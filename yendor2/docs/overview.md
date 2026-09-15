@@ -2021,6 +2021,15 @@ view an unread entry's detail). Completes the corrected chain:
 
 261 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowClueBookRegistrationNag — a shareware limitation
+
+Traced `RunClueEntryMenu`'s "unavailable entry" callee and dumped its
+message: "REGISTER YOUR COPY OF THE CLUE BOOK TODAY!" — some clue-book
+entries are locked behind shareware registration. Named
+`ShowClueBookRegistrationNag`.
+
+262 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

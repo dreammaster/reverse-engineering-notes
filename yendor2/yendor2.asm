@@ -4509,7 +4509,7 @@ loc_12C65:                              ; CODE XREF: RunClueEntryMenu+70↑j
                 mov     bx, word_2E3EE
                 test    word ptr [bx+2], 8000h
                 jnz     short loc_12C86
-                call    sub_14AE8
+                call    ShowClueBookRegistrationNag
                 jmp     loc_12B9B
 ; ---------------------------------------------------------------------------
 
@@ -5505,7 +5505,7 @@ loc_13433:                              ; CODE XREF: sub_133EB+13↑j
                 jnz     short loc_13451
                 cmp     word_3293A, 5
                 jle     short loc_13451
-                call    sub_14AE8
+                call    ShowClueBookRegistrationNag
                 jmp     short loc_1345C
 ; ---------------------------------------------------------------------------
 
@@ -7582,9 +7582,9 @@ seg010          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14AE8       proc far                ; CODE XREF: RunClueEntryMenu+FA↑P
+ShowClueBookRegistrationNag proc far    ; CODE XREF: RunClueEntryMenu+FA↑P
                                         ; sub_133EB+5F↑P
-                mov     ax, 3
+                mov     ax, 3           ; Plays a sound and shows 'REGISTER YOUR COPY OF THE CLUE BOOK TODAY!' -- the shareware registration nag for clue-book entries that require registration (called when the global 'registered' flag, word_328CA bit 1, is clear and the entry's own bit 0x8000 says it's registration-locked).
                 call    sub_28412
                 mov     _textPos_x, 23h ; '#'
                 mov     _textPos_y, 10h
@@ -7593,7 +7593,7 @@ sub_14AE8       proc far                ; CODE XREF: RunClueEntryMenu+FA↑P
                 call    writeString
                 call    DrawMouseCursor
                 retf
-sub_14AE8       endp
+ShowClueBookRegistrationNag endp
 
 
 ; =============== S U B R O U T I N E =======================================

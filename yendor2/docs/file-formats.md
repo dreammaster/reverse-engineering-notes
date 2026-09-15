@@ -221,6 +221,13 @@ chain was first named as a save-game slot-selection menu — wrong; all
 function's own pre-existing comment citing the manual, with no other
 caller anywhere.
 
+Some clue entries are **registration-locked**: `RunClueEntryMenu` shows
+`ShowClueBookRegistrationNag` ("REGISTER YOUR COPY OF THE CLUE BOOK
+TODAY!") instead of an entry's detail when the global "registered"
+flag (`word_328CA` bit 1) is clear and that entry's own flag
+(`[+2]` bit `0x8000`) marks it as requiring registration — a shareware
+limitation.
+
 ### Quest-item and party-inventory range checks
 
 `IsItemRangeAvailable` (**correction**: named `CheckTransportAvailability`

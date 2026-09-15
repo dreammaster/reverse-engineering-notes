@@ -1992,7 +1992,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X14AD8);
 	op_hex		(x,	1);
 	set_cmt	(0X14ADF,	"msg",	0);
+	set_cmt	(0X14AE8,	"Plays a sound and shows 'REGISTER YOUR COPY OF THE CLUE BOOK TODAY!' -- the shareware registration nag for clue-book entries that require registration (called when the global 'registered' flag, word_328CA bit 1, is clear and the entry's own bit 0x8000 says it's registration-locked).",	0);
 	create_insn	(0X14AE8);
+	set_name	(0X14AE8,	"ShowClueBookRegistrationNag");
 	set_cmt	(0X14B02,	"msg",	0);
 	set_cmt	(0X14B10,	"Fills the entire 320x200 video buffer (_videoBufferSeg) with the byte passed in AL (replicated to AH before the word-store loop). cx=0x7D00 = 32000 words = 64000 bytes = one full VGA Mode 13h-style frame.",	0);
 	create_insn	(0X14B10);
@@ -4299,12 +4301,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X1D050);
 	op_hex		(x,	0);
-	create_insn	(x=0X1D060);
-	op_hex		(x,	1);
-	create_insn	(0X1D06E);
-	set_cmt	(0X1D072,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
-	create_insn	(x=0X1D072);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -4314,6 +4310,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1D060);
+	op_hex		(x,	1);
+	create_insn	(0X1D06E);
+	set_cmt	(0X1D072,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
+	create_insn	(x=0X1D072);
+	op_hex		(x,	0);
 	create_insn	(x=0X1D081);
 	op_hex		(x,	1);
 	create_insn	(0X1D090);
@@ -7462,6 +7464,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X290CF,	"msg",	0);
 	set_cmt	(0X290E2,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X290FB,	"msg",	0);
 	create_insn	(x=0X29135);
 	op_hex		(x,	1);
@@ -7478,15 +7489,6 @@ static Bytes_1(void) {
 	set_cmt	(0X291A3,	"Per-row worker for RevealMapRegion: reads a WORLD.DAT block and a CURGAME block (FileEntry 0x9043/0x8FFB), walks the bit-packed explored-cell bitmap byte-by-byte, and for each not-yet-explored cell that passes a further gate (sub_28C94/sub_28CB1, not traced -- possibly related to the unconfirmed 'transport-check' table) calls sub_29259 (not traced) to reveal it.",	0);
 	create_insn	(0X291A3);
 	set_name	(0X291A3,	"RevealMapRegionRow");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X291A6,	"this",	0);
 	create_insn	(x=0X291C1);
 	op_hex		(x,	1);
@@ -10951,6 +10953,15 @@ static Bytes_2(void) {
 	create_word	(0X36E51);
 	set_cmt	(0X36E53,	"Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).",	0);
 	set_name	(0X36E53,	"g_partyRecords");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X38808);
 	create_word	(0X3880A);
 	create_word	(0X3880C);
@@ -10981,15 +10992,6 @@ static Bytes_2(void) {
 	set_name	(0X397C8,	"aWhitePotion");
 	create_strlit	(0X397D5,	0X7);
 	set_name	(0X397D5,	"aThaine");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X397DC,	0X8);
 	set_name	(0X397DC,	"aShirley");
 	create_strlit	(0X397E4,	0X5);
