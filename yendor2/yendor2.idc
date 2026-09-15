@@ -3285,7 +3285,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X18FC5);
 	op_hex		(x,	1);
 	create_insn	(0X18FCD);
+	set_cmt	(0X18FDA,	"Space-bar 'enhance item' action (sub_1869D, sibling of TrySellItemForGold). Eligibility via sub_1B147 (a level/stat range check against table 0xBCE); on failure, 'I CAN NOT ENHANCE THAT' (msg 0x815A). Else CompareBCD4(g_partyGold, [table 0xCB2]) -- on insufficient gold, 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, via sub_190AF); else SubBCD4(g_partyGold -= [0xCB2]), advances the item to the next catalog entry (word_32974+1) and reloads it as the enhanced result.",	0);
 	create_insn	(0X18FDA);
+	set_name	(0X18FDA,	"TryEnhanceItemForGold");
 	create_insn	(x=0X18FEC);
 	op_hex		(x,	1);
 	create_insn	(0X19021);
@@ -3306,9 +3308,9 @@ static Bytes_0(void) {
 	create_insn	(0X191FC);
 	create_insn	(x=0X1922C);
 	op_hex		(x,	1);
-	set_cmt	(0X19264,	"Space-bar action (sub_1869D, word_328C6 bit 0x10) while carrying an item (word_31946): if the held item's type mask (es:[bx+0x10]) doesn't overlap the standing location's accepted-type mask ([word_2E546+0x10]), shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise consumes the held item and does AddBCD4([0x94B3], [word_32920]) -- adds the location's amount into the global material counter 0x94B3 -- then ShowMaterialCounterHud. What kind of station/material this is not identified.",	0);
+	set_cmt	(0X19264,	"Space-bar 'sell item' action (sub_1869D main loop, word_328C6 bit 0x10) while carrying an item: if the held item's type mask doesn't overlap the standing location's accepted-type mask, shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise sells the item, crediting its value (word_32920, via AddBCD4) to g_partyGold, then ShowMaterialCounterHud. Renamed from TryConvertItemToMaterial after confirming g_partyGold's identity (HUD label is a literal '$', and the 'SPACEBAR TO SELL ITEM OR ESC TO UNDO' prompt lives in the same message bank).",	0);
 	create_insn	(0X19264);
-	set_name	(0X19264,	"TryConvertItemToMaterial");
+	set_name	(0X19264,	"TrySellItemForGold");
 	create_insn	(x=0X19284);
 	op_hex		(x,	1);
 	create_insn	(x=0X192B9);
@@ -4251,14 +4253,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
 	create_insn	(0X1CDBC);
 	set_name	(0X1CDBC,	"IsItemRangeAvailable");
-	create_insn	(0X1CDFA);
-	create_insn	(0X1CE02);
-	create_insn	(0X1CE25);
-	create_insn	(0X1CE52);
-	set_cmt	(0X1CE6B,	"FindItemInInventoryRange (implicit word_328D4, range = word_3293E..word_32940): searches the 8 main inventory slots ([+0x11A], matches GetInventorySlotPtr's layout) for an item id in range, recursing into container-type items (sub_12554 [+0xC] bit 0x2000) via sub_1CECB. Also checks one extra slot at +0x13E (plausibly 'equipped' transport item). Generic inventory search, not transport-specific by itself.",	0);
-	create_insn	(0X1CE6B);
-	set_name	(0X1CE6B,	"FindItemInInventoryRange");
-	create_insn	(0X1CE8D);
 }
 
 //------------------------------------------------------------------------
@@ -4268,6 +4262,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1CDFA);
+	create_insn	(0X1CE02);
+	create_insn	(0X1CE25);
+	create_insn	(0X1CE52);
+	set_cmt	(0X1CE6B,	"FindItemInInventoryRange (implicit word_328D4, range = word_3293E..word_32940): searches the 8 main inventory slots ([+0x11A], matches GetInventorySlotPtr's layout) for an item id in range, recursing into container-type items (sub_12554 [+0xC] bit 0x2000) via sub_1CECB. Also checks one extra slot at +0x13E (plausibly 'equipped' transport item). Generic inventory search, not transport-specific by itself.",	0);
+	create_insn	(0X1CE6B);
+	set_name	(0X1CE6B,	"FindItemInInventoryRange");
+	create_insn	(0X1CE8D);
 	create_insn	(x=0X1CE92);
 	op_hex		(x,	1);
 	create_insn	(0X1CEA1);
@@ -7361,6 +7363,15 @@ static Bytes_1(void) {
 	create_word	(x=0X28A41);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X28A43);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
@@ -7401,15 +7412,6 @@ static Bytes_1(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X28A76);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X28A7E);
 	op_hex		(x,	1);
 	create_insn	(0X28A92);
@@ -10848,6 +10850,15 @@ static Bytes_2(void) {
 	set_name	(0X3681A,	"aGreat");
 	create_strlit	(0X36822,	0X10);
 	set_name	(0X36822,	"aVisibleUndeads");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36832,	0X9);
 	set_name	(0X36832,	"aRegister");
 	create_strlit	(0X3683B,	0X7);
@@ -10880,15 +10891,6 @@ static Bytes_2(void) {
 	set_name	(0X3687F,	"aPicturesVga");
 	set_name	(0X3688C,	"savegameX");
 	create_word	(0X3688E);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X36892);
 	create_word	(0X36894);
 	set_name	(0X3689A,	"aSavgamex");
@@ -10948,7 +10950,9 @@ static Bytes_3(void) {
 	create_word	(0X36D07);
 	create_word	(0X36D09);
 	create_word	(0X36D0B);
+	set_cmt	(0X36D13,	"Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per-tier cost table at DS:0xCB2), credited by TrySellItemForGold (sells a held item of a matching type), and also touched by ApplyEffectCost's trap/status-effect cost dispatch alongside the two ore counters (0x94B7/0x94BB).",	0);
 	create_word	(0X36D13);
+	set_name	(0X36D13,	"g_partyGold");
 	create_word	(0X36D15);
 	set_cmt	(0X36D31,	"Global boolean flag bitfield (quest/world-state flags), accessed via SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag/GetGlobalFlagBitAndWord. GrantMonsterRewards sets/clears specific flags on monster death via its [+0x14]/[+0x16] signed flag-index fields.",	0);
 	set_name	(0X36D31,	"g_globalFlags");

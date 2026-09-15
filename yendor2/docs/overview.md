@@ -2067,6 +2067,28 @@ exact identity (and what kind of station this is) is still open.
 
 265 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — 0x94B3 is g_partyGold, not a generic material counter
+
+While tracing `TryEnhanceItemForGold` (previously unnamed `sub_18FDA`,
+the sibling Space-bar action to last round's item-sell function), its
+failure message turned out to be "YOU DON'T HAVE ENOUGH GOLD!" —
+direct textual proof that the counter at `0x94B3`, used by
+`CompareBCD4`/`SubBCD4` there, is the party's gold, not a generic
+"material" as framed last round. Confirmed further: `ShowMaterialCounterHud`'s
+HUD label for this same counter (msg `0x7FC4`) is a literal `"$"`, and
+the label is immediately followed in the same message bank by
+"SPACEBAR TO / SELL ITEM OR / ESC TO UNDO" — the exact prompt for last
+round's `TryConvertItemToMaterial`, which is therefore a sell-item
+action, not a material conversion. Renamed: `0x36D13` (data) →
+`g_partyGold`; `TryConvertItemToMaterial` → `TrySellItemForGold`;
+`sub_18FDA` → `TryEnhanceItemForGold` (eligibility check, gold cost
+from a per-tier table at `0xCB2`, then advances the held item to the
+next catalog entry — an item-enhancement upgrade). Left last round's
+entry standing above rather than editing it; `docs/file-formats.md`'s
+material-counter section is corrected in place.
+
+266 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

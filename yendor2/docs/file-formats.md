@@ -380,22 +380,29 @@ yet.
 
 ### Global material counters and BCD arithmetic
 
-Three **global** (not per-party-member) crafting-material counters at
-`0x94B3`, `0x94B7`, `0x94BB` — confirmed **exactly consecutive**,
-4-byte packed-BCD stride, by `ShowResourceDepletedOverlay`'s scan of
-all three in one loop. Individual identities: `0x94BB`/`0x94B7` are
-used by `CastSpell`'s `0x1C` alchemy ability (converts 10 units of one
-into the other — `NUORE`/`MAGIC ORE`); `0x94B3` is a third, sibling
-counter used the same way by `ApplyEffectCost`'s cost dispatch, and
-also fed by `TryConvertItemToMaterial` — a Space-bar action (main
-input loop, `word_328C6` bit `0x10`) available while carrying an item
-and standing at some location: if the held item's type doesn't match
-what the location accepts, it's rebuffed with "I HAVE NO NEED FOR THAT
-TYPE OF ITEM." (a shopkeeper/NPC-voiced line, from the same message
-bank as the alchemy-conversion prompts below); if it matches, the item
-is consumed and its value added to `0x94B3`. What `0x94B3` actually
-represents (and what kind of station this is) is still not identified.
-All three are manipulated via the packed-BCD
+Three **global** (not per-party-member) counters at `0x94B3`
+(`g_partyGold`), `0x94B7`, `0x94BB` — confirmed **exactly
+consecutive**, 4-byte packed-BCD stride, by
+`ShowResourceDepletedOverlay`'s scan of all three in one loop.
+Individual identities: `0x94BB`/`0x94B7` are used by `CastSpell`'s
+`0x1C` alchemy ability (converts 10 units of one into the other —
+`NUORE`/`MAGIC ORE`); `0x94B3` is the party's **gold** — **correction**:
+first framed as a generic "material counter" (below), but its HUD
+label (`ShowMaterialCounterHud`, msg `0x7FC4`) turned out to be a
+literal `"$"`, and its two consumer functions were renamed to match:
+`TrySellItemForGold` (was `TryConvertItemToMaterial` — a Space-bar
+action, main input loop `word_328C6` bit `0x10`, while carrying an
+item: rebuffed with "I HAVE NO NEED FOR THAT TYPE OF ITEM." if the
+item's type doesn't match what the standing location accepts,
+otherwise sells it and credits `g_partyGold`) and
+`TryEnhanceItemForGold` (was unnamed — the sibling Space-bar action:
+gated by a level/stat eligibility check, `CompareBCD4`/`SubBCD4`
+against `g_partyGold` and a per-tier cost table at `0xCB2`, showing
+"YOU DON'T HAVE ENOUGH GOLD!" on failure; on success, spends the gold
+and advances the held item to the next entry in the item catalog —
+the item "enhancement" itself). `ApplyEffectCost`'s trap/status-effect
+cost dispatch also spends from this same 3-counter family, so a trap
+stealing party gold is plausible. All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
 `SubtractFromBCDCounter`) — 4 bytes (8 decimal digits) per counter,

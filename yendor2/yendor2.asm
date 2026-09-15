@@ -15256,14 +15256,14 @@ loc_18BD1:                              ; CODE XREF: sub_1869D+504↑j
                 jz      short loc_18C06
                 test    word_328C6, 10h
                 jz      short loc_18BED
-                call    TryConvertItemToMaterial
+                call    TrySellItemForGold
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
 loc_18BED:                              ; CODE XREF: sub_1869D+548↑j
                 test    word_328C6, 8
                 jz      short loc_18BFB
-                call    sub_18FDA
+                call    TryEnhanceItemForGold
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -15708,8 +15708,8 @@ sub_18FC5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18FDA       proc near               ; CODE XREF: sub_1869D+558↑p
-                mov     ax, word_31948
+TryEnhanceItemForGold proc near         ; CODE XREF: sub_1869D+558↑p
+                mov     ax, word_31948  ; Space-bar 'enhance item' action (sub_1869D, sibling of TrySellItemForGold). Eligibility via sub_1B147 (a level/stat range check against table 0xBCE); on failure, 'I CAN NOT ENHANCE THAT' (msg 0x815A). Else CompareBCD4(g_partyGold, [table 0xCB2]) -- on insufficient gold, 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, via sub_190AF); else SubBCD4(g_partyGold -= [0xCB2]), advances the item to the next catalog entry (word_32974+1) and reloads it as the enhanced result.
                 mov     word_32974, ax
                 call    sub_1B147
                 jz      short loc_19021
@@ -15727,7 +15727,7 @@ sub_18FDA       proc near               ; CODE XREF: sub_1869D+558↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19021:                              ; CODE XREF: sub_18FDA+B↑j
+loc_19021:                              ; CODE XREF: TryEnhanceItemForGold+B↑j
                 mov     si, 94B3h
                 mov     di, 0CB2h
                 call    CompareBCD4
@@ -15736,7 +15736,7 @@ loc_19021:                              ; CODE XREF: sub_18FDA+B↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19032:                              ; CODE XREF: sub_18FDA+52↑j
+loc_19032:                              ; CODE XREF: TryEnhanceItemForGold+52↑j
                 mov     si, 94B3h
                 mov     di, 0CB2h
                 call    SubBCD4
@@ -15762,7 +15762,7 @@ loc_19032:                              ; CODE XREF: sub_18FDA+52↑j
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
-sub_18FDA       endp
+TryEnhanceItemForGold endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15783,7 +15783,7 @@ sub_19091       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_190AF       proc near               ; CODE XREF: sub_18FDA+54↑p
+sub_190AF       proc near               ; CODE XREF: TryEnhanceItemForGold+54↑p
                                         ; sub_19140+54↓p
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
@@ -15976,8 +15976,8 @@ sub_1922C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TryConvertItemToMaterial proc near      ; CODE XREF: sub_1869D+54A↑p
-                mov     ax, word_31948  ; Space-bar action (sub_1869D, word_328C6 bit 0x10) while carrying an item (word_31946): if the held item's type mask (es:[bx+0x10]) doesn't overlap the standing location's accepted-type mask ([word_2E546+0x10]), shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise consumes the held item and does AddBCD4([0x94B3], [word_32920]) -- adds the location's amount into the global material counter 0x94B3 -- then ShowMaterialCounterHud. What kind of station/material this is not identified.
+TrySellItemForGold proc near            ; CODE XREF: sub_1869D+54A↑p
+                mov     ax, word_31948  ; Space-bar 'sell item' action (sub_1869D main loop, word_328C6 bit 0x10) while carrying an item: if the held item's type mask doesn't overlap the standing location's accepted-type mask, shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise sells the item, crediting its value (word_32920, via AddBCD4) to g_partyGold, then ShowMaterialCounterHud. Renamed from TryConvertItemToMaterial after confirming g_partyGold's identity (HUD label is a literal '$', and the 'SPACEBAR TO SELL ITEM OR ESC TO UNDO' prompt lives in the same message bank).
                 mov     word_32974, ax
                 mov     es, word_2E54C
                 mov     bx, word_2E54E
@@ -15999,7 +15999,7 @@ TryConvertItemToMaterial proc near      ; CODE XREF: sub_1869D+54A↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_192B9:                              ; CODE XREF: TryConvertItemToMaterial+19↑j
+loc_192B9:                              ; CODE XREF: TrySellItemForGold+19↑j
                 or      word_328CA, 20h
                 mov     ax, word_31948
                 mov     word_32968, ax
@@ -16021,7 +16021,7 @@ loc_192B9:                              ; CODE XREF: TryConvertItemToMaterial+19
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
-TryConvertItemToMaterial endp
+TrySellItemForGold endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16783,7 +16783,7 @@ seg031          segment byte public 'CODE' use16
 
 
 AddBCD4         proc far                ; CODE XREF: sub_17B09+15↑P
-                                        ; TryConvertItemToMaterial+9A↑P ...
+                                        ; TrySellItemForGold+9A↑P ...
                 mov     al, [si+3]      ; Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.
                 add     al, [di+3]
                 daa
@@ -19557,7 +19557,7 @@ loc_1AF4C:                              ; CODE XREF: sub_1AF49+116↓j
                 mov     bx, 8186h
                 mov     cx, 3
                 call    sub_23B76
-                mov     ax, word_36D13
+                mov     ax, g_partyGold
                 mov     word_3881C, ax
                 mov     ax, word_36D15
                 mov     word_3881E, ax
@@ -19689,7 +19689,7 @@ sub_1B0CF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B147       proc far                ; CODE XREF: sub_18FDA+6↑P
+sub_1B147       proc far                ; CODE XREF: TryEnhanceItemForGold+6↑P
                                         ; sub_1CCBC+80↓P ...
                 push    bx
                 mov     ax, 1
@@ -74270,9 +74270,9 @@ _videoBufferSeg dw 0                    ; DATA XREF: sub_1075E+49↑r
                                         ; ShowClueBook+48↑r ...
 word_3291E      dw 0                    ; DATA XREF: RunGameDialog+5↑w
                                         ; RunGameDialog:loc_1EAD0↑w ...
-word_32920      dw 0                    ; DATA XREF: TryConvertItemToMaterial+66↑r
+word_32920      dw 0                    ; DATA XREF: TrySellItemForGold+66↑r
                                         ; sub_1CCBC+C↑w
-word_32922      dw 0                    ; DATA XREF: TryConvertItemToMaterial+6C↑r
+word_32922      dw 0                    ; DATA XREF: TrySellItemForGold+6C↑r
                                         ; sub_1CCBC+15↑w
 word_32924      dw 0                    ; DATA XREF: HandleDungeonInput+28↑w
                                         ; HandleDungeonInput+38↑w ...
@@ -74349,7 +74349,7 @@ word_32966      dw 0                    ; DATA XREF: sub_141D9+3FC↑w
 word_32968      dw 0                    ; DATA XREF: sub_141D9+403↑w
                                         ; sub_14E28+E8↑w ...
 word_3296A      dw 0                    ; DATA XREF: sub_1869D+5A4↑r
-                                        ; TryConvertItemToMaterial+63↑w
+                                        ; TrySellItemForGold+63↑w
 word_3296C      dw 0                    ; DATA XREF: IsItemRangeAvailable+23↑w
                                         ; IsItemRangeAvailable+5D↑w ...
 word_3296E      dw 0                    ; DATA XREF: IsItemRangeAvailable+2F↑w
@@ -86010,7 +86010,8 @@ word_36D0B      dw 0                    ; DATA XREF: sub_197B9+188↑r
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36D13      dw 0                    ; DATA XREF: sub_1AF49+3F↑r
+g_partyGold     dw 0                    ; DATA XREF: sub_1AF49+3F↑r
+                                        ; Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per-tier cost table at DS:0xCB2), credited by TrySellItemForGold (sells a held item of a matching type), and also touched by ApplyEffectCost's trap/status-effect cost dispatch alongside the two ore counters (0x94B7/0x94BB).
 word_36D15      dw 0                    ; DATA XREF: sub_1AF49+45↑r
                 db    0
                 db    0
