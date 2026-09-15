@@ -1914,6 +1914,17 @@ thread for a future round.
 
 250 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowVisionAtLocation — another piece of the quest cluster
+
+Item `0x253`, immediately before the `0x254`-`0x258` quest-item run, is
+`ShowVisionAtLocation`: a scrying effect that briefly jumps the view
+(not the player) to a fixed map coordinate using the same redraw
+sequence teleports use, then restores it — presumably revealing a
+story-significant location. Deepens the themed item cluster found over
+the last two rounds; the exact narrative still isn't identified.
+
+251 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

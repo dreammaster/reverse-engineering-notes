@@ -231,8 +231,14 @@ strings (`THE POTION WORKED SUCCESSFULLY` there, `YOU CAN NOT USE THAT
 HERE!` elsewhere). Using it there sets global quest flag `0x48`. The
 adjacency to the completion-check range (`0x254`-`0x258` consecutive,
 plus `0x2C8`) strongly suggests these 5-6 items are one themed quest
-item set — a promising thread into the main-quest structure, not
-followed further this round.
+item set. **Also part of this cluster**: item `0x253` (immediately
+before the range) is `ShowVisionAtLocation` — saves the current view,
+jumps it to a fixed coordinate (340,99) using the same redraw sequence
+`ApplyMapTriggerEffect` uses for teleports, shows it briefly, then
+restores the original view (the player doesn't actually move). A
+scrying/vision effect revealing a fixed, presumably story-significant
+location — not followed further this round, but a promising thread
+into the main-quest structure.
 
 ### Combat: monster slots and turn order
 

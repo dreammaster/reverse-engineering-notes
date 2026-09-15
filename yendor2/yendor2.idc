@@ -8641,7 +8641,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X2B21C);
 	op_hex		(x,	1);
 	create_insn	(0X2B2BE);
+	set_cmt	(0X2B2CF,	"Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.",	0);
 	create_insn	(0X2B2CF);
+	set_name	(0X2B2CF,	"ShowVisionAtLocation");
 	create_insn	(x=0X2B2EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B2F4);
@@ -11126,6 +11128,15 @@ static Bytes_2(void) {
 	set_name	(0X3A08E,	"aChuckMabreySta");
 	create_strlit	(0X3A0B1,	0X2);
 	create_strlit	(0X3A0B3,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A0B5,	0X2);
 	create_strlit	(0X3A0B7,	0X2);
 	create_strlit	(0X3A0B9,	0X2);
@@ -11154,15 +11165,6 @@ static Bytes_2(void) {
 	create_strlit	(0X3A169,	0X2);
 	create_strlit	(0X3A16B,	0X26);
 	set_name	(0X3A16B,	"aMikeHurleyLawr");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A191,	0X2);
 	create_strlit	(0X3A193,	0X24);
 	set_name	(0X3A193,	"aRodSmithIiDann");

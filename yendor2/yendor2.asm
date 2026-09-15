@@ -49038,7 +49038,7 @@ seg116          segment byte public 'CODE' use16
 sub_2AE3C       proc far                ; CODE XREF: HandleGameCommand:loc_2972D↑P
                 cmp     word_32974, 253h ; Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 (4 codes) each flash an icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the original trace.
                 jnz     short loc_2AE48
-                call    sub_2B2CF
+                call    ShowVisionAtLocation
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -49425,8 +49425,8 @@ CheckQuestItemsCompleted endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B2CF       proc near               ; CODE XREF: sub_2AE3C+8↑p
-                push    word_36CF7
+ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
+                push    word_36CF7      ; Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.
                 push    word_36CF9
                 push    word_36CF5
                 push    word_36C79
@@ -49463,7 +49463,7 @@ sub_2B2CF       proc near               ; CODE XREF: sub_2AE3C+8↑p
                 mov     word_2E530, 0
                 call    sub_23874
                 retn
-sub_2B2CF       endp
+ShowVisionAtLocation endp
 
 seg116          ends
 
