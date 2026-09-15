@@ -5514,7 +5514,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X21DCF);
 	op_hex		(x,	1);
+	set_cmt	(0X21DE2,	"Reads a small WORLD.DAT record (block 3) plus a second field (sub_28000), trims trailing spaces. Checks two character positions against sentinels: if set, builds ' LEVEL X' (ax=2) or ' MAP X' (ax=1) with the mismatched value; else ax=0 (ok). Reads as a save/WORLD.DAT version-compatibility check.",	0);
 	create_insn	(0X21DE2);
+	set_name	(0X21DE2,	"CheckWorldDatCompatibility");
 	create_insn	(0X21E51);
 	create_insn	(0X21E6D);
 	set_cmt	(0X21E71,	"HandleGameCommand's handler for word_32974==0x1E (also called from RunMapEditorScreen). Renders a full-screen (24-row) map view centered on the player (word_36CF7/word_36CF9): for each row, reads a block from WORLD.DAT and CURGAME and draws it via sub_22140 (not traced). Falls back to a smaller view (sub_222BD) when word_328C4 bit 1 is clear. Distinct from the overworld ShowWorldMap -- reads as the 'full local area map'.",	0);
@@ -7526,10 +7528,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2957E,	"Like SaveAndCloseContainer's write-back (if the bag at [di] has contents, write them to CURGAME) but doesn't clear the marker afterward -- saves without closing.",	0);
 	create_insn	(0X2957E);
 	set_name	(0X2957E,	"SyncContainerContents");
-	set_cmt	(0X29583,	"this",	0);
-	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
-	create_insn	(0X295A8);
-	set_name	(0X295A8,	"HandleGameCommand");
 }
 
 //------------------------------------------------------------------------
@@ -7539,6 +7537,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X29583,	"this",	0);
+	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
+	create_insn	(0X295A8);
+	set_name	(0X295A8,	"HandleGameCommand");
 	create_insn	(0X295BD);
 	create_insn	(0X295CA);
 	create_insn	(0X295E5);
@@ -11041,6 +11043,15 @@ static Bytes_2(void) {
 	create_strlit	(0X39C59,	0X2);
 	create_strlit	(0X39C5B,	0X2);
 	create_strlit	(0X39C5D,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39C5F,	0X1F);
 	set_name	(0X39C5F,	"aSpecialThanksT");
 	create_strlit	(0X39C7E,	0X1E);
@@ -11071,15 +11082,6 @@ static Bytes_2(void) {
 	create_strlit	(0X39D80,	0X2);
 	create_strlit	(0X39D82,	0X21);
 	set_name	(0X39D82,	"aTimSmithSandra");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39DA3,	0X2);
 	create_strlit	(0X39DA5,	0X24);
 	set_name	(0X39DA5,	"aKristiQuicksal");

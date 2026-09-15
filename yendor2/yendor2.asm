@@ -4887,7 +4887,7 @@ loc_12F48:                              ; CODE XREF: sub_12ECD+77↑j
 loc_12F4D:                              ; CODE XREF: sub_12ECD+B↑j
                 mov     ax, [si]
                 dec     ax
-                call    sub_21DE2
+                call    CheckWorldDatCompatibility
                 mov     ax, 0AFC6h
                 mov     bx, 0AFA8h
                 call    StrCat
@@ -6560,7 +6560,7 @@ sub_13FCF       proc near               ; CODE XREF: sub_13278+3↑p
                 mov     _textPos_x, 0
                 mov     ax, word_2E664
                 dec     ax
-                call    sub_21DE2
+                call    CheckWorldDatCompatibility
                 mov     ax, 0AFC6h
                 mov     bx, 0AFA8h
                 call    StrCat
@@ -31586,9 +31586,9 @@ seg069          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21DE2       proc far                ; CODE XREF: sub_12ECD+83↑P
+CheckWorldDatCompatibility proc far     ; CODE XREF: sub_12ECD+83↑P
                                         ; sub_13FCF+6D↑P ...
-                mov     word_368AB, ax
+                mov     word_368AB, ax  ; Reads a small WORLD.DAT record (block 3) plus a second field (sub_28000), trims trailing spaces. Checks two character positions against sentinels: if set, builds ' LEVEL X' (ax=2) or ' MAP X' (ax=1) with the mismatched value; else ax=0 (ok). Reads as a save/WORLD.DAT version-compatibility check.
                 mov     bx, 9043h
                 mov     ax, 0AFDAh
                 call    WorldDat_setBlock3
@@ -31619,7 +31619,7 @@ sub_21DE2       proc far                ; CODE XREF: sub_12ECD+83↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21E51:                              ; CODE XREF: sub_21DE2+58↑j
+loc_21E51:                              ; CODE XREF: CheckWorldDatCompatibility+58↑j
                 cmp     byte ptr word_3883A+1, 20h ; ' '
                 jz      short loc_21E6D
                 mov     ax, 791Fh
@@ -31631,10 +31631,10 @@ loc_21E51:                              ; CODE XREF: sub_21DE2+58↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21E6D:                              ; CODE XREF: sub_21DE2+74↑j
+loc_21E6D:                              ; CODE XREF: CheckWorldDatCompatibility+74↑j
                 mov     ax, 0
                 retf
-sub_21DE2       endp
+CheckWorldDatCompatibility endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31728,7 +31728,7 @@ loc_21EFB:                              ; CODE XREF: ShowLocalAreaMap+C3↓j
                 div     bx
                 add     ax, cx
                 push    cs
-                call    near ptr sub_21DE2
+                call    near ptr CheckWorldDatCompatibility
                 push    ax
                 mov     _textPos_x, 0
                 mov     _textPos_y, 0
@@ -43061,7 +43061,7 @@ WorldDat_setBlock2 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-WorldDat_setBlock3 proc far             ; CODE XREF: sub_21DE2+9↑P
+WorldDat_setBlock3 proc far             ; CODE XREF: CheckWorldDatCompatibility+9↑P
                                         ; sub_28CB1+1E↓P
                 push    si
                 mov     si, 0CDF3h
@@ -43157,7 +43157,7 @@ sub_27FE0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28000       proc far                ; CODE XREF: sub_21DE2+24↑P
+sub_28000       proc far                ; CODE XREF: CheckWorldDatCompatibility+24↑P
                 push    si
                 mov     si, 0CDF7h
                 mov     [bx+4], ax
@@ -92937,14 +92937,14 @@ word_3881E      dw 0                    ; DATA XREF: sub_1AF49+48↑w
                 db    0
                 db    0
                 db    0
-byte_38826      db 0                    ; DATA XREF: sub_21DE2+4E↑w
+byte_38826      db 0                    ; DATA XREF: CheckWorldDatCompatibility+4E↑w
                 db    0
                 db    0
                 db    0
                 db    0
-byte_3882B      db 0                    ; DATA XREF: sub_21DE2+84↑w
+byte_3882B      db 0                    ; DATA XREF: CheckWorldDatCompatibility+84↑w
                 db    0
-byte_3882D      db 0                    ; DATA XREF: sub_21DE2+68↑w
+byte_3882D      db 0                    ; DATA XREF: CheckWorldDatCompatibility+68↑w
                 db    0
                 db    0
                 db    0
@@ -92958,10 +92958,10 @@ byte_3882D      db 0                    ; DATA XREF: sub_21DE2+68↑w
                 db    0
                 db    0
 word_3883A      dw 0                    ; DATA XREF: sub_1E2E5+32↑w
-                                        ; sub_21DE2+53↑r ...
+                                        ; CheckWorldDatCompatibility+53↑r ...
                 db    0
                 db    0
-byte_3883E      db 0                    ; DATA XREF: sub_21DE2+2B↑r
+byte_3883E      db 0                    ; DATA XREF: CheckWorldDatCompatibility+2B↑r
                 db    0
                 db    0
                 db    0

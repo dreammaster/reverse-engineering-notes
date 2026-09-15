@@ -1950,6 +1950,16 @@ narrative thread next.
 
 256 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CheckWorldDatCompatibility
+
+Named `sub_21DE2` (called from two unexplored save/load-adjacent
+functions): dumped its strings (" LEVEL X" / " MAP X") and confirmed
+it's a version/compatibility check comparing the loaded `WORLD.DAT`/
+save data against an expected level/map number, not a text-record
+parse as first appeared.
+
+257 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
