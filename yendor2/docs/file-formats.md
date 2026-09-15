@@ -418,6 +418,12 @@ current party member's `+0x6C` field against ASCII-looking thresholds
 perception skill value, not confirmed against `ShowCharacterSkills`'
 15-entry skill array yet.
 
+**Key items reference locks by their own catalog type value**:
+`UseItem`'s `UseKeyItem` branch passes a key item's own type-flags
+field directly as `LoadLockState`'s lock id — a key's catalog "type"
+*is* the numbered door it opens, no separate item-to-lock lookup
+table needed.
+
 **Shareware relevance**: the guide notes the shareware version has a
 blocked portal that can be bypassed by giving a character the "Key of
 Pariah" (item `0x31`, modifier `00`) — directly explains the registration

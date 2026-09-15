@@ -3700,8 +3700,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1AEE4);
 	create_insn	(0X1AEEC);
+	set_cmt	(0X1AEF8,	"UseItem dispatch branch for key items: passes the item's own type-flags field (es:[si+0x10]) directly as the lock/object id to LoadLockState -- the item's catalog 'type' value doubles as which numbered door/lock it opens.",	0);
 	create_insn	(x=0X1AEF8);
 	op_hex		(x,	1);
+	set_name	(0X1AEF8,	"UseKeyItem");
 	create_insn	(x=0X1AF00);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AF21);
@@ -4556,6 +4558,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1E10F);
 	create_insn	(0X1E11E);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1E12A);
 	create_insn	(x=0X1E137);
 	op_hex		(x,	1);
@@ -4587,15 +4598,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1E2E5);
 	set_cmt	(0X1E337,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1E340);
 	create_insn	(x=0X1E356);
 	op_hex		(x,	1);
@@ -8184,6 +8186,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A2A5);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A2A8);
 	create_insn	(x=0X2A2AB);
 	op_hex		(x,	1);
@@ -8217,15 +8228,6 @@ static Bytes_1(void) {
 	create_insn	(0X2A2D8);
 	create_insn	(x=0X2A2DB);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2A2DD);
 	op_hex		(x,	1);
 	create_insn	(0X2A2E0);

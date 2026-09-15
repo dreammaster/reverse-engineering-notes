@@ -12208,7 +12208,7 @@ sub_1728A       endp
 
 
 sub_1732B       proc far                ; CODE XREF: UseAbilityCommand+104↓p
-                                        ; sub_1AEF8+1C↓P ...
+                                        ; UseKeyItem+1C↓P ...
                 call    ClearStatusPanelIfDirty
                 call    sub_1B47A
                 or      word_328C6, 200h
@@ -12581,7 +12581,7 @@ ShowMaterialCounterHud endp
 
 
 LoadLockState   proc far                ; CODE XREF: UseAbilityCommand+2C↓p
-                                        ; sub_1AEF8+17↓P ...
+                                        ; UseKeyItem+17↓P ...
                 push    es              ; LoadLockState(ax=1-based lock/object id): reads a bit-packed 'previously unlocked?' array from CURGAME (block 0x556C, (id-1)/8 byte + (id-1)%8 bit -> word_32DC8 mask), reads a second CURGAME block (0x556D) into an EMS buffer at offset id*0x1A, and splits word_32DD0 into word_32DC0/word_32DC2 via /100. Feeds word_32DCE and friends, which ShowLockStatus reads to choose its message.
                 push    si
                 push    di              ; this
@@ -13307,7 +13307,7 @@ loc_17D2B:                              ; CODE XREF: UseItem+132↑j
 loc_17D3B:                              ; CODE XREF: UseItem+19F↑j
                 test    word ptr es:[si+0Eh], 8000h
                 jz      short loc_17D4B
-                call    sub_1AEF8
+                call    UseKeyItem
                 jmp     loc_17BA4
 ; ---------------------------------------------------------------------------
 
@@ -19514,8 +19514,8 @@ seg041          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AEF8       proc far                ; CODE XREF: UseItem+1B1↑P
-                or      word_328C6, 20h
+UseKeyItem      proc far                ; CODE XREF: UseItem+1B1↑P
+                or      word_328C6, 20h ; UseItem dispatch branch for key items: passes the item's own type-flags field (es:[si+0x10]) directly as the lock/object id to LoadLockState -- the item's catalog 'type' value doubles as which numbered door/lock it opens.
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
@@ -19535,7 +19535,7 @@ sub_1AEF8       proc far                ; CODE XREF: UseItem+1B1↑P
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
-sub_1AEF8       endp
+UseKeyItem      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74251,7 +74251,7 @@ word_32908      dw 0                    ; DATA XREF: sub_16881+4D↑w
 word_3290A      dw 0                    ; DATA XREF: sub_1AC80+6↑w
                                         ; sub_1AC80+1D↑r ...
 word_3290C      dw 0                    ; DATA XREF: UseItem+151↑r
-                                        ; sub_1AEF8+B↑w ...
+                                        ; UseKeyItem+B↑w ...
 word_3290E      dw 0                    ; DATA XREF: sub_13FCF+A6↑w
                                         ; sub_13FCF+BE↑r ...
 word_32910      dw 0                    ; DATA XREF: RunGameDialog:loc_1EC8A↑w

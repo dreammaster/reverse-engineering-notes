@@ -1597,6 +1597,16 @@ practice of appending corrections rather than editing history).
 
 213 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UseKeyItem
+
+Found another `UseItem` dispatch branch: `UseKeyItem` passes the
+item's own type-flags field directly as the lock id to `LoadLockState`
+— confirms key items encode which numbered door they open via their
+own catalog "type" value, tying `UseItem` and the lock system together
+directly.
+
+214 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
