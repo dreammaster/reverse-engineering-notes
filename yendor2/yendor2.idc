@@ -3563,7 +3563,9 @@ static Bytes_0(void) {
 	create_insn	(0X19FEB);
 	create_insn	(x=0X1A00C);
 	op_hex		(x,	1);
+	set_cmt	(0X1A04B,	"Scans an 8-byte-stride table (0xD1C9, 0xFFFF-terminated) for the current cell's x or y coordinate (selected per entry by a flag bit) -- a general 'is this a designated special cell' check. Called from ApplyMapTriggerEffect and IsRestingAllowedHere.",	0);
 	create_insn	(0X1A04B);
+	set_name	(0X1A04B,	"IsPositionInTriggerList");
 	create_insn	(x=0X1A068);
 	op_hex		(x,	1);
 	create_insn	(0X1A075);
@@ -3673,13 +3675,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1A5CC,	"Moderate confidence: plays a sound, briefly shows picture id 0xE for 7 ticks (saving/restoring the previous picture id), then restores. Called from HandleGameCommand when a status effect is already active -- a periodic warning flash.",	0);
 	create_insn	(0X1A5CC);
 	set_name	(0X1A5CC,	"FlashStatusWarning");
-	set_cmt	(0X1A5E3,	"ticks",	0);
-	create_insn	(x=0X1A5F6);
-	op_hex		(x,	1);
-	create_insn	(0X1A604);
-	create_insn	(x=0X1A605);
-	op_hex		(x,	1);
-	set_cmt	(0X1A628,	"msg",	0);
 }
 
 //------------------------------------------------------------------------
@@ -3689,6 +3684,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1A5E3,	"ticks",	0);
+	create_insn	(x=0X1A5F6);
+	op_hex		(x,	1);
+	create_insn	(0X1A604);
+	create_insn	(x=0X1A605);
+	op_hex		(x,	1);
+	set_cmt	(0X1A628,	"msg",	0);
 	create_insn	(x=0X1A656);
 	op_seg		(x,	1);
 	create_insn	(0X1A6E7);
@@ -4843,8 +4845,10 @@ static Bytes_1(void) {
 	create_insn	(x=0X1E9AF);
 	op_hex		(x,	1);
 	create_insn	(0X1E9C9);
+	set_cmt	(0X1EA18,	"'Can the party rest here' check: rejects on a global flag (word_36C79 bit 1), forbidden map/level id ranges (word_34748), or a special-cell match (IsPositionInTriggerList). Confirmed by RestPartyAndAdvanceClock's rejection message 'YOU CAN NOT REST HERE'.",	0);
 	create_insn	(x=0X1EA18);
 	op_hex		(x,	1);
+	set_name	(0X1EA18,	"IsRestingAllowedHere");
 	create_insn	(0X1EA27);
 	set_cmt	(0X1EA6E,	"In-game options dialog: draws the panel background (DrawPicture id 1) + mouse cursor (id 8) + GameDialog_drawButtons, then loops on PollKeyboardInput dispatching each of the panel's 8 hotkeys: A=Animation(sub_1F163) D=Dos(sub_1F8C7) F=SoundFx(sub_1F93D) L=Load M=Music(sub_1F8F5) N=NewGame(sub_1F5A5) R/ESC=Return S=Save. Called directly from `start` and InitGame.",	0);
 	create_insn	(0X1EA6E);
@@ -5905,6 +5909,15 @@ static Bytes_1(void) {
 	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
 	create_insn	(0X22B96);
 	set_name	(0X22B96,	"GrantMonsterRewards");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X22BD9);
 	create_insn	(0X22BEF);
 	create_insn	(0X22BF5);
@@ -5920,15 +5933,6 @@ static Bytes_1(void) {
 	set_cmt	(0X22CED,	"Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] (plausibly a remaining-presence/lifespan timer, not confirmed movement-related) by [si+0x1C]; reaching 0 sets errorCode=1, which callers (ProcessLevelMonsters) treat as 'this monster's presence has ended' -- granting a reward and removing it. Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly preparing the slot for reuse/respawn.",	0);
 	create_insn	(0X22CED);
 	set_name	(0X22CED,	"TickMonsterTimer");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X22CF3);
 	op_hex		(x,	1);
 	create_insn	(0X22CFB);
@@ -8904,6 +8908,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2B2CF,	"Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.",	0);
 	create_insn	(0X2B2CF);
 	set_name	(0X2B2CF,	"ShowVisionAtLocation");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B2EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B2F4);
@@ -8948,15 +8961,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X2B656);
 	op_hex		(x,	1);
 	set_name	(0X2B656,	"RunConversation");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B65C);
 	op_hex		(x,	1);
 	create_insn	(0X2B685);

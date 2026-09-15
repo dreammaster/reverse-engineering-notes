@@ -1130,7 +1130,10 @@ once per in-game day.
 
 **The "R rest" command**, `RestPartyAndAdvanceClock` (an action-toolbar
 entry from `start`, also reached from `sub_2C0FE`): after an
-eligibility check, advances `word_36D01` directly — a flat `+0x1E0`
+eligibility check (`IsRestingAllowedHere` — rejects on a global flag,
+forbidden map/level id, or a special-cell match via
+`IsPositionInTriggerList`, confirmed by the "YOU CAN NOT REST HERE"
+message), advances `word_36D01` directly — a flat `+0x1E0`
 (8 hours) for a full/uninterrupted rest, or up to 8 hourly `+0x3C`
 ticks (calling `ProcessLevelMonsters` each hour and stopping early if
 combat starts) otherwise — then inlines the exact same day-rollover

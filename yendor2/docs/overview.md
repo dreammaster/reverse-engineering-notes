@@ -3057,6 +3057,15 @@ earlier this session, from a completely different entry point.
 
 391 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: IsRestingAllowedHere and IsPositionInTriggerList
+
+Named `RestPartyAndAdvanceClock`'s eligibility check (rejects on a
+global flag, forbidden map/level id, or a special-cell match) and a
+shared position-list lookup also used by `ApplyMapTriggerEffect`.
+Confirmed by the dumped rejection message "YOU CAN NOT REST HERE".
+
+393 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

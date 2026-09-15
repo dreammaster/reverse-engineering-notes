@@ -17443,7 +17443,7 @@ ApplyMapTriggerEffect proc far          ; CODE XREF: HandleMovementInput:loc_116
                                         ; RunAlchemyScreen+41A↓P ...
                 mov     byte_2E400, 0   ; Handles a movement-triggered map object (called from HandleMovementInput). Branches on [di+2] type flags: 0x4000 = teleport ([di+4]/[di+6] -> word_36CF7/word_36CF9, full redraw); 0x2000 = separate effect (sub_1FC3F+sub_20C46, not traced); 0x1000/0x800/0x400/0x300-pair = trap/status effects -- looks up an effect-definition record (PrepareTrapEffectSlots), then for each of the party's 4 slots (g_partySlotAssignment -> g_partyRecords, record = g_partyRecords+(slot-1)*0x1F4), skips members with status bits 0x1C40 set, otherwise fills their g_partyEffectIconSlots entry and calls ApplyEffectAndDrawIconBar.
                 push    cs
-                call    near ptr sub_1A04B
+                call    near ptr IsPositionInTriggerList
                 cmp     errorCode, 0
                 jz      short loc_19E68
                 jmp     short loc_19E74
@@ -17662,16 +17662,16 @@ ApplyMapTriggerEffect endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A04B       proc far                ; CODE XREF: ApplyMapTriggerEffect+6↑p
-                                        ; sub_1EA18:loc_1EA5A↓P
-                mov     es, word_2E562
+IsPositionInTriggerList proc far        ; CODE XREF: ApplyMapTriggerEffect+6↑p
+                                        ; IsRestingAllowedHere:loc_1EA5A↓P
+                mov     es, word_2E562  ; Scans an 8-byte-stride table (0xD1C9, 0xFFFF-terminated) for the current cell's x or y coordinate (selected per entry by a flag bit) -- a general 'is this a designated special cell' check. Called from ApplyMapTriggerEffect and IsRestingAllowedHere.
                 mov     si, word_328D2
                 mov     ax, es:[si]
                 mov     bx, es:[si+2]
                 mov     di, 0D1C9h
                 mov     errorCode, 0
 
-loc_1A063:                              ; CODE XREF: sub_1A04B+31↓j
+loc_1A063:                              ; CODE XREF: IsPositionInTriggerList+31↓j
                 cmp     word ptr [di], 0FFFFh
                 jz      short locret_1A084
                 test    word ptr [di+2], 8000h
@@ -17681,22 +17681,22 @@ loc_1A063:                              ; CODE XREF: sub_1A04B+31↓j
                 jmp     short loc_1A079
 ; ---------------------------------------------------------------------------
 
-loc_1A075:                              ; CODE XREF: sub_1A04B+22↑j
+loc_1A075:                              ; CODE XREF: IsPositionInTriggerList+22↑j
                 cmp     ax, [di]
                 jz      short loc_1A07E
 
-loc_1A079:                              ; CODE XREF: sub_1A04B+28↑j
+loc_1A079:                              ; CODE XREF: IsPositionInTriggerList+28↑j
                 add     di, 8
                 jmp     short loc_1A063
 ; ---------------------------------------------------------------------------
 
-loc_1A07E:                              ; CODE XREF: sub_1A04B+26↑j
-                                        ; sub_1A04B+2C↑j
+loc_1A07E:                              ; CODE XREF: IsPositionInTriggerList+26↑j
+                                        ; IsPositionInTriggerList+2C↑j
                 mov     errorCode, 1
 
-locret_1A084:                           ; CODE XREF: sub_1A04B+1B↑j
+locret_1A084:                           ; CODE XREF: IsPositionInTriggerList+1B↑j
                 retf
-sub_1A04B       endp
+IsPositionInTriggerList endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25677,7 +25677,7 @@ loc_1E657:                              ; CODE XREF: RestPartyAndAdvanceClock+A�
 
 loc_1E662:                              ; CODE XREF: RestPartyAndAdvanceClock+13↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_1EA18
+                call    IsRestingAllowedHere
                 cmp     errorCode, 0
                 jz      short loc_1E6AE
                 or      word_328C4, 100h
@@ -26005,14 +26005,14 @@ sub_1E943       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1EA18       proc near               ; CODE XREF: RestPartyAndAdvanceClock+1D↑p
-                test    word_36C79, 2
+IsRestingAllowedHere proc near          ; CODE XREF: RestPartyAndAdvanceClock+1D↑p
+                test    word_36C79, 2   ; 'Can the party rest here' check: rejects on a global flag (word_36C79 bit 1), forbidden map/level id ranges (word_34748), or a special-cell match (IsPositionInTriggerList). Confirmed by RestPartyAndAdvanceClock's rejection message 'YOU CAN NOT REST HERE'.
                 jz      short loc_1EA27
                 mov     errorCode, 1
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1EA27:                              ; CODE XREF: sub_1EA18+6↑j
+loc_1EA27:                              ; CODE XREF: IsRestingAllowedHere+6↑j
                 mov     errorCode, 0
                 mov     ax, word_34748
                 cmp     ax, 3Dh ; '='
@@ -26030,17 +26030,17 @@ loc_1EA27:                              ; CODE XREF: sub_1EA18+6↑j
                 cmp     ax, 94h
                 jz      short locret_1EA6C
 
-loc_1EA5A:                              ; CODE XREF: sub_1EA18+1B↑j
-                                        ; sub_1EA18+26↑j
-                call    sub_1A04B
+loc_1EA5A:                              ; CODE XREF: IsRestingAllowedHere+1B↑j
+                                        ; IsRestingAllowedHere+26↑j
+                call    IsPositionInTriggerList
                 cmp     errorCode, 0
                 jz      short locret_1EA6C
                 mov     errorCode, 4
 
-locret_1EA6C:                           ; CODE XREF: sub_1EA18+31↑j
-                                        ; sub_1EA18+36↑j ...
+locret_1EA6C:                           ; CODE XREF: IsRestingAllowedHere+31↑j
+                                        ; IsRestingAllowedHere+36↑j ...
                 retn
-sub_1EA18       endp
+IsRestingAllowedHere endp
 
 seg057          ends
 
@@ -81832,7 +81832,7 @@ aEmpty_0        db '        - EMPTY -       ',0
                 db    0
                 db    0
                 db    0
-word_34748      dw 0                    ; DATA XREF: sub_1EA18+15↑r
+word_34748      dw 0                    ; DATA XREF: IsRestingAllowedHere+15↑r
                 db    0
                 db    0
                 db    0
