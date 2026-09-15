@@ -2917,6 +2917,14 @@ currently selected weapon.
 
 373 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: AnimateEffectFrame
+
+Named `sub_2D3DC`, called from the large unnamed dispatcher
+`sub_2C0FE`: one animation frame, same shape as
+`AnimateProjectileStep`, for some other in-viewport effect sequence.
+
+374 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

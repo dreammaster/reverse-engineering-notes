@@ -52311,12 +52311,12 @@ loc_2CCEE:                              ; CODE XREF: sub_2C0FE+A7↑j
                 mov     ax, word_332E0
                 mov     word_2E530, ax
                 mov     word_3292C, 31h ; '1'
-                call    sub_2D3DC
+                call    AnimateEffectFrame
                 mov     ax, word_332E0
                 inc     ax
                 mov     word_2E530, ax
                 mov     word_3292C, 2Eh ; '.'
-                call    sub_2D3DC
+                call    AnimateEffectFrame
                 call    ClassifyObstacleAtViewportRow
                 cmp     errorCode, 0
                 jnz     short loc_2CDBE
@@ -52324,14 +52324,14 @@ loc_2CCEE:                              ; CODE XREF: sub_2C0FE+A7↑j
                 add     ax, 2
                 mov     word_2E530, ax
                 mov     word_3292C, 2Bh ; '+'
-                call    sub_2D3DC
+                call    AnimateEffectFrame
                 call    ClassifyObstacleAtViewportRow
                 cmp     errorCode, 0
                 jnz     short loc_2CDBE
                 mov     ax, word_332E0
                 mov     word_2E530, ax
                 mov     word_3292C, 28h ; '('
-                call    sub_2D3DC
+                call    AnimateEffectFrame
                 call    ClassifyObstacleAtViewportRow
                 cmp     errorCode, 0
                 jnz     short loc_2CDBE
@@ -52339,7 +52339,7 @@ loc_2CCEE:                              ; CODE XREF: sub_2C0FE+A7↑j
                 inc     ax
                 mov     word_2E530, ax
                 mov     word_3292C, 24h ; '$'
-                call    sub_2D3DC
+                call    AnimateEffectFrame
                 call    ClassifyObstacleAtViewportRow
                 cmp     errorCode, 0
                 jnz     short loc_2CDBE
@@ -52347,7 +52347,7 @@ loc_2CCEE:                              ; CODE XREF: sub_2C0FE+A7↑j
                 add     ax, 2
                 mov     word_2E530, ax
                 mov     word_3292C, 19h
-                call    sub_2D3DC
+                call    AnimateEffectFrame
                 call    ClassifyObstacleAtViewportRow
                 cmp     errorCode, 0
                 jnz     short loc_2CDBE
@@ -52402,7 +52402,7 @@ loc_2CDEC:                              ; CODE XREF: sub_2C0FE+CD1↑j
 
 loc_2CE33:                              ; CODE XREF: sub_2C0FE+D2E↑j
                                         ; sub_2C0FE+D3C↓j
-                call    sub_2D3DC
+                call    AnimateEffectFrame
                 inc     word_2E530
                 loop    loc_2CE33
                 pop     di
@@ -52982,9 +52982,9 @@ ApplyDamageToMapMonster endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D3DC       proc near               ; CODE XREF: sub_2C0FE+C2B↑p
+AnimateEffectFrame proc near            ; CODE XREF: sub_2C0FE+C2B↑p
                                         ; sub_2C0FE+C3B↑p ...
-                or      word_328C6, 1
+                or      word_328C6, 1   ; One animation frame (same shape as AnimateProjectileStep, but word_328C6 bit 1 and a 5-tick wait): draws via DrawViewportSprite, redraws cursor, restores background via RestoreCorridorBackgroundFromEMS. Called from sub_2C0FE (a large unnamed dispatcher).
                 call    DrawViewportSprite
                 and     word_328C6, 0FFFEh
                 call    DrawMouseCursor
@@ -52992,7 +52992,7 @@ sub_2D3DC       proc near               ; CODE XREF: sub_2C0FE+C2B↑p
                 mov     ax, 5           ; ticks
                 call    wait
                 retn
-sub_2D3DC       endp
+AnimateEffectFrame endp
 
 
 ; =============== S U B R O U T I N E =======================================

@@ -534,7 +534,13 @@ wound/display flags, redraws, then resolves death (`GrantMonsterRewards`
 + `RemoveMonsterFromMap` + `RedrawDungeonScreen`) or survival
 (`RefreshDungeonScreen`) based on its HP — the corridor-encounter
 counterpart to the turn-based `g_monsterSlots` combat flow documented
-below.
+below. A large unnamed dispatcher, `sub_2C0FE`, sits behind several
+combat-adjacent helpers this session named individually
+(`ApplyDamageToMapMonster`, `GetMonsterAtViewportRow`,
+`ScrollCorridorBackgroundFromEMS`, and `AnimateEffectFrame` — one
+animation frame, same shape as `AnimateProjectileStep` but a different
+layer flag and wait length, for some other in-viewport effect
+sequence) without itself being traced.
 
 **Ranged attacks and area-effect abilities against a corridor monster**:
 `ResolveAttackOrAbilityAction` (called from `sub_1D4B8`, an unnamed

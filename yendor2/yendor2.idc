@@ -9513,8 +9513,10 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X2D3AB,	"ticks",	0);
 	create_insn	(0X2D3CB);
+	set_cmt	(0X2D3DC,	"One animation frame (same shape as AnimateProjectileStep, but word_328C6 bit 1 and a 5-tick wait): draws via DrawViewportSprite, redraws cursor, restores background via RestoreCorridorBackgroundFromEMS. Called from sub_2C0FE (a large unnamed dispatcher).",	0);
 	create_insn	(x=0X2D3DC);
 	op_hex		(x,	1);
+	set_name	(0X2D3DC,	"AnimateEffectFrame");
 	create_insn	(x=0X2D3E6);
 	op_hex		(x,	1);
 	set_cmt	(0X2D3F5,	"ticks",	0);
