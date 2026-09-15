@@ -2174,6 +2174,19 @@ yet.
 
 275 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowHealingCostPrompt
+
+Named `sub_1B96F`, called from `UseHealingItem` (5 sites) and
+`UseItemType_400`: computes and displays a temple/healer paid-service
+cost. Message dump confirms the prompt text: "IT WILL COST `<total>`
+GOLD TO REPLENISH YOUR HEALTH POINTS." / "...TO REMOVE YOUR
+CONDITIONS." / "...TO RETURN YOU TO LIFE." / "...TO COMPLETELY RESTORE
+YOU.", followed by "IS THAT PRICE AGREEABLE?". Only computes and draws
+the total; the Y/N poll and gold deduction happen in the caller
+(not traced).
+
+276 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

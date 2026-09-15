@@ -249,6 +249,19 @@ sibling loop (`sub_13119`, called from two other `ShowClueBook` sites)
 adds extra dispatches for item-id ranges overlapping `CastSpell`'s and
 `RestCharacter`'s selector ranges, not yet traced.
 
+**Temple/healer paid services**: `UseHealingItem` calls
+`ShowHealingCostPrompt` (multiple sites) to compute and display a gold
+cost for a specific service — "IT WILL COST `<total>` GOLD TO
+REPLENISH YOUR HEALTH POINTS." / "...TO REMOVE YOUR CONDITIONS." /
+"...TO RETURN YOU TO LIFE." / "...TO COMPLETELY RESTORE YOU." followed
+by "IS THAT PRICE AGREEABLE?" (`ShowHealingCostPrompt` only computes
+and draws the prompt; the Y/N poll and actual gold deduction happen in
+the caller, not yet traced). The total is a per-unit base cost
+(varies by call site, sometimes built from `word_2E40C` condition
+bits) times an item-catalog quantity field (`0xBCE+0x18`), added in a
+loop running once per `[word_328D4+0x16]` — plausibly once per
+afflicted/eligible party member.
+
 A separate, likely shop/vendor "buy" `UseItem` handler (`sub_1BBED`,
 reached from `UseItem+0x65`) spends `g_partyGold` via
 `CompareBCD4`/`SubBCD4` against a price table at `0x512A`, gated by

@@ -20662,9 +20662,9 @@ sub_1B8EE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B96F       proc far                ; CODE XREF: UseItemType_400+EF↓p
+ShowHealingCostPrompt proc far          ; CODE XREF: UseItemType_400+EF↓p
                                         ; UseHealingItem+169↓p ...
-                push    bx
+                push    bx              ; Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text per caller: 'TO REPLENISH YOUR HEALTH POINTS.' / 'TO REMOVE YOUR CONDITIONS.' / 'TO RETURN YOU TO LIFE.' / 'TO COMPLETELY RESTORE YOU.'. Doesn't poll Y/N itself -- caller handles that.
                 push    ax
                 mov     ax, es:[si+10h]
                 mov     word_3298E, ax
@@ -20688,7 +20688,7 @@ sub_1B96F       proc far                ; CODE XREF: UseItemType_400+EF↓p
                 mov     word ptr [si], 0
                 mov     word ptr [si+2], 0
 
-loc_1B9AA:                              ; CODE XREF: sub_1B96F+40↓j
+loc_1B9AA:                              ; CODE XREF: ShowHealingCostPrompt+40↓j
                 call    AddToBCDCounter
                 loop    loc_1B9AA
                 pop     dx
@@ -20728,7 +20728,7 @@ loc_1B9AA:                              ; CODE XREF: sub_1B96F+40↓j
                 call    near ptr sub_1CBC4
                 call    DrawMouseCursor
                 retf
-sub_1B96F       endp
+ShowHealingCostPrompt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -21296,7 +21296,7 @@ loc_1BF4A:                              ; CODE XREF: UseItemType_400+24↑j
                 mov     ax, 3E8h
                 mov     bx, 0BC32h
                 push    cs
-                call    near ptr sub_1B96F
+                call    near ptr ShowHealingCostPrompt
                 retf
 UseItemType_400 endp
 
@@ -21452,7 +21452,7 @@ loc_1C0EE:                              ; CODE XREF: UseHealingItem+155↑j
 loc_1C0F9:                              ; CODE XREF: UseHealingItem+160↑j
                 mov     bx, 7F79h
                 push    cs
-                call    near ptr sub_1B96F
+                call    near ptr ShowHealingCostPrompt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21460,7 +21460,7 @@ loc_1C101:                              ; CODE XREF: UseHealingItem+2F↑j
                 mov     ax, 64h ; 'd'
                 mov     bx, 7F62h
                 push    cs
-                call    near ptr sub_1B96F
+                call    near ptr ShowHealingCostPrompt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21469,7 +21469,7 @@ loc_1C10C:                              ; CODE XREF: UseHealingItem+3A↑j
                 call    near ptr sub_1BA35
                 mov     bx, 7F47h
                 push    cs
-                call    near ptr sub_1B96F
+                call    near ptr ShowHealingCostPrompt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21477,7 +21477,7 @@ loc_1C118:                              ; CODE XREF: UseHealingItem+45↑j
                 mov     ax, 14h
                 mov     bx, 7F26h
                 push    cs
-                call    near ptr sub_1B96F
+                call    near ptr ShowHealingCostPrompt
                 retf
 UseHealingItem  endp
 
@@ -21884,7 +21884,7 @@ loc_1C54C:                              ; CODE XREF: UseTrainingItem+3CC↑j
                 mov     bx, 0BC32h
                 mov     ax, 64h ; 'd'
                 push    cs
-                call    near ptr sub_1B96F
+                call    near ptr ShowHealingCostPrompt
                 retf
 UseTrainingItem endp
 
@@ -22455,7 +22455,7 @@ ShowItemUsagePreview endp
 
 
 sub_1CB37       proc far                ; CODE XREF: sub_1A5F6+6B↑P
-                                        ; sub_1B96F+73↑p ...
+                                        ; ShowHealingCostPrompt+73↑p ...
                 and     word_328C4, 0FFC1h
                 mov     fontOffset, 2
                 mov     ax, 41h ; 'A'
@@ -22521,7 +22521,7 @@ sub_1CB37       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CBC4       proc far                ; CODE XREF: sub_1B96F+BD↑p
+sub_1CBC4       proc far                ; CODE XREF: ShowHealingCostPrompt+BD↑p
                                         ; sub_1BBED+CB↑p ...
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 73h ; 's'
@@ -44414,7 +44414,7 @@ seg104          segment byte public 'CODE' use16
 
 
 sub_28A76       proc far                ; CODE XREF: sub_1A5F6+89↑P
-                                        ; sub_1B96F+8E↑P ...
+                                        ; ShowHealingCostPrompt+8E↑P ...
                 test    word_328C4, 20h
                 jnz     short loc_28A8C
                 test    word_328C4, 2
@@ -56920,7 +56920,7 @@ word_2E54E      dw 0                    ; DATA XREF: UseItem+72↑r
 word_2E550      dw 0                    ; DATA XREF: sub_1732B+EF↑w
                                         ; UseItem+25E↑w ...
 fontOffset      dw 0                    ; DATA XREF: sub_1A5F6+8E↑w
-                                        ; sub_1B96F+B6↑w ...
+                                        ; ShowHealingCostPrompt+B6↑w ...
 word_2E554      dw 0                    ; DATA XREF: FindObjectAtPosition:loc_218AC↑w
                                         ; FindObjectAtPosition+57↑w
 word_2E556      dw 0                    ; DATA XREF: FindObjectAtPosition+43↑w
@@ -74384,7 +74384,7 @@ word_3298A      dw 0                    ; DATA XREF: sub_1BBED+1FE↑w
                                         ; UseAbilityScroll+224↑w ...
 word_3298C      dw 0                    ; DATA XREF: sub_1BBED+204↑w
                                         ; UseAbilityScroll+22A↑w ...
-word_3298E      dw 0                    ; DATA XREF: sub_1B96F+6↑w
+word_3298E      dw 0                    ; DATA XREF: ShowHealingCostPrompt+6↑w
                                         ; sub_1BBED+1E0↑w ...
 word_32990      dw 0                    ; DATA XREF: UseAbilityCommand:loc_17906↑w
                                         ; sub_1B2BD+28↑w ...

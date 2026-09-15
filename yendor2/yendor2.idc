@@ -3937,7 +3937,9 @@ static Bytes_0(void) {
 	create_insn	(0X1B8AB);
 	create_insn	(0X1B8EE);
 	set_cmt	(0X1B936,	"msg",	0);
+	set_cmt	(0X1B96F,	"Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text per caller: 'TO REPLENISH YOUR HEALTH POINTS.' / 'TO REMOVE YOUR CONDITIONS.' / 'TO RETURN YOU TO LIFE.' / 'TO COMPLETELY RESTORE YOU.'. Doesn't poll Y/N itself -- caller handles that.",	0);
 	create_insn	(0X1B96F);
+	set_name	(0X1B96F,	"ShowHealingCostPrompt");
 	create_insn	(x=0X1B978);
 	op_hex		(x,	1);
 	create_insn	(0X1BA35);
@@ -4121,6 +4123,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1C589,	"UseItem's handler for word_2E410 bits 0x1000|0x2000 (0x3000). Bit-2 branch: if the current party member already has this item's ability bit (es:[si+0x12]) set in their own [+0xB4] ('abilities learned' bitmask -- see RevealMapRegion), shows an 'already known' message. Otherwise pays a BCD material cost (0x94B3 vs threshold 0x512A) then learns it: sets the bit in [+0xB4] and zeroes the matching charge field ([+0xB6]/[+0xB8]/[+0xBA] for bits 0x8000/0x4000/0x2000). A scroll/tome that teaches a new special ability.",	0);
 	create_insn	(0X1C589);
 	set_name	(0X1C589,	"UseAbilityScroll");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1C58D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C598);
@@ -4166,15 +4177,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X1C779,	"msg",	0);
 	set_cmt	(0X1C786,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1C799,	"msg",	0);
 	set_cmt	(0X1C7C7,	"msg",	0);
 	create_insn	(0X1C7D9);
@@ -7202,6 +7204,15 @@ static Bytes_1(void) {
 	set_cmt	(0X286B2,	"UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.",	0);
 	create_insn	(0X286B2);
 	set_name	(0X286B2,	"UpdateMonsterWoundTier");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X286C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X286DB);
@@ -7217,15 +7228,6 @@ static Bytes_1(void) {
 	create_byte	(0X286FC);
 	make_array	(0X286FC,	0X19);
 	set_name	(0X286FC,	"aCallingProgram");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X28715);
 	make_array	(0X28715,	0X1B);
 	set_name	(0X28715,	"aMemoryAllocati");
@@ -10687,14 +10689,6 @@ static Bytes_2(void) {
 	set_name	(0X363CE,	"aPartyAttack");
 	create_strlit	(0X363DD,	0X7);
 	set_name	(0X363DD,	"aBreak");
-	create_strlit	(0X363E4,	0X9);
-	set_name	(0X363E4,	"aDestroy");
-	create_strlit	(0X363ED,	0X9);
-	set_name	(0X363ED,	"aPoison_2");
-	create_strlit	(0X363F6,	0XA);
-	set_name	(0X363F6,	"aDisease_1");
-	create_strlit	(0X36400,	0XB);
-	set_name	(0X36400,	"aParalyze_0");
 }
 
 //------------------------------------------------------------------------
@@ -10704,6 +10698,14 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X363E4,	0X9);
+	set_name	(0X363E4,	"aDestroy");
+	create_strlit	(0X363ED,	0X9);
+	set_name	(0X363ED,	"aPoison_2");
+	create_strlit	(0X363F6,	0XA);
+	set_name	(0X363F6,	"aDisease_1");
+	create_strlit	(0X36400,	0XB);
+	set_name	(0X36400,	"aParalyze_0");
 	create_strlit	(0X3640B,	0X9);
 	set_name	(0X3640B,	"aFrozen_1");
 	create_strlit	(0X36414,	0XA);
