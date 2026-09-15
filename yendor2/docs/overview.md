@@ -2864,6 +2864,15 @@ equipped-item icons next to a party member's portrait, using an
 
 365 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ClassifyObstacleAtWorldPosition
+
+Named `sub_111C1`, called from `ProcessLevelMonsters`: the `WORLD.DAT`-
+backed counterpart to `ClassifyObstacleAtViewportRow`, checking a
+monster's target cell anywhere on the level (not just the rendered
+viewport) for obstacles before it moves.
+
+366 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

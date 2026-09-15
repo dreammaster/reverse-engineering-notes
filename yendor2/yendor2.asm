@@ -1875,9 +1875,10 @@ sub_1119A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_111C1       proc far                ; CODE XREF: ProcessLevelMonsters+D3↓P
+ClassifyObstacleAtWorldPosition proc far
+                                        ; CODE XREF: ProcessLevelMonsters+D3↓P
                                         ; ProcessLevelMonsters+11B↓P
-                mov     errorCode, 0
+                mov     errorCode, 0    ; WORLD.DAT-backed counterpart to ClassifyObstacleAtViewportRow: reads a map cell from WORLD.DAT (word_2E406/word_2E402 index) and classifies it with the same type-range logic into errorCode (0=clear, 1=wall, 2=door/feature). Called from ProcessLevelMonsters to check a monster's target cell anywhere on the level, not just what's currently rendered.
                 mov     ax, word_2E406
                 mov     word_368AB, ax
                 mov     bx, 9043h
@@ -1897,7 +1898,7 @@ sub_111C1       proc far                ; CODE XREF: ProcessLevelMonsters+D3↓P
                 cmp     ax, 0Fh
                 jle     short loc_11221
 
-loc_11203:                              ; CODE XREF: sub_111C1+3B↑j
+loc_11203:                              ; CODE XREF: ClassifyObstacleAtWorldPosition+3B↑j
                 cmp     word ptr [bx+2], 0
                 jz      short locret_11220
                 mov     ax, [bx+2]
@@ -1910,21 +1911,21 @@ loc_11203:                              ; CODE XREF: sub_111C1+3B↑j
                 cmp     ax, 43h ; 'C'
                 jg      short loc_11228
 
-locret_11220:                           ; CODE XREF: sub_111C1+46↑j
-                                        ; sub_111C1+53↑j
+locret_11220:                           ; CODE XREF: ClassifyObstacleAtWorldPosition+46↑j
+                                        ; ClassifyObstacleAtWorldPosition+53↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_11221:                              ; CODE XREF: sub_111C1+40↑j
+loc_11221:                              ; CODE XREF: ClassifyObstacleAtWorldPosition+40↑j
                 mov     errorCode, 1
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_11228:                              ; CODE XREF: sub_111C1+4E↑j
-                                        ; sub_111C1+58↑j ...
+loc_11228:                              ; CODE XREF: ClassifyObstacleAtWorldPosition+4E↑j
+                                        ; ClassifyObstacleAtWorldPosition+58↑j ...
                 mov     errorCode, 2
                 retf
-sub_111C1       endp
+ClassifyObstacleAtWorldPosition endp
 
 ; ---------------------------------------------------------------------------
                 mov     errorCode, 3
@@ -14393,7 +14394,7 @@ FileEntry_OpenFile endp
 
 ; int __usercall FileEntry_Read@<ax>(FileEntry *this)
 FileEntry_Read  proc far                ; CODE XREF: ShowClueBook+4D5↑P
-                                        ; sub_111C1+20↑P ...
+                                        ; ClassifyObstacleAtWorldPosition+20↑P ...
 
 this            = dword ptr  4
 
@@ -33438,7 +33439,7 @@ loc_22E0F:                              ; CODE XREF: ProcessLevelMonsters+AE↑j
                 cmp     ax, word_36CF9
                 jz      short loc_22E77
                 mov     word_2E406, ax
-                call    sub_111C1
+                call    ClassifyObstacleAtWorldPosition
                 cmp     errorCode, 0
                 jnz     short loc_22E2D
                 loop    loc_22E57
@@ -33466,7 +33467,7 @@ loc_22E57:                              ; CODE XREF: ProcessLevelMonsters+DF↑j
                 cmp     ax, word_36CF7
                 jz      short loc_22E77
                 mov     word_2E402, ax
-                call    sub_111C1
+                call    ClassifyObstacleAtWorldPosition
                 cmp     errorCode, 0
                 jnz     short loc_22E2D
                 loop    loc_22E57
@@ -43139,7 +43140,7 @@ WorldDat_setBlock6 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PrepareWorldDatRead proc far            ; CODE XREF: sub_111C1+12↑P
+PrepareWorldDatRead proc far            ; CODE XREF: ClassifyObstacleAtWorldPosition+12↑P
                                         ; DrawClueBookMapGrid+B9↑P ...
                 push    si              ; Generic WORLD.DAT FileEntry setup, sibling of WorldDat_setBlock1-6: sets [+4]=ax (caller-supplied id, not a fixed block number), [+0xA]/[+0xC] from table 0xCDEF, [+6]=4*_blockSize3 (default, often overridden by the caller). Called from DrawClueBookMapGrid, LoadWorldDatTilePalette, and sub_111C1.
                 push    dx
@@ -56604,12 +56605,12 @@ byte_2E400      db 0                    ; DATA XREF: start+34↑r
                                         ; start+50↑r ...
                 align 2
 ; FileEntry *word_2E402
-word_2E402      dw 0                    ; DATA XREF: sub_111C1+2A↑r
+word_2E402      dw 0                    ; DATA XREF: ClassifyObstacleAtWorldPosition+2A↑r
                                         ; HandleMovementInput+217↑w ...
 word_2E404      dw 0                    ; DATA XREF: HandleMovementInput+21F↑w
                                         ; HandleMovementInput+25C↑r ...
 ; FileEntry *word_2E406
-word_2E406      dw 0                    ; DATA XREF: sub_111C1+6↑r
+word_2E406      dw 0                    ; DATA XREF: ClassifyObstacleAtWorldPosition+6↑r
                                         ; HandleMovementInput+21B↑w ...
 _val27          dw 0                    ; DATA XREF: InitGlobals+C6↑w
                                         ; DrawDungeonCellSideFeature+75↑r
@@ -84887,12 +84888,12 @@ worldDat        db 0FFh
 ; FileEntry *word_368A5
 word_368A5      dw 0                    ; DATA XREF: InitGame+18↑w
                                         ; loadWorldDat2+2C↑w ...
-word_368A7      dw 0                    ; DATA XREF: sub_111C1+32↑r
+word_368A7      dw 0                    ; DATA XREF: ClassifyObstacleAtWorldPosition+32↑r
                                         ; LoadWorldDatTilePalette+35↑r ...
 ; FileEntry *word_368A9
 word_368A9      dw 0                    ; DATA XREF: UpdateScrollArrows+3F↑w
                                         ; ShowClueBookSpellDetail+327↑w ...
-word_368AB      dw 0                    ; DATA XREF: sub_111C1+9↑w
+word_368AB      dw 0                    ; DATA XREF: ClassifyObstacleAtWorldPosition+9↑w
                                         ; UpdateScrollArrows+49↑w ...
 word_368AD      dw 0                    ; DATA XREF: seg096:001D↑w
                                         ; sub_27B0D+16↑w ...

@@ -768,6 +768,13 @@ a spawn position offset from the party's current facing direction
 current position, sets a countdown timer and full HP
 (`[+0x10]=[+0x50]`).
 
+`ProcessLevelMonsters` also calls `ClassifyObstacleAtWorldPosition`,
+the `WORLD.DAT`-backed counterpart to `ClassifyObstacleAtViewportRow`:
+same type-range obstacle classification, but reading a map cell
+directly from `WORLD.DAT` rather than the live viewport scratch
+buffer — used to check whether a monster's target cell (anywhere on
+the level) is blocked before it moves there.
+
 `ProcessLevelMonsters` ticks every occupied slot via `TickMonsterTimer`
 each `RunDungeonGameLoop` iteration: a movement/attack-readiness
 countdown (`[+0x10] -= [+0x1C]`, `errorCode`=1 on reaching 0, or a

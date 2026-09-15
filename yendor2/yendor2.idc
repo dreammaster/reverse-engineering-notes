@@ -1163,7 +1163,9 @@ static Bytes_0(void) {
 	create_insn	(0X11193);
 	create_insn	(0X1119A);
 	create_insn	(0X111BA);
+	set_cmt	(0X111C1,	"WORLD.DAT-backed counterpart to ClassifyObstacleAtViewportRow: reads a map cell from WORLD.DAT (word_2E406/word_2E402 index) and classifies it with the same type-range logic into errorCode (0=clear, 1=wall, 2=door/feature). Called from ProcessLevelMonsters to check a monster's target cell anywhere on the level, not just what's currently rendered.",	0);
 	create_insn	(0X111C1);
+	set_name	(0X111C1,	"ClassifyObstacleAtWorldPosition");
 	create_insn	(x=0X111EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X111F1);
@@ -3705,6 +3707,15 @@ static Bytes_0(void) {
 	create_insn	(0X1A85A);
 	create_insn	(0X1A864);
 	create_insn	(0X1A871);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1A87B);
 	create_insn	(0X1A8C7);
 	create_insn	(0X1A8D7);
@@ -3723,15 +3734,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1AA53,	"AddToStatCapped(ax=delta, bx=field offset on word_328D4): [word_328D4+bx] += ax, clamped at 9999 for HP/MP fields (+0x52/+0x92/+0x54/+0x94) or 999 otherwise. errorCode: 2 if the field was 0 (uninitialized, not applied), 1 if clamped, 0 if applied cleanly.",	0);
 	create_insn	(0X1AA53);
 	set_name	(0X1AA53,	"AddToStatCapped");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1AA9B);
 	set_cmt	(0X1AB26,	"Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.",	0);
 	create_insn	(0X1AB26);
@@ -6003,6 +6005,15 @@ static Bytes_1(void) {
 	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
 	create_insn	(0X23151);
 	set_name	(0X23151,	"ShowLootAndAwardExperience");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23169);
 	op_hex		(x,	1);
 	set_cmt	(0X23199,	"msg",	0);
@@ -6014,15 +6025,6 @@ static Bytes_1(void) {
 	set_cmt	(0X232A8,	"Draws the 3 g_monsterSlots info panels via DrawMonsterInfoPanel at 3 fixed screen positions (previously misidentified as generic 'status widgets' before BuildCombatTurnOrder confirmed these addresses are monster records).",	0);
 	create_insn	(0X232A8);
 	set_name	(0X232A8,	"DrawMonsterInfoPanels");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X232B9);
 	op_hex		(x,	1);
 	create_insn	(0X23305);
@@ -8986,6 +8988,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2BAA0,	"One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, plays a sound (sub_2BC16, not traced), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.",	0);
 	create_insn	(0X2BAA0);
 	set_name	(0X2BAA0,	"AnimateProjectileStep");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2BAC6,	"ticks",	0);
 	create_insn	(0X2BAD5);
 	create_insn	(0X2BADB);
@@ -9025,15 +9036,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2BC90);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2BC95);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2BCA1);
