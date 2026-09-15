@@ -4230,12 +4230,16 @@ static Bytes_0(void) {
 	create_insn	(0X1CC70);
 	create_insn	(0X1CC98);
 	create_insn	(0X1CCBC);
+	set_cmt	(0X1CDBC,	"CheckTransportAvailability(word_3293E/word_32940 = an item-type range): checks a fixed 6-entry table at 0x9519 for a direct match first; if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. 'Can the party use this mode of transport' -- a scripted route or someone carrying the right item.",	0);
 	create_insn	(0X1CDBC);
+	set_name	(0X1CDBC,	"CheckTransportAvailability");
 	create_insn	(0X1CDFA);
 	create_insn	(0X1CE02);
 	create_insn	(0X1CE25);
 	create_insn	(0X1CE52);
+	set_cmt	(0X1CE6B,	"FindItemInInventoryRange (implicit word_328D4, range = word_3293E..word_32940): searches the 8 main inventory slots ([+0x11A], matches GetInventorySlotPtr's layout) for an item id in range, recursing into container-type items (sub_12554 [+0xC] bit 0x2000) via sub_1CECB. Also checks one extra slot at +0x13E (plausibly 'equipped' transport item). Generic inventory search, not transport-specific by itself.",	0);
 	create_insn	(0X1CE6B);
+	set_name	(0X1CE6B,	"FindItemInInventoryRange");
 	create_insn	(0X1CE8D);
 	create_insn	(x=0X1CE92);
 	op_hex		(x,	1);
@@ -4429,6 +4433,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1D8C1);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1D8D0,	"ticks",	0);
 	create_insn	(0X1D902);
 	create_insn	(x=0X1D917);
@@ -4525,15 +4538,6 @@ static Bytes_0(void) {
 	create_insn	(0X1DE3B);
 	create_insn	(x=0X1DE4E);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1DE50);
 	op_hex		(x,	1);
 	create_insn	(x=0X1DE5B);
@@ -8055,6 +8059,15 @@ static Bytes_1(void) {
 	create_insn	(0X29FA9);
 	create_insn	(x=0X29FAA);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29FB0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29FB3);
@@ -8129,15 +8142,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2A11B,	"The real mouse-cursor draw: if word_3195C bit1 is set, first saves the video buffer content at the cursor's new position into 0xE0E (so RestoreCursorBackground can erase it later), then blits the cursor sprite from 0x3FE6 onto the video buffer with 0xFF as a transparent color key. Not a screen fade despite the inherited name/hedge -- explains why it's called so pervasively (once per cursor move).",	0);
 	create_insn	(0X2A11B);
 	set_name	(0X2A11B,	"DrawMouseCursor");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2A121);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A131);

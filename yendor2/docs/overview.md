@@ -1683,6 +1683,27 @@ roll, presumably to keep the savegame current.
 
 228 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the transport-check lead, resolved
+
+Revisited `sub_1CDBC`, flagged as an unconfirmable "transport-check"
+lead very early in the session (its table was all-zero at rest, with
+no populated save to inspect). With `GetInventorySlotPtr`'s inventory
+layout now known, its callee `sub_1CE6B` resolved cleanly:
+`FindItemInInventoryRange` is a generic "does this character carry an
+item whose id falls in a given range, anywhere including open
+containers" search over the confirmed 8-slot main inventory (plus one
+extra "equipped" slot). `CheckTransportAvailability` (was `sub_1CDBC`)
+builds on it: checks a fixed 6-entry table for a direct route match,
+then falls back to asking whether any party member carries a
+qualifying item — "can the party use this mode of transport," gated
+by a scripted route or an actual boat/horse-type item, not by
+unreadable save state. (This doesn't resolve the separate, still-open
+`sub_28C94`/`sub_28CB1`/`sub_29259` speculation from the
+`RevealMapRegion` correction a few rounds back — different functions,
+tentatively linked only by name.)
+
+230 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

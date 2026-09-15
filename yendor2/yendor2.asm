@@ -944,7 +944,7 @@ loc_10806:                              ; CODE XREF: start+6E0↑j
                 call    ClearStatusPanelIfDirty
                 mov     word_3293E, 1Eh
                 mov     word_32940, 1Eh
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jz      short loc_10867
                 and     word_3295A, 9FFFh
@@ -957,7 +957,7 @@ loc_10867:                              ; CODE XREF: seg000:0855↑j
                 call    ClearStatusPanelIfDirty
                 mov     word_3293E, 1Fh
                 mov     word_32940, 1Fh
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jz      short loc_10897
                 and     word_3295A, 9FFFh
@@ -969,7 +969,7 @@ loc_10897:                              ; CODE XREF: seg000:0885↑j
 ; ---------------------------------------------------------------------------
                 mov     word_3293E, 7
                 mov     word_32940, 7
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 7
                 jnz     short loc_108B7
                 call    sub_2819F
@@ -1146,7 +1146,7 @@ loc_10A35:                              ; CODE XREF: start+A30↑j
 ; ---------------------------------------------------------------------------
                 mov     word_3293E, 2Fh ; '/'
                 mov     word_32940, 2Fh ; '/'
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jz      short loc_10A62
                 call    RestoreCursorBackgroundIfDirty
@@ -18358,7 +18358,7 @@ loc_1A5AC:                              ; CODE XREF: sub_1A5A6+3↑j
                 push    ax
                 mov     word_3293E, ax
                 mov     word_32940, ax
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jz      short loc_1A5C8
                 call    TickStatusEffects
@@ -22136,7 +22136,7 @@ sub_1C809       proc far                ; CODE XREF: sub_1BA96+15↑p
                 jz      short loc_1C874
                 mov     word_3293E, ax
                 mov     word_32940, ax
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jz      short locret_1C83D
                 call    sub_274B4
@@ -22344,7 +22344,7 @@ loc_1CA1F:                              ; CODE XREF: LoadItemData+15F↑j
                 jz      short loc_1CA4F
                 mov     word_3293E, ax
                 mov     word_32940, ax
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jz      short loc_1CA4F
                 or      word_2E40E, 1
@@ -22739,9 +22739,9 @@ seg047          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CDBC       proc far                ; CODE XREF: seg000:084B↑P
+CheckTransportAvailability proc far     ; CODE XREF: seg000:084B↑P
                                         ; seg000:087B↑P ...
-                push    di
+                push    di              ; CheckTransportAvailability(word_3293E/word_32940 = an item-type range): checks a fixed 6-entry table at 0x9519 for a direct match first; if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. 'Can the party use this mode of transport' -- a scripted route or someone carrying the right item.
                 push    si
                 push    dx
                 push    cx
@@ -22760,17 +22760,17 @@ sub_1CDBC       proc far                ; CODE XREF: seg000:084B↑P
                 jmp     short loc_1CE65
 ; ---------------------------------------------------------------------------
 
-loc_1CDFA:                              ; CODE XREF: sub_1CDBC+3A↑j
+loc_1CDFA:                              ; CODE XREF: CheckTransportAvailability+3A↑j
                 cmp     ax, word_32940
                 jle     short loc_1CE02
                 jmp     short loc_1CE65
 ; ---------------------------------------------------------------------------
 
-loc_1CE02:                              ; CODE XREF: sub_1CDBC+42↑j
+loc_1CE02:                              ; CODE XREF: CheckTransportAvailability+42↑j
                 mov     di, 9519h
                 mov     cx, 6
 
-loc_1CE08:                              ; CODE XREF: sub_1CDBC+6C↓j
+loc_1CE08:                              ; CODE XREF: CheckTransportAvailability+6C↓j
                 mov     ax, [di]
                 cmp     ax, word_3293E
                 jl      short loc_1CE25
@@ -22782,22 +22782,22 @@ loc_1CE08:                              ; CODE XREF: sub_1CDBC+6C↓j
                 jmp     short loc_1CE65
 ; ---------------------------------------------------------------------------
 
-loc_1CE25:                              ; CODE XREF: sub_1CDBC+52↑j
-                                        ; sub_1CDBC+58↑j
+loc_1CE25:                              ; CODE XREF: CheckTransportAvailability+52↑j
+                                        ; CheckTransportAvailability+58↑j
                 add     di, 4
                 loop    loc_1CE08
                 call    SyncAllContainers
                 mov     si, 95EBh
                 mov     cx, 4
 
-loc_1CE35:                              ; CODE XREF: sub_1CDBC+92↓j
+loc_1CE35:                              ; CODE XREF: CheckTransportAvailability+92↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1CE65
                 push    cx
                 push    si
                 call    sub_25B14
-                call    sub_1CE6B
+                call    FindItemInInventoryRange
                 pop     si
                 pop     cx
                 or      ax, ax
@@ -22807,7 +22807,7 @@ loc_1CE35:                              ; CODE XREF: sub_1CDBC+92↓j
                 jmp     short loc_1CE65
 ; ---------------------------------------------------------------------------
 
-loc_1CE52:                              ; CODE XREF: sub_1CDBC+8D↑j
+loc_1CE52:                              ; CODE XREF: CheckTransportAvailability+8D↑j
                 mov     word_3297C, di
                 mov     word_32974, ax
                 mov     ax, word_328D6
@@ -22815,26 +22815,26 @@ loc_1CE52:                              ; CODE XREF: sub_1CDBC+8D↑j
                 mov     ax, word_328D4
                 mov     word_32978, ax
 
-loc_1CE65:                              ; CODE XREF: sub_1CDBC+3C↑j
-                                        ; sub_1CDBC+44↑j ...
+loc_1CE65:                              ; CODE XREF: CheckTransportAvailability+3C↑j
+                                        ; CheckTransportAvailability+44↑j ...
                 pop     bx
                 pop     cx
                 pop     dx
                 pop     si
                 pop     di
                 retf
-sub_1CDBC       endp
+CheckTransportAvailability endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CE6B       proc near               ; CODE XREF: sub_1CDBC+86↑p
-                mov     di, word_328D4
+FindItemInInventoryRange proc near      ; CODE XREF: CheckTransportAvailability+86↑p
+                mov     di, word_328D4  ; FindItemInInventoryRange (implicit word_328D4, range = word_3293E..word_32940): searches the 8 main inventory slots ([+0x11A], matches GetInventorySlotPtr's layout) for an item id in range, recursing into container-type items (sub_12554 [+0xC] bit 0x2000) via sub_1CECB. Also checks one extra slot at +0x13E (plausibly 'equipped' transport item). Generic inventory search, not transport-specific by itself.
                 add     di, 11Ah
                 mov     cx, 8
 
-loc_1CE76:                              ; CODE XREF: sub_1CE6B+39↓j
+loc_1CE76:                              ; CODE XREF: FindItemInInventoryRange+39↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1CEA1
@@ -22846,8 +22846,8 @@ loc_1CE76:                              ; CODE XREF: sub_1CE6B+39↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CE8D:                              ; CODE XREF: sub_1CE6B+15↑j
-                                        ; sub_1CE6B+1B↑j
+loc_1CE8D:                              ; CODE XREF: FindItemInInventoryRange+15↑j
+                                        ; FindItemInInventoryRange+1B↑j
                 call    sub_12554
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CEA1
@@ -22857,8 +22857,8 @@ loc_1CE8D:                              ; CODE XREF: sub_1CE6B+15↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CEA1:                              ; CODE XREF: sub_1CE6B+F↑j
-                                        ; sub_1CE6B+2C↑j ...
+loc_1CEA1:                              ; CODE XREF: FindItemInInventoryRange+F↑j
+                                        ; FindItemInInventoryRange+2C↑j ...
                 add     di, 4
                 loop    loc_1CE76
                 mov     di, word_328D4
@@ -22875,19 +22875,19 @@ loc_1CEA1:                              ; CODE XREF: sub_1CE6B+F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CEC8:                              ; CODE XREF: sub_1CE6B+47↑j
-                                        ; sub_1CE6B+53↑j ...
+loc_1CEC8:                              ; CODE XREF: FindItemInInventoryRange+47↑j
+                                        ; FindItemInInventoryRange+53↑j ...
                 xor     ax, ax
                 retn
-sub_1CE6B       endp
+FindItemInInventoryRange endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 ; int __fastcall sub_1CECB(int, int, FileEntry *this)
-sub_1CECB       proc near               ; CODE XREF: sub_1CE6B+2E↑p
-                                        ; sub_1CE6B+55↑p
+sub_1CECB       proc near               ; CODE XREF: FindItemInInventoryRange+2E↑p
+                                        ; FindItemInInventoryRange+55↑p
                 push    di
                 push    cx              ; this
                 mov     ax, 0BC28h
@@ -25830,7 +25830,7 @@ loc_1E85B:                              ; CODE XREF: sub_1E64A+1F8↑j
 loc_1E85F:                              ; CODE XREF: sub_1E64A+236↓j
                 mov     word_3293E, 36h ; '6'
                 mov     word_32940, 40h ; '@'
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jz      short loc_1E882
                 call    sub_274B4
@@ -45633,7 +45633,7 @@ seg108          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-SyncAllContainers proc far              ; CODE XREF: sub_1CDBC+6E↑P
+SyncAllContainers proc far              ; CODE XREF: CheckTransportAvailability+6E↑P
                                         ; RepairItemCommand+3↓P
                 push    di              ; Iterates all 4 g_partySlotAssignment members, calling SyncPartyMemberContainers for each -- commits every open bag's contents to CURGAME across the whole party.
                 push    si
@@ -49171,7 +49171,7 @@ sub_2AF2E       proc near               ; CODE XREF: sub_2AE3C+14↑p
                 call    DrawMouseCursor
                 mov     word_3293E, 258h
                 mov     word_32940, 258h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 and     word_328C8, 1FFFh
                 call    sub_274B4
                 call    DrawMouseCursor
@@ -49210,7 +49210,7 @@ sub_2AFB8       proc near               ; CODE XREF: sub_2AE3C+93↑p
                 and     word_328C8, 1FFFh
                 mov     word_3293E, 247h
                 mov     word_32940, 247h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 call    sub_274B4
                 mov     word_3293E, 1388h
                 mov     si, 94B7h
@@ -49241,7 +49241,7 @@ sub_2B029       proc near               ; CODE XREF: sub_2AE3C+87↑p
                 and     word_328C8, 1FFFh
                 mov     word_3293E, 246h
                 mov     word_32940, 246h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 call    sub_274B4
                 mov     word_3293E, 1388h
                 mov     si, 94BBh
@@ -49270,7 +49270,7 @@ sub_2B09A       proc near               ; CODE XREF: sub_2AE3C+9F↑p
                 and     word_328C8, 1FFFh
                 mov     word_3293E, 248h
                 mov     word_32940, 248h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 call    sub_274B4
                 mov     ax, 3
                 call    PrepareTrapEffectSlots
@@ -49316,7 +49316,7 @@ sub_2B14F       proc near               ; CODE XREF: sub_2AE3C+B3↑p
                 and     word_328C8, 1FFFh
                 mov     word_3293E, 249h
                 mov     word_32940, 249h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 call    sub_274B4
                 mov     si, word_32A1E
                 mov     word ptr [si+10h], 0
@@ -49340,7 +49340,7 @@ sub_2B17F       proc near               ; CODE XREF: sub_2AE3C+20↑p
                 mov     _textPos_y, 60h ; '`'
                 mov     word_3293E, 254h
                 mov     word_32940, 254h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jnz     short loc_2B1C3
                 jmp     loc_2B2BE
@@ -49349,7 +49349,7 @@ sub_2B17F       proc near               ; CODE XREF: sub_2AE3C+20↑p
 loc_2B1C3:                              ; CODE XREF: sub_2B17F+3F↑j
                 mov     word_3293E, 255h
                 mov     word_32940, 255h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jnz     short loc_2B1DE
                 jmp     loc_2B2BE
@@ -49358,7 +49358,7 @@ loc_2B1C3:                              ; CODE XREF: sub_2B17F+3F↑j
 loc_2B1DE:                              ; CODE XREF: sub_2B17F+5A↑j
                 mov     word_3293E, 256h
                 mov     word_32940, 256h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jnz     short loc_2B1F9
                 jmp     loc_2B2BE
@@ -49367,7 +49367,7 @@ loc_2B1DE:                              ; CODE XREF: sub_2B17F+5A↑j
 loc_2B1F9:                              ; CODE XREF: sub_2B17F+75↑j
                 mov     word_3293E, 257h
                 mov     word_32940, 257h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 cmp     word_32974, 0
                 jnz     short loc_2B214
                 jmp     loc_2B2BE
@@ -49381,22 +49381,22 @@ loc_2B214:                              ; CODE XREF: sub_2B17F+90↑j
                 call    DrawMouseCursor
                 mov     word_3293E, 256h
                 mov     word_32940, 256h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 call    sub_274B4
                 call    DrawMouseCursor
                 mov     word_3293E, 255h
                 mov     word_32940, 255h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 call    sub_274B4
                 call    DrawMouseCursor
                 mov     word_3293E, 254h
                 mov     word_32940, 254h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 call    sub_274B4
                 call    DrawMouseCursor
                 mov     word_3293E, 2C8h
                 mov     word_32940, 2C8h
-                call    sub_1CDBC
+                call    CheckTransportAvailability
                 call    sub_274B4
                 call    DrawMouseCursor
                 mov     ax, 258h
@@ -74198,7 +74198,7 @@ word_328D2      dw 0                    ; DATA XREF: HandleMovementInput+258↑r
 word_328D4      dw 0                    ; DATA XREF: HandleDungeonInput:loc_16428↑w
                                         ; HandleDungeonInput+3D↑w ...
 word_328D6      dw 0                    ; DATA XREF: FindPartySlotForRecord+24↑w
-                                        ; sub_1CDBC+9D↑r ...
+                                        ; CheckTransportAvailability+9D↑r ...
 word_328D8      dw 0                    ; DATA XREF: sub_1D4B8+E0↑r
                                         ; sub_1DC73+D↑r
 word_328DA      dw 0                    ; DATA XREF: sub_1D4B8+EC↑r
@@ -74350,24 +74350,24 @@ word_32968      dw 0                    ; DATA XREF: sub_141D9+403↑w
                                         ; sub_14E28+E8↑w ...
 word_3296A      dw 0                    ; DATA XREF: sub_1869D+5A4↑r
                                         ; sub_19264+63↑w
-word_3296C      dw 0                    ; DATA XREF: sub_1CDBC+23↑w
-                                        ; sub_1CDBC+5D↑w ...
-word_3296E      dw 0                    ; DATA XREF: sub_1CDBC+2F↑w
+word_3296C      dw 0                    ; DATA XREF: CheckTransportAvailability+23↑w
+                                        ; CheckTransportAvailability+5D↑w ...
+word_3296E      dw 0                    ; DATA XREF: CheckTransportAvailability+2F↑w
                                         ; sub_1CECB+69↑w ...
 word_32970      dw 0                    ; DATA XREF: sub_26415+27E↑w
                                         ; sub_2738B+7F↑w ...
-word_32972      dw 0                    ; DATA XREF: sub_1CDBC+29↑w
+word_32972      dw 0                    ; DATA XREF: CheckTransportAvailability+29↑w
                                         ; sub_1CECB+62↑r ...
 word_32974      dw 0                    ; DATA XREF: seg000:0850↑r
                                         ; seg000:0880↑r ...
-word_32976      dw 0                    ; DATA XREF: sub_1CDBC+5↑w
-                                        ; sub_1CDBC+A0↑w ...
-word_32978      dw 0                    ; DATA XREF: sub_1CDBC+B↑w
-                                        ; sub_1CDBC+A6↑w ...
-word_3297A      dw 0                    ; DATA XREF: sub_1CDBC+17↑w
-                                        ; sub_1CDBC+63↑w ...
-word_3297C      dw 0                    ; DATA XREF: sub_1CDBC+1D↑w
-                                        ; sub_1CDBC:loc_1CE52↑w ...
+word_32976      dw 0                    ; DATA XREF: CheckTransportAvailability+5↑w
+                                        ; CheckTransportAvailability+A0↑w ...
+word_32978      dw 0                    ; DATA XREF: CheckTransportAvailability+B↑w
+                                        ; CheckTransportAvailability+A6↑w ...
+word_3297A      dw 0                    ; DATA XREF: CheckTransportAvailability+17↑w
+                                        ; CheckTransportAvailability+63↑w ...
+word_3297C      dw 0                    ; DATA XREF: CheckTransportAvailability+1D↑w
+                                        ; CheckTransportAvailability:loc_1CE52↑w ...
 word_3297E      dw 0                    ; DATA XREF: ShowClueBook+63↑w
                                         ; ShowIntroPicture+8↑w ...
 word_32980      dw 0                    ; DATA XREF: sub_11D66+18↑w
