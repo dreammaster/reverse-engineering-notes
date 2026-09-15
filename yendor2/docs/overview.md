@@ -3037,6 +3037,14 @@ stat), an ability-readiness icon, and level-up/training text.
 
 389 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UpdateAmbientMusicForRegion
+
+Named `sub_25608`: computes a coarse map-region index from the
+party's position and, when it changes, plays that region's music
+track — the ambient-music-by-zone trigger.
+
+390 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

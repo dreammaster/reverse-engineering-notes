@@ -25892,7 +25892,7 @@ loc_1E8AB:                              ; CODE XREF: sub_1E64A+253↑j
                 call    DrawMouseCursor
                 call    sub_238CD
                 call    sub_1FD03
-                call    sub_25608
+                call    UpdateAmbientMusicForRegion
                 call    sub_2587E
                 retf
 sub_1E64A       endp
@@ -29467,7 +29467,7 @@ loc_20B91:                              ; CODE XREF: sub_209D2+16E↑j
 ; ---------------------------------------------------------------------------
 
 loc_20BA0:                              ; CODE XREF: sub_209D2+194↑j
-                call    sub_25608
+                call    UpdateAmbientMusicForRegion
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
@@ -37666,9 +37666,9 @@ seg077          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25608       proc far                ; CODE XREF: sub_1E64A+2EE↑P
+UpdateAmbientMusicForRegion proc far    ; CODE XREF: sub_1E64A+2EE↑P
                                         ; sub_209D2:loc_20BA0↑P
-                xor     dx, dx
+                xor     dx, dx          ; Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.
                 mov     bx, 18h
                 mov     ax, word_36CF9
                 div     bx
@@ -37693,9 +37693,9 @@ sub_25608       proc far                ; CODE XREF: sub_1E64A+2EE↑P
                 mov     ax, word_38808
                 call    PlayMusicTrack
 
-locret_25654:                           ; CODE XREF: sub_25608+21↑j
+locret_25654:                           ; CODE XREF: UpdateAmbientMusicForRegion+21↑j
                 retf
-sub_25608       endp
+UpdateAmbientMusicForRegion endp
 
 seg077          ends
 
@@ -43180,7 +43180,7 @@ sub_28000       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2801A       proc far                ; CODE XREF: sub_25608+2F↑P
+sub_2801A       proc far                ; CODE XREF: UpdateAmbientMusicForRegion+2F↑P
                 push    si
                 mov     si, 0CDFBh
                 mov     [bx+4], ax
@@ -56775,7 +56775,7 @@ word_2E4A2      dw 0                    ; DATA XREF: RunMapEditorScreen+38↑w
 word_2E4A6      dw 0                    ; DATA XREF: sub_209D2↑r
                                         ; PlayMusicTrack+D↑w ...
 word_2E4A8      dw 0                    ; DATA XREF: InitializeDungeonLevel+15↑w
-                                        ; sub_25608+1D↑r ...
+                                        ; UpdateAmbientMusicForRegion+1D↑r ...
 word_2E4AA      dw 0                    ; DATA XREF: start+17↑w
                                         ; HandleMovementInput+336↑r ...
 word_2E4AC      dw 0                    ; DATA XREF: ShowClueBookItemDetail+78↑w

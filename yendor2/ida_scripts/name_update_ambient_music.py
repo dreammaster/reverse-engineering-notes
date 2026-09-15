@@ -1,19 +1,16 @@
 """
-Traced sub_28320 (called from PollKeyboardInput and sub_162B6) -- the
-remaining ISR sub-task (word_32958, word_3295A bit 0x200, ~1-second
-period at 20 ticks) turned out to drive day/night ambient music,
-another consumer of the game clock.
+Names sub_25608, called from sub_1E64A and sub_209D2 (both not
+traced, presumably movement/screen-update paths): computes a coarse
+map-region index from the party's position (word_36CF7/36CF9, divided
+into 0x28x0x18 zones), and if it differs from the last known region
+(word_2E4A8, cached), reads a WORLD.DAT record for the new region
+(sub_2801A + FileEntry_Read) and plays its associated music track
+(word_38808) via the already-named PlayMusicTrack.
 
-Gated on the sound driver being active and not mid-transition. If the
-~1-second timer has fired and no track is being force-played
-(word_3297E==0), picks a music track based on the current game time:
-word_36D01 (minutes since midnight) in [0x1A4, 0x474] (7:00 AM-7:00 PM)
-selects the day track (word_36CB1), otherwise the night track
-(word_36CB3) -- and only actually switches if the selected track is
-nonzero and word_328C4 bit 0x2000 is set. Plays it via the already-named
-PlayMusicTrack.
+The ambient-music region trigger: background music changes as the
+party crosses between coarse map zones.
 
--> UpdateAmbientMusic
+-> UpdateAmbientMusicForRegion
 
 Run via:
     .\run_ida_script.ps1 name_update_ambient_music.py
@@ -22,18 +19,17 @@ import idc
 import ida_name
 import ida_bytes
 
-ea = 0x28320
+ea = 0x25608
 old = idc.get_name(ea)
-ok = ida_name.set_name(ea, "UpdateAmbientMusic", ida_name.SN_NOWARN | ida_name.SN_FORCE)
-print(f"{ea:#x}  {old!r} -> 'UpdateAmbientMusic': {'ok' if ok else 'FAILED'}")
+ok = ida_name.set_name(ea, "UpdateAmbientMusicForRegion", ida_name.SN_NOWARN | ida_name.SN_FORCE)
+print(f"{ea:#x}  {old!r} -> 'UpdateAmbientMusicForRegion': {'ok' if ok else 'FAILED'}")
 
 ida_bytes.set_cmt(
     ea,
-    "Timer-ISR-gated (~1 second, word_32958/word_3295A bit 0x200) "
-    "day/night ambient music switch. If no track is forced "
-    "(word_3297E==0), picks word_36CB1 (day) or word_36CB3 (night) "
-    "based on whether word_36D01 (clock minutes-since-midnight) "
-    "falls in [0x1A4,0x474] (7:00 AM-7:00 PM), then plays it via "
-    "PlayMusicTrack if word_328C4 bit 0x2000 allows.",
+    "Computes a coarse map-region index from the party's position; if "
+    "it changed since last checked (word_2E4A8), reads the new "
+    "region's WORLD.DAT record and plays its music track "
+    "(PlayMusicTrack) -- the ambient-music region trigger. Called "
+    "from sub_1E64A and sub_209D2.",
     False,
 )

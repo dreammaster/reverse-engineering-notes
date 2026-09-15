@@ -6479,7 +6479,9 @@ static Bytes_2(void) {
 	create_insn	(0X255C7);
 	create_insn	(0X255F1);
 	create_insn	(0X255FA);
+	set_cmt	(0X25608,	"Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.",	0);
 	create_insn	(0X25608);
+	set_name	(0X25608,	"UpdateAmbientMusicForRegion");
 	set_cmt	(0X25656,	"Advances a monster's idle/walk animation frame ([+8]) within a small cycle relative to a base frame ([+0x4C]), mode selected by [+0x92] bits 0x20/0x10 (skipped entirely if bit 0x40 set). Called from DrawMonsterAndUpdateAttackState (non-attacking case) and ShowClueBookMonsterDetail (animates the clue-book preview the same way).",	0);
 	create_insn	(x=0X25656);
 	op_hex		(x,	1);
@@ -8944,6 +8946,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X2B656);
 	op_hex		(x,	1);
 	set_name	(0X2B656,	"RunConversation");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B65C);
 	op_hex		(x,	1);
 	create_insn	(0X2B685);
@@ -8958,15 +8969,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2B6FF);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B70C);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B711);

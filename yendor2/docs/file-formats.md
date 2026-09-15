@@ -431,6 +431,14 @@ elsewhere, and redraws the gold readout afterward via
 adds the unit price to both `g_partyGold` and a second counter
 `0xB30`) not yet disentangled with enough confidence to name safely.
 
+### Ambient music by map region
+
+`UpdateAmbientMusicForRegion` computes a coarse map-region index from
+the party's position and, when it changes, reads that region's
+`WORLD.DAT` record and plays its associated music track
+(`PlayMusicTrack`) — background music changes as the party crosses
+between zones.
+
 ### The map legend editor
 
 `RunMapEditorScreen` (name pre-existing from an earlier session; not
