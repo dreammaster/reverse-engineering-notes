@@ -386,8 +386,16 @@ Three **global** (not per-party-member) crafting-material counters at
 all three in one loop. Individual identities: `0x94BB`/`0x94B7` are
 used by `CastSpell`'s `0x1C` alchemy ability (converts 10 units of one
 into the other — `NUORE`/`MAGIC ORE`); `0x94B3` is a third, sibling
-counter used the same way by `ApplyEffectCost`'s cost dispatch but not
-otherwise identified yet. All three are manipulated via the packed-BCD
+counter used the same way by `ApplyEffectCost`'s cost dispatch, and
+also fed by `TryConvertItemToMaterial` — a Space-bar action (main
+input loop, `word_328C6` bit `0x10`) available while carrying an item
+and standing at some location: if the held item's type doesn't match
+what the location accepts, it's rebuffed with "I HAVE NO NEED FOR THAT
+TYPE OF ITEM." (a shopkeeper/NPC-voiced line, from the same message
+bank as the alchemy-conversion prompts below); if it matches, the item
+is consumed and its value added to `0x94B3`. What `0x94B3` actually
+represents (and what kind of station this is) is still not identified.
+All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
 `SubtractFromBCDCounter`) — 4 bytes (8 decimal digits) per counter,

@@ -15256,7 +15256,7 @@ loc_18BD1:                              ; CODE XREF: sub_1869D+504↑j
                 jz      short loc_18C06
                 test    word_328C6, 10h
                 jz      short loc_18BED
-                call    sub_19264
+                call    TryConvertItemToMaterial
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -15976,8 +15976,8 @@ sub_1922C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19264       proc near               ; CODE XREF: sub_1869D+54A↑p
-                mov     ax, word_31948
+TryConvertItemToMaterial proc near      ; CODE XREF: sub_1869D+54A↑p
+                mov     ax, word_31948  ; Space-bar action (sub_1869D, word_328C6 bit 0x10) while carrying an item (word_31946): if the held item's type mask (es:[bx+0x10]) doesn't overlap the standing location's accepted-type mask ([word_2E546+0x10]), shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise consumes the held item and does AddBCD4([0x94B3], [word_32920]) -- adds the location's amount into the global material counter 0x94B3 -- then ShowMaterialCounterHud. What kind of station/material this is not identified.
                 mov     word_32974, ax
                 mov     es, word_2E54C
                 mov     bx, word_2E54E
@@ -15999,7 +15999,7 @@ sub_19264       proc near               ; CODE XREF: sub_1869D+54A↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_192B9:                              ; CODE XREF: sub_19264+19↑j
+loc_192B9:                              ; CODE XREF: TryConvertItemToMaterial+19↑j
                 or      word_328CA, 20h
                 mov     ax, word_31948
                 mov     word_32968, ax
@@ -16021,7 +16021,7 @@ loc_192B9:                              ; CODE XREF: sub_19264+19↑j
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
-sub_19264       endp
+TryConvertItemToMaterial endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16783,7 +16783,7 @@ seg031          segment byte public 'CODE' use16
 
 
 AddBCD4         proc far                ; CODE XREF: sub_17B09+15↑P
-                                        ; sub_19264+9A↑P ...
+                                        ; TryConvertItemToMaterial+9A↑P ...
                 mov     al, [si+3]      ; Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.
                 add     al, [di+3]
                 daa
@@ -74270,9 +74270,9 @@ _videoBufferSeg dw 0                    ; DATA XREF: sub_1075E+49↑r
                                         ; ShowClueBook+48↑r ...
 word_3291E      dw 0                    ; DATA XREF: RunGameDialog+5↑w
                                         ; RunGameDialog:loc_1EAD0↑w ...
-word_32920      dw 0                    ; DATA XREF: sub_19264+66↑r
+word_32920      dw 0                    ; DATA XREF: TryConvertItemToMaterial+66↑r
                                         ; sub_1CCBC+C↑w
-word_32922      dw 0                    ; DATA XREF: sub_19264+6C↑r
+word_32922      dw 0                    ; DATA XREF: TryConvertItemToMaterial+6C↑r
                                         ; sub_1CCBC+15↑w
 word_32924      dw 0                    ; DATA XREF: HandleDungeonInput+28↑w
                                         ; HandleDungeonInput+38↑w ...
@@ -74349,7 +74349,7 @@ word_32966      dw 0                    ; DATA XREF: sub_141D9+3FC↑w
 word_32968      dw 0                    ; DATA XREF: sub_141D9+403↑w
                                         ; sub_14E28+E8↑w ...
 word_3296A      dw 0                    ; DATA XREF: sub_1869D+5A4↑r
-                                        ; sub_19264+63↑w
+                                        ; TryConvertItemToMaterial+63↑w
 word_3296C      dw 0                    ; DATA XREF: IsItemRangeAvailable+23↑w
                                         ; IsItemRangeAvailable+5D↑w ...
 word_3296E      dw 0                    ; DATA XREF: IsItemRangeAvailable+2F↑w

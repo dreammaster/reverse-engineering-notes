@@ -2051,6 +2051,22 @@ category is not traced.
 
 264 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryConvertItemToMaterial
+
+Named `sub_19264`, a Space-bar action in the main input loop
+(`sub_1869D`, `word_328C6` bit `0x10`) while carrying an item: checks
+whether the held item's type mask overlaps the standing location's
+accepted-type mask; on mismatch shows "I HAVE NO NEED FOR THAT TYPE OF
+ITEM." (dumped from msg `0x7FF7`, which turned out to share a table
+with the alchemy ore-conversion prompts — "YOU MUST HAVE AT LEAST 10
+UNITS" / "IT WILL COST _ GOLD" / "IS THAT PRICE AGREEABLE?"); on match,
+consumes the item and adds its value (`AddBCD4`) into the global
+material counter `0x94B3`, then shows the material HUD. This gives
+`0x94B3` a source beyond `ApplyEffectCost`'s cost dispatch, though its
+exact identity (and what kind of station this is) is still open.
+
+265 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -3306,7 +3306,9 @@ static Bytes_0(void) {
 	create_insn	(0X191FC);
 	create_insn	(x=0X1922C);
 	op_hex		(x,	1);
+	set_cmt	(0X19264,	"Space-bar action (sub_1869D, word_328C6 bit 0x10) while carrying an item (word_31946): if the held item's type mask (es:[bx+0x10]) doesn't overlap the standing location's accepted-type mask ([word_2E546+0x10]), shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise consumes the held item and does AddBCD4([0x94B3], [word_32920]) -- adds the location's amount into the global material counter 0x94B3 -- then ShowMaterialCounterHud. What kind of station/material this is not identified.",	0);
 	create_insn	(0X19264);
+	set_name	(0X19264,	"TryConvertItemToMaterial");
 	create_insn	(x=0X19284);
 	op_hex		(x,	1);
 	create_insn	(x=0X192B9);
@@ -4257,6 +4259,15 @@ static Bytes_0(void) {
 	create_insn	(0X1CE6B);
 	set_name	(0X1CE6B,	"FindItemInInventoryRange");
 	create_insn	(0X1CE8D);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1CE92);
 	op_hex		(x,	1);
 	create_insn	(0X1CEA1);
@@ -4279,15 +4290,6 @@ static Bytes_0(void) {
 	create_insn	(0X1CF42);
 	create_insn	(0X1CF50);
 	set_cmt	(0X1CF51,	"this",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1CF55,	"this",	0);
 	create_insn	(x=0X1CF97);
 	op_hex		(x,	1);
@@ -7399,6 +7401,15 @@ static Bytes_1(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X28A76);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X28A7E);
 	op_hex		(x,	1);
 	create_insn	(0X28A92);
@@ -7430,15 +7441,6 @@ static Bytes_1(void) {
 	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
 	create_insn	(0X28CFF);
 	set_name	(0X28CFF,	"RevealMapRegion");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X28D1D);
 	op_hex		(x,	1);
 	create_insn	(0X28D2D);
@@ -10878,6 +10880,15 @@ static Bytes_2(void) {
 	set_name	(0X3687F,	"aPicturesVga");
 	set_name	(0X3688C,	"savegameX");
 	create_word	(0X3688E);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X36892);
 	create_word	(0X36894);
 	set_name	(0X3689A,	"aSavgamex");
@@ -10931,15 +10942,6 @@ static Bytes_2(void) {
 	create_word	(0X36CFB);
 	create_word	(0X36CFD);
 	create_word	(0X36CFF);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X36D01);
 	create_word	(0X36D03);
 	create_word	(0X36D05);
