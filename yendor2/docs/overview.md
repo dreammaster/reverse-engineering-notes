@@ -1616,6 +1616,21 @@ check/preview variant. Named `CheckKeyItem`.
 
 215 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunConversation's 4 topic-display branches
+
+Traced `RunConversation`'s 4 sub-functions (previously left
+undistinguished, "plausibly different response categories, not
+confirmed which") — they share an identical mechanism (paginated
+conversation text: portrait icon + 2-column word-wrapped pages), all
+reading the *same* text field but with different prep functions and
+screen position/color. Named by dispatch bit
+(`ShowConversationText_4000`/`_2000`/`_1000`/`_800`) rather than
+guessing which topic category each represents, since nothing
+distinguishes their data source. Refreshed `RunConversation`'s own
+comment to match.
+
+219 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

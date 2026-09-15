@@ -49743,7 +49743,7 @@ seg119          segment byte public 'CODE' use16
 
 
 RunConversation proc far                ; CODE XREF: HandleGameCommand+164↑P
-                and     word_3295A, 97FFh ; NPC conversation display: draws the dialog panel (g_pictureDir entry 1) then dispatches to one of 4 topic-display functions based on flag bits in the record at word_2E548 (+2, bits 0x4000/0x2000/0x1000/0x800). Each draws a small icon (entry 7) plus word-wrapped text. word_2E548's record shares a status-flags field (+0x1C) with the party-member records RunTitleScreen touches. Not individually distinguishing the 4 topic-type sub-functions (sub_2B78D/2B866/2B8D7/2B948) -- plausibly different response categories, not confirmed which.
+                and     word_3295A, 97FFh ; NPC conversation display: draws the dialog panel (g_pictureDir entry 1) then dispatches to one of 4 topic-display functions (ShowConversationText_4000/_2000/_1000/_800) based on flag bits in the record at word_2E548 (+2). Each is a paginated text display (portrait icon + 2-column word-wrap) -- all 4 read the same text field, differing only in prep function and screen position/color, so which topic category each represents isn't confirmed. word_2E548's record shares a status-flags field (+0x1C) with the party-member records RunTitleScreen touches.
                 test    word ptr [bx+2], 0Eh
                 jz      short loc_2B6A6
 
@@ -49786,7 +49786,7 @@ loc_2B6A6:                              ; CODE XREF: RunConversation+B↑j
                 test    word ptr [bx+2], 4000h
                 jz      short loc_2B6E1
                 call    sub_2B9D4
-                call    sub_2B78D
+                call    ShowConversationText_4000
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
 
@@ -49794,7 +49794,7 @@ loc_2B6E1:                              ; CODE XREF: RunConversation+81↑j
                 test    word ptr [bx+2], 2000h
                 jz      short loc_2B6F0
                 call    sub_2B9D4
-                call    sub_2B866
+                call    ShowConversationText_2000
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
 
@@ -49802,7 +49802,7 @@ loc_2B6F0:                              ; CODE XREF: RunConversation+90↑j
                 test    word ptr [bx+2], 1000h
                 jz      short loc_2B6FF
                 call    sub_2B9D4
-                call    sub_2B8D7
+                call    ShowConversationText_1000
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
 
@@ -49810,7 +49810,7 @@ loc_2B6FF:                              ; CODE XREF: RunConversation+9F↑j
                 test    word ptr [bx+2], 800h
                 jz      short loc_2B70C
                 call    sub_2B9D4
-                call    sub_2B948
+                call    ShowConversationText_800
 
 loc_2B70C:                              ; CODE XREF: RunConversation+2C↑j
                                         ; RunConversation+89↑j ...
@@ -49824,7 +49824,7 @@ RunConversation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B71D       proc near               ; CODE XREF: sub_2B78D+7↓p
+sub_2B71D       proc near               ; CODE XREF: ShowConversationText_4000+7↓p
                 mov     ax, 0AFA8h
                 call    sub_27B0D
                 mov     bx, 9043h
@@ -49838,7 +49838,7 @@ sub_2B71D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B739       proc near               ; CODE XREF: sub_2B8D7+7↓p
+sub_2B739       proc near               ; CODE XREF: ShowConversationText_1000+7↓p
                 mov     ax, 0AFA8h
                 call    sub_27CC9
                 mov     bx, 9043h
@@ -49852,7 +49852,7 @@ sub_2B739       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B755       proc near               ; CODE XREF: sub_2B866+7↓p
+sub_2B755       proc near               ; CODE XREF: ShowConversationText_2000+7↓p
                 mov     ax, 0AFA8h
                 call    sub_27D20
                 mov     bx, 9043h
@@ -49866,7 +49866,7 @@ sub_2B755       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B771       proc near               ; CODE XREF: sub_2B948+7↓p
+sub_2B771       proc near               ; CODE XREF: ShowConversationText_800+7↓p
                 mov     ax, 0AFA8h
                 call    sub_27D55
                 mov     bx, 9043h
@@ -49880,13 +49880,13 @@ sub_2B771       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B78D       proc near               ; CODE XREF: RunConversation+86↑p
-                mov     bx, word_2E548
+ShowConversationText_4000 proc near     ; CODE XREF: RunConversation+86↑p
+                mov     bx, word_2E548  ; One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.
                 mov     bx, [bx+4]
                 call    sub_2B71D
                 mov     si, 0AFA8h
 
-loc_2B79A:                              ; CODE XREF: sub_2B78D+6C↓j
+loc_2B79A:                              ; CODE XREF: ShowConversationText_4000+6C↓j
                 cmp     word_31980, 1Ah
                 jle     short loc_2B7FB
                 sub     word_31980, 1Ah
@@ -49911,7 +49911,7 @@ loc_2B79A:                              ; CODE XREF: sub_2B78D+6C↓j
                 jmp     short loc_2B79A
 ; ---------------------------------------------------------------------------
 
-loc_2B7FB:                              ; CODE XREF: sub_2B78D+12↑j
+loc_2B7FB:                              ; CODE XREF: ShowConversationText_4000+12↑j
                 mov     _textPos_x, 1Ah
                 mov     _textPos_y, 21h ; '!'
                 mov     _font_fgColor, 39h ; '9'
@@ -49930,32 +49930,32 @@ loc_2B7FB:                              ; CODE XREF: sub_2B78D+12↑j
                 jmp     short loc_2B850
 ; ---------------------------------------------------------------------------
 
-loc_2B845:                              ; CODE XREF: sub_2B78D+90↑j
+loc_2B845:                              ; CODE XREF: ShowConversationText_4000+90↑j
                 mov     bx, si
                 mov     cx, word_31980
                 call    sub_28A76
 
-loc_2B850:                              ; CODE XREF: sub_2B78D+B6↑j
+loc_2B850:                              ; CODE XREF: ShowConversationText_4000+B6↑j
                 call    sub_238CD
                 call    sub_162B6
 
-loc_2B85A:                              ; CODE XREF: sub_2B78D+65↑j
+loc_2B85A:                              ; CODE XREF: ShowConversationText_4000+65↑j
                 call    DrawMouseCursor
                 mov     fontOffset, 0
                 retn
-sub_2B78D       endp
+ShowConversationText_4000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B866       proc near               ; CODE XREF: RunConversation+95↑p
-                mov     bx, word_2E548
+ShowConversationText_2000 proc near     ; CODE XREF: RunConversation+95↑p
+                mov     bx, word_2E548  ; One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.
                 mov     bx, [bx+4]
                 call    sub_2B755
                 mov     si, 0AFA8h
 
-loc_2B873:                              ; CODE XREF: sub_2B866+63↓j
+loc_2B873:                              ; CODE XREF: ShowConversationText_2000+63↓j
                 mov     _textPos_x, 39h ; '9'
                 mov     _textPos_y, 2Bh ; '+'
                 mov     _font_fgColor, 46h ; 'F'
@@ -49967,7 +49967,7 @@ loc_2B873:                              ; CODE XREF: sub_2B866+63↓j
                 jge     short loc_2B8A0
                 mov     cx, word_31980
 
-loc_2B8A0:                              ; CODE XREF: sub_2B866+34↑j
+loc_2B8A0:                              ; CODE XREF: ShowConversationText_2000+34↑j
                 call    sub_28A76
                 mov     si, bx
                 call    sub_238CD
@@ -49981,24 +49981,24 @@ loc_2B8A0:                              ; CODE XREF: sub_2B866+34↑j
                 jmp     short loc_2B873
 ; ---------------------------------------------------------------------------
 
-loc_2B8CB:                              ; CODE XREF: sub_2B866+50↑j
-                                        ; sub_2B866+57↑j
+loc_2B8CB:                              ; CODE XREF: ShowConversationText_2000+50↑j
+                                        ; ShowConversationText_2000+57↑j
                 call    DrawMouseCursor
                 mov     fontOffset, 0
                 retn
-sub_2B866       endp
+ShowConversationText_2000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B8D7       proc near               ; CODE XREF: RunConversation+A4↑p
-                mov     bx, word_2E548
+ShowConversationText_1000 proc near     ; CODE XREF: RunConversation+A4↑p
+                mov     bx, word_2E548  ; One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.
                 mov     bx, [bx+4]
                 call    sub_2B739
                 mov     si, 0AFA8h
 
-loc_2B8E4:                              ; CODE XREF: sub_2B8D7+63↓j
+loc_2B8E4:                              ; CODE XREF: ShowConversationText_1000+63↓j
                 mov     _textPos_x, 36h ; '6'
                 mov     _textPos_y, 1Ch
                 mov     _font_fgColor, 6
@@ -50010,7 +50010,7 @@ loc_2B8E4:                              ; CODE XREF: sub_2B8D7+63↓j
                 jge     short loc_2B911
                 mov     cx, word_31980
 
-loc_2B911:                              ; CODE XREF: sub_2B8D7+34↑j
+loc_2B911:                              ; CODE XREF: ShowConversationText_1000+34↑j
                 call    sub_28A76
                 mov     si, bx
                 call    sub_238CD
@@ -50024,24 +50024,24 @@ loc_2B911:                              ; CODE XREF: sub_2B8D7+34↑j
                 jmp     short loc_2B8E4
 ; ---------------------------------------------------------------------------
 
-loc_2B93C:                              ; CODE XREF: sub_2B8D7+50↑j
-                                        ; sub_2B8D7+57↑j
+loc_2B93C:                              ; CODE XREF: ShowConversationText_1000+50↑j
+                                        ; ShowConversationText_1000+57↑j
                 call    DrawMouseCursor
                 mov     fontOffset, 0
                 retn
-sub_2B8D7       endp
+ShowConversationText_1000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B948       proc near               ; CODE XREF: RunConversation+B3↑p
-                mov     bx, word_2E548
+ShowConversationText_800 proc near      ; CODE XREF: RunConversation+B3↑p
+                mov     bx, word_2E548  ; One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.
                 mov     bx, [bx+4]
                 call    sub_2B771
                 mov     si, 0AFA8h
 
-loc_2B955:                              ; CODE XREF: sub_2B948+7E↓j
+loc_2B955:                              ; CODE XREF: ShowConversationText_800+7E↓j
                 mov     _textPos_x, 36h ; '6'
                 mov     _textPos_y, 1Ch
                 mov     _font_fgColor, 4
@@ -50053,7 +50053,7 @@ loc_2B955:                              ; CODE XREF: sub_2B948+7E↓j
                 jge     short loc_2B982
                 mov     cx, word_31980
 
-loc_2B982:                              ; CODE XREF: sub_2B948+34↑j
+loc_2B982:                              ; CODE XREF: ShowConversationText_800+34↑j
                 push    cx
                 push    bx
                 call    sub_28A76
@@ -50075,12 +50075,12 @@ loc_2B982:                              ; CODE XREF: sub_2B948+34↑j
                 jmp     short loc_2B955
 ; ---------------------------------------------------------------------------
 
-loc_2B9C8:                              ; CODE XREF: sub_2B948+6B↑j
-                                        ; sub_2B948+72↑j
+loc_2B9C8:                              ; CODE XREF: ShowConversationText_800+6B↑j
+                                        ; ShowConversationText_800+72↑j
                 call    DrawMouseCursor
                 mov     fontOffset, 0
                 retn
-sub_2B948       endp
+ShowConversationText_800 endp
 
 
 ; =============== S U B R O U T I N E =======================================
