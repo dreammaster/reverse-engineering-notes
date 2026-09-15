@@ -10170,7 +10170,7 @@ loc_16348:                              ; CODE XREF: RunDungeonGameLoop+B9↓j
 ; ---------------------------------------------------------------------------
 
 loc_1635F:                              ; CODE XREF: RunDungeonGameLoop+5B↑j
-                call    sub_16407
+                call    HandleDungeonInput
                 cmp     byte_2E400, 0
                 jnz     short loc_16375
                 call    sub_25AAC
@@ -10233,8 +10233,8 @@ RunDungeonGameLoop endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16407       proc near               ; CODE XREF: RunDungeonGameLoop:loc_1635F↑p
-                mov     word_2E49A, 0
+HandleDungeonInput proc near            ; CODE XREF: RunDungeonGameLoop:loc_1635F↑p
+                mov     word_2E49A, 0   ; One of RunDungeonGameLoop's 3 per-iteration input handlers. Selects a party member (word_328D4 = [bx], a caller-supplied pointer), then dispatches a wide range of dungeon UI input: movement, monster-panel clicks (sets word_32A1E as a target-selection shortcut alongside SelectActiveMonster), attack resolution (ResolveAttack + UpdateMonsterWoundTier, then [word_32A1E+0x10] -= word_2E49C -- the actual HP subtraction), and dialogs via RunGameDialog.
                 mov     word_2E49E, 0
                 mov     word_2E49C, 0
                 mov     si, [bx]
@@ -10244,13 +10244,13 @@ sub_16407       proc near               ; CODE XREF: RunDungeonGameLoop:loc_1635
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16428:                              ; CODE XREF: sub_16407+19↑j
+loc_16428:                              ; CODE XREF: HandleDungeonInput+19↑j
                 mov     word_328D4, si
                 mov     ax, [bx+2]
                 mov     word_32924, ax
 
-loc_16432:                              ; CODE XREF: sub_16407+12C↓j
-                                        ; sub_16407+13A↓j ...
+loc_16432:                              ; CODE XREF: HandleDungeonInput+12C↓j
+                                        ; HandleDungeonInput+13A↓j ...
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     bx, word_32BF4
@@ -10261,19 +10261,19 @@ loc_16432:                              ; CODE XREF: sub_16407+12C↓j
                 call    sub_26C9E
                 call    DrawMouseCursor
 
-loc_16451:                              ; CODE XREF: sub_16407:loc_16524↓j
-                                        ; sub_16407:loc_16560↓j ...
+loc_16451:                              ; CODE XREF: HandleDungeonInput:loc_16524↓j
+                                        ; HandleDungeonInput:loc_16560↓j ...
                 test    word_328C8, 20h
                 jnz     short loc_164B0
 
-loc_16459:                              ; CODE XREF: sub_16407+6E↓j
-                                        ; sub_16407+A4↓j
+loc_16459:                              ; CODE XREF: HandleDungeonInput+6E↓j
+                                        ; HandleDungeonInput+A4↓j
                 test    word_328C4, 400h
                 jz      short loc_1646B
                 call    sub_20C46
                 call    DrawMouseCursor
 
-loc_1646B:                              ; CODE XREF: sub_16407+58↑j
+loc_1646B:                              ; CODE XREF: HandleDungeonInput+58↑j
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_16459
@@ -10284,32 +10284,32 @@ loc_1646B:                              ; CODE XREF: sub_16407+58↑j
                 jmp     loc_16536
 ; ---------------------------------------------------------------------------
 
-loc_16488:                              ; CODE XREF: sub_16407+7C↑j
+loc_16488:                              ; CODE XREF: HandleDungeonInput+7C↑j
                 cmp     errorCode, 3
                 jnz     short loc_16492
                 jmp     loc_165D7
 ; ---------------------------------------------------------------------------
 
-loc_16492:                              ; CODE XREF: sub_16407+86↑j
+loc_16492:                              ; CODE XREF: HandleDungeonInput+86↑j
                 cmp     errorCode, 6
                 jnz     short loc_1649C
                 jmp     loc_16527
 ; ---------------------------------------------------------------------------
 
-loc_1649C:                              ; CODE XREF: sub_16407+90↑j
+loc_1649C:                              ; CODE XREF: HandleDungeonInput+90↑j
                 cmp     errorCode, 7
                 jnz     short loc_164A6
                 jmp     loc_16563
 ; ---------------------------------------------------------------------------
 
-loc_164A6:                              ; CODE XREF: sub_16407+9A↑j
+loc_164A6:                              ; CODE XREF: HandleDungeonInput+9A↑j
                 cmp     errorCode, 0Ah
                 jnz     short loc_16459
                 jmp     loc_16544
 ; ---------------------------------------------------------------------------
 
-loc_164B0:                              ; CODE XREF: sub_16407+50↑j
-                                        ; sub_16407+109↓j ...
+loc_164B0:                              ; CODE XREF: HandleDungeonInput+50↑j
+                                        ; HandleDungeonInput+109↓j ...
                 and     word_328C8, 0FFDFh
                 mov     word_32924, 0
                 call    sub_26C9E
@@ -10317,39 +10317,39 @@ loc_164B0:                              ; CODE XREF: sub_16407+50↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_164C6:                              ; CODE XREF: sub_16407+75↑j
+loc_164C6:                              ; CODE XREF: HandleDungeonInput+75↑j
                 cmp     byte_2E400, 41h ; 'A'
                 jnz     short loc_164D0
                 jmp     loc_1670D
 ; ---------------------------------------------------------------------------
 
-loc_164D0:                              ; CODE XREF: sub_16407+C4↑j
+loc_164D0:                              ; CODE XREF: HandleDungeonInput+C4↑j
                 cmp     byte_2E400, 43h ; 'C'
                 jnz     short loc_164DA
                 jmp     loc_167F1
 ; ---------------------------------------------------------------------------
 
-loc_164DA:                              ; CODE XREF: sub_16407+CE↑j
+loc_164DA:                              ; CODE XREF: HandleDungeonInput+CE↑j
                 cmp     byte_2E400, 44h ; 'D'
                 jnz     short loc_164E4
                 jmp     loc_167F9
 ; ---------------------------------------------------------------------------
 
-loc_164E4:                              ; CODE XREF: sub_16407+D8↑j
+loc_164E4:                              ; CODE XREF: HandleDungeonInput+D8↑j
                 cmp     byte_2E400, 50h ; 'P'
                 jnz     short loc_164EE
                 jmp     loc_16837
 ; ---------------------------------------------------------------------------
 
-loc_164EE:                              ; CODE XREF: sub_16407+E2↑j
+loc_164EE:                              ; CODE XREF: HandleDungeonInput+E2↑j
                 cmp     byte_2E400, 31h ; '1'
                 jl      short loc_16501
                 cmp     byte_2E400, 34h ; '4'
                 jg      short loc_16501
                 call    sub_25B34
 
-loc_16501:                              ; CODE XREF: sub_16407+EC↑j
-                                        ; sub_16407+F3↑j
+loc_16501:                              ; CODE XREF: HandleDungeonInput+EC↑j
+                                        ; HandleDungeonInput+F3↑j
                 test    word_328C4, 8000h
                 jz      short loc_16512
                 cmp     byte_2E400, 9
@@ -10357,8 +10357,8 @@ loc_16501:                              ; CODE XREF: sub_16407+EC↑j
                 jmp     short loc_164B0
 ; ---------------------------------------------------------------------------
 
-loc_16512:                              ; CODE XREF: sub_16407+100↑j
-                                        ; sub_16407+107↑j
+loc_16512:                              ; CODE XREF: HandleDungeonInput+100↑j
+                                        ; HandleDungeonInput+107↑j
                 test    word_328C4, 8000h
                 jz      short loc_16524
                 cmp     byte_2E400, 51h ; 'Q'
@@ -10366,26 +10366,26 @@ loc_16512:                              ; CODE XREF: sub_16407+100↑j
                 jmp     loc_16875
 ; ---------------------------------------------------------------------------
 
-loc_16524:                              ; CODE XREF: sub_16407+111↑j
-                                        ; sub_16407+118↑j
+loc_16524:                              ; CODE XREF: HandleDungeonInput+111↑j
+                                        ; HandleDungeonInput+118↑j
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_16527:                              ; CODE XREF: sub_16407+92↑j
+loc_16527:                              ; CODE XREF: HandleDungeonInput+92↑j
                 call    sub_270FE
                 cmp     errorCode, 1
                 jz      short loc_16536
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
-loc_16536:                              ; CODE XREF: sub_16407+7E↑j
-                                        ; sub_16407+12A↑j
+loc_16536:                              ; CODE XREF: HandleDungeonInput+7E↑j
+                                        ; HandleDungeonInput+12A↑j
                 call    sub_19553
                 or      word_328C4, 400h
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
-loc_16544:                              ; CODE XREF: sub_16407+A6↑j
+loc_16544:                              ; CODE XREF: HandleDungeonInput+A6↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
@@ -10397,12 +10397,12 @@ loc_16544:                              ; CODE XREF: sub_16407+A6↑j
                 jmp     loc_16837
 ; ---------------------------------------------------------------------------
 
-loc_16560:                              ; CODE XREF: sub_16407+14F↑j
-                                        ; sub_16407+154↑j
+loc_16560:                              ; CODE XREF: HandleDungeonInput+14F↑j
+                                        ; HandleDungeonInput+154↑j
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_16563:                              ; CODE XREF: sub_16407+9C↑j
+loc_16563:                              ; CODE XREF: HandleDungeonInput+9C↑j
                 mov     word_32924, 0
                 call    sub_26C9E
                 mov     ax, word_2E772
@@ -10416,13 +10416,13 @@ loc_16563:                              ; CODE XREF: sub_16407+9C↑j
                 cmp     ax, 2
                 jz      short loc_165A9
 
-loc_1658C:                              ; CODE XREF: sub_16407+179↑j
-                                        ; sub_16407+19D↓j ...
+loc_1658C:                              ; CODE XREF: HandleDungeonInput+179↑j
+                                        ; HandleDungeonInput+19D↓j ...
                 call    DrawMonsterInfoPanels
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
-loc_16594:                              ; CODE XREF: sub_16407+17E↑j
+loc_16594:                              ; CODE XREF: HandleDungeonInput+17E↑j
                 call    ClearStatusPanelIfDirty
                 call    sub_18504
                 test    word_328C6, 7800h
@@ -10430,7 +10430,7 @@ loc_16594:                              ; CODE XREF: sub_16407+17E↑j
                 jmp     loc_16852
 ; ---------------------------------------------------------------------------
 
-loc_165A9:                              ; CODE XREF: sub_16407+183↑j
+loc_165A9:                              ; CODE XREF: HandleDungeonInput+183↑j
                 call    sub_2738B
                 cmp     errorCode, 2
                 jnz     short loc_1658C
@@ -10441,12 +10441,12 @@ loc_165A9:                              ; CODE XREF: sub_16407+183↑j
                 mov     ax, 0Ah         ; ticks
                 call    wait
 
-loc_165CF:                              ; CODE XREF: sub_16407+1BE↑j
+loc_165CF:                              ; CODE XREF: HandleDungeonInput+1BE↑j
                 call    sub_238CD
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
-loc_165D7:                              ; CODE XREF: sub_16407+88↑j
+loc_165D7:                              ; CODE XREF: HandleDungeonInput+88↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6698h
@@ -10456,7 +10456,7 @@ loc_165D7:                              ; CODE XREF: sub_16407+88↑j
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_165EE:                              ; CODE XREF: sub_16407+1E2↑j
+loc_165EE:                              ; CODE XREF: HandleDungeonInput+1E2↑j
                 cmp     ax, 1
                 jnz     short loc_16605
                 call    sub_1A37E
@@ -10465,26 +10465,26 @@ loc_165EE:                              ; CODE XREF: sub_16407+1E2↑j
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_16605:                              ; CODE XREF: sub_16407+1EA↑j
+loc_16605:                              ; CODE XREF: HandleDungeonInput+1EA↑j
                 cmp     ax, 3
                 jnz     short loc_1660C
                 jmp     short loc_16648
 ; ---------------------------------------------------------------------------
 
-loc_1660C:                              ; CODE XREF: sub_16407+201↑j
+loc_1660C:                              ; CODE XREF: HandleDungeonInput+201↑j
                 cmp     ax, 2
                 jnz     short loc_16619
                 call    sub_271DC
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_16619:                              ; CODE XREF: sub_16407+208↑j
+loc_16619:                              ; CODE XREF: HandleDungeonInput+208↑j
                 cmp     ax, 4
                 jnz     short loc_16620
                 jmp     short loc_1667A
 ; ---------------------------------------------------------------------------
 
-loc_16620:                              ; CODE XREF: sub_16407+215↑j
+loc_16620:                              ; CODE XREF: HandleDungeonInput+215↑j
                 cmp     ax, 6
                 jnz     short loc_16645
                 cmp     word_31946, 0
@@ -10493,18 +10493,18 @@ loc_16620:                              ; CODE XREF: sub_16407+215↑j
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
-loc_16634:                              ; CODE XREF: sub_16407+223↑j
+loc_16634:                              ; CODE XREF: HandleDungeonInput+223↑j
                 call    sub_18C79
                 cmp     errorCode, 0
                 jnz     short loc_16645
                 call    DrawMouseCursor
 
-loc_16645:                              ; CODE XREF: sub_16407+21C↑j
-                                        ; sub_16407+237↑j
+loc_16645:                              ; CODE XREF: HandleDungeonInput+21C↑j
+                                        ; HandleDungeonInput+237↑j
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
-loc_16648:                              ; CODE XREF: sub_16407+203↑j
+loc_16648:                              ; CODE XREF: HandleDungeonInput+203↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5B32h
@@ -10514,30 +10514,30 @@ loc_16648:                              ; CODE XREF: sub_16407+203↑j
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_1665F:                              ; CODE XREF: sub_16407+253↑j
+loc_1665F:                              ; CODE XREF: HandleDungeonInput+253↑j
                 cmp     ax, 1
                 jnz     short loc_16667
                 jmp     loc_1670D
 ; ---------------------------------------------------------------------------
 
-loc_16667:                              ; CODE XREF: sub_16407+25B↑j
+loc_16667:                              ; CODE XREF: HandleDungeonInput+25B↑j
                 cmp     ax, 2
                 jnz     short loc_1666F
                 jmp     loc_167F1
 ; ---------------------------------------------------------------------------
 
-loc_1666F:                              ; CODE XREF: sub_16407+263↑j
+loc_1666F:                              ; CODE XREF: HandleDungeonInput+263↑j
                 cmp     ax, 4
                 jnz     short loc_16677
                 jmp     loc_167F9
 ; ---------------------------------------------------------------------------
 
-loc_16677:                              ; CODE XREF: sub_16407+26B↑j
-                                        ; sub_16407+28D↓j ...
+loc_16677:                              ; CODE XREF: HandleDungeonInput+26B↑j
+                                        ; HandleDungeonInput+28D↓j ...
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_1667A:                              ; CODE XREF: sub_16407+217↑j
+loc_1667A:                              ; CODE XREF: HandleDungeonInput+217↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6600h
@@ -10552,8 +10552,8 @@ loc_1667A:                              ; CODE XREF: sub_16407+217↑j
                 jmp     short loc_166CD
 ; ---------------------------------------------------------------------------
 
-loc_1669D:                              ; CODE XREF: sub_16407+288↑j
-                                        ; sub_16407+292↑j
+loc_1669D:                              ; CODE XREF: HandleDungeonInput+288↑j
+                                        ; HandleDungeonInput+292↑j
                 add     bx, 9Ch
                 cmp     word ptr [bx], 0
                 jz      short loc_166B6
@@ -10564,8 +10564,8 @@ loc_1669D:                              ; CODE XREF: sub_16407+288↑j
                 jmp     short loc_166CD
 ; ---------------------------------------------------------------------------
 
-loc_166B6:                              ; CODE XREF: sub_16407+29D↑j
-                                        ; sub_16407+2A2↑j
+loc_166B6:                              ; CODE XREF: HandleDungeonInput+29D↑j
+                                        ; HandleDungeonInput+2A2↑j
                 add     bx, 9Ch
                 cmp     word ptr [bx], 0
                 jz      short loc_16677
@@ -10574,50 +10574,50 @@ loc_166B6:                              ; CODE XREF: sub_16407+29D↑j
                 mov     _textPos_y, 0ABh
                 sub     ax, 0Ah
 
-loc_166CD:                              ; CODE XREF: sub_16407+294↑j
-                                        ; sub_16407+2AD↑j
+loc_166CD:                              ; CODE XREF: HandleDungeonInput+294↑j
+                                        ; HandleDungeonInput+2AD↑j
                 cmp     ax, 1
                 jnz     short loc_166D8
                 mov     word_32A1E, bx
                 jmp     short loc_16705
 ; ---------------------------------------------------------------------------
 
-loc_166D8:                              ; CODE XREF: sub_16407+2C9↑j
+loc_166D8:                              ; CODE XREF: HandleDungeonInput+2C9↑j
                 cmp     ax, 2
                 jnz     short loc_166E3
                 or      word ptr [bx+0Ch], 40h
                 jmp     short loc_16705
 ; ---------------------------------------------------------------------------
 
-loc_166E3:                              ; CODE XREF: sub_16407+2D4↑j
+loc_166E3:                              ; CODE XREF: HandleDungeonInput+2D4↑j
                 cmp     ax, 3
                 jnz     short loc_166EF
                 or      word ptr [bx+0Ch], 200h
                 jmp     short loc_16705
 ; ---------------------------------------------------------------------------
 
-loc_166EF:                              ; CODE XREF: sub_16407+2DF↑j
+loc_166EF:                              ; CODE XREF: HandleDungeonInput+2DF↑j
                 cmp     ax, 4
                 jnz     short loc_166FB
                 or      word ptr [bx+0Ch], 100h
                 jmp     short loc_16705
 ; ---------------------------------------------------------------------------
 
-loc_166FB:                              ; CODE XREF: sub_16407+2EB↑j
+loc_166FB:                              ; CODE XREF: HandleDungeonInput+2EB↑j
                 cmp     ax, 5
                 jnz     short loc_1670A
                 or      word ptr [bx+0Ch], 80h
 
-loc_16705:                              ; CODE XREF: sub_16407+2CF↑j
-                                        ; sub_16407+2DA↑j ...
+loc_16705:                              ; CODE XREF: HandleDungeonInput+2CF↑j
+                                        ; HandleDungeonInput+2DA↑j ...
                 call    DrawMonsterInfoPanels
 
-loc_1670A:                              ; CODE XREF: sub_16407+2F7↑j
+loc_1670A:                              ; CODE XREF: HandleDungeonInput+2F7↑j
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_1670D:                              ; CODE XREF: sub_16407+C6↑j
-                                        ; sub_16407+25D↑j
+loc_1670D:                              ; CODE XREF: HandleDungeonInput+C6↑j
+                                        ; HandleDungeonInput+25D↑j
                 mov     x, 0EFh
                 mov     y, 43h ; 'C'
                 mov     _font_bgTransparent, 0
@@ -10644,11 +10644,11 @@ loc_1670D:                              ; CODE XREF: sub_16407+C6↑j
                 mov     ax, _val43
                 call    sub_28412
 
-loc_16776:                              ; CODE XREF: sub_16407+365↑j
+loc_16776:                              ; CODE XREF: HandleDungeonInput+365↑j
                 jmp     short loc_167B3
 ; ---------------------------------------------------------------------------
 
-loc_16778:                              ; CODE XREF: sub_16407+35E↑j
+loc_16778:                              ; CODE XREF: HandleDungeonInput+35E↑j
                 call    UpdateMonsterWoundTier
                 call    sub_20C46
                 call    DrawMouseCursor
@@ -10663,14 +10663,14 @@ loc_16778:                              ; CODE XREF: sub_16407+35E↑j
                 jz      short loc_167A9
                 call    sub_28412
 
-loc_167A9:                              ; CODE XREF: sub_16407+385↑j
-                                        ; sub_16407+39B↑j
+loc_167A9:                              ; CODE XREF: HandleDungeonInput+385↑j
+                                        ; HandleDungeonInput+39B↑j
                 mov     ax, word_2E49C
                 mov     di, word_32A1E
                 sub     [di+10h], ax
 
-loc_167B3:                              ; CODE XREF: sub_16407+341↑j
-                                        ; sub_16407:loc_16776↑j
+loc_167B3:                              ; CODE XREF: HandleDungeonInput+341↑j
+                                        ; HandleDungeonInput:loc_16776↑j
                 mov     x, 0EFh
                 mov     y, 43h ; 'C'
                 mov     _font_bgTransparent, 0
@@ -10682,20 +10682,20 @@ loc_167B3:                              ; CODE XREF: sub_16407+341↑j
                 call    DrawMouseCursor
                 mov     word_32956, 0
 
-loc_167E7:                              ; CODE XREF: sub_16407+3E5↓j
+loc_167E7:                              ; CODE XREF: HandleDungeonInput+3E5↓j
                 cmp     word_32956, 3
                 jle     short loc_167E7
                 jmp     loc_164B0
 ; ---------------------------------------------------------------------------
 
-loc_167F1:                              ; CODE XREF: sub_16407+D0↑j
-                                        ; sub_16407+265↑j
+loc_167F1:                              ; CODE XREF: HandleDungeonInput+D0↑j
+                                        ; HandleDungeonInput+265↑j
                 call    sub_1DCE0
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
-loc_167F9:                              ; CODE XREF: sub_16407+DA↑j
-                                        ; sub_16407+26D↑j
+loc_167F9:                              ; CODE XREF: HandleDungeonInput+DA↑j
+                                        ; HandleDungeonInput+26D↑j
                 and     word_328C4, 0FF00h
                 or      word_328C4, 5Eh
                 and     word_3295A, 9FFFh
@@ -10705,29 +10705,29 @@ loc_167F9:                              ; CODE XREF: sub_16407+DA↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16817:                              ; CODE XREF: sub_16407+40D↑j
+loc_16817:                              ; CODE XREF: HandleDungeonInput+40D↑j
                 cmp     byte_2E400, 0FEh
                 jnz     short loc_16824
                 call    sub_1F0CD
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16824:                              ; CODE XREF: sub_16407+415↑j
+loc_16824:                              ; CODE XREF: HandleDungeonInput+415↑j
                 or      word_328CA, 1000h
                 call    sub_1FD03
                 call    DrawMonsterInfoPanels
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
-loc_16837:                              ; CODE XREF: sub_16407+E4↑j
-                                        ; sub_16407+156↑j
+loc_16837:                              ; CODE XREF: HandleDungeonInput+E4↑j
+                                        ; HandleDungeonInput+156↑j
                 mov     word_32924, 0
                 call    sub_26C9E
                 call    ClearStatusPanelIfDirty
                 and     word_3295A, 9FFFh
                 call    sub_185A2
 
-loc_16852:                              ; CODE XREF: sub_16407+19F↑j
+loc_16852:                              ; CODE XREF: HandleDungeonInput+19F↑j
                 call    sub_1869D
                 call    sub_1FD03
                 cmp     errorCode, 2
@@ -10735,16 +10735,16 @@ loc_16852:                              ; CODE XREF: sub_16407+19F↑j
                 call    HandleGameCommand
                 call    sub_238CD
 
-loc_1686D:                              ; CODE XREF: sub_16407+45A↑j
+loc_1686D:                              ; CODE XREF: HandleDungeonInput+45A↑j
                 call    DrawMonsterInfoPanels
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
-loc_16875:                              ; CODE XREF: sub_16407+11A↑j
+loc_16875:                              ; CODE XREF: HandleDungeonInput+11A↑j
                 mov     si, word_32A1E
                 mov     word ptr [si+10h], 0
                 jmp     loc_164B0
-sub_16407       endp
+HandleDungeonInput endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14504,7 +14504,7 @@ seg029          segment byte public 'CODE' use16
 
 
 sub_18504       proc far                ; CODE XREF: start+531↑P
-                                        ; sub_16407+192↑P ...
+                                        ; HandleDungeonInput+192↑P ...
                 call    sub_1922C
                 mov     ax, word_2E772
                 mov     bx, word_2E774
@@ -14575,7 +14575,7 @@ sub_18504       endp
 
 
 sub_185A2       proc far                ; CODE XREF: start+81D↑P
-                                        ; sub_16407+446↑P ...
+                                        ; HandleDungeonInput+446↑P ...
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_1922C
                 mov     si, 95EBh
@@ -15317,7 +15317,7 @@ sub_1869D       endp
 
 
 sub_18C79       proc far                ; CODE XREF: start+4B9↑P
-                                        ; sub_16407:loc_16634↑P ...
+                                        ; HandleDungeonInput:loc_16634↑P ...
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
@@ -16287,7 +16287,7 @@ sub_193BE       endp
 
 
 sub_19553       proc far                ; CODE XREF: start:loc_104F1↑P
-                                        ; sub_16407:loc_16536↑P ...
+                                        ; HandleDungeonInput:loc_16536↑P ...
                 cmp     byte_2E400, 0
                 jz      short loc_19583
                 mov     bx, 95EBh
@@ -18088,7 +18088,7 @@ seg034          segment byte public 'CODE' use16
 
 
 sub_1A37E       proc far                ; CODE XREF: start+322↑P
-                                        ; sub_16407+1EC↑P ...
+                                        ; HandleDungeonInput+1EC↑P ...
                 cmp     word_31946, 0
                 jnz     short loc_1A386
                 retf
@@ -19218,7 +19218,7 @@ sub_1AC80       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1ACD7       proc far                ; CODE XREF: sub_16407+337↑P
+sub_1ACD7       proc far                ; CODE XREF: HandleDungeonInput+337↑P
                                         ; sub_16881+DD↑P ...
                 push    di
                 push    si
@@ -24590,7 +24590,7 @@ seg056          segment byte public 'CODE' use16
 
 
 sub_1DCE0       proc far                ; CODE XREF: start:loc_10A81↑P
-                                        ; sub_16407:loc_167F1↑P
+                                        ; HandleDungeonInput:loc_167F1↑P
                 and     word_3295A, 9FFFh
                 test    word_328CA, 1000h
                 jnz     short loc_1DD00
@@ -38450,7 +38450,7 @@ ScaleByPercentRounded endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ResolveAttack   proc far                ; CODE XREF: sub_16407+354↑P
+ResolveAttack   proc far                ; CODE XREF: HandleDungeonInput+354↑P
                                         ; sub_16BF6+3B↑P ...
                 push    dx              ; ResolveAttack(ax=target defense, bx=attacker accuracy, cx=weapon damage power): miss (word_2E49C=0) if cx==0, if bx<ax, or if RandomInRange(55) beats (bx-ax). Otherwise hit: word_2E49C = (cx*(bx-ax)+50)/100, minimum 1.
                 mov     word_2E49C, 0
@@ -38575,7 +38575,7 @@ seg086          segment byte public 'CODE' use16
 
 
 sub_25B34       proc far                ; CODE XREF: start:loc_104D2↑P
-                                        ; sub_16407+F5↑P ...
+                                        ; HandleDungeonInput+F5↑P ...
                 cmp     byte_2E400, 0
                 jz      short loc_25B3E
                 jmp     loc_25BFB
@@ -40641,8 +40641,8 @@ seg088          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26C9E       proc far                ; CODE XREF: sub_16407+40↑P
-                                        ; sub_16407+B4↑P ...
+sub_26C9E       proc far                ; CODE XREF: HandleDungeonInput+40↑P
+                                        ; HandleDungeonInput+B4↑P ...
                 push    word_32924
                 push    word_328D4
                 push    word_328D6
@@ -41050,7 +41050,7 @@ ShowResourceDepletedOverlay endp ; sp-analysis failed
 
 
 sub_270FE       proc far                ; CODE XREF: start+4E2↑P
-                                        ; sub_16407:loc_16527↑P ...
+                                        ; HandleDungeonInput:loc_16527↑P ...
                 push    dx
                 push    si
                 mov     ax, word_2E76E
@@ -41138,7 +41138,7 @@ sub_2714A       endp
 
 
 sub_271DC       proc far                ; CODE XREF: start+3C7↑P
-                                        ; sub_16407+20A↑P ...
+                                        ; HandleDungeonInput+20A↑P ...
                 push    ax
                 push    bx
                 push    cx
@@ -41321,7 +41321,7 @@ sub_271DC       endp
 
 
 sub_2738B       proc far                ; CODE XREF: start:loc_1056B↑P
-                                        ; sub_16407:loc_165A9↑P ...
+                                        ; HandleDungeonInput:loc_165A9↑P ...
                 push    ax
                 push    bx
                 push    cx
@@ -43994,7 +43994,7 @@ seg101          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-UpdateMonsterWoundTier proc far         ; CODE XREF: sub_16407:loc_16778↑P
+UpdateMonsterWoundTier proc far         ; CODE XREF: HandleDungeonInput:loc_16778↑P
                 push    bx              ; UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.
                 push    dx
                 mov     ax, 0Ah
@@ -56754,11 +56754,11 @@ word_2E496      dw 0                    ; DATA XREF: RunMapEditorScreen+32↑w
                                         ; RunMapEditorScreen+27D↑w ...
 word_2E498      dw 0                    ; DATA XREF: sub_20CEC+12↑r
                                         ; sub_20D2F:loc_20D5C↑w ...
-word_2E49A      dw 0                    ; DATA XREF: sub_16407↑w
+word_2E49A      dw 0                    ; DATA XREF: HandleDungeonInput↑w
                                         ; sub_16881+5↑w ...
-word_2E49C      dw 0                    ; DATA XREF: sub_16407+C↑w
-                                        ; sub_16407+359↑r ...
-word_2E49E      dw 0                    ; DATA XREF: sub_16407+6↑w
+word_2E49C      dw 0                    ; DATA XREF: HandleDungeonInput+C↑w
+                                        ; HandleDungeonInput+359↑r ...
+word_2E49E      dw 0                    ; DATA XREF: HandleDungeonInput+6↑w
                                         ; sub_16881+B↑w ...
 word_2E4A0      dw 0                    ; DATA XREF: sub_20D2F+32↑w
                                         ; sub_20D2F+75↑r ...
@@ -74195,8 +74195,8 @@ word_328CE      dw 0                    ; DATA XREF: sub_1FECF+12↑r
                 db    0
 word_328D2      dw 0                    ; DATA XREF: HandleMovementInput+258↑r
                                         ; HandleMovementInput+2F8↑r ...
-word_328D4      dw 0                    ; DATA XREF: sub_16407:loc_16428↑w
-                                        ; sub_16407+3D↑w ...
+word_328D4      dw 0                    ; DATA XREF: HandleDungeonInput:loc_16428↑w
+                                        ; HandleDungeonInput+3D↑w ...
 word_328D6      dw 0                    ; DATA XREF: FindPartySlotForRecord+24↑w
                                         ; sub_1CDBC+9D↑r ...
 word_328D8      dw 0                    ; DATA XREF: sub_1D4B8+E0↑r
@@ -74274,8 +74274,8 @@ word_32920      dw 0                    ; DATA XREF: sub_19264+66↑r
                                         ; sub_1CCBC+C↑w
 word_32922      dw 0                    ; DATA XREF: sub_19264+6C↑r
                                         ; sub_1CCBC+15↑w
-word_32924      dw 0                    ; DATA XREF: sub_16407+28↑w
-                                        ; sub_16407+38↑w ...
+word_32924      dw 0                    ; DATA XREF: HandleDungeonInput+28↑w
+                                        ; HandleDungeonInput+38↑w ...
 word_32926      dw 0                    ; DATA XREF: sub_20C8E+F↑w
                                         ; sub_20C8E+1B↑w ...
 word_32928      dw 0                    ; DATA XREF: InitGlobals+156↑w
@@ -74433,7 +74433,7 @@ _val41          dw 0                    ; DATA XREF: InitGlobals+11A↑w
 _val42          dw 0                    ; DATA XREF: InitGlobals+120↑w
                                         ; sub_26EE8+43↑r
 _val43          dw 0                    ; DATA XREF: InitGlobals+126↑w
-                                        ; sub_16407+367↑r ...
+                                        ; HandleDungeonInput+367↑r ...
 _val9           dw 0                    ; DATA XREF: InitGlobals+30↑w
                                         ; LoadCurgameRecord+58↑r
 _val44          dw 0                    ; DATA XREF: InitGlobals+12C↑w
@@ -74523,7 +74523,7 @@ word_32A18      dw 0                    ; DATA XREF: sub_22CBC+6↑w
 word_32A1A      dw 0                    ; DATA XREF: sub_22CBC+C↑w
 word_32A1C      dw 0                    ; DATA XREF: sub_22CBC+12↑w
 word_32A1E      dw 0                    ; DATA XREF: RunDungeonGameLoop+3F↑w
-                                        ; sub_16407+2CB↑w ...
+                                        ; HandleDungeonInput+2CB↑w ...
 g_monsterSlots  dw 0                    ; DATA XREF: ProcessLevelMonsters:loc_2302A↑r
                                         ; ProcessLevelMonsters:loc_230B7↑r
                                         ; 3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.
@@ -74989,7 +74989,7 @@ word_32BEA      dw 0                    ; DATA XREF: ProcessLevelMonsters+338↑
                 db    0
                 db    0
 word_32BF4      dw 0                    ; DATA XREF: RunDungeonGameLoop:loc_16348↑r
-                                        ; sub_16407+31↑r ...
+                                        ; HandleDungeonInput+31↑r ...
 word_32BF6      dw 0                    ; DATA XREF: sub_22CBC+18↑w
 word_32BF8      dw 0                    ; DATA XREF: sub_22CBC+1E↑w
 word_32BFA      dw 0                    ; DATA XREF: sub_22CBC+24↑w

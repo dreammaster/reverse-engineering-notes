@@ -1480,6 +1480,21 @@ death/HP tracking is still an open question for a future round.
 
 202 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: monster HP found; named HandleDungeonInput
+
+Right after `UpdateMonsterWoundTier` (which only sets a visual wound-
+severity flag), its caller does `[word_32A1E+0x10] -= word_2E49C` — the
+actual HP subtraction. Confirms `g_monsterSlots`' `+0x10` field doubles
+as current HP in active combat, the same field `TickMonsterTimer` uses
+as a lifespan countdown in the level-wide spawn-pool context — another
+instance of this codebase's polymorphic-field pattern. `+0x50` is
+therefore plausibly max HP; what happens at 0 HP (death handling)
+remains untraced. Named the containing function, one of
+`RunDungeonGameLoop`'s 3 per-iteration input handlers,
+`HandleDungeonInput`.
+
+203 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
