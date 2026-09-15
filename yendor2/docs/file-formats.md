@@ -208,15 +208,23 @@ touches `word_32926` at all. **Still an open question** what
 evidence.
 
 A second, separate screen also reads these two tables:
-`ShowTileLegend` (`0x20070`, reached from an ordinary keyboard command
-slot in `start`'s main dispatch — not a debug/dev-only hook) draws two
-scrollable 17-icon horizontal legend strips, one per table
+`RunMapEditorScreen` (`0x20070`, reached from an ordinary keyboard
+command slot in `start`'s main dispatch — not a debug/dev-only hook)
+draws two scrollable 17-icon horizontal legend strips, one per table
 (`DrawWallTypeLegendRow`/`DrawFloorTypeLegendRow`), then previews the
 current map cell's own floor+overlay icon pair at full size
 (`DrawCellIconPair`, the same floor/overlay composite `DrawMinimap`
-uses, just unscaled). Confirmed by direct reads that nothing in this
-cluster writes back to map data — it's a legend/reference screen for
-decoding the automap's icons, not a level editor. A sibling cluster
+uses, just unscaled). **Correction**: first pass concluded this was a
+read-only legend screen ("nothing writes back to map data") and named
+it `ShowTileLegend` — wrong. Its `A` key (`FillVisibleAreaWithSelectedTile`)
+loops over the whole visible 40×24 cell grid and, per cell
+(`PaintCellAndPersist`), writes the selected legend tile into a
+`WORLD.DAT`-backed record and calls `FileEntry_Write` — a real,
+persisted bulk edit. `B`/`F` jump the legend strips to a per-level tile
+palette read from `WORLD.DAT` (`sub_205C0`/`sub_27FE0`, FileEntry
+`bx=0x9043`; record layout not fully traced yet). This is a
+debug/level-editor screen left reachable in the shipped binary, not a
+passive legend. A sibling cluster
 (`sub_20C8E`/`sub_20CEC`/`sub_20D2F`/`sub_20E12`/`sub_29FF6`, called
 from the same `sub_20C1E` master-redraw dispatch the minimap uses)
 draws two small "current cell class" preview boxes using `g_pictureDir`

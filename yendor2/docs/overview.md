@@ -924,17 +924,28 @@ interactive screen (`sub_20070`, reached from an ordinary keyboard
 command slot in `start`'s main dispatch, not a debug hook) that draws
 two scrollable 17-icon horizontal strips — one per table — as a legend,
 then uses `GetMapCellPtr` on a stored screen position to preview the
-current cell's own floor+overlay icon pair at full size. Confirmed via
-direct reads that nothing in this cluster ever writes back to map data
-(only `DrawCellIconPair`'s `es:[bx]`/`es:[bx+2]` reads and the legend
-strips' table reads) — this is a reference/legend screen, not a level
-editor. Named the whole clearly-understood piece:
-`DrawCellIconPair` (floor+overlay icon for one cell, also used
-elsewhere), `DrawWallTypeLegendRow`/`DrawFloorTypeLegendRow` (the two
-strips), `IsPairedValueMatch` (a small fuzzy-equality helper used by
-the strip-highlighting logic: `ax==bx`, or `ax`'s even/odd pair
-partner `==bx`), and `ShowTileLegend` for the screen itself (moderate
-confidence on the exact manual name/key, high confidence on structure).
+current cell's own floor+overlay icon pair at full size. Named the
+clearly-understood pieces: `DrawCellIconPair` (floor+overlay icon for
+one cell, also used elsewhere), `DrawWallTypeLegendRow`/
+`DrawFloorTypeLegendRow` (the two strips), `IsPairedValueMatch` (a
+small fuzzy-equality helper used by the strip-highlighting logic:
+`ax==bx`, or `ax`'s even/odd pair partner `==bx`).
+
+**Correction (same session, before this got pushed further): this
+screen is a map editor, not a passive legend.** Initially concluded
+"nothing in this cluster writes back to map data" and named the screen
+`ShowTileLegend` on that basis — checked the highest-ref-count
+neighboring functions next (via `rank_naming_candidates.py`) and found
+that was wrong. Its `A` key floods the *entire* visible 40×24 cell area
+with the currently-selected legend tile and calls `FileEntry_Write` per
+cell (via a new `PaintCellAndPersist`, called in a loop by a new
+`FillVisibleAreaWithSelectedTile`); `B`/`F` browse a per-level tile
+palette read from `WORLD.DAT`; a `9` key shows "H"/"V" coordinate-axis
+readouts. Renamed `sub_20070` → `RunMapEditorScreen` and corrected its
+comment rather than leaving the wrong "legend, not an editor" claim in
+place. The `WORLD.DAT` palette-lookup side (`sub_205C0`/`sub_27FE0`,
+plus `sub_205FB`/`sub_20626`/`sub_20817` which call it) isn't traced
+precisely enough to name yet — left open.
 
 A sibling cluster on the same two tables (`sub_20C8E`/`sub_20CEC`/
 `sub_20D2F`/`sub_20E12`/`sub_29FF6`, called from the same `sub_20C1E`
@@ -966,6 +977,13 @@ many unrelated subsystems, confirmed by the wide variety of other bit
 patterns tested against it elsewhere.
 
 137 named of 769 functions as of this update.
+
+### 2026-09-15 session update, continued: the "legend" screen is a map editor
+
+139 named of 769 functions as of this update. See the correction in
+the "minimap tile tables ... led to a legend screen" section above —
+`RunMapEditorScreen` (was `ShowTileLegend`), `FillVisibleAreaWithSelectedTile`,
+and `PaintCellAndPersist` are the 3 new names from this correction.
 
 ## Current state (2026-09-14, before any work this session)
 

@@ -4927,9 +4927,9 @@ static Bytes_0(void) {
 	create_insn	(0X20015);
 	create_insn	(x=0X2003F);
 	op_hex		(x,	1);
-	set_cmt	(0X20070,	"Interactive legend/reference screen, reached as a normal main-loop keyboard command (not confirmed which manual key). Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) plus a live preview of the current cell's icon pair (DrawCellIconPair via GetMapCellPtr on word_36CF7/word_36CF9). Own PollKeyboardInput loop; ESC exits via the normal full-redraw path. No writes back to map data found -- reads as a legend/key screen for the automap symbols, not an editor. Moderate confidence on the overall role.",	0);
+	set_cmt	(0X20070,	"CORRECTED from 'ShowTileLegend' (was wrongly documented as a read-only legend screen). Reached from a normal keyboard command slot in start's main dispatch. Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) and a live preview of the current cell. Its 'A' key (byte_2E400==0x41) calls FillVisibleAreaWithSelectedTile, which floods the entire visible 40x24 cell area with the selected legend icon and writes it back via FileEntry_Write -- this IS a map-editing tool (a debug/level-editor screen left reachable in the shipped binary), not a passive legend. 'B'/'F' browse a per-level tile palette loaded from WORLD.DAT (sub_205C0/sub_27FE0, not yet fully traced).",	0);
 	create_insn	(0X20070);
-	set_name	(0X20070,	"ShowTileLegend");
+	set_name	(0X20070,	"RunMapEditorScreen");
 	create_insn	(x=0X200BA);
 	op_hex		(x,	1);
 	create_insn	(x=0X200C0);
@@ -4961,8 +4961,12 @@ static Bytes_0(void) {
 	create_insn	(0X2030A);
 	create_insn	(0X2031F);
 	create_insn	(0X20336);
+	set_cmt	(0X2034B,	"'A' key handler in RunMapEditorScreen: loops over the full 40x24 visible cell grid (320x200 screen at 8x8-pixel granularity), calling PaintCellAndPersist for every cell -- floods the whole visible map area with the currently-selected legend tile type.",	0);
 	create_insn	(0X2034B);
+	set_name	(0X2034B,	"FillVisibleAreaWithSelectedTile");
+	set_cmt	(0X203AC,	"Per-cell paint: PersistExploredCell(x,y), looks up a WORLD.DAT-backed record via sub_205C0, writes the current legend selection (word_2E496) into it, saves via FileEntry_Write (errorCode=9), then redraws the cell (DrawCellIconPair). Called per-cell by FillVisibleAreaWithSelectedTile.",	0);
 	create_insn	(0X203AC);
+	set_name	(0X203AC,	"PaintCellAndPersist");
 	create_insn	(x=0X203D0);
 	op_seg		(x,	1);
 	create_insn	(0X203E4);
@@ -5536,6 +5540,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X22A68,	"this",	0);
 	create_insn	(0X22A68);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X22A8A);
 	create_insn	(x=0X22ACB);
 	op_hex		(x,	1);
@@ -5625,15 +5638,6 @@ static Bytes_0(void) {
 	create_insn	(0X22F49);
 	create_insn	(x=0X22F83);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X22F8B);
 	op_hex		(x,	1);
 	create_insn	(0X22FA5);
@@ -9988,6 +9992,15 @@ static Bytes_1(void) {
 	set_name	(0X3584A,	"aEscToUndo");
 	create_strlit	(0X35857,	0XD);
 	set_name	(0X35857,	"aIHaveNo");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35864,	0XD);
 	set_name	(0X35864,	"aNeedFor");
 	create_strlit	(0X35871,	0XD);
@@ -10028,15 +10041,6 @@ static Bytes_1(void) {
 	set_name	(0X3599B,	"aSpacebarTo_0");
 	create_strlit	(0X359A7,	0XD);
 	set_name	(0X359A7,	"aEnhanceItem");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X359B4,	0X6);
 	set_name	(0X359B4,	"aCost");
 	create_strlit	(0X359BA,	0XA);
