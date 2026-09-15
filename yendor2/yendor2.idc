@@ -1847,7 +1847,9 @@ static Bytes_0(void) {
 	set_cmt	(0X13E98,	"'TRANSPORTATIONS' detail screen (msg 0x8A6A): message box + nav bar, then 3 named mounts -- PEGASUS, GIANT EAGLE, MAGIC DRAGON -- drawn via sub_13EDF (not traced, likely a per-mount stat-line drawer).",	0);
 	create_insn	(0X13E98);
 	set_name	(0X13E98,	"ShowClueBookTransportDetail");
+	set_cmt	(0X13EDF,	"Draws one mount's detail row: name, 'VALUE:' (BCD4 price, [+0xE]), 'USES:' (formatted number, [+0x16]), 'TIME:' (flight window -- 'BETWEEN...AND...' or 'ANYTIME' per [+0x18] bit 1). Called 3x from ShowClueBookTransportDetail.",	0);
 	create_insn	(0X13EDF);
+	set_name	(0X13EDF,	"DrawTransportDetailRow");
 	set_cmt	(0X13EEB,	"msg",	0);
 	set_cmt	(0X13F03,	"msg",	0);
 	set_cmt	(0X13F32,	"msg",	0);
@@ -3835,6 +3837,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B194);
 	op_hex		(x,	1);
 	set_name	(0X1B194,	"RunRepairItemScreen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1B199);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B1A7);
@@ -3845,15 +3856,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B1DA);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1B1E2);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B1FB);
@@ -6155,9 +6157,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2383D,	"- MS MOUSE - DEFINE INTERRUPT SUBROUTINE PARAMETERS\nCX = call mask, ES:DX -> FAR routine",	0);
 	create_insn	(x=0X2383D);
 	op_hex		(x,	0);
-	set_cmt	(0X23848,	"- MS MOUSE - DEFINE MICKEY/PIXEL RATIO\nCX = number of mickeys per 8 pixels horizontally (default 8)\nDX = number of mickeys per 8 pixels vertically (default 16)",	0);
-	create_insn	(x=0X23848);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -6167,6 +6166,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X23848,	"- MS MOUSE - DEFINE MICKEY/PIXEL RATIO\nCX = number of mickeys per 8 pixels horizontally (default 8)\nDX = number of mickeys per 8 pixels vertically (default 16)",	0);
+	create_insn	(x=0X23848);
+	op_hex		(x,	0);
 	create_insn	(0X2384B);
 	create_insn	(x=0X23852);
 	op_hex		(x,	1);
@@ -9286,6 +9288,15 @@ static Bytes_2(void) {
 	create_insn	(0X2CAAB);
 	create_insn	(x=0X2CAC0);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2CACB);
 	create_insn	(0X2CACE);
 	create_insn	(x=0X2CADF);
@@ -9305,15 +9316,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2CB81,	"ticks",	0);
 	create_insn	(0X2CB98);
 	create_insn	(0X2CBA2);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2CBAC);
 	create_insn	(x=0X2CBB6);
 	op_hex		(x,	1);

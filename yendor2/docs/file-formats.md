@@ -293,7 +293,9 @@ other sites" as first counted below); **7 "TRANSPORTATIONS"** →
 ties to `IsItemRangeAvailable`'s "boat/horse-style transport gate" and
 to `ShowTransportUsagePreview`, `ShowItemUsagePreview`'s preview for
 actually using one of these mount items: name, cost, and a
-flight-time-restriction line, e.g. "CAN FLY ANYTIME DAY OR NIGHT");
+flight-time-restriction line, e.g. "CAN FLY ANYTIME DAY OR NIGHT"; the
+clue-book detail row itself, `DrawTransportDetailRow`, shows "VALUE:",
+"USES:", and "TIME:" — "BETWEEN 7P.M. AND 7A.M." or "ANYTIME");
 **8 "WEAPONS"** (`word_2E3F6=0x11`) → `RunClueEntryMenu` +
 `RunClueBookWeaponCategory`. F6 (Complete Walk Through) →
 `ShowPagedEntryScreen` (already-named, generic paginated text). ESC →

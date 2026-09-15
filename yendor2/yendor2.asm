@@ -6430,13 +6430,13 @@ ShowClueBookTransportDetail proc near   ; CODE XREF: RunClueBookTransportCategor
                 call    DrawClueBookNavBar
                 mov     si, 77C6h
                 mov     _textPos_y, 1Ah
-                call    sub_13EDF
+                call    DrawTransportDetailRow
                 mov     si, 77E0h
                 mov     _textPos_y, 4Ah ; 'J'
-                call    sub_13EDF
+                call    DrawTransportDetailRow
                 mov     si, 7814h
                 mov     _textPos_y, 7Ah ; 'z'
-                call    sub_13EDF
+                call    DrawTransportDetailRow
                 retn
 ShowClueBookTransportDetail endp
 
@@ -6444,9 +6444,9 @@ ShowClueBookTransportDetail endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13EDF       proc near               ; CODE XREF: ShowClueBookTransportDetail+2B↑p
+DrawTransportDetailRow proc near        ; CODE XREF: ShowClueBookTransportDetail+2B↑p
                                         ; ShowClueBookTransportDetail+37↑p ...
-                mov     _font_fgColor, 0Dh
+                mov     _font_fgColor, 0Dh ; Draws one mount's detail row: name, 'VALUE:' (BCD4 price, [+0xE]), 'USES:' (formatted number, [+0x16]), 'TIME:' (flight window -- 'BETWEEN...AND...' or 'ANYTIME' per [+0x18] bit 1). Called 3x from ShowClueBookTransportDetail.
                 mov     _textPos_x, 5Bh ; '['
                 mov     bx, si          ; msg
                 call    writeString
@@ -6487,7 +6487,7 @@ sub_13EDF       proc near               ; CODE XREF: ShowClueBookTransportDetail
                 jmp     short loc_13FB9
 ; ---------------------------------------------------------------------------
 
-loc_13F8F:                              ; CODE XREF: sub_13EDF+A9↑j
+loc_13F8F:                              ; CODE XREF: DrawTransportDetailRow+A9↑j
                 mov     _font_fgColor, 0Dh
                 mov     bx, 8C2Dh       ; msg
                 call    writeString
@@ -6498,10 +6498,10 @@ loc_13F8F:                              ; CODE XREF: sub_13EDF+A9↑j
                 add     _textPos_y, 9
                 mov     bx, 8C45h       ; msg
 
-loc_13FB9:                              ; CODE XREF: sub_13EDF+AE↑j
+loc_13FB9:                              ; CODE XREF: DrawTransportDetailRow+AE↑j
                 call    writeString
                 retn
-sub_13EDF       endp
+DrawTransportDetailRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17004,7 +17004,7 @@ sub_19B3E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-FormatAndDrawBCD4 proc far              ; CODE XREF: sub_13EDF+3C↑P
+FormatAndDrawBCD4 proc far              ; CODE XREF: DrawTransportDetailRow+3C↑P
                                         ; DrawLabeledBCDIfNonzero+2D↑P ...
                 push    cx              ; FormatAndDrawBCD4(si=4-byte packed-BCD value): formats it into a comma-grouped ASCII decimal string (leading zero suppressed unless dl forces it) and draws it via writeString. The BCD counterpart to FormatNumber.
                 push    dx
@@ -56620,7 +56620,7 @@ word_2E40E      dw 0                    ; DATA XREF: sub_1B818+16↑r
                                         ; ApplyItemEffectFlags+1F↑r ...
 word_2E410      dw 0                    ; DATA XREF: UseItem+1D↑r
                                         ; UseItem:loc_17BBF↑r ...
-word_2E412      dw 0                    ; DATA XREF: sub_13EDF+30↑w
+word_2E412      dw 0                    ; DATA XREF: DrawTransportDetailRow+30↑w
                                         ; DrawLabeledBCDIfNonzero+21↑w ...
 word_2E414      dw 0                    ; DATA XREF: sub_193BE+1C↑w
                                         ; sub_193BE+52↑w ...

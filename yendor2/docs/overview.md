@@ -2784,6 +2784,14 @@ hit-tests region table `0x63C8` plus an 8-entry exclusion check.
 
 353 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawTransportDetailRow
+
+Named `sub_13EDF`, called 3x from `ShowClueBookTransportDetail`: draws
+one mount's row — name, "VALUE:" (price), "USES:" (a count), "TIME:"
+(flight window, "BETWEEN...AND..." or "ANYTIME").
+
+354 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
