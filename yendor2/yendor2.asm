@@ -12061,7 +12061,7 @@ loc_171DE:                              ; CODE XREF: sub_17032+1A6↑j
                 add     di, 2
                 shr     byte_2E668, 1
                 loop    loc_171CD
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -12073,7 +12073,7 @@ loc_171F0:                              ; CODE XREF: sub_17032+1AA↑j
                 mov     ax, [bx+0Ah]
                 cmp     ax, word_3194A
                 jz      short loc_1722F
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -12088,7 +12088,7 @@ loc_1720D:                              ; CODE XREF: sub_17032+1CA↑j
                 mov     ax, [bx+4]
                 cmp     ax, dx
                 jz      short loc_1722F
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -12508,7 +12508,7 @@ loc_175B2:                              ; CODE XREF: sub_1732B+23A↑j
 loc_175BD:                              ; CODE XREF: sub_1732B+24A↑j
                                         ; sub_1732B+28D↑j
                 call    sub_238CD
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
@@ -12852,7 +12852,7 @@ loc_17906:                              ; CODE XREF: sub_178A6+35↑j
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_17927
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     word_36D07, 0
                 jmp     short loc_178D5
 ; ---------------------------------------------------------------------------
@@ -15072,7 +15072,7 @@ loc_18A08:                              ; CODE XREF: sub_1869D+31F↑j
 loc_18A1A:                              ; CODE XREF: sub_1869D+361↑j
                                         ; sub_1869D+371↑j
                 call    sub_238CD
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -15282,7 +15282,7 @@ loc_18C09:                              ; CODE XREF: sub_1869D+539↑j
                 jnz     short loc_18C06
                 cmp     word_31946, 0
                 jz      short loc_18C1F
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -15327,7 +15327,7 @@ sub_18C79       proc far                ; CODE XREF: start+4B9↑P
 
 loc_18C8D:                              ; CODE XREF: sub_18C79+65↓j
                                         ; sub_18C79+79↓j ...
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     errorCode, 1
                 retf
 ; ---------------------------------------------------------------------------
@@ -16186,7 +16186,7 @@ loc_1948C:                              ; CODE XREF: sub_193BE+9C↑j
                 jz      short loc_19473
                 cmp     word_2E38E, 0
                 jg      short loc_194AE
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     short loc_19442
 ; ---------------------------------------------------------------------------
 
@@ -16272,7 +16272,7 @@ loc_1953D:                              ; CODE XREF: sub_193BE+15B↑j
                 jnz     short loc_1954B
 
 loc_19543:                              ; CODE XREF: sub_193BE+161↑j
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_19442
 ; ---------------------------------------------------------------------------
 
@@ -16517,7 +16517,7 @@ loc_19734:                              ; CODE XREF: sub_19553+102↑j
                 mov     si, word_328D4
                 test    word ptr [si+1Ch], 1C40h
                 jz      short loc_19747
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_195FA
 ; ---------------------------------------------------------------------------
 
@@ -18099,7 +18099,7 @@ loc_1A386:                              ; CODE XREF: sub_1A37E+5↑j
                 call    sub_16EFA
                 call    sub_25740
                 jz      short loc_1A39E
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     short loc_1A3E9
 ; ---------------------------------------------------------------------------
 
@@ -18385,9 +18385,9 @@ seg036          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A5CC       proc far                ; CODE XREF: sub_17032+1B8↑P
+FlashStatusWarning proc far             ; CODE XREF: sub_17032+1B8↑P
                                         ; sub_17032+1D5↑P ...
-                push    word_31946
+                push    word_31946      ; Moderate confidence: plays a sound, briefly shows picture id 0xE for 7 ticks (saving/restoring the previous picture id), then restores. Called from HandleGameCommand when a status effect is already active -- a periodic warning flash.
                 mov     ax, 3
                 call    sub_28412
                 mov     word_2E530, 0Eh
@@ -18397,7 +18397,7 @@ sub_1A5CC       proc far                ; CODE XREF: sub_17032+1B8↑P
                 pop     word_2E530
                 call    sub_23874
                 retf
-sub_1A5CC       endp
+FlashStatusWarning endp
 
 seg036          ends
 
@@ -19859,7 +19859,7 @@ loc_1B2DF:                              ; CODE XREF: sub_1B2BD+6↑j
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_1B306
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     word_36D03, 0
                 jmp     short near ptr sub_1B2BD
 ; ---------------------------------------------------------------------------
@@ -22297,7 +22297,7 @@ loc_1C9AF:                              ; CODE XREF: sub_1C890+102↑j
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_1C9D0
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     word_36D09, 0
                 jmp     short loc_1C98C
 ; ---------------------------------------------------------------------------
@@ -24596,7 +24596,7 @@ sub_1DCE0       proc far                ; CODE XREF: start:loc_10A81↑P
                 call    sub_1E473
                 cmp     word_32924, 0
                 jnz     short loc_1DD16
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_1DF49
 ; ---------------------------------------------------------------------------
 
@@ -24614,7 +24614,7 @@ loc_1DD16:                              ; CODE XREF: sub_1DCE0+16↑j
                 call    sub_1E1A7
                 cmp     word_33310, 0
                 jnz     short loc_1DD28
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_1DF49
 ; ---------------------------------------------------------------------------
 
@@ -24918,7 +24918,7 @@ loc_1DF87:                              ; CODE XREF: sub_1DCE0+292↑j
 ; ---------------------------------------------------------------------------
 
 loc_1DFA5:                              ; CODE XREF: sub_1DCE0+2B8↑j
-                call    sub_1A5CC
+                call    FlashStatusWarning
 
 loc_1DFAA:                              ; CODE XREF: sub_1DCE0+272↑j
                 jmp     loc_1DD4B
@@ -35376,7 +35376,7 @@ loc_23E1F:                              ; CODE XREF: sub_23C18+1CB↑j
                                         ; sub_23C18+1F2↑j
                 mov     word_31948, 0
                 mov     word_3194C, 0
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_23D17
 ; ---------------------------------------------------------------------------
 
@@ -36360,7 +36360,7 @@ loc_24821:                              ; CODE XREF: ShowCharacterInventory+238�
 loc_24850:                              ; CODE XREF: ShowCharacterInventory+218↑j
                 cmp     word_3293E, 4
                 jnz     short loc_2485F
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_245B4
 ; ---------------------------------------------------------------------------
 
@@ -36470,7 +36470,7 @@ loc_24920:                              ; CODE XREF: ShowCharacterInventory+222�
 
 loc_24983:                              ; CODE XREF: ShowCharacterInventory+3A6↑j
                                         ; ShowCharacterInventory+3AC↑j ...
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_246D6
 ShowCharacterInventory endp
 
@@ -39350,7 +39350,7 @@ loc_2626E:                              ; CODE XREF: sub_2621C+4D↑j
                 test    word ptr [si+15Ch], 1000h
                 jz      short loc_2628F
                 mov     errorCode, 1
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
@@ -39369,7 +39369,7 @@ loc_26295:                              ; CODE XREF: sub_2621C+48↑j
                 jz      short loc_262B2
 
 loc_262AA:                              ; CODE XREF: sub_2621C+DE↓j
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
@@ -39437,7 +39437,7 @@ loc_2632B:                              ; CODE XREF: sub_2621C+C5↑j
                 add     ax, word_3194A
                 cmp     ax, [si+56h]
                 jle     short loc_26340
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
@@ -39482,7 +39482,7 @@ loc_26392:                              ; CODE XREF: sub_2621C+17E↓j
 loc_2639C:                              ; CODE XREF: sub_2621C+F7↑j
                                         ; sub_2621C+FF↑j ...
                 mov     errorCode, 1
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     short loc_26409
 ; ---------------------------------------------------------------------------
 
@@ -39514,7 +39514,7 @@ loc_263E8:                              ; CODE XREF: sub_2621C+B6↑j
                 add     ax, word_3194A
                 cmp     ax, [si+56h]
                 jle     short loc_263FC
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     short loc_26409
 ; ---------------------------------------------------------------------------
 
@@ -39666,7 +39666,7 @@ loc_264F9:                              ; CODE XREF: sub_26415+81↑j
 loc_26533:                              ; CODE XREF: sub_26415+78↑j
                 cmp     word ptr [si+17Ch], 0
                 jz      short loc_26548
-                call    sub_1A5CC
+                call    FlashStatusWarning
 
 loc_2653F:                              ; CODE XREF: sub_26415+A6↑j
                 mov     errorCode, 1
@@ -39735,7 +39735,7 @@ loc_265BD:                              ; CODE XREF: sub_26415+5B↑j
 loc_265E9:                              ; CODE XREF: sub_26415+1C6↑j
                 test    word ptr [bx+0Ch], 1000h
                 jz      short loc_265FE
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     errorCode, 1
                 jmp     loc_266A1
 ; ---------------------------------------------------------------------------
@@ -40617,7 +40617,7 @@ loc_26C8B:                              ; CODE XREF: sub_26C22+46↑j
                                         ; sub_26C22+50↑j ...
                 test    word_3293E, ax
                 jnz     short locret_26C9C
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     errorCode, 1
 
 locret_26C9C:                           ; CODE XREF: sub_26C22+B↑j
@@ -41218,7 +41218,7 @@ loc_2726E:                              ; CODE XREF: sub_271DC+71↑j
 
 loc_27284:                              ; CODE XREF: sub_271DC+78↑j
                                         ; sub_271DC+7F↑j ...
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     errorCode, 1
 
 loc_2728F:                              ; CODE XREF: sub_271DC+24↑j
@@ -44979,7 +44979,7 @@ loc_28F4B:                              ; CODE XREF: sub_28CFF+241↑j
 
 loc_28F8C:                              ; CODE XREF: sub_28CFF+262↑j
                                         ; sub_28CFF+269↑j
-                call    sub_1A5CC
+                call    FlashStatusWarning
 
 loc_28F91:                              ; CODE XREF: sub_28CFF+25B↑j
                 mov     bx, 9043h
@@ -45766,7 +45766,7 @@ loc_29611:                              ; CODE XREF: HandleGameCommand+42↑j
                 test    word_36C79, 2
                 jz      short loc_29624
                 call    sub_238CD
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -45834,7 +45834,7 @@ loc_29680:                              ; CODE XREF: HandleGameCommand+D0↑j
 loc_2969A:                              ; CODE XREF: HandleGameCommand+E5↑j
                                         ; HandleGameCommand+17C↓j
                 call    sub_238CD
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -45922,7 +45922,7 @@ sub_29738       proc far                ; CODE XREF: seg000:0A5D↑P
                                         ; HandleGameCommand:loc_295DF↑P
                 test    word_328CA, 1000h
                 jz      short loc_29747
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     short loc_2975D
 ; ---------------------------------------------------------------------------
 
@@ -48422,7 +48422,7 @@ loc_2A923:                              ; CODE XREF: sub_2A914+B↑j
                 mov     di, word_2E54A
                 test    word ptr [si+1Ch], 1C40h
                 jz      short loc_2A93C
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     short near ptr sub_2A914
 ; ---------------------------------------------------------------------------
 
@@ -48648,7 +48648,7 @@ loc_2AAD6:                              ; CODE XREF: CastSpell+4B↑j
 
 loc_2AADF:                              ; CODE XREF: CastSpell+C3↓j
                                         ; CastSpell+E0↓j ...
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     short loc_2AA8B
 ; ---------------------------------------------------------------------------
 
@@ -48857,7 +48857,7 @@ loc_2ACD0:                              ; CODE XREF: CastSpell+10↑j
                 cmp     ax, _val46
                 jnz     short loc_2ACEE
                 call    sub_238CD
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
@@ -49766,7 +49766,7 @@ loc_2B685:                              ; CODE XREF: RunConversation+13↑j
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_2B6A6
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     word_36D09, 0
                 jmp     short loc_2B663
 ; ---------------------------------------------------------------------------
@@ -50968,7 +50968,7 @@ loc_2C03D:                              ; CODE XREF: sub_2C010+13↑j
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_2C064
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 mov     word_36D05, 0
                 jmp     short loc_2C01D
 ; ---------------------------------------------------------------------------
@@ -53480,7 +53480,7 @@ loc_2D6FC:                              ; CODE XREF: InteractWithContainer+30↑
                 mov     si, ax
                 test    word ptr [si+15Eh], 8000h
                 jz      short loc_2D73C
-                call    sub_1A5CC
+                call    FlashStatusWarning
                 jmp     short loc_2D6FC
 ; ---------------------------------------------------------------------------
 

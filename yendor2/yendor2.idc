@@ -3498,7 +3498,9 @@ static Bytes_0(void) {
 	create_insn	(0X1A5AC);
 	create_insn	(x=0X1A5C8);
 	op_hex		(x,	1);
+	set_cmt	(0X1A5CC,	"Moderate confidence: plays a sound, briefly shows picture id 0xE for 7 ticks (saving/restoring the previous picture id), then restores. Called from HandleGameCommand when a status effect is already active -- a periodic warning flash.",	0);
 	create_insn	(0X1A5CC);
+	set_name	(0X1A5CC,	"FlashStatusWarning");
 	set_cmt	(0X1A5E3,	"ticks",	0);
 	create_insn	(x=0X1A5F6);
 	op_hex		(x,	1);
@@ -5868,6 +5870,15 @@ static Bytes_0(void) {
 	set_cmt	(0X23BAE,	"Iterates the party-member list (word_328D4, via [si+0x10]), running a pipeline of per-member display steps (sub_243D3, sub_24A5B, sub_24BF2, sub_245AE, sub_2498B, sub_25103) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
 	create_insn	(0X23BAE);
 	set_name	(0X23BAE,	"ShowPartyMembers");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X23BBD);
 	create_insn	(0X23BC8);
 	create_insn	(x=0X23BF5);
@@ -5881,15 +5892,6 @@ static Bytes_0(void) {
 	create_insn	(0X23DA3);
 	create_insn	(0X23DB3);
 	create_insn	(0X23DC3);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X23E1F);
 	create_insn	(0X23E33);
 	set_cmt	(0X23E59,	"msg",	0);
@@ -10238,12 +10240,6 @@ static Bytes_1(void) {
 	set_name	(0X36171,	"aHealth_0");
 	create_strlit	(0X36179,	0XA);
 	set_name	(0X36179,	"aAccuracy");
-	create_strlit	(0X36183,	0XB);
-	set_name	(0X36183,	"aDexterity_0");
-	create_strlit	(0X3618E,	0XC);
-	set_name	(0X3618E,	"aAbsorption_0");
-	create_strlit	(0X3619A,	0X8);
-	set_name	(0X3619A,	"aDamage_0");
 }
 
 //------------------------------------------------------------------------
@@ -10253,6 +10249,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X36183,	0XB);
+	set_name	(0X36183,	"aDexterity_0");
+	create_strlit	(0X3618E,	0XC);
+	set_name	(0X3618E,	"aAbsorption_0");
+	create_strlit	(0X3619A,	0X8);
+	set_name	(0X3619A,	"aDamage_0");
 	create_strlit	(0X361A2,	0XD);
 	set_name	(0X361A2,	"aRangedAcc");
 	create_strlit	(0X361AF,	0XD);

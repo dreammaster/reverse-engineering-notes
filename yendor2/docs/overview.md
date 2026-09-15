@@ -815,8 +815,16 @@ full effect table into `CastSpell`'s comment and
 [file-formats.md](file-formats.md#curgame--savgame1-and-presumably-savgamen)'s
 field map, which now has both HP and MP confirmed.
 
-No new named function this round — a documentation/comment
+No new named function that round — a documentation/comment
 consolidation of what's already been found.
+
+Named one more: `FlashStatusWarning` (was `sub_1A5CC`, moderate
+confidence) — `HandleGameCommand`'s handler for when a status effect is
+already active (the flag `ApplyStatusEffect` sets). Plays a sound and
+briefly flashes a picture before restoring, reading as a periodic
+"you're still affected" warning.
+
+121 named of 769 functions as of this update.
 
 ## Current state (2026-09-14, before any work this session)
 
