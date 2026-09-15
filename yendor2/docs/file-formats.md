@@ -520,6 +520,13 @@ side-feature sprite (table at `0xE175`, same facing-tier pattern as
 conditional overlay for what's plausibly an open-door/lit-torch
 variant.
 
+`RenderDungeonViewport`'s 7th and final call is
+`RenderDungeonVanishingPoint`, structurally different from the other
+six: draws the far-wall/vanishing-point cells at the end of the
+visible corridor (a different `0xE551` table field, z-layer 6), then
+runs the same per-cell side-feature and encounter checks as
+`RenderDungeonViewRow` for the final cell.
+
 `RenderDungeonViewport` itself is called by two `start`-reachable
 screen-redraw functions: `RedrawDungeonScreen` (a fuller variant with
 extra setup calls) and `RefreshDungeonScreen` (a lighter variant that

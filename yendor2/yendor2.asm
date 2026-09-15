@@ -29952,7 +29952,7 @@ RenderDungeonViewport proc near         ; CODE XREF: RedrawDungeonScreen+11↑p
                 mov     cx, 3
                 mov     ax, word_328F2
                 mov     word_32926, ax
-                call    sub_21217
+                call    RenderDungeonVanishingPoint
                 retn
 RenderDungeonViewport endp
 
@@ -30127,7 +30127,7 @@ TryDrawDungeonCellSideFeature endp
 
 
 DrawDungeonCellSideFeature proc near    ; CODE XREF: TryDrawDungeonCellSideFeature+5↑j
-                                        ; sub_21217+8F↓p
+                                        ; RenderDungeonVanishingPoint+8F↓p
                 mov     ax, 0Ah         ; Draws a door/side-feature sprite for the current cell: table at 0xE175 (10-byte stride, 4 facing directions) indexed by the cell's [+2] id, picture drawn at z-layer 7 or 8 depending on near/far distance banding, plus a conditional overlay (picture 6) for an open-door/lit-torch-like variant. Also called from sub_21217.
                 mul     si
                 mov     si, ax
@@ -30186,8 +30186,8 @@ DrawDungeonCellSideFeature endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21217       proc near               ; CODE XREF: RenderDungeonViewport+5A↑p
-                test    word ptr [di+6], 1
+RenderDungeonVanishingPoint proc near   ; CODE XREF: RenderDungeonViewport+5A↑p
+                test    word ptr [di+6], 1 ; Draws the far-wall/vanishing-point cells at the end of the visible corridor (0xE551 table's [+6] field, z-layer 6, two adjacent positions), then DrawDungeonCellSideFeature + TryTriggerMonsterEncounterAtCell for the final cell, plus a conditional sub_212EB (word_328CA bit 0x1000, not traced). Called once by RenderDungeonViewport as its 7th/final row.
                 jnz     short loc_21252
                 mov     si, [di]
                 mov     ax, 0Ch
@@ -30205,8 +30205,8 @@ sub_21217       proc near               ; CODE XREF: RenderDungeonViewport+5A↑
                 mov     _font_bgTransparent, 1
                 call    sub_29B0F
 
-loc_21252:                              ; CODE XREF: sub_21217+5↑j
-                                        ; sub_21217+19↑j
+loc_21252:                              ; CODE XREF: RenderDungeonVanishingPoint+5↑j
+                                        ; RenderDungeonVanishingPoint+19↑j
                 add     di, 10h
                 add     word_3292C, 2
                 test    word ptr [di+6], 1
@@ -30228,8 +30228,8 @@ loc_21252:                              ; CODE XREF: sub_21217+5↑j
                 mov     _font_bgTransparent, 1
                 call    sub_29B0F
 
-loc_21298:                              ; CODE XREF: sub_21217+48↑j
-                                        ; sub_21217+5C↑j
+loc_21298:                              ; CODE XREF: RenderDungeonVanishingPoint+48↑j
+                                        ; RenderDungeonVanishingPoint+5C↑j
                 sub     di, 8
                 dec     word_3292C
                 mov     si, [di+2]
@@ -30237,15 +30237,15 @@ loc_21298:                              ; CODE XREF: sub_21217+48↑j
                 jz      short loc_212A9
                 call    DrawDungeonCellSideFeature
 
-loc_212A9:                              ; CODE XREF: sub_21217+8D↑j
+loc_212A9:                              ; CODE XREF: RenderDungeonVanishingPoint+8D↑j
                 call    TryTriggerMonsterEncounterAtCell
                 test    word_328CA, 1000h
                 jz      short locret_212B7
                 call    sub_212EB
 
-locret_212B7:                           ; CODE XREF: sub_21217+9B↑j
+locret_212B7:                           ; CODE XREF: RenderDungeonVanishingPoint+9B↑j
                 retn
-sub_21217       endp
+RenderDungeonVanishingPoint endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -30287,7 +30287,7 @@ TryTriggerMonsterEncounterAtCell endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_212EB       proc near               ; CODE XREF: sub_21217+9D↑p
+sub_212EB       proc near               ; CODE XREF: RenderDungeonVanishingPoint+9D↑p
                 or      word_3295A, 8000h
                 mov     si, 51C0h
                 mov     cx, 3
@@ -74289,8 +74289,8 @@ word_3292E      dw 0                    ; DATA XREF: ShutdownAudioDrivers+25↑r
                                         ; sub_28412+37↑r ...
 errorCode       dw 0                    ; DATA XREF: start+94↑r
                                         ; start+9B↑r ...
-word_32932      dw 0                    ; DATA XREF: sub_21217+27↑w
-                                        ; sub_21217+6D↑w ...
+word_32932      dw 0                    ; DATA XREF: RenderDungeonVanishingPoint+27↑w
+                                        ; RenderDungeonVanishingPoint+6D↑w ...
 word_32934      dw 0                    ; DATA XREF: ComputeGameClockTime↑w
                                         ; ComputeGameClockTime+11↑w ...
 _videoSegment   dw 0                    ; DATA XREF: sub_1075E+4C↑w

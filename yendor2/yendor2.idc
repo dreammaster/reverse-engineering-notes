@@ -5380,8 +5380,10 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X211F5);
 	op_hex		(x,	1);
+	set_cmt	(0X21217,	"Draws the far-wall/vanishing-point cells at the end of the visible corridor (0xE551 table's [+6] field, z-layer 6, two adjacent positions), then DrawDungeonCellSideFeature + TryTriggerMonsterEncounterAtCell for the final cell, plus a conditional sub_212EB (word_328CA bit 0x1000, not traced). Called once by RenderDungeonViewport as its 7th/final row.",	0);
 	create_insn	(x=0X21217);
 	op_hex		(x,	1);
+	set_name	(0X21217,	"RenderDungeonVanishingPoint");
 	create_insn	(x=0X2125A);
 	op_hex		(x,	1);
 	create_insn	(x=0X212AC);
@@ -6774,6 +6776,15 @@ static Bytes_1(void) {
 	create_insn	(0X26B4F);
 	create_insn	(x=0X26B82);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X26BBC);
 	op_hex		(x,	1);
 	create_insn	(x=0X26BCB);
@@ -6823,15 +6834,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2704C,	"Unified 'resource depleted' overlay, called both when a material BCD counter can't cover a cost (SpendMaterialCounterClamped) and when the dungeon view itself is blanked (DrawMinimap, word_36C7F bit 0x1000). Sets that bit, blits a fixed overlay image (EMS page frame -> video buffer) over the minimap's screen area, checks all 3 material BCD counters (0x94B3/0x94B7/0x94BB, confirmed consecutive, stride 4) and builds a small per-material 'nonzero' indicator array, then draws a banner icon and the material status icons via DrawResourceStatusIcons.",	0);
 	create_insn	(0X2704C);
 	set_name	(0X2704C,	"ShowResourceDepletedOverlay");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X27050);
 	op_hex		(x,	1);
 	create_insn	(x=0X27056);
@@ -10166,6 +10168,15 @@ static Bytes_2(void) {
 	set_name	(0X353D0,	"aJinxing");
 	create_strlit	(0X353D8,	0XA);
 	set_name	(0X353D8,	"aTraining");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X353E2,	0XA);
 	set_name	(0X353E2,	"aReadyFor");
 	create_strlit	(0X353EC,	0X6);
@@ -10218,15 +10229,6 @@ static Bytes_2(void) {
 	set_name	(0X354CD,	"aNuore");
 	create_strlit	(0X354D5,	0XC);
 	set_name	(0X354D5,	"aAbsorption");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X354E1,	0X8);
 	set_name	(0X354E1,	"aDamage");
 	create_strlit	(0X354E9,	0XD);

@@ -2454,6 +2454,15 @@ overlay.
 
 309 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RenderDungeonVanishingPoint
+
+Named `sub_21217`, `RenderDungeonViewport`'s 7th/final call: draws the
+far-wall/vanishing-point cells at the end of the visible corridor,
+then runs the same per-cell side-feature and encounter checks as
+`RenderDungeonViewRow` for the final cell.
+
+310 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
