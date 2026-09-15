@@ -2302,7 +2302,7 @@ loc_1152A:                              ; CODE XREF: HandleMovementInput+266↑j
                 mov     ax, word_36D07
                 cmp     ax, 0
                 jnz     short loc_11535
-                mov     ax, word_36E4B
+                mov     ax, g_partySlotAssignment
 
 loc_11535:                              ; CODE XREF: HandleMovementInput+282↑j
                 call    sub_25B14
@@ -2409,7 +2409,7 @@ loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
 
 loc_11652:                              ; CODE XREF: HandleMovementInput+384↑j
                                         ; HandleMovementInput+38C↑j
-                call    sub_19E56
+                call    ApplyMapTriggerEffect
                 cmp     byte_2E400, 0
                 jnz     short loc_116C8
                 call    sub_222F8
@@ -6863,7 +6863,7 @@ loc_14442:                              ; CODE XREF: sub_141D9+258↑j
 loc_1444A:                              ; CODE XREF: sub_141D9+267↑j
                 push    bx
                 mov     ax, es:[si+6Eh]
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     di, bx
                 pop     bx
                 test    word ptr [di+8], 8000h
@@ -10820,7 +10820,7 @@ loc_1693D:                              ; CODE XREF: sub_16881+AA↑j
                                         ; sub_16881+B5↑j
                 mov     ax, [si+52h]
                 mov     word_32DC0, ax
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 cmp     byte_2E400, 0
                 jz      short loc_16950
                 retn
@@ -10912,7 +10912,7 @@ loc_16A06:                              ; CODE XREF: sub_16881+180↑j
                 and     word_328C8, 0FFFBh
                 mov     ax, [si+52h]
                 mov     word_32DC0, ax
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 cmp     byte_2E400, 0
                 jz      short loc_16A1E
                 retn
@@ -11381,7 +11381,7 @@ loc_16DDA:                              ; CODE XREF: sub_16DAA+23↑j
 
 loc_16DDD:                              ; CODE XREF: sub_16DAA+E↑j
                                         ; sub_16DAA+16↑j ...
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
                 mov     word_32940, bx
                 retn
@@ -13702,9 +13702,9 @@ seg026          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18068       proc far                ; CODE XREF: sub_141D9+276↑P
+PrepareTrapEffectSlots proc far         ; CODE XREF: sub_141D9+276↑P
                                         ; sub_16DAA:loc_16DDD↑P ...
-                push    ax
+                push    ax              ; PrepareTrapEffectSlots(ax=effect id): returns bx = g_trapEffectDefs + id*0xC (the effect-definition record). Also clears the [+8..+0x14) fields of all 4 g_partyEffectIconSlots entries first -- reset before repopulate. ax is left 0 on return.
                 push    es
                 push    di
                 push    dx
@@ -13718,7 +13718,7 @@ sub_18068       proc far                ; CODE XREF: sub_141D9+276↑P
                 mov     cx, 4
                 xor     ax, ax
 
-loc_18083:                              ; CODE XREF: sub_18068+25↓j
+loc_18083:                              ; CODE XREF: PrepareTrapEffectSlots+25↓j
                 push    cx
                 mov     cx, 6
                 rep stosw
@@ -13731,14 +13731,14 @@ loc_18083:                              ; CODE XREF: sub_18068+25↓j
                 pop     es
                 pop     ax
                 retf
-sub_18068       endp
+PrepareTrapEffectSlots endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 sub_18095       proc far                ; CODE XREF: DeductHPClamped+15↓p
-                                        ; sub_18257+6C↓p
+                                        ; ApplyEffectCost+6C↓p
                 push    bx
                 push    cx
                 push    dx
@@ -13768,9 +13768,9 @@ sub_18095       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_180BA       proc far                ; CODE XREF: sub_16881+C2↑P
+ApplyEffectAndDrawIconBar proc far      ; CODE XREF: sub_16881+C2↑P
                                         ; sub_16881+190↑P ...
-                push    si
+                push    si              ; Iterates the 4 g_partyEffectIconSlots entries; for each occupied slot, draws its effect icon (via the effect-def's +2 g_pictureDir offset, one of 3 draw variants selected by the effect-def's +0xA flags) and applies the effect's cost via ApplyEffectCost.
                 push    di
                 push    dx
                 push    cx
@@ -13778,11 +13778,11 @@ sub_180BA       proc far                ; CODE XREF: sub_16881+C2↑P
                 mov     cx, 4
                 mov     si, 0C50h
 
-loc_180C9:                              ; CODE XREF: sub_180BA+18↓j
+loc_180C9:                              ; CODE XREF: ApplyEffectAndDrawIconBar+18↓j
                 cmp     word ptr [si+0Ah], 0
                 jnz     short loc_18104
 
-loc_180CF:                              ; CODE XREF: sub_180BA+DE↓j
+loc_180CF:                              ; CODE XREF: ApplyEffectAndDrawIconBar+DE↓j
                 add     si, 14h
                 loop    loc_180C9
                 call    DrawMouseCursor
@@ -13791,11 +13791,11 @@ loc_180CF:                              ; CODE XREF: sub_180BA+DE↓j
                 call    sub_2827E
                 jz      short loc_180F0
 
-loc_180E8:                              ; CODE XREF: sub_180BA+25↑j
+loc_180E8:                              ; CODE XREF: ApplyEffectAndDrawIconBar+25↑j
                 mov     ax, 0Ch         ; ticks
                 call    wait
 
-loc_180F0:                              ; CODE XREF: sub_180BA+2C↑j
+loc_180F0:                              ; CODE XREF: ApplyEffectAndDrawIconBar+2C↑j
                 call    sub_222F8
                 call    DrawMouseCursor
                 call    sub_25AAC
@@ -13806,7 +13806,7 @@ loc_180F0:                              ; CODE XREF: sub_180BA+2C↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_18104:                              ; CODE XREF: sub_180BA+13↑j
+loc_18104:                              ; CODE XREF: ApplyEffectAndDrawIconBar+13↑j
                 push    cx
                 push    si
                 mov     ax, [si+0Ah]
@@ -13820,18 +13820,18 @@ loc_18104:                              ; CODE XREF: sub_180BA+13↑j
                 jz      short loc_18125
                 call    sub_28412
 
-loc_18125:                              ; CODE XREF: sub_180BA+5E↑j
-                                        ; sub_180BA+64↑j
+loc_18125:                              ; CODE XREF: ApplyEffectAndDrawIconBar+5E↑j
+                                        ; ApplyEffectAndDrawIconBar+64↑j
                 or      word_328C8, 4
 
-loc_1812A:                              ; CODE XREF: sub_180BA+57↑j
+loc_1812A:                              ; CODE XREF: ApplyEffectAndDrawIconBar+57↑j
                 test    word ptr [di+0Ah], 600h
                 jnz     short loc_1815A
                 test    word ptr [di+0Ah], 180h
                 jnz     short loc_18171
                 call    sub_183D5
                 call    sub_18333
-                call    sub_18257
+                call    ApplyEffectCost
                 mov     ax, [si]
                 mov     x, ax
                 mov     ax, [si+2]
@@ -13842,7 +13842,7 @@ loc_1812A:                              ; CODE XREF: sub_180BA+57↑j
                 jmp     short loc_1818B
 ; ---------------------------------------------------------------------------
 
-loc_1815A:                              ; CODE XREF: sub_180BA+75↑j
+loc_1815A:                              ; CODE XREF: ApplyEffectAndDrawIconBar+75↑j
                 call    sub_1819B
                 mov     ax, [si+4]
                 mov     x, ax
@@ -13852,7 +13852,7 @@ loc_1815A:                              ; CODE XREF: sub_180BA+75↑j
                 jmp     short loc_1818B
 ; ---------------------------------------------------------------------------
 
-loc_18171:                              ; CODE XREF: sub_180BA+7C↑j
+loc_18171:                              ; CODE XREF: ApplyEffectAndDrawIconBar+7C↑j
                 call    sub_182CE
                 mov     ax, [si]
                 mov     x, ax
@@ -13862,20 +13862,20 @@ loc_18171:                              ; CODE XREF: sub_180BA+7C↑j
                 mov     word_2E530, ax
                 mov     word_2E532, 70h ; 'p'
 
-loc_1818B:                              ; CODE XREF: sub_180BA+9E↑j
-                                        ; sub_180BA+B5↑j
+loc_1818B:                              ; CODE XREF: ApplyEffectAndDrawIconBar+9E↑j
+                                        ; ApplyEffectAndDrawIconBar+B5↑j
                 mov     _font_bgTransparent, 1
                 call    DrawPicture
                 pop     si
                 pop     cx
                 jmp     loc_180CF
-sub_180BA       endp
+ApplyEffectAndDrawIconBar endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1819B       proc near               ; CODE XREF: sub_180BA:loc_1815A↑p
+sub_1819B       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar:loc_1815A↑p
                 push    word_328D4
                 mov     ax, [si+0Ch]
                 mov     word_328D4, ax
@@ -13918,7 +13918,7 @@ sub_1819B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SpendMaterialCounterClamped proc near   ; CODE XREF: sub_18257:loc_182A9↓p
+SpendMaterialCounterClamped proc near   ; CODE XREF: ApplyEffectCost:loc_182A9↓p
                 push    si              ; SpendMaterialCounterClamped(ax=BCD counter addr, bx=ptr to 4-byte BCD amount): if counter > amount, SubBCD4 normally; otherwise the counter can't cover it -- zeroed outright (never negative), then sub_2704C is called (presumably a 'resource depleted' hook).
                 push    di
                 mov     si, ax
@@ -13944,8 +13944,8 @@ SpendMaterialCounterClamped endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DeductHPClamped proc near               ; CODE XREF: sub_18257+F↓p
-                                        ; sub_18257+27↓p
+DeductHPClamped proc near               ; CODE XREF: ApplyEffectCost+F↓p
+                                        ; ApplyEffectCost+27↓p
                 sub     [bx+52h], ax    ; DeductHPClamped(ax=amount, bx=party-member record): [bx+0x52] -= ax (HP-current), clamped at 0. At 0, sets status bit 0x40 in [bx+0x1C] and calls sub_18095+sub_1AB26 (not traced, plausibly death/incapacitation handling).
                 cmp     word ptr [bx+52h], 0
                 jg      short locret_18247
@@ -13964,8 +13964,8 @@ DeductHPClamped endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DeductMPClamped proc near               ; CODE XREF: sub_18257+1B↓p
-                                        ; sub_18257+2A↓p
+DeductMPClamped proc near               ; CODE XREF: ApplyEffectCost+1B↓p
+                                        ; ApplyEffectCost+2A↓p
                 sub     [bx+54h], ax    ; DeductMPClamped(ax=amount, bx=party-member record): [bx+0x54] -= ax (MP-current), clamped at 0.
                 cmp     word ptr [bx+54h], 0
                 jge     short locret_18256
@@ -13979,8 +13979,8 @@ DeductMPClamped endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18257       proc near               ; CODE XREF: sub_180BA+84↑p
-                push    cx
+ApplyEffectCost proc near               ; CODE XREF: ApplyEffectAndDrawIconBar+84↑p
+                push    cx              ; Dispatches an effect-definition record's cost (di = g_trapEffectDefs entry, [di+8] flag bits) to one or more of DeductHPClamped/DeductMPClamped/SpendMaterialCounterClamped (HP/MP costs use [si+0xC]=party-member record + a plain amount; material costs use one of 3 BCD counters selected by a different flag bit, amount read from the slot's own +0x10 field).
                 push    dx
                 mov     bx, [si+0Ch]
                 mov     ax, [si+10h]
@@ -13990,14 +13990,14 @@ sub_18257       proc near               ; CODE XREF: sub_180BA+84↑p
                 jmp     short loc_182AC
 ; ---------------------------------------------------------------------------
 
-loc_1826B:                              ; CODE XREF: sub_18257+D↑j
+loc_1826B:                              ; CODE XREF: ApplyEffectCost+D↑j
                 test    word ptr [di+8], 8
                 jz      short loc_18277
                 call    DeductMPClamped
                 jmp     short loc_182AC
 ; ---------------------------------------------------------------------------
 
-loc_18277:                              ; CODE XREF: sub_18257+19↑j
+loc_18277:                              ; CODE XREF: ApplyEffectCost+19↑j
                 test    word ptr [di+8], 20h
                 jz      short loc_18286
                 call    DeductHPClamped
@@ -14005,7 +14005,7 @@ loc_18277:                              ; CODE XREF: sub_18257+19↑j
                 jmp     short loc_182AC
 ; ---------------------------------------------------------------------------
 
-loc_18286:                              ; CODE XREF: sub_18257+25↑j
+loc_18286:                              ; CODE XREF: ApplyEffectCost+25↑j
                 mov     bx, si
                 add     bx, 10h
                 mov     ax, 94B3h
@@ -14018,12 +14018,12 @@ loc_18286:                              ; CODE XREF: sub_18257+25↑j
                 test    word ptr [di+8], 2
                 jz      short loc_182AC
 
-loc_182A9:                              ; CODE XREF: sub_18257+3C↑j
-                                        ; sub_18257+46↑j
+loc_182A9:                              ; CODE XREF: ApplyEffectCost+3C↑j
+                                        ; ApplyEffectCost+46↑j
                 call    SpendMaterialCounterClamped
 
-loc_182AC:                              ; CODE XREF: sub_18257+12↑j
-                                        ; sub_18257+1E↑j ...
+loc_182AC:                              ; CODE XREF: ApplyEffectCost+12↑j
+                                        ; ApplyEffectCost+1E↑j ...
                 mov     ax, [si+0Eh]
                 or      ax, ax
                 jz      short loc_182CB
@@ -14036,18 +14036,18 @@ loc_182AC:                              ; CODE XREF: sub_18257+12↑j
                 call    near ptr sub_18095
                 call    sub_1AB26
 
-loc_182CB:                              ; CODE XREF: sub_18257+5A↑j
-                                        ; sub_18257+67↑j
+loc_182CB:                              ; CODE XREF: ApplyEffectCost+5A↑j
+                                        ; ApplyEffectCost+67↑j
                 pop     dx
                 pop     cx
                 retn
-sub_18257       endp
+ApplyEffectCost endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_182CE       proc near               ; CODE XREF: sub_180BA:loc_18171↑p
+sub_182CE       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar:loc_18171↑p
                 test    word ptr [di+0Ah], 180h
                 jnz     short loc_182D6
                 retn
@@ -14106,7 +14106,7 @@ sub_182CE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18333       proc near               ; CODE XREF: sub_180BA+81↑p
+sub_18333       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar+81↑p
                 mov     ax, [si+0Eh]
                 cmp     ax, 0
                 jz      short loc_1833E
@@ -14193,7 +14193,7 @@ sub_18333       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_183D5       proc near               ; CODE XREF: sub_180BA+7E↑p
+sub_183D5       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar+7E↑p
                 test    word ptr [di+8], 7
                 jnz     short locret_1840C
                 cmp     word ptr [si+10h], 0
@@ -15195,7 +15195,7 @@ loc_18B40:                              ; CODE XREF: sub_1869D+F8↑j
                 mov     si, word_32924
                 mov     ax, [si]
                 mov     bx, 4000h
-                cmp     ax, word_36E4B
+                cmp     ax, g_partySlotAssignment
                 jz      short loc_18B6F
                 mov     bx, 2000h
                 cmp     ax, word_36E4D
@@ -17437,9 +17437,9 @@ seg032          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19E56       proc far                ; CODE XREF: HandleMovementInput:loc_11652↑P
+ApplyMapTriggerEffect proc far          ; CODE XREF: HandleMovementInput:loc_11652↑P
                                         ; sub_1DCE0+41A↓P ...
-                mov     byte_2E400, 0
+                mov     byte_2E400, 0   ; Handles a movement-triggered map object (called from HandleMovementInput). Branches on [di+2] type flags: 0x4000 = teleport ([di+4]/[di+6] -> word_36CF7/word_36CF9, full redraw); 0x2000 = separate effect (sub_1FC3F+sub_20C46, not traced); 0x1000/0x800/0x400/0x300-pair = trap/status effects -- looks up an effect-definition record (PrepareTrapEffectSlots), then for each of the party's 4 slots (g_partySlotAssignment -> g_partyRecords, record = g_partyRecords+(slot-1)*0x1F4), skips members with status bits 0x1C40 set, otherwise fills their g_partyEffectIconSlots entry and calls ApplyEffectAndDrawIconBar.
                 push    cs
                 call    near ptr sub_1A04B
                 cmp     errorCode, 0
@@ -17447,19 +17447,19 @@ sub_19E56       proc far                ; CODE XREF: HandleMovementInput:loc_116
                 jmp     short loc_19E74
 ; ---------------------------------------------------------------------------
 
-loc_19E68:                              ; CODE XREF: sub_19E56+E↑j
-                                        ; sub_19E56+12E↓j ...
+loc_19E68:                              ; CODE XREF: ApplyMapTriggerEffect+E↑j
+                                        ; ApplyMapTriggerEffect+12E↓j ...
                 cmp     byte_2E400, 0
                 jnz     short locret_19E73
                 push    cs
                 call    near ptr sub_1A085
 
-locret_19E73:                           ; CODE XREF: sub_19E56+17↑j
-                                        ; sub_19E56+72↓j ...
+locret_19E73:                           ; CODE XREF: ApplyMapTriggerEffect+17↑j
+                                        ; ApplyMapTriggerEffect+72↓j ...
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_19E74:                              ; CODE XREF: sub_19E56+10↑j
+loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑j
                 test    word ptr [di+2], 4000h
                 jz      short loc_19ECA
                 mov     word_2E530, 0Bh
@@ -17482,7 +17482,7 @@ loc_19E74:                              ; CODE XREF: sub_19E56+10↑j
                 jmp     short locret_19E73
 ; ---------------------------------------------------------------------------
 
-loc_19ECA:                              ; CODE XREF: sub_19E56+23↑j
+loc_19ECA:                              ; CODE XREF: ApplyMapTriggerEffect+23↑j
                 test    word ptr [di+2], 2000h
                 jz      short loc_19EE7
                 call    sub_1FC3F
@@ -17492,28 +17492,28 @@ loc_19ECA:                              ; CODE XREF: sub_19E56+23↑j
                 jmp     short locret_19E73
 ; ---------------------------------------------------------------------------
 
-loc_19EE7:                              ; CODE XREF: sub_19E56+79↑j
+loc_19EE7:                              ; CODE XREF: ApplyMapTriggerEffect+79↑j
                 test    word ptr [di+2], 1000h
                 jz      short loc_19EF3
                 mov     ax, 0Fh
                 jmp     short loc_19F09
 ; ---------------------------------------------------------------------------
 
-loc_19EF3:                              ; CODE XREF: sub_19E56+96↑j
+loc_19EF3:                              ; CODE XREF: ApplyMapTriggerEffect+96↑j
                 test    word ptr [di+2], 800h
                 jz      short loc_19EFF
                 mov     ax, 10h
                 jmp     short loc_19F09
 ; ---------------------------------------------------------------------------
 
-loc_19EFF:                              ; CODE XREF: sub_19E56+A2↑j
+loc_19EFF:                              ; CODE XREF: ApplyMapTriggerEffect+A2↑j
                 test    word ptr [di+2], 400h
                 jz      short loc_19F21
                 mov     ax, 11h
 
-loc_19F09:                              ; CODE XREF: sub_19E56+9B↑j
-                                        ; sub_19E56+A7↑j
-                call    sub_18068
+loc_19F09:                              ; CODE XREF: ApplyMapTriggerEffect+9B↑j
+                                        ; ApplyMapTriggerEffect+A7↑j
+                call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
                 mov     word_32940, bx
                 mov     word_32904, di
@@ -17521,7 +17521,7 @@ loc_19F09:                              ; CODE XREF: sub_19E56+9B↑j
                 jmp     loc_19FEB
 ; ---------------------------------------------------------------------------
 
-loc_19F21:                              ; CODE XREF: sub_19E56+AE↑j
+loc_19F21:                              ; CODE XREF: ApplyMapTriggerEffect+AE↑j
                 test    word ptr [di+2], 300h
                 jz      short loc_19F87
                 mov     ax, 2Bh ; '+'
@@ -17529,8 +17529,8 @@ loc_19F21:                              ; CODE XREF: sub_19E56+AE↑j
                 jnz     short loc_19F35
                 mov     ax, 1
 
-loc_19F35:                              ; CODE XREF: sub_19E56+DA↑j
-                call    sub_18068
+loc_19F35:                              ; CODE XREF: ApplyMapTriggerEffect+DA↑j
+                call    PrepareTrapEffectSlots
                 mov     word_32904, bx
                 push    bp
                 mov     bp, di
@@ -17538,7 +17538,7 @@ loc_19F35:                              ; CODE XREF: sub_19E56+DA↑j
                 mov     di, 95EBh
                 mov     cx, 4
 
-loc_19F4A:                              ; CODE XREF: sub_19E56+126↓j
+loc_19F4A:                              ; CODE XREF: ApplyMapTriggerEffect+126↓j
                 cmp     word ptr [di], 0
                 jz      short loc_19F7E
                 mov     ax, 1F4h
@@ -17557,26 +17557,26 @@ loc_19F4A:                              ; CODE XREF: sub_19E56+126↓j
                 jmp     short loc_19F76
 ; ---------------------------------------------------------------------------
 
-loc_19F70:                              ; CODE XREF: sub_19E56+115↑j
+loc_19F70:                              ; CODE XREF: ApplyMapTriggerEffect+115↑j
                 call    sub_1AC80
                 pop     di
 
-loc_19F76:                              ; CODE XREF: sub_19E56+10B↑j
-                                        ; sub_19E56+118↑j
+loc_19F76:                              ; CODE XREF: ApplyMapTriggerEffect+10B↑j
+                                        ; ApplyMapTriggerEffect+118↑j
                 add     si, 14h
                 add     di, 2
                 loop    loc_19F4A
 
-loc_19F7E:                              ; CODE XREF: sub_19E56+F7↑j
+loc_19F7E:                              ; CODE XREF: ApplyMapTriggerEffect+F7↑j
                 pop     bp
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 jmp     loc_19E68
 ; ---------------------------------------------------------------------------
 
-loc_19F87:                              ; CODE XREF: sub_19E56+D0↑j
+loc_19F87:                              ; CODE XREF: ApplyMapTriggerEffect+D0↑j
                 mov     word_32904, di
                 mov     ax, [di+4]
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
                 mov     word_32940, bx
                 mov     word_32DC0, 5Ah ; 'Z'
@@ -17584,7 +17584,7 @@ loc_19F87:                              ; CODE XREF: sub_19E56+D0↑j
                 mov     di, 95EBh
                 mov     cx, 4
 
-loc_19FA9:                              ; CODE XREF: sub_19E56+18B↓j
+loc_19FA9:                              ; CODE XREF: ApplyMapTriggerEffect+18B↓j
                 cmp     word ptr [di], 0
                 jz      short loc_19FE3
                 mov     ax, 1F4h
@@ -17604,23 +17604,23 @@ loc_19FA9:                              ; CODE XREF: sub_19E56+18B↓j
                 mov     ax, [bx+6]
                 mov     [si+10h], ax
 
-loc_19FDB:                              ; CODE XREF: sub_19E56+16A↑j
+loc_19FDB:                              ; CODE XREF: ApplyMapTriggerEffect+16A↑j
                 add     si, 14h
                 add     di, 2
                 loop    loc_19FA9
 
-loc_19FE3:                              ; CODE XREF: sub_19E56+156↑j
-                call    sub_180BA
+loc_19FE3:                              ; CODE XREF: ApplyMapTriggerEffect+156↑j
+                call    ApplyEffectAndDrawIconBar
                 jmp     loc_19E68
 ; ---------------------------------------------------------------------------
 
-loc_19FEB:                              ; CODE XREF: sub_19E56+C8↑j
+loc_19FEB:                              ; CODE XREF: ApplyMapTriggerEffect+C8↑j
                 mov     word_32DC0, 5Ah ; 'Z'
                 mov     si, 0C50h
                 mov     di, 95EBh
                 mov     cx, 4
 
-loc_19FFA:                              ; CODE XREF: sub_19E56+1EB↓j
+loc_19FFA:                              ; CODE XREF: ApplyMapTriggerEffect+1EB↓j
                 cmp     word ptr [di], 0
                 jz      short loc_1A043
                 mov     ax, 1F4h
@@ -17645,22 +17645,22 @@ loc_19FFA:                              ; CODE XREF: sub_19E56+1EB↓j
                 mov     [si+12h], ax
                 mov     word_32904, 0
 
-loc_1A03B:                              ; CODE XREF: sub_19E56+1BB↑j
-                                        ; sub_19E56+1D2↑j
+loc_1A03B:                              ; CODE XREF: ApplyMapTriggerEffect+1BB↑j
+                                        ; ApplyMapTriggerEffect+1D2↑j
                 add     si, 14h
                 add     di, 2
                 loop    loc_19FFA
 
-loc_1A043:                              ; CODE XREF: sub_19E56+1A7↑j
-                call    sub_180BA
+loc_1A043:                              ; CODE XREF: ApplyMapTriggerEffect+1A7↑j
+                call    ApplyEffectAndDrawIconBar
                 jmp     loc_19E68
-sub_19E56       endp
+ApplyMapTriggerEffect endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A04B       proc far                ; CODE XREF: sub_19E56+6↑p
+sub_1A04B       proc far                ; CODE XREF: ApplyMapTriggerEffect+6↑p
                                         ; sub_1EA18:loc_1EA5A↓P
                 mov     es, word_2E562
                 mov     si, word_328D2
@@ -17701,7 +17701,7 @@ sub_1A04B       endp
 
 
 sub_1A085       proc far                ; CODE XREF: sub_162F6+1B↑P
-                                        ; sub_19E56+1A↑p
+                                        ; ApplyMapTriggerEffect+1A↑p
 
 ; FUNCTION CHUNK AT 0393 SIZE 00000050 BYTES
 
@@ -17713,7 +17713,7 @@ sub_1A085       proc far                ; CODE XREF: sub_162F6+1B↑P
 loc_1A08E:                              ; CODE XREF: sub_1A085+6↑j
                 and     word_328CA, 0FEFFh
                 mov     ax, 2
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
                 mov     word_32940, bx
                 test    word_36C79, 2
@@ -17749,13 +17749,13 @@ loc_1A0CC:                              ; CODE XREF: sub_1A085+62↓j
 loc_1A0E9:                              ; CODE XREF: sub_1A085+50↑j
                 test    word_328CA, 100h
                 jz      short loc_1A101
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 call    sub_25AAC
                 and     word_328CA, 0FEFFh
 
 loc_1A101:                              ; CODE XREF: sub_1A085+6A↑j
                 mov     ax, 0Eh
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
                 mov     word_32940, bx
                 mov     word_32924, 95EBh
@@ -17776,7 +17776,7 @@ loc_1A11C:                              ; CODE XREF: sub_1A085+B2↓j
 loc_1A139:                              ; CODE XREF: sub_1A085+A0↑j
                 test    word_328CA, 100h
                 jz      short locret_1A14C
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 and     word_328CA, 0FEFFh
 
 locret_1A14C:                           ; CODE XREF: sub_1A085+BA↑j
@@ -17886,7 +17886,7 @@ loc_1A21D:                              ; CODE XREF: sub_1A085+167↑j
                                         ; sub_1A085+184↑j
                 test    word_328CA, 100h
                 jz      short loc_1A230
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 and     word_328CA, 0FEFFh
 
 loc_1A230:                              ; CODE XREF: sub_1A085+19E↑j
@@ -18687,7 +18687,7 @@ loc_1A87B:                              ; CODE XREF: ShowConfirmPrompt+7B↑j
                 jz      short loc_1A87B
                 cmp     ax, 1
                 jnz     short loc_1A8C7
-                mov     ax, word_36E4B
+                mov     ax, g_partySlotAssignment
                 mov     word_32924, 95EBh
                 jmp     short loc_1A8F5
 ; ---------------------------------------------------------------------------
@@ -18735,7 +18735,7 @@ loc_1A907:                              ; CODE XREF: ShowConfirmPrompt+12C↑j
 
 loc_1A90D:                              ; CODE XREF: ShowConfirmPrompt+125↑j
                 mov     word_32924, 95EBh
-                mov     ax, word_36E4B
+                mov     ax, g_partySlotAssignment
                 cmp     byte_2E400, 3Bh ; ';'
                 jz      short loc_1A8F5
                 mov     word_32924, 95EDh
@@ -19174,7 +19174,7 @@ seg040          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AC80       proc far                ; CODE XREF: sub_19E56:loc_19F70↑P
+sub_1AC80       proc far                ; CODE XREF: ApplyMapTriggerEffect:loc_19F70↑P
                 mov     word_32906, bx
                 mov     ax, [bx+di]
                 mov     word_3290A, ax
@@ -19429,7 +19429,7 @@ sub_1AE4C       proc near               ; CODE XREF: sub_1ACD7:loc_1ADE8↑p
                 add     ax, 0C50h
                 mov     si, ax
                 mov     ax, 0
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     [si+8], ax
                 mov     [si+0Ah], bx
                 mov     ax, word_3290A
@@ -19441,7 +19441,7 @@ sub_1AE4C       proc near               ; CODE XREF: sub_1ACD7:loc_1ADE8↑p
                 mov     [si+0Ch], ax
                 sub     bx, ax
                 mov     [si+0Eh], bx
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 call    sub_1AA9B
                 mov     ax, word_3290A
                 pop     di
@@ -20159,7 +20159,7 @@ loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
                 call    writeString
                 call    DrawMouseCursor
                 mov     ax, 3
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     word_32904, bx
                 mov     ax, [di+12h]
                 call    sub_27A46
@@ -20204,7 +20204,7 @@ loc_1B5BB:                              ; CODE XREF: sub_1B4C2+C5↑j
                 add     di, 14h
                 loop    loc_1B571
                 call    sub_1AB26
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
 
 loc_1B5D1:                              ; CODE XREF: sub_1B4C2+B3↑j
                 call    sub_238CD
@@ -20280,7 +20280,7 @@ loc_1B60F:                              ; CODE XREF: sub_1B5FD+D↑j
                 call    sub_19B80
                 call    DrawMouseCursor
                 mov     ax, 3
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     word_32904, bx
                 mov     ax, [di+12h]
                 call    sub_27A46
@@ -20313,7 +20313,7 @@ loc_1B6C2:                              ; CODE XREF: sub_1B5FD+A7↑j
                 add     di, 14h
                 loop    loc_1B692
                 call    sub_1AB26
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
 
 loc_1B6D4:                              ; CODE XREF: sub_1B5FD+99↑j
                 call    sub_238CD
@@ -21418,11 +21418,11 @@ loc_1C094:                              ; CODE XREF: sub_1BF94+F3↑j
                 mov     si, 0C50h
                 add     si, ax
                 mov     ax, 3
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     [si+8], ax
                 mov     [si+0Ah], bx
                 pop     si
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 call    sub_26C9E
                 push    cs
                 call    near ptr sub_1B74A
@@ -21680,11 +21680,11 @@ loc_1C2D2:                              ; CODE XREF: sub_1C123+1B7↓j
                 mov     si, 0C50h
                 add     si, ax
                 mov     ax, 3
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     [si+8], ax
                 mov     [si+0Ah], bx
                 pop     si
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 push    cs
                 call    near ptr sub_1B7DD
                 mov     bx, word_32924
@@ -23524,7 +23524,7 @@ loc_1D2D0:                              ; CODE XREF: RunTitleScreen+1B↑j
                 call    DrawMouseCursor
                 call    sub_2587E
                 and     word_328C4, 0FDFFh
-                mov     ax, word_36E4B
+                mov     ax, g_partySlotAssignment
                 add     ax, word_36E4D
                 add     ax, word_36E4F
                 add     ax, word_36E51
@@ -25030,7 +25030,7 @@ loc_1E08F:                              ; CODE XREF: sub_1DCE0+355↑j
                 call    sub_1D198
                 and     word_328CA, 0FF7Fh
                 call    sub_2C0FE
-                call    sub_19E56
+                call    ApplyMapTriggerEffect
                 call    sub_222F8
                 call    DrawMouseCursor
                 call    sub_1FD03
@@ -27650,7 +27650,7 @@ RestoreInt1cVector endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FC3F       proc far                ; CODE XREF: sub_19E56+7B↑P
+sub_1FC3F       proc far                ; CODE XREF: ApplyMapTriggerEffect+7B↑P
                                         ; sub_1E64A+B6↑P
                 test    word_3295A, 800h
                 jnz     short loc_1FC48
@@ -32818,7 +32818,7 @@ loc_2293B:                              ; CODE XREF: sub_2281F+28↑j
 
 loc_22944:                              ; CODE XREF: sub_2281F+122↑j
                 mov     ax, 0
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     si, 0C50h
                 mov     di, 0BC28h
                 mov     cx, 4
@@ -32843,7 +32843,7 @@ loc_2297B:                              ; CODE XREF: sub_2281F+139↑j
                 add     si, 14h
                 add     di, 18h
                 loop    loc_22955
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 retn
 sub_2281F       endp
 
@@ -35174,7 +35174,7 @@ sub_23BA4       endp
 
 
 ShowPartyMembers proc far               ; CODE XREF: RunTitleScreen+15E↑P
-                call    sub_25862       ; Iterates the party-member list (word_328D4, via [si+0x10]), running a pipeline of per-member display steps (sub_243D3, sub_24A5B, sub_24BF2, sub_245AE, sub_2498B, sub_25103) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.
+                call    sub_25862       ; Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.
                 call    sub_25544
                 call    sub_2587E
                 jmp     short loc_23BC0
@@ -37115,12 +37115,12 @@ sub_250BB       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_250E5       proc near               ; CODE XREF: sub_25544+12↓p
-                mov     word_328D4, 0
+SelectDefaultPartyRecord proc near      ; CODE XREF: sub_25544+12↓p
+                mov     word_328D4, 0   ; Linearly scans g_partyRecords (base 0x95F3, stride 0x1F4, up to 9 slots) for the first record whose +0xE field is 0, and sets word_328D4 to it (0 if none found). Whether +0xE==0 means 'unused slot' or something else isn't confirmed -- named on mechanism, not a guessed interpretation. Called by sub_25544 to establish/refresh word_328D4 between ShowPartyMembers iterations.
                 mov     si, 95F3h
                 mov     cx, 9
 
-loc_250F1:                              ; CODE XREF: sub_250E5+16↓j
+loc_250F1:                              ; CODE XREF: SelectDefaultPartyRecord+16↓j
                 cmp     word ptr [si+0Eh], 0
                 jz      short loc_250FE
                 add     si, 1F4h
@@ -37128,10 +37128,10 @@ loc_250F1:                              ; CODE XREF: sub_250E5+16↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_250FE:                              ; CODE XREF: sub_250E5+10↑j
+loc_250FE:                              ; CODE XREF: SelectDefaultPartyRecord+10↑j
                 mov     word_328D4, si
                 retn
-sub_250E5       endp
+SelectDefaultPartyRecord endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37569,7 +37569,7 @@ sub_25544       proc near               ; CODE XREF: ShowPartyMembers+5↑p
                 mov     word_328BC, 74h ; 't'
                 mov     word_328C0, 3Ch ; '<'
                 and     word_328CA, 7FFFh
-                call    sub_250E5
+                call    SelectDefaultPartyRecord
                 cmp     word_328D4, 0
                 jnz     short loc_25561
                 retn
@@ -38492,7 +38492,7 @@ seg085          segment byte public 'CODE' use16
 
 
 sub_25AAC       proc far                ; CODE XREF: sub_162F6+73↑P
-                                        ; sub_180BA+40↑P ...
+                                        ; ApplyEffectAndDrawIconBar+40↑P ...
                 push    word_328D4
                 push    word_328D6
                 push    si
@@ -38587,7 +38587,7 @@ loc_25B3E:                              ; CODE XREF: sub_25B34+5↑j
                 call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short locret_25B9E
-                mov     si, word_36E4B
+                mov     si, g_partySlotAssignment
                 cmp     ax, 2
                 jl      short locret_25B9E
                 cmp     ax, 8
@@ -38685,7 +38685,7 @@ loc_25BF0:                              ; CODE XREF: sub_25B34+97↑j
 loc_25BFB:                              ; CODE XREF: sub_25B34+7↑j
                 cmp     byte_2E400, 31h ; '1'
                 jnz     short loc_25C08
-                mov     si, word_36E4B
+                mov     si, g_partySlotAssignment
                 jmp     short loc_25C2D
 ; ---------------------------------------------------------------------------
 
@@ -41665,7 +41665,7 @@ loc_27616:                              ; CODE XREF: sub_274B4+F1↑j
 loc_27629:                              ; CODE XREF: sub_274B4+10F↑j
                                         ; sub_274B4+11F↑j ...
                 mov     ax, word_32976
-                cmp     ax, word_36E4B
+                cmp     ax, g_partySlotAssignment
                 jnz     short loc_2764B
                 test    word_328C6, 4000h
                 jnz     short loc_2763D
@@ -44639,7 +44639,7 @@ loc_28C18:                              ; CODE XREF: sub_28BD2+50↓j
 
 loc_28C24:                              ; CODE XREF: sub_28BD2+48↑j
                 mov     ax, word_32DC2
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     [si+8], ax
                 mov     [si+0Ah], bx
                 mov     ax, word_328D4
@@ -44650,7 +44650,7 @@ loc_28C24:                              ; CODE XREF: sub_28BD2+48↑j
 loc_28C3A:                              ; CODE XREF: sub_28BD2+38↑j
                 mov     ax, word_32DC2
                 sub     ax, 32h ; '2'
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
                 mov     word_32940, bx
                 mov     si, 0C50h
@@ -44681,7 +44681,7 @@ loc_28C7D:                              ; CODE XREF: sub_28BD2+9A↑j
 
 loc_28C85:                              ; CODE XREF: sub_28BD2+66↑j
                                         ; sub_28BD2+86↑j
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 mov     ax, 1
 
 loc_28C8D:                              ; CODE XREF: sub_28BD2+2F↑j
@@ -45007,7 +45007,7 @@ loc_28FAC:                              ; CODE XREF: sub_28CFF+24A↑j
                 call    sub_20C1E
                 call    BuildMinimapTileData
                 call    DrawMinimap
-                call    sub_19E56
+                call    ApplyMapTriggerEffect
                 call    sub_222F8
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -48670,7 +48670,7 @@ loc_2AAFA:                              ; CODE XREF: CastSpell+D7↓j
                 call    sub_274B4
                 call    sub_2ADD0
                 call    DrawMouseCursor
-                call    sub_19E56
+                call    ApplyMapTriggerEffect
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
@@ -48883,7 +48883,7 @@ loc_2AD02:                              ; CODE XREF: CastSpell+2A5↑j
                 or      word_328C8, 20h
 
 loc_2AD2C:                              ; CODE XREF: CastSpell+2CD↑j
-                call    sub_19E56
+                call    ApplyMapTriggerEffect
                 retf
 CastSpell       endp
 
@@ -49272,7 +49272,7 @@ sub_2B09A       proc near               ; CODE XREF: sub_2AE3C+9F↑p
                 call    sub_1CDBC
                 call    sub_274B4
                 mov     ax, 3
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     word_32904, bx
                 mov     cx, 4
                 mov     di, 0C50h
@@ -49302,7 +49302,7 @@ loc_2B0FF:                              ; CODE XREF: sub_2B09A+9E↓j
 loc_2B13A:                              ; CODE XREF: sub_2B09A+69↑j
                 call    sub_2704C
                 call    sub_1AB26
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 call    DrawMouseCursor
                 retn
 sub_2B09A       endp
@@ -49593,7 +49593,7 @@ sub_2B436       proc far                ; CODE XREF: RunTitleScreen+25↑P
                 mov     bx, 9043h
                 call    FileEntry_Read
                 call    ErrorCheck
-                mov     word_36E4B, 0
+                mov     g_partySlotAssignment, 0
                 mov     word_36E4D, 0
                 mov     word_36E4F, 0
                 mov     word_36E51, 0
@@ -50832,7 +50832,7 @@ ShowWorldMap    endp
 
 sub_2BF3C       proc near               ; CODE XREF: ShowWorldMap+11F↑p
                 and     word_328C4, 0FDFFh
-                mov     ax, word_36E4B
+                mov     ax, g_partySlotAssignment
                 add     ax, word_36E4D
                 add     ax, word_36E4F
                 add     ax, word_36E51
@@ -50843,7 +50843,7 @@ sub_2BF3C       proc near               ; CODE XREF: ShowWorldMap+11F↑p
 
 loc_2BF57:                              ; CODE XREF: sub_2BF3C+18↑j
                 or      word_328C4, 200h
-                cmp     word_36E4B, 0
+                cmp     g_partySlotAssignment, 0
                 jnz     short loc_2BF7F
                 mov     si, 95EDh
                 mov     cx, 3
@@ -50859,7 +50859,7 @@ loc_2BF6A:                              ; CODE XREF: sub_2BF3C+36↓j
 loc_2BF76:                              ; CODE XREF: sub_2BF3C+31↑j
                 mov     ax, [si]
                 mov     word ptr [si], 0
-                mov     word_36E4B, ax
+                mov     g_partySlotAssignment, ax
 
 loc_2BF7F:                              ; CODE XREF: sub_2BF3C+26↑j
                                         ; sub_2BF3C+38↑j
@@ -51189,7 +51189,7 @@ loc_2C1EA:                              ; CODE XREF: sub_2C0FE+F8↓j
 
 loc_2C1FB:                              ; CODE XREF: sub_2C0FE+F0↑j
                 mov     ax, word_332DA
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     [di+8], ax
                 mov     [di+0Ah], bx
                 mov     ax, word_328D4
@@ -51207,7 +51207,7 @@ loc_2C21F:                              ; CODE XREF: sub_2C0FE+117↑j
 
 loc_2C227:                              ; CODE XREF: sub_2C0FE+11F↑j
                 call    sub_2D547
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
 
 loc_2C22F:                              ; CODE XREF: sub_2C0FE+127↑j
                 jmp     short loc_2C1C9
@@ -51215,7 +51215,7 @@ loc_2C22F:                              ; CODE XREF: sub_2C0FE+127↑j
 
 loc_2C231:                              ; CODE XREF: sub_2C0FE+18↑j
                 mov     ax, word_332DA
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     dx, ax
                 mov     si, bx
                 mov     di, 0C50h
@@ -51250,7 +51250,7 @@ loc_2C277:                              ; CODE XREF: sub_2C0FE+174↑j
                 loop    loc_2C246
 
 loc_2C27F:                              ; CODE XREF: sub_2C0FE+14E↑j
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -52546,7 +52546,7 @@ loc_2CF8D:                              ; CODE XREF: sub_2C0FE+E6D↑j
                 mov     ax, word_332E4
 
 loc_2CFB2:                              ; CODE XREF: sub_2C0FE+E8D↑j
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     dx, ax
                 mov     si, bx
                 test    word_33306, 40h
@@ -52580,7 +52580,7 @@ loc_2D006:                              ; CODE XREF: sub_2C0FE+EFA↑j
                 loop    loc_2CFCC
 
 loc_2D00E:                              ; CODE XREF: sub_2C0FE+ED4↑j
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -52605,7 +52605,7 @@ loc_2D02D:                              ; CODE XREF: sub_2C0FE+F25↑j
                 mov     [di+0Eh], ax
                 mov     ax, word_332E2
                 mov     [di+10h], ax
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -53497,10 +53497,10 @@ loc_2D73C:                              ; CODE XREF: InteractWithContainer+D9↑
                 mov     si, 0C50h
                 add     si, ax
                 mov     ax, 3
-                call    sub_18068
+                call    PrepareTrapEffectSlots
                 mov     [si+8], ax
                 mov     [si+0Ah], bx
-                call    sub_180BA
+                call    ApplyEffectAndDrawIconBar
                 or      word_328C8, 20h
                 call    sub_274B4
 
@@ -53512,7 +53512,7 @@ loc_2D77A:                              ; CODE XREF: InteractWithContainer+25↑
 
 loc_2D78A:                              ; CODE XREF: InteractWithContainer+9F↑j
                 call    sub_2D7EA
-                call    sub_19E56
+                call    ApplyMapTriggerEffect
                 call    sub_222F8
                 call    sub_16E18
                 call    sub_21530
@@ -56775,7 +56775,7 @@ word_2E4AC      dw 0                    ; DATA XREF: sub_13678+78↑w
                                         ; sub_13780+18↑w ...
 _val10          dw 0                    ; DATA XREF: InitGlobals+36↑w
                                         ; LoadCurgameRecord+7↑r ...
-                db    0
+g_partyEffectIconSlots db    0          ; 4 entries x 20 bytes. +0/+2, +4/+6: two (x,y) screen-position pairs (set once at init by sub_1251D). +8: a message/data value. +0xA: pointer to the effect-definition record (g_trapEffectDefs entry) for this slot. +0xC: pointer to the affected party-member record. +0x10/+0x12: extra position/amount fields, meaning varies by which ApplyMapTriggerEffect branch populated it.
                 db    0
                 db    0
                 db    0
@@ -84894,7 +84894,7 @@ word_368AD      dw 0                    ; DATA XREF: seg096:001D↑w
 word_368AF      dw 0                    ; DATA XREF: seg096:0023↑w
                                         ; sub_27B0D+1C↑w ...
 aWorldDat       db 'WORLD.DAT',0
-                db    0
+g_trapEffectDefs db    0                ; 12-byte-stride trap/status-effect definition records, indexed by effect id (PrepareTrapEffectSlots computes id*0xC + this base). Confirmed fields: +2 = g_pictureDir icon offset, +8 = cost-type flags (ApplyEffectCost), +0xA = display-mode flags (ApplyEffectAndDrawIconBar).
                 db    0
                 db    0
                 db    0
@@ -86318,15 +86318,16 @@ word_36E0F      dw 0                    ; DATA XREF: sub_1A320+18↑r
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36E4B      dw 0                    ; DATA XREF: HandleMovementInput+284↑r
+g_partySlotAssignment dw 0              ; DATA XREF: HandleMovementInput+284↑r
                                         ; sub_1869D+4B7↑r ...
+                                        ; 4 entries x 2 bytes: which 1-based g_partyRecords index occupies UI/effect slot N (0 = empty).
 word_36E4D      dw 0                    ; DATA XREF: sub_1869D+4C0↑r
                                         ; ShowConfirmPrompt+15E↑r ...
 word_36E4F      dw 0                    ; DATA XREF: sub_1869D+4C9↑r
                                         ; ShowConfirmPrompt+16E↑r ...
 word_36E51      dw 0                    ; DATA XREF: ShowConfirmPrompt+17E↑r
                                         ; ShowConfirmPrompt+1D5↑r ...
-                db    0
+g_partyRecords  db    0                 ; Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).
                 db    0
                 db    0
                 db    0

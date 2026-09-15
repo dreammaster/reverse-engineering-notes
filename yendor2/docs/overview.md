@@ -1035,6 +1035,56 @@ plausibly death/incapacitation handling).
 
 149 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the trap/status-effect system, and the real party-record array
+
+Followed `sub_18257`'s caller chain (left unnamed last round) up to
+`HandleMovementInput` and found a complete, coherent map-trigger/trap
+system: `ApplyMapTriggerEffect` (was `sub_19E56`) is called whenever a
+move lands on a flagged object, and branches on its type flags —
+`0x4000` teleports the party, `0x2000` is a separate untraced effect,
+and `0x1000`/`0x800`/`0x400`/a `0x300` pair are trap/status effects
+applied to every valid (non-dead/paralyzed) party member. Each
+afflicted member gets an entry in a 4-slot icon-bar array
+(`g_partyEffectIconSlots`, was a bare `0xC50` literal), which
+`ApplyEffectAndDrawIconBar` (was `sub_180BA`) then walks to draw the
+effect's icon and apply its cost via `ApplyEffectCost` (was
+`sub_18257`, now confidently named — its flag bits select one of the
+three resource-deduction helpers named last round). Effect definitions
+themselves live in a new 12-byte-stride table, `g_trapEffectDefs`
+(icon, cost-type flags, display-mode flags), reset and looked up per
+trigger by `PrepareTrapEffectSlots` (was `sub_18068`).
+
+The most consequential single fact from this trace: `ApplyMapTriggerEffect`
+computes a party-member record's address as
+`g_partyRecords + (slot-1)*0x1F4` (500 bytes/record) via a small
+4-entry slot-assignment table (`g_partySlotAssignment`, was
+`word_36E4B`) — i.e. **the party is a fixed 4-record array with a
+confirmed base and stride**, not a dynamically-linked structure. The
+`word_328D4` "linked list" documented earlier this session is almost
+certainly just iterating pointers into this same fixed array, not
+separate heap allocations — worth keeping in mind for any future work
+on party-record layout.
+
+153 named of 769 functions as of this update.
+
+### 2026-09-15 session update, continued: another correction — "+0x10 next link" was wrong
+
+While documenting `g_partyRecords`, went looking for the `+0x10` "next"
+link this same doc had claimed `word_328D4` was traversed through
+since early in the session, to reconcile it with the new fixed-array
+finding — and couldn't find it anywhere. Traced it to a comment that
+had been misattached to `ShowPartyMembers`'s first instruction: the
+text (describing its 6-step per-member display pipeline) was correct
+about the pipeline but wrong about the traversal mechanism it was
+written next to. The real mechanism, confirmed by reading
+`sub_250E5`: a linear scan of `g_partyRecords` (cx=9, so up to 9
+slots — more than the 4 UI/effect slots from the trap-effect system)
+for the first record with `+0xE`==0, named `SelectDefaultPartyRecord`.
+Corrected the comment in place and fixed `file-formats.md`'s party
+record section rather than leaving the wrong claim standing.
+
+154 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

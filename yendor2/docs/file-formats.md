@@ -51,12 +51,26 @@ cleanly (`FileEntry_Write` with `_blockSize`/`_blockOffset` all zero,
 then `FileEntry_Close`) on the quit-to-DOS path. `sub_27DE5`'s target
 record itself isn't named yet.
 
-**Party-member record** (in-memory, pointed to by `word_328D4`,
-traversed via a `+0x10` "next" link — plausibly backed by this same
-`CURGAME` data once loaded): confirmed fields so far —
-`+0x0`: name (13 chars max, see `EditCharacterName`,
+**Party-member record** (in-memory, currently selected one pointed to
+by `word_328D4` — plausibly backed by this same `CURGAME` data once
+loaded): lives in a **confirmed fixed array**, `g_partyRecords` (base
+`0x95F3`, stride `0x1F4` = 500 bytes/record, up to 9 slots per
+`SelectDefaultPartyRecord`'s scan bound) — not a linked list.
+**Correction**: earlier documentation here claimed `word_328D4` was
+"traversed via a `+0x10` 'next' link"; that was wrong (a comment had
+been misattached to the wrong call site — see
+`ida_scripts/fix_party_record_next_claim.py`). `ApplyMapTriggerEffect`
+independently confirms the same base/stride via a separate 4-slot
+`g_partySlotAssignment` index table. `word_328D4` itself is set by
+several different mechanisms depending on context (a direct selector
+struct in some callers, `SelectDefaultPartyRecord`'s "first record
+with `+0xE`==0" scan as a fallback in `ShowPartyMembers`) — exactly how
+"the current member" gets chosen isn't fully mapped yet. Confirmed
+fields so far — `+0x0`: name (13 chars max, see `EditCharacterName`,
 `ida_scripts/name_char_rename.py`); `+0xE`: a time-of-day-like value
-(reduced mod 10 in `RestCharacter`); `+0x10`: gender/type (compared
+(reduced mod 10 in `RestCharacter`; `SelectDefaultPartyRecord` treats
+`0` here as its scan target, though whether that means "empty slot" or
+something else isn't confirmed); `+0x10`: gender/type (compared
 against `2` in `ShowCharacterEquipment`); `+0x1C`: a status/condition
 flags word, tested throughout (`RunTitleScreen`'s `E` handler,
 `ShowCharacterSkills`, `RunConversation`, `UseAbilityOnTarget`'s

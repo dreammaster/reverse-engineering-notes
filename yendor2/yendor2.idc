@@ -2893,9 +2893,13 @@ static Bytes_0(void) {
 	create_insn	(x=0X18031);
 	op_stkvar	(x,	0);
 	create_insn	(0X18041);
+	set_cmt	(0X18068,	"PrepareTrapEffectSlots(ax=effect id): returns bx = g_trapEffectDefs + id*0xC (the effect-definition record). Also clears the [+8..+0x14) fields of all 4 g_partyEffectIconSlots entries first -- reset before repopulate. ax is left 0 on return.",	0);
 	create_insn	(0X18068);
+	set_name	(0X18068,	"PrepareTrapEffectSlots");
 	create_insn	(0X18095);
+	set_cmt	(0X180BA,	"Iterates the 4 g_partyEffectIconSlots entries; for each occupied slot, draws its effect icon (via the effect-def's +2 g_pictureDir offset, one of 3 draw variants selected by the effect-def's +0xA flags) and applies the effect's cost via ApplyEffectCost.",	0);
 	create_insn	(0X180BA);
+	set_name	(0X180BA,	"ApplyEffectAndDrawIconBar");
 	create_insn	(x=0X180BE);
 	op_hex		(x,	1);
 	create_insn	(x=0X180D9);
@@ -2928,7 +2932,9 @@ static Bytes_0(void) {
 	set_cmt	(0X18248,	"DeductMPClamped(ax=amount, bx=party-member record): [bx+0x54] -= ax (MP-current), clamped at 0.",	0);
 	create_insn	(0X18248);
 	set_name	(0X18248,	"DeductMPClamped");
+	set_cmt	(0X18257,	"Dispatches an effect-definition record's cost (di = g_trapEffectDefs entry, [di+8] flag bits) to one or more of DeductHPClamped/DeductMPClamped/SpendMaterialCounterClamped (HP/MP costs use [si+0xC]=party-member record + a plain amount; material costs use one of 3 BCD counters selected by a different flag bit, amount read from the slot's own +0x10 field).",	0);
 	create_insn	(0X18257);
+	set_name	(0X18257,	"ApplyEffectCost");
 	create_insn	(x=0X1825F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1826B);
@@ -3396,7 +3402,9 @@ static Bytes_0(void) {
 	create_insn	(0X19E2C);
 	create_insn	(0X19E37);
 	create_insn	(0X19E49);
+	set_cmt	(0X19E56,	"Handles a movement-triggered map object (called from HandleMovementInput). Branches on [di+2] type flags: 0x4000 = teleport ([di+4]/[di+6] -> word_36CF7/word_36CF9, full redraw); 0x2000 = separate effect (sub_1FC3F+sub_20C46, not traced); 0x1000/0x800/0x400/0x300-pair = trap/status effects -- looks up an effect-definition record (PrepareTrapEffectSlots), then for each of the party's 4 slots (g_partySlotAssignment -> g_partyRecords, record = g_partyRecords+(slot-1)*0x1F4), skips members with status bits 0x1C40 set, otherwise fills their g_partyEffectIconSlots entry and calls ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X19E56);
+	set_name	(0X19E56,	"ApplyMapTriggerEffect");
 	create_insn	(0X19E68);
 	create_insn	(x=0X19E74);
 	op_hex		(x,	1);
@@ -5301,6 +5309,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X21831);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X21846);
 	op_hex		(x,	1);
 	set_cmt	(0X2186F,	"Map object lookup: bounds-checks (ax=x, bx=y) against the current map's valid range, indexes a per-column array to a row of 6-byte entries, scans for y==bx (0xFFFF terminates). Found: copies 3 words to word_2E554/556/558, returns si=0xCF4. Not found/out of bounds: si=0.",	0);
@@ -5393,15 +5410,6 @@ static Bytes_0(void) {
 	set_cmt	(0X21CC2,	"Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.",	0);
 	create_insn	(0X21CC2);
 	set_name	(0X21CC2,	"PersistExploredCell");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X21CC6,	"this",	0);
 	set_cmt	(0X21CD4,	"this",	0);
 	set_cmt	(0X21D30,	"Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.",	0);
@@ -5928,7 +5936,7 @@ static Bytes_1(void) {
 	create_insn	(0X23B8E);
 	create_insn	(0X23BA4);
 	create_insn	(0X23BAC);
-	set_cmt	(0X23BAE,	"Iterates the party-member list (word_328D4, via [si+0x10]), running a pipeline of per-member display steps (sub_243D3, sub_24A5B, sub_24BF2, sub_245AE, sub_2498B, sub_25103) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
+	set_cmt	(0X23BAE,	"Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
 	create_insn	(0X23BAE);
 	set_name	(0X23BAE,	"ShowPartyMembers");
 	create_insn	(0X23BBD);
@@ -6064,7 +6072,9 @@ static Bytes_1(void) {
 	create_insn	(0X2504F);
 	create_insn	(0X25091);
 	create_insn	(0X250BB);
+	set_cmt	(0X250E5,	"Linearly scans g_partyRecords (base 0x95F3, stride 0x1F4, up to 9 slots) for the first record whose +0xE field is 0, and sets word_328D4 to it (0 if none found). Whether +0xE==0 means 'unused slot' or something else isn't confirmed -- named on mechanism, not a guessed interpretation. Called by sub_25544 to establish/refresh word_328D4 between ShowPartyMembers iterations.",	0);
 	create_insn	(0X250E5);
+	set_name	(0X250E5,	"SelectDefaultPartyRecord");
 	create_insn	(0X250FE);
 	set_cmt	(0X25103,	"Moderate confidence: last ShowPartyMembers pipeline step. Reuses message pointers ShowCharacterStats also uses (0x7A11, 0x8572) alongside others -- reads as a condensed recap/overview screen rather than fresh content.",	0);
 	create_insn	(0X25103);
@@ -9241,6 +9251,8 @@ static Bytes_1(void) {
 	create_word	(0X2E4AC);
 	create_word	(0X2E4AE);
 	set_name	(0X2E4AE,	"_val10");
+	set_cmt	(0X2E4B0,	"4 entries x 20 bytes. +0/+2, +4/+6: two (x,y) screen-position pairs (set once at init by sub_1251D). +8: a message/data value. +0xA: pointer to the effect-definition record (g_trapEffectDefs entry) for this slot. +0xC: pointer to the affected party-member record. +0x10/+0x12: extra position/amount fields, meaning varies by which ApplyMapTriggerEffect branch populated it.",	0);
+	set_name	(0X2E4B0,	"g_partyEffectIconSlots");
 	create_word	(0X2E500);
 	create_word	(0X2E502);
 	set_name	(0X2E502,	"_emsPointer1?");
@@ -9746,6 +9758,15 @@ static Bytes_1(void) {
 	set_name	(0X35253,	"aMale");
 	create_strlit	(0X3525A,	0X7);
 	set_name	(0X3525A,	"aFemale");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35261,	0X10);
 	set_name	(0X35261,	"aPickAPortrait");
 	create_strlit	(0X35271,	0XA);
@@ -9896,15 +9917,6 @@ static Bytes_1(void) {
 	set_name	(0X35508,	"aTrap");
 	create_strlit	(0X3550E,	0X9);
 	set_name	(0X3550E,	"aDefeated");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35517,	0XD);
 	set_name	(0X35517,	"aBrass");
 	create_strlit	(0X35524,	0XD);
@@ -10653,6 +10665,8 @@ static Bytes_2(void) {
 	create_word	(0X368AF);
 	create_strlit	(0X368B1,	0XA);
 	set_name	(0X368B1,	"aWorldDat");
+	set_cmt	(0X368BB,	"12-byte-stride trap/status-effect definition records, indexed by effect id (PrepareTrapEffectSlots computes id*0xC + this base). Confirmed fields: +2 = g_pictureDir icon offset, +8 = cost-type flags (ApplyEffectCost), +0xA = display-mode flags (ApplyEffectAndDrawIconBar).",	0);
+	set_name	(0X368BB,	"g_trapEffectDefs");
 	set_name	(0X36C5F,	"_savegameBuffer");
 	create_word	(0X36C79);
 	create_word	(0X36C7F);
@@ -10707,10 +10721,14 @@ static Bytes_2(void) {
 	create_word	(0X36DF5);
 	create_word	(0X36E0D);
 	create_word	(0X36E0F);
+	set_cmt	(0X36E4B,	"4 entries x 2 bytes: which 1-based g_partyRecords index occupies UI/effect slot N (0 = empty).",	0);
 	create_word	(0X36E4B);
+	set_name	(0X36E4B,	"g_partySlotAssignment");
 	create_word	(0X36E4D);
 	create_word	(0X36E4F);
 	create_word	(0X36E51);
+	set_cmt	(0X36E53,	"Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).",	0);
+	set_name	(0X36E53,	"g_partyRecords");
 	create_word	(0X38808);
 	create_word	(0X3880A);
 	create_word	(0X3880C);
