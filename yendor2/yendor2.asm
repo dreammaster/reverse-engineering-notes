@@ -961,7 +961,7 @@ loc_10867:                              ; CODE XREF: seg000:0855↑j
                 cmp     word_32974, 0
                 jz      short loc_10897
                 and     word_3295A, 9FFFh
-                call    sub_220DF
+                call    ToggleMapViewMode
                 call    sub_1FD03
 
 loc_10897:                              ; CODE XREF: seg000:0885↑j
@@ -31851,16 +31851,16 @@ sub_21E71       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_220DF       proc far                ; CODE XREF: seg000:088D↑P
+ToggleMapViewMode proc far              ; CODE XREF: seg000:088D↑P
                                         ; HandleGameCommand+D2↓P
-                test    word_36C7F, 100h
+                test    word_36C7F, 100h ; HandleGameCommand's handler for word_32974==0x1F. If word_36C7F bit 0x100 is clear, does a normal small-view redraw (sub_222BD); if set, draws a full-screen picture (g_pictureDir entry 6, x=0,y=0 -- fills the whole screen rather than the small minimap position) instead. Exact trigger for the bit itself not traced.
                 jnz     short loc_220F0
                 call    sub_222BD
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_220F0:                              ; CODE XREF: sub_220DF+6↑j
+loc_220F0:                              ; CODE XREF: ToggleMapViewMode+6↑j
                 call    sub_25862
                 mov     word_2E532, 0
                 mov     _font_bgTransparent, 0
@@ -31878,7 +31878,7 @@ loc_220F0:                              ; CODE XREF: sub_220DF+6↑j
                 call    sub_2587E
                 call    sub_238CD
                 retf
-sub_220DF       endp
+ToggleMapViewMode endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32015,7 +32015,7 @@ sub_221A0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22255       proc near               ; CODE XREF: sub_220DF+3F↑p
+sub_22255       proc near               ; CODE XREF: ToggleMapViewMode+3F↑p
                 cmp     word_36CF7, 0A0h
                 jl      short locret_222BB
                 cmp     word_36CF9, 30h ; '0'
@@ -32059,7 +32059,7 @@ sub_22255       endp
 
 
 sub_222BD       proc near               ; CODE XREF: sub_21E71+10↑p
-                                        ; sub_220DF+8↑p
+                                        ; ToggleMapViewMode+8↑p
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_fgColor, 8Ah
@@ -45819,7 +45819,7 @@ loc_29666:                              ; CODE XREF: HandleGameCommand+AF↑j
 loc_29673:                              ; CODE XREF: HandleGameCommand+C3↑j
                 cmp     word_32974, 1Fh
                 jnz     short loc_29680
-                call    sub_220DF
+                call    ToggleMapViewMode
                 retf
 ; ---------------------------------------------------------------------------
 

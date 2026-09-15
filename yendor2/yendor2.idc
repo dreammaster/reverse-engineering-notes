@@ -5531,8 +5531,10 @@ static Bytes_1(void) {
 	create_insn	(x=0X220B1);
 	op_hex		(x,	1);
 	create_insn	(0X220BA);
+	set_cmt	(0X220DF,	"HandleGameCommand's handler for word_32974==0x1F. If word_36C7F bit 0x100 is clear, does a normal small-view redraw (sub_222BD); if set, draws a full-screen picture (g_pictureDir entry 6, x=0,y=0 -- fills the whole screen rather than the small minimap position) instead. Exact trigger for the bit itself not traced.",	0);
 	create_insn	(x=0X220DF);
 	op_hex		(x,	1);
+	set_name	(0X220DF,	"ToggleMapViewMode");
 	create_insn	(0X220F0);
 	create_insn	(0X22140);
 	create_insn	(x=0X22173);
@@ -7944,6 +7946,15 @@ static Bytes_1(void) {
 	create_insn	(0X29E5E);
 	create_insn	(x=0X29E64);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29E6A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29E6D);
@@ -7979,15 +7990,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29EC4);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29EC7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29ECA);

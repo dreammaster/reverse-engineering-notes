@@ -1740,6 +1740,15 @@ session.
 
 233 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ToggleMapViewMode
+
+Named `HandleGameCommand`'s `word_32974==0x1F` handler: branches on a
+view-mode bit to either do a normal small-view redraw or draw a
+full-screen picture instead — a zoomed/expanded map view, though the
+exact trigger for the mode bit itself wasn't traced.
+
+234 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
