@@ -14098,7 +14098,7 @@ loc_18310:                              ; CODE XREF: sub_182CE+27↑j
 loc_18323:                              ; CODE XREF: sub_182CE+4A↑j
                 call    sub_1AA9B
                 call    UpdatePartyAverageStatTiers
-                call    sub_1B428
+                call    CheckForLevelUp
                 retn
 sub_182CE       endp
 
@@ -20012,9 +20012,9 @@ seg043          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B428       proc far                ; CODE XREF: sub_182CE+5F↑P
+CheckForLevelUp proc far                ; CODE XREF: sub_182CE+5F↑P
                                         ; sub_1B5FD+B4↓P ...
-                push    si
+                push    si              ; CheckForLevelUp (implicit si=word_328D4): walks the XP-threshold table at 0x9277 (65 x 4-byte packed-BCD entries, one per level) starting at the character's current level [+0x16], comparing their XP [+0x18] against each threshold and advancing while >=. If the result exceeds the current level, stores it into [+0x1E] (pending new level, not yet applied).
                 push    di
                 mov     si, word_328D4
                 mov     word ptr [si+1Eh], 0
@@ -20031,7 +20031,7 @@ sub_1B428       proc far                ; CODE XREF: sub_182CE+5F↑P
                 call    CompareBCD4
                 jb      short loc_1B477
 
-loc_1B454:                              ; CODE XREF: sub_1B428+3E↓j
+loc_1B454:                              ; CODE XREF: CheckForLevelUp+3E↓j
                 inc     word_3293E
                 add     di, 4
                 cmp     di, 93DBh
@@ -20039,19 +20039,19 @@ loc_1B454:                              ; CODE XREF: sub_1B428+3E↓j
                 call    CompareBCD4
                 ja      short loc_1B454
 
-loc_1B468:                              ; CODE XREF: sub_1B428+37↑j
+loc_1B468:                              ; CODE XREF: CheckForLevelUp+37↑j
                 mov     si, word_328D4
                 mov     ax, word_3293E
                 cmp     [si+16h], ax
                 jge     short loc_1B477
                 mov     [si+1Eh], ax
 
-loc_1B477:                              ; CODE XREF: sub_1B428+10↑j
-                                        ; sub_1B428+2A↑j ...
+loc_1B477:                              ; CODE XREF: CheckForLevelUp+10↑j
+                                        ; CheckForLevelUp+2A↑j ...
                 pop     di
                 pop     si
                 retf
-sub_1B428       endp
+CheckForLevelUp endp
 
 seg043          ends
 
@@ -20302,7 +20302,7 @@ loc_1B692:                              ; CODE XREF: sub_1B5FD+CB↓j
                 mov     di, bp
                 add     si, 18h
                 call    AddBCD4
-                call    sub_1B428
+                call    CheckForLevelUp
                 pop     di
                 mov     word ptr [di+8], 3
                 mov     ax, word_32904
@@ -20486,12 +20486,12 @@ sub_1B7DD       proc far                ; CODE XREF: UseItem+2D6↑P
                 mov     bx, word_32924
                 mov     ax, [bx]
                 call    sub_25B14
-                call    sub_1B428
+                call    CheckForLevelUp
                 mov     si, word_328D4
                 cmp     word ptr [si+1Eh], 0
                 jz      short loc_1B815
                 or      word_2E40C, 8000h
-                call    sub_25C61
+                call    ShowLevelUpMessage
 
 loc_1B815:                              ; CODE XREF: sub_1B7DD+2B↑j
                 pop     bx
@@ -21427,7 +21427,7 @@ loc_1C094:                              ; CODE XREF: UseHealingItem+F3↑j
                 call    sub_26C9E
                 push    cs
                 call    near ptr ClassifyPartyMemberCondition
-                call    sub_1B428
+                call    CheckForLevelUp
                 mov     bx, word_32924
                 call    sub_22445
                 jmp     loc_1BFEA
@@ -33878,7 +33878,7 @@ loc_2325F:                              ; CODE XREF: ShowLootAndAwardExperience+
                 pop     si
 
 loc_2327F:                              ; CODE XREF: ShowLootAndAwardExperience+120↑j
-                call    sub_1B428
+                call    CheckForLevelUp
                 mov     bx, word_328D4
                 cmp     word ptr [bx+1Eh], 0
                 jz      short loc_23295
@@ -38669,7 +38669,7 @@ loc_25BE2:                              ; CODE XREF: sub_25B34+A6↑j
                 cmp     ax, 3
                 jnz     short loc_25BED
                 push    cs
-                call    near ptr sub_25C61
+                call    near ptr ShowLevelUpMessage
                 jmp     short loc_25BF0
 ; ---------------------------------------------------------------------------
 
@@ -38735,9 +38735,9 @@ sub_25B34       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25C61       proc far                ; CODE XREF: sub_1B7DD+33↑P
+ShowLevelUpMessage proc far             ; CODE XREF: sub_1B7DD+33↑P
                                         ; sub_25B34+B4↑p
-                or      word_328C4, 100h
+                or      word_328C4, 100h ; ShowLevelUpMessage(si=character): shows current level [+0x16], and if [+0x1E] (pending new level, from CheckForLevelUp) is nonzero, also shows it as a second line -- the level-up notification screen.
                 call    sub_25ED1
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7B78h       ; msg
@@ -38774,10 +38774,10 @@ sub_25C61       proc far                ; CODE XREF: sub_1B7DD+33↑P
                 call    sub_2570C
                 call    writeString
 
-locret_25CF9:                           ; CODE XREF: sub_25C61+5D↑j
-                                        ; sub_25C61+69↑j
+locret_25CF9:                           ; CODE XREF: ShowLevelUpMessage+5D↑j
+                                        ; ShowLevelUpMessage+69↑j
                 retf
-sub_25C61       endp
+ShowLevelUpMessage endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -38976,7 +38976,7 @@ sub_25E5E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25ED1       proc near               ; CODE XREF: sub_25C61+6↑p
+sub_25ED1       proc near               ; CODE XREF: ShowLevelUpMessage+6↑p
                                         ; sub_25CFA+16↑p ...
                 push    _font_bgTransparent
                 mov     ax, 0F1h

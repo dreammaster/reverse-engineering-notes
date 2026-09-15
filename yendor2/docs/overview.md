@@ -1521,6 +1521,19 @@ effect.
 
 205 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found the level-up system
+
+Followed up on `+0x1E` (known to gate a portrait-redraw call, from a
+few rounds back) and `+0x18` (suspected XP, from `ShowLootAndAwardExperience`)
+into `CheckForLevelUp` and `ShowLevelUpMessage` — a clean, well-
+confirmed pair: XP (`+0x18`, packed BCD) is compared against a
+65-level threshold table (`0x9277`) starting from the current level
+(`+0x16`); a higher resulting level is staged into `+0x1E` rather than
+applied immediately, and `ShowLevelUpMessage` displays both the
+current and pending level, confirming `+0x1E`'s role.
+
+207 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

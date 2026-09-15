@@ -291,7 +291,14 @@ drains `0x51BA`/`0x539A`/`0x5396` into the permanent counters
 pairing crosses over rather than matching numeric order), then drains
 `0x51B6` itself into every valid party member's own `+0x18` field —
 plausibly an **experience-points** counter, a new party-record field
-find.
+find. **Confirmed**: `CheckForLevelUp` reads `+0x18` as packed-BCD XP,
+comparing it against an XP-threshold table (`0x9277`, 65 × 4-byte
+entries, one per level) indexed by the character's current level
+(`+0x16`) — walking forward while XP still clears the next threshold.
+A resulting higher level is staged into `+0x1E` (not applied
+immediately); `ShowLevelUpMessage` then displays both the current and
+pending-new level, confirming `+0x1E`'s "pending level-up" role too
+(previously only known to gate a portrait-redraw call).
 
 ### Global quest/world-state flags
 

@@ -3796,7 +3796,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B3D6);
 	op_hex		(x,	1);
+	set_cmt	(0X1B428,	"CheckForLevelUp (implicit si=word_328D4): walks the XP-threshold table at 0x9277 (65 x 4-byte packed-BCD entries, one per level) starting at the character's current level [+0x16], comparing their XP [+0x18] against each threshold and advancing while >=. If the result exceeds the current level, stores it into [+0x1E] (pending new level, not yet applied).",	0);
 	create_insn	(0X1B428);
+	set_name	(0X1B428,	"CheckForLevelUp");
 	create_insn	(x=0X1B433);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B441);
@@ -4740,6 +4742,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1EE82);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1EE87);
 	op_hex		(x,	1);
 	create_insn	(x=0X1EE8A);
@@ -4771,15 +4782,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1F197,	"Blanks the 25-byte scratch label buffer (0xAFA8) via StrFillN, then writeString's it at the stored position -- erases whatever label text was previously drawn there.",	0);
 	create_insn	(0X1F197);
 	set_name	(0X1F197,	"EraseLabelText");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1F1AF,	"msg",	0);
 	set_cmt	(0X1F1B8,	"Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.",	0);
 	create_insn	(0X1F1B8);
@@ -6337,8 +6339,10 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X25C4D);
 	op_hex		(x,	1);
+	set_cmt	(0X25C61,	"ShowLevelUpMessage(si=character): shows current level [+0x16], and if [+0x1E] (pending new level, from CheckForLevelUp) is nonzero, also shows it as a second line -- the level-up notification screen.",	0);
 	create_insn	(x=0X25C61);
 	op_hex		(x,	1);
+	set_name	(0X25C61,	"ShowLevelUpMessage");
 	set_cmt	(0X25C70,	"msg",	0);
 	create_insn	(0X25CFA);
 	create_insn	(0X25D02);
@@ -8403,6 +8407,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2A805);
 	op_hex		(x,	1);
 	create_insn	(0X2A80E);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A81D);
 	create_insn	(0X2A827);
 	create_insn	(x=0X2A845);
@@ -8431,15 +8444,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A9E4);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A9EB);
 	create_insn	(0X2AA0C);
 	create_insn	(x=0X2AA2B);
