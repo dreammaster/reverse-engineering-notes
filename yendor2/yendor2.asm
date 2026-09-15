@@ -7010,8 +7010,8 @@ loc_14595:                              ; CODE XREF: sub_141D9+25D↑j
                 mov     ax, es:[si+76h]
                 mov     word_32968, ax
                 mov     ax, 5104h
-                mov     word_2E48E, ax
-                mov     word_2E490, 6
+                mov     g_blitMaskPtr, ax
+                mov     g_blitMaskLen, 6
 
 loc_145EB:                              ; CODE XREF: sub_141D9+3EA↑j
                 call    DrawPicture
@@ -7956,9 +7956,9 @@ sub_14E28       proc far                ; CODE XREF: ShowClueBook+508↑P
                 lodsw
                 mov     es:word_2E412, ax
                 lodsw
-                mov     es:word_2E48E, ax
+                mov     es:g_blitMaskPtr, ax
                 lodsw
-                mov     es:word_2E490, ax
+                mov     es:g_blitMaskLen, ax
                 lodsw
                 mov     es:word_2E4AC, ax
                 lodsw
@@ -8114,9 +8114,9 @@ sub_14F92       proc far                ; CODE XREF: ShowClueBook+C↑P
                 stosw
                 mov     ax, word_2E412
                 stosw
-                mov     ax, word_2E48E
+                mov     ax, g_blitMaskPtr
                 stosw
-                mov     ax, word_2E490
+                mov     ax, g_blitMaskLen
                 stosw
                 mov     ax, word_2E4AC
                 stosw
@@ -24076,9 +24076,9 @@ loc_1D87F:                              ; CODE XREF: sub_1D4B8+369↑j
                 call    sub_2BB97
                 mov     ax, _val36
                 call    sub_1DA42
-                mov     word_2E490, 6
+                mov     g_blitMaskLen, 6
                 mov     ax, 55AAh
-                mov     word_2E48E, ax
+                mov     g_blitMaskPtr, ax
                 mov     word_2E532, 30h ; '0'
                 mov     _font_bgTransparent, 1
                 mov     word_32918, 0Ah
@@ -29795,8 +29795,8 @@ sub_20E54       proc near               ; CODE XREF: sub_212B8:loc_212E7↓p
                 or      word_328C6, 1
                 mov     ax, si
                 add     ax, 72h ; 'r'
-                mov     word_2E48E, ax
-                mov     word_2E490, 6
+                mov     g_blitMaskPtr, ax
+                mov     g_blitMaskLen, 6
 
 loc_20E6F:                              ; CODE XREF: sub_20E54+6↑j
                 mov     ax, [si+8]
@@ -32734,9 +32734,9 @@ loc_2286D:                              ; CODE XREF: sub_2281F+7F↓j
                 cmp     word ptr [di+4], 0
                 jz      short loc_2289B
                 mov     ax, [di+0Ch]
-                mov     word_2E48E, ax
+                mov     g_blitMaskPtr, ax
                 mov     ax, [di+0Eh]
-                mov     word_2E490, ax
+                mov     g_blitMaskLen, ax
                 and     word_328C6, 0FFFEh
                 test    word ptr [di+10h], 2
                 jz      short loc_22890
@@ -46101,7 +46101,7 @@ var_A           = word ptr -0Ah
                 sub     sp, 50h
                 mov     ax, word_32926
                 mov     [bp+var_21], al
-                call    sub_2A53C
+                call    ExpandBlitMaskNibbles
                 mov     bx, 782Eh
                 add     bx, word_2E532
                 call    LoadPictureIntoEms
@@ -46332,10 +46332,10 @@ loc_29A02:                              ; CODE XREF: DrawPicture+144↑j
                 mov     cx, 0Fh
                 xor     ax, ax
                 rep stosw
-                mov     si, word_2E48E
+                mov     si, g_blitMaskPtr
                 mov     di, bp
                 sub     di, 4Ah ; 'J'
-                mov     cx, word_2E490
+                mov     cx, g_blitMaskLen
 
 loc_29A24:                              ; CODE XREF: DrawPicture+1C7↓j
                 xor     ax, ax
@@ -46584,10 +46584,10 @@ loc_29B86:                              ; CODE XREF: sub_29B0F+6C↑j
                 rep stosw
                 test    word_328C6, 1
                 jz      short loc_29BD8
-                mov     si, word_2E48E
+                mov     si, g_blitMaskPtr
                 mov     di, bp
                 sub     di, 4Ah ; 'J'
-                mov     cx, word_2E490
+                mov     cx, g_blitMaskLen
 
 loc_29BBB:                              ; CODE XREF: sub_29B0F+C7↓j
                 xor     ax, ax
@@ -47824,8 +47824,8 @@ sub_2A51B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A53C       proc near               ; CODE XREF: DrawPicture+13↑p
-                push    ax
+ExpandBlitMaskNibbles proc near         ; CODE XREF: DrawPicture+13↑p
+                push    ax              ; If word_328C6 bit 0 is set, expands g_blitMaskLen bytes from g_blitMaskPtr into a 15-word scratch buffer: each byte's low nibble becomes (nibble << 4) zero-extended to a word -- classic masked-blit prep. Factored-out copy of the same loop inlined in DrawPicture (loc_29A02) and sub_29B0F.
                 push    cx
                 push    di
                 push    si
@@ -47839,12 +47839,12 @@ sub_2A53C       proc near               ; CODE XREF: DrawPicture+13↑p
                 rep stosw
                 test    word_328C6, 1
                 jz      short loc_2A583
-                mov     si, word_2E48E
+                mov     si, g_blitMaskPtr
                 mov     di, bp
                 sub     di, 4Ah ; 'J'
-                mov     cx, word_2E490
+                mov     cx, g_blitMaskLen
 
-loc_2A566:                              ; CODE XREF: sub_2A53C+45↓j
+loc_2A566:                              ; CODE XREF: ExpandBlitMaskNibbles+45↓j
                 xor     ax, ax
                 mov     al, [si]
                 shl     ax, 1
@@ -47860,14 +47860,14 @@ loc_2A566:                              ; CODE XREF: sub_2A53C+45↓j
                 add     di, 2
                 loop    loc_2A566
 
-loc_2A583:                              ; CODE XREF: sub_2A53C+1B↑j
+loc_2A583:                              ; CODE XREF: ExpandBlitMaskNibbles+1B↑j
                 pop     es
                 pop     si
                 pop     di
                 pop     cx
                 pop     ax
                 retn
-sub_2A53C       endp
+ExpandBlitMaskNibbles endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51975,8 +51975,8 @@ loc_2C989:                              ; CODE XREF: sub_2C0FE+867↑j
                 mov     bx, word_332F0
                 or      bx, bx
                 jz      short loc_2C9A7
-                mov     word_2E48E, 5A90h
-                mov     word_2E490, 6
+                mov     g_blitMaskPtr, 5A90h
+                mov     g_blitMaskLen, 6
                 or      word_328C6, 1
 
 loc_2C9A7:                              ; CODE XREF: sub_2C0FE+896↑j
@@ -52261,9 +52261,9 @@ loc_2CC77:                              ; CODE XREF: sub_2C0FE+B67↑j
                 call    sub_2BB97
                 mov     ax, word_332E2
                 call    sub_2D498
-                mov     word_2E490, 6
+                mov     g_blitMaskLen, 6
                 mov     ax, 5A96h
-                mov     word_2E48E, ax
+                mov     g_blitMaskPtr, ax
                 mov     word_2E532, 30h ; '0'
                 mov     word_32918, 0Ah
                 mov     _font_bgTransparent, 1
@@ -52291,9 +52291,9 @@ loc_2CCB4:                              ; CODE XREF: sub_2C0FE+BE1↓j
 loc_2CCEE:                              ; CODE XREF: sub_2C0FE+A7↑j
                 mov     ax, word_332DA
                 call    sub_2D498
-                mov     word_2E490, 6
+                mov     g_blitMaskLen, 6
                 mov     ax, 5A90h
-                mov     word_2E48E, ax
+                mov     g_blitMaskPtr, ax
                 mov     word_2E532, 30h ; '0'
                 mov     word_32918, 0Ah
                 mov     _font_bgTransparent, 1
@@ -52377,7 +52377,7 @@ loc_2CDEC:                              ; CODE XREF: sub_2C0FE+CD1↑j
                 call    sub_20C1E
                 call    sub_2BB97
                 mov     ax, 5A90h
-                mov     word_2E48E, ax
+                mov     g_blitMaskPtr, ax
                 mov     word_2E532, 30h ; '0'
                 mov     word_32918, 0Ah
                 mov     _font_bgTransparent, 1
@@ -52609,9 +52609,9 @@ loc_2D02D:                              ; CODE XREF: sub_2C0FE+F25↑j
 ; ---------------------------------------------------------------------------
 
 loc_2D04D:                              ; CODE XREF: sub_2C0FE+BD↑j
-                mov     word_2E490, 6
+                mov     g_blitMaskLen, 6
                 mov     ax, 5A90h
-                mov     word_2E48E, ax
+                mov     g_blitMaskPtr, ax
                 mov     ax, word_332DA
                 call    sub_2D498
                 call    sub_2BB97
@@ -56739,10 +56739,12 @@ _val7           dw 0                    ; DATA XREF: InitGlobals+24↑w
                                         ; ShowCharacterInventory+D6↑r ...
 _val8           dw 0                    ; DATA XREF: InitGlobals+2A↑w
                                         ; ShowCharacterInventory+EA↑r ...
-word_2E48E      dw 0                    ; DATA XREF: sub_141D9+409↑w
+g_blitMaskPtr   dw 0                    ; DATA XREF: sub_141D9+409↑w
                                         ; sub_14E28+34↑w ...
-word_2E490      dw 0                    ; DATA XREF: sub_141D9+40C↑w
+                                        ; Pointer to the current sprite's explicit transparency/AND mask data (paired with g_blitMaskLen), consumed by ExpandBlitMaskNibbles when word_328C6 bit 0 is set. Set from ~12 call sites before drawing a masked sprite; often length 6.
+g_blitMaskLen   dw 0                    ; DATA XREF: sub_141D9+40C↑w
                                         ; sub_14E28+39↑w ...
+                                        ; Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.
 word_2E492      dw 0FFh                 ; DATA XREF: sub_11A10:loc_11D4A↑r
                                         ; InitGame+CF↑r ...
 word_2E494      dw 0FFFFh               ; DATA XREF: sub_2827E:loc_28289↑r

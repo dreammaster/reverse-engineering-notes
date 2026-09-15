@@ -949,6 +949,24 @@ enough to name. Left open rather than guessed at.
 
 136 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the masked-blit prep helper
+
+One more small, self-contained find while in this area: `sub_2A53C`
+(`DrawPicture`'s only callee) turned out to be a factored-out copy of a
+mask-expand loop that also appears inlined twice more — directly in
+`DrawPicture` and in `sub_29B0F` (the tile-legend cluster's other blit
+routine). All three are byte-identical: if `word_328C6` bit 0 is set,
+walk a byte mask (`word_2E48E`/`word_2E490`, set from ~12 call sites
+throughout the game) and expand each byte's low nibble into a
+zero-extended word — a standard VGA masked-blit prep step for sprites
+with an explicit transparency mask rather than a simple color key.
+Named `ExpandBlitMaskNibbles`, `g_blitMaskPtr`, `g_blitMaskLen`.
+`word_328C6` itself is left alone — it's a broad flags word reused by
+many unrelated subsystems, confirmed by the wide variety of other bit
+patterns tested against it elsewhere.
+
+137 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

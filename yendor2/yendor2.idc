@@ -8204,7 +8204,9 @@ static Bytes_1(void) {
 	create_insn	(0X2A51B);
 	create_insn	(0X2A530);
 	create_insn	(0X2A534);
+	set_cmt	(0X2A53C,	"If word_328C6 bit 0 is set, expands g_blitMaskLen bytes from g_blitMaskPtr into a 15-word scratch buffer: each byte's low nibble becomes (nibble << 4) zero-extended to a word -- classic masked-blit prep. Factored-out copy of the same loop inlined in DrawPicture (loc_29A02) and sub_29B0F.",	0);
 	create_insn	(0X2A53C);
+	set_name	(0X2A53C,	"ExpandBlitMaskNibbles");
 	create_insn	(x=0X2A551);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A56A);
@@ -9194,8 +9196,12 @@ static Bytes_1(void) {
 	set_name	(0X2E48A,	"_val7");
 	create_word	(0X2E48C);
 	set_name	(0X2E48C,	"_val8");
+	set_cmt	(0X2E48E,	"Pointer to the current sprite's explicit transparency/AND mask data (paired with g_blitMaskLen), consumed by ExpandBlitMaskNibbles when word_328C6 bit 0 is set. Set from ~12 call sites before drawing a masked sprite; often length 6.",	0);
 	create_word	(0X2E48E);
+	set_name	(0X2E48E,	"g_blitMaskPtr");
+	set_cmt	(0X2E490,	"Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.",	0);
 	create_word	(0X2E490);
+	set_name	(0X2E490,	"g_blitMaskLen");
 	create_word	(0X2E492);
 	create_word	(0X2E494);
 	create_word	(0X2E496);
@@ -10022,6 +10028,15 @@ static Bytes_1(void) {
 	set_name	(0X3599B,	"aSpacebarTo_0");
 	create_strlit	(0X359A7,	0XD);
 	set_name	(0X359A7,	"aEnhanceItem");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X359B4,	0X6);
 	set_name	(0X359B4,	"aCost");
 	create_strlit	(0X359BA,	0XA);
@@ -10058,15 +10073,6 @@ static Bytes_1(void) {
 	set_name	(0X35A9A,	"a6pmAnd12am");
 	create_strlit	(0X35AA7,	0X1D);
 	set_name	(0X35AA7,	"aCanFlyAnytimeD");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35AC4,	0X1C);
 	set_name	(0X35AC4,	"aMayBeUsedXTime");
 	create_strlit	(0X35AE0,	0X19);
