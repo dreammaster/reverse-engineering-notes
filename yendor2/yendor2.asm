@@ -916,7 +916,7 @@ loc_107CE:                              ; CODE XREF: start+4AC↑j
 loc_107EF:                              ; CODE XREF: start+7EA↑j
                 cmp     byte_2E400, 0FEh
                 jnz     short loc_107FE
-                call    sub_1F0CD
+                call    InitializeDungeonLevel
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -1125,7 +1125,7 @@ loc_109F9:                              ; CODE XREF: start+67A↑j
                 call    RunTitleScreen
                 cmp     byte_2E400, 0FFh
                 jz      short loc_10A23
-                call    sub_1F0CD
+                call    InitializeDungeonLevel
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -3381,7 +3381,7 @@ loc_1204C:                              ; CODE XREF: InitGame+168↑j
 ; ---------------------------------------------------------------------------
 
 loc_12064:                              ; CODE XREF: InitGame+185↑j
-                call    sub_1F0CD
+                call    InitializeDungeonLevel
                 mov     byte_2E400, 0
                 retf
 InitGame        endp
@@ -10708,7 +10708,7 @@ loc_167F9:                              ; CODE XREF: HandleDungeonInput+DA↑j
 loc_16817:                              ; CODE XREF: HandleDungeonInput+40D↑j
                 cmp     byte_2E400, 0FEh
                 jnz     short loc_16824
-                call    sub_1F0CD
+                call    InitializeDungeonLevel
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -26627,9 +26627,9 @@ RunGameDialog   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F0CD       proc far                ; CODE XREF: start+7F6↑P
+InitializeDungeonLevel proc far         ; CODE XREF: start+7F6↑P
                                         ; start+A1B↑P ...
-                push    es
+                push    es              ; Initializes/enters a dungeon level: copies a per-level metadata template, calls RevealCellsAroundPlayer, redraws the dungeon screen and minimap, and resets combat state -- zeroes the entire g_monsterSlots array and clears word_32A1E (active combat monster). Called from `start` at several sites.
                 call    sub_25862
                 mov     es, word_2E4AA
                 mov     cx, 30h ; '0'
@@ -26654,7 +26654,7 @@ sub_1F0CD       proc far                ; CODE XREF: start+7F6↑P
                 mov     word_32954, 0
                 or      word_3295A, 800h
 
-loc_1F13A:                              ; CODE XREF: sub_1F0CD+5F↑j
+loc_1F13A:                              ; CODE XREF: InitializeDungeonLevel+5F↑j
                 and     word_328CA, 0FFFh
                 mov     di, 51C0h
                 mov     cx, 0EAh
@@ -26666,10 +26666,10 @@ loc_1F13A:                              ; CODE XREF: sub_1F0CD+5F↑j
                 jnz     short loc_1F161
                 mov     word_36CE7, 5
 
-loc_1F161:                              ; CODE XREF: sub_1F0CD+8C↑j
+loc_1F161:                              ; CODE XREF: InitializeDungeonLevel+8C↑j
                 pop     es
                 retf
-sub_1F0CD       endp
+InitializeDungeonLevel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -38526,7 +38526,7 @@ loc_25ADB:                              ; CODE XREF: sub_25AAC+1B↑j
                 call    RunGameDialog
                 cmp     byte_2E400, 0FFh
                 jz      short loc_25B08
-                call    sub_1F0CD
+                call    InitializeDungeonLevel
 
 loc_25B08:                              ; CODE XREF: sub_25AAC+28↑j
                                         ; sub_25AAC+55↑j
@@ -56770,7 +56770,7 @@ word_2E4A2      dw 0                    ; DATA XREF: RunMapEditorScreen+38↑w
                 db    0
 word_2E4A6      dw 0                    ; DATA XREF: sub_209D2↑r
                                         ; PlayMusicTrack+D↑w ...
-word_2E4A8      dw 0                    ; DATA XREF: sub_1F0CD+15↑w
+word_2E4A8      dw 0                    ; DATA XREF: InitializeDungeonLevel+15↑w
                                         ; sub_25608+1D↑r ...
 word_2E4AA      dw 0                    ; DATA XREF: start+17↑w
                                         ; HandleMovementInput+336↑r ...
@@ -74327,7 +74327,7 @@ word_32950      dw 0                    ; DATA XREF: seg059:0213↑w
                                         ; sub_1FBE1+12↑w ...
 word_32952      dw 0                    ; DATA XREF: seg059:0224↑w
                                         ; sub_1FBE1+18↑w ...
-word_32954      dw 0                    ; DATA XREF: sub_1F0CD+61↑w
+word_32954      dw 0                    ; DATA XREF: InitializeDungeonLevel+61↑w
                                         ; AdvanceGameClock+5C↑r ...
 word_32956      dw 0                    ; DATA XREF: sub_11D66↑w
                                         ; sub_11D66:loc_11DCE↑r ...

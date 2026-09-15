@@ -2588,6 +2588,15 @@ findings.
 
 325 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: InitializeDungeonLevel
+
+Named `sub_1F0CD`, called from `start`: initializes/enters a dungeon
+level — copies a per-level metadata template, reveals cells around
+the player, redraws the screen/minimap, and resets combat state
+(zeroes `g_monsterSlots`, clears the active-combat-monster global).
+
+326 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

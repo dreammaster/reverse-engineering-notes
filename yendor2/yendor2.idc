@@ -4868,7 +4868,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1F028,	"this",	0);
 	set_cmt	(0X1F065,	"this",	0);
 	set_cmt	(0X1F070,	"this",	0);
+	set_cmt	(0X1F0CD,	"Initializes/enters a dungeon level: copies a per-level metadata template, calls RevealCellsAroundPlayer, redraws the dungeon screen and minimap, and resets combat state -- zeroes the entire g_monsterSlots array and clears word_32A1E (active combat monster). Called from `start` at several sites.",	0);
 	create_insn	(0X1F0CD);
+	set_name	(0X1F0CD,	"InitializeDungeonLevel");
 	create_insn	(x=0X1F120);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F126);
@@ -6464,9 +6466,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X25A3B);
 	op_hex		(x,	1);
 	set_name	(0X25A3B,	"SetPaletteRange");
-	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
-	create_insn	(x=0X25A47);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -6476,6 +6475,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
+	create_insn	(x=0X25A47);
+	op_hex		(x,	1);
 	set_cmt	(0X25A5B,	"BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).",	0);
 	create_insn	(0X25A5B);
 	set_name	(0X25A5B,	"GetPalette");
@@ -9908,6 +9910,15 @@ static Bytes_2(void) {
 	set_name	(0X329E0,	"_ptr5");
 	create_word	(0X329E2);
 	set_name	(0X329E2,	"_ptr6");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X329E4);
 	set_name	(0X329E4,	"_ptr7");
 	create_word	(0X329E6);
@@ -9925,15 +9936,6 @@ static Bytes_2(void) {
 	create_word	(0X329FA);
 	create_word	(0X329FC);
 	set_name	(0X329FC,	"_blockSize5");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X329FE);
 	create_word	(0X32A00);
 	create_word	(0X32A02);

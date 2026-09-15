@@ -456,7 +456,10 @@ below.
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base
-`0x51C0`, 3 × `0x9C`/156-byte records, `[+0]==0` = empty slot).
+`0x51C0`, 3 × `0x9C`/156-byte records, `[+0]==0` = empty slot;
+zeroed wholesale by `InitializeDungeonLevel` when entering/loading a
+level, alongside clearing `word_32A1E`, the active-combat-monster
+global).
 Confirmed fields: `+0xC` type/behavior flags (tested against `0x3010`
 in `BuildCombatTurnOrder`); `+0x12` the monster's current target (a
 party-member record pointer, assigned randomly among living party
