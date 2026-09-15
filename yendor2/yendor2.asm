@@ -23071,7 +23071,7 @@ seg048          segment byte public 'CODE' use16
 
 
 StrFillN        proc far                ; CODE XREF: sub_17B92+373↑P
-                                        ; sub_1F197+7↓P
+                                        ; EraseLabelText+7↓P
                 push    es              ; StrFillN(dest=bx, count=ah, fill=al): writes `count` copies of `fill` into dest then a null terminator; returns bx = pointer to the terminator (same convention as StpCpy/StrCat). Used e.g. to blank a text buffer with spaces before rebuilding a label in it.
                 push    di
                 push    cx
@@ -26310,7 +26310,7 @@ loc_1ECA7:                              ; CODE XREF: sub_1EA6E+234↑j
                 mov     _font_bgTransparent, 0
                 mov     ax, 0A000h
                 mov     _videoSegment, ax
-                call    sub_1F1B8
+                call    GetListItemPosition
                 mov     al, [bx]
                 mov     byte_368A1, al
                 test    byte ptr [bx+1], 80h
@@ -26353,7 +26353,7 @@ loc_1ED06:                              ; CODE XREF: sub_1EA6E+28F↑j
 
 loc_1ED31:                              ; CODE XREF: sub_1EA6E+26C↑j
                                         ; sub_1EA6E+2A4↑j
-                call    sub_1F197
+                call    EraseLabelText
                 mov     bx, 0AFA8h
                 mov     cx, 18h
                 call    sub_1D1D4
@@ -26373,7 +26373,7 @@ loc_1ED53:                              ; CODE XREF: sub_1EA6E+29D↑j
                 mov     bx, [bx+4]
                 mov     cx, 11h
                 call    sub_1F1F4
-                call    sub_1F197
+                call    EraseLabelText
                 call    sub_1F53E
                 jmp     loc_1EC8A
 ; ---------------------------------------------------------------------------
@@ -26413,7 +26413,7 @@ loc_1EDB8:                              ; CODE XREF: sub_1EA6E+3B3↓j
 ; ---------------------------------------------------------------------------
 
 loc_1EDD5:                              ; CODE XREF: sub_1EA6E+35D↑j
-                call    sub_1F1B8
+                call    GetListItemPosition
                 mov     al, [bx]
                 mov     byte_368A1, al
                 test    byte ptr [bx+1], 80h
@@ -26439,7 +26439,7 @@ loc_1EE02:                              ; CODE XREF: sub_1EA6E+37D↑j
                 mov     bx, [bx+4]
                 mov     cx, 11h
                 call    sub_1F1F4
-                call    sub_1F197
+                call    EraseLabelText
                 call    sub_1F53E
                 jmp     short loc_1EDB8
 ; ---------------------------------------------------------------------------
@@ -26698,9 +26698,9 @@ sub_1F163       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F197       proc near               ; CODE XREF: sub_1EA6E:loc_1ED31↑p
+EraseLabelText  proc near               ; CODE XREF: sub_1EA6E:loc_1ED31↑p
                                         ; sub_1EA6E+2FE↑p ...
-                mov     ah, 19h
+                mov     ah, 19h         ; Blanks the 25-byte scratch label buffer (0xAFA8) via StrFillN, then writeString's it at the stored position -- erases whatever label text was previously drawn there.
                 mov     al, 20h ; ' '
                 mov     bx, 0AFA8h
                 call    StrFillN
@@ -26711,15 +26711,15 @@ sub_1F197       proc near               ; CODE XREF: sub_1EA6E:loc_1ED31↑p
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
                 retn
-sub_1F197       endp
+EraseLabelText  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F1B8       proc near               ; CODE XREF: sub_1EA6E+259↑p
+GetListItemPosition proc near           ; CODE XREF: sub_1EA6E+259↑p
                                         ; sub_1EA6E:loc_1EDD5↑p
-                mov     ax, word_3291E
+                mov     ax, word_3291E  ; Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.
                 mov     bx, 0Ah
                 dec     ax
                 mul     bx
@@ -26742,7 +26742,7 @@ sub_1F1B8       proc near               ; CODE XREF: sub_1EA6E+259↑p
                 add     bx, 6CBEh
                 mov     word_32906, bx
                 retn
-sub_1F1B8       endp
+GetListItemPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74252,8 +74252,8 @@ word_3290E      dw 0                    ; DATA XREF: sub_13FCF+A6↑w
                                         ; sub_13FCF+BE↑r ...
 word_32910      dw 0                    ; DATA XREF: sub_1EA6E:loc_1EC8A↑w
                                         ; sub_1EA6E:loc_1EDB8↑w ...
-word_32912      dw 0                    ; DATA XREF: sub_1F197+12↑r
-                                        ; sub_1F1B8+22↑w
+word_32912      dw 0                    ; DATA XREF: EraseLabelText+12↑r
+                                        ; GetListItemPosition+22↑w
 word_32914      dw 0                    ; DATA XREF: sub_28564+3E↑r
                                         ; sub_28619+87↑w
 word_32916      dw 0                    ; DATA XREF: sub_28564+34↑r

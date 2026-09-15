@@ -331,7 +331,18 @@ functions around it (`sub_1F197` redraws whatever's currently in it;
 table at `0x5CD0` indexed by `word_3291E`) are a promising lead for a
 list/menu rendering subsystem, not yet named.
 
-71 named of 769 functions as of this update.
+Named both: `GetListItemPosition` (`0x1F1B8`, the 10-byte-per-entry
+table lookup) and `EraseLabelText` (`0x1F197`, blanks the scratch
+buffer with `StrFillN` then `writeString`s it, which — since it's now
+blank — erases whatever label was drawn there before).
+
+Both are called from `sub_1EA6E`, a 1631-byte function called directly
+from both `start` and `InitGame`, touching all four `FileEntry` ops and
+`GameDialog_drawButtons` — almost certainly a major top-level screen
+(main menu or HUD) but too large and multi-purpose to confidently name
+as a single unit without much more work; flagged rather than guessed.
+
+73 named of 769 functions as of this update.
 
 ## Current state (2026-09-14, before any work this session)
 

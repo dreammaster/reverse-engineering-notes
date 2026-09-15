@@ -4658,9 +4658,13 @@ static Bytes_0(void) {
 	create_insn	(x=0X1F13A);
 	op_hex		(x,	1);
 	create_insn	(0X1F163);
+	set_cmt	(0X1F197,	"Blanks the 25-byte scratch label buffer (0xAFA8) via StrFillN, then writeString's it at the stored position -- erases whatever label text was previously drawn there.",	0);
 	create_insn	(0X1F197);
+	set_name	(0X1F197,	"EraseLabelText");
 	set_cmt	(0X1F1AF,	"msg",	0);
+	set_cmt	(0X1F1B8,	"Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.",	0);
 	create_insn	(0X1F1B8);
+	set_name	(0X1F1B8,	"GetListItemPosition");
 	create_insn	(0X1F1F4);
 	create_insn	(x=0X1F217);
 	op_hex		(x,	1);
@@ -6537,6 +6541,15 @@ static Bytes_0(void) {
 	set_cmt	(0X275ED,	"this",	0);
 	create_insn	(x=0X27616);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X27632);
 	op_hex		(x,	1);
 	create_insn	(0X2763D);
@@ -6588,15 +6601,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2786A);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X27875);
 	op_hex		(x,	1);
 	create_insn	(0X27887);
