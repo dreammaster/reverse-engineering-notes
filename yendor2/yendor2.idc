@@ -4992,8 +4992,10 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1FD10);
 	op_hex		(x,	1);
+	set_cmt	(0X1FD17,	"Timer-ISR sub-task (word_3294C, word_3295A bit 0x8000): reloads its own countdown from word_36CE7 and flags a redraw (word_328C4 |= 0x400).",	0);
 	create_insn	(x=0X1FD17);
 	op_hex		(x,	1);
+	set_name	(0X1FD17,	"TickRedrawTimer");
 	set_cmt	(0X1FD24,	"5-minute periodic sweep (AdvanceGameClock). Runs TickAilmentDuration over the 6-entry table at 0x9519 and every party member's 8 main inventory slots ([+0x11A]) -- ailments occupy the same slot storage as items/world-table rows. Calls sub_1FE0A once (a related status sweep, not traced). Sums all 12 known status-duration counters; if all 0, clears word_3295A bit 0x800 so this timer stops firing until something needs it again.",	0);
 	create_insn	(0X1FD24);
 	set_name	(0X1FD24,	"TickWorldAilments");
@@ -5027,7 +5029,9 @@ static Bytes_1(void) {
 	create_insn	(0X1FEA0);
 	create_insn	(x=0X1FEA3);
 	op_hex		(x,	1);
+	set_cmt	(0X1FECF,	"Timer-ISR sub-task (word_32952, word_3295A bit 0x1000): dispatches on word_328CE (0-3) and shuffles small color-table chunks between 0x4C0C and 0x472A -- a palette-cycling animation effect (torch flicker / water shimmer style), not fully decoded.",	0);
 	create_insn	(0X1FECF);
+	set_name	(0X1FECF,	"AnimatePaletteCycle");
 	create_insn	(0X1FEEC);
 	create_insn	(0X1FEF9);
 	create_insn	(0X1FF3C);
@@ -7636,6 +7640,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X299D2);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X299E1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X299E4);
@@ -7686,15 +7699,6 @@ static Bytes_1(void) {
 	op_seg		(x,	1);
 	create_insn	(0X29AA2);
 	set_name	(0X29AA2,	"writeChar");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X29ABE,	"x",	0);
 	set_cmt	(0X29AC1,	"y",	0);
 	create_insn	(x=0X29ADE);

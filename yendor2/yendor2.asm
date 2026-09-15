@@ -27537,7 +27537,7 @@ byte_1F986      db 4 dup(0), 190h dup(11h), 2Eh, 0FFh, 6, 12h, 0, 2Eh
                 jz      short loc_1FB6A
                 dec     word_3294C
                 jnz     short loc_1FB6A
-                call    sub_1FD17
+                call    TickRedrawTimer
 
 loc_1FB6A:                              ; CODE XREF: seg059:01EF↑j
                                         ; seg059:01F5↑j
@@ -27561,7 +27561,7 @@ loc_1FB8C:                              ; CODE XREF: seg059:0211↑j
                 jz      short loc_1FB9D
                 dec     word_32952
                 jnz     short loc_1FB9D
-                call    sub_1FECF
+                call    AnimatePaletteCycle
 
 loc_1FB9D:                              ; CODE XREF: seg059:0222↑j
                                         ; seg059:0228↑j
@@ -27759,12 +27759,12 @@ sub_1FD03       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FD17       proc near               ; CODE XREF: seg059:01F7↑p
-                or      word_328C4, 400h
+TickRedrawTimer proc near               ; CODE XREF: seg059:01F7↑p
+                or      word_328C4, 400h ; Timer-ISR sub-task (word_3294C, word_3295A bit 0x8000): reloads its own countdown from word_36CE7 and flags a redraw (word_328C4 |= 0x400).
                 mov     ax, word_36CE7
                 mov     word_3294C, ax
                 retn
-sub_1FD17       endp
+TickRedrawTimer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27995,8 +27995,8 @@ AdvanceGameClock endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FECF       proc near               ; CODE XREF: seg059:022A↑p
-                push    es
+AnimatePaletteCycle proc near           ; CODE XREF: seg059:022A↑p
+                push    es              ; Timer-ISR sub-task (word_32952, word_3295A bit 0x1000): dispatches on word_328CE (0-3) and shuffles small color-table chunks between 0x4C0C and 0x472A -- a palette-cycling animation effect (torch flicker / water shimmer style), not fully decoded.
                 push    di
                 push    si
                 push    bp
@@ -28013,7 +28013,7 @@ sub_1FECF       proc near               ; CODE XREF: seg059:022A↑p
                 jmp     loc_1FFC7
 ; ---------------------------------------------------------------------------
 
-loc_1FEEC:                              ; CODE XREF: sub_1FECF+18↑j
+loc_1FEEC:                              ; CODE XREF: AnimatePaletteCycle+18↑j
                 cmp     ax, 1
                 jz      short loc_1FEF9
                 cmp     ax, 2
@@ -28021,7 +28021,7 @@ loc_1FEEC:                              ; CODE XREF: sub_1FECF+18↑j
                 jmp     loc_1FF7E
 ; ---------------------------------------------------------------------------
 
-loc_1FEF9:                              ; CODE XREF: sub_1FECF+20↑j
+loc_1FEF9:                              ; CODE XREF: AnimatePaletteCycle+20↑j
                 add     si, 3
                 mov     cx, 9
                 rep movsb
@@ -28049,7 +28049,7 @@ loc_1FEF9:                              ; CODE XREF: sub_1FECF+20↑j
                 jmp     loc_1FFC4
 ; ---------------------------------------------------------------------------
 
-loc_1FF3C:                              ; CODE XREF: sub_1FECF+25↑j
+loc_1FF3C:                              ; CODE XREF: AnimatePaletteCycle+25↑j
                 add     si, 6
                 mov     cx, 6
                 rep movsb
@@ -28077,7 +28077,7 @@ loc_1FF3C:                              ; CODE XREF: sub_1FECF+25↑j
                 jmp     short loc_1FFC4
 ; ---------------------------------------------------------------------------
 
-loc_1FF7E:                              ; CODE XREF: sub_1FECF+27↑j
+loc_1FF7E:                              ; CODE XREF: AnimatePaletteCycle+27↑j
                 add     si, 9
                 mov     cx, 3
                 rep movsb
@@ -28104,11 +28104,11 @@ loc_1FF7E:                              ; CODE XREF: sub_1FECF+27↑j
                 rep movsb
                 mov     word_328CE, 0FFFFh
 
-loc_1FFC4:                              ; CODE XREF: sub_1FECF+6A↑j
-                                        ; sub_1FECF+AD↑j
+loc_1FFC4:                              ; CODE XREF: AnimatePaletteCycle+6A↑j
+                                        ; AnimatePaletteCycle+AD↑j
                 mov     si, 472Ah
 
-loc_1FFC7:                              ; CODE XREF: sub_1FECF+1A↑j
+loc_1FFC7:                              ; CODE XREF: AnimatePaletteCycle+1A↑j
                 inc     word_328CE
                 mov     cx, 10h
                 mov     bl, 0D0h
@@ -28123,7 +28123,7 @@ loc_1FFC7:                              ; CODE XREF: sub_1FECF+1A↑j
                 pop     di
                 pop     es
                 retn
-sub_1FECF       endp
+AnimatePaletteCycle endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74189,8 +74189,8 @@ word_328CA      dw 0                    ; DATA XREF: start+25↑w
                                         ; start+2A↑w ...
 word_328CC      dw 0                    ; DATA XREF: ShowClueBook+5A↑w
                                         ; ShowClueBook:loc_10CB5↑w ...
-word_328CE      dw 0                    ; DATA XREF: sub_1FECF+12↑r
-                                        ; sub_1FECF+EF↑w ...
+word_328CE      dw 0                    ; DATA XREF: AnimatePaletteCycle+12↑r
+                                        ; AnimatePaletteCycle+EF↑w ...
                 db    0
                 db    0
 word_328D2      dw 0                    ; DATA XREF: HandleMovementInput+258↑r

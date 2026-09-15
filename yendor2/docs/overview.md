@@ -1814,6 +1814,24 @@ traced end to end.
 
 241 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the clock is a real timer interrupt
+
+Traced `AdvanceGameClock`'s own trigger and found it's called from a
+genuine `INT 1Ch` timer interrupt service routine (18.2 Hz hardware
+tick, ends in `iret`) — confirming the clock/lighting/ailment systems
+run on real wall-clock time, independent of player movement or turns.
+The ISR multiplexes 5 periodic sub-tasks off one hardware tick, each
+with its own gate bit and reload countdown; named the two
+cleanly-bounded remaining ones, `TickRedrawTimer` (periodic dirty-
+screen flag) and `AnimatePaletteCycle` (a palette-cycling animation
+effect, torch/water-shimmer style, not fully decoded). Left the raw
+ISR entry point itself undisturbed — it's embedded in bytes mixed
+with a preceding data declaration, and forcing a rename risked
+corrupting the disassembly boundary; documented its dispatch
+structure in `file-formats.md` instead.
+
+243 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

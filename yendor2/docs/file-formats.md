@@ -454,6 +454,21 @@ resolve the attempt.
 
 ### In-game clock/calendar
 
+**Everything below is wall-clock-driven, not turn-based**: `AdvanceGameClock`
+and friends are all called from a real `INT 1Ch` timer interrupt
+service routine (18.2 Hz hardware tick, ends in `iret`; paired with
+the already-named `RestoreInt1cVector`). The ISR multiplexes 5
+independent periodic sub-tasks, each with its own `word_3295A` gate
+bit and its own countdown reload value: `TickRedrawTimer` (periodic
+"mark screen dirty"), `AdvanceGameClock` (the minute tick, see below),
+`AdvanceDayNightPaletteFade` (confirms its 113-step fade is driven by
+*repeated* ISR calls, not one burst), `AnimatePaletteCycle` (a
+palette-cycling animation effect — torch flicker/water shimmer style,
+not fully decoded), and one inline bit-clear task not yet named. The
+raw ISR entry itself is embedded in bytes IDA hasn't cleanly separated
+from a preceding data declaration, so it's documented here rather than
+renamed (renaming risks corrupting the disassembly boundary).
+
 `ShowGameClockCommand` (a `HandleGameCommand` handler, `word_32974==7`)
 confirms the game tracks a genuine in-game date and time, not just a
 coarse day/night or "time of day" value: it fills two fixed template
