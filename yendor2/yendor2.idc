@@ -2060,7 +2060,9 @@ static Bytes_0(void) {
 	create_insn	(0X14B10);
 	set_name	(0X14B10,	"FillVideoBuffer");
 	create_insn	(0X14B24);
+	set_cmt	(0X14B85,	"Builds '<field1> <field2>' (space-separated) from two WORLD.DAT- sourced text buffers (0xAFDA, 0xAFE7) into 0xAFA8, returned in bx. Same WorldDat_setBlock5/FileEntry_Read(errorCode=9) pattern as LoadClueBookMonsterEntry (WORLD.DAT block 0x32, MONSTER STATISTICS). Called only from BuildClueEntryText and ShowClueBookMonsterDetail -- plausibly a monster name + type/category label; exact field semantics not independently confirmed.",	0);
 	create_insn	(0X14B85);
+	set_name	(0X14B85,	"BuildMonsterDisplayName");
 	set_cmt	(0X14BD5,	"Clue book TAB help/index screen (called from ShowClueBook). Title: '** PRESS TAB AT ANY TIME TO SEE THIS SCREEN **'. Body lists the categories: F1 Maps, F2 Monster Statistics, F3 Spells, F4 Magic Users (spells by class), F5 Inventory Items, F6 Complete Walk Through, ESC Return to Game -- identifying (at least 6 of) DrawClueBookNavBar's 7 category tabs.",	0);
 	create_insn	(x=0X14BD5);
 	op_hex		(x,	1);
@@ -2152,7 +2154,9 @@ static Bytes_0(void) {
 	create_insn	(0X1522E);
 	set_name	(0X1522E,	"RunCharacterCreation");
 	create_insn	(0X15249);
+	set_cmt	(0X15267,	"Character creation's finalize/cleanup step (always runs, even on ESC-cancel from any of the 3 prior steps -- see RunCharacterCreation). Loads a transition palette, reads file entry #3, frees a temp memory block if allocated, clears the screen, and stops the character-creation music before returning.",	0);
 	create_insn	(0X15267);
+	set_name	(0X15267,	"FinalizeCharacterCreation");
 	create_insn	(x=0X1526C);
 	op_hex		(x,	1);
 	create_insn	(x=0X15272);
@@ -3572,6 +3576,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1A04B,	"Scans an 8-byte-stride table (0xD1C9, 0xFFFF-terminated) for the current cell's x or y coordinate (selected per entry by a flag bit) -- a general 'is this a designated special cell' check. Called from ApplyMapTriggerEffect and IsRestingAllowedHere.",	0);
 	create_insn	(0X1A04B);
 	set_name	(0X1A04B,	"IsPositionInTriggerList");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1A068);
 	op_hex		(x,	1);
 	create_insn	(0X1A075);
@@ -3628,15 +3641,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1A294,	"Places the held item on the ground; if it's a container ([+0xC] bit 0x2000), recursively processes its 8-slot contents the same way via sub_1A34C -- persists a dropped container's full contents. Called from TryDropHeldItem.",	0);
 	create_insn	(0X1A294);
 	set_name	(0X1A294,	"PlaceItemOnGround");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1A29F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A2C4);
@@ -5803,6 +5807,15 @@ static Bytes_1(void) {
 	set_cmt	(0X22387,	"Draws a full-screen picture (dir 0, id=word_2E530, set by caller) at (1,1), then saves the resulting screen to EMS page 0x55D8 (0x7D00 words = one full VGA screen). Generic full-screen draw-then-cache utility; called from many different screens (InitGame, RunDungeonGameLoop, ShowCreateCharacterPrompt, etc.) each with their own picture id.",	0);
 	create_insn	(0X22387);
 	set_name	(0X22387,	"DrawFullScreenPictureAndCacheToEMS");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X223D4);
 	create_insn	(0X22402);
 	set_cmt	(0X22445,	"Draws one party member's full status panel: portrait, unconscious/dead overlay, three DrawStatBar gauges (HP [+0x52]/[+0x92], MP [+0x54]/[+0x94], a third stat [+0x118]/[+0x56] not identified), an ability-readiness icon ([+0xB4]), and level-up/training text ([+0x1C] bit 0x40, [+0x1E]). Called from the main input loop sub_1869D.",	0);
@@ -5815,15 +5828,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X224A7);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X224DC);
 	op_hex		(x,	1);
 	create_insn	(x=0X2255E);
@@ -8596,6 +8600,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A2E5);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A2E8);
 	create_insn	(x=0X2A2EB);
 	op_hex		(x,	1);
@@ -8653,15 +8666,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A38B);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A395);
 	create_insn	(x=0X2A398);
 	op_hex		(x,	1);
@@ -11600,6 +11604,15 @@ static Bytes_3(void) {
 	set_name	(0X3CC78,	"g_soundDriverFarPtr");
 	set_cmt	(0X3CC7A,	"Segment half of the far pointer g_soundDriverFarPtr (0x3CC78); reused directly as the ES segment to free when shutting the driver down.",	0);
 	create_word	(0X3CC7A);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	make_array	(0X3CC7C,	0X4);
 	create_byte	(0X3CC80);
 	make_array	(0X3CC80,	0X200);
@@ -15063,6 +15076,7 @@ static Bytes(void) {
 	Bytes_1();
 	Bytes_2();
 	Bytes_3();
+	Bytes_4();
         end_type_updating(UTP_STRUCT);
 }
 

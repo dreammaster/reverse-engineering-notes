@@ -4898,7 +4898,7 @@ loc_12F4D:                              ; CODE XREF: BuildClueEntryText+B↑j
 
 loc_12F65:                              ; CODE XREF: BuildClueEntryText+14↑j
                 mov     bx, [si]
-                call    sub_14B85
+                call    BuildMonsterDisplayName
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
@@ -6710,7 +6710,7 @@ ShowClueBookMonsterDetail proc near     ; CODE XREF: RunClueBookMonsterCategory+
                 mov     si, 0
                 mov     bx, word_2E3EE
                 mov     bx, [bx]
-                call    sub_14B85
+                call    BuildMonsterDisplayName
                 mov     word_2E3F8, bx
                 mov     word_2E3FC, 0D0h
                 mov     ax, 8876h
@@ -7656,9 +7656,9 @@ sub_14B24       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B85       proc far                ; CODE XREF: BuildClueEntryText+9A↑P
+BuildMonsterDisplayName proc far        ; CODE XREF: BuildClueEntryText+9A↑P
                                         ; ShowClueBookMonsterDetail+D↑P
-                mov     ax, 0AFDAh
+                mov     ax, 0AFDAh      ; Builds '<field1> <field2>' (space-separated) from two WORLD.DAT- sourced text buffers (0xAFDA, 0xAFE7) into 0xAFA8, returned in bx. Same WorldDat_setBlock5/FileEntry_Read(errorCode=9) pattern as LoadClueBookMonsterEntry (WORLD.DAT block 0x32, MONSTER STATISTICS). Called only from BuildClueEntryText and ShowClueBookMonsterDetail -- plausibly a monster name + type/category label; exact field semantics not independently confirmed.
                 call    WorldDat_setBlock5
                 mov     errorCode, 9
                 mov     bx, 9043h
@@ -7679,7 +7679,7 @@ sub_14B85       proc far                ; CODE XREF: BuildClueEntryText+9A↑P
                 call    StrCat
                 mov     bx, 0AFA8h
                 retf
-sub_14B85       endp
+BuildMonsterDisplayName endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8381,7 +8381,7 @@ RunCharacterCreation proc far           ; CODE XREF: InitGame+B6↑P
 
 loc_15245:                              ; CODE XREF: RunCharacterCreation+8↑j
                                         ; RunCharacterCreation+12↑j
-                call    sub_15267
+                call    FinalizeCharacterCreation
                 retf
 RunCharacterCreation endp
 
@@ -8408,8 +8408,8 @@ sub_15249       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15267       proc near               ; CODE XREF: RunCharacterCreation:loc_15245↑p
-                call    sub_25862
+FinalizeCharacterCreation proc near     ; CODE XREF: RunCharacterCreation:loc_15245↑p
+                call    sub_25862       ; Character creation's finalize/cleanup step (always runs, even on ESC-cancel from any of the 3 prior steps -- see RunCharacterCreation). Loads a transition palette, reads file entry #3, frees a temp memory block if allocated, clears the screen, and stops the character-creation music before returning.
                 and     word_328C8, 0F7FFh
                 and     word_3295A, 7FFFh
                 and     word_328C4, 0FBFFh
@@ -8428,7 +8428,7 @@ sub_15267       proc near               ; CODE XREF: RunCharacterCreation:loc_15
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
 
-loc_152B2:                              ; CODE XREF: sub_15267+41↑j
+loc_152B2:                              ; CODE XREF: FinalizeCharacterCreation+41↑j
                 call    sub_25862
                 call    sub_152E1
                 test    g_driverStateFlags, 2
@@ -8439,18 +8439,18 @@ loc_152B2:                              ; CODE XREF: sub_15267+41↑j
                 mov     ax, 14h         ; ticks
                 call    wait
 
-loc_152D6:                              ; CODE XREF: sub_15267+59↑j
-                                        ; sub_15267+60↑j
+loc_152D6:                              ; CODE XREF: FinalizeCharacterCreation+59↑j
+                                        ; FinalizeCharacterCreation+60↑j
                 call    sub_238CD
                 and     word_328CA, 0FFF7h
                 retn
-sub_15267       endp
+FinalizeCharacterCreation endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_152E1       proc near               ; CODE XREF: sub_15267+50↑p
+sub_152E1       proc near               ; CODE XREF: FinalizeCharacterCreation+50↑p
                                         ; sub_1559A+16C↓p ...
                 mov     es, _videoBufferSeg
                 xor     di, di
@@ -43104,7 +43104,7 @@ WorldDat_setBlock4 endp
 
 
 WorldDat_setBlock5 proc far             ; CODE XREF: LoadClueBookMonsterEntry+18↑P
-                                        ; sub_14B85+3↑P ...
+                                        ; BuildMonsterDisplayName+3↑P ...
                 push    si
                 mov     si, 0CE63h
                 mov     word_368A7, ax
@@ -74179,8 +74179,8 @@ word_322BA      dw 0                    ; DATA XREF: FadePaletteStep+18↑w
                 db    0
 word_328BC      dw 0                    ; DATA XREF: HandlePortraitClick+1D↑w
                                         ; HandlePortraitClick+36↑w ...
-word_328BE      dw 0                    ; DATA XREF: sub_15267+3C↑r
-                                        ; sub_15267+43↑r ...
+word_328BE      dw 0                    ; DATA XREF: FinalizeCharacterCreation+3C↑r
+                                        ; FinalizeCharacterCreation+43↑r ...
 word_328C0      dw 0                    ; DATA XREF: HandlePortraitClick+23↑w
                                         ; HandlePortraitClick+3C↑w ...
 word_328C2      dw 0                    ; DATA XREF: RestPartyAndAdvanceClock+245↑w

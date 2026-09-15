@@ -322,6 +322,23 @@ mechanic (adding/removing a character from the active adventuring
 group), but not confirmed. Worth revisiting once `sub_23C18` is
 traced.
 
+### Character creation wizard (`RunCharacterCreation`)
+
+`RunCharacterCreation` (called from `InitGame` and from
+`RunTitleScreen`'s `I` key, per its own pre-existing comment) is a
+3-step wizard, each step ESC-cancelable: `ComposeCharacterPortrait`
+(step 1), `sub_15429` (step 2, not yet traced), `sub_1559A` (step 3,
+not yet traced), then always `FinalizeCharacterCreation` (was
+`sub_15267`, runs regardless of which step was reached). Matches the
+manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/
+`FEMALE`/`PICK A PORTRAIT` cluster. `FinalizeCharacterCreation` loads a
+transition palette, reads file entry `#3`, frees a temp memory block if
+one was allocated, clears the screen, and stops the
+character-creation music before returning — the wizard's common
+cleanup/exit path. The entry point *into* this wizard from the party
+roster screen is `ShowCreateCharacterPrompt` (see above), which first
+finds and wipes an empty `g_partyRecords` slot.
+
 ### The on-line clue book (F8)
 
 `ShowClueBook` (the manual's "F8 On-line clue book") drives an
@@ -339,6 +356,16 @@ chain was first named as a save-game slot-selection menu — wrong; all
 13 call sites into it trace to `ShowClueBook` alone, confirmed by that
 function's own pre-existing comment citing the manual, with no other
 caller anywhere.
+
+For the monster-statistics category specifically,
+`LoadClueBookMonsterEntry` reads `WORLD.DAT` block `0x32` ("MONSTER
+STATISTICS", per its own pre-existing comment) into a fresh buffer, and
+`BuildMonsterDisplayName` (was `sub_14B85`, called from
+`BuildClueEntryText` and `ShowClueBookMonsterDetail`) uses the same
+`WorldDat_setBlock5`/`FileEntry_Read(errorCode=9)` pattern to build a
+single space-joined display string from two `WORLD.DAT`-sourced text
+fields — plausibly a monster's name and its type/category label, though
+the exact field semantics aren't independently confirmed.
 
 Some clue entries are **registration-locked**: `RunClueEntryMenu` shows
 `ShowClueBookRegistrationNag` ("REGISTER YOUR COPY OF THE CLUE BOOK

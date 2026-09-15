@@ -3297,6 +3297,27 @@ roster's entry point into character creation.
 
 425 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: FinalizeCharacterCreation, BuildMonsterDisplayName
+
+Named `sub_15267` -> `FinalizeCharacterCreation`: the character-creation
+wizard's common finalize/cleanup step, called from
+`RunCharacterCreation` regardless of which of the 3 ESC-cancelable
+steps was reached (that function's own pre-existing comment already
+called it "a finalize step" — this just names it). Loads a transition
+palette, reads file entry #3, frees a temp memory block if allocated,
+clears the screen, and stops the character-creation music.
+
+Named `sub_14B85` -> `BuildMonsterDisplayName`: called only from
+`BuildClueEntryText` and `ShowClueBookMonsterDetail` (the F8 clue
+book's monster-stats cluster). Uses the same
+`WorldDat_setBlock5`/`FileEntry_Read(errorCode=9)` pattern as the
+already-named `LoadClueBookMonsterEntry` (which reads `WORLD.DAT` block
+`0x32`, "MONSTER STATISTICS") to build a space-joined two-field display
+string — plausibly a monster's name and type/category label, though the
+exact field semantics aren't independently confirmed.
+
+427 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
