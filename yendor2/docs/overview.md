@@ -3220,6 +3220,15 @@ style, used in several unrelated screens.
 
 416 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawThreeThresholdStats and DrawValueWithThresholdColor
+
+Named a 3-value threshold-highlighted stat drawer called from
+`ShowCharacterSkills`, reading party-record fields `+0x4C`/`+0x4E`/
+`+0x50` immediately before the confirmed HP/MP pairs — plausibly 3
+primary attributes, not confirmed which.
+
+418 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

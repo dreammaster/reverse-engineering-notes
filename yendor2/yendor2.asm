@@ -35251,7 +35251,7 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgColor, 33h ; '3'
                 call    sub_24D30
-                call    sub_24CAD
+                call    DrawThreeThresholdStats
                 call    sub_2504F
                 mov     _textPos_x, 9Ch
                 mov     _textPos_y, 1Ah
@@ -36109,7 +36109,7 @@ loc_2459C:                              ; CODE XREF: ShowCharacterSkills+1C1↑j
                 call    sub_23F58
                 call    sub_1B30C
                 call    sub_24D30
-                call    sub_24CAD
+                call    DrawThreeThresholdStats
                 retn
 ShowCharacterSkills endp
 
@@ -36264,7 +36264,7 @@ loc_24736:                              ; CODE XREF: ShowCharacterInventory+183�
                 call    sub_2621C
                 cmp     errorCode, 1
                 jz      short loc_246D6
-                call    sub_24CAD
+                call    DrawThreeThresholdStats
                 call    DrawMouseCursor
                 jmp     short loc_246D6
 ; ---------------------------------------------------------------------------
@@ -36790,9 +36790,9 @@ ShowCharacterStats endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_24CAD       proc near               ; CODE XREF: sub_23C18+78↑p
+DrawThreeThresholdStats proc near       ; CODE XREF: sub_23C18+78↑p
                                         ; ShowCharacterSkills+1D7↑p ...
-                mov     si, word_328D4
+                mov     si, word_328D4  ; Draws 3 threshold-highlighted stat values from the current party record: [+0x4C]/[+0x8C], [+0x4E]/[+0x8E], [+0x50]/[+0x90] -- immediately before the confirmed HP/MP field pairs, plausibly 3 primary attributes (not confirmed which). Called from sub_23C18 and ShowCharacterSkills.
                 mov     _textPos_x, 0CBh
                 mov     word_2E412, 0Fh
                 mov     word_2E414, 8Ah
@@ -36811,17 +36811,17 @@ sub_24CAD       proc near               ; CODE XREF: sub_23C18+78↑p
                 mov     _textPos_y, 82h
                 mov     ax, [si+4Ch]
                 mov     bx, [si+8Ch]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 8Ch
                 mov     ax, [si+4Eh]
                 mov     bx, [si+8Eh]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 96h
                 mov     ax, [si+50h]
                 mov     bx, [si+90h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 retn
-sub_24CAD       endp
+DrawThreeThresholdStats endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36837,39 +36837,39 @@ sub_24D30       proc near               ; CODE XREF: sub_23C18+75↑p
                 mov     _textPos_y, 3Ch ; '<'
                 mov     ax, [si+3Ch]
                 mov     bx, [si+7Ch]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 46h ; 'F'
                 mov     ax, [si+3Eh]
                 mov     bx, [si+7Eh]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 50h ; 'P'
                 mov     ax, [si+40h]
                 mov     bx, [si+80h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 5Ah ; 'Z'
                 mov     ax, [si+42h]
                 mov     bx, [si+82h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 64h ; 'd'
                 mov     ax, [si+44h]
                 mov     bx, [si+84h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 6Eh ; 'n'
                 mov     ax, [si+46h]
                 mov     bx, [si+86h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 82h
                 mov     ax, [si+4Ch]
                 mov     bx, [si+8Ch]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 8Ch
                 mov     ax, [si+4Eh]
                 mov     bx, [si+8Eh]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 96h
                 mov     ax, [si+50h]
                 mov     bx, [si+90h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 0AAh
                 mov     _textPos_x, 0BFh
                 mov     ax, [si+52h]
@@ -36889,35 +36889,35 @@ sub_24D30       proc near               ; CODE XREF: sub_23C18+75↑p
                 mov     _textPos_y, 3Ch ; '<'
                 mov     ax, [si+58h]
                 mov     bx, [si+98h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 46h ; 'F'
                 mov     ax, [si+5Ah]
                 mov     bx, [si+9Ah]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 50h ; 'P'
                 mov     ax, [si+5Ch]
                 mov     bx, [si+9Ch]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 5Ah ; 'Z'
                 mov     ax, [si+5Eh]
                 mov     bx, [si+9Eh]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 64h ; 'd'
                 mov     ax, [si+60h]
                 mov     bx, [si+0A0h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 6Eh ; 'n'
                 mov     ax, [si+62h]
                 mov     bx, [si+0A2h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 78h ; 'x'
                 mov     ax, [si+64h]
                 mov     bx, [si+0A4h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 82h
                 mov     ax, [si+66h]
                 mov     bx, [si+0A6h]
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     ax, word_328D4
                 sub     ax, 95F3h
                 xor     dx, dx
@@ -36936,7 +36936,7 @@ sub_24D30       proc near               ; CODE XREF: sub_23C18+75↑p
                 mov     word_2E414, 9Bh
 
 loc_24EDE:                              ; CODE XREF: sub_24D30+1A0↑j
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 96h
                 mov     ax, [si+6Ah]
                 mov     bx, [si+0AAh]
@@ -36948,7 +36948,7 @@ loc_24EDE:                              ; CODE XREF: sub_24D30+1A0↑j
                 mov     word_2E414, 9Bh
 
 loc_24F0C:                              ; CODE XREF: sub_24D30+1CE↑j
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 0A0h
                 mov     ax, [si+6Ch]
                 mov     bx, [si+0ACh]
@@ -36960,7 +36960,7 @@ loc_24F0C:                              ; CODE XREF: sub_24D30+1CE↑j
                 mov     word_2E414, 9Bh
 
 loc_24F3A:                              ; CODE XREF: sub_24D30+1FC↑j
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 0AAh
                 mov     ax, [si+6Eh]
                 mov     bx, [si+0AEh]
@@ -36972,7 +36972,7 @@ loc_24F3A:                              ; CODE XREF: sub_24D30+1FC↑j
                 mov     word_2E414, 9Bh
 
 loc_24F68:                              ; CODE XREF: sub_24D30+22A↑j
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 mov     _textPos_y, 0B4h
                 mov     ax, [si+70h]
                 mov     bx, [si+0B0h]
@@ -36984,7 +36984,7 @@ loc_24F68:                              ; CODE XREF: sub_24D30+22A↑j
                 mov     word_2E414, 9Bh
 
 loc_24F96:                              ; CODE XREF: sub_24D30+258↑j
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 cmp     word ptr [si+16h], 1
                 jnz     short loc_24FF0
                 mov     _font_fgColor, 0DFh
@@ -37069,7 +37069,7 @@ sub_2504F       proc near               ; CODE XREF: sub_23C18+7B↑p
                 mov     bx, [si+16h]
                 mov     word_2E412, 0Fh
                 mov     word_2E414, 0Fh
-                call    sub_25091
+                call    DrawValueWithThresholdColor
                 retn
 sub_2504F       endp
 
@@ -37077,23 +37077,23 @@ sub_2504F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25091       proc near               ; CODE XREF: sub_24CAD+5F↑p
-                                        ; sub_24CAD+6F↑p ...
-                push    word_2E412
+DrawValueWithThresholdColor proc near   ; CODE XREF: DrawThreeThresholdStats+5F↑p
+                                        ; DrawThreeThresholdStats+6F↑p ...
+                push    word_2E412      ; Draws a formatted number (ax), using a highlight color if ax > bx (a threshold). Called from DrawThreeThresholdStats.
                 pop     _font_fgColor
                 cmp     ax, bx
                 jle     short loc_250A5
                 mov     bx, word_2E414
                 mov     _font_fgColor, bx
 
-loc_250A5:                              ; CODE XREF: sub_25091+A↑j
+loc_250A5:                              ; CODE XREF: DrawValueWithThresholdColor+A↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
                 retn
-sub_25091       endp
+DrawValueWithThresholdColor endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37556,7 +37556,7 @@ sub_254CC       proc near               ; CODE XREF: ShowCharacterStats+B↑p
                 mov     word_2E532, 70h ; 'p'
                 call    DrawPicture
                 call    sub_24D30
-                call    sub_24CAD
+                call    DrawThreeThresholdStats
                 call    sub_2504F
                 mov     _textPos_x, 9Ch
                 mov     _textPos_y, 1Ah

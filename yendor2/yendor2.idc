@@ -6418,7 +6418,9 @@ static Bytes_2(void) {
 	create_insn	(0X24C8C);
 	create_insn	(0X24C9A);
 	create_insn	(0X24CA7);
+	set_cmt	(0X24CAD,	"Draws 3 threshold-highlighted stat values from the current party record: [+0x4C]/[+0x8C], [+0x4E]/[+0x8E], [+0x50]/[+0x90] -- immediately before the confirmed HP/MP field pairs, plausibly 3 primary attributes (not confirmed which). Called from sub_23C18 and ShowCharacterSkills.",	0);
 	create_insn	(0X24CAD);
+	set_name	(0X24CAD,	"DrawThreeThresholdStats");
 	set_cmt	(0X24CD5,	"msg",	0);
 	set_cmt	(0X24CE3,	"msg",	0);
 	set_cmt	(0X24CF1,	"msg",	0);
@@ -6427,7 +6429,9 @@ static Bytes_2(void) {
 	create_insn	(0X24FFC);
 	set_name	(0X24FFC,	"DrawListEntryLabel");
 	create_insn	(0X2504F);
+	set_cmt	(0X25091,	"Draws a formatted number (ax), using a highlight color if ax > bx (a threshold). Called from DrawThreeThresholdStats.",	0);
 	create_insn	(0X25091);
+	set_name	(0X25091,	"DrawValueWithThresholdColor");
 	create_insn	(0X250BB);
 	set_cmt	(0X250E5,	"Linearly scans g_partyRecords (base 0x95F3, stride 0x1F4, up to 9 slots) for the first record whose +0xE field is 0, and sets word_328D4 to it (0 if none found). Whether +0xE==0 means 'unused slot' or something else isn't confirmed -- named on mechanism, not a guessed interpretation. Called by sub_25544 to establish/refresh word_328D4 between ShowPartyMembers iterations.",	0);
 	create_insn	(0X250E5);
@@ -8791,10 +8795,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2A914,	"First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.",	0);
 	create_insn	(0X2A914);
 	set_name	(0X2A914,	"ApplyMultiStatEffect");
-	create_insn	(0X2A923);
-	create_insn	(x=0X2A92E);
-	op_hex		(x,	1);
-	create_insn	(0X2A93C);
 }
 
 //------------------------------------------------------------------------
@@ -8804,6 +8804,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2A923);
+	create_insn	(x=0X2A92E);
+	op_hex		(x,	1);
+	create_insn	(0X2A93C);
 	create_insn	(0X2A982);
 	create_insn	(0X2A9A2);
 	set_cmt	(0X2A9AD,	"Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.",	0);
