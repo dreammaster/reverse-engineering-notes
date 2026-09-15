@@ -475,7 +475,7 @@ loc_103BA:                              ; CODE XREF: start+32F↑j
 
 loc_103D6:                              ; CODE XREF: start+3C5↑j
                                         ; start+43E↓j ...
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    sub_2714A
                 jmp     short loc_1040D
 ; ---------------------------------------------------------------------------
@@ -639,7 +639,7 @@ loc_10541:                              ; CODE XREF: start+53C↑j
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 push    ax
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    DrawMouseCursor
                 and     word_3295A, 9FFFh
                 call    sub_1869D
@@ -931,7 +931,7 @@ loc_10806:                              ; CODE XREF: start+6E0↑j
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 push    ax
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    sub_185A2
                 call    sub_1869D
                 call    sub_1FD03
@@ -10150,7 +10150,7 @@ loc_16324:                              ; CODE XREF: sub_162F6+2B↑j
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 push    ax
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    sub_20C1E
                 mov     word_32A1E, 0
 
@@ -11982,7 +11982,7 @@ loc_170E8:                              ; CODE XREF: sub_17032+160↓j
 loc_17100:                              ; CODE XREF: sub_17032+CA↑j
                 or      byte_32DCC, al
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 push    cs
                 call    near ptr sub_1728A
                 call    DrawMouseCursor
@@ -13009,7 +13009,7 @@ sub_17A21       endp
 
 
 sub_17A65       proc near               ; CODE XREF: sub_178A6:loc_179A6↑p
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 test    word_32DCE, 2
                 jz      short loc_17A73
                 retn
@@ -13054,7 +13054,7 @@ sub_17A8D       proc near               ; CODE XREF: sub_17032+2A↑p
 loc_17AC5:                              ; CODE XREF: sub_17A8D+27↑j
                 jnz     short loc_17ADA
                 mov     word_36D6D, 0
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 mov     ax, word_31948
                 call    sub_12554
 
@@ -13092,7 +13092,7 @@ sub_17B09       proc near               ; CODE XREF: sub_17032:loc_1726C↑p
                 cmp     word_36D6D, 0
                 jnz     short loc_17B35
                 mov     word_36D6D, 1
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
 
 loc_17B35:                              ; CODE XREF: sub_17B09+1F↑j
                 mov     word_31946, 0
@@ -13927,7 +13927,7 @@ SpendMaterialCounterClamped proc near   ; CODE XREF: ApplyEffectCost:loc_182A9�
                 ja      short loc_18222
                 mov     word ptr [si], 0
                 mov     word ptr [si+2], 0
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 jmp     short loc_18227
 ; ---------------------------------------------------------------------------
 
@@ -19519,7 +19519,7 @@ sub_1AEF8       proc far                ; CODE XREF: sub_17B92+1B1↑P
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 mov     ax, es:[si+10h]
                 call    sub_1766F
                 call    sub_1732B
@@ -19612,7 +19612,7 @@ loc_1B02E:                              ; CODE XREF: sub_1AF49+E0↑j
 loc_1B062:                              ; CODE XREF: sub_1AF49+F0↑j
                 jnz     short loc_1B06F
                 mov     word_36D6D, 0
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
 
 loc_1B06F:                              ; CODE XREF: sub_1AF49:loc_1B062↑j
                 mov     ax, 7
@@ -19637,7 +19637,7 @@ loc_1B098:                              ; CODE XREF: sub_1AF49+136↑j
                 mov     word_36D75, 3
 
 loc_1B0B0:                              ; CODE XREF: sub_1AF49+14D↑j
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
 
 loc_1B0B5:                              ; CODE XREF: sub_1AF49+145↑j
                                         ; sub_1AF49+15F↑j
@@ -19663,7 +19663,7 @@ sub_1B0CF       proc far                ; CODE XREF: sub_17B92+1C1↑P
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    sub_185A2
                 call    sub_175F4
                 call    DrawMouseCursor
@@ -19743,7 +19743,7 @@ sub_1B194       proc far                ; CODE XREF: sub_17B92+1D0↑P
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    sub_185A2
                 call    sub_175F4
                 call    DrawMouseCursor
@@ -19810,7 +19810,7 @@ sub_1B245       proc far                ; CODE XREF: sub_17B92+E0↑P
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    sub_185A2
                 call    sub_175F4
                 call    DrawMouseCursor
@@ -22542,7 +22542,7 @@ sub_1CBF3       proc far                ; CODE XREF: sub_17B92+1A1↑P
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 mov     ax, es:[si+10h]
                 call    sub_1766F
                 call    sub_1732B
@@ -22576,7 +22576,7 @@ sub_1CC2E       proc far                ; CODE XREF: sub_1BBED+8B↑p
                 call    sub_19B80
                 test    word_36C7F, 1000h
                 jz      short locret_1CC6F
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
 
 locret_1CC6F:                           ; CODE XREF: sub_1CC2E+3A↑j
                 retf
@@ -29547,7 +29547,7 @@ sub_20C1E       proc far                ; CODE XREF: start:loc_10071↑P
                 call    sub_20FB7
                 test    word_36C7F, 1000h
                 jz      short loc_20C3F
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
 
 loc_20C3F:                              ; CODE XREF: sub_20C1E+1A↑j
                 and     word_328C4, 0FBFFh
@@ -29566,7 +29566,7 @@ sub_20C46       proc far                ; CODE XREF: start+85↑P
                 call    sub_20FB7
                 test    word_36C7F, 1000h
                 jz      short loc_20C68
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 and     word_328C4, 0FBFFh
                 retf
 ; ---------------------------------------------------------------------------
@@ -30619,7 +30619,7 @@ DrawMinimap     proc far                ; CODE XREF: start+13E↑P
 loc_21596:                              ; CODE XREF: DrawMinimap+6↑j
                 test    word_36C7F, 1000h
                 jz      short loc_215A4
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -40976,9 +40976,9 @@ seg090          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2704C       proc far                ; CODE XREF: start:loc_103D6↑P
+ShowResourceDepletedOverlay proc far    ; CODE XREF: start:loc_103D6↑P
                                         ; start+548↑P ...
-                push    si
+                push    si              ; Unified 'resource depleted' overlay, called both when a material BCD counter can't cover a cost (SpendMaterialCounterClamped) and when the dungeon view itself is blanked (DrawMinimap, word_36C7F bit 0x1000). Sets that bit, blits a fixed overlay image (EMS page frame -> video buffer) over the minimap's screen area, checks all 3 material BCD counters (0x94B3/0x94B7/0x94BB, confirmed consecutive, stride 4) and builds a small per-material 'nonzero' indicator array, then draws a banner icon and the material status icons via DrawResourceStatusIcons.
                 push    di
                 push    es
                 push    ds
@@ -40992,7 +40992,7 @@ sub_2704C       proc far                ; CODE XREF: start:loc_103D6↑P
                 mov     bx, 0AF0h
                 mov     cx, 3Ah ; ':'
 
-loc_27076:                              ; CODE XREF: sub_2704C+39↓j
+loc_27076:                              ; CODE XREF: ShowResourceDepletedOverlay+39↓j
                 push    cx
                 mov     si, bx
                 mov     di, bx
@@ -41013,14 +41013,14 @@ loc_27076:                              ; CODE XREF: sub_2704C+39↓j
                 mov     cx, 3
                 mov     word_3293E, 0
 
-loc_270A3:                              ; CODE XREF: sub_2704C+6B↓j
+loc_270A3:                              ; CODE XREF: ShowResourceDepletedOverlay+6B↓j
                 pop     ax
                 mov     [di], ax
                 call    IsBCDCounterAtLeast
                 jnz     short loc_270B1
                 mov     word ptr [di], 0
 
-loc_270B1:                              ; CODE XREF: sub_2704C+5F↑j
+loc_270B1:                              ; CODE XREF: ShowResourceDepletedOverlay+5F↑j
                 add     di, 4
                 add     si, 4
                 loop    loc_270A3
@@ -41037,12 +41037,12 @@ loc_270B1:                              ; CODE XREF: sub_2704C+5F↑j
                 mov     si, 950Dh
                 mov     di, 636Ch
                 mov     cx, 9
-                call    sub_27441
+                call    DrawResourceStatusIcons
                 pop     es
                 pop     di
                 pop     si
                 retf
-sub_2704C       endp ; sp-analysis failed
+ShowResourceDepletedOverlay endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -41248,7 +41248,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 mov     word_2E530, 0
                 call    sub_23874
                 push    cs
-                call    near ptr sub_2704C
+                call    near ptr ShowResourceDepletedOverlay
                 call    sub_16E18
                 call    sub_175F4
                 call    sub_238CD
@@ -41294,7 +41294,7 @@ loc_2731C:                              ; CODE XREF: sub_271DC+6B↑j
 loc_27348:                              ; CODE XREF: sub_271DC+13E↑j
                 call    sub_23874
                 push    cs
-                call    near ptr sub_2704C
+                call    near ptr ShowResourceDepletedOverlay
                 mov     ax, word_31948
                 call    sub_12554
                 test    word_328C6, 1Ch
@@ -41402,9 +41402,9 @@ sub_2738B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27441       proc near               ; CODE XREF: sub_2704C+AB↑p
-                                        ; sub_27441+28↓j
-                cmp     word ptr [si], 0
+DrawResourceStatusIcons proc near       ; CODE XREF: ShowResourceDepletedOverlay+AB↑p
+                                        ; DrawResourceStatusIcons+28↓j
+                cmp     word ptr [si], 0 ; For cx entries: if the id at [si] is nonzero, looks it up (sub_12554) and draws its icon at the matching (x,y) from a position table at di (stride 0xA: x at +0, y at +4).
                 jz      short loc_27463
                 mov     ax, [di]
                 mov     x, ax
@@ -41416,12 +41416,12 @@ sub_27441       proc near               ; CODE XREF: sub_2704C+AB↑p
                 mov     word_2E530, ax
                 call    DrawPicture
 
-loc_27463:                              ; CODE XREF: sub_27441+3↑j
+loc_27463:                              ; CODE XREF: DrawResourceStatusIcons+3↑j
                 add     di, 0Ah
                 add     si, 4
-                loop    sub_27441
+                loop    DrawResourceStatusIcons
                 retn
-sub_27441       endp
+DrawResourceStatusIcons endp
 
 seg090          ends
 
@@ -41544,7 +41544,7 @@ loc_274F7:                              ; CODE XREF: sub_274B4+2A↑j
 
 loc_2750B:                              ; CODE XREF: sub_274B4+52↑j
                                         ; sub_274B4+A6↓j
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
 
@@ -41573,7 +41573,7 @@ loc_27541:                              ; CODE XREF: sub_274B4+83↑j
 
 loc_2754F:                              ; CODE XREF: sub_274B4+7B↑j
                                         ; sub_274B4+8B↑j ...
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
 
@@ -48827,7 +48827,7 @@ loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
                 pop     word_3293E
                 mov     si, word_32906
                 call    AddToBCDCounter
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    sub_16E18
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 0
@@ -49214,7 +49214,7 @@ sub_2AFB8       proc near               ; CODE XREF: sub_2AE3C+93↑p
                 mov     word_3293E, 1388h
                 mov     si, 94B7h
                 call    AddToBCDCounter
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    DrawMouseCursor
                 retn
 sub_2AFB8       endp
@@ -49245,7 +49245,7 @@ sub_2B029       proc near               ; CODE XREF: sub_2AE3C+87↑p
                 mov     word_3293E, 1388h
                 mov     si, 94BBh
                 call    AddToBCDCounter
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    DrawMouseCursor
                 retn
 sub_2B029       endp
@@ -49300,7 +49300,7 @@ loc_2B0FF:                              ; CODE XREF: sub_2B09A+9E↓j
                 loop    loc_2B0FF
 
 loc_2B13A:                              ; CODE XREF: sub_2B09A+69↑j
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 call    UpdatePartyAverageStatTiers
                 call    ApplyEffectAndDrawIconBar
                 call    DrawMouseCursor
@@ -49320,7 +49320,7 @@ sub_2B14F       proc near               ; CODE XREF: sub_2AE3C+B3↑p
                 mov     si, word_32A1E
                 mov     word ptr [si+10h], 0
                 or      word_328C8, 20h
-                call    sub_2704C
+                call    ShowResourceDepletedOverlay
                 retn
 sub_2B14F       endp
 

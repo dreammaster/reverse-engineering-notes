@@ -1125,6 +1125,20 @@ guesses.
 
 159 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the shared "resource depleted" overlay
+
+Traced `sub_2704C` — the hook called both when a material BCD counter
+can't cover a cost (`SpendMaterialCounterClamped`) and when the
+dungeon view itself is blanked (`DrawMinimap`'s `word_36C7F` bit
+`0x1000`). It's a single, unified "you're out of something" overlay:
+blits a fixed image over the minimap's screen area, checks **all 3**
+material BCD counters (confirming `0x94B3`/`0x94B7`/`0x94BB` are
+exactly consecutive, stride 4 — nice consolidation of an earlier
+finding), and draws status icons for whichever are empty via the new
+`DrawResourceStatusIcons`. Named `ShowResourceDepletedOverlay`.
+
+161 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

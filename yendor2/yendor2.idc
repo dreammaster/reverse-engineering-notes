@@ -6603,7 +6603,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X2701C);
 	op_hex		(x,	1);
 	create_insn	(0X27031);
+	set_cmt	(0X2704C,	"Unified 'resource depleted' overlay, called both when a material BCD counter can't cover a cost (SpendMaterialCounterClamped) and when the dungeon view itself is blanked (DrawMinimap, word_36C7F bit 0x1000). Sets that bit, blits a fixed overlay image (EMS page frame -> video buffer) over the minimap's screen area, checks all 3 material BCD counters (0x94B3/0x94B7/0x94BB, confirmed consecutive, stride 4) and builds a small per-material 'nonzero' indicator array, then draws a banner icon and the material status icons via DrawResourceStatusIcons.",	0);
 	create_insn	(0X2704C);
+	set_name	(0X2704C,	"ShowResourceDepletedOverlay");
 	create_insn	(x=0X27050);
 	op_hex		(x,	1);
 	create_insn	(x=0X27056);
@@ -6637,7 +6639,9 @@ static Bytes_1(void) {
 	create_insn	(0X273E6);
 	create_insn	(x=0X273F9);
 	op_hex		(x,	1);
+	set_cmt	(0X27441,	"For cx entries: if the id at [si] is nonzero, looks it up (sub_12554) and draws its icon at the matching (x,y) from a position table at di (stride 0xA: x at +0, y at +4).",	0);
 	create_insn	(0X27441);
+	set_name	(0X27441,	"DrawResourceStatusIcons");
 	set_cmt	(0X2746C,	"RandomInRange(ax=exclusive upper bound): DOS-time-seeded (INT 21h AH=0x2Ch on first call) linear-congruential PRNG (multiplier 0x805). Returns a value in [0, bound). Widely used general-purpose RNG.",	0);
 	create_insn	(0X2746C);
 	set_name	(0X2746C,	"RandomInRange");
@@ -9662,6 +9666,15 @@ static Bytes_1(void) {
 	create_word	(0X3330C);
 	create_word	(0X3330E);
 	create_word	(0X33310);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(0X33312);
 	create_word	(0X33314);
 	create_word	(0X33316);
@@ -9703,15 +9716,6 @@ static Bytes_1(void) {
 	set_name	(0X35074,	"aMagicDragon");
 	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:\n  0: 318x198 @ 0x0        -- \"SmithWare\" splash-screen logo\n  1: 210x105 @ 0xE694C    -- GameDialog button panel background\n  2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene\n  3: 190x110 @ 0x779552   -- wolf/monster silhouette\n  4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)\n  5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient\n  6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)\n  7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)\n  8: 16x16   @ 0xBCF3DA   -- mouse cursor\n  9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon\nIndexed as g_pictureDir + word_2E532 (p" "i",	0);
 	set_name	(0X3508E,	"g_pictureDir");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3512E,	0X9);
 	set_name	(0X3512E,	"aNorth");
 	create_strlit	(0X35137,	0X9);

@@ -106,6 +106,24 @@ than the one `TickStatusEffects`/`ApplyStatusEffect` manage (bits
 attribute values (`ShowCharacterStats`), the 8 item slots
 (`ShowCharacterInventory`), or the skill values (`ShowCharacterSkills`).
 
+### Global material counters and BCD arithmetic
+
+Three **global** (not per-party-member) crafting-material counters at
+`0x94B3`, `0x94B7`, `0x94BB` — confirmed **exactly consecutive**,
+4-byte packed-BCD stride, by `ShowResourceDepletedOverlay`'s scan of
+all three in one loop. Individual identities: `0x94BB`/`0x94B7` are
+used by `CastSpell`'s `0x1C` alchemy ability (converts 10 units of one
+into the other — `NUORE`/`MAGIC ORE`); `0x94B3` is a third, sibling
+counter used the same way by `ApplyEffectCost`'s cost dispatch but not
+otherwise identified yet. All three are manipulated via the packed-BCD
+bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
+`IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
+`SubtractFromBCDCounter`) — 4 bytes (8 decimal digits) per counter,
+most-significant-digit-first, `DAA`/`DAS`-adjusted arithmetic. This
+same library is called from many unrelated places throughout the
+executable, so it's very likely also the engine behind gold/currency,
+not just these three material counters — not confirmed.
+
 ### Item-slot encoding (from `Hex Hacking Item Guide.txt`, not yet cross-checked against the IDB)
 
 Not independently verified against `SW.EXE`'s code yet, but internally
