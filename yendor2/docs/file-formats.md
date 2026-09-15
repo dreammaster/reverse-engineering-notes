@@ -552,7 +552,13 @@ full per-cell wall/object rendering. Between that and
 dungeon-screen render sequence is: 1) `DrawDungeonFloorAndCeiling`
 (backdrop images + floor-extension), 2) `ExtendDungeonCeilingPass`
 (ceiling-extension), 3) `RenderDungeonViewport` (full wall/door/
-monster/encounter rendering).
+monster/encounter rendering). All three passes share one underlying
+primitive, `DrawViewportSprite` (was `sub_29B0F`, 632 lines, internals
+not traced): every viewport-rendering function this session calls it
+with the same (picture id `word_2E530`, scale class `word_2E532`,
+z-layer/depth `word_32918`, transparency `_font_bgTransparent`)
+convention — the perspective/depth-aware counterpart to the simpler
+general-purpose `DrawPicture`.
 
 `RenderDungeonViewport`'s 7th and final call is
 `RenderDungeonVanishingPoint`, structurally different from the other

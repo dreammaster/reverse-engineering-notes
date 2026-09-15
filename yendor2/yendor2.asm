@@ -24091,7 +24091,7 @@ loc_1D8B1:                              ; CODE XREF: sub_1D4B8+424↓j
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 or      word_328C6, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
                 and     word_328C6, 0FFFEh
                 call    DrawMouseCursor
                 call    sub_2BC16
@@ -29667,7 +29667,7 @@ ExtendDungeonCeilingTexture proc near   ; CODE XREF: ExtendDungeonCeilingPass+12
                 mov     word_32918, 2
                 mov     word_2E532, 50h ; 'P'
                 mov     _font_bgTransparent, 0
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 loc_20D24:                              ; CODE XREF: ExtendDungeonCeilingTexture+6↑j
                                         ; ExtendDungeonCeilingTexture+1B↑j
@@ -29775,7 +29775,7 @@ ExtendDungeonFloorTexture proc near     ; CODE XREF: DrawDungeonFloorAndCeiling+
                 mov     word_32918, 1
                 mov     word_2E532, 40h ; '@'
                 mov     _font_bgTransparent, 0
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 loc_20E49:                              ; CODE XREF: ExtendDungeonFloorTexture+6↑j
                                         ; ExtendDungeonFloorTexture+1A↑j
@@ -29836,7 +29836,7 @@ loc_20EB1:                              ; CODE XREF: DrawMonsterAndUpdateAttackS
 
 loc_20ECA:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+5B↑j
                                         ; DrawMonsterAndUpdateAttackState+62↑j ...
-                call    sub_29B0F
+                call    DrawViewportSprite
                 mov     word_32984, 0
                 mov     word ptr [si+18h], 0
                 and     word_328C6, 0FFFEh
@@ -29844,7 +29844,7 @@ loc_20ECA:                              ; CODE XREF: DrawMonsterAndUpdateAttackS
                 jz      short loc_20EF1
                 mov     ax, [si+1Ah]
                 mov     word_2E530, ax
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 loc_20EF1:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+90↑j
                 test    word ptr [si+0Ch], 8
@@ -29997,7 +29997,7 @@ loc_2101D:                              ; CODE XREF: RenderDungeonViewRow+70↓j
                 mov     word_32918, 3
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 loc_21077:                              ; CODE XREF: RenderDungeonViewRow+18↑j
                                         ; RenderDungeonViewRow+2C↑j ...
@@ -30053,7 +30053,7 @@ loc_210A8:                              ; CODE XREF: RenderDungeonViewRow+FB↓j
                 mov     word_32918, 4
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 loc_21102:                              ; CODE XREF: RenderDungeonViewRow+A3↑j
                                         ; RenderDungeonViewRow+B7↑j ...
@@ -30097,14 +30097,14 @@ DrawDungeonCellWallTexture proc near    ; CODE XREF: RenderDungeonViewRow+10↑p
                 mov     word_32918, 0
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
                 test    word ptr [di+6], 2000h
                 jz      short locret_2117E
                 mov     word_2E530, 5
                 mov     word_32918, 0
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 locret_2117E:                           ; CODE XREF: DrawDungeonCellWallTexture+4↑j
                                         ; DrawDungeonCellWallTexture+16↑j ...
@@ -30168,7 +30168,7 @@ loc_211E4:                              ; CODE XREF: DrawDungeonCellSideFeature+
                                         ; DrawDungeonCellSideFeature+55↑j
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
                 test    word ptr [di+6], 1000h
                 jz      short locret_21216
                 mov     ax, _val27
@@ -30176,7 +30176,7 @@ loc_211E4:                              ; CODE XREF: DrawDungeonCellSideFeature+
                 jnz     short locret_21216
                 mov     word_2E530, 6
                 mov     word_32918, 7
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 locret_21216:                           ; CODE XREF: DrawDungeonCellSideFeature+31↑j
                                         ; DrawDungeonCellSideFeature+73↑j ...
@@ -30204,7 +30204,7 @@ RenderDungeonVanishingPoint proc near   ; CODE XREF: RenderDungeonViewport+5A↑
                 mov     word_32932, ax
                 mov     word_2E532, 60h ; '`'
                 mov     _font_bgTransparent, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 loc_21252:                              ; CODE XREF: RenderDungeonVanishingPoint+5↑j
                                         ; RenderDungeonVanishingPoint+19↑j
@@ -30227,7 +30227,7 @@ loc_21252:                              ; CODE XREF: RenderDungeonVanishingPoint
                 mov     word_32932, ax
                 mov     word_2E532, 60h ; '`'
                 mov     _font_bgTransparent, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
 
 loc_21298:                              ; CODE XREF: RenderDungeonVanishingPoint+48↑j
                                         ; RenderDungeonVanishingPoint+5C↑j
@@ -46505,7 +46505,7 @@ FreeVideoBuffer endp
 
 ; Attributes: bp-based frame
 
-sub_29B0F       proc far                ; CODE XREF: sub_1D4B8+404↑P
+DrawViewportSprite proc far             ; CODE XREF: sub_1D4B8+404↑P
                                         ; ExtendDungeonCeilingTexture+33↑P ...
 
 var_2A          = word ptr -2Ah
@@ -46525,7 +46525,7 @@ var_6           = word ptr -6
 var_4           = word ptr -4
 var_2           = word ptr -2
 
-                push    ax
+                push    ax              ; Core dungeon-viewport sprite/picture blitter (632 lines, internals not traced): draws word_2E530 (picture id) at a scale class (word_2E532) and z-layer/depth (word_32918), honoring _font_bgTransparent. Called by every dungeon-viewport rendering function named this session (walls, floor/ceiling extension, doors, vanishing point, monsters) -- the depth-aware counterpart to the simpler general-purpose DrawPicture.
                 push    bx
                 push    cx
                 push    dx
@@ -46545,13 +46545,13 @@ var_2           = word ptr -2
                 jmp     short loc_29B49
 ; ---------------------------------------------------------------------------
 
-loc_29B3C:                              ; CODE XREF: sub_29B0F+12↑j
+loc_29B3C:                              ; CODE XREF: DrawViewportSprite+12↑j
                 mov     bx, 782Eh
                 add     bx, word_2E532
                 call    LoadPictureIntoEms
                 mov     [bp+var_4], si
 
-loc_29B49:                              ; CODE XREF: sub_29B0F+2B↑j
+loc_29B49:                              ; CODE XREF: DrawViewportSprite+2B↑j
                 mov     bx, _emsSegmentPageFrame
                 mov     [bp+var_2], bx
                 mov     bx, 782Eh
@@ -46573,7 +46573,7 @@ loc_29B49:                              ; CODE XREF: sub_29B0F+2B↑j
                 add     bx, 0BE8h
                 mov     bx, cs:[bx]
 
-loc_29B86:                              ; CODE XREF: sub_29B0F+6C↑j
+loc_29B86:                              ; CODE XREF: DrawViewportSprite+6C↑j
                 mov     [bp+var_2A], bx
                 mov     ax, word_3291A
                 mov     [bp+var_E], ax
@@ -46593,7 +46593,7 @@ loc_29B86:                              ; CODE XREF: sub_29B0F+6C↑j
                 sub     di, 4Ah ; 'J'
                 mov     cx, g_blitMaskLen
 
-loc_29BBB:                              ; CODE XREF: sub_29B0F+C7↓j
+loc_29BBB:                              ; CODE XREF: DrawViewportSprite+C7↓j
                 xor     ax, ax
                 mov     al, [si]
                 shl     ax, 1
@@ -46609,7 +46609,7 @@ loc_29BBB:                              ; CODE XREF: sub_29B0F+C7↓j
                 add     di, 2
                 loop    loc_29BBB
 
-loc_29BD8:                              ; CODE XREF: sub_29B0F+9D↑j
+loc_29BD8:                              ; CODE XREF: DrawViewportSprite+9D↑j
                 mov     ax, 6
                 mul     word_3292C
                 cmp     [bp+var_1E], 0
@@ -46617,49 +46617,49 @@ loc_29BD8:                              ; CODE XREF: sub_29B0F+9D↑j
                 jmp     loc_29C76
 ; ---------------------------------------------------------------------------
 
-loc_29BE8:                              ; CODE XREF: sub_29B0F+D4↑j
+loc_29BE8:                              ; CODE XREF: DrawViewportSprite+D4↑j
                 cmp     [bp+var_1E], 1
                 jnz     short loc_29BF1
                 jmp     loc_29CFD
 ; ---------------------------------------------------------------------------
 
-loc_29BF1:                              ; CODE XREF: sub_29B0F+DD↑j
+loc_29BF1:                              ; CODE XREF: DrawViewportSprite+DD↑j
                 cmp     [bp+var_1E], 2
                 jnz     short loc_29BFA
                 jmp     loc_29D1C
 ; ---------------------------------------------------------------------------
 
-loc_29BFA:                              ; CODE XREF: sub_29B0F+E6↑j
+loc_29BFA:                              ; CODE XREF: DrawViewportSprite+E6↑j
                 cmp     [bp+var_1E], 3
                 jnz     short loc_29C03
                 jmp     loc_29DDC
 ; ---------------------------------------------------------------------------
 
-loc_29C03:                              ; CODE XREF: sub_29B0F+EF↑j
+loc_29C03:                              ; CODE XREF: DrawViewportSprite+EF↑j
                 cmp     [bp+var_1E], 4
                 jnz     short loc_29C0C
                 jmp     loc_29E5E
 ; ---------------------------------------------------------------------------
 
-loc_29C0C:                              ; CODE XREF: sub_29B0F+F8↑j
+loc_29C0C:                              ; CODE XREF: DrawViewportSprite+F8↑j
                 cmp     [bp+var_1E], 6
                 jnz     short loc_29C15
                 jmp     loc_29D92
 ; ---------------------------------------------------------------------------
 
-loc_29C15:                              ; CODE XREF: sub_29B0F+101↑j
+loc_29C15:                              ; CODE XREF: DrawViewportSprite+101↑j
                 cmp     [bp+var_1E], 7
                 jnz     short loc_29C1E
                 jmp     loc_29EE0
 ; ---------------------------------------------------------------------------
 
-loc_29C1E:                              ; CODE XREF: sub_29B0F+10A↑j
+loc_29C1E:                              ; CODE XREF: DrawViewportSprite+10A↑j
                 cmp     [bp+var_1E], 8
                 jnz     short loc_29C27
                 jmp     loc_29EE0
 ; ---------------------------------------------------------------------------
 
-loc_29C27:                              ; CODE XREF: sub_29B0F+113↑j
+loc_29C27:                              ; CODE XREF: DrawViewportSprite+113↑j
                 mov     bx, _ptr2
                 cmp     [bp+var_1E], 9
                 jz      short loc_29C63
@@ -46679,13 +46679,13 @@ loc_29C27:                              ; CODE XREF: sub_29B0F+113↑j
                 cmp     [bp+var_1E], 0Eh
                 jnz     short loc_29C66
 
-loc_29C63:                              ; CODE XREF: sub_29B0F+120↑j
-                                        ; sub_29B0F+12A↑j ...
+loc_29C63:                              ; CODE XREF: DrawViewportSprite+120↑j
+                                        ; DrawViewportSprite+12A↑j ...
                 jmp     loc_29F72
 ; ---------------------------------------------------------------------------
 
-loc_29C66:                              ; CODE XREF: sub_29B0F+152↑j
-                                        ; sub_29B0F:loc_29CAE↓j ...
+loc_29C66:                              ; CODE XREF: DrawViewportSprite+152↑j
+                                        ; DrawViewportSprite:loc_29CAE↓j ...
                 mov     sp, bp
                 pop     bp
                 mov     ax, seg seg129
@@ -46700,7 +46700,7 @@ loc_29C66:                              ; CODE XREF: sub_29B0F+152↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29C76:                              ; CODE XREF: sub_29B0F+D6↑j
+loc_29C76:                              ; CODE XREF: DrawViewportSprite+D6↑j
                 mov     bx, _val11
                 add     bx, ax
                 mov     ds, [bp+var_E]
@@ -46718,19 +46718,19 @@ loc_29C76:                              ; CODE XREF: sub_29B0F+D6↑j
                 call    getTextPos
                 mov     [bp+var_8], ax
 
-loc_29CA2:                              ; CODE XREF: sub_29B0F+1EC↓j
+loc_29CA2:                              ; CODE XREF: DrawViewportSprite+1EC↓j
                 mov     ds, [bp+var_E]
                 mov     bx, [bp+var_10]
                 mov     cx, [bx]
                 or      cx, cx
                 jnz     short loc_29CB0
 
-loc_29CAE:                              ; CODE XREF: sub_29B0F+188↑j
+loc_29CAE:                              ; CODE XREF: DrawViewportSprite+188↑j
                 jmp     short loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29CB0:                              ; CODE XREF: sub_29B0F+19D↑j
-                                        ; sub_29B0F+1E6↓j
+loc_29CB0:                              ; CODE XREF: DrawViewportSprite+19D↑j
+                                        ; DrawViewportSprite+1E6↓j
                 push    cx
                 mov     ds, [bp+var_E]
                 mov     cx, [bx+2]
@@ -46739,7 +46739,7 @@ loc_29CB0:                              ; CODE XREF: sub_29B0F+19D↑j
                 or      cx, cx
                 jz      short loc_29CDF
 
-loc_29CC1:                              ; CODE XREF: sub_29B0F+1CE↓j
+loc_29CC1:                              ; CODE XREF: DrawViewportSprite+1CE↓j
                 push    cx
                 mov     si, [bp+var_4]
                 mov     di, [bp+var_8]
@@ -46752,7 +46752,7 @@ loc_29CC1:                              ; CODE XREF: sub_29B0F+1CE↓j
                 pop     cx
                 loop    loc_29CC1
 
-loc_29CDF:                              ; CODE XREF: sub_29B0F+1B0↑j
+loc_29CDF:                              ; CODE XREF: DrawViewportSprite+1B0↑j
                 mov     ax, [bp+var_A]
                 mov     ds, [bp+var_E]
                 mov     bx, [bp+var_10]
@@ -46760,18 +46760,18 @@ loc_29CDF:                              ; CODE XREF: sub_29B0F+1B0↑j
                 or      cx, cx
                 jz      short loc_29CF4
 
-loc_29CEF:                              ; CODE XREF: sub_29B0F+1E3↓j
+loc_29CEF:                              ; CODE XREF: DrawViewportSprite+1E3↓j
                 add     [bp+var_4], ax
                 loop    loc_29CEF
 
-loc_29CF4:                              ; CODE XREF: sub_29B0F+1DE↑j
+loc_29CF4:                              ; CODE XREF: DrawViewportSprite+1DE↑j
                 pop     cx
                 loop    loc_29CB0
                 add     [bp+var_10], 6
                 jmp     short loc_29CA2
 ; ---------------------------------------------------------------------------
 
-loc_29CFD:                              ; CODE XREF: sub_29B0F+DF↑j
+loc_29CFD:                              ; CODE XREF: DrawViewportSprite+DF↑j
                 mov     bx, _val12
                 add     bx, ax
                 mov     ds, [bp+var_E]
@@ -46785,7 +46785,7 @@ loc_29CFD:                              ; CODE XREF: sub_29B0F+DF↑j
                 jmp     short loc_29D39
 ; ---------------------------------------------------------------------------
 
-loc_29D1C:                              ; CODE XREF: sub_29B0F+E8↑j
+loc_29D1C:                              ; CODE XREF: DrawViewportSprite+E8↑j
                 mov     bx, _val13
                 add     bx, ax
                 mov     ds, [bp+var_E]
@@ -46797,7 +46797,7 @@ loc_29D1C:                              ; CODE XREF: sub_29B0F+E8↑j
                 add     ax, 8           ; x
                 add     bx, 8           ; y
 
-loc_29D39:                              ; CODE XREF: sub_29B0F+20B↑j
+loc_29D39:                              ; CODE XREF: DrawViewportSprite+20B↑j
                 or      si, si
                 jz      short loc_29D8F
                 mov     [bp+var_12], si
@@ -46808,7 +46808,7 @@ loc_29D39:                              ; CODE XREF: sub_29B0F+20B↑j
                 add     ax, [bp+var_1C]
                 add     [bp+var_4], ax
 
-loc_29D52:                              ; CODE XREF: sub_29B0F+27E↓j
+loc_29D52:                              ; CODE XREF: DrawViewportSprite+27E↓j
                 mov     ds, [bp+var_E]
                 mov     ax, [si]
                 or      ax, ax
@@ -46832,12 +46832,12 @@ loc_29D52:                              ; CODE XREF: sub_29B0F+27E↓j
                 jmp     short loc_29D52
 ; ---------------------------------------------------------------------------
 
-loc_29D8F:                              ; CODE XREF: sub_29B0F+22C↑j
-                                        ; sub_29B0F+24A↑j
+loc_29D8F:                              ; CODE XREF: DrawViewportSprite+22C↑j
+                                        ; DrawViewportSprite+24A↑j
                 jmp     loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29D92:                              ; CODE XREF: sub_29B0F+103↑j
+loc_29D92:                              ; CODE XREF: DrawViewportSprite+103↑j
                 mov     ax, word_32932
                 add     [bp+var_4], ax
                 mov     ax, 6
@@ -46851,7 +46851,7 @@ loc_29D92:                              ; CODE XREF: sub_29B0F+103↑j
                 mov     [bp+var_8], ax
                 mov     cx, 71h ; 'q'
 
-loc_29DB6:                              ; CODE XREF: sub_29B0F+2C8↓j
+loc_29DB6:                              ; CODE XREF: DrawViewportSprite+2C8↓j
                 push    cx
                 mov     [bp+var_14], 7
                 mov     ds, [bp+var_2]
@@ -46867,7 +46867,7 @@ loc_29DB6:                              ; CODE XREF: sub_29B0F+2C8↓j
                 jmp     loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29DDC:                              ; CODE XREF: sub_29B0F+F1↑j
+loc_29DDC:                              ; CODE XREF: DrawViewportSprite+F1↑j
                 mov     bx, _val14
                 add     bx, ax
                 mov     ds, [bp+var_E]
@@ -46881,8 +46881,8 @@ loc_29DDC:                              ; CODE XREF: sub_29B0F+F1↑j
                 call    getTextPos
                 mov     [bp+var_8], ax
 
-loc_29DFD:                              ; CODE XREF: sub_29B0F+312↓j
-                                        ; sub_29B0F+34D↓j
+loc_29DFD:                              ; CODE XREF: DrawViewportSprite+312↓j
+                                        ; DrawViewportSprite+34D↓j
                 mov     bx, [bp+var_10]
                 mov     ds, [bp+var_E]
                 mov     ax, [bx+2]
@@ -46893,11 +46893,11 @@ loc_29DFD:                              ; CODE XREF: sub_29B0F+312↓j
                 or      cx, cx
                 jnz     short loc_29E26
 
-loc_29E15:                              ; CODE XREF: sub_29B0F+2E3↑j
+loc_29E15:                              ; CODE XREF: DrawViewportSprite+2E3↑j
                 jmp     loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29E18:                              ; CODE XREF: sub_29B0F+300↑j
+loc_29E18:                              ; CODE XREF: DrawViewportSprite+300↑j
                 add     [bp+var_4], ax
                 add     [bp+var_10], 6
                 or      cx, cx
@@ -46905,8 +46905,8 @@ loc_29E18:                              ; CODE XREF: sub_29B0F+300↑j
                 jmp     loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29E26:                              ; CODE XREF: sub_29B0F+304↑j
-                                        ; sub_29B0F+33D↓j
+loc_29E26:                              ; CODE XREF: DrawViewportSprite+304↑j
+                                        ; DrawViewportSprite+33D↓j
                 push    cx
                 mov     ax, [bp+var_10]
                 add     ax, 4
@@ -46929,7 +46929,7 @@ loc_29E26:                              ; CODE XREF: sub_29B0F+304↑j
                 jmp     short loc_29DFD
 ; ---------------------------------------------------------------------------
 
-loc_29E5E:                              ; CODE XREF: sub_29B0F+FA↑j
+loc_29E5E:                              ; CODE XREF: DrawViewportSprite+FA↑j
                 mov     bx, _val14
                 add     bx, ax
                 mov     ds, [bp+var_E]
@@ -46943,8 +46943,8 @@ loc_29E5E:                              ; CODE XREF: sub_29B0F+FA↑j
                 call    getTextPos
                 mov     [bp+var_8], ax
 
-loc_29E7F:                              ; CODE XREF: sub_29B0F+394↓j
-                                        ; sub_29B0F+3CF↓j
+loc_29E7F:                              ; CODE XREF: DrawViewportSprite+394↓j
+                                        ; DrawViewportSprite+3CF↓j
                 mov     bx, [bp+var_10]
                 mov     ds, [bp+var_E]
                 mov     ax, [bx+2]
@@ -46955,11 +46955,11 @@ loc_29E7F:                              ; CODE XREF: sub_29B0F+394↓j
                 or      cx, cx
                 jnz     short loc_29EA8
 
-loc_29E97:                              ; CODE XREF: sub_29B0F+365↑j
+loc_29E97:                              ; CODE XREF: DrawViewportSprite+365↑j
                 jmp     loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29E9A:                              ; CODE XREF: sub_29B0F+382↑j
+loc_29E9A:                              ; CODE XREF: DrawViewportSprite+382↑j
                 add     [bp+var_4], ax
                 add     [bp+var_10], 6
                 or      cx, cx
@@ -46967,8 +46967,8 @@ loc_29E9A:                              ; CODE XREF: sub_29B0F+382↑j
                 jmp     loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29EA8:                              ; CODE XREF: sub_29B0F+386↑j
-                                        ; sub_29B0F+3BF↓j
+loc_29EA8:                              ; CODE XREF: DrawViewportSprite+386↑j
+                                        ; DrawViewportSprite+3BF↓j
                 push    cx
                 mov     ax, [bp+var_10]
                 add     ax, 4
@@ -46991,14 +46991,14 @@ loc_29EA8:                              ; CODE XREF: sub_29B0F+386↑j
                 jmp     short loc_29E7F
 ; ---------------------------------------------------------------------------
 
-loc_29EE0:                              ; CODE XREF: sub_29B0F+10C↑j
-                                        ; sub_29B0F+115↑j
+loc_29EE0:                              ; CODE XREF: DrawViewportSprite+10C↑j
+                                        ; DrawViewportSprite+115↑j
                 mov     bx, _ptr1
                 cmp     [bp+var_1E], 7
                 jz      short loc_29EEE
                 mov     bx, _val11
 
-loc_29EEE:                              ; CODE XREF: sub_29B0F+3D9↑j
+loc_29EEE:                              ; CODE XREF: DrawViewportSprite+3D9↑j
                 add     bx, ax
                 mov     ds, [bp+var_E]
                 mov     si, [bx+4]
@@ -47015,19 +47015,19 @@ loc_29EEE:                              ; CODE XREF: sub_29B0F+3D9↑j
                 call    getTextPos
                 mov     [bp+var_8], ax
 
-loc_29F16:                              ; CODE XREF: sub_29B0F+461↓j
+loc_29F16:                              ; CODE XREF: DrawViewportSprite+461↓j
                 mov     bx, [bp+var_10]
                 mov     ds, [bp+var_E]
                 mov     cx, [bx]
                 or      cx, cx
                 jnz     short loc_29F25
 
-loc_29F22:                              ; CODE XREF: sub_29B0F+3FC↑j
+loc_29F22:                              ; CODE XREF: DrawViewportSprite+3FC↑j
                 jmp     loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29F25:                              ; CODE XREF: sub_29B0F+411↑j
-                                        ; sub_29B0F+45B↓j
+loc_29F25:                              ; CODE XREF: DrawViewportSprite+411↑j
+                                        ; DrawViewportSprite+45B↓j
                 push    cx
                 mov     ds, [bp+var_E]
                 mov     cx, [bx+2]
@@ -47036,7 +47036,7 @@ loc_29F25:                              ; CODE XREF: sub_29B0F+411↑j
                 or      cx, cx
                 jz      short loc_29F54
 
-loc_29F36:                              ; CODE XREF: sub_29B0F+443↓j
+loc_29F36:                              ; CODE XREF: DrawViewportSprite+443↓j
                 push    cx
                 mov     si, [bp+var_4]
                 mov     di, [bp+var_8]
@@ -47049,7 +47049,7 @@ loc_29F36:                              ; CODE XREF: sub_29B0F+443↓j
                 pop     cx
                 loop    loc_29F36
 
-loc_29F54:                              ; CODE XREF: sub_29B0F+425↑j
+loc_29F54:                              ; CODE XREF: DrawViewportSprite+425↑j
                 mov     ax, [bp+var_A]
                 mov     ds, [bp+var_E]
                 mov     bx, [bp+var_10]
@@ -47057,18 +47057,18 @@ loc_29F54:                              ; CODE XREF: sub_29B0F+425↑j
                 or      cx, cx
                 jz      short loc_29F69
 
-loc_29F64:                              ; CODE XREF: sub_29B0F+458↓j
+loc_29F64:                              ; CODE XREF: DrawViewportSprite+458↓j
                 add     [bp+var_4], ax
                 loop    loc_29F64
 
-loc_29F69:                              ; CODE XREF: sub_29B0F+453↑j
+loc_29F69:                              ; CODE XREF: DrawViewportSprite+453↑j
                 pop     cx
                 loop    loc_29F25
                 add     [bp+var_10], 6
                 jmp     short loc_29F16
 ; ---------------------------------------------------------------------------
 
-loc_29F72:                              ; CODE XREF: sub_29B0F:loc_29C63↑j
+loc_29F72:                              ; CODE XREF: DrawViewportSprite:loc_29C63↑j
                 add     bx, ax
                 mov     ds, [bp+var_E]
                 mov     si, [bx+4]
@@ -47085,19 +47085,19 @@ loc_29F72:                              ; CODE XREF: sub_29B0F:loc_29C63↑j
                 call    getTextPos
                 mov     [bp+var_8], ax
 
-loc_29F9A:                              ; CODE XREF: sub_29B0F+4E5↓j
+loc_29F9A:                              ; CODE XREF: DrawViewportSprite+4E5↓j
                 mov     ds, [bp+var_E]
                 mov     bx, [bp+var_10]
                 mov     cx, [bx]
                 or      cx, cx
                 jnz     short loc_29FA9
 
-loc_29FA6:                              ; CODE XREF: sub_29B0F+480↑j
+loc_29FA6:                              ; CODE XREF: DrawViewportSprite+480↑j
                 jmp     loc_29C66
 ; ---------------------------------------------------------------------------
 
-loc_29FA9:                              ; CODE XREF: sub_29B0F+495↑j
-                                        ; sub_29B0F+4DF↓j
+loc_29FA9:                              ; CODE XREF: DrawViewportSprite+495↑j
+                                        ; DrawViewportSprite+4DF↓j
                 push    cx
                 mov     ds, [bp+var_E]
                 mov     cx, [bx+2]
@@ -47106,7 +47106,7 @@ loc_29FA9:                              ; CODE XREF: sub_29B0F+495↑j
                 or      cx, cx
                 jz      short loc_29FD8
 
-loc_29FBA:                              ; CODE XREF: sub_29B0F+4C7↓j
+loc_29FBA:                              ; CODE XREF: DrawViewportSprite+4C7↓j
                 push    cx
                 mov     si, [bp+var_4]
                 mov     di, [bp+var_8]
@@ -47119,7 +47119,7 @@ loc_29FBA:                              ; CODE XREF: sub_29B0F+4C7↓j
                 pop     cx
                 loop    loc_29FBA
 
-loc_29FD8:                              ; CODE XREF: sub_29B0F+4A9↑j
+loc_29FD8:                              ; CODE XREF: DrawViewportSprite+4A9↑j
                 mov     ax, [bp+var_A]
                 mov     ds, [bp+var_E]
                 mov     bx, [bp+var_10]
@@ -47127,16 +47127,16 @@ loc_29FD8:                              ; CODE XREF: sub_29B0F+4A9↑j
                 or      cx, cx
                 jz      short loc_29FED
 
-loc_29FE8:                              ; CODE XREF: sub_29B0F+4DC↓j
+loc_29FE8:                              ; CODE XREF: DrawViewportSprite+4DC↓j
                 add     [bp+var_4], ax
                 loop    loc_29FE8
 
-loc_29FED:                              ; CODE XREF: sub_29B0F+4D7↑j
+loc_29FED:                              ; CODE XREF: DrawViewportSprite+4D7↑j
                 pop     cx
                 loop    loc_29FA9
                 add     [bp+var_10], 6
                 jmp     short loc_29F9A
-sub_29B0F       endp
+DrawViewportSprite endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -47792,8 +47792,8 @@ loc_2A509:                              ; CODE XREF: seg111:0C81↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A51B       proc near               ; CODE XREF: sub_29B0F+25B↑p
-                                        ; sub_29B0F+2B9↑p
+sub_2A51B       proc near               ; CODE XREF: DrawViewportSprite+25B↑p
+                                        ; DrawViewportSprite+2B9↑p
                 mov     cx, [bp-14h]
                 cmp     byte ptr [bp-20h], 0
                 jz      short loc_2A534
@@ -47877,8 +47877,8 @@ ExpandBlitMaskNibbles endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A589       proc near               ; CODE XREF: sub_29B0F+1B9↑p
-                                        ; sub_29B0F+42E↑p ...
+sub_2A589       proc near               ; CODE XREF: DrawViewportSprite+1B9↑p
+                                        ; DrawViewportSprite+42E↑p ...
                 mov     ax, es
                 mov     es, word ptr [bp-0Eh]
                 mov     bx, [bp-12h]
@@ -47952,8 +47952,8 @@ sub_2A589       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A5F7       proc near               ; CODE XREF: sub_29B0F+32D↑p
-                                        ; sub_29B0F+3AF↑p ...
+sub_2A5F7       proc near               ; CODE XREF: DrawViewportSprite+32D↑p
+                                        ; DrawViewportSprite+3AF↑p ...
                 mov     ax, es
                 mov     es, word ptr [bp-0Eh]
                 mov     bx, [bp-1Ch]
@@ -48068,7 +48068,7 @@ getTextPos      endp
 
 
 LoadPictureIntoEms proc near            ; CODE XREF: DrawPicture+1D↑p
-                                        ; sub_29B0F+34↑p
+                                        ; DrawViewportSprite+34↑p
                 mov     es, word ptr [bx] ; LRU cache: maps picture ids into a small pool of LIM EMS 4.0 pages (INT 67h/AX=0x5000). Cache hit: just re-maps the already-loaded pages. Cache miss: evicts the oldest slot and reads the picture's bytes from PICTURES.VGA (FileEntry at bx=0x9011) into the newly-mapped pages.
                 mov     cx, [bx+2]
                 mov     ax, word_2E530
@@ -50213,7 +50213,7 @@ sub_2BAA0       proc far                ; CODE XREF: sub_1D4B8+139↑P
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 1
                 mov     word_32918, 5
-                call    sub_29B0F
+                call    DrawViewportSprite
                 call    DrawMouseCursor
                 push    cs
                 call    near ptr sub_2BC16
@@ -52279,7 +52279,7 @@ loc_2CCB4:                              ; CODE XREF: sub_2C0FE+BE1↓j
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 or      word_328C6, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
                 and     word_328C6, 0FFFEh
                 call    DrawMouseCursor
                 call    sub_2BC16
@@ -52981,7 +52981,7 @@ sub_2D370       endp
 sub_2D3DC       proc near               ; CODE XREF: sub_2C0FE+C2B↑p
                                         ; sub_2C0FE+C3B↑p ...
                 or      word_328C6, 1
-                call    sub_29B0F
+                call    DrawViewportSprite
                 and     word_328C6, 0FFFEh
                 call    DrawMouseCursor
                 call    sub_2BC16
@@ -74453,27 +74453,27 @@ _val48          dw 0                    ; DATA XREF: InitGlobals+144↑w
 word_329CE      dw 0                    ; DATA XREF: InitGlobals+150↑w
                                         ; sub_2BAD5+27↑r
 _val11          dw 0                    ; DATA XREF: InitGlobals+3C↑w
-                                        ; sub_29B0F:loc_29C76↑r ...
+                                        ; DrawViewportSprite:loc_29C76↑r ...
 _val12          dw 0                    ; DATA XREF: InitGlobals+42↑w
-                                        ; sub_29B0F:loc_29CFD↑r
+                                        ; DrawViewportSprite:loc_29CFD↑r
 _val13          dw 0                    ; DATA XREF: InitGlobals+48↑w
-                                        ; sub_29B0F:loc_29D1C↑r
+                                        ; DrawViewportSprite:loc_29D1C↑r
 _val14          dw 0                    ; DATA XREF: InitGlobals+4E↑w
-                                        ; sub_29B0F+290↑r ...
+                                        ; DrawViewportSprite+290↑r ...
 _ptr1           dw 0                    ; DATA XREF: InitGlobals+54↑w
-                                        ; sub_29B0F:loc_29EE0↑r
+                                        ; DrawViewportSprite:loc_29EE0↑r
 _ptr2           dw 0                    ; DATA XREF: InitGlobals+5A↑w
-                                        ; sub_29B0F:loc_29C27↑r
+                                        ; DrawViewportSprite:loc_29C27↑r
 _ptr3           dw 0                    ; DATA XREF: InitGlobals+60↑w
-                                        ; sub_29B0F+122↑r
+                                        ; DrawViewportSprite+122↑r
 _ptr4           dw 0                    ; DATA XREF: InitGlobals+66↑w
-                                        ; sub_29B0F+12C↑r
+                                        ; DrawViewportSprite+12C↑r
 _ptr5           dw 0                    ; DATA XREF: InitGlobals+6C↑w
-                                        ; sub_29B0F+136↑r
+                                        ; DrawViewportSprite+136↑r
 _ptr6           dw 0                    ; DATA XREF: InitGlobals+72↑w
-                                        ; sub_29B0F+140↑r
+                                        ; DrawViewportSprite+140↑r
 _ptr7           dw 0                    ; DATA XREF: InitGlobals+78↑w
-                                        ; sub_29B0F+14A↑r
+                                        ; DrawViewportSprite+14A↑r
 word_329E6      dw 0                    ; DATA XREF: InitGlobals+162↑w
                                         ; sub_1D4B8+21A↑r
 word_329E8      dw 0                    ; DATA XREF: InitGlobals+168↑w

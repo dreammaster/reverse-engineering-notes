@@ -2533,6 +2533,18 @@ is now clear: 1) backdrop + floor-extension, 2) ceiling-extension, 3)
 
 319 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawViewportSprite — the shared primitive behind every dungeon-render pass
+
+Named `sub_29B0F` (632 lines, internals not traced): the core
+sprite/picture blitter every viewport-rendering function this session
+calls with a consistent (picture id, scale class, z-layer, transparency)
+signature — the depth-aware counterpart to `DrawPicture`. Closes out
+this session's dungeon-rendering arc: spawn → activate → floor/
+ceiling/wall passes → monster sprites/animation → the shared blitter
+underneath all of it.
+
+320 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
