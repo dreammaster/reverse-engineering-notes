@@ -2444,6 +2444,16 @@ confirmed).
 
 307 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawDungeonCellSideFeature and TryDrawDungeonCellSideFeature
+
+Named the door/side-feature sprite drawer for the dungeon viewport:
+`TryDrawDungeonCellSideFeature` (null-check wrapper) calls
+`DrawDungeonCellSideFeature`, which indexes a facing-direction table
+by the cell's side-feature id, with a conditional open-door/lit-torch
+overlay.
+
+309 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

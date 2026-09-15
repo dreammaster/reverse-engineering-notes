@@ -5366,8 +5366,12 @@ static Bytes_1(void) {
 	set_name	(0X21128,	"DrawDungeonCellWallTexture");
 	create_insn	(x=0X2115A);
 	op_hex		(x,	1);
+	set_cmt	(0X2117F,	"Null-check wrapper: calls DrawDungeonCellSideFeature only if the cell's [+2] field is nonzero. Called from RenderDungeonViewRow per cell.",	0);
 	create_insn	(0X2117F);
+	set_name	(0X2117F,	"TryDrawDungeonCellSideFeature");
+	set_cmt	(0X21187,	"Draws a door/side-feature sprite for the current cell: table at 0xE175 (10-byte stride, 4 facing directions) indexed by the cell's [+2] id, picture drawn at z-layer 7 or 8 depending on near/far distance banding, plus a conditional overlay (picture 6) for an open-door/lit-torch-like variant. Also called from sub_21217.",	0);
 	create_insn	(0X21187);
+	set_name	(0X21187,	"DrawDungeonCellSideFeature");
 	create_insn	(x=0X21192);
 	op_hex		(x,	1);
 	create_insn	(x=0X2119D);

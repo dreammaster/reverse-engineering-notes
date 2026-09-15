@@ -30000,7 +30000,7 @@ loc_2101D:                              ; CODE XREF: RenderDungeonViewRow+70↓j
 
 loc_21077:                              ; CODE XREF: RenderDungeonViewRow+18↑j
                                         ; RenderDungeonViewRow+2C↑j ...
-                call    sub_2117F
+                call    TryDrawDungeonCellSideFeature
                 call    TryTriggerMonsterEncounterAtCell
 
 loc_2107D:                              ; CODE XREF: RenderDungeonViewRow+E↑j
@@ -30056,7 +30056,7 @@ loc_210A8:                              ; CODE XREF: RenderDungeonViewRow+FB↓j
 
 loc_21102:                              ; CODE XREF: RenderDungeonViewRow+A3↑j
                                         ; RenderDungeonViewRow+B7↑j ...
-                call    sub_2117F
+                call    TryDrawDungeonCellSideFeature
                 call    TryTriggerMonsterEncounterAtCell
 
 loc_21108:                              ; CODE XREF: RenderDungeonViewRow+99↑j
@@ -30067,7 +30067,7 @@ loc_21108:                              ; CODE XREF: RenderDungeonViewRow+99↑j
                 test    word ptr [di+6], 1
                 jnz     short loc_21122
                 call    DrawDungeonCellWallTexture
-                call    sub_2117F
+                call    TryDrawDungeonCellSideFeature
                 call    TryTriggerMonsterEncounterAtCell
 
 loc_21122:                              ; CODE XREF: RenderDungeonViewRow+102↑j
@@ -30114,21 +30114,21 @@ DrawDungeonCellWallTexture endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2117F       proc near               ; CODE XREF: RenderDungeonViewRow:loc_21077↑p
+TryDrawDungeonCellSideFeature proc near ; CODE XREF: RenderDungeonViewRow:loc_21077↑p
                                         ; RenderDungeonViewRow:loc_21102↑p ...
-                mov     si, [di+2]
+                mov     si, [di+2]      ; Null-check wrapper: calls DrawDungeonCellSideFeature only if the cell's [+2] field is nonzero. Called from RenderDungeonViewRow per cell.
                 or      si, si
-                jnz     short sub_21187
+                jnz     short DrawDungeonCellSideFeature
                 retn
-sub_2117F       endp
+TryDrawDungeonCellSideFeature endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21187       proc near               ; CODE XREF: sub_2117F+5↑j
+DrawDungeonCellSideFeature proc near    ; CODE XREF: TryDrawDungeonCellSideFeature+5↑j
                                         ; sub_21217+8F↓p
-                mov     ax, 0Ah
+                mov     ax, 0Ah         ; Draws a door/side-feature sprite for the current cell: table at 0xE175 (10-byte stride, 4 facing directions) indexed by the cell's [+2] id, picture drawn at z-layer 7 or 8 depending on near/far distance banding, plus a conditional overlay (picture 6) for an open-door/lit-torch-like variant. Also called from sub_21217.
                 mul     si
                 mov     si, ax
                 add     si, 0E175h
@@ -30142,8 +30142,8 @@ sub_21187       proc near               ; CODE XREF: sub_2117F+5↑j
                 jnz     short loc_211B3
                 add     si, 2
 
-loc_211B3:                              ; CODE XREF: sub_21187+11↑j
-                                        ; sub_21187+1C↑j ...
+loc_211B3:                              ; CODE XREF: DrawDungeonCellSideFeature+11↑j
+                                        ; DrawDungeonCellSideFeature+1C↑j ...
                 mov     ax, [si]
                 cmp     ax, 0
                 jz      short locret_21216
@@ -30159,12 +30159,12 @@ loc_211B3:                              ; CODE XREF: sub_21187+11↑j
                 cmp     ax, _val24
                 jle     short loc_211E4
 
-loc_211DE:                              ; CODE XREF: sub_21187+43↑j
-                                        ; sub_21187+4F↑j
+loc_211DE:                              ; CODE XREF: DrawDungeonCellSideFeature+43↑j
+                                        ; DrawDungeonCellSideFeature+4F↑j
                 mov     word_32918, 8
 
-loc_211E4:                              ; CODE XREF: sub_21187+49↑j
-                                        ; sub_21187+55↑j
+loc_211E4:                              ; CODE XREF: DrawDungeonCellSideFeature+49↑j
+                                        ; DrawDungeonCellSideFeature+55↑j
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 1
                 call    sub_29B0F
@@ -30177,10 +30177,10 @@ loc_211E4:                              ; CODE XREF: sub_21187+49↑j
                 mov     word_32918, 7
                 call    sub_29B0F
 
-locret_21216:                           ; CODE XREF: sub_21187+31↑j
-                                        ; sub_21187+73↑j ...
+locret_21216:                           ; CODE XREF: DrawDungeonCellSideFeature+31↑j
+                                        ; DrawDungeonCellSideFeature+73↑j ...
                 retn
-sub_21187       endp
+DrawDungeonCellSideFeature endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -30235,7 +30235,7 @@ loc_21298:                              ; CODE XREF: sub_21217+48↑j
                 mov     si, [di+2]
                 or      si, si
                 jz      short loc_212A9
-                call    sub_21187
+                call    DrawDungeonCellSideFeature
 
 loc_212A9:                              ; CODE XREF: sub_21217+8D↑j
                 call    TryTriggerMonsterEncounterAtCell
@@ -56609,7 +56609,7 @@ word_2E404      dw 0                    ; DATA XREF: HandleMovementInput+21F↑w
 word_2E406      dw 0                    ; DATA XREF: sub_111C1+6↑r
                                         ; HandleMovementInput+21B↑w ...
 _val27          dw 0                    ; DATA XREF: InitGlobals+C6↑w
-                                        ; sub_21187+75↑r
+                                        ; DrawDungeonCellSideFeature+75↑r
 word_2E40A      dw 0                    ; DATA XREF: ShowClueBook:loc_10CC5↑r
                                         ; ShowClueBook:loc_10CCF↑r ...
 word_2E40C      dw 0                    ; DATA XREF: CheckPartyMemberItemFlag+3↑w
@@ -56899,13 +56899,13 @@ word_2E534      dw 0                    ; DATA XREF: sub_284CB+3↑w
                                         ; sub_284CB:loc_284D4↑r ...
 aFmdrv          db 'FMDRV',0
 _val21          dw 0                    ; DATA XREF: InitGlobals+A2↑w
-                                        ; sub_21187+3F↑r
+                                        ; DrawDungeonCellSideFeature+3F↑r
 _val22          dw 0                    ; DATA XREF: InitGlobals+A8↑w
-                                        ; sub_21187+45↑r
+                                        ; DrawDungeonCellSideFeature+45↑r
 _val23          dw 0                    ; DATA XREF: InitGlobals+AE↑w
-                                        ; sub_21187+4B↑r
+                                        ; DrawDungeonCellSideFeature+4B↑r
 _val24          dw 0                    ; DATA XREF: InitGlobals+B4↑w
-                                        ; sub_21187+51↑r
+                                        ; DrawDungeonCellSideFeature+51↑r
 word_2E544      dw 0                    ; DATA XREF: sub_1D4B8:loc_1D4CB↑w
                                         ; sub_1D4B8+72↑w ...
 word_2E546      dw 0                    ; DATA XREF: loadWorldDat1+3↑w

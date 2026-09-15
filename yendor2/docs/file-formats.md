@@ -512,6 +512,13 @@ z-layer `word_32918=0` — a different layer from the `3`/`4` values
 used earlier in `RenderDungeonViewRow` for items/monsters standing in
 the cell), plus a fixed overlay picture when the cell's `[+6]` flags
 have bit `0x2000` set (a door/torch/decoration marker, not confirmed).
+`RenderDungeonViewRow` also calls `TryDrawDungeonCellSideFeature` per
+cell, which (if the cell's `[+2]` field is nonzero) calls
+`DrawDungeonCellSideFeature`: a facing-direction-indexed door/
+side-feature sprite (table at `0xE175`, same facing-tier pattern as
+`ShowCompassDirection`/`SpawnMonsterInFacingDirection`), with a
+conditional overlay for what's plausibly an open-door/lit-torch
+variant.
 
 `RenderDungeonViewport` itself is called by two `start`-reachable
 screen-redraw functions: `RedrawDungeonScreen` (a fuller variant with
