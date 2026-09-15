@@ -2831,6 +2831,14 @@ table `RunClueBookItemCategory` hit-tests for its own sub-icon clicks.
 
 361 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowHealingItemPercentInfo
+
+Named `sub_137C3`, the last piece of the item-ability-overlay cluster:
+shows "HEALTH-"/"MAGIC-" plus a percentage for healing/restore items,
+matching `UseHealingItem`'s own HP/MP flag convention.
+
+362 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

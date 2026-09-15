@@ -342,6 +342,9 @@ navigation) adds an extra ability-info overlay when the item's id
 falls in `CastSpell`'s or `RestCharacter`'s dispatch range — i.e. some
 clue-book items (plausibly the "MAGIC SCROLLS/QUARTZ" subtype) grant a
 spell/ability when used, and the clue book shows what it does via
+`ShowHealingItemPercentInfo` (for the `RestCharacter` range —
+"HEALTH-"/"MAGIC-" plus a percentage, e.g. "HEALTH- 25 PERCENT",
+matching `UseHealingItem`'s own HP/MP flag convention),
 `ShowItemEffectDuration` ("DURATION- `<n>` MINUTES") and
 `ShowItemAbilityEffectInfo` (a percent-chance or effect-amount line —
 confirmed to use the *exact same* damage constants as

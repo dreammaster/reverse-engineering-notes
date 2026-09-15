@@ -1748,7 +1748,9 @@ static Bytes_0(void) {
 	set_cmt	(0X13780,	"F5 subtype 1 (ARMOR/RINGS) extra row: 'ABSORPTION-' plus a value. Called from RunClueBookItemCategory, after ShowClueBookItemDetail's generic fields.",	0);
 	create_insn	(0X13780);
 	set_name	(0X13780,	"ShowArmorDetailRow");
+	set_cmt	(0X137C3,	"Shows a healing/restore item's clue-book description: 'HEALTH-' or 'MAGIC-' (selected by [+2] bit 0x8000) plus a percentage value and 'PERCENT'. Called from RunClueBookItemDetailWithAbilityInfo for items in RestCharacter's dispatch range.",	0);
 	create_insn	(0X137C3);
+	set_name	(0X137C3,	"ShowHealingItemPercentInfo");
 	create_insn	(x=0X137D6);
 	op_hex		(x,	1);
 	set_cmt	(0X1381C,	"Shows 'DURATION- <n> MINUTES' for a scroll/potion's timed effect (value from word_2E548's [+4] field x10). Called from RunClueBookItemDetailWithAbilityInfo.",	0);
@@ -3721,14 +3723,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1AB26,	"Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.",	0);
 	create_insn	(0X1AB26);
 	set_name	(0X1AB26,	"UpdatePartyAverageStatTiers");
-	create_insn	(x=0X1AB31);
-	op_hex		(x,	1);
-	create_insn	(x=0X1AB62);
-	op_hex		(x,	1);
-	create_insn	(x=0X1ABC7);
-	op_hex		(x,	1);
-	create_insn	(x=0X1ABD4);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -3738,6 +3732,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AB31);
+	op_hex		(x,	1);
+	create_insn	(x=0X1AB62);
+	op_hex		(x,	1);
+	create_insn	(x=0X1ABC7);
+	op_hex		(x,	1);
+	create_insn	(x=0X1ABD4);
+	op_hex		(x,	1);
 	create_insn	(x=0X1ABE1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1ABEE);

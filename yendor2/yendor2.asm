@@ -5174,7 +5174,7 @@ loc_13136:                              ; CODE XREF: RunClueBookItemDetailWithAb
                 jl      short loc_13149
                 cmp     word_32974, 46h ; 'F'
                 jg      short loc_13149
-                call    sub_137C3
+                call    ShowHealingItemPercentInfo
                 jmp     short loc_13163
 ; ---------------------------------------------------------------------------
 
@@ -5778,8 +5778,8 @@ ShowArmorDetailRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_137C3       proc near               ; CODE XREF: RunClueBookItemDetailWithAbilityInfo+2B↑p
-                mov     _textPos_y, 39h ; '9'
+ShowHealingItemPercentInfo proc near    ; CODE XREF: RunClueBookItemDetailWithAbilityInfo+2B↑p
+                mov     _textPos_y, 39h ; '9' ; Shows a healing/restore item's clue-book description: 'HEALTH-' or 'MAGIC-' (selected by [+2] bit 0x8000) plus a percentage value and 'PERCENT'. Called from RunClueBookItemDetailWithAbilityInfo for items in RestCharacter's dispatch range.
                 mov     _textPos_x, 73h ; 's'
                 mov     bx, 8B57h
                 mov     si, word_2E548
@@ -5788,7 +5788,7 @@ sub_137C3       proc near               ; CODE XREF: RunClueBookItemDetailWithAb
                 mov     _textPos_x, 79h ; 'y'
                 mov     bx, 8B5Fh
 
-loc_137E6:                              ; CODE XREF: sub_137C3+18↑j
+loc_137E6:                              ; CODE XREF: ShowHealingItemPercentInfo+18↑j
                 mov     ax, word_2E548
                 add     ax, 4
                 mov     cx, 59h ; 'Y'
@@ -5800,12 +5800,12 @@ loc_137E6:                              ; CODE XREF: sub_137C3+18↑j
                 jge     short loc_1380D
                 sub     _textPos_x, 6
 
-loc_1380D:                              ; CODE XREF: sub_137C3+43↑j
+loc_1380D:                              ; CODE XREF: ShowHealingItemPercentInfo+43↑j
                 mov     bx, 8B66h
                 mov     _font_fgColor, 0Dh
                 call    writeString
                 retn
-sub_137C3       endp
+ShowHealingItemPercentInfo endp
 
 
 ; =============== S U B R O U T I N E =======================================
