@@ -1749,7 +1749,7 @@ loc_110CA:                              ; CODE XREF: sub_10C40+485↑j
 
 loc_110D9:                              ; CODE XREF: sub_10C40+EB↑j
                 and     word_328CC, 0FF9Fh
-                call    sub_132F2
+                call    ShowPagedEntryScreen
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
@@ -4788,7 +4788,7 @@ loc_12E8A:                              ; CODE XREF: sub_12E59+2C↑j
 
 loc_12EB1:                              ; CODE XREF: sub_12E59+5↑j
                 mov     word_2E3FE, 0Eh
-                call    sub_150E5
+                call    DrawMessageBox
                 call    sub_14C37
                 call    sub_1303C
                 call    sub_12C96
@@ -5278,7 +5278,7 @@ sub_13216       proc far                ; CODE XREF: sub_10C40+1AC↑P
                 mov     ax, 8848h
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
-                call    sub_150E5
+                call    DrawMessageBox
                 call    sub_14C37
                 call    sub_13B3F
                 call    Fade?
@@ -5359,23 +5359,23 @@ sub_132B5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_132F2       proc far                ; CODE XREF: sub_10C40+49E↑P
-                mov     word_3293A, 1
+ShowPagedEntryScreen proc far           ; CODE XREF: sub_10C40+49E↑P
+                mov     word_3293A, 1   ; Top-level paginated-entry display screen: shows one entry (via DrawMessageBox), the scroll-arrow state for the current page (via UpdateScrollArrows), and a Fade? transition. Current page index is word_3293A (bounded 1..0x1F). Content type (book/sign text vs. a catalog like spells) not confirmed.
 
-loc_132F8:                              ; CODE XREF: sub_132F2+57↓j
+loc_132F8:                              ; CODE XREF: ShowPagedEntryScreen+57↓j
                 mov     ax, 883Dh
                 mov     word_2E3F8, ax
                 mov     word_2E3FC, 0BCh
                 mov     ax, 8889h
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
-                call    sub_150E5
-                call    sub_138C0
+                call    DrawMessageBox
+                call    UpdateScrollArrows
                 call    sub_14C37
                 call    Fade?
 
-loc_13322:                              ; CODE XREF: sub_132F2+3A↓j
-                                        ; sub_132F2+41↓j ...
+loc_13322:                              ; CODE XREF: ShowPagedEntryScreen+3A↓j
+                                        ; ShowPagedEntryScreen+41↓j ...
                 call    sub_1D038
                 cmp     errorCode, 0
                 jz      short loc_13322
@@ -5390,9 +5390,9 @@ loc_13322:                              ; CODE XREF: sub_132F2+3A↓j
                 jmp     short loc_13322
 ; ---------------------------------------------------------------------------
 
-locret_1334D:                           ; CODE XREF: sub_132F2+4D↑j
+locret_1334D:                           ; CODE XREF: ShowPagedEntryScreen+4D↑j
                 retf
-sub_132F2       endp
+ShowPagedEntryScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5466,7 +5466,7 @@ sub_13380       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_133EB       proc near               ; CODE XREF: sub_132F2+4F↑p
+sub_133EB       proc near               ; CODE XREF: ShowPagedEntryScreen+4F↑p
                 cmp     byte_2E400, 0
                 jz      short loc_13402
                 cmp     byte_2E400, 49h ; 'I'
@@ -5533,7 +5533,7 @@ sub_13463       proc near               ; CODE XREF: sub_1305E+5↑p
                 mov     ax, 88C0h
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
-                call    sub_150E5
+                call    DrawMessageBox
                 call    sub_14C37
                 mov     word_2E532, 80h
                 mov     x, 1Ch
@@ -5665,7 +5665,7 @@ sub_13678       proc near               ; CODE XREF: sub_13090:loc_130AD↑p
                 mov     ax, 0AFA8h
                 mov     word_2E3F8, ax
                 mov     word_2E3FE, 0Dh
-                call    sub_150E5
+                call    DrawMessageBox
                 call    sub_14C37
                 mov     word_2E532, 80h
                 mov     si, word_2E546
@@ -5866,8 +5866,8 @@ sub_1385C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_138C0       proc near               ; CODE XREF: sub_132F2+23↑p
-                and     word_328CC, 0FE7Fh
+UpdateScrollArrows proc near            ; CODE XREF: ShowPagedEntryScreen+23↑p
+                and     word_328CC, 0FE7Fh ; Shows/hides the two scroll-arrow glyphs (aAMoreB / byte_36755) based on whether word_3293A (current entry index) is at the first (1) or last (0x1F) entry, then loads that entry's data via FileEntry_Read (fixed FileEntry at bx=0x9043, record size 0x4FB) and draws its icon + message.
                 mov     aAMoreB, 20h ; ' '
                 mov     byte_36755, 20h ; ' '
                 cmp     word_3293A, 1
@@ -5875,13 +5875,13 @@ sub_138C0       proc near               ; CODE XREF: sub_132F2+23↑p
                 or      word_328CC, 100h
                 mov     aAMoreB, 61h ; 'a'
 
-loc_138E2:                              ; CODE XREF: sub_138C0+15↑j
+loc_138E2:                              ; CODE XREF: UpdateScrollArrows+15↑j
                 cmp     word_3293A, 1Fh
                 jz      short loc_138F4
                 or      word_328CC, 80h
                 mov     byte_36755, 62h ; 'b'
 
-loc_138F4:                              ; CODE XREF: sub_138C0+27↑j
+loc_138F4:                              ; CODE XREF: UpdateScrollArrows+27↑j
                 mov     ax, 0AFA8h
                 mov     bx, 2
                 call    sub_27B84
@@ -5905,7 +5905,7 @@ loc_138F4:                              ; CODE XREF: sub_138C0+27↑j
                 mov     bx, 8EECh       ; msg
                 call    writeString
                 retn
-sub_138C0       endp
+UpdateScrollArrows endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6426,7 +6426,7 @@ sub_13E98       proc near               ; CODE XREF: sub_1334E+5↑p
                 mov     cx, 88C0h
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
-                call    sub_150E5
+                call    DrawMessageBox
                 call    sub_14C37
                 mov     si, 77C6h
                 mov     _textPos_y, 1Ah
@@ -6714,7 +6714,7 @@ sub_141D9       proc near               ; CODE XREF: sub_132B5+B↑p
                 mov     ax, 8876h
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
-                call    sub_150E5
+                call    DrawMessageBox
                 mov     _textPos_x, 0B9h
                 mov     _textPos_y, 10h
                 mov     bx, 7DBBh
@@ -7600,7 +7600,7 @@ sub_14AE8       endp
 
 
 FillVideoBuffer proc far                ; CODE XREF: sub_13FCF+4C↑P
-                                        ; sub_150E5+4↓p
+                                        ; DrawMessageBox+4↓p
                 push    es              ; Fills the entire 320x200 video buffer (_videoBufferSeg) with the byte passed in AL (replicated to AH before the word-store loop). cx=0x7D00 = 32000 words = 64000 bytes = one full VGA Mode 13h-style frame.
                 push    di
                 push    cx
@@ -7693,7 +7693,7 @@ sub_14BD5       proc far                ; CODE XREF: sub_10C40+6B↑P
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
                 push    cs
-                call    near ptr sub_150E5
+                call    near ptr DrawMessageBox
                 mov     _textPos_x, 15h
                 mov     _textPos_y, 18h
                 mov     bx, 8719h       ; msg
@@ -8251,9 +8251,9 @@ sub_150B8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_150E5       proc far                ; CODE XREF: sub_12E59+5E↑P
+DrawMessageBox  proc far                ; CODE XREF: sub_12E59+5E↑P
                                         ; sub_13216+2B↑P ...
-                mov     ax, 0
+                mov     ax, 0           ; Draws a box (via sub_14B24) then two lines of text from word_2E3F8/word_2E3FA (both commented 'msg'), positioned via word_2E3FC. Called by ShowPagedEntryScreen.
                 push    cs
                 call    near ptr FillVideoBuffer
                 mov     x, 1
@@ -8274,7 +8274,7 @@ sub_150E5       proc far                ; CODE XREF: sub_12E59+5E↑P
                 mov     bx, word_2E3FA  ; msg
                 call    writeString
                 retf
-sub_150E5       endp
+DrawMessageBox  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42461,7 +42461,7 @@ sub_27B42       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27B84       proc far                ; CODE XREF: sub_138C0+3A↑P
+sub_27B84       proc far                ; CODE XREF: UpdateScrollArrows+3A↑P
                                         ; sub_13B3F+2F3↑P ...
                 mov     word_368AB, 0
                 mov     word_368A7, ax
@@ -49034,7 +49034,7 @@ seg116          segment byte public 'CODE' use16
 
 
 sub_2AE3C       proc far                ; CODE XREF: sub_295A8:loc_2972D↑P
-                cmp     word_32974, 253h
+                cmp     word_32974, 253h ; Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler (sub_294A3, an ESC-cancelable list-selection routine). 0x246-0x249 (4 codes) each flash a small icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the full trace.
                 jnz     short loc_2AE48
                 call    sub_2B2CF
                 retf
@@ -84870,10 +84870,10 @@ word_368A5      dw 0                    ; DATA XREF: InitGame+18↑w
 word_368A7      dw 0                    ; DATA XREF: sub_111C1+32↑r
                                         ; sub_205C0+35↑r ...
 ; FileEntry *word_368A9
-word_368A9      dw 0                    ; DATA XREF: sub_138C0+3F↑w
+word_368A9      dw 0                    ; DATA XREF: UpdateScrollArrows+3F↑w
                                         ; sub_13B3F+327↑w ...
 word_368AB      dw 0                    ; DATA XREF: sub_111C1+9↑w
-                                        ; sub_138C0+49↑w ...
+                                        ; UpdateScrollArrows+49↑w ...
 word_368AD      dw 0                    ; DATA XREF: seg096:001D↑w
                                         ; sub_27B0D+16↑w ...
 ; FileEntry *word_368AF

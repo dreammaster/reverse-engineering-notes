@@ -1657,7 +1657,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X132EC);
 	op_hex		(x,	1);
+	set_cmt	(0X132F2,	"Top-level paginated-entry display screen: shows one entry (via DrawMessageBox), the scroll-arrow state for the current page (via UpdateScrollArrows), and a Fade? transition. Current page index is word_3293A (bounded 1..0x1F). Content type (book/sign text vs. a catalog like spells) not confirmed.",	0);
 	create_insn	(0X132F2);
+	set_name	(0X132F2,	"ShowPagedEntryScreen");
 	create_insn	(0X1334D);
 	create_insn	(x=0X1334E);
 	op_hex		(x,	1);
@@ -1715,8 +1717,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X138A1);
 	op_hex		(x,	1);
 	set_cmt	(0X138A8,	"msg",	0);
+	set_cmt	(0X138C0,	"Shows/hides the two scroll-arrow glyphs (aAMoreB / byte_36755) based on whether word_3293A (current entry index) is at the first (1) or last (0x1F) entry, then loads that entry's data via FileEntry_Read (fixed FileEntry at bx=0x9043, record size 0x4FB) and draws its icon + message.",	0);
 	create_insn	(x=0X138C0);
 	op_hex		(x,	1);
+	set_name	(0X138C0,	"UpdateScrollArrows");
 	create_insn	(x=0X138D7);
 	op_hex		(x,	1);
 	create_insn	(x=0X138E9);
@@ -2035,7 +2039,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X14FB4,	"numPara",	0);
 	create_insn	(0X150B8);
+	set_cmt	(0X150E5,	"Draws a box (via sub_14B24) then two lines of text from word_2E3F8/word_2E3FA (both commented 'msg'), positioned via word_2E3FC. Called by ShowPagedEntryScreen.",	0);
 	create_insn	(0X150E5);
+	set_name	(0X150E5,	"DrawMessageBox");
 	set_cmt	(0X15127,	"msg",	0);
 	set_cmt	(0X15138,	"msg",	0);
 	create_insn	(0X15142);
@@ -6654,6 +6660,15 @@ static Bytes_0(void) {
 	create_insn	(0X27C96);
 	set_cmt	(0X27CB0,	"First of a ~27-function cluster (0x27B42-0x2801A, seg096) of tiny 'resource block setup' stubs: each hardcodes one FileEntry's _blockOffset/_blockOffsetHi (from a small pointer table) and _blockSize for one specific game resource, then returns -- the caller does the actual FileEntry_Read. Each is called directly from many different, scattered call sites (not through a dispatch table), so which resource each one represents isn't recoverable from static analysis alone; left unnamed deliberately rather than guessed -- see ida_scripts/document_resource_stubs.py.",	0);
 	create_insn	(0X27CB0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27CC9);
 	create_insn	(x=0X27CD4);
 	op_hex		(x,	1);
@@ -6696,15 +6711,6 @@ static Bytes_0(void) {
 	set_name	(0X27F6C,	"WorldDat_setBlock3");
 	create_insn	(0X27F86);
 	set_name	(0X27F86,	"WorldDat_setBlock4");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27FA4);
 	set_name	(0X27FA4,	"WorldDat_setBlock5");
 	create_insn	(0X27FC2);
@@ -8235,6 +8241,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE26);
 	op_hex		(x,	1);
+	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler (sub_294A3, an ESC-cancelable list-selection routine). 0x246-0x249 (4 codes) each flash a small icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the full trace.",	0);
 	create_insn	(0X2AE3C);
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);

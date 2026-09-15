@@ -257,6 +257,39 @@ cursor/icon blit than a screen fade — the original "?" hedge looks
 justified, a full trace of all its branches would be needed before
 renaming it either way, left as-is rather than guess.
 
+### 2026-09-14 session update, continued: paginated-entry screen cluster
+
+Followed a lead from `rank_naming_candidates.py` into a small,
+self-contained UI cluster and named it with real confidence
+(`ida_scripts/name_paged_screen.py`): `ShowPagedEntryScreen` (0x132F2,
+top-level: shows one entry + scroll-arrow state + fade transition),
+`UpdateScrollArrows` (0x138C0: shows/hides two arrow glyphs depending on
+whether the current page index `word_3293A` is at the first/last of up
+to 31 entries, then loads that entry via `FileEntry_Read` and draws its
+icon+message), `DrawMessageBox` (0x150E5: draws a box then two lines of
+text). Exact content type (book/sign text vs. a spell/item catalog)
+isn't confirmed — names describe the confirmed structural behavior
+(paginated single-entry display) rather than asserting which game
+content it shows.
+
+Also traced (but did not name, `document_item_icon_dispatch.py`) a
+command dispatcher at `0x2AE3C` handling event codes `0x242`-`0x2C8`.
+`0x246`-`0x249` (4 codes, each flashing an icon then a transition)
+plausibly correspond to the manual's 4 single-key inventory item icons
+(`D` disk, `K` keyring, `M` map, `T` hourglass, `docs/manual.txt`
+line 210-216) but which code is which item isn't determinable
+statically. `0x242`-`0x245` share one handler that turned out to be an
+ESC-cancelable list-selection routine, not a simple "draw character
+panel N" as the manual's F1-F4 hotkeys might suggest — didn't rename it
+since that hypothesis didn't hold up.
+
+New reusable tools: `ida_scripts/find_callers.py` (who calls a given
+address) and `ida_scripts/inspect_func.py` (one function's size/refs/
+callers/callees at a glance) — both hardcode their target(s) at the top,
+same pattern as `dump_range.py`.
+
+66 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
