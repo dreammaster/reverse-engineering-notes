@@ -2004,8 +2004,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X14BD5);
 	op_hex		(x,	1);
 	set_cmt	(0X14C02,	"msg",	0);
+	set_cmt	(0X14C37,	"Clue book (F8) nav bar, called from RunClueEntryMenu. Draws two conditional hotkey hints (word_328CC bit 0x40 -> 'd) LIST', bit 0x20 -> 'c) MAP'), then a row of 7 category-tab icons at y=0xB4 (x from 0x3E, step 0x1E): 7 base picture ids (0x20/0x145/0x147/0x153/0x149/0x14B/0x14D), each +1'd to a highlighted variant when its bit (word_328CC 0x8000..0x200) is set, drawn via DrawPicture. Category identities not traced -- only the mechanism is confirmed.",	0);
 	create_insn	(x=0X14C37);
 	op_hex		(x,	1);
+	set_name	(0X14C37,	"DrawClueBookNavBar");
 	set_cmt	(0X14C51,	"msg",	0);
 	create_insn	(x=0X14C59);
 	op_hex		(x,	1);
@@ -4277,6 +4279,15 @@ static Bytes_0(void) {
 	create_insn	(0X1CF42);
 	create_insn	(0X1CF50);
 	set_cmt	(0X1CF51,	"this",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1CF55,	"this",	0);
 	create_insn	(x=0X1CF97);
 	op_hex		(x,	1);
@@ -4300,15 +4311,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1D038,	"Non-blocking keyboard poll via INT 21h/AH=6/DL=0xFF. Sets errorCode (reused here as an input-event-type flag, NOT an actual error code: 0=no input, 1=regular char in byte_2E400 (uppercased a-z), 2=extended/function-key scan code in byte_2E400). Scan code 'B' triggers sub_10C40 unless word_328CA bit3 is set.",	0);
 	create_insn	(0X1D038);
 	set_name	(0X1D038,	"PollKeyboardInput");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X1D050);
 	op_hex		(x,	0);
@@ -7428,6 +7430,15 @@ static Bytes_1(void) {
 	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
 	create_insn	(0X28CFF);
 	set_name	(0X28CFF,	"RevealMapRegion");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X28D1D);
 	op_hex		(x,	1);
 	create_insn	(0X28D2D);
@@ -7456,15 +7467,6 @@ static Bytes_1(void) {
 	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
 	create_insn	(0X28FF9);
 	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X29040);
 	create_insn	(x=0X2906C);
 	op_hex		(x,	1);
@@ -10929,6 +10931,15 @@ static Bytes_2(void) {
 	create_word	(0X36CFB);
 	create_word	(0X36CFD);
 	create_word	(0X36CFF);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X36D01);
 	create_word	(0X36D03);
 	create_word	(0X36D05);
@@ -10950,15 +10961,6 @@ static Bytes_2(void) {
 	set_cmt	(0X36E4B,	"4 entries x 2 bytes: which 1-based g_partyRecords index occupies UI/effect slot N (0 = empty).",	0);
 	create_word	(0X36E4B);
 	set_name	(0X36E4B,	"g_partySlotAssignment");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X36E4D);
 	create_word	(0X36E4F);
 	create_word	(0X36E51);

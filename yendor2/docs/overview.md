@@ -2039,6 +2039,18 @@ shown).
 
 263 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawClueBookNavBar
+
+Named `sub_14C37`, called twice from `RunClueEntryMenu`: draws the clue
+book's top navigation bar — two conditional hotkey hints ("d) LIST" /
+"c) MAP", confirmed via raw message bytes) plus a row of 7 category-tab
+icons, each swapped to a highlighted variant (base id +1) when its bit
+in `word_328CC` (0x8000 down to 0x200) is set. Only the drawing
+mechanism is confirmed; which tab corresponds to which clue-book
+category is not traced.
+
+264 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

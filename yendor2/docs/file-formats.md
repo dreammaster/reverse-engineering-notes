@@ -228,6 +228,13 @@ flag (`word_328CA` bit 1) is clear and that entry's own flag
 (`[+2]` bit `0x8000`) marks it as requiring registration — a shareware
 limitation.
 
+`RunClueEntryMenu` also calls `DrawClueBookNavBar` (twice) to draw the
+book's top bar: conditional "d) LIST" / "c) MAP" hotkey hints
+(`word_328CC` bits `0x40`/`0x20`), then a row of 7 category-tab icons
+(fixed base picture ids, each swapped to a highlighted +1 variant when
+its bit in `word_328CC`, `0x8000` down to `0x200`, is set). The drawing
+mechanism is confirmed; which tab is which category is not.
+
 ### Quest-item and party-inventory range checks
 
 `IsItemRangeAvailable` (**correction**: named `CheckTransportAvailability`

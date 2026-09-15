@@ -4428,7 +4428,7 @@ loc_12BB8:                              ; CODE XREF: RunClueEntryMenu+2F↑j
                 call    sub_14D26
                 cmp     word_2E40A, 0
                 jz      short loc_12BD1
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 call    DrawMouseCursor
                 jmp     loc_12C88
 ; ---------------------------------------------------------------------------
@@ -4478,7 +4478,7 @@ loc_12C26:                              ; CODE XREF: RunClueEntryMenu+8D↑j
                 call    sub_14D26
                 cmp     word_2E40A, 0
                 jz      short loc_12BD1
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 call    DrawMouseCursor
                 jmp     short loc_12C88
 ; ---------------------------------------------------------------------------
@@ -4789,7 +4789,7 @@ loc_12E8A:                              ; CODE XREF: ShowClueCategoryEntries+2C�
 loc_12EB1:                              ; CODE XREF: ShowClueCategoryEntries+5↑j
                 mov     word_2E3FE, 0Eh
                 call    DrawMessageBox
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 call    sub_1303C
                 call    DrawClueEntryList
                 call    DrawMouseCursor
@@ -5279,7 +5279,7 @@ sub_13216       proc far                ; CODE XREF: ShowClueBook+1AC↑P
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
                 call    DrawMessageBox
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 call    sub_13B3F
                 call    DrawMouseCursor
 
@@ -5339,7 +5339,7 @@ loc_132B8:                              ; CODE XREF: sub_132B5+22↓j
                 test    word_328C4, 400h
                 jz      short loc_132CD
                 call    sub_141D9
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 call    DrawMouseCursor
 
 loc_132CD:                              ; CODE XREF: sub_132B5+9↑j
@@ -5371,7 +5371,7 @@ loc_132F8:                              ; CODE XREF: ShowPagedEntryScreen+57↓j
                 mov     word_2E3FE, 0Dh
                 call    DrawMessageBox
                 call    UpdateScrollArrows
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 call    DrawMouseCursor
 
 loc_13322:                              ; CODE XREF: ShowPagedEntryScreen+3A↓j
@@ -5534,7 +5534,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
                 call    DrawMessageBox
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 mov     word_2E532, 80h
                 mov     x, 1Ch
                 mov     y, 29h ; ')'
@@ -5666,7 +5666,7 @@ sub_13678       proc near               ; CODE XREF: sub_13090:loc_130AD↑p
                 mov     word_2E3F8, ax
                 mov     word_2E3FE, 0Dh
                 call    DrawMessageBox
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 mov     word_2E532, 80h
                 mov     si, word_2E546
                 mov     ax, [si+8]
@@ -6427,7 +6427,7 @@ sub_13E98       proc near               ; CODE XREF: sub_1334E+5↑p
                 mov     word_2E3FA, ax
                 mov     word_2E3FE, 0Dh
                 call    DrawMessageBox
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 mov     si, 77C6h
                 mov     _textPos_y, 1Ah
                 call    sub_13EDF
@@ -7053,7 +7053,7 @@ loc_1464A:                              ; CODE XREF: sub_141D9+446↑j
                                         ; sub_141D9+44D↑j
                 test    word ptr es:[si+0Ch], 4
                 jz      short loc_14667
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 call    DrawMouseCursor
                 mov     ax, 2           ; ticks
                 call    wait
@@ -7116,7 +7116,7 @@ loc_14700:                              ; CODE XREF: sub_1466E+7E↑j
                 mov     word_32938, 1
                 or      word_328CC, 40h
                 call    sub_141D9
-                call    sub_14C37
+                call    DrawClueBookNavBar
                 call    DrawMouseCursor
                 call    sub_238CD
                 or      word_3295A, 8000h
@@ -7706,7 +7706,7 @@ sub_14BD5       proc far                ; CODE XREF: ShowClueBook+6B↑P
                 mov     bx, 8748h
                 call    sub_23B76
                 push    cs
-                call    near ptr sub_14C37
+                call    near ptr DrawClueBookNavBar
                 call    DrawMouseCursor
                 retf
 sub_14BD5       endp
@@ -7715,9 +7715,9 @@ sub_14BD5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14C37       proc far                ; CODE XREF: RunClueEntryMenu+40↑P
+DrawClueBookNavBar proc far             ; CODE XREF: RunClueEntryMenu+40↑P
                                         ; RunClueEntryMenu+AE↑P ...
-                test    word_328CC, 40h
+                test    word_328CC, 40h ; Clue book (F8) nav bar, called from RunClueEntryMenu. Draws two conditional hotkey hints (word_328CC bit 0x40 -> 'd) LIST', bit 0x20 -> 'c) MAP'), then a row of 7 category-tab icons at y=0xB4 (x from 0x3E, step 0x1E): 7 base picture ids (0x20/0x145/0x147/0x153/0x149/0x14B/0x14D), each +1'd to a highlighted variant when its bit (word_328CC 0x8000..0x200) is set, drawn via DrawPicture. Category identities not traced -- only the mechanism is confirmed.
                 jz      short loc_14C59
                 mov     _textPos_x, 0Bh
                 mov     _textPos_y, 0B9h
@@ -7725,7 +7725,7 @@ sub_14C37       proc far                ; CODE XREF: RunClueEntryMenu+40↑P
                 mov     bx, 8EF7h       ; msg
                 call    writeString
 
-loc_14C59:                              ; CODE XREF: sub_14C37+6↑j
+loc_14C59:                              ; CODE XREF: DrawClueBookNavBar+6↑j
                 test    word_328CC, 20h
                 jz      short loc_14C7B
                 mov     _textPos_x, 110h
@@ -7734,7 +7734,7 @@ loc_14C59:                              ; CODE XREF: sub_14C37+6↑j
                 mov     bx, 8EFEh       ; msg
                 call    writeString
 
-loc_14C7B:                              ; CODE XREF: sub_14C37+28↑j
+loc_14C7B:                              ; CODE XREF: DrawClueBookNavBar+28↑j
                 mov     word_2E532, 80h
                 mov     y, 0B4h
                 mov     word_38808, 7
@@ -7745,49 +7745,49 @@ loc_14C7B:                              ; CODE XREF: sub_14C37+28↑j
                 jz      short loc_14CA4
                 inc     word ptr [bx]
 
-loc_14CA4:                              ; CODE XREF: sub_14C37+69↑j
+loc_14CA4:                              ; CODE XREF: DrawClueBookNavBar+69↑j
                 mov     word ptr [bx+2], 145h
                 test    word_328CC, 4000h
                 jz      short loc_14CB4
                 inc     word ptr [bx+2]
 
-loc_14CB4:                              ; CODE XREF: sub_14C37+78↑j
+loc_14CB4:                              ; CODE XREF: DrawClueBookNavBar+78↑j
                 mov     word ptr [bx+4], 147h
                 test    word_328CC, 2000h
                 jz      short loc_14CC4
                 inc     word ptr [bx+4]
 
-loc_14CC4:                              ; CODE XREF: sub_14C37+88↑j
+loc_14CC4:                              ; CODE XREF: DrawClueBookNavBar+88↑j
                 mov     word ptr [bx+6], 153h
                 test    word_328CC, 1000h
                 jz      short loc_14CD4
                 inc     word ptr [bx+6]
 
-loc_14CD4:                              ; CODE XREF: sub_14C37+98↑j
+loc_14CD4:                              ; CODE XREF: DrawClueBookNavBar+98↑j
                 mov     word ptr [bx+8], 149h
                 test    word_328CC, 800h
                 jz      short loc_14CE4
                 inc     word ptr [bx+8]
 
-loc_14CE4:                              ; CODE XREF: sub_14C37+A8↑j
+loc_14CE4:                              ; CODE XREF: DrawClueBookNavBar+A8↑j
                 mov     word ptr [bx+0Ah], 14Bh
                 test    word_328CC, 400h
                 jz      short loc_14CF4
                 inc     word ptr [bx+0Ah]
 
-loc_14CF4:                              ; CODE XREF: sub_14C37+B8↑j
+loc_14CF4:                              ; CODE XREF: DrawClueBookNavBar+B8↑j
                 mov     word ptr [bx+0Ch], 14Dh
                 test    word_328CC, 200h
                 jz      short loc_14D04
                 inc     word ptr [bx+0Ch]
 
-loc_14D04:                              ; CODE XREF: sub_14C37+C8↑j
+loc_14D04:                              ; CODE XREF: DrawClueBookNavBar+C8↑j
                 mov     bx, 0AFACh
                 mov     cx, word_38808
                 mov     ax, word_3880A
                 mov     x, ax
 
-loc_14D11:                              ; CODE XREF: sub_14C37+EC↓j
+loc_14D11:                              ; CODE XREF: DrawClueBookNavBar+EC↓j
                 mov     ax, [bx]
                 mov     word_2E530, ax
                 call    DrawPicture
@@ -7795,7 +7795,7 @@ loc_14D11:                              ; CODE XREF: sub_14C37+EC↓j
                 add     bx, 2
                 loop    loc_14D11
                 retf
-sub_14C37       endp
+DrawClueBookNavBar endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -92911,9 +92911,9 @@ g_partyRecords  db    0                 ; Base of the party-member record array.
                 db  45h ; E
                 db    0
 word_38808      dw 0                    ; DATA XREF: sub_141D9+22D↑w
-                                        ; sub_14C37+50↑w ...
-word_3880A      dw 0                    ; DATA XREF: sub_14C37+56↑w
-                                        ; sub_14C37+D4↑r ...
+                                        ; DrawClueBookNavBar+50↑w ...
+word_3880A      dw 0                    ; DATA XREF: DrawClueBookNavBar+56↑w
+                                        ; DrawClueBookNavBar+D4↑r ...
 word_3880C      dw 0                    ; DATA XREF: sub_19CA1+D↑w
                                         ; sub_28CB1+35↑r
 word_3880E      dw 0                    ; DATA XREF: FormatAndDrawBCD4+19↑w
