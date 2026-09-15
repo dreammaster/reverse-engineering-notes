@@ -6787,7 +6787,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X26745);
 	op_hex		(x,	1);
 	create_insn	(0X2674F);
+	set_cmt	(0X26778,	"Draws one item icon (ax=item id) at an offset position, with a two-variant toggle ([si+0x10]==1). Bails if ax==0. Called from DrawPartyMemberPortrait.",	0);
 	create_insn	(0X26778);
+	set_name	(0X26778,	"DrawPortraitAccessoryIcon");
 	set_cmt	(0X267A7,	"Draws up to cx equipped-item icons next to a portrait: for each nonzero item id, loads its catalog record and draws its icon at a position offset by word_328BC/word_328C0, using an 'active' icon variant ([+4] vs [+8]) when word_328C6 bit 0x8000 and the item's [+0xC] bit 0x400 are both set. Called from DrawPartyMemberPortrait.",	0);
 	create_insn	(0X267A7);
 	set_name	(0X267A7,	"DrawEquippedItemIcons");

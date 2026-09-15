@@ -39280,23 +39280,23 @@ loc_26196:                              ; CODE XREF: DrawPartyMemberPortrait+E1�
                 mov     ax, [si+152h]
                 mov     bx, 0Ch
                 mov     cx, 31h ; '1'
-                call    sub_26778
+                call    DrawPortraitAccessoryIcon
                 mov     ax, [si+154h]
                 mov     bx, 0Ch
                 mov     cx, 48h ; 'H'
-                call    sub_26778
+                call    DrawPortraitAccessoryIcon
                 mov     ax, [si+156h]
                 mov     bx, 0Ch
                 mov     cx, 5Dh ; ']'
-                call    sub_26778
+                call    DrawPortraitAccessoryIcon
                 mov     ax, [si+158h]
                 mov     bx, 0Ah
                 mov     cx, 68h ; 'h'
-                call    sub_26778
+                call    DrawPortraitAccessoryIcon
                 mov     ax, [si+15Ah]
                 mov     bx, 0Ch
                 mov     cx, 56h ; 'V'
-                call    sub_26778
+                call    DrawPortraitAccessoryIcon
                 pop     word_2E532
                 pop     es
                 pop     di
@@ -39929,9 +39929,9 @@ sub_266D4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26778       proc near               ; CODE XREF: DrawPartyMemberPortrait+15A↑p
+DrawPortraitAccessoryIcon proc near     ; CODE XREF: DrawPartyMemberPortrait+15A↑p
                                         ; DrawPartyMemberPortrait+167↑p ...
-                cmp     ax, 0
+                cmp     ax, 0           ; Draws one item icon (ax=item id) at an offset position, with a two-variant toggle ([si+0x10]==1). Bails if ax==0. Called from DrawPartyMemberPortrait.
                 jz      short locret_267A6
                 add     bx, word_328BC
                 mov     x, bx
@@ -39944,13 +39944,13 @@ sub_26778       proc near               ; CODE XREF: DrawPartyMemberPortrait+15A
                 jz      short loc_2679E
                 inc     ax
 
-loc_2679E:                              ; CODE XREF: sub_26778+23↑j
+loc_2679E:                              ; CODE XREF: DrawPortraitAccessoryIcon+23↑j
                 mov     word_2E530, ax
                 call    DrawPicture
 
-locret_267A6:                           ; CODE XREF: sub_26778+3↑j
+locret_267A6:                           ; CODE XREF: DrawPortraitAccessoryIcon+3↑j
                 retn
-sub_26778       endp
+DrawPortraitAccessoryIcon endp
 
 
 ; =============== S U B R O U T I N E =======================================

@@ -2981,6 +2981,14 @@ open-lead group.
 
 383 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawPortraitAccessoryIcon
+
+Named `sub_26778`, called from `DrawPartyMemberPortrait`: draws one
+item icon with a two-variant toggle, the same pattern
+`DrawEquippedItemIcons` uses.
+
+384 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
