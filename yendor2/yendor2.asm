@@ -85,7 +85,7 @@ loc_1005A:                              ; CODE XREF: start+49↑j
 ; ---------------------------------------------------------------------------
 
 loc_10071:                              ; CODE XREF: start+6C↑j
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    sub_2278C
                 jmp     short loc_10043
 ; ---------------------------------------------------------------------------
@@ -93,7 +93,7 @@ loc_10071:                              ; CODE XREF: start+6C↑j
 loc_1007D:                              ; CODE XREF: start+60↑j
                 test    word_328C4, 400h
                 jz      short loc_1008F
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
 
 loc_1008F:                              ; CODE XREF: start+83↑j
@@ -185,7 +185,7 @@ loc_10125:                              ; CODE XREF: start+120↑j
                 test    word_328C4, 8000h
                 jz      short loc_10152
                 call    ProcessLevelMonsters
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    sub_2278C
@@ -249,7 +249,7 @@ loc_101B8:                              ; CODE XREF: start+1AD↑j
                 call    FileEntry_Write
                 call    ErrorCheck
                 call    sub_209D2
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -300,7 +300,7 @@ loc_10248:                              ; CODE XREF: start+23D↑j
                 call    FileEntry_Write
                 call    ErrorCheck
                 call    sub_209D2
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -602,7 +602,7 @@ loc_104DA:                              ; CODE XREF: start+BA↑j
 loc_104F1:                              ; CODE XREF: start+4E0↑j
                                         ; start+4EC↑j
                 call    sub_19553
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -854,7 +854,7 @@ loc_1072E:                              ; CODE XREF: start+71E↑j
                 call    sub_28412
                 mov     bx, word_32DC4
                 inc     word ptr [bx+2]
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 call    sub_11A10
                 call    ShowIntroPicture
@@ -994,7 +994,7 @@ loc_108D5:                              ; CODE XREF: seg000:08CB↑j
 
 loc_108DB:                              ; CODE XREF: seg000:08D3↑j
                                         ; seg000:0901↓j ...
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -2393,7 +2393,7 @@ loc_115D5:                              ; CODE XREF: HandleMovementInput+31D↑j
 loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
                                         ; HandleMovementInput+325↑j
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -2402,7 +2402,7 @@ loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
                 test    word_328C4, 1800h
                 jz      short loc_11652
                 call    ProcessLevelMonsters
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    sub_2278C
                 cmp     byte_2E400, 0
                 jnz     short loc_116C8
@@ -2441,7 +2441,7 @@ loc_116A2:                              ; CODE XREF: HandleMovementInput+3CC↑j
                 test    word_328C4, 8000h
                 jz      short loc_116C8
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -2511,7 +2511,7 @@ loc_11704:                              ; CODE XREF: sub_116F3+5↑j
                 mov     [di+2], ax
                 mov     bx, 6ED0h
                 mov     word ptr [bx], 3Ch ; '<'
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, _val30
                 call    sub_28412
@@ -10151,7 +10151,7 @@ loc_16324:                              ; CODE XREF: RunDungeonGameLoop+2B↑j
                 and     ax, 7000h
                 push    ax
                 call    ShowResourceDepletedOverlay
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 mov     word_32A1E, 0
 
 loc_1633B:                              ; CODE XREF: RunDungeonGameLoop+A8↓j
@@ -10191,7 +10191,7 @@ loc_16377:                              ; CODE XREF: RunDungeonGameLoop+65↑j
                 cmp     errorCode, 1
                 jnz     short loc_163A0
                 call    ProcessLevelMonsters
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    sub_2278C
                 cmp     byte_2E400, 0
                 jnz     short loc_16375
@@ -10200,7 +10200,7 @@ loc_16377:                              ; CODE XREF: RunDungeonGameLoop+65↑j
 
 loc_163A0:                              ; CODE XREF: RunDungeonGameLoop+90↑j
                 call    DrawMonsterInfoPanels
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 jmp     short loc_16348
 ; ---------------------------------------------------------------------------
@@ -10213,7 +10213,7 @@ loc_163B1:                              ; CODE XREF: RunDungeonGameLoop+89↑j
                 pop     ax
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -10270,7 +10270,7 @@ loc_16459:                              ; CODE XREF: HandleDungeonInput+6E↓j
                                         ; HandleDungeonInput+A4↓j
                 test    word_328C4, 400h
                 jz      short loc_1646B
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
 
 loc_1646B:                              ; CODE XREF: HandleDungeonInput+58↑j
@@ -10650,7 +10650,7 @@ loc_16776:                              ; CODE XREF: HandleDungeonInput+365↑j
 
 loc_16778:                              ; CODE XREF: HandleDungeonInput+35E↑j
                 call    UpdateMonsterWoundTier
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 call    sub_2827E
                 jnz     short loc_167A9
@@ -10781,7 +10781,7 @@ loc_168CB:                              ; CODE XREF: sub_16881+47↑j
 
 loc_168D9:                              ; CODE XREF: sub_16881+64↓j
                 push    cx
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 pop     cx
                 loop    loc_168D9
@@ -10925,7 +10925,7 @@ loc_16A1E:                              ; CODE XREF: sub_16881+D7↑j
                 and     word ptr [si+0Ch], 0FFFBh
                 mov     ax, [si+4Ch]
                 mov     [si+8], ax
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 retn
 sub_16881       endp
@@ -12316,7 +12316,7 @@ loc_17400:                              ; CODE XREF: RunShopScreen+C0↑j
 loc_17403:                              ; CODE XREF: RunShopScreen+41↑j
                                         ; RunShopScreen+C5↑j
                 call    sub_19553
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 test    word_328C6, 80h
                 jz      short loc_17422
                 mov     di, 0BB8h
@@ -12442,7 +12442,7 @@ loc_17507:                              ; CODE XREF: RunShopScreen+284↓j
                 mov     word_2E530, 1
                 call    sub_22387
                 call    sub_222F8
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 test    word_328C6, 80h
                 jnz     short loc_1752F
                 call    DrawMouseCursor
@@ -12484,7 +12484,7 @@ loc_1756F:                              ; CODE XREF: RunShopScreen+234↑j
                 jnz     short loc_17590
                 mov     bx, word_32DC4
                 dec     word ptr [bx+2]
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
 
 loc_17590:                              ; CODE XREF: RunShopScreen+252↑j
@@ -13020,7 +13020,7 @@ loc_17A73:                              ; CODE XREF: sub_17A65+B↑j
                 call    sub_28412
                 mov     bx, word_32DC4
                 inc     word ptr [bx+2]
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 retn
 sub_17A65       endp
@@ -13571,7 +13571,7 @@ loc_17F8D:                              ; CODE XREF: UseItem+3F1↑j
                 mov     word_2E530, 1
                 call    sub_22387
                 call    sub_222F8
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -17472,7 +17472,7 @@ loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑
                 mov     word_36CF9, ax
                 call    sub_209D2
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -17486,7 +17486,7 @@ loc_19ECA:                              ; CODE XREF: ApplyMapTriggerEffect+23↑
                 test    word ptr [di+2], 2000h
                 jz      short loc_19EE7
                 call    sub_1FC3F
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     byte_2E400, 0
                 jmp     short locret_19E73
@@ -18226,7 +18226,7 @@ loc_1A493:                              ; CODE XREF: sub_1A3F0+77↑j
                 mov     ax, [si+0Ch]
                 mov     word_36CB3, ax
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -23835,7 +23835,7 @@ loc_1D540:                              ; CODE XREF: sub_1D4B8+85↑j
                 call    sub_2BAD5
                 call    sub_2BB1A
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    DrawMouseCursor
                 mov     ax, _val19
@@ -23915,7 +23915,7 @@ loc_1D6AC:                              ; CODE XREF: sub_1D4B8+1DF↑j
                 or      word_328C8, 400h
                 push    word_3292C
                 push    si
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMouseCursor
                 pop     si
                 pop     word_3292C
@@ -23937,7 +23937,7 @@ loc_1D6EA:                              ; CODE XREF: sub_1D4B8+227↑j
                 call    RemoveMonsterFromMap
                 and     word_328C8, 0FBFFh
                 push    word_3292C
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMouseCursor
                 pop     word_3292C
                 call    sub_2BB97
@@ -23979,7 +23979,7 @@ loc_1D747:                              ; CODE XREF: sub_1D4B8+1B1↑j
 loc_1D75C:                              ; CODE XREF: sub_1D4B8+29D↑j
                 call    DrawMouseCursor
                 call    ProcessLevelMonsters
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    sub_2278C
                 call    sub_238CD
@@ -24050,7 +24050,7 @@ loc_1D832:                              ; CODE XREF: sub_1D4B8+360↑j
 loc_1D840:                              ; CODE XREF: sub_1D4B8+383↑j
                 push    word_3292C
                 push    si
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 pop     si
                 pop     word_3292C
@@ -24129,7 +24129,7 @@ loc_1D902:                              ; CODE XREF: sub_1D4B8+10↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D921:                              ; CODE XREF: sub_1D4B8+465↑j
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, _val37
                 call    sub_1DA42
@@ -24184,7 +24184,7 @@ loc_1D9A6:                              ; CODE XREF: sub_1D937+3E↑j
                 call    DrawPicture
                 call    sub_2BB1A
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    DrawMouseCursor
                 mov     ax, _val43
@@ -24877,7 +24877,7 @@ loc_1DF15:                              ; CODE XREF: RunAlchemyScreen+85↑j
                 call    sub_1E4D6
                 call    ClearStatusPanelIfDirty
                 call    ShowCompassDirection
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 call    sub_238CD
 
@@ -25024,7 +25024,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    sub_1E4D6
                 call    ClearStatusPanelIfDirty
                 call    ShowCompassDirection
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 call    sub_238CD
                 mov     ax, word_3331E
@@ -25784,7 +25784,7 @@ loc_1E796:                              ; CODE XREF: sub_1E64A+147↑j
                 mov     bx, 7D58h
                 mov     cx, 2
                 call    sub_23B76
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 call    sub_238CD
                 call    sub_1FD03
@@ -25793,7 +25793,7 @@ loc_1E796:                              ; CODE XREF: sub_1E64A+147↑j
 loc_1E808:                              ; CODE XREF: sub_1E64A+1DA↓j
                 test    word_328C4, 400h
                 jz      short loc_1E81A
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
 
 loc_1E81A:                              ; CODE XREF: sub_1E64A+1C4↑j
@@ -25864,7 +25864,7 @@ loc_1E8AB:                              ; CODE XREF: sub_1E64A+253↑j
                 call    sub_222F8
                 call    UpdatePartyAverageStatTiers
                 and     word_328C4, 0FBFFh
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 or      word_328C4, 100h
@@ -26642,7 +26642,7 @@ sub_1F0CD       proc far                ; CODE XREF: start+7F6↑P
                 mov     word_2E530, 1
                 call    sub_22387
                 call    sub_222F8
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -28282,7 +28282,7 @@ loc_20157:                              ; CODE XREF: RunMapEditorScreen+C7↑j
                 and     word_328C4, 0FFFEh
                 call    sub_209D2
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -29171,7 +29171,7 @@ loc_20936:                              ; CODE XREF: TickStatusEffects+34↑j
 ; ---------------------------------------------------------------------------
 
 loc_2094E:                              ; CODE XREF: TickStatusEffects+80↑j
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 pop     si
                 retf
@@ -29217,7 +29217,7 @@ loc_209A9:                              ; CODE XREF: ApplyStatusEffect+37↑j
                 push    cs
                 call    near ptr sub_209C0
                 inc     word ptr [si]
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 retf
 ApplyStatusEffect endp
@@ -29538,9 +29538,9 @@ seg063          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20C1E       proc far                ; CODE XREF: start:loc_10071↑P
+RedrawDungeonScreen proc far            ; CODE XREF: start:loc_10071↑P
                                         ; start+134↑P ...
-                call    sub_21306
+                call    sub_21306       ; Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.
                 call    sub_213FC
                 call    sub_2784A
                 call    sub_20D2F
@@ -29550,18 +29550,18 @@ sub_20C1E       proc far                ; CODE XREF: start:loc_10071↑P
                 jz      short loc_20C3F
                 call    ShowResourceDepletedOverlay
 
-loc_20C3F:                              ; CODE XREF: sub_20C1E+1A↑j
+loc_20C3F:                              ; CODE XREF: RedrawDungeonScreen+1A↑j
                 and     word_328C4, 0FBFFh
                 retf
-sub_20C1E       endp
+RedrawDungeonScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20C46       proc far                ; CODE XREF: start+85↑P
+RefreshDungeonScreen proc far           ; CODE XREF: start+85↑P
                                         ; start+4F6↑P ...
-                call    sub_2784A
+                call    sub_2784A       ; Lighter dungeon-screen redraw (skips sub_21306/sub_213FC vs. RedrawDungeonScreen): sub_2784A/sub_20D2F/sub_20C8E, RenderDungeonViewport, conditional ShowResourceDepletedOverlay, plus a conditional DrawMinimap. Called from `start`.
                 call    sub_20D2F
                 call    sub_20C8E
                 call    RenderDungeonViewport
@@ -29572,15 +29572,15 @@ sub_20C46       proc far                ; CODE XREF: start+85↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_20C68:                              ; CODE XREF: sub_20C46+14↑j
+loc_20C68:                              ; CODE XREF: RefreshDungeonScreen+14↑j
                 test    word_36C7F, 4000h
                 jz      short loc_20C75
                 call    DrawMinimap
 
-loc_20C75:                              ; CODE XREF: sub_20C46+28↑j
+loc_20C75:                              ; CODE XREF: RefreshDungeonScreen+28↑j
                 and     word_328C4, 0FBFFh
                 retf
-sub_20C46       endp
+RefreshDungeonScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -29611,8 +29611,8 @@ IsPairedValueMatch endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20C8E       proc near               ; CODE XREF: sub_20C1E+E↑p
-                                        ; sub_20C46+8↑p
+sub_20C8E       proc near               ; CODE XREF: RedrawDungeonScreen+E↑p
+                                        ; RefreshDungeonScreen+8↑p
                 mov     di, 6D60h
                 mov     word_3292C, 0
                 mov     cx, 11h
@@ -29682,8 +29682,8 @@ sub_20CEC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20D2F       proc near               ; CODE XREF: sub_20C1E+B↑p
-                                        ; sub_20C46+5↑p
+sub_20D2F       proc near               ; CODE XREF: RedrawDungeonScreen+B↑p
+                                        ; RefreshDungeonScreen+5↑p
                 mov     es, word_2E562
                 mov     di, word_328D2
                 mov     si, 0E551h
@@ -29921,8 +29921,8 @@ sub_20E54       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RenderDungeonViewport proc near         ; CODE XREF: sub_20C1E+11↑p
-                                        ; sub_20C46+B↑p
+RenderDungeonViewport proc near         ; CODE XREF: RedrawDungeonScreen+11↑p
+                                        ; RefreshDungeonScreen+B↑p
                 mov     di, 6D60h       ; First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 6x with decreasing cell counts (0x11/0x11/5/3/3/3) and different row-data pointers (word_328E6..F0), then sub_21217 once more (word_328F2). Called from sub_20C1E and sub_20C46.
                 mov     word_3292C, 0
                 mov     cx, 11h
@@ -30309,7 +30309,7 @@ sub_212EB       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21306       proc near               ; CODE XREF: sub_20C1E↑p
+sub_21306       proc near               ; CODE XREF: RedrawDungeonScreen↑p
                 and     word_3295A, 7FFFh
                 cmp     word_36CF5, 8000h
                 jz      short loc_21338
@@ -30414,7 +30414,7 @@ sub_213D4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_213FC       proc near               ; CODE XREF: sub_20C1E+3↑p
+sub_213FC       proc near               ; CODE XREF: RedrawDungeonScreen+3↑p
                 mov     word_3292C, 2Dh ; '-'
                 mov     cx, 3
                 mov     bp, 2Dh ; '-'
@@ -32756,7 +32756,7 @@ loc_2289B:                              ; CODE XREF: sub_2281F+52↑j
                 and     word_328C6, 0FFFEh
                 call    sub_2BB1A
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    sub_2BB97
                 mov     di, 0BC28h
@@ -40773,7 +40773,7 @@ loc_26DF2:                              ; CODE XREF: sub_26D54+37↑j
                                         ; sub_26D54+7A↑j
                 call    sub_209D2
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -40840,7 +40840,7 @@ loc_26E4D:                              ; CODE XREF: sub_26E11+37↑j
 
 loc_26ECE:                              ; CODE XREF: sub_26E11+39↑j
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -40908,7 +40908,7 @@ loc_26F24:                              ; CODE XREF: sub_26EE8+37↑j
 
 loc_26FA9:                              ; CODE XREF: sub_26EE8+39↑j
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -40950,14 +40950,14 @@ loc_2701C:                              ; CODE XREF: sub_26FC3+51↑j
 
 loc_27020:                              ; CODE XREF: sub_26FC3+57↑j
                 call    sub_223D4
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 jmp     short near ptr sub_26FC3
 ; ---------------------------------------------------------------------------
 
 loc_27031:                              ; CODE XREF: sub_26FC3+37↑j
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -41951,7 +41951,7 @@ seg094          segment byte public 'CODE' use16
 
 
 sub_2784A       proc far                ; CODE XREF: AdvanceDayNightPaletteFade+79↑P
-                                        ; sub_20C1E+6↑P ...
+                                        ; RedrawDungeonScreen+6↑P ...
                 push    ax
                 push    bx
                 push    cx
@@ -45006,7 +45006,7 @@ loc_28FAC:                              ; CODE XREF: RevealMapRegion+24A↑j
                 call    sub_23874
                 call    sub_209D2
                 call    RevealCellsAroundPlayer
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    ApplyMapTriggerEffect
@@ -49441,7 +49441,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
                 mov     word_36CF5, 8000h
                 call    sub_223D4
                 call    sub_209D2
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -49456,7 +49456,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
                 pop     word_36CF7
                 call    sub_223D4
                 call    sub_209D2
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -51311,7 +51311,7 @@ loc_2C2E2:                              ; CODE XREF: sub_2C0FE+1A3↑j
                                         ; sub_2C0FE+1B0↑j ...
                 or      word_36C79, dx
                 or      word_3295A, 800h
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
@@ -51571,7 +51571,7 @@ loc_2C502:                              ; CODE XREF: sub_2C0FE+3FA↑j
 loc_2C543:                              ; CODE XREF: sub_2C0FE+3F5↑j
                                         ; sub_2C0FE+402↑j
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 retf
@@ -51682,7 +51682,7 @@ loc_2C621:                              ; CODE XREF: sub_2C0FE+51E↑j
                 or      word_36C79, ax
                 call    sub_209D2
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -51729,7 +51729,7 @@ loc_2C6BD:                              ; CODE XREF: sub_2C0FE+5B3↑j
                 call    FileEntry_Write
                 call    ErrorCheck
                 call    sub_209D2
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -51793,7 +51793,7 @@ loc_2C777:                              ; CODE XREF: sub_2C0FE+66D↑j
                 call    FileEntry_Write
                 call    ErrorCheck
                 call    sub_209D2
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -51863,7 +51863,7 @@ loc_2C83C:                              ; CODE XREF: sub_2C0FE+736↑j
                 call    FileEntry_Write
                 call    ErrorCheck
                 call    sub_209D2
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -51894,7 +51894,7 @@ loc_2C8A7:                              ; CODE XREF: sub_2C0FE+7A4↑j
                 mov     ax, word_332DE
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 2
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
@@ -51938,7 +51938,7 @@ loc_2C906:                              ; CODE XREF: sub_2C0FE+7FB↑j
                 mov     ax, word_332DE
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 2
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
@@ -51989,7 +51989,7 @@ loc_2C9A7:                              ; CODE XREF: sub_2C0FE+896↑j
                 and     word_328C8, 0FFF7h
                 call    sub_2BB1A
                 call    sub_223D4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMinimap
                 and     word_328C4, 0FFBFh
                 call    sub_2BB97
@@ -52121,7 +52121,7 @@ loc_2CAF3:                              ; CODE XREF: sub_2C0FE+9F0↑j
 
 loc_2CB17:                              ; CODE XREF: sub_2C0FE+9E7↑j
                                         ; sub_2C0FE+A12↑j
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, 3           ; ticks
                 call    wait
@@ -52134,7 +52134,7 @@ loc_2CB17:                              ; CODE XREF: sub_2C0FE+9E7↑j
                 mov     si, di
                 call    GrantMonsterRewards
                 call    RemoveMonsterFromMap
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 jmp     short loc_2CBB6
 ; ---------------------------------------------------------------------------
 
@@ -52153,7 +52153,7 @@ loc_2CB63:                              ; CODE XREF: sub_2C0FE+A55↑j
 
 loc_2CB68:                              ; CODE XREF: sub_2C0FE+A63↑j
                 push    word_3292C
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMouseCursor
                 pop     word_3292C
                 cmp     word_3292C, 19h
@@ -52243,7 +52243,7 @@ loc_2CC3D:                              ; CODE XREF: sub_2C0FE+AFE↑j
                 call    sub_2D470
                 pop     word_3292C
                 call    sub_2D470
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
@@ -52286,7 +52286,7 @@ loc_2CCB4:                              ; CODE XREF: sub_2C0FE+BE1↓j
                 call    wait
                 inc     word_2E530
                 loop    loc_2CCB4
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    DrawMouseCursor
                 jmp     loc_2CBB6
 ; ---------------------------------------------------------------------------
@@ -52377,7 +52377,7 @@ loc_2CDEC:                              ; CODE XREF: sub_2C0FE+CD1↑j
                                         ; sub_2C0FE+CE6↑j
                 push    di
                 push    word_3292C
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 call    sub_2BB97
                 mov     ax, 5A90h
                 mov     g_blitMaskPtr, ax
@@ -52413,7 +52413,7 @@ loc_2CE33:                              ; CODE XREF: sub_2C0FE+D2E↑j
 
 loc_2CE5A:                              ; CODE XREF: sub_2C0FE+D48↑j
                                         ; sub_2C0FE+D4E↑j
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 jmp     loc_2CBB6
 ; ---------------------------------------------------------------------------
 
@@ -52527,7 +52527,7 @@ loc_2CF51:                              ; CODE XREF: sub_2C0FE+791↑j
                 mov     ax, word_2E49C
                 add     [di+10h], ax
                 mov     ax, word_332E0
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
@@ -52541,7 +52541,7 @@ loc_2CF8D:                              ; CODE XREF: sub_2C0FE+E6D↑j
                 mov     ax, word_332DE
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 2
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
@@ -52947,7 +52947,7 @@ sub_2D370       proc near               ; CODE XREF: sub_2C0FE+E02↑p
 
 loc_2D3A0:                              ; CODE XREF: sub_2D370+2A↑j
                 push    di
-                call    sub_20C46
+                call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
@@ -52956,12 +52956,12 @@ loc_2D3A0:                              ; CODE XREF: sub_2D370+2A↑j
                 jg      short loc_2D3CB
                 call    GrantMonsterRewards
                 call    RemoveMonsterFromMap
-                call    sub_20C1E
+                call    RedrawDungeonScreen
                 jmp     short loc_2D3D0
 ; ---------------------------------------------------------------------------
 
 loc_2D3CB:                              ; CODE XREF: sub_2D370+48↑j
-                call    sub_20C46
+                call    RefreshDungeonScreen
 
 loc_2D3D0:                              ; CODE XREF: sub_2D370+59↑j
                 call    DrawMouseCursor

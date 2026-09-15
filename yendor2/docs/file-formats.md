@@ -506,6 +506,12 @@ the farthest visible cells, not right next to the party** — plus a
 flag bit on the cell record and a probability roll, before calling
 `SpawnMonsterInFacingDirection`, which:
 
+`RenderDungeonViewport` itself is called by two `start`-reachable
+screen-redraw functions: `RedrawDungeonScreen` (a fuller variant with
+extra setup calls) and `RefreshDungeonScreen` (a lighter variant that
+also conditionally redraws the minimap) — the exact trigger
+distinguishing when each is used isn't traced.
+
 finds an empty slot, loads the monster's catalog record from
 `WORLD.DAT` (same block math as `LoadClueBookMonsterEntry`), computes
 a spawn position offset from the party's current facing direction

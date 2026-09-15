@@ -2426,6 +2426,15 @@ subsystem directly.
 
 304 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RedrawDungeonScreen and RefreshDungeonScreen
+
+Named `RenderDungeonViewport`'s two direct, `start`-reachable callers:
+`RedrawDungeonScreen` (fuller setup) and `RefreshDungeonScreen`
+(lighter, plus a conditional minimap redraw). Exact trigger
+distinguishing the two not traced.
+
+306 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

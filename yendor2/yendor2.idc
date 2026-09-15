@@ -5280,12 +5280,16 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X20C06,	"int",	0);
 	create_insn	(0X20C06);
+	set_cmt	(0X20C1E,	"Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.",	0);
 	create_insn	(0X20C1E);
+	set_name	(0X20C1E,	"RedrawDungeonScreen");
 	create_insn	(x=0X20C32);
 	op_hex		(x,	1);
 	create_insn	(x=0X20C3F);
 	op_hex		(x,	1);
+	set_cmt	(0X20C46,	"Lighter dungeon-screen redraw (skips sub_21306/sub_213FC vs. RedrawDungeonScreen): sub_2784A/sub_20D2F/sub_20C8E, RenderDungeonViewport, conditional ShowResourceDepletedOverlay, plus a conditional DrawMinimap. Called from `start`.",	0);
 	create_insn	(0X20C46);
+	set_name	(0X20C46,	"RefreshDungeonScreen");
 	create_insn	(x=0X20C54);
 	op_hex		(x,	1);
 	create_insn	(x=0X20C61);
@@ -6844,6 +6848,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X27392);
 	op_hex		(x,	1);
 	create_insn	(0X273E6);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X273F9);
 	op_hex		(x,	1);
 	set_cmt	(0X27441,	"For cx entries: if the id at [si] is nonzero, looks it up (sub_12554) and draws its icon at the matching (x,y) from a position table at di (stride 0xA: x at +0, y at +4).",	0);
@@ -6857,15 +6870,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2747E,	"DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",	0);
 	create_insn	(x=0X2747E);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2749E);
 	op_hex		(x,	1);
 	create_insn	(0X274A5);
@@ -10224,6 +10228,15 @@ static Bytes_2(void) {
 	set_name	(0X3550E,	"aDefeated");
 	create_strlit	(0X35517,	0XD);
 	set_name	(0X35517,	"aBrass");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35524,	0XD);
 	set_name	(0X35524,	"aBronze");
 	create_strlit	(0X35531,	0XD);
@@ -10259,15 +10272,6 @@ static Bytes_2(void) {
 	set_name	(0X355DE,	"aYourSkill");
 	create_strlit	(0X355EB,	0XD);
 	set_name	(0X355EB,	"aIsNotHigh");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X355F8,	0XD);
 	set_name	(0X355F8,	"aEnough");
 	create_strlit	(0X35605,	0XC);
