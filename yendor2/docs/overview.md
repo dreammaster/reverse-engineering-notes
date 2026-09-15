@@ -2792,6 +2792,17 @@ one mount's row — name, "VALUE:" (price), "USES:" (a count), "TIME:"
 
 354 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunClueBookItemDetailWithAbilityInfo
+
+Named `sub_13119`, the F5 item-subtype 3-6 loop left unnamed as an
+open lead earlier this session. Draws via `ShowClueBookItemDetail`,
+then adds an extra ability-info overlay when the item's id falls in
+`CastSpell`'s or `RestCharacter`'s dispatch range — some clue-book
+items (plausibly Magic Scrolls) grant a spell when used, and the clue
+book shows what it does. Closes out an old open thread.
+
+355 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

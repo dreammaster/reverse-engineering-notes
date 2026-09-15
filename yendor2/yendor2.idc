@@ -1655,8 +1655,10 @@ static Bytes_0(void) {
 	create_insn	(0X13107);
 	create_insn	(x=0X13113);
 	op_hex		(x,	1);
+	set_cmt	(0X13119,	"Shared F5 item-subtype 3-6 category loop (Jewels/Artifacts/Unique, Magic Scrolls/Quartz, Potions, Supplies/Food): draws via ShowClueBookItemDetail, then -- if a flag bit is set or the item id falls in RestCharacter's or CastSpell's dispatch range -- an extra ability-info overlay (sub_1381C/sub_13957, not traced). Some clue-book items (plausibly Magic Scrolls) grant a spell when used, and this shows what it does.",	0);
 	create_insn	(x=0X13119);
 	op_hex		(x,	1);
+	set_name	(0X13119,	"RunClueBookItemDetailWithAbilityInfo");
 	create_insn	(x=0X1312A);
 	op_hex		(x,	1);
 	create_insn	(0X13136);
@@ -3823,6 +3825,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1B147,	"Eligibility check for TryEnhanceItemForGold (also called from sub_1CCBC and others, not traced). Selects a held-item field ([+8] or [+6], word_2E548) based on the location's ([+0xC], word_2E546) flag bits, and checks it against a range table at DS:0xBCE ([+0x14]..[+0x16]). Returns eligible (ax=0) if in range.",	0);
 	create_insn	(0X1B147);
 	set_name	(0X1B147,	"IsItemEligibleForEnhance");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1B14F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B156);
@@ -3837,15 +3848,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B194);
 	op_hex		(x,	1);
 	set_name	(0X1B194,	"RunRepairItemScreen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1B199);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B1A7);
@@ -6140,6 +6142,15 @@ static Bytes_1(void) {
 	set_name	(0X237D8,	"InitMouse");
 	create_insn	(x=0X237DE);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X237E1,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
 	create_insn	(x=0X237E1);
 	op_hex		(x,	0);
@@ -6157,15 +6168,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2383D,	"- MS MOUSE - DEFINE INTERRUPT SUBROUTINE PARAMETERS\nCX = call mask, ES:DX -> FAR routine",	0);
 	create_insn	(x=0X2383D);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X23848,	"- MS MOUSE - DEFINE MICKEY/PIXEL RATIO\nCX = number of mickeys per 8 pixels horizontally (default 8)\nDX = number of mickeys per 8 pixels vertically (default 16)",	0);
 	create_insn	(x=0X23848);
 	op_hex		(x,	0);
@@ -9240,6 +9242,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2C84B,	"this",	0);
 	set_cmt	(0X2C87F,	"ticks",	0);
 	create_insn	(0X2C87F);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2C887);
 	op_hex		(x,	1);
 	create_insn	(0X2C892);
@@ -9288,15 +9299,6 @@ static Bytes_2(void) {
 	create_insn	(0X2CAAB);
 	create_insn	(x=0X2CAC0);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2CACB);
 	create_insn	(0X2CACE);
 	create_insn	(x=0X2CADF);

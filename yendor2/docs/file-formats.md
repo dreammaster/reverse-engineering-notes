@@ -287,8 +287,9 @@ loop within F5's subtype selector); **2** → just `WaitForKeypress`
 (an empty/placeholder subtype, no title); **3 "JEWELS/ARTIFACTS/
 UNIQUE ITEMS"**, **4 "MAGIC SCROLLS/QUARTZ"**, **5 "POTIONS"**, **6
 "SUPPLIES/FOOD"** (`word_2E3F6=0xD/0xE/0xF/0x10`) → all four route
-through `sub_13119` (**correction**: has 4 call sites here, not "two
-other sites" as first counted below); **7 "TRANSPORTATIONS"** →
+through `RunClueBookItemDetailWithAbilityInfo` (**correction**: has 4
+call sites here, not "two other sites" as first counted); **7
+"TRANSPORTATIONS"** →
 `RunClueBookTransportCategory` (PEGASUS/GIANT EAGLE/MAGIC DRAGON —
 ties to `IsItemRangeAvailable`'s "boat/horse-style transport gate" and
 to `ShowTransportUsagePreview`, `ShowItemUsagePreview`'s preview for
@@ -329,9 +330,12 @@ table) give a full monster stat sheet: `EXPERIENCE:`, `GOLD:`,
 `RunClueBookItemCategory` is item subtype 1's own interactive loop
 (draw entry, poll input, hit-test a region table so the player can
 click a sub-icon to jump entries, until ESC) — the more complex
-`sub_13119` (item subtypes 3–6, 4 call sites) adds extra dispatches
-for item-id ranges overlapping `CastSpell`'s and `RestCharacter`'s
-selector ranges, not yet traced.
+`RunClueBookItemDetailWithAbilityInfo` (item subtypes 3–6, 4 call
+sites; simpler than `RunClueBookItemCategory` in that it has no click
+navigation) adds an extra ability-info overlay when the item's id
+falls in `CastSpell`'s or `RestCharacter`'s dispatch range — i.e. some
+clue-book items (plausibly the "MAGIC SCROLLS/QUARTZ" subtype) grant a
+spell/ability when used, and the clue book shows what it does.
 
 **Temple/healer paid services**: `UseHealingItem` (4 sites),
 `UseItemType_400`, and `UseTrainingItem` all call
