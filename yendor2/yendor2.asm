@@ -629,7 +629,7 @@ loc_1051A:                              ; CODE XREF: start+515↑j
 
 loc_1052C:                              ; CODE XREF: start+51D↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_18504
+                call    HandlePortraitClick
                 test    word_328C6, 7800h
                 jnz     short loc_10541
                 jmp     loc_10043
@@ -10424,7 +10424,7 @@ loc_1658C:                              ; CODE XREF: HandleDungeonInput+179↑j
 
 loc_16594:                              ; CODE XREF: HandleDungeonInput+17E↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_18504
+                call    HandlePortraitClick
                 test    word_328C6, 7800h
                 jz      short loc_1658C
                 jmp     loc_16852
@@ -12454,7 +12454,7 @@ loc_1752F:                              ; CODE XREF: RunShopScreen+1FD↑j
 ; ---------------------------------------------------------------------------
 
 loc_1753B:                              ; CODE XREF: RunShopScreen+1BF↑j
-                call    sub_18504
+                call    HandlePortraitClick
                 test    word_328C6, 7800h
                 jz      short loc_1754D
                 call    sub_1869D
@@ -14503,9 +14503,9 @@ seg029          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18504       proc far                ; CODE XREF: start+531↑P
+HandlePortraitClick proc far            ; CODE XREF: start+531↑P
                                         ; HandleDungeonInput+192↑P ...
-                call    RestorePortraitPanelFromEMS
+                call    RestorePortraitPanelFromEMS ; Mouse-click counterpart to sub_25B34 (keyboard 1-4 selection): hit-tests region table 0x61C2 for one of the 4 portrait zones, sets the matching word_328C6 highlight bit (same bits RefreshPartyPortraits uses) if that slot is occupied, redraws via sub_19133. Called from `start` and HandleDungeonInput.
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 61C2h
@@ -14513,12 +14513,12 @@ sub_18504       proc far                ; CODE XREF: start+531↑P
                 cmp     ax, 0
                 jnz     short loc_1851C
 
-locret_1851B:                           ; CODE XREF: sub_18504+66↓j
-                                        ; sub_18504+7D↓j
+locret_1851B:                           ; CODE XREF: HandlePortraitClick+66↓j
+                                        ; HandlePortraitClick+7D↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1851C:                              ; CODE XREF: sub_18504+15↑j
+loc_1851C:                              ; CODE XREF: HandlePortraitClick+15↑j
                 cmp     ax, 1
                 jnz     short loc_18535
                 mov     word_328BC, 8
@@ -14528,7 +14528,7 @@ loc_1851C:                              ; CODE XREF: sub_18504+15↑j
                 jmp     short loc_1857E
 ; ---------------------------------------------------------------------------
 
-loc_18535:                              ; CODE XREF: sub_18504+1B↑j
+loc_18535:                              ; CODE XREF: HandlePortraitClick+1B↑j
                 cmp     ax, 0Bh
                 jnz     short loc_1854E
                 mov     word_328BC, 40h ; '@'
@@ -14538,7 +14538,7 @@ loc_18535:                              ; CODE XREF: sub_18504+1B↑j
                 jmp     short loc_1857E
 ; ---------------------------------------------------------------------------
 
-loc_1854E:                              ; CODE XREF: sub_18504+34↑j
+loc_1854E:                              ; CODE XREF: HandlePortraitClick+34↑j
                 cmp     ax, 15h
                 jnz     short loc_18567
                 mov     word_328BC, 78h ; 'x'
@@ -14548,7 +14548,7 @@ loc_1854E:                              ; CODE XREF: sub_18504+34↑j
                 jmp     short loc_1857E
 ; ---------------------------------------------------------------------------
 
-loc_18567:                              ; CODE XREF: sub_18504+4D↑j
+loc_18567:                              ; CODE XREF: HandlePortraitClick+4D↑j
                 cmp     ax, 1Fh
                 jnz     short locret_1851B
                 mov     word_328BC, 0B0h
@@ -14556,8 +14556,8 @@ loc_18567:                              ; CODE XREF: sub_18504+4D↑j
                 mov     si, 95F1h
                 mov     bx, 800h
 
-loc_1857E:                              ; CODE XREF: sub_18504+2F↑j
-                                        ; sub_18504+48↑j ...
+loc_1857E:                              ; CODE XREF: HandlePortraitClick+2F↑j
+                                        ; HandlePortraitClick+48↑j ...
                 cmp     word ptr [si], 0
                 jz      short locret_1851B
                 or      word_328C6, bx
@@ -14568,7 +14568,7 @@ loc_1857E:                              ; CODE XREF: sub_18504+2F↑j
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
-sub_18504       endp
+HandlePortraitClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15843,7 +15843,7 @@ sub_190E9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19133       proc near               ; CODE XREF: sub_18504+88↑p
+sub_19133       proc near               ; CODE XREF: HandlePortraitClick+88↑p
                                         ; RefreshPartyPortraits+22↑p ...
                 mov     ax, [si]
                 call    sub_25B14
@@ -15943,7 +15943,7 @@ sub_191FC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RestorePortraitPanelFromEMS proc near   ; CODE XREF: sub_18504↑p
+RestorePortraitPanelFromEMS proc near   ; CODE XREF: HandlePortraitClick↑p
                                         ; RefreshPartyPortraits+5↑p
                 test    word_328C6, 7800h ; If no portrait-dirty bits are set (word_328C6 & 0x7800), blits a cached background region from EMS-paged memory back into the video buffer (136 rows x 224 bytes) -- restores the portrait panel area without a full redraw. Called from RefreshPartyPortraits and sub_18504.
                 jnz     short locret_19263
@@ -74174,12 +74174,12 @@ word_322BA      dw 0                    ; DATA XREF: FadePaletteStep+18↑w
                 db    0
                 db    0
                 db    0
-word_328BC      dw 0                    ; DATA XREF: sub_18504+1D↑w
-                                        ; sub_18504+36↑w ...
+word_328BC      dw 0                    ; DATA XREF: HandlePortraitClick+1D↑w
+                                        ; HandlePortraitClick+36↑w ...
 word_328BE      dw 0                    ; DATA XREF: sub_15267+3C↑r
                                         ; sub_15267+43↑r ...
-word_328C0      dw 0                    ; DATA XREF: sub_18504+23↑w
-                                        ; sub_18504+3C↑w ...
+word_328C0      dw 0                    ; DATA XREF: HandlePortraitClick+23↑w
+                                        ; HandlePortraitClick+3C↑w ...
 word_328C2      dw 0                    ; DATA XREF: sub_1E64A+245↑w
                                         ; sub_1E943+8A↑r ...
 word_328C4      dw 0                    ; DATA XREF: start+1F↑w

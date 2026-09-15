@@ -3130,7 +3130,9 @@ static Bytes_0(void) {
 	set_cmt	(0X18500,	"DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)\nAL = method: offset from beginning of file",	0);
 	create_insn	(x=0X18500);
 	op_hex		(x,	0);
+	set_cmt	(0X18504,	"Mouse-click counterpart to sub_25B34 (keyboard 1-4 selection): hit-tests region table 0x61C2 for one of the 4 portrait zones, sets the matching word_328C6 highlight bit (same bits RefreshPartyPortraits uses) if that slot is occupied, redraws via sub_19133. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X18504);
+	set_name	(0X18504,	"HandlePortraitClick");
 	create_insn	(0X1851C);
 	create_insn	(0X18535);
 	create_insn	(0X1854E);
@@ -3856,6 +3858,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B245);
 	op_hex		(x,	1);
 	set_name	(0X1B245,	"RunSellItemScreen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1B24A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B258);
@@ -3888,15 +3899,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B3D6);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1B428,	"CheckForLevelUp (implicit si=word_328D4): walks the XP-threshold table at 0x9277 (65 x 4-byte packed-BCD entries, one per level) starting at the character's current level [+0x16], comparing their XP [+0x18] against each threshold and advancing while >=. If the result exceeds the current level, stores it into [+0x1E] (pending new level, not yet applied).",	0);
 	create_insn	(0X1B428);
 	set_name	(0X1B428,	"CheckForLevelUp");
@@ -6194,6 +6196,15 @@ static Bytes_1(void) {
 	set_cmt	(0X23A64,	"stpcpy(dest=bx, src=ax): copies src including its null terminator into dest; returns bx = pointer to the copied terminator (ready for a further append).",	0);
 	create_insn	(0X23A64);
 	set_name	(0X23A64,	"StpCpy");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23A6B);
 	op_seg		(x,	1);
 	create_insn	(0X23A7C);
@@ -6207,15 +6218,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X23B5E);
 	set_name	(0X23B5E,	"writeString");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X23B70);
 	create_insn	(0X23B76);
 	create_insn	(0X23B8E);
@@ -9422,6 +9424,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D2F8);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D300);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D308);
@@ -9441,15 +9452,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D34E);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D359);
 	op_hex		(x,	1);
 	set_cmt	(0X2D370,	"Applies damage (word_2E49A+word_2E49C) to a dungeon-corridor monster (g_levelMonsters, via sub_2D498/sub_2D4B6, not traced), sets wound/display flags, redraws and waits, then resolves death (GrantMonsterRewards + RemoveMonsterFromMap + RedrawDungeonScreen) or survival (RefreshDungeonScreen) based on HP ([+0x10]). Called from sub_2C0FE.",	0);

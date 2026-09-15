@@ -2751,6 +2751,14 @@ redraw.
 
 348 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandlePortraitClick
+
+Named `sub_18504`, the mouse-click counterpart to the keyboard `1`-`4`
+party-panel selector: hit-tests the 4 portrait zones and highlights
+the clicked member.
+
+349 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

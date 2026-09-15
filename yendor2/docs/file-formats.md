@@ -812,7 +812,10 @@ ENHANCE ITEM" / "SPACEBAR TO REPAIR ITEM" / default "SPACEBAR TO SELL
 ITEM OR ESC TO UNDO". It opens with `RestorePortraitPanelFromEMS`,
 which — only when none of the portrait-dirty bits are already set —
 blits a cached background region from EMS-paged memory straight back
-into the video buffer instead of a full redraw.
+into the video buffer instead of a full redraw. `HandlePortraitClick`
+is the mouse-click counterpart to the keyboard `1`-`4` selector
+(`sub_25B34`): hit-tests the 4 portrait zones and sets the matching
+highlight bit when clicked.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
