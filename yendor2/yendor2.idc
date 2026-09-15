@@ -3350,8 +3350,10 @@ static Bytes_0(void) {
 	create_insn	(0X19187);
 	create_insn	(0X19198);
 	create_insn	(0X191FC);
+	set_cmt	(0X1922C,	"If no portrait-dirty bits are set (word_328C6 & 0x7800), blits a cached background region from EMS-paged memory back into the video buffer (136 rows x 224 bytes) -- restores the portrait panel area without a full redraw. Called from RefreshPartyPortraits and sub_18504.",	0);
 	create_insn	(x=0X1922C);
 	op_hex		(x,	1);
+	set_name	(0X1922C,	"RestorePortraitPanelFromEMS");
 	set_cmt	(0X19264,	"Space-bar 'sell item' action (sub_1869D main loop, word_328C6 bit 0x10) while carrying an item: if the held item's type mask doesn't overlap the standing location's accepted-type mask, shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise sells the item, crediting its value (word_32920, via AddBCD4) to g_partyGold, then ShowMaterialCounterHud. Renamed from TryConvertItemToMaterial after confirming g_partyGold's identity (HUD label is a literal '$', and the 'SPACEBAR TO SELL ITEM OR ESC TO UNDO' prompt lives in the same message bank).",	0);
 	create_insn	(0X19264);
 	set_name	(0X19264,	"TrySellItemForGold");
@@ -3886,9 +3888,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B3D6);
 	op_hex		(x,	1);
-	set_cmt	(0X1B428,	"CheckForLevelUp (implicit si=word_328D4): walks the XP-threshold table at 0x9277 (65 x 4-byte packed-BCD entries, one per level) starting at the character's current level [+0x16], comparing their XP [+0x18] against each threshold and advancing while >=. If the result exceeds the current level, stores it into [+0x1E] (pending new level, not yet applied).",	0);
-	create_insn	(0X1B428);
-	set_name	(0X1B428,	"CheckForLevelUp");
 }
 
 //------------------------------------------------------------------------
@@ -3898,6 +3897,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1B428,	"CheckForLevelUp (implicit si=word_328D4): walks the XP-threshold table at 0x9277 (65 x 4-byte packed-BCD entries, one per level) starting at the character's current level [+0x16], comparing their XP [+0x18] against each threshold and advancing while >=. If the result exceeds the current level, stores it into [+0x1E] (pending new level, not yet applied).",	0);
+	create_insn	(0X1B428);
+	set_name	(0X1B428,	"CheckForLevelUp");
 	create_insn	(x=0X1B433);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B441);
@@ -6205,14 +6207,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X23B5E);
 	set_name	(0X23B5E,	"writeString");
-	create_insn	(0X23B70);
-	create_insn	(0X23B76);
-	create_insn	(0X23B8E);
-	create_insn	(0X23BA4);
-	create_insn	(0X23BAC);
-	set_cmt	(0X23BAE,	"Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
-	create_insn	(0X23BAE);
-	set_name	(0X23BAE,	"ShowPartyMembers");
 }
 
 //------------------------------------------------------------------------
@@ -6222,6 +6216,14 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X23B70);
+	create_insn	(0X23B76);
+	create_insn	(0X23B8E);
+	create_insn	(0X23BA4);
+	create_insn	(0X23BAC);
+	set_cmt	(0X23BAE,	"Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
+	create_insn	(0X23BAE);
+	set_name	(0X23BAE,	"ShowPartyMembers");
 	create_insn	(0X23BBD);
 	create_insn	(0X23BC8);
 	create_insn	(x=0X23BF5);
@@ -9439,6 +9441,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D34E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D359);
 	op_hex		(x,	1);
 	set_cmt	(0X2D370,	"Applies damage (word_2E49A+word_2E49C) to a dungeon-corridor monster (g_levelMonsters, via sub_2D498/sub_2D4B6, not traced), sets wound/display flags, redraws and waits, then resolves death (GrantMonsterRewards + RemoveMonsterFromMap + RedrawDungeonScreen) or survival (RefreshDungeonScreen) based on HP ([+0x10]). Called from sub_2C0FE.",	0);
@@ -9472,15 +9483,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D463);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D46B);
 	op_hex		(x,	1);
 	create_insn	(0X2D470);

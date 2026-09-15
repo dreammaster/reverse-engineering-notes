@@ -2742,6 +2742,15 @@ for the new position/facing and an optional message, gated by
 
 347 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RestorePortraitPanelFromEMS
+
+Named `sub_1922C`, called from `RefreshPartyPortraits`: when no
+portrait-dirty bits are set, blits a cached background region from
+EMS-paged memory straight into the video buffer instead of a full
+redraw.
+
+348 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

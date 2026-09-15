@@ -809,7 +809,10 @@ All three, plus `start` and `HandleDungeonInput` generally, call
 portrait slots, but when a shop action bit is active
 (`word_328C6 & 0x1C`) it also draws a context hint — "SPACEBAR TO
 ENHANCE ITEM" / "SPACEBAR TO REPAIR ITEM" / default "SPACEBAR TO SELL
-ITEM OR ESC TO UNDO".
+ITEM OR ESC TO UNDO". It opens with `RestorePortraitPanelFromEMS`,
+which — only when none of the portrait-dirty bits are already set —
+blits a cached background region from EMS-paged memory straight back
+into the video buffer instead of a full redraw.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/

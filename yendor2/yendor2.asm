@@ -14505,7 +14505,7 @@ seg029          segment byte public 'CODE' use16
 
 sub_18504       proc far                ; CODE XREF: start+531↑P
                                         ; HandleDungeonInput+192↑P ...
-                call    sub_1922C
+                call    RestorePortraitPanelFromEMS
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 61C2h
@@ -14577,7 +14577,7 @@ sub_18504       endp
 RefreshPartyPortraits proc far          ; CODE XREF: start+81D↑P
                                         ; HandleDungeonInput+446↑P ...
                 call    RestoreCursorBackgroundIfDirty ; Refreshes the 4 party-member portrait slots (g_partySlotAssignment) via sub_19133, then -- only when a shop action bit is active (word_328C6 & 0x1C) -- draws a context hint: 'SPACEBAR TO ENHANCE ITEM' / 'SPACEBAR TO REPAIR ITEM' / default 'SPACEBAR TO SELL ITEM OR ESC TO UNDO'. Called from `start`, HandleDungeonInput, and all three shop screens.
-                call    sub_1922C
+                call    RestorePortraitPanelFromEMS
                 mov     si, 95EBh
                 cmp     word ptr [si], 0
                 jz      short loc_185C7
@@ -15943,9 +15943,9 @@ sub_191FC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1922C       proc near               ; CODE XREF: sub_18504↑p
+RestorePortraitPanelFromEMS proc near   ; CODE XREF: sub_18504↑p
                                         ; RefreshPartyPortraits+5↑p
-                test    word_328C6, 7800h
+                test    word_328C6, 7800h ; If no portrait-dirty bits are set (word_328C6 & 0x7800), blits a cached background region from EMS-paged memory back into the video buffer (136 rows x 224 bytes) -- restores the portrait panel area without a full redraw. Called from RefreshPartyPortraits and sub_18504.
                 jnz     short locret_19263
                 push    ds
                 mov     dx, _emsPointer1?
@@ -15957,7 +15957,7 @@ sub_1922C       proc near               ; CODE XREF: sub_18504↑p
                 mov     es, _emsSegmentPageFrame
                 mov     ds, _videoBufferSeg
 
-loc_19251:                              ; CODE XREF: sub_1922C+34↓j
+loc_19251:                              ; CODE XREF: RestorePortraitPanelFromEMS+34↓j
                 push    cx
                 mov     cx, 70h ; 'p'
                 mov     si, bx
@@ -15968,9 +15968,9 @@ loc_19251:                              ; CODE XREF: sub_1922C+34↓j
                 loop    loc_19251
                 pop     ds
 
-locret_19263:                           ; CODE XREF: sub_1922C+6↑j
+locret_19263:                           ; CODE XREF: RestorePortraitPanelFromEMS+6↑j
                 retn
-sub_1922C       endp
+RestorePortraitPanelFromEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================
