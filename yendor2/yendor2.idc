@@ -2466,7 +2466,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X16B12);
 	create_insn	(0X16B54);
+	set_cmt	(0X16B63,	"For each occupied g_monsterSlots entry with HP ([+0x10]) <= 0: flags its g_combatTurnOrder entry 0x4000 (confirms 'defeated'), clears word_32A1E if it was the active target, and calls GrantMonsterRewards + sub_2313D (cleanup, not traced). If none died this pass, advances the turn instead: ensures word_32A1E is set (SelectActiveMonster), calls sub_2333B (not traced), then walks g_combatTurnOrder from word_32BF4 for the next non-defeated entry.",	0);
 	create_insn	(0X16B63);
+	set_name	(0X16B63,	"ProcessCombatRound");
 	create_insn	(x=0X16B88);
 	op_hex		(x,	1);
 	create_insn	(0X16B8F);
@@ -4774,6 +4776,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
 	create_insn	(0X1F1F4);
 	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1F217);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F222);
@@ -4815,15 +4826,6 @@ static Bytes_0(void) {
 	create_insn	(0X1F481);
 	set_name	(0X1F481,	"GameDialog_drawDos");
 	set_cmt	(0X1F493,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1F49C);
 	set_name	(0X1F49C,	"GameDialog_drawReturn");
 	set_cmt	(0X1F4AE,	"msg",	0);

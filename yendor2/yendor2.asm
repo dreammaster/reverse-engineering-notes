@@ -10185,7 +10185,7 @@ loc_16375:                              ; CODE XREF: RunDungeonGameLoop+67↑j
 
 loc_16377:                              ; CODE XREF: RunDungeonGameLoop+65↑j
                                         ; RunDungeonGameLoop+7D↑j
-                call    sub_16B63
+                call    ProcessCombatRound
                 cmp     errorCode, 0
                 jz      short loc_163B1
                 cmp     errorCode, 1
@@ -11076,14 +11076,14 @@ BuildCombatTurnOrder endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16B63       proc near               ; CODE XREF: RunDungeonGameLoop:loc_16377↑p
-                push    cx
+ProcessCombatRound proc near            ; CODE XREF: RunDungeonGameLoop:loc_16377↑p
+                push    cx              ; For each occupied g_monsterSlots entry with HP ([+0x10]) <= 0: flags its g_combatTurnOrder entry 0x4000 (confirms 'defeated'), clears word_32A1E if it was the active target, and calls GrantMonsterRewards + sub_2313D (cleanup, not traced). If none died this pass, advances the turn instead: ensures word_32A1E is set (SelectActiveMonster), calls sub_2333B (not traced), then walks g_combatTurnOrder from word_32BF4 for the next non-defeated entry.
                 push    si
                 mov     errorCode, 0
                 mov     si, 51C0h
                 mov     cx, 3
 
-loc_16B71:                              ; CODE XREF: sub_16B63+55↓j
+loc_16B71:                              ; CODE XREF: ProcessCombatRound+55↓j
                 cmp     word ptr [si], 0
                 jz      short loc_16BB4
                 cmp     word ptr [si+10h], 0
@@ -11093,35 +11093,35 @@ loc_16B71:                              ; CODE XREF: sub_16B63+55↓j
                 mov     cx, 7
                 mov     di, 539Eh
 
-loc_16B84:                              ; CODE XREF: sub_16B63+2F↓j
+loc_16B84:                              ; CODE XREF: ProcessCombatRound+2F↓j
                 cmp     si, [di]
                 jnz     short loc_16B8F
                 or      word ptr [di+6], 4000h
                 jmp     short loc_16B94
 ; ---------------------------------------------------------------------------
 
-loc_16B8F:                              ; CODE XREF: sub_16B63+23↑j
+loc_16B8F:                              ; CODE XREF: ProcessCombatRound+23↑j
                 add     di, 8
                 loop    loc_16B84
 
-loc_16B94:                              ; CODE XREF: sub_16B63+2A↑j
+loc_16B94:                              ; CODE XREF: ProcessCombatRound+2A↑j
                 pop     cx
                 pop     di
                 cmp     si, word_32A1E
                 jnz     short loc_16BA2
                 mov     word_32A1E, 0
 
-loc_16BA2:                              ; CODE XREF: sub_16B63+37↑j
+loc_16BA2:                              ; CODE XREF: ProcessCombatRound+37↑j
                 call    GrantMonsterRewards
                 call    sub_2313D
                 jmp     short loc_16BB4
 ; ---------------------------------------------------------------------------
 
-loc_16BAE:                              ; CODE XREF: sub_16B63+17↑j
+loc_16BAE:                              ; CODE XREF: ProcessCombatRound+17↑j
                 mov     errorCode, 2
 
-loc_16BB4:                              ; CODE XREF: sub_16B63+11↑j
-                                        ; sub_16B63+49↑j
+loc_16BB4:                              ; CODE XREF: ProcessCombatRound+11↑j
+                                        ; ProcessCombatRound+49↑j
                 add     si, 9Ch
                 loop    loc_16B71
                 cmp     errorCode, 2
@@ -11130,12 +11130,12 @@ loc_16BB4:                              ; CODE XREF: sub_16B63+11↑j
                 jnz     short loc_16BCB
                 call    SelectActiveMonster
 
-loc_16BCB:                              ; CODE XREF: sub_16B63+63↑j
+loc_16BCB:                              ; CODE XREF: ProcessCombatRound+63↑j
                 call    sub_2333B
                 mov     errorCode, 1
                 mov     si, word_32BF4
 
-loc_16BDA:                              ; CODE XREF: sub_16B63+84↓j
+loc_16BDA:                              ; CODE XREF: ProcessCombatRound+84↓j
                 add     si, 8
                 cmp     word ptr [si], 0
                 jz      short loc_16BF3
@@ -11144,12 +11144,12 @@ loc_16BDA:                              ; CODE XREF: sub_16B63+84↓j
                 mov     word_32BF4, si
                 mov     errorCode, 2
 
-loc_16BF3:                              ; CODE XREF: sub_16B63+5C↑j
-                                        ; sub_16B63+7D↑j
+loc_16BF3:                              ; CODE XREF: ProcessCombatRound+5C↑j
+                                        ; ProcessCombatRound+7D↑j
                 pop     si
                 pop     cx
                 retn
-sub_16B63       endp
+ProcessCombatRound endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11323,7 +11323,7 @@ FindPartySlotForRecord endp
 
 
 SelectActiveMonster proc near           ; CODE XREF: BuildCombatTurnOrder+122↑p
-                                        ; sub_16B63+65↑p
+                                        ; ProcessCombatRound+65↑p
                 push    cx              ; Scans g_combatTurnOrder (cx=7, up to 4 party + 3 monster entries) for the first entry flagged 0x8000 (monster) and not 0x4000 (plausibly defeated); sets word_32A1E to its record pointer, or 0 if none found (no monsters currently active).
                 push    si
                 mov     word_32A1E, 0
@@ -33113,7 +33113,7 @@ sub_22B78       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GrantMonsterRewards proc far            ; CODE XREF: sub_16B63:loc_16BA2↑P
+GrantMonsterRewards proc far            ; CODE XREF: ProcessCombatRound:loc_16BA2↑P
                                         ; sub_1D4B8:loc_1D6EA↑P ...
                 push    si              ; Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.
                 push    di
@@ -33770,7 +33770,7 @@ RemoveMonsterFromMap endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2313D       proc far                ; CODE XREF: sub_16B63+44↑P
+sub_2313D       proc far                ; CODE XREF: ProcessCombatRound+44↑P
                 push    cx
                 push    di
                 push    es
@@ -33963,7 +33963,7 @@ sub_23305       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2333B       proc far                ; CODE XREF: sub_16B63:loc_16BCB↑P
+sub_2333B       proc far                ; CODE XREF: ProcessCombatRound:loc_16BCB↑P
                 push    cx
                 push    si
                 push    di

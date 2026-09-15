@@ -1495,6 +1495,21 @@ remains untraced. Named the containing function, one of
 
 203 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ProcessCombatRound closes the combat loop
+
+Traced `sub_16B63` (called directly from `RunDungeonGameLoop`) and
+found the piece connecting last round's HP subtraction to actual
+death handling: `ProcessCombatRound` checks every `g_monsterSlots`
+entry's HP each iteration, and on death flags its `g_combatTurnOrder`
+entry `0x4000` — **confirming the "plausibly defeated" guess from
+several rounds ago** — clears `word_32A1E` if needed, and calls
+`GrantMonsterRewards`. If nothing died that pass, it instead advances
+the turn to the next living combatant. This closes the loop: attack
+roll → HP subtraction → death detection → loot, all traced end to end
+across this session.
+
+204 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

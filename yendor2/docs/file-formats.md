@@ -197,9 +197,18 @@ Every `RunDungeonGameLoop` iteration, `BuildCombatTurnOrder` rebuilds
 4 party + 3 monster combatants): `+0` record pointer, `+2` party-slot
 address (0 for monsters), `+4` the speed/initiative sort key (used for
 a descending insertion sort — turn order fastest-first), `+6` flags
-(`0x8000` = this entry is a monster; `0x4000` = plausibly "defeated",
-not confirmed; `0x2000` = unconfirmed). `SelectActiveMonster` then
+(`0x8000` = this entry is a monster; `0x4000` = **defeated, confirmed
+below**; `0x2000` = unconfirmed). `SelectActiveMonster` then
 picks the first non-defeated monster from that order into
+`word_32A1E`. **`ProcessCombatRound` confirms the "defeated" flag**:
+called every `RunDungeonGameLoop` iteration, it checks every occupied
+`g_monsterSlots` entry's HP (`+0x10` <= 0) and, on death, sets its
+`g_combatTurnOrder` entry's `0x4000` flag, clears `word_32A1E` if it
+was the active target, and calls `GrantMonsterRewards` — closing the
+loop from `HandleDungeonInput`'s HP subtraction through to loot. If no
+monster died that pass, it instead advances the turn to the next
+living combatant in `g_combatTurnOrder`.
+
 `word_32A1E`, the "currently active monster" global read throughout
 the combat-adjacent code already documented this session
 (`UseAbilityOnTarget`, `ExamineTarget`, `CastSpell`'s target checks,
