@@ -23746,7 +23746,7 @@ seg055          segment byte public 'CODE' use16
 
 HandleRangedOrCombatAction proc far     ; CODE XREF: start+A73↑P
                                         ; seg000:0A9B↑P ...
-                cmp     word_31946, 0   ; Combat-action entry point, 3-way branch: formal combat (word_328CA bit 0x1000, not traced), a fully-traced ranged-weapon shot sequence (word_328C8 bit 0x100 set -- select weapon, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve via ResolveAttackOrAbilityAction on a monster hit), or a spell/ability-cast opening (bit 0x100 clear, not traced). Called from `start`.
+                cmp     word_31946, 0   ; Combat-action entry point, 3-way branch on word_328CA bit 0x1000 (in formal combat) and word_328C8 bit 0x100 (ranged-attack request): (1) in-combat melee -- HighlightSelectedAbilityIcon, one AnimateProjectileStep, then ResolveAttackOrAbilityAction directly against word_32A1E (no row search, target already known); (2) ranged-weapon shot -- select weapon, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve on a monster hit; (3) spell/ability cast when not in combat -- mostly the same shape as (2). A successful area-effect spell (2 special ability ids) plays a 10-frame explosion animation then sweeps all 80 g_levelMonsters slots for kills, not just the rows touched. Called from `start`.
                 jz      short loc_1D4C0
                 retf
 ; ---------------------------------------------------------------------------
@@ -23988,7 +23988,7 @@ loc_1D75C:                              ; CODE XREF: HandleRangedOrCombatAction+
 
 loc_1D77B:                              ; CODE XREF: HandleRangedOrCombatAction+2C↑j
                 or      word_328C8, 20h
-                call    sub_1D937
+                call    HighlightSelectedAbilityIcon
                 mov     word_3292C, 31h ; '1'
                 call    AnimateProjectileStep
                 mov     word_3292C, 2Eh ; '.'
@@ -24118,7 +24118,7 @@ loc_1D8F9:                              ; CODE XREF: HandleRangedOrCombatAction+
 ; ---------------------------------------------------------------------------
 
 loc_1D902:                              ; CODE XREF: HandleRangedOrCombatAction+10↑j
-                call    sub_1D937
+                call    HighlightSelectedAbilityIcon
                 mov     word_3292C, 31h ; '1'
                 call    AnimateProjectileStep
                 mov     si, word_32A1E
@@ -24143,14 +24143,14 @@ HandleRangedOrCombatAction endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D937       proc near               ; CODE XREF: HandleRangedOrCombatAction+2C8↑p
+HighlightSelectedAbilityIcon proc near  ; CODE XREF: HandleRangedOrCombatAction+2C8↑p
                                         ; HandleRangedOrCombatAction:loc_1D902↑p
-                cmp     word_32974, 0
+                cmp     word_32974, 0   ; Highlights the currently selected ability (word_32974) in the 4-slot action UI, if any is selected. Called from HandleRangedOrCombatAction.
                 jnz     short loc_1D941
                 jmp     locret_1D9E4
 ; ---------------------------------------------------------------------------
 
-loc_1D941:                              ; CODE XREF: sub_1D937+5↑j
+loc_1D941:                              ; CODE XREF: HighlightSelectedAbilityIcon+5↑j
                 call    sub_2BB97
                 call    sub_2BBD7
                 mov     _font_bgTransparent, 5
@@ -24174,8 +24174,8 @@ loc_1D941:                              ; CODE XREF: sub_1D937+5↑j
                 mov     x, 9Dh
                 mov     word_32980, 9Dh
 
-loc_1D9A6:                              ; CODE XREF: sub_1D937+3E↑j
-                                        ; sub_1D937+4F↑j ...
+loc_1D9A6:                              ; CODE XREF: HighlightSelectedAbilityIcon+3E↑j
+                                        ; HighlightSelectedAbilityIcon+4F↑j ...
                 mov     ax, _val49
                 mov     word_2E530, ax
                 mov     word_32982, 35h ; '5'
@@ -24190,9 +24190,9 @@ loc_1D9A6:                              ; CODE XREF: sub_1D937+3E↑j
                 mov     ax, _val43
                 call    sub_28412
 
-locret_1D9E4:                           ; CODE XREF: sub_1D937+7↑j
+locret_1D9E4:                           ; CODE XREF: HighlightSelectedAbilityIcon+7↑j
                 retn
-sub_1D937       endp
+HighlightSelectedAbilityIcon endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -50265,7 +50265,7 @@ sub_2BAD5       endp
 
 
 sub_2BB1A       proc far                ; CODE XREF: HandleRangedOrCombatAction+10D↑P
-                                        ; sub_1D937+8C↑P ...
+                                        ; HighlightSelectedAbilityIcon+8C↑P ...
                 push    es
                 push    di
                 push    si
@@ -50384,7 +50384,7 @@ sub_2BB97       endp
 
 
 sub_2BBD7       proc far                ; CODE XREF: HandleRangedOrCombatAction+C0↑P
-                                        ; sub_1D937+F↑P ...
+                                        ; HighlightSelectedAbilityIcon+F↑P ...
                 push    es
                 push    di
                 push    cx
@@ -74448,7 +74448,7 @@ _val46          dw 0                    ; DATA XREF: InitGlobals+138↑w
 _val47          dw 0                    ; DATA XREF: InitGlobals+13E↑w
                                         ; RunTitleScreen+1B9↑r
 _val49          dw 0                    ; DATA XREF: InitGlobals+14A↑w
-                                        ; sub_1D937:loc_1D9A6↑r
+                                        ; HighlightSelectedAbilityIcon:loc_1D9A6↑r
 _val48          dw 0                    ; DATA XREF: InitGlobals+144↑w
                                         ; RunGameDialog+5C5↑r ...
 word_329CE      dw 0                    ; DATA XREF: InitGlobals+150↑w

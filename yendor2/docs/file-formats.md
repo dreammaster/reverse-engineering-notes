@@ -525,7 +525,25 @@ which shows the message unless speech/sound is currently busy, in
 which case it just waits); a monster triggers
 `ResolveAttackOrAbilityAction` and a hit/miss follow-up. If bit `0x100`
 was clear (not in combat), it instead opens a parallel spell/ability-
-cast sequence (not traced).
+cast sequence (mostly the same shape, still not fully traced).
+
+**The in-combat melee branch** (formal combat, `word_328CA` bit
+`0x1000` set) is much simpler: `HighlightSelectedAbilityIcon` marks
+the selected ability in the UI, one `AnimateProjectileStep`, then
+`ResolveAttackOrAbilityAction` directly against `word_32A1E` (the
+active combat monster) — no row-by-row search needed since the target
+is already known. Miss shows `_val37` via `ShowCombatMessageOrWait`.
+
+**The area-effect spell finish** (the 2 area-effect ability ids from
+`ResolveAbilityEffect`, on a successful hit): shows a message, then
+plays a 10-frame "explosion" animation (`DrawViewportSprite` at a new
+z-layer `0xA`, with a `0x55AA` checkerboard blit-mask dither for a
+flash effect), then — notably — scans the **entire** `g_levelMonsters`
+pool (all 80 slots, not just the 3 rows the line-attack touched) for
+any monster with HP `<= 0` and grants rewards / removes it via
+`GrantMonsterRewards`/`RemoveMonsterFromMap` for each. So an
+area-effect spell's kills are swept up level-wide after the animation,
+not per-row during the attack itself.
 
 ### Combat: monster slots and turn order
 

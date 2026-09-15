@@ -4479,7 +4479,7 @@ static Bytes_1(void) {
 	create_insn	(0X1D484);
 	create_insn	(0X1D496);
 	create_insn	(0X1D4B4);
-	set_cmt	(0X1D4B8,	"Combat-action entry point, 3-way branch: formal combat (word_328CA bit 0x1000, not traced), a fully-traced ranged-weapon shot sequence (word_328C8 bit 0x100 set -- select weapon, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve via ResolveAttackOrAbilityAction on a monster hit), or a spell/ability-cast opening (bit 0x100 clear, not traced). Called from `start`.",	0);
+	set_cmt	(0X1D4B8,	"Combat-action entry point, 3-way branch on word_328CA bit 0x1000 (in formal combat) and word_328C8 bit 0x100 (ranged-attack request): (1) in-combat melee -- HighlightSelectedAbilityIcon, one AnimateProjectileStep, then ResolveAttackOrAbilityAction directly against word_32A1E (no row search, target already known); (2) ranged-weapon shot -- select weapon, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve on a monster hit; (3) spell/ability cast when not in combat -- mostly the same shape as (2). A successful area-effect spell (2 special ability ids) plays a 10-frame explosion animation then sweeps all 80 g_levelMonsters slots for kills, not just the rows touched. Called from `start`.",	0);
 	create_insn	(0X1D4B8);
 	set_name	(0X1D4B8,	"HandleRangedOrCombatAction");
 	create_insn	(x=0X1D4C0);
@@ -4531,7 +4531,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1D917);
 	op_hex		(x,	1);
 	create_insn	(0X1D921);
+	set_cmt	(0X1D937,	"Highlights the currently selected ability (word_32974) in the 4-slot action UI, if any is selected. Called from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X1D937);
+	set_name	(0X1D937,	"HighlightSelectedAbilityIcon");
 	create_insn	(0X1D941);
 	set_cmt	(0X1D9E5,	"Applies a resolved attack's damage (word_2E49C) to the target (si), reducing it via a resistance bit-scan (word_2E49E attack type flags vs [si+0x98] resistance flags -- each match halves the damage), then subtracts from HP ([si+0x10], clamped to 0) and sets display flags. Shared by ranged/ability attacks (sub_1DA60) and sub_1DA2C.",	0);
 	create_insn	(0X1D9E5);
@@ -6233,6 +6235,15 @@ static Bytes_1(void) {
 	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: clears status bits 0-5 of [+0x1C] and a 16-word skill-value array at [+0xCA]-[+0xE9], then draws 3 category headers each followed by a group of skill-name lines (3+4+8=15 total, via sub_23AF2) -- matches the manual's skill list grouped into categories. Individual skill names/offsets within the array aren't mapped yet. The character skills display.",	0);
 	create_insn	(0X243D3);
 	set_name	(0X243D3,	"ShowCharacterSkills");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X243ED,	"msg",	0);
 	create_insn	(x=0X243F9);
 	op_hex		(x,	1);
@@ -6254,15 +6265,6 @@ static Bytes_1(void) {
 	set_cmt	(0X245AE,	"Draws up to 8 item entries (DrawListEntryLabel, one per _val1.._val8, each skippable via a word_328C4 bit -- likely empty slots) -- matches the 8-item-slot-per-character savegame layout from file-formats.md. Then a selection loop: 'N' next character, 'Q' back, 'E' exit entirely (mirrors ShowPartyMembers' outer iteration). The character inventory/equipment screen.",	0);
 	create_insn	(0X245AE);
 	set_name	(0X245AE,	"ShowCharacterInventory");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X245D4,	"msg",	0);
 	create_insn	(x=0X245FE);
 	op_hex		(x,	1);
@@ -9515,6 +9517,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2D60A,	"Looks up the currently-targeted object (word_2E548) in the 0xDFBB capability table; if its capability is already known, shows one message (sub_29461), otherwise (or if not in the table at all) shows a generic description (sub_1A3F0). The 'examine' counterpart to UseAbilityOnTarget's 'try it'.",	0);
 	create_insn	(0X2D60A);
 	set_name	(0X2D60A,	"ExamineTarget");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2D625);
 	create_insn	(0X2D639);
 	set_cmt	(0X2D65A,	"Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.",	0);
@@ -9538,15 +9549,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D6EF);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2D6FC);
 	create_insn	(x=0X2D72D);
 	op_hex		(x,	1);

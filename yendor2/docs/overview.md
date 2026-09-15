@@ -2707,6 +2707,19 @@ which case it just waits 6 ticks instead.
 
 344 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HighlightSelectedAbilityIcon; traced the melee and area-spell-finish branches
+
+Named `sub_1D937`, and while tracing it also worked out
+`HandleRangedOrCombatAction`'s other two branches in full: the
+in-combat melee path (much simpler — attacks `word_32A1E` directly,
+no row search) and the area-effect spell finish (a 10-frame explosion
+animation, then a level-wide sweep of all 80 `g_levelMonsters` slots
+for kills — not just the 3 rows the attack itself touched). No new
+renames from this trace beyond `HighlightSelectedAbilityIcon` — the
+value was in fully understanding the combat-action dispatcher's shape.
+
+345 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
