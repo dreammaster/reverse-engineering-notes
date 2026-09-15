@@ -9596,7 +9596,9 @@ static Bytes_3(void) {
 	op_hex		(x,	0);
 	create_insn	(0X2D5AF);
 	create_insn	(0X2D5CE);
+	set_cmt	(0X2D5E0,	"Checks the standing location's flags against the held item's flags -- a generic 'does this context accept this item type' gate, structurally identical to IsItemEligibleForRepair (a separate function instance). Called from TryCureAilmentFromIconClick and sub_26415.",	0);
 	create_insn	(0X2D5E0);
+	set_name	(0X2D5E0,	"IsItemTypeAcceptedByLocation");
 	create_insn	(x=0X2D5E5);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D5F0);

@@ -3011,6 +3011,15 @@ into the "carrying" state, plausibly to apply a held cure item to it.
 
 386 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: IsItemTypeAcceptedByLocation
+
+Named `sub_2D5E0`, structurally identical to the already-named
+`IsItemEligibleForRepair` (a separate function instance, same logic):
+a generic "does this context accept this item type" gate, reused by
+`TryCureAilmentFromIconClick` and a branch of the main input loop.
+
+387 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

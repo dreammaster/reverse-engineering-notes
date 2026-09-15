@@ -39588,7 +39588,7 @@ loc_26441:                              ; CODE XREF: sub_26415+21↑j
 ; ---------------------------------------------------------------------------
 
 loc_26473:                              ; CODE XREF: sub_26415+59↑j
-                call    sub_2D5E0
+                call    IsItemTypeAcceptedByLocation
                 jz      short loc_2647D
                 jmp     loc_265BD
 ; ---------------------------------------------------------------------------
@@ -41377,7 +41377,7 @@ loc_273E6:                              ; CODE XREF: TryCureAilmentFromIconClick
                 call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 100h
                 jnz     short loc_27407
-                call    sub_2D5E0
+                call    IsItemTypeAcceptedByLocation
                 jz      short loc_273DE
 
 loc_27407:                              ; CODE XREF: TryCureAilmentFromIconClick+73↑j
@@ -53316,9 +53316,9 @@ seg126          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D5E0       proc far                ; CODE XREF: sub_26415:loc_26473↑P
+IsItemTypeAcceptedByLocation proc far   ; CODE XREF: sub_26415:loc_26473↑P
                                         ; TryCureAilmentFromIconClick+75↑P
-                push    bx
+                push    bx              ; Checks the standing location's flags against the held item's flags -- a generic 'does this context accept this item type' gate, structurally identical to IsItemEligibleForRepair (a separate function instance). Called from TryCureAilmentFromIconClick and sub_26415.
                 mov     bx, word_2E546
                 test    word ptr [bx+0Ch], 0C000h
                 jz      short loc_2D5F7
@@ -53327,17 +53327,17 @@ sub_2D5E0       proc far                ; CODE XREF: sub_26415:loc_26473↑P
                 jmp     short loc_2D607
 ; ---------------------------------------------------------------------------
 
-loc_2D5F7:                              ; CODE XREF: sub_2D5E0+A↑j
+loc_2D5F7:                              ; CODE XREF: IsItemTypeAcceptedByLocation+A↑j
                 test    word ptr [bx+0Ch], 800h
                 jz      short loc_2D607
                 mov     bx, word_2E548
                 test    word ptr [bx+2], 40h
 
-loc_2D607:                              ; CODE XREF: sub_2D5E0+15↑j
-                                        ; sub_2D5E0+1C↑j
+loc_2D607:                              ; CODE XREF: IsItemTypeAcceptedByLocation+15↑j
+                                        ; IsItemTypeAcceptedByLocation+1C↑j
                 pop     bx
                 retf
-sub_2D5E0       endp
+IsItemTypeAcceptedByLocation endp
 
 seg126          ends
 
