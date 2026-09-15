@@ -840,6 +840,33 @@ picture.
 
 122 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the dungeon automap/fog-of-war system
+
+Picked a fresh anchor away from `CastSpell`: followed the player-
+position update in `sub_112AE` (called directly from `start` —
+presumably the movement command handler, not yet named itself) into
+`sub_21D30`, which turned out to be a clean, well-confirmed cluster —
+the **automap reveal system**. Named all 5 functions
+(`ida_scripts/name_map_reveal.py`): `GetMapCellPtr` computes a map
+cell's address in a confirmed 8-bytes-per-cell, 78-cells-wide grid;
+`MarkCellExplored` checks/sets a per-cell "explored" flag (visit-once
+fog-of-war marking, skipping cells already seen); `ScanAdjacentCellsAlongX`/
+`ScanAdjacentCellsAlongY` each mark 3 neighboring cells; and
+`RevealCellsAroundPlayer` (called right after the player's position
+updates) uses the facing-direction flags to reveal the cells to both
+sides of the player — matches the manual's "M uses the party map"
+exactly (cells become known as you walk near them). Full grid layout
+documented in
+[file-formats.md](file-formats.md#in-memory-dungeon-map-grid-source-file-not-yet-identified--plausibly-loaded-from-worlddat).
+
+This is a genuinely fresh system (no overlap with anything mapped
+earlier this session) and a good entry point for whoever continues —
+`MarkCellExplored`'s own reveal action (`sub_21CC2`) is the natural next
+function to trace, and would likely lead into the actual dungeon-view
+rendering code.
+
+127 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

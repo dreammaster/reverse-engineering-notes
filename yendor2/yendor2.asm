@@ -2355,7 +2355,7 @@ loc_11598:                              ; CODE XREF: sub_112AE+27A↑j
                 mov     bx, word_328D2
                 add     bx, word_2E404
                 mov     word_328D2, bx
-                call    sub_21D30
+                call    RevealCellsAroundPlayer
                 test    word_328C4, 1800h
                 jz      short loc_11613
                 mov     ax, word_328D2
@@ -2524,7 +2524,7 @@ loc_1175B:                              ; CODE XREF: sub_116F3+F↑j
                 mov     bx, word_328D2
                 add     bx, word_2E404
                 mov     word_328D2, bx
-                call    sub_21D30
+                call    RevealCellsAroundPlayer
                 retn
 sub_116F3       endp
 
@@ -11697,9 +11697,9 @@ seg020          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16F64       proc far                ; CODE XREF: sub_20070+A9↓P
+GetMapCellPtr   proc far                ; CODE XREF: sub_20070+A9↓P
                                         ; sub_20070+1F1↓P ...
-                push    ax
+                push    ax              ; Map cell linear address: (y-word_2E564)*0x270 + (x-word_2E55C)*8, es=word_2E562 (map data segment). 8 bytes/cell, row stride 0x270 = 78 cells wide.
                 mov     ax, word_2E564
                 sub     bx, ax
                 mov     ax, 270h
@@ -11714,7 +11714,7 @@ sub_16F64       proc far                ; CODE XREF: sub_20070+A9↓P
                 add     bx, ax
                 mov     es, word_2E562
                 retf
-sub_16F64       endp
+GetMapCellPtr   endp
 
 seg020          ends
 
@@ -18219,7 +18219,7 @@ loc_1A493:                              ; CODE XREF: sub_1A3F0+77↑j
                                         ; sub_1A3F0+7E↑j ...
                 push    si
                 call    sub_209D2
-                call    sub_21D30
+                call    RevealCellsAroundPlayer
                 pop     si
                 mov     ax, [si+0Ah]
                 mov     word_36CB1, ax
@@ -26637,7 +26637,7 @@ sub_1F0CD       proc far                ; CODE XREF: start+7F6↑P
                 rep movsw
                 mov     word_2E4A8, 0
                 call    sub_209D2
-                call    sub_21D30
+                call    RevealCellsAroundPlayer
                 mov     word_2E530, 1
                 call    sub_22387
                 call    sub_222F8
@@ -28246,7 +28246,7 @@ sub_20070       proc far                ; CODE XREF: seg000:09E1↑P
                 mov     y, ax
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
-                call    sub_16F64
+                call    GetMapCellPtr
                 call    sub_20888
                 call    sub_238CD
 
@@ -28370,7 +28370,7 @@ loc_20250:                              ; CODE XREF: sub_20070+221↓j
                 call    sub_209D2
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
-                call    sub_16F64
+                call    GetMapCellPtr
                 call    sub_21E71
                 call    sub_2075B
                 call    sub_203F7
@@ -31474,9 +31474,9 @@ sub_21CC2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21D30       proc far                ; CODE XREF: sub_112AE+304↑P
+RevealCellsAroundPlayer proc far        ; CODE XREF: sub_112AE+304↑P
                                         ; sub_116F3+82↑P ...
-                mov     ax, word_36CF7
+                mov     ax, word_36CF7  ; Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.
                 mov     bx, word_36CF9
                 cmp     word_36CF5, 8000h
                 jz      short loc_21D51
@@ -31487,77 +31487,77 @@ sub_21D30       proc far                ; CODE XREF: sub_112AE+304↑P
                 jmp     short loc_21D7E
 ; ---------------------------------------------------------------------------
 
-loc_21D51:                              ; CODE XREF: sub_21D30+D↑j
+loc_21D51:                              ; CODE XREF: RevealCellsAroundPlayer+D↑j
                 dec     word_36CF9
-                call    sub_21D8D
+                call    ScanAdjacentCellsAlongX
                 inc     word_36CF9
-                call    sub_21D8D
+                call    ScanAdjacentCellsAlongX
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21D60:                              ; CODE XREF: sub_21D30+15↑j
+loc_21D60:                              ; CODE XREF: RevealCellsAroundPlayer+15↑j
                 inc     word_36CF9
-                call    sub_21D8D
+                call    ScanAdjacentCellsAlongX
                 dec     word_36CF9
-                call    sub_21D8D
+                call    ScanAdjacentCellsAlongX
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21D6F:                              ; CODE XREF: sub_21D30+1D↑j
+loc_21D6F:                              ; CODE XREF: RevealCellsAroundPlayer+1D↑j
                 inc     word_36CF7
-                call    sub_21DA4
+                call    ScanAdjacentCellsAlongY
                 dec     word_36CF7
-                call    sub_21DA4
+                call    ScanAdjacentCellsAlongY
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21D7E:                              ; CODE XREF: sub_21D30+1F↑j
+loc_21D7E:                              ; CODE XREF: RevealCellsAroundPlayer+1F↑j
                 dec     word_36CF7
-                call    sub_21DA4
+                call    ScanAdjacentCellsAlongY
                 inc     word_36CF7
-                call    sub_21DA4
+                call    ScanAdjacentCellsAlongY
                 retf
-sub_21D30       endp
+RevealCellsAroundPlayer endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21D8D       proc near               ; CODE XREF: sub_21D30+25↑p
-                                        ; sub_21D30+2C↑p ...
+ScanAdjacentCellsAlongX proc near       ; CODE XREF: RevealCellsAroundPlayer+25↑p
+                                        ; RevealCellsAroundPlayer+2C↑p ...
                 dec     word_36CF7
-                call    sub_21DBB
+                call    MarkCellExplored
                 add     word_36CF7, 2
-                call    sub_21DBB
+                call    MarkCellExplored
                 dec     word_36CF7
-                call    sub_21DBB
+                call    MarkCellExplored
                 retn
-sub_21D8D       endp
+ScanAdjacentCellsAlongX endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21DA4       proc near               ; CODE XREF: sub_21D30+43↑p
-                                        ; sub_21D30+4A↑p ...
+ScanAdjacentCellsAlongY proc near       ; CODE XREF: RevealCellsAroundPlayer+43↑p
+                                        ; RevealCellsAroundPlayer+4A↑p ...
                 dec     word_36CF9
-                call    sub_21DBB
+                call    MarkCellExplored
                 add     word_36CF9, 2
-                call    sub_21DBB
+                call    MarkCellExplored
                 dec     word_36CF9
-                call    sub_21DBB
+                call    MarkCellExplored
                 retn
-sub_21DA4       endp
+ScanAdjacentCellsAlongY endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21DBB       proc near               ; CODE XREF: sub_21D8D+4↑p
-                                        ; sub_21D8D+C↑p ...
-                mov     ax, word_36CF7
+MarkCellExplored proc near              ; CODE XREF: ScanAdjacentCellsAlongX+4↑p
+                                        ; ScanAdjacentCellsAlongX+C↑p ...
+                mov     ax, word_36CF7  ; If the cell's explored flag (bit 0x8000 at +6) isn't set, sets it and calls sub_21CC2 (reveal/render action, not traced) -- fog-of-war visit-once marking.
                 mov     bx, word_36CF9
-                call    sub_16F64
+                call    GetMapCellPtr
                 test    word ptr es:[bx+6], 8000h
                 jnz     short locret_21DE0
                 or      word ptr es:[bx+6], 8000h
@@ -31566,9 +31566,9 @@ sub_21DBB       proc near               ; CODE XREF: sub_21D8D+4↑p
                 push    cs
                 call    near ptr sub_21CC2
 
-locret_21DE0:                           ; CODE XREF: sub_21DBB+12↑j
+locret_21DE0:                           ; CODE XREF: MarkCellExplored+12↑j
                 retn
-sub_21DBB       endp
+MarkCellExplored endp
 
 seg068          ends
 
@@ -40806,7 +40806,7 @@ loc_26E4D:                              ; CODE XREF: sub_26E11+37↑j
                 jge     short near ptr sub_26E11
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
-                call    sub_16F64
+                call    GetMapCellPtr
                 mov     ax, word_2E530
                 mov     es:[bx], ax
                 mov     bx, 9043h
@@ -40873,7 +40873,7 @@ loc_26F24:                              ; CODE XREF: sub_26EE8+37↑j
                 jge     short near ptr sub_26EE8
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
-                call    sub_16F64
+                call    GetMapCellPtr
                 mov     ax, word_2E530
                 mov     es:[bx+2], ax
                 mov     bx, 9043h
@@ -45002,7 +45002,7 @@ loc_28FAC:                              ; CODE XREF: sub_28CFF+24A↑j
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_209D2
-                call    sub_21D30
+                call    RevealCellsAroundPlayer
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
@@ -51529,7 +51529,7 @@ loc_2C4D1:                              ; CODE XREF: sub_2C0FE+4D8↓j
                 mov     word_36CF9, ax
                 mov     ax, word_328FC
                 mov     word_328D2, ax
-                call    sub_21D30
+                call    RevealCellsAroundPlayer
                 mov     ax, word_328D2
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
@@ -51615,7 +51615,7 @@ loc_2C59F:                              ; CODE XREF: sub_2C0FE+472↑j
                                         ; sub_2C0FE+480↑j ...
                 mov     ax, word_328FA
                 mov     bx, word_32900
-                call    sub_16F64
+                call    GetMapCellPtr
                 mov     word_328FC, bx
                 mov     ax, es:[bx]
                 call    sub_11160

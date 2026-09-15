@@ -158,6 +158,22 @@ below) — loaded via `LoadMasterPalette` (`0x27CB0`), one of the ~27
 (`ida_scripts/document_resource_stubs.py`, `ida_scripts/extract_resource_stubs.py`
 has every stub's own offset/size if more need identifying the same way).
 
+### In-memory dungeon map grid (source file not yet identified — plausibly loaded from `WORLD.DAT`)
+
+Found via `GetMapCellPtr` (`0x16F64`), the address computation the
+fog-of-war reveal system (`RevealCellsAroundPlayer`
+`ida_scripts/name_map_reveal.py`) uses: a 2D grid, **8 bytes per cell**,
+rows **78 cells wide** (row stride `0x270` = `78*8`), segment
+`word_2E562`, with the grid's own origin held in `word_2E564`
+(row/y)/`word_2E55C` (column/x) — i.e. addressing is relative to
+whatever sub-region of the full map is currently loaded, not the map's
+absolute origin. One confirmed field: **`+6`, a flags word, bit
+`0x8000` = "already explored"** — the automap's "cells become known as
+you walk near them" mechanic (matches the manual's "M uses the party
+map"). Nothing else about the cell layout (wall data, room boundaries,
+special markers) is decoded yet — `MarkCellExplored`'s own reveal
+action, `sub_21CC2`, is the next function to trace for that.
+
 ## `PICTURES.VGA`
 
 **Decoded 2026-09-15.** 12,550,618 bytes, raw 8bpp indexed pixels (VGA

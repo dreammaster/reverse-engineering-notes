@@ -2539,7 +2539,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X16F07);
 	op_hex		(x,	1);
 	create_insn	(0X16F44);
+	set_cmt	(0X16F64,	"Map cell linear address: (y-word_2E564)*0x270 + (x-word_2E55C)*8, es=word_2E562 (map data segment). 8 bytes/cell, row stride 0x270 = 78 cells wide.",	0);
 	create_insn	(0X16F64);
+	set_name	(0X16F64,	"GetMapCellPtr");
 	create_insn	(x=0X16F84);
 	op_hex		(x,	1);
 	set_cmt	(0X16F86,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);
@@ -5351,14 +5353,20 @@ static Bytes_0(void) {
 	create_insn	(0X21CC2);
 	set_cmt	(0X21CC6,	"this",	0);
 	set_cmt	(0X21CD4,	"this",	0);
+	set_cmt	(0X21D30,	"Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.",	0);
 	create_insn	(0X21D30);
+	set_name	(0X21D30,	"RevealCellsAroundPlayer");
 	create_insn	(0X21D51);
 	create_insn	(0X21D60);
 	create_insn	(0X21D6F);
 	create_insn	(0X21D7E);
 	create_insn	(0X21D8D);
+	set_name	(0X21D8D,	"ScanAdjacentCellsAlongX");
 	create_insn	(0X21DA4);
+	set_name	(0X21DA4,	"ScanAdjacentCellsAlongY");
+	set_cmt	(0X21DBB,	"If the cell's explored flag (bit 0x8000 at +6) isn't set, sets it and calls sub_21CC2 (reveal/render action, not traced) -- fog-of-war visit-once marking.",	0);
 	create_insn	(0X21DBB);
+	set_name	(0X21DBB,	"MarkCellExplored");
 	create_insn	(x=0X21DC7);
 	op_hex		(x,	1);
 	create_insn	(x=0X21DCF);
@@ -5844,6 +5852,15 @@ static Bytes_0(void) {
 	set_cmt	(0X23A22,	"Restores the saved background (0xE0E) to the video buffer at (word_2E776, word_31956) via getTextPos -- erases the cursor from its last drawn position. (Corrected from an earlier, backwards 'DrawMouseCursor' name this session -- see fix_cursor_naming.py.)",	0);
 	create_insn	(0X23A22);
 	set_name	(0X23A22,	"RestoreCursorBackground");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23A40);
 	op_hex		(x,	1);
 	create_insn	(x=0X23A58);
@@ -5872,15 +5889,6 @@ static Bytes_0(void) {
 	set_cmt	(0X23BAE,	"Iterates the party-member list (word_328D4, via [si+0x10]), running a pipeline of per-member display steps (sub_243D3, sub_24A5B, sub_24BF2, sub_245AE, sub_2498B, sub_25103) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
 	create_insn	(0X23BAE);
 	set_name	(0X23BAE,	"ShowPartyMembers");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X23BBD);
 	create_insn	(0X23BC8);
 	create_insn	(x=0X23BF5);
@@ -10194,6 +10202,15 @@ static Bytes_1(void) {
 	set_name	(0X35F56,	"aDarkUnionTheOn");
 	create_strlit	(0X35F79,	0X2F);
 	set_name	(0X35F79,	"aPressTabAtAnyT");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35FA8,	0X25);
 	set_name	(0X35FA8,	"aF1MapsWorldTow");
 	create_strlit	(0X35FCE,	0X17);
@@ -10230,15 +10247,6 @@ static Bytes_1(void) {
 	set_name	(0X36130,	"aStrength_0");
 	create_strlit	(0X3613A,	0X7);
 	set_name	(0X3613A,	"aPoison_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36141,	0X7);
 	set_name	(0X36141,	"aUndead");
 	create_strlit	(0X36148,	0X12);
