@@ -1671,6 +1671,18 @@ repair/crafting). Named `RepairItemCommand`.
 
 225 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SyncAllContainers extends the container-persistence system
+
+Traced `RepairItemCommand`'s opening call into a small cluster that
+extends the container-persistence finding from a few rounds ago:
+`SyncAllContainers` commits every open bag's contents to `CURGAME`
+across the whole party (via `SyncPartyMemberContainers` →
+`SyncContainerContents`, a write-back-without-closing variant of
+`SaveAndCloseContainer`) — called before the repair minigame's risky
+roll, presumably to keep the savegame current.
+
+228 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

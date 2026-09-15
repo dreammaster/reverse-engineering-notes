@@ -7479,9 +7479,15 @@ static Bytes_1(void) {
 	create_insn	(0X294FA);
 	create_insn	(0X29506);
 	create_insn	(0X2951D);
+	set_cmt	(0X2952A,	"Iterates all 4 g_partySlotAssignment members, calling SyncPartyMemberContainers for each -- commits every open bag's contents to CURGAME across the whole party.",	0);
 	create_insn	(0X2952A);
+	set_name	(0X2952A,	"SyncAllContainers");
+	set_cmt	(0X2955C,	"Calls SyncContainerContents for all 3 of word_328D4's bag slots (+0x17C/+0x1A2/+0x1C8).",	0);
 	create_insn	(0X2955C);
+	set_name	(0X2955C,	"SyncPartyMemberContainers");
+	set_cmt	(0X2957E,	"Like SaveAndCloseContainer's write-back (if the bag at [di] has contents, write them to CURGAME) but doesn't clear the marker afterward -- saves without closing.",	0);
 	create_insn	(0X2957E);
+	set_name	(0X2957E,	"SyncContainerContents");
 	set_cmt	(0X29583,	"this",	0);
 	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
 	create_insn	(0X295A8);
@@ -8123,6 +8129,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2A11B,	"The real mouse-cursor draw: if word_3195C bit1 is set, first saves the video buffer content at the cursor's new position into 0xE0E (so RestoreCursorBackground can erase it later), then blits the cursor sprite from 0x3FE6 onto the video buffer with 0xFF as a transparent color key. Not a screen fade despite the inherited name/hedge -- explains why it's called so pervasively (once per cursor move).",	0);
 	create_insn	(0X2A11B);
 	set_name	(0X2A11B,	"DrawMouseCursor");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2A121);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A131);
@@ -8152,15 +8167,6 @@ static Bytes_1(void) {
 	create_dword	(x=0X2A21F);
 	op_plain_offset	(x,	0,	0X2D860);
 	op_plain_offset	(x,	128,	0X2D860);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A223);
 	create_insn	(x=0X2A22A);
 	op_hex		(x,	1);

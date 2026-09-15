@@ -22786,7 +22786,7 @@ loc_1CE25:                              ; CODE XREF: sub_1CDBC+52↑j
                                         ; sub_1CDBC+58↑j
                 add     di, 4
                 loop    loc_1CE08
-                call    sub_2952A
+                call    SyncAllContainers
                 mov     si, 95EBh
                 mov     cx, 4
 
@@ -45633,9 +45633,9 @@ seg108          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2952A       proc far                ; CODE XREF: sub_1CDBC+6E↑P
+SyncAllContainers proc far              ; CODE XREF: sub_1CDBC+6E↑P
                                         ; RepairItemCommand+3↓P
-                push    di
+                push    di              ; Iterates all 4 g_partySlotAssignment members, calling SyncPartyMemberContainers for each -- commits every open bag's contents to CURGAME across the whole party.
                 push    si
                 push    dx
                 push    cx
@@ -45644,16 +45644,16 @@ sub_2952A       proc far                ; CODE XREF: sub_1CDBC+6E↑P
                 mov     si, 95EBh
                 mov     cx, 4
 
-loc_2953C:                              ; CODE XREF: sub_2952A+23↓j
+loc_2953C:                              ; CODE XREF: SyncAllContainers+23↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_2954F
                 call    sub_25B14
-                call    sub_2955C
+                call    SyncPartyMemberContainers
                 add     si, 2
                 loop    loc_2953C
 
-loc_2954F:                              ; CODE XREF: sub_2952A+16↑j
+loc_2954F:                              ; CODE XREF: SyncAllContainers+16↑j
                 pop     word_328D4
                 pop     word_328D6
                 pop     cx
@@ -45661,32 +45661,32 @@ loc_2954F:                              ; CODE XREF: sub_2952A+16↑j
                 pop     si
                 pop     di
                 retf
-sub_2952A       endp
+SyncAllContainers endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2955C       proc near               ; CODE XREF: sub_2952A+1D↑p
-                mov     di, word_328D4
+SyncPartyMemberContainers proc near     ; CODE XREF: SyncAllContainers+1D↑p
+                mov     di, word_328D4  ; Calls SyncContainerContents for all 3 of word_328D4's bag slots (+0x17C/+0x1A2/+0x1C8).
                 add     di, 17Ch
-                call    sub_2957E
+                call    SyncContainerContents
                 mov     di, word_328D4
                 add     di, 1A2h
-                call    sub_2957E
+                call    SyncContainerContents
                 mov     di, word_328D4
                 add     di, 1C8h
-                call    sub_2957E
+                call    SyncContainerContents
                 retn
-sub_2955C       endp
+SyncPartyMemberContainers endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2957E       proc near               ; CODE XREF: sub_2955C+8↑p
-                                        ; sub_2955C+13↑p ...
-                cmp     word ptr [di], 0
+SyncContainerContents proc near         ; CODE XREF: SyncPartyMemberContainers+8↑p
+                                        ; SyncPartyMemberContainers+13↑p ...
+                cmp     word ptr [di], 0 ; Like SaveAndCloseContainer's write-back (if the bag at [di] has contents, write them to CURGAME) but doesn't clear the marker afterward -- saves without closing.
                 jz      short locret_295A6
                 mov     bx, 8FFBh       ; this
                 mov     ax, [di+2]
@@ -45698,9 +45698,9 @@ sub_2957E       proc near               ; CODE XREF: sub_2955C+8↑p
                 call    FileEntry_Write
                 call    ErrorCheck
 
-locret_295A6:                           ; CODE XREF: sub_2957E+3↑j
+locret_295A6:                           ; CODE XREF: SyncContainerContents+3↑j
                 retn
-sub_2957E       endp
+SyncContainerContents endp
 
 seg108          ends
 
@@ -50945,7 +50945,7 @@ seg123          segment byte public 'CODE' use16
 
 RepairItemCommand proc far              ; CODE XREF: HandleGameCommand+141↑P
                 mov     word_3293E, ax  ; Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).
-                call    sub_2952A
+                call    SyncAllContainers
                 call    sub_238CD
 
 loc_2C01D:                              ; CODE XREF: RepairItemCommand+52↓j

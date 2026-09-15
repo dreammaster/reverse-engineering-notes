@@ -195,6 +195,14 @@ if nonempty, then clears the marker — unloading it. So each bag's
 contents persist independently in the savegame, swapped into the
 character's inventory groups only while open.
 
+**`SyncAllContainers`** (found via `RepairItemCommand`'s opening call)
+writes every open bag's contents back to `CURGAME` across the *whole
+party*, without closing them (`SyncContainerContents`, the same
+write-back as `SaveAndCloseContainer` minus the marker-clear) — a
+"commit everything to the savegame" step called before risky actions
+like the repair minigame, presumably so an in-progress bag's state
+isn't lost if the action fails.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base
