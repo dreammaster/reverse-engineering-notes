@@ -3099,6 +3099,14 @@ a dropped bag's full contents are placed too.
 
 399 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UpdateCursorForHeldItem
+
+Named `sub_23874`, called throughout this session's item-manipulation
+functions: updates the mouse cursor to show the currently-held item's
+icon. A widely-reused helper, now named across dozens of call sites.
+
+400 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -6226,7 +6226,9 @@ static Bytes_2(void) {
 	create_insn	(0X2384B);
 	create_insn	(x=0X23852);
 	op_hex		(x,	1);
+	set_cmt	(0X23874,	"Updates the mouse cursor to show the currently-held item's icon (word_2E530 -> word_31946), rebuilding the cursor-sprite definition via FileEntry (bx=0x9011). Called throughout the item-manipulation functions after staging/clearing a held item.",	0);
 	create_insn	(0X23874);
+	set_name	(0X23874,	"UpdateCursorForHeldItem");
 	set_cmt	(0X2387A,	"this",	0);
 	create_insn	(x=0X2388B);
 	op_seg		(x,	1);
@@ -8882,13 +8884,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B029,	"Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.",	0);
 	create_insn	(0X2B029);
 	set_name	(0X2B029,	"CollectNuoreCache");
-	create_insn	(x=0X2B036);
-	op_hex		(x,	1);
-	create_insn	(x=0X2B065);
-	op_hex		(x,	1);
-	set_cmt	(0X2B09A,	"Item-icon-dispatch handler (word_32974==0x248). Shows '2 X HEALTH'/'2 X MAGIC': cures all ailments and sets every party member's current HP/MP to 2x their max (an overheal effect), drawing a heal icon (PrepareTrapEffectSlots id 3, same as UseHealingItem) on each via ApplyEffectAndDrawIconBar.",	0);
-	create_insn	(0X2B09A);
-	set_name	(0X2B09A,	"PartyMassHealAndOverheal");
 }
 
 //------------------------------------------------------------------------
@@ -8898,6 +8893,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2B036);
+	op_hex		(x,	1);
+	create_insn	(x=0X2B065);
+	op_hex		(x,	1);
+	set_cmt	(0X2B09A,	"Item-icon-dispatch handler (word_32974==0x248). Shows '2 X HEALTH'/'2 X MAGIC': cures all ailments and sets every party member's current HP/MP to 2x their max (an overheal effect), drawing a heal icon (PrepareTrapEffectSlots id 3, same as UseHealingItem) on each via ApplyEffectAndDrawIconBar.",	0);
+	create_insn	(0X2B09A);
+	set_name	(0X2B09A,	"PartyMassHealAndOverheal");
 	create_insn	(x=0X2B09F);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B0CE);

@@ -742,13 +742,13 @@ loc_10635:                              ; CODE XREF: start+5B4↑j
                 cmp     errorCode, 0
                 jnz     short loc_10652
                 mov     word_2E530, 0Bh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     ax, [si+4]
                 call    TravelToDestination
 
 loc_10652:                              ; CODE XREF: start+63D↑j
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -8069,7 +8069,7 @@ sub_14E28       proc far                ; CODE XREF: ShowClueBook+508↑P
                 push    errorCode
                 mov     ax, word_31946
                 mov     word_2E530, ax
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 pop     errorCode
                 pop     word_2E532
@@ -8345,7 +8345,7 @@ loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+1
 loc_15217:                              ; CODE XREF: PlayClueBookOpenAnimation+D↑j
                                         ; PlayClueBookOpenAnimation+18↑j
                 mov     word_2E530, 1Dh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 pop     ds
                 pop     di
@@ -11945,7 +11945,7 @@ loc_170A3:                              ; CODE XREF: sub_17032+6D↑j
 
 loc_170A7:                              ; CODE XREF: sub_17032+237↓j
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr sub_1728A
                 mov     ax, word_31948
@@ -13072,7 +13072,7 @@ loc_17ADA:                              ; CODE XREF: PayGoldAndAcquireItem:loc_1
                 mov     word_3194A, ax
                 mov     ax, [si+2]
                 mov     word_3194C, ax
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr ShowMaterialCounterHud
                 call    DrawMouseCursor
@@ -13102,7 +13102,7 @@ loc_17B35:                              ; CODE XREF: SellClickedCatalogItem+1F�
                 mov     word_31948, 0
                 mov     word_3194C, 0
                 mov     word_3194A, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    ClearStatusPanelIfDirty
                 push    cs
                 call    near ptr ShowMaterialCounterHud
@@ -15305,7 +15305,7 @@ loc_18C1F:                              ; CODE XREF: sub_1869D+578↑j
                 mov     di, 5104h
                 call    SubBCD4
                 call    ClearStatusPanelIfDirty
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
@@ -15649,7 +15649,7 @@ loc_18F34:                              ; CODE XREF: sub_18C79+2B2↑j
                 mov     word_3194C, 0
                 mov     word_31946, 0
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_1B30C
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
@@ -15759,7 +15759,7 @@ loc_19032:                              ; CODE XREF: TryEnhanceItemForGold+52↑
                 mov     bx, word_2E546
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
@@ -15906,7 +15906,7 @@ loc_19198:                              ; CODE XREF: TryRepairItemForGold+52↑j
                 mov     bx, word_2E546
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
@@ -16012,7 +16012,7 @@ loc_192B9:                              ; CODE XREF: TrySellItemForGold+19↑j
                 mov     ax, word_32922
                 mov     word_32966, ax
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    ClearStatusPanelIfDirty
                 mov     word_31948, 0
                 mov     word_3194A, 0
@@ -17465,7 +17465,7 @@ loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑
                 test    word ptr [di+2], 4000h
                 jz      short loc_19ECA
                 mov     word_2E530, 0Bh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     ax, 0Ah
                 call    sub_28412
                 mov     ax, [di+4]
@@ -17479,7 +17479,7 @@ loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑
                 call    DrawMinimap
                 call    DrawMouseCursor
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     byte_2E400, 0
                 jmp     short locret_19E73
 ; ---------------------------------------------------------------------------
@@ -18109,13 +18109,13 @@ loc_1A39E:                              ; CODE XREF: TryDropHeldItem+17↑j
                 push    word_31946
                 mov     word_31946, 0
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     ax, 4
                 call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_1A3CB
                 pop     word_2E530
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 jmp     short loc_1A3E4
 ; ---------------------------------------------------------------------------
 
@@ -18393,11 +18393,11 @@ FlashStatusWarning proc far             ; CODE XREF: sub_17032+1B8↑P
                 mov     ax, 3
                 call    sub_28412
                 mov     word_2E530, 0Eh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     ax, 7           ; ticks
                 call    wait
                 pop     word_2E530
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 retf
 FlashStatusWarning endp
 
@@ -25541,14 +25541,14 @@ ShowAlchemyIconIdle endp
 
 sub_1E4FA       proc near               ; CODE XREF: RunAlchemyScreen+31F↑p
                 mov     word_2E530, 0Fh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     ax, 12h
                 call    ShowConfirmPrompt
                 mov     word_3331A, ax
                 mov     ax, word_32924
                 mov     word_3331C, ax
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 retn
 sub_1E4FA       endp
 
@@ -26451,7 +26451,7 @@ loc_1EE02:                              ; CODE XREF: RunGameDialog+37D↑j
 loc_1EE23:                              ; CODE XREF: RunGameDialog+392↑j
                 call    ClearMessageBoxArea
                 mov     word_2E530, 0Bh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     errorCode, 0Bh
                 mov     bx, 902Ch
                 mov     al, 2
@@ -26620,7 +26620,7 @@ loc_1EFE3:                              ; CODE XREF: RunGameDialog+56B↑j
                 mov     bx, 902Ch
                 call    FileEntry_Close
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     byte_2E400, 0FEh
                 call    sub_1F58D
                 jmp     loc_1EC69
@@ -27223,7 +27223,7 @@ ConfirmNewGame  endp
 sub_1F5FF       proc near               ; CODE XREF: RunGameDialog+327↑p
                 call    ClearMessageBoxArea
                 mov     word_2E530, 0Bh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     bx, word_32906
                 test    byte ptr [bx+1], 80h
                 jnz     short loc_1F632
@@ -27384,7 +27384,7 @@ loc_1F7B2:                              ; CODE XREF: sub_1F5FF+1A9↑j
                 mov     bx, 902Ch
                 call    FileEntry_Close
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_1F58D
                 retn
 sub_1F5FF       endp
@@ -34589,7 +34589,7 @@ loc_23802:                              ; CODE XREF: InitMouse+27↑j
                 mov     word_2E782, 0E6h
                 mov     word_2E784, 0B4h
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     ax, seg seg073
                 mov     es, ax
                 assume es:seg073
@@ -34627,9 +34627,9 @@ loc_2386F:                              ; CODE XREF: seg073:0178↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23874       proc far                ; CODE XREF: start+645↑P
+UpdateCursorForHeldItem proc far        ; CODE XREF: start+645↑P
                                         ; start+658↑P ...
-                mov     word_2E532, 80h
+                mov     word_2E532, 80h ; Updates the mouse cursor to show the currently-held item's icon (word_2E530 -> word_31946), rebuilding the cursor-sprite definition via FileEntry (bx=0x9011). Called throughout the item-manipulation functions after staging/clearing a held item.
                 push    bx              ; this
                 mov     bx, 782Eh
                 add     bx, word_2E532
@@ -34656,11 +34656,11 @@ sub_23874       proc far                ; CODE XREF: start+645↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_238C6:                              ; CODE XREF: sub_23874+4F↑j
+loc_238C6:                              ; CODE XREF: UpdateCursorForHeldItem+4F↑j
                 call    RestoreCursorBackground
                 call    sub_23965
                 retf
-sub_23874       endp
+UpdateCursorForHeldItem endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36280,7 +36280,7 @@ loc_2475E:                              ; CODE XREF: ShowCharacterInventory+15A�
                 mov     word_31948, 0
                 mov     word_3194C, 0
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     byte_2E400, 0
                 retn
 ; ---------------------------------------------------------------------------
@@ -36296,7 +36296,7 @@ loc_24788:                              ; CODE XREF: ShowCharacterInventory+1D5�
                 test    word_328CA, 8000h
                 jz      short loc_2479C
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -36305,7 +36305,7 @@ loc_2479C:                              ; CODE XREF: ShowCharacterInventory+163�
                 mov     word_31948, 0
                 mov     word_3194C, 0
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 and     word_328C4, 0FF00h
                 mov     byte_2E400, 51h ; 'Q'
                 retn
@@ -36360,7 +36360,7 @@ loc_24821:                              ; CODE XREF: ShowCharacterInventory+238�
                 mov     word_3194C, 0
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 dec     word_3293E
 
@@ -36431,7 +36431,7 @@ loc_248D2:                              ; CODE XREF: ShowCharacterInventory+2D3�
                 mov     word_3194C, 0
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_2438B
                 call    sub_238CD
                 inc     word_3293E
@@ -39508,7 +39508,7 @@ loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
                 call    sub_266D4
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_26C0E
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
@@ -40056,7 +40056,7 @@ LoadContainerContents endp
 sub_26864       proc near               ; CODE XREF: sub_2621C:loc_2628F↑p
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_26B4F
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
@@ -40073,7 +40073,7 @@ sub_2687B       proc near               ; CODE XREF: sub_2621C+1EA↑p
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_266D4
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
@@ -40105,7 +40105,7 @@ sub_268A0       proc near               ; CODE XREF: sub_2621C+EA↑p
                 pop     word_3194A
                 pop     word_3194C
                 pop     word_31948
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
@@ -41252,7 +41252,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 mov     word_3194C, 0
                 mov     word_3194A, 0
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr ShowResourceDepletedOverlay
                 call    ClearStatusPanelIfDirty
@@ -41298,7 +41298,7 @@ loc_2731C:                              ; CODE XREF: sub_271DC+6B↑j
                 mov     word ptr [di], 0
 
 loc_27348:                              ; CODE XREF: sub_271DC+13E↑j
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr ShowResourceDepletedOverlay
                 mov     ax, word_31948
@@ -44921,7 +44921,7 @@ loc_28E86:                              ; CODE XREF: RevealMapRegion+1A1↓j
                 pop     si
                 call    sub_293C0
                 mov     word_2E530, 0Fh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    ClearStatusPanelIfDirty
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 57h ; 'W'
@@ -45007,7 +45007,7 @@ loc_28FAC:                              ; CODE XREF: RevealMapRegion+24A↑j
                 pop     word_36C7F
                 mov     word_3195A, 8
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_209D2
                 call    RevealCellsAroundPlayer
                 call    RedrawDungeonScreen
@@ -45489,7 +45489,7 @@ sub_2940E       proc far                ; CODE XREF: UseAbilityOnTarget+1↓p
                                         ; UnlockDoorCommand:loc_29747↓P ...
                 call    sub_21C79
                 mov     word_2E530, 0Fh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
 
 loc_29423:                              ; CODE XREF: sub_2940E+1F↓j
@@ -45566,7 +45566,7 @@ loc_294B8:                              ; CODE XREF: UseAbilityOnTarget+4C↓j
                                         ; UseAbilityOnTarget+78↓j ...
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
@@ -45945,7 +45945,7 @@ loc_29753:                              ; CODE XREF: UnlockDoorCommand+5C↓j
 loc_2975D:                              ; CODE XREF: UnlockDoorCommand+D↑j
                                         ; UnlockDoorCommand+84↓j ...
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -48274,7 +48274,7 @@ loc_2A7DA:                              ; CODE XREF: sub_2A788+BB↓j
                                         ; sub_2A788+CA↓j ...
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
@@ -48458,7 +48458,7 @@ loc_2A955:                              ; CODE XREF: ApplyMultiStatEffect+2B↑j
 
 loc_2A971:                              ; CODE XREF: ApplyMultiStatEffect+D↑j
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 retf
 ApplyMultiStatEffect endp
@@ -48568,7 +48568,7 @@ loc_2AA2B:                              ; CODE XREF: RestCharacter+3C↑j
 
 loc_2AA47:                              ; CODE XREF: RestCharacter+D↑j
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 retf
 RestCharacter   endp
@@ -48595,7 +48595,7 @@ loc_2AA6B:                              ; CODE XREF: CastSpell+E↑j
 loc_2AA75:                              ; CODE XREF: CastSpell+18↑j
                                         ; CastSpell+39↓j ...
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
@@ -48880,7 +48880,7 @@ loc_2ACEE:                              ; CODE XREF: CastSpell+27E↑j
 loc_2AD02:                              ; CODE XREF: CastSpell+2A5↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_274B4
                 call    sub_2ADD0
                 call    HandleRangedOrCombatAction
@@ -48938,7 +48938,7 @@ sub_2AD32       endp
 ConfirmAndSelectPartyTarget proc near   ; CODE XREF: ApplyMultiStatEffect+5↑p
                                         ; RestCharacter+5↑p ...
                 mov     word_2E530, 0Fh ; Shows a confirm prompt (msg 0x12); if declined, refreshes the material/gold HUD and returns 0. If confirmed, resolves the selected party record (word_32990 -> sub_25B14) and returns word_328D6. Called from ApplyMultiStatEffect and RestCharacter.
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 mov     ax, 12h
                 call    ShowConfirmPrompt
@@ -49413,7 +49413,7 @@ loc_2B214:                              ; CODE XREF: CheckQuestItemsCompleted+90
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
                 mov     word_3194C, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -49437,7 +49437,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
                 push    word_36C79
                 call    sub_238CD
                 mov     word_2E530, 0Bh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 and     word_36C79, 0FFF8h
                 or      word_36C79, 1
                 mov     word_36CF7, 154h
@@ -49450,10 +49450,10 @@ ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
                 call    DrawMinimap
                 call    DrawMouseCursor
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_162B6
                 mov     word_2E530, 0Bh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 pop     word_36C79
                 pop     word_36CF5
                 pop     word_36CF9
@@ -49466,7 +49466,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
                 call    DrawMouseCursor
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 retn
 ShowVisionAtLocation endp
 
@@ -50190,7 +50190,7 @@ loc_2BA88:                              ; CODE XREF: sub_2BA62+1E↑j
 loc_2BA8A:                              ; CODE XREF: sub_2BA62+24↑j
                 or      word_36C81, ax
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 retf
 sub_2BA62       endp
@@ -51347,7 +51347,7 @@ loc_2C322:                              ; CODE XREF: sub_2C0FE+212↑j
                 mov     word_3194C, ax
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -53388,7 +53388,7 @@ loc_2D639:                              ; CODE XREF: ExamineTarget+23↑j
 loc_2D644:                              ; CODE XREF: ExamineTarget+2D↑j
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 retf
 ExamineTarget   endp
@@ -53475,7 +53475,7 @@ loc_2D6DE:                              ; CODE XREF: InteractWithContainer+65↑
 loc_2D6FC:                              ; CODE XREF: InteractWithContainer+30↑j
                                         ; InteractWithContainer+E0↓j
                 mov     word_2E530, 0Fh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 call    ClearStatusPanelIfDirty
                 call    sub_2D7A7
@@ -53514,7 +53514,7 @@ loc_2D73C:                              ; CODE XREF: InteractWithContainer+D9↑
 loc_2D77A:                              ; CODE XREF: InteractWithContainer+25↑j
                                         ; InteractWithContainer+54↑j ...
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
 
 loc_2D78A:                              ; CODE XREF: InteractWithContainer+9F↑j
@@ -53593,20 +53593,20 @@ sub_2D7EA       endp
 
 sub_2D809       proc near               ; CODE XREF: InteractWithContainer+6C↑p
                 mov     word_2E530, 0Fh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 mov     ax, 12h
                 call    ShowConfirmPrompt
                 mov     word_3331A, ax
                 mov     ax, word_32924
                 mov     word_3331C, ax
                 mov     word_2E530, 0
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 retn
 sub_2D809       endp
 
 ; ---------------------------------------------------------------------------
                 mov     word_2E530, 0Fh
-                call    sub_23874
+                call    UpdateCursorForHeldItem
                 call    sub_238CD
                 mov     ax, 12h
                 call    ShowConfirmPrompt
@@ -84848,17 +84848,17 @@ word_36867      dw 0                    ; DATA XREF: DrawLocalMapCell+E↑r
 aCurgame        db 'CURGAME',0
 picturesVga     db 0FFh
                 db 0FFh
-word_36873      dw 0                    ; DATA XREF: sub_23874+1A↑w
+word_36873      dw 0                    ; DATA XREF: UpdateCursorForHeldItem+1A↑w
                                         ; LoadPictureIntoEms+6D↑w
-word_36875      dw 0                    ; DATA XREF: sub_23874+20↑w
+word_36875      dw 0                    ; DATA XREF: UpdateCursorForHeldItem+20↑w
                                         ; LoadPictureIntoEms+74↑w
-word_36877      dw 0                    ; DATA XREF: sub_23874+26↑w
+word_36877      dw 0                    ; DATA XREF: UpdateCursorForHeldItem+26↑w
                                         ; LoadPictureIntoEms+7A↑w
-word_36879      dw 0                    ; DATA XREF: sub_23874+14↑w
+word_36879      dw 0                    ; DATA XREF: UpdateCursorForHeldItem+14↑w
                                         ; LoadPictureIntoEms+67↑w
-word_3687B      dw 0                    ; DATA XREF: sub_23874+2C↑w
+word_3687B      dw 0                    ; DATA XREF: UpdateCursorForHeldItem+2C↑w
                                         ; LoadPictureIntoEms+80↑w
-word_3687D      dw 0                    ; DATA XREF: sub_23874+32↑w
+word_3687D      dw 0                    ; DATA XREF: UpdateCursorForHeldItem+32↑w
                                         ; LoadPictureIntoEms+86↑w
 aPicturesVga    db 'PICTURES.VGA',0
 savegameX       db 0FFh
