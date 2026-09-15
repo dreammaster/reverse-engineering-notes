@@ -216,7 +216,11 @@ character's inventory groups only while open.
 main-input-loop handler not traced this round) checks whether the
 currently-open alternate bag matches an allowed-type bitmask before
 letting an item be placed into it, rejecting with
-`FlashStatusWarning` otherwise.
+`FlashStatusWarning` otherwise. `sub_2621C` also uses
+`LoadNextContainerInChain`, which walks a linked chain of container/
+world-object records via `CURGAME` (each record's own `[+8]` field
+points to the next id) — e.g. multiple containers found together —
+loading each via `LoadContainerContents` in turn.
 
 **Dropping a held item**: `TryDropHeldItem` (checks `IsItemDroppable`,
 warns and bails if not; shows a confirm prompt; calls

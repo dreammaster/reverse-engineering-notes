@@ -15699,7 +15699,7 @@ sub_18FC5       proc near               ; CODE XREF: sub_18C79+10E↑p
 loc_18FCD:                              ; CODE XREF: sub_18FC5+5↑j
                 cmp     dx, 0
                 jnz     short locret_18FD9
-                call    sub_26022
+                call    LoadNextContainerInChain
                 mov     dx, ax
 
 locret_18FD9:                           ; CODE XREF: sub_18FC5+B↑j
@@ -39112,9 +39112,9 @@ seg087          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26022       proc far                ; CODE XREF: sub_18FC5+D↑P
+LoadNextContainerInChain proc far       ; CODE XREF: sub_18FC5+D↑P
                                         ; sub_2621C+A5↓p
-                push    bx              ; this
+                push    bx              ; Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.
                 cmp     word_36E0F, 0
                 jz      short loc_26058
                 mov     bx, 8FFBh       ; this
@@ -39131,11 +39131,11 @@ sub_26022       proc far                ; CODE XREF: sub_18FC5+D↑P
                 jmp     short loc_2605F
 ; ---------------------------------------------------------------------------
 
-loc_26058:                              ; CODE XREF: sub_26022+6↑j
+loc_26058:                              ; CODE XREF: LoadNextContainerInChain+6↑j
                 mov     ax, word_36E0D
                 inc     word_36E0D
 
-loc_2605F:                              ; CODE XREF: sub_26022+34↑j
+loc_2605F:                              ; CODE XREF: LoadNextContainerInChain+34↑j
                 mov     bx, 0AFA8h
                 call    LoadContainerContents
                 push    es
@@ -39151,7 +39151,7 @@ loc_2605F:                              ; CODE XREF: sub_26022+34↑j
                 mov     ax, word_36863
                 pop     bx
                 retf
-sub_26022       endp
+LoadNextContainerInChain endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -39386,7 +39386,7 @@ loc_262B2:                              ; CODE XREF: sub_2621C+8C↑j
                 cmp     word_3194C, 0
                 jnz     short loc_262C7
                 push    cs
-                call    near ptr sub_26022
+                call    near ptr LoadNextContainerInChain
                 mov     word_3194C, ax
 
 loc_262C7:                              ; CODE XREF: sub_2621C+9B↑j
@@ -40037,7 +40037,7 @@ sub_2681B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-LoadContainerContents proc near         ; CODE XREF: sub_26022+40↑p
+LoadContainerContents proc near         ; CODE XREF: LoadNextContainerInChain+40↑p
                                         ; sub_2621C+16A↑p ...
                 mov     word_36863, ax  ; LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).
                 mov     ax, bx
@@ -40573,7 +40573,7 @@ sub_26B4F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26C0E       proc near               ; CODE XREF: sub_26022+55↑p
+sub_26C0E       proc near               ; CODE XREF: LoadNextContainerInChain+55↑p
                                         ; sub_2621C+1BE↑p
                 mov     bx, 8FFBh
                 mov     errorCode, 0Bh
@@ -86265,8 +86265,8 @@ word_36DF5      dw 0                    ; DATA XREF: sub_1FC53+11↑w
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36E0D      dw 0                    ; DATA XREF: sub_26022:loc_26058↑r
-                                        ; sub_26022+39↑w ...
+word_36E0D      dw 0                    ; DATA XREF: LoadNextContainerInChain:loc_26058↑r
+                                        ; LoadNextContainerInChain+39↑w ...
 word_36E0F      dw 0                    ; DATA XREF: sub_1A320+18↑r
                                         ; sub_1A320+21↑w ...
                 db 0FFh

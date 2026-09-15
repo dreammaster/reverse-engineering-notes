@@ -6700,8 +6700,9 @@ static Bytes_2(void) {
 	create_insn	(0X25F92);
 	create_insn	(0X25FCD);
 	set_cmt	(0X25FD6,	"msg",	0);
-	set_cmt	(0X26022,	"this",	0);
+	set_cmt	(0X26022,	"Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.",	0);
 	create_insn	(0X26022);
+	set_name	(0X26022,	"LoadNextContainerInChain");
 	set_cmt	(0X2602A,	"this",	0);
 	create_insn	(0X26058);
 	set_cmt	(0X2607F,	"Draws one party member's portrait panel at word_328BC/word_328C0: character icon ([+0x14]), a status bar (sub_267A7), a condition icon ([+0x15C]/[+0x10]), and further icon draws (sub_2681B, not traced). Called via ShowPartyPortraitForSlot.",	0);
@@ -8854,10 +8855,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE20);
 	op_hex		(x,	1);
-	create_insn	(x=0X2AE26);
-	op_hex		(x,	1);
-	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
-	create_insn	(0X2AE3C);
 }
 
 //------------------------------------------------------------------------
@@ -8867,6 +8864,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2AE26);
+	op_hex		(x,	1);
+	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
+	create_insn	(0X2AE3C);
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
 	create_insn	(0X2AE60);

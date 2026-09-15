@@ -3142,6 +3142,14 @@ it.
 
 404 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: LoadNextContainerInChain
+
+Named `sub_26022`: walks a linked chain of container/world-object
+records via `CURGAME` (each record's own `[+8]` field points to the
+next id), loading each via `LoadContainerContents` in turn.
+
+405 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
