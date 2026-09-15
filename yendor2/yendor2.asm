@@ -10997,7 +10997,7 @@ loc_16A9D:                              ; CODE XREF: sub_16A39+5D↑j
 loc_16ABF:                              ; CODE XREF: sub_16A39+99↓j
                                         ; sub_16A39+A7↓j
                 mov     ax, 3
-                call    sub_2746C
+                call    RandomInRange
                 shl     ax, 1
                 add     ax, 95EBh
                 mov     bx, ax
@@ -11209,7 +11209,7 @@ loc_16C60:                              ; CODE XREF: sub_16BF6+2C↑j
                 mov     si, di
                 mov     ax, [si+58h]
                 mov     word_32940, ax
-                call    sub_2781C
+                call    FailsSavingThrow
                 pop     word_32940
                 pop     word_3293E
                 cmp     ax, 0
@@ -11242,7 +11242,7 @@ loc_16CC1:                              ; CODE XREF: sub_16BF6+18↑j
                 mov     ax, [si+58h]
                 shr     ax, 1
                 mov     word_32940, ax
-                call    sub_2781C
+                call    FailsSavingThrow
                 pop     word_32940
                 pop     word_3293E
                 cmp     ax, 0
@@ -11368,7 +11368,7 @@ sub_16DAA       proc near               ; CODE XREF: sub_16881+98↑p
 
 loc_16DC2:                              ; CODE XREF: sub_16DAA+14↑j
                 mov     ax, 64h ; 'd'
-                call    sub_2746C
+                call    RandomInRange
                 cmp     ax, 19h
                 jge     short loc_16DDA
                 mov     ax, [si+6Eh]
@@ -13829,8 +13829,8 @@ loc_1812A:                              ; CODE XREF: ApplyEffectAndDrawIconBar+5
                 jnz     short loc_1815A
                 test    word ptr [di+0Ah], 180h
                 jnz     short loc_18171
-                call    sub_183D5
-                call    sub_18333
+                call    RollEffectMagnitude
+                call    RollEffectResistance
                 call    ApplyEffectCost
                 mov     ax, [si]
                 mov     x, ax
@@ -14106,14 +14106,14 @@ sub_182CE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18333       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar+81↑p
-                mov     ax, [si+0Eh]
+RollEffectResistance proc near          ; CODE XREF: ApplyEffectAndDrawIconBar+81↑p
+                mov     ax, [si+0Eh]    ; RollEffectResistance: if [si+0xE]==0 (not yet resolved this pass) and the effect's high cost-flag bits (di+8 & 0xFF80) are set, sums the party member's equipment/bonus resistance fields (+0x20..+0x30, one per matching high bit of di+8) and calls FailsSavingThrow (threshold=word_32DC0). Records 0 into [si+0xE] if resisted, or the raw high cost-flags if the save failed.
                 cmp     ax, 0
                 jz      short loc_1833E
                 jmp     loc_183D1
 ; ---------------------------------------------------------------------------
 
-loc_1833E:                              ; CODE XREF: sub_18333+6↑j
+loc_1833E:                              ; CODE XREF: RollEffectResistance+6↑j
                 mov     ax, [di+8]
                 and     ax, 0FF80h
                 cmp     ax, 0
@@ -14121,7 +14121,7 @@ loc_1833E:                              ; CODE XREF: sub_18333+6↑j
                 jmp     loc_183D1
 ; ---------------------------------------------------------------------------
 
-loc_1834C:                              ; CODE XREF: sub_18333+14↑j
+loc_1834C:                              ; CODE XREF: RollEffectResistance+14↑j
                 test    word ptr [di+0Ah], 1000h
                 jz      short loc_183D1
                 mov     ax, 0
@@ -14130,71 +14130,71 @@ loc_1834C:                              ; CODE XREF: sub_18333+14↑j
                 jz      short loc_18363
                 add     ax, [bx+24h]
 
-loc_18363:                              ; CODE XREF: sub_18333+2B↑j
+loc_18363:                              ; CODE XREF: RollEffectResistance+2B↑j
                 test    word ptr [di+8], 4000h
                 jz      short loc_1836D
                 add     ax, [bx+22h]
 
-loc_1836D:                              ; CODE XREF: sub_18333+35↑j
+loc_1836D:                              ; CODE XREF: RollEffectResistance+35↑j
                 test    word ptr [di+8], 2000h
                 jz      short loc_18377
                 add     ax, [bx+20h]
 
-loc_18377:                              ; CODE XREF: sub_18333+3F↑j
+loc_18377:                              ; CODE XREF: RollEffectResistance+3F↑j
                 test    word ptr [di+8], 1000h
                 jz      short loc_18381
                 add     ax, [bx+2Ah]
 
-loc_18381:                              ; CODE XREF: sub_18333+49↑j
+loc_18381:                              ; CODE XREF: RollEffectResistance+49↑j
                 test    word ptr [di+8], 800h
                 jz      short loc_1838B
                 add     ax, [bx+28h]
 
-loc_1838B:                              ; CODE XREF: sub_18333+53↑j
+loc_1838B:                              ; CODE XREF: RollEffectResistance+53↑j
                 test    word ptr [di+8], 400h
                 jz      short loc_18395
                 add     ax, [bx+26h]
 
-loc_18395:                              ; CODE XREF: sub_18333+5D↑j
+loc_18395:                              ; CODE XREF: RollEffectResistance+5D↑j
                 test    word ptr [di+8], 200h
                 jz      short loc_1839F
                 add     ax, [bx+30h]
 
-loc_1839F:                              ; CODE XREF: sub_18333+67↑j
+loc_1839F:                              ; CODE XREF: RollEffectResistance+67↑j
                 test    word ptr [di+8], 100h
                 jz      short loc_183A9
                 add     ax, [bx+2Eh]
 
-loc_183A9:                              ; CODE XREF: sub_18333+71↑j
+loc_183A9:                              ; CODE XREF: RollEffectResistance+71↑j
                 test    word ptr [di+8], 80h
                 jz      short loc_183B3
                 add     ax, [bx+2Ch]
 
-loc_183B3:                              ; CODE XREF: sub_18333+7B↑j
+loc_183B3:                              ; CODE XREF: RollEffectResistance+7B↑j
                 mov     word_32940, ax
                 mov     ax, word_32DC0
                 mov     word_3293E, ax
                 push    si
                 mov     si, [si+0Ch]
-                call    sub_2781C
+                call    FailsSavingThrow
                 pop     si
                 cmp     ax, 0
                 jz      short loc_183D1
                 mov     ax, [di+8]
                 and     ax, 0FF80h
 
-loc_183D1:                              ; CODE XREF: sub_18333+8↑j
-                                        ; sub_18333+16↑j ...
+loc_183D1:                              ; CODE XREF: RollEffectResistance+8↑j
+                                        ; RollEffectResistance+16↑j ...
                 mov     [si+0Eh], ax
                 retn
-sub_18333       endp
+RollEffectResistance endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_183D5       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar+7E↑p
-                test    word ptr [di+8], 7
+RollEffectMagnitude proc near           ; CODE XREF: ApplyEffectAndDrawIconBar+7E↑p
+                test    word ptr [di+8], 7 ; RollEffectMagnitude: if the effect isn't a simple low-bit-flag type (di+8 bits 0-2) and [si+0x10] isn't already set, computes a magnitude there -- fixed ([di+4], if di+0xA bit 0x4000 set) or a RandomInRange([di+4],[di+6]) roll scaled by the party member's [+0x16] stat (skipped if di+0xA bit 0x2000 set).
                 jnz     short locret_1840C
                 cmp     word ptr [si+10h], 0
                 jnz     short locret_1840C
@@ -14205,21 +14205,21 @@ sub_183D5       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar+7
                 jnz     short loc_18401
                 mov     ax, [di+6]
                 sub     ax, [di+4]
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, [di+4]
 
-loc_18401:                              ; CODE XREF: sub_183D5+1C↑j
+loc_18401:                              ; CODE XREF: RollEffectMagnitude+1C↑j
                 mov     bx, [si+0Ch]
                 mov     bx, [bx+16h]
                 mul     bx
 
-loc_18409:                              ; CODE XREF: sub_183D5+15↑j
+loc_18409:                              ; CODE XREF: RollEffectMagnitude+15↑j
                 mov     [si+10h], ax
 
-locret_1840C:                           ; CODE XREF: sub_183D5+5↑j
-                                        ; sub_183D5+B↑j
+locret_1840C:                           ; CODE XREF: RollEffectMagnitude+5↑j
+                                        ; RollEffectMagnitude+B↑j
                 retn
-sub_183D5       endp
+RollEffectMagnitude endp
 
 seg026          ends
 
@@ -19332,7 +19332,7 @@ loc_1ADAB:                              ; CODE XREF: sub_1ACD7+CD↑j
                 cmp     word ptr [bx+0Ah], 0
                 jz      short loc_1AE16
                 mov     ax, 3E8h
-                call    sub_2746C
+                call    RandomInRange
                 mov     bx, word_2E548
                 cmp     ax, [bx+0Ah]
                 mov     ax, [bx+8]
@@ -19344,7 +19344,7 @@ loc_1ADCE:                              ; CODE XREF: sub_1ACD7+D9↑j
                 cmp     word ptr [bx+6], 0
                 jz      short loc_1AE16
                 mov     ax, 3E8h
-                call    sub_2746C
+                call    RandomInRange
                 mov     bx, word_2E548
                 cmp     ax, [bx+6]
                 mov     ax, [bx+4]
@@ -24407,7 +24407,7 @@ sub_1DB73       proc near               ; CODE XREF: sub_1DA60:loc_1DADE↑p
                 mov     word ptr [si+1Ch], 0
                 mov     word ptr [si+1Eh], 0
                 mov     ax, 64h ; 'd'
-                call    sub_2746C
+                call    RandomInRange
                 cmp     ax, 55h ; 'U'
                 jle     short loc_1DB9D
                 retn
@@ -24489,7 +24489,7 @@ loc_1DC4E:                              ; CODE XREF: sub_1DB73+38↑j
                 jz      short locret_1DC72
                 push    ax
                 mov     ax, 64h ; 'd'
-                call    sub_2746C
+                call    RandomInRange
                 mov     bx, ax
                 pop     ax
                 cmp     bx, 46h ; 'F'
@@ -32675,7 +32675,7 @@ sub_227F5       proc near               ; CODE XREF: sub_22989+14↓p
                 sub     bx, ax
                 jl      short loc_2281D
                 mov     ax, 64h ; 'd'
-                call    sub_2746C
+                call    RandomInRange
                 cmp     bx, ax
                 jl      short loc_2281D
                 mov     ax, cx
@@ -32933,7 +32933,7 @@ sub_22A35       proc near               ; CODE XREF: sub_22989+1↑p
 loc_22A36:                              ; CODE XREF: sub_22A35+20↓j
                                         ; sub_22A35+2E↓j
                 mov     ax, 3
-                call    sub_2746C
+                call    RandomInRange
                 push    ax
                 mov     bx, 18h
                 mul     bx
@@ -33038,7 +33038,7 @@ loc_22AF1:                              ; CODE XREF: sub_22A68+6E↑j
                 add     ax, bx
                 mov     [si+6], ax
                 mov     ax, 5
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, [si+4Ch]
                 mov     [si+8], ax
                 mov     ax, 0Ah
@@ -33471,7 +33471,7 @@ loc_22E57:                              ; CODE XREF: sub_22D4C+DF↑j
 loc_22E77:                              ; CODE XREF: sub_22D4C+CE↑j
                                         ; sub_22D4C+116↑j
                 mov     ax, 64h ; 'd'
-                call    sub_2746C
+                call    RandomInRange
                 mov     bx, 5Ah ; 'Z'
                 test    word ptr [si+94h], 1000h
                 jnz     short loc_22EAE
@@ -37334,7 +37334,7 @@ sub_252EF       proc near               ; CODE XREF: ShowCharacterSkills:loc_245
                 mov     word ptr [si+74h], 0
                 mov     word ptr [si+34h], 0
                 mov     ax, 0Fh
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, 2Dh ; '-'
                 mov     [si+3Ch], ax
                 mov     [si+7Ch], ax
@@ -37343,27 +37343,27 @@ sub_252EF       proc near               ; CODE XREF: ShowCharacterSkills:loc_245
                 mov     [si+56h], ax
                 mov     [si+96h], ax
                 mov     ax, 0Fh
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, 2Dh ; '-'
                 mov     [si+3Eh], ax
                 mov     [si+7Eh], ax
                 mov     ax, 0Fh
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, 2Dh ; '-'
                 mov     [si+42h], ax
                 mov     [si+82h], ax
                 mov     ax, 0Fh
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, 2Dh ; '-'
                 mov     [si+44h], ax
                 mov     [si+84h], ax
                 mov     ax, 0Fh
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, 2Dh ; '-'
                 mov     [si+46h], ax
                 mov     [si+86h], ax
                 mov     ax, 0Fh
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, 2Dh ; '-'
                 mov     [si+40h], ax
                 mov     [si+80h], ax
@@ -38458,7 +38458,7 @@ sub_25A73       proc far                ; CODE XREF: sub_16407+354↑P
                 sub     bx, ax
                 jl      short loc_25AA9
                 mov     ax, 37h ; '7'
-                call    sub_2746C
+                call    RandomInRange
                 cmp     bx, ax
                 jl      short loc_25AA9
                 mov     ax, cx
@@ -41436,9 +41436,9 @@ seg091          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2746C       proc far                ; CODE XREF: sub_16A39+89↑P
+RandomInRange   proc far                ; CODE XREF: sub_16A39+89↑P
                                         ; sub_16DAA+1B↑P ...
-                push    bx
+                push    bx              ; RandomInRange(ax=exclusive upper bound): DOS-time-seeded (INT 21h AH=0x2Ch on first call) linear-congruential PRNG (multiplier 0x805). Returns a value in [0, bound). Widely used general-purpose RNG.
                 push    cx
                 push    dx
                 or      ax, ax
@@ -41453,7 +41453,7 @@ sub_2746C       proc far                ; CODE XREF: sub_16A39+89↑P
                                         ; DL = hundredths of seconds
                 mov     ax, dx
 
-loc_27482:                              ; CODE XREF: sub_2746C+E↑j
+loc_27482:                              ; CODE XREF: RandomInRange+E↑j
                 neg     ax
                 mov     bx, 805h
                 mul     bx
@@ -41465,19 +41465,19 @@ loc_27482:                              ; CODE XREF: sub_2746C+E↑j
                 inc     ax
                 add     ax, 0FFFFh
 
-loc_27499:                              ; CODE XREF: sub_2746C+26↑j
+loc_27499:                              ; CODE XREF: RandomInRange+26↑j
                 pop     dx
                 push    dx
                 mov     cx, 0
 
-loc_2749E:                              ; CODE XREF: sub_2746C+37↓j
+loc_2749E:                              ; CODE XREF: RandomInRange+37↓j
                 shl     dx, 1
                 jb      short loc_274A5
                 inc     cx
                 jmp     short loc_2749E
 ; ---------------------------------------------------------------------------
 
-loc_274A5:                              ; CODE XREF: sub_2746C+34↑j
+loc_274A5:                              ; CODE XREF: RandomInRange+34↑j
                 pop     dx
                 shl     ax, cl
                 shr     ax, cl
@@ -41485,13 +41485,13 @@ loc_274A5:                              ; CODE XREF: sub_2746C+34↑j
                 jbe     short loc_274B0
                 sub     ax, dx
 
-loc_274B0:                              ; CODE XREF: sub_2746C+5↑j
-                                        ; sub_2746C+40↑j
+loc_274B0:                              ; CODE XREF: RandomInRange+5↑j
+                                        ; RandomInRange+40↑j
                 pop     dx
                 pop     cx
                 pop     bx
                 retf
-sub_2746C       endp
+RandomInRange   endp
 
 seg091          ends
 
@@ -41907,9 +41907,9 @@ seg093          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2781C       proc far                ; CODE XREF: sub_16BF6+8A↑P
+FailsSavingThrow proc far               ; CODE XREF: sub_16BF6+8A↑P
                                         ; sub_16BF6+E9↑P ...
-                mov     bx, [si+16h]
+                mov     bx, [si+16h]    ; FailsSavingThrow(si=party-member record, word_3293E=difficulty threshold, word_32940=resistance bonus): chance = max(5, 5*([si+0x16]-threshold) + bonus); rolls RandomInRange(100) against it. Returns 1 if the roll exceeds the chance (save fails, effect applies), 0 if resisted.
                 sub     bx, word_3293E
                 mov     ax, 5
                 imul    bx
@@ -41918,10 +41918,10 @@ sub_2781C       proc far                ; CODE XREF: sub_16BF6+8A↑P
                 jg      short loc_27834
                 mov     ax, 5
 
-loc_27834:                              ; CODE XREF: sub_2781C+13↑j
+loc_27834:                              ; CODE XREF: FailsSavingThrow+13↑j
                 push    ax
                 mov     ax, 64h ; 'd'
-                call    sub_2746C
+                call    RandomInRange
                 pop     bx
                 cmp     ax, bx
                 jle     short loc_27846
@@ -41929,10 +41929,10 @@ loc_27834:                              ; CODE XREF: sub_2781C+13↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_27846:                              ; CODE XREF: sub_2781C+24↑j
+loc_27846:                              ; CODE XREF: FailsSavingThrow+24↑j
                 xor     ax, ax
                 retf
-sub_2781C       endp
+FailsSavingThrow endp
 
 seg093          ends
 
@@ -44615,7 +44615,7 @@ loc_28BE2:                              ; CODE XREF: sub_28BD2+5↑j
                 mov     word_3293E, ax
                 mov     ax, [si+6Ch]
                 mov     word_32940, ax
-                call    sub_2781C
+                call    FailsSavingThrow
                 cmp     ax, 0
                 jnz     short loc_28C04
                 jmp     loc_28C8D
@@ -47429,7 +47429,7 @@ sub_2A217       endp
                 dd unk_3907E
 ; ---------------------------------------------------------------------------
                 mov     ds, ax
-                call    sub_2746C
+                call    RandomInRange
                 test    ax, 1
                 mov     ax, [bp-4Ch]
                 jnz     short loc_2A234
@@ -48329,7 +48329,7 @@ loc_2A854:                              ; CODE XREF: sub_2A788+C3↑j
                 mov     word_3293E, ax
                 mov     ax, [si+6Ch]
                 mov     word_32940, ax
-                call    sub_2781C
+                call    FailsSavingThrow
                 cmp     ax, 0
                 jz      short loc_2A899
                 mov     ax, 4
@@ -50997,7 +50997,7 @@ loc_2C094:                              ; CODE XREF: sub_2C010+64↑j
                 add     ax, 6B7Eh
                 add     si, ax
                 mov     ax, 64h ; 'd'
-                call    sub_2746C
+                call    RandomInRange
                 cmp     ax, [si]
                 jl      short loc_2C0AC
                 cmp     ax, [si+2]
@@ -51328,7 +51328,7 @@ loc_2C303:                              ; CODE XREF: sub_2C0FE+200↑j
                 jnz     short loc_2C322
                 mov     ax, word_332EE
                 sub     ax, word_332EC
-                call    sub_2746C
+                call    RandomInRange
                 add     ax, word_332EC
 
 loc_2C322:                              ; CODE XREF: sub_2C0FE+212↑j
@@ -106899,8 +106899,8 @@ BLOCK_OFFSETS   db  8Bh
                 db 0F3h
                 db  92h
                 db 0F3h
-word_3CC76      dw 0                    ; DATA XREF: sub_2746C+8↑r
-                                        ; sub_2746C+1F↑w ...
+word_3CC76      dw 0                    ; DATA XREF: RandomInRange+8↑r
+                                        ; RandomInRange+1F↑w ...
 g_soundDriverFarPtr db    0             ; DATA XREF: ShutdownAudioDrivers+12↑r
                                         ; ShutdownAudioDrivers+19↑r ...
                 db    0

@@ -1085,6 +1085,26 @@ record section rather than leaving the wrong claim standing.
 
 154 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: a saving-throw/resistance pipeline
+
+Kept following `ApplyEffectAndDrawIconBar`'s default branch one step
+earlier, to the two calls it makes right before `ApplyEffectCost` —
+and found a complete saving-throw/resistance-check pipeline for
+trap/status effects. `RollEffectMagnitude` (was `sub_183D5`) computes
+an effect's amount (fixed, or a random roll scaled by a party stat).
+`RollEffectResistance` (was `sub_18333`) sums a **newly-found 9-field
+block on the party record** (`+0x20` through `+0x30`, one per matching
+high bit of the effect's cost flags — equipment/bonus resistance
+values, individual fields not yet matched to specific types) and calls
+`FailsSavingThrow` (was `sub_2781C`: `chance = max(5, 5*(level -
+threshold) + resistance bonus)`, rolled against `RandomInRange(100)`)
+to decide whether the effect actually lands. `RandomInRange` (was
+`sub_2746C`) turned out to be the game's general-purpose PRNG — a
+DOS-time-seeded linear-congruential generator, widely called from
+elsewhere too.
+
+158 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
