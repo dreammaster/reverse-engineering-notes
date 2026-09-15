@@ -4216,7 +4216,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1CBC4);
 	set_cmt	(0X1CBD6,	"msg",	0);
+	set_cmt	(0X1CBF3,	"UseItem dispatch branch for key items, near-identical to UseKeyItem (same LoadLockState(ax=es:[si+0x10]) call) but missing its word_328C6 bit 0x20 bracketing and final ClearStatusPanelIfDirty -- reads as a lighter check/preview variant rather than the full 'use this key' action.",	0);
 	create_insn	(0X1CBF3);
+	set_name	(0X1CBF3,	"CheckKeyItem");
 	create_insn	(x=0X1CBF6);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CC12);
@@ -4523,6 +4525,15 @@ static Bytes_0(void) {
 	create_insn	(0X1DE3B);
 	create_insn	(x=0X1DE4E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1DE50);
 	op_hex		(x,	1);
 	create_insn	(x=0X1DE5B);
@@ -4558,15 +4569,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1E10F);
 	create_insn	(0X1E11E);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1E12A);
 	create_insn	(x=0X1E137);
 	op_hex		(x,	1);
@@ -8150,6 +8152,15 @@ static Bytes_1(void) {
 	create_dword	(x=0X2A21F);
 	op_plain_offset	(x,	0,	0X2D860);
 	op_plain_offset	(x,	128,	0X2D860);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A223);
 	create_insn	(x=0X2A22A);
 	op_hex		(x,	1);
@@ -8186,15 +8197,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A2A5);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A2A8);
 	create_insn	(x=0X2A2AB);
 	op_hex		(x,	1);

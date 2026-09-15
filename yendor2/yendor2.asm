@@ -13300,7 +13300,7 @@ loc_17D28:                              ; CODE XREF: UseItem+191↑j
 loc_17D2B:                              ; CODE XREF: UseItem+132↑j
                 test    word ptr es:[si+0Eh], 1000h
                 jz      short loc_17D3B
-                call    sub_1CBF3
+                call    CheckKeyItem
                 jmp     loc_17BA4
 ; ---------------------------------------------------------------------------
 
@@ -22539,8 +22539,8 @@ sub_1CBC4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CBF3       proc far                ; CODE XREF: UseItem+1A1↑P
-                mov     ax, word_36C7F
+CheckKeyItem    proc far                ; CODE XREF: UseItem+1A1↑P
+                mov     ax, word_36C7F  ; UseItem dispatch branch for key items, near-identical to UseKeyItem (same LoadLockState(ax=es:[si+0x10]) call) but missing its word_328C6 bit 0x20 bracketing and final ClearStatusPanelIfDirty -- reads as a lighter check/preview variant rather than the full 'use this key' action.
                 and     ax, 7000h
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
@@ -22557,7 +22557,7 @@ sub_1CBF3       proc far                ; CODE XREF: UseItem+1A1↑P
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
-sub_1CBF3       endp
+CheckKeyItem    endp
 
 
 ; =============== S U B R O U T I N E =======================================

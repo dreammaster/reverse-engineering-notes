@@ -1607,6 +1607,15 @@ directly.
 
 214 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CheckKeyItem
+
+Found a near-duplicate of `UseKeyItem` at a different `UseItem`
+dispatch offset — same `LoadLockState` call, but missing the "action
+in progress" bracketing and final panel clear, reading as a lighter
+check/preview variant. Named `CheckKeyItem`.
+
+215 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
