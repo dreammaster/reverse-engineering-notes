@@ -5287,6 +5287,20 @@ plausibly showing an ability's description or effect text.
 
 614 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawIndentedTextColumn
+
+Named `sub_28A76` -> `DrawIndentedTextColumn`, called from
+`ShowHealingCostPrompt` and unnamed `sub_1A5F6` — a mode-dispatching
+wrapper around the plain `DrawStringColumn` and a per-line helper
+`sub_28B94`, selecting between several "how many leading lines get
+zero indent" wrapping patterns based on `word_328C4` bits. Reads as a
+word-wrapped text column with a caller-selectable hanging-indent
+style, where `fontOffset` is the per-line indent and the selected mode
+controls how many leading lines start unindented before continuation
+lines pick up the accumulated offset.
+
+615 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

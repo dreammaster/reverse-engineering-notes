@@ -8011,8 +8011,10 @@ static Bytes_3(void) {
 	set_name	(0X28A5A,	"StrLen");
 	create_insn	(x=0X28A5D);
 	op_seg		(x,	1);
+	set_cmt	(0X28A76,	"Dispatches on word_328C4 bits to either call DrawStringColumn directly, or loop sub_28B94 (per-line draw, cx==0 stops) with one of 3 'how many leading lines get fontOffset reset to 0' patterns (bit 0x10=every line, 0x8=first 2, 0x4=first 4 of 5) -- a hanging-indent text column mode selector. Called from ShowHealingCostPrompt and sub_1A5F6.",	0);
 	create_insn	(x=0X28A76);
 	op_hex		(x,	1);
+	set_name	(0X28A76,	"DrawIndentedTextColumn");
 	create_insn	(x=0X28A7E);
 	op_hex		(x,	1);
 	create_insn	(0X28A92);
@@ -9290,6 +9292,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2B09A,	"Item-icon-dispatch handler (word_32974==0x248). Shows '2 X HEALTH'/'2 X MAGIC': cures all ailments and sets every party member's current HP/MP to 2x their max (an overheal effect), drawing a heal icon (PrepareTrapEffectSlots id 3, same as UseHealingItem) on each via ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X2B09A);
 	set_name	(0X2B09A,	"PartyMassHealAndOverheal");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B09F);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B0CE);
@@ -9304,15 +9315,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2B14F);
 	op_hex		(x,	1);
 	set_name	(0X2B14F,	"InstantKillActiveMonster");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B174);
 	op_hex		(x,	1);
 	set_cmt	(0X2B17F,	"Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.",	0);

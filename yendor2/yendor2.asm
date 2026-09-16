@@ -18466,7 +18466,7 @@ loc_1A611:                              ; CODE XREF: sub_1A5F6+145↓j
                 mov     _font_fgColor, 0Dh
                 mov     cx, word_32940
                 mov     bx, 0AFA8h
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     fontOffset, 0
                 call    DrawMouseCursor
 
@@ -20722,16 +20722,16 @@ loc_1B9AA:                              ; CODE XREF: ShowHealingCostPrompt+40↓
                 mov     _font_fgColor, 0Dh
                 mov     cx, 1
                 mov     bx, 0AFBCh
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 add     _textPos_y, 6
                 mov     cx, 1
                 pop     bx
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 add     _textPos_y, 6
                 add     _textPos_y, 6
                 mov     cx, 1
                 mov     bx, 8073h
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     fontOffset, 0
                 push    cs
                 call    near ptr sub_1CBC4
@@ -20875,7 +20875,7 @@ loc_1BB1B:                              ; CODE XREF: BuildItemUseMessage+5A↑j
                 mov     _font_fgColor, 0Dh
                 mov     cx, word_32940
                 mov     bx, 0AFA8h
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     fontOffset, 0
 
 loc_1BB43:                              ; CODE XREF: BuildItemUseMessage+62↑j
@@ -21182,7 +21182,7 @@ loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
                 mov     _font_fgColor, 0Dh
                 mov     cx, 1
                 mov     bx, 0AFA8h
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     si, 512Ah
                 mov     word_2E412, 0FFFFh
                 call    FormatAndDrawBCD4
@@ -21197,11 +21197,11 @@ loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
                 mov     _textPos_y, 4Fh ; 'O'
                 mov     cx, 1
                 mov     bx, 0AFBCh
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     _textPos_y, 5Bh ; '['
                 mov     cx, 1
                 mov     bx, 8073h
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     fontOffset, 0
                 push    cs
                 call    near ptr sub_1CBC4
@@ -44431,21 +44431,21 @@ seg104          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28A76       proc far                ; CODE XREF: sub_1A5F6+89↑P
+DrawIndentedTextColumn proc far         ; CODE XREF: sub_1A5F6+89↑P
                                         ; ShowHealingCostPrompt+8E↑P ...
-                test    word_328C4, 20h
+                test    word_328C4, 20h ; Dispatches on word_328C4 bits to either call DrawStringColumn directly, or loop sub_28B94 (per-line draw, cx==0 stops) with one of 3 'how many leading lines get fontOffset reset to 0' patterns (bit 0x10=every line, 0x8=first 2, 0x4=first 4 of 5) -- a hanging-indent text column mode selector. Called from ShowHealingCostPrompt and sub_1A5F6.
                 jnz     short loc_28A8C
                 test    word_328C4, 2
                 jz      short loc_28A92
                 mov     fontOffset, 0
 
-loc_28A8C:                              ; CODE XREF: sub_28A76+6↑j
-                                        ; sub_28A76+36↓j
+loc_28A8C:                              ; CODE XREF: DrawIndentedTextColumn+6↑j
+                                        ; DrawIndentedTextColumn+36↓j
                 call    DrawStringColumn
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28A92:                              ; CODE XREF: sub_28A76+E↑j
+loc_28A92:                              ; CODE XREF: DrawIndentedTextColumn+E↑j
                 mov     dx, _textPos_x
                 test    word_328C4, 10h
                 jnz     short loc_28AB1
@@ -44456,8 +44456,8 @@ loc_28A92:                              ; CODE XREF: sub_28A76+E↑j
                 jmp     loc_28B31
 ; ---------------------------------------------------------------------------
 
-loc_28AB1:                              ; CODE XREF: sub_28A76+26↑j
-                                        ; sub_28A76+71↓j
+loc_28AB1:                              ; CODE XREF: DrawIndentedTextColumn+26↑j
+                                        ; DrawIndentedTextColumn+71↓j
                 push    fontOffset
                 mov     fontOffset, 0
                 call    sub_28B94
@@ -44479,13 +44479,13 @@ loc_28AB1:                              ; CODE XREF: sub_28A76+26↑j
                 jmp     short loc_28AB1
 ; ---------------------------------------------------------------------------
 
-locret_28AE9:                           ; CODE XREF: sub_28A76+4F↑j
-                                        ; sub_28A76+57↑j ...
+locret_28AE9:                           ; CODE XREF: DrawIndentedTextColumn+4F↑j
+                                        ; DrawIndentedTextColumn+57↑j ...
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28AEA:                              ; CODE XREF: sub_28A76+2E↑j
-                                        ; sub_28A76+B8↓j
+loc_28AEA:                              ; CODE XREF: DrawIndentedTextColumn+2E↑j
+                                        ; DrawIndentedTextColumn+B8↓j
                 push    fontOffset
                 mov     fontOffset, 0
                 call    sub_28B94
@@ -44510,13 +44510,13 @@ loc_28AEA:                              ; CODE XREF: sub_28A76+2E↑j
                 jmp     short loc_28AEA
 ; ---------------------------------------------------------------------------
 
-locret_28B30:                           ; CODE XREF: sub_28A76+88↑j
-                                        ; sub_28A76+9E↑j ...
+locret_28B30:                           ; CODE XREF: DrawIndentedTextColumn+88↑j
+                                        ; DrawIndentedTextColumn+9E↑j ...
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28B31:                              ; CODE XREF: sub_28A76+38↑j
-                                        ; sub_28A76+11B↓j
+loc_28B31:                              ; CODE XREF: DrawIndentedTextColumn+38↑j
+                                        ; DrawIndentedTextColumn+11B↓j
                 push    fontOffset
                 mov     fontOffset, 0
                 call    sub_28B94
@@ -44547,17 +44547,17 @@ loc_28B31:                              ; CODE XREF: sub_28A76+38↑j
                 jmp     short loc_28B31
 ; ---------------------------------------------------------------------------
 
-locret_28B93:                           ; CODE XREF: sub_28A76+CF↑j
-                                        ; sub_28A76+E5↑j ...
+locret_28B93:                           ; CODE XREF: DrawIndentedTextColumn+CF↑j
+                                        ; DrawIndentedTextColumn+E5↑j ...
                 retf
-sub_28A76       endp
+DrawIndentedTextColumn endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28B94       proc near               ; CODE XREF: sub_28A76+45↑p
-                                        ; sub_28A76+51↑p ...
+sub_28B94       proc near               ; CODE XREF: DrawIndentedTextColumn+45↑p
+                                        ; DrawIndentedTextColumn+51↑p ...
                 cmp     byte ptr [bx], 20h ; ' '
                 jnz     short loc_28BA1
                 add     _textPos_x, 6
@@ -49916,11 +49916,11 @@ loc_2B79A:                              ; CODE XREF: ShowConversationText_4000+6
                 call    DrawPicture
                 mov     bx, si
                 mov     cx, 0Dh
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     _textPos_x, 7Ch ; '|'
                 mov     _textPos_y, 21h ; '!'
                 mov     cx, 0Dh
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     si, bx
                 call    sub_238CD
                 call    WaitForKeypressTickingMusic
@@ -49941,18 +49941,18 @@ loc_2B7FB:                              ; CODE XREF: ShowConversationText_4000+1
                 sub     word_31980, 0Dh
                 mov     bx, si
                 mov     cx, 0Dh
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     _textPos_x, 7Ch ; '|'
                 mov     _textPos_y, 21h ; '!'
                 mov     cx, word_31980
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 jmp     short loc_2B850
 ; ---------------------------------------------------------------------------
 
 loc_2B845:                              ; CODE XREF: ShowConversationText_4000+90↑j
                 mov     bx, si
                 mov     cx, word_31980
-                call    sub_28A76
+                call    DrawIndentedTextColumn
 
 loc_2B850:                              ; CODE XREF: ShowConversationText_4000+B6↑j
                 call    sub_238CD
@@ -49987,7 +49987,7 @@ loc_2B873:                              ; CODE XREF: ShowConversationText_2000+6
                 mov     cx, word_31980
 
 loc_2B8A0:                              ; CODE XREF: ShowConversationText_2000+34↑j
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     si, bx
                 call    sub_238CD
                 call    WaitForKeypressTickingMusic
@@ -50030,7 +50030,7 @@ loc_2B8E4:                              ; CODE XREF: ShowConversationText_1000+6
                 mov     cx, word_31980
 
 loc_2B911:                              ; CODE XREF: ShowConversationText_1000+34↑j
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     si, bx
                 call    sub_238CD
                 call    WaitForKeypressTickingMusic
@@ -50075,13 +50075,13 @@ loc_2B955:                              ; CODE XREF: ShowConversationText_800+7E
 loc_2B982:                              ; CODE XREF: ShowConversationText_800+34↑j
                 push    cx
                 push    bx
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     _textPos_x, 37h ; '7'
                 mov     _textPos_y, 1Dh
                 mov     _font_fgColor, 0Bh
                 pop     bx
                 pop     cx
-                call    sub_28A76
+                call    DrawIndentedTextColumn
                 mov     si, bx
                 call    sub_238CD
                 call    WaitForKeypressTickingMusic
