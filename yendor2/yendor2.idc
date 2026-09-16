@@ -7301,7 +7301,9 @@ static Bytes_1(void) {
 	set_cmt	(0X29838,	"this",	0);
 	create_insn	(x=0X2986C);
 	op_hex		(x,	1);
+	set_cmt	(0X29878,	"Core picture-drawing primitive: looks up g_pictureDir[word_2E532], calls LoadPictureIntoEms to ensure it's EMS-resident, then blits width x height pixels from the EMS page frame to the video buffer at (x, y). Blit mode selected by _font_bgTransparent (0-5 -- different transparency/color-key branches).",	0);
 	create_insn	(0X29878);
+	set_name	(0X29878,	"DrawPicture");
 	create_insn	(x=0X29882);
 	op_hex		(x,	1);
 	create_insn	(x=0X29888);
@@ -8142,7 +8144,9 @@ static Bytes_1(void) {
 	create_insn	(0X2A67E);
 	create_insn	(0X2A681);
 	set_name	(0X2A681,	"getTextPos");
+	set_cmt	(0X2A68D,	"LRU cache: maps picture ids into a small pool of LIM EMS 4.0 pages (INT 67h/AX=0x5000). Cache hit: just re-maps the already-loaded pages. Cache miss: evicts the oldest slot and reads the picture's bytes from PICTURES.VGA (FileEntry at bx=0x9011) into the newly-mapped pages.",	0);
 	create_insn	(0X2A68D);
+	set_name	(0X2A68D,	"LoadPictureIntoEms");
 	create_insn	(0X2A6A3);
 	set_cmt	(0X2A6CB,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A6CB);
@@ -9537,6 +9541,8 @@ static Bytes_1(void) {
 	set_name	(0X3505A,	"aFlyingRug");
 	create_strlit	(0X35074,	0XD);
 	set_name	(0X35074,	"aMagicDragon");
+	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA. 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Verified by extraction: entry 0 (318x198 @ 0) is the SmithWare splash screen; entry 8 (16x16 @ 0xBCF3DA) is a mouse cursor; entry 9 (8x8 @ 0xBEF1DA) is a scroll-arrow icon. Indexed as g_pictureDir + word_2E532 (picture id * 0x10) elsewhere.",	0);
+	set_name	(0X3508E,	"g_pictureDir");
 	create_strlit	(0X3512E,	0X9);
 	set_name	(0X3512E,	"aNorth");
 	create_strlit	(0X35137,	0X9);

@@ -2466,7 +2466,7 @@ sub_116CF       proc near               ; CODE XREF: sub_112AE:loc_114C2↑p
                 mov     ax, [bx+4]
                 mov     y, ax
                 mov     word_2E532, 80h
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 pop     bx
                 pop     ax
@@ -2556,7 +2556,7 @@ sub_1177C       proc far                ; CODE XREF: start+756↑P
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     word_2E530, 5
-                call    sub_29878
+                call    DrawPicture
                 and     word_328C8, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
@@ -2878,7 +2878,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     word_2E532, 0
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 7
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 mov     ax, 28h ; '('   ; ticks
                 call    wait
@@ -2922,7 +2922,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     x, 1
                 mov     y, 1
                 mov     word_2E530, 9
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 mov     ax, 14h         ; ticks
                 call    wait
@@ -2949,13 +2949,13 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 call    sub_25862
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 0Ah
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 7Ch ; '|'
                 mov     y, 2Ah ; '*'
                 mov     word_2E532, 60h ; '`'
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, 21h ; '!'
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 call    sub_2587E
                 mov     ax, 28h ; '('   ; ticks
@@ -2998,7 +2998,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 64h ; 'd'
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 mov     ax, 1Eh         ; ticks
                 call    wait
@@ -3021,7 +3021,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     word_2E532, 0
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 0Bh
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 mov     ax, 0Ah         ; ticks
                 call    wait
@@ -3093,11 +3093,11 @@ loc_11D99:                              ; CODE XREF: sub_11D66+79↓j
                 mov     y, 1
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 7
-                call    sub_29878
+                call    DrawPicture
                 pop     y
                 mov     _font_bgTransparent, 4
                 mov     word_2E530, 8
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
 
 loc_11DCE:                              ; CODE XREF: sub_11D66+6D↓j
@@ -3122,7 +3122,7 @@ sub_11DE2       proc near               ; CODE XREF: sub_11A10+234↑p
                 mov     cx, 0Eh
 
 loc_11E03:                              ; CODE XREF: sub_11DE2+37↓j
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 inc     word_2E530
                 mov     ax, 2           ; ticks
@@ -5456,7 +5456,7 @@ sub_13380       proc near               ; CODE XREF: sub_13FCF:loc_14108↓p
                 mov     ax, es:[di+6]
                 mov     [si+8], ax
                 mov     word_2E530, 73h ; 's'
-                call    sub_29878
+                call    DrawPicture
                 add     si, 0Ah
                 add     di, 8
                 retn
@@ -5539,7 +5539,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 mov     x, 1Ch
                 mov     y, 29h ; ')'
                 mov     word_2E530, 0DAh
-                call    sub_29878
+                call    DrawPicture
                 mov     _textPos_x, 2Fh ; '/'
                 mov     _textPos_y, 2Fh ; '/'
                 mov     _font_fgColor, 0CAh
@@ -5550,7 +5550,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    sub_135E8
                 mov     y, 3Bh ; ';'
                 mov     word_2E530, 0F1h
-                call    sub_29878
+                call    DrawPicture
                 mov     _textPos_x, 2Fh ; '/'
                 mov     _textPos_y, 41h ; 'A'
                 mov     _font_fgColor, 0CAh
@@ -5561,7 +5561,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    sub_135E8
                 mov     y, 4Dh ; 'M'
                 mov     word_2E530, 0F3h
-                call    sub_29878
+                call    DrawPicture
                 mov     _textPos_x, 2Fh ; '/'
                 mov     _textPos_y, 53h ; 'S'
                 mov     _font_fgColor, 0CAh
@@ -5572,7 +5572,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    sub_135E8
                 mov     y, 5Fh ; '_'
                 mov     word_2E530, 0F0h
-                call    sub_29878
+                call    DrawPicture
                 mov     _textPos_x, 2Fh ; '/'
                 mov     _textPos_y, 65h ; 'e'
                 mov     _font_fgColor, 0CAh
@@ -5583,7 +5583,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    sub_13630
                 mov     y, 71h ; 'q'
                 mov     word_2E530, 0F2h
-                call    sub_29878
+                call    DrawPicture
                 mov     _textPos_x, 2Fh ; '/'
                 mov     _textPos_y, 77h ; 'w'
                 mov     _font_fgColor, 0CAh
@@ -5594,7 +5594,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    sub_13630
                 mov     y, 83h
                 mov     word_2E530, 0F4h
-                call    sub_29878
+                call    DrawPicture
                 mov     _textPos_x, 2Fh ; '/'
                 mov     _textPos_y, 89h
                 mov     _font_fgColor, 0CAh
@@ -5678,7 +5678,7 @@ sub_13678       proc near               ; CODE XREF: sub_13090:loc_130AD↑p
                 inc     word_2E530
 
 loc_136BD:                              ; CODE XREF: sub_13678+3F↑j
-                call    sub_29878
+                call    DrawPicture
                 mov     _textPos_y, 27h ; '''
                 mov     _textPos_x, 5Bh ; '['
                 mov     bx, 8A82h
@@ -6662,7 +6662,7 @@ sub_14122       proc near               ; CODE XREF: sub_13278+32↑p
                 mov     y, 0
                 mov     word_2E532, 90h
                 mov     word_2E530, 73h ; 's'
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_fgColor, 7Bh ; '{'
                 mov     _font_bgColor, 0
                 mov     _textPos_x, 0AAh
@@ -7014,7 +7014,7 @@ loc_14595:                              ; CODE XREF: sub_141D9+25D↑j
                 mov     word_2E490, 6
 
 loc_145EB:                              ; CODE XREF: sub_141D9+3EA↑j
-                call    sub_29878
+                call    DrawPicture
                 and     word_328C6, 0FFFEh
                 inc     word_32938
                 cmp     word_32938, 49h ; 'I'
@@ -7433,13 +7433,13 @@ loc_149AC:                              ; CODE XREF: sub_14994+46↓j
                 test    word_328FE, dx
                 jz      short loc_149CB
                 inc     word_2E530
-                call    sub_29878
+                call    DrawPicture
                 inc     word_2E530
                 jmp     short loc_149D5
 ; ---------------------------------------------------------------------------
 
 loc_149CB:                              ; CODE XREF: sub_14994+26↑j
-                call    sub_29878
+                call    DrawPicture
                 add     word_2E530, 2
 
 loc_149D5:                              ; CODE XREF: sub_14994+35↑j
@@ -7790,7 +7790,7 @@ loc_14D04:                              ; CODE XREF: sub_14C37+C8↑j
 loc_14D11:                              ; CODE XREF: sub_14C37+EC↓j
                 mov     ax, [bx]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 add     x, 1Eh
                 add     bx, 2
                 loop    loc_14D11
@@ -8262,7 +8262,7 @@ DrawMessageBox  proc far                ; CODE XREF: sub_12E59+5E↑P
                 mov     word_2E532, 0
                 mov     ax, word_2E3FE
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_fgColor, 0Dh
                 mov     _textPos_x, 6
                 mov     _textPos_y, 4
@@ -8312,7 +8312,7 @@ loc_1515D:                              ; CODE XREF: sub_15142+16↑j
                 mov     _font_bgTransparent, 0
                 mov     word_2E532, 0
                 mov     word_2E530, 0Ch
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 or      word_328C8, 800h
                 mov     ax, 1
@@ -8554,7 +8554,7 @@ loc_153B0:                              ; CODE XREF: sub_152EF+A8↑j
 
 loc_153D2:                              ; CODE XREF: sub_152EF+BF↑j
                                         ; sub_152EF+CB↑j
-                call    sub_29878
+                call    DrawPicture
                 test    word ptr [si], 4000h
                 jnz     short loc_153E0
                 jmp     loc_1531E
@@ -8963,7 +8963,7 @@ loc_15756:                              ; CODE XREF: sub_1559A+1B9↑j
                 mov     _font_bgTransparent, 1
                 mov     word_2E532, 10h
                 mov     word_2E530, 27h ; '''
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 or      word_328C8, 800h
                 mov     dx, 0C0h
@@ -9018,7 +9018,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
                 mov     _font_bgTransparent, 1
                 mov     word_2E532, 10h
                 mov     word_2E530, 28h ; '('
-                call    sub_29878
+                call    DrawPicture
                 mov     cx, 0FFFFh
                 call    sub_16234
                 call    sub_16244
@@ -9171,34 +9171,34 @@ loc_159D9:                              ; CODE XREF: sub_1559A+43C↑j
                 mov     x, 8Eh
                 mov     y, 1
                 mov     word_2E530, 0AFh
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 32h ; '2'
                 mov     y, 17h
                 mov     word_2E530, 0B0h
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 0ECh
                 mov     word_2E530, 0B1h
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 1
                 mov     y, 52h ; 'R'
                 mov     word_2E530, 0B2h
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 11Eh
                 mov     y, 52h ; 'R'
                 mov     word_2E530, 0B3h
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 32h ; '2'
                 mov     y, 8Fh
                 mov     word_2E530, 0B4h
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 0ECh
                 mov     y, 8Fh
                 mov     word_2E530, 0B5h
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 8Eh
                 mov     y, 0A2h
                 mov     word_2E530, 0B6h
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 call    sub_15249
                 jnz     short loc_15AB1
@@ -9269,7 +9269,7 @@ loc_15B54:                              ; CODE XREF: sub_1559A+5B7↑j
                 mov     _font_bgTransparent, 1
                 mov     word_2E532, 10h
                 mov     word_2E530, 27h ; '''
-                call    sub_29878
+                call    DrawPicture
                 mov     es, _videoBufferSeg
                 mov     di, 6753h
                 mov     cx, 2Ah ; '*'
@@ -9567,11 +9567,11 @@ loc_15E5D:                              ; CODE XREF: sub_15E44+A↑j
                 add     ax, 0F50h
                 mov     _videoSegment, ax
                 mov     word_2E530, 6
-                call    sub_29878
+                call    DrawPicture
                 mov     ax, fe
                 mov     _videoSegment, ax
                 mov     word_2E530, 5
-                call    sub_29878
+                call    DrawPicture
                 and     word_328C8, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
@@ -9591,7 +9591,7 @@ loc_15E5D:                              ; CODE XREF: sub_15E44+A↑j
                 mov     cx, 9
 
 loc_15F1B:                              ; CODE XREF: sub_15E44+E0↓j
-                call    sub_29878
+                call    DrawPicture
                 inc     word_2E530
                 loop    loc_15F1B
                 mov     word_2E532, 60h ; '`'
@@ -9599,7 +9599,7 @@ loc_15F1B:                              ; CODE XREF: sub_15E44+E0↓j
                 mov     cx, 9
 
 loc_15F35:                              ; CODE XREF: sub_15E44+FA↓j
-                call    sub_29878
+                call    DrawPicture
                 inc     word_2E530
                 loop    loc_15F35
                 mov     word_2E402, 0
@@ -10625,7 +10625,7 @@ loc_1670D:                              ; CODE XREF: sub_16407+C6↑j
                 mov     _videoSegment, ax
                 mov     word_2E532, 80h
                 mov     word_2E530, 4
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 mov     ax, 142h
                 call    sub_1ACD7
@@ -10678,7 +10678,7 @@ loc_167B3:                              ; CODE XREF: sub_16407+341↑j
                 mov     _videoSegment, ax
                 mov     word_2E532, 80h
                 mov     word_2E530, 3
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 mov     word_32956, 0
 
@@ -12181,7 +12181,7 @@ loc_172C9:                              ; CODE XREF: sub_1728A+6B↓j
                 call    sub_12554
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
 
 loc_172EF:                              ; CODE XREF: sub_1728A+4F↑j
                 add     si, 4
@@ -13865,7 +13865,7 @@ loc_18171:                              ; CODE XREF: sub_180BA+7C↑j
 loc_1818B:                              ; CODE XREF: sub_180BA+9E↑j
                                         ; sub_180BA+B5↑j
                 mov     _font_bgTransparent, 1
-                call    sub_29878
+                call    DrawPicture
                 pop     si
                 pop     cx
                 jmp     loc_180CF
@@ -16742,7 +16742,7 @@ loc_19988:                              ; CODE XREF: sub_19957+10↑j
                 mov     _font_bgTransparent, 0
                 mov     word_2E532, 10h
                 mov     word_2E530, 1
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 1
                 mov     _font_fgColor, 0Fh
                 mov     word_2E412, 0Fh
@@ -20594,14 +20594,14 @@ sub_1B8AB       proc far                ; CODE XREF: sub_17B92+AF↑P
                 mov     _font_bgTransparent, 1
                 mov     word_2E532, 10h
                 mov     word_2E530, 3
-                call    sub_29878
+                call    DrawPicture
                 mov     word_2E532, 70h ; 'p'
                 mov     si, 0BCEh
                 mov     ax, [si]
                 mov     word_2E530, ax
                 mov     x, 15h
                 mov     y, 1Fh
-                call    sub_29878
+                call    DrawPicture
                 retf
 sub_1B8AB       endp
 
@@ -23520,7 +23520,7 @@ loc_1D2D0:                              ; CODE XREF: sub_1D2A6+1B↑j
                 mov     _videoSegment, ax
                 mov     word_2E532, 0
                 mov     word_2E530, 2
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 call    sub_2587E
                 and     word_328C4, 0FDFFh
@@ -23812,7 +23812,7 @@ loc_1D540:                              ; CODE XREF: sub_1D4B8+85↑j
                 mov     _videoSegment, ax
                 mov     word_2E532, 80h
                 mov     word_2E530, 2
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 call    sub_2BBD7
                 mov     _font_bgTransparent, 5
@@ -24180,7 +24180,7 @@ loc_1D9A6:                              ; CODE XREF: sub_1D937+3E↑j
                 mov     word_32982, 35h ; '5'
                 mov     word_32986, 0
                 mov     word_32988, 69h ; 'i'
-                call    sub_29878
+                call    DrawPicture
                 call    sub_2BB1A
                 call    sub_223D4
                 call    sub_20C1E
@@ -25511,7 +25511,7 @@ sub_1E4AA       proc near               ; CODE XREF: sub_1DCE0+4D↑p
                 mov     _videoSegment, ax
                 mov     word_2E532, 80h
                 mov     word_2E530, 6
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_1E4AA       endp
 
@@ -25527,7 +25527,7 @@ sub_1E4D6       proc near               ; CODE XREF: sub_1DCE0+24D↑p
                 mov     _videoSegment, ax
                 mov     word_2E532, 80h
                 mov     word_2E530, 5
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_1E4D6       endp
 
@@ -25559,7 +25559,7 @@ sub_1E522       proc near               ; CODE XREF: sub_1DCE0:loc_1DD35↑p
                 mov     y, 17h
                 mov     word_2E532, 10h
                 mov     word_2E530, 4
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_1E522       endp
 
@@ -25709,7 +25709,7 @@ loc_1E6CD:                              ; CODE XREF: sub_1E64A+79↑j
                 mov     _videoSegment, 0A000h
                 mov     word_2E532, 80h
                 mov     word_2E530, 8
-                call    sub_29878
+                call    DrawPicture
 
 loc_1E6FB:                              ; CODE XREF: sub_1E64A+15↑j
                 call    sub_25862
@@ -26078,7 +26078,7 @@ loc_1EAA2:                              ; CODE XREF: sub_1EA6E+2A↑j
                 mov     _videoSegment, 0A000h
                 mov     word_2E532, 80h
                 mov     word_2E530, 0Ah
-                call    sub_29878
+                call    DrawPicture
 
 loc_1EAD0:                              ; CODE XREF: sub_1EA6E:loc_1EC0B↓j
                                         ; sub_1EA6E+1D7↓j ...
@@ -26088,7 +26088,7 @@ loc_1EAD0:                              ; CODE XREF: sub_1EA6E:loc_1EC0B↓j
                 mov     _font_bgTransparent, 1
                 mov     word_2E532, 10h
                 mov     word_2E530, 0
-                call    sub_29878
+                call    DrawPicture
                 call    sub_1F217
                 call    sub_16EFA
                 test    word_328C4, 1
@@ -26756,7 +26756,7 @@ sub_1F1F4       proc near               ; CODE XREF: sub_1EA6E+2FB↑p
                 mov     _font_bgTransparent, 0
                 mov     _videoSegment, 0A000h
                 mov     word_2E532, 90h
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_1F1F4       endp
 
@@ -28608,7 +28608,7 @@ loc_20425:                              ; CODE XREF: sub_20406+3F↓j
                 mov     bx, ax
                 mov     ax, [bx+0Ah]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 add     x, 8
                 inc     word_2E496
                 loop    loc_20425
@@ -28673,7 +28673,7 @@ loc_204C9:                              ; CODE XREF: sub_204AA+3F↓j
                 mov     bx, ax
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 add     x, 8
                 inc     word_2E4A2
                 loop    loc_204C9
@@ -29085,7 +29085,7 @@ sub_20888       proc near               ; CODE XREF: sub_20070+AE↑p
                 mov     bx, ax
                 mov     ax, [bx+0Ah]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 1
                 pop     bx
                 mov     bx, es:[bx+2]
@@ -29097,7 +29097,7 @@ sub_20888       proc near               ; CODE XREF: sub_20070+AE↑p
                 mov     bx, ax
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
 
 locret_208C9:                           ; CODE XREF: sub_20888+2A↑j
                 retn
@@ -29710,14 +29710,14 @@ loc_20D5C:                              ; CODE XREF: sub_20D2F+18↑j
                 mov     _videoSegment, ax
                 mov     ax, word_2E498
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 call    sub_29FF6
                 mov     x, 8
                 mov     y, 46h ; 'F'
                 mov     word_2E532, 40h ; '@'
                 mov     ax, word_2E4A0
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 call    sub_29FF6
                 mov     di, 6D60h
                 mov     word_3292C, 0
@@ -29891,7 +29891,7 @@ loc_20F77:                              ; CODE XREF: sub_20E54+114↑j
                 mov     word_32926, ax
                 mov     word_2E532, 60h ; '`'
                 mov     _font_bgTransparent, 2
-                call    sub_29878
+                call    DrawPicture
                 and     word ptr [si+0Eh], 1FFFh
 
 loc_20F96:                              ; CODE XREF: sub_20E54+A4↑j
@@ -30645,13 +30645,13 @@ loc_215CC:                              ; CODE XREF: sub_21588+79↓j
                 mov     ax, [si]
                 mov     word_2E530, ax
                 mov     _font_bgTransparent, 3
-                call    sub_29878
+                call    DrawPicture
                 mov     ax, [si+2]
                 or      ax, ax
                 jz      short loc_215F6
                 mov     word_2E530, ax
                 mov     _font_bgTransparent, 2
-                call    sub_29878
+                call    DrawPicture
 
 loc_215F6:                              ; CODE XREF: sub_21588+5E↑j
                 add     x, 8
@@ -30760,7 +30760,7 @@ sub_2169C       proc near               ; CODE XREF: sub_21588+83↑p
 
 loc_216EA:                              ; CODE XREF: sub_2169C+2A↑j
                                         ; sub_2169C+38↑j ...
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_2169C       endp
 
@@ -31049,7 +31049,7 @@ loc_21937:                              ; CODE XREF: sub_218DC+4A↑j
                 mov     _videoSegment, ax
                 mov     word_2E532, 0
                 mov     word_2E530, 0
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 call    PollKeyboardInput
                 cmp     errorCode, 0
@@ -31785,7 +31785,7 @@ loc_21FC1:                              ; CODE XREF: sub_21E71+135↑j
 
 loc_22020:                              ; CODE XREF: sub_21E71+18B↑j
                                         ; sub_21E71+199↑j ...
-                call    sub_29878
+                call    DrawPicture
                 pop     y
                 pop     x
                 test    word_36C7F, 800h
@@ -31867,7 +31867,7 @@ loc_220F0:                              ; CODE XREF: sub_220DF+6↑j
                 mov     x, 0
                 mov     y, 0
                 mov     word_2E530, 6
-                call    sub_29878
+                call    DrawPicture
                 call    sub_22255
                 call    sub_2587E
                 call    sub_162B6
@@ -31905,7 +31905,7 @@ loc_2216B:                              ; CODE XREF: sub_22140+58↓j
                 mov     word_2E530, 13h
                 shl     byte ptr ds:[bp+0], 1
                 jb      short loc_22180
-                call    sub_29878
+                call    DrawPicture
                 jmp     short loc_22183
 ; ---------------------------------------------------------------------------
 
@@ -31992,7 +31992,7 @@ loc_22214:                              ; CODE XREF: sub_221A0+59↑j
                 add     di, 0E551h
                 mov     ax, [di+0Ah]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     ax, 0Ah
                 mul     word_32960
                 mov     di, ax
@@ -32002,7 +32002,7 @@ loc_22214:                              ; CODE XREF: sub_221A0+59↑j
                 jz      short locret_22254
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 0
 
 locret_22254:                           ; CODE XREF: sub_221A0+9E↑j
@@ -32043,7 +32043,7 @@ sub_22255       proc near               ; CODE XREF: sub_220DF+3F↑p
                 mov     word_2E532, 80h
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, 11h
-                call    sub_29878
+                call    DrawPicture
 
 locret_222BB:                           ; CODE XREF: sub_22255+6↑j
                                         ; sub_22255+D↑j ...
@@ -32126,7 +32126,7 @@ loc_2232D:                              ; CODE XREF: sub_22315+10↑j
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     dx, _emsPointer1?
                 mov     bx, 55D8h
                 call    MapUnmapPages
@@ -32171,7 +32171,7 @@ sub_22387       proc far                ; CODE XREF: InitGame+128↑P
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     word_2E532, 0
-                call    sub_29878
+                call    DrawPicture
                 mov     dx, _emsPointer1?
                 mov     bx, 55D8h
                 call    MapUnmapPages
@@ -32307,7 +32307,7 @@ loc_22461:                              ; CODE XREF: sub_22445+17↑j
                 mov     word_2E530, ax
                 mov     word_2E532, 70h ; 'p'
                 mov     _font_bgTransparent, 0
-                call    sub_29878
+                call    DrawPicture
                 test    word ptr [si+1Ch], 1C40h
                 jnz     short loc_224AF
                 test    word ptr [si+15Eh], 8000h
@@ -32317,7 +32317,7 @@ loc_224AF:                              ; CODE XREF: sub_22445+60↑j
                 mov     _font_bgTransparent, 1
                 mov     ax, _val38
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 0
 
 loc_224C6:                              ; CODE XREF: sub_22445+68↑j
@@ -32353,7 +32353,7 @@ loc_224E5:                              ; CODE XREF: sub_22445+9C↑j
                 mov     word_2E530, 15h
 
 loc_22533:                              ; CODE XREF: sub_22445+E6↑j
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 1
                 mov     _font_fgColor, 0Fh
                 mov     ax, [di+28h]
@@ -32377,7 +32377,7 @@ loc_22572:                              ; CODE XREF: sub_22445+11E↑j
                                         ; sub_22445+124↑j
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 15h
-                call    sub_29878
+                call    DrawPicture
 
 loc_22583:                              ; CODE XREF: sub_22445+12B↑j
                 mov     _font_bgTransparent, 0
@@ -32436,7 +32436,7 @@ sub_225F1       proc near               ; CODE XREF: sub_22402+3A↑p
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     _font_bgTransparent, 1
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_225F1       endp
 
@@ -32463,7 +32463,7 @@ sub_22615       proc near               ; CODE XREF: sub_22445+144↑p
 
 loc_22654:                              ; CODE XREF: sub_22615+1D↑j
                                         ; sub_22615+2A↑j ...
-                call    sub_29878
+                call    DrawPicture
                 mov     ax, [di+18h]
                 mov     y, ax
                 mov     word_2E530, 0Ah
@@ -32479,7 +32479,7 @@ loc_22654:                              ; CODE XREF: sub_22615+1D↑j
 
 loc_2268C:                              ; CODE XREF: sub_22615+55↑j
                                         ; sub_22615+62↑j ...
-                call    sub_29878
+                call    DrawPicture
                 mov     ax, [di+22h]
                 mov     y, ax
                 mov     word_2E530, 0Dh
@@ -32495,7 +32495,7 @@ loc_2268C:                              ; CODE XREF: sub_22615+55↑j
 
 loc_226C4:                              ; CODE XREF: sub_22615+8D↑j
                                         ; sub_22615+9A↑j ...
-                call    sub_29878
+                call    DrawPicture
                 mov     word_2E530, 15h
                 mov     ax, [di+32h]
                 mov     x, ax
@@ -32514,7 +32514,7 @@ loc_226E4:                              ; CODE XREF: sub_22615+D4↓j
                 mov     word_2E530, 0Eh
 
 loc_226F6:                              ; CODE XREF: sub_22615+D9↑j
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_22615       endp
 
@@ -34286,7 +34286,7 @@ loc_23559:                              ; CODE XREF: sub_234D3+81↑j
 
 loc_23588:                              ; CODE XREF: sub_234D3+A0↑j
                                         ; sub_234D3+AD↑j
-                call    sub_29878
+                call    DrawPicture
                 add     x, 9
                 mov     word_2E530, 9
                 test    word ptr [si+0Ch], 1000h
@@ -34298,7 +34298,7 @@ loc_23588:                              ; CODE XREF: sub_234D3+A0↑j
 
 loc_235B2:                              ; CODE XREF: sub_234D3+CA↑j
                                         ; sub_234D3+D7↑j
-                call    sub_29878
+                call    DrawPicture
                 add     x, 9
                 mov     word_2E530, 0Dh
                 test    word ptr [si+0Ch], 400h
@@ -34310,7 +34310,7 @@ loc_235B2:                              ; CODE XREF: sub_234D3+CA↑j
 
 loc_235DC:                              ; CODE XREF: sub_234D3+F4↑j
                                         ; sub_234D3+101↑j
-                call    sub_29878
+                call    DrawPicture
                 cmp     word_36CA9, 50h ; 'P'
                 jge     short loc_235EB
                 jmp     loc_236E5
@@ -35239,7 +35239,7 @@ sub_23C18       proc far                ; CODE XREF: sub_2BD1A+144↓P
                 mov     y, 13h
                 mov     _font_bgTransparent, 0
                 mov     word_2E532, 70h ; 'p'
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 1
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgColor, 33h ; '3'
@@ -36566,7 +36566,7 @@ loc_24A9A:                              ; CODE XREF: sub_24A5B+60↓j
                 mov     cx, 3
 
 loc_24AA4:                              ; CODE XREF: sub_24A5B+58↓j
-                call    sub_29878
+                call    DrawPicture
                 add     word_2E530, 2
                 add     x, 21h ; '!'
                 loop    loc_24AA4
@@ -36694,7 +36694,7 @@ loc_24BB4:                              ; CODE XREF: sub_24A5B+154↑j
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     word_2E532, 70h ; 'p'
-                call    sub_29878
+                call    DrawPicture
                 mov     byte_2E400, 0
                 retn
 sub_24A5B       endp
@@ -37022,7 +37022,7 @@ sub_24FFC       proc near               ; CODE XREF: sub_245AE+61↑p
                 call    sub_12554
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     ax, y
                 add     ax, 5
                 mov     _textPos_y, ax
@@ -37547,7 +37547,7 @@ sub_254CC       proc near               ; CODE XREF: sub_24BF2+B↑p
                 mov     x, 74h ; 't'
                 mov     y, 13h
                 mov     word_2E532, 70h ; 'p'
-                call    sub_29878
+                call    DrawPicture
                 call    sub_24D30
                 call    sub_24CAD
                 call    sub_2504F
@@ -39172,7 +39172,7 @@ sub_2607F       proc far                ; CODE XREF: sub_1869D+4E0↑P
                 mov     si, word_328D4
                 mov     ax, [si+14h]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     word_2E532, 80h
                 mov     _font_bgTransparent, 1
                 mov     si, word_328D4
@@ -39217,7 +39217,7 @@ loc_2612F:                              ; CODE XREF: sub_2607F+A8↑j
                 mov     ax, [di+4]
                 add     ax, word_328C0
                 mov     y, ax
-                call    sub_29878
+                call    DrawPicture
 
 loc_2614A:                              ; CODE XREF: sub_2607F+9C↑j
                 mov     si, word_328D4
@@ -39939,7 +39939,7 @@ sub_26778       proc near               ; CODE XREF: sub_2607F+15A↑p
 
 loc_2679E:                              ; CODE XREF: sub_26778+23↑j
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
 
 locret_267A6:                           ; CODE XREF: sub_26778+3↑j
                 retn
@@ -39976,7 +39976,7 @@ loc_267DC:                              ; CODE XREF: sub_267A7+25↑j
 
 loc_267DF:                              ; CODE XREF: sub_267A7+33↑j
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
 
 loc_267E7:                              ; CODE XREF: sub_267A7+3↑j
                 add     di, 0Ah
@@ -40001,7 +40001,7 @@ sub_267F0       proc near               ; CODE XREF: sub_2607F+6B↑p
                 mov     ax, [bx+8]
                 inc     ax
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_267F0       endp
 
@@ -40022,7 +40022,7 @@ sub_2681B       proc near               ; CODE XREF: sub_2607F+DA↑p
                 mov     ax, [bx+8]
                 inc     ax
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 retn
 sub_2681B       endp
 
@@ -40681,7 +40681,7 @@ sub_26CFB       proc near               ; CODE XREF: sub_26C9E+25↑p
                 mov     ax, [bx+12h]
                 mov     word_2E530, ax
                 mov     _font_bgTransparent, 0
-                call    sub_29878
+                call    DrawPicture
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short loc_26D2A
                 test    word ptr [bx+15Eh], 8000h
@@ -40691,7 +40691,7 @@ loc_26D2A:                              ; CODE XREF: sub_26CFB+25↑j
                 mov     ax, _val38
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
 
 loc_26D3B:                              ; CODE XREF: sub_26CFB+2D↑j
                 pop     bx
@@ -40700,7 +40700,7 @@ loc_26D3B:                              ; CODE XREF: sub_26CFB+2D↑j
                 mov     ax, 0
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
 
 locret_26D53:                           ; CODE XREF: sub_26CFB+3↑j
                                         ; sub_26CFB+45↑j
@@ -41030,7 +41030,7 @@ loc_270B1:                              ; CODE XREF: sub_2704C+5F↑j
                 mov     _videoSegment, ax
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, 14h
-                call    sub_29878
+                call    DrawPicture
                 mov     word_2E532, 80h
                 mov     _font_bgTransparent, 1
                 mov     si, 950Dh
@@ -41413,7 +41413,7 @@ sub_27441       proc near               ; CODE XREF: sub_2704C+AB↑p
                 call    sub_12554
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
 
 loc_27463:                              ; CODE XREF: sub_27441+3↑j
                 add     di, 0Ah
@@ -44858,7 +44858,7 @@ loc_28E04:                              ; CODE XREF: sub_28CFF+121↓j
                 mov     x, 8
 
 loc_28E0E:                              ; CODE XREF: sub_28CFF+119↓j
-                call    sub_29878
+                call    DrawPicture
                 add     x, 8
                 loop    loc_28E0E
                 pop     cx
@@ -45287,7 +45287,7 @@ sub_29259       proc near               ; CODE XREF: sub_291A3:loc_29236↑p
                 add     di, 0E551h
                 mov     ax, [di+0Ah]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     ax, 0Ah
                 mul     word ptr [si+2]
                 mov     di, ax
@@ -45297,7 +45297,7 @@ sub_29259       proc near               ; CODE XREF: sub_291A3:loc_29236↑p
                 jz      short locret_29296
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 0
 
 locret_29296:                           ; CODE XREF: sub_29259+27↑j
@@ -45460,7 +45460,7 @@ sub_293C0       proc near               ; CODE XREF: sub_28CFF+1A9↑p
 
 loc_29402:                              ; CODE XREF: sub_293C0+1E↑j
                                         ; sub_293C0+2C↑j ...
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 0
                 retn
 sub_293C0       endp
@@ -46081,7 +46081,7 @@ seg111          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_29878       proc far                ; CODE XREF: sub_116CF+17↑P
+DrawPicture     proc far                ; CODE XREF: sub_116CF+17↑P
                                         ; sub_1177C+39↑P ...
 
 var_4A          = word ptr -4Ah
@@ -46089,7 +46089,7 @@ var_24          = word ptr -24h
 var_21          = byte ptr -21h
 var_A           = word ptr -0Ah
 
-                push    ax
+                push    ax              ; Core picture-drawing primitive: looks up g_pictureDir[word_2E532], calls LoadPictureIntoEms to ensure it's EMS-resident, then blits width x height pixels from the EMS page frame to the video buffer at (x, y). Blit mode selected by _font_bgTransparent (0-5 -- different transparency/color-key branches).
                 push    bx
                 push    cx
                 push    dx
@@ -46104,7 +46104,7 @@ var_A           = word ptr -0Ah
                 call    sub_2A53C
                 mov     bx, 782Eh
                 add     bx, word_2E532
-                call    sub_2A68D
+                call    LoadPictureIntoEms
                 mov     ax, x           ; x
                 mov     bx, y           ; y
                 call    getTextPos
@@ -46128,25 +46128,25 @@ var_A           = word ptr -0Ah
                 jmp     loc_29970
 ; ---------------------------------------------------------------------------
 
-loc_298DE:                              ; CODE XREF: sub_29878+61↑j
+loc_298DE:                              ; CODE XREF: DrawPicture+61↑j
                 cmp     _font_bgTransparent, 5
                 jnz     short loc_298E8
                 jmp     loc_299B6
 ; ---------------------------------------------------------------------------
 
-loc_298E8:                              ; CODE XREF: sub_29878+6B↑j
+loc_298E8:                              ; CODE XREF: DrawPicture+6B↑j
                 jmp     loc_29A92
 ; ---------------------------------------------------------------------------
 
-loc_298EB:                              ; CODE XREF: sub_29878+4C↑j
+loc_298EB:                              ; CODE XREF: DrawPicture+4C↑j
                 mov     ds, ax
 
-loc_298ED:                              ; CODE XREF: sub_29878+99↓j
+loc_298ED:                              ; CODE XREF: DrawPicture+99↓j
                 push    cx
                 mov     cx, bx
 
-loc_298F0:                              ; CODE XREF: sub_29878+8B↓j
-                                        ; sub_29878+90↓j
+loc_298F0:                              ; CODE XREF: DrawPicture+8B↓j
+                                        ; DrawPicture+90↓j
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_29907
@@ -46156,18 +46156,18 @@ loc_298F0:                              ; CODE XREF: sub_29878+8B↓j
                 cmp     al, 0FFh
                 jz      short loc_29907
 
-loc_29902:                              ; CODE XREF: sub_29878+81↑j
+loc_29902:                              ; CODE XREF: DrawPicture+81↑j
                 stosb
                 loop    loc_298F0
                 jmp     short loc_2990A
 ; ---------------------------------------------------------------------------
 
-loc_29907:                              ; CODE XREF: sub_29878+7B↑j
-                                        ; sub_29878+88↑j
+loc_29907:                              ; CODE XREF: DrawPicture+7B↑j
+                                        ; DrawPicture+88↑j
                 inc     di
                 loop    loc_298F0
 
-loc_2990A:                              ; CODE XREF: sub_29878+8D↑j
+loc_2990A:                              ; CODE XREF: DrawPicture+8D↑j
                 sub     di, bx
                 add     di, 140h
                 pop     cx
@@ -46175,11 +46175,11 @@ loc_2990A:                              ; CODE XREF: sub_29878+8D↑j
                 jmp     loc_29A92
 ; ---------------------------------------------------------------------------
 
-loc_29916:                              ; CODE XREF: sub_29878+45↑j
+loc_29916:                              ; CODE XREF: DrawPicture+45↑j
                 mov     ds, ax
                 shr     bx, 1
 
-loc_2991A:                              ; CODE XREF: sub_29878+B0↓j
+loc_2991A:                              ; CODE XREF: DrawPicture+B0↓j
                 push    cx
                 mov     cx, bx
                 rep movsw
@@ -46191,16 +46191,16 @@ loc_2991A:                              ; CODE XREF: sub_29878+B0↓j
                 jmp     loc_29A92
 ; ---------------------------------------------------------------------------
 
-loc_2992D:                              ; CODE XREF: sub_29878+53↑j
+loc_2992D:                              ; CODE XREF: DrawPicture+53↑j
                 mov     [bp+var_A], bx
                 mov     ds, ax
 
-loc_29932:                              ; CODE XREF: sub_29878+D6↓j
+loc_29932:                              ; CODE XREF: DrawPicture+D6↓j
                 push    cx
                 mov     cx, [bp+var_A]
 
-loc_29936:                              ; CODE XREF: sub_29878+C7↓j
-                                        ; sub_29878+CC↓j
+loc_29936:                              ; CODE XREF: DrawPicture+C7↓j
+                                        ; DrawPicture+CC↓j
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_29943
@@ -46210,11 +46210,11 @@ loc_29936:                              ; CODE XREF: sub_29878+C7↓j
                 jmp     short loc_29946
 ; ---------------------------------------------------------------------------
 
-loc_29943:                              ; CODE XREF: sub_29878+C1↑j
+loc_29943:                              ; CODE XREF: DrawPicture+C1↑j
                 inc     di
                 loop    loc_29936
 
-loc_29946:                              ; CODE XREF: sub_29878+C9↑j
+loc_29946:                              ; CODE XREF: DrawPicture+C9↑j
                 sub     di, [bp+var_A]
                 add     di, 140h
                 pop     cx
@@ -46222,15 +46222,15 @@ loc_29946:                              ; CODE XREF: sub_29878+C9↑j
                 jmp     loc_29A92
 ; ---------------------------------------------------------------------------
 
-loc_29953:                              ; CODE XREF: sub_29878+5A↑j
+loc_29953:                              ; CODE XREF: DrawPicture+5A↑j
                 mov     [bp+var_A], bx
                 mov     ds, ax
 
-loc_29958:                              ; CODE XREF: sub_29878+F3↓j
+loc_29958:                              ; CODE XREF: DrawPicture+F3↓j
                 push    cx
                 mov     cx, [bp+var_A]
 
-loc_2995C:                              ; CODE XREF: sub_29878+E9↓j
+loc_2995C:                              ; CODE XREF: DrawPicture+E9↓j
                 lodsb
                 call    sub_2A653
                 stosb
@@ -46242,7 +46242,7 @@ loc_2995C:                              ; CODE XREF: sub_29878+E9↓j
                 jmp     loc_29A92
 ; ---------------------------------------------------------------------------
 
-loc_29970:                              ; CODE XREF: sub_29878+63↑j
+loc_29970:                              ; CODE XREF: DrawPicture+63↑j
                 mov     [bp+var_A], bx
                 mov     bx, ax
                 mov     ax, word_32980
@@ -46256,12 +46256,12 @@ loc_29970:                              ; CODE XREF: sub_29878+63↑j
                 mov     ds, bx
                 add     si, [bp-22h]
 
-loc_29992:                              ; CODE XREF: sub_29878+139↓j
+loc_29992:                              ; CODE XREF: DrawPicture+139↓j
                 push    cx
                 mov     cx, [bp+var_24]
 
-loc_29996:                              ; CODE XREF: sub_29878+124↓j
-                                        ; sub_29878+129↓j
+loc_29996:                              ; CODE XREF: DrawPicture+124↓j
+                                        ; DrawPicture+129↓j
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_299A0
@@ -46270,11 +46270,11 @@ loc_29996:                              ; CODE XREF: sub_29878+124↓j
                 jmp     short loc_299A3
 ; ---------------------------------------------------------------------------
 
-loc_299A0:                              ; CODE XREF: sub_29878+121↑j
+loc_299A0:                              ; CODE XREF: DrawPicture+121↑j
                 inc     di
                 loop    loc_29996
 
-loc_299A3:                              ; CODE XREF: sub_29878+126↑j
+loc_299A3:                              ; CODE XREF: DrawPicture+126↑j
                 sub     di, [bp+var_24]
                 add     di, 140h
                 sub     si, [bp+var_24]
@@ -46284,7 +46284,7 @@ loc_299A3:                              ; CODE XREF: sub_29878+126↑j
                 jmp     loc_29A92
 ; ---------------------------------------------------------------------------
 
-loc_299B6:                              ; CODE XREF: sub_29878+6D↑j
+loc_299B6:                              ; CODE XREF: DrawPicture+6D↑j
                 test    word_328C6, 1
                 jnz     short loc_29A02
                 mov     [bp+var_A], bx
@@ -46300,14 +46300,14 @@ loc_299B6:                              ; CODE XREF: sub_29878+6D↑j
                 mov     ds, bx
                 add     si, [bp-22h]
 
-loc_299E0:                              ; CODE XREF: sub_29878+185↓j
+loc_299E0:                              ; CODE XREF: DrawPicture+185↓j
                 push    cx
                 mov     cx, [bp+var_24]
                 test    cx, 1
                 jz      short loc_299EB
                 movsb
 
-loc_299EB:                              ; CODE XREF: sub_29878+170↑j
+loc_299EB:                              ; CODE XREF: DrawPicture+170↑j
                 shr     cx, 1
                 rep movsw
                 sub     di, [bp+var_24]
@@ -46319,7 +46319,7 @@ loc_299EB:                              ; CODE XREF: sub_29878+170↑j
                 jmp     loc_29A92
 ; ---------------------------------------------------------------------------
 
-loc_29A02:                              ; CODE XREF: sub_29878+144↑j
+loc_29A02:                              ; CODE XREF: DrawPicture+144↑j
                 push    ax
                 push    cx
                 push    di
@@ -46337,7 +46337,7 @@ loc_29A02:                              ; CODE XREF: sub_29878+144↑j
                 sub     di, 4Ah ; 'J'
                 mov     cx, word_2E490
 
-loc_29A24:                              ; CODE XREF: sub_29878+1C7↓j
+loc_29A24:                              ; CODE XREF: DrawPicture+1C7↓j
                 xor     ax, ax
                 mov     al, [si]
                 shl     ax, 1
@@ -46370,18 +46370,18 @@ loc_29A24:                              ; CODE XREF: sub_29878+1C7↓j
                 mov     ds, bx
                 add     si, [bp-22h]
 
-loc_29A68:                              ; CODE XREF: sub_29878+218↓j
+loc_29A68:                              ; CODE XREF: DrawPicture+218↓j
                 push    cx
                 mov     cx, [bp+var_24]
 
-loc_29A6C:                              ; CODE XREF: sub_29878+203↓j
-                                        ; sub_29878+208↓j
+loc_29A6C:                              ; CODE XREF: DrawPicture+203↓j
+                                        ; DrawPicture+208↓j
                 lodsb
                 cmp     [bp+var_4A], 0
                 jz      short loc_29A76
                 call    sub_2A4B0
 
-loc_29A76:                              ; CODE XREF: sub_29878+1F9↑j
+loc_29A76:                              ; CODE XREF: DrawPicture+1F9↑j
                 cmp     al, 0FFh
                 jz      short loc_29A7F
                 stosb
@@ -46389,11 +46389,11 @@ loc_29A76:                              ; CODE XREF: sub_29878+1F9↑j
                 jmp     short loc_29A82
 ; ---------------------------------------------------------------------------
 
-loc_29A7F:                              ; CODE XREF: sub_29878+200↑j
+loc_29A7F:                              ; CODE XREF: DrawPicture+200↑j
                 inc     di
                 loop    loc_29A6C
 
-loc_29A82:                              ; CODE XREF: sub_29878+205↑j
+loc_29A82:                              ; CODE XREF: DrawPicture+205↑j
                 sub     di, [bp+var_24]
                 add     di, 140h
                 sub     si, [bp+var_24]
@@ -46401,8 +46401,8 @@ loc_29A82:                              ; CODE XREF: sub_29878+205↑j
                 pop     cx
                 loop    loc_29A68
 
-loc_29A92:                              ; CODE XREF: sub_29878:loc_298E8↑j
-                                        ; sub_29878+9B↑j ...
+loc_29A92:                              ; CODE XREF: DrawPicture:loc_298E8↑j
+                                        ; DrawPicture+9B↑j ...
                 mov     sp, bp
                 pop     bp
                 mov     ax, seg seg129
@@ -46415,7 +46415,7 @@ loc_29A92:                              ; CODE XREF: sub_29878:loc_298E8↑j
                 pop     bx
                 pop     ax
                 retf
-sub_29878       endp
+DrawPicture     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -46544,7 +46544,7 @@ var_2           = word ptr -2
 loc_29B3C:                              ; CODE XREF: sub_29B0F+12↑j
                 mov     bx, 782Eh
                 add     bx, word_2E532
-                call    sub_2A68D
+                call    LoadPictureIntoEms
                 mov     [bp+var_4], si
 
 loc_29B49:                              ; CODE XREF: sub_29B0F+2B↑j
@@ -47709,8 +47709,8 @@ locret_2A289:                           ; CODE XREF: seg111:09EE↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A4B0       proc near               ; CODE XREF: sub_29878+83↑p
-                                        ; sub_29878+1FB↑p ...
+sub_2A4B0       proc near               ; CODE XREF: DrawPicture+83↑p
+                                        ; DrawPicture+1FB↑p ...
                 push    bx
                 push    cx
                 push    di
@@ -47824,7 +47824,7 @@ sub_2A51B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A53C       proc near               ; CODE XREF: sub_29878+13↑p
+sub_2A53C       proc near               ; CODE XREF: DrawPicture+13↑p
                 push    ax
                 push    cx
                 push    di
@@ -48008,8 +48008,8 @@ sub_2A5F7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A653       proc near               ; CODE XREF: sub_29878+C3↑p
-                                        ; sub_29878+E5↑p ...
+sub_2A653       proc near               ; CODE XREF: DrawPicture+C3↑p
+                                        ; DrawPicture+E5↑p ...
                 cmp     byte ptr [bp-21h], 0
                 jz      short locret_2A680
                 cmp     al, 0D0h
@@ -48047,7 +48047,7 @@ sub_2A653       endp
 
 
 ; void *__usercall getTextPos@<eds:eax.2>(int x@<ax>, int y@<bx>)
-getTextPos      proc near               ; CODE XREF: sub_29878+27↑p
+getTextPos      proc near               ; CODE XREF: DrawPicture+27↑p
                                         ; writeChar+23↑p ...
                 push    dx
                 push    ax
@@ -48063,14 +48063,14 @@ getTextPos      endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A68D       proc near               ; CODE XREF: sub_29878+1D↑p
+LoadPictureIntoEms proc near            ; CODE XREF: DrawPicture+1D↑p
                                         ; sub_29B0F+34↑p
-                mov     es, word ptr [bx]
+                mov     es, word ptr [bx] ; LRU cache: maps picture ids into a small pool of LIM EMS 4.0 pages (INT 67h/AX=0x5000). Cache hit: just re-maps the already-loaded pages. Cache miss: evicts the oldest slot and reads the picture's bytes from PICTURES.VGA (FileEntry at bx=0x9011) into the newly-mapped pages.
                 mov     cx, [bx+2]
                 mov     ax, word_2E530
                 xor     di, di
 
-loc_2A697:                              ; CODE XREF: sub_2A68D+12↓j
+loc_2A697:                              ; CODE XREF: LoadPictureIntoEms+12↓j
                 cmp     ax, es:[di]
                 jz      short loc_2A6A3
                 add     di, 6
@@ -48078,13 +48078,13 @@ loc_2A697:                              ; CODE XREF: sub_2A68D+12↓j
                 jmp     short loc_2A6D8
 ; ---------------------------------------------------------------------------
 
-loc_2A6A3:                              ; CODE XREF: sub_2A68D+D↑j
+loc_2A6A3:                              ; CODE XREF: LoadPictureIntoEms+D↑j
                 mov     si, 55B6h
                 mov     ax, es:[di+2]
                 mov     bx, 0
                 mov     cx, 4
 
-loc_2A6B0:                              ; CODE XREF: sub_2A68D+30↓j
+loc_2A6B0:                              ; CODE XREF: LoadPictureIntoEms+30↓j
                 mov     [si], ax
                 inc     bx
                 add     si, 4
@@ -48093,7 +48093,7 @@ loc_2A6B0:                              ; CODE XREF: sub_2A68D+30↓j
                 jg      short loc_2A6BF
                 loop    loc_2A6B0
 
-loc_2A6BF:                              ; CODE XREF: sub_2A68D+2E↑j
+loc_2A6BF:                              ; CODE XREF: LoadPictureIntoEms+2E↑j
                 mov     si, 55B6h
                 mov     ax, 5000h
                 mov     cx, bx
@@ -48107,7 +48107,7 @@ loc_2A6BF:                              ; CODE XREF: sub_2A68D+2E↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2A6D8:                              ; CODE XREF: sub_2A68D+14↑j
+loc_2A6D8:                              ; CODE XREF: LoadPictureIntoEms+14↑j
                 sub     di, 6
                 mov     si, di
                 mov     di, [bx+6]
@@ -48116,7 +48116,7 @@ loc_2A6D8:                              ; CODE XREF: sub_2A68D+14↑j
                 jbe     short loc_2A6EE
                 mov     word ptr [bx+6], 0
 
-loc_2A6EE:                              ; CODE XREF: sub_2A68D+5A↑j
+loc_2A6EE:                              ; CODE XREF: LoadPictureIntoEms+5A↑j
                 mov     ax, word_2E530
                 mov     es:[di], ax
                 mov     word_36879, ax
@@ -48135,7 +48135,7 @@ loc_2A6EE:                              ; CODE XREF: sub_2A68D+5A↑j
                 mov     bx, 0
                 mov     cx, 4
 
-loc_2A723:                              ; CODE XREF: sub_2A68D+A3↓j
+loc_2A723:                              ; CODE XREF: LoadPictureIntoEms+A3↓j
                 mov     [si], ax
                 inc     bx
                 add     si, 4
@@ -48144,7 +48144,7 @@ loc_2A723:                              ; CODE XREF: sub_2A68D+A3↓j
                 jg      short loc_2A732
                 loop    loc_2A723
 
-loc_2A732:                              ; CODE XREF: sub_2A68D+A1↑j
+loc_2A732:                              ; CODE XREF: LoadPictureIntoEms+A1↑j
                 mov     si, 55B6h
                 mov     ax, 5000h
                 mov     cx, bx
@@ -48160,7 +48160,7 @@ loc_2A732:                              ; CODE XREF: sub_2A68D+A1↑j
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_2A68D       endp
+LoadPictureIntoEms endp
 
 ; ---------------------------------------------------------------------------
 
@@ -49892,7 +49892,7 @@ loc_2B79A:                              ; CODE XREF: sub_2B78D+6C↓j
                 mov     _textPos_y, 21h ; '!'
                 mov     _font_fgColor, 39h ; '9'
                 mov     word_2E530, 7
-                call    sub_29878
+                call    DrawPicture
                 mov     bx, si
                 mov     cx, 0Dh
                 call    sub_28A76
@@ -49914,7 +49914,7 @@ loc_2B7FB:                              ; CODE XREF: sub_2B78D+12↑j
                 mov     _textPos_y, 21h ; '!'
                 mov     _font_fgColor, 39h ; '9'
                 mov     word_2E530, 7
-                call    sub_29878
+                call    DrawPicture
                 cmp     word_31980, 0Dh
                 jle     short loc_2B845
                 sub     word_31980, 0Dh
@@ -49958,7 +49958,7 @@ loc_2B873:                              ; CODE XREF: sub_2B866+63↓j
                 mov     _textPos_y, 2Bh ; '+'
                 mov     _font_fgColor, 46h ; 'F'
                 mov     word_2E530, 8
-                call    sub_29878
+                call    DrawPicture
                 mov     bx, si
                 mov     cx, 0Bh
                 cmp     word_31980, 0Bh
@@ -50001,7 +50001,7 @@ loc_2B8E4:                              ; CODE XREF: sub_2B8D7+63↓j
                 mov     _textPos_y, 1Ch
                 mov     _font_fgColor, 6
                 mov     word_2E530, 9
-                call    sub_29878
+                call    DrawPicture
                 mov     bx, si
                 mov     cx, 10h
                 cmp     word_31980, 10h
@@ -50044,7 +50044,7 @@ loc_2B955:                              ; CODE XREF: sub_2B948+7E↓j
                 mov     _textPos_y, 1Ch
                 mov     _font_fgColor, 4
                 mov     word_2E530, 0Ah
-                call    sub_29878
+                call    DrawPicture
                 mov     bx, si
                 mov     cx, 10h
                 cmp     word_31980, 10h
@@ -50251,7 +50251,7 @@ loc_2BB02:                              ; CODE XREF: sub_2BAD5+16↑j
                 mov     word_32986, 0
                 mov     word_32982, 35h ; '5'
                 mov     word_32988, 69h ; 'i'
-                call    sub_29878
+                call    DrawPicture
                 retf
 sub_2BAD5       endp
 
@@ -50605,7 +50605,7 @@ sub_2BD1A       proc far                ; CODE XREF: sub_1D2A6+170↑P
                 mov     _videoSegment, ax
                 mov     word_2E532, 0
                 mov     word_2E530, 4
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_fgColor, 0Fh
                 mov     di, 5B5Ch
                 mov     si, 95F3h
@@ -50633,7 +50633,7 @@ loc_2BD63:                              ; CODE XREF: sub_2BD1A+42↑j
                 mov     word_2E530, 12h
 
 loc_2BD8E:                              ; CODE XREF: sub_2BD1A+6C↑j
-                call    sub_29878
+                call    DrawPicture
 
 loc_2BD93:                              ; CODE XREF: sub_2BD1A+47↑j
                 inc     word_3293E
@@ -50820,7 +50820,7 @@ loc_2BEF3:                              ; CODE XREF: sub_2BD1A+1AB↑j
                 mov     word_2E532, 90h
                 mov     _font_bgTransparent, 0
                 mov     _videoSegment, 0A000h
-                call    sub_29878
+                call    DrawPicture
                 call    sub_238CD
                 jmp     loc_2BDAA
 sub_2BD1A       endp
@@ -50907,7 +50907,7 @@ sub_2BFBC       proc near               ; CODE XREF: sub_2BD1A:loc_2BD63↑p
                 mov     y, ax
                 mov     ax, [si+12h]
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     _font_bgTransparent, 1
                 add     di, 0Ah
                 mov     ax, [di]
@@ -52623,13 +52623,13 @@ loc_2D04D:                              ; CODE XREF: sub_2C0FE+BD↑j
                 mov     y, 8
                 mov     ax, word_332EA
                 mov     word_2E530, ax
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 40h ; '@'
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 78h ; 'x'
-                call    sub_29878
+                call    DrawPicture
                 mov     x, 0B0h
-                call    sub_29878
+                call    DrawPicture
                 call    Fade?
                 call    sub_2BC16
                 mov     ax, word_332EC
@@ -52995,7 +52995,7 @@ sub_2D3FE       proc near               ; CODE XREF: sub_2C0FE+FF7↑p
                 or      word_328C6, 1
                 mov     word_2E530, ax
                 mov     x, bx
-                call    sub_29878
+                call    DrawPicture
                 and     word_328C6, 0FFFEh
                 mov     ax, word_2E530
                 inc     ax
@@ -84146,7 +84146,7 @@ aMagicDragon    db 'MAGIC DRAGON',0
                 db    0
                 db    1
                 db  10h
-                db    0
+g_pictureDir    db    0                 ; Picture directory for PICTURES.VGA. 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Verified by extraction: entry 0 (318x198 @ 0) is the SmithWare splash screen; entry 8 (16x16 @ 0xBCF3DA) is a mouse cursor; entry 9 (8x8 @ 0xBEF1DA) is a scroll-arrow icon. Indexed as g_pictureDir + word_2E532 (picture id * 0x10) elsewhere.
                 db    0
                 db    0
                 db    0
@@ -84827,17 +84827,17 @@ aCurgame        db 'CURGAME',0
 picturesVga     db 0FFh
                 db 0FFh
 word_36873      dw 0                    ; DATA XREF: sub_23874+1A↑w
-                                        ; sub_2A68D+6D↑w
+                                        ; LoadPictureIntoEms+6D↑w
 word_36875      dw 0                    ; DATA XREF: sub_23874+20↑w
-                                        ; sub_2A68D+74↑w
+                                        ; LoadPictureIntoEms+74↑w
 word_36877      dw 0                    ; DATA XREF: sub_23874+26↑w
-                                        ; sub_2A68D+7A↑w
+                                        ; LoadPictureIntoEms+7A↑w
 word_36879      dw 0                    ; DATA XREF: sub_23874+14↑w
-                                        ; sub_2A68D+67↑w
+                                        ; LoadPictureIntoEms+67↑w
 word_3687B      dw 0                    ; DATA XREF: sub_23874+2C↑w
-                                        ; sub_2A68D+80↑w
+                                        ; LoadPictureIntoEms+80↑w
 word_3687D      dw 0                    ; DATA XREF: sub_23874+32↑w
-                                        ; sub_2A68D+86↑w
+                                        ; LoadPictureIntoEms+86↑w
 aPicturesVga    db 'PICTURES.VGA',0
 savegameX       db 0FFh
                 db 0FFh

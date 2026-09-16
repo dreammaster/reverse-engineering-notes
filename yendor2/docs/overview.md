@@ -372,6 +372,33 @@ flagged as "too large to name" (1311 bytes) — worth remembering that a
 function's size doesn't block naming it once an external anchor (a
 manual hotkey, in this case) pins down its role with confidence.
 
+### 2026-09-15 session update: PICTURES.VGA fully decoded
+
+At Paul's request ("try pictures.vga"), fully cracked `PICTURES.VGA`'s
+format by tracing its FileEntry (found via `FileEntry_OpenFile` always
+reading the filename from `bx+0xE`, right after the 14-byte struct —
+`bx=0x9043` → `"WORLD.DAT"`, `bx=0x902C` → `"SAVGAMEX"`, `bx=0x9011` →
+`"PICTURES.VGA"`) through to a picture directory table and validating
+the guessed field layout by **extracting and rendering actual pixels**
+(`ida_scripts/extract_pic.py`, a standalone stdlib-only PNG writer) —
+entry 0 turned out to be the exact "SmithWare" splash-screen logo, an
+unambiguous confirmation. Full writeup with the directory struct layout
+and all four verified examples in
+[file-formats.md](file-formats.md#pictures.vga). Named the whole
+pipeline (`ida_scripts/name_picture_system.py`): `g_pictureDir`,
+`LoadPictureIntoEms` (the LIM EMS 4.0 LRU page cache + file read), and
+`DrawPicture` (the blit, called from `start` and 8+ other functions —
+the core picture-drawing primitive used throughout the game).
+
+Along the way, also confirmed the WORLD.DAT-offset resource-stub
+cluster documented earlier (`document_resource_stubs.py`) really does
+read from `WORLD.DAT` and not `PICTURES.VGA` as originally unclear —
+its offsets top out at `0x1AA5DD`, matching `WORLD.DAT`'s exact size
+(1,761,397 bytes), not `PICTURES.VGA`'s 12.5MB
+(`ida_scripts/extract_resource_stubs.py`).
+
+78 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

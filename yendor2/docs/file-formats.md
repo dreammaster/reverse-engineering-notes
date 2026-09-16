@@ -110,11 +110,61 @@ retreiving text/NPC/conversation data."`), and presumably maps.
 
 ## `PICTURES.VGA`
 
-12,550,618 bytes. Referenced by the in-EXE error string `"Problem with
-PICTURE.VGA."` (note: singular in the string, plural on disk). Far too
-large to be a single image — almost certainly a sprite/tile/frame atlas,
-likely paged through EMS given the game's mandatory-expanded-memory
-requirement (see overview.md). Not decoded at all yet.
+**Decoded 2026-09-15.** 12,550,618 bytes, raw 8bpp indexed pixels (VGA
+Mode 13h palette), no per-image header or compression — a directory
+table elsewhere (`g_pictureDir`, in `SW.EXE`'s own data segment, not in
+this file) says where each picture starts and how big it is; the file
+itself is just a flat blob of pixel bytes back to back.
+
+**Directory** (`g_pictureDir`, linear `0x3508E`, i.e. `DS:0x782E` with
+`DS` fixed to paragraph `0x2D86` — see `fix_ds_segreg.py`): an array of
+16-byte entries, indexed as `g_pictureDir + picture_id*0x10`:
+
+```
++0x0  word   unused/reserved in the entries examined (always 0)
++0x2  word   unused/reserved in the entries examined (always 0)
++0x4  word   unconfirmed (varies per entry, not yet decoded)
++0x6  word   unused/reserved in the entries examined (always 0)
++0x8  word   width, pixels
++0xA  word   height, pixels
++0xC  word   file offset into PICTURES.VGA, low word
++0xE  word   file offset into PICTURES.VGA, high word
+```
+
+Verified directly by extracting and rendering three entries with
+`ida_scripts/extract_pic.py` (grayscale, real VGA palette not recovered
+yet — but shape alone was already unambiguous):
+
+- **Entry 0** — 318×198 @ offset `0x0`: the **"SmithWare" splash-screen
+  logo** (matches the developer name from `CURGAME`'s header string).
+- **Entry 8** — 16×16 @ offset `0xBCF3DA`: a **mouse-cursor arrow**.
+- **Entry 9** — 8×8 @ offset `0xBEF1DA`: a small **scroll-arrow icon**
+  (matches `UpdateScrollArrows`' two-glyph indicator from earlier this
+  session — likely one of its actual glyphs).
+- **Entry 1** — 210×105 @ offset `0xE694C`: a UI panel with partial
+  button-label text baked into the bitmap (`SAVE`/`LOAD`/`MUSIC`/`SOUND
+  FX`/`DOS`/`RETURN` fragments legible) — the `GameDialog_draw*`
+  background panel.
+
+Loading path, fully traced in `ida_scripts/name_picture_system.py`:
+`DrawPicture` (`0x29878`, called from `start` and 8+ other functions)
+looks up `g_pictureDir[id]`, calls `LoadPictureIntoEms` (`0x2A68D`) to
+ensure the picture's bytes are mapped into a small LRU cache of LIM EMS
+4.0 pages (evicting the oldest entry on a cache miss and reading fresh
+bytes from `PICTURES.VGA` — the fixed `FileEntry` at `bx=0x9011`, opened
+once in `InitGame`), then blits `width`×`height` pixels from the EMS
+page frame to the video buffer at `(x, y)`, with the blit mode selected
+by `_font_bgTransparent` (0–5, different transparency/color-key
+branches).
+
+`sub_23874` (called repeatedly from `start`, presumably an intro
+animation) indexes the same `g_pictureDir` table the same way
+(`g_pictureDir + word_2E532`, `word_2E532` = `picture_id*0x10`) — it's
+one shared directory, not a separate table per caller.
+
+Not yet decoded: the real VGA palette (so images render in true color,
+not grayscale), and the directory's `+0x4` field's meaning (varies per
+entry, didn't fit an obvious role from the entries examined so far).
 
 ## Not yet examined
 

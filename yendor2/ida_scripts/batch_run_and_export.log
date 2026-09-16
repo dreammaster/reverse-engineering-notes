@@ -5006,3 +5006,744 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'inspect_data.py', 'noexport']
+[*] reading inspect_data.py
+[*] executing inspect_data.py
+[*] captured stdout from target script:
+----- begin target script output -----
+fe @ 0x32946
+flags: 0x10005400
+size: 2
+32 xrefs, sample:
+  0x10c48 (ShowClueBook)  push    fe
+  0x10c51 (ShowClueBook)  push    fe; this
+  0x10c55 (ShowClueBook)  mov     fe, 0
+  0x1112f (ShowClueBook)  cmp     fe, 0
+  0x11136 (ShowClueBook)  mov     es, fe
+  0x1113e (ShowClueBook)  mov     fe, 0
+  0x11144 (ShowClueBook)  pop     fe
+  0x1114d (ShowClueBook)  pop     fe
+  0x140ed (sub_13FCF)  mov     es, fe
+  0x14113 (sub_13FCF)  mov     es, fe
+  0x1411b (sub_13FCF)  mov     fe, 0
+  0x141bb (sub_1419B)  mov     fe, ax
+  0x141d9 (sub_141D9)  mov     es, fe
+  0x1466e (sub_1466E)  mov     es, fe
+  0x14672 (sub_1466E)  cmp     fe, 0
+  0x14693 (sub_1466E)  mov     fe, ax
+  0x1469c (sub_1466E)  mov     es, fe
+  0x146c4 (sub_1466E)  mov     es, fe
+  0x14e2c (sub_14E28)  mov     ax, fe
+  0x14f5b (sub_14E28)  mov     es, fe
+----- end target script output -----
+[*] finished executing inspect_data.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_28320 @ 0x28320 ----
+  0x28320  test    g_driverStateFlags, 2
+  0x28326  jz      short locret_28358
+  0x28328  cmp     byte ptr word_2E492, 0
+  0x2832d  jnz     short locret_28358
+  0x2832f  test    word_328CA, 10h
+  0x28335  jnz     short loc_28359
+  0x28337  test    word_3295A, 200h
+  0x2833d  jnz     short locret_28358
+  0x2833f  mov     word_32958, 14h
+  0x28345  cmp     word_3297E, 0
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'extract_resource_stubs.py', 'noexport']
+[*] reading extract_resource_stubs.py
+[*] executing extract_resource_stubs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+27 resource stubs found
+
+0x27b42 (sz=33): si_raw=0xffffce47 real_si=? offset=? blocksize_expr=3Ah
+0x27bd6 (sz=33): si_raw=0xffffce43 real_si=? offset=? blocksize_expr=28h
+0x27bf7 (sz=33): si_raw=0xffffce4f real_si=? offset=? blocksize_expr=22h
+0x27c78 (sz=30): si_raw=0xffffce6f real_si=? offset=? blocksize_expr=1388h
+0x27c96 (sz=26): si_raw=0xffffce5f real_si=? offset=? blocksize_expr=ax
+0x27cb0 (sz=25): si_raw=0xffffce1f real_si=? offset=? blocksize_expr=300h
+0x27cfe (sz=34): si_raw=0xffffce5b real_si=? offset=? blocksize_expr=ax
+0x27d8a (sz=30): si_raw=0xffffcdeb real_si=? offset=? blocksize_expr=30C0h
+0x27da8 (sz=30): si_raw=0xffffcdd3 real_si=? offset=? blocksize_expr=1388h
+0x27dc6 (sz=31): si_raw=0xffffcde3 real_si=? offset=? blocksize_expr=1
+0x27de5 (sz=31): si_raw=0xffffcddf real_si=? offset=? blocksize_expr=1
+0x27e04 (sz=28): si_raw=0xffffcde7 real_si=? offset=? blocksize_expr=1
+0x27e20 (sz=26): si_raw=0xffffcdd7 real_si=? offset=? blocksize_expr=ax
+0x27e3a (sz=25): si_raw=0xffffcddb real_si=? offset=? blocksize_expr=22h
+0x27e7c (sz=30): si_raw=0xffffce07 real_si=? offset=? blocksize_expr=10h
+0x27e9a (sz=30): si_raw=0xffffce0b real_si=? offset=? blocksize_expr=0Ch
+0x27eb8 (sz=30): si_raw=0xffffce0f real_si=? offset=? blocksize_expr=8
+0x27ed6 (sz=30): si_raw=0xffffce13 real_si=? offset=? blocksize_expr=0Ch
+0x27ef4 (sz=30): si_raw=0xffffce17 real_si=? offset=? blocksize_expr=1Ah
+0x27f12 (sz=30): si_raw=0xffffce1b real_si=? offset=? blocksize_expr=4
+0x27f30 (sz=30): si_raw=0xffffcdff real_si=? offset=? blocksize_expr=3Ah
+0x27f4e (sz=30): si_raw=0xffffce03 real_si=? offset=? blocksize_expr=3Ah
+0x27f6c (sz=26): si_raw=0xffffcdf3 real_si=? offset=? blocksize_expr=ax
+0x27f86 (sz=30): si_raw=0xffffce6b real_si=? offset=? blocksize_expr=50h
+0x27fe0 (sz=32): si_raw=0xffffcdef real_si=? offset=? blocksize_expr=ax
+0x28000 (sz=26): si_raw=0xffffcdf7 real_si=? offset=? blocksize_expr=ax
+0x2801a (sz=26): si_raw=0xffffcdfb real_si=? offset=? blocksize_expr=ax
+----- end target script output -----
+[*] finished executing extract_resource_stubs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'extract_resource_stubs.py', 'noexport']
+[*] reading extract_resource_stubs.py
+[*] executing extract_resource_stubs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+27 resource stubs found
+
+0x27b42 (sz=33): si_raw=0xce47 real_si=0x3a6a7 offset=0x168f11 blocksize_expr=3Ah
+0x27bd6 (sz=33): si_raw=0xce43 real_si=0x3a6a3 offset=0x1677a1 blocksize_expr=28h
+0x27bf7 (sz=33): si_raw=0xce4f real_si=0x3a6af offset=0x1771db blocksize_expr=22h
+0x27c78 (sz=30): si_raw=0xce6f real_si=0x3a6cf offset=0x1acced blocksize_expr=1388h
+0x27c96 (sz=26): si_raw=0xce5f real_si=0x3a6bf offset=0x1a1141 blocksize_expr=ax
+0x27cb0 (sz=25): si_raw=0xce1f real_si=0x3a67f offset=0x8270a blocksize_expr=300h
+0x27cfe (sz=34): si_raw=0xce5b real_si=0x3a6bb offset=0x19c7a5 blocksize_expr=ax
+0x27d8a (sz=30): si_raw=0xcdeb real_si=0x3a64b offset=0xfe05 blocksize_expr=30C0h
+0x27da8 (sz=30): si_raw=0xcdd3 real_si=0x3a633 offset=0x0 blocksize_expr=1388h
+0x27dc6 (sz=31): si_raw=0xcde3 real_si=0x3a643 offset=0xfa6c blocksize_expr=1
+0x27de5 (sz=31): si_raw=0xcddf real_si=0x3a63f offset=0xf7e8 blocksize_expr=1
+0x27e04 (sz=28): si_raw=0xcde7 real_si=0x3a647 offset=0xfccc blocksize_expr=1
+0x27e20 (sz=26): si_raw=0xcdd7 real_si=0x3a637 offset=0x1388 blocksize_expr=ax
+0x27e3a (sz=25): si_raw=0xcddb real_si=0x3a63b offset=0x4bc8 blocksize_expr=22h
+0x27e7c (sz=30): si_raw=0xce07 real_si=0x3a667 offset=0x7bd2e blocksize_expr=10h
+0x27e9a (sz=30): si_raw=0xce0b real_si=0x3a66b offset=0x7c81e blocksize_expr=0Ch
+0x27eb8 (sz=30): si_raw=0xce0f real_si=0x3a66f offset=0x7d502 blocksize_expr=8
+0x27ed6 (sz=30): si_raw=0xce13 real_si=0x3a673 offset=0x7dcd2 blocksize_expr=0Ch
+0x27ef4 (sz=30): si_raw=0xce17 real_si=0x3a677 offset=0x7e5ba blocksize_expr=1Ah
+0x27f12 (sz=30): si_raw=0xce1b real_si=0x3a67b offset=0x822aa blocksize_expr=4
+0x27f30 (sz=30): si_raw=0xcdff real_si=0x3a65f offset=0x71138 blocksize_expr=3Ah
+0x27f4e (sz=30): si_raw=0xce03 real_si=0x3a663 offset=0x7af96 blocksize_expr=3Ah
+0x27f6c (sz=26): si_raw=0xcdf3 real_si=0x3a653 offset=0x70800 blocksize_expr=ax
+0x27f86 (sz=30): si_raw=0xce6b real_si=0x3a6cb offset=0x1aa5dd blocksize_expr=50h
+0x27fe0 (sz=32): si_raw=0xcdef real_si=0x3a64f offset=0x0 blocksize_expr=ax
+0x28000 (sz=26): si_raw=0xcdf7 real_si=0x3a657 offset=0x70ad0 blocksize_expr=ax
+0x2801a (sz=26): si_raw=0xcdfb real_si=0x3a65b offset=0x71048 blocksize_expr=ax
+----- end target script output -----
+[*] finished executing extract_resource_stubs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'find_pictures_vga.py', 'noexport']
+[*] reading find_pictures_vga.py
+[*] executing find_pictures_vga.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x3687f  'PICTURES.VGA'
+----- end target script output -----
+[*] finished executing find_pictures_vga.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'find_openfile_callers.py', 'noexport']
+[*] reading find_openfile_callers.py
+[*] executing find_openfile_callers.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+0x11f0b in InitGame:
+    0x11ef4  mov     word_368A5, ds
+    0x11ef8  mov     word_3688E, ds
+    0x11efc  mov     word_3685D, ds
+    0x11f00  mov     errorCode, 2
+    0x11f06  mov     bx, 9011h
+    0x11f09  mov     al, 0
+    0x11f0b  call    FileEntry_OpenFile
+
+0x11f2a in InitGame:
+    0x11f15  mov     errorCode, 9
+    0x11f1b  mov     bx, 9043h
+    0x11f1e  mov     al, 2
+    0x11f20  test    word_328C4, 8000h
+    0x11f26  jnz     short loc_11F2A
+    0x11f28  mov     al, 0
+    0x11f2a  call    FileEntry_OpenFile
+
+0x120ba in findSavegame:
+    0x120a4  int     21h; DOS - 2+ - FIND FIRST ASCIZ (FINDFIRST)
+    0x120a6  jb      short loc_120E6
+    0x120a8  or      word_328C4, 4000h
+    0x120ae  or      byte ptr [di+1], 80h
+    0x120b2  mov     errorCode, 0Bh
+    0x120b8  mov     al, 0
+    0x120ba  call    FileEntry_OpenFile
+
+0x1ee3e in sub_1EA6E:
+    0x1ee23  call    sub_16EFA
+    0x1ee28  mov     word_2E530, 0Bh
+    0x1ee2e  call    sub_23874
+    0x1ee33  mov     errorCode, 0Bh
+    0x1ee39  mov     bx, 902Ch
+    0x1ee3c  mov     al, 2
+    0x1ee3e  call    FileEntry_OpenFile
+
+0x1f63d in sub_1F5FF:
+    0x1f626  call    FileEntry_CreateFile
+    0x1f62b  call    ErrorCheck
+    0x1f630  jmp     short loc_1F647
+    0x1f632  mov     errorCode, 0Bh
+    0x1f638  mov     bx, 902Ch
+    0x1f63b  mov     al, 2
+    0x1f63d  call    FileEntry_OpenFile
+----- end target script output -----
+[*] finished executing find_openfile_callers.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- FileEntry_OpenFile @ 0x18472 ----
+  0x18472  push    dx
+  0x18473  push    cx
+  0x18474  mov     dx, bx
+  0x18476  add     dx, 0Eh
+  0x18479  mov     ah, 3Dh
+  0x1847b  int     21h; DOS - 2+ - OPEN DISK FILE WITH HANDLE  ; DOS - 2+ - OPEN DISK FILE WITH HANDLE
+DS:DX -> ASCIZ filename
+AL = access mode
+0 - read, 1 - write, 2 - read & write
+  0x1847d  jb      short loc_1848A
+  0x1847f  mov     [bx], ax
+  0x18481  mov     errorCode, 0
+  0x18487  pop     cx
+  0x18488  pop     dx
+  0x18489  retf
+  0x1848a  mov     word ptr [bx], 0FFFFh
+  0x1848e  pop     cx
+  0x1848f  pop     dx
+  0x18490  retf
+; ---- FileEntry_Read @ 0x18491 ----
+  0x18491  push    dx
+  0x18492  push    cx
+  0x18493  push    ds
+  0x18494  push    bx
+  0x18495  call    FileEntry_Seek
+  0x18498  mov     cx, [bx+6]
+  0x1849b  mov     dx, [bx+4]
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'check_fileentry_names.py', 'noexport']
+[*] reading check_fileentry_names.py
+[*] executing check_fileentry_names.py
+[*] captured stdout from target script:
+----- begin target script output -----
+FileEntry bx=0x9043: filename ea=0x368b1  contents=b'WORLD.DAT'
+FileEntry bx=0x902c: filename ea=0x3689a  contents=b'SAVGAMEX'
+
+PICTURES.VGA string ea = 0x3687F
+implied bx (if this were a FileEntry+0xE): 0x9011
+----- end target script output -----
+[*] finished executing check_fileentry_names.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- Fade? @ 0x2a11b ----
+  0x2a11b  push    si
+  0x2a11c  push    di
+  0x2a11d  push    dx
+  0x2a11e  push    cx
+  0x2a11f  push    bx
+  0x2a120  push    es
+  0x2a121  test    word_328CA, 40h
+  0x2a127  jz      short loc_2A136
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- Fade? @ 0x2a11b ----
+  0x2a11b  push    si
+  0x2a11c  push    di
+  0x2a11d  push    dx
+  0x2a11e  push    cx
+  0x2a11f  push    bx
+  0x2a120  push    es
+  0x2a121  test    word_328CA, 40h
+  0x2a127  jz      short loc_2A136
+  0x2a129  mov     ax, 9
+  0x2a12c  call    sub_28412
+  0x2a131  and     word_328CA, 0FFBFh
+  0x2a136  test    word_328CA, 10h
+  0x2a13c  jz      short loc_2A143
+  0x2a13e  and     word_328CA, 0FFEFh
+  0x2a143  or      word_3195C, 4
+  0x2a148  test    word_3195C, 2
+  0x2a14e  jz      short loc_2A1C9
+  0x2a150  mov     ax, word_2E776; x  ; x
+  0x2a153  mov     bx, word_31956; y  ; y
+  0x2a157  call    getTextPos
+  0x2a15a  push    ax
+  0x2a15b  mov     si, ax
+  0x2a15d  mov     di, 0E0Eh
+  0x2a160  mov     es, word_2E4AA
+  0x2a164  mov     ds, _videoBufferSeg
+  0x2a168  mov     cx, 10h
+  0x2a16b  push    cx
+  0x2a16c  mov     cx, 8
+  0x2a16f  rep movsw
+  0x2a171  add     si, 130h
+  0x2a175  pop     cx
+  0x2a176  cmp     si, 0FA00h
+  0x2a17a  ja      short loc_2A17E
+  0x2a17c  loop    loc_2A16B
+  0x2a17e  mov     ax, seg seg129
+  0x2a181  mov     ds, ax
+  0x2a183  pop     di
+  0x2a184  push    di
+  0x2a185  mov     si, 3FE6h
+  0x2a188  mov     es, _videoBufferSeg
+  0x2a18c  mov     cx, 10h
+  0x2a18f  push    cx
+  0x2a190  mov     cx, 10h
+  0x2a193  xor     dx, dx
+  0x2a195  cmp     word_2E776, 130h
+  0x2a19b  jle     short loc_2A1A7
+  0x2a19d  mov     dx, word_2E776
+  0x2a1a1  sub     dx, 130h
+  0x2a1a5  sub     cx, dx
+  0x2a1a7  lodsb
+  0x2a1a8  cmp     al, 0FFh
+  0x2a1aa  jz      short loc_2A1B1
+  0x2a1ac  stosb
+  0x2a1ad  loop    loc_2A1A7
+  0x2a1af  jmp     short loc_2A1B4
+  0x2a1b1  inc     di
+  0x2a1b2  loop    loc_2A1A7
+  0x2a1b4  or      dx, dx
+  0x2a1b6  jz      short loc_2A1BC
+  0x2a1b8  add     si, dx
+  0x2a1ba  add     di, dx
+  0x2a1bc  add     di, 130h
+  0x2a1c0  pop     cx
+  0x2a1c1  cmp     di, 0FA00h
+  0x2a1c5  ja      short loc_2A1C9
+  0x2a1c7  loop    loc_2A18F
+  0x2a1c9  xor     si, si
+  0x2a1cb  xor     di, di
+  0x2a1cd  mov     ax, 0A000h
+  0x2a1d0  mov     es, ax
+  0x2a1d2  mov     ds, _videoBufferSeg
+  0x2a1d6  mov     cx, 7D00h
+  0x2a1d9  rep movsw
+  0x2a1db  mov     ax, seg seg129
+  0x2a1de  mov     ds, ax
+  0x2a1e0  test    word_3195C, 2
+  0x2a1e6  jz      short loc_2A20B
+  0x2a1e8  pop     di
+  0x2a1e9  mov     si, 0E0Eh
+  0x2a1ec  mov     es, _videoBufferSeg
+  0x2a1f0  mov     cx, 10h
+  0x2a1f3  push    cx
+  0x2a1f4  mov     cx, 8
+  0x2a1f7  rep movsw
+  0x2a1f9  add     di, 130h
+  0x2a1fd  pop     cx
+  0x2a1fe  cmp     di, 0FA00h
+  0x2a202  ja      short loc_2A206
+  0x2a204  loop    loc_2A1F3
+  0x2a206  mov     ax, seg seg129
+  0x2a209  mov     ds, ax
+  0x2a20b  and     word_3195C, 0FFFBh
+  0x2a210  pop     es
+  0x2a211  pop     bx
+  0x2a212  pop     cx
+  0x2a213  pop     dx
+  0x2a214  pop     di
+  0x2a215  pop     si
+  0x2a216  retf
+; ---- sub_2A217 @ 0x2a217 ----
+  0x2a217  mov     [bp-4Ch], ax
+  0x2a21a  mov     ax, [bp-2Ah]
+  0x2a21d  jmp     ax
+  0x2a21f  dd unk_3907E
+  0x2a223  mov     ds, ax
+  0x2a225  call    sub_2746C
+  0x2a22a  test    ax, 1
+  0x2a22d  mov     ax, [bp-4Ch]
+  0x2a230  jnz     short loc_2A234
+  0x2a232  mov     al, 0FFh
+  0x2a234  pop     ds
+  0x2a235  retn
+  0x2a236  mov     ax, [bp-4Ch]
+  0x2a239  mov     word ptr [bp-4Ch], 0FFF8h
+  0x2a23e  jmp     short loc_2A25C
+  0x2a240  mov     ax, [bp-4Ch]
+  0x2a243  mov     word ptr [bp-4Ch], 0FFFCh
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_pic_dir.py', 'noexport']
+[*] reading dump_pic_dir.py
+[*] executing dump_pic_dir.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x3508e  00 00 00 00 f4 f5 00 00 3e 01 c6 00 00 00 00 00
+0x3509e  00 00 00 00 22 56 00 00 d2 00 69 00 4c 69 0e 00
+0x350ae  00 00 00 00 c4 54 00 00 8c 00 9b 00 b6 64 30 00
+0x350be  00 00 00 00 a4 51 00 00 be 00 6e 00 52 95 77 00
+0x350ce  00 00 00 00 c0 40 00 00 e0 00 4a 00 1a 3f ab 00
+0x350de  00 00 00 00 40 36 00 00 e0 00 3e 00 9a cc af 00
+0x350ee  00 00 00 00 c0 1d 00 00 38 00 88 00 9a 57 b2 00
+0x350fe  00 00 00 00 00 04 00 00 20 00 20 00 da bb b8 00
+0x3510e  00 00 00 00 00 01 00 00 10 00 10 00 da f3 bc 00
+0x3511e  00 00 00 00 40 00 00 00 08 00 08 00 da f1 be 00
+0x3512e  20 20 20 4e 4f 52 54 48 00 20 20 20 53 4f 55 54
+0x3513e  48 00 20 20 20 20 45 41 53 54 00 20 20 20 20 57
+0x3514e  45 53 54 00 53 41 56 45 00 4c 4f 41 44 00 44 4f
+0x3515e  53 00 4d 55 53 49 43 00 53 4f 55 4e 44 20 46 58
+0x3516e  00 52 45 54 55 52 4e 00 20 4c 45 56 45 4c 20 58
+0x3517e  00 20 4d 41 50 20 58 00 50 4f 53 49 54 49 4f 4e
+0x3518e  20 00 20 2d 20 00 31 32 3a 31 32 20 41 4d 00 31
+0x3519e  32 2f 31 32 2f 31 32 31 32 00 20 20 20 20 20 20
+0x351ae  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+0x351be  20 20 20 00 43 48 41 52 41 43 54 45 52 20 43 52
+0x351ce  45 41 54 49 4f 4e 00 50 49 43 4b 20 41 20 43 4c
+0x351de  41 53 53 00 46 49 47 48 54 45 52 20 20 20 00 4d
+0x351ee  45 52 43 48 41 4e 54 20 20 00 52 4f 47 55 45 20
+0x351fe  20 20 20 20 00 4d 4f 4e 4b 20 20 20 20 20 20 00
+0x3520e  41 4c 43 48 45 4d 49 53 54 20 00 50 41 4c 41 44
+0x3521e  49 4e 20 20 20 00 4d 41 47 45 20 20 20 20 20 20
+0x3522e  00 44 52 55 49 44 20 20 20 20 20 00 4d 41 52 4b
+0x3523e  53 4d 41 4e 20 20 00 51 55 49 54 20 22 43 52 45
+0x3524e  41 54 45 22 00 4d 41 4c 45 20 20 00 46 45 4d 41
+0x3525e  4c 45 00 50 49 43 4b 20 41 20 50 4f 52 54 52 41
+0x3526e  49 54 00 53 45 4c 45 43 54 20 41 4e 00 4f 50 54
+0x3527e  49 4f 4e 00 43 4c 41 53 53 00 54 41 4b 45 20 55
+----- end target script output -----
+[*] finished executing dump_pic_dir.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'name_picture_system.py']
+[*] reading name_picture_system.py
+[*] executing name_picture_system.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x3508e  '' -> 'g_pictureDir': ok
+0x2a68d  'sub_2A68D' -> 'LoadPictureIntoEms': ok
+0x29878  'sub_29878' -> 'DrawPicture': ok
+----- end target script output -----
+[*] finished executing name_picture_system.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106915
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SW.EXE
+input file    : C:\dev\yendor\yendor2\game\SW.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : d464f6847b9ea4296e9ce1b251f92788
+
+segments:
+  seg000       0x010000-0x010c40  (3136 bytes)
+  seg001       0x010c40-0x011160  (1312 bytes)
+  seg002       0x011160-0x01177b  (1563 bytes)
+  seg003       0x01177b-0x011a10  (661 bytes)
+  seg004       0x011a10-0x011edc  (1228 bytes)
+  seg005       0x011edc-0x012553  (1655 bytes)
+  seg006       0x012553-0x012623  (208 bytes)
+  seg007       0x012623-0x012b84  (1377 bytes)
+  seg008       0x012b84-0x01305e  (1242 bytes)
+  seg009       0x01305e-0x014ae8  (6794 bytes)
+  seg010       0x014ae8-0x01522d  (1861 bytes)
+  seg011       0x01522d-0x016262  (4149 bytes)
+  seg012       0x016262-0x016298  (54 bytes)
+  seg013       0x016298-0x0162b5  (29 bytes)
+  seg014       0x0162b5-0x0162f6  (65 bytes)
+  seg015       0x0162f6-0x016dea  (2804 bytes)
+  seg016       0x016dea-0x016e18  (46 bytes)
+  seg017       0x016e18-0x016ede  (198 bytes)
+  seg018       0x016ede-0x016efa  (28 bytes)
+  seg019       0x016efa-0x016f64  (106 bytes)
+  seg020       0x016f64-0x016f83  (31 bytes)
+  seg021       0x016f83-0x01700e  (139 bytes)
+  seg022       0x01700e-0x017031  (35 bytes)
+  seg023       0x017031-0x017b92  (2913 bytes)
+  seg024       0x017b92-0x017fb8  (1062 bytes)
+  seg025       0x017fb8-0x018067  (175 bytes)
+  seg026       0x018067-0x01840d  (934 bytes)
+  seg027       0x01840d-0x018424  (23 bytes)
+  seg028       0x018424-0x018504  (224 bytes)
+  seg029       0x018504-0x0193be  (3770 bytes)
+  seg030       0x0193be-0x019a16  (1624 bytes)
+  seg031       0x019a16-0x019e56  (1088 bytes)
+  seg032       0x019e56-0x01a294  (1086 bytes)
+  seg033       0x01a294-0x01a37e  (234 bytes)
+  seg034       0x01a37e-0x01a3f0  (114 bytes)
+  seg035       0x01a3f0-0x01a5cc  (476 bytes)
+  seg036       0x01a5cc-0x01a5f5  (41 bytes)
+  seg037       0x01a5f5-0x01a76d  (376 bytes)
+  seg038       0x01a76d-0x01aa05  (664 bytes)
+  seg039       0x01aa05-0x01ac80  (635 bytes)
+  seg040       0x01ac80-0x01aef7  (631 bytes)
+  seg041       0x01aef7-0x01b30c  (1045 bytes)
+  seg042       0x01b30c-0x01b428  (284 bytes)
+  seg043       0x01b428-0x01b47a  (82 bytes)
+  seg044       0x01b47a-0x01b4c1  (71 bytes)
+  seg045       0x01b4c1-0x01ccbb  (6138 bytes)
+  seg046       0x01ccbb-0x01cdbc  (257 bytes)
+  seg047       0x01cdbc-0x01d01d  (609 bytes)
+  seg048       0x01d01d-0x01d038  (27 bytes)
+  seg049       0x01d038-0x01d118  (224 bytes)
+  seg050       0x01d118-0x01d146  (46 bytes)
+  seg051       0x01d146-0x01d197  (81 bytes)
+  seg052       0x01d197-0x01d1d4  (61 bytes)
+  seg053       0x01d1d4-0x01d2a5  (209 bytes)
+  seg054       0x01d2a5-0x01d4b7  (530 bytes)
+  seg055       0x01d4b7-0x01dce0  (2089 bytes)
+  seg056       0x01dce0-0x01e64a  (2410 bytes)
+  seg057       0x01e64a-0x01ea6d  (1059 bytes)
+  seg058       0x01ea6d-0x01f97b  (3854 bytes)
+  seg059       0x01f97b-0x020070  (1781 bytes)
+  seg060       0x020070-0x0208ca  (2138 bytes)
+  seg061       0x0208ca-0x0209d2  (264 bytes)
+  seg062       0x0209d2-0x020c1e  (588 bytes)
+  seg063       0x020c1e-0x021530  (2322 bytes)
+  seg064       0x021530-0x0216f0  (448 bytes)
+  seg065       0x0216f0-0x0218dc  (492 bytes)
+  seg066       0x0218dc-0x0219f9  (285 bytes)
+  seg067       0x0219f9-0x021cc2  (713 bytes)
+  seg068       0x021cc2-0x021de1  (287 bytes)
+  seg069       0x021de1-0x0222f7  (1302 bytes)
+  seg070       0x0222f7-0x02278b  (1172 bytes)
+  seg071       0x02278b-0x022a67  (732 bytes)
+  seg072       0x022a67-0x0236eb  (3204 bytes)
+  seg073       0x0236eb-0x023a64  (889 bytes)
+  seg074       0x023a64-0x023a7c  (24 bytes)
+  seg075       0x023a7c-0x023ba4  (296 bytes)
+  seg076       0x023ba4-0x025607  (6755 bytes)
+  seg077       0x025607-0x025655  (78 bytes)
+  seg078       0x025655-0x0256f0  (155 bytes)
+  seg079       0x0256f0-0x02570b  (27 bytes)
+  seg080       0x02570b-0x02572b  (32 bytes)
+  seg081       0x02572b-0x025740  (21 bytes)
+  seg082       0x025740-0x025862  (290 bytes)
+  seg083       0x025862-0x025a66  (516 bytes)
+  seg084       0x025a66-0x025aab  (69 bytes)
+  seg085       0x025aab-0x025b33  (136 bytes)
+  seg086       0x025b33-0x026021  (1262 bytes)
+  seg087       0x026021-0x026c9d  (3196 bytes)
+  seg088       0x026c9d-0x026d54  (183 bytes)
+  seg089       0x026d54-0x02704b  (759 bytes)
+  seg090       0x02704b-0x02746c  (1057 bytes)
+  seg091       0x02746c-0x0274b4  (72 bytes)
+  seg092       0x0274b4-0x02781c  (872 bytes)
+  seg093       0x02781c-0x027849  (45 bytes)
+  seg094       0x027849-0x027a20  (471 bytes)
+  seg095       0x027a20-0x027aeb  (203 bytes)
+  seg096       0x027aeb-0x028034  (1353 bytes)
+  seg097       0x028034-0x02814b  (279 bytes)
+  seg098       0x02814b-0x028245  (250 bytes)
+  seg099       0x028245-0x02827e  (57 bytes)
+  seg100       0x02827e-0x0286b1  (1075 bytes)
+  seg101       0x0286b1-0x0286fc  (75 bytes)
+  seg102       0x0286fc-0x028a5a  (862 bytes)
+  seg103       0x028a5a-0x028a75  (27 bytes)
+  seg104       0x028a75-0x028bd1  (348 bytes)
+  seg105       0x028bd1-0x028c93  (194 bytes)
+  seg106       0x028c93-0x02940e  (1915 bytes)
+  seg107       0x02940e-0x029529  (283 bytes)
+  seg108       0x029529-0x0295a7  (126 bytes)
+  seg109       0x0295a7-0x029738  (401 bytes)
+  seg110       0x029738-0x029877  (319 bytes)
+  seg111       0x029877-0x02a765  (3822 bytes)
+  seg112       0x02a765-0x02a787  (34 bytes)
+  seg113       0x02a787-0x02a914  (397 bytes)
+  seg114       0x02a914-0x02ade8  (1236 bytes)
+  seg115       0x02ade8-0x02ae3b  (83 bytes)
+  seg116       0x02ae3b-0x02b383  (1352 bytes)
+  seg117       0x02b383-0x02b436  (179 bytes)
+  seg118       0x02b436-0x02b655  (543 bytes)
+  seg119       0x02b655-0x02ba61  (1036 bytes)
+  seg120       0x02ba61-0x02baa0  (63 bytes)
+  seg121       0x02baa0-0x02bd1a  (634 bytes)
+  seg122       0x02bd1a-0x02c010  (758 bytes)
+  seg123       0x02c010-0x02c0fe  (238 bytes)
+  seg124       0x02c0fe-0x02d577  (5241 bytes)
+  seg125       0x02d577-0x02d5e0  (105 bytes)
+  seg126       0x02d5e0-0x02d609  (41 bytes)
+  seg127       0x02d609-0x02d65a  (81 bytes)
+  seg128       0x02d65a-0x02d86d  (531 bytes)
+  seg129       0x02d86d-0x03cc80  (62483 bytes)
+  seg130       0x03cc80-0x03ce80  (512 bytes)
+
+functions: 769 total, 78 named, 691 still sub_XXXXX
+
+structs (0): 
+
+named functions (non-sub_, first 200):
+  0x010000  start
+  0x010c40  ShowClueBook
+  0x011edc  InitGame
+  0x01206f  clear_kbd_buffer
+  0x012075  findSavegame
+  0x0120ed  InitGlobals
+  0x0122f2  loadWorldDat2
+  0x012323  loadWorldDat3
+  0x012355  loadWorldDat1
+  0x01247a  loadWorldDat4
+  0x0124ab  loadWorldDat5
+  0x01264d  MapUnmapPages
+  0x012677  InitMemory
+  0x012a51  InitGraphics
+  0x012b31  Struc1_Allocate
+  0x012b76  calcOffset
+  0x01305e  WaitForKeypress
+  0x0132f2  ShowPagedEntryScreen
+  0x0138c0  UpdateScrollArrows
+  0x014b10  FillVideoBuffer
+  0x0150e5  DrawMessageBox
+  0x016298  allocMem
+  0x016ede  TrimTrailingSpaces
+  0x01700e  StrCat
+  0x01840e  wait
+  0x018424  FileEntry_Close
+  0x018450  FileEntry_CreateFile
+  0x018472  FileEntry_OpenFile
+  0x018491  FileEntry_Read
+  0x0184bc  FileEntry_Write
+  0x0184e7  FileEntry_Seek
+  0x01d01e  StrFillN
+  0x01d038  PollKeyboardInput
+  0x01f197  EraseLabelText
+  0x01f1b8  GetListItemPosition
+  0x01f38a  GameDialog_drawButtons
+  0x01f438  GameDialog_drawAnimation
+  0x01f481  GameDialog_drawDos
+  0x01f49c  GameDialog_drawReturn
+  0x01f4b7  GameDialog_drawLoad
+  0x01f4d2  GameDialog_drawMusic
+  0x01f4ed  GameDialog_drawNewGame
+  0x01f508  GameDialog_drawSave
+  0x01f523  GameDialog_drawSoundFx
+  0x01fc21  RestoreInt1cVector
+  0x0237d8  InitMouse
+  0x023a64  StpCpy
+  0x023b5e  writeString
+  0x027f30  WorldDat_setBlock1
+  0x027f4e  WorldDat_setBlock2
+  0x027f6c  WorldDat_setBlock3
+  0x027f86  WorldDat_setBlock4
+  0x027fa4  WorldDat_setBlock5
+  0x027fc2  WorldDat_setBlock6
+  0x02838f  ShutdownAudioDrivers
+  0x02897d  ErrorCheck
+  0x0289ce  ShowErr_MemoryAllocation
+  0x0289d3  ShowErr_ProblemWithPictureVga
+  0x0289d8  ShowErr_ProblemWithPalette
+  0x0289dd  ShowErr_RequiredExpandedMemMgr
+  0x0289e2  ShowErr_MinimumExpandedRam
+  0x0289e7  ShowErr_EmmMappingError
+  0x0289ec  ShowErr_ProblemWithMusic
+  0x0289f1  ShowErr_ProblemWithDriver
+  0x0289f6  ShowErr_ProblemWithWorldDat
+  0x0289fb  ShowErr_ProblemWithCurgame
+  0x028a00  ShowErr_ProblemWithSavedGame
+  0x028a05  ShowErr_ExpandedMemAllocFail
+  0x028a0a  ShowErr_ProblemRetrievingText
+  0x028a0f  ShowErr_ProblemRetrievingNpc
+  0x028a14  ShowErr_ProblemRetrievingConvo
+  0x028a5a  StrLen
+  0x029878  DrawPicture
+  0x029aa2  writeChar
+  0x029b06  FreeVideoBuffer
+  0x02a11b  Fade?
+  0x02a681  getTextPos
+  0x02a68d  LoadPictureIntoEms
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
