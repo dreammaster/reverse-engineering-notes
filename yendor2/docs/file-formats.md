@@ -1299,7 +1299,11 @@ cluster. A related classifier: `ClassifyItemServiceTier` (was
 item and, based on its `[+0xC]`/`[+2]` flags, returns one of 3 tier
 codes (or a 4th "wrong item type" code) — plausibly gating which
 service (repair/enhance-style) the item qualifies for, but not
-confirmed. One of its two callers (`sub_1ACD7`) also calls
+confirmed. Called from `GetClassifiedItemStatField` (was `sub_1AE23`,
+called from `sub_16BF6`), which selects one of two `word_2E548`
+sub-fields (`+4`/`+8`) based on the item's category flag, or returns 0
+if classification fails. One of `ClassifyItemServiceTier`'s two other
+callers (`sub_1ACD7`) also calls
 `ApplyItemEffectIconSlot` (was `sub_1AE4C`): populates an icon-bar slot
 (the same `0xC50 + slot*0x14` layout `TickPartyAilmentIconBar`/
 `ApplySavingThrowEffect` use) for effect id `0` — a new id not seen

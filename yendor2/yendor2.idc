@@ -3851,7 +3851,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1ADFC);
 	op_hex		(x,	1);
 	create_insn	(0X1AE16);
+	set_cmt	(0X1AE23,	"Uses ClassifyItemServiceTier; if classification fails, returns bx=0. Otherwise picks word_2E548+4 or +8 based on the item's [+0xC] bit 0xC000 category flag. Called from sub_16BF6.",	0);
 	create_insn	(0X1AE23);
+	set_name	(0X1AE23,	"GetClassifiedItemStatField");
 	create_insn	(x=0X1AE33);
 	op_hex		(x,	1);
 	create_insn	(0X1AE43);
@@ -5507,12 +5509,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20E12,	"For each cell in one row, draws the current floor picture (word_2E4A0) if the cell's type shares that same floor (IsPairedValueMatch) -- a seamless-floor pass, simpler than RenderDungeonViewRow's full wall/object rendering. Called 6x by DrawDungeonFloorAndCeiling.",	0);
 	create_insn	(0X20E12);
 	set_name	(0X20E12,	"ExtendDungeonFloorTexture");
-	create_insn	(x=0X20E13);
-	op_hex		(x,	1);
-	set_cmt	(0X20E54,	"Draws a monster's sprite in the dungeon viewport (base picture, wound-flash animation via [+0xC] bits 2/4, optional overlay via bit 0x10, plus a weapon/attack-effect sprite), then checks [+0xC] bits 0x3010 (same flags ProcessLevelMonsters documents for TickMonsterTimer's two-phase countdown): if set, resets the countdown; else calls sub_25656 (not traced, plausibly attack resolution). Called from TryTriggerMonsterEncounterAtCell and RenderActiveMonsterSprites.",	0);
-	create_insn	(x=0X20E54);
-	op_hex		(x,	1);
-	set_name	(0X20E54,	"DrawMonsterAndUpdateAttackState");
 }
 
 //------------------------------------------------------------------------
@@ -5522,6 +5518,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X20E13);
+	op_hex		(x,	1);
+	set_cmt	(0X20E54,	"Draws a monster's sprite in the dungeon viewport (base picture, wound-flash animation via [+0xC] bits 2/4, optional overlay via bit 0x10, plus a weapon/attack-effect sprite), then checks [+0xC] bits 0x3010 (same flags ProcessLevelMonsters documents for TickMonsterTimer's two-phase countdown): if set, resets the countdown; else calls sub_25656 (not traced, plausibly attack resolution). Called from TryTriggerMonsterEncounterAtCell and RenderActiveMonsterSprites.",	0);
+	create_insn	(x=0X20E54);
+	op_hex		(x,	1);
+	set_name	(0X20E54,	"DrawMonsterAndUpdateAttackState");
 	create_insn	(x=0X20E5C);
 	op_hex		(x,	1);
 	create_insn	(x=0X20E7B);
@@ -7511,6 +7513,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X2838F);
 	op_hex		(x,	1);
 	set_name	(0X2838F,	"ShutdownAudioDrivers");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X283B0);
 	op_hex		(x,	1);
 	set_cmt	(0X283B2,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -7525,15 +7536,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X283E5);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X283E7,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X283E7);
 	op_hex		(x,	0);
@@ -10467,6 +10469,15 @@ static Bytes_3(void) {
 	set_name	(0X351D5,	"aPickAClass");
 	create_strlit	(0X351E2,	0XB);
 	set_name	(0X351E2,	"aFighter");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X351ED,	0XB);
 	set_name	(0X351ED,	"aMerchant");
 	create_strlit	(0X351F8,	0XB);
@@ -10481,15 +10492,6 @@ static Bytes_3(void) {
 	set_name	(0X35224,	"aMage");
 	create_strlit	(0X3522F,	0XB);
 	set_name	(0X3522F,	"aDruid");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3523A,	0XB);
 	set_name	(0X3523A,	"aMarksman");
 	create_strlit	(0X35245,	0XE);

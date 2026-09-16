@@ -4019,6 +4019,15 @@ established, then draws it via `ApplyEffectAndDrawIconBar`.
 
 509 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: GetClassifiedItemStatField
+
+Named `sub_1AE23` -> `GetClassifiedItemStatField`, called from
+`sub_16BF6`: uses `ClassifyItemServiceTier` and selects one of two
+`word_2E548` sub-fields based on the item's category flag, or 0 on
+classification failure.
+
+510 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

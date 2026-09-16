@@ -11272,7 +11272,7 @@ loc_16D24:                              ; CODE XREF: sub_16BF6+11E↑j
                 mov     bx, word_32908
                 add     bx, ax
                 mov     ax, [bx]
-                call    sub_1AE23
+                call    GetClassifiedItemStatField
                 cmp     bx, 0
                 jnz     short loc_16D40
                 mov     word ptr [si+0Eh], 0
@@ -19390,8 +19390,8 @@ sub_1ACD7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AE23       proc far                ; CODE XREF: sub_16BF6+139↑P
-                push    ax
+GetClassifiedItemStatField proc far     ; CODE XREF: sub_16BF6+139↑P
+                push    ax              ; Uses ClassifyItemServiceTier; if classification fails, returns bx=0. Otherwise picks word_2E548+4 or +8 based on the item's [+0xC] bit 0xC000 category flag. Called from sub_16BF6.
                 call    ClassifyItemServiceTier
                 cmp     errorCode, 0
                 jz      short loc_1AE33
@@ -19399,7 +19399,7 @@ sub_1AE23       proc far                ; CODE XREF: sub_16BF6+139↑P
                 jmp     short loc_1AE4A
 ; ---------------------------------------------------------------------------
 
-loc_1AE33:                              ; CODE XREF: sub_1AE23+9↑j
+loc_1AE33:                              ; CODE XREF: GetClassifiedItemStatField+9↑j
                 test    word ptr [bx+0Ch], 0C000h
                 jnz     short loc_1AE43
                 mov     bx, word_2E548
@@ -19407,15 +19407,15 @@ loc_1AE33:                              ; CODE XREF: sub_1AE23+9↑j
                 jmp     short loc_1AE4A
 ; ---------------------------------------------------------------------------
 
-loc_1AE43:                              ; CODE XREF: sub_1AE23+15↑j
+loc_1AE43:                              ; CODE XREF: GetClassifiedItemStatField+15↑j
                 mov     bx, word_2E548
                 mov     bx, [bx+4]
 
-loc_1AE4A:                              ; CODE XREF: sub_1AE23+E↑j
-                                        ; sub_1AE23+1E↑j
+loc_1AE4A:                              ; CODE XREF: GetClassifiedItemStatField+E↑j
+                                        ; GetClassifiedItemStatField+1E↑j
                 pop     ax
                 retf
-sub_1AE23       endp
+GetClassifiedItemStatField endp
 
 
 ; =============== S U B R O U T I N E =======================================
