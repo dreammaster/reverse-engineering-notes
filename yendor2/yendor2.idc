@@ -9324,7 +9324,9 @@ static Bytes_3(void) {
 	set_name	(0X2BB97,	"SaveCorridorBackgroundToEMS");
 	create_insn	(x=0X2BBCC);
 	op_seg		(x,	1);
+	set_cmt	(0X2BBD7,	"Fills ~11.7KB of the offscreen buffer (starting at offset 0) with byte 0xFF via 105 overlapping row-strided rep stosw passes -- clears whatever mask/overlay buffer backs the action-icon highlight effect. Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.",	0);
 	create_insn	(0X2BBD7);
+	set_name	(0X2BBD7,	"ClearActionIconHighlightMask");
 	create_insn	(x=0X2BBDA);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -9337,7 +9339,9 @@ static Bytes_3(void) {
 	set_name	(0X2BC16,	"RestoreCorridorBackgroundFromEMS");
 	create_insn	(x=0X2BC4B);
 	op_seg		(x,	1);
+	set_cmt	(0X2BC56,	"Darkens a 224x136 region of the offscreen buffer (starting at row 8, col 8 of the 320-wide mode-13h buffer -- the dungeon viewport's area) by subtracting 2 from every byte (palette index) -- one step of a fade/dim effect. Called from sub_2C0FE.",	0);
 	create_insn	(0X2BC56);
+	set_name	(0X2BC56,	"DimDungeonViewport");
 	set_cmt	(0X2BC72,	"Parameterized sibling of RestoreCorridorBackgroundFromEMS: ax/bx/cx shift the blitted region's offsets/dimensions to scroll it directionally. Called from sub_2C0FE.",	0);
 	create_insn	(0X2BC72);
 	set_name	(0X2BC72,	"ScrollCorridorBackgroundFromEMS");
@@ -9926,6 +9930,15 @@ static Bytes_3(void) {
 	create_insn	(0X2D6D3);
 	create_insn	(x=0X2D6DE);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D6E9);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D6EF);
@@ -9948,15 +9961,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2D7EA,	"Clears +0x15E bit 0x8000 (the 'needs attention' flag MarkIneligiblePartyMembers sets) for all 4 party slots unconditionally. Called from InteractWithContainer.",	0);
 	create_insn	(0X2D7EA);
 	set_name	(0X2D7EA,	"ClearIneligibleFlagForAllMembers");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D7FD);
 	op_hex		(x,	1);
 	set_cmt	(0X2D809,	"Shows a yes/no confirm prompt (message id 0x12), storing the result in word_3331A and the current slot (word_32924) in word_3331C for the caller to act on. Called from InteractWithContainer.",	0);

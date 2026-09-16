@@ -1034,14 +1034,19 @@ below. `HandleRangedOrCombatAction` also uses `SaveCorridorBackgroundToEMS`
 (the mirror image of `RestoreCorridorBackgroundFromEMS` — video
 buffer → EMS, caching the corridor before an animated overlay draws
 over it) and `SaveActionIconPanelToEMS` (same idea for the action-icon
-panel area, also used by `HighlightSelectedAbilityIcon`).
+panel area, also used by `HighlightSelectedAbilityIcon`, which also
+calls `ClearActionIconHighlightMask` (was `sub_2BBD7`) to reset the
+mask/overlay buffer backing that highlight effect.
 
 A large unnamed dispatcher, `sub_2C0FE`, sits behind several
 combat-adjacent helpers this session named individually
 (`ApplyDamageToMapMonster`, `GetMonsterAtViewportRow`,
-`ScrollCorridorBackgroundFromEMS`, and `AnimateEffectFrame` — one
+`ScrollCorridorBackgroundFromEMS`, `AnimateEffectFrame` — one
 animation frame, same shape as `AnimateProjectileStep` but a different
-layer flag and wait length, for some other in-viewport effect
+layer flag and wait length, for some other in-viewport effect,
+and `DimDungeonViewport` (was `sub_2BC56`) — darkens the 224×136
+dungeon-viewport region of the offscreen buffer by 2 palette-index
+steps, plausibly one frame of a hit-flash or transition dim
 sequence) without itself being traced. Also called (twice) from it:
 `DrawAnimationFrameAndAdvance` (was `sub_2D3FE`) — a small, generic
 "draw this animation frame, return the next (wrapping) frame index"

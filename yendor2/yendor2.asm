@@ -23821,7 +23821,7 @@ loc_1D540:                              ; CODE XREF: HandleRangedOrCombatAction+
                 mov     word_2E530, 2
                 call    DrawPicture
                 call    DrawMouseCursor
-                call    sub_2BBD7
+                call    ClearActionIconHighlightMask
                 mov     _font_bgTransparent, 5
                 mov     y, 0
                 mov     ax, _videoBufferSeg
@@ -24158,7 +24158,7 @@ HighlightSelectedAbilityIcon proc near  ; CODE XREF: HandleRangedOrCombatAction+
 
 loc_1D941:                              ; CODE XREF: HighlightSelectedAbilityIcon+5↑j
                 call    SaveCorridorBackgroundToEMS
-                call    sub_2BBD7
+                call    ClearActionIconHighlightMask
                 mov     _font_bgTransparent, 5
                 mov     y, 0
                 mov     ax, _videoBufferSeg
@@ -32732,7 +32732,7 @@ loc_2283F:                              ; CODE XREF: sub_2281F+5↑j
 ; ---------------------------------------------------------------------------
 
 loc_2284A:                              ; CODE XREF: sub_2281F+26↑j
-                call    sub_2BBD7
+                call    ClearActionIconHighlightMask
                 mov     _font_bgTransparent, 5
                 mov     y, 0
                 mov     ax, _videoBufferSeg
@@ -50389,16 +50389,16 @@ SaveCorridorBackgroundToEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BBD7       proc far                ; CODE XREF: HandleRangedOrCombatAction+C0↑P
+ClearActionIconHighlightMask proc far   ; CODE XREF: HandleRangedOrCombatAction+C0↑P
                                         ; HighlightSelectedAbilityIcon+F↑P ...
-                push    es
+                push    es              ; Fills ~11.7KB of the offscreen buffer (starting at offset 0) with byte 0xFF via 105 overlapping row-strided rep stosw passes -- clears whatever mask/overlay buffer backs the action-icon highlight effect. Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.
                 push    di
                 push    cx
                 mov     cx, 69h
                 mov     es, _videoBufferSeg
                 xor     di, di
 
-loc_2BBE3:                              ; CODE XREF: sub_2BBD7+19↓j
+loc_2BBE3:                              ; CODE XREF: ClearActionIconHighlightMask+19↓j
                 push    cx
                 mov     cx, 69h ; 'i'
                 mov     ax, 0FFFFh
@@ -50410,7 +50410,7 @@ loc_2BBE3:                              ; CODE XREF: sub_2BBD7+19↓j
                 pop     di
                 pop     es
                 retf
-sub_2BBD7       endp
+ClearActionIconHighlightMask endp
 
 ; ---------------------------------------------------------------------------
                 push    es
@@ -50479,16 +50479,16 @@ RestoreCorridorBackgroundFromEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BC56       proc far                ; CODE XREF: sub_2C0FE+1050↓P
-                mov     cx, 88h
+DimDungeonViewport proc far             ; CODE XREF: sub_2C0FE+1050↓P
+                mov     cx, 88h         ; Darkens a 224x136 region of the offscreen buffer (starting at row 8, col 8 of the 320-wide mode-13h buffer -- the dungeon viewport's area) by subtracting 2 from every byte (palette index) -- one step of a fade/dim effect. Called from sub_2C0FE.
                 mov     si, 0A08h
                 mov     es, _videoBufferSeg
 
-loc_2BC60:                              ; CODE XREF: sub_2BC56+19↓j
+loc_2BC60:                              ; CODE XREF: DimDungeonViewport+19↓j
                 push    cx
                 mov     cx, 0E0h
 
-loc_2BC64:                              ; CODE XREF: sub_2BC56+13↓j
+loc_2BC64:                              ; CODE XREF: DimDungeonViewport+13↓j
                 sub     byte ptr es:[si], 2
                 inc     si
                 loop    loc_2BC64
@@ -50496,7 +50496,7 @@ loc_2BC64:                              ; CODE XREF: sub_2BC56+13↓j
                 pop     cx
                 loop    loc_2BC60
                 retf
-sub_2BC56       endp
+DimDungeonViewport endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51959,7 +51959,7 @@ loc_2C92A:                              ; CODE XREF: sub_2C0FE+91↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_332DA
                 call    sub_2D498
-                call    sub_2BBD7
+                call    ClearActionIconHighlightMask
                 mov     _font_bgTransparent, 5
                 mov     y, 0
                 mov     ax, _videoBufferSeg
@@ -52696,7 +52696,7 @@ loc_2D137:                              ; CODE XREF: sub_2C0FE+C8↑j
 
 loc_2D14D:                              ; CODE XREF: sub_2C0FE+1063↓j
                 push    cx
-                call    sub_2BC56
+                call    DimDungeonViewport
                 call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait

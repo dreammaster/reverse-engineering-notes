@@ -4436,6 +4436,23 @@ persistent draw.
 
 539 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DimDungeonViewport + ClearActionIconHighlightMask
+
+Named two small standalone offscreen-buffer visual-effect helpers.
+`sub_2BC56` -> `DimDungeonViewport` (called once from the large
+unnamed combat dispatcher `sub_2C0FE`): darkens a 224×136 region of
+the offscreen buffer — row 8, col 8 of the 320-byte-wide mode-13h
+buffer, matching the dungeon viewport's on-screen position/size — by
+subtracting 2 from every byte (palette index), i.e. one step of a
+fade/dim effect. `sub_2BBD7` -> `ClearActionIconHighlightMask` (called
+from the already-named `HandleRangedOrCombatAction` and
+`HighlightSelectedAbilityIcon`): fills ~11.7KB of the offscreen buffer
+with byte `0xFF` via 105 overlapping row-strided `rep stosw` passes —
+clearing whatever mask/overlay buffer backs the action-icon highlight
+effect before it's redrawn.
+
+541 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
