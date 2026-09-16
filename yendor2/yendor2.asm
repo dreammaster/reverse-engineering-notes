@@ -14729,7 +14729,7 @@ loc_18708:                              ; CODE XREF: sub_1869D+66↑j
 loc_18714:                              ; CODE XREF: sub_1869D+61↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
-                call    sub_1930E
+                call    SelectClickedRosterPortrait
                 cmp     errorCode, 1
                 jnz     short loc_1872D
                 call    TryDropHeldItem
@@ -14871,7 +14871,7 @@ loc_18857:                              ; CODE XREF: sub_1869D+134↑j
 loc_1885F:                              ; CODE XREF: sub_1869D+11C↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
-                call    sub_1930E
+                call    SelectClickedRosterPortrait
                 cmp     errorCode, 1
                 jnz     short loc_18873
                 jmp     loc_187D4
@@ -15017,7 +15017,7 @@ loc_1897C:                              ; CODE XREF: sub_1869D+2BF↑j
 loc_1897F:                              ; CODE XREF: sub_1869D+2C4↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
-                call    sub_1930E
+                call    SelectClickedRosterPortrait
                 cmp     errorCode, 1
                 jz      short loc_1897C
                 call    sub_26415
@@ -16029,20 +16029,20 @@ TrySellItemForGold endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1930E       proc near               ; CODE XREF: sub_1869D+7E↑p
+SelectClickedRosterPortrait proc near   ; CODE XREF: sub_1869D+7E↑p
                                         ; sub_1869D+1C9↑p ...
-                mov     errorCode, 1
+                mov     errorCode, 1    ; Hit-tests region table 0x6304 for one of 4 portrait slots, each gated on a word_328C6 visibility bit; sets the draw position and word_32924 to the matching g_partySlotAssignment entry (0x95EB/0x95ED/0x95EF/0x95F1), then resolves it via SelectPartyRecordById. errorCode=0 on success, 1 on a miss/empty/hidden slot. Called from sub_1869D.
                 mov     si, 6304h
                 call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_19322
 
-locret_19321:                           ; CODE XREF: sub_1930E+1F↓j
-                                        ; sub_1930E+40↓j ...
+locret_19321:                           ; CODE XREF: SelectClickedRosterPortrait+1F↓j
+                                        ; SelectClickedRosterPortrait+40↓j ...
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19322:                              ; CODE XREF: sub_1930E+11↑j
+loc_19322:                              ; CODE XREF: SelectClickedRosterPortrait+11↑j
                 cmp     ax, 1
                 jnz     short loc_19343
                 test    word_328C6, 4000h
@@ -16053,7 +16053,7 @@ loc_19322:                              ; CODE XREF: sub_1930E+11↑j
                 jmp     short loc_193A4
 ; ---------------------------------------------------------------------------
 
-loc_19343:                              ; CODE XREF: sub_1930E+17↑j
+loc_19343:                              ; CODE XREF: SelectClickedRosterPortrait+17↑j
                 cmp     ax, 2
                 jnz     short loc_19364
                 test    word_328C6, 2000h
@@ -16064,7 +16064,7 @@ loc_19343:                              ; CODE XREF: sub_1930E+17↑j
                 jmp     short loc_193A4
 ; ---------------------------------------------------------------------------
 
-loc_19364:                              ; CODE XREF: sub_1930E+38↑j
+loc_19364:                              ; CODE XREF: SelectClickedRosterPortrait+38↑j
                 cmp     ax, 3
                 jnz     short loc_19385
                 test    word_328C6, 1000h
@@ -16075,7 +16075,7 @@ loc_19364:                              ; CODE XREF: sub_1930E+38↑j
                 jmp     short loc_193A4
 ; ---------------------------------------------------------------------------
 
-loc_19385:                              ; CODE XREF: sub_1930E+59↑j
+loc_19385:                              ; CODE XREF: SelectClickedRosterPortrait+59↑j
                 cmp     ax, 4
                 jnz     short locret_19321
                 test    word_328C6, 800h
@@ -16084,20 +16084,20 @@ loc_19385:                              ; CODE XREF: sub_1930E+59↑j
                 mov     word_328C0, 8
                 mov     word_32924, 95F1h
 
-loc_193A4:                              ; CODE XREF: sub_1930E+33↑j
-                                        ; sub_1930E+54↑j ...
+loc_193A4:                              ; CODE XREF: SelectClickedRosterPortrait+33↑j
+                                        ; SelectClickedRosterPortrait+54↑j ...
                 mov     si, word_32924
                 cmp     word ptr [si], 0
                 jnz     short loc_193B0
                 jmp     locret_19321
 ; ---------------------------------------------------------------------------
 
-loc_193B0:                              ; CODE XREF: sub_1930E+9D↑j
+loc_193B0:                              ; CODE XREF: SelectClickedRosterPortrait+9D↑j
                 mov     ax, [si]
                 call    SelectPartyRecordById
                 mov     errorCode, 0
                 retn
-sub_1930E       endp
+SelectClickedRosterPortrait endp
 
 seg029          ends
 

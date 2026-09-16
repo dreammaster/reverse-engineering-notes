@@ -3379,6 +3379,18 @@ open in file-formats.md rather than guessed.
 
 432 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SelectClickedRosterPortrait
+
+Named `sub_1930E` -> `SelectClickedRosterPortrait`: hit-tests region
+table `0x6304` for one of 4 portrait slots (each gated on a
+`word_328C6` visibility bit), sets the draw position, and resolves the
+clicked slot's character via `g_partySlotAssignment` + `
+SelectPartyRecordById`. Confirms `g_partySlotAssignment`'s exact base
+address (`0x95EB`) and 4-slot layout, previously only described
+generically. Called from the still-unnamed, large `sub_1869D`.
+
+433 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

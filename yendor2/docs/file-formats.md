@@ -65,7 +65,10 @@ loaded): lives in a **confirmed fixed array**, `g_partyRecords` (base
 been misattached to the wrong call site — see
 `ida_scripts/fix_party_record_next_claim.py`). `ApplyMapTriggerEffect`
 independently confirms the same base/stride via a separate 4-slot
-`g_partySlotAssignment` index table. `SelectAndDrawPartyStatusRow`
+`g_partySlotAssignment` index table (base `0x95EB`, confirmed exactly
+by `SelectClickedRosterPortrait`, was `sub_1930E` — it maps 4
+screen-clicked portrait slots directly to `0x95EB`/`0x95ED`/`0x95EF`/
+`0x95F1`). `SelectAndDrawPartyStatusRow`
 uses the same table to map a party record back to its slot number
 (1-4), fakes that digit as a keypress to reuse the main loop's
 existing panel-select routine (`sub_25B34`), then draws that member's

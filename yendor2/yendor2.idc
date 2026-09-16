@@ -3405,7 +3405,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X192B9);
 	op_hex		(x,	1);
+	set_cmt	(0X1930E,	"Hit-tests region table 0x6304 for one of 4 portrait slots, each gated on a word_328C6 visibility bit; sets the draw position and word_32924 to the matching g_partySlotAssignment entry (0x95EB/0x95ED/0x95EF/0x95F1), then resolves it via SelectPartyRecordById. errorCode=0 on success, 1 on a miss/empty/hidden slot. Called from sub_1869D.",	0);
 	create_insn	(0X1930E);
+	set_name	(0X1930E,	"SelectClickedRosterPortrait");
 	create_insn	(0X19322);
 	create_insn	(x=0X19327);
 	op_hex		(x,	1);
