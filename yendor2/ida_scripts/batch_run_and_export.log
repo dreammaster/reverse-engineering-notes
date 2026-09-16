@@ -173863,3 +173863,36 @@ total names seen: 1491, matched default pattern: 0
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor2\yendor2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rename_globals_round6.py']
+[*] reading rename_globals_round6.py
+[*] executing rename_globals_round6.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2e76e  'word_2E76E' -> 'g_mouseLeftDownX': ok
+0x2e770  'word_2E770' -> 'g_mouseLeftDownY': ok
+0x3194e  'word_3194E' -> 'g_mouseLeftUpX': ok
+0x31950  'word_31950' -> 'g_mouseLeftUpY': ok
+0x2e772  'word_2E772' -> 'g_mouseRightDownX': ok
+0x2e774  'word_2E774' -> 'g_mouseRightDownY': ok
+0x31952  'word_31952' -> 'g_mouseRightUpX': ok
+0x31954  'word_31954' -> 'g_mouseRightUpY': ok
+0x2e77a  'word_2E77A' -> 'g_dragCursorMinX': ok
+0x2e778  'word_2E778' -> 'g_dragCursorMaxX': ok
+0x3195a  'word_3195A' -> 'g_dragCursorMinY': ok
+0x31958  'word_31958' -> 'g_dragCursorMaxY': ok
+0x2e496  'word_2E496' -> 'g_mapEditorWallScrollIndex': ok
+0x2e4a2  'word_2E4A2' -> 'g_mapEditorFloorScrollIndex': ok
+0x2e49e  'word_2E49E' -> 'g_stagedAttackTypeFlags': ok
+----- end target script output -----
+[*] finished executing rename_globals_round6.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106988
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

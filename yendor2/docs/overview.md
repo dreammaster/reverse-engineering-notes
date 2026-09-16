@@ -6944,6 +6944,68 @@ selection, and item-consumption parameters under one address. Naming
 these as a group would misrepresent them as having one purpose: left
 alone, same as previous rounds.
 
+### 2026-09-16 session update, continued: global variable renaming, round 6 (fresh disassembly tracing)
+
+The reference-count/doc-mention approach for finding rename candidates
+is now largely exhausted, so this round switched to reading actual
+disassembly directly (the same investigative style used throughout the
+function-naming phase) rather than harvesting existing prose. 15 more
+globals, the highlight being a full cluster found by reading `seg073`'s
+`INT 33h` mouse-callback handler start to finish:
+
+**The core mouse-event position-latch cluster.** The handler is a
+standard MS Mouse user callback (condition mask in `ax`, position in
+`cx`/`dx`): after running the raw per-call motion counters through
+`ClampDragCursorPosition` (which accumulates them into
+`g_dragCursorX`/`g_dragCursorY` and returns the clamped result in
+`cx`/`dx`), it tests the condition mask's classic bit values
+(`2`=left-down, `4`=left-up, `8`=right-down, `0x10`=right-up) and
+latches the clamped position into a different global pair per event:
+- `word_2E76E`/`word_2E770` → **`g_mouseLeftDownX`/`g_mouseLeftDownY`**
+  — the left-click position read throughout the game's click/hit-test
+  handlers; explains its very high reference count from the original
+  frequency count.
+- `word_3194E`/`word_31950` → **`g_mouseLeftUpX`/`g_mouseLeftUpY`**.
+- `word_2E772`/`word_2E774` → **`g_mouseRightDownX`/`g_mouseRightDownY`**
+  — used by `RunMapEditorScreen`'s right-click overlay/wall-tile paint
+  handler.
+- `word_31952`/`word_31954` → **`g_mouseRightUpX`/`g_mouseRightUpY`**.
+
+**The drag-cursor clamp bounds**, read directly from
+`ClampDragCursorPosition`'s comparisons (working out from the branch
+directions which side of each compare is the min vs. the max):
+`word_2E77A` → **`g_dragCursorMinX`**, `word_2E778` →
+**`g_dragCursorMaxX`**, `word_3195A` → **`g_dragCursorMinY`**,
+`word_31958` → **`g_dragCursorMaxY`**. `RunMapEditorScreen` saves and
+temporarily overrides all 4 around its own editing session.
+
+**Map editor legend scroll indices**: `word_2E496` → 
+**`g_mapEditorWallScrollIndex`**, `word_2E4A2` →
+**`g_mapEditorFloorScrollIndex`** — reset alongside
+`g_mapEditorWallType`/`g_mapEditorFloorType` and "nudged" toward them
+each tick, an easing/scroll-animation position for the 17-icon legend
+strips rather than the selected type itself.
+
+**`word_2E49E` → `g_stagedAttackTypeFlags`**: the third member of the
+attack-resolution staging trio alongside `g_stagedAttackDamage`/
+`g_stagedAttackStatusFlags`, confirmed by an existing inline comment
+("attack type flags vs `[si+0x98]` resistance flags — each match
+halves the damage").
+
+**A correction flagged for later, not acted on yet**: while tracing
+`word_32990`/`g_partyRoleAssignment1`'s write sites, found
+`ConfirmAndValidatePartyTarget` (called from `UseItem`'s `'BUY '`-named
+item branch) writes `g_partyRoleAssignment1` as a **transient
+"last-confirmed party target" cache** — confirm-prompt if empty, reject
+if the target is incapacitated — which reads more like a per-item-use
+target cache than a persistent "assigned role" slot. This doesn't
+necessarily contradict the round-5 "5 assignable roles" reading (a
+role could plausibly be *set* via using a role-granting item on a
+character, which is exactly this confirm-and-cache flow), but it's a
+new data point that should feed into eventually nailing down what the
+5 role slots actually represent and how `word_32990` itself relates to
+them — left `word_32990` unrenamed pending that.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

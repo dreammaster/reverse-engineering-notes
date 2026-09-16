@@ -1094,7 +1094,46 @@ reused 7 times) storing a wall/floor type number into
 redrawing the corresponding legend row (`DrawWallTypeLegendRow`/
 `DrawFloorTypeLegendRow`). One error path in the floor field falls
 through into the wall field, suggesting Tab-style navigation between
-the two.
+the two. Each legend row also has its own animated scroll position,
+`g_mapEditorWallScrollIndex`/`g_mapEditorFloorScrollIndex` — reset to 0
+alongside the actual selected type, then "nudged" by 1 per tick toward
+the true `g_mapEditorWallType`/`g_mapEditorFloorType` value, an easing
+effect for the 17-icon scrollable strip rather than a value in its own
+right.
+
+### Mouse input: the click-position latch cluster
+
+Read `seg073`'s INT 33h mouse-callback handler directly (the routine
+`ClampDragCursorPosition` feeds into): it's a standard MS Mouse user
+callback registered via function `0Ch`, where `ax` on entry is the
+condition mask and `cx`/`dx` are the cursor position. This handler
+converts the raw per-call motion counters (function `0Bh`, `int 33h`)
+through `ClampDragCursorPosition` — which accumulates them into
+`g_dragCursorX`/`g_dragCursorY` and returns the clamped result in
+`cx`/`dx` — then, based on which event bit the (separately preserved)
+condition mask has set, latches that clamped position into one of four
+dedicated globals, one pair per button-transition type (the classic MS
+Mouse mask bits: `2`=left-down, `4`=left-up, `8`=right-down,
+`0x10`=right-up):
+- **`g_mouseLeftDownX`/`g_mouseLeftDownY`**: the left-click position,
+  read throughout the game's click/hit-test handlers (catalog-slot
+  clicks, portrait drag-and-drop, map editor cell painting, and more)
+  — by far the most-referenced of the four pairs, matching its role as
+  the general-purpose "where did the player just left-click" position.
+- **`g_mouseLeftUpX`/`g_mouseLeftUpY`**: the left-button-release
+  position.
+- **`g_mouseRightDownX`/`g_mouseRightDownY`**: the right-click
+  position — used by `RunMapEditorScreen`'s overlay/wall-tile paint
+  handler.
+- **`g_mouseRightUpX`/`g_mouseRightUpY`**: the right-button-release
+  position.
+
+`g_dragCursorX`/`g_dragCursorY` (the accumulated position these are
+all derived from) are themselves clamped to
+`g_dragCursorMinX`/`g_dragCursorMaxX`/`g_dragCursorMinY`/
+`g_dragCursorMaxY` — bounds `RunMapEditorScreen` temporarily overrides
+and restores around its own editing session (the map editor evidently
+needs a different valid drag region than the normal game screens).
 
 ### The main pause/options dialog
 

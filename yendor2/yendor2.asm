@@ -361,8 +361,8 @@ loc_102FF:                              ; CODE XREF: start+2EF↑j
 ; ---------------------------------------------------------------------------
 
 loc_10306:                              ; CODE XREF: start+B0↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -408,8 +408,8 @@ loc_1034A:                              ; CODE XREF: start+345↑j
 ; ---------------------------------------------------------------------------
 
 loc_10352:                              ; CODE XREF: start+34D↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 641Ah
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -535,8 +535,8 @@ loc_10465:                              ; CODE XREF: start+454↑j
 ; ---------------------------------------------------------------------------
 
 loc_10478:                              ; CODE XREF: start+337↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5B32h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -608,8 +608,8 @@ loc_104F1:                              ; CODE XREF: start+4E0↑j
 ; ---------------------------------------------------------------------------
 
 loc_10503:                              ; CODE XREF: start+C4↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -783,8 +783,8 @@ loc_1069E:                              ; CODE XREF: start+6B3↓j
 ; ---------------------------------------------------------------------------
 
 loc_106A1:                              ; CODE XREF: start+69C↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5D5Eh
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -800,8 +800,8 @@ loc_106C4:                              ; CODE XREF: start+6BF↑j
 ; ---------------------------------------------------------------------------
 
 loc_106C7:                              ; CODE XREF: start+CE↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -4464,8 +4464,8 @@ loc_12BEF:                              ; CODE XREF: RunClueEntryMenu+64↑j
 ; ---------------------------------------------------------------------------
 
 loc_12BFF:                              ; CODE XREF: RunClueEntryMenu+28↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 68D2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -4489,8 +4489,8 @@ loc_12C26:                              ; CODE XREF: RunClueEntryMenu+8D↑j
 ; ---------------------------------------------------------------------------
 
 loc_12C3E:                              ; CODE XREF: RunClueEntryMenu+31↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 68D2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -4700,8 +4700,8 @@ HandleClueEntryScrollInput proc near    ; CODE XREF: RunClueEntryMenu:loc_12BD1�
 ; ---------------------------------------------------------------------------
 
 loc_12DF6:                              ; CODE XREF: HandleClueEntryScrollInput+C↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6960h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -5128,14 +5128,14 @@ loc_130B8:                              ; CODE XREF: RunClueBookItemCategory+32�
                 jz      short loc_130B8
                 cmp     errorCode, 3
                 jg      short loc_130B8
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6976h
                 call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_13107
-                mov     word_2E76E, 0
-                mov     word_2E770, 0
+                mov     g_mouseLeftDownX, 0
+                mov     g_mouseLeftDownY, 0
                 and     g_clueBookIconSelectionMask, 1Fh
                 dec     ax
                 mov     cx, ax
@@ -5240,14 +5240,14 @@ loc_131B5:                              ; CODE XREF: RunClueBookWeaponCategory+3
                 jz      short loc_131B5
                 cmp     errorCode, 3
                 jg      short loc_131B5
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6976h
                 call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_13204
-                mov     word_2E76E, 0
-                mov     word_2E770, 0
+                mov     g_mouseLeftDownX, 0
+                mov     g_mouseLeftDownY, 0
                 and     g_clueBookIconSelectionMask, 1Fh
                 dec     ax
                 mov     cx, ax
@@ -5319,8 +5319,8 @@ loc_13283:                              ; CODE XREF: RunClueBookMapCategory+15�
                 jz      short loc_13283
                 cmp     errorCode, 3
                 jg      short loc_13283
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6976h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -5483,8 +5483,8 @@ HandlePagedEntryNavigation proc near    ; CODE XREF: ShowPagedEntryScreen+4F↑p
 ; ---------------------------------------------------------------------------
 
 loc_13402:                              ; CODE XREF: HandlePagedEntryNavigation+5↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6960h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -7853,8 +7853,8 @@ loc_14D70:                              ; CODE XREF: HandleClueCategorySelection
 loc_14D8E:                              ; CODE XREF: HandleClueCategorySelection+5↑j
                 cmp     errorCode, 3
                 jnz     short loc_14DF5
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6876h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -10250,7 +10250,7 @@ RunDungeonGameLoop endp
 
 HandleDungeonInput proc near            ; CODE XREF: RunDungeonGameLoop:loc_1635F↑p
                 mov     g_stagedAttackStatusFlags, 0 ; One of RunDungeonGameLoop's 3 per-iteration input handlers. Selects a party member (word_328D4 = [bx], a caller-supplied pointer), then dispatches a wide range of dungeon UI input: movement, monster-panel clicks (sets word_32A1E as a target-selection shortcut alongside SelectActiveMonster), attack resolution (ResolveAttack + UpdateMonsterWoundTier, then [word_32A1E+0x10] -= word_2E49C -- the actual HP subtraction), and dialogs via RunGameDialog.
-                mov     word_2E49E, 0
+                mov     g_stagedAttackTypeFlags, 0
                 mov     g_stagedAttackDamage, 0
                 mov     si, [bx]
                 test    word ptr [si+1Ch], 1C40h
@@ -10401,8 +10401,8 @@ loc_16536:                              ; CODE XREF: HandleDungeonInput+7E↑j
 ; ---------------------------------------------------------------------------
 
 loc_16544:                              ; CODE XREF: HandleDungeonInput+A6↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -10420,8 +10420,8 @@ loc_16560:                              ; CODE XREF: HandleDungeonInput+14F↑j
 loc_16563:                              ; CODE XREF: HandleDungeonInput+9C↑j
                 mov     g_selectedPartySlotPtr, 0
                 call    DrawPartyStatusIconRow
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -10462,8 +10462,8 @@ loc_165CF:                              ; CODE XREF: HandleDungeonInput+1BE↑j
 ; ---------------------------------------------------------------------------
 
 loc_165D7:                              ; CODE XREF: HandleDungeonInput+88↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6698h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -10520,8 +10520,8 @@ loc_16645:                              ; CODE XREF: HandleDungeonInput+21C↑j
 ; ---------------------------------------------------------------------------
 
 loc_16648:                              ; CODE XREF: HandleDungeonInput+203↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5B32h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -10553,8 +10553,8 @@ loc_16677:                              ; CODE XREF: HandleDungeonInput+26B↑j
 ; ---------------------------------------------------------------------------
 
 loc_1667A:                              ; CODE XREF: HandleDungeonInput+217↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6600h
                 call    HitTestRegionTable
                 mov     bx, 51C0h
@@ -10768,7 +10768,7 @@ HandleDungeonInput endp
 ProcessMonsterAttackTurn proc near      ; CODE XREF: RunDungeonGameLoop+5D↑p
                 mov     g_lastKeyChar, 0 ; Per-monster combat-turn processor, called from RunDungeonGameLoop when g_combatTurnOrder's current entry is a monster's turn. Ticks the monster, shows its info panel on first reveal, then either attacks all 4 party members (if [+0x92] bit 0x1000 is set -- an area-effect/breath-weapon monster) or its single assigned target ([+0x12]) via ResolveAttackerActionOutcome, optionally wearing/breaking the defender's equipped item (TickEquippedItemDurability) on a hit. Falls back to an idle sound if no valid target.
                 mov     g_stagedAttackStatusFlags, 0
-                mov     word_2E49E, 0
+                mov     g_stagedAttackTypeFlags, 0
                 mov     g_stagedAttackDamage, 0
                 mov     si, [bx]
                 mov     word_32904, si
@@ -12308,8 +12308,8 @@ loc_173D6:                              ; CODE XREF: RunShopScreen+82↑j
 ; ---------------------------------------------------------------------------
 
 loc_173D9:                              ; CODE XREF: RunShopScreen+55↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -12350,8 +12350,8 @@ loc_1742A:                              ; CODE XREF: RunShopScreen+CA↑j
 ; ---------------------------------------------------------------------------
 
 loc_17432:                              ; CODE XREF: RunShopScreen+4B↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -12398,8 +12398,8 @@ loc_17482:                              ; CODE XREF: RunShopScreen+150↑j
 loc_17485:                              ; CODE XREF: RunShopScreen+149↑j
                 cmp     g_heldItemType, 0
                 jnz     short loc_17482
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6458h
                 call    HitTestRegionTable
                 cmp     ax, 1
@@ -12426,8 +12426,8 @@ loc_174B1:                              ; CODE XREF: RunShopScreen+17C↑j
 ; ---------------------------------------------------------------------------
 
 loc_174CE:                              ; CODE XREF: RunShopScreen+5E↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -12528,8 +12528,8 @@ loc_175BD:                              ; CODE XREF: RunShopScreen+24A↑j
 ; ---------------------------------------------------------------------------
 
 loc_175CA:                              ; CODE XREF: RunShopScreen+68↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -13131,8 +13131,8 @@ SellClickedCatalogItem endp
 
 HitTestCatalogSlot proc near            ; CODE XREF: HandleShopCatalogSlotClick↑p
                                         ; TryHandleCatalogSlotClick↑p
-                mov     ax, word_2E76E  ; Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX ; Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.
+                mov     bx, g_mouseLeftDownY
                 mov     si, 63C8h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -13371,8 +13371,8 @@ loc_17D9A:                              ; CODE XREF: UseItem+203↑j
 ; ---------------------------------------------------------------------------
 
 loc_17DAA:                              ; CODE XREF: UseItem+20D↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6458h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -13418,8 +13418,8 @@ loc_17DF6:                              ; CODE XREF: UseItem+22C↑j
 ; ---------------------------------------------------------------------------
 
 loc_17E01:                              ; CODE XREF: UseItem+26A↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -14524,8 +14524,8 @@ seg029          segment byte public 'CODE' use16
 HandlePortraitClick proc far            ; CODE XREF: start+531↑P
                                         ; HandleDungeonInput+192↑P ...
                 call    RestorePortraitPanelFromEMS ; Mouse-click counterpart to sub_25B34 (keyboard 1-4 selection): hit-tests region table 0x61C2 for one of the 4 portrait zones, sets the matching word_328C6 highlight bit (same bits RefreshPartyPortraits uses) if that slot is occupied, redraws via sub_19133. Called from `start` and HandleDungeonInput.
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -14718,8 +14718,8 @@ loc_186DA:                              ; CODE XREF: RunPartyInventoryScreen+38�
 ; ---------------------------------------------------------------------------
 
 loc_186E4:                              ; CODE XREF: RunPartyInventoryScreen+27↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -14743,8 +14743,8 @@ loc_18708:                              ; CODE XREF: RunPartyInventoryScreen+66�
 ; ---------------------------------------------------------------------------
 
 loc_18714:                              ; CODE XREF: RunPartyInventoryScreen+61↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 call    SelectClickedRosterPortrait
                 cmp     errorCode, 1
                 jnz     short loc_1872D
@@ -14804,8 +14804,8 @@ loc_18798:                              ; CODE XREF: RunPartyInventoryScreen+F6�
 ; ---------------------------------------------------------------------------
 
 loc_187A0:                              ; CODE XREF: RunPartyInventoryScreen+30↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -14885,8 +14885,8 @@ loc_18857:                              ; CODE XREF: RunPartyInventoryScreen+134
 ; ---------------------------------------------------------------------------
 
 loc_1885F:                              ; CODE XREF: RunPartyInventoryScreen+11C↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 call    SelectClickedRosterPortrait
                 cmp     errorCode, 1
                 jnz     short loc_18873
@@ -14894,9 +14894,9 @@ loc_1885F:                              ; CODE XREF: RunPartyInventoryScreen+11C
 ; ---------------------------------------------------------------------------
 
 loc_18873:                              ; CODE XREF: RunPartyInventoryScreen+1D1↑j
-                mov     ax, word_2E76E
+                mov     ax, g_mouseLeftDownX
                 sub     ax, word_328BC
-                mov     bx, word_2E770
+                mov     bx, g_mouseLeftDownY
                 sub     bx, word_328C0
                 mov     si, 60EEh
                 call    HitTestRegionTable
@@ -15005,8 +15005,8 @@ loc_18947:                              ; CODE XREF: RunPartyInventoryScreen+261
 ; ---------------------------------------------------------------------------
 
 loc_1894A:                              ; CODE XREF: RunPartyInventoryScreen+3A↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -15031,8 +15031,8 @@ loc_1897C:                              ; CODE XREF: RunPartyInventoryScreen+2BF
 ; ---------------------------------------------------------------------------
 
 loc_1897F:                              ; CODE XREF: RunPartyInventoryScreen+2C4↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 call    SelectClickedRosterPortrait
                 cmp     errorCode, 1
                 jz      short loc_1897C
@@ -15095,8 +15095,8 @@ loc_18A1A:                              ; CODE XREF: RunPartyInventoryScreen+361
 ; ---------------------------------------------------------------------------
 
 loc_18A27:                              ; CODE XREF: RunPartyInventoryScreen+2CB↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -15180,8 +15180,8 @@ loc_18B00:                              ; CODE XREF: RunPartyInventoryScreen+39E
 ; ---------------------------------------------------------------------------
 
 loc_18B03:                              ; CODE XREF: RunPartyInventoryScreen+44↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -15336,8 +15336,8 @@ RunPartyInventoryScreen endp
 
 HandleItemDropOnPartyPortrait proc far  ; CODE XREF: start+4B9↑P
                                         ; HandleDungeonInput:loc_16634↑P ...
-                mov     ax, word_2E76E  ; Drop-held-item-onto-portrait handler (give/equip via drag-and-drop): hit-tests table 0x61C2 for one of the 4 portrait zones, checks carry-capacity, then dispatches on the item's [+0xC] category flags. Called from `start` and HandleDungeonInput.
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX ; Drop-held-item-onto-portrait handler (give/equip via drag-and-drop): hit-tests table 0x61C2 for one of the 4 portrait zones, checks carry-capacity, then dispatches on the item's [+0xC] category flags. Called from `start` and HandleDungeonInput.
+                mov     bx, g_mouseLeftDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -16196,8 +16196,8 @@ loc_19482:                              ; CODE XREF: RunItemServiceRecipientLoop
 ; ---------------------------------------------------------------------------
 
 loc_1948C:                              ; CODE XREF: RunItemServiceRecipientLoop+9C↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6522h
                 call    HitTestRegionTable
                 cmp     ax, 3
@@ -16216,8 +16216,8 @@ loc_194AE:                              ; CODE XREF: RunItemServiceRecipientLoop
 ; ---------------------------------------------------------------------------
 
 loc_194B8:                              ; CODE XREF: RunItemServiceRecipientLoop+A3↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 6522h
                 call    HitTestRegionTable
                 cmp     ax, 4
@@ -16324,8 +16324,8 @@ RunPartyMemberDetailScreen proc far     ; CODE XREF: start:loc_104F1↑P
 ; ---------------------------------------------------------------------------
 
 loc_19583:                              ; CODE XREF: RunPartyMemberDetailScreen+5↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -16400,8 +16400,8 @@ loc_1961A:                              ; CODE XREF: RunPartyMemberDetailScreen+
 ; ---------------------------------------------------------------------------
 
 loc_1962B:                              ; CODE XREF: RunPartyMemberDetailScreen+CC↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 632Eh
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -16450,8 +16450,8 @@ loc_19679:                              ; CODE XREF: RunPartyMemberDetailScreen+
 
 loc_19684:                              ; CODE XREF: RunPartyMemberDetailScreen+EA↑j
                                         ; RunPartyMemberDetailScreen+12C↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -18645,8 +18645,8 @@ loc_1A808:                              ; CODE XREF: ShowConfirmPrompt+71↑j
                 jz      short loc_1A845
                 cmp     errorCode, 3
                 jnz     short loc_1A808
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5D5Eh
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -18699,8 +18699,8 @@ loc_1A87B:                              ; CODE XREF: ShowConfirmPrompt+7B↑j
                 jz      short loc_1A907
                 cmp     errorCode, 3
                 jnz     short loc_1A87B
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -18817,8 +18817,8 @@ loc_1A9A8:                              ; CODE XREF: ShowConfirmPrompt+91↑j
 ; ---------------------------------------------------------------------------
 
 loc_1A9CE:                              ; CODE XREF: ShowConfirmPrompt+252↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5D5Eh
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -23655,8 +23655,8 @@ loc_1D3DB:                              ; CODE XREF: RunTitleScreen+130↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D3E3:                              ; CODE XREF: RunTitleScreen+97↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5AFEh
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -24231,7 +24231,7 @@ ApplyResolvedDamageWithResistance proc near
                 and     ax, g_stagedAttackStatusFlags
                 or      [si+0Ch], ax
                 mov     bx, [si+98h]
-                and     bx, word_2E49E
+                and     bx, g_stagedAttackTypeFlags
                 mov     ax, g_stagedAttackDamage
                 mov     cx, 10h
 
@@ -24312,7 +24312,7 @@ ResolveAttackOrAbilityAction proc near  ; CODE XREF: HandleRangedOrCombatAction+
                 and     word_328C8, 0FDFFh ; Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).
                 mov     g_stagedAttackStatusFlags, 0
                 mov     g_stagedAttackDamage, 0
-                mov     word_2E49E, 0
+                mov     g_stagedAttackTypeFlags, 0
                 test    word_328C8, 100h
                 jnz     short loc_1DA82
                 jmp     short loc_1DADE
@@ -24342,15 +24342,15 @@ loc_1DA99:                              ; CODE XREF: ResolveAttackOrAbilityActio
                 mov     di, ax
                 test    word ptr [di+2], 400h
                 jz      short loc_1DAB6
-                or      word_2E49E, 1000h
+                or      g_stagedAttackTypeFlags, 1000h
 
 loc_1DAB6:                              ; CODE XREF: ResolveAttackOrAbilityAction+4E↑j
                 cmp     word ptr [di+8], 0
                 jz      short loc_1DAC2
-                or      word_2E49E, 800h
+                or      g_stagedAttackTypeFlags, 800h
 
 loc_1DAC2:                              ; CODE XREF: ResolveAttackOrAbilityAction+5A↑j
-                or      word_2E49E, 8000h
+                or      g_stagedAttackTypeFlags, 8000h
                 mov     di, g_currentPartyRecord
                 mov     ax, [si+58h]
                 mov     bx, [di+48h]
@@ -24426,7 +24426,7 @@ ResolveAttackOrAbilityAction endp
 
 ResolveAbilityEffect proc near          ; CODE XREF: ResolveAttackOrAbilityAction:loc_1DADE↑p
                 mov     g_stagedAttackDamage, 0 ; Ability/spell effect resolver: 85% success roll, then dispatches on word_32974 (ability id) to set a flat damage amount (word_2E49C) and, for several ids, a status-effect flag (word_2E49A) plus duration ([si+0x1C]/[0x1E]) unless already afflicted ([si+0x96]). Two ids (area-effect spells, per ShowClueBookSpellDetail's targeting text) are gated on not being in combat. Called from sub_1DA60.
-                mov     word_2E49E, 0
+                mov     g_stagedAttackTypeFlags, 0
                 mov     g_stagedAttackStatusFlags, 0
                 mov     word ptr [si+1Ch], 0
                 mov     word ptr [si+1Eh], 0
@@ -24508,7 +24508,7 @@ loc_1DC2A:                              ; CODE XREF: ResolveAbilityEffect+A5↑j
 
 loc_1DC4E:                              ; CODE XREF: ResolveAbilityEffect+38↑j
                                         ; ResolveAbilityEffect+5E↑j ...
-                or      word_2E49E, 8000h
+                or      g_stagedAttackTypeFlags, 8000h
                 cmp     g_stagedAttackStatusFlags, 0
                 jz      short locret_1DC72
                 push    ax
@@ -24745,8 +24745,8 @@ loc_1DDEB:                              ; CODE XREF: RunAlchemyScreen+AB↑j
 ; ---------------------------------------------------------------------------
 
 loc_1DDF5:                              ; CODE XREF: RunAlchemyScreen+110↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 67ACh
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -24808,8 +24808,8 @@ loc_1DE5B:                              ; CODE XREF: RunAlchemyScreen+129↑j
                 test    word_328CA, 1000h
                 jnz     short loc_1DE9C
                 mov     g_lastKeyChar, 0
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -24840,8 +24840,8 @@ loc_1DE9F:                              ; CODE XREF: RunAlchemyScreen+1A2↑j
 loc_1DEA2:                              ; CODE XREF: RunAlchemyScreen+112↑j
                 cmp     errorCode, 6
                 jnz     short loc_1DF0B
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 67ACh
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -26147,8 +26147,8 @@ loc_1EB2C:                              ; CODE XREF: RunGameDialog+C8↓j
 ; ---------------------------------------------------------------------------
 
 loc_1EB50:                              ; CODE XREF: RunGameDialog+D6↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5CD0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -26869,8 +26869,8 @@ SelectGameDialogOption proc near        ; CODE XREF: RunGameDialog+227↑p
                 jz      short loc_1F2FA
                 cmp     errorCode, 3
                 jnz     short SelectGameDialogOption
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5CD0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -28232,16 +28232,16 @@ seg060          segment byte public 'CODE' use16
 RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 push    word_3295A      ; CORRECTED from 'ShowTileLegend' (was wrongly documented as a read-only legend screen). Reached from a normal keyboard command slot in start's main dispatch. Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) and a live preview of the current cell. Its 'A' key (byte_2E400==0x41) calls FillVisibleAreaWithSelectedTile, which floods the entire visible 40x24 cell area with the selected legend icon and writes it back via FileEntry_Write -- this IS a map-editing tool (a debug/level-editor screen left reachable in the shipped binary), not a passive legend. 'B'/'F' browse a per-level tile palette loaded from WORLD.DAT (sub_205C0/sub_27FE0, not yet fully traced).
                 mov     word_3295A, 0
-                push    word_2E77A
-                push    word_2E778
-                push    word_31958
-                push    word_3195A
-                mov     word_2E77A, 0
-                mov     word_3195A, 0
+                push    g_dragCursorMinX
+                push    g_dragCursorMaxX
+                push    g_dragCursorMaxY
+                push    g_dragCursorMinY
+                mov     g_dragCursorMinX, 0
+                mov     g_dragCursorMinY, 0
                 mov     g_mapEditorWallType, 0
                 mov     g_mapEditorFloorType, 0
-                mov     word_2E496, 0
-                mov     word_2E4A2, 0
+                mov     g_mapEditorWallScrollIndex, 0
+                mov     g_mapEditorFloorScrollIndex, 0
                 mov     g_pictureCategory, 90h
                 mov     _videoSegment, 0A000h
                 and     word_328C4, 0FBFFh
@@ -28313,10 +28313,10 @@ loc_20157:                              ; CODE XREF: RunMapEditorScreen+C7↑j
                 call    DrawMinimap
                 call    DrawMouseCursor
                 call    TriggerFullPaletteFadeIn
-                pop     word_3195A
-                pop     word_31958
-                pop     word_2E778
-                pop     word_2E77A
+                pop     g_dragCursorMinY
+                pop     g_dragCursorMaxY
+                pop     g_dragCursorMaxX
+                pop     g_dragCursorMinX
                 pop     word_3295A
                 retf
 ; ---------------------------------------------------------------------------
@@ -28432,8 +28432,8 @@ loc_202A1:                              ; CODE XREF: RunMapEditorScreen+228↑j
 
 loc_202AF:                              ; CODE XREF: RunMapEditorScreen+DA↑j
                                         ; RunMapEditorScreen+236↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5E00h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -28462,7 +28462,7 @@ loc_202DC:                              ; CODE XREF: RunMapEditorScreen+264↑j
                 jg      short loc_202F3
                 sub     ax, 1
                 add     ax, g_mapEditorWallType
-                mov     word_2E496, ax
+                mov     g_mapEditorWallScrollIndex, ax
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
@@ -28474,7 +28474,7 @@ loc_202F3:                              ; CODE XREF: RunMapEditorScreen+26F↑j
                 jg      short loc_2030A
                 sub     ax, 15h
                 add     ax, g_mapEditorFloorType
-                mov     word_2E4A2, ax
+                mov     g_mapEditorFloorScrollIndex, ax
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
@@ -28491,8 +28491,8 @@ loc_2031C:                              ; CODE XREF: RunMapEditorScreen+29D↑j
 ; ---------------------------------------------------------------------------
 
 loc_2031F:                              ; CODE XREF: RunMapEditorScreen+E4↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 5E00h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -28518,7 +28518,7 @@ RunMapEditorScreen endp
 FillVisibleAreaWithSelectedTile proc near
                                         ; CODE XREF: RunMapEditorScreen+163↑p
                 push    g_mapEditorWallType ; 'A' key handler in RunMapEditorScreen: loops over the full 40x24 visible cell grid (320x200 screen at 8x8-pixel granularity), calling PaintCellAndPersist for every cell -- floods the whole visible map area with the currently-selected legend tile type.
-                mov     ax, word_2E496
+                mov     ax, g_mapEditorWallScrollIndex
                 mov     g_mapEditorWallType, ax
                 xor     dx, dx
                 mov     ax, g_partyWorldX
@@ -28566,7 +28566,7 @@ PaintCellAndPersist proc near           ; CODE XREF: FillVisibleAreaWithSelected
                 mov     bx, _textPos_y
                 call    PersistExploredCell
                 call    LoadWorldDatTilePalette
-                mov     ax, word_2E496
+                mov     ax, g_mapEditorWallScrollIndex
                 mov     [si], ax
                 mov     errorCode, 9
                 call    FileEntry_Write
@@ -28588,14 +28588,14 @@ PaintCellAndPersist endp
 StepCounterTowardTarget proc near       ; CODE XREF: FillVisibleAreaWithSelectedTile+43↑p
                                         ; FillVisibleAreaWithSelectedTile+49↑p
                 mov     ax, g_mapEditorWallType ; Nudges word_2E496 by 1 toward word_2E384. Called twice from FillVisibleAreaWithSelectedTile.
-                cmp     word_2E496, ax
+                cmp     g_mapEditorWallScrollIndex, ax
                 jz      short loc_203F2
-                dec     word_2E496
+                dec     g_mapEditorWallScrollIndex
                 retn
 ; ---------------------------------------------------------------------------
 
 loc_203F2:                              ; CODE XREF: StepCounterTowardTarget+7↑j
-                inc     word_2E496
+                inc     g_mapEditorWallScrollIndex
                 retn
 StepCounterTowardTarget endp
 
@@ -28621,26 +28621,26 @@ ClearVideoMemoryRegion endp
 
 DrawWallTypeLegendRow proc near         ; CODE XREF: RunMapEditorScreen+74↑p
                                         ; RunMapEditorScreen+1AD↑p ...
-                push    word_2E496      ; Draws a scrollable 17-icon horizontal strip from table 0xE551 (field +0xA), starting at index word_2E384, at y=0 x=0x18+.
+                push    g_mapEditorWallScrollIndex ; Draws a scrollable 17-icon horizontal strip from table 0xE551 (field +0xA), starting at index word_2E384, at y=0 x=0x18+.
                 mov     _font_bgTransparent, 0
                 mov     ax, g_mapEditorWallType
-                mov     word_2E496, ax
+                mov     g_mapEditorWallScrollIndex, ax
                 mov     y, 0
                 mov     x, 18h
                 mov     cx, 11h
 
 loc_20425:                              ; CODE XREF: DrawWallTypeLegendRow+3F↓j
                 mov     ax, 0Ch
-                mul     word_2E496
+                mul     g_mapEditorWallScrollIndex
                 add     ax, 0E551h
                 mov     bx, ax
                 mov     ax, [bx+0Ah]
                 mov     g_pictureId, ax
                 call    DrawPicture
                 add     x, 8
-                inc     word_2E496
+                inc     g_mapEditorWallScrollIndex
                 loop    loc_20425
-                pop     word_2E496
+                pop     g_mapEditorWallScrollIndex
                 retn
 DrawWallTypeLegendRow endp
 
@@ -28687,26 +28687,26 @@ DrawMapEditorFloorTypeReadout endp
 
 DrawFloorTypeLegendRow proc near        ; CODE XREF: RunMapEditorScreen+7A↑p
                                         ; RunMapEditorScreen+1B3↑p ...
-                push    word_2E4A2      ; Draws a scrollable 17-icon horizontal strip from table 0xE175 (field +8), starting at index word_2E386, at y=0 x=0xB8+.
+                push    g_mapEditorFloorScrollIndex ; Draws a scrollable 17-icon horizontal strip from table 0xE175 (field +8), starting at index word_2E386, at y=0 x=0xB8+.
                 mov     _font_bgTransparent, 0
                 mov     ax, g_mapEditorFloorType
-                mov     word_2E4A2, ax
+                mov     g_mapEditorFloorScrollIndex, ax
                 mov     y, 0
                 mov     x, 0B8h
                 mov     cx, 11h
 
 loc_204C9:                              ; CODE XREF: DrawFloorTypeLegendRow+3F↓j
                 mov     ax, 0Ah
-                mul     word_2E4A2
+                mul     g_mapEditorFloorScrollIndex
                 add     ax, 0E175h
                 mov     bx, ax
                 mov     ax, [bx+8]
                 mov     g_pictureId, ax
                 call    DrawPicture
                 add     x, 8
-                inc     word_2E4A2
+                inc     g_mapEditorFloorScrollIndex
                 loop    loc_204C9
-                pop     word_2E4A2
+                pop     g_mapEditorFloorScrollIndex
                 retn
 DrawFloorTypeLegendRow endp
 
@@ -28847,7 +28847,7 @@ BrowseWallTilePalette proc near         ; CODE XREF: RunMapEditorScreen+144↑p
                 call    LoadWorldDatTilePalette
                 mov     ax, [si]
                 mov     g_mapEditorWallType, ax
-                mov     word_2E496, ax
+                mov     g_mapEditorWallScrollIndex, ax
                 call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
                 call    DrawMouseCursorAlt
@@ -28868,7 +28868,7 @@ BrowseFloorTilePalette proc near        ; CODE XREF: RunMapEditorScreen+151↑p
                 call    LoadWorldDatTilePalette
                 mov     ax, [si+2]
                 mov     g_mapEditorFloorType, ax
-                mov     word_2E4A2, ax
+                mov     g_mapEditorFloorScrollIndex, ax
                 call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
                 call    DrawMouseCursorAlt
@@ -28880,24 +28880,24 @@ BrowseFloorTilePalette endp
 
 
 PaintCursorCellAndPersist proc near     ; CODE XREF: RunMapEditorScreen+2A4↑p
-                mov     ax, word_2E76E  ; Paints the selected tile (word_2E496) at the cursor cell (word_2E76E/word_2E770), persists via FileEntry_Write(errorCode=9), and redraws it via DrawCellIconPair. Called from RunMapEditorScreen.
+                mov     ax, g_mouseLeftDownX ; Paints the selected tile (word_2E496) at the cursor cell (word_2E76E/word_2E770), persists via FileEntry_Write(errorCode=9), and redraws it via DrawCellIconPair. Called from RunMapEditorScreen.
                 mov     word_3293E, ax
-                mov     ax, word_2E770
+                mov     ax, g_mouseLeftDownY
                 mov     word_32940, ax
                 call    ComputeMapEditorBlockOrigin
                 call    PersistExploredCell
                 call    LoadWorldDatTilePalette
-                mov     ax, word_2E496
+                mov     ax, g_mapEditorWallScrollIndex
                 mov     [si], ax
                 mov     errorCode, 9
                 call    FileEntry_Write
                 call    ErrorCheck
                 mov     cx, 3
-                mov     ax, word_2E76E
+                mov     ax, g_mouseLeftDownX
                 shr     ax, cl
                 shl     ax, cl
                 mov     x, ax
-                mov     ax, word_2E770
+                mov     ax, g_mouseLeftDownY
                 shr     ax, cl
                 shl     ax, cl
                 mov     y, ax
@@ -28963,24 +28963,24 @@ RedrawMapEditorGrid endp
 
 PaintCursorOverlayCellAndPersist proc near
                                         ; CODE XREF: RunMapEditorScreen+2D0↑p
-                mov     ax, word_2E772  ; Overlay/wall-tile sibling of PaintCursorCellAndPersist: paints word_2E4A2 into the cell record's [si+2] (overlay field) at cursor word_2E772/word_2E774, persists via FileEntry_Write(errorCode=9), redraws via DrawCellIconPair. Called from RunMapEditorScreen.
+                mov     ax, g_mouseRightDownX ; Overlay/wall-tile sibling of PaintCursorCellAndPersist: paints word_2E4A2 into the cell record's [si+2] (overlay field) at cursor word_2E772/word_2E774, persists via FileEntry_Write(errorCode=9), redraws via DrawCellIconPair. Called from RunMapEditorScreen.
                 mov     word_3293E, ax
-                mov     ax, word_2E774
+                mov     ax, g_mouseRightDownY
                 mov     word_32940, ax
                 call    ComputeMapEditorBlockOrigin
                 call    PersistExploredCell
                 call    LoadWorldDatTilePalette
-                mov     ax, word_2E4A2
+                mov     ax, g_mapEditorFloorScrollIndex
                 mov     [si+2], ax
                 mov     errorCode, 9
                 call    FileEntry_Write
                 call    ErrorCheck
                 mov     cx, 3
-                mov     ax, word_2E772
+                mov     ax, g_mouseRightDownX
                 shr     ax, cl
                 shl     ax, cl
                 mov     x, ax
-                mov     ax, word_2E774
+                mov     ax, g_mouseRightDownY
                 shr     ax, cl
                 shl     ax, cl
                 mov     y, ax
@@ -34496,29 +34496,29 @@ loc_23717:                              ; CODE XREF: seg073:0032↑j
                 test    ax, 2
                 jz      short loc_23742
                 or      word_3195C, 6000h
-                mov     word_2E76E, cx
-                mov     word_2E770, dx
+                mov     g_mouseLeftDownX, cx
+                mov     g_mouseLeftDownY, dx
 
 loc_23742:                              ; CODE XREF: seg073:0052↑j
                 test    ax, 4
                 jz      short loc_23755
                 or      word_3195C, 4800h
-                mov     word_3194E, cx
-                mov     word_31950, dx
+                mov     g_mouseLeftUpX, cx
+                mov     g_mouseLeftUpY, dx
 
 loc_23755:                              ; CODE XREF: seg073:0065↑j
                 test    ax, 8
                 jz      short loc_23768
                 or      word_3195C, 4400h
-                mov     word_2E772, cx
-                mov     word_2E774, dx
+                mov     g_mouseRightDownX, cx
+                mov     g_mouseRightDownY, dx
 
 loc_23768:                              ; CODE XREF: seg073:0078↑j
                 test    ax, 10h
                 jz      short loc_2377B
                 or      word_3195C, 4100h
-                mov     word_31952, cx
-                mov     word_31954, dx
+                mov     g_mouseRightUpX, cx
+                mov     g_mouseRightUpY, dx
 
 loc_2377B:                              ; CODE XREF: seg073:008B↑j
                 test    ax, 1
@@ -34868,27 +34868,27 @@ BlitCursorSprite endp
 
 ClampDragCursorPosition proc near       ; CODE XREF: seg073:0044↑p
                                         ; seg073:016F↑p
-                mov     ax, word_2E77A  ; Clamps an accumulated drag position (word_2E782/word_2E784) within bounds, then offsets by (8,8) unless the held item type (word_31946) is 0 or 0x1D -- plausibly the cursor position used to draw a held/dragged item. Referenced from a data/jump table in seg073.
+                mov     ax, g_dragCursorMinX ; Clamps an accumulated drag position (word_2E782/word_2E784) within bounds, then offsets by (8,8) unless the held item type (word_31946) is 0 or 0x1D -- plausibly the cursor position used to draw a held/dragged item. Referenced from a data/jump table in seg073.
                 add     g_dragCursorX, cx
                 cmp     g_dragCursorX, ax
                 jge     short loc_239DD
                 mov     g_dragCursorX, ax
 
 loc_239DD:                              ; CODE XREF: ClampDragCursorPosition+B↑j
-                mov     ax, word_2E778
+                mov     ax, g_dragCursorMaxX
                 cmp     g_dragCursorX, ax
                 jle     short loc_239E9
                 mov     g_dragCursorX, ax
 
 loc_239E9:                              ; CODE XREF: ClampDragCursorPosition+17↑j
-                mov     ax, word_3195A
+                mov     ax, g_dragCursorMinY
                 add     g_dragCursorY, dx
                 cmp     g_dragCursorY, ax
                 jge     short loc_239F9
                 mov     g_dragCursorY, ax
 
 loc_239F9:                              ; CODE XREF: ClampDragCursorPosition+27↑j
-                mov     ax, word_31958
+                mov     ax, g_dragCursorMaxY
                 cmp     g_dragCursorY, ax
                 jle     short loc_23A05
                 mov     g_dragCursorY, ax
@@ -36402,8 +36402,8 @@ loc_24850:                              ; CODE XREF: ShowCharacterInventory+218�
 ; ---------------------------------------------------------------------------
 
 loc_2485F:                              ; CODE XREF: ShowCharacterInventory+2A7↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 6092h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -37668,14 +37668,14 @@ WaitForClickOrEscape proc near          ; CODE XREF: RunCharacterDetailOverlay+1
 ; ---------------------------------------------------------------------------
 
 loc_255F1:                              ; CODE XREF: WaitForClickOrEscape+1D↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 jmp     short loc_25601
 ; ---------------------------------------------------------------------------
 
 loc_255FA:                              ; CODE XREF: WaitForClickOrEscape+16↑j
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
 
 loc_25601:                              ; CODE XREF: WaitForClickOrEscape+31↑j
                 call    HitTestRegionTable
@@ -38617,8 +38617,8 @@ HandlePartyStatusPanelInput proc far    ; CODE XREF: start:loc_104D2↑P
 ; ---------------------------------------------------------------------------
 
 loc_25B3E:                              ; CODE XREF: HandlePartyStatusPanelInput+5↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -39352,9 +39352,9 @@ HandleInventorySlotClick proc far       ; CODE XREF: RunPartyInventoryScreen:loc
                 push    di
                 push    es
                 push    word_3293E
-                mov     ax, word_2E76E
+                mov     ax, g_mouseLeftDownX
                 sub     ax, word_328BC
-                mov     bx, word_2E770
+                mov     bx, g_mouseLeftDownY
                 sub     bx, word_328C0
                 mov     si, 60EEh
                 call    HitTestRegionTable
@@ -39587,9 +39587,9 @@ HandleInventoryGridClick proc far       ; CODE XREF: RunPartyInventoryScreen+2F3
                 push    si
                 push    di
                 push    es              ; this
-                mov     ax, word_2E772
+                mov     ax, g_mouseRightDownX
                 sub     ax, word_328BC
-                mov     bx, word_2E774
+                mov     bx, g_mouseRightDownY
                 sub     bx, word_328C0
                 mov     si, 60EEh
                 call    HitTestRegionTable
@@ -41089,8 +41089,8 @@ HandleStatusIconBarClick proc far       ; CODE XREF: start+4E2↑P
                                         ; HandleDungeonInput:loc_16527↑P ...
                 push    dx              ; Hit-tests region table 0x636C (also used by TryCureAilmentFromIconClick, with a different mouse-position pair). Zones 1-3 -> sub_271DC (not traced); zones 4+ -> table 0x950D, stride 4 -- which for zone 4..9 is the exact same memory as TryCureAilmentFromIconClick's 6-slot ailment table, implying a 9-slot array whose first 3 entries are something else (equipment icons?), not confirmed.
                 push    si
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 636Ch
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -41182,8 +41182,8 @@ HandleStatusPanelItemSlotClick proc far ; CODE XREF: start+3C7↑P
                 push    si
                 push    di
                 push    es
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 636Ch
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -41367,8 +41367,8 @@ TryCureAilmentFromIconClick proc far    ; CODE XREF: start:loc_1056B↑P
                 push    es
                 test    word_36C7F, 1000h
                 jz      short loc_273DE
-                mov     ax, word_2E772
-                mov     bx, word_2E774
+                mov     ax, g_mouseRightDownX
+                mov     bx, g_mouseRightDownY
                 mov     si, 636Ch
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -44986,7 +44986,7 @@ loc_28E86:                              ; CODE XREF: RevealMapRegion+1A1↓j
                 mov     _textPos_y, 66h ; 'f'
                 mov     bx, 836Ah       ; msg
                 call    writeString
-                mov     word_3195A, 0
+                mov     g_dragCursorMinY, 0
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
@@ -45047,7 +45047,7 @@ loc_28FAC:                              ; CODE XREF: RevealMapRegion+24A↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    RestoreFullScreenFromEMS
                 pop     word_36C7F
-                mov     word_3195A, 8
+                mov     g_dragCursorMinY, 8
                 mov     g_pictureId, 0
                 call    UpdateCursorForHeldItem
                 call    RefreshDungeonMapWindow
@@ -45364,7 +45364,7 @@ TryTravelToClickedMapCell proc near     ; CODE XREF: RevealMapRegion:loc_28F4B�
                 push    word_2E402
                 push    word_2E406      ; this
                 mov     cx, 3
-                mov     ax, word_2E76E
+                mov     ax, g_mouseLeftDownX
                 sub     ax, word_3293E
                 shr     ax, cl
                 inc     ax
@@ -45382,7 +45382,7 @@ loc_292B7:                              ; CODE XREF: TryTravelToClickedMapCell+1
 loc_292C0:                              ; CODE XREF: TryTravelToClickedMapCell+24↑j
                 dec     ax
                 add     word_2E402, ax
-                mov     ax, word_2E770
+                mov     ax, g_mouseLeftDownY
                 sub     ax, word_32940
                 shr     ax, cl
                 inc     ax
@@ -45553,8 +45553,8 @@ loc_2943F:                              ; CODE XREF: WaitForTargetClick+26↑j
 ; ---------------------------------------------------------------------------
 
 loc_29447:                              ; CODE XREF: WaitForTargetClick+2F↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5AC0h
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -50740,8 +50740,8 @@ loc_2BDF5:                              ; CODE XREF: ShowWorldMap+AD↑j
 ; ---------------------------------------------------------------------------
 
 loc_2BE0C:                              ; CODE XREF: ShowWorldMap+B4↑j
-                mov     ax, word_2E76E
-                mov     bx, word_2E770
+                mov     ax, g_mouseLeftDownX
+                mov     bx, g_mouseLeftDownY
                 mov     si, 5B5Ch
                 call    HitTestRegionTable
                 cmp     ax, 0
@@ -56805,7 +56805,7 @@ g_blitMaskLen   dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+4
 word_2E492      dw 0FFh                 ; DATA XREF: PlayStudioCreditsIntro:loc_11D4A↑r
                                         ; InitGame+CF↑r ...
 word_2E494      dw 0FFFFh               ; DATA XREF: WaitForSoundDriverIdle:loc_28289↑r
-word_2E496      dw 0                    ; DATA XREF: RunMapEditorScreen+32↑w
+g_mapEditorWallScrollIndex dw 0         ; DATA XREF: RunMapEditorScreen+32↑w
                                         ; RunMapEditorScreen+27D↑w ...
 word_2E498      dw 0                    ; DATA XREF: ExtendDungeonCeilingTexture+12↑r
                                         ; DrawDungeonFloorAndCeiling:loc_20D5C↑w ...
@@ -56813,11 +56813,11 @@ g_stagedAttackStatusFlags dw 0          ; DATA XREF: HandleDungeonInput↑w
                                         ; ProcessMonsterAttackTurn+5↑w ...
 g_stagedAttackDamage dw 0               ; DATA XREF: HandleDungeonInput+C↑w
                                         ; HandleDungeonInput+359↑r ...
-word_2E49E      dw 0                    ; DATA XREF: HandleDungeonInput+6↑w
+g_stagedAttackTypeFlags dw 0            ; DATA XREF: HandleDungeonInput+6↑w
                                         ; ProcessMonsterAttackTurn+B↑w ...
 word_2E4A0      dw 0                    ; DATA XREF: DrawDungeonFloorAndCeiling+32↑w
                                         ; DrawDungeonFloorAndCeiling+75↑r ...
-word_2E4A2      dw 0                    ; DATA XREF: RunMapEditorScreen+38↑w
+g_mapEditorFloorScrollIndex dw 0        ; DATA XREF: RunMapEditorScreen+38↑w
                                         ; RunMapEditorScreen+294↑w ...
                 db    0
                 db    0
@@ -57513,20 +57513,20 @@ word_2E66C      dw 0                    ; DATA XREF: ShowConfirmPrompt+38↑w
                 db    0
                 db    0
                 db    0
-word_2E76E      dw 0                    ; DATA XREF: start:loc_10306↑r
+g_mouseLeftDownX dw 0                   ; DATA XREF: start:loc_10306↑r
                                         ; start:loc_10352↑r ...
-word_2E770      dw 0                    ; DATA XREF: start+309↑r
+g_mouseLeftDownY dw 0                   ; DATA XREF: start+309↑r
                                         ; start+355↑r ...
-word_2E772      dw 0                    ; DATA XREF: start:loc_10503↑r
+g_mouseRightDownX dw 0                  ; DATA XREF: start:loc_10503↑r
                                         ; start:loc_106C7↑r ...
-word_2E774      dw 0                    ; DATA XREF: start+506↑r
+g_mouseRightDownY dw 0                  ; DATA XREF: start+506↑r
                                         ; start+6CA↑r ...
 ; int word_2E776
 word_2E776      dw 0                    ; DATA XREF: BrowseWallTilePalette+5↑r
                                         ; BrowseFloorTilePalette+5↑r ...
-word_2E778      dw 13Ch                 ; DATA XREF: RunMapEditorScreen+E↑r
+g_dragCursorMaxX dw 13Ch                ; DATA XREF: RunMapEditorScreen+E↑r
                                         ; RunMapEditorScreen+123↑w ...
-word_2E77A      dw 1                    ; DATA XREF: RunMapEditorScreen+A↑r
+g_dragCursorMinX dw 1                   ; DATA XREF: RunMapEditorScreen+A↑r
                                         ; RunMapEditorScreen+1A↑w ...
                 align 8
 word_2E780      dw 0                    ; DATA XREF: ShowConfirmPrompt+32↑w
@@ -70279,16 +70279,16 @@ word_3194A      dw 0                    ; DATA XREF: RestoreUiStateForClueBook+8
                                         ; SaveUiStateForClueBook+95↑r ...
 word_3194C      dw 0                    ; DATA XREF: RestoreUiStateForClueBook+8E↑w
                                         ; SaveUiStateForClueBook+99↑r ...
-word_3194E      dw 0                    ; DATA XREF: seg073:006D↑w
-word_31950      dw 0                    ; DATA XREF: seg073:0071↑w
-word_31952      dw 0                    ; DATA XREF: seg073:0093↑w
-word_31954      dw 0                    ; DATA XREF: seg073:0097↑w
+g_mouseLeftUpX  dw 0                    ; DATA XREF: seg073:006D↑w
+g_mouseLeftUpY  dw 0                    ; DATA XREF: seg073:0071↑w
+g_mouseRightUpX dw 0                    ; DATA XREF: seg073:0093↑w
+g_mouseRightUpY dw 0                    ; DATA XREF: seg073:0097↑w
 ; int word_31956
 word_31956      dw 0                    ; DATA XREF: BrowseWallTilePalette+B↑r
                                         ; BrowseFloorTilePalette+B↑r ...
-word_31958      dw 0C3h                 ; DATA XREF: RunMapEditorScreen+12↑r
+g_dragCursorMaxY dw 0C3h                ; DATA XREF: RunMapEditorScreen+12↑r
                                         ; RunMapEditorScreen+11F↑w ...
-word_3195A      dw 8                    ; DATA XREF: RunMapEditorScreen+16↑r
+g_dragCursorMinY dw 8                   ; DATA XREF: RunMapEditorScreen+16↑r
                                         ; RunMapEditorScreen+20↑w ...
 word_3195C      dw 0                    ; DATA XREF: WaitForKeypressTickingMusic:loc_162C8↑r
                                         ; WaitForKeypressTickingMusic+1F↑r ...
