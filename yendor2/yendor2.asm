@@ -12146,7 +12146,7 @@ loc_17279:                              ; CODE XREF: TryHandleCatalogSlotClick+6
 
 loc_17281:                              ; CODE XREF: TryHandleCatalogSlotClick+E↑j
                 mov     bx, 0
-                call    sub_219FA
+                call    ShowItemPurchaseConfirmPrompt
                 retf
 TryHandleCatalogSlotClick endp
 
@@ -13050,7 +13050,7 @@ PayGoldAndAcquireItem proc near         ; CODE XREF: HandleShopCatalogSlotClick+
                 pop     si
                 mov     ax, [si]
                 mov     bx, 0
-                call    sub_219FA
+                call    ShowItemPurchaseConfirmPrompt
                 push    si
                 push    di
                 mov     di, 0B30h
@@ -14772,7 +14772,7 @@ loc_18761:                              ; CODE XREF: sub_1869D+BA↑j
                 call    ComputeBarterPricingPreview
                 mov     ax, word_31948
                 mov     bx, 0
-                call    sub_219FA
+                call    ShowItemPurchaseConfirmPrompt
 
 loc_1877B:                              ; CODE XREF: sub_1869D+5B↑j
                                         ; sub_1869D+9A↑j ...
@@ -14991,7 +14991,7 @@ loc_18932:                              ; CODE XREF: sub_1869D+267↑j
 loc_18935:                              ; CODE XREF: sub_1869D+293↑j
                 push    word_328C6
                 and     word_328C6, 0FFC3h
-                call    sub_219FA
+                call    ShowItemPurchaseConfirmPrompt
                 pop     word_328C6
 
 loc_18947:                              ; CODE XREF: sub_1869D+261↑j
@@ -15764,7 +15764,7 @@ loc_19032:                              ; CODE XREF: TryEnhanceItemForGold+52↑
                 call    ComputeBarterPricingPreview
                 mov     ax, word_31948
                 mov     bx, 0
-                call    sub_219FA
+                call    ShowItemPurchaseConfirmPrompt
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_2E546
                 mov     ax, [bx+8]
@@ -15911,7 +15911,7 @@ loc_19198:                              ; CODE XREF: TryRepairItemForGold+52↑j
                 call    ComputeBarterPricingPreview
                 mov     ax, word_31948
                 mov     bx, 0
-                call    sub_219FA
+                call    ShowItemPurchaseConfirmPrompt
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_2E546
                 mov     ax, [bx+8]
@@ -31172,9 +31172,9 @@ seg067          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_219FA       proc far                ; CODE XREF: TryHandleCatalogSlotClick+14↑P
+ShowItemPurchaseConfirmPrompt proc far  ; CODE XREF: TryHandleCatalogSlotClick+14↑P
                                         ; PayGoldAndAcquireItem+15↑P ...
-                push    es
+                push    es              ; Item-purchase/cost confirmation prompt: caches ax=item/event code, bx=price adjustment, prompts for a caster/recipient party member unless a mode-flag group is set, redraws the item description, and draws the formatted total price line. Called from TryHandleCatalogSlotClick, PayGoldAndAcquireItem, and HandleStatusPanelItemSlotClick.
                 push    di
                 push    si
                 push    dx
@@ -31186,7 +31186,7 @@ sub_219FA       proc far                ; CODE XREF: TryHandleCatalogSlotClick+1
                 test    word_328C6, 3Ch
                 jnz     short loc_21A55
 
-loc_21A17:                              ; CODE XREF: sub_219FA+59↓j
+loc_21A17:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+59↓j
                 mov     ax, word_36D05
                 cmp     ax, 0
                 jnz     short loc_21A39
@@ -31199,8 +31199,8 @@ loc_21A17:                              ; CODE XREF: sub_219FA+59↓j
                 jmp     loc_21C20
 ; ---------------------------------------------------------------------------
 
-loc_21A39:                              ; CODE XREF: sub_219FA+23↑j
-                                        ; sub_219FA+35↑j
+loc_21A39:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+23↑j
+                                        ; ShowItemPurchaseConfirmPrompt+35↑j
                 mov     word_32990, ax
                 mov     word_36D05, ax
                 call    SelectPartyRecordById
@@ -31211,8 +31211,8 @@ loc_21A39:                              ; CODE XREF: sub_219FA+23↑j
                 jmp     short loc_21A17
 ; ---------------------------------------------------------------------------
 
-loc_21A55:                              ; CODE XREF: sub_219FA+1B↑j
-                                        ; sub_219FA+51↑j
+loc_21A55:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+1B↑j
+                                        ; ShowItemPurchaseConfirmPrompt+51↑j
                 push    cs
                 call    near ptr RedrawItemDescriptionAndMaterials
                 call    RestoreCursorBackgroundIfDirty
@@ -31223,7 +31223,7 @@ loc_21A55:                              ; CODE XREF: sub_219FA+1B↑j
                 jmp     short loc_21A8E
 ; ---------------------------------------------------------------------------
 
-loc_21A73:                              ; CODE XREF: sub_219FA+6F↑j
+loc_21A73:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+6F↑j
                 mov     _textPos_y, 78h ; 'x'
                 test    word_328C6, 3Ch
                 jnz     short loc_21A8E
@@ -31233,8 +31233,8 @@ loc_21A73:                              ; CODE XREF: sub_219FA+6F↑j
                 jmp     loc_21C11
 ; ---------------------------------------------------------------------------
 
-loc_21A8E:                              ; CODE XREF: sub_219FA+77↑j
-                                        ; sub_219FA+85↑j ...
+loc_21A8E:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+77↑j
+                                        ; ShowItemPurchaseConfirmPrompt+85↑j ...
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7B1Ch       ; msg
                 call    writeString
@@ -31258,7 +31258,7 @@ loc_21A8E:                              ; CODE XREF: sub_219FA+77↑j
                 jmp     loc_21C2A
 ; ---------------------------------------------------------------------------
 
-loc_21AEA:                              ; CODE XREF: sub_219FA+E5↑j
+loc_21AEA:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+E5↑j
                 test    word_328C6, 3Ch
                 jnz     short loc_21AFF
                 mov     bx, word_328D4
@@ -31267,8 +31267,8 @@ loc_21AEA:                              ; CODE XREF: sub_219FA+E5↑j
                 jmp     loc_21C11
 ; ---------------------------------------------------------------------------
 
-loc_21AFF:                              ; CODE XREF: sub_219FA+F6↑j
-                                        ; sub_219FA+100↑j
+loc_21AFF:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+F6↑j
+                                        ; ShowItemPurchaseConfirmPrompt+100↑j
                 mov     _font_fgColor, 8Ah
                 mov     bx, word_2E546
                 test    word ptr [bx+0Ch], 0C000h
@@ -31281,7 +31281,7 @@ loc_21AFF:                              ; CODE XREF: sub_219FA+F6↑j
                 jmp     short loc_21B3F
 ; ---------------------------------------------------------------------------
 
-loc_21B25:                              ; CODE XREF: sub_219FA+114↑j
+loc_21B25:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+114↑j
                 test    word ptr [bx+0Ch], 0E00h
                 jz      short loc_21B5A
                 mov     bx, 7C75h       ; msg
@@ -31290,7 +31290,7 @@ loc_21B25:                              ; CODE XREF: sub_219FA+114↑j
                 mov     bx, word_2E548
                 mov     ax, [bx]
 
-loc_21B3F:                              ; CODE XREF: sub_219FA+129↑j
+loc_21B3F:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+129↑j
                 mov     _font_fgColor, 0Fh
                 mov     bx, 0AFA8h
                 call    FormatNumber
@@ -31298,7 +31298,7 @@ loc_21B3F:                              ; CODE XREF: sub_219FA+129↑j
                 call    StripSpaces
                 call    writeString
 
-loc_21B5A:                              ; CODE XREF: sub_219FA+130↑j
+loc_21B5A:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+130↑j
                 mov     si, 0B30h
                 test    word_328C6, 20h
                 jnz     short loc_21BBD
@@ -31317,7 +31317,7 @@ loc_21B5A:                              ; CODE XREF: sub_219FA+130↑j
                 jmp     loc_21C16
 ; ---------------------------------------------------------------------------
 
-loc_21B93:                              ; CODE XREF: sub_219FA+194↑j
+loc_21B93:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+194↑j
                 mov     ax, word_36D03
                 cmp     ax, 0
                 jz      short loc_21C16
@@ -31331,8 +31331,8 @@ loc_21B93:                              ; CODE XREF: sub_219FA+194↑j
                 pop     word_328D4
                 pop     word_328D6
 
-loc_21BBD:                              ; CODE XREF: sub_219FA+169↑j
-                                        ; sub_219FA+174↑j ...
+loc_21BBD:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+169↑j
+                                        ; ShowItemPurchaseConfirmPrompt+174↑j ...
                 mov     _textPos_y, 90h
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7FBDh
@@ -31345,35 +31345,35 @@ loc_21BBD:                              ; CODE XREF: sub_219FA+169↑j
                 jmp     short loc_21BFC
 ; ---------------------------------------------------------------------------
 
-loc_21BE6:                              ; CODE XREF: sub_219FA+1E0↑j
+loc_21BE6:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+1E0↑j
                 call    IsItemEligibleForEnhance
                 jnz     short loc_21C11
                 mov     bx, 8154h
                 jmp     short loc_21BFC
 ; ---------------------------------------------------------------------------
 
-loc_21BF2:                              ; CODE XREF: sub_219FA+1E8↑j
+loc_21BF2:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+1E8↑j
                 call    IsItemEligibleForRepair
                 jnz     short loc_21C11
                 mov     bx, 8154h       ; msg
 
-loc_21BFC:                              ; CODE XREF: sub_219FA+1D8↑j
-                                        ; sub_219FA+1EA↑j ...
+loc_21BFC:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+1D8↑j
+                                        ; ShowItemPurchaseConfirmPrompt+1EA↑j ...
                 call    writeString
                 add     _textPos_y, 6
                 mov     word_2E412, 0Fh
                 call    FormatAndDrawBCD4
 
-loc_21C11:                              ; CODE XREF: sub_219FA+91↑j
-                                        ; sub_219FA+102↑j ...
+loc_21C11:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+91↑j
+                                        ; ShowItemPurchaseConfirmPrompt+102↑j ...
                 call    ShowMaterialCounterHud
 
-loc_21C16:                              ; CODE XREF: sub_219FA+196↑j
-                                        ; sub_219FA+19F↑j
+loc_21C16:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+196↑j
+                                        ; ShowItemPurchaseConfirmPrompt+19F↑j
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
-loc_21C20:                              ; CODE XREF: sub_219FA+3C↑j
+loc_21C20:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+3C↑j
                 pop     word_32974
                 pop     bx
                 pop     dx
@@ -31383,7 +31383,7 @@ loc_21C20:                              ; CODE XREF: sub_219FA+3C↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21C2A:                              ; CODE XREF: sub_219FA+ED↑j
+loc_21C2A:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+ED↑j
                 mov     cx, 8
                 mov     si, 7CB7h
                 mov     di, 0AFA8h
@@ -31391,7 +31391,7 @@ loc_21C2A:                              ; CODE XREF: sub_219FA+ED↑j
                 mov     dx, word_36C81
                 xor     bx, bx
 
-loc_21C3D:                              ; CODE XREF: sub_219FA+26C↓j
+loc_21C3D:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+26C↓j
                 push    cx
                 test    dx, 8080h
                 jz      short loc_21C60
@@ -31402,18 +31402,18 @@ loc_21C3D:                              ; CODE XREF: sub_219FA+26C↓j
                 jz      short loc_21C54
                 mov     byte ptr [di-4], 43h ; 'C'
 
-loc_21C54:                              ; CODE XREF: sub_219FA+254↑j
+loc_21C54:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+254↑j
                 test    dx, 80h
                 jz      short loc_21C63
                 mov     byte ptr [di-3], 44h ; 'D'
                 jmp     short loc_21C63
 ; ---------------------------------------------------------------------------
 
-loc_21C60:                              ; CODE XREF: sub_219FA+248↑j
+loc_21C60:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+248↑j
                 add     si, 0Dh
 
-loc_21C63:                              ; CODE XREF: sub_219FA+25E↑j
-                                        ; sub_219FA+264↑j
+loc_21C63:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+25E↑j
+                                        ; ShowItemPurchaseConfirmPrompt+264↑j
                 shl     dx, 1
                 pop     cx
                 loop    loc_21C3D
@@ -31423,7 +31423,7 @@ loc_21C63:                              ; CODE XREF: sub_219FA+25E↑j
                 mov     bx, 0AFA8h
                 call    DrawStringColumn
                 jmp     short loc_21C11
-sub_219FA       endp
+ShowItemPurchaseConfirmPrompt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -41106,7 +41106,7 @@ loc_2711F:                              ; CODE XREF: HandleStatusIconBarClick+19
                 cmp     ax, 0
                 jz      short loc_27141
                 mov     bx, 0
-                call    sub_219FA
+                call    ShowItemPurchaseConfirmPrompt
                 mov     errorCode, 0
                 jmp     short loc_27147
 ; ---------------------------------------------------------------------------
@@ -41341,7 +41341,7 @@ loc_27369:                              ; CODE XREF: HandleStatusPanelItemSlotCl
                 call    ComputeBarterPricingPreview
                 mov     ax, word_31948
                 mov     bx, 0
-                call    sub_219FA
+                call    ShowItemPurchaseConfirmPrompt
                 call    ShowMaterialCounterHud
                 jmp     loc_2728F
 HandleStatusPanelItemSlotClick endp
@@ -85900,7 +85900,7 @@ word_36C79      dw 0                    ; DATA XREF: seg000:loc_108C5↑r
                 db 0FFh
 word_36C7F      dw 0                    ; DATA XREF: start+3BF↑r
                                         ; start:loc_103E2↑w ...
-word_36C81      dw 0                    ; DATA XREF: sub_219FA+23D↑r
+word_36C81      dw 0                    ; DATA XREF: ShowItemPurchaseConfirmPrompt+23D↑r
                                         ; UnlockDoorCommand+9A↑r ...
 word_36C83      dw 0                    ; DATA XREF: TickWorldAilments+4B↑r
                                         ; TickStatusEffects+1B↑w ...
@@ -86035,7 +86035,7 @@ word_36D01      dw 1E0h                 ; DATA XREF: PlayStudioCreditsIntro+E5�
 word_36D03      dw 0                    ; DATA XREF: DrawTrainingScreenStatSheet+D4↑r
                                         ; ConfirmAndValidatePartyTarget↑r ...
 word_36D05      dw 0                    ; DATA XREF: DrawTrainingScreenStatSheet+101↑r
-                                        ; sub_219FA:loc_21A17↑r ...
+                                        ; ShowItemPurchaseConfirmPrompt:loc_21A17↑r ...
 word_36D07      dw 0                    ; DATA XREF: HandleMovementInput:loc_1152A↑r
                                         ; UseAbilityCommand:loc_178D5↑r ...
 word_36D09      dw 0                    ; DATA XREF: DrawTrainingScreenStatSheet+15B↑r

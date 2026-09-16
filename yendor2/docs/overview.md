@@ -6098,6 +6098,18 @@ state and redraw the shop grid and item description.
 
 693 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowItemPurchaseConfirmPrompt
+
+Named `sub_219FA` -> `ShowItemPurchaseConfirmPrompt`, called from
+`TryHandleCatalogSlotClick`, `PayGoldAndAcquireItem`, and
+`HandleStatusPanelItemSlotClick` (16 refs total): prompts for a
+caster/recipient party member (rejecting an incapacitated choice),
+redraws the item description, and draws the formatted total price
+line (base cost plus a caller-supplied adjustment). Not fully traced
+beyond that point.
+
+694 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

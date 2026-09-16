@@ -5970,7 +5970,9 @@ static Bytes_2(void) {
 	op_hex		(x,	0);
 	create_insn	(x=0X219F2);
 	op_hex		(x,	1);
+	set_cmt	(0X219FA,	"Item-purchase/cost confirmation prompt: caches ax=item/event code, bx=price adjustment, prompts for a caster/recipient party member unless a mode-flag group is set, redraws the item description, and draws the formatted total price line. Called from TryHandleCatalogSlotClick, PayGoldAndAcquireItem, and HandleStatusPanelItemSlotClick.",	0);
 	create_insn	(0X219FA);
+	set_name	(0X219FA,	"ShowItemPurchaseConfirmPrompt");
 	create_insn	(x=0X21A0F);
 	op_hex		(x,	1);
 	create_insn	(0X21A39);
@@ -6475,6 +6477,15 @@ static Bytes_2(void) {
 	set_cmt	(0X23627,	"msg",	0);
 	create_insn	(x=0X2362A);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2363B,	"msg",	0);
 	create_insn	(x=0X2363E);
 	op_hex		(x,	1);
@@ -6507,15 +6518,6 @@ static Bytes_2(void) {
 	set_cmt	(0X23722,	"- MS MOUSE - READ MOTION COUNTERS\nReturn: CX = number of mickeys mouse moved horizontally since last call\nDX = number of mickeys mouse moved vertically",	0);
 	create_insn	(x=0X23722);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X23729);
 	op_hex		(x,	1);
 	create_insn	(x=0X2372F);
@@ -8231,10 +8233,6 @@ static Bytes_3(void) {
 	set_cmt	(0X29040,	"For the character selected via word_32924, walks a table at word_2E54C (stride 0x3A, count word_2E432) and ORs each qualifying entry's [+0x16]/[+0x18] into word_2E40C/word_2E40E. An entry qualifies if [+0x10] bit 1 is set, or [+0x0E] bit 8 is set and [+0x12] overlaps the character's learned-abilities bitmask ([+0xB4]). Called from UseItem and UseAbilityScroll.",	0);
 	create_insn	(0X29040);
 	set_name	(0X29040,	"AccumulateLearnedAbilityFlags");
-	create_insn	(x=0X2906C);
-	op_hex		(x,	1);
-	create_insn	(x=0X29074);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -8244,6 +8242,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2906C);
+	op_hex		(x,	1);
+	create_insn	(x=0X29074);
+	op_hex		(x,	1);
 	set_cmt	(0X2909C,	"Transport/mount item-use preview (called from ShowItemUsagePreview): selects an entry from the 4-slot transport table (0x77C6, stride 0x1A -- PEGASUS/GIANT EAGLE/MAGIC DRAGON, same table as ShowClueBookTransportDetail) via es:[si+0x12] flag bits, draws 'NAME:'/'COST:' plus a flight-time-restriction line ('CAN FLY ANYTIME DAY OR NIGHT' or a time-window variant).",	0);
 	create_insn	(0X2909C);
 	set_name	(0X2909C,	"ShowTransportUsagePreview");
