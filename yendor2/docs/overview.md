@@ -5095,6 +5095,19 @@ category tab list.
 
 596 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryHandleCatalogSlotClick
+
+Named `sub_17270` -> `TryHandleCatalogSlotClick`, called from
+`RunShopScreen` and the main input loop `sub_1869D` — a small gate
+distinct from the already-documented mouse-click "buy" handler
+`sub_17032` (called from the same two sites at different offsets).
+Bails on no hit or an empty slot, otherwise dispatches to a large,
+untraced helper (`sub_219FA`, 251 lines) — plausibly a select/preview
+interaction separate from the purchase flow. Named narrowly around
+its confirmed gate behavior; `sub_219FA` itself remains an open lead.
+
+597 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

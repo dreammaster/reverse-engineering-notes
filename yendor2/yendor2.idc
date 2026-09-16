@@ -2755,7 +2755,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X1722F);
 	op_hex		(x,	1);
 	create_insn	(0X1726C);
+	set_cmt	(0X17270,	"Gate: HitTestCatalogSlot, bail if no hit or the slot is empty ([si]==0). Otherwise dispatches to untraced sub_219FA (bx=0) -- distinct from the documented buy handler sub_17032. Called from RunShopScreen and sub_1869D.",	0);
 	create_insn	(0X17270);
+	set_name	(0X17270,	"TryHandleCatalogSlotClick");
 	create_insn	(0X17279);
 	create_insn	(0X17281);
 	create_insn	(0X1728A);
@@ -3177,15 +3179,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X183D5);
 	op_hex		(x,	1);
 	set_name	(0X183D5,	"RollEffectMagnitude");
-	create_insn	(x=0X183E5);
-	op_hex		(x,	1);
-	create_insn	(x=0X183EC);
-	op_hex		(x,	1);
-	create_insn	(0X1840E);
-	set_name	(0X1840E,	"wait");
-	set_cmt	(0X18414,	"CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",	0);
-	create_insn	(x=0X18414);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -3195,6 +3188,15 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X183E5);
+	op_hex		(x,	1);
+	create_insn	(x=0X183EC);
+	op_hex		(x,	1);
+	create_insn	(0X1840E);
+	set_name	(0X1840E,	"wait");
+	set_cmt	(0X18414,	"CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",	0);
+	create_insn	(x=0X18414);
+	op_hex		(x,	0);
 	set_cmt	(0X1841A,	"CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",	0);
 	create_insn	(x=0X1841A);
 	op_hex		(x,	0);
@@ -5187,6 +5189,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1F474,	"msg",	0);
 	create_insn	(0X1F481);
 	set_name	(0X1F481,	"GameDialog_drawDos");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1F493,	"msg",	0);
 	create_insn	(0X1F49C);
 	set_name	(0X1F49C,	"GameDialog_drawReturn");
@@ -5199,15 +5210,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1F4E4,	"msg",	0);
 	create_insn	(0X1F4ED);
 	set_name	(0X1F4ED,	"GameDialog_drawNewGame");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1F4FF,	"msg",	0);
 	create_insn	(0X1F508);
 	set_name	(0X1F508,	"GameDialog_drawSave");
@@ -6987,6 +6989,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X26279);
 	op_hex		(x,	1);
 	create_insn	(0X2628F);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X26295);
 	create_insn	(x=0X262B2);
 	op_hex		(x,	1);
@@ -7015,15 +7026,6 @@ static Bytes_2(void) {
 	create_insn	(0X26441);
 	create_insn	(x=0X2645B);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X26469);
 	op_hex		(x,	1);
 	create_insn	(0X26473);
@@ -9358,9 +9360,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B739,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B739);
 	set_name	(0X2B739,	"LoadConversationText_1000");
-	set_cmt	(0X2B755,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
-	create_insn	(0X2B755);
-	set_name	(0X2B755,	"LoadConversationText_2000");
 }
 
 //------------------------------------------------------------------------
@@ -9370,6 +9369,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2B755,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
+	create_insn	(0X2B755);
+	set_name	(0X2B755,	"LoadConversationText_2000");
 	set_cmt	(0X2B771,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B771);
 	set_name	(0X2B771,	"LoadConversationText_800");

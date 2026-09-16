@@ -12123,26 +12123,26 @@ sub_17032       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17270       proc far                ; CODE XREF: RunShopScreen+D2↓p
+TryHandleCatalogSlotClick proc far      ; CODE XREF: RunShopScreen+D2↓p
                                         ; sub_1869D:loc_18857↓P
-                call    HitTestCatalogSlot
+                call    HitTestCatalogSlot ; Gate: HitTestCatalogSlot, bail if no hit or the slot is empty ([si]==0). Otherwise dispatches to untraced sub_219FA (bx=0) -- distinct from the documented buy handler sub_17032. Called from RunShopScreen and sub_1869D.
                 cmp     ax, 0
                 jnz     short loc_17279
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_17279:                              ; CODE XREF: sub_17270+6↑j
+loc_17279:                              ; CODE XREF: TryHandleCatalogSlotClick+6↑j
                 mov     ax, [si]
                 cmp     ax, 0
                 jnz     short loc_17281
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_17281:                              ; CODE XREF: sub_17270+E↑j
+loc_17281:                              ; CODE XREF: TryHandleCatalogSlotClick+E↑j
                 mov     bx, 0
                 call    sub_219FA
                 retf
-sub_17270       endp
+TryHandleCatalogSlotClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12310,7 +12310,7 @@ loc_173D9:                              ; CODE XREF: RunShopScreen+55↑j
                 cmp     ax, 5
                 jnz     short loc_17400
                 push    cs
-                call    near ptr sub_17270
+                call    near ptr TryHandleCatalogSlotClick
 
 loc_17400:                              ; CODE XREF: RunShopScreen+C0↑j
                                         ; RunShopScreen+CF↑j
@@ -13118,7 +13118,7 @@ SellClickedCatalogItem endp
 
 
 HitTestCatalogSlot proc near            ; CODE XREF: sub_17032↑p
-                                        ; sub_17270↑p
+                                        ; TryHandleCatalogSlotClick↑p
                 mov     ax, word_2E76E  ; Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.
                 mov     bx, word_2E770
                 mov     si, 63C8h
@@ -14867,7 +14867,7 @@ loc_1884F:                              ; CODE XREF: sub_1869D+129↑j
 ; ---------------------------------------------------------------------------
 
 loc_18857:                              ; CODE XREF: sub_1869D+134↑j
-                call    sub_17270
+                call    TryHandleCatalogSlotClick
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -31159,7 +31159,7 @@ seg067          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_219FA       proc far                ; CODE XREF: sub_17270+14↑P
+sub_219FA       proc far                ; CODE XREF: TryHandleCatalogSlotClick+14↑P
                                         ; PayGoldAndAcquireItem+15↑P ...
                 push    es
                 push    di
