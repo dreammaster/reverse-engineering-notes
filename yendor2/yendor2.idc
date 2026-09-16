@@ -10452,10 +10452,13 @@ static Bytes_5(void) {
 	create_word	(0X2E3EA);
 	create_word	(0X2E3EC);
 	create_word	(0X2E3EE);
+	set_name	(0X2E3EE,	"g_clueEntrySelectedIndex");
 	create_word	(0X2E3F0);
+	set_name	(0X2E3F0,	"g_clueEntryScrollOffset");
 	create_word	(0X2E3F2);
 	create_word	(0X2E3F4);
 	create_word	(0X2E3F6);
+	set_name	(0X2E3F6,	"g_clueBookCategory");
 	create_word	(0X2E3F8);
 	create_word	(0X2E3FA);
 	create_word	(0X2E3FC);
@@ -10504,7 +10507,9 @@ static Bytes_5(void) {
 	create_word	(0X2E496);
 	create_word	(0X2E498);
 	create_word	(0X2E49A);
+	set_name	(0X2E49A,	"g_stagedAttackStatusFlags");
 	create_word	(0X2E49C);
+	set_name	(0X2E49C,	"g_stagedAttackDamage");
 	create_word	(0X2E49E);
 	create_word	(0X2E4A0);
 	create_word	(0X2E4A2);
@@ -10699,6 +10704,7 @@ static Bytes_5(void) {
 	create_word	(0X32928);
 	create_word	(0X3292A);
 	create_word	(0X3292C);
+	set_name	(0X3292C,	"g_viewportRowDepth");
 	create_word	(0X3292E);
 	create_word	(0X32930);
 	set_name	(0X32930,	"errorCode");

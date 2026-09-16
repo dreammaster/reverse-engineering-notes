@@ -1483,7 +1483,7 @@ death/HP tracking is still an open question for a future round.
 ### 2026-09-15 session update, continued: monster HP found; named HandleDungeonInput
 
 Right after `UpdateMonsterWoundTier` (which only sets a visual wound-
-severity flag), its caller does `[g_activeCombatMonster+0x10] -= word_2E49C` — the
+severity flag), its caller does `[g_activeCombatMonster+0x10] -= g_stagedAttackDamage` — the
 actual HP subtraction. Confirms `g_monsterSlots`' `+0x10` field doubles
 as current HP in active combat, the same field `TickMonsterTimer` uses
 as a lifespan countdown in the level-wide spawn-pool context — another
@@ -2004,7 +2004,7 @@ actually tags individual clue-book entries with which level/map they
 apply to (appending " LEVEL X"/" MAP X" when relevant), and the rest of
 the chain renamed to match: `BuildLoadValidationMessage` →
 `BuildClueEntryText`, `DrawSaveSlotList` → `DrawClueEntryList`,
-`ShowSaveSlotMenu` → `ShowClueCategoryEntries`. `word_2E3F6` is a clue
+`ShowSaveSlotMenu` → `ShowClueCategoryEntries`. `g_clueBookCategory` is a clue
 *category* selector, not a validation-failure type. Corrected rather
 than leaving the wrong "save menu" framing in the historical log above
 — see this entry for the real identification.
@@ -2417,7 +2417,7 @@ cell counts, one per depth row of the visible corridor.
 `RenderDungeonViewRow` draws each cell's picture and calls
 `TryTriggerMonsterEncounterAtCell` (was `sub_212B8`) once per cell.
 Key finding: the encounter check only fires for the farthest two rows
-(`word_3292C >= 0x11`) — **monsters can only spawn at the edge of
+(`g_viewportRowDepth >= 0x11`) — **monsters can only spawn at the edge of
 visibility, never right next to the party** — a deliberate fairness
 design, not an incidental detail. This is a genuine architectural
 discovery about the game's core rendering/encounter loop, found by
@@ -3843,7 +3843,7 @@ guards elsewhere in the clue book.
 
 Named `sub_2D195` -> `ResolveAttackAndLatchFirstHit`, called once from
 the still-unnamed combat dispatcher `sub_2C0FE`: calls `ResolveAttack`
-then latches a value into `word_2E49C` the first time through. Exact
+then latches a value into `g_stagedAttackDamage` the first time through. Exact
 field identities not confirmed — named for the clear mechanical shape
 only, without forcing a name onto `sub_2C0FE` itself.
 
@@ -4190,8 +4190,8 @@ sequence. Bundles four distinct behaviors, each gated by comparing the
 attack's flag words (`word_33304`/`word_33306`) against matching bits
 on the target record (`[di+0x96]`/`[di+0x98]`): filters 6 "high"
 status-effect bits by target immunity into the accumulated to-apply
-flags (`word_2E49A`); fully negates the staged damage
-(`word_2E49C`=0) on a match against 5 "low" bits; halves the staged
+flags (`g_stagedAttackStatusFlags`); fully negates the staged damage
+(`g_stagedAttackDamage`=0) on a match against 5 "low" bits; halves the staged
 damage on a match against 7 resistance-category bits; and drains a
 fixed amount (`word_332E0`) from one of 5 elemental resource fields on
 the target (offset selected by a 5-way priority-encoded bit test),
@@ -4231,7 +4231,7 @@ Named `sub_2D470` -> `ApplyAttackAlongCorridorLine`, called 3 times in
 a row from unnamed `sub_2C0FE` (a sibling of the already-named
 `ApplyDamageAlongCorridorLine`, but driving the full resistance-aware
 pipeline). Loops 3 times over consecutive viewport rows starting at
-`word_3292C` (incrementing it each iteration), calls
+`g_viewportRowDepth` (incrementing it each iteration), calls
 `GetMonsterAtViewportRow` to find a monster at each row, and — **this
 resolves the open question from the last two rounds** —
 `GetMonsterAtViewportRow`'s result (`si`) is moved directly into `di`
@@ -4285,12 +4285,12 @@ Named `sub_12DD8` -> `HandleClueEntryScrollInput`, called once from
 family as the previously-named `HandlePagedEntryNavigation`, but for
 the clue book's entry list, additionally driven by a mouse hit-test
 (`HitTestRegionTable` against table `0x6960`). 'I'/hit-region-1 adopts
-candidate index `word_2E3F0` into `word_2E3EE` (signaling change via
+candidate index `g_clueEntryScrollOffset` into `g_clueEntrySelectedIndex` (signaling change via
 `errorCode=1`) unless `word_328CC` bit `0x100` defers entirely to
 still-unnamed `sub_13014`; 'Q'/hit-region-2 mirrors this with
 `word_2E3F2` (`errorCode=2`), deferring to still-unnamed `sub_12FED`
 on `word_328CC` bit `0x80`. `errorCode=0` if nothing changed. The
-exact identity of `word_2E3F0`/`word_2E3F2` (plausibly precomputed
+exact identity of `g_clueEntryScrollOffset`/`word_2E3F2` (plausibly precomputed
 clamped prev/next indices) and of the two deferred-to functions isn't
 confirmed, so left open for a future round.
 
@@ -4302,9 +4302,9 @@ Named the pair `sub_13014` -> `ScrollClueEntryListPageUp` and
 `sub_12FED` -> `ScrollClueEntryListPageDown` — the two functions
 `HandleClueEntryScrollInput` defers to in its "special mode" branches,
 also shared with another unnamed caller (`sub_12D5C`). Both jump the
-clue entry list's scroll offset (`word_2E3F0`) by a fixed page size of
+clue entry list's scroll offset (`g_clueEntryScrollOffset`) by a fixed page size of
 `0x38` (56) — up clamped to a minimum of `word_2E3EA+2`, down clamped
-against upper bound `word_2E3F2` — adjust `word_2E3EE` by the delta,
+against upper bound `word_2E3F2` — adjust `g_clueEntrySelectedIndex` by the delta,
 call still-unnamed `sub_12FC1` (plausibly a redraw), and set
 `errorCode` (1/2) matching `HandleClueEntryScrollInput`'s own
 convention. Resolves both of that function's previously-open
@@ -4323,7 +4323,7 @@ page's boundary) and `sub_12FC1` -> `RecomputeClueEntryPageBounds`
 they were named last round it was speculated this might be "a
 redraw"; tracing it directly shows it's actually pure bounds
 arithmetic, no drawing at all). It recomputes the page's upper bound
-(`word_2E3F2 = word_2E3F0+0x34`, clamped to total count `word_2E3F4`)
+(`word_2E3F2 = g_clueEntryScrollOffset+0x34`, clamped to total count `word_2E3F4`)
 and visible-row count (`word_2E3EC`, defaulting to `0xE` or the
 remaining-rows count on the last partial page) — the `/4` in that
 remaining-rows math confirms a 4-entries-per-row grid layout for the
@@ -4399,7 +4399,7 @@ once from `ApplyAttackAlongCorridorLine` right after
 `ApplyAttackToTarget` — the function left deliberately unnamed two
 rounds ago pending clarification of its relationship to
 `ApplyAttackToTarget`'s own commit. Traced it fully this round: since
-`ApplyAttackToTarget` only ever leaves `word_2E49C`/`word_2E49A`
+`ApplyAttackToTarget` only ever leaves `g_stagedAttackDamage`/`g_stagedAttackStatusFlags`
 nonzero by having already run its own complete commit (every
 early-return path re-checks both are 0 first), this function runs as
 a genuine **second** commit pass on the same target. It re-filters
@@ -4862,7 +4862,7 @@ avoidance roll: subtracts a character's stat (the still-mysterious
 party-record field `+0x50`) from a trap record's threshold; if
 positive, rolls `RandomInRange(100)` against the remaining margin, and
 on success computes a magnitude scaled by that margin into
-`word_2E49C` — "the higher this stat relative to the trap's
+`g_stagedAttackDamage` — "the higher this stat relative to the trap's
 threshold, the less likely and smaller the effect."
 `TriggerSideTrapForRandomPartyMember` picks a random active party
 member (`PickRandomActivePartyMember`), rolls this avoidance check
@@ -6730,13 +6730,13 @@ mentions of these 7 raw addresses to the new names for consistency.
 
 Many more high-reference-count globals remain, ranked by the grep
 frequency count (e.g. `word_3293E` 209 refs, `word_328C6` 152,
-`word_328CA` 150, `word_328C8` 146, `word_32940` 128, `word_3292C` 121,
+`word_328CA` 150, `word_328C8` 146, `word_32940` 128, `g_viewportRowDepth` 121,
 `word_36C7F` 86 — a party-average-stat-tier-driven minimap/lighting
 visibility bitfield, exact real-world meaning (light source vs. mapping
 skill) not fully confirmed, `word_2E548` 83 — an item-effect-swap
 sub-flag/field table, exact structure not fully confirmed, `g_currentCommandCode`
 83, `word_3295A` 80, `word_328CC` 72, `word_2E412` 70, `word_36C79` 69
-— confirmed environmental-timer bits, `word_2E49C` 65). Several of the
+— confirmed environmental-timer bits, `g_stagedAttackDamage` 65). Several of the
 very highest-ref globals (`word_328C4`/`C6`/`C8`/`CA`/`CC`, `word_3293E`,
 `word_32940`) are multi-purpose bitfield/scratch-parameter words whose
 individual bits or call-site-specific meaning don't reduce to one clean
@@ -6840,6 +6840,42 @@ piece of state. Also checked `word_33302`/`word_33306`/`word_33304`
 them alone — each is a ~19-32-bit bitmask where individual bits select
 unrelated effect/attack types, the same category of "multi-purpose
 bitfield" already being deferred.
+
+### 2026-09-16 session update, continued: global variable renaming, round 4
+
+Renamed 6 more globals:
+- `word_3292C` → **`g_viewportRowDepth`**: the first-person dungeon
+  corridor renderer's per-frame row-depth counter, reset by
+  `RenderDungeonViewport` before its 7 `RenderDungeonViewRow` calls and
+  incremented/decremented per cell; also gates
+  `TryTriggerMonsterEncounterAtCell` (only fires at max depth) and
+  `TryActivateMonsterByDistance`'s detection-range check.
+- `word_2E49C` → **`g_stagedAttackDamage`**, `word_2E49A` →
+  **`g_stagedAttackStatusFlags`**: the pending attack-resolution commit
+  pair. `ApplyTargetResistancesToAttack` negates/halves
+  `g_stagedAttackDamage` on resistance/immunity matches and accumulates
+  filtered status-effect bits into `g_stagedAttackStatusFlags`;
+  `ApplyAttackToTarget`'s early returns all re-check both are `0` (a
+  completed-commit sentinel), and
+  `ReapplyDamageWithCompoundedResistance` runs a second compounding
+  pass over the same pair.
+- `word_2E3F6` → **`g_clueBookCategory`**: the clue book's current
+  top-level category selector, confirmed ("`word_2E3F6` is a clue
+  category") and used throughout `ShowClueBook`'s whole F-key/category
+  dispatch switch.
+- `word_2E3F0` → **`g_clueEntryScrollOffset`**: the clue entry list's
+  scroll offset, paged by a fixed `0x38`-entry page size.
+- `word_2E3EE` → **`g_clueEntrySelectedIndex`**: the current
+  highlighted entry index within the clue entry list, adjusted
+  alongside the scroll offset.
+
+Left the rest of the clue-book state cluster (`word_2E3EA`/`word_2E3F2`/
+`word_2E3F4`) alone — file-formats.md itself flags their "exact
+identity... not confirmed" beyond being bounds/count values paired with
+the ones just renamed. Also checked `word_332E8`/`word_332E0` (values
+latched into the attack-staging pair) and `word_31980`/`word_2E412`
+(no supporting documentation beyond raw reference counts) — none had
+enough confirmed evidence to name yet.
 
 ## Next steps (not started this session)
 

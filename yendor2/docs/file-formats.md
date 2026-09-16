@@ -737,10 +737,10 @@ whatever was on screen before the book opened. It drives an
 interactive, categorized clue-entry browser: `RunClueEntryMenu` (the
 per-category menu loop) → `ShowClueCategoryEntries` (init+draw one
 category, reading its entry count from a table at `0xF3F4` indexed by
-`word_2E3F6`, the category selector) → `DrawClueEntryList` (the
+`g_clueBookCategory`, the category selector) → `DrawClueEntryList` (the
 scrollable entry list itself, positions from a table at `0x68D2`) →
 `BuildClueEntryText` (composes one entry's display text, dispatching
-on `word_2E3F6` to different lookups per category) → for at least
+on `g_clueBookCategory` to different lookups per category) → for at least
 category 1, `BuildClueLocationSuffix` (reads a clue record from
 `WORLD.DAT` and appends ` LEVEL X` or ` MAP X` when the clue is tied to
 a specific level/map, else no suffix). **Correction**: this whole
@@ -775,17 +775,17 @@ limitation.
 entry-list scroll handler — the same "I"/"Q" hotkey convention as
 `HandlePagedEntryNavigation` elsewhere, plus a mouse hit-test
 (`HitTestRegionTable` table `0x6960`) as an alternate input, updating
-current index `word_2E3EE` from candidate `word_2E3F0` ('I') or
+current index `g_clueEntrySelectedIndex` from candidate `g_clueEntryScrollOffset` ('I') or
 `word_2E3F2` ('Q') and signaling which via `errorCode`
 (1/2/0=unchanged) — unless a `word_328CC` bit (`0x100`/`0x80`) defers
 to a full-page jump instead: `ScrollClueEntryListPageUp`/
 `ScrollClueEntryListPageDown` (was `sub_13014`/`sub_12FED`, also
 shared with `HandleClueEntryRowScrollInput` below), which move
-`word_2E3F0` by a fixed page size of `0x38` (56) entries/rows, clamped
+`g_clueEntryScrollOffset` by a fixed page size of `0x38` (56) entries/rows, clamped
 against `word_2E3EA+2`/`word_2E3F2` respectively, then call
 `RecomputeClueEntryPageBounds` (was `sub_12FC1` — **correction**: not
 a redraw as first speculated; it's pure bounds arithmetic, recomputing
-`word_2E3F2`/`word_2E3EC` from the new `word_2E3F0`, with a `/4` in
+`word_2E3F2`/`word_2E3EC` from the new `g_clueEntryScrollOffset`, with a `/4` in
 its last-partial-page math confirming a 4-entries-per-row grid). The
 list's other scroll input, `HandleClueEntryRowScrollInput` (was
 `sub_12D5C`), handles 'H'/'P' for a single-row (step 4) scroll,
@@ -816,19 +816,19 @@ ESC Return to Game — very likely (order not yet matched bit-for-bit)
 the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
 
 **`ShowClueBook`'s full F-key dispatch**, traced directly from its own
-`g_currentCommandCode` (`PollKeyboardInput` result) switch: F1 (`word_2E3F6=1`,
+`g_currentCommandCode` (`PollKeyboardInput` result) switch: F1 (`g_clueBookCategory=1`,
 Maps) → `RunClueEntryMenu` + `RunClueBookMapCategory` (loads the map
 via `LoadClueBookMapEntry`, draws a row/col grid of per-cell location
 labels via `DrawClueBookMapGrid`, and dispatches cell clicks to an
 untraced `sub_14122`). F2
-(`word_2E3F6=2`, Monster Statistics) → `RunClueEntryMenu` +
-`RunClueBookMonsterCategory`. F3 (`word_2E3F6=3`, Spells) →
+(`g_clueBookCategory=2`, Monster Statistics) → `RunClueEntryMenu` +
+`RunClueBookMonsterCategory`. F3 (`g_clueBookCategory=3`, Spells) →
 `RunClueEntryMenu` + `RunClueBookSpellCategory`, which (along with
 `BuildClueEntryText`) reads each spell's data via `LoadClueBookSpellEntry`
 (was `sub_1D198`) — an 80-byte record from its own dedicated EMS page
 (`0x5610`), the spell-data equivalent of `LoadClueBookMonsterEntry`'s
 `WORLD.DAT` read. F4
-(`word_2E3F6=4` lists classes, then `word_2E3F6=[selected class]+4`,
+(`g_clueBookCategory=4` lists classes, then `g_clueBookCategory=[selected class]+4`,
 Magic Users) → two chained `RunClueEntryMenu` calls (class picker,
 then that class's spell list) + `RunClueBookSpellCategory` again —
 `ShowClueBookSpellDetail` draws "CLASS:"/"LEVEL:" plus "MP:"/
@@ -844,16 +844,16 @@ matched level. Each cell of the eligibility row is drawn by
 `DrawClassEligibilityMarker` (was `sub_13C1D`): a fixed value of `1`
 in a highlight color when a 2-entry candidate array matches the same
 class id. F5
-(`word_2E3F6=0xB`,
+(`g_clueBookCategory=0xB`,
 Inventory Items) → `RunClueEntryMenu` lists **8 item subtypes**
-(`word_2E3EE[0]` 1–8), each with its own sub-loop and now fully
+(`g_clueEntrySelectedIndex[0]` 1–8), each with its own sub-loop and now fully
 identified by title dump: **1 "ARMOR/RINGS"** →
 `RunClueBookItemCategory` (**correction**: previously described below
 as "the F5 category's own loop" — it's actually only item subtype 1's
 loop within F5's subtype selector); **2** → just `WaitForKeypress`
 (an empty/placeholder subtype, no title); **3 "JEWELS/ARTIFACTS/
 UNIQUE ITEMS"**, **4 "MAGIC SCROLLS/QUARTZ"**, **5 "POTIONS"**, **6
-"SUPPLIES/FOOD"** (`word_2E3F6=0xD/0xE/0xF/0x10`) → all four route
+"SUPPLIES/FOOD"** (`g_clueBookCategory=0xD/0xE/0xF/0x10`) → all four route
 through `RunClueBookItemDetailWithAbilityInfo` (**correction**: has 4
 call sites here, not "two other sites" as first counted); **7
 "TRANSPORTATIONS"** →
@@ -878,7 +878,7 @@ category-flag match (`[+0x16]`/`[+0x18]` against `word_2E40C`/
 `word_2E40E`) plus 6 prerequisite flag ids (`[+0x22..+0x2C]`, each
 checked via `TestGlobalFlag`) — recording each match's catalog index
 for later selection;
-**8 "WEAPONS"** (`word_2E3F6=0x11`) → `RunClueEntryMenu` +
+**8 "WEAPONS"** (`g_clueBookCategory=0x11`) → `RunClueEntryMenu` +
 `RunClueBookWeaponCategory`. F6 (Complete Walk Through) →
 `ShowPagedEntryScreen` (already-named, generic paginated text), whose
 page-turn input is handled by `HandlePagedEntryNavigation` (was
@@ -1232,7 +1232,7 @@ sequence). Also called (twice) from it:
 cycler, drawing picture `ax` at x=`bx` and advancing/wrapping the frame
 counter within `[word_332EC, word_332EC+word_332EE)`. Also called once
 from it: `ResolveAttackAndLatchFirstHit` (was `sub_2D195`) — calls
-`ResolveAttack` then latches a value (`word_332E8`) into `word_2E49C`
+`ResolveAttack` then latches a value (`word_332E8`) into `g_stagedAttackDamage`
 the first time through (only if it was still 0); exact field identities
 not confirmed.
 
@@ -1418,7 +1418,7 @@ visual wound-severity flag on the monster record (`+0xE`: `0x8000`
 light, `0x4000` moderate, `0x2000` severe, by percentage of `+0x50` —
 plausibly max HP/toughness) plus an unconditional display flag
 (`+0xC` `|= 0xA`) — it does not subtract HP itself, but its caller
-does immediately afterward: **`[monster+0x10] -= word_2E49C`** (the
+does immediately afterward: **`[monster+0x10] -= g_stagedAttackDamage`** (the
 damage just dealt). `DrawMonsterAndUpdateAttackState` (called for
 every rendered monster, whether a corridor encounter or an active
 `g_monsterSlots` combatant) reads exactly this wound state to pick a
@@ -1446,7 +1446,7 @@ New monsters enter this pool via `SpawnMonsterInFacingDirection`,
 called from `TryTriggerMonsterEncounterAtCell` — which turns out to be
 part of the **first-person dungeon corridor viewport renderer**:
 `RenderDungeonViewport` (called from two unnamed sites) resets a
-per-frame row-depth counter (`word_3292C`) and calls
+per-frame row-depth counter (`g_viewportRowDepth`) and calls
 `RenderDungeonViewRow` **seven** times with decreasing cell counts
 (`0x11`, `0x11`, `5`, `3`, `3`, `3`, `3`) — the classic "draw each
 depth row of the visible corridor, near to far" shape. **Correction**:
@@ -1459,8 +1459,8 @@ pixel (see the lighting-gradient note below), so this is a shared
 kind. `RenderDungeonViewRow` draws each cell's picture (a
 12-byte-stride lookup table at `0xE551`) and calls
 `TryTriggerMonsterEncounterAtCell` once per cell, incrementing/
-decrementing `word_3292C` as it goes. `TryTriggerMonsterEncounterAtCell`
-only fires for `word_3292C >= 0x11` — since only the first two (and
+decrementing `g_viewportRowDepth` as it goes. `TryTriggerMonsterEncounterAtCell`
+only fires for `g_viewportRowDepth >= 0x11` — since only the first two (and
 therefore *farthest*) rows use `cx=0x11`, **monsters can only spawn in
 the farthest visible cells, not right next to the party** — plus a
 flag bit on the cell record, then **correction**: skips spawning if
@@ -1472,7 +1472,7 @@ check), before calling `SpawnMonsterInFacingDirection`, which:
 Both `SpawnMonsterInFacingDirection` and `FindMonsterTypeInLevelPool`
 call `TryActivateMonsterByDistance`: if a monster isn't already marked
 active/aware (`[+0xC]` bit 0), it checks the render-depth counter
-(`word_3292C`) against a per-monster detection-range threshold
+(`g_viewportRowDepth`) against a per-monster detection-range threshold
 selected by `[+0x94]` flags, setting the aware bit once the party is
 close enough — a distance-based monster "notices you" mechanic.
 
