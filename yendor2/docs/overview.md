@@ -3746,6 +3746,16 @@ already noted in an earlier round as "only draws label strings").
 
 477 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawShadowedText, DrawShadowedTextAlt
+
+Named `sub_161D0` -> `DrawShadowedText` and its byte-for-byte identical
+duplicate `sub_11E4A` -> `DrawShadowedTextAlt` (likely duplicated
+across overlay segments): a drop-shadow text/list draw effect, called
+from character-creation step 3 (`sub_1559A`) and a still-untraced
+function reached from `start` (`sub_11A10`) respectively.
+
+479 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

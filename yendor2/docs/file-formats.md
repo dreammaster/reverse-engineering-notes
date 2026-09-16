@@ -450,7 +450,13 @@ traced.
 not yet traced), then always `FinalizeCharacterCreation` (was
 `sub_15267`, runs regardless of which step was reached). Matches the
 manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/
-`FEMALE`/`PICK A PORTRAIT` cluster. `FinalizeCharacterCreation` loads a
+`FEMALE`/`PICK A PORTRAIT` cluster. Step 3 (`sub_1559A`) calls
+`DrawShadowedText` (was `sub_161D0`) — a drop-shadow text/list draw
+(background-color pass, then a foreground-color pass shifted 1 pixel
+up-left), with a byte-for-byte identical duplicate,
+`DrawShadowedTextAlt` (was `sub_11E4A`), used elsewhere by another
+still-untraced function (`sub_11A10`, called directly from `start`).
+`FinalizeCharacterCreation` loads a
 transition palette, reads file entry `#3`, frees a temp memory block if
 one was allocated, clears the screen, and stops the
 character-creation music before returning — the wizard's common

@@ -1410,8 +1410,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X11E41);
 	op_hex		(x,	1);
+	set_cmt	(0X11E4A,	"Draws text/a string column with a 1-pixel drop-shadow (background color pass, then foreground color pass shifted up-left). Single line via writeString when cx<=1, multi-line via DrawStringColumn otherwise. Optionally plays a sound first. Called from sub_11A10. Byte-for-byte identical to DrawShadowedText.",	0);
 	create_insn	(x=0X11E4A);
 	op_hex		(x,	1);
+	set_name	(0X11E4A,	"DrawShadowedTextAlt");
 	create_insn	(0X11E5D);
 	create_insn	(0X11E63);
 	set_cmt	(0X11E84,	"msg",	0);
@@ -2364,8 +2366,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X161C3);
 	op_hex		(x,	1);
+	set_cmt	(0X161D0,	"Draws text/a string column with a 1-pixel drop-shadow (background color pass, then foreground color pass shifted up-left). Single line via writeString when cx<=1, multi-line via DrawStringColumn otherwise. Optionally plays a sound first. Called from sub_1559A.",	0);
 	create_insn	(x=0X161D0);
 	op_hex		(x,	1);
+	set_name	(0X161D0,	"DrawShadowedText");
 	create_insn	(0X161E3);
 	create_insn	(0X161E9);
 	set_cmt	(0X1620A,	"msg",	0);
@@ -3489,15 +3493,6 @@ static Bytes_0(void) {
 	set_cmt	(0X19957,	"Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).",	0);
 	create_insn	(0X19957);
 	set_name	(0X19957,	"SelectAndDrawPartyStatusRow");
-	set_cmt	(0X19A16,	"Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.",	0);
-	create_insn	(0X19A16);
-	set_name	(0X19A16,	"AddBCD4");
-	set_cmt	(0X19A3C,	"AddToBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then AddBCD4 into the counter at si.",	0);
-	create_insn	(0X19A3C);
-	set_name	(0X19A3C,	"AddToBCDCounter");
-	set_cmt	(0X19A56,	"Raw 4-byte packed-BCD comparison, [si] vs [di], most-significant digit first (matches CompareBCD4/IsBCDCounterAtLeast usage). Exits at the first mismatching nibble; CF=1 if [si] < [di].",	0);
-	create_insn	(0X19A56);
-	set_name	(0X19A56,	"CompareBCD4");
 }
 
 //------------------------------------------------------------------------
@@ -3507,6 +3502,15 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X19A16,	"Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.",	0);
+	create_insn	(0X19A16);
+	set_name	(0X19A16,	"AddBCD4");
+	set_cmt	(0X19A3C,	"AddToBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then AddBCD4 into the counter at si.",	0);
+	create_insn	(0X19A3C);
+	set_name	(0X19A3C,	"AddToBCDCounter");
+	set_cmt	(0X19A56,	"Raw 4-byte packed-BCD comparison, [si] vs [di], most-significant digit first (matches CompareBCD4/IsBCDCounterAtLeast usage). Exits at the first mismatching nibble; CF=1 if [si] < [di].",	0);
+	create_insn	(0X19A56);
+	set_name	(0X19A56,	"CompareBCD4");
 	create_insn	(x=0X19A60);
 	op_hex		(x,	1);
 	create_insn	(x=0X19A6B);
@@ -5595,6 +5599,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X21530);
 	op_hex		(x,	1);
 	set_name	(0X21530,	"ShowCompassDirection");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X21538);
 	op_hex		(x,	1);
 	create_insn	(x=0X21543);
@@ -5608,15 +5621,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X21588);
 	op_hex		(x,	1);
 	set_name	(0X21588,	"DrawMinimap");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X21596);
 	op_hex		(x,	1);
 	create_insn	(0X215A4);
@@ -7802,9 +7806,6 @@ static Bytes_2(void) {
 	create_insn	(0X28BA1);
 	create_insn	(0X28BB3);
 	create_insn	(0X28BC5);
-	set_cmt	(0X28BD2,	"Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.",	0);
-	create_insn	(0X28BD2);
-	set_name	(0X28BD2,	"ApplySavingThrowEffect");
 }
 
 //------------------------------------------------------------------------
@@ -7814,6 +7815,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X28BD2,	"Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.",	0);
+	create_insn	(0X28BD2);
+	set_name	(0X28BD2,	"ApplySavingThrowEffect");
 	create_insn	(0X28BE2);
 	create_insn	(0X28C04);
 	create_insn	(0X28C3A);
@@ -10869,6 +10873,15 @@ static Bytes_3(void) {
 	set_name	(0X35D5A,	"aCongratulation");
 	create_strlit	(0X35D6C,	0XE);
 	set_name	(0X35D6C,	"aYouAreNowA");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35D7A,	0XD);
 	set_name	(0X35D7A,	"aToPurchase");
 	create_strlit	(0X35D87,	0XF);
@@ -10893,15 +10906,6 @@ static Bytes_3(void) {
 	set_name	(0X35DFB,	"aCongratulation_0");
 	create_strlit	(0X35E16,	0X1F);
 	set_name	(0X35E16,	"aYouHaveSuccess");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35E35,	0X5);
 	set_name	(0X35E35,	"aThe");
 	create_strlit	(0X35E3A,	0XB);

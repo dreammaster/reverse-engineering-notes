@@ -2891,7 +2891,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_fgColor, 89h
                 mov     _font_bgColor, 83h
                 mov     _font_bgTransparent, 1
-                call    sub_11E4A
+                call    DrawShadowedTextAlt
                 call    DrawMouseCursor
                 mov     ax, 64h ; 'd'   ; ticks
                 call    wait
@@ -2909,7 +2909,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_fgColor, 89h
                 mov     _font_bgColor, 83h
                 mov     _font_bgTransparent, 1
-                call    sub_11E4A
+                call    DrawShadowedTextAlt
                 call    DrawMouseCursor
                 mov     ax, 12Ch        ; ticks
                 call    wait
@@ -2942,7 +2942,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_fgColor, 89h
                 mov     _font_bgColor, 83h
                 mov     _font_bgTransparent, 1
-                call    sub_11E4A
+                call    DrawShadowedTextAlt
                 call    DrawMouseCursor
                 mov     ax, 15Eh        ; ticks
                 call    wait
@@ -2971,7 +2971,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgColor, 83h
                 mov     _font_bgTransparent, 1
                 mov     _videoSegment, 0A000h
-                call    sub_11E4A
+                call    DrawShadowedTextAlt
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     ax, 15Eh        ; ticks
@@ -2985,7 +2985,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_fgColor, 79h ; 'y'
                 mov     _font_bgColor, 73h ; 's'
                 mov     _font_bgTransparent, 1
-                call    sub_11E4A
+                call    DrawShadowedTextAlt
                 mov     cx, 14h
                 call    sub_11EAE
                 call    sub_11DE2
@@ -3165,9 +3165,9 @@ sub_11E39       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11E4A       proc near               ; CODE XREF: sub_11A10+79↑p
+DrawShadowedTextAlt proc near           ; CODE XREF: sub_11A10+79↑p
                                         ; sub_11A10+C4↑p ...
-                test    g_driverStateFlags, 8
+                test    g_driverStateFlags, 8 ; Draws text/a string column with a 1-pixel drop-shadow (background color pass, then foreground color pass shifted up-left). Single line via writeString when cx<=1, multi-line via DrawStringColumn otherwise. Optionally plays a sound first. Called from sub_11A10. Byte-for-byte identical to DrawShadowedText.
                 jz      short loc_11E5D
                 cmp     ax, 0FFFFh
                 jz      short loc_11E5D
@@ -3175,14 +3175,14 @@ sub_11E4A       proc near               ; CODE XREF: sub_11A10+79↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11E5D:                              ; CODE XREF: sub_11E4A+6↑j
-                                        ; sub_11E4A+B↑j
+loc_11E5D:                              ; CODE XREF: DrawShadowedTextAlt+6↑j
+                                        ; DrawShadowedTextAlt+B↑j
                 cmp     bx, 0
                 jnz     short loc_11E63
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11E63:                              ; CODE XREF: sub_11E4A+16↑j
+loc_11E63:                              ; CODE XREF: DrawShadowedTextAlt+16↑j
                 push    bx
                 push    _font_fgColor
                 mov     ax, _font_bgColor
@@ -3198,7 +3198,7 @@ loc_11E63:                              ; CODE XREF: sub_11E4A+16↑j
                 jmp     short loc_11EA5
 ; ---------------------------------------------------------------------------
 
-loc_11E8C:                              ; CODE XREF: sub_11E4A+27↑j
+loc_11E8C:                              ; CODE XREF: DrawShadowedTextAlt+27↑j
                 push    cx
                 call    DrawStringColumn
                 pop     cx
@@ -3208,11 +3208,11 @@ loc_11E8C:                              ; CODE XREF: sub_11E4A+27↑j
                 pop     bx
                 call    DrawStringColumn
 
-loc_11EA5:                              ; CODE XREF: sub_11E4A+40↑j
+loc_11EA5:                              ; CODE XREF: DrawShadowedTextAlt+40↑j
                 inc     _textPos_x
                 inc     _textPos_y
                 retn
-sub_11E4A       endp
+DrawShadowedTextAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8852,7 +8852,7 @@ loc_15602:                              ; CODE XREF: sub_1559A+65↑j
                 mov     bx, 0BF89h
                 mov     cx, 5
                 mov     ax, 0FFFFh
-                call    sub_161D0
+                call    DrawShadowedText
                 pop     _font_bgTransparent
                 pop     _videoSegment
                 call    sub_15249
@@ -8942,7 +8942,7 @@ loc_156DB:                              ; CODE XREF: sub_1559A+13E↑j
                 mov     bx, 0C063h
                 mov     ax, 0FFFFh
                 mov     cx, 2
-                call    sub_161D0
+                call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_161C3
                 call    sub_15249
@@ -8989,7 +8989,7 @@ loc_15799:                              ; CODE XREF: sub_1559A+1FC↑j
                 mov     _font_fgColor, 98h
                 mov     cx, 2
                 mov     ax, 10h
-                call    sub_161D0
+                call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_161C3
                 or      word_328C8, 800h
@@ -9063,7 +9063,7 @@ loc_1587F:                              ; CODE XREF: sub_1559A+2E2↑j
                 mov     _font_fgColor, 98h
                 mov     cx, 1
                 mov     ax, 13h
-                call    sub_161D0
+                call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_161C3
                 mov     ax, _videoBufferSeg
@@ -9092,7 +9092,7 @@ loc_158D5:                              ; CODE XREF: sub_1559A+338↑j
                 mov     _font_fgColor, 98h
                 mov     cx, 3
                 mov     ax, 17h
-                call    sub_161D0
+                call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_161C3
                 mov     cx, 0FFFFh
@@ -9151,7 +9151,7 @@ loc_1598C:                              ; CODE XREF: sub_1559A+3EF↑j
                 mov     _font_fgColor, 98h
                 mov     cx, 2
                 mov     ax, 14h
-                call    sub_161D0
+                call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_161C3
                 mov     cx, 14h
@@ -9328,7 +9328,7 @@ loc_15BBA:                              ; CODE XREF: sub_1559A+61D↑j
                 mov     _font_fgColor, 98h
                 mov     cx, 4
                 mov     ax, 15h
-                call    sub_161D0
+                call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_161C3
                 mov     di, 0
@@ -9455,7 +9455,7 @@ loc_15D39:                              ; CODE XREF: sub_1559A+79C↑j
                 mov     _font_fgColor, 98h
                 mov     ax, 0FFFFh
                 mov     cx, 2
-                call    sub_161D0
+                call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_15249
                 jnz     short loc_15D85
@@ -9523,7 +9523,7 @@ loc_15E05:                              ; CODE XREF: sub_1559A+868↑j
                 mov     _font_fgColor, 98h
                 mov     ax, 1Ch
                 mov     cx, 2
-                call    sub_161D0
+                call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_161C3
                 mov     cx, 14h
@@ -9911,9 +9911,9 @@ sub_161C3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_161D0       proc near               ; CODE XREF: sub_1559A+BB↑p
+DrawShadowedText proc near              ; CODE XREF: sub_1559A+BB↑p
                                         ; sub_1559A+19C↑p ...
-                test    g_driverStateFlags, 8
+                test    g_driverStateFlags, 8 ; Draws text/a string column with a 1-pixel drop-shadow (background color pass, then foreground color pass shifted up-left). Single line via writeString when cx<=1, multi-line via DrawStringColumn otherwise. Optionally plays a sound first. Called from sub_1559A.
                 jz      short loc_161E3
                 cmp     ax, 0FFFFh
                 jz      short loc_161E3
@@ -9921,14 +9921,14 @@ sub_161D0       proc near               ; CODE XREF: sub_1559A+BB↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_161E3:                              ; CODE XREF: sub_161D0+6↑j
-                                        ; sub_161D0+B↑j
+loc_161E3:                              ; CODE XREF: DrawShadowedText+6↑j
+                                        ; DrawShadowedText+B↑j
                 cmp     bx, 0
                 jnz     short loc_161E9
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_161E9:                              ; CODE XREF: sub_161D0+16↑j
+loc_161E9:                              ; CODE XREF: DrawShadowedText+16↑j
                 push    bx
                 push    _font_fgColor
                 mov     ax, _font_bgColor
@@ -9944,7 +9944,7 @@ loc_161E9:                              ; CODE XREF: sub_161D0+16↑j
                 jmp     short loc_1622B
 ; ---------------------------------------------------------------------------
 
-loc_16212:                              ; CODE XREF: sub_161D0+27↑j
+loc_16212:                              ; CODE XREF: DrawShadowedText+27↑j
                 push    cx
                 call    DrawStringColumn
                 pop     cx
@@ -9954,11 +9954,11 @@ loc_16212:                              ; CODE XREF: sub_161D0+27↑j
                 pop     bx
                 call    DrawStringColumn
 
-loc_1622B:                              ; CODE XREF: sub_161D0+40↑j
+loc_1622B:                              ; CODE XREF: DrawShadowedText+40↑j
                 inc     _textPos_x
                 inc     _textPos_y
                 retn
-sub_161D0       endp
+DrawShadowedText endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35100,8 +35100,8 @@ sub_23B19       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-writeString     proc far                ; CODE XREF: sub_11E4A+29↑P
-                                        ; sub_11E4A+3B↑P ...
+writeString     proc far                ; CODE XREF: DrawShadowedTextAlt+29↑P
+                                        ; DrawShadowedTextAlt+3B↑P ...
                 push    _textPos_x
 
 loc_23B62:                              ; CODE XREF: writeString+10↓j
@@ -85973,7 +85973,7 @@ word_36CE3      dw 3                    ; DATA XREF: sub_28619+8B↑w
 ; FileEntry *g_driverStateFlags
 g_driverStateFlags dw offset loc_2D869+1 - offset locret_2D860
                                         ; DATA XREF: sub_11A10+332↑r
-                                        ; sub_11E4A↑r ...
+                                        ; DrawShadowedTextAlt↑r ...
 word_36CE7      dw 0                    ; DATA XREF: ShowClueBook+1B↑r
                                         ; ShowClueBook+25↑r ...
                 db 0FFh
