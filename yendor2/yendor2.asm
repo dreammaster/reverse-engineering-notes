@@ -8470,9 +8470,10 @@ ClearOffscreenBuffer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_152EF       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+4A↓p
+DrawCharacterCreationAnimationFrame proc near
+                                        ; CODE XREF: PlayCharacterCreationIntroAnimation+4A↓p
                                         ; PlayCharacterCreationIntroAnimation+93↓p ...
-                push    cx
+                push    cx              ; Restores the full screen from `fe`, then draws each active (bit 0x8000) entry of a 7-entry cell table at 0x6D60 -- picture + position, clipped against the screen top/bottom, clearing the active bit once fully off-screen. Waits for a tick before returning. One animation frame of PlayCharacterCreationIntroAnimation.
                 push    di
                 push    si
                 push    es
@@ -8489,18 +8490,18 @@ sub_152EF       proc near               ; CODE XREF: PlayCharacterCreationIntroA
                 mov     cx, 7
                 mov     si, 6D60h
 
-loc_15318:                              ; CODE XREF: sub_152EF+32↓j
+loc_15318:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+32↓j
                 test    word ptr [si], 8000h
                 jnz     short loc_1533A
 
-loc_1531E:                              ; CODE XREF: sub_152EF+8F↓j
-                                        ; sub_152EF+A1↓j ...
+loc_1531E:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+8F↓j
+                                        ; DrawCharacterCreationAnimationFrame+A1↓j ...
                 add     si, 14h
                 loop    loc_15318
                 and     word_328C4, 0FBFFh
                 call    DrawMouseCursor
 
-loc_1532E:                              ; CODE XREF: sub_152EF+44↓j
+loc_1532E:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+44↓j
                 cmp     word_32956, 1
                 jl      short loc_1532E
                 pop     es
@@ -8510,7 +8511,7 @@ loc_1532E:                              ; CODE XREF: sub_152EF+44↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1533A:                              ; CODE XREF: sub_152EF+2D↑j
+loc_1533A:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+2D↑j
                 mov     ax, [si+10h]
                 mov     word_2E530, ax
                 mov     ax, [si+6]
@@ -8538,7 +8539,7 @@ loc_1533A:                              ; CODE XREF: sub_152EF+2D↑j
                 jmp     short loc_1531E
 ; ---------------------------------------------------------------------------
 
-loc_15392:                              ; CODE XREF: sub_152EF+9B↑j
+loc_15392:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+9B↑j
                 cmp     y, 0
                 jge     short loc_153B0
                 mov     y, 0
@@ -8549,7 +8550,7 @@ loc_15392:                              ; CODE XREF: sub_152EF+9B↑j
                 jmp     short loc_153D2
 ; ---------------------------------------------------------------------------
 
-loc_153B0:                              ; CODE XREF: sub_152EF+A8↑j
+loc_153B0:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+A8↑j
                 mov     ax, [si+0Eh]
                 add     ax, y
                 cmp     ax, 0C7h
@@ -8560,21 +8561,21 @@ loc_153B0:                              ; CODE XREF: sub_152EF+A8↑j
                 mov     word_32988, ax
                 mov     _font_bgTransparent, 4
 
-loc_153D2:                              ; CODE XREF: sub_152EF+BF↑j
-                                        ; sub_152EF+CB↑j
+loc_153D2:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+BF↑j
+                                        ; DrawCharacterCreationAnimationFrame+CB↑j
                 call    DrawPicture
                 test    word ptr [si], 4000h
                 jnz     short loc_153E0
                 jmp     loc_1531E
 ; ---------------------------------------------------------------------------
 
-loc_153E0:                              ; CODE XREF: sub_152EF+EC↑j
+loc_153E0:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+EC↑j
                 test    word_328C4, 400h
                 jnz     short loc_153EB
                 jmp     loc_1531E
 ; ---------------------------------------------------------------------------
 
-loc_153EB:                              ; CODE XREF: sub_152EF+F7↑j
+loc_153EB:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+F7↑j
                 test    word ptr [si], 0C0h
                 jnz     short loc_153FC
                 mov     ax, [si+10h]
@@ -8584,20 +8585,20 @@ loc_153EB:                              ; CODE XREF: sub_152EF+F7↑j
                 jmp     short loc_15405
 ; ---------------------------------------------------------------------------
 
-loc_153FC:                              ; CODE XREF: sub_152EF+100↑j
+loc_153FC:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+100↑j
                 mov     ax, [si+10h]
                 inc     ax
                 cmp     ax, [si+4]
                 jle     short loc_15423
 
-loc_15405:                              ; CODE XREF: sub_152EF+10B↑j
+loc_15405:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+10B↑j
                 test    word ptr [si], 60h
                 jz      short loc_15412
                 and     word ptr [si], 0BF9Fh
                 jmp     loc_1531E
 ; ---------------------------------------------------------------------------
 
-loc_15412:                              ; CODE XREF: sub_152EF+11A↑j
+loc_15412:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+11A↑j
                 test    word ptr [si], 80h
                 jnz     short loc_15420
                 jmp     loc_1531E
@@ -8606,14 +8607,14 @@ loc_15412:                              ; CODE XREF: sub_152EF+11A↑j
                 jmp     short loc_15423
 ; ---------------------------------------------------------------------------
 
-loc_15420:                              ; CODE XREF: sub_152EF+127↑j
+loc_15420:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+127↑j
                 mov     ax, [si+2]
 
-loc_15423:                              ; CODE XREF: sub_152EF+109↑j
-                                        ; sub_152EF+114↑j ...
+loc_15423:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+109↑j
+                                        ; DrawCharacterCreationAnimationFrame+114↑j ...
                 mov     [si+10h], ax
                 jmp     loc_1531E
-sub_152EF       endp
+DrawCharacterCreationAnimationFrame endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8650,7 +8651,7 @@ loc_15452:                              ; CODE XREF: PlayCharacterCreationIntroA
                 call    RunPaletteFadeSequence
                 test    word_328C4, 400h
                 jz      short loc_15476
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
 
 loc_15476:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+48↑j
                 pop     cx
@@ -8680,7 +8681,7 @@ loc_154B1:                              ; CODE XREF: PlayCharacterCreationIntroA
                 call    RestoreWipeEffectPixel
                 test    word_328C4, 400h
                 jz      short loc_154BF
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
 
 loc_154BF:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+91↑j
                 sub     word_328FA, 2
@@ -8694,7 +8695,7 @@ loc_154D6:                              ; CODE XREF: PlayCharacterCreationIntroA
                 call    RestoreWipeEffectPixel
                 test    word_328C4, 400h
                 jz      short loc_154E4
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
 
 loc_154E4:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+B6↑j
                 sub     word_328FA, 2
@@ -8721,7 +8722,7 @@ loc_15514:                              ; CODE XREF: PlayCharacterCreationIntroA
                 call    sub_160C3
                 test    word_328C4, 400h
                 jz      short loc_15526
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
 
 loc_15526:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+F8↑j
                 pop     cx
@@ -8750,7 +8751,7 @@ loc_1553E:                              ; CODE XREF: PlayCharacterCreationIntroA
                 call    sub_2589A
                 test    word_328C4, 400h
                 jz      short loc_1555B
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
 
 loc_1555B:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+12D↑j
                 pop     cx
@@ -8781,7 +8782,7 @@ loc_15573:                              ; CODE XREF: PlayCharacterCreationIntroA
                 call    sub_2589A
                 test    word_328C4, 400h
                 jz      short loc_15596
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
 
 loc_15596:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+168↑j
                 pop     cx
@@ -8801,7 +8802,7 @@ sub_1559A       proc near               ; CODE XREF: RunCharacterCreation+14↑p
 loc_155A9:                              ; CODE XREF: sub_1559A+1B↓j
                 add     fe, 14h
                 inc     word_2E406
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
                 loop    loc_155A9
                 and     word_328C8, 0F7FFh
                 mov     dx, 40h ; '@'
@@ -8811,7 +8812,7 @@ loc_155A9:                              ; CODE XREF: sub_1559A+1B↓j
 loc_155C6:                              ; CODE XREF: sub_1559A+38↓j
                 add     fe, 14h
                 inc     word_2E406
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
                 loop    loc_155C6
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_155DA
@@ -8829,7 +8830,7 @@ loc_155DA:                              ; CODE XREF: sub_1559A+3D↑j
 loc_155EE:                              ; CODE XREF: sub_1559A+60↓j
                 add     fe, 14h
                 inc     word_2E406
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
                 loop    loc_155EE
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15602
@@ -8876,7 +8877,7 @@ loc_1566F:                              ; CODE XREF: sub_1559A+E8↓j
                 call    sub_160C3
                 test    word_328C4, 400h
                 jz      short loc_15681
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
 
 loc_15681:                              ; CODE XREF: sub_1559A+E2↑j
                 pop     cx
@@ -8910,7 +8911,7 @@ loc_156A6:                              ; CODE XREF: sub_1559A+12A↓j
                 call    sub_2589A
                 test    word_328C4, 400h
                 jz      short loc_156C3
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
 
 loc_156C3:                              ; CODE XREF: sub_1559A+124↑j
                 pop     cx
@@ -9358,7 +9359,7 @@ loc_15C3D:                              ; CODE XREF: sub_1559A+6A0↑j
                 mov     word_2E406, 0
                 mov     si, 6DC4h
                 or      word ptr [si], 0C000h
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
                 or      word_328C8, 800h
                 mov     ax, 2
                 mov     bx, 3Fh ; '?'
@@ -9483,7 +9484,7 @@ loc_15D97:                              ; CODE XREF: sub_1559A+7FA↑j
                 call    TriggerSoundEvent
                 mov     si, 6DD8h
                 or      word ptr [si], 0C000h
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
                 mov     di, 0
                 mov     si, 0
                 mov     cx, 7D00h
@@ -9685,7 +9686,7 @@ loc_15F35:                              ; CODE XREF: ComposeCharacterPortrait+FA
                 mov     word ptr [si+10h], 49h ; 'I'
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
                 or      word_3295A, 8000h
                 and     word_328C4, 0FBFFh
                 call    RestoreCursorBackgroundIfDirty
@@ -9854,7 +9855,7 @@ sub_16180       proc near               ; CODE XREF: PlayCharacterCreationIntroA
                                         ; PlayCharacterCreationIntroAnimation+DF↑p ...
                 test    word_328C4, 400h
                 jz      short sub_16180
-                call    sub_152EF
+                call    DrawCharacterCreationAnimationFrame
                 loop    sub_16180
                 retn
 sub_16180       endp
@@ -74407,13 +74408,13 @@ word_3297C      dw 0                    ; DATA XREF: IsItemRangeAvailable+1D↑w
 word_3297E      dw 0                    ; DATA XREF: ShowClueBook+63↑w
                                         ; ShowIntroPicture+8↑w ...
 word_32980      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+18↑w
-                                        ; sub_152EF+71↑w ...
+                                        ; DrawCharacterCreationAnimationFrame+71↑w ...
 word_32982      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+1E↑w
-                                        ; sub_152EF+80↑w ...
+                                        ; DrawCharacterCreationAnimationFrame+80↑w ...
 word_32984      dw 0                    ; DATA XREF: DrawMonsterAndUpdateAttackState+44↑w
                                         ; DrawMonsterAndUpdateAttackState+7B↑w ...
 word_32986      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+24↑w
-                                        ; sub_152EF+6B↑w ...
+                                        ; DrawCharacterCreationAnimationFrame+6B↑w ...
 word_32988      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+2A↑w
                                         ; PlayCreditsWipeAnimation+6F↑w ...
 word_3298A      dw 0                    ; DATA XREF: sub_1BBED+1FE↑w

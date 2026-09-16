@@ -2267,7 +2267,9 @@ static Bytes_0(void) {
 	set_cmt	(0X152E1,	"Clears the entire offscreen buffer (0x7D00 words, a full mode-13h screen) to 0. Called from FinalizeCharacterCreation and sub_1559A. Byte-for-byte identical to ClearOffscreenBufferAlt (sub_11D58) in a different overlay segment.",	0);
 	create_insn	(0X152E1);
 	set_name	(0X152E1,	"ClearOffscreenBuffer");
+	set_cmt	(0X152EF,	"Restores the full screen from `fe`, then draws each active (bit 0x8000) entry of a 7-entry cell table at 0x6D60 -- picture + position, clipped against the screen top/bottom, clearing the active bit once fully off-screen. Waits for a tick before returning. One animation frame of PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(0X152EF);
+	set_name	(0X152EF,	"DrawCharacterCreationAnimationFrame");
 	create_insn	(x=0X1530D);
 	op_seg		(x,	1);
 	create_insn	(x=0X15318);

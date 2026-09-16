@@ -5960,6 +5960,20 @@ the `SelectAndDrawPartyStatusRow` doc's description exactly.
 
 684 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawCharacterCreationAnimationFrame
+
+Named `sub_152EF` -> `DrawCharacterCreationAnimationFrame`, called
+repeatedly from `PlayCharacterCreationIntroAnimation`: restores the
+full screen from the `fe` scratch buffer, then walks a 7-entry cell
+table at `0x6D60` (the same address used elsewhere as the dungeon-
+viewport scratch cell buffer, here repurposed for this animation) —
+draws each active entry's picture at a clipped position (screen
+top/bottom), clearing the entry once it's fully off-screen. One
+animation frame of the character-creation intro's animated picture
+sequence.
+
+685 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
