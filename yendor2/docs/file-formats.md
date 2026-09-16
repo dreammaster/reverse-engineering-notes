@@ -1343,6 +1343,25 @@ good next step). Mouse-clicking a monster panel's icon also sets
 `word_32A1E` directly (a target-selection shortcut alongside
 `SelectActiveMonster`'s automatic pick).
 
+**A monster's turn is driven by `ProcessMonsterAttackTurn`** (was
+`sub_16881`): `RunDungeonGameLoop` tests `g_combatTurnOrder`'s
+current entry for the `0x8000` "monster" flag and calls it for a
+monster's turn (calling `HandleDungeonInput` instead for a party
+member's turn). It ticks the monster, briefly shows its info panel
+on first reveal, then branches on a new find — `[+0x92]` bit
+`0x1000`, an **area-effect/breath-weapon attack flag**: if set, it
+attacks all 4 party slots (skipping incapacitated members) in one
+turn via `ResolveAttackerActionOutcome`, playing its hit sound only
+once; if clear (the common case), it attacks only its single
+assigned target (`[+0x12]`). On a successful single-target hit, it
+also calls `TickEquippedItemDurability(0x146)` on the defender —
+confirming an ordinary monster attack, not just the corrosion
+special attack, can wear/break the defender's equipped item. Two
+more monster-record fields found in the process: `+0x52` (a save-DC
+stat fed into `word_32DC0` for `ApplySavingThrowEffect`) and a pair
+of distinct sound ids, `+0x5C` (attack-hit) vs `+0x5E` (idle/
+grumble, played when no valid target is available).
+
 **Attack-roll formula, found via that click handler**: `ResolveAttack`
 (`ax`=target defense, `bx`=attacker accuracy, `cx`=weapon damage power)
 — hit if `(accuracy-defense) >= RandomInRange(55)`, damage =

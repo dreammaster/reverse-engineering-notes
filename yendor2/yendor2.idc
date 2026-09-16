@@ -2645,7 +2645,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X16847);
 	op_hex		(x,	1);
 	create_insn	(0X16875);
+	set_cmt	(0X16881,	"Per-monster combat-turn processor, called from RunDungeonGameLoop when g_combatTurnOrder's current entry is a monster's turn. Ticks the monster, shows its info panel on first reveal, then either attacks all 4 party members (if [+0x92] bit 0x1000 is set -- an area-effect/breath-weapon monster) or its single assigned target ([+0x12]) via ResolveAttackerActionOutcome, optionally wearing/breaking the defender's equipped item (TickEquippedItemDurability) on a hit. Falls back to an idle sound if no valid target.",	0);
 	create_insn	(0X16881);
+	set_name	(0X16881,	"ProcessMonsterAttackTurn");
 	create_insn	(x=0X168A3);
 	op_hex		(x,	1);
 	create_insn	(x=0X168AA);
@@ -2796,6 +2798,15 @@ static Bytes_0(void) {
 	set_cmt	(0X16EFA,	"Clears a VGA video-memory region (fill 0x0404), sized by combat state (word_328CA bit 0x1000). Generic message/status-box clear reused by sub_17032, UseAbilityCommand, and RestPartyAndAdvanceClock.",	0);
 	create_insn	(0X16EFA);
 	set_name	(0X16EFA,	"ClearMessageBoxArea");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X16F07);
 	op_hex		(x,	1);
 	create_insn	(0X16F44);
@@ -2806,15 +2817,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X16F84);
 	op_hex		(x,	1);
 	set_name	(0X16F84,	"ParseCommandLineSwitches");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X16F86,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);
 	create_insn	(x=0X16F86);
 	op_hex		(x,	0);
@@ -4668,10 +4670,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
 	create_insn	(0X1CDBC);
 	set_name	(0X1CDBC,	"IsItemRangeAvailable");
-	create_insn	(0X1CDFA);
-	create_insn	(0X1CE02);
-	create_insn	(0X1CE25);
-	create_insn	(0X1CE52);
 }
 
 //------------------------------------------------------------------------
@@ -4681,6 +4679,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1CDFA);
+	create_insn	(0X1CE02);
+	create_insn	(0X1CE25);
+	create_insn	(0X1CE52);
 	set_cmt	(0X1CE6B,	"FindItemInInventoryRange (implicit word_328D4, range = word_3293E..word_32940): searches the 8 main inventory slots ([+0x11A], matches GetInventorySlotPtr's layout) for an item id in range, recursing into container-type items (sub_12554 [+0xC] bit 0x2000) via sub_1CECB. Also checks one extra slot at +0x13E (plausibly 'equipped' transport item). Generic inventory search, not transport-specific by itself.",	0);
 	create_insn	(0X1CE6B);
 	set_name	(0X1CE6B,	"FindItemInInventoryRange");

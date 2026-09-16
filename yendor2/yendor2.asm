@@ -10178,7 +10178,7 @@ loc_16348:                              ; CODE XREF: RunDungeonGameLoop+B9↓j
                 mov     bx, word_32BF4
                 test    word ptr [bx+6], 8000h
                 jz      short loc_1635F
-                call    sub_16881
+                call    ProcessMonsterAttackTurn
                 cmp     byte_2E400, 0
                 jz      short loc_16377
                 jmp     short loc_16375
@@ -10765,8 +10765,8 @@ HandleDungeonInput endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16881       proc near               ; CODE XREF: RunDungeonGameLoop+5D↑p
-                mov     byte_2E400, 0
+ProcessMonsterAttackTurn proc near      ; CODE XREF: RunDungeonGameLoop+5D↑p
+                mov     byte_2E400, 0   ; Per-monster combat-turn processor, called from RunDungeonGameLoop when g_combatTurnOrder's current entry is a monster's turn. Ticks the monster, shows its info panel on first reveal, then either attacks all 4 party members (if [+0x92] bit 0x1000 is set -- an area-effect/breath-weapon monster) or its single assigned target ([+0x12]) via ResolveAttackerActionOutcome, optionally wearing/breaking the defender's equipped item (TickEquippedItemDurability) on a hit. Falls back to an idle sound if no valid target.
                 mov     word_2E49A, 0
                 mov     word_2E49E, 0
                 mov     word_2E49C, 0
@@ -10782,19 +10782,19 @@ sub_16881       proc near               ; CODE XREF: RunDungeonGameLoop+5D↑p
                 mov     ax, 0Ah         ; ticks
                 call    wait
 
-loc_168C3:                              ; CODE XREF: sub_16881+27↑j
+loc_168C3:                              ; CODE XREF: ProcessMonsterAttackTurn+27↑j
                 cmp     errorCode, 0
                 jz      short loc_168CB
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_168CB:                              ; CODE XREF: sub_16881+47↑j
+loc_168CB:                              ; CODE XREF: ProcessMonsterAttackTurn+47↑j
                 mov     di, [si+12h]
                 mov     word_32908, di
                 or      word ptr [si+0Ch], 4
                 mov     cx, 3
 
-loc_168D9:                              ; CODE XREF: sub_16881+64↓j
+loc_168D9:                              ; CODE XREF: ProcessMonsterAttackTurn+64↓j
                 push    cx
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -10806,7 +10806,7 @@ loc_168D9:                              ; CODE XREF: sub_16881+64↓j
                 jmp     loc_1698C
 ; ---------------------------------------------------------------------------
 
-loc_168F6:                              ; CODE XREF: sub_16881+70↑j
+loc_168F6:                              ; CODE XREF: ProcessMonsterAttackTurn+70↑j
                 mov     di, word_32908
                 test    word ptr [di+1Ch], 1C40h
                 jnz     short loc_16966
@@ -10831,8 +10831,8 @@ loc_168F6:                              ; CODE XREF: sub_16881+70↑j
                 jz      short loc_1693D
                 call    TriggerSoundEvent
 
-loc_1693D:                              ; CODE XREF: sub_16881+AA↑j
-                                        ; sub_16881+B5↑j
+loc_1693D:                              ; CODE XREF: ProcessMonsterAttackTurn+AA↑j
+                                        ; ProcessMonsterAttackTurn+B5↑j
                 mov     ax, [si+52h]
                 mov     word_32DC0, ax
                 call    ApplyEffectAndDrawIconBar
@@ -10841,30 +10841,30 @@ loc_1693D:                              ; CODE XREF: sub_16881+AA↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16950:                              ; CODE XREF: sub_16881+CC↑j
+loc_16950:                              ; CODE XREF: ProcessMonsterAttackTurn+CC↑j
                 test    word_328CA, 200h
                 jz      short loc_1695B
                 jmp     loc_16A1E
 ; ---------------------------------------------------------------------------
 
-loc_1695B:                              ; CODE XREF: sub_16881+D5↑j
+loc_1695B:                              ; CODE XREF: ProcessMonsterAttackTurn+D5↑j
                 mov     ax, 146h
                 call    TickEquippedItemDurability
                 jmp     loc_16A1E
 ; ---------------------------------------------------------------------------
 
-loc_16966:                              ; CODE XREF: sub_16881+7E↑j
-                                        ; sub_16881+A3↑j ...
+loc_16966:                              ; CODE XREF: ProcessMonsterAttackTurn+7E↑j
+                                        ; ProcessMonsterAttackTurn+A3↑j ...
                 call    WaitForSoundDriverIdle
                 jz      short loc_16978
 
-loc_1696D:                              ; CODE XREF: sub_16881+101↓j
+loc_1696D:                              ; CODE XREF: ProcessMonsterAttackTurn+101↓j
                 mov     ax, 0Ch         ; ticks
                 call    wait
                 jmp     loc_16A1E
 ; ---------------------------------------------------------------------------
 
-loc_16978:                              ; CODE XREF: sub_16881+EA↑j
+loc_16978:                              ; CODE XREF: ProcessMonsterAttackTurn+EA↑j
                 mov     si, word_32904
                 mov     ax, [si+5Eh]
                 cmp     ax, 0
@@ -10873,7 +10873,7 @@ loc_16978:                              ; CODE XREF: sub_16881+EA↑j
                 jmp     loc_16A1E
 ; ---------------------------------------------------------------------------
 
-loc_1698C:                              ; CODE XREF: sub_16881+72↑j
+loc_1698C:                              ; CODE XREF: ProcessMonsterAttackTurn+72↑j
                 push    bp
                 call    SelectTrapEffectVariant
                 and     word_328C8, 0FFFBh
@@ -10882,7 +10882,7 @@ loc_1698C:                              ; CODE XREF: sub_16881+72↑j
                 mov     bp, 95EBh
                 mov     cx, 4
 
-loc_169A1:                              ; CODE XREF: sub_16881+177↓j
+loc_169A1:                              ; CODE XREF: ProcessMonsterAttackTurn+177↓j
                 mov     bx, ds:[bp+0]
                 cmp     bx, 0
                 jz      short loc_169FA
@@ -10909,21 +10909,21 @@ loc_169A1:                              ; CODE XREF: sub_16881+177↓j
                 jz      short loc_169EF
                 call    TriggerSoundEvent
 
-loc_169EF:                              ; CODE XREF: sub_16881+13A↑j
-                                        ; sub_16881+148↑j ...
+loc_169EF:                              ; CODE XREF: ProcessMonsterAttackTurn+13A↑j
+                                        ; ProcessMonsterAttackTurn+148↑j ...
                 pop     cx
                 add     bp, 2
                 add     word_32906, 14h
                 loop    loc_169A1
 
-loc_169FA:                              ; CODE XREF: sub_16881+127↑j
+loc_169FA:                              ; CODE XREF: ProcessMonsterAttackTurn+127↑j
                 pop     bp
                 test    word_328C8, 4
                 jnz     short loc_16A06
                 jmp     loc_16966
 ; ---------------------------------------------------------------------------
 
-loc_16A06:                              ; CODE XREF: sub_16881+180↑j
+loc_16A06:                              ; CODE XREF: ProcessMonsterAttackTurn+180↑j
                 and     word_328C8, 0FFFBh
                 mov     ax, [si+52h]
                 mov     word_32DC0, ax
@@ -10933,8 +10933,8 @@ loc_16A06:                              ; CODE XREF: sub_16881+180↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16A1E:                              ; CODE XREF: sub_16881+D7↑j
-                                        ; sub_16881+E2↑j ...
+loc_16A1E:                              ; CODE XREF: ProcessMonsterAttackTurn+D7↑j
+                                        ; ProcessMonsterAttackTurn+E2↑j ...
                 mov     bx, word_32BF4
                 mov     si, [bx]
                 and     word ptr [si+0Ch], 0FFFBh
@@ -10943,7 +10943,7 @@ loc_16A1E:                              ; CODE XREF: sub_16881+D7↑j
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 retn
-sub_16881       endp
+ProcessMonsterAttackTurn endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11170,8 +11170,8 @@ ProcessCombatRound endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ResolveAttackerActionOutcome proc near  ; CODE XREF: sub_16881+9B↑p
-                                        ; sub_16881+140↑p
+ResolveAttackerActionOutcome proc near  ; CODE XREF: ProcessMonsterAttackTurn+9B↑p
+                                        ; ProcessMonsterAttackTurn+140↑p
                 mov     si, word_32904  ; Resolves one attacker-vs-defender action outcome, one of 3 paths selected by word_328CA bit 0x200 and the attacker's [+0x92] special-attack flags: (1) normal ResolveAttack damage roll, (2) a FailsSavingThrow-gated status-effect application, or (3) a weaker-DC FailsSavingThrow gating an 'equipment corrosion' effect that targets the defender's equipped item instead of HP. Called twice from sub_16881.
                 mov     di, word_32908
                 test    word_328CA, 200h
@@ -11305,7 +11305,7 @@ ResolveAttackerActionOutcome endp
 ; =============== S U B R O U T I N E =======================================
 
 
-FindPartySlotForRecord proc near        ; CODE XREF: sub_16881+82↑p
+FindPartySlotForRecord proc near        ; CODE XREF: ProcessMonsterAttackTurn+82↑p
                                         ; BuildCombatTurnOrder+35↑p
                 push    bx              ; FindPartySlotForRecord(ax=combatant record ptr): scans g_partySlotAssignment for a matching party slot; found -> word_32924/bx = that slot's address. Not found (record is a monster) -> resets word_328D4/word_328D6 to 0, word_32924=0.
                 push    cx
@@ -11370,8 +11370,8 @@ SelectActiveMonster endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SelectTrapEffectVariant proc near       ; CODE XREF: sub_16881+98↑p
-                                        ; sub_16881+10C↑p
+SelectTrapEffectVariant proc near       ; CODE XREF: ProcessMonsterAttackTurn+98↑p
+                                        ; ProcessMonsterAttackTurn+10C↑p
                 and     word_328CA, 0FDFFh ; Picks between a record's primary ([+0x6C]) and alternate ([+0x6E]) trap effect id: always primary if flag [+0xC] bit 0x400 is set or no alternate exists, else a 25% chance (RandomInRange(100)<0x19) of the alternate. Resolves the chosen id via PrepareTrapEffectSlots. Called from sub_16881.
                 mov     ax, [si+6Ch]
                 test    word ptr [si+0Ch], 400h
@@ -13786,8 +13786,8 @@ ClearPartySlotReferenceOnDamage endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ApplyEffectAndDrawIconBar proc far      ; CODE XREF: sub_16881+C2↑P
-                                        ; sub_16881+190↑P ...
+ApplyEffectAndDrawIconBar proc far      ; CODE XREF: ProcessMonsterAttackTurn+C2↑P
+                                        ; ProcessMonsterAttackTurn+190↑P ...
                 push    si              ; Iterates the 4 g_partyEffectIconSlots entries; for each occupied slot, draws its effect icon (via the effect-def's +2 g_pictureDir offset, one of 3 draw variants selected by the effect-def's +0xA flags) and applies the effect's cost via ApplyEffectCost.
                 push    di
                 push    dx
@@ -19240,7 +19240,7 @@ ApplyTriggerEffectIconSlot endp
 
 
 TickEquippedItemDurability proc far     ; CODE XREF: HandleDungeonInput+337↑P
-                                        ; sub_16881+DD↑P ...
+                                        ; ProcessMonsterAttackTurn+DD↑P ...
                 push    di              ; Equipped-item durability/breakage tracker for the slot given by ax (0x13A/0x142/0x146). Increments a per-slot wear counter ([+0xBE]/[+0xC0]/[+0xC2]); once it crosses a slot-specific threshold, rolls a percentage breakage chance from word_2E548's fields and, on a break, applies an 'item broke' effect (ApplyItemEffectIconSlot) and resets the counter. Called from HandleDungeonInput and sub_16881.
                 push    si
                 push    cx
@@ -33317,7 +33317,7 @@ ResetCombatRoundScratchState endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TickMonsterTimer proc far               ; CODE XREF: sub_16881+1D↑P
+TickMonsterTimer proc far               ; CODE XREF: ProcessMonsterAttackTurn+1D↑P
                                         ; ProcessLevelMonsters+4E↓p
                 mov     errorCode, 0    ; Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] (plausibly a remaining-presence/lifespan timer, not confirmed movement-related) by [si+0x1C]; reaching 0 sets errorCode=1, which callers (ProcessLevelMonsters) treat as 'this monster's presence has ended' -- granting a reward and removing it. Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly preparing the slot for reuse/respawn.
                 test    word ptr [si+0Ch], 0FC10h
@@ -56808,11 +56808,11 @@ word_2E496      dw 0                    ; DATA XREF: RunMapEditorScreen+32↑w
 word_2E498      dw 0                    ; DATA XREF: ExtendDungeonCeilingTexture+12↑r
                                         ; DrawDungeonFloorAndCeiling:loc_20D5C↑w ...
 word_2E49A      dw 0                    ; DATA XREF: HandleDungeonInput↑w
-                                        ; sub_16881+5↑w ...
+                                        ; ProcessMonsterAttackTurn+5↑w ...
 word_2E49C      dw 0                    ; DATA XREF: HandleDungeonInput+C↑w
                                         ; HandleDungeonInput+359↑r ...
 word_2E49E      dw 0                    ; DATA XREF: HandleDungeonInput+6↑w
-                                        ; sub_16881+B↑w ...
+                                        ; ProcessMonsterAttackTurn+B↑w ...
 word_2E4A0      dw 0                    ; DATA XREF: DrawDungeonFloorAndCeiling+32↑w
                                         ; DrawDungeonFloorAndCeiling+75↑r ...
 word_2E4A2      dw 0                    ; DATA XREF: RunMapEditorScreen+38↑w
@@ -74299,8 +74299,8 @@ word_32904      dw 0                    ; DATA XREF: HandleMovementInput+4A↑w
                                         ; HandleMovementInput+92↑w ...
 word_32906      dw 0                    ; DATA XREF: DrawClueBookMapGrid+46↑w
                                         ; RestoreUiStateForClueBook+B1↑w ...
-word_32908      dw 0                    ; DATA XREF: sub_16881+4D↑w
-                                        ; sub_16881:loc_168F6↑r ...
+word_32908      dw 0                    ; DATA XREF: ProcessMonsterAttackTurn+4D↑w
+                                        ; ProcessMonsterAttackTurn:loc_168F6↑r ...
 word_3290A      dw 0                    ; DATA XREF: ApplyTriggerEffectIconSlot+6↑w
                                         ; ApplyTriggerEffectIconSlot+1D↑r ...
 word_3290C      dw 0                    ; DATA XREF: UseItem+151↑r
@@ -75497,8 +75497,8 @@ word_32DBC      dw 0                    ; DATA XREF: LoadLockState+4↑w
                                         ; LoadLockState+69↑r ...
 word_32DBE      dw 0                    ; DATA XREF: UseAbilityCommand+1B↑w
                                         ; UseAbilityCommand:loc_1799D↑r
-word_32DC0      dw 0                    ; DATA XREF: sub_16881+BF↑w
-                                        ; sub_16881+18D↑w ...
+word_32DC0      dw 0                    ; DATA XREF: ProcessMonsterAttackTurn+BF↑w
+                                        ; ProcessMonsterAttackTurn+18D↑w ...
 word_32DC2      dw 0                    ; DATA XREF: LoadLockState+95↑w
                                         ; LoadCurgameRecord+81↑w ...
 word_32DC4      dw 0                    ; DATA XREF: start:loc_106EF↑w

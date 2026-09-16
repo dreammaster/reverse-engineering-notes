@@ -6364,6 +6364,34 @@ together the day/night cycle, weather, and dungeon lighting.
 762 named of 769 functions as of this update — only 7 unnamed
 functions remain.
 
+### 2026-09-15 session update, continued: ProcessMonsterAttackTurn
+
+At the user's explicit request, analyzed the first of the remaining
+large dispatchers, `sub_16881`. It resolved cleanly once its caller
+context was read closely: `RunDungeonGameLoop` tests
+`g_combatTurnOrder`'s current entry (the confirmed `0x8000` "this
+entry is a monster" flag) and calls it when it's a monster's turn
+(calling `HandleDungeonInput` instead for a party member's turn) —
+`sub_16881` is the per-monster combat-turn processor, named
+`ProcessMonsterAttackTurn`.
+
+Ticks the monster, briefly shows its info panel on first reveal, then
+branches on a genuinely new find — the monster's own `[+0x92]` bit
+`0x1000`, an **area-effect/breath-weapon attack flag**: if set, it
+loops all 4 party slots and attacks every non-incapacitated member in
+one turn via `ResolveAttackerActionOutcome`, playing its hit sound
+only once; if clear (the common case), it attacks only its single
+assigned target (`[+0x12]`, the confirmed target field). On a
+successful single-target hit, it also calls
+`TickEquippedItemDurability(0x146)` on the defender — confirming
+that a monster's ordinary attack, not just corrosion special
+attacks, can wear/break the defender's equipped item. Falls back to
+an idle/grumble sound (`[+0x5E]`, distinct from the attack-hit sound
+`[+0x5C]`) when no valid target is available.
+
+763 named of 769 functions as of this update — only 6 unnamed
+functions remain.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
