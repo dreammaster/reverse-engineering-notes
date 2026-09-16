@@ -3547,6 +3547,18 @@ restriction isn't confirmed.
 
 453 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawEligibleItemList, CheckItemEligibilityAndCopyName
+
+Named `sub_1B8EE` -> `DrawEligibleItemList` and `sub_1B818` ->
+`CheckItemEligibilityAndCopyName` (called from `UseItem` and
+`FinishItemUse`): iterates the item catalog and draws a 2-column x
+5-row list of entries matching a category-flag filter plus 6
+prerequisite flag ids checked via the already-named `TestGlobalFlag`,
+recording each match's catalog index in a small result buffer for
+later selection.
+
+455 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

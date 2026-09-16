@@ -4060,7 +4060,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B80A);
 	op_hex		(x,	1);
+	set_cmt	(0X1B818,	"Checks an item catalog record's category flags ([+0x16]/[+0x18]) against word_2E40C/word_2E40E, then 6 prerequisite flag ids at [+0x22..+0x2C] via TestGlobalFlag. If all pass, copies the item's name into 0xAFA8 (errorCode=0) and shows ShowMaterialCounterHud if [+0x18] bit 2 is set. Called from DrawEligibleItemList.",	0);
 	create_insn	(0X1B818);
+	set_name	(0X1B818,	"CheckItemEligibilityAndCopyName");
 	create_insn	(0X1B82B);
 	create_insn	(0X1B840);
 	create_insn	(0X1B84E);
@@ -4070,7 +4072,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B89E);
 	op_seg		(x,	1);
 	create_insn	(0X1B8AB);
+	set_cmt	(0X1B8EE,	"Iterates up to word_2E432 item catalog entries, drawing the name of each one CheckItemEligibilityAndCopyName approves, in a 2-column x 5-row layout, and recording each match's catalog index in a result buffer (0xBB8, max 10). Called from UseItem and FinishItemUse.",	0);
 	create_insn	(0X1B8EE);
+	set_name	(0X1B8EE,	"DrawEligibleItemList");
 	set_cmt	(0X1B936,	"msg",	0);
 	set_cmt	(0X1B96F,	"Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text/bx varies per caller (UseHealingItem x4, UseItemType_400, UseTrainingItem). All 6 traced call sites retf immediately after calling this -- none poll Y/N or deduct gold here. The actual confirm+pay step, if any, isn't found yet.",	0);
 	create_insn	(0X1B96F);
@@ -5608,6 +5612,15 @@ static Bytes_1(void) {
 	set_cmt	(0X21612,	"Gathers a 7x9 grid of tile render data (2 picture ids per cell) centered on the player into a local buffer (0xD06), from GetMapCellPtr-style map cells: explored cells look up their picture ids via two tables ([+0] -> 0xE551, [+2] -> 0xE175); unexplored cells get a fixed blank default. Feeds DrawMinimap.",	0);
 	create_insn	(0X21612);
 	set_name	(0X21612,	"BuildMinimapTileData");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X21616);
 	op_hex		(x,	1);
 	create_insn	(0X2161F);
@@ -5623,15 +5636,6 @@ static Bytes_1(void) {
 	set_cmt	(0X216F0,	"Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): LoadLockState (CORRECTED from a wrong 'weight/capacity check' guess -- it loads a lock/door's persisted state from CURGAME, feeding ShowLockStatus's message choice), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.",	0);
 	create_insn	(0X216F0);
 	set_name	(0X216F0,	"TryInteractAtPosition");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X216F4);
 	op_hex		(x,	1);
 	create_insn	(x=0X21702);
@@ -7942,6 +7946,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X29738);
 	op_hex		(x,	1);
 	set_name	(0X29738,	"UnlockDoorCommand");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29747);
 	create_insn	(0X29769);
 	create_insn	(x=0X29775);
@@ -7963,15 +7976,6 @@ static Bytes_2(void) {
 	create_insn	(0X29800);
 	create_insn	(x=0X29809);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29811);
 	op_hex		(x,	1);
 	set_cmt	(0X29838,	"this",	0);
@@ -11214,14 +11218,6 @@ static Bytes_3(void) {
 	set_name	(0X3677B,	"aAlchemistTrans");
 	create_strlit	(0X3679B,	0X1A);
 	set_name	(0X3679B,	"aPaladinCavalie");
-	create_strlit	(0X367B5,	0X19);
-	set_name	(0X367B5,	"aMageWizardSorc");
-	create_strlit	(0X367CE,	0X19);
-	set_name	(0X367CE,	"aDruidEnchanter");
-	create_strlit	(0X367E7,	0X1B);
-	set_name	(0X367E7,	"aMarksmanRanger");
-	create_strlit	(0X36802,	0X8);
-	set_name	(0X36802,	"aPoor");
 }
 
 //------------------------------------------------------------------------
@@ -11231,6 +11227,14 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X367B5,	0X19);
+	set_name	(0X367B5,	"aMageWizardSorc");
+	create_strlit	(0X367CE,	0X19);
+	set_name	(0X367CE,	"aDruidEnchanter");
+	create_strlit	(0X367E7,	0X1B);
+	set_name	(0X367E7,	"aMarksmanRanger");
+	create_strlit	(0X36802,	0X8);
+	set_name	(0X36802,	"aPoor");
 	create_strlit	(0X3680A,	0X8);
 	set_name	(0X3680A,	"aAverage");
 	create_strlit	(0X36812,	0X8);

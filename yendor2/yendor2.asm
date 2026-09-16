@@ -13221,7 +13221,7 @@ loc_17C33:                              ; CODE XREF: UseItem+97↑j
                 call    sub_1A5F6
                 call    ApplyItemEffectFlags
                 call    sub_1B8AB
-                call    sub_1B8EE
+                call    DrawEligibleItemList
                 call    DrawMouseCursor
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
@@ -20345,7 +20345,7 @@ FinishItemUse   proc far                ; CODE XREF: RunShopScreen+F2↑P
 
 loc_1B6FD:                              ; CODE XREF: FinishItemUse+E↑j
                 push    cs
-                call    near ptr sub_1B8EE
+                call    near ptr DrawEligibleItemList
                 retf
 FinishItemUse   endp
 
@@ -20506,8 +20506,9 @@ CheckAndAnnounceLevelUp endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B818       proc far                ; CODE XREF: sub_1B8EE+3E↓p
-                mov     errorCode, 1
+CheckItemEligibilityAndCopyName proc far
+                                        ; CODE XREF: DrawEligibleItemList+3E↓p
+                mov     errorCode, 1    ; Checks an item catalog record's category flags ([+0x16]/[+0x18]) against word_2E40C/word_2E40E, then 6 prerequisite flag ids at [+0x22..+0x2C] via TestGlobalFlag. If all pass, copies the item's name into 0xAFA8 (errorCode=0) and shows ShowMaterialCounterHud if [+0x18] bit 2 is set. Called from DrawEligibleItemList.
                 mov     ax, es:[si+16h]
                 add     ax, es:[si+18h]
                 or      ax, ax
@@ -20515,7 +20516,7 @@ sub_1B818       proc far                ; CODE XREF: sub_1B8EE+3E↓p
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B82B:                              ; CODE XREF: sub_1B818+10↑j
+loc_1B82B:                              ; CODE XREF: CheckItemEligibilityAndCopyName+10↑j
                 mov     ax, word_2E40C
                 mov     bx, word_2E40E
                 cmp     word ptr es:[si+16h], 0
@@ -20525,8 +20526,8 @@ loc_1B82B:                              ; CODE XREF: sub_1B818+10↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B840:                              ; CODE XREF: sub_1B818+1F↑j
-                                        ; sub_1B818+25↑j
+loc_1B840:                              ; CODE XREF: CheckItemEligibilityAndCopyName+1F↑j
+                                        ; CheckItemEligibilityAndCopyName+25↑j
                 cmp     word ptr es:[si+18h], 0
                 jz      short loc_1B84E
                 test    es:[si+18h], bx
@@ -20534,14 +20535,14 @@ loc_1B840:                              ; CODE XREF: sub_1B818+1F↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B84E:                              ; CODE XREF: sub_1B818+2D↑j
-                                        ; sub_1B818+33↑j
+loc_1B84E:                              ; CODE XREF: CheckItemEligibilityAndCopyName+2D↑j
+                                        ; CheckItemEligibilityAndCopyName+33↑j
                 push    cx
                 push    si
                 mov     cx, 6
                 add     si, 22h ; '"'
 
-loc_1B856:                              ; CODE XREF: sub_1B818+5D↓j
+loc_1B856:                              ; CODE XREF: CheckItemEligibilityAndCopyName+5D↓j
                 mov     ax, es:[si]
                 cmp     ax, 0
                 jz      short loc_1B872
@@ -20551,13 +20552,13 @@ loc_1B856:                              ; CODE XREF: sub_1B818+5D↓j
                 jmp     short loc_1B872
 ; ---------------------------------------------------------------------------
 
-loc_1B869:                              ; CODE XREF: sub_1B818+46↑j
+loc_1B869:                              ; CODE XREF: CheckItemEligibilityAndCopyName+46↑j
                 neg     ax
                 call    TestGlobalFlag
                 jnz     short loc_1B8A8
 
-loc_1B872:                              ; CODE XREF: sub_1B818+44↑j
-                                        ; sub_1B818+4F↑j
+loc_1B872:                              ; CODE XREF: CheckItemEligibilityAndCopyName+44↑j
+                                        ; CheckItemEligibilityAndCopyName+4F↑j
                 add     si, 2
                 loop    loc_1B856
                 mov     errorCode, 0
@@ -20568,7 +20569,7 @@ loc_1B872:                              ; CODE XREF: sub_1B818+44↑j
                 jz      short loc_1B88D
                 call    ShowMaterialCounterHud
 
-loc_1B88D:                              ; CODE XREF: sub_1B818+6E↑j
+loc_1B88D:                              ; CODE XREF: CheckItemEligibilityAndCopyName+6E↑j
                 mov     di, 0AFA8h
                 mov     cx, 7
                 mov     ax, word_2E54C
@@ -20580,12 +20581,12 @@ loc_1B88D:                              ; CODE XREF: sub_1B818+6E↑j
                 mov     es, word_2E54C
                 pop     di
 
-loc_1B8A8:                              ; CODE XREF: sub_1B818+4D↑j
-                                        ; sub_1B818+58↑j
+loc_1B8A8:                              ; CODE XREF: CheckItemEligibilityAndCopyName+4D↑j
+                                        ; CheckItemEligibilityAndCopyName+58↑j
                 pop     si
                 pop     cx
                 retf
-sub_1B818       endp
+CheckItemEligibilityAndCopyName endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -20613,9 +20614,9 @@ sub_1B8AB       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B8EE       proc far                ; CODE XREF: UseItem+B4↑P
+DrawEligibleItemList proc far           ; CODE XREF: UseItem+B4↑P
                                         ; FinishItemUse+20↑p ...
-                push    si
+                push    si              ; Iterates up to word_2E432 item catalog entries, drawing the name of each one CheckItemEligibilityAndCopyName approves, in a 2-column x 5-row layout, and recording each match's catalog index in a result buffer (0xBB8, max 10). Called from UseItem and FinishItemUse.
                 push    di
                 push    cx
                 mov     _textPos_x, 3Ah ; ':'
@@ -20633,9 +20634,9 @@ sub_1B8EE       proc far                ; CODE XREF: UseItem+B4↑P
                 mov     si, 0
                 mov     word_3293E, 1
 
-loc_1B92B:                              ; CODE XREF: sub_1B8EE+7B↓j
+loc_1B92B:                              ; CODE XREF: DrawEligibleItemList+7B↓j
                 push    cs
-                call    near ptr sub_1B818
+                call    near ptr CheckItemEligibilityAndCopyName
                 cmp     errorCode, 0
                 jnz     short loc_1B962
                 mov     bx, 0AFA8h      ; msg
@@ -20650,8 +20651,8 @@ loc_1B92B:                              ; CODE XREF: sub_1B8EE+7B↓j
                 mov     _textPos_x, 8Eh
                 mov     _textPos_y, 20h ; ' '
 
-loc_1B962:                              ; CODE XREF: sub_1B8EE+46↑j
-                                        ; sub_1B8EE+66↑j
+loc_1B962:                              ; CODE XREF: DrawEligibleItemList+46↑j
+                                        ; DrawEligibleItemList+66↑j
                 inc     word_3293E
                 add     si, 3Ah ; ':'
                 loop    loc_1B92B
@@ -20659,7 +20660,7 @@ loc_1B962:                              ; CODE XREF: sub_1B8EE+46↑j
                 pop     di
                 pop     si
                 retf
-sub_1B8EE       endp
+DrawEligibleItemList endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -20677,7 +20678,7 @@ ShowHealingCostPrompt proc far          ; CODE XREF: UseItemType_400+EF↓p
                 push    cs
                 call    near ptr sub_1B8AB
                 push    cs
-                call    near ptr sub_1B8EE
+                call    near ptr DrawEligibleItemList
                 mov     di, word_328D4
                 mov     cx, [di+16h]
                 mov     di, 0BCEh
@@ -21140,7 +21141,7 @@ loc_1BDC9:                              ; CODE XREF: sub_1BBED+24↑j
                 push    cs
                 call    near ptr sub_1B8AB
                 push    cs
-                call    near ptr sub_1B8EE
+                call    near ptr DrawEligibleItemList
                 push    cs
                 call    near ptr sub_1CB37
                 mov     di, 0BCEh
@@ -21865,7 +21866,7 @@ loc_1C4E1:                              ; CODE XREF: UseTrainingItem+24↑j
                 call    sub_2570C
                 call    writeString
                 push    cs
-                call    near ptr sub_1B8EE
+                call    near ptr DrawEligibleItemList
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -22060,7 +22061,7 @@ loc_1C72F:                              ; CODE XREF: UseAbilityScroll+137↑j
                 push    cs
                 call    near ptr sub_1B8AB
                 push    cs
-                call    near ptr sub_1B8EE
+                call    near ptr DrawEligibleItemList
                 pop     es
                 pop     si
                 mov     _font_bgColor, 44h ; 'D'
@@ -22421,7 +22422,7 @@ loc_1CACE:                              ; CODE XREF: ShowItemUsagePreview+62↑j
 loc_1CADA:                              ; CODE XREF: ShowItemUsagePreview+4C↑j
                                         ; ShowItemUsagePreview+5A↑j ...
                 push    cs
-                call    near ptr sub_1B8EE
+                call    near ptr DrawEligibleItemList
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawPartyStatusIconRow
                 call    sub_238CD
@@ -56620,7 +56621,7 @@ word_2E40A      dw 0                    ; DATA XREF: ShowClueBook:loc_10CC5↑r
                                         ; ShowClueBook:loc_10CCF↑r ...
 word_2E40C      dw 0                    ; DATA XREF: CheckPartyMemberItemFlag+3↑w
                                         ; CheckPartyMemberItemFlag+9↑w ...
-word_2E40E      dw 0                    ; DATA XREF: sub_1B818+16↑r
+word_2E40E      dw 0                    ; DATA XREF: CheckItemEligibilityAndCopyName+16↑r
                                         ; ApplyItemEffectFlags+1F↑r ...
 word_2E410      dw 0                    ; DATA XREF: UseItem+1D↑r
                                         ; UseItem:loc_17BBF↑r ...
@@ -56656,7 +56657,7 @@ word_2E42C      dw 0                    ; DATA XREF: LoadItemData↑w
                 db    0
                 db    0
                 db    0
-word_2E432      dw 0                    ; DATA XREF: sub_1B8EE+26↑r
+word_2E432      dw 0                    ; DATA XREF: DrawEligibleItemList+26↑r
                                         ; sub_29040+1C↑r
                 db    0
                 db    0

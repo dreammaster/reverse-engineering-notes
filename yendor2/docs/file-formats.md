@@ -455,7 +455,14 @@ using an item — either a generic message by tier, or item-specific
 message entries copied from an EMS-backed segment. For special items
 it first calls `CheckAndPaySpecialItemCost`: pays gold, NUORE, or
 MAGIC ORE (selected by a tag on the item), or checks/consumes a
-specific inventory item otherwise;
+specific inventory item otherwise; `UseItem` and `FinishItemUse` also
+call `DrawEligibleItemList` (was `sub_1B8EE`), which iterates the item
+catalog and draws a 2-column x 5-row list of every entry
+`CheckItemEligibilityAndCopyName` (was `sub_1B818`) approves — a
+category-flag match (`[+0x16]`/`[+0x18]` against `word_2E40C`/
+`word_2E40E`) plus 6 prerequisite flag ids (`[+0x22..+0x2C]`, each
+checked via `TestGlobalFlag`) — recording each match's catalog index
+for later selection;
 **8 "WEAPONS"** (`word_2E3F6=0x11`) → `RunClueEntryMenu` +
 `RunClueBookWeaponCategory`. F6 (Complete Walk Through) →
 `ShowPagedEntryScreen` (already-named, generic paginated text). ESC →
