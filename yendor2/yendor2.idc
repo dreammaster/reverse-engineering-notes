@@ -5417,7 +5417,9 @@ static Bytes_2(void) {
 	set_cmt	(0X20406,	"Draws a scrollable 17-icon horizontal strip from table 0xE551 (field +0xA), starting at index word_2E384, at y=0 x=0x18+.",	0);
 	create_insn	(0X20406);
 	set_name	(0X20406,	"DrawWallTypeLegendRow");
+	set_cmt	(0X2044C,	"Draws word_2E384, zero-padded via FormatNumberZeroPadded, at fixed position (4,1), skipping the first 2 characters of the formatted result before drawing -- a small coordinate/position readout in the map editor's corner; the exact meaning of word_2E384 isn't confirmed. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X2044C);
+	set_name	(0X2044C,	"DrawMapEditorCoordinateReadout");
 	set_cmt	(0X20472,	"msg",	0);
 	create_insn	(0X2047B);
 	set_cmt	(0X204A1,	"msg",	0);
@@ -7201,9 +7203,6 @@ static Bytes_2(void) {
 	set_cmt	(0X26C9E,	"Draws the 4-icon party status row (dungeon screen) by calling DrawPartyStatusIcon once per g_partySlotAssignment slot (0x95EB/0x95ED/0x95EF/0x95F1) at 4 fixed x positions. Called from HandleDungeonInput.",	0);
 	create_insn	(0X26C9E);
 	set_name	(0X26C9E,	"DrawPartyStatusIconRow");
-	set_cmt	(0X26CFB,	"Draws one party-status icon: the character's icon ([+0x12]), an overlay (_val38) if incapacitated (+0x1C bits 0x1C40, matching CheckPartyWipeAndReinitLevel) or a new flag (+0x15E bit 0x8000, not otherwise documented), and a selection-highlight overlay if this is the currently-selected slot (word_32924). Called from DrawPartyStatusIconRow.",	0);
-	create_insn	(0X26CFB);
-	set_name	(0X26CFB,	"DrawPartyStatusIcon");
 }
 
 //------------------------------------------------------------------------
@@ -7213,6 +7212,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X26CFB,	"Draws one party-status icon: the character's icon ([+0x12]), an overlay (_val38) if incapacitated (+0x1C bits 0x1C40, matching CheckPartyWipeAndReinitLevel) or a new flag (+0x15E bit 0x8000, not otherwise documented), and a selection-highlight overlay if this is the currently-selected slot (word_32924). Called from DrawPartyStatusIconRow.",	0);
+	create_insn	(0X26CFB);
+	set_name	(0X26CFB,	"DrawPartyStatusIcon");
 	create_insn	(x=0X26D1B);
 	op_hex		(x,	1);
 	create_insn	(x=0X26D22);

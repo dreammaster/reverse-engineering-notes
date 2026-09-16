@@ -28233,7 +28233,7 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 call    sub_162B6
                 call    ClearVideoMemoryRegion
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2044C
+                call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
                 call    sub_2047B
                 call    DrawFloorTypeLegendRow
@@ -28349,7 +28349,7 @@ loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
                 call    ShowLocalAreaMap
                 call    sub_2075B
                 call    ClearVideoMemoryRegion
-                call    sub_2044C
+                call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
                 call    sub_2047B
                 call    DrawFloorTypeLegendRow
@@ -28382,7 +28382,7 @@ loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
                 call    ShowLocalAreaMap
                 call    sub_2075B
                 call    ClearVideoMemoryRegion
-                call    sub_2044C
+                call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
                 call    sub_2047B
                 call    DrawFloorTypeLegendRow
@@ -28629,9 +28629,10 @@ DrawWallTypeLegendRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2044C       proc near               ; CODE XREF: RunMapEditorScreen+71↑p
+DrawMapEditorCoordinateReadout proc near
+                                        ; CODE XREF: RunMapEditorScreen+71↑p
                                         ; RunMapEditorScreen+1AA↑p ...
-                mov     _textPos_x, 4
+                mov     _textPos_x, 4   ; Draws word_2E384, zero-padded via FormatNumberZeroPadded, at fixed position (4,1), skipping the first 2 characters of the formatted result before drawing -- a small coordinate/position readout in the map editor's corner; the exact meaning of word_2E384 isn't confirmed. Called from RunMapEditorScreen.
                 mov     _textPos_y, 1
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgColor, 0
@@ -28641,7 +28642,7 @@ sub_2044C       proc near               ; CODE XREF: RunMapEditorScreen+71↑p
                 add     bx, 2           ; msg
                 call    writeString
                 retn
-sub_2044C       endp
+DrawMapEditorCoordinateReadout endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28747,7 +28748,7 @@ EditWallLegendTypeNumber proc near      ; CODE XREF: RunMapEditorScreen+25B↑p
                 mov     word_2E384, ax
 
 loc_20564:                              ; CODE XREF: EditWallLegendTypeNumber+32↑j
-                call    sub_2044C
+                call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
                 call    sub_238CD
                 retn
@@ -28828,7 +28829,7 @@ BrowseWallTilePalette proc near         ; CODE XREF: RunMapEditorScreen+144↑p
                 mov     ax, [si]
                 mov     word_2E384, ax
                 mov     word_2E496, ax
-                call    sub_2044C
+                call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
                 call    sub_238CD
                 retn
@@ -29072,7 +29073,7 @@ sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
                 call    writeString
                 call    sub_162B6
                 call    ClearVideoMemoryRegion
-                call    sub_2044C
+                call    DrawMapEditorCoordinateReadout
                 call    sub_2047B
                 call    DrawWallTypeLegendRow
                 call    DrawFloorTypeLegendRow
@@ -37906,7 +37907,7 @@ seg081          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-FormatNumberZeroPadded proc far         ; CODE XREF: sub_2044C+21↑P
+FormatNumberZeroPadded proc far         ; CODE XREF: DrawMapEditorCoordinateReadout+21↑P
                                         ; sub_2047B+21↑P ...
                 mov     bx, 0AFA8h      ; FormatNumber then StripCommasZeroPadSpaces on the shared 0xAFA8 buffer -- zero-padded sibling of FormatNumberCompact. Called from sub_2044C, sub_2047B, and others.
                 call    FormatNumber

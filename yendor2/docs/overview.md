@@ -4834,6 +4834,25 @@ item.
 
 575 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawMapEditorCoordinateReadout
+
+Named `sub_2044C` -> `DrawMapEditorCoordinateReadout`, called from
+`RunMapEditorScreen` at multiple points: draws `word_2E384`,
+zero-padded via `FormatNumberZeroPadded`, at a fixed screen position
+`(4,1)`, then skips the first 2 characters of the formatted result
+before drawing — plausibly trimming a fixed-width zero-padded value
+down to its last 2 significant digits. A small coordinate/position
+readout in the editor's corner; the exact field `word_2E384`
+represents (row, column, or cursor index) isn't confirmed. Also
+looked at `sub_22989` (called from unnamed `sub_2278C`, combines
+`PickRandomActivePartyMember`, the still-open `+0x50` field from the
+unidentified attribute trio, a facing-direction dispatch on
+`word_36CF5`, and an unclear helper `sub_227F5`) — plausibly a
+random-ambush/surprise-encounter setup, but too many unresolved
+dependencies to name confidently this round; left as an open lead.
+
+576 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
