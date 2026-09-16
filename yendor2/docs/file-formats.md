@@ -238,7 +238,12 @@ the manual's STR/DEX/STA/INT/WIS/CHA listing — but the *pairing*
 6 attributes; it isn't, since those 6 are confirmed at the entirely
 different `+0x3C`–`+0x86` range above. What `+0x4C`/`+0x4E`/`+0x50`
 actually are (drawn alongside the attributes on the same screen, so
-presumably related) is still open. `ComputeDerivedCharacterStats`
+presumably related) is still open — though `DrawCharacterStatSheet`
+(was `sub_24D30`, the character sheet's main stat renderer, called
+from `ShowCharacterSkills` and `sub_23C18`) draws them in the *same
+screen column* as the 6 attributes, immediately following (visual
+slots 7-9 of the same list), reinforcing that they're a related but
+distinct trio rather than coincidental neighbors. `ComputeDerivedCharacterStats`
 (called right after `RollCharacterAttributes`, before
 `DrawThreeThresholdStats`) computes a family of derived stats from
 the 6 attributes — each a weighted percentage blend of 2-3 attributes
@@ -246,6 +251,19 @@ plus a class-dependent bonus, mirrored into current/max pairs
 `+0x58`/`+0x98`, `+0x5A`/`+0x9A`, `+0x5C`/`+0x9C`, `+0x5E`/`+0x9E`,
 `+0x60`/`+0xA0`, and more — but it starts at `+0x58`, so it isn't the
 source of `+0x4C`/`+0x4E`/`+0x50` either.
+
+`DrawCharacterStatSheet`'s right-hand column draws 13 contiguous
+derived stats, `+0x58` through `+0x70` — confirming `ComputeDerivedCharacterStats`'s
+block extends that far — and the *last 5* of them (`+0x68`/`+0x6A`/
+`+0x6C`/`+0x6E`/`+0x70`) get a highlight color specifically when this
+character's own roster-slot number matches one of 5 global "assigned
+role" slots (`word_36D03`/`word_36D05`/`word_36D07`/`word_36D09`/
+`word_36D0B`) — consistent with practical party-role skills (a
+designated navigator, mapper, barterer, etc., per the earlier
+attribute/skill string survey) where the game highlights whichever
+character currently holds that role. Individual field-to-skill-name
+assignment isn't confirmed yet, but the "5 assignable roles" shape is
+a solid new lead for pinning them down.
 
 **Skill values found**: `ShowCharacterSkills` clears a **16-word array
 at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before

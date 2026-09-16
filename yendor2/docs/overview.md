@@ -3709,6 +3709,24 @@ charge/time-of-day requirements are currently met).
 
 471 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawCharacterStatSheet
+
+Named `sub_24D30` -> `DrawCharacterStatSheet` (the character sheet's
+main stat renderer, called from `ShowCharacterSkills` and
+`sub_23C18`), plus two small helpers it uses: `sub_250BB` ->
+`DrawTrimmedThresholdValue` and `sub_256F0` -> `StripSpaces`. This
+function draws the 6 core attributes and the still-mysterious
+`+0x4C`/`+0x4E`/`+0x50` trio in one screen column (confirming they sit
+in the same visual list, slots 7-9, without resolving what they are),
+and a 13-entry derived-stat column (`+0x58`-`+0x70`) in the other,
+where the last 5 entries highlight when this character holds one of 5
+globally-assigned party roles (`word_36D03`/`05`/`07`/`09`/`0B`) — a
+solid new lead for eventually naming those fields (navigator, mapper,
+barterer, etc., per the attribute/skill string survey from early in
+the session).
+
+474 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

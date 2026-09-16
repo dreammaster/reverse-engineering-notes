@@ -12005,7 +12005,7 @@ loc_17100:                              ; CODE XREF: sub_17032+CA↑j
                 pop     ax
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_256F0
+                call    StripSpaces
                 call    writeString
                 call    sub_238CD
                 retf
@@ -17047,7 +17047,7 @@ loc_19BA6:                              ; CODE XREF: FormatAndDrawBCD4+3C↓j
 
 loc_19BC9:                              ; CODE XREF: FormatAndDrawBCD4+41↑j
                 mov     bx, 0AFA8h
-                call    sub_256F0
+                call    StripSpaces
                 mov     ax, word_2E412
                 cmp     ax, 0FFFFh
                 jz      short loc_19BE1
@@ -21720,7 +21720,7 @@ loc_1C2D2:                              ; CODE XREF: UseTrainingItem+1B7↓j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_256F0
+                call    StripSpaces
                 call    writeString
                 cmp     word ptr [si+94h], 0
                 jnz     short loc_1C39C
@@ -21739,7 +21739,7 @@ loc_1C39C:                              ; CODE XREF: UseTrainingItem+274↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_256F0
+                call    StripSpaces
                 call    writeString
                 test    word ptr [si+16h], 1
                 jnz     short loc_1C447
@@ -31276,7 +31276,7 @@ loc_21B3F:                              ; CODE XREF: sub_219FA+129↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_256F0
+                call    StripSpaces
                 call    writeString
 
 loc_21B5A:                              ; CODE XREF: sub_219FA+130↑j
@@ -35252,7 +35252,7 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 mov     _font_bgTransparent, 1
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgColor, 33h ; '3'
-                call    sub_24D30
+                call    DrawCharacterStatSheet
                 call    DrawThreeThresholdStats
                 call    DrawCharacterClassAndLevel
                 mov     _textPos_x, 9Ch
@@ -36110,7 +36110,7 @@ loc_2459C:                              ; CODE XREF: ShowCharacterSkills+1C1↑j
                 call    RollCharacterAttributes
                 call    ComputeDerivedCharacterStats
                 call    sub_1B30C
-                call    sub_24D30
+                call    DrawCharacterStatSheet
                 call    DrawThreeThresholdStats
                 retn
 ShowCharacterSkills endp
@@ -36829,9 +36829,9 @@ DrawThreeThresholdStats endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_24D30       proc near               ; CODE XREF: sub_23C18+75↑p
+DrawCharacterStatSheet proc near        ; CODE XREF: sub_23C18+75↑p
                                         ; ShowCharacterSkills+1D4↑p ...
-                call    RestoreCursorBackgroundIfDirty
+                call    RestoreCursorBackgroundIfDirty ; Character sheet's main stat renderer: left column draws the 6 core attributes plus the +0x4C/+0x4E/+0x50 trio (same column, slots 7-9), then HP/MP rows and packed-BCD XP; right column draws 13 derived stats (+0x58..+0x70), the last 5 highlighted when this character holds one of 5 globally-assigned party roles (word_36D03/05/07/09/0B). Called from ShowCharacterSkills and sub_23C18.
                 mov     si, word_328D4
                 mov     _textPos_x, 0CBh
                 mov     word_2E412, 0Fh
@@ -36876,12 +36876,12 @@ sub_24D30       proc near               ; CODE XREF: sub_23C18+75↑p
                 mov     _textPos_x, 0BFh
                 mov     ax, [si+52h]
                 mov     bx, [si+92h]
-                call    sub_250BB
+                call    DrawTrimmedThresholdValue
                 mov     _textPos_y, 0B4h
                 mov     _textPos_x, 0BFh
                 mov     ax, [si+54h]
                 mov     bx, [si+94h]
-                call    sub_250BB
+                call    DrawTrimmedThresholdValue
                 mov     _textPos_y, 0BEh
                 mov     _textPos_x, 0CBh
                 add     si, 18h
@@ -36937,7 +36937,7 @@ sub_24D30       proc near               ; CODE XREF: sub_23C18+75↑p
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_24EDE:                              ; CODE XREF: sub_24D30+1A0↑j
+loc_24EDE:                              ; CODE XREF: DrawCharacterStatSheet+1A0↑j
                 call    DrawValueWithThresholdColor
                 mov     _textPos_y, 96h
                 mov     ax, [si+6Ah]
@@ -36949,7 +36949,7 @@ loc_24EDE:                              ; CODE XREF: sub_24D30+1A0↑j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_24F0C:                              ; CODE XREF: sub_24D30+1CE↑j
+loc_24F0C:                              ; CODE XREF: DrawCharacterStatSheet+1CE↑j
                 call    DrawValueWithThresholdColor
                 mov     _textPos_y, 0A0h
                 mov     ax, [si+6Ch]
@@ -36961,7 +36961,7 @@ loc_24F0C:                              ; CODE XREF: sub_24D30+1CE↑j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_24F3A:                              ; CODE XREF: sub_24D30+1FC↑j
+loc_24F3A:                              ; CODE XREF: DrawCharacterStatSheet+1FC↑j
                 call    DrawValueWithThresholdColor
                 mov     _textPos_y, 0AAh
                 mov     ax, [si+6Eh]
@@ -36973,7 +36973,7 @@ loc_24F3A:                              ; CODE XREF: sub_24D30+1FC↑j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_24F68:                              ; CODE XREF: sub_24D30+22A↑j
+loc_24F68:                              ; CODE XREF: DrawCharacterStatSheet+22A↑j
                 call    DrawValueWithThresholdColor
                 mov     _textPos_y, 0B4h
                 mov     ax, [si+70h]
@@ -36985,7 +36985,7 @@ loc_24F68:                              ; CODE XREF: sub_24D30+22A↑j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_24F96:                              ; CODE XREF: sub_24D30+258↑j
+loc_24F96:                              ; CODE XREF: DrawCharacterStatSheet+258↑j
                 call    DrawValueWithThresholdColor
                 cmp     word ptr [si+16h], 1
                 jnz     short loc_24FF0
@@ -37012,15 +37012,15 @@ loc_24F96:                              ; CODE XREF: sub_24D30+258↑j
                 jle     short loc_24FEB
                 call    sub_23BA4
 
-loc_24FEB:                              ; CODE XREF: sub_24D30+2A0↑j
-                                        ; sub_24D30+2AA↑j ...
+loc_24FEB:                              ; CODE XREF: DrawCharacterStatSheet+2A0↑j
+                                        ; DrawCharacterStatSheet+2AA↑j ...
                 call    writeString
 
-loc_24FF0:                              ; CODE XREF: sub_24D30+26D↑j
+loc_24FF0:                              ; CODE XREF: DrawCharacterStatSheet+26D↑j
                 mov     _font_fgColor, 0Fh
                 call    sub_238CD
                 retn
-sub_24D30       endp
+DrawCharacterStatSheet endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37101,23 +37101,23 @@ DrawValueWithThresholdColor endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_250BB       proc near               ; CODE XREF: sub_24D30+BC↑p
-                                        ; sub_24D30+D2↑p
-                push    word_2E412
+DrawTrimmedThresholdValue proc near     ; CODE XREF: DrawCharacterStatSheet+BC↑p
+                                        ; DrawCharacterStatSheet+D2↑p
+                push    word_2E412      ; Sibling of DrawValueWithThresholdColor (same ax>bx threshold-color logic) but using StripSpaces after FormatNumber instead of sub_2570C. Called from DrawCharacterStatSheet for the HP and MP rows.
                 pop     _font_fgColor
                 cmp     ax, bx
                 jle     short loc_250CF
                 mov     bx, word_2E414
                 mov     _font_fgColor, bx
 
-loc_250CF:                              ; CODE XREF: sub_250BB+A↑j
+loc_250CF:                              ; CODE XREF: DrawTrimmedThresholdValue+A↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_256F0
+                call    StripSpaces
                 call    writeString
                 retn
-sub_250BB       endp
+DrawTrimmedThresholdValue endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37557,7 +37557,7 @@ sub_254CC       proc near               ; CODE XREF: ShowCharacterStats+B↑p
                 mov     y, 13h
                 mov     word_2E532, 70h ; 'p'
                 call    DrawPicture
-                call    sub_24D30
+                call    DrawCharacterStatSheet
                 call    DrawThreeThresholdStats
                 call    DrawCharacterClassAndLevel
                 mov     _textPos_x, 9Ch
@@ -37817,14 +37817,14 @@ seg079          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_256F0       proc far                ; CODE XREF: sub_17032+130↑P
+StripSpaces     proc far                ; CODE XREF: sub_17032+130↑P
                                         ; FormatAndDrawBCD4+4C↑P ...
-                push    di
+                push    di              ; Strips all space characters from a string in place (compacting it). Called from FormatAndDrawBCD4 and others.
                 push    si
                 mov     si, bx
                 mov     di, bx
 
-loc_256F6:                              ; CODE XREF: sub_256F0+14↓j
+loc_256F6:                              ; CODE XREF: StripSpaces+14↓j
                 mov     al, [si]
                 cmp     al, 0
                 jz      short loc_25706
@@ -37833,17 +37833,17 @@ loc_256F6:                              ; CODE XREF: sub_256F0+14↓j
                 mov     [di], al
                 inc     di
 
-loc_25703:                              ; CODE XREF: sub_256F0+E↑j
+loc_25703:                              ; CODE XREF: StripSpaces+E↑j
                 inc     si
                 jmp     short loc_256F6
 ; ---------------------------------------------------------------------------
 
-loc_25706:                              ; CODE XREF: sub_256F0+A↑j
+loc_25706:                              ; CODE XREF: StripSpaces+A↑j
                 mov     [di], al
                 pop     si
                 pop     di
                 retf
-sub_256F0       endp
+StripSpaces     endp
 
 seg079          ends
 
@@ -38947,7 +38947,7 @@ FormatAndDrawFraction proc near         ; CODE XREF: DrawThreeStatBars+8F↓p
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_256F0
+                call    StripSpaces
                 cmp     word_2E4AC, 0
                 jz      short loc_25E80
                 call    sub_2570C
@@ -38958,7 +38958,7 @@ loc_25E80:                              ; CODE XREF: FormatAndDrawFraction+16↑
                 mov     bx, 0AFB2h
                 call    FormatNumber
                 mov     bx, 0AFB2h
-                call    sub_256F0
+                call    StripSpaces
                 cmp     word_2E4AC, 0
                 jz      short loc_25EA2
                 call    sub_2570C
@@ -86011,7 +86011,7 @@ word_36D07      dw 0                    ; DATA XREF: HandleMovementInput:loc_115
 word_36D09      dw 0                    ; DATA XREF: sub_197B9+15B↑r
                                         ; LoadItemData:loc_1C98C↑r ...
 word_36D0B      dw 0                    ; DATA XREF: sub_197B9+188↑r
-                                        ; sub_24D30+254↑r ...
+                                        ; DrawCharacterStatSheet+254↑r ...
                 db 0FFh
                 db 0FFh
                 db 0FFh

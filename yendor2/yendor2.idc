@@ -6480,7 +6480,9 @@ static Bytes_2(void) {
 	set_cmt	(0X24CD5,	"msg",	0);
 	set_cmt	(0X24CE3,	"msg",	0);
 	set_cmt	(0X24CF1,	"msg",	0);
+	set_cmt	(0X24D30,	"Character sheet's main stat renderer: left column draws the 6 core attributes plus the +0x4C/+0x4E/+0x50 trio (same column, slots 7-9), then HP/MP rows and packed-BCD XP; right column draws 13 derived stats (+0x58..+0x70), the last 5 highlighted when this character holds one of 5 globally-assigned party roles (word_36D03/05/07/09/0B). Called from ShowCharacterSkills and sub_23C18.",	0);
 	create_insn	(0X24D30);
+	set_name	(0X24D30,	"DrawCharacterStatSheet");
 	set_cmt	(0X24FFC,	"Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.",	0);
 	create_insn	(0X24FFC);
 	set_name	(0X24FFC,	"DrawListEntryLabel");
@@ -6490,7 +6492,9 @@ static Bytes_2(void) {
 	set_cmt	(0X25091,	"Draws a formatted number (ax), using a highlight color if ax > bx (a threshold). Called from DrawThreeThresholdStats.",	0);
 	create_insn	(0X25091);
 	set_name	(0X25091,	"DrawValueWithThresholdColor");
+	set_cmt	(0X250BB,	"Sibling of DrawValueWithThresholdColor (same ax>bx threshold-color logic) but using StripSpaces after FormatNumber instead of sub_2570C. Called from DrawCharacterStatSheet for the HP and MP rows.",	0);
 	create_insn	(0X250BB);
+	set_name	(0X250BB,	"DrawTrimmedThresholdValue");
 	set_cmt	(0X250E5,	"Linearly scans g_partyRecords (base 0x95F3, stride 0x1F4, up to 9 slots) for the first record whose +0xE field is 0, and sets word_328D4 to it (0 if none found). Whether +0xE==0 means 'unused slot' or something else isn't confirmed -- named on mechanism, not a guessed interpretation. Called by sub_25544 to establish/refresh word_328D4 between ShowPartyMembers iterations.",	0);
 	create_insn	(0X250E5);
 	set_name	(0X250E5,	"SelectDefaultPartyRecord");
@@ -6595,7 +6599,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X256DB);
 	create_insn	(0X256DE);
+	set_cmt	(0X256F0,	"Strips all space characters from a string in place (compacting it). Called from FormatAndDrawBCD4 and others.",	0);
 	create_insn	(0X256F0);
+	set_name	(0X256F0,	"StripSpaces");
 	create_insn	(0X25706);
 	create_insn	(0X2570C);
 	create_insn	(0X25726);
@@ -7808,6 +7814,15 @@ static Bytes_2(void) {
 	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
 	create_insn	(0X28CFF);
 	set_name	(0X28CFF,	"RevealMapRegion");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X28D1D);
 	op_hex		(x,	1);
 	create_insn	(0X28D2D);
@@ -7836,15 +7851,6 @@ static Bytes_2(void) {
 	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
 	create_insn	(0X28FF9);
 	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X29040);
 	create_insn	(x=0X2906C);
 	op_hex		(x,	1);
@@ -10939,6 +10945,15 @@ static Bytes_3(void) {
 	set_name	(0X360BA,	"aMagicUserInfor");
 	create_strlit	(0X360D1,	0X5);
 	set_name	(0X360D1,	"aMaps");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X360D6,	0X13);
 	set_name	(0X360D6,	"aMonsterStatist");
 	create_strlit	(0X360E9,	0X16);
@@ -10965,15 +10980,6 @@ static Bytes_3(void) {
 	set_name	(0X36171,	"aHealth_0");
 	create_strlit	(0X36179,	0XA);
 	set_name	(0X36179,	"aAccuracy");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36183,	0XB);
 	set_name	(0X36183,	"aDexterity_0");
 	create_strlit	(0X3618E,	0XC);
