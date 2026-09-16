@@ -42278,7 +42278,7 @@ TestGlobalFlag  endp
 
 
 sub_27A66       proc far                ; CODE XREF: sub_1E1A7+3A↑P
-                                        ; sub_2D7A7+16↓P
+                                        ; MarkIneligiblePartyMembers+16↓P
                 push    si
                 call    GetRecordFlagBitAndWord_CA
                 test    [si], ax
@@ -53479,7 +53479,7 @@ loc_2D6FC:                              ; CODE XREF: InteractWithContainer+30↑
                 call    UpdateCursorForHeldItem
                 call    sub_238CD
                 call    ClearStatusPanelIfDirty
-                call    sub_2D7A7
+                call    MarkIneligiblePartyMembers
                 call    DrawMouseCursor
                 mov     ax, 21h ; '!'
                 call    ShowConfirmPrompt
@@ -53532,11 +53532,11 @@ InteractWithContainer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D7A7       proc near               ; CODE XREF: InteractWithContainer+B7↑p
-                mov     bx, 95EBh
+MarkIneligiblePartyMembers proc near    ; CODE XREF: InteractWithContainer+B7↑p
+                mov     bx, 95EBh       ; For each of the 4 party slots, unless an eligibility check (sub_27A66) plus a status-flag/level test passes, sets +0x15E bit 0x8000 (the flag DrawPartyStatusIcon shows a warning overlay for) and redraws DrawPartyMemberStatusPanel. Called from InteractWithContainer; the exact restriction (class/level-gated item?) isn't confirmed.
                 mov     cx, 4
 
-loc_2D7AD:                              ; CODE XREF: sub_2D7A7+40↓j
+loc_2D7AD:                              ; CODE XREF: MarkIneligiblePartyMembers+40↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short locret_2D7E9
@@ -53553,18 +53553,18 @@ loc_2D7AD:                              ; CODE XREF: sub_2D7A7+40↓j
                 cmp     [si+16h], dx
                 jge     short loc_2D7E4
 
-loc_2D7D9:                              ; CODE XREF: sub_2D7A7+1B↑j
-                                        ; sub_2D7A7+27↑j
+loc_2D7D9:                              ; CODE XREF: MarkIneligiblePartyMembers+1B↑j
+                                        ; MarkIneligiblePartyMembers+27↑j
                 or      word ptr [si+15Eh], 8000h
                 call    DrawPartyMemberStatusPanel
 
-loc_2D7E4:                              ; CODE XREF: sub_2D7A7+30↑j
+loc_2D7E4:                              ; CODE XREF: MarkIneligiblePartyMembers+30↑j
                 add     bx, 2
                 loop    loc_2D7AD
 
-locret_2D7E9:                           ; CODE XREF: sub_2D7A7+A↑j
+locret_2D7E9:                           ; CODE XREF: MarkIneligiblePartyMembers+A↑j
                 retn
-sub_2D7A7       endp
+MarkIneligiblePartyMembers endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -76747,7 +76747,7 @@ word_32DE8      dw 0                    ; DATA XREF: ProbeFacingTile+D↑w
                 db    0
                 db    0
 word_332D0      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+C8↑r
-                                        ; sub_2D7A7+29↑r
+                                        ; MarkIneligiblePartyMembers+29↑r
 word_332D2      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+62↑r
                                         ; sub_1E285+52↑r ...
 ; FileEntry *word_332D4
@@ -76789,7 +76789,7 @@ word_332FA      dw 0                    ; DATA XREF: sub_2C0FE+4DF↑r
 word_332FC      dw 0                    ; DATA XREF: sub_2C0FE+A06↑r
                                         ; sub_2D4B6+7E↑r
 word_332FE      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+B1↑r
-                                        ; sub_2D7A7+1D↑r
+                                        ; MarkIneligiblePartyMembers+1D↑r
 word_33300      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+2C0↑r
                                         ; RunAlchemyScreen+313↑r ...
 word_33302      dw 0                    ; DATA XREF: ShowClueBookSpellDetail:loc_13CCF↑r

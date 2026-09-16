@@ -9770,7 +9770,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D770);
 	op_hex		(x,	1);
+	set_cmt	(0X2D7A7,	"For each of the 4 party slots, unless an eligibility check (sub_27A66) plus a status-flag/level test passes, sets +0x15E bit 0x8000 (the flag DrawPartyStatusIcon shows a warning overlay for) and redraws DrawPartyMemberStatusPanel. Called from InteractWithContainer; the exact restriction (class/level-gated item?) isn't confirmed.",	0);
 	create_insn	(0X2D7A7);
+	set_name	(0X2D7A7,	"MarkIneligiblePartyMembers");
 	create_insn	(x=0X2D7C8);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D7D9);
@@ -11220,6 +11222,15 @@ static Bytes_3(void) {
 	set_name	(0X367E7,	"aMarksmanRanger");
 	create_strlit	(0X36802,	0X8);
 	set_name	(0X36802,	"aPoor");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3680A,	0X8);
 	set_name	(0X3680A,	"aAverage");
 	create_strlit	(0X36812,	0X8);
@@ -11241,15 +11252,6 @@ static Bytes_3(void) {
 	create_strlit	(0X36855,	0X6);
 	set_name	(0X36855,	"aFXxx");
 	set_name	(0X3685B,	"curGame");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X3685D);
 	create_word	(0X3685F);
 	create_word	(0X36861);

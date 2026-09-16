@@ -1160,7 +1160,15 @@ field `DrawPartyRosterEntry` uses), an overlay icon when incapacitated
 (`+0x1C` bits `0x1C40`, the same bits `CheckPartyWipeAndReinitLevel`
 checks) or a new not-yet-documented flag (`+0x15E` bit `0x8000`,
 plausibly a second "needs attention" condition), and a selection-
-highlight overlay for the currently-selected slot.
+highlight overlay for the currently-selected slot. The other half of
+that `+0x15E` finding: `MarkIneligiblePartyMembers` (was `sub_2D7A7`,
+called from `InteractWithContainer`) is what *sets* the bit — for each
+party slot, unless an eligibility check (`sub_27A66`, not traced) plus
+a status-flag/level test passes, it sets `+0x15E` bit `0x8000` and
+forces a `DrawPartyMemberStatusPanel` redraw. Reads as "flag party
+members who don't qualify to use/interact with whatever's in this
+container" (a class- or level-restricted item?), but the specific
+restriction isn't confirmed.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/

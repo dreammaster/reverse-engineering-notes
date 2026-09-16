@@ -3534,6 +3534,19 @@ branches including the out-of-bounds case.
 
 452 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: MarkIneligiblePartyMembers
+
+Named `sub_2D7A7` -> `MarkIneligiblePartyMembers` (called from
+`InteractWithContainer`): closes the loop on the `+0x15E` bit `0x8000`
+flag found via `DrawPartyStatusIcon` earlier this round — this is the
+function that *sets* it, for party members who fail an eligibility
+check (`sub_27A66`, not traced) plus a status-flag/level test, before
+forcing a status-panel redraw. Reads as flagging members who don't
+qualify for whatever's in the interacted container, but the specific
+restriction isn't confirmed.
+
+453 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
