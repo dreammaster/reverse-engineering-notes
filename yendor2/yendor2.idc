@@ -3715,8 +3715,12 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X19CF6);
 	op_hex		(x,	1);
+	set_cmt	(0X19DA3,	"Shifts the 4-byte packed-BCD buffer at si left by one nibble. Called only from MulBCD4ByWord.",	0);
 	create_insn	(0X19DA3);
+	set_name	(0X19DA3,	"ShiftBCD4LeftNibble");
+	set_cmt	(0X19DCF,	"Shifts the 4-byte packed-BCD buffer at si right by one nibble. Called only from MulBCD4ByWord.",	0);
 	create_insn	(0X19DCF);
+	set_name	(0X19DCF,	"ShiftBCD4RightNibble");
 	set_cmt	(0X19DFB,	"SubtractFromBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then SubBCD4 from the counter at si.",	0);
 	create_insn	(0X19DFB);
 	set_name	(0X19DFB,	"SubtractFromBCDCounter");
@@ -4688,6 +4692,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X1D050);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D060);
 	op_hex		(x,	1);
 	create_insn	(0X1D06E);
@@ -4702,15 +4715,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X1D0A5);
 	op_hex		(x,	1);
 	set_cmt	(0X1D0AB,	"ticks",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1D0B3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D0C3);
@@ -6459,7 +6463,9 @@ static Bytes_3(void) {
 	set_cmt	(0X23442,	"Proportional-fill gauge bar: caller sets bx=current, cx=max. Clamps bx to [1,cx] (shifting _font_fgColor by 2 if bx exceeded cx), computes a pixel fill width from the ratio, then draws an 8-row, 45px-wide bar (fgColor fill + bgColor remainder per row). Called once from DrawMonsterInfoPanel, most likely the monster's HP bar.",	0);
 	create_insn	(0X23442);
 	set_name	(0X23442,	"DrawMonsterHealthBar");
+	set_cmt	(0X234A7,	"Re-finds word_32A1E (active-combat-monster pointer) among the 3 g_monsterSlots entries after it's moved, fixing up the pointer. Called from ProcessLevelMonsters and CompactMonsterSlots.",	0);
 	create_insn	(0X234A7);
+	set_name	(0X234A7,	"RelocateActiveMonsterPointer");
 	create_insn	(0X234AF);
 	create_insn	(0X234CA);
 	set_cmt	(0X234D3,	"Draws one monster's info panel (si = g_monsterSlots entry): name strings, then progressively more detail icons as the party's average word_36CA9 stat (an 'identify'-style tier) crosses 3 thresholds, selected by 2-bit quality flags on the monster's own [+0xC] field.",	0);
@@ -8004,12 +8010,6 @@ static Bytes_3(void) {
 	set_cmt	(0X286B2,	"UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.",	0);
 	create_insn	(0X286B2);
 	set_name	(0X286B2,	"UpdateMonsterWoundTier");
-	create_insn	(x=0X286C2);
-	op_hex		(x,	1);
-	create_insn	(x=0X286DB);
-	op_hex		(x,	1);
-	create_insn	(x=0X286E0);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -8019,6 +8019,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X286C2);
+	op_hex		(x,	1);
+	create_insn	(x=0X286DB);
+	op_hex		(x,	1);
+	create_insn	(x=0X286E0);
+	op_hex		(x,	1);
 	create_insn	(x=0X286EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X286F0);
@@ -9392,7 +9398,9 @@ static Bytes_4(void) {
 	create_insn	(x=0X2A92E);
 	op_hex		(x,	1);
 	create_insn	(0X2A93C);
+	set_cmt	(0X2A982,	"Clamps ax to 9999 for HP/MP-family field offsets (0x52/0x92/0x54/0x94), else 999, then stores it at [bx+si]. Called from ApplyMultiStatEffect.",	0);
 	create_insn	(0X2A982);
+	set_name	(0X2A982,	"ClampStatEffectValue");
 	create_insn	(0X2A9A2);
 	set_cmt	(0X2A9AD,	"Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.",	0);
 	create_insn	(0X2A9AD);
@@ -10465,6 +10473,15 @@ static Bytes_4(void) {
 	create_word	(0X2E544);
 	create_word	(0X2E546);
 	create_word	(0X2E548);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E54A);
 	create_word	(0X2E54C);
 	create_word	(0X2E54E);
@@ -10486,15 +10503,6 @@ static Bytes_4(void) {
 	create_byte	(0X2E668);
 	make_array	(0X2E669,	0X3);
 	create_word	(0X2E66C);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E76E);
 	create_word	(0X2E770);
 	create_word	(0X2E772);

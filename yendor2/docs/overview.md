@@ -6268,6 +6268,20 @@ into the party record's live fields after training/service use).
 
 730 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: BCD shift helpers, RelocateActiveMonsterPointer, ClampStatEffectValue
+
+Named `ShiftBCD4LeftNibble`/`ShiftBCD4RightNibble` (`sub_19DA3`/
+`sub_19DCF`, internal one-nibble shift helpers used only by
+`MulBCD4ByWord`), `RelocateActiveMonsterPointer` (`sub_234A7`,
+called from `ProcessLevelMonsters` and `CompactMonsterSlots` — fixes
+up the active-combat-monster pointer `word_32A1E` after
+`CompactMonsterSlots` moves records around), and
+`ClampStatEffectValue` (`sub_2A982`, called from
+`ApplyMultiStatEffect` — clamps a stat value to 9999 for HP/MP-family
+fields, 999 otherwise).
+
+734 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

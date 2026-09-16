@@ -17247,7 +17247,7 @@ loc_19D13:                              ; CODE XREF: MulBCD4ByWord+A4↓j
 
 loc_19D30:                              ; CODE XREF: MulBCD4ByWord+93↓j
                 push    cs
-                call    near ptr sub_19DA3
+                call    near ptr ShiftBCD4LeftNibble
                 loop    loc_19D30
                 pop     cx
                 inc     word_32942
@@ -17258,9 +17258,9 @@ loc_19D30:                              ; CODE XREF: MulBCD4ByWord+93↓j
                 loop    loc_19D13
                 mov     si, 0AFACh
                 push    cs
-                call    near ptr sub_19DCF
+                call    near ptr ShiftBCD4RightNibble
                 push    cs
-                call    near ptr sub_19DCF
+                call    near ptr ShiftBCD4RightNibble
                 mov     word_32942, 1
                 mov     cx, 5
 
@@ -17279,7 +17279,7 @@ loc_19D5B:                              ; CODE XREF: MulBCD4ByWord+EA↓j
 
 loc_19D76:                              ; CODE XREF: MulBCD4ByWord+D9↓j
                 push    cs
-                call    near ptr sub_19DA3
+                call    near ptr ShiftBCD4LeftNibble
                 loop    loc_19D76
                 pop     cx
                 inc     word_32942
@@ -17305,9 +17305,9 @@ MulBCD4ByWord   endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19DA3       proc far                ; CODE XREF: MulBCD4ByWord+90↑p
+ShiftBCD4LeftNibble proc far            ; CODE XREF: MulBCD4ByWord+90↑p
                                         ; MulBCD4ByWord+D6↑p ...
-                push    cx
+                push    cx              ; Shifts the 4-byte packed-BCD buffer at si left by one nibble. Called only from MulBCD4ByWord.
                 mov     cx, 4
                 mov     ah, [si]
                 mov     al, [si+1]
@@ -17326,15 +17326,15 @@ sub_19DA3       proc far                ; CODE XREF: MulBCD4ByWord+90↑p
                 mov     [si+3], al
                 pop     cx
                 retf
-sub_19DA3       endp
+ShiftBCD4LeftNibble endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19DCF       proc far                ; CODE XREF: MulBCD4ByWord+AA↑p
+ShiftBCD4RightNibble proc far           ; CODE XREF: MulBCD4ByWord+AA↑p
                                         ; MulBCD4ByWord+AE↑p ...
-                push    cx
+                push    cx              ; Shifts the 4-byte packed-BCD buffer at si right by one nibble. Called only from MulBCD4ByWord.
                 mov     cx, 4
                 mov     ah, [si+2]
                 mov     al, [si+3]
@@ -17353,7 +17353,7 @@ sub_19DCF       proc far                ; CODE XREF: MulBCD4ByWord+AA↑p
                 mov     [si+1], al
                 pop     cx
                 retf
-sub_19DCF       endp
+ShiftBCD4RightNibble endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19579,7 +19579,7 @@ loc_1AF4C:                              ; CODE XREF: PromptBuyOreQuantity+116↓
                 mov     ax, word_36D15
                 mov     word_3881E, ax
                 mov     si, 0AFBCh
-                call    sub_19DCF
+                call    ShiftBCD4RightNibble
                 mov     _textPos_x, 94h
                 mov     _textPos_y, 4Fh ; 'O'
                 mov     word_2E412, 0Dh
@@ -19659,7 +19659,7 @@ loc_1B0B0:                              ; CODE XREF: PromptBuyOreQuantity+14D↑
 loc_1B0B5:                              ; CODE XREF: PromptBuyOreQuantity+145↑j
                                         ; PromptBuyOreQuantity+15F↑j
                 mov     si, 0AFC2h
-                call    sub_19DA3
+                call    ShiftBCD4LeftNibble
                 mov     si, 94B3h
                 mov     di, 0AFC2h
                 call    SubBCD4
@@ -33720,7 +33720,7 @@ loc_2309D:                              ; CODE XREF: ProcessLevelMonsters+2BD↑
                 mov     bx, [si+6]
                 and     word ptr es:[bx+6], 0FBFFh
                 mov     word ptr es:[bx+4], 0
-                call    sub_234A7
+                call    RelocateActiveMonsterPointer
                 pop     si
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
@@ -34076,7 +34076,7 @@ loc_233C6:                              ; CODE XREF: CompactMonsterSlots+82↑j
 
 loc_233C8:                              ; CODE XREF: CompactMonsterSlots+23↑j
                                         ; CompactMonsterSlots+47↑j ...
-                call    sub_234A7
+                call    RelocateActiveMonsterPointer
                 pop     es
                 pop     di
                 pop     si
@@ -34219,14 +34219,14 @@ DrawMonsterHealthBar endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_234A7       proc near               ; CODE XREF: ProcessLevelMonsters+364↑p
+RelocateActiveMonsterPointer proc near  ; CODE XREF: ProcessLevelMonsters+364↑p
                                         ; CompactMonsterSlots:loc_233C8↑p
-                cmp     word_32A1E, 0
+                cmp     word_32A1E, 0   ; Re-finds word_32A1E (active-combat-monster pointer) among the 3 g_monsterSlots entries after it's moved, fixing up the pointer. Called from ProcessLevelMonsters and CompactMonsterSlots.
                 jnz     short loc_234AF
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_234AF:                              ; CODE XREF: sub_234A7+5↑j
+loc_234AF:                              ; CODE XREF: RelocateActiveMonsterPointer+5↑j
                 push    cx
                 push    si
                 mov     ax, word_32A1E
@@ -34234,22 +34234,22 @@ loc_234AF:                              ; CODE XREF: sub_234A7+5↑j
                 mov     si, 51C0h
                 mov     cx, 3
 
-loc_234C0:                              ; CODE XREF: sub_234A7+27↓j
+loc_234C0:                              ; CODE XREF: RelocateActiveMonsterPointer+27↓j
                 cmp     [si], ax
                 jnz     short loc_234CA
                 mov     word_32A1E, si
                 jmp     short loc_234D0
 ; ---------------------------------------------------------------------------
 
-loc_234CA:                              ; CODE XREF: sub_234A7+1B↑j
+loc_234CA:                              ; CODE XREF: RelocateActiveMonsterPointer+1B↑j
                 add     si, 9Ch
                 loop    loc_234C0
 
-loc_234D0:                              ; CODE XREF: sub_234A7+21↑j
+loc_234D0:                              ; CODE XREF: RelocateActiveMonsterPointer+21↑j
                 pop     si
                 pop     cx
                 retn
-sub_234A7       endp
+RelocateActiveMonsterPointer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -48481,7 +48481,7 @@ loc_2A93C:                              ; CODE XREF: ApplyMultiStatEffect+1F↑j
                 cmp     word ptr [bx+si], 0
                 jz      short loc_2A950
                 add     ax, [bx+si]
-                call    sub_2A982
+                call    ClampStatEffectValue
 
 loc_2A950:                              ; CODE XREF: ApplyMultiStatEffect+35↑j
                 add     di, 4
@@ -48506,8 +48506,8 @@ ApplyMultiStatEffect endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A982       proc near               ; CODE XREF: ApplyMultiStatEffect+39↑p
-                cmp     bx, 52h ; 'R'
+ClampStatEffectValue proc near          ; CODE XREF: ApplyMultiStatEffect+39↑p
+                cmp     bx, 52h ; 'R'   ; Clamps ax to 9999 for HP/MP-family field offsets (0x52/0x92/0x54/0x94), else 999, then stores it at [bx+si]. Called from ApplyMultiStatEffect.
                 jz      short loc_2A9A2
                 cmp     bx, 92h
                 jz      short loc_2A9A2
@@ -48521,17 +48521,17 @@ sub_2A982       proc near               ; CODE XREF: ApplyMultiStatEffect+39↑p
                 jmp     short loc_2A9AA
 ; ---------------------------------------------------------------------------
 
-loc_2A9A2:                              ; CODE XREF: sub_2A982+3↑j
-                                        ; sub_2A982+9↑j ...
+loc_2A9A2:                              ; CODE XREF: ClampStatEffectValue+3↑j
+                                        ; ClampStatEffectValue+9↑j ...
                 cmp     ax, 270Fh
                 jle     short loc_2A9AA
                 mov     ax, 270Fh
 
-loc_2A9AA:                              ; CODE XREF: sub_2A982+19↑j
-                                        ; sub_2A982+1E↑j ...
+loc_2A9AA:                              ; CODE XREF: ClampStatEffectValue+19↑j
+                                        ; ClampStatEffectValue+1E↑j ...
                 mov     [bx+si], ax
                 retn
-sub_2A982       endp
+ClampStatEffectValue endp
 
 
 ; =============== S U B R O U T I N E =======================================
