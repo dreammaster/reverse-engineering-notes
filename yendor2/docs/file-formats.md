@@ -1729,6 +1729,17 @@ severity is nonzero it populates a per-member icon-bar slot and calls
 `ApplyEffectAndDrawIconBar`. The `word_36C79` bit-`2` slow-path
 condition still isn't confirmed.
 
+`ApplyEffectAndDrawIconBar` itself calls `HandleIconBarItemExpiry` (was
+`sub_1819B`) — a significant find: when an icon-bar item's timed effect
+expires, it strips the item's stat bonuses via `RemoveMultiStatEffect`,
+then either **replaces** the inventory slot with a new item (applying
+*that* item's effect in turn) or **destroys** it outright (clearing the
+slot and subtracting its weight from the confirmed `+0x118` counter) —
+gated on a flag on the icon-bar entry. This is the mechanism behind
+consumable magic items that transform or are used up (a wand running
+out, ice melting, etc.), though the specific items involved aren't
+identified yet.
+
 `ApplyEffectAndDrawIconBar` and `RunDungeonGameLoop` both also call
 `CheckPartyWipeAndReinitLevel` (was `sub_25AAC`) — a **total party
 incapacitation** check: it scans all 4 `g_partySlotAssignment` members,

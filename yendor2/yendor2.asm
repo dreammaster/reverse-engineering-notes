@@ -13847,7 +13847,7 @@ loc_1812A:                              ; CODE XREF: ApplyEffectAndDrawIconBar+5
 ; ---------------------------------------------------------------------------
 
 loc_1815A:                              ; CODE XREF: ApplyEffectAndDrawIconBar+75↑j
-                call    sub_1819B
+                call    HandleIconBarItemExpiry
                 mov     ax, [si+4]
                 mov     x, ax
                 mov     ax, [si+6]
@@ -13879,8 +13879,8 @@ ApplyEffectAndDrawIconBar endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1819B       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar:loc_1815A↑p
-                push    word_328D4
+HandleIconBarItemExpiry proc near       ; CODE XREF: ApplyEffectAndDrawIconBar:loc_1815A↑p
+                push    word_328D4      ; Handles an icon-bar item's effect expiring: removes its stat bonuses (RemoveMultiStatEffect), then either replaces the inventory slot with a new item (applying its effect via sub_1AA06) or clears the slot and subtracts the item's weight (+0x118) -- item transforms or is destroyed. Called from ApplyEffectAndDrawIconBar.
                 mov     ax, [si+0Ch]
                 mov     word_328D4, ax
                 mov     ax, [si+10h]
@@ -13901,7 +13901,7 @@ sub_1819B       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar:l
                 jmp     short loc_181F6
 ; ---------------------------------------------------------------------------
 
-loc_181DA:                              ; CODE XREF: sub_1819B+1D↑j
+loc_181DA:                              ; CODE XREF: HandleIconBarItemExpiry+1D↑j
                 mov     word ptr [bx], 0
                 mov     ax, [si+10h]
                 call    LoadItemCatalogRecord
@@ -13911,12 +13911,12 @@ loc_181DA:                              ; CODE XREF: sub_1819B+1D↑j
                 mov     bx, [si+0Ch]
                 sub     [bx+118h], ax
 
-loc_181F6:                              ; CODE XREF: sub_1819B+3D↑j
+loc_181F6:                              ; CODE XREF: HandleIconBarItemExpiry+3D↑j
                 call    sub_1AA9B
                 call    UpdatePartyAverageStatTiers
                 pop     word_328D4
                 retn
-sub_1819B       endp
+HandleIconBarItemExpiry endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -18845,7 +18845,7 @@ seg039          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AA06       proc far                ; CODE XREF: sub_1819B+38↑P
+sub_1AA06       proc far                ; CODE XREF: HandleIconBarItemExpiry+38↑P
                                         ; sub_18C79+203↑P ...
                 push    si
                 push    di
@@ -18943,7 +18943,7 @@ AddToStatCapped endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AA9B       proc far                ; CODE XREF: sub_1819B:loc_181F6↑P
+sub_1AA9B       proc far                ; CODE XREF: HandleIconBarItemExpiry:loc_181F6↑P
                                         ; sub_182CE:loc_18323↑P ...
                 push    ax
                 push    bx
@@ -19009,7 +19009,7 @@ sub_1AA9B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-UpdatePartyAverageStatTiers proc far    ; CODE XREF: sub_1819B+60↑P
+UpdatePartyAverageStatTiers proc far    ; CODE XREF: HandleIconBarItemExpiry+60↑P
                                         ; DeductHPClamped+18↑P ...
                 push    ax              ; Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.
                 push    bx
@@ -19115,7 +19115,7 @@ UpdatePartyAverageStatTiers endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RemoveMultiStatEffect proc far          ; CODE XREF: sub_1819B+D↑P
+RemoveMultiStatEffect proc far          ; CODE XREF: HandleIconBarItemExpiry+D↑P
                                         ; PickUpItemFromSlot+61↓P ...
                 push    si              ; Removal counterpart to ApplyMultiStatEffect: walks the item's multi-stat-effect table (word_2E54A) subtracting each entry's amount from the matching party-record field, floor-clamped at 0 for offset>=0x32 fields. Called from PickUpItemFromSlot and sub_1819B.
                 push    di

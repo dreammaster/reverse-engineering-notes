@@ -4047,6 +4047,19 @@ taken off, confirmed by mirroring that function's own finish sequence
 
 512 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleIconBarItemExpiry
+
+A significant find: named `sub_1819B` -> `HandleIconBarItemExpiry`,
+called from `ApplyEffectAndDrawIconBar`. When an icon-bar item's timed
+effect expires, strips its stat bonuses via `RemoveMultiStatEffect`,
+then either replaces the inventory slot with a new item (applying that
+item's own effect) or destroys it outright (clearing the slot,
+subtracting its weight) — the mechanism behind consumable magic items
+that transform or run out, though the specific items involved aren't
+identified.
+
+513 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

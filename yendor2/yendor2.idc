@@ -3056,7 +3056,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1815A);
 	create_insn	(0X18171);
+	set_cmt	(0X1819B,	"Handles an icon-bar item's effect expiring: removes its stat bonuses (RemoveMultiStatEffect), then either replaces the inventory slot with a new item (applying its effect via sub_1AA06) or clears the slot and subtracts the item's weight (+0x118) -- item transforms or is destroyed. Called from ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X1819B);
+	set_name	(0X1819B,	"HandleIconBarItemExpiry");
 	create_insn	(x=0X181B3);
 	op_hex		(x,	1);
 	create_insn	(0X181DA);
