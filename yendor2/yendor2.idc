@@ -9028,7 +9028,9 @@ static Bytes_1(void) {
 	create_insn	(0X2D60A);
 	create_insn	(0X2D625);
 	create_insn	(0X2D639);
+	set_cmt	(0X2D65A,	"Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.",	0);
 	create_insn	(0X2D65A);
+	set_name	(0X2D65A,	"InteractWithContainer");
 	create_insn	(x=0X2D66B);
 	op_hex		(x,	1);
 	create_insn	(0X2D682);
@@ -10582,6 +10584,15 @@ static Bytes_1(void) {
 	create_word	(0X36CF7);
 	create_word	(0X36CF9);
 	create_word	(0X36CFB);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(0X36CFD);
 	create_word	(0X36CFF);
 	create_word	(0X36D01);
@@ -10616,15 +10627,6 @@ static Bytes_1(void) {
 	create_byte	(0X3882B);
 	create_byte	(0X3882D);
 	create_word	(0X3883A);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X3883E);
 	create_word	(0X3884C);
 	create_word	(0X39488);

@@ -616,6 +616,18 @@ other screen-specific region tables use.
 
 **Crossed 100 named functions this update: 101 of 769.**
 
+Also named `InteractWithContainer` (was `sub_2D65A`, moderate
+confidence — one of `HandleGameCommand`'s two fallback handlers for
+"container-like" target flags; checks a needs-confirmation bit and
+prompts before proceeding, consistent with a locked/trapped container,
+but not traced past that point). The other fallback, `sub_2D60A`,
+turned out to search the same `0xDFBB` table as `RunGameDialog`'s
+still-unresolved `0x242`-`0x245` handler (`sub_294A3`) — ties two loose
+ends together without resolving either; a good target for a future
+session that wants to tackle both at once.
+
+102 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

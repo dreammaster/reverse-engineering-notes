@@ -45874,7 +45874,7 @@ loc_296F4:                              ; CODE XREF: HandleGameCommand+10D↑j
                 mov     bx, word_2E548
                 test    word ptr [bx+2], 600h
                 jz      short loc_29705
-                call    sub_2D65A
+                call    InteractWithContainer
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -51052,7 +51052,7 @@ seg124          segment byte public 'CODE' use16
 
 
 sub_2C0FE       proc far                ; CODE XREF: sub_1DCE0+415↑P
-                                        ; sub_2D65A+8A↓P
+                                        ; InteractWithContainer+8A↓P
                 or      word_328C8, 20h
                 test    word_33302, 8000h
                 jz      short loc_2C10E
@@ -53398,9 +53398,9 @@ seg128          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D65A       proc far                ; CODE XREF: HandleGameCommand+157↑P
-                                        ; sub_2D65A+3A↓j
-                call    sub_21C79
+InteractWithContainer proc far          ; CODE XREF: HandleGameCommand+157↑P
+                                        ; InteractWithContainer+3A↓j
+                call    sub_21C79       ; Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.
                 mov     bx, word_2E548
                 mov     ax, [bx+4]
                 call    sub_1D198
@@ -53413,34 +53413,34 @@ sub_2D65A       proc far                ; CODE XREF: HandleGameCommand+157↑P
                 jmp     loc_2D77A
 ; ---------------------------------------------------------------------------
 
-loc_2D682:                              ; CODE XREF: sub_2D65A+23↑j
+loc_2D682:                              ; CODE XREF: InteractWithContainer+23↑j
                 cmp     ax, 5
                 jz      short loc_2D696
                 cmp     ax, 7
                 jz      short loc_2D6FC
                 mov     ax, 3
                 call    sub_28412
-                jmp     short near ptr sub_2D65A
+                jmp     short near ptr InteractWithContainer
 ; ---------------------------------------------------------------------------
 
-loc_2D696:                              ; CODE XREF: sub_2D65A+16↑j
-                                        ; sub_2D65A+2B↑j
+loc_2D696:                              ; CODE XREF: InteractWithContainer+16↑j
+                                        ; InteractWithContainer+2B↑j
                 test    word_328CA, 1000h
                 jnz     short loc_2D6B1
                 test    word_33302, 3000h
                 jz      short loc_2D6B9
 
-loc_2D6A6:                              ; CODE XREF: sub_2D65A+5D↓j
+loc_2D6A6:                              ; CODE XREF: InteractWithContainer+5D↓j
                 mov     ax, 3
                 call    sub_28412
                 jmp     loc_2D77A
 ; ---------------------------------------------------------------------------
 
-loc_2D6B1:                              ; CODE XREF: sub_2D65A+42↑j
+loc_2D6B1:                              ; CODE XREF: InteractWithContainer+42↑j
                 test    word_33300, 400h
                 jnz     short loc_2D6A6
 
-loc_2D6B9:                              ; CODE XREF: sub_2D65A+4A↑j
+loc_2D6B9:                              ; CODE XREF: InteractWithContainer+4A↑j
                 test    word_33300, 8000h
                 jz      short loc_2D6DE
                 call    DrawMouseCursor
@@ -53450,12 +53450,12 @@ loc_2D6B9:                              ; CODE XREF: sub_2D65A+4A↑j
                 jmp     loc_2D77A
 ; ---------------------------------------------------------------------------
 
-loc_2D6D3:                              ; CODE XREF: sub_2D65A+74↑j
+loc_2D6D3:                              ; CODE XREF: InteractWithContainer+74↑j
                 mov     ax, word_3331A
                 call    sub_25B14
                 mov     word_33318, ax
 
-loc_2D6DE:                              ; CODE XREF: sub_2D65A+65↑j
+loc_2D6DE:                              ; CODE XREF: InteractWithContainer+65↑j
                 or      word_328CA, 80h
                 call    sub_2C0FE
                 and     word_328CA, 0FF7Fh
@@ -53464,8 +53464,8 @@ loc_2D6DE:                              ; CODE XREF: sub_2D65A+65↑j
                 jmp     loc_2D78A
 ; ---------------------------------------------------------------------------
 
-loc_2D6FC:                              ; CODE XREF: sub_2D65A+30↑j
-                                        ; sub_2D65A+E0↓j
+loc_2D6FC:                              ; CODE XREF: InteractWithContainer+30↑j
+                                        ; InteractWithContainer+E0↓j
                 mov     word_2E530, 0Fh
                 call    sub_23874
                 call    sub_238CD
@@ -53484,7 +53484,7 @@ loc_2D6FC:                              ; CODE XREF: sub_2D65A+30↑j
                 jmp     short loc_2D6FC
 ; ---------------------------------------------------------------------------
 
-loc_2D73C:                              ; CODE XREF: sub_2D65A+D9↑j
+loc_2D73C:                              ; CODE XREF: InteractWithContainer+D9↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_3330A
                 call    sub_27A4E
@@ -53503,13 +53503,13 @@ loc_2D73C:                              ; CODE XREF: sub_2D65A+D9↑j
                 or      word_328C8, 20h
                 call    sub_274B4
 
-loc_2D77A:                              ; CODE XREF: sub_2D65A+25↑j
-                                        ; sub_2D65A+54↑j ...
+loc_2D77A:                              ; CODE XREF: InteractWithContainer+25↑j
+                                        ; InteractWithContainer+54↑j ...
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_238CD
 
-loc_2D78A:                              ; CODE XREF: sub_2D65A+9F↑j
+loc_2D78A:                              ; CODE XREF: InteractWithContainer+9F↑j
                 call    sub_2D7EA
                 call    sub_19E56
                 call    sub_222F8
@@ -53517,13 +53517,13 @@ loc_2D78A:                              ; CODE XREF: sub_2D65A+9F↑j
                 call    sub_21530
                 call    DrawMouseCursor
                 retf
-sub_2D65A       endp
+InteractWithContainer endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D7A7       proc near               ; CODE XREF: sub_2D65A+B7↑p
+sub_2D7A7       proc near               ; CODE XREF: InteractWithContainer+B7↑p
                 mov     bx, 95EBh
                 mov     cx, 4
 
@@ -53561,7 +53561,7 @@ sub_2D7A7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D7EA       proc near               ; CODE XREF: sub_2D65A:loc_2D78A↑p
+sub_2D7EA       proc near               ; CODE XREF: InteractWithContainer:loc_2D78A↑p
                 mov     bx, 95EBh
                 mov     cx, 4
 
@@ -53583,7 +53583,7 @@ sub_2D7EA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D809       proc near               ; CODE XREF: sub_2D65A+6C↑p
+sub_2D809       proc near               ; CODE XREF: InteractWithContainer+6C↑p
                 mov     word_2E530, 0Fh
                 call    sub_23874
                 mov     ax, 12h
