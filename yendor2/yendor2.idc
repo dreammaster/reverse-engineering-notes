@@ -6715,7 +6715,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_name	(0X25C61,	"ShowLevelUpMessage");
 	set_cmt	(0X25C70,	"msg",	0);
+	set_cmt	(0X25CFA,	"If the character has learned any special ability (+0xB4 nonzero), draws each learned ability's name (table 0x77C6) in bright/dim color depending on whether its charge field (+0xB6/+0xB8/+0xBA/+0xBC) meets the table's threshold and, for some abilities, whether the current time of day (word_36D01) is in the required window. Called from UseItem and UseAbilityScroll.",	0);
 	create_insn	(0X25CFA);
+	set_name	(0X25CFA,	"DrawAbilityReadinessList");
 	create_insn	(0X25D02);
 	create_insn	(x=0X25D04);
 	op_hex		(x,	1);
@@ -6729,7 +6731,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X25D5E);
 	op_hex		(x,	1);
 	set_cmt	(0X25D6B,	"msg",	0);
+	set_cmt	(0X25D82,	"Draws 'AFFLICTIONS:' then every active +0x1C affliction bit by name: 0x2000 DISEASED, 0x4000 POISONED, 0x8000 SICK, 0x400 STONED, 0x800 FROZEN, 0x1000 PARALYZED, 0x80 CURSED, 0x100 HEXED, 0x200 JINXED (or 'NONE' if none of 0xFF80 are set). The complete map of +0x1C's affliction bits. Called from sub_25B34.",	0);
 	create_insn	(0X25D82);
+	set_name	(0X25D82,	"DrawAfflictionsList");
 	set_cmt	(0X25D8B,	"msg",	0);
 	set_cmt	(0X25D9E,	"msg",	0);
 	create_insn	(x=0X25DA1);
@@ -6780,7 +6784,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X25F83,	"msg",	0);
 	create_insn	(0X25F92);
+	set_cmt	(0X25FCD,	"Draws 'PROTECTIONS:' plus 9 rows pairing DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/CURSING/HEXING/JINXING (table 0x7B31) with their values at +0x20..+0x30 -- confirms, by name, the '9 contiguous resistance values' found via RollEffectResistance. Called from sub_25B34.",	0);
 	create_insn	(0X25FCD);
+	set_name	(0X25FCD,	"DrawCharacterProtectionsList");
 	set_cmt	(0X25FD6,	"msg",	0);
 	set_cmt	(0X26022,	"Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.",	0);
 	create_insn	(0X26022);
@@ -7830,6 +7836,15 @@ static Bytes_2(void) {
 	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
 	create_insn	(0X28FF9);
 	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29040);
 	create_insn	(x=0X2906C);
 	op_hex		(x,	1);
@@ -7858,15 +7873,6 @@ static Bytes_2(void) {
 	set_cmt	(0X291A3,	"Per-row worker for RevealMapRegion: reads a WORLD.DAT block and a CURGAME block (FileEntry 0x9043/0x8FFB), walks the bit-packed explored-cell bitmap byte-by-byte, and for each not-yet-explored cell that passes a further gate (sub_28C94/sub_28CB1, not traced -- possibly related to the unconfirmed 'transport-check' table) calls sub_29259 (not traced) to reveal it.",	0);
 	create_insn	(0X291A3);
 	set_name	(0X291A3,	"RevealMapRegionRow");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X291A6,	"this",	0);
 	create_insn	(x=0X291C1);
 	op_hex		(x,	1);
@@ -10959,6 +10965,15 @@ static Bytes_3(void) {
 	set_name	(0X36171,	"aHealth_0");
 	create_strlit	(0X36179,	0XA);
 	set_name	(0X36179,	"aAccuracy");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36183,	0XB);
 	set_name	(0X36183,	"aDexterity_0");
 	create_strlit	(0X3618E,	0XC);
@@ -11015,15 +11030,6 @@ static Bytes_3(void) {
 	set_name	(0X362BC,	"aSuppliesFood");
 	create_strlit	(0X362CA,	0X10);
 	set_name	(0X362CA,	"aTransportation");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X362DA,	0X8);
 	set_name	(0X362DA,	"aWeapons");
 	create_strlit	(0X362E2,	0XC);

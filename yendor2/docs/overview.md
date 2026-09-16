@@ -3674,6 +3674,41 @@ one coherent picture of the inventory/weight/incapacitation system.
 
 468 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawAfflictionsList, DrawCharacterProtectionsList — the session's biggest cross-confirmation
+
+The single biggest payoff of this whole naming pass. Named
+`sub_25D82` -> `DrawAfflictionsList`: it draws "AFFLICTIONS:" and
+tests every individual bit of the party record's `+0x1C` status word,
+drawing the exact name for each. Dumping its 10 message strings gave
+the **complete, definitive map** of all 9 affliction bits plus "NONE":
+`0x2000`=DISEASED, `0x4000`=POISONED, `0x8000`=SICK, `0x400`=STONED,
+`0x800`=FROZEN, `0x1000`=PARALYZED, `0x80`=CURSED, `0x100`=HEXED,
+`0x200`=JINXED.
+
+This single function resolves five previously-separate, partially-
+guessed findings from across the session in one shot:
+- `TickStatusEffects`/`ApplyStatusEffect`'s `0x400`/`0x800`/`0x1000`
+  group = STONED/FROZEN/PARALYZED (the timed ailments).
+- `CastSpell`'s `0x18` dispel bits (`0x2000`/`0x4000`/`0x8000`) =
+  DISEASED/POISONED/SICK (the dispellable-only group).
+- `CheckPartyWipeAndReinitLevel`'s `0x1C40` mask = DEAD (bit 6, itself
+  confirmed via `DrawThreeStatBars` last round) + STONED + FROZEN +
+  PARALYZED — a coherent "can't act" set.
+- `TickPartyAilmentIconBar`'s two effect-id groups = DISEASED/
+  POISONED/SICK (id 2, everyone) vs. CURSED/HEXED/JINXED (id 0xE,
+  MP-gated).
+- `DrawCharacterProtectionsList` (also named this round, was
+  `sub_25FCD`) draws "PROTECTIONS:" pairing the already-found `+0x20`-
+  `+0x30` resistance values with these exact same 9 names (DISEASE/
+  POISON/SICKNESS/STONING/FROZEN/PARALYZE/CURSING/HEXING/JINXING),
+  resolving that section's long-standing "not confirmed" guess too.
+
+Also named `sub_25CFA` -> `DrawAbilityReadinessList` (draws a
+character's learned special abilities, color-coded by whether their
+charge/time-of-day requirements are currently met).
+
+471 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

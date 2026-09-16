@@ -13486,7 +13486,7 @@ loc_17EA8:                              ; CODE XREF: UseItem+2F2↑j
                 mov     ax, [bx]
                 call    SelectPartyRecordById
                 mov     si, ax
-                call    sub_25CFA
+                call    DrawAbilityReadinessList
                 mov     ax, word_32902
                 mov     word_2E550, ax
                 call    SelectItemUseRecord
@@ -21999,7 +21999,7 @@ loc_1C693:                              ; CODE XREF: UseAbilityScroll+E3↑j
                 call    DrawPartyMemberStatusPanel
                 call    ClearStatusPanelIfDirty
                 mov     si, word_328D4
-                call    sub_25CFA
+                call    DrawAbilityReadinessList
                 call    DrawPartyStatusIconRow
                 call    sub_238CD
                 call    DrawMouseCursor
@@ -22447,7 +22447,7 @@ loc_1CB15:                              ; CODE XREF: ShowItemUsagePreview+A8↑j
                 mov     ax, [bx]
                 call    SelectPartyRecordById
                 mov     si, ax
-                call    sub_25CFA
+                call    DrawAbilityReadinessList
                 call    ShowTransportUsagePreview
                 call    sub_238CD
                 call    DrawMouseCursor
@@ -38653,7 +38653,7 @@ loc_25B9F:                              ; CODE XREF: sub_25B34+2F↑j
                 mov     ax, word_2E40A
                 cmp     ax, 4
                 jnz     short loc_25BCD
-                call    sub_25FCD
+                call    DrawCharacterProtectionsList
                 jmp     short loc_25BF0
 ; ---------------------------------------------------------------------------
 
@@ -38668,7 +38668,7 @@ loc_25BD7:                              ; CODE XREF: sub_25B34+9C↑j
                 cmp     ax, 5
                 jnz     short loc_25BE2
                 push    cs
-                call    near ptr sub_25CFA
+                call    near ptr DrawAbilityReadinessList
                 jmp     short loc_25BF0
 ; ---------------------------------------------------------------------------
 
@@ -38681,7 +38681,7 @@ loc_25BE2:                              ; CODE XREF: sub_25B34+A6↑j
 ; ---------------------------------------------------------------------------
 
 loc_25BED:                              ; CODE XREF: sub_25B34+B1↑j
-                call    sub_25D82
+                call    DrawAfflictionsList
 
 loc_25BF0:                              ; CODE XREF: sub_25B34+97↑j
                                         ; sub_25B34+A1↑j ...
@@ -38790,14 +38790,14 @@ ShowLevelUpMessage endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25CFA       proc far                ; CODE XREF: UseItem+338↑P
+DrawAbilityReadinessList proc far       ; CODE XREF: UseItem+338↑P
                                         ; UseAbilityScroll+11C↑P ...
-                cmp     word ptr [si+0B4h], 0
+                cmp     word ptr [si+0B4h], 0 ; If the character has learned any special ability (+0xB4 nonzero), draws each learned ability's name (table 0x77C6) in bright/dim color depending on whether its charge field (+0xB6/+0xB8/+0xBA/+0xBC) meets the table's threshold and, for some abilities, whether the current time of day (word_36D01) is in the required window. Called from UseItem and UseAbilityScroll.
                 jnz     short loc_25D02
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_25D02:                              ; CODE XREF: sub_25CFA+5↑j
+loc_25D02:                              ; CODE XREF: DrawAbilityReadinessList+5↑j
                 push    di
                 push    si
                 or      word_328C4, 100h
@@ -38812,7 +38812,7 @@ loc_25D02:                              ; CODE XREF: sub_25CFA+5↑j
                 add     si, 0B6h
                 mov     cx, 4
 
-loc_25D34:                              ; CODE XREF: sub_25CFA+83↓j
+loc_25D34:                              ; CODE XREF: DrawAbilityReadinessList+83↓j
                 shl     dx, 1
                 jnb     short loc_25D77
                 mov     _font_fgColor, 0Fh
@@ -38824,41 +38824,41 @@ loc_25D34:                              ; CODE XREF: sub_25CFA+83↓j
                 cmp     word_36D01, 474h
                 jle     short loc_25D5E
 
-loc_25D55:                              ; CODE XREF: sub_25CFA+51↑j
+loc_25D55:                              ; CODE XREF: DrawAbilityReadinessList+51↑j
                 test    word ptr [di+18h], 1
                 jz      short loc_25D65
                 jmp     short loc_25D6B
 ; ---------------------------------------------------------------------------
 
-loc_25D5E:                              ; CODE XREF: sub_25CFA+59↑j
+loc_25D5E:                              ; CODE XREF: DrawAbilityReadinessList+59↑j
                 test    word ptr [di+18h], 2
                 jnz     short loc_25D6B
 
-loc_25D65:                              ; CODE XREF: sub_25CFA+49↑j
-                                        ; sub_25CFA+60↑j
+loc_25D65:                              ; CODE XREF: DrawAbilityReadinessList+49↑j
+                                        ; DrawAbilityReadinessList+60↑j
                 mov     _font_fgColor, 7
 
-loc_25D6B:                              ; CODE XREF: sub_25CFA+62↑j
-                                        ; sub_25CFA+69↑j
+loc_25D6B:                              ; CODE XREF: DrawAbilityReadinessList+62↑j
+                                        ; DrawAbilityReadinessList+69↑j
                 mov     bx, di          ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25D77:                              ; CODE XREF: sub_25CFA+3C↑j
+loc_25D77:                              ; CODE XREF: DrawAbilityReadinessList+3C↑j
                 add     di, 1Ah
                 add     si, 2
                 loop    loc_25D34
                 pop     si
                 pop     di
                 retf
-sub_25CFA       endp
+DrawAbilityReadinessList endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25D82       proc near               ; CODE XREF: sub_25B34:loc_25BED↑p
-                call    DrawCharacterNameHeader
+DrawAfflictionsList proc near           ; CODE XREF: sub_25B34:loc_25BED↑p
+                call    DrawCharacterNameHeader ; Draws 'AFFLICTIONS:' then every active +0x1C affliction bit by name: 0x2000 DISEASED, 0x4000 POISONED, 0x8000 SICK, 0x400 STONED, 0x800 FROZEN, 0x1000 PARALYZED, 0x80 CURSED, 0x100 HEXED, 0x200 JINXED (or 'NONE' if none of 0xFF80 are set). The complete map of +0x1C's affliction bits. Called from sub_25B34.
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7AB3h       ; msg
                 call    writeString
@@ -38871,71 +38871,71 @@ sub_25D82       proc near               ; CODE XREF: sub_25B34:loc_25BED↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_25DAE:                              ; CODE XREF: sub_25D82+24↑j
+loc_25DAE:                              ; CODE XREF: DrawAfflictionsList+24↑j
                 test    word ptr [si+1Ch], 2000h
                 jz      short loc_25DC2
                 mov     bx, 7ACAh       ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25DC2:                              ; CODE XREF: sub_25D82+31↑j
+loc_25DC2:                              ; CODE XREF: DrawAfflictionsList+31↑j
                 test    word ptr [si+1Ch], 4000h
                 jz      short loc_25DD6
                 mov     bx, 7AD3h       ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25DD6:                              ; CODE XREF: sub_25D82+45↑j
+loc_25DD6:                              ; CODE XREF: DrawAfflictionsList+45↑j
                 test    word ptr [si+1Ch], 8000h
                 jz      short loc_25DEA
                 mov     bx, 7ADCh       ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25DEA:                              ; CODE XREF: sub_25D82+59↑j
+loc_25DEA:                              ; CODE XREF: DrawAfflictionsList+59↑j
                 test    word ptr [si+1Ch], 400h
                 jz      short loc_25DFE
                 mov     bx, 7AE1h       ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25DFE:                              ; CODE XREF: sub_25D82+6D↑j
+loc_25DFE:                              ; CODE XREF: DrawAfflictionsList+6D↑j
                 test    word ptr [si+1Ch], 800h
                 jz      short loc_25E12
                 mov     bx, 7AE8h       ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25E12:                              ; CODE XREF: sub_25D82+81↑j
+loc_25E12:                              ; CODE XREF: DrawAfflictionsList+81↑j
                 test    word ptr [si+1Ch], 1000h
                 jz      short loc_25E26
                 mov     bx, 7AEFh       ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25E26:                              ; CODE XREF: sub_25D82+95↑j
+loc_25E26:                              ; CODE XREF: DrawAfflictionsList+95↑j
                 test    word ptr [si+1Ch], 80h
                 jz      short loc_25E3A
                 mov     bx, 7AF9h       ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25E3A:                              ; CODE XREF: sub_25D82+A9↑j
+loc_25E3A:                              ; CODE XREF: DrawAfflictionsList+A9↑j
                 test    word ptr [si+1Ch], 100h
                 jz      short loc_25E4E
                 mov     bx, 7B00h       ; msg
                 call    writeString
                 add     _textPos_y, 6
 
-loc_25E4E:                              ; CODE XREF: sub_25D82+BD↑j
+loc_25E4E:                              ; CODE XREF: DrawAfflictionsList+BD↑j
                 test    word ptr [si+1Ch], 200h
                 jz      short locret_25E5D
                 mov     bx, 7B06h       ; msg
                 call    writeString
 
-locret_25E5D:                           ; CODE XREF: sub_25D82+D1↑j
+locret_25E5D:                           ; CODE XREF: DrawAfflictionsList+D1↑j
                 retn
-sub_25D82       endp
+DrawAfflictionsList endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -38984,7 +38984,7 @@ FormatAndDrawFraction endp
 
 
 DrawCharacterNameHeader proc near       ; CODE XREF: ShowLevelUpMessage+6↑p
-                                        ; sub_25CFA+16↑p ...
+                                        ; DrawAbilityReadinessList+16↑p ...
                 push    _font_bgTransparent ; Draws a fixed-width blank label (12 spaces) then the character's name (+0x0) at a fixed position. Shared header draw used by ShowLevelUpMessage, DrawThreeStatBars's caller chain, and sub_25CFA.
                 mov     ax, 0F1h
                 mov     _textPos_x, ax
@@ -39073,8 +39073,8 @@ DrawThreeStatBars endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25FCD       proc near               ; CODE XREF: sub_25B34+94↑p
-                call    DrawCharacterNameHeader
+DrawCharacterProtectionsList proc near  ; CODE XREF: sub_25B34+94↑p
+                call    DrawCharacterNameHeader ; Draws 'PROTECTIONS:' plus 9 rows pairing DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/CURSING/HEXING/JINXING (table 0x7B31) with their values at +0x20..+0x30 -- confirms, by name, the '9 contiguous resistance values' found via RollEffectResistance. Called from sub_25B34.
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7B24h       ; msg
                 call    writeString
@@ -39087,7 +39087,7 @@ sub_25FCD       proc near               ; CODE XREF: sub_25B34+94↑p
                 mov     cx, 9
                 add     si, 20h ; ' '
 
-loc_25FFF:                              ; CODE XREF: sub_25FCD+51↓j
+loc_25FFF:                              ; CODE XREF: DrawCharacterProtectionsList+51↓j
                 mov     ax, [si]
                 mov     bx, 0AFA8h
                 call    FormatNumber
@@ -39098,7 +39098,7 @@ loc_25FFF:                              ; CODE XREF: sub_25FCD+51↓j
                 add     _textPos_y, 6
                 loop    loc_25FFF
                 retn
-sub_25FCD       endp
+DrawCharacterProtectionsList endp
 
 seg086          ends
 

@@ -136,14 +136,39 @@ upgraded this from "plausibly" to confirmed;
 `+0x1C`: a status/condition flags word, tested throughout
 (`RunTitleScreen`'s `E` handler, `ShowCharacterSkills`,
 `RunConversation`, `UseAbilityOnTarget`'s `0xDFBB` table, and now a
-"resting" bit in `RestCharacter`); **`+0x20`–`+0x30`: 9 contiguous
-2-byte equipment/bonus resistance values** (`+0x20`, `+0x22`, `+0x24`,
-`+0x26`, `+0x28`, `+0x2A`, `+0x2C`, `+0x2E`, `+0x30`), found via
-`RollEffectResistance` — each one is conditionally summed into a trap/
-status effect's resistance-check total, selected by one of 9 matching
-high bits (`0x8000`..`0x80`) in the effect-definition record's cost
-flags; individual fields not yet matched to specific resistance types
-(fire/poison/etc. is a guess, not confirmed); `+0x52`/`+0x92`: HP
+"resting" bit in `RestCharacter`). **Fully mapped** via
+`DrawAfflictionsList` (was `sub_25D82`, called from `sub_25B34`), which
+draws the header "AFFLICTIONS:" then tests every individual bit and
+shows the matching name (or "NONE"):
+`0x2000`=**DISEASED**, `0x4000`=**POISONED**, `0x8000`=**SICK**,
+`0x400`=**STONED**, `0x800`=**FROZEN**, `0x1000`=**PARALYZED**,
+`0x80`=**CURSED**, `0x100`=**HEXED**, `0x200`=**JINXED**; bit `0x40`
+separately confirmed as **DEAD** via `DrawThreeStatBars` (see below).
+This one function resolves several previously-separate findings at
+once: `TickStatusEffects`/`ApplyStatusEffect`'s `0x400`/`0x800`/
+`0x1000` group is STONED/FROZEN/PARALYZED (the *timed* ailments);
+`CastSpell`'s `0x18` dispel bits (`0x2000`/`0x4000`/`0x8000`) are
+DISEASED/POISONED/SICK (the *dispellable-only* group);
+`CheckPartyWipeAndReinitLevel`'s `0x1C40` incapacitation mask is
+DEAD+STONED+FROZEN+PARALYZED — literally "can't act"; and
+`TickPartyAilmentIconBar`'s two effect-id groups are DISEASED/
+POISONED/SICK (id `2`, all characters) vs. CURSED/HEXED/JINXED (id
+`0xE`, MP-gated characters only).
+
+**`+0x20`–`+0x30`: 9 contiguous 2-byte protection/resistance values**
+(`+0x20`, `+0x22`, `+0x24`, `+0x26`, `+0x28`, `+0x2A`, `+0x2C`, `+0x2E`,
+`+0x30`), found via `RollEffectResistance` — each one is conditionally
+summed into a trap/status effect's resistance-check total, selected by
+one of 9 matching high bits (`0x8000`..`0x80`) in the effect-definition
+record's cost flags. **Now identified by name** via
+`DrawCharacterProtectionsList` (was `sub_25FCD`, called from
+`sub_25B34`), which draws "PROTECTIONS:" and pairs each value with its
+exact affliction name, in order: `+0x20`=**DISEASE**,
+`+0x22`=**POISON**, `+0x24`=**SICKNESS**, `+0x26`=**STONING**,
+`+0x28`=**FROZEN**, `+0x2A`=**PARALYZE**, `+0x2C`=**CURSING**,
+`+0x2E`=**HEXING**, `+0x30`=**JINXING** — the resistance-value
+counterpart to `+0x1C`'s active-flag bits above, matching one-to-one;
+`+0x52`/`+0x92`: HP
 current/max, confirmed by `CastSpell`'s heal codes
 (`0x12`/`0x13`: +25%/+50% of missing; `0x14`: full heal directly);
 `+0x54`/`+0x94`: MP current/max (`0x1D`: +50% of missing; `0x17`: full
@@ -1524,15 +1549,14 @@ A **separate** per-member status icon bar exists alongside
 much slower ~32768-call wraparound path gated on a 4th `word_36C79`
 flag, bit `2`) recomputes each of the 4 roster members' ailment
 severity via `PrepareTrapEffectSlots(ax=2` or `0xE)` plus a helper that
-checks `+0x1C` status bits (`0x2000`/`0x4000`/`0x8000` — the same group
-`CastSpell`'s `0x18` dispel code clears — for the normal path; a
-different group, `0x80`/`0x100`/`0x200`, gated on having MP (`+0x54 !=
-0`) for the second helper) or, on the slow path, tiers off the derived
-stat `+0x58` instead. Whenever severity is nonzero it populates a
-per-member icon-bar slot and calls `ApplyEffectAndDrawIconBar`. The
-exact ailments behind effect ids `2`/`0xE` and the `word_36C79` bit-`2`
-condition aren't confirmed — this is a mechanically-clear but
-narratively-open sibling system to `TickWorldAilments`.
+checks `+0x1C` status bits — **now identified via `DrawAfflictionsList`**:
+`0x2000`/`0x4000`/`0x8000` = DISEASED/POISONED/SICK for the normal
+path (id `2`); `0x80`/`0x100`/`0x200` = CURSED/HEXED/JINXED, gated on
+having MP (`+0x54 != 0`), for the second helper (id `0xE`) — or, on the
+slow path, tiers off the derived stat `+0x58` instead. Whenever
+severity is nonzero it populates a per-member icon-bar slot and calls
+`ApplyEffectAndDrawIconBar`. The `word_36C79` bit-`2` slow-path
+condition still isn't confirmed.
 
 `ApplyEffectAndDrawIconBar` and `RunDungeonGameLoop` both also call
 `CheckPartyWipeAndReinitLevel` (was `sub_25AAC`) — a **total party
