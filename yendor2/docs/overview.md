@@ -909,12 +909,12 @@ write-up, including the two new map-cell fields, in
 
 ### 2026-09-15 session update, continued: minimap tile tables were a dead end, but led to a legend screen
 
-Tried to pin down what `word_32926` (a parameter `BuildMinimapTileData`
+Tried to pin down what `g_shadeShiftDelta` (a parameter `BuildMinimapTileData`
 sets per-cell before drawing) actually controls. `DrawMinimap` keeps its
 own picture index fixed at `g_pictureDir` entry 9 throughout its loop,
 so the varying table value isn't a picture selector there; checked
 whether it's a color/remap parameter by reading `sub_2A53C` and ruled
-that out too — it never reads `word_32926` at all. Documented as
+that out too — it never reads `g_shadeShiftDelta` at all. Documented as
 genuinely open in file-formats.md rather than leaving the disproven
 theory standing (commit `518cf62`, no new names that round).
 
@@ -1893,7 +1893,7 @@ main-quest structure.
 Named `sub_12554`, by far the most pervasively-called function
 encountered this session (dozens of callers spanning nearly every
 subsystem explored): `LoadItemCatalogRecord` maps in an item's 58-byte
-catalog data and, as a side effect, sets up both `word_2E54A` (the
+catalog data and, as a side effect, sets up both `g_itemStatEffectTable` (the
 multi-stat-effect table `ApplyMultiStatEffect` walks) and `word_2E548`
 (the "current target" pointer read throughout the codebase) — looking
 up an item's data is also how the game establishes "the current
@@ -2289,7 +2289,7 @@ labeled stat fields, left unnamed) until ESC.
 
 ### 2026-09-15 session update, continued: mapped ShowClueBook's full F-key dispatch; two precision corrections
 
-Traced `ShowClueBook`'s own `word_2E40A` switch directly, mapping all
+Traced `ShowClueBook`'s own `g_currentCommandCode` switch directly, mapping all
 6 F-key categories plus ESC: F1 Maps, F2 Monster Statistics (→
 `RunClueBookMonsterCategory`), F3 Spells, F4 Magic Users (class picker
 then that class's spell list), F5 Inventory Items (→ an 8-subtype
@@ -4425,7 +4425,7 @@ Named a 3-function cluster used only by
 `sub_1614D` -> `ComputeVgaOffsetFromRowCol` (a small VGA mode-13h
 linear offset helper, `row*320+col`, called only by the two functions
 below), `sub_1619F` -> `SetWipeEffectPixel` (stashes the pixel
-currently at `(word_328FA,word_32900)` into `_font_bgColor` —
+currently at `(g_wipeEffectX,g_wipeEffectY)` into `_font_bgColor` —
 repurposed here as a one-pixel scratch stash, not an actual font
 color — then overwrites it with `_font_fgColor`), and `sub_1618E` ->
 `RestoreWipeEffectPixel` (writes the stashed value back, undoing the
@@ -4477,13 +4477,13 @@ Named `sub_2A653` -> `ShiftPaletteShadeClamped`, called 9 times from
 `DrawPicture` and sibling picture-drawing code. This resolves a
 long-standing open question flagged during the minimap/tile-table
 investigation earlier this session: "the varying table value ... feeds
-`word_32926`, a parameter `DrawPicture` passes (as `[bp+var_21]`) ...
+`g_shadeShiftDelta`, a parameter `DrawPicture` passes (as `[bp+var_21]`) ...
 [but] it never reads `[bp+var_21]` at all" (`sub_2A53C` was ruled out
 as the reader). `sub_2A653`, sharing `DrawPicture`'s stack frame, *is*
 the actual reader: it treats the input color as belonging to a
 16-entry palette "hue block" (typical VGA RPG layout — 16 hues × 16
 shades), computes that block's floor (`al&0xF0`) and ceiling
-(`al|0x0F`), adds the `[bp+var_21]`/`word_32926` delta, and clamps the
+(`al|0x0F`), adds the `[bp+var_21]`/`g_shadeShiftDelta` delta, and clamps the
 result to stay within the same hue block rather than wrapping into a
 different hue (no-op if the delta is 0 or the input is `>=0xD0`, a
 reserved high palette range). In short: a signed shade-shift primitive
@@ -4584,9 +4584,9 @@ checking `RenderDungeonViewport` (already named), which turned out to
 already reference all 7 globals directly — and its pre-existing
 comment called them "different row-data pointers," which this
 session's new evidence shows is wrong. `RenderDungeonViewport` copies
-each of `word_328E6`..`word_328F2` into `word_32926` before each of 7
+each of `word_328E6`..`word_328F2` into `g_shadeShiftDelta` before each of 7
 `RenderDungeonViewRow` calls (decreasing cell counts
-`0x11/0x11/5/3/3/3/3`) — and `word_32926` is exactly the shade-shift
+`0x11/0x11/5/3/3/3/3`) — and `g_shadeShiftDelta` is exactly the shade-shift
 delta `DrawPicture`/`ShiftPaletteShadeClamped` apply per pixel (traced
 two rounds ago). So the same 7-entry gradient
 `ApplyDistanceShadingToFloorOrCeiling` walks for the floor/ceiling is
@@ -4759,7 +4759,7 @@ trio. Simple wrappers around the already-named
 Named `sub_26A75` -> `IsItemEligibleForCommand`, called once from
 `sub_2621C` (the container/inventory interaction handler, called from
 `ShowCharacterInventory` and `sub_1869D`) — a generalized eligibility
-gate, taking `ax=word_2E40A` (the current key/command code, the same
+gate, taking `ax=g_currentCommandCode` (the current key/command code, the same
 convention documented for other screens' dispatch) and `bx` (an
 item's catalog record, from the immediately-preceding
 `LoadItemCatalogRecord` call). Command codes `<=8` always pass; codes
@@ -4785,7 +4785,7 @@ marker offsets (`0x17C`/`0x1A2`/`0x1C8`) — closing every open bag for
 that member, e.g. when leaving the inventory screen. `sub_26928` ->
 `ClearDepletedResourceCounterForCommand` (called from `PlaceItemInSlot`
 and `PickUpItemFromSlot`): zeroes one of `[si+0xBE]`/`[si+0xC0]`/
-`[si+0xC2]` depending on the current command code (`word_2E40A`) — the
+`[si+0xC2]` depending on the current command code (`g_currentCommandCode`) — the
 same 3 fields the still-untraced `sub_274B4` clears for specific item
 types via its own `ShowResourceDepletedOverlay` path, adding another
 data point toward eventually tracing that dispatcher.
@@ -5392,8 +5392,8 @@ Named `sub_1F884` -> `DrawAnimationSpeedLabel`, called from
 `CycleAnimationSetting` and from `DrawGameDialogMenuLabels`'s
 ANIMATION branch (in place of `GameDialog_drawAnimation`, when
 `word_328C4` bit `0x8` is set): draws one of 3 messages at the
-animation label position selected by `word_36CE7`'s value (1, 5, or
-9). `CycleAnimationSetting` confirms `word_36CE7` cycles through
+animation label position selected by `g_animationSpeed`'s value (1, 5, or
+9). `CycleAnimationSetting` confirms `g_animationSpeed` cycles through
 exactly `{1, 5, 9}` on each activation, so this is the label for a
 3-way animation speed/mode setting; the exact text of each of the 3
 messages (e.g. slow/normal/fast) was not independently confirmed.
@@ -5463,7 +5463,7 @@ and how heavily this function is gated against interfering with
 other screens. Only runs when a specific debug flag combination
 holds (`word_328C6` bits `0x80`/`0x200` clear, `word_328CA` bit
 `0x1000` clear, `word_328C4` bit `0x2000` set), then draws 3 rows of
-labeled numeric pairs: `'H'`/`'V'` for `word_2E55C`/`word_2E564`,
+labeled numeric pairs: `'H'`/`'V'` for `g_dungeonMapGridOriginCol`/`g_dungeonMapGridOriginRow`,
 `'H'`/`'V'` again for `g_partyWorldX`/`g_partyWorldY` (the confirmed party
 world X/Y position), and `'B'`/`'F'` for a pair read via a
 `word_328D2`-indexed table. Reads as a debug HUD overlay; the exact
@@ -5788,7 +5788,7 @@ Its two row-drawing helpers, `sub_135E8` ->
 ### 2026-09-15 session update, continued: LoadGroundItemSlotRecord, DrawClueBookMapLocationMarker, AppendClueBookItemHitTestSlot
 
 Named `sub_19091` -> `LoadGroundItemSlotRecord`, called once from
-`sub_1869D`: caches its input into `word_36863` — the confirmed
+`sub_1869D`: caches its input into `g_groundItemSlotRecord` — the confirmed
 ground/world-object item slot record cache also used by
 `PlaceItemOnGround` — then loads that same record type.
 
@@ -5900,7 +5900,7 @@ Named `sub_1FBE1` -> `InstallInt1cTimerHandler`, called twice from
 `InitGame`: the installer paired with the already-named
 `RestoreInt1cVector` — saves the original INT 1Ch (timer tick)
 vector and installs the game's own handler, after initializing
-`word_3294C` from `word_36CE7` (the confirmed animation-speed
+`word_3294C` from `g_animationSpeed` (the confirmed animation-speed
 setting) and related timer globals.
 
 Named `sub_19B3E` -> `UnpackBCD2ToWord`, called once from
@@ -6457,7 +6457,7 @@ loader.
 Called from 16 sites throughout `start`, always right before
 `RedrawDungeonScreen`+`BuildMinimapTileData`+`DrawMinimap` — i.e.
 after any position-changing action. It (re)builds the confirmed
-78×78, 8-byte-per-cell map-grid window in segment `word_2E562` around
+78×78, 8-byte-per-cell map-grid window in segment `g_dungeonMapGridSegment` around
 the party's current position: computes a clamped window origin,
 reads 78 `WORLD.DAT` rows unpacking a packed-bit "explored" flag per
 cell, then does a second full pass calling `TryInteractAtPosition`
@@ -6734,7 +6734,7 @@ frequency count (e.g. `word_3293E` 209 refs, `word_328C6` 152,
 `word_36C7F` 86 — a party-average-stat-tier-driven minimap/lighting
 visibility bitfield, exact real-world meaning (light source vs. mapping
 skill) not fully confirmed, `word_2E548` 83 — an item-effect-swap
-sub-flag/field table, exact structure not fully confirmed, `word_2E40A`
+sub-flag/field table, exact structure not fully confirmed, `g_currentCommandCode`
 83, `word_3295A` 80, `word_328CC` 72, `word_2E412` 70, `word_36C79` 69
 — confirmed environmental-timer bits, `word_2E49C` 65). Several of the
 very highest-ref globals (`word_328C4`/`C6`/`C8`/`CA`/`CC`, `word_3293E`,
@@ -6794,6 +6794,52 @@ identity/struct description elsewhere. Also confirmed the
 file-formats.md's `SwapHeldItemWithSlot` writeup doesn't have
 individually-confirmed per-field meanings distinct from
 `g_heldItemType` — left unrenamed for the same reason.
+
+### 2026-09-16 session update, continued: global variable renaming, round 3
+
+Renamed 10 more globals:
+- `word_2E40A` → **`g_currentCommandCode`**: the "current key/command
+  code" convention documented across several dispatch switches
+  (`ShowClueBook`'s F-key switch, `IsItemEligibleForCommand`'s
+  eligibility gate, `ClearDepletedResourceCounterForCommand`) —
+  distinct from `g_lastKeyChar` (the raw `PollKeyboardInput` char) and
+  `g_currentActionId` (the ability/item id `HandleGameCommand`
+  dispatches on).
+- `word_36863` → **`g_groundItemSlotRecord`**: "the confirmed
+  ground/world-object item slot record cache", written by
+  `LoadGroundItemSlotRecord` and read by `PlaceItemOnGround`.
+- `word_2E562` → **`g_dungeonMapGridSegment`**, `word_2E564` →
+  **`g_dungeonMapGridOriginRow`**, `word_2E55C` →
+  **`g_dungeonMapGridOriginCol`**: the in-memory dungeon map grid
+  `RefreshDungeonMapWindow` (re)builds from `WORLD.DAT` — 78×78 cells,
+  8 bytes/cell — found via `GetMapCellPtr`: "segment `word_2E562`, with
+  the grid's own origin held in `word_2E564` (row/y)/`word_2E55C`
+  (column/x)".
+- `word_32926` → **`g_shadeShiftDelta`**: confirmed via a multi-round
+  trace to be the distance-based lighting shade-shift delta
+  `DrawPicture` applies to its palette lookup, fed by
+  `ApplyDistanceShadingToFloorOrCeiling`'s 7-entry gradient table.
+- `word_2E54A` → **`g_itemStatEffectTable`**: the item's multi-stat-
+  effect table, walked by both `ApplyMultiStatEffectForItem` (add) and
+  `RemoveMultiStatEffect` (subtract) to apply/reverse an equipped
+  item's stat bonuses.
+- `word_36CE7` → **`g_animationSpeed`**: the confirmed animation-speed
+  setting, cycled through by `CycleAnimationSetting`.
+- `word_328FA` → **`g_wipeEffectX`**, `word_32900` → **`g_wipeEffectY`**:
+  the current pixel position `SetWipeEffectPixel`/
+  `RestoreWipeEffectPixel` stash/restore around, driving the
+  character-creation intro's scan-line wipe effect.
+
+Checked `word_32918` (a z-layer/depth value set to `0`/`3`/`4` at
+different call sites before viewport-sprite draws) and held off — it's
+a caller-set parameter slot reused for different purposes per call
+site, the same "generic scratch parameter" pattern already being
+deferred for `word_3293E`/`word_32940` etc., not a single persistent
+piece of state. Also checked `word_33302`/`word_33306`/`word_33304`
+(the `ApplyEncodedItemEffect`/attack-resolution flag words) and left
+them alone — each is a ~19-32-bit bitmask where individual bits select
+unrelated effect/attack types, the same category of "multi-purpose
+bitfield" already being deferred.
 
 ## Next steps (not started this session)
 

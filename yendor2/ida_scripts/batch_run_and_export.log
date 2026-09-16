@@ -173776,3 +173776,31 @@ total names seen: 1491, matched default pattern: 0
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor2\yendor2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rename_globals_round3.py']
+[*] reading rename_globals_round3.py
+[*] executing rename_globals_round3.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2e40a  'word_2E40A' -> 'g_currentCommandCode': ok
+0x36863  'word_36863' -> 'g_groundItemSlotRecord': ok
+0x2e562  'word_2E562' -> 'g_dungeonMapGridSegment': ok
+0x2e564  'word_2E564' -> 'g_dungeonMapGridOriginRow': ok
+0x2e55c  'word_2E55C' -> 'g_dungeonMapGridOriginCol': ok
+0x32926  'word_32926' -> 'g_shadeShiftDelta': ok
+0x2e54a  'word_2E54A' -> 'g_itemStatEffectTable': ok
+0x36ce7  'word_36CE7' -> 'g_animationSpeed': ok
+0x328fa  'word_328FA' -> 'g_wipeEffectX': ok
+0x32900  'word_32900' -> 'g_wipeEffectY': ok
+----- end target script output -----
+[*] finished executing rename_globals_round3.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106988
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

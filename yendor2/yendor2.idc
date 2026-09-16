@@ -10468,6 +10468,7 @@ static Bytes_5(void) {
 	create_word	(0X2E408);
 	set_name	(0X2E408,	"_val27");
 	create_word	(0X2E40A);
+	set_name	(0X2E40A,	"g_currentCommandCode");
 	create_word	(0X2E40C);
 	create_word	(0X2E40E);
 	create_word	(0X2E410);
@@ -10557,6 +10558,7 @@ static Bytes_5(void) {
 	set_name	(0X2E546,	"g_currentItemRecord");
 	create_word	(0X2E548);
 	create_word	(0X2E54A);
+	set_name	(0X2E54A,	"g_itemStatEffectTable");
 	create_word	(0X2E54C);
 	create_word	(0X2E54E);
 	create_word	(0X2E550);
@@ -10567,10 +10569,13 @@ static Bytes_5(void) {
 	create_word	(0X2E558);
 	create_word	(0X2E55A);
 	create_word	(0X2E55C);
+	set_name	(0X2E55C,	"g_dungeonMapGridOriginCol");
 	create_word	(0X2E55E);
 	create_word	(0X2E560);
 	create_word	(0X2E562);
+	set_name	(0X2E562,	"g_dungeonMapGridSegment");
 	create_word	(0X2E564);
+	set_name	(0X2E564,	"g_dungeonMapGridOriginRow");
 	create_word	(0X2E662);
 	create_word	(0X2E664);
 	create_word	(0X2E666);
@@ -10664,9 +10669,11 @@ static Bytes_5(void) {
 	create_word	(0X328F6);
 	create_word	(0X328F8);
 	create_word	(0X328FA);
+	set_name	(0X328FA,	"g_wipeEffectX");
 	create_word	(0X328FC);
 	create_word	(0X328FE);
 	create_word	(0X32900);
+	set_name	(0X32900,	"g_wipeEffectY");
 	create_word	(0X32902);
 	create_word	(0X32904);
 	create_word	(0X32906);
@@ -10688,6 +10695,7 @@ static Bytes_5(void) {
 	create_word	(0X32924);
 	set_name	(0X32924,	"g_selectedPartySlotPtr");
 	create_word	(0X32926);
+	set_name	(0X32926,	"g_shadeShiftDelta");
 	create_word	(0X32928);
 	create_word	(0X3292A);
 	create_word	(0X3292C);
@@ -11905,6 +11913,7 @@ static Bytes_5(void) {
 	create_word	(0X3685F);
 	create_word	(0X36861);
 	create_word	(0X36863);
+	set_name	(0X36863,	"g_groundItemSlotRecord");
 	create_word	(0X36865);
 	create_word	(0X36867);
 	create_strlit	(0X36869,	0X8);
@@ -11967,6 +11976,7 @@ static Bytes_5(void) {
 	op_plain_offset	(x,	128,	0X2D860);
 	set_name	(0X36CE5,	"g_driverStateFlags");
 	create_word	(0X36CE7);
+	set_name	(0X36CE7,	"g_animationSpeed");
 	create_word	(0X36CF5);
 	set_name	(0X36CF5,	"g_partyFacing");
 	create_word	(0X36CF7);

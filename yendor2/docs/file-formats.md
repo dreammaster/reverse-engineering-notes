@@ -216,7 +216,7 @@ buffer band-by-band using a fixed 7-entry shade-delta gradient table
 (`word_328E6`-`word_328F2`) — a distance-based brightness falloff,
 plausibly fed by `+0x64`. **Confirmed shared with wall/monster
 rendering too**: `RenderDungeonViewport` copies the same 7 globals
-into `word_32926` (the shade delta `DrawPicture`/
+into `g_shadeShiftDelta` (the shade delta `DrawPicture`/
 `ShiftPaletteShadeClamped` apply per pixel) before each of its 7
 `RenderDungeonViewRow` calls — so this one gradient table lights
 walls, monsters, floor, and ceiling consistently by depth row (see
@@ -473,7 +473,7 @@ letting an item be placed into it, rejecting with
 `FlashStatusWarning` otherwise. `sub_2621C` also calls
 `IsItemEligibleForCommand` (was `sub_26A75`) right after loading the
 clicked item's catalog record — a generalized eligibility gate for the
-current command code (`word_2E40A`) against the item's flags, gating
+current command code (`g_currentCommandCode`) against the item's flags, gating
 whether an inventory action is allowed on this item at all (a superset
 of the pattern already seen in `IsItemEligibleForEnhance`/
 `IsItemEligibleForRepair`). `sub_2621C` also uses
@@ -582,7 +582,7 @@ totals are plausibly weight or quantity counters, not fully confirmed.
 `PickUpItemFromSlot` also calls `RemoveMultiStatEffect` (was
 `sub_1AC2F`) — the removal counterpart to the already-named
 `ApplyMultiStatEffect`: walks the item's multi-stat-effect table
-(`word_2E54A`) subtracting each entry's bonus from the matching party
+(`g_itemStatEffectTable`) subtracting each entry's bonus from the matching party
 stat field (floor-clamped at 0 for one sub-range of fields), then
 recalculates via `UpdatePartyAverageStatTiers` — i.e. taking off a
 magic item correctly reverses whatever stat bonuses putting it on
@@ -816,7 +816,7 @@ ESC Return to Game — very likely (order not yet matched bit-for-bit)
 the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
 
 **`ShowClueBook`'s full F-key dispatch**, traced directly from its own
-`word_2E40A` (`PollKeyboardInput` result) switch: F1 (`word_2E3F6=1`,
+`g_currentCommandCode` (`PollKeyboardInput` result) switch: F1 (`word_2E3F6=1`,
 Maps) → `RunClueEntryMenu` + `RunClueBookMapCategory` (loads the map
 via `LoadClueBookMapEntry`, draws a row/col grid of per-cell location
 labels via `DrawClueBookMapGrid`, and dispatches cell clicks to an
@@ -936,7 +936,7 @@ compatible-items list for the category view.
 
 **Major reference find**: `ShowArmorDetailRow` also calls two
 bonus-list drawers, each iterating up to 4 `(type id, amount)` pairs
-at `word_2E54A` and printing `"+<amount> <name>"`:
+at `g_itemStatEffectTable` and printing `"+<amount> <name>"`:
 `ShowArmorProtectionsList` ("PROTECTIONS:", type id `<= 0x30`, a
 9-entry table — DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/
 CURSING/HEXING/JINXING) and `ShowArmorAttributeBonusList` ("ADDS:",
@@ -1451,8 +1451,8 @@ per-frame row-depth counter (`word_3292C`) and calls
 (`0x11`, `0x11`, `5`, `3`, `3`, `3`, `3`) — the classic "draw each
 depth row of the visible corridor, near to far" shape. **Correction**:
 before each call it copies one of 7 consecutive globals
-(`word_328E6`-`word_328F2`) into `word_32926` — first described as "a
-different row-data pointer," which is wrong; `word_32926` is the
+(`word_328E6`-`word_328F2`) into `g_shadeShiftDelta` — first described as "a
+different row-data pointer," which is wrong; `g_shadeShiftDelta` is the
 shade-shift delta `DrawPicture`/`ShiftPaletteShadeClamped` apply per
 pixel (see the lighting-gradient note below), so this is a shared
 7-entry per-depth-row *shade-delta* gradient, not pointers of any
@@ -2356,8 +2356,8 @@ Found via `GetMapCellPtr` (`0x16F64`), the address computation the
 fog-of-war reveal system (`RevealCellsAroundPlayer`
 `ida_scripts/name_map_reveal.py`) uses: a 2D grid, **8 bytes per cell**,
 rows **78 cells wide** (row stride `0x270` = `78*8`), segment
-`word_2E562`, with the grid's own origin held in `word_2E564`
-(row/y)/`word_2E55C` (column/x) — i.e. addressing is relative to
+`g_dungeonMapGridSegment`, with the grid's own origin held in `g_dungeonMapGridOriginRow`
+(row/y)/`g_dungeonMapGridOriginCol` (column/x) — i.e. addressing is relative to
 whatever sub-region of the full map is currently loaded, not the map's
 absolute origin. Confirmed fields: **`+0`/`+2`: two tile-type indices**
 (used by `BuildMinimapTileData` — `ida_scripts/name_minimap.py` — as
@@ -2396,18 +2396,18 @@ values read only by the still-unnamed `sub_20D2F`/`sub_20CEC`/
 meaning is unconfirmed. `0xE175`'s confirmed field is `+8` (same role
 as `0xE551`'s `+0xA`, for the overlay picture).
 
-Checked whether `word_32926` (a parameter `BuildMinimapTileData` sets
+Checked whether `g_shadeShiftDelta` (a parameter `BuildMinimapTileData` sets
 per-cell before drawing) is a color/remap value, since `DrawMinimap`
 itself keeps its picture index fixed at `g_pictureDir` entry 9
 throughout its loop rather than varying it per cell — read the
 candidate consumer `sub_2A53C` directly and ruled this out, it never
-touches `word_32926` at all. **Resolved**: the actual reader is
+touches `g_shadeShiftDelta` at all. **Resolved**: the actual reader is
 `ShiftPaletteShadeClamped` (was `sub_2A653`, called 9x from
 `DrawPicture` and sibling picture-draw code, sharing `DrawPicture`'s
-stack frame where `word_32926` is copied to `[bp+var_21]`). It treats
+stack frame where `g_shadeShiftDelta` is copied to `[bp+var_21]`). It treats
 the drawn color as belonging to a 16-entry VGA palette "hue block"
-(16 hues × 16 shades) and shifts it by the `word_32926` delta, clamped
-to stay within the same hue block — so `word_32926` is a **shade-shift
+(16 hues × 16 shades) and shifts it by the `g_shadeShiftDelta` delta, clamped
+to stay within the same hue block — so `g_shadeShiftDelta` is a **shade-shift
 amount** (a distance/light dimming delta), not a remap/color-table
 index as such. The two tile-lookup tables' *own* per-cell values still
 aren't fully traced, but their role is now understood: they're
@@ -2478,12 +2478,12 @@ values they yield (`0x16`-`0x50` range) are far outside `g_pictureDir`'s
 `g_pictureDir` byte offset `DrawPicture` reads) fixed at `0x90` — entry
 9, the small 8×8 icon — for the whole 7×9 loop. So every cell likely
 draws the *same* base glyph, and the varying table value instead feeds
-`word_32926`, a parameter `DrawPicture` passes (as `[bp+var_21]`) to
+`g_shadeShiftDelta`, a parameter `DrawPicture` passes (as `[bp+var_21]`) to
 `sub_2A53C` first thing. Checked whether that's a per-cell color/remap
 parameter by reading `sub_2A53C` — **ruled out**: it never reads
 `[bp+var_21]` at all (it's a local stack-buffer init/copy routine keyed
 off different globals, `word_328C6`/`word_2E48E`/`word_2E490`). So
-`word_32926`'s actual role in `DrawPicture` — and by extension what the
+`g_shadeShiftDelta`'s actual role in `DrawPicture` — and by extension what the
 `0x16`-`0x50` table values mean — is still unknown; genuinely open,
 not a working theory.
 
