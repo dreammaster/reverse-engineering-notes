@@ -95654,3 +95654,456 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rank_naming_candidates.py', 'noexport']
+[*] reading rank_naming_candidates.py
+[*] executing rank_naming_candidates.py
+[*] captured stdout from target script:
+----- begin target script output -----
+202 unnamed functions (<=300 bytes) with named refs
+  0x2ae3c (size=242, 20 refs): CheckQuestItemsCompleted, ClearStatusPanelIfDirty, CollectMagicOreCache, CollectNuoreCache, DrawMouseCursor, InstantKillActiveMonster, PartyMassHealAndOverheal, PlayMusicTrack
+  0x26ee8 (size=219, 19 refs): BuildMinimapTileData, DrawMinimap, DrawMouseCursor, ErrorCheck, FileEntry_Read, FileEntry_Write, GetMapCellPtr, PrepareWorldDatRead
+  0x26e11 (size=215, 19 refs): BuildMinimapTileData, DrawMinimap, DrawMouseCursor, ErrorCheck, FileEntry_Read, FileEntry_Write, GetMapCellPtr, PrepareWorldDatRead
+  0x218dc (size=285, 18 refs): DrawMouseCursor, DrawPicture, ErrorCheck, FileEntry_Read, LoadMasterPalette, PlayMusicTrack, PollKeyboardInput, StopMusicAndResetTimer
+  0x1b5fd (size=225, 17 refs): AddBCD4, ApplyEffectAndDrawIconBar, CheckForLevelUp, ClearStatusPanelIfDirty, DrawMouseCursor, FormatAndDrawBCD4, PrepareTrapEffectSlots, RestoreCursorBackgroundIfDirty
+  0x26d54 (size=189, 14 refs): BuildMinimapTileData, DrawMinimap, DrawMouseCursor, RedrawDungeonScreen, RestoreFullScreenFromEMS, _font_bgColor, _font_bgTransparent, _font_fgColor
+  0x1b4c2 (size=280, 14 refs): ApplyEffectAndDrawIconBar, ClearStatusPanelIfDirty, DrawMouseCursor, FormatNumber, PrepareTrapEffectSlots, RestoreCursorBackgroundIfDirty, SelectPartyRecordById, SetGlobalFlag
+  0x26fc3 (size=136, 13 refs): BuildMinimapTileData, DrawMinimap, DrawMouseCursor, RedrawDungeonScreen, RefreshDungeonScreen, RestoreFullScreenFromEMS, _font_bgColor, _font_bgTransparent
+  0x254cc (size=120, 13 refs): DrawCharacterClassAndLevel, DrawFullScreenPictureAndCacheToEMS, DrawPartyMemberPortrait, DrawPicture, DrawThreeThresholdStats, RestoreCursorBackgroundIfDirty, _font_bgTransparent, _font_fgColor
+  0x1728a (size=161, 13 refs): DrawPicture, LoadItemCatalogRecord, _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, _videoBufferSeg
+  0x14122 (size=121, 13 refs): DrawMouseCursor, DrawPicture, ErrorCheck, FileEntry_Read, _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x
+  0x14f92 (size=294, 12 refs): _emsPointer1?, _emsSegmentPageFrame, _font_bgColor, _font_bgTransparent, _font_fgColor, _videoSegment, allocMem, fe
+  0x2714a (size=146, 11 refs): ClearStatusPanelIfDirty, DrawMouseCursor, FormatAndDrawBCD4, _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y
+  0x2075b (size=188, 11 refs): TryInteractAtPosition, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, _videoSegment, errorCode, fontOffset
+  0x1f217 (size=134, 11 refs): DrawCheckboxIndicator, GameDialog_drawAnimation, GameDialog_drawDos, GameDialog_drawLoad, GameDialog_drawMusic, GameDialog_drawNewGame, GameDialog_drawReturn, GameDialog_drawSave
+  0x1075e (size=112, 11 refs): ClearStatusPanelIfDirty, DrawMouseCursor, RestoreCursorBackgroundIfDirty, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, _videoBufferSeg
+  0x28034 (size=260, 10 refs): ClearStatusPanelIfDirty, StpCpy, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, _videoBufferSeg, _videoSegment
+  0x23b19 (size=69, 10 refs): ClearStatusPanelIfDirty, DrawMouseCursor, RestoreCursorBackgroundIfDirty, _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y
+  0x21c79 (size=73, 10 refs): ClearStatusPanelIfDirty, DrawMouseCursor, ShowMaterialCounterHud, _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y
+  0x20817 (size=113, 10 refs): ClearVideoMemoryRegion, DrawFloorTypeLegendRow, DrawWallTypeLegendRow, RestoreCursorBackgroundIfDirty, _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x
+  0x29461 (size=66, 9 refs): ClearStatusPanelIfDirty, DrawMouseCursor, RestoreCursorBackgroundIfDirty, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, _videoBufferSeg
+  0x22315 (size=114, 9 refs): DrawPicture, MapUnmapPages, _emsPointer1?, _emsSegmentPageFrame, _font_bgTransparent, _videoBufferSeg, _videoSegment, x
+  0x2070c (size=79, 8 refs): DrawCellIconPair, ErrorCheck, FileEntry_Write, LoadWorldDatTilePalette, PersistExploredCell, errorCode, x, y
+  0x20652 (size=78, 8 refs): DrawCellIconPair, ErrorCheck, FileEntry_Write, LoadWorldDatTilePalette, PersistExploredCell, errorCode, x, y
+  0x1f53e (size=79, 7 refs): _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, _videoSegment, writeString
+  0x28412 (size=138, 6 refs): ErrorCheck, FileEntry_Read, errorCode, g_driverStateFlags, g_soundDriverFarPtr, locret_28424
+  0x25ed1 (size=63, 6 refs): _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, writeString
+  0x2169c (size=84, 6 refs): DrawPicture, _font_bgTransparent, _videoBufferSeg, _videoSegment, x, y
+  0x2047b (size=47, 6 refs): _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, writeString
+  0x2044c (size=47, 6 refs): _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, writeString
+  0x1f884 (size=67, 6 refs): _font_bgColor, _font_bgTransparent, _font_fgColor, _textPos_x, _textPos_y, writeString
+  0x161d0 (size=100, 6 refs): _font_bgColor, _font_fgColor, _textPos_x, _textPos_y, g_driverStateFlags, writeString
+  0x13c86 (size=73, 6 refs): FormatNumber, _font_fgColor, _textPos_x, _textPos_y, errorCode, writeString
+  0x11e4a (size=100, 6 refs): _font_bgColor, _font_fgColor, _textPos_x, _textPos_y, g_driverStateFlags, writeString
+  0x28a76 (size=286, 5 refs): _textPos_x, fontOffset, locret_28AE9, locret_28B30, locret_28B93
+  0x2778d (size=143, 5 refs): ErrorCheck, FileEntry_Read, FileEntry_Write, errorCode, locret_2780A
+  0x26cfb (size=89, 5 refs): DrawPicture, SelectPartyRecordById, _font_bgTransparent, _val38, locret_26D53
+  0x25fcd (size=84, 5 refs): FormatNumber, _font_fgColor, _textPos_x, _textPos_y, writeString
+  0x23442 (size=101, 5 refs): _font_bgColor, _font_fgColor, _videoSegment, x, y
+  0x1e356 (size=89, 5 refs): _font_fgColor, _textPos_x, _textPos_y, locret_1E3AE, writeChar
+  0x1cbc4 (size=47, 5 refs): FormatAndDrawBCD4, _font_fgColor, _textPos_x, _textPos_y, writeString
+  0x1b8ee (size=129, 5 refs): _font_fgColor, _textPos_x, _textPos_y, errorCode, writeString
+  0x148b2 (size=56, 5 refs): FormatNumber, _font_fgColor, _textPos_x, locret_148E9, writeString
+  0x11de2 (size=58, 5 refs): DrawMouseCursor, DrawPicture, wait, x, y
+  0x11d66 (size=124, 5 refs): DrawMouseCursor, DrawPicture, _font_bgTransparent, x, y
+  0x293c0 (size=78, 4 refs): DrawPicture, _font_bgTransparent, x, y
+  0x28b94 (size=61, 4 refs): _textPos_x, _textPos_y, locret_28BD0, writeChar
+  0x25d82 (size=220, 4 refs): _font_fgColor, _textPos_y, locret_25E5D, writeString
+  0x22c3e (size=71, 4 refs): ErrorCheck, FileEntry_Read, FileEntry_Write, errorCode
+  0x22bf5 (size=73, 4 refs): ErrorCheck, FileEntry_Read, FileEntry_Write, errorCode
+  0x1e522 (size=36, 4 refs): DrawPicture, _font_bgTransparent, x, y
+  0x1e3af (size=152, 4 refs): _font_fgColor, _textPos_x, _textPos_y, writeString
+  0x1d1d4 (size=209, 4 refs): PollKeyboardInput, _textPos_x, errorCode, writeChar
+  0x1cf50 (size=120, 4 refs): ErrorCheck, FileEntry_Read, LoadItemCatalogRecord, errorCode
+  0x1b8ab (size=67, 4 refs): DrawPicture, _font_bgTransparent, x, y
+  0x14a87 (size=97, 4 refs): _font_fgColor, _textPos_x, _textPos_y, writeString
+  0x14a5e (size=41, 4 refs): _font_fgColor, _textPos_x, locret_14A86, writeString
+  0x1496b (size=41, 4 refs): _font_fgColor, _textPos_x, locret_14993, writeString
+  0x13707 (size=121, 4 refs): _font_fgColor, _textPos_x, locret_1377F, writeString
+  0x13630 (size=72, 4 refs): _font_fgColor, _textPos_x, writeChar, writeString
+----- end target script output -----
+[*] finished executing rank_naming_candidates.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'name_container_nesting_levels.py']
+[*] reading name_container_nesting_levels.py
+[*] executing name_container_nesting_levels.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x1cf50  'sub_1CF50' -> 'FindItemInsideContainerLevel2': ok
+0x1cfc8  'sub_1CFC8' -> 'FindItemInsideContainerLevel3': ok
+----- end target script output -----
+[*] finished executing name_container_nesting_levels.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106940
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SW.EXE
+input file    : C:\dev\yendor\yendor2\game\SW.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : d464f6847b9ea4296e9ce1b251f92788
+
+segments:
+  seg000       0x010000-0x010c40  (3136 bytes)
+  seg001       0x010c40-0x011160  (1312 bytes)
+  seg002       0x011160-0x01177b  (1563 bytes)
+  seg003       0x01177b-0x011a10  (661 bytes)
+  seg004       0x011a10-0x011edc  (1228 bytes)
+  seg005       0x011edc-0x012553  (1655 bytes)
+  seg006       0x012553-0x012623  (208 bytes)
+  seg007       0x012623-0x012b84  (1377 bytes)
+  seg008       0x012b84-0x01305e  (1242 bytes)
+  seg009       0x01305e-0x014ae8  (6794 bytes)
+  seg010       0x014ae8-0x01522d  (1861 bytes)
+  seg011       0x01522d-0x016262  (4149 bytes)
+  seg012       0x016262-0x016298  (54 bytes)
+  seg013       0x016298-0x0162b5  (29 bytes)
+  seg014       0x0162b5-0x0162f6  (65 bytes)
+  seg015       0x0162f6-0x016dea  (2804 bytes)
+  seg016       0x016dea-0x016e18  (46 bytes)
+  seg017       0x016e18-0x016ede  (198 bytes)
+  seg018       0x016ede-0x016efa  (28 bytes)
+  seg019       0x016efa-0x016f64  (106 bytes)
+  seg020       0x016f64-0x016f83  (31 bytes)
+  seg021       0x016f83-0x01700e  (139 bytes)
+  seg022       0x01700e-0x017031  (35 bytes)
+  seg023       0x017031-0x017b92  (2913 bytes)
+  seg024       0x017b92-0x017fb8  (1062 bytes)
+  seg025       0x017fb8-0x018067  (175 bytes)
+  seg026       0x018067-0x01840d  (934 bytes)
+  seg027       0x01840d-0x018424  (23 bytes)
+  seg028       0x018424-0x018504  (224 bytes)
+  seg029       0x018504-0x0193be  (3770 bytes)
+  seg030       0x0193be-0x019a16  (1624 bytes)
+  seg031       0x019a16-0x019e56  (1088 bytes)
+  seg032       0x019e56-0x01a294  (1086 bytes)
+  seg033       0x01a294-0x01a37e  (234 bytes)
+  seg034       0x01a37e-0x01a3f0  (114 bytes)
+  seg035       0x01a3f0-0x01a5cc  (476 bytes)
+  seg036       0x01a5cc-0x01a5f5  (41 bytes)
+  seg037       0x01a5f5-0x01a76d  (376 bytes)
+  seg038       0x01a76d-0x01aa05  (664 bytes)
+  seg039       0x01aa05-0x01ac80  (635 bytes)
+  seg040       0x01ac80-0x01aef7  (631 bytes)
+  seg041       0x01aef7-0x01b30c  (1045 bytes)
+  seg042       0x01b30c-0x01b428  (284 bytes)
+  seg043       0x01b428-0x01b47a  (82 bytes)
+  seg044       0x01b47a-0x01b4c1  (71 bytes)
+  seg045       0x01b4c1-0x01ccbb  (6138 bytes)
+  seg046       0x01ccbb-0x01cdbc  (257 bytes)
+  seg047       0x01cdbc-0x01d01d  (609 bytes)
+  seg048       0x01d01d-0x01d038  (27 bytes)
+  seg049       0x01d038-0x01d118  (224 bytes)
+  seg050       0x01d118-0x01d146  (46 bytes)
+  seg051       0x01d146-0x01d197  (81 bytes)
+  seg052       0x01d197-0x01d1d4  (61 bytes)
+  seg053       0x01d1d4-0x01d2a5  (209 bytes)
+  seg054       0x01d2a5-0x01d4b7  (530 bytes)
+  seg055       0x01d4b7-0x01dce0  (2089 bytes)
+  seg056       0x01dce0-0x01e64a  (2410 bytes)
+  seg057       0x01e64a-0x01ea6d  (1059 bytes)
+  seg058       0x01ea6d-0x01f97b  (3854 bytes)
+  seg059       0x01f97b-0x020070  (1781 bytes)
+  seg060       0x020070-0x0208ca  (2138 bytes)
+  seg061       0x0208ca-0x0209d2  (264 bytes)
+  seg062       0x0209d2-0x020c1e  (588 bytes)
+  seg063       0x020c1e-0x021530  (2322 bytes)
+  seg064       0x021530-0x0216f0  (448 bytes)
+  seg065       0x0216f0-0x0218dc  (492 bytes)
+  seg066       0x0218dc-0x0219f9  (285 bytes)
+  seg067       0x0219f9-0x021cc2  (713 bytes)
+  seg068       0x021cc2-0x021de1  (287 bytes)
+  seg069       0x021de1-0x0222f7  (1302 bytes)
+  seg070       0x0222f7-0x02278b  (1172 bytes)
+  seg071       0x02278b-0x022a67  (732 bytes)
+  seg072       0x022a67-0x0236eb  (3204 bytes)
+  seg073       0x0236eb-0x023a64  (889 bytes)
+  seg074       0x023a64-0x023a7c  (24 bytes)
+  seg075       0x023a7c-0x023ba4  (296 bytes)
+  seg076       0x023ba4-0x025607  (6755 bytes)
+  seg077       0x025607-0x025655  (78 bytes)
+  seg078       0x025655-0x0256f0  (155 bytes)
+  seg079       0x0256f0-0x02570b  (27 bytes)
+  seg080       0x02570b-0x02572b  (32 bytes)
+  seg081       0x02572b-0x025740  (21 bytes)
+  seg082       0x025740-0x025862  (290 bytes)
+  seg083       0x025862-0x025a66  (516 bytes)
+  seg084       0x025a66-0x025aab  (69 bytes)
+  seg085       0x025aab-0x025b33  (136 bytes)
+  seg086       0x025b33-0x026021  (1262 bytes)
+  seg087       0x026021-0x026c9d  (3196 bytes)
+  seg088       0x026c9d-0x026d54  (183 bytes)
+  seg089       0x026d54-0x02704b  (759 bytes)
+  seg090       0x02704b-0x02746c  (1057 bytes)
+  seg091       0x02746c-0x0274b4  (72 bytes)
+  seg092       0x0274b4-0x02781c  (872 bytes)
+  seg093       0x02781c-0x027849  (45 bytes)
+  seg094       0x027849-0x027a20  (471 bytes)
+  seg095       0x027a20-0x027aeb  (203 bytes)
+  seg096       0x027aeb-0x028034  (1353 bytes)
+  seg097       0x028034-0x02814b  (279 bytes)
+  seg098       0x02814b-0x028245  (250 bytes)
+  seg099       0x028245-0x02827e  (57 bytes)
+  seg100       0x02827e-0x0286b1  (1075 bytes)
+  seg101       0x0286b1-0x0286fc  (75 bytes)
+  seg102       0x0286fc-0x028a5a  (862 bytes)
+  seg103       0x028a5a-0x028a75  (27 bytes)
+  seg104       0x028a75-0x028bd1  (348 bytes)
+  seg105       0x028bd1-0x028c93  (194 bytes)
+  seg106       0x028c93-0x02940e  (1915 bytes)
+  seg107       0x02940e-0x029529  (283 bytes)
+  seg108       0x029529-0x0295a7  (126 bytes)
+  seg109       0x0295a7-0x029738  (401 bytes)
+  seg110       0x029738-0x029877  (319 bytes)
+  seg111       0x029877-0x02a765  (3822 bytes)
+  seg112       0x02a765-0x02a787  (34 bytes)
+  seg113       0x02a787-0x02a914  (397 bytes)
+  seg114       0x02a914-0x02ade8  (1236 bytes)
+  seg115       0x02ade8-0x02ae3b  (83 bytes)
+  seg116       0x02ae3b-0x02b383  (1352 bytes)
+  seg117       0x02b383-0x02b436  (179 bytes)
+  seg118       0x02b436-0x02b655  (543 bytes)
+  seg119       0x02b655-0x02ba61  (1036 bytes)
+  seg120       0x02ba61-0x02baa0  (63 bytes)
+  seg121       0x02baa0-0x02bd1a  (634 bytes)
+  seg122       0x02bd1a-0x02c010  (758 bytes)
+  seg123       0x02c010-0x02c0fe  (238 bytes)
+  seg124       0x02c0fe-0x02d577  (5241 bytes)
+  seg125       0x02d577-0x02d5e0  (105 bytes)
+  seg126       0x02d5e0-0x02d609  (41 bytes)
+  seg127       0x02d609-0x02d65a  (81 bytes)
+  seg128       0x02d65a-0x02d86d  (531 bytes)
+  seg129       0x02d86d-0x03cc80  (62483 bytes)
+  seg130       0x03cc80-0x03ce80  (512 bytes)
+
+functions: 769 total, 445 named, 324 still sub_XXXXX
+
+structs (0): 
+
+named functions (non-sub_, first 200):
+  0x010000  start
+  0x010c40  ShowClueBook
+  0x011160  ClassifyFloorType
+  0x01119a  IsCellTypeImpassable
+  0x0111c1  ClassifyObstacleAtWorldPosition
+  0x011236  ClassifyObstacleAtViewportRow
+  0x0112ae  HandleMovementInput
+  0x01177c  ShowIntroPicture
+  0x011953  FadePaletteStep
+  0x011edc  InitGame
+  0x01206f  clear_kbd_buffer
+  0x012075  findSavegame
+  0x0120ed  InitGlobals
+  0x0122f2  loadWorldDat2
+  0x012323  loadWorldDat3
+  0x012355  loadWorldDat1
+  0x01247a  loadWorldDat4
+  0x0124ab  loadWorldDat5
+  0x012554  LoadItemCatalogRecord
+  0x01264d  MapUnmapPages
+  0x012677  InitMemory
+  0x012a51  InitGraphics
+  0x012b31  Struc1_Allocate
+  0x012b76  calcOffset
+  0x012b84  RunClueEntryMenu
+  0x012c96  DrawClueEntryList
+  0x012e59  ShowClueCategoryEntries
+  0x012ecd  BuildClueEntryText
+  0x01305e  WaitForKeypress
+  0x013090  RunClueBookItemCategory
+  0x013119  RunClueBookItemDetailWithAbilityInfo
+  0x01318d  RunClueBookWeaponCategory
+  0x013216  RunClueBookSpellCategory
+  0x013278  RunClueBookMapCategory
+  0x0132b5  RunClueBookMonsterCategory
+  0x0132f2  ShowPagedEntryScreen
+  0x01334e  RunClueBookTransportCategory
+  0x013678  ShowClueBookItemDetail
+  0x013780  ShowArmorDetailRow
+  0x0137c3  ShowHealingItemPercentInfo
+  0x01381c  ShowItemEffectDuration
+  0x01385c  ShowWeaponDetailRow
+  0x0138c0  UpdateScrollArrows
+  0x013957  ShowItemAbilityEffectInfo
+  0x013b3f  ShowClueBookSpellDetail
+  0x013e98  ShowClueBookTransportDetail
+  0x013edf  DrawTransportDetailRow
+  0x013fcf  DrawClueBookMapGrid
+  0x01419b  LoadClueBookMapEntry
+  0x0141d9  ShowClueBookMonsterDetail
+  0x01466e  LoadClueBookMonsterEntry
+  0x0147ff  DrawLabeledBCDIfNonzero
+  0x014833  DrawRecordFieldBCDIfNonzero
+  0x014876  DrawLabeledNumberIfNonzero
+  0x0148ea  ShowArmorAttributeBonusList
+  0x014994  DrawSubIconSelectorRow
+  0x0149dd  ShowArmorProtectionsList
+  0x014ae8  ShowClueBookRegistrationNag
+  0x014b10  FillVideoBuffer
+  0x014b24  BuildItemDisplayName
+  0x014b85  BuildMonsterDisplayName
+  0x014bd5  ShowClueBookHelpScreen
+  0x014c37  DrawClueBookNavBar
+  0x014d26  HandleClueCategorySelection
+  0x014dfc  RestoreClueBookBackgroundFromEMS
+  0x0150e5  DrawMessageBox
+  0x015142  PlayClueBookOpenAnimation
+  0x01522e  RunCharacterCreation
+  0x015267  FinalizeCharacterCreation
+  0x015e44  ComposeCharacterPortrait
+  0x016298  allocMem
+  0x0162f6  RunDungeonGameLoop
+  0x016407  HandleDungeonInput
+  0x016a39  BuildCombatTurnOrder
+  0x016b63  ProcessCombatRound
+  0x016d4d  FindPartySlotForRecord
+  0x016d7f  SelectActiveMonster
+  0x016e18  ClearStatusPanelIfDirty
+  0x016ede  TrimTrailingSpaces
+  0x016efa  ClearMessageBoxArea
+  0x016f64  GetMapCellPtr
+  0x01700e  StrCat
+  0x01732b  RunShopScreen
+  0x0175f4  ShowMaterialCounterHud
+  0x01766f  LoadLockState
+  0x01770c  LoadCurgameRecord
+  0x017795  ShowLockStatus
+  0x0178a6  UseAbilityCommand
+  0x017a8d  PayGoldAndAcquireItem
+  0x017b09  SellClickedCatalogItem
+  0x017b67  HitTestCatalogSlot
+  0x017b92  UseItem
+  0x017fb8  FormatNumber
+  0x018068  PrepareTrapEffectSlots
+  0x0180ba  ApplyEffectAndDrawIconBar
+  0x018205  SpendMaterialCounterClamped
+  0x01822a  DeductHPClamped
+  0x018248  DeductMPClamped
+  0x018257  ApplyEffectCost
+  0x018333  RollEffectResistance
+  0x0183d5  RollEffectMagnitude
+  0x01840e  wait
+  0x018424  FileEntry_Close
+  0x018450  FileEntry_CreateFile
+  0x018472  FileEntry_OpenFile
+  0x018491  FileEntry_Read
+  0x0184bc  FileEntry_Write
+  0x0184e7  FileEntry_Seek
+  0x018504  HandlePortraitClick
+  0x0185a2  RefreshPartyPortraits
+  0x018fda  TryEnhanceItemForGold
+  0x0190af  ShowInsufficientGoldMessage
+  0x0190e9  RestorePortraitAreaAtPosition
+  0x019133  ShowPartyPortraitForSlot
+  0x019140  TryRepairItemForGold
+  0x0191fc  RestoreLargePanelFromEMS
+  0x01922c  RestorePortraitPanelFromEMS
+  0x019264  TrySellItemForGold
+  0x01930e  SelectClickedRosterPortrait
+  0x019768  GetClassNameString
+  0x019957  SelectAndDrawPartyStatusRow
+  0x019a16  AddBCD4
+  0x019a3c  AddToBCDCounter
+  0x019a56  CompareBCD4
+  0x019a7c  IsBCDCounterAtLeast
+  0x019ab3  ConvertWordToBCD4
+  0x019b80  FormatAndDrawBCD4
+  0x019c7b  SubBCD4
+  0x019ca1  MulBCD4ByWord
+  0x019dfb  SubtractFromBCDCounter
+  0x019e56  ApplyMapTriggerEffect
+  0x01a04b  IsPositionInTriggerList
+  0x01a085  TickPartyAilmentIconBar
+  0x01a294  PlaceItemOnGround
+  0x01a37e  TryDropHeldItem
+  0x01a3f0  TravelToDestination
+  0x01a4c5  IsDestinationUnlocked
+  0x01a5cc  FlashStatusWarning
+  0x01a76e  ShowConfirmPrompt
+  0x01aa53  AddToStatCapped
+  0x01ab26  UpdatePartyAverageStatTiers
+  0x01aef8  UseKeyItem
+  0x01b0cf  RunEnhanceItemScreen
+  0x01b147  IsItemEligibleForEnhance
+  0x01b194  RunRepairItemScreen
+  0x01b20c  IsItemEligibleForRepair
+  0x01b245  RunSellItemScreen
+  0x01b2bd  ConfirmAndValidatePartyTarget
+  0x01b428  CheckForLevelUp
+  0x01b47a  ClearPortraitPanelAreas
+  0x01b6de  FinishItemUse
+  0x01b702  SelectItemUseRecord
+  0x01b717  CheckPartyMemberItemFlag
+  0x01b74a  ClassifyPartyMemberCondition
+  0x01b7a5  CheckPartyMemberItemFlagAndClearPanel
+  0x01b7dd  CheckAndAnnounceLevelUp
+  0x01b96f  ShowHealingCostPrompt
+  0x01ba96  BuildItemUseMessage
+  0x01bb48  ApplyItemEffectFlags
+  0x01bea1  UseItemType_400
+  0x01bf94  UseHealingItem
+  0x01c123  UseTrainingItem
+  0x01c589  UseAbilityScroll
+  0x01c809  CheckAndPaySpecialItemCost
+  0x01c890  LoadItemData
+  0x01ca64  ShowItemUsagePreview
+  0x01cbf3  CheckKeyItem
+  0x01cc2e  RedrawPartyGoldDisplay
+  0x01ccbc  ComputeBarterPricingPreview
+  0x01cdbc  IsItemRangeAvailable
+  0x01ce6b  FindItemInInventoryRange
+  0x01cecb  FindItemInsideContainer
+  0x01cf50  FindItemInsideContainerLevel2
+  0x01cfc8  FindItemInsideContainerLevel3
+  0x01d01e  StrFillN
+  0x01d038  PollKeyboardInput
+  0x01d118  HitTestRegionTable
+  0x01d2a6  RunTitleScreen
+  0x01d4b8  HandleRangedOrCombatAction
+  0x01d937  HighlightSelectedAbilityIcon
+  0x01d9e5  ApplyResolvedDamageWithResistance
+  0x01da2c  ApplyDamageAlongCorridorLine
+  0x01da42  ShowCombatMessageOrWait
+  0x01da60  ResolveAttackOrAbilityAction
+  0x01db73  ResolveAbilityEffect
+  0x01dce0  RunAlchemyScreen
+  0x01e4aa  ShowAlchemyIconActive
+  0x01e4d6  ShowAlchemyIconIdle
+  0x01e546  DrawAlchemyStatusPanel
+  0x01e64a  RestPartyAndAdvanceClock
+  0x01ea18  IsRestingAllowedHere
+  0x01ea6e  RunGameDialog
+  0x01f0cd  InitializeDungeonLevel
+  0x01f163  CycleAnimationSetting
+  0x01f197  EraseLabelText
+  0x01f1b8  GetListItemPosition
+  0x01f1f4  DrawCheckboxIndicator
+  0x01f29d  SelectGameDialogOption
+  0x01f38a  GameDialog_drawButtons
+  0x01f438  GameDialog_drawAnimation
+  ...
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

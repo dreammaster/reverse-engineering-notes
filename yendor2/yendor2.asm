@@ -22925,7 +22925,7 @@ loc_1CF16:                              ; CODE XREF: FindItemInsideContainer+33�
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CF46
                 push    word_36863
-                call    sub_1CF50
+                call    FindItemInsideContainerLevel2
                 or      ax, ax
                 jz      short loc_1CF42
                 cmp     word_32972, 0
@@ -22959,9 +22959,9 @@ FindItemInsideContainer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall sub_1CF50(int, int, FileEntry *this)
-sub_1CF50       proc near               ; CODE XREF: FindItemInsideContainer+5B↑p
-                push    di
+; int __fastcall FindItemInsideContainerLevel2(int, int, FileEntry *this)
+FindItemInsideContainerLevel2 proc near ; CODE XREF: FindItemInsideContainer+5B↑p
+                push    di              ; Depth-2 step of FindItemInsideContainer's nested-container search: same shape (load contents, scan 8 slots, recurse via FindItemInsideContainerLevel3 on a flagged sub-container item), different fixed scratch-buffer offsets (0xBC4A/0xBC4C). Called only from FindItemInsideContainer.
                 push    cx              ; this
                 mov     ax, 0BC4Ah
                 mov     bx, 8FFBh       ; this
@@ -22974,7 +22974,7 @@ sub_1CF50       proc near               ; CODE XREF: FindItemInsideContainer+5B�
                 mov     di, 0BC4Ch
                 mov     cx, 8
 
-loc_1CF79:                              ; CODE XREF: sub_1CF50+71↓j
+loc_1CF79:                              ; CODE XREF: FindItemInsideContainerLevel2+71↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1CFBE
@@ -22989,13 +22989,13 @@ loc_1CF79:                              ; CODE XREF: sub_1CF50+71↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CF9B:                              ; CODE XREF: sub_1CF50+33↑j
-                                        ; sub_1CF50+39↑j
+loc_1CF9B:                              ; CODE XREF: FindItemInsideContainerLevel2+33↑j
+                                        ; FindItemInsideContainerLevel2+39↑j
                 call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CFBE
                 push    word_36863
-                call    sub_1CFC8
+                call    FindItemInsideContainerLevel3
                 or      ax, ax
                 jz      short loc_1CFBA
                 pop     word_32972
@@ -23003,26 +23003,26 @@ loc_1CF9B:                              ; CODE XREF: sub_1CF50+33↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CFBA:                              ; CODE XREF: sub_1CF50+60↑j
+loc_1CFBA:                              ; CODE XREF: FindItemInsideContainerLevel2+60↑j
                 pop     word_36863
 
-loc_1CFBE:                              ; CODE XREF: sub_1CF50+2D↑j
-                                        ; sub_1CF50+55↑j
+loc_1CFBE:                              ; CODE XREF: FindItemInsideContainerLevel2+2D↑j
+                                        ; FindItemInsideContainerLevel2+55↑j
                 add     di, 4
                 loop    loc_1CF79
                 pop     cx
                 pop     di
                 xor     ax, ax
                 retn
-sub_1CF50       endp
+FindItemInsideContainerLevel2 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall sub_1CFC8(int, int, FileEntry *this)
-sub_1CFC8       proc near               ; CODE XREF: sub_1CF50+5B↑p
-                push    di
+; int __fastcall FindItemInsideContainerLevel3(int, int, FileEntry *this)
+FindItemInsideContainerLevel3 proc near ; CODE XREF: FindItemInsideContainerLevel2+5B↑p
+                push    di              ; Depth-3, terminal step of FindItemInsideContainer's nested- container search: same shape as the depth-1/2 steps but does not recurse further, so the search chain stops at 3 levels deep. Called only from FindItemInsideContainerLevel2.
                 push    cx              ; this
                 mov     ax, 0BC6Ch
                 mov     bx, 8FFBh       ; this
@@ -23035,7 +23035,7 @@ sub_1CFC8       proc near               ; CODE XREF: sub_1CF50+5B↑p
                 mov     di, 0BC6Eh
                 mov     cx, 8
 
-loc_1CFF1:                              ; CODE XREF: sub_1CFC8+4E↓j
+loc_1CFF1:                              ; CODE XREF: FindItemInsideContainerLevel3+4E↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1D013
@@ -23050,15 +23050,15 @@ loc_1CFF1:                              ; CODE XREF: sub_1CFC8+4E↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1D013:                              ; CODE XREF: sub_1CFC8+2D↑j
-                                        ; sub_1CFC8+33↑j ...
+loc_1D013:                              ; CODE XREF: FindItemInsideContainerLevel3+2D↑j
+                                        ; FindItemInsideContainerLevel3+33↑j ...
                 add     di, 4
                 loop    loc_1CFF1
                 pop     cx
                 pop     di
                 xor     ax, ax
                 retn
-sub_1CFC8       endp
+FindItemInsideContainerLevel3 endp
 
 seg047          ends
 

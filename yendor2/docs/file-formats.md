@@ -626,7 +626,15 @@ range (a single id if the range's min/max are equal), it first checks a
 fixed 6-entry table (`0x9519`) for a direct match, then falls back to
 `FindItemInInventoryRange` (search every party member's main inventory,
 recursing into open containers via `FindItemInsideContainer`) until
-someone qualifies. It's reused for at least two different purposes:
+someone qualifies. The container recursion is a **fixed 3-level-deep**
+chain, confirmed structurally identical at each level:
+`FindItemInsideContainer` → `FindItemInsideContainerLevel2` (was
+`sub_1CF50`) → `FindItemInsideContainerLevel3` (was `sub_1CFC8`,
+terminal — it does not recurse further). Each level loads a
+container's 8-slot contents and scans for an item id in range, and if a
+non-matching slot's item catalog record has flag `[+0xC]` bit `0x2000`
+set, recurses one level deeper into that nested container. It's reused
+for at least two different purposes:
 a boat/horse-style transport gate (its original use), and — found via
 `CheckQuestItemsCompleted` (an item-icon-dispatch handler,
 `word_32974==0x2C8`) — a **quest-item-completion check**: 4 specific

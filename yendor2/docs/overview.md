@@ -3463,6 +3463,21 @@ Named `sub_14B24` -> `BuildItemDisplayName`: the item-detail sibling of
 
 443 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: FindItemInsideContainerLevel2/Level3
+
+Named `sub_1CF50` -> `FindItemInsideContainerLevel2` and `sub_1CFC8` ->
+`FindItemInsideContainerLevel3`: `FindItemInInventoryRange`'s container
+recursion (via `FindItemInsideContainer`) turns out to be a fixed
+3-level-deep chain, each level structurally identical (load a
+container's 8 slots, scan for an item id in range, recurse one level
+deeper on a flagged nested-container item) against different fixed
+scratch-buffer offsets, confirmed terminal at level 3 (no further
+recursion there). `FindItemInsideContainer`'s own pre-existing comment
+already flagged the recursion into `sub_1CF50` by address, making this
+an easy, high-confidence naming pass.
+
+445 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

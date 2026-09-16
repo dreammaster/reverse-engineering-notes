@@ -4434,7 +4434,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1CF3E);
 	op_hex		(x,	1);
 	create_insn	(0X1CF42);
+	set_cmt	(0X1CF50,	"Depth-2 step of FindItemInsideContainer's nested-container search: same shape (load contents, scan 8 slots, recurse via FindItemInsideContainerLevel3 on a flagged sub-container item), different fixed scratch-buffer offsets (0xBC4A/0xBC4C). Called only from FindItemInsideContainer.",	0);
 	create_insn	(0X1CF50);
+	set_name	(0X1CF50,	"FindItemInsideContainerLevel2");
 	set_cmt	(0X1CF51,	"this",	0);
 	set_cmt	(0X1CF55,	"this",	0);
 	create_insn	(x=0X1CF97);
@@ -4445,7 +4447,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1CFB6);
 	op_hex		(x,	1);
 	create_insn	(0X1CFBA);
+	set_cmt	(0X1CFC8,	"Depth-3, terminal step of FindItemInsideContainer's nested- container search: same shape as the depth-1/2 steps but does not recurse further, so the search chain stops at 3 levels deep. Called only from FindItemInsideContainerLevel2.",	0);
 	create_insn	(0X1CFC8);
+	set_name	(0X1CFC8,	"FindItemInsideContainerLevel3");
 	set_cmt	(0X1CFC9,	"this",	0);
 	set_cmt	(0X1CFCD,	"this",	0);
 	create_insn	(x=0X1D00F);
@@ -5695,6 +5699,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X21A8E);
 	set_cmt	(0X21A94,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X21ACD,	"msg",	0);
 	create_insn	(x=0X21AEA);
 	op_hex		(x,	1);
@@ -5739,15 +5752,6 @@ static Bytes_1(void) {
 	set_cmt	(0X21CC2,	"Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.",	0);
 	create_insn	(0X21CC2);
 	set_name	(0X21CC2,	"PersistExploredCell");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X21CC6,	"this",	0);
 	set_cmt	(0X21CD4,	"this",	0);
 	set_cmt	(0X21D30,	"Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.",	0);
@@ -8081,6 +8085,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29B5A);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29B60);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29B66);
@@ -8158,15 +8171,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29C90);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X29C95,	"x",	0);
 	set_cmt	(0X29C99,	"y",	0);
 	create_insn	(x=0X29C9F);
@@ -11323,6 +11327,15 @@ static Bytes_3(void) {
 	create_word	(0X36E51);
 	set_cmt	(0X36E53,	"Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).",	0);
 	set_name	(0X36E53,	"g_partyRecords");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X38808);
 	create_word	(0X3880A);
 	create_word	(0X3880C);
@@ -11361,15 +11374,6 @@ static Bytes_3(void) {
 	set_name	(0X397E9,	"aItHasBeenOnlyA");
 	create_strlit	(0X3981B,	0X2F);
 	set_name	(0X3981B,	"aTrekThroughThe");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3984A,	0X31);
 	set_name	(0X3984A,	"aNowTakeYouToTh");
 	create_strlit	(0X3987B,	0X30);
@@ -12584,11 +12588,11 @@ static Functions_0(void) {
 	set_frame_size(0X1CECB, 0X2, 0, 0);
 	add_func    (0X1CF50,0X1CFC8);
 	set_func_flags(0X1CF50,0x5400);
-	SetType(0X1CF50, "int __fastcall sub_1CF50(int, int, FileEntry *this);");
+	SetType(0X1CF50, "int __fastcall FindItemInsideContainerLevel2(int, int, FileEntry *this);");
 	set_frame_size(0X1CF50, 0X2, 0, 0);
 	add_func    (0X1CFC8,0X1D01D);
 	set_func_flags(0X1CFC8,0x5400);
-	SetType(0X1CFC8, "int __fastcall sub_1CFC8(int, int, FileEntry *this);");
+	SetType(0X1CFC8, "int __fastcall FindItemInsideContainerLevel3(int, int, FileEntry *this);");
 	set_frame_size(0X1CFC8, 0X2, 0, 0);
 	add_func    (0X1D01E,0X1D038);
 	set_func_flags(0X1D01E,0x5402);
