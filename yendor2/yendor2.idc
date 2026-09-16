@@ -3387,7 +3387,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1866E);
 	create_insn	(0X18681);
+	set_cmt	(0X1869D,	"The party/inventory management screen, entered when HandlePortraitClick expands a party portrait. Self-looping polling event machine tying together the equipment/bag grid (HandleInventoryGridClick), shop-buy path, party status panels, held-item drop, ailment-icon cure, and the Space-bar sell/enhance/repair-for-gold cluster. Called once from `start`.",	0);
 	create_insn	(0X1869D);
+	set_name	(0X1869D,	"RunPartyInventoryScreen");
 	create_insn	(0X186B3);
 	create_insn	(0X186BD);
 	create_insn	(0X186C6);
@@ -4666,9 +4668,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1CC98,	"Copies two staged stat regions ([+0x72]->[+0x32], [+0x76]->[+0x36]) within the current party record back into its live fields. Called from UseItemType_400 and UseTrainingItem.",	0);
 	create_insn	(0X1CC98);
 	set_name	(0X1CC98,	"SyncPartyRecordStagedStats");
-	set_cmt	(0X1CCBC,	"Computes a tiered discount/markup percentage from party record field +0x68 (plausibly the BARTERING skill/stat) via 7 descending thresholds, applies it via MulBCD4ByWord to preview a scaled sell/ buy price, then -- gated on IsItemEligibleForEnhance / IsItemEligibleForRepair -- computes further scaled preview prices for enhance/repair costs. Called from PayGoldAndAcquireItem and SellClickedCatalogItem.",	0);
-	create_insn	(0X1CCBC);
-	set_name	(0X1CCBC,	"ComputeBarterPricingPreview");
 }
 
 //------------------------------------------------------------------------
@@ -4678,6 +4677,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1CCBC,	"Computes a tiered discount/markup percentage from party record field +0x68 (plausibly the BARTERING skill/stat) via 7 descending thresholds, applies it via MulBCD4ByWord to preview a scaled sell/ buy price, then -- gated on IsItemEligibleForEnhance / IsItemEligibleForRepair -- computes further scaled preview prices for enhance/repair costs. Called from PayGoldAndAcquireItem and SellClickedCatalogItem.",	0);
+	create_insn	(0X1CCBC);
+	set_name	(0X1CCBC,	"ComputeBarterPricingPreview");
 	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
 	create_insn	(0X1CDBC);
 	set_name	(0X1CDBC,	"IsItemRangeAvailable");
@@ -6303,13 +6305,6 @@ static Bytes_2(void) {
 	set_cmt	(0X22A35,	"Retries RandomInRange(3) until it lands on an occupied, non-incapacitated (+0x1C bits 0x1C40) party slot, leaving it selected via SelectPartyRecordById. Also computes di=0xBC28+slot*0x18 (a smaller per-slot table, not confirmed) for the caller. Called from sub_22989.",	0);
 	create_insn	(0X22A35);
 	set_name	(0X22A35,	"PickRandomActivePartyMember");
-	create_insn	(x=0X22A4A);
-	op_hex		(x,	1);
-	create_insn	(x=0X22A5E);
-	op_hex		(x,	1);
-	set_cmt	(0X22A68,	"Spawns a monster (catalog id in ax/bx) into an empty g_levelMonsters slot: loads its catalog record from WORLD.DAT (same block math as LoadClueBookMonsterEntry), computes a spawn position offset from the current facing direction (word_36CF5 tier bits -- same as ShowCompassDirection) plus current position (word_36CF7/36CF9), sets a countdown timer (RandomInRange(5) + template) and full HP ([+0x10]=[+0x50]). Called from sub_212B8 (a movement/trigger handler, not traced).",	0);
-	create_insn	(0X22A68);
-	set_name	(0X22A68,	"SpawnMonsterInFacingDirection");
 }
 
 //------------------------------------------------------------------------
@@ -6319,6 +6314,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X22A4A);
+	op_hex		(x,	1);
+	create_insn	(x=0X22A5E);
+	op_hex		(x,	1);
+	set_cmt	(0X22A68,	"Spawns a monster (catalog id in ax/bx) into an empty g_levelMonsters slot: loads its catalog record from WORLD.DAT (same block math as LoadClueBookMonsterEntry), computes a spawn position offset from the current facing direction (word_36CF5 tier bits -- same as ShowCompassDirection) plus current position (word_36CF7/36CF9), sets a countdown timer (RandomInRange(5) + template) and full HP ([+0x10]=[+0x50]). Called from sub_212B8 (a movement/trigger handler, not traced).",	0);
+	create_insn	(0X22A68);
+	set_name	(0X22A68,	"SpawnMonsterInFacingDirection");
 	create_insn	(0X22A8A);
 	create_insn	(x=0X22ACB);
 	op_hex		(x,	1);
@@ -7263,7 +7265,9 @@ static Bytes_3(void) {
 	create_insn	(0X263A9);
 	create_insn	(0X263E8);
 	create_insn	(0X263FC);
+	set_cmt	(0X26415,	"Resolves a click on the equipment/bag grid (table 0x60EE): opens/closes one of the 3 alternate bags, or (for a regular slot) rejects an incompatible held-item/location combo or stages item-use parameters and returns errorCode=2 for the caller to consume/use the selected item. Called from RunPartyInventoryScreen and ShowCharacterInventory.",	0);
 	create_insn	(0X26415);
+	set_name	(0X26415,	"HandleInventoryGridClick");
 	set_cmt	(0X2641B,	"this",	0);
 	create_insn	(0X26441);
 	create_insn	(x=0X2645B);
@@ -7888,6 +7892,15 @@ static Bytes_3(void) {
 	set_cmt	(0X27FE0,	"Generic WORLD.DAT FileEntry setup, sibling of WorldDat_setBlock1-6: sets [+4]=ax (caller-supplied id, not a fixed block number), [+0xA]/[+0xC] from table 0xCDEF, [+6]=4*_blockSize3 (default, often overridden by the caller). Called from DrawClueBookMapGrid, LoadWorldDatTilePalette, and sub_111C1.",	0);
 	create_insn	(0X27FE0);
 	set_name	(0X27FE0,	"PrepareWorldDatRead");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X28000,	"Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCDF7, record size _blockSize4. Called from BuildClueLocationSuffix.",	0);
 	create_insn	(0X28000);
 	set_name	(0X28000,	"PrepareClueLocationSuffixBlockRead");
@@ -7898,15 +7911,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X28034);
 	op_hex		(x,	1);
 	set_name	(0X28034,	"DrawDebugPositionOverlay");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2803C);
 	op_hex		(x,	1);
 	create_insn	(x=0X28044);
@@ -9901,8 +9905,10 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C0F2);
 	op_hex		(x,	1);
+	set_cmt	(0X2C0FE,	"Bitmask-switch effect dispatcher (word_33302/word_33306, ~19 distinct effect types, one handled per call) applying a spell's/container's coded magical effect. Confirmed via InteractWithContainer: called right before ConsumeItemChargeResource, i.e. 'apply the effect, then spend the charge'. Covers single-target and whole-party icon-bar status effects plus other effect types (world-state timers, etc.) not individually traced. Called from RunAlchemyScreen and InteractWithContainer.",	0);
 	create_insn	(x=0X2C0FE);
 	op_hex		(x,	1);
+	set_name	(0X2C0FE,	"ApplyEncodedItemEffect");
 	create_insn	(x=0X2C103);
 	op_hex		(x,	1);
 	create_insn	(x=0X2C10E);
@@ -10277,6 +10283,15 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D394);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D39C);
 	op_hex		(x,	1);
 	set_cmt	(0X2D3AB,	"ticks",	0);
@@ -10312,15 +10327,6 @@ static Bytes_4(void) {
 	set_cmt	(0X2D470,	"Sibling of ApplyDamageAlongCorridorLine using the full resistance-aware pipeline: for 3 consecutive viewport rows starting at word_3292C (incrementing it each iteration), finds a monster via GetMonsterAtViewportRow and calls ApplyAttackToTarget against it, then conditionally calls still-unnamed sub_2D428 if any damage/status is pending. Called 3x in a row from sub_2C0FE, once per starting row of a 3-row band.",	0);
 	create_insn	(0X2D470);
 	set_name	(0X2D470,	"ApplyAttackAlongCorridorLine");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2D498,	"ax=sound command. If WaitForSoundDriverIdle didn't need to wait (already idle), discards ax and just waits 6 ticks -- no sound plays. If it DID wait (driver was busy), calls TriggerSoundEvent(ax) once free. Backwards from the sibling TryPlaySoundCue/Alt's 'drop if busy' pattern. The ax==0 path loops back into its own 'pop ax' (IDA flags sp-analysis failed here) -- plausibly unreachable dead code, left as observed. Called from sub_2C0FE.",	0);
 	create_insn	(0X2D498);
 	set_name	(0X2D498,	"TriggerSoundEventAfterDriverWait");

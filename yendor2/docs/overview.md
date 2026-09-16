@@ -6472,6 +6472,46 @@ scrolled outside it. Named `RefreshDungeonMapWindow`.
 766 named of 769 functions as of this update — only 3 unnamed
 functions remain.
 
+### 2026-09-15 session update, continued: the final 3 — 769/769, 100% named
+
+At the user's request, processed the last 3 remaining functions in
+one pass. All three turned out to be closely related, and together
+they close out the entire binary.
+
+`sub_1869D` -> `RunPartyInventoryScreen`: entered once from `start`
+right after `HandlePortraitClick` expands a party portrait. A
+self-looping polling event machine that turns out to be the single
+biggest UI hub in the game — it ties together the equipment/bag grid,
+the shop-buy path, all 4 party status panels, held-item drop, ailment-
+icon curing, and the Space-bar sell/enhance/repair-for-gold cluster
+documented earlier this session, plus keyboard shortcuts for party
+switching ('1'-'4'), a fallback to `HandleGameCommand` for any other
+input, and direct item-ability shortcuts ('M'/'P'). Effectively *the*
+party/inventory management screen.
+
+`sub_26415` -> `HandleInventoryGridClick`, its equipment/bag-grid
+click handler (shared with the already-named `ShowCharacterInventory`):
+opens/closes one of the 3 confirmed alternate bags, or — for a
+regular item slot — rejects an incompatible click or stages the same
+parameter globals `ConsumeItemChargeResource` reads, returning
+`errorCode=2` to signal "item selected, ready to use."
+
+`sub_2C0FE` -> `ApplyEncodedItemEffect`, the largest function in the
+binary (4,210 bytes). Confirmed via `InteractWithContainer`'s own
+call sequence (`ConfirmContainerInteraction` -> `sub_2C0FE` ->
+`ConsumeItemChargeResource`) to be "apply the item's/container's
+coded magical effect, right before its charge is spent" — a flat
+bitmask switch over two flag words (`word_33302`/`word_33306`, ~19
+distinct effect types, one handled per call) covering single-target
+and whole-party icon-bar status effects plus other effect kinds
+(world-state timers, etc.) not individually traced given the size.
+Also called from `RunAlchemyScreen`.
+
+**769 named of 769 functions — 100% of the binary is now named.**
+Every function in `SW.EXE` has a descriptive name; `docs/overview.md`
+and `docs/file-formats.md` carry the accumulated findings from the
+whole reverse-engineering effort.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

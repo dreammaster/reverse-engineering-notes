@@ -342,7 +342,8 @@ fields or the string survey's exact role names.
 
 **A caution about reusing these offsets in combat code**:
 `TryResolveAttackAgainstTarget` (was `sub_2D171`, part of the
-`sub_2C0FE`/`sub_2D4B6` combat-dispatch tree) reads `[di+0x4E]` and
+`ApplyEncodedItemEffect`/`ApplyAttackToTarget` combat-dispatch tree)
+reads `[di+0x4E]` and
 `[di+0x58]` from a `di`-pointed record of unconfirmed type (attacker?
 target? monster?) — *not* assumed to be the same party-record fields
 documented above, since combat code may operate on a differently-
@@ -358,14 +359,15 @@ conflating the two if `di`'s type is pinned down later (a monster
 record struct is the leading candidate, still unlocated).
 
 **The full per-target attack pipeline is now named end to end**:
-`ApplyAttackToTarget` (was `sub_2D4B6`, called twice from the large
-unnamed combat dispatcher `sub_2C0FE`) calls
-`TryResolveAttackAgainstTarget` to get a base damage/status result,
-`ApplyTargetResistancesToAttack` to filter it by the target's
-resistances, then commits the surviving damage/status directly into
-the target's `[di+0xC]`/`[di+0x10]`/`[di+0x1C]`/`[di+0x1E]`/`[di+0x96]`
-fields. This is a solid, fully-traced combat sub-pipeline; only
-`sub_2C0FE` itself remains untraced.
+`ApplyAttackToTarget` (was `sub_2D4B6`, called twice from
+`ApplyEncodedItemEffect`, was `sub_2C0FE`, since named — one of its
+~19 effect-type branches drives a direct attack/damage effect, not
+just icon-bar status effects) calls `TryResolveAttackAgainstTarget`
+to get a base damage/status result, `ApplyTargetResistancesToAttack`
+to filter it by the target's resistances, then commits the surviving
+damage/status directly into the target's
+`[di+0xC]`/`[di+0x10]`/`[di+0x1C]`/`[di+0x1E]`/`[di+0x96]` fields.
+This is a solid, fully-traced combat sub-pipeline.
 
 **`di`'s record type is now confirmed**: `ApplyAttackAlongCorridorLine`
 (was `sub_2D470`, a sibling of `ApplyDamageAlongCorridorLine` driving
@@ -419,7 +421,10 @@ at the same relative offset, from several rounds ago) operates on a
 hedge said "unconfirmed record type," which now reads more like
 "confirmed not the party record." **Follow-up**: found the 8 item
 slots too, via `ShowCharacterInventory`'s item-selection handler
-(`sub_26415`) down into the new `GetInventorySlotPtr`. Each character
+(`HandleInventoryGridClick`, was `sub_26415`, since named — also
+shared by `RunPartyInventoryScreen`, the equipment/bag grid click
+handler behind the portrait-click "open inventory" screen) down into
+the new `GetInventorySlotPtr`. Each character
 has up to **4 separate 8(-ish)-slot inventories** — 1 main plus 3
 "alternate bags" — not stored directly on the base record:
 `GetInventorySlotPtr(slot 1-9)` picks a group base (`+0x118` by
@@ -447,7 +452,7 @@ against the *main* inventory's `+0x118` counter (the 3 alternate bags'
 weight isn't shown on this panel, at least).
 
 **The "3 alternate bags" are literal container items**, confirmed via
-`sub_26415`'s open/close branches: clicking an unopened container item
+`HandleInventoryGridClick`'s (was `sub_26415`) open/close branches: clicking an unopened container item
 assigns it to the first free marker (`+0x17C`/`+0x1A2`/`+0x1C8`,
 priority order) and calls the new `LoadContainerContents`, which reads
 that container's own saved inventory contents from **`CURGAME`**
@@ -504,7 +509,19 @@ increments), full discard, swap-effect-then-discard
 (`SwapItemMultiStatEffect`), or the default decrement-with-auto-
 discard. It deducts the consumed item's weight from the owning party
 member's carry capacity, then syncs bags, redraws the portrait, and
-reapplies stat effects. `SyncItemChargeFieldToCurgame`
+reapplies stat effects. Immediately before spending the charge, both
+known callers of this pattern first call `ApplyEncodedItemEffect`
+(was `sub_2C0FE`, the largest function in the binary at 4,210 bytes,
+also called from `RunAlchemyScreen`): a flat bitmask switch over two
+flag words (`word_33302`/`word_33306`, ~19 distinct effect types, one
+handled per call) that applies the item's/container's coded magical
+effect — confirmed via `InteractWithContainer`'s own sequence
+(`ConfirmContainerInteraction` -> `ApplyEncodedItemEffect` ->
+`ConsumeItemChargeResource`). The two branches read closely apply a
+single-target or whole-party icon-bar status effect
+(`ApplyEffectAndDrawIconBar`); the rest (world-state timers, etc.)
+weren't individually traced given the function's size.
+`SyncItemChargeFieldToCurgame`
 (was `sub_2778D`, called 3 times from `ConsumeItemChargeResource`)
 reads a `CURGAME` record into it (`errorCode=0xA`),
 applies the same charge/transfer/swap-category logic
@@ -977,10 +994,11 @@ twice from `UseHealingItem`): a flat per-affliction price summed over
 the confirmed `+0x1C` bitfield (SICK `+5` through STONED `+60`).
 
 A 4th shop-mode bit, `word_328C6` `0x200`, gates a mouse-click-driven
-shop purchase path: `sub_17032` (a catalog-click handler reached from
-the main input loop via a hit-test against region table `0x5AC0`, not
-fully traced — its own click gate is `HitTestCatalogSlot`, region
-table `0x63C8` plus an 8-entry exclusion check) calls
+shop purchase path: `HandleShopCatalogSlotClick` (was `sub_17032`, a
+catalog-click handler reached from the main input loop via a hit-test
+against region table `0x5AC0` — its own click gate is
+`HitTestCatalogSlot`, region table `0x63C8` plus an 8-entry exclusion
+check) calls
 `PayGoldAndAcquireItem` for its "quick buy" branch, and a sibling
 branch, `SellClickedCatalogItem`, credits gold back for the clicked
 item instead — the click counterpart to `TrySellItemForGold` — pays
@@ -1007,9 +1025,11 @@ say the clicked item qualifies.
 
 All four shop actions (sell, enhance, repair, buy) are hosted under
 one umbrella screen, `RunShopScreen` (reached from `UseAbilityCommand`,
-not `UseItem`): it calls the main input loop `sub_1869D` directly
-(twice, enabling the Space-bar cluster) and `sub_17032` (enabling the
-click-to-buy path, reaching `PayGoldAndAcquireItem`), redraws
+not `UseItem`): it calls the main input loop `RunPartyInventoryScreen`
+(was `sub_1869D`, since named) directly (twice, enabling the Space-bar
+cluster) and `HandleShopCatalogSlotClick` (was `sub_17032`, since
+named — enabling the click-to-buy path, reaching
+`PayGoldAndAcquireItem`), redraws
 `ShowMaterialCounterHud` repeatedly, and
 writes state back via `FileEntry_Write` near an exit. Its many
 internal helpers aren't individually traced yet, though a few now
@@ -1020,10 +1040,11 @@ per-shop-type bitmask (`byte_32DCC`), pairing each enabled category id
 with a value (fixed globals for 3 special currency-like tabs, else
 pulled from the category's own catalog record); and
 `TryHandleCatalogSlotClick` (was `sub_17270`, called from both
-`RunShopScreen` and `sub_1869D`, distinct from `sub_17032`'s buy
-handler) gates a click on an occupied catalog slot before dispatching
-to a large, untraced helper (`sub_219FA`) — plausibly a select/preview
-interaction separate from the purchase flow.
+`RunShopScreen` and `RunPartyInventoryScreen`, distinct from
+`HandleShopCatalogSlotClick`'s own buy handler) gates a click on an
+occupied catalog slot before dispatching to `ShowItemPurchaseConfirmPrompt`
+(was `sub_219FA`, since named) — a select/preview interaction
+separate from the purchase flow.
 
 A separate, likely shop/vendor "buy" `UseItem` handler,
 `UseItemType_800` (was `sub_1BBED`, gated on `UseItem`'s
@@ -1177,8 +1198,8 @@ it as hidden — dungeon line-of-sight occlusion, using
 type — a dead-end/closed-wall test) to find that boundary row.
 
 **Attacking a monster in the corridor before it's engaged in turn-based
-combat**: `ApplyDamageToMapMonster` (called from an unnamed dispatcher,
-`sub_2C0FE`) applies damage to a `g_levelMonsters`-pool monster, sets
+combat**: `ApplyDamageToMapMonster` (called from `ApplyEncodedItemEffect`,
+was `sub_2C0FE`, since named) applies damage to a `g_levelMonsters`-pool monster, sets
 wound/display flags, redraws, then resolves death (`GrantMonsterRewards`
 + `RemoveMonsterFromMap` + `RedrawDungeonScreen`) or survival
 (`RefreshDungeonScreen`) based on its HP — the corridor-encounter
@@ -1191,8 +1212,13 @@ panel area, also used by `HighlightSelectedAbilityIcon`, which also
 calls `ClearActionIconHighlightMask` (was `sub_2BBD7`) to reset the
 mask/overlay buffer backing that highlight effect.
 
-A large unnamed dispatcher, `sub_2C0FE`, sits behind several
-combat-adjacent helpers this session named individually
+**`ApplyEncodedItemEffect` (was `sub_2C0FE`) is now named**, resolving
+the last unnamed function in the binary. This ~4,200-byte function
+turned out to be a flat bitmask switch (`word_33302`/`word_33306`,
+~19 distinct effect types) that applies an item's or container's
+coded magical effect — see the `ConsumeItemChargeResource` paragraph
+above for the full mechanism. It sits behind several combat-adjacent
+helpers this session named individually
 (`ApplyDamageToMapMonster`, `GetMonsterAtViewportRow`,
 `ScrollCorridorBackgroundFromEMS`, `AnimateEffectFrame` — one
 animation frame, same shape as `AnimateProjectileStep` but a different
@@ -1200,7 +1226,7 @@ layer flag and wait length, for some other in-viewport effect,
 and `DimDungeonViewport` (was `sub_2BC56`) — darkens the 224×136
 dungeon-viewport region of the offscreen buffer by 2 palette-index
 steps, plausibly one frame of a hit-flash or transition dim
-sequence) without itself being traced. Also called (twice) from it:
+sequence). Also called (twice) from it:
 `DrawAnimationFrameAndAdvance` (was `sub_2D3FE`) — a small, generic
 "draw this animation frame, return the next (wrapping) frame index"
 cycler, drawing picture `ax` at x=`bx` and advancing/wrapping the frame
@@ -1211,8 +1237,8 @@ the first time through (only if it was still 0); exact field identities
 not confirmed.
 
 **Ranged attacks and area-effect abilities against a corridor monster**:
-`ResolveAttackOrAbilityAction` (called from `sub_1D4B8`, an unnamed
-combat-round driver, itself called from `start`) handles two modes,
+`ResolveAttackOrAbilityAction` (called from `HandleRangedOrCombatAction`,
+the combat-round driver, itself called from `start`) handles two modes,
 selected by `word_328C8` bit `0x100` (set by the caller — e.g.
 `start`'s loc_10A65 branch, gated on *not* being in formal combat):
 
@@ -1677,11 +1703,12 @@ item and, based on its `[+0xC]`/`[+2]` flags, returns one of 3 tier
 codes (or a 4th "wrong item type" code) — plausibly gating which
 service (repair/enhance-style) the item qualifies for, but not
 confirmed. Called from `GetClassifiedItemStatField` (was `sub_1AE23`,
-called from `sub_16BF6`), which selects one of two `word_2E548`
-sub-fields (`+4`/`+8`) based on the item's category flag, or returns 0
-if classification fails. One of `ClassifyItemServiceTier`'s two other
-callers, `TickEquippedItemDurability` (was `sub_1ACD7`, called from
-`HandleDungeonInput` and `sub_16881`), turned out to be the game's
+called from `ResolveAttackerActionOutcome`), which selects one of two
+`word_2E548` sub-fields (`+4`/`+8`) based on the item's category flag,
+or returns 0 if classification fails. One of `ClassifyItemServiceTier`'s
+two other callers, `TickEquippedItemDurability` (was `sub_1ACD7`,
+called from `HandleDungeonInput` and `ProcessMonsterAttackTurn`),
+turned out to be the game's
 full **equipped-item durability and random-breakage system**: given
 an equipment-slot offset (`0x13A` weapon / `0x142` second slot /
 `0x146` array), it increments a per-slot wear counter (`+0xBE`/
@@ -1698,8 +1725,8 @@ elsewhere — tied to the current item and party record, then calls
 `ApplyMapTriggerEffect` instead of direct item use — a map trap
 triggering the same icon-bar-slot effect machinery. A second,
 combat-driven path to equipment damage: `ResolveAttackerActionOutcome`
-(was `sub_16BF6`, called twice from the combat dispatcher `sub_16881`)
-resolves one attacker-vs-defender action via one of 3 paths — the
+(was `sub_16BF6`, called twice from `ProcessMonsterAttackTurn`, was
+`sub_16881`, since named) resolves one attacker-vs-defender action via one of 3 paths — the
 normal `ResolveAttack` damage roll, a `FailsSavingThrow`-gated
 status-effect application, or (a weaker-DC save) an "equipment
 corrosion" effect that targets the *defender's* equipped item via
@@ -1713,7 +1740,7 @@ name literally matching `"BUY "` or its `[+0xE]` flags having bit
 `0xC000` set, calls `ConfirmAndValidatePartyTarget` — a confirm
 prompt to pick a party member, re-prompting with a warning if the
 pick is incapacitated (caching the valid choice): sets `word_328C6` bit `0x10` and runs
-the main input loop (`sub_1869D`) so Space triggers
+`RunPartyInventoryScreen` (was `sub_1869D`) so Space triggers
 `TrySellItemForGold`, then rebuilds/redraws the minimap on exit. Its
 two siblings, `RunEnhanceItemScreen` (`UseItem+0x1C1`, sets bit 8) and
 `RunRepairItemScreen` (`UseItem+0x1D0`, sets bit 4), are otherwise
@@ -1726,7 +1753,7 @@ portrait slots, but when a shop action bit is active
 (`word_328C6 & 0x1C`) it also draws a context hint — "SPACEBAR TO
 ENHANCE ITEM" / "SPACEBAR TO REPAIR ITEM" / default "SPACEBAR TO SELL
 ITEM OR ESC TO UNDO". A simpler sibling, `RestoreAllPortraitsFromEMS`
-(was `sub_18F6C`, called from the still-untraced `sub_1869D`), does the
+(was `sub_18F6C`, called from `RunPartyInventoryScreen`), does the
 same 4-portrait restore plus dirty-bit clearing without the shop-hint
 text. It opens with `RestorePortraitPanelFromEMS`,
 which — only when none of the portrait-dirty bits are already set —
@@ -1739,16 +1766,21 @@ buffer — resetting it so a later restore doesn't show stale portrait
 data. A few more `0x55D8`-page siblings were named alongside it:
 `RestoreFullScreenFromEMS` (was `sub_223D4`, a full-screen restore,
 called from `HandleMovementInput`) and `RestoreLargePanelFromEMS` (was
-`sub_191FC`, a large-but-not-full-screen area restore, called from the
-still-unnamed `sub_1869D`). Separately, `RestoreAndRedrawFixedStatusIcon`
+`sub_191FC`, a large-but-not-full-screen area restore, called from
+`RunPartyInventoryScreen`, was `sub_1869D`, since named — see the
+`ConsumeItemChargeResource`/`ApplyEncodedItemEffect` paragraph above
+for how the two connect). Separately, `RestoreAndRedrawFixedStatusIcon`
 (was `sub_22402`, 6 call sites incl. `start`) restores a small EMS-
 cached area then redraws a fixed picture via `DrawFixedStatusIcon` (was
 `sub_225F1`) — a picture from the same directory category (`0x60`)
 `DrawPartyMemberPortrait` uses, drawn at a fixed screen position; which
 specific HUD icon this is isn't confirmed. `HandlePortraitClick`
 is the mouse-click counterpart to the keyboard `1`-`4` selector
-(`HandlePartyStatusPanelInput`): hit-tests the 4 portrait zones and sets the matching
-highlight bit when clicked. Both draw via `ShowPartyPortraitForSlot`
+(`HandlePartyStatusPanelInput`): hit-tests the 4 portrait zones and
+sets the matching highlight bit when clicked — expanding a portrait
+this way is what enters `RunPartyInventoryScreen`, the party/
+inventory management screen (called once from `start` right after
+this bit gets set). Both draw via `ShowPartyPortraitForSlot`
 → `DrawPartyMemberPortrait`: the character's icon (`+0x14`), a status
 bar, and a condition icon selected by `+0x15C`/`+0x10`, plus
 equipped-item icons via `DrawEquippedItemIcons` (reads the
@@ -1770,7 +1802,7 @@ bonus (via `LoadItemCatalogRecord`) across all of these into two
 `+0x88`-`+0x90`, reset from base values `+0x32`-`+0x3A`/`+0x72`-`+0x7A`
 first) — the concrete mechanism behind equipped gear's stat
 contribution. A separate function, `DrawPartyMemberStatusPanel`
-(called from the main input loop `sub_1869D`), draws a fuller
+(called from `RunPartyInventoryScreen`), draws a fuller
 combat-style status panel per party slot: portrait, unconscious/dead
 overlay, three `DrawStatBar` gauges (HP `+0x52`/`+0x92`, MP
 `+0x54`/`+0x94`, and a third — **now confirmed as carried weight
@@ -2006,8 +2038,8 @@ plausibly a cartography/mapping skill, not yet traced to a specific
 field.
 
 **`+0x6C`/`+0x6E` also both feed trap-effect selection**:
-`SelectTrapEffectVariant` (was `sub_16DAA`, called twice from unnamed
-`sub_16881`) picks one of these two fields as the trap effect id to
+`SelectTrapEffectVariant` (was `sub_16DAA`, called twice from
+`ProcessMonsterAttackTurn`) picks one of these two fields as the trap effect id to
 resolve via `PrepareTrapEffectSlots` — normally `+0x6C` (the
 perception/save-resistance field), but a 25% chance
 (`RandomInRange(100) < 0x19`) of substituting `+0x6E` (the
@@ -2110,7 +2142,9 @@ see `RevealMapRegion`/`UseAbilityScroll`) — special abilities recharge
 once per in-game day.
 
 **The "R rest" command**, `RestPartyAndAdvanceClock` (an action-toolbar
-entry from `start`, also reached from `sub_2C0FE`): after an
+entry from `start`, also reached from `ApplyEncodedItemEffect` —
+plausibly one of its effect-type branches is a "rest/recover" item
+effect): after an
 eligibility check (`IsRestingAllowedHere` — rejects on a global flag,
 forbidden map/level id, or a special-cell match via
 `IsPositionInTriggerList`, confirmed by the "YOU CAN NOT REST HERE"
@@ -2128,7 +2162,7 @@ other `+0x1C` bits), drains HP or MP instead of regenerating it
 normal percentage-based HP/MP regeneration. Uses
 `RestoreDialogAreaFromEMS` (shared with `RunGameDialog`) to restore
 the status area from an EMS cache before drawing, and
-`ClearMessageBoxArea` (shared with `sub_17032` and
+`ClearMessageBoxArea` (shared with `HandleShopCatalogSlotClick` and
 `UseAbilityCommand`) to clear the message-box background.
 `UseAbilityCommand` also calls `ConsumeAbilityChargeAndRefresh` (was
 `sub_17A65`): shows `ShowResourceDepletedOverlay`, then — unless a
@@ -2625,9 +2659,11 @@ identical overlay-segment duplicate pair `TryPlaySoundCue`/
 `TryPlaySoundCueAlt` (was `sub_16234`/`sub_11EAE`, another instance of
 this session's recurring duplication pattern): drop a sound cue if the
 driver was busy or the id is the `0xFFFF` sentinel, else dispatch via
-a still-unnamed per-segment helper. A third, structurally different
-caller, `TriggerSoundEventAfterDriverWait` (was `sub_2D498`, called
-from the large unnamed combat dispatcher `sub_2C0FE`), behaves the
+their own per-segment tick-wait primitive (`WaitForTickFlagAndClear`/
+`WaitForTickFlagAndClearAlt`, since named). A third, structurally
+different caller, `TriggerSoundEventAfterDriverWait` (was `sub_2D498`,
+called from `ApplyEncodedItemEffect`, was `sub_2C0FE`, since named),
+behaves the
 *opposite* way: dispatches the sound only when the driver *was* busy
 (discarding it unplayed if already idle). It still carries a genuine
 IDA "sp-analysis failed" flag on its `ax==0` path (a jump back into
