@@ -535,6 +535,20 @@ zero) and stages the acquired item the same way
 `TrySellItemForGold`/`TryEnhanceItemForGold`/`TryRepairItemForGold`
 stage theirs.
 
+Both `PayGoldAndAcquireItem` and `SellClickedCatalogItem` open with a
+call to `ComputeBarterPricingPreview` (was `sub_1CCBC`), which computes
+a tiered discount/markup percentage from a party record field, `+0x68`
+(not otherwise identified — plausibly the **BARTERING** skill, given
+the shop context and the already-found attribute/skill list that
+includes it) via 7 descending thresholds, then scales a price at
+`0xB30` (the same `0xB30` `PayGoldAndAcquireItem` charges against
+`g_partyGold`) using the newly-named `MulBCD4ByWord` (was `sub_19CA1` —
+a `MulBCD4`-style sibling of the existing `ConvertWordToBCD4`/
+`CompareBCD4`/`AddBCD4`/`SubBCD4` library: multiplies a packed-BCD4
+value digit-by-digit by a 16-bit word). It also previews scaled enhance/
+repair costs when `IsItemEligibleForEnhance`/`IsItemEligibleForRepair`
+say the clicked item qualifies.
+
 All four shop actions (sell, enhance, repair, buy) are hosted under
 one umbrella screen, `RunShopScreen` (reached from `UseAbilityCommand`,
 not `UseItem`): it calls the main input loop `sub_1869D` directly
@@ -1092,6 +1106,11 @@ A resulting higher level is staged into `+0x1E` (not applied
 immediately); `ShowLevelUpMessage` then displays both the current and
 pending-new level, confirming `+0x1E`'s "pending level-up" role too
 (previously only known to gate a portrait-redraw call).
+`CheckAndAnnounceLevelUp` (was `sub_1B7DD`, called from `UseItem` and
+`UseTrainingItem`) is the shared wrapper: resolves the active party
+slot (`word_32924` → a `g_partySlotAssignment` entry → character id →
+`SelectPartyRecordById`), calls `CheckForLevelUp`, and shows
+`ShowLevelUpMessage` if `+0x1E` came back nonzero.
 
 ### Global quest/world-state flags
 

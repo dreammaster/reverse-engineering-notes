@@ -13036,7 +13036,7 @@ PayGoldAndAcquireItem proc near         ; CODE XREF: sub_17032+2A↑p
                 mov     ax, [si]
                 mov     si, word_2E546
                 add     si, 4
-                call    sub_1CCBC
+                call    ComputeBarterPricingPreview
                 pop     si
                 mov     ax, [si]
                 mov     bx, 0
@@ -13087,7 +13087,7 @@ SellClickedCatalogItem proc near        ; CODE XREF: sub_17032:loc_1726C↑p
                 mov     ax, word_31948  ; Credits gold (AddBCD4(g_partyGold, [0xB30])) instead of spending it, clears the held/staged item, refreshes the material/gold HUD -- a 'sell this catalog item back' action, the click counterpart to TrySellItemForGold. Called from sub_17032.
                 mov     si, word_2E546
                 add     si, 4
-                call    sub_1CCBC
+                call    ComputeBarterPricingPreview
                 mov     di, 0B30h
                 mov     si, 94B3h
                 call    AddBCD4
@@ -13448,7 +13448,7 @@ loc_17E43:                              ; CODE XREF: UseItem+2AC↑j
 loc_17E60:                              ; CODE XREF: UseItem+2C5↑j
                 test    word_2E410, 4000h
                 jz      short loc_17E6F
-                call    sub_1B7DD
+                call    CheckAndAnnounceLevelUp
                 jmp     short loc_17E8B
 ; ---------------------------------------------------------------------------
 
@@ -14759,7 +14759,7 @@ loc_18761:                              ; CODE XREF: sub_1869D+BA↑j
                 mov     si, word_2E546
                 add     si, 4
                 mov     ax, word_31948
-                call    sub_1CCBC
+                call    ComputeBarterPricingPreview
                 mov     ax, word_31948
                 mov     bx, 0
                 call    sub_219FA
@@ -15751,7 +15751,7 @@ loc_19032:                              ; CODE XREF: TryEnhanceItemForGold+52↑
                 mov     si, word_2E546
                 add     si, 4
                 mov     ax, word_31948
-                call    sub_1CCBC
+                call    ComputeBarterPricingPreview
                 mov     ax, word_31948
                 mov     bx, 0
                 call    sub_219FA
@@ -15898,7 +15898,7 @@ loc_19198:                              ; CODE XREF: TryRepairItemForGold+52↑j
                 mov     si, word_2E546
                 add     si, 4
                 mov     ax, word_31948
-                call    sub_1CCBC
+                call    ComputeBarterPricingPreview
                 mov     ax, word_31948
                 mov     bx, 0
                 call    sub_219FA
@@ -17171,9 +17171,9 @@ SubBCD4         endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19CA1       proc far                ; CODE XREF: sub_1CCBC+72↓P
-                                        ; sub_1CCBC+7B↓P ...
-                push    bx
+MulBCD4ByWord   proc far                ; CODE XREF: ComputeBarterPricingPreview+72↓P
+                                        ; ComputeBarterPricingPreview+7B↓P ...
+                push    bx              ; Multiplies a packed-BCD4 value at [si] by a 16-bit word (word_32940), digit-by-digit via repeated BCD addition (AddToBCDCounter/AddBCD4), writing the BCD4 product back to [si]. A MulBCD4-style sibling of ConvertWordToBCD4/CompareBCD4/AddBCD4/ SubBCD4. Called (twice each) from ComputeBarterPricingPreview.
                 push    cx
                 push    dx
                 push    di
@@ -17221,7 +17221,7 @@ sub_19CA1       proc far                ; CODE XREF: sub_1CCBC+72↓P
                 mov     word_32942, 1
                 mov     cx, 2
 
-loc_19D13:                              ; CODE XREF: sub_19CA1+A4↓j
+loc_19D13:                              ; CODE XREF: MulBCD4ByWord+A4↓j
                 mov     si, 0AFB0h
                 mov     word ptr [si], 0
                 mov     word ptr [si+2], 0
@@ -17233,7 +17233,7 @@ loc_19D13:                              ; CODE XREF: sub_19CA1+A4↓j
                 push    cx
                 mov     cx, word_32942
 
-loc_19D30:                              ; CODE XREF: sub_19CA1+93↓j
+loc_19D30:                              ; CODE XREF: MulBCD4ByWord+93↓j
                 push    cs
                 call    near ptr sub_19DA3
                 loop    loc_19D30
@@ -17252,7 +17252,7 @@ loc_19D30:                              ; CODE XREF: sub_19CA1+93↓j
                 mov     word_32942, 1
                 mov     cx, 5
 
-loc_19D5B:                              ; CODE XREF: sub_19CA1+EA↓j
+loc_19D5B:                              ; CODE XREF: MulBCD4ByWord+EA↓j
                 mov     si, 0AFB0h
                 xor     ax, ax
                 mov     [si], ax
@@ -17265,7 +17265,7 @@ loc_19D5B:                              ; CODE XREF: sub_19CA1+EA↓j
                 push    cx
                 mov     cx, word_32942
 
-loc_19D76:                              ; CODE XREF: sub_19CA1+D9↓j
+loc_19D76:                              ; CODE XREF: MulBCD4ByWord+D9↓j
                 push    cs
                 call    near ptr sub_19DA3
                 loop    loc_19D76
@@ -17287,14 +17287,14 @@ loc_19D76:                              ; CODE XREF: sub_19CA1+D9↓j
                 pop     cx
                 pop     bx
                 retf
-sub_19CA1       endp ; sp-analysis failed
+MulBCD4ByWord   endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19DA3       proc far                ; CODE XREF: sub_19CA1+90↑p
-                                        ; sub_19CA1+D6↑p ...
+sub_19DA3       proc far                ; CODE XREF: MulBCD4ByWord+90↑p
+                                        ; MulBCD4ByWord+D6↑p ...
                 push    cx
                 mov     cx, 4
                 mov     ah, [si]
@@ -17320,8 +17320,8 @@ sub_19DA3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19DCF       proc far                ; CODE XREF: sub_19CA1+AA↑p
-                                        ; sub_19CA1+AE↑p ...
+sub_19DCF       proc far                ; CODE XREF: MulBCD4ByWord+AA↑p
+                                        ; MulBCD4ByWord+AE↑p ...
                 push    cx
                 mov     cx, 4
                 mov     ah, [si+2]
@@ -19692,7 +19692,7 @@ RunEnhanceItemScreen endp
 
 
 IsItemEligibleForEnhance proc far       ; CODE XREF: TryEnhanceItemForGold+6↑P
-                                        ; sub_1CCBC+80↓P ...
+                                        ; ComputeBarterPricingPreview+80↓P ...
                 push    bx              ; Eligibility check for TryEnhanceItemForGold (also called from sub_1CCBC and others, not traced). Selects a held-item field ([+8] or [+6], word_2E548) based on the location's ([+0xC], word_2E546) flag bits, and checks it against a range table at DS:0xBCE ([+0x14]..[+0x16]). Returns eligible (ax=0) if in range.
                 mov     ax, 1
                 mov     bx, word_2E546
@@ -19772,7 +19772,7 @@ RunRepairItemScreen endp
 
 
 IsItemEligibleForRepair proc far        ; CODE XREF: TryRepairItemForGold+6↑P
-                                        ; sub_1CCBC:loc_1CD7A↓P ...
+                                        ; ComputeBarterPricingPreview:loc_1CD7A↓P ...
                 push    bx              ; Eligibility check for TryRepairItemForGold (also called elsewhere, not traced). For each of 2 location-flag bits (word_2E546's [+0xC] 0xC000/0x800), if set and the held item's matching flag (word_2E548's [+2] 0x100/0x40) is also set, returns eligible (ax=0).
                 mov     ax, 1
                 mov     bx, word_2E546
@@ -20478,9 +20478,9 @@ CheckPartyMemberItemFlagAndClearPanel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B7DD       proc far                ; CODE XREF: UseItem+2D6↑P
+CheckAndAnnounceLevelUp proc far        ; CODE XREF: UseItem+2D6↑P
                                         ; UseTrainingItem+49↓p ...
-                push    si
+                push    si              ; Resolves the active party slot (word_32924 -> g_partySlotAssignment entry -> character id -> SelectPartyRecordById), calls CheckForLevelUp, and shows ShowLevelUpMessage if +0x1E (pending level-up) is now nonzero. Shared post-item-use level-up check, called from UseItem and UseTrainingItem.
                 push    bx
                 call    ClearStatusPanelIfDirty
                 and     word_2E40C, 1FFFh
@@ -20495,11 +20495,11 @@ sub_1B7DD       proc far                ; CODE XREF: UseItem+2D6↑P
                 or      word_2E40C, 8000h
                 call    ShowLevelUpMessage
 
-loc_1B815:                              ; CODE XREF: sub_1B7DD+2B↑j
+loc_1B815:                              ; CODE XREF: CheckAndAnnounceLevelUp+2B↑j
                 pop     bx
                 pop     si
                 retf
-sub_1B7DD       endp
+CheckAndAnnounceLevelUp endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -21523,7 +21523,7 @@ loc_1C158:                              ; CODE XREF: UseTrainingItem+A↑j
 
 loc_1C16B:                              ; CODE XREF: UseTrainingItem+12↑j
                 push    cs
-                call    near ptr sub_1B7DD
+                call    near ptr CheckAndAnnounceLevelUp
                 jmp     short loc_1C158
 ; ---------------------------------------------------------------------------
 
@@ -21689,7 +21689,7 @@ loc_1C2D2:                              ; CODE XREF: UseTrainingItem+1B7↓j
                 pop     si
                 call    ApplyEffectAndDrawIconBar
                 push    cs
-                call    near ptr sub_1B7DD
+                call    near ptr CheckAndAnnounceLevelUp
                 mov     bx, word_32924
                 push    cs
                 call    near ptr sub_1B8AB
@@ -22399,7 +22399,7 @@ loc_1CAB2:                              ; CODE XREF: ShowItemUsagePreview+46↑j
                 test    word_2E410, 4000h
                 jz      short loc_1CAC0
                 push    cs
-                call    near ptr sub_1B7DD
+                call    near ptr CheckAndAnnounceLevelUp
                 jmp     short loc_1CADA
 ; ---------------------------------------------------------------------------
 
@@ -22640,9 +22640,9 @@ seg046          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CCBC       proc far                ; CODE XREF: PayGoldAndAcquireItem+A↑P
+ComputeBarterPricingPreview proc far    ; CODE XREF: PayGoldAndAcquireItem+A↑P
                                         ; SellClickedCatalogItem+A↑P ...
-                push    word_32974
+                push    word_32974      ; Computes a tiered discount/markup percentage from party record field +0x68 (plausibly the BARTERING skill/stat) via 7 descending thresholds, applies it via MulBCD4ByWord to preview a scaled sell/ buy price, then -- gated on IsItemEligibleForEnhance / IsItemEligibleForRepair -- computes further scaled preview prices for enhance/repair costs. Called from PayGoldAndAcquireItem and SellClickedCatalogItem.
                 mov     word_32974, ax
                 mov     ax, [si]
                 mov     word_2E390, ax
@@ -22676,17 +22676,17 @@ sub_1CCBC       proc far                ; CODE XREF: PayGoldAndAcquireItem+A↑P
                 jle     short loc_1CD22
                 mov     ax, 37h ; '7'
 
-loc_1CD22:                              ; CODE XREF: sub_1CCBC+29↑j
-                                        ; sub_1CCBC+32↑j ...
+loc_1CD22:                              ; CODE XREF: ComputeBarterPricingPreview+29↑j
+                                        ; ComputeBarterPricingPreview+32↑j ...
                 mov     bx, 64h ; 'd'
                 sub     bx, ax
                 push    bx
                 add     ax, 64h ; 'd'
                 mov     si, 0B30h
-                call    sub_19CA1
+                call    MulBCD4ByWord
                 pop     ax
                 mov     si, 50C0h
-                call    sub_19CA1
+                call    MulBCD4ByWord
                 call    IsItemEligibleForEnhance
                 jnz     short loc_1CD7A
                 mov     word_2E512, 0
@@ -22701,11 +22701,11 @@ loc_1CD22:                              ; CODE XREF: sub_1CCBC+29↑j
                 mov     si, 0CB2h
                 mov     bx, 0BCEh
                 mov     ax, [bx+18h]
-                call    sub_19CA1
+                call    MulBCD4ByWord
                 mov     ax, word_32974
                 call    LoadItemCatalogRecord
 
-loc_1CD7A:                              ; CODE XREF: sub_1CCBC+85↑j
+loc_1CD7A:                              ; CODE XREF: ComputeBarterPricingPreview+85↑j
                 call    IsItemEligibleForRepair
                 jnz     short loc_1CDB7
                 mov     word_328E2, 0
@@ -22719,14 +22719,14 @@ loc_1CD7A:                              ; CODE XREF: sub_1CCBC+85↑j
                 mov     si, 5082h
                 mov     bx, 0BCEh
                 mov     ax, [bx+18h]
-                call    sub_19CA1
+                call    MulBCD4ByWord
                 mov     ax, word_32974
                 call    LoadItemCatalogRecord
 
-loc_1CDB7:                              ; CODE XREF: sub_1CCBC+C3↑j
+loc_1CDB7:                              ; CODE XREF: ComputeBarterPricingPreview+C3↑j
                 pop     word_32974
                 retf
-sub_1CCBC       endp
+ComputeBarterPricingPreview endp
 
 seg046          ends
 
@@ -31305,7 +31305,7 @@ loc_21B93:                              ; CODE XREF: sub_219FA+194↑j
                 mov     si, word_2E546
                 add     si, 4
                 mov     ax, word_32974
-                call    sub_1CCBC
+                call    ComputeBarterPricingPreview
                 mov     si, 50C0h
                 pop     word_328D4
                 pop     word_328D6
@@ -38740,7 +38740,7 @@ sub_25B34       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowLevelUpMessage proc far             ; CODE XREF: sub_1B7DD+33↑P
+ShowLevelUpMessage proc far             ; CODE XREF: CheckAndAnnounceLevelUp+33↑P
                                         ; sub_25B34+B4↑p
                 or      word_328C4, 100h ; ShowLevelUpMessage(si=character): shows current level [+0x16], and if [+0x1E] (pending new level, from CheckForLevelUp) is nonzero, also shows it as a second line -- the level-up notification screen.
                 call    sub_25ED1
@@ -41313,7 +41313,7 @@ loc_27369:                              ; CODE XREF: sub_271DC+183↑j
                 mov     si, word_2E546
                 add     si, 4
                 mov     ax, word_31948
-                call    sub_1CCBC
+                call    ComputeBarterPricingPreview
                 mov     ax, word_31948
                 mov     bx, 0
                 call    sub_219FA
@@ -56491,9 +56491,9 @@ _font_bgTransparent dw 0                ; DATA XREF: sub_1075E+43↑w
 word_2E38E      dw 0                    ; DATA XREF: sub_193BE+42↑r
                                         ; sub_193BE+45↑r ...
 word_2E390      dw 0                    ; DATA XREF: sub_1BBED+E2↑w
-                                        ; sub_1CCBC+9↑w
+                                        ; ComputeBarterPricingPreview+9↑w
 word_2E392      dw 0                    ; DATA XREF: sub_1BBED+E8↑w
-                                        ; sub_1CCBC+12↑w
+                                        ; ComputeBarterPricingPreview+12↑w
                 db    0
                 db    0
                 db    0
@@ -56880,10 +56880,10 @@ _emsPageCount   dw 0                    ; DATA XREF: InitMemory+71↑w
                                         ; InitMemory+9B↑r ...
 _emsSegmentPageFrame dw 0               ; DATA XREF: loadWorldDat2+16↑r
                                         ; loadWorldDat3+17↑r ...
-word_2E512      dw 0                    ; DATA XREF: sub_1CCBC+87↑w
-                                        ; sub_1CCBC+9F↑w
-word_2E514      dw 0                    ; DATA XREF: sub_1CCBC+8D↑w
-                                        ; sub_1CCBC+A5↑w
+word_2E512      dw 0                    ; DATA XREF: ComputeBarterPricingPreview+87↑w
+                                        ; ComputeBarterPricingPreview+9F↑w
+word_2E514      dw 0                    ; DATA XREF: ComputeBarterPricingPreview+8D↑w
+                                        ; ComputeBarterPricingPreview+A5↑w
 word_2E516      dw 0                    ; DATA XREF: TravelToDestination↑w
                                         ; IsDestinationUnlocked+4↑r ...
 aBlaster        db 'BLASTER=',0
@@ -74214,10 +74214,10 @@ word_328DC      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+
 word_328DE      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+104↑r
 word_328E0      dw 0                    ; DATA XREF: ShowConfirmPrompt+29↑w
                                         ; ShowConfirmPrompt+6B↑r ...
-word_328E2      dw 0                    ; DATA XREF: sub_1CCBC+C5↑w
-                                        ; sub_1CCBC+DC↑w
-word_328E4      dw 0                    ; DATA XREF: sub_1CCBC+CB↑w
-                                        ; sub_1CCBC+E2↑w
+word_328E2      dw 0                    ; DATA XREF: ComputeBarterPricingPreview+C5↑w
+                                        ; ComputeBarterPricingPreview+DC↑w
+word_328E4      dw 0                    ; DATA XREF: ComputeBarterPricingPreview+CB↑w
+                                        ; ComputeBarterPricingPreview+E2↑w
 word_328E6      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+C↑r
                                         ; DrawDungeonFloorAndCeiling+91↑r ...
 word_328E8      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+18↑r
@@ -74277,9 +74277,9 @@ _videoBufferSeg dw 0                    ; DATA XREF: sub_1075E+49↑r
 word_3291E      dw 0                    ; DATA XREF: RunGameDialog+5↑w
                                         ; RunGameDialog:loc_1EAD0↑w ...
 word_32920      dw 0                    ; DATA XREF: TrySellItemForGold+66↑r
-                                        ; sub_1CCBC+C↑w
+                                        ; ComputeBarterPricingPreview+C↑w
 word_32922      dw 0                    ; DATA XREF: TrySellItemForGold+6C↑r
-                                        ; sub_1CCBC+15↑w
+                                        ; ComputeBarterPricingPreview+15↑w
 word_32924      dw 0                    ; DATA XREF: HandleDungeonInput+28↑w
                                         ; HandleDungeonInput+38↑w ...
 word_32926      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+F↑w
@@ -74311,8 +74311,8 @@ word_3293E      dw 0                    ; DATA XREF: seg000:083F↑w
 ; FileEntry *word_32940
 word_32940      dw 0                    ; DATA XREF: seg000:0845↑w
                                         ; seg000:0875↑w ...
-word_32942      dw 0                    ; DATA XREF: sub_19CA1+69↑w
-                                        ; sub_19CA1+8B↑r ...
+word_32942      dw 0                    ; DATA XREF: MulBCD4ByWord+69↑w
+                                        ; MulBCD4ByWord+8B↑r ...
 word_32944      dw 0                    ; DATA XREF: sub_2C0FE+FC1↑w
                                         ; sub_2C0FE+1015↑r ...
 ; FileEntry *fe
@@ -92921,12 +92921,12 @@ word_38808      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+2
                                         ; DrawClueBookNavBar+50↑w ...
 word_3880A      dw 0                    ; DATA XREF: DrawClueBookNavBar+56↑w
                                         ; DrawClueBookNavBar+D4↑r ...
-word_3880C      dw 0                    ; DATA XREF: sub_19CA1+D↑w
+word_3880C      dw 0                    ; DATA XREF: MulBCD4ByWord+D↑w
                                         ; ReadMapCellAttributeByte+35↑r
 word_3880E      dw 0                    ; DATA XREF: FormatAndDrawBCD4+19↑w
-                                        ; sub_19CA1+10↑w
-word_38810      dw 0                    ; DATA XREF: sub_19CA1+13↑w
-word_38812      dw 0                    ; DATA XREF: sub_19CA1+16↑w
+                                        ; MulBCD4ByWord+10↑w
+word_38810      dw 0                    ; DATA XREF: MulBCD4ByWord+13↑w
+word_38812      dw 0                    ; DATA XREF: MulBCD4ByWord+16↑w
                 db    0
                 db    0
                 db    0

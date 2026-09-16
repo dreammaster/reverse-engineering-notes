@@ -3519,7 +3519,9 @@ static Bytes_0(void) {
 	set_cmt	(0X19C7B,	"Raw 4-byte packed-BCD subtraction: [si] -= [di], DAS-adjusted, least-significant byte first with borrow propagation.",	0);
 	create_insn	(0X19C7B);
 	set_name	(0X19C7B,	"SubBCD4");
+	set_cmt	(0X19CA1,	"Multiplies a packed-BCD4 value at [si] by a 16-bit word (word_32940), digit-by-digit via repeated BCD addition (AddToBCDCounter/AddBCD4), writing the BCD4 product back to [si]. A MulBCD4-style sibling of ConvertWordToBCD4/CompareBCD4/AddBCD4/ SubBCD4. Called (twice each) from ComputeBarterPricingPreview.",	0);
 	create_insn	(0X19CA1);
+	set_name	(0X19CA1,	"MulBCD4ByWord");
 	create_insn	(x=0X19CC0);
 	op_hex		(x,	1);
 	create_insn	(x=0X19CC6);
@@ -3549,6 +3551,15 @@ static Bytes_0(void) {
 	set_cmt	(0X19E56,	"Handles a movement-triggered map object (called from HandleMovementInput). Branches on [di+2] type flags: 0x4000 = teleport ([di+4]/[di+6] -> word_36CF7/word_36CF9, full redraw); 0x2000 = separate effect (sub_1FC3F+sub_20C46, not traced); 0x1000/0x800/0x400/0x300-pair = trap/status effects -- looks up an effect-definition record (PrepareTrapEffectSlots), then for each of the party's 4 slots (g_partySlotAssignment -> g_partyRecords, record = g_partyRecords+(slot-1)*0x1F4), skips members with status bits 0x1C40 set, otherwise fills their g_partyEffectIconSlots entry and calls ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X19E56);
 	set_name	(0X19E56,	"ApplyMapTriggerEffect");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X19E68);
 	create_insn	(x=0X19E74);
 	op_hex		(x,	1);
@@ -3576,15 +3587,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1A04B,	"Scans an 8-byte-stride table (0xD1C9, 0xFFFF-terminated) for the current cell's x or y coordinate (selected per entry by a flag bit) -- a general 'is this a designated special cell' check. Called from ApplyMapTriggerEffect and IsRestingAllowedHere.",	0);
 	create_insn	(0X1A04B);
 	set_name	(0X1A04B,	"IsPositionInTriggerList");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1A068);
 	op_hex		(x,	1);
 	create_insn	(0X1A075);
@@ -4027,7 +4029,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B7D3);
 	op_hex		(x,	1);
+	set_cmt	(0X1B7DD,	"Resolves the active party slot (word_32924 -> g_partySlotAssignment entry -> character id -> SelectPartyRecordById), calls CheckForLevelUp, and shows ShowLevelUpMessage if +0x1E (pending level-up) is now nonzero. Shared post-item-use level-up check, called from UseItem and UseTrainingItem.",	0);
 	create_insn	(0X1B7DD);
+	set_name	(0X1B7DD,	"CheckAndAnnounceLevelUp");
 	create_insn	(x=0X1B7E4);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B7EA);
@@ -4382,7 +4386,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1CC70);
 	create_insn	(0X1CC98);
+	set_cmt	(0X1CCBC,	"Computes a tiered discount/markup percentage from party record field +0x68 (plausibly the BARTERING skill/stat) via 7 descending thresholds, applies it via MulBCD4ByWord to preview a scaled sell/ buy price, then -- gated on IsItemEligibleForEnhance / IsItemEligibleForRepair -- computes further scaled preview prices for enhance/repair costs. Called from PayGoldAndAcquireItem and SellClickedCatalogItem.",	0);
 	create_insn	(0X1CCBC);
+	set_name	(0X1CCBC,	"ComputeBarterPricingPreview");
 	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
 	create_insn	(0X1CDBC);
 	set_name	(0X1CDBC,	"IsItemRangeAvailable");
@@ -5782,6 +5788,15 @@ static Bytes_1(void) {
 	set_cmt	(0X22140,	"Draws 40 columns of one ShowLocalAreaMap row. Per cell, tests the explored/fog-of-war bitmap bit (same format PersistExploredCell writes): unexplored -> fixed blank/fog tile (g_pictureDir entry 0x13); explored -> DrawLocalMapCell.",	0);
 	create_insn	(0X22140);
 	set_name	(0X22140,	"DrawLocalMapRow");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X22173);
 	op_hex		(x,	1);
 	create_insn	(0X22180);
@@ -5807,15 +5822,6 @@ static Bytes_1(void) {
 	set_cmt	(0X22387,	"Draws a full-screen picture (dir 0, id=word_2E530, set by caller) at (1,1), then saves the resulting screen to EMS page 0x55D8 (0x7D00 words = one full VGA screen). Generic full-screen draw-then-cache utility; called from many different screens (InitGame, RunDungeonGameLoop, ShowCreateCharacterPrompt, etc.) each with their own picture id.",	0);
 	create_insn	(0X22387);
 	set_name	(0X22387,	"DrawFullScreenPictureAndCacheToEMS");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X223D4);
 	create_insn	(0X22402);
 	set_cmt	(0X22445,	"Draws one party member's full status panel: portrait, unconscious/dead overlay, three DrawStatBar gauges (HP [+0x52]/[+0x92], MP [+0x54]/[+0x94], a third stat [+0x118]/[+0x56] not identified), an ability-readiness icon ([+0xB4]), and level-up/training text ([+0x1C] bit 0x40, [+0x1E]). Called from the main input loop sub_1869D.",	0);
@@ -8495,6 +8501,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2A11B,	"The real mouse-cursor draw: if word_3195C bit1 is set, first saves the video buffer content at the cursor's new position into 0xE0E (so RestoreCursorBackground can erase it later), then blits the cursor sprite from 0x3FE6 onto the video buffer with 0xFF as a transparent color key. Not a screen fade despite the inherited name/hedge -- explains why it's called so pervasively (once per cursor move).",	0);
 	create_insn	(0X2A11B);
 	set_name	(0X2A11B,	"DrawMouseCursor");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2A121);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A131);
@@ -8600,15 +8615,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A2E5);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A2E8);
 	create_insn	(x=0X2A2EB);
 	op_hex		(x,	1);
@@ -11556,6 +11562,15 @@ static Bytes_3(void) {
 	set_name	(0X3A318,	"aIrudon");
 	create_strlit	(0X3A32C,	0X20);
 	set_name	(0X3A32C,	"aSomethingStran");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A34C,	0X1D);
 	set_name	(0X3A34C,	"aAfterDroppingT");
 	create_strlit	(0X3A369,	0X1B);
@@ -11595,15 +11610,6 @@ static Bytes_3(void) {
 	create_strlit	(0X3A5FF,	0X34);
 	set_name	(0X3A5FF,	"aThereIsAMoreUr");
 	set_name	(0X3A653,	"_worldDatOffset3");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_name	(0X3A65F,	"_worldDatOffset1");
 	set_name	(0X3A663,	"_worldDatOffset2");
 	set_name	(0X3A6C3,	"_worldDatOffset5");

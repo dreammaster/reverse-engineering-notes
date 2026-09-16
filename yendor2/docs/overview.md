@@ -3340,6 +3340,30 @@ command 6 itself, so leaving `sub_28412` unnamed rather than guessing.
 
 428 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CheckAndAnnounceLevelUp, MulBCD4ByWord, ComputeBarterPricingPreview
+
+Named `sub_1B7DD` -> `CheckAndAnnounceLevelUp` (called from `UseItem`
+and `UseTrainingItem`): resolves the active party slot via
+`word_32924`/`g_partySlotAssignment`, calls `CheckForLevelUp`, and
+shows `ShowLevelUpMessage` if `+0x1E` (pending level-up) is nonzero —
+the standard post-item-use level-up check shared by both callers.
+
+Named `sub_19CA1` -> `MulBCD4ByWord`: a new sibling of the existing
+BCD4 arithmetic library (`ConvertWordToBCD4`/`CompareBCD4`/`AddBCD4`/
+`SubBCD4`) — multiplies a packed-BCD4 value digit-by-digit by a 16-bit
+word via repeated BCD addition, writing the product back in place.
+
+Named `sub_1CCBC` -> `ComputeBarterPricingPreview` (called from
+`PayGoldAndAcquireItem` and `SellClickedCatalogItem`): computes a
+tiered discount/markup percentage from party record field `+0x68`
+(plausibly the **BARTERING** skill, given the shop context and the
+attribute/skill list found earlier this session) and applies it via
+`MulBCD4ByWord` to preview a scaled price at `0xB30` — the same buffer
+`PayGoldAndAcquireItem` charges against `g_partyGold` — plus scaled
+enhance/repair cost previews when the clicked item qualifies.
+
+431 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
