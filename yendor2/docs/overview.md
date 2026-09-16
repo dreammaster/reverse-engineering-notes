@@ -431,6 +431,27 @@ describing them.
 
 82 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found the real palette
+
+Picking the palette thread back up: `ShowIntroPicture`'s own code
+(right before the fade-buffer copy loop) turned out to call
+`LoadMasterPalette` (a rename of `sub_27CB0` — one of the WORLD.DAT
+resource-block stubs that were deliberately left unnamed earlier for
+being indistinguishable) to read exactly 768 bytes from `WORLD.DAT` at
+offset `0x8270A`. Read those bytes directly with a script — a
+well-formed 256-entry VGA DAC palette, already in 0-63 range, no
+decoding needed. Re-extracted the whole `PICTURES.VGA` catalog in true
+color (`extract_pic.py` now supports `--palette`) and it's a clean,
+unambiguous confirmation: the dialog panel's button labels are fully
+legible, the wolf and character images render with entirely natural
+colors. (The splash-screen logo shows some rainbow banding at higher
+palette indices — not fully explained, maybe a second palette region
+for that specific image.) Full writeup in
+[file-formats.md](file-formats.md#pictures.vga)'s "Palette" section.
+
+Sent Paul the recolored set. 83 named of 769 functions as of this
+update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

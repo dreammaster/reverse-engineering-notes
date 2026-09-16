@@ -6693,8 +6693,9 @@ static Bytes_1(void) {
 	create_insn	(0X27C5A);
 	create_insn	(0X27C78);
 	create_insn	(0X27C96);
-	set_cmt	(0X27CB0,	"First of a ~27-function cluster (0x27B42-0x2801A, seg096) of tiny 'resource block setup' stubs: each hardcodes one FileEntry's _blockOffset/_blockOffsetHi (from a small pointer table) and _blockSize for one specific game resource, then returns -- the caller does the actual FileEntry_Read. Each is called directly from many different, scattered call sites (not through a dispatch table), so which resource each one represents isn't recoverable from static analysis alone; left unnamed deliberately rather than guessed -- see ida_scripts/document_resource_stubs.py.",	0);
+	set_cmt	(0X27CB0,	"Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.",	0);
 	create_insn	(0X27CB0);
+	set_name	(0X27CB0,	"LoadMasterPalette");
 	create_insn	(0X27CC9);
 	create_insn	(x=0X27CD4);
 	op_hex		(x,	1);
@@ -10845,6 +10846,12 @@ static Bytes_1(void) {
 	set_name	(0X3A3A1,	"aTeleportedToYe");
 	create_strlit	(0X3A3C0,	0X22);
 	set_name	(0X3A3C0,	"aByYourSurround");
+	create_strlit	(0X3A3E2,	0X20);
+	set_name	(0X3A3E2,	"aThatYouHaveArr");
+	create_strlit	(0X3A402,	0X21);
+	set_name	(0X3A402,	"aOutsideOfTheAt");
+	create_strlit	(0X3A423,	0X22);
+	set_name	(0X3A423,	"aYouGatherYourW");
 }
 
 //------------------------------------------------------------------------
@@ -10854,12 +10861,6 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
-	create_strlit	(0X3A3E2,	0X20);
-	set_name	(0X3A3E2,	"aThatYouHaveArr");
-	create_strlit	(0X3A402,	0X21);
-	set_name	(0X3A402,	"aOutsideOfTheAt");
-	create_strlit	(0X3A423,	0X22);
-	set_name	(0X3A423,	"aYouGatherYourW");
 	create_strlit	(0X3A445,	0X1F);
 	set_name	(0X3A445,	"aQuicklyHeadIns");
 	create_strlit	(0X3A464,	0X1B);
@@ -12736,7 +12737,7 @@ static Functions_0(void) {
 	set_frame_size(0X27C96, 0X2, 0, 0);
 	add_func    (0X27CB0,0X27CC9);
 	set_func_flags(0X27CB0,0x5402);
-	SetType(0X27CB0, "void __usercall sub_27CB0(FileEntry *this@<eds:ebx.2>);");
+	SetType(0X27CB0, "void __usercall LoadMasterPalette(FileEntry *this@<eds:ebx.2>);");
 	set_frame_size(0X27CB0, 0X2, 0, 0);
 	add_func    (0X27CC9,0X27CFE);
 	set_func_flags(0X27CC9,0x5402);

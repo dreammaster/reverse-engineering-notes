@@ -108,6 +108,13 @@ guess from 64 bytes, not a traced format. Error strings suggest it holds
 at least: text data, NPC data, conversation data (per `"Problem
 retreiving text/NPC/conversation data."`), and presumably maps.
 
+**One resource confirmed**: offset `0x8270A`, 768 bytes, is the game's
+master 256-color VGA palette (see `PICTURES.VGA`'s "Palette" section
+below) — loaded via `LoadMasterPalette` (`0x27CB0`), one of the ~27
+`FileEntry`-block-setup stub functions at `0x27B42`-`0x2801A`
+(`ida_scripts/document_resource_stubs.py`, `ida_scripts/extract_resource_stubs.py`
+has every stub's own offset/size if more need identifying the same way).
+
 ## `PICTURES.VGA`
 
 **Decoded 2026-09-15.** 12,550,618 bytes, raw 8bpp indexed pixels (VGA
@@ -188,15 +195,29 @@ and calls `SetPaletteRange` — called once per animation frame by
 `FadePaletteStep`, waits for a keypress) to fade a picture's palette in
 or out smoothly.
 
-**Not yet found: where a picture's actual target RGB values come from.**
-The fade target buffer (`DS:0x475A` + a computed offset) is zeroed at
-rest in the `.idb`/EXE — populated at runtime, not baked in statically —
-so extracting it requires either tracing the runtime data flow further
-back (the offset is `dx*3` for some `dx` passed into `FadePaletteStep`,
-not yet traced to its origin) or an emulator/debugger. Until then,
-extracted images render in grayscale (raw index value as gray level),
-which was sufficient to identify all 10 `g_pictureDir` entries by shape
-alone but doesn't show true colors.
+**Found: the master palette.** `ShowIntroPicture` calls
+`LoadMasterPalette` (`0x27CB0` — one of the resource-block-setup stub
+family from the `WorldDat` section above, the first one actually
+confirmed) right before building the fade buffer. It configures a
+`FileEntry` read of **`WORLD.DAT` offset `0x8270A`, 768 bytes** — 256
+RGB triples, already valid 6-bit VGA DAC values (0-63 per channel, no
+transform needed) — verified by reading those bytes directly and
+re-rendering the whole `PICTURES.VGA` catalog in true color
+(`extract_pic.py --palette game/WORLD.DAT 0x8270A`). The dialog panel's
+`SAVE`/`LOAD`/`NEW GAME`/`DOS`/`MUSIC`/`SOUND FX`/`ANIMATION`/`RETURN`
+labels are now fully legible in color, and the wolf and character
+silhouettes render with entirely plausible natural colors — strong
+confirmation this is the right palette (the splash-screen logo, entry
+0, renders with some rainbow banding at higher indices — either a
+second, not-yet-found palette region for that one image, or an
+intentional effect; not fully explained).
+
+`ShowIntroPicture`'s own copy loop (`al=[si]; al-=0x3F; [di]=al`,
+copying the just-read `WORLD.DAT` bytes into the `0x475A`-based fade
+buffer) subtracts `0x3F` per byte — since the source bytes are already
+in 0-63 range, this looks like it's building a *signed delta* or
+some other derived form for `FadePaletteStep`'s interpolation, not a
+second encoding layer on the base palette; not fully traced.
 
 Not yet decoded: the real VGA palette (so images render in true color,
 not grayscale), and the directory's `+0x4` field's meaning (varies per

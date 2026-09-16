@@ -1761,7 +1761,7 @@ loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
                 call    Fade?
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 0
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -2560,7 +2560,7 @@ ShowIntroPicture proc far               ; CODE XREF: start+756↑P
                 and     word_328C8, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 3
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -2649,7 +2649,7 @@ loc_118B6:                              ; CODE XREF: ShowIntroPicture+95↑j
                 and     word_328C4, 0FBFFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 0
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -3008,7 +3008,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 call    sub_25862
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 4
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -3698,14 +3698,14 @@ loadWorldDat5   proc near               ; CODE XREF: InitGame+90↑p
                                         ; InitGame+E6↑p
                 mov     ax, 4A5Ch
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 2
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 0
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -8301,7 +8301,7 @@ loc_1515D:                              ; CODE XREF: sub_15142+16↑j
                 or      word_328CC, 10h
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 5
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -8333,7 +8333,7 @@ loc_1515D:                              ; CODE XREF: sub_15142+16↑j
                 and     word_328C8, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 0
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -8413,7 +8413,7 @@ sub_15267       proc near               ; CODE XREF: sub_1522E:loc_15245↑p
                 and     word_328C4, 0FBFFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 0
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -8922,7 +8922,7 @@ loc_156DB:                              ; CODE XREF: sub_1559A+13E↑j
                 and     word_328C8, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 0
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -9425,7 +9425,7 @@ loc_15CF3:                              ; CODE XREF: sub_1559A+756↑j
                 call    sub_25862
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 3
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -9575,7 +9575,7 @@ loc_15E5D:                              ; CODE XREF: sub_15E44+A↑j
                 and     word_328C8, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 3
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -31021,7 +31021,7 @@ loc_218F7:                              ; CODE XREF: sub_218DC+A↑j
                                         ; sub_218DC+18↑j
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
-                call    sub_27CB0
+                call    LoadMasterPalette
                 mov     word ptr [bx+8], 1
                 mov     errorCode, 3
                 call    FileEntry_Read
@@ -42624,10 +42624,10 @@ sub_27C96       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; void __usercall sub_27CB0(FileEntry *this@<eds:ebx.2>)
-sub_27CB0       proc far                ; CODE XREF: ShowClueBook+4C5↑P
+; void __usercall LoadMasterPalette(FileEntry *this@<eds:ebx.2>)
+LoadMasterPalette proc far              ; CODE XREF: ShowClueBook+4C5↑P
                                         ; ShowIntroPicture+4A↑P ...
-                push    si              ; First of a ~27-function cluster (0x27B42-0x2801A, seg096) of tiny 'resource block setup' stubs: each hardcodes one FileEntry's _blockOffset/_blockOffsetHi (from a small pointer table) and _blockSize for one specific game resource, then returns -- the caller does the actual FileEntry_Read. Each is called directly from many different, scattered call sites (not through a dispatch table), so which resource each one represents isn't recoverable from static analysis alone; left unnamed deliberately rather than guessed -- see ida_scripts/document_resource_stubs.py.
+                push    si              ; Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.
                 mov     si, 0CE1Fh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42637,7 +42637,7 @@ sub_27CB0       proc far                ; CODE XREF: ShowClueBook+4C5↑P
                 mov     word ptr [bx+6], 300h
                 pop     si
                 retf
-sub_27CB0       endp
+LoadMasterPalette endp
 
 
 ; =============== S U B R O U T I N E =======================================
