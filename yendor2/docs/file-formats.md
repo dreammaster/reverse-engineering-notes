@@ -290,6 +290,16 @@ same numeric offsets. Filed as an explicit non-finding to avoid
 conflating the two if `di`'s type is pinned down later (a monster
 record struct is the leading candidate, still unlocated).
 
+**The full per-target attack pipeline is now named end to end**:
+`ApplyAttackToTarget` (was `sub_2D4B6`, called twice from the large
+unnamed combat dispatcher `sub_2C0FE`) calls
+`TryResolveAttackAgainstTarget` to get a base damage/status result,
+`ApplyTargetResistancesToAttack` to filter it by the target's
+resistances, then commits the surviving damage/status directly into
+the target's `[di+0xC]`/`[di+0x10]`/`[di+0x1C]`/`[di+0x1E]`/`[di+0x96]`
+fields. This is a solid, fully-traced combat sub-pipeline; only the
+identity of `di`'s record type and `sub_2C0FE` itself remain open.
+
 **Skill values found**: `ShowCharacterSkills` clears a **16-word array
 at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before
 drawing 3 category headers with 3/4/8 skill-name lines respectively

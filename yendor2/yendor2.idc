@@ -9828,7 +9828,9 @@ static Bytes_3(void) {
 	create_insn	(0X2D498);
 	set_cmt	(0X2D4A1,	"ticks",	0);
 	create_insn	(0X2D4AA);
+	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);
 	create_insn	(0X2D4B6);
+	set_name	(0X2D4B6,	"ApplyAttackToTarget");
 	create_insn	(x=0X2D4C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D4CA);
@@ -10234,6 +10236,15 @@ static Bytes_3(void) {
 	set_name	(0X32994,	"_val16");
 	create_word	(0X32996);
 	set_name	(0X32996,	"_val17");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32998);
 	set_name	(0X32998,	"_val18");
 	create_word	(0X3299A);
@@ -10268,15 +10279,6 @@ static Bytes_3(void) {
 	set_name	(0X329B6,	"_val39");
 	create_word	(0X329B8);
 	set_name	(0X329B8,	"_val40");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X329BA);
 	set_name	(0X329BA,	"_val41");
 	create_word	(0X329BC);

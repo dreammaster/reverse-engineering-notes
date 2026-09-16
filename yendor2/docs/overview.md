@@ -4203,6 +4203,28 @@ unconfirmed.
 
 522 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyAttackToTarget
+
+Named `sub_2D4B6` -> `ApplyAttackToTarget`, called twice from the
+large unnamed combat dispatcher `sub_2C0FE` — the orchestrator that
+ties together this round's two new functions. Resolves base damage
+(via `TryResolveAttackAgainstTarget`, or a direct
+`word_332E8`/`[di+0x5A]/2` path), filters it through
+`ApplyTargetResistancesToAttack`, bails if nothing survived, then
+commits to the target: sets `[di+0xC] |= 3`, subtracts the final
+damage from `[di+0x10]` (a HP-like current-value field), ORs any
+surviving status flags into `[di+0xC]` (and conditionally `[di+0x96]`
+too), overwrites `[di+0x1C]`/`[di+0x1E]` with fixed globals
+`word_332EE`/`word_332FC`, and conditionally clears `[di+0xC]` bit 0.
+With all three functions in this cluster now named, the shape of a
+full "resolve → filter by resistance → commit" per-target attack
+pipeline is solid, even though `di`'s exact record type (monster vs.
+some other combat-scratch struct) is still unconfirmed. `sub_2C0FE`
+itself, the dispatcher that calls this twice, remains untraced and
+unnamed.
+
+523 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -51888,7 +51888,7 @@ loc_2C87F:                              ; CODE XREF: sub_2C0FE+7B↑j
 
 loc_2C892:                              ; CODE XREF: sub_2C0FE+78F↑j
                 mov     di, word_32A1E
-                call    sub_2D4B6
+                call    ApplyAttackToTarget
                 mov     ax, word_2E49A
                 add     ax, word_2E49C
                 or      ax, ax
@@ -51922,7 +51922,7 @@ loc_2C8D2:                              ; CODE XREF: sub_2C0FE+803↓j
                 jle     short loc_2C8FB
                 mov     ax, 5           ; ticks
                 call    wait
-                call    sub_2D4B6
+                call    ApplyAttackToTarget
                 mov     ax, word_2E49A
                 add     ax, word_2E49C
                 or      ax, ax
@@ -52087,7 +52087,7 @@ loc_2CAA1:                              ; CODE XREF: sub_2C0FE+99E↑j
 loc_2CAAB:                              ; CODE XREF: sub_2C0FE+9A8↑j
                 call    GetMonsterAtViewportRow
                 mov     di, si
-                call    sub_2D4B6
+                call    ApplyAttackToTarget
                 mov     ax, word_2E49A
                 add     ax, word_2E49C
                 or      ax, ax
@@ -52373,7 +52373,7 @@ loc_2CDC8:                              ; CODE XREF: sub_2C0FE+CC5↑j
 loc_2CDD1:                              ; CODE XREF: sub_2C0FE+CCF↑j
                 call    GetMonsterAtViewportRow
                 mov     di, si
-                call    sub_2D4B6
+                call    ApplyAttackToTarget
                 mov     ax, word_2E49A
                 add     ax, word_2E49C
                 or      ax, ax
@@ -52712,7 +52712,7 @@ sub_2C0FE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TryResolveAttackAgainstTarget proc near ; CODE XREF: sub_2D4B6:loc_2D4E2↓p
+TryResolveAttackAgainstTarget proc near ; CODE XREF: ApplyAttackToTarget:loc_2D4E2↓p
                 test    word_33306, 100h ; Skips the attack if word_33306 bit 0x100 is set and [di+0x4E] already equals word_332D8 (plausibly 'already resolved this round'). Otherwise calls ResolveAttack(ax=[di+0x58], bx=[si+0x62], cx=word_332E8), si=word_328D4. Field identities at di's offsets not confirmed -- di's record type here is unknown. Called from sub_2D4B6.
                 jz      short loc_2D181
                 mov     ax, word_332D8
@@ -52756,7 +52756,7 @@ ResolveAttackAndLatchFirstHit endp
 
 
 ApplyTargetResistancesToAttack proc near
-                                        ; CODE XREF: sub_2D4B6:loc_2D4EC↓p
+                                        ; CODE XREF: ApplyAttackToTarget:loc_2D4EC↓p
                 test    word_33304, 0FC00h ; Filters pending status-effect flags (word_33304 high bits) by target immunity ([di+0x96]) into word_2E49A; fully negates damage (word_2E49C=0) if a low-bit status/immunity match is found; halves damage for a resistance-category match (word_33306 vs [di+0x98]); and drains word_332E0 from an elemental resource field on the target (offset selected by word_33304 bits 0x20-0x200), floored at 0. Called from sub_2D4B6, right after TryResolveAttackAgainstTarget.
                 jnz     short loc_2D1CD
                 jmp     loc_2D251
@@ -52940,7 +52940,7 @@ ApplyDamageToMapMonster proc near       ; CODE XREF: sub_2C0FE+E02↑p
                 push    di              ; Applies damage (word_2E49A+word_2E49C) to a dungeon-corridor monster (g_levelMonsters, via sub_2D498/sub_2D4B6, not traced), sets wound/display flags, redraws and waits, then resolves death (GrantMonsterRewards + RemoveMonsterFromMap + RedrawDungeonScreen) or survival (RefreshDungeonScreen) based on HP ([+0x10]). Called from sub_2C0FE.
                 push    cx
                 push    word_3292C
-                call    sub_2D4B6
+                call    ApplyAttackToTarget
                 mov     ax, word_2E49A
                 add     ax, word_2E49C
                 or      ax, ax
@@ -53074,7 +53074,7 @@ loc_2D474:                              ; CODE XREF: sub_2D470+24↓j
                 call    GetMonsterAtViewportRow
                 jz      short loc_2D48F
                 mov     di, si
-                call    sub_2D4B6
+                call    ApplyAttackToTarget
                 mov     ax, word_2E49C
                 add     ax, word_2E49A
                 or      ax, ax
@@ -53118,9 +53118,9 @@ sub_2D498       endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D4B6       proc near               ; CODE XREF: sub_2C0FE+798↑p
+ApplyAttackToTarget proc near           ; CODE XREF: sub_2C0FE+798↑p
                                         ; sub_2C0FE+7E9↑p ...
-                mov     word_2E49C, 0
+                mov     word_2E49C, 0   ; Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.
                 mov     word_2E49A, 0
                 test    word_328CA, 80h
                 jz      short loc_2D4E2
@@ -53130,38 +53130,38 @@ sub_2D4B6       proc near               ; CODE XREF: sub_2C0FE+798↑p
                 cmp     [di+4Eh], ax
                 jnz     short locret_2D4FD
 
-loc_2D4DA:                              ; CODE XREF: sub_2D4B6+1A↑j
+loc_2D4DA:                              ; CODE XREF: ApplyAttackToTarget+1A↑j
                 mov     ax, word_332E8
                 mov     word_2E49C, ax
                 jmp     short loc_2D4EC
 ; ---------------------------------------------------------------------------
 
-loc_2D4E2:                              ; CODE XREF: sub_2D4B6+12↑j
+loc_2D4E2:                              ; CODE XREF: ApplyAttackToTarget+12↑j
                 call    TryResolveAttackAgainstTarget
                 cmp     word_2E49C, 0
                 jz      short locret_2D4FD
 
-loc_2D4EC:                              ; CODE XREF: sub_2D4B6+2A↑j
+loc_2D4EC:                              ; CODE XREF: ApplyAttackToTarget+2A↑j
                 call    ApplyTargetResistancesToAttack
                 cmp     word_2E49C, 0
                 jnz     short loc_2D4FE
                 cmp     word_2E49A, 0
                 jnz     short loc_2D4FE
 
-locret_2D4FD:                           ; CODE XREF: sub_2D4B6+22↑j
-                                        ; sub_2D4B6+34↑j
+locret_2D4FD:                           ; CODE XREF: ApplyAttackToTarget+22↑j
+                                        ; ApplyAttackToTarget+34↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2D4FE:                              ; CODE XREF: sub_2D4B6+3E↑j
-                                        ; sub_2D4B6+45↑j
+loc_2D4FE:                              ; CODE XREF: ApplyAttackToTarget+3E↑j
+                                        ; ApplyAttackToTarget+45↑j
                 test    word_33306, 10h
                 jz      short loc_2D50E
                 mov     ax, [di+5Ah]
                 shr     ax, 1
                 mov     word_2E49C, ax
 
-loc_2D50E:                              ; CODE XREF: sub_2D4B6+4E↑j
+loc_2D50E:                              ; CODE XREF: ApplyAttackToTarget+4E↑j
                 or      word ptr [di+0Ch], 3
                 mov     ax, word_2E49C
                 sub     [di+10h], ax
@@ -53173,20 +53173,20 @@ loc_2D50E:                              ; CODE XREF: sub_2D4B6+4E↑j
                 jz      short loc_2D52E
                 or      [di+96h], ax
 
-loc_2D52E:                              ; CODE XREF: sub_2D4B6+72↑j
+loc_2D52E:                              ; CODE XREF: ApplyAttackToTarget+72↑j
                 mov     ax, word_332EE
                 mov     [di+1Ch], ax
                 mov     ax, word_332FC
                 mov     [di+1Eh], ax
 
-loc_2D53A:                              ; CODE XREF: sub_2D4B6+67↑j
+loc_2D53A:                              ; CODE XREF: ApplyAttackToTarget+67↑j
                 test    word_33306, 20h
                 jz      short locret_2D546
                 and     word ptr [di+0Ch], 0FFFEh
 
-locret_2D546:                           ; CODE XREF: sub_2D4B6+8A↑j
+locret_2D546:                           ; CODE XREF: ApplyAttackToTarget+8A↑j
                 retn
-sub_2D4B6       endp
+ApplyAttackToTarget endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -76791,7 +76791,7 @@ word_332F6      dw 0                    ; DATA XREF: sub_2C0FE:loc_2C3D3↑r
 word_332F8      dw 0                    ; DATA XREF: sub_2C0FE:loc_2C3F5↑r
 word_332FA      dw 0                    ; DATA XREF: sub_2C0FE+4DF↑r
 word_332FC      dw 0                    ; DATA XREF: sub_2C0FE+A06↑r
-                                        ; sub_2D4B6+7E↑r
+                                        ; ApplyAttackToTarget+7E↑r
 word_332FE      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+B1↑r
                                         ; MarkIneligiblePartyMembers+1D↑r
 word_33300      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+2C0↑r
