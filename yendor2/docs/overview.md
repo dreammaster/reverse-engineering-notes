@@ -3948,6 +3948,19 @@ group-base fields.
 
 502 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleStatusIconBarClick
+
+Named `sub_270FE` -> `HandleStatusIconBarClick`, called from `start`
+and `HandleDungeonInput`: hit-tests the same region table (`0x636C`)
+`TryCureAilmentFromIconClick` uses, revealing the confirmed 6-slot
+ailment table at `0x9519` is likely the tail of a larger 9-slot array
+starting at `0x950D` — hits 1-3 (the first 3 slots) dispatch elsewhere
+(`sub_271DC`, not traced) instead of the ailment-cure logic, plausibly
+a different icon type sharing the same bar. Flagged as an open lead
+rather than guessed further.
+
+503 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

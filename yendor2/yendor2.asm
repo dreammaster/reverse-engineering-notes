@@ -593,7 +593,7 @@ loc_104D2:                              ; CODE XREF: start+4B7↑j
 loc_104DA:                              ; CODE XREF: start+BA↑j
                 test    word_36C7F, 1000h
                 jz      short loc_104F1
-                call    sub_270FE
+                call    HandleStatusIconBarClick
                 cmp     errorCode, 1
                 jz      short loc_104F1
                 jmp     loc_10043
@@ -10375,7 +10375,7 @@ loc_16524:                              ; CODE XREF: HandleDungeonInput+111↑j
 ; ---------------------------------------------------------------------------
 
 loc_16527:                              ; CODE XREF: HandleDungeonInput+92↑j
-                call    sub_270FE
+                call    HandleStatusIconBarClick
                 cmp     errorCode, 1
                 jz      short loc_16536
                 jmp     loc_16432
@@ -12333,7 +12333,7 @@ loc_17422:                              ; CODE XREF: RunShopScreen+E8↑j
 ; ---------------------------------------------------------------------------
 
 loc_1742A:                              ; CODE XREF: RunShopScreen+CA↑j
-                call    sub_270FE
+                call    HandleStatusIconBarClick
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
@@ -14861,7 +14861,7 @@ loc_18847:                              ; CODE XREF: sub_1869D+196↑j
 ; ---------------------------------------------------------------------------
 
 loc_1884F:                              ; CODE XREF: sub_1869D+129↑j
-                call    sub_270FE
+                call    HandleStatusIconBarClick
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -41057,9 +41057,9 @@ ShowResourceDepletedOverlay endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_270FE       proc far                ; CODE XREF: start+4E2↑P
+HandleStatusIconBarClick proc far       ; CODE XREF: start+4E2↑P
                                         ; HandleDungeonInput:loc_16527↑P ...
-                push    dx
+                push    dx              ; Hit-tests region table 0x636C (also used by TryCureAilmentFromIconClick, with a different mouse-position pair). Zones 1-3 -> sub_271DC (not traced); zones 4+ -> table 0x950D, stride 4 -- which for zone 4..9 is the exact same memory as TryCureAilmentFromIconClick's 6-slot ailment table, implying a 9-slot array whose first 3 entries are something else (equipment icons?), not confirmed.
                 push    si
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
@@ -41074,7 +41074,7 @@ sub_270FE       proc far                ; CODE XREF: start+4E2↑P
                 jmp     short loc_27147
 ; ---------------------------------------------------------------------------
 
-loc_2711F:                              ; CODE XREF: sub_270FE+19↑j
+loc_2711F:                              ; CODE XREF: HandleStatusIconBarClick+19↑j
                 dec     ax
                 mov     bx, 4
                 mul     bx
@@ -41089,16 +41089,16 @@ loc_2711F:                              ; CODE XREF: sub_270FE+19↑j
                 jmp     short loc_27147
 ; ---------------------------------------------------------------------------
 
-loc_27141:                              ; CODE XREF: sub_270FE+14↑j
-                                        ; sub_270FE+31↑j
+loc_27141:                              ; CODE XREF: HandleStatusIconBarClick+14↑j
+                                        ; HandleStatusIconBarClick+31↑j
                 mov     errorCode, 1
 
-loc_27147:                              ; CODE XREF: sub_270FE+1F↑j
-                                        ; sub_270FE+41↑j
+loc_27147:                              ; CODE XREF: HandleStatusIconBarClick+1F↑j
+                                        ; HandleStatusIconBarClick+41↑j
                 pop     si
                 pop     dx
                 retf
-sub_270FE       endp
+HandleStatusIconBarClick endp
 
 
 ; =============== S U B R O U T I N E =======================================

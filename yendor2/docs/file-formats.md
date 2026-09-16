@@ -1655,7 +1655,20 @@ and every
 party member's main inventory (`+0x11A`), decrementing one of 3 global
 per-ailment counters (`0x9425`/`0x9429`/`0x942B`) to zero before
 clearing the corresponding `word_36C79` flag — and disables itself
-once nothing is left ticking. Resting advances the clock
+once nothing is left ticking.
+
+**The 6-entry table at `0x9519` is likely the tail of a larger 9-slot
+array starting at `0x950D`**: `HandleStatusIconBarClick` (was
+`sub_270FE`, called from `start` and `HandleDungeonInput`) hit-tests
+the *same* region table `0x636C` (with a different mouse-position
+variable pair) and computes `(hit-1)*4 + 0x950D` for hits 4-9 — which
+lands on the exact same addresses (`0x9519`, `0x951D`, ... `0x952D`)
+as the ailment table. Hits 1-3 (i.e. slots at `0x950D`/`0x9511`/
+`0x9515`, before the ailment table starts) instead dispatch to the
+still-untraced `sub_271DC` — plausibly a different kind of icon
+(equipment slots?) sharing the same 9-icon bar, but not confirmed.
+
+Resting advances the clock
 by a fixed 8 hours (`word_36D01 += 0x1E0`, matching the classic
 "resting takes 8 hours" convention); a separate `+0x3C` (1-hour) advance
 exists elsewhere too, context not traced.

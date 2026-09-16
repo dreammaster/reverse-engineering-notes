@@ -7146,7 +7146,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27056);
 	op_hex		(x,	1);
+	set_cmt	(0X270FE,	"Hit-tests region table 0x636C (also used by TryCureAilmentFromIconClick, with a different mouse-position pair). Zones 1-3 -> sub_271DC (not traced); zones 4+ -> table 0x950D, stride 4 -- which for zone 4..9 is the exact same memory as TryCureAilmentFromIconClick's 6-slot ailment table, implying a 9-slot array whose first 3 entries are something else (equipment icons?), not confirmed.",	0);
 	create_insn	(0X270FE);
+	set_name	(0X270FE,	"HandleStatusIconBarClick");
 	create_insn	(0X2711F);
 	create_insn	(0X27141);
 	create_insn	(0X2714A);
@@ -7543,6 +7545,15 @@ static Bytes_2(void) {
 	set_cmt	(0X284CB,	"Scans DOS interrupt vectors (0x80-0xBE) for an installed sound/music driver's 5-byte signature; on a match, allocates its buffer and sets g_driverStateFlags bits 0/1 (detected/active), else sets bit 0x40 (not found). Called from sub_283EA.",	0);
 	create_insn	(0X284CB);
 	set_name	(0X284CB,	"DetectSoundDriver");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X284D7);
 	op_hex		(x,	1);
 	set_cmt	(0X284D9,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
@@ -7573,15 +7584,6 @@ static Bytes_2(void) {
 	set_cmt	(0X28564,	"Initializes the sound driver's hardware config (word_32916/word_32914) and calls into it via g_soundDriverFarPtr (function selectors 1-5: settings, init, further setup), then allocates its music-data buffer (word_3292E). Called from InitSoundSystem.",	0);
 	create_insn	(0X28564);
 	set_name	(0X28564,	"InitMusicDriver");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2856B,	"numPara",	0);
 	create_insn	(x=0X28592);
 	op_seg		(x,	1);
@@ -10561,6 +10563,15 @@ static Bytes_3(void) {
 	set_name	(0X353D8,	"aTraining");
 	create_strlit	(0X353E2,	0XA);
 	set_name	(0X353E2,	"aReadyFor");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X353EC,	0X6);
 	set_name	(0X353EC,	"aLevel");
 	create_strlit	(0X353F2,	0XC);
@@ -10595,15 +10606,6 @@ static Bytes_3(void) {
 	set_name	(0X35478,	"aBronzeKey");
 	create_strlit	(0X35483,	0XB);
 	set_name	(0X35483,	"aCopperKey");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3548E,	0X9);
 	set_name	(0X3548E,	"aIronKey");
 	create_strlit	(0X35497,	0XA);
