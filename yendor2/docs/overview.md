@@ -5661,6 +5661,24 @@ proportional-fill gauge, most likely the monster info panel's HP bar.
 
 646 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawAlchemySpellListScrollArrows, DrawConfirmPromptGoldLine
+
+Named `sub_1E356` -> `DrawAlchemySpellListScrollArrows`, called
+twice from `RunAlchemyScreen`: a standard "can scroll up"/"can scroll
+down" pagination indicator for the alchemy screen's 13-spells-per-page
+list, drawing an up-arrow glyph when not on the first page and a
+down-arrow glyph when a later page exists, each setting its own
+`word_328CA` flag bit.
+
+Named `sub_1CBC4` -> `DrawConfirmPromptGoldLine`, called from
+`ShowHealingCostPrompt` and unnamed `sub_1BBED`: draws "GOLD COINS:"
+(the same label `DrawResourceCounterPanel` uses) followed by the
+current `g_partyGold` value, at a position matching a
+cost-confirmation dialog layout — shows the player's gold balance
+inline in a gold-cost confirm prompt.
+
+648 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

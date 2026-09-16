@@ -20736,7 +20736,7 @@ loc_1B9AA:                              ; CODE XREF: ShowHealingCostPrompt+40↓
                 call    DrawIndentedTextColumn
                 mov     fontOffset, 0
                 push    cs
-                call    near ptr sub_1CBC4
+                call    near ptr DrawConfirmPromptGoldLine
                 call    DrawMouseCursor
                 retf
 ShowHealingCostPrompt endp
@@ -21054,7 +21054,7 @@ loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 mov     bx, 8601h
                 call    DrawStringColumn
                 push    cs
-                call    near ptr sub_1CBC4
+                call    near ptr DrawConfirmPromptGoldLine
                 call    DrawMouseCursor
                 call    WaitForKeypressTickingMusic
                 push    cs
@@ -21131,7 +21131,7 @@ loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
                 mov     bx, 0AFBCh      ; msg
                 call    writeString
                 push    cs
-                call    near ptr sub_1CBC4
+                call    near ptr DrawConfirmPromptGoldLine
                 call    DrawMouseCursor
                 call    WaitForKeypressTickingMusic
                 push    cs
@@ -21206,7 +21206,7 @@ loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
                 call    DrawIndentedTextColumn
                 mov     fontOffset, 0
                 push    cs
-                call    near ptr sub_1CBC4
+                call    near ptr DrawConfirmPromptGoldLine
                 call    DrawMouseCursor
                 retf
 sub_1BBED       endp
@@ -22110,7 +22110,7 @@ loc_1C76D:                              ; CODE XREF: UseAbilityScroll+1DD↑j
                 mov     bx, 82BCh       ; msg
                 call    writeString
                 push    cs
-                call    near ptr sub_1CBC4
+                call    near ptr DrawConfirmPromptGoldLine
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -22532,9 +22532,9 @@ sub_1CB37       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CBC4       proc far                ; CODE XREF: ShowHealingCostPrompt+BD↑p
+DrawConfirmPromptGoldLine proc far      ; CODE XREF: ShowHealingCostPrompt+BD↑p
                                         ; sub_1BBED+CB↑p ...
-                mov     _textPos_x, 16h
+                mov     _textPos_x, 16h ; Draws 'GOLD COINS:' + the current g_partyGold BCD4 value at (0x16,0x73) -- shows the player's gold balance inline in a cost-confirmation prompt. Called from ShowHealingCostPrompt and sub_1BBED.
                 mov     _textPos_y, 73h ; 's'
                 mov     _font_fgColor, 0Dh
                 mov     bx, 7C55h       ; msg
@@ -22544,7 +22544,7 @@ sub_1CBC4       proc far                ; CODE XREF: ShowHealingCostPrompt+BD↑
                 mov     si, 94B3h
                 call    FormatAndDrawBCD4
                 retf
-sub_1CBC4       endp
+DrawConfirmPromptGoldLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -24640,7 +24640,7 @@ loc_1DD35:                              ; CODE XREF: RunAlchemyScreen+178↓j
                                         ; RunAlchemyScreen+2A4↓j ...
                 call    sub_1E522
                 call    DrawAlchemySpellList
-                call    sub_1E356
+                call    DrawAlchemySpellListScrollArrows
                 call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -24867,7 +24867,7 @@ loc_1DEDF:                              ; CODE XREF: RunAlchemyScreen+1F0↑j
                 mov     word_3330E, ax
                 call    sub_1E522
                 call    DrawAlchemySpellList
-                call    sub_1E356
+                call    DrawAlchemySpellListScrollArrows
                 call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
                 jmp     loc_1DFAD
@@ -25028,7 +25028,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    sub_1E522
                 call    BuildAlchemySpellList
                 call    DrawAlchemySpellList
-                call    sub_1E356
+                call    DrawAlchemySpellListScrollArrows
                 call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
                 mov     ax, 5           ; ticks
@@ -25339,20 +25339,21 @@ DrawSpellCostValue endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E356       proc near               ; CODE XREF: RunAlchemyScreen+5B↑p
+DrawAlchemySpellListScrollArrows proc near
+                                        ; CODE XREF: RunAlchemyScreen+5B↑p
                                         ; RunAlchemyScreen+21D↑p ...
-                and     word_328CA, 0F3FFh
+                and     word_328CA, 0F3FFh ; Pagination scroll-arrow indicator: draws an up-arrow glyph (x=0xA5, sets word_328CA bit 0x800) if word_33316 (current page) > 1, and a down-arrow glyph (x=0xB0, sets bit 0x400) if word_33314 (last page) > word_33316. Called from RunAlchemyScreen for its 13-spells-per-page list.
                 cmp     word_33316, 1
                 jle     short loc_1E369
                 or      word_328CA, 800h
 
-loc_1E369:                              ; CODE XREF: sub_1E356+B↑j
+loc_1E369:                              ; CODE XREF: DrawAlchemySpellListScrollArrows+B↑j
                 mov     ax, word_33314
                 cmp     ax, word_33316
                 jle     short loc_1E378
                 or      word_328CA, 400h
 
-loc_1E378:                              ; CODE XREF: sub_1E356+1A↑j
+loc_1E378:                              ; CODE XREF: DrawAlchemySpellListScrollArrows+1A↑j
                 mov     _font_fgColor, 0Fh
                 mov     _textPos_y, 77h ; 'w'
                 test    word_328CA, 800h
@@ -25361,16 +25362,16 @@ loc_1E378:                              ; CODE XREF: sub_1E356+1A↑j
                 mov     _textPos_x, 0A5h
                 call    writeChar
 
-loc_1E399:                              ; CODE XREF: sub_1E356+34↑j
+loc_1E399:                              ; CODE XREF: DrawAlchemySpellListScrollArrows+34↑j
                 test    word_328CA, 400h
                 jz      short locret_1E3AE
                 mov     al, 62h ; 'b'
                 mov     _textPos_x, 0B0h
                 call    writeChar
 
-locret_1E3AE:                           ; CODE XREF: sub_1E356+49↑j
+locret_1E3AE:                           ; CODE XREF: DrawAlchemySpellListScrollArrows+49↑j
                 retn
-sub_1E356       endp
+DrawAlchemySpellListScrollArrows endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -45215,7 +45216,7 @@ loc_29179:                              ; CODE XREF: ShowTransportUsagePreview+A
 
 loc_29198:                              ; CODE XREF: ShowTransportUsagePreview+F2↑j
                 call    writeString
-                call    sub_1CBC4
+                call    DrawConfirmPromptGoldLine
                 retf
 ShowTransportUsagePreview endp
 
