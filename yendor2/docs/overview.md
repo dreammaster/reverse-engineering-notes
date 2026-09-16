@@ -681,6 +681,22 @@ savegame struct next.
 
 106 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowPartyMembers resolves 'C'
+
+Found `DrawListEntryLabel` (was `sub_24FFC`): loads a paged record
+(`sub_12554`) and draws an icon+text-label entry from it — the same
+"icon + two-field label" pattern `sub_14B24` (the `DrawMessageBox`
+helper) uses, confirming `sub_12554`'s record layout has an icon id at
+`+8` and text fields at `+0x13`/`+0x20`. Its one caller, `sub_245AE`
+(989 bytes, too large to trace this round), is itself only called by
+`sub_23BAE` — which turned out to be `RunTitleScreen`'s **'C' option**:
+iterates the party-member linked list, running a pipeline of per-member
+display steps. Named `ShowPartyMembers`, resolving 'C' as "view your
+party's characters" and updating `RunTitleScreen`'s comment accordingly
+— only `A` and `R` remain unidentified among its 5 options.
+
+108 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

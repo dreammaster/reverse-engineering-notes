@@ -4234,7 +4234,7 @@ static Bytes_0(void) {
 	create_insn	(0X1D258);
 	create_insn	(0X1D273);
 	create_insn	(0X1D286);
-	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: sub_25862+sub_23BAE, redraw. A: sub_25862+sub_2BD1A, redraw. E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
+	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: sub_25862+sub_2BD1A, redraw. E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
 	create_insn	(0X1D2A6);
 	set_name	(0X1D2A6,	"RunTitleScreen");
 	create_insn	(x=0X1D2BB);
@@ -5859,7 +5859,9 @@ static Bytes_0(void) {
 	create_insn	(0X23B8E);
 	create_insn	(0X23BA4);
 	create_insn	(0X23BAC);
+	set_cmt	(0X23BAE,	"Iterates the party-member list (word_328D4, via [si+0x10]), running a pipeline of per-member display steps (sub_243D3, sub_24A5B, sub_24BF2, sub_245AE, sub_2498B, sub_25103) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
 	create_insn	(0X23BAE);
+	set_name	(0X23BAE,	"ShowPartyMembers");
 	create_insn	(0X23BBD);
 	create_insn	(0X23BC8);
 	create_insn	(x=0X23BF5);
@@ -5977,7 +5979,18 @@ static Bytes_0(void) {
 	set_cmt	(0X24CE3,	"msg",	0);
 	set_cmt	(0X24CF1,	"msg",	0);
 	create_insn	(0X24D30);
+	set_cmt	(0X24FFC,	"Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.",	0);
 	create_insn	(0X24FFC);
+	set_name	(0X24FFC,	"DrawListEntryLabel");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2504F);
 	create_insn	(0X25091);
 	create_insn	(0X250BB);
@@ -6041,15 +6054,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X25561);
 	set_cmt	(0X25587,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X25595);
 	create_insn	(x=0X255B3);
 	op_hex		(x,	1);
@@ -10460,6 +10464,15 @@ static Bytes_1(void) {
 	set_name	(0X36665,	"aThatIsAn");
 	create_strlit	(0X36670,	0XA);
 	set_name	(0X36670,	"aIllusion");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3667A,	0XC);
 	set_name	(0X3667A,	"aPatienceIs");
 	create_strlit	(0X36686,	0XA);
@@ -10491,15 +10504,6 @@ static Bytes_1(void) {
 	set_name	(0X3675E,	"aMapC");
 	create_strlit	(0X36764,	0X17);
 	set_name	(0X36764,	"aMonkClericPrie");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3677B,	0X20);
 	set_name	(0X3677B,	"aAlchemistTrans");
 	create_strlit	(0X3679B,	0X1A);

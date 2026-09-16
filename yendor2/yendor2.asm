@@ -23500,7 +23500,7 @@ seg054          segment byte public 'CODE' use16
 
 RunTitleScreen  proc far                ; CODE XREF: start+A0F↑P
                                         ; InitGame+F6↑P ...
-                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: sub_25862+sub_23BAE, redraw. A: sub_25862+sub_2BD1A, redraw. E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.
+                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: sub_25862+sub_2BD1A, redraw. E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.
                 mov     word_36CE7, 3
                 mov     ax, 1
                 mov     word_3297E, ax
@@ -23647,7 +23647,7 @@ loc_1D3FA:                              ; CODE XREF: RunTitleScreen+14F↑j
 
 loc_1D3FF:                              ; CODE XREF: RunTitleScreen+A3↑j
                 call    sub_25862
-                call    sub_23BAE
+                call    ShowPartyMembers
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
 
@@ -35172,23 +35172,23 @@ sub_23BA4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23BAE       proc far                ; CODE XREF: RunTitleScreen+15E↑P
-                call    sub_25862
+ShowPartyMembers proc far               ; CODE XREF: RunTitleScreen+15E↑P
+                call    sub_25862       ; Iterates the party-member list (word_328D4, via [si+0x10]), running a pipeline of per-member display steps (sub_243D3, sub_24A5B, sub_24BF2, sub_245AE, sub_2498B, sub_25103) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.
                 call    sub_25544
                 call    sub_2587E
                 jmp     short loc_23BC0
 ; ---------------------------------------------------------------------------
 
-loc_23BBD:                              ; CODE XREF: sub_23BAE+62↓j
+loc_23BBD:                              ; CODE XREF: ShowPartyMembers+62↓j
                 call    sub_25544
 
-loc_23BC0:                              ; CODE XREF: sub_23BAE+D↑j
+loc_23BC0:                              ; CODE XREF: ShowPartyMembers+D↑j
                 cmp     word_328D4, 0
                 jnz     short loc_23BC8
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_23BC8:                              ; CODE XREF: sub_23BAE+17↑j
+loc_23BC8:                              ; CODE XREF: ShowPartyMembers+17↑j
                 call    sub_243D3
                 cmp     byte_2E400, 51h ; 'Q'
                 jz      short loc_23C12
@@ -35210,11 +35210,11 @@ loc_23BC8:                              ; CODE XREF: sub_23BAE+17↑j
                 cmp     byte_2E400, 51h ; 'Q'
                 jnz     short loc_23BBD
 
-loc_23C12:                              ; CODE XREF: sub_23BAE+22↑j
-                                        ; sub_23BAE+35↑j ...
+loc_23C12:                              ; CODE XREF: ShowPartyMembers+22↑j
+                                        ; ShowPartyMembers+35↑j ...
                 call    sub_25862
                 retf
-sub_23BAE       endp
+ShowPartyMembers endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35949,7 +35949,7 @@ sub_243C3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_243D3       proc near               ; CODE XREF: sub_23BAE:loc_23BC8↑p
+sub_243D3       proc near               ; CODE XREF: ShowPartyMembers:loc_23BC8↑p
                                         ; sub_25103+14E↓p
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_2438B
@@ -36110,7 +36110,7 @@ sub_243D3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_245AE       proc near               ; CODE XREF: sub_23BAE+4D↑p
+sub_245AE       proc near               ; CODE XREF: ShowPartyMembers+4D↑p
                                         ; sub_25103+186↓p
                 mov     word_32940, 0
 
@@ -36134,56 +36134,56 @@ loc_245B4:                              ; CODE XREF: sub_245AE+2AE↓j
                 jnz     short loc_24612
                 mov     y, 2Ah ; '*'
                 mov     ax, _val1
-                call    sub_24FFC
+                call    DrawListEntryLabel
 
 loc_24612:                              ; CODE XREF: sub_245AE+56↑j
                 test    word_328C4, 40h
                 jnz     short loc_24626
                 mov     y, 3Ah ; ':'
                 mov     ax, _val2
-                call    sub_24FFC
+                call    DrawListEntryLabel
 
 loc_24626:                              ; CODE XREF: sub_245AE+6A↑j
                 test    word_328C4, 20h
                 jnz     short loc_2463A
                 mov     y, 4Ah ; 'J'
                 mov     ax, _val3
-                call    sub_24FFC
+                call    DrawListEntryLabel
 
 loc_2463A:                              ; CODE XREF: sub_245AE+7E↑j
                 test    word_328C4, 10h
                 jnz     short loc_2464E
                 mov     y, 5Ah ; 'Z'
                 mov     ax, _val4
-                call    sub_24FFC
+                call    DrawListEntryLabel
 
 loc_2464E:                              ; CODE XREF: sub_245AE+92↑j
                 test    word_328C4, 8
                 jnz     short loc_24662
                 mov     y, 6Ah ; 'j'
                 mov     ax, _val5
-                call    sub_24FFC
+                call    DrawListEntryLabel
 
 loc_24662:                              ; CODE XREF: sub_245AE+A6↑j
                 test    word_328C4, 4
                 jnz     short loc_24676
                 mov     y, 7Ah ; 'z'
                 mov     ax, _val6
-                call    sub_24FFC
+                call    DrawListEntryLabel
 
 loc_24676:                              ; CODE XREF: sub_245AE+BA↑j
                 test    word_328C4, 2
                 jnz     short loc_2468A
                 mov     y, 8Ah
                 mov     ax, _val7
-                call    sub_24FFC
+                call    DrawListEntryLabel
 
 loc_2468A:                              ; CODE XREF: sub_245AE+CE↑j
                 test    word_328C4, 1
                 jnz     short loc_2469E
                 mov     y, 9Ah
                 mov     ax, _val8
-                call    sub_24FFC
+                call    DrawListEntryLabel
 
 loc_2469E:                              ; CODE XREF: sub_245AE+E2↑j
                 test    word_328CA, 8000h
@@ -36478,7 +36478,7 @@ sub_245AE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2498B       proc near               ; CODE XREF: sub_23BAE+57↑p
+sub_2498B       proc near               ; CODE XREF: ShowPartyMembers+57↑p
                                         ; sub_2498B+7D↓j ...
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -36542,7 +36542,7 @@ sub_2498B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_24A5B       proc near               ; CODE XREF: sub_23BAE+2D↑p
+sub_24A5B       proc near               ; CODE XREF: ShowPartyMembers+2D↑p
                                         ; sub_24A5B+12D↓j ...
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_2438B
@@ -36703,7 +36703,7 @@ sub_24A5B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_24BF2       proc near               ; CODE XREF: sub_23BAE+37↑p
+sub_24BF2       proc near               ; CODE XREF: ShowPartyMembers+37↑p
                                         ; sub_24BF2+87↓j ...
                 call    sub_252EF
                 call    sub_23F58
@@ -37017,9 +37017,9 @@ sub_24D30       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_24FFC       proc near               ; CODE XREF: sub_245AE+61↑p
+DrawListEntryLabel proc near            ; CODE XREF: sub_245AE+61↑p
                                         ; sub_245AE+75↑p ...
-                call    sub_12554
+                call    sub_12554       ; Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 call    DrawPicture
@@ -37042,7 +37042,7 @@ sub_24FFC       proc near               ; CODE XREF: sub_245AE+61↑p
                 call    TrimTrailingSpaces
                 call    writeString
                 retn
-sub_24FFC       endp
+DrawListEntryLabel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37136,7 +37136,7 @@ sub_250E5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25103       proc near               ; CODE XREF: sub_23BAE+5A↑p
+sub_25103       proc near               ; CODE XREF: ShowPartyMembers+5A↑p
                                         ; sub_25103+157↓j ...
                 call    sub_254CC
                 mov     _textPos_x, 6Bh ; 'k'
@@ -37563,8 +37563,8 @@ sub_254CC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25544       proc near               ; CODE XREF: sub_23BAE+5↑p
-                                        ; sub_23BAE:loc_23BBD↑p
+sub_25544       proc near               ; CODE XREF: ShowPartyMembers+5↑p
+                                        ; ShowPartyMembers:loc_23BBD↑p
                 mov     word_328BC, 74h ; 't'
                 mov     word_328C0, 3Ch ; '<'
                 and     word_328CA, 7FFFh
