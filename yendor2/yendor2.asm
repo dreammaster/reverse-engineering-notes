@@ -53026,8 +53026,9 @@ DrawAnimationFrameAndAdvance endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D428       proc near               ; CODE XREF: ApplyAttackAlongCorridorLine+1C↓p
-                mov     ax, [di+96h]
+ReapplyDamageWithCompoundedResistance proc near
+                                        ; CODE XREF: ApplyAttackAlongCorridorLine+1C↓p
+                mov     ax, [di+96h]    ; Second commit pass after ApplyAttackToTarget already committed: re-filters status flags by immunity (idempotent), recomputes a COMPOUNDED resistance halving (once per matching bit among the same 7 word_33306/[di+0x98] resistance-category bits, vs. ApplyTargetResistancesToAttack's single first-match halving), and subtracts that from [di+0x10] AGAIN (floored at 0) -- genuinely double-applies damage. Why this re-application is intentional (compounding elemental damage for area attacks?) vs. an artifact isn't resolved. Called from ApplyAttackAlongCorridorLine.
                 not     ax
                 and     ax, word_2E49A
                 or      [di+0Ch], ax
@@ -53037,12 +53038,12 @@ sub_2D428       proc near               ; CODE XREF: ApplyAttackAlongCorridorLin
                 mov     ax, word_2E49C
                 mov     cx, 10h
 
-loc_2D447:                              ; CODE XREF: sub_2D428:loc_2D44D↓j
+loc_2D447:                              ; CODE XREF: ReapplyDamageWithCompoundedResistance:loc_2D44D↓j
                 shl     bx, 1
                 jnb     short loc_2D44D
                 shr     ax, 1
 
-loc_2D44D:                              ; CODE XREF: sub_2D428+21↑j
+loc_2D44D:                              ; CODE XREF: ReapplyDamageWithCompoundedResistance+21↑j
                 loop    loc_2D447
                 mov     bx, [di+10h]
                 sub     bx, ax
@@ -53050,16 +53051,16 @@ loc_2D44D:                              ; CODE XREF: sub_2D428+21↑j
                 jg      short loc_2D45C
                 mov     bx, 0
 
-loc_2D45C:                              ; CODE XREF: sub_2D428+2F↑j
+loc_2D45C:                              ; CODE XREF: ReapplyDamageWithCompoundedResistance+2F↑j
                 mov     [di+10h], bx
                 or      word ptr [di+0Ch], 3
                 test    word_33306, 20h
                 jz      short locret_2D46F
                 and     word ptr [di+0Ch], 0FFFEh
 
-locret_2D46F:                           ; CODE XREF: sub_2D428+41↑j
+locret_2D46F:                           ; CODE XREF: ReapplyDamageWithCompoundedResistance+41↑j
                 retn
-sub_2D428       endp
+ReapplyDamageWithCompoundedResistance endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -53080,7 +53081,7 @@ loc_2D474:                              ; CODE XREF: ApplyAttackAlongCorridorLin
                 add     ax, word_2E49A
                 or      ax, ax
                 jz      short loc_2D48F
-                call    sub_2D428
+                call    ReapplyDamageWithCompoundedResistance
 
 loc_2D48F:                              ; CODE XREF: ApplyAttackAlongCorridorLine+A↑j
                                         ; ApplyAttackAlongCorridorLine+1A↑j

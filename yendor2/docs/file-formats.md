@@ -313,6 +313,22 @@ caution notes above were warranted, and none of those field identities
 should be merged with the party-record documentation elsewhere in this
 file.
 
+**`ApplyAttackAlongCorridorLine`'s follow-up call, now resolved**:
+`ReapplyDamageWithCompoundedResistance` (was `sub_2D428`, left unnamed
+for two rounds pending this) runs only when `ApplyAttackToTarget` left
+damage/status pending — which, since every one of that function's
+early-return paths re-checks both are 0 first, only happens after it
+has already run its own complete commit. So this is a genuine
+**second** commit pass on the same monster target: it re-filters
+status flags by immunity (idempotent, bits stay set) but recomputes a
+*compounded* resistance halving (once per matching bit among the same
+7 resistance-category bits `ApplyTargetResistancesToAttack` checks
+with only a single first-match halving) and subtracts that from
+`[di+0x10]` again — a real double-application of damage. *Why* the
+game does this specifically for corridor-line area attacks
+(compounding elemental damage as a deliberate design choice, vs. an
+artifact of the original code) remains an open question.
+
 **Skill values found**: `ShowCharacterSkills` clears a **16-word array
 at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before
 drawing 3 category headers with 3/4/8 skill-name lines respectively

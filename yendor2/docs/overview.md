@@ -4392,6 +4392,32 @@ both docs entries in place.
 
 535 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ReapplyDamageWithCompoundedResistance — resolving a previously-flagged open lead
+
+Named `sub_2D428` -> `ReapplyDamageWithCompoundedResistance`, called
+once from `ApplyAttackAlongCorridorLine` right after
+`ApplyAttackToTarget` — the function left deliberately unnamed two
+rounds ago pending clarification of its relationship to
+`ApplyAttackToTarget`'s own commit. Traced it fully this round: since
+`ApplyAttackToTarget` only ever leaves `word_2E49C`/`word_2E49A`
+nonzero by having already run its own complete commit (every
+early-return path re-checks both are 0 first), this function runs as
+a genuine **second** commit pass on the same target. It re-filters
+status flags by immunity (idempotent — bits stay set), but then
+recomputes a *compounded* resistance halving — looping all 16 bit
+positions and halving the staged damage once per matching bit among
+the same 7 resistance-category bits `ApplyTargetResistancesToAttack`
+already checked (which only applies a single first-match halving) —
+and subtracts that newly-recomputed amount from `[di+0x10]` **again**,
+genuinely double-applying damage on top of `ApplyAttackToTarget`'s own
+subtraction. Named it based on this now-fully-traced mechanical
+behavior, but honestly flagged that *why* the game deliberately
+re-applies damage this way for corridor-line attacks specifically
+(compounding elemental damage as an area-effect design choice, vs. an
+artifact of the original code) is not resolved.
+
+536 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

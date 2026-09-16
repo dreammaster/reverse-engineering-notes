@@ -9833,7 +9833,9 @@ static Bytes_3(void) {
 	set_name	(0X2D3FE,	"DrawAnimationFrameAndAdvance");
 	create_insn	(x=0X2D40F);
 	op_hex		(x,	1);
+	set_cmt	(0X2D428,	"Second commit pass after ApplyAttackToTarget already committed: re-filters status flags by immunity (idempotent), recomputes a COMPOUNDED resistance halving (once per matching bit among the same 7 word_33306/[di+0x98] resistance-category bits, vs. ApplyTargetResistancesToAttack's single first-match halving), and subtracts that from [di+0x10] AGAIN (floored at 0) -- genuinely double-applies damage. Why this re-application is intentional (compounding elemental damage for area attacks?) vs. an artifact isn't resolved. Called from ApplyAttackAlongCorridorLine.",	0);
 	create_insn	(0X2D428);
+	set_name	(0X2D428,	"ReapplyDamageWithCompoundedResistance");
 	create_insn	(x=0X2D439);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D447);
@@ -9940,6 +9942,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2D7EA,	"Clears +0x15E bit 0x8000 (the 'needs attention' flag MarkIneligiblePartyMembers sets) for all 4 party slots unconditionally. Called from InteractWithContainer.",	0);
 	create_insn	(0X2D7EA);
 	set_name	(0X2D7EA,	"ClearIneligibleFlagForAllMembers");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D7FD);
 	op_hex		(x,	1);
 	set_cmt	(0X2D809,	"Shows a yes/no confirm prompt (message id 0x12), storing the result in word_3331A and the current slot (word_32924) in word_3331C for the caller to act on. Called from InteractWithContainer.",	0);
@@ -9962,15 +9973,6 @@ static Bytes_3(void) {
 	set_name	(0X2E38A,	"y");
 	create_word	(0X2E38C);
 	set_name	(0X2E38C,	"_font_bgTransparent");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E38E);
 	create_word	(0X2E390);
 	create_word	(0X2E392);
