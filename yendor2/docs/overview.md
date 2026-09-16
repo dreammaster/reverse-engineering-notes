@@ -5820,6 +5820,30 @@ call earlier in the same function).
 670 named of 769 functions as of this update — fewer than 100
 unnamed functions remain.
 
+### 2026-09-15 session update, continued: DispatchItemAbilityCommand, DrawItemContainerCompatibilityRow
+
+Named `sub_2AE3C` -> `DispatchItemAbilityCommand`, called once from
+`HandleGameCommand`: the top-level command dispatcher (on
+`word_32974`, codes `0x242`-`0x2C8`) tying together the
+previously-documented "quest/relic items" cluster —
+`UseAbilityOnTarget`, the 4 recharge-gated relic effects
+(`CollectNuoreCache`/`CollectMagicOreCache`/`PartyMassHealAndOverheal`/
+`InstantKillActiveMonster`), `ShowVisionAtLocation`/
+`UseLocationBoundPotion`/`CheckQuestItemsCompleted`, and a
+forced-music-track one-off. Confirmed via string dump that using a
+relic before its recharge flag (global flag `0xB1`) is set shows
+"PATIENCE IS A VIRTUE." instead of firing the effect.
+
+Named `sub_13707` -> `DrawItemContainerCompatibilityRow`, called
+once from `ShowClueBookItemDetail`: draws "FITS IN-" then, based on
+item flag bits, either "ANY PANEL"/"CHARACTER PANEL" or a
+concatenation of "BACKPACK "/"BOX "/"BAG" (confirmed via string
+dump) — identifying the item record's `[+0xE]` top 3 bits as
+storage-container-compatibility flags and `[+0xC]` bit `0x2000` as
+an "equipment/character-panel only" flag.
+
+672 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

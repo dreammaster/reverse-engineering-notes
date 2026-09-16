@@ -5698,7 +5698,7 @@ loc_136BD:                              ; CODE XREF: ShowClueBookItemDetail+3F�
                 call    DrawLabeledNumberIfNonzero
                 mov     _textPos_y, 45h ; 'E'
                 mov     si, word_2E546
-                call    sub_13707
+                call    DrawItemContainerCompatibilityRow
                 retn
 ShowClueBookItemDetail endp
 
@@ -5706,8 +5706,9 @@ ShowClueBookItemDetail endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13707       proc near               ; CODE XREF: ShowClueBookItemDetail+8B↑p
-                mov     _textPos_x, 6Eh ; 'n'
+DrawItemContainerCompatibilityRow proc near
+                                        ; CODE XREF: ShowClueBookItemDetail+8B↑p
+                mov     _textPos_x, 6Eh ; 'n' ; Draws 'FITS IN-' then either 'ANY PANEL' / 'CHARACTER PANEL' (based on [si+0xC] bit 0x2000) or a concatenation of 'BACKPACK '/'BOX '/'BAG' for [si+0xE] bits 0x8000/0x4000/0x2000 -- identifies these as item container-compatibility flags. Called once from ShowClueBookItemDetail.
                 mov     _font_fgColor, 0Ah
                 mov     bx, 8AA2h
                 call    writeString
@@ -5722,36 +5723,36 @@ sub_13707       proc near               ; CODE XREF: ShowClueBookItemDetail+8B�
                 jmp     short locret_1377F
 ; ---------------------------------------------------------------------------
 
-loc_1373E:                              ; CODE XREF: sub_13707+2B↑j
+loc_1373E:                              ; CODE XREF: DrawItemContainerCompatibilityRow+2B↑j
                 mov     bx, 8AB1h
                 call    writeString
                 jmp     short locret_1377F
 ; ---------------------------------------------------------------------------
 
-loc_13748:                              ; CODE XREF: sub_13707+24↑j
+loc_13748:                              ; CODE XREF: DrawItemContainerCompatibilityRow+24↑j
                 test    word ptr [si+0Eh], 8000h
                 jz      short loc_1375C
                 mov     bx, 8ACBh
                 call    writeString
                 add     _textPos_x, 36h ; '6'
 
-loc_1375C:                              ; CODE XREF: sub_13707+46↑j
+loc_1375C:                              ; CODE XREF: DrawItemContainerCompatibilityRow+46↑j
                 test    word ptr [si+0Eh], 4000h
                 jz      short loc_13770
                 mov     bx, 8AD5h
                 call    writeString
                 add     _textPos_x, 18h
 
-loc_13770:                              ; CODE XREF: sub_13707+5A↑j
+loc_13770:                              ; CODE XREF: DrawItemContainerCompatibilityRow+5A↑j
                 test    word ptr [si+0Eh], 2000h
                 jz      short locret_1377F
                 mov     bx, 8ADAh
                 call    writeString
 
-locret_1377F:                           ; CODE XREF: sub_13707+35↑j
-                                        ; sub_13707+3F↑j ...
+locret_1377F:                           ; CODE XREF: DrawItemContainerCompatibilityRow+35↑j
+                                        ; DrawItemContainerCompatibilityRow+3F↑j ...
                 retn
-sub_13707       endp
+DrawItemContainerCompatibilityRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -45575,7 +45576,7 @@ ShowAbilityDescriptionColumn endp
 ; =============== S U B R O U T I N E =======================================
 
 
-UseAbilityOnTarget proc far             ; CODE XREF: sub_2AE3C:loc_2AE82↓P
+UseAbilityOnTarget proc far             ; CODE XREF: DispatchItemAbilityCommand:loc_2AE82↓P
                 push    cs              ; Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.
                 call    near ptr WaitForTargetClick
                 cmp     byte_2E400, 1Bh
@@ -45931,7 +45932,7 @@ loc_29727:                              ; CODE XREF: HandleGameCommand+17A↑j
 ; ---------------------------------------------------------------------------
 
 loc_2972D:                              ; CODE XREF: HandleGameCommand+172↑j
-                call    sub_2AE3C
+                call    DispatchItemAbilityCommand
                 call    sub_238CD
                 retf
 HandleGameCommand endp
@@ -49065,28 +49066,28 @@ seg116          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AE3C       proc far                ; CODE XREF: HandleGameCommand:loc_2972D↑P
-                cmp     word_32974, 253h ; Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.
+DispatchItemAbilityCommand proc far     ; CODE XREF: HandleGameCommand:loc_2972D↑P
+                cmp     word_32974, 253h ; Top-level dispatcher on word_32974 (0x242-0x2C8) for the quest/relic item cluster: UseAbilityOnTarget, the 4 recharge-gated relic effects (CollectNuoreCache/CollectMagicOreCache/PartyMassHealAndOverheal/InstantKillActiveMonster), ShowVisionAtLocation/UseLocationBoundPotion/CheckQuestItemsCompleted, and a forced-music-track one-off. Shows 'PATIENCE IS A VIRTUE.' when a relic is used before its recharge flag (global flag 0xB1) is set. Called once from HandleGameCommand.
                 jnz     short loc_2AE48
                 call    ShowVisionAtLocation
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AE48:                              ; CODE XREF: sub_2AE3C+6↑j
+loc_2AE48:                              ; CODE XREF: DispatchItemAbilityCommand+6↑j
                 cmp     word_32974, 258h
                 jnz     short loc_2AE54
                 call    UseLocationBoundPotion
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AE54:                              ; CODE XREF: sub_2AE3C+12↑j
+loc_2AE54:                              ; CODE XREF: DispatchItemAbilityCommand+12↑j
                 cmp     word_32974, 2C8h
                 jnz     short loc_2AE60
                 call    CheckQuestItemsCompleted
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AE60:                              ; CODE XREF: sub_2AE3C+1E↑j
+loc_2AE60:                              ; CODE XREF: DispatchItemAbilityCommand+1E↑j
                 cmp     word_32974, 242h
                 jz      short loc_2AE82
                 cmp     word_32974, 243h
@@ -49098,13 +49099,13 @@ loc_2AE60:                              ; CODE XREF: sub_2AE3C+1E↑j
                 jmp     short loc_2AE88
 ; ---------------------------------------------------------------------------
 
-loc_2AE82:                              ; CODE XREF: sub_2AE3C+2A↑j
-                                        ; sub_2AE3C+32↑j ...
+loc_2AE82:                              ; CODE XREF: DispatchItemAbilityCommand+2A↑j
+                                        ; DispatchItemAbilityCommand+32↑j ...
                 call    UseAbilityOnTarget
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AE88:                              ; CODE XREF: sub_2AE3C+44↑j
+loc_2AE88:                              ; CODE XREF: DispatchItemAbilityCommand+44↑j
                 cmp     word_32974, 26Dh
                 jnz     short loc_2AE9E
                 call    StopMusicAndResetTimer
@@ -49113,13 +49114,13 @@ loc_2AE88:                              ; CODE XREF: sub_2AE3C+44↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AE9E:                              ; CODE XREF: sub_2AE3C+52↑j
+loc_2AE9E:                              ; CODE XREF: DispatchItemAbilityCommand+52↑j
                 cmp     word_32974, 246h
                 jge     short loc_2AEA9
                 jmp     locret_2AF2D
 ; ---------------------------------------------------------------------------
 
-loc_2AEA9:                              ; CODE XREF: sub_2AE3C+68↑j
+loc_2AEA9:                              ; CODE XREF: DispatchItemAbilityCommand+68↑j
                 cmp     word_32974, 249h
                 jg      short locret_2AF2D
                 mov     ax, 0B1h
@@ -49131,21 +49132,21 @@ loc_2AEA9:                              ; CODE XREF: sub_2AE3C+68↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AEC7:                              ; CODE XREF: sub_2AE3C+85↑j
+loc_2AEC7:                              ; CODE XREF: DispatchItemAbilityCommand+85↑j
                 cmp     word_32974, 247h
                 jnz     short loc_2AED3
                 call    CollectMagicOreCache
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AED3:                              ; CODE XREF: sub_2AE3C+91↑j
+loc_2AED3:                              ; CODE XREF: DispatchItemAbilityCommand+91↑j
                 cmp     word_32974, 248h
                 jnz     short loc_2AEDF
                 call    PartyMassHealAndOverheal
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AEDF:                              ; CODE XREF: sub_2AE3C+9D↑j
+loc_2AEDF:                              ; CODE XREF: DispatchItemAbilityCommand+9D↑j
                 cmp     word_32974, 249h
                 jnz     short locret_2AF2D
                 test    word_328CA, 1000h
@@ -49154,8 +49155,8 @@ loc_2AEDF:                              ; CODE XREF: sub_2AE3C+9D↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AEF3:                              ; CODE XREF: sub_2AE3C+7D↑j
-                                        ; sub_2AE3C+B1↑j
+loc_2AEF3:                              ; CODE XREF: DispatchItemAbilityCommand+7D↑j
+                                        ; DispatchItemAbilityCommand+B1↑j
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
@@ -49171,16 +49172,16 @@ loc_2AEF3:                              ; CODE XREF: sub_2AE3C+7D↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-locret_2AF2D:                           ; CODE XREF: sub_2AE3C+6A↑j
-                                        ; sub_2AE3C+73↑j ...
+locret_2AF2D:                           ; CODE XREF: DispatchItemAbilityCommand+6A↑j
+                                        ; DispatchItemAbilityCommand+73↑j ...
                 retf
-sub_2AE3C       endp
+DispatchItemAbilityCommand endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-UseLocationBoundPotion proc near        ; CODE XREF: sub_2AE3C+14↑p
+UseLocationBoundPotion proc near        ; CODE XREF: DispatchItemAbilityCommand+14↑p
                 call    ClearStatusPanelIfDirty ; Item-icon-dispatch handler (word_32974==0x258). A potion that only works at one specific map cell (word_36CF7==0x68, word_36CF9==0x6E): there, shows 'THE POTION WORKED SUCCESSFULLY', confirms item 0x258 is present (IsItemRangeAvailable), and sets global quest flag 0x48 (SetGlobalFlag). Elsewhere: 'YOU CAN NOT USE THAT HERE!'.
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
@@ -49223,7 +49224,7 @@ UseLocationBoundPotion endp
 ; =============== S U B R O U T I N E =======================================
 
 
-CollectMagicOreCache proc near          ; CODE XREF: sub_2AE3C+93↑p
+CollectMagicOreCache proc near          ; CODE XREF: DispatchItemAbilityCommand+93↑p
                 mov     ax, 7           ; Item-icon-dispatch handler (word_32974==0x247). Shows '+5,000 MAGIC ORE', confirms item 0x247 present, adds 5000 to global material counter 0x94B7.
                 call    TriggerSoundEvent
                 call    ClearStatusPanelIfDirty
@@ -49254,7 +49255,7 @@ CollectMagicOreCache endp
 ; =============== S U B R O U T I N E =======================================
 
 
-CollectNuoreCache proc near             ; CODE XREF: sub_2AE3C+87↑p
+CollectNuoreCache proc near             ; CODE XREF: DispatchItemAbilityCommand+87↑p
                 mov     ax, 7           ; Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.
                 call    TriggerSoundEvent
                 call    ClearStatusPanelIfDirty
@@ -49285,7 +49286,7 @@ CollectNuoreCache endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PartyMassHealAndOverheal proc near      ; CODE XREF: sub_2AE3C+9F↑p
+PartyMassHealAndOverheal proc near      ; CODE XREF: DispatchItemAbilityCommand+9F↑p
                 call    ClearStatusPanelIfDirty ; Item-icon-dispatch handler (word_32974==0x248). Shows '2 X HEALTH'/'2 X MAGIC': cures all ailments and sets every party member's current HP/MP to 2x their max (an overheal effect), drawing a heal icon (PrepareTrapEffectSlots id 3, same as UseHealingItem) on each via ApplyEffectAndDrawIconBar.
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
@@ -49342,7 +49343,7 @@ PartyMassHealAndOverheal endp
 ; =============== S U B R O U T I N E =======================================
 
 
-InstantKillActiveMonster proc near      ; CODE XREF: sub_2AE3C+B3↑p
+InstantKillActiveMonster proc near      ; CODE XREF: DispatchItemAbilityCommand+B3↑p
                 and     word_328C8, 1FFFh ; Item-icon-dispatch handler (word_32974==0x249, also gated on word_328CA bit 0x1000). Zeroes the active monster's HP ([word_32A1E+0x10]=0) directly -- an instant-kill effect.
                 mov     word_3293E, 249h
                 mov     word_32940, 249h
@@ -49359,7 +49360,7 @@ InstantKillActiveMonster endp
 ; =============== S U B R O U T I N E =======================================
 
 
-CheckQuestItemsCompleted proc near      ; CODE XREF: sub_2AE3C+20↑p
+CheckQuestItemsCompleted proc near      ; CODE XREF: DispatchItemAbilityCommand+20↑p
                 call    ClearStatusPanelIfDirty ; Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
@@ -49455,7 +49456,7 @@ CheckQuestItemsCompleted endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
+ShowVisionAtLocation proc near          ; CODE XREF: DispatchItemAbilityCommand+8↑p
                 push    word_36CF7      ; Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.
                 push    word_36CF9
                 push    word_36CF5

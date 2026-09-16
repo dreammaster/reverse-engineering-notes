@@ -1791,7 +1791,9 @@ static Bytes_0(void) {
 	set_name	(0X13678,	"ShowClueBookItemDetail");
 	create_insn	(x=0X136B2);
 	op_hex		(x,	1);
+	set_cmt	(0X13707,	"Draws 'FITS IN-' then either 'ANY PANEL' / 'CHARACTER PANEL' (based on [si+0xC] bit 0x2000) or a concatenation of 'BACKPACK '/'BOX '/'BAG' for [si+0xE] bits 0x8000/0x4000/0x2000 -- identifies these as item container-compatibility flags. Called once from ShowClueBookItemDetail.",	0);
 	create_insn	(0X13707);
+	set_name	(0X13707,	"DrawItemContainerCompatibilityRow");
 	create_insn	(x=0X13726);
 	op_hex		(x,	1);
 	create_insn	(x=0X1372D);
@@ -2925,6 +2927,15 @@ static Bytes_0(void) {
 	set_cmt	(0X17835,	"msg",	0);
 	create_insn	(x=0X17849);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X17854);
 	op_hex		(x,	1);
 	create_insn	(x=0X1785F);
@@ -2940,15 +2951,6 @@ static Bytes_0(void) {
 	set_cmt	(0X178A6,	"Top-level 'use ability on a target' command, called directly from `start`. Dispatches on a caller-supplied record's +2 flags (bit 0x8000 -> weight/capacity check via sub_1766F, else LoadCurgameRecord for the target). Confirms via ShowConfirmPrompt, validates the target (status mask 0x1C40, else FlashStatusWarning), writes the result to CURGAME (FileEntry 0x8FFB) when gated flags allow, and shows a message box. If the action record's +2 bit 0x8000 was set, ends by calling ShowMaterialCounterHud (via sub_1732B) -- explains that HUD element's calling context.",	0);
 	create_insn	(0X178A6);
 	set_name	(0X178A6,	"UseAbilityCommand");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X178C5);
 	op_hex		(x,	1);
 	create_insn	(0X178D1);
@@ -4833,15 +4835,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1DA2C,	"Straight-line multi-target attack: calls GetMonsterAtViewportRow for 3 consecutive depth rows (word_3292C incrementing), applying ApplyResolvedDamageWithResistance to whatever monster is found at each. Matches the 'IN A STRAIGHT LINE' targeting text from ShowClueBookSpellDetail's message table. Called from sub_1DA60.",	0);
 	create_insn	(0X1DA2C);
 	set_name	(0X1DA2C,	"ApplyDamageAlongCorridorLine");
-	set_cmt	(0X1DA42,	"Shows a combat message (ax, via sub_28412) unless sub_2827E reports speech/sound busy, in which case it just waits 6 ticks instead. Called from HandleRangedOrCombatAction.",	0);
-	create_insn	(0X1DA42);
-	set_name	(0X1DA42,	"ShowCombatMessageOrWait");
-	set_cmt	(0X1DA4B,	"ticks",	0);
-	create_insn	(0X1DA54);
-	set_cmt	(0X1DA60,	"Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).",	0);
-	create_insn	(x=0X1DA60);
-	op_hex		(x,	1);
-	set_name	(0X1DA60,	"ResolveAttackOrAbilityAction");
 }
 
 //------------------------------------------------------------------------
@@ -4851,6 +4844,15 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1DA42,	"Shows a combat message (ax, via sub_28412) unless sub_2827E reports speech/sound busy, in which case it just waits 6 ticks instead. Called from HandleRangedOrCombatAction.",	0);
+	create_insn	(0X1DA42);
+	set_name	(0X1DA42,	"ShowCombatMessageOrWait");
+	set_cmt	(0X1DA4B,	"ticks",	0);
+	create_insn	(0X1DA54);
+	set_cmt	(0X1DA60,	"Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).",	0);
+	create_insn	(x=0X1DA60);
+	op_hex		(x,	1);
+	set_name	(0X1DA60,	"ResolveAttackOrAbilityAction");
 	create_insn	(x=0X1DA78);
 	op_hex		(x,	1);
 	create_insn	(0X1DA82);
@@ -6616,6 +6618,15 @@ static Bytes_2(void) {
 	set_cmt	(0X23BAE,	"Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
 	create_insn	(0X23BAE);
 	set_name	(0X23BAE,	"ShowPartyMembers");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X23BBD);
 	create_insn	(0X23BC8);
 	create_insn	(x=0X23BF5);
@@ -6639,15 +6650,6 @@ static Bytes_2(void) {
 	set_cmt	(0X23F58,	"Computes a family of derived stats from the 6 base attributes: each a weighted percentage blend (ScaleByPercentRounded) of 2-3 attributes plus a class-dependent bonus, mirrored into current/max pairs +0x58/+0x98, +0x5A/+0x9A, +0x5C/+0x9C, +0x5E/+0x9E, +0x60/+0xA0, and more. Confirms +0x58 (DrawMonsterInfoPanel's reveal-gate stat) is derived, not raw-rolled. Called from ShowCharacterSkills and ShowCharacterStats.",	0);
 	create_insn	(0X23F58);
 	set_name	(0X23F58,	"ComputeDerivedCharacterStats");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2438B,	"Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).",	0);
 	create_insn	(0X2438B);
 	set_name	(0X2438B,	"RestoreWorldMapAreaFromEMS");
@@ -8470,14 +8472,6 @@ static Bytes_3(void) {
 	set_cmt	(0X29B06,	"Frees the video buffer segment (_videoBufferSeg) via INT 21h/AH=49h. Called unconditionally from ErrorExit before exiting.",	0);
 	create_insn	(0X29B06);
 	set_name	(0X29B06,	"FreeVideoBuffer");
-	create_insn	(x=0X29B0A);
-	op_hex		(x,	1);
-	set_cmt	(0X29B0C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
-	create_insn	(x=0X29B0C);
-	op_hex		(x,	0);
-	set_cmt	(0X29B0F,	"Core dungeon-viewport sprite/picture blitter (632 lines, internals not traced): draws word_2E530 (picture id) at a scale class (word_2E532) and z-layer/depth (word_32918), honoring _font_bgTransparent. Called by every dungeon-viewport rendering function named this session (walls, floor/ceiling extension, doors, vanishing point, monsters) -- the depth-aware counterpart to the simpler general-purpose DrawPicture.",	0);
-	create_insn	(0X29B0F);
-	set_name	(0X29B0F,	"DrawViewportSprite");
 }
 
 //------------------------------------------------------------------------
@@ -8487,6 +8481,14 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X29B0A);
+	op_hex		(x,	1);
+	set_cmt	(0X29B0C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
+	create_insn	(x=0X29B0C);
+	op_hex		(x,	0);
+	set_cmt	(0X29B0F,	"Core dungeon-viewport sprite/picture blitter (632 lines, internals not traced): draws word_2E530 (picture id) at a scale class (word_2E532) and z-layer/depth (word_32918), honoring _font_bgTransparent. Called by every dungeon-viewport rendering function named this session (walls, floor/ceiling extension, doors, vanishing point, monsters) -- the depth-aware counterpart to the simpler general-purpose DrawPicture.",	0);
+	create_insn	(0X29B0F);
+	set_name	(0X29B0F,	"DrawViewportSprite");
 	create_insn	(x=0X29B19);
 	op_hex		(x,	1);
 	create_insn	(x=0X29B23);
@@ -9368,8 +9370,9 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE26);
 	op_hex		(x,	1);
-	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
+	set_cmt	(0X2AE3C,	"Top-level dispatcher on word_32974 (0x242-0x2C8) for the quest/relic item cluster: UseAbilityOnTarget, the 4 recharge-gated relic effects (CollectNuoreCache/CollectMagicOreCache/PartyMassHealAndOverheal/InstantKillActiveMonster), ShowVisionAtLocation/UseLocationBoundPotion/CheckQuestItemsCompleted, and a forced-music-track one-off. Shows 'PATIENCE IS A VIRTUE.' when a relic is used before its recharge flag (global flag 0xB1) is set. Called once from HandleGameCommand.",	0);
 	create_insn	(0X2AE3C);
+	set_name	(0X2AE3C,	"DispatchItemAbilityCommand");
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
 	create_insn	(0X2AE60);
@@ -11295,12 +11298,6 @@ static Bytes_4(void) {
 	set_name	(0X35E45,	"aAndHaveEarnedA");
 	create_strlit	(0X35E61,	0X1E);
 	set_name	(0X35E61,	"aUnfortunatelyY");
-	create_strlit	(0X35E7F,	0X21);
-	set_name	(0X35E7F,	"aToMasterThisCh");
-	create_strlit	(0X35EA0,	0X1F);
-	set_name	(0X35EA0,	"aYouWillHaveBet");
-	create_strlit	(0X35EBF,	0X13);
-	set_name	(0X35EBF,	"aYourNextAttemp");
 }
 
 //------------------------------------------------------------------------
@@ -11310,6 +11307,12 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X35E7F,	0X21);
+	set_name	(0X35E7F,	"aToMasterThisCh");
+	create_strlit	(0X35EA0,	0X1F);
+	set_name	(0X35EA0,	"aYouWillHaveBet");
+	create_strlit	(0X35EBF,	0X13);
+	set_name	(0X35EBF,	"aYourNextAttemp");
 	create_strlit	(0X35ED2,	0XD);
 	set_name	(0X35ED2,	"aGoldCoins_0");
 	create_strlit	(0X35EDF,	0XB);
