@@ -10009,7 +10009,7 @@ seg012          segment byte public 'CODE' use16
 
 
 sub_16262       proc far                ; CODE XREF: DrawLabeledNumberIfNonzero+30↑P
-                                        ; sub_1E2E5+11↓P ...
+                                        ; FormatAndDrawAlchemyFraction+11↓P ...
                 cmp     byte ptr [bx], 0
                 jz      short locret_16297
                 cmp     word_2E4AC, 0
@@ -25287,8 +25287,8 @@ sub_1E285       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E2E5       proc near               ; CODE XREF: DrawAlchemyStatusPanel+8A↓p
-                push    bx
+FormatAndDrawAlchemyFraction proc near  ; CODE XREF: DrawAlchemyStatusPanel+8A↓p
+                push    bx              ; Near-duplicate of FormatAndDrawFraction ('<num1>/<num2>' display), but unconditionally applying sub_2570C + sub_16262 to both numbers. Called only from DrawAlchemyStatusPanel.
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
@@ -25312,7 +25312,7 @@ sub_1E2E5       proc near               ; CODE XREF: DrawAlchemyStatusPanel+8A�
                 mov     bx, 0AFDAh      ; msg
                 call    writeString
                 retn
-sub_1E2E5       endp
+FormatAndDrawAlchemyFraction endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25608,7 +25608,7 @@ loc_1E5AF:                              ; CODE XREF: DrawAlchemyStatusPanel+62�
                 mov     ax, [si+54h]
                 mov     bx, [si+94h]
                 mov     word_2E4AC, 0
-                call    sub_1E2E5
+                call    FormatAndDrawAlchemyFraction
                 mov     _textPos_y, 72h ; 'r'
                 mov     _font_fgColor, 8Ah
                 mov     word_2E412, 0Fh
@@ -92966,7 +92966,7 @@ byte_3882D      db 0                    ; DATA XREF: BuildClueLocationSuffix+68�
                 db    0
                 db    0
                 db    0
-word_3883A      dw 0                    ; DATA XREF: sub_1E2E5+32↑w
+word_3883A      dw 0                    ; DATA XREF: FormatAndDrawAlchemyFraction+32↑w
                                         ; BuildClueLocationSuffix+53↑r ...
                 db    0
                 db    0

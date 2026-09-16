@@ -4802,7 +4802,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1E2A3);
 	op_hex		(x,	1);
+	set_cmt	(0X1E2E5,	"Near-duplicate of FormatAndDrawFraction ('<num1>/<num2>' display), but unconditionally applying sub_2570C + sub_16262 to both numbers. Called only from DrawAlchemyStatusPanel.",	0);
 	create_insn	(0X1E2E5);
+	set_name	(0X1E2E5,	"FormatAndDrawAlchemyFraction");
 	set_cmt	(0X1E337,	"msg",	0);
 	create_insn	(0X1E340);
 	create_insn	(x=0X1E356);
@@ -5606,12 +5608,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X21588);
 	op_hex		(x,	1);
 	set_name	(0X21588,	"DrawMinimap");
-	create_insn	(x=0X21596);
-	op_hex		(x,	1);
-	create_insn	(0X215A4);
-	set_cmt	(0X21612,	"Gathers a 7x9 grid of tile render data (2 picture ids per cell) centered on the player into a local buffer (0xD06), from GetMapCellPtr-style map cells: explored cells look up their picture ids via two tables ([+0] -> 0xE551, [+2] -> 0xE175); unexplored cells get a fixed blank default. Feeds DrawMinimap.",	0);
-	create_insn	(0X21612);
-	set_name	(0X21612,	"BuildMinimapTileData");
 }
 
 //------------------------------------------------------------------------
@@ -5621,6 +5617,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X21596);
+	op_hex		(x,	1);
+	create_insn	(0X215A4);
+	set_cmt	(0X21612,	"Gathers a 7x9 grid of tile render data (2 picture ids per cell) centered on the player into a local buffer (0xD06), from GetMapCellPtr-style map cells: explored cells look up their picture ids via two tables ([+0] -> 0xE551, [+2] -> 0xE175); unexplored cells get a fixed blank default. Feeds DrawMinimap.",	0);
+	create_insn	(0X21612);
+	set_name	(0X21612,	"BuildMinimapTileData");
 	create_insn	(x=0X21616);
 	op_hex		(x,	1);
 	create_insn	(0X2161F);
@@ -7810,10 +7812,6 @@ static Bytes_2(void) {
 	set_cmt	(0X28CB1,	"Reads WORLD.DAT block 3 for a given position (ax), preserving the caller's own block-read context (nested-read guard), and returns one byte from the result. Exact meaning of the byte not identified. Called from RevealMapRegion/RevealMapRegionRow.",	0);
 	create_insn	(0X28CB1);
 	set_name	(0X28CB1,	"ReadMapCellAttributeByte");
-	set_cmt	(0X28CC2,	"this",	0);
-	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
-	create_insn	(0X28CFF);
-	set_name	(0X28CFF,	"RevealMapRegion");
 }
 
 //------------------------------------------------------------------------
@@ -7823,6 +7821,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X28CC2,	"this",	0);
+	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
+	create_insn	(0X28CFF);
+	set_name	(0X28CFF,	"RevealMapRegion");
 	create_insn	(x=0X28D1D);
 	op_hex		(x,	1);
 	create_insn	(0X28D2D);
@@ -10913,6 +10915,15 @@ static Bytes_3(void) {
 	set_name	(0X35F01,	"aHasMissed");
 	create_strlit	(0X35F0D,	0XC);
 	set_name	(0X35F0D,	"aYouAreNot");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35F19,	0XB);
 	set_name	(0X35F19,	"aYetReady");
 	create_strlit	(0X35F24,	0X20);
@@ -10945,15 +10956,6 @@ static Bytes_3(void) {
 	set_name	(0X360BA,	"aMagicUserInfor");
 	create_strlit	(0X360D1,	0X5);
 	set_name	(0X360D1,	"aMaps");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X360D6,	0X13);
 	set_name	(0X360D6,	"aMonsterStatist");
 	create_strlit	(0X360E9,	0X16);

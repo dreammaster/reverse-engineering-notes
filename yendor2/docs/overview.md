@@ -3727,6 +3727,14 @@ the session).
 
 474 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: FormatAndDrawAlchemyFraction
+
+Named `sub_1E2E5` -> `FormatAndDrawAlchemyFraction`, called only from
+`DrawAlchemyStatusPanel`: a near-duplicate of the already-named
+`FormatAndDrawFraction`, for the alchemy screen's MAGIC: bar.
+
+475 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -1166,9 +1166,11 @@ yet.
 ### Global material counters and BCD arithmetic
 
 `DrawAlchemyStatusPanel` is the alchemy screen's character/resource
-panel: name, the "MAGIC:" MP bar, and readouts labeled "MAGIC ORE: "
-(`0x94B7`) and "NUORE: " (`0x94BB`) — pairing with `CastSpell`'s
-`0x1C` ability below, which converts between those same two counters.
+panel: name, the "MAGIC:" MP bar (drawn via `FormatAndDrawAlchemyFraction`,
+was `sub_1E2E5` — a near-duplicate of `FormatAndDrawFraction`), and
+readouts labeled "MAGIC ORE: " (`0x94B7`) and "NUORE: " (`0x94BB`) —
+pairing with `CastSpell`'s `0x1C` ability below, which converts between
+those same two counters.
 It's drawn repeatedly by `RunAlchemyScreen` (reached directly from
 `start`), the alchemy screen's own driver loop, which also draws one
 of two fixed icon states (`ShowAlchemyIconActive`/`ShowAlchemyIconIdle`,
