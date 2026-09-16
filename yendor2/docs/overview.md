@@ -3925,8 +3925,17 @@ previously documented — confirming the party roster extends beyond the
 4 active members into at least 3 reserve slots, a genuinely new
 structural finding.
 
-**500 named of 769 functions as of this update** — the session crossed
-the two-thirds mark (419 → 500, +81 functions this session).
+**500 named of 769 functions as of this update** — roughly 65% of the
+executable now named, up from 419 at the start of this session
+(+81 functions this session).
+
+### 2026-09-15 session update, continued: RedrawAllPartyStatusPanels
+
+Named `sub_2ADD0` -> `RedrawAllPartyStatusPanels`, called from
+`ApplyMultiStatEffect`, `RestCharacter`, and others: a batch helper
+calling `DrawPartyMemberStatusPanel` for every occupied roster slot.
+
+501 named of 769 functions as of this update.
 
 ## Current state (2026-09-14, before any work this session)
 

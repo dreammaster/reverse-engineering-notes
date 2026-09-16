@@ -9028,7 +9028,9 @@ static Bytes_3(void) {
 	create_insn	(0X2AD94);
 	set_name	(0X2AD94,	"ConfirmAndSelectPartyTarget");
 	create_insn	(0X2ADC4);
+	set_cmt	(0X2ADD0,	"Calls DrawPartyMemberStatusPanel for each occupied g_partySlotAssignment slot -- redraws every party member's status panel. Called from ApplyMultiStatEffect, RestCharacter, and others.",	0);
 	create_insn	(0X2ADD0);
+	set_name	(0X2ADD0,	"RedrawAllPartyStatusPanels");
 	set_cmt	(0X2ADE8,	"Stops music, plays sound effect 0x13 via the sound dispatch (sub_28412) when sub_2827E allows it, draws full-screen picture 1 and caches it to EMS, redraws the fixed status icon, and shows the mouse cursor. The 'show this screen' step of CheckPartyWipeAndReinitLevel's party-wipe sequence.",	0);
 	create_insn	(0X2ADE8);
 	set_name	(0X2ADE8,	"ShowPartyWipeScreen");
@@ -10593,6 +10595,15 @@ static Bytes_3(void) {
 	set_name	(0X35483,	"aCopperKey");
 	create_strlit	(0X3548E,	0X9);
 	set_name	(0X3548E,	"aIronKey");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35497,	0XA);
 	set_name	(0X35497,	"aSteelKey");
 	create_strlit	(0X354A1,	0XB);
@@ -10605,15 +10616,6 @@ static Bytes_3(void) {
 	set_name	(0X354C1,	"aMagicOre");
 	create_strlit	(0X354CD,	0X8);
 	set_name	(0X354CD,	"aNuore");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X354D5,	0XC);
 	set_name	(0X354D5,	"aAbsorption");
 	create_strlit	(0X354E1,	0X8);

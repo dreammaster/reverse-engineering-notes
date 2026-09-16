@@ -1354,7 +1354,10 @@ PARALYZED; CURSED/HEXED/JINXED) to pick one of 4 icon variants per
 group, plus a 4th icon shown when the 9 protection values (`+0x20`..
 `+0x30`) sum to nonzero (has some active protection bonus) —
 independently confirming both bit-group and protection-value mappings
-from a completely different function.
+from a completely different function. `RedrawAllPartyStatusPanels`
+(was `sub_2ADD0`, called from `ApplyMultiStatEffect`, `RestCharacter`,
+and others) is the batch helper: calls `DrawPartyMemberStatusPanel`
+for every occupied roster slot.
 `DrawThreeStatBars` (was `sub_25F10`) is the character-sheet version of
 this same 3-bar display, labeled exactly "HEALTH:"/"MAGIC:"/"WEIGHT:"
 — and its "DEAD" override (shown instead of the HEALTH fraction)

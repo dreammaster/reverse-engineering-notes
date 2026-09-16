@@ -48455,7 +48455,7 @@ loc_2A955:                              ; CODE XREF: ApplyMultiStatEffect+2B↑j
                 call    sub_1AA9B
                 call    UpdatePartyAverageStatTiers
                 call    sub_274B4
-                call    sub_2ADD0
+                call    RedrawAllPartyStatusPanels
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
@@ -48564,7 +48564,7 @@ loc_2AA2B:                              ; CODE XREF: RestCharacter+3C↑j
                                         ; RestCharacter+5D↑j
                 or      word_328C8, 20h
                 call    sub_274B4
-                call    sub_2ADD0
+                call    RedrawAllPartyStatusPanels
                 call    ClearStatusPanelIfDirty
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
@@ -48677,7 +48677,7 @@ loc_2AAFA:                              ; CODE XREF: CastSpell+D7↓j
                                         ; CastSpell+E5↓j ...
                 or      word_328C8, 20h
                 call    sub_274B4
-                call    sub_2ADD0
+                call    RedrawAllPartyStatusPanels
                 call    DrawMouseCursor
                 call    ApplyMapTriggerEffect
                 jmp     loc_2AA75
@@ -48885,7 +48885,7 @@ loc_2AD02:                              ; CODE XREF: CastSpell+2A5↑j
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
                 call    sub_274B4
-                call    sub_2ADD0
+                call    RedrawAllPartyStatusPanels
                 call    HandleRangedOrCombatAction
                 test    word_328CA, 1000h
                 jz      short loc_2AD2C
@@ -48965,12 +48965,12 @@ ConfirmAndSelectPartyTarget endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2ADD0       proc near               ; CODE XREF: ApplyMultiStatEffect+50↑p
+RedrawAllPartyStatusPanels proc near    ; CODE XREF: ApplyMultiStatEffect+50↑p
                                         ; RestCharacter+88↑p ...
-                mov     bx, 95EBh
+                mov     bx, 95EBh       ; Calls DrawPartyMemberStatusPanel for each occupied g_partySlotAssignment slot -- redraws every party member's status panel. Called from ApplyMultiStatEffect, RestCharacter, and others.
                 mov     cx, 4
 
-loc_2ADD6:                              ; CODE XREF: sub_2ADD0+15↓j
+loc_2ADD6:                              ; CODE XREF: RedrawAllPartyStatusPanels+15↓j
                 cmp     word ptr [bx], 0
                 jz      short locret_2ADE7
                 push    bx
@@ -48979,9 +48979,9 @@ loc_2ADD6:                              ; CODE XREF: sub_2ADD0+15↓j
                 add     bx, 2
                 loop    loc_2ADD6
 
-locret_2ADE7:                           ; CODE XREF: sub_2ADD0+9↑j
+locret_2ADE7:                           ; CODE XREF: RedrawAllPartyStatusPanels+9↑j
                 retn
-sub_2ADD0       endp
+RedrawAllPartyStatusPanels endp
 
 seg114          ends
 
