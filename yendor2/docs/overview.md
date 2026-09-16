@@ -783,6 +783,15 @@ yet — likely more spells.
 
 118 named of 769 functions as of this update.
 
+Also named `TickStatusEffects` (was `sub_208CA`, moderate-high
+confidence): manages 3 timed-effect duration counters, decrementing one
+per call and clearing its active flag on expiry — plausibly the subset
+of the manual's 8 afflictions (Diseased/Poisoned/Stoned/Frozen/
+Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than
+permanent-until-cured.
+
+119 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

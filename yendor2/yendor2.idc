@@ -5000,7 +5000,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X20817);
 	create_insn	(0X20888);
+	set_cmt	(0X208CA,	"Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.",	0);
 	create_insn	(0X208CA);
+	set_name	(0X208CA,	"TickStatusEffects");
 	create_insn	(0X208F9);
 	create_insn	(x=0X20900);
 	op_hex		(x,	1);
@@ -5890,6 +5892,15 @@ static Bytes_0(void) {
 	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: resets some per-member state ([si+0x1C] flag bits, a 16-word scratch area) then draws 3 category headers each followed by a group of skill lines (15 total) -- consistent with the manual's skill list grouped into categories. The character skills display.",	0);
 	create_insn	(0X243D3);
 	set_name	(0X243D3,	"ShowCharacterSkills");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X243ED,	"msg",	0);
 	create_insn	(x=0X243F9);
 	op_hex		(x,	1);
@@ -5911,15 +5922,6 @@ static Bytes_0(void) {
 	set_cmt	(0X245AE,	"Draws up to 8 item entries (DrawListEntryLabel, one per _val1.._val8, each skippable via a word_328C4 bit -- likely empty slots) -- matches the 8-item-slot-per-character savegame layout from file-formats.md. Then a selection loop: 'N' next character, 'Q' back, 'E' exit entirely (mirrors ShowPartyMembers' outer iteration). The character inventory/equipment screen.",	0);
 	create_insn	(0X245AE);
 	set_name	(0X245AE,	"ShowCharacterInventory");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X245D4,	"msg",	0);
 	create_insn	(x=0X245FE);
 	op_hex		(x,	1);
@@ -10276,6 +10278,15 @@ static Bytes_1(void) {
 	set_name	(0X36246,	"aResistant");
 	create_strlit	(0X36250,	0X11);
 	set_name	(0X36250,	"aBreakProjectil");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36261,	0XC);
 	set_name	(0X36261,	"aArmorRings");
 	create_strlit	(0X3626D,	0X14);
@@ -10306,15 +10317,6 @@ static Bytes_1(void) {
 	set_name	(0X36311,	"aCharacterPanel");
 	create_strlit	(0X36321,	0XA);
 	set_name	(0X36321,	"aAnyPanel");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3632B,	0XA);
 	set_name	(0X3632B,	"aBackpack");
 	create_strlit	(0X36335,	0X5);

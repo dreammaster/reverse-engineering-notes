@@ -18361,7 +18361,7 @@ loc_1A5AC:                              ; CODE XREF: sub_1A5A6+3↑j
                 call    sub_1CDBC
                 cmp     word_32974, 0
                 jz      short loc_1A5C8
-                call    sub_208CA
+                call    TickStatusEffects
                 pop     ax
                 loop    loc_1A5AC
                 retn
@@ -29116,9 +29116,9 @@ seg061          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_208CA       proc far                ; CODE XREF: sub_1A5A6+19↑P
+TickStatusEffects proc far              ; CODE XREF: sub_1A5A6+19↑P
                                         ; HandleGameCommand+87↓P
-                push    si
+                push    si              ; Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.
                 call    sub_238CD
                 cmp     word_32974, 9
                 jz      short loc_208F9
@@ -29133,7 +29133,7 @@ sub_208CA       proc far                ; CODE XREF: sub_1A5A6+19↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_208F9:                              ; CODE XREF: sub_208CA+B↑j
+loc_208F9:                              ; CODE XREF: TickStatusEffects+B↑j
                 sub     word_36C85, 1
                 jg      short loc_20936
                 and     word_36C79, 0DFFFh
@@ -29141,7 +29141,7 @@ loc_208F9:                              ; CODE XREF: sub_208CA+B↑j
                 jmp     short loc_20936
 ; ---------------------------------------------------------------------------
 
-loc_2090E:                              ; CODE XREF: sub_208CA+12↑j
+loc_2090E:                              ; CODE XREF: TickStatusEffects+12↑j
                 sub     word_36C89, 1
                 jg      short loc_20936
                 and     word_36C79, 0F7FFh
@@ -29149,14 +29149,14 @@ loc_2090E:                              ; CODE XREF: sub_208CA+12↑j
                 jmp     short loc_20936
 ; ---------------------------------------------------------------------------
 
-loc_20923:                              ; CODE XREF: sub_208CA+19↑j
+loc_20923:                              ; CODE XREF: TickStatusEffects+19↑j
                 sub     word_36C8B, 1
                 jg      short loc_20936
                 and     word_36C79, 0FBFFh
                 mov     word_36C8B, 0
 
-loc_20936:                              ; CODE XREF: sub_208CA+34↑j
-                                        ; sub_208CA+42↑j ...
+loc_20936:                              ; CODE XREF: TickStatusEffects+34↑j
+                                        ; TickStatusEffects+42↑j ...
                 push    cs
                 call    near ptr sub_209C0
                 dec     word ptr [si]
@@ -29168,12 +29168,12 @@ loc_20936:                              ; CODE XREF: sub_208CA+34↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2094E:                              ; CODE XREF: sub_208CA+80↑j
+loc_2094E:                              ; CODE XREF: TickStatusEffects+80↑j
                 call    sub_20C46
                 call    DrawMouseCursor
                 pop     si
                 retf
-sub_208CA       endp
+TickStatusEffects endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -29224,7 +29224,7 @@ sub_2095A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_209C0       proc far                ; CODE XREF: sub_208CA+6D↑p
+sub_209C0       proc far                ; CODE XREF: TickStatusEffects+6D↑p
                                         ; sub_2095A+56↑p
                 mov     si, word_3297A
                 or      si, si
@@ -45778,7 +45778,7 @@ loc_29624:                              ; CODE XREF: HandleGameCommand+6F↑j
 loc_2962A:                              ; CODE XREF: HandleGameCommand+57↑j
                                         ; HandleGameCommand+5E↑j ...
                 or      word_328C4, 40h
-                call    sub_208CA
+                call    TickStatusEffects
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -85860,17 +85860,17 @@ word_36C7F      dw 0                    ; DATA XREF: start+3BF↑r
 word_36C81      dw 0                    ; DATA XREF: sub_219FA+23D↑r
                                         ; sub_29738+9A↑r ...
 word_36C83      dw 0                    ; DATA XREF: sub_1FD24+4B↑r
-                                        ; sub_208CA+1B↑w ...
+                                        ; TickStatusEffects+1B↑w ...
 word_36C85      dw 0                    ; DATA XREF: sub_1A582+5↑r
                                         ; sub_1FD24+4E↑r ...
 word_36C87      dw 0                    ; DATA XREF: sub_1FD24+52↑r
-                                        ; sub_208CA+21↑w ...
+                                        ; TickStatusEffects+21↑w ...
 word_36C89      dw 0                    ; DATA XREF: sub_1A582+F↑r
                                         ; sub_1FD24+56↑r ...
 word_36C8B      dw 0                    ; DATA XREF: sub_1A582+19↑r
                                         ; sub_1FD24+5A↑r ...
 word_36C8D      dw 0                    ; DATA XREF: sub_1FD24+5E↑r
-                                        ; sub_208CA+27↑w ...
+                                        ; TickStatusEffects+27↑w ...
                 db 0FFh
                 db 0FFh
                 db 0FFh
