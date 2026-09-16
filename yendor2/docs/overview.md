@@ -658,6 +658,29 @@ from `WORLD.DAT` via the shared `FileEntry` and hands it to the driver.
 
 105 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: a fourth FileEntry (CURGAME)
+
+Chased the `sub_2B17F` transport-check lead partway: the table it reads
+via `sub_1CDBC` at `word_36E4B` is the same 4-entry table `RunTitleScreen`
+sums to gate a flag — genuine confirmation these two areas are related
+— but both tables are all-zero at rest (fresh-save runtime state), so
+without a populated save to inspect, couldn't pin down what the 4
+entries actually represent. Left `sub_1CDBC`/`sub_2B17F` unnamed rather
+than guess further.
+
+Went back to `rank_naming_candidates.py` and found a **fourth fixed
+`FileEntry`**, at `bx=0x8FFB` — filename `"CURGAME"` (the active
+savegame, distinct from `SAVGAMEX`'s numbered slots). Named
+`LoadCurgameRecord` (was `sub_1770C`): reads a record from it via EMS
+paging, indexed in a way that plausibly matches a per-character record
+(`0x1A`=26-word stride), splitting one field by 100 (currency or time,
+not confirmed). Documented in
+[file-formats.md](file-formats.md#curgame--savgame1-and-presumably-savgamen)'s
+`CURGAME` section as a concrete lead for whoever locates the actual
+savegame struct next.
+
+106 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

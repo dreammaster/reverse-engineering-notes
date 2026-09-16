@@ -12642,9 +12642,9 @@ sub_1766F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1770C       proc far                ; CODE XREF: sub_178A6+26↓p
+LoadCurgameRecord proc far              ; CODE XREF: sub_178A6+26↓p
                                         ; sub_216F0+88↓P ...
-                push    es
+                push    es              ; Reads a record from CURGAME (the active savegame, FileEntry bx=0x8FFB) via EMS paging, indexed by word_32DBC*4 + 0x1A*_val9 (plausibly a per-character row). Splits word_32DD0 by 100 into word_32DC0 (quotient)/word_32DC2 (remainder) -- typical of a currency or time value split into two denominations, not confirmed which.
                 push    si
                 push    di              ; this
                 dec     ax
@@ -12695,7 +12695,7 @@ sub_1770C       proc far                ; CODE XREF: sub_178A6+26↓p
                 pop     si
                 pop     es
                 retf
-sub_1770C       endp
+LoadCurgameRecord endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12816,7 +12816,7 @@ loc_178BE:                              ; CODE XREF: sub_178A6+10↑j
                 test    bx, 8000h
                 jnz     short loc_178D1
                 push    cs
-                call    near ptr sub_1770C
+                call    near ptr LoadCurgameRecord
                 jmp     short loc_178D5
 ; ---------------------------------------------------------------------------
 
@@ -30836,7 +30836,7 @@ loc_21766:                              ; CODE XREF: sub_216F0+71↑j
 
 loc_21775:                              ; CODE XREF: sub_216F0+1E↑j
                 mov     ax, [si+4]
-                call    sub_1770C
+                call    LoadCurgameRecord
                 mov     errorCode, 0
                 mov     ax, word_32DC8
                 test    byte_32DCD, al
@@ -45973,7 +45973,7 @@ loc_29796:                              ; CODE XREF: sub_29738+44↑j
 
 loc_297A0:                              ; CODE XREF: sub_29738+4D↑j
                 mov     ax, [si+4]
-                call    sub_1770C
+                call    LoadCurgameRecord
 
 loc_297A8:                              ; CODE XREF: sub_29738+66↑j
                 mov     ax, word_32DC8
@@ -48303,7 +48303,7 @@ loc_2A81D:                              ; CODE XREF: sub_2A788+7B↑j
 
 loc_2A827:                              ; CODE XREF: sub_2A788+84↑j
                 mov     ax, [si+4]
-                call    sub_1770C
+                call    LoadCurgameRecord
 
 loc_2A82F:                              ; CODE XREF: sub_2A788+9D↑j
                 mov     ax, word_32DC8
@@ -56771,7 +56771,7 @@ word_2E4AA      dw 0                    ; DATA XREF: start+17↑w
 word_2E4AC      dw 0                    ; DATA XREF: sub_13678+78↑w
                                         ; sub_13780+18↑w ...
 _val10          dw 0                    ; DATA XREF: InitGlobals+36↑w
-                                        ; sub_1770C+7↑r ...
+                                        ; LoadCurgameRecord+7↑r ...
                 db    0
                 db    0
                 db    0
@@ -74431,7 +74431,7 @@ _val42          dw 0                    ; DATA XREF: InitGlobals+120↑w
 _val43          dw 0                    ; DATA XREF: InitGlobals+126↑w
                                         ; sub_16407+367↑r ...
 _val9           dw 0                    ; DATA XREF: InitGlobals+30↑w
-                                        ; sub_1770C+58↑r
+                                        ; LoadCurgameRecord+58↑r
 _val44          dw 0                    ; DATA XREF: InitGlobals+12C↑w
                                         ; sub_284CB+61↑r
 _val45          dw 0                    ; DATA XREF: InitGlobals+132↑w
@@ -75442,7 +75442,7 @@ word_32DBE      dw 0                    ; DATA XREF: sub_178A6+1B↑w
 word_32DC0      dw 0                    ; DATA XREF: sub_16881+BF↑w
                                         ; sub_16881+18D↑w ...
 word_32DC2      dw 0                    ; DATA XREF: sub_1766F+95↑w
-                                        ; sub_1770C+81↑w ...
+                                        ; LoadCurgameRecord+81↑w ...
 word_32DC4      dw 0                    ; DATA XREF: start:loc_106EF↑w
                                         ; start+6FC↑w ...
 word_32DC6      dw 0                    ; DATA XREF: sub_1766F+A↑w
@@ -75458,7 +75458,7 @@ byte_32DCD      db 0                    ; DATA XREF: start+1BB↑w
 word_32DCE      dw 0                    ; DATA XREF: sub_1732B+24C↑r
                                         ; sub_17795+38↑r ...
 word_32DD0      dw 0                    ; DATA XREF: sub_1766F+88↑r
-                                        ; sub_1770C+74↑r ...
+                                        ; LoadCurgameRecord+74↑r ...
                 db    0
                 db    0
                 db    0

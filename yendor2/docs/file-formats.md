@@ -28,6 +28,17 @@ First 32 bytes of `CURGAME` (hex-decoded):
 (matches `SW.EXE`'s name) and suggests a header/magic string rather than
 game data proper.
 
+**A fourth fixed `FileEntry` reads it directly**: `bx=0x8FFB` (distinct
+from `0x9043`=`WORLD.DAT`, `0x902C`=`SAVGAMEX`, `0x9011`=`PICTURES.VGA`
+— see `PICTURES.VGA`'s section below for how the filename-at-`+0xE`
+convention was found). `LoadCurgameRecord` (`0x1770C`,
+`ida_scripts/name_curgame_reader.py`) reads a record from it via EMS
+paging, indexed by `word_32DBC*4 + 0x1A*_val9` — the `0x1A`-word (26)
+row stride is a plausible per-character record size, worth checking
+against the item-slot layout above once the struct is actually located.
+Splits one field by 100 into quotient/remainder (currency or time value,
+not confirmed which).
+
 ### Item-slot encoding (from `Hex Hacking Item Guide.txt`, not yet cross-checked against the IDB)
 
 Not independently verified against `SW.EXE`'s code yet, but internally

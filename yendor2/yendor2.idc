@@ -2670,7 +2670,9 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X2D860);
 	create_insn	(x=0X176F2);
 	op_seg		(x,	1);
+	set_cmt	(0X1770C,	"Reads a record from CURGAME (the active savegame, FileEntry bx=0x8FFB) via EMS paging, indexed by word_32DBC*4 + 0x1A*_val9 (plausibly a per-character row). Splits word_32DD0 by 100 into word_32DC0 (quotient)/word_32DC2 (remainder) -- typical of a currency or time value split into two denominations, not confirmed which.",	0);
 	create_insn	(0X1770C);
+	set_name	(0X1770C,	"LoadCurgameRecord");
 	set_cmt	(0X1770E,	"this",	0);
 	set_cmt	(0X17734,	"this",	0);
 	create_insn	(x=0X17772);
@@ -6039,6 +6041,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X25561);
 	set_cmt	(0X25587,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X25595);
 	create_insn	(x=0X255B3);
 	op_hex		(x,	1);
@@ -6080,15 +6091,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X25759);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X25764);
 	create_insn	(0X25770);
 	set_cmt	(0X25773,	"this",	0);
@@ -10489,6 +10491,15 @@ static Bytes_1(void) {
 	set_name	(0X3675E,	"aMapC");
 	create_strlit	(0X36764,	0X17);
 	set_name	(0X36764,	"aMonkClericPrie");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3677B,	0X20);
 	set_name	(0X3677B,	"aAlchemistTrans");
 	create_strlit	(0X3679B,	0X1A);
@@ -10507,15 +10518,6 @@ static Bytes_1(void) {
 	set_name	(0X36812,	"aGood");
 	create_strlit	(0X3681A,	0X8);
 	set_name	(0X3681A,	"aGreat");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36822,	0X10);
 	set_name	(0X36822,	"aVisibleUndeads");
 	create_strlit	(0X36832,	0X9);
