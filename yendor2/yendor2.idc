@@ -6709,7 +6709,9 @@ static Bytes_2(void) {
 	create_insn	(0X256F0);
 	set_name	(0X256F0,	"StripSpaces");
 	create_insn	(0X25706);
+	set_cmt	(0X2570C,	"Strips ',' and ' ' from an in-place NUL-terminated string -- the counterpart to FormatNumber's thousands-separator insertion. Called from ShowItemAbilityEffectInfo and others.",	0);
 	create_insn	(0X2570C);
+	set_name	(0X2570C,	"StripCommasAndSpaces");
 	create_insn	(0X25726);
 	create_insn	(0X2572C);
 	set_cmt	(0X25740,	"Checks the held item's catalog [+0xC] flags (bit 1 / bit 0x2000, the container flag) to determine droppability. Called from TryDropHeldItem.",	0);
@@ -7247,6 +7249,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2746C,	"RandomInRange(ax=exclusive upper bound): DOS-time-seeded (INT 21h AH=0x2Ch on first call) linear-congruential PRNG (multiplier 0x805). Returns a value in [0, bound). Widely used general-purpose RNG.",	0);
 	create_insn	(0X2746C);
 	set_name	(0X2746C,	"RandomInRange");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2747C);
 	op_hex		(x,	1);
 	set_cmt	(0X2747E,	"DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",	0);
@@ -7257,15 +7268,6 @@ static Bytes_2(void) {
 	create_insn	(0X274A5);
 	create_insn	(0X274B4);
 	set_cmt	(0X274B5,	"this",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X274C8);
 	create_insn	(x=0X274D0);
 	op_hex		(x,	1);
@@ -7511,7 +7513,9 @@ static Bytes_3(void) {
 	create_insn	(0X27FE0);
 	set_name	(0X27FE0,	"PrepareWorldDatRead");
 	create_insn	(0X28000);
+	set_cmt	(0X2801A,	"Configures a resource-read descriptor: [bx+4]=ax (caller value), [bx+0xA]/[bx+0xC]=fixed pair from table 0xCDFB, [bx+6]=_blockSize5. Same shape as sub_27DE5/sub_27DC6/sub_27E3A. Called from UpdateAmbientMusicForRegion.",	0);
 	create_insn	(0X2801A);
+	set_name	(0X2801A,	"PrepareAmbientMusicBlockRead");
 	create_insn	(x=0X28034);
 	op_hex		(x,	1);
 	create_insn	(x=0X2803C);
@@ -7529,7 +7533,9 @@ static Bytes_3(void) {
 	set_cmt	(0X280E6,	"msg",	0);
 	set_cmt	(0X28121,	"msg",	0);
 	set_cmt	(0X2812F,	"msg",	0);
+	set_cmt	(0X28138,	"FormatNumber into the shared 0xAFA8 buffer, then StripCommasAndSpaces on it -- produces a compact, separator-free numeric string, returned in ax. Called from unnamed sub_28034.",	0);
 	create_insn	(0X28138);
+	set_name	(0X28138,	"FormatNumberCompact");
 	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
 	create_insn	(0X2814C);
 	set_name	(0X2814C,	"ComputeGameClockTime");
@@ -9636,6 +9642,15 @@ static Bytes_3(void) {
 	create_insn	(0X2C87F);
 	create_insn	(x=0X2C887);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2C892);
 	create_insn	(0X2C8A7);
 	create_insn	(x=0X2C8B3);
@@ -9714,15 +9729,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2CCC4);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2CCD3,	"ticks",	0);
 	create_insn	(0X2CCEE);
 	create_insn	(0X2CDBE);

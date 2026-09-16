@@ -5967,7 +5967,7 @@ loc_139E5:                              ; CODE XREF: ShowItemAbilityEffectInfo+6
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 add     _textPos_x, 12h
                 cmp     word_32974, 1Ah
@@ -6038,7 +6038,7 @@ loc_13AB6:                              ; CODE XREF: ShowItemAbilityEffectInfo+1
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 pop     _textPos_x
                 pop     bx              ; msg
@@ -6114,7 +6114,7 @@ loc_13BA8:                              ; CODE XREF: ShowClueBookSpellDetail+84�
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 add     _textPos_y, 6
                 loop    loc_13BA8
@@ -6244,7 +6244,7 @@ sub_13C86       proc near               ; CODE XREF: ShowClueBookSpellDetail+CE�
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 mov     _textPos_x, 2Ch ; ','
                 mov     bx, si          ; msg
@@ -6474,7 +6474,7 @@ DrawTransportDetailRow proc near        ; CODE XREF: ShowClueBookTransportDetail
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 add     _textPos_y, 9
                 mov     _font_fgColor, 0Ah
@@ -7296,7 +7296,7 @@ DrawLabeledNumberIfNonzero proc near    ; CODE XREF: ShowClueBookItemDetail+7E�
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    sub_16262
                 call    writeString
 
@@ -7323,7 +7323,7 @@ sub_148B2       proc near               ; CODE XREF: ShowClueBookMonsterDetail+9
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
 
 locret_148E9:                           ; CODE XREF: sub_148B2+11↑j
@@ -7360,7 +7360,7 @@ loc_14913:                              ; CODE XREF: ShowArmorAttributeBonusList
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 add     _textPos_x, 18h
                 mov     bx, 7DC7h       ; msg
@@ -7484,7 +7484,7 @@ loc_14A06:                              ; CODE XREF: ShowArmorProtectionsList+7D
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 add     _textPos_x, 18h
                 mov     bx, 7B31h       ; msg
@@ -16589,7 +16589,7 @@ loc_197A3:                              ; CODE XREF: sub_1978F+A↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 retn
 sub_1978F       endp
@@ -20159,7 +20159,7 @@ loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
                 mov     bx, 0AFAAh
                 call    FormatNumber
                 mov     bx, 0AFAAh
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
                 call    DrawMouseCursor
@@ -21288,7 +21288,7 @@ loc_1BF4A:                              ; CODE XREF: UseItemType_400+24↑j
                 mov     bx, 0BC28h
                 call    FormatNumber
                 mov     bx, 0BC28h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     byte_39492, 0
                 mov     ax, 851Ah
                 mov     bx, 0BC32h
@@ -21709,7 +21709,7 @@ loc_1C2D2:                              ; CODE XREF: UseTrainingItem+1B7↓j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 49h ; 'I'
@@ -21865,7 +21865,7 @@ loc_1C4E1:                              ; CODE XREF: UseTrainingItem+24↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 push    cs
                 call    near ptr DrawEligibleItemList
@@ -21877,7 +21877,7 @@ loc_1C54C:                              ; CODE XREF: UseTrainingItem+3CC↑j
                 mov     bx, 0BC28h
                 call    FormatNumber
                 mov     bx, 0BC28h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     byte_39492, 0
                 mov     ax, 7F94h
                 mov     bx, 0BC32h
@@ -25294,13 +25294,13 @@ FormatAndDrawAlchemyFraction proc near  ; CODE XREF: DrawAlchemyStatusPanel+8A�
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    sub_16262
                 pop     ax
                 mov     bx, 0AFB2h
                 call    FormatNumber
                 mov     bx, 0AFB2h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    sub_16262
                 mov     word_3881C, 2Fh ; '/'
                 mov     byte ptr word_3883A, 0
@@ -25325,7 +25325,7 @@ DrawSpellCostValue proc near            ; CODE XREF: DrawAlchemySpellList+67↓p
                 mov     bx, 0AFA8h      ; Draws one spell cost value at the given x position. Called from DrawAlchemySpellList.
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 retn
 DrawSpellCostValue endp
@@ -31229,7 +31229,7 @@ loc_21A8E:                              ; CODE XREF: sub_219FA+77↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     word_2E4AC, 1
                 call    sub_16262
                 mov     bx, 0AFA8h      ; msg
@@ -31809,7 +31809,7 @@ loc_22037:                              ; CODE XREF: ShowLocalAreaMap+1C2↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     ax, bx
                 mov     bx, 0BC28h
                 call    StpCpy
@@ -31817,7 +31817,7 @@ loc_22037:                              ; CODE XREF: ShowLocalAreaMap+1C2↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     ax, bx
                 mov     bx, 0BC32h
                 call    StpCpy
@@ -34397,12 +34397,12 @@ loc_2367C:                              ; CODE XREF: DrawMonsterInfoPanel+182↑
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     ax, [si+50h]
                 mov     bx, 0AFB2h
                 call    FormatNumber
                 mov     bx, 0AFB2h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     word_3881C, 2Fh ; '/'
                 mov     word_3883A, 0
                 mov     ax, 0AFA8h
@@ -37094,7 +37094,7 @@ loc_250A5:                              ; CODE XREF: DrawValueWithThresholdColor
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 retn
 DrawValueWithThresholdColor endp
@@ -37690,7 +37690,7 @@ UpdateAmbientMusicForRegion proc far    ; CODE XREF: RestPartyAndAdvanceClock+2E
                 mov     bx, 9043h
                 mov     [bx+8], ax
                 mov     ax, 0AFA8h
-                call    sub_2801A
+                call    PrepareAmbientMusicBlockRead
                 mov     errorCode, 9
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -37861,14 +37861,14 @@ seg080          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2570C       proc far                ; CODE XREF: ShowItemAbilityEffectInfo+9F↑P
+StripCommasAndSpaces proc far           ; CODE XREF: ShowItemAbilityEffectInfo+9F↑P
                                         ; ShowItemAbilityEffectInfo+16B↑P ...
-                push    di
+                push    di              ; Strips ',' and ' ' from an in-place NUL-terminated string -- the counterpart to FormatNumber's thousands-separator insertion. Called from ShowItemAbilityEffectInfo and others.
                 push    si
                 mov     si, bx
                 mov     di, bx
 
-loc_25712:                              ; CODE XREF: sub_2570C+18↓j
+loc_25712:                              ; CODE XREF: StripCommasAndSpaces+18↓j
                 mov     al, [si]
                 cmp     al, 0
                 jz      short loc_25726
@@ -37879,18 +37879,18 @@ loc_25712:                              ; CODE XREF: sub_2570C+18↓j
                 mov     [di], al
                 inc     di
 
-loc_25723:                              ; CODE XREF: sub_2570C+E↑j
-                                        ; sub_2570C+12↑j
+loc_25723:                              ; CODE XREF: StripCommasAndSpaces+E↑j
+                                        ; StripCommasAndSpaces+12↑j
                 inc     si
                 jmp     short loc_25712
 ; ---------------------------------------------------------------------------
 
-loc_25726:                              ; CODE XREF: sub_2570C+A↑j
+loc_25726:                              ; CODE XREF: StripCommasAndSpaces+A↑j
                 mov     [di], al
                 pop     si
                 pop     di
                 retf
-sub_2570C       endp
+StripCommasAndSpaces endp
 
 seg080          ends
 
@@ -38762,7 +38762,7 @@ ShowLevelUpMessage proc far             ; CODE XREF: CheckAndAnnounceLevelUp+33�
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 add     _textPos_y, 6
                 sub     _textPos_x, 2Ah ; '*'
@@ -38780,7 +38780,7 @@ ShowLevelUpMessage proc far             ; CODE XREF: CheckAndAnnounceLevelUp+33�
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
 
 locret_25CF9:                           ; CODE XREF: ShowLevelUpMessage+5D↑j
@@ -38952,7 +38952,7 @@ FormatAndDrawFraction proc near         ; CODE XREF: DrawThreeStatBars+8F↓p
                 call    StripSpaces
                 cmp     word_2E4AC, 0
                 jz      short loc_25E80
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    sub_16262
 
 loc_25E80:                              ; CODE XREF: FormatAndDrawFraction+16↑j
@@ -38963,7 +38963,7 @@ loc_25E80:                              ; CODE XREF: FormatAndDrawFraction+16↑
                 call    StripSpaces
                 cmp     word_2E4AC, 0
                 jz      short loc_25EA2
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    sub_16262
 
 loc_25EA2:                              ; CODE XREF: FormatAndDrawFraction+38↑j
@@ -39094,7 +39094,7 @@ loc_25FFF:                              ; CODE XREF: DrawCharacterProtectionsLis
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 call    writeString
                 add     si, 2
                 add     _textPos_y, 6
@@ -43184,8 +43184,8 @@ sub_28000       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2801A       proc far                ; CODE XREF: UpdateAmbientMusicForRegion+2F↑P
-                push    si
+PrepareAmbientMusicBlockRead proc far   ; CODE XREF: UpdateAmbientMusicForRegion+2F↑P
+                push    si              ; Configures a resource-read descriptor: [bx+4]=ax (caller value), [bx+0xA]/[bx+0xC]=fixed pair from table 0xCDFB, [bx+6]=_blockSize5. Same shape as sub_27DE5/sub_27DC6/sub_27E3A. Called from UpdateAmbientMusicForRegion.
                 mov     si, 0CDFBh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -43196,7 +43196,7 @@ sub_2801A       proc far                ; CODE XREF: UpdateAmbientMusicForRegion
                 mov     [bx+6], ax
                 pop     si
                 retf
-sub_2801A       endp
+PrepareAmbientMusicBlockRead endp
 
 seg096          ends
 
@@ -43236,11 +43236,11 @@ loc_28055:                              ; CODE XREF: sub_28034+1E↑j
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 7Eh ; '~'
                 mov     ax, word_2E55C
-                call    sub_28138
+                call    FormatNumberCompact
                 mov     bx, 8FE4h
                 call    StpCpy
                 mov     ax, word_2E564
-                call    sub_28138
+                call    FormatNumberCompact
                 mov     bx, 8FEAh
                 call    StpCpy
                 mov     bx, 8FE3h       ; msg
@@ -43249,11 +43249,11 @@ loc_28055:                              ; CODE XREF: sub_28034+1E↑j
                 mov     bx, 8FE9h       ; msg
                 call    writeString
                 mov     ax, word_36CF7
-                call    sub_28138
+                call    FormatNumberCompact
                 mov     bx, 8FE4h
                 call    StpCpy
                 mov     ax, word_36CF9
-                call    sub_28138
+                call    FormatNumberCompact
                 mov     bx, 8FEAh
                 call    StpCpy
                 mov     _textPos_x, 0F0h
@@ -43268,11 +43268,11 @@ loc_28055:                              ; CODE XREF: sub_28034+1E↑j
                 mov     ax, es:[bx+2]
                 push    ax
                 mov     ax, es:[bx]
-                call    sub_28138
+                call    FormatNumberCompact
                 mov     bx, 8FF1h
                 call    StpCpy
                 pop     ax
-                call    sub_28138
+                call    FormatNumberCompact
                 mov     bx, 8FF7h
                 call    StpCpy
                 mov     _textPos_x, 0F0h
@@ -43289,15 +43289,15 @@ sub_28034       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28138       proc near               ; CODE XREF: sub_28034+4D↑p
+FormatNumberCompact proc near           ; CODE XREF: sub_28034+4D↑p
                                         ; sub_28034+5B↑p ...
-                mov     bx, 0AFA8h
+                mov     bx, 0AFA8h      ; FormatNumber into the shared 0xAFA8 buffer, then StripCommasAndSpaces on it -- produces a compact, separator-free numeric string, returned in ax. Called from unnamed sub_28034.
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     ax, bx
                 retn
-sub_28138       endp
+FormatNumberCompact endp
 
 seg097          ends
 
@@ -44938,7 +44938,7 @@ loc_28E86:                              ; CODE XREF: RevealMapRegion+1A1↓j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2570C
+                call    StripCommasAndSpaces
                 mov     ax, 835Fh
                 mov     bx, 0AFA8h
                 call    StrCat
@@ -74509,7 +74509,7 @@ word_329F8      dw 0                    ; DATA XREF: InitGlobals+198↑w
 word_329FA      dw 0                    ; DATA XREF: InitGlobals+19E↑w
                                         ; DrawClueBookMapGrid+E2↑r ...
 _blockSize5     dw 0                    ; DATA XREF: InitGlobals+1A4↑w
-                                        ; sub_2801A+12↑r
+                                        ; PrepareAmbientMusicBlockRead+12↑r
 word_329FE      dw 0                    ; DATA XREF: InitGlobals+1C8↑w
                                         ; LoadWorldDatTilePalette+16↑r ...
 word_32A00      dw 0                    ; DATA XREF: InitGlobals+1AA↑w

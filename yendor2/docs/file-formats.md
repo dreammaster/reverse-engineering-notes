@@ -936,7 +936,10 @@ above, though that link isn't confirmed.
 the party's position and, when it changes, reads that region's
 `WORLD.DAT` record and plays its associated music track
 (`PlayMusicTrack`) — background music changes as the party crosses
-between zones.
+between zones. It configures that `WORLD.DAT` read via
+`PrepareAmbientMusicBlockRead` (was `sub_2801A`), the same shape as
+the codebase's other resource-stub helpers, keyed by global
+`_blockSize5`.
 
 ### The map legend editor
 

@@ -4689,6 +4689,24 @@ interpretation past what's actually confirmed.
 
 560 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PrepareAmbientMusicBlockRead, StripCommasAndSpaces, FormatNumberCompact
+
+Named three small unrelated helpers. `sub_2801A` ->
+`PrepareAmbientMusicBlockRead` (called once from the already-named
+`UpdateAmbientMusicForRegion`): configures a resource-read descriptor
+in the same shape as this codebase's other resource-stub helpers
+(`sub_27DE5`/`sub_27DC6`/`sub_27E3A`), specific to ambient-music
+region data — writes a fixed pair from table `0xCDFB` and global
+`_blockSize5`. `sub_2570C` -> `StripCommasAndSpaces` (called from
+`ShowItemAbilityEffectInfo` and others): strips `,`/` ` from an
+in-place string — the natural counterpart to `FormatNumber`'s
+thousands-separator insertion. `sub_28138` -> `FormatNumberCompact`
+(called repeatedly from unnamed `sub_28034`): chains the two — formats
+a number into the shared `0xAFA8` buffer then immediately strips its
+separators back out, returning a compact numeric string.
+
+563 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
