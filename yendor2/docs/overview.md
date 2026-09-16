@@ -4060,6 +4060,16 @@ identified.
 
 513 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyMultiStatEffectForItem
+
+Named `sub_1AA06` -> `ApplyMultiStatEffectForItem`, called 6 times
+incl. from `HandleIconBarItemExpiry`: the exact ADD-side mirror of
+`RemoveMultiStatEffect`, distinct from the higher-level command handler
+`ApplyMultiStatEffect` (same core table-walking logic, but without
+target confirmation/incapacitation checks/full redraw).
+
+514 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

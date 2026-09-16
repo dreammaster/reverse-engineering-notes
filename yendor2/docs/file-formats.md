@@ -400,7 +400,12 @@ totals are plausibly weight or quantity counters, not fully confirmed.
 stat field (floor-clamped at 0 for one sub-range of fields), then
 recalculates via `UpdatePartyAverageStatTiers` — i.e. taking off a
 magic item correctly reverses whatever stat bonuses putting it on
-applied.
+applied. Its exact ADD-side mirror, `ApplyMultiStatEffectForItem` (was
+`sub_1AA06`, called 6 times incl. from `HandleIconBarItemExpiry`), is a
+distinct, lower-level primitive from the higher-level command handler
+`ApplyMultiStatEffect` — same table-walking core, capped at `0x3E7`
+instead of floored at `0`, but without that command's target
+confirmation, incapacitation check, or full redraw sequence.
 A fourth sibling, `PickUpHeldItemFromSlot` (was `sub_26864`, called
 from `sub_2621C`), is the simple "pick up only" action (no placement
 step) — the pickup counterpart to `PlaceHeldItemIntoEmptySlot`. All

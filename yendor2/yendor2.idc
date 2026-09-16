@@ -3792,7 +3792,9 @@ static Bytes_1(void) {
 	create_insn	(0X1A9A8);
 	create_insn	(0X1A9CE);
 	create_insn	(0X1A9F0);
+	set_cmt	(0X1AA06,	"ADD-side mirror of RemoveMultiStatEffect: walks the loaded item's multi-stat-effect table (word_2E54A), adding each entry's amount to the matching party field (capped at 0x3E7), then sub_1AA9B+UpdatePartyAverageStatTiers. Distinct from the higher-level ApplyMultiStatEffect command handler. Called from HandleIconBarItemExpiry and sub_18C79, among others.",	0);
 	create_insn	(0X1AA06);
+	set_name	(0X1AA06,	"ApplyMultiStatEffectForItem");
 	create_insn	(0X1AA2A);
 	create_insn	(0X1AA52);
 	set_cmt	(0X1AA53,	"AddToStatCapped(ax=delta, bx=field offset on word_328D4): [word_328D4+bx] += ax, clamped at 9999 for HP/MP fields (+0x52/+0x92/+0x54/+0x94) or 999 otherwise. errorCode: 2 if the field was 0 (uninitialized, not applied), 1 if clamped, 0 if applied cleanly.",	0);
@@ -5504,9 +5506,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20C8E,	"Ceiling-extension driver: same 7-call row pattern as RenderDungeonViewport, calling ExtendDungeonCeilingTexture. Called from RedrawDungeonScreen/RefreshDungeonScreen between DrawDungeonFloorAndCeiling and RenderDungeonViewport.",	0);
 	create_insn	(0X20C8E);
 	set_name	(0X20C8E,	"ExtendDungeonCeilingPass");
-	set_cmt	(0X20CEC,	"Ceiling counterpart to ExtendDungeonFloorTexture: draws the current ceiling picture (word_2E498) at z-layer 2 for cells whose [+2] ceiling field matches (IsPairedValueMatch). Called 6x by ExtendDungeonCeilingPass.",	0);
-	create_insn	(0X20CEC);
-	set_name	(0X20CEC,	"ExtendDungeonCeilingTexture");
 }
 
 //------------------------------------------------------------------------
@@ -5516,6 +5515,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X20CEC,	"Ceiling counterpart to ExtendDungeonFloorTexture: draws the current ceiling picture (word_2E498) at z-layer 2 for cells whose [+2] ceiling field matches (IsPairedValueMatch). Called 6x by ExtendDungeonCeilingPass.",	0);
+	create_insn	(0X20CEC);
+	set_name	(0X20CEC,	"ExtendDungeonCeilingTexture");
 	create_insn	(x=0X20CED);
 	op_hex		(x,	1);
 	set_cmt	(0X20D2F,	"Draws the dungeon backdrop: ceiling (word_2E498) and floor (word_2E4A0) pictures from the current cell's 0xE551 table entry, then calls ExtendDungeonFloorTexture 6x (same row-pointer pattern as RenderDungeonViewport) to extend the floor texture across matching cells. Called from RedrawDungeonScreen/RefreshDungeonScreen just before RenderDungeonViewport.",	0);
@@ -7490,13 +7492,6 @@ static Bytes_2(void) {
 	set_cmt	(0X28246,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
 	create_insn	(0X28246);
 	set_name	(0X28246,	"RestoreDialogAreaFromEMS");
-	create_insn	(0X2827E);
-	create_insn	(x=0X28281);
-	op_hex		(x,	1);
-	set_cmt	(0X28296,	"Plays music track ax (no-op if g_driverStateFlags bit1/music-active isn't set). Sets up a driver call param (sub_27BAD) then reads the track's data from WORLD.DAT (fixed FileEntry bx=0x9043).",	0);
-	create_insn	(x=0X28296);
-	op_hex		(x,	1);
-	set_name	(0X28296,	"PlayMusicTrack");
 }
 
 //------------------------------------------------------------------------
@@ -7506,6 +7501,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2827E);
+	create_insn	(x=0X28281);
+	op_hex		(x,	1);
+	set_cmt	(0X28296,	"Plays music track ax (no-op if g_driverStateFlags bit1/music-active isn't set). Sets up a driver call param (sub_27BAD) then reads the track's data from WORLD.DAT (fixed FileEntry bx=0x9043).",	0);
+	create_insn	(x=0X28296);
+	op_hex		(x,	1);
+	set_name	(0X28296,	"PlayMusicTrack");
 	create_insn	(0X2829F);
 	set_cmt	(0X282B3,	"this",	0);
 	create_insn	(0X282B3);

@@ -13897,7 +13897,7 @@ HandleIconBarItemExpiry proc near       ; CODE XREF: ApplyEffectAndDrawIconBar:l
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 mov     ax, [si+12h]
-                call    sub_1AA06
+                call    ApplyMultiStatEffectForItem
                 jmp     short loc_181F6
 ; ---------------------------------------------------------------------------
 
@@ -15559,7 +15559,7 @@ loc_18E75:                              ; CODE XREF: sub_18C79+FD↑j
                 mov     di, 0AFA8h
                 mov     [di], cx
                 mov     ax, cx
-                call    sub_1AA06
+                call    ApplyMultiStatEffectForItem
                 jmp     loc_18F26
 ; ---------------------------------------------------------------------------
 
@@ -18845,9 +18845,9 @@ seg039          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AA06       proc far                ; CODE XREF: HandleIconBarItemExpiry+38↑P
+ApplyMultiStatEffectForItem proc far    ; CODE XREF: HandleIconBarItemExpiry+38↑P
                                         ; sub_18C79+203↑P ...
-                push    si
+                push    si              ; ADD-side mirror of RemoveMultiStatEffect: walks the loaded item's multi-stat-effect table (word_2E54A), adding each entry's amount to the matching party field (capped at 0x3E7), then sub_1AA9B+UpdatePartyAverageStatTiers. Distinct from the higher-level ApplyMultiStatEffect command handler. Called from HandleIconBarItemExpiry and sub_18C79, among others.
                 push    di
                 call    LoadItemCatalogRecord
                 mov     cx, 4
@@ -18855,7 +18855,7 @@ sub_1AA06       proc far                ; CODE XREF: HandleIconBarItemExpiry+38�
                 cmp     bx, 0
                 jz      short loc_1AA4F
 
-loc_1AA19:                              ; CODE XREF: sub_1AA06+3F↓j
+loc_1AA19:                              ; CODE XREF: ApplyMultiStatEffectForItem+3F↓j
                 mov     di, [bx]
                 or      di, di
                 jz      short loc_1AA47
@@ -18865,34 +18865,34 @@ loc_1AA19:                              ; CODE XREF: sub_1AA06+3F↓j
                 jmp     short loc_1AA33
 ; ---------------------------------------------------------------------------
 
-loc_1AA2A:                              ; CODE XREF: sub_1AA06+1C↑j
+loc_1AA2A:                              ; CODE XREF: ApplyMultiStatEffectForItem+1C↑j
                 add     di, word_328D4
                 cmp     word ptr [di], 0
                 jz      short loc_1AA42
 
-loc_1AA33:                              ; CODE XREF: sub_1AA06+22↑j
+loc_1AA33:                              ; CODE XREF: ApplyMultiStatEffectForItem+22↑j
                 mov     ax, [bx+2]
                 add     [di], ax
                 cmp     word ptr [di], 3E7h
                 jle     short loc_1AA42
                 mov     word ptr [di], 3E7h
 
-loc_1AA42:                              ; CODE XREF: sub_1AA06+2B↑j
-                                        ; sub_1AA06+36↑j
+loc_1AA42:                              ; CODE XREF: ApplyMultiStatEffectForItem+2B↑j
+                                        ; ApplyMultiStatEffectForItem+36↑j
                 add     bx, 4
                 loop    loc_1AA19
 
-loc_1AA47:                              ; CODE XREF: sub_1AA06+17↑j
+loc_1AA47:                              ; CODE XREF: ApplyMultiStatEffectForItem+17↑j
                 push    cs
                 call    near ptr sub_1AA9B
                 push    cs
                 call    near ptr UpdatePartyAverageStatTiers
 
-loc_1AA4F:                              ; CODE XREF: sub_1AA06+11↑j
+loc_1AA4F:                              ; CODE XREF: ApplyMultiStatEffectForItem+11↑j
                 pop     di
                 pop     si
                 retf
-sub_1AA06       endp
+ApplyMultiStatEffectForItem endp
 
 ; ---------------------------------------------------------------------------
                 retn
@@ -39880,7 +39880,7 @@ loc_266EB:                              ; CODE XREF: PlaceItemInSlot+9↑j
                 jz      short loc_26728
                 add     [si+118h], ax
                 mov     ax, [di]
-                call    sub_1AA06
+                call    ApplyMultiStatEffectForItem
                 call    sub_1B30C
                 jmp     short loc_26774
 ; ---------------------------------------------------------------------------
@@ -41725,7 +41725,7 @@ loc_2769D:                              ; CODE XREF: sub_274B4+195↑j
                 test    word_328C8, 0E000h
                 jz      short loc_276C2
                 mov     ax, word_31948
-                call    sub_1AA06
+                call    ApplyMultiStatEffectForItem
                 call    sub_1B30C
 
 loc_276C2:                              ; CODE XREF: sub_274B4+40↑j
@@ -41762,7 +41762,7 @@ loc_276DA:                              ; CODE XREF: sub_276C5+A↑j
                 mov     [bx+2], ax
                 mov     ax, [si+4]
                 mov     [bx], ax
-                call    sub_1AA06
+                call    ApplyMultiStatEffectForItem
                 jmp     short loc_2772A
 ; ---------------------------------------------------------------------------
 
@@ -41778,7 +41778,7 @@ loc_27703:                              ; CODE XREF: sub_276C5+11↑j
                 mov     [bx+2], ax
                 mov     ax, [si+8]
                 mov     [bx], ax
-                call    sub_1AA06
+                call    ApplyMultiStatEffectForItem
 
 loc_2772A:                              ; CODE XREF: sub_276C5+13↑j
                                         ; sub_276C5+1B↑j ...
