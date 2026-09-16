@@ -6252,6 +6252,22 @@ stub cluster in one sweep.
 726 named of 769 functions as of this update — only 43 unnamed
 functions remain.
 
+### 2026-09-15 session update, continued: small cluster round
+
+Named 4 more previously-untraced helpers: `ResetCombatStateOnPartyWipe`
+(`sub_2AE1A`, called from `ShowPartyWipeScreen` — clears UI flags and
+zeroes `g_combatTurnOrder` after the party dies), `AssignClueCategoryEntryIds`
+(`sub_1303C`, assigns sequential ids into the clue book category
+list's hit-test table), `ClearPartySlotReferenceOnDamage`
+(`sub_18095`, called from `DeductHPClamped`/`ApplyEffectCost` —
+removes a damaged party member's reference from a 5-entry tracking
+table, exact purpose of that table not confirmed), and
+`SyncPartyRecordStagedStats` (`sub_1CC98`, called from
+`UseItemType_400`/`UseTrainingItem` — syncs a staged stat region back
+into the party record's live fields after training/service use).
+
+730 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

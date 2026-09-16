@@ -4792,7 +4792,7 @@ loc_12EB1:                              ; CODE XREF: ShowClueCategoryEntries+5�
                 mov     word_2E3FE, 0Eh
                 call    DrawMessageBox
                 call    DrawClueBookNavBar
-                call    sub_1303C
+                call    AssignClueCategoryEntryIds
                 call    DrawClueEntryList
                 call    DrawMouseCursor
                 retn
@@ -4962,7 +4962,7 @@ BuildClueEntryText endp
 
 
 sub_12FB0       proc near               ; CODE XREF: ShowClueCategoryEntries+20↑p
-                                        ; sub_1303C+2↓p
+                                        ; AssignClueCategoryEntryIds+2↓p
                 mov     bx, 68D2h
                 mov     cx, 0Eh
 
@@ -5047,8 +5047,8 @@ ScrollClueEntryListPageUp endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1303C       proc near               ; CODE XREF: ShowClueCategoryEntries+68↑p
-                push    si
+AssignClueCategoryEntryIds proc near    ; CODE XREF: ShowClueCategoryEntries+68↑p
+                push    si              ; Assigns sequential 1-based ids into a hit-test table's [+8] field (stride 0xA, base 0x68D2), after calling untraced sub_12FB0. Called once from ShowClueCategoryEntries.
                 push    cx
                 call    sub_12FB0
                 mov     si, word_2E3F0
@@ -5056,7 +5056,7 @@ sub_1303C       proc near               ; CODE XREF: ShowClueCategoryEntries+68�
                 mov     bx, 68D2h
                 mov     ax, 1
 
-loc_1304F:                              ; CODE XREF: sub_1303C+1D↓j
+loc_1304F:                              ; CODE XREF: AssignClueCategoryEntryIds+1D↓j
                 mov     [bx+8], ax
                 inc     ax
                 add     bx, 0Ah
@@ -5065,7 +5065,7 @@ loc_1304F:                              ; CODE XREF: sub_1303C+1D↓j
                 pop     cx
                 pop     si
                 retn
-sub_1303C       endp
+AssignClueCategoryEntryIds endp
 
 seg008          ends
 
@@ -13750,9 +13750,10 @@ PrepareTrapEffectSlots endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18095       proc far                ; CODE XREF: DeductHPClamped+15↓p
+ClearPartySlotReferenceOnDamage proc far
+                                        ; CODE XREF: DeductHPClamped+15↓p
                                         ; ApplyEffectCost+6C↓p
-                push    bx
+                push    bx              ; Converts a party-record pointer to its 1-based slot number and clears any matching entry in a 5-entry table at 0x94A3. Called from DeductHPClamped and ApplyEffectCost.
                 push    cx
                 push    dx
                 sub     ax, 95F3h
@@ -13763,19 +13764,19 @@ sub_18095       proc far                ; CODE XREF: DeductHPClamped+15↓p
                 mov     bx, 94A3h
                 mov     cx, 5
 
-loc_180A9:                              ; CODE XREF: sub_18095+1F↓j
+loc_180A9:                              ; CODE XREF: ClearPartySlotReferenceOnDamage+1F↓j
                 cmp     ax, [bx]
                 jnz     short loc_180B1
                 mov     word ptr [bx], 0
 
-loc_180B1:                              ; CODE XREF: sub_18095+16↑j
+loc_180B1:                              ; CODE XREF: ClearPartySlotReferenceOnDamage+16↑j
                 add     bx, 2
                 loop    loc_180A9
                 pop     dx
                 pop     cx
                 pop     bx
                 retf
-sub_18095       endp
+ClearPartySlotReferenceOnDamage endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13966,7 +13967,7 @@ DeductHPClamped proc near               ; CODE XREF: ApplyEffectCost+F↓p
                 or      word ptr [bx+1Ch], 40h
                 mov     ax, bx
                 push    cs
-                call    near ptr sub_18095
+                call    near ptr ClearPartySlotReferenceOnDamage
                 call    UpdatePartyAverageStatTiers
 
 locret_18247:                           ; CODE XREF: DeductHPClamped+7↑j
@@ -14046,7 +14047,7 @@ loc_182AC:                              ; CODE XREF: ApplyEffectCost+12↑j
                 jz      short loc_182CB
                 mov     ax, bx
                 push    cs
-                call    near ptr sub_18095
+                call    near ptr ClearPartySlotReferenceOnDamage
                 call    UpdatePartyAverageStatTiers
 
 loc_182CB:                              ; CODE XREF: ApplyEffectCost+5A↑j
@@ -21279,7 +21280,7 @@ loc_1BF1C:                              ; CODE XREF: UseItemType_400+59↑j
                 call    SubBCD4
                 push    cs
                 call    near ptr RedrawPartyGoldDisplay
-                call    sub_1CC98
+                call    SyncPartyRecordStagedStats
                 call    RunItemServiceRecipientLoop
                 call    DrawPartyStatusIconRow
                 call    CopyPartyStatBlockToEmsCache
@@ -21834,7 +21835,7 @@ loc_1C460:                              ; CODE XREF: UseTrainingItem+331↑j
                 call    writeString
 
 loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
-                call    sub_1CC98
+                call    SyncPartyRecordStagedStats
                 call    RefreshCarryCapacityAndAttributeBonuses
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
@@ -22625,9 +22626,9 @@ CopyPartyStatBlockToEmsCache endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CC98       proc near               ; CODE XREF: UseItemType_400+84↑p
+SyncPartyRecordStagedStats proc near    ; CODE XREF: UseItemType_400+84↑p
                                         ; UseTrainingItem:loc_1C499↑p
-                mov     es, word_2E4AA
+                mov     es, word_2E4AA  ; Copies two staged stat regions ([+0x72]->[+0x32], [+0x76]->[+0x36]) within the current party record back into its live fields. Called from UseItemType_400 and UseTrainingItem.
                 mov     cx, 10h
                 mov     si, word_328D4
                 add     si, 72h ; 'r'
@@ -22639,7 +22640,7 @@ sub_1CC98       proc near               ; CODE XREF: UseItemType_400+84↑p
                 mov     cx, 0Eh
                 rep movsw
                 retn
-sub_1CC98       endp
+SyncPartyRecordStagedStats endp
 
 seg045          ends
 
@@ -49039,7 +49040,7 @@ ShowPartyWipeScreen proc far            ; CODE XREF: CheckPartyWipeAndReinitLeve
                 call    TriggerSoundEvent
 
 loc_2ADFC:                              ; CODE XREF: ShowPartyWipeScreen+A↑j
-                call    sub_2AE1A
+                call    ResetCombatStateOnPartyWipe
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
                 call    RestoreAndRedrawFixedStatusIcon
@@ -49052,8 +49053,8 @@ ShowPartyWipeScreen endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AE1A       proc near               ; CODE XREF: ShowPartyWipeScreen:loc_2ADFC↑p
-                and     word_328C4, 0DAFFh
+ResetCombatStateOnPartyWipe proc near   ; CODE XREF: ShowPartyWipeScreen:loc_2ADFC↑p
+                and     word_328C4, 0DAFFh ; Clears UI flag bits and zeroes g_combatTurnOrder (0x539E). Called once from ShowPartyWipeScreen.
                 and     word_328C8, 803h
                 and     word_328CA, 0FFFh
                 mov     es, word_2E4AA
@@ -49062,7 +49063,7 @@ sub_2AE1A       proc near               ; CODE XREF: ShowPartyWipeScreen:loc_2AD
                 xor     ax, ax
                 rep stosw
                 retn
-sub_2AE1A       endp
+ResetCombatStateOnPartyWipe endp
 
 seg115          ends
 

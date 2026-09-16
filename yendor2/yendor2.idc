@@ -1688,7 +1688,9 @@ static Bytes_0(void) {
 	set_cmt	(0X13014,	"Full page-up jump for the clue entry list: recomputes word_2E3F0 -= 0x38 (clamped to word_2E3EA+2), adjusts word_2E3EE by the delta, calls sub_12FC1 (redraw), errorCode=1. Called from HandleClueEntryScrollInput and sub_12D5C.",	0);
 	create_insn	(0X13014);
 	set_name	(0X13014,	"ScrollClueEntryListPageUp");
+	set_cmt	(0X1303C,	"Assigns sequential 1-based ids into a hit-test table's [+8] field (stride 0xA, base 0x68D2), after calling untraced sub_12FB0. Called once from ShowClueCategoryEntries.",	0);
 	create_insn	(0X1303C);
+	set_name	(0X1303C,	"AssignClueCategoryEntryIds");
 	set_cmt	(0X1305E,	"Loops calling PollKeyboardInput (with a Fade? each iteration) until a key event is seen (errorCode != 0 as an input-event flag, see PollKeyboardInput), then for event types 1-3 calls sub_14D26.",	0);
 	create_insn	(x=0X1305E);
 	op_hex		(x,	1);
@@ -2880,6 +2882,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1756F);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X17577);
 	op_hex		(x,	1);
 	set_cmt	(0X17593,	"this",	0);
@@ -2893,15 +2904,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X175F4);
 	op_hex		(x,	1);
 	set_name	(0X175F4,	"ShowMaterialCounterHud");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X175FD);
 	create_insn	(x=0X17616);
 	op_hex		(x,	1);
@@ -3159,7 +3161,9 @@ static Bytes_1(void) {
 	set_cmt	(0X18068,	"PrepareTrapEffectSlots(ax=effect id): returns bx = g_trapEffectDefs + id*0xC (the effect-definition record). Also clears the [+8..+0x14) fields of all 4 g_partyEffectIconSlots entries first -- reset before repopulate. ax is left 0 on return.",	0);
 	create_insn	(0X18068);
 	set_name	(0X18068,	"PrepareTrapEffectSlots");
+	set_cmt	(0X18095,	"Converts a party-record pointer to its 1-based slot number and clears any matching entry in a 5-entry table at 0x94A3. Called from DeductHPClamped and ApplyEffectCost.",	0);
 	create_insn	(0X18095);
+	set_name	(0X18095,	"ClearPartySlotReferenceOnDamage");
 	set_cmt	(0X180BA,	"Iterates the 4 g_partyEffectIconSlots entries; for each occupied slot, draws its effect icon (via the effect-def's +2 g_pictureDir offset, one of 3 draw variants selected by the effect-def's +0xA flags) and applies the effect's cost via ApplyEffectCost.",	0);
 	create_insn	(0X180BA);
 	set_name	(0X180BA,	"ApplyEffectAndDrawIconBar");
@@ -4615,7 +4619,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1CC70,	"Copies 30 words from word_328D4+0x32 to the same relative offset (+0x72, the confirmed base->derived stat delta) in segment word_2E4AA, then calls UpdatePartyAverageStatTiers -- plausibly a before/after stat snapshot for a stat-changing item. Called from UseItemType_400 and UseTrainingItem.",	0);
 	create_insn	(0X1CC70);
 	set_name	(0X1CC70,	"CopyPartyStatBlockToEmsCache");
+	set_cmt	(0X1CC98,	"Copies two staged stat regions ([+0x72]->[+0x32], [+0x76]->[+0x36]) within the current party record back into its live fields. Called from UseItemType_400 and UseTrainingItem.",	0);
 	create_insn	(0X1CC98);
+	set_name	(0X1CC98,	"SyncPartyRecordStagedStats");
 	set_cmt	(0X1CCBC,	"Computes a tiered discount/markup percentage from party record field +0x68 (plausibly the BARTERING skill/stat) via 7 descending thresholds, applies it via MulBCD4ByWord to preview a scaled sell/ buy price, then -- gated on IsItemEligibleForEnhance / IsItemEligibleForRepair -- computes further scaled preview prices for enhance/repair costs. Called from PayGoldAndAcquireItem and SellClickedCatalogItem.",	0);
 	create_insn	(0X1CCBC);
 	set_name	(0X1CCBC,	"ComputeBarterPricingPreview");
@@ -4696,6 +4702,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1D0A5);
 	op_hex		(x,	1);
 	set_cmt	(0X1D0AB,	"ticks",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D0B3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D0C3);
@@ -4724,15 +4739,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1D198,	"Maps in EMS page 0x5610 and copies one 80-byte spell record (1-based index in ax) into scratch buffer 0x5A5A. Called from BuildClueEntryText and RunClueBookSpellCategory (F8 clue book, F3 SPELLS).",	0);
 	create_insn	(0X1D198);
 	set_name	(0X1D198,	"LoadClueBookSpellEntry");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1D1BF);
 	op_plain_offset	(x,	1,	0X2D860);
 	op_plain_offset	(x,	129,	0X2D860);
@@ -6394,6 +6400,15 @@ static Bytes_2(void) {
 	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
 	create_insn	(0X23151);
 	set_name	(0X23151,	"ShowLootAndAwardExperience");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23169);
 	op_hex		(x,	1);
 	set_cmt	(0X23199,	"msg",	0);
@@ -6423,15 +6438,6 @@ static Bytes_2(void) {
 	set_cmt	(0X233D0,	"Looks up the dungeon-viewport scratch buffer (0x6D60 + word_3292C*8) for a monster at the current depth row -- if the cell's [+6] bit 0x400 'monster present' flag is set, resolves it via FindMonsterTypeInLevelPool. Called from ApplyDamageAlongCorridorLine and sub_2C0FE.",	0);
 	create_insn	(0X233D0);
 	set_name	(0X233D0,	"GetMonsterAtViewportRow");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X233DD);
 	op_hex		(x,	1);
 	create_insn	(0X233EC);
@@ -8004,6 +8010,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X286E0);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X286EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X286F0);
@@ -8066,15 +8081,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2899C,	"Generic error/exit path: runs the RestoreInt1cVector / FreeVideoBuffer / ShutdownAudioDrivers cleanup trio, then (if the mouse/video subsystem flag ds:40FCh bit0 is set) resets the mouse driver and video mode 3, prints the DOS '$'-terminated string at DS:AX (set by the ErrorTable handler that jumped here), and exits via INT 21h/AH=4Ch with errorCode as the exit code.",	0);
 	create_insn	(0X2899C);
 	set_name	(0X2899C,	"ErrorExit");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X289AC);
 	op_hex		(x,	1);
 	set_cmt	(0X289B7,	"- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",	0);
@@ -9470,8 +9476,10 @@ static Bytes_4(void) {
 	set_cmt	(0X2ADE8,	"Stops music, plays sound effect 0x13 via the sound dispatch (sub_28412) when sub_2827E allows it, draws full-screen picture 1 and caches it to EMS, redraws the fixed status icon, and shows the mouse cursor. The 'show this screen' step of CheckPartyWipeAndReinitLevel's party-wipe sequence.",	0);
 	create_insn	(0X2ADE8);
 	set_name	(0X2ADE8,	"ShowPartyWipeScreen");
+	set_cmt	(0X2AE1A,	"Clears UI flag bits and zeroes g_combatTurnOrder (0x539E). Called once from ShowPartyWipeScreen.",	0);
 	create_insn	(x=0X2AE1A);
 	op_hex		(x,	1);
+	set_name	(0X2AE1A,	"ResetCombatStateOnPartyWipe");
 	create_insn	(x=0X2AE20);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE26);
@@ -10478,6 +10486,15 @@ static Bytes_4(void) {
 	create_byte	(0X2E668);
 	make_array	(0X2E669,	0X3);
 	create_word	(0X2E66C);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E76E);
 	create_word	(0X2E770);
 	create_word	(0X2E772);
@@ -10597,15 +10614,6 @@ static Bytes_4(void) {
 	set_name	(0X32936,	"_videoSegment");
 	create_word	(0X32938);
 	create_word	(0X3293A);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_word	(0X3293C);
 	create_word	(0X3293E);
 	create_word	(0X32940);
