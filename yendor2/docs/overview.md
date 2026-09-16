@@ -6181,6 +6181,19 @@ those sub-sections weren't individually traced this round.
 
 699 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleInventorySlotClick
+
+Named `sub_2621C` -> `HandleInventorySlotClick`, called from
+`ShowCharacterInventory` and `sub_1869D` — the click handler for a
+character's inventory grid slots, ties the already-named inventory-
+slot primitives (`GetInventorySlotPtr`, `IsItemEligibleForCommand`,
+`PickUpHeldItemFromSlot`) together into the actual UI click handler:
+with an empty hand, picks up the clicked item unless a specific
+command/flag combination blocks it; with an item held, checks
+eligibility for the current command and rejects on failure.
+
+A milestone: **700 named of 769 functions as of this update.**
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -14748,7 +14748,7 @@ loc_18714:                              ; CODE XREF: sub_1869D+61↑j
 ; ---------------------------------------------------------------------------
 
 loc_1872D:                              ; CODE XREF: sub_1869D+86↑j
-                call    sub_2621C
+                call    HandleInventorySlotClick
                 cmp     errorCode, 1
                 jz      short loc_1877B
                 mov     bx, word_32924
@@ -36286,7 +36286,7 @@ loc_2472E:                              ; CODE XREF: ShowCharacterInventory+13A�
 loc_24736:                              ; CODE XREF: ShowCharacterInventory+183↑j
                 cmp     ax, 2
                 jnz     short loc_24751
-                call    sub_2621C
+                call    HandleInventorySlotClick
                 cmp     errorCode, 1
                 jz      short loc_246D6
                 call    DrawThreeThresholdStats
@@ -39138,7 +39138,7 @@ seg087          segment byte public 'CODE' use16
 
 
 LoadNextContainerInChain proc far       ; CODE XREF: TryLoadNextContainerLink+D↑P
-                                        ; sub_2621C+A5↓p
+                                        ; HandleInventorySlotClick+A5↓p
                 push    bx              ; Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.
                 cmp     word_36E0F, 0
                 jz      short loc_26058
@@ -39337,9 +39337,9 @@ DrawPartyMemberPortrait endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2621C       proc far                ; CODE XREF: sub_1869D:loc_1872D↑P
+HandleInventorySlotClick proc far       ; CODE XREF: sub_1869D:loc_1872D↑P
                                         ; ShowCharacterInventory+18D↑P
-                push    ax
+                push    ax              ; Inventory-grid slot click handler: with an empty hand, picks up the clicked item (PickUpHeldItemFromSlot) unless a specific command/flag combination blocks it; with an item held, checks eligibility for the current command (IsItemEligibleForCommand) and rejects with FlashStatusWarning on failure. Called from ShowCharacterInventory and sub_1869D.
                 push    bx
                 push    cx
                 push    dx
@@ -39359,14 +39359,14 @@ sub_2621C       proc far                ; CODE XREF: sub_1869D:loc_1872D↑P
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_2624C:                              ; CODE XREF: sub_2621C+25↑j
+loc_2624C:                              ; CODE XREF: HandleInventorySlotClick+25↑j
                 cmp     word_2E40A, 9
                 jnz     short loc_2625C
                 mov     errorCode, 1
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_2625C:                              ; CODE XREF: sub_2621C+35↑j
+loc_2625C:                              ; CODE XREF: HandleInventorySlotClick+35↑j
                 call    GetInventorySlotPtr
                 cmp     word_31946, 0
                 jnz     short loc_26295
@@ -39375,7 +39375,7 @@ loc_2625C:                              ; CODE XREF: sub_2621C+35↑j
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_2626E:                              ; CODE XREF: sub_2621C+4D↑j
+loc_2626E:                              ; CODE XREF: HandleInventorySlotClick+4D↑j
                 mov     si, word_328D4
                 cmp     word_2E40A, 0Bh
                 jnz     short loc_2628F
@@ -39386,13 +39386,13 @@ loc_2626E:                              ; CODE XREF: sub_2621C+4D↑j
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_2628F:                              ; CODE XREF: sub_2621C+5B↑j
-                                        ; sub_2621C+63↑j
+loc_2628F:                              ; CODE XREF: HandleInventorySlotClick+5B↑j
+                                        ; HandleInventorySlotClick+63↑j
                 call    PickUpHeldItemFromSlot
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_26295:                              ; CODE XREF: sub_2621C+48↑j
+loc_26295:                              ; CODE XREF: HandleInventorySlotClick+48↑j
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
                 mov     ax, word_2E40A
@@ -39400,12 +39400,12 @@ loc_26295:                              ; CODE XREF: sub_2621C+48↑j
                 cmp     errorCode, 0
                 jz      short loc_262B2
 
-loc_262AA:                              ; CODE XREF: sub_2621C+DE↓j
+loc_262AA:                              ; CODE XREF: HandleInventorySlotClick+DE↓j
                 call    FlashStatusWarning
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_262B2:                              ; CODE XREF: sub_2621C+8C↑j
+loc_262B2:                              ; CODE XREF: HandleInventorySlotClick+8C↑j
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_262C7
                 cmp     word_3194C, 0
@@ -39414,8 +39414,8 @@ loc_262B2:                              ; CODE XREF: sub_2621C+8C↑j
                 call    near ptr LoadNextContainerInChain
                 mov     word_3194C, ax
 
-loc_262C7:                              ; CODE XREF: sub_2621C+9B↑j
-                                        ; sub_2621C+A2↑j
+loc_262C7:                              ; CODE XREF: HandleInventorySlotClick+9B↑j
+                                        ; HandleInventorySlotClick+A2↑j
                 mov     ax, [bx+0Eh]
                 mov     word_3293E, ax
                 cmp     word ptr [di], 0
@@ -39423,7 +39423,7 @@ loc_262C7:                              ; CODE XREF: sub_2621C+9B↑j
                 jmp     loc_263E8
 ; ---------------------------------------------------------------------------
 
-loc_262D5:                              ; CODE XREF: sub_2621C+B4↑j
+loc_262D5:                              ; CODE XREF: HandleInventorySlotClick+B4↑j
                 mov     ax, [di]
                 call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
@@ -39438,33 +39438,33 @@ loc_262D5:                              ; CODE XREF: sub_2621C+B4↑j
                 cmp     ax, [si+56h]
                 ja      short loc_262AA
 
-loc_262FC:                              ; CODE XREF: sub_2621C+D2↑j
+loc_262FC:                              ; CODE XREF: HandleInventorySlotClick+D2↑j
                 call    IsContainerTypeCompatible
                 cmp     errorCode, 0
                 jnz     short loc_26309
                 call    SwapHeldItemWithSlot
 
-loc_26309:                              ; CODE XREF: sub_2621C+E8↑j
+loc_26309:                              ; CODE XREF: HandleInventorySlotClick+E8↑j
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_2630C:                              ; CODE XREF: sub_2621C+CA↑j
+loc_2630C:                              ; CODE XREF: HandleInventorySlotClick+CA↑j
                 cmp     word_31948, 21h ; '!'
                 jge     short loc_26316
                 jmp     loc_2639C
 ; ---------------------------------------------------------------------------
 
-loc_26316:                              ; CODE XREF: sub_2621C+F5↑j
+loc_26316:                              ; CODE XREF: HandleInventorySlotClick+F5↑j
                 cmp     word_31948, 2Eh ; '.'
                 jg      short loc_2639C
                 call    FinishPlacingHeldItem
 
-loc_26322:                              ; CODE XREF: sub_2621C+131↓j
+loc_26322:                              ; CODE XREF: HandleInventorySlotClick+131↓j
                 mov     errorCode, 1
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_2632B:                              ; CODE XREF: sub_2621C+C5↑j
+loc_2632B:                              ; CODE XREF: HandleInventorySlotClick+C5↑j
                 mov     ax, [si+118h]
                 add     ax, word_3194A
                 cmp     ax, [si+56h]
@@ -39473,13 +39473,13 @@ loc_2632B:                              ; CODE XREF: sub_2621C+C5↑j
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_26340:                              ; CODE XREF: sub_2621C+11A↑j
+loc_26340:                              ; CODE XREF: HandleInventorySlotClick+11A↑j
                 cmp     word_2E40A, 0Bh
                 jnz     short loc_2634F
                 test    word ptr [si+15Ch], 1000h
                 jnz     short loc_26322
 
-loc_2634F:                              ; CODE XREF: sub_2621C+129↑j
+loc_2634F:                              ; CODE XREF: HandleInventorySlotClick+129↑j
                 mov     ax, 2000h
                 test    word ptr [bx+0Ch], 4
                 jnz     short loc_2637A
@@ -39494,8 +39494,8 @@ loc_2634F:                              ; CODE XREF: sub_2621C+129↑j
                 jnz     short loc_2637A
                 mov     ax, 0
 
-loc_2637A:                              ; CODE XREF: sub_2621C+13B↑j
-                                        ; sub_2621C+145↑j ...
+loc_2637A:                              ; CODE XREF: HandleInventorySlotClick+13B↑j
+                                        ; HandleInventorySlotClick+145↑j ...
                 test    word_3293E, ax
                 jz      short loc_2639C
                 mov     ax, [di+2]
@@ -39505,20 +39505,20 @@ loc_2637A:                              ; CODE XREF: sub_2621C+13B↑j
                 add     bx, 2
                 mov     cx, 8
 
-loc_26392:                              ; CODE XREF: sub_2621C+17E↓j
+loc_26392:                              ; CODE XREF: HandleInventorySlotClick+17E↓j
                 cmp     word ptr [bx], 0
                 jz      short loc_263A9
                 add     bx, 4
                 loop    loc_26392
 
-loc_2639C:                              ; CODE XREF: sub_2621C+F7↑j
-                                        ; sub_2621C+FF↑j ...
+loc_2639C:                              ; CODE XREF: HandleInventorySlotClick+F7↑j
+                                        ; HandleInventorySlotClick+FF↑j ...
                 mov     errorCode, 1
                 call    FlashStatusWarning
                 jmp     short loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_263A9:                              ; CODE XREF: sub_2621C+179↑j
+loc_263A9:                              ; CODE XREF: HandleInventorySlotClick+179↑j
                 cmp     word ptr [di], 11h
                 jnz     short loc_263BD
                 mov     ax, word_3194A
@@ -39526,7 +39526,7 @@ loc_263A9:                              ; CODE XREF: sub_2621C+179↑j
                 sub     [si+118h], ax
                 sub     word_38808, ax
 
-loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
+loc_263BD:                              ; CODE XREF: HandleInventorySlotClick+190↑j
                 mov     di, bx
                 mov     ax, 6
                 call    TriggerSoundEvent
@@ -39541,7 +39541,7 @@ loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
                 jmp     short loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_263E8:                              ; CODE XREF: sub_2621C+B6↑j
+loc_263E8:                              ; CODE XREF: HandleInventorySlotClick+B6↑j
                 mov     ax, [si+118h]
                 add     ax, word_3194A
                 cmp     ax, [si+56h]
@@ -39550,14 +39550,14 @@ loc_263E8:                              ; CODE XREF: sub_2621C+B6↑j
                 jmp     short loc_26409
 ; ---------------------------------------------------------------------------
 
-loc_263FC:                              ; CODE XREF: sub_2621C+1D7↑j
+loc_263FC:                              ; CODE XREF: HandleInventorySlotClick+1D7↑j
                 call    IsContainerTypeCompatible
                 cmp     errorCode, 0
                 jnz     short loc_26409
                 call    PlaceHeldItemIntoEmptySlot
 
-loc_26409:                              ; CODE XREF: sub_2621C+2D↑j
-                                        ; sub_2621C+3D↑j ...
+loc_26409:                              ; CODE XREF: HandleInventorySlotClick+2D↑j
+                                        ; HandleInventorySlotClick+3D↑j ...
                 pop     word_3293E
                 pop     es
                 pop     di
@@ -39567,7 +39567,7 @@ loc_26409:                              ; CODE XREF: sub_2621C+2D↑j
                 pop     bx
                 pop     ax
                 retf
-sub_2621C       endp
+HandleInventorySlotClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -39879,7 +39879,7 @@ CloseAllAlternateBags endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PlaceItemInSlot proc near               ; CODE XREF: sub_2621C+1AB↑p
+PlaceItemInSlot proc near               ; CODE XREF: HandleInventorySlotClick+1AB↑p
                                         ; PlaceHeldItemIntoEmptySlot+D↓p ...
                 mov     si, word_328D4  ; Places the held item into slot di and adds its value to one of 3 equipment-section running totals (+0x180/+0x1A6/+0x1CC, selected by [+0x15C] flag bits) or the general total (+0x118) -- the exact mirror of PickUpItemFromSlot. Called from SwapHeldItemWithSlot and PlaceHeldItemIntoEmptySlot.
                 cmp     word_2E40A, 10h
@@ -40063,7 +40063,7 @@ DrawPortraitOverlayIconB endp
 
 
 LoadContainerContents proc near         ; CODE XREF: LoadNextContainerInChain+40↑p
-                                        ; sub_2621C+16A↑p ...
+                                        ; HandleInventorySlotClick+16A↑p ...
                 mov     word_36863, ax  ; LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
@@ -40078,7 +40078,7 @@ LoadContainerContents endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PickUpHeldItemFromSlot proc near        ; CODE XREF: sub_2621C:loc_2628F↑p
+PickUpHeldItemFromSlot proc near        ; CODE XREF: HandleInventorySlotClick:loc_2628F↑p
                 call    RestoreCursorBackgroundIfDirty ; Restores the cursor, calls PickUpItemFromSlot (no placement step), updates the cursor and portrait. Called from sub_2621C -- the pickup counterpart to PlaceHeldItemIntoEmptySlot.
                 call    PickUpItemFromSlot
                 call    UpdateCursorForHeldItem
@@ -40092,7 +40092,7 @@ PickUpHeldItemFromSlot endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PlaceHeldItemIntoEmptySlot proc near    ; CODE XREF: sub_2621C+1EA↑p
+PlaceHeldItemIntoEmptySlot proc near    ; CODE XREF: HandleInventorySlotClick+1EA↑p
                 mov     ax, 6           ; Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.
                 call    TriggerSoundEvent
                 call    RestoreCursorBackgroundIfDirty
@@ -40109,7 +40109,7 @@ PlaceHeldItemIntoEmptySlot endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SwapHeldItemWithSlot proc near          ; CODE XREF: sub_2621C+EA↑p
+SwapHeldItemWithSlot proc near          ; CODE XREF: HandleInventorySlotClick+EA↑p
                 mov     ax, 6           ; Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.
                 call    TriggerSoundEvent
                 call    RestoreCursorBackgroundIfDirty
@@ -40196,7 +40196,7 @@ ClearDepletedResourceCounterForCommand endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GetInventorySlotPtr proc near           ; CODE XREF: sub_2621C:loc_2625C↑p
+GetInventorySlotPtr proc near           ; CODE XREF: HandleInventorySlotClick:loc_2625C↑p
                                         ; sub_26415+37↑p
                 mov     si, word_328D4  ; GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.
                 and     word ptr [si+15Ch], 0F83Fh
@@ -40375,7 +40375,7 @@ GetInventorySlotPtr endp
 ; =============== S U B R O U T I N E =======================================
 
 
-IsItemEligibleForCommand proc near      ; CODE XREF: sub_2621C+84↑p
+IsItemEligibleForCommand proc near      ; CODE XREF: HandleInventorySlotClick+84↑p
                 mov     errorCode, 0    ; Generalized eligibility gate for inventory command codes (ax=word_2E40A) against an item's catalog flags (bx, [bx+0xC]) or word_2E548[+2]. Codes <=8 always pass; 9-0x14 each check a specific bit, two also checking the current party member's own record. errorCode=1 if ineligible. Called from sub_2621C.
                 cmp     ax, 8
                 jg      short loc_26A81
@@ -40600,7 +40600,7 @@ PickUpItemFromSlot endp
 
 
 CommitContainerWrite proc near          ; CODE XREF: LoadNextContainerInChain+55↑p
-                                        ; sub_2621C+1BE↑p
+                                        ; HandleInventorySlotClick+1BE↑p
                 mov     bx, 8FFBh       ; Minimal write-commit: FileEntry_Write(errorCode=0xB) + ErrorCheck, assuming the caller already configured the container-write descriptor (unlike SyncContainerContents, which configures it itself via sub_27E3A). Called from LoadNextContainerInChain and sub_2621C.
                 mov     errorCode, 0Bh
                 call    FileEntry_Write
@@ -40612,8 +40612,8 @@ CommitContainerWrite endp
 ; =============== S U B R O U T I N E =======================================
 
 
-IsContainerTypeCompatible proc near     ; CODE XREF: sub_2621C:loc_262FC↑p
-                                        ; sub_2621C:loc_263FC↑p
+IsContainerTypeCompatible proc near     ; CODE XREF: HandleInventorySlotClick:loc_262FC↑p
+                                        ; HandleInventorySlotClick:loc_263FC↑p
                 mov     errorCode, 0    ; Checks whether the currently-open container (one of the '3 alternate bags', selected via [+0x15C]/[+0x17C]/[+0x1A2]/[+0x1C8]) matches an allowed-type bitmask (word_3293E). Rejects with FlashStatusWarning if not. Called from sub_2621C.
                 cmp     word_2E40A, 0Ah
                 jge     short locret_26C9C
@@ -50198,7 +50198,7 @@ seg120          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-FinishPlacingHeldItem proc far          ; CODE XREF: sub_2621C+101↑P
+FinishPlacingHeldItem proc far          ; CODE XREF: HandleInventorySlotClick+101↑P
                                         ; HandleStatusPanelItemSlotClick+81↑P
                 mov     ax, 4           ; Plays a sound, restores the cursor background, loads the held item's catalog record, ORs a value derived from its flag byte into word_36C81 (not otherwise documented), then clears the held-item cursor (UpdateCursorForHeldItem(0)). Called from sub_2621C (a still-untraced container-related handler) and sub_271DC.
                 call    TriggerSoundEvent

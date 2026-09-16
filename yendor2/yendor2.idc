@@ -7157,7 +7157,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X261BF);
 	op_hex		(x,	1);
+	set_cmt	(0X2621C,	"Inventory-grid slot click handler: with an empty hand, picks up the clicked item (PickUpHeldItemFromSlot) unless a specific command/flag combination blocks it; with an item held, checks eligibility for the current command (IsItemEligibleForCommand) and rejects with FlashStatusWarning on failure. Called from ShowCharacterInventory and sub_1869D.",	0);
 	create_insn	(0X2621C);
+	set_name	(0X2621C,	"HandleInventorySlotClick");
 	create_insn	(0X2624C);
 	create_insn	(0X2625C);
 	create_insn	(0X2626E);
@@ -8191,12 +8193,6 @@ static Bytes_3(void) {
 	set_cmt	(0X28B94,	"Draws one word from [bx] (skipping leading/trailing spaces, writeChar per character). On hitting NUL: resets _textPos_x to dx, advances _textPos_y, decrements cx (line-end). On hitting another word: returns without decrementing cx (same line continues). Text is pre-wrapped by NUL line separators, not wrapped here. Called from DrawIndentedTextColumn.",	0);
 	create_insn	(0X28B94);
 	set_name	(0X28B94,	"DrawWordToken");
-	create_insn	(0X28BA1);
-	create_insn	(0X28BB3);
-	create_insn	(0X28BC5);
-	set_cmt	(0X28BD2,	"Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.",	0);
-	create_insn	(0X28BD2);
-	set_name	(0X28BD2,	"ApplySavingThrowEffect");
 }
 
 //------------------------------------------------------------------------
@@ -8206,6 +8202,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(0X28BA1);
+	create_insn	(0X28BB3);
+	create_insn	(0X28BC5);
+	set_cmt	(0X28BD2,	"Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.",	0);
+	create_insn	(0X28BD2);
+	set_name	(0X28BD2,	"ApplySavingThrowEffect");
 	create_insn	(0X28BE2);
 	create_insn	(0X28C04);
 	create_insn	(0X28C3A);
@@ -10811,6 +10813,15 @@ static Bytes_4(void) {
 	set_name	(0X35074,	"aMagicDragon");
 	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:\n  0: 318x198 @ 0x0        -- \"SmithWare\" splash-screen logo\n  1: 210x105 @ 0xE694C    -- GameDialog button panel background\n  2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene\n  3: 190x110 @ 0x779552   -- wolf/monster silhouette\n  4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)\n  5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient\n  6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)\n  7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)\n  8: 16x16   @ 0xBCF3DA   -- mouse cursor\n  9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon\nIndexed as g_pictureDir + word_2E532 (p" "i",	0);
 	set_name	(0X3508E,	"g_pictureDir");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3512E,	0X9);
 	set_name	(0X3512E,	"aNorth");
 	create_strlit	(0X35137,	0X9);
@@ -10829,15 +10840,6 @@ static Bytes_4(void) {
 	set_name	(0X35160,	"aMusic");
 	create_strlit	(0X35166,	0X9);
 	set_name	(0X35166,	"aSoundFx");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3516F,	0X7);
 	set_name	(0X3516F,	"aReturn");
 	create_strlit	(0X35176,	0X9);
