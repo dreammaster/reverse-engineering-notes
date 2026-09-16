@@ -4037,6 +4037,16 @@ effect machinery instead of direct item use.
 
 511 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RemoveMultiStatEffect
+
+Named `sub_1AC2F` -> `RemoveMultiStatEffect`, called from
+`PickUpItemFromSlot`: the removal counterpart to the already-named
+`ApplyMultiStatEffect` — reverses a magic item's stat bonuses when it's
+taken off, confirmed by mirroring that function's own finish sequence
+(`sub_1AA9B` + `UpdatePartyAverageStatTiers`).
+
+512 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

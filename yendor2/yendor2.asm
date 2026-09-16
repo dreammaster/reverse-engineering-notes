@@ -13884,7 +13884,7 @@ sub_1819B       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar:l
                 mov     ax, [si+0Ch]
                 mov     word_328D4, ax
                 mov     ax, [si+10h]
-                call    sub_1AC2F
+                call    RemoveMultiStatEffect
                 mov     bx, [si+0Ch]
                 add     bx, [si+0Eh]
                 test    word ptr [di+0Ah], 200h
@@ -19115,9 +19115,9 @@ UpdatePartyAverageStatTiers endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AC2F       proc far                ; CODE XREF: sub_1819B+D↑P
+RemoveMultiStatEffect proc far          ; CODE XREF: sub_1819B+D↑P
                                         ; PickUpItemFromSlot+61↓P ...
-                push    si
+                push    si              ; Removal counterpart to ApplyMultiStatEffect: walks the item's multi-stat-effect table (word_2E54A) subtracting each entry's amount from the matching party-record field, floor-clamped at 0 for offset>=0x32 fields. Called from PickUpItemFromSlot and sub_1819B.
                 push    di
                 call    LoadItemCatalogRecord
                 mov     cx, 4
@@ -19125,7 +19125,7 @@ sub_1AC2F       proc far                ; CODE XREF: sub_1819B+D↑P
                 cmp     bx, 0
                 jz      short loc_1AC7C
 
-loc_1AC42:                              ; CODE XREF: sub_1AC2F+43↓j
+loc_1AC42:                              ; CODE XREF: RemoveMultiStatEffect+43↓j
                 mov     di, [bx]
                 or      di, di
                 jz      short loc_1AC74
@@ -19137,7 +19137,7 @@ loc_1AC42:                              ; CODE XREF: sub_1AC2F+43↓j
                 jmp     short loc_1AC6F
 ; ---------------------------------------------------------------------------
 
-loc_1AC58:                              ; CODE XREF: sub_1AC2F+1C↑j
+loc_1AC58:                              ; CODE XREF: RemoveMultiStatEffect+1C↑j
                 add     di, word_328D4
                 cmp     word ptr [di], 0
                 jz      short loc_1AC6F
@@ -19147,22 +19147,22 @@ loc_1AC58:                              ; CODE XREF: sub_1AC2F+1C↑j
                 jge     short loc_1AC6F
                 mov     word ptr [di], 0
 
-loc_1AC6F:                              ; CODE XREF: sub_1AC2F+27↑j
-                                        ; sub_1AC2F+30↑j ...
+loc_1AC6F:                              ; CODE XREF: RemoveMultiStatEffect+27↑j
+                                        ; RemoveMultiStatEffect+30↑j ...
                 add     bx, 4
                 loop    loc_1AC42
 
-loc_1AC74:                              ; CODE XREF: sub_1AC2F+17↑j
+loc_1AC74:                              ; CODE XREF: RemoveMultiStatEffect+17↑j
                 push    cs
                 call    near ptr sub_1AA9B
                 push    cs
                 call    near ptr UpdatePartyAverageStatTiers
 
-loc_1AC7C:                              ; CODE XREF: sub_1AC2F+11↑j
+loc_1AC7C:                              ; CODE XREF: RemoveMultiStatEffect+11↑j
                 pop     di
                 pop     si
                 retf
-sub_1AC2F       endp
+RemoveMultiStatEffect endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -40524,7 +40524,7 @@ loc_26B98:                              ; CODE XREF: PickUpItemFromSlot+38↑j
                 jz      short loc_26BBC
                 sub     [si+118h], ax
                 mov     ax, word_31948
-                call    sub_1AC2F
+                call    RemoveMultiStatEffect
                 call    sub_1B30C
                 jmp     short loc_26C0A
 ; ---------------------------------------------------------------------------
@@ -41757,7 +41757,7 @@ loc_276DA:                              ; CODE XREF: sub_276C5+A↑j
                 test    word ptr [si+2], 200h
                 jz      short loc_2772A
                 mov     ax, word_32974
-                call    sub_1AC2F
+                call    RemoveMultiStatEffect
                 mov     ax, word_32974
                 mov     [bx+2], ax
                 mov     ax, [si+4]
@@ -41773,7 +41773,7 @@ loc_27703:                              ; CODE XREF: sub_276C5+11↑j
                 test    word ptr [si+2], 80h
                 jz      short loc_2772A
                 mov     ax, word_32974
-                call    sub_1AC2F
+                call    RemoveMultiStatEffect
                 mov     ax, word_32974
                 mov     [bx+2], ax
                 mov     ax, [si+8]

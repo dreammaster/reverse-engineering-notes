@@ -393,6 +393,14 @@ general total `+0x118`, skipping a section whose "type" field
 (`+0x17C`/`+0x1A2`/`+0x1C8`) equals `0x11`; `PickUpItemFromSlot`
 SUBTRACTS the same way when removing an item. `+0x118`/the 3 section
 totals are plausibly weight or quantity counters, not fully confirmed.
+`PickUpItemFromSlot` also calls `RemoveMultiStatEffect` (was
+`sub_1AC2F`) — the removal counterpart to the already-named
+`ApplyMultiStatEffect`: walks the item's multi-stat-effect table
+(`word_2E54A`) subtracting each entry's bonus from the matching party
+stat field (floor-clamped at 0 for one sub-range of fields), then
+recalculates via `UpdatePartyAverageStatTiers` — i.e. taking off a
+magic item correctly reverses whatever stat bonuses putting it on
+applied.
 A fourth sibling, `PickUpHeldItemFromSlot` (was `sub_26864`, called
 from `sub_2621C`), is the simple "pick up only" action (no placement
 step) — the pickup counterpart to `PlaceHeldItemIntoEmptySlot`. All

@@ -3824,7 +3824,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1AC1D);
 	op_hex		(x,	1);
+	set_cmt	(0X1AC2F,	"Removal counterpart to ApplyMultiStatEffect: walks the item's multi-stat-effect table (word_2E54A) subtracting each entry's amount from the matching party-record field, floor-clamped at 0 for offset>=0x32 fields. Called from PickUpItemFromSlot and sub_1819B.",	0);
 	create_insn	(0X1AC2F);
+	set_name	(0X1AC2F,	"RemoveMultiStatEffect");
 	create_insn	(0X1AC58);
 	set_cmt	(0X1AC80,	"Map-trigger counterpart to ApplyItemEffectIconSlot: classifies an item via ClassifyItemServiceTier and, if valid, populates an icon-bar slot with its id/pointer, a caller-supplied flag, and the same word_2E548 category-based field GetClassifiedItemStatField selects. Called from ApplyMapTriggerEffect.",	0);
 	create_insn	(0X1AC80);
@@ -5503,11 +5505,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20CEC,	"Ceiling counterpart to ExtendDungeonFloorTexture: draws the current ceiling picture (word_2E498) at z-layer 2 for cells whose [+2] ceiling field matches (IsPairedValueMatch). Called 6x by ExtendDungeonCeilingPass.",	0);
 	create_insn	(0X20CEC);
 	set_name	(0X20CEC,	"ExtendDungeonCeilingTexture");
-	create_insn	(x=0X20CED);
-	op_hex		(x,	1);
-	set_cmt	(0X20D2F,	"Draws the dungeon backdrop: ceiling (word_2E498) and floor (word_2E4A0) pictures from the current cell's 0xE551 table entry, then calls ExtendDungeonFloorTexture 6x (same row-pointer pattern as RenderDungeonViewport) to extend the floor texture across matching cells. Called from RedrawDungeonScreen/RefreshDungeonScreen just before RenderDungeonViewport.",	0);
-	create_insn	(0X20D2F);
-	set_name	(0X20D2F,	"DrawDungeonFloorAndCeiling");
 }
 
 //------------------------------------------------------------------------
@@ -5517,6 +5514,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X20CED);
+	op_hex		(x,	1);
+	set_cmt	(0X20D2F,	"Draws the dungeon backdrop: ceiling (word_2E498) and floor (word_2E4A0) pictures from the current cell's 0xE551 table entry, then calls ExtendDungeonFloorTexture 6x (same row-pointer pattern as RenderDungeonViewport) to extend the floor texture across matching cells. Called from RedrawDungeonScreen/RefreshDungeonScreen just before RenderDungeonViewport.",	0);
+	create_insn	(0X20D2F);
+	set_name	(0X20D2F,	"DrawDungeonFloorAndCeiling");
 	set_cmt	(0X20E12,	"For each cell in one row, draws the current floor picture (word_2E4A0) if the cell's type shares that same floor (IsPairedValueMatch) -- a seamless-floor pass, simpler than RenderDungeonViewRow's full wall/object rendering. Called 6x by DrawDungeonFloorAndCeiling.",	0);
 	create_insn	(0X20E12);
 	set_name	(0X20E12,	"ExtendDungeonFloorTexture");
@@ -7493,13 +7495,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X28296);
 	op_hex		(x,	1);
 	set_name	(0X28296,	"PlayMusicTrack");
-	create_insn	(0X2829F);
-	set_cmt	(0X282B3,	"this",	0);
-	create_insn	(0X282B3);
-	set_cmt	(0X28320,	"Timer-ISR-gated (~1 second, word_32958/word_3295A bit 0x200) day/night ambient music switch. If no track is forced (word_3297E==0), picks word_36CB1 (day) or word_36CB3 (night) based on whether word_36D01 (clock minutes-since-midnight) falls in [0x1A4,0x474] (7:00 AM-7:00 PM), then plays it via PlayMusicTrack if word_328C4 bit 0x2000 allows.",	0);
-	create_insn	(x=0X28320);
-	op_hex		(x,	1);
-	set_name	(0X28320,	"UpdateAmbientMusic");
 }
 
 //------------------------------------------------------------------------
@@ -7509,6 +7504,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2829F);
+	set_cmt	(0X282B3,	"this",	0);
+	create_insn	(0X282B3);
+	set_cmt	(0X28320,	"Timer-ISR-gated (~1 second, word_32958/word_3295A bit 0x200) day/night ambient music switch. If no track is forced (word_3297E==0), picks word_36CB1 (day) or word_36CB3 (night) based on whether word_36D01 (clock minutes-since-midnight) falls in [0x1A4,0x474] (7:00 AM-7:00 PM), then plays it via PlayMusicTrack if word_328C4 bit 0x2000 allows.",	0);
+	create_insn	(x=0X28320);
+	op_hex		(x,	1);
+	set_name	(0X28320,	"UpdateAmbientMusic");
 	create_insn	(x=0X2832F);
 	op_hex		(x,	1);
 	create_insn	(x=0X28337);
@@ -10428,6 +10430,15 @@ static Bytes_3(void) {
 	set_name	(0X35074,	"aMagicDragon");
 	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:\n  0: 318x198 @ 0x0        -- \"SmithWare\" splash-screen logo\n  1: 210x105 @ 0xE694C    -- GameDialog button panel background\n  2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene\n  3: 190x110 @ 0x779552   -- wolf/monster silhouette\n  4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)\n  5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient\n  6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)\n  7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)\n  8: 16x16   @ 0xBCF3DA   -- mouse cursor\n  9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon\nIndexed as g_pictureDir + word_2E532 (p" "i",	0);
 	set_name	(0X3508E,	"g_pictureDir");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3512E,	0X9);
 	set_name	(0X3512E,	"aNorth");
 	create_strlit	(0X35137,	0X9);
@@ -10446,15 +10457,6 @@ static Bytes_3(void) {
 	set_name	(0X35160,	"aMusic");
 	create_strlit	(0X35166,	0X9);
 	set_name	(0X35166,	"aSoundFx");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3516F,	0X7);
 	set_name	(0X3516F,	"aReturn");
 	create_strlit	(0X35176,	0X9);
