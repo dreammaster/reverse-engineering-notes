@@ -8652,7 +8652,9 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29FF0);
 	op_stkvar	(x,	0);
+	set_cmt	(0X29FF6,	"Re-shades the floor or ceiling viewport buffer in place (CopyShadedViewportRows with si==di), branching on word_2E532 for floor (0xA08) vs ceiling (0x5788) addressing, walking a fixed 7-entry shade-delta gradient table (word_328E6..word_328F2) across successive row-bands -- a distance/light falloff effect, plausibly tied to the torch-fuel-like derived stat +0x64. Called twice from DrawDungeonFloorAndCeiling.",	0);
 	create_insn	(0X29FF6);
+	set_name	(0X29FF6,	"ApplyDistanceShadingToFloorOrCeiling");
 	create_insn	(x=0X2A000);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A029);
@@ -9862,6 +9864,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2D428,	"Second commit pass after ApplyAttackToTarget already committed: re-filters status flags by immunity (idempotent), recomputes a COMPOUNDED resistance halving (once per matching bit among the same 7 word_33306/[di+0x98] resistance-category bits, vs. ApplyTargetResistancesToAttack's single first-match halving), and subtracts that from [di+0x10] AGAIN (floored at 0) -- genuinely double-applies damage. Why this re-application is intentional (compounding elemental damage for area attacks?) vs. an artifact isn't resolved. Called from ApplyAttackAlongCorridorLine.",	0);
 	create_insn	(0X2D428);
 	set_name	(0X2D428,	"ReapplyDamageWithCompoundedResistance");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D439);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D447);
@@ -9877,15 +9888,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2D470,	"Sibling of ApplyDamageAlongCorridorLine using the full resistance-aware pipeline: for 3 consecutive viewport rows starting at word_3292C (incrementing it each iteration), finds a monster via GetMonsterAtViewportRow and calls ApplyAttackToTarget against it, then conditionally calls still-unnamed sub_2D428 if any damage/status is pending. Called 3x in a row from sub_2C0FE, once per starting row of a 3-row band.",	0);
 	create_insn	(0X2D470);
 	set_name	(0X2D470,	"ApplyAttackAlongCorridorLine");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2D498);
 	set_cmt	(0X2D4A1,	"ticks",	0);
 	create_insn	(0X2D4AA);

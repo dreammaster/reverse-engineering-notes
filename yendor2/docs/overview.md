@@ -4557,6 +4557,26 @@ understood.
 
 549 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyDistanceShadingToFloorOrCeiling — a real lighting-model find
+
+Named `sub_29FF6` -> `ApplyDistanceShadingToFloorOrCeiling`, called
+twice from `DrawDungeonFloorAndCeiling`. A genuinely interesting find:
+it re-shades the just-drawn floor or ceiling buffer *in place*
+(`CopyShadedViewportRows` called with `si==di`), branching on
+`word_2E532` for floor (`0xA08`) vs. ceiling (`0x5788`) addressing,
+and walks a **fixed 7-entry shade-delta gradient table**
+(`word_328E6` through `word_328F2`, consecutive words, not traced
+this round) as successive per-row-band deltas — 7 row-bands of
+10/11/10/10/9/9/3 rows for the floor, 4/9/9/10/10/11/21 in reverse
+gradient order for the ceiling. This is very likely the concrete
+mechanism behind the "plausible torch-fuel/light-source" derived stat
+(`+0x64`) flagged much earlier this session: a precomputed 7-step
+brightness falloff applied band-by-band with distance from the
+viewer. Where the `word_328E6`-`word_328F2` gradient values themselves
+get computed (presumably from `+0x64`) is a good next lead.
+
+550 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

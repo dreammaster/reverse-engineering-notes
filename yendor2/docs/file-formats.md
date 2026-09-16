@@ -189,7 +189,13 @@ tiered gameplay system — `+0x64` → `word_36CA5`, compared against 5
 ascending thresholds to set bits in `word_36C7F` that
 `DrawMinimap`/`BuildMinimapTileData` read directly (bit `0x1000` blanks
 the dungeon view entirely) — plausibly a light-source/torch-fuel level,
-not confirmed; `+0x66` → `word_36CA7`, gating a 4-tier area size in
+not confirmed. **A concrete lighting mechanism now found**:
+`ApplyDistanceShadingToFloorOrCeiling` (was `sub_29FF6`, called from
+`DrawDungeonFloorAndCeiling`) re-shades the floor/ceiling viewport
+buffer band-by-band using a fixed 7-entry shade-delta gradient table
+(`word_328E6`-`word_328F2`) — a distance-based brightness falloff,
+plausibly fed by `+0x64`, though where the gradient table itself gets
+computed isn't traced yet; `+0x66` → `word_36CA7`, gating a 4-tier area size in
 `RevealMapRegion` (**correction**: previously guessed "plausibly
 weather" — traced further and it's a `Locate`/`Scout`/`Magic-Mapping`-
 style special ability that reads `WORLD.DAT`/`CURGAME` directly and

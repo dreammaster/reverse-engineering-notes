@@ -29720,14 +29720,14 @@ loc_20D5C:                              ; CODE XREF: DrawDungeonFloorAndCeiling+
                 mov     ax, word_2E498
                 mov     word_2E530, ax
                 call    DrawPicture
-                call    sub_29FF6
+                call    ApplyDistanceShadingToFloorOrCeiling
                 mov     x, 8
                 mov     y, 46h ; 'F'
                 mov     word_2E532, 40h ; '@'
                 mov     ax, word_2E4A0
                 mov     word_2E530, ax
                 call    DrawPicture
-                call    sub_29FF6
+                call    ApplyDistanceShadingToFloorOrCeiling
                 mov     di, 6D60h
                 mov     word_3292C, 0
                 mov     cx, 11h
@@ -47150,14 +47150,15 @@ DrawViewportSprite endp
 
 ; Attributes: bp-based frame
 
-sub_29FF6       proc far                ; CODE XREF: DrawDungeonFloorAndCeiling+5E↑P
+ApplyDistanceShadingToFloorOrCeiling proc far
+                                        ; CODE XREF: DrawDungeonFloorAndCeiling+5E↑P
                                         ; DrawDungeonFloorAndCeiling+80↑P
 
 var_21          = byte ptr -21h
 var_8           = word ptr -8
 var_4           = word ptr -4
 
-                push    ax
+                push    ax              ; Re-shades the floor or ceiling viewport buffer in place (CopyShadedViewportRows with si==di), branching on word_2E532 for floor (0xA08) vs ceiling (0x5788) addressing, walking a fixed 7-entry shade-delta gradient table (word_328E6..word_328F2) across successive row-bands -- a distance/light falloff effect, plausibly tied to the torch-fuel-like derived stat +0x64. Called twice from DrawDungeonFloorAndCeiling.
                 push    bx
                 push    cx
                 push    dx
@@ -47210,7 +47211,7 @@ var_4           = word ptr -4
                 jmp     short loc_2A0EC
 ; ---------------------------------------------------------------------------
 
-loc_2A07E:                              ; CODE XREF: sub_29FF6+16↑j
+loc_2A07E:                              ; CODE XREF: ApplyDistanceShadingToFloorOrCeiling+16↑j
                 push    word_328F2
                 push    word_328F0
                 push    word_328EE
@@ -47249,7 +47250,7 @@ loc_2A07E:                              ; CODE XREF: sub_29FF6+16↑j
                 mov     [bp+var_21], al
                 call    CopyShadedViewportRows
 
-loc_2A0EC:                              ; CODE XREF: sub_29FF6+86↑j
+loc_2A0EC:                              ; CODE XREF: ApplyDistanceShadingToFloorOrCeiling+86↑j
                 mov     sp, bp
                 pop     bp
                 mov     ax, seg seg129
@@ -47262,14 +47263,14 @@ loc_2A0EC:                              ; CODE XREF: sub_29FF6+86↑j
                 pop     bx
                 pop     ax
                 retf
-sub_29FF6       endp
+ApplyDistanceShadingToFloorOrCeiling endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-CopyShadedViewportRows proc near        ; CODE XREF: sub_29FF6+47↑p
-                                        ; sub_29FF6+51↑p ...
+CopyShadedViewportRows proc near        ; CODE XREF: ApplyDistanceShadingToFloorOrCeiling+47↑p
+                                        ; ApplyDistanceShadingToFloorOrCeiling+51↑p ...
                 push    cx              ; Copies a 224-pixel-wide row from si to di, shading each pixel via ShiftPaletteShadeClamped, then advances both by 0x140 (320) and repeats for the caller's outer count. Called from unnamed sub_29FF6.
                 mov     cx, 0E0h
                 mov     si, [bp-4]
