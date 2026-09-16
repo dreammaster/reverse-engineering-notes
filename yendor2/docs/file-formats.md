@@ -2034,21 +2034,26 @@ A **separate** per-member status icon bar exists alongside
 much slower ~32768-call wraparound path gated on a 4th `word_36C79`
 flag, bit `2`) recomputes each of the 4 roster members' ailment
 severity via `PrepareTrapEffectSlots(ax=2` or `0xE)` plus a helper that
-checks `+0x1C` status bits — **now identified via `DrawAfflictionsList`**:
-`0x2000`/`0x4000`/`0x8000` = DISEASED/POISONED/SICK for the normal
-path (id `2`); `0x80`/`0x100`/`0x200` = CURSED/HEXED/JINXED, gated on
-having MP (`+0x54 != 0`), for the second helper (id `0xE`,
-`TickCurseHexJinxAilmentSlot`, was `sub_1A195` — sums a weighted
-severity `0x10`/`8`/`4` per active affliction) — or, on the
-slow path, tiers off the derived stat `+0x58` instead via
-`TickPerceptionGatedAilmentSlot` (was `sub_1A233`, confirmed to
-no-op for dead characters and produce a *decreasing* severity as
-`+0x58` rises across 6 thresholds — the opposite direction from a
-"bigger stat, bigger effect" reading, consistent with `+0x58` being a
-perception stat that *reduces* susceptibility). Whenever severity is
-nonzero it populates a per-member icon-bar slot and calls
-`ApplyEffectAndDrawIconBar`. The `word_36C79` bit-`2` slow-path
-condition still isn't confirmed.
+checks `+0x1C` status bits — **now identified via `DrawAfflictionsList`,
+and all three helpers now individually named**:
+`TickDiseasePoisonSickAilmentSlot` (was `sub_1A14D`, the "normal"
+path, id `2`) sums `0x2000`/`0x4000`/`0x8000` = DISEASED/POISONED/SICK
+as a weighted severity (`0xC`/`6`/`3`); `TickCurseHexJinxAilmentSlot`
+(was `sub_1A195`, id `0xE`) sums `0x80`/`0x100`/`0x200` =
+CURSED/HEXED/JINXED (`0x10`/`8`/`4`), gated on having MP
+(`+0x54 != 0`); or, on the slow path, `TickPerceptionGatedAilmentSlot`
+(was `sub_1A233`) tiers off the derived stat `+0x58` instead —
+confirmed to no-op for dead characters and produce a *decreasing*
+severity as `+0x58` rises across 6 thresholds, the opposite direction
+from a "bigger stat, bigger effect" reading, consistent with `+0x58`
+being a perception stat that *reduces* susceptibility. All three share
+an identical tail: if the summed severity is nonzero, populate the
+per-member icon-bar slot (`[di+8]`/`[di+0xA]`=the staged effect id/
+magnitude, `[di+0xC]`=the character pointer) and set `word_328CA` bit
+`0x100`; `TickPartyAilmentIconBar` itself then calls
+`ApplyEffectAndDrawIconBar`. This closes out
+`TickPartyAilmentIconBar`'s dispatch structure end to end — only the
+`word_36C79` bit-`2` slow-path trigger condition remains unconfirmed.
 
 `ApplyEffectAndDrawIconBar` also calls `ApplyIconBarStatDelta` (was
 `sub_182CE`): applies a capped or floored stat delta to a

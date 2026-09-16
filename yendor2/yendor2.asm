@@ -17746,7 +17746,7 @@ loc_1A0CC:                              ; CODE XREF: TickPartyAilmentIconBar+62�
                 cmp     ax, 0
                 jz      short loc_1A0E9
                 call    SelectPartyRecordById
-                call    sub_1A14D
+                call    TickDiseasePoisonSickAilmentSlot
                 add     word_32924, 2
                 add     di, 14h
                 loop    loc_1A0CC
@@ -17792,25 +17792,26 @@ TickPartyAilmentIconBar endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A14D       proc near               ; CODE XREF: TickPartyAilmentIconBar+57↑p
-                mov     bx, word_328D4
+TickDiseasePoisonSickAilmentSlot proc near
+                                        ; CODE XREF: TickPartyAilmentIconBar+57↑p
+                mov     bx, word_328D4  ; No-op if incapacitated ([bx+0x1C]&0x1C40). Adds weighted severity to [di+0x10]: DISEASED+0xC, POISONED+6, SICK+3. If nonzero, fills icon-bar slot di and sets word_328CA bit 0x100. Called from TickPartyAilmentIconBar.
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short locret_1A194
                 test    word ptr [bx+1Ch], 2000h
                 jz      short loc_1A163
                 add     word ptr [di+10h], 0Ch
 
-loc_1A163:                              ; CODE XREF: sub_1A14D+10↑j
+loc_1A163:                              ; CODE XREF: TickDiseasePoisonSickAilmentSlot+10↑j
                 test    word ptr [bx+1Ch], 4000h
                 jz      short loc_1A16E
                 add     word ptr [di+10h], 6
 
-loc_1A16E:                              ; CODE XREF: sub_1A14D+1B↑j
+loc_1A16E:                              ; CODE XREF: TickDiseasePoisonSickAilmentSlot+1B↑j
                 test    word ptr [bx+1Ch], 8000h
                 jz      short loc_1A179
                 add     word ptr [di+10h], 3
 
-loc_1A179:                              ; CODE XREF: sub_1A14D+26↑j
+loc_1A179:                              ; CODE XREF: TickDiseasePoisonSickAilmentSlot+26↑j
                 cmp     word ptr [di+10h], 0
                 jz      short locret_1A194
                 mov     ax, word_3293E
@@ -17820,10 +17821,10 @@ loc_1A179:                              ; CODE XREF: sub_1A14D+26↑j
                 mov     [di+0Ch], bx
                 or      word_328CA, 100h
 
-locret_1A194:                           ; CODE XREF: sub_1A14D+9↑j
-                                        ; sub_1A14D+30↑j
+locret_1A194:                           ; CODE XREF: TickDiseasePoisonSickAilmentSlot+9↑j
+                                        ; TickDiseasePoisonSickAilmentSlot+30↑j
                 retn
-sub_1A14D       endp
+TickDiseasePoisonSickAilmentSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================

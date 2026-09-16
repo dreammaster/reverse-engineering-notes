@@ -5056,6 +5056,20 @@ unaddressed piece of `TickPartyAilmentIconBar`'s three helper paths.
 
 593 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TickDiseasePoisonSickAilmentSlot — completes the TickPartyAilmentIconBar cluster
+
+Named `sub_1A14D` -> `TickDiseasePoisonSickAilmentSlot`, called once
+from `TickPartyAilmentIconBar` — the concrete "id `2`" helper already
+described in `file-formats.md` (DISEASED/POISONED/SICK, the normal
+path). No-ops if incapacitated; otherwise sums a weighted severity
+(`0xC`/`6`/`3` per active affliction) into the icon-bar slot the same
+way its two now-named siblings (`TickCurseHexJinxAilmentSlot`,
+`TickPerceptionGatedAilmentSlot`) do. With all three helpers named,
+`TickPartyAilmentIconBar`'s entire dispatch structure is now fully
+traced end to end.
+
+594 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
