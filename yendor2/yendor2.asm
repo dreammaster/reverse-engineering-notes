@@ -28637,7 +28637,7 @@ sub_2044C       proc near               ; CODE XREF: RunMapEditorScreen+71↑p
                 mov     _font_bgColor, 0
                 mov     _font_bgTransparent, 0
                 mov     ax, word_2E384
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 add     bx, 2           ; msg
                 call    writeString
                 retn
@@ -28655,7 +28655,7 @@ sub_2047B       proc near               ; CODE XREF: RunMapEditorScreen+77↑p
                 mov     _font_bgColor, 0
                 mov     _font_bgTransparent, 0
                 mov     ax, word_2E386
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 add     bx, 2           ; msg
                 call    writeString
                 retn
@@ -29062,12 +29062,12 @@ sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
                 mov     word_32940, ax
                 call    sub_204F0
                 push    bx
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 mov     byte ptr [bx], 48h ; 'H'
                 call    writeString
                 mov     _textPos_x, 30h ; '0'
                 pop     ax
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 mov     byte ptr [bx], 56h ; 'V'
                 call    writeString
                 call    sub_162B6
@@ -34463,7 +34463,7 @@ loc_23717:                              ; CODE XREF: seg073:0032↑j
                 int     33h             ; - MS MOUSE - READ MOTION COUNTERS
                                         ; Return: CX = number of mickeys mouse moved horizontally since last call
                                         ; DX = number of mickeys mouse moved vertically
-                call    sub_239CD
+                call    ClampDragCursorPosition
                 pop     bx
                 pop     ax
                 and     word_3195C, 7FFFh
@@ -34613,7 +34613,7 @@ InitMouse       endp
 
 ; ---------------------------------------------------------------------------
                 push    errorCode
-                call    sub_239CD
+                call    ClampDragCursorPosition
                 test    word_3195C, 2
                 jz      short loc_2386F
                 call    RestoreCursorBackground
@@ -34840,34 +34840,34 @@ sub_23965       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_239CD       proc near               ; CODE XREF: seg073:0044↑p
+ClampDragCursorPosition proc near       ; CODE XREF: seg073:0044↑p
                                         ; seg073:016F↑p
-                mov     ax, word_2E77A
+                mov     ax, word_2E77A  ; Clamps an accumulated drag position (word_2E782/word_2E784) within bounds, then offsets by (8,8) unless the held item type (word_31946) is 0 or 0x1D -- plausibly the cursor position used to draw a held/dragged item. Referenced from a data/jump table in seg073.
                 add     word_2E782, cx
                 cmp     word_2E782, ax
                 jge     short loc_239DD
                 mov     word_2E782, ax
 
-loc_239DD:                              ; CODE XREF: sub_239CD+B↑j
+loc_239DD:                              ; CODE XREF: ClampDragCursorPosition+B↑j
                 mov     ax, word_2E778
                 cmp     word_2E782, ax
                 jle     short loc_239E9
                 mov     word_2E782, ax
 
-loc_239E9:                              ; CODE XREF: sub_239CD+17↑j
+loc_239E9:                              ; CODE XREF: ClampDragCursorPosition+17↑j
                 mov     ax, word_3195A
                 add     word_2E784, dx
                 cmp     word_2E784, ax
                 jge     short loc_239F9
                 mov     word_2E784, ax
 
-loc_239F9:                              ; CODE XREF: sub_239CD+27↑j
+loc_239F9:                              ; CODE XREF: ClampDragCursorPosition+27↑j
                 mov     ax, word_31958
                 cmp     word_2E784, ax
                 jle     short loc_23A05
                 mov     word_2E784, ax
 
-loc_23A05:                              ; CODE XREF: sub_239CD+33↑j
+loc_23A05:                              ; CODE XREF: ClampDragCursorPosition+33↑j
                 mov     cx, word_2E782
                 mov     dx, word_2E784
                 cmp     word_31946, 0
@@ -34877,10 +34877,10 @@ loc_23A05:                              ; CODE XREF: sub_239CD+33↑j
                 add     cx, 8
                 add     dx, 8
 
-locret_23A21:                           ; CODE XREF: sub_239CD+45↑j
-                                        ; sub_239CD+4C↑j
+locret_23A21:                           ; CODE XREF: ClampDragCursorPosition+45↑j
+                                        ; ClampDragCursorPosition+4C↑j
                 retn
-sub_239CD       endp
+ClampDragCursorPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37906,15 +37906,15 @@ seg081          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2572C       proc far                ; CODE XREF: sub_2044C+21↑P
+FormatNumberZeroPadded proc far         ; CODE XREF: sub_2044C+21↑P
                                         ; sub_2047B+21↑P ...
-                mov     bx, 0AFA8h
+                mov     bx, 0AFA8h      ; FormatNumber then StripCommasZeroPadSpaces on the shared 0xAFA8 buffer -- zero-padded sibling of FormatNumberCompact. Called from sub_2044C, sub_2047B, and others.
                 call    FormatNumber
                 mov     bx, 0AFA8h
-                call    sub_2A766
+                call    StripCommasZeroPadSpaces
                 mov     ax, bx
                 retf
-sub_2572C       endp
+FormatNumberZeroPadded endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -43371,25 +43371,25 @@ ShowGameClockCommand proc far           ; CODE XREF: seg000:08B2↑P
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     ax, word_32948
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 mov     ax, [bx+3]
                 mov     a1212Am, ax
                 mov     ax, word_3295C
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 mov     ax, [bx+3]
                 mov     word_35197, ax
                 mov     al, byte ptr word_32934
                 mov     byte_3519A, al
                 mov     ax, word_36CFD
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 mov     ax, [bx+3]
                 mov     a12121212, ax
                 mov     ax, word_36CFB
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 mov     ax, [bx+3]
                 mov     word_351A0, ax
                 mov     ax, word_36CFF
-                call    sub_2572C
+                call    FormatNumberZeroPadded
                 mov     ax, [bx+1]
                 mov     word_351A3, ax
                 mov     ax, [bx+3]
@@ -48196,13 +48196,13 @@ seg112          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A766       proc far                ; CODE XREF: sub_2572C+B↑P
-                push    di
+StripCommasZeroPadSpaces proc far       ; CODE XREF: FormatNumberZeroPadded+B↑P
+                push    di              ; Strips ',' and converts ' ' to '0' in an in-place string -- the zero-pad sibling of StripCommasAndSpaces. Called from FormatNumberZeroPadded.
                 push    si
                 mov     si, bx
                 mov     di, bx
 
-loc_2A76C:                              ; CODE XREF: sub_2A766+1A↓j
+loc_2A76C:                              ; CODE XREF: StripCommasZeroPadSpaces+1A↓j
                 mov     al, [si]
                 cmp     al, 0
                 jz      short loc_2A782
@@ -48212,21 +48212,21 @@ loc_2A76C:                              ; CODE XREF: sub_2A766+1A↓j
                 jnz     short loc_2A77C
                 mov     al, 30h ; '0'
 
-loc_2A77C:                              ; CODE XREF: sub_2A766+12↑j
+loc_2A77C:                              ; CODE XREF: StripCommasZeroPadSpaces+12↑j
                 mov     [di], al
                 inc     di
 
-loc_2A77F:                              ; CODE XREF: sub_2A766+E↑j
+loc_2A77F:                              ; CODE XREF: StripCommasZeroPadSpaces+E↑j
                 inc     si
                 jmp     short loc_2A76C
 ; ---------------------------------------------------------------------------
 
-loc_2A782:                              ; CODE XREF: sub_2A766+A↑j
+loc_2A782:                              ; CODE XREF: StripCommasZeroPadSpaces+A↑j
                 mov     [di], al
                 pop     si
                 pop     di
                 retf
-sub_2A766       endp
+StripCommasZeroPadSpaces endp
 
 seg112          ends
 

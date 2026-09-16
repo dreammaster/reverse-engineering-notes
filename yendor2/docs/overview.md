@@ -4813,6 +4813,27 @@ time the summary screen is shown rather than a one-time event.
 
 572 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: FormatNumberZeroPadded, StripCommasZeroPadSpaces, ClampDragCursorPosition
+
+Named three more small helpers. `sub_2A766` -> `StripCommasZeroPadSpaces`
+(called once from `sub_2572C`): strips commas from an in-place string
+like `StripCommasAndSpaces`, but converts each space to `'0'` instead
+of removing it — a zero-padding variant (e.g. `"  42"` → `"0042"`
+after removing thousands separators). `sub_2572C` ->
+`FormatNumberZeroPadded` (called from still-unnamed `sub_2044C`/
+`sub_2047B` and others): chains `FormatNumber` with
+`StripCommasZeroPadSpaces` on the shared `0xAFA8` buffer — the
+zero-padded sibling of `FormatNumberCompact`. `sub_239CD` ->
+`ClampDragCursorPosition` (referenced from a data/jump table in
+`seg073`, not a direct call): clamps an accumulated drag position
+(`word_2E782`/`word_2E784`) within bounds, then offsets it by `(8,8)`
+unless the currently-held item type (`word_31946`) is `0` (none) or
+`0x1D` (a specific item type that apparently doesn't need the hotspot
+offset) — plausibly the cursor position used to draw a held/dragged
+item.
+
+575 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

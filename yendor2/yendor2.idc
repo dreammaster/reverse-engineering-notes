@@ -6418,7 +6418,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2396E);
 	create_insn	(0X239AE);
+	set_cmt	(0X239CD,	"Clamps an accumulated drag position (word_2E782/word_2E784) within bounds, then offsets by (8,8) unless the held item type (word_31946) is 0 or 0x1D -- plausibly the cursor position used to draw a held/dragged item. Referenced from a data/jump table in seg073.",	0);
 	create_insn	(0X239CD);
+	set_name	(0X239CD,	"ClampDragCursorPosition");
 	set_cmt	(0X23A22,	"Restores the saved background (0xE0E) to the video buffer at (word_2E776, word_31956) via getTextPos -- erases the cursor from its last drawn position. (Corrected from an earlier, backwards 'DrawMouseCursor' name this session -- see fix_cursor_naming.py.)",	0);
 	create_insn	(0X23A22);
 	set_name	(0X23A22,	"RestoreCursorBackground");
@@ -6721,7 +6723,9 @@ static Bytes_2(void) {
 	create_insn	(0X2570C);
 	set_name	(0X2570C,	"StripCommasAndSpaces");
 	create_insn	(0X25726);
+	set_cmt	(0X2572C,	"FormatNumber then StripCommasZeroPadSpaces on the shared 0xAFA8 buffer -- zero-padded sibling of FormatNumberCompact. Called from sub_2044C, sub_2047B, and others.",	0);
 	create_insn	(0X2572C);
+	set_name	(0X2572C,	"FormatNumberZeroPadded");
 	set_cmt	(0X25740,	"Checks the held item's catalog [+0xC] flags (bit 1 / bit 0x2000, the container flag) to determine droppability. Called from TryDropHeldItem.",	0);
 	create_insn	(0X25740);
 	set_name	(0X25740,	"IsItemDroppable");
@@ -7200,6 +7204,15 @@ static Bytes_2(void) {
 	set_cmt	(0X26CFB,	"Draws one party-status icon: the character's icon ([+0x12]), an overlay (_val38) if incapacitated (+0x1C bits 0x1C40, matching CheckPartyWipeAndReinitLevel) or a new flag (+0x15E bit 0x8000, not otherwise documented), and a selection-highlight overlay if this is the currently-selected slot (word_32924). Called from DrawPartyStatusIconRow.",	0);
 	create_insn	(0X26CFB);
 	set_name	(0X26CFB,	"DrawPartyStatusIcon");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X26D1B);
 	op_hex		(x,	1);
 	create_insn	(x=0X26D22);
@@ -7220,15 +7233,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2704C,	"Unified 'resource depleted' overlay, called both when a material BCD counter can't cover a cost (SpendMaterialCounterClamped) and when the dungeon view itself is blanked (DrawMinimap, word_36C7F bit 0x1000). Sets that bit, blits a fixed overlay image (EMS page frame -> video buffer) over the minimap's screen area, checks all 3 material BCD counters (0x94B3/0x94B7/0x94BB, confirmed consecutive, stride 4) and builds a small per-material 'nonzero' indicator array, then draws a banner icon and the material status icons via DrawResourceStatusIcons.",	0);
 	create_insn	(0X2704C);
 	set_name	(0X2704C,	"ShowResourceDepletedOverlay");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X27050);
 	op_hex		(x,	1);
 	create_insn	(x=0X27056);
@@ -9043,7 +9047,9 @@ static Bytes_3(void) {
 	create_insn	(x=0X2A73E);
 	op_hex		(x,	0);
 	create_insn	(0X2A75E);
+	set_cmt	(0X2A766,	"Strips ',' and converts ' ' to '0' in an in-place string -- the zero-pad sibling of StripCommasAndSpaces. Called from FormatNumberZeroPadded.",	0);
 	create_insn	(0X2A766);
+	set_name	(0X2A766,	"StripCommasZeroPadSpaces");
 	create_insn	(0X2A782);
 	create_insn	(0X2A788);
 	create_insn	(0X2A7A8);
@@ -9461,6 +9467,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2BD1A,	"Moderate-high confidence, corrected: NOT a location-marker map overlay (original guess). Draws g_pictureDir entry 4 full-screen, then iterates the 9-slot g_partyRecords array (base 0x95F3, stride 0x1F4) drawing one roster row per occupied slot (+0x16 != 0 -- the already-documented level/skill field, used here as an occupied-slot check, not a 'discovered' flag) via DrawPartyRosterEntry (icon + name + class name -- proves these are characters, not towns). Digit keys 1-9 (and a second, differently- routed key range) select a slot by index and call sub_23C18 to open a detail/interaction screen; one path toggles a flag (+0x15C bit 0x800) and removes the slot's index from two small lookup tables (0x95EB/0x94A3) when set -- plausibly a recruit/dismiss roster screen (add/remove a character from the active adventuring group), not a set of townsite markers. Not fully traced: sub_23C18, the toggle's exact meaning, and the digit-vs-alt-key distinction remain open.",	0);
 	create_insn	(0X2BD1A);
 	set_name	(0X2BD1A,	"ShowWorldMap");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2BD63);
 	create_insn	(x=0X2BD80);
 	op_hex		(x,	1);
@@ -9486,15 +9501,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2BF3C);
 	op_hex		(x,	1);
 	set_name	(0X2BF3C,	"CompactPartyRosterSlots");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2BF57);
 	op_hex		(x,	1);
 	create_insn	(0X2BF76);
