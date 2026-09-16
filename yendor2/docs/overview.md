@@ -4538,6 +4538,25 @@ disturbing its shading gradient.
 
 547 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawShadedPixelRun + CopyShadedViewportRows
+
+Named two more members of the `ShiftPaletteShadeClamped` blit family.
+`sub_2A51B` -> `DrawShadedPixelRun` (called twice from
+`DrawViewportSprite` directly, not through the RLE record table): the
+simplest member — a straight run copy of `cx=[bp-0x14]` pixels,
+shaded, with masking (`0xFF`=skip) only when `[bp-0x20]` is nonzero,
+otherwise unconditional. `sub_2A0FC` -> `CopyShadedViewportRows`
+(called repeatedly from unnamed `sub_29FF6`, 262 bytes, references
+`_videoSegment`, not traced this round): copies a 224-pixel-wide row
+(matching `DimDungeonViewport`'s viewport width) from `si` to `di`,
+shading every pixel, then advances both by `0x140` (320, one screen
+row) and repeats for the caller's outer count — a "copy this
+viewport-width region N rows at a time" primitive. `sub_29FF6` itself
+is a solid next-round candidate now that its main inner loop is
+understood.
+
+549 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -8694,7 +8694,9 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2A0EF);
 	op_seg		(x,	1);
+	set_cmt	(0X2A0FC,	"Copies a 224-pixel-wide row from si to di, shading each pixel via ShiftPaletteShadeClamped, then advances both by 0x140 (320) and repeats for the caller's outer count. Called from unnamed sub_29FF6.",	0);
 	create_insn	(0X2A0FC);
+	set_name	(0X2A0FC,	"CopyShadedViewportRows");
 	set_cmt	(0X2A11B,	"The real mouse-cursor draw: if word_3195C bit1 is set, first saves the video buffer content at the cursor's new position into 0xE0E (so RestoreCursorBackground can erase it later), then blits the cursor sprite from 0x3FE6 onto the video buffer with 0xFF as a transparent color key. Not a screen fade despite the inherited name/hedge -- explains why it's called so pervasively (once per cursor move).",	0);
 	create_insn	(0X2A11B);
 	set_name	(0X2A11B,	"DrawMouseCursor");
@@ -8936,7 +8938,9 @@ static Bytes_3(void) {
 	create_insn	(0X2A4E4);
 	create_insn	(0X2A4EA);
 	create_insn	(0X2A509);
+	set_cmt	(0X2A51B,	"Straight run copy of cx=[bp-0x14] pixels, shaded via ShiftPaletteShadeClamped; masks 0xFF pixels only if [bp-0x20] is nonzero, else draws unconditionally. Simplest member of the DrawViewportSprite shaded-blit family. Called from DrawViewportSprite.",	0);
 	create_insn	(0X2A51B);
+	set_name	(0X2A51B,	"DrawShadedPixelRun");
 	create_insn	(0X2A530);
 	create_insn	(0X2A534);
 	set_cmt	(0X2A53C,	"If word_328C6 bit 0 is set, expands g_blitMaskLen bytes from g_blitMaskPtr into a 15-word scratch buffer: each byte's low nibble becomes (nibble << 4) zero-extended to a word -- classic masked-blit prep. Factored-out copy of the same loop inlined in DrawPicture (loc_29A02) and sub_29B0F.",	0);
@@ -9873,12 +9877,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2D470,	"Sibling of ApplyDamageAlongCorridorLine using the full resistance-aware pipeline: for 3 consecutive viewport rows starting at word_3292C (incrementing it each iteration), finds a monster via GetMonsterAtViewportRow and calls ApplyAttackToTarget against it, then conditionally calls still-unnamed sub_2D428 if any damage/status is pending. Called 3x in a row from sub_2C0FE, once per starting row of a 3-row band.",	0);
 	create_insn	(0X2D470);
 	set_name	(0X2D470,	"ApplyAttackAlongCorridorLine");
-	create_insn	(0X2D498);
-	set_cmt	(0X2D4A1,	"ticks",	0);
-	create_insn	(0X2D4AA);
-	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);
-	create_insn	(0X2D4B6);
-	set_name	(0X2D4B6,	"ApplyAttackToTarget");
 }
 
 //------------------------------------------------------------------------
@@ -9888,6 +9886,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2D498);
+	set_cmt	(0X2D4A1,	"ticks",	0);
+	create_insn	(0X2D4AA);
+	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);
+	create_insn	(0X2D4B6);
+	set_name	(0X2D4B6,	"ApplyAttackToTarget");
 	create_insn	(x=0X2D4C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D4CA);

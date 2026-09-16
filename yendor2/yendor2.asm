@@ -46825,7 +46825,7 @@ loc_29D52:                              ; CODE XREF: DrawViewportSprite+27E↓j
                 mov     si, [bp+var_4]
                 mov     es, [bp+var_6]
                 mov     di, [bp+var_8]
-                call    sub_2A51B
+                call    DrawShadedPixelRun
                 mov     ax, [bp+var_A]
                 add     [bp+var_4], ax
                 add     [bp+var_8], 140h
@@ -46865,7 +46865,7 @@ loc_29DB6:                              ; CODE XREF: DrawViewportSprite+2C8↓j
                 mov     si, [bp+var_4]
                 mov     es, [bp+var_6]
                 mov     di, [bp+var_8]
-                call    sub_2A51B
+                call    DrawShadedPixelRun
                 mov     ax, [bp+var_A]
                 add     [bp+var_4], ax
                 add     [bp+var_8], 140h
@@ -47182,31 +47182,31 @@ var_4           = word ptr -4
                 mov     [bp+var_4], 0A08h
                 mov     [bp+var_8], 0A08h
                 mov     cx, 0Ah
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 0Bh
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 0Ah
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 0Ah
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 9
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 9
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 3
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 jmp     short loc_2A0EC
 ; ---------------------------------------------------------------------------
 
@@ -47223,31 +47223,31 @@ loc_2A07E:                              ; CODE XREF: sub_29FF6+16↑j
                 mov     [bp+var_4], 5788h
                 mov     [bp+var_8], 5788h
                 mov     cx, 4
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 9
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 9
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 0Ah
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 0Ah
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 0Bh
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
                 mov     cx, 15h
                 pop     ax
                 mov     [bp+var_21], al
-                call    sub_2A0FC
+                call    CopyShadedViewportRows
 
 loc_2A0EC:                              ; CODE XREF: sub_29FF6+86↑j
                 mov     sp, bp
@@ -47268,14 +47268,14 @@ sub_29FF6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A0FC       proc near               ; CODE XREF: sub_29FF6+47↑p
+CopyShadedViewportRows proc near        ; CODE XREF: sub_29FF6+47↑p
                                         ; sub_29FF6+51↑p ...
-                push    cx
+                push    cx              ; Copies a 224-pixel-wide row from si to di, shading each pixel via ShiftPaletteShadeClamped, then advances both by 0x140 (320) and repeats for the caller's outer count. Called from unnamed sub_29FF6.
                 mov     cx, 0E0h
                 mov     si, [bp-4]
                 mov     di, [bp-8]
 
-loc_2A106:                              ; CODE XREF: sub_2A0FC+F↓j
+loc_2A106:                              ; CODE XREF: CopyShadedViewportRows+F↓j
                 lodsb
                 call    ShiftPaletteShadeClamped
                 stosb
@@ -47283,9 +47283,9 @@ loc_2A106:                              ; CODE XREF: sub_2A0FC+F↓j
                 add     word ptr [bp-4], 140h
                 add     word ptr [bp-8], 140h
                 pop     cx
-                loop    sub_2A0FC
+                loop    CopyShadedViewportRows
                 retn
-sub_2A0FC       endp
+CopyShadedViewportRows endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -47799,14 +47799,14 @@ loc_2A509:                              ; CODE XREF: seg111:0C81↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A51B       proc near               ; CODE XREF: DrawViewportSprite+25B↑p
+DrawShadedPixelRun proc near            ; CODE XREF: DrawViewportSprite+25B↑p
                                         ; DrawViewportSprite+2B9↑p
-                mov     cx, [bp-14h]
+                mov     cx, [bp-14h]    ; Straight run copy of cx=[bp-0x14] pixels, shaded via ShiftPaletteShadeClamped; masks 0xFF pixels only if [bp-0x20] is nonzero, else draws unconditionally. Simplest member of the DrawViewportSprite shaded-blit family. Called from DrawViewportSprite.
                 cmp     byte ptr [bp-20h], 0
                 jz      short loc_2A534
 
-loc_2A524:                              ; CODE XREF: sub_2A51B+12↓j
-                                        ; sub_2A51B+16↓j
+loc_2A524:                              ; CODE XREF: DrawShadedPixelRun+12↓j
+                                        ; DrawShadedPixelRun+16↓j
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_2A530
@@ -47816,20 +47816,20 @@ loc_2A524:                              ; CODE XREF: sub_2A51B+12↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2A530:                              ; CODE XREF: sub_2A51B+C↑j
+loc_2A530:                              ; CODE XREF: DrawShadedPixelRun+C↑j
                 inc     di
                 loop    loc_2A524
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2A534:                              ; CODE XREF: sub_2A51B+7↑j
-                                        ; sub_2A51B+1E↓j
+loc_2A534:                              ; CODE XREF: DrawShadedPixelRun+7↑j
+                                        ; DrawShadedPixelRun+1E↓j
                 lodsb
                 call    ShiftPaletteShadeClamped
                 stosb
                 loop    loc_2A534
                 retn
-sub_2A51B       endp
+DrawShadedPixelRun endp
 
 
 ; =============== S U B R O U T I N E =======================================

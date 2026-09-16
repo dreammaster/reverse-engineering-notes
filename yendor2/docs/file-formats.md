@@ -1304,7 +1304,15 @@ table to remap it or force full transparency, plausibly a
 status-effect tint) and `InvokePixelEffectCallback` (was `sub_2A217`,
 a tiny tail-jump to a caller-configured function-pointer hook). The
 run-record producer(s) that build the 6-byte run tables these
-blitters consume remain untraced.
+blitters consume remain untraced. Two more family members:
+`DrawShadedPixelRun` (was `sub_2A51B`, called from `DrawViewportSprite`
+directly, no RLE table — the simplest member, a straight shaded run
+with optional masking) and `CopyShadedViewportRows` (was `sub_2A0FC`,
+called from unnamed `sub_29FF6`) — copies a 224-pixel-wide row
+(matching `DimDungeonViewport`'s viewport width) from `si` to `di`,
+shading every pixel, advancing both by one screen row (`0x140`) per
+iteration. `sub_29FF6` (262 bytes, references `_videoSegment`) is a
+solid next-round candidate now that its main inner loop is understood.
 
 `RenderDungeonViewport`'s 7th and final call is
 `RenderDungeonVanishingPoint`, structurally different from the other
