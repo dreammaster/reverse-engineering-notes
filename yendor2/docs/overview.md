@@ -5108,6 +5108,18 @@ its confirmed gate behavior; `sub_219FA` itself remains an open lead.
 
 597 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ParseCommandLineSwitches
+
+Named `sub_16F84` -> `ParseCommandLineSwitches`, called directly from
+`start` at program entry — a classic DOS command-line switch parser.
+Reads the PSP command-tail (`INT 21h AH=0x51`) and scans for
+`/`-prefixed switches: `/P` sets `word_328C4` bit `0x8000`; `/NOM`
+sets `word_328C8` bit `2` (plausibly no-music, tying into the
+BLASTER/sound-driver detection traced earlier this session); `/NOS`
+sets `word_328C8` bit `1` (plausibly no-sound).
+
+598 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

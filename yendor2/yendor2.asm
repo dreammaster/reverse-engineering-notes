@@ -51,7 +51,7 @@ start           proc near
                 mov     ax, seg seg129
                 mov     ds, ax
                 mov     word_2E4AA, ax
-                call    sub_16F84
+                call    ParseCommandLineSwitches
                 and     word_328C4, 7FFFh
                 or      word_328CA, 2
                 and     word_328CA, 0FFFEh
@@ -11734,8 +11734,8 @@ seg021          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16F84       proc far                ; CODE XREF: start+1A↑P
-                mov     ah, 51h
+ParseCommandLineSwitches proc far       ; CODE XREF: start+1A↑P
+                mov     ah, 51h         ; Scans the PSP command-tail (INT 21h AH=0x51, PSP+0x80/0x81) for '/'-prefixed switches: '/P' sets word_328C4 bit 0x8000; '/NOM' sets word_328C8 bit 2 (plausibly no-music); '/NOS' sets word_328C8 bit 1 (plausibly no-sound). Called from start.
                 int     21h             ; DOS - 2+ internal - GET PSP SEGMENT
                                         ; Return: BX = current PSP segment
                 mov     es, bx
@@ -11743,8 +11743,8 @@ sub_16F84       proc far                ; CODE XREF: start+1A↑P
                 mov     cl, es:[bx-1]
                 xor     ch, ch
 
-loc_16F93:                              ; CODE XREF: sub_16F84+21↓j
-                                        ; sub_16F84+3D↓j ...
+loc_16F93:                              ; CODE XREF: ParseCommandLineSwitches+21↓j
+                                        ; ParseCommandLineSwitches+3D↓j ...
                 cmp     byte ptr es:[bx], 2Fh ; '/'
                 jnz     short loc_16FA1
                 inc     bx
@@ -11753,14 +11753,14 @@ loc_16F93:                              ; CODE XREF: sub_16F84+21↓j
                 jmp     short locret_1700D
 ; ---------------------------------------------------------------------------
 
-loc_16FA1:                              ; CODE XREF: sub_16F84+13↑j
+loc_16FA1:                              ; CODE XREF: ParseCommandLineSwitches+13↑j
                 inc     bx
                 sub     cx, 1
                 jg      short loc_16F93
                 jmp     short locret_1700D
 ; ---------------------------------------------------------------------------
 
-loc_16FA9:                              ; CODE XREF: sub_16F84+19↑j
+loc_16FA9:                              ; CODE XREF: ParseCommandLineSwitches+19↑j
                 cmp     byte ptr es:[bx], 70h ; 'p'
                 jz      short loc_16FC3
                 cmp     byte ptr es:[bx], 50h ; 'P'
@@ -11772,14 +11772,14 @@ loc_16FA9:                              ; CODE XREF: sub_16F84+19↑j
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
-loc_16FC3:                              ; CODE XREF: sub_16F84+29↑j
-                                        ; sub_16F84+2F↑j
+loc_16FC3:                              ; CODE XREF: ParseCommandLineSwitches+29↑j
+                                        ; ParseCommandLineSwitches+2F↑j
                 or      word_328C4, 8000h
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
-loc_16FCB:                              ; CODE XREF: sub_16F84+35↑j
-                                        ; sub_16F84+3B↑j
+loc_16FCB:                              ; CODE XREF: ParseCommandLineSwitches+35↑j
+                                        ; ParseCommandLineSwitches+3B↑j
                 inc     bx
                 sub     cx, 1
                 jle     short locret_1700D
@@ -11790,8 +11790,8 @@ loc_16FCB:                              ; CODE XREF: sub_16F84+35↑j
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
-loc_16FDF:                              ; CODE XREF: sub_16F84+51↑j
-                                        ; sub_16F84+57↑j
+loc_16FDF:                              ; CODE XREF: ParseCommandLineSwitches+51↑j
+                                        ; ParseCommandLineSwitches+57↑j
                 inc     bx
                 sub     cx, 1
                 jle     short locret_1700D
@@ -11806,22 +11806,22 @@ loc_16FDF:                              ; CODE XREF: sub_16F84+51↑j
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
-loc_16FFF:                              ; CODE XREF: sub_16F84+65↑j
-                                        ; sub_16F84+6B↑j
+loc_16FFF:                              ; CODE XREF: ParseCommandLineSwitches+65↑j
+                                        ; ParseCommandLineSwitches+6B↑j
                 or      word_328C8, 2
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
-loc_17006:                              ; CODE XREF: sub_16F84+71↑j
-                                        ; sub_16F84+77↑j
+loc_17006:                              ; CODE XREF: ParseCommandLineSwitches+71↑j
+                                        ; ParseCommandLineSwitches+77↑j
                 or      word_328C8, 1
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
-locret_1700D:                           ; CODE XREF: sub_16F84+1B↑j
-                                        ; sub_16F84+23↑j ...
+locret_1700D:                           ; CODE XREF: ParseCommandLineSwitches+1B↑j
+                                        ; ParseCommandLineSwitches+23↑j ...
                 retf
-sub_16F84       endp
+ParseCommandLineSwitches endp
 
 seg021          ends
 

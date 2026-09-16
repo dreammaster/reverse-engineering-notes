@@ -2400,6 +2400,15 @@ Not yet decoded: the real VGA palette (so images render in true color,
 not grayscale), and the directory's `+0x4` field's meaning (varies per
 entry, didn't fit an obvious role from the entries examined so far).
 
+### Command-line switches
+
+`ParseCommandLineSwitches` (was `sub_16F84`, called directly from
+`start` at program entry) scans the PSP command-tail for `/`-prefixed
+switches: `/P` sets `word_328C4` bit `0x8000`; `/NOM` sets
+`word_328C8` bit `2` (plausibly no-music); `/NOS` sets `word_328C8`
+bit `1` (plausibly no-sound) — the latter two tie into the
+sound-driver detection below.
+
 ### Sound Blaster auto-detection
 
 `InitSoundSystem` calls `ParseSoundBlasterEnvironmentVariable` (was

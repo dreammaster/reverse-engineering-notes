@@ -2702,8 +2702,10 @@ static Bytes_0(void) {
 	set_cmt	(0X16F64,	"Map cell linear address: (y-word_2E564)*0x270 + (x-word_2E55C)*8, es=word_2E562 (map data segment). 8 bytes/cell, row stride 0x270 = 78 cells wide.",	0);
 	create_insn	(0X16F64);
 	set_name	(0X16F64,	"GetMapCellPtr");
+	set_cmt	(0X16F84,	"Scans the PSP command-tail (INT 21h AH=0x51, PSP+0x80/0x81) for '/'-prefixed switches: '/P' sets word_328C4 bit 0x8000; '/NOM' sets word_328C8 bit 2 (plausibly no-music); '/NOS' sets word_328C8 bit 1 (plausibly no-sound). Called from start.",	0);
 	create_insn	(x=0X16F84);
 	op_hex		(x,	1);
+	set_name	(0X16F84,	"ParseCommandLineSwitches");
 	set_cmt	(0X16F86,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);
 	create_insn	(x=0X16F86);
 	op_hex		(x,	0);
@@ -3165,6 +3167,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18381);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1838B);
 	op_hex		(x,	1);
 	create_insn	(x=0X18395);
@@ -3179,15 +3190,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X183D5);
 	op_hex		(x,	1);
 	set_name	(0X183D5,	"RollEffectMagnitude");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X183E5);
 	op_hex		(x,	1);
 	create_insn	(x=0X183EC);
@@ -5171,6 +5173,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1F29D,	"Input handler for RunGameDialog's 8 icon options (Animation/Dos/Return/Load/Music/NewGame/Save/SoundFx): polls keyboard ('1'-'6', or 'L'/'S' shortcuts when word_32910=='.') and mouse (region table 0x5CD0) to pick one, storing the 1-based selection in word_3291E.",	0);
 	create_insn	(0X1F29D);
 	set_name	(0X1F29D,	"SelectGameDialogOption");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1F2DD);
 	create_insn	(0X1F2EF);
 	create_insn	(0X1F2FA);
@@ -5189,15 +5200,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1F474,	"msg",	0);
 	create_insn	(0X1F481);
 	set_name	(0X1F481,	"GameDialog_drawDos");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1F493,	"msg",	0);
 	create_insn	(0X1F49C);
 	set_name	(0X1F49C,	"GameDialog_drawReturn");
@@ -6966,6 +6968,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2607F,	"Draws one party member's portrait panel at word_328BC/word_328C0: character icon ([+0x14]), a status bar (sub_267A7), a condition icon ([+0x15C]/[+0x10]), and further icon draws (sub_2681B, not traced). Called via ShowPartyPortraitForSlot.",	0);
 	create_insn	(0X2607F);
 	set_name	(0X2607F,	"DrawPartyMemberPortrait");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2608A);
 	op_hex		(x,	1);
 	create_insn	(x=0X260DE);
@@ -6989,15 +7000,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X26279);
 	op_hex		(x,	1);
 	create_insn	(0X2628F);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X26295);
 	create_insn	(x=0X262B2);
 	op_hex		(x,	1);
