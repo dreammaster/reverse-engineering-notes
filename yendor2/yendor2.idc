@@ -7454,7 +7454,9 @@ static Bytes_3(void) {
 	set_cmt	(0X27180,	"msg",	0);
 	set_cmt	(0X271A0,	"msg",	0);
 	set_cmt	(0X271C0,	"msg",	0);
+	set_cmt	(0X271DC,	"Click handler for the resource panel (hit-test indices 0-3, redraws DrawResourceCounterPanel) and 6 fixed item-display slots (indices 4-9, table 0x9519 -- the same table IsItemRangeAvailable uses): places/retrieves/swaps the held item into a clicked slot if its range/category matches, else FlashStatusWarning. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X271DC);
+	set_name	(0X271DC,	"HandleStatusPanelItemSlotClick");
 	create_insn	(0X27203);
 	create_insn	(0X2723B);
 	create_insn	(0X2724A);
@@ -8231,9 +8233,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X29074);
 	op_hex		(x,	1);
-	set_cmt	(0X2909C,	"Transport/mount item-use preview (called from ShowItemUsagePreview): selects an entry from the 4-slot transport table (0x77C6, stride 0x1A -- PEGASUS/GIANT EAGLE/MAGIC DRAGON, same table as ShowClueBookTransportDetail) via es:[si+0x12] flag bits, draws 'NAME:'/'COST:' plus a flight-time-restriction line ('CAN FLY ANYTIME DAY OR NIGHT' or a time-window variant).",	0);
-	create_insn	(0X2909C);
-	set_name	(0X2909C,	"ShowTransportUsagePreview");
 }
 
 //------------------------------------------------------------------------
@@ -8243,6 +8242,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2909C,	"Transport/mount item-use preview (called from ShowItemUsagePreview): selects an entry from the 4-slot transport table (0x77C6, stride 0x1A -- PEGASUS/GIANT EAGLE/MAGIC DRAGON, same table as ShowClueBookTransportDetail) via es:[si+0x12] flag bits, draws 'NAME:'/'COST:' plus a flight-time-restriction line ('CAN FLY ANYTIME DAY OR NIGHT' or a time-window variant).",	0);
+	create_insn	(0X2909C);
+	set_name	(0X2909C,	"ShowTransportUsagePreview");
 	create_insn	(x=0X290B4);
 	op_hex		(x,	1);
 	set_cmt	(0X290CF,	"msg",	0);
@@ -10950,6 +10952,15 @@ static Bytes_4(void) {
 	set_name	(0X353F2,	"aTransports");
 	create_strlit	(0X353FE,	0XA);
 	set_name	(0X353FE,	"aCurrently");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35408,	0X6);
 	set_name	(0X35408,	"aLevel_0");
 	create_strlit	(0X3540E,	0X9);
@@ -10972,15 +10983,6 @@ static Bytes_4(void) {
 	set_name	(0X35459,	"aRequires");
 	create_strlit	(0X35462,	0XC);
 	set_name	(0X35462,	"aSpecialKey");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3546E,	0XA);
 	set_name	(0X3546E,	"aBrassKey");
 	create_strlit	(0X35478,	0XB);

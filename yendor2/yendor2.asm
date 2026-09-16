@@ -467,7 +467,7 @@ loc_103BA:                              ; CODE XREF: start+32F↑j
                 call    ClearStatusPanelIfDirty
                 test    word_36C7F, 1000h
                 jz      short loc_103D6
-                call    sub_271DC
+                call    HandleStatusPanelItemSlotClick
                 cmp     errorCode, 1
                 jz      short loc_103E2
                 jmp     loc_10043
@@ -10484,7 +10484,7 @@ loc_16605:                              ; CODE XREF: HandleDungeonInput+1EA↑j
 loc_1660C:                              ; CODE XREF: HandleDungeonInput+201↑j
                 cmp     ax, 2
                 jnz     short loc_16619
-                call    sub_271DC
+                call    HandleStatusPanelItemSlotClick
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
@@ -12359,7 +12359,7 @@ loc_17432:                              ; CODE XREF: RunShopScreen+4B↑j
 loc_1744D:                              ; CODE XREF: RunShopScreen+11E↑j
                 cmp     ax, 2
                 jnz     short loc_1745A
-                call    sub_271DC
+                call    HandleStatusPanelItemSlotClick
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
@@ -14732,7 +14732,7 @@ loc_186FB:                              ; CODE XREF: sub_1869D+59↑j
 loc_18708:                              ; CODE XREF: sub_1869D+66↑j
                 cmp     ax, 2
                 jnz     short loc_1877E
-                call    sub_271DC
+                call    HandleStatusPanelItemSlotClick
                 jmp     short near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -41091,7 +41091,7 @@ HandleStatusIconBarClick proc far       ; CODE XREF: start+4E2↑P
                 cmp     ax, 3
                 jg      short loc_2711F
                 push    cs
-                call    near ptr sub_271DC
+                call    near ptr HandleStatusPanelItemSlotClick
                 jmp     short loc_27147
 ; ---------------------------------------------------------------------------
 
@@ -41126,7 +41126,7 @@ HandleStatusIconBarClick endp
 
 
 DrawResourceCounterPanel proc far       ; CODE XREF: start+3DB↑P
-                                        ; sub_271DC+21↓p ...
+                                        ; HandleStatusPanelItemSlotClick+21↓p ...
                 push    si              ; Draws the status panel's fully-labeled resource readout at (0xF0,0x60): 'GOLD COINS:' + BCD4 0x94B3 (g_partyGold), 'MAGIC ORE: ' + BCD4 0x94B7, 'NUORE: ' + BCD4 0x94BB. Called from `start`'s status-panel redraw path (after ShowResourceDepletedOverlay) and from sub_271DC.
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
@@ -41166,9 +41166,9 @@ DrawResourceCounterPanel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_271DC       proc far                ; CODE XREF: start+3C7↑P
+HandleStatusPanelItemSlotClick proc far ; CODE XREF: start+3C7↑P
                                         ; HandleDungeonInput+20A↑P ...
-                push    ax
+                push    ax              ; Click handler for the resource panel (hit-test indices 0-3, redraws DrawResourceCounterPanel) and 6 fixed item-display slots (indices 4-9, table 0x9519 -- the same table IsItemRangeAvailable uses): places/retrieves/swaps the held item into a clicked slot if its range/category matches, else FlashStatusWarning. Called from `start` and HandleDungeonInput.
                 push    bx
                 push    cx
                 push    dx
@@ -41188,7 +41188,7 @@ sub_271DC       proc far                ; CODE XREF: start+3C7↑P
                 jmp     loc_2728F
 ; ---------------------------------------------------------------------------
 
-loc_27203:                              ; CODE XREF: sub_271DC+1E↑j
+loc_27203:                              ; CODE XREF: HandleStatusPanelItemSlotClick+1E↑j
                 mov     di, 9519h
                 cmp     ax, 4
                 jz      short loc_2723B
@@ -41208,14 +41208,14 @@ loc_27203:                              ; CODE XREF: sub_271DC+1E↑j
                 cmp     ax, 9
                 jz      short loc_2723B
 
-loc_27233:                              ; CODE XREF: sub_271DC+19↑j
-                                        ; sub_271DC+69↓j
+loc_27233:                              ; CODE XREF: HandleStatusPanelItemSlotClick+19↑j
+                                        ; HandleStatusPanelItemSlotClick+69↓j
                 mov     errorCode, 1
                 jmp     short loc_2728F
 ; ---------------------------------------------------------------------------
 
-loc_2723B:                              ; CODE XREF: sub_271DC+2D↑j
-                                        ; sub_271DC+35↑j ...
+loc_2723B:                              ; CODE XREF: HandleStatusPanelItemSlotClick+2D↑j
+                                        ; HandleStatusPanelItemSlotClick+35↑j ...
                 cmp     word_31946, 0
                 jnz     short loc_2724A
                 cmp     word ptr [di], 0
@@ -41223,7 +41223,7 @@ loc_2723B:                              ; CODE XREF: sub_271DC+2D↑j
                 jmp     loc_2731C
 ; ---------------------------------------------------------------------------
 
-loc_2724A:                              ; CODE XREF: sub_271DC+64↑j
+loc_2724A:                              ; CODE XREF: HandleStatusPanelItemSlotClick+64↑j
                 cmp     word ptr [di], 2Fh ; '/'
                 jnz     short loc_2726E
                 cmp     word_31948, 21h ; '!'
@@ -41237,7 +41237,7 @@ loc_2724A:                              ; CODE XREF: sub_271DC+64↑j
                 jmp     short loc_2728F
 ; ---------------------------------------------------------------------------
 
-loc_2726E:                              ; CODE XREF: sub_271DC+71↑j
+loc_2726E:                              ; CODE XREF: HandleStatusPanelItemSlotClick+71↑j
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
@@ -41247,13 +41247,13 @@ loc_2726E:                              ; CODE XREF: sub_271DC+71↑j
                 jmp     short loc_272E6
 ; ---------------------------------------------------------------------------
 
-loc_27284:                              ; CODE XREF: sub_271DC+78↑j
-                                        ; sub_271DC+7F↑j ...
+loc_27284:                              ; CODE XREF: HandleStatusPanelItemSlotClick+78↑j
+                                        ; HandleStatusPanelItemSlotClick+7F↑j ...
                 call    FlashStatusWarning
                 mov     errorCode, 1
 
-loc_2728F:                              ; CODE XREF: sub_271DC+24↑j
-                                        ; sub_271DC+5D↑j ...
+loc_2728F:                              ; CODE XREF: HandleStatusPanelItemSlotClick+24↑j
+                                        ; HandleStatusPanelItemSlotClick+5D↑j ...
                 pop     es
                 pop     di
                 pop     si
@@ -41264,7 +41264,7 @@ loc_2728F:                              ; CODE XREF: sub_271DC+24↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
+loc_27297:                              ; CODE XREF: HandleStatusPanelItemSlotClick+A4↑j
                 mov     ax, 6
                 call    TriggerSoundEvent
                 mov     ax, word_31948
@@ -41286,7 +41286,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 jmp     short loc_2728F
 ; ---------------------------------------------------------------------------
 
-loc_272E6:                              ; CODE XREF: sub_271DC+A6↑j
+loc_272E6:                              ; CODE XREF: HandleStatusPanelItemSlotClick+A6↑j
                 mov     ax, 6
                 call    TriggerSoundEvent
                 mov     ax, word_31948
@@ -41306,7 +41306,7 @@ loc_272E6:                              ; CODE XREF: sub_271DC+A6↑j
                 jmp     short loc_27348
 ; ---------------------------------------------------------------------------
 
-loc_2731C:                              ; CODE XREF: sub_271DC+6B↑j
+loc_2731C:                              ; CODE XREF: HandleStatusPanelItemSlotClick+6B↑j
                 mov     ax, [di]
                 call    LoadItemCatalogRecord
                 mov     ax, [di+2]
@@ -41321,7 +41321,7 @@ loc_2731C:                              ; CODE XREF: sub_271DC+6B↑j
                 mov     word_2E530, ax
                 mov     word ptr [di], 0
 
-loc_27348:                              ; CODE XREF: sub_271DC+13E↑j
+loc_27348:                              ; CODE XREF: HandleStatusPanelItemSlotClick+13E↑j
                 call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr ShowResourceDepletedOverlay
@@ -41333,7 +41333,7 @@ loc_27348:                              ; CODE XREF: sub_271DC+13E↑j
                 jmp     loc_2728F
 ; ---------------------------------------------------------------------------
 
-loc_27369:                              ; CODE XREF: sub_271DC+183↑j
+loc_27369:                              ; CODE XREF: HandleStatusPanelItemSlotClick+183↑j
                 mov     si, word_2E546
                 add     si, 4
                 mov     ax, word_31948
@@ -41343,7 +41343,7 @@ loc_27369:                              ; CODE XREF: sub_271DC+183↑j
                 call    sub_219FA
                 call    ShowMaterialCounterHud
                 jmp     loc_2728F
-sub_271DC       endp
+HandleStatusPanelItemSlotClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -50197,7 +50197,7 @@ seg120          segment byte public 'CODE' use16
 
 
 FinishPlacingHeldItem proc far          ; CODE XREF: sub_2621C+101↑P
-                                        ; sub_271DC+81↑P
+                                        ; HandleStatusPanelItemSlotClick+81↑P
                 mov     ax, 4           ; Plays a sound, restores the cursor background, loads the held item's catalog record, ORs a value derived from its flag byte into word_36C81 (not otherwise documented), then clears the held-item cursor (UpdateCursorForHeldItem(0)). Called from sub_2621C (a still-untraced container-related handler) and sub_271DC.
                 call    TriggerSoundEvent
                 call    RestoreCursorBackgroundIfDirty

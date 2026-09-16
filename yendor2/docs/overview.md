@@ -6056,6 +6056,22 @@ a palette range in or out over many frames — used repeatedly by
 
 690 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleStatusPanelItemSlotClick
+
+Named `sub_271DC` -> `HandleStatusPanelItemSlotClick`, called from
+`start` and `HandleDungeonInput`. This unifies the click handling for
+the resource-counter panel (redraws `DrawResourceCounterPanel`) and 6
+fixed item-display slots next to it — the same `0x9519` table
+`file-formats.md`'s "Quest-item and party-inventory range checks"
+section already documents as `IsItemRangeAvailable`'s fixed 6-entry
+lookup table. Places, retrieves, or swaps the held item into a
+clicked slot if its range/category matches, else `FlashStatusWarning`
+rejects it. The narrative purpose of the 6 slots (quest altar,
+display case, etc.) isn't identified, but the mechanism is now fully
+traced.
+
+691 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

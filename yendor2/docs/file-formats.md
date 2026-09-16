@@ -1051,7 +1051,12 @@ icons (Animation, Dos, Return, Load, Music, NewGame, Save, SoundFx).
 several rounds ago on a first-seen use that looked transport-related —
 too specific a guess) is actually a generic primitive: given an item-id
 range (a single id if the range's min/max are equal), it first checks a
-fixed 6-entry table (`0x9519`) for a direct match, then falls back to
+fixed 6-entry table (`0x9519`) for a direct match — the same table
+`HandleStatusPanelItemSlotClick` (was `sub_271DC`, called from
+`start`/`HandleDungeonInput`) lets the player drop/retrieve/swap
+items into via 6 clickable slots next to the resource-counter panel,
+tracing where that table's contents actually come from — then falls
+back to
 `FindItemInInventoryRange` (search every party member's main inventory,
 recursing into open containers via `FindItemInsideContainer`) until
 someone qualifies. The container recursion is a **fixed 3-level-deep**
