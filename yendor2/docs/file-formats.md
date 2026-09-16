@@ -63,11 +63,11 @@ then `FileEntry_Close`) on the quit-to-DOS path. `sub_27DE5`'s target
 record itself isn't named yet.
 
 **Party-member record** (in-memory, currently selected one pointed to
-by `word_328D4` — plausibly backed by this same `CURGAME` data once
+by `g_currentPartyRecord` — plausibly backed by this same `CURGAME` data once
 loaded): lives in a **confirmed fixed array**, `g_partyRecords` (base
 `0x95F3`, stride `0x1F4` = 500 bytes/record, up to 9 slots per
 `SelectDefaultPartyRecord`'s scan bound) — not a linked list.
-**Correction**: earlier documentation here claimed `word_328D4` was
+**Correction**: earlier documentation here claimed `g_currentPartyRecord` was
 "traversed via a `+0x10` 'next' link"; that was wrong (a comment had
 been misattached to the wrong call site — see
 `ida_scripts/fix_party_record_next_claim.py`). `ApplyMapTriggerEffect`
@@ -82,11 +82,11 @@ existing panel-select routine (`HandlePartyStatusPanelInput`), then draws that m
 status-bar row: portrait icon, name, level (`+0x16`), packed-BCD XP
 (`+0x18`) — called both from a `UseItemType_400` path and from the
 F1-F4/click-portrait party-member selection handler. The main
-mechanism setting `word_328D4` is now confirmed:
+mechanism setting `g_currentPartyRecord` is now confirmed:
 `SelectPartyRecordById` (a foundational, extremely widely-called
-function) takes a 1-based record id and sets `word_328D4` =
+function) takes a 1-based record id and sets `g_currentPartyRecord` =
 `(id-1)*0x1F4 + 0x95F3` (or 0 for id 0), also caching the id itself in
-`word_328D6` — this is the function behind `g_partyRecords`'
+`g_currentPartyRecordId` — this is the function behind `g_partyRecords`'
 base/stride confirmation above. Other mechanisms (a direct selector
 struct in some callers, `SelectDefaultPartyRecord`'s "first record
 with `+0xE`==0" scan as a fallback in `ShowPartyMembers`) still apply
@@ -655,7 +655,7 @@ survive `DrawPartyRosterEntry` showing a name+class label is drawn for
 each row; these are player characters, not towns.
 
 Digit keys `1`-`9` select a roster slot by index (recomputing
-`word_328D4` the same way `SelectPartyRecordById` does) and call
+`g_currentPartyRecord` the same way `SelectPartyRecordById` does) and call
 `RunCharacterDetailOverlay` (was `sub_23C18`, since traced — the
 roster screen's character-detail popup) to open a detail/interaction
 screen. A second, differently-routed key range reaches the same slot
@@ -987,7 +987,7 @@ step (if it exists) happens on some later, separate re-entry not yet
 found. The total is a per-unit base cost (varies by call site,
 sometimes built from `word_2E40C` condition bits) times an
 item-catalog quantity field (`0xBCE+0x18`), added in a loop running
-once per `[word_328D4+0x16]` — plausibly once per afflicted/eligible
+once per `[g_currentPartyRecord+0x16]` — plausibly once per afflicted/eligible
 party member. The "REMOVE YOUR CONDITIONS" base cost itself is
 computed by `ComputeAfflictionHealingCost` (was `sub_1BA35`, called
 twice from `UseHealingItem`): a flat per-affliction price summed over
@@ -1130,7 +1130,7 @@ set, recurses one level deeper into that nested container. It's reused
 for at least two different purposes:
 a boat/horse-style transport gate (its original use), and — found via
 `CheckQuestItemsCompleted` (an item-icon-dispatch handler,
-`word_32974==0x2C8`) — a **quest-item-completion check**: 4 specific
+`g_currentActionId==0x2C8`) — a **quest-item-completion check**: 4 specific
 item ids (`0x254`-`0x257`) are each checked for being *absent* from
 every party member's inventory; if all 4 are gone, it plays a success
 sound and runs an animated sequence re-checking those 4 plus a 5th
@@ -1140,7 +1140,7 @@ N required quest items," a completion reward sequence — exact narrative
 
 **One of the 5 items identified**: item `0x258` — immediately adjacent
 to the `0x254`-`0x257` completion range — is `UseLocationBoundPotion`
-(`word_32974==0x258`, another item-icon-dispatch handler): a potion
+(`g_currentActionId==0x258`, another item-icon-dispatch handler): a potion
 that only works at one specific map cell, confirmed by its own message
 strings (`THE POTION WORKED SUCCESSFULLY` there, `YOU CAN NOT USE THAT
 HERE!` elsewhere). Using it there sets global quest flag `0x48`. The
@@ -1247,7 +1247,7 @@ selected by `word_328C8` bit `0x100` (set by the caller — e.g.
   flags, rolls the hit via `ResolveAttack`, applies it via
   `ApplyResolvedDamageWithResistance`.
 - **Clear (spell/ability)**: calls `ResolveAbilityEffect` — an 85%
-  success roll, then dispatches on `word_32974` (the ability id) to
+  success roll, then dispatches on `g_currentActionId` (the ability id) to
   set a flat damage amount and, for several ids, a status-effect flag
   plus duration (the same `ApplyStatusEffect`/`TickStatusEffects`
   convention). Two specific ids are **area-effect spells**: when not
@@ -1434,7 +1434,7 @@ cycle relative to a base frame, mode selected by `[+0x92]` flags. This confirms 
 `TickMonsterTimer` uses as a presence/lifespan countdown in the
 level-wide `g_levelMonsters` pool context, a polymorphic field reused
 across the two roles (matching this codebase's established pattern for
-fields like `errorCode`/`word_32974`). `+0x50` is therefore plausibly
+fields like `errorCode`/`g_currentActionId`). `+0x50` is therefore plausibly
 max HP. What actually happens once `+0x10` reaches 0 (death handling)
 isn't traced yet.
 
@@ -1505,7 +1505,7 @@ dungeon-screen render sequence is: 1) `DrawDungeonFloorAndCeiling`
 monster/encounter rendering). All three passes share one underlying
 primitive, `DrawViewportSprite` (was `sub_29B0F`, 632 lines, internals
 not traced): every viewport-rendering function this session calls it
-with the same (picture id `word_2E530`, scale class `word_2E532`,
+with the same (picture id `g_pictureId`, scale class `g_pictureCategory`,
 z-layer/depth `word_32918`, transparency `_font_bgTransparent`)
 convention — the perspective/depth-aware counterpart to the simpler
 general-purpose `DrawPicture`. **First foothold into its internals**:
@@ -1581,7 +1581,7 @@ walls.
 The **player's own** movement uses the same `[_val32,_val31]`
 "special cell type" range check: `HandleMovementInput` calls
 `HandleSpecialCellEntry` (was `sub_116F3`) when the destination cell's
-type falls in that range. If `byte_2E400`=='H' (not one of the
+type falls in that range. If `g_lastKeyChar`=='H' (not one of the
 manual's documented hotkeys — possibly unsurveyed, or an internal
 sentinel rather than a literal keypress), it pulls two entries out of
 the `0xE551` tile-type table (the destination cell's type, plus a fixed
@@ -1649,7 +1649,7 @@ spell pays for it via `DeductAlchemySpellCosts` (was `sub_1E61B`) —
 subtracting MP and the same two BCD ore counters. On screen entry,
 `RestoreOrSelectAlchemyCaster` (was `sub_1E473`) re-validates a cached
 caster id against `g_partySlotAssignment` (gated on the same `+0x94`
-marker `ApplySecondaryClassTierFlags` uses) and sets `word_32924`
+marker `ApplySecondaryClassTierFlags` uses) and sets `g_selectedPartySlotPtr`
 accordingly, falling back to `SelectDefaultAlchemyCaster` (was
 `sub_1E447` — the first occupied, `+0x94`-eligible slot) otherwise.
 `RunAlchemyScreen` also calls `ShowCompassDirection`, a
@@ -1895,7 +1895,7 @@ pending-new level, confirming `+0x1E`'s "pending level-up" role too
 (previously only known to gate a portrait-redraw call).
 `CheckAndAnnounceLevelUp` (was `sub_1B7DD`, called from `UseItem` and
 `UseTrainingItem`) is the shared wrapper: resolves the active party
-slot (`word_32924` → a `g_partySlotAssignment` entry → character id →
+slot (`g_selectedPartySlotPtr` → a `g_partySlotAssignment` entry → character id →
 `SelectPartyRecordById`), calls `CheckForLevelUp`, and shows
 `ShowLevelUpMessage` if `+0x1E` came back nonzero. A direct consumer
 of `+0x18`: `UseExperienceBoostItem` (was `sub_1B5FD`, `UseItem`'s
@@ -1929,7 +1929,7 @@ fixed offsets from a caller-supplied record rather than this global
 array. **Follow-up**: traced two of the three accessors.
 `GetRecordFlagBitAndWord_10C`/`SetRecordFlag_10C` (were `sub_27A6E`/
 `sub_27A3E`) operate on a bank at the caller record's `+0x10C`; the one
-traced real caller passes `si=word_328D4` (the current party member),
+traced real caller passes `si=g_currentPartyRecord` (the current party member),
 inside `UseItemType_800`'s branch gated on having
 enough of material `0x94B3` — plausibly per-character one-time-event
 flags (quest steps, items read, NPCs met), not confirmed.
@@ -2088,7 +2088,7 @@ field directly as `LoadLockState`'s lock id — a key's catalog "type"
 table needed.
 
 **The actual unlock-a-door command**: `UnlockDoorCommand` (a
-`HandleGameCommand` handler, `word_32974` `0x21`-`0x2E`/`0x2F`) uses
+`HandleGameCommand` handler, `g_currentActionId` `0x21`-`0x2E`/`0x2F`) uses
 `ProbeFacingTile` to find the lock ahead, loads its state via
 `LoadLockState`, shows `NOT LOCKED` directly if it's already open
 (same bit test `ShowLockStatus` performs), and otherwise compares the
@@ -2122,7 +2122,7 @@ raw ISR entry itself is embedded in bytes IDA hasn't cleanly separated
 from a preceding data declaration, so it's documented here rather than
 renamed (renaming risks corrupting the disassembly boundary).
 
-`ShowGameClockCommand` (a `HandleGameCommand` handler, `word_32974==7`)
+`ShowGameClockCommand` (a `HandleGameCommand` handler, `g_currentActionId==7`)
 confirms the game tracks a genuine in-game date and time, not just a
 coarse day/night or "time of day" value: it fills two fixed template
 strings — `12:12 AM` and `12/12/1212` — with the current hour/minute/
@@ -2282,11 +2282,11 @@ that member is still capable of acting. Only when *every* slot is
 either empty or flagged with one of those bits does it fall through to
 `ShowPartyWipeScreen` (was `sub_2ADE8` — stops music, plays a sound
 effect via the sound dispatch, draws a full-screen picture, redraws the
-fixed status icon), then `RunGameDialog`, then (unless `byte_2E400`==
+fixed status icon), then `RunGameDialog`, then (unless `g_lastKeyChar`==
 `0xFF`) `InitializeDungeonLevel` — reading very much like a "whole
 party is down → show a screen → reset the level" handler. Bit `6`'s
 specific ailment isn't confirmed (it's not one of the 3 timed-ailment
-bits), nor is the exact meaning of `byte_2E400`==`0xFF` skipping the
+bits), nor is the exact meaning of `g_lastKeyChar`==`0xFF` skipping the
 reset.
 
 **Shareware relevance**: the guide notes the shareware version has a
@@ -2474,7 +2474,7 @@ per cell) — the same area `FillVisibleAreaWithSelectedTile` floods.
 **Open question — how the two tile-type lookup tables actually work**:
 dumped both (`ida_scripts/dump_tile_tables.py`) and the picture-id-like
 values they yield (`0x16`-`0x50` range) are far outside `g_pictureDir`'s
-10 valid entries, while `DrawMinimap` keeps `word_2E532` (the actual
+10 valid entries, while `DrawMinimap` keeps `g_pictureCategory` (the actual
 `g_pictureDir` byte offset `DrawPicture` reads) fixed at `0x90` — entry
 9, the small 8×8 icon — for the whole 7×9 loop. So every cell likely
 draws the *same* base glyph, and the varying table value instead feeds
@@ -2546,8 +2546,8 @@ by `_font_bgTransparent` (0–5, different transparency/color-key
 branches).
 
 `sub_23874` (called repeatedly from `start`) indexes the same
-`g_pictureDir` table the same way (`g_pictureDir + word_2E532`,
-`word_2E532` = `picture_id*0x10`) — it's one shared directory, not a
+`g_pictureDir` table the same way (`g_pictureDir + g_pictureCategory`,
+`g_pictureCategory` = `picture_id*0x10`) — it's one shared directory, not a
 separate table per caller. One observed call used entry 8 (the mouse
 cursor), so this is more likely a cursor-draw/update path than an intro
 animation as first guessed — not confirmed either way.

@@ -6678,6 +6678,73 @@ attachments:
   survey (door-key tier names, town/key names) — see file-formats.md for
   specifics.
 
+### 2026-09-16 session update: global variable renaming, round 1
+
+With all 769 functions named, shifted focus to Paul's request to give
+proper names to identified-but-default-named global data variables
+(`word_XXXXX`/`byte_XXXXX`/`dword_XXXXX`). `idautils.Names()` turned out
+unusable for finding candidates — it only returns genuinely-assigned
+names (1491 of them), not IDA's dummy/display-only default labels for
+referenced-but-unnamed data, so `ida_scripts/list_unnamed_globals.py`
+(kept in the repo, unused) printed zero matches. Pivoted to a
+grep-based frequency count directly on `yendor2.asm`
+(`grep -oE '\b(word|byte|dword)_[0-9A-Fa-f]+\b' yendor2.asm | sort |
+uniq -c | sort -rn`), which works well as the data-global analog of the
+function-side `rank_naming_candidates.py` approach.
+
+Renamed the first batch of 7 — the highest-reference single-clear-meaning
+globals, each confirmed by existing documentation or direct disassembly,
+via `ida_scripts/rename_globals_round1.py`:
+- `byte_2E400` → **`g_lastKeyChar`**: the raw character/scan-code from
+  the last `PollKeyboardInput` poll (uppercased a-z, or the extended
+  scan-code byte); also doubles as a "quit" sentinel (`0xFF`).
+- `word_2E530` → **`g_pictureId`**: the picture id within the currently
+  selected category, read by `DrawPicture`.
+- `word_2E532` → **`g_pictureCategory`**: the `g_pictureDir` byte-offset
+  selecting which picture category/directory sub-table `DrawPicture`
+  looks the id up in.
+- `word_328D4` → **`g_currentPartyRecord`**: the currently-selected
+  party record's base address, set by `SelectPartyRecordById` as
+  `(id-1)*0x1F4 + 0x95F3`.
+- `word_328D6` → **`g_currentPartyRecordId`**: the 1-based character id
+  `SelectPartyRecordById` caches alongside `g_currentPartyRecord`.
+- `word_32924` → **`g_selectedPartySlotPtr`**: a pointer into
+  `g_partySlotAssignment` (which of the 4 slot addresses), resolved to
+  a character id and then a full record via `SelectPartyRecordById`.
+- `word_32974` → **`g_currentActionId`**: the current command/item/
+  ability id, dispatched on by `HandleGameCommand` and fed to
+  `LoadItemCatalogRecord` — confirmed earlier this session that item
+  ids and ability/command ids share one numbering space.
+
+Addressing note for future rounds: these default-named data labels use
+the raw address directly as `ea` (e.g. `ea = 0x2E400` for `byte_2E400`),
+the same flat address space used for function labels — no `DS_BASE`
+offset needed (that offset only applies when decoding a 16-bit
+immediate segment operand embedded in an instruction, e.g. reading a
+string literal via `mov bx, 0x8FD2h`). Caught an initial draft of the
+rename script mistakenly applying that unrelated pattern before running
+it, via a throwaway read-only sanity check.
+
+Also swept `docs/file-formats.md` and updated all existing prose
+mentions of these 7 raw addresses to the new names for consistency.
+
+Many more high-reference-count globals remain, ranked by the grep
+frequency count (e.g. `word_3293E` 209 refs, `word_328C6` 152,
+`word_328CA` 150, `word_328C8` 146, `word_32940` 128, `word_3292C` 121,
+`word_36CF5` 106, `word_36CF9`/`word_36CF7` 86-87 each — confirmed party
+world Y/X position, `word_36C7F` 86, `word_2E548` 83 — confirmed
+held-item flags struct, `word_2E40A` 83, `word_3295A` 80, `word_31948`
+77 — confirmed held item id, `word_328CC` 72, `word_2E412` 70,
+`word_36C79` 69 — confirmed environmental-timer bits, `word_2E49C` 65,
+plus further down: `word_2E546` current item catalog record pointer,
+`word_31946` held item quantity, `word_36D01` game clock minutes,
+`word_32A1E` active combat monster pointer). Several of the very
+highest-ref globals (`word_328C4`/`C6`/`C8`/`CA`/`CC`, `word_3293E`,
+`word_32940`) are multi-purpose bitfield/scratch-parameter words whose
+individual bits or call-site-specific meaning don't reduce to one clean
+name — deferring those in favor of continuing through the
+single-clear-meaning candidates first.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

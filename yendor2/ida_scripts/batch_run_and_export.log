@@ -173672,3 +173672,79 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'list_unnamed_globals.py', 'noexport']
+[*] reading list_unnamed_globals.py
+[*] executing list_unnamed_globals.py
+[*] captured stdout from target script:
+----- begin target script output -----
+total unnamed globals: 0
+----- end target script output -----
+[*] finished executing list_unnamed_globals.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'list_unnamed_globals.py', 'noexport']
+[*] reading list_unnamed_globals.py
+[*] executing list_unnamed_globals.py
+[*] captured stdout from target script:
+----- begin target script output -----
+total names seen: 1491, matched default pattern: 0
+----- end target script output -----
+[*] finished executing list_unnamed_globals.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'scratch_verify_global_addrs.py', 'noexport']
+[*] reading scratch_verify_global_addrs.py
+[*] executing scratch_verify_global_addrs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2e400: 'byte_2E400'
+0x2e530: 'word_2E530'
+0x2e532: 'word_2E532'
+0x328d4: 'word_328D4'
+0x328d6: 'word_328D6'
+0x32924: 'word_32924'
+0x32974: 'word_32974'
+----- end target script output -----
+[*] finished executing scratch_verify_global_addrs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rename_globals_round1.py']
+[*] reading rename_globals_round1.py
+[*] executing rename_globals_round1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2e400  'byte_2E400' -> 'g_lastKeyChar': ok
+0x2e530  'word_2E530' -> 'g_pictureId': ok
+0x2e532  'word_2E532' -> 'g_pictureCategory': ok
+0x328d4  'word_328D4' -> 'g_currentPartyRecord': ok
+0x328d6  'word_328D6' -> 'g_currentPartyRecordId': ok
+0x32924  'word_32924' -> 'g_selectedPartySlotPtr': ok
+0x32974  'word_32974' -> 'g_currentActionId': ok
+----- end target script output -----
+[*] finished executing rename_globals_round1.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106988
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

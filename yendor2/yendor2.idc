@@ -10461,6 +10461,7 @@ static Bytes_5(void) {
 	create_word	(0X2E3FC);
 	create_word	(0X2E3FE);
 	create_byte	(0X2E400);
+	set_name	(0X2E400,	"g_lastKeyChar");
 	create_word	(0X2E402);
 	create_word	(0X2E404);
 	create_word	(0X2E406);
@@ -10537,7 +10538,9 @@ static Bytes_5(void) {
 	set_name	(0X2E52C,	"_font_fgColor");
 	create_word	(0X2E52E);
 	create_word	(0X2E530);
+	set_name	(0X2E530,	"g_pictureId");
 	create_word	(0X2E532);
+	set_name	(0X2E532,	"g_pictureCategory");
 	create_word	(0X2E534);
 	create_strlit	(0X2E536,	0X6);
 	set_name	(0X2E536,	"aFmdrv");
@@ -10638,7 +10641,9 @@ static Bytes_5(void) {
 	create_word	(0X328CE);
 	create_word	(0X328D2);
 	create_word	(0X328D4);
+	set_name	(0X328D4,	"g_currentPartyRecord");
 	create_word	(0X328D6);
+	set_name	(0X328D6,	"g_currentPartyRecordId");
 	create_word	(0X328D8);
 	create_word	(0X328DA);
 	create_word	(0X328DC);
@@ -10679,6 +10684,7 @@ static Bytes_5(void) {
 	create_word	(0X32920);
 	create_word	(0X32922);
 	create_word	(0X32924);
+	set_name	(0X32924,	"g_selectedPartySlotPtr");
 	create_word	(0X32926);
 	create_word	(0X32928);
 	create_word	(0X3292A);
@@ -10724,6 +10730,7 @@ static Bytes_5(void) {
 	create_word	(0X32970);
 	create_word	(0X32972);
 	create_word	(0X32974);
+	set_name	(0X32974,	"g_currentActionId");
 	create_word	(0X32976);
 	create_word	(0X32978);
 	create_word	(0X3297A);
