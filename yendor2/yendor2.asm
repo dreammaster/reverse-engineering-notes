@@ -10090,9 +10090,9 @@ seg014          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_162B6       proc far                ; CODE XREF: sub_162B6+18↓j
-                                        ; sub_162B6+32↓j ...
-                call    UpdateAmbientMusic
+WaitForKeypressTickingMusic proc far    ; CODE XREF: WaitForKeypressTickingMusic+18↓j
+                                        ; WaitForKeypressTickingMusic+32↓j ...
+                call    UpdateAmbientMusic ; Loops calling UpdateAmbientMusic then polling for a key (INT 21h AH=6). On a key, stores it in byte_2E400. On no key, loops again unless word_3195C bits 0x2400 gate an early exit (clearing byte_2E400, or forcing it to ESC/0x1B per bit 0x2000/0x400). Flushes the DOS keyboard buffer before returning. Called from 19 sites across the codebase.
                 mov     ah, 6
                 mov     dl, 0FFh
                 int     21h             ; DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT
@@ -10104,24 +10104,24 @@ sub_162B6       proc far                ; CODE XREF: sub_162B6+18↓j
                 jmp     short loc_162EA
 ; ---------------------------------------------------------------------------
 
-loc_162C8:                              ; CODE XREF: sub_162B6+B↑j
+loc_162C8:                              ; CODE XREF: WaitForKeypressTickingMusic+B↑j
                 test    word_3195C, 2400h
-                jz      short near ptr sub_162B6
+                jz      short near ptr WaitForKeypressTickingMusic
                 mov     byte_2E400, 0
                 test    word_3195C, 2000h
                 jnz     short loc_162EA
                 mov     byte_2E400, 1Bh
                 test    word_3195C, 400h
-                jz      short near ptr sub_162B6
+                jz      short near ptr WaitForKeypressTickingMusic
 
-loc_162EA:                              ; CODE XREF: sub_162B6+10↑j
-                                        ; sub_162B6+25↑j
+loc_162EA:                              ; CODE XREF: WaitForKeypressTickingMusic+10↑j
+                                        ; WaitForKeypressTickingMusic+25↑j
                 and     word_3195C, 80FFh
                 mov     ax, 0C00h
                 int     21h             ; DOS - CLEAR KEYBOARD BUFFER
                                         ; AL must be 01h, 06h, 07h, 08h, or 0Ah.
                 retf
-sub_162B6       endp
+WaitForKeypressTickingMusic endp
 
 seg014          ends
 
@@ -13290,7 +13290,7 @@ loc_17CBE:                              ; CODE XREF: UseItem+125↑j
 loc_17D04:                              ; CODE XREF: UseItem+13A↑j
                 or      word_328C4, 100h
                 call    ClearStatusPanelIfDirty
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 mov     si, word_2E54E
                 mov     es, word_2E54C
                 mov     ax, es:[si+10h]
@@ -18518,7 +18518,7 @@ loc_1A712:                              ; CODE XREF: sub_1A5F6+F6↑j
                 call    writeString
                 call    DrawMouseCursor
                 call    sub_238CD
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 jmp     loc_1A611
 ; ---------------------------------------------------------------------------
 
@@ -18530,7 +18530,7 @@ loc_1A73E:                              ; CODE XREF: sub_1A5F6+11A↑j
                 call    writeString
                 call    DrawMouseCursor
                 call    sub_238CD
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 or      word_328C6, 40h
 
 locret_1A76C:                           ; CODE XREF: sub_1A5F6+B↑j
@@ -19613,7 +19613,7 @@ loc_1B02E:                              ; CODE XREF: PromptBuyOreQuantity+E0↑j
                 mov     bx, 808Ch       ; msg
                 call    writeString
                 call    DrawMouseCursor
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 jmp     loc_1AF4C
 ; ---------------------------------------------------------------------------
 
@@ -20345,7 +20345,7 @@ FinishItemUse   proc far                ; CODE XREF: RunShopScreen+F2↑P
                 test    word_328C4, 1
                 jz      short loc_1B6FD
                 call    DrawMouseCursor
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 and     word_328C4, 0FFFEh
 
 loc_1B6FD:                              ; CODE XREF: FinishItemUse+E↑j
@@ -21054,7 +21054,7 @@ loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 push    cs
                 call    near ptr sub_1CBC4
                 call    DrawMouseCursor
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 push    cs
                 call    near ptr CheckPartyMemberItemFlag
                 jmp     loc_1BC22
@@ -21131,7 +21131,7 @@ loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
                 push    cs
                 call    near ptr sub_1CBC4
                 call    DrawMouseCursor
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 push    cs
                 call    near ptr CheckPartyMemberItemFlag
                 jmp     loc_1BC22
@@ -21837,7 +21837,7 @@ loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
                 mov     cx, 2
                 call    DrawStringColumn
                 call    DrawMouseCursor
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 call    sub_193BE
                 call    DrawPartyStatusIconRow
                 call    CopyPartyStatBlockToEmsCache
@@ -22393,7 +22393,7 @@ ShowItemUsagePreview proc far           ; CODE XREF: UseItem+82↑P
                 push    cs
                 call    near ptr BuildItemUseMessage
                 call    DrawMouseCursor
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 and     word_328C4, 0FFFEh
                 test    word_2E410, 8000h
                 jz      short loc_1CAB2
@@ -28233,7 +28233,7 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 call    ShowLocalAreaMap
                 call    sub_238CD
                 call    sub_2587E
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 call    ClearVideoMemoryRegion
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawMapEditorCoordinateReadout
@@ -29074,7 +29074,7 @@ sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
                 call    FormatNumberZeroPadded
                 mov     byte ptr [bx], 56h ; 'V'
                 call    writeString
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 call    ClearVideoMemoryRegion
                 call    DrawMapEditorCoordinateReadout
                 call    sub_2047B
@@ -31850,7 +31850,7 @@ loc_220B1:                              ; CODE XREF: ShowLocalAreaMap+1C4↑j
 
 loc_220BA:                              ; CODE XREF: ShowLocalAreaMap+246↑j
                 call    sub_2587E
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 call    sub_25862
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -31885,7 +31885,7 @@ loc_220F0:                              ; CODE XREF: ToggleMapViewMode+6↑j
                 call    DrawPicture
                 call    DrawPlayerPositionMarker
                 call    sub_2587E
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 call    sub_25862
                 call    DrawMouseCursor
                 call    sub_2587E
@@ -43556,7 +43556,7 @@ PlayMusicTrack  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-UpdateAmbientMusic proc far             ; CODE XREF: sub_162B6↑P
+UpdateAmbientMusic proc far             ; CODE XREF: WaitForKeypressTickingMusic↑P
                                         ; PollKeyboardInput+4↑P ...
                 test    g_driverStateFlags, 2 ; Timer-ISR-gated (~1 second, word_32958/word_3295A bit 0x200) day/night ambient music switch. If no track is forced (word_3297E==0), picks word_36CB1 (day) or word_36CB3 (night) based on whether word_36D01 (clock minutes-since-midnight) falls in [0x1A4,0x474] (7:00 AM-7:00 PM), then plays it via PlayMusicTrack if word_328C4 bit 0x2000 allows.
                 jz      short locret_28358
@@ -49464,7 +49464,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
                 call    DrawMouseCursor
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 mov     word_2E530, 0Bh
                 call    UpdateCursorForHeldItem
                 pop     word_36C79
@@ -49922,7 +49922,7 @@ loc_2B79A:                              ; CODE XREF: ShowConversationText_4000+6
                 call    sub_28A76
                 mov     si, bx
                 call    sub_238CD
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B85A
                 call    RestoreCursorBackgroundIfDirty
@@ -49955,7 +49955,7 @@ loc_2B845:                              ; CODE XREF: ShowConversationText_4000+9
 
 loc_2B850:                              ; CODE XREF: ShowConversationText_4000+B6↑j
                 call    sub_238CD
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
 
 loc_2B85A:                              ; CODE XREF: ShowConversationText_4000+65↑j
                 call    DrawMouseCursor
@@ -49989,7 +49989,7 @@ loc_2B8A0:                              ; CODE XREF: ShowConversationText_2000+3
                 call    sub_28A76
                 mov     si, bx
                 call    sub_238CD
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B8CB
                 cmp     word_31980, 0Bh
@@ -50032,7 +50032,7 @@ loc_2B911:                              ; CODE XREF: ShowConversationText_1000+3
                 call    sub_28A76
                 mov     si, bx
                 call    sub_238CD
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B93C
                 cmp     word_31980, 10h
@@ -50083,7 +50083,7 @@ loc_2B982:                              ; CODE XREF: ShowConversationText_800+34
                 call    sub_28A76
                 mov     si, bx
                 call    sub_238CD
-                call    sub_162B6
+                call    WaitForKeypressTickingMusic
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B9C8
                 cmp     word_31980, 10h
@@ -70257,8 +70257,8 @@ word_31958      dw 0C3h                 ; DATA XREF: RunMapEditorScreen+12↑r
                                         ; RunMapEditorScreen+11F↑w ...
 word_3195A      dw 8                    ; DATA XREF: RunMapEditorScreen+16↑r
                                         ; RunMapEditorScreen+20↑w ...
-word_3195C      dw 0                    ; DATA XREF: sub_162B6:loc_162C8↑r
-                                        ; sub_162B6+1F↑r ...
+word_3195C      dw 0                    ; DATA XREF: WaitForKeypressTickingMusic:loc_162C8↑r
+                                        ; WaitForKeypressTickingMusic+1F↑r ...
 word_3195E      dw 0                    ; DATA XREF: PlayMusicTrack+21↑r
                                         ; PlayMusicTrack+49↑r ...
 word_31960      dw 1                    ; DATA XREF: InitMemory+B9↑w

@@ -5171,6 +5171,20 @@ session's sound-system investigation had flagged as open.
 
 602 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: WaitForKeypressTickingMusic
+
+Named `sub_162B6` -> `WaitForKeypressTickingMusic`, called from 19
+sites across the codebase — a core "wait for a key, ticking ambient
+music each iteration" building block, distinct from the larger,
+already-named `PollKeyboardInput`. Loops `UpdateAmbientMusic` +
+`INT 21h AH=6` key polling; stores a received key into `byte_2E400`,
+or loops again unless `word_3195C` bits `0x2400` gate an early exit
+(clearing the key buffer, or forcing a synthetic ESC). Flushes the
+DOS keyboard buffer before returning. With 19 call sites, this is one
+of the more heavily-used primitives named this session.
+
+603 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

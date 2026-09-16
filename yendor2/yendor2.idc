@@ -2429,7 +2429,9 @@ static Bytes_0(void) {
 	set_cmt	(0X1629A,	"DOS - 2+ - ALLOCATE MEMORY\nBX = number of 16-byte paragraphs desired",	0);
 	create_insn	(x=0X1629A);
 	op_hex		(x,	0);
+	set_cmt	(0X162B6,	"Loops calling UpdateAmbientMusic then polling for a key (INT 21h AH=6). On a key, stores it in byte_2E400. On no key, loops again unless word_3195C bits 0x2400 gate an early exit (clearing byte_2E400, or forcing it to ESC/0x1B per bit 0x2000/0x400). Flushes the DOS keyboard buffer before returning. Called from 19 sites across the codebase.",	0);
 	create_insn	(0X162B6);
+	set_name	(0X162B6,	"WaitForKeypressTickingMusic");
 	set_cmt	(0X162BF,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X162BF);
 	op_hex		(x,	0);
@@ -3146,13 +3148,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X182CE);
 	op_hex		(x,	1);
 	set_name	(0X182CE,	"ApplyIconBarStatDelta");
-	create_insn	(0X182D6);
-	create_insn	(x=0X182DB);
-	op_hex		(x,	1);
-	create_insn	(x=0X182F7);
-	op_hex		(x,	1);
-	create_insn	(x=0X18312);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -3162,6 +3157,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X182D6);
+	create_insn	(x=0X182DB);
+	op_hex		(x,	1);
+	create_insn	(x=0X182F7);
+	op_hex		(x,	1);
+	create_insn	(x=0X18312);
+	op_hex		(x,	1);
 	set_cmt	(0X18333,	"RollEffectResistance: if [si+0xE]==0 (not yet resolved this pass) and the effect's high cost-flag bits (di+8 & 0xFF80) are set, sums the party member's equipment/bonus resistance fields (+0x20..+0x30, one per matching high bit of di+8) and calls FailsSavingThrow (threshold=word_32DC0). Records 0 into [si+0xE] if resisted, or the raw high cost-flags if the save failed.",	0);
 	create_insn	(0X18333);
 	set_name	(0X18333,	"RollEffectResistance");
@@ -5150,9 +5152,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1F1B8,	"Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.",	0);
 	create_insn	(0X1F1B8);
 	set_name	(0X1F1B8,	"GetListItemPosition");
-	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
-	create_insn	(0X1F1F4);
-	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
 }
 
 //------------------------------------------------------------------------
@@ -5162,6 +5161,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
+	create_insn	(0X1F1F4);
+	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
 	create_insn	(x=0X1F217);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F222);
@@ -6963,10 +6965,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25FCD,	"Draws 'PROTECTIONS:' plus 9 rows pairing DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/CURSING/HEXING/JINXING (table 0x7B31) with their values at +0x20..+0x30 -- confirms, by name, the '9 contiguous resistance values' found via RollEffectResistance. Called from sub_25B34.",	0);
 	create_insn	(0X25FCD);
 	set_name	(0X25FCD,	"DrawCharacterProtectionsList");
-	set_cmt	(0X25FD6,	"msg",	0);
-	set_cmt	(0X26022,	"Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.",	0);
-	create_insn	(0X26022);
-	set_name	(0X26022,	"LoadNextContainerInChain");
 }
 
 //------------------------------------------------------------------------
@@ -6976,6 +6974,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X25FD6,	"msg",	0);
+	set_cmt	(0X26022,	"Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.",	0);
+	create_insn	(0X26022);
+	set_name	(0X26022,	"LoadNextContainerInChain");
 	set_cmt	(0X2602A,	"this",	0);
 	create_insn	(0X26058);
 	set_cmt	(0X2607F,	"Draws one party member's portrait panel at word_328BC/word_328C0: character icon ([+0x14]), a status bar (sub_267A7), a condition icon ([+0x15C]/[+0x10]), and further icon draws (sub_2681B, not traced). Called via ShowPartyPortraitForSlot.",	0);
@@ -9364,9 +9366,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B71D,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B71D);
 	set_name	(0X2B71D,	"LoadConversationText_4000");
-	set_cmt	(0X2B739,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
-	create_insn	(0X2B739);
-	set_name	(0X2B739,	"LoadConversationText_1000");
 }
 
 //------------------------------------------------------------------------
@@ -9376,6 +9375,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2B739,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
+	create_insn	(0X2B739);
+	set_name	(0X2B739,	"LoadConversationText_1000");
 	set_cmt	(0X2B755,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B755);
 	set_name	(0X2B755,	"LoadConversationText_2000");
