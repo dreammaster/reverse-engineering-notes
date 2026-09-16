@@ -5844,6 +5844,25 @@ an "equipment/character-panel only" flag.
 
 672 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ComputeCostMessageIndentMode, ClearVideoBackBufferLowerRegion
+
+Named `sub_1CB37` -> `ComputeCostMessageIndentMode`, called from
+`sub_1A5F6` and `ShowHealingCostPrompt` (both known
+`DrawIndentedTextColumn` preparers): picks a wrapping mode
+(`word_328C4` bits `0x2`/`0x4`/`0x8`/`0x10`/`0x20` + `fontOffset`)
+based on which of 4 ascending thresholds a cost/quantity record field
+falls into, with the threshold table itself selected by
+`word_3197C`. Reads as: pick the hanging-indent wrapping style
+appropriate for how many digits a cost value has, before drawing a
+wrapped "IT WILL COST `<n>`..." style message via
+`DrawIndentedTextColumn`.
+
+Named `sub_1191E` -> `ClearVideoBackBufferLowerRegion`, called once
+from `ShowIntroPicture`: zeroes the lower portion of the off-screen
+back buffer.
+
+674 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

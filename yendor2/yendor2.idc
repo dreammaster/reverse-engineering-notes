@@ -1355,7 +1355,9 @@ static Bytes_0(void) {
 	set_cmt	(0X11900,	"Polls for a keypress but only cares about ESC: any other key is silently discarded (byte_2E400 cleared). Returns ZF set iff byte_2E400==0x1B. Called from ShowIntroPicture. Byte-for-byte identical to PollForEscapeKeyOnlyAlt (sub_15249), another overlay-segment duplicate.",	0);
 	create_insn	(0X11900);
 	set_name	(0X11900,	"PollForEscapeKeyOnly");
+	set_cmt	(0X1191E,	"Zeroes 0x44C0 words (0x8980 bytes) of _videoBufferSeg starting at offset 0x6900 -- clears the lower portion of the off-screen back buffer (below the status/text area). Called once from ShowIntroPicture.",	0);
 	create_insn	(0X1191E);
+	set_name	(0X1191E,	"ClearVideoBackBufferLowerRegion");
 	create_insn	(0X1192D);
 	create_insn	(0X11940);
 	set_cmt	(0X11953,	"One step of a palette fade: nudges each of cx DAC registers one step from its current value toward a target buffer, then calls SetPaletteRange. Called repeatedly (once per animation frame) by ShowIntroPicture to fade a picture's palette in/out smoothly.",	0);
@@ -2911,6 +2913,15 @@ static Bytes_0(void) {
 	set_cmt	(0X17795,	"Lock-examination message shower (called from UseAbilityCommand and HandleMovementInput). Shows 'NOT LOCKED'/'LOCKED'/'MAGICALLY LOCKED' (word_32DCE bit 0x20)/'LOCKED AND TRAPPED', or 'REQUIRES SPECIAL KEY: <tier> KEY' -- the exact 7-tier key hierarchy (BRASS/BRONZE/COPPER/IRON/STEEL/SILVER/GOLD, word_32DCE bits 0x200-0x8000) already cross-confirmed early in the session against the Hex Hacking Item Guide's door-key item table. Gated on the current party member's [+0x6C] field (plausibly a lockpicking/perception skill) against thresholds.",	0);
 	create_insn	(0X17795);
 	set_name	(0X17795,	"ShowLockStatus");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1779A);
 	op_hex		(x,	1);
 	create_insn	(x=0X177CD);
@@ -2927,15 +2938,6 @@ static Bytes_0(void) {
 	set_cmt	(0X17835,	"msg",	0);
 	create_insn	(x=0X17849);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X17854);
 	op_hex		(x,	1);
 	create_insn	(x=0X1785F);
@@ -4557,8 +4559,10 @@ static Bytes_1(void) {
 	create_insn	(x=0X1CB06);
 	op_hex		(x,	1);
 	create_insn	(0X1CB15);
+	set_cmt	(0X1CB37,	"Picks a DrawIndentedTextColumn wrapping mode (word_328C4 bits 0x2/0x4/0x8/0x10/0x20 + fontOffset) based on which of 4 ascending thresholds the record at word_3197E's [+0x6E] field falls into, with the threshold table itself selected by word_3197C. Called from sub_1A5F6 and ShowHealingCostPrompt before drawing a wrapped cost message.",	0);
 	create_insn	(x=0X1CB37);
 	op_hex		(x,	1);
+	set_name	(0X1CB37,	"ComputeCostMessageIndentMode");
 	create_insn	(x=0X1CB87);
 	op_hex		(x,	1);
 	create_insn	(0X1CB93);
@@ -4820,6 +4824,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1D937,	"Highlights the currently selected ability (word_32974) in the 4-slot action UI, if any is selected. Called from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X1D937);
 	set_name	(0X1D937,	"HighlightSelectedAbilityIcon");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1D941);
 	set_cmt	(0X1D9E5,	"Applies a resolved attack's damage (word_2E49C) to the target (si), reducing it via a resistance bit-scan (word_2E49E attack type flags vs [si+0x98] resistance flags -- each match halves the damage), then subtracts from HP ([si+0x10], clamped to 0) and sets display flags. Shared by ranged/ability attacks (sub_1DA60) and sub_1DA2C.",	0);
 	create_insn	(0X1D9E5);
@@ -4835,15 +4848,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1DA2C,	"Straight-line multi-target attack: calls GetMonsterAtViewportRow for 3 consecutive depth rows (word_3292C incrementing), applying ApplyResolvedDamageWithResistance to whatever monster is found at each. Matches the 'IN A STRAIGHT LINE' targeting text from ShowClueBookSpellDetail's message table. Called from sub_1DA60.",	0);
 	create_insn	(0X1DA2C);
 	set_name	(0X1DA2C,	"ApplyDamageAlongCorridorLine");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1DA42,	"Shows a combat message (ax, via sub_28412) unless sub_2827E reports speech/sound busy, in which case it just waits 6 ticks instead. Called from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X1DA42);
 	set_name	(0X1DA42,	"ShowCombatMessageOrWait");
@@ -6602,6 +6606,15 @@ static Bytes_2(void) {
 	set_cmt	(0X23B19,	"Generic status-panel message display: sets position (0xF0,0x60) and colors, clears the panel if dirty, restores cursor background if dirty, then DrawStringColumn(bx, cx) + DrawMouseCursor + sub_238CD. Callers pass bx=message pointer, cx=line count. Confirmed uses: 'NOTHING HERE' (1 line, after a failed search) and 'YOU ARE NOT'/'YET READY!' (2 lines, after a quest-flag gate). Called from `start`.",	0);
 	create_insn	(0X23B19);
 	set_name	(0X23B19,	"ShowStatusPanelMessage");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23B43);
 	op_hex		(x,	1);
 	create_insn	(0X23B5E);
@@ -6618,15 +6631,6 @@ static Bytes_2(void) {
 	set_cmt	(0X23BAE,	"Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
 	create_insn	(0X23BAE);
 	set_name	(0X23BAE,	"ShowPartyMembers");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X23BBD);
 	create_insn	(0X23BC8);
 	create_insn	(x=0X23BF5);
@@ -8363,6 +8367,15 @@ static Bytes_3(void) {
 	set_cmt	(0X29878,	"Core picture-drawing primitive: looks up g_pictureDir[word_2E532], calls LoadPictureIntoEms to ensure it's EMS-resident, then blits width x height pixels from the EMS page frame to the video buffer at (x, y). Blit mode selected by _font_bgTransparent (0-5 -- different transparency/color-key branches).",	0);
 	create_insn	(0X29878);
 	set_name	(0X29878,	"DrawPicture");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29882);
 	op_hex		(x,	1);
 	create_insn	(x=0X29888);
@@ -8472,15 +8485,6 @@ static Bytes_3(void) {
 	set_cmt	(0X29B06,	"Frees the video buffer segment (_videoBufferSeg) via INT 21h/AH=49h. Called unconditionally from ErrorExit before exiting.",	0);
 	create_insn	(0X29B06);
 	set_name	(0X29B06,	"FreeVideoBuffer");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29B0A);
 	op_hex		(x,	1);
 	set_cmt	(0X29B0C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -11236,6 +11240,15 @@ static Bytes_4(void) {
 	set_name	(0X35CB5,	"aCleric");
 	create_strlit	(0X35CC0,	0XB);
 	set_name	(0X35CC0,	"aTransmuter");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35CCB,	0XB);
 	set_name	(0X35CCB,	"aCavalier");
 	create_strlit	(0X35CD6,	0XB);
@@ -11298,15 +11311,6 @@ static Bytes_4(void) {
 	set_name	(0X35E45,	"aAndHaveEarnedA");
 	create_strlit	(0X35E61,	0X1E);
 	set_name	(0X35E61,	"aUnfortunatelyY");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35E7F,	0X21);
 	set_name	(0X35E7F,	"aToMasterThisCh");
 	create_strlit	(0X35EA0,	0X1F);

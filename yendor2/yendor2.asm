@@ -2617,7 +2617,7 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
                 jz      short loc_118B6
                 push    si
                 call    sub_119F6
-                call    sub_1191E
+                call    ClearVideoBackBufferLowerRegion
                 pop     si
                 mov     _textPos_x, 28h ; '('
                 mov     _textPos_y, 57h ; 'W'
@@ -2684,14 +2684,15 @@ PollForEscapeKeyOnly endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1191E       proc near               ; CODE XREF: ShowIntroPicture+E5↑p
-                mov     es, _videoBufferSeg
+ClearVideoBackBufferLowerRegion proc near
+                                        ; CODE XREF: ShowIntroPicture+E5↑p
+                mov     es, _videoBufferSeg ; Zeroes 0x44C0 words (0x8980 bytes) of _videoBufferSeg starting at offset 0x6900 -- clears the lower portion of the off-screen back buffer (below the status/text area). Called once from ShowIntroPicture.
                 mov     di, 6900h
                 xor     ax, ax
                 mov     cx, 44C0h
                 rep stosw
                 retn
-sub_1191E       endp
+ClearVideoBackBufferLowerRegion endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -18465,7 +18466,7 @@ loc_1A611:                              ; CODE XREF: sub_1A5F6+145↓j
                 assume es:seg129
                 rep movsb
                 mov     ds, bx
-                call    sub_1CB37
+                call    ComputeCostMessageIndentMode
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
                 mov     _font_fgColor, 0Dh
@@ -20721,7 +20722,7 @@ loc_1B9AA:                              ; CODE XREF: ShowHealingCostPrompt+40↓
                 mov     ax, 806Dh
                 call    StrCat
                 push    cs
-                call    near ptr sub_1CB37
+                call    near ptr ComputeCostMessageIndentMode
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
                 mov     _font_fgColor, 0Dh
@@ -20874,7 +20875,7 @@ loc_1BAF2:                              ; CODE XREF: BuildItemUseMessage+12↑j
 
 loc_1BB1B:                              ; CODE XREF: BuildItemUseMessage+5A↑j
                 push    cs
-                call    near ptr sub_1CB37
+                call    near ptr ComputeCostMessageIndentMode
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
                 mov     _font_fgColor, 0Dh
@@ -21153,7 +21154,7 @@ loc_1BDC9:                              ; CODE XREF: sub_1BBED+24↑j
                 push    cs
                 call    near ptr DrawEligibleItemList
                 push    cs
-                call    near ptr sub_1CB37
+                call    near ptr ComputeCostMessageIndentMode
                 mov     di, 0BCEh
                 mov     ax, [di+1Ch]
                 mov     word_3298A, ax
@@ -22468,9 +22469,9 @@ ShowItemUsagePreview endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CB37       proc far                ; CODE XREF: sub_1A5F6+6B↑P
+ComputeCostMessageIndentMode proc far   ; CODE XREF: sub_1A5F6+6B↑P
                                         ; ShowHealingCostPrompt+73↑p ...
-                and     word_328C4, 0FFC1h
+                and     word_328C4, 0FFC1h ; Picks a DrawIndentedTextColumn wrapping mode (word_328C4 bits 0x2/0x4/0x8/0x10/0x20 + fontOffset) based on which of 4 ascending thresholds the record at word_3197E's [+0x6E] field falls into, with the threshold table itself selected by word_3197C. Called from sub_1A5F6 and ShowHealingCostPrompt before drawing a wrapped cost message.
                 mov     fontOffset, 2
                 mov     ax, 41h ; 'A'
                 mov     dx, 46h ; 'F'
@@ -22497,15 +22498,15 @@ sub_1CB37       proc far                ; CODE XREF: sub_1A5F6+6B↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1CB93:                              ; CODE XREF: sub_1CB37+1C↑j
-                                        ; sub_1CB37+35↑j ...
+loc_1CB93:                              ; CODE XREF: ComputeCostMessageIndentMode+1C↑j
+                                        ; ComputeCostMessageIndentMode+35↑j ...
                 mov     bx, word_3197E
                 cmp     [bx+6Eh], ax
                 jge     short loc_1CB9D
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1CB9D:                              ; CODE XREF: sub_1CB37+63↑j
+loc_1CB9D:                              ; CODE XREF: ComputeCostMessageIndentMode+63↑j
                 cmp     [bx+6Eh], dx
                 jl      short loc_1CBBE
                 cmp     [bx+6Eh], di
@@ -22516,20 +22517,20 @@ loc_1CB9D:                              ; CODE XREF: sub_1CB37+63↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1CBB2:                              ; CODE XREF: sub_1CB37+73↑j
+loc_1CBB2:                              ; CODE XREF: ComputeCostMessageIndentMode+73↑j
                 or      word_328C4, 4
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1CBB8:                              ; CODE XREF: sub_1CB37+6E↑j
+loc_1CBB8:                              ; CODE XREF: ComputeCostMessageIndentMode+6E↑j
                 or      word_328C4, 8
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1CBBE:                              ; CODE XREF: sub_1CB37+69↑j
+loc_1CBBE:                              ; CODE XREF: ComputeCostMessageIndentMode+69↑j
                 or      word_328C4, 10h
                 retf
-sub_1CB37       endp
+ComputeCostMessageIndentMode endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -70303,9 +70304,9 @@ word_31976      dw 0                    ; DATA XREF: FadePaletteStep+8↑w
                 db    0
                 db    0
 word_3197C      dw 0                    ; DATA XREF: LoadItemData+F4↑w
-                                        ; sub_1CB37+17↑r ...
+                                        ; ComputeCostMessageIndentMode+17↑r ...
 word_3197E      dw 0                    ; DATA XREF: LoadItemData+127↑w
-                                        ; sub_1CB37:loc_1CB93↑r
+                                        ; ComputeCostMessageIndentMode:loc_1CB93↑r
 word_31980      dw 0                    ; DATA XREF: sub_27B0D+30↑w
                                         ; sub_27CC9+30↑w ...
 word_31982      dw 0                    ; DATA XREF: FadePaletteStep+4↑w
