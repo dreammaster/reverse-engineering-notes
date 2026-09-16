@@ -9623,7 +9623,9 @@ static Bytes_3(void) {
 	create_insn	(0X2D170);
 	create_insn	(x=0X2D171);
 	op_hex		(x,	1);
+	set_cmt	(0X2D195,	"Calls ResolveAttack, then latches word_332E8 into word_2E49C the first time through (only if word_2E49C was still 0), setting errorCode=1. Field identities ([di+0x58], party record +0x62, word_332E8) not confirmed. Called once from the still-unnamed sub_2C0FE.",	0);
 	create_insn	(0X2D195);
+	set_name	(0X2D195,	"ResolveAttackAndLatchFirstHit");
 	create_insn	(x=0X2D1C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D1CD);
@@ -10715,6 +10717,15 @@ static Bytes_3(void) {
 	set_name	(0X3584A,	"aEscToUndo");
 	create_strlit	(0X35857,	0XD);
 	set_name	(0X35857,	"aIHaveNo");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35864,	0XD);
 	set_name	(0X35864,	"aNeedFor");
 	create_strlit	(0X35871,	0XD);
@@ -10731,15 +10742,6 @@ static Bytes_3(void) {
 	set_name	(0X358B2,	"aUnits");
 	create_strlit	(0X358BF,	0XE);
 	set_name	(0X358BF,	"aItWillCost");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X358CD,	0X6);
 	set_name	(0X358CD,	"aGold_0");
 	create_strlit	(0X358D3,	0X19);

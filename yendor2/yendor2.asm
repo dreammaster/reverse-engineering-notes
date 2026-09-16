@@ -52529,7 +52529,7 @@ loc_2CF51:                              ; CODE XREF: sub_2C0FE+791↑j
                 mov     ax, word_332DC
                 call    sub_2D498
                 mov     di, word_32A1E
-                call    sub_2D195
+                call    ResolveAttackAndLatchFirstHit
                 cmp     errorCode, 0
                 jz      short loc_2CF8D
                 mov     ax, word_2E49C
@@ -52734,8 +52734,8 @@ sub_2D171       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D195       proc near               ; CODE XREF: sub_2C0FE+E65↑p
-                mov     si, word_328D4
+ResolveAttackAndLatchFirstHit proc near ; CODE XREF: sub_2C0FE+E65↑p
+                mov     si, word_328D4  ; Calls ResolveAttack, then latches word_332E8 into word_2E49C the first time through (only if word_2E49C was still 0), setting errorCode=1. Field identities ([di+0x58], party record +0x62, word_332E8) not confirmed. Called once from the still-unnamed sub_2C0FE.
                 mov     ax, [di+58h]
                 mov     bx, [si+62h]
                 mov     cx, word_332E8
@@ -52747,9 +52747,9 @@ sub_2D195       proc near               ; CODE XREF: sub_2C0FE+E65↑p
                 mov     ax, word_332E8
                 mov     word_2E49C, ax
 
-locret_2D1C1:                           ; CODE XREF: sub_2D195+1E↑j
+locret_2D1C1:                           ; CODE XREF: ResolveAttackAndLatchFirstHit+1E↑j
                 retn
-sub_2D195       endp
+ResolveAttackAndLatchFirstHit endp
 
 
 ; =============== S U B R O U T I N E =======================================

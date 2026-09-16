@@ -3839,6 +3839,16 @@ guards elsewhere in the clue book.
 
 489 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ResolveAttackAndLatchFirstHit
+
+Named `sub_2D195` -> `ResolveAttackAndLatchFirstHit`, called once from
+the still-unnamed combat dispatcher `sub_2C0FE`: calls `ResolveAttack`
+then latches a value into `word_2E49C` the first time through. Exact
+field identities not confirmed — named for the clear mechanical shape
+only, without forcing a name onto `sub_2C0FE` itself.
+
+490 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

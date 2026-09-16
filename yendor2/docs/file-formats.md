@@ -888,7 +888,11 @@ sequence) without itself being traced. Also called (twice) from it:
 `DrawAnimationFrameAndAdvance` (was `sub_2D3FE`) — a small, generic
 "draw this animation frame, return the next (wrapping) frame index"
 cycler, drawing picture `ax` at x=`bx` and advancing/wrapping the frame
-counter within `[word_332EC, word_332EC+word_332EE)`.
+counter within `[word_332EC, word_332EC+word_332EE)`. Also called once
+from it: `ResolveAttackAndLatchFirstHit` (was `sub_2D195`) — calls
+`ResolveAttack` then latches a value (`word_332E8`) into `word_2E49C`
+the first time through (only if it was still 0); exact field identities
+not confirmed.
 
 **Ranged attacks and area-effect abilities against a corridor monster**:
 `ResolveAttackOrAbilityAction` (called from `sub_1D4B8`, an unnamed
