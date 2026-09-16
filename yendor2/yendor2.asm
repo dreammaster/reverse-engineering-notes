@@ -893,7 +893,7 @@ loc_1077C:                              ; CODE XREF: sub_1075E+1B↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, 8FD2h
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 call    sub_238CD
                 mov     errorCode, 1
@@ -2624,13 +2624,13 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
                 mov     cx, [si]
                 mov     bx, [si+4]
                 mov     _font_fgColor, 0E0h
-                call    sub_23B76
+                call    DrawStringColumn
                 dec     _textPos_x
                 dec     _textPos_y
                 mov     cx, [si]
                 mov     bx, [si+4]
                 mov     _font_fgColor, 0EBh
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 call    sub_11900
                 jz      short loc_118B6
@@ -3200,13 +3200,13 @@ loc_11E63:                              ; CODE XREF: sub_11E4A+16↑j
 
 loc_11E8C:                              ; CODE XREF: sub_11E4A+27↑j
                 push    cx
-                call    sub_23B76
+                call    DrawStringColumn
                 pop     cx
                 dec     _textPos_x
                 dec     _textPos_y
                 pop     _font_fgColor
                 pop     bx
-                call    sub_23B76
+                call    DrawStringColumn
 
 loc_11EA5:                              ; CODE XREF: sub_11E4A+40↑j
                 inc     _textPos_x
@@ -5900,7 +5900,7 @@ loc_138F4:                              ; CODE XREF: UpdateScrollArrows+27↑j
                 mov     _textPos_y, 17h
                 mov     bx, 0AFA8h
                 mov     cx, 19h
-                call    sub_23B76
+                call    DrawStringColumn
                 mov     _font_fgColor, 0Dh
                 mov     _textPos_x, 81h
                 mov     _textPos_y, 0A7h
@@ -6095,12 +6095,12 @@ ShowClueBookSpellDetail proc near       ; CODE XREF: RunClueBookSpellCategory+35
                 mov     _textPos_y, 28h ; '('
                 mov     bx, 8CAFh
                 mov     cx, 3
-                call    sub_23B76
+                call    DrawStringColumn
                 mov     _textPos_x, 2Ch ; ','
                 mov     _textPos_y, 4Ch ; 'L'
                 mov     bx, 8CC4h
                 mov     cx, 5
-                call    sub_23B76
+                call    DrawStringColumn
                 mov     _font_fgColor, 8Ah
                 mov     _textPos_x, 0ECh
                 mov     _textPos_y, 28h ; '('
@@ -7706,7 +7706,7 @@ ShowClueBookHelpScreen proc far         ; CODE XREF: ShowClueBook+6B↑P
                 mov     _font_fgColor, 8
                 mov     cx, 0Dh
                 mov     bx, 8748h
-                call    sub_23B76
+                call    DrawStringColumn
                 push    cs
                 call    near ptr DrawClueBookNavBar
                 call    DrawMouseCursor
@@ -9946,13 +9946,13 @@ loc_161E9:                              ; CODE XREF: sub_161D0+16↑j
 
 loc_16212:                              ; CODE XREF: sub_161D0+27↑j
                 push    cx
-                call    sub_23B76
+                call    DrawStringColumn
                 pop     cx
                 dec     _textPos_x
                 dec     _textPos_y
                 pop     _font_fgColor
                 pop     bx
-                call    sub_23B76
+                call    DrawStringColumn
 
 loc_1622B:                              ; CODE XREF: sub_161D0+40↑j
                 inc     _textPos_x
@@ -12796,7 +12796,7 @@ loc_17821:                              ; CODE XREF: ShowLockStatus+7E↑j
 
 loc_17896:                              ; CODE XREF: ShowLockStatus+40↑j
                                         ; ShowLockStatus+57↑j ...
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
@@ -14633,7 +14633,7 @@ loc_1861E:                              ; CODE XREF: RefreshPartyPortraits+65↑
                 jnz     short loc_18681
                 mov     cx, 3
                 mov     bx, 7FD0h
-                call    sub_23B76
+                call    DrawStringColumn
                 jmp     short loc_18692
 ; ---------------------------------------------------------------------------
 
@@ -14641,7 +14641,7 @@ loc_1866E:                              ; CODE XREF: RefreshPartyPortraits+B5↑
                 mov     _textPos_y, 0A7h
                 mov     cx, 2
                 mov     bx, 813Bh
-                call    sub_23B76
+                call    DrawStringColumn
                 jmp     short loc_18692
 ; ---------------------------------------------------------------------------
 
@@ -14649,7 +14649,7 @@ loc_18681:                              ; CODE XREF: RefreshPartyPortraits+BD↑
                 mov     _textPos_y, 0A7h
                 mov     cx, 2
                 mov     bx, 81CEh
-                call    sub_23B76
+                call    DrawStringColumn
 
 loc_18692:                              ; CODE XREF: RefreshPartyPortraits+8A↑j
                                         ; RefreshPartyPortraits+CA↑j ...
@@ -15725,7 +15725,7 @@ TryEnhanceItemForGold proc near         ; CODE XREF: sub_1869D+558↑p
                 mov     _font_bgTransparent, 0
                 mov     cx, 2
                 mov     bx, 815Ah
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 retn
 ; ---------------------------------------------------------------------------
@@ -15797,7 +15797,7 @@ ShowInsufficientGoldMessage proc near   ; CODE XREF: TryEnhanceItemForGold+54↑
                 mov     _font_bgTransparent, 0
                 mov     cx, 3
                 mov     bx, 8376h
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 retn
 ShowInsufficientGoldMessage endp
@@ -15872,7 +15872,7 @@ TryRepairItemForGold proc near          ; CODE XREF: sub_1869D+566↑p
                 mov     _font_bgTransparent, 0
                 mov     cx, 2
                 mov     bx, 81E6h
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 retn
 ; ---------------------------------------------------------------------------
@@ -15997,7 +15997,7 @@ TrySellItemForGold proc near            ; CODE XREF: sub_1869D+54A↑p
                 mov     _font_bgTransparent, 0
                 mov     cx, 4
                 mov     bx, 7FF7h
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 retn
 ; ---------------------------------------------------------------------------
@@ -18590,7 +18590,7 @@ loc_1A7B1:                              ; CODE XREF: ShowConfirmPrompt+64↓j
                 mov     _textPos_y, ax
                 mov     bx, [si+6]
                 mov     cx, [si+8]
-                call    sub_23B76
+                call    DrawStringColumn
                 pop     cx
                 add     si, 0Ah
                 loop    loc_1A7B1
@@ -19559,7 +19559,7 @@ loc_1AF4C:                              ; CODE XREF: PromptBuyOreQuantity+116↓
                 mov     _font_fgColor, 0Dh
                 mov     bx, 8186h
                 mov     cx, 3
-                call    sub_23B76
+                call    DrawStringColumn
                 mov     ax, g_partyGold
                 mov     word_3881C, ax
                 mov     ax, word_36D15
@@ -21045,7 +21045,7 @@ loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 mov     _font_fgColor, 0Fh
                 mov     cx, 4
                 mov     bx, 8601h
-                call    sub_23B76
+                call    DrawStringColumn
                 push    cs
                 call    near ptr sub_1CBC4
                 call    DrawMouseCursor
@@ -21082,7 +21082,7 @@ loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
                 mov     _font_fgColor, 0Fh
                 mov     cx, 3
                 mov     bx, 859Bh
-                call    sub_23B76
+                call    DrawStringColumn
                 mov     byte ptr word_38808, 0
                 mov     ax, 85D5h
                 mov     bx, 0AFA8h
@@ -21813,7 +21813,7 @@ loc_1C460:                              ; CODE XREF: UseTrainingItem+331↑j
                 mov     _font_fgColor, 0Fh
                 mov     bx, 84FAh
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    GetClassNameString
                 mov     _textPos_y, 61h ; 'a'
                 mov     _textPos_x, 6Ah ; 'j'
@@ -21830,7 +21830,7 @@ loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
                 mov     _font_fgColor, 0Dh
                 mov     bx, 80EAh
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 call    sub_162B6
                 call    sub_193BE
@@ -21855,7 +21855,7 @@ loc_1C4E1:                              ; CODE XREF: UseTrainingItem+24↑j
                 mov     _font_fgColor, 0Dh
                 mov     bx, 86C4h
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 mov     _textPos_x, 82h
                 mov     _textPos_y, 49h ; 'I'
                 mov     _font_fgColor, 8Ah
@@ -25691,7 +25691,7 @@ loc_1E662:                              ; CODE XREF: RestPartyAndAdvanceClock+13
                 mov     _textPos_y, 60h ; '`'
                 mov     bx, 7DA5h
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 mov     ax, 3
                 call    sub_28412
@@ -25788,7 +25788,7 @@ loc_1E796:                              ; CODE XREF: RestPartyAndAdvanceClock+14
                 mov     _textPos_y, 6Ch ; 'l'
                 mov     bx, 7D58h
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -25882,7 +25882,7 @@ loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 mov     _textPos_y, 60h ; '`'
                 mov     bx, 7D3Eh
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 mov     _font_fgColor, 0Fh
                 mov     word_38808, 38h ; '8'
                 mov     ax, word_2E544
@@ -25890,7 +25890,7 @@ loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 mov     word_3880A, ax
                 mov     bx, 0AFA8h
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 call    sub_238CD
                 call    sub_1FD03
@@ -31402,7 +31402,7 @@ loc_21C63:                              ; CODE XREF: sub_219FA+25E↑j
                 jz      short loc_21C11
                 mov     cx, bx
                 mov     bx, 0AFA8h
-                call    sub_23B76
+                call    DrawStringColumn
                 jmp     short loc_21C11
 sub_219FA       endp
 
@@ -31424,7 +31424,7 @@ sub_21C79       proc far                ; CODE XREF: sub_17032+8B↑P
                 mov     bx, word_2E546
                 add     bx, 13h
                 mov     cx, 3
-                call    sub_23B76
+                call    DrawStringColumn
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retf
@@ -32077,7 +32077,7 @@ ShowMapSkillTooLowMessage proc near     ; CODE XREF: ShowLocalAreaMap+10↑p
                 mov     _videoSegment, ax
                 mov     bx, 7D7Eh
                 mov     cx, 3
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 retn
 ShowMapSkillTooLowMessage endp
@@ -35044,17 +35044,17 @@ loc_23ADC:                              ; CODE XREF: seg075:0050↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23AF2       proc far                ; CODE XREF: ShowCharacterSkills+89↓P
+WriteStringWithHighlightedChar proc far ; CODE XREF: ShowCharacterSkills+89↓P
                                         ; ShowCharacterSkills+96↓P ...
-                push    _textPos_x
+                push    _textPos_x      ; Writes a string char-by-char, coloring every character word_2E414 except the Nth (N = initial cx), which uses word_2E412 -- a single-highlighted-character string draw, plausibly for a hotkey letter in a tab/menu label. Called 3 times from ShowCharacterSkills's setup.
 
-loc_23AF6:                              ; CODE XREF: sub_23AF2+1F↓j
+loc_23AF6:                              ; CODE XREF: WriteStringWithHighlightedChar+1F↓j
                 mov     ax, word_2E414
                 cmp     cx, 1
                 jnz     short loc_23B01
                 mov     ax, word_2E412
 
-loc_23B01:                              ; CODE XREF: sub_23AF2+A↑j
+loc_23B01:                              ; CODE XREF: WriteStringWithHighlightedChar+A↑j
                 dec     cx
                 mov     _font_fgColor, ax
                 mov     al, [bx]
@@ -35065,11 +35065,11 @@ loc_23B01:                              ; CODE XREF: sub_23AF2+A↑j
                 jmp     short loc_23AF6
 ; ---------------------------------------------------------------------------
 
-loc_23B13:                              ; CODE XREF: sub_23AF2+17↑j
+loc_23B13:                              ; CODE XREF: WriteStringWithHighlightedChar+17↑j
                 inc     bx
                 pop     _textPos_x
                 retf
-sub_23AF2       endp
+WriteStringWithHighlightedChar endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35090,7 +35090,7 @@ sub_23B19       proc far                ; CODE XREF: start+5A0↑P
                 call    RestoreCursorBackgroundIfDirty
                 pop     bx
                 push    cs
-                call    near ptr sub_23B76
+                call    near ptr DrawStringColumn
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
@@ -35123,15 +35123,15 @@ writeString     endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23B76       proc far                ; CODE XREF: sub_1075E+5A↑P
+DrawStringColumn proc far               ; CODE XREF: sub_1075E+5A↑P
                                         ; ShowIntroPicture+100↑P ...
-                push    dx
+                push    dx              ; Draws cx consecutive null-terminated strings from bx, stacked vertically (each row +6 y). Used to draw the 9 PROTECTIONS/AFFLICTIONS name columns, among others.
                 mov     dx, _textPos_x
                 push    dx
                 push    _textPos_y
 
-loc_23B80:                              ; CODE XREF: sub_23B76+16↓j
-                                        ; sub_23B76+22↓j
+loc_23B80:                              ; CODE XREF: DrawStringColumn+16↓j
+                                        ; DrawStringColumn+22↓j
                 mov     al, [bx]
                 or      al, al
                 jz      short loc_23B8E
@@ -35140,7 +35140,7 @@ loc_23B80:                              ; CODE XREF: sub_23B76+16↓j
                 jmp     short loc_23B80
 ; ---------------------------------------------------------------------------
 
-loc_23B8E:                              ; CODE XREF: sub_23B76+E↑j
+loc_23B8E:                              ; CODE XREF: DrawStringColumn+E↑j
                 inc     bx
                 mov     _textPos_x, dx
                 add     _textPos_y, 6
@@ -35149,7 +35149,7 @@ loc_23B8E:                              ; CODE XREF: sub_23B76+E↑j
                 pop     _textPos_x
                 pop     dx
                 retf
-sub_23B76       endp
+DrawStringColumn endp
 
 seg075          ends
 
@@ -35991,31 +35991,31 @@ ShowCharacterSkills proc near           ; CODE XREF: ShowPartyMembers:loc_23BC8�
                 mov     bx, 7982h
                 mov     _textPos_x, 8
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 mov     _textPos_y, 60h ; '`'
                 mov     cx, 2
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 mov     _textPos_y, 8Dh
                 mov     cx, 3
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     cx, 4
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 call    sub_25595
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -36203,7 +36203,7 @@ loc_2469E:                              ; CODE XREF: ShowCharacterInventory+E2�
                 mov     word_2E414, 0Fh
                 mov     bx, 7A3Eh
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
 
 loc_246C9:                              ; CODE XREF: ShowCharacterInventory+F6↑j
                 call    sub_25595
@@ -36595,7 +36595,7 @@ loc_24AA4:                              ; CODE XREF: ShowCharacterEquipment+58�
                 mov     bx, 79FAh
 
 loc_24AF0:                              ; CODE XREF: ShowCharacterEquipment+90↑j
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 mov     _font_bgTransparent, 1
                 call    sub_25595
                 call    DrawMouseCursor
@@ -36731,10 +36731,10 @@ ShowCharacterStats proc near            ; CODE XREF: ShowPartyMembers+37↑p
                 mov     word_2E414, 0Fh
                 mov     bx, 8572h
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 12h
                 mov     cx, 6
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 call    sub_25595
                 call    DrawMouseCursor
 
@@ -37167,27 +37167,27 @@ ShowCharacterSummary proc near          ; CODE XREF: ShowPartyMembers+5A↑p
                 mov     word_2E414, 0Fh
                 mov     bx, 7A5Ch
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 mov     _textPos_y, 45h ; 'E'
                 mov     bx, 7A22h
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     bx, 853Ch
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     bx, 8572h
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     bx, 8582h
                 mov     cx, 6
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 add     _textPos_y, 9
                 mov     bx, 7A3Eh
                 mov     cx, 1
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 call    sub_25595
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -37615,7 +37615,7 @@ sub_25595       proc near               ; CODE XREF: ShowCharacterSkills+F8↑p
                 mov     cx, 2
 
 loc_255C1:                              ; CODE XREF: sub_25595+24↑j
-                call    sub_23AF2
+                call    WriteStringWithHighlightedChar
                 retn
 sub_25595       endp
 
@@ -38753,7 +38753,7 @@ ShowLevelUpMessage proc far             ; CODE XREF: CheckAndAnnounceLevelUp+33�
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7B9Eh
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 add     _textPos_y, 6
                 add     _textPos_x, 2Ah ; '*'
                 mov     ax, [si+16h]
@@ -38771,7 +38771,7 @@ ShowLevelUpMessage proc far             ; CODE XREF: CheckAndAnnounceLevelUp+33�
                 jz      short locret_25CF9
                 mov     bx, 7B82h
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 add     _textPos_y, 6
                 add     _textPos_x, 2Ah ; '*'
                 mov     ax, [si+1Eh]
@@ -39082,7 +39082,7 @@ DrawCharacterProtectionsList proc near  ; CODE XREF: sub_25B34+94↑p
                 mov     _font_fgColor, 0Fh
                 mov     bx, 7B31h
                 mov     cx, 9
-                call    sub_23B76
+                call    DrawStringColumn
                 add     _textPos_x, 36h ; '6'
                 mov     cx, 9
                 add     si, 20h ; ' '
@@ -44430,7 +44430,7 @@ sub_28A76       proc far                ; CODE XREF: sub_1A5F6+89↑P
 
 loc_28A8C:                              ; CODE XREF: sub_28A76+6↑j
                                         ; sub_28A76+36↓j
-                call    sub_23B76
+                call    DrawStringColumn
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -44983,7 +44983,7 @@ loc_28F4B:                              ; CODE XREF: RevealMapRegion+241↑j
                 mov     _font_fgColor, 5Bh ; '['
                 mov     bx, 8E05h
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
 
 loc_28F8C:                              ; CODE XREF: RevealMapRegion+262↑j
@@ -45543,7 +45543,7 @@ sub_29461       proc far                ; CODE XREF: UseAbilityCommand+EC↑P
                 call    RestoreCursorBackgroundIfDirty
                 pop     cx
                 pop     bx
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
@@ -48847,7 +48847,7 @@ loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
                 mov     _textPos_y, 60h ; '`'
                 mov     bx, word_32908
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 mov     ax, word_32940
                 mov     bx, 0AFA8h
                 call    FormatNumber
@@ -49143,7 +49143,7 @@ loc_2AEF3:                              ; CODE XREF: sub_2AE3C+7D↑j
                 mov     _textPos_y, 60h ; '`'
                 mov     bx, 8E1Ah
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -49174,7 +49174,7 @@ UseLocationBoundPotion proc near        ; CODE XREF: sub_2AE3C+14↑p
                 call    sub_28412
                 mov     bx, 8DBEh
                 mov     cx, 3
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 mov     word_3293E, 258h
                 mov     word_32940, 258h
@@ -49191,7 +49191,7 @@ loc_2AFA7:                              ; CODE XREF: UseLocationBoundPotion+2E�
                                         ; UseLocationBoundPotion+35↑j
                 mov     bx, 8DA3h
                 mov     cx, 3
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 retn
 UseLocationBoundPotion endp
@@ -49213,7 +49213,7 @@ CollectMagicOreCache proc near          ; CODE XREF: sub_2AE3C+93↑p
                 mov     _textPos_y, 60h ; '`'
                 mov     bx, 8E3Dh
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 and     word_328C8, 1FFFh
                 mov     word_3293E, 247h
                 mov     word_32940, 247h
@@ -49244,7 +49244,7 @@ CollectNuoreCache proc near             ; CODE XREF: sub_2AE3C+87↑p
                 mov     _textPos_y, 60h ; '`'
                 mov     bx, 8E30h
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 and     word_328C8, 1FFFh
                 mov     word_3293E, 246h
                 mov     word_32940, 246h
@@ -49273,7 +49273,7 @@ PartyMassHealAndOverheal proc near      ; CODE XREF: sub_2AE3C+9F↑p
                 mov     _textPos_y, 60h ; '`'
                 mov     bx, 8E4Eh
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 and     word_328C8, 1FFFh
                 mov     word_3293E, 248h
                 mov     word_32940, 248h
@@ -49423,7 +49423,7 @@ loc_2B2BE:                              ; CODE XREF: CheckQuestItemsCompleted+41
                                         ; CheckQuestItemsCompleted+5C↑j ...
                 mov     bx, 8DDDh
                 mov     cx, 3
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 retn
 CheckQuestItemsCompleted endp
@@ -51454,7 +51454,7 @@ loc_2C400:                              ; CODE XREF: sub_2C0FE+202↑j
                 mov     _font_fgColor, 59h ; 'Y'
                 mov     bx, 867Fh
                 mov     cx, 2
-                call    sub_23B76
+                call    DrawStringColumn
                 call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------

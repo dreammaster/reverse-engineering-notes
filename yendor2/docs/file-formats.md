@@ -270,9 +270,11 @@ at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before
 drawing 3 category headers with 3/4/8 skill-name lines respectively
 (15 total — matches a pre-existing comment noting "15 total" skill
 lines). Individual skill names/offsets within that array aren't mapped
-yet (the line-drawer, `sub_23AF2`, only draws label strings — the
-numeric skill values themselves must be drawn by an untraced call in
-the same function). **This also sharpens an earlier hedge**: since
+yet (the line-drawer, `WriteStringWithHighlightedChar` (was
+`sub_23AF2`) — draws a string with exactly one character in a
+highlight color, called once per category header — only draws label
+strings; the numeric skill values themselves must be drawn by an
+untraced call in the same function). **This also sharpens an earlier hedge**: since
 `+0xCA` here holds plain word values (not a bitmask), it's now fairly
 confident that `GetRecordFlagBitAndWord_CA` (the per-object flag bank
 at the same relative offset, from several rounds ago) operates on a

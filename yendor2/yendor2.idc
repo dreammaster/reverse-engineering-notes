@@ -6333,7 +6333,9 @@ static Bytes_2(void) {
 	create_insn	(0X23AA6);
 	create_insn	(0X23AAC);
 	create_insn	(0X23ADC);
+	set_cmt	(0X23AF2,	"Writes a string char-by-char, coloring every character word_2E414 except the Nth (N = initial cx), which uses word_2E412 -- a single-highlighted-character string draw, plausibly for a hotkey letter in a tab/menu label. Called 3 times from ShowCharacterSkills's setup.",	0);
 	create_insn	(0X23AF2);
+	set_name	(0X23AF2,	"WriteStringWithHighlightedChar");
 	create_insn	(0X23B13);
 	create_insn	(0X23B19);
 	create_insn	(x=0X23B43);
@@ -6341,7 +6343,9 @@ static Bytes_2(void) {
 	create_insn	(0X23B5E);
 	set_name	(0X23B5E,	"writeString");
 	create_insn	(0X23B70);
+	set_cmt	(0X23B76,	"Draws cx consecutive null-terminated strings from bx, stacked vertically (each row +6 y). Used to draw the 9 PROTECTIONS/AFFLICTIONS name columns, among others.",	0);
 	create_insn	(0X23B76);
+	set_name	(0X23B76,	"DrawStringColumn");
 	create_insn	(0X23B8E);
 	create_insn	(0X23BA4);
 	create_insn	(0X23BAC);
@@ -7801,6 +7805,15 @@ static Bytes_2(void) {
 	set_cmt	(0X28BD2,	"Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.",	0);
 	create_insn	(0X28BD2);
 	set_name	(0X28BD2,	"ApplySavingThrowEffect");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X28BE2);
 	create_insn	(0X28C04);
 	create_insn	(0X28C3A);
@@ -7812,15 +7825,6 @@ static Bytes_2(void) {
 	set_cmt	(0X28CB1,	"Reads WORLD.DAT block 3 for a given position (ax), preserving the caller's own block-read context (nested-read guard), and returns one byte from the result. Exact meaning of the byte not identified. Called from RevealMapRegion/RevealMapRegionRow.",	0);
 	create_insn	(0X28CB1);
 	set_name	(0X28CB1,	"ReadMapCellAttributeByte");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X28CC2,	"this",	0);
 	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
 	create_insn	(0X28CFF);
@@ -10889,6 +10893,15 @@ static Bytes_3(void) {
 	set_name	(0X35DFB,	"aCongratulation_0");
 	create_strlit	(0X35E16,	0X1F);
 	set_name	(0X35E16,	"aYouHaveSuccess");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35E35,	0X5);
 	set_name	(0X35E35,	"aThe");
 	create_strlit	(0X35E3A,	0XB);
@@ -10915,15 +10928,6 @@ static Bytes_3(void) {
 	set_name	(0X35F01,	"aHasMissed");
 	create_strlit	(0X35F0D,	0XC);
 	set_name	(0X35F0D,	"aYouAreNot");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35F19,	0XB);
 	set_name	(0X35F19,	"aYetReady");
 	create_strlit	(0X35F24,	0X20);

@@ -3735,6 +3735,17 @@ Named `sub_1E2E5` -> `FormatAndDrawAlchemyFraction`, called only from
 
 475 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawStringColumn, WriteStringWithHighlightedChar
+
+Named `sub_23B76` -> `DrawStringColumn` (draws N stacked
+null-terminated strings, used this session for the PROTECTIONS/
+AFFLICTIONS name lists) and `sub_23AF2` -> `WriteStringWithHighlightedChar`
+(draws a string with exactly one character in a highlight color,
+called 3 times from `ShowCharacterSkills`'s 15-skill-line setup —
+already noted in an earlier round as "only draws label strings").
+
+477 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
