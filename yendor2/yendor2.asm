@@ -6145,7 +6145,7 @@ loc_13C01:                              ; CODE XREF: ShowClueBookSpellDetail+B5�
                 mov     _font_fgColor, 0CAh
                 mov     ax, word_332D0
                 mov     bx, 8CE6h
-                call    sub_13C86
+                call    DrawLabeledNumberRow
 
 loc_13C10:                              ; CODE XREF: ShowClueBookSpellDetail+A5↑j
                                         ; ShowClueBookSpellDetail+AF↑j ...
@@ -6179,7 +6179,7 @@ loc_13C39:                              ; CODE XREF: sub_13C1D+D↑j
                 mov     _font_fgColor, 0A7h
                 mov     ax, 1
                 mov     bx, 8D83h
-                call    sub_13C86
+                call    DrawLabeledNumberRow
 
 loc_13C48:                              ; CODE XREF: sub_13C1D+1A↑j
                 pop     bp
@@ -6220,7 +6220,7 @@ loc_13C73:                              ; CODE XREF: sub_13C4B+13↑j
                 mov     _font_fgColor, 8Ah
                 mov     ax, bp
                 mov     bx, 8CDDh
-                call    sub_13C86
+                call    DrawLabeledNumberRow
 
 loc_13C82:                              ; CODE XREF: sub_13C4B+26↑j
                 pop     bp
@@ -6233,9 +6233,9 @@ sub_13C4B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13C86       proc near               ; CODE XREF: ShowClueBookSpellDetail+CE↑p
+DrawLabeledNumberRow proc near          ; CODE XREF: ShowClueBookSpellDetail+CE↑p
                                         ; sub_13C1D+28↑p ...
-                push    ax
+                push    ax              ; Draws a row: writeString at x=0x7A (caller's si), a FormatNumber+StripCommasAndSpaces'd number (ax) at x=0x68, then writeString again at x=0x2C, advances _textPos_y by 6, clears errorCode. Called from ShowClueBookSpellDetail (cost fields) and sub_13C1D (a class-eligibility marker).
                 mov     _textPos_x, 7Ah ; 'z'
                 call    writeString
                 mov     _font_fgColor, 0Dh
@@ -6253,7 +6253,7 @@ sub_13C86       proc near               ; CODE XREF: ShowClueBookSpellDetail+CE�
                 add     _textPos_y, 6
                 mov     errorCode, 0
                 retn
-sub_13C86       endp
+DrawLabeledNumberRow endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR ShowClueBookSpellDetail

@@ -731,7 +731,12 @@ then that class's spell list) + `RunClueBookSpellCategory` again —
 `ShowClueBookSpellDetail` draws "CLASS:"/"LEVEL:" plus "MP:"/
 "NUORE:"/"ORE:" cost fields (spells cost MP and the same two alchemy
 ore counters used elsewhere) and "AFFECTS:"/"WHEN:"/"EFFECT:"
-description sections with a 6-class eligibility marker row. F5
+description sections with a 6-class eligibility marker row. Each cost
+field row is drawn via `DrawLabeledNumberRow` (was `sub_13C86`) — a
+generic "label, formatted number, label again, next line" primitive
+also reused by a sibling helper for the eligibility-marker row itself
+(a fixed value of `1` in a highlight color when the current class
+matches). F5
 (`word_2E3F6=0xB`,
 Inventory Items) → `RunClueEntryMenu` lists **8 item subtypes**
 (`word_2E3EE[0]` 1–8), each with its own sub-loop and now fully

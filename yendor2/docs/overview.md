@@ -4707,6 +4707,24 @@ separators back out, returning a compact numeric string.
 
 563 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawLabeledNumberRow
+
+Named `sub_13C86` -> `DrawLabeledNumberRow`, called from
+`ShowClueBookSpellDetail` (for its "MP:"/"NUORE:"/"ORE:" cost-field
+rows) and from sibling `sub_13C1D` (using it for a fixed value of `1`
+with a special highlight color, gated on a 2-entry class-id match
+against `word_3330A` — plausibly part of the documented "6-class
+eligibility marker row"). A generic row-drawing primitive: writes a
+caller-preset string at `x=0x7A`, a `FormatNumber`+
+`StripCommasAndSpaces`'d number at `x=0x68`, writes again at `x=0x2C`,
+then advances `_textPos_y` by 6 and clears `errorCode`. The exact
+visual relationship between the two string draws (whether the second
+redraws the same text or something `FormatNumber` left behind) wasn't
+independently confirmed — `writeString`'s own effect on `si` isn't
+traced.
+
+564 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

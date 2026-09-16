@@ -1842,7 +1842,9 @@ static Bytes_0(void) {
 	create_insn	(0X13C39);
 	create_insn	(0X13C4B);
 	create_insn	(0X13C73);
+	set_cmt	(0X13C86,	"Draws a row: writeString at x=0x7A (caller's si), a FormatNumber+StripCommasAndSpaces'd number (ax) at x=0x68, then writeString again at x=0x2C, advances _textPos_y by 6, clears errorCode. Called from ShowClueBookSpellDetail (cost fields) and sub_13C1D (a class-eligibility marker).",	0);
 	create_insn	(0X13C86);
+	set_name	(0X13C86,	"DrawLabeledNumberRow");
 	set_cmt	(0X13CBA,	"msg",	0);
 	create_insn	(x=0X13CCF);
 	op_hex		(x,	1);
@@ -3219,6 +3221,15 @@ static Bytes_0(void) {
 	set_name	(0X184BC,	"FileEntry_Write");
 	create_insn	(x=0X184D0);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X184D2,	"DOS - 2+ - WRITE TO FILE WITH HANDLE\nBX = file handle, CX = number of bytes to write, DS:DX -> buffer",	0);
 	create_insn	(x=0X184D2);
 	op_hex		(x,	0);
@@ -3231,15 +3242,6 @@ static Bytes_0(void) {
 	set_cmt	(0X18504,	"Mouse-click counterpart to sub_25B34 (keyboard 1-4 selection): hit-tests region table 0x61C2 for one of the 4 portrait zones, sets the matching word_328C6 highlight bit (same bits RefreshPartyPortraits uses) if that slot is occupied, redraws via sub_19133. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X18504);
 	set_name	(0X18504,	"HandlePortraitClick");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1851C);
 	create_insn	(0X18535);
 	create_insn	(0X1854E);
@@ -5355,6 +5357,15 @@ static Bytes_1(void) {
 	set_cmt	(0X20070,	"CORRECTED from 'ShowTileLegend' (was wrongly documented as a read-only legend screen). Reached from a normal keyboard command slot in start's main dispatch. Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) and a live preview of the current cell. Its 'A' key (byte_2E400==0x41) calls FillVisibleAreaWithSelectedTile, which floods the entire visible 40x24 cell area with the selected legend icon and writes it back via FileEntry_Write -- this IS a map-editing tool (a debug/level-editor screen left reachable in the shipped binary), not a passive legend. 'B'/'F' browse a per-level tile palette loaded from WORLD.DAT (sub_205C0/sub_27FE0, not yet fully traced).",	0);
 	create_insn	(0X20070);
 	set_name	(0X20070,	"RunMapEditorScreen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X200BA);
 	op_hex		(x,	1);
 	create_insn	(x=0X200C0);
@@ -5381,15 +5392,6 @@ static Bytes_1(void) {
 	create_insn	(0X202AF);
 	create_insn	(0X202C6);
 	create_insn	(0X202D1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X202DC);
 	create_insn	(0X202F3);
 	create_insn	(0X2030A);
@@ -7246,9 +7248,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27441,	"For cx entries: if the id at [si] is nonzero, looks it up (sub_12554) and draws its icon at the matching (x,y) from a position table at di (stride 0xA: x at +0, y at +4).",	0);
 	create_insn	(0X27441);
 	set_name	(0X27441,	"DrawResourceStatusIcons");
-	set_cmt	(0X2746C,	"RandomInRange(ax=exclusive upper bound): DOS-time-seeded (INT 21h AH=0x2Ch on first call) linear-congruential PRNG (multiplier 0x805). Returns a value in [0, bound). Widely used general-purpose RNG.",	0);
-	create_insn	(0X2746C);
-	set_name	(0X2746C,	"RandomInRange");
 }
 
 //------------------------------------------------------------------------
@@ -7258,6 +7257,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2746C,	"RandomInRange(ax=exclusive upper bound): DOS-time-seeded (INT 21h AH=0x2Ch on first call) linear-congruential PRNG (multiplier 0x805). Returns a value in [0, bound). Widely used general-purpose RNG.",	0);
+	create_insn	(0X2746C);
+	set_name	(0X2746C,	"RandomInRange");
 	create_insn	(x=0X2747C);
 	op_hex		(x,	1);
 	set_cmt	(0X2747E,	"DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",	0);
@@ -9619,6 +9621,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C64C);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2C674);
 	create_insn	(0X2C6BD);
 	set_cmt	(0X2C6CF,	"this",	0);
@@ -9642,15 +9653,6 @@ static Bytes_3(void) {
 	create_insn	(0X2C87F);
 	create_insn	(x=0X2C887);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2C892);
 	create_insn	(0X2C8A7);
 	create_insn	(x=0X2C8B3);
