@@ -1726,7 +1726,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X133C0);
 	op_hex		(x,	1);
+	set_cmt	(0X133EB,	"Page-navigation input for ShowPagedEntryScreen: 'I'/hit-1 -> previous page (word_3293A--, errorCode=1); 'Q'/hit-2 -> next page (word_3293A++, errorCode=2), gated on a registration check (shows ShowClueBookRegistrationNag past page 5 when unregistered).",	0);
 	create_insn	(0X133EB);
+	set_name	(0X133EB,	"HandlePagedEntryNavigation");
 	create_insn	(0X13402);
 	create_insn	(x=0X1341B);
 	op_hex		(x,	1);
@@ -3430,6 +3432,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1930E,	"Hit-tests region table 0x6304 for one of 4 portrait slots, each gated on a word_328C6 visibility bit; sets the draw position and word_32924 to the matching g_partySlotAssignment entry (0x95EB/0x95ED/0x95EF/0x95F1), then resolves it via SelectPartyRecordById. errorCode=0 on success, 1 on a miss/empty/hidden slot. Called from sub_1869D.",	0);
 	create_insn	(0X1930E);
 	set_name	(0X1930E,	"SelectClickedRosterPortrait");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X19322);
 	create_insn	(x=0X19327);
 	op_hex		(x,	1);
@@ -3464,15 +3475,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1953D);
 	create_insn	(0X1954B);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X19553);
 	create_insn	(0X19583);
 	create_insn	(0X19598);
@@ -5564,15 +5566,6 @@ static Bytes_1(void) {
 	set_cmt	(0X212B8,	"Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); skips spawning if this monster type already exists on the level (FindMonsterTypeInLevelPool -- CORRECTION: not a probability roll as first described), then calls SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.",	0);
 	create_insn	(0X212B8);
 	set_name	(0X212B8,	"TryTriggerMonsterEncounterAtCell");
-	create_insn	(x=0X212C0);
-	op_hex		(x,	1);
-	create_insn	(x=0X212C8);
-	op_hex		(x,	1);
-	create_insn	(0X212E7);
-	set_cmt	(0X212EB,	"Iterates the 3 g_monsterSlots records, calling sub_20E54 (not traced) for each occupied one -- draws the active combat monsters' sprites into the dungeon viewport. Called from RenderDungeonVanishingPoint when word_328CA bit 0x1000 is set.",	0);
-	create_insn	(x=0X212EB);
-	op_hex		(x,	1);
-	set_name	(0X212EB,	"RenderActiveMonsterSprites");
 }
 
 //------------------------------------------------------------------------
@@ -5582,6 +5575,15 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X212C0);
+	op_hex		(x,	1);
+	create_insn	(x=0X212C8);
+	op_hex		(x,	1);
+	create_insn	(0X212E7);
+	set_cmt	(0X212EB,	"Iterates the 3 g_monsterSlots records, calling sub_20E54 (not traced) for each occupied one -- draws the active combat monsters' sprites into the dungeon viewport. Called from RenderDungeonVanishingPoint when word_328CA bit 0x1000 is set.",	0);
+	create_insn	(x=0X212EB);
+	op_hex		(x,	1);
+	set_name	(0X212EB,	"RenderActiveMonsterSprites");
 	set_cmt	(0X21306,	"Builds the local scratch cell buffer (di=0x6D60) that every dungeon-rendering pass reads from: computes a facing-dependent row stride/side-step (word_36CF5 tier bits) from the current position, then calls CopyDungeonRowCells 7x (same row-count pattern as RenderDungeonViewport) to copy the visible cells from the level's map data. Called first in RedrawDungeonScreen.",	0);
 	create_insn	(x=0X21306);
 	op_hex		(x,	1);
@@ -7643,6 +7645,15 @@ static Bytes_2(void) {
 	create_byte	(0X2892A);
 	make_array	(0X2892A,	0X1F);
 	set_name	(0X2892A,	"aProblemRetreiv_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X28949);
 	make_array	(0X28949,	0X34);
 	set_name	(0X28949,	"aProblemRetreiv_1");
@@ -7654,15 +7665,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2899C,	"Generic error/exit path: runs the RestoreInt1cVector / FreeVideoBuffer / ShutdownAudioDrivers cleanup trio, then (if the mouse/video subsystem flag ds:40FCh bit0 is set) resets the mouse driver and video mode 3, prints the DOS '$'-terminated string at DS:AX (set by the ErrorTable handler that jumped here), and exits via INT 21h/AH=4Ch with errorCode as the exit code.",	0);
 	create_insn	(0X2899C);
 	set_name	(0X2899C,	"ErrorExit");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X289AC);
 	op_hex		(x,	1);
 	set_cmt	(0X289B7,	"- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",	0);
@@ -10729,6 +10731,15 @@ static Bytes_3(void) {
 	set_name	(0X358B2,	"aUnits");
 	create_strlit	(0X358BF,	0XE);
 	set_name	(0X358BF,	"aItWillCost");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X358CD,	0X6);
 	set_name	(0X358CD,	"aGold_0");
 	create_strlit	(0X358D3,	0X19);
@@ -10755,15 +10766,6 @@ static Bytes_3(void) {
 	set_name	(0X359A7,	"aEnhanceItem");
 	create_strlit	(0X359B4,	0X6);
 	set_name	(0X359B4,	"aCost");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X359BA,	0XA);
 	set_name	(0X359BA,	"aICanNot");
 	create_strlit	(0X359C4,	0XD);

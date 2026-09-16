@@ -5386,7 +5386,7 @@ loc_13322:                              ; CODE XREF: ShowPagedEntryScreen+3A↓j
                 call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jnz     short locret_1334D
-                call    sub_133EB
+                call    HandlePagedEntryNavigation
                 cmp     errorCode, 0
                 jnz     short loc_132F8
                 jmp     short loc_13322
@@ -5468,8 +5468,8 @@ sub_13380       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_133EB       proc near               ; CODE XREF: ShowPagedEntryScreen+4F↑p
-                cmp     byte_2E400, 0
+HandlePagedEntryNavigation proc near    ; CODE XREF: ShowPagedEntryScreen+4F↑p
+                cmp     byte_2E400, 0   ; Page-navigation input for ShowPagedEntryScreen: 'I'/hit-1 -> previous page (word_3293A--, errorCode=1); 'Q'/hit-2 -> next page (word_3293A++, errorCode=2), gated on a registration check (shows ShowClueBookRegistrationNag past page 5 when unregistered).
                 jz      short loc_13402
                 cmp     byte_2E400, 49h ; 'I'
                 jz      short loc_1341B
@@ -5478,7 +5478,7 @@ sub_133EB       proc near               ; CODE XREF: ShowPagedEntryScreen+4F↑p
                 jmp     short loc_1345C
 ; ---------------------------------------------------------------------------
 
-loc_13402:                              ; CODE XREF: sub_133EB+5↑j
+loc_13402:                              ; CODE XREF: HandlePagedEntryNavigation+5↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6960h
@@ -5488,7 +5488,7 @@ loc_13402:                              ; CODE XREF: sub_133EB+5↑j
                 cmp     ax, 1
                 jnz     short loc_1342E
 
-loc_1341B:                              ; CODE XREF: sub_133EB+C↑j
+loc_1341B:                              ; CODE XREF: HandlePagedEntryNavigation+C↑j
                 test    word_328CC, 100h
                 jz      short loc_1345C
                 dec     word_3293A
@@ -5496,11 +5496,11 @@ loc_1341B:                              ; CODE XREF: sub_133EB+C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1342E:                              ; CODE XREF: sub_133EB+2E↑j
+loc_1342E:                              ; CODE XREF: HandlePagedEntryNavigation+2E↑j
                 cmp     ax, 2
                 jnz     short loc_1345C
 
-loc_13433:                              ; CODE XREF: sub_133EB+13↑j
+loc_13433:                              ; CODE XREF: HandlePagedEntryNavigation+13↑j
                 test    word_328CC, 80h
                 jz      short loc_1345C
                 test    word_328CA, 1
@@ -5511,18 +5511,18 @@ loc_13433:                              ; CODE XREF: sub_133EB+13↑j
                 jmp     short loc_1345C
 ; ---------------------------------------------------------------------------
 
-loc_13451:                              ; CODE XREF: sub_133EB+56↑j
-                                        ; sub_133EB+5D↑j
+loc_13451:                              ; CODE XREF: HandlePagedEntryNavigation+56↑j
+                                        ; HandlePagedEntryNavigation+5D↑j
                 inc     word_3293A
                 mov     errorCode, 2
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1345C:                              ; CODE XREF: sub_133EB+15↑j
-                                        ; sub_133EB+29↑j ...
+loc_1345C:                              ; CODE XREF: HandlePagedEntryNavigation+15↑j
+                                        ; HandlePagedEntryNavigation+29↑j ...
                 mov     errorCode, 0
                 retn
-sub_133EB       endp
+HandlePagedEntryNavigation endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7585,7 +7585,7 @@ seg010          segment byte public 'CODE' use16
 
 
 ShowClueBookRegistrationNag proc far    ; CODE XREF: RunClueEntryMenu+FA↑P
-                                        ; sub_133EB+5F↑P
+                                        ; HandlePagedEntryNavigation+5F↑P
                 mov     ax, 3           ; Plays a sound and shows 'REGISTER YOUR COPY OF THE CLUE BOOK TODAY!' -- the shareware registration nag for clue-book entries that require registration (called when the global 'registered' flag, word_328CA bit 1, is clear and the entry's own bit 0x8000 says it's registration-locked).
                 call    sub_28412
                 mov     _textPos_x, 23h ; '#'

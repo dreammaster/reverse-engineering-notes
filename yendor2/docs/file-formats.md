@@ -594,7 +594,11 @@ checked via `TestGlobalFlag`) — recording each match's catalog index
 for later selection;
 **8 "WEAPONS"** (`word_2E3F6=0x11`) → `RunClueEntryMenu` +
 `RunClueBookWeaponCategory`. F6 (Complete Walk Through) →
-`ShowPagedEntryScreen` (already-named, generic paginated text). ESC →
+`ShowPagedEntryScreen` (already-named, generic paginated text), whose
+page-turn input is handled by `HandlePagedEntryNavigation` (was
+`sub_133EB`): `I`/previous-page and `Q`/next-page keys or mouse hits
+(region table `0x6960`), the latter gated past page 5 by the same
+registration check `ShowClueBookRegistrationNag` guards elsewhere. ESC →
 cleanup and `LoadMasterPalette` back to the normal palette (the
 reverse of `PlayClueBookOpenAnimation`'s swap). `sub_13278`/
 `sub_13216`/`sub_1334E`/`sub_1318D` are confirmed as clue-book category

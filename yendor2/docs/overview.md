@@ -3829,6 +3829,16 @@ region table `DrawSubIconSelectorRow` already ties to this cluster.
 
 488 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandlePagedEntryNavigation
+
+Named `sub_133EB` -> `HandlePagedEntryNavigation`, called from
+`ShowPagedEntryScreen`: `I`/previous-page and `Q`/next-page navigation
+(keyboard or mouse via region table `0x6960`), the latter gated past
+page 5 by the same registration check `ShowClueBookRegistrationNag`
+guards elsewhere in the clue book.
+
+489 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
