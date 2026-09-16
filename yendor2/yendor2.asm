@@ -23902,7 +23902,7 @@ loc_1D67B:                              ; CODE XREF: HandleRangedOrCombatAction+
 
 loc_1D68B:                              ; CODE XREF: HandleRangedOrCombatAction+1C8↑j
                                         ; HandleRangedOrCombatAction+1EF↓j ...
-                call    sub_1DC73
+                call    ResetWeaponSlotDisplayCache
                 call    ResolveAttackOrAbilityAction
                 test    word_328C8, 200h
                 jnz     short loc_1D6AC
@@ -24512,13 +24512,13 @@ ResolveAbilityEffect endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DC73       proc near               ; CODE XREF: HandleRangedOrCombatAction:loc_1D68B↑p
-                dec     word_2E544
+ResetWeaponSlotDisplayCache proc near   ; CODE XREF: HandleRangedOrCombatAction:loc_1D68B↑p
+                dec     word_2E544      ; Every Nth call (word_2E544 countdown), clears a 105-row region of EMS page 0x55FE at the x-offset of the first empty weapon-select slot (word_328D8/DA/DC, the same globals/positions HandleRangedOrCombatAction feeds to DrawWeaponSelectIcon). Plausibly resets a per-slot display/animation cache. Called from HandleRangedOrCombatAction.
                 jnz     short loc_1DC7A
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1DC7A:                              ; CODE XREF: sub_1DC73+4↑j
+loc_1DC7A:                              ; CODE XREF: ResetWeaponSlotDisplayCache+4↑j
                 push    cx
                 push    dx
                 push    di
@@ -24534,8 +24534,8 @@ loc_1DC7A:                              ; CODE XREF: sub_1DC73+4↑j
                 jnz     short loc_1DC9E
                 mov     di, 9Dh
 
-loc_1DC9E:                              ; CODE XREF: sub_1DC73+12↑j
-                                        ; sub_1DC73+1C↑j ...
+loc_1DC9E:                              ; CODE XREF: ResetWeaponSlotDisplayCache+12↑j
+                                        ; ResetWeaponSlotDisplayCache+1C↑j ...
                 mov     dx, _emsPointer1?
                 mov     bx, 55FEh
                 call    MapUnmapPages
@@ -24543,7 +24543,7 @@ loc_1DC9E:                              ; CODE XREF: sub_1DC73+12↑j
                 mov     cx, 69h ; 'i'
                 mov     ax, 0FFFFh
 
-loc_1DCB4:                              ; CODE XREF: sub_1DC73+4C↓j
+loc_1DCB4:                              ; CODE XREF: ResetWeaponSlotDisplayCache+4C↓j
                 push    cx
                 mov     cx, 1Bh
                 rep stosw
@@ -24555,7 +24555,7 @@ loc_1DCB4:                              ; CODE XREF: sub_1DC73+4C↓j
                 pop     dx
                 pop     cx
                 retn
-sub_1DC73       endp
+ResetWeaponSlotDisplayCache endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74209,11 +74209,11 @@ word_328D4      dw 0                    ; DATA XREF: HandleDungeonInput:loc_1642
 word_328D6      dw 0                    ; DATA XREF: FindPartySlotForRecord+24↑w
                                         ; IsItemRangeAvailable+9D↑r ...
 word_328D8      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+E0↑r
-                                        ; sub_1DC73+D↑r
+                                        ; ResetWeaponSlotDisplayCache+D↑r
 word_328DA      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+EC↑r
-                                        ; sub_1DC73+17↑r
+                                        ; ResetWeaponSlotDisplayCache+17↑r
 word_328DC      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+F8↑r
-                                        ; sub_1DC73+21↑r
+                                        ; ResetWeaponSlotDisplayCache+21↑r
 word_328DE      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+104↑r
 word_328E0      dw 0                    ; DATA XREF: ShowConfirmPrompt+29↑w
                                         ; ShowConfirmPrompt+6B↑r ...

@@ -921,7 +921,13 @@ caller set bit `0x100` (a ranged-attack request): scans the 4 party
 inventory slots for a character with an eligible ranged weapon (item
 `0x13A`, status-gated), bails if none; else draws a 4-icon weapon-select
 UI (`DrawWeaponSelectIcon` per slot, with a highlighted variant for the
-currently selected weapon) and **animates a projectile traveling down
+currently selected weapon; the 4 slot states, `word_328D8`/`word_328DA`/
+`word_328DC`/`word_328DE`, at x-positions `0`/`0x36`/`0x69`/`0x9D`, are
+also read by `ResetWeaponSlotDisplayCache` — was `sub_1DC73`, run every
+Nth call — which clears a 105-row region of a dedicated EMS page
+(`0x55FE`) at the first empty slot's x-offset, plausibly resetting a
+per-slot display/animation cache) and **animates a projectile traveling
+down
 the corridor one depth
 row at a time** — `AnimateProjectileStep` (draws the projectile sprite,
 restores the background via `RestoreCorridorBackgroundFromEMS`

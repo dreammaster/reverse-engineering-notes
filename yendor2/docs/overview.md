@@ -3795,6 +3795,17 @@ parameters.
 
 485 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ResetWeaponSlotDisplayCache
+
+Named `sub_1DC73` -> `ResetWeaponSlotDisplayCache`, called from
+`HandleRangedOrCombatAction`: reuses the same 4 weapon-select-slot
+globals and x-positions `DrawWeaponSelectIcon` draws, to clear a
+dedicated EMS page region at the first empty slot's position — every
+Nth call via a countdown. Plausibly a per-slot display/animation
+cache reset.
+
+486 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -4721,7 +4721,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1DC4E);
 	op_hex		(x,	1);
+	set_cmt	(0X1DC73,	"Every Nth call (word_2E544 countdown), clears a 105-row region of EMS page 0x55FE at the x-offset of the first empty weapon-select slot (word_328D8/DA/DC, the same globals/positions HandleRangedOrCombatAction feeds to DrawWeaponSelectIcon). Plausibly resets a per-slot display/animation cache. Called from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X1DC73);
+	set_name	(0X1DC73,	"ResetWeaponSlotDisplayCache");
 	create_insn	(0X1DC7A);
 	create_insn	(0X1DCC6);
 	set_cmt	(0X1DCE0,	"Alchemy screen driver loop, reached directly from `start`. Redraws via DrawAlchemyStatusPanel after various sub-actions, polls input, hit-tests region tables for clickable elements, uses sub_25B34 for party-member selection, shows ShowConfirmPrompt (plausibly for an ore conversion), and calls ApplyMapTriggerEffect on an exit path back to the dungeon. Many internal helper calls not individually traced yet.",	0);
@@ -5579,9 +5581,6 @@ static Bytes_1(void) {
 	set_cmt	(0X213D4,	"Copies one row of 8-byte cell records from the level's map data (es:si, advancing by bp, the facing-dependent stride) into the scratch viewport buffer (di, advancing by 8), then steps si to the next row's start (+= word_2E560). Called 7x by BuildDungeonViewportCells.",	0);
 	create_insn	(0X213D4);
 	set_name	(0X213D4,	"CopyDungeonRowCells");
-	set_cmt	(0X213FC,	"Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.",	0);
-	create_insn	(0X213FC);
-	set_name	(0X213FC,	"ComputeDungeonCellVisibility");
 }
 
 //------------------------------------------------------------------------
@@ -5591,6 +5590,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X213FC,	"Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.",	0);
+	create_insn	(0X213FC);
+	set_name	(0X213FC,	"ComputeDungeonCellVisibility");
 	create_insn	(0X21411);
 	create_insn	(x=0X2145E);
 	op_hex		(x,	1);
@@ -7698,6 +7700,15 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X289F1,	"ShowErr_ProblemWithDriver");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X289F6);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -7735,15 +7746,6 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
 	set_name	(0X28A31,	"ErrorTable");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(x=0X28A33);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
@@ -10795,6 +10797,15 @@ static Bytes_3(void) {
 	set_name	(0X35B1C,	"aDoYouWantToSel");
 	create_strlit	(0X35B38,	0XD);
 	set_name	(0X35B38,	"aYourAttempt");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35B45,	0XA);
 	set_name	(0X35B45,	"aToRepair");
 	create_strlit	(0X35B4F,	0XD);
@@ -10835,15 +10846,6 @@ static Bytes_3(void) {
 	set_name	(0X35C41,	"aAnimation");
 	create_strlit	(0X35C4B,	0X9);
 	set_name	(0X35C4B,	"aNewGame");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35C54,	0X7);
 	set_name	(0X35C54,	"aSlow");
 	create_strlit	(0X35C5B,	0X7);
