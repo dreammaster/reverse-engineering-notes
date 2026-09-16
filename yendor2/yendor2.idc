@@ -4234,7 +4234,7 @@ static Bytes_0(void) {
 	create_insn	(0X1D258);
 	create_insn	(0X1D273);
 	create_insn	(0X1D286);
-	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
+	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: replays whatever picture is already showing (entry 2, since word_2E530/532 aren't reset here) via ShowIntroPicture's fade+wait-for-key -- doesn't show distinct content, so its actual purpose (About/credits/register nag?) isn't confirmed. I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
 	create_insn	(0X1D2A6);
 	set_name	(0X1D2A6,	"RunTitleScreen");
 	create_insn	(x=0X1D2BB);
@@ -5904,7 +5904,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X2458E);
 	op_hex		(x,	1);
 	create_insn	(0X2459C);
+	set_cmt	(0X245AE,	"Draws up to 8 item entries (DrawListEntryLabel, one per _val1.._val8, each skippable via a word_328C4 bit -- likely empty slots) -- matches the 8-item-slot-per-character savegame layout from file-formats.md. Then a selection loop: 'N' next character, 'Q' back, 'E' exit entirely (mirrors ShowPartyMembers' outer iteration). The character inventory/equipment screen.",	0);
 	create_insn	(0X245AE);
+	set_name	(0X245AE,	"ShowCharacterInventory");
 	set_cmt	(0X245D4,	"msg",	0);
 	create_insn	(x=0X245FE);
 	op_hex		(x,	1);
@@ -5948,6 +5950,15 @@ static Bytes_0(void) {
 	create_insn	(0X24983);
 	create_insn	(0X2498B);
 	set_cmt	(0X249AC,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X249F3);
 	op_hex		(x,	1);
 	create_insn	(0X24A03);
@@ -5967,7 +5978,9 @@ static Bytes_0(void) {
 	create_insn	(0X24BA4);
 	create_insn	(x=0X24BA5);
 	op_hex		(x,	1);
+	set_cmt	(0X24BF2,	"ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.",	0);
 	create_insn	(0X24BF2);
+	set_name	(0X24BF2,	"ShowCharacterStats");
 	set_cmt	(0X24C12,	"msg",	0);
 	create_insn	(0X24C72);
 	create_insn	(0X24C7C);
@@ -5982,15 +5995,6 @@ static Bytes_0(void) {
 	set_cmt	(0X24FFC,	"Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.",	0);
 	create_insn	(0X24FFC);
 	set_name	(0X24FFC,	"DrawListEntryLabel");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2504F);
 	create_insn	(0X25091);
 	create_insn	(0X250BB);
@@ -10394,6 +10398,15 @@ static Bytes_1(void) {
 	set_name	(0X364FE,	"aClassLevel");
 	create_strlit	(0X3650F,	0X7);
 	set_name	(0X3650F,	"aMp");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36516,	0X7);
 	set_name	(0X36516,	"aNuore_1");
 	create_strlit	(0X3651D,	0X7);
@@ -10444,15 +10457,6 @@ static Bytes_1(void) {
 	set_name	(0X365F6,	"aOreCreated");
 	create_strlit	(0X36603,	0XC);
 	set_name	(0X36603,	"aYouCanNot_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3660F,	0X9);
 	set_name	(0X3660F,	"aUseThat");
 	create_strlit	(0X36618,	0X6);

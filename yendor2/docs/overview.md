@@ -707,6 +707,27 @@ registration-info screen) remains unidentified.
 
 109 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: character stats and inventory screens
+
+Checked `RunTitleScreen`'s last unresolved option, `R`: it doesn't set a
+new picture id before calling `ShowIntroPicture`, so it just replays
+whatever's already showing (the combat scene) with the standard
+fade+wait treatment — not distinct enough content to name confidently.
+Updated the comment to record this rather than leave the earlier
+under-qualified "About"/"Register" guess standing.
+
+Dug into two of `ShowPartyMembers`' pipeline steps instead:
+`ShowCharacterStats` (was `sub_24BF2`) draws exactly 6 lines of text —
+matching the manual's 6 core attributes (Strength/Dexterity/Stamina/
+Intelligence/Wisdom/Charisma). `ShowCharacterInventory` (was
+`sub_245AE`, 989 bytes) draws up to 8 `DrawListEntryLabel` entries
+(icon+text), each individually skippable — matching the 8-item-slot-
+per-character savegame layout from `file-formats.md`'s item-guide
+cross-reference — then a selection loop sharing the same N(ext)/Q(uit)/
+E(xit) keys `ShowPartyMembers`' outer loop uses.
+
+111 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

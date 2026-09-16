@@ -23500,7 +23500,7 @@ seg054          segment byte public 'CODE' use16
 
 RunTitleScreen  proc far                ; CODE XREF: start+A0F↑P
                                         ; InitGame+F6↑P ...
-                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.
+                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: replays whatever picture is already showing (entry 2, since word_2E530/532 aren't reset here) via ShowIntroPicture's fade+wait-for-key -- doesn't show distinct content, so its actual purpose (About/credits/register nag?) isn't confirmed. I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.
                 mov     word_36CE7, 3
                 mov     ax, 1
                 mov     word_3297E, ax
@@ -35197,12 +35197,12 @@ loc_23BC8:                              ; CODE XREF: ShowPartyMembers+17↑j
                 call    sub_24A5B
                 cmp     byte_2E400, 51h ; 'Q'
                 jz      short loc_23C12
-                call    sub_24BF2
+                call    ShowCharacterStats
                 cmp     byte_2E400, 51h ; 'Q'
                 jz      short loc_23C12
                 mov     word_3293E, 0
                 and     word_328C4, 0FF00h
-                call    sub_245AE
+                call    ShowCharacterInventory
                 cmp     byte_2E400, 51h ; 'Q'
                 jz      short loc_23C12
                 call    sub_2498B
@@ -35496,7 +35496,7 @@ sub_23C18       endp
 
 
 sub_23F58       proc near               ; CODE XREF: sub_243D3+1CC↓p
-                                        ; sub_24BF2+3↓p ...
+                                        ; ShowCharacterStats+3↓p ...
                 mov     si, word_328D4
                 mov     ax, [si+3Ch]
                 mov     bx, 0Ah
@@ -36110,12 +36110,12 @@ sub_243D3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_245AE       proc near               ; CODE XREF: ShowPartyMembers+4D↑p
+ShowCharacterInventory proc near        ; CODE XREF: ShowPartyMembers+4D↑p
                                         ; sub_25103+186↓p
-                mov     word_32940, 0
+                mov     word_32940, 0   ; Draws up to 8 item entries (DrawListEntryLabel, one per _val1.._val8, each skippable via a word_328C4 bit -- likely empty slots) -- matches the 8-item-slot-per-character savegame layout from file-formats.md. Then a selection loop: 'N' next character, 'Q' back, 'E' exit entirely (mirrors ShowPartyMembers' outer iteration). The character inventory/equipment screen.
 
-loc_245B4:                              ; CODE XREF: sub_245AE+2AE↓j
-                                        ; sub_245AE+2C5↓j ...
+loc_245B4:                              ; CODE XREF: ShowCharacterInventory+2AE↓j
+                                        ; ShowCharacterInventory+2C5↓j ...
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_2438B
                 mov     _font_bgTransparent, 1
@@ -36136,56 +36136,56 @@ loc_245B4:                              ; CODE XREF: sub_245AE+2AE↓j
                 mov     ax, _val1
                 call    DrawListEntryLabel
 
-loc_24612:                              ; CODE XREF: sub_245AE+56↑j
+loc_24612:                              ; CODE XREF: ShowCharacterInventory+56↑j
                 test    word_328C4, 40h
                 jnz     short loc_24626
                 mov     y, 3Ah ; ':'
                 mov     ax, _val2
                 call    DrawListEntryLabel
 
-loc_24626:                              ; CODE XREF: sub_245AE+6A↑j
+loc_24626:                              ; CODE XREF: ShowCharacterInventory+6A↑j
                 test    word_328C4, 20h
                 jnz     short loc_2463A
                 mov     y, 4Ah ; 'J'
                 mov     ax, _val3
                 call    DrawListEntryLabel
 
-loc_2463A:                              ; CODE XREF: sub_245AE+7E↑j
+loc_2463A:                              ; CODE XREF: ShowCharacterInventory+7E↑j
                 test    word_328C4, 10h
                 jnz     short loc_2464E
                 mov     y, 5Ah ; 'Z'
                 mov     ax, _val4
                 call    DrawListEntryLabel
 
-loc_2464E:                              ; CODE XREF: sub_245AE+92↑j
+loc_2464E:                              ; CODE XREF: ShowCharacterInventory+92↑j
                 test    word_328C4, 8
                 jnz     short loc_24662
                 mov     y, 6Ah ; 'j'
                 mov     ax, _val5
                 call    DrawListEntryLabel
 
-loc_24662:                              ; CODE XREF: sub_245AE+A6↑j
+loc_24662:                              ; CODE XREF: ShowCharacterInventory+A6↑j
                 test    word_328C4, 4
                 jnz     short loc_24676
                 mov     y, 7Ah ; 'z'
                 mov     ax, _val6
                 call    DrawListEntryLabel
 
-loc_24676:                              ; CODE XREF: sub_245AE+BA↑j
+loc_24676:                              ; CODE XREF: ShowCharacterInventory+BA↑j
                 test    word_328C4, 2
                 jnz     short loc_2468A
                 mov     y, 8Ah
                 mov     ax, _val7
                 call    DrawListEntryLabel
 
-loc_2468A:                              ; CODE XREF: sub_245AE+CE↑j
+loc_2468A:                              ; CODE XREF: ShowCharacterInventory+CE↑j
                 test    word_328C4, 1
                 jnz     short loc_2469E
                 mov     y, 9Ah
                 mov     ax, _val8
                 call    DrawListEntryLabel
 
-loc_2469E:                              ; CODE XREF: sub_245AE+E2↑j
+loc_2469E:                              ; CODE XREF: ShowCharacterInventory+E2↑j
                 test    word_328CA, 8000h
                 jnz     short loc_246C9
                 mov     _textPos_x, 8
@@ -36196,13 +36196,13 @@ loc_2469E:                              ; CODE XREF: sub_245AE+E2↑j
                 mov     cx, 1
                 call    sub_23AF2
 
-loc_246C9:                              ; CODE XREF: sub_245AE+F6↑j
+loc_246C9:                              ; CODE XREF: ShowCharacterInventory+F6↑j
                 call    sub_25595
                 call    DrawMouseCursor
                 call    sub_238CD
 
-loc_246D6:                              ; CODE XREF: sub_245AE+131↓j
-                                        ; sub_245AE+143↓j ...
+loc_246D6:                              ; CODE XREF: ShowCharacterInventory+131↓j
+                                        ; ShowCharacterInventory+143↓j ...
                 mov     si, 6068h
                 call    sub_255C7
                 cmp     ax, 0
@@ -36215,7 +36215,7 @@ loc_246D6:                              ; CODE XREF: sub_245AE+131↓j
                 jmp     short loc_246D6
 ; ---------------------------------------------------------------------------
 
-loc_246F3:                              ; CODE XREF: sub_245AE+133↑j
+loc_246F3:                              ; CODE XREF: ShowCharacterInventory+133↑j
                 test    word_328CA, 8000h
                 jz      short loc_24703
                 cmp     byte_2E400, 45h ; 'E'
@@ -36223,7 +36223,7 @@ loc_246F3:                              ; CODE XREF: sub_245AE+133↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_24703:                              ; CODE XREF: sub_245AE+14B↑j
+loc_24703:                              ; CODE XREF: ShowCharacterInventory+14B↑j
                 cmp     byte_2E400, 4Eh ; 'N'
                 jz      short loc_2475E
                 cmp     byte_2E400, 51h ; 'Q'
@@ -36231,11 +36231,11 @@ loc_24703:                              ; CODE XREF: sub_245AE+14B↑j
                 jmp     loc_2479C
 ; ---------------------------------------------------------------------------
 
-loc_24714:                              ; CODE XREF: sub_245AE+161↑j
+loc_24714:                              ; CODE XREF: ShowCharacterInventory+161↑j
                 jmp     short loc_246D6
 ; ---------------------------------------------------------------------------
 
-loc_24716:                              ; CODE XREF: sub_245AE+141↑j
+loc_24716:                              ; CODE XREF: ShowCharacterInventory+141↑j
                 cmp     ax, 2
                 jnz     short loc_246D6
                 call    sub_26415
@@ -36245,13 +36245,13 @@ loc_24716:                              ; CODE XREF: sub_245AE+141↑j
                 jmp     short loc_246D6
 ; ---------------------------------------------------------------------------
 
-loc_2472E:                              ; CODE XREF: sub_245AE+13A↑j
+loc_2472E:                              ; CODE XREF: ShowCharacterInventory+13A↑j
                 cmp     ax, 1
                 jnz     short loc_24736
                 jmp     loc_247BF
 ; ---------------------------------------------------------------------------
 
-loc_24736:                              ; CODE XREF: sub_245AE+183↑j
+loc_24736:                              ; CODE XREF: ShowCharacterInventory+183↑j
                 cmp     ax, 2
                 jnz     short loc_24751
                 call    sub_2621C
@@ -36262,13 +36262,13 @@ loc_24736:                              ; CODE XREF: sub_245AE+183↑j
                 jmp     short loc_246D6
 ; ---------------------------------------------------------------------------
 
-loc_24751:                              ; CODE XREF: sub_245AE+18B↑j
+loc_24751:                              ; CODE XREF: ShowCharacterInventory+18B↑j
                 test    word_328CA, 8000h
                 jnz     short loc_24780
                 cmp     ax, 10h
                 jnz     short loc_24780
 
-loc_2475E:                              ; CODE XREF: sub_245AE+15A↑j
+loc_2475E:                              ; CODE XREF: ShowCharacterInventory+15A↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_31948, 0
                 mov     word_3194C, 0
@@ -36278,14 +36278,14 @@ loc_2475E:                              ; CODE XREF: sub_245AE+15A↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_24780:                              ; CODE XREF: sub_245AE+1A9↑j
-                                        ; sub_245AE+1AE↑j
+loc_24780:                              ; CODE XREF: ShowCharacterInventory+1A9↑j
+                                        ; ShowCharacterInventory+1AE↑j
                 cmp     ax, 11h
                 jz      short loc_24788
                 jmp     loc_246D6
 ; ---------------------------------------------------------------------------
 
-loc_24788:                              ; CODE XREF: sub_245AE+1D5↑j
+loc_24788:                              ; CODE XREF: ShowCharacterInventory+1D5↑j
                 test    word_328CA, 8000h
                 jz      short loc_2479C
                 mov     word_2E530, 0
@@ -36293,8 +36293,8 @@ loc_24788:                              ; CODE XREF: sub_245AE+1D5↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2479C:                              ; CODE XREF: sub_245AE+163↑j
-                                        ; sub_245AE+1E0↑j
+loc_2479C:                              ; CODE XREF: ShowCharacterInventory+163↑j
+                                        ; ShowCharacterInventory+1E0↑j
                 mov     word_31948, 0
                 mov     word_3194C, 0
                 mov     word_2E530, 0
@@ -36304,20 +36304,20 @@ loc_2479C:                              ; CODE XREF: sub_245AE+163↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_247BF:                              ; CODE XREF: sub_245AE+185↑j
+loc_247BF:                              ; CODE XREF: ShowCharacterInventory+185↑j
                 cmp     word_31946, 0
                 jnz     short loc_247C9
                 jmp     loc_24850
 ; ---------------------------------------------------------------------------
 
-loc_247C9:                              ; CODE XREF: sub_245AE+216↑j
+loc_247C9:                              ; CODE XREF: ShowCharacterInventory+216↑j
                 cmp     word_3194C, 0
                 jz      short loc_247D3
                 jmp     loc_24920
 ; ---------------------------------------------------------------------------
 
-loc_247D3:                              ; CODE XREF: sub_245AE+220↑j
-                                        ; sub_245AE+3D2↓j
+loc_247D3:                              ; CODE XREF: ShowCharacterInventory+220↑j
+                                        ; ShowCharacterInventory+3D2↓j
                 mov     ax, 6
                 call    sub_28412
                 mov     bx, word_31948
@@ -36344,8 +36344,8 @@ loc_247D3:                              ; CODE XREF: sub_245AE+220↑j
                 jz      short loc_24821
                 mov     ax, 0FFFEh
 
-loc_24821:                              ; CODE XREF: sub_245AE+238↑j
-                                        ; sub_245AE+241↑j ...
+loc_24821:                              ; CODE XREF: ShowCharacterInventory+238↑j
+                                        ; ShowCharacterInventory+241↑j ...
                 and     word_328C4, ax
                 mov     ax, word_31948
                 mov     word_32940, ax
@@ -36357,14 +36357,14 @@ loc_24821:                              ; CODE XREF: sub_245AE+238↑j
                 call    sub_238CD
                 dec     word_3293E
 
-loc_24850:                              ; CODE XREF: sub_245AE+218↑j
+loc_24850:                              ; CODE XREF: ShowCharacterInventory+218↑j
                 cmp     word_3293E, 4
                 jnz     short loc_2485F
                 call    sub_1A5CC
                 jmp     loc_245B4
 ; ---------------------------------------------------------------------------
 
-loc_2485F:                              ; CODE XREF: sub_245AE+2A7↑j
+loc_2485F:                              ; CODE XREF: ShowCharacterInventory+2A7↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6092h
@@ -36374,7 +36374,7 @@ loc_2485F:                              ; CODE XREF: sub_245AE+2A7↑j
                 jmp     loc_245B4
 ; ---------------------------------------------------------------------------
 
-loc_24876:                              ; CODE XREF: sub_245AE+2C3↑j
+loc_24876:                              ; CODE XREF: ShowCharacterInventory+2C3↑j
                 push    cx
                 mov     bx, 80h
                 mov     cx, _val1
@@ -36407,8 +36407,8 @@ loc_24876:                              ; CODE XREF: sub_245AE+2C3↑j
                 mov     bx, 1
                 mov     cx, _val8
 
-loc_248D2:                              ; CODE XREF: sub_245AE+2D3↑j
-                                        ; sub_245AE+2DF↑j ...
+loc_248D2:                              ; CODE XREF: ShowCharacterInventory+2D3↑j
+                                        ; ShowCharacterInventory+2DF↑j ...
                 mov     word_31948, cx
                 pop     cx
                 test    word_328C4, bx
@@ -36429,13 +36429,13 @@ loc_248D2:                              ; CODE XREF: sub_245AE+2D3↑j
                 call    sub_238CD
                 inc     word_3293E
 
-loc_24917:                              ; CODE XREF: sub_245AE+32D↑j
-                                        ; sub_245AE+336↑j
+loc_24917:                              ; CODE XREF: ShowCharacterInventory+32D↑j
+                                        ; ShowCharacterInventory+336↑j
                 mov     word_32940, 0
                 jmp     loc_245B4
 ; ---------------------------------------------------------------------------
 
-loc_24920:                              ; CODE XREF: sub_245AE+222↑j
+loc_24920:                              ; CODE XREF: ShowCharacterInventory+222↑j
                 mov     ax, word_3194C
                 mov     word_36863, ax
                 mov     word_3685F, 0AFA8h
@@ -36468,11 +36468,11 @@ loc_24920:                              ; CODE XREF: sub_245AE+222↑j
                 jmp     loc_247D3
 ; ---------------------------------------------------------------------------
 
-loc_24983:                              ; CODE XREF: sub_245AE+3A6↑j
-                                        ; sub_245AE+3AC↑j ...
+loc_24983:                              ; CODE XREF: ShowCharacterInventory+3A6↑j
+                                        ; ShowCharacterInventory+3AC↑j ...
                 call    sub_1A5CC
                 jmp     loc_246D6
-sub_245AE       endp
+ShowCharacterInventory endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36703,9 +36703,9 @@ sub_24A5B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_24BF2       proc near               ; CODE XREF: ShowPartyMembers+37↑p
-                                        ; sub_24BF2+87↓j ...
-                call    sub_252EF
+ShowCharacterStats proc near            ; CODE XREF: ShowPartyMembers+37↑p
+                                        ; ShowCharacterStats+87↓j ...
+                call    sub_252EF       ; ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.
                 call    sub_23F58
                 call    sub_1B30C
                 call    sub_254CC
@@ -36729,8 +36729,8 @@ sub_24BF2       proc near               ; CODE XREF: ShowPartyMembers+37↑p
                 call    sub_25595
                 call    DrawMouseCursor
 
-loc_24C5C:                              ; CODE XREF: sub_24BF2+73↓j
-                                        ; sub_24BF2+7E↓j ...
+loc_24C5C:                              ; CODE XREF: ShowCharacterStats+73↓j
+                                        ; ShowCharacterStats+7E↓j ...
                 mov     si, 5F7Eh
                 call    sub_255C7
                 cmp     ax, 0
@@ -36741,13 +36741,13 @@ loc_24C5C:                              ; CODE XREF: sub_24BF2+73↓j
                 jmp     short loc_24C5C
 ; ---------------------------------------------------------------------------
 
-loc_24C72:                              ; CODE XREF: sub_24BF2+75↑j
+loc_24C72:                              ; CODE XREF: ShowCharacterStats+75↑j
                 cmp     byte_2E400, 52h ; 'R'
                 jnz     short loc_24C7C
-                jmp     sub_24BF2
+                jmp     ShowCharacterStats
 ; ---------------------------------------------------------------------------
 
-loc_24C7C:                              ; CODE XREF: sub_24BF2+85↑j
+loc_24C7C:                              ; CODE XREF: ShowCharacterStats+85↑j
                 cmp     byte_2E400, 49h ; 'I'
                 jz      short loc_24CA7
                 cmp     byte_2E400, 51h ; 'Q'
@@ -36755,29 +36755,29 @@ loc_24C7C:                              ; CODE XREF: sub_24BF2+85↑j
                 jmp     short loc_24C5C
 ; ---------------------------------------------------------------------------
 
-loc_24C8C:                              ; CODE XREF: sub_24BF2+7C↑j
+loc_24C8C:                              ; CODE XREF: ShowCharacterStats+7C↑j
                 cmp     ax, 11h
                 jnz     short loc_24C9A
 
-loc_24C91:                              ; CODE XREF: sub_24BF2+96↑j
+loc_24C91:                              ; CODE XREF: ShowCharacterStats+96↑j
                 call    sub_243C3
                 mov     byte_2E400, 51h ; 'Q'
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_24C9A:                              ; CODE XREF: sub_24BF2+9D↑j
+loc_24C9A:                              ; CODE XREF: ShowCharacterStats+9D↑j
                 cmp     ax, 4
                 jz      short loc_24CA7
                 cmp     ax, 2
                 jnz     short loc_24C5C
-                jmp     sub_24BF2
+                jmp     ShowCharacterStats
 ; ---------------------------------------------------------------------------
 
-loc_24CA7:                              ; CODE XREF: sub_24BF2+8F↑j
-                                        ; sub_24BF2+AB↑j
+loc_24CA7:                              ; CODE XREF: ShowCharacterStats+8F↑j
+                                        ; ShowCharacterStats+AB↑j
                 mov     byte_2E400, 0
                 retn
-sub_24BF2       endp
+ShowCharacterStats endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37017,8 +37017,8 @@ sub_24D30       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawListEntryLabel proc near            ; CODE XREF: sub_245AE+61↑p
-                                        ; sub_245AE+75↑p ...
+DrawListEntryLabel proc near            ; CODE XREF: ShowCharacterInventory+61↑p
+                                        ; ShowCharacterInventory+75↑p ...
                 call    sub_12554       ; Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
@@ -37281,7 +37281,7 @@ loc_25280:                              ; CODE XREF: sub_25103+102↑j
                                         ; sub_25103+134↑j
                 call    sub_2438B
                 or      word_328CA, 8000h
-                call    sub_245AE
+                call    ShowCharacterInventory
                 and     word_328CA, 7FFFh
                 jmp     sub_25103
 ; ---------------------------------------------------------------------------
@@ -37326,7 +37326,7 @@ sub_25103       endp
 
 
 sub_252EF       proc near               ; CODE XREF: sub_243D3:loc_2459C↑p
-                                        ; sub_24BF2↑p ...
+                                        ; ShowCharacterStats↑p ...
                 mov     si, word_328D4
                 mov     word ptr [si+72h], 0
                 mov     word ptr [si+32h], 0
@@ -37529,7 +37529,7 @@ sub_25456       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_254CC       proc near               ; CODE XREF: sub_24BF2+B↑p
+sub_254CC       proc near               ; CODE XREF: ShowCharacterStats+B↑p
                                         ; sub_25103↑p
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 3
@@ -37593,7 +37593,7 @@ sub_25544       endp
 
 
 sub_25595       proc near               ; CODE XREF: sub_243D3+F8↑p
-                                        ; sub_245AE:loc_246C9↑p ...
+                                        ; ShowCharacterInventory:loc_246C9↑p ...
                 mov     _textPos_x, 8
                 mov     _textPos_y, 0B9h
                 mov     word_2E412, 7Bh ; '{'
@@ -39306,7 +39306,7 @@ sub_2607F       endp
 
 
 sub_2621C       proc far                ; CODE XREF: sub_1869D:loc_1872D↑P
-                                        ; sub_245AE+18D↑P
+                                        ; ShowCharacterInventory+18D↑P
                 push    ax
                 push    bx
                 push    cx
@@ -39542,7 +39542,7 @@ sub_2621C       endp
 
 
 sub_26415       proc far                ; CODE XREF: sub_1869D+2F3↑P
-                                        ; sub_245AE+16D↑P
+                                        ; ShowCharacterInventory+16D↑P
                 push    ax
                 push    bx
                 push    cx
@@ -56724,21 +56724,21 @@ word_2E432      dw 0                    ; DATA XREF: sub_1B8EE+26↑r
                 db    0
                 db    0
 _val1           dw 0                    ; DATA XREF: InitGlobals↑w
-                                        ; sub_245AE+5E↑r ...
+                                        ; ShowCharacterInventory+5E↑r ...
 _val2           dw 0                    ; DATA XREF: InitGlobals+6↑w
-                                        ; sub_245AE+72↑r ...
+                                        ; ShowCharacterInventory+72↑r ...
 _val3           dw 0                    ; DATA XREF: InitGlobals+C↑w
-                                        ; sub_245AE+86↑r ...
+                                        ; ShowCharacterInventory+86↑r ...
 _val4           dw 0                    ; DATA XREF: InitGlobals+12↑w
-                                        ; sub_245AE+9A↑r ...
+                                        ; ShowCharacterInventory+9A↑r ...
 _val5           dw 0                    ; DATA XREF: InitGlobals+18↑w
-                                        ; sub_245AE+AE↑r ...
+                                        ; ShowCharacterInventory+AE↑r ...
 _val6           dw 0                    ; DATA XREF: InitGlobals+1E↑w
-                                        ; sub_245AE+C2↑r ...
+                                        ; ShowCharacterInventory+C2↑r ...
 _val7           dw 0                    ; DATA XREF: InitGlobals+24↑w
-                                        ; sub_245AE+D6↑r ...
+                                        ; ShowCharacterInventory+D6↑r ...
 _val8           dw 0                    ; DATA XREF: InitGlobals+2A↑w
-                                        ; sub_245AE+EA↑r ...
+                                        ; ShowCharacterInventory+EA↑r ...
 word_2E48E      dw 0                    ; DATA XREF: sub_141D9+409↑w
                                         ; sub_14E28+34↑w ...
 word_2E490      dw 0                    ; DATA XREF: sub_141D9+40C↑w
