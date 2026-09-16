@@ -3775,6 +3775,15 @@ counterpart to the already-named `CommitContainerWrite`.
 
 483 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RestoreAllPortraitsFromEMS
+
+Named `sub_18F6C` -> `RestoreAllPortraitsFromEMS`, called from the
+still-untraced `sub_1869D`: a simpler sibling of `RefreshPartyPortraits`
+that restores all 4 portrait slots and clears their dirty bits without
+drawing the shop-hint text.
+
+484 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

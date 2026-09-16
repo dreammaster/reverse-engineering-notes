@@ -15046,7 +15046,7 @@ loc_189B4:                              ; CODE XREF: sub_1869D+2DD↑j
                 jz      short loc_189F5
                 mov     ax, 0Ah         ; ticks
                 call    wait
-                call    sub_18F6C
+                call    RestoreAllPortraitsFromEMS
                 call    DrawMouseCursor
                 call    sub_238CD
                 mov     errorCode, 0
@@ -15067,7 +15067,7 @@ loc_189F8:                              ; CODE XREF: sub_1869D+325↑j
 loc_18A08:                              ; CODE XREF: sub_1869D+31F↑j
                 test    word_328C6, 80h
                 jnz     short loc_18A1A
-                call    sub_18F6C
+                call    RestoreAllPortraitsFromEMS
                 mov     errorCode, 2
                 retf
 ; ---------------------------------------------------------------------------
@@ -15177,7 +15177,7 @@ loc_18B03:                              ; CODE XREF: sub_1869D+44↑j
 loc_18B1C:                              ; CODE XREF: sub_1869D+51B↓j
                 mov     ax, 1
                 call    sub_28412
-                call    sub_18F6C
+                call    RestoreAllPortraitsFromEMS
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -15662,9 +15662,9 @@ sub_18C79       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18F6C       proc near               ; CODE XREF: sub_1869D+344↑p
+RestoreAllPortraitsFromEMS proc near    ; CODE XREF: sub_1869D+344↑p
                                         ; sub_1869D+373↑p ...
-                call    RestoreCursorBackgroundIfDirty
+                call    RestoreCursorBackgroundIfDirty ; Restores all 4 portrait slots via RestorePortraitAreaAtPosition, clears their word_328C6 dirty bits, and calls ClearStatusPanelIfDirty. A simpler sibling of RefreshPartyPortraits (no shop-hint text). Called from sub_1869D.
                 mov     word_328BC, 8
                 mov     word_328C0, 8
                 mov     si, 95EBh
@@ -15684,7 +15684,7 @@ sub_18F6C       proc near               ; CODE XREF: sub_1869D+344↑p
                 and     word_328C6, 87FFh
                 call    ClearStatusPanelIfDirty
                 retn
-sub_18F6C       endp
+RestoreAllPortraitsFromEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15807,7 +15807,7 @@ ShowInsufficientGoldMessage endp
 
 
 RestorePortraitAreaAtPosition proc near ; CODE XREF: sub_1869D+442↑p
-                                        ; sub_18F6C+14↑p ...
+                                        ; RestoreAllPortraitsFromEMS+14↑p ...
                 cmp     word ptr [si], 0 ; Resolves a party record (SelectPartyRecordById), calls sub_266A9 (not traced), then restores a portrait-sized EMS-cached region (page 0x55D8) at a position from word_328BC/word_328C0. Called from sub_1869D and sub_18F6C.
                 jg      short loc_190EF
                 retn

@@ -1257,7 +1257,10 @@ All three, plus `start` and `HandleDungeonInput` generally, call
 portrait slots, but when a shop action bit is active
 (`word_328C6 & 0x1C`) it also draws a context hint — "SPACEBAR TO
 ENHANCE ITEM" / "SPACEBAR TO REPAIR ITEM" / default "SPACEBAR TO SELL
-ITEM OR ESC TO UNDO". It opens with `RestorePortraitPanelFromEMS`,
+ITEM OR ESC TO UNDO". A simpler sibling, `RestoreAllPortraitsFromEMS`
+(was `sub_18F6C`, called from the still-untraced `sub_1869D`), does the
+same 4-portrait restore plus dirty-bit clearing without the shop-hint
+text. It opens with `RestorePortraitPanelFromEMS`,
 which — only when none of the portrait-dirty bits are already set —
 blits a cached background region from EMS-paged memory straight back
 into the video buffer instead of a full redraw. Its sibling

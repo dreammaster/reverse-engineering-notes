@@ -3373,7 +3373,9 @@ static Bytes_0(void) {
 	create_insn	(0X18EFD);
 	create_insn	(0X18F11);
 	create_insn	(0X18F1B);
+	set_cmt	(0X18F6C,	"Restores all 4 portrait slots via RestorePortraitAreaAtPosition, clears their word_328C6 dirty bits, and calls ClearStatusPanelIfDirty. A simpler sibling of RefreshPartyPortraits (no shop-hint text). Called from sub_1869D.",	0);
 	create_insn	(0X18F6C);
+	set_name	(0X18F6C,	"RestoreAllPortraitsFromEMS");
 	create_insn	(x=0X18FB9);
 	op_hex		(x,	1);
 	create_insn	(x=0X18FC5);
@@ -3488,11 +3490,6 @@ static Bytes_0(void) {
 	set_cmt	(0X19768,	"Given a class id (ax, 1-27), returns a pointer (bx) into one of two contiguous 11-byte-stride string tables -- a real class-name table (FIGHTER/MERCHANT/ROGUE/MONK/ALCHEMIST/PALADIN/MAGE/DRUID/MARKSMAN for 1-9; WARRIOR/TINKERER/THIEF/CLERIC/TRANSMUTER/CAVALIER/WIZARD/ENCHANTER/RANGER/CHAMPION/BLACKSMITH/ASSASSIN/PRIEST/HEALER/HERO/SORCERER/SAGE/KNIGHT for 10-27). Confirms +0xE is a class id.",	0);
 	create_insn	(0X19768);
 	set_name	(0X19768,	"GetClassNameString");
-	create_insn	(0X1978F);
-	create_insn	(0X197B9);
-	set_cmt	(0X19957,	"Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).",	0);
-	create_insn	(0X19957);
-	set_name	(0X19957,	"SelectAndDrawPartyStatusRow");
 }
 
 //------------------------------------------------------------------------
@@ -3502,6 +3499,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1978F);
+	create_insn	(0X197B9);
+	set_cmt	(0X19957,	"Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).",	0);
+	create_insn	(0X19957);
+	set_name	(0X19957,	"SelectAndDrawPartyStatusRow");
 	set_cmt	(0X19A16,	"Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.",	0);
 	create_insn	(0X19A16);
 	set_name	(0X19A16,	"AddBCD4");
