@@ -4905,7 +4905,7 @@ loc_12F65:                              ; CODE XREF: BuildClueEntryText+14↑j
 loc_12F6E:                              ; CODE XREF: BuildClueEntryText+1E↑j
                                         ; BuildClueEntryText+39↑j
                 mov     ax, [si]
-                call    sub_1D198
+                call    LoadClueBookSpellEntry
                 mov     bx, 5A5Ah
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
@@ -5274,7 +5274,7 @@ RunClueBookSpellCategory proc far       ; CODE XREF: ShowClueBook+1AC↑P
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 mov     word_3330A, ax
-                call    sub_1D198
+                call    LoadClueBookSpellEntry
                 mov     word_2E3F8, 5A5Ah
                 mov     word_2E3FC, 0D5h
                 mov     ax, 8848h
@@ -23335,9 +23335,9 @@ seg052          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D198       proc far                ; CODE XREF: BuildClueEntryText+A3↑P
+LoadClueBookSpellEntry proc far         ; CODE XREF: BuildClueEntryText+A3↑P
                                         ; RunClueBookSpellCategory+E↑P ...
-                push    bx
+                push    bx              ; Maps in EMS page 0x5610 and copies one 80-byte spell record (1-based index in ax) into scratch buffer 0x5A5A. Called from BuildClueEntryText and RunClueBookSpellCategory (F8 clue book, F3 SPELLS).
                 push    cx
                 push    dx
                 push    si
@@ -23366,7 +23366,7 @@ sub_1D198       proc far                ; CODE XREF: BuildClueEntryText+A3↑P
                 pop     cx
                 pop     bx
                 retf
-sub_1D198       endp
+LoadClueBookSpellEntry endp
 
 seg052          ends
 
@@ -24949,7 +24949,7 @@ loc_1DFBA:                              ; CODE XREF: RunAlchemyScreen+2D5↑j
                 call    DrawMouseCursor
                 mov     si, word_328D4
                 mov     ax, [si+0C8h]
-                call    sub_1D198
+                call    LoadClueBookSpellEntry
                 push    word_32924
                 mov     word_32924, 0
                 call    DrawPartyStatusIconRow
@@ -25034,7 +25034,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    DrawMouseCursor
                 call    sub_238CD
                 mov     ax, word_3331E
-                call    sub_1D198
+                call    LoadClueBookSpellEntry
                 and     word_328CA, 0FF7Fh
                 call    sub_2C0FE
                 call    ApplyMapTriggerEffect
@@ -25242,7 +25242,7 @@ sub_1E1A7       endp
 sub_1E285       proc near               ; CODE XREF: sub_1E1A7:loc_1E218↑p
                 mov     word ptr [di+2], 6
                 mov     ax, [di]
-                call    sub_1D198
+                call    LoadClueBookSpellEntry
                 test    word_328CA, 1000h
                 jz      short loc_1E2A3
                 test    word_33300, 400h
@@ -25393,7 +25393,7 @@ loc_1E3D7:                              ; CODE XREF: sub_1E3AF+22↑j
                 mov     ax, [si+2]
                 mov     _font_fgColor, ax
                 mov     ax, [si]
-                call    sub_1D198
+                call    LoadClueBookSpellEntry
                 cmp     si, word_3330E
                 jnz     short loc_1E3FF
                 cmp     _font_fgColor, 0Fh
@@ -53414,7 +53414,7 @@ InteractWithContainer proc far          ; CODE XREF: HandleGameCommand+157↑P
                 call    sub_21C79       ; Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.
                 mov     bx, word_2E548
                 mov     ax, [bx+4]
-                call    sub_1D198
+                call    LoadClueBookSpellEntry
                 test    word ptr [bx+2], 200h
                 jz      short loc_2D696
                 mov     ax, 20h ; ' '
@@ -53668,7 +53668,7 @@ unk_2D86D       db    0                 ; DATA XREF: LoadLockState+7A↑o
                 db    0
                 db  78h ; x
                 db  6Eh ; n
-unk_2D888       db  30h ; 0             ; DATA XREF: sub_1D198+27↑o
+unk_2D888       db  30h ; 0             ; DATA XREF: LoadClueBookSpellEntry+27↑o
                 db    0
                 db  80h
                 db  6Eh ; n

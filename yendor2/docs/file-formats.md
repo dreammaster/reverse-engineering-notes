@@ -550,7 +550,11 @@ labels via `DrawClueBookMapGrid`, and dispatches cell clicks to an
 untraced `sub_14122`). F2
 (`word_2E3F6=2`, Monster Statistics) → `RunClueEntryMenu` +
 `RunClueBookMonsterCategory`. F3 (`word_2E3F6=3`, Spells) →
-`RunClueEntryMenu` + `RunClueBookSpellCategory`. F4
+`RunClueEntryMenu` + `RunClueBookSpellCategory`, which (along with
+`BuildClueEntryText`) reads each spell's data via `LoadClueBookSpellEntry`
+(was `sub_1D198`) — an 80-byte record from its own dedicated EMS page
+(`0x5610`), the spell-data equivalent of `LoadClueBookMonsterEntry`'s
+`WORLD.DAT` read. F4
 (`word_2E3F6=4` lists classes, then `word_2E3F6=[selected class]+4`,
 Magic Users) → two chained `RunClueEntryMenu` calls (class picker,
 then that class's spell list) + `RunClueBookSpellCategory` again —

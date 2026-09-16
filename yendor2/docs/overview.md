@@ -3886,6 +3886,15 @@ party slots.
 
 494 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: LoadClueBookSpellEntry
+
+Named `sub_1D198` -> `LoadClueBookSpellEntry`, called from
+`BuildClueEntryText` and `RunClueBookSpellCategory`: reads an 80-byte
+spell record from its own dedicated EMS page, the spell-data
+equivalent of `LoadClueBookMonsterEntry`'s `WORLD.DAT` read.
+
+495 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

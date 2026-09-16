@@ -4537,7 +4537,9 @@ static Bytes_1(void) {
 	create_insn	(0X1D146);
 	create_insn	(0X1D161);
 	create_insn	(0X1D18E);
+	set_cmt	(0X1D198,	"Maps in EMS page 0x5610 and copies one 80-byte spell record (1-based index in ax) into scratch buffer 0x5A5A. Called from BuildClueEntryText and RunClueBookSpellCategory (F8 clue book, F3 SPELLS).",	0);
 	create_insn	(0X1D198);
+	set_name	(0X1D198,	"LoadClueBookSpellEntry");
 	create_insn	(x=0X1D1BF);
 	op_plain_offset	(x,	1,	0X2D860);
 	op_plain_offset	(x,	129,	0X2D860);
