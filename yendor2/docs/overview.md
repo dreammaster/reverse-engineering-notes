@@ -470,6 +470,29 @@ handle but not yet renamed — their actual behavior isn't traced yet.
 
 84 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: mouse cursor draw/erase (and a correction)
+
+Traced `RunGameDialog`'s 'A' (Animation) handler one level deeper —
+`sub_1F163` → `sub_237B0` → `sub_23A22` — into what turned out to be the
+mouse cursor rendering pair, and finally resolved the session-opening
+`Fade?` hedge in the process. First pass named `sub_23A22` "DrawMouseCursor"
+(blits a 16×16 tile from a fixed source) and `sub_237B0`
+"RefreshMouseCursor" (its dirty-flag gate) — but reading `Fade?`'s full
+body right after (only a fragment had been read earlier this session)
+showed the roles were backwards: `sub_23A22` copies **from** a saved-
+background buffer (`0xE0E`) **to** the video buffer — that's *erasing*
+the cursor by restoring what was under it, not drawing it. `Fade?` does
+the real draw: saves the new position's background into `0xE0E` (for
+next time), then blits the actual cursor sprite (`0x3FE6`, `0xFF` as a
+transparent color key) onto the screen. Corrected
+(`ida_scripts/fix_cursor_naming.py`, `name_mouse_cursor.py` kept as-is
+with a note pointing to the fix, for the record): `RestoreCursorBackground`,
+`RestoreCursorBackgroundIfDirty`, and — finally — `DrawMouseCursor` for
+what was `Fade?`. It was never a screen fade; the pervasive call sites
+throughout the binary are just every point the cursor moves.
+
+86 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

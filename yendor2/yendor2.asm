@@ -94,7 +94,7 @@ loc_1007D:                              ; CODE XREF: start+60↑j
                 test    word_328C4, 400h
                 jz      short loc_1008F
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_1008F:                              ; CODE XREF: start+83↑j
                 call    PollKeyboardInput
@@ -252,7 +252,7 @@ loc_101B8:                              ; CODE XREF: start+1AD↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_101F3:                              ; CODE XREF: start+15D↑j
                                         ; start+172↑j ...
@@ -303,7 +303,7 @@ loc_10248:                              ; CODE XREF: start+23D↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_10283:                              ; CODE XREF: start+1FE↑j
                                         ; start+246↑j
@@ -500,7 +500,7 @@ loc_10403:                              ; CODE XREF: start+3FB↑j
 loc_1040D:                              ; CODE XREF: start+3E0↑j
                 mov     ax, 2
                 call    sub_28412
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
                 call    sub_16E18
@@ -579,7 +579,7 @@ loc_104B2:                              ; CODE XREF: start+347↑j
                 cmp     errorCode, 0
                 jnz     short loc_104CF
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_104CF:                              ; CODE XREF: start+4C3↑j
                 jmp     loc_10043
@@ -603,7 +603,7 @@ loc_104F1:                              ; CODE XREF: start+4E0↑j
                                         ; start+4EC↑j
                 call    sub_19553
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -640,7 +640,7 @@ loc_10541:                              ; CODE XREF: start+53C↑j
                 and     ax, 7000h
                 push    ax
                 call    sub_2704C
-                call    Fade?
+                call    DrawMouseCursor
                 and     word_3295A, 9FFFh
                 call    sub_1869D
                 pop     ax
@@ -657,7 +657,7 @@ loc_1056B:                              ; CODE XREF: start+522↑j
 ; ---------------------------------------------------------------------------
 
 loc_1057A:                              ; CODE XREF: start+575↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_295A8
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_105CA
@@ -721,7 +721,7 @@ loc_10600:                              ; CODE XREF: start+568↑j
                 push    errorCode
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 pop     errorCode
                 cmp     errorCode, 2
                 jnz     short loc_1062D
@@ -848,14 +848,14 @@ loc_10720:                              ; CODE XREF: start+70A↑j
 ; ---------------------------------------------------------------------------
 
 loc_1072E:                              ; CODE XREF: start+71E↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2849C
                 mov     ax, _val30
                 call    sub_28412
                 mov     bx, word_32DC4
                 inc     word ptr [bx+2]
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_11A10
                 call    ShowIntroPicture
                 jmp     loc_10286
@@ -890,11 +890,11 @@ loc_1077C:                              ; CODE XREF: sub_1075E+1B↑j
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     bx, 8FD2h
                 mov     cx, 2
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 mov     errorCode, 1
                 retn
@@ -995,7 +995,7 @@ loc_108D5:                              ; CODE XREF: seg000:08CB↑j
 loc_108DB:                              ; CODE XREF: seg000:08D3↑j
                                         ; seg000:0901↓j ...
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
                 test    word_328C4, 8000h
@@ -1149,7 +1149,7 @@ loc_10A35:                              ; CODE XREF: start+A30↑j
                 call    sub_1CDBC
                 cmp     word_32974, 0
                 jz      short loc_10A62
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, 2Fh ; '/'
                 call    sub_12554
                 call    sub_29738
@@ -1226,7 +1226,7 @@ loc_10AE5:                              ; CODE XREF: seg000:0AE0↑j
                 test    word_328C4, 8000h
                 jz      short loc_10B04
                 call    sub_28034
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_10B04:                              ; CODE XREF: seg000:0AF8↑j
                 jmp     loc_10043
@@ -1278,7 +1278,7 @@ ShowClueBook    proc far                ; CODE XREF: seg000:0AA3↑P
 loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
                 or      word_328CA, 8
                 call    sub_2849C
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_25862
                 call    sub_150B8
                 mov     ax, _videoBufferSeg
@@ -1756,9 +1756,9 @@ loc_110D9:                              ; CODE XREF: ShowClueBook+EB↑j
 loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
                 call    sub_2849C
                 call    sub_25862
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_14DFC
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -2278,7 +2278,7 @@ loc_114F0:                              ; CODE XREF: sub_112AE+212↑j
                 mov     ax, word_32940
                 mov     word_2E530, ax
                 call    sub_116CF
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -2342,7 +2342,7 @@ loc_11589:                              ; CODE XREF: sub_112AE+2D1↑j
                 mov     ax, word_32940
                 mov     word_2E530, ax
                 call    sub_116CF
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -2396,7 +2396,7 @@ loc_11613:                              ; CODE XREF: sub_112AE+30F↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 test    word_328CA, 1000h
                 jnz     short loc_11652
                 test    word_328C4, 1800h
@@ -2413,7 +2413,7 @@ loc_11652:                              ; CODE XREF: sub_112AE+384↑j
                 cmp     byte_2E400, 0
                 jnz     short loc_116C8
                 call    sub_222F8
-                call    Fade?
+                call    DrawMouseCursor
                 test    word_328C4, 1800h
                 jz      short loc_116C8
                 mov     ax, word_2E55C
@@ -2444,7 +2444,7 @@ loc_116A2:                              ; CODE XREF: sub_112AE+3CC↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_116C8:                              ; CODE XREF: sub_112AE+3A2↑j
                                         ; sub_112AE+3AE↑j ...
@@ -2467,7 +2467,7 @@ sub_116CF       proc near               ; CODE XREF: sub_112AE:loc_114C2↑p
                 mov     y, ax
                 mov     word_2E532, 80h
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 pop     bx
                 pop     ax
                 retn
@@ -2512,7 +2512,7 @@ loc_11704:                              ; CODE XREF: sub_116F3+5↑j
                 mov     bx, 6ED0h
                 mov     word ptr [bx], 3Ch ; '<'
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, _val30
                 call    sub_28412
 
@@ -2548,7 +2548,7 @@ ShowIntroPicture proc far               ; CODE XREF: start+756↑P
                 mov     ax, 1
                 mov     word_3297E, ax
                 call    sub_28296
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     x, 1
                 mov     y, 1
                 mov     _font_bgTransparent, 0
@@ -2578,7 +2578,7 @@ loc_117EE:                              ; CODE XREF: ShowIntroPicture+7A↓j
                 inc     di
                 loop    loc_117EE
                 or      word_328C8, 800h
-                call    Fade?
+                call    DrawMouseCursor
                 or      word_328C8, 800h
                 mov     cx, 3Fh ; '?'
                 call    sub_11900
@@ -2630,7 +2630,7 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
                 mov     bx, [si+4]
                 mov     _font_fgColor, 0EBh
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_11900
                 jz      short loc_118B6
                 call    sub_11A03
@@ -2879,7 +2879,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 7
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 28h ; '('   ; ticks
                 call    wait
                 mov     ax, 0FFFFh
@@ -2891,7 +2891,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgColor, 83h
                 mov     _font_bgTransparent, 1
                 call    sub_11E4A
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 64h ; 'd'   ; ticks
                 call    wait
                 call    sub_11D66
@@ -2909,7 +2909,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgColor, 83h
                 mov     _font_bgTransparent, 1
                 call    sub_11E4A
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 12Ch        ; ticks
                 call    wait
                 mov     ax, 0Ah
@@ -2923,7 +2923,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     y, 1
                 mov     word_2E530, 9
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 14h         ; ticks
                 call    wait
                 mov     ax, 5
@@ -2942,7 +2942,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgColor, 83h
                 mov     _font_bgTransparent, 1
                 call    sub_11E4A
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 15Eh        ; ticks
                 call    wait
                 and     word_328C8, 0F7FFh
@@ -2956,7 +2956,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, 21h ; '!'
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2587E
                 mov     ax, 28h ; '('   ; ticks
                 call    wait
@@ -2975,7 +2975,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _videoSegment, ax
                 mov     ax, 15Eh        ; ticks
                 call    wait
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 46h ; 'F'
                 mov     bx, 0CD41h
                 mov     cx, 3
@@ -2999,7 +2999,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 64h ; 'd'
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 1Eh         ; ticks
                 call    wait
                 call    sub_2587E
@@ -3022,7 +3022,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 0Bh
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 0Ah         ; ticks
                 call    wait
                 mov     ax, 1
@@ -3098,7 +3098,7 @@ loc_11D99:                              ; CODE XREF: sub_11D66+79↓j
                 mov     _font_bgTransparent, 4
                 mov     word_2E530, 8
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_11DCE:                              ; CODE XREF: sub_11D66+6D↓j
                 cmp     word_32956, 3
@@ -3123,7 +3123,7 @@ sub_11DE2       proc near               ; CODE XREF: sub_11A10+234↑p
 
 loc_11E03:                              ; CODE XREF: sub_11DE2+37↓j
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 inc     word_2E530
                 mov     ax, 2           ; ticks
                 call    wait
@@ -3373,7 +3373,7 @@ loc_12046:                              ; CODE XREF: InitGame+161↑j
 
 loc_1204C:                              ; CODE XREF: InitGame+168↑j
                 and     word_3295A, 1FFFh
-                call    Fade?
+                call    DrawMouseCursor
                 call    RunGameDialog
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_12064
@@ -4429,7 +4429,7 @@ loc_12BB8:                              ; CODE XREF: sub_12B84+2F↑j
                 cmp     word_2E40A, 0
                 jz      short loc_12BD1
                 call    sub_14C37
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_12C88
 ; ---------------------------------------------------------------------------
 
@@ -4479,7 +4479,7 @@ loc_12C26:                              ; CODE XREF: sub_12B84+8D↑j
                 cmp     word_2E40A, 0
                 jz      short loc_12BD1
                 call    sub_14C37
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     short loc_12C88
 ; ---------------------------------------------------------------------------
 
@@ -4792,7 +4792,7 @@ loc_12EB1:                              ; CODE XREF: sub_12E59+5↑j
                 call    sub_14C37
                 call    sub_1303C
                 call    sub_12C96
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_12E59       endp
 
@@ -5081,7 +5081,7 @@ seg009          segment byte public 'CODE' use16
 WaitForKeypress proc far                ; CODE XREF: ShowClueBook:loc_10F3E↑P
                 or      word_328CC, 40h ; Loops calling PollKeyboardInput (with a Fade? each iteration) until a key event is seen (errorCode != 0 as an input-event flag, see PollKeyboardInput), then for event types 1-3 calls sub_14D26.
                 call    sub_13463
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_1306B:                              ; CODE XREF: WaitForKeypress+17↓j
                                         ; WaitForKeypress+1E↓j ...
@@ -5114,7 +5114,7 @@ sub_13090       proc far                ; CODE XREF: ShowClueBook:loc_10F2F↑P
 loc_130AD:                              ; CODE XREF: sub_13090+75↓j
                 call    sub_13678
                 call    sub_13780
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_130B8:                              ; CODE XREF: sub_13090+32↓j
                                         ; sub_13090+39↓j ...
@@ -5192,7 +5192,7 @@ loc_13160:                              ; CODE XREF: sub_13119+37↑j
 
 loc_13163:                              ; CODE XREF: sub_13119+2E↑j
                                         ; sub_13119+3E↑j ...
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_13168:                              ; CODE XREF: sub_13119+59↓j
                                         ; sub_13119+60↓j ...
@@ -5225,7 +5225,7 @@ sub_1318D       proc far                ; CODE XREF: ShowClueBook:loc_110CA↑P
 loc_131AA:                              ; CODE XREF: sub_1318D+75↓j
                 call    sub_13678
                 call    sub_1385C
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_131B5:                              ; CODE XREF: sub_1318D+32↓j
                                         ; sub_1318D+39↓j ...
@@ -5281,7 +5281,7 @@ sub_13216       proc far                ; CODE XREF: ShowClueBook+1AC↑P
                 call    DrawMessageBox
                 call    sub_14C37
                 call    sub_13B3F
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_13253:                              ; CODE XREF: sub_13216+47↓j
                                         ; sub_13216+4E↓j ...
@@ -5304,7 +5304,7 @@ sub_13216       endp
 sub_13278       proc far                ; CODE XREF: ShowClueBook+124↑P
                 call    sub_1419B
                 call    sub_13FCF
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_13283:                              ; CODE XREF: sub_13278+15↓j
                                         ; sub_13278+1C↓j ...
@@ -5340,7 +5340,7 @@ loc_132B8:                              ; CODE XREF: sub_132B5+22↓j
                 jz      short loc_132CD
                 call    sub_141D9
                 call    sub_14C37
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_132CD:                              ; CODE XREF: sub_132B5+9↑j
                 call    PollKeyboardInput
@@ -5372,7 +5372,7 @@ loc_132F8:                              ; CODE XREF: ShowPagedEntryScreen+57↓j
                 call    DrawMessageBox
                 call    UpdateScrollArrows
                 call    sub_14C37
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_13322:                              ; CODE XREF: ShowPagedEntryScreen+3A↓j
                                         ; ShowPagedEntryScreen+41↓j ...
@@ -5401,7 +5401,7 @@ ShowPagedEntryScreen endp
 sub_1334E       proc far                ; CODE XREF: ShowClueBook:loc_1107C↑P
                 or      word_328CC, 40h
                 call    sub_13E98
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_1335B:                              ; CODE XREF: sub_1334E+17↓j
                                         ; sub_1334E+1E↓j ...
@@ -6670,7 +6670,7 @@ sub_14122       proc near               ; CODE XREF: sub_13278+32↑p
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
                 pop     _font_bgTransparent
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_14122       endp
 
@@ -7054,7 +7054,7 @@ loc_1464A:                              ; CODE XREF: sub_141D9+446↑j
                 test    word ptr es:[si+0Ch], 4
                 jz      short loc_14667
                 call    sub_14C37
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 2           ; ticks
                 call    wait
                 jmp     sub_141D9
@@ -7117,7 +7117,7 @@ loc_14700:                              ; CODE XREF: sub_1466E+7E↑j
                 or      word_328CC, 40h
                 call    sub_141D9
                 call    sub_14C37
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 or      word_3295A, 8000h
                 and     word_328C4, 0FBFFh
@@ -7591,7 +7591,7 @@ sub_14AE8       proc far                ; CODE XREF: sub_12B84+FA↑P
                 mov     _font_fgColor, 59h ; 'Y'
                 mov     bx, 8E63h       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_14AE8       endp
 
@@ -7707,7 +7707,7 @@ sub_14BD5       proc far                ; CODE XREF: ShowClueBook+6B↑P
                 call    sub_23B76
                 push    cs
                 call    near ptr sub_14C37
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_14BD5       endp
 
@@ -8313,7 +8313,7 @@ loc_1515D:                              ; CODE XREF: sub_15142+16↑j
                 mov     word_2E532, 0
                 mov     word_2E530, 0Ch
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 or      word_328C8, 800h
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
@@ -8490,7 +8490,7 @@ loc_1531E:                              ; CODE XREF: sub_152EF+8F↓j
                 add     si, 14h
                 loop    loc_15318
                 and     word_328C4, 0FBFFh
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_1532E:                              ; CODE XREF: sub_152EF+44↓j
                 cmp     word_32956, 1
@@ -8626,7 +8626,7 @@ loc_15432:                              ; CODE XREF: sub_15429+11↓j
                 mov     ax, 12h
                 call    sub_28296
                 or      word_328C8, 800h
-                call    Fade?
+                call    DrawMouseCursor
                 mov     cx, 3Fh ; '?'
 
 loc_15452:                              ; CODE XREF: sub_15429+4E↓j
@@ -8665,7 +8665,7 @@ loc_15489:                              ; CODE XREF: sub_15429+5D↑j
                 mov     _font_fgColor, 1Fh
                 mov     cx, 20h ; ' '
                 call    sub_1619F
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_154B1:                              ; CODE XREF: sub_15429+A8↓j
                 call    sub_1618E
@@ -8677,7 +8677,7 @@ loc_154BF:                              ; CODE XREF: sub_15429+91↑j
                 sub     word_328FA, 2
                 add     word_32900, 2
                 call    sub_1619F
-                call    Fade?
+                call    DrawMouseCursor
                 loop    loc_154B1
                 mov     cx, 14h
 
@@ -8692,7 +8692,7 @@ loc_154E4:                              ; CODE XREF: sub_15429+B6↑j
                 add     word_32900, 2
                 dec     _font_fgColor
                 call    sub_1619F
-                call    Fade?
+                call    DrawMouseCursor
                 loop    loc_154D6
                 call    sub_1618E
                 call    sub_15249
@@ -8940,7 +8940,7 @@ loc_156DB:                              ; CODE XREF: sub_1559A+13E↑j
                 mov     ax, 0FFFFh
                 mov     cx, 2
                 call    sub_161D0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_161C3
                 call    sub_15249
                 jnz     short loc_15747
@@ -8964,7 +8964,7 @@ loc_15756:                              ; CODE XREF: sub_1559A+1B9↑j
                 mov     word_2E532, 10h
                 mov     word_2E530, 27h ; '''
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 or      word_328C8, 800h
                 mov     dx, 0C0h
                 call    sub_16164
@@ -8987,7 +8987,7 @@ loc_15799:                              ; CODE XREF: sub_1559A+1FC↑j
                 mov     cx, 2
                 mov     ax, 10h
                 call    sub_161D0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_161C3
                 or      word_328C8, 800h
                 mov     dx, 0B0h
@@ -9024,7 +9024,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
                 call    sub_16244
                 mov     ax, 12h
                 call    sub_28412
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 5
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0FFh
@@ -9061,7 +9061,7 @@ loc_1587F:                              ; CODE XREF: sub_1559A+2E2↑j
                 mov     cx, 1
                 mov     ax, 13h
                 call    sub_161D0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_161C3
                 mov     ax, _videoBufferSeg
                 mov     es, ax
@@ -9090,7 +9090,7 @@ loc_158D5:                              ; CODE XREF: sub_1559A+338↑j
                 mov     cx, 3
                 mov     ax, 17h
                 call    sub_161D0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_161C3
                 mov     cx, 0FFFFh
                 call    sub_16234
@@ -9149,7 +9149,7 @@ loc_1598C:                              ; CODE XREF: sub_1559A+3EF↑j
                 mov     cx, 2
                 mov     ax, 14h
                 call    sub_161D0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_161C3
                 mov     cx, 14h
                 call    sub_16234
@@ -9199,7 +9199,7 @@ loc_159D9:                              ; CODE XREF: sub_1559A+43C↑j
                 mov     y, 0A2h
                 mov     word_2E530, 0B6h
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_15249
                 jnz     short loc_15AB1
                 retn
@@ -9284,7 +9284,7 @@ loc_15B81:                              ; CODE XREF: sub_1559A+5F6↓j
                 add     di, 140h
                 pop     cx
                 loop    loc_15B81
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_15249
                 jnz     short loc_15B9D
                 retn
@@ -9326,7 +9326,7 @@ loc_15BBA:                              ; CODE XREF: sub_1559A+61D↑j
                 mov     cx, 4
                 mov     ax, 15h
                 call    sub_161D0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_161C3
                 mov     di, 0
                 mov     si, 0
@@ -9453,7 +9453,7 @@ loc_15D39:                              ; CODE XREF: sub_1559A+79C↑j
                 mov     ax, 0FFFFh
                 mov     cx, 2
                 call    sub_161D0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_15249
                 jnz     short loc_15D85
                 retn
@@ -9521,7 +9521,7 @@ loc_15E05:                              ; CODE XREF: sub_1559A+868↑j
                 mov     ax, 1Ch
                 mov     cx, 2
                 call    sub_161D0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_161C3
                 mov     cx, 14h
                 call    sub_1616F
@@ -9679,7 +9679,7 @@ loc_15F35:                              ; CODE XREF: sub_15E44+FA↓j
                 call    sub_152EF
                 or      word_3295A, 8000h
                 and     word_328C4, 0FBFFh
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 retn
 sub_15E44       endp
 
@@ -10157,7 +10157,7 @@ loc_16324:                              ; CODE XREF: sub_162F6+2B↑j
 loc_1633B:                              ; CODE XREF: sub_162F6+A8↓j
                 call    sub_16A39
                 call    sub_232A8
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_16348:                              ; CODE XREF: sub_162F6+B9↓j
                 mov     bx, word_32BF4
@@ -10201,7 +10201,7 @@ loc_16377:                              ; CODE XREF: sub_162F6+65↑j
 loc_163A0:                              ; CODE XREF: sub_162F6+90↑j
                 call    sub_232A8
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     short loc_16348
 ; ---------------------------------------------------------------------------
 
@@ -10216,7 +10216,7 @@ loc_163B1:                              ; CODE XREF: sub_162F6+89↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_3293E, 0
                 mov     si, 51B6h
                 call    sub_19A7C
@@ -10259,7 +10259,7 @@ loc_16432:                              ; CODE XREF: sub_16407+12C↓j
                 mov     ax, [bx]
                 mov     word_328D4, ax
                 call    sub_26C9E
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_16451:                              ; CODE XREF: sub_16407:loc_16524↓j
                                         ; sub_16407:loc_16560↓j ...
@@ -10271,7 +10271,7 @@ loc_16459:                              ; CODE XREF: sub_16407+6E↓j
                 test    word_328C4, 400h
                 jz      short loc_1646B
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_1646B:                              ; CODE XREF: sub_16407+58↑j
                 call    PollKeyboardInput
@@ -10434,7 +10434,7 @@ loc_165A9:                              ; CODE XREF: sub_16407+183↑j
                 call    sub_2738B
                 cmp     errorCode, 2
                 jnz     short loc_1658C
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_295A8
                 test    word_328C8, 20h
                 jz      short loc_165CF
@@ -10461,7 +10461,7 @@ loc_165EE:                              ; CODE XREF: sub_16407+1E2↑j
                 jnz     short loc_16605
                 call    sub_1A37E
                 call    sub_232A8
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
@@ -10497,7 +10497,7 @@ loc_16634:                              ; CODE XREF: sub_16407+223↑j
                 call    sub_18C79
                 cmp     errorCode, 0
                 jnz     short loc_16645
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_16645:                              ; CODE XREF: sub_16407+21C↑j
                                         ; sub_16407+237↑j
@@ -10626,7 +10626,7 @@ loc_1670D:                              ; CODE XREF: sub_16407+C6↑j
                 mov     word_2E532, 80h
                 mov     word_2E530, 4
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 142h
                 call    sub_1ACD7
                 cmp     errorCode, 0
@@ -10651,7 +10651,7 @@ loc_16776:                              ; CODE XREF: sub_16407+365↑j
 loc_16778:                              ; CODE XREF: sub_16407+35E↑j
                 call    sub_286B2
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2827E
                 jnz     short loc_167A9
                 mov     si, word_328D4
@@ -10679,7 +10679,7 @@ loc_167B3:                              ; CODE XREF: sub_16407+341↑j
                 mov     word_2E532, 80h
                 mov     word_2E530, 3
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_32956, 0
 
 loc_167E7:                              ; CODE XREF: sub_16407+3E5↓j
@@ -10782,7 +10782,7 @@ loc_168CB:                              ; CODE XREF: sub_16881+47↑j
 loc_168D9:                              ; CODE XREF: sub_16881+64↓j
                 push    cx
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 pop     cx
                 loop    loc_168D9
                 mov     si, word_32904
@@ -10926,7 +10926,7 @@ loc_16A1E:                              ; CODE XREF: sub_16881+D7↑j
                 mov     ax, [si+4Ch]
                 mov     [si+8], ax
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_16881       endp
 
@@ -11628,7 +11628,7 @@ sub_16EFA       proc far                ; CODE XREF: sub_17032+E5↓P
                 push    di
                 push    es
                 push    cx
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, 0A000h
                 mov     es, ax
                 assume es:nothing
@@ -11942,7 +11942,7 @@ loc_170A3:                              ; CODE XREF: sub_17032+6D↑j
                 or      byte_32DCC, al
 
 loc_170A7:                              ; CODE XREF: sub_17032+237↓j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_23874
                 push    cs
                 call    near ptr sub_1728A
@@ -11981,13 +11981,13 @@ loc_170E8:                              ; CODE XREF: sub_17032+160↓j
 
 loc_17100:                              ; CODE XREF: sub_17032+CA↑j
                 or      byte_32DCC, al
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2704C
                 push    cs
                 call    near ptr sub_1728A
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_16EFA
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     _videoSegment, 0A000h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -12218,7 +12218,7 @@ sub_1732B       proc far                ; CODE XREF: sub_178A6+104↓p
                 push    cs
                 call    near ptr sub_175F4
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_17350:                              ; CODE XREF: sub_1732B+2F↓j
                                         ; sub_1732B+66↓j ...
@@ -12325,7 +12325,7 @@ loc_17403:                              ; CODE XREF: sub_1732B+41↑j
                 call    sub_1B6DE
 
 loc_17422:                              ; CODE XREF: sub_1732B+E8↑j
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
@@ -12406,7 +12406,7 @@ loc_174B1:                              ; CODE XREF: sub_1732B+17C↑j
                 push    cs
                 call    near ptr sub_175F4
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
@@ -12445,7 +12445,7 @@ loc_17507:                              ; CODE XREF: sub_1732B+284↓j
                 call    sub_20C46
                 test    word_328C6, 80h
                 jnz     short loc_1752F
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_1752F:                              ; CODE XREF: sub_1732B+1FD↑j
                 pop     errorCode
@@ -12485,7 +12485,7 @@ loc_1756F:                              ; CODE XREF: sub_1732B+234↑j
                 mov     bx, word_32DC4
                 dec     word ptr [bx+2]
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_17590:                              ; CODE XREF: sub_1732B+252↑j
                 mov     ax, 556Ch
@@ -12711,7 +12711,7 @@ sub_17795       proc far                ; CODE XREF: sub_112AE+2A0↑P
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     si, word_328D4
                 mov     bx, 7BE8h
                 mov     cx, 2
@@ -12794,7 +12794,7 @@ loc_17821:                              ; CODE XREF: sub_17795+7E↑j
 loc_17896:                              ; CODE XREF: sub_17795+40↑j
                                         ; sub_17795+57↑j ...
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 retf
 sub_17795       endp
@@ -12858,7 +12858,7 @@ loc_17906:                              ; CODE XREF: sub_178A6+35↑j
 ; ---------------------------------------------------------------------------
 
 loc_17927:                              ; CODE XREF: sub_178A6+72↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 test    word_32DCE, 80h
                 jnz     short loc_17948
                 mov     ax, word_32DC8
@@ -13021,7 +13021,7 @@ loc_17A73:                              ; CODE XREF: sub_17A65+B↑j
                 mov     bx, word_32DC4
                 inc     word ptr [bx+2]
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_17A65       endp
 
@@ -13047,7 +13047,7 @@ sub_17A8D       proc near               ; CODE XREF: sub_17032+2A↑p
                 jnb     short loc_17AC5
                 mov     word_31948, 0
                 add     sp, 4
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -13073,7 +13073,7 @@ loc_17ADA:                              ; CODE XREF: sub_17A8D:loc_17AC5↑j
                 call    sub_23874
                 push    cs
                 call    near ptr sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_17A8D       endp
 
@@ -13104,7 +13104,7 @@ loc_17B35:                              ; CODE XREF: sub_17B09+1F↑j
                 call    sub_16E18
                 push    cs
                 call    near ptr sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_17B09       endp
 
@@ -13219,7 +13219,7 @@ loc_17C33:                              ; CODE XREF: sub_17B92+97↑j
                 call    sub_1BB48
                 call    sub_1B8AB
                 call    sub_1B8EE
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
@@ -13250,7 +13250,7 @@ loc_17C7A:                              ; CODE XREF: sub_17B92+C7↑j
                 test    word ptr es:[si+0Eh], 140h
                 jnz     short loc_17C9C
                 call    sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_17C9C:                              ; CODE XREF: sub_17B92+2A↑j
                                         ; sub_17B92+3A↑j ...
@@ -13271,7 +13271,7 @@ loc_17CBE:                              ; CODE XREF: sub_17B92+125↑j
                 test    word_2E410, 0FC00h
                 jz      short loc_17D04
                 and     word_2E410, 0FFFEh
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
                 call    sub_26C9E
                 mov     ax, word_3290C
@@ -13280,7 +13280,7 @@ loc_17CBE:                              ; CODE XREF: sub_17B92+125↑j
                 call    sub_21612
                 call    sub_21588
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_17D04:                              ; CODE XREF: sub_17B92+13A↑j
                 or      word_328C4, 100h
@@ -13434,7 +13434,7 @@ loc_17E3B:                              ; CODE XREF: sub_17B92+28C↑j
 ; ---------------------------------------------------------------------------
 
 loc_17E43:                              ; CODE XREF: sub_17B92+2AC↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, bx
                 call    sub_26C9E
                 test    word_2E410, 8000h
@@ -13468,7 +13468,7 @@ loc_17E8B:                              ; CODE XREF: sub_17B92+2CC↑j
                 mov     word_2E550, ax
                 call    sub_1B702
                 call    sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
@@ -13502,7 +13502,7 @@ loc_17EA8:                              ; CODE XREF: sub_17B92+2F2↑j
                 call    writeString
 
 loc_17F18:                              ; CODE XREF: sub_17B92+34E↑j
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
@@ -13574,7 +13574,7 @@ loc_17F8D:                              ; CODE XREF: sub_17B92+3F1↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 and     word_328C6, 0FF7Fh
                 retf
 sub_17B92       endp
@@ -13785,7 +13785,7 @@ loc_180C9:                              ; CODE XREF: sub_180BA+18↓j
 loc_180CF:                              ; CODE XREF: sub_180BA+DE↓j
                 add     si, 14h
                 loop    loc_180C9
-                call    Fade?
+                call    DrawMouseCursor
                 test    word_328C8, 4
                 jz      short loc_180E8
                 call    sub_2827E
@@ -13797,7 +13797,7 @@ loc_180E8:                              ; CODE XREF: sub_180BA+25↑j
 
 loc_180F0:                              ; CODE XREF: sub_180BA+2C↑j
                 call    sub_222F8
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_25AAC
                 pop     cx
                 pop     dx
@@ -14561,11 +14561,11 @@ loc_1857E:                              ; CODE XREF: sub_18504+2F↑j
                 cmp     word ptr [si], 0
                 jz      short locret_1851B
                 or      word_328C6, bx
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_19133
                 mov     ax, 1
                 call    sub_28412
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 retf
 sub_18504       endp
@@ -14576,7 +14576,7 @@ sub_18504       endp
 
 sub_185A2       proc far                ; CODE XREF: start+81D↑P
                                         ; sub_16407+446↑P ...
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_1922C
                 mov     si, 95EBh
                 cmp     word ptr [si], 0
@@ -14650,7 +14650,7 @@ loc_18681:                              ; CODE XREF: sub_185A2+BD↑j
 
 loc_18692:                              ; CODE XREF: sub_185A2+8A↑j
                                         ; sub_185A2+CA↑j ...
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 retf
 sub_185A2       endp
@@ -14852,7 +14852,7 @@ loc_1882D:                              ; CODE XREF: sub_1869D+17C↑j
                 call    sub_19133
 
 loc_18847:                              ; CODE XREF: sub_1869D+196↑j
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -15025,7 +15025,7 @@ loc_1897F:                              ; CODE XREF: sub_1869D+2C4↑j
                 jz      short loc_1897C
                 mov     bx, word_32924
                 call    sub_22445
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -15044,7 +15044,7 @@ loc_189B4:                              ; CODE XREF: sub_1869D+2DD↑j
                 mov     ax, 0Ah         ; ticks
                 call    wait
                 call    sub_18F6C
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 mov     errorCode, 0
                 retf
@@ -15131,11 +15131,11 @@ loc_18AA0:                              ; CODE XREF: sub_1869D+3B8↑j
                 test    word_328C6, bx
                 jnz     short loc_18ACC
                 or      word_328C6, bx
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_19133
                 mov     ax, 1
                 call    sub_28412
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
@@ -15143,11 +15143,11 @@ loc_18AA0:                              ; CODE XREF: sub_1869D+3B8↑j
 loc_18ACC:                              ; CODE XREF: sub_1869D+40C↑j
                 not     bx
                 and     word_328C6, bx
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, 1
                 call    sub_28412
                 call    sub_190E9
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 test    word_328C6, 7800h
                 jnz     short loc_18B00
@@ -15176,7 +15176,7 @@ loc_18B1C:                              ; CODE XREF: sub_1869D+51B↓j
                 call    sub_28412
                 call    sub_18F6C
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 mov     errorCode, 0
                 retf
@@ -15216,7 +15216,7 @@ loc_18B6F:                              ; CODE XREF: sub_1869D+4BB↑j
 loc_18B82:                              ; CODE XREF: sub_1869D+4D6↑j
                 call    sub_16E18
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_18B91:                              ; CODE XREF: sub_1869D+4AC↑j
                 jmp     near ptr sub_1869D
@@ -15306,7 +15306,7 @@ loc_18C1F:                              ; CODE XREF: sub_1869D+578↑j
                 call    sub_23874
                 call    sub_238CD
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
                 mov     word_32968, 0
                 jmp     loc_18761
@@ -15661,7 +15661,7 @@ sub_18C79       endp
 
 sub_18F6C       proc near               ; CODE XREF: sub_1869D+344↑p
                                         ; sub_1869D+373↑p ...
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_328BC, 8
                 mov     word_328C0, 8
                 mov     si, 95EBh
@@ -15723,7 +15723,7 @@ sub_18FDA       proc near               ; CODE XREF: sub_1869D+558↑p
                 mov     cx, 2
                 mov     bx, 815Ah
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -15741,7 +15741,7 @@ loc_19032:                              ; CODE XREF: sub_18FDA+52↑j
                 mov     di, 0CB2h
                 call    sub_19C7B
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, word_32974
                 inc     ax
                 mov     word_31948, ax
@@ -15753,14 +15753,14 @@ loc_19032:                              ; CODE XREF: sub_18FDA+52↑j
                 mov     ax, word_31948
                 mov     bx, 0
                 call    sub_219FA
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_2E546
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 call    sub_23874
                 call    sub_238CD
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_18FDA       endp
 
@@ -15795,7 +15795,7 @@ sub_190AF       proc near               ; CODE XREF: sub_18FDA+54↑p
                 mov     cx, 3
                 mov     bx, 8376h
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_190AF       endp
 
@@ -15870,7 +15870,7 @@ sub_19140       proc near               ; CODE XREF: sub_1869D+566↑p
                 mov     cx, 2
                 mov     bx, 81E6h
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -15888,7 +15888,7 @@ loc_19198:                              ; CODE XREF: sub_19140+52↑j
                 mov     di, 5082h
                 call    sub_19C7B
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, word_3194C
                 mov     word_3194C, 0
                 mov     word_31948, ax
@@ -15900,14 +15900,14 @@ loc_19198:                              ; CODE XREF: sub_19140+52↑j
                 mov     ax, word_31948
                 mov     bx, 0
                 call    sub_219FA
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_2E546
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 call    sub_23874
                 call    sub_238CD
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_19140       endp
 
@@ -15995,7 +15995,7 @@ sub_19264       proc near               ; CODE XREF: sub_1869D+54A↑p
                 mov     cx, 4
                 mov     bx, 7FF7h
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -16019,7 +16019,7 @@ loc_192B9:                              ; CODE XREF: sub_19264+19↑j
                 mov     di, 50C0h
                 call    sub_19A16
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_19264       endp
 
@@ -16142,7 +16142,7 @@ loc_19429:                              ; CODE XREF: sub_193BE+5D↑j
                 mov     _textPos_y, 71h ; 'q'
                 mov     bx, 8536h
                 call    sub_23A7C
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_19442:                              ; CODE XREF: sub_193BE+8E↓j
                                         ; sub_193BE+A5↓j ...
@@ -16172,7 +16172,7 @@ loc_19473:                              ; CODE XREF: sub_193BE+AC↑j
                 jnz     short loc_19442
 
 loc_19482:                              ; CODE XREF: sub_193BE+BB↑j
-                call    Fade?
+                call    DrawMouseCursor
                 pop     word_3295A
                 retf
 ; ---------------------------------------------------------------------------
@@ -16350,12 +16350,12 @@ loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
                                         ; sub_19553+1AB↓j
                 mov     ax, [bx]
                 call    sub_25B14
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_19957
                 call    sub_197B9
                 call    sub_26C9E
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_195FA:                              ; CODE XREF: sub_19553+B1↓j
                                         ; sub_19553+D3↓j ...
@@ -16507,7 +16507,7 @@ loc_19712:                              ; CODE XREF: sub_19553+D5↑j
                 mov     word_32924, 0
                 call    sub_26C9E
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 pop     word_3295A
                 retf
 ; ---------------------------------------------------------------------------
@@ -16532,10 +16532,10 @@ loc_1974F:                              ; CODE XREF: sub_19553+1F6↑j
                 mov     word ptr [bx], 0
 
 loc_19753:                              ; CODE XREF: sub_19553+1FA↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_197B9
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_195FA
 sub_19553       endp
 
@@ -17475,7 +17475,7 @@ loc_19E74:                              ; CODE XREF: sub_19E56+10↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_2E530, 0
                 call    sub_23874
                 mov     byte_2E400, 0
@@ -17487,7 +17487,7 @@ loc_19ECA:                              ; CODE XREF: sub_19E56+23↑j
                 jz      short loc_19EE7
                 call    sub_1FC3F
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     byte_2E400, 0
                 jmp     short locret_19E73
 ; ---------------------------------------------------------------------------
@@ -18229,7 +18229,7 @@ loc_1A493:                              ; CODE XREF: sub_1A3F0+77↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1A3F0       endp
 
@@ -18272,10 +18272,10 @@ loc_1A4E9:                              ; CODE XREF: sub_1A4C5+1D↑j
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     bx, 7BCEh       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
 
 loc_1A52F:                              ; CODE XREF: sub_1A4C5+A↑j
@@ -18308,7 +18308,7 @@ loc_1A554:                              ; CODE XREF: sub_1A4C5+9C↓j
 
 loc_1A563:                              ; CODE XREF: sub_1A4C5+94↑j
                 or      [bx], ax
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 mov     ax, 2
                 pop     si
@@ -18317,7 +18317,7 @@ loc_1A563:                              ; CODE XREF: sub_1A4C5+94↑j
 
 loc_1A574:                              ; CODE XREF: sub_1A4C5+7E↑j
                                         ; sub_1A4C5+98↑j
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 xor     ax, ax
                 pop     si
@@ -18461,10 +18461,10 @@ loc_1A611:                              ; CODE XREF: sub_1A5F6+145↓j
                 mov     bx, 0AFA8h
                 call    sub_28A76
                 mov     fontOffset, 0
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_1A68F:                              ; CODE XREF: sub_1A5F6+48↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 push    _videoSegment
                 push    _font_bgTransparent
                 mov     _textPos_x, 16h
@@ -18509,7 +18509,7 @@ loc_1A712:                              ; CODE XREF: sub_1A5F6+F6↑j
                 mov     _font_fgColor, 7Bh ; '{'
                 mov     bx, 8409h       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 call    sub_162B6
                 jmp     loc_1A611
@@ -18521,7 +18521,7 @@ loc_1A73E:                              ; CODE XREF: sub_1A5F6+11A↑j
                 mov     _font_fgColor, 8Ah
                 mov     bx, 841Ch       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 call    sub_162B6
                 or      word_328C6, 40h
@@ -18575,7 +18575,7 @@ loc_1A789:                              ; CODE XREF: sub_1A76E+16↑j
                 mov     ax, [si+6]
                 mov     word_2E66C, ax
                 add     si, 8
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
 
 loc_1A7B1:                              ; CODE XREF: sub_1A76E+64↓j
                 push    cx
@@ -18759,7 +18759,7 @@ loc_1A950:                              ; CODE XREF: sub_1A76E+86↑j
                 mov     es, word_2E4AA
                 xor     ax, ax
                 rep stosw
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     _videoSegment, 0A000h
                 mov     _font_bgTransparent, 0
                 mov     _textPos_x, 0F0h
@@ -19533,7 +19533,7 @@ sub_1AEF8       proc far                ; CODE XREF: sub_17B92+1B1↑P
                 call    sub_1B6DE
                 or      word_328C4, 100h
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1AEF8       endp
 
@@ -19580,8 +19580,8 @@ loc_1AF4C:                              ; CODE XREF: sub_1AF49+116↓j
                 mov     word_2E412, 8Ah
                 mov     si, 94B3h
                 call    sub_19B80
-                call    Fade?
-                call    sub_237B0
+                call    DrawMouseCursor
+                call    RestoreCursorBackgroundIfDirty
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 61h ; 'a'
                 mov     _font_bgColor, 44h ; 'D'
@@ -19604,7 +19604,7 @@ loc_1B02E:                              ; CODE XREF: sub_1AF49+E0↑j
                 mov     _font_fgColor, 7Bh ; '{'
                 mov     bx, 808Ch       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_162B6
                 jmp     loc_1AF4C
 ; ---------------------------------------------------------------------------
@@ -19666,7 +19666,7 @@ sub_1B0CF       proc far                ; CODE XREF: sub_17B92+1C1↑P
                 call    sub_2704C
                 call    sub_185A2
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
                 mov     byte ptr word_32968, 0
                 call    sub_1869D
@@ -19681,7 +19681,7 @@ sub_1B0CF       proc far                ; CODE XREF: sub_17B92+1C1↑P
                 call    sub_21588
                 or      word_328C4, 100h
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1B0CF       endp
 
@@ -19746,7 +19746,7 @@ sub_1B194       proc far                ; CODE XREF: sub_17B92+1D0↑P
                 call    sub_2704C
                 call    sub_185A2
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
                 mov     byte ptr word_32968, 0
                 call    sub_1869D
@@ -19761,7 +19761,7 @@ sub_1B194       proc far                ; CODE XREF: sub_17B92+1D0↑P
                 call    sub_21588
                 or      word_328C4, 100h
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1B194       endp
 
@@ -19813,7 +19813,7 @@ sub_1B245       proc far                ; CODE XREF: sub_17B92+E0↑P
                 call    sub_2704C
                 call    sub_185A2
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
                 mov     byte ptr word_32968, 0
                 call    sub_1869D
@@ -19828,7 +19828,7 @@ sub_1B245       proc far                ; CODE XREF: sub_17B92+E0↑P
                 call    sub_21588
                 or      word_328C4, 100h
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1B245       endp
 
@@ -19866,7 +19866,7 @@ loc_1B2DF:                              ; CODE XREF: sub_1B2BD+6↑j
 
 loc_1B306:                              ; CODE XREF: sub_1B2BD+20↑j
                                         ; sub_1B2BD+3A↑j
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1B2BD       endp
 
@@ -20129,7 +20129,7 @@ sub_1B4C2       proc far                ; CODE XREF: sub_17B92+11A↑P
 ; ---------------------------------------------------------------------------
 
 loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 push    cx
                 push    si
                 or      word_328C4, 100h
@@ -20157,7 +20157,7 @@ loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
                 call    sub_2570C
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 3
                 call    sub_18068
                 mov     word_32904, bx
@@ -20258,7 +20258,7 @@ sub_1B5FD       proc far                ; CODE XREF: sub_17B92+127↑P
 ; ---------------------------------------------------------------------------
 
 loc_1B60F:                              ; CODE XREF: sub_1B5FD+D↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 push    cx
                 push    si
                 or      word_328C4, 100h
@@ -20278,7 +20278,7 @@ loc_1B60F:                              ; CODE XREF: sub_1B5FD+D↑j
                 mov     si, 0BCEh
                 add     si, 14h
                 call    sub_19B80
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 3
                 call    sub_18068
                 mov     word_32904, bx
@@ -20336,7 +20336,7 @@ sub_1B6DE       proc far                ; CODE XREF: sub_1732B+F2↑P
                 call    near ptr sub_1BA96
                 test    word_328C4, 1
                 jz      short loc_1B6FD
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_162B6
                 and     word_328C4, 0FFFEh
 
@@ -20725,7 +20725,7 @@ loc_1B9AA:                              ; CODE XREF: sub_1B96F+40↓j
                 mov     fontOffset, 0
                 push    cs
                 call    near ptr sub_1CBC4
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1B96F       endp
 
@@ -20981,7 +20981,7 @@ loc_1BC14:                              ; CODE XREF: sub_1BBED+22↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -20996,7 +20996,7 @@ loc_1BC22:                              ; CODE XREF: sub_1BBED+A↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21016,7 +21016,7 @@ loc_1BC45:                              ; CODE XREF: sub_1BBED+1A↑j
                 mov     _font_fgColor, 7Bh ; '{'
                 mov     bx, 808Ch       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21043,7 +21043,7 @@ loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 call    sub_23B76
                 push    cs
                 call    near ptr sub_1CBC4
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_162B6
                 push    cs
                 call    near ptr sub_1B717
@@ -21120,7 +21120,7 @@ loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
                 call    writeString
                 push    cs
                 call    near ptr sub_1CBC4
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_162B6
                 push    cs
                 call    near ptr sub_1B717
@@ -21195,7 +21195,7 @@ loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
                 mov     fontOffset, 0
                 push    cs
                 call    near ptr sub_1CBC4
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1BBED       endp
 
@@ -21222,7 +21222,7 @@ loc_1BEC8:                              ; CODE XREF: sub_1BEA1+22↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21233,7 +21233,7 @@ loc_1BED6:                              ; CODE XREF: sub_1BEA1+A↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21253,7 +21253,7 @@ loc_1BEEF:                              ; CODE XREF: sub_1BEA1+1A↑j
                 mov     _font_fgColor, 7Bh ; '{'
                 mov     bx, 808Ch       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21340,7 +21340,7 @@ loc_1BFDC:                              ; CODE XREF: sub_1BF94+43↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21351,7 +21351,7 @@ loc_1BFEA:                              ; CODE XREF: sub_1BF94+A↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21371,7 +21371,7 @@ loc_1C003:                              ; CODE XREF: sub_1BF94+1A↑j
                 mov     _font_fgColor, 7Bh ; '{'
                 mov     bx, 808Ch       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21383,7 +21383,7 @@ loc_1C030:                              ; CODE XREF: sub_1BF94+7A↑j
                 pop     word_32924
                 push    cs
                 call    near ptr sub_1CC2E
-                call    Fade?
+                call    DrawMouseCursor
                 mov     bx, word_328D4
                 test    word_3298E, 2000h
                 jz      short loc_1C066
@@ -21503,7 +21503,7 @@ loc_1C14A:                              ; CODE XREF: sub_1C123+22↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21514,7 +21514,7 @@ loc_1C158:                              ; CODE XREF: sub_1C123+A↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21534,7 +21534,7 @@ loc_1C171:                              ; CODE XREF: sub_1C123+1A↑j
                 mov     _font_fgColor, 7Bh ; '{'
                 mov     bx, 808Ch       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21546,7 +21546,7 @@ loc_1C19E:                              ; CODE XREF: sub_1C123+59↑j
                 mov     word_32924, 0
                 call    sub_26C9E
                 pop     word_32924
-                call    Fade?
+                call    DrawMouseCursor
                 mov     si, word_328D4
                 inc     word ptr [si+16h]
                 cmp     word ptr [si+16h], 5Ah ; 'Z'
@@ -21826,7 +21826,7 @@ loc_1C499:                              ; CODE XREF: sub_1C123+337↑j
                 mov     bx, 80EAh
                 mov     cx, 2
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_162B6
                 call    sub_193BE
                 call    sub_26C9E
@@ -21862,7 +21862,7 @@ loc_1C4E1:                              ; CODE XREF: sub_1C123+24↑j
                 call    writeString
                 push    cs
                 call    near ptr sub_1B8EE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21909,7 +21909,7 @@ loc_1C598:                              ; CODE XREF: sub_1C589+A↑j
 
 loc_1C5A9:                              ; CODE XREF: sub_1C589+15↑j
                 and     word_2E410, 0EFFEh
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
                 call    sub_26C9E
                 call    sub_238CD
@@ -21917,7 +21917,7 @@ loc_1C5A9:                              ; CODE XREF: sub_1C589+15↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21933,7 +21933,7 @@ loc_1C5D2:                              ; CODE XREF: sub_1C589+1D↑j
                 mov     _font_bgColor, 44h ; 'D'
                 mov     bx, 8299h       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21949,7 +21949,7 @@ loc_1C60B:                              ; CODE XREF: sub_1C589+55↑j
                 mov     _font_bgColor, 44h ; 'D'
                 mov     bx, 808Ch       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -21957,7 +21957,7 @@ loc_1C643:                              ; CODE XREF: sub_1C589+8D↑j
                 call    sub_19C7B
                 push    cs
                 call    near ptr sub_1CC2E
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 push    cs
                 call    near ptr sub_1B702
                 mov     bx, word_328D4
@@ -21997,7 +21997,7 @@ loc_1C693:                              ; CODE XREF: sub_1C589+E3↑j
                 call    sub_25CFA
                 call    sub_26C9E
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -22019,7 +22019,7 @@ locret_1C6DD:                           ; CODE XREF: sub_1C589+14F↑j
 
 loc_1C6DE:                              ; CODE XREF: sub_1C589+13F↑j
                 and     word_2E410, 0DFFEh
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
                 call    sub_26C9E
                 call    sub_238CD
@@ -22027,14 +22027,14 @@ loc_1C6DE:                              ; CODE XREF: sub_1C589+13F↑j
                 call    near ptr sub_1BB48
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_1C707:                              ; CODE XREF: sub_1C589+147↑j
                                         ; sub_1C589+27D↓j
                 or      word_2E410, 1
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_29040
                 mov     ax, word_32902
                 mov     word_2E550, ax
@@ -22043,7 +22043,7 @@ loc_1C707:                              ; CODE XREF: sub_1C589+147↑j
                 push    cs
                 call    near ptr sub_1B6DE
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -22099,7 +22099,7 @@ loc_1C76D:                              ; CODE XREF: sub_1C589+1DD↑j
                 call    writeString
                 push    cs
                 call    near ptr sub_1CBC4
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -22382,7 +22382,7 @@ sub_1CA64       proc far                ; CODE XREF: sub_17B92+82↑P
                 call    near ptr sub_1B8AB
                 push    cs
                 call    near ptr sub_1BA96
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_162B6
                 and     word_328C4, 0FFFEh
                 test    word_2E410, 8000h
@@ -22418,17 +22418,17 @@ loc_1CADA:                              ; CODE XREF: sub_1CA64+4C↑j
                                         ; sub_1CA64+5A↑j ...
                 push    cs
                 call    near ptr sub_1B8EE
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_26C9E
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_1CAF3:                              ; CODE XREF: sub_1CA64+27↑j
                 push    cs
                 call    near ptr sub_1B6DE
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_26C9E
                 call    sub_16E18
                 test    word_2E410, 1000h
@@ -22445,7 +22445,7 @@ loc_1CB15:                              ; CODE XREF: sub_1CA64+A8↑j
                 call    sub_25CFA
                 call    sub_2909C
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1CA64       endp
 
@@ -22554,7 +22554,7 @@ sub_1CBF3       proc far                ; CODE XREF: sub_17B92+1A1↑P
                 mov     word_2E550, ax
                 push    cs
                 call    near ptr sub_1B6DE
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_1CBF3       endp
 
@@ -23521,7 +23521,7 @@ loc_1D2D0:                              ; CODE XREF: sub_1D2A6+1B↑j
                 mov     word_2E532, 0
                 mov     word_2E530, 2
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2587E
                 and     word_328C4, 0FDFFh
                 mov     ax, word_36E4B
@@ -23804,7 +23804,7 @@ loc_1D538:                              ; CODE XREF: sub_1D4B8+4F↑j
 
 loc_1D540:                              ; CODE XREF: sub_1D4B8+85↑j
                 or      word_328C8, 20h
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     x, 0EFh
                 mov     y, 43h ; 'C'
                 mov     _font_bgTransparent, 0
@@ -23813,7 +23813,7 @@ loc_1D540:                              ; CODE XREF: sub_1D4B8+85↑j
                 mov     word_2E532, 80h
                 mov     word_2E530, 2
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2BBD7
                 mov     _font_bgTransparent, 5
                 mov     y, 0
@@ -23836,7 +23836,7 @@ loc_1D540:                              ; CODE XREF: sub_1D4B8+85↑j
                 call    sub_223D4
                 call    sub_20C1E
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, _val19
                 call    sub_28412
                 call    sub_2BB97
@@ -23880,7 +23880,7 @@ loc_1D652:                              ; CODE XREF: sub_1D4B8+28C↓j
 
 loc_1D66C:                              ; CODE XREF: sub_1D4B8+153↑j
                                         ; sub_1D4B8+16A↑j ...
-                call    Fade?
+                call    DrawMouseCursor
                 cmp     errorCode, 3
                 jnz     short loc_1D67B
                 jmp     loc_1D747
@@ -23915,7 +23915,7 @@ loc_1D6AC:                              ; CODE XREF: sub_1D4B8+1DF↑j
                 push    word_3292C
                 push    si
                 call    sub_20C1E
-                call    Fade?
+                call    DrawMouseCursor
                 pop     si
                 pop     word_3292C
 
@@ -23937,7 +23937,7 @@ loc_1D6EA:                              ; CODE XREF: sub_1D4B8+227↑j
                 and     word_328C8, 0FBFFh
                 push    word_3292C
                 call    sub_20C1E
-                call    Fade?
+                call    DrawMouseCursor
                 pop     word_3292C
                 call    sub_2BB97
                 cmp     word_2E544, 0
@@ -23976,7 +23976,7 @@ loc_1D747:                              ; CODE XREF: sub_1D4B8+1B1↑j
                 call    sub_23151
 
 loc_1D75C:                              ; CODE XREF: sub_1D4B8+29D↑j
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_22D4C
                 call    sub_20C1E
                 call    sub_21588
@@ -24020,7 +24020,7 @@ loc_1D77B:                              ; CODE XREF: sub_1D4B8+2C↑j
 
 loc_1D804:                              ; CODE XREF: sub_1D4B8+2EB↑j
                                         ; sub_1D4B8+302↑j ...
-                call    Fade?
+                call    DrawMouseCursor
                 cmp     errorCode, 3
                 jnz     short loc_1D813
                 jmp     loc_1D747
@@ -24050,7 +24050,7 @@ loc_1D840:                              ; CODE XREF: sub_1D4B8+383↑j
                 push    word_3292C
                 push    si
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 pop     si
                 pop     word_3292C
                 mov     ax, word_32974
@@ -24092,7 +24092,7 @@ loc_1D8B1:                              ; CODE XREF: sub_1D4B8+424↓j
                 or      word_328C6, 1
                 call    sub_29B0F
                 and     word_328C6, 0FFFEh
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2BC16
                 mov     ax, 1           ; ticks
                 call    wait
@@ -24129,7 +24129,7 @@ loc_1D902:                              ; CODE XREF: sub_1D4B8+10↑j
 
 loc_1D921:                              ; CODE XREF: sub_1D4B8+465↑j
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, _val37
                 call    sub_1DA42
 
@@ -24185,7 +24185,7 @@ loc_1D9A6:                              ; CODE XREF: sub_1D937+3E↑j
                 call    sub_223D4
                 call    sub_20C1E
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, _val43
                 call    sub_28412
 
@@ -24619,7 +24619,7 @@ loc_1DD16:                              ; CODE XREF: sub_1DCE0+16↑j
 ; ---------------------------------------------------------------------------
 
 loc_1DD28:                              ; CODE XREF: sub_1DCE0+3E↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_1E4AA
                 call    sub_26C9E
 
@@ -24629,7 +24629,7 @@ loc_1DD35:                              ; CODE XREF: sub_1DCE0+178↓j
                 call    sub_1E3AF
                 call    sub_1E356
                 call    sub_1E546
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
 
 loc_1DD4B:                              ; CODE XREF: sub_1DCE0+75↓j
@@ -24856,7 +24856,7 @@ loc_1DEDF:                              ; CODE XREF: sub_1DCE0+1F0↑j
                 call    sub_1E3AF
                 call    sub_1E356
                 call    sub_1E546
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_1DFAD
 ; ---------------------------------------------------------------------------
 
@@ -24870,14 +24870,14 @@ loc_1DF15:                              ; CODE XREF: sub_1DCE0+85↑j
                                         ; sub_1DCE0+8F↑j ...
                 mov     ax, 1
                 call    sub_28412
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
                 call    sub_26C9E
                 call    sub_1E4D6
                 call    sub_16E18
                 call    sub_21530
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
 
 loc_1DF49:                              ; CODE XREF: sub_1DCE0+1D↑j
@@ -24901,7 +24901,7 @@ loc_1DF4F:                              ; CODE XREF: sub_1DCE0:loc_1DDE5↑j
                 jz      short loc_1DF87
                 call    sub_1E1A7
                 add     sp, 6
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_26C9E
                 jmp     loc_1DD35
 ; ---------------------------------------------------------------------------
@@ -24939,14 +24939,14 @@ loc_1DFBA:                              ; CODE XREF: sub_1DCE0+2D5↑j
                 mov     [si+0C8h], ax
                 call    sub_1E1A7
                 call    sub_1E3AF
-                call    Fade?
+                call    DrawMouseCursor
                 mov     si, word_328D4
                 mov     ax, [si+0C8h]
                 call    sub_1D198
                 push    word_32924
                 mov     word_32924, 0
                 call    sub_26C9E
-                call    Fade?
+                call    DrawMouseCursor
                 test    word_33300, 8000h
                 jz      short loc_1E037
                 push    word_328D6
@@ -24956,7 +24956,7 @@ loc_1DFBA:                              ; CODE XREF: sub_1DCE0+2D5↑j
                 pop     word_328D6
                 pop     word_32924
                 call    sub_26C9E
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
@@ -24975,13 +24975,13 @@ loc_1E037:                              ; CODE XREF: sub_1DCE0+319↑j
                 test    word_33302, 20h
                 jz      short loc_1E08F
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 22h ; '"'
                 call    sub_1A76E
                 cmp     ax, 0
                 jnz     short loc_1E067
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
                 pop     word_32924
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
@@ -25009,7 +25009,7 @@ loc_1E08F:                              ; CODE XREF: sub_1DCE0+355↑j
                 mov     ax, [bx]
                 call    sub_25B14
                 call    sub_1E61B
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32924
                 call    sub_22445
                 call    sub_1E522
@@ -25017,14 +25017,14 @@ loc_1E08F:                              ; CODE XREF: sub_1DCE0+355↑j
                 call    sub_1E3AF
                 call    sub_1E356
                 call    sub_1E546
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
                 call    sub_1E4D6
                 call    sub_16E18
                 call    sub_21530
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 mov     ax, word_3331E
                 call    sub_1D198
@@ -25032,7 +25032,7 @@ loc_1E08F:                              ; CODE XREF: sub_1DCE0+355↑j
                 call    sub_2C0FE
                 call    sub_19E56
                 call    sub_222F8
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_1FD03
                 retf
 ; ---------------------------------------------------------------------------
@@ -25686,7 +25686,7 @@ loc_1E662:                              ; CODE XREF: sub_1E64A+13↑j
                 mov     bx, 7DA5h
                 mov     cx, 2
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 3
                 call    sub_28412
                 retf
@@ -25702,7 +25702,7 @@ loc_1E6AE:                              ; CODE XREF: sub_1E64A+25↑j
                 call    sub_28412
 
 loc_1E6CD:                              ; CODE XREF: sub_1E64A+79↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     x, 115h
                 mov     y, 43h ; 'C'
                 mov     _font_bgTransparent, 0
@@ -25784,7 +25784,7 @@ loc_1E796:                              ; CODE XREF: sub_1E64A+147↑j
                 mov     cx, 2
                 call    sub_23B76
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 call    sub_1FD03
                 call    sub_2587E
@@ -25793,7 +25793,7 @@ loc_1E808:                              ; CODE XREF: sub_1E64A+1DA↓j
                 test    word_328C4, 400h
                 jz      short loc_1E81A
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_1E81A:                              ; CODE XREF: sub_1E64A+1C4↑j
                 call    PollKeyboardInput
@@ -25885,7 +25885,7 @@ loc_1E8AB:                              ; CODE XREF: sub_1E64A+253↑j
                 mov     bx, 0AFA8h
                 mov     cx, 2
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 call    sub_1FD03
                 call    sub_25608
@@ -26071,7 +26071,7 @@ loc_1EA83:                              ; CODE XREF: RunGameDialog+10↑j
                 call    sub_28412
 
 loc_1EAA2:                              ; CODE XREF: RunGameDialog+2A↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     x, 128h
                 mov     y, 43h ; 'C'
                 mov     _font_bgTransparent, 0
@@ -26266,7 +26266,7 @@ loc_1EC48:                              ; CODE XREF: RunGameDialog+DF↑j
                 jz      short loc_1EBE8
                 mov     ax, 1
                 call    sub_28412
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     short loc_1EC69
 ; ---------------------------------------------------------------------------
 
@@ -26287,7 +26287,7 @@ loc_1EC69:                              ; CODE XREF: RunGameDialog+12↑j
 ; ---------------------------------------------------------------------------
 
 loc_1EC7C:                              ; CODE XREF: RunGameDialog+1F9↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, 1           ; styleNum
                 call    GameDialog_drawButtons
                 call    sub_1F53E
@@ -26296,7 +26296,7 @@ loc_1EC8A:                              ; CODE XREF: RunGameDialog+304↓j
                 mov     word_32910, 2Ch ; ','
                 call    sub_238CD
                 call    sub_1F29D
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1ECA7
                 jmp     loc_1EAD0
@@ -26367,7 +26367,7 @@ loc_1ED31:                              ; CODE XREF: RunGameDialog+26C↑j
 loc_1ED53:                              ; CODE XREF: RunGameDialog+29D↑j
                                         ; RunGameDialog+2B1↑j ...
                 call    sub_16EFA
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32904
                 mov     ax, [bx]
                 mov     bx, [bx+4]
@@ -26390,14 +26390,14 @@ loc_1ED75:                              ; CODE XREF: RunGameDialog+2E3↑j
 loc_1ED8F:                              ; CODE XREF: RunGameDialog+2C1↑j
                 or      word_328C4, 4000h
                 call    sub_1F5FF
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 mov     byte_2E400, 0
                 jmp     loc_1EC69
 ; ---------------------------------------------------------------------------
 
 loc_1EDAA:                              ; CODE XREF: RunGameDialog+1AE↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, 2           ; styleNum
                 call    GameDialog_drawButtons
                 call    sub_1F53E
@@ -26408,7 +26408,7 @@ loc_1EDB8:                              ; CODE XREF: RunGameDialog+3B3↓j
                 call    sub_1F29D
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1EDD5
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 jmp     loc_1EAD0
 ; ---------------------------------------------------------------------------
 
@@ -26433,7 +26433,7 @@ loc_1EDED:                              ; CODE XREF: RunGameDialog+373↑j
 
 loc_1EE02:                              ; CODE XREF: RunGameDialog+37D↑j
                 call    sub_16EFA
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32904
                 mov     ax, [bx]
                 mov     bx, [bx+4]
@@ -26644,7 +26644,7 @@ sub_1F0CD       proc far                ; CODE XREF: start+7F6↑P
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2587E
                 call    sub_1FD03
                 and     word_3295A, 0F7FFh
@@ -26687,7 +26687,7 @@ sub_1F163       proc near               ; CODE XREF: RunGameDialog+185↑p
 
 loc_1F186:                              ; CODE XREF: sub_1F163+14↑j
                                         ; sub_1F163+1E↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_36CE7, ax
                 call    sub_1F884
                 call    sub_238CD
@@ -26920,7 +26920,7 @@ loc_1F35F:                              ; CODE XREF: sub_1F29D+AD↑j
 loc_1F362:                              ; CODE XREF: sub_1F29D+3D↑j
                                         ; sub_1F29D+6D↑j ...
                 mov     word_3291E, ax
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_3291E
                 mov     bx, 0Ah
                 dec     ax
@@ -27183,7 +27183,7 @@ sub_1F58D       endp
 
 
 sub_1F5A5       proc near               ; CODE XREF: RunGameDialog+1BF↑p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, 4           ; styleNum
                 call    GameDialog_drawButtons
                 mov     ax, 1Fh
@@ -27192,12 +27192,12 @@ sub_1F5A5       proc near               ; CODE XREF: RunGameDialog+1BF↑p
                 jz      short loc_1F5CD
                 call    sub_16EFA
                 mov     byte_2E400, 0
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 retn
 ; ---------------------------------------------------------------------------
 
 loc_1F5CD:                              ; CODE XREF: sub_1F5A5+16↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2849C
                 and     word_328C6, 0FBFFh
                 and     word_328C4, 9FFFh
@@ -27417,7 +27417,7 @@ sub_1F884       endp
 
 
 sub_1F8C7       proc near               ; CODE XREF: RunGameDialog+193↑p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, 3           ; styleNum
                 call    GameDialog_drawButtons
                 mov     ax, 1
@@ -27425,7 +27425,7 @@ sub_1F8C7       proc near               ; CODE XREF: RunGameDialog+193↑p
                 cmp     ax, 5
                 jz      short loc_1F8EF
                 call    sub_16EFA
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     byte_2E400, 0
                 retn
 ; ---------------------------------------------------------------------------
@@ -27442,7 +27442,7 @@ sub_1F8C7       endp
 sub_1F8F5       proc near               ; CODE XREF: RunGameDialog:loc_1EC1F↑p
                 test    g_driverStateFlags, 1
                 jz      short locret_1F93C
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, 4
                 call    sub_28412
                 test    g_driverStateFlags, 2
@@ -27475,7 +27475,7 @@ sub_1F8F5       endp
 sub_1F93D       proc near               ; CODE XREF: RunGameDialog:loc_1EC0E↑p
                 test    g_driverStateFlags, 4
                 jz      short locret_1F97A
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 test    g_driverStateFlags, 8
                 jz      short loc_1F95C
                 and     g_driverStateFlags, 0FFF7h
@@ -28224,7 +28224,7 @@ sub_20070       proc far                ; CODE XREF: seg000:09E1↑P
                 call    sub_2587E
                 call    sub_162B6
                 call    sub_203F7
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2044C
                 call    sub_20406
                 call    sub_2047B
@@ -28284,7 +28284,7 @@ loc_20157:                              ; CODE XREF: sub_20070+C7↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2587E
                 pop     word_3195A
                 pop     word_31958
@@ -28318,7 +28318,7 @@ loc_201BA:                              ; CODE XREF: sub_20070+142↑j
 loc_201C7:                              ; CODE XREF: sub_20070+14F↑j
                 cmp     byte_2E400, 41h ; 'A'
                 jnz     short loc_201DE
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2034B
                 call    sub_2075B
                 call    sub_238CD
@@ -28326,7 +28326,7 @@ loc_201C7:                              ; CODE XREF: sub_20070+14F↑j
 loc_201DE:                              ; CODE XREF: sub_20070+15C↑j
                 cmp     byte_2E400, 4Dh ; 'M'
                 jnz     short loc_201F5
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_206A0
                 call    sub_2075B
                 call    sub_238CD
@@ -28337,7 +28337,7 @@ loc_201F5:                              ; CODE XREF: sub_20070+173↑j
                 test    word_328C4, 400h
                 jz      short loc_2022E
                 and     word_328C4, 0FBFFh
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_21E71
                 call    sub_2075B
                 call    sub_203F7
@@ -28351,7 +28351,7 @@ loc_201F5:                              ; CODE XREF: sub_20070+173↑j
 
 loc_2022E:                              ; CODE XREF: sub_20070+192↑j
                 or      word_328C4, 400h
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2075B
                 call    sub_238CD
 
@@ -28366,7 +28366,7 @@ loc_20244:                              ; CODE XREF: sub_20070+D0↑j
 
 loc_20250:                              ; CODE XREF: sub_20070+221↓j
                                         ; sub_20070+22F↓j ...
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_209D2
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
@@ -28455,7 +28455,7 @@ loc_2030A:                              ; CODE XREF: sub_20070+286↑j
                                         ; sub_20070+28B↑j
                 cmp     ax, 14h
                 jl      short loc_2031C
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_20652
                 call    sub_238CD
 
@@ -28476,7 +28476,7 @@ loc_2031F:                              ; CODE XREF: sub_20070+E4↑j
 loc_20336:                              ; CODE XREF: sub_20070+2C1↑j
                 cmp     ax, 14h
                 jl      short loc_20348
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2070C
                 call    sub_238CD
 
@@ -28720,7 +28720,7 @@ sub_204F0       endp
 
 sub_20523       proc near               ; CODE XREF: sub_20070+25B↑p
                                         ; sub_20523+39↓j ...
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     _textPos_x, 4
                 mov     _textPos_y, 1
                 mov     _font_bgTransparent, 0
@@ -28749,7 +28749,7 @@ sub_20523       endp
 
 
 sub_20570       proc near               ; CODE XREF: sub_20070+266↑p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     _textPos_x, 0A4h
                 mov     _textPos_y, 1
                 mov     _font_bgTransparent, 0
@@ -28809,7 +28809,7 @@ sub_205C0       endp
 
 
 sub_205FB       proc near               ; CODE XREF: sub_20070+144↑p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_2E776
                 mov     word_3293E, ax
                 mov     ax, word_31956
@@ -28830,7 +28830,7 @@ sub_205FB       endp
 
 
 sub_20626       proc near               ; CODE XREF: sub_20070+151↑p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_2E776
                 mov     word_3293E, ax
                 mov     ax, word_31956
@@ -29040,7 +29040,7 @@ sub_2075B       endp
 
 
 sub_20817       proc near               ; CODE XREF: sub_20070+137↑p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_203F7
                 mov     _textPos_x, 0
                 mov     _textPos_y, 1
@@ -29170,7 +29170,7 @@ loc_20936:                              ; CODE XREF: sub_208CA+34↑j
 
 loc_2094E:                              ; CODE XREF: sub_208CA+80↑j
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 pop     si
                 retf
 sub_208CA       endp
@@ -29216,7 +29216,7 @@ loc_209A9:                              ; CODE XREF: sub_2095A+37↑j
                 call    near ptr sub_209C0
                 inc     word ptr [si]
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_2095A       endp
 
@@ -31050,7 +31050,7 @@ loc_21937:                              ; CODE XREF: sub_218DC+4A↑j
                 mov     word_2E532, 0
                 mov     word_2E530, 0
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_21980
@@ -31187,7 +31187,7 @@ loc_21A55:                              ; CODE XREF: sub_219FA+1B↑j
                                         ; sub_219FA+51↑j
                 push    cs
                 call    near ptr sub_21C79
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     _textPos_x, 0F0h
                 cmp     word_32974, 2Fh ; '/'
                 jnz     short loc_21A73
@@ -31343,7 +31343,7 @@ loc_21C11:                              ; CODE XREF: sub_219FA+91↑j
 loc_21C16:                              ; CODE XREF: sub_219FA+196↑j
                                         ; sub_219FA+19F↑j
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_21C20:                              ; CODE XREF: sub_219FA+3C↑j
                 pop     word_32974
@@ -31417,7 +31417,7 @@ sub_21C79       proc far                ; CODE XREF: sub_17032+8B↑P
                 mov     cx, 3
                 call    sub_23B76
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_21C79       endp
 
@@ -31653,7 +31653,7 @@ loc_21E8A:                              ; CODE XREF: sub_21E71+E↑j
                 call    sub_25862
 
 loc_21E8F:                              ; CODE XREF: sub_21E71+6↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 or      word_328CA, 4
                 mov     ax, 0A000h
                 mov     _videoSegment, ax
@@ -31837,7 +31837,7 @@ loc_220BA:                              ; CODE XREF: sub_21E71+246↑j
                 call    sub_2587E
                 call    sub_162B6
                 call    sub_25862
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 call    sub_2587E
                 mov     ax, _videoBufferSeg
@@ -31872,7 +31872,7 @@ loc_220F0:                              ; CODE XREF: sub_220DF+6↑j
                 call    sub_2587E
                 call    sub_162B6
                 call    sub_25862
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2587E
                 call    sub_238CD
                 retf
@@ -32069,7 +32069,7 @@ sub_222BD       proc near               ; CODE XREF: sub_21E71+10↑p
                 mov     bx, 7D7Eh
                 mov     cx, 3
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_222BD       endp
 
@@ -32621,7 +32621,7 @@ sub_2278C       proc far                ; CODE XREF: start+76↑P
                 mov     byte_2E400, 0
                 test    word_328C8, 10h
                 jnz     short loc_2279F
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -32807,7 +32807,7 @@ loc_22920:                              ; CODE XREF: sub_2281F+D3↑j
                 call    sub_2BAA0
                 mov     word_3292C, 31h ; '1'
                 call    sub_2BAA0
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_2293B:                              ; CODE XREF: sub_2281F+28↑j
                 test    word_328C8, 10h
@@ -33357,7 +33357,7 @@ loc_22D63:                              ; CODE XREF: sub_22D4C+4B↓j
                 jz      short loc_22D8B
                 push    cs
                 call    near ptr sub_23151
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_22D8B:                              ; CODE XREF: sub_22D4C+24↑j
                                         ; sub_22D4C+34↑j
@@ -33888,7 +33888,7 @@ loc_23295:                              ; CODE XREF: sub_23151+13B↑j
                 loop    loc_2325F
 
 loc_2329A:                              ; CODE XREF: sub_23151+112↑j
-                call    Fade?
+                call    DrawMouseCursor
                 push    cs
                 call    near ptr sub_22CBC
                 pop     di
@@ -33926,7 +33926,7 @@ sub_232A8       proc far                ; CODE XREF: sub_162F6+48↑P
                 mov     _textPos_y, 9Fh
                 mov     si, 52F8h
                 call    sub_234D3
-                call    Fade?
+                call    DrawMouseCursor
                 pop     es
                 pop     di
                 pop     si
@@ -34494,7 +34494,7 @@ loc_23782:                              ; CODE XREF: seg073:009E↑j
                 jz      short loc_237A7
                 test    word_3195C, 4
                 jnz     short loc_237A7
-                call    sub_23A22
+                call    RestoreCursorBackground
                 mov     ax, word_2E782
                 mov     word_2E776, ax
                 mov     ax, word_2E784
@@ -34517,27 +34517,27 @@ loc_237A7:                              ; CODE XREF: seg073:0029↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_237B0       proc far                ; CODE XREF: start:loc_1057A↑P
+RestoreCursorBackgroundIfDirty proc far ; CODE XREF: start:loc_1057A↑P
                                         ; start:loc_1072E↑P ...
-                test    word_3195C, 1
+                test    word_3195C, 1   ; Calls RestoreCursorBackground (erasing the cursor) only if the dirty flags in word_3195C (bits 0 and 1) indicate it's needed. Called very widely (effectively a per-frame/per-event cursor service call).
                 jnz     short loc_237BE
                 and     word_3195C, 0FFFDh
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_237BE:                              ; CODE XREF: sub_237B0+6↑j
+loc_237BE:                              ; CODE XREF: RestoreCursorBackgroundIfDirty+6↑j
                 test    word_3195C, 2
                 jnz     short loc_237C7
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_237C7:                              ; CODE XREF: sub_237B0+14↑j
+loc_237C7:                              ; CODE XREF: RestoreCursorBackgroundIfDirty+14↑j
                 and     word_3195C, 0FFFDh
                 push    errorCode
-                call    sub_23A22
+                call    RestoreCursorBackground
                 pop     errorCode
                 retf
-sub_237B0       endp
+RestoreCursorBackgroundIfDirty endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34605,7 +34605,7 @@ InitMouse       endp
                 call    sub_239CD
                 test    word_3195C, 2
                 jz      short loc_2386F
-                call    sub_23A22
+                call    RestoreCursorBackground
                 mov     ax, word_2E782
                 mov     word_2E776, ax
                 mov     ax, word_2E784
@@ -34650,7 +34650,7 @@ sub_23874       proc far                ; CODE XREF: start+645↑P
 ; ---------------------------------------------------------------------------
 
 loc_238C6:                              ; CODE XREF: sub_23874+4F↑j
-                call    sub_23A22
+                call    RestoreCursorBackground
                 call    sub_23965
                 retf
 sub_23874       endp
@@ -34875,9 +34875,9 @@ sub_239CD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23A22       proc near               ; CODE XREF: seg073:00B2↑p
-                                        ; sub_237B0+20↑p ...
-                push    ax
+RestoreCursorBackground proc near       ; CODE XREF: seg073:00B2↑p
+                                        ; RestoreCursorBackgroundIfDirty+20↑p ...
+                push    ax              ; Restores the saved background (0xE0E) to the video buffer at (word_2E776, word_31956) via getTextPos -- erases the cursor from its last drawn position. (Corrected from an earlier, backwards 'DrawMouseCursor' name this session -- see fix_cursor_naming.py.)
                 push    cx
                 push    dx
                 push    si
@@ -34894,7 +34894,7 @@ sub_23A22       proc near               ; CODE XREF: seg073:00B2↑p
                 mov     cx, 10h
                 or      word_3195C, 4
 
-loc_23A45:                              ; CODE XREF: sub_23A22+34↓j
+loc_23A45:                              ; CODE XREF: RestoreCursorBackground+34↓j
                 push    cx
                 mov     cx, 8
                 rep movsw
@@ -34904,7 +34904,7 @@ loc_23A45:                              ; CODE XREF: sub_23A22+34↓j
                 ja      short loc_23A58
                 loop    loc_23A45
 
-loc_23A58:                              ; CODE XREF: sub_23A22+32↑j
+loc_23A58:                              ; CODE XREF: RestoreCursorBackground+32↑j
                 and     word_3195C, 0FFFBh
                 pop     es
                 assume es:nothing
@@ -34914,7 +34914,7 @@ loc_23A58:                              ; CODE XREF: sub_23A22+32↑j
                 pop     cx
                 pop     ax
                 retn
-sub_23A22       endp
+RestoreCursorBackground endp
 
 seg073          ends
 
@@ -35078,11 +35078,11 @@ sub_23B19       proc far                ; CODE XREF: start+5A0↑P
                 mov     _videoSegment, ax
                 call    sub_16E18
                 or      word_328C4, 100h
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 pop     bx
                 push    cs
                 call    near ptr sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 retf
 sub_23B19       endp
@@ -35269,14 +35269,14 @@ sub_23C18       proc far                ; CODE XREF: sub_2BD1A+144↓P
                 mov     bx, 7A84h
                 call    sub_23A7C
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2587E
                 jmp     short loc_23D8D
 ; ---------------------------------------------------------------------------
 
 loc_23D17:                              ; CODE XREF: sub_23C18+218↓j
                                         ; sub_23C18+2AB↓j ...
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2438B
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -35299,7 +35299,7 @@ loc_23D17:                              ; CODE XREF: sub_23C18+218↓j
                 mov     bx, 7A84h
                 call    sub_23A7C
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_23D8D:                              ; CODE XREF: sub_23C18+FD↑j
                                         ; sub_23C18+17E↓j ...
@@ -35381,7 +35381,7 @@ loc_23E1F:                              ; CODE XREF: sub_23C18+1CB↑j
 ; ---------------------------------------------------------------------------
 
 loc_23E33:                              ; CODE XREF: sub_23C18+205↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2438B
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -35401,7 +35401,7 @@ loc_23E33:                              ; CODE XREF: sub_23C18+205↑j
                 mov     _textPos_y, 3Ch ; '<'
                 mov     bx, 7AA5h
                 call    sub_23A7C
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
 
 loc_23E9F:                              ; CODE XREF: sub_23C18+290↓j
@@ -35951,7 +35951,7 @@ sub_243C3       endp
 
 sub_243D3       proc near               ; CODE XREF: sub_23BAE:loc_23BC8↑p
                                         ; sub_25103+14E↓p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2438B
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
@@ -36008,7 +36008,7 @@ sub_243D3       proc near               ; CODE XREF: sub_23BAE:loc_23BC8↑p
                 mov     cx, 4
                 call    sub_23AF2
                 call    sub_25595
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
 
 loc_244D8:                              ; CODE XREF: sub_243D3+110↓j
@@ -36116,7 +36116,7 @@ sub_245AE       proc near               ; CODE XREF: sub_23BAE+4D↑p
 
 loc_245B4:                              ; CODE XREF: sub_245AE+2AE↓j
                                         ; sub_245AE+2C5↓j ...
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2438B
                 mov     _font_bgTransparent, 1
                 mov     _textPos_x, 8
@@ -36198,7 +36198,7 @@ loc_2469E:                              ; CODE XREF: sub_245AE+E2↑j
 
 loc_246C9:                              ; CODE XREF: sub_245AE+F6↑j
                 call    sub_25595
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
 
 loc_246D6:                              ; CODE XREF: sub_245AE+131↓j
@@ -36241,7 +36241,7 @@ loc_24716:                              ; CODE XREF: sub_245AE+141↑j
                 call    sub_26415
                 cmp     errorCode, 1
                 jz      short loc_246D6
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     short loc_246D6
 ; ---------------------------------------------------------------------------
 
@@ -36258,7 +36258,7 @@ loc_24736:                              ; CODE XREF: sub_245AE+183↑j
                 cmp     errorCode, 1
                 jz      short loc_246D6
                 call    sub_24CAD
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     short loc_246D6
 ; ---------------------------------------------------------------------------
 
@@ -36269,7 +36269,7 @@ loc_24751:                              ; CODE XREF: sub_245AE+18B↑j
                 jnz     short loc_24780
 
 loc_2475E:                              ; CODE XREF: sub_245AE+15A↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_31948, 0
                 mov     word_3194C, 0
                 mov     word_2E530, 0
@@ -36351,7 +36351,7 @@ loc_24821:                              ; CODE XREF: sub_245AE+238↑j
                 mov     word_32940, ax
                 mov     word_31948, 0
                 mov     word_3194C, 0
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_238CD
@@ -36418,7 +36418,7 @@ loc_248D2:                              ; CODE XREF: sub_245AE+2D3↑j
                 jz      short loc_24917
                 or      word_328C4, bx
                 call    sub_12554
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 mov     word_3194C, 0
@@ -36489,7 +36489,7 @@ sub_2498B       proc near               ; CODE XREF: sub_23BAE+57↑p
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7A4Dh       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgColor, 33h ; '3'
                 mov     _videoSegment, 0A000h
@@ -36544,7 +36544,7 @@ sub_2498B       endp
 
 sub_24A5B       proc near               ; CODE XREF: sub_23BAE+2D↑p
                                         ; sub_24A5B+12D↓j ...
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_2438B
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
@@ -36589,7 +36589,7 @@ loc_24AF0:                              ; CODE XREF: sub_24A5B+90↑j
                 call    sub_23AF2
                 mov     _font_bgTransparent, 1
                 call    sub_25595
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
 
 loc_24B08:                              ; CODE XREF: sub_24A5B+B8↓j
@@ -36727,7 +36727,7 @@ sub_24BF2       proc near               ; CODE XREF: sub_23BAE+37↑p
                 mov     cx, 6
                 call    sub_23AF2
                 call    sub_25595
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_24C5C:                              ; CODE XREF: sub_24BF2+73↓j
                                         ; sub_24BF2+7E↓j ...
@@ -36822,7 +36822,7 @@ sub_24CAD       endp
 
 sub_24D30       proc near               ; CODE XREF: sub_23C18+75↑p
                                         ; sub_243D3+1D4↑p ...
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     si, word_328D4
                 mov     _textPos_x, 0CBh
                 mov     word_2E412, 0Fh
@@ -37180,7 +37180,7 @@ sub_25103       proc near               ; CODE XREF: sub_23BAE+5A↑p
                 mov     cx, 1
                 call    sub_23AF2
                 call    sub_25595
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
 
 loc_251CB:                              ; CODE XREF: sub_25103+D1↓j
@@ -37531,7 +37531,7 @@ sub_25456       endp
 
 sub_254CC       proc near               ; CODE XREF: sub_24BF2+B↑p
                                         ; sub_25103↑p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 3
                 call    sub_22387
                 mov     _textPos_x, 6Bh ; 'k'
@@ -37584,7 +37584,7 @@ loc_25561:                              ; CODE XREF: sub_25544+1A↑j
                 mov     _font_fgColor, 0Fh
                 mov     bx, 7962h       ; msg
                 call    writeString
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_25544       endp
 
@@ -38636,7 +38636,7 @@ loc_25B9F:                              ; CODE XREF: sub_25B34+2F↑j
                 jz      short locret_25B9E
                 mov     word_2E40A, ax
                 call    sub_16E18
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 or      word_328C4, 100h
                 mov     ax, si
                 call    sub_25B14
@@ -38677,7 +38677,7 @@ loc_25BED:                              ; CODE XREF: sub_25B34+B1↑j
 loc_25BF0:                              ; CODE XREF: sub_25B34+97↑j
                                         ; sub_25B34+A1↑j ...
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -38718,11 +38718,11 @@ loc_25C2D:                              ; CODE XREF: sub_25B34+D2↑j
                 add     si, ax
                 or      word_328C4, 100h
                 call    sub_16E18
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 or      word_328C4, 100h
                 call    sub_25F10
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
 
 locret_25C60:                           ; CODE XREF: sub_25B34+F3↑j
                                         ; sub_25B34+FC↑j
@@ -39499,7 +39499,7 @@ loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
                 mov     ax, 6
                 call    sub_28412
                 call    sub_266D4
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_26C0E
@@ -40047,7 +40047,7 @@ sub_26846       endp
 
 
 sub_26864       proc near               ; CODE XREF: sub_2621C:loc_2628F↑p
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_26B4F
                 call    sub_23874
                 push    cs
@@ -40063,7 +40063,7 @@ sub_26864       endp
 sub_2687B       proc near               ; CODE XREF: sub_2621C+1EA↑p
                 mov     ax, 6
                 call    sub_28412
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_266D4
                 mov     word_2E530, 0
                 call    sub_23874
@@ -40080,7 +40080,7 @@ sub_2687B       endp
 sub_268A0       proc near               ; CODE XREF: sub_2621C+EA↑p
                 mov     ax, 6
                 call    sub_28412
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 push    word_31948
                 push    word_3194C
                 push    word_3194A
@@ -40773,7 +40773,7 @@ loc_26DF2:                              ; CODE XREF: sub_26D54+37↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_26D54       endp
 
@@ -40840,7 +40840,7 @@ loc_26ECE:                              ; CODE XREF: sub_26E11+39↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_26E11       endp
 
@@ -40908,7 +40908,7 @@ loc_26FA9:                              ; CODE XREF: sub_26EE8+39↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_26EE8       endp
 
@@ -40948,7 +40948,7 @@ loc_2701C:                              ; CODE XREF: sub_26FC3+51↑j
 loc_27020:                              ; CODE XREF: sub_26FC3+57↑j
                 call    sub_223D4
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     short near ptr sub_26FC3
 ; ---------------------------------------------------------------------------
 
@@ -40957,7 +40957,7 @@ loc_27031:                              ; CODE XREF: sub_26FC3+37↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_26FC3       endp
 
@@ -41126,7 +41126,7 @@ sub_2714A       proc far                ; CODE XREF: start+3DB↑P
                 add     _textPos_y, 6
                 mov     si, 94BBh
                 call    sub_19B80
-                call    Fade?
+                call    DrawMouseCursor
                 pop     si
                 retf
 sub_2714A       endp
@@ -41240,7 +41240,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 mov     [di], ax
                 mov     ax, word_3194C
                 mov     [di+2], ax
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_31948, 0
                 mov     word_3194C, 0
                 mov     word_3194A, 0
@@ -41251,7 +41251,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 call    sub_16E18
                 call    sub_175F4
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     short loc_2728F
 ; ---------------------------------------------------------------------------
 
@@ -41383,7 +41383,7 @@ loc_27407:                              ; CODE XREF: sub_2738B+73↑j
                 mov     word_3296C, 0
                 mov     word_32972, 0
                 mov     word_3296E, 0
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     errorCode, 2
 
 loc_27439:                              ; CODE XREF: sub_2738B+59↑j
@@ -43389,7 +43389,7 @@ sub_2819F       proc far                ; CODE XREF: seg000:08B2↑P
                 mov     bx, 793Dh       ; msg
                 call    writeString
                 call    sub_21530
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_2819F       endp
 
@@ -44814,7 +44814,7 @@ loc_28D4D:                              ; CODE XREF: sub_28CFF+44↑j
                 jz      short locret_28D4C
 
 loc_28D54:                              ; CODE XREF: sub_28CFF+4B↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 push    word_36C7F      ; this
                 and     word_36C7F, 0AFFFh
                 or      word_36C7F, 2000h
@@ -44939,7 +44939,7 @@ loc_28E86:                              ; CODE XREF: sub_28CFF+1A1↓j
                 call    writeString
                 mov     word_3195A, 0
                 call    sub_238CD
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_28F26:                              ; CODE XREF: sub_28CFF+231↓j
                                         ; sub_28CFF+23F↓j ...
@@ -44975,7 +44975,7 @@ loc_28F4B:                              ; CODE XREF: sub_28CFF+241↑j
                 mov     bx, 8E05h
                 mov     cx, 2
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_28F8C:                              ; CODE XREF: sub_28CFF+262↑j
                                         ; sub_28CFF+269↑j
@@ -44995,7 +44995,7 @@ loc_28FAA:                              ; CODE XREF: sub_28CFF+254↑j
                 inc     word ptr [di]
 
 loc_28FAC:                              ; CODE XREF: sub_28CFF+24A↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_223D4
                 pop     word_36C7F
                 mov     word_3195A, 8
@@ -45008,7 +45008,7 @@ loc_28FAC:                              ; CODE XREF: sub_28CFF+24A↑j
                 call    sub_21588
                 call    sub_19E56
                 call    sub_222F8
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 retf
 sub_28CFF       endp
@@ -45531,11 +45531,11 @@ sub_29461       proc far                ; CODE XREF: sub_178A6+EC↑P
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 pop     cx
                 pop     bx
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 retf
 sub_29461       endp
@@ -45553,12 +45553,12 @@ sub_294A3       proc far                ; CODE XREF: sub_2AE3C:loc_2AE82↓P
 loc_294AE:                              ; CODE XREF: sub_294A3+35↓j
                                         ; sub_294A3+3E↓j
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_294B8:                              ; CODE XREF: sub_294A3+4C↓j
                                         ; sub_294A3+78↓j ...
                 mov     word_2E530, 0
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_23874
                 call    sub_238CD
                 retf
@@ -45933,7 +45933,7 @@ loc_29747:                              ; CODE XREF: sub_29738+6↑j
 
 loc_29753:                              ; CODE XREF: sub_29738+5C↓j
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_2975D:                              ; CODE XREF: sub_29738+D↑j
                                         ; sub_29738+84↓j ...
@@ -47280,9 +47280,9 @@ sub_2A0FC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-Fade?           proc far                ; CODE XREF: start+8A↑P
+DrawMouseCursor proc far                ; CODE XREF: start+8A↑P
                                         ; start+1EE↑P ...
-                push    si
+                push    si              ; The real mouse-cursor draw: if word_3195C bit1 is set, first saves the video buffer content at the cursor's new position into 0xE0E (so RestoreCursorBackground can erase it later), then blits the cursor sprite from 0x3FE6 onto the video buffer with 0xFF as a transparent color key. Not a screen fade despite the inherited name/hedge -- explains why it's called so pervasively (once per cursor move).
                 push    di
                 push    dx
                 push    cx
@@ -47294,12 +47294,12 @@ Fade?           proc far                ; CODE XREF: start+8A↑P
                 call    sub_28412
                 and     word_328CA, 0FFBFh
 
-loc_2A136:                              ; CODE XREF: Fade?+C↑j
+loc_2A136:                              ; CODE XREF: DrawMouseCursor+C↑j
                 test    word_328CA, 10h
                 jz      short loc_2A143
                 and     word_328CA, 0FFEFh
 
-loc_2A143:                              ; CODE XREF: Fade?+21↑j
+loc_2A143:                              ; CODE XREF: DrawMouseCursor+21↑j
                 or      word_3195C, 4
                 test    word_3195C, 2
                 jz      short loc_2A1C9
@@ -47313,7 +47313,7 @@ loc_2A143:                              ; CODE XREF: Fade?+21↑j
                 mov     ds, _videoBufferSeg
                 mov     cx, 10h
 
-loc_2A16B:                              ; CODE XREF: Fade?+61↓j
+loc_2A16B:                              ; CODE XREF: DrawMouseCursor+61↓j
                 push    cx
                 mov     cx, 8
                 rep movsw
@@ -47323,7 +47323,7 @@ loc_2A16B:                              ; CODE XREF: Fade?+61↓j
                 ja      short loc_2A17E
                 loop    loc_2A16B
 
-loc_2A17E:                              ; CODE XREF: Fade?+5F↑j
+loc_2A17E:                              ; CODE XREF: DrawMouseCursor+5F↑j
                 mov     ax, seg seg129
                 mov     ds, ax
                 pop     di
@@ -47332,7 +47332,7 @@ loc_2A17E:                              ; CODE XREF: Fade?+5F↑j
                 mov     es, _videoBufferSeg
                 mov     cx, 10h
 
-loc_2A18F:                              ; CODE XREF: Fade?+AC↓j
+loc_2A18F:                              ; CODE XREF: DrawMouseCursor+AC↓j
                 push    cx
                 mov     cx, 10h
                 xor     dx, dx
@@ -47342,8 +47342,8 @@ loc_2A18F:                              ; CODE XREF: Fade?+AC↓j
                 sub     dx, 130h
                 sub     cx, dx
 
-loc_2A1A7:                              ; CODE XREF: Fade?+80↑j
-                                        ; Fade?+92↓j ...
+loc_2A1A7:                              ; CODE XREF: DrawMouseCursor+80↑j
+                                        ; DrawMouseCursor+92↓j ...
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_2A1B1
@@ -47352,25 +47352,25 @@ loc_2A1A7:                              ; CODE XREF: Fade?+80↑j
                 jmp     short loc_2A1B4
 ; ---------------------------------------------------------------------------
 
-loc_2A1B1:                              ; CODE XREF: Fade?+8F↑j
+loc_2A1B1:                              ; CODE XREF: DrawMouseCursor+8F↑j
                 inc     di
                 loop    loc_2A1A7
 
-loc_2A1B4:                              ; CODE XREF: Fade?+94↑j
+loc_2A1B4:                              ; CODE XREF: DrawMouseCursor+94↑j
                 or      dx, dx
                 jz      short loc_2A1BC
                 add     si, dx
                 add     di, dx
 
-loc_2A1BC:                              ; CODE XREF: Fade?+9B↑j
+loc_2A1BC:                              ; CODE XREF: DrawMouseCursor+9B↑j
                 add     di, 130h
                 pop     cx
                 cmp     di, 0FA00h
                 ja      short loc_2A1C9
                 loop    loc_2A18F
 
-loc_2A1C9:                              ; CODE XREF: Fade?+33↑j
-                                        ; Fade?+AA↑j
+loc_2A1C9:                              ; CODE XREF: DrawMouseCursor+33↑j
+                                        ; DrawMouseCursor+AA↑j
                 xor     si, si
                 xor     di, di
                 mov     ax, 0A000h
@@ -47389,7 +47389,7 @@ loc_2A1C9:                              ; CODE XREF: Fade?+33↑j
                 assume es:nothing
                 mov     cx, 10h
 
-loc_2A1F3:                              ; CODE XREF: Fade?+E9↓j
+loc_2A1F3:                              ; CODE XREF: DrawMouseCursor+E9↓j
                 push    cx
                 mov     cx, 8
                 rep movsw
@@ -47399,11 +47399,11 @@ loc_2A1F3:                              ; CODE XREF: Fade?+E9↓j
                 ja      short loc_2A206
                 loop    loc_2A1F3
 
-loc_2A206:                              ; CODE XREF: Fade?+E7↑j
+loc_2A206:                              ; CODE XREF: DrawMouseCursor+E7↑j
                 mov     ax, seg seg129
                 mov     ds, ax
 
-loc_2A20B:                              ; CODE XREF: Fade?+CB↑j
+loc_2A20B:                              ; CODE XREF: DrawMouseCursor+CB↑j
                 and     word_3195C, 0FFFBh
                 pop     es
                 pop     bx
@@ -47412,7 +47412,7 @@ loc_2A20B:                              ; CODE XREF: Fade?+CB↑j
                 pop     di
                 pop     si
                 retf
-Fade?           endp ; sp-analysis failed
+DrawMouseCursor endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -48261,12 +48261,12 @@ loc_2A7C4:                              ; CODE XREF: sub_2A788+32↑j
 
 loc_2A7D0:                              ; CODE XREF: sub_2A788+93↓j
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_2A7DA:                              ; CODE XREF: sub_2A788+BB↓j
                                         ; sub_2A788+CA↓j ...
                 mov     word_2E530, 0
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_23874
                 call    sub_238CD
                 retf
@@ -48447,7 +48447,7 @@ loc_2A955:                              ; CODE XREF: sub_2A914+2B↑j
                 call    sub_274B4
                 call    sub_2ADD0
                 call    sub_16E18
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_2A971:                              ; CODE XREF: sub_2A914+D↑j
                 mov     word_2E530, 0
@@ -48557,7 +48557,7 @@ loc_2AA2B:                              ; CODE XREF: sub_2A9AD+3C↑j
                 call    sub_2ADD0
                 call    sub_16E18
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_2AA47:                              ; CODE XREF: sub_2A9AD+D↑j
                 mov     word_2E530, 0
@@ -48668,7 +48668,7 @@ loc_2AAFA:                              ; CODE XREF: sub_2AA58+D7↓j
                 or      word_328C8, 20h
                 call    sub_274B4
                 call    sub_2ADD0
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_19E56
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
@@ -48871,7 +48871,7 @@ loc_2ACEE:                              ; CODE XREF: sub_2AA58+27E↑j
 ; ---------------------------------------------------------------------------
 
 loc_2AD02:                              ; CODE XREF: sub_2AA58+2A5↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_274B4
@@ -48939,7 +48939,7 @@ sub_2AD94       proc near               ; CODE XREF: sub_2A914+5↑p
                 jnz     short loc_2ADC4
                 call    sub_16E18
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 0
                 retn
 ; ---------------------------------------------------------------------------
@@ -48999,7 +48999,7 @@ loc_2ADFC:                              ; CODE XREF: sub_2ADE8+A↑j
                 call    sub_22387
                 call    sub_22402
                 call    sub_2827E
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_2ADE8       endp
 
@@ -49135,7 +49135,7 @@ loc_2AEF3:                              ; CODE XREF: sub_2AE3C+7D↑j
                 mov     bx, 8E1Ah
                 mov     cx, 2
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -49166,13 +49166,13 @@ sub_2AF2E       proc near               ; CODE XREF: sub_2AE3C+14↑p
                 mov     bx, 8DBEh
                 mov     cx, 3
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_3293E, 258h
                 mov     word_32940, 258h
                 call    sub_1CDBC
                 and     word_328C8, 1FFFh
                 call    sub_274B4
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 48h ; 'H'
                 call    sub_27A46
                 retn
@@ -49183,7 +49183,7 @@ loc_2AFA7:                              ; CODE XREF: sub_2AF2E+2E↑j
                 mov     bx, 8DA3h
                 mov     cx, 3
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_2AF2E       endp
 
@@ -49214,7 +49214,7 @@ sub_2AFB8       proc near               ; CODE XREF: sub_2AE3C+93↑p
                 mov     si, 94B7h
                 call    sub_19A3C
                 call    sub_2704C
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_2AFB8       endp
 
@@ -49245,7 +49245,7 @@ sub_2B029       proc near               ; CODE XREF: sub_2AE3C+87↑p
                 mov     si, 94BBh
                 call    sub_19A3C
                 call    sub_2704C
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_2B029       endp
 
@@ -49302,7 +49302,7 @@ loc_2B13A:                              ; CODE XREF: sub_2B09A+69↑j
                 call    sub_2704C
                 call    sub_1AB26
                 call    sub_180BA
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_2B09A       endp
 
@@ -49376,27 +49376,27 @@ loc_2B214:                              ; CODE XREF: sub_2B17F+90↑j
                 call    sub_28412
                 and     word_328C8, 1FFFh
                 call    sub_274B4
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_3293E, 256h
                 mov     word_32940, 256h
                 call    sub_1CDBC
                 call    sub_274B4
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_3293E, 255h
                 mov     word_32940, 255h
                 call    sub_1CDBC
                 call    sub_274B4
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_3293E, 254h
                 mov     word_32940, 254h
                 call    sub_1CDBC
                 call    sub_274B4
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_3293E, 2C8h
                 mov     word_32940, 2C8h
                 call    sub_1CDBC
                 call    sub_274B4
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 258h
                 mov     word_31948, ax
                 call    sub_12554
@@ -49415,7 +49415,7 @@ loc_2B2BE:                              ; CODE XREF: sub_2B17F+41↑j
                 mov     bx, 8DDDh
                 mov     cx, 3
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 retn
 sub_2B17F       endp
 
@@ -49441,7 +49441,7 @@ sub_2B2CF       proc near               ; CODE XREF: sub_2AE3C+8↑p
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_162B6
@@ -49456,8 +49456,8 @@ sub_2B2CF       proc near               ; CODE XREF: sub_2AE3C+8↑p
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
-                call    sub_237B0
+                call    DrawMouseCursor
+                call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    sub_23874
                 retn
@@ -49774,7 +49774,7 @@ loc_2B685:                              ; CODE XREF: sub_2B656+13↑j
 loc_2B6A6:                              ; CODE XREF: sub_2B656+B↑j
                                         ; sub_2B656+41↑j
                 call    sub_16EFA
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     x, 0Fh
                 mov     y, 17h
                 mov     _font_bgTransparent, 1
@@ -49905,7 +49905,7 @@ loc_2B79A:                              ; CODE XREF: sub_2B78D+6C↓j
                 call    sub_162B6
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B85A
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 jmp     short loc_2B79A
 ; ---------------------------------------------------------------------------
 
@@ -49938,7 +49938,7 @@ loc_2B850:                              ; CODE XREF: sub_2B78D+B6↑j
                 call    sub_162B6
 
 loc_2B85A:                              ; CODE XREF: sub_2B78D+65↑j
-                call    Fade?
+                call    DrawMouseCursor
                 mov     fontOffset, 0
                 retn
 sub_2B78D       endp
@@ -49975,13 +49975,13 @@ loc_2B8A0:                              ; CODE XREF: sub_2B866+34↑j
                 cmp     word_31980, 0Bh
                 jle     short loc_2B8CB
                 sub     word_31980, 0Bh
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 jmp     short loc_2B873
 ; ---------------------------------------------------------------------------
 
 loc_2B8CB:                              ; CODE XREF: sub_2B866+50↑j
                                         ; sub_2B866+57↑j
-                call    Fade?
+                call    DrawMouseCursor
                 mov     fontOffset, 0
                 retn
 sub_2B866       endp
@@ -50018,13 +50018,13 @@ loc_2B911:                              ; CODE XREF: sub_2B8D7+34↑j
                 cmp     word_31980, 10h
                 jle     short loc_2B93C
                 sub     word_31980, 10h
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 jmp     short loc_2B8E4
 ; ---------------------------------------------------------------------------
 
 loc_2B93C:                              ; CODE XREF: sub_2B8D7+50↑j
                                         ; sub_2B8D7+57↑j
-                call    Fade?
+                call    DrawMouseCursor
                 mov     fontOffset, 0
                 retn
 sub_2B8D7       endp
@@ -50069,13 +50069,13 @@ loc_2B982:                              ; CODE XREF: sub_2B948+34↑j
                 cmp     word_31980, 10h
                 jle     short loc_2B9C8
                 sub     word_31980, 10h
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 jmp     short loc_2B955
 ; ---------------------------------------------------------------------------
 
 loc_2B9C8:                              ; CODE XREF: sub_2B948+6B↑j
                                         ; sub_2B948+72↑j
-                call    Fade?
+                call    DrawMouseCursor
                 mov     fontOffset, 0
                 retn
 sub_2B948       endp
@@ -50165,7 +50165,7 @@ sub_2BA62       proc far                ; CODE XREF: sub_2621C+101↑P
                                         ; sub_271DC+81↑P
                 mov     ax, 4
                 call    sub_28412
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_31948
                 call    sub_12554
                 mov     bx, word_2E548
@@ -50210,7 +50210,7 @@ sub_2BAA0       proc far                ; CODE XREF: sub_1D4B8+139↑P
                 mov     _font_bgTransparent, 1
                 mov     word_32918, 5
                 call    sub_29B0F
-                call    Fade?
+                call    DrawMouseCursor
                 push    cs
                 call    near ptr sub_2BC16
                 mov     ax, 2           ; ticks
@@ -50640,7 +50640,7 @@ loc_2BD93:                              ; CODE XREF: sub_2BD1A+47↑j
                 add     di, 0Ah
                 add     si, 1F4h
                 loop    loc_2BD58
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2587E
 
 loc_2BDAA:                              ; CODE XREF: sub_2BD1A+9F↓j
@@ -50805,7 +50805,7 @@ loc_2BEE5:                              ; CODE XREF: sub_2BD1A+1B9↑j
 loc_2BEF3:                              ; CODE XREF: sub_2BD1A+1AB↑j
                 mov     ax, 4
                 call    sub_28412
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_3293E
                 dec     bx
                 mov     ax, 28h ; '('
@@ -51034,7 +51034,7 @@ loc_2C0ED:                              ; CODE XREF: sub_2C010+B5↑j
 
 loc_2C0F2:                              ; CODE XREF: sub_2C010+C2↑j
                 and     word_328C8, 3FFFh
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_2C010       endp
 
@@ -51309,7 +51309,7 @@ loc_2C2E2:                              ; CODE XREF: sub_2C0FE+1A3↑j
                 or      word_36C79, dx
                 or      word_3295A, 800h
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -51445,7 +51445,7 @@ loc_2C400:                              ; CODE XREF: sub_2C0FE+202↑j
                 mov     bx, 867Fh
                 mov     cx, 2
                 call    sub_23B76
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -51682,7 +51682,7 @@ loc_2C621:                              ; CODE XREF: sub_2C0FE+51E↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -51729,7 +51729,7 @@ loc_2C6BD:                              ; CODE XREF: sub_2C0FE+5B3↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -51793,7 +51793,7 @@ loc_2C777:                              ; CODE XREF: sub_2C0FE+66D↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -51863,7 +51863,7 @@ loc_2C83C:                              ; CODE XREF: sub_2C0FE+736↑j
                 call    sub_20C1E
                 call    sub_21612
                 call    sub_21588
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -51892,7 +51892,7 @@ loc_2C8A7:                              ; CODE XREF: sub_2C0FE+7A4↑j
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 2
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
                 jmp     loc_2C1C9
@@ -51936,7 +51936,7 @@ loc_2C906:                              ; CODE XREF: sub_2C0FE+7FB↑j
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 2
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
                 jmp     short loc_2C8FB
@@ -51944,7 +51944,7 @@ loc_2C906:                              ; CODE XREF: sub_2C0FE+7FB↑j
 
 loc_2C92A:                              ; CODE XREF: sub_2C0FE+91↑j
                 call    sub_22CBC
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_332DA
                 call    sub_2D498
                 call    sub_2BBD7
@@ -52055,7 +52055,7 @@ loc_2CA78:                              ; CODE XREF: sub_2C0FE+973↑j
 
 loc_2CA87:                              ; CODE XREF: sub_2C0FE+8FC↑j
                                         ; sub_2C0FE+91C↑j ...
-                call    Fade?
+                call    DrawMouseCursor
                 cmp     errorCode, 3
                 jnz     short loc_2CA96
                 jmp     loc_2CBB6
@@ -52119,7 +52119,7 @@ loc_2CAF3:                              ; CODE XREF: sub_2C0FE+9F0↑j
 loc_2CB17:                              ; CODE XREF: sub_2C0FE+9E7↑j
                                         ; sub_2C0FE+A12↑j
                 call    sub_20C1E
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 3           ; ticks
                 call    wait
                 pop     di
@@ -52151,7 +52151,7 @@ loc_2CB63:                              ; CODE XREF: sub_2C0FE+A55↑j
 loc_2CB68:                              ; CODE XREF: sub_2C0FE+A63↑j
                 push    word_3292C
                 call    sub_20C1E
-                call    Fade?
+                call    DrawMouseCursor
                 pop     word_3292C
                 cmp     word_3292C, 19h
                 jle     short loc_2CBB6
@@ -52192,7 +52192,7 @@ loc_2CBB6:                              ; CODE XREF: sub_2C0FE+964↑j
 
 loc_2CBD0:                              ; CODE XREF: sub_2C0FE+ACB↑j
                                         ; sub_2C0FE+CBD↓j ...
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_238CD
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
@@ -52241,7 +52241,7 @@ loc_2CC3D:                              ; CODE XREF: sub_2C0FE+AFE↑j
                 pop     word_3292C
                 call    sub_2D470
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
@@ -52277,14 +52277,14 @@ loc_2CCB4:                              ; CODE XREF: sub_2C0FE+BE1↓j
                 or      word_328C6, 1
                 call    sub_29B0F
                 and     word_328C6, 0FFFEh
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2BC16
                 mov     ax, 1           ; ticks
                 call    wait
                 inc     word_2E530
                 loop    loc_2CCB4
                 call    sub_20C1E
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_2CBB6
 ; ---------------------------------------------------------------------------
 
@@ -52427,7 +52427,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
                 xor     bx, bx
                 sub     ax, cx
                 call    sub_2BC72
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
                 mov     cx, word_332E0
@@ -52435,7 +52435,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
                 xor     bx, bx
                 add     ax, cx
                 call    sub_2BC72
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
                 mov     cx, word_332E0
@@ -52443,7 +52443,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
                 xor     bx, bx
                 sub     bx, cx
                 call    sub_2BC72
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
                 mov     cx, word_332E0
@@ -52451,7 +52451,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
                 xor     bx, bx
                 add     bx, cx
                 call    sub_2BC72
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
                 pop     cx
@@ -52525,7 +52525,7 @@ loc_2CF51:                              ; CODE XREF: sub_2C0FE+791↑j
                 add     [di+10h], ax
                 mov     ax, word_332E0
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
                 mov     ax, word_332E6
@@ -52539,7 +52539,7 @@ loc_2CF8D:                              ; CODE XREF: sub_2C0FE+E6D↑j
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 2
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
                 mov     ax, word_332E4
@@ -52630,7 +52630,7 @@ loc_2D04D:                              ; CODE XREF: sub_2C0FE+BD↑j
                 call    DrawPicture
                 mov     x, 0B0h
                 call    DrawPicture
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2BC16
                 mov     ax, word_332EC
                 mov     word_3293E, ax
@@ -52665,7 +52665,7 @@ loc_2D0EE:                              ; CODE XREF: sub_2C0FE+1034↓j
                 mov     bx, 0B0h
                 call    sub_2D3FE
                 mov     word_32944, ax
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2BC16
                 mov     ax, 2           ; ticks
                 call    wait
@@ -52685,13 +52685,13 @@ loc_2D137:                              ; CODE XREF: sub_2C0FE+C8↑j
 loc_2D14D:                              ; CODE XREF: sub_2C0FE+1063↓j
                 push    cx
                 call    sub_2BC56
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
                 pop     cx
                 loop    loc_2D14D
                 call    sub_2BC16
-                call    Fade?
+                call    DrawMouseCursor
                 jmp     loc_2CEED
 sub_2C0FE       endp
 
@@ -52945,7 +52945,7 @@ sub_2D370       proc near               ; CODE XREF: sub_2C0FE+E02↑p
 loc_2D3A0:                              ; CODE XREF: sub_2D370+2A↑j
                 push    di
                 call    sub_20C46
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
                 pop     si
@@ -52961,7 +52961,7 @@ loc_2D3CB:                              ; CODE XREF: sub_2D370+48↑j
                 call    sub_20C46
 
 loc_2D3D0:                              ; CODE XREF: sub_2D370+59↑j
-                call    Fade?
+                call    DrawMouseCursor
 
 loc_2D3D5:                              ; CODE XREF: sub_2D370+12↑j
                 pop     word_3292C
@@ -52979,7 +52979,7 @@ sub_2D3DC       proc near               ; CODE XREF: sub_2C0FE+C2B↑p
                 or      word_328C6, 1
                 call    sub_29B0F
                 and     word_328C6, 0FFFEh
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2BC16
                 mov     ax, 5           ; ticks
                 call    wait
@@ -53379,7 +53379,7 @@ loc_2D639:                              ; CODE XREF: sub_2D60A+23↑j
 
 loc_2D644:                              ; CODE XREF: sub_2D60A+2D↑j
                 mov     word_2E530, 0
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 call    sub_23874
                 call    sub_238CD
                 retf
@@ -53443,7 +53443,7 @@ loc_2D6B1:                              ; CODE XREF: sub_2D65A+42↑j
 loc_2D6B9:                              ; CODE XREF: sub_2D65A+4A↑j
                 test    word_33300, 8000h
                 jz      short loc_2D6DE
-                call    Fade?
+                call    DrawMouseCursor
                 call    sub_2D809
                 cmp     word_3331A, 0
                 jnz     short loc_2D6D3
@@ -53471,7 +53471,7 @@ loc_2D6FC:                              ; CODE XREF: sub_2D65A+30↑j
                 call    sub_238CD
                 call    sub_16E18
                 call    sub_2D7A7
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 21h ; '!'
                 call    sub_1A76E
                 cmp     ax, 0
@@ -53485,7 +53485,7 @@ loc_2D6FC:                              ; CODE XREF: sub_2D65A+30↑j
 ; ---------------------------------------------------------------------------
 
 loc_2D73C:                              ; CODE XREF: sub_2D65A+D9↑j
-                call    sub_237B0
+                call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_3330A
                 call    sub_27A4E
                 mov     si, word_32924
@@ -53515,7 +53515,7 @@ loc_2D78A:                              ; CODE XREF: sub_2D65A+9F↑j
                 call    sub_222F8
                 call    sub_16E18
                 call    sub_21530
-                call    Fade?
+                call    DrawMouseCursor
                 retf
 sub_2D65A       endp
 
@@ -53606,7 +53606,7 @@ sub_2D809       endp
                 jnz     short loc_2D861
                 call    sub_16E18
                 call    sub_175F4
-                call    Fade?
+                call    DrawMouseCursor
                 mov     ax, 0
 
 locret_2D860:                           ; DATA XREF: seg129:g_driverStateFlags↓o

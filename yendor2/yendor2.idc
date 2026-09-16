@@ -5741,8 +5741,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2378A);
 	op_hex		(x,	1);
+	set_cmt	(0X237B0,	"Calls RestoreCursorBackground (erasing the cursor) only if the dirty flags in word_3195C (bits 0 and 1) indicate it's needed. Called very widely (effectively a per-frame/per-event cursor service call).",	0);
 	create_insn	(x=0X237B0);
 	op_hex		(x,	1);
+	set_name	(0X237B0,	"RestoreCursorBackgroundIfDirty");
 	create_insn	(x=0X237B8);
 	op_hex		(x,	1);
 	create_insn	(x=0X237BE);
@@ -5807,7 +5809,9 @@ static Bytes_0(void) {
 	create_insn	(0X2396E);
 	create_insn	(0X239AE);
 	create_insn	(0X239CD);
+	set_cmt	(0X23A22,	"Restores the saved background (0xE0E) to the video buffer at (word_2E776, word_31956) via getTextPos -- erases the cursor from its last drawn position. (Corrected from an earlier, backwards 'DrawMouseCursor' name this session -- see fix_cursor_naming.py.)",	0);
 	create_insn	(0X23A22);
+	set_name	(0X23A22,	"RestoreCursorBackground");
 	create_insn	(x=0X23A40);
 	op_hex		(x,	1);
 	create_insn	(x=0X23A58);
@@ -6254,6 +6258,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2635C);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X26366);
 	op_hex		(x,	1);
 	create_insn	(x=0X26370);
@@ -6320,15 +6333,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X26735);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2673D);
 	op_hex		(x,	1);
 	create_insn	(x=0X26745);
@@ -7880,8 +7884,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X2A0EF);
 	op_seg		(x,	1);
 	create_insn	(0X2A0FC);
+	set_cmt	(0X2A11B,	"The real mouse-cursor draw: if word_3195C bit1 is set, first saves the video buffer content at the cursor's new position into 0xE0E (so RestoreCursorBackground can erase it later), then blits the cursor sprite from 0x3FE6 onto the video buffer with 0xFF as a transparent color key. Not a screen fade despite the inherited name/hedge -- explains why it's called so pervasively (once per cursor move).",	0);
 	create_insn	(0X2A11B);
-	set_name	(0X2A11B,	"Fade?");
+	set_name	(0X2A11B,	"DrawMouseCursor");
 	create_insn	(x=0X2A121);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A131);
@@ -10785,6 +10790,15 @@ static Bytes_1(void) {
 	create_strlit	(0X3A0F9,	0X2);
 	create_strlit	(0X3A0FB,	0X1C);
 	set_name	(0X3A0FB,	"aCraigShirley");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A117,	0X2);
 	create_strlit	(0X3A119,	0X2);
 	create_strlit	(0X3A11B,	0X2);
@@ -10836,15 +10850,6 @@ static Bytes_1(void) {
 	set_name	(0X3A305,	"aCyril");
 	create_strlit	(0X3A318,	0X14);
 	set_name	(0X3A318,	"aIrudon");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A32C,	0X20);
 	set_name	(0X3A32C,	"aSomethingStran");
 	create_strlit	(0X3A34C,	0X1D);
