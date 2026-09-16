@@ -5224,6 +5224,16 @@ overlay-segment duplicate-function pattern.
 
 607 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ClearOffscreenBuffer + ClearOffscreenBufferAlt
+
+Named another byte-for-byte-identical overlay-segment duplicate pair:
+`sub_152E1` -> `ClearOffscreenBuffer` (called from
+`FinalizeCharacterCreation` and `sub_1559A`) and `sub_11D58` ->
+`ClearOffscreenBufferAlt` (called from `sub_11A10`) — both clear the
+entire offscreen buffer (`0x7D00` words, a full mode-13h screen) to 0.
+
+609 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

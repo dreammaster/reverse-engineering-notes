@@ -1405,7 +1405,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X11D42);
 	op_hex		(x,	1);
 	create_insn	(0X11D57);
+	set_cmt	(0X11D58,	"Byte-for-byte duplicate of ClearOffscreenBuffer (sub_152E1). Called from sub_11A10.",	0);
 	create_insn	(0X11D58);
+	set_name	(0X11D58,	"ClearOffscreenBufferAlt");
 	create_insn	(0X11D66);
 	create_insn	(0X11DE2);
 	set_cmt	(0X11E11,	"ticks",	0);
@@ -2224,7 +2226,9 @@ static Bytes_0(void) {
 	set_cmt	(0X152CE,	"ticks",	0);
 	create_insn	(x=0X152DB);
 	op_hex		(x,	1);
+	set_cmt	(0X152E1,	"Clears the entire offscreen buffer (0x7D00 words, a full mode-13h screen) to 0. Called from FinalizeCharacterCreation and sub_1559A. Byte-for-byte identical to ClearOffscreenBufferAlt (sub_11D58) in a different overlay segment.",	0);
 	create_insn	(0X152E1);
+	set_name	(0X152E1,	"ClearOffscreenBuffer");
 	create_insn	(0X152EF);
 	create_insn	(x=0X1530D);
 	op_seg		(x,	1);
@@ -3119,12 +3123,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1819B,	"Handles an icon-bar item's effect expiring: removes its stat bonuses (RemoveMultiStatEffect), then either replaces the inventory slot with a new item (applying its effect via sub_1AA06) or clears the slot and subtracts the item's weight (+0x118) -- item transforms or is destroyed. Called from ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X1819B);
 	set_name	(0X1819B,	"HandleIconBarItemExpiry");
-	create_insn	(x=0X181B3);
-	op_hex		(x,	1);
-	create_insn	(0X181DA);
-	set_cmt	(0X18205,	"SpendMaterialCounterClamped(ax=BCD counter addr, bx=ptr to 4-byte BCD amount): if counter > amount, SubBCD4 normally; otherwise the counter can't cover it -- zeroed outright (never negative), then sub_2704C is called (presumably a 'resource depleted' hook).",	0);
-	create_insn	(0X18205);
-	set_name	(0X18205,	"SpendMaterialCounterClamped");
 }
 
 //------------------------------------------------------------------------
@@ -3134,6 +3132,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X181B3);
+	op_hex		(x,	1);
+	create_insn	(0X181DA);
+	set_cmt	(0X18205,	"SpendMaterialCounterClamped(ax=BCD counter addr, bx=ptr to 4-byte BCD amount): if counter > amount, SubBCD4 normally; otherwise the counter can't cover it -- zeroed outright (never negative), then sub_2704C is called (presumably a 'resource depleted' hook).",	0);
+	create_insn	(0X18205);
+	set_name	(0X18205,	"SpendMaterialCounterClamped");
 	create_insn	(0X18222);
 	set_cmt	(0X1822A,	"DeductHPClamped(ax=amount, bx=party-member record): [bx+0x52] -= ax (HP-current), clamped at 0. At 0, sets status bit 0x40 in [bx+0x1C] and calls sub_18095+sub_1AB26 (not traced, plausibly death/incapacitation handling).",	0);
 	create_insn	(0X1822A);
@@ -5058,6 +5062,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1EB01);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1EB09);
 	op_hex		(x,	1);
 	create_insn	(x=0X1EB22);
@@ -5097,15 +5110,6 @@ static Bytes_1(void) {
 	create_insn	(0X1ECA7);
 	create_insn	(x=0X1ECCF);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1ECDC);
 	create_insn	(0X1ED31);
 	create_insn	(0X1ED75);
@@ -6920,6 +6924,15 @@ static Bytes_2(void) {
 	set_cmt	(0X25D82,	"Draws 'AFFLICTIONS:' then every active +0x1C affliction bit by name: 0x2000 DISEASED, 0x4000 POISONED, 0x8000 SICK, 0x400 STONED, 0x800 FROZEN, 0x1000 PARALYZED, 0x80 CURSED, 0x100 HEXED, 0x200 JINXED (or 'NONE' if none of 0xFF80 are set). The complete map of +0x1C's affliction bits. Called from sub_25B34.",	0);
 	create_insn	(0X25D82);
 	set_name	(0X25D82,	"DrawAfflictionsList");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X25D8B,	"msg",	0);
 	set_cmt	(0X25D9E,	"msg",	0);
 	create_insn	(x=0X25DA1);
@@ -6933,15 +6946,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X25DD6);
 	op_hex		(x,	1);
 	set_cmt	(0X25DDD,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X25DEA);
 	op_hex		(x,	1);
 	set_cmt	(0X25DF1,	"msg",	0);

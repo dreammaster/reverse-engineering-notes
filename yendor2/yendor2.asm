@@ -2993,7 +2993,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     ax, 64h ; 'd'   ; ticks
                 call    wait
                 call    sub_25862
-                call    sub_11D58
+                call    ClearOffscreenBufferAlt
                 mov     x, 39h ; '9'
                 mov     y, 31h ; '1'
                 mov     word_2E532, 10h
@@ -3065,14 +3065,14 @@ sub_11A10       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11D58       proc near               ; CODE XREF: sub_11A10+247↑p
-                mov     es, _videoBufferSeg
+ClearOffscreenBufferAlt proc near       ; CODE XREF: sub_11A10+247↑p
+                mov     es, _videoBufferSeg ; Byte-for-byte duplicate of ClearOffscreenBuffer (sub_152E1). Called from sub_11A10.
                 xor     di, di
                 xor     ax, ax
                 mov     cx, 7D00h
                 rep stosw
                 retn
-sub_11D58       endp
+ClearOffscreenBufferAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8431,7 +8431,7 @@ FinalizeCharacterCreation proc near     ; CODE XREF: RunCharacterCreation:loc_15
 
 loc_152B2:                              ; CODE XREF: FinalizeCharacterCreation+41↑j
                 call    sub_25862
-                call    sub_152E1
+                call    ClearOffscreenBuffer
                 test    g_driverStateFlags, 2
                 jz      short loc_152D6
                 cmp     byte ptr word_2E492, 0
@@ -8451,15 +8451,15 @@ FinalizeCharacterCreation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_152E1       proc near               ; CODE XREF: FinalizeCharacterCreation+50↑p
+ClearOffscreenBuffer proc near          ; CODE XREF: FinalizeCharacterCreation+50↑p
                                         ; sub_1559A+16C↓p ...
-                mov     es, _videoBufferSeg
+                mov     es, _videoBufferSeg ; Clears the entire offscreen buffer (0x7D00 words, a full mode-13h screen) to 0. Called from FinalizeCharacterCreation and sub_1559A. Byte-for-byte identical to ClearOffscreenBufferAlt (sub_11D58) in a different overlay segment.
                 xor     di, di
                 xor     ax, ax
                 mov     cx, 7D00h
                 rep stosw
                 retn
-sub_152E1       endp
+ClearOffscreenBuffer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8932,7 +8932,7 @@ loc_156DB:                              ; CODE XREF: sub_1559A+13E↑j
                 call    FileEntry_Read
                 call    ErrorCheck
                 call    sub_25862
-                call    sub_152E1
+                call    ClearOffscreenBuffer
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -8961,7 +8961,7 @@ loc_15747:                              ; CODE XREF: sub_1559A+1AA↑j
 ; ---------------------------------------------------------------------------
 
 loc_15756:                              ; CODE XREF: sub_1559A+1B9↑j
-                call    sub_152E1
+                call    ClearOffscreenBuffer
                 mov     x, 37h ; '7'
                 mov     y, 2Fh ; '/'
                 mov     _font_bgTransparent, 1
@@ -9016,7 +9016,7 @@ loc_157E9:                              ; CODE XREF: sub_1559A+24C↑j
 ; ---------------------------------------------------------------------------
 
 loc_15806:                              ; CODE XREF: sub_1559A+269↑j
-                call    sub_152E1
+                call    ClearOffscreenBuffer
                 mov     x, 37h ; '7'
                 mov     y, 2Fh ; '/'
                 mov     _font_bgTransparent, 1
@@ -9261,7 +9261,7 @@ loc_15B34:                              ; CODE XREF: sub_1559A+597↑j
                 call    TryPlaySoundCue
                 mov     ax, 12h
                 call    TriggerSoundEvent
-                call    sub_152E1
+                call    ClearOffscreenBuffer
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15B54
                 retn
@@ -9420,7 +9420,7 @@ loc_15CB7:                              ; CODE XREF: sub_1559A+70D↑j
 ; ---------------------------------------------------------------------------
 
 loc_15CF3:                              ; CODE XREF: sub_1559A+756↑j
-                call    sub_152E1
+                call    ClearOffscreenBuffer
                 mov     cx, 3
                 call    sub_1616F
                 mov     si, 6DC4h
@@ -9467,7 +9467,7 @@ loc_15D85:                              ; CODE XREF: sub_1559A+7E8↑j
                 mov     cx, 14h
                 call    sub_1616F
                 call    sub_161B6
-                call    sub_152E1
+                call    ClearOffscreenBuffer
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15D97
                 retn
