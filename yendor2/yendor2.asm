@@ -14336,7 +14336,7 @@ FileEntry_Close endp
 
 ; int __usercall FileEntry_CreateFile@<ax>(FileEntry *this)
 FileEntry_CreateFile proc far           ; CODE XREF: InitGame+67↑P
-                                        ; sub_1F5FF+27↓P
+                                        ; SaveCurrentGameToSlot+27↓P
 
 this            = dword ptr  4
 
@@ -26409,7 +26409,7 @@ loc_1ED75:                              ; CODE XREF: RunGameDialog+2E3↑j
 
 loc_1ED8F:                              ; CODE XREF: RunGameDialog+2C1↑j
                 or      word_328C4, 4000h
-                call    sub_1F5FF
+                call    SaveCurrentGameToSlot
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
                 mov     byte_2E400, 0
@@ -27186,7 +27186,7 @@ DrawGameDialogMenuLabelsHighlighted endp
 
 
 sub_1F58D       proc near               ; CODE XREF: RunGameDialog+659↑p
-                                        ; sub_1F5FF+281↓p
+                                        ; SaveCurrentGameToSlot+281↓p
                 mov     si, 6CBEh
                 mov     cx, 6
 
@@ -27237,8 +27237,8 @@ ConfirmNewGame  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F5FF       proc near               ; CODE XREF: RunGameDialog+327↑p
-                call    ClearMessageBoxArea
+SaveCurrentGameToSlot proc near         ; CODE XREF: RunGameDialog+327↑p
+                call    ClearMessageBoxArea ; Save-game file-copy: creates/opens the save-slot file (0x902C), writes matching header records to both it and the live game file (0x8FFB), then copies the game data record-by-record from live into the save slot across several typed-record loops. Called once from RunGameDialog's SAVE option.
                 mov     word_2E530, 0Bh
                 call    UpdateCursorForHeldItem
                 mov     bx, word_32906
@@ -27252,14 +27252,14 @@ sub_1F5FF       proc near               ; CODE XREF: RunGameDialog+327↑p
                 jmp     short loc_1F647
 ; ---------------------------------------------------------------------------
 
-loc_1F632:                              ; CODE XREF: sub_1F5FF+18↑j
+loc_1F632:                              ; CODE XREF: SaveCurrentGameToSlot+18↑j
                 mov     errorCode, 0Bh
                 mov     bx, 902Ch
                 mov     al, 2
                 call    FileEntry_OpenFile
                 call    ErrorCheck
 
-loc_1F647:                              ; CODE XREF: sub_1F5FF+31↑j
+loc_1F647:                              ; CODE XREF: SaveCurrentGameToSlot+31↑j
                 mov     ax, 93FFh
                 mov     bx, 8FFBh       ; this
                 call    sub_27DA8
@@ -27282,7 +27282,7 @@ loc_1F647:                              ; CODE XREF: sub_1F5FF+31↑j
                 mov     word ptr [bx+8], 0
                 mov     cx, word_32A12
 
-loc_1F6A1:                              ; CODE XREF: sub_1F5FF+D0↓j
+loc_1F6A1:                              ; CODE XREF: SaveCurrentGameToSlot+D0↓j
                 mov     bx, 8FFBh
                 mov     errorCode, 0Ah
                 call    FileEntry_Read
@@ -27306,7 +27306,7 @@ loc_1F6A1:                              ; CODE XREF: sub_1F5FF+D0↓j
                 mov     word_36892, 0AC2h
                 mov     cx, 10h
 
-loc_1F700:                              ; CODE XREF: sub_1F5FF+12F↓j
+loc_1F700:                              ; CODE XREF: SaveCurrentGameToSlot+12F↓j
                 mov     bx, 8FFBh
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
@@ -27346,13 +27346,13 @@ loc_1F700:                              ; CODE XREF: sub_1F5FF+12F↓j
                 mov     word_36892, 0BB8h
                 mov     cx, _val10
 
-loc_1F7A4:                              ; CODE XREF: sub_1F5FF+1E5↓j
+loc_1F7A4:                              ; CODE XREF: SaveCurrentGameToSlot+1E5↓j
                 cmp     cx, 0BB8h
                 jge     short loc_1F7B2
                 mov     word_36861, cx
                 mov     word_36892, cx
 
-loc_1F7B2:                              ; CODE XREF: sub_1F5FF+1A9↑j
+loc_1F7B2:                              ; CODE XREF: SaveCurrentGameToSlot+1A9↑j
                 mov     bx, 8FFBh
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
@@ -27404,7 +27404,7 @@ loc_1F7B2:                              ; CODE XREF: sub_1F5FF+1A9↑j
                 call    UpdateCursorForHeldItem
                 call    sub_1F58D
                 retn
-sub_1F5FF       endp
+SaveCurrentGameToSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================

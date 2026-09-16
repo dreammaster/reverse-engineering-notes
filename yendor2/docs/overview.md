@@ -6110,6 +6110,18 @@ beyond that point.
 
 694 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SaveCurrentGameToSlot
+
+Named `sub_1F5FF` -> `SaveCurrentGameToSlot`, called once from
+`RunGameDialog`'s SAVE option — the actual save-game file-copy
+operation. Creates or opens the save-slot file, writes matching
+header records to both it and the live game file, then copies the
+game data record-by-record from live into the save slot across
+several typed-record loops. Implements the `CURGAME` -> `SAVGAMEn`
+copy documented in `file-formats.md`'s `CURGAME`/`SAVGAME1` section.
+
+695 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

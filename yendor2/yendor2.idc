@@ -5336,7 +5336,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F5DD);
 	op_hex		(x,	1);
+	set_cmt	(0X1F5FF,	"Save-game file-copy: creates/opens the save-slot file (0x902C), writes matching header records to both it and the live game file (0x8FFB), then copies the game data record-by-record from live into the save slot across several typed-record loops. Called once from RunGameDialog's SAVE option.",	0);
 	create_insn	(0X1F5FF);
+	set_name	(0X1F5FF,	"SaveCurrentGameToSlot");
 	create_insn	(x=0X1F613);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F619);
@@ -6442,6 +6444,15 @@ static Bytes_2(void) {
 	set_cmt	(0X234D3,	"Draws one monster's info panel (si = g_monsterSlots entry): name strings, then progressively more detail icons as the party's average word_36CA9 stat (an 'identify'-style tier) crosses 3 thresholds, selected by 2-bit quality flags on the monster's own [+0xC] field.",	0);
 	create_insn	(0X234D3);
 	set_name	(0X234D3,	"DrawMonsterInfoPanel");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X234D9);
 	op_hex		(x,	1);
 	create_insn	(x=0X234E5);
@@ -6477,15 +6488,6 @@ static Bytes_2(void) {
 	set_cmt	(0X23627,	"msg",	0);
 	create_insn	(x=0X2362A);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2363B,	"msg",	0);
 	create_insn	(x=0X2363E);
 	op_hex		(x,	1);
@@ -8227,12 +8229,6 @@ static Bytes_3(void) {
 	create_insn	(0X28F4B);
 	set_cmt	(0X28F9C,	"this",	0);
 	create_insn	(0X28FAA);
-	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
-	create_insn	(0X28FF9);
-	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
-	set_cmt	(0X29040,	"For the character selected via word_32924, walks a table at word_2E54C (stride 0x3A, count word_2E432) and ORs each qualifying entry's [+0x16]/[+0x18] into word_2E40C/word_2E40E. An entry qualifies if [+0x10] bit 1 is set, or [+0x0E] bit 8 is set and [+0x12] overlaps the character's learned-abilities bitmask ([+0xB4]). Called from UseItem and UseAbilityScroll.",	0);
-	create_insn	(0X29040);
-	set_name	(0X29040,	"AccumulateLearnedAbilityFlags");
 }
 
 //------------------------------------------------------------------------
@@ -8242,6 +8238,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
+	create_insn	(0X28FF9);
+	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
+	set_cmt	(0X29040,	"For the character selected via word_32924, walks a table at word_2E54C (stride 0x3A, count word_2E432) and ORs each qualifying entry's [+0x16]/[+0x18] into word_2E40C/word_2E40E. An entry qualifies if [+0x10] bit 1 is set, or [+0x0E] bit 8 is set and [+0x12] overlaps the character's learned-abilities bitmask ([+0xB4]). Called from UseItem and UseAbilityScroll.",	0);
+	create_insn	(0X29040);
+	set_name	(0X29040,	"AccumulateLearnedAbilityFlags");
 	create_insn	(x=0X2906C);
 	op_hex		(x,	1);
 	create_insn	(x=0X29074);
@@ -10898,6 +10900,15 @@ static Bytes_4(void) {
 	set_name	(0X35305,	"aNoKeep");
 	create_strlit	(0X3530E,	0X5);
 	set_name	(0X3530E,	"aDead");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35313,	0XD);
 	set_name	(0X35313,	"aAfflictions");
 	create_strlit	(0X35320,	0X5);
@@ -10938,15 +10949,6 @@ static Bytes_4(void) {
 	set_name	(0X353A0,	"aSickness");
 	create_strlit	(0X353A9,	0X8);
 	set_name	(0X353A9,	"aStoning");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X353B1,	0X7);
 	set_name	(0X353B1,	"aFrozen_0");
 	create_strlit	(0X353B8,	0X9);

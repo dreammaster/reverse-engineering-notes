@@ -28,6 +28,13 @@ First 32 bytes of `CURGAME` (hex-decoded):
 (matches `SW.EXE`'s name) and suggests a header/magic string rather than
 game data proper.
 
+**The actual save operation is now traced**: `SaveCurrentGameToSlot`
+(was `sub_1F5FF`, called once from `RunGameDialog`'s SAVE option)
+creates or opens `0x902C` (`SAVGAMEX`), writes matching header
+records to it and to `0x8FFB` (the live `CURGAME` file), then copies
+the game data record-by-record from live into the save slot across
+several typed-record loops.
+
 **A fourth fixed `FileEntry` reads it directly**: `bx=0x8FFB` (distinct
 from `0x9043`=`WORLD.DAT`, `0x902C`=`SAVGAMEX`, `0x9011`=`PICTURES.VGA`
 — see `PICTURES.VGA`'s section below for how the filename-at-`+0xE`
