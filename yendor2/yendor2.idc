@@ -7334,7 +7334,9 @@ static Bytes_3(void) {
 	set_name	(0X270FE,	"HandleStatusIconBarClick");
 	create_insn	(0X2711F);
 	create_insn	(0X27141);
+	set_cmt	(0X2714A,	"Draws the status panel's fully-labeled resource readout at (0xF0,0x60): 'GOLD COINS:' + BCD4 0x94B3 (g_partyGold), 'MAGIC ORE: ' + BCD4 0x94B7, 'NUORE: ' + BCD4 0x94BB. Called from `start`'s status-panel redraw path (after ShowResourceDepletedOverlay) and from sub_271DC.",	0);
 	create_insn	(0X2714A);
+	set_name	(0X2714A,	"DrawResourceCounterPanel");
 	create_insn	(x=0X27150);
 	op_hex		(x,	1);
 	set_cmt	(0X27180,	"msg",	0);
@@ -7630,8 +7632,10 @@ static Bytes_3(void) {
 	set_cmt	(0X2801A,	"Configures a resource-read descriptor: [bx+4]=ax (caller value), [bx+0xA]/[bx+0xC]=fixed pair from table 0xCDFB, [bx+6]=_blockSize5. Same shape as sub_27DE5/sub_27DC6/sub_27E3A. Called from UpdateAmbientMusicForRegion.",	0);
 	create_insn	(0X2801A);
 	set_name	(0X2801A,	"PrepareAmbientMusicBlockRead");
+	set_cmt	(0X28034,	"Debug HUD overlay, gated on word_328C6 bits 0x80/0x200 clear, word_328CA bit 0x1000 clear, and word_328C4 bit 0x2000 set. Draws 3 rows of labeled numeric pairs: 'H'/'V' for word_2E55C/word_2E564, 'H'/'V' again for word_36CF7/word_36CF9 (confirmed party world X/Y), and 'B'/'F' for a pair read via a word_328D2-indexed table. Called from an unresolved raw address (seg000:0AFA), plausibly a low-level tick hook.",	0);
 	create_insn	(x=0X28034);
 	op_hex		(x,	1);
+	set_name	(0X28034,	"DrawDebugPositionOverlay");
 	create_insn	(x=0X2803C);
 	op_hex		(x,	1);
 	create_insn	(x=0X28044);
@@ -9193,11 +9197,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2A9EB);
 	create_insn	(0X2AA0C);
-	create_insn	(x=0X2AA2B);
-	op_hex		(x,	1);
-	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
-	create_insn	(0X2AA58);
-	set_name	(0X2AA58,	"CastSpell");
 }
 
 //------------------------------------------------------------------------
@@ -9207,6 +9206,11 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2AA2B);
+	op_hex		(x,	1);
+	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
+	create_insn	(0X2AA58);
+	set_name	(0X2AA58,	"CastSpell");
 	create_insn	(x=0X2AA5C);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AA62);
@@ -11842,6 +11846,15 @@ static Bytes_4(void) {
 	create_strlit	(0X39E34,	0X2);
 	create_strlit	(0X39E36,	0X22);
 	set_name	(0X39E36,	"aPatriciaFrankl");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39E58,	0X2);
 	create_strlit	(0X39E5A,	0X2);
 	create_strlit	(0X39E5C,	0X24);
@@ -11897,15 +11910,6 @@ static Bytes_4(void) {
 	create_strlit	(0X3A0B5,	0X2);
 	create_strlit	(0X3A0B7,	0X2);
 	create_strlit	(0X3A0B9,	0X2);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A0BB,	0X1B);
 	set_name	(0X3A0BB,	"aSteveSmith");
 	create_strlit	(0X3A0D6,	0X2);

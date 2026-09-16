@@ -5453,6 +5453,37 @@ book overlay would otherwise clobber.
 
 626 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawDebugPositionOverlay, DrawResourceCounterPanel
+
+Named `sub_28034` -> `DrawDebugPositionOverlay`, called from a raw
+address (`seg000:0AFA`) very early in the binary that IDA never
+resolved into a named function — not independently confirmed, but
+plausibly a low-level tick hook given how early the call site sits
+and how heavily this function is gated against interfering with
+other screens. Only runs when a specific debug flag combination
+holds (`word_328C6` bits `0x80`/`0x200` clear, `word_328CA` bit
+`0x1000` clear, `word_328C4` bit `0x2000` set), then draws 3 rows of
+labeled numeric pairs: `'H'`/`'V'` for `word_2E55C`/`word_2E564`,
+`'H'`/`'V'` again for `word_36CF7`/`word_36CF9` (the confirmed party
+world X/Y position), and `'B'`/`'F'` for a pair read via a
+`word_328D2`-indexed table. Reads as a debug HUD overlay; the exact
+meaning of the `H`/`V` and `B`/`F` field pairs beyond the confirmed
+row being world X/Y was not established.
+
+Named `sub_2714A` -> `DrawResourceCounterPanel`, called from
+`start`'s main status-panel redraw path (right after
+`ShowResourceDepletedOverlay`) and from `sub_271DC`: draws the status
+panel's fully-labeled resource readout at (`0xF0`,`0x60`) — "GOLD
+COINS:" + the BCD4 counter at `0x94B3` (confirmed `g_partyGold`),
+"MAGIC ORE: " + `0x94B7`, "NUORE: " + `0x94BB` (the same 3 confirmed
+global material counters documented in `file-formats.md`'s "Global
+material counters" section). This is the detailed, fully-labeled
+resource panel shown in the normal status-panel area, distinct from
+the compact icon-based `ShowMaterialCounterHud` (gold only, shop
+screens).
+
+628 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

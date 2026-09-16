@@ -1546,7 +1546,11 @@ fixed position, with a 0–3 remap value selected by the same
 Three **global** (not per-party-member) counters at `0x94B3`
 (`g_partyGold`), `0x94B7`, `0x94BB` — confirmed **exactly
 consecutive**, 4-byte packed-BCD stride, by
-`ShowResourceDepletedOverlay`'s scan of all three in one loop.
+`ShowResourceDepletedOverlay`'s scan of all three in one loop. All
+three, fully labeled ("GOLD COINS:"/"MAGIC ORE: "/"NUORE: "), are
+drawn together by `DrawResourceCounterPanel` (was `sub_2714A`) in the
+normal status-panel area — the detailed counterpart to the
+gold-only, icon-based `ShowMaterialCounterHud` used in shop screens.
 Individual identities: `0x94BB`/`0x94B7` are used by `CastSpell`'s
 `0x1C` alchemy ability (converts 10 units of one into the other —
 `NUORE`/`MAGIC ORE`); `0x94B3` is the party's **gold** — **correction**:

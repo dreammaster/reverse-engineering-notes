@@ -476,7 +476,7 @@ loc_103BA:                              ; CODE XREF: start+32F↑j
 loc_103D6:                              ; CODE XREF: start+3C5↑j
                                         ; start+43E↓j ...
                 call    ShowResourceDepletedOverlay
-                call    sub_2714A
+                call    DrawResourceCounterPanel
                 jmp     short loc_1040D
 ; ---------------------------------------------------------------------------
 
@@ -1225,7 +1225,7 @@ loc_10AE5:                              ; CODE XREF: seg000:0AE0↑j
 ; ---------------------------------------------------------------------------
                 test    word_328C4, 8000h
                 jz      short loc_10B04
-                call    sub_28034
+                call    DrawDebugPositionOverlay
                 call    DrawMouseCursor
 
 loc_10B04:                              ; CODE XREF: seg000:0AF8↑j
@@ -41115,9 +41115,9 @@ HandleStatusIconBarClick endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2714A       proc far                ; CODE XREF: start+3DB↑P
+DrawResourceCounterPanel proc far       ; CODE XREF: start+3DB↑P
                                         ; sub_271DC+21↓p ...
-                push    si
+                push    si              ; Draws the status panel's fully-labeled resource readout at (0xF0,0x60): 'GOLD COINS:' + BCD4 0x94B3 (g_partyGold), 'MAGIC ORE: ' + BCD4 0x94B7, 'NUORE: ' + BCD4 0x94BB. Called from `start`'s status-panel redraw path (after ShowResourceDepletedOverlay) and from sub_271DC.
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     ax, _videoBufferSeg
@@ -41150,7 +41150,7 @@ sub_2714A       proc far                ; CODE XREF: start+3DB↑P
                 call    DrawMouseCursor
                 pop     si
                 retf
-sub_2714A       endp
+DrawResourceCounterPanel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -41174,7 +41174,7 @@ sub_271DC       proc far                ; CODE XREF: start+3C7↑P
                 cmp     ax, 3
                 jg      short loc_27203
                 push    cs
-                call    near ptr sub_2714A
+                call    near ptr DrawResourceCounterPanel
                 jmp     loc_2728F
 ; ---------------------------------------------------------------------------
 
@@ -41223,7 +41223,7 @@ loc_2724A:                              ; CODE XREF: sub_271DC+64↑j
                 call    FinishPlacingHeldItem
                 mov     errorCode, 0
                 push    cs
-                call    near ptr sub_2714A
+                call    near ptr DrawResourceCounterPanel
                 jmp     short loc_2728F
 ; ---------------------------------------------------------------------------
 
@@ -43221,8 +43221,8 @@ seg097          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28034       proc far                ; CODE XREF: seg000:0AFA↑P
-                test    word_328C6, 80h
+DrawDebugPositionOverlay proc far       ; CODE XREF: seg000:0AFA↑P
+                test    word_328C6, 80h ; Debug HUD overlay, gated on word_328C6 bits 0x80/0x200 clear, word_328CA bit 0x1000 clear, and word_328C4 bit 0x2000 set. Draws 3 rows of labeled numeric pairs: 'H'/'V' for word_2E55C/word_2E564, 'H'/'V' again for word_36CF7/word_36CF9 (confirmed party world X/Y), and 'B'/'F' for a pair read via a word_328D2-indexed table. Called from an unresolved raw address (seg000:0AFA), plausibly a low-level tick hook.
                 jnz     short locret_28054
                 test    word_328C6, 200h
                 jnz     short locret_28054
@@ -43231,12 +43231,12 @@ sub_28034       proc far                ; CODE XREF: seg000:0AFA↑P
                 test    word_328C4, 2000h
                 jnz     short loc_28055
 
-locret_28054:                           ; CODE XREF: sub_28034+6↑j
-                                        ; sub_28034+E↑j ...
+locret_28054:                           ; CODE XREF: DrawDebugPositionOverlay+6↑j
+                                        ; DrawDebugPositionOverlay+E↑j ...
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28055:                              ; CODE XREF: sub_28034+1E↑j
+loc_28055:                              ; CODE XREF: DrawDebugPositionOverlay+1E↑j
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_fgColor, 0Fh
@@ -43293,14 +43293,14 @@ loc_28055:                              ; CODE XREF: sub_28034+1E↑j
                 mov     bx, 8FF5h       ; msg
                 call    writeString
                 retf
-sub_28034       endp
+DrawDebugPositionOverlay endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-FormatNumberCompact proc near           ; CODE XREF: sub_28034+4D↑p
-                                        ; sub_28034+5B↑p ...
+FormatNumberCompact proc near           ; CODE XREF: DrawDebugPositionOverlay+4D↑p
+                                        ; DrawDebugPositionOverlay+5B↑p ...
                 mov     bx, 0AFA8h      ; FormatNumber into the shared 0xAFA8 buffer, then StripCommasAndSpaces on it -- produces a compact, separator-free numeric string, returned in ax. Called from unnamed sub_28034.
                 call    FormatNumber
                 mov     bx, 0AFA8h
