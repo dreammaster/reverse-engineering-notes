@@ -5215,6 +5215,15 @@ No-op if the string is empty or the digit count isn't positive.
 
 606 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SetPaletteToWhiteAlt
+
+Named `sub_11EBE` -> `SetPaletteToWhiteAlt`, called once from
+`sub_11A10` — byte-for-byte identical to the just-named
+`SetPaletteToWhite`, another instance of this session's recurring
+overlay-segment duplicate-function pattern.
+
+607 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

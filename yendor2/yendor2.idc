@@ -1427,7 +1427,9 @@ static Bytes_0(void) {
 	set_cmt	(0X11EAE,	"Byte-for-byte duplicate of TryPlaySoundCue (sub_16234); dispatches via still-unnamed sub_11E39. Called from sub_11A10, sub_11E1C, and others.",	0);
 	create_insn	(0X11EAE);
 	set_name	(0X11EAE,	"TryPlaySoundCueAlt");
+	set_cmt	(0X11EBE,	"Byte-for-byte duplicate of SetPaletteToWhite (sub_16244), in a different overlay segment. Called from sub_11A10.",	0);
 	create_insn	(0X11EBE);
+	set_name	(0X11EBE,	"SetPaletteToWhiteAlt");
 	create_insn	(0X11EDC);
 	set_name	(0X11EDC,	"InitGame");
 	create_insn	(x=0X11F20);
@@ -3123,10 +3125,6 @@ static Bytes_0(void) {
 	set_cmt	(0X18205,	"SpendMaterialCounterClamped(ax=BCD counter addr, bx=ptr to 4-byte BCD amount): if counter > amount, SubBCD4 normally; otherwise the counter can't cover it -- zeroed outright (never negative), then sub_2704C is called (presumably a 'resource depleted' hook).",	0);
 	create_insn	(0X18205);
 	set_name	(0X18205,	"SpendMaterialCounterClamped");
-	create_insn	(0X18222);
-	set_cmt	(0X1822A,	"DeductHPClamped(ax=amount, bx=party-member record): [bx+0x52] -= ax (HP-current), clamped at 0. At 0, sets status bit 0x40 in [bx+0x1C] and calls sub_18095+sub_1AB26 (not traced, plausibly death/incapacitation handling).",	0);
-	create_insn	(0X1822A);
-	set_name	(0X1822A,	"DeductHPClamped");
 }
 
 //------------------------------------------------------------------------
@@ -3136,6 +3134,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X18222);
+	set_cmt	(0X1822A,	"DeductHPClamped(ax=amount, bx=party-member record): [bx+0x52] -= ax (HP-current), clamped at 0. At 0, sets status bit 0x40 in [bx+0x1C] and calls sub_18095+sub_1AB26 (not traced, plausibly death/incapacitation handling).",	0);
+	create_insn	(0X1822A);
+	set_name	(0X1822A,	"DeductHPClamped");
 	create_insn	(x=0X18238);
 	op_hex		(x,	1);
 	set_cmt	(0X18248,	"DeductMPClamped(ax=amount, bx=party-member record): [bx+0x54] -= ax (MP-current), clamped at 0.",	0);
@@ -5095,6 +5097,15 @@ static Bytes_1(void) {
 	create_insn	(0X1ECA7);
 	create_insn	(x=0X1ECCF);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1ECDC);
 	create_insn	(0X1ED31);
 	create_insn	(0X1ED75);
@@ -5125,15 +5136,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1EE8A);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1EE96,	"this",	0);
 	set_cmt	(0X1EEB1,	"this",	0);
 	set_cmt	(0X1EEC1,	"this",	0);
@@ -6931,6 +6933,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X25DD6);
 	op_hex		(x,	1);
 	set_cmt	(0X25DDD,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X25DEA);
 	op_hex		(x,	1);
 	set_cmt	(0X25DF1,	"msg",	0);
@@ -6952,15 +6963,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25E5E,	"Formats two numbers (FormatNumber + sub_256F0, optionally sub_2570C+sub_16262) and joins them as '<num1>/<num2>' for display. Called 3 times from DrawThreeStatBars.",	0);
 	create_insn	(0X25E5E);
 	set_name	(0X25E5E,	"FormatAndDrawFraction");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25EC8,	"msg",	0);
 	set_cmt	(0X25ED1,	"Draws a fixed-width blank label (12 spaces) then the character's name (+0x0) at a fixed position. Shared header draw used by ShowLevelUpMessage, DrawThreeStatBars's caller chain, and sub_25CFA.",	0);
 	create_insn	(0X25ED1);
@@ -9312,10 +9314,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B384,	"Checks whether a monster's (si) computed one-cell step (es:bx, bx=[si+6]+word_2E404) is passable, returning via errorCode (0=ok, 1=blocked). Cell flag bits 0xC00 always block; bits 0x6000 need monster trait [si+0x94] bit 0x10; several other branches gate on value ranges (_val31/_val32, 0x27-0x2A, <=1, ==0x25) and other [si+0x94] bits (8/0x14/0x1A) whose exact meaning (movement traits: flying/incorporeal/door-opening?) isn't confirmed; otherwise falls through to ClassifyFloorType + IsCellTypeImpassable, the same pair used for plain terrain checks. Called once from ProcessLevelMonsters right after it computes a one-cell step toward the player.",	0);
 	create_insn	(0X2B384);
 	set_name	(0X2B384,	"IsMonsterStepBlocked");
-	create_insn	(x=0X2B395);
-	op_hex		(x,	1);
-	create_insn	(x=0X2B39E);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -9325,6 +9323,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2B395);
+	op_hex		(x,	1);
+	create_insn	(x=0X2B39E);
+	op_hex		(x,	1);
 	create_insn	(x=0X2B3A6);
 	op_hex		(x,	1);
 	create_insn	(0X2B3CA);

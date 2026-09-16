@@ -645,7 +645,9 @@ mode-13h offset math), plus a multi-step palette fade,
 `FadePaletteStep` sharing the same `0x4D5C`/`0x442A`/`0x475A`
 current/target/output buffer trio), each ESC-abortable), `sub_1559A`
 (step 3, not yet traced — though it calls `SetPaletteToWhite`, was
-`sub_16244`, a full-palette white flash), then always
+`sub_16244`, a full-palette white flash, with a byte-for-byte
+duplicate `SetPaletteToWhiteAlt`, was `sub_11EBE`, called from another
+still-untraced function, `sub_11A10`), then always
 `FinalizeCharacterCreation` (was
 `sub_15267`, runs regardless of which step was reached). Matches the
 manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/

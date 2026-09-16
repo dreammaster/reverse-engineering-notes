@@ -2916,7 +2916,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     ax, 0Ah
                 call    TriggerSoundEvent
                 and     word_3295A, 0EFFFh
-                call    sub_11EBE
+                call    SetPaletteToWhiteAlt
                 mov     word_36D01, 1E0h
                 call    sub_1FC53
                 mov     _font_bgTransparent, 0
@@ -3235,8 +3235,8 @@ TryPlaySoundCueAlt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11EBE       proc near               ; CODE XREF: sub_11A10+E2↑p
-                mov     es, word_2E4AA
+SetPaletteToWhiteAlt proc near          ; CODE XREF: sub_11A10+E2↑p
+                mov     es, word_2E4AA  ; Byte-for-byte duplicate of SetPaletteToWhite (sub_16244), in a different overlay segment. Called from sub_11A10.
                 mov     di, 4D5Ch
                 mov     ax, 3F3Fh
                 mov     cx, 180h
@@ -3246,7 +3246,7 @@ sub_11EBE       proc near               ; CODE XREF: sub_11A10+E2↑p
                 mov     si, 4D5Ch
                 call    SetPaletteRange
                 retn
-sub_11EBE       endp
+SetPaletteToWhiteAlt endp
 
 seg004          ends
 
@@ -38391,7 +38391,7 @@ sub_2589A       endp
 
 
 SetPaletteRange proc far                ; CODE XREF: FadePaletteStep+6E↑P
-                                        ; sub_11EBE+18↑P ...
+                                        ; SetPaletteToWhiteAlt+18↑P ...
                 test    word_328C8, 800h ; Direct VGA DAC I/O (bypasses BIOS): optionally waits for vertical retrace (port 0x3DA bit 3), writes bl to port 0x3C8 (DAC write address), then cx RGB triples from ds:si to port 0x3C9 (DAC data). The real palette-set primitive.
                 jz      short loc_25A4B
                 mov     dx, 3DAh
