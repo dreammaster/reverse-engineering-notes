@@ -4210,7 +4210,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1D10D);
 	op_hex		(x,	1);
+	set_cmt	(0X1D118,	"Generic mouse hit-test: scans a table at ds:si of 10-byte entries (x_min, x_max, y_min, y_max, result), 0xFFFF as x_min terminating the table, for one containing (ax, bx). Returns/stores in word_2E40A the matching result word, or 0 if none match.",	0);
 	create_insn	(0X1D118);
+	set_name	(0X1D118,	"HitTestRegionTable");
 	create_insn	(0X1D127);
 	create_insn	(0X1D141);
 	create_insn	(0X1D146);
@@ -5238,14 +5240,18 @@ static Bytes_0(void) {
 	create_insn	(x=0X217D2);
 	op_hex		(x,	1);
 	set_cmt	(0X217D8,	"int",	0);
+	set_cmt	(0X217ED,	"Probes the map position the player is facing (offsets the coordinate by fixed deltas per word_36CF5's direction flags) via FindObjectAtPosition, then an adjacent-tile fallback. errorCode: 0=nothing found, 1=facing tile hit, 2=fallback tile hit.",	0);
 	create_insn	(0X217ED);
+	set_name	(0X217ED,	"ProbeFacingTile");
 	create_insn	(x=0X21820);
 	op_hex		(x,	1);
 	create_insn	(x=0X21831);
 	op_hex		(x,	1);
 	create_insn	(x=0X21846);
 	op_hex		(x,	1);
+	set_cmt	(0X2186F,	"Map object lookup: bounds-checks (ax=x, bx=y) against the current map's valid range, indexes a per-column array to a row of 6-byte entries, scans for y==bx (0xFFFF terminates). Found: copies 3 words to word_2E554/556/558, returns si=0xCF4. Not found/out of bounds: si=0.",	0);
 	create_insn	(0X2186F);
+	set_name	(0X2186F,	"FindObjectAtPosition");
 	create_insn	(0X2188B);
 	create_insn	(x=0X21893);
 	op_hex		(x,	1);
@@ -6074,6 +6080,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X25759);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X25764);
 	create_insn	(0X25770);
 	set_cmt	(0X25773,	"this",	0);
@@ -6123,15 +6138,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_name	(0X25A3B,	"SetPaletteRange");
 	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X25A47);
 	op_hex		(x,	1);
 	set_cmt	(0X25A5B,	"BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).",	0);
@@ -10610,6 +10616,15 @@ static Bytes_1(void) {
 	create_byte	(0X3882B);
 	create_byte	(0X3882D);
 	create_word	(0X3883A);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X3883E);
 	create_word	(0X3884C);
 	create_word	(0X39488);
@@ -10660,15 +10675,6 @@ static Bytes_1(void) {
 	set_name	(0X399BD,	"aZamoraHasFalle");
 	create_strlit	(0X399D2,	0X24);
 	set_name	(0X399D2,	"aSummonTheHeale");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X399F6,	0X33);
 	set_name	(0X399F6,	"aWhoHasStolenTh");
 	create_strlit	(0X39A29,	0X2C);

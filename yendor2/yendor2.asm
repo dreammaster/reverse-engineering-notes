@@ -204,7 +204,7 @@ loc_10152:                              ; CODE XREF: start+12D↑j
 ; ---------------------------------------------------------------------------
 
 loc_10160:                              ; CODE XREF: start+15B↑j
-                call    sub_217ED
+                call    ProbeFacingTile
                 xor     ax, ax
                 xor     bx, bx
                 cmp     errorCode, 1
@@ -364,7 +364,7 @@ loc_10306:                              ; CODE XREF: start+B0↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_1031D
                 jmp     loc_10043
@@ -411,7 +411,7 @@ loc_10352:                              ; CODE XREF: start+34D↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 641Ah
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_10369
                 jmp     loc_10043
@@ -538,7 +538,7 @@ loc_10478:                              ; CODE XREF: start+337↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5B32h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_1048F
                 jmp     loc_10043
@@ -611,7 +611,7 @@ loc_10503:                              ; CODE XREF: start+C4↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_1051A
                 jmp     loc_10043
@@ -665,7 +665,7 @@ loc_1057A:                              ; CODE XREF: start+575↑j
 ; ---------------------------------------------------------------------------
 
 loc_1058E:                              ; CODE XREF: start+527↑j
-                call    sub_217ED
+                call    ProbeFacingTile
                 cmp     errorCode, 0
                 jnz     short loc_105A8
                 mov     bx, 7D71h
@@ -786,7 +786,7 @@ loc_106A1:                              ; CODE XREF: start+69C↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5D5Eh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1069E
                 call    sub_28CFF
@@ -803,7 +803,7 @@ loc_106C7:                              ; CODE XREF: start+CE↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_106E3
                 cmp     ax, 6
@@ -4462,7 +4462,7 @@ loc_12BFF:                              ; CODE XREF: sub_12B84+28↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 68D2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_12C26
                 dec     ax
@@ -4487,7 +4487,7 @@ loc_12C3E:                              ; CODE XREF: sub_12B84+31↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 68D2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_12C55
                 jmp     loc_12B9B
@@ -4698,7 +4698,7 @@ loc_12DF6:                              ; CODE XREF: sub_12DD8+C↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6960h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_12E52
                 cmp     ax, 1
@@ -5126,7 +5126,7 @@ loc_130B8:                              ; CODE XREF: sub_13090+32↓j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6976h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_13107
                 mov     word_2E76E, 0
@@ -5237,7 +5237,7 @@ loc_131B5:                              ; CODE XREF: sub_1318D+32↓j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6976h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_13204
                 mov     word_2E76E, 0
@@ -5316,7 +5316,7 @@ loc_13283:                              ; CODE XREF: sub_13278+15↓j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6976h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_132AD
                 call    sub_14122
@@ -5480,7 +5480,7 @@ loc_13402:                              ; CODE XREF: sub_133EB+5↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6960h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1345C
                 cmp     ax, 1
@@ -7846,7 +7846,7 @@ loc_14D8E:                              ; CODE XREF: sub_14D26+5↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6876h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_14DF5
                 cmp     ax, 1
@@ -10389,7 +10389,7 @@ loc_16544:                              ; CODE XREF: sub_16407+A6↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_16560
                 cmp     ax, 6
@@ -10408,7 +10408,7 @@ loc_16563:                              ; CODE XREF: sub_16407+9C↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1658C
                 cmp     ax, 6
@@ -10450,7 +10450,7 @@ loc_165D7:                              ; CODE XREF: sub_16407+88↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6698h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_165EE
                 jmp     loc_16451
@@ -10508,7 +10508,7 @@ loc_16648:                              ; CODE XREF: sub_16407+203↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5B32h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_1665F
                 jmp     loc_16451
@@ -10541,7 +10541,7 @@ loc_1667A:                              ; CODE XREF: sub_16407+217↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6600h
-                call    sub_1D118
+                call    HitTestRegionTable
                 mov     bx, 51C0h
                 cmp     word ptr [bx], 0
                 jz      short loc_1669D
@@ -12296,7 +12296,7 @@ loc_173D9:                              ; CODE XREF: sub_1732B+55↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_17400
                 cmp     ax, 6
@@ -12338,7 +12338,7 @@ loc_17432:                              ; CODE XREF: sub_1732B+4B↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1746B
                 cmp     ax, 1
@@ -12386,7 +12386,7 @@ loc_17485:                              ; CODE XREF: sub_1732B+149↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6458h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 1
                 jnz     short loc_17482
                 jmp     short loc_17500
@@ -12414,7 +12414,7 @@ loc_174CE:                              ; CODE XREF: sub_1732B+5E↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_174FD
                 cmp     ax, 1
@@ -12516,7 +12516,7 @@ loc_175CA:                              ; CODE XREF: sub_1732B+68↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_175F0
                 cmp     ax, 6
@@ -13117,7 +13117,7 @@ sub_17B67       proc near               ; CODE XREF: sub_17032↑p
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 63C8h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short locret_17B91
                 mov     di, 63C8h
@@ -13357,7 +13357,7 @@ loc_17DAA:                              ; CODE XREF: sub_17B92+20D↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6458h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_17DE0
                 jmp     short loc_17DF6
@@ -13404,7 +13404,7 @@ loc_17E01:                              ; CODE XREF: sub_17B92+26A↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_17E18
                 jmp     loc_17D7D
@@ -14509,7 +14509,7 @@ sub_18504       proc far                ; CODE XREF: start+531↑P
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_1851C
 
@@ -14703,7 +14703,7 @@ loc_186E4:                              ; CODE XREF: sub_1869D+27↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_186FB
                 jmp     loc_1877B
@@ -14789,7 +14789,7 @@ loc_187A0:                              ; CODE XREF: sub_1869D+30↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_187D4
                 cmp     ax, 1
@@ -14881,7 +14881,7 @@ loc_18873:                              ; CODE XREF: sub_1869D+1D1↑j
                 mov     bx, word_2E770
                 sub     bx, word_328C0
                 mov     si, 60EEh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_18892
                 jmp     loc_187D4
@@ -14990,7 +14990,7 @@ loc_1894A:                              ; CODE XREF: sub_1869D+3A↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1897C
                 cmp     ax, 1
@@ -15080,7 +15080,7 @@ loc_18A27:                              ; CODE XREF: sub_1869D+2CB↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_18A3E
                 jmp     loc_18B00
@@ -15165,7 +15165,7 @@ loc_18B03:                              ; CODE XREF: sub_1869D+44↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_18B3D
                 cmp     ax, 6
@@ -15321,7 +15321,7 @@ sub_18C79       proc far                ; CODE XREF: start+4B9↑P
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_18C99
 
@@ -16031,7 +16031,7 @@ sub_1930E       proc near               ; CODE XREF: sub_1869D+7E↑p
                                         ; sub_1869D+1C9↑p ...
                 mov     errorCode, 1
                 mov     si, 6304h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_19322
 
@@ -16181,7 +16181,7 @@ loc_1948C:                              ; CODE XREF: sub_193BE+9C↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6522h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 3
                 jz      short loc_19473
                 cmp     word_2E38E, 0
@@ -16201,7 +16201,7 @@ loc_194B8:                              ; CODE XREF: sub_193BE+A3↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 6522h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 4
                 jge     short loc_194CF
                 jmp     loc_19442
@@ -16309,7 +16309,7 @@ loc_19583:                              ; CODE XREF: sub_19553+5↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_19598
                 retf
@@ -16385,7 +16385,7 @@ loc_1962B:                              ; CODE XREF: sub_19553+CC↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 632Eh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_19684
                 mov     bx, word_32924
@@ -16435,7 +16435,7 @@ loc_19684:                              ; CODE XREF: sub_19553+EA↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_196C4
                 mov     bx, 95EBh
@@ -18628,7 +18628,7 @@ loc_1A808:                              ; CODE XREF: ShowConfirmPrompt+71↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5D5Eh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1A808
                 cmp     ax, word_2E780
@@ -18682,7 +18682,7 @@ loc_1A87B:                              ; CODE XREF: ShowConfirmPrompt+7B↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1A87B
                 cmp     ax, 1
@@ -18800,7 +18800,7 @@ loc_1A9CE:                              ; CODE XREF: ShowConfirmPrompt+252↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5D5Eh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1A9A8
                 cmp     ax, word_2E780
@@ -23218,16 +23218,16 @@ seg050          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D118       proc far                ; CODE XREF: start+310↑P
+HitTestRegionTable proc far             ; CODE XREF: start+310↑P
                                         ; start+35C↑P ...
-                cmp     word ptr [si], 0FFFFh
+                cmp     word ptr [si], 0FFFFh ; Generic mouse hit-test: scans a table at ds:si of 10-byte entries (x_min, x_max, y_min, y_max, result), 0xFFFF as x_min terminating the table, for one containing (ax, bx). Returns/stores in word_2E40A the matching result word, or 0 if none match.
                 jnz     short loc_1D127
                 mov     ax, 0
                 mov     word_2E40A, 0
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D127:                              ; CODE XREF: sub_1D118+3↑j
+loc_1D127:                              ; CODE XREF: HitTestRegionTable+3↑j
                 cmp     ax, [si]
                 jb      short loc_1D141
                 cmp     ax, [si+2]
@@ -23241,11 +23241,11 @@ loc_1D127:                              ; CODE XREF: sub_1D118+3↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D141:                              ; CODE XREF: sub_1D118+11↑j
-                                        ; sub_1D118+16↑j ...
+loc_1D141:                              ; CODE XREF: HitTestRegionTable+11↑j
+                                        ; HitTestRegionTable+16↑j ...
                 add     si, 0Ah
-                jmp     short near ptr sub_1D118
-sub_1D118       endp
+                jmp     short near ptr HitTestRegionTable
+HitTestRegionTable endp
 
 seg050          ends
 
@@ -23635,7 +23635,7 @@ loc_1D3E3:                              ; CODE XREF: RunTitleScreen+97↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AFEh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_1D3FA
                 jmp     loc_1D323
@@ -24724,7 +24724,7 @@ loc_1DDF5:                              ; CODE XREF: sub_1DCE0+110↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 67ACh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_1DE0B
                 jmp     short loc_1DE5B
@@ -24787,7 +24787,7 @@ loc_1DE5B:                              ; CODE XREF: sub_1DCE0+129↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1DE9C
                 mov     bx, 95EBh
@@ -24819,7 +24819,7 @@ loc_1DEA2:                              ; CODE XREF: sub_1DCE0+112↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 67ACh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1DE9C
                 cmp     ax, 0Dh
@@ -26124,7 +26124,7 @@ loc_1EB50:                              ; CODE XREF: RunGameDialog+D6↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5CD0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_1EBC0
                 jmp     short loc_1EB2C
@@ -26846,7 +26846,7 @@ sub_1F29D       proc near               ; CODE XREF: RunGameDialog+227↑p
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5CD0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short sub_1F29D
                 cmp     ax, 1
@@ -28408,7 +28408,7 @@ loc_202AF:                              ; CODE XREF: sub_20070+DA↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5E00h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_202C6
                 jmp     loc_20126
@@ -28467,7 +28467,7 @@ loc_2031F:                              ; CODE XREF: sub_20070+E4↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5E00h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_20336
                 jmp     loc_20126
@@ -30783,7 +30783,7 @@ sub_216F0       proc far                ; CODE XREF: start+1A3↑P
                 push    dx
                 push    cx
                 and     word_328C8, 0FF7Fh
-                call    sub_2186F
+                call    FindObjectAtPosition
                 cmp     si, 0
                 jz      short loc_2172A
                 test    word ptr [si+2], 8000h
@@ -30878,9 +30878,9 @@ sub_216F0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_217ED       proc far                ; CODE XREF: start:loc_10160↑P
+ProbeFacingTile proc far                ; CODE XREF: start:loc_10160↑P
                                         ; start:loc_1058E↑P ...
-                push    es
+                push    es              ; Probes the map position the player is facing (offsets the coordinate by fixed deltas per word_36CF5's direction flags) via FindObjectAtPosition, then an adjacent-tile fallback. errorCode: 0=nothing found, 1=facing tile hit, 2=fallback tile hit.
                 push    di
                 push    dx
                 push    cx
@@ -30889,7 +30889,7 @@ sub_217ED       proc far                ; CODE XREF: start:loc_10160↑P
                 mov     word_32DE8, ax
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
-                call    sub_2186F
+                call    FindObjectAtPosition
                 cmp     si, 0
                 jnz     short loc_2186A
                 mov     errorCode, 2
@@ -30912,30 +30912,30 @@ sub_217ED       proc far                ; CODE XREF: start:loc_10160↑P
                 add     ax, 2
                 add     word_32DE8, 10h
 
-loc_21856:                              ; CODE XREF: sub_217ED+39↑j
-                                        ; sub_217ED+4A↑j ...
-                call    sub_2186F
+loc_21856:                              ; CODE XREF: ProbeFacingTile+39↑j
+                                        ; ProbeFacingTile+4A↑j ...
+                call    FindObjectAtPosition
                 cmp     si, 0
                 jnz     short loc_2186A
                 mov     errorCode, 0
                 mov     word_32DE8, 0
 
-loc_2186A:                              ; CODE XREF: sub_217ED+1D↑j
-                                        ; sub_217ED+6F↑j
+loc_2186A:                              ; CODE XREF: ProbeFacingTile+1D↑j
+                                        ; ProbeFacingTile+6F↑j
                 pop     cx
                 pop     dx
                 pop     di
                 pop     es
                 retf
-sub_217ED       endp
+ProbeFacingTile endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2186F       proc near               ; CODE XREF: sub_216F0+A↑p
-                                        ; sub_217ED+17↑p ...
-                mov     si, 0
+FindObjectAtPosition proc near          ; CODE XREF: sub_216F0+A↑p
+                                        ; ProbeFacingTile+17↑p ...
+                mov     si, 0           ; Map object lookup: bounds-checks (ax=x, bx=y) against the current map's valid range, indexes a per-column array to a row of 6-byte entries, scans for y==bx (0xFFFF terminates). Found: copies 3 words to word_2E554/556/558, returns si=0xCF4. Not found/out of bounds: si=0.
                 cmp     ax, word_32A02
                 jl      short locret_2188A
                 cmp     ax, word_32A00
@@ -30945,12 +30945,12 @@ sub_2186F       proc near               ; CODE XREF: sub_216F0+A↑p
                 cmp     bx, word_32A08
                 jle     short loc_2188B
 
-locret_2188A:                           ; CODE XREF: sub_2186F+7↑j
-                                        ; sub_2186F+D↑j ...
+locret_2188A:                           ; CODE XREF: FindObjectAtPosition+7↑j
+                                        ; FindObjectAtPosition+D↑j ...
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2188B:                              ; CODE XREF: sub_2186F+19↑j
+loc_2188B:                              ; CODE XREF: FindObjectAtPosition+19↑j
                 push    es
                 mov     es, word_2E55A
                 sub     ax, 28h ; '('
@@ -30958,7 +30958,7 @@ loc_2188B:                              ; CODE XREF: sub_2186F+19↑j
                 mov     si, ax
                 mov     si, es:[si]
 
-loc_2189A:                              ; CODE XREF: sub_2186F+3B↓j
+loc_2189A:                              ; CODE XREF: FindObjectAtPosition+3B↓j
                 cmp     word ptr es:[si], 0FFFFh
                 jz      short loc_218AC
                 cmp     bx, es:[si]
@@ -30968,8 +30968,8 @@ loc_2189A:                              ; CODE XREF: sub_2186F+3B↓j
                 jmp     short loc_2189A
 ; ---------------------------------------------------------------------------
 
-loc_218AC:                              ; CODE XREF: sub_2186F+2F↑j
-                                        ; sub_2186F+34↑j
+loc_218AC:                              ; CODE XREF: FindObjectAtPosition+2F↑j
+                                        ; FindObjectAtPosition+34↑j
                 mov     word_2E554, 0
                 mov     word_2E556, 0
                 mov     word_2E558, 0
@@ -30978,7 +30978,7 @@ loc_218AC:                              ; CODE XREF: sub_2186F+2F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_218C3:                              ; CODE XREF: sub_2186F+36↑j
+loc_218C3:                              ; CODE XREF: FindObjectAtPosition+36↑j
                 mov     ax, es:[si]
                 mov     word_2E554, ax
                 mov     ax, es:[si+2]
@@ -30988,7 +30988,7 @@ loc_218C3:                              ; CODE XREF: sub_2186F+36↑j
                 mov     si, 0CF4h
                 pop     es
                 retn
-sub_2186F       endp
+FindObjectAtPosition endp
 
 seg065          ends
 
@@ -36368,7 +36368,7 @@ loc_2485F:                              ; CODE XREF: sub_245AE+2A7↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6092h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_24876
                 jmp     loc_245B4
@@ -37641,7 +37641,7 @@ loc_255FA:                              ; CODE XREF: sub_255C7+16↑j
                 mov     bx, word_2E774
 
 loc_25601:                              ; CODE XREF: sub_255C7+31↑j
-                call    sub_1D118
+                call    HitTestRegionTable
                 retn
 sub_255C7       endp
 
@@ -38583,7 +38583,7 @@ loc_25B3E:                              ; CODE XREF: sub_25B34+5↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short locret_25B9E
                 mov     si, word_36E4B
@@ -39320,7 +39320,7 @@ sub_2621C       proc far                ; CODE XREF: sub_1869D:loc_1872D↑P
                 mov     bx, word_2E770
                 sub     bx, word_328C0
                 mov     si, 60EEh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_2624C
                 mov     errorCode, 1
@@ -39555,7 +39555,7 @@ sub_26415       proc far                ; CODE XREF: sub_1869D+2F3↑P
                 mov     bx, word_2E774
                 sub     bx, word_328C0
                 mov     si, 60EEh
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_26441
                 mov     errorCode, 1
@@ -41054,7 +41054,7 @@ sub_270FE       proc far                ; CODE XREF: start+4E2↑P
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 636Ch
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_27141
                 cmp     ax, 3
@@ -41147,7 +41147,7 @@ sub_271DC       proc far                ; CODE XREF: start+3C7↑P
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 636Ch
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_27233
                 cmp     ax, 3
@@ -41332,7 +41332,7 @@ sub_2738B       proc far                ; CODE XREF: start:loc_1056B↑P
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 636Ch
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_273DE
                 mov     di, 9519h
@@ -45507,7 +45507,7 @@ loc_29447:                              ; CODE XREF: sub_2940E+2F↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_29423
                 cmp     ax, 1
@@ -45565,7 +45565,7 @@ loc_294B8:                              ; CODE XREF: sub_294A3+4C↓j
 ; ---------------------------------------------------------------------------
 
 loc_294CE:                              ; CODE XREF: sub_294A3+9↑j
-                call    sub_217ED
+                call    ProbeFacingTile
                 cmp     errorCode, 0
                 jz      short loc_294AE
                 test    word ptr [si+2], 2000h
@@ -45943,7 +45943,7 @@ loc_2975D:                              ; CODE XREF: sub_29738+D↑j
 ; ---------------------------------------------------------------------------
 
 loc_29769:                              ; CODE XREF: sub_29738+19↑j
-                call    sub_217ED
+                call    ProbeFacingTile
                 cmp     errorCode, 0
                 jz      short loc_29787
                 test    word ptr [si+2], 8000h
@@ -48273,7 +48273,7 @@ loc_2A7DA:                              ; CODE XREF: sub_2A788+BB↓j
 ; ---------------------------------------------------------------------------
 
 loc_2A7F0:                              ; CODE XREF: sub_2A788+46↑j
-                call    sub_217ED
+                call    ProbeFacingTile
                 cmp     errorCode, 0
                 jz      short loc_2A80E
                 test    word ptr [si+2], 8000h
@@ -50691,7 +50691,7 @@ loc_2BE0C:                              ; CODE XREF: sub_2BD1A+B4↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5B5Ch
-                call    sub_1D118
+                call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_2BE22
                 jmp     short loc_2BDAA
@@ -51743,7 +51743,7 @@ loc_2C703:                              ; CODE XREF: sub_2C0FE+5A↑j
 ; ---------------------------------------------------------------------------
 
 loc_2C71D:                              ; CODE XREF: sub_2C0FE+65↑j
-                call    sub_217ED
+                call    ProbeFacingTile
                 xor     ax, ax
                 xor     bx, bx
                 cmp     errorCode, 1
@@ -51798,7 +51798,7 @@ loc_2C777:                              ; CODE XREF: sub_2C0FE+66D↑j
 ; ---------------------------------------------------------------------------
 
 loc_2C7BD:                              ; CODE XREF: sub_2C0FE+70↑j
-                call    sub_217ED
+                call    ProbeFacingTile
                 xor     ax, ax
                 xor     bx, bx
                 cmp     errorCode, 1
@@ -56917,12 +56917,12 @@ word_2E550      dw 0                    ; DATA XREF: sub_1732B+EF↑w
                                         ; sub_17B92+25E↑w ...
 fontOffset      dw 0                    ; DATA XREF: sub_1A5F6+8E↑w
                                         ; sub_1B96F+B6↑w ...
-word_2E554      dw 0                    ; DATA XREF: sub_2186F:loc_218AC↑w
-                                        ; sub_2186F+57↑w
-word_2E556      dw 0                    ; DATA XREF: sub_2186F+43↑w
-                                        ; sub_2186F+5E↑w
-word_2E558      dw 0                    ; DATA XREF: sub_2186F+49↑w
-                                        ; sub_2186F+65↑w
+word_2E554      dw 0                    ; DATA XREF: FindObjectAtPosition:loc_218AC↑w
+                                        ; FindObjectAtPosition+57↑w
+word_2E556      dw 0                    ; DATA XREF: FindObjectAtPosition+43↑w
+                                        ; FindObjectAtPosition+5E↑w
+word_2E558      dw 0                    ; DATA XREF: FindObjectAtPosition+49↑w
+                                        ; FindObjectAtPosition+65↑w
 word_2E55A      dw 0                    ; DATA XREF: sub_12449+E↑w
                                         ; sub_12449+1B↑r ...
 word_2E55C      dw 0                    ; DATA XREF: sub_112AE+3C2↑r
@@ -75478,8 +75478,8 @@ word_32DD0      dw 0                    ; DATA XREF: sub_1766F+88↑r
 word_32DE2      dw 0                    ; DATA XREF: sub_179AE+28↑r
 word_32DE4      dw 0                    ; DATA XREF: sub_179AE+3A↑r
 word_32DE6      dw 0                    ; DATA XREF: sub_179AE+31↑r
-word_32DE8      dw 0                    ; DATA XREF: sub_217ED+D↑w
-                                        ; sub_217ED+2D↑w ...
+word_32DE8      dw 0                    ; DATA XREF: ProbeFacingTile+D↑w
+                                        ; ProbeFacingTile+2D↑w ...
                 db    0
                 db    0
                 db    0

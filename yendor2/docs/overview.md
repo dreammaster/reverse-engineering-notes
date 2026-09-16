@@ -600,6 +600,22 @@ this session: `PollKeyboardInput`/mouse → command code → `HandleGameCommand`
 
 98 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: map object lookup and mouse hit-testing
+
+Traced the rest of `start`'s main-loop input pipeline that feeds
+`HandleGameCommand`: `ProbeFacingTile` (was `sub_217ED`) offsets the
+player's position by fixed deltas per a facing-direction flags word and
+calls `FindObjectAtPosition` (was `sub_2186F`) — a bounds-checked,
+column-indexed lookup into the current map's object table by (x, y)
+coordinate, with a clean found/not-found sentinel. Separately,
+`HitTestRegionTable` (was `sub_1D118`) is the generic mouse hit-test
+used throughout the UI: scans a table of 10-byte clickable-region
+entries (min/max x, min/max y, result) for one containing the cursor —
+the same mechanism `GetListItemPosition`'s table (`0x5CD0`) and several
+other screen-specific region tables use.
+
+**Crossed 100 named functions this update: 101 of 769.**
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
