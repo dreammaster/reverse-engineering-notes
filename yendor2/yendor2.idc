@@ -6651,7 +6651,9 @@ static Bytes_2(void) {
 	set_cmt	(0X25A73,	"ResolveAttack(ax=target defense, bx=attacker accuracy, cx=weapon damage power): miss (word_2E49C=0) if cx==0, if bx<ax, or if RandomInRange(55) beats (bx-ax). Otherwise hit: word_2E49C = (cx*(bx-ax)+50)/100, minimum 1.",	0);
 	create_insn	(0X25A73);
 	set_name	(0X25A73,	"ResolveAttack");
+	set_cmt	(0X25AAC,	"If every one of the 4 party slots is either empty or has one of +0x1C bits 6/10/11/12 set (bits 10/11 = the confirmed TickStatusEffects/ApplyStatusEffect timed-ailment flags) -- i.e. no member is currently unafflicted -- shows ShowPartyWipeScreen, then RunGameDialog, then InitializeDungeonLevel (unless byte_2E400==0xFF). Reads as a 'whole party incapacitated' handler. Called from RunDungeonGameLoop and ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X25AAC);
+	set_name	(0X25AAC,	"CheckPartyWipeAndReinitLevel");
 	create_insn	(x=0X25ACF);
 	op_hex		(x,	1);
 	create_insn	(x=0X25AE6);
@@ -8315,6 +8317,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29E4E);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29E53);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29E59);
@@ -8363,15 +8374,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29ED0);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29ED5);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29EDB);
@@ -8921,7 +8923,9 @@ static Bytes_3(void) {
 	set_name	(0X2AD94,	"ConfirmAndSelectPartyTarget");
 	create_insn	(0X2ADC4);
 	create_insn	(0X2ADD0);
+	set_cmt	(0X2ADE8,	"Stops music, plays sound effect 0x13 via the sound dispatch (sub_28412) when sub_2827E allows it, draws full-screen picture 1 and caches it to EMS, redraws the fixed status icon, and shows the mouse cursor. The 'show this screen' step of CheckPartyWipeAndReinitLevel's party-wipe sequence.",	0);
 	create_insn	(0X2ADE8);
+	set_name	(0X2ADE8,	"ShowPartyWipeScreen");
 	create_insn	(x=0X2AE1A);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE20);
@@ -11434,6 +11438,15 @@ static Bytes_3(void) {
 	create_strlit	(0X39D1A,	0X2);
 	create_strlit	(0X39D1C,	0X1C);
 	set_name	(0X39D1C,	"aDannyDeloach");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39D38,	0X20);
 	set_name	(0X39D38,	"aPORTRAITS");
 	create_strlit	(0X39D58,	0X2);
@@ -11475,15 +11488,6 @@ static Bytes_3(void) {
 	create_strlit	(0X39EF3,	0X20);
 	set_name	(0X39EF3,	"aDonnaKarpenkoN");
 	create_strlit	(0X39F13,	0X2);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39F15,	0X20);
 	set_name	(0X39F15,	"aSharonLehmanTJ");
 	create_strlit	(0X39F35,	0X2);

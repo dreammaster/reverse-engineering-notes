@@ -3416,6 +3416,23 @@ established `RestoreXFromEMS`/`SaveXToEMS` shape:
 
 438 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CheckPartyWipeAndReinitLevel, ShowPartyWipeScreen
+
+A significant find: named `sub_25AAC` -> `CheckPartyWipeAndReinitLevel`
+and `sub_2ADE8` -> `ShowPartyWipeScreen`. `CheckPartyWipeAndReinitLevel`
+(called from `RunDungeonGameLoop` and `ApplyEffectAndDrawIconBar`)
+scans all 4 roster members and returns immediately if any one of them
+is *not* flagged by one of `+0x1C` bits `6`/`10`/`11`/`12` (bits 10/11
+being the confirmed timed-ailment flags). Only when every slot is
+empty or flagged does it fall through to `ShowPartyWipeScreen` (stop
+music, play a sound effect, full-screen picture, redraw the status
+icon), then `RunGameDialog`, then `InitializeDungeonLevel` — i.e. a
+"whole party incapacitated" handler that resets the level. Bit `6`'s
+specific ailment and the `byte_2E400==0xFF` skip condition aren't
+confirmed, but the overall "total party wipe" shape is well-evidenced.
+
+440 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

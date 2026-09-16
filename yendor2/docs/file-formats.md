@@ -1368,6 +1368,23 @@ exact ailments behind effect ids `2`/`0xE` and the `word_36C79` bit-`2`
 condition aren't confirmed — this is a mechanically-clear but
 narratively-open sibling system to `TickWorldAilments`.
 
+`ApplyEffectAndDrawIconBar` and `RunDungeonGameLoop` both also call
+`CheckPartyWipeAndReinitLevel` (was `sub_25AAC`) — a **total party
+incapacitation** check: it scans all 4 `g_partySlotAssignment` members,
+and if it finds even one whose `+0x1C` has *none* of bits `6`/`10`/`11`/
+`12` set (bits 10/11 being the confirmed `TickStatusEffects`/
+`ApplyStatusEffect` timed-ailment flags), it returns immediately —
+that member is still capable of acting. Only when *every* slot is
+either empty or flagged with one of those bits does it fall through to
+`ShowPartyWipeScreen` (was `sub_2ADE8` — stops music, plays a sound
+effect via the sound dispatch, draws a full-screen picture, redraws the
+fixed status icon), then `RunGameDialog`, then (unless `byte_2E400`==
+`0xFF`) `InitializeDungeonLevel` — reading very much like a "whole
+party is down → show a screen → reset the level" handler. Bit `6`'s
+specific ailment isn't confirmed (it's not one of the 3 timed-ailment
+bits), nor is the exact meaning of `byte_2E400`==`0xFF` skipping the
+reset.
+
 **Shareware relevance**: the guide notes the shareware version has a
 blocked portal that can be bypassed by giving a character the "Key of
 Pariah" (item `0x31`, modifier `00`) — directly explains the registration

@@ -10175,7 +10175,7 @@ loc_1635F:                              ; CODE XREF: RunDungeonGameLoop+5B↑j
                 call    HandleDungeonInput
                 cmp     byte_2E400, 0
                 jnz     short loc_16375
-                call    sub_25AAC
+                call    CheckPartyWipeAndReinitLevel
                 cmp     byte_2E400, 0
                 jz      short loc_16377
 
@@ -13800,7 +13800,7 @@ loc_180E8:                              ; CODE XREF: ApplyEffectAndDrawIconBar+2
 loc_180F0:                              ; CODE XREF: ApplyEffectAndDrawIconBar+2C↑j
                 call    sub_222F8
                 call    DrawMouseCursor
-                call    sub_25AAC
+                call    CheckPartyWipeAndReinitLevel
                 pop     cx
                 pop     dx
                 pop     di
@@ -17752,7 +17752,7 @@ loc_1A0E9:                              ; CODE XREF: TickPartyAilmentIconBar+50�
                 test    word_328CA, 100h
                 jz      short loc_1A101
                 call    ApplyEffectAndDrawIconBar
-                call    sub_25AAC
+                call    CheckPartyWipeAndReinitLevel
                 and     word_328CA, 0FEFFh
 
 loc_1A101:                              ; CODE XREF: TickPartyAilmentIconBar+6A↑j
@@ -38497,9 +38497,9 @@ seg085          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25AAC       proc far                ; CODE XREF: RunDungeonGameLoop+73↑P
+CheckPartyWipeAndReinitLevel proc far   ; CODE XREF: RunDungeonGameLoop+73↑P
                                         ; ApplyEffectAndDrawIconBar+40↑P ...
-                push    word_328D4
+                push    word_328D4      ; If every one of the 4 party slots is either empty or has one of +0x1C bits 6/10/11/12 set (bits 10/11 = the confirmed TickStatusEffects/ApplyStatusEffect timed-ailment flags) -- i.e. no member is currently unafflicted -- shows ShowPartyWipeScreen, then RunGameDialog, then InitializeDungeonLevel (unless byte_2E400==0xFF). Reads as a 'whole party incapacitated' handler. Called from RunDungeonGameLoop and ApplyEffectAndDrawIconBar.
                 push    word_328D6
                 push    si
                 push    di
@@ -38508,7 +38508,7 @@ sub_25AAC       proc far                ; CODE XREF: RunDungeonGameLoop+73↑P
                 mov     si, 95EBh
                 mov     cx, 4
 
-loc_25AC2:                              ; CODE XREF: sub_25AAC+2D↓j
+loc_25AC2:                              ; CODE XREF: CheckPartyWipeAndReinitLevel+2D↓j
                 mov     ax, [si]
                 cmp     ax, 0
                 jz      short loc_25ADB
@@ -38520,8 +38520,8 @@ loc_25AC2:                              ; CODE XREF: sub_25AAC+2D↓j
                 add     si, 2
                 loop    loc_25AC2
 
-loc_25ADB:                              ; CODE XREF: sub_25AAC+1B↑j
-                call    sub_2ADE8
+loc_25ADB:                              ; CODE XREF: CheckPartyWipeAndReinitLevel+1B↑j
+                call    ShowPartyWipeScreen
                 mov     word_31946, 0
                 and     word_328C4, 0FF00h
                 or      word_328C4, 70h
@@ -38531,15 +38531,15 @@ loc_25ADB:                              ; CODE XREF: sub_25AAC+1B↑j
                 jz      short loc_25B08
                 call    InitializeDungeonLevel
 
-loc_25B08:                              ; CODE XREF: sub_25AAC+28↑j
-                                        ; sub_25AAC+55↑j
+loc_25B08:                              ; CODE XREF: CheckPartyWipeAndReinitLevel+28↑j
+                                        ; CheckPartyWipeAndReinitLevel+55↑j
                 pop     cx
                 pop     di
                 pop     si
                 pop     word_328D6
                 pop     word_328D4
                 retf
-sub_25AAC       endp
+CheckPartyWipeAndReinitLevel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -48993,14 +48993,14 @@ seg115          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2ADE8       proc far                ; CODE XREF: sub_25AAC:loc_25ADB↑P
-                call    StopMusicAndResetTimer
+ShowPartyWipeScreen proc far            ; CODE XREF: CheckPartyWipeAndReinitLevel:loc_25ADB↑P
+                call    StopMusicAndResetTimer ; Stops music, plays sound effect 0x13 via the sound dispatch (sub_28412) when sub_2827E allows it, draws full-screen picture 1 and caches it to EMS, redraws the fixed status icon, and shows the mouse cursor. The 'show this screen' step of CheckPartyWipeAndReinitLevel's party-wipe sequence.
                 call    sub_2827E
                 jnz     short loc_2ADFC
                 mov     ax, 13h
                 call    sub_28412
 
-loc_2ADFC:                              ; CODE XREF: sub_2ADE8+A↑j
+loc_2ADFC:                              ; CODE XREF: ShowPartyWipeScreen+A↑j
                 call    sub_2AE1A
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
@@ -49008,13 +49008,13 @@ loc_2ADFC:                              ; CODE XREF: sub_2ADE8+A↑j
                 call    sub_2827E
                 call    DrawMouseCursor
                 retf
-sub_2ADE8       endp
+ShowPartyWipeScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AE1A       proc near               ; CODE XREF: sub_2ADE8:loc_2ADFC↑p
+sub_2AE1A       proc near               ; CODE XREF: ShowPartyWipeScreen:loc_2ADFC↑p
                 and     word_328C4, 0DAFFh
                 and     word_328C8, 803h
                 and     word_328CA, 0FFFh
