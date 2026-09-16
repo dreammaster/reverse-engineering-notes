@@ -33560,7 +33560,7 @@ loc_22F49:                              ; CODE XREF: ProcessLevelMonsters+1DC↑
 
 loc_22F63:                              ; CODE XREF: ProcessLevelMonsters+1B0↑j
                                         ; ProcessLevelMonsters+1CC↑j ...
-                call    sub_2B384
+                call    IsMonsterStepBlocked
                 cmp     errorCode, 0
                 jnz     short loc_22F83
                 mov     bx, [si+6]
@@ -49484,8 +49484,8 @@ seg117          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B384       proc far                ; CODE XREF: ProcessLevelMonsters:loc_22F63↑P
-                mov     errorCode, 1
+IsMonsterStepBlocked proc far           ; CODE XREF: ProcessLevelMonsters:loc_22F63↑P
+                mov     errorCode, 1    ; Checks whether a monster's (si) computed one-cell step (es:bx, bx=[si+6]+word_2E404) is passable, returning via errorCode (0=ok, 1=blocked). Cell flag bits 0xC00 always block; bits 0x6000 need monster trait [si+0x94] bit 0x10; several other branches gate on value ranges (_val31/_val32, 0x27-0x2A, <=1, ==0x25) and other [si+0x94] bits (8/0x14/0x1A) whose exact meaning (movement traits: flying/incorporeal/door-opening?) isn't confirmed; otherwise falls through to ClassifyFloorType + IsCellTypeImpassable, the same pair used for plain terrain checks. Called once from ProcessLevelMonsters right after it computes a one-cell step toward the player.
                 mov     es, word_2E562
                 mov     bx, [si+6]
                 add     bx, word_2E404
@@ -49494,13 +49494,13 @@ sub_2B384       proc far                ; CODE XREF: ProcessLevelMonsters:loc_22
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2B39E:                              ; CODE XREF: sub_2B384+17↑j
+loc_2B39E:                              ; CODE XREF: IsMonsterStepBlocked+17↑j
                 test    word ptr es:[bx+6], 6000h
                 jz      short loc_2B3CA
                 test    word ptr [si+94h], 10h
                 jz      short locret_2B3C9
 
-loc_2B3AE:                              ; CODE XREF: sub_2B384+5B↓j
+loc_2B3AE:                              ; CODE XREF: IsMonsterStepBlocked+5B↓j
                 mov     ax, word_2E402
                 add     word_2E402, ax
                 mov     ax, word_2E406
@@ -49508,15 +49508,15 @@ loc_2B3AE:                              ; CODE XREF: sub_2B384+5B↓j
                 mov     ax, word_2E404
                 add     word_2E404, ax
 
-loc_2B3C3:                              ; CODE XREF: sub_2B384+69↓j
-                                        ; sub_2B384+95↓j
+loc_2B3C3:                              ; CODE XREF: IsMonsterStepBlocked+69↓j
+                                        ; IsMonsterStepBlocked+95↓j
                 mov     errorCode, 0
 
-locret_2B3C9:                           ; CODE XREF: sub_2B384+28↑j
+locret_2B3C9:                           ; CODE XREF: IsMonsterStepBlocked+28↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2B3CA:                              ; CODE XREF: sub_2B384+20↑j
+loc_2B3CA:                              ; CODE XREF: IsMonsterStepBlocked+20↑j
                 mov     ax, es:[bx]
                 cmp     ax, _val32
                 jl      short loc_2B3E2
@@ -49527,8 +49527,8 @@ loc_2B3CA:                              ; CODE XREF: sub_2B384+20↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2B3E2:                              ; CODE XREF: sub_2B384+4D↑j
-                                        ; sub_2B384+53↑j
+loc_2B3E2:                              ; CODE XREF: IsMonsterStepBlocked+4D↑j
+                                        ; IsMonsterStepBlocked+53↑j
                 cmp     ax, 1
                 jg      short loc_2B3F0
                 test    word ptr [si+94h], 1Ah
@@ -49536,7 +49536,7 @@ loc_2B3E2:                              ; CODE XREF: sub_2B384+4D↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2B3F0:                              ; CODE XREF: sub_2B384+61↑j
+loc_2B3F0:                              ; CODE XREF: IsMonsterStepBlocked+61↑j
                 mov     ax, es:[bx+2]
                 cmp     ax, 27h ; '''
                 jl      short loc_2B3FF
@@ -49545,15 +49545,15 @@ loc_2B3F0:                              ; CODE XREF: sub_2B384+61↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2B3FF:                              ; CODE XREF: sub_2B384+73↑j
-                                        ; sub_2B384+78↑j
+loc_2B3FF:                              ; CODE XREF: IsMonsterStepBlocked+73↑j
+                                        ; IsMonsterStepBlocked+78↑j
                 test    word ptr [si+94h], 10h
                 jz      short loc_2B40E
                 mov     errorCode, 0
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2B40E:                              ; CODE XREF: sub_2B384+81↑j
+loc_2B40E:                              ; CODE XREF: IsMonsterStepBlocked+81↑j
                 cmp     ax, 25h ; '%'
                 jnz     short loc_2B41C
                 test    word ptr [si+94h], 8
@@ -49561,7 +49561,7 @@ loc_2B40E:                              ; CODE XREF: sub_2B384+81↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2B41C:                              ; CODE XREF: sub_2B384+8D↑j
+loc_2B41C:                              ; CODE XREF: IsMonsterStepBlocked+8D↑j
                 mov     ax, es:[bx]
                 call    ClassifyFloorType
                 cmp     errorCode, 0
@@ -49569,11 +49569,11 @@ loc_2B41C:                              ; CODE XREF: sub_2B384+8D↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2B42C:                              ; CODE XREF: sub_2B384+A5↑j
+loc_2B42C:                              ; CODE XREF: IsMonsterStepBlocked+A5↑j
                 mov     ax, es:[bx+2]
                 call    IsCellTypeImpassable
                 retf
-sub_2B384       endp
+IsMonsterStepBlocked endp
 
 seg117          ends
 

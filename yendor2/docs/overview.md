@@ -3318,6 +3318,28 @@ exact field semantics aren't independently confirmed.
 
 427 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: IsMonsterStepBlocked
+
+Named `sub_2B384` -> `IsMonsterStepBlocked`, moderate confidence:
+called once from `ProcessLevelMonsters` right after it computes a
+one-cell step toward the player's position, to validate that step
+before moving a monster. Cell flag bits `0xC00` always block; bits
+`0x6000` need a monster trait flag (`[+0x94]` bit `0x10`); a few more
+branches gate on other `[+0x94]` bits and value ranges; otherwise falls
+through to `ClassifyFloorType`/`IsCellTypeImpassable`, the same pair
+used for plain terrain checks elsewhere. The `[+0x94]` trait bits'
+exact meaning (flying/incorporeal/door-opening monsters?) isn't
+confirmed — left as an open lead rather than guessed.
+
+Also checked `sub_28412` (the sound-driver dispatch function flagged
+in an earlier round's `document_sound_dispatch.py` as deliberately
+*not* renamed pending confirmation of its command-6 meaning) —
+confirmed its sibling `sub_2849C` is already named
+`StopMusicAndResetTimer` from earlier work, but that doesn't resolve
+command 6 itself, so leaving `sub_28412` unnamed rather than guessing.
+
+428 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -8986,7 +8986,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2B2F4);
 	op_hex		(x,	1);
+	set_cmt	(0X2B384,	"Checks whether a monster's (si) computed one-cell step (es:bx, bx=[si+6]+word_2E404) is passable, returning via errorCode (0=ok, 1=blocked). Cell flag bits 0xC00 always block; bits 0x6000 need monster trait [si+0x94] bit 0x10; several other branches gate on value ranges (_val31/_val32, 0x27-0x2A, <=1, ==0x25) and other [si+0x94] bits (8/0x14/0x1A) whose exact meaning (movement traits: flying/incorporeal/door-opening?) isn't confirmed; otherwise falls through to ClassifyFloorType + IsCellTypeImpassable, the same pair used for plain terrain checks. Called once from ProcessLevelMonsters right after it computes a one-cell step toward the player.",	0);
 	create_insn	(0X2B384);
+	set_name	(0X2B384,	"IsMonsterStepBlocked");
 	create_insn	(x=0X2B395);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B39E);
@@ -11593,6 +11595,15 @@ static Bytes_3(void) {
 	create_strlit	(0X3A5FF,	0X34);
 	set_name	(0X3A5FF,	"aThereIsAMoreUr");
 	set_name	(0X3A653,	"_worldDatOffset3");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_name	(0X3A65F,	"_worldDatOffset1");
 	set_name	(0X3A663,	"_worldDatOffset2");
 	set_name	(0X3A6C3,	"_worldDatOffset5");
@@ -11604,15 +11615,6 @@ static Bytes_3(void) {
 	set_name	(0X3CC78,	"g_soundDriverFarPtr");
 	set_cmt	(0X3CC7A,	"Segment half of the far pointer g_soundDriverFarPtr (0x3CC78); reused directly as the ES segment to free when shutting the driver down.",	0);
 	create_word	(0X3CC7A);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	make_array	(0X3CC7C,	0X4);
 	create_byte	(0X3CC80);
 	make_array	(0X3CC80,	0X200);

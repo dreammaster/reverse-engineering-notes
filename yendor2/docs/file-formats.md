@@ -933,6 +933,20 @@ directly from `WORLD.DAT` rather than the live viewport scratch
 buffer — used to check whether a monster's target cell (anywhere on
 the level) is blocked before it moves there.
 
+Separately, `ProcessLevelMonsters` also computes a one-cell step toward
+the player's position (comparing the monster's `[+2]`/`[+4]` against
+`word_36CF7`/`word_36CF9`) and calls `IsMonsterStepBlocked` (was
+`sub_2B384`) to validate it before moving: outright blocked on cell
+flag bits `0xC00`; a "special" cell (flag bits `0x6000`) passable only
+if a monster trait flag (`[+0x94]` bit `0x10`) is set (plausibly a
+wall/door-bypass trait — flying or incorporeal monsters?); a few more
+branches gated on other `[+0x94]` bits (`8`/`0x14`/`0x1A`) and value
+ranges; otherwise falling through to the same
+`ClassifyFloorType`/`IsCellTypeImpassable` pair used for plain terrain
+checks. The exact meaning of the `[+0x94]` trait bits isn't confirmed —
+open lead for whichever monster types turn out to fly/phase through
+walls.
+
 `ProcessLevelMonsters` ticks every occupied slot via `TickMonsterTimer`
 each `RunDungeonGameLoop` iteration: a movement/attack-readiness
 countdown (`[+0x10] -= [+0x1C]`, `errorCode`=1 on reaching 0, or a
