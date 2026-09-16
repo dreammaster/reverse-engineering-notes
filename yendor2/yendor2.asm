@@ -53521,7 +53521,7 @@ loc_2D77A:                              ; CODE XREF: InteractWithContainer+25↑
                 call    sub_238CD
 
 loc_2D78A:                              ; CODE XREF: InteractWithContainer+9F↑j
-                call    sub_2D7EA
+                call    ClearIneligibleFlagForAllMembers
                 call    ApplyMapTriggerEffect
                 call    sub_222F8
                 call    ClearStatusPanelIfDirty
@@ -53572,11 +53572,12 @@ MarkIneligiblePartyMembers endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D7EA       proc near               ; CODE XREF: InteractWithContainer:loc_2D78A↑p
-                mov     bx, 95EBh
+ClearIneligibleFlagForAllMembers proc near
+                                        ; CODE XREF: InteractWithContainer:loc_2D78A↑p
+                mov     bx, 95EBh       ; Clears +0x15E bit 0x8000 (the 'needs attention' flag MarkIneligiblePartyMembers sets) for all 4 party slots unconditionally. Called from InteractWithContainer.
                 mov     cx, 4
 
-loc_2D7F0:                              ; CODE XREF: sub_2D7EA+1C↓j
+loc_2D7F0:                              ; CODE XREF: ClearIneligibleFlagForAllMembers+1C↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short locret_2D808
@@ -53586,9 +53587,9 @@ loc_2D7F0:                              ; CODE XREF: sub_2D7EA+1C↓j
                 add     bx, 2
                 loop    loc_2D7F0
 
-locret_2D808:                           ; CODE XREF: sub_2D7EA+A↑j
+locret_2D808:                           ; CODE XREF: ClearIneligibleFlagForAllMembers+A↑j
                 retn
-sub_2D7EA       endp
+ClearIneligibleFlagForAllMembers endp
 
 
 ; =============== S U B R O U T I N E =======================================

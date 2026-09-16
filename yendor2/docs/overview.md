@@ -3877,6 +3877,15 @@ result and the current slot selection for the caller to act on.
 
 493 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ClearIneligibleFlagForAllMembers
+
+Named `sub_2D7EA` -> `ClearIneligibleFlagForAllMembers`, called from
+`InteractWithContainer`: the exact inverse of `MarkIneligiblePartyMembers`,
+unconditionally clearing the `+0x15E` "needs attention" bit for all 4
+party slots.
+
+494 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

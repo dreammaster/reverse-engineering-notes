@@ -1360,7 +1360,10 @@ container" (a class- or level-restricted item?), but the specific
 restriction isn't confirmed. `InteractWithContainer` also calls
 `ConfirmContainerInteraction` (was `sub_2D809`): shows a yes/no
 confirm prompt (message id `0x12`), storing the result and the current
-slot selection for the caller to act on afterward.
+slot selection for the caller to act on afterward, and
+`ClearIneligibleFlagForAllMembers` (was `sub_2D7EA`) — the exact
+inverse of `MarkIneligiblePartyMembers`, unconditionally clearing
+`+0x15E` bit `0x8000` for all 4 slots.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
