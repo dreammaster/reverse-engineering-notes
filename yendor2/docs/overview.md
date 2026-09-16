@@ -5803,6 +5803,23 @@ region entry for an equally-spaced row of clickable icon slots.
 
 667 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: WorldDat block-prep trio
+
+Named 3 more resource-block-setup stubs (the same family
+`LoadMasterPalette` belongs to) — distinct from the already-named
+`WorldDat_setBlock1`-`6` cluster: these three use fixed table
+addresses and the `_blockSize1`/`_blockSize2`/`_blockSize4` globals
+for record size, rather than a hardcoded size. `sub_27C96` ->
+`PrepareWorldDataTableBlockRead` (called from `PreloadWorldDataTable`),
+`sub_27CFE` -> `PrepareMonsterStatsTableBlockRead` (called from
+`PreloadMonsterStatsTable`), `sub_28000` ->
+`PrepareClueLocationSuffixBlockRead` (called from
+`BuildClueLocationSuffix`, alongside a separate `WorldDat_setBlock3`
+call earlier in the same function).
+
+670 named of 769 functions as of this update — fewer than 100
+unnamed functions remain.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

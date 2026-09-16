@@ -3662,7 +3662,7 @@ PreloadWorldDataTable proc near         ; CODE XREF: InitGame+5B↑p
                 mov     word_2E55A, ax
                 xor     ax, ax
                 mov     bx, 9043h
-                call    sub_27C96
+                call    PrepareWorldDataTableBlockRead
                 mov     ax, word_2E55A
                 mov     [bx+2], ax
                 mov     errorCode, 9
@@ -3725,7 +3725,7 @@ PreloadMonsterStatsTable proc near      ; CODE XREF: InitGame+58↑p
                 mov     word_3291A, ax
                 xor     ax, ax
                 mov     bx, 9043h
-                call    sub_27CFE
+                call    PrepareMonsterStatsTableBlockRead
                 mov     ax, word_3291A
                 mov     [bx+2], ax
                 mov     errorCode, 9
@@ -31620,7 +31620,7 @@ BuildClueLocationSuffix proc far        ; CODE XREF: BuildClueEntryText+83↑P
                 call    ErrorCheck
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_28000
+                call    PrepareClueLocationSuffixBlockRead
                 xor     ah, ah
                 mov     al, byte_3883E
                 mov     [bx+8], ax
@@ -42634,8 +42634,8 @@ sub_27C78       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27C96       proc far                ; CODE XREF: PreloadWorldDataTable+16↑P
-                push    si
+PrepareWorldDataTableBlockRead proc far ; CODE XREF: PreloadWorldDataTable+16↑P
+                push    si              ; Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCE5F, record size _blockSize1. Called from PreloadWorldDataTable.
                 mov     si, 0CE5Fh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42646,7 +42646,7 @@ sub_27C96       proc far                ; CODE XREF: PreloadWorldDataTable+16↑
                 mov     [bx+6], ax
                 pop     si
                 retf
-sub_27C96       endp
+PrepareWorldDataTableBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42700,8 +42700,9 @@ sub_27CC9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27CFE       proc far                ; CODE XREF: PreloadMonsterStatsTable+16↑P
-                push    si
+PrepareMonsterStatsTableBlockRead proc far
+                                        ; CODE XREF: PreloadMonsterStatsTable+16↑P
+                push    si              ; Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCE5B, record size _blockSize2. Called from PreloadMonsterStatsTable.
                 mov     bx, 9043h
                 mov     si, 0CE5Bh
                 mov     [bx+4], ax
@@ -42714,7 +42715,7 @@ sub_27CFE       proc far                ; CODE XREF: PreloadMonsterStatsTable+16
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27CFE       endp
+PrepareMonsterStatsTableBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43183,8 +43184,9 @@ PrepareWorldDatRead endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28000       proc far                ; CODE XREF: BuildClueLocationSuffix+24↑P
-                push    si
+PrepareClueLocationSuffixBlockRead proc far
+                                        ; CODE XREF: BuildClueLocationSuffix+24↑P
+                push    si              ; Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCDF7, record size _blockSize4. Called from BuildClueLocationSuffix.
                 mov     si, 0CDF7h
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -43195,7 +43197,7 @@ sub_28000       proc far                ; CODE XREF: BuildClueLocationSuffix+24�
                 mov     [bx+6], ax
                 pop     si
                 retf
-sub_28000       endp
+PrepareClueLocationSuffixBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74517,11 +74519,11 @@ word_329EE      dw 0                    ; DATA XREF: InitGlobals+17A↑w
 word_329F0      dw 0                    ; DATA XREF: InitGlobals+180↑w
                                         ; sub_2784A:loc_278B8↑r
 _blockSize1     dw 0                    ; DATA XREF: InitGlobals+186↑w
-                                        ; sub_27C96+12↑r
+                                        ; PrepareWorldDataTableBlockRead+12↑r
 word_329F4      dw 0                    ; DATA XREF: InitGlobals+18C↑w
                                         ; WorldDat_setBlock3+12↑r
 _blockSize4     dw 0                    ; DATA XREF: InitGlobals+192↑w
-                                        ; sub_28000+12↑r
+                                        ; PrepareClueLocationSuffixBlockRead+12↑r
 word_329F8      dw 0                    ; DATA XREF: InitGlobals+198↑w
 word_329FA      dw 0                    ; DATA XREF: InitGlobals+19E↑w
                                         ; DrawClueBookMapGrid+E2↑r ...
@@ -74549,7 +74551,7 @@ _blockSize3     dw 0                    ; DATA XREF: InitGlobals+1C2↑w
 word_32A12      dw 0                    ; DATA XREF: InitGlobals+1E6↑w
                                         ; RunGameDialog+460↑r ...
 _blockSize2     dw 0                    ; DATA XREF: InitGlobals+1EC↑w
-                                        ; sub_27CFE+15↑r
+                                        ; PrepareMonsterStatsTableBlockRead+15↑r
 word_32A16      dw 0                    ; DATA XREF: sub_22CBC↑w
 word_32A18      dw 0                    ; DATA XREF: sub_22CBC+6↑w
 word_32A1A      dw 0                    ; DATA XREF: sub_22CBC+C↑w

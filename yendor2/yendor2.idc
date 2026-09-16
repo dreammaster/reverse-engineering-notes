@@ -7651,7 +7651,9 @@ static Bytes_3(void) {
 	create_insn	(0X27C5A);
 	set_name	(0X27C5A,	"PrepareMusicDataRead");
 	create_insn	(0X27C78);
+	set_cmt	(0X27C96,	"Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCE5F, record size _blockSize1. Called from PreloadWorldDataTable.",	0);
 	create_insn	(0X27C96);
+	set_name	(0X27C96,	"PrepareWorldDataTableBlockRead");
 	set_cmt	(0X27CB0,	"Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.",	0);
 	create_insn	(0X27CB0);
 	set_name	(0X27CB0,	"LoadMasterPalette");
@@ -7660,7 +7662,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27CD7);
 	op_hex		(x,	1);
+	set_cmt	(0X27CFE,	"Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCE5B, record size _blockSize2. Called from PreloadMonsterStatsTable.",	0);
 	create_insn	(0X27CFE);
+	set_name	(0X27CFE,	"PrepareMonsterStatsTableBlockRead");
 	create_insn	(0X27D20);
 	create_insn	(x=0X27D2B);
 	op_hex		(x,	1);
@@ -7704,7 +7708,9 @@ static Bytes_3(void) {
 	set_cmt	(0X27FE0,	"Generic WORLD.DAT FileEntry setup, sibling of WorldDat_setBlock1-6: sets [+4]=ax (caller-supplied id, not a fixed block number), [+0xA]/[+0xC] from table 0xCDEF, [+6]=4*_blockSize3 (default, often overridden by the caller). Called from DrawClueBookMapGrid, LoadWorldDatTilePalette, and sub_111C1.",	0);
 	create_insn	(0X27FE0);
 	set_name	(0X27FE0,	"PrepareWorldDatRead");
+	set_cmt	(0X28000,	"Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCDF7, record size _blockSize4. Called from BuildClueLocationSuffix.",	0);
 	create_insn	(0X28000);
+	set_name	(0X28000,	"PrepareClueLocationSuffixBlockRead");
 	set_cmt	(0X2801A,	"Configures a resource-read descriptor: [bx+4]=ax (caller value), [bx+0xA]/[bx+0xC]=fixed pair from table 0xCDFB, [bx+6]=_blockSize5. Same shape as sub_27DE5/sub_27DC6/sub_27E3A. Called from UpdateAmbientMusicForRegion.",	0);
 	create_insn	(0X2801A);
 	set_name	(0X2801A,	"PrepareAmbientMusicBlockRead");
@@ -8472,6 +8478,15 @@ static Bytes_3(void) {
 	set_cmt	(0X29B0F,	"Core dungeon-viewport sprite/picture blitter (632 lines, internals not traced): draws word_2E530 (picture id) at a scale class (word_2E532) and z-layer/depth (word_32918), honoring _font_bgTransparent. Called by every dungeon-viewport rendering function named this session (walls, floor/ceiling extension, doors, vanishing point, monsters) -- the depth-aware counterpart to the simpler general-purpose DrawPicture.",	0);
 	create_insn	(0X29B0F);
 	set_name	(0X29B0F,	"DrawViewportSprite");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29B19);
 	op_hex		(x,	1);
 	create_insn	(x=0X29B23);
@@ -8561,15 +8576,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X29C90);
 	op_stkvar	(x,	0);
 	set_cmt	(0X29C95,	"x",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X29C99,	"y",	0);
 	create_insn	(x=0X29C9F);
 	op_stkvar	(x,	0);
@@ -11295,6 +11301,15 @@ static Bytes_4(void) {
 	set_name	(0X35EA0,	"aYouWillHaveBet");
 	create_strlit	(0X35EBF,	0X13);
 	set_name	(0X35EBF,	"aYourNextAttemp");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35ED2,	0XD);
 	set_name	(0X35ED2,	"aGoldCoins_0");
 	create_strlit	(0X35EDF,	0XB);
@@ -11335,15 +11350,6 @@ static Bytes_4(void) {
 	set_name	(0X3609D,	"aDarkUnion");
 	create_strlit	(0X360A8,	0X12);
 	set_name	(0X360A8,	"aSpellInformati");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X360BA,	0X17);
 	set_name	(0X360BA,	"aMagicUserInfor");
 	create_strlit	(0X360D1,	0X5);
