@@ -1305,6 +1305,14 @@ overlay, three `DrawStatBar` gauges (HP `+0x52`/`+0x92`, MP
 character-sheet sibling of this panel — see the inventory-slot section
 above for the full cross-confirmation), an ability-readiness icon
 (`+0xB4`, the "learned abilities" bitmask), and level-up/training text.
+It also calls `DrawAfflictionIconRow` (was `sub_22615`) — a visual,
+icon-based counterpart to `DrawAfflictionsList`, directly re-testing
+the same `+0x1C` bit groups (DISEASED/POISONED/SICK; STONED/FROZEN/
+PARALYZED; CURSED/HEXED/JINXED) to pick one of 4 icon variants per
+group, plus a 4th icon shown when the 9 protection values (`+0x20`..
+`+0x30`) sum to nonzero (has some active protection bonus) —
+independently confirming both bit-group and protection-value mappings
+from a completely different function.
 `DrawThreeStatBars` (was `sub_25F10`) is the character-sheet version of
 this same 3-bar display, labeled exactly "HEALTH:"/"MAGIC:"/"WEIGHT:"
 — and its "DEAD" override (shown instead of the HEALTH fraction)

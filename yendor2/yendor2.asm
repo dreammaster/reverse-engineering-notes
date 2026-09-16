@@ -32391,7 +32391,7 @@ loc_22572:                              ; CODE XREF: DrawPartyMemberStatusPanel+
 
 loc_22583:                              ; CODE XREF: DrawPartyMemberStatusPanel+12B↑j
                 mov     _font_bgTransparent, 0
-                call    sub_22615
+                call    DrawAfflictionIconRow
                 test    word ptr [si+1Ch], 40h
                 jz      short loc_225B6
                 mov     _font_bgTransparent, 1
@@ -32454,8 +32454,8 @@ DrawFixedStatusIcon endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22615       proc near               ; CODE XREF: DrawPartyMemberStatusPanel+144↑p
-                mov     ax, [di+0Ah]
+DrawAfflictionIconRow proc near         ; CODE XREF: DrawPartyMemberStatusPanel+144↑p
+                mov     ax, [di+0Ah]    ; Draws 4 affliction/status icons (category 0x90), a visual counterpart to DrawAfflictionsList: DISEASED/POISONED/SICK (+0x1C 0x2000/0x4000/0x8000), STONED/FROZEN/PARALYZED (0x400/0x800/0x1000), CURSED/HEXED/JINXED (0x80/0x100/0x200), and a 4th icon if the 9 protection values (+0x20..+0x30) sum to nonzero. Called from DrawPartyMemberStatusPanel.
                 mov     x, ax
                 mov     ax, [di+0Eh]
                 mov     y, ax
@@ -32471,8 +32471,8 @@ sub_22615       proc near               ; CODE XREF: DrawPartyMemberStatusPanel+
                 jnz     short loc_22654
                 mov     word_2E530, 4
 
-loc_22654:                              ; CODE XREF: sub_22615+1D↑j
-                                        ; sub_22615+2A↑j ...
+loc_22654:                              ; CODE XREF: DrawAfflictionIconRow+1D↑j
+                                        ; DrawAfflictionIconRow+2A↑j ...
                 call    DrawPicture
                 mov     ax, [di+18h]
                 mov     y, ax
@@ -32487,8 +32487,8 @@ loc_22654:                              ; CODE XREF: sub_22615+1D↑j
                 jnz     short loc_2268C
                 mov     word_2E530, 4
 
-loc_2268C:                              ; CODE XREF: sub_22615+55↑j
-                                        ; sub_22615+62↑j ...
+loc_2268C:                              ; CODE XREF: DrawAfflictionIconRow+55↑j
+                                        ; DrawAfflictionIconRow+62↑j ...
                 call    DrawPicture
                 mov     ax, [di+22h]
                 mov     y, ax
@@ -32503,8 +32503,8 @@ loc_2268C:                              ; CODE XREF: sub_22615+55↑j
                 jnz     short loc_226C4
                 mov     word_2E530, 4
 
-loc_226C4:                              ; CODE XREF: sub_22615+8D↑j
-                                        ; sub_22615+9A↑j ...
+loc_226C4:                              ; CODE XREF: DrawAfflictionIconRow+8D↑j
+                                        ; DrawAfflictionIconRow+9A↑j ...
                 call    DrawPicture
                 mov     word_2E530, 15h
                 mov     ax, [di+32h]
@@ -32515,7 +32515,7 @@ loc_226C4:                              ; CODE XREF: sub_22615+8D↑j
                 mov     cx, 9
                 mov     bx, 20h ; ' '
 
-loc_226E4:                              ; CODE XREF: sub_22615+D4↓j
+loc_226E4:                              ; CODE XREF: DrawAfflictionIconRow+D4↓j
                 add     ax, [bx+si]
                 add     bx, 2
                 loop    loc_226E4
@@ -32523,10 +32523,10 @@ loc_226E4:                              ; CODE XREF: sub_22615+D4↓j
                 jz      short loc_226F6
                 mov     word_2E530, 0Eh
 
-loc_226F6:                              ; CODE XREF: sub_22615+D9↑j
+loc_226F6:                              ; CODE XREF: DrawAfflictionIconRow+D9↑j
                 call    DrawPicture
                 retn
-sub_22615       endp
+DrawAfflictionIconRow endp
 
 
 ; =============== S U B R O U T I N E =======================================

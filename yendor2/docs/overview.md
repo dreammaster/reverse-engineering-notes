@@ -3806,6 +3806,18 @@ cache reset.
 
 486 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawAfflictionIconRow — independent re-confirmation
+
+Named `sub_22615` -> `DrawAfflictionIconRow`, called from
+`DrawPartyMemberStatusPanel`: an icon-based counterpart to last round's
+`DrawAfflictionsList`, testing the exact same `+0x1C` affliction bit
+groups (DISEASED/POISONED/SICK, STONED/FROZEN/PARALYZED, CURSED/HEXED/
+JINXED) plus the 9 protection values (`+0x20`-`+0x30`) — independently
+re-confirming both mappings from a completely different function found
+by chance while ranking candidates.
+
+487 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -5899,7 +5899,9 @@ static Bytes_2(void) {
 	set_cmt	(0X225F1,	"Draws a fixed picture (id=word_2E530, category 0x60 -- same directory DrawPartyMemberPortrait uses) at position (0xF8, 9). Called only from RestoreAndRedrawFixedStatusIcon.",	0);
 	create_insn	(0X225F1);
 	set_name	(0X225F1,	"DrawFixedStatusIcon");
+	set_cmt	(0X22615,	"Draws 4 affliction/status icons (category 0x90), a visual counterpart to DrawAfflictionsList: DISEASED/POISONED/SICK (+0x1C 0x2000/0x4000/0x8000), STONED/FROZEN/PARALYZED (0x400/0x800/0x1000), CURSED/HEXED/JINXED (0x80/0x100/0x200), and a 4th icon if the 9 protection values (+0x20..+0x30) sum to nonzero. Called from DrawPartyMemberStatusPanel.",	0);
 	create_insn	(0X22615);
+	set_name	(0X22615,	"DrawAfflictionIconRow");
 	create_insn	(x=0X2262D);
 	op_hex		(x,	1);
 	create_insn	(x=0X2263A);
@@ -7680,6 +7682,15 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X289D8,	"ShowErr_ProblemWithPalette");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X289DD);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -7700,15 +7711,6 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X289F1,	"ShowErr_ProblemWithDriver");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X289F6);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -10781,6 +10783,15 @@ static Bytes_3(void) {
 	set_name	(0X35A78,	"aCanOnlyFlyBetw");
 	create_strlit	(0X35A8D,	0XD);
 	set_name	(0X35A8D,	"a12amAnd6pm");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35A9A,	0XD);
 	set_name	(0X35A9A,	"a6pmAnd12am");
 	create_strlit	(0X35AA7,	0X1D);
@@ -10797,15 +10808,6 @@ static Bytes_3(void) {
 	set_name	(0X35B1C,	"aDoYouWantToSel");
 	create_strlit	(0X35B38,	0XD);
 	set_name	(0X35B38,	"aYourAttempt");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35B45,	0XA);
 	set_name	(0X35B45,	"aToRepair");
 	create_strlit	(0X35B4F,	0XD);
