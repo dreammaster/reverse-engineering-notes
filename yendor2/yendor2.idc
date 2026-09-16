@@ -5503,7 +5503,9 @@ static Bytes_2(void) {
 	set_cmt	(0X20626,	"'F' key handler, floor counterpart to BrowseWallTilePalette: picks a floor type from the palette, stores to word_2E386/word_2E4A2, redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X20626);
 	set_name	(0X20626,	"BrowseFloorTilePalette");
+	set_cmt	(0X20652,	"Paints the selected tile (word_2E496) at the cursor cell (word_2E76E/word_2E770), persists via FileEntry_Write(errorCode=9), and redraws it via DrawCellIconPair. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X20652);
+	set_name	(0X20652,	"PaintCursorCellAndPersist");
 	create_insn	(x=0X20695);
 	op_seg		(x,	1);
 	set_cmt	(0X206A0,	"Redraws the full visible 40x24 cell grid in the map editor: for every cell, PersistExploredCell + LoadWorldDatTilePalette + DrawCellIconPair. Called from RunMapEditorScreen.",	0);
@@ -6915,6 +6917,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X25D0A);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X25D19,	"msg",	0);
 	create_insn	(x=0X25D34);
 	op_hex		(x,	1);
@@ -6926,15 +6937,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25D82,	"Draws 'AFFLICTIONS:' then every active +0x1C affliction bit by name: 0x2000 DISEASED, 0x4000 POISONED, 0x8000 SICK, 0x400 STONED, 0x800 FROZEN, 0x1000 PARALYZED, 0x80 CURSED, 0x100 HEXED, 0x200 JINXED (or 'NONE' if none of 0xFF80 are set). The complete map of +0x1C's affliction bits. Called from sub_25B34.",	0);
 	create_insn	(0X25D82);
 	set_name	(0X25D82,	"DrawAfflictionsList");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25D8B,	"msg",	0);
 	set_cmt	(0X25D9E,	"msg",	0);
 	create_insn	(x=0X25DA1);
@@ -9313,13 +9315,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B2CF,	"Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.",	0);
 	create_insn	(0X2B2CF);
 	set_name	(0X2B2CF,	"ShowVisionAtLocation");
-	create_insn	(x=0X2B2EF);
-	op_hex		(x,	1);
-	create_insn	(x=0X2B2F4);
-	op_hex		(x,	1);
-	set_cmt	(0X2B384,	"Checks whether a monster's (si) computed one-cell step (es:bx, bx=[si+6]+word_2E404) is passable, returning via errorCode (0=ok, 1=blocked). Cell flag bits 0xC00 always block; bits 0x6000 need monster trait [si+0x94] bit 0x10; several other branches gate on value ranges (_val31/_val32, 0x27-0x2A, <=1, ==0x25) and other [si+0x94] bits (8/0x14/0x1A) whose exact meaning (movement traits: flying/incorporeal/door-opening?) isn't confirmed; otherwise falls through to ClassifyFloorType + IsCellTypeImpassable, the same pair used for plain terrain checks. Called once from ProcessLevelMonsters right after it computes a one-cell step toward the player.",	0);
-	create_insn	(0X2B384);
-	set_name	(0X2B384,	"IsMonsterStepBlocked");
 }
 
 //------------------------------------------------------------------------
@@ -9329,6 +9324,13 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2B2EF);
+	op_hex		(x,	1);
+	create_insn	(x=0X2B2F4);
+	op_hex		(x,	1);
+	set_cmt	(0X2B384,	"Checks whether a monster's (si) computed one-cell step (es:bx, bx=[si+6]+word_2E404) is passable, returning via errorCode (0=ok, 1=blocked). Cell flag bits 0xC00 always block; bits 0x6000 need monster trait [si+0x94] bit 0x10; several other branches gate on value ranges (_val31/_val32, 0x27-0x2A, <=1, ==0x25) and other [si+0x94] bits (8/0x14/0x1A) whose exact meaning (movement traits: flying/incorporeal/door-opening?) isn't confirmed; otherwise falls through to ClassifyFloorType + IsCellTypeImpassable, the same pair used for plain terrain checks. Called once from ProcessLevelMonsters right after it computes a one-cell step toward the player.",	0);
+	create_insn	(0X2B384);
+	set_name	(0X2B384,	"IsMonsterStepBlocked");
 	create_insn	(x=0X2B395);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B39E);

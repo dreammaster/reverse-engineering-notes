@@ -28467,7 +28467,7 @@ loc_2030A:                              ; CODE XREF: RunMapEditorScreen+286↑j
                 cmp     ax, 14h
                 jl      short loc_2031C
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_20652
+                call    PaintCursorCellAndPersist
                 call    sub_238CD
 
 loc_2031C:                              ; CODE XREF: RunMapEditorScreen+29D↑j
@@ -28863,8 +28863,8 @@ BrowseFloorTilePalette endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20652       proc near               ; CODE XREF: RunMapEditorScreen+2A4↑p
-                mov     ax, word_2E76E
+PaintCursorCellAndPersist proc near     ; CODE XREF: RunMapEditorScreen+2A4↑p
+                mov     ax, word_2E76E  ; Paints the selected tile (word_2E496) at the cursor cell (word_2E76E/word_2E770), persists via FileEntry_Write(errorCode=9), and redraws it via DrawCellIconPair. Called from RunMapEditorScreen.
                 mov     word_3293E, ax
                 mov     ax, word_2E770
                 mov     word_32940, ax
@@ -28891,7 +28891,7 @@ sub_20652       proc near               ; CODE XREF: RunMapEditorScreen+2A4↑p
                 mov     bx, si
                 call    DrawCellIconPair
                 retn
-sub_20652       endp
+PaintCursorCellAndPersist endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31450,7 +31450,7 @@ seg068          segment byte public 'CODE' use16
 
 
 PersistExploredCell proc far            ; CODE XREF: PaintCellAndPersist+7↑P
-                                        ; sub_20652+F↑P ...
+                                        ; PaintCursorCellAndPersist+F↑P ...
                 push    word_3293E      ; Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.
                 push    word_32940      ; this
                 mov     word_3293E, ax

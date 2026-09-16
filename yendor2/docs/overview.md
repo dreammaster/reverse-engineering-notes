@@ -5244,6 +5244,16 @@ already unallocated (`0xFFFF`). A classic shutdown/cleanup routine.
 
 610 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PaintCursorCellAndPersist
+
+Named `sub_20652` -> `PaintCursorCellAndPersist`, called once from
+`RunMapEditorScreen`: paints the selected tile at the cursor's map
+cell, persists it via `FileEntry_Write`, and redraws it via
+`DrawCellIconPair` — the single-cell counterpart to
+`FillVisibleAreaWithSelectedTile`'s bulk `PaintCellAndPersist` loop.
+
+611 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
