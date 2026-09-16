@@ -6227,6 +6227,31 @@ no more specific semantic distinction was established).
 
 712 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: palette-fade wrappers and final block-prep stub sweep
+
+Named `sub_25862` -> `TriggerFullPaletteFadeOut` and `sub_2587E` ->
+`TriggerFullPaletteFadeIn`, two extremely widely-used (88 and 36
+refs) thin wrappers around `StepPaletteFadeRange` for a full
+(`cx=0x100`) palette fade.
+
+Then swept the remaining 12 `LoadMasterPalette`-family resource-
+block-setup stubs, each named by its single already-named caller:
+`PrepareNewGameResetBlockRead` (`InitializeNewGameWorldState`),
+`PrepareMasterHeaderBlockRead` (`RunGameDialog` and
+`SaveCurrentGameToSlot`, sharing the same header-record size),
+`PrepareGameDialogLargeBlockRead`/`PrepareGameDialogIndexedBlockRead`/
+`PrepareGameDialogSizedBlockRead` (three more `RunGameDialog`
+sub-stubs), `PrepareGroundItemSlotBlockRead`
+(`LoadGroundItemSlotRecord`/`ReadGroundItemSlot`), and 6 more for the
+`loadWorldDat1`/`2`/`3` family (`PrepareWorldDat1Block1Read` through
+`Block4Read`, `PrepareWorldDat2BlockRead`, `PrepareWorldDat3BlockRead`).
+
+This closes out essentially the entire `LoadMasterPalette`-family
+stub cluster in one sweep.
+
+726 named of 769 functions as of this update — only 43 unnamed
+functions remain.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

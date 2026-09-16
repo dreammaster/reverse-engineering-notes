@@ -6974,10 +6974,14 @@ static Bytes_3(void) {
 	create_insn	(x=0X2584C);
 	op_hex		(x,	1);
 	create_insn	(0X2585C);
+	set_cmt	(0X25862,	"Clears word_3295A bit 0x1000, then StepPaletteFadeRange(ax=0, cx=0x100) -- snapshots and begins fading the whole palette down toward black. Called very widely (88 refs).",	0);
 	create_insn	(0X25862);
+	set_name	(0X25862,	"TriggerFullPaletteFadeOut");
 	create_insn	(x=0X25864);
 	op_hex		(x,	1);
+	set_cmt	(0X2587E,	"StepPaletteFadeRange(ax=1, cx=0x100, an untraced mode), then sets word_3295A bit 0x1000 -- the counterpart to TriggerFullPaletteFadeOut. Called widely (36 refs).",	0);
 	create_insn	(0X2587E);
+	set_name	(0X2587E,	"TriggerFullPaletteFadeIn");
 	create_insn	(x=0X25891);
 	op_hex		(x,	1);
 	set_cmt	(0X2589A,	"General mode-selectable (ax=0-5) palette-fade stepper, called once per frame: modes 0/3 fade a palette range down toward black, modes 2/4 fade up toward the master palette (0x442A), one increment per call via SetPaletteRange. Modes 1/5 not fully traced. Distinct from the simpler FadePaletteStep/SetPaletteToWhite. Called from dozens of sites including PlayStudioCreditsIntro.",	0);
@@ -7716,7 +7720,9 @@ static Bytes_3(void) {
 	set_cmt	(0X27C5A,	"Sets up a WORLD.DAT-style read context for a fixed data block (table 0xCE23, size 0x9BD) -- preparing to read the sound driver's music/instrument data. Called from InitMusicDriver.",	0);
 	create_insn	(0X27C5A);
 	set_name	(0X27C5A,	"PrepareMusicDataRead");
+	set_cmt	(0X27C78,	"Resource-block-setup stub (LoadMasterPalette family). Called from InitializeNewGameWorldState.",	0);
 	create_insn	(0X27C78);
+	set_name	(0X27C78,	"PrepareNewGameResetBlockRead");
 	set_cmt	(0X27C96,	"Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCE5F, record size _blockSize1. Called from PreloadWorldDataTable.",	0);
 	create_insn	(0X27C96);
 	set_name	(0X27C96,	"PrepareWorldDataTableBlockRead");
@@ -7747,17 +7753,27 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27D63);
 	op_hex		(x,	1);
+	set_cmt	(0X27D8A,	"Resource-block-setup stub (LoadMasterPalette family). Called from RunGameDialog.",	0);
 	create_insn	(0X27D8A);
+	set_name	(0X27D8A,	"PrepareGameDialogLargeBlockRead");
+	set_cmt	(0X27DA8,	"Resource-block-setup stub (LoadMasterPalette family). Called from RunGameDialog and SaveCurrentGameToSlot.",	0);
 	create_insn	(0X27DA8);
+	set_name	(0X27DA8,	"PrepareMasterHeaderBlockRead");
 	set_cmt	(0X27DC6,	"Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a single-record read/write from table 0xCDE3, indexed by word_32DCA rather than a caller-supplied value.",	0);
 	create_insn	(0X27DC6);
 	set_name	(0X27DC6,	"PrepareRecordAtIndexDCA");
 	set_cmt	(0X27DE5,	"Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a single-record read/write from table 0xCDDF, indexed by word_32DC6 rather than a caller-supplied value.",	0);
 	create_insn	(0X27DE5);
 	set_name	(0X27DE5,	"PrepareRecordAtIndexDC6");
+	set_cmt	(0X27E04,	"Resource-block-setup stub (LoadMasterPalette family). Called from RunGameDialog.",	0);
 	create_insn	(0X27E04);
+	set_name	(0X27E04,	"PrepareGameDialogIndexedBlockRead");
+	set_cmt	(0X27E20,	"Resource-block-setup stub (LoadMasterPalette family). Called from RunGameDialog.",	0);
 	create_insn	(0X27E20);
+	set_name	(0X27E20,	"PrepareGameDialogSizedBlockRead");
+	set_cmt	(0X27E3A,	"Resource-block-setup stub (LoadMasterPalette family). Called from LoadGroundItemSlotRecord and ReadGroundItemSlot.",	0);
 	create_insn	(0X27E3A);
+	set_name	(0X27E3A,	"PrepareGroundItemSlotBlockRead");
 	set_cmt	(0X27E53,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from TriggerSoundEvent.",	0);
 	create_insn	(0X27E53);
 	set_name	(0X27E53,	"LookupSoundEffectBlockOffset");
@@ -7765,12 +7781,24 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27E60);
 	op_hex		(x,	1);
+	set_cmt	(0X27E7C,	"Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat1.",	0);
 	create_insn	(0X27E7C);
+	set_name	(0X27E7C,	"PrepareWorldDat1Block1Read");
+	set_cmt	(0X27E9A,	"Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat1.",	0);
 	create_insn	(0X27E9A);
+	set_name	(0X27E9A,	"PrepareWorldDat1Block2Read");
+	set_cmt	(0X27EB8,	"Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat1.",	0);
 	create_insn	(0X27EB8);
+	set_name	(0X27EB8,	"PrepareWorldDat1Block3Read");
+	set_cmt	(0X27ED6,	"Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat1.",	0);
 	create_insn	(0X27ED6);
+	set_name	(0X27ED6,	"PrepareWorldDat1Block4Read");
+	set_cmt	(0X27EF4,	"Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat2.",	0);
 	create_insn	(0X27EF4);
+	set_name	(0X27EF4,	"PrepareWorldDat2BlockRead");
+	set_cmt	(0X27F12,	"Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat3.",	0);
 	create_insn	(0X27F12);
+	set_name	(0X27F12,	"PrepareWorldDat3BlockRead");
 	create_insn	(0X27F30);
 	set_name	(0X27F30,	"WorldDat_setBlock1");
 	create_insn	(0X27F4E);
@@ -8038,6 +8066,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2899C,	"Generic error/exit path: runs the RestoreInt1cVector / FreeVideoBuffer / ShutdownAudioDrivers cleanup trio, then (if the mouse/video subsystem flag ds:40FCh bit0 is set) resets the mouse driver and video mode 3, prints the DOS '$'-terminated string at DS:AX (set by the ErrorTable handler that jumped here), and exits via INT 21h/AH=4Ch with errorCode as the exit code.",	0);
 	create_insn	(0X2899C);
 	set_name	(0X2899C,	"ErrorExit");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X289AC);
 	op_hex		(x,	1);
 	set_cmt	(0X289B7,	"- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",	0);
@@ -8122,15 +8159,6 @@ static Bytes_3(void) {
 	set_cmt	(0X28A1F,	"ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.",	0);
 	create_insn	(0X28A1F);
 	set_name	(0X28A1F,	"ErrorExitCode285");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X28A25,	"ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.",	0);
 	create_insn	(0X28A25);
 	set_name	(0X28A25,	"ErrorExitCode289");
@@ -10569,6 +10597,15 @@ static Bytes_4(void) {
 	set_name	(0X32936,	"_videoSegment");
 	create_word	(0X32938);
 	create_word	(0X3293A);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_word	(0X3293C);
 	create_word	(0X3293E);
 	create_word	(0X32940);
@@ -10735,15 +10772,6 @@ static Bytes_4(void) {
 	set_cmt	(0X32A20,	"3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.",	0);
 	create_word	(0X32A20);
 	set_name	(0X32A20,	"g_monsterSlots");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32A2A);
 	create_word	(0X32AB2);
 	create_word	(0X32ABC);
@@ -14049,11 +14077,11 @@ static Functions_0(void) {
 	set_frame_size(0X27D55, 0, 0, 0);
 	add_func    (0X27D8A,0X27DA8);
 	set_func_flags(0X27D8A,0x5402);
-	SetType(0X27D8A, "void __usercall sub_27D8A(FileEntry *this@<eds:ebx.2>);");
+	SetType(0X27D8A, "void __usercall PrepareGameDialogLargeBlockRead(FileEntry *this@<eds:ebx.2>);");
 	set_frame_size(0X27D8A, 0X2, 0, 0);
 	add_func    (0X27DA8,0X27DC6);
 	set_func_flags(0X27DA8,0x5402);
-	SetType(0X27DA8, "void __usercall sub_27DA8(FileEntry *this@<eds:ebx.2>);");
+	SetType(0X27DA8, "void __usercall PrepareMasterHeaderBlockRead(FileEntry *this@<eds:ebx.2>);");
 	set_frame_size(0X27DA8, 0X2, 0, 0);
 	add_func    (0X27DC6,0X27DE5);
 	set_func_flags(0X27DC6,0x5402);
@@ -14065,15 +14093,15 @@ static Functions_0(void) {
 	set_frame_size(0X27DE5, 0X2, 0, 0);
 	add_func    (0X27E04,0X27E20);
 	set_func_flags(0X27E04,0x5402);
-	SetType(0X27E04, "void __usercall sub_27E04(FileEntry *this@<eds:ebx.2>);");
+	SetType(0X27E04, "void __usercall PrepareGameDialogIndexedBlockRead(FileEntry *this@<eds:ebx.2>);");
 	set_frame_size(0X27E04, 0X2, 0, 0);
 	add_func    (0X27E20,0X27E3A);
 	set_func_flags(0X27E20,0x5402);
-	SetType(0X27E20, "void __usercall sub_27E20(FileEntry *this@<eds:ebx.2>);");
+	SetType(0X27E20, "void __usercall PrepareGameDialogSizedBlockRead(FileEntry *this@<eds:ebx.2>);");
 	set_frame_size(0X27E20, 0X2, 0, 0);
 	add_func    (0X27E3A,0X27E53);
 	set_func_flags(0X27E3A,0x5402);
-	SetType(0X27E3A, "void __usercall sub_27E3A(FileEntry *this@<eds:ebx.2>);");
+	SetType(0X27E3A, "void __usercall PrepareGroundItemSlotBlockRead(FileEntry *this@<eds:ebx.2>);");
 	set_frame_size(0X27E3A, 0X2, 0, 0);
 	add_func    (0X27E53,0X27E7C);
 	set_func_flags(0X27E53,0x5402);

@@ -1279,7 +1279,7 @@ loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
                 or      word_328CA, 8
                 call    StopMusicAndResetTimer
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    SaveClueBookBackgroundToEMS
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -1290,7 +1290,7 @@ loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
                 mov     word_3297E, ax
                 call    PlayClueBookOpenAnimation
                 call    ShowClueBookHelpScreen
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
 
 loc_10CB5:                              ; CODE XREF: ShowClueBook+F3↓j
                                         ; ShowClueBook+157↓j ...
@@ -1755,7 +1755,7 @@ loc_110D9:                              ; CODE XREF: ShowClueBook+EB↑j
 
 loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
                 call    StopMusicAndResetTimer
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    RestoreCursorBackgroundIfDirty
                 call    RestoreClueBookBackgroundFromEMS
                 call    DrawMouseCursor
@@ -1767,7 +1767,7 @@ loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
                 call    FileEntry_Read
                 call    ErrorCheck
                 call    UpdateScrollingBannerWindow
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 and     word_328CA, 0FF7h
                 cmp     fe, 0
                 jz      short loc_11144
@@ -2566,7 +2566,7 @@ ShowIntroPicture proc far               ; CODE XREF: start+756↑P
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     di, 4D5Ch
                 mov     si, 442Ah
                 mov     cx, 300h
@@ -2644,7 +2644,7 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
 loc_118B6:                              ; CODE XREF: ShowIntroPicture+95↑j
                                         ; ShowIntroPicture+C5↑j ...
                 call    sub_119F6
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 and     word_328C8, 0F7FFh
                 and     word_3295A, 7FFFh
                 and     word_328C4, 0FBFFh
@@ -2655,7 +2655,7 @@ loc_118B6:                              ; CODE XREF: ShowIntroPicture+95↑j
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    DrawMouseCursorAlt
                 and     word_328CA, 0FFF7h
                 retf
@@ -2948,7 +2948,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 mov     ax, 15Eh        ; ticks
                 call    wait
                 and     word_328C8, 0F7FFh
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 0Ah
                 call    DrawPicture
@@ -2959,7 +2959,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 mov     word_2E530, 21h ; '!'
                 call    DrawPicture
                 call    DrawMouseCursor
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 mov     ax, 28h ; '('   ; ticks
                 call    wait
                 or      word_328C8, 800h
@@ -2993,7 +2993,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 call    PlaySoundSequenceGH
                 mov     ax, 64h ; 'd'   ; ticks
                 call    wait
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    ClearOffscreenBufferAlt
                 mov     x, 39h ; '9'
                 mov     y, 31h ; '1'
@@ -3004,10 +3004,10 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 call    DrawMouseCursor
                 mov     ax, 1Eh         ; ticks
                 call    wait
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 mov     ax, 32h ; '2'   ; ticks
                 call    wait
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -3015,7 +3015,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     x, 1
                 mov     y, 1
                 mov     ax, _videoBufferSeg
@@ -3056,7 +3056,7 @@ loc_11D4A:                              ; CODE XREF: PlayStudioCreditsIntro+33F�
                 jnz     short loc_11D4A
 
 loc_11D51:                              ; CODE XREF: PlayStudioCreditsIntro+338↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 retf
 PlayStudioCreditsIntro endp
 
@@ -3302,7 +3302,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 call    InitSoundSystem
                 mov     word_36CE7, 5
                 call    loadWorldDat5
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     byte_2E400, 0
                 test    word_328C4, 8000h
                 jnz     short loc_11FDF
@@ -3328,7 +3328,7 @@ loc_11FBD:                              ; CODE XREF: InitGame+CD↑j
                                         ; InitGame+D4↑j
                 call    DrawMouseCursorAlt
                 call    loadWorldDat5
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 test    word_328C4, 4000h
                 jnz     short loc_11FFE
                 call    RunTitleScreen
@@ -3361,7 +3361,7 @@ loc_12016:                              ; CODE XREF: InitGame+133↑j
                 mov     bx, 0BE3h       ; numPara
                 call    allocMem
                 mov     word_2E562, ax
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    RestoreAndRedrawFixedStatusIcon
                 and     word_328C4, 0FF00h
                 test    word_328C4, 4000h
@@ -3554,7 +3554,7 @@ loadWorldDat2   proc near               ; CODE XREF: InitGame+77↑p
                 call    MapUnmapPages
                 xor     ax, ax
                 mov     bx, 9043h
-                call    sub_27EF4
+                call    PrepareWorldDat2BlockRead
                 mov     ax, _emsSegmentPageFrame
                 mov     [bx+2], ax
                 mov     word ptr [bx+6], 3CF0h
@@ -3574,7 +3574,7 @@ loadWorldDat3   proc near               ; CODE XREF: InitGame+7A↑p
                 call    MapUnmapPages
                 mov     ax, 3CF0h
                 mov     bx, 9043h
-                call    sub_27F12
+                call    PrepareWorldDat3BlockRead
                 mov     ax, _emsSegmentPageFrame
                 mov     [bx+2], ax
                 mov     word ptr [bx+6], 460h
@@ -3622,28 +3622,28 @@ loadWorldDat1   proc near               ; CODE XREF: InitGame+74↑p
                 mov     word_368A5, ax
                 xor     ax, ax
                 mov     bx, 9043h
-                call    sub_27E7C
+                call    PrepareWorldDat1Block1Read
                 mov     word ptr [bx+6], 0AF0h
                 mov     errorCode, 9
                 call    FileEntry_Read
                 call    ErrorCheck
                 mov     ax, 0AF0h
                 mov     bx, 9043h
-                call    sub_27E9A
+                call    PrepareWorldDat1Block2Read
                 mov     word ptr [bx+6], 0CE4h
                 mov     errorCode, 9
                 call    FileEntry_Read
                 call    ErrorCheck
                 mov     ax, 17D4h
                 mov     bx, 9043h
-                call    sub_27EB8
+                call    PrepareWorldDat1Block3Read
                 mov     word ptr [bx+6], 7D0h
                 mov     errorCode, 9
                 call    FileEntry_Read
                 call    ErrorCheck
                 mov     ax, 1FA4h
                 mov     bx, 9043h
-                call    sub_27ED6
+                call    PrepareWorldDat1Block4Read
                 mov     word ptr [bx+6], 8E8h
                 mov     errorCode, 9
                 call    FileEntry_Read
@@ -8314,7 +8314,7 @@ loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+1
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     x, 1
                 mov     y, 1
                 mov     _font_bgTransparent, 0
@@ -8337,7 +8337,7 @@ loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+1
                 call    StepPaletteFadeRange
                 mov     ax, 23h ; '#'   ; ticks
                 call    wait
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 and     word_328C8, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
@@ -8346,7 +8346,7 @@ loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+1
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
 
 loc_15217:                              ; CODE XREF: PlayClueBookOpenAnimation+D↑j
                                         ; PlayClueBookOpenAnimation+18↑j
@@ -8415,7 +8415,7 @@ PollForEscapeKeyOnlyAlt endp
 
 
 FinalizeCharacterCreation proc near     ; CODE XREF: RunCharacterCreation:loc_15245↑p
-                call    sub_25862       ; Character creation's finalize/cleanup step (always runs, even on ESC-cancel from any of the 3 prior steps -- see RunCharacterCreation). Loads a transition palette, reads file entry #3, frees a temp memory block if allocated, clears the screen, and stops the character-creation music before returning.
+                call    TriggerFullPaletteFadeOut ; Character creation's finalize/cleanup step (always runs, even on ESC-cancel from any of the 3 prior steps -- see RunCharacterCreation). Loads a transition palette, reads file entry #3, frees a temp memory block if allocated, clears the screen, and stops the character-creation music before returning.
                 and     word_328C8, 0F7FFh
                 and     word_3295A, 7FFFh
                 and     word_328C4, 0FBFFh
@@ -8426,7 +8426,7 @@ FinalizeCharacterCreation proc near     ; CODE XREF: RunCharacterCreation:loc_15
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 cmp     word_328BE, 0
                 jz      short loc_152B2
                 mov     es, word_328BE
@@ -8435,7 +8435,7 @@ FinalizeCharacterCreation proc near     ; CODE XREF: RunCharacterCreation:loc_15
                                         ; ES = segment address of area to be freed
 
 loc_152B2:                              ; CODE XREF: FinalizeCharacterCreation+41↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    ClearOffscreenBuffer
                 test    g_driverStateFlags, 2
                 jz      short loc_152D6
@@ -8938,7 +8938,7 @@ loc_156DB:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    ClearOffscreenBuffer
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -9433,7 +9433,7 @@ loc_15CF3:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     si, 6DC4h
                 and     word ptr [si], 3FFFh
                 and     word_328C8, 0F7FFh
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -9441,7 +9441,7 @@ loc_15CF3:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15D39
                 retn
@@ -9591,7 +9591,7 @@ loc_15E5D:                              ; CODE XREF: ComposeCharacterPortrait+A�
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     x, 0
                 mov     y, 0
                 mov     _font_bgTransparent, 0
@@ -15785,7 +15785,7 @@ LoadGroundItemSlotRecord proc near      ; CODE XREF: sub_1869D+289↑p
                 mov     word_36863, ax  ; Caches ax into word_36863 (the confirmed ground/world-object item slot record cache, also used by PlaceItemOnGround), loads that record type (FileEntry errorCode 0xB) via sub_27E3A. Called once from sub_1869D.
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -18070,7 +18070,7 @@ ReadGroundItemSlot proc near            ; CODE XREF: PlaceItemOnGround+15↑p
                 mov     word_36863, ax  ; Reads a ground/world-object item slot record (FileEntry_Read, errorCode=0xB) into word_36863. Called 3 times from PlaceItemOnGround.
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -22909,7 +22909,7 @@ FindItemInsideContainer proc near       ; CODE XREF: FindItemInInventoryRange+2E
                 push    cx              ; this
                 mov     ax, 0BC28h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, [di+2]
                 mov     [bx+8], ax
                 mov     errorCode, 0Ah
@@ -22979,7 +22979,7 @@ FindItemInsideContainerLevel2 proc near ; CODE XREF: FindItemInsideContainer+5B�
                 push    cx              ; this
                 mov     ax, 0BC4Ah
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, [di+2]
                 mov     [bx+8], ax
                 mov     errorCode, 0Ah
@@ -23040,7 +23040,7 @@ FindItemInsideContainerLevel3 proc near ; CODE XREF: FindItemInsideContainerLeve
                 push    cx              ; this
                 mov     ax, 0BC6Ch
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, [di+2]
                 mov     [bx+8], ax
                 mov     errorCode, 0Ah
@@ -23522,7 +23522,7 @@ RunTitleScreen  proc far                ; CODE XREF: start+A0F↑P
                 mov     word_36CE7, 3
                 mov     ax, 1
                 mov     word_3297E, ax
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 test    word_328C6, 400h
                 jnz     short loc_1D2D0
                 test    word_328C4, 4000h
@@ -23540,7 +23540,7 @@ loc_1D2D0:                              ; CODE XREF: RunTitleScreen+1B↑j
                 mov     word_2E530, 2
                 call    DrawPicture
                 call    DrawMouseCursor
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 and     word_328C4, 0FDFFh
                 mov     ax, g_partySlotAssignment
                 add     ax, word_36E4D
@@ -23664,7 +23664,7 @@ loc_1D3FA:                              ; CODE XREF: RunTitleScreen+14F↑j
                 jnz     short loc_1D40C
 
 loc_1D3FF:                              ; CODE XREF: RunTitleScreen+A3↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    ShowPartyMembers
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
@@ -23674,7 +23674,7 @@ loc_1D40C:                              ; CODE XREF: RunTitleScreen+157↑j
                 jnz     short loc_1D41E
 
 loc_1D411:                              ; CODE XREF: RunTitleScreen+AD↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    ShowWorldMap
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
@@ -23715,7 +23715,7 @@ loc_1D46A:                              ; CODE XREF: RunTitleScreen+EA↑j
                                         ; RunTitleScreen+196↑j ...
                 mov     word_3297E, 0
                 call    StopMusicAndResetTimer
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    UpdatePartyAverageStatTiers
                 pop     word_36CE7
                 retf
@@ -23726,7 +23726,7 @@ loc_1D484:                              ; CODE XREF: RunTitleScreen+17B↑j
                 jnz     short loc_1D496
 
 loc_1D489:                              ; CODE XREF: RunTitleScreen+C1↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    ShowIntroPicture
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
@@ -23737,7 +23737,7 @@ loc_1D496:                              ; CODE XREF: RunTitleScreen+1E1↑j
 
 loc_1D49B:                              ; CODE XREF: RunTitleScreen+CB↑j
                 mov     word_3297E, 0
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    RunCharacterCreation
                 mov     word_3297E, 1
                 jmp     loc_1D2D0
@@ -25733,7 +25733,7 @@ loc_1E6CD:                              ; CODE XREF: RestPartyAndAdvanceClock+79
                 call    DrawPicture
 
 loc_1E6FB:                              ; CODE XREF: RestPartyAndAdvanceClock+15↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    MaybeForceTickWorldAilments
                 and     word_3295A, 1FFFh
                 mov     word_32940, 1
@@ -25808,7 +25808,7 @@ loc_1E796:                              ; CODE XREF: RestPartyAndAdvanceClock+14
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
                 call    sub_1FD03
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
 
 loc_1E808:                              ; CODE XREF: RestPartyAndAdvanceClock+1DA↓j
                 test    word_328C4, 400h
@@ -25910,7 +25910,7 @@ loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 call    DrawMouseCursorAlt
                 call    sub_1FD03
                 call    UpdateAmbientMusicForRegion
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 retf
 RestPartyAndAdvanceClock endp
 
@@ -26480,7 +26480,7 @@ loc_1EE23:                              ; CODE XREF: RunGameDialog+392↑j
                 push    ax              ; this
                 mov     ax, 93FFh
                 mov     bx, 902Ch       ; this
-                call    sub_27DA8
+                call    PrepareMasterHeaderBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -26501,17 +26501,17 @@ loc_1EE8F:                              ; CODE XREF: RunGameDialog+417↑j
                 and     g_driverStateFlags, ax
                 mov     ax, 93FFh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DA8
+                call    PrepareMasterHeaderBlockRead
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
                 mov     ax, 0BC28h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 mov     word ptr [bx+8], 0
                 mov     ax, 0BC28h
                 mov     bx, 902Ch       ; this
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 mov     word ptr [bx+8], 0
                 mov     cx, word_32A12
 
@@ -26530,11 +26530,11 @@ loc_1EED2:                              ; CODE XREF: RunGameDialog+492↓j
                 mov     ax, 0AFA8h
                 mov     bx, 902Ch       ; this
                 mov     word ptr [bx+8], 0
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
                 mov     word ptr [bx+8], 0
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     word_36861, 0AC2h
                 mov     word_36892, 0AC2h
                 mov     cx, 10h
@@ -26601,11 +26601,11 @@ loc_1EFE3:                              ; CODE XREF: RunGameDialog+56B↑j
                 mov     ax, 0AFA8h
                 mov     bx, 902Ch       ; this
                 mov     cx, 0
-                call    sub_27E04
+                call    PrepareGameDialogIndexedBlockRead
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
                 mov     cx, 0
-                call    sub_27E04
+                call    PrepareGameDialogIndexedBlockRead
                 mov     ax, _val48
                 mov     word_36892, ax
                 mov     word_36861, ax
@@ -26619,10 +26619,10 @@ loc_1EFE3:                              ; CODE XREF: RunGameDialog+56B↑j
                 call    ErrorCheck
                 mov     ax, 0F26h
                 mov     bx, 902Ch       ; this
-                call    sub_27D8A
+                call    PrepareGameDialogLargeBlockRead
                 mov     ax, 0F26h
                 mov     bx, 8FFBh       ; this
-                call    sub_27D8A
+                call    PrepareGameDialogLargeBlockRead
                 mov     bx, 902Ch
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
@@ -26650,7 +26650,7 @@ RunGameDialog   endp
 InitializeDungeonLevel proc far         ; CODE XREF: start+7F6↑P
                                         ; start+A1B↑P ...
                 push    es              ; Initializes/enters a dungeon level: copies a per-level metadata template, calls RevealCellsAroundPlayer, redraws the dungeon screen and minimap, and resets combat state -- zeroes the entire g_monsterSlots array and clears word_32A1E (active combat monster). Called from `start` at several sites.
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     es, word_2E4AA
                 mov     cx, 30h ; '0'
                 mov     si, 9535h
@@ -26666,7 +26666,7 @@ InitializeDungeonLevel proc far         ; CODE XREF: start+7F6↑P
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 call    sub_1FD03
                 and     word_3295A, 0F7FFh
                 test    word_36C79, 0FE00h
@@ -27263,23 +27263,23 @@ loc_1F632:                              ; CODE XREF: SaveCurrentGameToSlot+18↑
 loc_1F647:                              ; CODE XREF: SaveCurrentGameToSlot+31↑j
                 mov     ax, 93FFh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DA8
+                call    PrepareMasterHeaderBlockRead
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
                 mov     ax, 93FFh
                 mov     bx, 902Ch       ; this
-                call    sub_27DA8
+                call    PrepareMasterHeaderBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Write
                 call    ErrorCheck
                 mov     ax, 0BC28h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 mov     word ptr [bx+8], 0
                 mov     ax, 0BC28h
                 mov     bx, 902Ch       ; this
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 mov     word ptr [bx+8], 0
                 mov     cx, word_32A12
 
@@ -27298,11 +27298,11 @@ loc_1F6A1:                              ; CODE XREF: SaveCurrentGameToSlot+D0↓
                 mov     ax, 0AFA8h
                 mov     bx, 902Ch       ; this
                 mov     word ptr [bx+8], 0
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
                 mov     word ptr [bx+8], 0
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     word_36861, 0AC2h
                 mov     word_36892, 0AC2h
                 mov     cx, 10h
@@ -27369,11 +27369,11 @@ loc_1F7B2:                              ; CODE XREF: SaveCurrentGameToSlot+1A9�
                 mov     ax, 0AFA8h
                 mov     bx, 902Ch       ; this
                 mov     cx, 0
-                call    sub_27E04
+                call    PrepareGameDialogIndexedBlockRead
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
                 mov     cx, 0
-                call    sub_27E04
+                call    PrepareGameDialogIndexedBlockRead
                 mov     ax, _val48
                 mov     word_36892, ax
                 mov     word_36861, ax
@@ -27387,10 +27387,10 @@ loc_1F7B2:                              ; CODE XREF: SaveCurrentGameToSlot+1A9�
                 call    ErrorCheck
                 mov     ax, 0F26h
                 mov     bx, 902Ch       ; this
-                call    sub_27D8A
+                call    PrepareGameDialogLargeBlockRead
                 mov     ax, 0F26h
                 mov     bx, 8FFBh       ; this
-                call    sub_27D8A
+                call    PrepareGameDialogLargeBlockRead
                 mov     bx, 8FFBh
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
@@ -28243,7 +28243,7 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 or      word_328C4, 1
                 call    ShowLocalAreaMap
                 call    DrawMouseCursorAlt
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 call    WaitForKeypressTickingMusic
                 call    ClearVideoMemoryRegion
                 call    RestoreCursorBackgroundIfDirty
@@ -28299,7 +28299,7 @@ loc_2014D:                              ; CODE XREF: RunMapEditorScreen+D8↑j
 loc_20157:                              ; CODE XREF: RunMapEditorScreen+C7↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_201A0
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 and     word_328C4, 0FFFEh
                 call    sub_209D2
                 call    RestoreFullScreenFromEMS
@@ -28307,7 +28307,7 @@ loc_20157:                              ; CODE XREF: RunMapEditorScreen+C7↑j
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 pop     word_3195A
                 pop     word_31958
                 pop     word_2E778
@@ -29338,7 +29338,7 @@ loc_20A30:                              ; CODE XREF: sub_209D2+4F↑j
                 call    PrepareWorldDatRead
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0BC28h
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 mov     cx, 4Eh ; 'N'
                 xor     di, di
 
@@ -31055,7 +31055,7 @@ loc_218F7:                              ; CODE XREF: PlayTitleScreenSequence+A�
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_21937
@@ -31099,7 +31099,7 @@ loc_21980:                              ; CODE XREF: PlayTitleScreenSequence+93�
                 mov     ax, 3
                 call    PlayMusicTrack
                 or      word_328C8, 800h
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 mov     ah, 0
                 int     1Ah             ; CLOCK - GET TIME OF DAY
                                         ; Return: CX:DX = clock count
@@ -31154,7 +31154,7 @@ loc_219DA:                              ; CODE XREF: PlayTitleScreenSequence+EB�
 
 loc_219ED:                              ; CODE XREF: PlayTitleScreenSequence+DF↑j
                                         ; PlayTitleScreenSequence+FC↑j ...
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 and     word_328C8, 0F7FFh
                 retf
 PlayTitleScreenSequence endp
@@ -31472,7 +31472,7 @@ PersistExploredCell proc far            ; CODE XREF: PaintCellAndPersist+7↑P
                 mov     word_32940, bx
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 mov     ax, word_32940
                 mov     [bx+8], ax
                 mov     errorCode, 0Ah
@@ -31680,7 +31680,7 @@ ShowLocalAreaMap proc far               ; CODE XREF: seg000:085D↑P
 ; ---------------------------------------------------------------------------
 
 loc_21E8A:                              ; CODE XREF: ShowLocalAreaMap+E↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
 
 loc_21E8F:                              ; CODE XREF: ShowLocalAreaMap+6↑j
                 call    RestoreCursorBackgroundIfDirty
@@ -31715,7 +31715,7 @@ loc_21E8F:                              ; CODE XREF: ShowLocalAreaMap+6↑j
                 call    PrepareWorldDatRead
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0BC28h
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 mov     y, 8
                 mov     cx, 18h
 
@@ -31864,12 +31864,12 @@ loc_220B1:                              ; CODE XREF: ShowLocalAreaMap+1C4↑j
 ; ---------------------------------------------------------------------------
 
 loc_220BA:                              ; CODE XREF: ShowLocalAreaMap+246↑j
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 call    WaitForKeypressTickingMusic
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 retf
@@ -31889,7 +31889,7 @@ ToggleMapViewMode proc far              ; CODE XREF: seg000:088D↑P
 ; ---------------------------------------------------------------------------
 
 loc_220F0:                              ; CODE XREF: ToggleMapViewMode+6↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     word_2E532, 0
                 mov     _font_bgTransparent, 0
                 mov     ax, 0A000h
@@ -31899,11 +31899,11 @@ loc_220F0:                              ; CODE XREF: ToggleMapViewMode+6↑j
                 mov     word_2E530, 6
                 call    DrawPicture
                 call    DrawPlayerPositionMarker
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 call    WaitForKeypressTickingMusic
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    DrawMouseCursor
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 call    DrawMouseCursorAlt
                 retf
 ToggleMapViewMode endp
@@ -33207,7 +33207,7 @@ ClearCellMonsterSpawnedFlag proc far    ; CODE XREF: sub_209D2+236↑P
                 mov     cx, ax
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E04
+                call    PrepareGameDialogIndexedBlockRead
                 mov     errorCode, 0Ah
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -33242,7 +33242,7 @@ SetCellMonsterSpawnedFlag proc far      ; CODE XREF: SpawnMonsterInFacingDirecti
                 mov     cx, ax
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E04
+                call    PrepareGameDialogIndexedBlockRead
                 mov     errorCode, 0Ah
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -33276,7 +33276,7 @@ TestCellMonsterSpawnedFlag proc far     ; CODE XREF: TryInteractAtPosition+EB↑
                 mov     cx, ax
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E04
+                call    PrepareGameDialogIndexedBlockRead
                 mov     errorCode, 0Ah
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -35205,9 +35205,9 @@ AdvanceToNextPackedString endp
 
 
 ShowPartyMembers proc far               ; CODE XREF: RunTitleScreen+15E↑P
-                call    sub_25862       ; Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.
+                call    TriggerFullPaletteFadeOut ; Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.
                 call    ShowCreateCharacterPrompt
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 jmp     short loc_23BC0
 ; ---------------------------------------------------------------------------
 
@@ -35244,7 +35244,7 @@ loc_23BC8:                              ; CODE XREF: ShowPartyMembers+17↑j
 
 loc_23C12:                              ; CODE XREF: ShowPartyMembers+22↑j
                                         ; ShowPartyMembers+35↑j ...
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 retf
 ShowPartyMembers endp
 
@@ -35302,7 +35302,7 @@ RunCharacterDetailOverlay proc far      ; CODE XREF: ShowWorldMap+144↓P
                 call    WriteTwoToneString
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
                 jmp     short loc_23D8D
 ; ---------------------------------------------------------------------------
 
@@ -35360,7 +35360,7 @@ loc_23DB3:                              ; CODE XREF: RunCharacterDetailOverlay+1
                 jnz     short loc_23D8D
 
 loc_23DBD:                              ; CODE XREF: RunCharacterDetailOverlay+197↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -35509,7 +35509,7 @@ loc_23F10:                              ; CODE XREF: RunCharacterDetailOverlay+3
                 add     si, 4
                 loop    loc_23F10
                 call    ClearPartyRecord
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 mov     bx, 8FFBh
                 mov     ax, 93FFh
                 mov     [bx+4], ax
@@ -37990,7 +37990,7 @@ loc_25767:                              ; CODE XREF: IsItemDroppable+22↑j
 loc_25770:                              ; CODE XREF: IsItemDroppable+1E↑j
                 mov     ax, 0BC28h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, word_3194C
                 mov     [bx+8], ax
                 mov     errorCode, 0Ah
@@ -38029,7 +38029,7 @@ HasDroppableItemInInventory proc near   ; CODE XREF: IsItemDroppable+70↑p
                 push    cx              ; this
                 mov     ax, 0BC4Ah
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, [di+2]
                 mov     [bx+8], ax
                 mov     errorCode, 0Ah
@@ -38079,7 +38079,7 @@ HasDroppableItemInContainer proc near   ; CODE XREF: HasDroppableItemInInventory
                 push    cx              ; this
                 mov     ax, 0BC6Ch
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, [di+2]
                 mov     [bx+8], ax
                 mov     errorCode, 0Ah
@@ -38125,9 +38125,9 @@ seg083          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25862       proc far                ; CODE XREF: ShowClueBook+3E↑P
+TriggerFullPaletteFadeOut proc far      ; CODE XREF: ShowClueBook+3E↑P
                                         ; ShowClueBook+4AB↑P ...
-                push    cx
+                push    cx              ; Clears word_3295A bit 0x1000, then StepPaletteFadeRange(ax=0, cx=0x100) -- snapshots and begins fading the whole palette down toward black. Called very widely (88 refs).
                 push    dx
                 and     word_3295A, 0EFFFh
                 mov     ax, 0
@@ -38138,15 +38138,15 @@ sub_25862       proc far                ; CODE XREF: ShowClueBook+3E↑P
                 pop     dx
                 pop     cx
                 retf
-sub_25862       endp
+TriggerFullPaletteFadeOut endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2587E       proc far                ; CODE XREF: ShowClueBook+70↑P
+TriggerFullPaletteFadeIn proc far       ; CODE XREF: ShowClueBook+70↑P
                                         ; ShowClueBook+4E4↑P ...
-                push    cx
+                push    cx              ; StepPaletteFadeRange(ax=1, cx=0x100, an untraced mode), then sets word_3295A bit 0x1000 -- the counterpart to TriggerFullPaletteFadeOut. Called widely (36 refs).
                 push    dx
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
@@ -38157,7 +38157,7 @@ sub_2587E       proc far                ; CODE XREF: ShowClueBook+70↑P
                 pop     dx
                 pop     cx
                 retf
-sub_2587E       endp
+TriggerFullPaletteFadeIn endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -39144,7 +39144,7 @@ LoadNextContainerInChain proc far       ; CODE XREF: TryLoadNextContainerLink+D�
                 jz      short loc_26058
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0AFA8h
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     ax, word_36E0F
                 mov     [bx+8], ax
                 mov     errorCode, 0Bh
@@ -39817,7 +39817,7 @@ loc_26660:                              ; CODE XREF: sub_26415+204↑j
                 mov     [bx+8], ax
                 mov     ax, di
                 sub     ax, word_3297C
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -40067,7 +40067,7 @@ LoadContainerContents proc near         ; CODE XREF: LoadNextContainerInChain+40
                 mov     word_36863, ax  ; LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -40151,7 +40151,7 @@ SaveAndCloseContainer proc near         ; CODE XREF: sub_26415+86↑p
                 mov     [bx+8], ax
                 mov     ax, di
                 add     ax, 4
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -41675,7 +41675,7 @@ loc_275E5:                              ; CODE XREF: sub_274B4+D3↑j
 loc_275EA:                              ; CODE XREF: sub_274B4+BB↑j
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     word ptr [bx+6], 22h ; '"'
                 mov     dx, word_3297C
                 mov     ax, word_3296C
@@ -41853,7 +41853,7 @@ WriteContainerSubBlock proc near        ; CODE XREF: SyncAlternateBagsToSave+13�
                 mov     word_36863, ax  ; Writes a data block (bx=address, ax=count, stored via word_36863) using the sub_27E3A/FileEntry_Write(errorCode=0xB) pattern. Called 3 times from sub_2772C for 3 party-record sub-blocks whose identity isn't confirmed.
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -42623,8 +42623,8 @@ PrepareMusicDataRead endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27C78       proc far                ; CODE XREF: InitializeNewGameWorldState+12↓P
-                push    si
+PrepareNewGameResetBlockRead proc far   ; CODE XREF: InitializeNewGameWorldState+12↓P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from InitializeNewGameWorldState.
                 mov     si, 0CE6Fh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42635,7 +42635,7 @@ sub_27C78       proc far                ; CODE XREF: InitializeNewGameWorldState
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27C78       endp
+PrepareNewGameResetBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42789,10 +42789,11 @@ LookupConversationTextBlockOffset_800 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; void __usercall sub_27D8A(FileEntry *this@<eds:ebx.2>)
-sub_27D8A       proc far                ; CODE XREF: RunGameDialog+5FA↑P
+; void __usercall PrepareGameDialogLargeBlockRead(FileEntry *this@<eds:ebx.2>)
+PrepareGameDialogLargeBlockRead proc far
+                                        ; CODE XREF: RunGameDialog+5FA↑P
                                         ; RunGameDialog+605↑P ...
-                push    si
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from RunGameDialog.
                 mov     si, 0CDEBh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42803,16 +42804,16 @@ sub_27D8A       proc far                ; CODE XREF: RunGameDialog+5FA↑P
                 mov     word ptr [bx+6], 30C0h
                 pop     si
                 retf
-sub_27D8A       endp
+PrepareGameDialogLargeBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-; void __usercall sub_27DA8(FileEntry *this@<eds:ebx.2>)
-sub_27DA8       proc far                ; CODE XREF: RunGameDialog+3EC↑P
+; void __usercall PrepareMasterHeaderBlockRead(FileEntry *this@<eds:ebx.2>)
+PrepareMasterHeaderBlockRead proc far   ; CODE XREF: RunGameDialog+3EC↑P
                                         ; RunGameDialog+42B↑P ...
-                push    si
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from RunGameDialog and SaveCurrentGameToSlot.
                 mov     si, 0CDD3h
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42823,7 +42824,7 @@ sub_27DA8       proc far                ; CODE XREF: RunGameDialog+3EC↑P
                 mov     word ptr [bx+6], 1388h
                 pop     si
                 retf
-sub_27DA8       endp
+PrepareMasterHeaderBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42871,10 +42872,11 @@ PrepareRecordAtIndexDC6 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; void __usercall sub_27E04(FileEntry *this@<eds:ebx.2>)
-sub_27E04       proc far                ; CODE XREF: RunGameDialog+5B2↑P
+; void __usercall PrepareGameDialogIndexedBlockRead(FileEntry *this@<eds:ebx.2>)
+PrepareGameDialogIndexedBlockRead proc far
+                                        ; CODE XREF: RunGameDialog+5B2↑P
                                         ; RunGameDialog+5C0↑P ...
-                push    si
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from RunGameDialog.
                 mov     si, 0CDE7h
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42885,16 +42887,17 @@ sub_27E04       proc far                ; CODE XREF: RunGameDialog+5B2↑P
                 mov     word ptr [bx+6], 1
                 pop     si
                 retf
-sub_27E04       endp
+PrepareGameDialogIndexedBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-; void __usercall sub_27E20(FileEntry *this@<eds:ebx.2>)
-sub_27E20       proc far                ; CODE XREF: RunGameDialog+446↑P
+; void __usercall PrepareGameDialogSizedBlockRead(FileEntry *this@<eds:ebx.2>)
+PrepareGameDialogSizedBlockRead proc far
+                                        ; CODE XREF: RunGameDialog+446↑P
                                         ; RunGameDialog+456↑P ...
-                push    si
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from RunGameDialog.
                 mov     si, 0CDD7h
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42905,16 +42908,16 @@ sub_27E20       proc far                ; CODE XREF: RunGameDialog+446↑P
                 mov     [bx+6], ax
                 pop     si
                 retf
-sub_27E20       endp
+PrepareGameDialogSizedBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-; void __usercall sub_27E3A(FileEntry *this@<eds:ebx.2>)
-sub_27E3A       proc far                ; CODE XREF: LoadGroundItemSlotRecord+8↑P
+; void __usercall PrepareGroundItemSlotBlockRead(FileEntry *this@<eds:ebx.2>)
+PrepareGroundItemSlotBlockRead proc far ; CODE XREF: LoadGroundItemSlotRecord+8↑P
                                         ; ReadGroundItemSlot+8↑P ...
-                push    si
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from LoadGroundItemSlotRecord and ReadGroundItemSlot.
                 mov     si, 0CDDBh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42924,7 +42927,7 @@ sub_27E3A       proc far                ; CODE XREF: LoadGroundItemSlotRecord+8�
                 mov     word ptr [bx+6], 22h ; '"'
                 pop     si
                 retf
-sub_27E3A       endp
+PrepareGroundItemSlotBlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42953,8 +42956,8 @@ LookupSoundEffectBlockOffset endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27E7C       proc far                ; CODE XREF: loadWorldDat1+75↑P
-                push    si
+PrepareWorldDat1Block1Read proc far     ; CODE XREF: loadWorldDat1+75↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat1.
                 mov     si, 0CE07h
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42965,14 +42968,14 @@ sub_27E7C       proc far                ; CODE XREF: loadWorldDat1+75↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27E7C       endp
+PrepareWorldDat1Block1Read endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27E9A       proc far                ; CODE XREF: loadWorldDat1+95↑P
-                push    si
+PrepareWorldDat1Block2Read proc far     ; CODE XREF: loadWorldDat1+95↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat1.
                 mov     si, 0CE0Bh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42983,14 +42986,14 @@ sub_27E9A       proc far                ; CODE XREF: loadWorldDat1+95↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27E9A       endp
+PrepareWorldDat1Block2Read endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27EB8       proc far                ; CODE XREF: loadWorldDat1+B5↑P
-                push    si
+PrepareWorldDat1Block3Read proc far     ; CODE XREF: loadWorldDat1+B5↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat1.
                 mov     si, 0CE0Fh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -43001,14 +43004,14 @@ sub_27EB8       proc far                ; CODE XREF: loadWorldDat1+B5↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27EB8       endp
+PrepareWorldDat1Block3Read endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27ED6       proc far                ; CODE XREF: loadWorldDat1+D5↑P
-                push    si
+PrepareWorldDat1Block4Read proc far     ; CODE XREF: loadWorldDat1+D5↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat1.
                 mov     si, 0CE13h
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -43019,14 +43022,14 @@ sub_27ED6       proc far                ; CODE XREF: loadWorldDat1+D5↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27ED6       endp
+PrepareWorldDat1Block4Read endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27EF4       proc far                ; CODE XREF: loadWorldDat2+11↑P
-                push    si
+PrepareWorldDat2BlockRead proc far      ; CODE XREF: loadWorldDat2+11↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat2.
                 mov     si, 0CE17h
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -43037,14 +43040,14 @@ sub_27EF4       proc far                ; CODE XREF: loadWorldDat2+11↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27EF4       endp
+PrepareWorldDat2BlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27F12       proc far                ; CODE XREF: loadWorldDat3+12↑P
-                push    si
+PrepareWorldDat3BlockRead proc far      ; CODE XREF: loadWorldDat3+12↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family). Called from loadWorldDat3.
                 mov     si, 0CE1Bh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -43055,7 +43058,7 @@ sub_27F12       proc far                ; CODE XREF: loadWorldDat3+12↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27F12       endp
+PrepareWorldDat3BlockRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -44933,7 +44936,7 @@ loc_28E0E:                              ; CODE XREF: RevealMapRegion+119↓j
                 call    PrepareWorldDatRead
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0BC28h
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 push    si
                 push    di
                 push    word_2E406
@@ -45028,7 +45031,7 @@ loc_28F91:                              ; CODE XREF: RevealMapRegion+25B↑j
                 call    PrepareWorldDatRead
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0BC28h
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 jmp     loc_28F26
 ; ---------------------------------------------------------------------------
 
@@ -45732,7 +45735,7 @@ SyncContainerContents proc near         ; CODE XREF: SyncPartyMemberContainers+8
                 mov     [bx+8], ax
                 mov     ax, di
                 add     ax, 4
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     errorCode, 0Bh
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -49629,7 +49632,7 @@ InitializeNewGameWorldState proc far    ; CODE XREF: RunTitleScreen+25↑P
                 push    g_driverStateFlags ; this
                 mov     ax, 93FFh
                 mov     bx, 9043h
-                call    sub_27C78
+                call    PrepareNewGameResetBlockRead
                 mov     errorCode, 9
                 mov     bx, 9043h
                 call    FileEntry_Read
@@ -49664,12 +49667,12 @@ loc_2B47E:                              ; CODE XREF: InitializeNewGameWorldState
                 mov     errorCode, 0Ah
                 mov     ax, 93FFh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DA8
+                call    PrepareMasterHeaderBlockRead
                 call    FileEntry_Write
                 call    ErrorCheck
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E20
+                call    PrepareGameDialogSizedBlockRead
                 mov     word ptr [bx+8], 0
                 mov     cx, 190h
                 mov     es, word_2E4AA
@@ -49691,7 +49694,7 @@ loc_2B520:                              ; CODE XREF: InitializeNewGameWorldState
                 rep stosw
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27E3A
+                call    PrepareGroundItemSlotBlockRead
                 mov     word_36861, 0AC2h
                 mov     word_36863, 0
                 mov     cx, 10h
@@ -49742,7 +49745,7 @@ loc_2B5D7:                              ; CODE XREF: InitializeNewGameWorldState
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
                 mov     cx, 0
-                call    sub_27E04
+                call    PrepareGameDialogIndexedBlockRead
                 mov     cx, 139h
                 mov     [bx+6], cx
                 mov     es, word_2E4AA
@@ -49754,7 +49757,7 @@ loc_2B5D7:                              ; CODE XREF: InitializeNewGameWorldState
                 call    ErrorCheck
                 mov     ax, 0F26h
                 mov     bx, 8FFBh       ; this
-                call    sub_27D8A
+                call    PrepareGameDialogLargeBlockRead
                 mov     cx, 4Eh ; 'N'
                 mov     es, word_2E4AA
                 mov     di, 0F26h
@@ -50684,7 +50687,7 @@ loc_2BD93:                              ; CODE XREF: ShowWorldMap+47↑j
                 add     si, 1F4h
                 loop    loc_2BD58
                 call    DrawMouseCursor
-                call    sub_2587E
+                call    TriggerFullPaletteFadeIn
 
 loc_2BDAA:                              ; CODE XREF: ShowWorldMap+9F↓j
                                         ; ShowWorldMap+B6↓j ...
@@ -50752,7 +50755,7 @@ loc_2BE22:                              ; CODE XREF: ShowWorldMap+104↑j
 
 loc_2BE34:                              ; CODE XREF: ShowWorldMap+D7↑j
                                         ; ShowWorldMap+115↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    CompactPartyRosterSlots
                 retf
 ; ---------------------------------------------------------------------------
@@ -50772,7 +50775,7 @@ loc_2BE3D:                              ; CODE XREF: ShowWorldMap+F0↑j
 ; ---------------------------------------------------------------------------
 
 loc_2BE59:                              ; CODE XREF: ShowWorldMap+13A↑j
-                call    sub_25862
+                call    TriggerFullPaletteFadeOut
                 call    RunCharacterDetailOverlay
                 jmp     near ptr ShowWorldMap
 ; ---------------------------------------------------------------------------
