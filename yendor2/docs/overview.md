@@ -529,6 +529,28 @@ given this shareware build's nag string).
 
 94 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: character creation wizard
+
+Traced `RunTitleScreen`'s 5 menu options (keyboard `C`/`A`/`E`/`R`/`I` and
+mouse-click numeric codes 1–5 turned out to funnel into the *same*
+handler labels — selectable either way). `E` is the clearest: it sets a
+flag on up to 4 party-member records then returns from the function
+entirely, back to whoever called `RunTitleScreen` — i.e. it's what
+actually leaves the title screen and proceeds into the game (plausibly
+"Enter"). `I` calls a 3-step wizard (each step ESC-cancelable) matching
+the `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/`FEMALE`/`PICK A
+PORTRAIT` string cluster found near `g_pictureDir` earlier this session
+— named `RunCharacterCreation`. Its first step draws the male body
+silhouette (`g_pictureDir` entry 6) and a sky background (entry 5) into
+a freshly-allocated *offscreen* compositing buffer rather than the
+screen directly — named `ComposeCharacterPortrait`
+(`ida_scripts/name_char_creation.py`). The other two wizard steps and
+the finalizer aren't traced yet. `C`/`A`/`R` still aren't confidently
+identified (`R`, plausibly "About" or a registration-info screen, replays
+`ShowIntroPicture`).
+
+96 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

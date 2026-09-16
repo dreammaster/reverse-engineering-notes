@@ -2068,7 +2068,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X151EC);
 	op_hex		(x,	1);
 	set_cmt	(0X151F5,	"this",	0);
+	set_cmt	(0X1522E,	"Character creation wizard: three steps (sub_15E44/ComposeCharacterPortrait, sub_15429, sub_1559A, each ESC-cancelable) then a finalize step (sub_15267). Matches the CHARACTER CREATION/PICK A CLASS/MALE/FEMALE/PICK A PORTRAIT string cluster near g_pictureDir. Called from InitGame and from RunTitleScreen's 'I' key.",	0);
 	create_insn	(0X1522E);
+	set_name	(0X1522E,	"RunCharacterCreation");
 	create_insn	(0X15249);
 	create_insn	(0X15267);
 	create_insn	(x=0X1526C);
@@ -2236,6 +2238,7 @@ static Bytes_0(void) {
 	create_insn	(0X15E05);
 	create_insn	(x=0X15E44);
 	op_hex		(x,	1);
+	set_name	(0X15E44,	"ComposeCharacterPortrait");
 	set_cmt	(0X15E55,	"ticks",	0);
 	set_cmt	(0X15E63,	"numPara",	0);
 	create_insn	(x=0X15EC9);
@@ -4227,7 +4230,7 @@ static Bytes_0(void) {
 	create_insn	(0X1D258);
 	create_insn	(0X1D273);
 	create_insn	(0X1D286);
-	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches top-level single-key commands (C/A/E/R/I -- not individually traced, plausibly Continue/About/Exit/Register/Info) plus direct music/soundfx toggles. Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
+	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: sub_25862+sub_23BAE, redraw. A: sub_25862+sub_2BD1A, redraw. E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
 	create_insn	(0X1D2A6);
 	set_name	(0X1D2A6,	"RunTitleScreen");
 	create_insn	(x=0X1D2BB);
@@ -6120,6 +6123,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_name	(0X25A3B,	"SetPaletteRange");
 	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X25A47);
 	op_hex		(x,	1);
 	set_cmt	(0X25A5B,	"BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).",	0);
@@ -6177,15 +6189,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X25D5E);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25D6B,	"msg",	0);
 	create_insn	(0X25D82);
 	set_cmt	(0X25D8B,	"msg",	0);
@@ -10709,6 +10712,15 @@ static Bytes_1(void) {
 	create_strlit	(0X39CFE,	0X1A);
 	set_name	(0X39CFE,	"aTimSmith_0");
 	create_strlit	(0X39D18,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39D1A,	0X2);
 	create_strlit	(0X39D1C,	0X1C);
 	set_name	(0X39D1C,	"aDannyDeloach");
@@ -10752,15 +10764,6 @@ static Bytes_1(void) {
 	create_strlit	(0X39EF1,	0X2);
 	create_strlit	(0X39EF3,	0X20);
 	set_name	(0X39EF3,	"aDonnaKarpenkoN");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39F13,	0X2);
 	create_strlit	(0X39F15,	0X20);
 	set_name	(0X39F15,	"aSharonLehmanTJ");

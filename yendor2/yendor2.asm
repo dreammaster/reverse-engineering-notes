@@ -3308,7 +3308,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 call    sub_1FBE1
                 cmp     byte_2E400, 1Bh
                 jz      short loc_11FA3
-                call    sub_1522E
+                call    RunCharacterCreation
                 cmp     byte_2E400, 1Bh
                 jz      short loc_11FA3
                 call    ShowIntroPicture
@@ -8367,9 +8367,9 @@ seg011          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1522E       proc far                ; CODE XREF: InitGame+B6↑P
+RunCharacterCreation proc far           ; CODE XREF: InitGame+B6↑P
                                         ; RunTitleScreen+200↓P
-                call    sub_15E44
+                call    ComposeCharacterPortrait ; Character creation wizard: three steps (sub_15E44/ComposeCharacterPortrait, sub_15429, sub_1559A, each ESC-cancelable) then a finalize step (sub_15267). Matches the CHARACTER CREATION/PICK A CLASS/MALE/FEMALE/PICK A PORTRAIT string cluster near g_pictureDir. Called from InitGame and from RunTitleScreen's 'I' key.
                 cmp     byte_2E400, 1Bh
                 jz      short loc_15245
                 call    sub_15429
@@ -8377,11 +8377,11 @@ sub_1522E       proc far                ; CODE XREF: InitGame+B6↑P
                 jz      short loc_15245
                 call    sub_1559A
 
-loc_15245:                              ; CODE XREF: sub_1522E+8↑j
-                                        ; sub_1522E+12↑j
+loc_15245:                              ; CODE XREF: RunCharacterCreation+8↑j
+                                        ; RunCharacterCreation+12↑j
                 call    sub_15267
                 retf
-sub_1522E       endp
+RunCharacterCreation endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8406,7 +8406,7 @@ sub_15249       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15267       proc near               ; CODE XREF: sub_1522E:loc_15245↑p
+sub_15267       proc near               ; CODE XREF: RunCharacterCreation:loc_15245↑p
                 call    sub_25862
                 and     word_328C8, 0F7FFh
                 and     word_3295A, 7FFFh
@@ -8611,7 +8611,7 @@ sub_152EF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15429       proc near               ; CODE XREF: sub_1522E+A↑p
+sub_15429       proc near               ; CODE XREF: RunCharacterCreation+A↑p
                 mov     di, 4D5Ch
                 mov     si, 442Ah
                 mov     cx, 300h
@@ -8784,7 +8784,7 @@ sub_15429       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1559A       proc near               ; CODE XREF: sub_1522E+14↑p
+sub_1559A       proc near               ; CODE XREF: RunCharacterCreation+14↑p
                 mov     word_2E402, 0
                 mov     word_2E406, 0
                 mov     cx, 1Fh
@@ -9532,7 +9532,7 @@ sub_1559A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15E44       proc near               ; CODE XREF: sub_1522E↑p
+ComposeCharacterPortrait proc near      ; CODE XREF: RunCharacterCreation↑p
                 or      word_328CA, 8
                 cmp     byte ptr word_2E492, 0
                 jz      short loc_15E5D
@@ -9540,7 +9540,7 @@ sub_15E44       proc near               ; CODE XREF: sub_1522E↑p
                 mov     ax, 14h         ; ticks
                 call    wait
 
-loc_15E5D:                              ; CODE XREF: sub_15E44+A↑j
+loc_15E5D:                              ; CODE XREF: ComposeCharacterPortrait+A↑j
                 mov     errorCode, 1
                 mov     bx, 1F41h       ; numPara
                 call    allocMem
@@ -9590,7 +9590,7 @@ loc_15E5D:                              ; CODE XREF: sub_15E44+A↑j
                 mov     word_2E530, 0Ah
                 mov     cx, 9
 
-loc_15F1B:                              ; CODE XREF: sub_15E44+E0↓j
+loc_15F1B:                              ; CODE XREF: ComposeCharacterPortrait+E0↓j
                 call    DrawPicture
                 inc     word_2E530
                 loop    loc_15F1B
@@ -9598,7 +9598,7 @@ loc_15F1B:                              ; CODE XREF: sub_15E44+E0↓j
                 mov     word_2E530, 17h
                 mov     cx, 9
 
-loc_15F35:                              ; CODE XREF: sub_15E44+FA↓j
+loc_15F35:                              ; CODE XREF: ComposeCharacterPortrait+FA↓j
                 call    DrawPicture
                 inc     word_2E530
                 loop    loc_15F35
@@ -9681,7 +9681,7 @@ loc_15F35:                              ; CODE XREF: sub_15E44+FA↓j
                 and     word_328C4, 0FBFFh
                 call    RestoreCursorBackgroundIfDirty
                 retn
-sub_15E44       endp
+ComposeCharacterPortrait endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -23500,7 +23500,7 @@ seg054          segment byte public 'CODE' use16
 
 RunTitleScreen  proc far                ; CODE XREF: start+A0F↑P
                                         ; InitGame+F6↑P ...
-                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches top-level single-key commands (C/A/E/R/I -- not individually traced, plausibly Continue/About/Exit/Register/Info) plus direct music/soundfx toggles. Called from `start` and from ConfirmNewGame after confirming a new game.
+                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: sub_25862+sub_23BAE, redraw. A: sub_25862+sub_2BD1A, redraw. E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.
                 mov     word_36CE7, 3
                 mov     ax, 1
                 mov     word_3297E, ax
@@ -23720,7 +23720,7 @@ loc_1D496:                              ; CODE XREF: RunTitleScreen+1E1↑j
 loc_1D49B:                              ; CODE XREF: RunTitleScreen+CB↑j
                 mov     word_3297E, 0
                 call    sub_25862
-                call    sub_1522E
+                call    RunCharacterCreation
                 mov     word_3297E, 1
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
