@@ -1358,8 +1358,12 @@ static Bytes_0(void) {
 	set_cmt	(0X1191E,	"Zeroes 0x44C0 words (0x8980 bytes) of _videoBufferSeg starting at offset 0x6900 -- clears the lower portion of the off-screen back buffer (below the status/text area). Called once from ShowIntroPicture.",	0);
 	create_insn	(0X1191E);
 	set_name	(0X1191E,	"ClearVideoBackBufferLowerRegion");
+	set_cmt	(0X1192D,	"Overlay-segment duplicate of StepPaletteRange16FadeDown.",	0);
 	create_insn	(0X1192D);
+	set_name	(0X1192D,	"StepPaletteRange16FadeDownAlt");
+	set_cmt	(0X11940,	"Overlay-segment duplicate of StepPaletteRange16FadeUp.",	0);
 	create_insn	(0X11940);
+	set_name	(0X11940,	"StepPaletteRange16FadeUpAlt");
 	set_cmt	(0X11953,	"One step of a palette fade: nudges each of cx DAC registers one step from its current value toward a target buffer, then calls SetPaletteRange. Called repeatedly (once per animation frame) by ShowIntroPicture to fade a picture's palette in/out smoothly.",	0);
 	create_insn	(0X11953);
 	set_name	(0X11953,	"FadePaletteStep");
@@ -1367,18 +1371,26 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X119A7);
 	op_hex		(x,	1);
+	set_cmt	(0X119CA,	"Overlay-segment duplicate of RunPaletteRange16FadeDown.",	0);
 	create_insn	(0X119CA);
+	set_name	(0X119CA,	"RunPaletteRange16FadeDownAlt");
+	set_cmt	(0X119D5,	"Overlay-segment duplicate of RunPaletteRange16FadeUp.",	0);
 	create_insn	(0X119D5);
+	set_name	(0X119D5,	"RunPaletteRange16FadeUpAlt");
 	set_cmt	(0X119E0,	"Busy-waits for word_328C4 bit 0x400 ('tick ready', plausibly set by an untraced timer/vsync interrupt handler), checks ESC via PollForEscapeKeyOnly (returns immediately if pressed), else clears the bit and repeats for cx ticks. Called from ShowIntroPicture.",	0);
 	create_insn	(x=0X119E0);
 	op_hex		(x,	1);
 	set_name	(0X119E0,	"WaitFrameTicksOrEscape");
 	create_insn	(x=0X119ED);
 	op_hex		(x,	1);
+	set_cmt	(0X119F6,	"Overlay-segment duplicate of TriggerPaletteRange16FadeDown. Called from ShowIntroPicture.",	0);
 	create_insn	(x=0X119F6);
 	op_hex		(x,	1);
+	set_name	(0X119F6,	"TriggerPaletteRange16FadeDownAlt");
+	set_cmt	(0X11A03,	"Overlay-segment duplicate of TriggerPaletteRange16FadeUp. Called from ShowIntroPicture.",	0);
 	create_insn	(x=0X11A03);
 	op_hex		(x,	1);
+	set_name	(0X11A03,	"TriggerPaletteRange16FadeUpAlt");
 	set_cmt	(0X11A10,	"The game's studio/publisher credits intro cinematic: music, several picture reveals, multiple DrawShadowedTextAlt credit panels, sound cues, and 2 effect helpers (PlayCreditsWipeAnimation, PlayCreditsFrameAnimation), before loading a new master palette and finishing with a 3-part wipe/transition. Called once from `start`.",	0);
 	create_insn	(x=0X11A10);
 	op_hex		(x,	1);
@@ -1424,8 +1436,10 @@ static Bytes_0(void) {
 	set_cmt	(0X11E1C,	"Waits for driver idle (via TryPlaySoundCueAlt(cx=0xFFFF), always a no-op cue but still runs its idle-wait), triggers sound event 0x47, waits again, triggers event 0x48. A two-part sound cue. Called from sub_11A10.",	0);
 	create_insn	(0X11E1C);
 	set_name	(0X11E1C,	"PlaySoundSequenceGH");
+	set_cmt	(0X11E39,	"Overlay-segment duplicate of WaitForTickFlagAndClear. Called from TryPlaySoundCueAlt.",	0);
 	create_insn	(x=0X11E39);
 	op_hex		(x,	1);
+	set_name	(0X11E39,	"WaitForTickFlagAndClearAlt");
 	create_insn	(x=0X11E41);
 	op_hex		(x,	1);
 	set_cmt	(0X11E4A,	"Draws text/a string column with a 1-pixel drop-shadow (background color pass, then foreground color pass shifted up-left). Single line via writeString when cx<=1, multi-line via DrawStringColumn otherwise. Optionally plays a sound first. Called from sub_11A10. Byte-for-byte identical to DrawShadowedText.",	0);
@@ -2805,6 +2819,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1700E,	"strcat(dest=bx, src=ax): finds dest's existing null terminator (scans up to 1024 bytes), then appends src including its terminator; returns bx = pointer to the new terminator.",	0);
 	create_insn	(0X1700E);
 	set_name	(0X1700E,	"StrCat");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X17015);
 	op_seg		(x,	1);
 	set_cmt	(0X17032,	"Click handler for the shop's catalog item grid (HitTestCatalogSlot). With an empty hand: buys directly via PayGoldAndAcquireItem if word_328C6 bit 0x20 is set, else dispatches on the item's [+0xC] flags (0x80=sell for gold, 0x40/0x20=other branches, default=pick up into held-item state). Called from RunShopScreen and sub_1869D.",	0);
@@ -2844,15 +2867,6 @@ static Bytes_0(void) {
 	set_cmt	(0X17270,	"Gate: HitTestCatalogSlot, bail if no hit or the slot is empty ([si]==0). Otherwise dispatches to untraced sub_219FA (bx=0) -- distinct from the documented buy handler sub_17032. Called from RunShopScreen and sub_1869D.",	0);
 	create_insn	(0X17270);
 	set_name	(0X17270,	"TryHandleCatalogSlotClick");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X17279);
 	create_insn	(0X17281);
 	set_cmt	(0X1728A,	"Clears the shop item-slot grid area, then draws up to 8 item icons (from a position table at 0x63C8 and an item-id table at 0x558A) via LoadItemCatalogRecord + DrawPicture. Shows 'EMPTY' and sets a word_328C6 flag bit if no items were drawn. Called twice from sub_17032.",	0);
@@ -4657,6 +4671,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1CE6B,	"FindItemInInventoryRange (implicit word_328D4, range = word_3293E..word_32940): searches the 8 main inventory slots ([+0x11A], matches GetInventorySlotPtr's layout) for an item id in range, recursing into container-type items (sub_12554 [+0xC] bit 0x2000) via sub_1CECB. Also checks one extra slot at +0x13E (plausibly 'equipped' transport item). Generic inventory search, not transport-specific by itself.",	0);
 	create_insn	(0X1CE6B);
 	set_name	(0X1CE6B,	"FindItemInInventoryRange");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1CE8D);
 	create_insn	(x=0X1CE92);
 	op_hex		(x,	1);
@@ -4682,15 +4705,6 @@ static Bytes_1(void) {
 	create_insn	(0X1CF50);
 	set_name	(0X1CF50,	"FindItemInsideContainerLevel2");
 	set_cmt	(0X1CF51,	"this",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1CF55,	"this",	0);
 	create_insn	(x=0X1CF97);
 	op_hex		(x,	1);
@@ -6319,6 +6333,15 @@ static Bytes_2(void) {
 	set_cmt	(0X22CED,	"Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] (plausibly a remaining-presence/lifespan timer, not confirmed movement-related) by [si+0x1C]; reaching 0 sets errorCode=1, which callers (ProcessLevelMonsters) treat as 'this monster's presence has ended' -- granting a reward and removing it. Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly preparing the slot for reuse/respawn.",	0);
 	create_insn	(0X22CED);
 	set_name	(0X22CED,	"TickMonsterTimer");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X22CF3);
 	op_hex		(x,	1);
 	create_insn	(0X22CFB);
@@ -6330,15 +6353,6 @@ static Bytes_2(void) {
 	set_cmt	(0X22D4C,	"Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 (this monster's presence has ended), calls GrantMonsterRewards then RemoveMonsterFromMap. Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).",	0);
 	create_insn	(0X22D4C);
 	set_name	(0X22D4C,	"ProcessLevelMonsters");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X22D52);
 	op_hex		(x,	1);
 	create_insn	(x=0X22D6A);
@@ -7953,6 +7967,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X28412);
 	op_hex		(x,	1);
 	set_name	(0X28412,	"TriggerSoundEvent");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X28425);
 	set_cmt	(0X28443,	"this",	0);
 	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
@@ -7969,15 +7992,6 @@ static Bytes_3(void) {
 	set_cmt	(0X284CB,	"Scans DOS interrupt vectors (0x80-0xBE) for an installed sound/music driver's 5-byte signature; on a match, allocates its buffer and sets g_driverStateFlags bits 0/1 (detected/active), else sets bit 0x40 (not found). Called from sub_283EA.",	0);
 	create_insn	(0X284CB);
 	set_name	(0X284CB,	"DetectSoundDriver");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X284D7);
 	op_hex		(x,	1);
 	set_cmt	(0X284D9,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
@@ -10362,6 +10376,15 @@ static Bytes_4(void) {
 	set_cmt	(0X2D7A7,	"For each of the 4 party slots, unless an eligibility check (sub_27A66) plus a status-flag/level test passes, sets +0x15E bit 0x8000 (the flag DrawPartyStatusIcon shows a warning overlay for) and redraws DrawPartyMemberStatusPanel. Called from InteractWithContainer; the exact restriction (class/level-gated item?) isn't confirmed.",	0);
 	create_insn	(0X2D7A7);
 	set_name	(0X2D7A7,	"MarkIneligiblePartyMembers");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D7C8);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D7D9);
@@ -10387,15 +10410,6 @@ static Bytes_4(void) {
 	create_word	(0X2E386);
 	create_word	(0X2E388);
 	set_name	(0X2E388,	"x");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E38A);
 	set_name	(0X2E38A,	"y");
 	create_word	(0X2E38C);

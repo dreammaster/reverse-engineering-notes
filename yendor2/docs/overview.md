@@ -6315,6 +6315,20 @@ flag then run the fade to completion).
 746 named of 769 functions as of this update — only 23 unnamed
 functions remain.
 
+### 2026-09-15 session update, continued: ShowIntroPicture fade Alt cluster
+
+Named 7 more functions — byte-for-byte overlay-segment duplicates of
+the character-creation wipe/fade toolkit just named, this copy used
+by `ShowIntroPicture` (and, for the wait primitive, the sound-cue
+system) instead: `StepPaletteRange16FadeDownAlt`/`...FadeUpAlt`,
+`RunPaletteRange16FadeDownAlt`/`...FadeUpAlt`,
+`TriggerPaletteRange16FadeDownAlt`/`...FadeUpAlt`, and
+`WaitForTickFlagAndClearAlt` (called from `TryPlaySoundCueAlt`, which
+had already flagged it as "still-unnamed `sub_11E39`").
+
+753 named of 769 functions as of this update — only 16 unnamed
+functions remain.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

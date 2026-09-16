@@ -2616,7 +2616,7 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
                 cmp     word ptr [si], 0FFFFh
                 jz      short loc_118B6
                 push    si
-                call    sub_119F6
+                call    TriggerPaletteRange16FadeDownAlt
                 call    ClearVideoBackBufferLowerRegion
                 pop     si
                 mov     _textPos_x, 28h ; '('
@@ -2634,7 +2634,7 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
                 call    DrawMouseCursor
                 call    PollForEscapeKeyOnly
                 jz      short loc_118B6
-                call    sub_11A03
+                call    TriggerPaletteRange16FadeUpAlt
                 mov     cx, [si+2]
                 call    WaitFrameTicksOrEscape
                 add     si, 6
@@ -2643,7 +2643,7 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
 
 loc_118B6:                              ; CODE XREF: ShowIntroPicture+95↑j
                                         ; ShowIntroPicture+C5↑j ...
-                call    sub_119F6
+                call    TriggerPaletteRange16FadeDownAlt
                 call    TriggerFullPaletteFadeOut
                 and     word_328C8, 0F7FFh
                 and     word_3295A, 7FFFh
@@ -2698,8 +2698,8 @@ ClearVideoBackBufferLowerRegion endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1192D       proc near               ; CODE XREF: sub_119CA:loc_119CE↓p
-                push    cx
+StepPaletteRange16FadeDownAlt proc near ; CODE XREF: RunPaletteRange16FadeDownAlt:loc_119CE↓p
+                push    cx              ; Overlay-segment duplicate of StepPaletteRange16FadeDown.
                 push    dx
                 mov     ax, 3
                 mov     bx, 1
@@ -2708,14 +2708,14 @@ sub_1192D       proc near               ; CODE XREF: sub_119CA:loc_119CE↓p
                 pop     dx
                 pop     cx
                 retn
-sub_1192D       endp
+StepPaletteRange16FadeDownAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11940       proc near               ; CODE XREF: sub_119D5:loc_119D9↓p
-                push    cx
+StepPaletteRange16FadeUpAlt proc near   ; CODE XREF: RunPaletteRange16FadeUpAlt:loc_119D9↓p
+                push    cx              ; Overlay-segment duplicate of StepPaletteRange16FadeUp.
                 push    dx
                 mov     ax, 4
                 mov     bx, 1
@@ -2724,7 +2724,7 @@ sub_11940       proc near               ; CODE XREF: sub_119D5:loc_119D9↓p
                 pop     dx
                 pop     cx
                 retn
-sub_11940       endp
+StepPaletteRange16FadeUpAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2788,31 +2788,31 @@ FadePaletteStep endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_119CA       proc near               ; CODE XREF: sub_119F6+9↓p
-                push    cx
+RunPaletteRange16FadeDownAlt proc near  ; CODE XREF: TriggerPaletteRange16FadeDownAlt+9↓p
+                push    cx              ; Overlay-segment duplicate of RunPaletteRange16FadeDown.
                 mov     cx, 3Fh ; '?'
 
-loc_119CE:                              ; CODE XREF: sub_119CA+7↓j
-                call    sub_1192D
+loc_119CE:                              ; CODE XREF: RunPaletteRange16FadeDownAlt+7↓j
+                call    StepPaletteRange16FadeDownAlt
                 loop    loc_119CE
                 pop     cx
                 retn
-sub_119CA       endp
+RunPaletteRange16FadeDownAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_119D5       proc near               ; CODE XREF: sub_11A03+9↓p
-                push    cx
+RunPaletteRange16FadeUpAlt proc near    ; CODE XREF: TriggerPaletteRange16FadeUpAlt+9↓p
+                push    cx              ; Overlay-segment duplicate of RunPaletteRange16FadeUp.
                 mov     cx, 3Fh ; '?'
 
-loc_119D9:                              ; CODE XREF: sub_119D5+7↓j
-                call    sub_11940
+loc_119D9:                              ; CODE XREF: RunPaletteRange16FadeUpAlt+7↓j
+                call    StepPaletteRange16FadeUpAlt
                 loop    loc_119D9
                 pop     cx
                 retn
-sub_119D5       endp
+RunPaletteRange16FadeUpAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2835,24 +2835,26 @@ WaitFrameTicksOrEscape endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_119F6       proc near               ; CODE XREF: ShowIntroPicture+E2↑p
+TriggerPaletteRange16FadeDownAlt proc near
+                                        ; CODE XREF: ShowIntroPicture+E2↑p
                                         ; ShowIntroPicture:loc_118B6↑p
-                or      word_328C8, 800h
+                or      word_328C8, 800h ; Overlay-segment duplicate of TriggerPaletteRange16FadeDown. Called from ShowIntroPicture.
                 mov     dx, 0E0h
-                call    sub_119CA
+                call    RunPaletteRange16FadeDownAlt
                 retn
-sub_119F6       endp
+TriggerPaletteRange16FadeDownAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11A03       proc near               ; CODE XREF: ShowIntroPicture+127↑p
-                or      word_328C8, 800h
+TriggerPaletteRange16FadeUpAlt proc near
+                                        ; CODE XREF: ShowIntroPicture+127↑p
+                or      word_328C8, 800h ; Overlay-segment duplicate of TriggerPaletteRange16FadeUp. Called from ShowIntroPicture.
                 mov     dx, 0E0h
-                call    sub_119D5
+                call    RunPaletteRange16FadeUpAlt
                 retn
-sub_11A03       endp
+TriggerPaletteRange16FadeUpAlt endp
 
 seg003          ends
 
@@ -3153,14 +3155,14 @@ PlaySoundSequenceGH endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11E39       proc near               ; CODE XREF: sub_11E39+6↓j
-                                        ; sub_11E39+E↓j ...
-                test    word_328C4, 400h
-                jz      short sub_11E39
+WaitForTickFlagAndClearAlt proc near    ; CODE XREF: WaitForTickFlagAndClearAlt+6↓j
+                                        ; WaitForTickFlagAndClearAlt+E↓j ...
+                test    word_328C4, 400h ; Overlay-segment duplicate of WaitForTickFlagAndClear. Called from TryPlaySoundCueAlt.
+                jz      short WaitForTickFlagAndClearAlt
                 and     word_328C4, 0FBFFh
-                loop    sub_11E39
+                loop    WaitForTickFlagAndClearAlt
                 retn
-sub_11E39       endp
+WaitForTickFlagAndClearAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -3225,7 +3227,7 @@ TryPlaySoundCueAlt proc near            ; CODE XREF: PlayStudioCreditsIntro+231�
                 jz      short locret_11EBD
                 cmp     cx, 0FFFFh
                 jz      short locret_11EBD
-                call    sub_11E39
+                call    WaitForTickFlagAndClearAlt
 
 locret_11EBD:                           ; CODE XREF: TryPlaySoundCueAlt+5↑j
                                         ; TryPlaySoundCueAlt+A↑j
@@ -38167,7 +38169,7 @@ TriggerFullPaletteFadeIn endp
 
 
 StepPaletteFadeRange proc far           ; CODE XREF: start+2CB↑P
-                                        ; sub_1192D+B↑P ...
+                                        ; StepPaletteRange16FadeDownAlt+B↑P ...
                 push    si              ; General mode-selectable (ax=0-5) palette-fade stepper, called once per frame: modes 0/3 fade a palette range down toward black, modes 2/4 fade up toward the master palette (0x442A), one increment per call via SetPaletteRange. Modes 1/5 not fully traced. Distinct from the simpler FadePaletteStep/SetPaletteToWhite. Called from dozens of sites including PlayStudioCreditsIntro.
                 push    di
                 push    es
