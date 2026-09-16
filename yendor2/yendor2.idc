@@ -6761,12 +6761,18 @@ static Bytes_2(void) {
 	create_insn	(x=0X25E4E);
 	op_hex		(x,	1);
 	set_cmt	(0X25E55,	"msg",	0);
+	set_cmt	(0X25E5E,	"Formats two numbers (FormatNumber + sub_256F0, optionally sub_2570C+sub_16262) and joins them as '<num1>/<num2>' for display. Called 3 times from DrawThreeStatBars.",	0);
 	create_insn	(0X25E5E);
+	set_name	(0X25E5E,	"FormatAndDrawFraction");
 	set_cmt	(0X25EC8,	"msg",	0);
+	set_cmt	(0X25ED1,	"Draws a fixed-width blank label (12 spaces) then the character's name (+0x0) at a fixed position. Shared header draw used by ShowLevelUpMessage, DrawThreeStatBars's caller chain, and sub_25CFA.",	0);
 	create_insn	(0X25ED1);
+	set_name	(0X25ED1,	"DrawCharacterNameHeader");
 	set_cmt	(0X25EF3,	"msg",	0);
 	set_cmt	(0X25EFD,	"msg",	0);
+	set_cmt	(0X25F10,	"Draws 'HEALTH:' (+0x52/+0x92), 'MAGIC:' (+0x54/+0x94), and 'WEIGHT:' (+0x118/+0x56 -- confirms carried weight / max carry capacity) as three threshold-colored stat rows. Shows 'DEAD' instead of the HEALTH fraction when +0x1C bit 0x40 is set -- confirms that bit as the dead/incapacitated flag. Called from sub_25B34.",	0);
 	create_insn	(0X25F10);
+	set_name	(0X25F10,	"DrawThreeStatBars");
 	set_cmt	(0X25F27,	"msg",	0);
 	set_cmt	(0X25F48,	"msg",	0);
 	set_cmt	(0X25F69,	"msg",	0);
@@ -7852,6 +7858,15 @@ static Bytes_2(void) {
 	set_cmt	(0X291A3,	"Per-row worker for RevealMapRegion: reads a WORLD.DAT block and a CURGAME block (FileEntry 0x9043/0x8FFB), walks the bit-packed explored-cell bitmap byte-by-byte, and for each not-yet-explored cell that passes a further gate (sub_28C94/sub_28CB1, not traced -- possibly related to the unconfirmed 'transport-check' table) calls sub_29259 (not traced) to reveal it.",	0);
 	create_insn	(0X291A3);
 	set_name	(0X291A3,	"RevealMapRegionRow");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X291A6,	"this",	0);
 	create_insn	(x=0X291C1);
 	op_hex		(x,	1);
@@ -7870,15 +7885,6 @@ static Bytes_2(void) {
 	create_insn	(0X292C0);
 	create_insn	(0X292D7);
 	create_insn	(0X292E0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X292F2);
 	op_hex		(x,	1);
 	create_insn	(x=0X292F4);
@@ -11009,6 +11015,15 @@ static Bytes_3(void) {
 	set_name	(0X362BC,	"aSuppliesFood");
 	create_strlit	(0X362CA,	0X10);
 	set_name	(0X362CA,	"aTransportation");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X362DA,	0X8);
 	set_name	(0X362DA,	"aWeapons");
 	create_strlit	(0X362E2,	0XC);
@@ -11045,15 +11060,6 @@ static Bytes_3(void) {
 	set_name	(0X36366,	"aToAn");
 	create_strlit	(0X3636C,	0XA);
 	set_name	(0X3636C,	"aAttribute");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36376,	0X5);
 	set_name	(0X36376,	"aToA");
 	create_strlit	(0X3637B,	0X6);

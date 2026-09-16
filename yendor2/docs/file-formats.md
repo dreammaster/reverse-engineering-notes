@@ -249,6 +249,21 @@ explains why the slots weren't visible from `ShowCharacterInventory`'s
 own drawing code — that reads generic catalog ids for its labels, not
 per-character storage directly.
 
+**The group base's leading 2 bytes (the ones `GetInventorySlotPtr`
+skips with `+2`) are now confirmed: a running total-weight-carried
+counter for that inventory group**, not padding. Three independent
+functions agree: `PickUpItemFromSlot`/`PlaceItemInSlot` add/subtract
+an item's value at exactly `+0x118` (main inventory) or `+0x180`/
+`+0x1A6`/`+0x1CC` (the 3 alternate bags) whenever an item enters/leaves
+that group; and `DrawThreeStatBars` (was `sub_25F10`) draws `+0x118`
+labeled **"WEIGHT:"** against `+0x56` as the max — and `+0x56` was
+already suspected as a carry-capacity stat (derived from Strength×10
+via `RollCharacterAttributes`). So the full picture: each inventory
+group is `[2-byte running weight total][8 slots × 4 bytes]`, and
+`+0x56`/`+0x96` is Strength-derived max carry weight, checked only
+against the *main* inventory's `+0x118` counter (the 3 alternate bags'
+weight isn't shown on this panel, at least).
+
 **The "3 alternate bags" are literal container items**, confirmed via
 `sub_26415`'s open/close branches: clicking an unopened container item
 assigns it to the first free marker (`+0x17C`/`+0x1A2`/`+0x1C8`,
@@ -1211,9 +1226,19 @@ confirmed). A separate function, `DrawPartyMemberStatusPanel`
 (called from the main input loop `sub_1869D`), draws a fuller
 combat-style status panel per party slot: portrait, unconscious/dead
 overlay, three `DrawStatBar` gauges (HP `+0x52`/`+0x92`, MP
-`+0x54`/`+0x94`, a third stat `+0x118`/`+0x56` not identified), an
-ability-readiness icon (`+0xB4`, the "learned abilities" bitmask), and
-level-up/training text. A third, simpler party display,
+`+0x54`/`+0x94`, and a third — **now confirmed as carried weight
+`+0x118` vs. max capacity `+0x56`**, via `DrawThreeStatBars`, the
+character-sheet sibling of this panel — see the inventory-slot section
+above for the full cross-confirmation), an ability-readiness icon
+(`+0xB4`, the "learned abilities" bitmask), and level-up/training text.
+`DrawThreeStatBars` (was `sub_25F10`) is the character-sheet version of
+this same 3-bar display, labeled exactly "HEALTH:"/"MAGIC:"/"WEIGHT:"
+— and its "DEAD" override (shown instead of the HEALTH fraction)
+**confirms `+0x1C` bit `0x40` as the character's dead/incapacitated
+flag**. Its number formatting goes through `FormatAndDrawFraction` (was
+`sub_25E5E`, "`<current>/<max>`") and a shared header,
+`DrawCharacterNameHeader` (was `sub_25ED1`, also used by
+`ShowLevelUpMessage`). A third, simpler party display,
 `DrawPartyStatusIconRow` (was `sub_26C9E`, called from
 `HandleDungeonInput`) draws a compact 4-icon row during dungeon
 exploration via `DrawPartyStatusIcon` (was `sub_26CFB`) per
@@ -1513,8 +1538,9 @@ narratively-open sibling system to `TickWorldAilments`.
 `CheckPartyWipeAndReinitLevel` (was `sub_25AAC`) — a **total party
 incapacitation** check: it scans all 4 `g_partySlotAssignment` members,
 and if it finds even one whose `+0x1C` has *none* of bits `6`/`10`/`11`/
-`12` set (bits 10/11 being the confirmed `TickStatusEffects`/
-`ApplyStatusEffect` timed-ailment flags), it returns immediately —
+`12` set (bit 6 now confirmed as the "DEAD" flag via `DrawThreeStatBars`;
+bits 10/11 being the confirmed `TickStatusEffects`/`ApplyStatusEffect`
+timed-ailment flags), it returns immediately —
 that member is still capable of acting. Only when *every* slot is
 either empty or flagged with one of those bits does it fall through to
 `ShowPartyWipeScreen` (was `sub_2ADE8` — stops music, plays a sound

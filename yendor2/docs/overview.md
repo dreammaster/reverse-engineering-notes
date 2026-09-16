@@ -3648,6 +3648,32 @@ by doing no descriptor setup of its own.
 
 465 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawThreeStatBars — resolves the "third stat bar" mystery
+
+A major cross-confirming find. Named `sub_25F10` -> `DrawThreeStatBars`,
+`sub_25E5E` -> `FormatAndDrawFraction`, and `sub_25ED1` ->
+`DrawCharacterNameHeader`. Dumping `DrawThreeStatBars`' message strings
+gave exact labels — "HEALTH:", "MAGIC:", "WEIGHT:" — which:
+
+1. **Resolves the long-flagged "third stat bar" in
+   `DrawPartyMemberStatusPanel`** (`+0x118`/`+0x56`, "not identified"
+   since early in the session): it's carried weight vs. max carry
+   capacity.
+2. **Reconciles with `GetInventorySlotPtr`'s "group base + 2" formula**
+   from several rounds ago: the 2 bytes it skips at each inventory
+   group's base (`+0x118` main, or `+0x180`/`+0x1A6`/`+0x1CC` for the 3
+   alternate bags) aren't padding — they're a running weight-total
+   counter, exactly matching what `PickUpItemFromSlot`/`PlaceItemInSlot`
+   (named a couple rounds ago) add/subtract from.
+3. **Confirms `+0x1C` bit `0x40`** (part of `CheckPartyWipeAndReinitLevel`'s
+   `0x1C40` incapacitation mask) **as the "DEAD" flag** — `DrawThreeStatBars`
+   shows "DEAD" instead of the HEALTH fraction when it's set.
+
+This ties together five separate findings from across the session into
+one coherent picture of the inventory/weight/incapacitation system.
+
+468 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

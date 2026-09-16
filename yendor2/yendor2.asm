@@ -38660,7 +38660,7 @@ loc_25B9F:                              ; CODE XREF: sub_25B34+2F↑j
 loc_25BCD:                              ; CODE XREF: sub_25B34+92↑j
                 cmp     ax, 6
                 jnz     short loc_25BD7
-                call    sub_25F10
+                call    DrawThreeStatBars
                 jmp     short loc_25BF0
 ; ---------------------------------------------------------------------------
 
@@ -38729,7 +38729,7 @@ loc_25C2D:                              ; CODE XREF: sub_25B34+D2↑j
                 call    ClearStatusPanelIfDirty
                 call    RestoreCursorBackgroundIfDirty
                 or      word_328C4, 100h
-                call    sub_25F10
+                call    DrawThreeStatBars
                 call    sub_238CD
                 call    DrawMouseCursor
 
@@ -38745,7 +38745,7 @@ sub_25B34       endp
 ShowLevelUpMessage proc far             ; CODE XREF: CheckAndAnnounceLevelUp+33↑P
                                         ; sub_25B34+B4↑p
                 or      word_328C4, 100h ; ShowLevelUpMessage(si=character): shows current level [+0x16], and if [+0x1E] (pending new level, from CheckForLevelUp) is nonzero, also shows it as a second line -- the level-up notification screen.
-                call    sub_25ED1
+                call    DrawCharacterNameHeader
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7B78h       ; msg
                 call    writeString
@@ -38802,7 +38802,7 @@ loc_25D02:                              ; CODE XREF: sub_25CFA+5↑j
                 push    si
                 or      word_328C4, 100h
                 or      word_328C8, 1000h
-                call    sub_25ED1
+                call    DrawCharacterNameHeader
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7B92h       ; msg
                 call    writeString
@@ -38858,7 +38858,7 @@ sub_25CFA       endp
 
 
 sub_25D82       proc near               ; CODE XREF: sub_25B34:loc_25BED↑p
-                call    sub_25ED1
+                call    DrawCharacterNameHeader
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7AB3h       ; msg
                 call    writeString
@@ -38941,9 +38941,9 @@ sub_25D82       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25E5E       proc near               ; CODE XREF: sub_25F10+8F↓p
-                                        ; sub_25F10+A4↓p ...
-                push    bx
+FormatAndDrawFraction proc near         ; CODE XREF: DrawThreeStatBars+8F↓p
+                                        ; DrawThreeStatBars+A4↓p ...
+                push    bx              ; Formats two numbers (FormatNumber + sub_256F0, optionally sub_2570C+sub_16262) and joins them as '<num1>/<num2>' for display. Called 3 times from DrawThreeStatBars.
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
@@ -38953,7 +38953,7 @@ sub_25E5E       proc near               ; CODE XREF: sub_25F10+8F↓p
                 call    sub_2570C
                 call    sub_16262
 
-loc_25E80:                              ; CODE XREF: sub_25E5E+16↑j
+loc_25E80:                              ; CODE XREF: FormatAndDrawFraction+16↑j
                 pop     ax
                 mov     bx, 0AFB2h
                 call    FormatNumber
@@ -38964,7 +38964,7 @@ loc_25E80:                              ; CODE XREF: sub_25E5E+16↑j
                 call    sub_2570C
                 call    sub_16262
 
-loc_25EA2:                              ; CODE XREF: sub_25E5E+38↑j
+loc_25EA2:                              ; CODE XREF: FormatAndDrawFraction+38↑j
                 mov     word_3881C, 2Fh ; '/'
                 mov     byte ptr word_3883A, 0
                 mov     ax, 0AFA8h
@@ -38977,15 +38977,15 @@ loc_25EA2:                              ; CODE XREF: sub_25E5E+38↑j
                 mov     bx, 0AFDAh      ; msg
                 call    writeString
                 retn
-sub_25E5E       endp
+FormatAndDrawFraction endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25ED1       proc near               ; CODE XREF: ShowLevelUpMessage+6↑p
+DrawCharacterNameHeader proc near       ; CODE XREF: ShowLevelUpMessage+6↑p
                                         ; sub_25CFA+16↑p ...
-                push    _font_bgTransparent
+                push    _font_bgTransparent ; Draws a fixed-width blank label (12 spaces) then the character's name (+0x0) at a fixed position. Shared header draw used by ShowLevelUpMessage, DrawThreeStatBars's caller chain, and sub_25CFA.
                 mov     ax, 0F1h
                 mov     _textPos_x, ax
                 mov     ax, 57h ; 'W'
@@ -39001,22 +39001,22 @@ sub_25ED1       proc near               ; CODE XREF: ShowLevelUpMessage+6↑p
                 mov     _textPos_y, 60h ; '`'
                 pop     _font_bgTransparent
                 retn
-sub_25ED1       endp
+DrawCharacterNameHeader endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25F10       proc near               ; CODE XREF: sub_25B34+9E↑p
+DrawThreeStatBars proc near             ; CODE XREF: sub_25B34+9E↑p
                                         ; sub_25B34+11F↑p
-                call    sub_25ED1
+                call    DrawCharacterNameHeader ; Draws 'HEALTH:' (+0x52/+0x92), 'MAGIC:' (+0x54/+0x94), and 'WEIGHT:' (+0x118/+0x56 -- confirms carried weight / max carry capacity) as three threshold-colored stat rows. Shows 'DEAD' instead of the HEALTH fraction when +0x1C bit 0x40 is set -- confirms that bit as the dead/incapacitated flag. Called from sub_25B34.
                 mov     _font_fgColor, 59h ; 'Y'
                 mov     ax, [si+52h]
                 cmp     ax, [si+92h]
                 jle     short loc_25F27
                 add     _font_fgColor, 2
 
-loc_25F27:                              ; CODE XREF: sub_25F10+10↑j
+loc_25F27:                              ; CODE XREF: DrawThreeStatBars+10↑j
                 mov     bx, 7B0Dh       ; msg
                 call    writeString
                 add     _textPos_y, 12h
@@ -39026,7 +39026,7 @@ loc_25F27:                              ; CODE XREF: sub_25F10+10↑j
                 jle     short loc_25F48
                 add     _font_fgColor, 2
 
-loc_25F48:                              ; CODE XREF: sub_25F10+31↑j
+loc_25F48:                              ; CODE XREF: DrawThreeStatBars+31↑j
                 mov     bx, 7B15h       ; msg
                 call    writeString
                 add     _textPos_y, 12h
@@ -39036,7 +39036,7 @@ loc_25F48:                              ; CODE XREF: sub_25F10+31↑j
                 jle     short loc_25F69
                 add     _font_fgColor, 2
 
-loc_25F69:                              ; CODE XREF: sub_25F10+52↑j
+loc_25F69:                              ; CODE XREF: DrawThreeStatBars+52↑j
                 mov     bx, 7B1Ch       ; msg
                 call    writeString
                 sub     _textPos_y, 1Eh
@@ -39049,32 +39049,32 @@ loc_25F69:                              ; CODE XREF: sub_25F10+52↑j
                 jmp     short loc_25FA7
 ; ---------------------------------------------------------------------------
 
-loc_25F92:                              ; CODE XREF: sub_25F10+71↑j
+loc_25F92:                              ; CODE XREF: DrawThreeStatBars+71↑j
                 mov     ax, [si+52h]
                 mov     bx, [si+92h]
                 mov     word_2E4AC, 0
-                call    sub_25E5E
+                call    FormatAndDrawFraction
                 add     _textPos_y, 12h
 
-loc_25FA7:                              ; CODE XREF: sub_25F10+80↑j
+loc_25FA7:                              ; CODE XREF: DrawThreeStatBars+80↑j
                 mov     ax, [si+54h]
                 mov     bx, [si+94h]
                 mov     word_2E4AC, 0
-                call    sub_25E5E
+                call    FormatAndDrawFraction
                 add     _textPos_y, 12h
                 mov     ax, [si+118h]
                 mov     bx, [si+56h]
                 mov     word_2E4AC, 1
-                call    sub_25E5E
+                call    FormatAndDrawFraction
                 retn
-sub_25F10       endp
+DrawThreeStatBars endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 sub_25FCD       proc near               ; CODE XREF: sub_25B34+94↑p
-                call    sub_25ED1
+                call    DrawCharacterNameHeader
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7B24h       ; msg
                 call    writeString
