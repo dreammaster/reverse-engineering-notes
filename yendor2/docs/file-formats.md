@@ -282,6 +282,15 @@ a held container, calls `HasDroppableItemInInventory` (base case
 `HasDroppableItemInContainer`) — a container is only droppable if it
 holds at least one directly-droppable item somewhere inside it.
 
+A related but distinct action, `FinishPlacingHeldItem` (was
+`sub_2BA62`, called from `sub_271DC` and the still-untraced,
+container-related `sub_2621C`), also clears the held-item cursor
+(`UpdateCursorForHeldItem(0)`) after loading the held item's catalog
+record and OR-ing a value derived from one of its flag bytes into
+`word_36C81` (a global not otherwise documented) — plausibly a
+container/inventory-slot placement rather than the ground-drop
+`PlaceItemOnGround` handles, but not confirmed.
+
 **`SyncAllContainers`** (found via `RepairItemCommand`'s opening call)
 writes every open bag's contents back to `CURGAME` across the *whole
 party*, without closing them (`SyncContainerContents`, the same

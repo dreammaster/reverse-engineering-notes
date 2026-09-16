@@ -9149,7 +9149,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2BA5B);
 	op_hex		(x,	1);
+	set_cmt	(0X2BA62,	"Plays a sound, restores the cursor background, loads the held item's catalog record, ORs a value derived from its flag byte into word_36C81 (not otherwise documented), then clears the held-item cursor (UpdateCursorForHeldItem(0)). Called from sub_2621C (a still-untraced container-related handler) and sub_271DC.",	0);
 	create_insn	(0X2BA62);
+	set_name	(0X2BA62,	"FinishPlacingHeldItem");
 	create_insn	(x=0X2BA7D);
 	op_hex		(x,	1);
 	create_insn	(0X2BA88);
@@ -11199,6 +11201,15 @@ static Bytes_3(void) {
 	set_name	(0X366AE,	"a2XHealth");
 	create_strlit	(0X366B9,	0XA);
 	set_name	(0X366B9,	"a2XMagic");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X366C3,	0X2B);
 	set_name	(0X366C3,	"aRegisterYourCo");
 	create_strlit	(0X366EE,	0X3A);
@@ -11218,15 +11229,6 @@ static Bytes_3(void) {
 	set_name	(0X3677B,	"aAlchemistTrans");
 	create_strlit	(0X3679B,	0X1A);
 	set_name	(0X3679B,	"aPaladinCavalie");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X367B5,	0X19);
 	set_name	(0X367B5,	"aMageWizardSorc");
 	create_strlit	(0X367CE,	0X19);

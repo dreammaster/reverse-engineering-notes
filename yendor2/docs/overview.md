@@ -3559,6 +3559,19 @@ later selection.
 
 455 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: FinishPlacingHeldItem
+
+Named `sub_2BA62` -> `FinishPlacingHeldItem`, moderate confidence:
+called from `sub_271DC` and the still-untraced, container-related
+`sub_2621C`. Clears the held-item cursor after loading the held item's
+catalog record and OR-ing a value from one of its flag bytes into
+`word_36C81` (not otherwise documented) — a related but distinct
+action from the already-named drop-to-ground flow
+(`TryDropHeldItem`/`PlaceItemOnGround`), plausibly a container/
+inventory-slot placement instead, but not confirmed.
+
+456 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

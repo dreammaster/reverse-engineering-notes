@@ -39434,7 +39434,7 @@ loc_2630C:                              ; CODE XREF: sub_2621C+CA↑j
 loc_26316:                              ; CODE XREF: sub_2621C+F5↑j
                 cmp     word_31948, 2Eh ; '.'
                 jg      short loc_2639C
-                call    sub_2BA62
+                call    FinishPlacingHeldItem
 
 loc_26322:                              ; CODE XREF: sub_2621C+131↓j
                 mov     errorCode, 1
@@ -41208,7 +41208,7 @@ loc_2724A:                              ; CODE XREF: sub_271DC+64↑j
                 jl      short loc_27284
                 cmp     word_31948, 2Eh ; '.'
                 jg      short loc_27284
-                call    sub_2BA62
+                call    FinishPlacingHeldItem
                 mov     errorCode, 0
                 push    cs
                 call    near ptr sub_2714A
@@ -50170,9 +50170,9 @@ seg120          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BA62       proc far                ; CODE XREF: sub_2621C+101↑P
+FinishPlacingHeldItem proc far          ; CODE XREF: sub_2621C+101↑P
                                         ; sub_271DC+81↑P
-                mov     ax, 4
+                mov     ax, 4           ; Plays a sound, restores the cursor background, loads the held item's catalog record, ORs a value derived from its flag byte into word_36C81 (not otherwise documented), then clears the held-item cursor (UpdateCursorForHeldItem(0)). Called from sub_2621C (a still-untraced container-related handler) and sub_271DC.
                 call    sub_28412
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_31948
@@ -50186,16 +50186,16 @@ sub_2BA62       proc far                ; CODE XREF: sub_2621C+101↑P
                 jmp     short loc_2BA8A
 ; ---------------------------------------------------------------------------
 
-loc_2BA88:                              ; CODE XREF: sub_2BA62+1E↑j
+loc_2BA88:                              ; CODE XREF: FinishPlacingHeldItem+1E↑j
                 xor     al, al
 
-loc_2BA8A:                              ; CODE XREF: sub_2BA62+24↑j
+loc_2BA8A:                              ; CODE XREF: FinishPlacingHeldItem+24↑j
                 or      word_36C81, ax
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
                 call    sub_238CD
                 retf
-sub_2BA62       endp
+FinishPlacingHeldItem endp
 
 ; ---------------------------------------------------------------------------
                 align 2
