@@ -5596,6 +5596,29 @@ encoding which stat by record offset.
 
 639 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DebugTeleportToCoordinates, DebugToggleViewportCellHidden
+
+Named two more members of the debug-hotkey family reachable only
+from unresolved raw addresses early in the binary (joining
+`EnforceDemoBoundary`, `DrawDebugPositionOverlay`,
+`DebugSetFloorTileByNumber`, `DebugSetOverlayTileByNumber`):
+
+`sub_26D54` -> `DebugTeleportToCoordinates` prompts for a 5-digit X
+value (range-checked against `word_32A00`/`word_32A02`), then a
+5-digit Y value (`word_32A08`/`word_32A0A`), then sets `word_36CF7`/
+`word_36CF9` (the confirmed party world X/Y position) directly to the
+entered values — a "type in X,Y and teleport there" cheat.
+
+`sub_26FC3` -> `DebugToggleViewportCellHidden` prompts for an index,
+then toggles bit `0x1` of the `[+6]` flag word at
+`0x6D60 + index*8` — the confirmed dungeon-viewport scratch cell
+buffer's "hidden" flag (documented in `file-formats.md`, rebuilt each
+render pass by `BuildDungeonViewportCells`), looping to prompt for
+another index until cancelled. A rendering debug tool letting the
+developer manually flip a specific visible cell's hidden state.
+
+641 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

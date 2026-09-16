@@ -7327,7 +7327,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X26D22);
 	op_hex		(x,	1);
+	set_cmt	(0X26D54,	"Debug cheat: prompts for X (range-checked against word_32A00/word_32A02) then Y (word_32A08/word_32A0A) via ReadTypedInteger, then sets word_36CF7/word_36CF9 (party world X/Y) directly -- teleport by typed coordinates. Called from an unresolved raw address, part of the debug hotkey family (EnforceDemoBoundary, DrawDebugPositionOverlay, DebugSetFloorTileByNumber).",	0);
 	create_insn	(0X26D54);
+	set_name	(0X26D54,	"DebugTeleportToCoordinates");
 	set_cmt	(0X26E11,	"Debug cheat: prompts for a 4-digit number via ReadTypedInteger, range-checks against _val41, writes it into the current map cell's floor (es:[bx]) field, persists to WORLD.DAT, updates the minimap cache, and redraws. Called from an unresolved raw address, plausibly a debug hotkey table. Byte-for-byte duplicate pair with its floor/overlay sibling.",	0);
 	create_insn	(0X26E11);
 	set_name	(0X26E11,	"DebugSetFloorTileByNumber");
@@ -7336,7 +7338,9 @@ static Bytes_3(void) {
 	create_insn	(0X26EE8);
 	set_name	(0X26EE8,	"DebugSetOverlayTileByNumber");
 	create_insn	(0X26F24);
+	set_cmt	(0X26FC3,	"Debug cheat: prompts for an index via ReadTypedInteger (written into word_3292C), toggles bit 0x1 of the [+6] flag word at 0x6D60+index*8 -- the confirmed dungeon-viewport scratch cell buffer's 'hidden' flag (file-formats.md, BuildDungeonViewportCells). Loops until cancelled. Called from an unresolved raw address, part of the debug hotkey family.",	0);
 	create_insn	(0X26FC3);
+	set_name	(0X26FC3,	"DebugToggleViewportCellHidden");
 	create_insn	(x=0X2700F);
 	op_hex		(x,	1);
 	create_insn	(x=0X27016);
@@ -9107,6 +9111,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2A4B0,	"Looks up al's high nibble (hue group) in a 16-entry stack table ([bp-0x4A]); no match leaves al unchanged; a match with low byte 0x0F forces al=0xFF (hue-group-wide transparency); otherwise replaces just the hue-group nibble, keeping the shade nibble -- a per-hue-group color remap/mask, plausibly for status-effect tinting. Called from DrawPicture.",	0);
 	create_insn	(0X2A4B0);
 	set_name	(0X2A4B0,	"RemapOrMaskColorByHueTable");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A4D7);
 	create_insn	(0X2A4E4);
 	create_insn	(0X2A4EA);
@@ -9127,15 +9140,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A56E);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2A570);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A572);
@@ -11657,6 +11661,15 @@ static Bytes_4(void) {
 	set_name	(0X368B1,	"aWorldDat");
 	set_cmt	(0X368BB,	"12-byte-stride trap/status-effect definition records, indexed by effect id (PrepareTrapEffectSlots computes id*0xC + this base). Confirmed fields: +2 = g_pictureDir icon offset, +8 = cost-type flags (ApplyEffectCost), +0xA = display-mode flags (ApplyEffectAndDrawIconBar).",	0);
 	set_name	(0X368BB,	"g_trapEffectDefs");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	set_name	(0X36C5F,	"_savegameBuffer");
 	create_word	(0X36C79);
 	create_word	(0X36C7F);
@@ -11704,15 +11717,6 @@ static Bytes_4(void) {
 	set_cmt	(0X36D13,	"Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per-tier cost table at DS:0xCB2), credited by TrySellItemForGold (sells a held item of a matching type), and also touched by ApplyEffectCost's trap/status-effect cost dispatch alongside the two ore counters (0x94B7/0x94BB).",	0);
 	create_word	(0X36D13);
 	set_name	(0X36D13,	"g_partyGold");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_word	(0X36D15);
 	set_cmt	(0X36D31,	"Global boolean flag bitfield (quest/world-state flags), accessed via SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag/GetGlobalFlagBitAndWord. GrantMonsterRewards sets/clears specific flags on monster death via its [+0x14]/[+0x16] signed flag-index fields.",	0);
 	set_name	(0X36D31,	"g_globalFlags");

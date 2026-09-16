@@ -1085,7 +1085,7 @@ loc_10992:                              ; CODE XREF: seg000:0987↑j
 
 loc_109A6:                              ; CODE XREF: seg000:09A1↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_26FC3
+                call    DebugToggleViewportCellHidden
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
                 test    word_328C4, 8000h
@@ -1095,7 +1095,7 @@ loc_109A6:                              ; CODE XREF: seg000:09A1↑j
 
 loc_109BE:                              ; CODE XREF: seg000:09B9↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_26D54
+                call    DebugTeleportToCoordinates
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
                 test    word_328C4, 8000h
@@ -40743,9 +40743,9 @@ seg089          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26D54       proc far                ; CODE XREF: seg000:09C3↑P
-                                        ; sub_26D54+3E↓j ...
-                mov     _font_fgColor, 0Fh
+DebugTeleportToCoordinates proc far     ; CODE XREF: seg000:09C3↑P
+                                        ; DebugTeleportToCoordinates+3E↓j ...
+                mov     _font_fgColor, 0Fh ; Debug cheat: prompts for X (range-checked against word_32A00/word_32A02) then Y (word_32A08/word_32A0A) via ReadTypedInteger, then sets word_36CF7/word_36CF9 (party world X/Y) directly -- teleport by typed coordinates. Called from an unresolved raw address, part of the debug hotkey family (EnforceDemoBoundary, DrawDebugPositionOverlay, DebugSetFloorTileByNumber).
                 mov     _font_bgColor, 0
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 66h ; 'f'
@@ -40758,15 +40758,15 @@ sub_26D54       proc far                ; CODE XREF: seg000:09C3↑P
                 cmp     errorCode, 2
                 jz      short loc_26DF2
                 cmp     errorCode, 0
-                jnz     short near ptr sub_26D54
+                jnz     short near ptr DebugTeleportToCoordinates
                 mov     ax, x
                 cmp     ax, word_32A00
-                jg      short near ptr sub_26D54
+                jg      short near ptr DebugTeleportToCoordinates
                 cmp     ax, word_32A02
-                jl      short near ptr sub_26D54
+                jl      short near ptr DebugTeleportToCoordinates
 
-loc_26DA3:                              ; CODE XREF: sub_26D54+81↓j
-                                        ; sub_26D54+8A↓j ...
+loc_26DA3:                              ; CODE XREF: DebugTeleportToCoordinates+81↓j
+                                        ; DebugTeleportToCoordinates+8A↓j ...
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 6Ch ; 'l'
                 mov     _font_bgTransparent, 0
@@ -40789,8 +40789,8 @@ loc_26DA3:                              ; CODE XREF: sub_26D54+81↓j
                 mov     ax, y
                 mov     word_36CF9, ax
 
-loc_26DF2:                              ; CODE XREF: sub_26D54+37↑j
-                                        ; sub_26D54+7A↑j
+loc_26DF2:                              ; CODE XREF: DebugTeleportToCoordinates+37↑j
+                                        ; DebugTeleportToCoordinates+7A↑j
                 call    sub_209D2
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
@@ -40798,7 +40798,7 @@ loc_26DF2:                              ; CODE XREF: sub_26D54+37↑j
                 call    DrawMinimap
                 call    DrawMouseCursor
                 retf
-sub_26D54       endp
+DebugTeleportToCoordinates endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -40939,9 +40939,9 @@ DebugSetOverlayTileByNumber endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26FC3       proc far                ; CODE XREF: seg000:09AB↑P
-                                        ; sub_26FC3+3E↓j ...
-                mov     _font_fgColor, 0Fh
+DebugToggleViewportCellHidden proc far  ; CODE XREF: seg000:09AB↑P
+                                        ; DebugToggleViewportCellHidden+3E↓j ...
+                mov     _font_fgColor, 0Fh ; Debug cheat: prompts for an index via ReadTypedInteger (written into word_3292C), toggles bit 0x1 of the [+6] flag word at 0x6D60+index*8 -- the confirmed dungeon-viewport scratch cell buffer's 'hidden' flag (file-formats.md, BuildDungeonViewportCells). Loops until cancelled. Called from an unresolved raw address, part of the debug hotkey family.
                 mov     _font_bgColor, 0
                 mov     _textPos_x, 0FAh
                 mov     _textPos_y, 6Ah ; 'j'
@@ -40954,7 +40954,7 @@ sub_26FC3       proc far                ; CODE XREF: seg000:09AB↑P
                 cmp     errorCode, 2
                 jz      short loc_27031
                 cmp     errorCode, 0
-                jnz     short near ptr sub_26FC3
+                jnz     short near ptr DebugToggleViewportCellHidden
                 mov     ax, 8
                 mul     word_3292C
                 add     ax, 6D60h
@@ -40965,24 +40965,24 @@ sub_26FC3       proc far                ; CODE XREF: seg000:09AB↑P
                 jmp     short loc_27020
 ; ---------------------------------------------------------------------------
 
-loc_2701C:                              ; CODE XREF: sub_26FC3+51↑j
+loc_2701C:                              ; CODE XREF: DebugToggleViewportCellHidden+51↑j
                 and     word ptr [bx+6], 0FFFEh
 
-loc_27020:                              ; CODE XREF: sub_26FC3+57↑j
+loc_27020:                              ; CODE XREF: DebugToggleViewportCellHidden+57↑j
                 call    RestoreFullScreenFromEMS
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
-                jmp     short near ptr sub_26FC3
+                jmp     short near ptr DebugToggleViewportCellHidden
 ; ---------------------------------------------------------------------------
 
-loc_27031:                              ; CODE XREF: sub_26FC3+37↑j
+loc_27031:                              ; CODE XREF: DebugToggleViewportCellHidden+37↑j
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
                 retf
-sub_26FC3       endp
+DebugToggleViewportCellHidden endp
 
 seg089          ends
 

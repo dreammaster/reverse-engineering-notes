@@ -2525,16 +2525,19 @@ dead code, rather than reinterpreted.
   just permanently disabled.
 
 - **A family of functions is reachable only from unresolved raw
-  addresses (`seg000:0AD2`/`0AEA`/`0AFA`) very early in the binary,
-  outside any function IDA named.** `EnforceDemoBoundary`,
-  `DrawDebugPositionOverlay`, `DebugSetFloorTileByNumber`, and
-  `DebugSetOverlayTileByNumber` are all called this way. The latter
-  two prompt for a 4-digit number and write it directly into the
-  current dungeon cell's floor/overlay field, bypassing the map
-  editor's palette-picker UI entirely -- consistent with this being a
-  small developer-only hotkey table left wired into the shipped
-  binary (in the same spirit as `RunMapEditorScreen` itself, already
-  documented above as "a debug/level-editor screen left reachable in
-  the shipped binary, not a passive legend"). The dispatch mechanism
-  that actually reaches these raw addresses (keyboard scan-code table,
-  low-memory jump table, or something else) has not been located.
+  addresses (`seg000:09AB`/`09C3`/`0AD2`/`0AEA`/`0AFA`) very early in
+  the binary, outside any function IDA named.** `EnforceDemoBoundary`,
+  `DrawDebugPositionOverlay`, `DebugSetFloorTileByNumber`,
+  `DebugSetOverlayTileByNumber`, `DebugTeleportToCoordinates`, and
+  `DebugToggleViewportCellHidden` are all called this way. Between
+  them: typing a floor/overlay tile number directly into the current
+  cell (bypassing the map editor's palette-picker UI), typing X/Y
+  coordinates to teleport the party instantly, and toggling the
+  "hidden" flag of an arbitrary dungeon-viewport scratch cell by
+  index — consistent with this being a small developer-only hotkey
+  table left wired into the shipped binary (in the same spirit as
+  `RunMapEditorScreen` itself, already documented above as "a
+  debug/level-editor screen left reachable in the shipped binary, not
+  a passive legend"). The dispatch mechanism that actually reaches
+  these raw addresses (keyboard scan-code table, low-memory jump
+  table, or something else) has not been located.
