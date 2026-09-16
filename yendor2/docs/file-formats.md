@@ -355,6 +355,21 @@ similarly-shaped `SyncContainerContents`, does no descriptor setup of
 its own and assumes the caller already configured the container-write
 descriptor.
 
+**A shared scratch buffer at `0xAFA8`** is reused across many unrelated
+subsystems (item records, conversation-topic text — see `WORLD.DAT`
+notes below — and more) as the landing spot for whatever a resource-
+stub helper (`sub_27DE5`/`sub_27DC6`/`sub_27E3A`/etc.) is currently
+configured to read into or write from. `SyncItemChargeFieldToCurgame`
+(was `sub_2778D`, called 3 times from unnamed item-use dispatcher
+`sub_274B4`) reads a `CURGAME` record into it (`errorCode=0xA`),
+applies the same charge/transfer/swap-category logic `sub_274B4`
+applies to its own in-memory item fields to a chosen field
+(`[0xAFA8+dx]`), then writes it back — except one category/`dx`
+combination instead adjusts generic scratch variable `word_38808` and
+skips the write. Reinforces that `0xAFA8` is a true scratch landing
+zone, not itself a stable record layout — any field offsets within it
+are only meaningful for the specific record currently loaded there.
+
 **Dropping a held item**: `TryDropHeldItem` (checks `IsItemDroppable`,
 warns and bails if not; shows a confirm prompt; calls
 `PlaceItemOnGround` on confirmation, else restores the held item)

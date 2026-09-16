@@ -7294,7 +7294,9 @@ static Bytes_2(void) {
 	create_insn	(0X2776F);
 	set_name	(0X2776F,	"WriteContainerSubBlock");
 	set_cmt	(0X27774,	"this",	0);
+	set_cmt	(0X2778D,	"Reads (FileEntry bx=8FFB/CURGAME, errorCode=0xA) the shared 0xAFA8 scratch record the caller just configured, applies the same category-dependent charge/transfer/swap logic sub_274B4 applies to its in-memory copy to the field at [0xAFA8+dx], then writes it back -- except for the 'transfer' category with dx==0, where it instead subtracts the staged amount (word_3293E) from scratch var word_38808 and skips the write. Called 3x from sub_274B4 with different (ax,dx) field selectors.",	0);
 	create_insn	(0X2778D);
+	set_name	(0X2778D,	"SyncItemChargeFieldToCurgame");
 	create_insn	(x=0X277AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X277B5);
@@ -7413,6 +7415,15 @@ static Bytes_2(void) {
 	set_cmt	(0X27C5A,	"Sets up a WORLD.DAT-style read context for a fixed data block (table 0xCE23, size 0x9BD) -- preparing to read the sound driver's music/instrument data. Called from InitMusicDriver.",	0);
 	create_insn	(0X27C5A);
 	set_name	(0X27C5A,	"PrepareMusicDataRead");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27C78);
 	create_insn	(0X27C96);
 	set_cmt	(0X27CB0,	"Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.",	0);
@@ -7425,15 +7436,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X27CFE);
 	create_insn	(0X27D20);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X27D2B);
 	op_hex		(x,	1);
 	create_insn	(x=0X27D2E);
@@ -10328,6 +10330,15 @@ static Bytes_3(void) {
 	create_word	(0X32A08);
 	create_word	(0X32A0A);
 	create_word	(0X32A0C);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32A0E);
 	create_word	(0X32A10);
 	set_name	(0X32A10,	"_blockSize3");
@@ -10350,15 +10361,6 @@ static Bytes_3(void) {
 	create_word	(0X32BEA);
 	create_word	(0X32BF4);
 	create_word	(0X32BF6);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32BF8);
 	create_word	(0X32BFA);
 	create_word	(0X32BFC);

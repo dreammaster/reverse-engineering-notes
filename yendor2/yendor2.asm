@@ -41656,13 +41656,13 @@ loc_275EA:                              ; CODE XREF: sub_274B4+BB↑j
                 mov     word ptr [bx+6], 22h ; '"'
                 mov     dx, word_3297C
                 mov     ax, word_3296C
-                call    sub_2778D
+                call    SyncItemChargeFieldToCurgame
                 mov     dx, 0
                 mov     ax, word_32972
-                call    sub_2778D
+                call    SyncItemChargeFieldToCurgame
                 mov     dx, 0
                 mov     ax, word_3296E
-                call    sub_2778D
+                call    SyncItemChargeFieldToCurgame
 
 loc_27616:                              ; CODE XREF: sub_274B4+F1↑j
                 test    word_328C8, 8000h
@@ -41841,9 +41841,9 @@ WriteContainerSubBlock endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2778D       proc near               ; CODE XREF: sub_274B4+14D↑p
+SyncItemChargeFieldToCurgame proc near  ; CODE XREF: sub_274B4+14D↑p
                                         ; sub_274B4+156↑p ...
-                mov     word_36863, ax
+                mov     word_36863, ax  ; Reads (FileEntry bx=8FFB/CURGAME, errorCode=0xA) the shared 0xAFA8 scratch record the caller just configured, applies the same category-dependent charge/transfer/swap logic sub_274B4 applies to its in-memory copy to the field at [0xAFA8+dx], then writes it back -- except for the 'transfer' category with dx==0, where it instead subtracts the staged amount (word_3293E) from scratch var word_38808 and skips the write. Called 3x from sub_274B4 with different (ax,dx) field selectors.
                 mov     bx, 8FFBh
                 mov     errorCode, 0Ah
                 call    FileEntry_Read
@@ -41869,39 +41869,39 @@ sub_2778D       proc near               ; CODE XREF: sub_274B4+14D↑p
                 jmp     short loc_277F7
 ; ---------------------------------------------------------------------------
 
-loc_277DF:                              ; CODE XREF: sub_2778D+2E↑j
-                                        ; sub_2778D+43↑j ...
+loc_277DF:                              ; CODE XREF: SyncItemChargeFieldToCurgame+2E↑j
+                                        ; SyncItemChargeFieldToCurgame+43↑j ...
                 mov     word ptr [bx], 0
                 mov     word ptr [bx+2], 0
 
-loc_277E8:                              ; CODE XREF: sub_2778D+19↑j
+loc_277E8:                              ; CODE XREF: SyncItemChargeFieldToCurgame+19↑j
                 test    word_328C8, 8000h
                 jnz     short locret_2780A
                 mov     ax, word_3293E
                 sub     word_38808, ax
 
-loc_277F7:                              ; CODE XREF: sub_2778D+50↑j
-                                        ; sub_2778D+88↓j ...
+loc_277F7:                              ; CODE XREF: SyncItemChargeFieldToCurgame+50↑j
+                                        ; SyncItemChargeFieldToCurgame+88↓j ...
                 mov     bx, 8FFBh
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
 
-locret_2780A:                           ; CODE XREF: sub_2778D+61↑j
+locret_2780A:                           ; CODE XREF: SyncItemChargeFieldToCurgame+61↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2780B:                              ; CODE XREF: sub_2778D+26↑j
+loc_2780B:                              ; CODE XREF: SyncItemChargeFieldToCurgame+26↑j
                 mov     ax, [bx+2]
                 mov     [bx], ax
                 mov     word ptr [bx+2], 0
                 jmp     short loc_277F7
 ; ---------------------------------------------------------------------------
 
-loc_27817:                              ; CODE XREF: sub_2778D+36↑j
+loc_27817:                              ; CODE XREF: SyncItemChargeFieldToCurgame+36↑j
                 call    SwapItemMultiStatEffect
                 jmp     short loc_277F7
-sub_2778D       endp
+SyncItemChargeFieldToCurgame endp
 
 seg092          ends
 

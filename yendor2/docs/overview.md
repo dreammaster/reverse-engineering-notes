@@ -4131,6 +4131,31 @@ the caller `sub_16881` itself remains untraced and unnamed.
 
 519 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SyncItemChargeFieldToCurgame
+
+Named `sub_2778D` -> `SyncItemChargeFieldToCurgame`, called 3 times
+from the still-unnamed `sub_274B4` (the large item-use/consumption
+dispatcher already known to host `SwapItemMultiStatEffect` and
+`SyncAlternateBagsToSave`). Before each call, the caller configures a
+resource-stub helper pointing a heavily-reused shared scratch buffer
+(`0xAFA8` — also used elsewhere for conversation-topic text) at
+`CURGAME` (`FileEntry` `bx=0x8FFB`), then this function reads that
+record (`errorCode=0xA`), applies the *exact same* category-dependent
+charge/transfer/swap logic the caller applies to its own in-memory
+copy (`word_328C8` bits `0x8000`/`0x4000`/`0x2000`: transfer a
+secondary count into primary, decrement a shared charge counter with
+depletion handling, or call `SwapItemMultiStatEffect`) to the field at
+`[0xAFA8+dx]`, then writes the record back — except for the "transfer"
+category with `dx==0`, where it instead subtracts the staged amount
+(`word_3293E`) from generic scratch variable `word_38808` (previously
+documented as reused for unrelated purposes elsewhere, not a specific
+resource pool) and skips the write. In short: a CURGAME-persisting
+mirror of the caller's in-memory item-charge logic. The exact identity
+of the 3 fields it's called with (`word_3296C`/`word_32972`/
+`word_3296E`) isn't confirmed, and `sub_274B4` itself remains untraced.
+
+520 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
