@@ -6041,6 +6041,21 @@ as an item-use dispatcher — not yet independently confirmed.
 
 689 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: StepPaletteFadeRange
+
+Named `sub_2589A` -> `StepPaletteFadeRange`, called from dozens of
+sites throughout the game (66 refs) — a general, mode-selectable
+(`ax` 0-5) palette-fade stepper, distinct from and more parameterized
+than the existing `FadePaletteStep`/`SetPaletteToWhite`. Modes 0/3
+fade a palette range down toward black one increment per call; modes
+2/4 fade a range up toward the master palette, same pattern; modes 1
+and 5 weren't fully traced but appear to be related variants in the
+same state machine. Called once per animation frame to smoothly fade
+a palette range in or out over many frames — used repeatedly by
+`PlayStudioCreditsIntro` among many other callers.
+
+690 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

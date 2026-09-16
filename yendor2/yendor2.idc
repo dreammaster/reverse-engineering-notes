@@ -6966,7 +6966,9 @@ static Bytes_3(void) {
 	create_insn	(0X2587E);
 	create_insn	(x=0X25891);
 	op_hex		(x,	1);
+	set_cmt	(0X2589A,	"General mode-selectable (ax=0-5) palette-fade stepper, called once per frame: modes 0/3 fade a palette range down toward black, modes 2/4 fade up toward the master palette (0x442A), one increment per call via SetPaletteRange. Modes 1/5 not fully traced. Distinct from the simpler FadePaletteStep/SetPaletteToWhite. Called from dozens of sites including PlayStudioCreditsIntro.",	0);
 	create_insn	(0X2589A);
+	set_name	(0X2589A,	"StepPaletteFadeRange");
 	create_insn	(0X258CC);
 	create_insn	(0X258D3);
 	create_insn	(0X258DB);
@@ -8232,6 +8234,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2909C,	"Transport/mount item-use preview (called from ShowItemUsagePreview): selects an entry from the 4-slot transport table (0x77C6, stride 0x1A -- PEGASUS/GIANT EAGLE/MAGIC DRAGON, same table as ShowClueBookTransportDetail) via es:[si+0x12] flag bits, draws 'NAME:'/'COST:' plus a flight-time-restriction line ('CAN FLY ANYTIME DAY OR NIGHT' or a time-window variant).",	0);
 	create_insn	(0X2909C);
 	set_name	(0X2909C,	"ShowTransportUsagePreview");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X290B4);
 	op_hex		(x,	1);
 	set_cmt	(0X290CF,	"msg",	0);
@@ -8252,15 +8263,6 @@ static Bytes_3(void) {
 	set_cmt	(0X291A3,	"Per-row worker for RevealMapRegion: reads a WORLD.DAT block and a CURGAME block (FileEntry 0x9043/0x8FFB), walks the bit-packed explored-cell bitmap byte-by-byte, and for each not-yet-explored cell that passes a further gate (sub_28C94/sub_28CB1, not traced -- possibly related to the unconfirmed 'transport-check' table) calls sub_29259 (not traced) to reveal it.",	0);
 	create_insn	(0X291A3);
 	set_name	(0X291A3,	"RevealMapRegionRow");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X291A6,	"this",	0);
 	create_insn	(x=0X291C1);
 	op_hex		(x,	1);
@@ -10970,6 +10972,15 @@ static Bytes_4(void) {
 	set_name	(0X35459,	"aRequires");
 	create_strlit	(0X35462,	0XC);
 	set_name	(0X35462,	"aSpecialKey");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3546E,	0XA);
 	set_name	(0X3546E,	"aBrassKey");
 	create_strlit	(0X35478,	0XB);
@@ -11004,15 +11015,6 @@ static Bytes_4(void) {
 	set_name	(0X35502,	"aLeave");
 	create_strlit	(0X35508,	0X6);
 	set_name	(0X35508,	"aTrap");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3550E,	0X9);
 	set_name	(0X3550E,	"aDefeated");
 	create_strlit	(0X35517,	0XD);

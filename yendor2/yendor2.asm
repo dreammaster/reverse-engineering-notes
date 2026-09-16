@@ -331,7 +331,7 @@ loc_102B5:                              ; CODE XREF: start+2AB↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 call    FreeVideoBuffer
                 call    ShutdownAudioDrivers
                 call    ReleaseEmsHandles
@@ -2704,7 +2704,7 @@ sub_1192D       proc near               ; CODE XREF: sub_119CA:loc_119CE↓p
                 mov     ax, 3
                 mov     bx, 1
                 mov     cx, 10h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 pop     dx
                 pop     cx
                 retn
@@ -2720,7 +2720,7 @@ sub_11940       proc near               ; CODE XREF: sub_119D5:loc_119D9↓p
                 mov     ax, 4
                 mov     bx, 1
                 mov     cx, 10h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 pop     dx
                 pop     cx
                 retn
@@ -2901,7 +2901,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 mov     cx, 71h ; 'q'
                 mov     dx, 0
                 mov     ax, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 0FFFFh
                 mov     bx, 0C9E3h
                 mov     cx, 0Ch
@@ -2932,7 +2932,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0FFh
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 28h ; '('   ; ticks
                 call    wait
                 mov     ax, 0FFFFh
@@ -3031,21 +3031,21 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 mov     bx, 3Fh ; '?'
                 mov     cx, 40h ; '@'
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 1Eh         ; ticks
                 call    wait
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 30h ; '0'
                 mov     dx, 40h ; '@'
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 1Eh         ; ticks
                 call    wait
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 90h
                 mov     dx, 6Fh ; 'o'
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 64h ; 'd'   ; ticks
                 call    wait
                 test    g_driverStateFlags, 2
@@ -8327,14 +8327,14 @@ loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0AFh
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 1Eh         ; ticks
                 call    wait
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0Fh
                 mov     dx, 0B0h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 23h ; '#'   ; ticks
                 call    wait
                 call    sub_25862
@@ -8748,7 +8748,7 @@ loc_1553E:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     bx, 1
                 mov     cx, 30h ; '0'
                 mov     dx, 50h ; 'P'
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 test    word_328C4, 400h
                 jz      short loc_1555B
                 call    DrawCharacterCreationAnimationFrame
@@ -8779,7 +8779,7 @@ loc_15573:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     bx, 1
                 mov     cx, 30h ; '0'
                 mov     dx, 50h ; 'P'
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 test    word_328C4, 400h
                 jz      short loc_15596
                 call    DrawCharacterCreationAnimationFrame
@@ -8824,7 +8824,7 @@ loc_155DA:                              ; CODE XREF: sub_1559A+3D↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 30h ; '0'
                 mov     dx, 50h ; 'P'
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     cx, 80h
 
 loc_155EE:                              ; CODE XREF: sub_1559A+60↓j
@@ -8846,7 +8846,7 @@ loc_15602:                              ; CODE XREF: sub_1559A+65↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 6
                 mov     dx, 93h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 push    _videoSegment
                 push    _font_bgTransparent
                 mov     _font_bgTransparent, 1
@@ -8908,7 +8908,7 @@ loc_156A6:                              ; CODE XREF: sub_1559A+12A↓j
                 mov     bx, 1
                 mov     cx, 0FFh
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 test    word_328C4, 400h
                 jz      short loc_156C3
                 call    DrawCharacterCreationAnimationFrame
@@ -9039,7 +9039,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0FFh
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15859
                 retn
@@ -9122,17 +9122,17 @@ loc_15927:                              ; CODE XREF: sub_1559A+38A↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 60h ; '`'
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 3
                 mov     bx, 3Fh ; '?'
                 mov     cx, 40h ; '@'
                 mov     dx, 80h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 3
                 mov     bx, 3Fh ; '?'
                 mov     cx, 30h ; '0'
                 mov     dx, 0D0h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, _videoBufferSeg
                 mov     es, ax
                 mov     di, 8C0h
@@ -9221,7 +9221,7 @@ loc_15AB1:                              ; CODE XREF: sub_1559A+514↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 20h ; ' '
                 mov     dx, 0A0h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     dx, 30h ; '0'
                 call    sub_16164
                 and     word_328C8, 0F7FFh
@@ -9305,7 +9305,7 @@ loc_15B9D:                              ; CODE XREF: sub_1559A+600↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0FFh
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     cx, 0Ah
                 call    sub_1616F
                 call    PollForEscapeKeyOnlyAlt
@@ -9319,12 +9319,12 @@ loc_15BBA:                              ; CODE XREF: sub_1559A+61D↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0C0h
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 3
                 mov     bx, 3Fh ; '?'
                 mov     cx, 30h ; '0'
                 mov     dx, 0D0h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -9365,12 +9365,12 @@ loc_15C3D:                              ; CODE XREF: sub_1559A+6A0↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0C0h
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 2
                 mov     bx, 3Fh ; '?'
                 mov     cx, 30h ; '0'
                 mov     dx, 0D0h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15C81
                 retn
@@ -9414,12 +9414,12 @@ loc_15CB7:                              ; CODE XREF: sub_1559A+70D↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0C0h
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 mov     ax, 3
                 mov     bx, 3Fh ; '?'
                 mov     cx, 30h ; '0'
                 mov     dx, 0D0h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15CF3
                 retn
@@ -9500,7 +9500,7 @@ loc_15D97:                              ; CODE XREF: sub_1559A+7FA↑j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
 
 loc_15DD7:                              ; CODE XREF: sub_1559A+843↓j
                 test    word_328C4, 400h
@@ -9704,7 +9704,7 @@ sub_160B0       proc near               ; CODE XREF: PlayCharacterCreationIntroA
                 mov     ax, 3
                 mov     bx, 1
                 mov     cx, 10h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 pop     dx
                 pop     cx
                 retn
@@ -9721,7 +9721,7 @@ sub_160C3       proc near               ; CODE XREF: PlayCharacterCreationIntroA
                 mov     ax, 4
                 mov     bx, 1
                 mov     cx, 10h
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 pop     dx
                 pop     cx
                 retn
@@ -26119,7 +26119,7 @@ loc_1EAD0:                              ; CODE XREF: RunGameDialog:loc_1EC0B↓j
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0E0h
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 or      word_328C4, 2
 
 loc_1EB27:                              ; CODE XREF: RunGameDialog+99↑j
@@ -38132,7 +38132,7 @@ sub_25862       proc far                ; CODE XREF: ShowClueBook+3E↑P
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 pop     dx
                 pop     cx
                 retf
@@ -38150,7 +38150,7 @@ sub_2587E       proc far                ; CODE XREF: ShowClueBook+70↑P
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
                 mov     dx, 0
-                call    sub_2589A
+                call    StepPaletteFadeRange
                 or      word_3295A, 1000h
                 pop     dx
                 pop     cx
@@ -38161,9 +38161,9 @@ sub_2587E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2589A       proc far                ; CODE XREF: start+2CB↑P
+StepPaletteFadeRange proc far           ; CODE XREF: start+2CB↑P
                                         ; sub_1192D+B↑P ...
-                push    si
+                push    si              ; General mode-selectable (ax=0-5) palette-fade stepper, called once per frame: modes 0/3 fade a palette range down toward black, modes 2/4 fade up toward the master palette (0x442A), one increment per call via SetPaletteRange. Modes 1/5 not fully traced. Distinct from the simpler FadePaletteStep/SetPaletteToWhite. Called from dozens of sites including PlayStudioCreditsIntro.
                 push    di
                 push    es
                 mov     word_31984, bx
@@ -38181,65 +38181,65 @@ sub_2589A       proc far                ; CODE XREF: start+2CB↑P
                 jmp     short loc_258F6
 ; ---------------------------------------------------------------------------
 
-loc_258CC:                              ; CODE XREF: sub_2589A+2E↑j
+loc_258CC:                              ; CODE XREF: StepPaletteFadeRange+2E↑j
                 cmp     ax, 1
                 jnz     short loc_258D3
                 jmp     short loc_25939
 ; ---------------------------------------------------------------------------
 
-loc_258D3:                              ; CODE XREF: sub_2589A+35↑j
+loc_258D3:                              ; CODE XREF: StepPaletteFadeRange+35↑j
                 cmp     ax, 2
                 jnz     short loc_258DB
                 jmp     loc_259AF
 ; ---------------------------------------------------------------------------
 
-loc_258DB:                              ; CODE XREF: sub_2589A+3C↑j
+loc_258DB:                              ; CODE XREF: StepPaletteFadeRange+3C↑j
                 cmp     ax, 3
                 jnz     short loc_258E2
                 jmp     short loc_258FC
 ; ---------------------------------------------------------------------------
 
-loc_258E2:                              ; CODE XREF: sub_2589A+44↑j
+loc_258E2:                              ; CODE XREF: StepPaletteFadeRange+44↑j
                 cmp     ax, 4
                 jnz     short loc_258EA
                 jmp     loc_259B5
 ; ---------------------------------------------------------------------------
 
-loc_258EA:                              ; CODE XREF: sub_2589A+4B↑j
+loc_258EA:                              ; CODE XREF: StepPaletteFadeRange+4B↑j
                 cmp     ax, 5
                 jnz     short loc_258F2
                 jmp     loc_259FD
 ; ---------------------------------------------------------------------------
 
-loc_258F2:                              ; CODE XREF: sub_2589A+53↑j
-                                        ; sub_2589A+85↓j ...
+loc_258F2:                              ; CODE XREF: StepPaletteFadeRange+53↑j
+                                        ; StepPaletteFadeRange+85↓j ...
                 pop     es
                 pop     di
                 pop     si
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_258F6:                              ; CODE XREF: sub_2589A+30↑j
+loc_258F6:                              ; CODE XREF: StepPaletteFadeRange+30↑j
                 mov     dx, 412Ah
                 call    GetPalette
 
-loc_258FC:                              ; CODE XREF: sub_2589A+46↑j
+loc_258FC:                              ; CODE XREF: StepPaletteFadeRange+46↑j
                 mov     cx, word_31984
 
-loc_25900:                              ; CODE XREF: sub_2589A+9B↓j
+loc_25900:                              ; CODE XREF: StepPaletteFadeRange+9B↓j
                 push    cx
                 mov     di, 412Ah
                 add     di, word_322BA
                 mov     cx, word_31976
                 xor     al, al
 
-loc_2590E:                              ; CODE XREF: sub_2589A+7E↓j
+loc_2590E:                              ; CODE XREF: StepPaletteFadeRange+7E↓j
                 cmp     byte ptr [di], 0
                 jle     short loc_25917
                 dec     byte ptr [di]
                 mov     al, 1
 
-loc_25917:                              ; CODE XREF: sub_2589A+77↑j
+loc_25917:                              ; CODE XREF: StepPaletteFadeRange+77↑j
                 inc     di
                 loop    loc_2590E
                 cmp     al, 0
@@ -38248,7 +38248,7 @@ loc_25917:                              ; CODE XREF: sub_2589A+77↑j
                 jmp     short loc_258F2
 ; ---------------------------------------------------------------------------
 
-loc_25921:                              ; CODE XREF: sub_2589A+82↑j
+loc_25921:                              ; CODE XREF: StepPaletteFadeRange+82↑j
                 mov     bx, word_2E52E
                 mov     cx, word_31982
                 mov     si, 412Ah
@@ -38260,14 +38260,14 @@ loc_25921:                              ; CODE XREF: sub_2589A+82↑j
                 jmp     short loc_258F2
 ; ---------------------------------------------------------------------------
 
-loc_25939:                              ; CODE XREF: sub_2589A+37↑j
+loc_25939:                              ; CODE XREF: StepPaletteFadeRange+37↑j
                 mov     di, 4D5Ch
                 add     di, word_322BA
                 mov     si, 442Ah
                 add     si, word_322BA
                 mov     cx, word_31976
 
-loc_2594B:                              ; CODE XREF: sub_2589A+B9↓j
+loc_2594B:                              ; CODE XREF: StepPaletteFadeRange+B9↓j
                 mov     al, [si]
                 sub     al, 3Fh ; '?'
                 mov     [di], al
@@ -38276,7 +38276,7 @@ loc_2594B:                              ; CODE XREF: sub_2589A+B9↓j
                 loop    loc_2594B
                 mov     cx, word_31984
 
-loc_25959:                              ; CODE XREF: sub_2589A+106↓j
+loc_25959:                              ; CODE XREF: StepPaletteFadeRange+106↓j
                 push    cx
                 mov     di, 4D5Ch
                 add     di, word_322BA
@@ -38286,22 +38286,22 @@ loc_25959:                              ; CODE XREF: sub_2589A+106↓j
                 add     bx, word_322BA
                 mov     cx, word_31976
 
-loc_25973:                              ; CODE XREF: sub_2589A+F0↓j
+loc_25973:                              ; CODE XREF: StepPaletteFadeRange+F0↓j
                 mov     al, [di]
                 test    al, 80h
                 jnz     short loc_2597D
                 cmp     al, [si]
                 jz      short loc_25987
 
-loc_2597D:                              ; CODE XREF: sub_2589A+DD↑j
+loc_2597D:                              ; CODE XREF: StepPaletteFadeRange+DD↑j
                 inc     al
                 mov     [di], al
                 test    al, 80h
                 jnz     short loc_25987
                 mov     [bx], al
 
-loc_25987:                              ; CODE XREF: sub_2589A+E1↑j
-                                        ; sub_2589A+E9↑j
+loc_25987:                              ; CODE XREF: StepPaletteFadeRange+E1↑j
+                                        ; StepPaletteFadeRange+E9↑j
                 inc     bx
                 inc     di
                 inc     si
@@ -38321,14 +38321,14 @@ loc_25987:                              ; CODE XREF: sub_2589A+E1↑j
                 jmp     loc_258F2
 ; ---------------------------------------------------------------------------
 
-loc_259AF:                              ; CODE XREF: sub_2589A+3E↑j
+loc_259AF:                              ; CODE XREF: StepPaletteFadeRange+3E↑j
                 mov     dx, 412Ah
                 call    GetPalette
 
-loc_259B5:                              ; CODE XREF: sub_2589A+4D↑j
+loc_259B5:                              ; CODE XREF: StepPaletteFadeRange+4D↑j
                 mov     cx, word_31984
 
-loc_259B9:                              ; CODE XREF: sub_2589A+15E↓j
+loc_259B9:                              ; CODE XREF: StepPaletteFadeRange+15E↓j
                 push    cx
                 mov     si, 442Ah
                 add     si, word_322BA
@@ -38337,14 +38337,14 @@ loc_259B9:                              ; CODE XREF: sub_2589A+15E↓j
                 mov     cx, word_31976
                 xor     al, al
 
-loc_259CE:                              ; CODE XREF: sub_2589A+140↓j
+loc_259CE:                              ; CODE XREF: StepPaletteFadeRange+140↓j
                 mov     bh, [di]
                 cmp     bh, [si]
                 jge     short loc_259D8
                 inc     byte ptr [di]
                 mov     al, 1
 
-loc_259D8:                              ; CODE XREF: sub_2589A+138↑j
+loc_259D8:                              ; CODE XREF: StepPaletteFadeRange+138↑j
                 inc     di
                 inc     si
                 loop    loc_259CE
@@ -38354,7 +38354,7 @@ loc_259D8:                              ; CODE XREF: sub_2589A+138↑j
                 jmp     loc_258F2
 ; ---------------------------------------------------------------------------
 
-loc_259E4:                              ; CODE XREF: sub_2589A+144↑j
+loc_259E4:                              ; CODE XREF: StepPaletteFadeRange+144↑j
                 mov     bx, word_2E52E
                 mov     cx, word_31982
                 mov     si, 412Ah
@@ -38366,10 +38366,10 @@ loc_259E4:                              ; CODE XREF: sub_2589A+144↑j
                 jmp     loc_258F2
 ; ---------------------------------------------------------------------------
 
-loc_259FD:                              ; CODE XREF: sub_2589A+55↑j
+loc_259FD:                              ; CODE XREF: StepPaletteFadeRange+55↑j
                 mov     cx, word_31984
 
-loc_25A01:                              ; CODE XREF: sub_2589A+19C↓j
+loc_25A01:                              ; CODE XREF: StepPaletteFadeRange+19C↓j
                 push    cx
                 mov     di, 4D5Ch
                 add     di, word_322BA
@@ -38377,14 +38377,14 @@ loc_25A01:                              ; CODE XREF: sub_2589A+19C↓j
                 add     si, word_322BA
                 mov     cx, word_31976
 
-loc_25A14:                              ; CODE XREF: sub_2589A+186↓j
+loc_25A14:                              ; CODE XREF: StepPaletteFadeRange+186↓j
                 mov     al, [di]
                 cmp     al, [si]
                 jz      short loc_25A1E
                 dec     al
                 mov     [di], al
 
-loc_25A1E:                              ; CODE XREF: sub_2589A+17E↑j
+loc_25A1E:                              ; CODE XREF: StepPaletteFadeRange+17E↑j
                 inc     di
                 inc     si
                 loop    loc_25A14
@@ -38397,7 +38397,7 @@ loc_25A1E:                              ; CODE XREF: sub_2589A+17E↑j
                 pop     cx
                 loop    loc_25A01
                 jmp     loc_258F2
-sub_2589A       endp
+StepPaletteFadeRange endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -38439,8 +38439,8 @@ SetPaletteRange endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GetPalette      proc near               ; CODE XREF: sub_2589A+5F↑p
-                                        ; sub_2589A+118↑p
+GetPalette      proc near               ; CODE XREF: StepPaletteFadeRange+5F↑p
+                                        ; StepPaletteFadeRange+118↑p
                 xor     bx, bx          ; BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).
                 mov     cx, 100h
                 mov     ax, 1017h
