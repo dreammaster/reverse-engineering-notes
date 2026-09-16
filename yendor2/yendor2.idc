@@ -4234,7 +4234,7 @@ static Bytes_0(void) {
 	create_insn	(0X1D258);
 	create_insn	(0X1D273);
 	create_insn	(0X1D286);
-	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: sub_25862+sub_2BD1A, redraw. E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
+	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
 	create_insn	(0X1D2A6);
 	set_name	(0X1D2A6,	"RunTitleScreen");
 	create_insn	(x=0X1D2BB);
@@ -8553,7 +8553,9 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2BD0D);
 	op_seg		(x,	1);
+	set_cmt	(0X2BD1A,	"Moderate confidence: RunTitleScreen's 'A' option. Draws g_pictureDir entry 4 full-screen, then places up to 9 small markers (entry 9) at per-location positions from a table, skipping locations not flagged discovered (+0x16). Shape (map background + flagged location pins) fits the docs' ~7 named towns from the string survey. Not confirmed which letter/word this is short for.",	0);
 	create_insn	(0X2BD1A);
+	set_name	(0X2BD1A,	"ShowWorldMap");
 	create_insn	(0X2BD63);
 	create_insn	(x=0X2BD80);
 	op_hex		(x,	1);
@@ -10442,6 +10444,15 @@ static Bytes_1(void) {
 	set_name	(0X365F6,	"aOreCreated");
 	create_strlit	(0X36603,	0XC);
 	set_name	(0X36603,	"aYouCanNot_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3660F,	0X9);
 	set_name	(0X3660F,	"aUseThat");
 	create_strlit	(0X36618,	0X6);
@@ -10464,15 +10475,6 @@ static Bytes_1(void) {
 	set_name	(0X36665,	"aThatIsAn");
 	create_strlit	(0X36670,	0XA);
 	set_name	(0X36670,	"aIllusion");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3667A,	0XC);
 	set_name	(0X3667A,	"aPatienceIs");
 	create_strlit	(0X36686,	0XA);

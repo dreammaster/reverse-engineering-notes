@@ -697,6 +697,16 @@ party's characters" and updating `RunTitleScreen`'s comment accordingly
 
 108 named of 769 functions as of this update.
 
+Also named `ShowWorldMap` (was `sub_2BD1A`, moderate confidence —
+`RunTitleScreen`'s 'A' option, its only caller): draws a full-screen
+background then places up to 9 small markers at per-location positions
+from a table, skipping any not flagged discovered — fits the docs'
+string-survey finding of ~7 named towns. This resolves 4 of
+`RunTitleScreen`'s 5 options; only `R` (plausibly "About" or a
+registration-info screen) remains unidentified.
+
+109 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

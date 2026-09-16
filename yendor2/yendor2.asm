@@ -23500,7 +23500,7 @@ seg054          segment byte public 'CODE' use16
 
 RunTitleScreen  proc far                ; CODE XREF: start+A0F↑P
                                         ; InitGame+F6↑P ...
-                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: sub_25862+sub_2BD1A, redraw. E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.
+                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: sub_25862+ShowIntroPicture, redraw (plausibly 'About'/replay intro, or a registration-info screen given this shareware build's nag string). I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.
                 mov     word_36CE7, 3
                 mov     ax, 1
                 mov     word_3297E, ax
@@ -23657,7 +23657,7 @@ loc_1D40C:                              ; CODE XREF: RunTitleScreen+157↑j
 
 loc_1D411:                              ; CODE XREF: RunTitleScreen+AD↑j
                 call    sub_25862
-                call    sub_2BD1A
+                call    ShowWorldMap
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
 
@@ -35220,7 +35220,7 @@ ShowPartyMembers endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23C18       proc far                ; CODE XREF: sub_2BD1A+144↓P
+sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 mov     word_328BC, 74h ; 't'
                 mov     word_328C0, 3Ch ; '<'
                 mov     word_2E530, 3
@@ -50596,9 +50596,9 @@ seg122          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BD1A       proc far                ; CODE XREF: RunTitleScreen+170↑P
-                                        ; sub_2BD1A+149↓j
-                mov     x, 1
+ShowWorldMap    proc far                ; CODE XREF: RunTitleScreen+170↑P
+                                        ; ShowWorldMap+149↓j
+                mov     x, 1            ; Moderate confidence: RunTitleScreen's 'A' option. Draws g_pictureDir entry 4 full-screen, then places up to 9 small markers (entry 9) at per-location positions from a table, skipping locations not flagged discovered (+0x16). Shape (map background + flagged location pins) fits the docs' ~7 named towns from the string survey. Not confirmed which letter/word this is short for.
                 mov     y, 1
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
@@ -50612,14 +50612,14 @@ sub_2BD1A       proc far                ; CODE XREF: RunTitleScreen+170↑P
                 mov     word_3293E, 1
                 mov     cx, 9
 
-loc_2BD58:                              ; CODE XREF: sub_2BD1A+84↓j
+loc_2BD58:                              ; CODE XREF: ShowWorldMap+84↓j
                 cmp     word ptr [si+16h], 0
                 jnz     short loc_2BD63
                 add     di, 1Eh
                 jmp     short loc_2BD93
 ; ---------------------------------------------------------------------------
 
-loc_2BD63:                              ; CODE XREF: sub_2BD1A+42↑j
+loc_2BD63:                              ; CODE XREF: ShowWorldMap+42↑j
                 call    sub_2BFBC
                 add     di, 0Ah
                 mov     word_2E532, 90h
@@ -50632,10 +50632,10 @@ loc_2BD63:                              ; CODE XREF: sub_2BD1A+42↑j
                 jz      short loc_2BD8E
                 mov     word_2E530, 12h
 
-loc_2BD8E:                              ; CODE XREF: sub_2BD1A+6C↑j
+loc_2BD8E:                              ; CODE XREF: ShowWorldMap+6C↑j
                 call    DrawPicture
 
-loc_2BD93:                              ; CODE XREF: sub_2BD1A+47↑j
+loc_2BD93:                              ; CODE XREF: ShowWorldMap+47↑j
                 inc     word_3293E
                 add     di, 0Ah
                 add     si, 1F4h
@@ -50643,8 +50643,8 @@ loc_2BD93:                              ; CODE XREF: sub_2BD1A+47↑j
                 call    DrawMouseCursor
                 call    sub_2587E
 
-loc_2BDAA:                              ; CODE XREF: sub_2BD1A+9F↓j
-                                        ; sub_2BD1A+B6↓j ...
+loc_2BDAA:                              ; CODE XREF: ShowWorldMap+9F↓j
+                                        ; ShowWorldMap+B6↓j ...
                 call    sub_28320
                 call    PollKeyboardInput
                 cmp     errorCode, 0
@@ -50658,7 +50658,7 @@ loc_2BDAA:                              ; CODE XREF: sub_2BD1A+9F↓j
                 jmp     short loc_2BDAA
 ; ---------------------------------------------------------------------------
 
-loc_2BDD2:                              ; CODE XREF: sub_2BD1A+A6↑j
+loc_2BDD2:                              ; CODE XREF: ShowWorldMap+A6↑j
                 cmp     byte_2E400, 31h ; '1'
                 jl      short loc_2BDAA
                 cmp     byte_2E400, 39h ; '9'
@@ -50670,13 +50670,13 @@ loc_2BDD2:                              ; CODE XREF: sub_2BD1A+A6↑j
                 jmp     short loc_2BE66
 ; ---------------------------------------------------------------------------
 
-loc_2BDEC:                              ; CODE XREF: sub_2BD1A+C4↑j
+loc_2BDEC:                              ; CODE XREF: ShowWorldMap+C4↑j
                 cmp     byte_2E400, 44h ; 'D'
                 jz      short loc_2BE34
                 jmp     short loc_2BDAA
 ; ---------------------------------------------------------------------------
 
-loc_2BDF5:                              ; CODE XREF: sub_2BD1A+AD↑j
+loc_2BDF5:                              ; CODE XREF: ShowWorldMap+AD↑j
                 cmp     byte_2E400, 3Bh ; ';'
                 jl      short loc_2BDAA
                 cmp     byte_2E400, 43h ; 'C'
@@ -50687,7 +50687,7 @@ loc_2BDF5:                              ; CODE XREF: sub_2BD1A+AD↑j
                 jmp     short loc_2BE3D
 ; ---------------------------------------------------------------------------
 
-loc_2BE0C:                              ; CODE XREF: sub_2BD1A+B4↑j
+loc_2BE0C:                              ; CODE XREF: ShowWorldMap+B4↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5B5Ch
@@ -50697,7 +50697,7 @@ loc_2BE0C:                              ; CODE XREF: sub_2BD1A+B4↑j
                 jmp     short loc_2BDAA
 ; ---------------------------------------------------------------------------
 
-loc_2BE22:                              ; CODE XREF: sub_2BD1A+104↑j
+loc_2BE22:                              ; CODE XREF: ShowWorldMap+104↑j
                 cmp     ax, 0Ah
                 jl      short loc_2BE3D
                 cmp     ax, 12h
@@ -50707,15 +50707,15 @@ loc_2BE22:                              ; CODE XREF: sub_2BD1A+104↑j
                 jmp     loc_2BDAA
 ; ---------------------------------------------------------------------------
 
-loc_2BE34:                              ; CODE XREF: sub_2BD1A+D7↑j
-                                        ; sub_2BD1A+115↑j
+loc_2BE34:                              ; CODE XREF: ShowWorldMap+D7↑j
+                                        ; ShowWorldMap+115↑j
                 call    sub_25862
                 call    sub_2BF3C
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2BE3D:                              ; CODE XREF: sub_2BD1A+F0↑j
-                                        ; sub_2BD1A+10B↑j ...
+loc_2BE3D:                              ; CODE XREF: ShowWorldMap+F0↑j
+                                        ; ShowWorldMap+10B↑j ...
                 mov     si, ax
                 sub     si, 1
                 mov     ax, 1F4h
@@ -50728,14 +50728,14 @@ loc_2BE3D:                              ; CODE XREF: sub_2BD1A+F0↑j
                 jmp     loc_2BDAA
 ; ---------------------------------------------------------------------------
 
-loc_2BE59:                              ; CODE XREF: sub_2BD1A+13A↑j
+loc_2BE59:                              ; CODE XREF: ShowWorldMap+13A↑j
                 call    sub_25862
                 call    sub_23C18
-                jmp     near ptr sub_2BD1A
+                jmp     near ptr ShowWorldMap
 ; ---------------------------------------------------------------------------
 
-loc_2BE66:                              ; CODE XREF: sub_2BD1A+D0↑j
-                                        ; sub_2BD1A+110↑j
+loc_2BE66:                              ; CODE XREF: ShowWorldMap+D0↑j
+                                        ; ShowWorldMap+110↑j
                 mov     word_3293E, ax
                 sub     word_3293E, 9
                 sub     ax, 0Ah
@@ -50749,7 +50749,7 @@ loc_2BE66:                              ; CODE XREF: sub_2BD1A+D0↑j
                 jmp     loc_2BDAA
 ; ---------------------------------------------------------------------------
 
-loc_2BE86:                              ; CODE XREF: sub_2BD1A+167↑j
+loc_2BE86:                              ; CODE XREF: ShowWorldMap+167↑j
                 test    word ptr [si+15Ch], 800h
                 jz      short loc_2BEC7
                 and     word ptr [si+15Ch], 0F7FFh
@@ -50758,7 +50758,7 @@ loc_2BE86:                              ; CODE XREF: sub_2BD1A+167↑j
                 mov     ax, word_3293E
                 mov     cx, 4
 
-loc_2BEA3:                              ; CODE XREF: sub_2BD1A+190↓j
+loc_2BEA3:                              ; CODE XREF: ShowWorldMap+190↓j
                 cmp     [di], ax
                 jz      short loc_2BEAE
                 add     di, 2
@@ -50766,28 +50766,28 @@ loc_2BEA3:                              ; CODE XREF: sub_2BD1A+190↓j
                 jmp     short loc_2BE3D
 ; ---------------------------------------------------------------------------
 
-loc_2BEAE:                              ; CODE XREF: sub_2BD1A+18B↑j
+loc_2BEAE:                              ; CODE XREF: ShowWorldMap+18B↑j
                 mov     word ptr [di], 0
                 mov     di, 94A3h
                 mov     cx, 5
 
-loc_2BEB8:                              ; CODE XREF: sub_2BD1A+1A9↓j
+loc_2BEB8:                              ; CODE XREF: ShowWorldMap+1A9↓j
                 cmp     [di], ax
                 jnz     short loc_2BEC0
                 mov     word ptr [di], 0
 
-loc_2BEC0:                              ; CODE XREF: sub_2BD1A+1A0↑j
+loc_2BEC0:                              ; CODE XREF: ShowWorldMap+1A0↑j
                 add     di, 2
                 loop    loc_2BEB8
                 jmp     short loc_2BEF3
 ; ---------------------------------------------------------------------------
 
-loc_2BEC7:                              ; CODE XREF: sub_2BD1A+172↑j
+loc_2BEC7:                              ; CODE XREF: ShowWorldMap+172↑j
                 mov     di, 95EBh
                 mov     ax, word_3293E
                 mov     cx, 4
 
-loc_2BED0:                              ; CODE XREF: sub_2BD1A+1BE↓j
+loc_2BED0:                              ; CODE XREF: ShowWorldMap+1BE↓j
                 cmp     word ptr [di], 0
                 jz      short loc_2BEE5
                 add     di, 2
@@ -50797,12 +50797,12 @@ loc_2BED0:                              ; CODE XREF: sub_2BD1A+1BE↓j
                 jmp     loc_2BDAA
 ; ---------------------------------------------------------------------------
 
-loc_2BEE5:                              ; CODE XREF: sub_2BD1A+1B9↑j
+loc_2BEE5:                              ; CODE XREF: ShowWorldMap+1B9↑j
                 mov     [di], ax
                 or      word ptr [si+15Ch], 800h
                 mov     word_2E530, 12h
 
-loc_2BEF3:                              ; CODE XREF: sub_2BD1A+1AB↑j
+loc_2BEF3:                              ; CODE XREF: ShowWorldMap+1AB↑j
                 mov     ax, 4
                 call    sub_28412
                 call    RestoreCursorBackgroundIfDirty
@@ -50823,13 +50823,13 @@ loc_2BEF3:                              ; CODE XREF: sub_2BD1A+1AB↑j
                 call    DrawPicture
                 call    sub_238CD
                 jmp     loc_2BDAA
-sub_2BD1A       endp
+ShowWorldMap    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BF3C       proc near               ; CODE XREF: sub_2BD1A+11F↑p
+sub_2BF3C       proc near               ; CODE XREF: ShowWorldMap+11F↑p
                 and     word_328C4, 0FDFFh
                 mov     ax, word_36E4B
                 add     ax, word_36E4D
@@ -50899,7 +50899,7 @@ sub_2BF3C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BFBC       proc near               ; CODE XREF: sub_2BD1A:loc_2BD63↑p
+sub_2BFBC       proc near               ; CODE XREF: ShowWorldMap:loc_2BD63↑p
                 mov     word_2E532, 70h ; 'p'
                 mov     ax, [di]
                 mov     x, ax
