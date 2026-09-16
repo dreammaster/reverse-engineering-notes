@@ -276,7 +276,15 @@ set both current and max HP, `+0x52`/`+0x92` — plausibly
 **Stamina/Constitution**). Exact name-to-offset assignment for all 6
 isn't independently confirmed — the roll order doesn't obviously match
 the manual's STR/DEX/STA/INT/WIS/CHA listing — but the *pairing*
-(base ↔ derived, and which pair feeds HP vs. MP) is solid.
+(base ↔ derived, and which pair feeds HP vs. MP) is solid. Independent
+confirmation that these 6 base offsets (`0x3C`/`0x3E`/`0x40`/`0x42`/
+`0x44`/`0x46`) form one coherent, evenly-spaced set: `UseAttributeBoostItem`
+(was `sub_1B4C2`, a one-time-use "tome of attribute" consumable)
+takes its target stat as a literal field offset from its own item
+data, uses `(offset-0x3C)/2` to index a 13-byte-stride display-name
+string table, and adds its boost amount to both that field and
+field+`0x40` (the base↔derived pair) — the same base/derived stride
+documented here.
 **Correction**: `DrawThreeThresholdStats` — called right after
 `RollCharacterAttributes` in `ShowCharacterSkills`, at `+0x4C`/`+0x8C`,
 `+0x4E`/`+0x8E`, `+0x50`/`+0x90` — was first guessed to be 3 of these

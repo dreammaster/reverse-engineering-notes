@@ -13265,7 +13265,7 @@ loc_17C9C:                              ; CODE XREF: UseItem+2A↑j
                 mov     es, word_2E54C
                 test    word ptr es:[si+0Eh], 200h
                 jz      short loc_17CB1
-                call    sub_1B4C2
+                call    UseAttributeBoostItem
 
 loc_17CB1:                              ; CODE XREF: UseItem+118↑j
                 test    word ptr es:[si+0Eh], 400h
@@ -20128,8 +20128,8 @@ seg045          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B4C2       proc far                ; CODE XREF: UseItem+11A↑P
-                push    di
+UseAttributeBoostItem proc far          ; CODE XREF: UseItem+11A↑P
+                push    di              ; One-time-use 'tome of attribute' item effect (UseItem's item [+0xE] bit 0x200 path, sibling of UseExperienceBoostItem). 0xBCE+0x14 holds the target stat's party-record field offset directly (also used to look up its display name in a 13-byte string table at 0x7DC7); 0xBCE+0x16 is the boost amount. Adds the amount to that field and to field+0x40 (the paired current/max stat 0x40 bytes over) for every eligible living party member, clamped via ClampValueAtSlotToTypeCap.
                 mov     di, 0BCEh
                 mov     ax, [di+12h]
                 call    TestGlobalFlag
@@ -20138,7 +20138,7 @@ sub_1B4C2       proc far                ; CODE XREF: UseItem+11A↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
+loc_1B4D2:                              ; CODE XREF: UseAttributeBoostItem+C↑j
                 call    RestoreCursorBackgroundIfDirty
                 push    cx
                 push    si
@@ -20181,7 +20181,7 @@ loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
                 mov     di, 0C50h
                 mov     bx, 95EBh
 
-loc_1B571:                              ; CODE XREF: sub_1B4C2+103↓j
+loc_1B571:                              ; CODE XREF: UseAttributeBoostItem+103↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_1B5D1
@@ -20207,8 +20207,8 @@ loc_1B571:                              ; CODE XREF: sub_1B4C2+103↓j
                 mov     [di+0Ah], ax
                 call    RefreshCarryCapacityAndAttributeBonuses
 
-loc_1B5BB:                              ; CODE XREF: sub_1B4C2+C5↑j
-                                        ; sub_1B4C2+D0↑j
+loc_1B5BB:                              ; CODE XREF: UseAttributeBoostItem+C5↑j
+                                        ; UseAttributeBoostItem+D0↑j
                 pop     word_3293E
                 add     bx, 2
                 add     di, 14h
@@ -20216,20 +20216,20 @@ loc_1B5BB:                              ; CODE XREF: sub_1B4C2+C5↑j
                 call    UpdatePartyAverageStatTiers
                 call    ApplyEffectAndDrawIconBar
 
-loc_1B5D1:                              ; CODE XREF: sub_1B4C2+B3↑j
+loc_1B5D1:                              ; CODE XREF: UseAttributeBoostItem+B3↑j
                 call    sub_238CD
                 pop     si
                 pop     cx
                 pop     di
                 retf
-sub_1B4C2       endp
+UseAttributeBoostItem endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-ClampValueAtSlotToTypeCap proc near     ; CODE XREF: sub_1B4C2+D8↑p
-                                        ; sub_1B4C2+E6↑p
+ClampValueAtSlotToTypeCap proc near     ; CODE XREF: UseAttributeBoostItem+D8↑p
+                                        ; UseAttributeBoostItem+E6↑p
                 cmp     word_32940, 52h ; 'R' ; If ax exceeds a cap, writes the cap into [si]; else no-op. Cap is 0x270F (9999) when word_32940=='R'/'T' (item-type marker, not confirmed), else 0x3E7 (999) -- the same cap ApplyMultiStatEffectForItem uses. Called from sub_1B4C2.
                 jz      short loc_1B5F3
                 cmp     word_32940, 54h ; 'T'
@@ -42240,7 +42240,7 @@ SetRecordFlag_10C endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SetGlobalFlag   proc far                ; CODE XREF: sub_1B4C2+95↑P
+SetGlobalFlag   proc far                ; CODE XREF: UseAttributeBoostItem+95↑P
                                         ; UseExperienceBoostItem+82↑P ...
                 push    si              ; SetGlobalFlag(ax=flag index): [si] |= mask.
                 call    GetGlobalFlagBitAndWord

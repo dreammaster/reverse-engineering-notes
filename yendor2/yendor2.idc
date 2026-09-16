@@ -4121,7 +4121,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1B47A,	"Blanks (fills with 0x0404) the same screen region in both the EMS page-0x55D8 cache and the live video buffer -- at a location page 0x55D8 is elsewhere documented as portrait-sized, and one of the two callers is RefreshPartyPortraits.",	0);
 	create_insn	(0X1B47A);
 	set_name	(0X1B47A,	"ClearPortraitPanelAreas");
+	set_cmt	(0X1B4C2,	"One-time-use 'tome of attribute' item effect (UseItem's item [+0xE] bit 0x200 path, sibling of UseExperienceBoostItem). 0xBCE+0x14 holds the target stat's party-record field offset directly (also used to look up its display name in a 13-byte string table at 0x7DC7); 0xBCE+0x16 is the boost amount. Adds the amount to that field and to field+0x40 (the paired current/max stat 0x40 bytes over) for every eligible living party member, clamped via ClampValueAtSlotToTypeCap.",	0);
 	create_insn	(0X1B4C2);
+	set_name	(0X1B4C2,	"UseAttributeBoostItem");
 	create_insn	(0X1B4D2);
 	create_insn	(x=0X1B4D9);
 	op_hex		(x,	1);
@@ -4985,10 +4987,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1E473,	"Re-validates the cached caster (word_36CCD) via SelectPartyRecordById + [bx+0x94] check, finds their slot in g_partySlotAssignment matching word_328D6, and sets word_32924 to it; falls back to sub_1E447 otherwise. Called from RunAlchemyScreen (screen entry).",	0);
 	create_insn	(0X1E473);
 	set_name	(0X1E473,	"RestoreOrSelectAlchemyCaster");
-	create_insn	(0X1E4A5);
-	set_cmt	(0X1E4AA,	"Draws alchemy-screen picture 6 at (0x102,0x43), plus message 1. Called from RunAlchemyScreen. Exact narrative (vs. ShowAlchemyIconIdle) not confirmed.",	0);
-	create_insn	(0X1E4AA);
-	set_name	(0X1E4AA,	"ShowAlchemyIconActive");
 }
 
 //------------------------------------------------------------------------
@@ -4998,6 +4996,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1E4A5);
+	set_cmt	(0X1E4AA,	"Draws alchemy-screen picture 6 at (0x102,0x43), plus message 1. Called from RunAlchemyScreen. Exact narrative (vs. ShowAlchemyIconIdle) not confirmed.",	0);
+	create_insn	(0X1E4AA);
+	set_name	(0X1E4AA,	"ShowAlchemyIconActive");
 	set_cmt	(0X1E4D6,	"Draws alchemy-screen picture 5 at (0x102,0x43) -- sibling of ShowAlchemyIconActive. Called from RunAlchemyScreen (2 sites).",	0);
 	create_insn	(0X1E4D6);
 	set_name	(0X1E4D6,	"ShowAlchemyIconIdle");

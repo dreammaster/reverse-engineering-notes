@@ -5577,6 +5577,25 @@ eligible living party member's `+0x18` field — confirmed elsewhere in
 
 638 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UseAttributeBoostItem
+
+Named `sub_1B4C2` -> `UseAttributeBoostItem`, reached from `UseItem`'s
+item `[+0xE]` flag `0x200` path — the sibling of
+`UseExperienceBoostItem`'s `0x400` path, same one-time-use-flag
+structure. Its item data field `0xBCE+0x14` holds the *literal
+party-record field offset* of the target stat (also reused to index a
+13-byte-stride string table for the stat's display name), and
+`0xBCE+0x16` holds the boost amount. For every eligible living party
+member it adds that amount to the stat field at the given offset
+*and* again at offset+`0x40` — the paired current/max field 0x40
+bytes over, matching the stride already established for the
+`+0x3E`/`+0x7E` pair — clamping each via `ClampValueAtSlotToTypeCap`.
+A one-time-use "tome of attribute" consumable: permanently raises one
+core stat for the whole party, with the item's own data literally
+encoding which stat by record offset.
+
+639 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
