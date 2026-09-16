@@ -941,7 +941,9 @@ static Bytes_0(void) {
 	create_insn	(0X106E6);
 	create_insn	(0X106EF);
 	create_insn	(0X1072E);
+	set_cmt	(0X1075E,	"Shareware demo boundary check: if the party is at the exact position (word_36CF7==0x200, word_36CF9==0x2B, word_36CF5==0x4000) and word_328CA bit 0x2 ('registered version' flag) is clear, shows 'REGISTER TODAY!' and sets errorCode=1 to block the caller's TravelToDestination. Dead in this binary: word_328CA bit 0x2 is unconditionally set at boot in `start` and never cleared anywhere, so this block can never fire. Called once from `start`.",	0);
 	create_insn	(0X1075E);
+	set_name	(0X1075E,	"EnforceDemoBoundary");
 	create_insn	(x=0X1077C);
 	op_hex		(x,	1);
 	create_insn	(x=0X10789);
@@ -1938,7 +1940,9 @@ static Bytes_0(void) {
 	set_cmt	(0X14119,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X14119);
 	op_hex		(x,	0);
+	set_cmt	(0X14122,	"Formats a label via sub_27B84 into buffer 0xAFA8, loads a graphic via FileEntry_Read (errorCode=9, record 0x1A) + ErrorCheck, draws it via DrawPicture at (0xA1,0) sized (0x90,0x73), draws the label text at (0xAA,1), then DrawMouseCursor. Called once from RunClueBookMapCategory.",	0);
 	create_insn	(0X14122);
+	set_name	(0X14122,	"DrawClueBookMapCategoryHeader");
 	set_cmt	(0X14189,	"msg",	0);
 	set_cmt	(0X1419B,	"Loads the current map id (word_2E3EE[0]) via FileEntry_Read from WORLD.DAT into a fresh buffer. Called by RunClueBookMapCategory.",	0);
 	create_insn	(0X1419B);
@@ -3102,6 +3106,15 @@ static Bytes_0(void) {
 	set_cmt	(0X18068,	"PrepareTrapEffectSlots(ax=effect id): returns bx = g_trapEffectDefs + id*0xC (the effect-definition record). Also clears the [+8..+0x14) fields of all 4 g_partyEffectIconSlots entries first -- reset before repopulate. ax is left 0 on return.",	0);
 	create_insn	(0X18068);
 	set_name	(0X18068,	"PrepareTrapEffectSlots");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X18095);
 	set_cmt	(0X180BA,	"Iterates the 4 g_partyEffectIconSlots entries; for each occupied slot, draws its effect icon (via the effect-def's +2 g_pictureDir offset, one of 3 draw variants selected by the effect-def's +0xA flags) and applies the effect's cost via ApplyEffectCost.",	0);
 	create_insn	(0X180BA);
@@ -3125,15 +3138,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1819B,	"Handles an icon-bar item's effect expiring: removes its stat bonuses (RemoveMultiStatEffect), then either replaces the inventory slot with a new item (applying its effect via sub_1AA06) or clears the slot and subtracts the item's weight (+0x118) -- item transforms or is destroyed. Called from ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X1819B);
 	set_name	(0X1819B,	"HandleIconBarItemExpiry");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X181B3);
 	op_hex		(x,	1);
 	create_insn	(0X181DA);
@@ -5042,6 +5046,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1E985);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1E98C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E991);
@@ -5064,15 +5077,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1EB01);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1EB09);
 	op_hex		(x,	1);
 	create_insn	(x=0X1EB22);
@@ -6823,6 +6827,15 @@ static Bytes_2(void) {
 	set_cmt	(0X25773,	"this",	0);
 	create_insn	(x=0X257A2);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X257A9);
 	op_hex		(x,	1);
 	set_cmt	(0X257BF,	"Scans an 8-slot CURGAME inventory record for a directly droppable item ([+0xC] bit 1), recursing into any container slot ([+0xC] bit 0x2000) via HasDroppableItemInContainer. Called from IsItemDroppable.",	0);
@@ -6870,15 +6883,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X25A3B);
 	op_hex		(x,	1);
 	set_name	(0X25A3B,	"SetPaletteRange");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
 	create_insn	(x=0X25A47);
 	op_hex		(x,	1);
@@ -9215,6 +9219,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2AB31);
 	create_insn	(0X2AB3F);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2AB4C);
 	op_hex		(x,	1);
 	create_insn	(0X2AB60);
@@ -9254,15 +9267,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2ADD0,	"Calls DrawPartyMemberStatusPanel for each occupied g_partySlotAssignment slot -- redraws every party member's status panel. Called from ApplyMultiStatEffect, RestCharacter, and others.",	0);
 	create_insn	(0X2ADD0);
 	set_name	(0X2ADD0,	"RedrawAllPartyStatusPanels");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2ADE8,	"Stops music, plays sound effect 0x13 via the sound dispatch (sub_28412) when sub_2827E allows it, draws full-screen picture 1 and caches it to EMS, redraws the fixed status icon, and shows the mouse cursor. The 'show this screen' step of CheckPartyWipeAndReinitLevel's party-wipe sequence.",	0);
 	create_insn	(0X2ADE8);
 	set_name	(0X2ADE8,	"ShowPartyWipeScreen");
@@ -11900,6 +11904,15 @@ static Bytes_4(void) {
 	create_strlit	(0X3A0FB,	0X1C);
 	set_name	(0X3A0FB,	"aCraigShirley");
 	create_strlit	(0X3A117,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A119,	0X2);
 	create_strlit	(0X3A11B,	0X2);
 	create_strlit	(0X3A11D,	0X2);
@@ -11960,15 +11973,6 @@ static Bytes_4(void) {
 	set_name	(0X3A384,	"aChamberYouAreI");
 	create_strlit	(0X3A3A1,	0X1F);
 	set_name	(0X3A3A1,	"aTeleportedToYe");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A3C0,	0X22);
 	set_name	(0X3A3C0,	"aByYourSurround");
 	create_strlit	(0X3A3E2,	0X20);

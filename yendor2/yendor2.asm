@@ -738,7 +738,7 @@ loc_1062D:                              ; CODE XREF: start+61C↑j
 ; ---------------------------------------------------------------------------
 
 loc_10635:                              ; CODE XREF: start+5B4↑j
-                call    sub_1075E
+                call    EnforceDemoBoundary
                 cmp     errorCode, 0
                 jnz     short loc_10652
                 mov     word_2E530, 0Bh
@@ -865,8 +865,8 @@ start           endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1075E       proc near               ; CODE XREF: start:loc_10635↑p
-                mov     errorCode, 0
+EnforceDemoBoundary proc near           ; CODE XREF: start:loc_10635↑p
+                mov     errorCode, 0    ; Shareware demo boundary check: if the party is at the exact position (word_36CF7==0x200, word_36CF9==0x2B, word_36CF5==0x4000) and word_328CA bit 0x2 ('registered version' flag) is clear, shows 'REGISTER TODAY!' and sets errorCode=1 to block the caller's TravelToDestination. Dead in this binary: word_328CA bit 0x2 is unconditionally set at boot in `start` and never cleared anywhere, so this block can never fire. Called once from `start`.
                 cmp     word_36CF7, 200h
                 jnz     short locret_1077B
                 cmp     word_36CF9, 2Bh ; '+'
@@ -874,12 +874,12 @@ sub_1075E       proc near               ; CODE XREF: start:loc_10635↑p
                 cmp     word_36CF5, 4000h
                 jz      short loc_1077C
 
-locret_1077B:                           ; CODE XREF: sub_1075E+C↑j
-                                        ; sub_1075E+13↑j ...
+locret_1077B:                           ; CODE XREF: EnforceDemoBoundary+C↑j
+                                        ; EnforceDemoBoundary+13↑j ...
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1077C:                              ; CODE XREF: sub_1075E+1B↑j
+loc_1077C:                              ; CODE XREF: EnforceDemoBoundary+1B↑j
                 test    word_328CA, 2
                 jnz     short locret_1077B
                 call    ClearStatusPanelIfDirty
@@ -898,7 +898,7 @@ loc_1077C:                              ; CODE XREF: sub_1075E+1B↑j
                 call    sub_238CD
                 mov     errorCode, 1
                 retn
-sub_1075E       endp
+EnforceDemoBoundary endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR start
@@ -5321,7 +5321,7 @@ loc_13283:                              ; CODE XREF: RunClueBookMapCategory+15�
                 call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_132AD
-                call    sub_14122
+                call    DrawClueBookMapCategoryHeader
 
 loc_132AD:                              ; CODE XREF: RunClueBookMapCategory+30↑j
                 cmp     byte_2E400, 1Bh
@@ -6646,8 +6646,8 @@ DrawClueBookMapGrid endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14122       proc near               ; CODE XREF: RunClueBookMapCategory+32↑p
-                push    ax
+DrawClueBookMapCategoryHeader proc near ; CODE XREF: RunClueBookMapCategory+32↑p
+                push    ax              ; Formats a label via sub_27B84 into buffer 0xAFA8, loads a graphic via FileEntry_Read (errorCode=9, record 0x1A) + ErrorCheck, draws it via DrawPicture at (0xA1,0) sized (0x90,0x73), draws the label text at (0xAA,1), then DrawMouseCursor. Called once from RunClueBookMapCategory.
                 mov     ax, 0AFA8h
                 mov     bx, 4
                 call    sub_27B84
@@ -6674,7 +6674,7 @@ sub_14122       proc near               ; CODE XREF: RunClueBookMapCategory+32�
                 pop     _font_bgTransparent
                 call    DrawMouseCursor
                 retn
-sub_14122       endp
+DrawClueBookMapCategoryHeader endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34679,7 +34679,7 @@ UpdateCursorForHeldItem endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_238CD       proc far                ; CODE XREF: sub_1075E+64↑P
+sub_238CD       proc far                ; CODE XREF: EnforceDemoBoundary+64↑P
                                         ; ShowIntroPicture+179↑P ...
                 test    word_3195C, 1
                 jnz     short loc_238DB
@@ -35134,7 +35134,7 @@ writeString     endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawStringColumn proc far               ; CODE XREF: sub_1075E+5A↑P
+DrawStringColumn proc far               ; CODE XREF: EnforceDemoBoundary+5A↑P
                                         ; ShowIntroPicture+100↑P ...
                 push    dx              ; Draws cx consecutive null-terminated strings from bx, stacked vertically (each row +6 y). Used to draw the 9 PROTECTIONS/AFFLICTIONS name columns, among others.
                 mov     dx, _textPos_x
@@ -56505,7 +56505,7 @@ x               dw 0                    ; DATA XREF: DrawMovementFeedbackIcon+8�
 ; int y
 y               dw 0                    ; DATA XREF: DrawMovementFeedbackIcon+E↑w
                                         ; ShowIntroPicture+1B↑w ...
-_font_bgTransparent dw 0                ; DATA XREF: sub_1075E+43↑w
+_font_bgTransparent dw 0                ; DATA XREF: EnforceDemoBoundary+43↑w
                                         ; ShowIntroPicture+21↑w ...
 word_2E38E      dw 0                    ; DATA XREF: sub_193BE+42↑r
                                         ; sub_193BE+45↑r ...
@@ -56911,7 +56911,7 @@ _val34          dw 0                    ; DATA XREF: InitGlobals+F0↑w
                                         ; seg096:0012↑r
 word_2E52A      dw 0                    ; DATA XREF: start+673↑r
                                         ; start:loc_1067D↑r ...
-_font_fgColor   dw 0                    ; DATA XREF: sub_1075E+3D↑w
+_font_fgColor   dw 0                    ; DATA XREF: EnforceDemoBoundary+3D↑w
                                         ; ShowIntroPicture+FA↑w ...
 word_2E52E      dw 0                    ; DATA XREF: FadePaletteStep+14↑w
                                         ; FadePaletteStep+5F↑r ...
@@ -74291,7 +74291,7 @@ word_32918      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+
                                         ; ExtendDungeonCeilingTexture+21↑w ...
 word_3291A      dw 0                    ; DATA XREF: PreloadMonsterStatsTable+E↑w
                                         ; PreloadMonsterStatsTable+1B↑r ...
-_videoBufferSeg dw 0                    ; DATA XREF: sub_1075E+49↑r
+_videoBufferSeg dw 0                    ; DATA XREF: EnforceDemoBoundary+49↑r
                                         ; ShowClueBook+48↑r ...
 word_3291E      dw 0                    ; DATA XREF: RunGameDialog+5↑w
                                         ; RunGameDialog:loc_1EAD0↑w ...
@@ -74317,7 +74317,7 @@ word_32932      dw 0                    ; DATA XREF: RenderDungeonVanishingPoint
                                         ; RenderDungeonVanishingPoint+6D↑w ...
 word_32934      dw 0                    ; DATA XREF: ComputeGameClockTime↑w
                                         ; ComputeGameClockTime+11↑w ...
-_videoSegment   dw 0                    ; DATA XREF: sub_1075E+4C↑w
+_videoSegment   dw 0                    ; DATA XREF: EnforceDemoBoundary+4C↑w
                                         ; ShowClueBook+4B↑w ...
 word_32938      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+41C↑w
                                         ; ShowClueBookMonsterDetail+420↑r ...
@@ -74340,7 +74340,7 @@ fe              dw 0                    ; DATA XREF: ShowClueBook+8↑r
 word_32948      dw 0                    ; DATA XREF: ComputeGameClockTime+1C↑w
                                         ; ComputeGameClockTime+36↑w ...
 ; int textPos_x
-_textPos_x      dw 0                    ; DATA XREF: sub_1075E+31↑w
+_textPos_x      dw 0                    ; DATA XREF: EnforceDemoBoundary+31↑w
                                         ; ShowIntroPicture+E9↑w ...
 word_3294C      dw 0                    ; DATA XREF: ShowClueBook+2C↑w
                                         ; sub_14E28+D9↑w ...
@@ -74365,7 +74365,7 @@ word_3295E      dw 0                    ; DATA XREF: DrawLocalMapCell+50↑w
 word_32960      dw 0                    ; DATA XREF: DrawLocalMapCell+56↑w
                                         ; DrawLocalMapCell+5E↑w ...
 ; int textPos_y
-_textPos_y      dw 0                    ; DATA XREF: sub_1075E+37↑w
+_textPos_y      dw 0                    ; DATA XREF: EnforceDemoBoundary+37↑w
                                         ; ShowIntroPicture+EF↑w ...
 word_32964      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+3F5↑w
                                         ; sub_14E28+DE↑w ...

@@ -2487,3 +2487,22 @@ dead code, rather than reinterpreted.
   the identical value. Plausibly reserved error-code slots that never
   got real message text, or an artifact of shareware content removal;
   not confirmed either way.
+
+- **The shareware "REGISTER TODAY!" demo-boundary nag is dead code in
+  this binary, but its data survives intact.** `EnforceDemoBoundary`
+  (was `sub_1075E`) checks the party's position against a single
+  hardcoded coordinate triple and, if matched, shows a 2-line
+  "REGISTER TODAY!" message and blocks movement past that point,
+  the classic shareware "edge of the demo area" gate, guarded by
+  `word_328CA` bit `0x2`. That bit is unconditionally forced on at
+  boot in `start` (`or word_328CA, 2`, right after
+  `ParseCommandLineSwitches`) and is never cleared anywhere else in
+  the binary, so the check can never actually trigger. A second dead
+  branch exists in the game's shutdown sequence (`start`, right after
+  `ReleaseEmsHandles`): the same bit gates two DOS `INT 21h AH=9`
+  prints, `"Thank You for playing Yendorian Tales Book I Chapter 2"`
+  and `"Please register your copy today."`, also unreachable. Reads
+  as `word_328CA` bit `0x2` being a "registered version" flag that
+  this particular `SW.EXE` build forces on unconditionally -- the
+  shareware-era code and its message strings are still compiled in,
+  just permanently disabled.

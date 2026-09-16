@@ -5400,6 +5400,40 @@ messages (e.g. slow/normal/fast) was not independently confirmed.
 
 622 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawClueBookMapCategoryHeader, EnforceDemoBoundary
+
+Named `sub_14122` -> `DrawClueBookMapCategoryHeader`, called once
+from `RunClueBookMapCategory`: formats a label via `sub_27B84`, loads
+a graphic via `FileEntry_Read`, draws it as a banner picture, then
+draws the formatted label text next to it, followed by the mouse
+cursor — the header draw for a clue book map category page.
+
+Named `sub_1075E` -> `EnforceDemoBoundary` — a genuinely interesting
+find. It checks the party's position against one hardcoded
+coordinate triple, and if matched (and `word_328CA` bit `0x2` is
+clear), shows a 2-line "REGISTER TODAY!" message and blocks the
+caller's subsequent `TravelToDestination` call. This is the classic
+shareware "you've reached the edge of the demo area, please
+register" boundary gate. **However, it is confirmed dead code in
+this binary**: `start` unconditionally sets `word_328CA` bit `0x2`
+right after `ParseCommandLineSwitches` (`or word_328CA, 2`), and a
+search of every `and word_328CA, <imm>` mask in the whole binary
+confirms none of them ever clears that bit again — so the `jnz` at
+the top of `EnforceDemoBoundary` is always taken and the block can
+never fire. A second, related dead branch was found in the same
+sweep: at the game's shutdown sequence in `start`, right after
+`ReleaseEmsHandles`, the same bit is tested again, and when clear
+(never, per the above) prints via DOS `INT 21h AH=9`: "Thank You for
+playing Yendorian Tales Book I Chapter 2" / "Please register your
+copy today." — also unreachable. Read together, `word_328CA` bit
+`0x2` looks like a "registered version" flag that this particular
+`SW.EXE` build forces on unconditionally, permanently disabling both
+the in-game demo-boundary nag and the exit-time registration
+reminder, while leaving the shareware-era code paths themselves
+intact in the binary.
+
+624 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
