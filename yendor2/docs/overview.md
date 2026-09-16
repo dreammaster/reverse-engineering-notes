@@ -6392,6 +6392,33 @@ an idle/grumble sound (`[+0x5E]`, distinct from the attack-hit sound
 763 named of 769 functions as of this update — only 6 unnamed
 functions remain.
 
+### 2026-09-15 session update, continued: ConsumeItemChargeResource
+
+Analyzed the next remaining large dispatcher, `sub_274B4` — the
+shared "spend one use of an item-based resource" engine, called from
+21 sites (`CheckAndPaySpecialItemCost`, `HandleSearchCommand`'s
+failed-trap-search backfire, `RestPartyAndAdvanceClock`, and many
+more in the item-ability-effect region). Confirmed via
+`CheckAndPaySpecialItemCost`: called right after `IsItemRangeAvailable`
+locates a qualifying inventory item, to actually consume it as
+payment.
+
+It's driven entirely by caller-configured globals rather than
+explicit parameters: `word_328C8` bits `0x8000`/`0x4000`/`0x2000`
+select the consumption mode — "recharge and reset wear" (also zeroes
+the matching equipped-item durability counter, tying directly into
+this session's `TickEquippedItemDurability`), "full discard", "swap
+the item's stat effect for an alternate then discard"
+(`SwapItemMultiStatEffect`), or the default "decrement a charge
+counter, auto-discard at zero". It deducts the consumed item's
+weight from the owning party member's carry capacity, then (if that
+member's slot is flagged dirty) syncs their alternate bags, redraws
+their portrait, and reapplies their stat effects/equipment bonuses.
+Named `ConsumeItemChargeResource`.
+
+764 named of 769 functions as of this update — only 5 unnamed
+functions remain.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

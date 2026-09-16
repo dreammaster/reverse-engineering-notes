@@ -7578,7 +7578,9 @@ static Bytes_3(void) {
 	create_insn	(x=0X2749E);
 	op_hex		(x,	1);
 	create_insn	(0X274A5);
+	set_cmt	(0X274B4,	"Shared 'spend one use of an item-based resource' engine, driven entirely by caller-configured globals (word_32974 item code, word_3297A charge-record pointer or 0 for a party-record field fallback, word_328C8 bits 0x8000/0x4000/0x2000 selecting the consumption mode: recharge+reset-wear / full discard / swap-effect-then-discard / default decrement-with-auto-discard). Deducts the item's weight, then syncs bags, redraws the owning party member's portrait, and reapplies stat effects/equipment bonuses. Called from CheckAndPaySpecialItemCost, HandleSearchCommand, and ~19 more sites.",	0);
 	create_insn	(0X274B4);
+	set_name	(0X274B4,	"ConsumeItemChargeResource");
 	set_cmt	(0X274B5,	"this",	0);
 	create_insn	(0X274C8);
 	create_insn	(x=0X274D0);
@@ -7918,13 +7920,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
 	create_insn	(0X2819F);
 	set_name	(0X2819F,	"ShowGameClockCommand");
-	create_insn	(x=0X281A4);
-	op_hex		(x,	1);
-	set_cmt	(0X2821E,	"msg",	0);
-	set_cmt	(0X28232,	"msg",	0);
-	set_cmt	(0X28246,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
-	create_insn	(0X28246);
-	set_name	(0X28246,	"RestoreDialogAreaFromEMS");
 }
 
 //------------------------------------------------------------------------
@@ -7934,6 +7929,13 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X281A4);
+	op_hex		(x,	1);
+	set_cmt	(0X2821E,	"msg",	0);
+	set_cmt	(0X28232,	"msg",	0);
+	set_cmt	(0X28246,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
+	create_insn	(0X28246);
+	set_name	(0X28246,	"RestoreDialogAreaFromEMS");
 	set_cmt	(0X2827E,	"Returns immediately (ax=1) if g_driverStateFlags bit 0x8 is clear; otherwise busy-waits for word_2E494 to become 0 then returns ax=0 -- waits for the sound driver's current operation to finish. Called from several sites including sub_2D498.",	0);
 	create_insn	(0X2827E);
 	set_name	(0X2827E,	"WaitForSoundDriverIdle");
@@ -10314,6 +10316,15 @@ static Bytes_4(void) {
 	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);
 	create_insn	(0X2D4B6);
 	set_name	(0X2D4B6,	"ApplyAttackToTarget");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D4C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D4CA);
@@ -10325,15 +10336,6 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D50E);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D522);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D53A);

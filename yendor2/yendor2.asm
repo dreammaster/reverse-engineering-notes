@@ -22161,7 +22161,7 @@ CheckAndPaySpecialItemCost proc far     ; CODE XREF: BuildItemUseMessage+15↑p
                 call    IsItemRangeAvailable
                 cmp     word_32974, 0
                 jz      short locret_1C83D
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 or      word_328C6, 40h
 
 locret_1C83D:                           ; CODE XREF: CheckAndPaySpecialItemCost+28↑j
@@ -25858,7 +25858,7 @@ loc_1E85F:                              ; CODE XREF: RestPartyAndAdvanceClock+23
                 call    IsItemRangeAvailable
                 cmp     word_32974, 0
                 jz      short loc_1E882
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 inc     word_2E544
                 loop    loc_1E85F
 
@@ -41543,9 +41543,9 @@ seg092          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_274B4       proc far                ; CODE XREF: CheckAndPaySpecialItemCost+2A↑P
+ConsumeItemChargeResource proc far      ; CODE XREF: CheckAndPaySpecialItemCost+2A↑P
                                         ; RestPartyAndAdvanceClock+22D↑P ...
-                push    si
+                push    si              ; Shared 'spend one use of an item-based resource' engine, driven entirely by caller-configured globals (word_32974 item code, word_3297A charge-record pointer or 0 for a party-record field fallback, word_328C8 bits 0x8000/0x4000/0x2000 selecting the consumption mode: recharge+reset-wear / full discard / swap-effect-then-discard / default decrement-with-auto-discard). Deducts the item's weight, then syncs bags, redraws the owning party member's portrait, and reapplies stat effects/equipment bonuses. Called from CheckAndPaySpecialItemCost, HandleSearchCommand, and ~19 more sites.
                 push    cx              ; this
                 mov     ax, word_32974
                 call    LoadItemCatalogRecord
@@ -41554,7 +41554,7 @@ sub_274B4       proc far                ; CODE XREF: CheckAndPaySpecialItemCost+
                 jmp     loc_2755C
 ; ---------------------------------------------------------------------------
 
-loc_274C8:                              ; CODE XREF: sub_274B4+F↑j
+loc_274C8:                              ; CODE XREF: ConsumeItemChargeResource+F↑j
                 mov     si, word_2E548
                 mov     bx, word_3297A
                 test    word_328C8, 8000h
@@ -41570,8 +41570,8 @@ loc_274C8:                              ; CODE XREF: sub_274B4+F↑j
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
 
-loc_274F7:                              ; CODE XREF: sub_274B4+2A↑j
-                                        ; sub_274B4+39↑j ...
+loc_274F7:                              ; CODE XREF: ConsumeItemChargeResource+2A↑j
+                                        ; ConsumeItemChargeResource+39↑j ...
                 mov     word ptr [bx], 0
                 mov     word ptr [bx+2], 0
                 test    word_36C7F, 1000h
@@ -41579,13 +41579,13 @@ loc_274F7:                              ; CODE XREF: sub_274B4+2A↑j
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
 
-loc_2750B:                              ; CODE XREF: sub_274B4+52↑j
-                                        ; sub_274B4+A6↓j
+loc_2750B:                              ; CODE XREF: ConsumeItemChargeResource+52↑j
+                                        ; ConsumeItemChargeResource+A6↓j
                 call    ShowResourceDepletedOverlay
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
 
-loc_27513:                              ; CODE XREF: sub_274B4+22↑j
+loc_27513:                              ; CODE XREF: ConsumeItemChargeResource+22↑j
                 mov     ax, [bx+2]
                 mov     [bx], ax
                 mov     word ptr [bx+2], 0
@@ -41596,30 +41596,30 @@ loc_27513:                              ; CODE XREF: sub_274B4+22↑j
                 jmp     short loc_2754F
 ; ---------------------------------------------------------------------------
 
-loc_27531:                              ; CODE XREF: sub_274B4+73↑j
+loc_27531:                              ; CODE XREF: ConsumeItemChargeResource+73↑j
                 cmp     word_3297C, 13Ah
                 jnz     short loc_27541
                 mov     word ptr [bx+0BEh], 0
                 jmp     short loc_2754F
 ; ---------------------------------------------------------------------------
 
-loc_27541:                              ; CODE XREF: sub_274B4+83↑j
+loc_27541:                              ; CODE XREF: ConsumeItemChargeResource+83↑j
                 cmp     word_3297C, 146h
                 jnz     short loc_2754F
                 mov     word ptr [bx+0C2h], 0
 
-loc_2754F:                              ; CODE XREF: sub_274B4+7B↑j
-                                        ; sub_274B4+8B↑j ...
+loc_2754F:                              ; CODE XREF: ConsumeItemChargeResource+7B↑j
+                                        ; ConsumeItemChargeResource+8B↑j ...
                 call    ShowResourceDepletedOverlay
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
 
-loc_27557:                              ; CODE XREF: sub_274B4+32↑j
+loc_27557:                              ; CODE XREF: ConsumeItemChargeResource+32↑j
                 call    SwapItemMultiStatEffect
                 jmp     short loc_2750B
 ; ---------------------------------------------------------------------------
 
-loc_2755C:                              ; CODE XREF: sub_274B4+11↑j
+loc_2755C:                              ; CODE XREF: ConsumeItemChargeResource+11↑j
                 mov     ax, [bx+0Ah]
                 mov     word_3293E, ax
                 mov     bx, word_32978
@@ -41640,14 +41640,14 @@ loc_2755C:                              ; CODE XREF: sub_274B4+11↑j
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
 
-loc_2759C:                              ; CODE XREF: sub_274B4+CB↑j
-                                        ; sub_274B4+DE↑j ...
+loc_2759C:                              ; CODE XREF: ConsumeItemChargeResource+CB↑j
+                                        ; ConsumeItemChargeResource+DE↑j ...
                 mov     word ptr [bx], 0
                 mov     word ptr [bx+2], 0
                 jmp     short loc_27616
 ; ---------------------------------------------------------------------------
 
-loc_275A7:                              ; CODE XREF: sub_274B4+C3↑j
+loc_275A7:                              ; CODE XREF: ConsumeItemChargeResource+C3↑j
                 mov     ax, [bx+2]
                 mov     [bx], ax
                 mov     word ptr [bx+2], 0
@@ -41658,26 +41658,26 @@ loc_275A7:                              ; CODE XREF: sub_274B4+C3↑j
                 jmp     short loc_27629
 ; ---------------------------------------------------------------------------
 
-loc_275C5:                              ; CODE XREF: sub_274B4+107↑j
+loc_275C5:                              ; CODE XREF: ConsumeItemChargeResource+107↑j
                 cmp     word_3297C, 13Ah
                 jnz     short loc_275D5
                 mov     word ptr [bx+0BEh], 0
                 jmp     short loc_27629
 ; ---------------------------------------------------------------------------
 
-loc_275D5:                              ; CODE XREF: sub_274B4+117↑j
+loc_275D5:                              ; CODE XREF: ConsumeItemChargeResource+117↑j
                 cmp     word_3297C, 146h
                 jnz     short loc_27629
                 mov     word ptr [bx+0C2h], 0
                 jmp     short loc_27629
 ; ---------------------------------------------------------------------------
 
-loc_275E5:                              ; CODE XREF: sub_274B4+D3↑j
+loc_275E5:                              ; CODE XREF: ConsumeItemChargeResource+D3↑j
                 call    SwapItemMultiStatEffect
                 jmp     short loc_27629
 ; ---------------------------------------------------------------------------
 
-loc_275EA:                              ; CODE XREF: sub_274B4+BB↑j
+loc_275EA:                              ; CODE XREF: ConsumeItemChargeResource+BB↑j
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
                 call    PrepareGroundItemSlotBlockRead
@@ -41692,15 +41692,15 @@ loc_275EA:                              ; CODE XREF: sub_274B4+BB↑j
                 mov     ax, word_3296E
                 call    SyncItemChargeFieldToCurgame
 
-loc_27616:                              ; CODE XREF: sub_274B4+F1↑j
+loc_27616:                              ; CODE XREF: ConsumeItemChargeResource+F1↑j
                 test    word_328C8, 8000h
                 jnz     short loc_27629
                 mov     bx, word_32978
                 mov     ax, word_3293E
                 sub     [bx+118h], ax
 
-loc_27629:                              ; CODE XREF: sub_274B4+10F↑j
-                                        ; sub_274B4+11F↑j ...
+loc_27629:                              ; CODE XREF: ConsumeItemChargeResource+10F↑j
+                                        ; ConsumeItemChargeResource+11F↑j ...
                 mov     ax, word_32976
                 cmp     ax, g_partySlotAssignment
                 jnz     short loc_2764B
@@ -41709,13 +41709,13 @@ loc_27629:                              ; CODE XREF: sub_274B4+10F↑j
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
 
-loc_2763D:                              ; CODE XREF: sub_274B4+184↑j
+loc_2763D:                              ; CODE XREF: ConsumeItemChargeResource+184↑j
                 mov     word_328BC, 8
                 mov     word_328C0, 8
                 jmp     short loc_2769D
 ; ---------------------------------------------------------------------------
 
-loc_2764B:                              ; CODE XREF: sub_274B4+17C↑j
+loc_2764B:                              ; CODE XREF: ConsumeItemChargeResource+17C↑j
                 cmp     ax, word_36E4D
                 jnz     short loc_27667
                 test    word_328C6, 2000h
@@ -41725,7 +41725,7 @@ loc_2764B:                              ; CODE XREF: sub_274B4+17C↑j
                 jmp     short loc_2769D
 ; ---------------------------------------------------------------------------
 
-loc_27667:                              ; CODE XREF: sub_274B4+19B↑j
+loc_27667:                              ; CODE XREF: ConsumeItemChargeResource+19B↑j
                 cmp     ax, word_36E4F
                 jnz     short loc_27683
                 test    word_328C6, 1000h
@@ -41735,7 +41735,7 @@ loc_27667:                              ; CODE XREF: sub_274B4+19B↑j
                 jmp     short loc_2769D
 ; ---------------------------------------------------------------------------
 
-loc_27683:                              ; CODE XREF: sub_274B4+1B7↑j
+loc_27683:                              ; CODE XREF: ConsumeItemChargeResource+1B7↑j
                 cmp     ax, word_36E51
                 jnz     short loc_2769D
                 test    word_328C6, 800h
@@ -41743,8 +41743,8 @@ loc_27683:                              ; CODE XREF: sub_274B4+1B7↑j
                 mov     word_328BC, 0B0h
                 mov     word_328C0, 8
 
-loc_2769D:                              ; CODE XREF: sub_274B4+195↑j
-                                        ; sub_274B4+1B1↑j ...
+loc_2769D:                              ; CODE XREF: ConsumeItemChargeResource+195↑j
+                                        ; ConsumeItemChargeResource+1B1↑j ...
                 mov     ax, word_32978
                 mov     word_328D4, ax
                 mov     si, ax
@@ -41756,19 +41756,19 @@ loc_2769D:                              ; CODE XREF: sub_274B4+195↑j
                 call    ApplyMultiStatEffectForItem
                 call    RecomputeEquipmentStatBonuses
 
-loc_276C2:                              ; CODE XREF: sub_274B4+40↑j
-                                        ; sub_274B4+54↑j ...
+loc_276C2:                              ; CODE XREF: ConsumeItemChargeResource+40↑j
+                                        ; ConsumeItemChargeResource+54↑j ...
                 pop     cx
                 pop     si
                 retf
-sub_274B4       endp
+ConsumeItemChargeResource endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-SwapItemMultiStatEffect proc near       ; CODE XREF: sub_274B4:loc_27557↑p
-                                        ; sub_274B4:loc_275E5↑p ...
+SwapItemMultiStatEffect proc near       ; CODE XREF: ConsumeItemChargeResource:loc_27557↑p
+                                        ; ConsumeItemChargeResource:loc_275E5↑p ...
                 push    si              ; If the current item's category ([+0xC] 0xC000/0x800) and a matching word_2E548 sub-flag ([+2] 0x200/0x80) both hold, removes the current item's effect (RemoveMultiStatEffect), swaps in a new item id from word_2E548+4/+8 (the same fields GetClassifiedItemStatField selects), and applies its effect (ApplyMultiStatEffectForItem). Called from sub_274B4.
                 mov     si, word_2E546
                 test    word ptr [si+0Ch], 0C000h
@@ -41818,7 +41818,7 @@ SwapItemMultiStatEffect endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SyncAlternateBagsToSave proc near       ; CODE XREF: sub_274B4+1F1↑p
+SyncAlternateBagsToSave proc near       ; CODE XREF: ConsumeItemChargeResource+1F1↑p
                 cmp     word ptr [si+17Eh], 0 ; Writes each of the 3 alternate-bag inventory groups (+0x17E/0x180, +0x1A4/0x1A6, +0x1CA/0x1CC -- the same fields GetInventorySlotPtr/WriteContainerSubBlock established) back to CURGAME via WriteContainerSubBlock, only when populated. Called from sub_274B4.
                 jz      short loc_27742
                 mov     bx, si
@@ -41869,8 +41869,8 @@ WriteContainerSubBlock endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SyncItemChargeFieldToCurgame proc near  ; CODE XREF: sub_274B4+14D↑p
-                                        ; sub_274B4+156↑p ...
+SyncItemChargeFieldToCurgame proc near  ; CODE XREF: ConsumeItemChargeResource+14D↑p
+                                        ; ConsumeItemChargeResource+156↑p ...
                 mov     word_36863, ax  ; Reads (FileEntry bx=8FFB/CURGAME, errorCode=0xA) the shared 0xAFA8 scratch record the caller just configured, applies the same category-dependent charge/transfer/swap logic sub_274B4 applies to its in-memory copy to the field at [0xAFA8+dx], then writes it back -- except for the 'transfer' category with dx==0, where it instead subtracts the staged amount (word_3293E) from scratch var word_38808 and skips the write. Called 3x from sub_274B4 with different (ax,dx) field selectors.
                 mov     bx, 8FFBh
                 mov     errorCode, 0Ah
@@ -48383,7 +48383,7 @@ loc_2A854:                              ; CODE XREF: HandleSearchCommand+C3↑j
                 jz      short loc_2A899
                 mov     ax, 4
                 call    TriggerSoundEvent
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 mov     cx, 2
                 mov     bx, 7C89h
                 call    ShowAbilityDescriptionColumn
@@ -48494,7 +48494,7 @@ loc_2A950:                              ; CODE XREF: ApplyMultiStatEffect+35↑j
 loc_2A955:                              ; CODE XREF: ApplyMultiStatEffect+2B↑j
                 call    RefreshCarryCapacityAndAttributeBonuses
                 call    UpdatePartyAverageStatTiers
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    RedrawAllPartyStatusPanels
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
@@ -48603,7 +48603,7 @@ loc_2AA28:                              ; CODE XREF: RestCharacter+75↑j
 loc_2AA2B:                              ; CODE XREF: RestCharacter+3C↑j
                                         ; RestCharacter+5D↑j
                 or      word_328C8, 20h
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    RedrawAllPartyStatusPanels
                 call    ClearStatusPanelIfDirty
                 call    ShowMaterialCounterHud
@@ -48716,7 +48716,7 @@ loc_2AAF7:                              ; CODE XREF: CastSpell+99↑j
 loc_2AAFA:                              ; CODE XREF: CastSpell+D7↓j
                                         ; CastSpell+E5↓j ...
                 or      word_328C8, 20h
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    RedrawAllPartyStatusPanels
                 call    DrawMouseCursor
                 call    ApplyMapTriggerEffect
@@ -48924,7 +48924,7 @@ loc_2AD02:                              ; CODE XREF: CastSpell+2A5↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    RedrawAllPartyStatusPanels
                 call    HandleRangedOrCombatAction
                 test    word_328CA, 1000h
@@ -49221,7 +49221,7 @@ UseLocationBoundPotion proc near        ; CODE XREF: DispatchItemAbilityCommand+
                 mov     word_32940, 258h
                 call    IsItemRangeAvailable
                 and     word_328C8, 1FFFh
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    DrawMouseCursor
                 mov     ax, 48h ; 'H'
                 call    SetGlobalFlag
@@ -49259,7 +49259,7 @@ CollectMagicOreCache proc near          ; CODE XREF: DispatchItemAbilityCommand+
                 mov     word_3293E, 247h
                 mov     word_32940, 247h
                 call    IsItemRangeAvailable
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 mov     word_3293E, 1388h
                 mov     si, 94B7h
                 call    AddToBCDCounter
@@ -49290,7 +49290,7 @@ CollectNuoreCache proc near             ; CODE XREF: DispatchItemAbilityCommand+
                 mov     word_3293E, 246h
                 mov     word_32940, 246h
                 call    IsItemRangeAvailable
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 mov     word_3293E, 1388h
                 mov     si, 94BBh
                 call    AddToBCDCounter
@@ -49319,7 +49319,7 @@ PartyMassHealAndOverheal proc near      ; CODE XREF: DispatchItemAbilityCommand+
                 mov     word_3293E, 248h
                 mov     word_32940, 248h
                 call    IsItemRangeAvailable
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 mov     ax, 3
                 call    PrepareTrapEffectSlots
                 mov     word_32904, bx
@@ -49365,7 +49365,7 @@ InstantKillActiveMonster proc near      ; CODE XREF: DispatchItemAbilityCommand+
                 mov     word_3293E, 249h
                 mov     word_32940, 249h
                 call    IsItemRangeAvailable
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 mov     si, word_32A1E
                 mov     word ptr [si+10h], 0
                 or      word_328C8, 20h
@@ -49425,27 +49425,27 @@ loc_2B214:                              ; CODE XREF: CheckQuestItemsCompleted+90
                 mov     ax, 7
                 call    TriggerSoundEvent
                 and     word_328C8, 1FFFh
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    DrawMouseCursor
                 mov     word_3293E, 256h
                 mov     word_32940, 256h
                 call    IsItemRangeAvailable
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    DrawMouseCursor
                 mov     word_3293E, 255h
                 mov     word_32940, 255h
                 call    IsItemRangeAvailable
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    DrawMouseCursor
                 mov     word_3293E, 254h
                 mov     word_32940, 254h
                 call    IsItemRangeAvailable
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    DrawMouseCursor
                 mov     word_3293E, 2C8h
                 mov     word_32940, 2C8h
                 call    IsItemRangeAvailable
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 call    DrawMouseCursor
                 mov     ax, 258h
                 mov     word_31948, ax
@@ -51081,7 +51081,7 @@ loc_2C0D4:                              ; CODE XREF: RepairItemCommand+98↑j
                 or      word_328C8, 8000h
 
 loc_2C0ED:                              ; CODE XREF: RepairItemCommand+B5↑j
-                call    sub_274B4
+                call    ConsumeItemChargeResource
 
 loc_2C0F2:                              ; CODE XREF: RepairItemCommand+C2↑j
                 and     word_328C8, 3FFFh
@@ -53514,7 +53514,7 @@ loc_2D6DE:                              ; CODE XREF: InteractWithContainer+65↑
                 call    sub_2C0FE
                 and     word_328CA, 0FF7Fh
                 or      word_328C8, 20h
-                call    sub_274B4
+                call    ConsumeItemChargeResource
                 jmp     loc_2D78A
 ; ---------------------------------------------------------------------------
 
@@ -53555,7 +53555,7 @@ loc_2D73C:                              ; CODE XREF: InteractWithContainer+D9↑
                 mov     [si+0Ah], bx
                 call    ApplyEffectAndDrawIconBar
                 or      word_328C8, 20h
-                call    sub_274B4
+                call    ConsumeItemChargeResource
 
 loc_2D77A:                              ; CODE XREF: InteractWithContainer+25↑j
                                         ; InteractWithContainer+54↑j ...

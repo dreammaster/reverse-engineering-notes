@@ -490,12 +490,26 @@ descriptor.
 **A shared scratch buffer at `0xAFA8`** is reused across many unrelated
 subsystems (item records, conversation-topic text — see `WORLD.DAT`
 notes below — and more) as the landing spot for whatever a resource-
-stub helper (`sub_27DE5`/`sub_27DC6`/`sub_27E3A`/etc.) is currently
-configured to read into or write from. `SyncItemChargeFieldToCurgame`
-(was `sub_2778D`, called 3 times from unnamed item-use dispatcher
-`sub_274B4`) reads a `CURGAME` record into it (`errorCode=0xA`),
-applies the same charge/transfer/swap-category logic `sub_274B4`
-applies to its own in-memory item fields to a chosen field
+stub helper (`PrepareRecordAtIndexDC6`/`PrepareRecordAtIndexDCA`/
+`PrepareGroundItemSlotBlockRead`/etc.) is currently configured to
+read into or write from. **`ConsumeItemChargeResource`** (was
+`sub_274B4`, called from 21 sites including `CheckAndPaySpecialItemCost`
+and `HandleSearchCommand`'s failed-trap-search) is the shared "spend
+one use of an item-based resource" engine: driven entirely by
+caller-configured globals, `word_328C8` bits `0x8000`/`0x4000`/
+`0x2000` select the consumption mode — recharge-and-reset-wear (also
+zeroing the matching equipped-item durability counter,
+`+0xBE`/`+0xC0`/`+0xC2`, the same fields `TickEquippedItemDurability`
+increments), full discard, swap-effect-then-discard
+(`SwapItemMultiStatEffect`), or the default decrement-with-auto-
+discard. It deducts the consumed item's weight from the owning party
+member's carry capacity, then syncs bags, redraws the portrait, and
+reapplies stat effects. `SyncItemChargeFieldToCurgame`
+(was `sub_2778D`, called 3 times from `ConsumeItemChargeResource`)
+reads a `CURGAME` record into it (`errorCode=0xA`),
+applies the same charge/transfer/swap-category logic
+`ConsumeItemChargeResource` applies to its own in-memory item fields
+to a chosen field
 (`[0xAFA8+dx]`), then writes it back — except one category/`dx`
 combination instead adjusts generic scratch variable `word_38808` and
 skips the write. Reinforces that `0xAFA8` is a true scratch landing
@@ -562,7 +576,7 @@ distinct, lower-level primitive from the higher-level command handler
 instead of floored at `0`, but without that command's target
 confirmation, incapacitation check, or full redraw sequence.
 `SwapItemMultiStatEffect` (was `sub_276C5`, called 3 times from
-`sub_274B4`) ties the whole cluster together: if the current item's
+`ConsumeItemChargeResource`) ties the whole cluster together: if the current item's
 category matches a `word_2E548` sub-flag, it removes the current
 item's effect, swaps in a new item id from `word_2E548`'s `+4`/`+8`
 field (the exact fields `GetClassifiedItemStatField` selects between),
@@ -588,7 +602,7 @@ A related low-level primitive: `WriteContainerSubBlock` (was
 `sub_2776F`) writes a data block (address + count) via the same
 `FileEntry_Write(errorCode=0xB)` pattern. Called 3 times from
 `SyncAlternateBagsToSave` (was `sub_2772C`, itself called from
-`sub_274B4`) for the 3 "alternate bag" inventory groups at
+`ConsumeItemChargeResource`) for the 3 "alternate bag" inventory groups at
 `+0x17E`/`+0x180`, `+0x1A4`/`+0x1A6`, `+0x1CA`/`+0x1CC` — the same
 group-base fields `GetInventorySlotPtr` already established (count
 field followed by its slot data), written only when each bag is
@@ -1739,7 +1753,7 @@ individually traced, plus two small overlay icon drawers,
 "+1" highlighted icon variant at a fixed offset — exact narrative not
 confirmed). **The equipment slot layout extends further**:
 `RecomputeEquipmentStatBonuses` (was `sub_1B30C`, called from
-`sub_18C79`/`sub_1AA9B`/the long-open `sub_274B4`) confirms `+0x13A`
+`HandleItemDropOnPartyPortrait`/`sub_1AA9B`/`ConsumeItemChargeResource`) confirms `+0x13A`
 (main weapon) and `+0x142` as individually-treated slots (matching
 `DrawEquippedItemIcons` above), plus two more slot arrays beyond
 `+0x13E`: a 3-entry array at `+0x146` (stride 4) and a 5-entry array
