@@ -315,7 +315,7 @@ utilities used across dozens of call sites, so naming them pays off far
 beyond the 4 functions themselves — every caller's disassembly is now
 more readable. `sub_14B24` itself (which chains `StpCpy`/
 `TrimTrailingSpaces`/`StrCat` repeatedly with a base pointer
-`word_2E546` and fixed separator strings) is building a formatted
+`g_currentItemRecord` and fixed separator strings) is building a formatted
 multi-part label, not drawing a box as first assumed from
 `DrawMessageBox` calling it — not yet renamed, worth a follow-up pass to
 pin down what the label actually says.
@@ -1467,7 +1467,7 @@ least a structural answer.
 
 ### 2026-09-15 session update, continued: the melee attack-roll formula
 
-Followed `word_32A1E`'s ("active monster") other usages into a mouse-
+Followed `g_activeCombatMonster`'s ("active monster") other usages into a mouse-
 click attack handler inside `RunDungeonGameLoop`'s input code, and
 found the actual combat attack-roll math: `ResolveAttack` (was
 `sub_25A73`) — hit if `(accuracy - defense) >= random(0-54)`, damage =
@@ -1483,7 +1483,7 @@ death/HP tracking is still an open question for a future round.
 ### 2026-09-15 session update, continued: monster HP found; named HandleDungeonInput
 
 Right after `UpdateMonsterWoundTier` (which only sets a visual wound-
-severity flag), its caller does `[word_32A1E+0x10] -= word_2E49C` — the
+severity flag), its caller does `[g_activeCombatMonster+0x10] -= word_2E49C` — the
 actual HP subtraction. Confirms `g_monsterSlots`' `+0x10` field doubles
 as current HP in active combat, the same field `TickMonsterTimer` uses
 as a lifespan countdown in the level-wide spawn-pool context — another
@@ -1502,7 +1502,7 @@ found the piece connecting last round's HP subtraction to actual
 death handling: `ProcessCombatRound` checks every `g_monsterSlots`
 entry's HP each iteration, and on death flags its `g_combatTurnOrder`
 entry `0x4000` — **confirming the "plausibly defeated" guess from
-several rounds ago** — clears `word_32A1E` if needed, and calls
+several rounds ago** — clears `g_activeCombatMonster` if needed, and calls
 `GrantMonsterRewards`. If nothing died that pass, it instead advances
 the turn to the next living combatant. This closes the loop: attack
 roll → HP subtraction → death detection → loot, all traced end to end
@@ -2711,7 +2711,7 @@ which case it just waits 6 ticks instead.
 
 Named `sub_1D937`, and while tracing it also worked out
 `HandleRangedOrCombatAction`'s other two branches in full: the
-in-combat melee path (much simpler — attacks `word_32A1E` directly,
+in-combat melee path (much simpler — attacks `g_activeCombatMonster` directly,
 no row search) and the area-effect spell finish (a 10-frame explosion
 animation, then a level-wide sweep of all 80 `g_levelMonsters` slots
 for kills — not just the 3 rows the attack itself touched). No new
@@ -4258,7 +4258,7 @@ position (`0x110`,`0x20`), redirected to the offscreen buffer, reuses
 the same fixed glyph `DrawMinimap` itself uses for its 7×9 grid
 (`word_2E532=0x90`), and picks a 0–3 remap/variant value
 (`word_2E530`) from the party's current facing via the same
-`word_36CF5` tier-bit convention already documented across
+`g_partyFacing` tier-bit convention already documented across
 `ShowCompassDirection`/`SpawnMonsterInFacingDirection`/
 `DrawDungeonCellSideFeature` — a small graphical counterpart to
 `ShowCompassDirection`'s text HUD readout.
@@ -4827,7 +4827,7 @@ zero-padded sibling of `FormatNumberCompact`. `sub_239CD` ->
 `ClampDragCursorPosition` (referenced from a data/jump table in
 `seg073`, not a direct call): clamps an accumulated drag position
 (`word_2E782`/`word_2E784`) within bounds, then offsets it by `(8,8)`
-unless the currently-held item type (`word_31946`) is `0` (none) or
+unless the currently-held item type (`g_heldItemType`) is `0` (none) or
 `0x1D` (a specific item type that apparently doesn't need the hotspot
 offset) — plausibly the cursor position used to draw a held/dragged
 item.
@@ -4847,7 +4847,7 @@ represents (row, column, or cursor index) isn't confirmed. Also
 looked at `sub_22989` (called from unnamed `sub_2278C`, combines
 `PickRandomActivePartyMember`, the still-open `+0x50` field from the
 unidentified attribute trio, a facing-direction dispatch on
-`word_36CF5`, and an unclear helper `sub_227F5`) — plausibly a
+`g_partyFacing`, and an unclear helper `sub_227F5`) — plausibly a
 random-ambush/surprise-encounter setup, but too many unresolved
 dependencies to name confidently this round; left as an open lead.
 
@@ -4868,7 +4868,7 @@ threshold, the less likely and smaller the effect."
 member (`PickRandomActivePartyMember`), rolls this avoidance check
 using their `+0x50` stat against a trap/side-feature record's
 threshold and magnitude cap, and — only if the party's current facing
-(the same `word_36CF5` tier-bit convention as
+(the same `g_partyFacing` tier-bit convention as
 `DrawDungeonCellSideFeature`/`ShowCompassDirection`) matches one of 4
 direction bits on the trap record's own flags — finishes populating an
 icon-bar-style output record for the effect system. In short: a
@@ -5326,9 +5326,9 @@ on-screen width themselves.
 Named `sub_21C79` -> `RedrawItemDescriptionAndMaterials`, called from
 the shop buy handler `sub_17032` and the trade/inventory dispatcher
 `sub_1869D`, always immediately after `LoadItemCatalogRecord`: draws
-a 3-line text field from `word_2E546`+0x13 (the current item
+a 3-line text field from `g_currentItemRecord`+0x13 (the current item
 record's description text, per earlier confirmed uses of
-`word_2E546` as the current-item-record pointer) via
+`g_currentItemRecord` as the current-item-record pointer) via
 `DrawStringColumn`, then refreshes `ShowMaterialCounterHud` and
 `DrawMouseCursor`. This is the standard post-item-load redraw in the
 shop/trade screens; `sub_1869D` uses it as the default branch when no
@@ -5464,7 +5464,7 @@ other screens. Only runs when a specific debug flag combination
 holds (`word_328C6` bits `0x80`/`0x200` clear, `word_328CA` bit
 `0x1000` clear, `word_328C4` bit `0x2000` set), then draws 3 rows of
 labeled numeric pairs: `'H'`/`'V'` for `word_2E55C`/`word_2E564`,
-`'H'`/`'V'` again for `word_36CF7`/`word_36CF9` (the confirmed party
+`'H'`/`'V'` again for `g_partyWorldX`/`g_partyWorldY` (the confirmed party
 world X/Y position), and `'B'`/`'F'` for a pair read via a
 `word_328D2`-indexed table. Reads as a debug HUD overlay; the exact
 meaning of the `H`/`V` and `B`/`F` field pairs beyond the confirmed
@@ -5605,8 +5605,8 @@ from unresolved raw addresses early in the binary (joining
 
 `sub_26D54` -> `DebugTeleportToCoordinates` prompts for a 5-digit X
 value (range-checked against `word_32A00`/`word_32A02`), then a
-5-digit Y value (`word_32A08`/`word_32A0A`), then sets `word_36CF7`/
-`word_36CF9` (the confirmed party world X/Y position) directly to the
+5-digit Y value (`word_32A08`/`word_32A0A`), then sets `g_partyWorldX`/
+`g_partyWorldY` (the confirmed party world X/Y position) directly to the
 entered values — a "type in X,Y and teleport there" cheat.
 
 `sub_26FC3` -> `DebugToggleViewportCellHidden` prompts for an index,
@@ -5729,7 +5729,7 @@ picture (id 4) at the identical position, with no icon overlay — the
 alchemy screen's own confirm-dialog background. `sub_293C0` ->
 `DrawRevealMapDirectionIcon` (called once from `RevealMapRegion`):
 draws a small facing-direction icon (picture 0-3, selected by the
-same `word_36CF5` facing-tier bits `DrawMinimapCompassIcon` remaps
+same `g_partyFacing` facing-tier bits `DrawMinimapCompassIcon` remaps
 for the minimap compass).
 
 657 named of 769 functions as of this update.
@@ -5925,7 +5925,7 @@ timer is still running.
 
 Named `sub_1FC53` -> `UpdateScrollingBannerWindow`, called from
 `PlayStudioCreditsIntro` (right after setting the tick value
-`word_36D01`) and from `ShowClueBook`: computes a scroll offset into
+`g_gameClockMinutes`) and from `ShowClueBook`: computes a scroll offset into
 a fixed source table from the tick value, with distinct entry/
 steady/exit zones, then copies a fixed 96-byte window through to a
 destination buffer — most likely the mechanism behind the credits
@@ -6078,8 +6078,8 @@ Named `sub_2B436` -> `InitializeNewGameWorldState`, called once from
 `RunTitleScreen` — the "New Game" initializer. Clears the party
 roster and a per-record flag across all 9 party slots, resets a
 large block of world-state globals to their starting values
-(including the party's starting world position `word_36CF7`/
-`word_36CF9` = `0xA6`/`0x24` and facing), and writes zeroed/reset
+(including the party's starting world position `g_partyWorldX`/
+`g_partyWorldY` = `0xA6`/`0x24` and facing), and writes zeroed/reset
 records back to `WORLD.DAT` across several loops. Resets the save
 game's entire persistent world state back to a fresh starting
 condition before a new game begins.
@@ -6274,7 +6274,7 @@ Named `ShiftBCD4LeftNibble`/`ShiftBCD4RightNibble` (`sub_19DA3`/
 `sub_19DCF`, internal one-nibble shift helpers used only by
 `MulBCD4ByWord`), `RelocateActiveMonsterPointer` (`sub_234A7`,
 called from `ProcessLevelMonsters` and `CompactMonsterSlots` — fixes
-up the active-combat-monster pointer `word_32A1E` after
+up the active-combat-monster pointer `g_activeCombatMonster` after
 `CompactMonsterSlots` moves records around), and
 `ClampStatEffectValue` (`sub_2A982`, called from
 `ApplyMultiStatEffect` — clamps a stat value to 9999 for HP/MP-family
@@ -6355,7 +6355,7 @@ turned out to be well-evidenced: named `sub_2784A` ->
 `ComputeAmbientLightingTable`, called from `RedrawDungeonScreen` (the
 core first-person dungeon render) and `AdvanceDayNightPaletteFade`.
 Computes the dungeon's current ambient lighting table in two stages —
-(1) a day/night cycle lookup against `word_36D01` (the confirmed
+(1) a day/night cycle lookup against `g_gameClockMinutes` (the confirmed
 clock/tick value) with environmental-override and facing/region
 refinements, then (2) a weather-darkening pass subtracting deltas
 under rain/storm/fog-style conditions. This is the system tying
@@ -6731,19 +6731,69 @@ mentions of these 7 raw addresses to the new names for consistency.
 Many more high-reference-count globals remain, ranked by the grep
 frequency count (e.g. `word_3293E` 209 refs, `word_328C6` 152,
 `word_328CA` 150, `word_328C8` 146, `word_32940` 128, `word_3292C` 121,
-`word_36CF5` 106, `word_36CF9`/`word_36CF7` 86-87 each — confirmed party
-world Y/X position, `word_36C7F` 86, `word_2E548` 83 — confirmed
-held-item flags struct, `word_2E40A` 83, `word_3295A` 80, `word_31948`
-77 — confirmed held item id, `word_328CC` 72, `word_2E412` 70,
-`word_36C79` 69 — confirmed environmental-timer bits, `word_2E49C` 65,
-plus further down: `word_2E546` current item catalog record pointer,
-`word_31946` held item quantity, `word_36D01` game clock minutes,
-`word_32A1E` active combat monster pointer). Several of the very
-highest-ref globals (`word_328C4`/`C6`/`C8`/`CA`/`CC`, `word_3293E`,
+`word_36C7F` 86 — a party-average-stat-tier-driven minimap/lighting
+visibility bitfield, exact real-world meaning (light source vs. mapping
+skill) not fully confirmed, `word_2E548` 83 — an item-effect-swap
+sub-flag/field table, exact structure not fully confirmed, `word_2E40A`
+83, `word_3295A` 80, `word_328CC` 72, `word_2E412` 70, `word_36C79` 69
+— confirmed environmental-timer bits, `word_2E49C` 65). Several of the
+very highest-ref globals (`word_328C4`/`C6`/`C8`/`CA`/`CC`, `word_3293E`,
 `word_32940`) are multi-purpose bitfield/scratch-parameter words whose
 individual bits or call-site-specific meaning don't reduce to one clean
 name — deferring those in favor of continuing through the
 single-clear-meaning candidates first.
+
+### 2026-09-16 session update, continued: global variable renaming, round 2
+
+Renamed 10 more globals, continuing down the reference-ranked candidate
+list from round 1:
+- `word_36CF7` → **`g_partyWorldX`**, `word_36CF9` → **`g_partyWorldY`**:
+  the party's current world position — confirmed multiple times,
+  including the new-game initializer setting them to `0xA6`/`0x24`, and
+  `ProcessLevelMonsters` reading them to step monsters toward the
+  player.
+- `word_36CF5` → **`g_partyFacing`**: the party's current facing
+  direction (a 0-3 tier value), read via a consistently-documented
+  "tier-bit convention" across `ShowCompassDirection`,
+  `DrawMinimapCompassIcon`, `DrawDungeonCellSideFeature`, and
+  `SpawnMonsterInFacingDirection`.
+- `word_2E546` → **`g_currentItemRecord`**: the current item catalog
+  record pointer, set by `LoadItemCatalogRecord` and read throughout
+  the shop/trade item-description redraw path.
+- `word_31946` → **`g_heldItemType`**: the currently-held (dragged)
+  item's type/id, checked against `0` (none) by
+  `ClampDragCursorPosition` to decide whether to offset the drag-cursor
+  hotspot.
+- `word_36D01` → **`g_gameClockMinutes`**: the master "minutes since
+  midnight" counter (0-1439), advanced by `AdvanceGameClock` and
+  `RestPartyAndAdvanceClock`, read by `ShowGameClockCommand`/
+  `ComputeGameClockTime` and the day/night ambient-music switch — the
+  file-formats.md entry for this one was already headed "Full
+  mechanism traced".
+- `word_36CFB` → **`g_gameDay`**, `word_36CFD` → **`g_gameMonth`**,
+  `word_36CFF` → **`g_gameYear`**: the in-game calendar counters
+  `AdvanceGameClock` rolls on a `g_gameClockMinutes >= 1440` rollover
+  (30-day months, 12-month years; new-game start day 4, month 11, year
+  `0x222`).
+- `word_32A1E` → **`g_activeCombatMonster`**: the currently-targeted
+  monster in formal (row-based) combat, read directly by
+  `ResolveAttackOrAbilityAction` once a target is already selected —
+  already called "the active combat monster" by name in an earlier
+  file-formats.md entry.
+
+Checked two more high-ref candidates (`word_36C7F`, `word_2E548`) and
+held off on both: `word_36C7F` is a bitfield set from ascending
+thresholds on a party-average stat tier, read by the minimap/dungeon
+renderer to gate visibility, but file-formats.md itself flags the
+underlying stat's real-world meaning (light-source/torch fuel vs. the
+"MAPPING" attribute) as "not confirmed" — naming it now risks baking in
+a guess. `word_2E548` is referenced only via offset fields (`+4`/`+8`)
+in one item-effect-swap function without a clear top-level
+identity/struct description elsewhere. Also confirmed the
+`word_31948`/`word_3194A`/`word_3194C` "held-item triple" mentioned in
+file-formats.md's `SwapHeldItemWithSlot` writeup doesn't have
+individually-confirmed per-field meanings distinct from
+`g_heldItemType` — left unrenamed for the same reason.
 
 ## Next steps (not started this session)
 

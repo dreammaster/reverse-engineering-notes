@@ -1184,7 +1184,7 @@ Before any of the three render passes runs, `RedrawDungeonScreen`
 first calls `BuildDungeonViewportCells`, which builds the local
 scratch cell buffer (`0x6D60`) every pass actually reads from:
 computes a facing-dependent row stride/side-step (the same
-`word_36CF5` tier bits used throughout) from the current position,
+`g_partyFacing` tier bits used throughout) from the current position,
 then calls `CopyDungeonRowCells` 7× (matching `RenderDungeonViewport`'s
 row-count pattern) to copy the visible cells out of the level's map
 data. `RedrawDungeonScreen` then calls `ComputeDungeonCellVisibility`,
@@ -1312,7 +1312,7 @@ has accumulated enough, `ShowLootAndAwardExperience` fires, then
 **The in-combat melee branch** (formal combat, `word_328CA` bit
 `0x1000` set) is much simpler: `HighlightSelectedAbilityIcon` marks
 the selected ability in the UI, one `AnimateProjectileStep`, then
-`ResolveAttackOrAbilityAction` directly against `word_32A1E` (the
+`ResolveAttackOrAbilityAction` directly against `g_activeCombatMonster` (the
 active combat monster) — no row-by-row search needed since the target
 is already known. Miss shows `_val37` via `ShowCombatMessageOrWait`.
 
@@ -1347,7 +1347,7 @@ specific quest item(s) use this path is not identified.
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base
 `0x51C0`, 3 × `0x9C`/156-byte records, `[+0]==0` = empty slot;
 zeroed wholesale by `InitializeDungeonLevel` when entering/loading a
-level, alongside clearing `word_32A1E`, the active-combat-monster
+level, alongside clearing `g_activeCombatMonster`, the active-combat-monster
 global).
 Confirmed fields: `+0xC` type/behavior flags (tested against `0x3010`
 in `BuildCombatTurnOrder`); `+0x12` the monster's current target (a
@@ -1366,10 +1366,10 @@ a descending insertion sort — turn order fastest-first), `+6` flags
 (`0x8000` = this entry is a monster; `0x4000` = **defeated, confirmed
 below**; `0x2000` = unconfirmed). `SelectActiveMonster` then
 picks the first non-defeated monster from that order into
-`word_32A1E`. **`ProcessCombatRound` confirms the "defeated" flag**:
+`g_activeCombatMonster`. **`ProcessCombatRound` confirms the "defeated" flag**:
 called every `RunDungeonGameLoop` iteration, it checks every occupied
 `g_monsterSlots` entry's HP (`+0x10` <= 0) and, on death, sets its
-`g_combatTurnOrder` entry's `0x4000` flag, clears `word_32A1E` if it
+`g_combatTurnOrder` entry's `0x4000` flag, clears `g_activeCombatMonster` if it
 was the active target, and calls `GrantMonsterRewards` — closing the
 loop from `HandleDungeonInput`'s HP subtraction through to loot. If no
 monster died that pass, it instead advances the turn to the next
@@ -1382,12 +1382,12 @@ fixed slot addresses based on occupancy), then rewrites any
 `g_combatTurnOrder` entry still pointing at the old, now-vacated
 address.
 
-`word_32A1E`, the "currently active monster" global read throughout
+`g_activeCombatMonster`, the "currently active monster" global read throughout
 the combat-adjacent code already documented this session
 (`UseAbilityOnTarget`, `ExamineTarget`, `CastSpell`'s target checks,
 etc. — not yet cross-referenced against this specific variable, a
 good next step). Mouse-clicking a monster panel's icon also sets
-`word_32A1E` directly (a target-selection shortcut alongside
+`g_activeCombatMonster` directly (a target-selection shortcut alongside
 `SelectActiveMonster`'s automatic pick).
 
 **A monster's turn is driven by `ProcessMonsterAttackTurn`** (was
@@ -1553,7 +1553,7 @@ distinguishing when each is used isn't traced.
 finds an empty slot, loads the monster's catalog record from
 `WORLD.DAT` (same block math as `LoadClueBookMonsterEntry`), computes
 a spawn position offset from the party's current facing direction
-(the same `word_36CF5` tier bits `ShowCompassDirection` reads) plus
+(the same `g_partyFacing` tier bits `ShowCompassDirection` reads) plus
 current position, sets a countdown timer and full HP
 (`[+0x10]=[+0x50]`).
 
@@ -1566,7 +1566,7 @@ the level) is blocked before it moves there.
 
 Separately, `ProcessLevelMonsters` also computes a one-cell step toward
 the player's position (comparing the monster's `[+2]`/`[+4]` against
-`word_36CF7`/`word_36CF9`) and calls `IsMonsterStepBlocked` (was
+`g_partyWorldX`/`g_partyWorldY`) and calls `IsMonsterStepBlocked` (was
 `sub_2B384`) to validate it before moving: outright blocked on cell
 flag bits `0xC00`; a "special" cell (flag bits `0x6000`) passable only
 if a monster trait flag (`[+0x94]` bit `0x10`) is set (plausibly a
@@ -1660,7 +1660,7 @@ material/gold HUD. `DrawMinimap` has its own small graphical
 counterpart, `DrawMinimapCompassIcon` (was `sub_2169C`): draws a fixed
 icon glyph (the same one used for the minimap's 7×9 grid cells) at a
 fixed position, with a 0–3 remap value selected by the same
-`word_36CF5` facing-tier bits.
+`g_partyFacing` facing-tier bits.
 
 Three **global** (not per-party-member) counters at `0x94B3`
 (`g_partyGold`), `0x94B7`, `0x94BB` — confirmed **exactly
@@ -2065,7 +2065,7 @@ field `+0x50` against the trap record's threshold/magnitude-cap
 fields (`[+0x64]`/`[+0x66]`): the higher `+0x50` relative to the
 threshold, the less likely and smaller the resulting effect. The trap
 only actually fires if the party's current facing (the same
-`word_36CF5` tier-bit convention as `DrawDungeonCellSideFeature`/
+`g_partyFacing` tier-bit convention as `DrawDungeonCellSideFeature`/
 `ShowCompassDirection`) matches one of 4 direction bits on the trap
 record's own flags — i.e. it has to be a wall/door the party is
 currently facing. Up to 4 such results are staged into a scratch
@@ -2109,7 +2109,7 @@ bit and its own countdown reload value: `TickRedrawTimer` (periodic
 palette-cycling animation effect — torch flicker/water shimmer style,
 not fully decoded), and `UpdateAmbientMusic` — the 5th sub-task
 (`word_32958`, ~1-second period), which switches between day and night
-background music tracks based on `word_36D01` (the clock) falling
+background music tracks based on `g_gameClockMinutes` (the clock) falling
 inside or outside `[0x1A4, 0x474]` (7:00 AM–7:00 PM), via the
 already-named `PlayMusicTrack`. `word_3297E` is the "forced track"
 override this checks (0 = let the ambient day/night system choose):
@@ -2128,13 +2128,13 @@ coarse day/night or "time of day" value: it fills two fixed template
 strings — `12:12 AM` and `12/12/1212` — with the current hour/minute/
 AM-PM and month/day/year, via `ComputeGameClockTime`.
 
-**Full mechanism traced**: `word_36D01` is the master "minutes since
+**Full mechanism traced**: `g_gameClockMinutes` is the master "minutes since
 midnight" counter (0–1439), advanced by `AdvanceGameClock` — the
 per-minute clock tick. `ComputeGameClockTime` converts it to a 12-hour
 display (`word_32934`="AM"/"PM", `word_32948`=hour 1–12,
 `word_3295C`=minute). Past 1440, `AdvanceGameClock` rolls the calendar:
-day (`word_36CFB`) wraps at 31 into month (`word_36CFD`), which wraps
-at 13 into year (`word_36CFF`) — a **30-day-month, 12-month-year**
+day (`g_gameDay`) wraps at 31 into month (`g_gameMonth`), which wraps
+at 13 into year (`g_gameYear`) — a **30-day-month, 12-month-year**
 in-game calendar (new-game start: day 4, month 11, year `0x222`=546).
 On the day rollover, `ResetDailyAbilityCharges` also zeroes every
 party member's 4 special-ability charge fields (`+0xB6`-`+0xBC`,
@@ -2148,7 +2148,7 @@ effect): after an
 eligibility check (`IsRestingAllowedHere` — rejects on a global flag,
 forbidden map/level id, or a special-cell match via
 `IsPositionInTriggerList`, confirmed by the "YOU CAN NOT REST HERE"
-message), advances `word_36D01` directly — a flat `+0x1E0`
+message), advances `g_gameClockMinutes` directly — a flat `+0x1E0`
 (8 hours) for a full/uninterrupted rest, or up to 8 hourly `+0x3C`
 ticks (calling `ProcessLevelMonsters` each hour and stopping early if
 combat starts) otherwise — then inlines the exact same day-rollover
@@ -2173,7 +2173,7 @@ effect-id/threshold parameters feeding `ApplySavingThrowEffect`), and
 refreshes the dungeon screen.
 
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
-6:00 PM (`word_36D01`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
+6:00 PM (`g_gameClockMinutes`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
 — a genuine ambient-lighting system: a gradual 113-step palette fade
 through a snapshot table, written into VGA palette entries `0xE0`-
 `0xFF` (the last 32 slots, plausibly a dedicated sky/ambient-light
@@ -2181,13 +2181,13 @@ ramp) via `SetPaletteRange`, walked forward from dawn and backward
 from dusk). `AdvanceDayNightPaletteFade` and `RedrawDungeonScreen` (the
 core first-person render) both call `ComputeAmbientLightingTable`
 (was `sub_2784A`) to compute the actual lighting-gradient snapshot
-that fade walks through: a day/night cycle lookup against `word_36D01`
+that fade walks through: a day/night cycle lookup against `g_gameClockMinutes`
 against a 32-byte-entry table (`0x7228`), with environmental-override
 flags (`word_36C79`) and facing/region refinements, then a weather-
 darkening pass subtracting deltas under rain/storm/fog-style
 conditions — the system tying together the clock, weather, and
 dungeon lighting into one 7-word working buffer (`0x5086`). This
-also independently confirms `word_36D01` wraps at its `0xFFFF`
+also independently confirms `g_gameClockMinutes` wraps at its `0xFFFF`
 table terminator back to `0`, consistent with the "minutes since
 midnight, 0–1439" model above. A separate 5-minute periodic timer
 (`word_32954`,
@@ -2220,7 +2220,7 @@ still-untraced `sub_271DC` — plausibly a different kind of icon
 (equipment slots?) sharing the same 9-icon bar, but not confirmed.
 
 Resting advances the clock
-by a fixed 8 hours (`word_36D01 += 0x1E0`, matching the classic
+by a fixed 8 hours (`g_gameClockMinutes += 0x1E0`, matching the classic
 "resting takes 8 hours" convention); a separate `+0x3C` (1-hour) advance
 exists elsewhere too, context not traced.
 

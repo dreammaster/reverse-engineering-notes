@@ -173748,3 +173748,31 @@ total names seen: 1491, matched default pattern: 0
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor2\yendor2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rename_globals_round2.py']
+[*] reading rename_globals_round2.py
+[*] executing rename_globals_round2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x36cf7  'word_36CF7' -> 'g_partyWorldX': ok
+0x36cf9  'word_36CF9' -> 'g_partyWorldY': ok
+0x36cf5  'word_36CF5' -> 'g_partyFacing': ok
+0x2e546  'word_2E546' -> 'g_currentItemRecord': ok
+0x31946  'word_31946' -> 'g_heldItemType': ok
+0x36d01  'word_36D01' -> 'g_gameClockMinutes': ok
+0x36cfb  'word_36CFB' -> 'g_gameDay': ok
+0x36cfd  'word_36CFD' -> 'g_gameMonth': ok
+0x36cff  'word_36CFF' -> 'g_gameYear': ok
+0x32a1e  'word_32A1E' -> 'g_activeCombatMonster': ok
+----- end target script output -----
+[*] finished executing rename_globals_round2.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106988
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

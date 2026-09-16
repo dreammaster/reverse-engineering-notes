@@ -215,21 +215,21 @@ loc_10160:                              ; CODE XREF: start+15B↑j
 
 loc_10174:                              ; CODE XREF: start+16E↑j
                 mov     bx, 0FFFFh
-                cmp     word_36CF5, 8000h
+                cmp     g_partyFacing, 8000h
                 jz      short loc_1019B
                 mov     bx, 1
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_1019B
                 mov     ax, 0FFFFh
                 mov     bx, 0
-                cmp     word_36CF5, 2000h
+                cmp     g_partyFacing, 2000h
                 jz      short loc_1019B
                 mov     ax, 1
 
 loc_1019B:                              ; CODE XREF: start+170↑j
                                         ; start+17D↑j ...
-                add     ax, word_36CF7
-                add     bx, word_36CF9
+                add     ax, g_partyWorldX
+                add     bx, g_partyWorldY
                 call    TryInteractAtPosition
                 cmp     errorCode, 2
                 jz      short loc_101B8
@@ -266,21 +266,21 @@ loc_101F3:                              ; CODE XREF: start+15D↑j
 loc_10201:                              ; CODE XREF: start+1FC↑j
                 mov     ax, 0
                 mov     bx, 0FFFFh
-                cmp     word_36CF5, 8000h
+                cmp     g_partyFacing, 8000h
                 jz      short loc_1022B
                 mov     bx, 1
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_1022B
                 mov     ax, 0FFFFh
                 mov     bx, 0
-                cmp     word_36CF5, 2000h
+                cmp     g_partyFacing, 2000h
                 jz      short loc_1022B
                 mov     ax, 1
 
 loc_1022B:                              ; CODE XREF: start+20D↑j
                                         ; start+218↑j ...
-                add     ax, word_36CF7
-                add     bx, word_36CF9
+                add     ax, g_partyWorldX
+                add     bx, g_partyWorldY
                 call    TryInteractAtPosition
                 cmp     errorCode, 6
                 jz      short loc_10248
@@ -573,7 +573,7 @@ loc_104AF:                              ; CODE XREF: start+4AA↑j
 ; ---------------------------------------------------------------------------
 
 loc_104B2:                              ; CODE XREF: start+347↑j
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_104D2
                 call    HandleItemDropOnPartyPortrait
                 cmp     errorCode, 0
@@ -867,11 +867,11 @@ start           endp
 
 EnforceDemoBoundary proc near           ; CODE XREF: start:loc_10635↑p
                 mov     errorCode, 0    ; Shareware demo boundary check: if the party is at the exact position (word_36CF7==0x200, word_36CF9==0x2B, word_36CF5==0x4000) and word_328CA bit 0x2 ('registered version' flag) is clear, shows 'REGISTER TODAY!' and sets errorCode=1 to block the caller's TravelToDestination. Dead in this binary: word_328CA bit 0x2 is unconditionally set at boot in `start` and never cleared anywhere, so this block can never fire. Called once from `start`.
-                cmp     word_36CF7, 200h
+                cmp     g_partyWorldX, 200h
                 jnz     short locret_1077B
-                cmp     word_36CF9, 2Bh ; '+'
+                cmp     g_partyWorldY, 2Bh ; '+'
                 jnz     short locret_1077B
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_1077C
 
 locret_1077B:                           ; CODE XREF: EnforceDemoBoundary+C↑j
@@ -2002,7 +2002,7 @@ ClassifyObstacleAtViewportRow endp
 
 
 HandleMovementInput proc far            ; CODE XREF: start+AB0↑P
-                mov     ax, word_36CF5  ; Movement/turning input handler, called from `start`. Dispatches on byte_2E400 == 'H'/'P'/'K'/'M' (BIOS extended scan codes for cursor Up/Down/Left/Right) -- matches the manual's move forward/backward/turn left/turn right exactly, plus an 's' case. Updates player position (word_36CF7/36CF9) and facing (word_328D2), then triggers the automap reveal (sub_21D30/RevealCellsAroundPlayer).
+                mov     ax, g_partyFacing ; Movement/turning input handler, called from `start`. Dispatches on byte_2E400 == 'H'/'P'/'K'/'M' (BIOS extended scan codes for cursor Up/Down/Left/Right) -- matches the manual's move forward/backward/turn left/turn right exactly, plus an 's' case. Updates player position (word_36CF7/36CF9) and facing (word_328D2), then triggers the automap reveal (sub_21D30/RevealCellsAroundPlayer).
                 xor     bx, bx
                 xor     cx, cx
                 xor     dx, dx
@@ -2036,11 +2036,11 @@ loc_112EC:                              ; CODE XREF: HandleMovementInput+1B↑j
                 mov     g_pictureId, 1Ah
                 mov     word_32940, 19h
                 mov     word_32904, 6442h
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_1131D
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_11325
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_1132D
                 inc     bx
                 add     dx, 8
@@ -2069,11 +2069,11 @@ loc_11334:                              ; CODE XREF: HandleMovementInput+14↑j
                 mov     g_pictureId, 14h
                 mov     word_32940, 13h
                 mov     word_32904, 6424h
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_11365
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_1136D
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_11375
                 dec     bx
                 sub     dx, 8
@@ -2102,11 +2102,11 @@ loc_1137C:                              ; CODE XREF: HandleMovementInput+24↑j
                 mov     g_pictureId, 12h
                 mov     word_32940, 11h
                 mov     word_32904, 641Ah
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_113AF
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_113B8
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_113C1
                 and     ax, 0DFFFh
                 or      ax, 4000h
@@ -2135,11 +2135,11 @@ loc_113CA:                              ; CODE XREF: HandleMovementInput+2E↑j
                 mov     g_pictureId, 16h
                 mov     word_32940, 15h
                 mov     word_32904, 642Eh
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_113FD
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_11406
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_1140F
                 and     ax, 0DFFFh
                 or      ax, 8000h
@@ -2168,11 +2168,11 @@ loc_11418:                              ; CODE XREF: HandleMovementInput+38↑j
                 mov     g_pictureId, 18h
                 mov     word_32940, 17h
                 mov     word_32904, 6438h
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_11444
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_1144A
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_11450
                 jmp     short loc_11457
 ; ---------------------------------------------------------------------------
@@ -2205,11 +2205,11 @@ loc_1145E:                              ; CODE XREF: HandleMovementInput:loc_112
                 mov     g_pictureId, 1Ch
                 mov     word_32940, 1Bh
                 mov     word_32904, 644Ch
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_1148A
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_11490
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_11496
                 jmp     short loc_1149D
 ; ---------------------------------------------------------------------------
@@ -2261,8 +2261,8 @@ loc_114C2:                              ; CODE XREF: HandleMovementInput+FE↑j
                 mov     word_2E402, bx
                 mov     word_2E406, cx
                 mov     word_2E404, dx
-                add     bx, word_36CF7
-                add     cx, word_36CF9
+                add     bx, g_partyWorldX
+                add     cx, g_partyWorldY
                 cmp     bx, 28h ; '('
                 jl      short loc_114F0
                 cmp     bx, 2F7h
@@ -2284,7 +2284,7 @@ loc_114F0:                              ; CODE XREF: HandleMovementInput+212↑j
 ; ---------------------------------------------------------------------------
 
 loc_114FF:                              ; CODE XREF: HandleMovementInput+240↑j
-                mov     word_36CF5, ax
+                mov     g_partyFacing, ax
                 mov     es, word_2E562
                 mov     bx, word_328D2
                 add     bx, word_2E404
@@ -2307,9 +2307,9 @@ loc_1152A:                              ; CODE XREF: HandleMovementInput+266↑j
 
 loc_11535:                              ; CODE XREF: HandleMovementInput+282↑j
                 call    SelectPartyRecordById
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 add     ax, word_2E402
-                mov     bx, word_36CF9
+                mov     bx, g_partyWorldY
                 add     bx, word_2E406
                 call    TryInteractAtPosition
                 call    ShowLockStatus
@@ -2350,9 +2350,9 @@ loc_11589:                              ; CODE XREF: HandleMovementInput+2D1↑j
 loc_11598:                              ; CODE XREF: HandleMovementInput+27A↑j
                                         ; HandleMovementInput+2AD↑j ...
                 mov     ax, word_2E402
-                add     word_36CF7, ax
+                add     g_partyWorldX, ax
                 mov     ax, word_2E406
-                add     word_36CF9, ax
+                add     g_partyWorldY, ax
                 mov     bx, word_328D2
                 add     bx, word_2E404
                 mov     word_328D2, bx
@@ -2419,19 +2419,19 @@ loc_11652:                              ; CODE XREF: HandleMovementInput+384↑j
                 jz      short loc_116C8
                 mov     ax, word_2E55C
                 add     ax, 9
-                cmp     word_36CF7, ax
+                cmp     g_partyWorldX, ax
                 jle     short loc_116A2
                 mov     ax, word_2E55C
                 add     ax, 45h ; 'E'
-                cmp     word_36CF7, ax
+                cmp     g_partyWorldX, ax
                 jge     short loc_116A2
                 mov     ax, word_2E564
                 add     ax, 9
-                cmp     word_36CF9, ax
+                cmp     g_partyWorldY, ax
                 jle     short loc_116A2
                 mov     ax, word_2E564
                 add     ax, 45h ; 'E'
-                cmp     word_36CF9, ax
+                cmp     g_partyWorldY, ax
                 jge     short loc_116A2
                 jmp     short loc_116C8
 ; ---------------------------------------------------------------------------
@@ -2519,9 +2519,9 @@ loc_11704:                              ; CODE XREF: HandleSpecialCellEntry+5↑
 
 loc_1175B:                              ; CODE XREF: HandleSpecialCellEntry+F↑j
                 mov     ax, word_2E402
-                add     word_36CF7, ax
+                add     g_partyWorldX, ax
                 mov     ax, word_2E406
-                add     word_36CF9, ax
+                add     g_partyWorldY, ax
                 mov     bx, word_328D2
                 add     bx, word_2E404
                 mov     word_328D2, bx
@@ -2920,7 +2920,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 call    TriggerSoundEvent
                 and     word_3295A, 0EFFFh
                 call    SetPaletteToWhiteAlt
-                mov     word_36D01, 1E0h
+                mov     g_gameClockMinutes, 1E0h
                 call    UpdateScrollingBannerWindow
                 mov     _font_bgTransparent, 0
                 mov     x, 1
@@ -3592,7 +3592,7 @@ loadWorldDat3   endp
 
 loadWorldDat1   proc near               ; CODE XREF: InitGame+74↑p
                 mov     ax, 0B50h
-                mov     word_2E546, ax
+                mov     g_currentItemRecord, ax
                 mov     dx, _emsPointer1?
                 mov     bx, 55C6h
                 call    MapUnmapPages
@@ -3869,7 +3869,7 @@ loc_12611:                              ; CODE XREF: LoadItemCatalogRecord+25↑
                 mov     ax, seg seg129
                 mov     ds, ax
                 mov     ax, word_2E548
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 pop     es
                 pop     si
                 pop     di
@@ -5675,7 +5675,7 @@ ShowClueBookItemDetail proc near        ; CODE XREF: RunClueBookItemCategory:loc
                 call    DrawMessageBox
                 call    DrawClueBookNavBar
                 mov     g_pictureCategory, 80h
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 mov     ax, [si+8]
                 mov     g_pictureId, ax
                 mov     x, 44h ; 'D'
@@ -5701,7 +5701,7 @@ loc_136BD:                              ; CODE XREF: ShowClueBookItemDetail+3F�
                 mov     word_2E4AC, 1
                 call    DrawLabeledNumberIfNonzero
                 mov     _textPos_y, 45h ; 'E'
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 call    DrawItemContainerCompatibilityRow
                 retn
 ShowClueBookItemDetail endp
@@ -7144,7 +7144,7 @@ ListCompatibleClueBookItems proc near   ; CODE XREF: RunClueBookItemCategory↑p
                 call    LoadItemCatalogRecord
                 mov     word_328FE, 0
                 call    ResetClueBookMarkerBuffer
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 test    word ptr [bx+0Ch], 0C000h
                 jz      short loc_1475E
                 mov     bx, word_2E548
@@ -7632,7 +7632,7 @@ FillVideoBuffer endp
 BuildItemDisplayName proc far           ; CODE XREF: BuildClueEntryText+D7↑P
                                         ; ShowClueBookItemDetail+3↑P
                 call    LoadItemCatalogRecord ; Builds '<+0x13> <+0x20> <+0x2D>' (space-separated, trimmed) from an item catalog record loaded via LoadItemCatalogRecord -- the item-detail sibling of BuildMonsterDisplayName (same separator string at 0x7960). Called from BuildClueEntryText and ShowClueBookItemDetail. Per-field semantics not confirmed.
-                mov     ax, word_2E546
+                mov     ax, g_currentItemRecord
                 add     ax, 13h
                 mov     bx, 0AFA8h
                 call    StpCpy
@@ -7641,7 +7641,7 @@ BuildItemDisplayName proc far           ; CODE XREF: BuildClueEntryText+D7↑P
                 mov     ax, 7960h
                 mov     bx, 0AFA8h
                 call    StrCat
-                mov     ax, word_2E546
+                mov     ax, g_currentItemRecord
                 add     ax, 20h ; ' '
                 mov     bx, 0AFA8h
                 call    StrCat
@@ -7650,7 +7650,7 @@ BuildItemDisplayName proc far           ; CODE XREF: BuildClueEntryText+D7↑P
                 mov     ax, 7960h
                 mov     bx, 0AFA8h
                 call    StrCat
-                mov     ax, word_2E546
+                mov     ax, g_currentItemRecord
                 add     ax, 2Dh ; '-'
                 mov     bx, 0AFA8h
                 call    StrCat
@@ -7985,7 +7985,7 @@ RestoreUiStateForClueBook proc far      ; CODE XREF: ShowClueBook+508↑P
                 lodsw
                 mov     es:word_36CE7, ax
                 lodsw
-                mov     es:word_2E546, ax
+                mov     es:g_currentItemRecord, ax
                 lodsw
                 mov     es:word_2E548, ax
                 lodsw
@@ -7997,7 +7997,7 @@ RestoreUiStateForClueBook proc far      ; CODE XREF: ShowClueBook+508↑P
                 lodsw
                 mov     es:word_2E666, ax
                 lodsw
-                mov     es:word_31946, ax
+                mov     es:g_heldItemType, ax
                 lodsw
                 mov     es:word_31948, ax
                 lodsw
@@ -8076,7 +8076,7 @@ RestoreUiStateForClueBook proc far      ; CODE XREF: ShowClueBook+508↑P
                 push    g_pictureId
                 push    g_pictureCategory
                 push    errorCode
-                mov     ax, word_31946
+                mov     ax, g_heldItemType
                 mov     g_pictureId, ax
                 call    UpdateCursorForHeldItem
                 call    DrawMouseCursorAlt
@@ -8143,7 +8143,7 @@ SaveUiStateForClueBook proc far         ; CODE XREF: ShowClueBook+C↑P
                 stosw
                 mov     ax, word_36CE7
                 stosw
-                mov     ax, word_2E546
+                mov     ax, g_currentItemRecord
                 stosw
                 mov     ax, word_2E548
                 stosw
@@ -8155,7 +8155,7 @@ SaveUiStateForClueBook proc far         ; CODE XREF: ShowClueBook+C↑P
                 stosw
                 mov     ax, word_2E666
                 stosw
-                mov     ax, word_31946
+                mov     ax, g_heldItemType
                 stosw
                 mov     ax, word_31948
                 stosw
@@ -10167,7 +10167,7 @@ loc_16324:                              ; CODE XREF: RunDungeonGameLoop+2B↑j
                 push    ax
                 call    ShowResourceDepletedOverlay
                 call    RedrawDungeonScreen
-                mov     word_32A1E, 0
+                mov     g_activeCombatMonster, 0
 
 loc_1633B:                              ; CODE XREF: RunDungeonGameLoop+A8↓j
                 call    BuildCombatTurnOrder
@@ -10502,7 +10502,7 @@ loc_16619:                              ; CODE XREF: HandleDungeonInput+208↑j
 loc_16620:                              ; CODE XREF: HandleDungeonInput+215↑j
                 cmp     ax, 6
                 jnz     short loc_16645
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jnz     short loc_16634
                 call    HandlePartyStatusPanelInput
                 jmp     loc_16432
@@ -10593,7 +10593,7 @@ loc_166CD:                              ; CODE XREF: HandleDungeonInput+294↑j
                                         ; HandleDungeonInput+2AD↑j
                 cmp     ax, 1
                 jnz     short loc_166D8
-                mov     word_32A1E, bx
+                mov     g_activeCombatMonster, bx
                 jmp     short loc_16705
 ; ---------------------------------------------------------------------------
 
@@ -10647,7 +10647,7 @@ loc_1670D:                              ; CODE XREF: HandleDungeonInput+C6↑j
                 cmp     errorCode, 0
                 jz      short loc_167B3
                 mov     si, g_currentPartyRecord
-                mov     di, word_32A1E
+                mov     di, g_activeCombatMonster
                 mov     ax, [di+58h]
                 mov     bx, [si+4Ch]
                 mov     cx, [si+4Eh]
@@ -10681,7 +10681,7 @@ loc_16778:                              ; CODE XREF: HandleDungeonInput+35E↑j
 loc_167A9:                              ; CODE XREF: HandleDungeonInput+385↑j
                                         ; HandleDungeonInput+39B↑j
                 mov     ax, word_2E49C
-                mov     di, word_32A1E
+                mov     di, g_activeCombatMonster
                 sub     [di+10h], ax
 
 loc_167B3:                              ; CODE XREF: HandleDungeonInput+341↑j
@@ -10756,7 +10756,7 @@ loc_1686D:                              ; CODE XREF: HandleDungeonInput+45A↑j
 ; ---------------------------------------------------------------------------
 
 loc_16875:                              ; CODE XREF: HandleDungeonInput+11A↑j
-                mov     si, word_32A1E
+                mov     si, g_activeCombatMonster
                 mov     word ptr [si+10h], 0
                 jmp     loc_164B0
 HandleDungeonInput endp
@@ -11075,7 +11075,7 @@ loc_16B4C:                              ; CODE XREF: BuildCombatTurnOrder+DF↑j
 ; ---------------------------------------------------------------------------
 
 loc_16B54:                              ; CODE XREF: BuildCombatTurnOrder+C9↑j
-                cmp     word_32A1E, 0
+                cmp     g_activeCombatMonster, 0
                 jnz     short loc_16B5E
                 call    SelectActiveMonster
 
@@ -11122,9 +11122,9 @@ loc_16B8F:                              ; CODE XREF: ProcessCombatRound+23↑j
 loc_16B94:                              ; CODE XREF: ProcessCombatRound+2A↑j
                 pop     cx
                 pop     di
-                cmp     si, word_32A1E
+                cmp     si, g_activeCombatMonster
                 jnz     short loc_16BA2
-                mov     word_32A1E, 0
+                mov     g_activeCombatMonster, 0
 
 loc_16BA2:                              ; CODE XREF: ProcessCombatRound+37↑j
                 call    GrantMonsterRewards
@@ -11141,7 +11141,7 @@ loc_16BB4:                              ; CODE XREF: ProcessCombatRound+11↑j
                 loop    loc_16B71
                 cmp     errorCode, 2
                 jnz     short loc_16BF3
-                cmp     word_32A1E, 0
+                cmp     g_activeCombatMonster, 0
                 jnz     short loc_16BCB
                 call    SelectActiveMonster
 
@@ -11341,7 +11341,7 @@ SelectActiveMonster proc near           ; CODE XREF: BuildCombatTurnOrder+122↑
                                         ; ProcessCombatRound+65↑p
                 push    cx              ; Scans g_combatTurnOrder (cx=7, up to 4 party + 3 monster entries) for the first entry flagged 0x8000 (monster) and not 0x4000 (plausibly defeated); sets word_32A1E to its record pointer, or 0 if none found (no monsters currently active).
                 push    si
-                mov     word_32A1E, 0
+                mov     g_activeCombatMonster, 0
                 mov     si, 539Eh
                 mov     cx, 7
 
@@ -11351,7 +11351,7 @@ loc_16D8D:                              ; CODE XREF: SelectActiveMonster+26↓j
                 test    word ptr [si+6], 4000h
                 jnz     short loc_16DA2
                 mov     ax, [si]
-                mov     word_32A1E, ax
+                mov     g_activeCombatMonster, ax
                 jmp     short loc_16DA7
 ; ---------------------------------------------------------------------------
 
@@ -11902,7 +11902,7 @@ HandleShopCatalogSlotClick proc far     ; CODE XREF: RunShopScreen+13A↓p
 ; ---------------------------------------------------------------------------
 
 loc_1703B:                              ; CODE XREF: HandleShopCatalogSlotClick+6↑j
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_17045
                 jmp     loc_171B8
 ; ---------------------------------------------------------------------------
@@ -11939,7 +11939,7 @@ loc_17071:                              ; CODE XREF: HandleShopCatalogSlotClick+
 
 loc_1707B:                              ; CODE XREF: HandleShopCatalogSlotClick+44↑j
                 mov     ax, [bx+8]
-                mov     word_31946, ax
+                mov     g_heldItemType, ax
                 mov     g_pictureId, ax
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
@@ -12117,7 +12117,7 @@ loc_1722F:                              ; CODE XREF: HandleShopCatalogSlotClick+
                 not     byte_2E668
                 mov     bl, byte_2E668
                 and     byte_32DCC, bl
-                mov     word_31946, 0
+                mov     g_heldItemType, 0
                 mov     g_pictureId, 0
                 mov     word_31948, 0
                 mov     word_3194C, 0
@@ -12386,7 +12386,7 @@ loc_1746B:                              ; CODE XREF: RunShopScreen+119↑j
 loc_1746E:                              ; CODE XREF: RunShopScreen+120↑j
                 test    word_328C6, 80h
                 jnz     short loc_17485
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_17482
                 call    TryDropHeldItem
 
@@ -12396,7 +12396,7 @@ loc_17482:                              ; CODE XREF: RunShopScreen+150↑j
 ; ---------------------------------------------------------------------------
 
 loc_17485:                              ; CODE XREF: RunShopScreen+149↑j
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jnz     short loc_17482
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
@@ -12408,7 +12408,7 @@ loc_17485:                              ; CODE XREF: RunShopScreen+149↑j
 ; ---------------------------------------------------------------------------
 
 loc_174A2:                              ; CODE XREF: RunShopScreen+132↑j
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jnz     short loc_174B1
                 call    HandlePartyStatusPanelInput
                 jmp     loc_17350
@@ -13049,7 +13049,7 @@ ConsumeAbilityChargeAndRefresh endp
 PayGoldAndAcquireItem proc near         ; CODE XREF: HandleShopCatalogSlotClick+2A↑p
                 push    si              ; Core 'pay and receive' step of a shop purchase: CompareBCD4/SubBCD4(g_partyGold, [0xB30]) -- bails if unaffordable, shows ShowResourceDepletedOverlay on an exact-drain special case -- then stages the acquired item (word_31946/3194A/3194C) the same way TrySellItemForGold/TryEnhanceItemForGold/TryRepairItemForGold stage theirs. Called from sub_17032, a shop-catalog click handler (main input loop, word_328C6 bit 0x200).
                 mov     ax, [si]
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 add     si, 4
                 call    ComputeBarterPricingPreview
                 pop     si
@@ -13079,9 +13079,9 @@ loc_17ADA:                              ; CODE XREF: PayGoldAndAcquireItem:loc_1
                 call    SubBCD4
                 pop     di
                 pop     si
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 mov     ax, [bx+8]
-                mov     word_31946, ax
+                mov     g_heldItemType, ax
                 mov     g_pictureId, ax
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
@@ -13100,7 +13100,7 @@ PayGoldAndAcquireItem endp
 
 SellClickedCatalogItem proc near        ; CODE XREF: HandleShopCatalogSlotClick:loc_1726C↑p
                 mov     ax, word_31948  ; Credits gold (AddBCD4(g_partyGold, [0xB30])) instead of spending it, clears the held/staged item, refreshes the material/gold HUD -- a 'sell this catalog item back' action, the click counterpart to TrySellItemForGold. Called from sub_17032.
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 add     si, 4
                 call    ComputeBarterPricingPreview
                 mov     di, 0B30h
@@ -13112,7 +13112,7 @@ SellClickedCatalogItem proc near        ; CODE XREF: HandleShopCatalogSlotClick:
                 call    ShowResourceDepletedOverlay
 
 loc_17B35:                              ; CODE XREF: SellClickedCatalogItem+1F↑j
-                mov     word_31946, 0
+                mov     g_heldItemType, 0
                 mov     g_pictureId, 0
                 mov     word_31948, 0
                 mov     word_3194C, 0
@@ -14760,7 +14760,7 @@ loc_1872D:                              ; CODE XREF: RunPartyInventoryScreen+86�
                 call    DrawPartyMemberStatusPanel
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_18759
                 test    word_328C6, 1Ch
                 jnz     short loc_18761
@@ -14772,7 +14772,7 @@ loc_18759:                              ; CODE XREF: RunPartyInventoryScreen+B2�
 
 loc_18761:                              ; CODE XREF: RunPartyInventoryScreen+BA↑j
                                         ; RunPartyInventoryScreen+5D9↓j
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 add     si, 4
                 mov     ax, word_31948
                 call    ComputeBarterPricingPreview
@@ -14793,7 +14793,7 @@ loc_1877E:                              ; CODE XREF: RunPartyInventoryScreen+6E�
 ; ---------------------------------------------------------------------------
 
 loc_1878E:                              ; CODE XREF: RunPartyInventoryScreen+68↑j
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_18798
                 jmp     loc_18B40
 ; ---------------------------------------------------------------------------
@@ -15270,7 +15270,7 @@ loc_18BD1:                              ; CODE XREF: RunPartyInventoryScreen+504
                                         ; RunPartyInventoryScreen+523↑j ...
                 cmp     g_lastKeyChar, 20h ; ' '
                 jnz     short loc_18C09
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_18C06
                 test    word_328C6, 10h
                 jz      short loc_18BED
@@ -15298,7 +15298,7 @@ loc_18C06:                              ; CODE XREF: RunPartyInventoryScreen+540
 loc_18C09:                              ; CODE XREF: RunPartyInventoryScreen+539↑j
                 cmp     g_lastKeyChar, 1Bh
                 jnz     short loc_18C06
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_18C1F
                 call    FlashStatusWarning
                 jmp     near ptr RunPartyInventoryScreen
@@ -15312,7 +15312,7 @@ loc_18C1F:                              ; CODE XREF: RunPartyInventoryScreen+578
                 call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     g_pictureId, ax
-                mov     word_31946, ax
+                mov     g_heldItemType, ax
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
                 mov     ax, word_3296A
@@ -15663,7 +15663,7 @@ loc_18F34:                              ; CODE XREF: HandleItemDropOnPartyPortra
                 mov     word_3194A, 0
                 mov     word_31948, 0
                 mov     word_3194C, 0
-                mov     word_31946, 0
+                mov     g_heldItemType, 0
                 mov     g_pictureId, 0
                 call    UpdateCursorForHeldItem
                 call    RecomputeEquipmentStatBonuses
@@ -15764,7 +15764,7 @@ loc_19032:                              ; CODE XREF: TryEnhanceItemForGold+52↑
                 inc     ax
                 mov     word_31948, ax
                 call    LoadItemCatalogRecord
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 add     si, 4
                 mov     ax, word_31948
                 call    ComputeBarterPricingPreview
@@ -15772,7 +15772,7 @@ loc_19032:                              ; CODE XREF: TryEnhanceItemForGold+52↑
                 mov     bx, 0
                 call    ShowItemPurchaseConfirmPrompt
                 call    RestoreCursorBackgroundIfDirty
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 mov     ax, [bx+8]
                 mov     g_pictureId, ax
                 call    UpdateCursorForHeldItem
@@ -15911,7 +15911,7 @@ loc_19198:                              ; CODE XREF: TryRepairItemForGold+52↑j
                 mov     word_3194C, 0
                 mov     word_31948, ax
                 call    LoadItemCatalogRecord
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 add     si, 4
                 mov     ax, word_31948
                 call    ComputeBarterPricingPreview
@@ -15919,7 +15919,7 @@ loc_19198:                              ; CODE XREF: TryRepairItemForGold+52↑j
                 mov     bx, 0
                 call    ShowItemPurchaseConfirmPrompt
                 call    RestoreCursorBackgroundIfDirty
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 mov     ax, [bx+8]
                 mov     g_pictureId, ax
                 call    UpdateCursorForHeldItem
@@ -16000,7 +16000,7 @@ TrySellItemForGold proc near            ; CODE XREF: RunPartyInventoryScreen+54A
                 mov     es, word_2E54C
                 mov     bx, word_2E54E
                 mov     ax, es:[bx+10h]
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 test    [bx+10h], ax
                 jnz     short loc_192B9
                 call    ClearStatusPanelIfDirty
@@ -17485,9 +17485,9 @@ loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑
                 mov     ax, 0Ah
                 call    TriggerSoundEvent
                 mov     ax, [di+4]
-                mov     word_36CF7, ax
+                mov     g_partyWorldX, ax
                 mov     ax, [di+6]
-                mov     word_36CF9, ax
+                mov     g_partyWorldY, ax
                 call    RefreshDungeonMapWindow
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
@@ -18109,7 +18109,7 @@ seg034          segment byte public 'CODE' use16
 
 TryDropHeldItem proc far                ; CODE XREF: start+322↑P
                                         ; HandleDungeonInput+1EC↑P ...
-                cmp     word_31946, 0   ; The 'drop held item' action: checks IsItemDroppable (warns/bails if not), shows a confirm prompt, then calls PlaceItemOnGround on confirmation or restores the held item on decline. Called from `start`/HandleDungeonInput.
+                cmp     g_heldItemType, 0 ; The 'drop held item' action: checks IsItemDroppable (warns/bails if not), shows a confirm prompt, then calls PlaceItemOnGround on confirmation or restores the held item on decline. Called from `start`/HandleDungeonInput.
                 jnz     short loc_1A386
                 retf
 ; ---------------------------------------------------------------------------
@@ -18124,8 +18124,8 @@ loc_1A386:                              ; CODE XREF: TryDropHeldItem+5↑j
 ; ---------------------------------------------------------------------------
 
 loc_1A39E:                              ; CODE XREF: TryDropHeldItem+17↑j
-                push    word_31946
-                mov     word_31946, 0
+                push    g_heldItemType
+                mov     g_heldItemType, 0
                 mov     g_pictureId, 0
                 call    UpdateCursorForHeldItem
                 mov     ax, 4
@@ -18215,25 +18215,25 @@ loc_1A445:                              ; CODE XREF: TravelToDestination+43↑j
 loc_1A451:                              ; CODE XREF: TravelToDestination+3C↑j
                                         ; TravelToDestination+53↑j ...
                 mov     ax, [si]
-                mov     word_36CF7, ax
+                mov     g_partyWorldX, ax
                 mov     ax, [si+2]
-                mov     word_36CF9, ax
+                mov     g_partyWorldY, ax
                 mov     ax, [si+4]
-                mov     word_36CF5, ax
+                mov     g_partyFacing, ax
                 test    word ptr [si+0Eh], 800h
                 jz      short loc_1A493
-                cmp     word_36CF7, 62h ; 'b'
+                cmp     g_partyWorldX, 62h ; 'b'
                 jnz     short loc_1A493
-                cmp     word_36CF9, 53h ; 'S'
+                cmp     g_partyWorldY, 53h ; 'S'
                 jnz     short loc_1A493
-                cmp     word_36D01, 1A4h
+                cmp     g_gameClockMinutes, 1A4h
                 jle     short loc_1A487
-                cmp     word_36D01, 474h
+                cmp     g_gameClockMinutes, 474h
                 jl      short loc_1A493
 
 loc_1A487:                              ; CODE XREF: TravelToDestination+8D↑j
-                mov     word_36CF7, 17Ah
-                mov     word_36CF9, 0E3h
+                mov     g_partyWorldX, 17Ah
+                mov     g_partyWorldY, 0E3h
 
 loc_1A493:                              ; CODE XREF: TravelToDestination+77↑j
                                         ; TravelToDestination+7E↑j ...
@@ -18407,7 +18407,7 @@ seg036          segment byte public 'CODE' use16
 
 FlashStatusWarning proc far             ; CODE XREF: HandleShopCatalogSlotClick+1B8↑P
                                         ; HandleShopCatalogSlotClick+1D5↑P ...
-                push    word_31946      ; Moderate confidence: plays a sound, briefly shows picture id 0xE for 7 ticks (saving/restoring the previous picture id), then restores. Called from HandleGameCommand when a status effect is already active -- a periodic warning flash.
+                push    g_heldItemType  ; Moderate confidence: plays a sound, briefly shows picture id 0xE for 7 ticks (saving/restoring the previous picture id), then restores. Called from HandleGameCommand when a status effect is already active -- a periodic warning flash.
                 mov     ax, 3
                 call    TriggerSoundEvent
                 mov     g_pictureId, 0Eh
@@ -19373,7 +19373,7 @@ loc_1ADCE:                              ; CODE XREF: TickEquippedItemDurability+
 
 loc_1ADE8:                              ; CODE XREF: TickEquippedItemDurability+F5↑j
                 call    ApplyItemEffectIconSlot
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 mov     si, 0BEh
                 test    word ptr [bx+0Ch], 8000h
                 jnz     short loc_1AE06
@@ -19517,7 +19517,7 @@ loc_1AEEC:                              ; CODE XREF: ClassifyItemServiceTier+31�
 
 loc_1AEF2:                              ; CODE XREF: ClassifyItemServiceTier+33↑j
                                         ; ClassifyItemServiceTier+45↑j ...
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 retn
 ClassifyItemServiceTier endp
 
@@ -19714,7 +19714,7 @@ IsItemEligibleForEnhance proc far       ; CODE XREF: TryEnhanceItemForGold+6↑P
                                         ; ComputeBarterPricingPreview+80↓P ...
                 push    bx              ; Eligibility check for TryEnhanceItemForGold (also called from sub_1CCBC and others, not traced). Selects a held-item field ([+8] or [+6], word_2E548) based on the location's ([+0xC], word_2E546) flag bits, and checks it against a range table at DS:0xBCE ([+0x14]..[+0x16]). Returns eligible (ax=0) if in range.
                 mov     ax, 1
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 test    word ptr [bx+0Ch], 0A00h
                 jnz     short loc_1B16D
                 test    word ptr [bx+0Ch], 0C000h
@@ -19794,7 +19794,7 @@ IsItemEligibleForRepair proc far        ; CODE XREF: TryRepairItemForGold+6↑P
                                         ; ComputeBarterPricingPreview:loc_1CD7A↓P ...
                 push    bx              ; Eligibility check for TryRepairItemForGold (also called elsewhere, not traced). For each of 2 location-flag bits (word_2E546's [+0xC] 0xC000/0x800), if set and the held item's matching flag (word_2E548's [+2] 0x100/0x40) is also set, returns eligible (ax=0).
                 mov     ax, 1
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 test    word ptr [bx+0Ch], 0C000h
                 jz      short loc_1B22B
                 mov     bx, word_2E548
@@ -23768,7 +23768,7 @@ seg055          segment byte public 'CODE' use16
 
 HandleRangedOrCombatAction proc far     ; CODE XREF: start+A73↑P
                                         ; seg000:0A9B↑P ...
-                cmp     word_31946, 0   ; Combat-action entry point, 3-way branch on word_328CA bit 0x1000 (in formal combat) and word_328C8 bit 0x100 (ranged-attack request): (1) in-combat melee -- HighlightSelectedAbilityIcon, one AnimateProjectileStep, then ResolveAttackOrAbilityAction directly against word_32A1E (no row search, target already known); (2) ranged-weapon shot and (3) spell/ability cast (not in combat) -- these converge into the identical code: select weapon/ability, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve via ResolveAttackOrAbilityAction on a hit, with a multi-shot continuation (word_2E544) for characters with more than one attack. A successful area-effect spell plays a 10-frame explosion animation then sweeps all 80 g_levelMonsters slots for kills. Common epilogue for all 3 branches: loot-staging check -> ShowLootAndAwardExperience -> ProcessLevelMonsters -> redraw. Called from `start`.
+                cmp     g_heldItemType, 0 ; Combat-action entry point, 3-way branch on word_328CA bit 0x1000 (in formal combat) and word_328C8 bit 0x100 (ranged-attack request): (1) in-combat melee -- HighlightSelectedAbilityIcon, one AnimateProjectileStep, then ResolveAttackOrAbilityAction directly against word_32A1E (no row search, target already known); (2) ranged-weapon shot and (3) spell/ability cast (not in combat) -- these converge into the identical code: select weapon/ability, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve via ResolveAttackOrAbilityAction on a hit, with a multi-shot continuation (word_2E544) for characters with more than one attack. A successful area-effect spell plays a 10-frame explosion animation then sweeps all 80 g_levelMonsters slots for kills. Common epilogue for all 3 branches: loot-staging check -> ShowLootAndAwardExperience -> ProcessLevelMonsters -> redraw. Called from `start`.
                 jz      short loc_1D4C0
                 retf
 ; ---------------------------------------------------------------------------
@@ -24143,7 +24143,7 @@ loc_1D902:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    HighlightSelectedAbilityIcon
                 mov     word_3292C, 31h ; '1'
                 call    AnimateProjectileStep
-                mov     si, word_32A1E
+                mov     si, g_activeCombatMonster
                 call    ResolveAttackOrAbilityAction
                 test    word_328C8, 200h
                 jnz     short loc_1D921
@@ -25686,7 +25686,7 @@ seg057          segment byte public 'CODE' use16
 RestPartyAndAdvanceClock proc far       ; CODE XREF: start:loc_10A26↑P
                                         ; ApplyEncodedItemEffect+60A↓P
                 mov     g_lastKeyChar, 0 ; The party rest/camp action ('R rest'). Checks eligibility (sub_1EA18), advances the game clock (8 hours flat for a full rest, or up to 8 hourly ticks calling ProcessLevelMonsters and stopping if combat starts), handles day rollover (ResetDailyAbilityCharges + calendar counters), shows hours rested, then resumes via RunDungeonGameLoop. Called from `start` and sub_2C0FE.
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_1E657
                 retf
 ; ---------------------------------------------------------------------------
@@ -25745,7 +25745,7 @@ loc_1E6FB:                              ; CODE XREF: RestPartyAndAdvanceClock+15
                 mov     cx, 8
                 test    word_328C4, 2
                 jz      short loc_1E72A
-                add     word_36D01, 1E0h
+                add     g_gameClockMinutes, 1E0h
                 mov     word_32940, 8
                 jmp     short loc_1E746
 ; ---------------------------------------------------------------------------
@@ -25755,30 +25755,30 @@ loc_1E72A:                              ; CODE XREF: RestPartyAndAdvanceClock+D0
                 call    ProcessLevelMonsters
                 test    word_328CA, 1000h
                 jnz     short loc_1E746
-                add     word_36D01, 3Ch ; '<'
+                add     g_gameClockMinutes, 3Ch ; '<'
                 inc     word_32940
                 loop    loc_1E72A
                 dec     word_32940
 
 loc_1E746:                              ; CODE XREF: RestPartyAndAdvanceClock+DE↑j
                                         ; RestPartyAndAdvanceClock+EB↑j
-                cmp     word_36D01, 59Fh
+                cmp     g_gameClockMinutes, 59Fh
                 jl      short loc_1E786
-                sub     word_36D01, 5A0h
-                cmp     word_36D01, 0
+                sub     g_gameClockMinutes, 5A0h
+                cmp     g_gameClockMinutes, 0
                 jnz     short loc_1E761
-                mov     word_36D01, 1
+                mov     g_gameClockMinutes, 1
 
 loc_1E761:                              ; CODE XREF: RestPartyAndAdvanceClock+10F↑j
                 call    ResetDailyAbilityCharges
-                inc     word_36CFB
-                cmp     word_36CFB, 1Fh
+                inc     g_gameDay
+                cmp     g_gameDay, 1Fh
                 jnz     short loc_1E786
-                mov     word_36CFB, 1
-                inc     word_36CFD
-                cmp     word_36CFD, 0Dh
+                mov     g_gameDay, 1
+                inc     g_gameMonth
+                cmp     g_gameMonth, 0Dh
                 jnz     short loc_1E786
-                inc     word_36CFF
+                inc     g_gameYear
 
 loc_1E786:                              ; CODE XREF: RestPartyAndAdvanceClock+102↑j
                                         ; RestPartyAndAdvanceClock+125↑j ...
@@ -26082,7 +26082,7 @@ RunGameDialog   proc far                ; CODE XREF: start+7E0↑P
                                         ; InitGame+17B↑P ...
                 mov     g_lastKeyChar, 0 ; In-game options dialog: draws the panel background (DrawPicture id 1) + mouse cursor (id 8) + GameDialog_drawButtons, then loops on PollKeyboardInput dispatching each of the panel's 8 hotkeys: A=Animation(sub_1F163) D=Dos(sub_1F8C7) F=SoundFx(sub_1F93D) L=Load M=Music(sub_1F8F5) N=NewGame(sub_1F5A5) R/ESC=Return S=Save. Called directly from `start` and InitGame.
                 mov     word_3291E, 0
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_1EA83
                 jmp     loc_1EC69
 ; ---------------------------------------------------------------------------
@@ -26637,7 +26637,7 @@ loc_1EFE3:                              ; CODE XREF: RunGameDialog+56B↑j
                 call    FileEntry_Write
                 call    ErrorCheck
                 call    ResetCombatRoundScratchState
-                mov     word_32A1E, 0
+                mov     g_activeCombatMonster, 0
                 mov     word_32BF4, 0
                 mov     bx, 902Ch
                 call    FileEntry_Close
@@ -26686,7 +26686,7 @@ loc_1F13A:                              ; CODE XREF: InitializeDungeonLevel+5F�
                 mov     es, word_2E4AA
                 xor     ax, ax
                 rep stosw
-                mov     word_32A1E, 0
+                mov     g_activeCombatMonster, 0
                 cmp     word_36CE7, 0
                 jnz     short loc_1F161
                 mov     word_36CE7, 5
@@ -27705,14 +27705,14 @@ UpdateScrollingBannerWindow proc far    ; CODE XREF: ShowClueBook+4DF↑P
                 mov     word_36D91, 0
                 mov     word_36DF5, 0
                 mov     si, 4A5Ch
-                cmp     word_36D01, 4AAh
+                cmp     g_gameClockMinutes, 4AAh
                 jge     short loc_1FCE1
-                cmp     word_36D01, 167h
+                cmp     g_gameClockMinutes, 167h
                 jle     short loc_1FCE1
-                cmp     word_36D01, 1D9h
+                cmp     g_gameClockMinutes, 1D9h
                 jle     short loc_1FC95
                 mov     word_36D91, 14Dh
-                cmp     word_36D01, 438h
+                cmp     g_gameClockMinutes, 438h
                 jge     short loc_1FCB6
                 jmp     short loc_1FCE1
 ; ---------------------------------------------------------------------------
@@ -27720,7 +27720,7 @@ UpdateScrollingBannerWindow proc far    ; CODE XREF: ShowClueBook+4DF↑P
 loc_1FC95:                              ; CODE XREF: UpdateScrollingBannerWindow+30↑j
                 mov     word_36D93, 3
                 mov     word_36DF5, 71h ; 'q'
-                mov     ax, word_36D01
+                mov     ax, g_gameClockMinutes
                 sub     ax, 168h
                 sub     word_36DF5, ax
                 mov     bx, 3
@@ -27732,7 +27732,7 @@ loc_1FC95:                              ; CODE XREF: UpdateScrollingBannerWindow
 loc_1FCB6:                              ; CODE XREF: UpdateScrollingBannerWindow+3E↑j
                 mov     word_36D93, 0FFFDh
                 mov     word_36DF5, 71h ; 'q'
-                mov     ax, word_36D01
+                mov     ax, g_gameClockMinutes
                 sub     ax, 438h
                 sub     word_36DF5, ax
                 mov     bx, 3
@@ -27968,28 +27968,28 @@ TickWorldAilmentTimers endp
 
 
 AdvanceGameClock proc near              ; CODE XREF: seg059:0208↑p
-                inc     word_36D01      ; Master per-minute game-clock tick. Increments word_36D01; past 1440 (a full day), calls sub_28FF9 ('new day', not traced), resets to 1, and rolls the calendar: day (word_36CFB) wraps at 31 into month (word_36CFD), which wraps at 13 into year (word_36CFF) -- a 30-day-month, 12-month-year calendar. Fires sub_1FFE4 (not traced, plausibly lighting/spawn-rate) at exactly 6:00 AM or 6:00 PM -- dawn/dusk. Also runs a separate 5-minute periodic countdown (word_32954, gated on word_3295A bit 0x800) calling sub_1FD24 when it lapses.
-                cmp     word_36D01, 5A1h
+                inc     g_gameClockMinutes ; Master per-minute game-clock tick. Increments word_36D01; past 1440 (a full day), calls sub_28FF9 ('new day', not traced), resets to 1, and rolls the calendar: day (word_36CFB) wraps at 31 into month (word_36CFD), which wraps at 13 into year (word_36CFF) -- a 30-day-month, 12-month-year calendar. Fires sub_1FFE4 (not traced, plausibly lighting/spawn-rate) at exactly 6:00 AM or 6:00 PM -- dawn/dusk. Also runs a separate 5-minute periodic countdown (word_32954, gated on word_3295A bit 0x800) calling sub_1FD24 when it lapses.
+                cmp     g_gameClockMinutes, 5A1h
                 jz      short loc_1FE6D
-                cmp     word_36D01, 168h
+                cmp     g_gameClockMinutes, 168h
                 jz      short loc_1FEA0
-                cmp     word_36D01, 438h
+                cmp     g_gameClockMinutes, 438h
                 jz      short loc_1FEA0
                 jmp     short loc_1FEA3
 ; ---------------------------------------------------------------------------
 
 loc_1FE6D:                              ; CODE XREF: AdvanceGameClock+A↑j
                 call    ResetDailyAbilityCharges
-                mov     word_36D01, 1
-                inc     word_36CFB
-                cmp     word_36CFB, 1Fh
+                mov     g_gameClockMinutes, 1
+                inc     g_gameDay
+                cmp     g_gameDay, 1Fh
                 jnz     short loc_1FEA3
-                mov     word_36CFB, 1
-                inc     word_36CFD
-                cmp     word_36CFD, 0Dh
+                mov     g_gameDay, 1
+                inc     g_gameMonth
+                cmp     g_gameMonth, 0Dh
                 jnz     short loc_1FEA3
-                inc     word_36CFF
-                mov     word_36CFD, 1
+                inc     g_gameYear
+                mov     g_gameMonth, 1
                 jmp     short loc_1FEA3
 ; ---------------------------------------------------------------------------
 
@@ -28168,7 +28168,7 @@ AdvanceDayNightPaletteFade proc near    ; CODE XREF: seg059:0219↑p
                 jnz     short loc_20021
                 or      word_3295A, 2000h
                 mov     word_36DF5, 71h ; 'q'
-                cmp     word_36D01, 438h
+                cmp     g_gameClockMinutes, 438h
                 jz      short loc_20015
                 mov     word_36D91, 0
                 mov     word_36D93, 3
@@ -28258,21 +28258,21 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 call    DrawFloorTypeLegendRow
                 xor     dx, dx
                 mov     bx, 28h ; '('
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 div     bx
                 mov     ax, 8
                 mul     dx
                 mov     x, ax
                 xor     dx, dx
                 mov     bx, 18h
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 div     bx
                 inc     dx
                 mov     ax, 8
                 mul     dx
                 mov     y, ax
-                mov     ax, word_36CF7
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX
+                mov     bx, g_partyWorldY
                 call    GetMapCellPtr
                 call    DrawCellIconPair
                 call    DrawMouseCursorAlt
@@ -28389,14 +28389,14 @@ loc_20241:                              ; CODE XREF: RunMapEditorScreen+18A↑j
 loc_20244:                              ; CODE XREF: RunMapEditorScreen+D0↑j
                 cmp     g_lastKeyChar, 4Bh ; 'K'
                 jnz     short loc_20285
-                sub     word_36CF7, 28h ; '('
+                sub     g_partyWorldX, 28h ; '('
 
 loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
                                         ; RunMapEditorScreen+22F↓j ...
                 call    RestoreCursorBackgroundIfDirty
                 call    RefreshDungeonMapWindow
-                mov     ax, word_36CF7
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX
+                mov     bx, g_partyWorldY
                 call    GetMapCellPtr
                 call    ShowLocalAreaMap
                 call    DrawMapEditorInteractionTypeOverlay
@@ -28412,21 +28412,21 @@ loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
 loc_20285:                              ; CODE XREF: RunMapEditorScreen+1D9↑j
                 cmp     g_lastKeyChar, 4Dh ; 'M'
                 jnz     short loc_20293
-                add     word_36CF7, 28h ; '('
+                add     g_partyWorldX, 28h ; '('
                 jmp     short loc_20250
 ; ---------------------------------------------------------------------------
 
 loc_20293:                              ; CODE XREF: RunMapEditorScreen+21A↑j
                 cmp     g_lastKeyChar, 48h ; 'H'
                 jnz     short loc_202A1
-                sub     word_36CF9, 18h
+                sub     g_partyWorldY, 18h
                 jmp     short loc_20250
 ; ---------------------------------------------------------------------------
 
 loc_202A1:                              ; CODE XREF: RunMapEditorScreen+228↑j
                 cmp     g_lastKeyChar, 50h ; 'P'
                 jnz     short loc_202AF
-                add     word_36CF9, 18h
+                add     g_partyWorldY, 18h
                 jmp     short loc_20250
 ; ---------------------------------------------------------------------------
 
@@ -28521,13 +28521,13 @@ FillVisibleAreaWithSelectedTile proc near
                 mov     ax, word_2E496
                 mov     word_2E384, ax
                 xor     dx, dx
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 mov     bx, 28h ; '('
                 div     bx
                 mul     bx
                 mov     _textPos_x, ax
                 xor     dx, dx
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     bx, 18h
                 div     bx
                 mul     bx
@@ -28720,7 +28720,7 @@ ComputeMapEditorBlockOrigin proc near   ; CODE XREF: BrowseWallTilePalette+11↓
                 push    dx
                 mov     cx, 3
                 xor     dx, dx
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 mov     bx, 28h ; '('
                 div     bx
                 mul     bx
@@ -28729,7 +28729,7 @@ ComputeMapEditorBlockOrigin proc near   ; CODE XREF: BrowseWallTilePalette+11↓
                 add     ax, bx
                 push    ax
                 xor     dx, dx
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     bx, 18h
                 div     bx
                 mul     bx
@@ -28915,13 +28915,13 @@ PaintCursorCellAndPersist endp
 
 RedrawMapEditorGrid proc near           ; CODE XREF: RunMapEditorScreen+17A↑p
                 xor     dx, dx          ; Redraws the full visible 40x24 cell grid in the map editor: for every cell, PersistExploredCell + LoadWorldDatTilePalette + DrawCellIconPair. Called from RunMapEditorScreen.
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 mov     bx, 28h ; '('
                 div     bx
                 mul     bx
                 mov     _textPos_x, ax
                 xor     dx, dx
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     bx, 18h
                 div     bx
                 mul     bx
@@ -29009,13 +29009,13 @@ loc_20764:                              ; CODE XREF: DrawMapEditorInteractionTyp
                 mov     _font_fgColor, 0Fh
                 mov     fontOffset, 0
                 xor     dx, dx
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 mov     bx, 28h ; '('
                 div     bx
                 mul     bx
                 mov     x, ax
                 xor     dx, dx
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     bx, 18h
                 div     bx
                 mul     bx
@@ -29298,7 +29298,7 @@ loc_209E6:                              ; CODE XREF: RefreshDungeonMapWindow+C�
 
 loc_209EB:                              ; CODE XREF: RefreshDungeonMapWindow+6↑j
                                         ; RefreshDungeonMapWindow+12↑j
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 sub     ax, 27h ; '''
                 cmp     ax, word_32A02
                 jge     short loc_209FF
@@ -29317,7 +29317,7 @@ loc_209FF:                              ; CODE XREF: RefreshDungeonMapWindow+23�
 loc_20A0C:                              ; CODE XREF: RefreshDungeonMapWindow+2B↑j
                                         ; RefreshDungeonMapWindow+36↑j
                 mov     word_2E55C, ax
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 sub     ax, 27h ; '''
                 cmp     ax, word_32A0A
                 jge     short loc_20A23
@@ -29396,12 +29396,12 @@ loc_20ABF:                              ; CODE XREF: RefreshDungeonMapWindow+E7�
                 inc     word_368AB
                 inc     word_36863
                 loop    loc_20A54
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 sub     ax, word_2E564
                 mov     bx, 270h
                 mul     bx
                 push    ax
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 sub     ax, word_2E55C
                 mov     bx, 8
                 mul     bx
@@ -29723,9 +29723,9 @@ DrawDungeonFloorAndCeiling proc near    ; CODE XREF: RedrawDungeonScreen+B↑p
                 mov     ax, [si+2]
                 or      ax, ax
                 jnz     short loc_20D5C
-                cmp     word_36CF5, 8000h
+                cmp     g_partyFacing, 8000h
                 jz      short loc_20D5C
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_20D5C
                 mov     ax, 1
 
@@ -30163,13 +30163,13 @@ DrawDungeonCellSideFeature proc near    ; CODE XREF: TryDrawDungeonCellSideFeatu
                 mul     si
                 mov     si, ax
                 add     si, 0E175h
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_211B3
                 add     si, 2
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_211B3
                 add     si, 2
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_211B3
                 add     si, 2
 
@@ -30342,11 +30342,11 @@ RenderActiveMonsterSprites endp
 
 BuildDungeonViewportCells proc near     ; CODE XREF: RedrawDungeonScreen↑p
                 and     word_3295A, 7FFFh ; Builds the local scratch cell buffer (di=0x6D60) that every dungeon-rendering pass reads from: computes a facing-dependent row stride/side-step (word_36CF5 tier bits) from the current position, then calls CopyDungeonRowCells 7x (same row-count pattern as RenderDungeonViewport) to copy the visible cells from the level's map data. Called first in RedrawDungeonScreen.
-                cmp     word_36CF5, 8000h
+                cmp     g_partyFacing, 8000h
                 jz      short loc_21338
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_2134C
-                cmp     word_36CF5, 1000h
+                cmp     g_partyFacing, 1000h
                 jz      short loc_21360
                 mov     word_2E55E, 0FD90h
                 mov     word_2E560, 8
@@ -30379,8 +30379,8 @@ loc_21360:                              ; CODE XREF: BuildDungeonViewportCells+1
 
 loc_21372:                              ; CODE XREF: BuildDungeonViewportCells+30↑j
                                         ; BuildDungeonViewportCells+44↑j ...
-                add     bx, word_36CF7
-                add     cx, word_36CF9
+                add     bx, g_partyWorldX
+                add     cx, g_partyWorldY
                 sub     cx, word_2E564
                 mov     ax, 270h
                 mul     cx
@@ -30612,13 +30612,13 @@ ShowCompassDirection proc far           ; CODE XREF: RunAlchemyScreen+255↑P
                 test    word_36C7F, 400h
                 jz      short locret_21587
                 mov     bx, 78CEh
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_21564
                 add     bx, 9
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_21564
                 add     bx, 9
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_21564
                 add     bx, 9           ; msg
 
@@ -30718,14 +30718,14 @@ BuildMinimapTileData proc far           ; CODE XREF: start+139↑P
 loc_2161F:                              ; CODE XREF: BuildMinimapTileData+A↑j
                 push    dx
                 mov     es, word_2E562
-                mov     bx, word_36CF9
+                mov     bx, g_partyWorldY
                 sub     bx, 3
                 sub     bx, word_2E564
                 mov     ax, 270h
                 mul     bx
                 mov     di, ax
                 mov     ax, 8
-                mov     bx, word_36CF7
+                mov     bx, g_partyWorldX
                 sub     bx, 4
                 sub     bx, word_2E55C
                 mul     bx
@@ -30782,13 +30782,13 @@ DrawMinimapCompassIcon proc near        ; CODE XREF: DrawMinimap+83↑p
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     g_pictureId, 0
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_216EA
                 mov     g_pictureId, 2
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_216EA
                 mov     g_pictureId, 1
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_216EA
                 mov     g_pictureId, 3
 
@@ -30921,27 +30921,27 @@ ProbeFacingTile proc far                ; CODE XREF: start:loc_10160↑P
                 mov     errorCode, 1
                 mov     ax, word_328D2
                 mov     word_32DE8, ax
-                mov     ax, word_36CF7
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX
+                mov     bx, g_partyWorldY
                 call    FindObjectAtPosition
                 cmp     si, 0
                 jnz     short loc_2186A
                 mov     errorCode, 2
-                mov     ax, word_36CF7
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX
+                mov     bx, g_partyWorldY
                 dec     bx
                 sub     word_32DE8, 270h
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_21856
                 add     bx, 2
                 add     word_32DE8, 4E0h
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_21856
                 dec     ax
                 dec     bx
                 sub     word_32DE8, 270h
                 sub     word_32DE8, 8
-                test    word_36CF5, 2000h
+                test    g_partyFacing, 2000h
                 jnz     short loc_21856
                 add     ax, 2
                 add     word_32DE8, 10h
@@ -31246,7 +31246,7 @@ loc_21A8E:                              ; CODE XREF: ShowItemPurchaseConfirmProm
                 call    writeString
                 add     _textPos_y, 6
                 mov     _font_fgColor, 0Fh
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 mov     ax, [bx+0Ah]
                 add     ax, word_3293E
                 mov     bx, 0AFA8h
@@ -31276,7 +31276,7 @@ loc_21AEA:                              ; CODE XREF: ShowItemPurchaseConfirmProm
 loc_21AFF:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+F6↑j
                                         ; ShowItemPurchaseConfirmPrompt+100↑j
                 mov     _font_fgColor, 8Ah
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 test    word ptr [bx+0Ch], 0C000h
                 jz      short loc_21B25
                 mov     bx, 7C81h       ; msg
@@ -31329,7 +31329,7 @@ loc_21B93:                              ; CODE XREF: ShowItemPurchaseConfirmProm
                 jz      short loc_21C16
                 push    g_currentPartyRecordId
                 push    g_currentPartyRecord
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 add     si, 4
                 mov     ax, g_currentActionId
                 call    ComputeBarterPricingPreview
@@ -31447,7 +31447,7 @@ RedrawItemDescriptionAndMaterials proc far
                 mov     _font_bgColor, 4
                 mov     _font_bgTransparent, 0
                 mov     _font_fgColor, 0Fh
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 add     bx, 13h
                 mov     cx, 3
                 call    DrawStringColumn
@@ -31511,45 +31511,45 @@ PersistExploredCell endp
 
 RevealCellsAroundPlayer proc far        ; CODE XREF: HandleMovementInput+304↑P
                                         ; HandleSpecialCellEntry+82↑P ...
-                mov     ax, word_36CF7  ; Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.
-                mov     bx, word_36CF9
-                cmp     word_36CF5, 8000h
+                mov     ax, g_partyWorldX ; Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.
+                mov     bx, g_partyWorldY
+                cmp     g_partyFacing, 8000h
                 jz      short loc_21D51
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_21D60
-                cmp     word_36CF5, 1000h
+                cmp     g_partyFacing, 1000h
                 jz      short loc_21D6F
                 jmp     short loc_21D7E
 ; ---------------------------------------------------------------------------
 
 loc_21D51:                              ; CODE XREF: RevealCellsAroundPlayer+D↑j
-                dec     word_36CF9
+                dec     g_partyWorldY
                 call    ScanAdjacentCellsAlongX
-                inc     word_36CF9
+                inc     g_partyWorldY
                 call    ScanAdjacentCellsAlongX
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_21D60:                              ; CODE XREF: RevealCellsAroundPlayer+15↑j
-                inc     word_36CF9
+                inc     g_partyWorldY
                 call    ScanAdjacentCellsAlongX
-                dec     word_36CF9
+                dec     g_partyWorldY
                 call    ScanAdjacentCellsAlongX
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_21D6F:                              ; CODE XREF: RevealCellsAroundPlayer+1D↑j
-                inc     word_36CF7
+                inc     g_partyWorldX
                 call    ScanAdjacentCellsAlongY
-                dec     word_36CF7
+                dec     g_partyWorldX
                 call    ScanAdjacentCellsAlongY
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_21D7E:                              ; CODE XREF: RevealCellsAroundPlayer+1F↑j
-                dec     word_36CF7
+                dec     g_partyWorldX
                 call    ScanAdjacentCellsAlongY
-                inc     word_36CF7
+                inc     g_partyWorldX
                 call    ScanAdjacentCellsAlongY
                 retf
 RevealCellsAroundPlayer endp
@@ -31560,11 +31560,11 @@ RevealCellsAroundPlayer endp
 
 ScanAdjacentCellsAlongX proc near       ; CODE XREF: RevealCellsAroundPlayer+25↑p
                                         ; RevealCellsAroundPlayer+2C↑p ...
-                dec     word_36CF7
+                dec     g_partyWorldX
                 call    MarkCellExplored
-                add     word_36CF7, 2
+                add     g_partyWorldX, 2
                 call    MarkCellExplored
-                dec     word_36CF7
+                dec     g_partyWorldX
                 call    MarkCellExplored
                 retn
 ScanAdjacentCellsAlongX endp
@@ -31575,11 +31575,11 @@ ScanAdjacentCellsAlongX endp
 
 ScanAdjacentCellsAlongY proc near       ; CODE XREF: RevealCellsAroundPlayer+43↑p
                                         ; RevealCellsAroundPlayer+4A↑p ...
-                dec     word_36CF9
+                dec     g_partyWorldY
                 call    MarkCellExplored
-                add     word_36CF9, 2
+                add     g_partyWorldY, 2
                 call    MarkCellExplored
-                dec     word_36CF9
+                dec     g_partyWorldY
                 call    MarkCellExplored
                 retn
 ScanAdjacentCellsAlongY endp
@@ -31590,14 +31590,14 @@ ScanAdjacentCellsAlongY endp
 
 MarkCellExplored proc near              ; CODE XREF: ScanAdjacentCellsAlongX+4↑p
                                         ; ScanAdjacentCellsAlongX+C↑p ...
-                mov     ax, word_36CF7  ; If the cell's explored flag (bit 0x8000 at +6) isn't set, sets it and calls sub_21CC2 (reveal/render action, not traced) -- fog-of-war visit-once marking.
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX ; If the cell's explored flag (bit 0x8000 at +6) isn't set, sets it and calls sub_21CC2 (reveal/render action, not traced) -- fog-of-war visit-once marking.
+                mov     bx, g_partyWorldY
                 call    GetMapCellPtr
                 test    word ptr es:[bx+6], 8000h
                 jnz     short locret_21DE0
                 or      word ptr es:[bx+6], 8000h
-                mov     ax, word_36CF7
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX
+                mov     bx, g_partyWorldY
                 push    cs
                 call    near ptr PersistExploredCell
 
@@ -31694,7 +31694,7 @@ loc_21E8F:                              ; CODE XREF: ShowLocalAreaMap+6↑j
                 mov     _videoSegment, ax
                 xor     dx, dx
                 mov     bx, word_32A06
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 div     bx
                 mul     bx
                 mov     word_2E662, ax
@@ -31710,7 +31710,7 @@ loc_21E8F:                              ; CODE XREF: ShowLocalAreaMap+6↑j
                 mov     word_32906, ax
                 xor     dx, dx
                 mov     bx, word_32A0E
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 div     bx
                 mul     bx
                 mov     word_36863, ax
@@ -31750,14 +31750,14 @@ loc_21EFB:                              ; CODE XREF: ShowLocalAreaMap+C3↓j
                 rep stosw
                 xor     dx, dx
                 mov     bx, word_32A0E
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 div     bx
                 mov     bx, word_32A04
                 mul     bx
                 mov     cx, ax
                 xor     dx, dx
                 mov     bx, word_32A06
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 div     bx
                 add     ax, cx
                 push    cs
@@ -31791,7 +31791,7 @@ loc_21FBC:                              ; CODE XREF: ShowLocalAreaMap+143↑j
 loc_21FC1:                              ; CODE XREF: ShowLocalAreaMap+135↑j
                 xor     dx, dx
                 mov     bx, word_32A06
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 div     bx
                 push    dx
                 mov     ax, 8
@@ -31799,7 +31799,7 @@ loc_21FC1:                              ; CODE XREF: ShowLocalAreaMap+135↑j
                 mov     x, ax
                 xor     dx, dx
                 mov     bx, word_32A0E
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 div     bx
                 push    dx
                 inc     dx
@@ -31808,13 +31808,13 @@ loc_21FC1:                              ; CODE XREF: ShowLocalAreaMap+135↑j
                 mov     y, ax
                 mov     _font_bgTransparent, 1
                 mov     g_pictureId, 0
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_22020
                 mov     g_pictureId, 2
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_22020
                 mov     g_pictureId, 1
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_22020
                 mov     g_pictureId, 3
 
@@ -32049,17 +32049,17 @@ DrawLocalMapCell endp
 
 
 DrawPlayerPositionMarker proc near      ; CODE XREF: ToggleMapViewMode+3F↑p
-                cmp     word_36CF7, 0A0h ; Draws a 'you are here' marker (picture 0x11) at the party's current position on the local area map, if within its visible bounding box. Called from ToggleMapViewMode.
+                cmp     g_partyWorldX, 0A0h ; Draws a 'you are here' marker (picture 0x11) at the party's current position on the local area map, if within its visible bounding box. Called from ToggleMapViewMode.
                 jl      short locret_222BB
-                cmp     word_36CF9, 30h ; '0'
+                cmp     g_partyWorldY, 30h ; '0'
                 jl      short locret_222BB
-                cmp     word_36CF7, 27Fh
+                cmp     g_partyWorldX, 27Fh
                 jg      short locret_222BB
-                cmp     word_36CF9, 0EFh
+                cmp     g_partyWorldY, 0EFh
                 jg      short locret_222BB
                 mov     bx, 28h ; '('
                 xor     dx, dx
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 sub     ax, 0A0h
                 div     bx
                 mov     bx, 18h
@@ -32068,7 +32068,7 @@ DrawPlayerPositionMarker proc near      ; CODE XREF: ToggleMapViewMode+3F↑p
                 mov     x, ax
                 mov     bx, 18h
                 xor     dx, dx
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 sub     ax, 30h ; '0'
                 div     bx
                 mov     bx, 14h
@@ -32903,34 +32903,34 @@ TriggerSideTrapForRandomPartyMember proc near
                 or      word_328C8, 10h
 
 loc_229AF:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+1F↑j
-                cmp     word_36CF5, 8000h
+                cmp     g_partyFacing, 8000h
                 jnz     short loc_229C4
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 sub     ax, [si+4]
                 test    word ptr [si+0Eh], 800h
                 jmp     short loc_229FB
 ; ---------------------------------------------------------------------------
 
 loc_229C4:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+2C↑j
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jnz     short loc_229DA
                 mov     ax, [si+4]
-                sub     ax, word_36CF9
+                sub     ax, g_partyWorldY
                 test    word ptr [si+0Eh], 400h
                 jmp     short loc_229FB
 ; ---------------------------------------------------------------------------
 
 loc_229DA:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+41↑j
-                cmp     word_36CF5, 1000h
+                cmp     g_partyFacing, 1000h
                 jnz     short loc_229F0
                 mov     ax, [si+2]
-                sub     ax, word_36CF7
+                sub     ax, g_partyWorldX
                 test    word ptr [si+0Eh], 200h
                 jmp     short loc_229FB
 ; ---------------------------------------------------------------------------
 
 loc_229F0:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+57↑j
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 sub     ax, [si+2]
                 test    word ptr [si+0Eh], 100h
 
@@ -33041,13 +33041,13 @@ loc_22A8A:                              ; CODE XREF: SpawnMonsterInFacingDirecti
                 mov     ax, word_3292C
                 shl     ax, 1
                 mov     bx, 7090h
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_22AF1
                 mov     bx, 70F6h
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_22AF1
                 mov     bx, 715Ch
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_22AF1
                 mov     bx, 71C2h
 
@@ -33056,11 +33056,11 @@ loc_22AF1:                              ; CODE XREF: SpawnMonsterInFacingDirecti
                 add     bx, ax
                 mov     al, [bx]
                 cbw
-                add     ax, word_36CF7
+                add     ax, g_partyWorldX
                 mov     [si+2], ax
                 mov     al, [bx+1]
                 cbw
-                add     ax, word_36CF9
+                add     ax, g_partyWorldY
                 mov     [si+4], ax
                 sub     ax, word_2E564
                 mov     bx, 270h
@@ -33444,10 +33444,10 @@ loc_22DCA:                              ; CODE XREF: ProcessLevelMonsters+79↑j
                 mov     word_2E402, ax
                 mov     ax, [si+4]
                 mov     word_2E406, ax
-                cmp     ax, word_36CF9
+                cmp     ax, g_partyWorldY
                 jz      short loc_22E30
                 mov     ax, word_2E402
-                cmp     ax, word_36CF7
+                cmp     ax, g_partyWorldX
                 jz      short loc_22DE8
                 jmp     loc_22EBF
 ; ---------------------------------------------------------------------------
@@ -33456,7 +33456,7 @@ loc_22DE8:                              ; CODE XREF: ProcessLevelMonsters+97↑j
                 or      word ptr [si+0Eh], 800h
                 mov     word_3293E, 1
                 mov     ax, word_2E406
-                cmp     ax, word_36CF9
+                cmp     ax, g_partyWorldY
                 jb      short loc_22E0F
                 or      word ptr [si+0Eh], 400h
                 and     word ptr [si+0Eh], 0F7FFh
@@ -33466,7 +33466,7 @@ loc_22DE8:                              ; CODE XREF: ProcessLevelMonsters+97↑j
 loc_22E0F:                              ; CODE XREF: ProcessLevelMonsters+AE↑j
                 mov     ax, word_2E406
                 add     ax, word_3293E
-                cmp     ax, word_36CF9
+                cmp     ax, g_partyWorldY
                 jz      short loc_22E77
                 mov     word_2E406, ax
                 call    ClassifyObstacleAtWorldPosition
@@ -33483,7 +33483,7 @@ loc_22E30:                              ; CODE XREF: ProcessLevelMonsters+8E↑j
                 or      word ptr [si+0Eh], 100h
                 mov     word_3293E, 1
                 mov     ax, word_2E402
-                cmp     ax, word_36CF7
+                cmp     ax, g_partyWorldX
                 jb      short loc_22E57
                 or      word ptr [si+0Eh], 200h
                 and     word ptr [si+0Eh], 0FEFFh
@@ -33494,7 +33494,7 @@ loc_22E57:                              ; CODE XREF: ProcessLevelMonsters+DF↑j
                                         ; ProcessLevelMonsters+F6↑j ...
                 mov     ax, word_2E402
                 add     ax, word_3293E
-                cmp     ax, word_36CF7
+                cmp     ax, g_partyWorldX
                 jz      short loc_22E77
                 mov     word_2E402, ax
                 call    ClassifyObstacleAtWorldPosition
@@ -33539,10 +33539,10 @@ loc_22EBF:                              ; CODE XREF: ProcessLevelMonsters+71↑j
                 and     word_328C8, 0FFBFh
                 and     word ptr [si+0Eh], 0E0FFh
                 mov     ax, [si+4]
-                cmp     ax, word_36CF9
+                cmp     ax, g_partyWorldY
                 jz      short loc_22F1A
                 inc     ax
-                cmp     ax, word_36CF9
+                cmp     ax, g_partyWorldY
                 jnz     short loc_22EFE
                 or      word_328C8, 40h
                 mov     word_2E406, 1
@@ -33552,7 +33552,7 @@ loc_22EBF:                              ; CODE XREF: ProcessLevelMonsters+71↑j
 
 loc_22EFE:                              ; CODE XREF: ProcessLevelMonsters+19D↑j
                 sub     ax, 2
-                cmp     ax, word_36CF9
+                cmp     ax, g_partyWorldY
                 jnz     short loc_22F1A
                 or      word_328C8, 40h
                 mov     word_2E406, 0FFFFh
@@ -33562,10 +33562,10 @@ loc_22EFE:                              ; CODE XREF: ProcessLevelMonsters+19D↑
 
 loc_22F1A:                              ; CODE XREF: ProcessLevelMonsters+196↑j
                                         ; ProcessLevelMonsters+1B9↑j ...
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 cmp     ax, [si+2]
                 jnz     short loc_22F2D
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 cmp     ax, [si+4]
                 jnz     short loc_22F49
                 jmp     loc_22D63
@@ -33622,7 +33622,7 @@ loc_22FAF:                              ; CODE XREF: ProcessLevelMonsters+25E↑
                 mov     word_2E402, 0
                 mov     word_2E406, 0
                 mov     word_2E404, 0
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 cmp     ax, [si+4]
                 jnz     short loc_22F49
                 jmp     loc_22D63
@@ -33631,7 +33631,7 @@ loc_22FAF:                              ; CODE XREF: ProcessLevelMonsters+25E↑
 loc_22FCC:                              ; CODE XREF: ProcessLevelMonsters+22E↑j
                 test    word_328CA, 1000h
                 jnz     short loc_2300C
-                mov     word_32A1E, 0
+                mov     g_activeCombatMonster, 0
                 or      word_328CA, 1000h
                 call    DrawAndCacheStatusIcon
                 push    si
@@ -33673,11 +33673,11 @@ loc_2302A:                              ; CODE XREF: ProcessLevelMonsters+2D9↑
                 jnz     short loc_2301C
 
 loc_23031:                              ; CODE XREF: ProcessLevelMonsters+372↓j
-                cmp     word_32A1E, 0
+                cmp     g_activeCombatMonster, 0
                 jz      short loc_23041
-                mov     di, word_32A1E
+                mov     di, g_activeCombatMonster
                 mov     ax, [di]
-                mov     word_32A1E, ax
+                mov     g_activeCombatMonster, ax
 
 loc_23041:                              ; CODE XREF: ProcessLevelMonsters+2EA↑j
                 push    si
@@ -33748,11 +33748,11 @@ loc_230CB:                              ; CODE XREF: ProcessLevelMonsters+37A↑
 ; ---------------------------------------------------------------------------
 
 loc_230D6:                              ; CODE XREF: ProcessLevelMonsters+385↑j
-                cmp     word_32A1E, 0
+                cmp     g_activeCombatMonster, 0
                 jz      short loc_230E6
-                mov     di, word_32A1E
+                mov     di, g_activeCombatMonster
                 mov     ax, [di]
-                mov     word_32A1E, ax
+                mov     g_activeCombatMonster, ax
 
 loc_230E6:                              ; CODE XREF: ProcessLevelMonsters+38F↑j
                 push    si
@@ -34003,11 +34003,11 @@ CompactMonsterSlots proc far            ; CODE XREF: ProcessCombatRound:loc_16BC
                 push    si
                 push    di
                 push    es
-                cmp     word_32A1E, 0
+                cmp     g_activeCombatMonster, 0
                 jz      short loc_2334F
-                mov     di, word_32A1E
+                mov     di, g_activeCombatMonster
                 mov     ax, [di]
-                mov     word_32A1E, ax
+                mov     g_activeCombatMonster, ax
 
 loc_2334F:                              ; CODE XREF: CompactMonsterSlots+9↑j
                 mov     si, 51C0h
@@ -34225,7 +34225,7 @@ DrawMonsterHealthBar endp
 
 RelocateActiveMonsterPointer proc near  ; CODE XREF: ProcessLevelMonsters+364↑p
                                         ; CompactMonsterSlots:loc_233C8↑p
-                cmp     word_32A1E, 0   ; Re-finds word_32A1E (active-combat-monster pointer) among the 3 g_monsterSlots entries after it's moved, fixing up the pointer. Called from ProcessLevelMonsters and CompactMonsterSlots.
+                cmp     g_activeCombatMonster, 0 ; Re-finds word_32A1E (active-combat-monster pointer) among the 3 g_monsterSlots entries after it's moved, fixing up the pointer. Called from ProcessLevelMonsters and CompactMonsterSlots.
                 jnz     short loc_234AF
                 retn
 ; ---------------------------------------------------------------------------
@@ -34233,15 +34233,15 @@ RelocateActiveMonsterPointer proc near  ; CODE XREF: ProcessLevelMonsters+364↑
 loc_234AF:                              ; CODE XREF: RelocateActiveMonsterPointer+5↑j
                 push    cx
                 push    si
-                mov     ax, word_32A1E
-                mov     word_32A1E, 0
+                mov     ax, g_activeCombatMonster
+                mov     g_activeCombatMonster, 0
                 mov     si, 51C0h
                 mov     cx, 3
 
 loc_234C0:                              ; CODE XREF: RelocateActiveMonsterPointer+27↓j
                 cmp     [si], ax
                 jnz     short loc_234CA
-                mov     word_32A1E, si
+                mov     g_activeCombatMonster, si
                 jmp     short loc_234D0
 ; ---------------------------------------------------------------------------
 
@@ -34272,7 +34272,7 @@ loc_234D9:                              ; CODE XREF: DrawMonsterInfoPanel+3↑j
                 test    word ptr [si+0Ch], 20h
                 jnz     short loc_234FE
                 mov     _font_fgColor, 9
-                cmp     word_32A1E, si
+                cmp     g_activeCombatMonster, si
                 jnz     short loc_234FE
                 mov     _font_fgColor, 8Ah
 
@@ -34664,7 +34664,7 @@ UpdateCursorForHeldItem proc far        ; CODE XREF: start+645↑P
                 mov     bx, 782Eh
                 add     bx, g_pictureCategory
                 mov     ax, g_pictureId
-                mov     word_31946, ax
+                mov     g_heldItemType, ax
                 mov     word_36879, ax
                 mov     ax, seg seg129
                 mov     word_36873, ax
@@ -34896,9 +34896,9 @@ loc_239F9:                              ; CODE XREF: ClampDragCursorPosition+27�
 loc_23A05:                              ; CODE XREF: ClampDragCursorPosition+33↑j
                 mov     cx, word_2E782
                 mov     dx, word_2E784
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short locret_23A21
-                cmp     word_31946, 1Dh
+                cmp     g_heldItemType, 1Dh
                 jz      short locret_23A21
                 add     cx, 8
                 add     dx, 8
@@ -36342,7 +36342,7 @@ loc_2479C:                              ; CODE XREF: ShowCharacterInventory+163�
 ; ---------------------------------------------------------------------------
 
 loc_247BF:                              ; CODE XREF: ShowCharacterInventory+185↑j
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jnz     short loc_247C9
                 jmp     loc_24850
 ; ---------------------------------------------------------------------------
@@ -37063,7 +37063,7 @@ DrawListEntryLabel proc near            ; CODE XREF: ShowCharacterInventory+61�
                 mov     ax, y
                 add     ax, 5
                 mov     _textPos_y, ax
-                mov     ax, word_2E546
+                mov     ax, g_currentItemRecord
                 add     ax, 13h
                 mov     bx, 0AFA8h
                 call    StpCpy
@@ -37072,7 +37072,7 @@ DrawListEntryLabel proc near            ; CODE XREF: ShowCharacterInventory+61�
                 mov     ax, 7960h
                 mov     bx, 0AFA8h
                 call    StrCat
-                mov     ax, word_2E546
+                mov     ax, g_currentItemRecord
                 add     ax, 20h ; ' '
                 call    StrCat
                 mov     bx, 0AFA8h
@@ -37700,14 +37700,14 @@ UpdateAmbientMusicForRegion proc far    ; CODE XREF: RestPartyAndAdvanceClock+2E
                                         ; RefreshDungeonMapWindow:loc_20BA0↑P
                 xor     dx, dx          ; Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.
                 mov     bx, 18h
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 div     bx
                 mov     bx, 14h
                 mul     bx
                 mov     cx, ax
                 xor     dx, dx
                 mov     bx, 28h ; '('
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 div     bx
                 add     ax, cx
                 cmp     word_2E4A8, ax
@@ -38552,7 +38552,7 @@ loc_25AC2:                              ; CODE XREF: CheckPartyWipeAndReinitLeve
 
 loc_25ADB:                              ; CODE XREF: CheckPartyWipeAndReinitLevel+1B↑j
                 call    ShowPartyWipeScreen
-                mov     word_31946, 0
+                mov     g_heldItemType, 0
                 and     word_328C4, 0FF00h
                 or      word_328C4, 70h
                 and     word_3295A, 1FFFh
@@ -38847,9 +38847,9 @@ loc_25D34:                              ; CODE XREF: DrawAbilityReadinessList+83
                 mov     ax, [si]
                 cmp     ax, [di+16h]
                 jge     short loc_25D65
-                cmp     word_36D01, 1A4h
+                cmp     g_gameClockMinutes, 1A4h
                 jl      short loc_25D55
-                cmp     word_36D01, 474h
+                cmp     g_gameClockMinutes, 474h
                 jle     short loc_25D5E
 
 loc_25D55:                              ; CODE XREF: DrawAbilityReadinessList+51↑j
@@ -39373,7 +39373,7 @@ loc_2624C:                              ; CODE XREF: HandleInventorySlotClick+25
 
 loc_2625C:                              ; CODE XREF: HandleInventorySlotClick+35↑j
                 call    GetInventorySlotPtr
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jnz     short loc_26295
                 cmp     word ptr [di], 0
                 jnz     short loc_2626E
@@ -39610,7 +39610,7 @@ loc_26441:                              ; CODE XREF: HandleInventoryGridClick+21
                 call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jnz     short loc_26486
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jnz     short loc_2647D
                 test    word ptr [bx+0Ch], 100h
                 jz      short loc_26473
@@ -40034,7 +40034,7 @@ DrawPortraitOverlayIconA proc near      ; CODE XREF: DrawPartyMemberPortrait+6B�
                 mov     x, ax
                 add     bx, word_328C0
                 mov     y, bx
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 mov     ax, [bx+8]
                 inc     ax
                 mov     g_pictureId, ax
@@ -40055,7 +40055,7 @@ DrawPortraitOverlayIconB proc near      ; CODE XREF: DrawPartyMemberPortrait+DA�
                 mov     x, ax
                 add     bx, word_328C0
                 mov     y, bx
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 mov     ax, [bx+8]
                 inc     ax
                 mov     g_pictureId, ax
@@ -40800,9 +40800,9 @@ loc_26DA3:                              ; CODE XREF: DebugTeleportToCoordinates+
                 cmp     ax, word_32A0A
                 jl      short loc_26DA3
                 mov     ax, x
-                mov     word_36CF7, ax
+                mov     g_partyWorldX, ax
                 mov     ax, y
-                mov     word_36CF9, ax
+                mov     g_partyWorldY, ax
 
 loc_26DF2:                              ; CODE XREF: DebugTeleportToCoordinates+37↑j
                                         ; DebugTeleportToCoordinates+7A↑j
@@ -40842,15 +40842,15 @@ loc_26E4D:                              ; CODE XREF: DebugSetFloorTileByNumber+3
                 mov     ax, _val41
                 cmp     g_pictureId, ax
                 jge     short near ptr DebugSetFloorTileByNumber
-                mov     ax, word_36CF7
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX
+                mov     bx, g_partyWorldY
                 call    GetMapCellPtr
                 mov     ax, g_pictureId
                 mov     es:[bx], ax
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
                 call    PrepareWorldDatRead
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     [bx+8], ax
                 mov     ax, 4
                 mul     _blockSize3
@@ -40860,7 +40860,7 @@ loc_26E4D:                              ; CODE XREF: DebugSetFloorTileByNumber+3
                 call    ErrorCheck
                 mov     es, word_2E562
                 mov     ax, 4
-                mul     word_36CF7
+                mul     g_partyWorldX
                 mov     si, word_368A7
                 add     si, ax
                 mov     di, word_328D2
@@ -40909,15 +40909,15 @@ loc_26F24:                              ; CODE XREF: DebugSetOverlayTileByNumber
                 mov     ax, _val42
                 cmp     g_pictureId, ax
                 jge     short near ptr DebugSetOverlayTileByNumber
-                mov     ax, word_36CF7
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX
+                mov     bx, g_partyWorldY
                 call    GetMapCellPtr
                 mov     ax, g_pictureId
                 mov     es:[bx+2], ax
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
                 call    PrepareWorldDatRead
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     [bx+8], ax
                 mov     ax, 4
                 mul     _blockSize3
@@ -40928,7 +40928,7 @@ loc_26F24:                              ; CODE XREF: DebugSetOverlayTileByNumber
                 call    ErrorCheck
                 mov     es, word_2E562
                 mov     ax, 4
-                mul     word_36CF7
+                mul     g_partyWorldX
                 mov     si, word_368A7
                 add     si, ax
                 mov     di, word_328D2
@@ -41223,7 +41223,7 @@ loc_27233:                              ; CODE XREF: HandleStatusPanelItemSlotCl
 
 loc_2723B:                              ; CODE XREF: HandleStatusPanelItemSlotClick+2D↑j
                                         ; HandleStatusPanelItemSlotClick+35↑j ...
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jnz     short loc_2724A
                 cmp     word ptr [di], 0
                 jz      short loc_27233
@@ -41341,7 +41341,7 @@ loc_27348:                              ; CODE XREF: HandleStatusPanelItemSlotCl
 ; ---------------------------------------------------------------------------
 
 loc_27369:                              ; CODE XREF: HandleStatusPanelItemSlotClick+183↑j
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 add     si, 4
                 mov     ax, word_31948
                 call    ComputeBarterPricingPreview
@@ -41400,7 +41400,7 @@ loc_273DE:                              ; CODE XREF: TryCureAilmentFromIconClick
 
 loc_273E6:                              ; CODE XREF: TryCureAilmentFromIconClick+29↑j
                                         ; TryCureAilmentFromIconClick+31↑j ...
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jnz     short loc_273DE
                 cmp     word ptr [di], 0
                 jz      short loc_273DE
@@ -41770,7 +41770,7 @@ ConsumeItemChargeResource endp
 SwapItemMultiStatEffect proc near       ; CODE XREF: ConsumeItemChargeResource:loc_27557↑p
                                         ; ConsumeItemChargeResource:loc_275E5↑p ...
                 push    si              ; If the current item's category ([+0xC] 0xC000/0x800) and a matching word_2E548 sub-flag ([+2] 0x200/0x80) both hold, removes the current item's effect (RemoveMultiStatEffect), swaps in a new item id from word_2E548+4/+8 (the same fields GetClassifiedItemStatField selects), and applies its effect (ApplyMultiStatEffectForItem). Called from sub_274B4.
-                mov     si, word_2E546
+                mov     si, g_currentItemRecord
                 test    word ptr [si+0Ch], 0C000h
                 jnz     short loc_276DA
                 test    word ptr [si+0Ch], 800h
@@ -42017,7 +42017,7 @@ loc_2787D:                              ; CODE XREF: ComputeAmbientLightingTable
 
 loc_27887:                              ; CODE XREF: ComputeAmbientLightingTable+31↑j
                 mov     si, 7228h
-                mov     ax, word_36D01
+                mov     ax, g_gameClockMinutes
 
 loc_2788D:                              ; CODE XREF: ComputeAmbientLightingTable+50↓j
                 cmp     word ptr [si], 0FFFFh
@@ -42029,7 +42029,7 @@ loc_2788D:                              ; CODE XREF: ComputeAmbientLightingTable
 ; ---------------------------------------------------------------------------
 
 loc_2789C:                              ; CODE XREF: ComputeAmbientLightingTable+46↑j
-                mov     word_36D01, 0
+                mov     g_gameClockMinutes, 0
                 mov     si, 7228h
 
 loc_278A5:                              ; CODE XREF: ComputeAmbientLightingTable+4B↑j
@@ -42067,25 +42067,25 @@ loc_278D3:                              ; CODE XREF: ComputeAmbientLightingTable
 ; ---------------------------------------------------------------------------
 
 loc_278DD:                              ; CODE XREF: ComputeAmbientLightingTable+75↑j
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jz      short loc_278D3
                 jmp     short loc_27903
 ; ---------------------------------------------------------------------------
 
 loc_278E7:                              ; CODE XREF: ComputeAmbientLightingTable+7B↑j
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jz      short loc_278D3
                 jmp     short loc_27903
 ; ---------------------------------------------------------------------------
 
 loc_278F1:                              ; CODE XREF: ComputeAmbientLightingTable+81↑j
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jz      short loc_278D3
                 jmp     short loc_27903
 ; ---------------------------------------------------------------------------
 
 loc_278FB:                              ; CODE XREF: ComputeAmbientLightingTable+87↑j
-                test    word_36CF5, 2000h
+                test    g_partyFacing, 2000h
                 jz      short loc_278D3
 
 loc_27903:                              ; CODE XREF: ComputeAmbientLightingTable+9B↑j
@@ -43285,11 +43285,11 @@ loc_28055:                              ; CODE XREF: DrawDebugPositionOverlay+1E
                 mov     _textPos_x, 11Ah
                 mov     bx, 8FE9h       ; msg
                 call    writeString
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 call    FormatNumberCompact
                 mov     bx, 8FE4h
                 call    StpCpy
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 call    FormatNumberCompact
                 mov     bx, 8FEAh
                 call    StpCpy
@@ -43352,8 +43352,8 @@ seg098          segment byte public 'CODE' use16
 
 ComputeGameClockTime proc far           ; CODE XREF: ShowGameClockCommand+C↓p
                 mov     word_32934, 4D41h ; Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.
-                mov     ax, word_36D01
-                cmp     word_36D01, 2CFh
+                mov     ax, g_gameClockMinutes
+                cmp     g_gameClockMinutes, 2CFh
                 jle     short loc_28163
                 mov     word_32934, 4D50h
 
@@ -43366,7 +43366,7 @@ loc_28163:                              ; CODE XREF: ComputeGameClockTime+F↑j
 ; ---------------------------------------------------------------------------
 
 loc_28172:                              ; CODE XREF: ComputeGameClockTime+1A↑j
-                cmp     word_36D01, 30Bh
+                cmp     g_gameClockMinutes, 30Bh
                 jg      short loc_2818B
                 push    dx
                 xor     dx, dx
@@ -43416,15 +43416,15 @@ ShowGameClockCommand proc far           ; CODE XREF: seg000:08B2↑P
                 mov     word_35197, ax
                 mov     al, byte ptr word_32934
                 mov     byte_3519A, al
-                mov     ax, word_36CFD
+                mov     ax, g_gameMonth
                 call    FormatNumberZeroPadded
                 mov     ax, [bx+3]
                 mov     a12121212, ax
-                mov     ax, word_36CFB
+                mov     ax, g_gameDay
                 call    FormatNumberZeroPadded
                 mov     ax, [bx+3]
                 mov     word_351A0, ax
-                mov     ax, word_36CFF
+                mov     ax, g_gameYear
                 call    FormatNumberZeroPadded
                 mov     ax, [bx+1]
                 mov     word_351A3, ax
@@ -43614,9 +43614,9 @@ loc_28359:                              ; CODE XREF: UpdateAmbientMusic+15↑j
                 or      ax, ax
                 jnz     short loc_28382
                 mov     ax, word_36CB3
-                cmp     word_36D01, 1A4h
+                cmp     g_gameClockMinutes, 1A4h
                 jl      short loc_28376
-                cmp     word_36D01, 474h
+                cmp     g_gameClockMinutes, 474h
                 jg      short loc_28376
                 mov     ax, word_36CB1
 
@@ -44845,9 +44845,9 @@ loc_28D2D:                              ; CODE XREF: RevealMapRegion+23↑j
 ; ---------------------------------------------------------------------------
 
 loc_28D35:                              ; CODE XREF: RevealMapRegion+33↑j
-                cmp     word_36D01, 1A4h
+                cmp     g_gameClockMinutes, 1A4h
                 jl      short loc_28D45
-                cmp     word_36D01, 474h
+                cmp     g_gameClockMinutes, 474h
                 jle     short loc_28D4D
 
 loc_28D45:                              ; CODE XREF: RevealMapRegion+3C↑j
@@ -44913,20 +44913,20 @@ loc_28E0E:                              ; CODE XREF: RevealMapRegion+119↓j
                 pop     cx
                 add     y, 8
                 loop    loc_28E04
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 mov     word_2E402, ax
                 mov     ax, word_328FA
                 dec     ax
                 shr     ax, 1
                 sub     word_2E402, ax
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     word_2E406, ax
                 mov     ax, word_32900
                 dec     ax
                 shr     ax, 1
                 sub     word_2E406, ax
-                mov     ax, word_36CF7
-                mov     bx, word_36CF9
+                mov     ax, g_partyWorldX
+                mov     bx, g_partyWorldY
                 push    cs
                 call    near ptr ComputeMapCellIndex
                 mov     word_3290C, ax
@@ -45449,9 +45449,9 @@ loc_29340:                              ; CODE XREF: TryTravelToClickedMapCell+9
                 cmp     errorCode, 7
                 jz      short loc_293B4
                 mov     ax, word_2E402
-                mov     word_36CF7, ax
+                mov     g_partyWorldX, ax
                 mov     ax, word_2E406
-                mov     word_36CF9, ax
+                mov     g_partyWorldY, ax
                 add     sp, 4
                 mov     errorCode, 0
                 jmp     short loc_293BC
@@ -45497,13 +45497,13 @@ DrawRevealMapDirectionIcon proc near    ; CODE XREF: RevealMapRegion+1A9↑p
                 mov     y, 48h ; 'H'
                 mov     _font_bgTransparent, 1
                 mov     g_pictureId, 0
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_29402
                 mov     g_pictureId, 2
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_29402
                 mov     g_pictureId, 1
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_29402
                 mov     g_pictureId, 3
 
@@ -49207,9 +49207,9 @@ UseLocationBoundPotion proc near        ; CODE XREF: DispatchItemAbilityCommand+
                 mov     _font_fgColor, 0Fh
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
-                cmp     word_36CF7, 68h ; 'h'
+                cmp     g_partyWorldX, 68h ; 'h'
                 jnz     short loc_2AFA7
-                cmp     word_36CF9, 6Eh ; 'n'
+                cmp     g_partyWorldY, 6Eh ; 'n'
                 jnz     short loc_2AFA7
                 mov     ax, 0Eh
                 call    TriggerSoundEvent
@@ -49366,7 +49366,7 @@ InstantKillActiveMonster proc near      ; CODE XREF: DispatchItemAbilityCommand+
                 mov     word_32940, 249h
                 call    IsItemRangeAvailable
                 call    ConsumeItemChargeResource
-                mov     si, word_32A1E
+                mov     si, g_activeCombatMonster
                 mov     word ptr [si+10h], 0
                 or      word_328C8, 20h
                 call    ShowResourceDepletedOverlay
@@ -49452,7 +49452,7 @@ loc_2B214:                              ; CODE XREF: CheckQuestItemsCompleted+90
                 call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     g_pictureId, ax
-                mov     word_31946, ax
+                mov     g_heldItemType, ax
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
                 mov     word_3194C, 0
@@ -49474,18 +49474,18 @@ CheckQuestItemsCompleted endp
 
 
 ShowVisionAtLocation proc near          ; CODE XREF: DispatchItemAbilityCommand+8↑p
-                push    word_36CF7      ; Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.
-                push    word_36CF9
-                push    word_36CF5
+                push    g_partyWorldX   ; Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.
+                push    g_partyWorldY
+                push    g_partyFacing
                 push    word_36C79
                 call    DrawMouseCursorAlt
                 mov     g_pictureId, 0Bh
                 call    UpdateCursorForHeldItem
                 and     word_36C79, 0FFF8h
                 or      word_36C79, 1
-                mov     word_36CF7, 154h
-                mov     word_36CF9, 63h ; 'c'
-                mov     word_36CF5, 8000h
+                mov     g_partyWorldX, 154h
+                mov     g_partyWorldY, 63h ; 'c'
+                mov     g_partyFacing, 8000h
                 call    RestoreFullScreenFromEMS
                 call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
@@ -49498,9 +49498,9 @@ ShowVisionAtLocation proc near          ; CODE XREF: DispatchItemAbilityCommand+
                 mov     g_pictureId, 0Bh
                 call    UpdateCursorForHeldItem
                 pop     word_36C79
-                pop     word_36CF5
-                pop     word_36CF9
-                pop     word_36CF7
+                pop     g_partyFacing
+                pop     g_partyWorldY
+                pop     g_partyWorldX
                 call    RestoreFullScreenFromEMS
                 call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
@@ -49660,13 +49660,13 @@ loc_2B47E:                              ; CODE XREF: InitializeNewGameWorldState
                 mov     word_36C7F, 2000h
                 mov     word_36E0D, 2
                 mov     word_36E0F, 0
-                mov     word_36CF5, 2000h
-                mov     word_36CF7, 0A6h
-                mov     word_36CF9, 24h ; '$'
-                mov     word_36CFB, 4
-                mov     word_36CFD, 0Bh
-                mov     word_36CFF, 222h
-                mov     word_36D01, 1A4h
+                mov     g_partyFacing, 2000h
+                mov     g_partyWorldX, 0A6h
+                mov     g_partyWorldY, 24h ; '$'
+                mov     g_gameDay, 4
+                mov     g_gameMonth, 0Bh
+                mov     g_gameYear, 222h
+                mov     g_gameClockMinutes, 1A4h
                 mov     word_36CB1, 0Ch
                 mov     word_36CB3, 0
                 mov     errorCode, 0Ah
@@ -51366,7 +51366,7 @@ loc_2C2E2:                              ; CODE XREF: ApplyEncodedItemEffect+1A3�
 ; ---------------------------------------------------------------------------
 
 loc_2C2F9:                              ; CODE XREF: ApplyEncodedItemEffect+2E↑j
-                cmp     word_31946, 0
+                cmp     g_heldItemType, 0
                 jz      short loc_2C303
                 jmp     loc_2C400
 ; ---------------------------------------------------------------------------
@@ -51402,19 +51402,19 @@ loc_2C344:                              ; CODE XREF: ApplyEncodedItemEffect+39�
                 mov     cx, word_332F0
                 or      cx, cx
                 jz      short loc_2C382
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jz      short loc_2C369
                 jmp     loc_2C438
 ; ---------------------------------------------------------------------------
 
 loc_2C369:                              ; CODE XREF: ApplyEncodedItemEffect+266↑j
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jz      short loc_2C374
                 jmp     loc_2C444
 ; ---------------------------------------------------------------------------
 
 loc_2C374:                              ; CODE XREF: ApplyEncodedItemEffect+271↑j
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jz      short loc_2C37F
                 jmp     loc_2C44F
 ; ---------------------------------------------------------------------------
@@ -51427,19 +51427,19 @@ loc_2C382:                              ; CODE XREF: ApplyEncodedItemEffect+25E�
                 mov     cx, word_332F2
                 or      cx, cx
                 jz      short loc_2C3AE
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jz      short loc_2C395
                 jmp     loc_2C44F
 ; ---------------------------------------------------------------------------
 
 loc_2C395:                              ; CODE XREF: ApplyEncodedItemEffect+292↑j
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jz      short loc_2C3A0
                 jmp     loc_2C45B
 ; ---------------------------------------------------------------------------
 
 loc_2C3A0:                              ; CODE XREF: ApplyEncodedItemEffect+29D↑j
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jz      short loc_2C3AB
                 jmp     loc_2C438
 ; ---------------------------------------------------------------------------
@@ -51452,15 +51452,15 @@ loc_2C3AE:                              ; CODE XREF: ApplyEncodedItemEffect+28A�
                 mov     cx, word_332F4
                 or      cx, cx
                 jz      short loc_2C3D3
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jz      short loc_2C3C1
                 jmp     loc_2C45B
 ; ---------------------------------------------------------------------------
 
 loc_2C3C1:                              ; CODE XREF: ApplyEncodedItemEffect+2BE↑j
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_2C438
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_2C444
                 jmp     short loc_2C44F
 ; ---------------------------------------------------------------------------
@@ -51469,11 +51469,11 @@ loc_2C3D3:                              ; CODE XREF: ApplyEncodedItemEffect+2B6�
                 mov     cx, word_332F6
                 or      cx, cx
                 jz      short loc_2C3F5
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jnz     short loc_2C444
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jnz     short loc_2C44F
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jnz     short loc_2C45B
                 jmp     short loc_2C438
 ; ---------------------------------------------------------------------------
@@ -51529,9 +51529,9 @@ loc_2C45B:                              ; CODE XREF: ApplyEncodedItemEffect:loc_
 
 loc_2C464:                              ; CODE XREF: ApplyEncodedItemEffect+344↑j
                                         ; ApplyEncodedItemEffect+34F↑j ...
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 mov     word_328FA, ax
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     word_32900, ax
                 mov     si, word_328D2
                 mov     word_328FC, si
@@ -51576,9 +51576,9 @@ loc_2C4C7:                              ; CODE XREF: ApplyEncodedItemEffect+3C4�
 
 loc_2C4D1:                              ; CODE XREF: ApplyEncodedItemEffect+4D8↓j
                 mov     ax, word_328FA
-                mov     word_36CF7, ax
+                mov     g_partyWorldX, ax
                 mov     ax, word_32900
-                mov     word_36CF9, ax
+                mov     g_partyWorldY, ax
                 mov     ax, word_328FC
                 mov     word_328D2, ax
                 call    RevealCellsAroundPlayer
@@ -51627,32 +51627,32 @@ loc_2C543:                              ; CODE XREF: ApplyEncodedItemEffect+3F5�
 ; ---------------------------------------------------------------------------
 
 loc_2C558:                              ; CODE XREF: ApplyEncodedItemEffect+2FF↑j
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 mov     word_328FA, ax
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     word_32900, ax
-                test    word_36CF5, 8000h
+                test    g_partyFacing, 8000h
                 jz      short loc_2C572
                 sub     word_32900, cx
                 jmp     short loc_2C59F
 ; ---------------------------------------------------------------------------
 
 loc_2C572:                              ; CODE XREF: ApplyEncodedItemEffect+46C↑j
-                test    word_36CF5, 1000h
+                test    g_partyFacing, 1000h
                 jz      short loc_2C580
                 add     word_328FA, cx
                 jmp     short loc_2C59F
 ; ---------------------------------------------------------------------------
 
 loc_2C580:                              ; CODE XREF: ApplyEncodedItemEffect+47A↑j
-                test    word_36CF5, 4000h
+                test    g_partyFacing, 4000h
                 jz      short loc_2C58E
                 add     word_32900, cx
                 jmp     short loc_2C59F
 ; ---------------------------------------------------------------------------
 
 loc_2C58E:                              ; CODE XREF: ApplyEncodedItemEffect+488↑j
-                test    word_36CF5, 2000h
+                test    g_partyFacing, 2000h
                 jz      short loc_2C59C
                 sub     word_328FA, cx
                 jmp     short loc_2C59F
@@ -51688,11 +51688,11 @@ loc_2C5D9:                              ; CODE XREF: ApplyEncodedItemEffect+44�
                 add     si, ax
                 test    word_328C4, 80h
                 jz      short loc_2C619
-                mov     ax, word_36CF7
+                mov     ax, g_partyWorldX
                 mov     [si], ax
-                mov     ax, word_36CF9
+                mov     ax, g_partyWorldY
                 mov     [si+2], ax
-                mov     ax, word_36CF5
+                mov     ax, g_partyFacing
                 mov     [si+4], ax
                 mov     ax, word_36CAF
                 mov     [si+6], ax
@@ -51714,11 +51714,11 @@ loc_2C619:                              ; CODE XREF: ApplyEncodedItemEffect+4EA�
 
 loc_2C621:                              ; CODE XREF: ApplyEncodedItemEffect+51E↑j
                 mov     ax, [si]
-                mov     word_36CF7, ax
+                mov     g_partyWorldX, ax
                 mov     ax, [si+2]
-                mov     word_36CF9, ax
+                mov     g_partyWorldY, ax
                 mov     ax, [si+4]
-                mov     word_36CF5, ax
+                mov     g_partyFacing, ax
                 mov     ax, [si+6]
                 mov     word_36CAF, ax
                 mov     ax, [si+8]
@@ -51742,21 +51742,21 @@ loc_2C674:                              ; CODE XREF: ApplyEncodedItemEffect+4F�
                 xor     ax, ax
                 xor     bx, bx
                 mov     bx, 0FFFFh
-                cmp     word_36CF5, 8000h
+                cmp     g_partyFacing, 8000h
                 jz      short loc_2C69F
                 mov     bx, 1
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_2C69F
                 mov     ax, 0FFFFh
                 mov     bx, 0
-                cmp     word_36CF5, 2000h
+                cmp     g_partyFacing, 2000h
                 jz      short loc_2C69F
                 mov     ax, 1
 
 loc_2C69F:                              ; CODE XREF: ApplyEncodedItemEffect+583↑j
                                         ; ApplyEncodedItemEffect+58E↑j ...
-                add     ax, word_36CF7
-                add     bx, word_36CF9
+                add     ax, g_partyWorldX
+                add     bx, g_partyWorldY
                 call    TryInteractAtPosition
                 cmp     errorCode, 6
                 jz      short loc_2C6BD
@@ -51806,21 +51806,21 @@ loc_2C71D:                              ; CODE XREF: ApplyEncodedItemEffect+65�
 
 loc_2C732:                              ; CODE XREF: ApplyEncodedItemEffect+62D↑j
                 mov     bx, 0FFFFh
-                cmp     word_36CF5, 8000h
+                cmp     g_partyFacing, 8000h
                 jz      short loc_2C759
                 mov     bx, 1
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_2C759
                 mov     ax, 0FFFFh
                 mov     bx, 0
-                cmp     word_36CF5, 2000h
+                cmp     g_partyFacing, 2000h
                 jz      short loc_2C759
                 mov     ax, 1
 
 loc_2C759:                              ; CODE XREF: ApplyEncodedItemEffect+62F↑j
                                         ; ApplyEncodedItemEffect+63D↑j ...
-                add     ax, word_36CF7
-                add     bx, word_36CF9
+                add     ax, g_partyWorldX
+                add     bx, g_partyWorldY
                 call    TryInteractAtPosition
                 cmp     errorCode, 2
                 jz      short loc_2C777
@@ -51861,21 +51861,21 @@ loc_2C7BD:                              ; CODE XREF: ApplyEncodedItemEffect+70�
 
 loc_2C7D2:                              ; CODE XREF: ApplyEncodedItemEffect+6CD↑j
                 mov     bx, 0FFFFh
-                cmp     word_36CF5, 8000h
+                cmp     g_partyFacing, 8000h
                 jz      short loc_2C7F9
                 mov     bx, 1
-                cmp     word_36CF5, 4000h
+                cmp     g_partyFacing, 4000h
                 jz      short loc_2C7F9
                 mov     ax, 0FFFFh
                 mov     bx, 0
-                cmp     word_36CF5, 2000h
+                cmp     g_partyFacing, 2000h
                 jz      short loc_2C7F9
                 mov     ax, 1
 
 loc_2C7F9:                              ; CODE XREF: ApplyEncodedItemEffect+6CF↑j
                                         ; ApplyEncodedItemEffect+6DD↑j ...
-                add     ax, word_36CF7
-                add     bx, word_36CF9
+                add     ax, g_partyWorldX
+                add     bx, g_partyWorldY
                 call    TryInteractAtPosition
                 cmp     errorCode, 0Ah
                 jz      short loc_2C81E
@@ -51928,7 +51928,7 @@ loc_2C87F:                              ; CODE XREF: ApplyEncodedItemEffect+7B�
 ; ---------------------------------------------------------------------------
 
 loc_2C892:                              ; CODE XREF: ApplyEncodedItemEffect+78F↑j
-                mov     di, word_32A1E
+                mov     di, g_activeCombatMonster
                 call    ApplyAttackToTarget
                 mov     ax, word_2E49A
                 add     ax, word_2E49C
@@ -52569,7 +52569,7 @@ loc_2CF51:                              ; CODE XREF: ApplyEncodedItemEffect+791�
                 call    wait
                 mov     ax, word_332DC
                 call    TriggerSoundEventAfterDriverWait
-                mov     di, word_32A1E
+                mov     di, g_activeCombatMonster
                 call    ResolveAttackAndLatchFirstHit
                 cmp     errorCode, 0
                 jz      short loc_2CF8D
@@ -53367,7 +53367,7 @@ seg126          segment byte public 'CODE' use16
 IsItemTypeAcceptedByLocation proc far   ; CODE XREF: HandleInventoryGridClick:loc_26473↑P
                                         ; TryCureAilmentFromIconClick+75↑P
                 push    bx              ; Checks the standing location's flags against the held item's flags -- a generic 'does this context accept this item type' gate, structurally identical to IsItemEligibleForRepair (a separate function instance). Called from TryCureAilmentFromIconClick and sub_26415.
-                mov     bx, word_2E546
+                mov     bx, g_currentItemRecord
                 test    word ptr [bx+0Ch], 0C000h
                 jz      short loc_2D5F7
                 mov     bx, word_2E548
@@ -56962,7 +56962,7 @@ _val24          dw 0                    ; DATA XREF: InitGlobals+B4↑w
                                         ; DrawDungeonCellSideFeature+51↑r
 word_2E544      dw 0                    ; DATA XREF: HandleRangedOrCombatAction:loc_1D4CB↑w
                                         ; HandleRangedOrCombatAction+72↑w ...
-word_2E546      dw 0                    ; DATA XREF: loadWorldDat1+3↑w
+g_currentItemRecord dw 0                ; DATA XREF: loadWorldDat1+3↑w
                                         ; LoadItemCatalogRecord+C5↑r ...
 word_2E548      dw 0                    ; DATA XREF: LoadItemCatalogRecord:loc_125C7↑w
                                         ; LoadItemCatalogRecord+B3↑w ...
@@ -70271,7 +70271,7 @@ g_levelMonsters db    0                 ; 80 x 0x9C-byte monster records (per-le
                 db    0
                 db    0
                 db    0
-word_31946      dw 0                    ; DATA XREF: start:loc_104B2↑r
+g_heldItemType  dw 0                    ; DATA XREF: start:loc_104B2↑r
                                         ; RestoreUiStateForClueBook+7F↑w ...
 word_31948      dw 0                    ; DATA XREF: RestoreUiStateForClueBook+84↑w
                                         ; SaveUiStateForClueBook+91↑r ...
@@ -74577,7 +74577,7 @@ word_32A16      dw 0                    ; DATA XREF: ResetCombatRoundScratchStat
 word_32A18      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+6↑w
 word_32A1A      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+C↑w
 word_32A1C      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+12↑w
-word_32A1E      dw 0                    ; DATA XREF: RunDungeonGameLoop+3F↑w
+g_activeCombatMonster dw 0              ; DATA XREF: RunDungeonGameLoop+3F↑w
                                         ; HandleDungeonInput+2CB↑w ...
 g_monsterSlots  dw 0                    ; DATA XREF: ProcessLevelMonsters:loc_2302A↑r
                                         ; ProcessLevelMonsters:loc_230B7↑r
@@ -86035,19 +86035,19 @@ word_36CE7      dw 0                    ; DATA XREF: ShowClueBook+1B↑r
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36CF5      dw 2000h                ; DATA XREF: start+177↑r
+g_partyFacing   dw 2000h                ; DATA XREF: start+177↑r
                                         ; start+182↑r ...
-word_36CF7      dw 276h                 ; DATA XREF: start:loc_1019B↑r
+g_partyWorldX   dw 276h                 ; DATA XREF: start:loc_1019B↑r
                                         ; start:loc_1022B↑r ...
-word_36CF9      dw 0ACh                 ; DATA XREF: start+19F↑r
+g_partyWorldY   dw 0ACh                 ; DATA XREF: start+19F↑r
                                         ; start+22F↑r ...
-word_36CFB      dw 4                    ; DATA XREF: RestPartyAndAdvanceClock+11C↑w
+g_gameDay       dw 4                    ; DATA XREF: RestPartyAndAdvanceClock+11C↑w
                                         ; RestPartyAndAdvanceClock+120↑r ...
-word_36CFD      dw 0Bh                  ; DATA XREF: RestPartyAndAdvanceClock+12D↑w
+g_gameMonth     dw 0Bh                  ; DATA XREF: RestPartyAndAdvanceClock+12D↑w
                                         ; RestPartyAndAdvanceClock+131↑r ...
-word_36CFF      dw 222h                 ; DATA XREF: RestPartyAndAdvanceClock+138↑w
+g_gameYear      dw 222h                 ; DATA XREF: RestPartyAndAdvanceClock+138↑w
                                         ; AdvanceGameClock+45↑w ...
-word_36D01      dw 1E0h                 ; DATA XREF: PlayStudioCreditsIntro+E5↑w
+g_gameClockMinutes dw 1E0h              ; DATA XREF: PlayStudioCreditsIntro+E5↑w
                                         ; TravelToDestination+87↑r ...
 word_36D03      dw 0                    ; DATA XREF: DrawTrainingScreenStatSheet+D4↑r
                                         ; ConfirmAndValidatePartyTarget↑r ...

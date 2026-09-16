@@ -10554,6 +10554,7 @@ static Bytes_5(void) {
 	set_name	(0X2E542,	"_val24");
 	create_word	(0X2E544);
 	create_word	(0X2E546);
+	set_name	(0X2E546,	"g_currentItemRecord");
 	create_word	(0X2E548);
 	create_word	(0X2E54A);
 	create_word	(0X2E54C);
@@ -10590,6 +10591,7 @@ static Bytes_5(void) {
 	set_cmt	(0X2E786,	"80 x 0x9C-byte monster records (per-level monster pool, feeding the 3-slot g_monsterSlots active-combat array). Same record stride and [+0xC] flag conventions as g_monsterSlots.",	0);
 	set_name	(0X2E786,	"g_levelMonsters");
 	create_word	(0X31946);
+	set_name	(0X31946,	"g_heldItemType");
 	create_word	(0X31948);
 	create_word	(0X3194A);
 	create_word	(0X3194C);
@@ -10862,6 +10864,7 @@ static Bytes_5(void) {
 	create_word	(0X32A1A);
 	create_word	(0X32A1C);
 	create_word	(0X32A1E);
+	set_name	(0X32A1E,	"g_activeCombatMonster");
 	set_cmt	(0X32A20,	"3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.",	0);
 	create_word	(0X32A20);
 	set_name	(0X32A20,	"g_monsterSlots");
@@ -11965,12 +11968,19 @@ static Bytes_5(void) {
 	set_name	(0X36CE5,	"g_driverStateFlags");
 	create_word	(0X36CE7);
 	create_word	(0X36CF5);
+	set_name	(0X36CF5,	"g_partyFacing");
 	create_word	(0X36CF7);
+	set_name	(0X36CF7,	"g_partyWorldX");
 	create_word	(0X36CF9);
+	set_name	(0X36CF9,	"g_partyWorldY");
 	create_word	(0X36CFB);
+	set_name	(0X36CFB,	"g_gameDay");
 	create_word	(0X36CFD);
+	set_name	(0X36CFD,	"g_gameMonth");
 	create_word	(0X36CFF);
+	set_name	(0X36CFF,	"g_gameYear");
 	create_word	(0X36D01);
+	set_name	(0X36D01,	"g_gameClockMinutes");
 	create_word	(0X36D03);
 	create_word	(0X36D05);
 	create_word	(0X36D07);
