@@ -25858,7 +25858,7 @@ loc_1E898:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 jz      short loc_1E8AB
                 push    cx
                 push    si
-                call    sub_1E943
+                call    ApplyRestEffectsToCharacter
                 pop     si
                 pop     cx
                 add     si, 2
@@ -25904,15 +25904,15 @@ RestPartyAndAdvanceClock endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E943       proc near               ; CODE XREF: RestPartyAndAdvanceClock+257↑p
-                call    SelectPartyRecordById
+ApplyRestEffectsToCharacter proc near   ; CODE XREF: RestPartyAndAdvanceClock+257↑p
+                call    SelectPartyRecordById ; Per-character rest-tick handler: skips if incapacitated (+0x1C 0x1C40). If DISEASED/CURSED (among other +0x1C bits, 0xE380), drains HP or MP instead of regenerating (DISEASED HP loss can set the DEAD flag at 0); otherwise applies normal percentage-based HP/MP regen. Called from RestPartyAndAdvanceClock.
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_1E954
                 jmp     locret_1EA17
 ; ---------------------------------------------------------------------------
 
-loc_1E954:                              ; CODE XREF: sub_1E943+C↑j
+loc_1E954:                              ; CODE XREF: ApplyRestEffectsToCharacter+C↑j
                 mov     es, word_2E4AA
                 mov     cx, 10h
                 mov     si, bx
@@ -25930,12 +25930,12 @@ loc_1E954:                              ; CODE XREF: sub_1E943+C↑j
                 jz      short loc_1E985
                 and     word ptr [bx+1Ch], 7FFFh
 
-loc_1E985:                              ; CODE XREF: sub_1E943+3B↑j
+loc_1E985:                              ; CODE XREF: ApplyRestEffectsToCharacter+3B↑j
                 test    word ptr [bx+1Ch], 200h
                 jz      short loc_1E991
                 and     word ptr [bx+1Ch], 0FDFFh
 
-loc_1E991:                              ; CODE XREF: sub_1E943+47↑j
+loc_1E991:                              ; CODE XREF: ApplyRestEffectsToCharacter+47↑j
                 test    word ptr [bx+1Ch], 2000h
                 jz      short loc_1E9AF
                 mov     ax, 24h ; '$'
@@ -25947,8 +25947,8 @@ loc_1E991:                              ; CODE XREF: sub_1E943+47↑j
                 jmp     short locret_1EA17
 ; ---------------------------------------------------------------------------
 
-loc_1E9AF:                              ; CODE XREF: sub_1E943+53↑j
-                                        ; sub_1E943+5F↑j
+loc_1E9AF:                              ; CODE XREF: ApplyRestEffectsToCharacter+53↑j
+                                        ; ApplyRestEffectsToCharacter+5F↑j
                 test    word ptr [bx+1Ch], 80h
                 jz      short loc_1E9C7
                 mov     ax, 30h ; '0'
@@ -25957,19 +25957,19 @@ loc_1E9AF:                              ; CODE XREF: sub_1E943+53↑j
                 jg      short loc_1E9C7
                 mov     word ptr [bx+54h], 0
 
-loc_1E9C7:                              ; CODE XREF: sub_1E943+71↑j
-                                        ; sub_1E943+7D↑j
+loc_1E9C7:                              ; CODE XREF: ApplyRestEffectsToCharacter+71↑j
+                                        ; ApplyRestEffectsToCharacter+7D↑j
                 jmp     short locret_1EA17
 ; ---------------------------------------------------------------------------
 
-loc_1E9C9:                              ; CODE XREF: sub_1E943+34↑j
+loc_1E9C9:                              ; CODE XREF: ApplyRestEffectsToCharacter+34↑j
                 mov     ax, [bx+92h]
                 mul     word_328C2
                 add     ax, 32h ; '2'
                 jnb     short loc_1E9D9
                 add     dx, 1
 
-loc_1E9D9:                              ; CODE XREF: sub_1E943+91↑j
+loc_1E9D9:                              ; CODE XREF: ApplyRestEffectsToCharacter+91↑j
                 mov     cx, 64h ; 'd'
                 div     cx
                 add     ax, [bx+52h]
@@ -25977,7 +25977,7 @@ loc_1E9D9:                              ; CODE XREF: sub_1E943+91↑j
                 jle     short loc_1E9EB
                 mov     ax, [bx+92h]
 
-loc_1E9EB:                              ; CODE XREF: sub_1E943+A2↑j
+loc_1E9EB:                              ; CODE XREF: ApplyRestEffectsToCharacter+A2↑j
                 mov     [bx+52h], ax
                 mov     ax, [bx+94h]
                 or      ax, ax
@@ -25987,7 +25987,7 @@ loc_1E9EB:                              ; CODE XREF: sub_1E943+A2↑j
                 jnb     short loc_1EA02
                 add     dx, 1
 
-loc_1EA02:                              ; CODE XREF: sub_1E943+BA↑j
+loc_1EA02:                              ; CODE XREF: ApplyRestEffectsToCharacter+BA↑j
                 mov     cx, 64h ; 'd'
                 div     cx
                 add     ax, [bx+54h]
@@ -25995,14 +25995,14 @@ loc_1EA02:                              ; CODE XREF: sub_1E943+BA↑j
                 jle     short loc_1EA14
                 mov     ax, [bx+94h]
 
-loc_1EA14:                              ; CODE XREF: sub_1E943+B1↑j
-                                        ; sub_1E943+CB↑j
+loc_1EA14:                              ; CODE XREF: ApplyRestEffectsToCharacter+B1↑j
+                                        ; ApplyRestEffectsToCharacter+CB↑j
                 mov     [bx+54h], ax
 
-locret_1EA17:                           ; CODE XREF: sub_1E943+E↑j
-                                        ; sub_1E943+6A↑j ...
+locret_1EA17:                           ; CODE XREF: ApplyRestEffectsToCharacter+E↑j
+                                        ; ApplyRestEffectsToCharacter+6A↑j ...
                 retn
-sub_1E943       endp
+ApplyRestEffectsToCharacter endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74188,7 +74188,7 @@ word_328BE      dw 0                    ; DATA XREF: FinalizeCharacterCreation+3
 word_328C0      dw 0                    ; DATA XREF: HandlePortraitClick+23↑w
                                         ; HandlePortraitClick+3C↑w ...
 word_328C2      dw 0                    ; DATA XREF: RestPartyAndAdvanceClock+245↑w
-                                        ; sub_1E943+8A↑r ...
+                                        ; ApplyRestEffectsToCharacter+8A↑r ...
 word_328C4      dw 0                    ; DATA XREF: start+1F↑w
                                         ; start:loc_1007D↑r ...
 word_328C6      dw 0                    ; DATA XREF: start+536↑r

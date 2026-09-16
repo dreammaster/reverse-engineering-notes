@@ -4914,7 +4914,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1E919);
 	op_hex		(x,	1);
+	set_cmt	(0X1E943,	"Per-character rest-tick handler: skips if incapacitated (+0x1C 0x1C40). If DISEASED/CURSED (among other +0x1C bits, 0xE380), drains HP or MP instead of regenerating (DISEASED HP loss can set the DEAD flag at 0); otherwise applies normal percentage-based HP/MP regen. Called from RestPartyAndAdvanceClock.",	0);
 	create_insn	(0X1E943);
+	set_name	(0X1E943,	"ApplyRestEffectsToCharacter");
 	create_insn	(x=0X1E94A);
 	op_hex		(x,	1);
 	create_insn	(0X1E954);
@@ -5538,6 +5540,15 @@ static Bytes_1(void) {
 	set_cmt	(0X21015,	"Renders one depth row of the dungeon corridor view: iterates 8-byte cell records (forward then backward from a midpoint), drawing each cell's picture (table 0xE551, 12-byte stride) via sub_29B0F, and calls TryTriggerMonsterEncounterAtCell once per cell while incrementing/decrementing word_3292C (a per-frame row depth counter). Called 6x by RenderDungeonViewport.",	0);
 	create_insn	(0X21015);
 	set_name	(0X21015,	"RenderDungeonViewRow");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X21018);
 	op_hex		(x,	1);
 	create_insn	(x=0X2101E);
@@ -5553,15 +5564,6 @@ static Bytes_1(void) {
 	set_cmt	(0X21128,	"Draws one dungeon cell's base wall texture (0xE551 lookup table by cell id, z-layer word_32918=0), then a fixed overlay (picture 5) if the cell's [+6] flags have bit 0x2000 set (a door/torch/decoration marker, not confirmed). Called from RenderDungeonViewRow per visible cell.",	0);
 	create_insn	(0X21128);
 	set_name	(0X21128,	"DrawDungeonCellWallTexture");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2115A);
 	op_hex		(x,	1);
 	set_cmt	(0X2117F,	"Null-check wrapper: calls DrawDungeonCellSideFeature only if the cell's [+2] field is nonzero. Called from RenderDungeonViewRow per cell.",	0);
@@ -7531,12 +7533,6 @@ static Bytes_2(void) {
 	set_cmt	(0X28412,	"Sound driver dispatch, called with a command in AX. If the driver isn't active (g_driverStateFlags bit3 clear), only handles AX==3 (via sub_16DEA) and otherwise no-ops. When active: reads data via FileEntry_Read using the FileEntry at bx=0x9043 (same fixed instance the 0x27CFE-family resource stubs configure), ErrorChecks it, then calls g_soundDriverFarPtr with bx=6 and es:di pointing past a small header (es:0x14) in the loaded driver segment (word_3292E). Likely 'load+play a sound effect', but command 6's exact meaning per the driver's own protocol isn't confirmed -- see ida_scripts/document_sound_dispatch.py.",	0);
 	create_insn	(x=0X28412);
 	op_hex		(x,	1);
-	create_insn	(0X28425);
-	set_cmt	(0X28443,	"this",	0);
-	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
-	create_insn	(x=0X2849C);
-	op_hex		(x,	1);
-	set_name	(0X2849C,	"StopMusicAndResetTimer");
 }
 
 //------------------------------------------------------------------------
@@ -7546,6 +7542,12 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X28425);
+	set_cmt	(0X28443,	"this",	0);
+	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
+	create_insn	(x=0X2849C);
+	op_hex		(x,	1);
+	set_name	(0X2849C,	"StopMusicAndResetTimer");
 	create_insn	(0X284A5);
 	create_insn	(x=0X284B1);
 	op_hex		(x,	1);
@@ -10527,6 +10529,15 @@ static Bytes_3(void) {
 	set_name	(0X35341,	"aStoned");
 	create_strlit	(0X35348,	0X7);
 	set_name	(0X35348,	"aFrozen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3534F,	0XA);
 	set_name	(0X3534F,	"aParalyzed");
 	create_strlit	(0X35359,	0X7);
@@ -10547,15 +10558,6 @@ static Bytes_3(void) {
 	set_name	(0X35391,	"aDisease");
 	create_strlit	(0X35399,	0X7);
 	set_name	(0X35399,	"aPoison");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X353A0,	0X9);
 	set_name	(0X353A0,	"aSickness");
 	create_strlit	(0X353A9,	0X8);

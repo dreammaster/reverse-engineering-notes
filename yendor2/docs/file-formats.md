@@ -1624,7 +1624,12 @@ ticks (calling `ProcessLevelMonsters` each hour and stopping early if
 combat starts) otherwise — then inlines the exact same day-rollover
 math `AdvanceGameClock` uses (wraps at `0x5A0`/1440 minutes, calendar
 counters wrapping the same way) and calls `ResetDailyAbilityCharges`
-on rollover, before resuming play via `RunDungeonGameLoop`. Uses
+on rollover, before resuming play via `RunDungeonGameLoop`. Each hourly
+tick also calls `ApplyRestEffectsToCharacter` (was `sub_1E943`) per
+party member: skips the incapacitated; if DISEASED or CURSED (among
+other `+0x1C` bits), drains HP or MP instead of regenerating it
+(DISEASED HP loss reaching 0 sets the DEAD flag) — otherwise applies
+normal percentage-based HP/MP regeneration. Uses
 `RestoreDialogAreaFromEMS` (shared with `RunGameDialog`) to restore
 the status area from an EMS cache before drawing, and
 `ClearMessageBoxArea` (shared with `sub_17032` and

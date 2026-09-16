@@ -3970,6 +3970,17 @@ a classic "pick a valid random target" utility.
 
 504 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyRestEffectsToCharacter
+
+Named `sub_1E943` -> `ApplyRestEffectsToCharacter`, called from
+`RestPartyAndAdvanceClock`'s hourly tick loop: skips the incapacitated;
+drains HP or MP instead of regenerating it when DISEASED or CURSED
+(DISEASED HP loss reaching 0 sets the DEAD flag), otherwise applies
+normal percentage-based regen — a nice cross-confirmation that resting
+isn't purely beneficial when the party is afflicted.
+
+505 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
