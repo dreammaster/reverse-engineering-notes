@@ -5434,6 +5434,25 @@ intact in the binary.
 
 624 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SaveUiStateForClueBook, RestoreUiStateForClueBook
+
+Named `sub_14F92` -> `SaveUiStateForClueBook` and its exact mirror
+`sub_14E28` -> `RestoreUiStateForClueBook`, a matched pair called
+once each from `ShowClueBook`. `SaveUiStateForClueBook` allocates a
+scratch memory block (handle kept in `fe`) and serializes roughly 45
+global UI/display-state words — video position, font colors, EMS
+pointers, the current item/spell/selection state words, and several
+`word_328Cx`/`word_3290x`/`word_3293x`/`word_3296x`/`word_3297x` UI
+flag words — into it via `stosw`, plus several fixed-size `rep movsw`
+copies of other data tables. `RestoreUiStateForClueBook` reads the
+same block back out via `lodsw` in the identical order, in
+`ShowClueBook`'s cleanup path after the scratch block itself has been
+freed and the outer `fe` handle popped back off the stack. Together
+they snapshot/restore the UI state that opening the full-screen clue
+book overlay would otherwise clobber.
+
+626 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

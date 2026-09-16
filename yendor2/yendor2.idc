@@ -2162,7 +2162,9 @@ static Bytes_0(void) {
 	set_cmt	(0X14DFC,	"Restores the entire video buffer from EMS page 0x5616 (a dedicated page, distinct from 0x55D8) -- the screen behind the F8 clue book, restored when it closes. Called only from ShowClueBook.",	0);
 	create_insn	(0X14DFC);
 	set_name	(0X14DFC,	"RestoreClueBookBackgroundFromEMS");
+	set_cmt	(0X14E28,	"Reads the scratch block referenced by `fe` and lodsw's the same ~45 global UI/display-state words back out, in the same order SaveUiStateForClueBook wrote them. Called once from ShowClueBook's cleanup path.",	0);
 	create_insn	(0X14E28);
+	set_name	(0X14E28,	"RestoreUiStateForClueBook");
 	create_insn	(x=0X14F56);
 	op_seg		(x,	1);
 	create_insn	(x=0X14F5F);
@@ -2170,7 +2172,9 @@ static Bytes_0(void) {
 	set_cmt	(0X14F61,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X14F61);
 	op_hex		(x,	0);
+	set_cmt	(0X14F92,	"Allocates a scratch memory block (handle stored in `fe`) and serializes ~45 global UI/display-state words plus several fixed-size data table copies into it via stosw/rep movsw. Called once from ShowClueBook before opening the clue book overlay. Paired with RestoreUiStateForClueBook.",	0);
 	create_insn	(0X14F92);
+	set_name	(0X14F92,	"SaveUiStateForClueBook");
 	create_insn	(x=0X14FAC);
 	op_hex		(x,	1);
 	create_insn	(x=0X14FAE);
@@ -3074,6 +3078,15 @@ static Bytes_0(void) {
 	set_cmt	(0X17FB8,	"Formats ax as a decimal string into the buffer at bx (space-padded '0' for ax==0). Extracts digits via successive divisors with leading-zero suppression (sub_18041).",	0);
 	create_insn	(0X17FB8);
 	set_name	(0X17FB8,	"FormatNumber");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X17FBC);
 	op_hex		(x,	1);
 	create_insn	(x=0X17FBF);
@@ -3106,15 +3119,6 @@ static Bytes_0(void) {
 	set_cmt	(0X18068,	"PrepareTrapEffectSlots(ax=effect id): returns bx = g_trapEffectDefs + id*0xC (the effect-definition record). Also clears the [+8..+0x14) fields of all 4 g_partyEffectIconSlots entries first -- reset before repopulate. ax is left 0 on return.",	0);
 	create_insn	(0X18068);
 	set_name	(0X18068,	"PrepareTrapEffectSlots");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X18095);
 	set_cmt	(0X180BA,	"Iterates the 4 g_partyEffectIconSlots entries; for each occupied slot, draws its effect icon (via the effect-def's +2 g_pictureDir offset, one of 3 draw variants selected by the effect-def's +0xA flags) and applies the effect's cost via ApplyEffectCost.",	0);
 	create_insn	(0X180BA);
@@ -4998,6 +5002,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1E64A,	"The party rest/camp action ('R rest'). Checks eligibility (sub_1EA18), advances the game clock (8 hours flat for a full rest, or up to 8 hourly ticks calling ProcessLevelMonsters and stopping if combat starts), handles day rollover (ResetDailyAbilityCharges + calendar counters), shows hours rested, then resumes via RunDungeonGameLoop. Called from `start` and sub_2C0FE.",	0);
 	create_insn	(0X1E64A);
 	set_name	(0X1E64A,	"RestPartyAndAdvanceClock");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1E657);
 	op_hex		(x,	1);
 	create_insn	(0X1E662);
@@ -5046,15 +5059,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1E985);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1E98C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E991);
@@ -6810,6 +6814,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2570C,	"Strips ',' and ' ' from an in-place NUL-terminated string -- the counterpart to FormatNumber's thousands-separator insertion. Called from ShowItemAbilityEffectInfo and others.",	0);
 	create_insn	(0X2570C);
 	set_name	(0X2570C,	"StripCommasAndSpaces");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X25726);
 	set_cmt	(0X2572C,	"FormatNumber then StripCommasZeroPadSpaces on the shared 0xAFA8 buffer -- zero-padded sibling of FormatNumberCompact. Called from sub_2044C, sub_2047B, and others.",	0);
 	create_insn	(0X2572C);
@@ -6827,15 +6840,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25773,	"this",	0);
 	create_insn	(x=0X257A2);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X257A9);
 	op_hex		(x,	1);
 	set_cmt	(0X257BF,	"Scans an 8-slot CURGAME inventory record for a directly droppable item ([+0xC] bit 1), recursing into any container slot ([+0xC] bit 0x2000) via HasDroppableItemInContainer. Called from IsItemDroppable.",	0);
@@ -9194,6 +9198,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
 	create_insn	(0X2AA58);
 	set_name	(0X2AA58,	"CastSpell");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2AA5C);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AA62);
@@ -9219,15 +9232,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2AB31);
 	create_insn	(0X2AB3F);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2AB4C);
 	op_hex		(x,	1);
 	create_insn	(0X2AB60);
@@ -11893,6 +11897,15 @@ static Bytes_4(void) {
 	create_strlit	(0X3A0B5,	0X2);
 	create_strlit	(0X3A0B7,	0X2);
 	create_strlit	(0X3A0B9,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A0BB,	0X1B);
 	set_name	(0X3A0BB,	"aSteveSmith");
 	create_strlit	(0X3A0D6,	0X2);
@@ -11904,15 +11917,6 @@ static Bytes_4(void) {
 	create_strlit	(0X3A0FB,	0X1C);
 	set_name	(0X3A0FB,	"aCraigShirley");
 	create_strlit	(0X3A117,	0X2);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A119,	0X2);
 	create_strlit	(0X3A11B,	0X2);
 	create_strlit	(0X3A11D,	0X2);

@@ -1265,7 +1265,7 @@ ShowClueBook    proc far                ; CODE XREF: seg000:0AA3↑P
                 push    es
                 push    bp
                 push    fe
-                call    sub_14F92
+                call    SaveUiStateForClueBook
                 push    fe              ; this
                 mov     fe, 0
                 cmp     word_36CE7, 1
@@ -1779,7 +1779,7 @@ loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
 
 loc_11144:                              ; CODE XREF: ShowClueBook+4F4↑j
                 pop     fe
-                call    sub_14E28
+                call    RestoreUiStateForClueBook
                 pop     fe
                 or      word_328CC, 10h
                 pop     bp
@@ -7935,8 +7935,8 @@ RestoreClueBookBackgroundFromEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14E28       proc far                ; CODE XREF: ShowClueBook+508↑P
-                mov     ax, ds
+RestoreUiStateForClueBook proc far      ; CODE XREF: ShowClueBook+508↑P
+                mov     ax, ds          ; Reads the scratch block referenced by `fe` and lodsw's the same ~45 global UI/display-state words back out, in the same order SaveUiStateForClueBook wrote them. Called once from ShowClueBook's cleanup path.
                 mov     es, ax
                 assume es:seg129
                 mov     ax, fe
@@ -8076,14 +8076,14 @@ sub_14E28       proc far                ; CODE XREF: ShowClueBook+508↑P
                 pop     word_2E532
                 pop     word_2E530
                 retf
-sub_14E28       endp
+RestoreUiStateForClueBook endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14F92       proc far                ; CODE XREF: ShowClueBook+C↑P
-                mov     bx, 50h ; 'P'
+SaveUiStateForClueBook proc far         ; CODE XREF: ShowClueBook+C↑P
+                mov     bx, 50h ; 'P'   ; Allocates a scratch memory block (handle stored in `fe`) and serializes ~45 global UI/display-state words plus several fixed-size data table copies into it via stosw/rep movsw. Called once from ShowClueBook before opening the clue book overlay. Paired with RestoreUiStateForClueBook.
                 add     bx, 0Eh
                 add     bx, 0C80h
                 add     bx, 320h
@@ -8217,7 +8217,7 @@ sub_14F92       proc far                ; CODE XREF: ShowClueBook+C↑P
                 mov     cx, 190h
                 rep movsw
                 retf
-sub_14F92       endp
+SaveUiStateForClueBook endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -56767,10 +56767,10 @@ _val7           dw 0                    ; DATA XREF: InitGlobals+24↑w
 _val8           dw 0                    ; DATA XREF: InitGlobals+2A↑w
                                         ; ShowCharacterInventory+EA↑r ...
 g_blitMaskPtr   dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+409↑w
-                                        ; sub_14E28+34↑w ...
+                                        ; RestoreUiStateForClueBook+34↑w ...
                                         ; Pointer to the current sprite's explicit transparency/AND mask data (paired with g_blitMaskLen), consumed by ExpandBlitMaskNibbles when word_328C6 bit 0 is set. Set from ~12 call sites before drawing a masked sprite; often length 6.
 g_blitMaskLen   dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+40C↑w
-                                        ; sub_14E28+39↑w ...
+                                        ; RestoreUiStateForClueBook+39↑w ...
                                         ; Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.
 word_2E492      dw 0FFh                 ; DATA XREF: sub_11A10:loc_11D4A↑r
                                         ; InitGame+CF↑r ...
@@ -70242,13 +70242,13 @@ g_levelMonsters db    0                 ; 80 x 0x9C-byte monster records (per-le
                 db    0
                 db    0
 word_31946      dw 0                    ; DATA XREF: start:loc_104B2↑r
-                                        ; sub_14E28+7F↑w ...
-word_31948      dw 0                    ; DATA XREF: sub_14E28+84↑w
-                                        ; sub_14F92+91↑r ...
-word_3194A      dw 0                    ; DATA XREF: sub_14E28+89↑w
-                                        ; sub_14F92+95↑r ...
-word_3194C      dw 0                    ; DATA XREF: sub_14E28+8E↑w
-                                        ; sub_14F92+99↑r ...
+                                        ; RestoreUiStateForClueBook+7F↑w ...
+word_31948      dw 0                    ; DATA XREF: RestoreUiStateForClueBook+84↑w
+                                        ; SaveUiStateForClueBook+91↑r ...
+word_3194A      dw 0                    ; DATA XREF: RestoreUiStateForClueBook+89↑w
+                                        ; SaveUiStateForClueBook+95↑r ...
+word_3194C      dw 0                    ; DATA XREF: RestoreUiStateForClueBook+8E↑w
+                                        ; SaveUiStateForClueBook+99↑r ...
 word_3194E      dw 0                    ; DATA XREF: seg073:006D↑w
 word_31950      dw 0                    ; DATA XREF: seg073:0071↑w
 word_31952      dw 0                    ; DATA XREF: seg073:0093↑w
@@ -74270,7 +74270,7 @@ word_32902      dw 0                    ; DATA XREF: UseItem:loc_17E8B↑r
 word_32904      dw 0                    ; DATA XREF: HandleMovementInput+4A↑w
                                         ; HandleMovementInput+92↑w ...
 word_32906      dw 0                    ; DATA XREF: DrawClueBookMapGrid+46↑w
-                                        ; sub_14E28+B1↑w ...
+                                        ; RestoreUiStateForClueBook+B1↑w ...
 word_32908      dw 0                    ; DATA XREF: sub_16881+4D↑w
                                         ; sub_16881:loc_168F6↑r ...
 word_3290A      dw 0                    ; DATA XREF: ApplyTriggerEffectIconSlot+6↑w
@@ -74343,7 +74343,7 @@ word_32948      dw 0                    ; DATA XREF: ComputeGameClockTime+1C↑w
 _textPos_x      dw 0                    ; DATA XREF: EnforceDemoBoundary+31↑w
                                         ; ShowIntroPicture+E9↑w ...
 word_3294C      dw 0                    ; DATA XREF: ShowClueBook+2C↑w
-                                        ; sub_14E28+D9↑w ...
+                                        ; RestoreUiStateForClueBook+D9↑w ...
 word_3294E      dw 0                    ; DATA XREF: seg059:0202↑w
                                         ; sub_1FBE1+C↑w ...
 word_32950      dw 0                    ; DATA XREF: seg059:0213↑w
@@ -74368,11 +74368,11 @@ word_32960      dw 0                    ; DATA XREF: DrawLocalMapCell+56↑w
 _textPos_y      dw 0                    ; DATA XREF: EnforceDemoBoundary+37↑w
                                         ; ShowIntroPicture+EF↑w ...
 word_32964      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+3F5↑w
-                                        ; sub_14E28+DE↑w ...
+                                        ; RestoreUiStateForClueBook+DE↑w ...
 word_32966      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+3FC↑w
-                                        ; sub_14E28+E3↑w ...
+                                        ; RestoreUiStateForClueBook+E3↑w ...
 word_32968      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+403↑w
-                                        ; sub_14E28+E8↑w ...
+                                        ; RestoreUiStateForClueBook+E8↑w ...
 word_3296A      dw 0                    ; DATA XREF: sub_1869D+5A4↑r
                                         ; TrySellItemForGold+63↑w
 word_3296C      dw 0                    ; DATA XREF: IsItemRangeAvailable+23↑w
