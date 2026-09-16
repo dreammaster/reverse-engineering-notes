@@ -733,7 +733,7 @@ loc_10600:                              ; CODE XREF: start+568↑j
 
 loc_1062D:                              ; CODE XREF: start+61C↑j
                                         ; start+628↑j
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -756,7 +756,7 @@ loc_10660:                              ; CODE XREF: start+5BD↑j
                 and     word_3295A, 9FFFh
                 mov     ax, [si+4]
                 call    UseItem
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 cmp     word_2E52A, 1
                 jnz     short loc_1067D
                 jmp     loc_109F9
@@ -921,7 +921,7 @@ loc_107EF:                              ; CODE XREF: start+7EA↑j
 ; ---------------------------------------------------------------------------
 
 loc_107FE:                              ; CODE XREF: start+7F4↑j
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -934,7 +934,7 @@ loc_10806:                              ; CODE XREF: start+6E0↑j
                 call    ShowResourceDepletedOverlay
                 call    RefreshPartyPortraits
                 call    sub_1869D
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 pop     ax
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
@@ -949,7 +949,7 @@ loc_10806:                              ; CODE XREF: start+6E0↑j
                 jz      short loc_10867
                 and     word_3295A, 9FFFh
                 call    ShowLocalAreaMap
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
 
 loc_10867:                              ; CODE XREF: seg000:0855↑j
                 jmp     loc_10043
@@ -962,7 +962,7 @@ loc_10867:                              ; CODE XREF: seg000:0855↑j
                 jz      short loc_10897
                 and     word_3295A, 9FFFh
                 call    ToggleMapViewMode
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
 
 loc_10897:                              ; CODE XREF: seg000:0885↑j
                 jmp     loc_10043
@@ -1107,7 +1107,7 @@ loc_109D6:                              ; CODE XREF: seg000:09D1↑j
                 and     word_3295A, 9FFFh
                 call    ClearStatusPanelIfDirty
                 call    RunMapEditorScreen
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
                 test    word_328C4, 8000h
@@ -4768,7 +4768,7 @@ ShowClueCategoryEntries proc near       ; CODE XREF: RunClueEntryMenu+14↑p
                 add     ax, 2
                 mov     word_2E3EE, ax
                 mov     word_2E3F0, ax
-                call    sub_12FB0
+                call    ClearClueCategoryEntryIds
                 mov     bx, word_2E3EA
                 mov     ax, [bx]
                 cmp     ax, 0Eh
@@ -4964,17 +4964,17 @@ BuildClueEntryText endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12FB0       proc near               ; CODE XREF: ShowClueCategoryEntries+20↑p
+ClearClueCategoryEntryIds proc near     ; CODE XREF: ShowClueCategoryEntries+20↑p
                                         ; AssignClueCategoryEntryIds+2↓p
-                mov     bx, 68D2h
+                mov     bx, 68D2h       ; Clears the [+8] id field across all 14 entries of the clue category hit-test table (0x68D2). Reset counterpart to AssignClueCategoryEntryIds.
                 mov     cx, 0Eh
 
-loc_12FB6:                              ; CODE XREF: sub_12FB0+E↓j
+loc_12FB6:                              ; CODE XREF: ClearClueCategoryEntryIds+E↓j
                 mov     word ptr [bx+8], 0
                 add     bx, 0Ah
                 loop    loc_12FB6
                 retn
-sub_12FB0       endp
+ClearClueCategoryEntryIds endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5053,7 +5053,7 @@ ScrollClueEntryListPageUp endp
 AssignClueCategoryEntryIds proc near    ; CODE XREF: ShowClueCategoryEntries+68↑p
                 push    si              ; Assigns sequential 1-based ids into a hit-test table's [+8] field (stride 0xA, base 0x68D2), after calling untraced sub_12FB0. Called once from ShowClueCategoryEntries.
                 push    cx
-                call    sub_12FB0
+                call    ClearClueCategoryEntryIds
                 mov     si, word_2E3F0
                 mov     cx, word_2E3EC
                 mov     bx, 68D2h
@@ -6515,15 +6515,15 @@ DrawTransportDetailRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13FBF       proc near               ; CODE XREF: DrawClueBookMapGrid+112↓p
+ResetClueBookMarkerBuffer proc near     ; CODE XREF: DrawClueBookMapGrid+112↓p
                                         ; ListCompatibleClueBookItems+14↓p
-                mov     di, 6976h
+                mov     di, 6976h       ; Fills a 250-word scratch buffer (0x6976) with sentinel 0xFFFF. Called from DrawClueBookMapGrid and ListCompatibleClueBookItems.
                 mov     es, word_2E4AA
                 mov     cx, 0FAh
                 mov     ax, 0FFFFh
                 rep stosw
                 retn
-sub_13FBF       endp
+ResetClueBookMarkerBuffer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6614,7 +6614,7 @@ loc_14081:                              ; CODE XREF: DrawClueBookMapGrid+110↓j
                 add     y, 8
                 pop     cx
                 loop    loc_14081
-                call    sub_13FBF
+                call    ResetClueBookMarkerBuffer
                 mov     word_2E532, 90h
                 mov     si, 6976h
                 mov     es, fe
@@ -7143,7 +7143,7 @@ ListCompatibleClueBookItems proc near   ; CODE XREF: RunClueBookItemCategory↑p
                 mov     word_32974, ax
                 call    LoadItemCatalogRecord
                 mov     word_328FE, 0
-                call    sub_13FBF
+                call    ResetClueBookMarkerBuffer
                 mov     bx, word_2E546
                 test    word ptr [bx+0Ch], 0C000h
                 jz      short loc_1475E
@@ -10729,7 +10729,7 @@ loc_16817:                              ; CODE XREF: HandleDungeonInput+40D↑j
 
 loc_16824:                              ; CODE XREF: HandleDungeonInput+415↑j
                 or      word_328CA, 1000h
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 call    DrawMonsterInfoPanels
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
@@ -10744,7 +10744,7 @@ loc_16837:                              ; CODE XREF: HandleDungeonInput+E4↑j
 
 loc_16852:                              ; CODE XREF: HandleDungeonInput+19F↑j
                 call    sub_1869D
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 cmp     errorCode, 2
                 jnz     short loc_1686D
                 call    HandleGameCommand
@@ -11128,7 +11128,7 @@ loc_16B94:                              ; CODE XREF: ProcessCombatRound+2A↑j
 
 loc_16BA2:                              ; CODE XREF: ProcessCombatRound+37↑j
                 call    GrantMonsterRewards
-                call    sub_2313D
+                call    ClearMonsterSlotRecord
                 jmp     short loc_16BB4
 ; ---------------------------------------------------------------------------
 
@@ -23925,7 +23925,7 @@ loc_1D68B:                              ; CODE XREF: HandleRangedOrCombatAction+
                 jnz     short loc_1D6AC
                 mov     ax, _val43
                 call    ShowCombatMessageOrWait
-                call    sub_1DCC6
+                call    ClearFirstOccupiedCombatSlot
                 cmp     word_2E544, 0
                 jnz     short loc_1D68B
                 jmp     loc_1D747
@@ -23946,7 +23946,7 @@ loc_1D6CE:                              ; CODE XREF: HandleRangedOrCombatAction+
                 and     word ptr [si+0Ch], 0FFFDh
                 mov     ax, word_329E6
                 call    ShowCombatMessageOrWait
-                call    sub_1DCC6
+                call    ClearFirstOccupiedCombatSlot
                 cmp     word ptr [si+10h], 0
                 jle     short loc_1D6EA
                 cmp     word_2E544, 0
@@ -24578,25 +24578,25 @@ ResetWeaponSlotDisplayCache endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DCC6       proc near               ; CODE XREF: HandleRangedOrCombatAction+1E7↑p
+ClearFirstOccupiedCombatSlot proc near  ; CODE XREF: HandleRangedOrCombatAction+1E7↑p
                                         ; HandleRangedOrCombatAction+220↑p
-                push    cx
+                push    cx              ; Scans a 3-entry table (0x5078) for the first nonzero entry and clears it. Called from HandleRangedOrCombatAction.
                 push    di
                 mov     cx, 3
                 mov     di, 5078h
 
-loc_1DCCE:                              ; CODE XREF: sub_1DCC6+10↓j
+loc_1DCCE:                              ; CODE XREF: ClearFirstOccupiedCombatSlot+10↓j
                 cmp     word ptr [di], 0
                 jnz     short loc_1DCD8
                 add     di, 2
                 loop    loc_1DCCE
 
-loc_1DCD8:                              ; CODE XREF: sub_1DCC6+B↑j
+loc_1DCD8:                              ; CODE XREF: ClearFirstOccupiedCombatSlot+B↑j
                 mov     word ptr [di], 0
                 pop     di
                 pop     cx
                 retn
-sub_1DCC6       endp
+ClearFirstOccupiedCombatSlot endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -24906,7 +24906,7 @@ loc_1DF15:                              ; CODE XREF: RunAlchemyScreen+85↑j
 
 loc_1DF49:                              ; CODE XREF: RunAlchemyScreen+1D↑j
                                         ; RunAlchemyScreen+33↑j ...
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -25057,7 +25057,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    ApplyMapTriggerEffect
                 call    RedrawAllPartyStatusPanelsAlt
                 call    DrawMouseCursor
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -25812,7 +25812,7 @@ loc_1E796:                              ; CODE XREF: RestPartyAndAdvanceClock+14
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 call    TriggerFullPaletteFadeIn
 
 loc_1E808:                              ; CODE XREF: RestPartyAndAdvanceClock+1DA↓j
@@ -25913,7 +25913,7 @@ loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 call    DrawStringColumn
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 call    UpdateAmbientMusicForRegion
                 call    TriggerFullPaletteFadeIn
                 retf
@@ -26644,7 +26644,7 @@ loc_1EFE3:                              ; CODE XREF: RunGameDialog+56B↑j
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
                 mov     byte_2E400, 0FEh
-                call    sub_1F58D
+                call    HighlightGameDialogMenuEntry
                 jmp     loc_1EC69
 RunGameDialog   endp
 
@@ -26672,7 +26672,7 @@ InitializeDungeonLevel proc far         ; CODE XREF: start+7F6↑P
                 call    DrawMinimap
                 call    DrawMouseCursor
                 call    TriggerFullPaletteFadeIn
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 and     word_3295A, 0F7FFh
                 test    word_36C79, 0FE00h
                 jz      short loc_1F13A
@@ -27191,19 +27191,19 @@ DrawGameDialogMenuLabelsHighlighted endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F58D       proc near               ; CODE XREF: RunGameDialog+659↑p
+HighlightGameDialogMenuEntry proc near  ; CODE XREF: RunGameDialog+659↑p
                                         ; SaveCurrentGameToSlot+281↓p
-                mov     si, 6CBEh
+                mov     si, 6CBEh       ; Clears highlight bit 0x40 across all 6 pause-menu label entries (0x6CBE), then sets it on one entry (word_32906) -- moves the highlight to a new selection. Called from RunGameDialog and SaveCurrentGameToSlot.
                 mov     cx, 6
 
-loc_1F593:                              ; CODE XREF: sub_1F58D+D↓j
+loc_1F593:                              ; CODE XREF: HighlightGameDialogMenuEntry+D↓j
                 and     byte ptr [si+1], 0BFh
                 add     si, 1Bh
                 loop    loc_1F593
                 mov     si, word_32906
                 or      byte ptr [si+1], 40h
                 retn
-sub_1F58D       endp
+HighlightGameDialogMenuEntry endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27408,7 +27408,7 @@ loc_1F7B2:                              ; CODE XREF: SaveCurrentGameToSlot+1A9�
                 call    FileEntry_Close
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_1F58D
+                call    HighlightGameDialogMenuEntry
                 retn
 SaveCurrentGameToSlot endp
 
@@ -27770,16 +27770,16 @@ UpdateScrollingBannerWindow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FD03       proc far                ; CODE XREF: start:loc_1062D↑P
+MarkScreenRedrawFlags proc far          ; CODE XREF: start:loc_1062D↑P
                                         ; start+66E↑P ...
-                cmp     word_36DF5, 0
+                cmp     word_36DF5, 0   ; Sets word_3295A bit 0x4000 always, plus bit 0x2000 if word_36DF5 is nonzero. Called very widely from `start`.
                 jz      short loc_1FD10
                 or      word_3295A, 2000h
 
-loc_1FD10:                              ; CODE XREF: sub_1FD03+5↑j
+loc_1FD10:                              ; CODE XREF: MarkScreenRedrawFlags+5↑j
                 or      word_3295A, 4000h
                 retf
-sub_1FD03       endp
+MarkScreenRedrawFlags endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28544,10 +28544,10 @@ loc_2037C:                              ; CODE XREF: FillVisibleAreaWithSelected
 loc_2038A:                              ; CODE XREF: FillVisibleAreaWithSelectedTile+47↓j
                 push    cx
                 call    PaintCellAndPersist
-                call    sub_203E4
+                call    StepCounterTowardTarget
                 pop     cx
                 loop    loc_2038A
-                call    sub_203E4
+                call    StepCounterTowardTarget
                 inc     _textPos_y
                 add     y, 8
                 pop     cx
@@ -28585,19 +28585,19 @@ PaintCellAndPersist endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_203E4       proc near               ; CODE XREF: FillVisibleAreaWithSelectedTile+43↑p
+StepCounterTowardTarget proc near       ; CODE XREF: FillVisibleAreaWithSelectedTile+43↑p
                                         ; FillVisibleAreaWithSelectedTile+49↑p
-                mov     ax, word_2E384
+                mov     ax, word_2E384  ; Nudges word_2E496 by 1 toward word_2E384. Called twice from FillVisibleAreaWithSelectedTile.
                 cmp     word_2E496, ax
                 jz      short loc_203F2
                 dec     word_2E496
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_203F2:                              ; CODE XREF: sub_203E4+7↑j
+loc_203F2:                              ; CODE XREF: StepCounterTowardTarget+7↑j
                 inc     word_2E496
                 retn
-sub_203E4       endp
+StepCounterTowardTarget endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -29190,7 +29190,7 @@ loc_20923:                              ; CODE XREF: TickStatusEffects+19↑j
 loc_20936:                              ; CODE XREF: TickStatusEffects+34↑j
                                         ; TickStatusEffects+42↑j ...
                 push    cs
-                call    near ptr sub_209C0
+                call    near ptr ResolveIconBarBaseAddress
                 dec     word ptr [si]
                 mov     ax, 9
                 call    TriggerSoundEvent
@@ -29245,7 +29245,7 @@ loc_209A9:                              ; CODE XREF: ApplyStatusEffect+37↑j
                                         ; ApplyStatusEffect+43↑j
                 or      word_3295A, 800h
                 push    cs
-                call    near ptr sub_209C0
+                call    near ptr ResolveIconBarBaseAddress
                 inc     word ptr [si]
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -29256,19 +29256,19 @@ ApplyStatusEffect endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_209C0       proc far                ; CODE XREF: TickStatusEffects+6D↑p
+ResolveIconBarBaseAddress proc far      ; CODE XREF: TickStatusEffects+6D↑p
                                         ; ApplyStatusEffect+56↑p
-                mov     si, word_3297A
+                mov     si, word_3297A  ; Returns word_3297A if nonzero (an active override), else word_32978+word_3297C (computed base+offset). Called from TickStatusEffects and ApplyStatusEffect.
                 or      si, si
                 jz      short loc_209C9
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_209C9:                              ; CODE XREF: sub_209C0+6↑j
+loc_209C9:                              ; CODE XREF: ResolveIconBarBaseAddress+6↑j
                 mov     si, word_32978
                 add     si, word_3297C
                 retf
-sub_209C0       endp
+ResolveIconBarBaseAddress endp
 
 seg061          ends
 
@@ -33805,8 +33805,8 @@ RemoveMonsterFromMap endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2313D       proc far                ; CODE XREF: ProcessCombatRound+44↑P
-                push    cx
+ClearMonsterSlotRecord proc far         ; CODE XREF: ProcessCombatRound+44↑P
+                push    cx              ; Zeroes one g_monsterSlots record (156 bytes) at [si]. Called once from ProcessCombatRound after granting a dead monster's rewards.
                 push    di
                 push    es
                 mov     es, word_2E4AA
@@ -33818,7 +33818,7 @@ sub_2313D       proc far                ; CODE XREF: ProcessCombatRound+44↑P
                 pop     di
                 pop     cx
                 retf
-sub_2313D       endp
+ClearMonsterSlotRecord endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -49864,7 +49864,7 @@ loc_2B70C:                              ; CODE XREF: RunConversation+2C↑j
                                         ; RunConversation+89↑j ...
                 and     word_328C4, 0FFC1h
                 or      word_3295A, 800h
-                call    sub_1FD03
+                call    MarkScreenRedrawFlags
                 retf
 RunConversation endp
 

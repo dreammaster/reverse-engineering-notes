@@ -1694,7 +1694,9 @@ static Bytes_0(void) {
 	create_insn	(0X12F8E);
 	create_insn	(0X12FA2);
 	create_insn	(0X12FAB);
+	set_cmt	(0X12FB0,	"Clears the [+8] id field across all 14 entries of the clue category hit-test table (0x68D2). Reset counterpart to AssignClueCategoryEntryIds.",	0);
 	create_insn	(0X12FB0);
+	set_name	(0X12FB0,	"ClearClueCategoryEntryIds");
 	set_cmt	(0X12FC1,	"Recomputes the clue entry list's page window from the new word_2E3F0: word_2E3F2 = word_2E3F0+0x34, clamped to total count word_2E3F4; word_2E3EC (visible row count) defaults to 0xE, or (word_2E3F4-word_2E3F0)/4+1 on the last partial page. Called from ScrollClueEntryListPageUp/Down.",	0);
 	create_insn	(0X12FC1);
 	set_name	(0X12FC1,	"RecomputeClueEntryPageBounds");
@@ -1958,7 +1960,9 @@ static Bytes_0(void) {
 	set_cmt	(0X13F95,	"msg",	0);
 	set_cmt	(0X13FA9,	"msg",	0);
 	set_cmt	(0X13FB6,	"msg",	0);
+	set_cmt	(0X13FBF,	"Fills a 250-word scratch buffer (0x6976) with sentinel 0xFFFF. Called from DrawClueBookMapGrid and ListCompatibleClueBookItems.",	0);
 	create_insn	(0X13FBF);
+	set_name	(0X13FBF,	"ResetClueBookMarkerBuffer");
 	set_cmt	(0X13FCF,	"Draws the F1 map grid: computes a row/col layout (id-1 / 20) from the loaded map id, clears the video buffer, and draws per-cell location labels via BuildClueLocationSuffix.",	0);
 	create_insn	(x=0X13FCF);
 	op_hex		(x,	1);
@@ -2802,6 +2806,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X16F84);
 	op_hex		(x,	1);
 	set_name	(0X16F84,	"ParseCommandLineSwitches");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X16F86,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);
 	create_insn	(x=0X16F86);
 	op_hex		(x,	0);
@@ -2819,15 +2832,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1700E,	"strcat(dest=bx, src=ax): finds dest's existing null terminator (scans up to 1024 bytes), then appends src including its terminator; returns bx = pointer to the new terminator.",	0);
 	create_insn	(0X1700E);
 	set_name	(0X1700E,	"StrCat");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X17015);
 	op_seg		(x,	1);
 	set_cmt	(0X17032,	"Click handler for the shop's catalog item grid (HitTestCatalogSlot). With an empty hand: buys directly via PayGoldAndAcquireItem if word_328C6 bit 0x20 is set, else dispatches on the item's [+0xC] flags (0x80=sell for gold, 0x40/0x20=other branches, default=pick up into held-item state). Called from RunShopScreen and sub_1869D.",	0);
@@ -4668,9 +4672,6 @@ static Bytes_1(void) {
 	create_insn	(0X1CE02);
 	create_insn	(0X1CE25);
 	create_insn	(0X1CE52);
-	set_cmt	(0X1CE6B,	"FindItemInInventoryRange (implicit word_328D4, range = word_3293E..word_32940): searches the 8 main inventory slots ([+0x11A], matches GetInventorySlotPtr's layout) for an item id in range, recursing into container-type items (sub_12554 [+0xC] bit 0x2000) via sub_1CECB. Also checks one extra slot at +0x13E (plausibly 'equipped' transport item). Generic inventory search, not transport-specific by itself.",	0);
-	create_insn	(0X1CE6B);
-	set_name	(0X1CE6B,	"FindItemInInventoryRange");
 }
 
 //------------------------------------------------------------------------
@@ -4680,6 +4681,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1CE6B,	"FindItemInInventoryRange (implicit word_328D4, range = word_3293E..word_32940): searches the 8 main inventory slots ([+0x11A], matches GetInventorySlotPtr's layout) for an item id in range, recursing into container-type items (sub_12554 [+0xC] bit 0x2000) via sub_1CECB. Also checks one extra slot at +0x13E (plausibly 'equipped' transport item). Generic inventory search, not transport-specific by itself.",	0);
+	create_insn	(0X1CE6B);
+	set_name	(0X1CE6B,	"FindItemInInventoryRange");
 	create_insn	(0X1CE8D);
 	create_insn	(x=0X1CE92);
 	op_hex		(x,	1);
@@ -4970,7 +4974,9 @@ static Bytes_2(void) {
 	create_insn	(0X1DC73);
 	set_name	(0X1DC73,	"ResetWeaponSlotDisplayCache");
 	create_insn	(0X1DC7A);
+	set_cmt	(0X1DCC6,	"Scans a 3-entry table (0x5078) for the first nonzero entry and clears it. Called from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X1DCC6);
+	set_name	(0X1DCC6,	"ClearFirstOccupiedCombatSlot");
 	set_cmt	(0X1DCE0,	"Alchemy screen driver loop, reached directly from `start`. Redraws via DrawAlchemyStatusPanel after various sub-actions, polls input, hit-tests region tables for clickable elements, uses sub_25B34 for party-member selection, shows ShowConfirmPrompt (plausibly for an ore conversion), and calls ApplyMapTriggerEffect on an exit path back to the dungeon. Many internal helper calls not individually traced yet.",	0);
 	create_insn	(x=0X1DCE0);
 	op_hex		(x,	1);
@@ -5371,7 +5377,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X1F55F);
 	op_hex		(x,	1);
 	set_cmt	(0X1F57C,	"msg",	0);
+	set_cmt	(0X1F58D,	"Clears highlight bit 0x40 across all 6 pause-menu label entries (0x6CBE), then sets it on one entry (word_32906) -- moves the highlight to a new selection. Called from RunGameDialog and SaveCurrentGameToSlot.",	0);
 	create_insn	(0X1F58D);
+	set_name	(0X1F58D,	"HighlightGameDialogMenuEntry");
 	create_insn	(x=0X1F593);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F5A0);
@@ -5498,7 +5506,9 @@ static Bytes_2(void) {
 	create_insn	(0X1FCB6);
 	create_insn	(x=0X1FCD5);
 	op_hex		(x,	1);
+	set_cmt	(0X1FD03,	"Sets word_3295A bit 0x4000 always, plus bit 0x2000 if word_36DF5 is nonzero. Called very widely from `start`.",	0);
 	create_insn	(0X1FD03);
+	set_name	(0X1FD03,	"MarkScreenRedrawFlags");
 	create_insn	(x=0X1FD0A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1FD10);
@@ -5601,7 +5611,9 @@ static Bytes_2(void) {
 	set_name	(0X203AC,	"PaintCellAndPersist");
 	create_insn	(x=0X203D0);
 	op_seg		(x,	1);
+	set_cmt	(0X203E4,	"Nudges word_2E496 by 1 toward word_2E384. Called twice from FillVisibleAreaWithSelectedTile.",	0);
 	create_insn	(0X203E4);
+	set_name	(0X203E4,	"StepCounterTowardTarget");
 	create_insn	(0X203F2);
 	set_cmt	(0X203F7,	"Zeroes 0x500 words (2560 bytes) at VGA segment 0xA000:0000 -- a partial screen clear, not the full 64000-byte frame. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X203F7);
@@ -5705,7 +5717,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X209A9);
 	op_hex		(x,	1);
+	set_cmt	(0X209C0,	"Returns word_3297A if nonzero (an active override), else word_32978+word_3297C (computed base+offset). Called from TickStatusEffects and ApplyStatusEffect.",	0);
 	create_insn	(0X209C0);
+	set_name	(0X209C0,	"ResolveIconBarBaseAddress");
 	create_insn	(0X209C9);
 	create_insn	(0X209D2);
 	create_insn	(0X209FF);
@@ -6310,6 +6324,15 @@ static Bytes_2(void) {
 	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
 	create_insn	(0X22B96);
 	set_name	(0X22B96,	"GrantMonsterRewards");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X22BD9);
 	create_insn	(0X22BEF);
 	set_cmt	(0X22BF5,	"Clears (ANDs out) bit ax of the same cell-monster-spawned bitmap and writes it back. Called from sub_209D2 when a monster falls outside the tracked visible range (despawn/cleanup).",	0);
@@ -6333,15 +6356,6 @@ static Bytes_2(void) {
 	set_cmt	(0X22CED,	"Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] (plausibly a remaining-presence/lifespan timer, not confirmed movement-related) by [si+0x1C]; reaching 0 sets errorCode=1, which callers (ProcessLevelMonsters) treat as 'this monster's presence has ended' -- granting a reward and removing it. Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly preparing the slot for reuse/respawn.",	0);
 	create_insn	(0X22CED);
 	set_name	(0X22CED,	"TickMonsterTimer");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X22CF3);
 	op_hex		(x,	1);
 	create_insn	(0X22CFB);
@@ -6443,7 +6457,9 @@ static Bytes_3(void) {
 	set_name	(0X23116,	"RemoveMonsterFromMap");
 	create_insn	(x=0X23120);
 	op_hex		(x,	1);
+	set_cmt	(0X2313D,	"Zeroes one g_monsterSlots record (156 bytes) at [si]. Called once from ProcessCombatRound after granting a dead monster's rewards.",	0);
 	create_insn	(0X2313D);
+	set_name	(0X2313D,	"ClearMonsterSlotRecord");
 	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
 	create_insn	(0X23151);
 	set_name	(0X23151,	"ShowLootAndAwardExperience");
@@ -7914,6 +7930,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X28296);
 	op_hex		(x,	1);
 	set_name	(0X28296,	"PlayMusicTrack");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2829F);
 	set_cmt	(0X282B3,	"this",	0);
 	create_insn	(0X282B3);
@@ -7967,15 +7992,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X28412);
 	op_hex		(x,	1);
 	set_name	(0X28412,	"TriggerSoundEvent");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X28425);
 	set_cmt	(0X28443,	"this",	0);
 	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
@@ -10321,6 +10337,15 @@ static Bytes_4(void) {
 	set_cmt	(0X2D578,	"DOS environment-variable lookup: PSP via INT 21h AH=0x51, env segment from PSP+0x2C, scans the env block for a match against ds:bp (caller's search string), copies the value to es:dx. ax=1 found / ax=0 not found. Called from ParseSoundBlasterEnvironmentVariable.",	0);
 	create_insn	(0X2D578);
 	set_name	(0X2D578,	"FindEnvironmentVariable");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D583);
 	op_hex		(x,	1);
 	set_cmt	(0X2D585,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);
@@ -10376,15 +10401,6 @@ static Bytes_4(void) {
 	set_cmt	(0X2D7A7,	"For each of the 4 party slots, unless an eligibility check (sub_27A66) plus a status-flag/level test passes, sets +0x15E bit 0x8000 (the flag DrawPartyStatusIcon shows a warning overlay for) and redraws DrawPartyMemberStatusPanel. Called from InteractWithContainer; the exact restriction (class/level-gated item?) isn't confirmed.",	0);
 	create_insn	(0X2D7A7);
 	set_name	(0X2D7A7,	"MarkIneligiblePartyMembers");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D7C8);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D7D9);

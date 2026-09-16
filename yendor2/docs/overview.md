@@ -6329,6 +6329,26 @@ had already flagged it as "still-unnamed `sub_11E39`").
 753 named of 769 functions as of this update — only 16 unnamed
 functions remain.
 
+### 2026-09-15 session update, continued: final small-function sweep
+
+Named 8 more small helpers, closing out nearly every small/medium
+function in the binary: `ClearClueCategoryEntryIds` (reset
+counterpart to `AssignClueCategoryEntryIds`), `ResetClueBookMarkerBuffer`,
+`StepCounterTowardTarget`, `ResolveIconBarBaseAddress`,
+`MarkScreenRedrawFlags` (called very widely, 30 refs, from `start`),
+`ClearMonsterSlotRecord` (the actual "wipe the dead monster's slot"
+step in `ProcessCombatRound`, right after granting rewards),
+`ClearFirstOccupiedCombatSlot`, and `HighlightGameDialogMenuEntry`
+(moves the pause menu's highlight to a new selection, reusing the
+same label table `DrawGameDialogMenuLabelsHighlighted` draws).
+
+761 named of 769 functions as of this update — only 8 unnamed
+functions remain, all large dispatchers (`sub_16881`, `sub_2784A`,
+`sub_274B4`, `sub_19553`, `sub_209D2`, `sub_26415`, `sub_1869D`,
+`sub_2C0FE`) previously flagged under the standing "don't force a
+name onto an ambiguous/large function without sufficient evidence"
+policy.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
