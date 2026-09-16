@@ -420,7 +420,13 @@ character's inventory groups only while open.
 main-input-loop handler not traced this round) checks whether the
 currently-open alternate bag matches an allowed-type bitmask before
 letting an item be placed into it, rejecting with
-`FlashStatusWarning` otherwise. `sub_2621C` also uses
+`FlashStatusWarning` otherwise. `sub_2621C` also calls
+`IsItemEligibleForCommand` (was `sub_26A75`) right after loading the
+clicked item's catalog record — a generalized eligibility gate for the
+current command code (`word_2E40A`) against the item's flags, gating
+whether an inventory action is allowed on this item at all (a superset
+of the pattern already seen in `IsItemEligibleForEnhance`/
+`IsItemEligibleForRepair`). `sub_2621C` also uses
 `LoadNextContainerInChain`, which walks a linked chain of container/
 world-object records via `CURGAME` (each record's own `[+8]` field
 points to the next id) — e.g. multiple containers found together —

@@ -39375,7 +39375,7 @@ loc_26295:                              ; CODE XREF: sub_2621C+48↑j
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
                 mov     ax, word_2E40A
-                call    sub_26A75
+                call    IsItemEligibleForCommand
                 cmp     errorCode, 0
                 jz      short loc_262B2
 
@@ -40353,14 +40353,14 @@ GetInventorySlotPtr endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26A75       proc near               ; CODE XREF: sub_2621C+84↑p
-                mov     errorCode, 0
+IsItemEligibleForCommand proc near      ; CODE XREF: sub_2621C+84↑p
+                mov     errorCode, 0    ; Generalized eligibility gate for inventory command codes (ax=word_2E40A) against an item's catalog flags (bx, [bx+0xC]) or word_2E548[+2]. Codes <=8 always pass; 9-0x14 each check a specific bit, two also checking the current party member's own record. errorCode=1 if ineligible. Called from sub_2621C.
                 cmp     ax, 8
                 jg      short loc_26A81
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A81:                              ; CODE XREF: sub_26A75+9↑j
+loc_26A81:                              ; CODE XREF: IsItemEligibleForCommand+9↑j
                 cmp     ax, 0Ah
                 jnz     short loc_26A8E
                 test    word ptr [bx+0Ch], 8000h
@@ -40368,7 +40368,7 @@ loc_26A81:                              ; CODE XREF: sub_26A75+9↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A8E:                              ; CODE XREF: sub_26A75+F↑j
+loc_26A8E:                              ; CODE XREF: IsItemEligibleForCommand+F↑j
                 cmp     ax, 0Bh
                 jnz     short loc_26AA3
                 cmp     word ptr [si+13Eh], 0
@@ -40376,13 +40376,13 @@ loc_26A8E:                              ; CODE XREF: sub_26A75+F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A9B:                              ; CODE XREF: sub_26A75+23↑j
+loc_26A9B:                              ; CODE XREF: IsItemEligibleForCommand+23↑j
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_26AFB
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26AA3:                              ; CODE XREF: sub_26A75+1C↑j
+loc_26AA3:                              ; CODE XREF: IsItemEligibleForCommand+1C↑j
                 cmp     ax, 0Ch
                 jnz     short loc_26AC5
                 test    word ptr [bx+0Ch], 4000h
@@ -40390,20 +40390,20 @@ loc_26AA3:                              ; CODE XREF: sub_26A75+1C↑j
                 jmp     short loc_26AFB
 ; ---------------------------------------------------------------------------
 
-loc_26AB1:                              ; CODE XREF: sub_26A75+38↑j
+loc_26AB1:                              ; CODE XREF: IsItemEligibleForCommand+38↑j
                 mov     bx, word_2E548
                 test    word ptr [bx+2], 1
                 jnz     short loc_26ABD
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26ABD:                              ; CODE XREF: sub_26A75+45↑j
+loc_26ABD:                              ; CODE XREF: IsItemEligibleForCommand+45↑j
                 cmp     word ptr [si+146h], 0
                 jnz     short loc_26AFB
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26AC5:                              ; CODE XREF: sub_26A75+31↑j
+loc_26AC5:                              ; CODE XREF: IsItemEligibleForCommand+31↑j
                 cmp     ax, 0Dh
                 jnz     short loc_26ADA
                 test    word ptr [bx+0Ch], 800h
@@ -40413,7 +40413,7 @@ loc_26AC5:                              ; CODE XREF: sub_26A75+31↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26ADA:                              ; CODE XREF: sub_26A75+53↑j
+loc_26ADA:                              ; CODE XREF: IsItemEligibleForCommand+53↑j
                 cmp     ax, 0Eh
                 jnz     short loc_26AE7
                 test    word ptr [bx+0Ch], 400h
@@ -40421,7 +40421,7 @@ loc_26ADA:                              ; CODE XREF: sub_26A75+53↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26AE7:                              ; CODE XREF: sub_26A75+68↑j
+loc_26AE7:                              ; CODE XREF: IsItemEligibleForCommand+68↑j
                 cmp     ax, 0Fh
                 jnz     short loc_26AF4
                 test    word ptr [bx+0Ch], 400h
@@ -40429,17 +40429,17 @@ loc_26AE7:                              ; CODE XREF: sub_26A75+68↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26AF4:                              ; CODE XREF: sub_26A75+75↑j
+loc_26AF4:                              ; CODE XREF: IsItemEligibleForCommand+75↑j
                 test    word ptr [bx+0Ch], 200h
                 jnz     short loc_26B02
 
-loc_26AFB:                              ; CODE XREF: sub_26A75+16↑j
-                                        ; sub_26A75+2B↑j ...
+loc_26AFB:                              ; CODE XREF: IsItemEligibleForCommand+16↑j
+                                        ; IsItemEligibleForCommand+2B↑j ...
                 mov     errorCode, 1
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26B02:                              ; CODE XREF: sub_26A75+84↑j
+loc_26B02:                              ; CODE XREF: IsItemEligibleForCommand+84↑j
                 mov     bx, word_2E548
                 cmp     ax, 10h
                 jnz     short loc_26B13
@@ -40448,7 +40448,7 @@ loc_26B02:                              ; CODE XREF: sub_26A75+84↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26B13:                              ; CODE XREF: sub_26A75+94↑j
+loc_26B13:                              ; CODE XREF: IsItemEligibleForCommand+94↑j
                 cmp     ax, 11h
                 jnz     short loc_26B20
                 test    word ptr [bx+2], 4000h
@@ -40456,7 +40456,7 @@ loc_26B13:                              ; CODE XREF: sub_26A75+94↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26B20:                              ; CODE XREF: sub_26A75+A1↑j
+loc_26B20:                              ; CODE XREF: IsItemEligibleForCommand+A1↑j
                 cmp     ax, 12h
                 jnz     short loc_26B2D
                 test    word ptr [bx+2], 2000h
@@ -40464,7 +40464,7 @@ loc_26B20:                              ; CODE XREF: sub_26A75+A1↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26B2D:                              ; CODE XREF: sub_26A75+AE↑j
+loc_26B2D:                              ; CODE XREF: IsItemEligibleForCommand+AE↑j
                 cmp     ax, 13h
                 jnz     short loc_26B3A
                 test    word ptr [bx+2], 1000h
@@ -40472,7 +40472,7 @@ loc_26B2D:                              ; CODE XREF: sub_26A75+AE↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26B3A:                              ; CODE XREF: sub_26A75+BB↑j
+loc_26B3A:                              ; CODE XREF: IsItemEligibleForCommand+BB↑j
                 cmp     ax, 14h
                 jnz     short loc_26B47
                 test    word ptr [bx+2], 800h
@@ -40480,11 +40480,11 @@ loc_26B3A:                              ; CODE XREF: sub_26A75+BB↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26B47:                              ; CODE XREF: sub_26A75+C8↑j
+loc_26B47:                              ; CODE XREF: IsItemEligibleForCommand+C8↑j
                 test    word ptr [bx+2], 800h
                 jz      short loc_26AFB
                 retn
-sub_26A75       endp
+IsItemEligibleForCommand endp
 
 
 ; =============== S U B R O U T I N E =======================================

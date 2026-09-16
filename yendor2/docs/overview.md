@@ -4754,6 +4754,27 @@ trio. Simple wrappers around the already-named
 
 568 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: IsItemEligibleForCommand
+
+Named `sub_26A75` -> `IsItemEligibleForCommand`, called once from
+`sub_2621C` (the container/inventory interaction handler, called from
+`ShowCharacterInventory` and `sub_1869D`) — a generalized eligibility
+gate, taking `ax=word_2E40A` (the current key/command code, the same
+convention documented for other screens' dispatch) and `bx` (an
+item's catalog record, from the immediately-preceding
+`LoadItemCatalogRecord` call). Command codes `<=8` always pass; codes
+9 through `0x14` (20) each check a specific bit of either the item's
+own `[bx+0xC]` flags or the separate `word_2E548[+2]` flags (the same
+field `ClassifyItemServiceTier`/`GetClassifiedItemStatField` use), two
+of them (`0xB`, `0xD`) adding an extra check against the current party
+member's own record. Sets `errorCode=1` on ineligibility, triggering
+the caller's `FlashStatusWarning`. This generalizes the pattern
+already seen in `IsItemEligibleForEnhance`/`IsItemEligibleForRepair`
+into one combined switch; the individual command codes' specific
+meanings weren't identified.
+
+569 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

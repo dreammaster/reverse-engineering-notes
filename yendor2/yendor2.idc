@@ -7106,7 +7106,9 @@ static Bytes_2(void) {
 	create_insn	(0X26A5C);
 	create_insn	(0X26A66);
 	create_insn	(0X26A70);
+	set_cmt	(0X26A75,	"Generalized eligibility gate for inventory command codes (ax=word_2E40A) against an item's catalog flags (bx, [bx+0xC]) or word_2E548[+2]. Codes <=8 always pass; 9-0x14 each check a specific bit, two also checking the current party member's own record. errorCode=1 if ineligible. Called from sub_2621C.",	0);
 	create_insn	(0X26A75);
+	set_name	(0X26A75,	"IsItemEligibleForCommand");
 	create_insn	(0X26A81);
 	create_insn	(x=0X26A86);
 	op_hex		(x,	1);
@@ -7226,6 +7228,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X27180,	"msg",	0);
 	set_cmt	(0X271A0,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X271C0,	"msg",	0);
 	create_insn	(0X271DC);
 	create_insn	(0X27203);
@@ -7244,15 +7255,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2738B,	"CORRECTED: click handler for the 6-slot active-ailment icon bar (word_36C7F bit 0x1000), not a generic equipment bar. Hit-tests region table 0x636C, maps to the 6-entry ailment table 0x9519 (same table TickWorldAilments walks -- [+0]=ailment code matching TickStatusEffects' 9/0xF/0xC, [+2]=duration; also read by IsItemRangeAvailable). Loads the ailment code as an item-catalog record (ailment codes and item ids appear to share a numbering space elsewhere in this engine too), validates via sub_2D5E0 if needed, then stages it into the 'carrying' state (errorCode=2) -- plausibly clicking an active ailment icon to apply a held cure item to it. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X2738B);
 	set_name	(0X2738B,	"TryCureAilmentFromIconClick");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X27392);
 	op_hex		(x,	1);
 	create_insn	(0X273E6);
@@ -9489,6 +9491,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2C010,	"Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).",	0);
 	create_insn	(0X2C010);
 	set_name	(0X2C010,	"RepairItemCommand");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2C03D);
 	create_insn	(x=0X2C050);
 	op_hex		(x,	1);
@@ -9551,15 +9562,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C26C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2C287);
 	create_insn	(0X2C2A3);
 	create_insn	(0X2C2B0);
