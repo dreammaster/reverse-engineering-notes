@@ -3503,6 +3503,20 @@ unnamed `sub_1BBED`'s quantity-loop purchase path — not confirmed.
 
 448 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawPartyStatusIconRow, DrawPartyStatusIcon — 450 named milestone
+
+Named `sub_26C9E` -> `DrawPartyStatusIconRow` and `sub_26CFB` ->
+`DrawPartyStatusIcon` (called from `HandleDungeonInput`): a third,
+compact party display alongside the portrait panel and the fuller
+combat status panel — a 4-icon row for the `g_partySlotAssignment`
+roster, each icon drawn from `+0x12` (the same field
+`DrawPartyRosterEntry` uses) with an incapacitation overlay
+(cross-confirming `CheckPartyWipeAndReinitLevel`'s `+0x1C` bits
+`0x1C40`) and a selection highlight. Also surfaced a new,
+not-yet-documented party record flag, `+0x15E` bit `0x8000`.
+
+450 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

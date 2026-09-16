@@ -1134,7 +1134,16 @@ combat-style status panel per party slot: portrait, unconscious/dead
 overlay, three `DrawStatBar` gauges (HP `+0x52`/`+0x92`, MP
 `+0x54`/`+0x94`, a third stat `+0x118`/`+0x56` not identified), an
 ability-readiness icon (`+0xB4`, the "learned abilities" bitmask), and
-level-up/training text.
+level-up/training text. A third, simpler party display,
+`DrawPartyStatusIconRow` (was `sub_26C9E`, called from
+`HandleDungeonInput`) draws a compact 4-icon row during dungeon
+exploration via `DrawPartyStatusIcon` (was `sub_26CFB`) per
+`g_partySlotAssignment` slot: the character's icon (`+0x12`, the same
+field `DrawPartyRosterEntry` uses), an overlay icon when incapacitated
+(`+0x1C` bits `0x1C40`, the same bits `CheckPartyWipeAndReinitLevel`
+checks) or a new not-yet-documented flag (`+0x15E` bit `0x8000`,
+plausibly a second "needs attention" condition), and a selection-
+highlight overlay for the currently-selected slot.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/

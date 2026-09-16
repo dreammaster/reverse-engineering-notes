@@ -7034,8 +7034,12 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X26C81);
 	op_hex		(x,	1);
+	set_cmt	(0X26C9E,	"Draws the 4-icon party status row (dungeon screen) by calling DrawPartyStatusIcon once per g_partySlotAssignment slot (0x95EB/0x95ED/0x95EF/0x95F1) at 4 fixed x positions. Called from HandleDungeonInput.",	0);
 	create_insn	(0X26C9E);
+	set_name	(0X26C9E,	"DrawPartyStatusIconRow");
+	set_cmt	(0X26CFB,	"Draws one party-status icon: the character's icon ([+0x12]), an overlay (_val38) if incapacitated (+0x1C bits 0x1C40, matching CheckPartyWipeAndReinitLevel) or a new flag (+0x15E bit 0x8000, not otherwise documented), and a selection-highlight overlay if this is the currently-selected slot (word_32924). Called from DrawPartyStatusIconRow.",	0);
 	create_insn	(0X26CFB);
+	set_name	(0X26CFB,	"DrawPartyStatusIcon");
 	create_insn	(x=0X26D1B);
 	op_hex		(x,	1);
 	create_insn	(x=0X26D22);
@@ -8018,6 +8022,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X299E4);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X299EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X299EF);
@@ -8072,15 +8085,6 @@ static Bytes_2(void) {
 	set_cmt	(0X29B06,	"Frees the video buffer segment (_videoBufferSeg) via INT 21h/AH=49h. Called unconditionally from ErrorExit before exiting.",	0);
 	create_insn	(0X29B06);
 	set_name	(0X29B06,	"FreeVideoBuffer");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29B0A);
 	op_hex		(x,	1);
 	set_cmt	(0X29B0C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -11283,6 +11287,15 @@ static Bytes_3(void) {
 	create_word	(0X36C99);
 	create_word	(0X36C9B);
 	create_word	(0X36C9D);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X36CA5);
 	create_word	(0X36CA7);
 	create_word	(0X36CA9);
@@ -11314,15 +11327,6 @@ static Bytes_3(void) {
 	set_cmt	(0X36D13,	"Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per-tier cost table at DS:0xCB2), credited by TrySellItemForGold (sells a held item of a matching type), and also touched by ApplyEffectCost's trap/status-effect cost dispatch alongside the two ore counters (0x94B7/0x94BB).",	0);
 	create_word	(0X36D13);
 	set_name	(0X36D13,	"g_partyGold");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X36D15);
 	set_cmt	(0X36D31,	"Global boolean flag bitfield (quest/world-state flags), accessed via SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag/GetGlobalFlagBitAndWord. GrantMonsterRewards sets/clears specific flags on monster death via its [+0x14]/[+0x16] signed flag-index fields.",	0);
 	set_name	(0X36D31,	"g_globalFlags");

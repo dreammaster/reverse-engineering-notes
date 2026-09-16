@@ -10261,7 +10261,7 @@ loc_16432:                              ; CODE XREF: HandleDungeonInput+12C↓j
                 mov     word_32924, ax
                 mov     ax, [bx]
                 mov     word_328D4, ax
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    DrawMouseCursor
 
 loc_16451:                              ; CODE XREF: HandleDungeonInput:loc_16524↓j
@@ -10315,7 +10315,7 @@ loc_164B0:                              ; CODE XREF: HandleDungeonInput+50↑j
                                         ; HandleDungeonInput+109↓j ...
                 and     word_328C8, 0FFDFh
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 mov     byte_2E400, 0
                 retn
 ; ---------------------------------------------------------------------------
@@ -10407,7 +10407,7 @@ loc_16560:                              ; CODE XREF: HandleDungeonInput+14F↑j
 
 loc_16563:                              ; CODE XREF: HandleDungeonInput+9C↑j
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
@@ -10725,7 +10725,7 @@ loc_16824:                              ; CODE XREF: HandleDungeonInput+415↑j
 loc_16837:                              ; CODE XREF: HandleDungeonInput+E4↑j
                                         ; HandleDungeonInput+156↑j
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    ClearStatusPanelIfDirty
                 and     word_3295A, 9FFFh
                 call    RefreshPartyPortraits
@@ -13276,7 +13276,7 @@ loc_17CBE:                              ; CODE XREF: UseItem+125↑j
                 and     word_2E410, 0FFFEh
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
@@ -13439,7 +13439,7 @@ loc_17E3B:                              ; CODE XREF: UseItem+28C↑j
 loc_17E43:                              ; CODE XREF: UseItem+2AC↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, bx
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 test    word_2E410, 8000h
                 jz      short loc_17E60
                 call    ClassifyPartyMemberCondition
@@ -16356,7 +16356,7 @@ loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
                 call    RestoreCursorBackgroundIfDirty
                 call    SelectAndDrawPartyStatusRow
                 call    sub_197B9
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    sub_238CD
                 call    DrawMouseCursor
 
@@ -16508,7 +16508,7 @@ loc_19712:                              ; CODE XREF: sub_19553+D5↑j
                 mov     ax, 2
                 call    sub_28412
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 pop     word_3295A
@@ -21267,7 +21267,7 @@ loc_1BF1C:                              ; CODE XREF: UseItemType_400+59↑j
                 call    near ptr RedrawPartyGoldDisplay
                 call    sub_1CC98
                 call    sub_193BE
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    sub_1CC70
                 mov     si, word_328D4
                 mov     bx, 0BCEh
@@ -21383,7 +21383,7 @@ loc_1C030:                              ; CODE XREF: UseHealingItem+7A↑j
                 call    SubBCD4
                 push    word_32924
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 pop     word_32924
                 push    cs
                 call    near ptr RedrawPartyGoldDisplay
@@ -21427,7 +21427,7 @@ loc_1C094:                              ; CODE XREF: UseHealingItem+F3↑j
                 mov     [si+0Ah], bx
                 pop     si
                 call    ApplyEffectAndDrawIconBar
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 push    cs
                 call    near ptr ClassifyPartyMemberCondition
                 call    CheckForLevelUp
@@ -21548,7 +21548,7 @@ loc_1C19E:                              ; CODE XREF: UseTrainingItem+59↑j
                 call    near ptr RedrawPartyGoldDisplay
                 push    word_32924
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 pop     word_32924
                 call    DrawMouseCursor
                 mov     si, word_328D4
@@ -21833,7 +21833,7 @@ loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
                 call    DrawMouseCursor
                 call    sub_162B6
                 call    sub_193BE
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    sub_1CC70
                 jmp     loc_1C158
 ; ---------------------------------------------------------------------------
@@ -21915,7 +21915,7 @@ loc_1C5A9:                              ; CODE XREF: UseAbilityScroll+15↑j
                 and     word_2E410, 0EFFEh
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    sub_238CD
                 push    cs
                 call    near ptr ApplyItemEffectFlags
@@ -21999,7 +21999,7 @@ loc_1C693:                              ; CODE XREF: UseAbilityScroll+E3↑j
                 call    ClearStatusPanelIfDirty
                 mov     si, word_328D4
                 call    sub_25CFA
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    sub_238CD
                 call    DrawMouseCursor
                 retf
@@ -22025,7 +22025,7 @@ loc_1C6DE:                              ; CODE XREF: UseAbilityScroll+13F↑j
                 and     word_2E410, 0DFFEh
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    sub_238CD
                 push    cs
                 call    near ptr ApplyItemEffectFlags
@@ -22423,7 +22423,7 @@ loc_1CADA:                              ; CODE XREF: ShowItemUsagePreview+4C↑j
                 push    cs
                 call    near ptr sub_1B8EE
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    sub_238CD
                 call    DrawMouseCursor
                 retf
@@ -22433,7 +22433,7 @@ loc_1CAF3:                              ; CODE XREF: ShowItemUsagePreview+27↑j
                 push    cs
                 call    near ptr FinishItemUse
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    ClearStatusPanelIfDirty
                 test    word_2E410, 1000h
                 jnz     short loc_1CB15
@@ -24626,7 +24626,7 @@ loc_1DD16:                              ; CODE XREF: RunAlchemyScreen+16↑j
 loc_1DD28:                              ; CODE XREF: RunAlchemyScreen+3E↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowAlchemyIconActive
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
 
 loc_1DD35:                              ; CODE XREF: RunAlchemyScreen+178↓j
                                         ; RunAlchemyScreen+2A4↓j ...
@@ -24877,7 +24877,7 @@ loc_1DF15:                              ; CODE XREF: RunAlchemyScreen+85↑j
                 call    sub_28412
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    ShowAlchemyIconIdle
                 call    ClearStatusPanelIfDirty
                 call    ShowCompassDirection
@@ -24907,7 +24907,7 @@ loc_1DF4F:                              ; CODE XREF: RunAlchemyScreen:loc_1DDE5�
                 call    sub_1E1A7
                 add     sp, 6
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 jmp     loc_1DD35
 ; ---------------------------------------------------------------------------
 
@@ -24950,7 +24950,7 @@ loc_1DFBA:                              ; CODE XREF: RunAlchemyScreen+2D5↑j
                 call    sub_1D198
                 push    word_32924
                 mov     word_32924, 0
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    DrawMouseCursor
                 test    word_33300, 8000h
                 jz      short loc_1E037
@@ -24960,7 +24960,7 @@ loc_1DFBA:                              ; CODE XREF: RunAlchemyScreen+2D5↑j
                 jnz     short loc_1E01E
                 pop     word_328D6
                 pop     word_32924
-                call    sub_26C9E
+                call    DrawPartyStatusIconRow
                 call    DrawMouseCursor
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
@@ -40647,9 +40647,9 @@ seg088          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26C9E       proc far                ; CODE XREF: HandleDungeonInput+40↑P
+DrawPartyStatusIconRow proc far         ; CODE XREF: HandleDungeonInput+40↑P
                                         ; HandleDungeonInput+B4↑P ...
-                push    word_32924
+                push    word_32924      ; Draws the 4-icon party status row (dungeon screen) by calling DrawPartyStatusIcon once per g_partySlotAssignment slot (0x95EB/0x95ED/0x95EF/0x95F1) at 4 fixed x positions. Called from HandleDungeonInput.
                 push    word_328D4
                 push    word_328D6
                 push    _font_bgTransparent
@@ -40657,30 +40657,30 @@ sub_26C9E       proc far                ; CODE XREF: HandleDungeonInput+40↑P
                 mov     y, 94h
                 mov     bx, 95EBh
                 mov     x, 8
-                call    sub_26CFB
+                call    DrawPartyStatusIcon
                 mov     bx, 95EDh
                 mov     x, 42h ; 'B'
-                call    sub_26CFB
+                call    DrawPartyStatusIcon
                 mov     bx, 95EFh
                 mov     x, 7Ch ; '|'
-                call    sub_26CFB
+                call    DrawPartyStatusIcon
                 mov     bx, 95F1h
                 mov     x, 0B6h
-                call    sub_26CFB
+                call    DrawPartyStatusIcon
                 pop     _font_bgTransparent
                 pop     word_328D6
                 pop     word_328D4
                 pop     word_32924
                 retf
-sub_26C9E       endp
+DrawPartyStatusIconRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26CFB       proc near               ; CODE XREF: sub_26C9E+25↑p
-                                        ; sub_26C9E+31↑p ...
-                cmp     word ptr [bx], 0
+DrawPartyStatusIcon proc near           ; CODE XREF: DrawPartyStatusIconRow+25↑p
+                                        ; DrawPartyStatusIconRow+31↑p ...
+                cmp     word ptr [bx], 0 ; Draws one party-status icon: the character's icon ([+0x12]), an overlay (_val38) if incapacitated (+0x1C bits 0x1C40, matching CheckPartyWipeAndReinitLevel) or a new flag (+0x15E bit 0x8000, not otherwise documented), and a selection-highlight overlay if this is the currently-selected slot (word_32924). Called from DrawPartyStatusIconRow.
                 jz      short locret_26D53
                 push    bx
                 mov     ax, [bx]
@@ -40695,13 +40695,13 @@ sub_26CFB       proc near               ; CODE XREF: sub_26C9E+25↑p
                 test    word ptr [bx+15Eh], 8000h
                 jz      short loc_26D3B
 
-loc_26D2A:                              ; CODE XREF: sub_26CFB+25↑j
+loc_26D2A:                              ; CODE XREF: DrawPartyStatusIcon+25↑j
                 mov     ax, _val38
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, ax
                 call    DrawPicture
 
-loc_26D3B:                              ; CODE XREF: sub_26CFB+2D↑j
+loc_26D3B:                              ; CODE XREF: DrawPartyStatusIcon+2D↑j
                 pop     bx
                 cmp     bx, word_32924
                 jnz     short locret_26D53
@@ -40710,10 +40710,10 @@ loc_26D3B:                              ; CODE XREF: sub_26CFB+2D↑j
                 mov     word_2E530, ax
                 call    DrawPicture
 
-locret_26D53:                           ; CODE XREF: sub_26CFB+3↑j
-                                        ; sub_26CFB+45↑j
+locret_26D53:                           ; CODE XREF: DrawPartyStatusIcon+3↑j
+                                        ; DrawPartyStatusIcon+45↑j
                 retn
-sub_26CFB       endp
+DrawPartyStatusIcon endp
 
 seg088          ends
 
