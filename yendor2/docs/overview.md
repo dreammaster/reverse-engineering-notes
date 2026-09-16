@@ -6297,6 +6297,24 @@ observed mechanics without asserting the parent's full narrative).
 
 738 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: character-creation wipe/fade toolkit
+
+Named 8 more small helpers rounding out the character-creation
+wipe/fade toolkit (alongside the already-named `SetWipeEffectPixel`/
+`RestoreWipeEffectPixel`/`ComputeVgaOffsetFromRowCol`/
+`RunPaletteFadeSequence`/`StepPaletteFadeRange`):
+`StepPaletteRange16FadeDown`/`StepPaletteRange16FadeUp` (single-step
+16-color range fade wrappers), `RunPaletteRange16FadeDown`/
+`RunPaletteRange16FadeUp` (loop the above to completion),
+`WaitForTickFlagAndClear` (a tick-synced busy-wait/clear primitive),
+`WaitForTickAndDrawCreationFrame` (the frame-stepping primitive
+`PlayCharacterCreationIntroAnimation` uses), and
+`TriggerPaletteRange16FadeDown`/`TriggerPaletteRange16FadeUp` (set a
+flag then run the fade to completion).
+
+746 named of 769 functions as of this update — only 23 unnamed
+functions remain.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

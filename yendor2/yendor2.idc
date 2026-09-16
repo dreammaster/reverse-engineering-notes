@@ -2434,8 +2434,12 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X160A4);
 	op_hex		(x,	1);
+	set_cmt	(0X160B0,	"StepPaletteFadeRange(ax=3, bx=1, cx=0x10) -- one fade-down step for a 16-color palette range.",	0);
 	create_insn	(0X160B0);
+	set_name	(0X160B0,	"StepPaletteRange16FadeDown");
+	set_cmt	(0X160C3,	"StepPaletteFadeRange(ax=4, bx=1, cx=0x10) -- one fade-up step for a 16-color palette range.",	0);
 	create_insn	(0X160C3);
+	set_name	(0X160C3,	"StepPaletteRange16FadeUp");
 	set_cmt	(0X160D6,	"Runs bx steps of a palette fade: nudges 0x4D5C (current) toward 0x442A (target) byte-by-byte, mirrors into 0x475A (output) unless a 0x80 sentinel bit is set, then SetPaletteRange's the output segment (dx=start index, cx=RGB-triple count). A multi-step sibling of FadePaletteStep. Called from PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(0X160D6);
 	set_name	(0X160D6,	"RunPaletteFadeSequence");
@@ -2446,24 +2450,36 @@ static Bytes_0(void) {
 	set_cmt	(0X1614D,	"VGA mode-13h linear offset: bx = ax(row)*320 + bx(col). Called only by SetWipeEffectPixel/RestoreWipeEffectPixel, part of PlayCharacterCreationIntroAnimation's wipe effect.",	0);
 	create_insn	(0X1614D);
 	set_name	(0X1614D,	"ComputeVgaOffsetFromRowCol");
+	set_cmt	(0X16159,	"Loops StepPaletteRange16FadeDown 0x3F times -- runs a 16-color fade-down to completion.",	0);
 	create_insn	(0X16159);
+	set_name	(0X16159,	"RunPaletteRange16FadeDown");
+	set_cmt	(0X16164,	"Loops StepPaletteRange16FadeUp 0x3F times -- runs a 16-color fade-up to completion.",	0);
 	create_insn	(0X16164);
+	set_name	(0X16164,	"RunPaletteRange16FadeUp");
+	set_cmt	(0X1616F,	"Busy-waits on word_328C4 bit 0x400, clears it once set, loops cx times. A tick-synced busy-wait/clear primitive.",	0);
 	create_insn	(x=0X1616F);
 	op_hex		(x,	1);
+	set_name	(0X1616F,	"WaitForTickFlagAndClear");
 	create_insn	(x=0X16177);
 	op_hex		(x,	1);
+	set_cmt	(0X16180,	"Busy-waits on word_328C4 bit 0x400 then draws one DrawCharacterCreationAnimationFrame, loops cx times. Called from PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(x=0X16180);
 	op_hex		(x,	1);
+	set_name	(0X16180,	"WaitForTickAndDrawCreationFrame");
 	set_cmt	(0X1618E,	"Writes the stashed _font_bgColor value back to (word_328FA,word_32900), undoing SetWipeEffectPixel's punch. Called from PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(0X1618E);
 	set_name	(0X1618E,	"RestoreWipeEffectPixel");
 	set_cmt	(0X1619F,	"Stashes the pixel at (word_328FA,word_32900) into _font_bgColor (repurposed as scratch, not a real font color) then overwrites it with _font_fgColor -- the 'punch' half of a moving wipe effect. Called from PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(0X1619F);
 	set_name	(0X1619F,	"SetWipeEffectPixel");
+	set_cmt	(0X161B6,	"Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeDown to completion. Called from RunCharacterCreationSelectionStep.",	0);
 	create_insn	(x=0X161B6);
 	op_hex		(x,	1);
+	set_name	(0X161B6,	"TriggerPaletteRange16FadeDown");
+	set_cmt	(0X161C3,	"Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeUp to completion. Called from RunCharacterCreationSelectionStep.",	0);
 	create_insn	(x=0X161C3);
 	op_hex		(x,	1);
+	set_name	(0X161C3,	"TriggerPaletteRange16FadeUp");
 	set_cmt	(0X161D0,	"Draws text/a string column with a 1-pixel drop-shadow (background color pass, then foreground color pass shifted up-left). Single line via writeString when cx<=1, multi-line via DrawStringColumn otherwise. Optionally plays a sound first. Called from sub_1559A.",	0);
 	create_insn	(x=0X161D0);
 	op_hex		(x,	1);
@@ -2828,6 +2844,15 @@ static Bytes_0(void) {
 	set_cmt	(0X17270,	"Gate: HitTestCatalogSlot, bail if no hit or the slot is empty ([si]==0). Otherwise dispatches to untraced sub_219FA (bx=0) -- distinct from the documented buy handler sub_17032. Called from RunShopScreen and sub_1869D.",	0);
 	create_insn	(0X17270);
 	set_name	(0X17270,	"TryHandleCatalogSlotClick");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X17279);
 	create_insn	(0X17281);
 	set_cmt	(0X1728A,	"Clears the shop item-slot grid area, then draws up to 8 item icons (from a position table at 0x63C8 and an item-id table at 0x558A) via LoadItemCatalogRecord + DrawPicture. Shows 'EMPTY' and sets a word_328C6 flag bit if no items were drawn. Called twice from sub_17032.",	0);
@@ -2859,15 +2884,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1740D);
 	op_hex		(x,	1);
 	create_insn	(0X1742A);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X17432);
 	create_insn	(0X1744D);
 	create_insn	(0X1745A);
@@ -4666,6 +4682,15 @@ static Bytes_1(void) {
 	create_insn	(0X1CF50);
 	set_name	(0X1CF50,	"FindItemInsideContainerLevel2");
 	set_cmt	(0X1CF51,	"this",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1CF55,	"this",	0);
 	create_insn	(x=0X1CF97);
 	op_hex		(x,	1);
@@ -4691,15 +4716,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1D038,	"Non-blocking keyboard poll via INT 21h/AH=6/DL=0xFF. Sets errorCode (reused here as an input-event-type flag, NOT an actual error code: 0=no input, 1=regular char in byte_2E400 (uppercased a-z), 2=extended/function-key scan code in byte_2E400). Scan code 'B' triggers sub_10C40 unless word_328CA bit3 is set.",	0);
 	create_insn	(0X1D038);
 	set_name	(0X1D038,	"PollKeyboardInput");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X1D050);
 	op_hex		(x,	0);
@@ -6314,6 +6330,15 @@ static Bytes_2(void) {
 	set_cmt	(0X22D4C,	"Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 (this monster's presence has ended), calls GrantMonsterRewards then RemoveMonsterFromMap. Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).",	0);
 	create_insn	(0X22D4C);
 	set_name	(0X22D4C,	"ProcessLevelMonsters");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X22D52);
 	op_hex		(x,	1);
 	create_insn	(x=0X22D6A);
@@ -6404,15 +6429,6 @@ static Bytes_2(void) {
 	set_name	(0X23116,	"RemoveMonsterFromMap");
 	create_insn	(x=0X23120);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2313D);
 	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
 	create_insn	(0X23151);
@@ -7953,6 +7969,15 @@ static Bytes_3(void) {
 	set_cmt	(0X284CB,	"Scans DOS interrupt vectors (0x80-0xBE) for an installed sound/music driver's 5-byte signature; on a match, allocates its buffer and sets g_driverStateFlags bits 0/1 (detected/active), else sets bit 0x40 (not found). Called from sub_283EA.",	0);
 	create_insn	(0X284CB);
 	set_name	(0X284CB,	"DetectSoundDriver");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X284D7);
 	op_hex		(x,	1);
 	set_cmt	(0X284D9,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
@@ -7999,15 +8024,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2860F);
 	op_hex		(x,	1);
 	create_byte	(0X28616);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X28617);
 	create_insn	(0X28618);
 	set_cmt	(0X28619,	"Looks up two env vars via FindEnvironmentVariable (name constants at 0xCC1/0xCB8, near the BLASTER=/SOUND=/EMMXXXX0/FMDRV string cluster; exact text not independently pinned down). On success, parses 'A<3 digits>' into word_32916 and 'I<1 digit>' into word_32914 -- the classic BLASTER=A220 I5 D1 T3 format -- setting word_36CE3/word_36CE1=1. Sets g_driverStateFlags fallback bits (0x8000/0xC000) on lookup/parse failure. Called from InitSoundSystem.",	0);
@@ -10371,6 +10387,15 @@ static Bytes_4(void) {
 	create_word	(0X2E386);
 	create_word	(0X2E388);
 	set_name	(0X2E388,	"x");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E38A);
 	set_name	(0X2E38A,	"y");
 	create_word	(0X2E38C);
@@ -10423,15 +10448,6 @@ static Bytes_4(void) {
 	set_cmt	(0X2E48E,	"Pointer to the current sprite's explicit transparency/AND mask data (paired with g_blitMaskLen), consumed by ExpandBlitMaskNibbles when word_328C6 bit 0 is set. Set from ~12 call sites before drawing a masked sprite; often length 6.",	0);
 	create_word	(0X2E48E);
 	set_name	(0X2E48E,	"g_blitMaskPtr");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2E490,	"Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.",	0);
 	create_word	(0X2E490);
 	set_name	(0X2E490,	"g_blitMaskLen");

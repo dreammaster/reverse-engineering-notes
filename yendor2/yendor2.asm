@@ -8668,7 +8668,7 @@ loc_15476:                              ; CODE XREF: PlayCharacterCreationIntroA
 
 loc_15489:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+5D↑j
                 mov     cx, 5
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 mov     ax, _videoBufferSeg
                 mov     es, ax
                 mov     word_328FA, 10Ch
@@ -8713,14 +8713,14 @@ loc_154E4:                              ; CODE XREF: PlayCharacterCreationIntroA
 
 loc_15505:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+D9↑j
                 mov     cx, 0Ah
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 or      word_328C8, 800h
                 mov     cx, 3Fh ; '?'
 
 loc_15514:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+FE↓j
                 push    cx
                 mov     dx, 40h ; '@'
-                call    sub_160C3
+                call    StepPaletteRange16FadeUp
                 test    word_328C4, 400h
                 jz      short loc_15526
                 call    DrawCharacterCreationAnimationFrame
@@ -8735,7 +8735,7 @@ loc_15526:                              ; CODE XREF: PlayCharacterCreationIntroA
 
 loc_1552F:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+103↑j
                 mov     cx, 0Ah
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 mov     cx, 3Fh ; '?'
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1553E
@@ -8764,7 +8764,7 @@ loc_1555B:                              ; CODE XREF: PlayCharacterCreationIntroA
 
 loc_15564:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+138↑j
                 mov     cx, 14h
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 mov     cx, 3Fh ; '?'
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15573
@@ -8775,7 +8775,7 @@ loc_15573:                              ; CODE XREF: PlayCharacterCreationIntroA
                                         ; PlayCharacterCreationIntroAnimation+16E↓j
                 push    cx
                 mov     dx, 40h ; '@'
-                call    sub_160B0
+                call    StepPaletteRange16FadeDown
                 mov     ax, 3
                 mov     bx, 1
                 mov     cx, 30h ; '0'
@@ -8808,7 +8808,7 @@ loc_155A9:                              ; CODE XREF: RunCharacterCreationSelecti
                 loop    loc_155A9
                 and     word_328C8, 0F7FFh
                 mov     dx, 40h ; '@'
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 mov     cx, 27h ; '''
 
 loc_155C6:                              ; CODE XREF: RunCharacterCreationSelectionStep+38↓j
@@ -8843,7 +8843,7 @@ loc_15602:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     si, 6DB0h
                 or      word ptr [si], 4000h
                 mov     cx, 7
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 6
@@ -8876,7 +8876,7 @@ loc_15666:                              ; CODE XREF: RunCharacterCreationSelecti
 loc_1566F:                              ; CODE XREF: RunCharacterCreationSelectionStep+E8↓j
                 push    cx
                 mov     dx, 93h
-                call    sub_160C3
+                call    StepPaletteRange16FadeUp
                 test    word_328C4, 400h
                 jz      short loc_15681
                 call    DrawCharacterCreationAnimationFrame
@@ -8891,7 +8891,7 @@ loc_15681:                              ; CODE XREF: RunCharacterCreationSelecti
 
 loc_1568A:                              ; CODE XREF: RunCharacterCreationSelectionStep+ED↑j
                 mov     cx, 2Dh ; '-'
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15696
                 retn
@@ -8901,7 +8901,7 @@ loc_15696:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     si, 6DB0h
                 or      word ptr [si], 4020h
                 mov     cx, 0Fh
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 mov     cx, 3Fh ; '?'
 
 loc_156A6:                              ; CODE XREF: RunCharacterCreationSelectionStep+12A↓j
@@ -8953,7 +8953,7 @@ loc_156DB:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     cx, 2
                 call    DrawShadowedText
                 call    DrawMouseCursor
-                call    sub_161C3
+                call    TriggerPaletteRange16FadeUp
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15747
                 retn
@@ -8961,8 +8961,8 @@ loc_156DB:                              ; CODE XREF: RunCharacterCreationSelecti
 
 loc_15747:                              ; CODE XREF: RunCharacterCreationSelectionStep+1AA↑j
                 mov     cx, 19h
-                call    sub_1616F
-                call    sub_161B6
+                call    WaitForTickFlagAndClear
+                call    TriggerPaletteRange16FadeDown
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15756
                 retn
@@ -8979,7 +8979,7 @@ loc_15756:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    DrawMouseCursor
                 or      word_328C8, 800h
                 mov     dx, 0C0h
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
@@ -9000,10 +9000,10 @@ loc_15799:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     ax, 10h
                 call    DrawShadowedText
                 call    DrawMouseCursor
-                call    sub_161C3
+                call    TriggerPaletteRange16FadeUp
                 or      word_328C8, 800h
                 mov     dx, 0B0h
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 mov     cx, 1Eh
                 call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
@@ -9016,8 +9016,8 @@ loc_157E9:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    TriggerSoundEvent
                 or      word_328C8, 800h
                 mov     dx, 0B0h
-                call    sub_16159
-                call    sub_161B6
+                call    RunPaletteRange16FadeDown
+                call    TriggerPaletteRange16FadeDown
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15806
                 retn
@@ -9053,8 +9053,8 @@ loc_15859:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     ax, 13h
                 call    TriggerSoundEvent
                 and     word_328C8, 0F7FFh
-                call    sub_161C3
-                call    sub_161B6
+                call    TriggerPaletteRange16FadeUp
+                call    TriggerPaletteRange16FadeDown
                 or      word_328C8, 800h
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1587F
@@ -9074,7 +9074,7 @@ loc_1587F:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     ax, 13h
                 call    DrawShadowedText
                 call    DrawMouseCursor
-                call    sub_161C3
+                call    TriggerPaletteRange16FadeUp
                 mov     ax, _videoBufferSeg
                 mov     es, ax
                 mov     di, 8C0h
@@ -9083,7 +9083,7 @@ loc_1587F:                              ; CODE XREF: RunCharacterCreationSelecti
                 rep stosw
                 mov     cx, 0Fh
                 call    TryPlaySoundCue
-                call    sub_161B6
+                call    TriggerPaletteRange16FadeDown
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_158D5
                 retn
@@ -9103,7 +9103,7 @@ loc_158D5:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     ax, 17h
                 call    DrawShadowedText
                 call    DrawMouseCursor
-                call    sub_161C3
+                call    TriggerPaletteRange16FadeUp
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 18h
@@ -9118,7 +9118,7 @@ loc_15927:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    TryPlaySoundCue
                 mov     ax, 19h
                 call    TriggerSoundEvent
-                call    sub_161B6
+                call    TriggerPaletteRange16FadeDown
                 and     word_328C8, 0F7FFh
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
@@ -9162,10 +9162,10 @@ loc_1598C:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     ax, 14h
                 call    DrawShadowedText
                 call    DrawMouseCursor
-                call    sub_161C3
+                call    TriggerPaletteRange16FadeUp
                 mov     cx, 14h
                 call    TryPlaySoundCue
-                call    sub_161B6
+                call    TriggerPaletteRange16FadeDown
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_159D9
                 retn
@@ -9225,18 +9225,18 @@ loc_15AB1:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     dx, 0A0h
                 call    StepPaletteFadeRange
                 mov     dx, 30h ; '0'
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 and     word_328C8, 0F7FFh
                 mov     dx, 10h
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 or      word_328C8, 800h
                 mov     dx, 50h ; 'P'
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 mov     dx, 40h ; '@'
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 and     word_328C8, 0F7FFh
                 mov     dx, 90h
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15AFE
                 retn
@@ -9245,18 +9245,18 @@ loc_15AB1:                              ; CODE XREF: RunCharacterCreationSelecti
 loc_15AFE:                              ; CODE XREF: RunCharacterCreationSelectionStep+561↑j
                 or      word_328C8, 800h
                 mov     dx, 20h ; ' '
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 mov     dx, 80h
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 or      word_3295A, 1000h
                 mov     dx, 0D0h
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 mov     dx, 0
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 mov     dx, 0C0h
-                call    sub_16159
+                call    RunPaletteRange16FadeDown
                 mov     dx, 60h ; '`'
-                call    sub_16159
+                call    RunPaletteRange16FadeDown
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15B34
                 retn
@@ -9309,7 +9309,7 @@ loc_15B9D:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     dx, 0
                 call    StepPaletteFadeRange
                 mov     cx, 0Ah
-                call    sub_1616F
+                call    WaitForTickFlagAndClear
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15BBA
                 retn
@@ -9339,7 +9339,7 @@ loc_15BBA:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     ax, 15h
                 call    DrawShadowedText
                 call    DrawMouseCursor
-                call    sub_161C3
+                call    TriggerPaletteRange16FadeUp
                 mov     di, 0
                 mov     si, 0
                 mov     cx, 7D00h
@@ -9407,11 +9407,11 @@ loc_15CA1:                              ; CODE XREF: RunCharacterCreationSelecti
 
 loc_15CB7:                              ; CODE XREF: RunCharacterCreationSelectionStep+70D↑j
                 mov     cx, 3
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 mov     ax, 1Ah
                 call    TriggerSoundEvent
                 mov     cx, 2
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0C0h
@@ -9430,7 +9430,7 @@ loc_15CB7:                              ; CODE XREF: RunCharacterCreationSelecti
 loc_15CF3:                              ; CODE XREF: RunCharacterCreationSelectionStep+756↑j
                 call    ClearOffscreenBuffer
                 mov     cx, 3
-                call    sub_1616F
+                call    WaitForTickFlagAndClear
                 mov     si, 6DC4h
                 and     word ptr [si], 3FFFh
                 and     word_328C8, 0F7FFh
@@ -9453,7 +9453,7 @@ loc_15D39:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    TryPlaySoundCue
                 mov     ax, 1Bh
                 call    TriggerSoundEvent
-                call    sub_161C3
+                call    TriggerPaletteRange16FadeUp
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -9473,8 +9473,8 @@ loc_15D39:                              ; CODE XREF: RunCharacterCreationSelecti
 
 loc_15D85:                              ; CODE XREF: RunCharacterCreationSelectionStep+7E8↑j
                 mov     cx, 14h
-                call    sub_1616F
-                call    sub_161B6
+                call    WaitForTickFlagAndClear
+                call    TriggerPaletteRange16FadeDown
                 call    ClearOffscreenBuffer
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15D97
@@ -9513,7 +9513,7 @@ loc_15DD7:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     ax, 5
                 call    TriggerSoundEvent
                 mov     cx, 5
-                call    sub_16180
+                call    WaitForTickAndDrawCreationFrame
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
@@ -9534,9 +9534,9 @@ loc_15E05:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     cx, 2
                 call    DrawShadowedText
                 call    DrawMouseCursor
-                call    sub_161C3
+                call    TriggerPaletteRange16FadeUp
                 mov     cx, 14h
-                call    sub_1616F
+                call    WaitForTickFlagAndClear
                 retn
 RunCharacterCreationSelectionStep endp
 
@@ -9699,9 +9699,9 @@ ComposeCharacterPortrait endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_160B0       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+14E↑p
-                                        ; sub_16159:loc_1615D↓p
-                push    cx
+StepPaletteRange16FadeDown proc near    ; CODE XREF: PlayCharacterCreationIntroAnimation+14E↑p
+                                        ; RunPaletteRange16FadeDown:loc_1615D↓p
+                push    cx              ; StepPaletteFadeRange(ax=3, bx=1, cx=0x10) -- one fade-down step for a 16-color palette range.
                 push    dx
                 mov     ax, 3
                 mov     bx, 1
@@ -9710,15 +9710,15 @@ sub_160B0       proc near               ; CODE XREF: PlayCharacterCreationIntroA
                 pop     dx
                 pop     cx
                 retn
-sub_160B0       endp
+StepPaletteRange16FadeDown endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_160C3       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+EF↑p
+StepPaletteRange16FadeUp proc near      ; CODE XREF: PlayCharacterCreationIntroAnimation+EF↑p
                                         ; RunCharacterCreationSelectionStep+D9↑p ...
-                push    cx
+                push    cx              ; StepPaletteFadeRange(ax=4, bx=1, cx=0x10) -- one fade-up step for a 16-color palette range.
                 push    dx
                 mov     ax, 4
                 mov     bx, 1
@@ -9727,7 +9727,7 @@ sub_160C3       proc near               ; CODE XREF: PlayCharacterCreationIntroA
                 pop     dx
                 pop     cx
                 retn
-sub_160C3       endp
+StepPaletteRange16FadeUp endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9808,59 +9808,60 @@ ComputeVgaOffsetFromRowCol endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16159       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+260↑p
+RunPaletteRange16FadeDown proc near     ; CODE XREF: RunCharacterCreationSelectionStep+260↑p
                                         ; RunCharacterCreationSelectionStep+58B↑p ...
-                push    cx
+                push    cx              ; Loops StepPaletteRange16FadeDown 0x3F times -- runs a 16-color fade-down to completion.
                 mov     cx, 3Fh ; '?'
 
-loc_1615D:                              ; CODE XREF: sub_16159+7↓j
-                call    sub_160B0
+loc_1615D:                              ; CODE XREF: RunPaletteRange16FadeDown+7↓j
+                call    StepPaletteRange16FadeDown
                 loop    loc_1615D
                 pop     cx
                 retn
-sub_16159       endp
+RunPaletteRange16FadeDown endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16164       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+26↑p
+RunPaletteRange16FadeUp proc near       ; CODE XREF: RunCharacterCreationSelectionStep+26↑p
                                         ; RunCharacterCreationSelectionStep+1F0↑p ...
-                push    cx
+                push    cx              ; Loops StepPaletteRange16FadeUp 0x3F times -- runs a 16-color fade-up to completion.
                 mov     cx, 3Fh ; '?'
 
-loc_16168:                              ; CODE XREF: sub_16164+7↓j
-                call    sub_160C3
+loc_16168:                              ; CODE XREF: RunPaletteRange16FadeUp+7↓j
+                call    StepPaletteRange16FadeUp
                 loop    loc_16168
                 pop     cx
                 retn
-sub_16164       endp
+RunPaletteRange16FadeUp endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1616F       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+1B0↑p
+WaitForTickFlagAndClear proc near       ; CODE XREF: RunCharacterCreationSelectionStep+1B0↑p
                                         ; RunCharacterCreationSelectionStep+617↑p ...
-                test    word_328C4, 400h
-                jz      short sub_1616F
+                test    word_328C4, 400h ; Busy-waits on word_328C4 bit 0x400, clears it once set, loops cx times. A tick-synced busy-wait/clear primitive.
+                jz      short WaitForTickFlagAndClear
                 and     word_328C4, 0FBFFh
-                loop    sub_1616F
+                loop    WaitForTickFlagAndClear
                 retn
-sub_1616F       endp
+WaitForTickFlagAndClear endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16180       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+63↑p
+WaitForTickAndDrawCreationFrame proc near
+                                        ; CODE XREF: PlayCharacterCreationIntroAnimation+63↑p
                                         ; PlayCharacterCreationIntroAnimation+DF↑p ...
-                test    word_328C4, 400h
-                jz      short sub_16180
+                test    word_328C4, 400h ; Busy-waits on word_328C4 bit 0x400 then draws one DrawCharacterCreationAnimationFrame, loops cx times. Called from PlayCharacterCreationIntroAnimation.
+                jz      short WaitForTickAndDrawCreationFrame
                 call    DrawCharacterCreationAnimationFrame
-                loop    sub_16180
+                loop    WaitForTickAndDrawCreationFrame
                 retn
-sub_16180       endp
+WaitForTickAndDrawCreationFrame endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9896,25 +9897,25 @@ SetWipeEffectPixel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_161B6       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+1B3↑p
+TriggerPaletteRange16FadeDown proc near ; CODE XREF: RunCharacterCreationSelectionStep+1B3↑p
                                         ; RunCharacterCreationSelectionStep+263↑p ...
-                or      word_328C8, 800h
+                or      word_328C8, 800h ; Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeDown to completion. Called from RunCharacterCreationSelectionStep.
                 mov     dx, 90h
-                call    sub_16159
+                call    RunPaletteRange16FadeDown
                 retn
-sub_161B6       endp
+TriggerPaletteRange16FadeDown endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_161C3       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+1A4↑p
+TriggerPaletteRange16FadeUp proc near   ; CODE XREF: RunCharacterCreationSelectionStep+1A4↑p
                                         ; RunCharacterCreationSelectionStep+234↑p ...
-                or      word_328C8, 800h
+                or      word_328C8, 800h ; Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeUp to completion. Called from RunCharacterCreationSelectionStep.
                 mov     dx, 90h
-                call    sub_16164
+                call    RunPaletteRange16FadeUp
                 retn
-sub_161C3       endp
+TriggerPaletteRange16FadeUp endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9979,7 +9980,7 @@ TryPlaySoundCue proc near               ; CODE XREF: RunCharacterCreationSelecti
                 jz      short locret_16243
                 cmp     cx, 0FFFFh
                 jz      short locret_16243
-                call    sub_1616F
+                call    WaitForTickFlagAndClear
 
 locret_16243:                           ; CODE XREF: TryPlaySoundCue+5↑j
                                         ; TryPlaySoundCue+A↑j
