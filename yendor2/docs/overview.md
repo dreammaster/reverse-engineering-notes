@@ -6009,6 +6009,22 @@ special attack rather than ordinary wear.
 
 687 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UseRiddleAnswerItem
+
+Named `sub_1A5F6` -> `UseRiddleAnswerItem`, called once from
+`UseItem` — a genuinely new and delightful item mechanic: a
+riddle/password item requiring the player to type the correct
+answer. Looks up an id/pointer for the expected answer from a table
+indexed by the item's tier value, draws the confirm dialog and an
+optional wrapped description, then opens a 34-character text-entry
+field ("PRESS ESCAPE TO EXIT" shown as a standing hint) and compares
+the typed text byte-for-byte against the expected string. Confirmed
+via string dump: "THAT SOUNDS GOOD TO ME." on a match (sets a
+`word_328C6` unlock flag), "THAT IS INCORRECT." on a mismatch —
+either way looping back to prompt again unless the player cancels.
+
+688 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

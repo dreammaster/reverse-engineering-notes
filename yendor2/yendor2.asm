@@ -13227,7 +13227,7 @@ loc_17C1C:                              ; CODE XREF: UseItem+80↑j
 
 loc_17C33:                              ; CODE XREF: UseItem+97↑j
                 mov     ax, es:[si+10h]
-                call    sub_1A5F6
+                call    UseRiddleAnswerItem
                 call    ApplyItemEffectFlags
                 call    DrawItemUseConfirmDialog
                 call    DrawEligibleItemList
@@ -18427,14 +18427,14 @@ seg037          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A5F6       proc far                ; CODE XREF: UseItem+A5↑P
-                and     word_328C6, 0FFBFh
+UseRiddleAnswerItem proc far            ; CODE XREF: UseItem+A5↑P
+                and     word_328C6, 0FFBFh ; Riddle/password item: opens a text-entry field for the player to type an answer, comparing it byte-for-byte against an expected string looked up via the item's tier value. Confirmed via string dump: 'THAT SOUNDS GOOD TO ME.' on a match, 'THAT IS INCORRECT.' on a mismatch. Called once from UseItem.
                 cmp     ax, _val40
                 jle     short loc_1A604
                 jmp     locret_1A76C
 ; ---------------------------------------------------------------------------
 
-loc_1A604:                              ; CODE XREF: sub_1A5F6+9↑j
+loc_1A604:                              ; CODE XREF: UseRiddleAnswerItem+9↑j
                 dec     ax
                 shl     ax, 1
                 mov     bx, 0BF48h
@@ -18442,7 +18442,7 @@ loc_1A604:                              ; CODE XREF: sub_1A5F6+9↑j
                 mov     ax, [bx]
                 mov     word_32904, ax
 
-loc_1A611:                              ; CODE XREF: sub_1A5F6+145↓j
+loc_1A611:                              ; CODE XREF: UseRiddleAnswerItem+145↓j
                 call    DrawItemUseConfirmDialog
                 mov     _textPos_x, 4Ch ; 'L'
                 mov     _textPos_y, 2Ch ; ','
@@ -18477,7 +18477,7 @@ loc_1A611:                              ; CODE XREF: sub_1A5F6+145↓j
                 mov     fontOffset, 0
                 call    DrawMouseCursor
 
-loc_1A68F:                              ; CODE XREF: sub_1A5F6+48↑j
+loc_1A68F:                              ; CODE XREF: UseRiddleAnswerItem+48↑j
                 call    RestoreCursorBackgroundIfDirty
                 push    _videoSegment
                 push    _font_bgTransparent
@@ -18499,7 +18499,7 @@ loc_1A68F:                              ; CODE XREF: sub_1A5F6+48↑j
                 jmp     locret_1A76C
 ; ---------------------------------------------------------------------------
 
-loc_1A6E7:                              ; CODE XREF: sub_1A5F6+E7↑j
+loc_1A6E7:                              ; CODE XREF: UseRiddleAnswerItem+E7↑j
                 cmp     errorCode, 0
                 jnz     short loc_1A712
                 mov     di, word_32904
@@ -18516,8 +18516,8 @@ loc_1A6E7:                              ; CODE XREF: sub_1A5F6+E7↑j
                 repe cmpsb
                 jz      short loc_1A73E
 
-loc_1A712:                              ; CODE XREF: sub_1A5F6+F6↑j
-                                        ; sub_1A5F6+111↑j
+loc_1A712:                              ; CODE XREF: UseRiddleAnswerItem+F6↑j
+                                        ; UseRiddleAnswerItem+111↑j
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 73h ; 's'
                 mov     _font_fgColor, 7Bh ; '{'
@@ -18529,7 +18529,7 @@ loc_1A712:                              ; CODE XREF: sub_1A5F6+F6↑j
                 jmp     loc_1A611
 ; ---------------------------------------------------------------------------
 
-loc_1A73E:                              ; CODE XREF: sub_1A5F6+11A↑j
+loc_1A73E:                              ; CODE XREF: UseRiddleAnswerItem+11A↑j
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 73h ; 's'
                 mov     _font_fgColor, 8Ah
@@ -18540,10 +18540,10 @@ loc_1A73E:                              ; CODE XREF: sub_1A5F6+11A↑j
                 call    WaitForKeypressTickingMusic
                 or      word_328C6, 40h
 
-locret_1A76C:                           ; CODE XREF: sub_1A5F6+B↑j
-                                        ; sub_1A5F6+EE↑j
+locret_1A76C:                           ; CODE XREF: UseRiddleAnswerItem+B↑j
+                                        ; UseRiddleAnswerItem+EE↑j
                 retf
-sub_1A5F6       endp
+UseRiddleAnswerItem endp
 
 seg037          ends
 
@@ -20605,7 +20605,7 @@ CheckItemEligibilityAndCopyName endp
 
 
 DrawItemUseConfirmDialog proc far       ; CODE XREF: UseItem+AF↑P
-                                        ; sub_1A5F6:loc_1A611↑P ...
+                                        ; UseRiddleAnswerItem:loc_1A611↑P ...
                 mov     x, 0Fh          ; Draws a small dialog-box frame (picture 3) at (0xF,0x17), then the current item's own icon (0xBCE+0) at (0x15,0x1F) inside it -- an item-use confirmation dialog. Called from UseItem and sub_1A5F6.
                 mov     y, 17h
                 mov     _font_bgTransparent, 1
@@ -22470,7 +22470,7 @@ ShowItemUsagePreview endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ComputeCostMessageIndentMode proc far   ; CODE XREF: sub_1A5F6+6B↑P
+ComputeCostMessageIndentMode proc far   ; CODE XREF: UseRiddleAnswerItem+6B↑P
                                         ; ShowHealingCostPrompt+73↑p ...
                 and     word_328C4, 0FFC1h ; Picks a DrawIndentedTextColumn wrapping mode (word_328C4 bits 0x2/0x4/0x8/0x10/0x20 + fontOffset) based on which of 4 ascending thresholds the record at word_3197E's [+0x6E] field falls into, with the threshold table itself selected by word_3197C. Called from sub_1A5F6 and ShowHealingCostPrompt before drawing a wrapped cost message.
                 mov     fontOffset, 2
@@ -23393,7 +23393,7 @@ seg053          segment byte public 'CODE' use16
 
 
 EditTextField   proc far                ; CODE XREF: PromptForBCD4Quantity+21↑P
-                                        ; sub_1A5F6+D5↑P ...
+                                        ; UseRiddleAnswerItem+D5↑P ...
                 push    si              ; Generic single-line text input editor (bx=buffer, cx=max length): draws a '-' cursor, polls keyboard for Enter (confirm, errorCode=0), Backspace (delete/beep), Escape (cancel, errorCode=2), or printable chars (append/beep at limit). One of its 6 call sites is inside EditCharacterName.
                 push    bx
                 push    cx
@@ -44445,7 +44445,7 @@ seg104          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawIndentedTextColumn proc far         ; CODE XREF: sub_1A5F6+89↑P
+DrawIndentedTextColumn proc far         ; CODE XREF: UseRiddleAnswerItem+89↑P
                                         ; ShowHealingCostPrompt+8E↑P ...
                 test    word_328C4, 20h ; Dispatches on word_328C4 bits to either call DrawStringColumn directly, or loop sub_28B94 (per-line draw, cx==0 stops) with one of 3 'how many leading lines get fontOffset reset to 0' patterns (bit 0x10=every line, 0x8=first 2, 0x4=first 4 of 5) -- a hanging-indent text column mode selector. Called from ShowHealingCostPrompt and sub_1A5F6.
                 jnz     short loc_28A8C
@@ -56956,7 +56956,7 @@ word_2E54E      dw 0                    ; DATA XREF: UseItem+72↑r
                                         ; UseItem:loc_17C9C↑r ...
 word_2E550      dw 0                    ; DATA XREF: RunShopScreen+EF↑w
                                         ; UseItem+25E↑w ...
-fontOffset      dw 0                    ; DATA XREF: sub_1A5F6+8E↑w
+fontOffset      dw 0                    ; DATA XREF: UseRiddleAnswerItem+8E↑w
                                         ; ShowHealingCostPrompt+B6↑w ...
 word_2E554      dw 0                    ; DATA XREF: FindObjectAtPosition:loc_218AC↑w
                                         ; FindObjectAtPosition+57↑w
@@ -74464,7 +74464,7 @@ _val38          dw 0                    ; DATA XREF: InitGlobals+108↑w
 _val39          dw 0                    ; DATA XREF: InitGlobals+10E↑w
                                         ; RunGameDialog+504↑r ...
 _val40          dw 0                    ; DATA XREF: InitGlobals+114↑w
-                                        ; sub_1A5F6+5↑r
+                                        ; UseRiddleAnswerItem+5↑r
 _val41          dw 0                    ; DATA XREF: InitGlobals+11A↑w
                                         ; DebugSetFloorTileByNumber+43↑r
 _val42          dw 0                    ; DATA XREF: InitGlobals+120↑w

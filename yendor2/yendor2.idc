@@ -3879,8 +3879,10 @@ static Bytes_1(void) {
 	create_insn	(0X1A5CC);
 	set_name	(0X1A5CC,	"FlashStatusWarning");
 	set_cmt	(0X1A5E3,	"ticks",	0);
+	set_cmt	(0X1A5F6,	"Riddle/password item: opens a text-entry field for the player to type an answer, comparing it byte-for-byte against an expected string looked up via the item's tier value. Confirmed via string dump: 'THAT SOUNDS GOOD TO ME.' on a match, 'THAT IS INCORRECT.' on a mismatch. Called once from UseItem.",	0);
 	create_insn	(x=0X1A5F6);
 	op_hex		(x,	1);
+	set_name	(0X1A5F6,	"UseRiddleAnswerItem");
 	create_insn	(0X1A604);
 	create_insn	(x=0X1A605);
 	op_hex		(x,	1);
@@ -4732,6 +4734,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: replays whatever picture is already showing (entry 2, since word_2E530/532 aren't reset here) via ShowIntroPicture's fade+wait-for-key -- doesn't show distinct content, so its actual purpose (About/credits/register nag?) isn't confirmed. I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
 	create_insn	(0X1D2A6);
 	set_name	(0X1D2A6,	"RunTitleScreen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D2BB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D2C3);
@@ -4760,15 +4771,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3C8);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1D3D0);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3DB);
@@ -6503,6 +6505,15 @@ static Bytes_2(void) {
 	set_cmt	(0X23722,	"- MS MOUSE - READ MOTION COUNTERS\nReturn: CX = number of mickeys mouse moved horizontally since last call\nDX = number of mickeys mouse moved vertically",	0);
 	create_insn	(x=0X23722);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23729);
 	op_hex		(x,	1);
 	create_insn	(x=0X2372F);
@@ -6525,15 +6536,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X23782);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2378A);
 	op_hex		(x,	1);
 	set_cmt	(0X237B0,	"Calls RestoreCursorBackground (erasing the cursor) only if the dirty flags in word_3195C (bits 0 and 1) indicate it's needed. Called very widely (effectively a per-frame/per-event cursor service call).",	0);

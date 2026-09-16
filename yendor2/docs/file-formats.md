@@ -1257,6 +1257,21 @@ any monster with HP `<= 0` and grants rewards / removes it via
 area-effect spell's kills are swept up level-wide after the animation,
 not per-row during the attack itself.
 
+### A riddle/password item mechanic
+
+`UseRiddleAnswerItem` (was `sub_1A5F6`, called once from `UseItem`)
+is a distinct item mechanic not seen elsewhere: it looks up an
+expected-answer id from a table indexed by the item's tier value,
+shows the item's description (if any) via `DrawIndentedTextColumn`,
+then opens a 34-character text-entry field (`EditTextField`) for the
+player to type an answer — "PRESS ESCAPE TO EXIT" shown as a standing
+hint. The typed text is compared byte-for-byte against the expected
+answer string; a match shows "THAT SOUNDS GOOD TO ME." and sets a
+`word_328C6` unlock flag, a mismatch shows "THAT IS INCORRECT." —
+either way looping back to prompt again unless the player cancels.
+Reads as a riddle, puzzle-lock, or "speak the password" item; which
+specific quest item(s) use this path is not identified.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base
