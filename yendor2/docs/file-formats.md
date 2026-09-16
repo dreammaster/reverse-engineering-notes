@@ -233,6 +233,12 @@ that teaches a new ability sets the matching bit in `+0xB4` and zeroes
 the matching charge field (`+0xB6`/`+0xB8`/`+0xBA` for bits `0x8000`/
 `0x4000`/`0x2000`) — resetting that ability's charge to 0 the moment
 it's learned, cross-confirming both fields' roles.
+`AccumulateLearnedAbilityFlags` (was `sub_29040`, called from `UseItem`
+and `UseAbilityScroll`) reads `+0xB4` to gate which entries of an
+unidentified `word_2E54C` catalog table (stride `0x3A`) qualify to OR
+their own `[+0x16]`/`[+0x18]` flags into accumulators
+`word_2E40C`/`word_2E40E` — plausibly determining which item-use
+options are available given the character's learned abilities.
 `0x18` dispels/cures — clears bits 13-15 of `+0x1C`, a *different* 3-bit group
 than the one `TickStatusEffects`/`ApplyStatusEffect` manage (bits
 10/11/13 — bit 13 appears in both groups).

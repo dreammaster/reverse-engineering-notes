@@ -13513,7 +13513,7 @@ loc_17F18:                              ; CODE XREF: UseItem+34E↑j
 ; ---------------------------------------------------------------------------
 
 loc_17F25:                              ; CODE XREF: UseItem+329↑j
-                call    sub_29040
+                call    AccumulateLearnedAbilityFlags
                 jmp     loc_17E8B
 ; ---------------------------------------------------------------------------
 
@@ -22042,7 +22042,7 @@ loc_1C707:                              ; CODE XREF: UseAbilityScroll+147↑j
                                         ; UseAbilityScroll+27D↓j
                 or      word_2E410, 1
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_29040
+                call    AccumulateLearnedAbilityFlags
                 mov     ax, word_32902
                 mov     word_2E550, ax
                 push    cs
@@ -22440,7 +22440,7 @@ loc_1CAF3:                              ; CODE XREF: ShowItemUsagePreview+27↑j
                 call    ClearStatusPanelIfDirty
                 test    word_2E410, 1000h
                 jnz     short loc_1CB15
-                call    sub_29040
+                call    AccumulateLearnedAbilityFlags
                 jmp     short loc_1CADA
 ; ---------------------------------------------------------------------------
 
@@ -45075,9 +45075,9 @@ ResetDailyAbilityCharges endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29040       proc far                ; CODE XREF: UseItem:loc_17F25↑P
+AccumulateLearnedAbilityFlags proc far  ; CODE XREF: UseItem:loc_17F25↑P
                                         ; UseAbilityScroll+188↑P ...
-                push    es
+                push    es              ; For the character selected via word_32924, walks a table at word_2E54C (stride 0x3A, count word_2E432) and ORs each qualifying entry's [+0x16]/[+0x18] into word_2E40C/word_2E40E. An entry qualifies if [+0x10] bit 1 is set, or [+0x0E] bit 8 is set and [+0x12] overlaps the character's learned-abilities bitmask ([+0xB4]). Called from UseItem and UseAbilityScroll.
                 push    di
                 push    si
                 push    cx
@@ -45092,7 +45092,7 @@ sub_29040       proc far                ; CODE XREF: UseItem:loc_17F25↑P
                 mov     word_2E40C, 0
                 mov     word_2E40E, 0
 
-loc_2906C:                              ; CODE XREF: sub_29040+55↓j
+loc_2906C:                              ; CODE XREF: AccumulateLearnedAbilityFlags+55↓j
                 test    word ptr es:[di+10h], 1
                 jnz     short loc_29082
                 test    word ptr es:[di+0Eh], 8
@@ -45100,14 +45100,14 @@ loc_2906C:                              ; CODE XREF: sub_29040+55↓j
                 test    es:[di+12h], bx
                 jz      short loc_29092
 
-loc_29082:                              ; CODE XREF: sub_29040+32↑j
+loc_29082:                              ; CODE XREF: AccumulateLearnedAbilityFlags+32↑j
                 mov     ax, es:[di+16h]
                 or      word_2E40C, ax
                 mov     ax, es:[di+18h]
                 or      word_2E40E, ax
 
-loc_29092:                              ; CODE XREF: sub_29040+3A↑j
-                                        ; sub_29040+40↑j
+loc_29092:                              ; CODE XREF: AccumulateLearnedAbilityFlags+3A↑j
+                                        ; AccumulateLearnedAbilityFlags+40↑j
                 add     di, 3Ah ; ':'
                 loop    loc_2906C
                 pop     cx
@@ -45115,7 +45115,7 @@ loc_29092:                              ; CODE XREF: sub_29040+3A↑j
                 pop     di
                 pop     es
                 retf
-sub_29040       endp
+AccumulateLearnedAbilityFlags endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -56664,7 +56664,7 @@ word_2E42C      dw 0                    ; DATA XREF: LoadItemData↑w
                 db    0
                 db    0
 word_2E432      dw 0                    ; DATA XREF: DrawEligibleItemList+26↑r
-                                        ; sub_29040+1C↑r
+                                        ; AccumulateLearnedAbilityFlags+1C↑r
                 db    0
                 db    0
                 db    0

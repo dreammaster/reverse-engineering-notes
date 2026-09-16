@@ -4600,6 +4600,27 @@ documentation correction — but it substantially firms up the lighting
 model. Where the gradient values themselves get computed (presumably
 from `+0x64`) remains the next lead.
 
+### 2026-09-15 session update, continued: AccumulateLearnedAbilityFlags
+
+Named `sub_29040` -> `AccumulateLearnedAbilityFlags`, called from
+`UseItem` and `UseAbilityScroll`: resolves the current character
+(`word_32924` id) and reads their learned-abilities bitmask
+(`[+0xB4]`, the confirmed "which of at least 4 special abilities this
+character has learned" field), then walks a table at `word_2E54C`
+(stride `0x3A`, count `word_2E432`, identity not otherwise traced),
+ORing each qualifying entry's `[+0x16]`/`[+0x18]` fields into two
+accumulator globals (`word_2E40C`/`word_2E40E`). An entry qualifies
+if its `[+0x10]` bit 1 is set (always applies), or its `[+0x0E]` bit 8
+is set and its `[+0x12]` ability-bitmask overlaps the character's
+learned abilities. Reads as "accumulate the flags contributed by
+every catalog entry this character's known abilities unlock" —
+plausibly determining available item-use options — though the
+`word_2E54C` table's own identity isn't confirmed.
+
+551 named of 769 functions as of this update.
+
+## Current state (2026-09-14, before any work this session)
+
 Via `identify.py`:
 
 - **Root file**: `SW.EXE`, MD5 `d464f6847b9ea4296e9ce1b251f92788`.

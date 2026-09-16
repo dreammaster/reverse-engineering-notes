@@ -7961,7 +7961,9 @@ static Bytes_3(void) {
 	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
 	create_insn	(0X28FF9);
 	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
+	set_cmt	(0X29040,	"For the character selected via word_32924, walks a table at word_2E54C (stride 0x3A, count word_2E432) and ORs each qualifying entry's [+0x16]/[+0x18] into word_2E40C/word_2E40E. An entry qualifies if [+0x10] bit 1 is set, or [+0x0E] bit 8 is set and [+0x12] overlaps the character's learned-abilities bitmask ([+0xB4]). Called from UseItem and UseAbilityScroll.",	0);
 	create_insn	(0X29040);
+	set_name	(0X29040,	"AccumulateLearnedAbilityFlags");
 	create_insn	(x=0X2906C);
 	op_hex		(x,	1);
 	create_insn	(x=0X29074);
@@ -9852,13 +9854,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2D3DC);
 	op_hex		(x,	1);
 	set_name	(0X2D3DC,	"AnimateEffectFrame");
-	create_insn	(x=0X2D3E6);
-	op_hex		(x,	1);
-	set_cmt	(0X2D3F5,	"ticks",	0);
-	set_cmt	(0X2D3FE,	"Draws a picture (ax=id, bx=x) guarded by word_328C6 bit 0, then returns the next frame index (ax+1, wrapping to word_332EC once it reaches word_332EC+word_332EE). Called from the still-unnamed combat dispatcher sub_2C0FE.",	0);
-	create_insn	(x=0X2D3FE);
-	op_hex		(x,	1);
-	set_name	(0X2D3FE,	"DrawAnimationFrameAndAdvance");
 }
 
 //------------------------------------------------------------------------
@@ -9868,6 +9863,13 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2D3E6);
+	op_hex		(x,	1);
+	set_cmt	(0X2D3F5,	"ticks",	0);
+	set_cmt	(0X2D3FE,	"Draws a picture (ax=id, bx=x) guarded by word_328C6 bit 0, then returns the next frame index (ax+1, wrapping to word_332EC once it reaches word_332EC+word_332EE). Called from the still-unnamed combat dispatcher sub_2C0FE.",	0);
+	create_insn	(x=0X2D3FE);
+	op_hex		(x,	1);
+	set_name	(0X2D3FE,	"DrawAnimationFrameAndAdvance");
 	create_insn	(x=0X2D40F);
 	op_hex		(x,	1);
 	set_cmt	(0X2D428,	"Second commit pass after ApplyAttackToTarget already committed: re-filters status flags by immunity (idempotent), recomputes a COMPOUNDED resistance halving (once per matching bit among the same 7 word_33306/[di+0x98] resistance-category bits, vs. ApplyTargetResistancesToAttack's single first-match halving), and subtracts that from [di+0x10] AGAIN (floored at 0) -- genuinely double-applies damage. Why this re-application is intentional (compounding elemental damage for area attacks?) vs. an artifact isn't resolved. Called from ApplyAttackAlongCorridorLine.",	0);
