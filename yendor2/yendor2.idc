@@ -9858,7 +9858,9 @@ static Bytes_3(void) {
 	create_insn	(0X2D7EA);
 	create_insn	(x=0X2D7FD);
 	op_hex		(x,	1);
+	set_cmt	(0X2D809,	"Shows a yes/no confirm prompt (message id 0x12), storing the result in word_3331A and the current slot (word_32924) in word_3331C for the caller to act on. Called from InteractWithContainer.",	0);
 	create_insn	(0X2D809);
+	set_name	(0X2D809,	"ConfirmContainerInteraction");
 	create_insn	(0X2D831);
 	create_insn	(0X2D861);
 	set_name	(0X2DA7A,	"fonts");
@@ -10684,6 +10686,15 @@ static Bytes_3(void) {
 	set_name	(0X35711,	"aPolearm");
 	create_strlit	(0X3571E,	0XD);
 	set_name	(0X3571E,	"aCasting");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3572B,	0XD);
 	set_name	(0X3572B,	"aMapping");
 	create_strlit	(0X35738,	0XD);
@@ -10696,15 +10707,6 @@ static Bytes_3(void) {
 	set_name	(0X3575F,	"aThievery");
 	create_strlit	(0X3576C,	0XD);
 	set_name	(0X3576C,	"aLinguistics");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35779,	0XD);
 	set_name	(0X35779,	"aChemistry");
 	create_strlit	(0X35786,	0X21);

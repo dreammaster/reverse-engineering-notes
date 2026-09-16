@@ -3869,6 +3869,14 @@ block — not confirmed which one.
 
 492 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ConfirmContainerInteraction
+
+Named `sub_2D809` -> `ConfirmContainerInteraction`, called from
+`InteractWithContainer`: shows a yes/no confirm prompt, storing the
+result and the current slot selection for the caller to act on.
+
+493 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -53455,7 +53455,7 @@ loc_2D6B9:                              ; CODE XREF: InteractWithContainer+4A↑
                 test    word_33300, 8000h
                 jz      short loc_2D6DE
                 call    DrawMouseCursor
-                call    sub_2D809
+                call    ConfirmContainerInteraction
                 cmp     word_3331A, 0
                 jnz     short loc_2D6D3
                 jmp     loc_2D77A
@@ -53594,8 +53594,8 @@ sub_2D7EA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D809       proc near               ; CODE XREF: InteractWithContainer+6C↑p
-                mov     word_2E530, 0Fh
+ConfirmContainerInteraction proc near   ; CODE XREF: InteractWithContainer+6C↑p
+                mov     word_2E530, 0Fh ; Shows a yes/no confirm prompt (message id 0x12), storing the result in word_3331A and the current slot (word_32924) in word_3331C for the caller to act on. Called from InteractWithContainer.
                 call    UpdateCursorForHeldItem
                 mov     ax, 12h
                 call    ShowConfirmPrompt
@@ -53605,7 +53605,7 @@ sub_2D809       proc near               ; CODE XREF: InteractWithContainer+6C↑
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
                 retn
-sub_2D809       endp
+ConfirmContainerInteraction endp
 
 ; ---------------------------------------------------------------------------
                 mov     word_2E530, 0Fh

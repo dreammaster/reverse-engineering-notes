@@ -1357,7 +1357,10 @@ a status-flag/level test passes, it sets `+0x15E` bit `0x8000` and
 forces a `DrawPartyMemberStatusPanel` redraw. Reads as "flag party
 members who don't qualify to use/interact with whatever's in this
 container" (a class- or level-restricted item?), but the specific
-restriction isn't confirmed.
+restriction isn't confirmed. `InteractWithContainer` also calls
+`ConfirmContainerInteraction` (was `sub_2D809`): shows a yes/no
+confirm prompt (message id `0x12`), storing the result and the current
+slot selection for the caller to act on afterward.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
