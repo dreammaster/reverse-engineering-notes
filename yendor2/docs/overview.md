@@ -4156,6 +4156,31 @@ of the 3 fields it's called with (`word_3296C`/`word_32972`/
 
 520 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryResolveAttackAgainstTarget
+
+Named `sub_2D171` -> `TryResolveAttackAgainstTarget`, called once from
+unnamed `sub_2D4B6` (part of the large unnamed combat dispatcher
+`sub_2C0FE`'s tree, alongside the previously-named
+`ResolveAttackAndLatchFirstHit`). Skips the attack if `word_33306` bit
+`0x100` is set and a per-target field (`[di+0x4E]`) already equals
+global `word_332D8` (plausibly "already resolved this round/pass"),
+otherwise calls `ResolveAttack(ax=[di+0x58], bx=[si+0x62],
+cx=word_332E8)` with `si=word_328D4` (current/selected party member).
+Deliberately did **not** identify `[di+0x4E]`/`[di+0x58]` with the
+similarly-offset, already-documented party-record fields (the
+still-open `+0x4C`/`+0x4E`/`+0x50` trio and the monster-detail-reveal
+derived stat `+0x58`) since `di`'s record type at this call site isn't
+confirmed — it could be a monster or a different combat-scratch
+struct entirely, not necessarily the party-record layout. Also traced
+`word_332D8` a bit further: besides this guard, it's compared against
+small constants (9, `0xD`) elsewhere and has an odd
+`ShowClueBookSpellDetail+0x1F6` read xref that looks like an IDA
+tail-chunk attribution artifact rather than genuine logical overlap —
+plausibly a reused scratch value like `word_38808`, not confirmed
+single-purpose.
+
+521 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

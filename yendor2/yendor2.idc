@@ -9677,8 +9677,10 @@ static Bytes_3(void) {
 	create_insn	(0X2D137);
 	set_cmt	(0X2D158,	"ticks",	0);
 	create_insn	(0X2D170);
+	set_cmt	(0X2D171,	"Skips the attack if word_33306 bit 0x100 is set and [di+0x4E] already equals word_332D8 (plausibly 'already resolved this round'). Otherwise calls ResolveAttack(ax=[di+0x58], bx=[si+0x62], cx=word_332E8), si=word_328D4. Field identities at di's offsets not confirmed -- di's record type here is unknown. Called from sub_2D4B6.",	0);
 	create_insn	(x=0X2D171);
 	op_hex		(x,	1);
+	set_name	(0X2D171,	"TryResolveAttackAgainstTarget");
 	set_cmt	(0X2D195,	"Calls ResolveAttack, then latches word_332E8 into word_2E49C the first time through (only if word_2E49C was still 0), setting errorCode=1. Field identities ([di+0x58], party record +0x62, word_332E8) not confirmed. Called once from the still-unnamed sub_2C0FE.",	0);
 	create_insn	(0X2D195);
 	set_name	(0X2D195,	"ResolveAttackAndLatchFirstHit");
@@ -10299,6 +10301,15 @@ static Bytes_3(void) {
 	set_name	(0X329DA,	"_ptr2");
 	create_word	(0X329DC);
 	set_name	(0X329DC,	"_ptr3");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X329DE);
 	set_name	(0X329DE,	"_ptr4");
 	create_word	(0X329E0);
@@ -10330,15 +10341,6 @@ static Bytes_3(void) {
 	create_word	(0X32A08);
 	create_word	(0X32A0A);
 	create_word	(0X32A0C);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32A0E);
 	create_word	(0X32A10);
 	set_name	(0X32A10,	"_blockSize3");

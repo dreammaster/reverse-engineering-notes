@@ -52712,23 +52712,23 @@ sub_2C0FE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D171       proc near               ; CODE XREF: sub_2D4B6:loc_2D4E2↓p
-                test    word_33306, 100h
+TryResolveAttackAgainstTarget proc near ; CODE XREF: sub_2D4B6:loc_2D4E2↓p
+                test    word_33306, 100h ; Skips the attack if word_33306 bit 0x100 is set and [di+0x4E] already equals word_332D8 (plausibly 'already resolved this round'). Otherwise calls ResolveAttack(ax=[di+0x58], bx=[si+0x62], cx=word_332E8), si=word_328D4. Field identities at di's offsets not confirmed -- di's record type here is unknown. Called from sub_2D4B6.
                 jz      short loc_2D181
                 mov     ax, word_332D8
                 cmp     [di+4Eh], ax
                 jnz     short locret_2D194
 
-loc_2D181:                              ; CODE XREF: sub_2D171+6↑j
+loc_2D181:                              ; CODE XREF: TryResolveAttackAgainstTarget+6↑j
                 mov     si, word_328D4
                 mov     ax, [di+58h]
                 mov     bx, [si+62h]
                 mov     cx, word_332E8
                 call    ResolveAttack
 
-locret_2D194:                           ; CODE XREF: sub_2D171+E↑j
+locret_2D194:                           ; CODE XREF: TryResolveAttackAgainstTarget+E↑j
                 retn
-sub_2D171       endp
+TryResolveAttackAgainstTarget endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -53136,7 +53136,7 @@ loc_2D4DA:                              ; CODE XREF: sub_2D4B6+1A↑j
 ; ---------------------------------------------------------------------------
 
 loc_2D4E2:                              ; CODE XREF: sub_2D4B6+12↑j
-                call    sub_2D171
+                call    TryResolveAttackAgainstTarget
                 cmp     word_2E49C, 0
                 jz      short locret_2D4FD
 
@@ -76775,7 +76775,7 @@ word_332E4      dw 0                    ; DATA XREF: sub_2C0FE+194↑r
 word_332E6      dw 0                    ; DATA XREF: sub_2C0FE+191↑r
                                         ; sub_2C0FE+BB2↑r ...
 word_332E8      dw 0                    ; DATA XREF: sub_2C0FE+20D↑r
-                                        ; sub_2D171+1A↑r ...
+                                        ; TryResolveAttackAgainstTarget+1A↑r ...
 word_332EA      dw 0                    ; DATA XREF: sub_2C0FE+232↑r
                                         ; sub_2C0FE+9E9↑r ...
 word_332EC      dw 0                    ; DATA XREF: sub_2C0FE+217↑r

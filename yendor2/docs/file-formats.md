@@ -273,6 +273,16 @@ character currently holds that role. Individual field-to-skill-name
 assignment isn't confirmed yet, but the "5 assignable roles" shape is
 a solid new lead for pinning them down.
 
+**A caution about reusing these offsets in combat code**:
+`TryResolveAttackAgainstTarget` (was `sub_2D171`, part of the
+`sub_2C0FE`/`sub_2D4B6` combat-dispatch tree) reads `[di+0x4E]` and
+`[di+0x58]` from a `di`-pointed record of unconfirmed type (attacker?
+target? monster?) — *not* assumed to be the same party-record fields
+documented above, since combat code may operate on a differently-
+shaped monster or scratch struct at the same numeric offsets. Filed as
+an explicit non-finding to avoid conflating the two if `di`'s type is
+pinned down later.
+
 **Skill values found**: `ShowCharacterSkills` clears a **16-word array
 at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before
 drawing 3 category headers with 3/4/8 skill-name lines respectively
