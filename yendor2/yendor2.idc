@@ -7667,7 +7667,9 @@ static Bytes_3(void) {
 	create_insn	(0X2781C);
 	set_name	(0X2781C,	"FailsSavingThrow");
 	create_insn	(0X27846);
+	set_cmt	(0X2784A,	"Computes the dungeon's current ambient lighting table (working buffer 0x5086) from time-of-day (word_36D01 against a day/night cycle table at 0x7228), environmental override flags (word_36C79), and facing/region (word_36CF5 vs table 0x6E98), then darkens it under weather conditions via delta table 0x76D8. Called from RedrawDungeonScreen and AdvanceDayNightPaletteFade.",	0);
 	create_insn	(0X2784A);
+	set_name	(0X2784A,	"ComputeAmbientLightingTable");
 	create_insn	(x=0X27852);
 	op_hex		(x,	1);
 	create_insn	(x=0X2785F);
@@ -7921,15 +7923,6 @@ static Bytes_3(void) {
 	set_cmt	(0X28246,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
 	create_insn	(0X28246);
 	set_name	(0X28246,	"RestoreDialogAreaFromEMS");
-	set_cmt	(0X2827E,	"Returns immediately (ax=1) if g_driverStateFlags bit 0x8 is clear; otherwise busy-waits for word_2E494 to become 0 then returns ax=0 -- waits for the sound driver's current operation to finish. Called from several sites including sub_2D498.",	0);
-	create_insn	(0X2827E);
-	set_name	(0X2827E,	"WaitForSoundDriverIdle");
-	create_insn	(x=0X28281);
-	op_hex		(x,	1);
-	set_cmt	(0X28296,	"Plays music track ax (no-op if g_driverStateFlags bit1/music-active isn't set). Sets up a driver call param (sub_27BAD) then reads the track's data from WORLD.DAT (fixed FileEntry bx=0x9043).",	0);
-	create_insn	(x=0X28296);
-	op_hex		(x,	1);
-	set_name	(0X28296,	"PlayMusicTrack");
 }
 
 //------------------------------------------------------------------------
@@ -7939,6 +7932,15 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2827E,	"Returns immediately (ax=1) if g_driverStateFlags bit 0x8 is clear; otherwise busy-waits for word_2E494 to become 0 then returns ax=0 -- waits for the sound driver's current operation to finish. Called from several sites including sub_2D498.",	0);
+	create_insn	(0X2827E);
+	set_name	(0X2827E,	"WaitForSoundDriverIdle");
+	create_insn	(x=0X28281);
+	op_hex		(x,	1);
+	set_cmt	(0X28296,	"Plays music track ax (no-op if g_driverStateFlags bit1/music-active isn't set). Sets up a driver call param (sub_27BAD) then reads the track's data from WORLD.DAT (fixed FileEntry bx=0x9043).",	0);
+	create_insn	(x=0X28296);
+	op_hex		(x,	1);
+	set_name	(0X28296,	"PlayMusicTrack");
 	create_insn	(0X2829F);
 	set_cmt	(0X282B3,	"this",	0);
 	create_insn	(0X282B3);
@@ -10321,6 +10323,15 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D50E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D522);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D53A);
@@ -10337,15 +10348,6 @@ static Bytes_4(void) {
 	set_cmt	(0X2D578,	"DOS environment-variable lookup: PSP via INT 21h AH=0x51, env segment from PSP+0x2C, scans the env block for a match against ds:bp (caller's search string), copies the value to es:dx. ax=1 found / ax=0 not found. Called from ParseSoundBlasterEnvironmentVariable.",	0);
 	create_insn	(0X2D578);
 	set_name	(0X2D578,	"FindEnvironmentVariable");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D583);
 	op_hex		(x,	1);
 	set_cmt	(0X2D585,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);

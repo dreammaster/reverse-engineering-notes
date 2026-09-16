@@ -2104,7 +2104,19 @@ It also fires a dawn event at exactly 6:00 AM and a dusk event at
 through a snapshot table, written into VGA palette entries `0xE0`-
 `0xFF` (the last 32 slots, plausibly a dedicated sky/ambient-light
 ramp) via `SetPaletteRange`, walked forward from dawn and backward
-from dusk), plus a separate 5-minute periodic timer (`word_32954`,
+from dusk). `AdvanceDayNightPaletteFade` and `RedrawDungeonScreen` (the
+core first-person render) both call `ComputeAmbientLightingTable`
+(was `sub_2784A`) to compute the actual lighting-gradient snapshot
+that fade walks through: a day/night cycle lookup against `word_36D01`
+against a 32-byte-entry table (`0x7228`), with environmental-override
+flags (`word_36C79`) and facing/region refinements, then a weather-
+darkening pass subtracting deltas under rain/storm/fog-style
+conditions — the system tying together the clock, weather, and
+dungeon lighting into one 7-word working buffer (`0x5086`). This
+also independently confirms `word_36D01` wraps at its `0xFFFF`
+table terminator back to `0`, consistent with the "minutes since
+midnight, 0–1439" model above. A separate 5-minute periodic timer
+(`word_32954`,
 gated on `word_3295A` bit `0x800`, calling `TickWorldAilments`) — a
 status-ailment duration sweep, not an item timer: it ticks a shared
 "ailment slot" format (`[+0]`=ailment code `9`/`0xF`/`0xC`, matching

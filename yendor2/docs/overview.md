@@ -6343,11 +6343,26 @@ step in `ProcessCombatRound`, right after granting rewards),
 same label table `DrawGameDialogMenuLabelsHighlighted` draws).
 
 761 named of 769 functions as of this update — only 8 unnamed
-functions remain, all large dispatchers (`sub_16881`, `sub_2784A`,
-`sub_274B4`, `sub_19553`, `sub_209D2`, `sub_26415`, `sub_1869D`,
-`sub_2C0FE`) previously flagged under the standing "don't force a
-name onto an ambiguous/large function without sufficient evidence"
-policy.
+functions remain, all large dispatchers previously flagged under the
+standing "don't force a name onto an ambiguous/large function without
+sufficient evidence" policy.
+
+### 2026-09-15 session update, continued: ComputeAmbientLightingTable
+
+Attempted one of the remaining 8 large dispatchers, now that far more
+of the codebase is mapped than when it was first flagged, and it
+turned out to be well-evidenced: named `sub_2784A` ->
+`ComputeAmbientLightingTable`, called from `RedrawDungeonScreen` (the
+core first-person dungeon render) and `AdvanceDayNightPaletteFade`.
+Computes the dungeon's current ambient lighting table in two stages —
+(1) a day/night cycle lookup against `word_36D01` (the confirmed
+clock/tick value) with environmental-override and facing/region
+refinements, then (2) a weather-darkening pass subtracting deltas
+under rain/storm/fog-style conditions. This is the system tying
+together the day/night cycle, weather, and dungeon lighting.
+
+762 named of 769 functions as of this update — only 7 unnamed
+functions remain.
 
 ## Current state (2026-09-14, before any work this session)
 

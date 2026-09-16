@@ -28204,7 +28204,7 @@ loc_20045:                              ; CODE XREF: AdvanceDayNightPaletteFade+
                 mov     cx, 20h ; ' '
                 mov     si, 46CAh
                 call    SetPaletteRange
-                call    sub_2784A
+                call    ComputeAmbientLightingTable
                 mov     word_32950, 5Bh ; '['
                 pop     bx
                 pop     cx
@@ -29572,7 +29572,7 @@ RedrawDungeonScreen proc far            ; CODE XREF: start:loc_10071↑P
                                         ; start+134↑P ...
                 call    BuildDungeonViewportCells ; Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.
                 call    ComputeDungeonCellVisibility
-                call    sub_2784A
+                call    ComputeAmbientLightingTable
                 call    DrawDungeonFloorAndCeiling
                 call    ExtendDungeonCeilingPass
                 call    RenderDungeonViewport
@@ -29591,7 +29591,7 @@ RedrawDungeonScreen endp
 
 RefreshDungeonScreen proc far           ; CODE XREF: start+85↑P
                                         ; start+4F6↑P ...
-                call    sub_2784A       ; Lighter dungeon-screen redraw (skips sub_21306/sub_213FC vs. RedrawDungeonScreen): sub_2784A/sub_20D2F/sub_20C8E, RenderDungeonViewport, conditional ShowResourceDepletedOverlay, plus a conditional DrawMinimap. Called from `start`.
+                call    ComputeAmbientLightingTable ; Lighter dungeon-screen redraw (skips sub_21306/sub_213FC vs. RedrawDungeonScreen): sub_2784A/sub_20D2F/sub_20C8E, RenderDungeonViewport, conditional ShowResourceDepletedOverlay, plus a conditional DrawMinimap. Called from `start`.
                 call    DrawDungeonFloorAndCeiling
                 call    ExtendDungeonCeilingPass
                 call    RenderDungeonViewport
@@ -41985,9 +41985,9 @@ seg094          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2784A       proc far                ; CODE XREF: AdvanceDayNightPaletteFade+79↑P
+ComputeAmbientLightingTable proc far    ; CODE XREF: AdvanceDayNightPaletteFade+79↑P
                                         ; RedrawDungeonScreen+6↑P ...
-                push    ax
+                push    ax              ; Computes the dungeon's current ambient lighting table (working buffer 0x5086) from time-of-day (word_36D01 against a day/night cycle table at 0x7228), environmental override flags (word_36C79), and facing/region (word_36CF5 vs table 0x6E98), then darkens it under weather conditions via delta table 0x76D8. Called from RedrawDungeonScreen and AdvanceDayNightPaletteFade.
                 push    bx
                 push    cx
                 push    dx
@@ -42007,19 +42007,19 @@ sub_2784A       proc far                ; CODE XREF: AdvanceDayNightPaletteFade+
                 test    word_36C79, 1
                 jz      short loc_27887
 
-loc_2787D:                              ; CODE XREF: sub_2784A+1B↑j
-                                        ; sub_2784A+26↑j
+loc_2787D:                              ; CODE XREF: ComputeAmbientLightingTable+1B↑j
+                                        ; ComputeAmbientLightingTable+26↑j
                 mov     di, 5086h
                 mov     cx, 7
                 rep movsw
                 jmp     short loc_278B0
 ; ---------------------------------------------------------------------------
 
-loc_27887:                              ; CODE XREF: sub_2784A+31↑j
+loc_27887:                              ; CODE XREF: ComputeAmbientLightingTable+31↑j
                 mov     si, 7228h
                 mov     ax, word_36D01
 
-loc_2788D:                              ; CODE XREF: sub_2784A+50↓j
+loc_2788D:                              ; CODE XREF: ComputeAmbientLightingTable+50↓j
                 cmp     word ptr [si], 0FFFFh
                 jz      short loc_2789C
                 cmp     ax, [si+2]
@@ -42028,22 +42028,22 @@ loc_2788D:                              ; CODE XREF: sub_2784A+50↓j
                 jmp     short loc_2788D
 ; ---------------------------------------------------------------------------
 
-loc_2789C:                              ; CODE XREF: sub_2784A+46↑j
+loc_2789C:                              ; CODE XREF: ComputeAmbientLightingTable+46↑j
                 mov     word_36D01, 0
                 mov     si, 7228h
 
-loc_278A5:                              ; CODE XREF: sub_2784A+4B↑j
+loc_278A5:                              ; CODE XREF: ComputeAmbientLightingTable+4B↑j
                 add     si, 12h
                 mov     di, 5086h
                 mov     cx, 7
                 rep movsw
 
-loc_278B0:                              ; CODE XREF: sub_2784A+3B↑j
+loc_278B0:                              ; CODE XREF: ComputeAmbientLightingTable+3B↑j
                 xor     ax, ax
                 mov     di, 6E98h
                 mov     cx, 9
 
-loc_278B8:                              ; CODE XREF: sub_2784A+8D↓j
+loc_278B8:                              ; CODE XREF: ComputeAmbientLightingTable+8D↓j
                 mov     bx, word_329F0
                 cmp     [di+2], bx
                 jz      short loc_278DD
@@ -42057,8 +42057,8 @@ loc_278B8:                              ; CODE XREF: sub_2784A+8D↓j
                 cmp     [di+2], bx
                 jz      short loc_278FB
 
-loc_278D3:                              ; CODE XREF: sub_2784A+99↓j
-                                        ; sub_2784A+A3↓j ...
+loc_278D3:                              ; CODE XREF: ComputeAmbientLightingTable+99↓j
+                                        ; ComputeAmbientLightingTable+A3↓j ...
                 add     di, 8
                 inc     ax
                 loop    loc_278B8
@@ -42066,36 +42066,36 @@ loc_278D3:                              ; CODE XREF: sub_2784A+99↓j
                 jmp     short loc_2790B
 ; ---------------------------------------------------------------------------
 
-loc_278DD:                              ; CODE XREF: sub_2784A+75↑j
+loc_278DD:                              ; CODE XREF: ComputeAmbientLightingTable+75↑j
                 test    word_36CF5, 8000h
                 jz      short loc_278D3
                 jmp     short loc_27903
 ; ---------------------------------------------------------------------------
 
-loc_278E7:                              ; CODE XREF: sub_2784A+7B↑j
+loc_278E7:                              ; CODE XREF: ComputeAmbientLightingTable+7B↑j
                 test    word_36CF5, 4000h
                 jz      short loc_278D3
                 jmp     short loc_27903
 ; ---------------------------------------------------------------------------
 
-loc_278F1:                              ; CODE XREF: sub_2784A+81↑j
+loc_278F1:                              ; CODE XREF: ComputeAmbientLightingTable+81↑j
                 test    word_36CF5, 1000h
                 jz      short loc_278D3
                 jmp     short loc_27903
 ; ---------------------------------------------------------------------------
 
-loc_278FB:                              ; CODE XREF: sub_2784A+87↑j
+loc_278FB:                              ; CODE XREF: ComputeAmbientLightingTable+87↑j
                 test    word_36CF5, 2000h
                 jz      short loc_278D3
 
-loc_27903:                              ; CODE XREF: sub_2784A+9B↑j
-                                        ; sub_2784A+A5↑j ...
+loc_27903:                              ; CODE XREF: ComputeAmbientLightingTable+9B↑j
+                                        ; ComputeAmbientLightingTable+A5↑j ...
                 xor     dx, dx
                 mov     bx, 3
                 div     bx
                 inc     ax
 
-loc_2790B:                              ; CODE XREF: sub_2784A+91↑j
+loc_2790B:                              ; CODE XREF: ComputeAmbientLightingTable+91↑j
                 mov     di, 5086h
                 mov     cx, 7
                 mov     si, 76D8h
@@ -42137,8 +42137,8 @@ loc_2790B:                              ; CODE XREF: sub_2784A+91↑j
                 jmp     short loc_279AE
 ; ---------------------------------------------------------------------------
 
-loc_27994:                              ; CODE XREF: sub_2784A+D0↑j
-                                        ; sub_2784A+D8↑j ...
+loc_27994:                              ; CODE XREF: ComputeAmbientLightingTable+D0↑j
+                                        ; ComputeAmbientLightingTable+D8↑j ...
                 mov     ax, [di]
                 cmp     ax, 0
                 jge     short loc_279A6
@@ -42147,15 +42147,15 @@ loc_27994:                              ; CODE XREF: sub_2784A+D0↑j
                 jle     short loc_279A4
                 xor     ax, ax
 
-loc_279A4:                              ; CODE XREF: sub_2784A+156↑j
+loc_279A4:                              ; CODE XREF: ComputeAmbientLightingTable+156↑j
                 mov     [di], ax
 
-loc_279A6:                              ; CODE XREF: sub_2784A+14F↑j
+loc_279A6:                              ; CODE XREF: ComputeAmbientLightingTable+14F↑j
                 add     si, 0Ch
                 add     di, 2
                 loop    loc_27994
 
-loc_279AE:                              ; CODE XREF: sub_2784A+148↑j
+loc_279AE:                              ; CODE XREF: ComputeAmbientLightingTable+148↑j
                 mov     es, word_2E4AA
                 mov     di, 7748h
                 mov     ax, word_328EA
@@ -42200,7 +42200,7 @@ loc_279AE:                              ; CODE XREF: sub_2784A+148↑j
                 pop     bx
                 pop     ax
                 retf
-sub_2784A       endp
+ComputeAmbientLightingTable endp
 
 seg094          ends
 
@@ -74536,7 +74536,7 @@ word_329EC      dw 0                    ; DATA XREF: InitGlobals+174↑w
 word_329EE      dw 0                    ; DATA XREF: InitGlobals+17A↑w
                                         ; UnlockDoorCommand+EE↑r ...
 word_329F0      dw 0                    ; DATA XREF: InitGlobals+180↑w
-                                        ; sub_2784A:loc_278B8↑r
+                                        ; ComputeAmbientLightingTable:loc_278B8↑r
 _blockSize1     dw 0                    ; DATA XREF: InitGlobals+186↑w
                                         ; PrepareWorldDataTableBlockRead+12↑r
 word_329F4      dw 0                    ; DATA XREF: InitGlobals+18C↑w
