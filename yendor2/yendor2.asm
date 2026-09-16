@@ -11951,7 +11951,7 @@ loc_170A7:                              ; CODE XREF: sub_17032+237↓j
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
                 push    cs
-                call    near ptr sub_1728A
+                call    near ptr DrawShopItemSlotGrid
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
                 call    RedrawItemDescriptionAndMaterials
@@ -11990,7 +11990,7 @@ loc_17100:                              ; CODE XREF: sub_17032+CA↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowResourceDepletedOverlay
                 push    cs
-                call    near ptr sub_1728A
+                call    near ptr DrawShopItemSlotGrid
                 call    DrawMouseCursor
                 call    ClearMessageBoxArea
                 call    RestoreCursorBackgroundIfDirty
@@ -12150,9 +12150,9 @@ TryHandleCatalogSlotClick endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1728A       proc far                ; CODE XREF: sub_17032+80↑p
+DrawShopItemSlotGrid proc far           ; CODE XREF: sub_17032+80↑p
                                         ; sub_17032+DD↑p ...
-                push    es
+                push    es              ; Clears the shop item-slot grid area, then draws up to 8 item icons (from a position table at 0x63C8 and an item-id table at 0x558A) via LoadItemCatalogRecord + DrawPicture. Shows 'EMPTY' and sets a word_328C6 flag bit if no items were drawn. Called twice from sub_17032.
                 and     word_328C6, 0FFBFh
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -12161,7 +12161,7 @@ sub_1728A       proc far                ; CODE XREF: sub_17032+80↑p
                 mov     cx, 23h ; '#'
                 mov     ax, 404h
 
-loc_172A1:                              ; CODE XREF: sub_1728A+22↓j
+loc_172A1:                              ; CODE XREF: DrawShopItemSlotGrid+22↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -12175,7 +12175,7 @@ loc_172A1:                              ; CODE XREF: sub_1728A+22↓j
                 mov     si, 558Ah
                 mov     cx, 8
 
-loc_172C9:                              ; CODE XREF: sub_1728A+6B↓j
+loc_172C9:                              ; CODE XREF: DrawShopItemSlotGrid+6B↓j
                 mov     ax, [di]
                 mov     x, ax
                 mov     ax, [di+4]
@@ -12189,7 +12189,7 @@ loc_172C9:                              ; CODE XREF: sub_1728A+6B↓j
                 mov     word_2E530, ax
                 call    DrawPicture
 
-loc_172EF:                              ; CODE XREF: sub_1728A+4F↑j
+loc_172EF:                              ; CODE XREF: DrawShopItemSlotGrid+4F↑j
                 add     si, 4
                 add     di, 0Ah
                 loop    loc_172C9
@@ -12205,9 +12205,9 @@ loc_172EF:                              ; CODE XREF: sub_1728A+4F↑j
                 mov     bx, 7D26h       ; msg
                 call    writeString
 
-locret_1732A:                           ; CODE XREF: sub_1728A+73↑j
+locret_1732A:                           ; CODE XREF: DrawShopItemSlotGrid+73↑j
                 retf
-sub_1728A       endp
+DrawShopItemSlotGrid endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12220,7 +12220,7 @@ RunShopScreen   proc far                ; CODE XREF: UseAbilityCommand+104↓p
                 or      word_328C6, 200h
                 call    BuildShopCategoryTabList
                 push    cs
-                call    near ptr sub_1728A
+                call    near ptr DrawShopItemSlotGrid
                 push    cs
                 call    near ptr ShowMaterialCounterHud
                 call    sub_238CD
@@ -34152,8 +34152,8 @@ TryActivateMonsterByDistance endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23442       proc near               ; CODE XREF: DrawMonsterInfoPanel+75↓p
-                push    dx
+DrawMonsterHealthBar proc near          ; CODE XREF: DrawMonsterInfoPanel+75↓p
+                push    dx              ; Proportional-fill gauge bar: caller sets bx=current, cx=max. Clamps bx to [1,cx] (shifting _font_fgColor by 2 if bx exceeded cx), computes a pixel fill width from the ratio, then draws an 8-row, 45px-wide bar (fgColor fill + bgColor remainder per row). Called once from DrawMonsterInfoPanel, most likely the monster's HP bar.
                 push    di
                 push    es
                 mov     es, _videoSegment
@@ -34165,13 +34165,13 @@ sub_23442       proc near               ; CODE XREF: DrawMonsterInfoPanel+75↓p
                 jg      short loc_2345E
                 mov     bx, 1
 
-loc_2345E:                              ; CODE XREF: sub_23442+17↑j
+loc_2345E:                              ; CODE XREF: DrawMonsterHealthBar+17↑j
                 cmp     bx, cx
                 jle     short loc_23469
                 mov     bx, cx
                 add     _font_fgColor, 2
 
-loc_23469:                              ; CODE XREF: sub_23442+1E↑j
+loc_23469:                              ; CODE XREF: DrawMonsterHealthBar+1E↑j
                 mov     ax, 64h ; 'd'
                 mul     cx
                 div     bx
@@ -34183,11 +34183,11 @@ loc_23469:                              ; CODE XREF: sub_23442+1E↑j
                 jnz     short loc_23480
                 mov     ax, 1
 
-loc_23480:                              ; CODE XREF: sub_23442+39↑j
+loc_23480:                              ; CODE XREF: DrawMonsterHealthBar+39↑j
                 mov     word_3293E, ax
                 mov     cx, 8
 
-loc_23486:                              ; CODE XREF: sub_23442+5F↓j
+loc_23486:                              ; CODE XREF: DrawMonsterHealthBar+5F↓j
                 push    cx
                 mov     cx, word_3293E
                 mov     ax, _font_fgColor
@@ -34203,7 +34203,7 @@ loc_23486:                              ; CODE XREF: sub_23442+5F↓j
                 pop     di
                 pop     dx
                 retn
-sub_23442       endp
+DrawMonsterHealthBar endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34287,7 +34287,7 @@ loc_23538:                              ; CODE XREF: DrawMonsterInfoPanel+60↑j
                 mov     _font_fgColor, 59h ; 'Y'
                 mov     bx, [si+10h]
                 mov     cx, [si+50h]
-                call    sub_23442
+                call    DrawMonsterHealthBar
                 pop     _font_fgColor
                 cmp     word_36CA9, 4Bh ; 'K'
                 jge     short loc_23559

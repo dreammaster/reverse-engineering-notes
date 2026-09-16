@@ -5642,6 +5642,25 @@ floor-type readout, both legend rows).
 
 644 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawShopItemSlotGrid, DrawMonsterHealthBar
+
+Named `sub_1728A` -> `DrawShopItemSlotGrid`, called twice from the
+shop buy handler `sub_17032`: clears the shop's item-slot grid area,
+then draws up to 8 item icons (position table + item-id table) via
+`LoadItemCatalogRecord` + `DrawPicture`, counting how many were
+drawn. Shows "EMPTY" (confirmed via string dump) and sets a
+`word_328C6` flag bit if the shop has nothing to show.
+
+Named `sub_23442` -> `DrawMonsterHealthBar`, called once from
+`DrawMonsterInfoPanel` with `bx`/`cx` (current/max value) set by the
+caller: clamps `bx` to `[1,cx]` (shifting the fill color if `bx`
+exceeded `cx` — plausibly an "overfull" tint), computes a
+proportional pixel fill width from the ratio, then draws an 8-row,
+45px-wide bar (fill color + remainder background color per row) — a
+proportional-fill gauge, most likely the monster info panel's HP bar.
+
+646 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

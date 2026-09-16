@@ -2798,7 +2798,9 @@ static Bytes_0(void) {
 	set_name	(0X17270,	"TryHandleCatalogSlotClick");
 	create_insn	(0X17279);
 	create_insn	(0X17281);
+	set_cmt	(0X1728A,	"Clears the shop item-slot grid area, then draws up to 8 item icons (from a position table at 0x63C8 and an item-id table at 0x558A) via LoadItemCatalogRecord + DrawPicture. Shows 'EMPTY' and sets a word_328C6 flag bit if no items were drawn. Called twice from sub_17032.",	0);
 	create_insn	(0X1728A);
+	set_name	(0X1728A,	"DrawShopItemSlotGrid");
 	create_insn	(x=0X1728B);
 	op_hex		(x,	1);
 	create_insn	(x=0X172FF);
@@ -2976,9 +2978,6 @@ static Bytes_0(void) {
 	set_cmt	(0X17B67,	"Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.",	0);
 	create_insn	(0X17B67);
 	set_name	(0X17B67,	"HitTestCatalogSlot");
-	set_cmt	(0X17B92,	"UseItem, reached from a normal keyboard command slot (called directly from `start`). Calls LoadItemData first; if that signals nothing to do, bails. Otherwise dispatches on word_2E410 (the loaded item's type-flags word) to one of several type-specific effect handlers (sub_1BF94/sub_1C123/sub_1C589/sub_1BEA1/sub_1BBED/sub_1BB48, plus a fallback keyed on a secondary type field) -- none named yet.",	0);
-	create_insn	(0X17B92);
-	set_name	(0X17B92,	"UseItem");
 }
 
 //------------------------------------------------------------------------
@@ -2988,6 +2987,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X17B92,	"UseItem, reached from a normal keyboard command slot (called directly from `start`). Calls LoadItemData first; if that signals nothing to do, bails. Otherwise dispatches on word_2E410 (the loaded item's type-flags word) to one of several type-specific effect handlers (sub_1BF94/sub_1C123/sub_1C589/sub_1BEA1/sub_1BBED/sub_1BB48, plus a fallback keyed on a secondary type field) -- none named yet.",	0);
+	create_insn	(0X17B92);
+	set_name	(0X17B92,	"UseItem");
 	create_insn	(x=0X17BA4);
 	op_hex		(x,	1);
 	create_insn	(x=0X17BAF);
@@ -4978,15 +4980,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1E3AF,	"Draws the current page (13 rows) of the alchemy spell list (buffer 0x565A), each row's name colored by its castability icon-state and highlighted if selected, plus its MP/NUORE/MAGIC ORE costs via DrawSpellCostValue. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E3AF);
 	set_name	(0X1E3AF,	"DrawAlchemySpellList");
-	create_insn	(0X1E3F9);
-	set_cmt	(0X1E405,	"msg",	0);
-	set_cmt	(0X1E447,	"Scans g_partySlotAssignment for the first occupied slot whose record has [+0x94] set, sets word_32924 to it -- default alchemy caster fallback. Called from RestoreOrSelectAlchemyCaster.",	0);
-	create_insn	(0X1E447);
-	set_name	(0X1E447,	"SelectDefaultAlchemyCaster");
-	create_insn	(0X1E46B);
-	set_cmt	(0X1E473,	"Re-validates the cached caster (word_36CCD) via SelectPartyRecordById + [bx+0x94] check, finds their slot in g_partySlotAssignment matching word_328D6, and sets word_32924 to it; falls back to sub_1E447 otherwise. Called from RunAlchemyScreen (screen entry).",	0);
-	create_insn	(0X1E473);
-	set_name	(0X1E473,	"RestoreOrSelectAlchemyCaster");
 }
 
 //------------------------------------------------------------------------
@@ -4996,6 +4989,15 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1E3F9);
+	set_cmt	(0X1E405,	"msg",	0);
+	set_cmt	(0X1E447,	"Scans g_partySlotAssignment for the first occupied slot whose record has [+0x94] set, sets word_32924 to it -- default alchemy caster fallback. Called from RestoreOrSelectAlchemyCaster.",	0);
+	create_insn	(0X1E447);
+	set_name	(0X1E447,	"SelectDefaultAlchemyCaster");
+	create_insn	(0X1E46B);
+	set_cmt	(0X1E473,	"Re-validates the cached caster (word_36CCD) via SelectPartyRecordById + [bx+0x94] check, finds their slot in g_partySlotAssignment matching word_328D6, and sets word_32924 to it; falls back to sub_1E447 otherwise. Called from RunAlchemyScreen (screen entry).",	0);
+	create_insn	(0X1E473);
+	set_name	(0X1E473,	"RestoreOrSelectAlchemyCaster");
 	create_insn	(0X1E4A5);
 	set_cmt	(0X1E4AA,	"Draws alchemy-screen picture 6 at (0x102,0x43), plus message 1. Called from RunAlchemyScreen. Exact narrative (vs. ShowAlchemyIconIdle) not confirmed.",	0);
 	create_insn	(0X1E4AA);
@@ -6361,7 +6363,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2343D);
 	op_hex		(x,	1);
+	set_cmt	(0X23442,	"Proportional-fill gauge bar: caller sets bx=current, cx=max. Clamps bx to [1,cx] (shifting _font_fgColor by 2 if bx exceeded cx), computes a pixel fill width from the ratio, then draws an 8-row, 45px-wide bar (fgColor fill + bgColor remainder per row). Called once from DrawMonsterInfoPanel, most likely the monster's HP bar.",	0);
 	create_insn	(0X23442);
+	set_name	(0X23442,	"DrawMonsterHealthBar");
 	create_insn	(0X234A7);
 	create_insn	(0X234AF);
 	create_insn	(0X234CA);
@@ -6718,6 +6722,15 @@ static Bytes_2(void) {
 	set_cmt	(0X25091,	"Draws a formatted number (ax), using a highlight color if ax > bx (a threshold). Called from DrawThreeThresholdStats.",	0);
 	create_insn	(0X25091);
 	set_name	(0X25091,	"DrawValueWithThresholdColor");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X250BB,	"Sibling of DrawValueWithThresholdColor (same ax>bx threshold-color logic) but using StripSpaces after FormatNumber instead of sub_2570C. Called from DrawCharacterStatSheet for the HP and MP rows.",	0);
 	create_insn	(0X250BB);
 	set_name	(0X250BB,	"DrawTrimmedThresholdValue");
@@ -6728,15 +6741,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25103,	"Moderate confidence: last ShowPartyMembers pipeline step. Reuses message pointers ShowCharacterStats also uses (0x7A11, 0x8572) alongside others -- reads as a condensed recap/overview screen rather than fresh content.",	0);
 	create_insn	(0X25103);
 	set_name	(0X25103,	"ShowCharacterSummary");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2511E,	"msg",	0);
 	set_cmt	(0X25138,	"msg",	0);
 	create_insn	(0X251E1);
@@ -8911,6 +8915,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2A217,	"Stashes ax into [bp-0x4C] then tail-jumps to the caller-configured function pointer at [bp-0x2A] -- a per-pixel effect callback hook. Called from DrawRleMaskedShadedRun.",	0);
 	create_insn	(0X2A217);
 	set_name	(0X2A217,	"InvokePixelEffectCallback");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_dword	(x=0X2A21F);
 	op_plain_offset	(x,	0,	0X2D860);
 	op_plain_offset	(x,	128,	0X2D860);
@@ -9006,15 +9019,6 @@ static Bytes_3(void) {
 	create_insn	(0X2A305);
 	create_insn	(x=0X2A308);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A312);
 	create_insn	(x=0X2A315);
 	op_hex		(x,	1);
@@ -11563,6 +11567,15 @@ static Bytes_4(void) {
 	set_name	(0X36647,	"aHaveAllOf");
 	create_strlit	(0X36653,	0XB);
 	set_name	(0X36653,	"aTheItems");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3665E,	0X7);
 	set_name	(0X3665E,	"aSick_0");
 	create_strlit	(0X36665,	0XB);
@@ -11604,15 +11617,6 @@ static Bytes_4(void) {
 	set_name	(0X3677B,	"aAlchemistTrans");
 	create_strlit	(0X3679B,	0X1A);
 	set_name	(0X3679B,	"aPaladinCavalie");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X367B5,	0X19);
 	set_name	(0X367B5,	"aMageWizardSorc");
 	create_strlit	(0X367CE,	0X19);
