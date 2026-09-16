@@ -412,7 +412,10 @@ that container's own saved inventory contents from **`CURGAME`**
 (`FileEntry` `bx=0x8FFB`, `errorCode=0xB`) into the matching bag slot
 area. Clicking an open container again calls `SaveAndCloseContainer`,
 which writes the bag's contents back to `CURGAME` (same `FileEntry`)
-if nonempty, then clears the marker — unloading it. So each bag's
+if nonempty, then clears the marker — unloading it.
+`CloseAllAlternateBags` (was `sub_266A9`, called from
+`RestorePortraitAreaAtPosition`) calls it for all 3 marker offsets at
+once, e.g. when leaving the inventory screen. So each bag's
 contents persist independently in the savegame, swapped into the
 character's inventory groups only while open.
 

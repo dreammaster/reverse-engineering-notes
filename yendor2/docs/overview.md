@@ -4775,6 +4775,23 @@ meanings weren't identified.
 
 569 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CloseAllAlternateBags + ClearDepletedResourceCounterForCommand
+
+Named two more small helpers. `sub_266A9` -> `CloseAllAlternateBags`
+(called once from `RestorePortraitAreaAtPosition`): clears the current
+party member's `[+0x15C]` high status bits, then calls
+`SaveAndCloseContainer` for each of the 3 documented alternate-bag
+marker offsets (`0x17C`/`0x1A2`/`0x1C8`) — closing every open bag for
+that member, e.g. when leaving the inventory screen. `sub_26928` ->
+`ClearDepletedResourceCounterForCommand` (called from `PlaceItemInSlot`
+and `PickUpItemFromSlot`): zeroes one of `[si+0xBE]`/`[si+0xC0]`/
+`[si+0xC2]` depending on the current command code (`word_2E40A`) — the
+same 3 fields the still-untraced `sub_274B4` clears for specific item
+types via its own `ShowResourceDepletedOverlay` path, adding another
+data point toward eventually tracing that dispatcher.
+
+571 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -7013,7 +7013,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2663F);
 	set_cmt	(0X26660,	"this",	0);
+	set_cmt	(0X266A9,	"Clears [si+0x15C] high bits (above 0xFFF) then calls SaveAndCloseContainer for each of the 3 alternate-bag marker offsets (0x17C/0x1A2/0x1C8) -- closes every open bag for the current party member. Called from RestorePortraitAreaAtPosition.",	0);
 	create_insn	(0X266A9);
+	set_name	(0X266A9,	"CloseAllAlternateBags");
 	create_insn	(x=0X266B4);
 	op_hex		(x,	1);
 	set_cmt	(0X266D4,	"Places the held item into slot di and adds its value to one of 3 equipment-section running totals (+0x180/+0x1A6/+0x1CC, selected by [+0x15C] flag bits) or the general total (+0x118) -- the exact mirror of PickUpItemFromSlot. Called from SwapHeldItemWithSlot and PlaceHeldItemIntoEmptySlot.",	0);
@@ -7062,7 +7064,9 @@ static Bytes_2(void) {
 	create_insn	(0X268F4);
 	set_name	(0X268F4,	"SaveAndCloseContainer");
 	set_cmt	(0X268FB,	"this",	0);
+	set_cmt	(0X26928,	"Zeroes [si+0xBE]/[si+0xC0]/[si+0xC2] depending on word_2E40A (0xA/0xC/0xD) -- the same 3 fields sub_274B4 clears for item types 0x13A/0x142/0x146. Called from PlaceItemInSlot and PickUpItemFromSlot.",	0);
 	create_insn	(0X26928);
+	set_name	(0X26928,	"ClearDepletedResourceCounterForCommand");
 	create_insn	(0X26937);
 	create_insn	(0X26946);
 	set_cmt	(0X26954,	"GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.",	0);
@@ -7216,6 +7220,15 @@ static Bytes_2(void) {
 	set_name	(0X2704C,	"ShowResourceDepletedOverlay");
 	create_insn	(x=0X27050);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X27056);
 	op_hex		(x,	1);
 	set_cmt	(0X270FE,	"Hit-tests region table 0x636C (also used by TryCureAilmentFromIconClick, with a different mouse-position pair). Zones 1-3 -> sub_271DC (not traced); zones 4+ -> table 0x950D, stride 4 -- which for zone 4..9 is the exact same memory as TryCureAilmentFromIconClick's 6-slot ailment table, implying a 9-slot array whose first 3 entries are something else (equipment icons?), not confirmed.",	0);
@@ -7228,15 +7241,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X27180,	"msg",	0);
 	set_cmt	(0X271A0,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X271C0,	"msg",	0);
 	create_insn	(0X271DC);
 	create_insn	(0X27203);
@@ -9480,6 +9484,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X2BF3C);
 	op_hex		(x,	1);
 	set_name	(0X2BF3C,	"CompactPartyRosterSlots");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2BF57);
 	op_hex		(x,	1);
 	create_insn	(0X2BF76);
@@ -9491,15 +9504,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2C010,	"Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).",	0);
 	create_insn	(0X2C010);
 	set_name	(0X2C010,	"RepairItemCommand");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2C03D);
 	create_insn	(x=0X2C050);
 	op_hex		(x,	1);

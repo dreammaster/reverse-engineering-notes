@@ -15818,7 +15818,7 @@ RestorePortraitAreaAtPosition proc near ; CODE XREF: sub_1869D+442↑p
 loc_190EF:                              ; CODE XREF: RestorePortraitAreaAtPosition+3↑j
                 mov     ax, [si]
                 call    SelectPartyRecordById
-                call    sub_266A9
+                call    CloseAllAlternateBags
                 push    ds
                 mov     dx, _emsPointer1?
                 mov     bx, 55D8h
@@ -39828,8 +39828,8 @@ sub_26415       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_266A9       proc far                ; CODE XREF: RestorePortraitAreaAtPosition+D↑P
-                push    ax
+CloseAllAlternateBags proc far          ; CODE XREF: RestorePortraitAreaAtPosition+D↑P
+                push    ax              ; Clears [si+0x15C] high bits (above 0xFFF) then calls SaveAndCloseContainer for each of the 3 alternate-bag marker offsets (0x17C/0x1A2/0x1C8) -- closes every open bag for the current party member. Called from RestorePortraitAreaAtPosition.
                 push    bx
                 push    cx
                 push    dx
@@ -39852,7 +39852,7 @@ sub_266A9       proc far                ; CODE XREF: RestorePortraitAreaAtPositi
                 pop     bx
                 pop     ax
                 retf
-sub_266A9       endp
+CloseAllAlternateBags endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -39925,7 +39925,7 @@ loc_26770:                              ; CODE XREF: PlaceItemInSlot+79↑j
 
 loc_26774:                              ; CODE XREF: PlaceItemInSlot+52↑j
                                         ; PlaceItemInSlot+5F↑j ...
-                call    sub_26928
+                call    ClearDepletedResourceCounterForCommand
                 retn
 PlaceItemInSlot endp
 
@@ -40145,30 +40145,31 @@ SaveAndCloseContainer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26928       proc near               ; CODE XREF: PlaceItemInSlot:loc_26774↑p
+ClearDepletedResourceCounterForCommand proc near
+                                        ; CODE XREF: PlaceItemInSlot:loc_26774↑p
                                         ; PickUpItemFromSlot:loc_26C0A↓p
-                cmp     word_2E40A, 0Ah
+                cmp     word_2E40A, 0Ah ; Zeroes [si+0xBE]/[si+0xC0]/[si+0xC2] depending on word_2E40A (0xA/0xC/0xD) -- the same 3 fields sub_274B4 clears for item types 0x13A/0x142/0x146. Called from PlaceItemInSlot and PickUpItemFromSlot.
                 jnz     short loc_26937
                 mov     word ptr [si+0BEh], 0
                 jmp     short locret_26953
 ; ---------------------------------------------------------------------------
 
-loc_26937:                              ; CODE XREF: sub_26928+5↑j
+loc_26937:                              ; CODE XREF: ClearDepletedResourceCounterForCommand+5↑j
                 cmp     word_2E40A, 0Ch
                 jnz     short loc_26946
                 mov     word ptr [si+0C0h], 0
                 jmp     short locret_26953
 ; ---------------------------------------------------------------------------
 
-loc_26946:                              ; CODE XREF: sub_26928+14↑j
+loc_26946:                              ; CODE XREF: ClearDepletedResourceCounterForCommand+14↑j
                 cmp     word_2E40A, 0Dh
                 jnz     short locret_26953
                 mov     word ptr [si+0C2h], 0
 
-locret_26953:                           ; CODE XREF: sub_26928+D↑j
-                                        ; sub_26928+1C↑j ...
+locret_26953:                           ; CODE XREF: ClearDepletedResourceCounterForCommand+D↑j
+                                        ; ClearDepletedResourceCounterForCommand+1C↑j ...
                 retn
-sub_26928       endp
+ClearDepletedResourceCounterForCommand endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -40569,7 +40570,7 @@ loc_26C06:                              ; CODE XREF: PickUpItemFromSlot+94↑j
 
 loc_26C0A:                              ; CODE XREF: PickUpItemFromSlot+6B↑j
                                         ; PickUpItemFromSlot+7A↑j ...
-                call    sub_26928
+                call    ClearDepletedResourceCounterForCommand
                 retn
 PickUpItemFromSlot endp
 
