@@ -1229,7 +1229,15 @@ polls input,
 hit-tests clickable regions, reuses the party-member panel-select
 routine, and shows a confirm prompt (plausibly for an ore conversion)
 before exiting back to the dungeon via `ApplyMapTriggerEffect`. Its
-many internal helper calls aren't individually traced yet.
+many internal helper calls aren't individually traced yet, but one
+cluster now is: `BuildAlchemySpellList` (was `sub_1E1A7`) builds the
+filtered list of known spells (an eligibility check, `sub_27A66`, not
+itself traced) unless the character is incapacitated, then calls
+`CheckSpellCastability` (was `sub_1E285`) on each to check whether the
+character can currently afford it — enough MP (`+0x54`), MAGIC ORE
+(`0x94B7`), and NUORE (`0x94BB`), loading each spell's cost data via
+`LoadClueBookSpellEntry` — setting a "castable" icon state for the ones
+that qualify. Pagination is 13 spells/page.
 `RunAlchemyScreen` also calls `ShowCompassDirection`, a
 "NORTH"/"SOUTH"/"EAST"/"WEST" HUD readout gated on an unidentified
 "compass active" mode (`word_328CA` bit `0x1000` clear, `word_36C7F`

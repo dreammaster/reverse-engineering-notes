@@ -3895,6 +3895,16 @@ equivalent of `LoadClueBookMonsterEntry`'s `WORLD.DAT` read.
 
 495 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: BuildAlchemySpellList, CheckSpellCastability
+
+Named `sub_1E1A7` -> `BuildAlchemySpellList` and `sub_1E285` ->
+`CheckSpellCastability`, both called from `RunAlchemyScreen`: builds
+the alchemy screen's filtered known-spell list, then checks each
+spell's affordability (MP, MAGIC ORE, NUORE) via
+`LoadClueBookSpellEntry`'s cost data, marking castable ones.
+
+497 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

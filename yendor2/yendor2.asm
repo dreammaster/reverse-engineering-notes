@@ -24618,7 +24618,7 @@ loc_1DD00:                              ; CODE XREF: RunAlchemyScreen+C↑j
 
 loc_1DD16:                              ; CODE XREF: RunAlchemyScreen+16↑j
                                         ; RunAlchemyScreen+29↑j
-                call    sub_1E1A7
+                call    BuildAlchemySpellList
                 cmp     word_33310, 0
                 jnz     short loc_1DD28
                 call    FlashStatusWarning
@@ -24906,7 +24906,7 @@ loc_1DF4F:                              ; CODE XREF: RunAlchemyScreen:loc_1DDE5�
                 mov     bx, ax
                 cmp     word ptr [bx+94h], 0
                 jz      short loc_1DF87
-                call    sub_1E1A7
+                call    BuildAlchemySpellList
                 add     sp, 6
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawPartyStatusIconRow
@@ -24944,7 +24944,7 @@ loc_1DFBA:                              ; CODE XREF: RunAlchemyScreen+2D5↑j
                 mov     ax, [di]
                 mov     word_3331E, ax
                 mov     [si+0C8h], ax
-                call    sub_1E1A7
+                call    BuildAlchemySpellList
                 call    sub_1E3AF
                 call    DrawMouseCursor
                 mov     si, word_328D4
@@ -25020,7 +25020,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
                 call    sub_1E522
-                call    sub_1E1A7
+                call    BuildAlchemySpellList
                 call    sub_1E3AF
                 call    sub_1E356
                 call    DrawAlchemyStatusPanel
@@ -25134,9 +25134,9 @@ RunAlchemyScreen endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E1A7       proc near               ; CODE XREF: RunAlchemyScreen:loc_1DD16↑p
+BuildAlchemySpellList proc near         ; CODE XREF: RunAlchemyScreen:loc_1DD16↑p
                                         ; RunAlchemyScreen+294↑p ...
-                push    bx
+                push    bx              ; Builds the alchemy screen's filtered list of known spells (sub_27A66 eligibility check) into buffer 0x565A, calling CheckSpellCastability on each (unless incapacitated), then computes pagination (13/page) and locates the current selection. Called from RunAlchemyScreen.
                 push    cx
                 push    dx
                 push    si
@@ -25155,7 +25155,7 @@ sub_1E1A7       proc near               ; CODE XREF: RunAlchemyScreen:loc_1DD16�
                 mov     si, word_328D4
                 mov     cx, word_3330C
 
-loc_1E1DE:                              ; CODE XREF: sub_1E1A7+56↓j
+loc_1E1DE:                              ; CODE XREF: BuildAlchemySpellList+56↓j
                 mov     ax, word_3330A
                 call    sub_27A66
                 jz      short loc_1E1F9
@@ -25165,7 +25165,7 @@ loc_1E1DE:                              ; CODE XREF: sub_1E1A7+56↓j
                 inc     word_33310
                 add     di, 4
 
-loc_1E1F9:                              ; CODE XREF: sub_1E1A7+3F↑j
+loc_1E1F9:                              ; CODE XREF: BuildAlchemySpellList+3F↑j
                 inc     word_3330A
                 loop    loc_1E1DE
                 cmp     word_33310, 0
@@ -25176,12 +25176,12 @@ loc_1E1F9:                              ; CODE XREF: sub_1E1A7+3F↑j
                 mov     di, 565Ah
                 mov     cx, word_33310
 
-loc_1E218:                              ; CODE XREF: sub_1E1A7+77↓j
-                call    sub_1E285
+loc_1E218:                              ; CODE XREF: BuildAlchemySpellList+77↓j
+                call    CheckSpellCastability
                 add     di, 4
                 loop    loc_1E218
 
-loc_1E220:                              ; CODE XREF: sub_1E1A7+68↑j
+loc_1E220:                              ; CODE XREF: BuildAlchemySpellList+68↑j
                 mov     word_33312, 0Dh
                 mov     ax, word_33310
                 xor     dx, dx
@@ -25193,7 +25193,7 @@ loc_1E220:                              ; CODE XREF: sub_1E1A7+68↑j
                 mov     word_33312, dx
                 inc     word_33314
 
-loc_1E23F:                              ; CODE XREF: sub_1E1A7+8E↑j
+loc_1E23F:                              ; CODE XREF: BuildAlchemySpellList+8E↑j
                 mov     si, word_328D4
                 mov     ax, [si+0C8h]
                 or      ax, ax
@@ -25201,20 +25201,20 @@ loc_1E23F:                              ; CODE XREF: sub_1E1A7+8E↑j
                 mov     bx, 565Ah
                 mov     cx, word_33310
 
-loc_1E252:                              ; CODE XREF: sub_1E1A7+B2↓j
+loc_1E252:                              ; CODE XREF: BuildAlchemySpellList+B2↓j
                 cmp     ax, [bx]
                 jz      short loc_1E269
                 add     bx, 4
                 loop    loc_1E252
 
-loc_1E25B:                              ; CODE XREF: sub_1E1A7+A2↑j
+loc_1E25B:                              ; CODE XREF: BuildAlchemySpellList+A2↑j
                 mov     word_33316, 1
                 mov     ax, 565Ah
                 mov     word_3330E, ax
                 jmp     short loc_1E27E
 ; ---------------------------------------------------------------------------
 
-loc_1E269:                              ; CODE XREF: sub_1E1A7+AD↑j
+loc_1E269:                              ; CODE XREF: BuildAlchemySpellList+AD↑j
                 mov     word_3330E, bx
                 sub     bx, 565Ah
                 mov     ax, bx
@@ -25224,8 +25224,8 @@ loc_1E269:                              ; CODE XREF: sub_1E1A7+AD↑j
                 inc     ax
                 mov     word_33316, ax
 
-loc_1E27E:                              ; CODE XREF: sub_1E1A7+5D↑j
-                                        ; sub_1E1A7+C0↑j
+loc_1E27E:                              ; CODE XREF: BuildAlchemySpellList+5D↑j
+                                        ; BuildAlchemySpellList+C0↑j
                 pop     es
                 pop     di
                 pop     si
@@ -25233,14 +25233,14 @@ loc_1E27E:                              ; CODE XREF: sub_1E1A7+5D↑j
                 pop     cx
                 pop     bx
                 retn
-sub_1E1A7       endp
+BuildAlchemySpellList endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E285       proc near               ; CODE XREF: sub_1E1A7:loc_1E218↑p
-                mov     word ptr [di+2], 6
+CheckSpellCastability proc near         ; CODE XREF: BuildAlchemySpellList:loc_1E218↑p
+                mov     word ptr [di+2], 6 ; Loads the spell (LoadClueBookSpellEntry) and checks context-gating flags plus NUORE (0x94BB)/MAGIC ORE (0x94B7)/MP (+0x54) affordability; sets the spell's icon-state to 0xF if all pass. Called from BuildAlchemySpellList.
                 mov     ax, [di]
                 call    LoadClueBookSpellEntry
                 test    word_328CA, 1000h
@@ -25250,11 +25250,11 @@ sub_1E285       proc near               ; CODE XREF: sub_1E1A7:loc_1E218↑p
                 jmp     short loc_1E2AB
 ; ---------------------------------------------------------------------------
 
-loc_1E2A3:                              ; CODE XREF: sub_1E285+12↑j
+loc_1E2A3:                              ; CODE XREF: CheckSpellCastability+12↑j
                 test    word_33302, 3000h
                 jnz     short locret_1E2E4
 
-loc_1E2AB:                              ; CODE XREF: sub_1E285+1C↑j
+loc_1E2AB:                              ; CODE XREF: CheckSpellCastability+1C↑j
                 mov     ax, word_332D4
                 or      ax, ax
                 jz      short loc_1E2BF
@@ -25263,7 +25263,7 @@ loc_1E2AB:                              ; CODE XREF: sub_1E285+1C↑j
                 call    IsBCDCounterAtLeast
                 jb      short locret_1E2E4
 
-loc_1E2BF:                              ; CODE XREF: sub_1E285+2B↑j
+loc_1E2BF:                              ; CODE XREF: CheckSpellCastability+2B↑j
                 mov     ax, word_332D6
                 or      ax, ax
                 jz      short loc_1E2D3
@@ -25272,17 +25272,17 @@ loc_1E2BF:                              ; CODE XREF: sub_1E285+2B↑j
                 call    IsBCDCounterAtLeast
                 jb      short locret_1E2E4
 
-loc_1E2D3:                              ; CODE XREF: sub_1E285+3F↑j
+loc_1E2D3:                              ; CODE XREF: CheckSpellCastability+3F↑j
                 mov     si, word_328D4
                 mov     ax, word_332D2
                 cmp     ax, [si+54h]
                 jg      short locret_1E2E4
                 mov     word ptr [di+2], 0Fh
 
-locret_1E2E4:                           ; CODE XREF: sub_1E285+1A↑j
-                                        ; sub_1E285+24↑j ...
+locret_1E2E4:                           ; CODE XREF: CheckSpellCastability+1A↑j
+                                        ; CheckSpellCastability+24↑j ...
                 retn
-sub_1E285       endp
+CheckSpellCastability endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42279,7 +42279,7 @@ TestGlobalFlag  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A66       proc far                ; CODE XREF: sub_1E1A7+3A↑P
+sub_27A66       proc far                ; CODE XREF: BuildAlchemySpellList+3A↑P
                                         ; MarkIneligiblePartyMembers+16↓P
                 push    si
                 call    GetRecordFlagBitAndWord_CA
@@ -76752,12 +76752,12 @@ word_32DE8      dw 0                    ; DATA XREF: ProbeFacingTile+D↑w
 word_332D0      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+C8↑r
                                         ; MarkIneligiblePartyMembers+29↑r
 word_332D2      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+62↑r
-                                        ; sub_1E285+52↑r ...
+                                        ; CheckSpellCastability+52↑r ...
 ; FileEntry *word_332D4
 word_332D4      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+5E↑r
-                                        ; sub_1E285:loc_1E2AB↑r ...
+                                        ; CheckSpellCastability:loc_1E2AB↑r ...
 word_332D6      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+5A↑r
-                                        ; sub_1E285:loc_1E2BF↑r ...
+                                        ; CheckSpellCastability:loc_1E2BF↑r ...
 word_332D8      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+1F6↑r
                                         ; ShowClueBookSpellDetail+210↑r ...
 word_332DA      dw 0                    ; DATA XREF: sub_2C0FE:loc_2C1FB↑r
@@ -76806,7 +76806,7 @@ word_33306      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+19E
 word_3330A      dw 0                    ; DATA XREF: RunClueBookSpellCategory+B↑w
                                         ; sub_13C1D+9↑r ...
 word_3330C      dw 0                    ; DATA XREF: InitGlobals+1F2↑w
-                                        ; sub_1E1A7+33↑r
+                                        ; BuildAlchemySpellList+33↑r
 word_3330E      dw 0                    ; DATA XREF: RunAlchemyScreen+175↑w
                                         ; RunAlchemyScreen+214↑w ...
 word_33310      dw 0                    ; DATA XREF: RunAlchemyScreen+39↑r

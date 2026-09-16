@@ -4817,11 +4817,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1E17C);
 	op_hex		(x,	1);
 	create_insn	(0X1E18A);
+	set_cmt	(0X1E1A7,	"Builds the alchemy screen's filtered list of known spells (sub_27A66 eligibility check) into buffer 0x565A, calling CheckSpellCastability on each (unless incapacitated), then computes pagination (13/page) and locates the current selection. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E1A7);
+	set_name	(0X1E1A7,	"BuildAlchemySpellList");
 	create_insn	(x=0X1E20A);
 	op_hex		(x,	1);
 	create_insn	(0X1E269);
+	set_cmt	(0X1E285,	"Loads the spell (LoadClueBookSpellEntry) and checks context-gating flags plus NUORE (0x94BB)/MAGIC ORE (0x94B7)/MP (+0x54) affordability; sets the spell's icon-state to 0xF if all pass. Called from BuildAlchemySpellList.",	0);
 	create_insn	(0X1E285);
+	set_name	(0X1E285,	"CheckSpellCastability");
 	create_insn	(x=0X1E291);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E299);
@@ -5550,6 +5554,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2117F,	"Null-check wrapper: calls DrawDungeonCellSideFeature only if the cell's [+2] field is nonzero. Called from RenderDungeonViewRow per cell.",	0);
 	create_insn	(0X2117F);
 	set_name	(0X2117F,	"TryDrawDungeonCellSideFeature");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X21187,	"Draws a door/side-feature sprite for the current cell: table at 0xE175 (10-byte stride, 4 facing directions) indexed by the cell's [+2] id, picture drawn at z-layer 7 or 8 depending on near/far distance banding, plus a conditional overlay (picture 6) for an open-door/lit-torch-like variant. Also called from sub_21217.",	0);
 	create_insn	(0X21187);
 	set_name	(0X21187,	"DrawDungeonCellSideFeature");
@@ -5565,15 +5578,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X21217);
 	op_hex		(x,	1);
 	set_name	(0X21217,	"RenderDungeonVanishingPoint");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2125A);
 	op_hex		(x,	1);
 	create_insn	(x=0X212AC);
@@ -7594,6 +7598,15 @@ static Bytes_2(void) {
 	set_cmt	(0X286B2,	"UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.",	0);
 	create_insn	(0X286B2);
 	set_name	(0X286B2,	"UpdateMonsterWoundTier");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X286C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X286DB);
@@ -7624,15 +7637,6 @@ static Bytes_2(void) {
 	create_byte	(0X287D3);
 	make_array	(0X287D3,	0X31);
 	set_name	(0X287D3,	"aMinimumOf1mbEx");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X28804);
 	make_array	(0X28804,	0X25);
 	set_name	(0X28804,	"aAnEmmMappingEr");
@@ -10656,6 +10660,15 @@ static Bytes_3(void) {
 	set_name	(0X35611,	"aRestHere");
 	create_strlit	(0X3561B,	0XC);
 	set_name	(0X3561B,	"aExperience");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35627,	0XD);
 	set_name	(0X35627,	"aStrength");
 	create_strlit	(0X35634,	0XD);
@@ -10678,15 +10691,6 @@ static Bytes_3(void) {
 	create_strlit	(0X356C3,	0XD);
 	set_name	(0X356C3,	"aMagicPoints");
 	create_strlit	(0X356D0,	0XD);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X356DD,	0XD);
 	set_name	(0X356DD,	"aSurvival");
 	create_strlit	(0X356EA,	0XD);
