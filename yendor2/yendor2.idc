@@ -9510,7 +9510,9 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2B41C);
 	create_insn	(0X2B42C);
+	set_cmt	(0X2B436,	"'New Game' initializer: clears the party roster and a per-record flag across all 9 party slots, resets world-state globals (starting position word_36CF7/word_36CF9=0xA6/0x24, facing, clock/calendar fields, etc.), and writes zeroed/reset records back to WORLD.DAT across several loops. Called once from RunTitleScreen.",	0);
 	create_insn	(0X2B436);
+	set_name	(0X2B436,	"InitializeNewGameWorldState");
 	set_cmt	(0X2B43E,	"this",	0);
 	create_insn	(x=0X2B47E);
 	op_hex		(x,	1);
@@ -10932,6 +10934,15 @@ static Bytes_4(void) {
 	set_name	(0X353A0,	"aSickness");
 	create_strlit	(0X353A9,	0X8);
 	set_name	(0X353A9,	"aStoning");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X353B1,	0X7);
 	set_name	(0X353B1,	"aFrozen_0");
 	create_strlit	(0X353B8,	0X9);
@@ -10952,15 +10963,6 @@ static Bytes_4(void) {
 	set_name	(0X353F2,	"aTransports");
 	create_strlit	(0X353FE,	0XA);
 	set_name	(0X353FE,	"aCurrently");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35408,	0X6);
 	set_name	(0X35408,	"aLevel_0");
 	create_strlit	(0X3540E,	0X9);

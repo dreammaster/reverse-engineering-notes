@@ -6072,6 +6072,20 @@ traced.
 
 691 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: InitializeNewGameWorldState
+
+Named `sub_2B436` -> `InitializeNewGameWorldState`, called once from
+`RunTitleScreen` — the "New Game" initializer. Clears the party
+roster and a per-record flag across all 9 party slots, resets a
+large block of world-state globals to their starting values
+(including the party's starting world position `word_36CF7`/
+`word_36CF9` = `0xA6`/`0x24` and facing), and writes zeroed/reset
+records back to `WORLD.DAT` across several loops. Resets the save
+game's entire persistent world state back to a fresh starting
+condition before a new game begins.
+
+692 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

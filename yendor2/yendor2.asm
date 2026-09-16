@@ -23526,7 +23526,7 @@ RunTitleScreen  proc far                ; CODE XREF: start+A0F↑P
                 jnz     short loc_1D2D0
                 test    word_328C4, 4000h
                 jnz     short loc_1D2D0
-                call    sub_2B436
+                call    InitializeNewGameWorldState
 
 loc_1D2D0:                              ; CODE XREF: RunTitleScreen+1B↑j
                                         ; RunTitleScreen+23↑j ...
@@ -42619,7 +42619,7 @@ PrepareMusicDataRead endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27C78       proc far                ; CODE XREF: sub_2B436+12↓P
+sub_27C78       proc far                ; CODE XREF: InitializeNewGameWorldState+12↓P
                 push    si
                 mov     si, 0CE6Fh
                 mov     [bx+4], ax
@@ -49616,8 +49616,8 @@ seg118          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B436       proc far                ; CODE XREF: RunTitleScreen+25↑P
-                push    word_36CE1
+InitializeNewGameWorldState proc far    ; CODE XREF: RunTitleScreen+25↑P
+                push    word_36CE1      ; 'New Game' initializer: clears the party roster and a per-record flag across all 9 party slots, resets world-state globals (starting position word_36CF7/word_36CF9=0xA6/0x24, facing, clock/calendar fields, etc.), and writes zeroed/reset records back to WORLD.DAT across several loops. Called once from RunTitleScreen.
                 push    word_36CE3
                 push    g_driverStateFlags ; this
                 mov     ax, 93FFh
@@ -49634,7 +49634,7 @@ sub_2B436       proc far                ; CODE XREF: RunTitleScreen+25↑P
                 mov     cx, 9
                 mov     si, 95F3h
 
-loc_2B47E:                              ; CODE XREF: sub_2B436+52↓j
+loc_2B47E:                              ; CODE XREF: InitializeNewGameWorldState+52↓j
                 and     word ptr [si+15Ch], 0F7FFh
                 add     si, 1F4h
                 loop    loc_2B47E
@@ -49671,7 +49671,7 @@ loc_2B47E:                              ; CODE XREF: sub_2B436+52↓j
                 rep stosw
                 mov     cx, 90h
 
-loc_2B520:                              ; CODE XREF: sub_2B436+FD↓j
+loc_2B520:                              ; CODE XREF: InitializeNewGameWorldState+FD↓j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -49689,7 +49689,7 @@ loc_2B520:                              ; CODE XREF: sub_2B436+FD↓j
                 mov     word_36863, 0
                 mov     cx, 10h
 
-loc_2B55D:                              ; CODE XREF: sub_2B436+13B↓j
+loc_2B55D:                              ; CODE XREF: InitializeNewGameWorldState+13B↓j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -49720,12 +49720,12 @@ loc_2B55D:                              ; CODE XREF: sub_2B436+13B↓j
                 mov     word ptr [bx+6], 0BB8h
                 mov     cx, 260h
 
-loc_2B5CE:                              ; CODE XREF: sub_2B436+1B8↓j
+loc_2B5CE:                              ; CODE XREF: InitializeNewGameWorldState+1B8↓j
                 cmp     cx, 0BB8h
                 jge     short loc_2B5D7
                 mov     [bx+6], cx
 
-loc_2B5D7:                              ; CODE XREF: sub_2B436+19C↑j
+loc_2B5D7:                              ; CODE XREF: InitializeNewGameWorldState+19C↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -49759,7 +49759,7 @@ loc_2B5D7:                              ; CODE XREF: sub_2B436+19C↑j
                 or      word_328C6, 400h
                 or      word_328C6, 100h
                 retf
-sub_2B436       endp
+InitializeNewGameWorldState endp
 
 seg118          ends
 
@@ -85996,9 +85996,9 @@ word_36CCD      dw 0                    ; DATA XREF: RestoreOrSelectAlchemyCaste
                 db 0FFh
                 db 0FFh
 word_36CE1      dw 3                    ; DATA XREF: ParseSoundBlasterEnvironmentVariable+91↑w
-                                        ; sub_2B436↑r ...
+                                        ; InitializeNewGameWorldState↑r ...
 word_36CE3      dw 3                    ; DATA XREF: ParseSoundBlasterEnvironmentVariable+8B↑w
-                                        ; sub_2B436+4↑r ...
+                                        ; InitializeNewGameWorldState+4↑r ...
 ; FileEntry *g_driverStateFlags
 g_driverStateFlags dw offset loc_2D869+1 - offset locret_2D860
                                         ; DATA XREF: PlayStudioCreditsIntro+332↑r
