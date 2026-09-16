@@ -6801,8 +6801,10 @@ static Bytes_1(void) {
 	create_insn	(0X2827E);
 	create_insn	(x=0X28281);
 	op_hex		(x,	1);
+	set_cmt	(0X28296,	"Plays music track ax (no-op if g_driverStateFlags bit1/music-active isn't set). Sets up a driver call param (sub_27BAD) then reads the track's data from WORLD.DAT (fixed FileEntry bx=0x9043).",	0);
 	create_insn	(x=0X28296);
 	op_hex		(x,	1);
+	set_name	(0X28296,	"PlayMusicTrack");
 	create_insn	(0X2829F);
 	set_cmt	(0X282B3,	"this",	0);
 	create_insn	(0X282B3);
@@ -10505,6 +10507,15 @@ static Bytes_1(void) {
 	set_name	(0X36812,	"aGood");
 	create_strlit	(0X3681A,	0X8);
 	set_name	(0X3681A,	"aGreat");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36822,	0X10);
 	set_name	(0X36822,	"aVisibleUndeads");
 	create_strlit	(0X36832,	0X9);
@@ -10519,15 +10530,6 @@ static Bytes_1(void) {
 	set_name	(0X3684F,	"aBXxx");
 	create_strlit	(0X36855,	0X6);
 	set_name	(0X36855,	"aFXxx");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_name	(0X3685B,	"curGame");
 	create_word	(0X3685D);
 	create_word	(0X3685F);

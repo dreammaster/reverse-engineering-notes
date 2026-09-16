@@ -651,6 +651,13 @@ unconfirmed).
 
 104 named of 769 functions as of this update.
 
+Also named `PlayMusicTrack` (was `sub_28296`, called from
+`ShowIntroPicture`, the item-icon dispatcher's `0x26D` handler, and
+`sub_11A10`): gated on the music-active flag, reads a music track's data
+from `WORLD.DAT` via the shared `FileEntry` and hands it to the driver.
+
+105 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

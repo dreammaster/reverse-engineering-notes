@@ -2547,7 +2547,7 @@ ShowIntroPicture proc far               ; CODE XREF: start+756↑P
                 or      word_328CA, 8   ; Shows a picture (DrawPicture, id from word_2E530/word_2E532) with a palette fade (FadePaletteStep) and waits for a keypress (byte_2E400, filled by PollKeyboardInput). Called directly from `start` and InitGame -- likely the boot-time splash/logo display.
                 mov     ax, 1
                 mov     word_3297E, ax
-                call    sub_28296
+                call    PlayMusicTrack
                 call    RestoreCursorBackgroundIfDirty
                 mov     x, 1
                 mov     y, 1
@@ -2870,7 +2870,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     ax, 0Ah         ; ticks
                 call    wait
                 mov     ax, 14h
-                call    sub_28296
+                call    PlayMusicTrack
                 mov     x, 1
                 mov     y, 1
                 mov     ax, _videoBufferSeg
@@ -8624,7 +8624,7 @@ loc_15432:                              ; CODE XREF: sub_15429+11↓j
                 inc     di
                 loop    loc_15432
                 mov     ax, 12h
-                call    sub_28296
+                call    PlayMusicTrack
                 or      word_328C8, 800h
                 call    DrawMouseCursor
                 mov     cx, 3Fh ; '?'
@@ -31068,7 +31068,7 @@ loc_21980:                              ; CODE XREF: sub_218DC+93↑j
                                         ; sub_218DC+A1↑j
                 mov     byte_2E400, 0
                 mov     ax, 3
-                call    sub_28296
+                call    PlayMusicTrack
                 or      word_328C8, 800h
                 call    sub_2587E
                 mov     ah, 0
@@ -37684,7 +37684,7 @@ sub_25608       proc far                ; CODE XREF: sub_1E64A+2EE↑P
                 call    FileEntry_Read
                 call    ErrorCheck
                 mov     ax, word_38808
-                call    sub_28296
+                call    PlayMusicTrack
 
 locret_25654:                           ; CODE XREF: sub_25608+21↑j
                 retf
@@ -42485,7 +42485,7 @@ sub_27B84       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27BAD       proc far                ; CODE XREF: sub_28296+2D↓P
+sub_27BAD       proc far                ; CODE XREF: PlayMusicTrack+2D↓P
                 mov     word_368AB, 0
                 mov     word_368A7, ax
                 dec     bx
@@ -43474,14 +43474,14 @@ sub_2827E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28296       proc far                ; CODE XREF: ShowIntroPicture+B↑P
+PlayMusicTrack  proc far                ; CODE XREF: ShowIntroPicture+B↑P
                                         ; sub_11A10+17↑P ...
-                test    g_driverStateFlags, 2
+                test    g_driverStateFlags, 2 ; Plays music track ax (no-op if g_driverStateFlags bit1/music-active isn't set). Sets up a driver call param (sub_27BAD) then reads the track's data from WORLD.DAT (fixed FileEntry bx=0x9043).
                 jnz     short loc_2829F
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2829F:                              ; CODE XREF: sub_28296+6↑j
+loc_2829F:                              ; CODE XREF: PlayMusicTrack+6↑j
                 push    bx
                 push    cx
                 push    dx
@@ -43494,7 +43494,7 @@ loc_2829F:                              ; CODE XREF: sub_28296+6↑j
                 jmp     short loc_2831B
 ; ---------------------------------------------------------------------------
 
-loc_282B3:                              ; CODE XREF: sub_28296+19↑j
+loc_282B3:                              ; CODE XREF: PlayMusicTrack+19↑j
                 push    word_368A5      ; this
                 mov     ax, word_3195E
                 mov     word_368A5, ax
@@ -43525,14 +43525,14 @@ loc_282B3:                              ; CODE XREF: sub_28296+19↑j
                 mov     bx, 6
                 call    near ptr byte_28616
 
-loc_2831B:                              ; CODE XREF: sub_28296+12↑j
-                                        ; sub_28296+1B↑j
+loc_2831B:                              ; CODE XREF: PlayMusicTrack+12↑j
+                                        ; PlayMusicTrack+1B↑j
                 pop     es
                 pop     dx
                 pop     cx
                 pop     bx
                 retf
-sub_28296       endp
+PlayMusicTrack  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43583,7 +43583,7 @@ loc_28382:                              ; CODE XREF: sub_28320+3E↑j
                 and     word_328CA, 0FFEFh
                 mov     word_2E4A6, ax
                 push    cs
-                call    near ptr sub_28296
+                call    near ptr PlayMusicTrack
                 retf
 sub_28320       endp
 
@@ -43887,8 +43887,8 @@ loc_285ED:                              ; CODE XREF: sub_28564+85↑j
 sub_28564       endp
 
 ; ---------------------------------------------------------------------------
-byte_28616      db 0CDh                 ; CODE XREF: sub_28296+5B↑p
-                                        ; sub_28296+72↑p ...
+byte_28616      db 0CDh                 ; CODE XREF: PlayMusicTrack+5B↑p
+                                        ; PlayMusicTrack+72↑p ...
 byte_28617      db 0                    ; DATA XREF: ShutdownAudioDrivers+35↑r
                                         ; sub_284CB+42↑w
 ; ---------------------------------------------------------------------------
@@ -49077,7 +49077,7 @@ loc_2AE88:                              ; CODE XREF: sub_2AE3C+44↑j
                 jnz     short loc_2AE9E
                 call    sub_2849C
                 mov     ax, 8
-                call    sub_28296
+                call    PlayMusicTrack
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -56763,7 +56763,7 @@ word_2E4A2      dw 0                    ; DATA XREF: sub_20070+38↑w
                 db    0
                 db    0
 word_2E4A6      dw 0                    ; DATA XREF: sub_209D2↑r
-                                        ; sub_28296+D↑w ...
+                                        ; PlayMusicTrack+D↑w ...
 word_2E4A8      dw 0                    ; DATA XREF: sub_1F0CD+15↑w
                                         ; sub_25608+1D↑r ...
 word_2E4AA      dw 0                    ; DATA XREF: start+17↑w
@@ -70233,8 +70233,8 @@ word_3195A      dw 8                    ; DATA XREF: sub_20070+16↑r
                                         ; sub_20070+20↑w ...
 word_3195C      dw 0                    ; DATA XREF: sub_162B6:loc_162C8↑r
                                         ; sub_162B6+1F↑r ...
-word_3195E      dw 0                    ; DATA XREF: sub_28296+21↑r
-                                        ; sub_28296+49↑r ...
+word_3195E      dw 0                    ; DATA XREF: PlayMusicTrack+21↑r
+                                        ; PlayMusicTrack+49↑r ...
 word_31960      dw 1                    ; DATA XREF: InitMemory+B9↑w
                                         ; InitGraphics+C↑r
 _emsVal1        dw 1                    ; DATA XREF: InitMemory+C7↑w
