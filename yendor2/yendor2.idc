@@ -3712,7 +3712,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1A22A);
 	op_hex		(x,	1);
+	set_cmt	(0X1A233,	"No-op if [bx+0x1C] bit 0x40 (DEAD). Tiers [bx+0x58] (perception stat) against 6 thresholds to a decreasing value (0xC..0); if nonzero, fills icon-bar slot di ([di+0x10]=value, [di+8]/[di+0xA]=word_3293E/word_32940, [di+0xC]=bx) and sets word_328CA bit 0x100. Called from TickPartyAilmentIconBar.",	0);
 	create_insn	(0X1A233);
+	set_name	(0X1A233,	"TickPerceptionGatedAilmentSlot");
 	create_insn	(x=0X1A237);
 	op_hex		(x,	1);
 	create_insn	(0X1A276);
@@ -5287,6 +5289,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1FC02,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
 	create_insn	(x=0X1FC02);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1FC0E);
 	op_seg		(x,	1);
 	create_insn	(x=0X1FC16);
@@ -5300,15 +5311,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X1FC21);
 	op_hex		(x,	1);
 	set_name	(0X1FC21,	"RestoreInt1cVector");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1FC34);
 	op_hex		(x,	1);
 	set_cmt	(0X1FC37,	"DOS - SET INTERRUPT VECTOR\nAL = interrupt number\nDS:DX = new vector to be used for specified interrupt",	0);
@@ -7071,9 +7073,6 @@ static Bytes_2(void) {
 	set_cmt	(0X26778,	"Draws one item icon (ax=item id) at an offset position, with a two-variant toggle ([si+0x10]==1). Bails if ax==0. Called from DrawPartyMemberPortrait.",	0);
 	create_insn	(0X26778);
 	set_name	(0X26778,	"DrawPortraitAccessoryIcon");
-	set_cmt	(0X267A7,	"Draws up to cx equipped-item icons next to a portrait: for each nonzero item id, loads its catalog record and draws its icon at a position offset by word_328BC/word_328C0, using an 'active' icon variant ([+4] vs [+8]) when word_328C6 bit 0x8000 and the item's [+0xC] bit 0x400 are both set. Called from DrawPartyMemberPortrait.",	0);
-	create_insn	(0X267A7);
-	set_name	(0X267A7,	"DrawEquippedItemIcons");
 }
 
 //------------------------------------------------------------------------
@@ -7083,6 +7082,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X267A7,	"Draws up to cx equipped-item icons next to a portrait: for each nonzero item id, loads its catalog record and draws its icon at a position offset by word_328BC/word_328C0, using an 'active' icon variant ([+4] vs [+8]) when word_328C6 bit 0x8000 and the item's [+0xC] bit 0x400 are both set. Called from DrawPartyMemberPortrait.",	0);
+	create_insn	(0X267A7);
+	set_name	(0X267A7,	"DrawEquippedItemIcons");
 	create_insn	(x=0X267C6);
 	op_hex		(x,	1);
 	create_insn	(x=0X267CE);
@@ -9362,10 +9364,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B866,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B866);
 	set_name	(0X2B866,	"ShowConversationText_2000");
-	create_insn	(0X2B8CB);
-	set_cmt	(0X2B8D7,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
-	create_insn	(0X2B8D7);
-	set_name	(0X2B8D7,	"ShowConversationText_1000");
 }
 
 //------------------------------------------------------------------------
@@ -9375,6 +9373,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2B8CB);
+	set_cmt	(0X2B8D7,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
+	create_insn	(0X2B8D7);
+	set_name	(0X2B8D7,	"ShowConversationText_1000");
 	create_insn	(0X2B93C);
 	set_cmt	(0X2B948,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B948);

@@ -2038,8 +2038,13 @@ checks `+0x1C` status bits — **now identified via `DrawAfflictionsList`**:
 `0x2000`/`0x4000`/`0x8000` = DISEASED/POISONED/SICK for the normal
 path (id `2`); `0x80`/`0x100`/`0x200` = CURSED/HEXED/JINXED, gated on
 having MP (`+0x54 != 0`), for the second helper (id `0xE`) — or, on the
-slow path, tiers off the derived stat `+0x58` instead. Whenever
-severity is nonzero it populates a per-member icon-bar slot and calls
+slow path, tiers off the derived stat `+0x58` instead via
+`TickPerceptionGatedAilmentSlot` (was `sub_1A233`, confirmed to
+no-op for dead characters and produce a *decreasing* severity as
+`+0x58` rises across 6 thresholds — the opposite direction from a
+"bigger stat, bigger effect" reading, consistent with `+0x58` being a
+perception stat that *reduces* susceptibility). Whenever severity is
+nonzero it populates a per-member icon-bar slot and calls
 `ApplyEffectAndDrawIconBar`. The `word_36C79` bit-`2` slow-path
 condition still isn't confirmed.
 

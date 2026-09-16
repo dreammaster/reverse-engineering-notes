@@ -5028,6 +5028,21 @@ confirmed.
 
 591 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TickPerceptionGatedAilmentSlot
+
+Named `sub_1A233` -> `TickPerceptionGatedAilmentSlot`, called once
+from `TickPartyAilmentIconBar`. No-ops for dead characters (`+0x1C`
+bit `0x40`); otherwise tiers the character's `+0x58` perception stat
+against 6 ascending thresholds to a *decreasing* severity/duration
+value (higher perception, smaller value), and — if nonzero — fills an
+icon-bar slot with it alongside the staged effect id/magnitude pair
+(`word_3293E`/`word_32940`) and the character pointer, then sets
+`word_328CA` bit `0x100`. A perception-gated ailment effect,
+plausibly confusion/disorientation-flavored, whose severity shrinks
+as perception rises.
+
+592 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

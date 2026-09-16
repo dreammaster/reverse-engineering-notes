@@ -17882,7 +17882,7 @@ loc_1A200:                              ; CODE XREF: TickPartyAilmentIconBar+196
                 cmp     ax, 0
                 jz      short loc_1A21D
                 call    SelectPartyRecordById
-                call    sub_1A233
+                call    TickPerceptionGatedAilmentSlot
                 add     word_32924, 2
                 add     di, 14h
                 loop    loc_1A200
@@ -17901,8 +17901,9 @@ loc_1A230:                              ; CODE XREF: TickPartyAilmentIconBar+19E
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A233       proc near               ; CODE XREF: TickPartyAilmentIconBar+18B↑p
-                mov     bx, word_328D4
+TickPerceptionGatedAilmentSlot proc near
+                                        ; CODE XREF: TickPartyAilmentIconBar+18B↑p
+                mov     bx, word_328D4  ; No-op if [bx+0x1C] bit 0x40 (DEAD). Tiers [bx+0x58] (perception stat) against 6 thresholds to a decreasing value (0xC..0); if nonzero, fills icon-bar slot di ([di+0x10]=value, [di+8]/[di+0xA]=word_3293E/word_32940, [di+0xC]=bx) and sets word_328CA bit 0x100. Called from TickPartyAilmentIconBar.
                 test    word ptr [bx+1Ch], 40h
                 jnz     short locret_1A293
                 mov     ax, 0Ch
@@ -17926,8 +17927,8 @@ sub_1A233       proc near               ; CODE XREF: TickPartyAilmentIconBar+18B
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A276:                              ; CODE XREF: sub_1A233+12↑j
-                                        ; sub_1A233+1B↑j ...
+loc_1A276:                              ; CODE XREF: TickPerceptionGatedAilmentSlot+12↑j
+                                        ; TickPerceptionGatedAilmentSlot+1B↑j ...
                 cmp     ax, 0
                 jz      short locret_1A293
                 mov     [di+10h], ax
@@ -17938,10 +17939,10 @@ loc_1A276:                              ; CODE XREF: sub_1A233+12↑j
                 mov     [di+0Ch], bx
                 or      word_328CA, 100h
 
-locret_1A293:                           ; CODE XREF: sub_1A233+9↑j
-                                        ; sub_1A233+46↑j
+locret_1A293:                           ; CODE XREF: TickPerceptionGatedAilmentSlot+9↑j
+                                        ; TickPerceptionGatedAilmentSlot+46↑j
                 retn
-sub_1A233       endp
+TickPerceptionGatedAilmentSlot endp
 
 seg032          ends
 
