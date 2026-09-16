@@ -230,7 +230,7 @@ loc_1019B:                              ; CODE XREF: start+170↑j
                                         ; start+17D↑j ...
                 add     ax, word_36CF7
                 add     bx, word_36CF9
-                call    sub_216F0
+                call    TryInteractAtPosition
                 cmp     errorCode, 2
                 jz      short loc_101B8
                 cmp     errorCode, 3
@@ -281,7 +281,7 @@ loc_1022B:                              ; CODE XREF: start+20D↑j
                                         ; start+218↑j ...
                 add     ax, word_36CF7
                 add     bx, word_36CF9
-                call    sub_216F0
+                call    TryInteractAtPosition
                 cmp     errorCode, 6
                 jz      short loc_10248
                 cmp     errorCode, 7
@@ -2310,7 +2310,7 @@ loc_11535:                              ; CODE XREF: sub_112AE+282↑j
                 add     ax, word_2E402
                 mov     bx, word_36CF9
                 add     bx, word_2E406
-                call    sub_216F0
+                call    TryInteractAtPosition
                 call    sub_17795
                 jmp     short loc_11581
 ; ---------------------------------------------------------------------------
@@ -12643,7 +12643,7 @@ sub_1766F       endp
 
 
 LoadCurgameRecord proc far              ; CODE XREF: sub_178A6+26↓p
-                                        ; sub_216F0+88↓P ...
+                                        ; TryInteractAtPosition+88↓P ...
                 push    es              ; Reads a record from CURGAME (the active savegame, FileEntry bx=0x8FFB) via EMS paging, indexed by word_32DBC*4 + 0x1A*_val9 (plausibly a per-character row). Splits word_32DD0 by 100 into word_32DC0 (quotient)/word_32DC2 (remainder) -- typical of a currency or time value split into two denominations, not confirmed which.
                 push    si
                 push    di              ; this
@@ -29002,7 +29002,7 @@ loc_207B1:                              ; CODE XREF: sub_2075B+A9↓j
                 mov     ax, x
                 mov     bx, y
                 mov     word_32DCE, 0
-                call    sub_216F0
+                call    TryInteractAtPosition
                 mov     al, 4Eh ; 'N'
                 cmp     errorCode, 4
                 jz      short loc_207F1
@@ -29394,7 +29394,7 @@ loc_20B0B:                              ; CODE XREF: sub_209D2+187↓j
                 push    cx
                 mov     ax, x
                 mov     bx, y
-                call    sub_216F0
+                call    TryInteractAtPosition
                 cmp     errorCode, 0
                 jz      short loc_20B50
                 cmp     errorCode, 0Ah
@@ -30776,9 +30776,9 @@ seg065          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_216F0       proc far                ; CODE XREF: start+1A3↑P
+TryInteractAtPosition proc far          ; CODE XREF: start+1A3↑P
                                         ; start+233↑P ...
-                push    es
+                push    es              ; Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): weight/capacity check (sub_1766F), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.
                 push    di
                 push    dx
                 push    cx
@@ -30796,19 +30796,19 @@ sub_216F0       proc far                ; CODE XREF: start+1A3↑P
                 jmp     loc_217E8
 ; ---------------------------------------------------------------------------
 
-loc_21720:                              ; CODE XREF: sub_216F0+2B↑j
+loc_21720:                              ; CODE XREF: TryInteractAtPosition+2B↑j
                 test    word ptr [si+2], 800h
                 jz      short loc_2172A
                 jmp     loc_217CC
 ; ---------------------------------------------------------------------------
 
-loc_2172A:                              ; CODE XREF: sub_216F0+10↑j
-                                        ; sub_216F0+35↑j ...
+loc_2172A:                              ; CODE XREF: TryInteractAtPosition+10↑j
+                                        ; TryInteractAtPosition+35↑j ...
                 mov     errorCode, 0
                 jmp     loc_217E8
 ; ---------------------------------------------------------------------------
 
-loc_21733:                              ; CODE XREF: sub_216F0+17↑j
+loc_21733:                              ; CODE XREF: TryInteractAtPosition+17↑j
                 mov     ax, [si+4]
                 call    sub_1766F
                 mov     ax, word_32DC8
@@ -30820,21 +30820,21 @@ loc_21733:                              ; CODE XREF: sub_216F0+17↑j
                 jmp     loc_217E8
 ; ---------------------------------------------------------------------------
 
-loc_21755:                              ; CODE XREF: sub_216F0+60↑j
+loc_21755:                              ; CODE XREF: TryInteractAtPosition+60↑j
                 mov     errorCode, 8
                 test    word_32DCE, 40h
                 jz      short loc_21766
                 jmp     loc_217E8
 ; ---------------------------------------------------------------------------
 
-loc_21766:                              ; CODE XREF: sub_216F0+71↑j
+loc_21766:                              ; CODE XREF: TryInteractAtPosition+71↑j
                 mov     errorCode, 9
                 cmp     word_32DD0, 0
                 jnz     short loc_217E8
                 jmp     short loc_2172A
 ; ---------------------------------------------------------------------------
 
-loc_21775:                              ; CODE XREF: sub_216F0+1E↑j
+loc_21775:                              ; CODE XREF: TryInteractAtPosition+1E↑j
                 mov     ax, [si+4]
                 call    LoadCurgameRecord
                 mov     errorCode, 0
@@ -30857,7 +30857,7 @@ loc_21775:                              ; CODE XREF: sub_216F0+1E↑j
                 jmp     short loc_217E8
 ; ---------------------------------------------------------------------------
 
-loc_217CC:                              ; CODE XREF: sub_216F0+37↑j
+loc_217CC:                              ; CODE XREF: TryInteractAtPosition+37↑j
                 mov     errorCode, 0
                 or      word_328C8, 80h
                 mov     ax, [si+4]      ; int
@@ -30865,14 +30865,14 @@ loc_217CC:                              ; CODE XREF: sub_216F0+37↑j
                 jnz     short loc_217E8
                 mov     errorCode, 5
 
-loc_217E8:                              ; CODE XREF: sub_216F0+2D↑j
-                                        ; sub_216F0+40↑j ...
+loc_217E8:                              ; CODE XREF: TryInteractAtPosition+2D↑j
+                                        ; TryInteractAtPosition+40↑j ...
                 pop     cx
                 pop     dx
                 pop     di
                 pop     es
                 retf
-sub_216F0       endp
+TryInteractAtPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -30933,7 +30933,7 @@ ProbeFacingTile endp
 ; =============== S U B R O U T I N E =======================================
 
 
-FindObjectAtPosition proc near          ; CODE XREF: sub_216F0+A↑p
+FindObjectAtPosition proc near          ; CODE XREF: TryInteractAtPosition+A↑p
                                         ; ProbeFacingTile+17↑p ...
                 mov     si, 0           ; Map object lookup: bounds-checks (ax=x, bx=y) against the current map's valid range, indexes a per-column array to a row of 6-byte entries, scans for y==bx (0xFFFF terminates). Found: copies 3 words to word_2E554/556/558, returns si=0xCF4. Not found/out of bounds: si=0.
                 cmp     ax, word_32A02
@@ -31949,7 +31949,7 @@ sub_221A0       proc near               ; CODE XREF: sub_22140:loc_22180↑p
                 push    word_3685F
                 mov     ax, word_328FA
                 mov     bx, word_368AB
-                call    sub_216F0
+                call    TryInteractAtPosition
                 pop     word_3685F
                 pop     word_36863
                 pop     word_36861
@@ -33233,7 +33233,7 @@ sub_22C3E       endp
 
 
 ; int __fastcall __far sub_22C85(int, FileEntry *this)
-sub_22C85       proc far                ; CODE XREF: sub_216F0+EB↑P
+sub_22C85       proc far                ; CODE XREF: TryInteractAtPosition+EB↑P
                 push    ax
                 push    bx
                 push    cx
@@ -45393,7 +45393,7 @@ loc_29340:                              ; CODE XREF: sub_29297+9F↑j
                 push    si
                 mov     ax, word_2E402
                 mov     bx, word_2E406
-                call    sub_216F0
+                call    TryInteractAtPosition
                 pop     si
                 cmp     errorCode, 6
                 jz      short loc_293B4
@@ -51705,7 +51705,7 @@ loc_2C69F:                              ; CODE XREF: sub_2C0FE+583↑j
                                         ; sub_2C0FE+58E↑j ...
                 add     ax, word_36CF7
                 add     bx, word_36CF9
-                call    sub_216F0
+                call    TryInteractAtPosition
                 cmp     errorCode, 6
                 jz      short loc_2C6BD
                 cmp     errorCode, 7
@@ -51769,7 +51769,7 @@ loc_2C759:                              ; CODE XREF: sub_2C0FE+62F↑j
                                         ; sub_2C0FE+63D↑j ...
                 add     ax, word_36CF7
                 add     bx, word_36CF9
-                call    sub_216F0
+                call    TryInteractAtPosition
                 cmp     errorCode, 2
                 jz      short loc_2C777
                 cmp     errorCode, 3
@@ -51824,7 +51824,7 @@ loc_2C7F9:                              ; CODE XREF: sub_2C0FE+6CF↑j
                                         ; sub_2C0FE+6DD↑j ...
                 add     ax, word_36CF7
                 add     bx, word_36CF9
-                call    sub_216F0
+                call    TryInteractAtPosition
                 cmp     errorCode, 0Ah
                 jz      short loc_2C81E
                 cmp     errorCode, 8

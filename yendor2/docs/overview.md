@@ -748,6 +748,22 @@ throughout.
 
 115 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CURGAME autosave and TryInteractAtPosition
+
+Followed the savegame-struct lead from `EditCharacterName`: traced
+`start`'s autosave-on-movement behavior (writes a fixed-offset record
+to `CURGAME` after certain interaction outcomes) and the clean-shutdown
+zero+close sequence. Named `TryInteractAtPosition` (was `sub_216F0`):
+validates an interaction at a map position via `FindObjectAtPosition`,
+branching on the target's type flags into a weight/capacity check, a
+`CURGAME` record load, or a specific failure code — the function whose
+outcome gates the autosave. Documented the party-member record's
+confirmed fields (`+0x0` name, `+0x10` gender/type, `+0x1C` status
+flags) in [file-formats.md](file-formats.md#curgame--savgame1-and-presumably-savgamen)
+as a concrete starting point for locating the rest of the struct.
+
+116 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

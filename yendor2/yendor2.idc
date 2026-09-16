@@ -5210,7 +5210,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X216DC);
 	op_hex		(x,	1);
+	set_cmt	(0X216F0,	"Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): weight/capacity check (sub_1766F), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.",	0);
 	create_insn	(0X216F0);
+	set_name	(0X216F0,	"TryInteractAtPosition");
 	create_insn	(x=0X216F4);
 	op_hex		(x,	1);
 	create_insn	(x=0X21702);
@@ -5909,11 +5911,6 @@ static Bytes_0(void) {
 	set_cmt	(0X245AE,	"Draws up to 8 item entries (DrawListEntryLabel, one per _val1.._val8, each skippable via a word_328C4 bit -- likely empty slots) -- matches the 8-item-slot-per-character savegame layout from file-formats.md. Then a selection loop: 'N' next character, 'Q' back, 'E' exit entirely (mirrors ShowPartyMembers' outer iteration). The character inventory/equipment screen.",	0);
 	create_insn	(0X245AE);
 	set_name	(0X245AE,	"ShowCharacterInventory");
-	set_cmt	(0X245D4,	"msg",	0);
-	create_insn	(x=0X245FE);
-	op_hex		(x,	1);
-	create_insn	(x=0X24612);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -5923,6 +5920,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X245D4,	"msg",	0);
+	create_insn	(x=0X245FE);
+	op_hex		(x,	1);
+	create_insn	(x=0X24612);
+	op_hex		(x,	1);
 	create_insn	(x=0X24626);
 	op_hex		(x,	1);
 	create_insn	(x=0X2463A);
@@ -10342,8 +10344,6 @@ static Bytes_1(void) {
 	set_name	(0X363B7,	"aHealth_1");
 	create_strlit	(0X363BF,	0X7);
 	set_name	(0X363BF,	"aMagic_0");
-	create_strlit	(0X363C6,	0X8);
-	set_name	(0X363C6,	"aPercent");
 }
 
 //------------------------------------------------------------------------
@@ -10353,6 +10353,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X363C6,	0X8);
+	set_name	(0X363C6,	"aPercent");
 	create_strlit	(0X363CE,	0XF);
 	set_name	(0X363CE,	"aPartyAttack");
 	create_strlit	(0X363DD,	0X7);

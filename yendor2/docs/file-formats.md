@@ -41,13 +41,15 @@ not confirmed which).
 
 **Autosave on movement**: `start`'s main loop writes a small, *fixed-
 offset* record (`ax=0x556D`, via the resource stub `sub_27DE5`) back to
-this same `FileEntry` whenever a movement/interaction check (`sub_216F0`)
-returns certain outcome codes — not indexed by character, so plausibly
-global state like the player's world position. `CURGAME` is also
-explicitly zeroed and closed cleanly (`FileEntry_Write` with
-`_blockSize`/`_blockOffset` all zero, then `FileEntry_Close`) on the
-quit-to-DOS path. Neither `sub_216F0` nor `sub_27DE5`'s target record
-are named yet — a good next step for whoever wants the full save format.
+this same `FileEntry` whenever `TryInteractAtPosition` (was `sub_216F0`
+— validates an interaction at a map position via `FindObjectAtPosition`,
+branching on the target's type flags into a weight/capacity check,
+`LoadCurgameRecord`, or a specific failure code) returns certain outcome
+codes — not indexed by character, so plausibly global state like the
+player's world position. `CURGAME` is also explicitly zeroed and closed
+cleanly (`FileEntry_Write` with `_blockSize`/`_blockOffset` all zero,
+then `FileEntry_Close`) on the quit-to-DOS path. `sub_27DE5`'s target
+record itself isn't named yet.
 
 **Party-member record** (in-memory, pointed to by `word_328D4`,
 traversed via a `+0x10` "next" link — plausibly backed by this same
