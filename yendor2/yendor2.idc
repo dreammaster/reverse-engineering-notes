@@ -3554,7 +3554,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1938A);
 	op_hex		(x,	1);
 	create_insn	(0X193B0);
+	set_cmt	(0X193BE,	"Interactive 'pick a party member, show updated stats, track remaining uses' loop shared by UseItemType_400's paid-service branch (called right after paying its BCD material cost) and UseTrainingItem. Draws DrawTrainingScreenStatSheet + a remaining-uses count + a two-tone prompt, then polls input to repeat or exit.",	0);
 	create_insn	(0X193BE);
+	set_name	(0X193BE,	"RunItemServiceRecipientLoop");
 	create_insn	(x=0X193C2);
 	op_hex		(x,	1);
 	set_cmt	(0X193EC,	"msg",	0);
@@ -3605,8 +3607,12 @@ static Bytes_1(void) {
 	set_cmt	(0X19768,	"Given a class id (ax, 1-27), returns a pointer (bx) into one of two contiguous 11-byte-stride string tables -- a real class-name table (FIGHTER/MERCHANT/ROGUE/MONK/ALCHEMIST/PALADIN/MAGE/DRUID/MARKSMAN for 1-9; WARRIOR/TINKERER/THIEF/CLERIC/TRANSMUTER/CAVALIER/WIZARD/ENCHANTER/RANGER/CHAMPION/BLACKSMITH/ASSASSIN/PRIEST/HEALER/HERO/SORCERER/SAGE/KNIGHT for 10-27). Confirms +0xE is a class id.",	0);
 	create_insn	(0X19768);
 	set_name	(0X19768,	"GetClassNameString");
+	set_cmt	(0X1978F,	"Draws ax in word_2E412's color if ax<=bx, else word_2E414's color (an 'over the cap' tint). Generic value-cell renderer, used throughout DrawTrainingScreenStatSheet.",	0);
 	create_insn	(0X1978F);
+	set_name	(0X1978F,	"DrawStatValueWithCapColor");
+	set_cmt	(0X197B9,	"Redraws the current party member's full stat-sheet grid via DrawStatValueWithCapColor: the 6 core attribute base/derived pairs (+0x3C/+0x7C), the +0x4C/+0x8C trio, 8 more fields at +0x58/+0x98, plus one more. Near-duplicate, differently-positioned counterpart to DrawCharacterStatSheet, used by the training/service screens. Called from RunItemServiceRecipientLoop and sub_19553.",	0);
 	create_insn	(0X197B9);
+	set_name	(0X197B9,	"DrawTrainingScreenStatSheet");
 	set_cmt	(0X19957,	"Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).",	0);
 	create_insn	(0X19957);
 	set_name	(0X19957,	"SelectAndDrawPartyStatusRow");
@@ -4878,6 +4884,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1DCE0);
 	op_hex		(x,	1);
 	set_name	(0X1DCE0,	"RunAlchemyScreen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1DCE6);
 	op_hex		(x,	1);
 	create_insn	(0X1DD00);
@@ -4958,15 +4973,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1E1A7,	"Builds the alchemy screen's filtered list of known spells (sub_27A66 eligibility check) into buffer 0x565A, calling CheckSpellCastability on each (unless incapacitated), then computes pagination (13/page) and locates the current selection. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E1A7);
 	set_name	(0X1E1A7,	"BuildAlchemySpellList");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1E20A);
 	op_hex		(x,	1);
 	create_insn	(0X1E269);
@@ -6649,6 +6655,15 @@ static Bytes_2(void) {
 	set_cmt	(0X245AE,	"Draws up to 8 item entries (DrawListEntryLabel, one per _val1.._val8, each skippable via a word_328C4 bit -- likely empty slots) -- matches the 8-item-slot-per-character savegame layout from file-formats.md. Then a selection loop: 'N' next character, 'Q' back, 'E' exit entirely (mirrors ShowPartyMembers' outer iteration). The character inventory/equipment screen.",	0);
 	create_insn	(0X245AE);
 	set_name	(0X245AE,	"ShowCharacterInventory");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X245D4,	"msg",	0);
 	create_insn	(x=0X245FE);
 	op_hex		(x,	1);
@@ -6702,15 +6717,6 @@ static Bytes_2(void) {
 	set_cmt	(0X24A5B,	"ShowPartyMembers' second pipeline step: draws a 3x3 grid of equipment-slot icons (DrawPicture, incrementing picture id by 2 per cell) -- fits the manual's equip-slot diagram. Also shows a gender-dependent message ([si+0x10] compared against 2). The character equipment display.",	0);
 	create_insn	(0X24A5B);
 	set_name	(0X24A5B,	"ShowCharacterEquipment");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X24A75,	"msg",	0);
 	create_insn	(0X24B3D);
 	create_insn	(0X24B52);
@@ -8689,6 +8695,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29E30);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29E33);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29E36);
@@ -8787,15 +8802,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F37);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29F3A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F40);
@@ -11391,6 +11397,15 @@ static Bytes_4(void) {
 	set_name	(0X36261,	"aArmorRings");
 	create_strlit	(0X3626D,	0X14);
 	set_name	(0X3626D,	"aAttributeEnhan");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36281,	0X1E);
 	set_name	(0X36281,	"aJewelsArtifact");
 	create_strlit	(0X3629F,	0X15);
@@ -11443,15 +11458,6 @@ static Bytes_4(void) {
 	set_name	(0X3637B,	"aSkill_0");
 	create_strlit	(0X36381,	0X8);
 	set_name	(0X36381,	"aScrolls");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36389,	0X6);
 	set_name	(0X36389,	"aWands");
 	create_strlit	(0X3638F,	0X6);

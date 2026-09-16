@@ -5734,6 +5734,33 @@ for the minimap compass).
 
 657 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunItemServiceRecipientLoop cluster
+
+Named a 3-function cluster shared between `UseItemType_400`'s paid-
+service branch and `UseTrainingItem`: an interactive "select a party
+member, show a live stat sheet, track remaining uses" loop.
+
+`sub_1978F` -> `DrawStatValueWithCapColor`: a generic "value, colored
+differently if it exceeds a threshold" cell renderer.
+
+`sub_197B9` -> `DrawTrainingScreenStatSheet`: redraws a full
+stat-sheet grid for the current party member using
+`DrawStatValueWithCapColor` per cell — the 6 core attribute
+base/derived pairs, the still-otherwise-unidentified `+0x4C`/`+0x8C`
+trio, 8 more fields, plus one more. A near-duplicate, differently
+positioned counterpart to the character-sheet screen's own
+`DrawCharacterStatSheet`.
+
+`sub_193BE` -> `RunItemServiceRecipientLoop`: the shared interactive
+loop, called from `UseItemType_400` right after paying its BCD
+material cost, and from `UseTrainingItem`. Draws
+`SelectAndDrawPartyStatusRow` + `DrawTrainingScreenStatSheet`, a
+remaining-uses count (colored red at zero), and a two-tone prompt,
+then polls keyboard/clicks to let the player pick another party
+member and repeat, until uses run out or the player cancels.
+
+A milestone: **660 named of 769 functions as of this update.**
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

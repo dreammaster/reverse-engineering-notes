@@ -16117,14 +16117,14 @@ seg030          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_193BE       proc far                ; CODE XREF: UseItemType_400+87↓P
+RunItemServiceRecipientLoop proc far    ; CODE XREF: UseItemType_400+87↓P
                                         ; UseTrainingItem+3AE↓P
-                push    word_3295A
+                push    word_3295A      ; Interactive 'pick a party member, show updated stats, track remaining uses' loop shared by UseItemType_400's paid-service branch (called right after paying its BCD material cost) and UseTrainingItem. Draws DrawTrainingScreenStatSheet + a remaining-uses count + a two-tone prompt, then polls input to repeat or exit.
                 and     word_3295A, 3FFFh
 
-loc_193C8:                              ; CODE XREF: sub_193BE+17C↓j
+loc_193C8:                              ; CODE XREF: RunItemServiceRecipientLoop+17C↓j
                 call    SelectAndDrawPartyStatusRow
-                call    sub_197B9
+                call    DrawTrainingScreenStatSheet
                 mov     _font_fgColor, 0Fh
                 mov     word_2E412, 0Fh
                 mov     word_2E414, 0Fh
@@ -16136,7 +16136,7 @@ loc_193C8:                              ; CODE XREF: sub_193BE+17C↓j
                 mov     _textPos_y, 67h ; 'g'
                 mov     ax, word_2E38E
                 mov     bx, word_2E38E
-                call    sub_1978F
+                call    DrawStatValueWithCapColor
                 mov     word_2E412, 36h ; '6'
                 mov     word_2E414, 36h ; '6'
                 cmp     word_2E38E, 0
@@ -16144,15 +16144,15 @@ loc_193C8:                              ; CODE XREF: sub_193BE+17C↓j
                 mov     word_2E412, 7Bh ; '{'
                 mov     word_2E414, 0Fh
 
-loc_19429:                              ; CODE XREF: sub_193BE+5D↑j
+loc_19429:                              ; CODE XREF: RunItemServiceRecipientLoop+5D↑j
                 mov     _textPos_x, 0A5h
                 mov     _textPos_y, 71h ; 'q'
                 mov     bx, 8536h
                 call    WriteTwoToneString
                 call    DrawMouseCursor
 
-loc_19442:                              ; CODE XREF: sub_193BE+8E↓j
-                                        ; sub_193BE+A5↓j ...
+loc_19442:                              ; CODE XREF: RunItemServiceRecipientLoop+8E↓j
+                                        ; RunItemServiceRecipientLoop+A5↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_19442
@@ -16165,26 +16165,26 @@ loc_19442:                              ; CODE XREF: sub_193BE+8E↓j
                 jmp     short loc_19442
 ; ---------------------------------------------------------------------------
 
-loc_19465:                              ; CODE XREF: sub_193BE+95↑j
+loc_19465:                              ; CODE XREF: RunItemServiceRecipientLoop+95↑j
                 cmp     byte_2E400, 1Bh
                 jz      short loc_19473
                 cmp     byte_2E400, 43h ; 'C'
                 jnz     short loc_19442
 
-loc_19473:                              ; CODE XREF: sub_193BE+AC↑j
-                                        ; sub_193BE+E0↓j
+loc_19473:                              ; CODE XREF: RunItemServiceRecipientLoop+AC↑j
+                                        ; RunItemServiceRecipientLoop+E0↓j
                 test    word_328C4, 8000h
                 jnz     short loc_19482
                 cmp     word_2E38E, 0
                 jnz     short loc_19442
 
-loc_19482:                              ; CODE XREF: sub_193BE+BB↑j
+loc_19482:                              ; CODE XREF: RunItemServiceRecipientLoop+BB↑j
                 call    DrawMouseCursor
                 pop     word_3295A
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1948C:                              ; CODE XREF: sub_193BE+9C↑j
+loc_1948C:                              ; CODE XREF: RunItemServiceRecipientLoop+9C↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6522h
@@ -16197,14 +16197,14 @@ loc_1948C:                              ; CODE XREF: sub_193BE+9C↑j
                 jmp     short loc_19442
 ; ---------------------------------------------------------------------------
 
-loc_194AE:                              ; CODE XREF: sub_193BE+E7↑j
+loc_194AE:                              ; CODE XREF: RunItemServiceRecipientLoop+E7↑j
                 cmp     ax, 4
                 jl      short loc_19442
                 mov     bx, 1
                 jmp     short loc_194D2
 ; ---------------------------------------------------------------------------
 
-loc_194B8:                              ; CODE XREF: sub_193BE+A3↑j
+loc_194B8:                              ; CODE XREF: RunItemServiceRecipientLoop+A3↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 6522h
@@ -16214,10 +16214,10 @@ loc_194B8:                              ; CODE XREF: sub_193BE+A3↑j
                 jmp     loc_19442
 ; ---------------------------------------------------------------------------
 
-loc_194CF:                              ; CODE XREF: sub_193BE+10C↑j
+loc_194CF:                              ; CODE XREF: RunItemServiceRecipientLoop+10C↑j
                 mov     bx, 0FFFFh
 
-loc_194D2:                              ; CODE XREF: sub_193BE+F8↑j
+loc_194D2:                              ; CODE XREF: RunItemServiceRecipientLoop+F8↑j
                 mov     si, word_328D4
                 mov     di, si
                 cmp     ax, 4
@@ -16225,7 +16225,7 @@ loc_194D2:                              ; CODE XREF: sub_193BE+F8↑j
                 jmp     loc_19442
 ; ---------------------------------------------------------------------------
 
-loc_194E0:                              ; CODE XREF: sub_193BE+11D↑j
+loc_194E0:                              ; CODE XREF: RunItemServiceRecipientLoop+11D↑j
                 cmp     ax, 9
                 jg      short loc_194F6
                 sub     ax, 4
@@ -16237,19 +16237,19 @@ loc_194E0:                              ; CODE XREF: sub_193BE+11D↑j
                 jmp     short loc_19516
 ; ---------------------------------------------------------------------------
 
-loc_194F6:                              ; CODE XREF: sub_193BE+125↑j
+loc_194F6:                              ; CODE XREF: RunItemServiceRecipientLoop+125↑j
                 cmp     ax, 0Ah
                 jge     short loc_194FE
                 jmp     loc_19442
 ; ---------------------------------------------------------------------------
 
-loc_194FE:                              ; CODE XREF: sub_193BE+13B↑j
+loc_194FE:                              ; CODE XREF: RunItemServiceRecipientLoop+13B↑j
                 cmp     ax, 16h
                 jle     short loc_19506
                 jmp     loc_19442
 ; ---------------------------------------------------------------------------
 
-loc_19506:                              ; CODE XREF: sub_193BE+143↑j
+loc_19506:                              ; CODE XREF: RunItemServiceRecipientLoop+143↑j
                 sub     ax, 0Ah
                 shl     ax, 1
                 add     si, 58h ; 'X'
@@ -16257,7 +16257,7 @@ loc_19506:                              ; CODE XREF: sub_193BE+143↑j
                 add     di, 98h
                 add     di, ax
 
-loc_19516:                              ; CODE XREF: sub_193BE+136↑j
+loc_19516:                              ; CODE XREF: RunItemServiceRecipientLoop+136↑j
                 cmp     bx, 0
                 jl      short loc_1953D
                 cmp     word ptr [si], 3E7h
@@ -16265,7 +16265,7 @@ loc_19516:                              ; CODE XREF: sub_193BE+136↑j
                 inc     word ptr [si]
                 dec     word_2E38E
 
-loc_19527:                              ; CODE XREF: sub_193BE+193↓j
+loc_19527:                              ; CODE XREF: RunItemServiceRecipientLoop+193↓j
                 call    RefreshCarryCapacityAndAttributeBonuses
                 call    UpdatePartyAverageStatTiers
                 mov     bx, word_32924
@@ -16273,21 +16273,21 @@ loc_19527:                              ; CODE XREF: sub_193BE+193↓j
                 jmp     loc_193C8
 ; ---------------------------------------------------------------------------
 
-loc_1953D:                              ; CODE XREF: sub_193BE+15B↑j
+loc_1953D:                              ; CODE XREF: RunItemServiceRecipientLoop+15B↑j
                 mov     ax, [di]
                 cmp     [si], ax
                 jnz     short loc_1954B
 
-loc_19543:                              ; CODE XREF: sub_193BE+161↑j
+loc_19543:                              ; CODE XREF: RunItemServiceRecipientLoop+161↑j
                 call    FlashStatusWarning
                 jmp     loc_19442
 ; ---------------------------------------------------------------------------
 
-loc_1954B:                              ; CODE XREF: sub_193BE+183↑j
+loc_1954B:                              ; CODE XREF: RunItemServiceRecipientLoop+183↑j
                 dec     word ptr [si]
                 inc     word_2E38E
                 jmp     short loc_19527
-sub_193BE       endp
+RunItemServiceRecipientLoop endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16359,7 +16359,7 @@ loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
                 call    SelectPartyRecordById
                 call    RestoreCursorBackgroundIfDirty
                 call    SelectAndDrawPartyStatusRow
-                call    sub_197B9
+                call    DrawTrainingScreenStatSheet
                 call    DrawPartyStatusIconRow
                 call    sub_238CD
                 call    DrawMouseCursor
@@ -16540,7 +16540,7 @@ loc_1974F:                              ; CODE XREF: sub_19553+1F6↑j
 
 loc_19753:                              ; CODE XREF: sub_19553+1FA↑j
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_197B9
+                call    DrawTrainingScreenStatSheet
                 call    sub_238CD
                 call    DrawMouseCursor
                 jmp     loc_195FA
@@ -16578,31 +16578,31 @@ GetClassNameString endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1978F       proc near               ; CODE XREF: sub_193BE+49↑p
-                                        ; sub_197B9+37↓p ...
-                push    word_2E412
+DrawStatValueWithCapColor proc near     ; CODE XREF: RunItemServiceRecipientLoop+49↑p
+                                        ; DrawTrainingScreenStatSheet+37↓p ...
+                push    word_2E412      ; Draws ax in word_2E412's color if ax<=bx, else word_2E414's color (an 'over the cap' tint). Generic value-cell renderer, used throughout DrawTrainingScreenStatSheet.
                 pop     _font_fgColor
                 cmp     ax, bx
                 jle     short loc_197A3
                 mov     bx, word_2E414
                 mov     _font_fgColor, bx
 
-loc_197A3:                              ; CODE XREF: sub_1978F+A↑j
+loc_197A3:                              ; CODE XREF: DrawStatValueWithCapColor+A↑j
                 mov     bx, 0AFA8h
                 call    FormatNumber
                 mov     bx, 0AFA8h
                 call    StripCommasAndSpaces
                 call    writeString
                 retn
-sub_1978F       endp
+DrawStatValueWithCapColor endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_197B9       proc near               ; CODE XREF: sub_193BE+D↑p
+DrawTrainingScreenStatSheet proc near   ; CODE XREF: RunItemServiceRecipientLoop+D↑p
                                         ; sub_19553+95↑p ...
-                mov     _font_bgTransparent, 1
+                mov     _font_bgTransparent, 1 ; Redraws the current party member's full stat-sheet grid via DrawStatValueWithCapColor: the 6 core attribute base/derived pairs (+0x3C/+0x7C), the +0x4C/+0x8C trio, 8 more fields at +0x58/+0x98, plus one more. Near-duplicate, differently-positioned counterpart to DrawCharacterStatSheet, used by the training/service screens. Called from RunItemServiceRecipientLoop and sub_19553.
                 mov     _font_fgColor, 0Fh
                 mov     word_2E412, 0Fh
                 mov     word_2E414, 8Ah
@@ -16614,10 +16614,10 @@ sub_197B9       proc near               ; CODE XREF: sub_193BE+D↑p
                 add     si, 3Ch ; '<'
                 add     di, 7Ch ; '|'
 
-loc_197EC:                              ; CODE XREF: sub_197B9+45↓j
+loc_197EC:                              ; CODE XREF: DrawTrainingScreenStatSheet+45↓j
                 mov     ax, [si]
                 mov     bx, [di]
-                call    sub_1978F
+                call    DrawStatValueWithCapColor
                 add     _textPos_y, 0Ah
                 add     si, 2
                 add     di, 2
@@ -16630,10 +16630,10 @@ loc_197EC:                              ; CODE XREF: sub_197B9+45↓j
                 mov     di, word_328D4
                 add     di, 8Ch
 
-loc_1981E:                              ; CODE XREF: sub_197B9+77↓j
+loc_1981E:                              ; CODE XREF: DrawTrainingScreenStatSheet+77↓j
                 mov     ax, [si]
                 mov     bx, [di]
-                call    sub_1978F
+                call    DrawStatValueWithCapColor
                 add     _textPos_y, 0Ah
                 add     si, 2
                 add     di, 2
@@ -16646,10 +16646,10 @@ loc_1981E:                              ; CODE XREF: sub_197B9+77↓j
                 mov     di, word_328D4
                 add     di, 98h
 
-loc_19850:                              ; CODE XREF: sub_197B9+A9↓j
+loc_19850:                              ; CODE XREF: DrawTrainingScreenStatSheet+A9↓j
                 mov     ax, [si]
                 mov     bx, [di]
-                call    sub_1978F
+                call    DrawStatValueWithCapColor
                 add     _textPos_y, 0Ah
                 add     si, 2
                 add     di, 2
@@ -16668,8 +16668,8 @@ loc_19850:                              ; CODE XREF: sub_197B9+A9↓j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_1989F:                              ; CODE XREF: sub_197B9+D8↑j
-                call    sub_1978F
+loc_1989F:                              ; CODE XREF: DrawTrainingScreenStatSheet+D8↑j
+                call    DrawStatValueWithCapColor
                 add     _textPos_y, 0Ah
                 mov     ax, [si+6Ah]
                 mov     bx, [si+0AAh]
@@ -16680,8 +16680,8 @@ loc_1989F:                              ; CODE XREF: sub_197B9+D8↑j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_198CC:                              ; CODE XREF: sub_197B9+105↑j
-                call    sub_1978F
+loc_198CC:                              ; CODE XREF: DrawTrainingScreenStatSheet+105↑j
+                call    DrawStatValueWithCapColor
                 add     _textPos_y, 0Ah
                 mov     ax, [si+6Ch]
                 mov     bx, [si+0ACh]
@@ -16692,8 +16692,8 @@ loc_198CC:                              ; CODE XREF: sub_197B9+105↑j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_198F9:                              ; CODE XREF: sub_197B9+132↑j
-                call    sub_1978F
+loc_198F9:                              ; CODE XREF: DrawTrainingScreenStatSheet+132↑j
+                call    DrawStatValueWithCapColor
                 add     _textPos_y, 0Ah
                 mov     ax, [si+6Eh]
                 mov     bx, [si+0AEh]
@@ -16704,8 +16704,8 @@ loc_198F9:                              ; CODE XREF: sub_197B9+132↑j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_19926:                              ; CODE XREF: sub_197B9+15F↑j
-                call    sub_1978F
+loc_19926:                              ; CODE XREF: DrawTrainingScreenStatSheet+15F↑j
+                call    DrawStatValueWithCapColor
                 add     _textPos_y, 0Ah
                 mov     ax, [si+70h]
                 mov     bx, [si+0B0h]
@@ -16716,16 +16716,16 @@ loc_19926:                              ; CODE XREF: sub_197B9+15F↑j
                 mov     word_2E412, 0CBh
                 mov     word_2E414, 9Bh
 
-loc_19953:                              ; CODE XREF: sub_197B9+18C↑j
-                call    sub_1978F
+loc_19953:                              ; CODE XREF: DrawTrainingScreenStatSheet+18C↑j
+                call    DrawStatValueWithCapColor
                 retn
-sub_197B9       endp
+DrawTrainingScreenStatSheet endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-SelectAndDrawPartyStatusRow proc near   ; CODE XREF: sub_193BE:loc_193C8↑p
+SelectAndDrawPartyStatusRow proc near   ; CODE XREF: RunItemServiceRecipientLoop:loc_193C8↑p
                                         ; sub_19553+92↑p
                 mov     al, byte_2E400  ; Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).
                 push    ax
@@ -16765,7 +16765,7 @@ loc_19988:                              ; CODE XREF: SelectAndDrawPartyStatusRow
                 mov     _textPos_y, 1Bh
                 mov     ax, [si+16h]
                 mov     bx, [si+16h]
-                call    sub_1978F
+                call    DrawStatValueWithCapColor
                 mov     _textPos_x, 0A0h
                 mov     _textPos_y, 1Bh
                 add     si, 18h
@@ -21274,7 +21274,7 @@ loc_1BF1C:                              ; CODE XREF: UseItemType_400+59↑j
                 push    cs
                 call    near ptr RedrawPartyGoldDisplay
                 call    sub_1CC98
-                call    sub_193BE
+                call    RunItemServiceRecipientLoop
                 call    DrawPartyStatusIconRow
                 call    CopyPartyStatBlockToEmsCache
                 mov     si, word_328D4
@@ -21840,7 +21840,7 @@ loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
                 call    DrawStringColumn
                 call    DrawMouseCursor
                 call    WaitForKeypressTickingMusic
-                call    sub_193BE
+                call    RunItemServiceRecipientLoop
                 call    DrawPartyStatusIconRow
                 call    CopyPartyStatBlockToEmsCache
                 jmp     loc_1C158
@@ -34991,7 +34991,7 @@ seg075          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-WriteTwoToneString proc far             ; CODE XREF: sub_193BE+7A↑P
+WriteTwoToneString proc far             ; CODE XREF: RunItemServiceRecipientLoop+7A↑P
                                         ; sub_23C18+D5↓P ...
                 push    _textPos_x      ; Draws a string (bx) with the first character in word_2E412's color and the rest in word_2E414's -- a highlighted-hotkey-letter label style. Called from sub_193BE and sub_23C18.
                 mov     ax, word_2E412
@@ -56512,8 +56512,8 @@ y               dw 0                    ; DATA XREF: DrawMovementFeedbackIcon+E�
                                         ; ShowIntroPicture+1B↑w ...
 _font_bgTransparent dw 0                ; DATA XREF: EnforceDemoBoundary+43↑w
                                         ; ShowIntroPicture+21↑w ...
-word_2E38E      dw 0                    ; DATA XREF: sub_193BE+42↑r
-                                        ; sub_193BE+45↑r ...
+word_2E38E      dw 0                    ; DATA XREF: RunItemServiceRecipientLoop+42↑r
+                                        ; RunItemServiceRecipientLoop+45↑r ...
 word_2E390      dw 0                    ; DATA XREF: sub_1BBED+E2↑w
                                         ; ComputeBarterPricingPreview+9↑w
 word_2E392      dw 0                    ; DATA XREF: sub_1BBED+E8↑w
@@ -56649,8 +56649,8 @@ word_2E410      dw 0                    ; DATA XREF: UseItem+1D↑r
                                         ; UseItem:loc_17BBF↑r ...
 word_2E412      dw 0                    ; DATA XREF: DrawTransportDetailRow+30↑w
                                         ; DrawLabeledBCDIfNonzero+21↑w ...
-word_2E414      dw 0                    ; DATA XREF: sub_193BE+1C↑w
-                                        ; sub_193BE+52↑w ...
+word_2E414      dw 0                    ; DATA XREF: RunItemServiceRecipientLoop+1C↑w
+                                        ; RunItemServiceRecipientLoop+52↑w ...
 word_2E416      dw 0                    ; DATA XREF: UseItem:loc_17DC7↑r
                                         ; UseItem:loc_17DE0↑r ...
                 db    0
@@ -86024,15 +86024,15 @@ word_36CFF      dw 222h                 ; DATA XREF: RestPartyAndAdvanceClock+13
                                         ; AdvanceGameClock+45↑w ...
 word_36D01      dw 1E0h                 ; DATA XREF: PlayStudioCreditsIntro+E5↑w
                                         ; TravelToDestination+87↑r ...
-word_36D03      dw 0                    ; DATA XREF: sub_197B9+D4↑r
+word_36D03      dw 0                    ; DATA XREF: DrawTrainingScreenStatSheet+D4↑r
                                         ; ConfirmAndValidatePartyTarget↑r ...
-word_36D05      dw 0                    ; DATA XREF: sub_197B9+101↑r
+word_36D05      dw 0                    ; DATA XREF: DrawTrainingScreenStatSheet+101↑r
                                         ; sub_219FA:loc_21A17↑r ...
 word_36D07      dw 0                    ; DATA XREF: HandleMovementInput:loc_1152A↑r
                                         ; UseAbilityCommand:loc_178D5↑r ...
-word_36D09      dw 0                    ; DATA XREF: sub_197B9+15B↑r
+word_36D09      dw 0                    ; DATA XREF: DrawTrainingScreenStatSheet+15B↑r
                                         ; LoadItemData:loc_1C98C↑r ...
-word_36D0B      dw 0                    ; DATA XREF: sub_197B9+188↑r
+word_36D0B      dw 0                    ; DATA XREF: DrawTrainingScreenStatSheet+188↑r
                                         ; DrawCharacterStatSheet+254↑r ...
                 db 0FFh
                 db 0FFh
