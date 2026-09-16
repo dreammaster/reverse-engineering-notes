@@ -4725,6 +4725,22 @@ traced.
 
 564 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawSpellLevelForCurrentClass + DrawClassEligibilityMarker
+
+Named two more `ShowClueBookSpellDetail` helpers built on
+`DrawLabeledNumberRow`. `sub_13C4B` -> `DrawSpellLevelForCurrentClass`:
+searches a 20-level × 2-class-slot table for a match against the
+current class id (`word_3330A`), and on a match draws the matched
+level via `DrawLabeledNumberRow` with a fixed "LEVEL:" label —
+resolving the documented "LEVEL:" field's mechanism. `sub_13C1D` ->
+`DrawClassEligibilityMarker`: checks a 2-entry candidate array against
+the same `word_3330A` and, on a match, draws a fixed `1` in a
+highlight color — plausibly one cell of the documented "6-class
+eligibility marker row." Both round out the spell-detail screen's
+per-field drawing logic.
+
+566 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

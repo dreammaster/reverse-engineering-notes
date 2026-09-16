@@ -1838,9 +1838,13 @@ static Bytes_0(void) {
 	create_insn	(0X13C01);
 	create_insn	(x=0X13C16);
 	op_hex		(x,	1);
+	set_cmt	(0X13C1D,	"Checks a 2-entry candidate array against word_3330A; on a match, draws a fixed '1' via DrawLabeledNumberRow (color 0xA7) -- a class-eligibility marker, plausibly one cell of the documented 6-class eligibility row. Called from ShowClueBookSpellDetail.",	0);
 	create_insn	(0X13C1D);
+	set_name	(0X13C1D,	"DrawClassEligibilityMarker");
 	create_insn	(0X13C39);
+	set_cmt	(0X13C4B,	"Searches a 20-level x 2-class-slot table for a match against word_3330A (current class id); on a match, draws the level via DrawLabeledNumberRow ('LEVEL:' label, color 0x8A). errorCode=1 if no match. Called from ShowClueBookSpellDetail.",	0);
 	create_insn	(0X13C4B);
+	set_name	(0X13C4B,	"DrawSpellLevelForCurrentClass");
 	create_insn	(0X13C73);
 	set_cmt	(0X13C86,	"Draws a row: writeString at x=0x7A (caller's si), a FormatNumber+StripCommasAndSpaces'd number (ax) at x=0x68, then writeString again at x=0x2C, advances _textPos_y by 6, clears errorCode. Called from ShowClueBookSpellDetail (cost fields) and sub_13C1D (a class-eligibility marker).",	0);
 	create_insn	(0X13C86);
@@ -3200,6 +3204,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1845C,	"DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)\nCX = attributes for file\nDS:DX -> ASCIZ filename (may include drive and path)",	0);
 	create_insn	(x=0X1845C);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1846B);
 	create_insn	(0X18472);
 	set_name	(0X18472,	"FileEntry_OpenFile");
@@ -3221,15 +3234,6 @@ static Bytes_0(void) {
 	set_name	(0X184BC,	"FileEntry_Write");
 	create_insn	(x=0X184D0);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X184D2,	"DOS - 2+ - WRITE TO FILE WITH HANDLE\nBX = file handle, CX = number of bytes to write, DS:DX -> buffer",	0);
 	create_insn	(x=0X184D2);
 	op_hex		(x,	0);
@@ -5347,6 +5351,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1FFE4,	"AdvanceGameClock's dawn/dusk handler (fired at exactly 6:00 AM/6:00 PM). Sets up (or continues) a gradual 113-step palette fade through a snapshot table at 0x4A5C -- backward from dusk, forward from dawn -- writing 32-RGB-triple chunks into VGA palette entries 0xE0-0xFF (the last 32 slots, plausibly a sky/ambient-light ramp) via SetPaletteRange. Guarded by word_3295A bit 0x2000 so it only initializes once per transition.",	0);
 	create_insn	(0X1FFE4);
 	set_name	(0X1FFE4,	"AdvanceDayNightPaletteFade");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1FFEB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1FFF3);
@@ -5357,15 +5370,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20070,	"CORRECTED from 'ShowTileLegend' (was wrongly documented as a read-only legend screen). Reached from a normal keyboard command slot in start's main dispatch. Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) and a live preview of the current cell. Its 'A' key (byte_2E400==0x41) calls FillVisibleAreaWithSelectedTile, which floods the entire visible 40x24 cell area with the selected legend icon and writes it back via FileEntry_Write -- this IS a map-editing tool (a debug/level-editor screen left reachable in the shipped binary), not a passive legend. 'B'/'F' browse a per-level tile palette loaded from WORLD.DAT (sub_205C0/sub_27FE0, not yet fully traced).",	0);
 	create_insn	(0X20070);
 	set_name	(0X20070,	"RunMapEditorScreen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X200BA);
 	op_hex		(x,	1);
 	create_insn	(x=0X200C0);
@@ -7240,14 +7244,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2738B,	"CORRECTED: click handler for the 6-slot active-ailment icon bar (word_36C7F bit 0x1000), not a generic equipment bar. Hit-tests region table 0x636C, maps to the 6-entry ailment table 0x9519 (same table TickWorldAilments walks -- [+0]=ailment code matching TickStatusEffects' 9/0xF/0xC, [+2]=duration; also read by IsItemRangeAvailable). Loads the ailment code as an item-catalog record (ailment codes and item ids appear to share a numbering space elsewhere in this engine too), validates via sub_2D5E0 if needed, then stages it into the 'carrying' state (errorCode=2) -- plausibly clicking an active ailment icon to apply a held cure item to it. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X2738B);
 	set_name	(0X2738B,	"TryCureAilmentFromIconClick");
-	create_insn	(x=0X27392);
-	op_hex		(x,	1);
-	create_insn	(0X273E6);
-	create_insn	(x=0X273F9);
-	op_hex		(x,	1);
-	set_cmt	(0X27441,	"For cx entries: if the id at [si] is nonzero, looks it up (sub_12554) and draws its icon at the matching (x,y) from a position table at di (stride 0xA: x at +0, y at +4).",	0);
-	create_insn	(0X27441);
-	set_name	(0X27441,	"DrawResourceStatusIcons");
 }
 
 //------------------------------------------------------------------------
@@ -7257,6 +7253,14 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X27392);
+	op_hex		(x,	1);
+	create_insn	(0X273E6);
+	create_insn	(x=0X273F9);
+	op_hex		(x,	1);
+	set_cmt	(0X27441,	"For cx entries: if the id at [si] is nonzero, looks it up (sub_12554) and draws its icon at the matching (x,y) from a position table at di (stride 0xA: x at +0, y at +4).",	0);
+	create_insn	(0X27441);
+	set_name	(0X27441,	"DrawResourceStatusIcons");
 	set_cmt	(0X2746C,	"RandomInRange(ax=exclusive upper bound): DOS-time-seeded (INT 21h AH=0x2Ch on first call) linear-congruential PRNG (multiplier 0x805). Returns a value in [0, bound). Widely used general-purpose RNG.",	0);
 	create_insn	(0X2746C);
 	set_name	(0X2746C,	"RandomInRange");
@@ -9589,6 +9593,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2C438);
 	create_insn	(0X2C444);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2C44F);
 	create_insn	(0X2C45B);
 	create_insn	(0X2C4B4);
@@ -9621,15 +9634,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C64C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2C674);
 	create_insn	(0X2C6BD);
 	set_cmt	(0X2C6CF,	"this",	0);

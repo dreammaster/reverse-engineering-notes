@@ -6127,10 +6127,10 @@ loc_13BA8:                              ; CODE XREF: ShowClueBookSpellDetail+84�
                 mov     cx, 6
 
 loc_13BDC:                              ; CODE XREF: ShowClueBookSpellDetail+D9↓j
-                call    sub_13C1D
+                call    DrawClassEligibilityMarker
                 cmp     errorCode, 0
                 jz      short loc_13C10
-                call    sub_13C4B
+                call    DrawSpellLevelForCurrentClass
                 cmp     errorCode, 0
                 jz      short loc_13C10
                 test    word_332FE, dx
@@ -6160,12 +6160,12 @@ ShowClueBookSpellDetail endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13C1D       proc near               ; CODE XREF: ShowClueBookSpellDetail:loc_13BDC↑p
-                push    cx
+DrawClassEligibilityMarker proc near    ; CODE XREF: ShowClueBookSpellDetail:loc_13BDC↑p
+                push    cx              ; Checks a 2-entry candidate array against word_3330A; on a match, draws a fixed '1' via DrawLabeledNumberRow (color 0xA7) -- a class-eligibility marker, plausibly one cell of the documented 6-class eligibility row. Called from ShowClueBookSpellDetail.
                 push    bp
                 mov     cx, 2
 
-loc_13C22:                              ; CODE XREF: sub_13C1D+12↓j
+loc_13C22:                              ; CODE XREF: DrawClassEligibilityMarker+12↓j
                 mov     ax, ds:[bp+0]
                 cmp     ax, word_3330A
                 jz      short loc_13C39
@@ -6175,34 +6175,34 @@ loc_13C22:                              ; CODE XREF: sub_13C1D+12↓j
                 jmp     short loc_13C48
 ; ---------------------------------------------------------------------------
 
-loc_13C39:                              ; CODE XREF: sub_13C1D+D↑j
+loc_13C39:                              ; CODE XREF: DrawClassEligibilityMarker+D↑j
                 mov     _font_fgColor, 0A7h
                 mov     ax, 1
                 mov     bx, 8D83h
                 call    DrawLabeledNumberRow
 
-loc_13C48:                              ; CODE XREF: sub_13C1D+1A↑j
+loc_13C48:                              ; CODE XREF: DrawClassEligibilityMarker+1A↑j
                 pop     bp
                 pop     cx
                 retn
-sub_13C1D       endp
+DrawClassEligibilityMarker endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13C4B       proc near               ; CODE XREF: ShowClueBookSpellDetail+A7↑p
-                push    cx
+DrawSpellLevelForCurrentClass proc near ; CODE XREF: ShowClueBookSpellDetail+A7↑p
+                push    cx              ; Searches a 20-level x 2-class-slot table for a match against word_3330A (current class id); on a match, draws the level via DrawLabeledNumberRow ('LEVEL:' label, color 0x8A). errorCode=1 if no match. Called from ShowClueBookSpellDetail.
                 push    di
                 push    bp
                 mov     bp, 2
                 mov     cx, 14h
 
-loc_13C54:                              ; CODE XREF: sub_13C4B+1E↓j
+loc_13C54:                              ; CODE XREF: DrawSpellLevelForCurrentClass+1E↓j
                 push    cx
                 mov     cx, 2
 
-loc_13C58:                              ; CODE XREF: sub_13C4B+18↓j
+loc_13C58:                              ; CODE XREF: DrawSpellLevelForCurrentClass+18↓j
                 mov     ax, [di]
                 cmp     ax, word_3330A
                 jz      short loc_13C73
@@ -6215,26 +6215,26 @@ loc_13C58:                              ; CODE XREF: sub_13C4B+18↓j
                 jmp     short loc_13C82
 ; ---------------------------------------------------------------------------
 
-loc_13C73:                              ; CODE XREF: sub_13C4B+13↑j
+loc_13C73:                              ; CODE XREF: DrawSpellLevelForCurrentClass+13↑j
                 pop     ax
                 mov     _font_fgColor, 8Ah
                 mov     ax, bp
                 mov     bx, 8CDDh
                 call    DrawLabeledNumberRow
 
-loc_13C82:                              ; CODE XREF: sub_13C4B+26↑j
+loc_13C82:                              ; CODE XREF: DrawSpellLevelForCurrentClass+26↑j
                 pop     bp
                 pop     di
                 pop     cx
                 retn
-sub_13C4B       endp
+DrawSpellLevelForCurrentClass endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 DrawLabeledNumberRow proc near          ; CODE XREF: ShowClueBookSpellDetail+CE↑p
-                                        ; sub_13C1D+28↑p ...
+                                        ; DrawClassEligibilityMarker+28↑p ...
                 push    ax              ; Draws a row: writeString at x=0x7A (caller's si), a FormatNumber+StripCommasAndSpaces'd number (ax) at x=0x68, then writeString again at x=0x2C, advances _textPos_y by 6, clears errorCode. Called from ShowClueBookSpellDetail (cost fields) and sub_13C1D (a class-eligibility marker).
                 mov     _textPos_x, 7Ah ; 'z'
                 call    writeString
@@ -76809,7 +76809,7 @@ word_33306      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+19E
                 db    0
                 db    0
 word_3330A      dw 0                    ; DATA XREF: RunClueBookSpellCategory+B↑w
-                                        ; sub_13C1D+9↑r ...
+                                        ; DrawClassEligibilityMarker+9↑r ...
 word_3330C      dw 0                    ; DATA XREF: InitGlobals+1F2↑w
                                         ; BuildAlchemySpellList+33↑r
 word_3330E      dw 0                    ; DATA XREF: RunAlchemyScreen+175↑w
