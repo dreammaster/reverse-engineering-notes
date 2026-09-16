@@ -1690,7 +1690,12 @@ enough of material `0x94B3` — plausibly per-character one-time-event
 flags (quest steps, items read, NPCs met), not confirmed.
 `GetRecordFlagBitAndWord_CA` (was `sub_27AC1`) is the same mechanism at
 a *different* offset, `+0xCA`, on an unconfirmed record type. **Follow-
-up**: found and named the missing Test accessor for the `+0x10C` bank,
+up**: named its own Set/Test accessors too — `SetRecordFlag_CA` (was
+`sub_27A4E`, called from `UseTrainingItem`/`sub_25456`) and
+`TestRecordFlag_CA` (was `sub_27A66`, called from
+`BuildAlchemySpellList`/`MarkIneligiblePartyMembers`) — completing
+both flag-bank families symmetrically. Also found and named the
+missing Test accessor for the `+0x10C` bank,
 `TestRecordFlag_10C` (was `sub_27A56`) — used by an item-target status
 display (`CheckPartyMemberItemFlag`) to check whether the targeted
 party member has already triggered the current item's personal flag

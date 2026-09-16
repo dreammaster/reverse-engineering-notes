@@ -7418,14 +7418,18 @@ static Bytes_3(void) {
 	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
 	create_insn	(0X27A46);
 	set_name	(0X27A46,	"SetGlobalFlag");
+	set_cmt	(0X27A4E,	"Sets a bit in the +0xCA per-record flag bank: ORs GetRecordFlagBitAndWord_CA's mask into [si]. Called from UseTrainingItem, sub_25456, and others.",	0);
 	create_insn	(0X27A4E);
+	set_name	(0X27A4E,	"SetRecordFlag_CA");
 	set_cmt	(0X27A56,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
 	create_insn	(0X27A56);
 	set_name	(0X27A56,	"TestRecordFlag_10C");
 	set_cmt	(0X27A5E,	"TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.",	0);
 	create_insn	(0X27A5E);
 	set_name	(0X27A5E,	"TestGlobalFlag");
+	set_cmt	(0X27A66,	"Tests a bit in the +0xCA per-record flag bank: [si] & GetRecordFlagBitAndWord_CA's mask (ZF result). Called from BuildAlchemySpellList and MarkIneligiblePartyMembers.",	0);
 	create_insn	(0X27A66);
+	set_name	(0X27A66,	"TestRecordFlag_CA");
 	set_cmt	(0X27A6E,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0x10C instead of a fixed global base -- a per-record flag bank. Traced one caller (SetRecordFlag_10C, via sub_1BBED) using si=word_328D4 (current party member), suggesting this bank lives on the party-member record, plausibly per-character one-time-event flags. Not fully confirmed.",	0);
 	create_insn	(0X27A6E);
 	set_name	(0X27A6E,	"GetRecordFlagBitAndWord_10C");
@@ -9547,6 +9551,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C26C);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2C287);
 	create_insn	(0X2C2A3);
 	create_insn	(0X2C2B0);
@@ -9593,15 +9606,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2C438);
 	create_insn	(0X2C444);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2C44F);
 	create_insn	(0X2C45B);
 	create_insn	(0X2C4B4);

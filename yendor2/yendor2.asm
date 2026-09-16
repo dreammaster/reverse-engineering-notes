@@ -21781,7 +21781,7 @@ loc_1C418:                              ; CODE XREF: UseTrainingItem+304↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1C429
-                call    sub_27A4E
+                call    SetRecordFlag_CA
                 add     di, 2
                 inc     bp
                 loop    loc_1C418
@@ -25158,7 +25158,7 @@ BuildAlchemySpellList proc near         ; CODE XREF: RunAlchemyScreen:loc_1DD16�
 
 loc_1E1DE:                              ; CODE XREF: BuildAlchemySpellList+56↓j
                 mov     ax, word_3330A
-                call    sub_27A66
+                call    TestRecordFlag_CA
                 jz      short loc_1E1F9
                 mov     ax, word_3330A
                 mov     [di], ax
@@ -37523,7 +37523,7 @@ loc_254B7:                              ; CODE XREF: sub_25456+6F↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_254C7
-                call    sub_27A4E
+                call    SetRecordFlag_CA
                 add     di, 2
                 loop    loc_254B7
 
@@ -42241,14 +42241,14 @@ SetGlobalFlag   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A4E       proc far                ; CODE XREF: UseTrainingItem+2FB↑P
+SetRecordFlag_CA proc far               ; CODE XREF: UseTrainingItem+2FB↑P
                                         ; sub_25456+67↑P ...
-                push    si
+                push    si              ; Sets a bit in the +0xCA per-record flag bank: ORs GetRecordFlagBitAndWord_CA's mask into [si]. Called from UseTrainingItem, sub_25456, and others.
                 call    GetRecordFlagBitAndWord_CA
                 or      [si], ax
                 pop     si
                 retf
-sub_27A4E       endp
+SetRecordFlag_CA endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42280,14 +42280,14 @@ TestGlobalFlag  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A66       proc far                ; CODE XREF: BuildAlchemySpellList+3A↑P
+TestRecordFlag_CA proc far              ; CODE XREF: BuildAlchemySpellList+3A↑P
                                         ; MarkIneligiblePartyMembers+16↓P
-                push    si
+                push    si              ; Tests a bit in the +0xCA per-record flag bank: [si] & GetRecordFlagBitAndWord_CA's mask (ZF result). Called from BuildAlchemySpellList and MarkIneligiblePartyMembers.
                 call    GetRecordFlagBitAndWord_CA
                 test    [si], ax
                 pop     si
                 retf
-sub_27A66       endp
+TestRecordFlag_CA endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42358,7 +42358,7 @@ GetGlobalFlagBitAndWord endp
 
 
 GetRecordFlagBitAndWord_CA proc near    ; CODE XREF: seg095:0015↑p
-                                        ; sub_27A4E+1↑p ...
+                                        ; SetRecordFlag_CA+1↑p ...
                 push    bx              ; Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).
                 push    cx
                 push    dx
@@ -53503,7 +53503,7 @@ loc_2D6FC:                              ; CODE XREF: InteractWithContainer+30↑
 loc_2D73C:                              ; CODE XREF: InteractWithContainer+D9↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_3330A
-                call    sub_27A4E
+                call    SetRecordFlag_CA
                 mov     si, word_32924
                 sub     si, 95EBh
                 shr     si, 1
@@ -53550,7 +53550,7 @@ loc_2D7AD:                              ; CODE XREF: MarkIneligiblePartyMembers+
                 call    SelectPartyRecordById
                 mov     si, ax
                 mov     ax, word_3330A
-                call    sub_27A66
+                call    TestRecordFlag_CA
                 jnz     short loc_2D7D9
                 mov     dx, word_332FE
                 and     dx, 3Fh

@@ -4741,6 +4741,19 @@ per-field drawing logic.
 
 566 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SetRecordFlag_CA + TestRecordFlag_CA
+
+Named `sub_27A4E` -> `SetRecordFlag_CA` and `sub_27A66` ->
+`TestRecordFlag_CA`, completing the accessor family for the `+0xCA`
+per-record flag bank to match the sibling `+0x10C` bank's already-named
+`GetRecordFlagBitAndWord_10C`/`SetRecordFlag_10C`/`TestRecordFlag_10C`
+trio. Simple wrappers around the already-named
+`GetRecordFlagBitAndWord_CA`: OR its bit mask into `[si]` to set, or
+`[si] & mask` to test. Called from `UseTrainingItem`/`sub_25456`
+(set) and `BuildAlchemySpellList`/`MarkIneligiblePartyMembers` (test).
+
+568 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
