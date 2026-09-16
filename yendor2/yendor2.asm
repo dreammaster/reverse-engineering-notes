@@ -32660,7 +32660,7 @@ loc_2279F:                              ; CODE XREF: sub_2278C+B↑j
 loc_227D6:                              ; CODE XREF: sub_2278C+58↓j
                 test    word ptr [si+0Eh], 1000h
                 jz      short loc_227E0
-                call    sub_22989
+                call    TriggerSideTrapForRandomPartyMember
 
 loc_227E0:                              ; CODE XREF: sub_2278C+4F↑j
                 add     si, 9Ch
@@ -32680,8 +32680,8 @@ sub_2278C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_227F5       proc near               ; CODE XREF: sub_22989+14↓p
-                push    dx
+RollTrapAvoidanceMagnitude proc near    ; CODE XREF: TriggerSideTrapForRandomPartyMember+14↓p
+                push    dx              ; Chance-scaled avoidance roll: bx-=ax (threshold minus stat); skip if negative or RandomInRange(100) exceeds the remaining margin; else word_2E49C = round(cx*bx/100). Higher ax (the caller's [+0x50] stat) means less likely and smaller effect. Called from TriggerSideTrapForRandomPartyMember.
                 mov     word_2E49C, 0
                 sub     bx, ax
                 jl      short loc_2281D
@@ -32697,11 +32697,11 @@ sub_227F5       proc near               ; CODE XREF: sub_22989+14↓p
                 div     bx
                 mov     word_2E49C, ax
 
-loc_2281D:                              ; CODE XREF: sub_227F5+9↑j
-                                        ; sub_227F5+15↑j
+loc_2281D:                              ; CODE XREF: RollTrapAvoidanceMagnitude+9↑j
+                                        ; RollTrapAvoidanceMagnitude+15↑j
                 pop     dx
                 retn
-sub_227F5       endp
+RollTrapAvoidanceMagnitude endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32862,22 +32862,23 @@ sub_2281F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22989       proc near               ; CODE XREF: sub_2278C+51↑p
-                push    cx
+TriggerSideTrapForRandomPartyMember proc near
+                                        ; CODE XREF: sub_2278C+51↑p
+                push    cx              ; Picks a random party member, rolls RollTrapAvoidanceMagnitude using their [+0x50] stat against a trap record's threshold/cap ([si+0x64]/[si+0x66]), then -- only if the party's current facing (word_36CF5 tier bits) matches one of 4 direction bits on the trap's [si+0xE] flags -- finishes populating an icon-bar-style output record and sets word_328C8 bit 8. A wall/door-embedded 'side trap' trigger. Called from unnamed sub_2278C.
                 call    PickRandomActivePartyMember
                 mov     bx, word_328D4
                 mov     [di+6], bx
                 mov     ax, [bx+50h]
                 mov     bx, [si+64h]
                 mov     cx, [si+66h]
-                call    sub_227F5
+                call    RollTrapAvoidanceMagnitude
                 mov     ax, word_2E49C
                 mov     [di], ax
                 cmp     ax, 0
                 jz      short loc_229AF
                 or      word_328C8, 10h
 
-loc_229AF:                              ; CODE XREF: sub_22989+1F↑j
+loc_229AF:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+1F↑j
                 cmp     word_36CF5, 8000h
                 jnz     short loc_229C4
                 mov     ax, word_36CF9
@@ -32886,7 +32887,7 @@ loc_229AF:                              ; CODE XREF: sub_22989+1F↑j
                 jmp     short loc_229FB
 ; ---------------------------------------------------------------------------
 
-loc_229C4:                              ; CODE XREF: sub_22989+2C↑j
+loc_229C4:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+2C↑j
                 cmp     word_36CF5, 4000h
                 jnz     short loc_229DA
                 mov     ax, [si+4]
@@ -32895,7 +32896,7 @@ loc_229C4:                              ; CODE XREF: sub_22989+2C↑j
                 jmp     short loc_229FB
 ; ---------------------------------------------------------------------------
 
-loc_229DA:                              ; CODE XREF: sub_22989+41↑j
+loc_229DA:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+41↑j
                 cmp     word_36CF5, 1000h
                 jnz     short loc_229F0
                 mov     ax, [si+2]
@@ -32904,13 +32905,13 @@ loc_229DA:                              ; CODE XREF: sub_22989+41↑j
                 jmp     short loc_229FB
 ; ---------------------------------------------------------------------------
 
-loc_229F0:                              ; CODE XREF: sub_22989+57↑j
+loc_229F0:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+57↑j
                 mov     ax, word_36CF7
                 sub     ax, [si+2]
                 test    word ptr [si+0Eh], 100h
 
-loc_229FB:                              ; CODE XREF: sub_22989+39↑j
-                                        ; sub_22989+4F↑j ...
+loc_229FB:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+39↑j
+                                        ; TriggerSideTrapForRandomPartyMember+4F↑j ...
                 mov     cx, [si+70h]
                 mov     [di+12h], cx
                 mov     cx, [si+62h]
@@ -32928,17 +32929,17 @@ loc_229FB:                              ; CODE XREF: sub_22989+39↑j
                 and     ax, 2
                 mov     [di+10h], ax
 
-loc_22A2E:                              ; CODE XREF: sub_22989+7E↑j
+loc_22A2E:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+7E↑j
                 and     word ptr [si+0Eh], 0E0FFh
                 pop     cx
                 retn
-sub_22989       endp
+TriggerSideTrapForRandomPartyMember endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-PickRandomActivePartyMember proc near   ; CODE XREF: sub_22989+1↑p
+PickRandomActivePartyMember proc near   ; CODE XREF: TriggerSideTrapForRandomPartyMember+1↑p
                 push    si              ; Retries RandomInRange(3) until it lands on an occupied, non-incapacitated (+0x1C bits 0x1C40) party slot, leaving it selected via SelectPartyRecordById. Also computes di=0xBC28+slot*0x18 (a smaller per-slot table, not confirmed) for the caller. Called from sub_22989.
 
 loc_22A36:                              ; CODE XREF: PickRandomActivePartyMember+20↓j

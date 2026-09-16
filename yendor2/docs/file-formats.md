@@ -274,7 +274,16 @@ the manual's STR/DEX/STA/INT/WIS/CHA listing — but the *pairing*
 6 attributes; it isn't, since those 6 are confirmed at the entirely
 different `+0x3C`–`+0x86` range above. What `+0x4C`/`+0x4E`/`+0x50`
 actually are (drawn alongside the attributes on the same screen, so
-presumably related) is still open — though `DrawCharacterStatSheet`
+presumably related) is still open — though `+0x50` picked up a second,
+independent data point this session via
+`TriggerSideTrapForRandomPartyMember`/`RollTrapAvoidanceMagnitude`
+(was `sub_22989`/`sub_227F5`): a party member's `+0x50` field is used
+as a save-vs-trap avoidance stat (higher value, smaller/less-likely
+trap effect) for a wall/door-embedded "side trap" trigger — an
+unrelated system from `ComputeAlchemyRefinementYield`'s use of the
+neighboring `+0x70` field, reinforcing that these are general
+character stats reused across many systems rather than single-purpose
+fields — though `DrawCharacterStatSheet`
 (was `sub_24D30`, the character sheet's main stat renderer, called
 from `ShowCharacterSkills` and `sub_23C18`) draws them in the *same
 screen column* as the 6 attributes, immediately following (visual

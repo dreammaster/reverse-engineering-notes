@@ -6020,7 +6020,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X227E9);
 	op_hex		(x,	1);
+	set_cmt	(0X227F5,	"Chance-scaled avoidance roll: bx-=ax (threshold minus stat); skip if negative or RandomInRange(100) exceeds the remaining margin; else word_2E49C = round(cx*bx/100). Higher ax (the caller's [+0x50] stat) means less likely and smaller effect. Called from TriggerSideTrapForRandomPartyMember.",	0);
 	create_insn	(0X227F5);
+	set_name	(0X227F5,	"RollTrapAvoidanceMagnitude");
 	create_insn	(0X2281F);
 	create_insn	(0X2283A);
 	create_insn	(x=0X2283F);
@@ -6038,7 +6040,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X2293B);
 	op_hex		(x,	1);
 	create_insn	(0X22944);
+	set_cmt	(0X22989,	"Picks a random party member, rolls RollTrapAvoidanceMagnitude using their [+0x50] stat against a trap record's threshold/cap ([si+0x64]/[si+0x66]), then -- only if the party's current facing (word_36CF5 tier bits) matches one of 4 direction bits on the trap's [si+0xE] flags -- finishes populating an icon-bar-style output record and sets word_328C8 bit 8. A wall/door-embedded 'side trap' trigger. Called from unnamed sub_2278C.",	0);
 	create_insn	(0X22989);
+	set_name	(0X22989,	"TriggerSideTrapForRandomPartyMember");
 	create_insn	(x=0X229AA);
 	op_hex		(x,	1);
 	create_insn	(x=0X229BD);
@@ -7181,6 +7185,15 @@ static Bytes_2(void) {
 	set_cmt	(0X26C0E,	"Minimal write-commit: FileEntry_Write(errorCode=0xB) + ErrorCheck, assuming the caller already configured the container-write descriptor (unlike SyncContainerContents, which configures it itself via sub_27E3A). Called from LoadNextContainerInChain and sub_2621C.",	0);
 	create_insn	(0X26C0E);
 	set_name	(0X26C0E,	"CommitContainerWrite");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X26C22,	"Checks whether the currently-open container (one of the '3 alternate bags', selected via [+0x15C]/[+0x17C]/[+0x1A2]/[+0x1C8]) matches an allowed-type bitmask (word_3293E). Rejects with FlashStatusWarning if not. Called from sub_2621C.",	0);
 	create_insn	(0X26C22);
 	set_name	(0X26C22,	"IsContainerTypeCompatible");
@@ -7203,15 +7216,6 @@ static Bytes_2(void) {
 	set_cmt	(0X26C9E,	"Draws the 4-icon party status row (dungeon screen) by calling DrawPartyStatusIcon once per g_partySlotAssignment slot (0x95EB/0x95ED/0x95EF/0x95F1) at 4 fixed x positions. Called from HandleDungeonInput.",	0);
 	create_insn	(0X26C9E);
 	set_name	(0X26C9E,	"DrawPartyStatusIconRow");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X26CFB,	"Draws one party-status icon: the character's icon ([+0x12]), an overlay (_val38) if incapacitated (+0x1C bits 0x1C40, matching CheckPartyWipeAndReinitLevel) or a new flag (+0x15E bit 0x8000, not otherwise documented), and a selection-highlight overlay if this is the currently-selected slot (word_32924). Called from DrawPartyStatusIconRow.",	0);
 	create_insn	(0X26CFB);
 	set_name	(0X26CFB,	"DrawPartyStatusIcon");
@@ -9417,6 +9421,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2BC7C);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2BC81);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2BC86);
@@ -9469,15 +9482,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2BD1A,	"Moderate-high confidence, corrected: NOT a location-marker map overlay (original guess). Draws g_pictureDir entry 4 full-screen, then iterates the 9-slot g_partyRecords array (base 0x95F3, stride 0x1F4) drawing one roster row per occupied slot (+0x16 != 0 -- the already-documented level/skill field, used here as an occupied-slot check, not a 'discovered' flag) via DrawPartyRosterEntry (icon + name + class name -- proves these are characters, not towns). Digit keys 1-9 (and a second, differently- routed key range) select a slot by index and call sub_23C18 to open a detail/interaction screen; one path toggles a flag (+0x15C bit 0x800) and removes the slot's index from two small lookup tables (0x95EB/0x94A3) when set -- plausibly a recruit/dismiss roster screen (add/remove a character from the active adventuring group), not a set of townsite markers. Not fully traced: sub_23C18, the toggle's exact meaning, and the digit-vs-alt-key distinction remain open.",	0);
 	create_insn	(0X2BD1A);
 	set_name	(0X2BD1A,	"ShowWorldMap");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2BD63);
 	create_insn	(x=0X2BD80);
 	op_hex		(x,	1);

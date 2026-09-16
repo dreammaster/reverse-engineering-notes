@@ -4853,6 +4853,34 @@ dependencies to name confidently this round; left as an open lead.
 
 576 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TriggerSideTrapForRandomPartyMember — resolves last round's open lead
+
+Named `sub_227F5` -> `RollTrapAvoidanceMagnitude` and `sub_22989` ->
+`TriggerSideTrapForRandomPartyMember`, resolving the open lead flagged
+last round. `RollTrapAvoidanceMagnitude` is a save-vs-trap-style
+avoidance roll: subtracts a character's stat (the still-mysterious
+party-record field `+0x50`) from a trap record's threshold; if
+positive, rolls `RandomInRange(100)` against the remaining margin, and
+on success computes a magnitude scaled by that margin into
+`word_2E49C` — "the higher this stat relative to the trap's
+threshold, the less likely and smaller the effect."
+`TriggerSideTrapForRandomPartyMember` picks a random active party
+member (`PickRandomActivePartyMember`), rolls this avoidance check
+using their `+0x50` stat against a trap/side-feature record's
+threshold and magnitude cap, and — only if the party's current facing
+(the same `word_36CF5` tier-bit convention as
+`DrawDungeonCellSideFeature`/`ShowCompassDirection`) matches one of 4
+direction bits on the trap record's own flags — finishes populating an
+icon-bar-style output record for the effect system. In short: a
+wall/door-embedded "side trap" trigger, gated on both a stat-based
+avoidance roll and facing direction. This is a second, independent
+data point (alongside `ComputeAlchemyRefinementYield`'s `+0x70` use)
+that `+0x50`/`+0x70` and their siblings in the still-open
+"`+0x4C`/`+0x4E`/`+0x50` trio" lead are general character stats
+reused across multiple unrelated systems, not single-purpose fields.
+
+578 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
