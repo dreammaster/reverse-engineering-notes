@@ -3657,7 +3657,9 @@ static Bytes_1(void) {
 	set_cmt	(0X19AB3,	"Converts a 16-bit binary value (word_3293E) into 4-byte packed BCD, written to ds:0xAFA8 (word_38808/word_3880A -- a generic scratch pair reused for unrelated things elsewhere).",	0);
 	create_insn	(0X19AB3);
 	set_name	(0X19AB3,	"ConvertWordToBCD4");
+	set_cmt	(0X19B3E,	"Unpacks 4 packed-BCD digits from [si+2]/[si+3] (2 bytes) into their decimal value (high([si+2])*1000 + low([si+2])*100 + high([si+3])*10 + low([si+3])). Distinct from the 4-byte BCD4 bignum library used elsewhere. Called once from ComputeAlchemyRefinementYield.",	0);
 	create_insn	(0X19B3E);
+	set_name	(0X19B3E,	"UnpackBCD2ToWord");
 	create_insn	(x=0X19B49);
 	op_hex		(x,	1);
 	create_insn	(x=0X19B56);
@@ -3704,7 +3706,9 @@ static Bytes_1(void) {
 	set_cmt	(0X19DFB,	"SubtractFromBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then SubBCD4 from the counter at si.",	0);
 	create_insn	(0X19DFB);
 	set_name	(0X19DFB,	"SubtractFromBCDCounter");
+	set_cmt	(0X19E15,	"Per-digit output helper for FormatAndDrawBCD4: ah=digit value, dl=first-significant-digit-emitted flag, di=output cursor. Implements leading-zero suppression (blanking pre-filled ',' separators to spaces) and comma-thousands-separator formatting. Called twice from FormatAndDrawBCD4.",	0);
 	create_insn	(0X19E15);
+	set_name	(0X19E15,	"FormatBCD4Digit");
 	create_insn	(0X19E1C);
 	create_insn	(0X19E2C);
 	create_insn	(0X19E37);
@@ -4772,6 +4776,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1D4B8,	"Combat-action entry point, 3-way branch on word_328CA bit 0x1000 (in formal combat) and word_328C8 bit 0x100 (ranged-attack request): (1) in-combat melee -- HighlightSelectedAbilityIcon, one AnimateProjectileStep, then ResolveAttackOrAbilityAction directly against word_32A1E (no row search, target already known); (2) ranged-weapon shot and (3) spell/ability cast (not in combat) -- these converge into the identical code: select weapon/ability, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve via ResolveAttackOrAbilityAction on a hit, with a multi-shot continuation (word_2E544) for characters with more than one attack. A successful area-effect spell plays a 10-frame explosion animation then sweeps all 80 g_levelMonsters slots for kills. Common epilogue for all 3 branches: loot-staging check -> ShowLootAndAwardExperience -> ProcessLevelMonsters -> redraw. Called from `start`.",	0);
 	create_insn	(0X1D4B8);
 	set_name	(0X1D4B8,	"HandleRangedOrCombatAction");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D4C0);
 	op_hex		(x,	1);
 	create_insn	(0X1D4CB);
@@ -4824,15 +4837,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1D937,	"Highlights the currently selected ability (word_32974) in the 4-slot action UI, if any is selected. Called from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X1D937);
 	set_name	(0X1D937,	"HighlightSelectedAbilityIcon");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1D941);
 	set_cmt	(0X1D9E5,	"Applies a resolved attack's damage (word_2E49C) to the target (si), reducing it via a resistance bit-scan (word_2E49E attack type flags vs [si+0x98] resistance flags -- each match halves the damage), then subtracts from HP ([si+0x10], clamped to 0) and sets display flags. Shared by ranged/ability attacks (sub_1DA60) and sub_1DA2C.",	0);
 	create_insn	(0X1D9E5);
@@ -5391,8 +5395,10 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1FBC0);
 	op_hex		(x,	1);
+	set_cmt	(0X1FBE1,	"Saves the original INT 1Ch vector to dword_1F97C (INT 21h/AH=35h) and installs this session's own handler (INT 21h/AH=25h), after initializing word_3294C (from word_36CE7, the animation-speed setting) and related timer globals. Paired with RestoreInt1cVector. Called twice from InitGame.",	0);
 	create_insn	(x=0X1FBE1);
 	op_hex		(x,	1);
+	set_name	(0X1FBE1,	"InstallInt1cTimerHandler");
 	create_insn	(x=0X1FBFF);
 	op_hex		(x,	1);
 	set_cmt	(0X1FC02,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
@@ -5454,8 +5460,10 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1FE03);
 	op_hex		(x,	1);
+	set_cmt	(0X1FE0A,	"Gated on word_36C79 bit 0x8000 ('timers pending'). Ticks down 6 global countdown timers at 0x9433 by dx, each paired with its own word_36C79 bit (3-8): on expiry, sets word_328C4 bit 0x400 (redraw signal) and clears the bit; if still running, re-arms the 0x8000 pending flag. Called once from TickWorldAilments.",	0);
 	create_insn	(x=0X1FE0A);
 	op_hex		(x,	1);
+	set_name	(0X1FE0A,	"TickWorldAilmentTimers");
 	create_insn	(x=0X1FE13);
 	op_hex		(x,	1);
 	create_insn	(0X1FE29);
@@ -6572,6 +6580,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2391C,	"Copies the 16x16-pixel VGA region at the cached cursor position into the fixed save buffer at 0xE0E (stride 0x140 per row, clipped to 320x200). Called from DrawMouseCursorAlt.",	0);
 	create_insn	(0X2391C);
 	set_name	(0X2391C,	"SaveCursorBackgroundPixels");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23923);
 	op_hex		(x,	1);
 	create_insn	(x=0X23938);
@@ -6597,15 +6614,6 @@ static Bytes_2(void) {
 	set_cmt	(0X23A64,	"stpcpy(dest=bx, src=ax): copies src including its null terminator into dest; returns bx = pointer to the copied terminator (ready for a further append).",	0);
 	create_insn	(0X23A64);
 	set_name	(0X23A64,	"StpCpy");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X23A6B);
 	op_seg		(x,	1);
 	set_cmt	(0X23A7C,	"Draws a string (bx) with the first character in word_2E412's color and the rest in word_2E414's -- a highlighted-hotkey-letter label style. Called from sub_193BE and sub_23C18.",	0);
@@ -8292,6 +8300,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2952A,	"Iterates all 4 g_partySlotAssignment members, calling SyncPartyMemberContainers for each -- commits every open bag's contents to CURGAME across the whole party.",	0);
 	create_insn	(0X2952A);
 	set_name	(0X2952A,	"SyncAllContainers");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2955C,	"Calls SyncContainerContents for all 3 of word_328D4's bag slots (+0x17C/+0x1A2/+0x1C8).",	0);
 	create_insn	(0X2955C);
 	set_name	(0X2955C,	"SyncPartyMemberContainers");
@@ -8328,15 +8345,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X296EE);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X296F4);
 	create_insn	(x=0X296F8);
 	op_hex		(x,	1);
@@ -11130,6 +11138,15 @@ static Bytes_4(void) {
 	set_name	(0X3594A,	"aNowYouCanSpend");
 	create_strlit	(0X35967,	0XA);
 	set_name	(0X35967,	"aPoints");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35971,	0X1D);
 	set_name	(0X35971,	"aYouHaveLearned");
 	create_strlit	(0X3598E,	0XD);
@@ -11186,15 +11203,6 @@ static Bytes_4(void) {
 	set_name	(0X35B1C,	"aDoYouWantToSel");
 	create_strlit	(0X35B38,	0XD);
 	set_name	(0X35B38,	"aYourAttempt");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35B45,	0XA);
 	set_name	(0X35B45,	"aToRepair");
 	create_strlit	(0X35B4F,	0XD);

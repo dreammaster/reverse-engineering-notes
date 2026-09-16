@@ -3307,7 +3307,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 test    word_328C4, 8000h
                 jnz     short loc_11FDF
                 call    PlayTitleScreenSequence
-                call    sub_1FBE1
+                call    InstallInt1cTimerHandler
                 cmp     byte_2E400, 1Bh
                 jz      short loc_11FA3
                 call    RunCharacterCreation
@@ -3338,7 +3338,7 @@ loc_11FBD:                              ; CODE XREF: InitGame+CD↑j
 ; ---------------------------------------------------------------------------
 
 loc_11FDF:                              ; CODE XREF: InitGame+A3↑j
-                call    sub_1FBE1
+                call    InstallInt1cTimerHandler
                 call    DrawMouseCursorAlt
                 test    word_328C4, 4000h
                 jnz     short loc_11FFE
@@ -16976,8 +16976,8 @@ ConvertWordToBCD4 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19B3E       proc far                ; CODE XREF: ComputeAlchemyRefinementYield+15↓P
-                push    di
+UnpackBCD2ToWord proc far               ; CODE XREF: ComputeAlchemyRefinementYield+15↓P
+                push    di              ; Unpacks 4 packed-BCD digits from [si+2]/[si+3] (2 bytes) into their decimal value (high([si+2])*1000 + low([si+2])*100 + high([si+3])*10 + low([si+3])). Distinct from the 4-byte BCD4 bignum library used elsewhere. Called once from ComputeAlchemyRefinementYield.
                 push    dx
                 push    cx
                 push    bx
@@ -17009,7 +17009,7 @@ sub_19B3E       proc far                ; CODE XREF: ComputeAlchemyRefinementYie
                 pop     dx
                 pop     di
                 retf
-sub_19B3E       endp
+UnpackBCD2ToWord endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17043,9 +17043,9 @@ loc_19BA6:                              ; CODE XREF: FormatAndDrawBCD4+3C↓j
                 shl     ax, cl
                 shr     al, cl
                 and     ah, 0Fh
-                call    sub_19E15
+                call    FormatBCD4Digit
                 mov     ah, al
-                call    sub_19E15
+                call    FormatBCD4Digit
                 inc     si
                 pop     cx
                 loop    loc_19BA6
@@ -17378,14 +17378,14 @@ SubtractFromBCDCounter endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19E15       proc near               ; CODE XREF: FormatAndDrawBCD4+32↑p
+FormatBCD4Digit proc near               ; CODE XREF: FormatAndDrawBCD4+32↑p
                                         ; FormatAndDrawBCD4+37↑p
-                cmp     ah, 0
+                cmp     ah, 0           ; Per-digit output helper for FormatAndDrawBCD4: ah=digit value, dl=first-significant-digit-emitted flag, di=output cursor. Implements leading-zero suppression (blanking pre-filled ',' separators to spaces) and comma-thousands-separator formatting. Called twice from FormatAndDrawBCD4.
                 jz      short loc_19E1C
                 jmp     short loc_19E37
 ; ---------------------------------------------------------------------------
 
-loc_19E1C:                              ; CODE XREF: sub_19E15+3↑j
+loc_19E1C:                              ; CODE XREF: FormatBCD4Digit+3↑j
                 cmp     dl, 1
                 jz      short loc_19E2C
                 cmp     byte ptr [di], 2Ch ; ','
@@ -17393,23 +17393,23 @@ loc_19E1C:                              ; CODE XREF: sub_19E15+3↑j
                 mov     byte ptr [di], 20h ; ' '
                 inc     di
 
-loc_19E2A:                              ; CODE XREF: sub_19E15+F↑j
+loc_19E2A:                              ; CODE XREF: FormatBCD4Digit+F↑j
                 inc     di
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19E2C:                              ; CODE XREF: sub_19E15+A↑j
+loc_19E2C:                              ; CODE XREF: FormatBCD4Digit+A↑j
                 cmp     byte ptr [di], 2Ch ; ','
                 jnz     short loc_19E32
                 inc     di
 
-loc_19E32:                              ; CODE XREF: sub_19E15+1A↑j
+loc_19E32:                              ; CODE XREF: FormatBCD4Digit+1A↑j
                 mov     byte ptr [di], 30h ; '0'
                 inc     di
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19E37:                              ; CODE XREF: sub_19E15+5↑j
+loc_19E37:                              ; CODE XREF: FormatBCD4Digit+5↑j
                 cmp     dl, 1
                 jz      short loc_19E49
                 cmp     byte ptr [di], 2Ch ; ','
@@ -17417,23 +17417,23 @@ loc_19E37:                              ; CODE XREF: sub_19E15+5↑j
                 mov     byte ptr [di], 20h ; ' '
                 inc     di
 
-loc_19E45:                              ; CODE XREF: sub_19E15+2A↑j
+loc_19E45:                              ; CODE XREF: FormatBCD4Digit+2A↑j
                 mov     dl, 1
                 jmp     short loc_19E4F
 ; ---------------------------------------------------------------------------
 
-loc_19E49:                              ; CODE XREF: sub_19E15+25↑j
+loc_19E49:                              ; CODE XREF: FormatBCD4Digit+25↑j
                 cmp     byte ptr [di], 2Ch ; ','
                 jnz     short loc_19E4F
                 inc     di
 
-loc_19E4F:                              ; CODE XREF: sub_19E15+32↑j
-                                        ; sub_19E15+37↑j
+loc_19E4F:                              ; CODE XREF: FormatBCD4Digit+32↑j
+                                        ; FormatBCD4Digit+37↑j
                 add     ah, 30h ; '0'
                 mov     [di], ah
                 inc     di
                 retn
-sub_19E15       endp
+FormatBCD4Digit endp
 
 seg031          ends
 
@@ -27529,7 +27529,7 @@ seg059          segment byte public 'CODE' use16
                 ;org 0Bh
                 assume es:nothing, ss:nothing, ds:seg129, fs:nothing, gs:nothing
                 align 2
-dword_1F97C     dd 0                    ; DATA XREF: sub_1FBE1+23↓w
+dword_1F97C     dd 0                    ; DATA XREF: InstallInt1cTimerHandler+23↓w
                                         ; RestoreInt1cVector+E↓r ...
 byte_1F980      db 4 dup(0)             ; DATA XREF: seg059:026A↓w
                                         ; seg059:loc_1FB9D↓r ...
@@ -27617,9 +27617,9 @@ loc_1FBC5:                              ; CODE XREF: seg059:0242↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FBE1       proc far                ; CODE XREF: InitGame+AA↑P
+InstallInt1cTimerHandler proc far       ; CODE XREF: InitGame+AA↑P
                                         ; InitGame:loc_11FDF↑P
-                and     word_3295A, 0DFFh
+                and     word_3295A, 0DFFh ; Saves the original INT 1Ch vector to dword_1F97C (INT 21h/AH=35h) and installs this session's own handler (INT 21h/AH=25h), after initializing word_3294C (from word_36CE7, the animation-speed setting) and related timer globals. Paired with RestoreInt1cVector. Called twice from InitGame.
                 mov     ax, word_36CE7
                 mov     word_3294C, ax
                 mov     word_3294E, 5Bh ; '['
@@ -27643,7 +27643,7 @@ sub_1FBE1       proc far                ; CODE XREF: InitGame+AA↑P
                 mov     ds, ax
                 assume ds:seg129
                 retf
-sub_1FBE1       endp
+InstallInt1cTimerHandler endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27826,7 +27826,7 @@ loc_1FD40:                              ; CODE XREF: TickWorldAilments+41↓j
 
 loc_1FD67:                              ; CODE XREF: TickWorldAilments+1F↑j
                 mov     dx, cs:word_1F984
-                call    sub_1FE0A
+                call    TickWorldAilmentTimers
                 mov     ax, word_36C83
                 add     ax, word_36C85
                 add     ax, word_36C87
@@ -27915,46 +27915,46 @@ TickAilmentDuration endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FE0A       proc near               ; CODE XREF: TickWorldAilments+48↑p
-                test    word_36C79, 8000h
+TickWorldAilmentTimers proc near        ; CODE XREF: TickWorldAilments+48↑p
+                test    word_36C79, 8000h ; Gated on word_36C79 bit 0x8000 ('timers pending'). Ticks down 6 global countdown timers at 0x9433 by dx, each paired with its own word_36C79 bit (3-8): on expiry, sets word_328C4 bit 0x400 (redraw signal) and clears the bit; if still running, re-arms the 0x8000 pending flag. Called once from TickWorldAilments.
                 jnz     short loc_1FE13
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1FE13:                              ; CODE XREF: sub_1FE0A+6↑j
+loc_1FE13:                              ; CODE XREF: TickWorldAilmentTimers+6↑j
                 and     word_36C79, 7FFFh
                 mov     ax, 0FEFFh
                 mov     bx, 9433h
                 mov     cx, 6
 
-loc_1FE22:                              ; CODE XREF: sub_1FE0A+42↓j
+loc_1FE22:                              ; CODE XREF: TickWorldAilmentTimers+42↓j
                 cmp     word ptr [bx], 0
                 jg      short loc_1FE29
                 jmp     short loc_1FE3B
 ; ---------------------------------------------------------------------------
 
-loc_1FE29:                              ; CODE XREF: sub_1FE0A+1B↑j
+loc_1FE29:                              ; CODE XREF: TickWorldAilmentTimers+1B↑j
                 sub     [bx], dx
                 jle     short loc_1FE35
                 or      word_36C79, 8000h
                 jmp     short loc_1FE43
 ; ---------------------------------------------------------------------------
 
-loc_1FE35:                              ; CODE XREF: sub_1FE0A+21↑j
+loc_1FE35:                              ; CODE XREF: TickWorldAilmentTimers+21↑j
                 or      word_328C4, 400h
 
-loc_1FE3B:                              ; CODE XREF: sub_1FE0A+1D↑j
+loc_1FE3B:                              ; CODE XREF: TickWorldAilmentTimers+1D↑j
                 mov     word ptr [bx], 0
                 and     word_36C79, ax
 
-loc_1FE43:                              ; CODE XREF: sub_1FE0A+29↑j
+loc_1FE43:                              ; CODE XREF: TickWorldAilmentTimers+29↑j
                 add     bx, 2
                 not     ax
                 shr     ax, 1
                 not     ax
                 loop    loc_1FE22
                 retn
-sub_1FE0A       endp
+TickWorldAilmentTimers endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -48930,7 +48930,7 @@ ComputeAlchemyRefinementYield proc near ; CODE XREF: CastSpell:loc_2AC4F↑p
                 call    IsBCDCounterAtLeast
                 jnb     short loc_2AD4F
                 mov     si, word_32904
-                call    sub_19B3E
+                call    UnpackBCD2ToWord
                 mov     word_3293E, ax
 
 loc_2AD4F:                              ; CODE XREF: ComputeAlchemyRefinementYield+F↑j
@@ -74356,11 +74356,11 @@ _textPos_x      dw 0                    ; DATA XREF: EnforceDemoBoundary+31↑w
 word_3294C      dw 0                    ; DATA XREF: ShowClueBook+2C↑w
                                         ; RestoreUiStateForClueBook+D9↑w ...
 word_3294E      dw 0                    ; DATA XREF: seg059:0202↑w
-                                        ; sub_1FBE1+C↑w ...
+                                        ; InstallInt1cTimerHandler+C↑w ...
 word_32950      dw 0                    ; DATA XREF: seg059:0213↑w
-                                        ; sub_1FBE1+12↑w ...
+                                        ; InstallInt1cTimerHandler+12↑w ...
 word_32952      dw 0                    ; DATA XREF: seg059:0224↑w
-                                        ; sub_1FBE1+18↑w ...
+                                        ; InstallInt1cTimerHandler+18↑w ...
 word_32954      dw 0                    ; DATA XREF: InitializeDungeonLevel+61↑w
                                         ; AdvanceGameClock+5C↑r ...
 word_32956      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation↑w

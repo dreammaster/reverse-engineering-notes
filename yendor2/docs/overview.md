@@ -5889,6 +5889,38 @@ transparent color key).
 
 677 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: InstallInt1cTimerHandler, UnpackBCD2ToWord, FormatBCD4Digit, TickWorldAilmentTimers
+
+With `rank_naming_candidates.py`'s named-neighbor heuristic finally
+exhausted, switched to a size-sorted listing of all remaining
+`sub_XXXXX` functions (new script `ida_scripts/list_remaining_unnamed.py`)
+to keep picking small, tractable targets.
+
+Named `sub_1FBE1` -> `InstallInt1cTimerHandler`, called twice from
+`InitGame`: the installer paired with the already-named
+`RestoreInt1cVector` — saves the original INT 1Ch (timer tick)
+vector and installs the game's own handler, after initializing
+`word_3294C` from `word_36CE7` (the confirmed animation-speed
+setting) and related timer globals.
+
+Named `sub_19B3E` -> `UnpackBCD2ToWord`, called once from
+`ComputeAlchemyRefinementYield`: a small, self-contained "2-byte
+packed-BCD to word" converter, distinct from the general 4-byte BCD4
+bignum library used elsewhere.
+
+Named `sub_19E15` -> `FormatBCD4Digit`, called twice from
+`FormatAndDrawBCD4`'s digit loop: the per-digit output helper
+implementing BCD4's leading-zero suppression and comma-thousands-
+separator formatting.
+
+Named `sub_1FE0A` -> `TickWorldAilmentTimers`, called once from
+`TickWorldAilments`: ticks down 6 global (not per-party-member)
+countdown timers, each paired with its own flag bit, signaling a
+redraw on expiry and re-arming a "timers pending" flag while any
+timer is still running.
+
+681 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
