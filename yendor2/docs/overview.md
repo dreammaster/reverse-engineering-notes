@@ -4936,6 +4936,22 @@ back to unnamed `sub_1E447` otherwise.
 
 584 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SelectDefaultAlchemyCaster + CopyPartyStatBlockToEmsCache
+
+Named `sub_1E447` -> `SelectDefaultAlchemyCaster`, resolving
+`RestoreOrSelectAlchemyCaster`'s fallback path: scans
+`g_partySlotAssignment` for the first occupied slot whose record has
+`[+0x94]` set and adopts it as the default alchemy caster. Also named
+`sub_1CC70` -> `CopyPartyStatBlockToEmsCache` (called from
+`UseItemType_400` and `UseTrainingItem`): copies 30 words from the
+party member's record into the same relative offsets in a separate
+EMS-mapped segment (`word_2E4AA`), then calls
+`UpdatePartyAverageStatTiers` — plausibly a before/after stat snapshot
+for a stat-changing item, though the destination buffer's exact
+purpose isn't confirmed.
+
+586 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

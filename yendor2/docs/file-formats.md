@@ -1494,7 +1494,8 @@ subtracting MP and the same two BCD ore counters. On screen entry,
 `RestoreOrSelectAlchemyCaster` (was `sub_1E473`) re-validates a cached
 caster id against `g_partySlotAssignment` (gated on the same `+0x94`
 marker `ApplySecondaryClassTierFlags` uses) and sets `word_32924`
-accordingly, falling back to a default-selection helper otherwise.
+accordingly, falling back to `SelectDefaultAlchemyCaster` (was
+`sub_1E447` — the first occupied, `+0x94`-eligible slot) otherwise.
 `RunAlchemyScreen` also calls `ShowCompassDirection`, a
 "NORTH"/"SOUTH"/"EAST"/"WEST" HUD readout gated on an unidentified
 "compass active" mode (`word_328CA` bit `0x1000` clear, `word_36C7F`

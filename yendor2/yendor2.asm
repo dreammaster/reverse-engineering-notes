@@ -21271,7 +21271,7 @@ loc_1BF1C:                              ; CODE XREF: UseItemType_400+59↑j
                 call    sub_1CC98
                 call    sub_193BE
                 call    DrawPartyStatusIconRow
-                call    sub_1CC70
+                call    CopyPartyStatBlockToEmsCache
                 mov     si, word_328D4
                 mov     bx, 0BCEh
                 mov     ax, [bx+1Ah]
@@ -21837,7 +21837,7 @@ loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
                 call    sub_162B6
                 call    sub_193BE
                 call    DrawPartyStatusIconRow
-                call    sub_1CC70
+                call    CopyPartyStatBlockToEmsCache
                 jmp     loc_1C158
 ; ---------------------------------------------------------------------------
 
@@ -22593,9 +22593,9 @@ RedrawPartyGoldDisplay endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CC70       proc near               ; CODE XREF: UseItemType_400+91↑p
+CopyPartyStatBlockToEmsCache proc near  ; CODE XREF: UseItemType_400+91↑p
                                         ; UseTrainingItem+3B8↑p
-                mov     es, word_2E4AA
+                mov     es, word_2E4AA  ; Copies 30 words from word_328D4+0x32 to the same relative offset (+0x72, the confirmed base->derived stat delta) in segment word_2E4AA, then calls UpdatePartyAverageStatTiers -- plausibly a before/after stat snapshot for a stat-changing item. Called from UseItemType_400 and UseTrainingItem.
                 mov     cx, 10h
                 mov     si, word_328D4
                 add     si, 32h ; '2'
@@ -22608,7 +22608,7 @@ sub_1CC70       proc near               ; CODE XREF: UseItemType_400+91↑p
                 rep movsw
                 call    UpdatePartyAverageStatTiers
                 retn
-sub_1CC70       endp
+CopyPartyStatBlockToEmsCache endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25441,14 +25441,14 @@ DrawAlchemySpellList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E447       proc near               ; CODE XREF: RestoreOrSelectAlchemyCaster:loc_1E4A1↓p
-                push    si
+SelectDefaultAlchemyCaster proc near    ; CODE XREF: RestoreOrSelectAlchemyCaster:loc_1E4A1↓p
+                push    si              ; Scans g_partySlotAssignment for the first occupied slot whose record has [+0x94] set, sets word_32924 to it -- default alchemy caster fallback. Called from RestoreOrSelectAlchemyCaster.
                 push    cx
                 push    bx
                 mov     cx, 4
                 mov     si, 95EBh
 
-loc_1E450:                              ; CODE XREF: sub_1E447+20↓j
+loc_1E450:                              ; CODE XREF: SelectDefaultAlchemyCaster+20↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1E46F
@@ -25461,16 +25461,16 @@ loc_1E450:                              ; CODE XREF: sub_1E447+20↓j
                 jmp     short loc_1E46F
 ; ---------------------------------------------------------------------------
 
-loc_1E46B:                              ; CODE XREF: sub_1E447+1B↑j
+loc_1E46B:                              ; CODE XREF: SelectDefaultAlchemyCaster+1B↑j
                 mov     word_32924, si
 
-loc_1E46F:                              ; CODE XREF: sub_1E447+D↑j
-                                        ; sub_1E447+22↑j
+loc_1E46F:                              ; CODE XREF: SelectDefaultAlchemyCaster+D↑j
+                                        ; SelectDefaultAlchemyCaster+22↑j
                 pop     bx
                 pop     cx
                 pop     si
                 retn
-sub_1E447       endp
+SelectDefaultAlchemyCaster endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25497,7 +25497,7 @@ loc_1E498:                              ; CODE XREF: RestoreOrSelectAlchemyCaste
 
 loc_1E4A1:                              ; CODE XREF: RestoreOrSelectAlchemyCaster+C↑j
                                         ; RestoreOrSelectAlchemyCaster+1A↑j
-                call    sub_1E447
+                call    SelectDefaultAlchemyCaster
                 retn
 ; ---------------------------------------------------------------------------
 

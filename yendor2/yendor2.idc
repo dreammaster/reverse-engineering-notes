@@ -4490,7 +4490,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1CC4C,	"msg",	0);
 	create_insn	(x=0X1CC62);
 	op_hex		(x,	1);
+	set_cmt	(0X1CC70,	"Copies 30 words from word_328D4+0x32 to the same relative offset (+0x72, the confirmed base->derived stat delta) in segment word_2E4AA, then calls UpdatePartyAverageStatTiers -- plausibly a before/after stat snapshot for a stat-changing item. Called from UseItemType_400 and UseTrainingItem.",	0);
 	create_insn	(0X1CC70);
+	set_name	(0X1CC70,	"CopyPartyStatBlockToEmsCache");
 	create_insn	(0X1CC98);
 	set_cmt	(0X1CCBC,	"Computes a tiered discount/markup percentage from party record field +0x68 (plausibly the BARTERING skill/stat) via 7 descending thresholds, applies it via MulBCD4ByWord to preview a scaled sell/ buy price, then -- gated on IsItemEligibleForEnhance / IsItemEligibleForRepair -- computes further scaled preview prices for enhance/repair costs. Called from PayGoldAndAcquireItem and SellClickedCatalogItem.",	0);
 	create_insn	(0X1CCBC);
@@ -4914,7 +4916,9 @@ static Bytes_1(void) {
 	set_name	(0X1E3AF,	"DrawAlchemySpellList");
 	create_insn	(0X1E3F9);
 	set_cmt	(0X1E405,	"msg",	0);
+	set_cmt	(0X1E447,	"Scans g_partySlotAssignment for the first occupied slot whose record has [+0x94] set, sets word_32924 to it -- default alchemy caster fallback. Called from RestoreOrSelectAlchemyCaster.",	0);
 	create_insn	(0X1E447);
+	set_name	(0X1E447,	"SelectDefaultAlchemyCaster");
 	create_insn	(0X1E46B);
 	set_cmt	(0X1E473,	"Re-validates the cached caster (word_36CCD) via SelectPartyRecordById + [bx+0x94] check, finds their slot in g_partySlotAssignment matching word_328D6, and sets word_32924 to it; falls back to sub_1E447 otherwise. Called from RunAlchemyScreen (screen entry).",	0);
 	create_insn	(0X1E473);
@@ -5340,9 +5344,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1FE48);
 	op_hex		(x,	1);
-	set_cmt	(0X1FE4F,	"Master per-minute game-clock tick. Increments word_36D01; past 1440 (a full day), calls sub_28FF9 ('new day', not traced), resets to 1, and rolls the calendar: day (word_36CFB) wraps at 31 into month (word_36CFD), which wraps at 13 into year (word_36CFF) -- a 30-day-month, 12-month-year calendar. Fires sub_1FFE4 (not traced, plausibly lighting/spawn-rate) at exactly 6:00 AM or 6:00 PM -- dawn/dusk. Also runs a separate 5-minute periodic countdown (word_32954, gated on word_3295A bit 0x800) calling sub_1FD24 when it lapses.",	0);
-	create_insn	(0X1FE4F);
-	set_name	(0X1FE4F,	"AdvanceGameClock");
 }
 
 //------------------------------------------------------------------------
@@ -5352,6 +5353,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1FE4F,	"Master per-minute game-clock tick. Increments word_36D01; past 1440 (a full day), calls sub_28FF9 ('new day', not traced), resets to 1, and rolls the calendar: day (word_36CFB) wraps at 31 into month (word_36CFD), which wraps at 13 into year (word_36CFF) -- a 30-day-month, 12-month-year calendar. Fires sub_1FFE4 (not traced, plausibly lighting/spawn-rate) at exactly 6:00 AM or 6:00 PM -- dawn/dusk. Also runs a separate 5-minute periodic countdown (word_32954, gated on word_3295A bit 0x800) calling sub_1FD24 when it lapses.",	0);
+	create_insn	(0X1FE4F);
+	set_name	(0X1FE4F,	"AdvanceGameClock");
 	create_insn	(0X1FE6D);
 	create_insn	(0X1FEA0);
 	create_insn	(x=0X1FEA3);
@@ -7087,15 +7091,6 @@ static Bytes_2(void) {
 	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
 	create_insn	(0X268F4);
 	set_name	(0X268F4,	"SaveAndCloseContainer");
-	set_cmt	(0X268FB,	"this",	0);
-	set_cmt	(0X26928,	"Zeroes [si+0xBE]/[si+0xC0]/[si+0xC2] depending on word_2E40A (0xA/0xC/0xD) -- the same 3 fields sub_274B4 clears for item types 0x13A/0x142/0x146. Called from PlaceItemInSlot and PickUpItemFromSlot.",	0);
-	create_insn	(0X26928);
-	set_name	(0X26928,	"ClearDepletedResourceCounterForCommand");
-	create_insn	(0X26937);
-	create_insn	(0X26946);
-	set_cmt	(0X26954,	"GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.",	0);
-	create_insn	(0X26954);
-	set_name	(0X26954,	"GetInventorySlotPtr");
 }
 
 //------------------------------------------------------------------------
@@ -7105,6 +7100,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X268FB,	"this",	0);
+	set_cmt	(0X26928,	"Zeroes [si+0xBE]/[si+0xC0]/[si+0xC2] depending on word_2E40A (0xA/0xC/0xD) -- the same 3 fields sub_274B4 clears for item types 0x13A/0x142/0x146. Called from PlaceItemInSlot and PickUpItemFromSlot.",	0);
+	create_insn	(0X26928);
+	set_name	(0X26928,	"ClearDepletedResourceCounterForCommand");
+	create_insn	(0X26937);
+	create_insn	(0X26946);
+	set_cmt	(0X26954,	"GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.",	0);
+	create_insn	(0X26954);
+	set_name	(0X26954,	"GetInventorySlotPtr");
 	create_insn	(x=0X26958);
 	op_hex		(x,	1);
 	create_insn	(0X2696A);
@@ -9388,6 +9392,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2BAA0,	"One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, restores the background via RestoreCorridorBackgroundFromEMS (CORRECTION: not a sound effect as first guessed -- it's an EMS-backed graphics blit), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.",	0);
 	create_insn	(0X2BAA0);
 	set_name	(0X2BAA0,	"AnimateProjectileStep");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2BAC6,	"ticks",	0);
 	set_cmt	(0X2BAD5,	"Draws one weapon-select slot icon (bx=item id), bailing if empty. When word_328C8 bit 8 is set, uses a highlighted icon variant for item ids in range word_3292A..word_32928 (the selected weapon). Called 4x from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X2BAD5);
@@ -9398,15 +9411,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2BB1A,	"Caches the action-icon panel area (video buffer -> EMS page frame, offset 0,0). Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.",	0);
 	create_insn	(0X2BB1A);
 	set_name	(0X2BB1A,	"SaveActionIconPanelToEMS");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2BB4D);
 	op_seg		(x,	1);
 	create_insn	(0X2BB58);
