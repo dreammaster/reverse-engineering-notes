@@ -4792,6 +4792,27 @@ data point toward eventually tracing that dispatcher.
 
 571 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplySecondaryClassTierFlags — extends the confirmed +0x1C bitfield
+
+Named `sub_25456` -> `ApplySecondaryClassTierFlags`, called once from
+`ShowCharacterSummary` — a genuinely new structural finding. The
+party-record `+0x1C` bitfield was previously fully mapped for its
+affliction bits (`0x40` and up: DEAD, CURSED, HEXED, JINXED, STONED,
+FROZEN, PARALYZED, DISEASED, POISONED, SICK); this function reveals
+that the **low 6 bits (`0x1`-`0x20`)** of the same field encode which
+"secondary class" (ids 4-9 of the 27-class table: MONK, ALCHEMIST,
+PALADIN, MAGE, DRUID, MARKSMAN) the character has reached. Gated on
+`[bx+0x94]` being nonzero (an unconfirmed "eligible" marker,
+`bx=word_328D4`), it maps the character's class id (`[bx+0xE]`) to the
+matching bit and ORs it into `[bx+0x1C]`, then also sets up to 2
+class-specific ability flags from a small fixed table via the
+already-named `SetRecordFlag_CA` (the `+0xCA` per-record ability
+bank) — plausibly a class-promotion/unlock effect, re-applied each
+time the summary screen is shown rather than a one-time event.
+`[bx+0x94]`'s own trigger condition remains unconfirmed.
+
+572 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

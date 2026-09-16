@@ -6662,7 +6662,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X25442);
 	op_hex		(x,	1);
+	set_cmt	(0X25456,	"Gated on [bx+0x94]!=0 (bx=word_328D4): maps class id [bx+0xE] (4-9) to a bit (0x20..0x1) OR'd into [bx+0x1C] -- new low bits of that field, distinct from the confirmed affliction bits -- and to a 2-entry table of ability-flag indices set via SetRecordFlag_CA. Called from ShowCharacterSummary.",	0);
 	create_insn	(0X25456);
+	set_name	(0X25456,	"ApplySecondaryClassTierFlags");
 	create_insn	(0X254CC);
 	set_cmt	(0X254F4,	"msg",	0);
 	set_cmt	(0X2553B,	"msg",	0);
@@ -7218,8 +7220,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2704C,	"Unified 'resource depleted' overlay, called both when a material BCD counter can't cover a cost (SpendMaterialCounterClamped) and when the dungeon view itself is blanked (DrawMinimap, word_36C7F bit 0x1000). Sets that bit, blits a fixed overlay image (EMS page frame -> video buffer) over the minimap's screen area, checks all 3 material BCD counters (0x94B3/0x94B7/0x94BB, confirmed consecutive, stride 4) and builds a small per-material 'nonzero' indicator array, then draws a banner icon and the material status icons via DrawResourceStatusIcons.",	0);
 	create_insn	(0X2704C);
 	set_name	(0X2704C,	"ShowResourceDepletedOverlay");
-	create_insn	(x=0X27050);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7229,6 +7229,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X27050);
+	op_hex		(x,	1);
 	create_insn	(x=0X27056);
 	op_hex		(x,	1);
 	set_cmt	(0X270FE,	"Hit-tests region table 0x636C (also used by TryCureAilmentFromIconClick, with a different mouse-position pair). Zones 1-3 -> sub_271DC (not traced); zones 4+ -> table 0x950D, stride 4 -- which for zone 4..9 is the exact same memory as TryCureAilmentFromIconClick's 6-slot ailment table, implying a 9-slot array whose first 3 entries are something else (equipment icons?), not confirmed.",	0);

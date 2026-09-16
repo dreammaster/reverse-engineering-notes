@@ -37310,7 +37310,7 @@ loc_25295:                              ; CODE XREF: ShowCharacterSummary+10B↑
 
 loc_252B0:                              ; CODE XREF: ShowCharacterSummary+E5↑j
                                         ; ShowCharacterSummary+11F↑j
-                call    sub_25456
+                call    ApplySecondaryClassTierFlags
                 mov     bx, 8FFBh
                 mov     ax, 93FFh
                 mov     [bx+4], ax
@@ -37480,8 +37480,8 @@ RollCharacterAttributes endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25456       proc near               ; CODE XREF: ShowCharacterSummary:loc_252B0↑p
-                push    si
+ApplySecondaryClassTierFlags proc near  ; CODE XREF: ShowCharacterSummary:loc_252B0↑p
+                push    si              ; Gated on [bx+0x94]!=0 (bx=word_328D4): maps class id [bx+0xE] (4-9) to a bit (0x20..0x1) OR'd into [bx+0x1C] -- new low bits of that field, distinct from the confirmed affliction bits -- and to a 2-entry table of ability-flag indices set via SetRecordFlag_CA. Called from ShowCharacterSummary.
                 push    di
                 push    cx
                 push    bx
@@ -37513,13 +37513,13 @@ sub_25456       proc near               ; CODE XREF: ShowCharacterSummary:loc_25
                 cmp     word ptr [bx+0Eh], 9
                 jnz     short loc_254C7
 
-loc_254AD:                              ; CODE XREF: sub_25456+19↑j
-                                        ; sub_25456+25↑j ...
+loc_254AD:                              ; CODE XREF: ApplySecondaryClassTierFlags+19↑j
+                                        ; ApplySecondaryClassTierFlags+25↑j ...
                 or      [bx+1Ch], ax
                 mov     si, word_328D4
                 mov     cx, 2
 
-loc_254B7:                              ; CODE XREF: sub_25456+6F↓j
+loc_254B7:                              ; CODE XREF: ApplySecondaryClassTierFlags+6F↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_254C7
@@ -37527,14 +37527,14 @@ loc_254B7:                              ; CODE XREF: sub_25456+6F↓j
                 add     di, 2
                 loop    loc_254B7
 
-loc_254C7:                              ; CODE XREF: sub_25456+D↑j
-                                        ; sub_25456+55↑j ...
+loc_254C7:                              ; CODE XREF: ApplySecondaryClassTierFlags+D↑j
+                                        ; ApplySecondaryClassTierFlags+55↑j ...
                 pop     bx
                 pop     cx
                 pop     di
                 pop     si
                 retn
-sub_25456       endp
+ApplySecondaryClassTierFlags endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42243,7 +42243,7 @@ SetGlobalFlag   endp
 
 
 SetRecordFlag_CA proc far               ; CODE XREF: UseTrainingItem+2FB↑P
-                                        ; sub_25456+67↑P ...
+                                        ; ApplySecondaryClassTierFlags+67↑P ...
                 push    si              ; Sets a bit in the +0xCA per-record flag bank: ORs GetRecordFlagBitAndWord_CA's mask into [si]. Called from UseTrainingItem, sub_25456, and others.
                 call    GetRecordFlagBitAndWord_CA
                 or      [si], ax

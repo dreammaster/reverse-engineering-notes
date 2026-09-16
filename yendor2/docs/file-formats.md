@@ -144,7 +144,16 @@ shows the matching name (or "NONE"):
 `0x400`=**STONED**, `0x800`=**FROZEN**, `0x1000`=**PARALYZED**,
 `0x80`=**CURSED**, `0x100`=**HEXED**, `0x200`=**JINXED**; bit `0x40`
 separately confirmed as **DEAD** via `DrawThreeStatBars` (see below).
-This one function resolves several previously-separate findings at
+**Correction/extension**: "fully mapped" above referred only to the
+affliction bits (`0x40` and up) `DrawAfflictionsList` itself tests.
+The low 6 bits (`0x1`-`0x20`) are a *separate* sub-field: found via
+`ApplySecondaryClassTierFlags` (was `sub_25456`, called from
+`ShowCharacterSummary`) to encode which "secondary class" (ids 4-9 of
+the 27-class table — MONK/ALCHEMIST/PALADIN/MAGE/DRUID/MARKSMAN) the
+character has reached, one bit per class (`0x20` down to `0x1`),
+gated on an unconfirmed `[+0x94]` marker and paired with up to 2
+class-specific ability-flag grants via `SetRecordFlag_CA`. This one
+function resolves several previously-separate findings at
 once: `TickStatusEffects`/`ApplyStatusEffect`'s `0x400`/`0x800`/
 `0x1000` group is STONED/FROZEN/PARALYZED (the *timed* ailments);
 `CastSpell`'s `0x18` dispel bits (`0x2000`/`0x4000`/`0x8000`) are
