@@ -5289,8 +5289,10 @@ static Bytes_1(void) {
 	op_hex		(x,	0);
 	create_insn	(x=0X1FC39);
 	op_seg		(x,	1);
+	set_cmt	(0X1FC3F,	"If word_3295A bit 0x800 is set, resets cs:word_1F984 to 0x270F (9999) and calls TickWorldAilments; no-op otherwise. Called from ApplyMapTriggerEffect and RestPartyAndAdvanceClock.",	0);
 	create_insn	(x=0X1FC3F);
 	op_hex		(x,	1);
+	set_name	(0X1FC3F,	"MaybeForceTickWorldAilments");
 	create_insn	(0X1FC48);
 	create_insn	(0X1FC53);
 	create_insn	(x=0X1FC58);
@@ -5951,7 +5953,9 @@ static Bytes_2(void) {
 	set_name	(0X222BD,	"ShowMapSkillTooLowMessage");
 	create_insn	(x=0X222C2);
 	op_hex		(x,	1);
+	set_cmt	(0X222F8,	"Unconditionally redraws all 4 g_partySlotAssignment status panels via far calls to DrawPartyMemberStatusPanel -- a different-segment, non-identical counterpart to RedrawAllPartyStatusPanels. Called from HandleMovementInput and InitGame.",	0);
 	create_insn	(0X222F8);
+	set_name	(0X222F8,	"RedrawAllPartyStatusPanelsAlt");
 	create_insn	(0X22315);
 	create_insn	(x=0X2231F);
 	op_hex		(x,	1);
@@ -7129,6 +7133,15 @@ static Bytes_2(void) {
 	set_cmt	(0X26A75,	"Generalized eligibility gate for inventory command codes (ax=word_2E40A) against an item's catalog flags (bx, [bx+0xC]) or word_2E548[+2]. Codes <=8 always pass; 9-0x14 each check a specific bit, two also checking the current party member's own record. errorCode=1 if ineligible. Called from sub_2621C.",	0);
 	create_insn	(0X26A75);
 	set_name	(0X26A75,	"IsItemEligibleForCommand");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X26A81);
 	create_insn	(x=0X26A86);
 	op_hex		(x,	1);
@@ -7141,15 +7154,6 @@ static Bytes_2(void) {
 	create_insn	(0X26AB1);
 	create_insn	(x=0X26AB5);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X26ABD);
 	create_insn	(0X26AC5);
 	create_insn	(x=0X26ACA);

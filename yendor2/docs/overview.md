@@ -4904,6 +4904,22 @@ disassembly dump.
 
 580 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RedrawAllPartyStatusPanelsAlt + MaybeForceTickWorldAilments
+
+Named two more small helpers. `sub_222F8` -> `RedrawAllPartyStatusPanelsAlt`
+(called from `HandleMovementInput` and `InitGame`): unconditionally
+redraws all 4 `g_partySlotAssignment` status panels via far calls —
+another instance of this session's recurring overlay-segment
+duplicate-function pattern, though not byte-identical to the
+already-named `RedrawAllPartyStatusPanels` (which instead loops with
+an occupied-slot check via near calls). `sub_1FC3F` ->
+`MaybeForceTickWorldAilments` (called from `ApplyMapTriggerEffect` and
+`RestPartyAndAdvanceClock`): gated on `word_3295A` bit `0x800`, resets
+a counter (`word_1F984`) to `0x270F` (9999) and calls the already-named
+`TickWorldAilments`; a no-op otherwise.
+
+582 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

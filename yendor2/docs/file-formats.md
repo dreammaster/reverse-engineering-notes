@@ -1617,7 +1617,10 @@ independently confirming both bit-group and protection-value mappings
 from a completely different function. `RedrawAllPartyStatusPanels`
 (was `sub_2ADD0`, called from `ApplyMultiStatEffect`, `RestCharacter`,
 and others) is the batch helper: calls `DrawPartyMemberStatusPanel`
-for every occupied roster slot.
+for every occupied roster slot. `RedrawAllPartyStatusPanelsAlt` (was
+`sub_222F8`, called from `HandleMovementInput`/`InitGame`) is a
+different-segment, non-identical counterpart that redraws all 4 slots
+unconditionally rather than stopping at the first empty one.
 `DrawThreeStatBars` (was `sub_25F10`) is the character-sheet version of
 this same 3-bar display, labeled exactly "HEALTH:"/"MAGIC:"/"WEIGHT:"
 — and its "DEAD" override (shown instead of the HEALTH fraction)

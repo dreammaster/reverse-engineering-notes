@@ -2413,7 +2413,7 @@ loc_11652:                              ; CODE XREF: HandleMovementInput+384↑j
                 call    ApplyMapTriggerEffect
                 cmp     byte_2E400, 0
                 jnz     short loc_116C8
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    DrawMouseCursor
                 test    word_328C4, 1800h
                 jz      short loc_116C8
@@ -3353,7 +3353,7 @@ loc_11FFE:                              ; CODE XREF: InitGame+F4↑j
                 call    DrawFullScreenPictureAndCacheToEMS
                 test    word_328C4, 4000h
                 jnz     short loc_12016
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
 
 loc_12016:                              ; CODE XREF: InitGame+133↑j
                 mov     errorCode, 1
@@ -10213,7 +10213,7 @@ loc_163B1:                              ; CODE XREF: RunDungeonGameLoop+89↑j
                 and     word_328CA, 0FFFh
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 pop     ax
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
@@ -12445,7 +12445,7 @@ loc_17507:                              ; CODE XREF: RunShopScreen+284↓j
                 and     word_328C6, 0FDFFh
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    RefreshDungeonScreen
                 test    word_328C6, 80h
                 jnz     short loc_1752F
@@ -13575,7 +13575,7 @@ loc_17F7E:                              ; CODE XREF: UseItem+3E2↑j
 loc_17F8D:                              ; CODE XREF: UseItem+3F1↑j
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -13801,7 +13801,7 @@ loc_180E8:                              ; CODE XREF: ApplyEffectAndDrawIconBar+2
                 call    wait
 
 loc_180F0:                              ; CODE XREF: ApplyEffectAndDrawIconBar+2C↑j
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    DrawMouseCursor
                 call    CheckPartyWipeAndReinitLevel
                 pop     cx
@@ -17490,7 +17490,7 @@ loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑
 loc_19ECA:                              ; CODE XREF: ApplyMapTriggerEffect+23↑j
                 test    word ptr [di+2], 2000h
                 jz      short loc_19EE7
-                call    sub_1FC3F
+                call    MaybeForceTickWorldAilments
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     byte_2E400, 0
@@ -25039,7 +25039,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 and     word_328CA, 0FF7Fh
                 call    sub_2C0FE
                 call    ApplyMapTriggerEffect
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    DrawMouseCursor
                 call    sub_1FD03
                 retf
@@ -25721,7 +25721,7 @@ loc_1E6CD:                              ; CODE XREF: RestPartyAndAdvanceClock+79
 
 loc_1E6FB:                              ; CODE XREF: RestPartyAndAdvanceClock+15↑j
                 call    sub_25862
-                call    sub_1FC3F
+                call    MaybeForceTickWorldAilments
                 and     word_3295A, 1FFFh
                 mov     word_32940, 1
                 mov     cx, 8
@@ -25868,7 +25868,7 @@ loc_1E898:                              ; CODE XREF: RestPartyAndAdvanceClock+25
 loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+253↑j
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    UpdatePartyAverageStatTiers
                 and     word_328C4, 0FBFFh
                 call    RedrawDungeonScreen
@@ -26648,7 +26648,7 @@ InitializeDungeonLevel proc far         ; CODE XREF: start+7F6↑P
                 call    RevealCellsAroundPlayer
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -27521,7 +27521,7 @@ dword_1F97C     dd 0                    ; DATA XREF: sub_1FBE1+23↓w
                                         ; RestoreInt1cVector+E↓r ...
 byte_1F980      db 4 dup(0)             ; DATA XREF: seg059:026A↓w
                                         ; seg059:loc_1FB9D↓r ...
-word_1F984      dw 0                    ; DATA XREF: sub_1FC3F:loc_1FC48↓w
+word_1F984      dw 0                    ; DATA XREF: MaybeForceTickWorldAilments:loc_1FC48↓w
                                         ; TickWorldAilments+E↓r ...
 byte_1F986      db 4 dup(0), 190h dup(11h), 2Eh, 0FFh, 6, 12h, 0, 2Eh
                                         ; DATA XREF: seg059:01DD↓w
@@ -27658,18 +27658,18 @@ RestoreInt1cVector endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FC3F       proc far                ; CODE XREF: ApplyMapTriggerEffect+7B↑P
+MaybeForceTickWorldAilments proc far    ; CODE XREF: ApplyMapTriggerEffect+7B↑P
                                         ; RestPartyAndAdvanceClock+B6↑P
-                test    word_3295A, 800h
+                test    word_3295A, 800h ; If word_3295A bit 0x800 is set, resets cs:word_1F984 to 0x270F (9999) and calls TickWorldAilments; no-op otherwise. Called from ApplyMapTriggerEffect and RestPartyAndAdvanceClock.
                 jnz     short loc_1FC48
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1FC48:                              ; CODE XREF: sub_1FC3F+6↑j
+loc_1FC48:                              ; CODE XREF: MaybeForceTickWorldAilments+6↑j
                 mov     cs:word_1F984, 270Fh
                 call    TickWorldAilments
                 retf
-sub_1FC3F       endp
+MaybeForceTickWorldAilments endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27777,7 +27777,7 @@ TickRedrawTimer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TickWorldAilments proc near             ; CODE XREF: sub_1FC3F+10↑p
+TickWorldAilments proc near             ; CODE XREF: MaybeForceTickWorldAilments+10↑p
                                         ; AdvanceGameClock+70↓p
                 push    es              ; 5-minute periodic sweep (AdvanceGameClock). Runs TickAilmentDuration over the 6-entry table at 0x9519 and every party member's 8 main inventory slots ([+0x11A]) -- ailments occupy the same slot storage as items/world-table rows. Calls sub_1FE0A once (a related status sweep, not traced). Sums all 12 known status-duration counters; if all 0, clears word_3295A bit 0x800 so this timer stops firing until something needs it again.
                 push    di
@@ -32099,9 +32099,9 @@ seg070          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_222F8       proc far                ; CODE XREF: HandleMovementInput+3B0↑P
+RedrawAllPartyStatusPanelsAlt proc far  ; CODE XREF: HandleMovementInput+3B0↑P
                                         ; InitGame+135↑P ...
-                mov     bx, 95EBh
+                mov     bx, 95EBh       ; Unconditionally redraws all 4 g_partySlotAssignment status panels via far calls to DrawPartyMemberStatusPanel -- a different-segment, non-identical counterpart to RedrawAllPartyStatusPanels. Called from HandleMovementInput and InitGame.
                 push    cs
                 call    near ptr DrawPartyMemberStatusPanel
                 mov     bx, 95EDh
@@ -32114,7 +32114,7 @@ sub_222F8       proc far                ; CODE XREF: HandleMovementInput+3B0↑P
                 push    cs
                 call    near ptr DrawPartyMemberStatusPanel
                 retf
-sub_222F8       endp
+RedrawAllPartyStatusPanelsAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -45023,7 +45023,7 @@ loc_28FAC:                              ; CODE XREF: RevealMapRegion+24A↑j
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    ApplyMapTriggerEffect
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
@@ -53532,7 +53532,7 @@ loc_2D77A:                              ; CODE XREF: InteractWithContainer+25↑
 loc_2D78A:                              ; CODE XREF: InteractWithContainer+9F↑j
                 call    ClearIneligibleFlagForAllMembers
                 call    ApplyMapTriggerEffect
-                call    sub_222F8
+                call    RedrawAllPartyStatusPanelsAlt
                 call    ClearStatusPanelIfDirty
                 call    ShowCompassDirection
                 call    DrawMouseCursor
