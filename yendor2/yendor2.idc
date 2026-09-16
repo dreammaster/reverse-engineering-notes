@@ -7541,7 +7541,9 @@ static Bytes_3(void) {
 	set_cmt	(0X28246,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
 	create_insn	(0X28246);
 	set_name	(0X28246,	"RestoreDialogAreaFromEMS");
+	set_cmt	(0X2827E,	"Returns immediately (ax=1) if g_driverStateFlags bit 0x8 is clear; otherwise busy-waits for word_2E494 to become 0 then returns ax=0 -- waits for the sound driver's current operation to finish. Called from several sites including sub_2D498.",	0);
 	create_insn	(0X2827E);
+	set_name	(0X2827E,	"WaitForSoundDriverIdle");
 	create_insn	(x=0X28281);
 	op_hex		(x,	1);
 	set_cmt	(0X28296,	"Plays music track ax (no-op if g_driverStateFlags bit1/music-active isn't set). Sets up a driver call param (sub_27BAD) then reads the track's data from WORLD.DAT (fixed FileEntry bx=0x9043).",	0);
@@ -7664,8 +7666,10 @@ static Bytes_3(void) {
 	create_byte	(0X28616);
 	create_byte	(0X28617);
 	create_insn	(0X28618);
+	set_cmt	(0X28619,	"Looks up two env vars via FindEnvironmentVariable (name constants at 0xCC1/0xCB8, near the BLASTER=/SOUND=/EMMXXXX0/FMDRV string cluster; exact text not independently pinned down). On success, parses 'A<3 digits>' into word_32916 and 'I<1 digit>' into word_32914 -- the classic BLASTER=A220 I5 D1 T3 format -- setting word_36CE3/word_36CE1=1. Sets g_driverStateFlags fallback bits (0x8000/0xC000) on lookup/parse failure. Called from InitSoundSystem.",	0);
 	create_insn	(x=0X28619);
 	op_hex		(x,	1);
+	set_name	(0X28619,	"ParseSoundBlasterEnvironmentVariable");
 	create_insn	(x=0X2862E);
 	op_hex		(x,	1);
 	create_insn	(0X28635);
@@ -9744,10 +9748,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2D195,	"Calls ResolveAttack, then latches word_332E8 into word_2E49C the first time through (only if word_2E49C was still 0), setting errorCode=1. Field identities ([di+0x58], party record +0x62, word_332E8) not confirmed. Called once from the still-unnamed sub_2C0FE.",	0);
 	create_insn	(0X2D195);
 	set_name	(0X2D195,	"ResolveAttackAndLatchFirstHit");
-	set_cmt	(0X2D1C2,	"Filters pending status-effect flags (word_33304 high bits) by target immunity ([di+0x96]) into word_2E49A; fully negates damage (word_2E49C=0) if a low-bit status/immunity match is found; halves damage for a resistance-category match (word_33306 vs [di+0x98]); and drains word_332E0 from an elemental resource field on the target (offset selected by word_33304 bits 0x20-0x200), floored at 0. Called from sub_2D4B6, right after TryResolveAttackAgainstTarget.",	0);
-	create_insn	(x=0X2D1C2);
-	op_hex		(x,	1);
-	set_name	(0X2D1C2,	"ApplyTargetResistancesToAttack");
 }
 
 //------------------------------------------------------------------------
@@ -9757,6 +9757,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2D1C2,	"Filters pending status-effect flags (word_33304 high bits) by target immunity ([di+0x96]) into word_2E49A; fully negates damage (word_2E49C=0) if a low-bit status/immunity match is found; halves damage for a resistance-category match (word_33306 vs [di+0x98]); and drains word_332E0 from an elemental resource field on the target (offset selected by word_33304 bits 0x20-0x200), floored at 0. Called from sub_2D4B6, right after TryResolveAttackAgainstTarget.",	0);
+	create_insn	(x=0X2D1C2);
+	op_hex		(x,	1);
+	set_name	(0X2D1C2,	"ApplyTargetResistancesToAttack");
 	create_insn	(x=0X2D1CD);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D1D5);
@@ -9926,7 +9930,9 @@ static Bytes_4(void) {
 	create_insn	(x=0X2D553);
 	op_hex		(x,	1);
 	create_insn	(0X2D56A);
+	set_cmt	(0X2D578,	"DOS environment-variable lookup: PSP via INT 21h AH=0x51, env segment from PSP+0x2C, scans the env block for a match against ds:bp (caller's search string), copies the value to es:dx. ax=1 found / ax=0 not found. Called from ParseSoundBlasterEnvironmentVariable.",	0);
 	create_insn	(0X2D578);
+	set_name	(0X2D578,	"FindEnvironmentVariable");
 	create_insn	(x=0X2D583);
 	op_hex		(x,	1);
 	set_cmt	(0X2D585,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);

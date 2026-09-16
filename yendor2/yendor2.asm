@@ -3220,7 +3220,7 @@ DrawShadowedTextAlt endp
 
 sub_11EAE       proc near               ; CODE XREF: sub_11A10+231↑p
                                         ; sub_11E1C+3↑p ...
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jz      short locret_11EBD
                 cmp     cx, 0FFFFh
                 jz      short locret_11EBD
@@ -9967,7 +9967,7 @@ DrawShadowedText endp
 
 sub_16234       proc near               ; CODE XREF: sub_1559A+1F6↑p
                                         ; sub_1559A+246↑p ...
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jz      short locret_16243
                 cmp     cx, 0FFFFh
                 jz      short locret_16243
@@ -10643,7 +10643,7 @@ loc_1670D:                              ; CODE XREF: HandleDungeonInput+C6↑j
                 call    ResolveAttack
                 cmp     word_2E49C, 0
                 jnz     short loc_16778
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_16776
                 mov     ax, _val43
                 call    sub_28412
@@ -10656,7 +10656,7 @@ loc_16778:                              ; CODE XREF: HandleDungeonInput+35E↑j
                 call    UpdateMonsterWoundTier
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_167A9
                 mov     si, word_328D4
                 mov     ax, [si+142h]
@@ -10812,7 +10812,7 @@ loc_168F6:                              ; CODE XREF: sub_16881+70↑j
                 call    sub_16BF6
                 cmp     word_2E49C, 0
                 jz      short loc_16966
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_1693D
                 mov     si, word_32904
                 mov     ax, [si+5Ch]
@@ -10844,7 +10844,7 @@ loc_1695B:                              ; CODE XREF: sub_16881+D5↑j
 
 loc_16966:                              ; CODE XREF: sub_16881+7E↑j
                                         ; sub_16881+A3↑j ...
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jz      short loc_16978
 
 loc_1696D:                              ; CODE XREF: sub_16881+101↓j
@@ -10890,7 +10890,7 @@ loc_169A1:                              ; CODE XREF: sub_16881+177↓j
                 test    word_328C8, 4
                 jnz     short loc_169EF
                 or      word_328C8, 4
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_169EF
                 mov     si, word_32904
                 mov     ax, [si+5Ch]
@@ -13793,7 +13793,7 @@ loc_180CF:                              ; CODE XREF: ApplyEffectAndDrawIconBar+D
                 call    DrawMouseCursor
                 test    word_328C8, 4
                 jz      short loc_180E8
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jz      short loc_180F0
 
 loc_180E8:                              ; CODE XREF: ApplyEffectAndDrawIconBar+25↑j
@@ -13818,7 +13818,7 @@ loc_18104:                              ; CODE XREF: ApplyEffectAndDrawIconBar+1
                 mov     di, ax
                 test    word_328C8, 4
                 jnz     short loc_1812A
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_18125
                 mov     ax, [di]
                 or      ax, ax
@@ -24270,7 +24270,7 @@ ApplyDamageAlongCorridorLine endp
 ShowCombatMessageOrWait proc near       ; CODE XREF: HandleRangedOrCombatAction+1CD↑p
                                         ; HandleRangedOrCombatAction+1E4↑p ...
                 push    ax              ; Shows a combat message (ax, via sub_28412) unless sub_2827E reports speech/sound busy, in which case it just waits 6 ticks instead. Called from HandleRangedOrCombatAction.
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jz      short loc_1DA54
                 pop     ax
                 mov     ax, 6           ; ticks
@@ -32707,7 +32707,7 @@ sub_227F5       endp
 
 
 sub_2281F       proc near               ; CODE XREF: sub_2278C+5A↑p
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_2283F
                 mov     cx, 4
                 mov     di, 0BC28h
@@ -33804,7 +33804,7 @@ ShowLootAndAwardExperience proc far     ; CODE XREF: RunDungeonGameLoop+100↑P
                 push    dx
                 push    si
                 push    di
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_23164
                 mov     ax, _val16
                 call    sub_28412
@@ -43465,21 +43465,21 @@ seg100          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2827E       proc far                ; CODE XREF: sub_11EAE↑P
+WaitForSoundDriverIdle proc far         ; CODE XREF: sub_11EAE↑P
                                         ; sub_16234↑P ...
-                mov     ax, 1
+                mov     ax, 1           ; Returns immediately (ax=1) if g_driverStateFlags bit 0x8 is clear; otherwise busy-waits for word_2E494 to become 0 then returns ax=0 -- waits for the sound driver's current operation to finish. Called from several sites including sub_2D498.
                 test    g_driverStateFlags, 8
                 jz      short loc_28292
 
-loc_28289:                              ; CODE XREF: sub_2827E+10↓j
+loc_28289:                              ; CODE XREF: WaitForSoundDriverIdle+10↓j
                 cmp     word_2E494, 0
                 jnz     short loc_28289
                 xor     ax, ax
 
-loc_28292:                              ; CODE XREF: sub_2827E+9↑j
+loc_28292:                              ; CODE XREF: WaitForSoundDriverIdle+9↑j
                 cmp     ax, 0
                 retf
-sub_2827E       endp
+WaitForSoundDriverIdle endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43650,7 +43650,7 @@ ShutdownAudioDrivers endp
 
 InitSoundSystem proc far                ; CODE XREF: InitGame+85↑P
                 and     g_driverStateFlags, 0FFF0h ; Top-level sound/music driver init, called from InitGame: bails early if already initialized (g_driverStateFlags bits 0xC000), else conditionally runs DetectSoundDriver and sub_28564 gated on word_328C8 bits 1/0 (plausibly sound/music disable flags).
-                call    sub_28619
+                call    ParseSoundBlasterEnvironmentVariable
                 test    g_driverStateFlags, 0C000h
                 jz      short loc_283FB
                 retf
@@ -43908,34 +43908,35 @@ byte_28617      db 0                    ; DATA XREF: ShutdownAudioDrivers+35↑r
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28619       proc near               ; CODE XREF: InitSoundSystem+5↑p
-                and     g_driverStateFlags, 3FF0h
+ParseSoundBlasterEnvironmentVariable proc near
+                                        ; CODE XREF: InitSoundSystem+5↑p
+                and     g_driverStateFlags, 3FF0h ; Looks up two env vars via FindEnvironmentVariable (name constants at 0xCC1/0xCB8, near the BLASTER=/SOUND=/EMMXXXX0/FMDRV string cluster; exact text not independently pinned down). On success, parses 'A<3 digits>' into word_32916 and 'I<1 digit>' into word_32914 -- the classic BLASTER=A220 I5 D1 T3 format -- setting word_36CE3/word_36CE1=1. Sets g_driverStateFlags fallback bits (0x8000/0xC000) on lookup/parse failure. Called from InitSoundSystem.
                 mov     ax, 0CC1h
                 mov     bx, 0AFA8h
-                call    sub_2D578
+                call    FindEnvironmentVariable
                 or      ax, ax
                 jnz     short loc_28635
                 or      g_driverStateFlags, 8000h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_28635:                              ; CODE XREF: sub_28619+13↑j
+loc_28635:                              ; CODE XREF: ParseSoundBlasterEnvironmentVariable+13↑j
                 mov     ax, 0CB8h
                 mov     bx, 0AFA8h
-                call    sub_2D578
+                call    FindEnvironmentVariable
                 or      ax, ax
                 jnz     short loc_2864B
 
-loc_28644:                              ; CODE XREF: sub_28619+38↓j
-                                        ; sub_28619+74↓j
+loc_28644:                              ; CODE XREF: ParseSoundBlasterEnvironmentVariable+38↓j
+                                        ; ParseSoundBlasterEnvironmentVariable+74↓j
                 or      g_driverStateFlags, 0C000h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2864B:                              ; CODE XREF: sub_28619+29↑j
+loc_2864B:                              ; CODE XREF: ParseSoundBlasterEnvironmentVariable+29↑j
                 mov     si, 0AFA8h
 
-loc_2864E:                              ; CODE XREF: sub_28619+42↓j
+loc_2864E:                              ; CODE XREF: ParseSoundBlasterEnvironmentVariable+42↓j
                 lodsb
                 cmp     al, 0
                 jz      short loc_28644
@@ -43946,8 +43947,8 @@ loc_2864E:                              ; CODE XREF: sub_28619+42↓j
                 jmp     short loc_2864E
 ; ---------------------------------------------------------------------------
 
-loc_2865D:                              ; CODE XREF: sub_28619+3C↑j
-                                        ; sub_28619+40↑j
+loc_2865D:                              ; CODE XREF: ParseSoundBlasterEnvironmentVariable+3C↑j
+                                        ; ParseSoundBlasterEnvironmentVariable+40↑j
                 mov     bl, [si]
                 xor     bh, bh
                 sub     bx, 30h ; '0'
@@ -43967,7 +43968,7 @@ loc_2865D:                              ; CODE XREF: sub_28619+3C↑j
                 mov     word_32916, dx
                 mov     si, 0AFA8h
 
-loc_2868A:                              ; CODE XREF: sub_28619+7E↓j
+loc_2868A:                              ; CODE XREF: ParseSoundBlasterEnvironmentVariable+7E↓j
                 lodsb
                 cmp     al, 0
                 jz      short loc_28644
@@ -43978,8 +43979,8 @@ loc_2868A:                              ; CODE XREF: sub_28619+7E↓j
                 jmp     short loc_2868A
 ; ---------------------------------------------------------------------------
 
-loc_28699:                              ; CODE XREF: sub_28619+78↑j
-                                        ; sub_28619+7C↑j
+loc_28699:                              ; CODE XREF: ParseSoundBlasterEnvironmentVariable+78↑j
+                                        ; ParseSoundBlasterEnvironmentVariable+7C↑j
                 mov     bl, [si]
                 sub     bl, 30h ; '0'
                 xor     bh, bh
@@ -43987,7 +43988,7 @@ loc_28699:                              ; CODE XREF: sub_28619+78↑j
                 mov     word_36CE3, 1
                 mov     word_36CE1, 1
                 retn
-sub_28619       endp
+ParseSoundBlasterEnvironmentVariable endp
 
 seg100          ends
 
@@ -46046,7 +46047,7 @@ loc_29817:                              ; CODE XREF: UnlockDoorCommand+D5↑j
                 jz      short loc_297EB
 
 loc_2981F:                              ; CODE XREF: UnlockDoorCommand+B1↑j
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_2982E
                 mov     ax, word_329EE
                 call    sub_28412
@@ -48359,7 +48360,7 @@ loc_2A896:                              ; CODE XREF: sub_2A788+103↑j
 ; ---------------------------------------------------------------------------
 
 loc_2A899:                              ; CODE XREF: sub_2A788+E4↑j
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_2A8A8
                 mov     ax, word_329EE
                 call    sub_28412
@@ -49000,7 +49001,7 @@ seg115          segment byte public 'CODE' use16
 
 ShowPartyWipeScreen proc far            ; CODE XREF: CheckPartyWipeAndReinitLevel:loc_25ADB↑P
                 call    StopMusicAndResetTimer ; Stops music, plays sound effect 0x13 via the sound dispatch (sub_28412) when sub_2827E allows it, draws full-screen picture 1 and caches it to EMS, redraws the fixed status icon, and shows the mouse cursor. The 'show this screen' step of CheckPartyWipeAndReinitLevel's party-wipe sequence.
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jnz     short loc_2ADFC
                 mov     ax, 13h
                 call    sub_28412
@@ -49010,7 +49011,7 @@ loc_2ADFC:                              ; CODE XREF: ShowPartyWipeScreen+A↑j
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
                 call    RestoreAndRedrawFixedStatusIcon
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 call    DrawMouseCursor
                 retf
 ShowPartyWipeScreen endp
@@ -53100,7 +53101,7 @@ ApplyAttackAlongCorridorLine endp
 sub_2D498       proc near               ; CODE XREF: sub_2C0FE+7AC↑p
                                         ; sub_2C0FE+80B↑p ...
                 push    ax
-                call    sub_2827E
+                call    WaitForSoundDriverIdle
                 jz      short loc_2D4AA
                 pop     ax
                 mov     ax, 6           ; ticks
@@ -53231,9 +53232,9 @@ seg125          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D578       proc far                ; CODE XREF: sub_28619+C↑P
-                                        ; sub_28619+22↑P
-                push    bp
+FindEnvironmentVariable proc far        ; CODE XREF: ParseSoundBlasterEnvironmentVariable+C↑P
+                                        ; ParseSoundBlasterEnvironmentVariable+22↑P
+                push    bp              ; DOS environment-variable lookup: PSP via INT 21h AH=0x51, env segment from PSP+0x2C, scans the env block for a match against ds:bp (caller's search string), copies the value to es:dx. ax=1 found / ax=0 not found. Called from ParseSoundBlasterEnvironmentVariable.
                 push    cx
                 push    dx
                 push    si
@@ -53250,7 +53251,7 @@ sub_2D578       proc far                ; CODE XREF: sub_28619+C↑P
                 mov     di, 0
                 mov     cx, 0FFh
 
-loc_2D594:                              ; CODE XREF: sub_2D578+31↓j
+loc_2D594:                              ; CODE XREF: FindEnvironmentVariable+31↓j
                 mov     si, bp
                 repe cmpsb
                 cmp     byte ptr [si-1], 0
@@ -53264,7 +53265,7 @@ loc_2D594:                              ; CODE XREF: sub_2D578+31↓j
                 jmp     short loc_2D5C5
 ; ---------------------------------------------------------------------------
 
-loc_2D5AF:                              ; CODE XREF: sub_2D578+24↑j
+loc_2D5AF:                              ; CODE XREF: FindEnvironmentVariable+24↑j
                 dec     di
                 mov     si, dx
                 xchg    si, di
@@ -53274,14 +53275,14 @@ loc_2D5AF:                              ; CODE XREF: sub_2D578+24↑j
                 mov     es, bx
                 assume es:seg129
 
-loc_2D5BC:                              ; CODE XREF: sub_2D578+48↓j
+loc_2D5BC:                              ; CODE XREF: FindEnvironmentVariable+48↓j
                 lodsb
                 stosb
                 or      al, al
                 jnz     short loc_2D5BC
                 mov     ax, 1
 
-loc_2D5C5:                              ; CODE XREF: sub_2D578+35↑j
+loc_2D5C5:                              ; CODE XREF: FindEnvironmentVariable+35↑j
                 pop     ds
                 pop     es
                 assume es:nothing
@@ -53291,7 +53292,7 @@ loc_2D5C5:                              ; CODE XREF: sub_2D578+35↑j
                 pop     cx
                 pop     bp
                 retf
-sub_2D578       endp
+FindEnvironmentVariable endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -56763,7 +56764,7 @@ g_blitMaskLen   dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+4
                                         ; Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.
 word_2E492      dw 0FFh                 ; DATA XREF: sub_11A10:loc_11D4A↑r
                                         ; InitGame+CF↑r ...
-word_2E494      dw 0FFFFh               ; DATA XREF: sub_2827E:loc_28289↑r
+word_2E494      dw 0FFFFh               ; DATA XREF: WaitForSoundDriverIdle:loc_28289↑r
 word_2E496      dw 0                    ; DATA XREF: RunMapEditorScreen+32↑w
                                         ; RunMapEditorScreen+27D↑w ...
 word_2E498      dw 0                    ; DATA XREF: ExtendDungeonCeilingTexture+12↑r
@@ -74273,9 +74274,9 @@ word_32910      dw 0                    ; DATA XREF: RunGameDialog:loc_1EC8A↑w
 word_32912      dw 0                    ; DATA XREF: EraseLabelText+12↑r
                                         ; GetListItemPosition+22↑w
 word_32914      dw 0                    ; DATA XREF: InitMusicDriver+3E↑r
-                                        ; sub_28619+87↑w
+                                        ; ParseSoundBlasterEnvironmentVariable+87↑w
 word_32916      dw 0                    ; DATA XREF: InitMusicDriver+34↑r
-                                        ; sub_28619+6A↑w
+                                        ; ParseSoundBlasterEnvironmentVariable+6A↑w
 word_32918      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+3EA↑w
                                         ; ExtendDungeonCeilingTexture+21↑w ...
 word_3291A      dw 0                    ; DATA XREF: PreloadMonsterStatsTable+E↑w
@@ -85972,9 +85973,9 @@ word_36CCD      dw 0                    ; DATA XREF: sub_1E473+6↑r
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36CE1      dw 3                    ; DATA XREF: sub_28619+91↑w
+word_36CE1      dw 3                    ; DATA XREF: ParseSoundBlasterEnvironmentVariable+91↑w
                                         ; sub_2B436↑r ...
-word_36CE3      dw 3                    ; DATA XREF: sub_28619+8B↑w
+word_36CE3      dw 3                    ; DATA XREF: ParseSoundBlasterEnvironmentVariable+8B↑w
                                         ; sub_2B436+4↑r ...
 ; FileEntry *g_driverStateFlags
 g_driverStateFlags dw offset loc_2D869+1 - offset locret_2D860

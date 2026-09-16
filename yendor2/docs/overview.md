@@ -4640,6 +4640,33 @@ curiosity rather than a confirmed finding.
 
 555 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: Sound Blaster environment-variable auto-detection
+
+Named a 3-function cluster behind sound hardware setup, called from
+`InitSoundSystem`. `sub_2D578` -> `FindEnvironmentVariable`: the
+classic DOS technique — gets the PSP segment (`INT 21h AH=0x51`),
+reads the environment segment pointer at `PSP+0x2C`, and scans the
+env block for a caller-supplied search string, copying the matched
+value out. `sub_28619` -> `ParseSoundBlasterEnvironmentVariable`:
+calls it twice against two env-var name constants, then parses the
+returned value for `'A'<3 digits>` into `word_32916` and `'I'<1
+digit>` into `word_32914` — exactly the classic `BLASTER=A220 I5 D1
+T3` Sound Blaster format (base address + IRQ), setting
+`word_36CE3`/`word_36CE1` on success and `g_driverStateFlags`
+fallback bits on failure. While tracing this, found a nearby string
+cluster (`BLASTER=`, `SOUND=`, `EMMXXXX0`, `FMDRV`) that strongly
+supports this reading, though the exact byte addresses of the two
+name constants (`0xCC1`/`0xCB8`) didn't line up precisely with those
+strings on manual inspection — the naming rests on the parsing logic
+itself, which is unambiguous, not on a byte-exact string match.
+`sub_2827E` -> `WaitForSoundDriverIdle`: a small gate that returns
+immediately unless `g_driverStateFlags` bit `0x8` is set, in which
+case it busy-waits for `word_2E494` to reach 0 — "wait for the sound
+driver's current operation to finish," used by several sites including
+the still-open `sub_2D498` lead from earlier this session.
+
+558 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

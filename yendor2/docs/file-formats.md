@@ -2264,6 +2264,25 @@ Not yet decoded: the real VGA palette (so images render in true color,
 not grayscale), and the directory's `+0x4` field's meaning (varies per
 entry, didn't fit an obvious role from the entries examined so far).
 
+### Sound Blaster auto-detection
+
+`InitSoundSystem` calls `ParseSoundBlasterEnvironmentVariable` (was
+`sub_28619`), which uses `FindEnvironmentVariable` (was `sub_2D578` —
+the classic DOS technique: PSP via `INT 21h AH=0x51`, environment
+segment from `PSP+0x2C`, linear-scan the env block for a match) twice
+against two env-var name constants, then parses the returned value as
+`'A'<3 digits>` (base address, into `word_32916`) and `'I'<1 digit>`
+(IRQ, into `word_32914`) — exactly the classic `BLASTER=A220 I5 D1 T3`
+format. A nearby string cluster (`BLASTER=`, `SOUND=`, `EMMXXXX0`,
+`FMDRV` — the latter matching `SBFMDRV.COM` above) supports this
+reading, though the exact addresses of the two name constants didn't
+line up byte-for-byte with those strings on manual inspection; the
+identification rests on the unambiguous parsing logic rather than a
+confirmed string match. `WaitForSoundDriverIdle` (was `sub_2827E`)
+is a small companion gate used elsewhere: returns immediately unless
+`g_driverStateFlags` bit `0x8` is set, in which case it busy-waits for
+`word_2E494` to reach 0.
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not
