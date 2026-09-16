@@ -3612,6 +3612,19 @@ item into the slot).
 
 460 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PlaceHeldItemIntoEmptySlot
+
+Named `sub_2687B` -> `PlaceHeldItemIntoEmptySlot`, the simpler sibling
+of `SwapHeldItemWithSlot` (no pickup step, since the target slot is
+already empty), also called from `sub_2621C`. Its own `sub_266D4`
+resists a confident name (large, multi-branch), but investigating it
+revealed it touches the same 3 sub-block offsets `WriteContainerSubBlock`
+writes, plus a running total at `+0x118` plausibly tracking carried
+weight — a useful cross-reference added to that earlier finding rather
+than a new name forced onto an under-evidenced function.
+
+461 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

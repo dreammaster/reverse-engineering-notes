@@ -297,8 +297,18 @@ swap, done via a careful save/restore dance around the held-item triple
 (`word_31948`/`word_3194C`/`word_3194A`) across two calls — one that
 presumably picks up a target slot's item (`sub_26B4F`, not traced) and
 one that places the original held item into that slot (`sub_266D4`,
-not traced) — finishing with a portrait redraw and cursor update. Both
-`FinishPlacingHeldItem` and `SwapHeldItemWithSlot` are called from
+not traced) — finishing with a portrait redraw and cursor update. A simpler sibling,
+`PlaceHeldItemIntoEmptySlot` (was `sub_2687B`, also called from
+`sub_2621C`): the same "swap-family" sound, but calls `sub_266D4`
+directly with no pickup step (the slot is already empty). `sub_266D4`
+itself resists a confident name — it's large and multi-branch, but it
+touches the *same 3 sub-block offsets* `WriteContainerSubBlock` writes
+(`+0x17C`/`+0x1A2`/`+0x1C8`, adjacent to that function's `+0x17E`/
+`+0x1A4`/`+0x1CA` fields), selected by condition-icon flag bits
+(`[+0x15C]` `0x400`/`0x200`/`0x100`), plus a running total at `+0x118`
+(plausibly carried weight, given it's incremented by the placed item's
+catalog weight field). All three (`FinishPlacingHeldItem`,
+`SwapHeldItemWithSlot`, `PlaceHeldItemIntoEmptySlot`) are called from
 `sub_2621C`, reinforcing that it's the main container-interaction
 input handler (still not traced as a whole — 230 lines).
 

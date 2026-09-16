@@ -39531,7 +39531,7 @@ loc_263FC:                              ; CODE XREF: sub_2621C+1D7↑j
                 call    IsContainerTypeCompatible
                 cmp     errorCode, 0
                 jnz     short loc_26409
-                call    sub_2687B
+                call    PlaceHeldItemIntoEmptySlot
 
 loc_26409:                              ; CODE XREF: sub_2621C+2D↑j
                                         ; sub_2621C+3D↑j ...
@@ -39857,7 +39857,7 @@ sub_266A9       endp
 
 
 sub_266D4       proc near               ; CODE XREF: sub_2621C+1AB↑p
-                                        ; sub_2687B+D↓p ...
+                                        ; PlaceHeldItemIntoEmptySlot+D↓p ...
                 mov     si, word_328D4
                 cmp     word_2E40A, 10h
                 jge     short loc_266EB
@@ -40069,8 +40069,8 @@ sub_26864       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2687B       proc near               ; CODE XREF: sub_2621C+1EA↑p
-                mov     ax, 6
+PlaceHeldItemIntoEmptySlot proc near    ; CODE XREF: sub_2621C+1EA↑p
+                mov     ax, 6           ; Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.
                 call    sub_28412
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_266D4
@@ -40080,7 +40080,7 @@ sub_2687B       proc near               ; CODE XREF: sub_2621C+1EA↑p
                 call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
                 retn
-sub_2687B       endp
+PlaceHeldItemIntoEmptySlot endp
 
 
 ; =============== S U B R O U T I N E =======================================

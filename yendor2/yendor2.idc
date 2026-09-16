@@ -6916,7 +6916,9 @@ static Bytes_2(void) {
 	set_name	(0X26846,	"LoadContainerContents");
 	set_cmt	(0X2684B,	"this",	0);
 	create_insn	(0X26864);
+	set_cmt	(0X2687B,	"Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.",	0);
 	create_insn	(0X2687B);
+	set_name	(0X2687B,	"PlaceHeldItemIntoEmptySlot");
 	set_cmt	(0X268A0,	"Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.",	0);
 	create_insn	(0X268A0);
 	set_name	(0X268A0,	"SwapHeldItemWithSlot");
@@ -7903,9 +7905,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2955C,	"Calls SyncContainerContents for all 3 of word_328D4's bag slots (+0x17C/+0x1A2/+0x1C8).",	0);
 	create_insn	(0X2955C);
 	set_name	(0X2955C,	"SyncPartyMemberContainers");
-	set_cmt	(0X2957E,	"Like SaveAndCloseContainer's write-back (if the bag at [di] has contents, write them to CURGAME) but doesn't clear the marker afterward -- saves without closing.",	0);
-	create_insn	(0X2957E);
-	set_name	(0X2957E,	"SyncContainerContents");
 }
 
 //------------------------------------------------------------------------
@@ -7915,6 +7914,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2957E,	"Like SaveAndCloseContainer's write-back (if the bag at [di] has contents, write them to CURGAME) but doesn't clear the marker afterward -- saves without closing.",	0);
+	create_insn	(0X2957E);
+	set_name	(0X2957E,	"SyncContainerContents");
 	set_cmt	(0X29583,	"this",	0);
 	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
 	create_insn	(0X295A8);
@@ -11109,6 +11111,15 @@ static Bytes_3(void) {
 	set_name	(0X364B3,	"aRestores");
 	create_strlit	(0X364BD,	0X6);
 	set_name	(0X364BD,	"a3X3");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X364C3,	0X7);
 	set_name	(0X364C3,	"aCures");
 	create_strlit	(0X364CA,	0X16);
@@ -11121,15 +11132,6 @@ static Bytes_3(void) {
 	set_name	(0X364FE,	"aClassLevel");
 	create_strlit	(0X3650F,	0X7);
 	set_name	(0X3650F,	"aMp");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36516,	0X7);
 	set_name	(0X36516,	"aNuore_1");
 	create_strlit	(0X3651D,	0X7);
