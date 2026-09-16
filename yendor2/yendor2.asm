@@ -45881,7 +45881,7 @@ loc_296F4:                              ; CODE XREF: sub_295A8+10D↑j
 loc_29705:                              ; CODE XREF: sub_295A8+155↑j
                 test    word ptr [bx+2], 7800h
                 jz      short loc_29712
-                call    sub_2B656
+                call    RunConversation
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -49740,12 +49740,12 @@ seg119          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B656       proc far                ; CODE XREF: sub_295A8+164↑P
-                and     word_3295A, 97FFh
+RunConversation proc far                ; CODE XREF: sub_295A8+164↑P
+                and     word_3295A, 97FFh ; NPC conversation display: draws the dialog panel (g_pictureDir entry 1) then dispatches to one of 4 topic-display functions based on flag bits in the record at word_2E548 (+2, bits 0x4000/0x2000/0x1000/0x800). Each draws a small icon (entry 7) plus word-wrapped text. word_2E548's record shares a status-flags field (+0x1C) with the party-member records RunTitleScreen touches. Not individually distinguishing the 4 topic-type sub-functions (sub_2B78D/2B866/2B8D7/2B948) -- plausibly different response categories, not confirmed which.
                 test    word ptr [bx+2], 0Eh
                 jz      short loc_2B6A6
 
-loc_2B663:                              ; CODE XREF: sub_2B656+4E↓j
+loc_2B663:                              ; CODE XREF: RunConversation+4E↓j
                 mov     ax, word_36D09
                 cmp     ax, 0
                 jnz     short loc_2B685
@@ -49758,8 +49758,8 @@ loc_2B663:                              ; CODE XREF: sub_2B656+4E↓j
                 jmp     loc_2B70C
 ; ---------------------------------------------------------------------------
 
-loc_2B685:                              ; CODE XREF: sub_2B656+13↑j
-                                        ; sub_2B656+25↑j
+loc_2B685:                              ; CODE XREF: RunConversation+13↑j
+                                        ; RunConversation+25↑j
                 mov     word_32990, ax
                 mov     word_36D09, ax
                 call    sub_25B14
@@ -49771,8 +49771,8 @@ loc_2B685:                              ; CODE XREF: sub_2B656+13↑j
                 jmp     short loc_2B663
 ; ---------------------------------------------------------------------------
 
-loc_2B6A6:                              ; CODE XREF: sub_2B656+B↑j
-                                        ; sub_2B656+41↑j
+loc_2B6A6:                              ; CODE XREF: RunConversation+B↑j
+                                        ; RunConversation+41↑j
                 call    sub_16EFA
                 call    RestoreCursorBackgroundIfDirty
                 mov     x, 0Fh
@@ -49788,7 +49788,7 @@ loc_2B6A6:                              ; CODE XREF: sub_2B656+B↑j
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
 
-loc_2B6E1:                              ; CODE XREF: sub_2B656+81↑j
+loc_2B6E1:                              ; CODE XREF: RunConversation+81↑j
                 test    word ptr [bx+2], 2000h
                 jz      short loc_2B6F0
                 call    sub_2B9D4
@@ -49796,7 +49796,7 @@ loc_2B6E1:                              ; CODE XREF: sub_2B656+81↑j
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
 
-loc_2B6F0:                              ; CODE XREF: sub_2B656+90↑j
+loc_2B6F0:                              ; CODE XREF: RunConversation+90↑j
                 test    word ptr [bx+2], 1000h
                 jz      short loc_2B6FF
                 call    sub_2B9D4
@@ -49804,19 +49804,19 @@ loc_2B6F0:                              ; CODE XREF: sub_2B656+90↑j
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
 
-loc_2B6FF:                              ; CODE XREF: sub_2B656+9F↑j
+loc_2B6FF:                              ; CODE XREF: RunConversation+9F↑j
                 test    word ptr [bx+2], 800h
                 jz      short loc_2B70C
                 call    sub_2B9D4
                 call    sub_2B948
 
-loc_2B70C:                              ; CODE XREF: sub_2B656+2C↑j
-                                        ; sub_2B656+89↑j ...
+loc_2B70C:                              ; CODE XREF: RunConversation+2C↑j
+                                        ; RunConversation+89↑j ...
                 and     word_328C4, 0FFC1h
                 or      word_3295A, 800h
                 call    sub_1FD03
                 retf
-sub_2B656       endp
+RunConversation endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -49878,7 +49878,7 @@ sub_2B771       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B78D       proc near               ; CODE XREF: sub_2B656+86↑p
+sub_2B78D       proc near               ; CODE XREF: RunConversation+86↑p
                 mov     bx, word_2E548
                 mov     bx, [bx+4]
                 call    sub_2B71D
@@ -49947,7 +49947,7 @@ sub_2B78D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B866       proc near               ; CODE XREF: sub_2B656+95↑p
+sub_2B866       proc near               ; CODE XREF: RunConversation+95↑p
                 mov     bx, word_2E548
                 mov     bx, [bx+4]
                 call    sub_2B755
@@ -49990,7 +49990,7 @@ sub_2B866       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B8D7       proc near               ; CODE XREF: sub_2B656+A4↑p
+sub_2B8D7       proc near               ; CODE XREF: RunConversation+A4↑p
                 mov     bx, word_2E548
                 mov     bx, [bx+4]
                 call    sub_2B739
@@ -50033,7 +50033,7 @@ sub_2B8D7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B948       proc near               ; CODE XREF: sub_2B656+B3↑p
+sub_2B948       proc near               ; CODE XREF: RunConversation+B3↑p
                 mov     bx, word_2E548
                 mov     bx, [bx+4]
                 call    sub_2B771
@@ -50084,8 +50084,8 @@ sub_2B948       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B9D4       proc near               ; CODE XREF: sub_2B656+83↑p
-                                        ; sub_2B656+92↑p ...
+sub_2B9D4       proc near               ; CODE XREF: RunConversation+83↑p
+                                        ; RunConversation+92↑p ...
                 and     word_328C4, 0FFC1h
                 mov     fontOffset, 2
                 mov     ax, 41h ; 'A'

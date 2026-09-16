@@ -8395,8 +8395,10 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2B64E);
 	op_hex		(x,	1);
+	set_cmt	(0X2B656,	"NPC conversation display: draws the dialog panel (g_pictureDir entry 1) then dispatches to one of 4 topic-display functions based on flag bits in the record at word_2E548 (+2, bits 0x4000/0x2000/0x1000/0x800). Each draws a small icon (entry 7) plus word-wrapped text. word_2E548's record shares a status-flags field (+0x1C) with the party-member records RunTitleScreen touches. Not individually distinguishing the 4 topic-type sub-functions (sub_2B78D/2B866/2B8D7/2B948) -- plausibly different response categories, not confirmed which.",	0);
 	create_insn	(x=0X2B656);
 	op_hex		(x,	1);
+	set_name	(0X2B656,	"RunConversation");
 	create_insn	(x=0X2B65C);
 	op_hex		(x,	1);
 	create_insn	(0X2B685);
@@ -10682,6 +10684,15 @@ static Bytes_1(void) {
 	create_strlit	(0X39BC6,	0X1A);
 	set_name	(0X39BC6,	"aPrograms");
 	create_strlit	(0X39BE0,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39BE2,	0X1A);
 	set_name	(0X39BE2,	"aTimSmith");
 	create_strlit	(0X39BFC,	0X1F);
@@ -10712,15 +10723,6 @@ static Bytes_1(void) {
 	create_strlit	(0X39CFE,	0X1A);
 	set_name	(0X39CFE,	"aTimSmith_0");
 	create_strlit	(0X39D18,	0X2);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39D1A,	0X2);
 	create_strlit	(0X39D1C,	0X1C);
 	set_name	(0X39D1C,	"aDannyDeloach");

@@ -7,7 +7,7 @@ import idautils
 import idc
 import ida_funcs
 
-TARGETS = [0x28A5A, 0x23A64, 0x1700E, 0x16EDE]
+TARGETS = [0x2B78D, 0x2B866, 0x2B8D7, 0x2B948]
 
 for t in TARGETS:
     callers = set()

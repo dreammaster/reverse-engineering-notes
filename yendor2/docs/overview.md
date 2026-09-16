@@ -551,6 +551,34 @@ identified (`R`, plausibly "About" or a registration-info screen, replays
 
 96 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunConversation, and a major lead
+
+Went back to `rank_naming_candidates.py` for fresh targets and found the
+NPC conversation system: `sub_2B656` draws the dialog panel then
+dispatches to one of 4 sibling functions based on flag bits in a record
+pointed to by `word_2E548` — a record that shares a status-flags field
+(`+0x1C`) with the party-member records `RunTitleScreen` touches, so
+this operates on a character/NPC. Matches the manual's "talk to an NPC"
+feature and the "Problem retreiving conversation data" error string.
+Named `RunConversation` (`ida_scripts/name_conversation.py`); the 4
+topic-display siblings aren't individually distinguishable from static
+analysis (same caution as the earlier resource-stub cluster), so left
+unnamed.
+
+`RunConversation`'s only caller, `sub_295A8` (400 bytes, called directly
+from `start`), turned out to be a **major command dispatcher** — reads
+`word_32974` (the same "current command" global the item-icon dispatcher
+from much earlier this session also used, but here spanning a much
+wider numeric range: single-digit codes up through the 0x2xx range seen
+before) and branches across ~20 different handlers, including
+`RunConversation` and the item-icon dispatcher `sub_2AE3C`. This is
+very likely the core gameplay command dispatch (movement, menus,
+dialogue, etc. all funneling through one command code) — a strong lead
+for a future session, but mapping ~20 command codes individually is
+more work than fits in one round; not named yet.
+
+97 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
