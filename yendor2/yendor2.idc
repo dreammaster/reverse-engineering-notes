@@ -4509,7 +4509,9 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	129,	0X2D860);
 	create_insn	(x=0X1D1C8);
 	op_seg		(x,	1);
+	set_cmt	(0X1D1D4,	"Generic single-line text input editor (bx=buffer, cx=max length): draws a '-' cursor, polls keyboard for Enter (confirm, errorCode=0), Backspace (delete/beep), Escape (cancel, errorCode=2), or printable chars (append/beep at limit). One of its 6 call sites is inside EditCharacterName.",	0);
 	create_insn	(0X1D1D4);
+	set_name	(0X1D1D4,	"EditTextField");
 	create_insn	(0X1D1E9);
 	create_insn	(0X1D213);
 	create_insn	(0X1D23F);
@@ -5679,6 +5681,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X219B8);
 	op_hex		(x,	1);
 	create_insn	(0X219BD);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X219D5);
 	op_hex		(x,	1);
 	create_insn	(0X219DA);
@@ -5699,15 +5710,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X21A8E);
 	set_cmt	(0X21A94,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X21ACD,	"msg",	0);
 	create_insn	(x=0X21AEA);
 	op_hex		(x,	1);
@@ -8074,6 +8076,15 @@ static Bytes_2(void) {
 	set_cmt	(0X29B0F,	"Core dungeon-viewport sprite/picture blitter (632 lines, internals not traced): draws word_2E530 (picture id) at a scale class (word_2E532) and z-layer/depth (word_32918), honoring _font_bgTransparent. Called by every dungeon-viewport rendering function named this session (walls, floor/ceiling extension, doors, vanishing point, monsters) -- the depth-aware counterpart to the simpler general-purpose DrawPicture.",	0);
 	create_insn	(0X29B0F);
 	set_name	(0X29B0F,	"DrawViewportSprite");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29B19);
 	op_hex		(x,	1);
 	create_insn	(x=0X29B23);
@@ -8085,15 +8096,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29B5A);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29B60);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29B66);
@@ -11322,11 +11324,6 @@ static Bytes_3(void) {
 	set_cmt	(0X36E4B,	"4 entries x 2 bytes: which 1-based g_partyRecords index occupies UI/effect slot N (0 = empty).",	0);
 	create_word	(0X36E4B);
 	set_name	(0X36E4B,	"g_partySlotAssignment");
-	create_word	(0X36E4D);
-	create_word	(0X36E4F);
-	create_word	(0X36E51);
-	set_cmt	(0X36E53,	"Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).",	0);
-	set_name	(0X36E53,	"g_partyRecords");
 }
 
 //------------------------------------------------------------------------
@@ -11336,6 +11333,11 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_word	(0X36E4D);
+	create_word	(0X36E4F);
+	create_word	(0X36E51);
+	set_cmt	(0X36E53,	"Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).",	0);
+	set_name	(0X36E53,	"g_partyRecords");
 	create_word	(0X38808);
 	create_word	(0X3880A);
 	create_word	(0X3880C);

@@ -96,7 +96,12 @@ including `InitGame` and `RunDungeonGameLoop`), and writes
 "CHARACTER CREATION" — the entry point into character creation from
 the party roster screen. Confirmed
 fields so far — `+0x0`: name (13 chars max, see `EditCharacterName`,
-`ida_scripts/name_char_rename.py`); **`+0xE`: confirmed class id**
+`ida_scripts/name_char_rename.py`, which — confirmed by one of its
+call sites falling inside `EditCharacterName`'s own address range —
+uses the generic `EditTextField` (was `sub_1D1D4`) single-line text
+input editor, reused across at least 6 different text-entry screens:
+draws a `-` cursor, handles Enter/Backspace/Escape/printable chars via
+`PollKeyboardInput`); **`+0xE`: confirmed class id**
 (**correction**: documented since early in the session as "a time-of-
 day-like value" — wrong, or at least a worse fit. `RestCharacter`'s two
 branches settle it: the HP-regen branch never touches `+0xE` at all,

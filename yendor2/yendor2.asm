@@ -17077,7 +17077,7 @@ sub_19BE6       proc far                ; CODE XREF: sub_1AF49+D1↓P
                 mov     cx, 0Bh
                 mov     bx, 0AFA8h
                 mov     byte_2E400, 0
-                call    sub_1D1D4
+                call    EditTextField
                 cmp     errorCode, 0
                 jnz     short loc_19C70
                 push    si
@@ -18479,7 +18479,7 @@ loc_1A68F:                              ; CODE XREF: sub_1A5F6+48↑j
                 mov     cx, 22h ; '"'
                 mov     bx, 0AFA8h
                 mov     byte_2E400, 0
-                call    sub_1D1D4
+                call    EditTextField
                 pop     _font_bgTransparent
                 pop     _videoSegment
                 cmp     errorCode, 2
@@ -18772,7 +18772,7 @@ loc_1A950:                              ; CODE XREF: ShowConfirmPrompt+86↑j
                 mov     bx, 0AFA8h
                 mov     cx, 0Ch
                 mov     byte_2E400, 0
-                call    sub_1D1D4
+                call    EditTextField
                 cmp     errorCode, 0
                 jz      short loc_1A9A3
                 mov     ax, 0
@@ -23272,7 +23272,7 @@ sub_1D146       proc far                ; CODE XREF: EditWallLegendTypeNumber+28
                 push    cx
                 push    bx
                 mov     byte_2E400, 0
-                call    sub_1D1D4
+                call    EditTextField
                 cmp     errorCode, 0
                 jz      short loc_1D161
                 pop     bx
@@ -23379,9 +23379,9 @@ seg053          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D1D4       proc far                ; CODE XREF: sub_19BE6+21↑P
+EditTextField   proc far                ; CODE XREF: sub_19BE6+21↑P
                                         ; sub_1A5F6+D5↑P ...
-                push    si
+                push    si              ; Generic single-line text input editor (bx=buffer, cx=max length): draws a '-' cursor, polls keyboard for Enter (confirm, errorCode=0), Backspace (delete/beep), Escape (cancel, errorCode=2), or printable chars (append/beep at limit). One of its 6 call sites is inside EditCharacterName.
                 push    bx
                 push    cx
                 mov     si, bx
@@ -23392,13 +23392,13 @@ sub_1D1D4       proc far                ; CODE XREF: sub_19BE6+21↑P
                 jmp     short loc_1D213
 ; ---------------------------------------------------------------------------
 
-loc_1D1E9:                              ; CODE XREF: sub_1D1D4+A↑j
-                                        ; sub_1D1D4+69↓j ...
+loc_1D1E9:                              ; CODE XREF: EditTextField+A↑j
+                                        ; EditTextField+69↓j ...
                 mov     al, 2Dh ; '-'
                 call    writeChar
 
-loc_1D1F0:                              ; CODE XREF: sub_1D1D4+26↓j
-                                        ; sub_1D1D4+2D↓j ...
+loc_1D1F0:                              ; CODE XREF: EditTextField+26↓j
+                                        ; EditTextField+2D↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1D1F0
@@ -23411,8 +23411,8 @@ loc_1D1F0:                              ; CODE XREF: sub_1D1D4+26↓j
                 jmp     short loc_1D273
 ; ---------------------------------------------------------------------------
 
-loc_1D213:                              ; CODE XREF: sub_1D1D4+13↑j
-                                        ; sub_1D1D4+3B↑j
+loc_1D213:                              ; CODE XREF: EditTextField+13↑j
+                                        ; EditTextField+3B↑j
                 cmp     byte_2E400, 1Bh
                 jz      short loc_1D258
                 cmp     byte_2E400, 20h ; ' '
@@ -23431,14 +23431,14 @@ loc_1D213:                              ; CODE XREF: sub_1D1D4+13↑j
                 jmp     short loc_1D1E9
 ; ---------------------------------------------------------------------------
 
-loc_1D23F:                              ; CODE XREF: sub_1D1D4+34↑j
+loc_1D23F:                              ; CODE XREF: EditTextField+34↑j
                 mov     byte ptr [si], 0
                 pop     cx
                 mov     errorCode, 0
                 jmp     short loc_1D262
 ; ---------------------------------------------------------------------------
 
-loc_1D24B:                              ; CODE XREF: sub_1D1D4+5C↑j
+loc_1D24B:                              ; CODE XREF: EditTextField+5C↑j
                 dec     si
                 inc     cx
                 push    cx
@@ -23447,12 +23447,12 @@ loc_1D24B:                              ; CODE XREF: sub_1D1D4+5C↑j
                 jmp     short loc_1D1F0
 ; ---------------------------------------------------------------------------
 
-loc_1D258:                              ; CODE XREF: sub_1D1D4+44↑j
+loc_1D258:                              ; CODE XREF: EditTextField+44↑j
                 mov     byte ptr [si], 0
                 pop     cx
                 mov     errorCode, 2
 
-loc_1D262:                              ; CODE XREF: sub_1D1D4+75↑j
+loc_1D262:                              ; CODE XREF: EditTextField+75↑j
                 sub     _textPos_x, 6
                 mov     al, 20h ; ' '
                 call    writeChar
@@ -23462,7 +23462,7 @@ loc_1D262:                              ; CODE XREF: sub_1D1D4+75↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D273:                              ; CODE XREF: sub_1D1D4+3D↑j
+loc_1D273:                              ; CODE XREF: EditTextField+3D↑j
                 pop     cx
                 pop     ax
                 cmp     ax, si
@@ -23474,7 +23474,7 @@ loc_1D273:                              ; CODE XREF: sub_1D1D4+3D↑j
                 jmp     loc_1D1F0
 ; ---------------------------------------------------------------------------
 
-loc_1D286:                              ; CODE XREF: sub_1D1D4+A3↑j
+loc_1D286:                              ; CODE XREF: EditTextField+A3↑j
                 dec     si
                 inc     cx
                 push    ax
@@ -23486,7 +23486,7 @@ loc_1D286:                              ; CODE XREF: sub_1D1D4+A3↑j
                 call    writeChar
                 sub     _textPos_x, 0Ch
                 jmp     loc_1D1E9
-sub_1D1D4       endp
+EditTextField   endp
 
 seg053          ends
 
@@ -26361,7 +26361,7 @@ loc_1ED31:                              ; CODE XREF: RunGameDialog+26C↑j
                 call    EraseLabelText
                 mov     bx, 0AFA8h
                 mov     cx, 18h
-                call    sub_1D1D4
+                call    EditTextField
                 cmp     errorCode, 2
                 jz      short loc_1ED53
                 mov     ax, 2
@@ -36507,7 +36507,7 @@ EditCharacterName proc near             ; CODE XREF: ShowPartyMembers+57↑p
                 mov     bx, 0AFA8h
                 mov     cx, 0Dh
                 mov     byte_2E400, 0
-                call    sub_1D1D4
+                call    EditTextField
                 mov     _font_bgTransparent, 1
                 test    word_328CA, 8000h
                 jz      short loc_24A03

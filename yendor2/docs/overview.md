@@ -3478,6 +3478,17 @@ an easy, high-confidence naming pass.
 
 445 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: EditTextField
+
+Named `sub_1D1D4` -> `EditTextField`, high confidence: a generic
+single-line text input editor (buffer + max length), confirmed by one
+of its 6 call sites falling inside `EditCharacterName`'s own address
+range. Handles Enter (confirm)/Backspace (delete, or beep at empty)/
+Escape (cancel)/printable characters (append, or beep at max length)
+via `PollKeyboardInput`. Reused across 6 different text-entry screens.
+
+446 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
