@@ -7263,7 +7263,9 @@ static Bytes_1(void) {
 	create_insn	(0X2955C);
 	create_insn	(0X2957E);
 	set_cmt	(0X29583,	"this",	0);
+	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
 	create_insn	(0X295A8);
+	set_name	(0X295A8,	"HandleGameCommand");
 	create_insn	(0X295BD);
 	create_insn	(0X295CA);
 	create_insn	(0X295E5);
@@ -10658,6 +10660,15 @@ static Bytes_1(void) {
 	set_name	(0X399BD,	"aZamoraHasFalle");
 	create_strlit	(0X399D2,	0X24);
 	set_name	(0X399D2,	"aSummonTheHeale");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X399F6,	0X33);
 	set_name	(0X399F6,	"aWhoHasStolenTh");
 	create_strlit	(0X39A29,	0X2C);
@@ -10684,15 +10695,6 @@ static Bytes_1(void) {
 	create_strlit	(0X39BC6,	0X1A);
 	set_name	(0X39BC6,	"aPrograms");
 	create_strlit	(0X39BE0,	0X2);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39BE2,	0X1A);
 	set_name	(0X39BE2,	"aTimSmith");
 	create_strlit	(0X39BFC,	0X1F);

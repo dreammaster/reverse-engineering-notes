@@ -658,7 +658,7 @@ loc_1056B:                              ; CODE XREF: start+522↑j
 
 loc_1057A:                              ; CODE XREF: start+575↑j
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_295A8
+                call    HandleGameCommand
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_105CA
                 jmp     loc_10286
@@ -725,7 +725,7 @@ loc_10600:                              ; CODE XREF: start+568↑j
                 pop     errorCode
                 cmp     errorCode, 2
                 jnz     short loc_1062D
-                call    sub_295A8
+                call    HandleGameCommand
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_1062D
                 jmp     loc_10286
@@ -10435,7 +10435,7 @@ loc_165A9:                              ; CODE XREF: sub_16407+183↑j
                 cmp     errorCode, 2
                 jnz     short loc_1658C
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_295A8
+                call    HandleGameCommand
                 test    word_328C8, 20h
                 jz      short loc_165CF
                 mov     ax, 0Ah         ; ticks
@@ -10732,7 +10732,7 @@ loc_16852:                              ; CODE XREF: sub_16407+19F↑j
                 call    sub_1FD03
                 cmp     errorCode, 2
                 jnz     short loc_1686D
-                call    sub_295A8
+                call    HandleGameCommand
                 call    sub_238CD
 
 loc_1686D:                              ; CODE XREF: sub_16407+45A↑j
@@ -12473,7 +12473,7 @@ loc_17557:                              ; CODE XREF: sub_1732B+8F↑j
                 jnz     short loc_1756F
                 test    word ptr [bx], 10h
                 jnz     short loc_175B2
-                call    sub_295A8
+                call    HandleGameCommand
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
@@ -15036,7 +15036,7 @@ loc_189B4:                              ; CODE XREF: sub_1869D+2DD↑j
                 jnz     short loc_18A08
                 test    word ptr [bx], 10h
                 jnz     short loc_189F8
-                call    sub_295A8
+                call    HandleGameCommand
                 test    word_328CA, 1000h
                 jz      short loc_189F5
                 test    word_328C8, 20h
@@ -29117,7 +29117,7 @@ seg061          segment byte public 'CODE' use16
 
 
 sub_208CA       proc far                ; CODE XREF: sub_1A5A6+19↑P
-                                        ; sub_295A8+87↓P
+                                        ; HandleGameCommand+87↓P
                 push    si
                 call    sub_238CD
                 cmp     word_32974, 9
@@ -29179,7 +29179,7 @@ sub_208CA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2095A       proc far                ; CODE XREF: sub_295A8:loc_29624↓P
+sub_2095A       proc far                ; CODE XREF: HandleGameCommand:loc_29624↓P
                 call    sub_238CD
                 cmp     word_32974, 8
                 jz      short loc_20987
@@ -31850,7 +31850,7 @@ sub_21E71       endp
 
 
 sub_220DF       proc far                ; CODE XREF: seg000:088D↑P
-                                        ; sub_295A8+D2↓P
+                                        ; HandleGameCommand+D2↓P
                 test    word_36C7F, 100h
                 jnz     short loc_220F0
                 call    sub_222BD
@@ -43347,7 +43347,7 @@ sub_2814C       endp
 
 
 sub_2819F       proc far                ; CODE XREF: seg000:08B2↑P
-                                        ; sub_295A8+EC↓P
+                                        ; HandleGameCommand+EC↓P
                 call    sub_16E18
                 or      word_328C4, 100h
                 push    cs
@@ -45714,9 +45714,9 @@ seg109          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_295A8       proc far                ; CODE XREF: start+57F↑P
+HandleGameCommand proc far              ; CODE XREF: start+57F↑P
                                         ; start+61E↑P ...
-                mov     ax, word_32974
+                mov     ax, word_32974  ; Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.
                 call    sub_12554
                 cmp     word_2E54A, 0
                 jz      short loc_295BD
@@ -45724,14 +45724,14 @@ sub_295A8       proc far                ; CODE XREF: start+57F↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_295BD:                              ; CODE XREF: sub_295A8+D↑j
+loc_295BD:                              ; CODE XREF: HandleGameCommand+D↑j
                 cmp     word_32974, 20h ; ' '
                 jnz     short loc_295CA
                 call    sub_2A788
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_295CA:                              ; CODE XREF: sub_295A8+1A↑j
+loc_295CA:                              ; CODE XREF: HandleGameCommand+1A↑j
                 cmp     word_32974, 2Fh ; '/'
                 jz      short loc_295DF
                 cmp     word_32974, 21h ; '!'
@@ -45739,13 +45739,13 @@ loc_295CA:                              ; CODE XREF: sub_295A8+1A↑j
                 cmp     word_32974, 2Eh ; '.'
                 jg      short loc_295E5
 
-loc_295DF:                              ; CODE XREF: sub_295A8+27↑j
+loc_295DF:                              ; CODE XREF: HandleGameCommand+27↑j
                 call    sub_29738
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_295E5:                              ; CODE XREF: sub_295A8+2E↑j
-                                        ; sub_295A8+35↑j
+loc_295E5:                              ; CODE XREF: HandleGameCommand+2E↑j
+                                        ; HandleGameCommand+35↑j
                 cmp     word_32974, 8
                 jz      short loc_29611
                 cmp     word_32974, 0Eh
@@ -45761,8 +45761,8 @@ loc_295E5:                              ; CODE XREF: sub_295A8+2E↑j
                 jmp     short loc_29635
 ; ---------------------------------------------------------------------------
 
-loc_29611:                              ; CODE XREF: sub_295A8+42↑j
-                                        ; sub_295A8+49↑j ...
+loc_29611:                              ; CODE XREF: HandleGameCommand+42↑j
+                                        ; HandleGameCommand+49↑j ...
                 test    word_36C79, 2
                 jz      short loc_29624
                 call    sub_238CD
@@ -45770,19 +45770,19 @@ loc_29611:                              ; CODE XREF: sub_295A8+42↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29624:                              ; CODE XREF: sub_295A8+6F↑j
+loc_29624:                              ; CODE XREF: HandleGameCommand+6F↑j
                 call    sub_2095A
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2962A:                              ; CODE XREF: sub_295A8+57↑j
-                                        ; sub_295A8+5E↑j ...
+loc_2962A:                              ; CODE XREF: HandleGameCommand+57↑j
+                                        ; HandleGameCommand+5E↑j ...
                 or      word_328C4, 40h
                 call    sub_208CA
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29635:                              ; CODE XREF: sub_295A8+67↑j
+loc_29635:                              ; CODE XREF: HandleGameCommand+67↑j
                 cmp     word_32974, 12h
                 jl      short loc_29652
                 cmp     word_32974, 1Dh
@@ -45791,13 +45791,13 @@ loc_29635:                              ; CODE XREF: sub_295A8+67↑j
                 cmp     word_32974, ax
                 jnz     short loc_29652
 
-loc_2964C:                              ; CODE XREF: sub_295A8+99↑j
+loc_2964C:                              ; CODE XREF: HandleGameCommand+99↑j
                 call    sub_2AA58
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29652:                              ; CODE XREF: sub_295A8+92↑j
-                                        ; sub_295A8+A2↑j
+loc_29652:                              ; CODE XREF: HandleGameCommand+92↑j
+                                        ; HandleGameCommand+A2↑j
                 cmp     word_32974, 36h ; '6'
                 jl      short loc_29666
                 cmp     word_32974, 46h ; 'F'
@@ -45806,22 +45806,22 @@ loc_29652:                              ; CODE XREF: sub_295A8+92↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29666:                              ; CODE XREF: sub_295A8+AF↑j
-                                        ; sub_295A8+B6↑j
+loc_29666:                              ; CODE XREF: HandleGameCommand+AF↑j
+                                        ; HandleGameCommand+B6↑j
                 cmp     word_32974, 1Eh
                 jnz     short loc_29673
                 call    sub_21E71
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29673:                              ; CODE XREF: sub_295A8+C3↑j
+loc_29673:                              ; CODE XREF: HandleGameCommand+C3↑j
                 cmp     word_32974, 1Fh
                 jnz     short loc_29680
                 call    sub_220DF
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29680:                              ; CODE XREF: sub_295A8+D0↑j
+loc_29680:                              ; CODE XREF: HandleGameCommand+D0↑j
                 cmp     word_32974, 7
                 jnz     short loc_296A5
                 test    word_328CA, 1000h
@@ -45831,14 +45831,14 @@ loc_29680:                              ; CODE XREF: sub_295A8+D0↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2969A:                              ; CODE XREF: sub_295A8+E5↑j
-                                        ; sub_295A8+17C↓j
+loc_2969A:                              ; CODE XREF: HandleGameCommand+E5↑j
+                                        ; HandleGameCommand+17C↓j
                 call    sub_238CD
                 call    sub_1A5CC
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_296A5:                              ; CODE XREF: sub_295A8+DD↑j
+loc_296A5:                              ; CODE XREF: HandleGameCommand+DD↑j
                 test    word ptr [bx+0Ch], 0C000h
                 jz      short loc_296C6
                 mov     bx, word_2E548
@@ -45851,7 +45851,7 @@ loc_296A5:                              ; CODE XREF: sub_295A8+DD↑j
                 jmp     short loc_296E5
 ; ---------------------------------------------------------------------------
 
-loc_296C6:                              ; CODE XREF: sub_295A8+102↑j
+loc_296C6:                              ; CODE XREF: HandleGameCommand+102↑j
                 test    word ptr [bx+0Ch], 800h
                 jz      short loc_296F4
                 mov     bx, word_2E548
@@ -45862,15 +45862,15 @@ loc_296C6:                              ; CODE XREF: sub_295A8+102↑j
                 mov     bx, ax
                 mov     ax, [bx+6]
 
-loc_296E5:                              ; CODE XREF: sub_295A8+11C↑j
+loc_296E5:                              ; CODE XREF: HandleGameCommand+11C↑j
                 mov     bx, word_2E548
                 call    sub_2C010
                 or      word_328C8, 20h
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_296F4:                              ; CODE XREF: sub_295A8+10D↑j
-                                        ; sub_295A8+123↑j ...
+loc_296F4:                              ; CODE XREF: HandleGameCommand+10D↑j
+                                        ; HandleGameCommand+123↑j ...
                 mov     bx, word_2E548
                 test    word ptr [bx+2], 600h
                 jz      short loc_29705
@@ -45878,14 +45878,14 @@ loc_296F4:                              ; CODE XREF: sub_295A8+10D↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29705:                              ; CODE XREF: sub_295A8+155↑j
+loc_29705:                              ; CODE XREF: HandleGameCommand+155↑j
                 test    word ptr [bx+2], 7800h
                 jz      short loc_29712
                 call    RunConversation
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29712:                              ; CODE XREF: sub_295A8+162↑j
+loc_29712:                              ; CODE XREF: HandleGameCommand+162↑j
                 mov     bx, word_2E548
                 test    word ptr [bx], 4
                 jz      short loc_2972D
@@ -45894,16 +45894,16 @@ loc_29712:                              ; CODE XREF: sub_295A8+162↑j
                 jmp     loc_2969A
 ; ---------------------------------------------------------------------------
 
-loc_29727:                              ; CODE XREF: sub_295A8+17A↑j
+loc_29727:                              ; CODE XREF: HandleGameCommand+17A↑j
                 call    sub_2D60A
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2972D:                              ; CODE XREF: sub_295A8+172↑j
+loc_2972D:                              ; CODE XREF: HandleGameCommand+172↑j
                 call    sub_2AE3C
                 call    sub_238CD
                 retf
-sub_295A8       endp
+HandleGameCommand endp
 
 seg109          ends
 
@@ -45919,7 +45919,7 @@ seg110          segment byte public 'CODE' use16
 
 
 sub_29738       proc far                ; CODE XREF: seg000:0A5D↑P
-                                        ; sub_295A8:loc_295DF↑P
+                                        ; HandleGameCommand:loc_295DF↑P
                 test    word_328CA, 1000h
                 jz      short loc_29747
                 call    sub_1A5CC
@@ -48228,7 +48228,7 @@ seg113          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A788       proc far                ; CODE XREF: sub_295A8+1C↑P
+sub_2A788       proc far                ; CODE XREF: HandleGameCommand+1C↑P
                                         ; sub_2A788+3A↓j
                 mov     ax, word_36D07
                 cmp     ax, 0
@@ -48407,7 +48407,7 @@ seg114          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A914       proc far                ; CODE XREF: sub_295A8+F↑P
+sub_2A914       proc far                ; CODE XREF: HandleGameCommand+F↑P
                                         ; sub_2A914+26↓j
                 call    sub_21C79
                 call    sub_2AD94
@@ -48491,7 +48491,7 @@ sub_2A982       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A9AD       proc far                ; CODE XREF: sub_295A8+B8↑P
+sub_2A9AD       proc far                ; CODE XREF: HandleGameCommand+B8↑P
                 call    sub_21C79
                 call    sub_2AD94
                 cmp     ax, 0
@@ -48570,7 +48570,7 @@ sub_2A9AD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AA58       proc far                ; CODE XREF: sub_295A8:loc_2964C↑P
+sub_2AA58       proc far                ; CODE XREF: HandleGameCommand:loc_2964C↑P
                 mov     bx, word_2E548
                 test    word ptr [bx], 2
                 jnz     short loc_2AA86
@@ -49033,7 +49033,7 @@ seg116          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AE3C       proc far                ; CODE XREF: sub_295A8:loc_2972D↑P
+sub_2AE3C       proc far                ; CODE XREF: HandleGameCommand:loc_2972D↑P
                 cmp     word_32974, 253h ; Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler (sub_294A3, an ESC-cancelable list-selection routine). 0x246-0x249 (4 codes) each flash a small icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the full trace.
                 jnz     short loc_2AE48
                 call    sub_2B2CF
@@ -49740,7 +49740,7 @@ seg119          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-RunConversation proc far                ; CODE XREF: sub_295A8+164↑P
+RunConversation proc far                ; CODE XREF: HandleGameCommand+164↑P
                 and     word_3295A, 97FFh ; NPC conversation display: draws the dialog panel (g_pictureDir entry 1) then dispatches to one of 4 topic-display functions based on flag bits in the record at word_2E548 (+2, bits 0x4000/0x2000/0x1000/0x800). Each draws a small icon (entry 7) plus word-wrapped text. word_2E548's record shares a status-flags field (+0x1C) with the party-member records RunTitleScreen touches. Not individually distinguishing the 4 topic-type sub-functions (sub_2B78D/2B866/2B8D7/2B948) -- plausibly different response categories, not confirmed which.
                 test    word ptr [bx+2], 0Eh
                 jz      short loc_2B6A6
@@ -50941,7 +50941,7 @@ seg123          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C010       proc far                ; CODE XREF: sub_295A8+141↑P
+sub_2C010       proc far                ; CODE XREF: HandleGameCommand+141↑P
                 mov     word_3293E, ax
                 call    sub_2952A
                 call    sub_238CD
@@ -53345,7 +53345,7 @@ seg127          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D60A       proc far                ; CODE XREF: sub_295A8:loc_29727↑P
+sub_2D60A       proc far                ; CODE XREF: HandleGameCommand:loc_29727↑P
                 mov     bx, word_2E548
                 mov     ax, [bx+4]
                 mov     word_2E516, ax
@@ -53398,7 +53398,7 @@ seg128          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D65A       proc far                ; CODE XREF: sub_295A8+157↑P
+sub_2D65A       proc far                ; CODE XREF: HandleGameCommand+157↑P
                                         ; sub_2D65A+3A↓j
                 call    sub_21C79
                 mov     bx, word_2E548

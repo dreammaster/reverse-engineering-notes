@@ -579,6 +579,27 @@ more work than fits in one round; not named yet.
 
 97 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleGameCommand — the core dispatcher
+
+Fully read `sub_295A8` (the lead flagged last round): ~20 branches on
+`word_32974` (an already-decoded command code) covering movement,
+`RunConversation`, the item-icon dispatcher, and more — then, for
+codes that don't match anything specific, falls back to
+**context-sensitive interaction**: inspects flag bits on the
+currently-targeted object (`word_2E548`) to decide what fits
+(conversable → `RunConversation`, container-like → `sub_2D65A`, etc.).
+Matches the manual's "SPACE uses the space you are standing on" exactly.
+Named `HandleGameCommand`.
+
+Checked its callers to confirm: all 6 are either directly in `start`
+(the main game loop — mouse-click handling via `sub_1D118`, keyboard via
+`sub_217ED`, both funneling into `HandleGameCommand`) or in similarly
+central screens. This closes the loop on the whole input pipeline traced
+this session: `PollKeyboardInput`/mouse → command code → `HandleGameCommand`
+→ specific handler (`RunConversation`, `RunGameDialog`, item icons, …).
+
+98 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
