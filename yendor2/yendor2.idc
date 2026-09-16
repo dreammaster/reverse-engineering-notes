@@ -3671,10 +3671,16 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1A2EC);
 	op_hex		(x,	1);
+	set_cmt	(0X1A320,	"Clears a 17-word scratch buffer, transplants word_36863 into word_36E0F (saving the previous value), then calls CommitGroundItemWrite. Called from PlaceItemOnGround.",	0);
 	create_insn	(0X1A320);
+	set_name	(0X1A320,	"PrepareGroundItemSlotWrite");
+	set_cmt	(0X1A34C,	"Reads a ground/world-object item slot record (FileEntry_Read, errorCode=0xB) into word_36863. Called 3 times from PlaceItemOnGround.",	0);
 	create_insn	(0X1A34C);
+	set_name	(0X1A34C,	"ReadGroundItemSlot");
 	set_cmt	(0X1A351,	"this",	0);
+	set_cmt	(0X1A36A,	"Minimal write-commit (FileEntry_Write, errorCode=0xB) for the ground-item slot, the same shape as CommitContainerWrite. Called from PrepareGroundItemSlotWrite.",	0);
 	create_insn	(0X1A36A);
+	set_name	(0X1A36A,	"CommitGroundItemWrite");
 	set_cmt	(0X1A37E,	"The 'drop held item' action: checks IsItemDroppable (warns/bails if not), shows a confirm prompt, then calls PlaceItemOnGround on confirmation or restores the held item on decline. Called from `start`/HandleDungeonInput.",	0);
 	create_insn	(0X1A37E);
 	set_name	(0X1A37E,	"TryDropHeldItem");
@@ -5572,6 +5578,15 @@ static Bytes_1(void) {
 	set_cmt	(0X213FC,	"Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.",	0);
 	create_insn	(0X213FC);
 	set_name	(0X213FC,	"ComputeDungeonCellVisibility");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X21411);
 	create_insn	(x=0X2145E);
 	op_hex		(x,	1);
@@ -5599,15 +5614,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X21530);
 	op_hex		(x,	1);
 	set_name	(0X21530,	"ShowCompassDirection");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X21538);
 	op_hex		(x,	1);
 	create_insn	(x=0X21543);
@@ -7725,6 +7731,15 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
 	set_name	(0X28A31,	"ErrorTable");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X28A33);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
@@ -7782,15 +7797,6 @@ static Bytes_2(void) {
 	create_word	(x=0X28A57);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X28A5A,	"strlen(bx): scans for a null byte (max 255 bytes), returns length in ax.",	0);
 	create_insn	(0X28A5A);
 	set_name	(0X28A5A,	"StrLen");
@@ -10825,6 +10831,15 @@ static Bytes_3(void) {
 	set_name	(0X35C41,	"aAnimation");
 	create_strlit	(0X35C4B,	0X9);
 	set_name	(0X35C4B,	"aNewGame");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35C54,	0X7);
 	set_name	(0X35C54,	"aSlow");
 	create_strlit	(0X35C5B,	0X7);
@@ -10857,15 +10872,6 @@ static Bytes_3(void) {
 	set_name	(0X35CF7,	"aChampion");
 	create_strlit	(0X35D02,	0XB);
 	set_name	(0X35D02,	"aBlacksmith");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35D0D,	0XB);
 	set_name	(0X35D0D,	"aAssassin");
 	create_strlit	(0X35D18,	0XB);

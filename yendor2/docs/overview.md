@@ -3766,6 +3766,15 @@ existing character and mid-chargen review.
 
 480 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ground-item slot I/O cluster
+
+Named `sub_1A34C` -> `ReadGroundItemSlot`, `sub_1A320` ->
+`PrepareGroundItemSlotWrite`, and `sub_1A36A` -> `CommitGroundItemWrite`
+— `PlaceItemOnGround`'s low-level slot read/write cycle, the ground-item
+counterpart to the already-named `CommitContainerWrite`.
+
+483 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

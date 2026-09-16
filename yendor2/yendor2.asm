@@ -17966,7 +17966,7 @@ PlaceItemOnGround proc far              ; CODE XREF: TryDropHeldItem+55↓P
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1A31B
                 mov     bx, 0AFA8h
-                call    sub_1A34C
+                call    ReadGroundItemSlot
                 push    word_36863
                 mov     si, 0AFA8h
                 mov     cx, 8
@@ -17982,7 +17982,7 @@ loc_1A2B6:                              ; CODE XREF: PlaceItemOnGround+7E↓j
                 jz      short loc_1A30D
                 mov     ax, [si+4]
                 mov     bx, 0AFCAh
-                call    sub_1A34C
+                call    ReadGroundItemSlot
                 push    word_36863
                 mov     si, 0AFCAh
                 mov     cx, 8
@@ -17998,8 +17998,8 @@ loc_1A2DE:                              ; CODE XREF: PlaceItemOnGround+70↓j
                 jz      short loc_1A2FF
                 mov     ax, [si+4]
                 mov     bx, 0AFECh
-                call    sub_1A34C
-                call    sub_1A320
+                call    ReadGroundItemSlot
+                call    PrepareGroundItemSlotWrite
 
 loc_1A2FF:                              ; CODE XREF: PlaceItemOnGround+51↑j
                                         ; PlaceItemOnGround+5D↑j
@@ -18008,7 +18008,7 @@ loc_1A2FF:                              ; CODE XREF: PlaceItemOnGround+51↑j
                 add     si, 4
                 loop    loc_1A2DE
                 pop     word_36863
-                call    sub_1A320
+                call    PrepareGroundItemSlotWrite
 
 loc_1A30D:                              ; CODE XREF: PlaceItemOnGround+29↑j
                                         ; PlaceItemOnGround+35↑j
@@ -18017,7 +18017,7 @@ loc_1A30D:                              ; CODE XREF: PlaceItemOnGround+29↑j
                 add     si, 4
                 loop    loc_1A2B6
                 pop     word_36863
-                call    sub_1A320
+                call    PrepareGroundItemSlotWrite
 
 loc_1A31B:                              ; CODE XREF: PlaceItemOnGround+10↑j
                 pop     di
@@ -18031,9 +18031,9 @@ PlaceItemOnGround endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A320       proc near               ; CODE XREF: PlaceItemOnGround+68↑p
+PrepareGroundItemSlotWrite proc near    ; CODE XREF: PlaceItemOnGround+68↑p
                                         ; PlaceItemOnGround+76↑p ...
-                push    word_3685F
+                push    word_3685F      ; Clears a 17-word scratch buffer, transplants word_36863 into word_36E0F (saving the previous value), then calls CommitGroundItemWrite. Called from PlaceItemOnGround.
                 mov     word_3685F, 0AFECh
                 mov     di, 0AFECh
                 mov     es, word_2E4AA
@@ -18044,18 +18044,18 @@ sub_1A320       proc near               ; CODE XREF: PlaceItemOnGround+68↑p
                 mov     word_3884C, ax
                 mov     ax, word_36863
                 mov     word_36E0F, ax
-                call    sub_1A36A
+                call    CommitGroundItemWrite
                 pop     word_3685F
                 retn
-sub_1A320       endp
+PrepareGroundItemSlotWrite endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A34C       proc near               ; CODE XREF: PlaceItemOnGround+15↑p
+ReadGroundItemSlot proc near            ; CODE XREF: PlaceItemOnGround+15↑p
                                         ; PlaceItemOnGround+3D↑p ...
-                mov     word_36863, ax
+                mov     word_36863, ax  ; Reads a ground/world-object item slot record (FileEntry_Read, errorCode=0xB) into word_36863. Called 3 times from PlaceItemOnGround.
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
                 call    sub_27E3A
@@ -18063,19 +18063,19 @@ sub_1A34C       proc near               ; CODE XREF: PlaceItemOnGround+15↑p
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_1A34C       endp
+ReadGroundItemSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A36A       proc near               ; CODE XREF: sub_1A320+24↑p
-                mov     bx, 8FFBh
+CommitGroundItemWrite proc near         ; CODE XREF: PrepareGroundItemSlotWrite+24↑p
+                mov     bx, 8FFBh       ; Minimal write-commit (FileEntry_Write, errorCode=0xB) for the ground-item slot, the same shape as CommitContainerWrite. Called from PrepareGroundItemSlotWrite.
                 mov     errorCode, 0Bh
                 call    FileEntry_Write
                 call    ErrorCheck
                 retn
-sub_1A36A       endp
+CommitGroundItemWrite endp
 
 seg033          ends
 
@@ -42883,7 +42883,7 @@ sub_27E20       endp
 
 ; void __usercall sub_27E3A(FileEntry *this@<eds:ebx.2>)
 sub_27E3A       proc far                ; CODE XREF: sub_19091+8↑P
-                                        ; sub_1A34C+8↑P ...
+                                        ; ReadGroundItemSlot+8↑P ...
                 push    si
                 mov     si, 0CDDBh
                 mov     [bx+4], ax
@@ -84837,8 +84837,8 @@ aFXxx           db 'F xxx',0
 curGame         db 0FFh
                 db 0FFh
 word_3685D      dw 0                    ; DATA XREF: InitGame+20↑w
-word_3685F      dw 0                    ; DATA XREF: sub_1A320↑r
-                                        ; sub_1A320+4↑w ...
+word_3685F      dw 0                    ; DATA XREF: PrepareGroundItemSlotWrite↑r
+                                        ; PrepareGroundItemSlotWrite+4↑w ...
 word_36861      dw 0                    ; DATA XREF: RunGameDialog+4B4↑w
                                         ; RunGameDialog+557↑w ...
 word_36863      dw 0                    ; DATA XREF: sub_19091↑w
@@ -86269,8 +86269,8 @@ word_36DF5      dw 0                    ; DATA XREF: sub_1FC53+11↑w
                 db 0FFh
 word_36E0D      dw 0                    ; DATA XREF: LoadNextContainerInChain:loc_26058↑r
                                         ; LoadNextContainerInChain+39↑w ...
-word_36E0F      dw 0                    ; DATA XREF: sub_1A320+18↑r
-                                        ; sub_1A320+21↑w ...
+word_36E0F      dw 0                    ; DATA XREF: PrepareGroundItemSlotWrite+18↑r
+                                        ; PrepareGroundItemSlotWrite+21↑w ...
                 db 0FFh
                 db 0FFh
                 db 0FFh
@@ -92984,7 +92984,7 @@ byte_3883E      db 0                    ; DATA XREF: BuildClueLocationSuffix+2B�
                 db    0
                 db    0
                 db    0
-word_3884C      dw 0                    ; DATA XREF: sub_1A320+1B↑w
+word_3884C      dw 0                    ; DATA XREF: PrepareGroundItemSlotWrite+1B↑w
                 db    0
                 db    0
                 db    0

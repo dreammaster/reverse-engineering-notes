@@ -349,7 +349,13 @@ warns and bails if not; shows a confirm prompt; calls
 handles the "drop" action. `PlaceItemOnGround` recurses into a
 dropped container's 8-slot contents (catalog `[+0xC]` bit `0x2000`,
 the same container flag) so a dropped bag's full contents are placed
-too, not just the container item itself. `IsItemDroppable` itself, for
+too, not just the container item itself. Its low-level slot I/O:
+`ReadGroundItemSlot` (was `sub_1A34C`, called 3 times) reads a ground/
+world-object slot record; `PrepareGroundItemSlotWrite` (was
+`sub_1A320`) clears a scratch buffer and transplants the read count
+into place before calling `CommitGroundItemWrite` (was `sub_1A36A`) —
+a minimal write-commit, the same shape as `CommitContainerWrite` but
+for the ground slot. `IsItemDroppable` itself, for
 a held container, calls `HasDroppableItemInInventory` (base case
 `HasDroppableItemInContainer`) — a container is only droppable if it
 holds at least one directly-droppable item somewhere inside it.
