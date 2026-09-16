@@ -2987,7 +2987,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     _font_bgTransparent, 1
                 call    DrawShadowedTextAlt
                 mov     cx, 14h
-                call    sub_11EAE
+                call    TryPlaySoundCueAlt
                 call    sub_11DE2
                 call    sub_11E1C
                 mov     ax, 64h ; 'd'   ; ticks
@@ -3138,11 +3138,11 @@ sub_11DE2       endp
 
 sub_11E1C       proc near               ; CODE XREF: sub_11A10+237↑p
                 mov     cx, 0FFFFh
-                call    sub_11EAE
+                call    TryPlaySoundCueAlt
                 mov     ax, 47h ; 'G'
                 call    sub_28412
                 mov     cx, 0FFFFh
-                call    sub_11EAE
+                call    TryPlaySoundCueAlt
                 mov     ax, 48h ; 'H'
                 call    sub_28412
                 retn
@@ -3218,18 +3218,18 @@ DrawShadowedTextAlt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11EAE       proc near               ; CODE XREF: sub_11A10+231↑p
+TryPlaySoundCueAlt proc near            ; CODE XREF: sub_11A10+231↑p
                                         ; sub_11E1C+3↑p ...
-                call    WaitForSoundDriverIdle
+                call    WaitForSoundDriverIdle ; Byte-for-byte duplicate of TryPlaySoundCue (sub_16234); dispatches via still-unnamed sub_11E39. Called from sub_11A10, sub_11E1C, and others.
                 jz      short locret_11EBD
                 cmp     cx, 0FFFFh
                 jz      short locret_11EBD
                 call    sub_11E39
 
-locret_11EBD:                           ; CODE XREF: sub_11EAE+5↑j
-                                        ; sub_11EAE+A↑j
+locret_11EBD:                           ; CODE XREF: TryPlaySoundCueAlt+5↑j
+                                        ; TryPlaySoundCueAlt+A↑j
                 retn
-sub_11EAE       endp
+TryPlaySoundCueAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8973,7 +8973,7 @@ loc_15756:                              ; CODE XREF: sub_1559A+1B9↑j
                 mov     dx, 0C0h
                 call    sub_16164
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15799
                 retn
@@ -8997,7 +8997,7 @@ loc_15799:                              ; CODE XREF: sub_1559A+1FC↑j
                 mov     dx, 0B0h
                 call    sub_16164
                 mov     cx, 1Eh
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_157E9
                 retn
@@ -9024,7 +9024,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
                 mov     word_2E530, 28h ; '('
                 call    DrawPicture
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    sub_16244
                 mov     ax, 12h
                 call    sub_28412
@@ -9041,7 +9041,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
 
 loc_15859:                              ; CODE XREF: sub_1559A+2BC↑j
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 mov     ax, 13h
                 call    sub_28412
                 and     word_328C8, 0F7FFh
@@ -9074,7 +9074,7 @@ loc_1587F:                              ; CODE XREF: sub_1559A+2E2↑j
                 mov     cx, 640h
                 rep stosw
                 mov     cx, 0Fh
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    sub_161B6
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_158D5
@@ -9097,7 +9097,7 @@ loc_158D5:                              ; CODE XREF: sub_1559A+338↑j
                 call    DrawMouseCursor
                 call    sub_161C3
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 mov     ax, 18h
                 call    sub_28412
                 call    PollForEscapeKeyOnlyAlt
@@ -9107,7 +9107,7 @@ loc_158D5:                              ; CODE XREF: sub_1559A+338↑j
 
 loc_15927:                              ; CODE XREF: sub_1559A+38A↑j
                 mov     cx, 19h
-                call    sub_16234
+                call    TryPlaySoundCue
                 mov     ax, 19h
                 call    sub_28412
                 call    sub_161B6
@@ -9134,7 +9134,7 @@ loc_15927:                              ; CODE XREF: sub_1559A+38A↑j
                 mov     cx, 0D20h
                 rep stosw
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1598C
                 retn
@@ -9156,7 +9156,7 @@ loc_1598C:                              ; CODE XREF: sub_1559A+3EF↑j
                 call    DrawMouseCursor
                 call    sub_161C3
                 mov     cx, 14h
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    sub_161B6
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_159D9
@@ -9258,7 +9258,7 @@ loc_15B34:                              ; CODE XREF: sub_1559A+597↑j
                 call    sub_16244
                 and     word_3295A, 0EFFFh
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 mov     ax, 12h
                 call    sub_28412
                 call    sub_152E1
@@ -9372,7 +9372,7 @@ loc_15C3D:                              ; CODE XREF: sub_1559A+6A0↑j
 
 loc_15C81:                              ; CODE XREF: sub_1559A+6E4↑j
                 mov     cx, 2Dh ; '-'
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15C8D
                 retn
@@ -9382,7 +9382,7 @@ loc_15C8D:                              ; CODE XREF: sub_1559A+6F0↑j
                 mov     ax, 16h
                 call    sub_28412
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15CA1
                 retn
@@ -9442,7 +9442,7 @@ loc_15CF3:                              ; CODE XREF: sub_1559A+756↑j
 
 loc_15D39:                              ; CODE XREF: sub_1559A+79C↑j
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 mov     ax, 1Bh
                 call    sub_28412
                 call    sub_161C3
@@ -9501,13 +9501,13 @@ loc_15DD7:                              ; CODE XREF: sub_1559A+843↓j
                 jz      short loc_15DD7
                 and     word_328C4, 0FBFFh
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 mov     ax, 5
                 call    sub_28412
                 mov     cx, 5
                 call    sub_16180
                 mov     cx, 0FFFFh
-                call    sub_16234
+                call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15E05
                 retn
@@ -9965,18 +9965,18 @@ DrawShadowedText endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16234       proc near               ; CODE XREF: sub_1559A+1F6↑p
+TryPlaySoundCue proc near               ; CODE XREF: sub_1559A+1F6↑p
                                         ; sub_1559A+246↑p ...
-                call    WaitForSoundDriverIdle
+                call    WaitForSoundDriverIdle ; Drops this sound cue (cx=sound/note id) if WaitForSoundDriverIdle had to wait (driver was busy) or cx==0xFFFF (no-op sentinel); otherwise dispatches via still-unnamed sub_1616F. Byte-for-byte identical to TryPlaySoundCueAlt (sub_11EAE) in a different overlay segment. Called from sub_1559A and others.
                 jz      short locret_16243
                 cmp     cx, 0FFFFh
                 jz      short locret_16243
                 call    sub_1616F
 
-locret_16243:                           ; CODE XREF: sub_16234+5↑j
-                                        ; sub_16234+A↑j
+locret_16243:                           ; CODE XREF: TryPlaySoundCue+5↑j
+                                        ; TryPlaySoundCue+A↑j
                 retn
-sub_16234       endp
+TryPlaySoundCue endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43465,8 +43465,8 @@ seg100          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-WaitForSoundDriverIdle proc far         ; CODE XREF: sub_11EAE↑P
-                                        ; sub_16234↑P ...
+WaitForSoundDriverIdle proc far         ; CODE XREF: TryPlaySoundCueAlt↑P
+                                        ; TryPlaySoundCue↑P ...
                 mov     ax, 1           ; Returns immediately (ax=1) if g_driverStateFlags bit 0x8 is clear; otherwise busy-waits for word_2E494 to become 0 then returns ax=0 -- waits for the sound driver's current operation to finish. Called from several sites including sub_2D498.
                 test    g_driverStateFlags, 8
                 jz      short loc_28292

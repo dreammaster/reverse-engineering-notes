@@ -4667,6 +4667,28 @@ the still-open `sub_2D498` lead from earlier this session.
 
 558 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryPlaySoundCue / Alt
+
+Named another byte-for-byte-identical overlay-segment duplicate pair
+(joining `DrawShadowedText`/`Alt`, `ConfirmContainerInteraction`/
+`ConfirmAlchemyInteraction`, and `PollForEscapeKeyOnly`/`Alt`):
+`sub_16234` -> `TryPlaySoundCue` and `sub_11EAE` ->
+`TryPlaySoundCueAlt`. Both drop a sound cue (`cx`=sound/note id) if
+`WaitForSoundDriverIdle` had to wait (driver was busy) or `cx` is the
+`0xFFFF` no-op sentinel; otherwise dispatch via a still-unnamed
+per-segment helper (`sub_1616F`/`sub_11E39`). Noted while investigating
+this pair that they behave the *opposite* way from the earlier,
+harder-to-read `sub_2D498` (which dispatches its own sound command,
+`sub_28412`, only when the driver *was* busy and had to be waited out,
+and otherwise just delays — the reverse of "drop it if busy"), and
+`sub_2D498` itself carries an IDA "sp-analysis failed" flag plus a
+`cmp ax,0; jz` branch that appears to jump back into its own `pop ax`
+instruction — a genuine anomaly, not just an unfamiliar convention.
+Left `sub_2D498` deliberately unnamed rather than force an
+interpretation past what's actually confirmed.
+
+560 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

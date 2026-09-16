@@ -1422,7 +1422,9 @@ static Bytes_0(void) {
 	create_insn	(0X11E63);
 	set_cmt	(0X11E84,	"msg",	0);
 	create_insn	(0X11E8C);
+	set_cmt	(0X11EAE,	"Byte-for-byte duplicate of TryPlaySoundCue (sub_16234); dispatches via still-unnamed sub_11E39. Called from sub_11A10, sub_11E1C, and others.",	0);
 	create_insn	(0X11EAE);
+	set_name	(0X11EAE,	"TryPlaySoundCueAlt");
 	create_insn	(0X11EBE);
 	create_insn	(0X11EDC);
 	set_name	(0X11EDC,	"InitGame");
@@ -2408,7 +2410,9 @@ static Bytes_0(void) {
 	create_insn	(0X161E9);
 	set_cmt	(0X1620A,	"msg",	0);
 	create_insn	(0X16212);
+	set_cmt	(0X16234,	"Drops this sound cue (cx=sound/note id) if WaitForSoundDriverIdle had to wait (driver was busy) or cx==0xFFFF (no-op sentinel); otherwise dispatches via still-unnamed sub_1616F. Byte-for-byte identical to TryPlaySoundCueAlt (sub_11EAE) in a different overlay segment. Called from sub_1559A and others.",	0);
 	create_insn	(0X16234);
+	set_name	(0X16234,	"TryPlaySoundCue");
 	create_insn	(0X16244);
 	create_insn	(0X16262);
 	create_insn	(x=0X16298);
@@ -3227,13 +3231,6 @@ static Bytes_0(void) {
 	set_cmt	(0X18504,	"Mouse-click counterpart to sub_25B34 (keyboard 1-4 selection): hit-tests region table 0x61C2 for one of the 4 portrait zones, sets the matching word_328C6 highlight bit (same bits RefreshPartyPortraits uses) if that slot is occupied, redraws via sub_19133. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X18504);
 	set_name	(0X18504,	"HandlePortraitClick");
-	create_insn	(0X1851C);
-	create_insn	(0X18535);
-	create_insn	(0X1854E);
-	create_insn	(0X18567);
-	set_cmt	(0X185A2,	"Refreshes the 4 party-member portrait slots (g_partySlotAssignment) via sub_19133, then -- only when a shop action bit is active (word_328C6 & 0x1C) -- draws a context hint: 'SPACEBAR TO ENHANCE ITEM' / 'SPACEBAR TO REPAIR ITEM' / default 'SPACEBAR TO SELL ITEM OR ESC TO UNDO'. Called from `start`, HandleDungeonInput, and all three shop screens.",	0);
-	create_insn	(0X185A2);
-	set_name	(0X185A2,	"RefreshPartyPortraits");
 }
 
 //------------------------------------------------------------------------
@@ -3243,6 +3240,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1851C);
+	create_insn	(0X18535);
+	create_insn	(0X1854E);
+	create_insn	(0X18567);
+	set_cmt	(0X185A2,	"Refreshes the 4 party-member portrait slots (g_partySlotAssignment) via sub_19133, then -- only when a shop action bit is active (word_328C6 & 0x1C) -- draws a context hint: 'SPACEBAR TO ENHANCE ITEM' / 'SPACEBAR TO REPAIR ITEM' / default 'SPACEBAR TO SELL ITEM OR ESC TO UNDO'. Called from `start`, HandleDungeonInput, and all three shop screens.",	0);
+	create_insn	(0X185A2);
+	set_name	(0X185A2,	"RefreshPartyPortraits");
 	create_insn	(x=0X185B2);
 	op_hex		(x,	1);
 	create_insn	(x=0X185CF);
@@ -5377,6 +5381,15 @@ static Bytes_1(void) {
 	create_insn	(0X202AF);
 	create_insn	(0X202C6);
 	create_insn	(0X202D1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X202DC);
 	create_insn	(0X202F3);
 	create_insn	(0X2030A);
@@ -5388,15 +5401,6 @@ static Bytes_1(void) {
 	set_cmt	(0X203AC,	"Per-cell paint: PersistExploredCell(x,y), looks up a WORLD.DAT-backed record via sub_205C0, writes the current legend selection (word_2E496) into it, saves via FileEntry_Write (errorCode=9), then redraws the cell (DrawCellIconPair). Called per-cell by FillVisibleAreaWithSelectedTile.",	0);
 	create_insn	(0X203AC);
 	set_name	(0X203AC,	"PaintCellAndPersist");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X203D0);
 	op_seg		(x,	1);
 	create_insn	(0X203E4);
@@ -7253,6 +7257,15 @@ static Bytes_2(void) {
 	create_insn	(0X274A5);
 	create_insn	(0X274B4);
 	set_cmt	(0X274B5,	"this",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X274C8);
 	create_insn	(x=0X274D0);
 	op_hex		(x,	1);
@@ -7305,15 +7318,6 @@ static Bytes_2(void) {
 	set_cmt	(0X276C5,	"If the current item's category ([+0xC] 0xC000/0x800) and a matching word_2E548 sub-flag ([+2] 0x200/0x80) both hold, removes the current item's effect (RemoveMultiStatEffect), swaps in a new item id from word_2E548+4/+8 (the same fields GetClassifiedItemStatField selects), and applies its effect (ApplyMultiStatEffectForItem). Called from sub_274B4.",	0);
 	create_insn	(0X276C5);
 	set_name	(0X276C5,	"SwapItemMultiStatEffect");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X276CA);
 	op_hex		(x,	1);
 	create_insn	(x=0X276D1);
@@ -9710,6 +9714,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2CCC4);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2CCD3,	"ticks",	0);
 	create_insn	(0X2CCEE);
 	create_insn	(0X2CDBE);
@@ -9748,15 +9761,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2D195,	"Calls ResolveAttack, then latches word_332E8 into word_2E49C the first time through (only if word_2E49C was still 0), setting errorCode=1. Field identities ([di+0x58], party record +0x62, word_332E8) not confirmed. Called once from the still-unnamed sub_2C0FE.",	0);
 	create_insn	(0X2D195);
 	set_name	(0X2D195,	"ResolveAttackAndLatchFirstHit");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2D1C2,	"Filters pending status-effect flags (word_33304 high bits) by target immunity ([di+0x96]) into word_2E49A; fully negates damage (word_2E49C=0) if a low-bit status/immunity match is found; halves damage for a resistance-category match (word_33306 vs [di+0x98]); and drains word_332E0 from an elemental resource field on the target (offset selected by word_33304 bits 0x20-0x200), floored at 0. Called from sub_2D4B6, right after TryResolveAttackAgainstTarget.",	0);
 	create_insn	(x=0X2D1C2);
 	op_hex		(x,	1);

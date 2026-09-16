@@ -2281,7 +2281,17 @@ identification rests on the unambiguous parsing logic rather than a
 confirmed string match. `WaitForSoundDriverIdle` (was `sub_2827E`)
 is a small companion gate used elsewhere: returns immediately unless
 `g_driverStateFlags` bit `0x8` is set, in which case it busy-waits for
-`word_2E494` to reach 0.
+`word_2E494` to reach 0. Its two main consumers are the byte-for-byte-
+identical overlay-segment duplicate pair `TryPlaySoundCue`/
+`TryPlaySoundCueAlt` (was `sub_16234`/`sub_11EAE`, another instance of
+this session's recurring duplication pattern): drop a sound cue if the
+driver was busy or the id is the `0xFFFF` sentinel, else dispatch via
+a still-unnamed per-segment helper. A third, structurally different
+caller, `sub_2D498`, behaves the *opposite* way (dispatches only when
+the driver *was* busy) and carries a genuine IDA "sp-analysis failed"
+flag plus a suspicious jump back into its own `pop` instruction —
+deliberately left unnamed as an actual anomaly, not just an
+unfamiliar-but-sound convention.
 
 ## Not yet examined
 
