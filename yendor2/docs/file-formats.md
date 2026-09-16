@@ -576,7 +576,10 @@ at least 3 reserve slots.
 sequence run before the wizard's actual steps: builds a palette fade
 buffer — see the `ShowIntroPicture`/palette section below for the
 matching transform — plays music, and runs several staged
-sub-animations, each ESC-abortable), `sub_1559A` (step 3, not yet
+sub-animations built from a small moving wipe-effect primitive,
+`SetWipeEffectPixel`/`RestoreWipeEffectPixel` (was `sub_1619F`/
+`sub_1618E`, using `ComputeVgaOffsetFromRowCol`'s `row*320+col`
+mode-13h offset math), each ESC-abortable), `sub_1559A` (step 3, not yet
 traced), then always `FinalizeCharacterCreation` (was
 `sub_15267`, runs regardless of which step was reached). Matches the
 manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/

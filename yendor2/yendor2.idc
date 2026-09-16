@@ -2379,7 +2379,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1612A);
 	op_hex		(x,	1);
+	set_cmt	(0X1614D,	"VGA mode-13h linear offset: bx = ax(row)*320 + bx(col). Called only by SetWipeEffectPixel/RestoreWipeEffectPixel, part of PlayCharacterCreationIntroAnimation's wipe effect.",	0);
 	create_insn	(0X1614D);
+	set_name	(0X1614D,	"ComputeVgaOffsetFromRowCol");
 	create_insn	(0X16159);
 	create_insn	(0X16164);
 	create_insn	(x=0X1616F);
@@ -2388,8 +2390,12 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X16180);
 	op_hex		(x,	1);
+	set_cmt	(0X1618E,	"Writes the stashed _font_bgColor value back to (word_328FA,word_32900), undoing SetWipeEffectPixel's punch. Called from PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(0X1618E);
+	set_name	(0X1618E,	"RestoreWipeEffectPixel");
+	set_cmt	(0X1619F,	"Stashes the pixel at (word_328FA,word_32900) into _font_bgColor (repurposed as scratch, not a real font color) then overwrites it with _font_fgColor -- the 'punch' half of a moving wipe effect. Called from PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(0X1619F);
+	set_name	(0X1619F,	"SetWipeEffectPixel");
 	create_insn	(x=0X161B6);
 	op_hex		(x,	1);
 	create_insn	(x=0X161C3);
@@ -3228,6 +3234,15 @@ static Bytes_0(void) {
 	set_cmt	(0X185A2,	"Refreshes the 4 party-member portrait slots (g_partySlotAssignment) via sub_19133, then -- only when a shop action bit is active (word_328C6 & 0x1C) -- draws a context hint: 'SPACEBAR TO ENHANCE ITEM' / 'SPACEBAR TO REPAIR ITEM' / default 'SPACEBAR TO SELL ITEM OR ESC TO UNDO'. Called from `start`, HandleDungeonInput, and all three shop screens.",	0);
 	create_insn	(0X185A2);
 	set_name	(0X185A2,	"RefreshPartyPortraits");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X185B2);
 	op_hex		(x,	1);
 	create_insn	(x=0X185CF);
@@ -3283,15 +3298,6 @@ static Bytes_0(void) {
 	create_insn	(0X18892);
 	create_insn	(0X1889A);
 	create_insn	(0X188AC);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X188B8);
 	create_insn	(0X188C4);
 	create_insn	(x=0X188CA);
@@ -5382,13 +5388,6 @@ static Bytes_1(void) {
 	set_cmt	(0X203AC,	"Per-cell paint: PersistExploredCell(x,y), looks up a WORLD.DAT-backed record via sub_205C0, writes the current legend selection (word_2E496) into it, saves via FileEntry_Write (errorCode=9), then redraws the cell (DrawCellIconPair). Called per-cell by FillVisibleAreaWithSelectedTile.",	0);
 	create_insn	(0X203AC);
 	set_name	(0X203AC,	"PaintCellAndPersist");
-	create_insn	(x=0X203D0);
-	op_seg		(x,	1);
-	create_insn	(0X203E4);
-	create_insn	(0X203F2);
-	set_cmt	(0X203F7,	"Zeroes 0x500 words (2560 bytes) at VGA segment 0xA000:0000 -- a partial screen clear, not the full 64000-byte frame. Called from RunMapEditorScreen.",	0);
-	create_insn	(0X203F7);
-	set_name	(0X203F7,	"ClearVideoMemoryRegion");
 }
 
 //------------------------------------------------------------------------
@@ -5398,6 +5397,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X203D0);
+	op_seg		(x,	1);
+	create_insn	(0X203E4);
+	create_insn	(0X203F2);
+	set_cmt	(0X203F7,	"Zeroes 0x500 words (2560 bytes) at VGA segment 0xA000:0000 -- a partial screen clear, not the full 64000-byte frame. Called from RunMapEditorScreen.",	0);
+	create_insn	(0X203F7);
+	set_name	(0X203F7,	"ClearVideoMemoryRegion");
 	set_cmt	(0X20406,	"Draws a scrollable 17-icon horizontal strip from table 0xE551 (field +0xA), starting at index word_2E384, at y=0 x=0x18+.",	0);
 	create_insn	(0X20406);
 	set_name	(0X20406,	"DrawWallTypeLegendRow");

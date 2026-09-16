@@ -8668,11 +8668,11 @@ loc_15489:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     word_32900, 8
                 mov     _font_fgColor, 1Fh
                 mov     cx, 20h ; ' '
-                call    sub_1619F
+                call    SetWipeEffectPixel
                 call    DrawMouseCursor
 
 loc_154B1:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+A8↓j
-                call    sub_1618E
+                call    RestoreWipeEffectPixel
                 test    word_328C4, 400h
                 jz      short loc_154BF
                 call    sub_152EF
@@ -8680,13 +8680,13 @@ loc_154B1:                              ; CODE XREF: PlayCharacterCreationIntroA
 loc_154BF:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+91↑j
                 sub     word_328FA, 2
                 add     word_32900, 2
-                call    sub_1619F
+                call    SetWipeEffectPixel
                 call    DrawMouseCursor
                 loop    loc_154B1
                 mov     cx, 14h
 
 loc_154D6:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+D1↓j
-                call    sub_1618E
+                call    RestoreWipeEffectPixel
                 test    word_328C4, 400h
                 jz      short loc_154E4
                 call    sub_152EF
@@ -8695,10 +8695,10 @@ loc_154E4:                              ; CODE XREF: PlayCharacterCreationIntroA
                 sub     word_328FA, 2
                 add     word_32900, 2
                 dec     _font_fgColor
-                call    sub_1619F
+                call    SetWipeEffectPixel
                 call    DrawMouseCursor
                 loop    loc_154D6
-                call    sub_1618E
+                call    RestoreWipeEffectPixel
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15505
                 retn
@@ -9784,9 +9784,9 @@ sub_160D6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1614D       proc near               ; CODE XREF: sub_1618E+7↓p
-                                        ; sub_1619F+7↓p
-                push    dx
+ComputeVgaOffsetFromRowCol proc near    ; CODE XREF: RestoreWipeEffectPixel+7↓p
+                                        ; SetWipeEffectPixel+7↓p
+                push    dx              ; VGA mode-13h linear offset: bx = ax(row)*320 + bx(col). Called only by SetWipeEffectPixel/RestoreWipeEffectPixel, part of PlayCharacterCreationIntroAnimation's wipe effect.
                 push    ax
                 mov     ax, 140h
                 mul     bx
@@ -9794,7 +9794,7 @@ sub_1614D       proc near               ; CODE XREF: sub_1618E+7↓p
                 add     bx, ax
                 pop     dx
                 retn
-sub_1614D       endp
+ComputeVgaOffsetFromRowCol endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9858,31 +9858,31 @@ sub_16180       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1618E       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation:loc_154B1↑p
+RestoreWipeEffectPixel proc near        ; CODE XREF: PlayCharacterCreationIntroAnimation:loc_154B1↑p
                                         ; PlayCharacterCreationIntroAnimation:loc_154D6↑p ...
-                mov     ax, word_328FA
+                mov     ax, word_328FA  ; Writes the stashed _font_bgColor value back to (word_328FA,word_32900), undoing SetWipeEffectPixel's punch. Called from PlayCharacterCreationIntroAnimation.
                 mov     bx, word_32900
-                call    sub_1614D
+                call    ComputeVgaOffsetFromRowCol
                 mov     ax, _font_bgColor
                 mov     es:[bx], al
                 retn
-sub_1618E       endp
+RestoreWipeEffectPixel endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1619F       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+80↑p
+SetWipeEffectPixel proc near            ; CODE XREF: PlayCharacterCreationIntroAnimation+80↑p
                                         ; PlayCharacterCreationIntroAnimation+A0↑p ...
-                mov     ax, word_328FA
+                mov     ax, word_328FA  ; Stashes the pixel at (word_328FA,word_32900) into _font_bgColor (repurposed as scratch, not a real font color) then overwrites it with _font_fgColor -- the 'punch' half of a moving wipe effect. Called from PlayCharacterCreationIntroAnimation.
                 mov     bx, word_32900
-                call    sub_1614D
+                call    ComputeVgaOffsetFromRowCol
                 mov     al, es:[bx]
                 mov     _font_bgColor, ax
                 mov     ax, _font_fgColor
                 mov     es:[bx], al
                 retn
-sub_1619F       endp
+SetWipeEffectPixel endp
 
 
 ; =============== S U B R O U T I N E =======================================

@@ -4418,6 +4418,24 @@ artifact of the original code) is not resolved.
 
 536 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the intro-animation wipe effect (3 functions)
+
+Named a 3-function cluster used only by
+`PlayCharacterCreationIntroAnimation`'s staged sub-animations: 
+`sub_1614D` -> `ComputeVgaOffsetFromRowCol` (a small VGA mode-13h
+linear offset helper, `row*320+col`, called only by the two functions
+below), `sub_1619F` -> `SetWipeEffectPixel` (stashes the pixel
+currently at `(word_328FA,word_32900)` into `_font_bgColor` —
+repurposed here as a one-pixel scratch stash, not an actual font
+color — then overwrites it with `_font_fgColor`), and `sub_1618E` ->
+`RestoreWipeEffectPixel` (writes the stashed value back, undoing the
+punch). The intro animation's loops call these while stepping the
+position by ±2 each iteration and sometimes decrementing
+`_font_fgColor` — a moving highlight/scan-line wipe effect, not a
+persistent draw.
+
+539 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
