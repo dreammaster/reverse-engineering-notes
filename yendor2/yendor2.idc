@@ -6917,7 +6917,9 @@ static Bytes_2(void) {
 	set_cmt	(0X2684B,	"this",	0);
 	create_insn	(0X26864);
 	create_insn	(0X2687B);
+	set_cmt	(0X268A0,	"Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.",	0);
 	create_insn	(0X268A0);
+	set_name	(0X268A0,	"SwapHeldItemWithSlot");
 	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
 	create_insn	(0X268F4);
 	set_name	(0X268F4,	"SaveAndCloseContainer");
@@ -7904,10 +7906,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2957E,	"Like SaveAndCloseContainer's write-back (if the bag at [di] has contents, write them to CURGAME) but doesn't clear the marker afterward -- saves without closing.",	0);
 	create_insn	(0X2957E);
 	set_name	(0X2957E,	"SyncContainerContents");
-	set_cmt	(0X29583,	"this",	0);
-	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
-	create_insn	(0X295A8);
-	set_name	(0X295A8,	"HandleGameCommand");
 }
 
 //------------------------------------------------------------------------
@@ -7917,6 +7915,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X29583,	"this",	0);
+	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
+	create_insn	(0X295A8);
+	set_name	(0X295A8,	"HandleGameCommand");
 	create_insn	(0X295BD);
 	create_insn	(0X295CA);
 	create_insn	(0X295E5);
@@ -11119,6 +11121,15 @@ static Bytes_3(void) {
 	set_name	(0X364FE,	"aClassLevel");
 	create_strlit	(0X3650F,	0X7);
 	set_name	(0X3650F,	"aMp");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36516,	0X7);
 	set_name	(0X36516,	"aNuore_1");
 	create_strlit	(0X3651D,	0X7);
@@ -11151,15 +11162,6 @@ static Bytes_3(void) {
 	set_name	(0X3658C,	"aInA3x3Area");
 	create_strlit	(0X3659A,	0XE);
 	set_name	(0X3659A,	"aAtADistance");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X365A8,	0X14);
 	set_name	(0X365A8,	"aOutOfHandToHan");
 	create_strlit	(0X365BC,	0X8);

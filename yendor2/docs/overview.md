@@ -3600,6 +3600,18 @@ names on their larger, still-ambiguous callers.
 
 459 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SwapHeldItemWithSlot
+
+Named `sub_268A0` -> `SwapHeldItemWithSlot`, moderate-high confidence:
+called from `sub_2621C` (the still-untraced, 230-line container-
+interaction input handler — now confirmed to host at least two named
+item actions, this and `FinishPlacingHeldItem`). A classic drag-and-
+drop swap via a save/restore dance around the held-item triple across
+two unnamed calls (pick up the slot's item; place the original held
+item into the slot).
+
+460 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

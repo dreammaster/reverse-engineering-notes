@@ -39419,7 +39419,7 @@ loc_262FC:                              ; CODE XREF: sub_2621C+D2↑j
                 call    IsContainerTypeCompatible
                 cmp     errorCode, 0
                 jnz     short loc_26309
-                call    sub_268A0
+                call    SwapHeldItemWithSlot
 
 loc_26309:                              ; CODE XREF: sub_2621C+E8↑j
                 jmp     loc_26409
@@ -40086,8 +40086,8 @@ sub_2687B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_268A0       proc near               ; CODE XREF: sub_2621C+EA↑p
-                mov     ax, 6
+SwapHeldItemWithSlot proc near          ; CODE XREF: sub_2621C+EA↑p
+                mov     ax, 6           ; Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.
                 call    sub_28412
                 call    RestoreCursorBackgroundIfDirty
                 push    word_31948
@@ -40112,7 +40112,7 @@ sub_268A0       proc near               ; CODE XREF: sub_2621C+EA↑p
                 call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
                 retn
-sub_268A0       endp
+SwapHeldItemWithSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -40489,7 +40489,7 @@ sub_26A75       endp
 
 
 sub_26B4F       proc near               ; CODE XREF: sub_26864+5↑p
-                                        ; sub_268A0+19↑p
+                                        ; SwapHeldItemWithSlot+19↑p
                 mov     word_3194C, 0
                 mov     si, word_328D4
                 cmp     word_2E40A, 10h

@@ -291,6 +291,17 @@ record and OR-ing a value derived from one of its flag bytes into
 container/inventory-slot placement rather than the ground-drop
 `PlaceItemOnGround` handles, but not confirmed.
 
+A third item-manipulation action, `SwapHeldItemWithSlot` (was
+`sub_268A0`, also called from `sub_2621C`): a classic drag-and-drop
+swap, done via a careful save/restore dance around the held-item triple
+(`word_31948`/`word_3194C`/`word_3194A`) across two calls — one that
+presumably picks up a target slot's item (`sub_26B4F`, not traced) and
+one that places the original held item into that slot (`sub_266D4`,
+not traced) — finishing with a portrait redraw and cursor update. Both
+`FinishPlacingHeldItem` and `SwapHeldItemWithSlot` are called from
+`sub_2621C`, reinforcing that it's the main container-interaction
+input handler (still not traced as a whole — 230 lines).
+
 **`SyncAllContainers`** (found via `RepairItemCommand`'s opening call)
 writes every open bag's contents back to `CURGAME` across the *whole
 party*, without closing them (`SyncContainerContents`, the same
