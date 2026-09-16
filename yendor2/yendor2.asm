@@ -36016,7 +36016,7 @@ ShowCharacterSkills proc near           ; CODE XREF: ShowPartyMembers:loc_23BC8�
                 add     _textPos_y, 9
                 mov     cx, 4
                 call    WriteStringWithHighlightedChar
-                call    sub_25595
+                call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
                 call    sub_238CD
 
@@ -36206,7 +36206,7 @@ loc_2469E:                              ; CODE XREF: ShowCharacterInventory+E2�
                 call    WriteStringWithHighlightedChar
 
 loc_246C9:                              ; CODE XREF: ShowCharacterInventory+F6↑j
-                call    sub_25595
+                call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
                 call    sub_238CD
 
@@ -36597,7 +36597,7 @@ loc_24AA4:                              ; CODE XREF: ShowCharacterEquipment+58�
 loc_24AF0:                              ; CODE XREF: ShowCharacterEquipment+90↑j
                 call    WriteStringWithHighlightedChar
                 mov     _font_bgTransparent, 1
-                call    sub_25595
+                call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
                 call    sub_238CD
 
@@ -36735,7 +36735,7 @@ ShowCharacterStats proc near            ; CODE XREF: ShowPartyMembers+37↑p
                 add     _textPos_y, 12h
                 mov     cx, 6
                 call    WriteStringWithHighlightedChar
-                call    sub_25595
+                call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
 
 loc_24C5C:                              ; CODE XREF: ShowCharacterStats+73↓j
@@ -37188,7 +37188,7 @@ ShowCharacterSummary proc near          ; CODE XREF: ShowPartyMembers+5A↑p
                 mov     bx, 7A3Eh
                 mov     cx, 1
                 call    WriteStringWithHighlightedChar
-                call    sub_25595
+                call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
                 call    sub_238CD
 
@@ -37601,9 +37601,9 @@ ShowCreateCharacterPrompt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25595       proc near               ; CODE XREF: ShowCharacterSkills+F8↑p
+DrawQuitOrReturnLabel proc near         ; CODE XREF: ShowCharacterSkills+F8↑p
                                         ; ShowCharacterInventory:loc_246C9↑p ...
-                mov     _textPos_x, 8
+                mov     _textPos_x, 8   ; Draws a fixed bottom-left exit label: 'QUIT "CREATE"' (default) or 'RETURN' (when word_328CA bit 0x8000 is set) -- shared by character-info screens reused during character creation vs. viewing an existing character. Called from ShowCharacterSkills and ShowCharacterInventory.
                 mov     _textPos_y, 0B9h
                 mov     word_2E412, 7Bh ; '{'
                 mov     word_2E414, 0Fh
@@ -37614,10 +37614,10 @@ sub_25595       proc near               ; CODE XREF: ShowCharacterSkills+F8↑p
                 mov     bx, 7A84h
                 mov     cx, 2
 
-loc_255C1:                              ; CODE XREF: sub_25595+24↑j
+loc_255C1:                              ; CODE XREF: DrawQuitOrReturnLabel+24↑j
                 call    WriteStringWithHighlightedChar
                 retn
-sub_25595       endp
+DrawQuitOrReturnLabel endp
 
 
 ; =============== S U B R O U T I N E =======================================

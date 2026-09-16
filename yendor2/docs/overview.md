@@ -3756,6 +3756,16 @@ function reached from `start` (`sub_11A10`) respectively.
 
 479 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawQuitOrReturnLabel
+
+Named `sub_25595` -> `DrawQuitOrReturnLabel` (called from
+`ShowCharacterSkills` and `ShowCharacterInventory`): draws a bottom-left
+exit button toggling between `QUIT "CREATE"` and `RETURN` based on
+`word_328CA` bit `0x8000` — these screens are shared between viewing an
+existing character and mid-chargen review.
+
+480 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

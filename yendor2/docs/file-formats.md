@@ -274,7 +274,13 @@ yet (the line-drawer, `WriteStringWithHighlightedChar` (was
 `sub_23AF2`) — draws a string with exactly one character in a
 highlight color, called once per category header — only draws label
 strings; the numeric skill values themselves must be drawn by an
-untraced call in the same function). **This also sharpens an earlier hedge**: since
+untraced call in the same function). Both `ShowCharacterSkills` and
+`ShowCharacterInventory` also call `DrawQuitOrReturnLabel` (was
+`sub_25595`) for their bottom-left exit button: `QUIT "CREATE"`
+(highlighting the `Q`) when `word_328CA` bit `0x8000` is clear, or
+`RETURN` when set — these screens are shared between viewing an
+existing character and the character-creation flow, and the button
+text/behavior switches accordingly. **This also sharpens an earlier hedge**: since
 `+0xCA` here holds plain word values (not a bitmask), it's now fairly
 confident that `GetRecordFlagBitAndWord_CA` (the per-object flag bank
 at the same relative offset, from several rounds ago) operates on a

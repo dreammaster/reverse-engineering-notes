@@ -6573,7 +6573,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X25561);
 	set_cmt	(0X25587,	"msg",	0);
+	set_cmt	(0X25595,	"Draws a fixed bottom-left exit label: 'QUIT \"CREATE\"' (default) or 'RETURN' (when word_328CA bit 0x8000 is set) -- shared by character-info screens reused during character creation vs. viewing an existing character. Called from ShowCharacterSkills and ShowCharacterInventory.",	0);
 	create_insn	(0X25595);
+	set_name	(0X25595,	"DrawQuitOrReturnLabel");
 	create_insn	(x=0X255B3);
 	op_hex		(x,	1);
 	set_cmt	(0X255C7,	"Generic 'wait for a click or ESC' loop, ticking UpdateAmbientMusic each iteration. Returns ax=0xFFFF on ESC, else the HitTestRegionTable result for the click. Called from sub_23C18.",	0);
@@ -7780,6 +7782,15 @@ static Bytes_2(void) {
 	create_word	(x=0X28A57);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X28A5A,	"strlen(bx): scans for a null byte (max 255 bytes), returns length in ax.",	0);
 	create_insn	(0X28A5A);
 	set_name	(0X28A5A,	"StrLen");
@@ -7806,15 +7817,6 @@ static Bytes_2(void) {
 	create_insn	(0X28BA1);
 	create_insn	(0X28BB3);
 	create_insn	(0X28BC5);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X28BD2,	"Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.",	0);
 	create_insn	(0X28BD2);
 	set_name	(0X28BD2,	"ApplySavingThrowEffect");
@@ -10855,6 +10857,15 @@ static Bytes_3(void) {
 	set_name	(0X35CF7,	"aChampion");
 	create_strlit	(0X35D02,	0XB);
 	set_name	(0X35D02,	"aBlacksmith");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35D0D,	0XB);
 	set_name	(0X35D0D,	"aAssassin");
 	create_strlit	(0X35D18,	0XB);
@@ -10873,15 +10884,6 @@ static Bytes_3(void) {
 	set_name	(0X35D5A,	"aCongratulation");
 	create_strlit	(0X35D6C,	0XE);
 	set_name	(0X35D6C,	"aYouAreNowA");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35D7A,	0XD);
 	set_name	(0X35D7A,	"aToPurchase");
 	create_strlit	(0X35D87,	0XF);
