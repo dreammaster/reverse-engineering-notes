@@ -2671,7 +2671,9 @@ static Bytes_0(void) {
 	create_insn	(0X16BAE);
 	create_insn	(x=0X16BE2);
 	op_hex		(x,	1);
+	set_cmt	(0X16BF6,	"Resolves one attacker-vs-defender action outcome, one of 3 paths selected by word_328CA bit 0x200 and the attacker's [+0x92] special-attack flags: (1) normal ResolveAttack damage roll, (2) a FailsSavingThrow-gated status-effect application, or (3) a weaker-DC FailsSavingThrow gating an 'equipment corrosion' effect that targets the defender's equipped item instead of HP. Called twice from sub_16881.",	0);
 	create_insn	(0X16BF6);
+	set_name	(0X16BF6,	"ResolveAttackerActionOutcome");
 	create_insn	(x=0X16BFE);
 	op_hex		(x,	1);
 	create_insn	(x=0X16C06);
@@ -2905,6 +2907,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1770C,	"Reads a record from CURGAME (the active savegame, FileEntry bx=0x8FFB) via EMS paging, indexed by word_32DBC*4 + 0x1A*_val9 (plausibly a per-character row). Splits word_32DD0 by 100 into word_32DC0 (quotient)/word_32DC2 (remainder) -- typical of a currency or time value split into two denominations, not confirmed which.",	0);
 	create_insn	(0X1770C);
 	set_name	(0X1770C,	"LoadCurgameRecord");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1770E,	"this",	0);
 	set_cmt	(0X17734,	"this",	0);
 	create_insn	(x=0X17772);
@@ -2915,15 +2926,6 @@ static Bytes_0(void) {
 	set_cmt	(0X17795,	"Lock-examination message shower (called from UseAbilityCommand and HandleMovementInput). Shows 'NOT LOCKED'/'LOCKED'/'MAGICALLY LOCKED' (word_32DCE bit 0x20)/'LOCKED AND TRAPPED', or 'REQUIRES SPECIAL KEY: <tier> KEY' -- the exact 7-tier key hierarchy (BRASS/BRONZE/COPPER/IRON/STEEL/SILVER/GOLD, word_32DCE bits 0x200-0x8000) already cross-confirmed early in the session against the Hex Hacking Item Guide's door-key item table. Gated on the current party member's [+0x6C] field (plausibly a lockpicking/perception skill) against thresholds.",	0);
 	create_insn	(0X17795);
 	set_name	(0X17795,	"ShowLockStatus");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1779A);
 	op_hex		(x,	1);
 	create_insn	(x=0X177CD);
@@ -4758,6 +4760,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3C8);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D3D0);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3DB);
@@ -4780,15 +4791,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1D4B8,	"Combat-action entry point, 3-way branch on word_328CA bit 0x1000 (in formal combat) and word_328C8 bit 0x100 (ranged-attack request): (1) in-combat melee -- HighlightSelectedAbilityIcon, one AnimateProjectileStep, then ResolveAttackOrAbilityAction directly against word_32A1E (no row search, target already known); (2) ranged-weapon shot and (3) spell/ability cast (not in combat) -- these converge into the identical code: select weapon/ability, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve via ResolveAttackOrAbilityAction on a hit, with a multi-shot continuation (word_2E544) for characters with more than one attack. A successful area-effect spell plays a 10-frame explosion animation then sweeps all 80 g_levelMonsters slots for kills. Common epilogue for all 3 branches: loot-staging check -> ShowLootAndAwardExperience -> ProcessLevelMonsters -> redraw. Called from `start`.",	0);
 	create_insn	(0X1D4B8);
 	set_name	(0X1D4B8,	"HandleRangedOrCombatAction");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1D4C0);
 	op_hex		(x,	1);
 	create_insn	(0X1D4CB);
@@ -6523,6 +6525,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X23782);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2378A);
 	op_hex		(x,	1);
 	set_cmt	(0X237B0,	"Calls RestoreCursorBackground (erasing the cursor) only if the dirty flags in word_3195C (bits 0 and 1) indicate it's needed. Called very widely (effectively a per-frame/per-event cursor service call).",	0);
@@ -6565,15 +6576,6 @@ static Bytes_2(void) {
 	set_cmt	(0X23874,	"Updates the mouse cursor to show the currently-held item's icon (word_2E530 -> word_31946), rebuilding the cursor-sprite definition via FileEntry (bx=0x9011). Called throughout the item-manipulation functions after staging/clearing a held item.",	0);
 	create_insn	(0X23874);
 	set_name	(0X23874,	"UpdateCursorForHeldItem");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2387A,	"this",	0);
 	create_insn	(x=0X2388B);
 	op_seg		(x,	1);
@@ -8248,6 +8250,15 @@ static Bytes_3(void) {
 	set_cmt	(0X291A3,	"Per-row worker for RevealMapRegion: reads a WORLD.DAT block and a CURGAME block (FileEntry 0x9043/0x8FFB), walks the bit-packed explored-cell bitmap byte-by-byte, and for each not-yet-explored cell that passes a further gate (sub_28C94/sub_28CB1, not traced -- possibly related to the unconfirmed 'transport-check' table) calls sub_29259 (not traced) to reveal it.",	0);
 	create_insn	(0X291A3);
 	set_name	(0X291A3,	"RevealMapRegionRow");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X291A6,	"this",	0);
 	create_insn	(x=0X291C1);
 	op_hex		(x,	1);
@@ -8290,15 +8301,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2940E,	"Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.",	0);
 	create_insn	(0X2940E);
 	set_name	(0X2940E,	"WaitForTargetClick");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2943F);
 	create_insn	(0X29447);
 	set_cmt	(0X29461,	"Clears the status panel if dirty, sets word_328C4 bit 0x100, positions text (0xF0,0x60) color 0x8A transparent, restores the cursor background if dirty, then calls DrawStringColumn with the caller's bx/cx (preserved through setup) -- a multi-line text column, plausibly an ability's description. Called from UseAbilityCommand and UseAbilityOnTarget.",	0);
@@ -11017,6 +11019,15 @@ static Bytes_4(void) {
 	create_strlit	(0X35572,	0XD);
 	create_strlit	(0X3557F,	0X7);
 	set_name	(0X3557F,	"aFailed");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35586,	0X6);
 	set_name	(0X35586,	"aEmpty");
 	create_strlit	(0X3558C,	0XA);
@@ -11089,15 +11100,6 @@ static Bytes_4(void) {
 	set_name	(0X35752,	"aRepair");
 	create_strlit	(0X3575F,	0XD);
 	set_name	(0X3575F,	"aThievery");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3576C,	0XD);
 	set_name	(0X3576C,	"aLinguistics");
 	create_strlit	(0X35779,	0XD);

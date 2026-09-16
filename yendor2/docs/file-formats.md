@@ -1618,7 +1618,16 @@ elsewhere — tied to the current item and party record, then calls
 `ApplyEffectAndDrawIconBar`. Its other caller (`sub_1AC80` ->
 `ApplyTriggerEffectIconSlot`) is the same pattern reached from
 `ApplyMapTriggerEffect` instead of direct item use — a map trap
-triggering the same icon-bar-slot effect machinery. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
+triggering the same icon-bar-slot effect machinery. A second,
+combat-driven path to equipment damage: `ResolveAttackerActionOutcome`
+(was `sub_16BF6`, called twice from the combat dispatcher `sub_16881`)
+resolves one attacker-vs-defender action via one of 3 paths — the
+normal `ResolveAttack` damage roll, a `FailsSavingThrow`-gated
+status-effect application, or (a weaker-DC save) an "equipment
+corrosion" effect that targets the *defender's* equipped item via
+`GetClassifiedItemStatField` instead of dealing HP damage — a
+monster special attack that damages gear directly, distinct from
+`TickEquippedItemDurability`'s ordinary wear-and-tear. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
 `ShowInsufficientGoldMessage`. The whole sell-item screen is entered
 via `RunSellItemScreen` (from `UseItem`, when the used item's `[+0xE]`
 flags have bit `0x4000` set). A sibling branch, gated on the item's

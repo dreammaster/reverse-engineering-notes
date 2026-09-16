@@ -5991,6 +5991,24 @@ and resets the counter.
 
 686 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ResolveAttackerActionOutcome
+
+Named `sub_16BF6` -> `ResolveAttackerActionOutcome`, called twice
+from the still-unnamed combat dispatcher `sub_16881`. Resolves one
+attacker-vs-defender action outcome via one of 3 paths, selected by
+`word_328CA` bit `0x200` and the attacker's special-attack flags:
+(1) the normal `ResolveAttack` damage roll, (2) a
+`FailsSavingThrow`-gated status-effect application, or (3) — a
+genuinely new find — a weaker-DC `FailsSavingThrow` gating an
+"equipment corrosion" effect that targets the *defender's* equipped
+item (via the confirmed equipment-slot offsets) instead of dealing
+HP damage, using `GetClassifiedItemStatField`. Ties directly into
+this round's earlier `TickEquippedItemDurability` finding — a second
+mechanism by which equipment can be damaged, this one via a monster's
+special attack rather than ordinary wear.
+
+687 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

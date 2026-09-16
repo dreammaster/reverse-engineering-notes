@@ -10815,7 +10815,7 @@ loc_168F6:                              ; CODE XREF: sub_16881+70↑j
                 add     ax, 0C50h
                 mov     word_32906, ax
                 call    SelectTrapEffectVariant
-                call    sub_16BF6
+                call    ResolveAttackerActionOutcome
                 cmp     word_2E49C, 0
                 jz      short loc_16966
                 call    WaitForSoundDriverIdle
@@ -10890,7 +10890,7 @@ loc_169A1:                              ; CODE XREF: sub_16881+177↓j
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short loc_169EF
                 mov     word_32908, bx
-                call    sub_16BF6
+                call    ResolveAttackerActionOutcome
                 cmp     word_2E49C, 0
                 jz      short loc_169EF
                 test    word_328C8, 4
@@ -11165,9 +11165,9 @@ ProcessCombatRound endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16BF6       proc near               ; CODE XREF: sub_16881+9B↑p
+ResolveAttackerActionOutcome proc near  ; CODE XREF: sub_16881+9B↑p
                                         ; sub_16881+140↑p
-                mov     si, word_32904
+                mov     si, word_32904  ; Resolves one attacker-vs-defender action outcome, one of 3 paths selected by word_328CA bit 0x200 and the attacker's [+0x92] special-attack flags: (1) normal ResolveAttack damage roll, (2) a FailsSavingThrow-gated status-effect application, or (3) a weaker-DC FailsSavingThrow gating an 'equipment corrosion' effect that targets the defender's equipped item instead of HP. Called twice from sub_16881.
                 mov     di, word_32908
                 test    word_328CA, 200h
                 jz      short loc_16C24
@@ -11176,7 +11176,7 @@ sub_16BF6       proc near               ; CODE XREF: sub_16881+9B↑p
                 jmp     loc_16CC1
 ; ---------------------------------------------------------------------------
 
-loc_16C11:                              ; CODE XREF: sub_16BF6+16↑j
+loc_16C11:                              ; CODE XREF: ResolveAttackerActionOutcome+16↑j
                 mov     word_3293E, 0
                 add     si, 8Eh
                 call    IsBCDCounterAtLeast
@@ -11184,8 +11184,8 @@ loc_16C11:                              ; CODE XREF: sub_16BF6+16↑j
                 jmp     short loc_16C60
 ; ---------------------------------------------------------------------------
 
-loc_16C24:                              ; CODE XREF: sub_16BF6+E↑j
-                                        ; sub_16BF6+2A↑j
+loc_16C24:                              ; CODE XREF: ResolveAttackerActionOutcome+E↑j
+                                        ; ResolveAttackerActionOutcome+2A↑j
                 mov     si, word_32904
                 mov     ax, [di+50h]
                 mov     bx, [si+54h]
@@ -11205,11 +11205,11 @@ loc_16C24:                              ; CODE XREF: sub_16BF6+E↑j
                 mov     ax, word_2E49A
                 mov     [si+0Eh], ax
 
-locret_16C5F:                           ; CODE XREF: sub_16BF6+45↑j
+locret_16C5F:                           ; CODE XREF: ResolveAttackerActionOutcome+45↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16C60:                              ; CODE XREF: sub_16BF6+2C↑j
+loc_16C60:                              ; CODE XREF: ResolveAttackerActionOutcome+2C↑j
                 mov     si, word_32904
                 push    word_3293E
                 push    word_32940
@@ -11238,11 +11238,11 @@ loc_16C60:                              ; CODE XREF: sub_16BF6+2C↑j
                 mov     [si+12h], ax
                 mov     word_2E49C, 1
 
-locret_16CC0:                           ; CODE XREF: sub_16BF6+9A↑j
+locret_16CC0:                           ; CODE XREF: ResolveAttackerActionOutcome+9A↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16CC1:                              ; CODE XREF: sub_16BF6+18↑j
+loc_16CC1:                              ; CODE XREF: ResolveAttackerActionOutcome+18↑j
                 push    word_3293E
                 push    word_32940
                 mov     word_2E49C, 0
@@ -11273,8 +11273,8 @@ loc_16CC1:                              ; CODE XREF: sub_16BF6+18↑j
                 jnz     short loc_16D24
                 mov     ax, 146h
 
-loc_16D24:                              ; CODE XREF: sub_16BF6+11E↑j
-                                        ; sub_16BF6+129↑j
+loc_16D24:                              ; CODE XREF: ResolveAttackerActionOutcome+11E↑j
+                                        ; ResolveAttackerActionOutcome+129↑j
                 mov     [si+0Eh], ax
                 mov     bx, word_32908
                 add     bx, ax
@@ -11286,15 +11286,15 @@ loc_16D24:                              ; CODE XREF: sub_16BF6+11E↑j
                 jmp     short locret_16D4C
 ; ---------------------------------------------------------------------------
 
-loc_16D40:                              ; CODE XREF: sub_16BF6+141↑j
+loc_16D40:                              ; CODE XREF: ResolveAttackerActionOutcome+141↑j
                 mov     [si+10h], ax
                 mov     [si+12h], bx
                 mov     word_2E49C, 1
 
-locret_16D4C:                           ; CODE XREF: sub_16BF6+F9↑j
-                                        ; sub_16BF6+148↑j
+locret_16D4C:                           ; CODE XREF: ResolveAttackerActionOutcome+F9↑j
+                                        ; ResolveAttackerActionOutcome+148↑j
                 retn
-sub_16BF6       endp
+ResolveAttackerActionOutcome endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19401,7 +19401,7 @@ TickEquippedItemDurability endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GetClassifiedItemStatField proc far     ; CODE XREF: sub_16BF6+139↑P
+GetClassifiedItemStatField proc far     ; CODE XREF: ResolveAttackerActionOutcome+139↑P
                 push    ax              ; Uses ClassifyItemServiceTier; if classification fails, returns bx=0. Otherwise picks word_2E548+4 or +8 based on the item's [+0xC] bit 0xC000 category flag. Called from sub_16BF6.
                 call    ClassifyItemServiceTier
                 cmp     errorCode, 0
@@ -38479,7 +38479,7 @@ ScaleByPercentRounded endp
 
 
 ResolveAttack   proc far                ; CODE XREF: HandleDungeonInput+354↑P
-                                        ; sub_16BF6+3B↑P ...
+                                        ; ResolveAttackerActionOutcome+3B↑P ...
                 push    dx              ; ResolveAttack(ax=target defense, bx=attacker accuracy, cx=weapon damage power): miss (word_2E49C=0) if cx==0, if bx<ax, or if RandomInRange(55) beats (bx-ax). Otherwise hit: word_2E49C = (cx*(bx-ax)+50)/100, minimum 1.
                 mov     word_2E49C, 0
                 cmp     cx, 0
@@ -41937,8 +41937,8 @@ seg093          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-FailsSavingThrow proc far               ; CODE XREF: sub_16BF6+8A↑P
-                                        ; sub_16BF6+E9↑P ...
+FailsSavingThrow proc far               ; CODE XREF: ResolveAttackerActionOutcome+8A↑P
+                                        ; ResolveAttackerActionOutcome+E9↑P ...
                 mov     bx, [si+16h]    ; FailsSavingThrow(si=party-member record, word_3293E=difficulty threshold, word_32940=resistance bonus): chance = max(5, 5*([si+0x16]-threshold) + bonus); rolls RandomInRange(100) against it. Returns 1 if the roll exceeds the chance (save fails, effect applies), 0 if resisted.
                 sub     bx, word_3293E
                 mov     ax, 5
