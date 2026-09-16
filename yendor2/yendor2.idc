@@ -4221,7 +4221,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B89E);
 	op_seg		(x,	1);
+	set_cmt	(0X1B8AB,	"Draws a small dialog-box frame (picture 3) at (0xF,0x17), then the current item's own icon (0xBCE+0) at (0x15,0x1F) inside it -- an item-use confirmation dialog. Called from UseItem and sub_1A5F6.",	0);
 	create_insn	(0X1B8AB);
+	set_name	(0X1B8AB,	"DrawItemUseConfirmDialog");
 	set_cmt	(0X1B8EE,	"Iterates up to word_2E432 item catalog entries, drawing the name of each one CheckItemEligibilityAndCopyName approves, in a 2-column x 5-row layout, and recording each match's catalog index in a result buffer (0xBB8, max 10). Called from UseItem and FinishItemUse.",	0);
 	create_insn	(0X1B8EE);
 	set_name	(0X1B8EE,	"DrawEligibleItemList");
@@ -4956,12 +4958,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1E1A7,	"Builds the alchemy screen's filtered list of known spells (sub_27A66 eligibility check) into buffer 0x565A, calling CheckSpellCastability on each (unless incapacitated), then computes pagination (13/page) and locates the current selection. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E1A7);
 	set_name	(0X1E1A7,	"BuildAlchemySpellList");
-	create_insn	(x=0X1E20A);
-	op_hex		(x,	1);
-	create_insn	(0X1E269);
-	set_cmt	(0X1E285,	"Loads the spell (LoadClueBookSpellEntry) and checks context-gating flags plus NUORE (0x94BB)/MAGIC ORE (0x94B7)/MP (+0x54) affordability; sets the spell's icon-state to 0xF if all pass. Called from BuildAlchemySpellList.",	0);
-	create_insn	(0X1E285);
-	set_name	(0X1E285,	"CheckSpellCastability");
 }
 
 //------------------------------------------------------------------------
@@ -4971,6 +4967,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1E20A);
+	op_hex		(x,	1);
+	create_insn	(0X1E269);
+	set_cmt	(0X1E285,	"Loads the spell (LoadClueBookSpellEntry) and checks context-gating flags plus NUORE (0x94BB)/MAGIC ORE (0x94B7)/MP (+0x54) affordability; sets the spell's icon-state to 0xF if all pass. Called from BuildAlchemySpellList.",	0);
+	create_insn	(0X1E285);
+	set_name	(0X1E285,	"CheckSpellCastability");
 	create_insn	(x=0X1E291);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E299);
@@ -5018,7 +5020,9 @@ static Bytes_2(void) {
 	set_cmt	(0X1E4FA,	"Byte-for-byte identical to ConfirmContainerInteraction (yes/no confirm prompt, message id 0x12, storing result + slot selection) -- likely duplicated into this overlay segment. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E4FA);
 	set_name	(0X1E4FA,	"ConfirmAlchemyInteraction");
+	set_cmt	(0X1E522,	"Draws the same dialog-box-frame picture (id 4) at the same position (0xF,0x17) as DrawItemUseConfirmDialog, with no icon overlay -- the alchemy screen's confirm-dialog background. Called twice from RunAlchemyScreen.",	0);
 	create_insn	(0X1E522);
+	set_name	(0X1E522,	"DrawAlchemyConfirmDialogBackground");
 	set_cmt	(0X1E546,	"Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.",	0);
 	create_insn	(0X1E546);
 	set_name	(0X1E546,	"DrawAlchemyStatusPanel");
@@ -6698,6 +6702,15 @@ static Bytes_2(void) {
 	set_cmt	(0X24A5B,	"ShowPartyMembers' second pipeline step: draws a 3x3 grid of equipment-slot icons (DrawPicture, incrementing picture id by 2 per cell) -- fits the manual's equip-slot diagram. Also shows a gender-dependent message ([si+0x10] compared against 2). The character equipment display.",	0);
 	create_insn	(0X24A5B);
 	set_name	(0X24A5B,	"ShowCharacterEquipment");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X24A75,	"msg",	0);
 	create_insn	(0X24B3D);
 	create_insn	(0X24B52);
@@ -6714,15 +6727,6 @@ static Bytes_2(void) {
 	set_cmt	(0X24BF2,	"ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.",	0);
 	create_insn	(0X24BF2);
 	set_name	(0X24BF2,	"ShowCharacterStats");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X24C12,	"msg",	0);
 	create_insn	(0X24C72);
 	create_insn	(0X24C7C);
@@ -8218,7 +8222,9 @@ static Bytes_3(void) {
 	create_insn	(0X2939E);
 	create_insn	(0X293A6);
 	create_insn	(0X293AE);
+	set_cmt	(0X293C0,	"Draws a small facing-direction icon (picture 0-3, selected by word_36CF5's facing-tier bits, the same bits DrawMinimapCompassIcon remaps) at (0x74,0x48). Called once from RevealMapRegion.",	0);
 	create_insn	(0X293C0);
+	set_name	(0X293C0,	"DrawRevealMapDirectionIcon");
 	create_insn	(x=0X293D8);
 	op_hex		(x,	1);
 	create_insn	(x=0X293E6);
@@ -8781,6 +8787,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F37);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29F3A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F40);
@@ -8845,15 +8860,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29FD8);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29FDB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29FDE);
@@ -11437,6 +11443,15 @@ static Bytes_4(void) {
 	set_name	(0X3637B,	"aSkill_0");
 	create_strlit	(0X36381,	0X8);
 	set_name	(0X36381,	"aScrolls");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36389,	0X6);
 	set_name	(0X36389,	"aWands");
 	create_strlit	(0X3638F,	0X6);
@@ -11471,15 +11486,6 @@ static Bytes_4(void) {
 	set_name	(0X3640B,	"aFrozen_1");
 	create_strlit	(0X36414,	0XA);
 	set_name	(0X36414,	"aStoning_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3641E,	0XA);
 	set_name	(0X3641E,	"aJinxing_0");
 	create_strlit	(0X36428,	0X9);

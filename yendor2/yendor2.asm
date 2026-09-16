@@ -13224,7 +13224,7 @@ loc_17C33:                              ; CODE XREF: UseItem+97↑j
                 mov     ax, es:[si+10h]
                 call    sub_1A5F6
                 call    ApplyItemEffectFlags
-                call    sub_1B8AB
+                call    DrawItemUseConfirmDialog
                 call    DrawEligibleItemList
                 call    DrawMouseCursor
                 jmp     loc_17D7D
@@ -18438,7 +18438,7 @@ loc_1A604:                              ; CODE XREF: sub_1A5F6+9↑j
                 mov     word_32904, ax
 
 loc_1A611:                              ; CODE XREF: sub_1A5F6+145↓j
-                call    sub_1B8AB
+                call    DrawItemUseConfirmDialog
                 mov     _textPos_x, 4Ch ; 'L'
                 mov     _textPos_y, 2Ch ; ','
                 mov     _font_fgColor, 9Bh
@@ -19555,7 +19555,7 @@ PromptBuyOreQuantity proc far           ; CODE XREF: UseItem+1E3↑P
                 mov     word_32974, ax  ; Shows 'ORE COSTS 10 GOLD PER UNIT.', the party's gold balance, and 'ENTER QUANTITY TO BUY', then reads a quantity via PromptForBCD4Quantity and validates affordability via CompareBCD4 against g_partyGold. Called from UseItem for an Ore-type item.
 
 loc_1AF4C:                              ; CODE XREF: PromptBuyOreQuantity+116↓j
-                call    sub_1B8AB
+                call    DrawItemUseConfirmDialog
                 mov     _textPos_x, 4Ch ; 'L'
                 mov     _textPos_y, 2Ch ; ','
                 mov     _font_fgColor, 9Bh
@@ -20341,7 +20341,7 @@ UseExperienceBoostItem endp
 FinishItemUse   proc far                ; CODE XREF: RunShopScreen+F2↑P
                                         ; UseItem+100↑P ...
                 push    cs              ; FinishItemUse: common post-item-use cleanup/redraw, called at the end of every branch in UseItemType_400 and sub_1BBED (the 0x800-selected sibling handler).
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 push    cs
                 call    near ptr BuildItemUseMessage
                 test    word_328C4, 1
@@ -20599,9 +20599,9 @@ CheckItemEligibilityAndCopyName endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B8AB       proc far                ; CODE XREF: UseItem+AF↑P
+DrawItemUseConfirmDialog proc far       ; CODE XREF: UseItem+AF↑P
                                         ; sub_1A5F6:loc_1A611↑P ...
-                mov     x, 0Fh
+                mov     x, 0Fh          ; Draws a small dialog-box frame (picture 3) at (0xF,0x17), then the current item's own icon (0xBCE+0) at (0x15,0x1F) inside it -- an item-use confirmation dialog. Called from UseItem and sub_1A5F6.
                 mov     y, 17h
                 mov     _font_bgTransparent, 1
                 mov     word_2E532, 10h
@@ -20615,7 +20615,7 @@ sub_1B8AB       proc far                ; CODE XREF: UseItem+AF↑P
                 mov     y, 1Fh
                 call    DrawPicture
                 retf
-sub_1B8AB       endp
+DrawItemUseConfirmDialog endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -20683,7 +20683,7 @@ ShowHealingCostPrompt proc far          ; CODE XREF: UseItemType_400+EF↓p
                 push    cs
                 call    near ptr ApplyItemEffectFlags
                 push    cs
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 push    cs
                 call    near ptr DrawEligibleItemList
                 mov     di, word_328D4
@@ -21046,7 +21046,7 @@ loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 mov     ax, 3
                 call    TriggerSoundEvent
                 push    cs
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 49h ; 'I'
                 mov     _font_fgColor, 0Fh
@@ -21083,7 +21083,7 @@ loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
                 mov     ax, 7
                 call    TriggerSoundEvent
                 push    cs
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
                 mov     _font_fgColor, 0Fh
@@ -21146,7 +21146,7 @@ loc_1BDC9:                              ; CODE XREF: sub_1BBED+24↑j
                 push    cs
                 call    near ptr ApplyItemEffectFlags
                 push    cs
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 push    cs
                 call    near ptr DrawEligibleItemList
                 push    cs
@@ -21701,7 +21701,7 @@ loc_1C2D2:                              ; CODE XREF: UseTrainingItem+1B7↓j
                 call    near ptr CheckAndAnnounceLevelUp
                 mov     bx, word_32924
                 push    cs
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 mov     si, word_328D4
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
@@ -21856,7 +21856,7 @@ loc_1C4E1:                              ; CODE XREF: UseTrainingItem+24↑j
                 mov     ax, [bx+16h]
                 mov     word_3293E, ax
                 push    cs
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
                 mov     _font_fgColor, 0Dh
@@ -22066,7 +22066,7 @@ loc_1C72F:                              ; CODE XREF: UseAbilityScroll+137↑j
                 push    cs
                 call    near ptr ApplyItemEffectFlags
                 push    cs
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 push    cs
                 call    near ptr DrawEligibleItemList
                 pop     es
@@ -22391,7 +22391,7 @@ ShowItemUsagePreview proc far           ; CODE XREF: UseItem+82↑P
                 test    word_2E410, 3000h
                 jnz     short loc_1CAF3
                 push    cs
-                call    near ptr sub_1B8AB
+                call    near ptr DrawItemUseConfirmDialog
                 push    cs
                 call    near ptr BuildItemUseMessage
                 call    DrawMouseCursor
@@ -24638,7 +24638,7 @@ loc_1DD28:                              ; CODE XREF: RunAlchemyScreen+3E↑j
 
 loc_1DD35:                              ; CODE XREF: RunAlchemyScreen+178↓j
                                         ; RunAlchemyScreen+2A4↓j ...
-                call    sub_1E522
+                call    DrawAlchemyConfirmDialogBackground
                 call    DrawAlchemySpellList
                 call    DrawAlchemySpellListScrollArrows
                 call    DrawAlchemyStatusPanel
@@ -24865,7 +24865,7 @@ loc_1DEDF:                              ; CODE XREF: RunAlchemyScreen+1F0↑j
                 shl     ax, 1
                 add     ax, 565Ah
                 mov     word_3330E, ax
-                call    sub_1E522
+                call    DrawAlchemyConfirmDialogBackground
                 call    DrawAlchemySpellList
                 call    DrawAlchemySpellListScrollArrows
                 call    DrawAlchemyStatusPanel
@@ -25025,7 +25025,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
-                call    sub_1E522
+                call    DrawAlchemyConfirmDialogBackground
                 call    BuildAlchemySpellList
                 call    DrawAlchemySpellList
                 call    DrawAlchemySpellListScrollArrows
@@ -25566,16 +25566,17 @@ ConfirmAlchemyInteraction endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E522       proc near               ; CODE XREF: RunAlchemyScreen:loc_1DD35↑p
+DrawAlchemyConfirmDialogBackground proc near
+                                        ; CODE XREF: RunAlchemyScreen:loc_1DD35↑p
                                         ; RunAlchemyScreen+217↑p ...
-                mov     _font_bgTransparent, 1
+                mov     _font_bgTransparent, 1 ; Draws the same dialog-box-frame picture (id 4) at the same position (0xF,0x17) as DrawItemUseConfirmDialog, with no icon overlay -- the alchemy screen's confirm-dialog background. Called twice from RunAlchemyScreen.
                 mov     x, 0Fh
                 mov     y, 17h
                 mov     word_2E532, 10h
                 mov     word_2E530, 4
                 call    DrawPicture
                 retn
-sub_1E522       endp
+DrawAlchemyConfirmDialogBackground endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -44938,7 +44939,7 @@ loc_28E86:                              ; CODE XREF: RevealMapRegion+1A1↓j
                 pop     word_2E406
                 pop     di
                 pop     si
-                call    sub_293C0
+                call    DrawRevealMapDirectionIcon
                 mov     word_2E530, 0Fh
                 call    UpdateCursorForHeldItem
                 call    ClearStatusPanelIfDirty
@@ -45469,8 +45470,8 @@ TryTravelToClickedMapCell endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_293C0       proc near               ; CODE XREF: RevealMapRegion+1A9↑p
-                mov     x, 74h ; 't'
+DrawRevealMapDirectionIcon proc near    ; CODE XREF: RevealMapRegion+1A9↑p
+                mov     x, 74h ; 't'    ; Draws a small facing-direction icon (picture 0-3, selected by word_36CF5's facing-tier bits, the same bits DrawMinimapCompassIcon remaps) at (0x74,0x48). Called once from RevealMapRegion.
                 mov     y, 48h ; 'H'
                 mov     _font_bgTransparent, 1
                 mov     word_2E530, 0
@@ -45484,12 +45485,12 @@ sub_293C0       proc near               ; CODE XREF: RevealMapRegion+1A9↑p
                 jnz     short loc_29402
                 mov     word_2E530, 3
 
-loc_29402:                              ; CODE XREF: sub_293C0+1E↑j
-                                        ; sub_293C0+2C↑j ...
+loc_29402:                              ; CODE XREF: DrawRevealMapDirectionIcon+1E↑j
+                                        ; DrawRevealMapDirectionIcon+2C↑j ...
                 call    DrawPicture
                 mov     _font_bgTransparent, 0
                 retn
-sub_293C0       endp
+DrawRevealMapDirectionIcon endp
 
 seg106          ends
 

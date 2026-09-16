@@ -5717,6 +5717,23 @@ and the same fixed record setup.
 
 654 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawItemUseConfirmDialog, DrawAlchemyConfirmDialogBackground, DrawRevealMapDirectionIcon
+
+Named 3 small, single-purpose picture-draw helpers. `sub_1B8AB` ->
+`DrawItemUseConfirmDialog` (called from `UseItem` and `sub_1A5F6`):
+draws a small dialog-box frame (picture 3) at a fixed position, then
+the current item's own icon inside it — an item-use confirmation
+dialog. `sub_1E522` -> `DrawAlchemyConfirmDialogBackground` (called
+twice from `RunAlchemyScreen`): draws the same dialog-box-frame
+picture (id 4) at the identical position, with no icon overlay — the
+alchemy screen's own confirm-dialog background. `sub_293C0` ->
+`DrawRevealMapDirectionIcon` (called once from `RevealMapRegion`):
+draws a small facing-direction icon (picture 0-3, selected by the
+same `word_36CF5` facing-tier bits `DrawMinimapCompassIcon` remaps
+for the minimap compass).
+
+657 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
