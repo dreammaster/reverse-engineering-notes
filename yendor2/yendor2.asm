@@ -2257,7 +2257,7 @@ loc_114B2:                              ; CODE XREF: HandleMovementInput+1FC↑j
 
 loc_114C2:                              ; CODE XREF: HandleMovementInput+FE↑j
                                         ; HandleMovementInput+107↑j ...
-                call    sub_116CF
+                call    DrawMovementFeedbackIcon
                 mov     word_2E402, bx
                 mov     word_2E406, cx
                 mov     word_2E404, dx
@@ -2278,7 +2278,7 @@ loc_114F0:                              ; CODE XREF: HandleMovementInput+212↑j
                                         ; HandleMovementInput+22E↑j ...
                 mov     ax, word_32940
                 mov     word_2E530, ax
-                call    sub_116CF
+                call    DrawMovementFeedbackIcon
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -2295,7 +2295,7 @@ loc_114FF:                              ; CODE XREF: HandleMovementInput+240↑j
                 jl      short loc_11555
                 cmp     ax, _val31
                 jg      short loc_11555
-                call    sub_116F3
+                call    HandleSpecialCellEntry
                 jmp     short loc_11598
 ; ---------------------------------------------------------------------------
 
@@ -2342,7 +2342,7 @@ loc_11581:                              ; CODE XREF: HandleMovementInput+2A5↑j
 loc_11589:                              ; CODE XREF: HandleMovementInput+2D1↑j
                 mov     ax, word_32940
                 mov     word_2E530, ax
-                call    sub_116CF
+                call    DrawMovementFeedbackIcon
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -2457,9 +2457,9 @@ HandleMovementInput endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_116CF       proc near               ; CODE XREF: HandleMovementInput:loc_114C2↑p
+DrawMovementFeedbackIcon proc near      ; CODE XREF: HandleMovementInput:loc_114C2↑p
                                         ; HandleMovementInput+248↑p ...
-                push    ax
+                push    ax              ; Draws a picture (id=word_2E530, category 0x80) at a position from the struct word_32904 points at, then shows the mouse cursor. Called several times from HandleMovementInput, including the out-of-bounds destination branch. Exact icon/narrative not confirmed.
                 push    bx
                 mov     bx, word_32904
                 mov     ax, [bx]
@@ -2472,21 +2472,21 @@ sub_116CF       proc near               ; CODE XREF: HandleMovementInput:loc_114
                 pop     bx
                 pop     ax
                 retn
-sub_116CF       endp
+DrawMovementFeedbackIcon endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_116F3       proc near               ; CODE XREF: HandleMovementInput+277↑p
-                cmp     byte_2E400, 48h ; 'H'
+HandleSpecialCellEntry proc near        ; CODE XREF: HandleMovementInput+277↑p
+                cmp     byte_2E400, 48h ; 'H' ; Called from HandleMovementInput when the destination cell's type is in the [_val32,_val31] range (same range-check shape as IsMonsterStepBlocked's 'special' branch). If byte_2E400=='H', looks up 0xE551 tile-type table entries (destination cell's type, plus a fixed index 0x6EB8) into scratch 0xE821, then RefreshDungeonScreen + a sound; otherwise just a different sound. Both paths fall through to the shared movement-apply code. Exact nature of the special cell type and the 'H' condition not confirmed.
                 jz      short loc_11704
                 mov     ax, _val30
                 call    sub_28412
                 jmp     short loc_1175B
 ; ---------------------------------------------------------------------------
 
-loc_11704:                              ; CODE XREF: sub_116F3+5↑j
+loc_11704:                              ; CODE XREF: HandleSpecialCellEntry+5↑j
                 mov     ax, 0Ch
                 mul     word ptr es:[bx]
                 mov     bx, 0E551h
@@ -2517,7 +2517,7 @@ loc_11704:                              ; CODE XREF: sub_116F3+5↑j
                 mov     ax, _val30
                 call    sub_28412
 
-loc_1175B:                              ; CODE XREF: sub_116F3+F↑j
+loc_1175B:                              ; CODE XREF: HandleSpecialCellEntry+F↑j
                 mov     ax, word_2E402
                 add     word_36CF7, ax
                 mov     ax, word_2E406
@@ -2527,7 +2527,7 @@ loc_1175B:                              ; CODE XREF: sub_116F3+F↑j
                 mov     word_328D2, bx
                 call    RevealCellsAroundPlayer
                 retn
-sub_116F3       endp
+HandleSpecialCellEntry endp
 
 seg002          ends
 
@@ -31483,7 +31483,7 @@ PersistExploredCell endp
 
 
 RevealCellsAroundPlayer proc far        ; CODE XREF: HandleMovementInput+304↑P
-                                        ; sub_116F3+82↑P ...
+                                        ; HandleSpecialCellEntry+82↑P ...
                 mov     ax, word_36CF7  ; Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.
                 mov     bx, word_36CF9
                 cmp     word_36CF5, 8000h
@@ -46089,7 +46089,7 @@ seg111          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-DrawPicture     proc far                ; CODE XREF: sub_116CF+17↑P
+DrawPicture     proc far                ; CODE XREF: DrawMovementFeedbackIcon+17↑P
                                         ; ShowIntroPicture+39↑P ...
 
 var_4A          = word ptr -4Ah
@@ -56482,10 +56482,10 @@ word_2E384      dw 0                    ; DATA XREF: RunMapEditorScreen+26↑w
 word_2E386      dw 0                    ; DATA XREF: RunMapEditorScreen+2C↑w
                                         ; RunMapEditorScreen+290↑r ...
 ; int x
-x               dw 0                    ; DATA XREF: sub_116CF+8↑w
+x               dw 0                    ; DATA XREF: DrawMovementFeedbackIcon+8↑w
                                         ; ShowIntroPicture+15↑w ...
 ; int y
-y               dw 0                    ; DATA XREF: sub_116CF+E↑w
+y               dw 0                    ; DATA XREF: DrawMovementFeedbackIcon+E↑w
                                         ; ShowIntroPicture+1B↑w ...
 _font_bgTransparent dw 0                ; DATA XREF: sub_1075E+43↑w
                                         ; ShowIntroPicture+21↑w ...
@@ -56899,7 +56899,7 @@ word_2E52E      dw 0                    ; DATA XREF: FadePaletteStep+14↑w
                                         ; FadePaletteStep+5F↑r ...
 word_2E530      dw 0                    ; DATA XREF: start+63F↑w
                                         ; start:loc_10652↑w ...
-word_2E532      dw 0                    ; DATA XREF: sub_116CF+11↑w
+word_2E532      dw 0                    ; DATA XREF: DrawMovementFeedbackIcon+11↑w
                                         ; ShowIntroPicture+27↑w ...
 word_2E534      dw 0                    ; DATA XREF: DetectSoundDriver+3↑w
                                         ; DetectSoundDriver:loc_284D4↑r ...
@@ -74416,7 +74416,7 @@ _val28          dw 0                    ; DATA XREF: InitGlobals+CC↑w
 _val29          dw 0                    ; DATA XREF: InitGlobals+D2↑w
                                         ; HandleRangedOrCombatAction+36B↑r ...
 _val30          dw 0                    ; DATA XREF: start+738↑r
-                                        ; sub_116F3+7↑r ...
+                                        ; HandleSpecialCellEntry+7↑r ...
 _val31          dw 0                    ; DATA XREF: ClassifyFloorType+16↑r
                                         ; HandleMovementInput+271↑r ...
 _val32          dw 0                    ; DATA XREF: ClassifyFloorType+10↑r

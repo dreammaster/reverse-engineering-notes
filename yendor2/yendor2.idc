@@ -1318,8 +1318,12 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X116C8);
 	op_hex		(x,	1);
+	set_cmt	(0X116CF,	"Draws a picture (id=word_2E530, category 0x80) at a position from the struct word_32904 points at, then shows the mouse cursor. Called several times from HandleMovementInput, including the out-of-bounds destination branch. Exact icon/narrative not confirmed.",	0);
 	create_insn	(0X116CF);
+	set_name	(0X116CF,	"DrawMovementFeedbackIcon");
+	set_cmt	(0X116F3,	"Called from HandleMovementInput when the destination cell's type is in the [_val32,_val31] range (same range-check shape as IsMonsterStepBlocked's 'special' branch). If byte_2E400=='H', looks up 0xE551 tile-type table entries (destination cell's type, plus a fixed index 0x6EB8) into scratch 0xE821, then RefreshDungeonScreen + a sound; otherwise just a different sound. Both paths fall through to the shared movement-apply code. Exact nature of the special cell type and the 'H' condition not confirmed.",	0);
 	create_insn	(0X116F3);
+	set_name	(0X116F3,	"HandleSpecialCellEntry");
 	create_insn	(0X11704);
 	set_cmt	(0X1177C,	"Shows a picture (DrawPicture, id from word_2E530/word_2E532) with a palette fade (FadePaletteStep) and waits for a keypress (byte_2E400, filled by PollKeyboardInput). Called directly from `start` and InitGame -- likely the boot-time splash/logo display.",	0);
 	create_insn	(x=0X1177C);
@@ -3494,6 +3498,15 @@ static Bytes_0(void) {
 	set_cmt	(0X19A56,	"Raw 4-byte packed-BCD comparison, [si] vs [di], most-significant digit first (matches CompareBCD4/IsBCDCounterAtLeast usage). Exits at the first mismatching nibble; CF=1 if [si] < [di].",	0);
 	create_insn	(0X19A56);
 	set_name	(0X19A56,	"CompareBCD4");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X19A60);
 	op_hex		(x,	1);
 	create_insn	(x=0X19A6B);
@@ -3520,15 +3533,6 @@ static Bytes_0(void) {
 	set_cmt	(0X19B80,	"FormatAndDrawBCD4(si=4-byte packed-BCD value): formats it into a comma-grouped ASCII decimal string (leading zero suppressed unless dl forces it) and draws it via writeString. The BCD counterpart to FormatNumber.",	0);
 	create_insn	(0X19B80);
 	set_name	(0X19B80,	"FormatAndDrawBCD4");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X19BAF);
 	op_hex		(x,	1);
 	set_cmt	(0X19BE6,	"Reads a digit string via EditTextField (max 11 chars) and parses it backward into a packed-BCD4 value (2 digits/byte). errorCode=1 if the result is zero (empty/invalid entry). Called from PromptBuyOreQuantity.",	0);
@@ -5619,6 +5623,15 @@ static Bytes_1(void) {
 	set_cmt	(0X216F0,	"Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): LoadLockState (CORRECTED from a wrong 'weight/capacity check' guess -- it loads a lock/door's persisted state from CURGAME, feeding ShowLockStatus's message choice), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.",	0);
 	create_insn	(0X216F0);
 	set_name	(0X216F0,	"TryInteractAtPosition");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X216F4);
 	op_hex		(x,	1);
 	create_insn	(x=0X21702);
@@ -5662,15 +5675,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2186F,	"Map object lookup: bounds-checks (ax=x, bx=y) against the current map's valid range, indexes a per-column array to a row of 6-byte entries, scans for y==bx (0xFFFF terminates). Found: copies 3 words to word_2E554/556/558, returns si=0xCF4. Not found/out of bounds: si=0.",	0);
 	create_insn	(0X2186F);
 	set_name	(0X2186F,	"FindObjectAtPosition");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2188B);
 	create_insn	(x=0X21893);
 	op_hex		(x,	1);
@@ -7959,6 +7963,15 @@ static Bytes_2(void) {
 	create_insn	(0X29800);
 	create_insn	(x=0X29809);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29811);
 	op_hex		(x,	1);
 	set_cmt	(0X29838,	"this",	0);
@@ -8022,15 +8035,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X299E4);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X299EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X299EF);
@@ -11237,6 +11241,15 @@ static Bytes_3(void) {
 	create_strlit	(0X36855,	0X6);
 	set_name	(0X36855,	"aFXxx");
 	set_name	(0X3685B,	"curGame");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X3685D);
 	create_word	(0X3685F);
 	create_word	(0X36861);
@@ -11287,15 +11300,6 @@ static Bytes_3(void) {
 	create_word	(0X36C99);
 	create_word	(0X36C9B);
 	create_word	(0X36C9D);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X36CA5);
 	create_word	(0X36CA7);
 	create_word	(0X36CA9);

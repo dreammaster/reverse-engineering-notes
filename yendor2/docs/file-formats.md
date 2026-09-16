@@ -1006,6 +1006,23 @@ checks. The exact meaning of the `[+0x94]` trait bits isn't confirmed —
 open lead for whichever monster types turn out to fly/phase through
 walls.
 
+The **player's own** movement uses the same `[_val32,_val31]`
+"special cell type" range check: `HandleMovementInput` calls
+`HandleSpecialCellEntry` (was `sub_116F3`) when the destination cell's
+type falls in that range. If `byte_2E400`=='H' (not one of the
+manual's documented hotkeys — possibly unsurveyed, or an internal
+sentinel rather than a literal keypress), it pulls two entries out of
+the `0xE551` tile-type table (the destination cell's type, plus a fixed
+index `0x6EB8`) into a scratch struct, then calls
+`RefreshDungeonScreen`; otherwise it just plays a different sound.
+Both paths fall through to the normal movement-apply code. Reads as
+handling a trap-door/stairs-like special cell, but neither the cell
+type's identity nor the 'H' condition are confirmed.
+`HandleMovementInput` also calls `DrawMovementFeedbackIcon` (was
+`sub_116CF`) in a few places, including its "destination out of the
+dungeon grid bounds" branch — a small icon draw whose exact narrative
+isn't confirmed either.
+
 `ProcessLevelMonsters` ticks every occupied slot via `TickMonsterTimer`
 each `RunDungeonGameLoop` iteration: a movement/attack-readiness
 countdown (`[+0x10] -= [+0x1C]`, `errorCode`=1 on reaching 0, or a

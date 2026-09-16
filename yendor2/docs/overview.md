@@ -3517,6 +3517,23 @@ not-yet-documented party record flag, `+0x15E` bit `0x8000`.
 
 450 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleSpecialCellEntry, DrawMovementFeedbackIcon
+
+Named `sub_116F3` -> `HandleSpecialCellEntry` and `sub_116CF` ->
+`DrawMovementFeedbackIcon`, both called from `HandleMovementInput`,
+moderate confidence. `HandleSpecialCellEntry` fires when the player's
+destination cell type falls in the same `[_val32,_val31]` range
+`IsMonsterStepBlocked` also checks — a `byte_2E400`=='H' branch pulls
+`0xE551` tile-type table entries into scratch and refreshes the
+dungeon screen, otherwise just a sound; both fall through to normal
+movement. Neither the special cell type's identity nor 'H' 's meaning
+(not one of the manual's documented hotkeys) are confirmed — flagged
+as open rather than guessed. `DrawMovementFeedbackIcon` is a smaller,
+similarly-uncertain icon draw used in a few `HandleMovementInput`
+branches including the out-of-bounds case.
+
+452 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
