@@ -1299,7 +1299,12 @@ cluster. A related classifier: `ClassifyItemServiceTier` (was
 item and, based on its `[+0xC]`/`[+2]` flags, returns one of 3 tier
 codes (or a 4th "wrong item type" code) — plausibly gating which
 service (repair/enhance-style) the item qualifies for, but not
-confirmed. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
+confirmed. One of its two callers (`sub_1ACD7`) also calls
+`ApplyItemEffectIconSlot` (was `sub_1AE4C`): populates an icon-bar slot
+(the same `0xC50 + slot*0x14` layout `TickPartyAilmentIconBar`/
+`ApplySavingThrowEffect` use) for effect id `0` — a new id not seen
+elsewhere — tied to the current item and party record, then calls
+`ApplyEffectAndDrawIconBar`. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
 `ShowInsufficientGoldMessage`. The whole sell-item screen is entered
 via `RunSellItemScreen` (from `UseItem`, when the used item's `[+0xE]`
 flags have bit `0x4000` set). A sibling branch, gated on the item's

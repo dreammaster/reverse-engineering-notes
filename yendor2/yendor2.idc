@@ -3855,7 +3855,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1AE33);
 	op_hex		(x,	1);
 	create_insn	(0X1AE43);
+	set_cmt	(0X1AE4C,	"Populates an icon-bar slot (0xC50 + slot_index*0x14, the same layout TickPartyAilmentIconBar/ApplySavingThrowEffect use) for effect id 0 tied to the current item, then calls ApplyEffectAndDrawIconBar. Called from sub_1ACD7.",	0);
 	create_insn	(0X1AE4C);
+	set_name	(0X1AE4C,	"ApplyItemEffectIconSlot");
 	create_insn	(x=0X1AE59);
 	op_hex		(x,	1);
 	set_cmt	(0X1AE9D,	"Loads an item and classifies it via errorCode: 3 if neither [+0xC] bit 0xC000 nor 0x800 is set (wrong item type), else 2 or 1 based on a secondary [+2] flag pair. A 3-tier item-compatibility classifier; exact tier meanings and the callers' (sub_1AC80/sub_1ACD7) purpose aren't confirmed.",	0);

@@ -4009,6 +4009,16 @@ confirmed.
 
 508 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyItemEffectIconSlot
+
+Named `sub_1AE4C` -> `ApplyItemEffectIconSlot`, called from `sub_1ACD7`
+(the same caller as `ClassifyItemServiceTier`): populates an icon-bar
+slot for a new effect id (`0`) tied to the current item, using the
+same slot layout `TickPartyAilmentIconBar`/`ApplySavingThrowEffect`
+established, then draws it via `ApplyEffectAndDrawIconBar`.
+
+509 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

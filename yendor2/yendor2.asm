@@ -19355,7 +19355,7 @@ loc_1ADCE:                              ; CODE XREF: sub_1ACD7+D9↑j
                 jg      short loc_1AE16
 
 loc_1ADE8:                              ; CODE XREF: sub_1ACD7+F5↑j
-                call    sub_1AE4C
+                call    ApplyItemEffectIconSlot
                 mov     bx, word_2E546
                 mov     si, 0BEh
                 test    word ptr [bx+0Ch], 8000h
@@ -19421,8 +19421,8 @@ sub_1AE23       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AE4C       proc near               ; CODE XREF: sub_1ACD7:loc_1ADE8↑p
-                push    si
+ApplyItemEffectIconSlot proc near       ; CODE XREF: sub_1ACD7:loc_1ADE8↑p
+                push    si              ; Populates an icon-bar slot (0xC50 + slot_index*0x14, the same layout TickPartyAilmentIconBar/ApplySavingThrowEffect use) for effect id 0 tied to the current item, then calls ApplyEffectAndDrawIconBar. Called from sub_1ACD7.
                 push    di
                 mov     word_3290A, ax
                 mov     bx, word_32924
@@ -19451,7 +19451,7 @@ sub_1AE4C       proc near               ; CODE XREF: sub_1ACD7:loc_1ADE8↑p
                 pop     di
                 pop     si
                 retn
-sub_1AE4C       endp
+ApplyItemEffectIconSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
