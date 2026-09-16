@@ -11952,7 +11952,7 @@ loc_170A7:                              ; CODE XREF: sub_17032+237↓j
                 call    near ptr sub_1728A
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
-                call    sub_21C79
+                call    RedrawItemDescriptionAndMaterials
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
@@ -14753,7 +14753,7 @@ loc_1872D:                              ; CODE XREF: sub_1869D+86↑j
                 jnz     short loc_18761
 
 loc_18759:                              ; CODE XREF: sub_1869D+B2↑j
-                call    sub_21C79
+                call    RedrawItemDescriptionAndMaterials
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -28331,7 +28331,7 @@ loc_201C7:                              ; CODE XREF: RunMapEditorScreen+14F↑j
                 jnz     short loc_201DE
                 call    RestoreCursorBackgroundIfDirty
                 call    FillVisibleAreaWithSelectedTile
-                call    sub_2075B
+                call    DrawMapEditorInteractionTypeOverlay
                 call    sub_238CD
 
 loc_201DE:                              ; CODE XREF: RunMapEditorScreen+15C↑j
@@ -28339,7 +28339,7 @@ loc_201DE:                              ; CODE XREF: RunMapEditorScreen+15C↑j
                 jnz     short loc_201F5
                 call    RestoreCursorBackgroundIfDirty
                 call    RedrawMapEditorGrid
-                call    sub_2075B
+                call    DrawMapEditorInteractionTypeOverlay
                 call    sub_238CD
 
 loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
@@ -28350,7 +28350,7 @@ loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
                 and     word_328C4, 0FBFFh
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowLocalAreaMap
-                call    sub_2075B
+                call    DrawMapEditorInteractionTypeOverlay
                 call    ClearVideoMemoryRegion
                 call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
@@ -28363,7 +28363,7 @@ loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
 loc_2022E:                              ; CODE XREF: RunMapEditorScreen+192↑j
                 or      word_328C4, 400h
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2075B
+                call    DrawMapEditorInteractionTypeOverlay
                 call    sub_238CD
 
 loc_20241:                              ; CODE XREF: RunMapEditorScreen+18A↑j
@@ -28383,7 +28383,7 @@ loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
                 mov     bx, word_36CF9
                 call    GetMapCellPtr
                 call    ShowLocalAreaMap
-                call    sub_2075B
+                call    DrawMapEditorInteractionTypeOverlay
                 call    ClearVideoMemoryRegion
                 call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
@@ -28979,14 +28979,15 @@ PaintCursorOverlayCellAndPersist endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2075B       proc near               ; CODE XREF: RunMapEditorScreen+166↑p
+DrawMapEditorInteractionTypeOverlay proc near
+                                        ; CODE XREF: RunMapEditorScreen+166↑p
                                         ; RunMapEditorScreen+17D↑p ...
-                test    word_328C4, 400h
+                test    word_328C4, 400h ; Debug overlay gated on word_328C4 bit 0x400. Scans a 40x24 grid of map-editor tile positions, calling TryInteractAtPosition per cell and drawing a one-letter code (N/I/M/C, or nothing) based on errorCode / word_32DCE / word_328C8 / [si+2] flag bits -- labels what TryInteractAtPosition considers present at each tile. Called from RunMapEditorScreen.
                 jnz     short loc_20764
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_20764:                              ; CODE XREF: sub_2075B+6↑j
+loc_20764:                              ; CODE XREF: DrawMapEditorInteractionTypeOverlay+6↑j
                 mov     _font_bgTransparent, 1
                 mov     _videoSegment, 0A000h
                 mov     _font_fgColor, 0Fh
@@ -29006,13 +29007,13 @@ loc_20764:                              ; CODE XREF: sub_2075B+6↑j
                 mov     _textPos_y, 9
                 mov     cx, 18h
 
-loc_207A3:                              ; CODE XREF: sub_2075B+B9↓j
+loc_207A3:                              ; CODE XREF: DrawMapEditorInteractionTypeOverlay+B9↓j
                 push    x
                 push    cx
                 mov     _textPos_x, 1
                 mov     cx, 28h ; '('
 
-loc_207B1:                              ; CODE XREF: sub_2075B+A9↓j
+loc_207B1:                              ; CODE XREF: DrawMapEditorInteractionTypeOverlay+A9↓j
                 mov     ax, x
                 mov     bx, y
                 mov     word_32DCE, 0
@@ -29032,12 +29033,12 @@ loc_207B1:                              ; CODE XREF: sub_2075B+A9↓j
                 test    word ptr [si+2], 8000h
                 jz      short loc_207FB
 
-loc_207F1:                              ; CODE XREF: sub_2075B+6F↑j
-                                        ; sub_2075B+79↑j ...
+loc_207F1:                              ; CODE XREF: DrawMapEditorInteractionTypeOverlay+6F↑j
+                                        ; DrawMapEditorInteractionTypeOverlay+79↑j ...
                 call    writeChar
                 sub     _textPos_x, 6
 
-loc_207FB:                              ; CODE XREF: sub_2075B+94↑j
+loc_207FB:                              ; CODE XREF: DrawMapEditorInteractionTypeOverlay+94↑j
                 inc     x
                 add     _textPos_x, 8
                 loop    loc_207B1
@@ -29047,7 +29048,7 @@ loc_207FB:                              ; CODE XREF: sub_2075B+94↑j
                 pop     x
                 loop    loc_207A3
                 retn
-sub_2075B       endp
+DrawMapEditorInteractionTypeOverlay endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31202,7 +31203,7 @@ loc_21A39:                              ; CODE XREF: sub_219FA+23↑j
 loc_21A55:                              ; CODE XREF: sub_219FA+1B↑j
                                         ; sub_219FA+51↑j
                 push    cs
-                call    near ptr sub_21C79
+                call    near ptr RedrawItemDescriptionAndMaterials
                 call    RestoreCursorBackgroundIfDirty
                 mov     _textPos_x, 0F0h
                 cmp     word_32974, 2Fh ; '/'
@@ -31417,9 +31418,9 @@ sub_219FA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21C79       proc far                ; CODE XREF: sub_17032+8B↑P
+RedrawItemDescriptionAndMaterials proc far ; CODE XREF: sub_17032+8B↑P
                                         ; sub_1869D:loc_18759↑P ...
-                call    ClearStatusPanelIfDirty
+                call    ClearStatusPanelIfDirty ; Clears status panel if dirty, sets word_328C4 bit 0x100, positions text at (0xF0,0x60), draws a 3-line text field from word_2E546+0x13 (current item record's description text) via DrawStringColumn, then ShowMaterialCounterHud + DrawMouseCursor. Standard post-LoadItemCatalogRecord refresh in shop/trade screens. Called from sub_17032 and sub_1869D.
                 or      word_328C4, 100h
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -31435,7 +31436,7 @@ sub_21C79       proc far                ; CODE XREF: sub_17032+8B↑P
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retf
-sub_21C79       endp
+RedrawItemDescriptionAndMaterials endp
 
 seg067          ends
 
@@ -41317,7 +41318,7 @@ loc_27348:                              ; CODE XREF: sub_271DC+13E↑j
                 call    LoadItemCatalogRecord
                 test    word_328C6, 1Ch
                 jnz     short loc_27369
-                call    sub_21C79
+                call    RedrawItemDescriptionAndMaterials
                 jmp     loc_2728F
 ; ---------------------------------------------------------------------------
 
@@ -45500,7 +45501,7 @@ seg107          segment byte public 'CODE' use16
 
 WaitForTargetClick proc far             ; CODE XREF: UseAbilityOnTarget+1↓p
                                         ; UnlockDoorCommand:loc_29747↓P ...
-                call    sub_21C79       ; Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.
+                call    RedrawItemDescriptionAndMaterials ; Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.
                 mov     word_2E530, 0Fh
                 call    UpdateCursorForHeldItem
                 call    sub_238CD
@@ -48430,7 +48431,7 @@ seg114          segment byte public 'CODE' use16
 
 ApplyMultiStatEffect proc far           ; CODE XREF: HandleGameCommand+F↑P
                                         ; ApplyMultiStatEffect+26↓j
-                call    sub_21C79       ; First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.
+                call    RedrawItemDescriptionAndMaterials ; First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.
                 call    ConfirmAndSelectPartyTarget
                 cmp     ax, 0
                 jnz     short loc_2A923
@@ -48513,7 +48514,7 @@ sub_2A982       endp
 
 
 RestCharacter   proc far                ; CODE XREF: HandleGameCommand+B8↑P
-                call    sub_21C79       ; Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.
+                call    RedrawItemDescriptionAndMaterials ; Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.
                 call    ConfirmAndSelectPartyTarget
                 cmp     ax, 0
                 jnz     short loc_2A9BD
@@ -48615,7 +48616,7 @@ loc_2AA75:                              ; CODE XREF: CastSpell+18↑j
 ; ---------------------------------------------------------------------------
 
 loc_2AA86:                              ; CODE XREF: CastSpell+8↑j
-                call    sub_21C79
+                call    RedrawItemDescriptionAndMaterials
 
 loc_2AA8B:                              ; CODE XREF: CastSpell+8C↓j
                 call    ConfirmAndSelectPartyTarget
@@ -48884,7 +48885,7 @@ loc_2ACD0:                              ; CODE XREF: CastSpell+10↑j
 
 loc_2ACEE:                              ; CODE XREF: CastSpell+27E↑j
                                         ; CastSpell+287↑j
-                call    sub_21C79
+                call    RedrawItemDescriptionAndMaterials
                 call    WaitForTargetClick
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_2AD02
@@ -53424,7 +53425,7 @@ seg128          segment byte public 'CODE' use16
 
 InteractWithContainer proc far          ; CODE XREF: HandleGameCommand+157↑P
                                         ; InteractWithContainer+3A↓j
-                call    sub_21C79       ; Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.
+                call    RedrawItemDescriptionAndMaterials ; Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.
                 mov     bx, word_2E548
                 mov     ax, [bx+4]
                 call    LoadClueBookSpellEntry

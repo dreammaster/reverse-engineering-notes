@@ -5321,6 +5321,33 @@ on-screen width themselves.
 
 616 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RedrawItemDescriptionAndMaterials, DrawMapEditorInteractionTypeOverlay
+
+Named `sub_21C79` -> `RedrawItemDescriptionAndMaterials`, called from
+the shop buy handler `sub_17032` and the trade/inventory dispatcher
+`sub_1869D`, always immediately after `LoadItemCatalogRecord`: draws
+a 3-line text field from `word_2E546`+0x13 (the current item
+record's description text, per earlier confirmed uses of
+`word_2E546` as the current-item-record pointer) via
+`DrawStringColumn`, then refreshes `ShowMaterialCounterHud` and
+`DrawMouseCursor`. This is the standard post-item-load redraw in the
+shop/trade screens; `sub_1869D` uses it as the default branch when no
+barter-pricing preview is needed (the alternate branch instead calls
+`ComputeBarterPricingPreview`).
+
+Named `sub_2075B` -> `DrawMapEditorInteractionTypeOverlay`, called
+from `RunMapEditorScreen`, gated on `word_328C4` bit `0x400` (a
+debug/overlay toggle — returns immediately if clear). When active,
+scans a 40x24 grid of map-editor tile positions and calls
+`TryInteractAtPosition` per cell, then draws a single debug letter
+('N', 'I', 'M', or 'C', or nothing) chosen from `errorCode` and
+several other flag words. Read as a map-editor debug overlay
+labeling what `TryInteractAtPosition` considers present at each
+visible tile; the exact meaning of each letter code is not
+independently confirmed.
+
+618 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

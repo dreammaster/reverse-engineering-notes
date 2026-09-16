@@ -5518,8 +5518,10 @@ static Bytes_2(void) {
 	set_name	(0X2070C,	"PaintCursorOverlayCellAndPersist");
 	create_insn	(x=0X20750);
 	op_seg		(x,	1);
+	set_cmt	(0X2075B,	"Debug overlay gated on word_328C4 bit 0x400. Scans a 40x24 grid of map-editor tile positions, calling TryInteractAtPosition per cell and drawing a one-letter code (N/I/M/C, or nothing) based on errorCode / word_32DCE / word_328C8 / [si+2] flag bits -- labels what TryInteractAtPosition considers present at each tile. Called from RunMapEditorScreen.",	0);
 	create_insn	(x=0X2075B);
 	op_hex		(x,	1);
+	set_name	(0X2075B,	"DrawMapEditorInteractionTypeOverlay");
 	create_insn	(0X20764);
 	create_insn	(x=0X207CE);
 	op_hex		(x,	1);
@@ -5922,7 +5924,9 @@ static Bytes_2(void) {
 	create_insn	(0X21C60);
 	create_insn	(x=0X21C63);
 	op_hex		(x,	1);
+	set_cmt	(0X21C79,	"Clears status panel if dirty, sets word_328C4 bit 0x100, positions text at (0xF0,0x60), draws a 3-line text field from word_2E546+0x13 (current item record's description text) via DrawStringColumn, then ShowMaterialCounterHud + DrawMouseCursor. Standard post-LoadItemCatalogRecord refresh in shop/trade screens. Called from sub_17032 and sub_1869D.",	0);
 	create_insn	(0X21C79);
+	set_name	(0X21C79,	"RedrawItemDescriptionAndMaterials");
 	create_insn	(x=0X21C7E);
 	op_hex		(x,	1);
 	set_cmt	(0X21CC2,	"Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.",	0);
@@ -6876,6 +6880,15 @@ static Bytes_2(void) {
 	set_cmt	(0X25AAC,	"If every one of the 4 party slots is either empty or has one of +0x1C bits 6/10/11/12 set (bits 10/11 = the confirmed TickStatusEffects/ApplyStatusEffect timed-ailment flags) -- i.e. no member is currently unafflicted -- shows ShowPartyWipeScreen, then RunGameDialog, then InitializeDungeonLevel (unless byte_2E400==0xFF). Reads as a 'whole party incapacitated' handler. Called from RunDungeonGameLoop and ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X25AAC);
 	set_name	(0X25AAC,	"CheckPartyWipeAndReinitLevel");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X25ACF);
 	op_hex		(x,	1);
 	create_insn	(x=0X25AE6);
@@ -6912,15 +6925,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X25C61);
 	op_hex		(x,	1);
 	set_name	(0X25C61,	"ShowLevelUpMessage");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25C70,	"msg",	0);
 	set_cmt	(0X25CFA,	"If the character has learned any special ability (+0xB4 nonzero), draws each learned ability's name (table 0x77C6) in bright/dim color depending on whether its charge field (+0xB6/+0xB8/+0xBA/+0xBC) meets the table's threshold and, for some abilities, whether the current time of day (word_36D01) is in the required window. Called from UseItem and UseAbilityScroll.",	0);
 	create_insn	(0X25CFA);
@@ -9263,6 +9267,15 @@ static Bytes_3(void) {
 	create_insn	(0X2AEC7);
 	create_insn	(0X2AED3);
 	create_insn	(0X2AEDF);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2AEE7);
 	op_hex		(x,	1);
 	create_insn	(0X2AEF3);
@@ -9287,15 +9300,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B029,	"Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.",	0);
 	create_insn	(0X2B029);
 	set_name	(0X2B029,	"CollectNuoreCache");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B036);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B065);
