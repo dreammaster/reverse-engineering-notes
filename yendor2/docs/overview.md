@@ -6025,6 +6025,22 @@ either way looping back to prompt again unless the player cancels.
 
 688 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleSearchCommand
+
+Named `sub_2A788` -> `HandleSearchCommand`, called once from
+`HandleGameCommand` — the "Search" command: examine the facing tile
+for a lock (`ShowLockStatus`), a door/container (`LoadCurgameRecord`),
+or, if neither is present, a hidden trap via a saving-throw skill
+check. A failed search-for-traps roll triggers the trap (still-
+unnamed `sub_274B4`) with a backfire message; a successful roll marks
+the caster's proficiency and reports "found something" or "nothing
+found," clearing the hidden-trap flag on a find. This gives
+`sub_274B4` its first concrete evidence of being reachable as a
+"trigger the trap here" path, alongside its long-standing open role
+as an item-use dispatcher — not yet independently confirmed.
+
+689 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

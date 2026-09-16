@@ -9281,7 +9281,9 @@ static Bytes_4(void) {
 	create_insn	(0X2A766);
 	set_name	(0X2A766,	"StripCommasZeroPadSpaces");
 	create_insn	(0X2A782);
+	set_cmt	(0X2A788,	"The 'Search' command: examine the facing tile for a lock (overlay flag 0x8000), a door/container (0x4000), or a hidden trap (neither bit) via a saving-throw skill check -- a failed search-for-traps roll triggers the trap (sub_274B4). Called once from HandleGameCommand.",	0);
 	create_insn	(0X2A788);
+	set_name	(0X2A788,	"HandleSearchCommand");
 	create_insn	(0X2A7A8);
 	create_insn	(x=0X2A7B5);
 	op_hex		(x,	1);
@@ -11002,6 +11004,15 @@ static Bytes_4(void) {
 	set_name	(0X35502,	"aLeave");
 	create_strlit	(0X35508,	0X6);
 	set_name	(0X35508,	"aTrap");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3550E,	0X9);
 	set_name	(0X3550E,	"aDefeated");
 	create_strlit	(0X35517,	0XD);
@@ -11021,15 +11032,6 @@ static Bytes_4(void) {
 	create_strlit	(0X35572,	0XD);
 	create_strlit	(0X3557F,	0X7);
 	set_name	(0X3557F,	"aFailed");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35586,	0X6);
 	set_name	(0X35586,	"aEmpty");
 	create_strlit	(0X3558C,	0XA);

@@ -44629,7 +44629,7 @@ seg105          segment byte public 'CODE' use16
 
 
 ApplySavingThrowEffect proc far         ; CODE XREF: UseAbilityCommand+CD↑P
-                                        ; sub_2A788+142↓P
+                                        ; HandleSearchCommand+142↓P
                 cmp     word_32DD0, 0   ; Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.
                 jnz     short loc_28BE2
                 mov     ax, 0
@@ -45761,7 +45761,7 @@ HandleGameCommand proc far              ; CODE XREF: start+57F↑P
 loc_295BD:                              ; CODE XREF: HandleGameCommand+D↑j
                 cmp     word_32974, 20h ; ' '
                 jnz     short loc_295CA
-                call    sub_2A788
+                call    HandleSearchCommand
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -48263,9 +48263,9 @@ seg113          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A788       proc far                ; CODE XREF: HandleGameCommand+1C↑P
-                                        ; sub_2A788+3A↓j
-                mov     ax, word_36D07
+HandleSearchCommand proc far            ; CODE XREF: HandleGameCommand+1C↑P
+                                        ; HandleSearchCommand+3A↓j
+                mov     ax, word_36D07  ; The 'Search' command: examine the facing tile for a lock (overlay flag 0x8000), a door/container (0x4000), or a hidden trap (neither bit) via a saving-throw skill check -- a failed search-for-traps roll triggers the trap (sub_274B4). Called once from HandleGameCommand.
                 cmp     ax, 0
                 jnz     short loc_2A7A8
                 call    ClearMessageBoxArea
@@ -48277,8 +48277,8 @@ sub_2A788       proc far                ; CODE XREF: HandleGameCommand+1C↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2A7A8:                              ; CODE XREF: sub_2A788+6↑j
-                                        ; sub_2A788+18↑j
+loc_2A7A8:                              ; CODE XREF: HandleSearchCommand+6↑j
+                                        ; HandleSearchCommand+18↑j
                 mov     word_32990, ax
                 mov     word_36D07, ax
                 call    SelectPartyRecordById
@@ -48286,20 +48286,20 @@ loc_2A7A8:                              ; CODE XREF: sub_2A788+6↑j
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_2A7C4
                 mov     word_36D07, 0
-                jmp     short near ptr sub_2A788
+                jmp     short near ptr HandleSearchCommand
 ; ---------------------------------------------------------------------------
 
-loc_2A7C4:                              ; CODE XREF: sub_2A788+32↑j
+loc_2A7C4:                              ; CODE XREF: HandleSearchCommand+32↑j
                 call    WaitForTargetClick
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_2A7F0
 
-loc_2A7D0:                              ; CODE XREF: sub_2A788+93↓j
+loc_2A7D0:                              ; CODE XREF: HandleSearchCommand+93↓j
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
-loc_2A7DA:                              ; CODE XREF: sub_2A788+BB↓j
-                                        ; sub_2A788+CA↓j ...
+loc_2A7DA:                              ; CODE XREF: HandleSearchCommand+BB↓j
+                                        ; HandleSearchCommand+CA↓j ...
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
@@ -48307,7 +48307,7 @@ loc_2A7DA:                              ; CODE XREF: sub_2A788+BB↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2A7F0:                              ; CODE XREF: sub_2A788+46↑j
+loc_2A7F0:                              ; CODE XREF: HandleSearchCommand+46↑j
                 call    ProbeFacingTile
                 cmp     errorCode, 0
                 jz      short loc_2A80E
@@ -48316,31 +48316,31 @@ loc_2A7F0:                              ; CODE XREF: sub_2A788+46↑j
                 jmp     short loc_2A81D
 ; ---------------------------------------------------------------------------
 
-loc_2A805:                              ; CODE XREF: sub_2A788+79↑j
+loc_2A805:                              ; CODE XREF: HandleSearchCommand+79↑j
                 test    word ptr [si+2], 4000h
                 jz      short loc_2A80E
                 jmp     short loc_2A827
 ; ---------------------------------------------------------------------------
 
-loc_2A80E:                              ; CODE XREF: sub_2A788+72↑j
-                                        ; sub_2A788+82↑j
+loc_2A80E:                              ; CODE XREF: HandleSearchCommand+72↑j
+                                        ; HandleSearchCommand+82↑j
                 mov     byte_2E400, 0
                 mov     ax, 3
                 call    TriggerSoundEvent
                 jmp     short loc_2A7D0
 ; ---------------------------------------------------------------------------
 
-loc_2A81D:                              ; CODE XREF: sub_2A788+7B↑j
+loc_2A81D:                              ; CODE XREF: HandleSearchCommand+7B↑j
                 mov     ax, [si+4]
                 call    LoadLockState
                 jmp     short loc_2A82F
 ; ---------------------------------------------------------------------------
 
-loc_2A827:                              ; CODE XREF: sub_2A788+84↑j
+loc_2A827:                              ; CODE XREF: HandleSearchCommand+84↑j
                 mov     ax, [si+4]
                 call    LoadCurgameRecord
 
-loc_2A82F:                              ; CODE XREF: sub_2A788+9D↑j
+loc_2A82F:                              ; CODE XREF: HandleSearchCommand+9D↑j
                 mov     ax, word_32DC8
                 test    byte_32DCD, al
                 jz      short loc_2A845
@@ -48350,14 +48350,14 @@ loc_2A82F:                              ; CODE XREF: sub_2A788+9D↑j
                 jmp     short loc_2A7DA
 ; ---------------------------------------------------------------------------
 
-loc_2A845:                              ; CODE XREF: sub_2A788+AE↑j
+loc_2A845:                              ; CODE XREF: HandleSearchCommand+AE↑j
                 test    word_32DCE, 40h
                 jnz     short loc_2A854
                 call    ShowLockStatus
                 jmp     short loc_2A7DA
 ; ---------------------------------------------------------------------------
 
-loc_2A854:                              ; CODE XREF: sub_2A788+C3↑j
+loc_2A854:                              ; CODE XREF: HandleSearchCommand+C3↑j
                 mov     si, word_328D4
                 mov     ax, word_32DC0
                 mov     word_3293E, ax
@@ -48377,17 +48377,17 @@ loc_2A854:                              ; CODE XREF: sub_2A788+C3↑j
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
 
-loc_2A896:                              ; CODE XREF: sub_2A788+103↑j
+loc_2A896:                              ; CODE XREF: HandleSearchCommand+103↑j
                 jmp     loc_2A7DA
 ; ---------------------------------------------------------------------------
 
-loc_2A899:                              ; CODE XREF: sub_2A788+E4↑j
+loc_2A899:                              ; CODE XREF: HandleSearchCommand+E4↑j
                 call    WaitForSoundDriverIdle
                 jnz     short loc_2A8A8
                 mov     ax, word_329EE
                 call    TriggerSoundEvent
 
-loc_2A8A8:                              ; CODE XREF: sub_2A788+116↑j
+loc_2A8A8:                              ; CODE XREF: HandleSearchCommand+116↑j
                 mov     ax, word_32DC8
                 or      byte_32DCD, al
                 mov     ax, 556Dh
@@ -48404,14 +48404,14 @@ loc_2A8A8:                              ; CODE XREF: sub_2A788+116↑j
                 jmp     loc_2A7DA
 ; ---------------------------------------------------------------------------
 
-loc_2A8DF:                              ; CODE XREF: sub_2A788+152↑j
+loc_2A8DF:                              ; CODE XREF: HandleSearchCommand+152↑j
                 mov     cx, 2
                 mov     bx, 7CA8h
                 call    ShowAbilityDescriptionColumn
                 jmp     loc_2A7DA
 ; ---------------------------------------------------------------------------
 
-loc_2A8ED:                              ; CODE XREF: sub_2A788+14D↑j
+loc_2A8ED:                              ; CODE XREF: HandleSearchCommand+14D↑j
                 mov     cx, 1
                 mov     bx, 7BAEh
                 call    ShowAbilityDescriptionColumn
@@ -48425,9 +48425,9 @@ loc_2A8ED:                              ; CODE XREF: sub_2A788+14D↑j
                 pop     es
                 pop     si
 
-loc_2A911:                              ; CODE XREF: sub_2A788+175↑j
+loc_2A911:                              ; CODE XREF: HandleSearchCommand+175↑j
                 jmp     loc_2A7DA
-sub_2A788       endp
+HandleSearchCommand endp
 
 seg113          ends
 
