@@ -41720,7 +41720,7 @@ loc_2769D:                              ; CODE XREF: sub_274B4+195↑j
                 mov     ax, word_32978
                 mov     word_328D4, ax
                 mov     si, ax
-                call    sub_2772C
+                call    SyncAlternateBagsToSave
                 call    DrawPartyMemberPortrait
                 test    word_328C8, 0E000h
                 jz      short loc_276C2
@@ -41790,8 +41790,8 @@ sub_276C5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2772C       proc near               ; CODE XREF: sub_274B4+1F1↑p
-                cmp     word ptr [si+17Eh], 0
+SyncAlternateBagsToSave proc near       ; CODE XREF: sub_274B4+1F1↑p
+                cmp     word ptr [si+17Eh], 0 ; Writes each of the 3 alternate-bag inventory groups (+0x17E/0x180, +0x1A4/0x1A6, +0x1CA/0x1CC -- the same fields GetInventorySlotPtr/WriteContainerSubBlock established) back to CURGAME via WriteContainerSubBlock, only when populated. Called from sub_274B4.
                 jz      short loc_27742
                 mov     bx, si
                 add     bx, 180h
@@ -41799,7 +41799,7 @@ sub_2772C       proc near               ; CODE XREF: sub_274B4+1F1↑p
                 or      ax, ax
                 call    WriteContainerSubBlock
 
-loc_27742:                              ; CODE XREF: sub_2772C+5↑j
+loc_27742:                              ; CODE XREF: SyncAlternateBagsToSave+5↑j
                 cmp     word ptr [si+1A4h], 0
                 jz      short loc_27758
                 mov     bx, si
@@ -41808,7 +41808,7 @@ loc_27742:                              ; CODE XREF: sub_2772C+5↑j
                 or      ax, ax
                 call    WriteContainerSubBlock
 
-loc_27758:                              ; CODE XREF: sub_2772C+1B↑j
+loc_27758:                              ; CODE XREF: SyncAlternateBagsToSave+1B↑j
                 cmp     word ptr [si+1CAh], 0
                 jz      short locret_2776E
                 mov     bx, si
@@ -41817,16 +41817,16 @@ loc_27758:                              ; CODE XREF: sub_2772C+1B↑j
                 or      ax, ax
                 call    WriteContainerSubBlock
 
-locret_2776E:                           ; CODE XREF: sub_2772C+31↑j
+locret_2776E:                           ; CODE XREF: SyncAlternateBagsToSave+31↑j
                 retn
-sub_2772C       endp
+SyncAlternateBagsToSave endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-WriteContainerSubBlock proc near        ; CODE XREF: sub_2772C+13↑p
-                                        ; sub_2772C+29↑p ...
+WriteContainerSubBlock proc near        ; CODE XREF: SyncAlternateBagsToSave+13↑p
+                                        ; SyncAlternateBagsToSave+29↑p ...
                 mov     word_36863, ax  ; Writes a data block (bx=address, ax=count, stored via word_36863) using the sub_27E3A/FileEntry_Write(errorCode=0xB) pattern. Called 3 times from sub_2772C for 3 party-record sub-blocks whose identity isn't confirmed.
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this

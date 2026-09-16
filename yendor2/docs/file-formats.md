@@ -407,11 +407,14 @@ isn't lost if the action fails.
 
 A related low-level primitive: `WriteContainerSubBlock` (was
 `sub_2776F`) writes a data block (address + count) via the same
-`FileEntry_Write(errorCode=0xB)` pattern. Called 3 times from an
-unnamed caller (`sub_2772C`) for 3 party-record sub-blocks at
-`+0x17E`/`+0x180`, `+0x1A4`/`+0x1A6`, `+0x1CA`/`+0x1CC` (each a
-count field followed by its data, written only when the count is
-nonzero) — the identity of those 3 sub-blocks isn't confirmed.
+`FileEntry_Write(errorCode=0xB)` pattern. Called 3 times from
+`SyncAlternateBagsToSave` (was `sub_2772C`, itself called from
+`sub_274B4`) for the 3 "alternate bag" inventory groups at
+`+0x17E`/`+0x180`, `+0x1A4`/`+0x1A6`, `+0x1CA`/`+0x1CC` — the same
+group-base fields `GetInventorySlotPtr` already established (count
+field followed by its slot data), written only when each bag is
+populated (count nonzero). Confirms those 3 sub-blocks are exactly the
+3 alternate bags, resolving the earlier "identity not confirmed" note.
 
 ### Party travel / fast-travel
 

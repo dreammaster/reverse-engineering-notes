@@ -3937,6 +3937,17 @@ calling `DrawPartyMemberStatusPanel` for every occupied roster slot.
 
 501 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SyncAlternateBagsToSave
+
+Named `sub_2772C` -> `SyncAlternateBagsToSave`, called from
+`sub_274B4`: writes each of the 3 alternate-bag inventory groups back
+to `CURGAME` via `WriteContainerSubBlock`, only when populated —
+resolving the earlier "identity of those 3 sub-blocks isn't confirmed"
+note by tying them to the already-established `GetInventorySlotPtr`
+group-base fields.
+
+502 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

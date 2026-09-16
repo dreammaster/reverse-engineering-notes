@@ -7253,7 +7253,9 @@ static Bytes_2(void) {
 	create_insn	(0X27703);
 	create_insn	(x=0X2770B);
 	op_hex		(x,	1);
+	set_cmt	(0X2772C,	"Writes each of the 3 alternate-bag inventory groups (+0x17E/0x180, +0x1A4/0x1A6, +0x1CA/0x1CC -- the same fields GetInventorySlotPtr/WriteContainerSubBlock established) back to CURGAME via WriteContainerSubBlock, only when populated. Called from sub_274B4.",	0);
 	create_insn	(0X2772C);
+	set_name	(0X2772C,	"SyncAlternateBagsToSave");
 	set_cmt	(0X2776F,	"Writes a data block (bx=address, ax=count, stored via word_36863) using the sub_27E3A/FileEntry_Write(errorCode=0xB) pattern. Called 3 times from sub_2772C for 3 party-record sub-blocks whose identity isn't confirmed.",	0);
 	create_insn	(0X2776F);
 	set_name	(0X2776F,	"WriteContainerSubBlock");
@@ -7571,11 +7573,6 @@ static Bytes_2(void) {
 	set_cmt	(0X28564,	"Initializes the sound driver's hardware config (word_32916/word_32914) and calls into it via g_soundDriverFarPtr (function selectors 1-5: settings, init, further setup), then allocates its music-data buffer (word_3292E). Called from InitSoundSystem.",	0);
 	create_insn	(0X28564);
 	set_name	(0X28564,	"InitMusicDriver");
-	set_cmt	(0X2856B,	"numPara",	0);
-	create_insn	(x=0X28592);
-	op_seg		(x,	1);
-	create_insn	(x=0X285B8);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7585,6 +7582,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2856B,	"numPara",	0);
+	create_insn	(x=0X28592);
+	op_seg		(x,	1);
+	create_insn	(x=0X285B8);
+	op_hex		(x,	1);
 	create_insn	(x=0X285BE);
 	op_hex		(x,	1);
 	create_insn	(0X285C4);
@@ -10593,8 +10595,6 @@ static Bytes_3(void) {
 	set_name	(0X35478,	"aBronzeKey");
 	create_strlit	(0X35483,	0XB);
 	set_name	(0X35483,	"aCopperKey");
-	create_strlit	(0X3548E,	0X9);
-	set_name	(0X3548E,	"aIronKey");
 }
 
 //------------------------------------------------------------------------
@@ -10604,6 +10604,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X3548E,	0X9);
+	set_name	(0X3548E,	"aIronKey");
 	create_strlit	(0X35497,	0XA);
 	set_name	(0X35497,	"aSteelKey");
 	create_strlit	(0X354A1,	0XB);
