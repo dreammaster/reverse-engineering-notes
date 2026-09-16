@@ -8638,11 +8638,11 @@ loc_15452:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     bx, 1
                 mov     cx, 40h ; '@'
                 mov     dx, 0
-                call    sub_160D6
+                call    RunPaletteFadeSequence
                 mov     bx, 1
                 mov     cx, 80h
                 mov     dx, 80h
-                call    sub_160D6
+                call    RunPaletteFadeSequence
                 test    word_328C4, 400h
                 jz      short loc_15476
                 call    sub_152EF
@@ -9025,7 +9025,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
                 call    DrawPicture
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
-                call    sub_16244
+                call    SetPaletteToWhite
                 mov     ax, 12h
                 call    TriggerSoundEvent
                 call    DrawMouseCursor
@@ -9255,7 +9255,7 @@ loc_15AFE:                              ; CODE XREF: sub_1559A+561↑j
 ; ---------------------------------------------------------------------------
 
 loc_15B34:                              ; CODE XREF: sub_1559A+597↑j
-                call    sub_16244
+                call    SetPaletteToWhite
                 and     word_3295A, 0EFFFh
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
@@ -9725,9 +9725,9 @@ sub_160C3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_160D6       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+33↑p
+RunPaletteFadeSequence proc near        ; CODE XREF: PlayCharacterCreationIntroAnimation+33↑p
                                         ; PlayCharacterCreationIntroAnimation+3F↑p
-                mov     word_31984, bx
+                mov     word_31984, bx  ; Runs bx steps of a palette fade: nudges 0x4D5C (current) toward 0x442A (target) byte-by-byte, mirrors into 0x475A (output) unless a 0x80 sentinel bit is set, then SetPaletteRange's the output segment (dx=start index, cx=RGB-triple count). A multi-step sibling of FadePaletteStep. Called from PlayCharacterCreationIntroAnimation.
                 mov     word_31982, cx
                 mov     word_31976, cx
                 add     word_31976, cx
@@ -9740,7 +9740,7 @@ sub_160D6       proc near               ; CODE XREF: PlayCharacterCreationIntroA
                 assume es:nothing
                 mov     cx, word_31984
 
-loc_16102:                              ; CODE XREF: sub_160D6+74↓j
+loc_16102:                              ; CODE XREF: RunPaletteFadeSequence+74↓j
                 push    cx
                 mov     di, 4D5Ch
                 add     di, word_322BA
@@ -9750,22 +9750,22 @@ loc_16102:                              ; CODE XREF: sub_160D6+74↓j
                 add     bx, word_322BA
                 mov     cx, word_31976
 
-loc_1611C:                              ; CODE XREF: sub_160D6+5D↓j
+loc_1611C:                              ; CODE XREF: RunPaletteFadeSequence+5D↓j
                 mov     al, [di]
                 test    al, 80h
                 jnz     short loc_16126
                 cmp     al, [si]
                 jz      short loc_16130
 
-loc_16126:                              ; CODE XREF: sub_160D6+4A↑j
+loc_16126:                              ; CODE XREF: RunPaletteFadeSequence+4A↑j
                 inc     al
                 mov     [di], al
                 test    al, 80h
                 jnz     short loc_16130
                 mov     [bx], al
 
-loc_16130:                              ; CODE XREF: sub_160D6+4E↑j
-                                        ; sub_160D6+56↑j
+loc_16130:                              ; CODE XREF: RunPaletteFadeSequence+4E↑j
+                                        ; RunPaletteFadeSequence+56↑j
                 inc     bx
                 inc     di
                 inc     si
@@ -9778,7 +9778,7 @@ loc_16130:                              ; CODE XREF: sub_160D6+4E↑j
                 pop     cx
                 loop    loc_16102
                 retn
-sub_160D6       endp
+RunPaletteFadeSequence endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9982,9 +9982,9 @@ TryPlaySoundCue endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16244       proc near               ; CODE XREF: sub_1559A+298↑p
+SetPaletteToWhite proc near             ; CODE XREF: sub_1559A+298↑p
                                         ; sub_1559A:loc_15B34↑p
-                mov     es, word_2E4AA
+                mov     es, word_2E4AA  ; Fills the 0x4D5C palette buffer with byte 0x3F (max 6-bit DAC value) and applies all 256 entries via SetPaletteRange -- sets the whole palette to white. Called from sub_1559A.
                 mov     di, 4D5Ch
                 mov     ax, 3F3Fh
                 mov     cx, 180h
@@ -9994,7 +9994,7 @@ sub_16244       proc near               ; CODE XREF: sub_1559A+298↑p
                 mov     si, 4D5Ch
                 call    SetPaletteRange
                 retn
-sub_16244       endp
+SetPaletteToWhite endp
 
 seg011          ends
 

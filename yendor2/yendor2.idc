@@ -2384,7 +2384,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X160B0);
 	create_insn	(0X160C3);
+	set_cmt	(0X160D6,	"Runs bx steps of a palette fade: nudges 0x4D5C (current) toward 0x442A (target) byte-by-byte, mirrors into 0x475A (output) unless a 0x80 sentinel bit is set, then SetPaletteRange's the output segment (dx=start index, cx=RGB-triple count). A multi-step sibling of FadePaletteStep. Called from PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(0X160D6);
+	set_name	(0X160D6,	"RunPaletteFadeSequence");
 	create_insn	(x=0X1611E);
 	op_hex		(x,	1);
 	create_insn	(x=0X1612A);
@@ -2421,7 +2423,9 @@ static Bytes_0(void) {
 	set_cmt	(0X16234,	"Drops this sound cue (cx=sound/note id) if WaitForSoundDriverIdle had to wait (driver was busy) or cx==0xFFFF (no-op sentinel); otherwise dispatches via still-unnamed sub_1616F. Byte-for-byte identical to TryPlaySoundCueAlt (sub_11EAE) in a different overlay segment. Called from sub_1559A and others.",	0);
 	create_insn	(0X16234);
 	set_name	(0X16234,	"TryPlaySoundCue");
+	set_cmt	(0X16244,	"Fills the 0x4D5C palette buffer with byte 0x3F (max 6-bit DAC value) and applies all 256 entries via SetPaletteRange -- sets the whole palette to white. Called from sub_1559A.",	0);
 	create_insn	(0X16244);
+	set_name	(0X16244,	"SetPaletteToWhite");
 	create_insn	(0X16262);
 	create_insn	(x=0X16298);
 	op_hex		(x,	1);
@@ -3129,6 +3133,15 @@ static Bytes_0(void) {
 	set_cmt	(0X18257,	"Dispatches an effect-definition record's cost (di = g_trapEffectDefs entry, [di+8] flag bits) to one or more of DeductHPClamped/DeductMPClamped/SpendMaterialCounterClamped (HP/MP costs use [si+0xC]=party-member record + a plain amount; material costs use one of 3 BCD counters selected by a different flag bit, amount read from the slot's own +0x10 field).",	0);
 	create_insn	(0X18257);
 	set_name	(0X18257,	"ApplyEffectCost");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1825F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1826B);
@@ -3148,15 +3161,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X182CE);
 	op_hex		(x,	1);
 	set_name	(0X182CE,	"ApplyIconBarStatDelta");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X182D6);
 	create_insn	(x=0X182DB);
 	op_hex		(x,	1);
@@ -5135,6 +5139,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1F0CD,	"Initializes/enters a dungeon level: copies a per-level metadata template, calls RevealCellsAroundPlayer, redraws the dungeon screen and minimap, and resets combat state -- zeroes the entire g_monsterSlots array and clears word_32A1E (active combat monster). Called from `start` at several sites.",	0);
 	create_insn	(0X1F0CD);
 	set_name	(0X1F0CD,	"InitializeDungeonLevel");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1F120);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F126);
@@ -5152,15 +5165,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1F1B8,	"Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.",	0);
 	create_insn	(0X1F1B8);
 	set_name	(0X1F1B8,	"GetListItemPosition");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
 	create_insn	(0X1F1F4);
 	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
@@ -6955,6 +6959,15 @@ static Bytes_2(void) {
 	set_cmt	(0X25F10,	"Draws 'HEALTH:' (+0x52/+0x92), 'MAGIC:' (+0x54/+0x94), and 'WEIGHT:' (+0x118/+0x56 -- confirms carried weight / max carry capacity) as three threshold-colored stat rows. Shows 'DEAD' instead of the HEALTH fraction when +0x1C bit 0x40 is set -- confirms that bit as the dead/incapacitated flag. Called from sub_25B34.",	0);
 	create_insn	(0X25F10);
 	set_name	(0X25F10,	"DrawThreeStatBars");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X25F27,	"msg",	0);
 	set_cmt	(0X25F48,	"msg",	0);
 	set_cmt	(0X25F69,	"msg",	0);
@@ -6965,15 +6978,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25FCD,	"Draws 'PROTECTIONS:' plus 9 rows pairing DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/CURSING/HEXING/JINXING (table 0x7B31) with their values at +0x20..+0x30 -- confirms, by name, the '9 contiguous resistance values' found via RollEffectResistance. Called from sub_25B34.",	0);
 	create_insn	(0X25FCD);
 	set_name	(0X25FCD,	"DrawCharacterProtectionsList");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25FD6,	"msg",	0);
 	set_cmt	(0X26022,	"Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.",	0);
 	create_insn	(0X26022);
@@ -9345,6 +9349,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X2B656);
 	op_hex		(x,	1);
 	set_name	(0X2B656,	"RunConversation");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B65C);
 	op_hex		(x,	1);
 	create_insn	(0X2B685);
@@ -9366,15 +9379,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B71D,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B71D);
 	set_name	(0X2B71D,	"LoadConversationText_4000");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2B739,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B739);
 	set_name	(0X2B739,	"LoadConversationText_1000");

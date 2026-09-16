@@ -5185,6 +5185,25 @@ of the more heavily-used primitives named this session.
 
 603 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunPaletteFadeSequence + SetPaletteToWhite — resolves two of PlayCharacterCreationIntroAnimation's animation-frame primitives
+
+Named `sub_160D6` -> `RunPaletteFadeSequence`, called twice from
+`PlayCharacterCreationIntroAnimation` — a multi-step palette fade, a
+sibling of the already-named `FadePaletteStep`, that ties together
+the palette-buffer addresses already identified this session (`0x4D5C`
+current / `0x442A` target / `0x475A` output). For each of several
+steps, nudges each "current" byte toward its "target" byte, mirrors
+the result into the output buffer unless a `0x80` sentinel bit is set,
+then applies that step via `SetPaletteRange`. Also named `sub_16244`
+-> `SetPaletteToWhite`, called twice from `sub_1559A` (character
+creation step 3): fills the palette buffer with the maximum 6-bit DAC
+value and applies it — a full-palette white flash, plausibly a
+screen-transition effect. Together these resolve 2 of the 8
+previously-unnamed animation-frame helpers flagged when
+`PlayCharacterCreationIntroAnimation` was first named.
+
+605 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

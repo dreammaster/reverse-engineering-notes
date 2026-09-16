@@ -640,8 +640,13 @@ matching transform — plays music, and runs several staged
 sub-animations built from a small moving wipe-effect primitive,
 `SetWipeEffectPixel`/`RestoreWipeEffectPixel` (was `sub_1619F`/
 `sub_1618E`, using `ComputeVgaOffsetFromRowCol`'s `row*320+col`
-mode-13h offset math), each ESC-abortable), `sub_1559A` (step 3, not yet
-traced), then always `FinalizeCharacterCreation` (was
+mode-13h offset math), plus a multi-step palette fade,
+`RunPaletteFadeSequence` (was `sub_160D6`, a sibling of
+`FadePaletteStep` sharing the same `0x4D5C`/`0x442A`/`0x475A`
+current/target/output buffer trio), each ESC-abortable), `sub_1559A`
+(step 3, not yet traced — though it calls `SetPaletteToWhite`, was
+`sub_16244`, a full-palette white flash), then always
+`FinalizeCharacterCreation` (was
 `sub_15267`, runs regardless of which step was reached). Matches the
 manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/
 `FEMALE`/`PICK A PORTRAIT` cluster. Step 3 (`sub_1559A`) calls
