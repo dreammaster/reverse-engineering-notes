@@ -5761,6 +5761,30 @@ member and repeat, until uses run out or the player cancels.
 
 A milestone: **660 named of 769 functions as of this update.**
 
+### 2026-09-15 session update, continued: TriggerShopExitSoundAndPersist, item-type legend cluster
+
+Named `sub_17A21` -> `TriggerShopExitSoundAndPersist`, called once
+from `RunShopScreen` in the branch reached via its hit-test table
+index 1 (plausibly a door/exit icon, not independently confirmed):
+gated on `word_328C6` shop-mode flags, plays a sound and decrements a
+per-slot counter, then always persists a `WORLD.DAT`-backed record.
+
+Named a 3-function clue book sub-page cluster, called from
+`WaitForKeypress` (itself called from `ShowClueBook`): `sub_13463` ->
+`ShowConsumableItemTypeLegend`, confirmed via string dump to list the
+game's 6 consumable item categories — POTIONS, SCROLLS, WANDS,
+VIALS, PARCHMENTS, RODS — each row reading "`<TYPE>` PERMANENTLY
+ADD`<n>` TO AN ATTRIBUTE" or "...TO A SKILL". This directly explains
+the narrative behind this session's earlier `UseAttributeBoostItem`/
+`UseExperienceBoostItem` findings: this is the clue book's in-game
+legend for what each one-time-use item category permanently boosts.
+Its two row-drawing helpers, `sub_135E8` ->
+`DrawItemTypeLegendAttributeRow` and `sub_13630` ->
+`DrawItemTypeLegendSkillRow`, draw the "...TO AN ATTRIBUTE" and
+"...TO A SKILL" row variants respectively.
+
+664 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

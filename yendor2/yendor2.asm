@@ -5081,7 +5081,7 @@ seg009          segment byte public 'CODE' use16
 
 WaitForKeypress proc far                ; CODE XREF: ShowClueBook:loc_10F3E↑P
                 or      word_328CC, 40h ; Loops calling PollKeyboardInput (with a Fade? each iteration) until a key event is seen (errorCode != 0 as an input-event flag, see PollKeyboardInput), then for event types 1-3 calls sub_14D26.
-                call    sub_13463
+                call    ShowConsumableItemTypeLegend
                 call    DrawMouseCursor
 
 loc_1306B:                              ; CODE XREF: WaitForKeypress+17↓j
@@ -5528,8 +5528,8 @@ HandlePagedEntryNavigation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
-                mov     word_2E3FC, 0E1h
+ShowConsumableItemTypeLegend proc near  ; CODE XREF: WaitForKeypress+5↑p
+                mov     word_2E3FC, 0E1h ; Clue book sub-page: draws a message box + DrawClueBookNavBar, then 6 rows -- POTIONS/SCROLLS/WANDS/VIALS/PARCHMENTS/RODS (confirmed via string dump), each explaining that the item type 'PERMANENTLY ADD<n> TO AN ATTRIBUTE' or '...TO A SKILL' via DrawItemTypeLegendAttributeRow/DrawItemTypeLegendSkillRow. Called once from WaitForKeypress (itself called from ShowClueBook).
                 mov     ax, 8A0Dh
                 mov     word_2E3F8, ax
                 mov     ax, 88C0h
@@ -5549,7 +5549,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    writeString
                 mov     _textPos_x, 5Fh ; '_'
                 mov     byte_2E400, 32h ; '2'
-                call    sub_135E8
+                call    DrawItemTypeLegendAttributeRow
                 mov     y, 3Bh ; ';'
                 mov     word_2E530, 0F1h
                 call    DrawPicture
@@ -5560,7 +5560,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    writeString
                 mov     _textPos_x, 5Fh ; '_'
                 mov     byte_2E400, 34h ; '4'
-                call    sub_135E8
+                call    DrawItemTypeLegendAttributeRow
                 mov     y, 4Dh ; 'M'
                 mov     word_2E530, 0F3h
                 call    DrawPicture
@@ -5571,7 +5571,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    writeString
                 mov     _textPos_x, 53h ; 'S'
                 mov     byte_2E400, 36h ; '6'
-                call    sub_135E8
+                call    DrawItemTypeLegendAttributeRow
                 mov     y, 5Fh ; '_'
                 mov     word_2E530, 0F0h
                 call    DrawPicture
@@ -5582,7 +5582,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    writeString
                 mov     _textPos_x, 53h ; 'S'
                 mov     byte_2E400, 31h ; '1'
-                call    sub_13630
+                call    DrawItemTypeLegendSkillRow
                 mov     y, 71h ; 'q'
                 mov     word_2E530, 0F2h
                 call    DrawPicture
@@ -5593,7 +5593,7 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    writeString
                 mov     _textPos_x, 71h ; 'q'
                 mov     byte_2E400, 33h ; '3'
-                call    sub_13630
+                call    DrawItemTypeLegendSkillRow
                 mov     y, 83h
                 mov     word_2E530, 0F4h
                 call    DrawPicture
@@ -5604,17 +5604,18 @@ sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 call    writeString
                 mov     _textPos_x, 4Dh ; 'M'
                 mov     byte_2E400, 35h ; '5'
-                call    sub_13630
+                call    DrawItemTypeLegendSkillRow
                 retn
-sub_13463       endp
+ShowConsumableItemTypeLegend endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_135E8       proc near               ; CODE XREF: sub_13463+64↑p
-                                        ; sub_13463+9D↑p ...
-                mov     _font_fgColor, 0Ah
+DrawItemTypeLegendAttributeRow proc near
+                                        ; CODE XREF: ShowConsumableItemTypeLegend+64↑p
+                                        ; ShowConsumableItemTypeLegend+9D↑p ...
+                mov     _font_fgColor, 0Ah ; Draws one item-type-legend row ending '...TO AN ATTRIBUTE' (a digit char via byte_2E400, repurposed here as a display character). Called from ShowConsumableItemTypeLegend.
                 mov     bx, 8AF6h
                 call    writeString
                 add     _textPos_x, 60h ; '`'
@@ -5630,15 +5631,15 @@ sub_135E8       proc near               ; CODE XREF: sub_13463+64↑p
                 mov     bx, 8B0Ch
                 call    writeString
                 retn
-sub_135E8       endp
+DrawItemTypeLegendAttributeRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13630       proc near               ; CODE XREF: sub_13463+10F↑p
-                                        ; sub_13463+148↑p ...
-                mov     _font_fgColor, 0Ah
+DrawItemTypeLegendSkillRow proc near    ; CODE XREF: ShowConsumableItemTypeLegend+10F↑p
+                                        ; ShowConsumableItemTypeLegend+148↑p ...
+                mov     _font_fgColor, 0Ah ; Draws one item-type-legend row ending '...TO A SKILL' (a digit char via byte_2E400, repurposed here as a display character). Called from ShowConsumableItemTypeLegend.
                 mov     bx, 8AF6h
                 call    writeString
                 add     _textPos_x, 60h ; '`'
@@ -5654,7 +5655,7 @@ sub_13630       proc near               ; CODE XREF: sub_13463+10F↑p
                 mov     bx, 8B1Bh
                 call    writeString
                 retn
-sub_13630       endp
+DrawItemTypeLegendSkillRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12441,7 +12442,7 @@ loc_174FD:                              ; CODE XREF: RunShopScreen+1B5↑j
 loc_17500:                              ; CODE XREF: RunShopScreen+72↑j
                                         ; RunShopScreen+175↑j ...
                 push    errorCode
-                call    sub_17A21
+                call    TriggerShopExitSoundAndPersist
 
 loc_17507:                              ; CODE XREF: RunShopScreen+284↓j
                 and     word_328C6, 0FDFFh
@@ -12983,15 +12984,16 @@ BuildShopCategoryTabList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17A21       proc near               ; CODE XREF: RunShopScreen+1D9↑p
-                test    word_328C6, 80h
+TriggerShopExitSoundAndPersist proc near
+                                        ; CODE XREF: RunShopScreen+1D9↑p
+                test    word_328C6, 80h ; Gated on word_328C6 bits 0x80/0x20; if not skipped and word_32DCE bit 0x2 is clear, plays a sound (ax=6) and decrements [word_32DC4+2]. Always writes back a WORLD.DAT record via sub_27DC6 + FileEntry_Write. Called once from RunShopScreen, reached via its hit-test table index 1.
                 jz      short loc_17A32
                 test    word_328C6, 20h
                 jz      short loc_17A49
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_17A32:                              ; CODE XREF: sub_17A21+6↑j
+loc_17A32:                              ; CODE XREF: TriggerShopExitSoundAndPersist+6↑j
                 test    word_32DCE, 2
                 jnz     short loc_17A49
                 mov     ax, 6
@@ -12999,8 +13001,8 @@ loc_17A32:                              ; CODE XREF: sub_17A21+6↑j
                 mov     bx, word_32DC4
                 dec     word ptr [bx+2]
 
-loc_17A49:                              ; CODE XREF: sub_17A21+E↑j
-                                        ; sub_17A21+17↑j
+loc_17A49:                              ; CODE XREF: TriggerShopExitSoundAndPersist+E↑j
+                                        ; TriggerShopExitSoundAndPersist+17↑j
                 mov     ax, 556Ch
                 mov     bx, 8FFBh       ; this
                 call    sub_27DC6
@@ -13008,7 +13010,7 @@ loc_17A49:                              ; CODE XREF: sub_17A21+E↑j
                 call    FileEntry_Write
                 call    ErrorCheck
                 retn
-sub_17A21       endp
+TriggerShopExitSoundAndPersist endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -46448,8 +46450,8 @@ DrawPicture     endp
 ; =============== S U B R O U T I N E =======================================
 
 
-writeChar       proc far                ; CODE XREF: sub_135E8+1C↑P
-                                        ; sub_13630+1C↑P ...
+writeChar       proc far                ; CODE XREF: DrawItemTypeLegendAttributeRow+1C↑P
+                                        ; DrawItemTypeLegendSkillRow+1C↑P ...
                 push    ax
                 push    bx
                 push    cx

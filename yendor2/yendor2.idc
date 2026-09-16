@@ -1775,9 +1775,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X13451);
 	create_insn	(0X1345C);
+	set_cmt	(0X13463,	"Clue book sub-page: draws a message box + DrawClueBookNavBar, then 6 rows -- POTIONS/SCROLLS/WANDS/VIALS/PARCHMENTS/RODS (confirmed via string dump), each explaining that the item type 'PERMANENTLY ADD<n> TO AN ATTRIBUTE' or '...TO A SKILL' via DrawItemTypeLegendAttributeRow/DrawItemTypeLegendSkillRow. Called once from WaitForKeypress (itself called from ShowClueBook).",	0);
 	create_insn	(0X13463);
+	set_name	(0X13463,	"ShowConsumableItemTypeLegend");
+	set_cmt	(0X135E8,	"Draws one item-type-legend row ending '...TO AN ATTRIBUTE' (a digit char via byte_2E400, repurposed here as a display character). Called from ShowConsumableItemTypeLegend.",	0);
 	create_insn	(0X135E8);
+	set_name	(0X135E8,	"DrawItemTypeLegendAttributeRow");
+	set_cmt	(0X13630,	"Draws one item-type-legend row ending '...TO A SKILL' (a digit char via byte_2E400, repurposed here as a display character). Called from ShowConsumableItemTypeLegend.",	0);
 	create_insn	(0X13630);
+	set_name	(0X13630,	"DrawItemTypeLegendSkillRow");
 	set_cmt	(0X13678,	"Clue book 'F5 INVENTORY ITEMS' entry detail screen: message box + DrawClueBookNavBar, then the entry's icon (word_2E546) and two labeled fields, confirmed via message dump to be 'BASE VALUE:' and 'WEIGHT:'.",	0);
 	create_insn	(0X13678);
 	set_name	(0X13678,	"ShowClueBookItemDetail");
@@ -2952,6 +2958,15 @@ static Bytes_0(void) {
 	set_cmt	(0X179AE,	"Clears the 0x558A/word_2E4AA scratch buffer, then walks the 8-entry category table (0x5572) gated by byte_32DCC's bits, storing [category_id, value] pairs -- ids 1/2/3 get fixed globals (word_32DE2/32DE4/32DE6), others pull from their own catalog record's [+4] field when eligible. Called from RunShopScreen.",	0);
 	create_insn	(0X179AE);
 	set_name	(0X179AE,	"BuildShopCategoryTabList");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X179CB);
 	op_hex		(x,	1);
 	create_insn	(x=0X179FC);
@@ -2959,8 +2974,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X17A05);
 	op_hex		(x,	1);
 	create_insn	(0X17A15);
+	set_cmt	(0X17A21,	"Gated on word_328C6 bits 0x80/0x20; if not skipped and word_32DCE bit 0x2 is clear, plays a sound (ax=6) and decrements [word_32DC4+2]. Always writes back a WORLD.DAT record via sub_27DC6 + FileEntry_Write. Called once from RunShopScreen, reached via its hit-test table index 1.",	0);
 	create_insn	(x=0X17A21);
 	op_hex		(x,	1);
+	set_name	(0X17A21,	"TriggerShopExitSoundAndPersist");
 	create_insn	(x=0X17A29);
 	op_hex		(x,	1);
 	create_insn	(x=0X17A32);
@@ -2975,15 +2992,6 @@ static Bytes_0(void) {
 	set_cmt	(0X17A8D,	"Core 'pay and receive' step of a shop purchase: CompareBCD4/SubBCD4(g_partyGold, [0xB30]) -- bails if unaffordable, shows ShowResourceDepletedOverlay on an exact-drain special case -- then stages the acquired item (word_31946/3194A/3194C) the same way TrySellItemForGold/TryEnhanceItemForGold/TryRepairItemForGold stage theirs. Called from sub_17032, a shop-catalog click handler (main input loop, word_328C6 bit 0x200).",	0);
 	create_insn	(0X17A8D);
 	set_name	(0X17A8D,	"PayGoldAndAcquireItem");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X17ABC);
 	op_hex		(x,	1);
 	create_insn	(0X17AC5);
@@ -4851,6 +4859,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1DB73,	"Ability/spell effect resolver: 85% success roll, then dispatches on word_32974 (ability id) to set a flat damage amount (word_2E49C) and, for several ids, a status-effect flag (word_2E49A) plus duration ([si+0x1C]/[0x1E]) unless already afflicted ([si+0x96]). Two ids (area-effect spells, per ShowClueBookSpellDetail's targeting text) are gated on not being in combat. Called from sub_1DA60.",	0);
 	create_insn	(0X1DB73);
 	set_name	(0X1DB73,	"ResolveAbilityEffect");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1DB9D);
 	create_insn	(0X1DBAE);
 	create_insn	(x=0X1DBB3);
@@ -4884,15 +4901,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X1DCE0);
 	op_hex		(x,	1);
 	set_name	(0X1DCE0,	"RunAlchemyScreen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1DCE6);
 	op_hex		(x,	1);
 	create_insn	(0X1DD00);
@@ -6628,6 +6636,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2438B,	"Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).",	0);
 	create_insn	(0X2438B);
 	set_name	(0X2438B,	"RestoreWorldMapAreaFromEMS");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X243C3,	"Zeroes exactly 0xFA words (500 bytes = the confirmed g_partyRecords stride 0x1F4) at es:di, di=word_328D4 -- wipes one entire party record clean.",	0);
 	create_insn	(0X243C3);
 	set_name	(0X243C3,	"ClearPartyRecord");
@@ -6655,15 +6672,6 @@ static Bytes_2(void) {
 	set_cmt	(0X245AE,	"Draws up to 8 item entries (DrawListEntryLabel, one per _val1.._val8, each skippable via a word_328C4 bit -- likely empty slots) -- matches the 8-item-slot-per-character savegame layout from file-formats.md. Then a selection loop: 'N' next character, 'Q' back, 'E' exit entirely (mirrors ShowPartyMembers' outer iteration). The character inventory/equipment screen.",	0);
 	create_insn	(0X245AE);
 	set_name	(0X245AE,	"ShowCharacterInventory");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X245D4,	"msg",	0);
 	create_insn	(x=0X245FE);
 	op_hex		(x,	1);
@@ -8573,6 +8581,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29CD6);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29CD9);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29CDF);
@@ -8695,15 +8712,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29E30);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29E33);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29E36);
@@ -11333,6 +11341,15 @@ static Bytes_4(void) {
 	set_name	(0X360FF,	"aHelpScreen");
 	create_strlit	(0X3610B,	0X15);
 	set_name	(0X3610B,	"aSelectLegendOr");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36120,	0X10);
 	set_name	(0X36120,	"aInventoryItems");
 	create_strlit	(0X36130,	0XA);
@@ -11397,15 +11414,6 @@ static Bytes_4(void) {
 	set_name	(0X36261,	"aArmorRings");
 	create_strlit	(0X3626D,	0X14);
 	set_name	(0X3626D,	"aAttributeEnhan");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36281,	0X1E);
 	set_name	(0X36281,	"aJewelsArtifact");
 	create_strlit	(0X3629F,	0X15);

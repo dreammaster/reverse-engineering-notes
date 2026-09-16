@@ -1768,7 +1768,14 @@ of `+0x18`: `UseExperienceBoostItem` (was `sub_1B5FD`, `UseItem`'s
 item `[+0xE]` bit `0x400` path) is a one-time-use "tome of
 experience" item that adds a fixed packed-BCD amount straight into
 every eligible living party member's `+0x18`, gated by its own
-one-time-use global flag so it can't be reused.
+one-time-use global flag so it can't be reused. **The narrative
+behind these is now confirmed**: the clue book's
+`ShowConsumableItemTypeLegend` page (was `sub_13463`, reached via
+`WaitForKeypress`/`ShowClueBook`) lists the game's 6 consumable item
+categories — POTIONS, SCROLLS, WANDS, VIALS, PARCHMENTS, RODS — each
+explicitly described as permanently adding to an attribute or a
+skill, exactly matching `UseAttributeBoostItem`/`UseExperienceBoostItem`'s
+behavior.
 
 ### Global quest/world-state flags
 
