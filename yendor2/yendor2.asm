@@ -12909,7 +12909,7 @@ loc_1799D:                              ; CODE XREF: UseAbilityCommand+95↑j
 ; ---------------------------------------------------------------------------
 
 loc_179A6:                              ; CODE XREF: UseAbilityCommand+FD↑j
-                call    sub_17A65
+                call    ConsumeAbilityChargeAndRefresh
                 push    cs
                 call    near ptr RunShopScreen
                 retf
@@ -13011,14 +13011,15 @@ sub_17A21       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17A65       proc near               ; CODE XREF: UseAbilityCommand:loc_179A6↑p
-                call    ShowResourceDepletedOverlay
+ConsumeAbilityChargeAndRefresh proc near
+                                        ; CODE XREF: UseAbilityCommand:loc_179A6↑p
+                call    ShowResourceDepletedOverlay ; Shows ShowResourceDepletedOverlay; unless word_32DCE bit 1 is set (early-out), plays a sound, increments [word_32DC4+2] (plausibly a charge/uses counter), then RefreshDungeonScreen + DrawMouseCursor. Called from UseAbilityCommand.
                 test    word_32DCE, 2
                 jz      short loc_17A73
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_17A73:                              ; CODE XREF: sub_17A65+B↑j
+loc_17A73:                              ; CODE XREF: ConsumeAbilityChargeAndRefresh+B↑j
                 mov     ax, 6
                 call    sub_28412
                 mov     bx, word_32DC4
@@ -13026,7 +13027,7 @@ loc_17A73:                              ; CODE XREF: sub_17A65+B↑j
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 retn
-sub_17A65       endp
+ConsumeAbilityChargeAndRefresh endp
 
 
 ; =============== S U B R O U T I N E =======================================

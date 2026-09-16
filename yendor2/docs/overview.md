@@ -3784,6 +3784,17 @@ drawing the shop-hint text.
 
 484 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ConsumeAbilityChargeAndRefresh
+
+Named `sub_17A65` -> `ConsumeAbilityChargeAndRefresh`, called from
+`UseAbilityCommand`: shows `ShowResourceDepletedOverlay`, then
+increments a plausible charge/uses counter and refreshes the dungeon
+screen. Part of the same "use special ability" flow already tied
+together via `ApplySavingThrowEffect`'s `word_32DC0`/`word_32DC2`
+parameters.
+
+485 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

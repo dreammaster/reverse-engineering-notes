@@ -1557,6 +1557,13 @@ on rollover, before resuming play via `RunDungeonGameLoop`. Uses
 the status area from an EMS cache before drawing, and
 `ClearMessageBoxArea` (shared with `sub_17032` and
 `UseAbilityCommand`) to clear the message-box background.
+`UseAbilityCommand` also calls `ConsumeAbilityChargeAndRefresh` (was
+`sub_17A65`): shows `ShowResourceDepletedOverlay`, then — unless a
+flag (`word_32DCE` bit 1) says otherwise — plays a sound, increments a
+counter at `[word_32DC4+2]` (plausibly the ability's charge/uses
+count, alongside the already-known `word_32DC0`/`word_32DC2`
+effect-id/threshold parameters feeding `ApplySavingThrowEffect`), and
+refreshes the dungeon screen.
 
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`word_36D01`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`

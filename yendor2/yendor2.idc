@@ -2870,7 +2870,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X17A32);
 	op_hex		(x,	1);
 	set_cmt	(0X17A4C,	"this",	0);
+	set_cmt	(0X17A65,	"Shows ShowResourceDepletedOverlay; unless word_32DCE bit 1 is set (early-out), plays a sound, increments [word_32DC4+2] (plausibly a charge/uses counter), then RefreshDungeonScreen + DrawMouseCursor. Called from UseAbilityCommand.",	0);
 	create_insn	(0X17A65);
+	set_name	(0X17A65,	"ConsumeAbilityChargeAndRefresh");
 	create_insn	(x=0X17A6A);
 	op_hex		(x,	1);
 	create_insn	(0X17A73);
