@@ -7008,7 +7008,9 @@ static Bytes_3(void) {
 	set_cmt	(0X25B14,	"Resolves a 1-based party-record id (ax) to its pointer: word_328D6=ax, word_328D4=(ax-1)*0x1F4+0x95F3 (or 0 if ax==0) -- the party-member record table, 500 bytes/record. Called extremely widely throughout the codebase.",	0);
 	create_insn	(0X25B14);
 	set_name	(0X25B14,	"SelectPartyRecordById");
+	set_cmt	(0X25B34,	"The party-member panel-select routine: on a mouse click, hit-tests against table 0x61C2 to pick a party slot + sub-region and draws the matching detail overlay (DrawAfflictionsList/ShowLevelUpMessage/DrawCharacterProtectionsList/DrawAbilityReadinessList/DrawThreeStatBars); on a direct '1'-'4' keypress, selects that party slot and always draws DrawThreeStatBars. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X25B34);
+	set_name	(0X25B34,	"HandlePartyStatusPanelInput");
 	create_insn	(0X25B3E);
 	create_insn	(0X25B65);
 	create_insn	(0X25B78);
@@ -8284,11 +8286,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2940E,	"Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.",	0);
 	create_insn	(0X2940E);
 	set_name	(0X2940E,	"WaitForTargetClick");
-	create_insn	(0X2943F);
-	create_insn	(0X29447);
-	set_cmt	(0X29461,	"Clears the status panel if dirty, sets word_328C4 bit 0x100, positions text (0xF0,0x60) color 0x8A transparent, restores the cursor background if dirty, then calls DrawStringColumn with the caller's bx/cx (preserved through setup) -- a multi-line text column, plausibly an ability's description. Called from UseAbilityCommand and UseAbilityOnTarget.",	0);
-	create_insn	(0X29461);
-	set_name	(0X29461,	"ShowAbilityDescriptionColumn");
 }
 
 //------------------------------------------------------------------------
@@ -8298,6 +8295,11 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2943F);
+	create_insn	(0X29447);
+	set_cmt	(0X29461,	"Clears the status panel if dirty, sets word_328C4 bit 0x100, positions text (0xF0,0x60) color 0x8A transparent, restores the cursor background if dirty, then calls DrawStringColumn with the caller's bx/cx (preserved through setup) -- a multi-line text column, plausibly an ability's description. Called from UseAbilityCommand and UseAbilityOnTarget.",	0);
+	create_insn	(0X29461);
+	set_name	(0X29461,	"ShowAbilityDescriptionColumn");
 	create_insn	(x=0X29468);
 	op_hex		(x,	1);
 	set_cmt	(0X294A3,	"Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.",	0);
@@ -11083,6 +11085,15 @@ static Bytes_4(void) {
 	set_name	(0X35752,	"aRepair");
 	create_strlit	(0X3575F,	0XD);
 	set_name	(0X3575F,	"aThievery");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3576C,	0XD);
 	set_name	(0X3576C,	"aLinguistics");
 	create_strlit	(0X35779,	0XD);
@@ -11104,15 +11115,6 @@ static Bytes_4(void) {
 	create_strlit	(0X35824,	0XC);
 	create_strlit	(0X35830,	0XD);
 	set_name	(0X35830,	"aSpacebarTo");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3583D,	0XD);
 	set_name	(0X3583D,	"aSellItemOr");
 	create_strlit	(0X3584A,	0XD);

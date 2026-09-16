@@ -5942,6 +5942,24 @@ in the "Combat: monster slots and turn order" documentation.
 
 683 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandlePartyStatusPanelInput
+
+Named `sub_25B34` -> `HandlePartyStatusPanelInput`, called from
+`start` and `HandleDungeonInput` — the "party-member panel-select
+routine" already referenced informally in `file-formats.md`
+(`RunAlchemyScreen` "reuses the party-member panel-select routine",
+`SelectAndDrawPartyStatusRow` "fakes that digit as a keypress to
+reuse the main loop's existing panel-select routine"). Two input
+modes, now fully traced: a mouse click hit-tests against a table
+covering all 4 party members' status-panel sub-regions and draws the
+matching detail overlay (`DrawAfflictionsList`/`ShowLevelUpMessage`/
+`DrawCharacterProtectionsList`/`DrawAbilityReadinessList`/
+`DrawThreeStatBars`); a direct `'1'`-`'4'` keypress selects that
+party slot directly and always draws `DrawThreeStatBars` — confirming
+the `SelectAndDrawPartyStatusRow` doc's description exactly.
+
+684 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

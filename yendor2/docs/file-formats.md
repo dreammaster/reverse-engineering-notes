@@ -71,7 +71,7 @@ screen-clicked portrait slots directly to `0x95EB`/`0x95ED`/`0x95EF`/
 `0x95F1`). `SelectAndDrawPartyStatusRow`
 uses the same table to map a party record back to its slot number
 (1-4), fakes that digit as a keypress to reuse the main loop's
-existing panel-select routine (`sub_25B34`), then draws that member's
+existing panel-select routine (`HandlePartyStatusPanelInput`), then draws that member's
 status-bar row: portrait icon, name, level (`+0x16`), packed-BCD XP
 (`+0x18`) — called both from a `UseItemType_400` path and from the
 F1-F4/click-portrait party-member selection handler. The main
@@ -137,7 +137,7 @@ upgraded this from "plausibly" to confirmed;
 (`RunTitleScreen`'s `E` handler, `ShowCharacterSkills`,
 `RunConversation`, `UseAbilityOnTarget`'s `0xDFBB` table, and now a
 "resting" bit in `RestCharacter`). **Fully mapped** via
-`DrawAfflictionsList` (was `sub_25D82`, called from `sub_25B34`), which
+`DrawAfflictionsList` (was `sub_25D82`, called from `HandlePartyStatusPanelInput`), which
 draws the header "AFFLICTIONS:" then tests every individual bit and
 shows the matching name (or "NONE"):
 `0x2000`=**DISEASED**, `0x4000`=**POISONED**, `0x8000`=**SICK**,
@@ -183,7 +183,7 @@ summed into a trap/status effect's resistance-check total, selected by
 one of 9 matching high bits (`0x8000`..`0x80`) in the effect-definition
 record's cost flags. **Now identified by name** via
 `DrawCharacterProtectionsList` (was `sub_25FCD`, called from
-`sub_25B34`), which draws "PROTECTIONS:" and pairs each value with its
+`HandlePartyStatusPanelInput`), which draws "PROTECTIONS:" and pairs each value with its
 exact affliction name, in order: `+0x20`=**DISEASE**,
 `+0x22`=**POISON**, `+0x24`=**SICKNESS**, `+0x26`=**STONING**,
 `+0x28`=**FROZEN**, `+0x2A`=**PARALYZE**, `+0x2C`=**CURSING**,
@@ -1652,7 +1652,7 @@ cached area then redraws a fixed picture via `DrawFixedStatusIcon` (was
 `DrawPartyMemberPortrait` uses, drawn at a fixed screen position; which
 specific HUD icon this is isn't confirmed. `HandlePortraitClick`
 is the mouse-click counterpart to the keyboard `1`-`4` selector
-(`sub_25B34`): hit-tests the 4 portrait zones and sets the matching
+(`HandlePartyStatusPanelInput`): hit-tests the 4 portrait zones and sets the matching
 highlight bit when clicked. Both draw via `ShowPartyPortraitForSlot`
 → `DrawPartyMemberPortrait`: the character's icon (`+0x14`), a status
 bar, and a condition icon selected by `+0x15C`/`+0x10`, plus

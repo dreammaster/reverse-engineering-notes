@@ -586,7 +586,7 @@ loc_104CF:                              ; CODE XREF: start+4C3↑j
 ; ---------------------------------------------------------------------------
 
 loc_104D2:                              ; CODE XREF: start+4B7↑j
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -10355,7 +10355,7 @@ loc_164EE:                              ; CODE XREF: HandleDungeonInput+E2↑j
                 jl      short loc_16501
                 cmp     byte_2E400, 34h ; '4'
                 jg      short loc_16501
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
 
 loc_16501:                              ; CODE XREF: HandleDungeonInput+EC↑j
                                         ; HandleDungeonInput+F3↑j
@@ -10498,7 +10498,7 @@ loc_16620:                              ; CODE XREF: HandleDungeonInput+215↑j
                 jnz     short loc_16645
                 cmp     word_31946, 0
                 jnz     short loc_16634
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
@@ -12295,7 +12295,7 @@ loc_173BD:                              ; CODE XREF: RunShopScreen+7A↑j
 ; ---------------------------------------------------------------------------
 
 loc_173D1:                              ; CODE XREF: RunShopScreen+97↑j
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
 
 loc_173D6:                              ; CODE XREF: RunShopScreen+82↑j
                 jmp     loc_17350
@@ -12404,7 +12404,7 @@ loc_17485:                              ; CODE XREF: RunShopScreen+149↑j
 loc_174A2:                              ; CODE XREF: RunShopScreen+132↑j
                 cmp     word_31946, 0
                 jnz     short loc_174B1
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
@@ -14792,7 +14792,7 @@ loc_1878E:                              ; CODE XREF: sub_1869D+68↑j
 ; ---------------------------------------------------------------------------
 
 loc_18798:                              ; CODE XREF: sub_1869D+F6↑j
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -15255,7 +15255,7 @@ loc_18BBB:                              ; CODE XREF: sub_1869D+519↑j
                 jl      short loc_18BD1
                 cmp     byte_2E400, 34h ; '4'
                 jg      short loc_18BD1
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -16747,7 +16747,7 @@ SelectAndDrawPartyStatusRow proc near   ; CODE XREF: RunItemServiceRecipientLoop
 
 loc_19988:                              ; CODE XREF: SelectAndDrawPartyStatusRow+10↑j
                                         ; SelectAndDrawPartyStatusRow+1D↑j ...
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
                 mov     x, 0Fh
                 mov     y, 17h
                 mov     _font_bgTransparent, 0
@@ -24773,7 +24773,7 @@ loc_1DE23:                              ; CODE XREF: RunAlchemyScreen+13E↑j
                 jle     short loc_1DE40
 
 loc_1DE33:                              ; CODE XREF: RunAlchemyScreen+15E↓j
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
@@ -24848,7 +24848,7 @@ loc_1DEA2:                              ; CODE XREF: RunAlchemyScreen+112↑j
                 jle     short loc_1DEDF
 
 loc_1DED2:                              ; CODE XREF: RunAlchemyScreen+1FD↓j
-                call    sub_25B34
+                call    HandlePartyStatusPanelInput
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
@@ -38601,14 +38601,14 @@ seg086          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25B34       proc far                ; CODE XREF: start:loc_104D2↑P
+HandlePartyStatusPanelInput proc far    ; CODE XREF: start:loc_104D2↑P
                                         ; HandleDungeonInput+F5↑P ...
-                cmp     byte_2E400, 0
+                cmp     byte_2E400, 0   ; The party-member panel-select routine: on a mouse click, hit-tests against table 0x61C2 to pick a party slot + sub-region and draws the matching detail overlay (DrawAfflictionsList/ShowLevelUpMessage/DrawCharacterProtectionsList/DrawAbilityReadinessList/DrawThreeStatBars); on a direct '1'-'4' keypress, selects that party slot and always draws DrawThreeStatBars. Called from `start` and HandleDungeonInput.
                 jz      short loc_25B3E
                 jmp     loc_25BFB
 ; ---------------------------------------------------------------------------
 
-loc_25B3E:                              ; CODE XREF: sub_25B34+5↑j
+loc_25B3E:                              ; CODE XREF: HandlePartyStatusPanelInput+5↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
@@ -38624,7 +38624,7 @@ loc_25B3E:                              ; CODE XREF: sub_25B34+5↑j
                 jmp     short loc_25B9F
 ; ---------------------------------------------------------------------------
 
-loc_25B65:                              ; CODE XREF: sub_25B34+2A↑j
+loc_25B65:                              ; CODE XREF: HandlePartyStatusPanelInput+2A↑j
                 mov     si, word_36E4D
                 cmp     ax, 0Ch
                 jl      short locret_25B9E
@@ -38634,7 +38634,7 @@ loc_25B65:                              ; CODE XREF: sub_25B34+2A↑j
                 jmp     short loc_25B9F
 ; ---------------------------------------------------------------------------
 
-loc_25B78:                              ; CODE XREF: sub_25B34+3D↑j
+loc_25B78:                              ; CODE XREF: HandlePartyStatusPanelInput+3D↑j
                 mov     si, word_36E4F
                 cmp     ax, 16h
                 jl      short locret_25B9E
@@ -38644,7 +38644,7 @@ loc_25B78:                              ; CODE XREF: sub_25B34+3D↑j
                 jmp     short loc_25B9F
 ; ---------------------------------------------------------------------------
 
-loc_25B8B:                              ; CODE XREF: sub_25B34+50↑j
+loc_25B8B:                              ; CODE XREF: HandlePartyStatusPanelInput+50↑j
                 mov     si, word_36E51
                 cmp     ax, 20h ; ' '
                 jl      short locret_25B9E
@@ -38654,13 +38654,13 @@ loc_25B8B:                              ; CODE XREF: sub_25B34+50↑j
                 jmp     short loc_25B9F
 ; ---------------------------------------------------------------------------
 
-locret_25B9E:                           ; CODE XREF: sub_25B34+1C↑j
-                                        ; sub_25B34+25↑j ...
+locret_25B9E:                           ; CODE XREF: HandlePartyStatusPanelInput+1C↑j
+                                        ; HandlePartyStatusPanelInput+25↑j ...
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_25B9F:                              ; CODE XREF: sub_25B34+2F↑j
-                                        ; sub_25B34+42↑j ...
+loc_25B9F:                              ; CODE XREF: HandlePartyStatusPanelInput+2F↑j
+                                        ; HandlePartyStatusPanelInput+42↑j ...
                 cmp     si, 0
                 jz      short locret_25B9E
                 mov     word_2E40A, ax
@@ -38677,14 +38677,14 @@ loc_25B9F:                              ; CODE XREF: sub_25B34+2F↑j
                 jmp     short loc_25BF0
 ; ---------------------------------------------------------------------------
 
-loc_25BCD:                              ; CODE XREF: sub_25B34+92↑j
+loc_25BCD:                              ; CODE XREF: HandlePartyStatusPanelInput+92↑j
                 cmp     ax, 6
                 jnz     short loc_25BD7
                 call    DrawThreeStatBars
                 jmp     short loc_25BF0
 ; ---------------------------------------------------------------------------
 
-loc_25BD7:                              ; CODE XREF: sub_25B34+9C↑j
+loc_25BD7:                              ; CODE XREF: HandlePartyStatusPanelInput+9C↑j
                 cmp     ax, 5
                 jnz     short loc_25BE2
                 push    cs
@@ -38692,7 +38692,7 @@ loc_25BD7:                              ; CODE XREF: sub_25B34+9C↑j
                 jmp     short loc_25BF0
 ; ---------------------------------------------------------------------------
 
-loc_25BE2:                              ; CODE XREF: sub_25B34+A6↑j
+loc_25BE2:                              ; CODE XREF: HandlePartyStatusPanelInput+A6↑j
                 cmp     ax, 3
                 jnz     short loc_25BED
                 push    cs
@@ -38700,44 +38700,44 @@ loc_25BE2:                              ; CODE XREF: sub_25B34+A6↑j
                 jmp     short loc_25BF0
 ; ---------------------------------------------------------------------------
 
-loc_25BED:                              ; CODE XREF: sub_25B34+B1↑j
+loc_25BED:                              ; CODE XREF: HandlePartyStatusPanelInput+B1↑j
                 call    DrawAfflictionsList
 
-loc_25BF0:                              ; CODE XREF: sub_25B34+97↑j
-                                        ; sub_25B34+A1↑j ...
+loc_25BF0:                              ; CODE XREF: HandlePartyStatusPanelInput+97↑j
+                                        ; HandlePartyStatusPanelInput+A1↑j ...
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_25BFB:                              ; CODE XREF: sub_25B34+7↑j
+loc_25BFB:                              ; CODE XREF: HandlePartyStatusPanelInput+7↑j
                 cmp     byte_2E400, 31h ; '1'
                 jnz     short loc_25C08
                 mov     si, g_partySlotAssignment
                 jmp     short loc_25C2D
 ; ---------------------------------------------------------------------------
 
-loc_25C08:                              ; CODE XREF: sub_25B34+CC↑j
+loc_25C08:                              ; CODE XREF: HandlePartyStatusPanelInput+CC↑j
                 cmp     byte_2E400, 32h ; '2'
                 jnz     short loc_25C15
                 mov     si, word_36E4D
                 jmp     short loc_25C2D
 ; ---------------------------------------------------------------------------
 
-loc_25C15:                              ; CODE XREF: sub_25B34+D9↑j
+loc_25C15:                              ; CODE XREF: HandlePartyStatusPanelInput+D9↑j
                 cmp     byte_2E400, 33h ; '3'
                 jnz     short loc_25C22
                 mov     si, word_36E4F
                 jmp     short loc_25C2D
 ; ---------------------------------------------------------------------------
 
-loc_25C22:                              ; CODE XREF: sub_25B34+E6↑j
+loc_25C22:                              ; CODE XREF: HandlePartyStatusPanelInput+E6↑j
                 cmp     byte_2E400, 34h ; '4'
                 jnz     short locret_25C60
                 mov     si, word_36E51
 
-loc_25C2D:                              ; CODE XREF: sub_25B34+D2↑j
-                                        ; sub_25B34+DF↑j ...
+loc_25C2D:                              ; CODE XREF: HandlePartyStatusPanelInput+D2↑j
+                                        ; HandlePartyStatusPanelInput+DF↑j ...
                 cmp     si, 0
                 jz      short locret_25C60
                 dec     si
@@ -38753,17 +38753,17 @@ loc_25C2D:                              ; CODE XREF: sub_25B34+D2↑j
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
-locret_25C60:                           ; CODE XREF: sub_25B34+F3↑j
-                                        ; sub_25B34+FC↑j
+locret_25C60:                           ; CODE XREF: HandlePartyStatusPanelInput+F3↑j
+                                        ; HandlePartyStatusPanelInput+FC↑j
                 retf
-sub_25B34       endp
+HandlePartyStatusPanelInput endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 ShowLevelUpMessage proc far             ; CODE XREF: CheckAndAnnounceLevelUp+33↑P
-                                        ; sub_25B34+B4↑p
+                                        ; HandlePartyStatusPanelInput+B4↑p
                 or      word_328C4, 100h ; ShowLevelUpMessage(si=character): shows current level [+0x16], and if [+0x1E] (pending new level, from CheckForLevelUp) is nonzero, also shows it as a second line -- the level-up notification screen.
                 call    DrawCharacterNameHeader
                 mov     _font_fgColor, 0AAh
@@ -38877,7 +38877,7 @@ DrawAbilityReadinessList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawAfflictionsList proc near           ; CODE XREF: sub_25B34:loc_25BED↑p
+DrawAfflictionsList proc near           ; CODE XREF: HandlePartyStatusPanelInput:loc_25BED↑p
                 call    DrawCharacterNameHeader ; Draws 'AFFLICTIONS:' then every active +0x1C affliction bit by name: 0x2000 DISEASED, 0x4000 POISONED, 0x8000 SICK, 0x400 STONED, 0x800 FROZEN, 0x1000 PARALYZED, 0x80 CURSED, 0x100 HEXED, 0x200 JINXED (or 'NONE' if none of 0xFF80 are set). The complete map of +0x1C's affliction bits. Called from sub_25B34.
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7AB3h       ; msg
@@ -39027,8 +39027,8 @@ DrawCharacterNameHeader endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawThreeStatBars proc near             ; CODE XREF: sub_25B34+9E↑p
-                                        ; sub_25B34+11F↑p
+DrawThreeStatBars proc near             ; CODE XREF: HandlePartyStatusPanelInput+9E↑p
+                                        ; HandlePartyStatusPanelInput+11F↑p
                 call    DrawCharacterNameHeader ; Draws 'HEALTH:' (+0x52/+0x92), 'MAGIC:' (+0x54/+0x94), and 'WEIGHT:' (+0x118/+0x56 -- confirms carried weight / max carry capacity) as three threshold-colored stat rows. Shows 'DEAD' instead of the HEALTH fraction when +0x1C bit 0x40 is set -- confirms that bit as the dead/incapacitated flag. Called from sub_25B34.
                 mov     _font_fgColor, 59h ; 'Y'
                 mov     ax, [si+52h]
@@ -39093,7 +39093,7 @@ DrawThreeStatBars endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawCharacterProtectionsList proc near  ; CODE XREF: sub_25B34+94↑p
+DrawCharacterProtectionsList proc near  ; CODE XREF: HandlePartyStatusPanelInput+94↑p
                 call    DrawCharacterNameHeader ; Draws 'PROTECTIONS:' plus 9 rows pairing DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/CURSING/HEXING/JINXING (table 0x7B31) with their values at +0x20..+0x30 -- confirms, by name, the '9 contiguous resistance values' found via RollEffectResistance. Called from sub_25B34.
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7B24h       ; msg
