@@ -3588,6 +3588,18 @@ file-formats.md rather than treating the two uses as unrelated.
 
 457 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawAnimationFrameAndAdvance, WriteContainerSubBlock
+
+Named `sub_2D3FE` -> `DrawAnimationFrameAndAdvance` (a small, generic
+animation-frame-cycler called from the still-unnamed combat dispatcher
+`sub_2C0FE`) and `sub_2776F` -> `WriteContainerSubBlock` (a low-level
+`FileEntry_Write` helper called 3 times from an unnamed caller for 3
+party-record sub-blocks whose identity isn't confirmed). Both are
+narrow, self-contained, well-evidenced helpers named without forcing
+names on their larger, still-ambiguous callers.
+
+459 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

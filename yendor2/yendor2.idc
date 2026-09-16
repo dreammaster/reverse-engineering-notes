@@ -7180,7 +7180,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X2770B);
 	op_hex		(x,	1);
 	create_insn	(0X2772C);
+	set_cmt	(0X2776F,	"Writes a data block (bx=address, ax=count, stored via word_36863) using the sub_27E3A/FileEntry_Write(errorCode=0xB) pattern. Called 3 times from sub_2772C for 3 party-record sub-blocks whose identity isn't confirmed.",	0);
 	create_insn	(0X2776F);
+	set_name	(0X2776F,	"WriteContainerSubBlock");
 	set_cmt	(0X27774,	"this",	0);
 	create_insn	(0X2778D);
 	create_insn	(x=0X277AD);
@@ -9681,8 +9683,10 @@ static Bytes_3(void) {
 	create_insn	(x=0X2D3E6);
 	op_hex		(x,	1);
 	set_cmt	(0X2D3F5,	"ticks",	0);
+	set_cmt	(0X2D3FE,	"Draws a picture (ax=id, bx=x) guarded by word_328C6 bit 0, then returns the next frame index (ax+1, wrapping to word_332EC once it reaches word_332EC+word_332EE). Called from the still-unnamed combat dispatcher sub_2C0FE.",	0);
 	create_insn	(x=0X2D3FE);
 	op_hex		(x,	1);
+	set_name	(0X2D3FE,	"DrawAnimationFrameAndAdvance");
 	create_insn	(x=0X2D40F);
 	op_hex		(x,	1);
 	create_insn	(0X2D428);
@@ -11147,6 +11151,15 @@ static Bytes_3(void) {
 	set_name	(0X3658C,	"aInA3x3Area");
 	create_strlit	(0X3659A,	0XE);
 	set_name	(0X3659A,	"aAtADistance");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X365A8,	0X14);
 	set_name	(0X365A8,	"aOutOfHandToHan");
 	create_strlit	(0X365BC,	0X8);
@@ -11159,15 +11172,6 @@ static Bytes_3(void) {
 	set_name	(0X365DC,	"aUndead_0");
 	create_strlit	(0X365E3,	0X9);
 	set_name	(0X365E3,	"aCreation");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X365EC,	0XA);
 	set_name	(0X365EC,	"aMagic_1");
 	create_strlit	(0X365F6,	0XD);

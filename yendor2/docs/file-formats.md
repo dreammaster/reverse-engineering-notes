@@ -299,6 +299,14 @@ write-back as `SaveAndCloseContainer` minus the marker-clear) — a
 like the repair minigame, presumably so an in-progress bag's state
 isn't lost if the action fails.
 
+A related low-level primitive: `WriteContainerSubBlock` (was
+`sub_2776F`) writes a data block (address + count) via the same
+`FileEntry_Write(errorCode=0xB)` pattern. Called 3 times from an
+unnamed caller (`sub_2772C`) for 3 party-record sub-blocks at
+`+0x17E`/`+0x180`, `+0x1A4`/`+0x1A6`, `+0x1CA`/`+0x1CC` (each a
+count field followed by its data, written only when the count is
+nonzero) — the identity of those 3 sub-blocks isn't confirmed.
+
 ### Party travel / fast-travel
 
 `TravelToDestination` (called from `start` and `ExamineTarget`) is the
@@ -755,7 +763,11 @@ combat-adjacent helpers this session named individually
 `ScrollCorridorBackgroundFromEMS`, and `AnimateEffectFrame` — one
 animation frame, same shape as `AnimateProjectileStep` but a different
 layer flag and wait length, for some other in-viewport effect
-sequence) without itself being traced.
+sequence) without itself being traced. Also called (twice) from it:
+`DrawAnimationFrameAndAdvance` (was `sub_2D3FE`) — a small, generic
+"draw this animation frame, return the next (wrapping) frame index"
+cycler, drawing picture `ax` at x=`bx` and advancing/wrapping the frame
+counter within `[word_332EC, word_332EC+word_332EE)`.
 
 **Ranged attacks and area-effect abilities against a corridor monster**:
 `ResolveAttackOrAbilityAction` (called from `sub_1D4B8`, an unnamed

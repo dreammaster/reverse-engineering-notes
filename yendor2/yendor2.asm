@@ -41796,7 +41796,7 @@ sub_2772C       proc near               ; CODE XREF: sub_274B4+1F1↑p
                 add     bx, 180h
                 mov     ax, [si+17Eh]
                 or      ax, ax
-                call    sub_2776F
+                call    WriteContainerSubBlock
 
 loc_27742:                              ; CODE XREF: sub_2772C+5↑j
                 cmp     word ptr [si+1A4h], 0
@@ -41805,7 +41805,7 @@ loc_27742:                              ; CODE XREF: sub_2772C+5↑j
                 add     bx, 1A6h
                 mov     ax, [si+1A4h]
                 or      ax, ax
-                call    sub_2776F
+                call    WriteContainerSubBlock
 
 loc_27758:                              ; CODE XREF: sub_2772C+1B↑j
                 cmp     word ptr [si+1CAh], 0
@@ -41814,7 +41814,7 @@ loc_27758:                              ; CODE XREF: sub_2772C+1B↑j
                 add     bx, 1CCh
                 mov     ax, [si+1CAh]
                 or      ax, ax
-                call    sub_2776F
+                call    WriteContainerSubBlock
 
 locret_2776E:                           ; CODE XREF: sub_2772C+31↑j
                 retn
@@ -41824,9 +41824,9 @@ sub_2772C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2776F       proc near               ; CODE XREF: sub_2772C+13↑p
+WriteContainerSubBlock proc near        ; CODE XREF: sub_2772C+13↑p
                                         ; sub_2772C+29↑p ...
-                mov     word_36863, ax
+                mov     word_36863, ax  ; Writes a data block (bx=address, ax=count, stored via word_36863) using the sub_27E3A/FileEntry_Write(errorCode=0xB) pattern. Called 3 times from sub_2772C for 3 party-record sub-blocks whose identity isn't confirmed.
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
                 call    sub_27E3A
@@ -41834,7 +41834,7 @@ sub_2776F       proc near               ; CODE XREF: sub_2772C+13↑p
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_2776F       endp
+WriteContainerSubBlock endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -52661,19 +52661,19 @@ loc_2D0EE:                              ; CODE XREF: sub_2C0FE+1034↓j
                 push    cx
                 mov     bx, 8
                 mov     ax, word_3293E
-                call    sub_2D3FE
+                call    DrawAnimationFrameAndAdvance
                 mov     word_3293E, ax
                 mov     ax, word_32940
                 mov     bx, 40h ; '@'
-                call    sub_2D3FE
+                call    DrawAnimationFrameAndAdvance
                 mov     word_32940, ax
                 mov     ax, word_32942
                 mov     bx, 78h ; 'x'
-                call    sub_2D3FE
+                call    DrawAnimationFrameAndAdvance
                 mov     word_32942, ax
                 mov     ax, word_32944
                 mov     bx, 0B0h
-                call    sub_2D3FE
+                call    DrawAnimationFrameAndAdvance
                 mov     word_32944, ax
                 call    DrawMouseCursor
                 call    RestoreCorridorBackgroundFromEMS
@@ -53000,9 +53000,9 @@ AnimateEffectFrame endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D3FE       proc near               ; CODE XREF: sub_2C0FE+FF7↑p
+DrawAnimationFrameAndAdvance proc near  ; CODE XREF: sub_2C0FE+FF7↑p
                                         ; sub_2C0FE+1003↑p ...
-                or      word_328C6, 1
+                or      word_328C6, 1   ; Draws a picture (ax=id, bx=x) guarded by word_328C6 bit 0, then returns the next frame index (ax+1, wrapping to word_332EC once it reaches word_332EC+word_332EE). Called from the still-unnamed combat dispatcher sub_2C0FE.
                 mov     word_2E530, ax
                 mov     x, bx
                 call    DrawPicture
@@ -53015,9 +53015,9 @@ sub_2D3FE       proc near               ; CODE XREF: sub_2C0FE+FF7↑p
                 jl      short locret_2D427
                 mov     ax, word_332EC
 
-locret_2D427:                           ; CODE XREF: sub_2D3FE+24↑j
+locret_2D427:                           ; CODE XREF: DrawAnimationFrameAndAdvance+24↑j
                 retn
-sub_2D3FE       endp
+DrawAnimationFrameAndAdvance endp
 
 
 ; =============== S U B R O U T I N E =======================================
