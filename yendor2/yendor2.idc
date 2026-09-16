@@ -7823,10 +7823,18 @@ static Bytes_3(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X28A14,	"ShowErr_ProblemRetrievingConvo");
+	set_cmt	(0X28A19,	"ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.",	0);
 	create_insn	(0X28A19);
+	set_name	(0X28A19,	"ErrorExitCode281");
+	set_cmt	(0X28A1F,	"ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.",	0);
 	create_insn	(0X28A1F);
+	set_name	(0X28A1F,	"ErrorExitCode285");
+	set_cmt	(0X28A25,	"ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.",	0);
 	create_insn	(0X28A25);
+	set_name	(0X28A25,	"ErrorExitCode289");
+	set_cmt	(0X28A2B,	"ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.",	0);
 	create_insn	(0X28A2B);
+	set_name	(0X28A2B,	"ErrorExitCode289Alt");
 	set_cmt	(0X28A31,	"Jump table of error-message handlers, indexed from ErrorCheck. Each entry sets AX to an error-message offset (into the block starting near aMemoryAllocati) then falls into ErrorExit.",	0);
 	create_word	(x=0X28A31);
 	op_plain_offset	(x,	0,	0X286F0);
@@ -9740,6 +9748,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X2D1C2);
 	op_hex		(x,	1);
 	set_name	(0X2D1C2,	"ApplyTargetResistancesToAttack");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D1CD);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D1D5);
@@ -9854,15 +9871,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2D3DC);
 	op_hex		(x,	1);
 	set_name	(0X2D3DC,	"AnimateEffectFrame");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D3E6);
 	op_hex		(x,	1);
 	set_cmt	(0X2D3F5,	"ticks",	0);

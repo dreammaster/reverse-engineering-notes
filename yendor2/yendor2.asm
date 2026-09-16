@@ -44318,37 +44318,37 @@ ShowErr_ProblemRetrievingConvo endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28A19       proc far                ; DATA XREF: seg102:0361↓o
-                mov     ax, 281h
+ErrorExitCode281 proc far               ; DATA XREF: seg102:0361↓o
+                mov     ax, 281h        ; ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.
                 jmp     ErrorExit
-sub_28A19       endp
+ErrorExitCode281 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28A1F       proc far                ; DATA XREF: seg102:0363↓o
-                mov     ax, 285h
+ErrorExitCode285 proc far               ; DATA XREF: seg102:0363↓o
+                mov     ax, 285h        ; ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.
                 jmp     ErrorExit
-sub_28A1F       endp
+ErrorExitCode285 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28A25       proc far                ; DATA XREF: seg102:0365↓o
-                mov     ax, 289h
+ErrorExitCode289 proc far               ; DATA XREF: seg102:0365↓o
+                mov     ax, 289h        ; ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.
                 jmp     ErrorExit
-sub_28A25       endp
+ErrorExitCode289 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28A2B       proc far                ; DATA XREF: seg102:0367↓o
-                mov     ax, 289h
+ErrorExitCode289Alt proc far            ; DATA XREF: seg102:0367↓o
+                mov     ax, 289h        ; ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.
                 jmp     ErrorExit
-sub_28A2B       endp
+ErrorExitCode289Alt endp
 
 ; ---------------------------------------------------------------------------
 ErrorTable      dw offset ErrorExit     ; Jump table of error-message handlers, indexed from ErrorCheck. Each entry sets AX to an error-message offset (into the block starting near aMemoryAllocati) then falls into ErrorExit.
@@ -44367,10 +44367,10 @@ ErrorTable      dw offset ErrorExit     ; Jump table of error-message handlers, 
                 dw offset ShowErr_ProblemRetrievingText
                 dw offset ShowErr_ProblemRetrievingNpc
                 dw offset ShowErr_ProblemRetrievingConvo
-                dw offset sub_28A19
-                dw offset sub_28A1F
-                dw offset sub_28A25
-                dw offset sub_28A2B
+                dw offset ErrorExitCode281
+                dw offset ErrorExitCode285
+                dw offset ErrorExitCode289
+                dw offset ErrorExitCode289Alt
                 align 2
 seg102          ends
 

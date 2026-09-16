@@ -4619,6 +4619,27 @@ plausibly determining available item-use options — though the
 
 551 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the ErrorTable's 4 anomalous trailing entries
+
+Named the last 4 entries of the pre-existing `ErrorTable` jump table
+(indices 16-19): `sub_28A19`/`sub_28A1F`/`sub_28A25`/`sub_28A2B` ->
+`ErrorExitCode281`/`ErrorExitCode285`/`ErrorExitCode289`/
+`ErrorExitCode289Alt`. Every earlier `ErrorTable` entry sets `ax` to
+`offset aXxx`, a real string pointer into the message-text block
+starting near `aMemoryAllocati` (actual address ~`0x28715`+); these
+last four instead set `ax` to a tiny raw value (`0x281`, `0x285`,
+`0x289`, `0x289` again) — two orders of magnitude too small to
+address that same string block, and the last two entries share the
+identical value, breaking the `+4`-per-entry progression the first
+three suggest. This looks like incomplete/vestigial reserved
+error-code slots that never got real message text — possibly related
+to content stripped from this shareware build — rather than anything
+with a discoverable message. Named modestly, without inventing
+message content that isn't actually there; flagged as an open
+curiosity rather than a confirmed finding.
+
+555 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

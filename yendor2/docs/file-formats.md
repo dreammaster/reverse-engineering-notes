@@ -2268,3 +2268,17 @@ entry, didn't fit an obvious role from the entries examined so far).
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not
   worth reverse-engineering in detail (not game logic).
+
+## Minor curiosities
+
+- **`ErrorTable`'s 4 trailing entries look vestigial.** This
+  pre-existing jump table (indexed from `ErrorCheck`) has 16 real
+  entries setting `ax` to `offset aXxx`, a genuine message-string
+  pointer. Its last 4 (`ErrorExitCode281`/`ErrorExitCode285`/
+  `ErrorExitCode289`/`ErrorExitCode289Alt`, was `sub_28A19`/
+  `sub_28A1F`/`sub_28A25`/`sub_28A2B`) instead set `ax` to a tiny raw
+  value (`0x281`/`0x285`/`0x289`/`0x289`) — far too small to address
+  the real message-string block (~`0x28715`+), and the last two share
+  the identical value. Plausibly reserved error-code slots that never
+  got real message text, or an artifact of shareware content removal;
+  not confirmed either way.
