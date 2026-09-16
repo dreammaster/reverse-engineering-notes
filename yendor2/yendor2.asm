@@ -15653,7 +15653,7 @@ loc_18F34:                              ; CODE XREF: sub_18C79+2B2↑j
                 mov     word_31946, 0
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_1B30C
+                call    RecomputeEquipmentStatBonuses
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
                 mov     errorCode, 0
@@ -18995,7 +18995,7 @@ loc_1AB01:                              ; CODE XREF: sub_1AA9B+59↑j
 
 loc_1AB19:                              ; CODE XREF: sub_1AA9B+41↑j
                                         ; sub_1AA9B+71↑j
-                call    sub_1B30C
+                call    RecomputeEquipmentStatBonuses
                 pop     es
                 pop     si
                 pop     di
@@ -19888,9 +19888,9 @@ seg042          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B30C       proc far                ; CODE XREF: sub_18C79+2DE↑P
+RecomputeEquipmentStatBonuses proc far  ; CODE XREF: sub_18C79+2DE↑P
                                         ; sub_1AA9B:loc_1AB19↑P ...
-                push    cx
+                push    cx              ; Resets [si+0x48..0x50]/[si+0x88..0x90] from their base values ([si+0x32..0x3A]/[si+0x72..0x7A]), then adds each equipped item's catalog stat bonus (weapon +0x13A, slot +0x142, 3-array +0x146, 5-array +0x152) via LoadItemCatalogRecord. Also sets/clears [si+0x15C] bit 0x20 from the +0x142 item's catalog flags. A full equipment-derived stat recompute. Called from sub_18C79, sub_1AA9B, and sub_274B4.
                 push    dx
                 push    si
                 push    di
@@ -19928,7 +19928,7 @@ sub_1B30C       proc far                ; CODE XREF: sub_18C79+2DE↑P
                 add     [si+4Ah], ax
                 add     [si+8Ah], ax
 
-loc_1B37C:                              ; CODE XREF: sub_1B30C+50↑j
+loc_1B37C:                              ; CODE XREF: RecomputeEquipmentStatBonuses+50↑j
                 and     word ptr [si+15Ch], 0FFDFh
                 mov     ax, [si+142h]
                 cmp     ax, 0
@@ -19950,8 +19950,8 @@ loc_1B37C:                              ; CODE XREF: sub_1B30C+50↑j
                 xor     ax, ax
                 xor     dx, dx
 
-loc_1B3BF:                              ; CODE XREF: sub_1B30C+91↑j
-                                        ; sub_1B30C+9F↑j ...
+loc_1B3BF:                              ; CODE XREF: RecomputeEquipmentStatBonuses+91↑j
+                                        ; RecomputeEquipmentStatBonuses+9F↑j ...
                 add     [si+4Ch], dx
                 add     [si+8Ch], ax
                 mov     ax, [bx]
@@ -19961,13 +19961,13 @@ loc_1B3BF:                              ; CODE XREF: sub_1B30C+91↑j
                 jz      short loc_1B3DB
                 or      word ptr [si+15Ch], 20h
 
-loc_1B3DB:                              ; CODE XREF: sub_1B30C+7C↑j
-                                        ; sub_1B30C+C8↑j
+loc_1B3DB:                              ; CODE XREF: RecomputeEquipmentStatBonuses+7C↑j
+                                        ; RecomputeEquipmentStatBonuses+C8↑j
                 mov     di, si
                 add     di, 146h
                 mov     cx, 3
 
-loc_1B3E4:                              ; CODE XREF: sub_1B30C+F1↓j
+loc_1B3E4:                              ; CODE XREF: RecomputeEquipmentStatBonuses+F1↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1B3FA
@@ -19977,14 +19977,14 @@ loc_1B3E4:                              ; CODE XREF: sub_1B30C+F1↓j
                 add     [si+50h], ax
                 add     [si+90h], ax
 
-loc_1B3FA:                              ; CODE XREF: sub_1B30C+DC↑j
+loc_1B3FA:                              ; CODE XREF: RecomputeEquipmentStatBonuses+DC↑j
                 add     di, 4
                 loop    loc_1B3E4
                 mov     di, si
                 add     di, 152h
                 mov     cx, 5
 
-loc_1B408:                              ; CODE XREF: sub_1B30C+115↓j
+loc_1B408:                              ; CODE XREF: RecomputeEquipmentStatBonuses+115↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1B41E
@@ -19994,7 +19994,7 @@ loc_1B408:                              ; CODE XREF: sub_1B30C+115↓j
                 add     [si+50h], ax
                 add     [si+90h], ax
 
-loc_1B41E:                              ; CODE XREF: sub_1B30C+100↑j
+loc_1B41E:                              ; CODE XREF: RecomputeEquipmentStatBonuses+100↑j
                 add     di, 2
                 loop    loc_1B408
                 pop     di
@@ -20002,7 +20002,7 @@ loc_1B41E:                              ; CODE XREF: sub_1B30C+100↑j
                 pop     dx
                 pop     cx
                 retf
-sub_1B30C       endp
+RecomputeEquipmentStatBonuses endp
 
 seg042          ends
 
@@ -36114,7 +36114,7 @@ loc_2457F:                              ; CODE XREF: ShowCharacterSkills+121↑j
 loc_2459C:                              ; CODE XREF: ShowCharacterSkills+1C1↑j
                 call    RollCharacterAttributes
                 call    ComputeDerivedCharacterStats
-                call    sub_1B30C
+                call    RecomputeEquipmentStatBonuses
                 call    DrawCharacterStatSheet
                 call    DrawThreeThresholdStats
                 retn
@@ -36721,7 +36721,7 @@ ShowCharacterStats proc near            ; CODE XREF: ShowPartyMembers+37↑p
                                         ; ShowCharacterStats+87↓j ...
                 call    RollCharacterAttributes ; ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.
                 call    ComputeDerivedCharacterStats
-                call    sub_1B30C
+                call    RecomputeEquipmentStatBonuses
                 call    sub_254CC
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
@@ -37287,7 +37287,7 @@ loc_25272:                              ; CODE XREF: ShowCharacterSummary+FB↑j
                                         ; ShowCharacterSummary+12F↑j
                 call    RollCharacterAttributes
                 call    ComputeDerivedCharacterStats
-                call    sub_1B30C
+                call    RecomputeEquipmentStatBonuses
                 jmp     ShowCharacterSummary
 ; ---------------------------------------------------------------------------
 
@@ -39885,7 +39885,7 @@ loc_266EB:                              ; CODE XREF: PlaceItemInSlot+9↑j
                 add     [si+118h], ax
                 mov     ax, [di]
                 call    ApplyMultiStatEffectForItem
-                call    sub_1B30C
+                call    RecomputeEquipmentStatBonuses
                 jmp     short loc_26774
 ; ---------------------------------------------------------------------------
 
@@ -40530,7 +40530,7 @@ loc_26B98:                              ; CODE XREF: PickUpItemFromSlot+38↑j
                 sub     [si+118h], ax
                 mov     ax, word_31948
                 call    RemoveMultiStatEffect
-                call    sub_1B30C
+                call    RecomputeEquipmentStatBonuses
                 jmp     short loc_26C0A
 ; ---------------------------------------------------------------------------
 
@@ -41731,7 +41731,7 @@ loc_2769D:                              ; CODE XREF: sub_274B4+195↑j
                 jz      short loc_276C2
                 mov     ax, word_31948
                 call    ApplyMultiStatEffectForItem
-                call    sub_1B30C
+                call    RecomputeEquipmentStatBonuses
 
 loc_276C2:                              ; CODE XREF: sub_274B4+40↑j
                                         ; sub_274B4+54↑j ...

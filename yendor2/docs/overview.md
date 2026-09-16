@@ -4976,6 +4976,28 @@ uses for its own stat additions.
 
 588 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RecomputeEquipmentStatBonuses — a new equipment-slot layout
+
+Named `sub_1B30C` -> `RecomputeEquipmentStatBonuses`, called from
+`sub_18C79`, `sub_1AA9B`, and directly from the long-open
+`sub_274B4` dispatcher (right after `ApplyMultiStatEffectForItem`) —
+a meaningful new structural finding. For the current party member, it
+resets two 5-word "derived equipment bonus" blocks
+(`[si+0x48..0x50]`/`[si+0x88..0x90]`) from base values
+(`[si+0x32..0x3A]`/`[si+0x72..0x7A]`, both pairs `0x16` apart — a
+*different* pairing scheme than the confirmed `+0x40` base/derived
+attribute convention), then walks the character's equipped-item
+slots — main weapon (`+0x13A`), a second slot (`+0x142`, whose
+catalog-flag bits select which bonus-field pair its value adds into),
+a 3-entry array (`+0x146`), and a 5-entry array (`+0x152`) — adding
+each equipped item's catalog stat bonus into the running totals via
+`LoadItemCatalogRecord`. In short: a full equipment-derived stat
+recompute triggered whenever gear changes. This is the first solid
+structural read on `sub_274B4`'s own equipment-slot layout, though
+the dispatcher itself remains untraced.
+
+589 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

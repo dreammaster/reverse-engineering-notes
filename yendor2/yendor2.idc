@@ -4040,7 +4040,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B2F2);
 	op_hex		(x,	1);
 	create_insn	(0X1B306);
+	set_cmt	(0X1B30C,	"Resets [si+0x48..0x50]/[si+0x88..0x90] from their base values ([si+0x32..0x3A]/[si+0x72..0x7A]), then adds each equipped item's catalog stat bonus (weapon +0x13A, slot +0x142, 3-array +0x146, 5-array +0x152) via LoadItemCatalogRecord. Also sets/clears [si+0x15C] bit 0x20 from the +0x142 item's catalog flags. A full equipment-derived stat recompute. Called from sub_18C79, sub_1AA9B, and sub_274B4.",	0);
 	create_insn	(0X1B30C);
+	set_name	(0X1B30C,	"RecomputeEquipmentStatBonuses");
 	create_insn	(x=0X1B37C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B398);
@@ -5322,9 +5324,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X1FD17);
 	op_hex		(x,	1);
 	set_name	(0X1FD17,	"TickRedrawTimer");
-	set_cmt	(0X1FD24,	"5-minute periodic sweep (AdvanceGameClock). Runs TickAilmentDuration over the 6-entry table at 0x9519 and every party member's 8 main inventory slots ([+0x11A]) -- ailments occupy the same slot storage as items/world-table rows. Calls sub_1FE0A once (a related status sweep, not traced). Sums all 12 known status-duration counters; if all 0, clears word_3295A bit 0x800 so this timer stops firing until something needs it again.",	0);
-	create_insn	(0X1FD24);
-	set_name	(0X1FD24,	"TickWorldAilments");
 }
 
 //------------------------------------------------------------------------
@@ -5334,6 +5333,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1FD24,	"5-minute periodic sweep (AdvanceGameClock). Runs TickAilmentDuration over the 6-entry table at 0x9519 and every party member's 8 main inventory slots ([+0x11A]) -- ailments occupy the same slot storage as items/world-table rows. Calls sub_1FE0A once (a related status sweep, not traced). Sums all 12 known status-duration counters; if all 0, clears word_3295A bit 0x800 so this timer stops firing until something needs it again.",	0);
+	create_insn	(0X1FD24);
+	set_name	(0X1FD24,	"TickWorldAilments");
 	create_insn	(x=0X1FDA2);
 	op_hex		(x,	1);
 	set_cmt	(0X1FDB1,	"TickAilmentDuration(si=slot array, cx=count, dx=elapsed delta): for each 4-byte slot whose [si] is one of the 3 ailment codes (9/0xF/0xC, matching TickStatusEffects), decrements [si+2] by dx; on expiry, zeroes it, bumps [si], and decrements one of 3 global per-ailment counters (0x9425/0x9429/0x942B). At 0, clears the matching word_36C79 bit and flags a redraw.",	0);
@@ -7082,13 +7084,6 @@ static Bytes_2(void) {
 	set_cmt	(0X26846,	"LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).",	0);
 	create_insn	(0X26846);
 	set_name	(0X26846,	"LoadContainerContents");
-	set_cmt	(0X2684B,	"this",	0);
-	set_cmt	(0X26864,	"Restores the cursor, calls PickUpItemFromSlot (no placement step), updates the cursor and portrait. Called from sub_2621C -- the pickup counterpart to PlaceHeldItemIntoEmptySlot.",	0);
-	create_insn	(0X26864);
-	set_name	(0X26864,	"PickUpHeldItemFromSlot");
-	set_cmt	(0X2687B,	"Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.",	0);
-	create_insn	(0X2687B);
-	set_name	(0X2687B,	"PlaceHeldItemIntoEmptySlot");
 }
 
 //------------------------------------------------------------------------
@@ -7098,6 +7093,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2684B,	"this",	0);
+	set_cmt	(0X26864,	"Restores the cursor, calls PickUpItemFromSlot (no placement step), updates the cursor and portrait. Called from sub_2621C -- the pickup counterpart to PlaceHeldItemIntoEmptySlot.",	0);
+	create_insn	(0X26864);
+	set_name	(0X26864,	"PickUpHeldItemFromSlot");
+	set_cmt	(0X2687B,	"Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.",	0);
+	create_insn	(0X2687B);
+	set_name	(0X2687B,	"PlaceHeldItemIntoEmptySlot");
 	set_cmt	(0X268A0,	"Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.",	0);
 	create_insn	(0X268A0);
 	set_name	(0X268A0,	"SwapHeldItemWithSlot");
@@ -9369,12 +9371,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2B9D4);
 	op_hex		(x,	1);
 	set_name	(0X2B9D4,	"ClassifyConversationSkillTier");
-	create_insn	(x=0X2B9EB);
-	op_hex		(x,	1);
-	create_insn	(x=0X2BA04);
-	op_hex		(x,	1);
-	create_insn	(x=0X2BA1D);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -9384,6 +9380,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2B9EB);
+	op_hex		(x,	1);
+	create_insn	(x=0X2BA04);
+	op_hex		(x,	1);
+	create_insn	(x=0X2BA1D);
+	op_hex		(x,	1);
 	create_insn	(x=0X2BA24);
 	op_hex		(x,	1);
 	create_insn	(0X2BA30);

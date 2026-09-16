@@ -1610,7 +1610,18 @@ icon variant when an item's own `[+0xC]` bit `0x400` is set) — a
 individually traced, plus two small overlay icon drawers,
 `DrawPortraitOverlayIconA`/`DrawPortraitOverlayIconB` (each drawing a
 "+1" highlighted icon variant at a fixed offset — exact narrative not
-confirmed). A separate function, `DrawPartyMemberStatusPanel`
+confirmed). **The equipment slot layout extends further**:
+`RecomputeEquipmentStatBonuses` (was `sub_1B30C`, called from
+`sub_18C79`/`sub_1AA9B`/the long-open `sub_274B4`) confirms `+0x13A`
+(main weapon) and `+0x142` as individually-treated slots (matching
+`DrawEquippedItemIcons` above), plus two more slot arrays beyond
+`+0x13E`: a 3-entry array at `+0x146` (stride 4) and a 5-entry array
+at `+0x152` (stride 2) — it sums each equipped item's catalog stat
+bonus (via `LoadItemCatalogRecord`) across all of these into two
+5-word "derived equipment bonus" blocks (`+0x48`-`+0x50`/
+`+0x88`-`+0x90`, reset from base values `+0x32`-`+0x3A`/`+0x72`-`+0x7A`
+first) — the concrete mechanism behind equipped gear's stat
+contribution. A separate function, `DrawPartyMemberStatusPanel`
 (called from the main input loop `sub_1869D`), draws a fuller
 combat-style status panel per party slot: portrait, unconscious/dead
 overlay, three `DrawStatBar` gauges (HP `+0x52`/`+0x92`, MP
