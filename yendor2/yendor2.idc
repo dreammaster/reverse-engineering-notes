@@ -5885,7 +5885,9 @@ static Bytes_0(void) {
 	create_insn	(0X23F58);
 	create_insn	(0X2438B);
 	create_insn	(0X243C3);
+	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: resets some per-member state ([si+0x1C] flag bits, a 16-word scratch area) then draws 3 category headers each followed by a group of skill lines (15 total) -- consistent with the manual's skill list grouped into categories. The character skills display.",	0);
 	create_insn	(0X243D3);
+	set_name	(0X243D3,	"ShowCharacterSkills");
 	set_cmt	(0X243ED,	"msg",	0);
 	create_insn	(x=0X243F9);
 	op_hex		(x,	1);
@@ -5912,6 +5914,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X24612);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X24626);
 	op_hex		(x,	1);
 	create_insn	(x=0X2463A);
@@ -5948,23 +5959,18 @@ static Bytes_0(void) {
 	create_insn	(0X24876);
 	create_insn	(0X24920);
 	create_insn	(0X24983);
+	set_cmt	(0X2498B,	"Text-entry field (13-char max) for the character's name -- non-empty result gets copied into word_328D4+0 (the party-member record's first field) and displayed. ShowPartyMembers pipeline step.",	0);
 	create_insn	(0X2498B);
+	set_name	(0X2498B,	"EditCharacterName");
 	set_cmt	(0X249AC,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X249F3);
 	op_hex		(x,	1);
 	create_insn	(0X24A03);
 	create_insn	(0X24A21);
 	set_cmt	(0X24A52,	"msg",	0);
+	set_cmt	(0X24A5B,	"ShowPartyMembers' second pipeline step: draws a 3x3 grid of equipment-slot icons (DrawPicture, incrementing picture id by 2 per cell) -- fits the manual's equip-slot diagram. Also shows a gender-dependent message ([si+0x10] compared against 2). The character equipment display.",	0);
 	create_insn	(0X24A5B);
+	set_name	(0X24A5B,	"ShowCharacterEquipment");
 	set_cmt	(0X24A75,	"msg",	0);
 	create_insn	(0X24B3D);
 	create_insn	(0X24B52);
@@ -6000,7 +6006,9 @@ static Bytes_1(void) {
 	create_insn	(0X250BB);
 	create_insn	(0X250E5);
 	create_insn	(0X250FE);
+	set_cmt	(0X25103,	"Moderate confidence: last ShowPartyMembers pipeline step. Reuses message pointers ShowCharacterStats also uses (0x7A11, 0x8572) alongside others -- reads as a condensed recap/overview screen rather than fresh content.",	0);
 	create_insn	(0X25103);
+	set_name	(0X25103,	"ShowCharacterSummary");
 	set_cmt	(0X2511E,	"msg",	0);
 	set_cmt	(0X25138,	"msg",	0);
 	create_insn	(0X251E1);
@@ -10336,6 +10344,15 @@ static Bytes_1(void) {
 	set_name	(0X363BF,	"aMagic_0");
 	create_strlit	(0X363C6,	0X8);
 	set_name	(0X363C6,	"aPercent");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X363CE,	0XF);
 	set_name	(0X363CE,	"aPartyAttack");
 	create_strlit	(0X363DD,	0X7);
@@ -10398,15 +10415,6 @@ static Bytes_1(void) {
 	set_name	(0X364FE,	"aClassLevel");
 	create_strlit	(0X3650F,	0X7);
 	set_name	(0X3650F,	"aMp");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36516,	0X7);
 	set_name	(0X36516,	"aNuore_1");
 	create_strlit	(0X3651D,	0X7);

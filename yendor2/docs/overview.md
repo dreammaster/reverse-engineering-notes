@@ -728,6 +728,26 @@ E(xit) keys `ShowPartyMembers`' outer loop uses.
 
 111 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowPartyMembers fully mapped
+
+Named the remaining four `ShowPartyMembers` pipeline steps, completing
+the character review screen end to end: `ShowCharacterSkills` (3
+category headers + 15 skill lines, matching the manual's skill list),
+`ShowCharacterEquipment` (a 3x3 grid of equipment-slot icons, fitting
+the manual's equip diagram), `EditCharacterName` (a 13-character text
+field that writes into the party-member record's first field — pins
+down that record's name field at offset 0), and `ShowCharacterSummary`
+(moderate confidence — reuses `ShowCharacterStats`' message pointers,
+reads as a condensed recap rather than fresh content).
+
+`ShowPartyMembers`' full pipeline is now: `ShowCharacterSkills` →
+`ShowCharacterEquipment` → `ShowCharacterStats` →
+`ShowCharacterInventory` → `EditCharacterName` → `ShowCharacterSummary`,
+iterated per party member with N(ext)/Q(uit)/E(xit) navigation
+throughout.
+
+115 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
