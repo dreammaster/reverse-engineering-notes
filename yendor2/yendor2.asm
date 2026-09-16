@@ -4436,7 +4436,7 @@ loc_12BB8:                              ; CODE XREF: RunClueEntryMenu+2F↑j
 
 loc_12BD1:                              ; CODE XREF: RunClueEntryMenu+3E↑j
                                         ; RunClueEntryMenu+AC↓j
-                call    sub_12DD8
+                call    HandleClueEntryScrollInput
                 cmp     errorCode, 0
                 jz      short loc_12BE0
                 call    ShowClueCategoryEntries
@@ -4683,8 +4683,8 @@ sub_12D5C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12DD8       proc near               ; CODE XREF: RunClueEntryMenu:loc_12BD1↑p
-                cmp     word_2E3EA, 0
+HandleClueEntryScrollInput proc near    ; CODE XREF: RunClueEntryMenu:loc_12BD1↑p
+                cmp     word_2E3EA, 0   ; Pagination handler for RunClueEntryMenu's entry list: 'I' key or a HitTestRegionTable(0x6960) mouse hit region 1 adopts word_2E3F0 into word_2E3EE (errorCode=1) unless word_328CC bit 0x100 defers to sub_13014; 'Q'/region 2 does the same with word_2E3F2 (errorCode=2), deferring to sub_12FED on word_328CC bit 0x80. errorCode=0 if nothing changed. Called from RunClueEntryMenu.
                 jz      short loc_12E52
                 cmp     byte_2E400, 0
                 jz      short loc_12DF6
@@ -4695,7 +4695,7 @@ sub_12DD8       proc near               ; CODE XREF: RunClueEntryMenu:loc_12BD1�
                 jmp     short loc_12E52
 ; ---------------------------------------------------------------------------
 
-loc_12DF6:                              ; CODE XREF: sub_12DD8+C↑j
+loc_12DF6:                              ; CODE XREF: HandleClueEntryScrollInput+C↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6960h
@@ -4705,14 +4705,14 @@ loc_12DF6:                              ; CODE XREF: sub_12DD8+C↑j
                 cmp     ax, 1
                 jnz     short loc_12E2E
 
-loc_12E0F:                              ; CODE XREF: sub_12DD8+13↑j
+loc_12E0F:                              ; CODE XREF: HandleClueEntryScrollInput+13↑j
                 test    word_328CC, 100h
                 jz      short loc_12E1B
                 call    sub_13014
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12E1B:                              ; CODE XREF: sub_12DD8+3D↑j
+loc_12E1B:                              ; CODE XREF: HandleClueEntryScrollInput+3D↑j
                 mov     ax, word_2E3F0
                 cmp     word_2E3EE, ax
                 jz      short loc_12E52
@@ -4721,18 +4721,18 @@ loc_12E1B:                              ; CODE XREF: sub_12DD8+3D↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12E2E:                              ; CODE XREF: sub_12DD8+35↑j
+loc_12E2E:                              ; CODE XREF: HandleClueEntryScrollInput+35↑j
                 cmp     ax, 2
                 jnz     short loc_12E52
 
-loc_12E33:                              ; CODE XREF: sub_12DD8+1A↑j
+loc_12E33:                              ; CODE XREF: HandleClueEntryScrollInput+1A↑j
                 test    word_328CC, 80h
                 jz      short loc_12E3F
                 call    sub_12FED
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12E3F:                              ; CODE XREF: sub_12DD8+61↑j
+loc_12E3F:                              ; CODE XREF: HandleClueEntryScrollInput+61↑j
                 mov     ax, word_2E3F2
                 cmp     word_2E3EE, ax
                 jz      short loc_12E52
@@ -4741,11 +4741,11 @@ loc_12E3F:                              ; CODE XREF: sub_12DD8+61↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12E52:                              ; CODE XREF: sub_12DD8+5↑j
-                                        ; sub_12DD8+1C↑j ...
+loc_12E52:                              ; CODE XREF: HandleClueEntryScrollInput+5↑j
+                                        ; HandleClueEntryScrollInput+1C↑j ...
                 mov     errorCode, 0
                 retn
-sub_12DD8       endp
+HandleClueEntryScrollInput endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5002,7 +5002,7 @@ sub_12FC1       endp
 
 
 sub_12FED       proc near               ; CODE XREF: sub_12D5C+67↑p
-                                        ; sub_12DD8+63↑p
+                                        ; HandleClueEntryScrollInput+63↑p
                 mov     ax, word_2E3F0
                 sub     word_2E3EE, ax
                 add     ax, 38h ; '8'
@@ -5024,7 +5024,7 @@ sub_12FED       endp
 
 
 sub_13014       proc near               ; CODE XREF: sub_12D5C+3C↑p
-                                        ; sub_12DD8+3F↑p
+                                        ; HandleClueEntryScrollInput+3F↑p
                 mov     ax, word_2E3F0
                 sub     word_2E3EE, ax
                 sub     ax, 38h ; '8'

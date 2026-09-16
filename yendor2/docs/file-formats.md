@@ -619,6 +619,16 @@ flag (`word_328CA` bit 1) is clear and that entry's own flag
 (`[+2]` bit `0x8000`) marks it as requiring registration — a shareware
 limitation.
 
+`HandleClueEntryScrollInput` (was `sub_12DD8`) is `RunClueEntryMenu`'s
+entry-list scroll handler — the same "I"/"Q" hotkey convention as
+`HandlePagedEntryNavigation` elsewhere, plus a mouse hit-test
+(`HitTestRegionTable` table `0x6960`) as an alternate input, updating
+current index `word_2E3EE` from candidate `word_2E3F0` ('I') or
+`word_2E3F2` ('Q') and signaling which via `errorCode`
+(1/2/0=unchanged) — unless a `word_328CC` bit (`0x100`/`0x80`) defers
+to a still-unnamed handler instead (`sub_13014`/`sub_12FED`
+respectively).
+
 `HandleClueCategorySelection` (was `sub_14D26`) is `RunClueEntryMenu`'s
 category-switching input handler: keyboard (`ESC`/digit keys, plus
 `K`/`P` hotkeys gated on the same `word_328CC` `0x40`/`0x20` bits

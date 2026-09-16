@@ -1613,7 +1613,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X12DBB);
 	op_hex		(x,	1);
 	create_insn	(0X12DCB);
+	set_cmt	(0X12DD8,	"Pagination handler for RunClueEntryMenu's entry list: 'I' key or a HitTestRegionTable(0x6960) mouse hit region 1 adopts word_2E3F0 into word_2E3EE (errorCode=1) unless word_328CC bit 0x100 defers to sub_13014; 'Q'/region 2 does the same with word_2E3F2 (errorCode=2), deferring to sub_12FED on word_328CC bit 0x80. errorCode=0 if nothing changed. Called from RunClueEntryMenu.",	0);
 	create_insn	(0X12DD8);
+	set_name	(0X12DD8,	"HandleClueEntryScrollInput");
 	create_insn	(0X12DF6);
 	create_insn	(x=0X12E0F);
 	op_hex		(x,	1);
@@ -3418,13 +3420,6 @@ static Bytes_0(void) {
 	set_cmt	(0X190E9,	"Resolves a party record (SelectPartyRecordById), calls sub_266A9 (not traced), then restores a portrait-sized EMS-cached region (page 0x55D8) at a position from word_328BC/word_328C0. Called from sub_1869D and sub_18F6C.",	0);
 	create_insn	(0X190E9);
 	set_name	(0X190E9,	"RestorePortraitAreaAtPosition");
-	create_insn	(0X190EF);
-	set_cmt	(0X19133,	"Resolves a party slot's record id to a pointer (sub_25B14) then draws its portrait (DrawPartyMemberPortrait). Called from RefreshPartyPortraits/HandlePortraitClick.",	0);
-	create_insn	(0X19133);
-	set_name	(0X19133,	"ShowPartyPortraitForSlot");
-	set_cmt	(0X19140,	"Space-bar 'repair item' action (sub_1869D, word_328C6 bit 4), sibling of TrySellItemForGold/TryEnhanceItemForGold. Eligibility via sub_1B20C; on failure 'I CAN NOT REPAIR THAT' (msg 0x81E6). Else CompareBCD4/SubBCD4(g_partyGold, [table 0x5082]) -- 'YOU DON'T HAVE ENOUGH GOLD!' on failure (msg 0x8376, shared with TryEnhanceItemForGold) -- then restores the item from word_3194C into word_31948 (fixing the same item, not upgrading to a new catalog entry) and reloads it. Distinct from the skill-based RepairItemCommand minigame, which can critically fail and destroy the item.",	0);
-	create_insn	(0X19140);
-	set_name	(0X19140,	"TryRepairItemForGold");
 }
 
 //------------------------------------------------------------------------
@@ -3434,6 +3429,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X190EF);
+	set_cmt	(0X19133,	"Resolves a party slot's record id to a pointer (sub_25B14) then draws its portrait (DrawPartyMemberPortrait). Called from RefreshPartyPortraits/HandlePortraitClick.",	0);
+	create_insn	(0X19133);
+	set_name	(0X19133,	"ShowPartyPortraitForSlot");
+	set_cmt	(0X19140,	"Space-bar 'repair item' action (sub_1869D, word_328C6 bit 4), sibling of TrySellItemForGold/TryEnhanceItemForGold. Eligibility via sub_1B20C; on failure 'I CAN NOT REPAIR THAT' (msg 0x81E6). Else CompareBCD4/SubBCD4(g_partyGold, [table 0x5082]) -- 'YOU DON'T HAVE ENOUGH GOLD!' on failure (msg 0x8376, shared with TryEnhanceItemForGold) -- then restores the item from word_3194C into word_31948 (fixing the same item, not upgrading to a new catalog entry) and reloads it. Distinct from the skill-based RepairItemCommand minigame, which can critically fail and destroy the item.",	0);
+	create_insn	(0X19140);
+	set_name	(0X19140,	"TryRepairItemForGold");
 	create_insn	(x=0X19152);
 	op_hex		(x,	1);
 	create_insn	(0X19187);
@@ -5433,6 +5435,15 @@ static Bytes_1(void) {
 	set_cmt	(0X208CA,	"Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.",	0);
 	create_insn	(0X208CA);
 	set_name	(0X208CA,	"TickStatusEffects");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X208F9);
 	create_insn	(x=0X20900);
 	op_hex		(x,	1);
@@ -5457,15 +5468,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X209A9);
 	op_hex		(x,	1);
 	create_insn	(0X209C0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X209C9);
 	create_insn	(0X209D2);
 	create_insn	(0X209FF);
@@ -7387,6 +7389,15 @@ static Bytes_2(void) {
 	set_cmt	(0X27A98,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
 	create_insn	(0X27A98);
 	set_name	(0X27A98,	"GetGlobalFlagBitAndWord");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X27AC1,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).",	0);
 	create_insn	(0X27AC1);
 	set_name	(0X27AC1,	"GetRecordFlagBitAndWord_CA");
@@ -7400,15 +7411,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27B1B);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27B42);
 	create_insn	(0X27B63);
 	create_insn	(0X27B84);
@@ -10130,6 +10132,15 @@ static Bytes_3(void) {
 	create_word	(0X328C2);
 	create_word	(0X328C4);
 	create_word	(0X328C6);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X328C8);
 	create_word	(0X328CA);
 	create_word	(0X328CC);
@@ -10166,15 +10177,6 @@ static Bytes_3(void) {
 	create_word	(0X3290C);
 	create_word	(0X3290E);
 	create_word	(0X32910);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32912);
 	create_word	(0X32914);
 	create_word	(0X32916);

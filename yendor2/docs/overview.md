@@ -4278,6 +4278,24 @@ resolved thanks to the restore function's existing comment.
 
 526 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleClueEntryScrollInput
+
+Named `sub_12DD8` -> `HandleClueEntryScrollInput`, called once from
+`RunClueEntryMenu` — a pagination handler in the same "I"/"Q" hotkey
+family as the previously-named `HandlePagedEntryNavigation`, but for
+the clue book's entry list, additionally driven by a mouse hit-test
+(`HitTestRegionTable` against table `0x6960`). 'I'/hit-region-1 adopts
+candidate index `word_2E3F0` into `word_2E3EE` (signaling change via
+`errorCode=1`) unless `word_328CC` bit `0x100` defers entirely to
+still-unnamed `sub_13014`; 'Q'/hit-region-2 mirrors this with
+`word_2E3F2` (`errorCode=2`), deferring to still-unnamed `sub_12FED`
+on `word_328CC` bit `0x80`. `errorCode=0` if nothing changed. The
+exact identity of `word_2E3F0`/`word_2E3F2` (plausibly precomputed
+clamped prev/next indices) and of the two deferred-to functions isn't
+confirmed, so left open for a future round.
+
+527 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
