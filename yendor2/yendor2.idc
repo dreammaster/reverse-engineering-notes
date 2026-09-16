@@ -4319,7 +4319,9 @@ static Bytes_1(void) {
 	create_insn	(0X1BBD8);
 	create_insn	(x=0X1BBE4);
 	op_hex		(x,	1);
+	set_cmt	(0X1BBED,	"UseItem's item-type handler for word_2E410 bit 0x800 -- structural sibling of UseItemType_400, same SelectItemUseRecord [si+0x10] bit dispatch (1/4/2/0x400/default). Bit-2 branch pays a BCD gold cost against the shared 0x512A threshold, confirming first if a per-character stat is already at its cap.",	0);
 	create_insn	(0X1BBED);
+	set_name	(0X1BBED,	"UseItemType_800");
 	create_insn	(x=0X1BBF1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BBF9);

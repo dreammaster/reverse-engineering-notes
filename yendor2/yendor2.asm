@@ -13203,7 +13203,7 @@ loc_17BDF:                              ; CODE XREF: UseItem+43↑j
 loc_17BEF:                              ; CODE XREF: UseItem+53↑j
                 test    word_2E410, 800h
                 jz      short loc_17BFF
-                call    sub_1BBED
+                call    UseItemType_800
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
@@ -20384,7 +20384,7 @@ SelectItemUseRecord endp
 
 
 CheckPartyMemberItemFlag proc far       ; CODE XREF: UseItem+2F4↑P
-                                        ; sub_1BBED+53↓p ...
+                                        ; UseItemType_800+53↓p ...
                 push    di              ; Looks up the targeted party member (word_32924) and tests whether they've already triggered the current item's personal flag (TestRecordFlag_10C, index from the item catalog's own +0x1A field -- the same index SetRecordFlag_10C uses to mark it used). Sets word_2E40C bit 0x8000 if not yet triggered.
                 push    si
                 push    bx
@@ -20979,8 +20979,8 @@ ApplyItemEffectFlags endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BBED       proc far                ; CODE XREF: UseItem+65↑P
-                push    cs
+UseItemType_800 proc far                ; CODE XREF: UseItem+65↑P
+                push    cs              ; UseItem's item-type handler for word_2E410 bit 0x800 -- structural sibling of UseItemType_400, same SelectItemUseRecord [si+0x10] bit dispatch (1/4/2/0x400/default). Bit-2 branch pays a BCD gold cost against the shared 0x512A threshold, confirming first if a per-character stat is already at its cap.
                 call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+10h], 1
                 jnz     short loc_1BC22
@@ -20993,7 +20993,7 @@ sub_1BBED       proc far                ; CODE XREF: UseItem+65↑P
                 jmp     loc_1BDC9
 ; ---------------------------------------------------------------------------
 
-loc_1BC14:                              ; CODE XREF: sub_1BBED+22↑j
+loc_1BC14:                              ; CODE XREF: UseItemType_800+22↑j
                 push    cs
                 call    near ptr ApplyItemEffectFlags
                 push    cs
@@ -21002,8 +21002,8 @@ loc_1BC14:                              ; CODE XREF: sub_1BBED+22↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BC22:                              ; CODE XREF: sub_1BBED+A↑j
-                                        ; sub_1BBED+56↓j ...
+loc_1BC22:                              ; CODE XREF: UseItemType_800+A↑j
+                                        ; UseItemType_800+56↓j ...
                 or      word_2E410, 1
                 mov     ax, word_32902
                 mov     word_2E550, ax
@@ -21017,13 +21017,13 @@ loc_1BC22:                              ; CODE XREF: sub_1BBED+A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BC3F:                              ; CODE XREF: sub_1BBED+12↑j
+loc_1BC3F:                              ; CODE XREF: UseItemType_800+12↑j
                 push    cs
                 call    near ptr CheckPartyMemberItemFlag
                 jmp     short loc_1BC22
 ; ---------------------------------------------------------------------------
 
-loc_1BC45:                              ; CODE XREF: sub_1BBED+1A↑j
+loc_1BC45:                              ; CODE XREF: UseItemType_800+1A↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
                 call    CompareBCD4
@@ -21037,7 +21037,7 @@ loc_1BC45:                              ; CODE XREF: sub_1BBED+1A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
+loc_1BC72:                              ; CODE XREF: UseItemType_800+63↑j
                 call    SubBCD4
                 push    cs
                 call    near ptr RedrawPartyGoldDisplay
@@ -21067,13 +21067,13 @@ loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 jmp     loc_1BC22
 ; ---------------------------------------------------------------------------
 
-loc_1BCCC:                              ; CODE XREF: sub_1BBED+9F↑j
+loc_1BCCC:                              ; CODE XREF: UseItemType_800+9F↑j
                 mov     cx, [di+18h]
                 mov     word_2E390, 0
                 mov     word_2E392, 0
                 mov     di, 512Ah
 
-loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
+loc_1BCDE:                              ; CODE XREF: UseItemType_800+101↓j
                 mov     si, 94B3h
                 call    AddBCD4
                 mov     si, 0B30h
@@ -21103,14 +21103,14 @@ loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
                 mov     ax, [si+14h]
                 mov     di, 5410h
 
-loc_1BD45:                              ; CODE XREF: sub_1BBED+15F↓j
+loc_1BD45:                              ; CODE XREF: UseItemType_800+15F↓j
                 cmp     [di], ax
                 jz      short loc_1BD4E
                 add     di, 4
                 jmp     short loc_1BD45
 ; ---------------------------------------------------------------------------
 
-loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
+loc_1BD4E:                              ; CODE XREF: UseItemType_800+15A↑j
                 mov     ax, [di+2]
                 mov     bx, 0AFA8h
                 call    StrCat
@@ -21144,7 +21144,7 @@ loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
                 jmp     loc_1BC22
 ; ---------------------------------------------------------------------------
 
-loc_1BDC9:                              ; CODE XREF: sub_1BBED+24↑j
+loc_1BDC9:                              ; CODE XREF: UseItemType_800+24↑j
                 mov     ax, es:[si+10h]
                 mov     word_3298E, ax
                 and     word_2E410, 0FFFEh
@@ -21169,7 +21169,7 @@ loc_1BDC9:                              ; CODE XREF: sub_1BBED+24↑j
                 mov     ax, [si+14h]
                 mov     di, 5410h
 
-loc_1BE0D:                              ; CODE XREF: sub_1BBED+22C↓j
+loc_1BE0D:                              ; CODE XREF: UseItemType_800+22C↓j
                 cmp     [di], ax
                 jz      short loc_1BE1B
                 cmp     word ptr [di], 0
@@ -21178,12 +21178,12 @@ loc_1BE0D:                              ; CODE XREF: sub_1BBED+22C↓j
                 jmp     short loc_1BE0D
 ; ---------------------------------------------------------------------------
 
-loc_1BE1B:                              ; CODE XREF: sub_1BBED+222↑j
+loc_1BE1B:                              ; CODE XREF: UseItemType_800+222↑j
                 mov     ax, [di+2]
                 mov     bx, 0AFA8h
                 call    StrCat
 
-loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
+loc_1BE26:                              ; CODE XREF: UseItemType_800+227↑j
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
                 mov     _font_fgColor, 0Dh
@@ -21214,7 +21214,7 @@ loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
                 call    near ptr DrawConfirmPromptGoldLine
                 call    DrawMouseCursor
                 retf
-sub_1BBED       endp
+UseItemType_800 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -22538,7 +22538,7 @@ ComputeCostMessageIndentMode endp
 
 
 DrawConfirmPromptGoldLine proc far      ; CODE XREF: ShowHealingCostPrompt+BD↑p
-                                        ; sub_1BBED+CB↑p ...
+                                        ; UseItemType_800+CB↑p ...
                 mov     _textPos_x, 16h ; Draws 'GOLD COINS:' + the current g_partyGold BCD4 value at (0x16,0x73) -- shows the player's gold balance inline in a cost-confirmation prompt. Called from ShowHealingCostPrompt and sub_1BBED.
                 mov     _textPos_y, 73h ; 's'
                 mov     _font_fgColor, 0Dh
@@ -22579,8 +22579,8 @@ CheckKeyItem    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RedrawPartyGoldDisplay proc far         ; CODE XREF: sub_1BBED+8B↑p
-                                        ; sub_1BBED+104↑p ...
+RedrawPartyGoldDisplay proc far         ; CODE XREF: UseItemType_800+8B↑p
+                                        ; UseItemType_800+104↑p ...
                 mov     _textPos_x, 5Eh ; '^' ; Redraws the gold readout: blanks the area (msg 0x7952) then FormatAndDrawBCD4(g_partyGold), then conditionally ShowResourceDepletedOverlay (word_36C7F bit 0x1000). Called from sub_1BBED (an unnamed, not-yet-fully-traced UseItem shop/vendor handler) after it spends gold.
                 mov     _textPos_y, 73h ; 's'
                 mov     _font_bgColor, 44h ; 'D'
@@ -42236,7 +42236,7 @@ ClearGlobalFlag endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SetRecordFlag_10C proc far              ; CODE XREF: sub_1BBED+111↑P
+SetRecordFlag_10C proc far              ; CODE XREF: UseItemType_800+111↑P
                                         ; UseItemType_400+9E↑P
                 push    si              ; SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.
                 call    GetRecordFlagBitAndWord_10C
@@ -56522,9 +56522,9 @@ _font_bgTransparent dw 0                ; DATA XREF: EnforceDemoBoundary+43↑w
                                         ; ShowIntroPicture+21↑w ...
 word_2E38E      dw 0                    ; DATA XREF: RunItemServiceRecipientLoop+42↑r
                                         ; RunItemServiceRecipientLoop+45↑r ...
-word_2E390      dw 0                    ; DATA XREF: sub_1BBED+E2↑w
+word_2E390      dw 0                    ; DATA XREF: UseItemType_800+E2↑w
                                         ; ComputeBarterPricingPreview+9↑w
-word_2E392      dw 0                    ; DATA XREF: sub_1BBED+E8↑w
+word_2E392      dw 0                    ; DATA XREF: UseItemType_800+E8↑w
                                         ; ComputeBarterPricingPreview+12↑w
                 db    0
                 db    0
@@ -74418,12 +74418,12 @@ word_32986      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+24
                                         ; DrawCharacterCreationAnimationFrame+6B↑w ...
 word_32988      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+2A↑w
                                         ; PlayCreditsWipeAnimation+6F↑w ...
-word_3298A      dw 0                    ; DATA XREF: sub_1BBED+1FE↑w
+word_3298A      dw 0                    ; DATA XREF: UseItemType_800+1FE↑w
                                         ; UseAbilityScroll+224↑w ...
-word_3298C      dw 0                    ; DATA XREF: sub_1BBED+204↑w
+word_3298C      dw 0                    ; DATA XREF: UseItemType_800+204↑w
                                         ; UseAbilityScroll+22A↑w ...
 word_3298E      dw 0                    ; DATA XREF: ShowHealingCostPrompt+6↑w
-                                        ; sub_1BBED+1E0↑w ...
+                                        ; UseItemType_800+1E0↑w ...
 word_32990      dw 0                    ; DATA XREF: UseAbilityCommand:loc_17906↑w
                                         ; ConfirmAndValidatePartyTarget+28↑w ...
 _val15          dw 0                    ; DATA XREF: InitGlobals+7E↑w
@@ -92968,7 +92968,7 @@ word_38812      dw 0                    ; DATA XREF: MulBCD4ByWord+16↑w
                 db    0
                 db    0
 word_3881C      dw 0                    ; DATA XREF: PromptBuyOreQuantity+42↑w
-                                        ; sub_1BBED+193↑w ...
+                                        ; UseItemType_800+193↑w ...
 word_3881E      dw 0                    ; DATA XREF: PromptBuyOreQuantity+48↑w
                 db    0
                 db    0

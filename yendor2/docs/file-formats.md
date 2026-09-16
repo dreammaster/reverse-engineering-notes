@@ -997,15 +997,19 @@ handler) gates a click on an occupied catalog slot before dispatching
 to a large, untraced helper (`sub_219FA`) — plausibly a select/preview
 interaction separate from the purchase flow.
 
-A separate, likely shop/vendor "buy" `UseItem` handler (`sub_1BBED`,
-reached from `UseItem+0x65`) spends `g_partyGold` via
-`CompareBCD4`/`SubBCD4` against a price table at `0x512A`, gated by
-inventory-capacity checks against the same `0xBCE` range table used
-elsewhere, and redraws the gold readout afterward via
-`RedrawPartyGoldDisplay`. Left unnamed — it has several branches
-(a single-item purchase path and a quantity-loop path that repeatedly
-adds the unit price to both `g_partyGold` and a second counter
-`0xB30`) not yet disentangled with enough confidence to name safely.
+A separate, likely shop/vendor "buy" `UseItem` handler,
+`UseItemType_800` (was `sub_1BBED`, gated on `UseItem`'s
+`word_2E410` bit `0x800` — the direct structural sibling of
+`UseItemType_400`, dispatching on the identical
+`SelectItemUseRecord` `[si+0x10]` bit pattern) spends `g_partyGold`
+via `CompareBCD4`/`SubBCD4` against a price table at `0x512A`, gated
+by inventory-capacity checks against the same `0xBCE` range table
+used elsewhere, and redraws the gold readout afterward via
+`RedrawPartyGoldDisplay`. Named for its role in `UseItem`'s outer
+dispatch, but it has several branches (a single-item purchase path
+and a quantity-loop path that repeatedly adds the unit price to both
+`g_partyGold` and a second counter `0xB30`) not yet disentangled in
+detail.
 
 A specific, fully-traced instance of a quantity-purchase flow:
 `PromptBuyOreQuantity` (was `sub_1AF49`, called from `UseItem`) shows
@@ -1015,8 +1019,8 @@ and "ENTER QUANTITY TO BUY", reads the quantity via
 through `EditTextField` backward into a packed-BCD4 value), then
 validates affordability via `CompareBCD4` against `g_partyGold`. This
 is the purchase flow for using an Ore-type item from the inventory —
-plausibly connected to the unnamed `sub_1BBED`'s quantity-loop path
-above, though that link isn't confirmed.
+plausibly connected to `UseItemType_800`'s quantity-loop path above,
+though that link isn't confirmed.
 
 ### Ambient music by map region
 
@@ -1847,7 +1851,7 @@ array. **Follow-up**: traced two of the three accessors.
 `GetRecordFlagBitAndWord_10C`/`SetRecordFlag_10C` (were `sub_27A6E`/
 `sub_27A3E`) operate on a bank at the caller record's `+0x10C`; the one
 traced real caller passes `si=word_328D4` (the current party member),
-inside an item-use dispatcher (`sub_1BBED`) branch gated on having
+inside `UseItemType_800`'s branch gated on having
 enough of material `0x94B3` — plausibly per-character one-time-event
 flags (quest steps, items read, NPCs met), not confirmed.
 `GetRecordFlagBitAndWord_CA` (was `sub_27AC1`) is the same mechanism at

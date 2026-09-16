@@ -6134,6 +6134,24 @@ screen's character-detail popup.
 
 696 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UseItemType_800
+
+Named `sub_1BBED` -> `UseItemType_800`, gated on `UseItem`'s
+`word_2E410` bit `0x800` — the direct structural sibling of the
+already-named `UseItemType_400` (bit `0x400`), sub-dispatching on the
+identical `SelectItemUseRecord` `[si+0x10]` bit pattern. Its
+"type-2" branch (already referenced informally in `file-formats.md`
+as a "likely shop/vendor 'buy' `UseItem` handler") spends
+`g_partyGold` against a price table, gated by inventory-capacity
+checks, and redraws the gold readout. Named for its role in `UseItem`'s
+outer dispatch, matching the same naming convention already used for
+`UseItemType_400` — several of its internal branches (a single-item
+purchase path and a quantity-loop path) remain undisentangled in
+detail. Updated all 3 informal `sub_1BBED` references in
+`file-formats.md` to the new name.
+
+697 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
