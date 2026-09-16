@@ -194,8 +194,15 @@ not confirmed. **A concrete lighting mechanism now found**:
 `DrawDungeonFloorAndCeiling`) re-shades the floor/ceiling viewport
 buffer band-by-band using a fixed 7-entry shade-delta gradient table
 (`word_328E6`-`word_328F2`) — a distance-based brightness falloff,
-plausibly fed by `+0x64`, though where the gradient table itself gets
-computed isn't traced yet; `+0x66` → `word_36CA7`, gating a 4-tier area size in
+plausibly fed by `+0x64`. **Confirmed shared with wall/monster
+rendering too**: `RenderDungeonViewport` copies the same 7 globals
+into `word_32926` (the shade delta `DrawPicture`/
+`ShiftPaletteShadeClamped` apply per pixel) before each of its 7
+`RenderDungeonViewRow` calls — so this one gradient table lights
+walls, monsters, floor, and ceiling consistently by depth row (see
+the `RenderDungeonViewport` correction below for detail). Where the
+gradient values themselves get computed isn't traced yet; `+0x66` →
+`word_36CA7`, gating a 4-tier area size in
 `RevealMapRegion` (**correction**: previously guessed "plausibly
 weather" — traced further and it's a `Locate`/`Scout`/`Magic-Mapping`-
 style special ability that reads `WORLD.DAT`/`CURGAME` directly and
@@ -1239,10 +1246,16 @@ called from `TryTriggerMonsterEncounterAtCell` — which turns out to be
 part of the **first-person dungeon corridor viewport renderer**:
 `RenderDungeonViewport` (called from two unnamed sites) resets a
 per-frame row-depth counter (`word_3292C`) and calls
-`RenderDungeonViewRow` six times with decreasing cell counts (`0x11`,
-`0x11`, `5`, `3`, `3`, `3`) and a different row-data pointer each time
-— the classic "draw each depth row of the visible corridor, near to
-far" shape. `RenderDungeonViewRow` draws each cell's picture (a
+`RenderDungeonViewRow` **seven** times with decreasing cell counts
+(`0x11`, `0x11`, `5`, `3`, `3`, `3`, `3`) — the classic "draw each
+depth row of the visible corridor, near to far" shape. **Correction**:
+before each call it copies one of 7 consecutive globals
+(`word_328E6`-`word_328F2`) into `word_32926` — first described as "a
+different row-data pointer," which is wrong; `word_32926` is the
+shade-shift delta `DrawPicture`/`ShiftPaletteShadeClamped` apply per
+pixel (see the lighting-gradient note below), so this is a shared
+7-entry per-depth-row *shade-delta* gradient, not pointers of any
+kind. `RenderDungeonViewRow` draws each cell's picture (a
 12-byte-stride lookup table at `0xE551`) and calls
 `TryTriggerMonsterEncounterAtCell` once per cell, incrementing/
 decrementing `word_3292C` as it goes. `TryTriggerMonsterEncounterAtCell`

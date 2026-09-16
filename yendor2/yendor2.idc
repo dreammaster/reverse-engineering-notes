@@ -5595,7 +5595,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X20FA6);
 	op_hex		(x,	1);
 	create_insn	(0X20FAB);
-	set_cmt	(0X20FB7,	"First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 6x with decreasing cell counts (0x11/0x11/5/3/3/3) and different row-data pointers (word_328E6..F0), then sub_21217 once more (word_328F2). Called from sub_20C1E and sub_20C46.",	0);
+	set_cmt	(0X20FB7,	"First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 7x with decreasing cell counts (0x11/0x11/5/3/3/3/3), copying each of word_328E6..word_328F2 into word_32926 first -- the shared per-depth-row shade-delta gradient (same table ApplyDistanceShadingToFloorOrCeiling walks for the floor/ceiling) that DrawPicture/ShiftPaletteShadeClamped apply per pixel, giving walls/monsters and floor/ceiling consistent distance-based lighting falloff. Called from sub_20C1E and sub_20C46.",	0);
 	create_insn	(0X20FB7);
 	set_name	(0X20FB7,	"RenderDungeonViewport");
 	set_cmt	(0X21015,	"Renders one depth row of the dungeon corridor view: iterates 8-byte cell records (forward then backward from a midpoint), drawing each cell's picture (table 0xE551, 12-byte stride) via sub_29B0F, and calls TryTriggerMonsterEncounterAtCell once per cell while incrementing/decrementing word_3292C (a per-frame row depth counter). Called 6x by RenderDungeonViewport.",	0);
@@ -7305,6 +7305,15 @@ static Bytes_2(void) {
 	set_cmt	(0X276C5,	"If the current item's category ([+0xC] 0xC000/0x800) and a matching word_2E548 sub-flag ([+2] 0x200/0x80) both hold, removes the current item's effect (RemoveMultiStatEffect), swaps in a new item id from word_2E548+4/+8 (the same fields GetClassifiedItemStatField selects), and applies its effect (ApplyMultiStatEffectForItem). Called from sub_274B4.",	0);
 	create_insn	(0X276C5);
 	set_name	(0X276C5,	"SwapItemMultiStatEffect");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X276CA);
 	op_hex		(x,	1);
 	create_insn	(x=0X276D1);
@@ -7318,15 +7327,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2772C,	"Writes each of the 3 alternate-bag inventory groups (+0x17E/0x180, +0x1A4/0x1A6, +0x1CA/0x1CC -- the same fields GetInventorySlotPtr/WriteContainerSubBlock established) back to CURGAME via WriteContainerSubBlock, only when populated. Called from sub_274B4.",	0);
 	create_insn	(0X2772C);
 	set_name	(0X2772C,	"SyncAlternateBagsToSave");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2776F,	"Writes a data block (bx=address, ax=count, stored via word_36863) using the sub_27E3A/FileEntry_Write(errorCode=0xB) pattern. Called 3 times from sub_2772C for 3 party-record sub-blocks whose identity isn't confirmed.",	0);
 	create_insn	(0X2776F);
 	set_name	(0X2776F,	"WriteContainerSubBlock");
@@ -9859,11 +9859,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2D3FE);
 	op_hex		(x,	1);
 	set_name	(0X2D3FE,	"DrawAnimationFrameAndAdvance");
-	create_insn	(x=0X2D40F);
-	op_hex		(x,	1);
-	set_cmt	(0X2D428,	"Second commit pass after ApplyAttackToTarget already committed: re-filters status flags by immunity (idempotent), recomputes a COMPOUNDED resistance halving (once per matching bit among the same 7 word_33306/[di+0x98] resistance-category bits, vs. ApplyTargetResistancesToAttack's single first-match halving), and subtracts that from [di+0x10] AGAIN (floored at 0) -- genuinely double-applies damage. Why this re-application is intentional (compounding elemental damage for area attacks?) vs. an artifact isn't resolved. Called from ApplyAttackAlongCorridorLine.",	0);
-	create_insn	(0X2D428);
-	set_name	(0X2D428,	"ReapplyDamageWithCompoundedResistance");
 }
 
 //------------------------------------------------------------------------
@@ -9873,6 +9868,11 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2D40F);
+	op_hex		(x,	1);
+	set_cmt	(0X2D428,	"Second commit pass after ApplyAttackToTarget already committed: re-filters status flags by immunity (idempotent), recomputes a COMPOUNDED resistance halving (once per matching bit among the same 7 word_33306/[di+0x98] resistance-category bits, vs. ApplyTargetResistancesToAttack's single first-match halving), and subtracts that from [di+0x10] AGAIN (floored at 0) -- genuinely double-applies damage. Why this re-application is intentional (compounding elemental damage for area attacks?) vs. an artifact isn't resolved. Called from ApplyAttackAlongCorridorLine.",	0);
+	create_insn	(0X2D428);
+	set_name	(0X2D428,	"ReapplyDamageWithCompoundedResistance");
 	create_insn	(x=0X2D439);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D447);

@@ -29931,7 +29931,7 @@ DrawMonsterAndUpdateAttackState endp
 
 RenderDungeonViewport proc near         ; CODE XREF: RedrawDungeonScreen+11↑p
                                         ; RefreshDungeonScreen+B↑p
-                mov     di, 6D60h       ; First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 6x with decreasing cell counts (0x11/0x11/5/3/3/3) and different row-data pointers (word_328E6..F0), then sub_21217 once more (word_328F2). Called from sub_20C1E and sub_20C46.
+                mov     di, 6D60h       ; First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 7x with decreasing cell counts (0x11/0x11/5/3/3/3/3), copying each of word_328E6..word_328F2 into word_32926 first -- the shared per-depth-row shade-delta gradient (same table ApplyDistanceShadingToFloorOrCeiling walks for the floor/ceiling) that DrawPicture/ShiftPaletteShadeClamped apply per pixel, giving walls/monsters and floor/ceiling consistent distance-based lighting falloff. Called from sub_20C1E and sub_20C46.
                 mov     word_3292C, 0
                 mov     cx, 11h
                 mov     ax, word_328E6

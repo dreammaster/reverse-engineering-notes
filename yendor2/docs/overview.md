@@ -4577,7 +4577,28 @@ get computed (presumably from `+0x64`) is a good next lead.
 
 550 named of 769 functions as of this update.
 
-## Current state (2026-09-14, before any work this session)
+### 2026-09-15 session update, continued: confirmed the lighting-gradient table's other consumer, and fixed a stale comment
+
+Followed up on the `word_328E6`-`word_328F2` gradient table by
+checking `RenderDungeonViewport` (already named), which turned out to
+already reference all 7 globals directly — and its pre-existing
+comment called them "different row-data pointers," which this
+session's new evidence shows is wrong. `RenderDungeonViewport` copies
+each of `word_328E6`..`word_328F2` into `word_32926` before each of 7
+`RenderDungeonViewRow` calls (decreasing cell counts
+`0x11/0x11/5/3/3/3/3`) — and `word_32926` is exactly the shade-shift
+delta `DrawPicture`/`ShiftPaletteShadeClamped` apply per pixel (traced
+two rounds ago). So the same 7-entry gradient
+`ApplyDistanceShadingToFloorOrCeiling` walks for the floor/ceiling is
+also applied to every wall/monster picture drawn in each of the 7
+depth rows via `RenderDungeonViewRow` — a single, shared, consistent
+distance-lighting gradient across the whole dungeon viewport (walls,
+monsters, floor, and ceiling alike). Fixed `RenderDungeonViewport`'s
+comment in place (`ida_scripts/fix_render_dungeon_viewport_comment.py`)
+to reflect this. No new function named this round — this was a
+documentation correction — but it substantially firms up the lighting
+model. Where the gradient values themselves get computed (presumably
+from `+0x64`) remains the next lead.
 
 Via `identify.py`:
 
