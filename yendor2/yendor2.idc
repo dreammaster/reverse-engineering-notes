@@ -6210,13 +6210,19 @@ static Bytes_2(void) {
 	set_name	(0X22B96,	"GrantMonsterRewards");
 	create_insn	(0X22BD9);
 	create_insn	(0X22BEF);
+	set_cmt	(0X22BF5,	"Clears (ANDs out) bit ax of the same cell-monster-spawned bitmap and writes it back. Called from sub_209D2 when a monster falls outside the tracked visible range (despawn/cleanup).",	0);
 	create_insn	(0X22BF5);
+	set_name	(0X22BF5,	"ClearCellMonsterSpawnedFlag");
 	set_cmt	(0X22BF8,	"this",	0);
 	set_cmt	(0X22C05,	"this",	0);
+	set_cmt	(0X22C3E,	"Sets (ORs in) bit ax of the WORLD.DAT-backed cell-monster-spawned bitmap (record type 0xA) and writes it back. Called from SpawnMonsterInFacingDirection with ax=the spawned monster's own cell index ([si]). Sibling of ClearCellMonsterSpawnedFlag/TestCellMonsterSpawnedFlag.",	0);
 	create_insn	(0X22C3E);
+	set_name	(0X22C3E,	"SetCellMonsterSpawnedFlag");
 	set_cmt	(0X22C41,	"this",	0);
 	set_cmt	(0X22C4E,	"this",	0);
+	set_cmt	(0X22C85,	"Tests (read-only) bit ax of the same cell-monster-spawned bitmap, no write-back. Called from TryInteractAtPosition.",	0);
 	create_insn	(0X22C85);
+	set_name	(0X22C85,	"TestCellMonsterSpawnedFlag");
 	set_cmt	(0X22C88,	"this",	0);
 	set_cmt	(0X22C95,	"this",	0);
 	create_insn	(0X22CBC);
@@ -6708,6 +6714,15 @@ static Bytes_2(void) {
 	set_cmt	(0X24BF2,	"ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.",	0);
 	create_insn	(0X24BF2);
 	set_name	(0X24BF2,	"ShowCharacterStats");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X24C12,	"msg",	0);
 	create_insn	(0X24C72);
 	create_insn	(0X24C7C);
@@ -6719,15 +6734,6 @@ static Bytes_2(void) {
 	set_name	(0X24CAD,	"DrawThreeThresholdStats");
 	set_cmt	(0X24CD5,	"msg",	0);
 	set_cmt	(0X24CE3,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X24CF1,	"msg",	0);
 	set_cmt	(0X24D30,	"Character sheet's main stat renderer: left column draws the 6 core attributes plus the +0x4C/+0x4E/+0x50 trio (same column, slots 7-9), then HP/MP rows and packed-BCD XP; right column draws 13 derived stats (+0x58..+0x70), the last 5 highlighted when this character holds one of 5 globally-assigned party roles (word_36D03/05/07/09/0B). Called from ShowCharacterSkills and sub_23C18.",	0);
 	create_insn	(0X24D30);
@@ -8839,6 +8845,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29FD8);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29FDB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29FDE);
@@ -8856,15 +8871,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2A030);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2A035);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2A044);
@@ -11465,6 +11471,15 @@ static Bytes_4(void) {
 	set_name	(0X3640B,	"aFrozen_1");
 	create_strlit	(0X36414,	0XA);
 	set_name	(0X36414,	"aStoning_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3641E,	0XA);
 	set_name	(0X3641E,	"aJinxing_0");
 	create_strlit	(0X36428,	0X9);
@@ -11499,15 +11514,6 @@ static Bytes_4(void) {
 	set_name	(0X364B3,	"aRestores");
 	create_strlit	(0X364BD,	0X6);
 	set_name	(0X364BD,	"a3X3");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X364C3,	0X7);
 	set_name	(0X364C3,	"aCures");
 	create_strlit	(0X364CA,	0X16);
@@ -13484,15 +13490,15 @@ static Functions_0(void) {
 	set_frame_size(0X22B96, 0X4, 0, 0);
 	add_func    (0X22BF5,0X22C3E);
 	set_func_flags(0X22BF5,0x5402);
-	SetType(0X22BF5, "int __fastcall __far sub_22BF5(int, FileEntry *this);");
+	SetType(0X22BF5, "int __fastcall __far ClearCellMonsterSpawnedFlag(int, FileEntry *this);");
 	set_frame_size(0X22BF5, 0X4, 0, 0);
 	add_func    (0X22C3E,0X22C85);
 	set_func_flags(0X22C3E,0x5402);
-	SetType(0X22C3E, "int __fastcall __far sub_22C3E(int, FileEntry *this);");
+	SetType(0X22C3E, "int __fastcall __far SetCellMonsterSpawnedFlag(int, FileEntry *this);");
 	set_frame_size(0X22C3E, 0X4, 0, 0);
 	add_func    (0X22C85,0X22CBC);
 	set_func_flags(0X22C85,0x5402);
-	SetType(0X22C85, "int __fastcall __far sub_22C85(int, FileEntry *this);");
+	SetType(0X22C85, "int __fastcall __far TestCellMonsterSpawnedFlag(int, FileEntry *this);");
 	set_frame_size(0X22C85, 0X4, 0, 0);
 	add_func    (0X22CBC,0X22CED);
 	set_func_flags(0X22CBC,0x5402);

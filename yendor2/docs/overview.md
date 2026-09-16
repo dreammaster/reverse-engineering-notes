@@ -5701,6 +5701,22 @@ ticks per frame).
 
 651 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: cell-monster-spawned flag trio
+
+Named a matched Set/Clear/Test trio operating on a single-bit flag
+in a `WORLD.DAT`-backed packed bitmap (`FileEntry` record type
+`0xA`): `sub_22C3E` -> `SetCellMonsterSpawnedFlag` (called from
+`SpawnMonsterInFacingDirection` with the spawned monster's own
+map-cell index, marking that cell as having an active monster),
+`sub_22BF5` -> `ClearCellMonsterSpawnedFlag` (called from unnamed
+`sub_209D2` when a monster falls outside the tracked visible range —
+despawn/cleanup), and `sub_22C85` -> `TestCellMonsterSpawnedFlag`
+(read-only, called from `TryInteractAtPosition`). All three share the
+same bit-index math (byte offset = index/8, mask = `0x80>>(index%8)`)
+and the same fixed record setup.
+
+654 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

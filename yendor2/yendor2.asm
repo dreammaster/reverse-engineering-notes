@@ -29532,7 +29532,7 @@ loc_20BB9:                              ; CODE XREF: sub_209D2+1DD↑j
 loc_20C06:                              ; CODE XREF: sub_209D2+1ED↑j
                                         ; sub_209D2+1F5↑j ...
                 mov     ax, [si]        ; int
-                call    sub_22BF5
+                call    ClearCellMonsterSpawnedFlag
                 push    es
                 mov     es, word_2E4AA
                 mov     di, si
@@ -30883,7 +30883,7 @@ loc_217CC:                              ; CODE XREF: TryInteractAtPosition+37↑
                 mov     errorCode, 0
                 or      word_328C8, 80h
                 mov     ax, [si+4]      ; int
-                call    sub_22C85
+                call    TestCellMonsterSpawnedFlag
                 jnz     short loc_217E8
                 mov     errorCode, 5
 
@@ -33076,7 +33076,7 @@ loc_22B40:                              ; CODE XREF: SpawnMonsterInFacingDirecti
                 call    TryActivateMonsterByDistance
                 mov     ax, [si]        ; int
                 push    cs
-                call    near ptr sub_22C3E
+                call    near ptr SetCellMonsterSpawnedFlag
                 mov     bx, 0E4E9h
                 mov     ax, [si]
 
@@ -33187,9 +33187,9 @@ GrantMonsterRewards endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall __far sub_22BF5(int, FileEntry *this)
-sub_22BF5       proc far                ; CODE XREF: sub_209D2+236↑P
-                push    ax
+; int __fastcall __far ClearCellMonsterSpawnedFlag(int, FileEntry *this)
+ClearCellMonsterSpawnedFlag proc far    ; CODE XREF: sub_209D2+236↑P
+                push    ax              ; Clears (ANDs out) bit ax of the same cell-monster-spawned bitmap and writes it back. Called from sub_209D2 when a monster falls outside the tracked visible range (despawn/cleanup).
                 push    bx
                 push    cx
                 push    dx              ; this
@@ -33216,15 +33216,15 @@ sub_22BF5       proc far                ; CODE XREF: sub_209D2+236↑P
                 pop     bx
                 pop     ax
                 retf
-sub_22BF5       endp
+ClearCellMonsterSpawnedFlag endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall __far sub_22C3E(int, FileEntry *this)
-sub_22C3E       proc far                ; CODE XREF: SpawnMonsterInFacingDirection+E7↑p
-                push    ax
+; int __fastcall __far SetCellMonsterSpawnedFlag(int, FileEntry *this)
+SetCellMonsterSpawnedFlag proc far      ; CODE XREF: SpawnMonsterInFacingDirection+E7↑p
+                push    ax              ; Sets (ORs in) bit ax of the WORLD.DAT-backed cell-monster-spawned bitmap (record type 0xA) and writes it back. Called from SpawnMonsterInFacingDirection with ax=the spawned monster's own cell index ([si]). Sibling of ClearCellMonsterSpawnedFlag/TestCellMonsterSpawnedFlag.
                 push    bx
                 push    cx
                 push    dx              ; this
@@ -33250,15 +33250,15 @@ sub_22C3E       proc far                ; CODE XREF: SpawnMonsterInFacingDirecti
                 pop     bx
                 pop     ax
                 retf
-sub_22C3E       endp
+SetCellMonsterSpawnedFlag endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall __far sub_22C85(int, FileEntry *this)
-sub_22C85       proc far                ; CODE XREF: TryInteractAtPosition+EB↑P
-                push    ax
+; int __fastcall __far TestCellMonsterSpawnedFlag(int, FileEntry *this)
+TestCellMonsterSpawnedFlag proc far     ; CODE XREF: TryInteractAtPosition+EB↑P
+                push    ax              ; Tests (read-only) bit ax of the same cell-monster-spawned bitmap, no write-back. Called from TryInteractAtPosition.
                 push    bx
                 push    cx
                 push    dx              ; this
@@ -33281,7 +33281,7 @@ sub_22C85       proc far                ; CODE XREF: TryInteractAtPosition+EB↑
                 pop     bx
                 pop     ax
                 retf
-sub_22C85       endp
+TestCellMonsterSpawnedFlag endp
 
 
 ; =============== S U B R O U T I N E =======================================
