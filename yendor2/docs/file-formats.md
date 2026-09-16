@@ -2303,7 +2303,20 @@ item's raw data in. Item contents/size/count not yet examined —
 `sub_27B42`'s own signature (id in, offset+size out) would be the
 fastest way to enumerate the whole catalog if that's wanted later.
 
-### In-memory dungeon map grid (source file not yet identified — plausibly loaded from `WORLD.DAT`)
+### In-memory dungeon map grid
+
+**The loader is now found**: `RefreshDungeonMapWindow` (was
+`sub_209D2`, called from 16 sites in `start`, always right before
+`RedrawDungeonScreen`+`BuildMinimapTileData`+`DrawMinimap` — i.e.
+after any position-changing action) (re)builds this grid from
+`WORLD.DAT` around the party's current position: reads 78 rows,
+unpacking a packed-bit "explored" flag per cell alongside the two
+tile-type indices below, then a second pass calls
+`TryInteractAtPosition` per cell to bake item/trigger/trap markers
+directly into the grid data. It also walks the 80-slot
+`g_levelMonsters` array, placing monster markers into cells that
+scroll into the window and despawning (via the confirmed
+`ClearCellMonsterSpawnedFlag`) monsters that scroll outside it.
 
 Found via `GetMapCellPtr` (`0x16F64`), the address computation the
 fog-of-war reveal system (`RevealCellsAroundPlayer`
@@ -2324,14 +2337,20 @@ the automap's "cells become known as you walk near them" mechanic
 automap survives save/load because it's part of the savegame, not just
 in-memory state.
 
-**The dungeon "view" is a small tile-grid minimap, not a full-screen
-first-person render**: `DrawMinimap` (`0x21588`) draws a 7×9 grid of
-8×8-pixel tiles at a fixed on-screen position (base tile + optional
-overlay per cell, from `BuildMinimapTileData`'s buffer) — this pair is
-what `start`'s main loop calls after every movement/state change to
-refresh the view. No separate "3D corridor" renderer has turned up;
-this minimap widget appears to be the game's primary way of showing the
-dungeon layout.
+`DrawMinimap` (`0x21588`) draws a 7×9 grid of 8×8-pixel tiles at a
+fixed on-screen position (base tile + optional overlay per cell, from
+`BuildMinimapTileData`'s buffer) — this pair is what `start`'s main
+loop calls after every movement/state change to refresh the small
+tile-grid minimap widget. **Correction**: this paragraph previously
+claimed "no separate '3D corridor' renderer has turned up" and that
+the minimap was the game's primary way of showing the dungeon layout
+— wrong, superseded by this session's later, much more thorough
+first-person rendering trace (`RenderDungeonViewport`,
+`RedrawDungeonScreen`, `DrawDungeonCellWallTexture`,
+`ExtendDungeonFloorTexture`/`ExtendDungeonCeilingTexture`, etc. — see
+the dedicated sections elsewhere in this file). The minimap is a
+secondary automap widget alongside the full first-person corridor
+render, not a replacement for it.
 
 **The `0xE551`/`0xE175` tile-type tables have a confirmed layout and a
 second consumer.** Entry stride: 12 bytes (`0xE551`) / 10 bytes

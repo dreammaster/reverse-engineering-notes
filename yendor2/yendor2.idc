@@ -5725,7 +5725,9 @@ static Bytes_2(void) {
 	create_insn	(0X209C0);
 	set_name	(0X209C0,	"ResolveIconBarBaseAddress");
 	create_insn	(0X209C9);
+	set_cmt	(0X209D2,	"Loads/refreshes the in-memory 78x78 dungeon map-grid window (segment word_2E562) around the party's position from WORLD.DAT, bakes per-cell interaction markers via TryInteractAtPosition, updates region music, and places/despawns g_levelMonsters entries as they scroll into/out of the window. Called from 16 sites in `start`, always right before RedrawDungeonScreen+BuildMinimapTileData+DrawMinimap.",	0);
 	create_insn	(0X209D2);
+	set_name	(0X209D2,	"RefreshDungeonMapWindow");
 	create_insn	(0X209FF);
 	create_insn	(0X20A23);
 	set_cmt	(0X20A44,	"this",	0);
@@ -6308,6 +6310,15 @@ static Bytes_2(void) {
 	set_cmt	(0X22A68,	"Spawns a monster (catalog id in ax/bx) into an empty g_levelMonsters slot: loads its catalog record from WORLD.DAT (same block math as LoadClueBookMonsterEntry), computes a spawn position offset from the current facing direction (word_36CF5 tier bits -- same as ShowCompassDirection) plus current position (word_36CF7/36CF9), sets a countdown timer (RandomInRange(5) + template) and full HP ([+0x10]=[+0x50]). Called from sub_212B8 (a movement/trigger handler, not traced).",	0);
 	create_insn	(0X22A68);
 	set_name	(0X22A68,	"SpawnMonsterInFacingDirection");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X22A8A);
 	create_insn	(x=0X22ACB);
 	op_hex		(x,	1);
@@ -6324,15 +6335,6 @@ static Bytes_2(void) {
 	set_cmt	(0X22B78,	"Scans g_levelMonsters for an entry matching the given monster type id (ax). Found -> sub_233F5 + ZF clear; not found -> ZF set. Used by TryTriggerMonsterEncounterAtCell as a duplicate-prevention check before spawning (skips spawning if this type already exists on the level) -- NOT a probability roll, correcting last round's comment.",	0);
 	create_insn	(0X22B78);
 	set_name	(0X22B78,	"FindMonsterTypeInLevelPool");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X22B8E);
 	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
 	create_insn	(0X22B96);
@@ -7896,6 +7898,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X28034);
 	op_hex		(x,	1);
 	set_name	(0X28034,	"DrawDebugPositionOverlay");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2803C);
 	op_hex		(x,	1);
 	create_insn	(x=0X28044);
@@ -7914,15 +7925,6 @@ static Bytes_3(void) {
 	set_cmt	(0X28138,	"FormatNumber into the shared 0xAFA8 buffer, then StripCommasAndSpaces on it -- produces a compact, separator-free numeric string, returned in ax. Called from unnamed sub_28034.",	0);
 	create_insn	(0X28138);
 	set_name	(0X28138,	"FormatNumberCompact");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
 	create_insn	(0X2814C);
 	set_name	(0X2814C,	"ComputeGameClockTime");
@@ -10310,9 +10312,6 @@ static Bytes_4(void) {
 	set_cmt	(0X2D470,	"Sibling of ApplyDamageAlongCorridorLine using the full resistance-aware pipeline: for 3 consecutive viewport rows starting at word_3292C (incrementing it each iteration), finds a monster via GetMonsterAtViewportRow and calls ApplyAttackToTarget against it, then conditionally calls still-unnamed sub_2D428 if any damage/status is pending. Called 3x in a row from sub_2C0FE, once per starting row of a 3-row band.",	0);
 	create_insn	(0X2D470);
 	set_name	(0X2D470,	"ApplyAttackAlongCorridorLine");
-	set_cmt	(0X2D498,	"ax=sound command. If WaitForSoundDriverIdle didn't need to wait (already idle), discards ax and just waits 6 ticks -- no sound plays. If it DID wait (driver was busy), calls TriggerSoundEvent(ax) once free. Backwards from the sibling TryPlaySoundCue/Alt's 'drop if busy' pattern. The ax==0 path loops back into its own 'pop ax' (IDA flags sp-analysis failed here) -- plausibly unreachable dead code, left as observed. Called from sub_2C0FE.",	0);
-	create_insn	(0X2D498);
-	set_name	(0X2D498,	"TriggerSoundEventAfterDriverWait");
 }
 
 //------------------------------------------------------------------------
@@ -10322,6 +10321,9 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2D498,	"ax=sound command. If WaitForSoundDriverIdle didn't need to wait (already idle), discards ax and just waits 6 ticks -- no sound plays. If it DID wait (driver was busy), calls TriggerSoundEvent(ax) once free. Backwards from the sibling TryPlaySoundCue/Alt's 'drop if busy' pattern. The ax==0 path loops back into its own 'pop ax' (IDA flags sp-analysis failed here) -- plausibly unreachable dead code, left as observed. Called from sub_2C0FE.",	0);
+	create_insn	(0X2D498);
+	set_name	(0X2D498,	"TriggerSoundEventAfterDriverWait");
 	set_cmt	(0X2D4A1,	"ticks",	0);
 	create_insn	(0X2D4AA);
 	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);

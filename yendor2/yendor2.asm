@@ -248,7 +248,7 @@ loc_101B8:                              ; CODE XREF: start+1AD↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -299,7 +299,7 @@ loc_10248:                              ; CODE XREF: start+23D↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -2438,7 +2438,7 @@ loc_11652:                              ; CODE XREF: HandleMovementInput+384↑j
 
 loc_116A2:                              ; CODE XREF: HandleMovementInput+3CC↑j
                                         ; HandleMovementInput+3D8↑j ...
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 test    word_328C4, 8000h
                 jz      short loc_116C8
                 call    RestoreFullScreenFromEMS
@@ -17488,7 +17488,7 @@ loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑
                 mov     word_36CF7, ax
                 mov     ax, [di+6]
                 mov     word_36CF9, ax
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -18238,7 +18238,7 @@ loc_1A487:                              ; CODE XREF: TravelToDestination+8D↑j
 loc_1A493:                              ; CODE XREF: TravelToDestination+77↑j
                                         ; TravelToDestination+7E↑j ...
                 push    si
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RevealCellsAroundPlayer
                 pop     si
                 mov     ax, [si+0Ah]
@@ -26662,7 +26662,7 @@ InitializeDungeonLevel proc far         ; CODE XREF: start+7F6↑P
                 mov     di, 46CAh
                 rep movsw
                 mov     word_2E4A8, 0
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RevealCellsAroundPlayer
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
@@ -28306,7 +28306,7 @@ loc_20157:                              ; CODE XREF: RunMapEditorScreen+C7↑j
                 jnz     short loc_201A0
                 call    TriggerFullPaletteFadeOut
                 and     word_328C4, 0FFFEh
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -28394,7 +28394,7 @@ loc_20244:                              ; CODE XREF: RunMapEditorScreen+D0↑j
 loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
                                         ; RunMapEditorScreen+22F↓j ...
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
                 call    GetMapCellPtr
@@ -29283,9 +29283,9 @@ seg062          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_209D2       proc far                ; CODE XREF: start+1DA↑P
+RefreshDungeonMapWindow proc far        ; CODE XREF: start+1DA↑P
                                         ; start+26A↑P ...
-                mov     ax, word_2E4A6
+                mov     ax, word_2E4A6  ; Loads/refreshes the in-memory 78x78 dungeon map-grid window (segment word_2E562) around the party's position from WORLD.DAT, bakes per-cell interaction markers via TryInteractAtPosition, updates region music, and places/despawns g_levelMonsters entries as they scroll into/out of the window. Called from 16 sites in `start`, always right before RedrawDungeonScreen+BuildMinimapTileData+DrawMinimap.
                 cmp     ax, 0
                 jz      short loc_209EB
                 cmp     ax, word_36CB1
@@ -29293,11 +29293,11 @@ sub_209D2       proc far                ; CODE XREF: start+1DA↑P
                 cmp     ax, word_36CB3
                 jnz     short loc_209EB
 
-loc_209E6:                              ; CODE XREF: sub_209D2+C↑j
+loc_209E6:                              ; CODE XREF: RefreshDungeonMapWindow+C↑j
                 call    StopMusicAndResetTimer
 
-loc_209EB:                              ; CODE XREF: sub_209D2+6↑j
-                                        ; sub_209D2+12↑j
+loc_209EB:                              ; CODE XREF: RefreshDungeonMapWindow+6↑j
+                                        ; RefreshDungeonMapWindow+12↑j
                 mov     ax, word_36CF7
                 sub     ax, 27h ; '''
                 cmp     ax, word_32A02
@@ -29307,15 +29307,15 @@ loc_209EB:                              ; CODE XREF: sub_209D2+6↑j
                 jmp     short loc_20A0C
 ; ---------------------------------------------------------------------------
 
-loc_209FF:                              ; CODE XREF: sub_209D2+23↑j
+loc_209FF:                              ; CODE XREF: RefreshDungeonMapWindow+23↑j
                 mov     bx, word_32A00
                 sub     bx, 0Fh
                 cmp     ax, bx
                 jle     short loc_20A0C
                 mov     ax, bx
 
-loc_20A0C:                              ; CODE XREF: sub_209D2+2B↑j
-                                        ; sub_209D2+36↑j
+loc_20A0C:                              ; CODE XREF: RefreshDungeonMapWindow+2B↑j
+                                        ; RefreshDungeonMapWindow+36↑j
                 mov     word_2E55C, ax
                 mov     ax, word_36CF9
                 sub     ax, 27h ; '''
@@ -29326,15 +29326,15 @@ loc_20A0C:                              ; CODE XREF: sub_209D2+2B↑j
                 jmp     short loc_20A30
 ; ---------------------------------------------------------------------------
 
-loc_20A23:                              ; CODE XREF: sub_209D2+47↑j
+loc_20A23:                              ; CODE XREF: RefreshDungeonMapWindow+47↑j
                 mov     bx, word_32A08
                 sub     bx, 0Fh
                 cmp     ax, bx
                 jle     short loc_20A30
                 mov     ax, bx
 
-loc_20A30:                              ; CODE XREF: sub_209D2+4F↑j
-                                        ; sub_209D2+5A↑j
+loc_20A30:                              ; CODE XREF: RefreshDungeonMapWindow+4F↑j
+                                        ; RefreshDungeonMapWindow+5A↑j
                 mov     word_2E564, ax
                 mov     word_368AB, ax
                 mov     word_36863, ax
@@ -29347,7 +29347,7 @@ loc_20A30:                              ; CODE XREF: sub_209D2+4F↑j
                 mov     cx, 4Eh ; 'N'
                 xor     di, di
 
-loc_20A54:                              ; CODE XREF: sub_209D2+F8↓j
+loc_20A54:                              ; CODE XREF: RefreshDungeonMapWindow+F8↓j
                 push    cx              ; this
                 mov     errorCode, 9
                 mov     bx, 9043h
@@ -29374,7 +29374,7 @@ loc_20A54:                              ; CODE XREF: sub_209D2+F8↓j
                 mov     es, word_2E562
                 mov     cx, 4Eh ; 'N'
 
-loc_20AA9:                              ; CODE XREF: sub_209D2:loc_20ABF↓j
+loc_20AA9:                              ; CODE XREF: RefreshDungeonMapWindow:loc_20ABF↓j
                 movsw
                 movsw
                 xor     ax, ax
@@ -29383,14 +29383,14 @@ loc_20AA9:                              ; CODE XREF: sub_209D2:loc_20ABF↓j
                 jnb     short loc_20AB7
                 or      ax, 8000h
 
-loc_20AB7:                              ; CODE XREF: sub_209D2+E0↑j
+loc_20AB7:                              ; CODE XREF: RefreshDungeonMapWindow+E0↑j
                 stosw
                 dec     bx
                 jnz     short loc_20ABF
                 mov     bx, 8
                 inc     bp
 
-loc_20ABF:                              ; CODE XREF: sub_209D2+E7↑j
+loc_20ABF:                              ; CODE XREF: RefreshDungeonMapWindow+E7↑j
                 loop    loc_20AA9
                 pop     cx
                 inc     word_368AB
@@ -29415,14 +29415,14 @@ loc_20ABF:                              ; CODE XREF: sub_209D2+E7↑j
                 mov     es, word_2E562
                 xor     di, di
 
-loc_20B00:                              ; CODE XREF: sub_209D2+192↓j
+loc_20B00:                              ; CODE XREF: RefreshDungeonMapWindow+192↓j
                 push    di
                 push    cx
                 mov     ax, word_2E564
                 mov     y, ax
                 mov     cx, 4Eh ; 'N'
 
-loc_20B0B:                              ; CODE XREF: sub_209D2+187↓j
+loc_20B0B:                              ; CODE XREF: RefreshDungeonMapWindow+187↓j
                 push    cx
                 mov     ax, x
                 mov     bx, y
@@ -29444,8 +29444,8 @@ loc_20B0B:                              ; CODE XREF: sub_209D2+187↓j
                 cmp     errorCode, 7
                 jz      short loc_20B89
 
-loc_20B50:                              ; CODE XREF: sub_209D2+14B↑j
-                                        ; sub_209D2+19C↓j ...
+loc_20B50:                              ; CODE XREF: RefreshDungeonMapWindow+14B↑j
+                                        ; RefreshDungeonMapWindow+19C↓j ...
                 add     di, 270h
                 inc     y
                 pop     cx
@@ -29458,60 +29458,60 @@ loc_20B50:                              ; CODE XREF: sub_209D2+14B↑j
                 jmp     short loc_20BA0
 ; ---------------------------------------------------------------------------
 
-loc_20B68:                              ; CODE XREF: sub_209D2+152↑j
-                                        ; sub_209D2+159↑j
+loc_20B68:                              ; CODE XREF: RefreshDungeonMapWindow+152↑j
+                                        ; RefreshDungeonMapWindow+159↑j
                 or      word ptr es:[di+6], 4000h
                 jmp     short loc_20B50
 ; ---------------------------------------------------------------------------
 
-loc_20B70:                              ; CODE XREF: sub_209D2+160↑j
+loc_20B70:                              ; CODE XREF: RefreshDungeonMapWindow+160↑j
                 or      word ptr es:[di+6], 2000h
                 jmp     short loc_20B50
 ; ---------------------------------------------------------------------------
 
-loc_20B78:                              ; CODE XREF: sub_209D2+167↑j
+loc_20B78:                              ; CODE XREF: RefreshDungeonMapWindow+167↑j
                 or      word ptr es:[di+6], 1000h
                 jmp     short loc_20B50
 ; ---------------------------------------------------------------------------
 
-loc_20B80:                              ; CODE XREF: sub_209D2+175↑j
+loc_20B80:                              ; CODE XREF: RefreshDungeonMapWindow+175↑j
                 mov     ax, word_32DD0
                 mov     es:[di+2], ax
                 jmp     short loc_20B50
 ; ---------------------------------------------------------------------------
 
-loc_20B89:                              ; CODE XREF: sub_209D2+17C↑j
+loc_20B89:                              ; CODE XREF: RefreshDungeonMapWindow+17C↑j
                 mov     ax, word_32DD0
                 mov     es:[di], ax
                 jmp     short loc_20B50
 ; ---------------------------------------------------------------------------
 
-loc_20B91:                              ; CODE XREF: sub_209D2+16E↑j
+loc_20B91:                              ; CODE XREF: RefreshDungeonMapWindow+16E↑j
                 or      word ptr es:[di+6], 400h
                 mov     ax, [si+4]
                 mov     es:[di+4], ax
                 jmp     short loc_20B50
 ; ---------------------------------------------------------------------------
 
-loc_20BA0:                              ; CODE XREF: sub_209D2+194↑j
+loc_20BA0:                              ; CODE XREF: RefreshDungeonMapWindow+194↑j
                 call    UpdateAmbientMusicForRegion
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
-loc_20BAB:                              ; CODE XREF: sub_209D2+1E4↓j
+loc_20BAB:                              ; CODE XREF: RefreshDungeonMapWindow+1E4↓j
                 push    cx
                 cmp     word ptr [si], 0
                 jnz     short loc_20BB9
 
-loc_20BB1:                              ; CODE XREF: sub_209D2+232↓j
-                                        ; sub_209D2+24A↓j
+loc_20BB1:                              ; CODE XREF: RefreshDungeonMapWindow+232↓j
+                                        ; RefreshDungeonMapWindow+24A↓j
                 pop     cx
                 add     si, 9Ch
                 loop    loc_20BAB
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_20BB9:                              ; CODE XREF: sub_209D2+1DD↑j
+loc_20BB9:                              ; CODE XREF: RefreshDungeonMapWindow+1DD↑j
                 mov     ax, word_2E55C
                 cmp     [si+2], ax
                 jl      short loc_20C06
@@ -29541,8 +29541,8 @@ loc_20BB9:                              ; CODE XREF: sub_209D2+1DD↑j
                 jmp     short loc_20BB1
 ; ---------------------------------------------------------------------------
 
-loc_20C06:                              ; CODE XREF: sub_209D2+1ED↑j
-                                        ; sub_209D2+1F5↑j ...
+loc_20C06:                              ; CODE XREF: RefreshDungeonMapWindow+1ED↑j
+                                        ; RefreshDungeonMapWindow+1F5↑j ...
                 mov     ax, [si]        ; int
                 call    ClearCellMonsterSpawnedFlag
                 push    es
@@ -29553,7 +29553,7 @@ loc_20C06:                              ; CODE XREF: sub_209D2+1ED↑j
                 rep stosw
                 pop     es
                 jmp     short loc_20BB1
-sub_209D2       endp
+RefreshDungeonMapWindow endp
 
 seg062          ends
 
@@ -33201,7 +33201,7 @@ GrantMonsterRewards endp
 
 
 ; int __fastcall __far ClearCellMonsterSpawnedFlag(int, FileEntry *this)
-ClearCellMonsterSpawnedFlag proc far    ; CODE XREF: sub_209D2+236↑P
+ClearCellMonsterSpawnedFlag proc far    ; CODE XREF: RefreshDungeonMapWindow+236↑P
                 push    ax              ; Clears (ANDs out) bit ax of the same cell-monster-spawned bitmap and writes it back. Called from sub_209D2 when a monster falls outside the tracked visible range (despawn/cleanup).
                 push    bx
                 push    cx
@@ -37697,7 +37697,7 @@ seg077          segment byte public 'CODE' use16
 
 
 UpdateAmbientMusicForRegion proc far    ; CODE XREF: RestPartyAndAdvanceClock+2EE↑P
-                                        ; sub_209D2:loc_20BA0↑P
+                                        ; RefreshDungeonMapWindow:loc_20BA0↑P
                 xor     dx, dx          ; Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.
                 mov     bx, 18h
                 mov     ax, word_36CF9
@@ -40806,7 +40806,7 @@ loc_26DA3:                              ; CODE XREF: DebugTeleportToCoordinates+
 
 loc_26DF2:                              ; CODE XREF: DebugTeleportToCoordinates+37↑j
                                         ; DebugTeleportToCoordinates+7A↑j
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -45050,7 +45050,7 @@ loc_28FAC:                              ; CODE XREF: RevealMapRegion+24A↑j
                 mov     word_3195A, 8
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RevealCellsAroundPlayer
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -49487,7 +49487,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: DispatchItemAbilityCommand+
                 mov     word_36CF9, 63h ; 'c'
                 mov     word_36CF5, 8000h
                 call    RestoreFullScreenFromEMS
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -49502,7 +49502,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: DispatchItemAbilityCommand+
                 pop     word_36CF9
                 pop     word_36CF7
                 call    RestoreFullScreenFromEMS
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -51728,7 +51728,7 @@ loc_2C621:                              ; CODE XREF: sub_2C0FE+51E↑j
                 mov     ax, [si+0Ch]
                 and     ax, 7
                 or      word_36C79, ax
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -51776,7 +51776,7 @@ loc_2C6BD:                              ; CODE XREF: sub_2C0FE+5B3↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -51840,7 +51840,7 @@ loc_2C777:                              ; CODE XREF: sub_2C0FE+66D↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -51910,7 +51910,7 @@ loc_2C83C:                              ; CODE XREF: sub_2C0FE+736↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                call    sub_209D2
+                call    RefreshDungeonMapWindow
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -56819,7 +56819,7 @@ word_2E4A2      dw 0                    ; DATA XREF: RunMapEditorScreen+38↑w
                                         ; RunMapEditorScreen+294↑w ...
                 db    0
                 db    0
-word_2E4A6      dw 0                    ; DATA XREF: sub_209D2↑r
+word_2E4A6      dw 0                    ; DATA XREF: RefreshDungeonMapWindow↑r
                                         ; PlayMusicTrack+D↑w ...
 word_2E4A8      dw 0                    ; DATA XREF: InitializeDungeonLevel+15↑w
                                         ; UpdateAmbientMusicForRegion+1D↑r ...
@@ -74551,17 +74551,17 @@ _blockSize5     dw 0                    ; DATA XREF: InitGlobals+1A4↑w
 word_329FE      dw 0                    ; DATA XREF: InitGlobals+1C8↑w
                                         ; LoadWorldDatTilePalette+16↑r ...
 word_32A00      dw 0                    ; DATA XREF: InitGlobals+1AA↑w
-                                        ; sub_209D2:loc_209FF↑r ...
+                                        ; RefreshDungeonMapWindow:loc_209FF↑r ...
 word_32A02      dw 0                    ; DATA XREF: InitGlobals+1B0↑w
-                                        ; sub_209D2+1F↑r ...
+                                        ; RefreshDungeonMapWindow+1F↑r ...
 word_32A04      dw 0                    ; DATA XREF: InitGlobals+1B6↑w
                                         ; ShowLocalAreaMap+DF↑r ...
 word_32A06      dw 0                    ; DATA XREF: InitGlobals+1BC↑w
                                         ; ShowLocalAreaMap+30↑r ...
 word_32A08      dw 0                    ; DATA XREF: InitGlobals+1CE↑w
-                                        ; sub_209D2:loc_20A23↑r ...
+                                        ; RefreshDungeonMapWindow:loc_20A23↑r ...
 word_32A0A      dw 0                    ; DATA XREF: InitGlobals+1D4↑w
-                                        ; sub_209D2+43↑r ...
+                                        ; RefreshDungeonMapWindow+43↑r ...
 word_32A0C      dw 0                    ; DATA XREF: InitGlobals+1DA↑w
 word_32A0E      dw 0                    ; DATA XREF: InitGlobals+1E0↑w
                                         ; DrawClueBookMapGrid+9B↑r ...
@@ -85964,9 +85964,9 @@ word_36CA9      dw 0                    ; DATA XREF: UpdatePartyAverageStatTiers
 word_36CAF      dw 0                    ; DATA XREF: sub_2C0FE+4FD↑r
                                         ; sub_2C0FE+537↑w
 word_36CB1      dw 0                    ; DATA XREF: TravelToDestination+B2↑w
-                                        ; sub_209D2+8↑r ...
+                                        ; RefreshDungeonMapWindow+8↑r ...
 word_36CB3      dw 0                    ; DATA XREF: TravelToDestination+B8↑w
-                                        ; sub_209D2+E↑r ...
+                                        ; RefreshDungeonMapWindow+E↑r ...
                 db 0FFh
                 db 0FFh
                 db 0FFh

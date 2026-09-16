@@ -6445,6 +6445,33 @@ rather than guessing at the 5-slot narrative.
 765 named of 769 functions as of this update — only 4 unnamed
 functions remain.
 
+### 2026-09-15 session update, continued: RefreshDungeonMapWindow (resolves a long-standing open question)
+
+Analyzed the next remaining large dispatcher, `sub_209D2`, and it
+turned out to resolve a question flagged open in `file-formats.md`'s
+"In-memory dungeon map grid" section since well before this session
+window: **the source of the in-memory dungeon map grid**, previously
+noted only as "plausibly loaded from `WORLD.DAT`". This is that
+loader.
+
+Called from 16 sites throughout `start`, always right before
+`RedrawDungeonScreen`+`BuildMinimapTileData`+`DrawMinimap` — i.e.
+after any position-changing action. It (re)builds the confirmed
+78×78, 8-byte-per-cell map-grid window in segment `word_2E562` around
+the party's current position: computes a clamped window origin,
+reads 78 `WORLD.DAT` rows unpacking a packed-bit "explored" flag per
+cell, then does a second full pass calling `TryInteractAtPosition`
+per cell to bake item/trigger/trap markers directly into the grid
+data. It also updates region-based ambient music
+(`UpdateAmbientMusicForRegion`) and walks the 80-slot
+`g_levelMonsters` array, placing monster markers into cells that
+scrolled into the window and — confirming `ClearCellMonsterSpawnedFlag`'s
+own documented caller context exactly — despawning monsters that
+scrolled outside it. Named `RefreshDungeonMapWindow`.
+
+766 named of 769 functions as of this update — only 3 unnamed
+functions remain.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
