@@ -1589,7 +1589,7 @@ Traced its body: it reads a bit-packed "previously unlocked?" array
 from `CURGAME`, a second `CURGAME` block into an EMS buffer, and
 splits a value via `/100` — nothing to do with weight. Confirmed by
 its call site: right afterward, `TryInteractAtPosition` tests the
-exact globals (`g_lockUnlockedAccumulator`, `word_32DCE` bits `0x20`/`0x40`)
+exact globals (`g_lockUnlockedAccumulator`, `g_lockStatusFlags` bits `0x20`/`0x40`)
 `ShowLockStatus` reads to pick its message. Named `LoadLockState` and
 corrected `TryInteractAtPosition`'s stale comment (the old wording is
 left standing in this log's earlier dated entries, per this session's
@@ -3565,7 +3565,7 @@ Named `sub_2BA62` -> `FinishPlacingHeldItem`, moderate confidence:
 called from `sub_271DC` and the still-untraced, container-related
 `sub_2621C`. Clears the held-item cursor after loading the held item's
 catalog record and OR-ing a value from one of its flag bytes into
-`word_36C81` (not otherwise documented) — a related but distinct
+`g_heldKeyFlags` (not otherwise documented) — a related but distinct
 action from the already-named drop-to-ground flow
 (`TryDropHeldItem`/`PlaceItemOnGround`), plausibly a container/
 inventory-slot placement instead, but not confirmed.
@@ -3920,7 +3920,7 @@ Named `sub_2BF3C` -> `CompactPartyRosterSlots`, called from
 `ShowWorldMap`'s exit path (`D` key or equivalent mouse click) as a
 cleanup-on-exit step: cascades non-empty roster entries down to fill
 gaps across the 4 active `g_partySlotAssignment` slots *and* 3 more
-"reserve" globals (`word_36E4D`/`word_36E4F`/`word_36E51`) not
+"reserve" globals (`g_partyReserveSlot1`/`g_partyReserveSlot2`/`g_partyReserveSlot3`) not
 previously documented — confirming the party roster extends beyond the
 4 active members into at least 3 reserve slots, a genuinely new
 structural finding.
@@ -7088,6 +7088,41 @@ it's a scratch parameter register for the BCD-arithmetic helpers
 confirmed by their own inline comments), reused elsewhere as an
 icon-bar slot's staged effect-id field. Confirms the original
 characterization from earlier rounds — correctly left alone.
+
+### 2026-09-16 session update, continued: global variable renaming, round 9 (more structures)
+
+Six more globals, continuing the structures/bitfields focus:
+- `word_32DCE` → **`g_lockStatusFlags`**: the currently-examined
+  lock/door's status flags, loaded by `LoadLockState` and decoded by
+  `ShowLockStatus`'s own confirmed switch (bit `0x20`="magically
+  locked", bits `0x200`-`0x8000`=the 7-tier key hierarchy, independently
+  cross-confirmed against the Hex Hacking Item Guide). A couple of low
+  bits are also tested at a few unrelated-looking call sites — named
+  for its dominant, well-confirmed role, with the caveat documented in
+  an IDA comment.
+- `word_36C81` → **`g_heldKeyFlags`**: the player's held-key flags
+  accumulator, compared against `g_lockStatusFlags`' key-tier bits by
+  the unlock-door handler — resolves a stale "not otherwise documented"
+  note in file-formats.md that had guessed at its purpose incorrectly.
+- `word_32DE8` → **`g_facingTileCellPtr`**: computed by `ProbeFacingTile`
+  by offsetting the party's own dungeon-grid cell address by one row
+  or column depending on facing — "the tile directly ahead of the
+  party", read by the unlock-door handler and other facing-tile
+  interaction code.
+- `word_36E4D`/`36E4F`/`36E51` → **`g_partyReserveSlot1`/`2`/`3`**: a
+  confirmed 3-slot reserve-roster array, sibling to
+  `g_partySlotAssignment`'s 4 active slots (same cascade-down cleanup
+  logic on `ShowWorldMap`'s exit path) — also resolves a stale
+  "not otherwise documented" note.
+
+Also did a full bit-sweep of `word_33302`/`word_33304`/`word_33306`
+(the `ApplyEncodedItemEffect`/`ApplyTargetResistancesToAttack` flag
+words): confirmed they're a genuine encoded-effect bitmask (every bit
+1-`0x8000` is tested against at least one of them), not scratch, but
+the exact word-pairing differs by consumer and the field boundaries
+aren't confirmed enough to name individually — flagged in
+file-formats.md as a target for a future dedicated trace rather than
+guessed at.
 
 ## Next steps (not started this session)
 

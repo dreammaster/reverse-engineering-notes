@@ -527,6 +527,22 @@ effect — confirmed via `InteractWithContainer`'s own sequence
 single-target or whole-party icon-bar status effect
 (`ApplyEffectAndDrawIconBar`); the rest (world-state timers, etc.)
 weren't individually traced given the function's size.
+
+**Flagged, not renamed**: `word_33302`/`word_33304`/`word_33306` (3
+consecutive words) are exhaustively bit-tested — every bit from `1`
+through `0x8000` is checked against at least one of them somewhere —
+confirming they're a genuine encoded-effect bitmask, not scratch. But
+the exact word-pairing differs by consumer: `ApplyEncodedItemEffect`
+reads `word_33302`+`word_33306` as the effect-type switch, while
+`ApplyTargetResistancesToAttack` reads `word_33304`+`word_33306`
+(filtering by target immunity into `g_stagedAttackStatusFlags`, and
+comparing `word_33306` against resistance-category bits to halve
+`g_stagedAttackDamage`). `word_33306` being shared between both readers
+suggests one underlying "encoded effect" descriptor consumed from two
+angles (item/spell effect application vs. attack resistance
+filtering), but the precise field boundaries aren't confirmed enough
+to name individually yet — a good target for a future dedicated trace.
+
 `SyncItemChargeFieldToCurgame`
 (was `sub_2778D`, called 3 times from `ConsumeItemChargeResource`)
 reads a `CURGAME` record into it (`errorCode=0xA`),
@@ -561,9 +577,13 @@ A related but distinct action, `FinishPlacingHeldItem` (was
 container-related `sub_2621C`), also clears the held-item cursor
 (`UpdateCursorForHeldItem(0)`) after loading the held item's catalog
 record and OR-ing a value derived from one of its flag bytes into
-`word_36C81` (a global not otherwise documented) — plausibly a
-container/inventory-slot placement rather than the ground-drop
-`PlaceItemOnGround` handles, but not confirmed.
+`g_heldKeyFlags`. **Resolved**: this is the player's held-key flags
+accumulator, confirmed by `HandleGameCommand`'s unlock-door handler,
+which compares it against `g_lockStatusFlags`' key-tier bits to decide
+whether the party is carrying a high-enough-tier key to open the
+current door — so `FinishPlacingHeldItem` placing a key-type item
+updates the carried-key tier available for unlocking, alongside
+whatever container/slot placement it performs.
 
 A third item-manipulation action, `SwapHeldItemWithSlot` (was
 `sub_268A0`, also called from `sub_2621C`): a classic drag-and-drop
@@ -681,8 +701,8 @@ Separately, `ShowWorldMap`'s exit path (`D` key or an
 equivalent mouse click, both leading straight to a `retf`) calls
 `CompactPartyRosterSlots` (was `sub_2BF3C`) as a cleanup-on-exit step:
 it cascades non-empty roster entries down to fill gaps, across not
-just the 4 active slots but **3 more "reserve" globals**
-(`word_36E4D`/`word_36E4F`/`word_36E51`, not otherwise documented) —
+just the 4 active slots but **3 more "reserve" slots**
+(`g_partyReserveSlot1`/`g_partyReserveSlot2`/`g_partyReserveSlot3`) —
 confirming the roster extends beyond the 4 active party members into
 at least 3 reserve slots.
 
@@ -2080,7 +2100,7 @@ inferred/reconstructed after the fact by its author.
 (was `sub_17795`) examines a targeted lock and shows `NOT LOCKED`/
 `LOCKED`/`MAGICALLY LOCKED`/`LOCKED AND TRAPPED`, or `REQUIRES SPECIAL
 KEY: <tier> KEY` — the exact 7-tier hierarchy above, selected by flag
-bits on `word_32DCE`. How much detail is revealed is gated on the
+bits on `g_lockStatusFlags`. How much detail is revealed is gated on the
 current party member's `+0x6C` field against ASCII-looking thresholds
 (`0x37`/`'7'`, `0x41`/`'A'`, `0x50`/`'P'`) — plausibly a lockpicking or
 perception skill value (**`ApplySavingThrowEffect`, was `sub_28BD2`,
@@ -2234,7 +2254,7 @@ the status area from an EMS cache before drawing, and
 `UseAbilityCommand`) to clear the message-box background.
 `UseAbilityCommand` also calls `ConsumeAbilityChargeAndRefresh` (was
 `sub_17A65`): shows `ShowResourceDepletedOverlay`, then — unless a
-flag (`word_32DCE` bit 1) says otherwise — plays a sound, increments a
+flag (`g_lockStatusFlags` bit 1) says otherwise — plays a sound, increments a
 counter at `[g_currentToolbarIconPtr+2]` (plausibly the ability's charge/uses
 count, alongside the already-known `word_32DC0`/`word_32DC2`
 effect-id/threshold parameters feeding `ApplySavingThrowEffect`), and
@@ -2438,6 +2458,13 @@ the automap's "cells become known as you walk near them" mechanic
 (`PersistExploredCell`) writes the explored bit into `CURGAME` — the
 automap survives save/load because it's part of the savegame, not just
 in-memory state.
+
+`ProbeFacingTile` computes `g_facingTileCellPtr` — the grid cell
+directly ahead of the party — by offsetting the party's own cell
+address by one row (`0x270`, matching the confirmed row stride) or one
+column (`8`, the confirmed per-cell size) depending on facing
+direction; it's the "what's directly in front of the party" primitive
+the unlock-door handler and other facing-tile interaction code use.
 
 `DrawMinimap` (`0x21588`) draws a 7×9 grid of 8×8-pixel tiles at a
 fixed on-screen position (base tile + optional overlay per cell, from

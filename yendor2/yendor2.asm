@@ -12495,7 +12495,7 @@ loc_17557:                              ; CODE XREF: RunShopScreen+8F↑j
 loc_1756F:                              ; CODE XREF: RunShopScreen+234↑j
                 test    g_uiScratchFlags2, 80h
                 jnz     short loc_175BD
-                test    word_32DCE, 2
+                test    g_lockStatusFlags, 2
                 jnz     short loc_17590
                 mov     bx, g_currentToolbarIconPtr
                 dec     word ptr [bx+2]
@@ -12730,7 +12730,7 @@ ShowLockStatus  proc far                ; CODE XREF: HandleMovementInput+2A0↑P
                 mov     si, g_currentPartyRecord
                 mov     bx, 7BE8h
                 mov     cx, 2
-                test    word_32DCE, 20h
+                test    g_lockStatusFlags, 20h
                 jz      short loc_177D8
                 jmp     loc_17896
 ; ---------------------------------------------------------------------------
@@ -12738,7 +12738,7 @@ ShowLockStatus  proc far                ; CODE XREF: HandleMovementInput+2A0↑P
 loc_177D8:                              ; CODE XREF: ShowLockStatus+3E↑j
                 mov     bx, 7BB7h
                 mov     cx, 1
-                test    word_32DCE, 80h
+                test    g_lockStatusFlags, 80h
                 jz      short loc_177FF
                 cmp     word ptr [si+6Ch], 37h ; '7'
                 jge     short loc_177EF
@@ -12773,7 +12773,7 @@ loc_1780E:                              ; CODE XREF: ShowLockStatus+74↑j
                 jl      short loc_17896
 
 loc_17821:                              ; CODE XREF: ShowLockStatus+7E↑j
-                test    word_32DCE, 0FE00h
+                test    g_lockStatusFlags, 0FE00h
                 jz      short loc_17896
                 mov     bx, 7BF9h
                 mov     cx, 2
@@ -12784,25 +12784,25 @@ loc_17821:                              ; CODE XREF: ShowLockStatus+7E↑j
                 mov     _textPos_y, 66h ; 'f'
                 mov     cx, 1
                 mov     bx, 7C0Eh
-                test    word_32DCE, 8000h
+                test    g_lockStatusFlags, 8000h
                 jnz     short loc_17896
                 mov     bx, 7C18h
-                test    word_32DCE, 4000h
+                test    g_lockStatusFlags, 4000h
                 jnz     short loc_17896
                 mov     bx, 7C23h
-                test    word_32DCE, 2000h
+                test    g_lockStatusFlags, 2000h
                 jnz     short loc_17896
                 mov     bx, 7C2Eh
-                test    word_32DCE, 1000h
+                test    g_lockStatusFlags, 1000h
                 jnz     short loc_17896
                 mov     bx, 7C37h
-                test    word_32DCE, 800h
+                test    g_lockStatusFlags, 800h
                 jnz     short loc_17896
                 mov     bx, 7C41h
-                test    word_32DCE, 400h
+                test    g_lockStatusFlags, 400h
                 jnz     short loc_17896
                 mov     bx, 7C4Ch
-                test    word_32DCE, 200h
+                test    g_lockStatusFlags, 200h
                 jnz     short loc_17896
                 mov     bx, 7C02h
 
@@ -12846,7 +12846,7 @@ loc_178D5:                              ; CODE XREF: UseAbilityCommand+29↑j
                 jnz     short loc_17906
                 call    ClearMessageBoxArea
                 mov     ax, 6
-                test    word_32DCE, 2
+                test    g_lockStatusFlags, 2
                 jnz     short loc_178F0
                 mov     ax, 5
 
@@ -12874,7 +12874,7 @@ loc_17906:                              ; CODE XREF: UseAbilityCommand+35↑j
 
 loc_17927:                              ; CODE XREF: UseAbilityCommand+72↑j
                 call    RestoreCursorBackgroundIfDirty
-                test    word_32DCE, 80h
+                test    g_lockStatusFlags, 80h
                 jnz     short loc_17948
                 mov     ax, g_lockUnlockedMask
                 test    g_lockUnlockedAccumulator, al
@@ -13002,7 +13002,7 @@ TriggerShopExitSoundAndPersist proc near
 ; ---------------------------------------------------------------------------
 
 loc_17A32:                              ; CODE XREF: TriggerShopExitSoundAndPersist+6↑j
-                test    word_32DCE, 2
+                test    g_lockStatusFlags, 2
                 jnz     short loc_17A49
                 mov     ax, 6
                 call    TriggerSoundEvent
@@ -13027,7 +13027,7 @@ TriggerShopExitSoundAndPersist endp
 ConsumeAbilityChargeAndRefresh proc near
                                         ; CODE XREF: UseAbilityCommand:loc_179A6↑p
                 call    ShowResourceDepletedOverlay ; Shows ShowResourceDepletedOverlay; unless word_32DCE bit 1 is set (early-out), plays a sound, increments [word_32DC4+2] (plausibly a charge/uses counter), then RefreshDungeonScreen + DrawMouseCursor. Called from UseAbilityCommand.
-                test    word_32DCE, 2
+                test    g_lockStatusFlags, 2
                 jz      short loc_17A73
                 retn
 ; ---------------------------------------------------------------------------
@@ -15216,10 +15216,10 @@ loc_18B40:                              ; CODE XREF: RunPartyInventoryScreen+F8�
                 cmp     ax, g_partySlotAssignment
                 jz      short loc_18B6F
                 mov     bx, 2000h
-                cmp     ax, word_36E4D
+                cmp     ax, g_partyReserveSlot1
                 jz      short loc_18B6F
                 mov     bx, 1000h
-                cmp     ax, word_36E4F
+                cmp     ax, g_partyReserveSlot2
                 jz      short loc_18B6F
                 mov     bx, 800h
 
@@ -18715,7 +18715,7 @@ loc_1A87B:                              ; CODE XREF: ShowConfirmPrompt+7B↑j
 loc_1A8C7:                              ; CODE XREF: ShowConfirmPrompt+14C↑j
                 cmp     ax, 0Bh
                 jnz     short loc_1A8D7
-                mov     ax, word_36E4D
+                mov     ax, g_partyReserveSlot1
                 mov     g_selectedPartySlotPtr, 95EDh
                 jmp     short loc_1A8F5
 ; ---------------------------------------------------------------------------
@@ -18723,7 +18723,7 @@ loc_1A8C7:                              ; CODE XREF: ShowConfirmPrompt+14C↑j
 loc_1A8D7:                              ; CODE XREF: ShowConfirmPrompt+15C↑j
                 cmp     ax, 15h
                 jnz     short loc_1A8E7
-                mov     ax, word_36E4F
+                mov     ax, g_partyReserveSlot2
                 mov     g_selectedPartySlotPtr, 95EFh
                 jmp     short loc_1A8F5
 ; ---------------------------------------------------------------------------
@@ -18731,7 +18731,7 @@ loc_1A8D7:                              ; CODE XREF: ShowConfirmPrompt+15C↑j
 loc_1A8E7:                              ; CODE XREF: ShowConfirmPrompt+16C↑j
                 cmp     ax, 1Fh
                 jnz     short loc_1A87B
-                mov     ax, word_36E51
+                mov     ax, g_partyReserveSlot3
                 mov     g_selectedPartySlotPtr, 95F1h
 
 loc_1A8F5:                              ; CODE XREF: ShowConfirmPrompt+157↑j
@@ -18759,15 +18759,15 @@ loc_1A90D:                              ; CODE XREF: ShowConfirmPrompt+125↑j
                 cmp     g_lastKeyChar, 3Bh ; ';'
                 jz      short loc_1A8F5
                 mov     g_selectedPartySlotPtr, 95EDh
-                mov     ax, word_36E4D
+                mov     ax, g_partyReserveSlot1
                 cmp     g_lastKeyChar, 3Ch ; '<'
                 jz      short loc_1A8F5
                 mov     g_selectedPartySlotPtr, 95EFh
-                mov     ax, word_36E4F
+                mov     ax, g_partyReserveSlot2
                 cmp     g_lastKeyChar, 3Dh ; '='
                 jz      short loc_1A8F5
                 mov     g_selectedPartySlotPtr, 95F1h
-                mov     ax, word_36E51
+                mov     ax, g_partyReserveSlot3
                 cmp     g_lastKeyChar, 3Eh ; '>'
                 jz      short loc_1A8F5
                 jmp     loc_1A87B
@@ -23548,9 +23548,9 @@ loc_1D2D0:                              ; CODE XREF: RunTitleScreen+1B↑j
                 call    TriggerFullPaletteFadeIn
                 and     g_uiScratchFlags1, 0FDFFh
                 mov     ax, g_partySlotAssignment
-                add     ax, word_36E4D
-                add     ax, word_36E4F
-                add     ax, word_36E51
+                add     ax, g_partyReserveSlot1
+                add     ax, g_partyReserveSlot2
+                add     ax, g_partyReserveSlot3
                 cmp     ax, 0
                 jz      short loc_1D323
                 or      g_uiScratchFlags1, 200h
@@ -29032,15 +29032,15 @@ loc_207A3:                              ; CODE XREF: DrawMapEditorInteractionTyp
 loc_207B1:                              ; CODE XREF: DrawMapEditorInteractionTypeOverlay+A9↓j
                 mov     ax, x
                 mov     bx, y
-                mov     word_32DCE, 0
+                mov     g_lockStatusFlags, 0
                 call    TryInteractAtPosition
                 mov     al, 4Eh ; 'N'
                 cmp     errorCode, 4
                 jz      short loc_207F1
                 mov     al, 49h ; 'I'
-                test    word_32DCE, 10h
+                test    g_lockStatusFlags, 10h
                 jnz     short loc_207F1
-                test    word_32DCE, 8
+                test    g_lockStatusFlags, 8
                 jnz     short loc_207F1
                 mov     al, 4Dh ; 'M'
                 test    g_uiScratchFlags3, 80h
@@ -30849,14 +30849,14 @@ loc_21733:                              ; CODE XREF: TryInteractAtPosition+17↑
                 test    g_lockUnlockedAccumulator, al
                 jnz     short loc_2172A
                 mov     errorCode, 3
-                test    word_32DCE, 20h
+                test    g_lockStatusFlags, 20h
                 jz      short loc_21755
                 jmp     loc_217E8
 ; ---------------------------------------------------------------------------
 
 loc_21755:                              ; CODE XREF: TryInteractAtPosition+60↑j
                 mov     errorCode, 8
-                test    word_32DCE, 40h
+                test    g_lockStatusFlags, 40h
                 jz      short loc_21766
                 jmp     loc_217E8
 ; ---------------------------------------------------------------------------
@@ -30876,16 +30876,16 @@ loc_21775:                              ; CODE XREF: TryInteractAtPosition+1E↑
                 test    g_lockUnlockedAccumulator, al
                 jnz     short loc_2172A
                 mov     errorCode, 6
-                test    word_32DCE, 10h
+                test    g_lockStatusFlags, 10h
                 jnz     short loc_217E8
                 mov     errorCode, 7
-                test    word_32DCE, 8
+                test    g_lockStatusFlags, 8
                 jnz     short loc_217E8
                 mov     errorCode, 0Ah
-                test    word_32DCE, 40h
+                test    g_lockStatusFlags, 40h
                 jnz     short loc_217E8
                 mov     errorCode, 1
-                test    word_32DCE, 20h
+                test    g_lockStatusFlags, 20h
                 jz      short loc_217E8
                 mov     errorCode, 2
                 jmp     short loc_217E8
@@ -30920,7 +30920,7 @@ ProbeFacingTile proc far                ; CODE XREF: start:loc_10160↑P
                 push    cx
                 mov     errorCode, 1
                 mov     ax, word_328D2
-                mov     word_32DE8, ax
+                mov     g_facingTileCellPtr, ax
                 mov     ax, g_partyWorldX
                 mov     bx, g_partyWorldY
                 call    FindObjectAtPosition
@@ -30930,21 +30930,21 @@ ProbeFacingTile proc far                ; CODE XREF: start:loc_10160↑P
                 mov     ax, g_partyWorldX
                 mov     bx, g_partyWorldY
                 dec     bx
-                sub     word_32DE8, 270h
+                sub     g_facingTileCellPtr, 270h
                 test    g_partyFacing, 8000h
                 jnz     short loc_21856
                 add     bx, 2
-                add     word_32DE8, 4E0h
+                add     g_facingTileCellPtr, 4E0h
                 test    g_partyFacing, 4000h
                 jnz     short loc_21856
                 dec     ax
                 dec     bx
-                sub     word_32DE8, 270h
-                sub     word_32DE8, 8
+                sub     g_facingTileCellPtr, 270h
+                sub     g_facingTileCellPtr, 8
                 test    g_partyFacing, 2000h
                 jnz     short loc_21856
                 add     ax, 2
-                add     word_32DE8, 10h
+                add     g_facingTileCellPtr, 10h
 
 loc_21856:                              ; CODE XREF: ProbeFacingTile+39↑j
                                         ; ProbeFacingTile+4A↑j ...
@@ -30952,7 +30952,7 @@ loc_21856:                              ; CODE XREF: ProbeFacingTile+39↑j
                 cmp     si, 0
                 jnz     short loc_2186A
                 mov     errorCode, 0
-                mov     word_32DE8, 0
+                mov     g_facingTileCellPtr, 0
 
 loc_2186A:                              ; CODE XREF: ProbeFacingTile+1D↑j
                                         ; ProbeFacingTile+6F↑j
@@ -31394,7 +31394,7 @@ loc_21C2A:                              ; CODE XREF: ShowItemPurchaseConfirmProm
                 mov     si, 7CB7h
                 mov     di, 0AFA8h
                 mov     es, word_2E4AA
-                mov     dx, word_36C81
+                mov     dx, g_heldKeyFlags
                 xor     bx, bx
 
 loc_21C3D:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+26C↓j
@@ -38633,7 +38633,7 @@ loc_25B3E:                              ; CODE XREF: HandlePartyStatusPanelInput
 ; ---------------------------------------------------------------------------
 
 loc_25B65:                              ; CODE XREF: HandlePartyStatusPanelInput+2A↑j
-                mov     si, word_36E4D
+                mov     si, g_partyReserveSlot1
                 cmp     ax, 0Ch
                 jl      short locret_25B9E
                 cmp     ax, 12h
@@ -38643,7 +38643,7 @@ loc_25B65:                              ; CODE XREF: HandlePartyStatusPanelInput
 ; ---------------------------------------------------------------------------
 
 loc_25B78:                              ; CODE XREF: HandlePartyStatusPanelInput+3D↑j
-                mov     si, word_36E4F
+                mov     si, g_partyReserveSlot2
                 cmp     ax, 16h
                 jl      short locret_25B9E
                 cmp     ax, 1Ch
@@ -38653,7 +38653,7 @@ loc_25B78:                              ; CODE XREF: HandlePartyStatusPanelInput
 ; ---------------------------------------------------------------------------
 
 loc_25B8B:                              ; CODE XREF: HandlePartyStatusPanelInput+50↑j
-                mov     si, word_36E51
+                mov     si, g_partyReserveSlot3
                 cmp     ax, 20h ; ' '
                 jl      short locret_25B9E
                 cmp     ax, 26h ; '&'
@@ -38728,21 +38728,21 @@ loc_25BFB:                              ; CODE XREF: HandlePartyStatusPanelInput
 loc_25C08:                              ; CODE XREF: HandlePartyStatusPanelInput+CC↑j
                 cmp     g_lastKeyChar, 32h ; '2'
                 jnz     short loc_25C15
-                mov     si, word_36E4D
+                mov     si, g_partyReserveSlot1
                 jmp     short loc_25C2D
 ; ---------------------------------------------------------------------------
 
 loc_25C15:                              ; CODE XREF: HandlePartyStatusPanelInput+D9↑j
                 cmp     g_lastKeyChar, 33h ; '3'
                 jnz     short loc_25C22
-                mov     si, word_36E4F
+                mov     si, g_partyReserveSlot2
                 jmp     short loc_25C2D
 ; ---------------------------------------------------------------------------
 
 loc_25C22:                              ; CODE XREF: HandlePartyStatusPanelInput+E6↑j
                 cmp     g_lastKeyChar, 34h ; '4'
                 jnz     short locret_25C60
-                mov     si, word_36E51
+                mov     si, g_partyReserveSlot3
 
 loc_25C2D:                              ; CODE XREF: HandlePartyStatusPanelInput+D2↑j
                                         ; HandlePartyStatusPanelInput+DF↑j ...
@@ -41716,7 +41716,7 @@ loc_2763D:                              ; CODE XREF: ConsumeItemChargeResource+1
 ; ---------------------------------------------------------------------------
 
 loc_2764B:                              ; CODE XREF: ConsumeItemChargeResource+17C↑j
-                cmp     ax, word_36E4D
+                cmp     ax, g_partyReserveSlot1
                 jnz     short loc_27667
                 test    g_uiScratchFlags2, 2000h
                 jz      short loc_276C2
@@ -41726,7 +41726,7 @@ loc_2764B:                              ; CODE XREF: ConsumeItemChargeResource+1
 ; ---------------------------------------------------------------------------
 
 loc_27667:                              ; CODE XREF: ConsumeItemChargeResource+19B↑j
-                cmp     ax, word_36E4F
+                cmp     ax, g_partyReserveSlot2
                 jnz     short loc_27683
                 test    g_uiScratchFlags2, 1000h
                 jz      short loc_276C2
@@ -41736,7 +41736,7 @@ loc_27667:                              ; CODE XREF: ConsumeItemChargeResource+1
 ; ---------------------------------------------------------------------------
 
 loc_27683:                              ; CODE XREF: ConsumeItemChargeResource+1B7↑j
-                cmp     ax, word_36E51
+                cmp     ax, g_partyReserveSlot3
                 jnz     short loc_2769D
                 test    g_uiScratchFlags2, 800h
                 jz      short loc_276C2
@@ -46044,7 +46044,7 @@ loc_297BE:                              ; CODE XREF: UnlockDoorCommand+77↑j
 
 loc_297CE:                              ; CODE XREF: UnlockDoorCommand+8B↑j
                 mov     bx, word_2E548
-                mov     ax, word_36C81
+                mov     ax, g_heldKeyFlags
                 test    word ptr [bx], 20h
                 jnz     short loc_297E3
                 mov     ax, [bx]
@@ -46052,7 +46052,7 @@ loc_297CE:                              ; CODE XREF: UnlockDoorCommand+8B↑j
                 jz      short loc_297EB
 
 loc_297E3:                              ; CODE XREF: UnlockDoorCommand+A1↑j
-                mov     bx, word_32DCE
+                mov     bx, g_lockStatusFlags
                 test    ah, bh
                 jnz     short loc_2981F
 
@@ -46070,7 +46070,7 @@ loc_297F8:                              ; CODE XREF: UnlockDoorCommand+B9↑j
 
 loc_29800:                              ; CODE XREF: UnlockDoorCommand+92↑j
                 mov     bx, word_2E548
-                mov     ax, word_36C81
+                mov     ax, g_heldKeyFlags
                 xchg    ah, al
                 test    word ptr [bx], 20h
                 jnz     short loc_29817
@@ -46079,7 +46079,7 @@ loc_29800:                              ; CODE XREF: UnlockDoorCommand+92↑j
                 jz      short loc_297EB
 
 loc_29817:                              ; CODE XREF: UnlockDoorCommand+D5↑j
-                mov     bx, word_32DCE
+                mov     bx, g_lockStatusFlags
                 test    ah, bh
                 jz      short loc_297EB
 
@@ -46101,12 +46101,12 @@ loc_2982E:                              ; CODE XREF: UnlockDoorCommand+EC↑j
                 mov     cx, 1
                 mov     bx, 7BAEh
                 call    ShowAbilityDescriptionColumn
-                cmp     word_32DE8, 0
+                cmp     g_facingTileCellPtr, 0
                 jz      short loc_29874
                 push    es
                 push    si
                 mov     es, g_dungeonMapGridSegment
-                mov     si, word_32DE8
+                mov     si, g_facingTileCellPtr
                 and     word ptr es:[si+6], 0BFFFh
                 pop     es
                 pop     si
@@ -48366,7 +48366,7 @@ loc_2A82F:                              ; CODE XREF: HandleSearchCommand+9D↑j
 ; ---------------------------------------------------------------------------
 
 loc_2A845:                              ; CODE XREF: HandleSearchCommand+AE↑j
-                test    word_32DCE, 40h
+                test    g_lockStatusFlags, 40h
                 jnz     short loc_2A854
                 call    ShowLockStatus
                 jmp     short loc_2A7DA
@@ -48412,7 +48412,7 @@ loc_2A8A8:                              ; CODE XREF: HandleSearchCommand+116↑j
                 call    FileEntry_Write
                 call    ErrorCheck
                 call    ApplySavingThrowEffect
-                test    word_32DCE, 80h
+                test    g_lockStatusFlags, 80h
                 jz      short loc_2A8ED
                 cmp     ax, 1
                 jnz     short loc_2A8DF
@@ -48430,12 +48430,12 @@ loc_2A8ED:                              ; CODE XREF: HandleSearchCommand+14D↑j
                 mov     cx, 1
                 mov     bx, 7BAEh
                 call    ShowAbilityDescriptionColumn
-                cmp     word_32DE8, 0
+                cmp     g_facingTileCellPtr, 0
                 jz      short loc_2A911
                 push    es
                 push    si
                 mov     es, g_dungeonMapGridSegment
-                mov     si, word_32DE8
+                mov     si, g_facingTileCellPtr
                 and     word ptr es:[si+6], 0BFFFh
                 pop     es
                 pop     si
@@ -49643,9 +49643,9 @@ InitializeNewGameWorldState proc far    ; CODE XREF: RunTitleScreen+25↑P
                 call    FileEntry_Read
                 call    ErrorCheck
                 mov     g_partySlotAssignment, 0
-                mov     word_36E4D, 0
-                mov     word_36E4F, 0
-                mov     word_36E51, 0
+                mov     g_partyReserveSlot1, 0
+                mov     g_partyReserveSlot2, 0
+                mov     g_partyReserveSlot3, 0
                 mov     cx, 9
                 mov     si, 95F3h
 
@@ -50231,7 +50231,7 @@ loc_2BA88:                              ; CODE XREF: FinishPlacingHeldItem+1E↑
                 xor     al, al
 
 loc_2BA8A:                              ; CODE XREF: FinishPlacingHeldItem+24↑j
-                or      word_36C81, ax
+                or      g_heldKeyFlags, ax
                 mov     g_pictureId, 0
                 call    UpdateCursorForHeldItem
                 call    DrawMouseCursorAlt
@@ -50884,9 +50884,9 @@ ShowWorldMap    endp
 CompactPartyRosterSlots proc near       ; CODE XREF: ShowWorldMap+11F↑p
                 and     g_uiScratchFlags1, 0FDFFh ; Cascades non-empty roster entries down to fill gaps across the 4 active slots (g_partySlotAssignment=0x95EB, plus 0x95ED/0x95EF/0x95F1) and 3 reserve slots (word_36E4D/36E4F/36E51, not otherwise documented), setting word_328C4 bit 0x200 if anything changed. Called from ShowWorldMap's exit path ('D' key or equivalent mouse click), right before it returns -- a cleanup-on-exit step.
                 mov     ax, g_partySlotAssignment
-                add     ax, word_36E4D
-                add     ax, word_36E4F
-                add     ax, word_36E51
+                add     ax, g_partyReserveSlot1
+                add     ax, g_partyReserveSlot2
+                add     ax, g_partyReserveSlot3
                 cmp     ax, 0
                 jnz     short loc_2BF57
                 retn
@@ -50914,7 +50914,7 @@ loc_2BF76:                              ; CODE XREF: CompactPartyRosterSlots+31�
 
 loc_2BF7F:                              ; CODE XREF: CompactPartyRosterSlots+26↑j
                                         ; CompactPartyRosterSlots+38↑j
-                cmp     word_36E4D, 0
+                cmp     g_partyReserveSlot1, 0
                 jnz     short loc_2BFA1
                 mov     si, 95EFh
                 mov     cx, 2
@@ -50930,17 +50930,17 @@ loc_2BF8C:                              ; CODE XREF: CompactPartyRosterSlots+58�
 loc_2BF98:                              ; CODE XREF: CompactPartyRosterSlots+53↑j
                 mov     ax, [si]
                 mov     word ptr [si], 0
-                mov     word_36E4D, ax
+                mov     g_partyReserveSlot1, ax
 
 loc_2BFA1:                              ; CODE XREF: CompactPartyRosterSlots+48↑j
                                         ; CompactPartyRosterSlots+5A↑j
-                cmp     word_36E4F, 0
+                cmp     g_partyReserveSlot2, 0
                 jnz     short locret_2BFBB
-                cmp     word_36E51, 0
+                cmp     g_partyReserveSlot3, 0
                 jz      short locret_2BFBB
-                mov     ax, word_36E51
-                mov     word_36E4F, ax
-                mov     word_36E51, 0
+                mov     ax, g_partyReserveSlot3
+                mov     g_partyReserveSlot2, ax
+                mov     g_partyReserveSlot3, 0
 
 locret_2BFBB:                           ; CODE XREF: CompactPartyRosterSlots+6A↑j
                                         ; CompactPartyRosterSlots+71↑j
@@ -51890,7 +51890,7 @@ loc_2C81E:                              ; CODE XREF: ApplyEncodedItemEffect+70D�
                                         ; ApplyEncodedItemEffect+714↑j ...
                 mov     ax, 2Ah ; '*'
                 call    TriggerSoundEvent
-                test    word_32DCE, 80h
+                test    g_lockStatusFlags, 80h
                 jz      short loc_2C836
                 mov     cx, 2
                 mov     bx, 7CA8h
@@ -75519,8 +75519,9 @@ byte_32DCC      db 0                    ; DATA XREF: HandleShopCatalogSlotClick:
                                         ; HandleShopCatalogSlotClick:loc_17100↑w ...
 g_lockUnlockedAccumulator db 0          ; DATA XREF: start+1BB↑w
                                         ; start+24B↑w ...
-word_32DCE      dw 0                    ; DATA XREF: RunShopScreen+24C↑r
+g_lockStatusFlags dw 0                  ; DATA XREF: RunShopScreen+24C↑r
                                         ; ShowLockStatus+38↑r ...
+                                        ; Currently-examined lock/door status flags, loaded by LoadLockState. Confirmed via ShowLockStatus's own switch: bit 0x20='magically locked', bits 0x200/0x400/0x800/0x1000/0x2000/0x4000/0x8000=the 7-tier key hierarchy (BRASS/BRONZE/COPPER/IRON/STEEL/SILVER/GOLD). Bits 0x1/0x2 are also tested at several UseAbilityCommand/RunShopScreen/RunMapEditorScreen call sites whose exact relationship to lock state isn't confirmed.
 word_32DD0      dw 0                    ; DATA XREF: LoadLockState+88↑r
                                         ; LoadCurgameRecord+74↑r ...
                 db    0
@@ -75542,7 +75543,7 @@ word_32DD0      dw 0                    ; DATA XREF: LoadLockState+88↑r
 word_32DE2      dw 0                    ; DATA XREF: BuildShopCategoryTabList+28↑r
 word_32DE4      dw 0                    ; DATA XREF: BuildShopCategoryTabList+3A↑r
 word_32DE6      dw 0                    ; DATA XREF: BuildShopCategoryTabList+31↑r
-word_32DE8      dw 0                    ; DATA XREF: ProbeFacingTile+D↑w
+g_facingTileCellPtr dw 0                ; DATA XREF: ProbeFacingTile+D↑w
                                         ; ProbeFacingTile+2D↑w ...
                 db    0
                 db    0
@@ -85921,7 +85922,7 @@ word_36C79      dw 0                    ; DATA XREF: seg000:loc_108C5↑r
                 db 0FFh
 word_36C7F      dw 0                    ; DATA XREF: start+3BF↑r
                                         ; start:loc_103E2↑w ...
-word_36C81      dw 0                    ; DATA XREF: ShowItemPurchaseConfirmPrompt+23D↑r
+g_heldKeyFlags  dw 0                    ; DATA XREF: ShowItemPurchaseConfirmPrompt+23D↑r
                                         ; UnlockDoorCommand+9A↑r ...
 word_36C83      dw 0                    ; DATA XREF: TickWorldAilments+4B↑r
                                         ; TickStatusEffects+1B↑w ...
@@ -86383,11 +86384,11 @@ word_36E0F      dw 0                    ; DATA XREF: PrepareGroundItemSlotWrite+
 g_partySlotAssignment dw 0              ; DATA XREF: HandleMovementInput+284↑r
                                         ; RunPartyInventoryScreen+4B7↑r ...
                                         ; 4 entries x 2 bytes: which 1-based g_partyRecords index occupies UI/effect slot N (0 = empty).
-word_36E4D      dw 0                    ; DATA XREF: RunPartyInventoryScreen+4C0↑r
+g_partyReserveSlot1 dw 0                ; DATA XREF: RunPartyInventoryScreen+4C0↑r
                                         ; ShowConfirmPrompt+15E↑r ...
-word_36E4F      dw 0                    ; DATA XREF: RunPartyInventoryScreen+4C9↑r
+g_partyReserveSlot2 dw 0                ; DATA XREF: RunPartyInventoryScreen+4C9↑r
                                         ; ShowConfirmPrompt+16E↑r ...
-word_36E51      dw 0                    ; DATA XREF: ShowConfirmPrompt+17E↑r
+g_partyReserveSlot3 dw 0                ; DATA XREF: ShowConfirmPrompt+17E↑r
                                         ; ShowConfirmPrompt+1D5↑r ...
 g_partyRecords  db    0                 ; Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).
                 db    0

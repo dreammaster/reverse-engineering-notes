@@ -10948,12 +10948,15 @@ static Bytes_5(void) {
 	create_byte	(0X32DCC);
 	create_byte	(0X32DCD);
 	set_name	(0X32DCD,	"g_lockUnlockedAccumulator");
+	set_cmt	(0X32DCE,	"Currently-examined lock/door status flags, loaded by LoadLockState. Confirmed via ShowLockStatus's own switch: bit 0x20='magically locked', bits 0x200/0x400/0x800/0x1000/0x2000/0x4000/0x8000=the 7-tier key hierarchy (BRASS/BRONZE/COPPER/IRON/STEEL/SILVER/GOLD). Bits 0x1/0x2 are also tested at several UseAbilityCommand/RunShopScreen/RunMapEditorScreen call sites whose exact relationship to lock state isn't confirmed.",	0);
 	create_word	(0X32DCE);
+	set_name	(0X32DCE,	"g_lockStatusFlags");
 	create_word	(0X32DD0);
 	create_word	(0X32DE2);
 	create_word	(0X32DE4);
 	create_word	(0X32DE6);
 	create_word	(0X32DE8);
+	set_name	(0X32DE8,	"g_facingTileCellPtr");
 	create_word	(0X332D0);
 	create_word	(0X332D2);
 	create_word	(0X332D4);
@@ -11999,6 +12002,7 @@ static Bytes_5(void) {
 	create_word	(0X36C79);
 	create_word	(0X36C7F);
 	create_word	(0X36C81);
+	set_name	(0X36C81,	"g_heldKeyFlags");
 	create_word	(0X36C83);
 	create_word	(0X36C85);
 	create_word	(0X36C87);
@@ -12072,8 +12076,11 @@ static Bytes_5(void) {
 	create_word	(0X36E4B);
 	set_name	(0X36E4B,	"g_partySlotAssignment");
 	create_word	(0X36E4D);
+	set_name	(0X36E4D,	"g_partyReserveSlot1");
 	create_word	(0X36E4F);
+	set_name	(0X36E4F,	"g_partyReserveSlot2");
 	create_word	(0X36E51);
+	set_name	(0X36E51,	"g_partyReserveSlot3");
 	set_cmt	(0X36E53,	"Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).",	0);
 	set_name	(0X36E53,	"g_partyRecords");
 	create_word	(0X38808);

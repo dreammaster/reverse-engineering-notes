@@ -173952,3 +173952,28 @@ total names seen: 1491, matched default pattern: 0
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor2\yendor2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rename_globals_round9.py']
+[*] reading rename_globals_round9.py
+[*] executing rename_globals_round9.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x32dce  'word_32DCE' -> 'g_lockStatusFlags': ok
+0x36c81  'word_36C81' -> 'g_heldKeyFlags': ok
+0x32de8  'word_32DE8' -> 'g_facingTileCellPtr': ok
+0x36e4d  'word_36E4D' -> 'g_partyReserveSlot1': ok
+0x36e4f  'word_36E4F' -> 'g_partyReserveSlot2': ok
+0x36e51  'word_36E51' -> 'g_partyReserveSlot3': ok
+0x32dce  comment set (419 chars)
+----- end target script output -----
+[*] finished executing rename_globals_round9.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106993
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
