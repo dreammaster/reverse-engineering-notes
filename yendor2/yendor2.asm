@@ -46215,7 +46215,7 @@ loc_29936:                              ; CODE XREF: DrawPicture+C7↓j
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_29943
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 stosb
                 loop    loc_29936
                 jmp     short loc_29946
@@ -46243,7 +46243,7 @@ loc_29958:                              ; CODE XREF: DrawPicture+F3↓j
 
 loc_2995C:                              ; CODE XREF: DrawPicture+E9↓j
                 lodsb
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 stosb
                 loop    loc_2995C
                 sub     di, [bp+var_A]
@@ -47277,7 +47277,7 @@ sub_2A0FC       proc near               ; CODE XREF: sub_29FF6+47↑p
 
 loc_2A106:                              ; CODE XREF: sub_2A0FC+F↓j
                 lodsb
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 stosb
                 loop    loc_2A106
                 add     word ptr [bp-4], 140h
@@ -47776,7 +47776,7 @@ loc_2A4F3:                              ; CODE XREF: seg111:0C96↓j
                 mov     al, [si]
                 cmp     al, 0FFh
                 jz      short loc_2A4FF
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 mov     es:[di], al
 
 loc_2A4FF:                              ; CODE XREF: seg111:0C87↑j
@@ -47789,7 +47789,7 @@ loc_2A4FF:                              ; CODE XREF: seg111:0C87↑j
 loc_2A509:                              ; CODE XREF: seg111:0C81↑j
                                         ; seg111:0CA8↓j
                 mov     al, [si]
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 mov     es:[di], al
                 add     si, [bp-0Ah]
                 add     di, 140h
@@ -47810,7 +47810,7 @@ loc_2A524:                              ; CODE XREF: sub_2A51B+12↓j
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_2A530
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 stosb
                 loop    loc_2A524
                 retn
@@ -47825,7 +47825,7 @@ loc_2A530:                              ; CODE XREF: sub_2A51B+C↑j
 loc_2A534:                              ; CODE XREF: sub_2A51B+7↑j
                                         ; sub_2A51B+1E↓j
                 lodsb
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 stosb
                 loop    loc_2A534
                 retn
@@ -47918,7 +47918,7 @@ loc_2A5B9:                              ; CODE XREF: sub_2A589+59↓j
                 jz      short loc_2A5E6
 
 loc_2A5C4:                              ; CODE XREF: sub_2A589+35↑j
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 cmp     word ptr [bp-4Ah], 0
                 jz      short loc_2A5D4
                 call    sub_2A4B0
@@ -47993,7 +47993,7 @@ loc_2A627:                              ; CODE XREF: sub_2A5F7+49↓j
                 jz      short loc_2A63C
 
 loc_2A636:                              ; CODE XREF: sub_2A5F7+39↑j
-                call    sub_2A653
+                call    ShiftPaletteShadeClamped
                 mov     es:[di], al
 
 loc_2A63C:                              ; CODE XREF: sub_2A5F7+3D↑j
@@ -48019,9 +48019,9 @@ sub_2A5F7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A653       proc near               ; CODE XREF: DrawPicture+C3↑p
+ShiftPaletteShadeClamped proc near      ; CODE XREF: DrawPicture+C3↑p
                                         ; DrawPicture+E5↑p ...
-                cmp     byte ptr [bp-21h], 0
+                cmp     byte ptr [bp-21h], 0 ; Shifts color al by the shared [bp+var_21] delta (DrawPicture's copy of word_32926) within its 16-entry palette hue-block (floor al&0xF0, ceiling al|0x0F), clamped at the block edges; no-op if delta==0 or al>=0xD0. A distance/light dimming shade primitive. Called 9x from DrawPicture and sibling picture-draw code.
                 jz      short locret_2A680
                 cmp     al, 0D0h
                 jnb     short locret_2A680
@@ -48039,19 +48039,19 @@ sub_2A653       proc near               ; CODE XREF: DrawPicture+C3↑p
                 test    al, 80h
                 jnz     short loc_2A67E
 
-loc_2A67B:                              ; CODE XREF: sub_2A653+22↑j
+loc_2A67B:                              ; CODE XREF: ShiftPaletteShadeClamped+22↑j
                 mov     al, bh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2A67E:                              ; CODE XREF: sub_2A653+19↑j
-                                        ; sub_2A653+26↑j
+loc_2A67E:                              ; CODE XREF: ShiftPaletteShadeClamped+19↑j
+                                        ; ShiftPaletteShadeClamped+26↑j
                 mov     al, bl
 
-locret_2A680:                           ; CODE XREF: sub_2A653+4↑j
-                                        ; sub_2A653+8↑j ...
+locret_2A680:                           ; CODE XREF: ShiftPaletteShadeClamped+4↑j
+                                        ; ShiftPaletteShadeClamped+8↑j ...
                 retn
-sub_2A653       endp
+ShiftPaletteShadeClamped endp
 
 
 ; =============== S U B R O U T I N E =======================================

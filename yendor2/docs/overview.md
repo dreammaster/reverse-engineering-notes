@@ -4471,6 +4471,30 @@ mathematically redundant with a single division and isn't explained.
 
 542 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShiftPaletteShadeClamped — resolves the tile-table "remap parameter" open question
+
+Named `sub_2A653` -> `ShiftPaletteShadeClamped`, called 9 times from
+`DrawPicture` and sibling picture-drawing code. This resolves a
+long-standing open question flagged during the minimap/tile-table
+investigation earlier this session: "the varying table value ... feeds
+`word_32926`, a parameter `DrawPicture` passes (as `[bp+var_21]`) ...
+[but] it never reads `[bp+var_21]` at all" (`sub_2A53C` was ruled out
+as the reader). `sub_2A653`, sharing `DrawPicture`'s stack frame, *is*
+the actual reader: it treats the input color as belonging to a
+16-entry palette "hue block" (typical VGA RPG layout — 16 hues × 16
+shades), computes that block's floor (`al&0xF0`) and ceiling
+(`al|0x0F`), adds the `[bp+var_21]`/`word_32926` delta, and clamps the
+result to stay within the same hue block rather than wrapping into a
+different hue (no-op if the delta is 0 or the input is `>=0xD0`, a
+reserved high palette range). In short: a signed shade-shift primitive
+clamped within one hue block — exactly the kind of building block a
+distance/light-based dungeon-corridor dimming effect would use. The
+two tile-lookup tables themselves are still not fully traced, but
+their "picture-id-like values" are now understood to be shade deltas,
+not remap/color-table indices.
+
+543 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

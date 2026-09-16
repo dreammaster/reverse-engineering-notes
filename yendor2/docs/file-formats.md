@@ -2012,9 +2012,18 @@ per-cell before drawing) is a color/remap value, since `DrawMinimap`
 itself keeps its picture index fixed at `g_pictureDir` entry 9
 throughout its loop rather than varying it per cell — read the
 candidate consumer `sub_2A53C` directly and ruled this out, it never
-touches `word_32926` at all. **Still an open question** what
-`word_32926` actually controls; not worth another guess without more
-evidence.
+touches `word_32926` at all. **Resolved**: the actual reader is
+`ShiftPaletteShadeClamped` (was `sub_2A653`, called 9x from
+`DrawPicture` and sibling picture-draw code, sharing `DrawPicture`'s
+stack frame where `word_32926` is copied to `[bp+var_21]`). It treats
+the drawn color as belonging to a 16-entry VGA palette "hue block"
+(16 hues × 16 shades) and shifts it by the `word_32926` delta, clamped
+to stay within the same hue block — so `word_32926` is a **shade-shift
+amount** (a distance/light dimming delta), not a remap/color-table
+index as such. The two tile-lookup tables' *own* per-cell values still
+aren't fully traced, but their role is now understood: they're
+plausibly per-cell lighting/distance deltas feeding this shade-shift,
+not picture ids.
 
 A second, separate screen also reads these two tables:
 `RunMapEditorScreen` (`0x20070`, reached from an ordinary keyboard
