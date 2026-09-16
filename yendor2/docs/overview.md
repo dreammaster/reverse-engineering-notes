@@ -4250,6 +4250,21 @@ single first-match halving) whose exact relationship to
 
 524 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawMinimapCompassIcon
+
+Named `sub_2169C` -> `DrawMinimapCompassIcon`, called once from
+`DrawMinimap`: draws the minimap's small facing/compass icon. Fixed
+position (`0x110`,`0x20`), redirected to the offscreen buffer, reuses
+the same fixed glyph `DrawMinimap` itself uses for its 7×9 grid
+(`word_2E532=0x90`), and picks a 0–3 remap/variant value
+(`word_2E530`) from the party's current facing via the same
+`word_36CF5` tier-bit convention already documented across
+`ShowCompassDirection`/`SpawnMonsterInFacingDirection`/
+`DrawDungeonCellSideFeature` — a small graphical counterpart to
+`ShowCompassDirection`'s text HUD readout.
+
+525 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

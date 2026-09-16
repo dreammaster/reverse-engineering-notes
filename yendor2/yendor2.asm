@@ -30671,7 +30671,7 @@ loc_215F6:                              ; CODE XREF: DrawMinimap+5E↑j
                 pop     cx
                 add     y, 8
                 loop    loc_215C2
-                call    sub_2169C
+                call    DrawMinimapCompassIcon
                 pop     cx
                 pop     si
                 pop     di
@@ -30750,8 +30750,8 @@ BuildMinimapTileData endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2169C       proc near               ; CODE XREF: DrawMinimap+83↑p
-                mov     x, 110h
+DrawMinimapCompassIcon proc near        ; CODE XREF: DrawMinimap+83↑p
+                mov     x, 110h         ; Draws the minimap's facing/compass icon: fixed position (0x110,0x20) into the offscreen buffer, fixed glyph 0x90 (same as DrawMinimap's 7x9 grid icon), remap value 0-3 selected by the word_36CF5 facing-tier bits (same convention as ShowCompassDirection/SpawnMonsterInFacingDirection). Called from DrawMinimap.
                 mov     y, 20h ; ' '
                 mov     word_2E532, 90h
                 mov     _font_bgTransparent, 1
@@ -30768,11 +30768,11 @@ sub_2169C       proc near               ; CODE XREF: DrawMinimap+83↑p
                 jnz     short loc_216EA
                 mov     word_2E530, 3
 
-loc_216EA:                              ; CODE XREF: sub_2169C+2A↑j
-                                        ; sub_2169C+38↑j ...
+loc_216EA:                              ; CODE XREF: DrawMinimapCompassIcon+2A↑j
+                                        ; DrawMinimapCompassIcon+38↑j ...
                 call    DrawPicture
                 retn
-sub_2169C       endp
+DrawMinimapCompassIcon endp
 
 seg064          ends
 

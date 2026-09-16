@@ -5690,7 +5690,9 @@ static Bytes_2(void) {
 	create_insn	(0X2161F);
 	create_insn	(x=0X2165C);
 	op_hex		(x,	1);
+	set_cmt	(0X2169C,	"Draws the minimap's facing/compass icon: fixed position (0x110,0x20) into the offscreen buffer, fixed glyph 0x90 (same as DrawMinimap's 7x9 grid icon), remap value 0-3 selected by the word_36CF5 facing-tier bits (same convention as ShowCompassDirection/SpawnMonsterInFacingDirection). Called from DrawMinimap.",	0);
 	create_insn	(0X2169C);
+	set_name	(0X2169C,	"DrawMinimapCompassIcon");
 	create_insn	(x=0X216C0);
 	op_hex		(x,	1);
 	create_insn	(x=0X216CE);
@@ -7396,6 +7398,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27B1B);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27B42);
 	create_insn	(0X27B63);
 	create_insn	(0X27B84);
@@ -7415,15 +7426,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27C5A,	"Sets up a WORLD.DAT-style read context for a fixed data block (table 0xCE23, size 0x9BD) -- preparing to read the sound driver's music/instrument data. Called from InitMusicDriver.",	0);
 	create_insn	(0X27C5A);
 	set_name	(0X27C5A,	"PrepareMusicDataRead");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27C78);
 	create_insn	(0X27C96);
 	set_cmt	(0X27CB0,	"Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.",	0);
@@ -10162,6 +10164,15 @@ static Bytes_3(void) {
 	create_word	(0X3290C);
 	create_word	(0X3290E);
 	create_word	(0X32910);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32912);
 	create_word	(0X32914);
 	create_word	(0X32916);
@@ -10194,15 +10205,6 @@ static Bytes_3(void) {
 	create_word	(0X32946);
 	set_name	(0X32946,	"fe");
 	create_word	(0X32948);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X3294A);
 	set_name	(0X3294A,	"_textPos_x");
 	create_word	(0X3294C);

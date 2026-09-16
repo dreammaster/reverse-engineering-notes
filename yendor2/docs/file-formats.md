@@ -1344,7 +1344,11 @@ was `sub_1E340`) and highlighting the current selection.
 "NORTH"/"SOUTH"/"EAST"/"WEST" HUD readout gated on an unidentified
 "compass active" mode (`word_328CA` bit `0x1000` clear, `word_36C7F`
 bit `0x400` set), drawn at the same screen position as the
-material/gold HUD.
+material/gold HUD. `DrawMinimap` has its own small graphical
+counterpart, `DrawMinimapCompassIcon` (was `sub_2169C`): draws a fixed
+icon glyph (the same one used for the minimap's 7×9 grid cells) at a
+fixed position, with a 0–3 remap value selected by the same
+`word_36CF5` facing-tier bits.
 
 Three **global** (not per-party-member) counters at `0x94B3`
 (`g_partyGold`), `0x94B7`, `0x94BB` — confirmed **exactly
