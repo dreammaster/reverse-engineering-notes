@@ -3433,6 +3433,25 @@ confirmed, but the overall "total party wipe" shape is well-evidenced.
 
 440 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleClueCategorySelection, RestoreClueBookBackgroundFromEMS
+
+Named `sub_14D26` -> `HandleClueCategorySelection`: `RunClueEntryMenu`'s
+category-switching input handler (keyboard + mouse, both funneling into
+a shared "apply new category" block). Caught and fixed my own comment
+before it was ever committed: initially guessed its `K`/`P` hotkeys'
+gating bits (`word_328CC` `0x40`/`0x20`) were "plausibly the same
+registration-lock bits `ShowClueBookRegistrationNag` checks" — wrong;
+`DrawClueBookNavBar`'s own pre-existing comment already documents those
+exact bits as the "d) LIST"/"c) MAP" hotkey-hint toggles, a completely
+different flag from the actual registration lock (`word_328CA` bit 1 +
+an entry's own `+2` bit `0x8000`).
+
+Named `sub_14DFC` -> `RestoreClueBookBackgroundFromEMS`: a full-screen
+EMS restore on its own dedicated page (`0x5616`), called only from
+`ShowClueBook` to restore the screen behind it on close.
+
+442 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

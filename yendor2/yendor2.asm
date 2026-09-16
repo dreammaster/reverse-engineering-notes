@@ -1757,7 +1757,7 @@ loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
                 call    StopMusicAndResetTimer
                 call    sub_25862
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_14DFC
+                call    RestoreClueBookBackgroundFromEMS
                 call    DrawMouseCursor
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
@@ -4426,7 +4426,7 @@ loc_12B9B:                              ; CODE XREF: RunClueEntryMenu+12↑j
 ; ---------------------------------------------------------------------------
 
 loc_12BB8:                              ; CODE XREF: RunClueEntryMenu+2F↑j
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_12BD1
                 call    DrawClueBookNavBar
@@ -4476,7 +4476,7 @@ loc_12BFF:                              ; CODE XREF: RunClueEntryMenu+28↑j
 ; ---------------------------------------------------------------------------
 
 loc_12C26:                              ; CODE XREF: RunClueEntryMenu+8D↑j
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_12BD1
                 call    DrawClueBookNavBar
@@ -5091,7 +5091,7 @@ loc_1306B:                              ; CODE XREF: WaitForKeypress+17↓j
                 jz      short loc_1306B
                 cmp     errorCode, 3
                 jg      short loc_1306B
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_1306B
                 and     word_328CC, 0FFBFh
@@ -5145,7 +5145,7 @@ loc_130B8:                              ; CODE XREF: RunClueBookItemCategory+32�
 ; ---------------------------------------------------------------------------
 
 loc_13107:                              ; CODE XREF: RunClueBookItemCategory+4D↑j
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_130B8
                 and     word_328CC, 0FFBFh
@@ -5203,7 +5203,7 @@ loc_13168:                              ; CODE XREF: RunClueBookItemDetailWithAb
                 jz      short loc_13168
                 cmp     errorCode, 3
                 jg      short loc_13168
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_13168
                 and     word_328CC, 0FFBFh
@@ -5257,7 +5257,7 @@ loc_131B5:                              ; CODE XREF: RunClueBookWeaponCategory+3
 ; ---------------------------------------------------------------------------
 
 loc_13204:                              ; CODE XREF: RunClueBookWeaponCategory+4D↑j
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_131B5
                 and     word_328CC, 0FFBFh
@@ -5292,7 +5292,7 @@ loc_13253:                              ; CODE XREF: RunClueBookSpellCategory+47
                 jz      short loc_13253
                 cmp     errorCode, 3
                 jg      short loc_13253
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_13253
                 and     word_328CC, 0FFBFh
@@ -5350,7 +5350,7 @@ loc_132CD:                              ; CODE XREF: RunClueBookMonsterCategory+
                 jz      short loc_132B8
                 cmp     errorCode, 3
                 jg      short loc_132B8
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_132B8
                 and     word_328CC, 0FFBFh
@@ -5383,7 +5383,7 @@ loc_13322:                              ; CODE XREF: ShowPagedEntryScreen+3A↓j
                 jz      short loc_13322
                 cmp     errorCode, 3
                 jg      short loc_13322
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jnz     short locret_1334D
                 call    sub_133EB
@@ -5412,7 +5412,7 @@ loc_1335B:                              ; CODE XREF: RunClueBookTransportCategor
                 jz      short loc_1335B
                 cmp     errorCode, 3
                 jg      short loc_1335B
-                call    sub_14D26
+                call    HandleClueCategorySelection
                 cmp     word_2E40A, 0
                 jz      short loc_1335B
                 and     word_328CC, 0FFBFh
@@ -7803,9 +7803,9 @@ DrawClueBookNavBar endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14D26       proc far                ; CODE XREF: RunClueEntryMenu:loc_12BB8↑P
+HandleClueCategorySelection proc far    ; CODE XREF: RunClueEntryMenu:loc_12BB8↑P
                                         ; RunClueEntryMenu:loc_12C26↑P ...
-                cmp     byte_2E400, 0
+                cmp     byte_2E400, 0   ; RunClueEntryMenu's category-switching input handler: keyboard (ESC/digit keys/'K'/'P' hotkeys, byte_2E400==9 for ShowClueBookHelpScreen) and mouse (region table 0x6876, categories 1-9) both feed into a shared 'apply new category' block that walks a 7-bit category mask in word_328CC and plays a sound cue on change. 'K'/'P' gated on word_328CC bits 0x40/0x20 -- the same 'd) LIST'/'c) MAP' hotkey-hint bits DrawClueBookNavBar draws (NOT the registration-lock flag, which is a different bit).
                 jz      short loc_14D8E
                 mov     word_2E40A, 8
                 cmp     byte_2E400, 1Bh
@@ -7813,7 +7813,7 @@ sub_14D26       proc far                ; CODE XREF: RunClueEntryMenu:loc_12BB8�
                 jmp     loc_14DC7
 ; ---------------------------------------------------------------------------
 
-loc_14D3D:                              ; CODE XREF: sub_14D26+12↑j
+loc_14D3D:                              ; CODE XREF: HandleClueCategorySelection+12↑j
                 mov     word_2E40A, 1
                 cmp     byte_2E400, 4Bh ; 'K'
                 jz      short loc_14DAE
@@ -7829,7 +7829,7 @@ loc_14D3D:                              ; CODE XREF: sub_14D26+12↑j
                 jmp     locret_14DFB
 ; ---------------------------------------------------------------------------
 
-loc_14D70:                              ; CODE XREF: sub_14D26+36↑j
+loc_14D70:                              ; CODE XREF: HandleClueCategorySelection+36↑j
                 cmp     byte_2E400, 3Bh ; ';'
                 jl      short loc_14DF5
                 cmp     byte_2E400, 40h ; '@'
@@ -7842,7 +7842,7 @@ loc_14D70:                              ; CODE XREF: sub_14D26+36↑j
                 jmp     short loc_14DC7
 ; ---------------------------------------------------------------------------
 
-loc_14D8E:                              ; CODE XREF: sub_14D26+5↑j
+loc_14D8E:                              ; CODE XREF: HandleClueCategorySelection+5↑j
                 cmp     errorCode, 3
                 jnz     short loc_14DF5
                 mov     ax, word_2E76E
@@ -7854,29 +7854,29 @@ loc_14D8E:                              ; CODE XREF: sub_14D26+5↑j
                 cmp     ax, 1
                 jnz     short loc_14DB8
 
-loc_14DAE:                              ; CODE XREF: sub_14D26+22↑j
+loc_14DAE:                              ; CODE XREF: HandleClueCategorySelection+22↑j
                 test    word_328CC, 40h
                 jz      short loc_14DF5
                 jmp     short locret_14DFB
 ; ---------------------------------------------------------------------------
 
-loc_14DB8:                              ; CODE XREF: sub_14D26+86↑j
+loc_14DB8:                              ; CODE XREF: HandleClueCategorySelection+86↑j
                 cmp     ax, 9
                 jnz     short loc_14DC7
 
-loc_14DBD:                              ; CODE XREF: sub_14D26+2F↑j
+loc_14DBD:                              ; CODE XREF: HandleClueCategorySelection+2F↑j
                 test    word_328CC, 20h
                 jz      short loc_14DF5
                 jmp     short locret_14DFB
 ; ---------------------------------------------------------------------------
 
-loc_14DC7:                              ; CODE XREF: sub_14D26+14↑j
-                                        ; sub_14D26+66↑j ...
+loc_14DC7:                              ; CODE XREF: HandleClueCategorySelection+14↑j
+                                        ; HandleClueCategorySelection+66↑j ...
                 mov     bx, 8000h
                 mov     dx, 2
                 mov     cx, 7
 
-loc_14DD0:                              ; CODE XREF: sub_14D26+CD↓j
+loc_14DD0:                              ; CODE XREF: HandleClueCategorySelection+CD↓j
                 cmp     word_2E40A, dx
                 jnz     short loc_14DF0
                 test    word_328CC, bx
@@ -7888,26 +7888,27 @@ loc_14DD0:                              ; CODE XREF: sub_14D26+CD↓j
                 jmp     short locret_14DFB
 ; ---------------------------------------------------------------------------
 
-loc_14DF0:                              ; CODE XREF: sub_14D26+AE↑j
+loc_14DF0:                              ; CODE XREF: HandleClueCategorySelection+AE↑j
                 inc     dx
                 shr     bx, 1
                 loop    loc_14DD0
 
-loc_14DF5:                              ; CODE XREF: sub_14D26+4F↑j
-                                        ; sub_14D26+56↑j ...
+loc_14DF5:                              ; CODE XREF: HandleClueCategorySelection+4F↑j
+                                        ; HandleClueCategorySelection+56↑j ...
                 mov     word_2E40A, 0
 
-locret_14DFB:                           ; CODE XREF: sub_14D26+47↑j
-                                        ; sub_14D26+90↑j ...
+locret_14DFB:                           ; CODE XREF: HandleClueCategorySelection+47↑j
+                                        ; HandleClueCategorySelection+90↑j ...
                 retf
-sub_14D26       endp
+HandleClueCategorySelection endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14DFC       proc far                ; CODE XREF: ShowClueBook+4B5↑P
-                push    cx
+RestoreClueBookBackgroundFromEMS proc far
+                                        ; CODE XREF: ShowClueBook+4B5↑P
+                push    cx              ; Restores the entire video buffer from EMS page 0x5616 (a dedicated page, distinct from 0x55D8) -- the screen behind the F8 clue book, restored when it closes. Called only from ShowClueBook.
                 push    es
                 push    si
                 push    di
@@ -7928,7 +7929,7 @@ sub_14DFC       proc far                ; CODE XREF: ShowClueBook+4B5↑P
                 pop     es
                 pop     cx
                 retf
-sub_14DFC       endp
+RestoreClueBookBackgroundFromEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================

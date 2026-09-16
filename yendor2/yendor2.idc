@@ -2090,7 +2090,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X14CF9);
 	op_hex		(x,	1);
+	set_cmt	(0X14D26,	"RunClueEntryMenu's category-switching input handler: keyboard (ESC/digit keys/'K'/'P' hotkeys, byte_2E400==9 for ShowClueBookHelpScreen) and mouse (region table 0x6876, categories 1-9) both feed into a shared 'apply new category' block that walks a 7-bit category mask in word_328CC and plays a sound cue on change. 'K'/'P' gated on word_328CC bits 0x40/0x20 -- the same 'd) LIST'/'c) MAP' hotkey-hint bits DrawClueBookNavBar draws (NOT the registration-lock flag, which is a different bit).",	0);
 	create_insn	(0X14D26);
+	set_name	(0X14D26,	"HandleClueCategorySelection");
 	create_insn	(0X14D3D);
 	create_insn	(x=0X14D5E);
 	op_hex		(x,	1);
@@ -2107,7 +2109,9 @@ static Bytes_0(void) {
 	create_insn	(0X14DF0);
 	create_insn	(x=0X14DF1);
 	op_hex		(x,	1);
+	set_cmt	(0X14DFC,	"Restores the entire video buffer from EMS page 0x5616 (a dedicated page, distinct from 0x55D8) -- the screen behind the F8 clue book, restored when it closes. Called only from ShowClueBook.",	0);
 	create_insn	(0X14DFC);
+	set_name	(0X14DFC,	"RestoreClueBookBackgroundFromEMS");
 	create_insn	(0X14E28);
 	create_insn	(x=0X14F56);
 	op_seg		(x,	1);
@@ -3523,6 +3527,15 @@ static Bytes_0(void) {
 	set_cmt	(0X19C7B,	"Raw 4-byte packed-BCD subtraction: [si] -= [di], DAS-adjusted, least-significant byte first with borrow propagation.",	0);
 	create_insn	(0X19C7B);
 	set_name	(0X19C7B,	"SubBCD4");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X19CA1,	"Multiplies a packed-BCD4 value at [si] by a 16-bit word (word_32940), digit-by-digit via repeated BCD addition (AddToBCDCounter/AddBCD4), writing the BCD4 product back to [si]. A MulBCD4-style sibling of ConvertWordToBCD4/CompareBCD4/AddBCD4/ SubBCD4. Called (twice each) from ComputeBarterPricingPreview.",	0);
 	create_insn	(0X19CA1);
 	set_name	(0X19CA1,	"MulBCD4ByWord");
@@ -3555,15 +3568,6 @@ static Bytes_0(void) {
 	set_cmt	(0X19E56,	"Handles a movement-triggered map object (called from HandleMovementInput). Branches on [di+2] type flags: 0x4000 = teleport ([di+4]/[di+6] -> word_36CF7/word_36CF9, full redraw); 0x2000 = separate effect (sub_1FC3F+sub_20C46, not traced); 0x1000/0x800/0x400/0x300-pair = trap/status effects -- looks up an effect-definition record (PrepareTrapEffectSlots), then for each of the party's 4 slots (g_partySlotAssignment -> g_partyRecords, record = g_partyRecords+(slot-1)*0x1F4), skips members with status bits 0x1C40 set, otherwise fills their g_partyEffectIconSlots entry and calls ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X19E56);
 	set_name	(0X19E56,	"ApplyMapTriggerEffect");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X19E68);
 	create_insn	(x=0X19E74);
 	op_hex		(x,	1);
@@ -5738,6 +5742,15 @@ static Bytes_1(void) {
 	set_cmt	(0X21D30,	"Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.",	0);
 	create_insn	(0X21D30);
 	set_name	(0X21D30,	"RevealCellsAroundPlayer");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X21D51);
 	create_insn	(0X21D60);
 	create_insn	(0X21D6F);
@@ -5762,15 +5775,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X21E71);
 	op_hex		(x,	1);
 	set_name	(0X21E71,	"ShowLocalAreaMap");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X21E79);
 	op_hex		(x,	1);
 	create_insn	(0X21E8A);
@@ -8183,6 +8187,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29CDF);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29CE2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29CE5);
@@ -8317,15 +8330,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29E4E);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29E53);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29E59);
@@ -11371,6 +11375,15 @@ static Bytes_3(void) {
 	set_name	(0X39939,	"aYourSleep");
 	create_strlit	(0X39945,	0X31);
 	set_name	(0X39945,	"aOnceEnchantedT");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39976,	0X1A);
 	set_name	(0X39976,	"aCreaturesFromT");
 	create_strlit	(0X39990,	0X2D);
@@ -11438,15 +11451,6 @@ static Bytes_3(void) {
 	create_strlit	(0X39D1A,	0X2);
 	create_strlit	(0X39D1C,	0X1C);
 	set_name	(0X39D1C,	"aDannyDeloach");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39D38,	0X20);
 	set_name	(0X39D38,	"aPORTRAITS");
 	create_strlit	(0X39D58,	0X2);

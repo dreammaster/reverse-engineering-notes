@@ -344,7 +344,11 @@ finds and wipes an empty `g_partyRecords` slot.
 
 ### The on-line clue book (F8)
 
-`ShowClueBook` (the manual's "F8 On-line clue book") drives an
+`ShowClueBook` (the manual's "F8 On-line clue book") closes by calling
+`RestoreClueBookBackgroundFromEMS` (was `sub_14DFC`) — a full-screen
+restore from its own dedicated EMS page (`0x5616`, distinct from the
+`0x55D8` page the portrait/dungeon-screen cluster uses) — bringing back
+whatever was on screen before the book opened. It drives an
 interactive, categorized clue-entry browser: `RunClueEntryMenu` (the
 per-category menu loop) → `ShowClueCategoryEntries` (init+draw one
 category, reading its entry count from a table at `0xF3F4` indexed by
@@ -376,6 +380,15 @@ TODAY!") instead of an entry's detail when the global "registered"
 flag (`word_328CA` bit 1) is clear and that entry's own flag
 (`[+2]` bit `0x8000`) marks it as requiring registration — a shareware
 limitation.
+
+`HandleClueCategorySelection` (was `sub_14D26`) is `RunClueEntryMenu`'s
+category-switching input handler: keyboard (`ESC`/digit keys, plus
+`K`/`P` hotkeys gated on the same `word_328CC` `0x40`/`0x20` bits
+`DrawClueBookNavBar` uses for its "d) LIST"/"c) MAP" hints — not the
+registration lock, a different flag) and mouse (region table `0x6876`,
+categories 1-9) both funnel into a shared "apply new category" block
+that walks a 7-bit category mask in `word_328CC` and plays a sound cue
+on change.
 
 `RunClueEntryMenu` also calls `DrawClueBookNavBar` (twice) to draw the
 book's top bar: conditional "d) LIST" / "c) MAP" hotkey hints
