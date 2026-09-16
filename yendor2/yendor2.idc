@@ -1350,7 +1350,9 @@ static Bytes_0(void) {
 	set_cmt	(0X118D3,	"this",	0);
 	create_insn	(x=0X118FA);
 	op_hex		(x,	1);
+	set_cmt	(0X11900,	"Polls for a keypress but only cares about ESC: any other key is silently discarded (byte_2E400 cleared). Returns ZF set iff byte_2E400==0x1B. Called from ShowIntroPicture. Byte-for-byte identical to PollForEscapeKeyOnlyAlt (sub_15249), another overlay-segment duplicate.",	0);
 	create_insn	(0X11900);
+	set_name	(0X11900,	"PollForEscapeKeyOnly");
 	create_insn	(0X1191E);
 	create_insn	(0X1192D);
 	create_insn	(0X11940);
@@ -2185,7 +2187,9 @@ static Bytes_0(void) {
 	set_cmt	(0X1522E,	"Character creation wizard: three steps (sub_15E44/ComposeCharacterPortrait, sub_15429, sub_1559A, each ESC-cancelable) then a finalize step (sub_15267). Matches the CHARACTER CREATION/PICK A CLASS/MALE/FEMALE/PICK A PORTRAIT string cluster near g_pictureDir. Called from InitGame and from RunTitleScreen's 'I' key.",	0);
 	create_insn	(0X1522E);
 	set_name	(0X1522E,	"RunCharacterCreation");
+	set_cmt	(0X15249,	"Byte-for-byte duplicate of PollForEscapeKeyOnly (sub_11900), in a different overlay segment. Called from unnamed sub_15429.",	0);
 	create_insn	(0X15249);
+	set_name	(0X15249,	"PollForEscapeKeyOnlyAlt");
 	set_cmt	(0X15267,	"Character creation's finalize/cleanup step (always runs, even on ESC-cancel from any of the 3 prior steps -- see RunCharacterCreation). Loads a transition palette, reads file entry #3, frees a temp memory block if allocated, clears the screen, and stops the character-creation music before returning.",	0);
 	create_insn	(0X15267);
 	set_name	(0X15267,	"FinalizeCharacterCreation");
@@ -3381,6 +3385,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18E18);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X18E1F);
 	op_hex		(x,	1);
 	create_insn	(x=0X18E26);
@@ -3410,15 +3423,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X18FC5);
 	op_hex		(x,	1);
 	set_name	(0X18FC5,	"TryLoadNextContainerLink");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X18FCD);
 	set_cmt	(0X18FDA,	"Space-bar 'enhance item' action (sub_1869D, sibling of TrySellItemForGold). Eligibility via sub_1B147 (a level/stat range check against table 0xBCE); on failure, 'I CAN NOT ENHANCE THAT' (msg 0x815A). Else CompareBCD4(g_partyGold, [table 0xCB2]) -- on insufficient gold, 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, via sub_190AF); else SubBCD4(g_partyGold -= [0xCB2]), advances the item to the next catalog entry (word_32974+1) and reloads it as the enhanced result.",	0);
 	create_insn	(0X18FDA);
@@ -5399,6 +5403,15 @@ static Bytes_1(void) {
 	set_cmt	(0X20570,	"Reads a numeric floor-type entry (sub_1D146, not traced) into word_2E386, then redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen; falls through to EditWallLegendTypeNumber on one error path.",	0);
 	create_insn	(0X20570);
 	set_name	(0X20570,	"EditFloorLegendTypeNumber");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X20587,	"msg",	0);
 	create_insn	(0X205AE);
 	set_cmt	(0X205C0,	"Loads a per-level tile-palette record from WORLD.DAT: PrepareWorldDatRead then overrides the block offset with _blockSize3*word_329FE (selects one record among several) before FileEntry_Read. Called from PaintCellAndPersist and sub_205FB -- feeds RunMapEditorScreen's B/F palette-browsing keys.",	0);
@@ -5411,15 +5424,6 @@ static Bytes_1(void) {
 	set_cmt	(0X205FB,	"'B' key handler: picks a wall type from the tile palette at the clicked position (LoadWorldDatTilePalette), stores it to word_2E384/word_2E496 (same fields EditWallLegendTypeNumber writes), redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X205FB);
 	set_name	(0X205FB,	"BrowseWallTilePalette");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X20626,	"'F' key handler, floor counterpart to BrowseWallTilePalette: picks a floor type from the palette, stores to word_2E386/word_2E4A2, redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X20626);
 	set_name	(0X20626,	"BrowseFloorTilePalette");
@@ -7323,6 +7327,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X277E8);
 	op_hex		(x,	1);
 	create_insn	(0X2780B);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27817);
 	set_cmt	(0X2781C,	"FailsSavingThrow(si=party-member record, word_3293E=difficulty threshold, word_32940=resistance bonus): chance = max(5, 5*([si+0x16]-threshold) + bonus); rolls RandomInRange(100) against it. Returns 1 if the roll exceeds the chance (save fails, effect applies), 0 if resisted.",	0);
 	create_insn	(0X2781C);
@@ -7376,15 +7389,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27A2A,	"ClearGlobalFlag(ax=flag index): [si] &= ~mask.",	0);
 	create_insn	(0X27A2A);
 	set_name	(0X27A2A,	"ClearGlobalFlag");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27A34);
 	set_cmt	(0X27A3E,	"SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.",	0);
 	create_insn	(0X27A3E);
@@ -10005,6 +10009,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2E490,	"Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.",	0);
 	create_word	(0X2E490);
 	set_name	(0X2E490,	"g_blitMaskLen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E492);
 	create_word	(0X2E494);
 	create_word	(0X2E496);
@@ -10034,15 +10047,6 @@ static Bytes_3(void) {
 	create_word	(0X2E512);
 	create_word	(0X2E514);
 	create_word	(0X2E516);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X2E518,	0X9);
 	set_name	(0X2E518,	"aBlaster");
 	create_strlit	(0X2E521,	0X7);

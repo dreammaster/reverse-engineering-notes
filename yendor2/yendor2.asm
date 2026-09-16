@@ -2582,7 +2582,7 @@ loc_117EE:                              ; CODE XREF: ShowIntroPicture+7A↓j
                 call    DrawMouseCursor
                 or      word_328C8, 800h
                 mov     cx, 3Fh ; '?'
-                call    sub_11900
+                call    PollForEscapeKeyOnly
                 jnz     short loc_11814
                 jmp     loc_118B6
 ; ---------------------------------------------------------------------------
@@ -2605,7 +2605,7 @@ loc_11814:                              ; CODE XREF: ShowIntroPicture+93↑j
                 xor     ax, ax
                 mov     cx, 180h
                 rep stosw
-                call    sub_11900
+                call    PollForEscapeKeyOnly
                 jz      short loc_118B6
                 mov     _font_bgTransparent, 1
                 or      word_3295A, 8000h
@@ -2632,7 +2632,7 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
                 mov     _font_fgColor, 0EBh
                 call    DrawStringColumn
                 call    DrawMouseCursor
-                call    sub_11900
+                call    PollForEscapeKeyOnly
                 jz      short loc_118B6
                 call    sub_11A03
                 mov     cx, [si+2]
@@ -2665,20 +2665,20 @@ ShowIntroPicture endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11900       proc near               ; CODE XREF: ShowIntroPicture+90↑p
+PollForEscapeKeyOnly proc near          ; CODE XREF: ShowIntroPicture+90↑p
                                         ; ShowIntroPicture+C2↑p ...
-                call    PollKeyboardInput
+                call    PollKeyboardInput ; Polls for a keypress but only cares about ESC: any other key is silently discarded (byte_2E400 cleared). Returns ZF set iff byte_2E400==0x1B. Called from ShowIntroPicture. Byte-for-byte identical to PollForEscapeKeyOnlyAlt (sub_15249), another overlay-segment duplicate.
                 cmp     errorCode, 0
                 jz      short loc_11918
                 cmp     byte_2E400, 1Bh
                 jz      short loc_11918
                 mov     byte_2E400, 0
 
-loc_11918:                              ; CODE XREF: sub_11900+A↑j
-                                        ; sub_11900+11↑j
+loc_11918:                              ; CODE XREF: PollForEscapeKeyOnly+A↑j
+                                        ; PollForEscapeKeyOnly+11↑j
                 cmp     byte_2E400, 1Bh
                 retn
-sub_11900       endp
+PollForEscapeKeyOnly endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2821,7 +2821,7 @@ sub_119E0       proc near               ; CODE XREF: ShowIntroPicture+12D↑p
                                         ; sub_119E0+6↓j ...
                 test    word_328C4, 400h
                 jz      short sub_119E0
-                call    sub_11900
+                call    PollForEscapeKeyOnly
                 jz      short locret_119F5
                 and     word_328C4, 0FBFFh
                 loop    sub_119E0
@@ -8390,20 +8390,20 @@ RunCharacterCreation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15249       proc near               ; CODE XREF: sub_15429+5A↓p
+PollForEscapeKeyOnlyAlt proc near       ; CODE XREF: sub_15429+5A↓p
                                         ; sub_15429+D6↓p ...
-                call    PollKeyboardInput
+                call    PollKeyboardInput ; Byte-for-byte duplicate of PollForEscapeKeyOnly (sub_11900), in a different overlay segment. Called from unnamed sub_15429.
                 cmp     errorCode, 0
                 jz      short loc_15261
                 cmp     byte_2E400, 1Bh
                 jz      short loc_15261
                 mov     byte_2E400, 0
 
-loc_15261:                              ; CODE XREF: sub_15249+A↑j
-                                        ; sub_15249+11↑j
+loc_15261:                              ; CODE XREF: PollForEscapeKeyOnlyAlt+A↑j
+                                        ; PollForEscapeKeyOnlyAlt+11↑j
                 cmp     byte_2E400, 1Bh
                 retn
-sub_15249       endp
+PollForEscapeKeyOnlyAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8653,7 +8653,7 @@ loc_15476:                              ; CODE XREF: sub_15429+48↑j
                 xor     ax, ax
                 mov     cx, 180h
                 rep stosw
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15489
                 retn
 ; ---------------------------------------------------------------------------
@@ -8698,7 +8698,7 @@ loc_154E4:                              ; CODE XREF: sub_15429+B6↑j
                 call    DrawMouseCursor
                 loop    loc_154D6
                 call    sub_1618E
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15505
                 retn
 ; ---------------------------------------------------------------------------
@@ -8720,7 +8720,7 @@ loc_15514:                              ; CODE XREF: sub_15429+FE↓j
 loc_15526:                              ; CODE XREF: sub_15429+F8↑j
                 pop     cx
                 loop    loc_15514
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1552F
                 retn
 ; ---------------------------------------------------------------------------
@@ -8729,7 +8729,7 @@ loc_1552F:                              ; CODE XREF: sub_15429+103↑j
                 mov     cx, 0Ah
                 call    sub_16180
                 mov     cx, 3Fh ; '?'
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1553E
                 retn
 ; ---------------------------------------------------------------------------
@@ -8749,7 +8749,7 @@ loc_1553E:                              ; CODE XREF: sub_15429+112↑j
 loc_1555B:                              ; CODE XREF: sub_15429+12D↑j
                 pop     cx
                 loop    loc_1553E
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15564
                 retn
 ; ---------------------------------------------------------------------------
@@ -8758,7 +8758,7 @@ loc_15564:                              ; CODE XREF: sub_15429+138↑j
                 mov     cx, 14h
                 call    sub_16180
                 mov     cx, 3Fh ; '?'
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15573
                 retn
 ; ---------------------------------------------------------------------------
@@ -8807,7 +8807,7 @@ loc_155C6:                              ; CODE XREF: sub_1559A+38↓j
                 inc     word_2E406
                 call    sub_152EF
                 loop    loc_155C6
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_155DA
                 retn
 ; ---------------------------------------------------------------------------
@@ -8825,7 +8825,7 @@ loc_155EE:                              ; CODE XREF: sub_1559A+60↓j
                 inc     word_2E406
                 call    sub_152EF
                 loop    loc_155EE
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15602
                 retn
 ; ---------------------------------------------------------------------------
@@ -8855,7 +8855,7 @@ loc_15602:                              ; CODE XREF: sub_1559A+65↑j
                 call    DrawShadowedText
                 pop     _font_bgTransparent
                 pop     _videoSegment
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15666
                 retn
 ; ---------------------------------------------------------------------------
@@ -8875,7 +8875,7 @@ loc_1566F:                              ; CODE XREF: sub_1559A+E8↓j
 loc_15681:                              ; CODE XREF: sub_1559A+E2↑j
                 pop     cx
                 loop    loc_1566F
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1568A
                 retn
 ; ---------------------------------------------------------------------------
@@ -8883,7 +8883,7 @@ loc_15681:                              ; CODE XREF: sub_1559A+E2↑j
 loc_1568A:                              ; CODE XREF: sub_1559A+ED↑j
                 mov     cx, 2Dh ; '-'
                 call    sub_16180
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15696
                 retn
 ; ---------------------------------------------------------------------------
@@ -8916,7 +8916,7 @@ loc_156CC:                              ; CODE XREF: sub_1559A+139↓j
                 and     word ptr [si], 3FFFh
                 add     si, 14h
                 loop    loc_156CC
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_156DB
                 retn
 ; ---------------------------------------------------------------------------
@@ -8945,7 +8945,7 @@ loc_156DB:                              ; CODE XREF: sub_1559A+13E↑j
                 call    DrawShadowedText
                 call    DrawMouseCursor
                 call    sub_161C3
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15747
                 retn
 ; ---------------------------------------------------------------------------
@@ -8954,7 +8954,7 @@ loc_15747:                              ; CODE XREF: sub_1559A+1AA↑j
                 mov     cx, 19h
                 call    sub_1616F
                 call    sub_161B6
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15756
                 retn
 ; ---------------------------------------------------------------------------
@@ -8973,7 +8973,7 @@ loc_15756:                              ; CODE XREF: sub_1559A+1B9↑j
                 call    sub_16164
                 mov     cx, 0FFFFh
                 call    sub_16234
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15799
                 retn
 ; ---------------------------------------------------------------------------
@@ -8997,7 +8997,7 @@ loc_15799:                              ; CODE XREF: sub_1559A+1FC↑j
                 call    sub_16164
                 mov     cx, 1Eh
                 call    sub_16234
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_157E9
                 retn
 ; ---------------------------------------------------------------------------
@@ -9009,7 +9009,7 @@ loc_157E9:                              ; CODE XREF: sub_1559A+24C↑j
                 mov     dx, 0B0h
                 call    sub_16159
                 call    sub_161B6
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15806
                 retn
 ; ---------------------------------------------------------------------------
@@ -9033,7 +9033,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
                 mov     cx, 0FFh
                 mov     dx, 0
                 call    sub_2589A
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15859
                 retn
 ; ---------------------------------------------------------------------------
@@ -9047,7 +9047,7 @@ loc_15859:                              ; CODE XREF: sub_1559A+2BC↑j
                 call    sub_161C3
                 call    sub_161B6
                 or      word_328C8, 800h
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1587F
                 retn
 ; ---------------------------------------------------------------------------
@@ -9075,7 +9075,7 @@ loc_1587F:                              ; CODE XREF: sub_1559A+2E2↑j
                 mov     cx, 0Fh
                 call    sub_16234
                 call    sub_161B6
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_158D5
                 retn
 ; ---------------------------------------------------------------------------
@@ -9099,7 +9099,7 @@ loc_158D5:                              ; CODE XREF: sub_1559A+338↑j
                 call    sub_16234
                 mov     ax, 18h
                 call    sub_28412
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15927
                 retn
 ; ---------------------------------------------------------------------------
@@ -9134,7 +9134,7 @@ loc_15927:                              ; CODE XREF: sub_1559A+38A↑j
                 rep stosw
                 mov     cx, 0FFFFh
                 call    sub_16234
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1598C
                 retn
 ; ---------------------------------------------------------------------------
@@ -9157,7 +9157,7 @@ loc_1598C:                              ; CODE XREF: sub_1559A+3EF↑j
                 mov     cx, 14h
                 call    sub_16234
                 call    sub_161B6
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_159D9
                 retn
 ; ---------------------------------------------------------------------------
@@ -9203,7 +9203,7 @@ loc_159D9:                              ; CODE XREF: sub_1559A+43C↑j
                 mov     word_2E530, 0B6h
                 call    DrawPicture
                 call    DrawMouseCursor
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15AB1
                 retn
 ; ---------------------------------------------------------------------------
@@ -9228,7 +9228,7 @@ loc_15AB1:                              ; CODE XREF: sub_1559A+514↑j
                 and     word_328C8, 0F7FFh
                 mov     dx, 90h
                 call    sub_16164
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15AFE
                 retn
 ; ---------------------------------------------------------------------------
@@ -9248,7 +9248,7 @@ loc_15AFE:                              ; CODE XREF: sub_1559A+561↑j
                 call    sub_16159
                 mov     dx, 60h ; '`'
                 call    sub_16159
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15B34
                 retn
 ; ---------------------------------------------------------------------------
@@ -9261,7 +9261,7 @@ loc_15B34:                              ; CODE XREF: sub_1559A+597↑j
                 mov     ax, 12h
                 call    sub_28412
                 call    sub_152E1
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15B54
                 retn
 ; ---------------------------------------------------------------------------
@@ -9288,7 +9288,7 @@ loc_15B81:                              ; CODE XREF: sub_1559A+5F6↓j
                 pop     cx
                 loop    loc_15B81
                 call    DrawMouseCursor
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15B9D
                 retn
 ; ---------------------------------------------------------------------------
@@ -9301,7 +9301,7 @@ loc_15B9D:                              ; CODE XREF: sub_1559A+600↑j
                 call    sub_2589A
                 mov     cx, 0Ah
                 call    sub_1616F
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15BBA
                 retn
 ; ---------------------------------------------------------------------------
@@ -9342,7 +9342,7 @@ loc_15BBA:                              ; CODE XREF: sub_1559A+61D↑j
                 rep movsw
                 mov     ax, seg seg129
                 mov     ds, ax
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15C3D
                 retn
 ; ---------------------------------------------------------------------------
@@ -9364,7 +9364,7 @@ loc_15C3D:                              ; CODE XREF: sub_1559A+6A0↑j
                 mov     cx, 30h ; '0'
                 mov     dx, 0D0h
                 call    sub_2589A
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15C81
                 retn
 ; ---------------------------------------------------------------------------
@@ -9372,7 +9372,7 @@ loc_15C3D:                              ; CODE XREF: sub_1559A+6A0↑j
 loc_15C81:                              ; CODE XREF: sub_1559A+6E4↑j
                 mov     cx, 2Dh ; '-'
                 call    sub_16234
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15C8D
                 retn
 ; ---------------------------------------------------------------------------
@@ -9382,7 +9382,7 @@ loc_15C8D:                              ; CODE XREF: sub_1559A+6F0↑j
                 call    sub_28412
                 mov     cx, 0FFFFh
                 call    sub_16234
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15CA1
                 retn
 ; ---------------------------------------------------------------------------
@@ -9413,7 +9413,7 @@ loc_15CB7:                              ; CODE XREF: sub_1559A+70D↑j
                 mov     cx, 30h ; '0'
                 mov     dx, 0D0h
                 call    sub_2589A
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15CF3
                 retn
 ; ---------------------------------------------------------------------------
@@ -9434,7 +9434,7 @@ loc_15CF3:                              ; CODE XREF: sub_1559A+756↑j
                 call    FileEntry_Read
                 call    ErrorCheck
                 call    sub_25862
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15D39
                 retn
 ; ---------------------------------------------------------------------------
@@ -9457,7 +9457,7 @@ loc_15D39:                              ; CODE XREF: sub_1559A+79C↑j
                 mov     cx, 2
                 call    DrawShadowedText
                 call    DrawMouseCursor
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15D85
                 retn
 ; ---------------------------------------------------------------------------
@@ -9467,7 +9467,7 @@ loc_15D85:                              ; CODE XREF: sub_1559A+7E8↑j
                 call    sub_1616F
                 call    sub_161B6
                 call    sub_152E1
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15D97
                 retn
 ; ---------------------------------------------------------------------------
@@ -9507,7 +9507,7 @@ loc_15DD7:                              ; CODE XREF: sub_1559A+843↓j
                 call    sub_16180
                 mov     cx, 0FFFFh
                 call    sub_16234
-                call    sub_15249
+                call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15E05
                 retn
 ; ---------------------------------------------------------------------------
@@ -23111,7 +23111,7 @@ seg049          segment byte public 'CODE' use16
 
 
 PollKeyboardInput proc far              ; CODE XREF: start:loc_1008F↑P
-                                        ; sub_11900↑P ...
+                                        ; PollForEscapeKeyOnly↑P ...
                 push    ax              ; Non-blocking keyboard poll via INT 21h/AH=6/DL=0xFF. Sets errorCode (reused here as an input-event-type flag, NOT an actual error code: 0=no input, 1=regular char in byte_2E400 (uppercased a-z), 2=extended/function-key scan code in byte_2E400). Scan code 'B' triggers sub_10C40 unless word_328CA bit3 is set.
                 push    bx
                 push    cx

@@ -1529,7 +1529,11 @@ inverse of `MarkIneligiblePartyMembers`, unconditionally clearing
 byte-for-byte duplicate of `ConfirmContainerInteraction`,
 `ConfirmAlchemyInteraction` (was `sub_1E4FA`) — the same
 `DrawShadowedText`/`DrawShadowedTextAlt`-style overlay-segment
-duplication found earlier this session.
+duplication found earlier this session. A third instance of the same
+pattern: `PollForEscapeKeyOnly`/`PollForEscapeKeyOnlyAlt` (was
+`sub_11900`/`sub_15249`) — polls for a keypress but discards anything
+but ESC, called from `ShowIntroPicture` and unnamed `sub_15429`
+respectively.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/

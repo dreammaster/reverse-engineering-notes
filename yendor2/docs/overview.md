@@ -4335,6 +4335,21 @@ list scrolling cluster (`HandleClueEntryScrollInput`,
 
 531 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PollForEscapeKeyOnly / Alt
+
+Named the byte-for-byte-identical pair `sub_11900` ->
+`PollForEscapeKeyOnly` and `sub_15249` -> `PollForEscapeKeyOnlyAlt` —
+another instance of this session's overlay-segment duplicate-function
+pattern (alongside `DrawShadowedText`/`DrawShadowedTextAlt` and
+`ConfirmContainerInteraction`/`ConfirmAlchemyInteraction`). Both poll
+for a keypress but only care about ESC: any other key is silently
+discarded (`byte_2E400` cleared to 0), and the function returns with
+ZF set iff `byte_2E400==0x1B`. `PollForEscapeKeyOnly` is called 3x
+from the already-named `ShowIntroPicture`; the `Alt` duplicate is
+called 3x from still-unnamed `sub_15429`.
+
+533 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
