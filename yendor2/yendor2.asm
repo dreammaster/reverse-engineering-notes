@@ -1210,7 +1210,7 @@ loc_10ABF:                              ; CODE XREF: start+ABA↑j
 
 loc_10ACD:                              ; CODE XREF: seg000:0AC8↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_26E11
+                call    DebugSetFloorTileByNumber
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
                 test    word_328C4, 8000h
@@ -1220,7 +1220,7 @@ loc_10ACD:                              ; CODE XREF: seg000:0AC8↑j
 
 loc_10AE5:                              ; CODE XREF: seg000:0AE0↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_26EE8
+                call    DebugSetOverlayTileByNumber
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
                 test    word_328C4, 8000h
@@ -40804,9 +40804,9 @@ sub_26D54       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26E11       proc far                ; CODE XREF: seg000:0AD2↑P
-                                        ; sub_26E11+41↓j ...
-                mov     _font_fgColor, 0Fh
+DebugSetFloorTileByNumber proc far      ; CODE XREF: seg000:0AD2↑P
+                                        ; DebugSetFloorTileByNumber+41↓j ...
+                mov     _font_fgColor, 0Fh ; Debug cheat: prompts for a 4-digit number via ReadTypedInteger, range-checks against _val41, writes it into the current map cell's floor (es:[bx]) field, persists to WORLD.DAT, updates the minimap cache, and redraws. Called from an unresolved raw address, plausibly a debug hotkey table. Byte-for-byte duplicate pair with its floor/overlay sibling.
                 mov     _font_bgColor, 0
                 mov     _textPos_x, 0FAh
                 mov     _textPos_y, 6Ah ; 'j'
@@ -40821,12 +40821,12 @@ sub_26E11       proc far                ; CODE XREF: seg000:0AD2↑P
                 jmp     loc_26ECE
 ; ---------------------------------------------------------------------------
 
-loc_26E4D:                              ; CODE XREF: sub_26E11+37↑j
+loc_26E4D:                              ; CODE XREF: DebugSetFloorTileByNumber+37↑j
                 cmp     errorCode, 0
-                jnz     short near ptr sub_26E11
+                jnz     short near ptr DebugSetFloorTileByNumber
                 mov     ax, _val41
                 cmp     word_2E530, ax
-                jge     short near ptr sub_26E11
+                jge     short near ptr DebugSetFloorTileByNumber
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
                 call    GetMapCellPtr
@@ -40858,22 +40858,22 @@ loc_26E4D:                              ; CODE XREF: sub_26E11+37↑j
                 call    FileEntry_Write
                 call    ErrorCheck
 
-loc_26ECE:                              ; CODE XREF: sub_26E11+39↑j
+loc_26ECE:                              ; CODE XREF: DebugSetFloorTileByNumber+39↑j
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
                 retf
-sub_26E11       endp
+DebugSetFloorTileByNumber endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26EE8       proc far                ; CODE XREF: seg000:0AEA↑P
-                                        ; sub_26EE8+41↓j ...
-                mov     _font_fgColor, 0Fh
+DebugSetOverlayTileByNumber proc far    ; CODE XREF: seg000:0AEA↑P
+                                        ; DebugSetOverlayTileByNumber+41↓j ...
+                mov     _font_fgColor, 0Fh ; Debug cheat: prompts for a 4-digit number via ReadTypedInteger, range-checks against _val42, writes it into the current map cell's overlay (es:[bx+2]) field, persists to WORLD.DAT, updates the minimap cache, and redraws. Called from an unresolved raw address, plausibly a debug hotkey table. Byte-for-byte duplicate pair with its floor/overlay sibling.
                 mov     _font_bgColor, 44h ; 'D'
                 mov     _textPos_x, 0FAh
                 mov     _textPos_y, 6Ah ; 'j'
@@ -40888,12 +40888,12 @@ sub_26EE8       proc far                ; CODE XREF: seg000:0AEA↑P
                 jmp     loc_26FA9
 ; ---------------------------------------------------------------------------
 
-loc_26F24:                              ; CODE XREF: sub_26EE8+37↑j
+loc_26F24:                              ; CODE XREF: DebugSetOverlayTileByNumber+37↑j
                 cmp     errorCode, 0
-                jnz     short near ptr sub_26EE8
+                jnz     short near ptr DebugSetOverlayTileByNumber
                 mov     ax, _val42
                 cmp     word_2E530, ax
-                jge     short near ptr sub_26EE8
+                jge     short near ptr DebugSetOverlayTileByNumber
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
                 call    GetMapCellPtr
@@ -40926,14 +40926,14 @@ loc_26F24:                              ; CODE XREF: sub_26EE8+37↑j
                 call    FileEntry_Write
                 call    ErrorCheck
 
-loc_26FA9:                              ; CODE XREF: sub_26EE8+39↑j
+loc_26FA9:                              ; CODE XREF: DebugSetOverlayTileByNumber+39↑j
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
                 retf
-sub_26EE8       endp
+DebugSetOverlayTileByNumber endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74456,9 +74456,9 @@ _val39          dw 0                    ; DATA XREF: InitGlobals+10E↑w
 _val40          dw 0                    ; DATA XREF: InitGlobals+114↑w
                                         ; sub_1A5F6+5↑r
 _val41          dw 0                    ; DATA XREF: InitGlobals+11A↑w
-                                        ; sub_26E11+43↑r
+                                        ; DebugSetFloorTileByNumber+43↑r
 _val42          dw 0                    ; DATA XREF: InitGlobals+120↑w
-                                        ; sub_26EE8+43↑r
+                                        ; DebugSetOverlayTileByNumber+43↑r
 _val43          dw 0                    ; DATA XREF: InitGlobals+126↑w
                                         ; HandleDungeonInput+367↑r ...
 _val9           dw 0                    ; DATA XREF: InitGlobals+30↑w

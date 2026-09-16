@@ -7322,9 +7322,13 @@ static Bytes_3(void) {
 	create_insn	(x=0X26D22);
 	op_hex		(x,	1);
 	create_insn	(0X26D54);
+	set_cmt	(0X26E11,	"Debug cheat: prompts for a 4-digit number via ReadTypedInteger, range-checks against _val41, writes it into the current map cell's floor (es:[bx]) field, persists to WORLD.DAT, updates the minimap cache, and redraws. Called from an unresolved raw address, plausibly a debug hotkey table. Byte-for-byte duplicate pair with its floor/overlay sibling.",	0);
 	create_insn	(0X26E11);
+	set_name	(0X26E11,	"DebugSetFloorTileByNumber");
 	create_insn	(0X26E4D);
+	set_cmt	(0X26EE8,	"Debug cheat: prompts for a 4-digit number via ReadTypedInteger, range-checks against _val42, writes it into the current map cell's overlay (es:[bx+2]) field, persists to WORLD.DAT, updates the minimap cache, and redraws. Called from an unresolved raw address, plausibly a debug hotkey table. Byte-for-byte duplicate pair with its floor/overlay sibling.",	0);
 	create_insn	(0X26EE8);
+	set_name	(0X26EE8,	"DebugSetOverlayTileByNumber");
 	create_insn	(0X26F24);
 	create_insn	(0X26FC3);
 	create_insn	(x=0X2700F);
@@ -9139,6 +9143,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2A653,	"Shifts color al by the shared [bp+var_21] delta (DrawPicture's copy of word_32926) within its 16-entry palette hue-block (floor al&0xF0, ceiling al|0x0F), clamped at the block edges; no-op if delta==0 or al>=0xD0. A distance/light dimming shade primitive. Called 9x from DrawPicture and sibling picture-draw code.",	0);
 	create_insn	(0X2A653);
 	set_name	(0X2A653,	"ShiftPaletteShadeClamped");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2A661);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A664);
@@ -9157,15 +9170,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2A6CB,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A6CB);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A6D8);
 	set_cmt	(0X2A73E,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A73E);
@@ -11735,6 +11739,15 @@ static Bytes_4(void) {
 	make_array	(0X394AA,	0X16);
 	create_word	(0X394C0);
 	create_word	(0X394D8);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X397B4,	0X9);
 	set_name	(0X397B4,	"aPentagon");
 	create_strlit	(0X397BD,	0XB);
@@ -11765,15 +11778,6 @@ static Bytes_4(void) {
 	set_name	(0X3990E,	"aALoudKnockOnTh");
 	create_strlit	(0X39939,	0XC);
 	set_name	(0X39939,	"aYourSleep");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39945,	0X31);
 	set_name	(0X39945,	"aOnceEnchantedT");
 	create_strlit	(0X39976,	0X1A);

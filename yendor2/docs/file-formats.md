@@ -2510,3 +2510,18 @@ dead code, rather than reinterpreted.
   this particular `SW.EXE` build forces on unconditionally -- the
   shareware-era code and its message strings are still compiled in,
   just permanently disabled.
+
+- **A family of functions is reachable only from unresolved raw
+  addresses (`seg000:0AD2`/`0AEA`/`0AFA`) very early in the binary,
+  outside any function IDA named.** `EnforceDemoBoundary`,
+  `DrawDebugPositionOverlay`, `DebugSetFloorTileByNumber`, and
+  `DebugSetOverlayTileByNumber` are all called this way. The latter
+  two prompt for a 4-digit number and write it directly into the
+  current dungeon cell's floor/overlay field, bypassing the map
+  editor's palette-picker UI entirely -- consistent with this being a
+  small developer-only hotkey table left wired into the shipped
+  binary (in the same spirit as `RunMapEditorScreen` itself, already
+  documented above as "a debug/level-editor screen left reachable in
+  the shipped binary, not a passive legend"). The dispatch mechanism
+  that actually reaches these raw addresses (keyboard scan-code table,
+  low-memory jump table, or something else) has not been located.

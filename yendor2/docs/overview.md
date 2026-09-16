@@ -5531,6 +5531,28 @@ skill-type classification.
 
 634 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DebugSetFloorTileByNumber, DebugSetOverlayTileByNumber
+
+Named `sub_26E11` -> `DebugSetFloorTileByNumber` and
+`sub_26EE8` -> `DebugSetOverlayTileByNumber`, another byte-for-byte
+duplicate pair (the recurring overlay-segment duplication pattern),
+each called from its own unresolved raw address (`seg000:0AD2` /
+`seg000:0AEA`) very early in the binary — the same family as
+`EnforceDemoBoundary` and `DrawDebugPositionOverlay`, both also
+reached from raw un-labeled call sites, plausibly a debug/cheat
+hotkey table. Each prompts for a 4-digit number via `ReadTypedInteger`
+at a fixed HUD position, range-checks it, then writes it directly
+into the current map cell — floor field for the first, overlay/wall
+field for the second (per `GetMapCellPtr`'s layout, confirmed
+elsewhere by `PaintCursorCellAndPersist`/`PaintCursorOverlayCellAndPersist`)
+— persists the change to `WORLD.DAT`, updates the minimap cache
+array, and redraws the dungeon view and minimap. Reads as a developer
+cheat: type in a floor/overlay tile-type number directly at the
+current dungeon position, bypassing the map editor's palette-picker
+UI, while playing the normal (non-editor) dungeon view.
+
+636 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
