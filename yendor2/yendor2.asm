@@ -857,7 +857,7 @@ loc_1072E:                              ; CODE XREF: start+71E↑j
                 call    sub_20C46
                 call    Fade?
                 call    sub_11A10
-                call    sub_1177C
+                call    ShowIntroPicture
                 jmp     loc_10286
 start           endp
 
@@ -2542,9 +2542,9 @@ seg003          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1177C       proc far                ; CODE XREF: start+756↑P
+ShowIntroPicture proc far               ; CODE XREF: start+756↑P
                                         ; InitGame+C2↓P ...
-                or      word_328CA, 8
+                or      word_328CA, 8   ; Shows a picture (DrawPicture, id from word_2E530/word_2E532) with a palette fade (FadePaletteStep) and waits for a keypress (byte_2E400, filled by PollKeyboardInput). Called directly from `start` and InitGame -- likely the boot-time splash/logo display.
                 mov     ax, 1
                 mov     word_3297E, ax
                 call    sub_28296
@@ -2570,7 +2570,7 @@ sub_1177C       proc far                ; CODE XREF: start+756↑P
                 mov     si, 442Ah
                 mov     cx, 300h
 
-loc_117EE:                              ; CODE XREF: sub_1177C+7A↓j
+loc_117EE:                              ; CODE XREF: ShowIntroPicture+7A↓j
                 mov     al, [si]
                 sub     al, 3Fh ; '?'
                 mov     [di], al
@@ -2586,17 +2586,17 @@ loc_117EE:                              ; CODE XREF: sub_1177C+7A↓j
                 jmp     loc_118B6
 ; ---------------------------------------------------------------------------
 
-loc_11814:                              ; CODE XREF: sub_1177C+93↑j
-                                        ; sub_1177C+B2↓j
+loc_11814:                              ; CODE XREF: ShowIntroPicture+93↑j
+                                        ; ShowIntroPicture+B2↓j
                 push    cx
                 mov     bx, 1
                 mov     cx, 10h
                 mov     dx, 40h ; '@'
-                call    sub_11953
+                call    FadePaletteStep
                 mov     bx, 1
                 mov     cx, 30h ; '0'
                 mov     dx, 50h ; 'P'
-                call    sub_11953
+                call    FadePaletteStep
                 pop     cx
                 loop    loc_11814
                 mov     es, word_2E4AA
@@ -2611,7 +2611,7 @@ loc_11814:                              ; CODE XREF: sub_1177C+93↑j
                 and     word_328C4, 0FBFFh
                 mov     si, 0C2FBh
 
-loc_11858:                              ; CODE XREF: sub_1177C+138↓j
+loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
                 cmp     word ptr [si], 0FFFFh
                 jz      short loc_118B6
                 push    si
@@ -2640,8 +2640,8 @@ loc_11858:                              ; CODE XREF: sub_1177C+138↓j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_11858
 
-loc_118B6:                              ; CODE XREF: sub_1177C+95↑j
-                                        ; sub_1177C+C5↑j ...
+loc_118B6:                              ; CODE XREF: ShowIntroPicture+95↑j
+                                        ; ShowIntroPicture+C5↑j ...
                 call    sub_119F6
                 call    sub_25862
                 and     word_328C8, 0F7FFh
@@ -2658,14 +2658,14 @@ loc_118B6:                              ; CODE XREF: sub_1177C+95↑j
                 call    sub_238CD
                 and     word_328CA, 0FFF7h
                 retf
-sub_1177C       endp
+ShowIntroPicture endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11900       proc near               ; CODE XREF: sub_1177C+90↑p
-                                        ; sub_1177C+C2↑p ...
+sub_11900       proc near               ; CODE XREF: ShowIntroPicture+90↑p
+                                        ; ShowIntroPicture+C2↑p ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_11918
@@ -2683,7 +2683,7 @@ sub_11900       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1191E       proc near               ; CODE XREF: sub_1177C+E5↑p
+sub_1191E       proc near               ; CODE XREF: ShowIntroPicture+E5↑p
                 mov     es, _videoBufferSeg
                 mov     di, 6900h
                 xor     ax, ax
@@ -2728,9 +2728,9 @@ sub_11940       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11953       proc near               ; CODE XREF: sub_1177C+A2↑p
-                                        ; sub_1177C+AE↑p
-                mov     word_31984, bx
+FadePaletteStep proc near               ; CODE XREF: ShowIntroPicture+A2↑p
+                                        ; ShowIntroPicture+AE↑p
+                mov     word_31984, bx  ; One step of a palette fade: nudges each of cx DAC registers one step from its current value toward a target buffer, then calls SetPaletteRange. Called repeatedly (once per animation frame) by ShowIntroPicture to fade a picture's palette in/out smoothly.
                 mov     word_31982, cx
                 mov     word_31976, cx
                 add     word_31976, cx
@@ -2742,7 +2742,7 @@ sub_11953       proc near               ; CODE XREF: sub_1177C+A2↑p
                 mov     es, word_2E4AA
                 mov     cx, word_31984
 
-loc_1197F:                              ; CODE XREF: sub_11953+74↓j
+loc_1197F:                              ; CODE XREF: FadePaletteStep+74↓j
                 push    cx
                 mov     di, 4D5Ch
                 add     di, word_322BA
@@ -2752,22 +2752,22 @@ loc_1197F:                              ; CODE XREF: sub_11953+74↓j
                 add     bx, word_322BA
                 mov     cx, word_31976
 
-loc_11999:                              ; CODE XREF: sub_11953+5D↓j
+loc_11999:                              ; CODE XREF: FadePaletteStep+5D↓j
                 mov     al, [di]
                 test    al, 80h
                 jnz     short loc_119A3
                 cmp     al, [si]
                 jz      short loc_119AD
 
-loc_119A3:                              ; CODE XREF: sub_11953+4A↑j
+loc_119A3:                              ; CODE XREF: FadePaletteStep+4A↑j
                 inc     al
                 mov     [di], al
                 test    al, 80h
                 jnz     short loc_119AD
                 mov     [bx], al
 
-loc_119AD:                              ; CODE XREF: sub_11953+4E↑j
-                                        ; sub_11953+56↑j
+loc_119AD:                              ; CODE XREF: FadePaletteStep+4E↑j
+                                        ; FadePaletteStep+56↑j
                 inc     bx
                 inc     di
                 inc     si
@@ -2776,11 +2776,11 @@ loc_119AD:                              ; CODE XREF: sub_11953+4E↑j
                 mov     cx, word_31982
                 mov     si, 475Ah
                 add     si, word_322BA
-                call    sub_25A3B
+                call    SetPaletteRange
                 pop     cx
                 loop    loc_1197F
                 retn
-sub_11953       endp
+FadePaletteStep endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2816,7 +2816,7 @@ sub_119D5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_119E0       proc near               ; CODE XREF: sub_1177C+12D↑p
+sub_119E0       proc near               ; CODE XREF: ShowIntroPicture+12D↑p
                                         ; sub_119E0+6↓j ...
                 test    word_328C4, 400h
                 jz      short sub_119E0
@@ -2833,8 +2833,8 @@ sub_119E0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_119F6       proc near               ; CODE XREF: sub_1177C+E2↑p
-                                        ; sub_1177C:loc_118B6↑p
+sub_119F6       proc near               ; CODE XREF: ShowIntroPicture+E2↑p
+                                        ; ShowIntroPicture:loc_118B6↑p
                 or      word_328C8, 800h
                 mov     dx, 0E0h
                 call    sub_119CA
@@ -2845,7 +2845,7 @@ sub_119F6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11A03       proc near               ; CODE XREF: sub_1177C+127↑p
+sub_11A03       proc near               ; CODE XREF: ShowIntroPicture+127↑p
                 or      word_328C8, 800h
                 mov     dx, 0E0h
                 call    sub_119D5
@@ -3243,7 +3243,7 @@ sub_11EBE       proc near               ; CODE XREF: sub_11A10+E2↑p
                 mov     bx, 0
                 mov     cx, 0FFh
                 mov     si, 4D5Ch
-                call    sub_25A3B
+                call    SetPaletteRange
                 retn
 sub_11EBE       endp
 
@@ -3311,7 +3311,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 call    sub_1522E
                 cmp     byte_2E400, 1Bh
                 jz      short loc_11FA3
-                call    sub_1177C
+                call    ShowIntroPicture
 
 loc_11FA3:                              ; CODE XREF: InitGame+B4↑j
                                         ; InitGame+C0↑j
@@ -9770,7 +9770,7 @@ loc_16130:                              ; CODE XREF: sub_160D6+4E↑j
                 mov     cx, word_31982
                 mov     si, 475Ah
                 add     si, word_322BA
-                call    sub_25A3B
+                call    SetPaletteRange
                 pop     cx
                 loop    loc_16102
                 retn
@@ -9988,7 +9988,7 @@ sub_16244       proc near               ; CODE XREF: sub_1559A+298↑p
                 mov     bx, 0
                 mov     cx, 0FFh
                 mov     si, 4D5Ch
-                call    sub_25A3B
+                call    SetPaletteRange
                 retn
 sub_16244       endp
 
@@ -23709,7 +23709,7 @@ loc_1D484:                              ; CODE XREF: sub_1D2A6+17B↑j
 
 loc_1D489:                              ; CODE XREF: sub_1D2A6+C1↑j
                 call    sub_25862
-                call    sub_1177C
+                call    ShowIntroPicture
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
 
@@ -28111,7 +28111,7 @@ loc_1FFC7:                              ; CODE XREF: sub_1FECF+1A↑j
                 inc     word_328CE
                 mov     cx, 10h
                 mov     bl, 0D0h
-                call    sub_25A3B
+                call    SetPaletteRange
                 mov     word_32952, 5
                 pop     ax
                 pop     bx
@@ -28176,7 +28176,7 @@ loc_20045:                              ; CODE XREF: sub_1FFE4+59↑j
                 mov     bl, 0E0h
                 mov     cx, 20h ; ' '
                 mov     si, 46CAh
-                call    sub_25A3B
+                call    SetPaletteRange
                 call    sub_2784A
                 mov     word_32950, 5Bh ; '['
                 pop     bx
@@ -34660,7 +34660,7 @@ sub_23874       endp
 
 
 sub_238CD       proc far                ; CODE XREF: sub_1075E+64↑P
-                                        ; sub_1177C+179↑P ...
+                                        ; ShowIntroPicture+179↑P ...
                 test    word_3195C, 1
                 jnz     short loc_238DB
                 and     word_3195C, 0FFFDh
@@ -35115,7 +35115,7 @@ writeString     endp
 
 
 sub_23B76       proc far                ; CODE XREF: sub_1075E+5A↑P
-                                        ; sub_1177C+100↑P ...
+                                        ; ShowIntroPicture+100↑P ...
                 push    dx
                 mov     dx, _textPos_x
                 push    dx
@@ -38191,7 +38191,7 @@ loc_258F2:                              ; CODE XREF: sub_2589A+53↑j
 
 loc_258F6:                              ; CODE XREF: sub_2589A+30↑j
                 mov     dx, 412Ah
-                call    sub_25A5B
+                call    GetPalette
 
 loc_258FC:                              ; CODE XREF: sub_2589A+46↑j
                 mov     cx, word_31984
@@ -38224,7 +38224,7 @@ loc_25921:                              ; CODE XREF: sub_2589A+82↑j
                 mov     si, 412Ah
                 add     si, word_322BA
                 push    cs
-                call    near ptr sub_25A3B
+                call    near ptr SetPaletteRange
                 pop     cx
                 loop    loc_25900
                 jmp     short loc_258F2
@@ -38281,7 +38281,7 @@ loc_25987:                              ; CODE XREF: sub_2589A+E1↑j
                 mov     si, 475Ah
                 add     si, word_322BA
                 push    cs
-                call    near ptr sub_25A3B
+                call    near ptr SetPaletteRange
                 pop     cx
                 loop    loc_25959
                 mov     di, 475Ah
@@ -38293,7 +38293,7 @@ loc_25987:                              ; CODE XREF: sub_2589A+E1↑j
 
 loc_259AF:                              ; CODE XREF: sub_2589A+3E↑j
                 mov     dx, 412Ah
-                call    sub_25A5B
+                call    GetPalette
 
 loc_259B5:                              ; CODE XREF: sub_2589A+4D↑j
                 mov     cx, word_31984
@@ -38330,7 +38330,7 @@ loc_259E4:                              ; CODE XREF: sub_2589A+144↑j
                 mov     si, 412Ah
                 add     si, word_322BA
                 push    cs
-                call    near ptr sub_25A3B
+                call    near ptr SetPaletteRange
                 pop     cx
                 loop    loc_259B9
                 jmp     loc_258F2
@@ -38363,7 +38363,7 @@ loc_25A1E:                              ; CODE XREF: sub_2589A+17E↑j
                 mov     si, 4D5Ch
                 add     si, word_322BA
                 push    cs
-                call    near ptr sub_25A3B
+                call    near ptr SetPaletteRange
                 pop     cx
                 loop    loc_25A01
                 jmp     loc_258F2
@@ -38373,13 +38373,13 @@ sub_2589A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25A3B       proc far                ; CODE XREF: sub_11953+6E↑P
+SetPaletteRange proc far                ; CODE XREF: FadePaletteStep+6E↑P
                                         ; sub_11EBE+18↑P ...
-                test    word_328C8, 800h
+                test    word_328C8, 800h ; Direct VGA DAC I/O (bypasses BIOS): optionally waits for vertical retrace (port 0x3DA bit 3), writes bl to port 0x3C8 (DAC write address), then cx RGB triples from ds:si to port 0x3C9 (DAC data). The real palette-set primitive.
                 jz      short loc_25A4B
                 mov     dx, 3DAh
 
-loc_25A46:                              ; CODE XREF: sub_25A3B+E↓j
+loc_25A46:                              ; CODE XREF: SetPaletteRange+E↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -38388,13 +38388,13 @@ loc_25A46:                              ; CODE XREF: sub_25A3B+E↓j
                 test    al, 8
                 jz      short loc_25A46
 
-loc_25A4B:                              ; CODE XREF: sub_25A3B+6↑j
+loc_25A4B:                              ; CODE XREF: SetPaletteRange+6↑j
                 mov     dx, 3C8h
                 mov     al, bl
                 out     dx, al
                 inc     dx
 
-loc_25A52:                              ; CODE XREF: sub_25A3B+1D↓j
+loc_25A52:                              ; CODE XREF: SetPaletteRange+1D↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -38403,15 +38403,15 @@ loc_25A52:                              ; CODE XREF: sub_25A3B+1D↓j
                 out     dx, al
                 loop    loc_25A52
                 retf
-sub_25A3B       endp
+SetPaletteRange endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25A5B       proc near               ; CODE XREF: sub_2589A+5F↑p
+GetPalette      proc near               ; CODE XREF: sub_2589A+5F↑p
                                         ; sub_2589A+118↑p
-                xor     bx, bx
+                xor     bx, bx          ; BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).
                 mov     cx, 100h
                 mov     ax, 1017h
                 int     10h             ; - VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)
@@ -38419,7 +38419,7 @@ sub_25A5B       proc near               ; CODE XREF: sub_2589A+5F↑p
                                         ; ES:DX -> buffer (3 * CX bytes in size)
                                         ; Return: CX number of red, green and blue triples in buffer
                 retn
-sub_25A5B       endp
+GetPalette      endp
 
 seg083          ends
 
@@ -42626,7 +42626,7 @@ sub_27C96       endp
 
 ; void __usercall sub_27CB0(FileEntry *this@<eds:ebx.2>)
 sub_27CB0       proc far                ; CODE XREF: ShowClueBook+4C5↑P
-                                        ; sub_1177C+4A↑P ...
+                                        ; ShowIntroPicture+4A↑P ...
                 push    si              ; First of a ~27-function cluster (0x27B42-0x2801A, seg096) of tiny 'resource block setup' stubs: each hardcodes one FileEntry's _blockOffset/_blockOffsetHi (from a small pointer table) and _blockSize for one specific game resource, then returns -- the caller does the actual FileEntry_Read. Each is called directly from many different, scattered call sites (not through a dispatch table), so which resource each one represents isn't recoverable from static analysis alone; left unnamed deliberately rather than guessed -- see ida_scripts/document_resource_stubs.py.
                 mov     si, 0CE1Fh
                 mov     [bx+4], ax
@@ -43474,7 +43474,7 @@ sub_2827E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28296       proc far                ; CODE XREF: sub_1177C+B↑P
+sub_28296       proc far                ; CODE XREF: ShowIntroPicture+B↑P
                                         ; sub_11A10+17↑P ...
                 test    g_driverStateFlags, 2
                 jnz     short loc_2829F
@@ -46082,7 +46082,7 @@ seg111          segment byte public 'CODE' use16
 ; Attributes: bp-based frame
 
 DrawPicture     proc far                ; CODE XREF: sub_116CF+17↑P
-                                        ; sub_1177C+39↑P ...
+                                        ; ShowIntroPicture+39↑P ...
 
 var_4A          = word ptr -4Ah
 var_24          = word ptr -24h
@@ -56474,12 +56474,12 @@ word_2E386      dw 0                    ; DATA XREF: sub_20070+2C↑w
                                         ; sub_20070+290↑r ...
 ; int x
 x               dw 0                    ; DATA XREF: sub_116CF+8↑w
-                                        ; sub_1177C+15↑w ...
+                                        ; ShowIntroPicture+15↑w ...
 ; int y
 y               dw 0                    ; DATA XREF: sub_116CF+E↑w
-                                        ; sub_1177C+1B↑w ...
+                                        ; ShowIntroPicture+1B↑w ...
 _font_bgTransparent dw 0                ; DATA XREF: sub_1075E+43↑w
-                                        ; sub_1177C+21↑w ...
+                                        ; ShowIntroPicture+21↑w ...
 word_2E38E      dw 0                    ; DATA XREF: sub_193BE+42↑r
                                         ; sub_193BE+45↑r ...
 word_2E390      dw 0                    ; DATA XREF: sub_1BBED+E2↑w
@@ -56883,13 +56883,13 @@ _val34          dw 0                    ; DATA XREF: InitGlobals+F0↑w
 word_2E52A      dw 0                    ; DATA XREF: start+673↑r
                                         ; start:loc_1067D↑r ...
 _font_fgColor   dw 0                    ; DATA XREF: sub_1075E+3D↑w
-                                        ; sub_1177C+FA↑w ...
-word_2E52E      dw 0                    ; DATA XREF: sub_11953+14↑w
-                                        ; sub_11953+5F↑r ...
+                                        ; ShowIntroPicture+FA↑w ...
+word_2E52E      dw 0                    ; DATA XREF: FadePaletteStep+14↑w
+                                        ; FadePaletteStep+5F↑r ...
 word_2E530      dw 0                    ; DATA XREF: start+63F↑w
                                         ; start:loc_10652↑w ...
 word_2E532      dw 0                    ; DATA XREF: sub_116CF+11↑w
-                                        ; sub_1177C+27↑w ...
+                                        ; ShowIntroPicture+27↑w ...
 word_2E534      dw 0                    ; DATA XREF: sub_284CB+3↑w
                                         ; sub_284CB:loc_284D4↑r ...
 aFmdrv          db 'FMDRV',0
@@ -70257,8 +70257,8 @@ _emsVal9        dw 1                    ; DATA XREF: InitMemory+F7↑w
                                         ; InitMemory+138↑w ...
 word_31974      dw 0                    ; DATA XREF: sub_1E64A:loc_1E82C↑w
                                         ; sub_1E64A+208↑w ...
-word_31976      dw 0                    ; DATA XREF: sub_11953+8↑w
-                                        ; sub_11953+C↑w ...
+word_31976      dw 0                    ; DATA XREF: FadePaletteStep+8↑w
+                                        ; FadePaletteStep+C↑w ...
                 db    0
                 db    0
                 db    0
@@ -70269,10 +70269,10 @@ word_3197E      dw 0                    ; DATA XREF: sub_1C890+127↑w
                                         ; sub_1CB37:loc_1CB93↑r
 word_31980      dw 0                    ; DATA XREF: sub_27B0D+30↑w
                                         ; sub_27CC9+30↑w ...
-word_31982      dw 0                    ; DATA XREF: sub_11953+4↑w
-                                        ; sub_11953+63↑r ...
-word_31984      dw 0                    ; DATA XREF: sub_11953↑w
-                                        ; sub_11953+28↑r ...
+word_31982      dw 0                    ; DATA XREF: FadePaletteStep+4↑w
+                                        ; FadePaletteStep+63↑r ...
+word_31984      dw 0                    ; DATA XREF: FadePaletteStep↑w
+                                        ; FadePaletteStep+28↑r ...
                 db    0
                 db    0
                 db    0
@@ -72629,8 +72629,8 @@ word_31984      dw 0                    ; DATA XREF: sub_11953↑w
                 db    0
                 db    0
                 db    0
-word_322BA      dw 0                    ; DATA XREF: sub_11953+18↑w
-                                        ; sub_11953+1C↑w ...
+word_322BA      dw 0                    ; DATA XREF: FadePaletteStep+18↑w
+                                        ; FadePaletteStep+1C↑w ...
                 db    0
                 db    0
                 db    0
@@ -74312,7 +74312,7 @@ word_32948      dw 0                    ; DATA XREF: sub_2814C+1C↑w
                                         ; sub_2814C+36↑w ...
 ; int textPos_x
 _textPos_x      dw 0                    ; DATA XREF: sub_1075E+31↑w
-                                        ; sub_1177C+E9↑w ...
+                                        ; ShowIntroPicture+E9↑w ...
 word_3294C      dw 0                    ; DATA XREF: ShowClueBook+2C↑w
                                         ; sub_14E28+D9↑w ...
 word_3294E      dw 0                    ; DATA XREF: seg059:0202↑w
@@ -74337,7 +74337,7 @@ word_32960      dw 0                    ; DATA XREF: sub_221A0+56↑w
                                         ; sub_221A0+5E↑w ...
 ; int textPos_y
 _textPos_y      dw 0                    ; DATA XREF: sub_1075E+37↑w
-                                        ; sub_1177C+EF↑w ...
+                                        ; ShowIntroPicture+EF↑w ...
 word_32964      dw 0                    ; DATA XREF: sub_141D9+3F5↑w
                                         ; sub_14E28+DE↑w ...
 word_32966      dw 0                    ; DATA XREF: sub_141D9+3FC↑w
@@ -74365,7 +74365,7 @@ word_3297A      dw 0                    ; DATA XREF: sub_1CDBC+17↑w
 word_3297C      dw 0                    ; DATA XREF: sub_1CDBC+1D↑w
                                         ; sub_1CDBC:loc_1CE52↑w ...
 word_3297E      dw 0                    ; DATA XREF: ShowClueBook+63↑w
-                                        ; sub_1177C+8↑w ...
+                                        ; ShowIntroPicture+8↑w ...
 word_32980      dw 0                    ; DATA XREF: sub_11D66+18↑w
                                         ; sub_152EF+71↑w ...
 word_32982      dw 0                    ; DATA XREF: sub_11D66+1E↑w
@@ -84146,7 +84146,18 @@ aMagicDragon    db 'MAGIC DRAGON',0
                 db    0
                 db    1
                 db  10h
-g_pictureDir    db    0                 ; Picture directory for PICTURES.VGA. 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Verified by extraction: entry 0 (318x198 @ 0) is the SmithWare splash screen; entry 8 (16x16 @ 0xBCF3DA) is a mouse cursor; entry 9 (8x8 @ 0xBEF1DA) is a scroll-arrow icon. Indexed as g_pictureDir + word_2E532 (picture id * 0x10) elsewhere.
+g_pictureDir    db    0                 ; Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:
+                                        ;   0: 318x198 @ 0x0        -- "SmithWare" splash-screen logo
+                                        ;   1: 210x105 @ 0xE694C    -- GameDialog button panel background
+                                        ;   2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene
+                                        ;   3: 190x110 @ 0x779552   -- wolf/monster silhouette
+                                        ;   4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)
+                                        ;   5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient
+                                        ;   6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)
+                                        ;   7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)
+                                        ;   8: 16x16   @ 0xBCF3DA   -- mouse cursor
+                                        ;   9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon
+                                        ; Indexed as g_pictureDir + word_2E532 (pi
                 db    0
                 db    0
                 db    0

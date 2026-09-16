@@ -399,6 +399,38 @@ its offsets top out at `0x1AA5DD`, matching `WORLD.DAT`'s exact size
 
 78 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: full picture catalog + palette I/O
+
+At Paul's follow-up ("keep going"), enumerated `g_pictureDir`
+exhaustively (`ida_scripts/enumerate_pictures.py`) and found it has
+**exactly 10 entries** — a small fixed set of splash/UI graphics, not a
+general asset catalog. Extracted and identified all 10 by shape
+(grayscale rendering, `ida_scripts/extract_pic.py`): the SmithWare logo
+and dialog panel from before, plus a combat scene, a wolf/monster
+silhouette, two sky/gradient panels, a male character silhouette
+(plausibly the character-creation body template), and three icons.
+Full table with descriptions in
+[file-formats.md](file-formats.md#pictures.vga).
+
+Also traced the palette machinery while looking for real colors to
+render these in: `SetPaletteRange`/`GetPalette` (`0x25A3B`/`0x25A5B`,
+direct VGA DAC port I/O — ports `0x3C8`/`0x3C9`, bypassing the BIOS),
+`FadePaletteStep` (`0x11953`, one animation-frame step of a palette
+fade), and `ShowIntroPicture` (`0x1177C`, called directly from `start`
+and `InitGame` — shows a picture, fades its palette, waits for a
+keypress; likely the boot splash-screen display). Didn't manage to
+trace a picture's actual target RGB values back to their source this
+pass — the fade-target buffer is a runtime-populated scratch area, zero
+at rest in the `.idb` — so extracted images stay grayscale for now; see
+file-formats.md's "Palette" section for exactly where the trail goes
+cold.
+
+Sent Paul the extracted images directly (`SmithWare` logo, dialog panel,
+cursor, plus the new combat/wolf/character ones) rather than just
+describing them.
+
+82 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

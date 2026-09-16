@@ -131,20 +131,29 @@ itself is just a flat blob of pixel bytes back to back.
 +0xE  word   file offset into PICTURES.VGA, high word
 ```
 
-Verified directly by extracting and rendering three entries with
-`ida_scripts/extract_pic.py` (grayscale, real VGA palette not recovered
-yet — but shape alone was already unambiguous):
+**The table has exactly 10 entries** (confirmed by
+`ida_scripts/enumerate_pictures.py`: scanning for plausible
+width/height/offset values, the pattern holds for 10 entries then
+breaks down completely) — this is a small fixed set of splash/UI
+graphics, not a general asset catalog. Dungeon views, portraits etc.
+must be generated or stored some other way (not yet investigated).
 
-- **Entry 0** — 318×198 @ offset `0x0`: the **"SmithWare" splash-screen
-  logo** (matches the developer name from `CURGAME`'s header string).
-- **Entry 8** — 16×16 @ offset `0xBCF3DA`: a **mouse-cursor arrow**.
-- **Entry 9** — 8×8 @ offset `0xBEF1DA`: a small **scroll-arrow icon**
-  (matches `UpdateScrollArrows`' two-glyph indicator from earlier this
-  session — likely one of its actual glyphs).
-- **Entry 1** — 210×105 @ offset `0xE694C`: a UI panel with partial
-  button-label text baked into the bitmap (`SAVE`/`LOAD`/`MUSIC`/`SOUND
-  FX`/`DOS`/`RETURN` fragments legible) — the `GameDialog_draw*`
-  background panel.
+All 10 extracted and rendered with `ida_scripts/extract_pic.py`
+(grayscale — real VGA palette not recovered yet, but shape alone was
+already unambiguous for most):
+
+| # | size | offset | content |
+|---|------|--------|---------|
+| 0 | 318×198 | `0x0` | **"SmithWare" splash-screen logo** (matches the developer name from `CURGAME`'s header string) |
+| 1 | 210×105 | `0xE694C` | `GameDialog_draw*` background panel — button-label text fragments (`SAVE`/`LOAD`/`MUSIC`/`SOUND FX`/`DOS`/`RETURN`) baked into the bitmap |
+| 2 | 140×155 | `0x3064B6` | two-figure **combat/fighting scene** silhouette |
+| 3 | 190×110 | `0x779552` | **wolf/monster** silhouette |
+| 4 | 224×74 | `0xAB3F1A` | light gradient panel — indistinct in grayscale, possibly sky/background |
+| 5 | 224×62 | `0xAFCC9A` | sky/cloud gradient |
+| 6 | 56×136 | `0xB2579A` | male character silhouette — plausibly the character-creation body template (`docs/overview.md`'s string survey found `"MALE"`/`"FEMALE"`/`"PICK A PORTRAIT"` nearby in the string table right after this same directory) |
+| 7 | 32×32 | `0xB8BBDA` | icon — indistinct in grayscale (mostly two flat index values, needs the real palette) |
+| 8 | 16×16 | `0xBCF3DA` | **mouse-cursor arrow** |
+| 9 | 8×8 | `0xBEF1DA` | small **scroll-arrow icon** (matches `UpdateScrollArrows`' two-glyph indicator from earlier this session — likely one of its actual glyphs) |
 
 Loading path, fully traced in `ida_scripts/name_picture_system.py`:
 `DrawPicture` (`0x29878`, called from `start` and 8+ other functions)
@@ -157,10 +166,37 @@ page frame to the video buffer at `(x, y)`, with the blit mode selected
 by `_font_bgTransparent` (0–5, different transparency/color-key
 branches).
 
-`sub_23874` (called repeatedly from `start`, presumably an intro
-animation) indexes the same `g_pictureDir` table the same way
-(`g_pictureDir + word_2E532`, `word_2E532` = `picture_id*0x10`) — it's
-one shared directory, not a separate table per caller.
+`sub_23874` (called repeatedly from `start`) indexes the same
+`g_pictureDir` table the same way (`g_pictureDir + word_2E532`,
+`word_2E532` = `picture_id*0x10`) — it's one shared directory, not a
+separate table per caller. One observed call used entry 8 (the mouse
+cursor), so this is more likely a cursor-draw/update path than an intro
+animation as first guessed — not confirmed either way.
+
+### Palette
+
+Colors are 8bpp indices into a 256-entry VGA DAC palette, set via direct
+port I/O rather than the BIOS (`ida_scripts/name_palette_io.py`):
+`SetPaletteRange` (`0x25A3B`) writes a starting register to port `0x3C8`
+then RGB triples to port `0x3C9` (optionally waiting for vertical
+retrace first); `GetPalette` (`0x25A5B`) reads all 256 back via BIOS
+`INT 10h/AX=1017h`. `FadePaletteStep` (`0x11953`, `ida_scripts/name_intro_picture.py`)
+nudges each of a range of DAC registers one step toward a target buffer
+and calls `SetPaletteRange` — called once per animation frame by
+`ShowIntroPicture` (`0x1177C`, called directly from `start` and
+`InitGame`: shows a picture via `DrawPicture`, fades its palette via
+`FadePaletteStep`, waits for a keypress) to fade a picture's palette in
+or out smoothly.
+
+**Not yet found: where a picture's actual target RGB values come from.**
+The fade target buffer (`DS:0x475A` + a computed offset) is zeroed at
+rest in the `.idb`/EXE — populated at runtime, not baked in statically —
+so extracting it requires either tracing the runtime data flow further
+back (the offset is `dx*3` for some `dx` passed into `FadePaletteStep`,
+not yet traced to its origin) or an emulator/debugger. Until then,
+extracted images render in grayscale (raw index value as gray level),
+which was sufficient to identify all 10 `g_pictureDir` entries by shape
+alone but doesn't show true colors.
 
 Not yet decoded: the real VGA palette (so images render in true color,
 not grayscale), and the directory's `+0x4` field's meaning (varies per

@@ -1311,8 +1311,10 @@ static Bytes_0(void) {
 	create_insn	(0X116CF);
 	create_insn	(0X116F3);
 	create_insn	(0X11704);
+	set_cmt	(0X1177C,	"Shows a picture (DrawPicture, id from word_2E530/word_2E532) with a palette fade (FadePaletteStep) and waits for a keypress (byte_2E400, filled by PollKeyboardInput). Called directly from `start` and InitGame -- likely the boot-time splash/logo display.",	0);
 	create_insn	(x=0X1177C);
 	op_hex		(x,	1);
+	set_name	(0X1177C,	"ShowIntroPicture");
 	create_insn	(x=0X117BA);
 	op_hex		(x,	1);
 	set_cmt	(0X117C3,	"this",	0);
@@ -1338,7 +1340,9 @@ static Bytes_0(void) {
 	create_insn	(0X1191E);
 	create_insn	(0X1192D);
 	create_insn	(0X11940);
+	set_cmt	(0X11953,	"One step of a palette fade: nudges each of cx DAC registers one step from its current value toward a target buffer, then calls SetPaletteRange. Called repeatedly (once per animation frame) by ShowIntroPicture to fade a picture's palette in/out smoothly.",	0);
 	create_insn	(0X11953);
+	set_name	(0X11953,	"FadePaletteStep");
 	create_insn	(x=0X1199B);
 	op_hex		(x,	1);
 	create_insn	(x=0X119A7);
@@ -6094,12 +6098,16 @@ static Bytes_0(void) {
 	create_insn	(0X259AF);
 	create_insn	(0X259E4);
 	create_insn	(0X259FD);
+	set_cmt	(0X25A3B,	"Direct VGA DAC I/O (bypasses BIOS): optionally waits for vertical retrace (port 0x3DA bit 3), writes bl to port 0x3C8 (DAC write address), then cx RGB triples from ds:si to port 0x3C9 (DAC data). The real palette-set primitive.",	0);
 	create_insn	(x=0X25A3B);
 	op_hex		(x,	1);
+	set_name	(0X25A3B,	"SetPaletteRange");
 	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
 	create_insn	(x=0X25A47);
 	op_hex		(x,	1);
+	set_cmt	(0X25A5B,	"BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).",	0);
 	create_insn	(0X25A5B);
+	set_name	(0X25A5B,	"GetPalette");
 	set_cmt	(0X25A63,	"- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",	0);
 	create_insn	(x=0X25A63);
 	op_hex		(x,	0);
@@ -6353,6 +6361,15 @@ static Bytes_0(void) {
 	create_insn	(0X269BF);
 	create_insn	(0X269C8);
 	create_insn	(0X269D1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X269DA);
 	create_insn	(0X269E3);
 	create_insn	(0X269EC);
@@ -6471,15 +6488,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27056);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X270FE);
 	create_insn	(0X2711F);
 	create_insn	(0X27141);
@@ -9541,7 +9549,7 @@ static Bytes_1(void) {
 	set_name	(0X3505A,	"aFlyingRug");
 	create_strlit	(0X35074,	0XD);
 	set_name	(0X35074,	"aMagicDragon");
-	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA. 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Verified by extraction: entry 0 (318x198 @ 0) is the SmithWare splash screen; entry 8 (16x16 @ 0xBCF3DA) is a mouse cursor; entry 9 (8x8 @ 0xBEF1DA) is a scroll-arrow icon. Indexed as g_pictureDir + word_2E532 (picture id * 0x10) elsewhere.",	0);
+	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:\n  0: 318x198 @ 0x0        -- \"SmithWare\" splash-screen logo\n  1: 210x105 @ 0xE694C    -- GameDialog button panel background\n  2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene\n  3: 190x110 @ 0x779552   -- wolf/monster silhouette\n  4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)\n  5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient\n  6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)\n  7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)\n  8: 16x16   @ 0xBCF3DA   -- mouse cursor\n  9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon\nIndexed as g_pictureDir + word_2E532 (p" "i",	0);
 	set_name	(0X3508E,	"g_pictureDir");
 	create_strlit	(0X3512E,	0X9);
 	set_name	(0X3512E,	"aNorth");
@@ -10837,6 +10845,15 @@ static Bytes_1(void) {
 	set_name	(0X3A3A1,	"aTeleportedToYe");
 	create_strlit	(0X3A3C0,	0X22);
 	set_name	(0X3A3C0,	"aByYourSurround");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A3E2,	0X20);
 	set_name	(0X3A3E2,	"aThatYouHaveArr");
 	create_strlit	(0X3A402,	0X21);
@@ -14337,6 +14354,7 @@ static Patches(void) {
 static Bytes(void) {
 	Bytes_0();
 	Bytes_1();
+	Bytes_2();
         end_type_updating(UTP_STRUCT);
 }
 
