@@ -4070,6 +4070,17 @@ target confirmation/incapacitation checks/full redraw).
 
 514 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SwapItemMultiStatEffect
+
+Named `sub_276C5` -> `SwapItemMultiStatEffect`, called 3 times from
+`sub_274B4`: ties together several findings from this round —
+removes the current item's effect and swaps in a new item id from the
+exact `word_2E548` fields `GetClassifiedItemStatField` selects between,
+applying the new item's effect. Replaces one equipped item's stat
+effect with a different item's, per category.
+
+515 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

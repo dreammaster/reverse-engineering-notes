@@ -406,6 +406,13 @@ distinct, lower-level primitive from the higher-level command handler
 `ApplyMultiStatEffect` — same table-walking core, capped at `0x3E7`
 instead of floored at `0`, but without that command's target
 confirmation, incapacitation check, or full redraw sequence.
+`SwapItemMultiStatEffect` (was `sub_276C5`, called 3 times from
+`sub_274B4`) ties the whole cluster together: if the current item's
+category matches a `word_2E548` sub-flag, it removes the current
+item's effect, swaps in a new item id from `word_2E548`'s `+4`/`+8`
+field (the exact fields `GetClassifiedItemStatField` selects between),
+and applies the new item's effect — replacing one equipped item's stat
+effect with a different item's, per category.
 A fourth sibling, `PickUpHeldItemFromSlot` (was `sub_26864`, called
 from `sub_2621C`), is the simple "pick up only" action (no placement
 step) — the pickup counterpart to `PlaceHeldItemIntoEmptySlot`. All

@@ -41587,7 +41587,7 @@ loc_2754F:                              ; CODE XREF: sub_274B4+7B↑j
 ; ---------------------------------------------------------------------------
 
 loc_27557:                              ; CODE XREF: sub_274B4+32↑j
-                call    sub_276C5
+                call    SwapItemMultiStatEffect
                 jmp     short loc_2750B
 ; ---------------------------------------------------------------------------
 
@@ -41645,7 +41645,7 @@ loc_275D5:                              ; CODE XREF: sub_274B4+117↑j
 ; ---------------------------------------------------------------------------
 
 loc_275E5:                              ; CODE XREF: sub_274B4+D3↑j
-                call    sub_276C5
+                call    SwapItemMultiStatEffect
                 jmp     short loc_27629
 ; ---------------------------------------------------------------------------
 
@@ -41739,9 +41739,9 @@ sub_274B4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_276C5       proc near               ; CODE XREF: sub_274B4:loc_27557↑p
+SwapItemMultiStatEffect proc near       ; CODE XREF: sub_274B4:loc_27557↑p
                                         ; sub_274B4:loc_275E5↑p ...
-                push    si
+                push    si              ; If the current item's category ([+0xC] 0xC000/0x800) and a matching word_2E548 sub-flag ([+2] 0x200/0x80) both hold, removes the current item's effect (RemoveMultiStatEffect), swaps in a new item id from word_2E548+4/+8 (the same fields GetClassifiedItemStatField selects), and applies its effect (ApplyMultiStatEffectForItem). Called from sub_274B4.
                 mov     si, word_2E546
                 test    word ptr [si+0Ch], 0C000h
                 jnz     short loc_276DA
@@ -41750,7 +41750,7 @@ sub_276C5       proc near               ; CODE XREF: sub_274B4:loc_27557↑p
                 jmp     short loc_2772A
 ; ---------------------------------------------------------------------------
 
-loc_276DA:                              ; CODE XREF: sub_276C5+A↑j
+loc_276DA:                              ; CODE XREF: SwapItemMultiStatEffect+A↑j
                 mov     si, word_2E548
                 or      si, si
                 jz      short loc_2772A
@@ -41766,7 +41766,7 @@ loc_276DA:                              ; CODE XREF: sub_276C5+A↑j
                 jmp     short loc_2772A
 ; ---------------------------------------------------------------------------
 
-loc_27703:                              ; CODE XREF: sub_276C5+11↑j
+loc_27703:                              ; CODE XREF: SwapItemMultiStatEffect+11↑j
                 mov     si, word_2E548
                 or      si, si
                 jz      short loc_2772A
@@ -41780,11 +41780,11 @@ loc_27703:                              ; CODE XREF: sub_276C5+11↑j
                 mov     [bx], ax
                 call    ApplyMultiStatEffectForItem
 
-loc_2772A:                              ; CODE XREF: sub_276C5+13↑j
-                                        ; sub_276C5+1B↑j ...
+loc_2772A:                              ; CODE XREF: SwapItemMultiStatEffect+13↑j
+                                        ; SwapItemMultiStatEffect+1B↑j ...
                 pop     si
                 retn
-sub_276C5       endp
+SwapItemMultiStatEffect endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -41899,7 +41899,7 @@ loc_2780B:                              ; CODE XREF: sub_2778D+26↑j
 ; ---------------------------------------------------------------------------
 
 loc_27817:                              ; CODE XREF: sub_2778D+36↑j
-                call    sub_276C5
+                call    SwapItemMultiStatEffect
                 jmp     short loc_277F7
 sub_2778D       endp
 

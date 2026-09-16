@@ -7266,7 +7266,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X276AD);
 	op_hex		(x,	1);
+	set_cmt	(0X276C5,	"If the current item's category ([+0xC] 0xC000/0x800) and a matching word_2E548 sub-flag ([+2] 0x200/0x80) both hold, removes the current item's effect (RemoveMultiStatEffect), swaps in a new item id from word_2E548+4/+8 (the same fields GetClassifiedItemStatField selects), and applies its effect (ApplyMultiStatEffectForItem). Called from sub_274B4.",	0);
 	create_insn	(0X276C5);
+	set_name	(0X276C5,	"SwapItemMultiStatEffect");
 	create_insn	(x=0X276CA);
 	op_hex		(x,	1);
 	create_insn	(x=0X276D1);
@@ -7485,13 +7487,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
 	create_insn	(0X2819F);
 	set_name	(0X2819F,	"ShowGameClockCommand");
-	create_insn	(x=0X281A4);
-	op_hex		(x,	1);
-	set_cmt	(0X2821E,	"msg",	0);
-	set_cmt	(0X28232,	"msg",	0);
-	set_cmt	(0X28246,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
-	create_insn	(0X28246);
-	set_name	(0X28246,	"RestoreDialogAreaFromEMS");
 }
 
 //------------------------------------------------------------------------
@@ -7501,6 +7496,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X281A4);
+	op_hex		(x,	1);
+	set_cmt	(0X2821E,	"msg",	0);
+	set_cmt	(0X28232,	"msg",	0);
+	set_cmt	(0X28246,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
+	create_insn	(0X28246);
+	set_name	(0X28246,	"RestoreDialogAreaFromEMS");
 	create_insn	(0X2827E);
 	create_insn	(x=0X28281);
 	op_hex		(x,	1);
