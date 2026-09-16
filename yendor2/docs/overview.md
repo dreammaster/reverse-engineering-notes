@@ -6282,6 +6282,21 @@ fields, 999 otherwise).
 
 734 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: InitializeStatusIconBarHitTestRegions and 3 others
+
+Named `InitializeStatusIconBarHitTestRegions` (`sub_1251D`, boot-time
+setup of the 4 party members' clickable status-icon regions),
+`ResetCombatRoundScratchState` (`sub_22CBC`, zeroes 8 combat scratch
+words at the start of processing, called from `RunDungeonGameLoop`
+and `HandleRangedOrCombatAction`), `RelocateMonsterCellMarker`
+(`sub_23305`, moves a monster's map-cell position marker to an
+adjacent cell, called once from `ProcessLevelMonsters`), and
+`ResetOrCopyTargetPositionFields` (`sub_2D547`, a small helper of the
+still-untraced combat dispatcher `sub_2C0FE` — named from directly
+observed mechanics without asserting the parent's full narrative).
+
+738 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

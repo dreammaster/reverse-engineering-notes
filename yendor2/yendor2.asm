@@ -3268,7 +3268,7 @@ InitGame        proc far                ; CODE XREF: start+2F↑P
                 call    ErrorCheck
                 call    clear_kbd_buffer
                 call    InitGlobals
-                call    sub_1251D
+                call    InitializeStatusIconBarHitTestRegions
                 mov     word_368A5, ds
                 mov     word_3688E, ds
                 mov     word_3685D, ds
@@ -3739,8 +3739,9 @@ PreloadMonsterStatsTable endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1251D       proc near               ; CODE XREF: InitGame+15↑p
-                mov     di, 0C50h
+InitializeStatusIconBarHitTestRegions proc near
+                                        ; CODE XREF: InitGame+15↑p
+                mov     di, 0C50h       ; Zeroes the icon-bar area (0xC50) and computes each of the 4 party members' small status-icon hit-test regions from table 0x61C2. Called once from InitGame.
                 mov     es, word_2E4AA
                 mov     cx, 28h ; '('
                 xor     ax, ax
@@ -3749,7 +3750,7 @@ sub_1251D       proc near               ; CODE XREF: InitGame+15↑p
                 mov     cx, 4
                 mov     di, 61C2h
 
-loc_12534:                              ; CODE XREF: sub_1251D+33↓j
+loc_12534:                              ; CODE XREF: InitializeStatusIconBarHitTestRegions+33↓j
                 mov     ax, [di]
                 mov     [si], ax
                 add     ax, 8
@@ -3762,7 +3763,7 @@ loc_12534:                              ; CODE XREF: sub_1251D+33↓j
                 add     di, 50h ; 'P'
                 loop    loc_12534
                 retn
-sub_1251D       endp
+InitializeStatusIconBarHitTestRegions endp
 
 seg005          ends
 
@@ -10146,7 +10147,7 @@ seg015          segment byte public 'CODE' use16
 RunDungeonGameLoop proc far             ; CODE XREF: start+4B↑P
                                         ; RestPartyAndAdvanceClock+1DC↓P
                 and     word_328C8, 0FFDFh ; Main dungeon game loop, called once from `start`. Each iteration: checks movement/menu input (sub_16407/sub_16881/sub_25AAC), redraws (sub_20C1E, BuildMinimapTileData, DrawMinimap), shows a resource-depleted overlay if needed, draws 3 fixed status/info widgets via sub_232A8, and checks a BCD counter at 0x51B6 to conditionally call sub_23151. Loops via jmp back to its own body until byte_2E400 signals exit.
-                call    sub_22CBC
+                call    ResetCombatRoundScratchState
                 mov     byte_2E400, 0
                 or      word_328C4, 1800h
                 mov     word_36CBD, 28h ; '('
@@ -23778,7 +23779,7 @@ loc_1D4C0:                              ; CODE XREF: HandleRangedOrCombatAction+
 loc_1D4CB:                              ; CODE XREF: HandleRangedOrCombatAction+E↑j
                 mov     word_2E544, 0
                 and     word_328C8, 0FBFFh
-                call    sub_22CBC
+                call    ResetCombatRoundScratchState
                 test    word_328C8, 100h
                 jnz     short loc_1D4E7
                 jmp     loc_1D77B
@@ -26632,7 +26633,7 @@ loc_1EFE3:                              ; CODE XREF: RunGameDialog+56B↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                call    sub_22CBC
+                call    ResetCombatRoundScratchState
                 mov     word_32A1E, 0
                 mov     word_32BF4, 0
                 mov     bx, 902Ch
@@ -33296,9 +33297,9 @@ TestCellMonsterSpawnedFlag endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22CBC       proc far                ; CODE XREF: RunDungeonGameLoop+5↑P
+ResetCombatRoundScratchState proc far   ; CODE XREF: RunDungeonGameLoop+5↑P
                                         ; HandleRangedOrCombatAction+1F↑P ...
-                mov     word_32A16, 0
+                mov     word_32A16, 0   ; Zeroes 8 combat scratch words (word_32A16-1C, word_32BF6-FC). Called from RunDungeonGameLoop and HandleRangedOrCombatAction.
                 mov     word_32A18, 0
                 mov     word_32A1A, 0
                 mov     word_32A1C, 0
@@ -33307,7 +33308,7 @@ sub_22CBC       proc far                ; CODE XREF: RunDungeonGameLoop+5↑P
                 mov     word_32BFA, 0
                 mov     word_32BFC, 0
                 retf
-sub_22CBC       endp
+ResetCombatRoundScratchState endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33594,7 +33595,7 @@ loc_22F63:                              ; CODE XREF: ProcessLevelMonsters+1B0↑
                 cmp     word_328D2, bx
                 jz      short loc_22FCC
                 push    cs
-                call    near ptr sub_23305
+                call    near ptr RelocateMonsterCellMarker
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
@@ -33923,7 +33924,7 @@ loc_23295:                              ; CODE XREF: ShowLootAndAwardExperience+
 loc_2329A:                              ; CODE XREF: ShowLootAndAwardExperience+112↑j
                 call    DrawMouseCursor
                 push    cs
-                call    near ptr sub_22CBC
+                call    near ptr ResetCombatRoundScratchState
                 pop     di
                 pop     si
                 pop     dx
@@ -33972,8 +33973,8 @@ DrawMonsterInfoPanels endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23305       proc far                ; CODE XREF: ProcessLevelMonsters+231↑p
-                mov     es, word_2E562
+RelocateMonsterCellMarker proc far      ; CODE XREF: ProcessLevelMonsters+231↑p
+                mov     es, word_2E562  ; Clears the old map cell's flag bit 0x400/reference, advances the position by (word_2E402, word_2E406), sets the new cell's flag bit 0x400/reference. Called once from ProcessLevelMonsters.
                 mov     bx, [si+6]
                 and     word ptr es:[bx+6], 0FBFFh
                 mov     word ptr es:[bx+4], 0
@@ -33988,7 +33989,7 @@ sub_23305       proc far                ; CODE XREF: ProcessLevelMonsters+231↑
                 mov     ax, [si]
                 mov     es:[bx+4], ax
                 retf
-sub_23305       endp
+RelocateMonsterCellMarker endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51252,7 +51253,7 @@ loc_2C21F:                              ; CODE XREF: sub_2C0FE+117↑j
                 jz      short loc_2C22F
 
 loc_2C227:                              ; CODE XREF: sub_2C0FE+11F↑j
-                call    sub_2D547
+                call    ResetOrCopyTargetPositionFields
                 call    ApplyEffectAndDrawIconBar
 
 loc_2C22F:                              ; CODE XREF: sub_2C0FE+127↑j
@@ -51288,7 +51289,7 @@ loc_2C26C:                              ; CODE XREF: sub_2C0FE+164↑j
                 jz      short loc_2C277
 
 loc_2C274:                              ; CODE XREF: sub_2C0FE+16C↑j
-                call    sub_2D547
+                call    ResetOrCopyTargetPositionFields
 
 loc_2C277:                              ; CODE XREF: sub_2C0FE+174↑j
                 add     di, 14h
@@ -51990,7 +51991,7 @@ loc_2C906:                              ; CODE XREF: sub_2C0FE+7FB↑j
 ; ---------------------------------------------------------------------------
 
 loc_2C92A:                              ; CODE XREF: sub_2C0FE+91↑j
-                call    sub_22CBC
+                call    ResetCombatRoundScratchState
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_332DA
                 call    TriggerSoundEventAfterDriverWait
@@ -53229,9 +53230,10 @@ ApplyAttackToTarget endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D547       proc near               ; CODE XREF: sub_2C0FE:loc_2C227↑p
+ResetOrCopyTargetPositionFields proc near
+                                        ; CODE XREF: sub_2C0FE:loc_2C227↑p
                                         ; sub_2C0FE:loc_2C274↑p
-                test    word_332E2, 40h
+                test    word_332E2, 40h ; If word_332E2 bit 0x40 and the current party member's affliction bit 0x40 are both set, zeroes [di+0xE]/[0x10]/[0x12]; else copies word_332DC/word_332DE into [di+0xE]/[0x10]. Called from the combat dispatcher sub_2C0FE.
                 jz      short loc_2D56A
                 mov     bx, word_328D4
                 test    word ptr [bx+1Ch], 40h
@@ -53242,14 +53244,14 @@ sub_2D547       proc near               ; CODE XREF: sub_2C0FE:loc_2C227↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2D56A:                              ; CODE XREF: sub_2D547+6↑j
-                                        ; sub_2D547+11↑j
+loc_2D56A:                              ; CODE XREF: ResetOrCopyTargetPositionFields+6↑j
+                                        ; ResetOrCopyTargetPositionFields+11↑j
                 mov     ax, word_332DC
                 mov     [di+0Eh], ax
                 mov     ax, word_332DE
                 mov     [di+10h], ax
                 retn
-sub_2D547       endp
+ResetOrCopyTargetPositionFields endp
 
 seg124          ends
 
@@ -74566,10 +74568,10 @@ word_32A12      dw 0                    ; DATA XREF: InitGlobals+1E6↑w
                                         ; RunGameDialog+460↑r ...
 _blockSize2     dw 0                    ; DATA XREF: InitGlobals+1EC↑w
                                         ; PrepareMonsterStatsTableBlockRead+15↑r
-word_32A16      dw 0                    ; DATA XREF: sub_22CBC↑w
-word_32A18      dw 0                    ; DATA XREF: sub_22CBC+6↑w
-word_32A1A      dw 0                    ; DATA XREF: sub_22CBC+C↑w
-word_32A1C      dw 0                    ; DATA XREF: sub_22CBC+12↑w
+word_32A16      dw 0                    ; DATA XREF: ResetCombatRoundScratchState↑w
+word_32A18      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+6↑w
+word_32A1A      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+C↑w
+word_32A1C      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+12↑w
 word_32A1E      dw 0                    ; DATA XREF: RunDungeonGameLoop+3F↑w
                                         ; HandleDungeonInput+2CB↑w ...
 g_monsterSlots  dw 0                    ; DATA XREF: ProcessLevelMonsters:loc_2302A↑r
@@ -75038,10 +75040,10 @@ word_32BEA      dw 0                    ; DATA XREF: ProcessLevelMonsters+338↑
                 db    0
 word_32BF4      dw 0                    ; DATA XREF: RunDungeonGameLoop:loc_16348↑r
                                         ; HandleDungeonInput+31↑r ...
-word_32BF6      dw 0                    ; DATA XREF: sub_22CBC+18↑w
-word_32BF8      dw 0                    ; DATA XREF: sub_22CBC+1E↑w
-word_32BFA      dw 0                    ; DATA XREF: sub_22CBC+24↑w
-word_32BFC      dw 0                    ; DATA XREF: sub_22CBC+2A↑w
+word_32BF6      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+18↑w
+word_32BF8      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+1E↑w
+word_32BFA      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+24↑w
+word_32BFC      dw 0                    ; DATA XREF: ResetCombatRoundScratchState+2A↑w
 g_combatTurnOrder db    0               ; 14 x 8-byte combat turn-order scratch list, rebuilt every RunDungeonGameLoop iteration by BuildCombatTurnOrder. +0 record ptr, +2 party-slot address (0 for monsters), +4 speed/initiative (sort key, descending), +6 flags (0x8000=monster, 0x2000=?, 0x4000=plausibly defeated).
                 db    0
                 db    0

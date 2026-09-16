@@ -1512,7 +1512,9 @@ static Bytes_0(void) {
 	create_insn	(0X124EC);
 	set_name	(0X124EC,	"PreloadMonsterStatsTable");
 	set_cmt	(0X124F2,	"numPara",	0);
+	set_cmt	(0X1251D,	"Zeroes the icon-bar area (0xC50) and computes each of the 4 party members' small status-icon hit-test regions from table 0x61C2. Called once from InitGame.",	0);
 	create_insn	(0X1251D);
+	set_name	(0X1251D,	"InitializeStatusIconBarHitTestRegions");
 	set_cmt	(0X12554,	"LoadItemCatalogRecord(ax=item id): maps in EMS item-catalog pages, copies the item's 58-byte record into a scratch buffer (0xB50). If [+2] is nonzero, also loads word_2E54A (the multi-stat-effect table ApplyMultiStatEffect walks) from an 8-word sub-block. Also sets up word_2E548 -- the 'current target' pointer read throughout the codebase -- based on a flag test on [+0xC]. The single most pervasively-used item lookup in the executable.",	0);
 	create_insn	(0X12554);
 	set_name	(0X12554,	"LoadItemCatalogRecord");
@@ -2857,6 +2859,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1740D);
 	op_hex		(x,	1);
 	create_insn	(0X1742A);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X17432);
 	create_insn	(0X1744D);
 	create_insn	(0X1745A);
@@ -2882,15 +2893,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1756F);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X17577);
 	op_hex		(x,	1);
 	set_cmt	(0X17593,	"this",	0);
@@ -4689,9 +4691,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1D038,	"Non-blocking keyboard poll via INT 21h/AH=6/DL=0xFF. Sets errorCode (reused here as an input-event-type flag, NOT an actual error code: 0=no input, 1=regular char in byte_2E400 (uppercased a-z), 2=extended/function-key scan code in byte_2E400). Scan code 'B' triggers sub_10C40 unless word_328CA bit3 is set.",	0);
 	create_insn	(0X1D038);
 	set_name	(0X1D038,	"PollKeyboardInput");
-	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
-	create_insn	(x=0X1D050);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -4701,6 +4700,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
+	create_insn	(x=0X1D050);
+	op_hex		(x,	0);
 	create_insn	(x=0X1D060);
 	op_hex		(x,	1);
 	create_insn	(0X1D06E);
@@ -6295,7 +6297,9 @@ static Bytes_2(void) {
 	set_name	(0X22C85,	"TestCellMonsterSpawnedFlag");
 	set_cmt	(0X22C88,	"this",	0);
 	set_cmt	(0X22C95,	"this",	0);
+	set_cmt	(0X22CBC,	"Zeroes 8 combat scratch words (word_32A16-1C, word_32BF6-FC). Called from RunDungeonGameLoop and HandleRangedOrCombatAction.",	0);
 	create_insn	(0X22CBC);
+	set_name	(0X22CBC,	"ResetCombatRoundScratchState");
 	set_cmt	(0X22CED,	"Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] (plausibly a remaining-presence/lifespan timer, not confirmed movement-related) by [si+0x1C]; reaching 0 sets errorCode=1, which callers (ProcessLevelMonsters) treat as 'this monster's presence has ended' -- granting a reward and removing it. Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly preparing the slot for reuse/respawn.",	0);
 	create_insn	(0X22CED);
 	set_name	(0X22CED,	"TickMonsterTimer");
@@ -6400,10 +6404,6 @@ static Bytes_2(void) {
 	set_name	(0X23116,	"RemoveMonsterFromMap");
 	create_insn	(x=0X23120);
 	op_hex		(x,	1);
-	create_insn	(0X2313D);
-	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
-	create_insn	(0X23151);
-	set_name	(0X23151,	"ShowLootAndAwardExperience");
 }
 
 //------------------------------------------------------------------------
@@ -6413,6 +6413,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2313D);
+	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
+	create_insn	(0X23151);
+	set_name	(0X23151,	"ShowLootAndAwardExperience");
 	create_insn	(x=0X23169);
 	op_hex		(x,	1);
 	set_cmt	(0X23199,	"msg",	0);
@@ -6426,7 +6430,9 @@ static Bytes_3(void) {
 	set_name	(0X232A8,	"DrawMonsterInfoPanels");
 	create_insn	(x=0X232B9);
 	op_hex		(x,	1);
+	set_cmt	(0X23305,	"Clears the old map cell's flag bit 0x400/reference, advances the position by (word_2E402, word_2E406), sets the new cell's flag bit 0x400/reference. Called once from ProcessLevelMonsters.",	0);
 	create_insn	(0X23305);
+	set_name	(0X23305,	"RelocateMonsterCellMarker");
 	create_insn	(x=0X2330C);
 	op_hex		(x,	1);
 	create_insn	(x=0X2332E);
@@ -7993,6 +7999,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X2860F);
 	op_hex		(x,	1);
 	create_byte	(0X28616);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X28617);
 	create_insn	(0X28618);
 	set_cmt	(0X28619,	"Looks up two env vars via FindEnvironmentVariable (name constants at 0xCC1/0xCB8, near the BLASTER=/SOUND=/EMMXXXX0/FMDRV string cluster; exact text not independently pinned down). On success, parses 'A<3 digits>' into word_32916 and 'I<1 digit>' into word_32914 -- the classic BLASTER=A220 I5 D1 T3 format -- setting word_36CE3/word_36CE1=1. Sets g_driverStateFlags fallback bits (0x8000/0xC000) on lookup/parse failure. Called from InitSoundSystem.",	0);
@@ -8010,15 +8025,6 @@ static Bytes_3(void) {
 	set_cmt	(0X286B2,	"UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.",	0);
 	create_insn	(0X286B2);
 	set_name	(0X286B2,	"UpdateMonsterWoundTier");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X286C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X286DB);
@@ -10275,8 +10281,10 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D542);
 	op_hex		(x,	1);
+	set_cmt	(0X2D547,	"If word_332E2 bit 0x40 and the current party member's affliction bit 0x40 are both set, zeroes [di+0xE]/[0x10]/[0x12]; else copies word_332DC/word_332DE into [di+0xE]/[0x10]. Called from the combat dispatcher sub_2C0FE.",	0);
 	create_insn	(x=0X2D547);
 	op_hex		(x,	1);
+	set_name	(0X2D547,	"ResetOrCopyTargetPositionFields");
 	create_insn	(x=0X2D553);
 	op_hex		(x,	1);
 	create_insn	(0X2D56A);
@@ -10415,6 +10423,15 @@ static Bytes_4(void) {
 	set_cmt	(0X2E48E,	"Pointer to the current sprite's explicit transparency/AND mask data (paired with g_blitMaskLen), consumed by ExpandBlitMaskNibbles when word_328C6 bit 0 is set. Set from ~12 call sites before drawing a masked sprite; often length 6.",	0);
 	create_word	(0X2E48E);
 	set_name	(0X2E48E,	"g_blitMaskPtr");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2E490,	"Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.",	0);
 	create_word	(0X2E490);
 	set_name	(0X2E490,	"g_blitMaskLen");
@@ -10473,15 +10490,6 @@ static Bytes_4(void) {
 	create_word	(0X2E544);
 	create_word	(0X2E546);
 	create_word	(0X2E548);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E54A);
 	create_word	(0X2E54C);
 	create_word	(0X2E54E);
