@@ -26301,7 +26301,7 @@ loc_1EC7C:                              ; CODE XREF: RunGameDialog+1F9↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 1           ; styleNum
                 call    GameDialog_drawButtons
-                call    sub_1F53E
+                call    DrawGameDialogMenuLabelsHighlighted
 
 loc_1EC8A:                              ; CODE XREF: RunGameDialog+304↓j
                 mov     word_32910, 2Ch ; ','
@@ -26385,7 +26385,7 @@ loc_1ED53:                              ; CODE XREF: RunGameDialog+29D↑j
                 mov     cx, 11h
                 call    DrawCheckboxIndicator
                 call    EraseLabelText
-                call    sub_1F53E
+                call    DrawGameDialogMenuLabelsHighlighted
                 jmp     loc_1EC8A
 ; ---------------------------------------------------------------------------
 
@@ -26411,7 +26411,7 @@ loc_1EDAA:                              ; CODE XREF: RunGameDialog+1AE↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 2           ; styleNum
                 call    GameDialog_drawButtons
-                call    sub_1F53E
+                call    DrawGameDialogMenuLabelsHighlighted
 
 loc_1EDB8:                              ; CODE XREF: RunGameDialog+3B3↓j
                 mov     word_32910, 51h ; 'Q'
@@ -26451,7 +26451,7 @@ loc_1EE02:                              ; CODE XREF: RunGameDialog+37D↑j
                 mov     cx, 11h
                 call    DrawCheckboxIndicator
                 call    EraseLabelText
-                call    sub_1F53E
+                call    DrawGameDialogMenuLabelsHighlighted
                 jmp     short loc_1EDB8
 ; ---------------------------------------------------------------------------
 
@@ -26700,7 +26700,7 @@ loc_1F186:                              ; CODE XREF: CycleAnimationSetting+14↑
                                         ; CycleAnimationSetting+1E↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_36CE7, ax
-                call    sub_1F884
+                call    DrawAnimationSpeedLabel
                 call    sub_238CD
                 retn
 CycleAnimationSetting endp
@@ -26803,7 +26803,7 @@ loc_1F243:                              ; CODE XREF: DrawGameDialogMenuLabels+27
 ; ---------------------------------------------------------------------------
 
 loc_1F250:                              ; CODE XREF: DrawGameDialogMenuLabels+32↑j
-                call    sub_1F884
+                call    DrawAnimationSpeedLabel
 
 loc_1F253:                              ; CODE XREF: DrawGameDialogMenuLabels+37↑j
                 test    word_328C4, 4
@@ -27140,22 +27140,23 @@ GameDialog_drawSoundFx endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F53E       proc near               ; CODE XREF: RunGameDialog+219↑p
+DrawGameDialogMenuLabelsHighlighted proc near
+                                        ; CODE XREF: RunGameDialog+219↑p
                                         ; RunGameDialog+301↑p ...
-                mov     _font_bgTransparent, 0
+                mov     _font_bgTransparent, 0 ; Loops 6 times over table 0x6CBE (stride 0x1B: flags byte at [si+1], text at [si+2]) paired with position table 0x5CD0 (stride 0xA: x/[di], y/[di+4]), drawing each entry's text in a highlighted color if its flags bit 0x40 is set, else the normal color -- the selection-highlight redraw of the same 6 menu entries DrawGameDialogMenuLabels draws once at setup. Called from RunGameDialog after GameDialog_drawButtons and after each SelectGameDialogOption cycle.
                 mov     _videoSegment, 0A000h
                 mov     cx, 6
                 mov     si, 6CBEh
                 mov     di, 5CD0h
                 mov     _font_bgColor, 4
 
-loc_1F559:                              ; CODE XREF: sub_1F53E+4C↓j
+loc_1F559:                              ; CODE XREF: DrawGameDialogMenuLabelsHighlighted+4C↓j
                 mov     _font_fgColor, 0Fh
                 test    byte ptr [si+1], 40h
                 jz      short loc_1F56B
                 mov     _font_fgColor, 7Bh ; '{'
 
-loc_1F56B:                              ; CODE XREF: sub_1F53E+25↑j
+loc_1F56B:                              ; CODE XREF: DrawGameDialogMenuLabelsHighlighted+25↑j
                 mov     ax, [di]
                 add     ax, 0Ch
                 mov     _textPos_x, ax
@@ -27169,7 +27170,7 @@ loc_1F56B:                              ; CODE XREF: sub_1F53E+25↑j
                 add     si, 1Bh
                 loop    loc_1F559
                 retn
-sub_1F53E       endp
+DrawGameDialogMenuLabelsHighlighted endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27400,9 +27401,9 @@ sub_1F5FF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F884       proc near               ; CODE XREF: CycleAnimationSetting+2B↑p
+DrawAnimationSpeedLabel proc near       ; CODE XREF: CycleAnimationSetting+2B↑p
                                         ; DrawGameDialogMenuLabels:loc_1F250↑p
-                mov     bx, 8402h
+                mov     bx, 8402h       ; Draws one of 3 messages at (0x61,0x77) selected by word_36CE7 (1/5/9, per CycleAnimationSetting's cycle order 1->9, 5->1, other->5) -- the label for the pause menu's 3-way animation speed/mode setting. Called from CycleAnimationSetting and from DrawGameDialogMenuLabels's ANIMATION branch.
                 cmp     word_36CE7, 1
                 jz      short loc_1F89B
                 mov     bx, 83FBh
@@ -27410,8 +27411,8 @@ sub_1F884       proc near               ; CODE XREF: CycleAnimationSetting+2B↑
                 jz      short loc_1F89B
                 mov     bx, 83F4h       ; msg
 
-loc_1F89B:                              ; CODE XREF: sub_1F884+8↑j
-                                        ; sub_1F884+12↑j
+loc_1F89B:                              ; CODE XREF: DrawAnimationSpeedLabel+8↑j
+                                        ; DrawAnimationSpeedLabel+12↑j
                 push    _font_bgTransparent
                 mov     _font_bgTransparent, 0
                 mov     _textPos_x, 61h ; 'a'
@@ -27421,7 +27422,7 @@ loc_1F89B:                              ; CODE XREF: sub_1F884+8↑j
                 call    writeString
                 pop     _font_bgTransparent
                 retn
-sub_1F884       endp
+DrawAnimationSpeedLabel endp
 
 
 ; =============== S U B R O U T I N E =======================================

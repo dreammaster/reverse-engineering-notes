@@ -5241,7 +5241,9 @@ static Bytes_2(void) {
 	create_insn	(0X1F523);
 	set_name	(0X1F523,	"GameDialog_drawSoundFx");
 	set_cmt	(0X1F535,	"msg",	0);
+	set_cmt	(0X1F53E,	"Loops 6 times over table 0x6CBE (stride 0x1B: flags byte at [si+1], text at [si+2]) paired with position table 0x5CD0 (stride 0xA: x/[di], y/[di+4]), drawing each entry's text in a highlighted color if its flags bit 0x40 is set, else the normal color -- the selection-highlight redraw of the same 6 menu entries DrawGameDialogMenuLabels draws once at setup. Called from RunGameDialog after GameDialog_drawButtons and after each SelectGameDialogOption cycle.",	0);
 	create_insn	(0X1F53E);
+	set_name	(0X1F53E,	"DrawGameDialogMenuLabelsHighlighted");
 	create_insn	(x=0X1F55F);
 	op_hex		(x,	1);
 	set_cmt	(0X1F57C,	"msg",	0);
@@ -5278,7 +5280,9 @@ static Bytes_2(void) {
 	set_cmt	(0X1F7F7,	"this",	0);
 	set_cmt	(0X1F834,	"this",	0);
 	set_cmt	(0X1F83F,	"this",	0);
+	set_cmt	(0X1F884,	"Draws one of 3 messages at (0x61,0x77) selected by word_36CE7 (1/5/9, per CycleAnimationSetting's cycle order 1->9, 5->1, other->5) -- the label for the pause menu's 3-way animation speed/mode setting. Called from CycleAnimationSetting and from DrawGameDialogMenuLabels's ANIMATION branch.",	0);
 	create_insn	(0X1F884);
+	set_name	(0X1F884,	"DrawAnimationSpeedLabel");
 	set_cmt	(0X1F898,	"msg",	0);
 	create_insn	(0X1F8C7);
 	set_name	(0X1F8C7,	"ConfirmQuitToDos");
@@ -6866,15 +6870,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X25A3B);
 	op_hex		(x,	1);
 	set_name	(0X25A3B,	"SetPaletteRange");
-	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
-	create_insn	(x=0X25A47);
-	op_hex		(x,	1);
-	set_cmt	(0X25A5B,	"BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).",	0);
-	create_insn	(0X25A5B);
-	set_name	(0X25A5B,	"GetPalette");
-	set_cmt	(0X25A63,	"- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",	0);
-	create_insn	(x=0X25A63);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -6884,6 +6879,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
+	create_insn	(x=0X25A47);
+	op_hex		(x,	1);
+	set_cmt	(0X25A5B,	"BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).",	0);
+	create_insn	(0X25A5B);
+	set_name	(0X25A5B,	"GetPalette");
+	set_cmt	(0X25A63,	"- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",	0);
+	create_insn	(x=0X25A63);
+	op_hex		(x,	0);
 	set_cmt	(0X25A66,	"ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.",	0);
 	create_insn	(0X25A66);
 	set_name	(0X25A66,	"ScaleByPercentRounded");
@@ -9250,6 +9254,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2ADD0,	"Calls DrawPartyMemberStatusPanel for each occupied g_partySlotAssignment slot -- redraws every party member's status panel. Called from ApplyMultiStatEffect, RestCharacter, and others.",	0);
 	create_insn	(0X2ADD0);
 	set_name	(0X2ADD0,	"RedrawAllPartyStatusPanels");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2ADE8,	"Stops music, plays sound effect 0x13 via the sound dispatch (sub_28412) when sub_2827E allows it, draws full-screen picture 1 and caches it to EMS, redraws the fixed status icon, and shows the mouse cursor. The 'show this screen' step of CheckPartyWipeAndReinitLevel's party-wipe sequence.",	0);
 	create_insn	(0X2ADE8);
 	set_name	(0X2ADE8,	"ShowPartyWipeScreen");
@@ -9261,15 +9274,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
 	create_insn	(0X2AE3C);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
 	create_insn	(0X2AE60);
@@ -11956,6 +11960,15 @@ static Bytes_4(void) {
 	set_name	(0X3A384,	"aChamberYouAreI");
 	create_strlit	(0X3A3A1,	0X1F);
 	set_name	(0X3A3A1,	"aTeleportedToYe");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A3C0,	0X22);
 	set_name	(0X3A3C0,	"aByYourSurround");
 	create_strlit	(0X3A3E2,	0X20);
@@ -11998,15 +12011,6 @@ static Bytes_4(void) {
 	set_name	(0X3CC78,	"g_soundDriverFarPtr");
 	set_cmt	(0X3CC7A,	"Segment half of the far pointer g_soundDriverFarPtr (0x3CC78); reused directly as the ES segment to free when shutting the driver down.",	0);
 	create_word	(0X3CC7A);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	make_array	(0X3CC7C,	0X4);
 	create_byte	(0X3CC80);
 	make_array	(0X3CC80,	0X200);

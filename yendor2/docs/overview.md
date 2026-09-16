@@ -5374,6 +5374,32 @@ position, the floor-type sibling of the already-named
 
 620 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawGameDialogMenuLabelsHighlighted, DrawAnimationSpeedLabel
+
+Named `sub_1F53E` -> `DrawGameDialogMenuLabelsHighlighted`, called
+from `RunGameDialog` right after `GameDialog_drawButtons`, both at
+initial dialog entry and again after each `SelectGameDialogOption`
+cycle: loops 6 times over a fixed table (text + a flags byte per
+entry) paired with a position table, drawing each entry's text in a
+highlighted color if its flags byte has bit `0x40` set, else the
+normal color. This is the selection-highlight redraw counterpart to
+the earlier `DrawGameDialogMenuLabels` (which draws the same 6
+pause-menu entries once at setup, gated on different `word_328C4`
+availability bits) — here bit `0x40` marks the currently
+highlighted/selected entry.
+
+Named `sub_1F884` -> `DrawAnimationSpeedLabel`, called from
+`CycleAnimationSetting` and from `DrawGameDialogMenuLabels`'s
+ANIMATION branch (in place of `GameDialog_drawAnimation`, when
+`word_328C4` bit `0x8` is set): draws one of 3 messages at the
+animation label position selected by `word_36CE7`'s value (1, 5, or
+9). `CycleAnimationSetting` confirms `word_36CE7` cycles through
+exactly `{1, 5, 9}` on each activation, so this is the label for a
+3-way animation speed/mode setting; the exact text of each of the 3
+messages (e.g. slow/normal/fast) was not independently confirmed.
+
+622 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
