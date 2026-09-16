@@ -86,7 +86,7 @@ loc_1005A:                              ; CODE XREF: start+49↑j
 
 loc_10071:                              ; CODE XREF: start+6C↑j
                 call    RedrawDungeonScreen
-                call    sub_2278C
+                call    ProcessSideTrapsOnMovement
                 jmp     short loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -188,7 +188,7 @@ loc_10125:                              ; CODE XREF: start+120↑j
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
-                call    sub_2278C
+                call    ProcessSideTrapsOnMovement
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_10152
                 jmp     loc_10286
@@ -2404,7 +2404,7 @@ loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
                 jz      short loc_11652
                 call    ProcessLevelMonsters
                 call    RedrawDungeonScreen
-                call    sub_2278C
+                call    ProcessSideTrapsOnMovement
                 cmp     byte_2E400, 0
                 jnz     short loc_116C8
 
@@ -10196,7 +10196,7 @@ loc_16377:                              ; CODE XREF: RunDungeonGameLoop+65↑j
                 jnz     short loc_163A0
                 call    ProcessLevelMonsters
                 call    RedrawDungeonScreen
-                call    sub_2278C
+                call    ProcessSideTrapsOnMovement
                 cmp     byte_2E400, 0
                 jnz     short loc_16375
                 jmp     short loc_1633B
@@ -23987,7 +23987,7 @@ loc_1D75C:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    ProcessLevelMonsters
                 call    RedrawDungeonScreen
                 call    DrawMinimap
-                call    sub_2278C
+                call    ProcessSideTrapsOnMovement
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
@@ -32628,16 +32628,16 @@ seg071          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2278C       proc far                ; CODE XREF: start+76↑P
+ProcessSideTrapsOnMovement proc far     ; CODE XREF: start+76↑P
                                         ; start+143↑P ...
-                mov     byte_2E400, 0
+                mov     byte_2E400, 0   ; Fast-exits unless word_328C8 bit 0x10 is set. Otherwise clears the 0xBC28 trap-result scratch table (4 entries, stride 0x18) and walks 80 wall/cell records (0xF26, stride 0x9C) calling TriggerSideTrapForRandomPartyMember for every one flagged with a side trap ([+0xE] bit 0x1000), then calls PresentTriggeredSideTrapEffects. Called from start.
                 test    word_328C8, 10h
                 jnz     short loc_2279F
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2279F:                              ; CODE XREF: sub_2278C+B↑j
+loc_2279F:                              ; CODE XREF: ProcessSideTrapsOnMovement+B↑j
                 push    bx
                 push    cx
                 push    dx
@@ -32657,15 +32657,15 @@ loc_2279F:                              ; CODE XREF: sub_2278C+B↑j
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
-loc_227D6:                              ; CODE XREF: sub_2278C+58↓j
+loc_227D6:                              ; CODE XREF: ProcessSideTrapsOnMovement+58↓j
                 test    word ptr [si+0Eh], 1000h
                 jz      short loc_227E0
                 call    TriggerSideTrapForRandomPartyMember
 
-loc_227E0:                              ; CODE XREF: sub_2278C+4F↑j
+loc_227E0:                              ; CODE XREF: ProcessSideTrapsOnMovement+4F↑j
                 add     si, 9Ch
                 loop    loc_227D6
-                call    sub_2281F
+                call    PresentTriggeredSideTrapEffects
                 and     word_328C8, 0FFE7h
                 pop     es
                 pop     di
@@ -32674,7 +32674,7 @@ loc_227E0:                              ; CODE XREF: sub_2278C+4F↑j
                 pop     cx
                 pop     bx
                 retf
-sub_2278C       endp
+ProcessSideTrapsOnMovement endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32707,13 +32707,14 @@ RollTrapAvoidanceMagnitude endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2281F       proc near               ; CODE XREF: sub_2278C+5A↑p
-                call    WaitForSoundDriverIdle
+PresentTriggeredSideTrapEffects proc near
+                                        ; CODE XREF: ProcessSideTrapsOnMovement+5A↑p
+                call    WaitForSoundDriverIdle ; Resolves/presents up to 4 triggered side-trap results from the 0xBC28 table: sound cue once the driver is idle, weapon-style icons + full dungeon-screen refresh (word_328C8 bit 0x8), a severity-scaled projectile animation, and (word_328C8 bit 0x10) a transfer into the confirmed icon-bar slot table (0xC50) via ApplyEffectAndDrawIconBar. Called from ProcessSideTrapsOnMovement.
                 jnz     short loc_2283F
                 mov     cx, 4
                 mov     di, 0BC28h
 
-loc_2282C:                              ; CODE XREF: sub_2281F+17↓j
+loc_2282C:                              ; CODE XREF: PresentTriggeredSideTrapEffects+17↓j
                 mov     ax, [di+14h]
                 or      ax, ax
                 jnz     short loc_2283A
@@ -32722,17 +32723,17 @@ loc_2282C:                              ; CODE XREF: sub_2281F+17↓j
                 jmp     short loc_2283F
 ; ---------------------------------------------------------------------------
 
-loc_2283A:                              ; CODE XREF: sub_2281F+12↑j
+loc_2283A:                              ; CODE XREF: PresentTriggeredSideTrapEffects+12↑j
                 call    sub_28412
 
-loc_2283F:                              ; CODE XREF: sub_2281F+5↑j
-                                        ; sub_2281F+19↑j
+loc_2283F:                              ; CODE XREF: PresentTriggeredSideTrapEffects+5↑j
+                                        ; PresentTriggeredSideTrapEffects+19↑j
                 test    word_328C8, 8
                 jnz     short loc_2284A
                 jmp     loc_2293B
 ; ---------------------------------------------------------------------------
 
-loc_2284A:                              ; CODE XREF: sub_2281F+26↑j
+loc_2284A:                              ; CODE XREF: PresentTriggeredSideTrapEffects+26↑j
                 call    ClearActionIconHighlightMask
                 mov     _font_bgTransparent, 5
                 mov     y, 0
@@ -32742,7 +32743,7 @@ loc_2284A:                              ; CODE XREF: sub_2281F+26↑j
                 mov     cx, 4
                 mov     di, 0BC28h
 
-loc_2286D:                              ; CODE XREF: sub_2281F+7F↓j
+loc_2286D:                              ; CODE XREF: PresentTriggeredSideTrapEffects+7F↓j
                 cmp     word ptr [di+4], 0
                 jz      short loc_2289B
                 mov     ax, [di+0Ch]
@@ -32754,12 +32755,12 @@ loc_2286D:                              ; CODE XREF: sub_2281F+7F↓j
                 jz      short loc_22890
                 or      word_328C6, 1
 
-loc_22890:                              ; CODE XREF: sub_2281F+6A↑j
+loc_22890:                              ; CODE XREF: PresentTriggeredSideTrapEffects+6A↑j
                 mov     ax, [di+8]
                 mov     bx, [di+4]
                 call    DrawWeaponSelectIcon
 
-loc_2289B:                              ; CODE XREF: sub_2281F+52↑j
+loc_2289B:                              ; CODE XREF: PresentTriggeredSideTrapEffects+52↑j
                 add     di, 18h
                 loop    loc_2286D
                 and     word_328C6, 0FFFEh
@@ -32772,7 +32773,7 @@ loc_2289B:                              ; CODE XREF: sub_2281F+52↑j
                 mov     cx, 4
                 xor     ax, ax
 
-loc_228C6:                              ; CODE XREF: sub_2281F+BD↓j
+loc_228C6:                              ; CODE XREF: PresentTriggeredSideTrapEffects+BD↓j
                 cmp     word ptr [di+0Ah], 0
                 jz      short loc_228D9
                 cmp     ax, 0
@@ -32780,11 +32781,11 @@ loc_228C6:                              ; CODE XREF: sub_2281F+BD↓j
                 cmp     ax, [di+0Ah]
                 jle     short loc_228D9
 
-loc_228D6:                              ; CODE XREF: sub_2281F+B0↑j
+loc_228D6:                              ; CODE XREF: PresentTriggeredSideTrapEffects+B0↑j
                 mov     ax, [di+0Ah]
 
-loc_228D9:                              ; CODE XREF: sub_2281F+AB↑j
-                                        ; sub_2281F+B5↑j
+loc_228D9:                              ; CODE XREF: PresentTriggeredSideTrapEffects+AB↑j
+                                        ; PresentTriggeredSideTrapEffects+B5↑j
                 add     di, 18h
                 loop    loc_228C6
                 cmp     ax, 5
@@ -32798,43 +32799,43 @@ loc_228D9:                              ; CODE XREF: sub_2281F+AB↑j
                 jmp     short loc_22920
 ; ---------------------------------------------------------------------------
 
-loc_228F4:                              ; CODE XREF: sub_2281F+C2↑j
+loc_228F4:                              ; CODE XREF: PresentTriggeredSideTrapEffects+C2↑j
                 mov     word_3292C, 19h
                 call    AnimateProjectileStep
 
-loc_228FF:                              ; CODE XREF: sub_2281F+C7↑j
+loc_228FF:                              ; CODE XREF: PresentTriggeredSideTrapEffects+C7↑j
                 mov     word_3292C, 24h ; '$'
                 call    AnimateProjectileStep
 
-loc_2290A:                              ; CODE XREF: sub_2281F+CC↑j
+loc_2290A:                              ; CODE XREF: PresentTriggeredSideTrapEffects+CC↑j
                 mov     word_3292C, 28h ; '('
                 call    AnimateProjectileStep
 
-loc_22915:                              ; CODE XREF: sub_2281F+D1↑j
+loc_22915:                              ; CODE XREF: PresentTriggeredSideTrapEffects+D1↑j
                 mov     word_3292C, 2Bh ; '+'
                 call    AnimateProjectileStep
 
-loc_22920:                              ; CODE XREF: sub_2281F+D3↑j
+loc_22920:                              ; CODE XREF: PresentTriggeredSideTrapEffects+D3↑j
                 mov     word_3292C, 2Eh ; '.'
                 call    AnimateProjectileStep
                 mov     word_3292C, 31h ; '1'
                 call    AnimateProjectileStep
                 call    DrawMouseCursor
 
-loc_2293B:                              ; CODE XREF: sub_2281F+28↑j
+loc_2293B:                              ; CODE XREF: PresentTriggeredSideTrapEffects+28↑j
                 test    word_328C8, 10h
                 jnz     short loc_22944
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_22944:                              ; CODE XREF: sub_2281F+122↑j
+loc_22944:                              ; CODE XREF: PresentTriggeredSideTrapEffects+122↑j
                 mov     ax, 0
                 call    PrepareTrapEffectSlots
                 mov     si, 0C50h
                 mov     di, 0BC28h
                 mov     cx, 4
 
-loc_22955:                              ; CODE XREF: sub_2281F+162↓j
+loc_22955:                              ; CODE XREF: PresentTriggeredSideTrapEffects+162↓j
                 cmp     word ptr [di], 0
                 jz      short loc_2297B
                 mov     ax, [di+12h]
@@ -32850,20 +32851,20 @@ loc_22955:                              ; CODE XREF: sub_2281F+162↓j
                 mov     ax, [di]
                 mov     [si+10h], ax
 
-loc_2297B:                              ; CODE XREF: sub_2281F+139↑j
+loc_2297B:                              ; CODE XREF: PresentTriggeredSideTrapEffects+139↑j
                 add     si, 14h
                 add     di, 18h
                 loop    loc_22955
                 call    ApplyEffectAndDrawIconBar
                 retn
-sub_2281F       endp
+PresentTriggeredSideTrapEffects endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 TriggerSideTrapForRandomPartyMember proc near
-                                        ; CODE XREF: sub_2278C+51↑p
+                                        ; CODE XREF: ProcessSideTrapsOnMovement+51↑p
                 push    cx              ; Picks a random party member, rolls RollTrapAvoidanceMagnitude using their [+0x50] stat against a trap record's threshold/cap ([si+0x64]/[si+0x66]), then -- only if the party's current facing (word_36CF5 tier bits) matches one of 4 direction bits on the trap's [si+0xE] flags -- finishes populating an icon-bar-style output record and sets word_328C8 bit 8. A wall/door-embedded 'side trap' trigger. Called from unnamed sub_2278C.
                 call    PickRandomActivePartyMember
                 mov     bx, word_328D4
@@ -96127,7 +96128,7 @@ unk_3907E       db    0                 ; DATA XREF: seg111:09AF↑o
                 db    0
 word_39488      dw 0                    ; DATA XREF: ShowItemEffectDuration+19↑w
                 align 8
-word_39490      dw 0                    ; DATA XREF: sub_2278C+27↑w
+word_39490      dw 0                    ; DATA XREF: ProcessSideTrapsOnMovement+27↑w
 byte_39492      db 0                    ; DATA XREF: UseItemType_400+C2↑w
                                         ; UseTrainingItem+439↑w
                 db    0
@@ -96151,9 +96152,9 @@ byte_39492      db 0                    ; DATA XREF: UseItemType_400+C2↑w
                 db    0
                 db    0
                 db    0
-word_394A8      dw 0                    ; DATA XREF: sub_2278C+2D↑w
+word_394A8      dw 0                    ; DATA XREF: ProcessSideTrapsOnMovement+2D↑w
                 align 20h
-word_394C0      dw 0                    ; DATA XREF: sub_2278C+33↑w
+word_394C0      dw 0                    ; DATA XREF: ProcessSideTrapsOnMovement+33↑w
                 db    0
                 db    0
                 db    0
@@ -96176,7 +96177,7 @@ word_394C0      dw 0                    ; DATA XREF: sub_2278C+33↑w
                 db    0
                 db    0
                 db    0
-word_394D8      dw 0                    ; DATA XREF: sub_2278C+39↑w
+word_394D8      dw 0                    ; DATA XREF: ProcessSideTrapsOnMovement+39↑w
                 db    0
                 db    0
                 db    0

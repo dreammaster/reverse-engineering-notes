@@ -4881,6 +4881,29 @@ reused across multiple unrelated systems, not single-purpose fields.
 
 578 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the complete side-trap pipeline — ProcessSideTrapsOnMovement + PresentTriggeredSideTrapEffects
+
+Named the two remaining functions that complete the "side trap"
+system uncovered this session. `sub_2278C` -> `ProcessSideTrapsOnMovement`
+(called directly from `start`, likely after each movement step):
+fast-exits unless `word_328C8` bit `0x10` is set, otherwise walks an
+80-entry wall/cell table (stride `0x9C`) calling
+`TriggerSideTrapForRandomPartyMember` for every entry flagged with a
+side trap, then hands off to `sub_2281F`. `sub_2281F` ->
+`PresentTriggeredSideTrapEffects`: a rich resolution/presentation
+sequence for up to 4 triggered results — plays the trap's sound cue
+once the driver is idle, draws weapon-style icons and does a full
+dungeon-screen refresh, picks the highest-severity result to drive a
+scaled projectile-style animation (`AnimateProjectileStep`), and
+finally transfers the results into the confirmed icon-bar slot table
+(`0xC50`) via `ApplyEffectAndDrawIconBar`. This completes a fully-
+traced pipeline from trap detection through avoidance roll, sound,
+visual effects, and icon-bar application — a satisfying close to a
+thread that started several rounds ago as an unexplained `sub_16DAA`
+disassembly dump.
+
+580 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

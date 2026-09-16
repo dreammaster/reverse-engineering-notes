@@ -6010,7 +6010,9 @@ static Bytes_2(void) {
 	create_insn	(0X226FC);
 	set_name	(0X226FC,	"DrawStatBar");
 	create_insn	(0X22774);
+	set_cmt	(0X2278C,	"Fast-exits unless word_328C8 bit 0x10 is set. Otherwise clears the 0xBC28 trap-result scratch table (4 entries, stride 0x18) and walks 80 wall/cell records (0xF26, stride 0x9C) calling TriggerSideTrapForRandomPartyMember for every one flagged with a side trap ([+0xE] bit 0x1000), then calls PresentTriggeredSideTrapEffects. Called from start.",	0);
 	create_insn	(0X2278C);
+	set_name	(0X2278C,	"ProcessSideTrapsOnMovement");
 	create_insn	(x=0X22791);
 	op_hex		(x,	1);
 	create_insn	(0X2279F);
@@ -6023,7 +6025,9 @@ static Bytes_2(void) {
 	set_cmt	(0X227F5,	"Chance-scaled avoidance roll: bx-=ax (threshold minus stat); skip if negative or RandomInRange(100) exceeds the remaining margin; else word_2E49C = round(cx*bx/100). Higher ax (the caller's [+0x50] stat) means less likely and smaller effect. Called from TriggerSideTrapForRandomPartyMember.",	0);
 	create_insn	(0X227F5);
 	set_name	(0X227F5,	"RollTrapAvoidanceMagnitude");
+	set_cmt	(0X2281F,	"Resolves/presents up to 4 triggered side-trap results from the 0xBC28 table: sound cue once the driver is idle, weapon-style icons + full dungeon-screen refresh (word_328C8 bit 0x8), a severity-scaled projectile animation, and (word_328C8 bit 0x10) a transfer into the confirmed icon-bar slot table (0xC50) via ApplyEffectAndDrawIconBar. Called from ProcessSideTrapsOnMovement.",	0);
 	create_insn	(0X2281F);
+	set_name	(0X2281F,	"PresentTriggeredSideTrapEffects");
 	create_insn	(0X2283A);
 	create_insn	(x=0X2283F);
 	op_hex		(x,	1);
@@ -7137,6 +7141,15 @@ static Bytes_2(void) {
 	create_insn	(0X26AB1);
 	create_insn	(x=0X26AB5);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X26ABD);
 	create_insn	(0X26AC5);
 	create_insn	(x=0X26ACA);
@@ -7185,15 +7198,6 @@ static Bytes_2(void) {
 	set_cmt	(0X26C0E,	"Minimal write-commit: FileEntry_Write(errorCode=0xB) + ErrorCheck, assuming the caller already configured the container-write descriptor (unlike SyncContainerContents, which configures it itself via sub_27E3A). Called from LoadNextContainerInChain and sub_2621C.",	0);
 	create_insn	(0X26C0E);
 	set_name	(0X26C0E,	"CommitContainerWrite");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X26C22,	"Checks whether the currently-open container (one of the '3 alternate bags', selected via [+0x15C]/[+0x17C]/[+0x1A2]/[+0x1C8]) matches an allowed-type bitmask (word_3293E). Rejects with FlashStatusWarning if not. Called from sub_2621C.",	0);
 	create_insn	(0X26C22);
 	set_name	(0X26C22,	"IsContainerTypeCompatible");
@@ -9399,6 +9403,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2BBD7,	"Fills ~11.7KB of the offscreen buffer (starting at offset 0) with byte 0xFF via 105 overlapping row-strided rep stosw passes -- clears whatever mask/overlay buffer backs the action-icon highlight effect. Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.",	0);
 	create_insn	(0X2BBD7);
 	set_name	(0X2BBD7,	"ClearActionIconHighlightMask");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2BBDA);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -9421,15 +9434,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2BC7C);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2BC81);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2BC86);

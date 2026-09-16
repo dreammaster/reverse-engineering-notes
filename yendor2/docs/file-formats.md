@@ -1830,6 +1830,39 @@ charisma/persuasion field) instead, gated on a flag bit (`[+0xC]`
 general character-stat fields reused across multiple systems
 (locks, conversation, trap resolution), not single-purpose flags.
 
+### The "side trap" pipeline (wall/door-embedded traps)
+
+A second, independent trap system — fully traced end to end this
+session, separate from `SelectTrapEffectVariant` above though both
+ultimately feed `PrepareTrapEffectSlots`. `ProcessSideTrapsOnMovement`
+(was `sub_2278C`, called directly from `start`, likely once per
+movement step) fast-exits unless `word_328C8` bit `0x10` is set,
+otherwise walks an 80-entry wall/cell table (stride `0x9C`) and calls
+`TriggerSideTrapForRandomPartyMember` (was `sub_22989`) for every
+entry flagged with a side trap (`[+0xE]` bit `0x1000`). That function
+picks a random active party member (`PickRandomActivePartyMember`)
+and rolls `RollTrapAvoidanceMagnitude` (was `sub_227F5`) — a
+save-vs-trap avoidance check using the still-mysterious party-record
+field `+0x50` against the trap record's threshold/magnitude-cap
+fields (`[+0x64]`/`[+0x66]`): the higher `+0x50` relative to the
+threshold, the less likely and smaller the resulting effect. The trap
+only actually fires if the party's current facing (the same
+`word_36CF5` tier-bit convention as `DrawDungeonCellSideFeature`/
+`ShowCompassDirection`) matches one of 4 direction bits on the trap
+record's own flags — i.e. it has to be a wall/door the party is
+currently facing. Up to 4 such results are staged into a scratch
+table (`0xBC28`), then `PresentTriggeredSideTrapEffects` (was
+`sub_2281F`) resolves and presents them: plays the trap's sound cue
+once `WaitForSoundDriverIdle` confirms the driver is free, draws
+weapon-style icons and does a full dungeon-screen refresh, picks the
+highest-severity result to drive a scaled `AnimateProjectileStep`
+animation, and finally transfers the results into the confirmed
+icon-bar slot table (`0xC50`) via `ApplyEffectAndDrawIconBar`. `+0x50`
+being used here as an avoidance stat is a second, independent data
+point (alongside `ComputeAlchemyRefinementYield`'s use of the
+neighboring `+0x70`) that the still-open "`+0x4C`/`+0x4E`/`+0x50`
+trio" are general character stats reused across systems.
+
 **Key items reference locks by their own catalog type value**:
 `UseItem`'s `UseKeyItem` branch passes a key item's own type-flags
 field directly as `LoadLockState`'s lock id — a key's catalog "type"
