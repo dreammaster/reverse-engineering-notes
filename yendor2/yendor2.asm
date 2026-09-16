@@ -10638,7 +10638,7 @@ loc_1670D:                              ; CODE XREF: HandleDungeonInput+C6↑j
                 call    DrawPicture
                 call    DrawMouseCursor
                 mov     ax, 142h
-                call    sub_1ACD7
+                call    TickEquippedItemDurability
                 cmp     errorCode, 0
                 jz      short loc_167B3
                 mov     si, word_328D4
@@ -10844,7 +10844,7 @@ loc_16950:                              ; CODE XREF: sub_16881+CC↑j
 
 loc_1695B:                              ; CODE XREF: sub_16881+D5↑j
                 mov     ax, 146h
-                call    sub_1ACD7
+                call    TickEquippedItemDurability
                 jmp     loc_16A1E
 ; ---------------------------------------------------------------------------
 
@@ -19233,9 +19233,9 @@ ApplyTriggerEffectIconSlot endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1ACD7       proc far                ; CODE XREF: HandleDungeonInput+337↑P
+TickEquippedItemDurability proc far     ; CODE XREF: HandleDungeonInput+337↑P
                                         ; sub_16881+DD↑P ...
-                push    di
+                push    di              ; Equipped-item durability/breakage tracker for the slot given by ax (0x13A/0x142/0x146). Increments a per-slot wear counter ([+0xBE]/[+0xC0]/[+0xC2]); once it crosses a slot-specific threshold, rolls a percentage breakage chance from word_2E548's fields and, on a break, applies an 'item broke' effect (ApplyItemEffectIconSlot) and resets the counter. Called from HandleDungeonInput and sub_16881.
                 push    si
                 push    cx
                 mov     bx, word_328D4
@@ -19246,7 +19246,7 @@ sub_1ACD7       proc far                ; CODE XREF: HandleDungeonInput+337↑P
                 jmp     loc_1AD85
 ; ---------------------------------------------------------------------------
 
-loc_1ACED:                              ; CODE XREF: sub_1ACD7+11↑j
+loc_1ACED:                              ; CODE XREF: TickEquippedItemDurability+11↑j
                 mov     ax, [bx+13Ah]
                 call    ClassifyItemServiceTier
                 mov     bx, word_328D4
@@ -19256,14 +19256,14 @@ loc_1ACED:                              ; CODE XREF: sub_1ACD7+11↑j
                 jmp     loc_1AD8E
 ; ---------------------------------------------------------------------------
 
-loc_1AD05:                              ; CODE XREF: sub_1ACD7+29↑j
+loc_1AD05:                              ; CODE XREF: TickEquippedItemDurability+29↑j
                 inc     word ptr [bx+0BEh]
                 cmp     word ptr [bx+0BEh], 78h ; 'x'
                 jg      short loc_1AD7D
                 jmp     short loc_1AD70
 ; ---------------------------------------------------------------------------
 
-loc_1AD12:                              ; CODE XREF: sub_1ACD7+A↑j
+loc_1AD12:                              ; CODE XREF: TickEquippedItemDurability+A↑j
                 cmp     ax, 142h
                 jnz     short loc_1AD42
                 cmp     word ptr [bx+142h], 0
@@ -19277,14 +19277,14 @@ loc_1AD12:                              ; CODE XREF: sub_1ACD7+A↑j
                 jmp     short loc_1AD8E
 ; ---------------------------------------------------------------------------
 
-loc_1AD35:                              ; CODE XREF: sub_1ACD7+5A↑j
+loc_1AD35:                              ; CODE XREF: TickEquippedItemDurability+5A↑j
                 inc     word ptr [bx+0C0h]
                 cmp     word ptr [bx+0C0h], 50h ; 'P'
                 jg      short loc_1AD7D
                 jmp     short loc_1AD70
 ; ---------------------------------------------------------------------------
 
-loc_1AD42:                              ; CODE XREF: sub_1ACD7+3E↑j
+loc_1AD42:                              ; CODE XREF: TickEquippedItemDurability+3E↑j
                 cmp     ax, 146h
                 jnz     short loc_1AD85
                 cmp     word ptr [bx+146h], 0
@@ -19298,40 +19298,40 @@ loc_1AD42:                              ; CODE XREF: sub_1ACD7+3E↑j
                 jmp     short loc_1AD8E
 ; ---------------------------------------------------------------------------
 
-loc_1AD65:                              ; CODE XREF: sub_1ACD7+8A↑j
+loc_1AD65:                              ; CODE XREF: TickEquippedItemDurability+8A↑j
                 inc     word ptr [bx+0C2h]
                 cmp     word ptr [bx+0C2h], 14h
                 jg      short loc_1AD7D
 
-loc_1AD70:                              ; CODE XREF: sub_1ACD7+39↑j
-                                        ; sub_1ACD7+69↑j
+loc_1AD70:                              ; CODE XREF: TickEquippedItemDurability+39↑j
+                                        ; TickEquippedItemDurability+69↑j
                 add     bx, ax
                 mov     ax, [bx]
                 mov     errorCode, 1
                 jmp     loc_1AE1F
 ; ---------------------------------------------------------------------------
 
-loc_1AD7D:                              ; CODE XREF: sub_1ACD7+37↑j
-                                        ; sub_1ACD7+67↑j ...
+loc_1AD7D:                              ; CODE XREF: TickEquippedItemDurability+37↑j
+                                        ; TickEquippedItemDurability+67↑j ...
                 add     bx, ax
                 mov     ax, [bx]
                 or      ax, ax
                 jnz     short loc_1AD95
 
-loc_1AD85:                              ; CODE XREF: sub_1ACD7+13↑j
-                                        ; sub_1ACD7+45↑j ...
+loc_1AD85:                              ; CODE XREF: TickEquippedItemDurability+13↑j
+                                        ; TickEquippedItemDurability+45↑j ...
                 mov     errorCode, 4
                 jmp     loc_1AE1F
 ; ---------------------------------------------------------------------------
 
-loc_1AD8E:                              ; CODE XREF: sub_1ACD7+2B↑j
-                                        ; sub_1ACD7+5C↑j ...
+loc_1AD8E:                              ; CODE XREF: TickEquippedItemDurability+2B↑j
+                                        ; TickEquippedItemDurability+5C↑j ...
                 add     bx, ax
                 mov     ax, [bx]
                 jmp     loc_1AE1F
 ; ---------------------------------------------------------------------------
 
-loc_1AD95:                              ; CODE XREF: sub_1ACD7+AC↑j
+loc_1AD95:                              ; CODE XREF: TickEquippedItemDurability+AC↑j
                 mov     word_32904, bx
                 mov     word_3290A, ax
                 call    ClassifyItemServiceTier
@@ -19341,7 +19341,7 @@ loc_1AD95:                              ; CODE XREF: sub_1ACD7+AC↑j
                 jmp     short loc_1AE1F
 ; ---------------------------------------------------------------------------
 
-loc_1ADAB:                              ; CODE XREF: sub_1ACD7+CD↑j
+loc_1ADAB:                              ; CODE XREF: TickEquippedItemDurability+CD↑j
                 test    word ptr [bx+0Ch], 0C000h
                 jnz     short loc_1ADCE
                 cmp     word ptr [bx+0Ah], 0
@@ -19355,7 +19355,7 @@ loc_1ADAB:                              ; CODE XREF: sub_1ACD7+CD↑j
                 jmp     short loc_1ADE8
 ; ---------------------------------------------------------------------------
 
-loc_1ADCE:                              ; CODE XREF: sub_1ACD7+D9↑j
+loc_1ADCE:                              ; CODE XREF: TickEquippedItemDurability+D9↑j
                 cmp     word ptr [bx+6], 0
                 jz      short loc_1AE16
                 mov     ax, 3E8h
@@ -19365,7 +19365,7 @@ loc_1ADCE:                              ; CODE XREF: sub_1ACD7+D9↑j
                 mov     ax, [bx+4]
                 jg      short loc_1AE16
 
-loc_1ADE8:                              ; CODE XREF: sub_1ACD7+F5↑j
+loc_1ADE8:                              ; CODE XREF: TickEquippedItemDurability+F5↑j
                 call    ApplyItemEffectIconSlot
                 mov     bx, word_2E546
                 mov     si, 0BEh
@@ -19376,26 +19376,26 @@ loc_1ADE8:                              ; CODE XREF: sub_1ACD7+F5↑j
                 jnz     short loc_1AE06
                 mov     si, 0C2h
 
-loc_1AE06:                              ; CODE XREF: sub_1ACD7+120↑j
-                                        ; sub_1ACD7+12A↑j
+loc_1AE06:                              ; CODE XREF: TickEquippedItemDurability+120↑j
+                                        ; TickEquippedItemDurability+12A↑j
                 add     si, word_328D4
                 mov     word ptr [si], 0
                 mov     errorCode, 0
                 jmp     short loc_1AE1F
 ; ---------------------------------------------------------------------------
 
-loc_1AE16:                              ; CODE XREF: sub_1ACD7+DF↑j
-                                        ; sub_1ACD7+F3↑j ...
+loc_1AE16:                              ; CODE XREF: TickEquippedItemDurability+DF↑j
+                                        ; TickEquippedItemDurability+F3↑j ...
                 mov     ax, word_3290A
                 mov     errorCode, 1
 
-loc_1AE1F:                              ; CODE XREF: sub_1ACD7+A3↑j
-                                        ; sub_1ACD7+B4↑j ...
+loc_1AE1F:                              ; CODE XREF: TickEquippedItemDurability+A3↑j
+                                        ; TickEquippedItemDurability+B4↑j ...
                 pop     cx
                 pop     si
                 pop     di
                 retf
-sub_1ACD7       endp
+TickEquippedItemDurability endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19432,7 +19432,7 @@ GetClassifiedItemStatField endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ApplyItemEffectIconSlot proc near       ; CODE XREF: sub_1ACD7:loc_1ADE8↑p
+ApplyItemEffectIconSlot proc near       ; CODE XREF: TickEquippedItemDurability:loc_1ADE8↑p
                 push    si              ; Populates an icon-bar slot (0xC50 + slot_index*0x14, the same layout TickPartyAilmentIconBar/ApplySavingThrowEffect use) for effect id 0 tied to the current item, then calls ApplyEffectAndDrawIconBar. Called from sub_1ACD7.
                 push    di
                 mov     word_3290A, ax
@@ -19469,7 +19469,7 @@ ApplyItemEffectIconSlot endp
 
 
 ClassifyItemServiceTier proc near       ; CODE XREF: ApplyTriggerEffectIconSlot+9↑p
-                                        ; sub_1ACD7+1A↑p ...
+                                        ; TickEquippedItemDurability+1A↑p ...
                 mov     errorCode, 0    ; Loads an item and classifies it via errorCode: 3 if neither [+0xC] bit 0xC000 nor 0x800 is set (wrong item type), else 2 or 1 based on a secondary [+2] flag pair. A 3-tier item-compatibility classifier; exact tier meanings and the callers' (sub_1AC80/sub_1ACD7) purpose aren't confirmed.
                 mov     word_3290A, ax
                 call    LoadItemCatalogRecord
@@ -23801,7 +23801,7 @@ loc_1D503:                              ; CODE XREF: HandleRangedOrCombatAction+
                 jnz     short loc_1D530
                 mov     word_32924, si
                 mov     ax, 13Ah
-                call    sub_1ACD7
+                call    TickEquippedItemDurability
                 cmp     errorCode, 1
                 jnz     short loc_1D530
                 inc     word_2E544

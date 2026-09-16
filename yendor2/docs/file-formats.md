@@ -1594,7 +1594,7 @@ flag-pair match); `TryEnhanceItemForGold`'s is `IsItemEligibleForEnhance`
 (a location-selected item field checked against a range table at
 `0xBCE`). Both have other, untraced callers beyond this Space-bar
 cluster. A related classifier: `ClassifyItemServiceTier` (was
-`sub_1AE9D`, called 6 times from two other unnamed functions) loads an
+`sub_1AE9D`, called 6 times from two other functions) loads an
 item and, based on its `[+0xC]`/`[+2]` flags, returns one of 3 tier
 codes (or a 4th "wrong item type" code) — plausibly gating which
 service (repair/enhance-style) the item qualifies for, but not
@@ -1602,7 +1602,15 @@ confirmed. Called from `GetClassifiedItemStatField` (was `sub_1AE23`,
 called from `sub_16BF6`), which selects one of two `word_2E548`
 sub-fields (`+4`/`+8`) based on the item's category flag, or returns 0
 if classification fails. One of `ClassifyItemServiceTier`'s two other
-callers (`sub_1ACD7`) also calls
+callers, `TickEquippedItemDurability` (was `sub_1ACD7`, called from
+`HandleDungeonInput` and `sub_16881`), turned out to be the game's
+full **equipped-item durability and random-breakage system**: given
+an equipment-slot offset (`0x13A` weapon / `0x142` second slot /
+`0x146` array), it increments a per-slot wear counter (`+0xBE`/
+`+0xC0`/`+0xC2`), and once it crosses a slot-specific threshold,
+re-classifies the item and rolls a percentage breakage chance from
+`word_2E548`'s fields (`+0xA`/`+0x6`, paired with replacement-item
+ids at `+0x8`/`+0x4`) — on a break, it calls
 `ApplyItemEffectIconSlot` (was `sub_1AE4C`): populates an icon-bar slot
 (the same `0xC50 + slot*0x14` layout `TickPartyAilmentIconBar`/
 `ApplySavingThrowEffect` use) for effect id `0` — a new id not seen

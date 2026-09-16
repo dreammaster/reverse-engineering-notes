@@ -3977,7 +3977,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X1ACBA);
 	op_hex		(x,	1);
 	create_insn	(0X1ACCC);
+	set_cmt	(0X1ACD7,	"Equipped-item durability/breakage tracker for the slot given by ax (0x13A/0x142/0x146). Increments a per-slot wear counter ([+0xBE]/[+0xC0]/[+0xC2]); once it crosses a slot-specific threshold, rolls a percentage breakage chance from word_2E548's fields and, on a break, applies an 'item broke' effect (ApplyItemEffectIconSlot) and resets the counter. Called from HandleDungeonInput and sub_16881.",	0);
 	create_insn	(0X1ACD7);
+	set_name	(0X1ACD7,	"TickEquippedItemDurability");
 	create_insn	(0X1ACED);
 	create_insn	(0X1AD05);
 	create_insn	(0X1AD12);

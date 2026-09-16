@@ -5974,6 +5974,23 @@ sequence.
 
 685 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TickEquippedItemDurability
+
+Named `sub_1ACD7` -> `TickEquippedItemDurability`, called from
+`HandleDungeonInput` and `sub_16881` with the target equipment-slot
+field offset (`0x13A` main weapon, `0x142` second slot, `0x146`
+array entry — the equipment-slot layout established earlier this
+session from `RecomputeEquipmentStatBonuses`/
+`RefreshCarryCapacityAndAttributeBonuses`). A genuinely new gameplay
+mechanic found: this is the equipped-item **durability and random
+breakage system**. For the occupied slot, it increments a per-slot
+wear counter; once the counter crosses a slot-specific threshold, it
+rolls a percentage breakage chance from item data, and on a break,
+applies an "item broke" status effect (`ApplyItemEffectIconSlot`)
+and resets the counter.
+
+686 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
