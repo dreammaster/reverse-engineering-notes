@@ -3572,6 +3572,22 @@ inventory-slot placement instead, but not confirmed.
 
 456 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplySavingThrowEffect
+
+Named `sub_28BD2` -> `ApplySavingThrowEffect` (called from
+`UseAbilityCommand` and `sub_2A788`): gated by `FailsSavingThrow`, on a
+failed save applies a trap/ability effect — id `< 50` to the current
+character only, id `>= 50` applies `(id-50)` to every non-incapacitated
+party member, revealing that effect ids `50+` are the party-wide/area
+variant of the id 50 lower. Also a useful cross-reference: it passes
+the current character's `+0x6C` field (previously only tied to
+`ShowLockStatus`'s lockpicking-detail gate) to `FailsSavingThrow` as
+the save's resistance bonus — fitting a general perception/awareness
+stat better than lockpicking specifically, so I updated that note in
+file-formats.md rather than treating the two uses as unrelated.
+
+457 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

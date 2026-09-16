@@ -12885,7 +12885,7 @@ loc_17948:                              ; CODE XREF: UseAbilityCommand+8C↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                call    sub_28BD2
+                call    ApplySavingThrowEffect
                 cmp     byte_2E400, 0
                 jz      short loc_17980
                 retf
@@ -44603,16 +44603,16 @@ seg105          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28BD2       proc far                ; CODE XREF: UseAbilityCommand+CD↑P
+ApplySavingThrowEffect proc far         ; CODE XREF: UseAbilityCommand+CD↑P
                                         ; sub_2A788+142↓P
-                cmp     word_32DD0, 0
+                cmp     word_32DD0, 0   ; Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.
                 jnz     short loc_28BE2
                 mov     ax, 0
                 mov     byte_2E400, 0
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28BE2:                              ; CODE XREF: sub_28BD2+5↑j
+loc_28BE2:                              ; CODE XREF: ApplySavingThrowEffect+5↑j
                 push    bx
                 push    cx
                 push    dx
@@ -44629,7 +44629,7 @@ loc_28BE2:                              ; CODE XREF: sub_28BD2+5↑j
                 jmp     loc_28C8D
 ; ---------------------------------------------------------------------------
 
-loc_28C04:                              ; CODE XREF: sub_28BD2+2D↑j
+loc_28C04:                              ; CODE XREF: ApplySavingThrowEffect+2D↑j
                 mov     ax, word_32DC2
                 cmp     ax, 32h ; '2'
                 jge     short loc_28C3A
@@ -44638,14 +44638,14 @@ loc_28C04:                              ; CODE XREF: sub_28BD2+2D↑j
                 mov     ax, word_328D6
                 mov     cx, 4
 
-loc_28C18:                              ; CODE XREF: sub_28BD2+50↓j
+loc_28C18:                              ; CODE XREF: ApplySavingThrowEffect+50↓j
                 cmp     ax, [bx]
                 jz      short loc_28C24
                 add     si, 14h
                 add     bx, 2
                 loop    loc_28C18
 
-loc_28C24:                              ; CODE XREF: sub_28BD2+48↑j
+loc_28C24:                              ; CODE XREF: ApplySavingThrowEffect+48↑j
                 mov     ax, word_32DC2
                 call    PrepareTrapEffectSlots
                 mov     [si+8], ax
@@ -44655,7 +44655,7 @@ loc_28C24:                              ; CODE XREF: sub_28BD2+48↑j
                 jmp     short loc_28C85
 ; ---------------------------------------------------------------------------
 
-loc_28C3A:                              ; CODE XREF: sub_28BD2+38↑j
+loc_28C3A:                              ; CODE XREF: ApplySavingThrowEffect+38↑j
                 mov     ax, word_32DC2
                 sub     ax, 32h ; '2'
                 call    PrepareTrapEffectSlots
@@ -44665,7 +44665,7 @@ loc_28C3A:                              ; CODE XREF: sub_28BD2+38↑j
                 mov     di, 95EBh
                 mov     cx, 4
 
-loc_28C55:                              ; CODE XREF: sub_28BD2+B1↓j
+loc_28C55:                              ; CODE XREF: ApplySavingThrowEffect+B1↓j
                 cmp     word ptr [di], 0
                 jz      short loc_28C85
                 mov     ax, 1F4h
@@ -44682,24 +44682,24 @@ loc_28C55:                              ; CODE XREF: sub_28BD2+B1↓j
                 mov     ax, word_32940
                 mov     [si+0Ah], ax
 
-loc_28C7D:                              ; CODE XREF: sub_28BD2+9A↑j
+loc_28C7D:                              ; CODE XREF: ApplySavingThrowEffect+9A↑j
                 add     si, 14h
                 add     di, 2
                 loop    loc_28C55
 
-loc_28C85:                              ; CODE XREF: sub_28BD2+66↑j
-                                        ; sub_28BD2+86↑j
+loc_28C85:                              ; CODE XREF: ApplySavingThrowEffect+66↑j
+                                        ; ApplySavingThrowEffect+86↑j
                 call    ApplyEffectAndDrawIconBar
                 mov     ax, 1
 
-loc_28C8D:                              ; CODE XREF: sub_28BD2+2F↑j
+loc_28C8D:                              ; CODE XREF: ApplySavingThrowEffect+2F↑j
                 pop     di
                 pop     si
                 pop     dx
                 pop     cx
                 pop     bx
                 retf
-sub_28BD2       endp
+ApplySavingThrowEffect endp
 
 seg105          ends
 
@@ -48370,7 +48370,7 @@ loc_2A8A8:                              ; CODE XREF: sub_2A788+116↑j
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                call    sub_28BD2
+                call    ApplySavingThrowEffect
                 test    word_32DCE, 80h
                 jz      short loc_2A8ED
                 cmp     ax, 1

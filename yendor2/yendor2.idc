@@ -7764,7 +7764,9 @@ static Bytes_2(void) {
 	create_insn	(0X28BA1);
 	create_insn	(0X28BB3);
 	create_insn	(0X28BC5);
+	set_cmt	(0X28BD2,	"Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.",	0);
 	create_insn	(0X28BD2);
+	set_name	(0X28BD2,	"ApplySavingThrowEffect");
 	create_insn	(0X28BE2);
 	create_insn	(0X28C04);
 	create_insn	(0X28C3A);
@@ -7904,6 +7906,15 @@ static Bytes_2(void) {
 	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
 	create_insn	(0X295A8);
 	set_name	(0X295A8,	"HandleGameCommand");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X295BD);
 	create_insn	(0X295CA);
 	create_insn	(0X295E5);
@@ -7946,15 +7957,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X29738);
 	op_hex		(x,	1);
 	set_name	(0X29738,	"UnlockDoorCommand");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X29747);
 	create_insn	(0X29769);
 	create_insn	(x=0X29775);
@@ -11157,6 +11159,15 @@ static Bytes_3(void) {
 	set_name	(0X365DC,	"aUndead_0");
 	create_strlit	(0X365E3,	0X9);
 	set_name	(0X365E3,	"aCreation");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X365EC,	0XA);
 	set_name	(0X365EC,	"aMagic_1");
 	create_strlit	(0X365F6,	0XD);
@@ -11201,15 +11212,6 @@ static Bytes_3(void) {
 	set_name	(0X366AE,	"a2XHealth");
 	create_strlit	(0X366B9,	0XA);
 	set_name	(0X366B9,	"a2XMagic");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X366C3,	0X2B);
 	set_name	(0X366C3,	"aRegisterYourCo");
 	create_strlit	(0X366EE,	0X3A);

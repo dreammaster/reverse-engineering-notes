@@ -1320,7 +1320,10 @@ KEY: <tier> KEY` — the exact 7-tier hierarchy above, selected by flag
 bits on `word_32DCE`. How much detail is revealed is gated on the
 current party member's `+0x6C` field against ASCII-looking thresholds
 (`0x37`/`'7'`, `0x41`/`'A'`, `0x50`/`'P'`) — plausibly a lockpicking or
-perception skill value, not confirmed against `ShowCharacterSkills`'
+perception skill value (**`ApplySavingThrowEffect`, was `sub_28BD2`,
+also passes this same field to `FailsSavingThrow` as a save's
+resistance bonus** — fits a general perception/awareness stat better
+than lockpicking specifically), not confirmed against `ShowCharacterSkills`'
 15-entry skill array yet. **A neighboring field, `+0x6E`**, plays a
 similar role for NPC conversations: `ClassifyConversationSkillTier`
 (called before every `RunConversation` topic display) compares it
