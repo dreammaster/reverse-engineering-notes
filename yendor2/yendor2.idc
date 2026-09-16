@@ -1365,8 +1365,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X119CA);
 	create_insn	(0X119D5);
+	set_cmt	(0X119E0,	"Busy-waits for word_328C4 bit 0x400 ('tick ready', plausibly set by an untraced timer/vsync interrupt handler), checks ESC via PollForEscapeKeyOnly (returns immediately if pressed), else clears the bit and repeats for cx ticks. Called from ShowIntroPicture.",	0);
 	create_insn	(x=0X119E0);
 	op_hex		(x,	1);
+	set_name	(0X119E0,	"WaitFrameTicksOrEscape");
 	create_insn	(x=0X119ED);
 	op_hex		(x,	1);
 	create_insn	(x=0X119F6);
@@ -2238,7 +2240,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1541B);
 	create_insn	(0X15420);
-	set_cmt	(0X15429,	"Character creation's opening animated sequence: decodes a 768-byte block (byte-0x3F), plays music track 0x12, then runs several staged sub-animations (63/5/20/10/10/20 frame loops via unnamed helpers), abortable via PollForEscapeKeyOnlyAlt after each stage. Called once from RunCharacterCreation.",	0);
+	set_cmt	(0X15429,	"Character creation's opening animated sequence. Its first step (al=[si]; al-=0x3F; [di]=al, 0x442A->0x4D5C, 768 bytes) is the same transform ShowIntroPicture uses to build its palette fade-interpolation buffer -- corrected from an earlier 'decodes a graphics block' guess; this almost certainly builds a palette fade buffer too, not graphics data. Then plays music track 0x12 and runs several staged sub-animations (63/5/20/10/10/20 frame loops via unnamed helpers), abortable via PollForEscapeKeyOnlyAlt after each stage. Called once from RunCharacterCreation.",	0);
 	create_insn	(0X15429);
 	set_name	(0X15429,	"PlayCharacterCreationIntroAnimation");
 	create_insn	(x=0X15444);
@@ -3281,6 +3283,15 @@ static Bytes_0(void) {
 	create_insn	(0X18892);
 	create_insn	(0X1889A);
 	create_insn	(0X188AC);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X188B8);
 	create_insn	(0X188C4);
 	create_insn	(x=0X188CA);
@@ -3346,15 +3357,6 @@ static Bytes_0(void) {
 	create_insn	(0X18C09);
 	create_insn	(x=0X18C1F);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X18C6B);
 	op_hex		(x,	1);
 	create_insn	(0X18C79);
@@ -5387,6 +5389,15 @@ static Bytes_1(void) {
 	set_cmt	(0X203F7,	"Zeroes 0x500 words (2560 bytes) at VGA segment 0xA000:0000 -- a partial screen clear, not the full 64000-byte frame. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X203F7);
 	set_name	(0X203F7,	"ClearVideoMemoryRegion");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X20406,	"Draws a scrollable 17-icon horizontal strip from table 0xE551 (field +0xA), starting at index word_2E384, at y=0 x=0x18+.",	0);
 	create_insn	(0X20406);
 	set_name	(0X20406,	"DrawWallTypeLegendRow");
@@ -5401,15 +5412,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20523,	"Reads a numeric wall-type entry (sub_1D146, not traced) into word_2E384, then redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen; falls through from EditFloorLegendTypeNumber on one error path.",	0);
 	create_insn	(0X20523);
 	set_name	(0X20523,	"EditWallLegendTypeNumber");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2053A,	"msg",	0);
 	set_cmt	(0X20570,	"Reads a numeric floor-type entry (sub_1D146, not traced) into word_2E386, then redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen; falls through to EditWallLegendTypeNumber on one error path.",	0);
 	create_insn	(0X20570);
@@ -7310,13 +7312,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2772C,	"Writes each of the 3 alternate-bag inventory groups (+0x17E/0x180, +0x1A4/0x1A6, +0x1CA/0x1CC -- the same fields GetInventorySlotPtr/WriteContainerSubBlock established) back to CURGAME via WriteContainerSubBlock, only when populated. Called from sub_274B4.",	0);
 	create_insn	(0X2772C);
 	set_name	(0X2772C,	"SyncAlternateBagsToSave");
-	set_cmt	(0X2776F,	"Writes a data block (bx=address, ax=count, stored via word_36863) using the sub_27E3A/FileEntry_Write(errorCode=0xB) pattern. Called 3 times from sub_2772C for 3 party-record sub-blocks whose identity isn't confirmed.",	0);
-	create_insn	(0X2776F);
-	set_name	(0X2776F,	"WriteContainerSubBlock");
-	set_cmt	(0X27774,	"this",	0);
-	set_cmt	(0X2778D,	"Reads (FileEntry bx=8FFB/CURGAME, errorCode=0xA) the shared 0xAFA8 scratch record the caller just configured, applies the same category-dependent charge/transfer/swap logic sub_274B4 applies to its in-memory copy to the field at [0xAFA8+dx], then writes it back -- except for the 'transfer' category with dx==0, where it instead subtracts the staged amount (word_3293E) from scratch var word_38808 and skips the write. Called 3x from sub_274B4 with different (ax,dx) field selectors.",	0);
-	create_insn	(0X2778D);
-	set_name	(0X2778D,	"SyncItemChargeFieldToCurgame");
 }
 
 //------------------------------------------------------------------------
@@ -7326,6 +7321,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2776F,	"Writes a data block (bx=address, ax=count, stored via word_36863) using the sub_27E3A/FileEntry_Write(errorCode=0xB) pattern. Called 3 times from sub_2772C for 3 party-record sub-blocks whose identity isn't confirmed.",	0);
+	create_insn	(0X2776F);
+	set_name	(0X2776F,	"WriteContainerSubBlock");
+	set_cmt	(0X27774,	"this",	0);
+	set_cmt	(0X2778D,	"Reads (FileEntry bx=8FFB/CURGAME, errorCode=0xA) the shared 0xAFA8 scratch record the caller just configured, applies the same category-dependent charge/transfer/swap logic sub_274B4 applies to its in-memory copy to the field at [0xAFA8+dx], then writes it back -- except for the 'transfer' category with dx==0, where it instead subtracts the staged amount (word_3293E) from scratch var word_38808 and skips the write. Called 3x from sub_274B4 with different (ax,dx) field selectors.",	0);
+	create_insn	(0X2778D);
+	set_name	(0X2778D,	"SyncItemChargeFieldToCurgame");
 	create_insn	(x=0X277AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X277B5);
@@ -9960,6 +9962,15 @@ static Bytes_3(void) {
 	set_name	(0X2E38A,	"y");
 	create_word	(0X2E38C);
 	set_name	(0X2E38C,	"_font_bgTransparent");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E38E);
 	create_word	(0X2E390);
 	create_word	(0X2E392);
@@ -10011,15 +10022,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2E490,	"Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.",	0);
 	create_word	(0X2E490);
 	set_name	(0X2E490,	"g_blitMaskLen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E492);
 	create_word	(0X2E494);
 	create_word	(0X2E496);

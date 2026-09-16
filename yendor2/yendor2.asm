@@ -2636,7 +2636,7 @@ loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
                 jz      short loc_118B6
                 call    sub_11A03
                 mov     cx, [si+2]
-                call    sub_119E0
+                call    WaitFrameTicksOrEscape
                 add     si, 6
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_11858
@@ -2817,18 +2817,18 @@ sub_119D5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_119E0       proc near               ; CODE XREF: ShowIntroPicture+12D↑p
-                                        ; sub_119E0+6↓j ...
-                test    word_328C4, 400h
-                jz      short sub_119E0
+WaitFrameTicksOrEscape proc near        ; CODE XREF: ShowIntroPicture+12D↑p
+                                        ; WaitFrameTicksOrEscape+6↓j ...
+                test    word_328C4, 400h ; Busy-waits for word_328C4 bit 0x400 ('tick ready', plausibly set by an untraced timer/vsync interrupt handler), checks ESC via PollForEscapeKeyOnly (returns immediately if pressed), else clears the bit and repeats for cx ticks. Called from ShowIntroPicture.
+                jz      short WaitFrameTicksOrEscape
                 call    PollForEscapeKeyOnly
                 jz      short locret_119F5
                 and     word_328C4, 0FBFFh
-                loop    sub_119E0
+                loop    WaitFrameTicksOrEscape
 
-locret_119F5:                           ; CODE XREF: sub_119E0+B↑j
+locret_119F5:                           ; CODE XREF: WaitFrameTicksOrEscape+B↑j
                 retn
-sub_119E0       endp
+WaitFrameTicksOrEscape endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8616,7 +8616,7 @@ sub_152EF       endp
 
 PlayCharacterCreationIntroAnimation proc near
                                         ; CODE XREF: RunCharacterCreation+A↑p
-                mov     di, 4D5Ch       ; Character creation's opening animated sequence: decodes a 768-byte block (byte-0x3F), plays music track 0x12, then runs several staged sub-animations (63/5/20/10/10/20 frame loops via unnamed helpers), abortable via PollForEscapeKeyOnlyAlt after each stage. Called once from RunCharacterCreation.
+                mov     di, 4D5Ch       ; Character creation's opening animated sequence. Its first step (al=[si]; al-=0x3F; [di]=al, 0x442A->0x4D5C, 768 bytes) is the same transform ShowIntroPicture uses to build its palette fade-interpolation buffer -- corrected from an earlier 'decodes a graphics block' guess; this almost certainly builds a palette fade buffer too, not graphics data. Then plays music track 0x12 and runs several staged sub-animations (63/5/20/10/10/20 frame loops via unnamed helpers), abortable via PollForEscapeKeyOnlyAlt after each stage. Called once from RunCharacterCreation.
                 mov     si, 442Ah
                 mov     cx, 300h
 

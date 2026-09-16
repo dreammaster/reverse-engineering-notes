@@ -557,10 +557,11 @@ at least 3 reserve slots.
 3-step wizard, each step ESC-cancelable: `ComposeCharacterPortrait`
 (step 1), `PlayCharacterCreationIntroAnimation` (was `sub_15429`, step
 2 — **correction**: not a wizard step at all, but an opening animated
-sequence run before the wizard's actual steps: decodes a small
-graphics block, plays music, and runs several staged sub-animations,
-each ESC-abortable), `sub_1559A` (step 3, not yet traced), then always
-`FinalizeCharacterCreation` (was
+sequence run before the wizard's actual steps: builds a palette fade
+buffer — see the `ShowIntroPicture`/palette section below for the
+matching transform — plays music, and runs several staged
+sub-animations, each ESC-abortable), `sub_1559A` (step 3, not yet
+traced), then always `FinalizeCharacterCreation` (was
 `sub_15267`, runs regardless of which step was reached). Matches the
 manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/
 `FEMALE`/`PICK A PORTRAIT` cluster. Step 3 (`sub_1559A`) calls
@@ -1536,8 +1537,8 @@ byte-for-byte duplicate of `ConfirmContainerInteraction`,
 duplication found earlier this session. A third instance of the same
 pattern: `PollForEscapeKeyOnly`/`PollForEscapeKeyOnlyAlt` (was
 `sub_11900`/`sub_15249`) — polls for a keypress but discards anything
-but ESC, called from `ShowIntroPicture` and unnamed `sub_15429`
-respectively.
+but ESC, called from `ShowIntroPicture` and
+`PlayCharacterCreationIntroAnimation` (was `sub_15429`) respectively.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
@@ -2155,7 +2156,21 @@ copying the just-read `WORLD.DAT` bytes into the `0x475A`-based fade
 buffer) subtracts `0x3F` per byte — since the source bytes are already
 in 0-63 range, this looks like it's building a *signed delta* or
 some other derived form for `FadePaletteStep`'s interpolation, not a
-second encoding layer on the base palette; not fully traced.
+second encoding layer on the base palette; not fully traced. **The
+same transform recurs in `PlayCharacterCreationIntroAnimation`** (was
+`sub_15429`, character creation's opening animation): its own opening
+step runs the identical `al=[si]; al-=0x3F; [di]=al` loop, `0x442A` ->
+`0x4D5C`, 768 bytes — almost certainly building the same kind of
+palette fade buffer for its own animated sequence (corrected from an
+initial "decodes a graphics block" guess when that function was
+named). `0x442A` is a heavily-referenced address elsewhere in the
+binary, plausibly a shared palette/DAC staging buffer, not traced
+further. Also related: `WaitFrameTicksOrEscape` (was `sub_119E0`,
+called from `ShowIntroPicture`) is a frame-paced wait-with-abort
+primitive — busy-waits for `word_328C4` bit `0x400` ("tick ready",
+plausibly raised by an untraced timer/vsync interrupt handler), checks
+ESC via `PollForEscapeKeyOnly`, clears the bit, repeats for `cx`
+ticks.
 
 Not yet decoded: the real VGA palette (so images render in true color,
 not grayscale), and the directory's `+0x4` field's meaning (varies per

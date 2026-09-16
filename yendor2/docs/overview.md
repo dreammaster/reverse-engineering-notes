@@ -4367,6 +4367,31 @@ not traced/named this round.
 
 534 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: WaitFrameTicksOrEscape
+
+Named `sub_119E0` -> `WaitFrameTicksOrEscape`, called once from
+`ShowIntroPicture`: busy-waits for `word_328C4` bit `0x400` ("tick
+ready", the same flag `PlayCharacterCreationIntroAnimation`'s staged
+sub-animations check — plausibly raised by an untraced timer/vsync
+interrupt handler), checks for ESC via `PollForEscapeKeyOnly`
+(returns immediately if pressed), else clears the bit and repeats for
+`cx` total ticks — a frame-paced wait-with-abort primitive.
+
+**Correction to last round's `PlayCharacterCreationIntroAnimation`
+entry**: while adding the note above, noticed `file-formats.md`
+already documents `ShowIntroPicture` performing the *exact same*
+`al=[si]; al-=0x3F; [di]=al` copy loop to build a palette
+fade-interpolation buffer (`0x475A`, sourced from a `WORLD.DAT`
+palette read). `PlayCharacterCreationIntroAnimation`'s own opening
+step runs the identical loop (`0x442A` -> `0x4D5C`, 768 bytes) — so
+its "decodes a simple-obfuscated graphics/data block" description was
+wrong; it's almost certainly building the same kind of palette fade
+buffer for its own animation, not decoding graphics. Fixed the IDA
+comment (`ida_scripts/fix_char_creation_intro_anim_comment.py`) and
+both docs entries in place.
+
+535 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
