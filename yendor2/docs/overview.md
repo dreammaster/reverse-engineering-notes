@@ -4952,6 +4952,18 @@ purpose isn't confirmed.
 
 586 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ComputeAfflictionHealingCost
+
+Named `sub_1BA35` -> `ComputeAfflictionHealingCost`, called twice from
+`UseHealingItem`: sums a per-affliction cost over the confirmed
+`+0x1C` bitfield — SICK `+5`, POISONED `+10`, DISEASED `+20`,
+PARALYZED `+40`, FROZEN `+50`, STONED `+60`, JINXED `+20`, HEXED `+30`,
+CURSED `+40` — returning the combined total. Ties directly into the
+already-named `ShowHealingCostPrompt`, giving that screen's cost
+calculation a concrete mechanism.
+
+587 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -4161,7 +4161,9 @@ static Bytes_1(void) {
 	set_name	(0X1B96F,	"ShowHealingCostPrompt");
 	create_insn	(x=0X1B978);
 	op_hex		(x,	1);
+	set_cmt	(0X1BA35,	"Sums a per-affliction cost over [bx+0x1C] (SICK+5/POISONED+10/DISEASED+20/PARALYZED+40/FROZEN+50/STONED+60/JINXED+20/HEXED+30/CURSED+40), bx=word_328D4. Returns total in ax -- the combined healing/curing cost for this character's active afflictions. Called from UseHealingItem.",	0);
 	create_insn	(0X1BA35);
+	set_name	(0X1BA35,	"ComputeAfflictionHealingCost");
 	create_insn	(x=0X1BA3B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BA45);
@@ -5326,6 +5328,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1FDB1,	"TickAilmentDuration(si=slot array, cx=count, dx=elapsed delta): for each 4-byte slot whose [si] is one of the 3 ailment codes (9/0xF/0xC, matching TickStatusEffects), decrements [si+2] by dx; on expiry, zeroes it, bumps [si], and decrements one of 3 global per-ailment counters (0x9425/0x9429/0x942B). At 0, clears the matching word_36C79 bit and flags a redraw.",	0);
 	create_insn	(0X1FDB1);
 	set_name	(0X1FDB1,	"TickAilmentDuration");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1FDC6);
 	create_insn	(0X1FDCE);
 	create_insn	(0X1FDD6);
@@ -5344,15 +5355,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1FE48);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1FE4F,	"Master per-minute game-clock tick. Increments word_36D01; past 1440 (a full day), calls sub_28FF9 ('new day', not traced), resets to 1, and rolls the calendar: day (word_36CFB) wraps at 31 into month (word_36CFD), which wraps at 13 into year (word_36CFF) -- a 30-day-month, 12-month-year calendar. Fires sub_1FFE4 (not traced, plausibly lighting/spawn-rate) at exactly 6:00 AM or 6:00 PM -- dawn/dusk. Also runs a separate 5-minute periodic countdown (word_32954, gated on word_3295A bit 0x800) calling sub_1FD24 when it lapses.",	0);
 	create_insn	(0X1FE4F);
 	set_name	(0X1FE4F,	"AdvanceGameClock");
@@ -7088,9 +7090,6 @@ static Bytes_2(void) {
 	set_cmt	(0X268A0,	"Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.",	0);
 	create_insn	(0X268A0);
 	set_name	(0X268A0,	"SwapHeldItemWithSlot");
-	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
-	create_insn	(0X268F4);
-	set_name	(0X268F4,	"SaveAndCloseContainer");
 }
 
 //------------------------------------------------------------------------
@@ -7100,6 +7099,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
+	create_insn	(0X268F4);
+	set_name	(0X268F4,	"SaveAndCloseContainer");
 	set_cmt	(0X268FB,	"this",	0);
 	set_cmt	(0X26928,	"Zeroes [si+0xBE]/[si+0xC0]/[si+0xC2] depending on word_2E40A (0xA/0xC/0xD) -- the same 3 fields sub_274B4 clears for item types 0x13A/0x142/0x146. Called from PlaceItemInSlot and PickUpItemFromSlot.",	0);
 	create_insn	(0X26928);
@@ -9386,12 +9388,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2BA62,	"Plays a sound, restores the cursor background, loads the held item's catalog record, ORs a value derived from its flag byte into word_36C81 (not otherwise documented), then clears the held-item cursor (UpdateCursorForHeldItem(0)). Called from sub_2621C (a still-untraced container-related handler) and sub_271DC.",	0);
 	create_insn	(0X2BA62);
 	set_name	(0X2BA62,	"FinishPlacingHeldItem");
-	create_insn	(x=0X2BA7D);
-	op_hex		(x,	1);
-	create_insn	(0X2BA88);
-	set_cmt	(0X2BAA0,	"One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, restores the background via RestoreCorridorBackgroundFromEMS (CORRECTION: not a sound effect as first guessed -- it's an EMS-backed graphics blit), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.",	0);
-	create_insn	(0X2BAA0);
-	set_name	(0X2BAA0,	"AnimateProjectileStep");
 }
 
 //------------------------------------------------------------------------
@@ -9401,6 +9397,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2BA7D);
+	op_hex		(x,	1);
+	create_insn	(0X2BA88);
+	set_cmt	(0X2BAA0,	"One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, restores the background via RestoreCorridorBackgroundFromEMS (CORRECTION: not a sound effect as first guessed -- it's an EMS-backed graphics blit), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.",	0);
+	create_insn	(0X2BAA0);
+	set_name	(0X2BAA0,	"AnimateProjectileStep");
 	set_cmt	(0X2BAC6,	"ticks",	0);
 	set_cmt	(0X2BAD5,	"Draws one weapon-select slot icon (bx=item id), bailing if empty. When word_328C8 bit 8 is set, uses a highlighted icon variant for item ids in range word_3292A..word_32928 (the selected weapon). Called 4x from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X2BAD5);

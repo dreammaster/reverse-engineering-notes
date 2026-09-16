@@ -20740,57 +20740,57 @@ ShowHealingCostPrompt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BA35       proc far                ; CODE XREF: UseHealingItem+14C↓p
+ComputeAfflictionHealingCost proc far   ; CODE XREF: UseHealingItem+14C↓p
                                         ; UseHealingItem+179↓p
-                mov     bx, word_328D4
+                mov     bx, word_328D4  ; Sums a per-affliction cost over [bx+0x1C] (SICK+5/POISONED+10/DISEASED+20/PARALYZED+40/FROZEN+50/STONED+60/JINXED+20/HEXED+30/CURSED+40), bx=word_328D4. Returns total in ax -- the combined healing/curing cost for this character's active afflictions. Called from UseHealingItem.
                 xor     ax, ax
                 test    word ptr [bx+1Ch], 8000h
                 jz      short loc_1BA45
                 add     ax, 5
 
-loc_1BA45:                              ; CODE XREF: sub_1BA35+B↑j
+loc_1BA45:                              ; CODE XREF: ComputeAfflictionHealingCost+B↑j
                 test    word ptr [bx+1Ch], 4000h
                 jz      short loc_1BA4F
                 add     ax, 0Ah
 
-loc_1BA4F:                              ; CODE XREF: sub_1BA35+15↑j
+loc_1BA4F:                              ; CODE XREF: ComputeAfflictionHealingCost+15↑j
                 test    word ptr [bx+1Ch], 2000h
                 jz      short loc_1BA59
                 add     ax, 14h
 
-loc_1BA59:                              ; CODE XREF: sub_1BA35+1F↑j
+loc_1BA59:                              ; CODE XREF: ComputeAfflictionHealingCost+1F↑j
                 test    word ptr [bx+1Ch], 1000h
                 jz      short loc_1BA63
                 add     ax, 28h ; '('
 
-loc_1BA63:                              ; CODE XREF: sub_1BA35+29↑j
+loc_1BA63:                              ; CODE XREF: ComputeAfflictionHealingCost+29↑j
                 test    word ptr [bx+1Ch], 800h
                 jz      short loc_1BA6D
                 add     ax, 32h ; '2'
 
-loc_1BA6D:                              ; CODE XREF: sub_1BA35+33↑j
+loc_1BA6D:                              ; CODE XREF: ComputeAfflictionHealingCost+33↑j
                 test    word ptr [bx+1Ch], 400h
                 jz      short loc_1BA77
                 add     ax, 3Ch ; '<'
 
-loc_1BA77:                              ; CODE XREF: sub_1BA35+3D↑j
+loc_1BA77:                              ; CODE XREF: ComputeAfflictionHealingCost+3D↑j
                 test    word ptr [bx+1Ch], 200h
                 jz      short loc_1BA81
                 add     ax, 14h
 
-loc_1BA81:                              ; CODE XREF: sub_1BA35+47↑j
+loc_1BA81:                              ; CODE XREF: ComputeAfflictionHealingCost+47↑j
                 test    word ptr [bx+1Ch], 100h
                 jz      short loc_1BA8B
                 add     ax, 1Eh
 
-loc_1BA8B:                              ; CODE XREF: sub_1BA35+51↑j
+loc_1BA8B:                              ; CODE XREF: ComputeAfflictionHealingCost+51↑j
                 test    word ptr [bx+1Ch], 80h
                 jz      short locret_1BA95
                 add     ax, 28h ; '('
 
-locret_1BA95:                           ; CODE XREF: sub_1BA35+5B↑j
+locret_1BA95:                           ; CODE XREF: ComputeAfflictionHealingCost+5B↑j
                 retf
-sub_1BA35       endp
+ComputeAfflictionHealingCost endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -21443,7 +21443,7 @@ loc_1C0D7:                              ; CODE XREF: UseHealingItem+24↑j
                 test    word_2E40C, 4000h
                 jz      short loc_1C0E3
                 push    cs
-                call    near ptr sub_1BA35
+                call    near ptr ComputeAfflictionHealingCost
 
 loc_1C0E3:                              ; CODE XREF: UseHealingItem+149↑j
                 test    word_2E40C, 8000h
@@ -21472,7 +21472,7 @@ loc_1C101:                              ; CODE XREF: UseHealingItem+2F↑j
 
 loc_1C10C:                              ; CODE XREF: UseHealingItem+3A↑j
                 push    cs
-                call    near ptr sub_1BA35
+                call    near ptr ComputeAfflictionHealingCost
                 mov     bx, 7F47h
                 push    cs
                 call    near ptr ShowHealingCostPrompt

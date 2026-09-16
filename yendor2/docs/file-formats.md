@@ -906,7 +906,10 @@ found. The total is a per-unit base cost (varies by call site,
 sometimes built from `word_2E40C` condition bits) times an
 item-catalog quantity field (`0xBCE+0x18`), added in a loop running
 once per `[word_328D4+0x16]` — plausibly once per afflicted/eligible
-party member.
+party member. The "REMOVE YOUR CONDITIONS" base cost itself is
+computed by `ComputeAfflictionHealingCost` (was `sub_1BA35`, called
+twice from `UseHealingItem`): a flat per-affliction price summed over
+the confirmed `+0x1C` bitfield (SICK `+5` through STONED `+60`).
 
 A 4th shop-mode bit, `word_328C6` `0x200`, gates a mouse-click-driven
 shop purchase path: `sub_17032` (a catalog-click handler reached from
