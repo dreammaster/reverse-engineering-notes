@@ -7297,7 +7297,7 @@ DrawLabeledNumberIfNonzero proc near    ; CODE XREF: ShowClueBookItemDetail+7E�
                 call    FormatNumber
                 mov     bx, 0AFA8h
                 call    StripCommasAndSpaces
-                call    sub_16262
+                call    InsertDecimalPointFromEnd
                 call    writeString
 
 loc_148B0:                              ; CODE XREF: DrawLabeledNumberIfNonzero+16↑j
@@ -10009,9 +10009,9 @@ seg012          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16262       proc far                ; CODE XREF: DrawLabeledNumberIfNonzero+30↑P
+InsertDecimalPointFromEnd proc far      ; CODE XREF: DrawLabeledNumberIfNonzero+30↑P
                                         ; FormatAndDrawAlchemyFraction+11↓P ...
-                cmp     byte ptr [bx], 0
+                cmp     byte ptr [bx], 0 ; Inserts '.' into the in-place number string at [bx], word_2E4AC digits from the end (e.g. '1234' -> '12.34' for word_2E4AC=2) by shifting the trailing digits right. No-op if the string is empty or word_2E4AC<=0. Called from DrawLabeledNumberIfNonzero and FormatAndDrawAlchemyFraction.
                 jz      short locret_16297
                 cmp     word_2E4AC, 0
                 jle     short locret_16297
@@ -10030,7 +10030,7 @@ sub_16262       proc far                ; CODE XREF: DrawLabeledNumberIfNonzero+
                 mov     cx, word_2E4AC
                 inc     cx
 
-loc_16288:                              ; CODE XREF: sub_16262+2C↓j
+loc_16288:                              ; CODE XREF: InsertDecimalPointFromEnd+2C↓j
                 mov     al, [si]
                 mov     [di], al
                 dec     si
@@ -10042,10 +10042,10 @@ loc_16288:                              ; CODE XREF: sub_16262+2C↓j
                 pop     di
                 pop     es
 
-locret_16297:                           ; CODE XREF: sub_16262+3↑j
-                                        ; sub_16262+A↑j
+locret_16297:                           ; CODE XREF: InsertDecimalPointFromEnd+3↑j
+                                        ; InsertDecimalPointFromEnd+A↑j
                 retf
-sub_16262       endp
+InsertDecimalPointFromEnd endp
 
 seg012          ends
 
@@ -25298,13 +25298,13 @@ FormatAndDrawAlchemyFraction proc near  ; CODE XREF: DrawAlchemyStatusPanel+8A�
                 call    FormatNumber
                 mov     bx, 0AFA8h
                 call    StripCommasAndSpaces
-                call    sub_16262
+                call    InsertDecimalPointFromEnd
                 pop     ax
                 mov     bx, 0AFB2h
                 call    FormatNumber
                 mov     bx, 0AFB2h
                 call    StripCommasAndSpaces
-                call    sub_16262
+                call    InsertDecimalPointFromEnd
                 mov     word_3881C, 2Fh ; '/'
                 mov     byte ptr word_3883A, 0
                 mov     ax, 0AFA8h
@@ -31235,7 +31235,7 @@ loc_21A8E:                              ; CODE XREF: sub_219FA+77↑j
                 mov     bx, 0AFA8h
                 call    StripCommasAndSpaces
                 mov     word_2E4AC, 1
-                call    sub_16262
+                call    InsertDecimalPointFromEnd
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
                 add     _textPos_y, 6
@@ -38959,7 +38959,7 @@ FormatAndDrawFraction proc near         ; CODE XREF: DrawThreeStatBars+8F↓p
                 cmp     word_2E4AC, 0
                 jz      short loc_25E80
                 call    StripCommasAndSpaces
-                call    sub_16262
+                call    InsertDecimalPointFromEnd
 
 loc_25E80:                              ; CODE XREF: FormatAndDrawFraction+16↑j
                 pop     ax
@@ -38970,7 +38970,7 @@ loc_25E80:                              ; CODE XREF: FormatAndDrawFraction+16↑
                 cmp     word_2E4AC, 0
                 jz      short loc_25EA2
                 call    StripCommasAndSpaces
-                call    sub_16262
+                call    InsertDecimalPointFromEnd
 
 loc_25EA2:                              ; CODE XREF: FormatAndDrawFraction+38↑j
                 mov     word_3881C, 2Fh ; '/'

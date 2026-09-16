@@ -2426,7 +2426,9 @@ static Bytes_0(void) {
 	set_cmt	(0X16244,	"Fills the 0x4D5C palette buffer with byte 0x3F (max 6-bit DAC value) and applies all 256 entries via SetPaletteRange -- sets the whole palette to white. Called from sub_1559A.",	0);
 	create_insn	(0X16244);
 	set_name	(0X16244,	"SetPaletteToWhite");
+	set_cmt	(0X16262,	"Inserts '.' into the in-place number string at [bx], word_2E4AC digits from the end (e.g. '1234' -> '12.34' for word_2E4AC=2) by shifting the trailing digits right. No-op if the string is empty or word_2E4AC<=0. Called from DrawLabeledNumberIfNonzero and FormatAndDrawAlchemyFraction.",	0);
 	create_insn	(0X16262);
+	set_name	(0X16262,	"InsertDecimalPointFromEnd");
 	create_insn	(x=0X16298);
 	op_hex		(x,	1);
 	set_name	(0X16298,	"allocMem");
@@ -3125,14 +3127,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1822A,	"DeductHPClamped(ax=amount, bx=party-member record): [bx+0x52] -= ax (HP-current), clamped at 0. At 0, sets status bit 0x40 in [bx+0x1C] and calls sub_18095+sub_1AB26 (not traced, plausibly death/incapacitation handling).",	0);
 	create_insn	(0X1822A);
 	set_name	(0X1822A,	"DeductHPClamped");
-	create_insn	(x=0X18238);
-	op_hex		(x,	1);
-	set_cmt	(0X18248,	"DeductMPClamped(ax=amount, bx=party-member record): [bx+0x54] -= ax (MP-current), clamped at 0.",	0);
-	create_insn	(0X18248);
-	set_name	(0X18248,	"DeductMPClamped");
-	set_cmt	(0X18257,	"Dispatches an effect-definition record's cost (di = g_trapEffectDefs entry, [di+8] flag bits) to one or more of DeductHPClamped/DeductMPClamped/SpendMaterialCounterClamped (HP/MP costs use [si+0xC]=party-member record + a plain amount; material costs use one of 3 BCD counters selected by a different flag bit, amount read from the slot's own +0x10 field).",	0);
-	create_insn	(0X18257);
-	set_name	(0X18257,	"ApplyEffectCost");
 }
 
 //------------------------------------------------------------------------
@@ -3142,6 +3136,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18238);
+	op_hex		(x,	1);
+	set_cmt	(0X18248,	"DeductMPClamped(ax=amount, bx=party-member record): [bx+0x54] -= ax (MP-current), clamped at 0.",	0);
+	create_insn	(0X18248);
+	set_name	(0X18248,	"DeductMPClamped");
+	set_cmt	(0X18257,	"Dispatches an effect-definition record's cost (di = g_trapEffectDefs entry, [di+8] flag bits) to one or more of DeductHPClamped/DeductMPClamped/SpendMaterialCounterClamped (HP/MP costs use [si+0xC]=party-member record + a plain amount; material costs use one of 3 BCD counters selected by a different flag bit, amount read from the slot's own +0x10 field).",	0);
+	create_insn	(0X18257);
+	set_name	(0X18257,	"ApplyEffectCost");
 	create_insn	(x=0X1825F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1826B);
@@ -5123,6 +5125,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1EE8A);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1EE96,	"this",	0);
 	set_cmt	(0X1EEB1,	"this",	0);
 	set_cmt	(0X1EEC1,	"this",	0);
@@ -5139,15 +5150,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1F0CD,	"Initializes/enters a dungeon level: copies a per-level metadata template, calls RevealCellsAroundPlayer, redraws the dungeon screen and minimap, and resets combat state -- zeroes the entire g_monsterSlots array and clears word_32A1E (active combat monster). Called from `start` at several sites.",	0);
 	create_insn	(0X1F0CD);
 	set_name	(0X1F0CD,	"InitializeDungeonLevel");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1F120);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F126);
@@ -6950,15 +6952,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25E5E,	"Formats two numbers (FormatNumber + sub_256F0, optionally sub_2570C+sub_16262) and joins them as '<num1>/<num2>' for display. Called 3 times from DrawThreeStatBars.",	0);
 	create_insn	(0X25E5E);
 	set_name	(0X25E5E,	"FormatAndDrawFraction");
-	set_cmt	(0X25EC8,	"msg",	0);
-	set_cmt	(0X25ED1,	"Draws a fixed-width blank label (12 spaces) then the character's name (+0x0) at a fixed position. Shared header draw used by ShowLevelUpMessage, DrawThreeStatBars's caller chain, and sub_25CFA.",	0);
-	create_insn	(0X25ED1);
-	set_name	(0X25ED1,	"DrawCharacterNameHeader");
-	set_cmt	(0X25EF3,	"msg",	0);
-	set_cmt	(0X25EFD,	"msg",	0);
-	set_cmt	(0X25F10,	"Draws 'HEALTH:' (+0x52/+0x92), 'MAGIC:' (+0x54/+0x94), and 'WEIGHT:' (+0x118/+0x56 -- confirms carried weight / max carry capacity) as three threshold-colored stat rows. Shows 'DEAD' instead of the HEALTH fraction when +0x1C bit 0x40 is set -- confirms that bit as the dead/incapacitated flag. Called from sub_25B34.",	0);
-	create_insn	(0X25F10);
-	set_name	(0X25F10,	"DrawThreeStatBars");
 }
 
 //------------------------------------------------------------------------
@@ -6968,6 +6961,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X25EC8,	"msg",	0);
+	set_cmt	(0X25ED1,	"Draws a fixed-width blank label (12 spaces) then the character's name (+0x0) at a fixed position. Shared header draw used by ShowLevelUpMessage, DrawThreeStatBars's caller chain, and sub_25CFA.",	0);
+	create_insn	(0X25ED1);
+	set_name	(0X25ED1,	"DrawCharacterNameHeader");
+	set_cmt	(0X25EF3,	"msg",	0);
+	set_cmt	(0X25EFD,	"msg",	0);
+	set_cmt	(0X25F10,	"Draws 'HEALTH:' (+0x52/+0x92), 'MAGIC:' (+0x54/+0x94), and 'WEIGHT:' (+0x118/+0x56 -- confirms carried weight / max carry capacity) as three threshold-colored stat rows. Shows 'DEAD' instead of the HEALTH fraction when +0x1C bit 0x40 is set -- confirms that bit as the dead/incapacitated flag. Called from sub_25B34.",	0);
+	create_insn	(0X25F10);
+	set_name	(0X25F10,	"DrawThreeStatBars");
 	set_cmt	(0X25F27,	"msg",	0);
 	set_cmt	(0X25F48,	"msg",	0);
 	set_cmt	(0X25F69,	"msg",	0);
@@ -9314,6 +9316,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2B39E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B3A6);
 	op_hex		(x,	1);
 	create_insn	(0X2B3CA);
@@ -9349,15 +9360,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2B656);
 	op_hex		(x,	1);
 	set_name	(0X2B656,	"RunConversation");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B65C);
 	op_hex		(x,	1);
 	create_insn	(0X2B685);

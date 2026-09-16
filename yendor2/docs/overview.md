@@ -5204,6 +5204,17 @@ previously-unnamed animation-frame helpers flagged when
 
 605 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: InsertDecimalPointFromEnd
+
+Named `sub_16262` -> `InsertDecimalPointFromEnd`, called from
+`DrawLabeledNumberIfNonzero` and `FormatAndDrawAlchemyFraction`: a
+fixed-point decimal formatting helper — inserts `.` into an in-place
+number string, `word_2E4AC` digits from the end (e.g. `"1234"` →
+`"12.34"` for `word_2E4AC=2`) by shifting the trailing digits right.
+No-op if the string is empty or the digit count isn't positive.
+
+606 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
