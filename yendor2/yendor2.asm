@@ -1122,7 +1122,7 @@ loc_109F9:                              ; CODE XREF: start+67A↑j
                 call    sub_16E18
                 and     word_328C4, 0DFFFh
                 and     word_3295A, 9FFFh
-                call    sub_1D2A6
+                call    RunTitleScreen
                 cmp     byte_2E400, 0FFh
                 jz      short loc_10A23
                 call    sub_1F0CD
@@ -3329,7 +3329,7 @@ loc_11FBD:                              ; CODE XREF: InitGame+CD↑j
                 call    sub_25862
                 test    word_328C4, 4000h
                 jnz     short loc_11FFE
-                call    sub_1D2A6
+                call    RunTitleScreen
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_11FFE
                 retf
@@ -3340,7 +3340,7 @@ loc_11FDF:                              ; CODE XREF: InitGame+A3↑j
                 call    sub_238CD
                 test    word_328C4, 4000h
                 jnz     short loc_11FFE
-                call    sub_1D2A6
+                call    RunTitleScreen
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_11FFE
                 retf
@@ -8368,7 +8368,7 @@ seg011          segment byte public 'CODE' use16
 
 
 sub_1522E       proc far                ; CODE XREF: InitGame+B6↑P
-                                        ; sub_1D2A6+200↓P
+                                        ; RunTitleScreen+200↓P
                 call    sub_15E44
                 cmp     byte_2E400, 1Bh
                 jz      short loc_15245
@@ -23498,9 +23498,9 @@ seg054          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D2A6       proc far                ; CODE XREF: start+A0F↑P
+RunTitleScreen  proc far                ; CODE XREF: start+A0F↑P
                                         ; InitGame+F6↑P ...
-                push    word_36CE7
+                push    word_36CE7      ; Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches top-level single-key commands (C/A/E/R/I -- not individually traced, plausibly Continue/About/Exit/Register/Info) plus direct music/soundfx toggles. Called from `start` and from ConfirmNewGame after confirming a new game.
                 mov     word_36CE7, 3
                 mov     ax, 1
                 mov     word_3297E, ax
@@ -23511,8 +23511,8 @@ sub_1D2A6       proc far                ; CODE XREF: start+A0F↑P
                 jnz     short loc_1D2D0
                 call    sub_2B436
 
-loc_1D2D0:                              ; CODE XREF: sub_1D2A6+1B↑j
-                                        ; sub_1D2A6+23↑j ...
+loc_1D2D0:                              ; CODE XREF: RunTitleScreen+1B↑j
+                                        ; RunTitleScreen+23↑j ...
                 mov     x, 1
                 mov     y, 1
                 mov     _font_bgTransparent, 0
@@ -23532,8 +23532,8 @@ loc_1D2D0:                              ; CODE XREF: sub_1D2A6+1B↑j
                 jz      short loc_1D323
                 or      word_328C4, 200h
 
-loc_1D323:                              ; CODE XREF: sub_1D2A6+75↑j
-                                        ; sub_1D2A6+87↓j ...
+loc_1D323:                              ; CODE XREF: RunTitleScreen+75↑j
+                                        ; RunTitleScreen+87↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1D323
@@ -23544,41 +23544,41 @@ loc_1D323:                              ; CODE XREF: sub_1D2A6+75↑j
                 jmp     loc_1D3E3
 ; ---------------------------------------------------------------------------
 
-loc_1D340:                              ; CODE XREF: sub_1D2A6+95↑j
+loc_1D340:                              ; CODE XREF: RunTitleScreen+95↑j
                 jmp     short loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D342:                              ; CODE XREF: sub_1D2A6+8E↑j
+loc_1D342:                              ; CODE XREF: RunTitleScreen+8E↑j
                 cmp     byte_2E400, 43h ; 'C'
                 jnz     short loc_1D34C
                 jmp     loc_1D3FF
 ; ---------------------------------------------------------------------------
 
-loc_1D34C:                              ; CODE XREF: sub_1D2A6+A1↑j
+loc_1D34C:                              ; CODE XREF: RunTitleScreen+A1↑j
                 cmp     byte_2E400, 41h ; 'A'
                 jnz     short loc_1D356
                 jmp     loc_1D411
 ; ---------------------------------------------------------------------------
 
-loc_1D356:                              ; CODE XREF: sub_1D2A6+AB↑j
+loc_1D356:                              ; CODE XREF: RunTitleScreen+AB↑j
                 cmp     byte_2E400, 45h ; 'E'
                 jnz     short loc_1D360
                 jmp     loc_1D423
 ; ---------------------------------------------------------------------------
 
-loc_1D360:                              ; CODE XREF: sub_1D2A6+B5↑j
+loc_1D360:                              ; CODE XREF: RunTitleScreen+B5↑j
                 cmp     byte_2E400, 52h ; 'R'
                 jnz     short loc_1D36A
                 jmp     loc_1D489
 ; ---------------------------------------------------------------------------
 
-loc_1D36A:                              ; CODE XREF: sub_1D2A6+BF↑j
+loc_1D36A:                              ; CODE XREF: RunTitleScreen+BF↑j
                 cmp     byte_2E400, 49h ; 'I'
                 jnz     short loc_1D374
                 jmp     loc_1D49B
 ; ---------------------------------------------------------------------------
 
-loc_1D374:                              ; CODE XREF: sub_1D2A6+C9↑j
+loc_1D374:                              ; CODE XREF: RunTitleScreen+C9↑j
                 cmp     byte_2E400, 11h
                 jz      short loc_1D38B
                 cmp     byte_2E400, 0Dh
@@ -23588,12 +23588,12 @@ loc_1D374:                              ; CODE XREF: sub_1D2A6+C9↑j
                 jmp     short loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D38B:                              ; CODE XREF: sub_1D2A6+D3↑j
+loc_1D38B:                              ; CODE XREF: RunTitleScreen+D3↑j
                 mov     byte_2E400, 0FFh
                 jmp     loc_1D46A
 ; ---------------------------------------------------------------------------
 
-loc_1D393:                              ; CODE XREF: sub_1D2A6+DA↑j
+loc_1D393:                              ; CODE XREF: RunTitleScreen+DA↑j
                 test    g_driverStateFlags, 2
                 jz      short loc_1D3A8
                 call    sub_2849C
@@ -23601,37 +23601,37 @@ loc_1D393:                              ; CODE XREF: sub_1D2A6+DA↑j
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D3A8:                              ; CODE XREF: sub_1D2A6+F3↑j
+loc_1D3A8:                              ; CODE XREF: RunTitleScreen+F3↑j
                 test    g_driverStateFlags, 1
                 jnz     short loc_1D3B3
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D3B3:                              ; CODE XREF: sub_1D2A6+108↑j
+loc_1D3B3:                              ; CODE XREF: RunTitleScreen+108↑j
                 or      g_driverStateFlags, 2
                 call    sub_28320
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D3C0:                              ; CODE XREF: sub_1D2A6+E1↑j
+loc_1D3C0:                              ; CODE XREF: RunTitleScreen+E1↑j
                 test    g_driverStateFlags, 8
                 jz      short loc_1D3D0
                 and     g_driverStateFlags, 0FFF7h
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D3D0:                              ; CODE XREF: sub_1D2A6+120↑j
+loc_1D3D0:                              ; CODE XREF: RunTitleScreen+120↑j
                 test    g_driverStateFlags, 4
                 jnz     short loc_1D3DB
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D3DB:                              ; CODE XREF: sub_1D2A6+130↑j
+loc_1D3DB:                              ; CODE XREF: RunTitleScreen+130↑j
                 or      g_driverStateFlags, 8
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D3E3:                              ; CODE XREF: sub_1D2A6+97↑j
+loc_1D3E3:                              ; CODE XREF: RunTitleScreen+97↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AFEh
@@ -23641,31 +23641,31 @@ loc_1D3E3:                              ; CODE XREF: sub_1D2A6+97↑j
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D3FA:                              ; CODE XREF: sub_1D2A6+14F↑j
+loc_1D3FA:                              ; CODE XREF: RunTitleScreen+14F↑j
                 cmp     ax, 1
                 jnz     short loc_1D40C
 
-loc_1D3FF:                              ; CODE XREF: sub_1D2A6+A3↑j
+loc_1D3FF:                              ; CODE XREF: RunTitleScreen+A3↑j
                 call    sub_25862
                 call    sub_23BAE
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
 
-loc_1D40C:                              ; CODE XREF: sub_1D2A6+157↑j
+loc_1D40C:                              ; CODE XREF: RunTitleScreen+157↑j
                 cmp     ax, 2
                 jnz     short loc_1D41E
 
-loc_1D411:                              ; CODE XREF: sub_1D2A6+AD↑j
+loc_1D411:                              ; CODE XREF: RunTitleScreen+AD↑j
                 call    sub_25862
                 call    sub_2BD1A
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
 
-loc_1D41E:                              ; CODE XREF: sub_1D2A6+169↑j
+loc_1D41E:                              ; CODE XREF: RunTitleScreen+169↑j
                 cmp     ax, 3
                 jnz     short loc_1D484
 
-loc_1D423:                              ; CODE XREF: sub_1D2A6+B7↑j
+loc_1D423:                              ; CODE XREF: RunTitleScreen+B7↑j
                 test    word_328C4, 200h
                 jnz     short loc_1D436
                 mov     ax, 3
@@ -23673,7 +23673,7 @@ loc_1D423:                              ; CODE XREF: sub_1D2A6+B7↑j
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
-loc_1D436:                              ; CODE XREF: sub_1D2A6+183↑j
+loc_1D436:                              ; CODE XREF: RunTitleScreen+183↑j
                 test    word_328C6, 100h
                 jz      short loc_1D46A
                 and     word_328C6, 0FEFFh
@@ -23682,7 +23682,7 @@ loc_1D436:                              ; CODE XREF: sub_1D2A6+183↑j
                 mov     cx, 4
                 mov     si, 95EBh
 
-loc_1D452:                              ; CODE XREF: sub_1D2A6+1C2↓j
+loc_1D452:                              ; CODE XREF: RunTitleScreen+1C2↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1D46A
@@ -23693,8 +23693,8 @@ loc_1D452:                              ; CODE XREF: sub_1D2A6+1C2↓j
                 add     si, 2
                 loop    loc_1D452
 
-loc_1D46A:                              ; CODE XREF: sub_1D2A6+EA↑j
-                                        ; sub_1D2A6+196↑j ...
+loc_1D46A:                              ; CODE XREF: RunTitleScreen+EA↑j
+                                        ; RunTitleScreen+196↑j ...
                 mov     word_3297E, 0
                 call    sub_2849C
                 call    sub_25862
@@ -23703,21 +23703,21 @@ loc_1D46A:                              ; CODE XREF: sub_1D2A6+EA↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D484:                              ; CODE XREF: sub_1D2A6+17B↑j
+loc_1D484:                              ; CODE XREF: RunTitleScreen+17B↑j
                 cmp     ax, 4
                 jnz     short loc_1D496
 
-loc_1D489:                              ; CODE XREF: sub_1D2A6+C1↑j
+loc_1D489:                              ; CODE XREF: RunTitleScreen+C1↑j
                 call    sub_25862
                 call    ShowIntroPicture
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
 
-loc_1D496:                              ; CODE XREF: sub_1D2A6+1E1↑j
+loc_1D496:                              ; CODE XREF: RunTitleScreen+1E1↑j
                 cmp     ax, 5
                 jnz     short loc_1D4B4
 
-loc_1D49B:                              ; CODE XREF: sub_1D2A6+CB↑j
+loc_1D49B:                              ; CODE XREF: RunTitleScreen+CB↑j
                 mov     word_3297E, 0
                 call    sub_25862
                 call    sub_1522E
@@ -23725,9 +23725,9 @@ loc_1D49B:                              ; CODE XREF: sub_1D2A6+CB↑j
                 jmp     loc_1D2D0
 ; ---------------------------------------------------------------------------
 
-loc_1D4B4:                              ; CODE XREF: sub_1D2A6+1F3↑j
+loc_1D4B4:                              ; CODE XREF: RunTitleScreen+1F3↑j
                 jmp     loc_1D323
-sub_1D2A6       endp
+RunTitleScreen  endp
 
 seg054          ends
 
@@ -27203,7 +27203,7 @@ loc_1F5CD:                              ; CODE XREF: ConfirmNewGame+16↑j
                 and     word_328C4, 9FFFh
                 call    sub_16E18
                 call    sub_238CD
-                call    sub_1D2A6
+                call    RunTitleScreen
                 cmp     byte_2E400, 0FFh
                 jz      short locret_1F5FE
                 mov     byte_2E400, 0FEh
@@ -35172,7 +35172,7 @@ sub_23BA4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23BAE       proc far                ; CODE XREF: sub_1D2A6+15E↑P
+sub_23BAE       proc far                ; CODE XREF: RunTitleScreen+15E↑P
                 call    sub_25862
                 call    sub_25544
                 call    sub_2587E
@@ -49581,7 +49581,7 @@ seg118          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B436       proc far                ; CODE XREF: sub_1D2A6+25↑P
+sub_2B436       proc far                ; CODE XREF: RunTitleScreen+25↑P
                 push    word_36CE1
                 push    word_36CE3
                 push    g_driverStateFlags ; this
@@ -50596,7 +50596,7 @@ seg122          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BD1A       proc far                ; CODE XREF: sub_1D2A6+170↑P
+sub_2BD1A       proc far                ; CODE XREF: RunTitleScreen+170↑P
                                         ; sub_2BD1A+149↓j
                 mov     x, 1
                 mov     y, 1
@@ -74439,7 +74439,7 @@ _val45          dw 0                    ; DATA XREF: InitGlobals+132↑w
 _val46          dw 0                    ; DATA XREF: InitGlobals+138↑w
                                         ; sub_13119:loc_13149↑r ...
 _val47          dw 0                    ; DATA XREF: InitGlobals+13E↑w
-                                        ; sub_1D2A6+1B9↑r
+                                        ; RunTitleScreen+1B9↑r
 _val49          dw 0                    ; DATA XREF: InitGlobals+14A↑w
                                         ; sub_1D937:loc_1D9A6↑r
 _val48          dw 0                    ; DATA XREF: InitGlobals+144↑w

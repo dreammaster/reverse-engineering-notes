@@ -4227,7 +4227,9 @@ static Bytes_0(void) {
 	create_insn	(0X1D258);
 	create_insn	(0X1D273);
 	create_insn	(0X1D286);
+	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches top-level single-key commands (C/A/E/R/I -- not individually traced, plausibly Continue/About/Exit/Register/Info) plus direct music/soundfx toggles. Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
 	create_insn	(0X1D2A6);
+	set_name	(0X1D2A6,	"RunTitleScreen");
 	create_insn	(x=0X1D2BB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D2C3);
@@ -6175,6 +6177,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X25D5E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X25D6B,	"msg",	0);
 	create_insn	(0X25D82);
 	set_cmt	(0X25D8B,	"msg",	0);
@@ -6209,15 +6220,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X25E55,	"msg",	0);
 	create_insn	(0X25E5E);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25EC8,	"msg",	0);
 	create_insn	(0X25ED1);
 	set_cmt	(0X25EF3,	"msg",	0);
@@ -10750,6 +10752,15 @@ static Bytes_1(void) {
 	create_strlit	(0X39EF1,	0X2);
 	create_strlit	(0X39EF3,	0X20);
 	set_name	(0X39EF3,	"aDonnaKarpenkoN");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39F13,	0X2);
 	create_strlit	(0X39F15,	0X20);
 	set_name	(0X39F15,	"aSharonLehmanTJ");
@@ -10769,15 +10780,6 @@ static Bytes_1(void) {
 	create_strlit	(0X39FCF,	0X2);
 	create_strlit	(0X39FD1,	0X24);
 	set_name	(0X39FD1,	"aJudyVanoverDeb");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39FF5,	0X2);
 	create_strlit	(0X39FF7,	0X22);
 	set_name	(0X39FF7,	"aDianeElpersMik");

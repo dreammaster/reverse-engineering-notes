@@ -514,6 +514,21 @@ now has a named, understood handler.
 
 93 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunTitleScreen
+
+Followed `ConfirmNewGame`'s reset call to `sub_1D2A6`, called both from
+`start` directly and from `ConfirmNewGame` — draws `g_pictureDir` entry
+2 (the combat-scene picture) full-screen, then dispatches single-key
+top-level commands (`C`/`A`/`E`/`R`/`I`, not individually traced) plus
+direct music/sound-fx toggles bypassing `RunGameDialog`. The game's main
+title screen. Named `RunTitleScreen`
+(`ida_scripts/name_title_screen.py`) — moderate confidence on the
+overall role, low confidence on what each individual letter does (a
+good target for a future pass, especially `R`, plausibly "Register"
+given this shareware build's nag string).
+
+94 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
