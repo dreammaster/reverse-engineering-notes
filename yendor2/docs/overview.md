@@ -5619,6 +5619,29 @@ developer manually flip a specific visible cell's hidden state.
 
 641 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawCharacterSheetPanel, ComputeMapEditorBlockOrigin, ShowMapEditorBlockCoordsAndRedraw
+
+Named `sub_254CC` -> `DrawCharacterSheetPanel`, called from both
+`ShowCharacterStats` and `ShowCharacterSummary`: the shared
+full-screen character-sheet assembly — background picture, title,
+portrait, a class/status picture selected by the character record's
+`+0x12` field, then `DrawCharacterStatSheet` + `DrawThreeThresholdStats`
++ `DrawCharacterClassAndLevel` + the character's name.
+
+Named `sub_204F0` -> `ComputeMapEditorBlockOrigin` (called from
+`BrowseWallTilePalette`, `BrowseFloorTilePalette`, and its own caller
+below) and `sub_20817` -> `ShowMapEditorBlockCoordsAndRedraw` (called
+once from `RunMapEditorScreen`). `ComputeMapEditorBlockOrigin`
+computes the 40×24-block-aligned origin of the party's current
+map-editor view — aligning the world position down to the nearest
+block boundary, offset by a caller-supplied shift amount — returning
+X/Y in ax/bx. `ShowMapEditorBlockCoordsAndRedraw` shows those two
+values as "H<n>"/"V<n>" block-coordinate readouts, waits for a
+keypress, then redraws the full map editor UI (coordinate readout,
+floor-type readout, both legend rows).
+
+644 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

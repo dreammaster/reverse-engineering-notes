@@ -28311,7 +28311,7 @@ loc_20157:                              ; CODE XREF: RunMapEditorScreen+C7↑j
 loc_201A0:                              ; CODE XREF: RunMapEditorScreen+EC↑j
                 cmp     byte_2E400, 9
                 jnz     short loc_201AD
-                call    sub_20817
+                call    ShowMapEditorBlockCoordsAndRedraw
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
@@ -28701,9 +28701,9 @@ DrawFloorTypeLegendRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_204F0       proc near               ; CODE XREF: BrowseWallTilePalette+11↓p
+ComputeMapEditorBlockOrigin proc near   ; CODE XREF: BrowseWallTilePalette+11↓p
                                         ; BrowseFloorTilePalette+11↓p ...
-                push    cx
+                push    cx              ; Computes the 40x24-block-aligned origin of the party's current map-editor view (align word_36CF7/word_36CF9 down to the nearest 0x28/0x18 boundary, offset by caller-supplied word_3293E/word_32940 shifted amounts). Returns X in ax, Y in bx. Called from BrowseWallTilePalette, BrowseFloorTilePalette, and ShowMapEditorBlockCoordsAndRedraw.
                 push    dx
                 mov     cx, 3
                 xor     dx, dx
@@ -28728,7 +28728,7 @@ sub_204F0       proc near               ; CODE XREF: BrowseWallTilePalette+11↓
                 pop     dx
                 pop     cx
                 retn
-sub_204F0       endp
+ComputeMapEditorBlockOrigin endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28830,7 +28830,7 @@ BrowseWallTilePalette proc near         ; CODE XREF: RunMapEditorScreen+144↑p
                 mov     word_3293E, ax
                 mov     ax, word_31956
                 mov     word_32940, ax
-                call    sub_204F0
+                call    ComputeMapEditorBlockOrigin
                 call    LoadWorldDatTilePalette
                 mov     ax, [si]
                 mov     word_2E384, ax
@@ -28851,7 +28851,7 @@ BrowseFloorTilePalette proc near        ; CODE XREF: RunMapEditorScreen+151↑p
                 mov     word_3293E, ax
                 mov     ax, word_31956
                 mov     word_32940, ax
-                call    sub_204F0
+                call    ComputeMapEditorBlockOrigin
                 call    LoadWorldDatTilePalette
                 mov     ax, [si+2]
                 mov     word_2E386, ax
@@ -28871,7 +28871,7 @@ PaintCursorCellAndPersist proc near     ; CODE XREF: RunMapEditorScreen+2A4↑p
                 mov     word_3293E, ax
                 mov     ax, word_2E770
                 mov     word_32940, ax
-                call    sub_204F0
+                call    ComputeMapEditorBlockOrigin
                 call    PersistExploredCell
                 call    LoadWorldDatTilePalette
                 mov     ax, word_2E496
@@ -28954,7 +28954,7 @@ PaintCursorOverlayCellAndPersist proc near
                 mov     word_3293E, ax
                 mov     ax, word_2E774
                 mov     word_32940, ax
-                call    sub_204F0
+                call    ComputeMapEditorBlockOrigin
                 call    PersistExploredCell
                 call    LoadWorldDatTilePalette
                 mov     ax, word_2E4A2
@@ -29057,8 +29057,9 @@ DrawMapEditorInteractionTypeOverlay endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
-                call    RestoreCursorBackgroundIfDirty
+ShowMapEditorBlockCoordsAndRedraw proc near
+                                        ; CODE XREF: RunMapEditorScreen+137↑p
+                call    RestoreCursorBackgroundIfDirty ; Shows 'H<n>'/'V<n>' block-coordinate readouts (via ComputeMapEditorBlockOrigin), waits for a keypress (WaitForKeypressTickingMusic), then redraws the full map editor UI: coordinate readout, floor-type readout, wall/floor legend rows. Called once from RunMapEditorScreen.
                 call    ClearVideoMemoryRegion
                 mov     _textPos_x, 0
                 mov     _textPos_y, 1
@@ -29069,7 +29070,7 @@ sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
                 mov     word_3293E, ax
                 mov     ax, word_31956
                 mov     word_32940, ax
-                call    sub_204F0
+                call    ComputeMapEditorBlockOrigin
                 push    bx
                 call    FormatNumberZeroPadded
                 mov     byte ptr [bx], 48h ; 'H'
@@ -29087,7 +29088,7 @@ sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
                 call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 retn
-sub_20817       endp
+ShowMapEditorBlockCoordsAndRedraw endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36730,7 +36731,7 @@ ShowCharacterStats proc near            ; CODE XREF: ShowPartyMembers+37↑p
                 call    RollCharacterAttributes ; ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.
                 call    ComputeDerivedCharacterStats
                 call    RecomputeEquipmentStatBonuses
-                call    sub_254CC
+                call    DrawCharacterSheetPanel
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
                 mov     _font_fgColor, 8Ah
@@ -37160,7 +37161,7 @@ SelectDefaultPartyRecord endp
 
 ShowCharacterSummary proc near          ; CODE XREF: ShowPartyMembers+5A↑p
                                         ; ShowCharacterSummary+157↓j ...
-                call    sub_254CC       ; Moderate confidence: last ShowPartyMembers pipeline step. Reuses message pointers ShowCharacterStats also uses (0x7A11, 0x8572) alongside others -- reads as a condensed recap/overview screen rather than fresh content.
+                call    DrawCharacterSheetPanel ; Moderate confidence: last ShowPartyMembers pipeline step. Reuses message pointers ShowCharacterStats also uses (0x7A11, 0x8572) alongside others -- reads as a condensed recap/overview screen rather than fresh content.
                 mov     _textPos_x, 6Bh ; 'k'
                 mov     _textPos_y, 6
                 mov     _font_bgTransparent, 1
@@ -37551,9 +37552,9 @@ ApplySecondaryClassTierFlags endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_254CC       proc near               ; CODE XREF: ShowCharacterStats+B↑p
+DrawCharacterSheetPanel proc near       ; CODE XREF: ShowCharacterStats+B↑p
                                         ; ShowCharacterSummary↑p
-                call    RestoreCursorBackgroundIfDirty
+                call    RestoreCursorBackgroundIfDirty ; Shared character-sheet screen assembly: full-screen background (picture 3) + title, portrait, a class/status picture selected by the character's [+0x12] field, then DrawCharacterStatSheet + DrawThreeThresholdStats + DrawCharacterClassAndLevel + name. Called from ShowCharacterStats and ShowCharacterSummary.
                 mov     word_2E530, 3
                 call    DrawFullScreenPictureAndCacheToEMS
                 mov     _textPos_x, 6Bh ; 'k'
@@ -37579,7 +37580,7 @@ sub_254CC       proc near               ; CODE XREF: ShowCharacterStats+B↑p
                 add     bx, 0           ; msg
                 call    writeString
                 retn
-sub_254CC       endp
+DrawCharacterSheetPanel endp
 
 
 ; =============== S U B R O U T I N E =======================================

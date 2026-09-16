@@ -5508,7 +5508,9 @@ static Bytes_2(void) {
 	set_cmt	(0X204AA,	"Draws a scrollable 17-icon horizontal strip from table 0xE175 (field +8), starting at index word_2E386, at y=0 x=0xB8+.",	0);
 	create_insn	(0X204AA);
 	set_name	(0X204AA,	"DrawFloorTypeLegendRow");
+	set_cmt	(0X204F0,	"Computes the 40x24-block-aligned origin of the party's current map-editor view (align word_36CF7/word_36CF9 down to the nearest 0x28/0x18 boundary, offset by caller-supplied word_3293E/word_32940 shifted amounts). Returns X in ax, Y in bx. Called from BrowseWallTilePalette, BrowseFloorTilePalette, and ShowMapEditorBlockCoordsAndRedraw.",	0);
 	create_insn	(0X204F0);
+	set_name	(0X204F0,	"ComputeMapEditorBlockOrigin");
 	set_cmt	(0X20523,	"Reads a numeric wall-type entry (sub_1D146, not traced) into word_2E384, then redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen; falls through from EditFloorLegendTypeNumber on one error path.",	0);
 	create_insn	(0X20523);
 	set_name	(0X20523,	"EditWallLegendTypeNumber");
@@ -5559,7 +5561,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X207EA);
 	op_hex		(x,	1);
+	set_cmt	(0X20817,	"Shows 'H<n>'/'V<n>' block-coordinate readouts (via ComputeMapEditorBlockOrigin), waits for a keypress (WaitForKeypressTickingMusic), then redraws the full map editor UI: coordinate readout, floor-type readout, wall/floor legend rows. Called once from RunMapEditorScreen.",	0);
 	create_insn	(0X20817);
+	set_name	(0X20817,	"ShowMapEditorBlockCoordsAndRedraw");
 	set_cmt	(0X20888,	"Draws one map cell's icon pair: floor (g_pictureDir via table 0xE551 field +0xA, indexed by es:[bx]) then, if es:[bx+2] != 0, an overlay/wall icon (g_pictureDir via table 0xE175 field +8, indexed by es:[bx+2]) drawn transparently on top. Same composite BuildMinimapTileData/DrawMinimap use per cell, but full-size.",	0);
 	create_insn	(0X20888);
 	set_name	(0X20888,	"DrawCellIconPair");
@@ -6724,6 +6728,15 @@ static Bytes_2(void) {
 	set_cmt	(0X25103,	"Moderate confidence: last ShowPartyMembers pipeline step. Reuses message pointers ShowCharacterStats also uses (0x7A11, 0x8572) alongside others -- reads as a condensed recap/overview screen rather than fresh content.",	0);
 	create_insn	(0X25103);
 	set_name	(0X25103,	"ShowCharacterSummary");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2511E,	"msg",	0);
 	set_cmt	(0X25138,	"msg",	0);
 	create_insn	(0X251E1);
@@ -6759,15 +6772,6 @@ static Bytes_2(void) {
 	set_cmt	(0X252EF,	"Rolls the 6 core attributes for word_328D4 (RandomInRange(15)+45 each, 45-59), storing base+derived field pairs: +0x3C/+0x7C (also x10 into +0x56/+0x96, weight-like -- plausibly STRENGTH); +0x3E/+0x7E; +0x42/+0x82 (MP-formula component in UseTrainingItem -- plausibly INTELLIGENCE); +0x44/+0x84 (the other MP-formula component -- plausibly WISDOM); +0x46/+0x86 (a separate UseTrainingItem growth calc); +0x40/+0x80, whose 25%-scaled value sets both current and max HP (+0x52/+0x92) -- plausibly STAMINA/CONSTITUTION.",	0);
 	create_insn	(0X252EF);
 	set_name	(0X252EF,	"RollCharacterAttributes");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2539F);
 	create_insn	(0X253BB);
 	create_insn	(0X253C4);
@@ -6786,7 +6790,9 @@ static Bytes_3(void) {
 	set_cmt	(0X25456,	"Gated on [bx+0x94]!=0 (bx=word_328D4): maps class id [bx+0xE] (4-9) to a bit (0x20..0x1) OR'd into [bx+0x1C] -- new low bits of that field, distinct from the confirmed affliction bits -- and to a 2-entry table of ability-flag indices set via SetRecordFlag_CA. Called from ShowCharacterSummary.",	0);
 	create_insn	(0X25456);
 	set_name	(0X25456,	"ApplySecondaryClassTierFlags");
+	set_cmt	(0X254CC,	"Shared character-sheet screen assembly: full-screen background (picture 3) + title, portrait, a class/status picture selected by the character's [+0x12] field, then DrawCharacterStatSheet + DrawThreeThresholdStats + DrawCharacterClassAndLevel + name. Called from ShowCharacterStats and ShowCharacterSummary.",	0);
 	create_insn	(0X254CC);
+	set_name	(0X254CC,	"DrawCharacterSheetPanel");
 	set_cmt	(0X254F4,	"msg",	0);
 	set_cmt	(0X2553B,	"msg",	0);
 	set_cmt	(0X25544,	"Uses SelectDefaultPartyRecord's empty-slot scan (first record with +0xE==0); if none found, returns (roster full, no prompt). Otherwise wipes the slot (ClearPartyRecord), draws picture 3 full-screen (DrawFullScreenPictureAndCacheToEMS), and writes 'CHARACTER CREATION'. Called from ShowPartyMembers.",	0);
@@ -9000,6 +9006,15 @@ static Bytes_3(void) {
 	create_insn	(0X2A305);
 	create_insn	(x=0X2A308);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A312);
 	create_insn	(x=0X2A315);
 	op_hex		(x,	1);
@@ -9111,15 +9126,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2A4B0,	"Looks up al's high nibble (hue group) in a 16-entry stack table ([bp-0x4A]); no match leaves al unchanged; a match with low byte 0x0F forces al=0xFF (hue-group-wide transparency); otherwise replaces just the hue-group nibble, keeping the shade nibble -- a per-hue-group color remap/mask, plausibly for status-effect tinting. Called from DrawPicture.",	0);
 	create_insn	(0X2A4B0);
 	set_name	(0X2A4B0,	"RemapOrMaskColorByHueTable");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A4D7);
 	create_insn	(0X2A4E4);
 	create_insn	(0X2A4EA);
@@ -11598,6 +11604,15 @@ static Bytes_4(void) {
 	set_name	(0X3677B,	"aAlchemistTrans");
 	create_strlit	(0X3679B,	0X1A);
 	set_name	(0X3679B,	"aPaladinCavalie");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X367B5,	0X19);
 	set_name	(0X367B5,	"aMageWizardSorc");
 	create_strlit	(0X367CE,	0X19);
@@ -11661,15 +11676,6 @@ static Bytes_4(void) {
 	set_name	(0X368B1,	"aWorldDat");
 	set_cmt	(0X368BB,	"12-byte-stride trap/status-effect definition records, indexed by effect id (PrepareTrapEffectSlots computes id*0xC + this base). Confirmed fields: +2 = g_pictureDir icon offset, +8 = cost-type flags (ApplyEffectCost), +0xA = display-mode flags (ApplyEffectAndDrawIconBar).",	0);
 	set_name	(0X368BB,	"g_trapEffectDefs");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	set_name	(0X36C5F,	"_savegameBuffer");
 	create_word	(0X36C79);
 	create_word	(0X36C7F);
