@@ -4836,7 +4836,9 @@ static Bytes_1(void) {
 	create_insn	(0X1E2E5);
 	set_name	(0X1E2E5,	"FormatAndDrawAlchemyFraction");
 	set_cmt	(0X1E337,	"msg",	0);
+	set_cmt	(0X1E340,	"Draws one spell cost value at the given x position. Called from DrawAlchemySpellList.",	0);
 	create_insn	(0X1E340);
+	set_name	(0X1E340,	"DrawSpellCostValue");
 	create_insn	(x=0X1E356);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E363);
@@ -4847,7 +4849,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1E399);
 	op_hex		(x,	1);
+	set_cmt	(0X1E3AF,	"Draws the current page (13 rows) of the alchemy spell list (buffer 0x565A), each row's name colored by its castability icon-state and highlighted if selected, plus its MP/NUORE/MAGIC ORE costs via DrawSpellCostValue. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E3AF);
+	set_name	(0X1E3AF,	"DrawAlchemySpellList");
 	create_insn	(0X1E3F9);
 	set_cmt	(0X1E405,	"msg",	0);
 	create_insn	(0X1E447);
@@ -5549,11 +5553,6 @@ static Bytes_1(void) {
 	set_cmt	(0X21128,	"Draws one dungeon cell's base wall texture (0xE551 lookup table by cell id, z-layer word_32918=0), then a fixed overlay (picture 5) if the cell's [+6] flags have bit 0x2000 set (a door/torch/decoration marker, not confirmed). Called from RenderDungeonViewRow per visible cell.",	0);
 	create_insn	(0X21128);
 	set_name	(0X21128,	"DrawDungeonCellWallTexture");
-	create_insn	(x=0X2115A);
-	op_hex		(x,	1);
-	set_cmt	(0X2117F,	"Null-check wrapper: calls DrawDungeonCellSideFeature only if the cell's [+2] field is nonzero. Called from RenderDungeonViewRow per cell.",	0);
-	create_insn	(0X2117F);
-	set_name	(0X2117F,	"TryDrawDungeonCellSideFeature");
 }
 
 //------------------------------------------------------------------------
@@ -5563,6 +5562,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2115A);
+	op_hex		(x,	1);
+	set_cmt	(0X2117F,	"Null-check wrapper: calls DrawDungeonCellSideFeature only if the cell's [+2] field is nonzero. Called from RenderDungeonViewRow per cell.",	0);
+	create_insn	(0X2117F);
+	set_name	(0X2117F,	"TryDrawDungeonCellSideFeature");
 	set_cmt	(0X21187,	"Draws a door/side-feature sprite for the current cell: table at 0xE175 (10-byte stride, 4 facing directions) indexed by the cell's [+2] id, picture drawn at z-layer 7 or 8 depending on near/far distance banding, plus a conditional overlay (picture 6) for an open-door/lit-torch-like variant. Also called from sub_21217.",	0);
 	create_insn	(0X21187);
 	set_name	(0X21187,	"DrawDungeonCellSideFeature");
@@ -7572,6 +7576,15 @@ static Bytes_2(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X285B8);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X285BE);
 	op_hex		(x,	1);
 	create_insn	(0X285C4);
@@ -7598,15 +7611,6 @@ static Bytes_2(void) {
 	set_cmt	(0X286B2,	"UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.",	0);
 	create_insn	(0X286B2);
 	set_name	(0X286B2,	"UpdateMonsterWoundTier");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X286C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X286DB);
@@ -10623,6 +10627,15 @@ static Bytes_3(void) {
 	set_name	(0X35531,	"aCopper");
 	create_strlit	(0X3553E,	0XD);
 	set_name	(0X3553E,	"aIron");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3554B,	0XD);
 	set_name	(0X3554B,	"aSteel");
 	create_strlit	(0X35558,	0XD);
@@ -10660,15 +10673,6 @@ static Bytes_3(void) {
 	set_name	(0X35611,	"aRestHere");
 	create_strlit	(0X3561B,	0XC);
 	set_name	(0X3561B,	"aExperience");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35627,	0XD);
 	set_name	(0X35627,	"aStrength");
 	create_strlit	(0X35634,	0XD);

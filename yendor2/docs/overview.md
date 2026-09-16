@@ -3905,6 +3905,15 @@ spell's affordability (MP, MAGIC ORE, NUORE) via
 
 497 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawAlchemySpellList, DrawSpellCostValue
+
+Named `sub_1E3AF` -> `DrawAlchemySpellList` and `sub_1E340` ->
+`DrawSpellCostValue`, both called from `RunAlchemyScreen`: the visual
+counterpart to `BuildAlchemySpellList`, drawing each page's spell rows
+and cost values.
+
+499 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

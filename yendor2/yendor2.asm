@@ -24633,7 +24633,7 @@ loc_1DD28:                              ; CODE XREF: RunAlchemyScreen+3E↑j
 loc_1DD35:                              ; CODE XREF: RunAlchemyScreen+178↓j
                                         ; RunAlchemyScreen+2A4↓j ...
                 call    sub_1E522
-                call    sub_1E3AF
+                call    DrawAlchemySpellList
                 call    sub_1E356
                 call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
@@ -24860,7 +24860,7 @@ loc_1DEDF:                              ; CODE XREF: RunAlchemyScreen+1F0↑j
                 add     ax, 565Ah
                 mov     word_3330E, ax
                 call    sub_1E522
-                call    sub_1E3AF
+                call    DrawAlchemySpellList
                 call    sub_1E356
                 call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
@@ -24945,7 +24945,7 @@ loc_1DFBA:                              ; CODE XREF: RunAlchemyScreen+2D5↑j
                 mov     word_3331E, ax
                 mov     [si+0C8h], ax
                 call    BuildAlchemySpellList
-                call    sub_1E3AF
+                call    DrawAlchemySpellList
                 call    DrawMouseCursor
                 mov     si, word_328D4
                 mov     ax, [si+0C8h]
@@ -25021,7 +25021,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    DrawPartyMemberStatusPanel
                 call    sub_1E522
                 call    BuildAlchemySpellList
-                call    sub_1E3AF
+                call    DrawAlchemySpellList
                 call    sub_1E356
                 call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
@@ -25319,15 +25319,15 @@ FormatAndDrawAlchemyFraction endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E340       proc near               ; CODE XREF: sub_1E3AF+67↓p
-                                        ; sub_1E3AF+77↓p ...
-                mov     bx, 0AFA8h
+DrawSpellCostValue proc near            ; CODE XREF: DrawAlchemySpellList+67↓p
+                                        ; DrawAlchemySpellList+77↓p ...
+                mov     bx, 0AFA8h      ; Draws one spell cost value at the given x position. Called from DrawAlchemySpellList.
                 call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
                 retn
-sub_1E340       endp
+DrawSpellCostValue endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25370,9 +25370,9 @@ sub_1E356       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E3AF       proc near               ; CODE XREF: RunAlchemyScreen+58↑p
+DrawAlchemySpellList proc near          ; CODE XREF: RunAlchemyScreen+58↑p
                                         ; RunAlchemyScreen+21A↑p ...
-                push    si
+                push    si              ; Draws the current page (13 rows) of the alchemy spell list (buffer 0x565A), each row's name colored by its castability icon-state and highlighted if selected, plus its MP/NUORE/MAGIC ORE costs via DrawSpellCostValue. Called from RunAlchemyScreen.
                 push    dx
                 push    cx
                 mov     si, word_33316
@@ -25388,8 +25388,8 @@ sub_1E3AF       proc near               ; CODE XREF: RunAlchemyScreen+58↑p
                 jl      short loc_1E3D7
                 mov     cx, word_33312
 
-loc_1E3D7:                              ; CODE XREF: sub_1E3AF+22↑j
-                                        ; sub_1E3AF+92↓j
+loc_1E3D7:                              ; CODE XREF: DrawAlchemySpellList+22↑j
+                                        ; DrawAlchemySpellList+92↓j
                 mov     ax, [si+2]
                 mov     _font_fgColor, ax
                 mov     ax, [si]
@@ -25402,31 +25402,31 @@ loc_1E3D7:                              ; CODE XREF: sub_1E3AF+22↑j
                 jmp     short loc_1E3FF
 ; ---------------------------------------------------------------------------
 
-loc_1E3F9:                              ; CODE XREF: sub_1E3AF+40↑j
+loc_1E3F9:                              ; CODE XREF: DrawAlchemySpellList+40↑j
                 mov     _font_fgColor, 8Ah
 
-loc_1E3FF:                              ; CODE XREF: sub_1E3AF+39↑j
-                                        ; sub_1E3AF+48↑j
+loc_1E3FF:                              ; CODE XREF: DrawAlchemySpellList+39↑j
+                                        ; DrawAlchemySpellList+48↑j
                 mov     _textPos_x, 15h
                 mov     bx, 5A5Ah       ; msg
                 call    writeString
                 mov     _textPos_x, 96h
                 mov     ax, word_332D2
-                call    sub_1E340
+                call    DrawSpellCostValue
                 mov     ax, word_332D4
                 or      ax, ax
                 jz      short loc_1E429
                 mov     _textPos_x, 0B3h
-                call    sub_1E340
+                call    DrawSpellCostValue
 
-loc_1E429:                              ; CODE XREF: sub_1E3AF+6F↑j
+loc_1E429:                              ; CODE XREF: DrawAlchemySpellList+6F↑j
                 mov     ax, word_332D6
                 or      ax, ax
                 jz      short loc_1E439
                 mov     _textPos_x, 0CAh
-                call    sub_1E340
+                call    DrawSpellCostValue
 
-loc_1E439:                              ; CODE XREF: sub_1E3AF+7F↑j
+loc_1E439:                              ; CODE XREF: DrawAlchemySpellList+7F↑j
                 add     si, 4
                 add     _textPos_y, 6
                 loop    loc_1E3D7
@@ -25434,7 +25434,7 @@ loc_1E439:                              ; CODE XREF: sub_1E3AF+7F↑j
                 pop     dx
                 pop     si
                 retn
-sub_1E3AF       endp
+DrawAlchemySpellList endp
 
 
 ; =============== S U B R O U T I N E =======================================

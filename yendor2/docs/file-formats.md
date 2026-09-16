@@ -1237,7 +1237,10 @@ itself traced) unless the character is incapacitated, then calls
 character can currently afford it — enough MP (`+0x54`), MAGIC ORE
 (`0x94B7`), and NUORE (`0x94BB`), loading each spell's cost data via
 `LoadClueBookSpellEntry` — setting a "castable" icon state for the ones
-that qualify. Pagination is 13 spells/page.
+that qualify. Pagination is 13 spells/page. `DrawAlchemySpellList`
+(was `sub_1E3AF`) is the visual counterpart, drawing each page's rows
+(name colored by castability, cost values via `DrawSpellCostValue`,
+was `sub_1E340`) and highlighting the current selection.
 `RunAlchemyScreen` also calls `ShowCompassDirection`, a
 "NORTH"/"SOUTH"/"EAST"/"WEST" HUD readout gated on an unidentified
 "compass active" mode (`word_328CA` bit `0x1000` clear, `word_36C7F`
