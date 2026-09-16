@@ -1519,7 +1519,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X12611);
 	op_seg		(x,	1);
+	set_cmt	(0X12624,	"Releases both EMS handles (_emsPointer1?, word_2E504) via INT 67h AH=0x45, skipping each if already 0xFFFF. Shutdown cleanup. Called from start.",	0);
 	create_insn	(0X12624);
+	set_name	(0X12624,	"ReleaseEmsHandles");
 	set_cmt	(0X12636,	" - LIM EMS - RELEASE HANDLE AND MEMORY\nDX = EMM handle\nReturn: AH = status",	0);
 	create_insn	(x=0X12636);
 	op_hex		(x,	0);

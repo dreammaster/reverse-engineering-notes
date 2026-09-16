@@ -5234,6 +5234,16 @@ entire offscreen buffer (`0x7D00` words, a full mode-13h screen) to 0.
 
 609 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ReleaseEmsHandles
+
+Named `sub_12624` -> `ReleaseEmsHandles`, called directly from `start`:
+releases both EMS handles the game uses (`_emsPointer1?`, the primary
+handle used throughout the icon-bar/trap/portrait EMS system, and a
+second one, `word_2E504`) via `INT 67h AH=0x45`, skipping each if
+already unallocated (`0xFFFF`). A classic shutdown/cleanup routine.
+
+610 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

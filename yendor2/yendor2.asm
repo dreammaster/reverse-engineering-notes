@@ -334,7 +334,7 @@ loc_102B5:                              ; CODE XREF: start+2AB↑j
                 call    sub_2589A
                 call    FreeVideoBuffer
                 call    ShutdownAudioDrivers
-                call    sub_12624
+                call    ReleaseEmsHandles
                 mov     ax, 0
                 int     33h             ; - MS MOUSE - RESET DRIVER AND READ STATUS
                                         ; Return: AX = status
@@ -3888,8 +3888,8 @@ seg007          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12624       proc far                ; CODE XREF: start+2DA↑P
-                push    ax
+ReleaseEmsHandles proc far              ; CODE XREF: start+2DA↑P
+                push    ax              ; Releases both EMS handles (_emsPointer1?, word_2E504) via INT 67h AH=0x45, skipping each if already 0xFFFF. Shutdown cleanup. Called from start.
                 push    bx
                 push    cx
                 push    dx
@@ -3904,7 +3904,7 @@ sub_12624       proc far                ; CODE XREF: start+2DA↑P
                                         ; DX = EMM handle
                                         ; Return: AH = status
 
-loc_12638:                              ; CODE XREF: sub_12624+E↑j
+loc_12638:                              ; CODE XREF: ReleaseEmsHandles+E↑j
                 mov     dx, word_2E504
                 cmp     dx, 0FFFFh
                 jz      short loc_12645
@@ -3913,7 +3913,7 @@ loc_12638:                              ; CODE XREF: sub_12624+E↑j
                                         ; DX = EMM handle
                                         ; Return: AH = status
 
-loc_12645:                              ; CODE XREF: sub_12624+1B↑j
+loc_12645:                              ; CODE XREF: ReleaseEmsHandles+1B↑j
                 pop     di
                 pop     si
                 pop     es
@@ -3922,7 +3922,7 @@ loc_12645:                              ; CODE XREF: sub_12624+1B↑j
                 pop     bx
                 pop     ax
                 retf
-sub_12624       endp
+ReleaseEmsHandles endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -56882,7 +56882,7 @@ word_2E500      dw 0                    ; DATA XREF: MapUnmapPages+2↑r
                                         ; MapUnmapPages+8↑w ...
 _emsPointer1?   dw 0FFFFh               ; DATA XREF: loadWorldDat2↑r
                                         ; loadWorldDat3↑r ...
-word_2E504      dw 0FFFFh               ; DATA XREF: sub_12624:loc_12638↑r
+word_2E504      dw 0FFFFh               ; DATA XREF: ReleaseEmsHandles:loc_12638↑r
                                         ; InitMemory:loc_1272C↑w ...
 aEmmxxxx        db  45h ; E
                 db  4Dh ; M
