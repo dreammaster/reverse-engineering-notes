@@ -917,7 +917,11 @@ TO LIFE." / "...TO COMPLETELY RESTORE YOU." (or a dynamically-built
 message for the other two callers) followed by "IS THAT PRICE
 AGREEABLE?" — drawn via `DrawIndentedTextColumn` (was `sub_28A76`), a
 word-wrapped text-column mode dispatcher with a caller-selectable
-hanging-indent style. All 6 traced call sites `retf` immediately after the
+hanging-indent style. Its per-word helper `DrawWordToken` (was
+`sub_28B94`) shows the underlying text buffers are pre-wrapped into
+lines at load/format time, with NUL bytes marking line boundaries —
+these functions consume that pre-wrapping rather than computing
+word wrap from on-screen width themselves. All 6 traced call sites `retf` immediately after the
 call — none poll Y/N or deduct gold there, so the actual confirm+pay
 step (if it exists) happens on some later, separate re-entry not yet
 found. The total is a per-unit base cost (varies by call site,

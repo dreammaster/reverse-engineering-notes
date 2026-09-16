@@ -5301,6 +5301,26 @@ lines pick up the accumulated offset.
 
 615 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawWordToken
+
+Named `sub_28B94` -> `DrawWordToken`, the per-line helper called
+repeatedly by `DrawIndentedTextColumn`: draws one word from a
+pre-formatted text buffer, skipping leading spaces, writing
+non-space characters one at a time, then skipping trailing spaces.
+If that trailing-space skip hits a NUL byte, it resets the text
+cursor back to the line's left margin, advances to the next text
+row, and decrements the caller's remaining-lines counter — this
+word was the last one on a pre-wrapped line. If it hits another
+non-space character instead, it returns without decrementing the
+counter, so the caller loops back to draw the next word on the same
+line. This reveals that the game's message-text buffers are
+pre-wrapped into lines at load/format time, with NUL bytes marking
+line boundaries — `DrawIndentedTextColumn` and `DrawWordToken`
+consume that pre-wrapping rather than computing word wrap from
+on-screen width themselves.
+
+616 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

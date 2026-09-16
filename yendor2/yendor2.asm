@@ -44460,20 +44460,20 @@ loc_28AB1:                              ; CODE XREF: DrawIndentedTextColumn+26�
                                         ; DrawIndentedTextColumn+71↓j
                 push    fontOffset
                 mov     fontOffset, 0
-                call    sub_28B94
+                call    DrawWordToken
                 pop     fontOffset
                 cmp     cx, 0
                 jz      short locret_28AE9
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 jz      short locret_28AE9
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 jz      short locret_28AE9
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 jz      short locret_28AE9
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 jz      short locret_28AE9
                 jmp     short loc_28AB1
@@ -44488,23 +44488,23 @@ loc_28AEA:                              ; CODE XREF: DrawIndentedTextColumn+2E�
                                         ; DrawIndentedTextColumn+B8↓j
                 push    fontOffset
                 mov     fontOffset, 0
-                call    sub_28B94
+                call    DrawWordToken
                 pop     fontOffset
                 cmp     cx, 0
                 jz      short locret_28B30
                 push    fontOffset
                 mov     fontOffset, 0
-                call    sub_28B94
+                call    DrawWordToken
                 pop     fontOffset
                 cmp     cx, 0
                 jz      short locret_28B30
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 jz      short locret_28B30
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 jz      short locret_28B30
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 jz      short locret_28B30
                 jmp     short loc_28AEA
@@ -44519,29 +44519,29 @@ loc_28B31:                              ; CODE XREF: DrawIndentedTextColumn+38�
                                         ; DrawIndentedTextColumn+11B↓j
                 push    fontOffset
                 mov     fontOffset, 0
-                call    sub_28B94
+                call    DrawWordToken
                 pop     fontOffset
                 cmp     cx, 0
                 jz      short locret_28B93
                 push    fontOffset
                 mov     fontOffset, 0
-                call    sub_28B94
+                call    DrawWordToken
                 pop     fontOffset
                 cmp     cx, 0
                 jz      short locret_28B93
                 push    fontOffset
                 mov     fontOffset, 0
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 pop     fontOffset
                 jz      short locret_28B93
                 push    fontOffset
                 mov     fontOffset, 0
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 pop     fontOffset
                 jz      short locret_28B93
-                call    sub_28B94
+                call    DrawWordToken
                 cmp     cx, 0
                 jz      short locret_28B93
                 jmp     short loc_28B31
@@ -44556,17 +44556,17 @@ DrawIndentedTextColumn endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28B94       proc near               ; CODE XREF: DrawIndentedTextColumn+45↑p
+DrawWordToken   proc near               ; CODE XREF: DrawIndentedTextColumn+45↑p
                                         ; DrawIndentedTextColumn+51↑p ...
-                cmp     byte ptr [bx], 20h ; ' '
+                cmp     byte ptr [bx], 20h ; ' ' ; Draws one word from [bx] (skipping leading/trailing spaces, writeChar per character). On hitting NUL: resets _textPos_x to dx, advances _textPos_y, decrements cx (line-end). On hitting another word: returns without decrementing cx (same line continues). Text is pre-wrapped by NUL line separators, not wrapped here. Called from DrawIndentedTextColumn.
                 jnz     short loc_28BA1
                 add     _textPos_x, 6
                 inc     bx
-                jmp     short sub_28B94
+                jmp     short DrawWordToken
 ; ---------------------------------------------------------------------------
 
-loc_28BA1:                              ; CODE XREF: sub_28B94+3↑j
-                                        ; sub_28B94+1D↓j
+loc_28BA1:                              ; CODE XREF: DrawWordToken+3↑j
+                                        ; DrawWordToken+1D↓j
                 mov     al, [bx]
                 cmp     al, 0
                 jz      short loc_28BC5
@@ -44577,8 +44577,8 @@ loc_28BA1:                              ; CODE XREF: sub_28B94+3↑j
                 jmp     short loc_28BA1
 ; ---------------------------------------------------------------------------
 
-loc_28BB3:                              ; CODE XREF: sub_28B94+15↑j
-                                        ; sub_28B94+2F↓j
+loc_28BB3:                              ; CODE XREF: DrawWordToken+15↑j
+                                        ; DrawWordToken+2F↓j
                 mov     al, [bx]
                 cmp     al, 0
                 jz      short loc_28BC5
@@ -44589,16 +44589,16 @@ loc_28BB3:                              ; CODE XREF: sub_28B94+15↑j
                 jmp     short loc_28BB3
 ; ---------------------------------------------------------------------------
 
-loc_28BC5:                              ; CODE XREF: sub_28B94+11↑j
-                                        ; sub_28B94+23↑j
+loc_28BC5:                              ; CODE XREF: DrawWordToken+11↑j
+                                        ; DrawWordToken+23↑j
                 inc     bx
                 mov     _textPos_x, dx
                 add     _textPos_y, 6
                 dec     cx
 
-locret_28BD0:                           ; CODE XREF: sub_28B94+27↑j
+locret_28BD0:                           ; CODE XREF: DrawWordToken+27↑j
                 retn
-sub_28B94       endp
+DrawWordToken   endp
 
 seg104          ends
 
