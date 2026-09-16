@@ -5553,6 +5553,30 @@ UI, while playing the normal (non-editor) dungeon view.
 
 636 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PlayTitleScreenSequence, UseExperienceBoostItem
+
+Named `sub_218DC` -> `PlayTitleScreenSequence`, called once from
+`InitGame` right before the already-named `ShowIntroPicture`: 3
+skippable keypress gates around `LoadMasterPalette` +
+`FileEntry_Read`(record 1) and `DrawPicture`(id 0), then
+`PlayMusicTrack`(3) and a ~12-second BIOS-clock-timed display window
+(skippable via ESC, or ended early once the clock target is
+reached). Reads as the game's title screen: draw the title picture,
+start its theme music, and hold it on screen for a fixed duration or
+until the player presses a key.
+
+Named `sub_1B5FD` -> `UseExperienceBoostItem`, reached from `UseItem`'s
+item `[+0xE]` flag `0x400` path (the "`UseItemType_400`" path already
+referenced informally in `file-formats.md`'s party-record notes). A
+one-time-use "tome of experience" consumable: gated on a global
+one-time-use flag, it shows "EXPERIENCE: +<amount>" (confirmed via
+string dump) and adds that packed-BCD amount directly to every
+eligible living party member's `+0x18` field — confirmed elsewhere in
+`file-formats.md` as packed-BCD experience points — then calls
+`CheckForLevelUp` per member.
+
+638 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

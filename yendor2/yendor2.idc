@@ -4135,7 +4135,9 @@ static Bytes_1(void) {
 	create_insn	(0X1B5DA);
 	set_name	(0X1B5DA,	"ClampValueAtSlotToTypeCap");
 	create_insn	(0X1B5F3);
+	set_cmt	(0X1B5FD,	"One-time-use 'tome of experience' item effect (UseItem's item [+0xE] bit 0x400 path). Gated on a global one-time-use flag (0xBCE+0x12); shows 'EXPERIENCE: +<BCD4 amount>' (0xBCE+0x14) and adds that amount to every eligible living party member's +0x18 XP field, then CheckForLevelUp per member.",	0);
 	create_insn	(0X1B5FD);
+	set_name	(0X1B5FD,	"UseExperienceBoostItem");
 	create_insn	(0X1B60F);
 	create_insn	(x=0X1B616);
 	op_hex		(x,	1);
@@ -4987,12 +4989,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1E4AA,	"Draws alchemy-screen picture 6 at (0x102,0x43), plus message 1. Called from RunAlchemyScreen. Exact narrative (vs. ShowAlchemyIconIdle) not confirmed.",	0);
 	create_insn	(0X1E4AA);
 	set_name	(0X1E4AA,	"ShowAlchemyIconActive");
-	set_cmt	(0X1E4D6,	"Draws alchemy-screen picture 5 at (0x102,0x43) -- sibling of ShowAlchemyIconActive. Called from RunAlchemyScreen (2 sites).",	0);
-	create_insn	(0X1E4D6);
-	set_name	(0X1E4D6,	"ShowAlchemyIconIdle");
-	set_cmt	(0X1E4FA,	"Byte-for-byte identical to ConfirmContainerInteraction (yes/no confirm prompt, message id 0x12, storing result + slot selection) -- likely duplicated into this overlay segment. Called from RunAlchemyScreen.",	0);
-	create_insn	(0X1E4FA);
-	set_name	(0X1E4FA,	"ConfirmAlchemyInteraction");
 }
 
 //------------------------------------------------------------------------
@@ -5002,6 +4998,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1E4D6,	"Draws alchemy-screen picture 5 at (0x102,0x43) -- sibling of ShowAlchemyIconActive. Called from RunAlchemyScreen (2 sites).",	0);
+	create_insn	(0X1E4D6);
+	set_name	(0X1E4D6,	"ShowAlchemyIconIdle");
+	set_cmt	(0X1E4FA,	"Byte-for-byte identical to ConfirmContainerInteraction (yes/no confirm prompt, message id 0x12, storing result + slot selection) -- likely duplicated into this overlay segment. Called from RunAlchemyScreen.",	0);
+	create_insn	(0X1E4FA);
+	set_name	(0X1E4FA,	"ConfirmAlchemyInteraction");
 	create_insn	(0X1E522);
 	set_cmt	(0X1E546,	"Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.",	0);
 	create_insn	(0X1E546);
@@ -5872,7 +5874,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X218AC);
 	create_insn	(0X218C3);
+	set_cmt	(0X218DC,	"Boot title screen: 3 skippable keypress gates around LoadMasterPalette + FileEntry_Read(record 1) and DrawPicture(id 0), then PlayMusicTrack(3) and a ~12-second BIOS-clock-timed display window (skippable via ESC, or via StopMusicAndResetTimer once the clock target is reached). Called once from InitGame, right before ShowIntroPicture.",	0);
 	create_insn	(0X218DC);
+	set_name	(0X218DC,	"PlayTitleScreenSequence");
 	create_insn	(0X218F6);
 	create_insn	(0X218F7);
 	set_cmt	(0X218FA,	"this",	0);
@@ -6753,6 +6757,15 @@ static Bytes_2(void) {
 	set_cmt	(0X252EF,	"Rolls the 6 core attributes for word_328D4 (RandomInRange(15)+45 each, 45-59), storing base+derived field pairs: +0x3C/+0x7C (also x10 into +0x56/+0x96, weight-like -- plausibly STRENGTH); +0x3E/+0x7E; +0x42/+0x82 (MP-formula component in UseTrainingItem -- plausibly INTELLIGENCE); +0x44/+0x84 (the other MP-formula component -- plausibly WISDOM); +0x46/+0x86 (a separate UseTrainingItem growth calc); +0x40/+0x80, whose 25%-scaled value sets both current and max HP (+0x52/+0x92) -- plausibly STAMINA/CONSTITUTION.",	0);
 	create_insn	(0X252EF);
 	set_name	(0X252EF,	"RollCharacterAttributes");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2539F);
 	create_insn	(0X253BB);
 	create_insn	(0X253C4);
@@ -6777,15 +6790,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25544,	"Uses SelectDefaultPartyRecord's empty-slot scan (first record with +0xE==0); if none found, returns (roster full, no prompt). Otherwise wipes the slot (ClearPartyRecord), draws picture 3 full-screen (DrawFullScreenPictureAndCacheToEMS), and writes 'CHARACTER CREATION'. Called from ShowPartyMembers.",	0);
 	create_insn	(0X25544);
 	set_name	(0X25544,	"ShowCreateCharacterPrompt");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X25550);
 	op_hex		(x,	1);
 	create_insn	(0X25561);
@@ -9121,6 +9125,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A56E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2A570);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A572);
@@ -9143,15 +9156,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2A653,	"Shifts color al by the shared [bp+var_21] delta (DrawPicture's copy of word_32926) within its 16-entry palette hue-block (floor al&0xF0, ceiling al|0x0F), clamped at the block edges; no-op if delta==0 or al>=0xD0. A distance/light dimming shade primitive. Called 9x from DrawPicture and sibling picture-draw code.",	0);
 	create_insn	(0X2A653);
 	set_name	(0X2A653,	"ShiftPaletteShadeClamped");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2A661);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A664);
@@ -11698,6 +11702,15 @@ static Bytes_4(void) {
 	set_cmt	(0X36D13,	"Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per-tier cost table at DS:0xCB2), credited by TrySellItemForGold (sells a held item of a matching type), and also touched by ApplyEffectCost's trap/status-effect cost dispatch alongside the two ore counters (0x94B7/0x94BB).",	0);
 	create_word	(0X36D13);
 	set_name	(0X36D13,	"g_partyGold");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_word	(0X36D15);
 	set_cmt	(0X36D31,	"Global boolean flag bitfield (quest/world-state flags), accessed via SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag/GetGlobalFlagBitAndWord. GrantMonsterRewards sets/clears specific flags on monster death via its [+0x14]/[+0x16] signed flag-index fields.",	0);
 	set_name	(0X36D31,	"g_globalFlags");
@@ -11739,15 +11752,6 @@ static Bytes_4(void) {
 	make_array	(0X394AA,	0X16);
 	create_word	(0X394C0);
 	create_word	(0X394D8);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X397B4,	0X9);
 	set_name	(0X397B4,	"aPentagon");
 	create_strlit	(0X397BD,	0XB);

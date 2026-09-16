@@ -1755,7 +1755,12 @@ pending-new level, confirming `+0x1E`'s "pending level-up" role too
 `UseTrainingItem`) is the shared wrapper: resolves the active party
 slot (`word_32924` → a `g_partySlotAssignment` entry → character id →
 `SelectPartyRecordById`), calls `CheckForLevelUp`, and shows
-`ShowLevelUpMessage` if `+0x1E` came back nonzero.
+`ShowLevelUpMessage` if `+0x1E` came back nonzero. A direct consumer
+of `+0x18`: `UseExperienceBoostItem` (was `sub_1B5FD`, `UseItem`'s
+item `[+0xE]` bit `0x400` path) is a one-time-use "tome of
+experience" item that adds a fixed packed-BCD amount straight into
+every eligible living party member's `+0x18`, gated by its own
+one-time-use global flag so it can't be reused.
 
 ### Global quest/world-state flags
 

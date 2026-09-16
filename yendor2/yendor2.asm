@@ -3305,7 +3305,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 mov     byte_2E400, 0
                 test    word_328C4, 8000h
                 jnz     short loc_11FDF
-                call    sub_218DC
+                call    PlayTitleScreenSequence
                 call    sub_1FBE1
                 cmp     byte_2E400, 1Bh
                 jz      short loc_11FA3
@@ -13270,7 +13270,7 @@ loc_17C9C:                              ; CODE XREF: UseItem+2A↑j
 loc_17CB1:                              ; CODE XREF: UseItem+118↑j
                 test    word ptr es:[si+0Eh], 400h
                 jz      short loc_17CBE
-                call    sub_1B5FD
+                call    UseExperienceBoostItem
 
 loc_17CBE:                              ; CODE XREF: UseItem+125↑j
                 test    word ptr es:[si+0Eh], 1
@@ -20023,7 +20023,7 @@ seg043          segment byte public 'CODE' use16
 
 
 CheckForLevelUp proc far                ; CODE XREF: ApplyIconBarStatDelta+5F↑P
-                                        ; sub_1B5FD+B4↓P ...
+                                        ; UseExperienceBoostItem+B4↓P ...
                 push    si              ; CheckForLevelUp (implicit si=word_328D4): walks the XP-threshold table at 0x9277 (65 x 4-byte packed-BCD entries, one per level) starting at the character's current level [+0x16], comparing their XP [+0x18] against each threshold and advancing while >=. If the result exceeds the current level, stores it into [+0x1E] (pending new level, not yet applied).
                 push    di
                 mov     si, word_328D4
@@ -20255,8 +20255,8 @@ ClampValueAtSlotToTypeCap endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B5FD       proc far                ; CODE XREF: UseItem+127↑P
-                push    bp
+UseExperienceBoostItem proc far         ; CODE XREF: UseItem+127↑P
+                push    bp              ; One-time-use 'tome of experience' item effect (UseItem's item [+0xE] bit 0x400 path). Gated on a global one-time-use flag (0xBCE+0x12); shows 'EXPERIENCE: +<BCD4 amount>' (0xBCE+0x14) and adds that amount to every eligible living party member's +0x18 XP field, then CheckForLevelUp per member.
                 push    di
                 mov     di, 0BCEh
                 mov     ax, [di+12h]
@@ -20267,7 +20267,7 @@ sub_1B5FD       proc far                ; CODE XREF: UseItem+127↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B60F:                              ; CODE XREF: sub_1B5FD+D↑j
+loc_1B60F:                              ; CODE XREF: UseExperienceBoostItem+D↑j
                 call    RestoreCursorBackgroundIfDirty
                 push    cx
                 push    si
@@ -20300,7 +20300,7 @@ loc_1B60F:                              ; CODE XREF: sub_1B5FD+D↑j
                 mov     bx, 95EBh
                 mov     di, 0C50h
 
-loc_1B692:                              ; CODE XREF: sub_1B5FD+CB↓j
+loc_1B692:                              ; CODE XREF: UseExperienceBoostItem+CB↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_1B6D4
@@ -20318,21 +20318,21 @@ loc_1B692:                              ; CODE XREF: sub_1B5FD+CB↓j
                 mov     ax, word_32904
                 mov     [di+0Ah], ax
 
-loc_1B6C2:                              ; CODE XREF: sub_1B5FD+A7↑j
+loc_1B6C2:                              ; CODE XREF: UseExperienceBoostItem+A7↑j
                 add     bx, 2
                 add     di, 14h
                 loop    loc_1B692
                 call    UpdatePartyAverageStatTiers
                 call    ApplyEffectAndDrawIconBar
 
-loc_1B6D4:                              ; CODE XREF: sub_1B5FD+99↑j
+loc_1B6D4:                              ; CODE XREF: UseExperienceBoostItem+99↑j
                 call    sub_238CD
                 pop     si
                 pop     cx
                 pop     di
                 pop     bp
                 retf
-sub_1B5FD       endp
+UseExperienceBoostItem endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31023,8 +31023,8 @@ seg066          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_218DC       proc far                ; CODE XREF: InitGame+A5↑P
-                call    PollKeyboardInput
+PlayTitleScreenSequence proc far        ; CODE XREF: InitGame+A5↑P
+                call    PollKeyboardInput ; Boot title screen: 3 skippable keypress gates around LoadMasterPalette + FileEntry_Read(record 1) and DrawPicture(id 0), then PlayMusicTrack(3) and a ~12-second BIOS-clock-timed display window (skippable via ESC, or via StopMusicAndResetTimer once the clock target is reached). Called once from InitGame, right before ShowIntroPicture.
                 cmp     errorCode, 0
                 jz      short loc_218F7
                 cmp     byte_2E400, 1Bh
@@ -31033,12 +31033,12 @@ sub_218DC       proc far                ; CODE XREF: InitGame+A5↑P
                 jmp     short loc_218F7
 ; ---------------------------------------------------------------------------
 
-locret_218F6:                           ; CODE XREF: sub_218DC+11↑j
+locret_218F6:                           ; CODE XREF: PlayTitleScreenSequence+11↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_218F7:                              ; CODE XREF: sub_218DC+A↑j
-                                        ; sub_218DC+18↑j
+loc_218F7:                              ; CODE XREF: PlayTitleScreenSequence+A↑j
+                                        ; PlayTitleScreenSequence+18↑j
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -31056,12 +31056,12 @@ loc_218F7:                              ; CODE XREF: sub_218DC+A↑j
                 jmp     short loc_21937
 ; ---------------------------------------------------------------------------
 
-locret_21936:                           ; CODE XREF: sub_218DC+51↑j
+locret_21936:                           ; CODE XREF: PlayTitleScreenSequence+51↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21937:                              ; CODE XREF: sub_218DC+4A↑j
-                                        ; sub_218DC+58↑j
+loc_21937:                              ; CODE XREF: PlayTitleScreenSequence+4A↑j
+                                        ; PlayTitleScreenSequence+58↑j
                 mov     x, 1
                 mov     y, 1
                 mov     _font_bgTransparent, 0
@@ -31080,12 +31080,12 @@ loc_21937:                              ; CODE XREF: sub_218DC+4A↑j
                 jmp     short loc_21980
 ; ---------------------------------------------------------------------------
 
-locret_2197F:                           ; CODE XREF: sub_218DC+9A↑j
+locret_2197F:                           ; CODE XREF: PlayTitleScreenSequence+9A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21980:                              ; CODE XREF: sub_218DC+93↑j
-                                        ; sub_218DC+A1↑j
+loc_21980:                              ; CODE XREF: PlayTitleScreenSequence+93↑j
+                                        ; PlayTitleScreenSequence+A1↑j
                 mov     byte_2E400, 0
                 mov     ax, 3
                 call    PlayMusicTrack
@@ -31103,8 +31103,8 @@ loc_21980:                              ; CODE XREF: sub_218DC+93↑j
                 jnb     short loc_219A7
                 inc     ax
 
-loc_219A7:                              ; CODE XREF: sub_218DC+C8↑j
-                                        ; sub_218DC+10A↓j
+loc_219A7:                              ; CODE XREF: PlayTitleScreenSequence+C8↑j
+                                        ; PlayTitleScreenSequence+10A↓j
                 push    ax
                 push    bx
                 test    g_driverStateFlags, 2
@@ -31115,8 +31115,8 @@ loc_219A7:                              ; CODE XREF: sub_218DC+C8↑j
                 jmp     short loc_219ED
 ; ---------------------------------------------------------------------------
 
-loc_219BD:                              ; CODE XREF: sub_218DC+D3↑j
-                                        ; sub_218DC+DA↑j
+loc_219BD:                              ; CODE XREF: PlayTitleScreenSequence+D3↑j
+                                        ; PlayTitleScreenSequence+DA↑j
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_219DA
@@ -31127,8 +31127,8 @@ loc_219BD:                              ; CODE XREF: sub_218DC+D3↑j
                 jmp     short loc_219ED
 ; ---------------------------------------------------------------------------
 
-loc_219DA:                              ; CODE XREF: sub_218DC+EB↑j
-                                        ; sub_218DC+F2↑j
+loc_219DA:                              ; CODE XREF: PlayTitleScreenSequence+EB↑j
+                                        ; PlayTitleScreenSequence+F2↑j
                 mov     ah, 0
                 int     1Ah             ; CLOCK - GET TIME OF DAY
                                         ; Return: CX:DX = clock count
@@ -31143,12 +31143,12 @@ loc_219DA:                              ; CODE XREF: sub_218DC+EB↑j
                 ja      short loc_219A7
                 call    StopMusicAndResetTimer
 
-loc_219ED:                              ; CODE XREF: sub_218DC+DF↑j
-                                        ; sub_218DC+FC↑j ...
+loc_219ED:                              ; CODE XREF: PlayTitleScreenSequence+DF↑j
+                                        ; PlayTitleScreenSequence+FC↑j ...
                 call    sub_25862
                 and     word_328C8, 0F7FFh
                 retf
-sub_218DC       endp
+PlayTitleScreenSequence endp
 
 seg066          ends
 
@@ -42241,7 +42241,7 @@ SetRecordFlag_10C endp
 
 
 SetGlobalFlag   proc far                ; CODE XREF: sub_1B4C2+95↑P
-                                        ; sub_1B5FD+82↑P ...
+                                        ; UseExperienceBoostItem+82↑P ...
                 push    si              ; SetGlobalFlag(ax=flag index): [si] |= mask.
                 call    GetGlobalFlagBitAndWord
                 or      [si], ax
