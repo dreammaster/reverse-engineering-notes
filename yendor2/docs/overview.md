@@ -6419,6 +6419,32 @@ Named `ConsumeItemChargeResource`.
 764 named of 769 functions as of this update — only 5 unnamed
 functions remain.
 
+### 2026-09-15 session update, continued: RunPartyMemberDetailScreen
+
+Analyzed the next remaining large dispatcher, `sub_19553` — an
+interactive party-member detail screen, entered by an F1-F4 keypress
+or a portrait click from `start`'s main loop or `HandleDungeonInput`.
+Reuses the same drawing trio `RunItemServiceRecipientLoop` uses
+(`SelectAndDrawPartyStatusRow` + `DrawTrainingScreenStatSheet` +
+`DrawPartyStatusIconRow`), lets the player switch which of the 4
+active party members is shown (F1-F4 or clicking another portrait),
+and — the interesting part — toggles the currently-viewed character
+into/out of one of **5 slots** at `0x94A3`/`94A5`/`94A7`/`94A9`/`94AB`
+via a second hit-test region.
+
+The exact narrative purpose of those 5 slots isn't confirmed. A
+pre-existing comment on a separate, still-untraced roster screen
+(drawing all 9 `g_partyRecords` slots via digit keys 1-9) notes that
+dismissing a character from the active party "removes the slot's
+index from two small lookup tables (`0x95EB`/`0x94A3`)" — so `0x94A3`
+is plausibly some kind of secondary/reserve roster tracking, but that
+link isn't independently confirmed. Named
+`RunPartyMemberDetailScreen`, honestly flagging the open question
+rather than guessing at the 5-slot narrative.
+
+765 named of 769 functions as of this update — only 4 unnamed
+functions remain.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

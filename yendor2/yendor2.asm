@@ -601,7 +601,7 @@ loc_104DA:                              ; CODE XREF: start+BA↑j
 
 loc_104F1:                              ; CODE XREF: start+4E0↑j
                                         ; start+4EC↑j
-                call    sub_19553
+                call    RunPartyMemberDetailScreen
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 jmp     loc_10043
@@ -10395,7 +10395,7 @@ loc_16527:                              ; CODE XREF: HandleDungeonInput+92↑j
 
 loc_16536:                              ; CODE XREF: HandleDungeonInput+7E↑j
                                         ; HandleDungeonInput+12A↑j
-                call    sub_19553
+                call    RunPartyMemberDetailScreen
                 or      word_328C4, 400h
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
@@ -12330,7 +12330,7 @@ loc_17400:                              ; CODE XREF: RunShopScreen+C0↑j
 
 loc_17403:                              ; CODE XREF: RunShopScreen+41↑j
                                         ; RunShopScreen+C5↑j
-                call    sub_19553
+                call    RunPartyMemberDetailScreen
                 call    RefreshDungeonScreen
                 test    word_328C6, 80h
                 jz      short loc_17422
@@ -14836,7 +14836,7 @@ loc_187D4:                              ; CODE XREF: sub_1869D+115↑j
 
 loc_187D7:                              ; CODE XREF: sub_1869D+1D↑j
                                         ; sub_1869D+122↑j
-                call    sub_19553
+                call    RunPartyMemberDetailScreen
                 call    RestoreLargePanelFromEMS
                 test    word_328C6, 4000h
                 jz      short loc_187F9
@@ -16304,9 +16304,9 @@ RunItemServiceRecipientLoop endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19553       proc far                ; CODE XREF: start:loc_104F1↑P
+RunPartyMemberDetailScreen proc far     ; CODE XREF: start:loc_104F1↑P
                                         ; HandleDungeonInput:loc_16536↑P ...
-                cmp     byte_2E400, 0
+                cmp     byte_2E400, 0   ; Interactive party-member detail screen (F1-F4 or portrait click to enter): draws the training-style stat sheet, lets the player switch which of the 4 active members is shown, and toggles the viewed character into/out of one of 5 slots at 0x94A3/94A5/94A7/94A9/94AB (exact purpose unconfirmed) via a second hit-test region. Called from `start` and HandleDungeonInput.
                 jz      short loc_19583
                 mov     bx, 95EBh
                 cmp     byte_2E400, 3Bh ; ';'
@@ -16323,7 +16323,7 @@ sub_19553       proc far                ; CODE XREF: start:loc_104F1↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_19583:                              ; CODE XREF: sub_19553+5↑j
+loc_19583:                              ; CODE XREF: RunPartyMemberDetailScreen+5↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
@@ -16333,7 +16333,7 @@ loc_19583:                              ; CODE XREF: sub_19553+5↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_19598:                              ; CODE XREF: sub_19553+42↑j
+loc_19598:                              ; CODE XREF: RunPartyMemberDetailScreen+42↑j
                 mov     bx, 95EBh
                 cmp     ax, 1
                 jz      short loc_195B9
@@ -16349,14 +16349,14 @@ loc_19598:                              ; CODE XREF: sub_19553+42↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_195B9:                              ; CODE XREF: sub_19553+F↑j
-                                        ; sub_19553+19↑j ...
+loc_195B9:                              ; CODE XREF: RunPartyMemberDetailScreen+F↑j
+                                        ; RunPartyMemberDetailScreen+19↑j ...
                 cmp     word ptr [bx], 0
                 jnz     short loc_195BF
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_195BF:                              ; CODE XREF: sub_19553+69↑j
+loc_195BF:                              ; CODE XREF: RunPartyMemberDetailScreen+69↑j
                 push    word_3295A
                 and     word_3295A, 3FFFh
                 mov     word_32924, bx
@@ -16364,8 +16364,8 @@ loc_195BF:                              ; CODE XREF: sub_19553+69↑j
                 call    TriggerSoundEvent
                 mov     bx, word_32924
 
-loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
-                                        ; sub_19553+1AB↓j
+loc_195D9:                              ; CODE XREF: RunPartyMemberDetailScreen+16E↓j
+                                        ; RunPartyMemberDetailScreen+1AB↓j
                 mov     ax, [bx]
                 call    SelectPartyRecordById
                 call    RestoreCursorBackgroundIfDirty
@@ -16375,8 +16375,8 @@ loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
-loc_195FA:                              ; CODE XREF: sub_19553+B1↓j
-                                        ; sub_19553+D3↓j ...
+loc_195FA:                              ; CODE XREF: RunPartyMemberDetailScreen+B1↓j
+                                        ; RunPartyMemberDetailScreen+D3↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_195FA
@@ -16385,13 +16385,13 @@ loc_195FA:                              ; CODE XREF: sub_19553+B1↓j
                 jmp     loc_19701
 ; ---------------------------------------------------------------------------
 
-loc_19610:                              ; CODE XREF: sub_19553+B8↑j
+loc_19610:                              ; CODE XREF: RunPartyMemberDetailScreen+B8↑j
                 cmp     errorCode, 2
                 jnz     short loc_1961A
                 jmp     loc_196C7
 ; ---------------------------------------------------------------------------
 
-loc_1961A:                              ; CODE XREF: sub_19553+C2↑j
+loc_1961A:                              ; CODE XREF: RunPartyMemberDetailScreen+C2↑j
                 cmp     errorCode, 3
                 jz      short loc_1962B
                 cmp     errorCode, 7
@@ -16399,7 +16399,7 @@ loc_1961A:                              ; CODE XREF: sub_19553+C2↑j
                 jmp     loc_19712
 ; ---------------------------------------------------------------------------
 
-loc_1962B:                              ; CODE XREF: sub_19553+CC↑j
+loc_1962B:                              ; CODE XREF: RunPartyMemberDetailScreen+CC↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 632Eh
@@ -16412,7 +16412,7 @@ loc_1962B:                              ; CODE XREF: sub_19553+CC↑j
                 jmp     loc_19712
 ; ---------------------------------------------------------------------------
 
-loc_1964B:                              ; CODE XREF: sub_19553+F3↑j
+loc_1964B:                              ; CODE XREF: RunPartyMemberDetailScreen+F3↑j
                 mov     dx, [bx]
                 mov     bx, 94A3h
                 cmp     ax, 2
@@ -16420,36 +16420,36 @@ loc_1964B:                              ; CODE XREF: sub_19553+F3↑j
                 jmp     loc_19734
 ; ---------------------------------------------------------------------------
 
-loc_19658:                              ; CODE XREF: sub_19553+100↑j
+loc_19658:                              ; CODE XREF: RunPartyMemberDetailScreen+100↑j
                 mov     bx, 94A5h
                 cmp     ax, 3
                 jnz     short loc_19663
                 jmp     loc_19734
 ; ---------------------------------------------------------------------------
 
-loc_19663:                              ; CODE XREF: sub_19553+10B↑j
+loc_19663:                              ; CODE XREF: RunPartyMemberDetailScreen+10B↑j
                 mov     bx, 94A7h
                 cmp     ax, 4
                 jnz     short loc_1966E
                 jmp     loc_19734
 ; ---------------------------------------------------------------------------
 
-loc_1966E:                              ; CODE XREF: sub_19553+116↑j
+loc_1966E:                              ; CODE XREF: RunPartyMemberDetailScreen+116↑j
                 mov     bx, 94A9h
                 cmp     ax, 5
                 jnz     short loc_19679
                 jmp     loc_19734
 ; ---------------------------------------------------------------------------
 
-loc_19679:                              ; CODE XREF: sub_19553+121↑j
+loc_19679:                              ; CODE XREF: RunPartyMemberDetailScreen+121↑j
                 mov     bx, 94ABh
                 cmp     ax, 6
                 jnz     short loc_19684
                 jmp     loc_19734
 ; ---------------------------------------------------------------------------
 
-loc_19684:                              ; CODE XREF: sub_19553+EA↑j
-                                        ; sub_19553+12C↑j
+loc_19684:                              ; CODE XREF: RunPartyMemberDetailScreen+EA↑j
+                                        ; RunPartyMemberDetailScreen+12C↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
@@ -16469,20 +16469,20 @@ loc_19684:                              ; CODE XREF: sub_19553+EA↑j
                 cmp     ax, 1Fh
                 jnz     short loc_196C4
 
-loc_196B8:                              ; CODE XREF: sub_19553+14B↑j
-                                        ; sub_19553+153↑j ...
+loc_196B8:                              ; CODE XREF: RunPartyMemberDetailScreen+14B↑j
+                                        ; RunPartyMemberDetailScreen+153↑j ...
                 cmp     word ptr [bx], 0
                 jz      short loc_196C4
                 mov     word_32924, bx
                 jmp     loc_195D9
 ; ---------------------------------------------------------------------------
 
-loc_196C4:                              ; CODE XREF: sub_19553+143↑j
-                                        ; sub_19553+163↑j ...
+loc_196C4:                              ; CODE XREF: RunPartyMemberDetailScreen+143↑j
+                                        ; RunPartyMemberDetailScreen+163↑j ...
                 jmp     loc_195FA
 ; ---------------------------------------------------------------------------
 
-loc_196C7:                              ; CODE XREF: sub_19553+C4↑j
+loc_196C7:                              ; CODE XREF: RunPartyMemberDetailScreen+C4↑j
                 mov     bx, 95EBh
                 cmp     byte_2E400, 3Bh ; ';'
                 jz      short loc_196F2
@@ -16498,19 +16498,19 @@ loc_196C7:                              ; CODE XREF: sub_19553+C4↑j
                 jmp     loc_195FA
 ; ---------------------------------------------------------------------------
 
-loc_196F2:                              ; CODE XREF: sub_19553+17C↑j
-                                        ; sub_19553+186↑j ...
+loc_196F2:                              ; CODE XREF: RunPartyMemberDetailScreen+17C↑j
+                                        ; RunPartyMemberDetailScreen+186↑j ...
                 cmp     word ptr [bx], 0
                 jnz     short loc_196FA
                 jmp     loc_195FA
 ; ---------------------------------------------------------------------------
 
-loc_196FA:                              ; CODE XREF: sub_19553+1A2↑j
+loc_196FA:                              ; CODE XREF: RunPartyMemberDetailScreen+1A2↑j
                 mov     word_32924, bx
                 jmp     loc_195D9
 ; ---------------------------------------------------------------------------
 
-loc_19701:                              ; CODE XREF: sub_19553+BA↑j
+loc_19701:                              ; CODE XREF: RunPartyMemberDetailScreen+BA↑j
                 cmp     byte_2E400, 1Bh
                 jz      short loc_19712
                 cmp     byte_2E400, 43h ; 'C'
@@ -16518,8 +16518,8 @@ loc_19701:                              ; CODE XREF: sub_19553+BA↑j
                 jmp     loc_195FA
 ; ---------------------------------------------------------------------------
 
-loc_19712:                              ; CODE XREF: sub_19553+D5↑j
-                                        ; sub_19553+F5↑j ...
+loc_19712:                              ; CODE XREF: RunPartyMemberDetailScreen+D5↑j
+                                        ; RunPartyMemberDetailScreen+F5↑j ...
                 mov     ax, 2
                 call    TriggerSoundEvent
                 mov     word_32924, 0
@@ -16530,8 +16530,8 @@ loc_19712:                              ; CODE XREF: sub_19553+D5↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_19734:                              ; CODE XREF: sub_19553+102↑j
-                                        ; sub_19553+10D↑j ...
+loc_19734:                              ; CODE XREF: RunPartyMemberDetailScreen+102↑j
+                                        ; RunPartyMemberDetailScreen+10D↑j ...
                 mov     si, word_328D4
                 test    word ptr [si+1Ch], 1C40h
                 jz      short loc_19747
@@ -16539,23 +16539,23 @@ loc_19734:                              ; CODE XREF: sub_19553+102↑j
                 jmp     loc_195FA
 ; ---------------------------------------------------------------------------
 
-loc_19747:                              ; CODE XREF: sub_19553+1EA↑j
+loc_19747:                              ; CODE XREF: RunPartyMemberDetailScreen+1EA↑j
                 cmp     [bx], dx
                 jz      short loc_1974F
                 mov     [bx], dx
                 jmp     short loc_19753
 ; ---------------------------------------------------------------------------
 
-loc_1974F:                              ; CODE XREF: sub_19553+1F6↑j
+loc_1974F:                              ; CODE XREF: RunPartyMemberDetailScreen+1F6↑j
                 mov     word ptr [bx], 0
 
-loc_19753:                              ; CODE XREF: sub_19553+1FA↑j
+loc_19753:                              ; CODE XREF: RunPartyMemberDetailScreen+1FA↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawTrainingScreenStatSheet
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 jmp     loc_195FA
-sub_19553       endp
+RunPartyMemberDetailScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16612,7 +16612,7 @@ DrawStatValueWithCapColor endp
 
 
 DrawTrainingScreenStatSheet proc near   ; CODE XREF: RunItemServiceRecipientLoop+D↑p
-                                        ; sub_19553+95↑p ...
+                                        ; RunPartyMemberDetailScreen+95↑p ...
                 mov     _font_bgTransparent, 1 ; Redraws the current party member's full stat-sheet grid via DrawStatValueWithCapColor: the 6 core attribute base/derived pairs (+0x3C/+0x7C), the +0x4C/+0x8C trio, 8 more fields at +0x58/+0x98, plus one more. Near-duplicate, differently-positioned counterpart to DrawCharacterStatSheet, used by the training/service screens. Called from RunItemServiceRecipientLoop and sub_19553.
                 mov     _font_fgColor, 0Fh
                 mov     word_2E412, 0Fh
@@ -16737,7 +16737,7 @@ DrawTrainingScreenStatSheet endp
 
 
 SelectAndDrawPartyStatusRow proc near   ; CODE XREF: RunItemServiceRecipientLoop:loc_193C8↑p
-                                        ; sub_19553+92↑p
+                                        ; RunPartyMemberDetailScreen+92↑p
                 mov     al, byte_2E400  ; Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).
                 push    ax
                 push    si

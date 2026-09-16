@@ -639,15 +639,22 @@ each row; these are player characters, not towns.
 
 Digit keys `1`-`9` select a roster slot by index (recomputing
 `word_328D4` the same way `SelectPartyRecordById` does) and call
-`sub_23C18` (still an open lead — a ~270-line handler, not traced) to
-open some detail/interaction screen. A second, differently-routed key
-range reaches the same slot math but first tests a flag
-(`+0x15C` bit `0x800`); when set, it clears the bit and removes the
-slot's index from two small lookup tables (`0x95EB`, 5 slots at
-`0x94A3`) before falling through — plausibly a recruit/dismiss
-mechanic (adding/removing a character from the active adventuring
-group), but not confirmed. Worth revisiting once `sub_23C18` is
-traced. Separately, `ShowWorldMap`'s exit path (`D` key or an
+`RunCharacterDetailOverlay` (was `sub_23C18`, since traced — the
+roster screen's character-detail popup) to open a detail/interaction
+screen. A second, differently-routed key range reaches the same slot
+math but first tests a flag (`+0x15C` bit `0x800`); when set, it
+clears the bit and removes the slot's index from two small lookup
+tables (`0x95EB`, 5 slots at `0x94A3`) before falling through —
+plausibly a recruit/dismiss mechanic (adding/removing a character
+from the active adventuring group), but not confirmed. The same
+5-slot table `0x94A3` is independently reached from
+`RunPartyMemberDetailScreen` (was `sub_19553`, the interactive
+party-member info screen entered by F1-F4/portrait-click from the
+main dungeon loop): while viewing one of the 4 active members, the
+player can toggle that character's id into/out of one of the 5
+`0x94A3` slots via a dedicated hit-test region — consistent with, but
+not conclusively tying together, the recruit/dismiss reading above.
+Separately, `ShowWorldMap`'s exit path (`D` key or an
 equivalent mouse click, both leading straight to a `retf`) calls
 `CompactPartyRosterSlots` (was `sub_2BF3C`) as a cleanup-on-exit step:
 it cascades non-empty roster entries down to fill gaps, across not

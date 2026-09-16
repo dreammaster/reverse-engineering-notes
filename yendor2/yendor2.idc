@@ -3647,7 +3647,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1953D);
 	create_insn	(0X1954B);
+	set_cmt	(0X19553,	"Interactive party-member detail screen (F1-F4 or portrait click to enter): draws the training-style stat sheet, lets the player switch which of the 4 active members is shown, and toggles the viewed character into/out of one of 5 slots at 0x94A3/94A5/94A7/94A9/94AB (exact purpose unconfirmed) via a second hit-test region. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X19553);
+	set_name	(0X19553,	"RunPartyMemberDetailScreen");
 	create_insn	(0X19583);
 	create_insn	(0X19598);
 	create_insn	(0X195B9);
@@ -4667,9 +4669,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1CCBC,	"Computes a tiered discount/markup percentage from party record field +0x68 (plausibly the BARTERING skill/stat) via 7 descending thresholds, applies it via MulBCD4ByWord to preview a scaled sell/ buy price, then -- gated on IsItemEligibleForEnhance / IsItemEligibleForRepair -- computes further scaled preview prices for enhance/repair costs. Called from PayGoldAndAcquireItem and SellClickedCatalogItem.",	0);
 	create_insn	(0X1CCBC);
 	set_name	(0X1CCBC,	"ComputeBarterPricingPreview");
-	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
-	create_insn	(0X1CDBC);
-	set_name	(0X1CDBC,	"IsItemRangeAvailable");
 }
 
 //------------------------------------------------------------------------
@@ -4679,6 +4678,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
+	create_insn	(0X1CDBC);
+	set_name	(0X1CDBC,	"IsItemRangeAvailable");
 	create_insn	(0X1CDFA);
 	create_insn	(0X1CE02);
 	create_insn	(0X1CE25);
@@ -6322,10 +6324,6 @@ static Bytes_2(void) {
 	set_cmt	(0X22B78,	"Scans g_levelMonsters for an entry matching the given monster type id (ax). Found -> sub_233F5 + ZF clear; not found -> ZF set. Used by TryTriggerMonsterEncounterAtCell as a duplicate-prevention check before spawning (skips spawning if this type already exists on the level) -- NOT a probability roll, correcting last round's comment.",	0);
 	create_insn	(0X22B78);
 	set_name	(0X22B78,	"FindMonsterTypeInLevelPool");
-	create_insn	(0X22B8E);
-	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
-	create_insn	(0X22B96);
-	set_name	(0X22B96,	"GrantMonsterRewards");
 }
 
 //------------------------------------------------------------------------
@@ -6335,6 +6333,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X22B8E);
+	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
+	create_insn	(0X22B96);
+	set_name	(0X22B96,	"GrantMonsterRewards");
 	create_insn	(0X22BD9);
 	create_insn	(0X22BEF);
 	set_cmt	(0X22BF5,	"Clears (ANDs out) bit ax of the same cell-monster-spawned bitmap and writes it back. Called from sub_209D2 when a monster falls outside the tracked visible range (despawn/cleanup).",	0);
@@ -7912,14 +7914,6 @@ static Bytes_3(void) {
 	set_cmt	(0X28138,	"FormatNumber into the shared 0xAFA8 buffer, then StripCommasAndSpaces on it -- produces a compact, separator-free numeric string, returned in ax. Called from unnamed sub_28034.",	0);
 	create_insn	(0X28138);
 	set_name	(0X28138,	"FormatNumberCompact");
-	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
-	create_insn	(0X2814C);
-	set_name	(0X2814C,	"ComputeGameClockTime");
-	create_insn	(0X28172);
-	create_insn	(0X2818B);
-	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
-	create_insn	(0X2819F);
-	set_name	(0X2819F,	"ShowGameClockCommand");
 }
 
 //------------------------------------------------------------------------
@@ -7929,6 +7923,14 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
+	create_insn	(0X2814C);
+	set_name	(0X2814C,	"ComputeGameClockTime");
+	create_insn	(0X28172);
+	create_insn	(0X2818B);
+	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
+	create_insn	(0X2819F);
+	set_name	(0X2819F,	"ShowGameClockCommand");
 	create_insn	(x=0X281A4);
 	op_hex		(x,	1);
 	set_cmt	(0X2821E,	"msg",	0);
@@ -10311,11 +10313,6 @@ static Bytes_4(void) {
 	set_cmt	(0X2D498,	"ax=sound command. If WaitForSoundDriverIdle didn't need to wait (already idle), discards ax and just waits 6 ticks -- no sound plays. If it DID wait (driver was busy), calls TriggerSoundEvent(ax) once free. Backwards from the sibling TryPlaySoundCue/Alt's 'drop if busy' pattern. The ax==0 path loops back into its own 'pop ax' (IDA flags sp-analysis failed here) -- plausibly unreachable dead code, left as observed. Called from sub_2C0FE.",	0);
 	create_insn	(0X2D498);
 	set_name	(0X2D498,	"TriggerSoundEventAfterDriverWait");
-	set_cmt	(0X2D4A1,	"ticks",	0);
-	create_insn	(0X2D4AA);
-	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);
-	create_insn	(0X2D4B6);
-	set_name	(0X2D4B6,	"ApplyAttackToTarget");
 }
 
 //------------------------------------------------------------------------
@@ -10325,6 +10322,11 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2D4A1,	"ticks",	0);
+	create_insn	(0X2D4AA);
+	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);
+	create_insn	(0X2D4B6);
+	set_name	(0X2D4B6,	"ApplyAttackToTarget");
 	create_insn	(x=0X2D4C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D4CA);
