@@ -1409,7 +1409,9 @@ static Bytes_0(void) {
 	create_insn	(0X11D66);
 	create_insn	(0X11DE2);
 	set_cmt	(0X11E11,	"ticks",	0);
+	set_cmt	(0X11E1C,	"Waits for driver idle (via TryPlaySoundCueAlt(cx=0xFFFF), always a no-op cue but still runs its idle-wait), triggers sound event 0x47, waits again, triggers event 0x48. A two-part sound cue. Called from sub_11A10.",	0);
 	create_insn	(0X11E1C);
+	set_name	(0X11E1C,	"PlaySoundSequenceGH");
 	create_insn	(x=0X11E39);
 	op_hex		(x,	1);
 	create_insn	(x=0X11E41);
@@ -3151,9 +3153,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18312);
 	op_hex		(x,	1);
-	set_cmt	(0X18333,	"RollEffectResistance: if [si+0xE]==0 (not yet resolved this pass) and the effect's high cost-flag bits (di+8 & 0xFF80) are set, sums the party member's equipment/bonus resistance fields (+0x20..+0x30, one per matching high bit of di+8) and calls FailsSavingThrow (threshold=word_32DC0). Records 0 into [si+0xE] if resisted, or the raw high cost-flags if the save failed.",	0);
-	create_insn	(0X18333);
-	set_name	(0X18333,	"RollEffectResistance");
 }
 
 //------------------------------------------------------------------------
@@ -3163,6 +3162,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X18333,	"RollEffectResistance: if [si+0xE]==0 (not yet resolved this pass) and the effect's high cost-flag bits (di+8 & 0xFF80) are set, sums the party member's equipment/bonus resistance fields (+0x20..+0x30, one per matching high bit of di+8) and calls FailsSavingThrow (threshold=word_32DC0). Records 0 into [si+0xE] if resisted, or the raw high cost-flags if the save failed.",	0);
+	create_insn	(0X18333);
+	set_name	(0X18333,	"RollEffectResistance");
 	create_insn	(0X1833E);
 	create_insn	(x=0X18341);
 	op_hex		(x,	1);
@@ -5151,6 +5153,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
 	create_insn	(0X1F1F4);
 	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1F217);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F222);
@@ -5175,15 +5186,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1F29D,	"Input handler for RunGameDialog's 8 icon options (Animation/Dos/Return/Load/Music/NewGame/Save/SoundFx): polls keyboard ('1'-'6', or 'L'/'S' shortcuts when word_32910=='.') and mouse (region table 0x5CD0) to pick one, storing the 1-based selection in word_3291E.",	0);
 	create_insn	(0X1F29D);
 	set_name	(0X1F29D,	"SelectGameDialogOption");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1F2DD);
 	create_insn	(0X1F2EF);
 	create_insn	(0X1F2FA);
@@ -6965,11 +6967,6 @@ static Bytes_2(void) {
 	set_cmt	(0X26022,	"Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.",	0);
 	create_insn	(0X26022);
 	set_name	(0X26022,	"LoadNextContainerInChain");
-	set_cmt	(0X2602A,	"this",	0);
-	create_insn	(0X26058);
-	set_cmt	(0X2607F,	"Draws one party member's portrait panel at word_328BC/word_328C0: character icon ([+0x14]), a status bar (sub_267A7), a condition icon ([+0x15C]/[+0x10]), and further icon draws (sub_2681B, not traced). Called via ShowPartyPortraitForSlot.",	0);
-	create_insn	(0X2607F);
-	set_name	(0X2607F,	"DrawPartyMemberPortrait");
 }
 
 //------------------------------------------------------------------------
@@ -6979,6 +6976,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2602A,	"this",	0);
+	create_insn	(0X26058);
+	set_cmt	(0X2607F,	"Draws one party member's portrait panel at word_328BC/word_328C0: character icon ([+0x14]), a status bar (sub_267A7), a condition icon ([+0x15C]/[+0x10]), and further icon draws (sub_2681B, not traced). Called via ShowPartyPortraitForSlot.",	0);
+	create_insn	(0X2607F);
+	set_name	(0X2607F,	"DrawPartyMemberPortrait");
 	create_insn	(x=0X2608A);
 	op_hex		(x,	1);
 	create_insn	(x=0X260DE);
@@ -9985,7 +9987,9 @@ static Bytes_4(void) {
 	set_cmt	(0X2D470,	"Sibling of ApplyDamageAlongCorridorLine using the full resistance-aware pipeline: for 3 consecutive viewport rows starting at word_3292C (incrementing it each iteration), finds a monster via GetMonsterAtViewportRow and calls ApplyAttackToTarget against it, then conditionally calls still-unnamed sub_2D428 if any damage/status is pending. Called 3x in a row from sub_2C0FE, once per starting row of a 3-row band.",	0);
 	create_insn	(0X2D470);
 	set_name	(0X2D470,	"ApplyAttackAlongCorridorLine");
+	set_cmt	(0X2D498,	"ax=sound command. If WaitForSoundDriverIdle didn't need to wait (already idle), discards ax and just waits 6 ticks -- no sound plays. If it DID wait (driver was busy), calls TriggerSoundEvent(ax) once free. Backwards from the sibling TryPlaySoundCue/Alt's 'drop if busy' pattern. The ax==0 path loops back into its own 'pop ax' (IDA flags sp-analysis failed here) -- plausibly unreachable dead code, left as observed. Called from sub_2C0FE.",	0);
 	create_insn	(0X2D498);
+	set_name	(0X2D498,	"TriggerSoundEventAfterDriverWait");
 	set_cmt	(0X2D4A1,	"ticks",	0);
 	create_insn	(0X2D4AA);
 	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);

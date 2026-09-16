@@ -5145,6 +5145,32 @@ stood open since very early in this session's work.
 
 600 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PlaySoundSequenceGH + TriggerSoundEventAfterDriverWait — the last flagged sound-cluster lead resolved
+
+Named `sub_11E1C` -> `PlaySoundSequenceGH` (called from `sub_11A10`):
+waits for the sound driver to go idle (via `TryPlaySoundCueAlt`'s own
+idle-wait, called with the guaranteed-no-op sentinel `cx=0xFFFF`),
+triggers sound event `0x47`, waits again, triggers `0x48` — a
+two-part sound cue.
+
+Also finally named `sub_2D498` -> `TriggerSoundEventAfterDriverWait`
+(called twice from the large unnamed combat dispatcher `sub_2C0FE`),
+resolving the "structurally odd" lead flagged and deliberately left
+open two rounds ago. With all three of its callees now named
+(`WaitForSoundDriverIdle`, `wait`, `TriggerSoundEvent`), its shape is
+fully legible even though it's genuinely unusual: if the driver was
+already idle, the sound command is *discarded unplayed* and it just
+waits 6 ticks; only if the driver was busy (and `WaitForSoundDriverIdle`
+had to wait it out) does the sound actually play. This is the inverse
+of the sibling `TryPlaySoundCue`/`Alt`'s "drop it if busy" pattern.
+The `ax==0` branch still contains the genuine anomaly noted before (a
+loop back into its own `pop ax`, flagged by IDA's own sp-analysis
+failure) — left exactly as observed rather than reinterpreted, most
+likely unreachable dead code. This closes out every function this
+session's sound-system investigation had flagged as open.
+
+602 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

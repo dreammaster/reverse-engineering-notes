@@ -2989,7 +2989,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     cx, 14h
                 call    TryPlaySoundCueAlt
                 call    sub_11DE2
-                call    sub_11E1C
+                call    PlaySoundSequenceGH
                 mov     ax, 64h ; 'd'   ; ticks
                 call    wait
                 call    sub_25862
@@ -3136,8 +3136,8 @@ sub_11DE2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11E1C       proc near               ; CODE XREF: sub_11A10+237↑p
-                mov     cx, 0FFFFh
+PlaySoundSequenceGH proc near           ; CODE XREF: sub_11A10+237↑p
+                mov     cx, 0FFFFh      ; Waits for driver idle (via TryPlaySoundCueAlt(cx=0xFFFF), always a no-op cue but still runs its idle-wait), triggers sound event 0x47, waits again, triggers event 0x48. A two-part sound cue. Called from sub_11A10.
                 call    TryPlaySoundCueAlt
                 mov     ax, 47h ; 'G'
                 call    TriggerSoundEvent
@@ -3146,7 +3146,7 @@ sub_11E1C       proc near               ; CODE XREF: sub_11A10+237↑p
                 mov     ax, 48h ; 'H'
                 call    TriggerSoundEvent
                 retn
-sub_11E1C       endp
+PlaySoundSequenceGH endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -3219,7 +3219,7 @@ DrawShadowedTextAlt endp
 
 
 TryPlaySoundCueAlt proc near            ; CODE XREF: sub_11A10+231↑p
-                                        ; sub_11E1C+3↑p ...
+                                        ; PlaySoundSequenceGH+3↑p ...
                 call    WaitForSoundDriverIdle ; Byte-for-byte duplicate of TryPlaySoundCue (sub_16234); dispatches via still-unnamed sub_11E39. Called from sub_11A10, sub_11E1C, and others.
                 jz      short locret_11EBD
                 cmp     cx, 0FFFFh
@@ -51908,7 +51908,7 @@ loc_2C892:                              ; CODE XREF: sub_2C0FE+78F↑j
 
 loc_2C8A7:                              ; CODE XREF: sub_2C0FE+7A4↑j
                 mov     ax, word_332DC
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 mov     ax, word_332DE
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 2
@@ -51952,7 +51952,7 @@ loc_2C8FB:                              ; CODE XREF: sub_2C0FE+7D9↑j
 
 loc_2C906:                              ; CODE XREF: sub_2C0FE+7FB↑j
                 mov     ax, word_332DC
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 mov     ax, word_332DE
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 2
@@ -51967,7 +51967,7 @@ loc_2C92A:                              ; CODE XREF: sub_2C0FE+91↑j
                 call    sub_22CBC
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_332DA
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 call    ClearActionIconHighlightMask
                 mov     _font_bgTransparent, 5
                 mov     y, 0
@@ -52115,7 +52115,7 @@ loc_2CACE:                              ; CODE XREF: sub_2C0FE+9C0↑j
                 push    word_3292C
                 push    di
                 mov     ax, word_332DC
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 mov     ax, word_332DE
                 mov     [di+18h], ax
                 test    word_33304, 10h
@@ -52281,7 +52281,7 @@ loc_2CC77:                              ; CODE XREF: sub_2C0FE+B67↑j
                 pop     word_3292C
                 call    SaveCorridorBackgroundToEMS
                 mov     ax, word_332E2
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 mov     g_blitMaskLen, 6
                 mov     ax, 5A96h
                 mov     g_blitMaskPtr, ax
@@ -52311,7 +52311,7 @@ loc_2CCB4:                              ; CODE XREF: sub_2C0FE+BE1↓j
 
 loc_2CCEE:                              ; CODE XREF: sub_2C0FE+A7↑j
                 mov     ax, word_332DA
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 mov     g_blitMaskLen, 6
                 mov     ax, 5A90h
                 mov     g_blitMaskPtr, ax
@@ -52437,7 +52437,7 @@ loc_2CE5A:                              ; CODE XREF: sub_2C0FE+D48↑j
 
 loc_2CE62:                              ; CODE XREF: sub_2C0FE+B2↑j
                 mov     ax, word_332DA
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 call    SaveCorridorBackgroundToEMS
                 mov     cx, word_332E2
 
@@ -52482,7 +52482,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
 
 loc_2CEE7:                              ; CODE XREF: sub_2C0FE+9C↑j
                 mov     ax, word_332DA
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
 
 loc_2CEED:                              ; CODE XREF: sub_2C0FE+DE7↑j
                                         ; sub_2C0FE+1036↓j ...
@@ -52537,7 +52537,7 @@ loc_2CF51:                              ; CODE XREF: sub_2C0FE+791↑j
                 mov     ax, 5           ; ticks
                 call    wait
                 mov     ax, word_332DC
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 mov     di, word_32A1E
                 call    ResolveAttackAndLatchFirstHit
                 cmp     errorCode, 0
@@ -52634,7 +52634,7 @@ loc_2D04D:                              ; CODE XREF: sub_2C0FE+BD↑j
                 mov     ax, 5A90h
                 mov     g_blitMaskPtr, ax
                 mov     ax, word_332DA
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 call    SaveCorridorBackgroundToEMS
                 mov     word_2E532, 60h ; '`'
                 mov     _font_bgTransparent, 1
@@ -52699,7 +52699,7 @@ loc_2D137:                              ; CODE XREF: sub_2C0FE+C8↑j
                 mov     ax, 5           ; ticks
                 call    wait
                 mov     ax, word_332DA
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 call    SaveCorridorBackgroundToEMS
                 mov     cx, 40h ; '@'
 
@@ -52956,7 +52956,7 @@ ApplyDamageToMapMonster proc near       ; CODE XREF: sub_2C0FE+E02↑p
                 or      ax, ax
                 jz      short loc_2D3D5
                 mov     ax, word_332DC
-                call    sub_2D498
+                call    TriggerSoundEventAfterDriverWait
                 mov     ax, word_332DE
                 mov     [di+18h], ax
                 or      word ptr [di+0Ch], 3
@@ -53105,9 +53105,9 @@ ApplyAttackAlongCorridorLine endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D498       proc near               ; CODE XREF: sub_2C0FE+7AC↑p
+TriggerSoundEventAfterDriverWait proc near ; CODE XREF: sub_2C0FE+7AC↑p
                                         ; sub_2C0FE+80B↑p ...
-                push    ax
+                push    ax              ; ax=sound command. If WaitForSoundDriverIdle didn't need to wait (already idle), discards ax and just waits 6 ticks -- no sound plays. If it DID wait (driver was busy), calls TriggerSoundEvent(ax) once free. Backwards from the sibling TryPlaySoundCue/Alt's 'drop if busy' pattern. The ax==0 path loops back into its own 'pop ax' (IDA flags sp-analysis failed here) -- plausibly unreachable dead code, left as observed. Called from sub_2C0FE.
                 call    WaitForSoundDriverIdle
                 jz      short loc_2D4AA
                 pop     ax
@@ -53116,14 +53116,14 @@ sub_2D498       proc near               ; CODE XREF: sub_2C0FE+7AC↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2D4AA:                              ; CODE XREF: sub_2D498+6↑j
-                                        ; sub_2D498+16↓j
+loc_2D4AA:                              ; CODE XREF: TriggerSoundEventAfterDriverWait+6↑j
+                                        ; TriggerSoundEventAfterDriverWait+16↓j
                 pop     ax
                 cmp     ax, 0
                 jz      short loc_2D4AA
                 call    TriggerSoundEvent
                 retn
-sub_2D498       endp ; sp-analysis failed
+TriggerSoundEventAfterDriverWait endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================

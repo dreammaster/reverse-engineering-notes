@@ -2443,11 +2443,13 @@ identical overlay-segment duplicate pair `TryPlaySoundCue`/
 this session's recurring duplication pattern): drop a sound cue if the
 driver was busy or the id is the `0xFFFF` sentinel, else dispatch via
 a still-unnamed per-segment helper. A third, structurally different
-caller, `sub_2D498`, behaves the *opposite* way (dispatches only when
-the driver *was* busy) and carries a genuine IDA "sp-analysis failed"
-flag plus a suspicious jump back into its own `pop` instruction —
-deliberately left unnamed as an actual anomaly, not just an
-unfamiliar-but-sound convention.
+caller, `TriggerSoundEventAfterDriverWait` (was `sub_2D498`, called
+from the large unnamed combat dispatcher `sub_2C0FE`), behaves the
+*opposite* way: dispatches the sound only when the driver *was* busy
+(discarding it unplayed if already idle). It still carries a genuine
+IDA "sp-analysis failed" flag on its `ax==0` path (a jump back into
+its own `pop` instruction) — left as observed, most likely unreachable
+dead code, rather than reinterpreted.
 
 ## Not yet examined
 
