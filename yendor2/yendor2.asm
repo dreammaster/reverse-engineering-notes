@@ -10807,7 +10807,7 @@ loc_168F6:                              ; CODE XREF: sub_16881+70↑j
                 mul     bx
                 add     ax, 0C50h
                 mov     word_32906, ax
-                call    sub_16DAA
+                call    SelectTrapEffectVariant
                 call    sub_16BF6
                 cmp     word_2E49C, 0
                 jz      short loc_16966
@@ -10863,7 +10863,7 @@ loc_16978:                              ; CODE XREF: sub_16881+EA↑j
 
 loc_1698C:                              ; CODE XREF: sub_16881+72↑j
                 push    bp
-                call    sub_16DAA
+                call    SelectTrapEffectVariant
                 and     word_328C8, 0FFFBh
                 mov     ax, 0C50h
                 mov     word_32906, ax
@@ -11358,9 +11358,9 @@ SelectActiveMonster endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16DAA       proc near               ; CODE XREF: sub_16881+98↑p
+SelectTrapEffectVariant proc near       ; CODE XREF: sub_16881+98↑p
                                         ; sub_16881+10C↑p
-                and     word_328CA, 0FDFFh
+                and     word_328CA, 0FDFFh ; Picks between a record's primary ([+0x6C]) and alternate ([+0x6E]) trap effect id: always primary if flag [+0xC] bit 0x400 is set or no alternate exists, else a 25% chance (RandomInRange(100)<0x19) of the alternate. Resolves the chosen id via PrepareTrapEffectSlots. Called from sub_16881.
                 mov     ax, [si+6Ch]
                 test    word ptr [si+0Ch], 400h
                 jnz     short loc_16DDD
@@ -11369,7 +11369,7 @@ sub_16DAA       proc near               ; CODE XREF: sub_16881+98↑p
                 jmp     short loc_16DDD
 ; ---------------------------------------------------------------------------
 
-loc_16DC2:                              ; CODE XREF: sub_16DAA+14↑j
+loc_16DC2:                              ; CODE XREF: SelectTrapEffectVariant+14↑j
                 mov     ax, 64h ; 'd'
                 call    RandomInRange
                 cmp     ax, 19h
@@ -11379,16 +11379,16 @@ loc_16DC2:                              ; CODE XREF: sub_16DAA+14↑j
                 jmp     short loc_16DDD
 ; ---------------------------------------------------------------------------
 
-loc_16DDA:                              ; CODE XREF: sub_16DAA+23↑j
+loc_16DDA:                              ; CODE XREF: SelectTrapEffectVariant+23↑j
                 mov     ax, [si+6Ch]
 
-loc_16DDD:                              ; CODE XREF: sub_16DAA+E↑j
-                                        ; sub_16DAA+16↑j ...
+loc_16DDD:                              ; CODE XREF: SelectTrapEffectVariant+E↑j
+                                        ; SelectTrapEffectVariant+16↑j ...
                 call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
                 mov     word_32940, bx
                 retn
-sub_16DAA       endp
+SelectTrapEffectVariant endp
 
 seg015          ends
 
@@ -13707,7 +13707,7 @@ seg026          segment byte public 'CODE' use16
 
 
 PrepareTrapEffectSlots proc far         ; CODE XREF: ShowClueBookMonsterDetail+276↑P
-                                        ; sub_16DAA:loc_16DDD↑P ...
+                                        ; SelectTrapEffectVariant:loc_16DDD↑P ...
                 push    ax              ; PrepareTrapEffectSlots(ax=effect id): returns bx = g_trapEffectDefs + id*0xC (the effect-definition record). Also clears the [+8..+0x14) fields of all 4 g_partyEffectIconSlots entries first -- reset before repopulate. ax is left 0 on return.
                 push    es
                 push    di
@@ -41446,7 +41446,7 @@ seg091          segment byte public 'CODE' use16
 
 
 RandomInRange   proc far                ; CODE XREF: BuildCombatTurnOrder+89↑P
-                                        ; sub_16DAA+1B↑P ...
+                                        ; SelectTrapEffectVariant+1B↑P ...
                 push    bx              ; RandomInRange(ax=exclusive upper bound): DOS-time-seeded (INT 21h AH=0x2Ch on first call) linear-congruential PRNG (multiplier 0x805). Returns a value in [0, bound). Widely used general-purpose RNG.
                 push    cx
                 push    dx

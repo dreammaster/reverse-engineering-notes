@@ -1604,6 +1604,17 @@ unidentified skill check gates `ShowLocalAreaMap`/`ToggleMapViewMode`:
 plausibly a cartography/mapping skill, not yet traced to a specific
 field.
 
+**`+0x6C`/`+0x6E` also both feed trap-effect selection**:
+`SelectTrapEffectVariant` (was `sub_16DAA`, called twice from unnamed
+`sub_16881`) picks one of these two fields as the trap effect id to
+resolve via `PrepareTrapEffectSlots` — normally `+0x6C` (the
+perception/save-resistance field), but a 25% chance
+(`RandomInRange(100) < 0x19`) of substituting `+0x6E` (the
+charisma/persuasion field) instead, gated on a flag bit (`[+0xC]`
+`0x400`) and `+0x6E` being nonzero. Another data point that these are
+general character-stat fields reused across multiple systems
+(locks, conversation, trap resolution), not single-purpose flags.
+
 **Key items reference locks by their own catalog type value**:
 `UseItem`'s `UseKeyItem` branch passes a key item's own type-flags
 field directly as `LoadLockState`'s lock id — a key's catalog "type"

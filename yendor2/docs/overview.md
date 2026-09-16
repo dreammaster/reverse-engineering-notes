@@ -4110,6 +4110,27 @@ though the specific field isn't confirmed.
 
 518 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SelectTrapEffectVariant
+
+Named `sub_16DAA` -> `SelectTrapEffectVariant`, called twice from
+unnamed `sub_16881`: picks between a record's primary trap effect id
+(`[+0x6C]`) and an alternate (`[+0x6E]`). If flag `[+0xC]` bit `0x400`
+is set, or there's no alternate, always uses the primary. Otherwise
+rolls `RandomInRange(100)`: a 25% chance (roll `< 0x19`) swaps in the
+alternate instead (and sets `word_328CA` bit `0x200`), else falls back
+to the primary. Either way, resolves the chosen id via
+`PrepareTrapEffectSlots`, staging the result into `word_3293E`/
+`word_32940` — the same staging globals used elsewhere for the
+icon-bar effect mechanism. `[+0x6C]` and `[+0x6E]` were already
+identified separately (via `ShowLockStatus`/`ApplySavingThrowEffect`
+and `ClassifyConversationSkillTier` respectively) as
+lockpicking/perception- and charisma/persuasion-style fields — so this
+reads as "usually trigger the trap's primary save-resistance effect,
+but a 1-in-4 chance of a persuasion-flavored alternate instead," though
+the caller `sub_16881` itself remains untraced and unnamed.
+
+519 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

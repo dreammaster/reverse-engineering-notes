@@ -2606,8 +2606,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X16D94);
 	op_hex		(x,	1);
 	create_insn	(0X16DA2);
+	set_cmt	(0X16DAA,	"Picks between a record's primary ([+0x6C]) and alternate ([+0x6E]) trap effect id: always primary if flag [+0xC] bit 0x400 is set or no alternate exists, else a 25% chance (RandomInRange(100)<0x19) of the alternate. Resolves the chosen id via PrepareTrapEffectSlots. Called from sub_16881.",	0);
 	create_insn	(x=0X16DAA);
 	op_hex		(x,	1);
+	set_name	(0X16DAA,	"SelectTrapEffectVariant");
 	create_insn	(x=0X16DB3);
 	op_hex		(x,	1);
 	create_insn	(0X16DC2);
@@ -3421,8 +3423,6 @@ static Bytes_0(void) {
 	set_cmt	(0X19140,	"Space-bar 'repair item' action (sub_1869D, word_328C6 bit 4), sibling of TrySellItemForGold/TryEnhanceItemForGold. Eligibility via sub_1B20C; on failure 'I CAN NOT REPAIR THAT' (msg 0x81E6). Else CompareBCD4/SubBCD4(g_partyGold, [table 0x5082]) -- 'YOU DON'T HAVE ENOUGH GOLD!' on failure (msg 0x8376, shared with TryEnhanceItemForGold) -- then restores the item from word_3194C into word_31948 (fixing the same item, not upgrading to a new catalog entry) and reloads it. Distinct from the skill-based RepairItemCommand minigame, which can critically fail and destroy the item.",	0);
 	create_insn	(0X19140);
 	set_name	(0X19140,	"TryRepairItemForGold");
-	create_insn	(x=0X19152);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -3432,6 +3432,8 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X19152);
+	op_hex		(x,	1);
 	create_insn	(0X19187);
 	create_insn	(0X19198);
 	set_cmt	(0X191FC,	"Restores a large rectangular area (136 rows x 112 words/row) from EMS page 0x55D8. Called from sub_1869D; exact panel identity not confirmed.",	0);
@@ -5453,7 +5455,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X209A9);
 	op_hex		(x,	1);
 	create_insn	(0X209C0);
-	create_insn	(0X209C9);
 }
 
 //------------------------------------------------------------------------
@@ -5463,6 +5464,7 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X209C9);
 	create_insn	(0X209D2);
 	create_insn	(0X209FF);
 	create_insn	(0X20A23);
@@ -7423,8 +7425,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X27CFE);
 	create_insn	(0X27D20);
-	create_insn	(x=0X27D2B);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7434,6 +7434,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X27D2B);
+	op_hex		(x,	1);
 	create_insn	(x=0X27D2E);
 	op_hex		(x,	1);
 	create_insn	(0X27D55);
@@ -10348,8 +10350,6 @@ static Bytes_3(void) {
 	create_word	(0X32BEA);
 	create_word	(0X32BF4);
 	create_word	(0X32BF6);
-	create_word	(0X32BF8);
-	create_word	(0X32BFA);
 }
 
 //------------------------------------------------------------------------
@@ -10359,6 +10359,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_word	(0X32BF8);
+	create_word	(0X32BFA);
 	create_word	(0X32BFC);
 	set_cmt	(0X32BFE,	"14 x 8-byte combat turn-order scratch list, rebuilt every RunDungeonGameLoop iteration by BuildCombatTurnOrder. +0 record ptr, +2 party-slot address (0 for monsters), +4 speed/initiative (sort key, descending), +6 flags (0x8000=monster, 0x2000=?, 0x4000=plausibly defeated).",	0);
 	set_name	(0X32BFE,	"g_combatTurnOrder");
