@@ -8383,7 +8383,7 @@ RunCharacterCreation proc far           ; CODE XREF: InitGame+B6↑P
                 call    PlayCharacterCreationIntroAnimation
                 cmp     byte_2E400, 1Bh
                 jz      short loc_15245
-                call    sub_1559A
+                call    RunCharacterCreationSelectionStep
 
 loc_15245:                              ; CODE XREF: RunCharacterCreation+8↑j
                                         ; RunCharacterCreation+12↑j
@@ -8457,7 +8457,7 @@ FinalizeCharacterCreation endp
 
 
 ClearOffscreenBuffer proc near          ; CODE XREF: FinalizeCharacterCreation+50↑p
-                                        ; sub_1559A+16C↓p ...
+                                        ; RunCharacterCreationSelectionStep+16C↓p ...
                 mov     es, _videoBufferSeg ; Clears the entire offscreen buffer (0x7D00 words, a full mode-13h screen) to 0. Called from FinalizeCharacterCreation and sub_1559A. Byte-for-byte identical to ClearOffscreenBufferAlt (sub_11D58) in a different overlay segment.
                 xor     di, di
                 xor     ax, ax
@@ -8794,12 +8794,13 @@ PlayCharacterCreationIntroAnimation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1559A       proc near               ; CODE XREF: RunCharacterCreation+14↑p
-                mov     word_2E402, 0
+RunCharacterCreationSelectionStep proc near
+                                        ; CODE XREF: RunCharacterCreation+14↑p
+                mov     word_2E402, 0   ; RunCharacterCreation's step 3: continues the intro animation, then presents the class/gender/portrait selection UI (matched to the manual's PICK A CLASS/MALE/FEMALE/PICK A PORTRAIT string cluster) -- opens with a shadowed 5-item text list, consistent with the class menu. Not fully disentangled internally. Called once from RunCharacterCreation.
                 mov     word_2E406, 0
                 mov     cx, 1Fh
 
-loc_155A9:                              ; CODE XREF: sub_1559A+1B↓j
+loc_155A9:                              ; CODE XREF: RunCharacterCreationSelectionStep+1B↓j
                 add     fe, 14h
                 inc     word_2E406
                 call    DrawCharacterCreationAnimationFrame
@@ -8809,7 +8810,7 @@ loc_155A9:                              ; CODE XREF: sub_1559A+1B↓j
                 call    sub_16164
                 mov     cx, 27h ; '''
 
-loc_155C6:                              ; CODE XREF: sub_1559A+38↓j
+loc_155C6:                              ; CODE XREF: RunCharacterCreationSelectionStep+38↓j
                 add     fe, 14h
                 inc     word_2E406
                 call    DrawCharacterCreationAnimationFrame
@@ -8819,7 +8820,7 @@ loc_155C6:                              ; CODE XREF: sub_1559A+38↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_155DA:                              ; CODE XREF: sub_1559A+3D↑j
+loc_155DA:                              ; CODE XREF: RunCharacterCreationSelectionStep+3D↑j
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 30h ; '0'
@@ -8827,7 +8828,7 @@ loc_155DA:                              ; CODE XREF: sub_1559A+3D↑j
                 call    StepPaletteFadeRange
                 mov     cx, 80h
 
-loc_155EE:                              ; CODE XREF: sub_1559A+60↓j
+loc_155EE:                              ; CODE XREF: RunCharacterCreationSelectionStep+60↓j
                 add     fe, 14h
                 inc     word_2E406
                 call    DrawCharacterCreationAnimationFrame
@@ -8837,7 +8838,7 @@ loc_155EE:                              ; CODE XREF: sub_1559A+60↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15602:                              ; CODE XREF: sub_1559A+65↑j
+loc_15602:                              ; CODE XREF: RunCharacterCreationSelectionStep+65↑j
                 mov     si, 6DB0h
                 or      word ptr [si], 4000h
                 mov     cx, 7
@@ -8867,11 +8868,11 @@ loc_15602:                              ; CODE XREF: sub_1559A+65↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15666:                              ; CODE XREF: sub_1559A+C9↑j
+loc_15666:                              ; CODE XREF: RunCharacterCreationSelectionStep+C9↑j
                 or      word_328C8, 800h
                 mov     cx, 3Fh ; '?'
 
-loc_1566F:                              ; CODE XREF: sub_1559A+E8↓j
+loc_1566F:                              ; CODE XREF: RunCharacterCreationSelectionStep+E8↓j
                 push    cx
                 mov     dx, 93h
                 call    sub_160C3
@@ -8879,7 +8880,7 @@ loc_1566F:                              ; CODE XREF: sub_1559A+E8↓j
                 jz      short loc_15681
                 call    DrawCharacterCreationAnimationFrame
 
-loc_15681:                              ; CODE XREF: sub_1559A+E2↑j
+loc_15681:                              ; CODE XREF: RunCharacterCreationSelectionStep+E2↑j
                 pop     cx
                 loop    loc_1566F
                 call    PollForEscapeKeyOnlyAlt
@@ -8887,7 +8888,7 @@ loc_15681:                              ; CODE XREF: sub_1559A+E2↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1568A:                              ; CODE XREF: sub_1559A+ED↑j
+loc_1568A:                              ; CODE XREF: RunCharacterCreationSelectionStep+ED↑j
                 mov     cx, 2Dh ; '-'
                 call    sub_16180
                 call    PollForEscapeKeyOnlyAlt
@@ -8895,14 +8896,14 @@ loc_1568A:                              ; CODE XREF: sub_1559A+ED↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15696:                              ; CODE XREF: sub_1559A+F9↑j
+loc_15696:                              ; CODE XREF: RunCharacterCreationSelectionStep+F9↑j
                 mov     si, 6DB0h
                 or      word ptr [si], 4020h
                 mov     cx, 0Fh
                 call    sub_16180
                 mov     cx, 3Fh ; '?'
 
-loc_156A6:                              ; CODE XREF: sub_1559A+12A↓j
+loc_156A6:                              ; CODE XREF: RunCharacterCreationSelectionStep+12A↓j
                 push    cx
                 mov     ax, 3
                 mov     bx, 1
@@ -8913,13 +8914,13 @@ loc_156A6:                              ; CODE XREF: sub_1559A+12A↓j
                 jz      short loc_156C3
                 call    DrawCharacterCreationAnimationFrame
 
-loc_156C3:                              ; CODE XREF: sub_1559A+124↑j
+loc_156C3:                              ; CODE XREF: RunCharacterCreationSelectionStep+124↑j
                 pop     cx
                 loop    loc_156A6
                 mov     cx, 7
                 mov     si, 6D60h
 
-loc_156CC:                              ; CODE XREF: sub_1559A+139↓j
+loc_156CC:                              ; CODE XREF: RunCharacterCreationSelectionStep+139↓j
                 and     word ptr [si], 3FFFh
                 add     si, 14h
                 loop    loc_156CC
@@ -8928,7 +8929,7 @@ loc_156CC:                              ; CODE XREF: sub_1559A+139↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_156DB:                              ; CODE XREF: sub_1559A+13E↑j
+loc_156DB:                              ; CODE XREF: RunCharacterCreationSelectionStep+13E↑j
                 and     word_328C8, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
@@ -8957,7 +8958,7 @@ loc_156DB:                              ; CODE XREF: sub_1559A+13E↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15747:                              ; CODE XREF: sub_1559A+1AA↑j
+loc_15747:                              ; CODE XREF: RunCharacterCreationSelectionStep+1AA↑j
                 mov     cx, 19h
                 call    sub_1616F
                 call    sub_161B6
@@ -8966,7 +8967,7 @@ loc_15747:                              ; CODE XREF: sub_1559A+1AA↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15756:                              ; CODE XREF: sub_1559A+1B9↑j
+loc_15756:                              ; CODE XREF: RunCharacterCreationSelectionStep+1B9↑j
                 call    ClearOffscreenBuffer
                 mov     x, 37h ; '7'
                 mov     y, 2Fh ; '/'
@@ -8985,7 +8986,7 @@ loc_15756:                              ; CODE XREF: sub_1559A+1B9↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15799:                              ; CODE XREF: sub_1559A+1FC↑j
+loc_15799:                              ; CODE XREF: RunCharacterCreationSelectionStep+1FC↑j
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -9009,7 +9010,7 @@ loc_15799:                              ; CODE XREF: sub_1559A+1FC↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_157E9:                              ; CODE XREF: sub_1559A+24C↑j
+loc_157E9:                              ; CODE XREF: RunCharacterCreationSelectionStep+24C↑j
                 mov     ax, 11h
                 call    TriggerSoundEvent
                 or      word_328C8, 800h
@@ -9021,7 +9022,7 @@ loc_157E9:                              ; CODE XREF: sub_1559A+24C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15806:                              ; CODE XREF: sub_1559A+269↑j
+loc_15806:                              ; CODE XREF: RunCharacterCreationSelectionStep+269↑j
                 call    ClearOffscreenBuffer
                 mov     x, 37h ; '7'
                 mov     y, 2Fh ; '/'
@@ -9045,7 +9046,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15859:                              ; CODE XREF: sub_1559A+2BC↑j
+loc_15859:                              ; CODE XREF: RunCharacterCreationSelectionStep+2BC↑j
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 13h
@@ -9059,7 +9060,7 @@ loc_15859:                              ; CODE XREF: sub_1559A+2BC↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1587F:                              ; CODE XREF: sub_1559A+2E2↑j
+loc_1587F:                              ; CODE XREF: RunCharacterCreationSelectionStep+2E2↑j
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -9087,7 +9088,7 @@ loc_1587F:                              ; CODE XREF: sub_1559A+2E2↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_158D5:                              ; CODE XREF: sub_1559A+338↑j
+loc_158D5:                              ; CODE XREF: RunCharacterCreationSelectionStep+338↑j
                 or      word_328C8, 800h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -9111,7 +9112,7 @@ loc_158D5:                              ; CODE XREF: sub_1559A+338↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15927:                              ; CODE XREF: sub_1559A+38A↑j
+loc_15927:                              ; CODE XREF: RunCharacterCreationSelectionStep+38A↑j
                 mov     cx, 19h
                 call    TryPlaySoundCue
                 mov     ax, 19h
@@ -9146,7 +9147,7 @@ loc_15927:                              ; CODE XREF: sub_1559A+38A↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1598C:                              ; CODE XREF: sub_1559A+3EF↑j
+loc_1598C:                              ; CODE XREF: RunCharacterCreationSelectionStep+3EF↑j
                 or      word_328C8, 800h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -9169,7 +9170,7 @@ loc_1598C:                              ; CODE XREF: sub_1559A+3EF↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_159D9:                              ; CODE XREF: sub_1559A+43C↑j
+loc_159D9:                              ; CODE XREF: RunCharacterCreationSelectionStep+43C↑j
                 mov     ax, _videoBufferSeg
                 mov     es, ax
                 mov     di, 8C0h
@@ -9215,7 +9216,7 @@ loc_159D9:                              ; CODE XREF: sub_1559A+43C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15AB1:                              ; CODE XREF: sub_1559A+514↑j
+loc_15AB1:                              ; CODE XREF: RunCharacterCreationSelectionStep+514↑j
                 or      word_328C8, 800h
                 mov     ax, 4
                 mov     bx, 3Fh ; '?'
@@ -9240,7 +9241,7 @@ loc_15AB1:                              ; CODE XREF: sub_1559A+514↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15AFE:                              ; CODE XREF: sub_1559A+561↑j
+loc_15AFE:                              ; CODE XREF: RunCharacterCreationSelectionStep+561↑j
                 or      word_328C8, 800h
                 mov     dx, 20h ; ' '
                 call    sub_16164
@@ -9260,7 +9261,7 @@ loc_15AFE:                              ; CODE XREF: sub_1559A+561↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15B34:                              ; CODE XREF: sub_1559A+597↑j
+loc_15B34:                              ; CODE XREF: RunCharacterCreationSelectionStep+597↑j
                 call    SetPaletteToWhite
                 and     word_3295A, 0EFFFh
                 mov     cx, 0FFFFh
@@ -9273,7 +9274,7 @@ loc_15B34:                              ; CODE XREF: sub_1559A+597↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15B54:                              ; CODE XREF: sub_1559A+5B7↑j
+loc_15B54:                              ; CODE XREF: RunCharacterCreationSelectionStep+5B7↑j
                 mov     x, 37h ; '7'
                 mov     y, 2Fh ; '/'
                 mov     _font_bgTransparent, 1
@@ -9284,7 +9285,7 @@ loc_15B54:                              ; CODE XREF: sub_1559A+5B7↑j
                 mov     di, 6753h
                 mov     cx, 2Ah ; '*'
 
-loc_15B81:                              ; CODE XREF: sub_1559A+5F6↓j
+loc_15B81:                              ; CODE XREF: RunCharacterCreationSelectionStep+5F6↓j
                 push    cx
                 push    di
                 mov     cx, 1Dh
@@ -9300,7 +9301,7 @@ loc_15B81:                              ; CODE XREF: sub_1559A+5F6↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15B9D:                              ; CODE XREF: sub_1559A+600↑j
+loc_15B9D:                              ; CODE XREF: RunCharacterCreationSelectionStep+600↑j
                 mov     ax, 5
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0FFh
@@ -9313,7 +9314,7 @@ loc_15B9D:                              ; CODE XREF: sub_1559A+600↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15BBA:                              ; CODE XREF: sub_1559A+61D↑j
+loc_15BBA:                              ; CODE XREF: RunCharacterCreationSelectionStep+61D↑j
                 and     word_328C8, 0F7FFh
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
@@ -9354,7 +9355,7 @@ loc_15BBA:                              ; CODE XREF: sub_1559A+61D↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15C3D:                              ; CODE XREF: sub_1559A+6A0↑j
+loc_15C3D:                              ; CODE XREF: RunCharacterCreationSelectionStep+6A0↑j
                 mov     word_2E402, 0
                 mov     word_2E406, 0
                 mov     si, 6DC4h
@@ -9376,7 +9377,7 @@ loc_15C3D:                              ; CODE XREF: sub_1559A+6A0↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15C81:                              ; CODE XREF: sub_1559A+6E4↑j
+loc_15C81:                              ; CODE XREF: RunCharacterCreationSelectionStep+6E4↑j
                 mov     cx, 2Dh ; '-'
                 call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
@@ -9384,7 +9385,7 @@ loc_15C81:                              ; CODE XREF: sub_1559A+6E4↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15C8D:                              ; CODE XREF: sub_1559A+6F0↑j
+loc_15C8D:                              ; CODE XREF: RunCharacterCreationSelectionStep+6F0↑j
                 mov     ax, 16h
                 call    TriggerSoundEvent
                 mov     cx, 0FFFFh
@@ -9394,7 +9395,7 @@ loc_15C8D:                              ; CODE XREF: sub_1559A+6F0↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15CA1:                              ; CODE XREF: sub_1559A+704↑j
+loc_15CA1:                              ; CODE XREF: RunCharacterCreationSelectionStep+704↑j
                 test    g_driverStateFlags, 8
                 jnz     short loc_15CB7
                 mov     es, word_328BE
@@ -9403,7 +9404,7 @@ loc_15CA1:                              ; CODE XREF: sub_1559A+704↑j
                 mov     cx, 12C0h
                 rep stosw
 
-loc_15CB7:                              ; CODE XREF: sub_1559A+70D↑j
+loc_15CB7:                              ; CODE XREF: RunCharacterCreationSelectionStep+70D↑j
                 mov     cx, 3
                 call    sub_16180
                 mov     ax, 1Ah
@@ -9425,7 +9426,7 @@ loc_15CB7:                              ; CODE XREF: sub_1559A+70D↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15CF3:                              ; CODE XREF: sub_1559A+756↑j
+loc_15CF3:                              ; CODE XREF: RunCharacterCreationSelectionStep+756↑j
                 call    ClearOffscreenBuffer
                 mov     cx, 3
                 call    sub_1616F
@@ -9446,7 +9447,7 @@ loc_15CF3:                              ; CODE XREF: sub_1559A+756↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15D39:                              ; CODE XREF: sub_1559A+79C↑j
+loc_15D39:                              ; CODE XREF: RunCharacterCreationSelectionStep+79C↑j
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 1Bh
@@ -9469,7 +9470,7 @@ loc_15D39:                              ; CODE XREF: sub_1559A+79C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15D85:                              ; CODE XREF: sub_1559A+7E8↑j
+loc_15D85:                              ; CODE XREF: RunCharacterCreationSelectionStep+7E8↑j
                 mov     cx, 14h
                 call    sub_1616F
                 call    sub_161B6
@@ -9479,7 +9480,7 @@ loc_15D85:                              ; CODE XREF: sub_1559A+7E8↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15D97:                              ; CODE XREF: sub_1559A+7FA↑j
+loc_15D97:                              ; CODE XREF: RunCharacterCreationSelectionStep+7FA↑j
                 mov     ax, 1Bh
                 call    TriggerSoundEvent
                 mov     si, 6DD8h
@@ -9502,7 +9503,7 @@ loc_15D97:                              ; CODE XREF: sub_1559A+7FA↑j
                 mov     dx, 0
                 call    StepPaletteFadeRange
 
-loc_15DD7:                              ; CODE XREF: sub_1559A+843↓j
+loc_15DD7:                              ; CODE XREF: RunCharacterCreationSelectionStep+843↓j
                 test    word_328C4, 400h
                 jz      short loc_15DD7
                 and     word_328C4, 0FBFFh
@@ -9519,7 +9520,7 @@ loc_15DD7:                              ; CODE XREF: sub_1559A+843↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15E05:                              ; CODE XREF: sub_1559A+868↑j
+loc_15E05:                              ; CODE XREF: RunCharacterCreationSelectionStep+868↑j
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -9536,7 +9537,7 @@ loc_15E05:                              ; CODE XREF: sub_1559A+868↑j
                 mov     cx, 14h
                 call    sub_1616F
                 retn
-sub_1559A       endp
+RunCharacterCreationSelectionStep endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9715,7 +9716,7 @@ sub_160B0       endp
 
 
 sub_160C3       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+EF↑p
-                                        ; sub_1559A+D9↑p ...
+                                        ; RunCharacterCreationSelectionStep+D9↑p ...
                 push    cx
                 push    dx
                 mov     ax, 4
@@ -9806,8 +9807,8 @@ ComputeVgaOffsetFromRowCol endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16159       proc near               ; CODE XREF: sub_1559A+260↑p
-                                        ; sub_1559A+58B↑p ...
+sub_16159       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+260↑p
+                                        ; RunCharacterCreationSelectionStep+58B↑p ...
                 push    cx
                 mov     cx, 3Fh ; '?'
 
@@ -9822,8 +9823,8 @@ sub_16159       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16164       proc near               ; CODE XREF: sub_1559A+26↑p
-                                        ; sub_1559A+1F0↑p ...
+sub_16164       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+26↑p
+                                        ; RunCharacterCreationSelectionStep+1F0↑p ...
                 push    cx
                 mov     cx, 3Fh ; '?'
 
@@ -9838,8 +9839,8 @@ sub_16164       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1616F       proc near               ; CODE XREF: sub_1559A+1B0↑p
-                                        ; sub_1559A+617↑p ...
+sub_1616F       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+1B0↑p
+                                        ; RunCharacterCreationSelectionStep+617↑p ...
                 test    word_328C4, 400h
                 jz      short sub_1616F
                 and     word_328C4, 0FBFFh
@@ -9894,8 +9895,8 @@ SetWipeEffectPixel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_161B6       proc near               ; CODE XREF: sub_1559A+1B3↑p
-                                        ; sub_1559A+263↑p ...
+sub_161B6       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+1B3↑p
+                                        ; RunCharacterCreationSelectionStep+263↑p ...
                 or      word_328C8, 800h
                 mov     dx, 90h
                 call    sub_16159
@@ -9906,8 +9907,8 @@ sub_161B6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_161C3       proc near               ; CODE XREF: sub_1559A+1A4↑p
-                                        ; sub_1559A+234↑p ...
+sub_161C3       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+1A4↑p
+                                        ; RunCharacterCreationSelectionStep+234↑p ...
                 or      word_328C8, 800h
                 mov     dx, 90h
                 call    sub_16164
@@ -9918,8 +9919,8 @@ sub_161C3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawShadowedText proc near              ; CODE XREF: sub_1559A+BB↑p
-                                        ; sub_1559A+19C↑p ...
+DrawShadowedText proc near              ; CODE XREF: RunCharacterCreationSelectionStep+BB↑p
+                                        ; RunCharacterCreationSelectionStep+19C↑p ...
                 test    g_driverStateFlags, 8 ; Draws text/a string column with a 1-pixel drop-shadow (background color pass, then foreground color pass shifted up-left). Single line via writeString when cx<=1, multi-line via DrawStringColumn otherwise. Optionally plays a sound first. Called from sub_1559A.
                 jz      short loc_161E3
                 cmp     ax, 0FFFFh
@@ -9971,8 +9972,8 @@ DrawShadowedText endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TryPlaySoundCue proc near               ; CODE XREF: sub_1559A+1F6↑p
-                                        ; sub_1559A+246↑p ...
+TryPlaySoundCue proc near               ; CODE XREF: RunCharacterCreationSelectionStep+1F6↑p
+                                        ; RunCharacterCreationSelectionStep+246↑p ...
                 call    WaitForSoundDriverIdle ; Drops this sound cue (cx=sound/note id) if WaitForSoundDriverIdle had to wait (driver was busy) or cx==0xFFFF (no-op sentinel); otherwise dispatches via still-unnamed sub_1616F. Byte-for-byte identical to TryPlaySoundCueAlt (sub_11EAE) in a different overlay segment. Called from sub_1559A and others.
                 jz      short locret_16243
                 cmp     cx, 0FFFFh
@@ -9988,8 +9989,8 @@ TryPlaySoundCue endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SetPaletteToWhite proc near             ; CODE XREF: sub_1559A+298↑p
-                                        ; sub_1559A:loc_15B34↑p
+SetPaletteToWhite proc near             ; CODE XREF: RunCharacterCreationSelectionStep+298↑p
+                                        ; RunCharacterCreationSelectionStep:loc_15B34↑p
                 mov     es, word_2E4AA  ; Fills the 0x4D5C palette buffer with byte 0x3F (max 6-bit DAC value) and applies all 256 entries via SetPaletteRange -- sets the whole palette to white. Called from sub_1559A.
                 mov     di, 4D5Ch
                 mov     ax, 3F3Fh

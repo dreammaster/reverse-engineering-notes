@@ -6164,6 +6164,23 @@ category flags to apply it appropriately.
 
 698 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunCharacterCreationSelectionStep
+
+Named `sub_1559A` -> `RunCharacterCreationSelectionStep`,
+`RunCharacterCreation`'s "step 3" — previously flagged in
+`file-formats.md` as "not yet traced," matched only by elimination to
+the manual's "CHARACTER CREATION"/"PICK A CLASS"/"MALE"/"FEMALE"/
+"PICK A PORTRAIT" string cluster. A partial trace of this large
+(2218-byte) function confirms its opening structure: continues the
+intro animation from `PlayCharacterCreationIntroAnimation` through
+several more ESC-cancelable staged loops, fades the palette between
+stages, then draws a shadowed 5-item text list — consistent with
+presenting the class-selection menu. The full step likely also covers
+gender and portrait selection per the manual-string cluster, but
+those sub-sections weren't individually traced this round.
+
+699 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

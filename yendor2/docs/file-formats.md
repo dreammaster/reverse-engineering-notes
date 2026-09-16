@@ -658,20 +658,27 @@ sub-animations built from a small moving wipe-effect primitive,
 mode-13h offset math), plus a multi-step palette fade,
 `RunPaletteFadeSequence` (was `sub_160D6`, a sibling of
 `FadePaletteStep` sharing the same `0x4D5C`/`0x442A`/`0x475A`
-current/target/output buffer trio), each ESC-abortable), `sub_1559A`
-(step 3, not yet traced — though it calls `SetPaletteToWhite`, was
+current/target/output buffer trio), each ESC-abortable),
+`RunCharacterCreationSelectionStep` (was `sub_1559A`, step 3 — a
+large 2218-byte function, partially traced: continues the intro
+animation through several more ESC-cancelable staged loops with
+palette fades between them, then draws a shadowed 5-item text list —
+consistent with presenting the class-selection menu, though not
+fully disentangled) — it also calls `SetPaletteToWhite`, was
 `sub_16244`, a full-palette white flash, with a byte-for-byte
-duplicate `SetPaletteToWhiteAlt`, was `sub_11EBE`, called from another
-still-untraced function, `sub_11A10`), then always
-`FinalizeCharacterCreation` (was
+duplicate `SetPaletteToWhiteAlt`, was `sub_11EBE`, called from
+`PlayStudioCreditsIntro` (the game's separate studio/publisher
+credits cinematic, `start`'s own intro sequence, since named)), then
+always `FinalizeCharacterCreation` (was
 `sub_15267`, runs regardless of which step was reached). Matches the
 manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/
-`FEMALE`/`PICK A PORTRAIT` cluster. Step 3 (`sub_1559A`) calls
+`FEMALE`/`PICK A PORTRAIT` cluster. Step 3
+(`RunCharacterCreationSelectionStep`) calls
 `DrawShadowedText` (was `sub_161D0`) — a drop-shadow text/list draw
 (background-color pass, then a foreground-color pass shifted 1 pixel
 up-left), with a byte-for-byte identical duplicate,
-`DrawShadowedTextAlt` (was `sub_11E4A`), used elsewhere by another
-still-untraced function (`sub_11A10`, called directly from `start`).
+`DrawShadowedTextAlt` (was `sub_11E4A`), used elsewhere by
+`PlayStudioCreditsIntro`.
 `FinalizeCharacterCreation` loads a
 transition palette, reads file entry `#3`, frees a temp memory block if
 one was allocated, clears the screen, and stops the

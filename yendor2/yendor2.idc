@@ -2321,7 +2321,9 @@ static Bytes_0(void) {
 	create_insn	(0X15573);
 	create_insn	(x=0X1558B);
 	op_hex		(x,	1);
+	set_cmt	(0X1559A,	"RunCharacterCreation's step 3: continues the intro animation, then presents the class/gender/portrait selection UI (matched to the manual's PICK A CLASS/MALE/FEMALE/PICK A PORTRAIT string cluster) -- opens with a shadowed 5-item text list, consistent with the class menu. Not fully disentangled internally. Called once from RunCharacterCreation.",	0);
 	create_insn	(0X1559A);
+	set_name	(0X1559A,	"RunCharacterCreationSelectionStep");
 	create_insn	(x=0X155B7);
 	op_hex		(x,	1);
 	create_insn	(0X155DA);
@@ -2891,13 +2893,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X175F4);
 	op_hex		(x,	1);
 	set_name	(0X175F4,	"ShowMaterialCounterHud");
-	create_insn	(0X175FD);
-	create_insn	(x=0X17616);
-	op_hex		(x,	1);
-	set_cmt	(0X1763A,	"msg",	0);
-	set_cmt	(0X1766F,	"LoadLockState(ax=1-based lock/object id): reads a bit-packed 'previously unlocked?' array from CURGAME (block 0x556C, (id-1)/8 byte + (id-1)%8 bit -> word_32DC8 mask), reads a second CURGAME block (0x556D) into an EMS buffer at offset id*0x1A, and splits word_32DD0 into word_32DC0/word_32DC2 via /100. Feeds word_32DCE and friends, which ShowLockStatus reads to choose its message.",	0);
-	create_insn	(0X1766F);
-	set_name	(0X1766F,	"LoadLockState");
 }
 
 //------------------------------------------------------------------------
@@ -2907,6 +2902,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X175FD);
+	create_insn	(x=0X17616);
+	op_hex		(x,	1);
+	set_cmt	(0X1763A,	"msg",	0);
+	set_cmt	(0X1766F,	"LoadLockState(ax=1-based lock/object id): reads a bit-packed 'previously unlocked?' array from CURGAME (block 0x556C, (id-1)/8 byte + (id-1)%8 bit -> word_32DC8 mask), reads a second CURGAME block (0x556D) into an EMS buffer at offset id*0x1A, and splits word_32DD0 into word_32DC0/word_32DC2 via /100. Feeds word_32DCE and friends, which ShowLockStatus reads to choose its message.",	0);
+	create_insn	(0X1766F);
+	set_name	(0X1766F,	"LoadLockState");
 	set_cmt	(0X17671,	"this",	0);
 	set_cmt	(0X1767F,	"this",	0);
 	set_cmt	(0X176B4,	"this",	0);
@@ -4722,14 +4724,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1D198,	"Maps in EMS page 0x5610 and copies one 80-byte spell record (1-based index in ax) into scratch buffer 0x5A5A. Called from BuildClueEntryText and RunClueBookSpellCategory (F8 clue book, F3 SPELLS).",	0);
 	create_insn	(0X1D198);
 	set_name	(0X1D198,	"LoadClueBookSpellEntry");
-	create_insn	(x=0X1D1BF);
-	op_plain_offset	(x,	1,	0X2D860);
-	op_plain_offset	(x,	129,	0X2D860);
-	create_insn	(x=0X1D1C8);
-	op_seg		(x,	1);
-	set_cmt	(0X1D1D4,	"Generic single-line text input editor (bx=buffer, cx=max length): draws a '-' cursor, polls keyboard for Enter (confirm, errorCode=0), Backspace (delete/beep), Escape (cancel, errorCode=2), or printable chars (append/beep at limit). One of its 6 call sites is inside EditCharacterName.",	0);
-	create_insn	(0X1D1D4);
-	set_name	(0X1D1D4,	"EditTextField");
 }
 
 //------------------------------------------------------------------------
@@ -4739,6 +4733,14 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1D1BF);
+	op_plain_offset	(x,	1,	0X2D860);
+	op_plain_offset	(x,	129,	0X2D860);
+	create_insn	(x=0X1D1C8);
+	op_seg		(x,	1);
+	set_cmt	(0X1D1D4,	"Generic single-line text input editor (bx=buffer, cx=max length): draws a '-' cursor, polls keyboard for Enter (confirm, errorCode=0), Backspace (delete/beep), Escape (cancel, errorCode=2), or printable chars (append/beep at limit). One of its 6 call sites is inside EditCharacterName.",	0);
+	create_insn	(0X1D1D4);
+	set_name	(0X1D1D4,	"EditTextField");
 	create_insn	(0X1D1E9);
 	create_insn	(0X1D213);
 	create_insn	(0X1D23F);
@@ -6421,13 +6423,6 @@ static Bytes_2(void) {
 	set_cmt	(0X233D0,	"Looks up the dungeon-viewport scratch buffer (0x6D60 + word_3292C*8) for a monster at the current depth row -- if the cell's [+6] bit 0x400 'monster present' flag is set, resolves it via FindMonsterTypeInLevelPool. Called from ApplyDamageAlongCorridorLine and sub_2C0FE.",	0);
 	create_insn	(0X233D0);
 	set_name	(0X233D0,	"GetMonsterAtViewportRow");
-	create_insn	(x=0X233DD);
-	op_hex		(x,	1);
-	create_insn	(0X233EC);
-	set_cmt	(0X233F5,	"If not already active ([+0xC] bit 0), checks the render-depth counter (word_3292C) against a per-monster detection-range threshold selected by [+0x94] flags (0x20/0x40/0x80/0x100 -> 0x21/0x2C/0x29/0x26) -- sets [+0xC] bit 0 once close enough, marking the monster active/aware. Called from SpawnMonsterInFacingDirection and FindMonsterTypeInLevelPool.",	0);
-	create_insn	(x=0X233F5);
-	op_hex		(x,	1);
-	set_name	(0X233F5,	"TryActivateMonsterByDistance");
 }
 
 //------------------------------------------------------------------------
@@ -6437,6 +6432,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X233DD);
+	op_hex		(x,	1);
+	create_insn	(0X233EC);
+	set_cmt	(0X233F5,	"If not already active ([+0xC] bit 0), checks the render-depth counter (word_3292C) against a per-monster detection-range threshold selected by [+0x94] flags (0x20/0x40/0x80/0x100 -> 0x21/0x2C/0x29/0x26) -- sets [+0xC] bit 0 once close enough, marking the monster active/aware. Called from SpawnMonsterInFacingDirection and FindMonsterTypeInLevelPool.",	0);
+	create_insn	(x=0X233F5);
+	op_hex		(x,	1);
+	set_name	(0X233F5,	"TryActivateMonsterByDistance");
 	create_insn	(0X233FD);
 	create_insn	(x=0X23404);
 	op_hex		(x,	1);
@@ -8195,6 +8197,15 @@ static Bytes_3(void) {
 	set_cmt	(0X28BD2,	"Gated by FailsSavingThrow (threshold word_32DC0, resistance bonus = current character's +0x6C). On a failed save: effect id word_32DC2 < 50 applies to the current character only; id >= 50 applies (id-50) to every non-incapacitated party member -- ids 50+ are the party-wide variant of the id 50 lower. Populates the matching icon-bar slot(s) via PrepareTrapEffectSlots and finishes with ApplyEffectAndDrawIconBar. Called from UseAbilityCommand and sub_2A788.",	0);
 	create_insn	(0X28BD2);
 	set_name	(0X28BD2,	"ApplySavingThrowEffect");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X28BE2);
 	create_insn	(0X28C04);
 	create_insn	(0X28C3A);
@@ -8206,15 +8217,6 @@ static Bytes_3(void) {
 	set_cmt	(0X28CB1,	"Reads WORLD.DAT block 3 for a given position (ax), preserving the caller's own block-read context (nested-read guard), and returns one byte from the result. Exact meaning of the byte not identified. Called from RevealMapRegion/RevealMapRegionRow.",	0);
 	create_insn	(0X28CB1);
 	set_name	(0X28CB1,	"ReadMapCellAttributeByte");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X28CC2,	"this",	0);
 	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
 	create_insn	(0X28CFF);
@@ -10827,6 +10829,15 @@ static Bytes_4(void) {
 	set_name	(0X35160,	"aMusic");
 	create_strlit	(0X35166,	0X9);
 	set_name	(0X35166,	"aSoundFx");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3516F,	0X7);
 	set_name	(0X3516F,	"aReturn");
 	create_strlit	(0X35176,	0X9);
@@ -10858,15 +10869,6 @@ static Bytes_4(void) {
 	set_name	(0X351F8,	"aRogue");
 	create_strlit	(0X35203,	0XB);
 	set_name	(0X35203,	"aMonk");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3520E,	0XB);
 	set_name	(0X3520E,	"aAlchemist");
 	create_strlit	(0X35219,	0XB);
