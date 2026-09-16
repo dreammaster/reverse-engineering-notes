@@ -17773,7 +17773,7 @@ loc_1A11C:                              ; CODE XREF: TickPartyAilmentIconBar+B2�
                 cmp     ax, 0
                 jz      short loc_1A139
                 call    SelectPartyRecordById
-                call    sub_1A195
+                call    TickCurseHexJinxAilmentSlot
                 add     word_32924, 2
                 add     di, 14h
                 loop    loc_1A11C
@@ -17829,8 +17829,8 @@ sub_1A14D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A195       proc near               ; CODE XREF: TickPartyAilmentIconBar+A7↑p
-                mov     bx, word_328D4
+TickCurseHexJinxAilmentSlot proc near   ; CODE XREF: TickPartyAilmentIconBar+A7↑p
+                mov     bx, word_328D4  ; No-op if incapacitated ([bx+0x1C]&0x1C40) or out of MP ([bx+0x54]==0). Adds weighted severity to [di+0x10]: CURSED+0x10, HEXED+8, JINXED+4. If nonzero, fills icon-bar slot di and sets word_328CA bit 0x100. Called from TickPartyAilmentIconBar.
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short locret_1A1E2
                 cmp     word ptr [bx+54h], 0
@@ -17839,17 +17839,17 @@ sub_1A195       proc near               ; CODE XREF: TickPartyAilmentIconBar+A7�
                 jz      short loc_1A1B1
                 add     word ptr [di+10h], 10h
 
-loc_1A1B1:                              ; CODE XREF: sub_1A195+16↑j
+loc_1A1B1:                              ; CODE XREF: TickCurseHexJinxAilmentSlot+16↑j
                 test    word ptr [bx+1Ch], 100h
                 jz      short loc_1A1BC
                 add     word ptr [di+10h], 8
 
-loc_1A1BC:                              ; CODE XREF: sub_1A195+21↑j
+loc_1A1BC:                              ; CODE XREF: TickCurseHexJinxAilmentSlot+21↑j
                 test    word ptr [bx+1Ch], 200h
                 jz      short loc_1A1C7
                 add     word ptr [di+10h], 4
 
-loc_1A1C7:                              ; CODE XREF: sub_1A195+2C↑j
+loc_1A1C7:                              ; CODE XREF: TickCurseHexJinxAilmentSlot+2C↑j
                 cmp     word ptr [di+10h], 0
                 jz      short locret_1A1E2
                 mov     ax, word_3293E
@@ -17859,10 +17859,10 @@ loc_1A1C7:                              ; CODE XREF: sub_1A195+2C↑j
                 mov     [di+0Ch], bx
                 or      word_328CA, 100h
 
-locret_1A1E2:                           ; CODE XREF: sub_1A195+9↑j
-                                        ; sub_1A195+F↑j ...
+locret_1A1E2:                           ; CODE XREF: TickCurseHexJinxAilmentSlot+9↑j
+                                        ; TickCurseHexJinxAilmentSlot+F↑j ...
                 retn
-sub_1A195       endp
+TickCurseHexJinxAilmentSlot endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR TickPartyAilmentIconBar

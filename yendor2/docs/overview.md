@@ -5043,6 +5043,19 @@ as perception rises.
 
 592 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TickCurseHexJinxAilmentSlot
+
+Named `sub_1A195` -> `TickCurseHexJinxAilmentSlot`, called once from
+`TickPartyAilmentIconBar` — pins down the concrete address for the
+"id `0xE`" helper already described in `file-formats.md`
+(CURSED/HEXED/JINXED, MP-gated). No-ops if incapacitated or out of
+MP; otherwise sums a weighted severity (`0x10`/`8`/`4` per active
+affliction) and, if nonzero, fills the icon-bar slot the same way its
+sibling `TickPerceptionGatedAilmentSlot` does. This resolves the last
+unaddressed piece of `TickPartyAilmentIconBar`'s three helper paths.
+
+593 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -2037,7 +2037,9 @@ severity via `PrepareTrapEffectSlots(ax=2` or `0xE)` plus a helper that
 checks `+0x1C` status bits — **now identified via `DrawAfflictionsList`**:
 `0x2000`/`0x4000`/`0x8000` = DISEASED/POISONED/SICK for the normal
 path (id `2`); `0x80`/`0x100`/`0x200` = CURSED/HEXED/JINXED, gated on
-having MP (`+0x54 != 0`), for the second helper (id `0xE`) — or, on the
+having MP (`+0x54 != 0`), for the second helper (id `0xE`,
+`TickCurseHexJinxAilmentSlot`, was `sub_1A195` — sums a weighted
+severity `0x10`/`8`/`4` per active affliction) — or, on the
 slow path, tiers off the derived stat `+0x58` instead via
 `TickPerceptionGatedAilmentSlot` (was `sub_1A233`, confirmed to
 no-op for dead characters and produce a *decreasing* severity as
