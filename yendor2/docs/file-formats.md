@@ -630,7 +630,12 @@ the generic fields; `RunClueBookWeaponCategory` (subtype 8) similarly
 adds `ShowWeaponDetailRow` ("DAMAGE:" and "2-HANDED: YES/NO"); both
 end with `DrawSubIconSelectorRow`, drawing the clickable sub-icon
 indicator strip (region table `0x6976`, the same table
-`RunClueBookItemCategory` hit-tests, toggled by `word_328FE` bits).
+`RunClueBookItemCategory` hit-tests, toggled by `word_328FE` bits). Both
+also call `ListCompatibleClueBookItems` (was `sub_1472A`, using the
+same `0x6976` table/position): checks the current entry's usability
+flags, and if eligible, scans up to 9 more catalog ids re-checking the
+same eligibility test and drawing each match — a filtered
+compatible-items list for the category view.
 
 **Major reference find**: `ShowArmorDetailRow` also calls two
 bonus-list drawers, each iterating up to 4 `(type id, amount)` pairs

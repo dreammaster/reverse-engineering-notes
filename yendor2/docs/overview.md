@@ -3818,6 +3818,17 @@ by chance while ranking candidates.
 
 487 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ListCompatibleClueBookItems
+
+Named `sub_1472A` -> `ListCompatibleClueBookItems`, called from
+`RunClueBookItemCategory` and `RunClueBookWeaponCategory`: checks the
+current item's usability flags and, if eligible, scans up to 9 more
+catalog ids drawing each compatible match — a filtered items list for
+the F8 clue book's weapon/armor category view, using the same `0x6976`
+region table `DrawSubIconSelectorRow` already ties to this cluster.
+
+488 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

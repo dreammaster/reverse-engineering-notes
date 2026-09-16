@@ -3778,7 +3778,7 @@ seg006          segment byte public 'CODE' use16
 
 
 LoadItemCatalogRecord proc far          ; CODE XREF: seg000:0A58↑P
-                                        ; sub_1472A+9↓P ...
+                                        ; ListCompatibleClueBookItems+9↓P ...
                 push    cx              ; LoadItemCatalogRecord(ax=item id): maps in EMS item-catalog pages, copies the item's 58-byte record into a scratch buffer (0xB50). If [+2] is nonzero, also loads word_2E54A (the multi-stat-effect table ApplyMultiStatEffect walks) from an 8-word sub-block. Also sets up word_2E548 -- the 'current target' pointer read throughout the codebase -- based on a flag test on [+0xC]. The single most pervasively-used item lookup in the executable.
                 push    dx
                 push    di
@@ -5103,7 +5103,7 @@ WaitForKeypress endp
 
 
 RunClueBookItemCategory proc far        ; CODE XREF: ShowClueBook:loc_10F2F↑P
-                call    sub_1472A       ; F5 'INVENTORY ITEMS' clue-book category loop (called once from ShowClueBook). Draws the current entry via ShowClueBookItemDetail, polls input, hit-tests a region table (0x6976) so the player can click a sub-icon to jump to a specific entry (word_328FE tracks the selection), loops until ESC.
+                call    ListCompatibleClueBookItems ; F5 'INVENTORY ITEMS' clue-book category loop (called once from ShowClueBook). Draws the current entry via ShowClueBookItemDetail, polls input, hit-tests a region table (0x6976) so the player can click a sub-icon to jump to a specific entry (word_328FE tracks the selection), loops until ESC.
                 or      word_328CC, 40h
                 mov     word_2E3FC, 0F9h
                 mov     ax, 8A01h
@@ -5215,7 +5215,7 @@ RunClueBookItemDetailWithAbilityInfo endp
 
 
 RunClueBookWeaponCategory proc far      ; CODE XREF: ShowClueBook:loc_110CA↑P
-                call    sub_1472A       ; F5 item-subtype-8 'WEAPONS' clue-book category loop (called from ShowClueBook), structurally identical to RunClueBookItemCategory (subtype 1, 'ARMOR/RINGS'): ShowClueBookItemDetail + sub_1385C, region-table 0x6976 hit-testing for sub-icon clicks, until ESC.
+                call    ListCompatibleClueBookItems ; F5 item-subtype-8 'WEAPONS' clue-book category loop (called from ShowClueBook), structurally identical to RunClueBookItemCategory (subtype 1, 'ARMOR/RINGS'): ShowClueBookItemDetail + sub_1385C, region-table 0x6976 hit-testing for sub-icon clicks, until ESC.
                 or      word_328CC, 40h
                 mov     word_2E3FC, 111h
                 mov     ax, 8A7Ah
@@ -6510,7 +6510,7 @@ DrawTransportDetailRow endp
 
 
 sub_13FBF       proc near               ; CODE XREF: DrawClueBookMapGrid+112↓p
-                                        ; sub_1472A+14↓p
+                                        ; ListCompatibleClueBookItems+14↓p
                 mov     di, 6976h
                 mov     es, word_2E4AA
                 mov     cx, 0FAh
@@ -7130,9 +7130,9 @@ LoadClueBookMonsterEntry endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1472A       proc near               ; CODE XREF: RunClueBookItemCategory↑p
+ListCompatibleClueBookItems proc near   ; CODE XREF: RunClueBookItemCategory↑p
                                         ; RunClueBookWeaponCategory↑p
-                mov     bx, word_2E3EE
+                mov     bx, word_2E3EE  ; Checks the current item's usability flags ([+0xC] bits 0xC000/0xE00, word_2E548[+2] bits 0x800/0x100); if eligible, iterates up to 9 more catalog ids re-checking eligibility and drawing each match (sub_147D8) -- a filtered compatible-items list for the F8 clue book's weapon/armor category view. Called from RunClueBookItemCategory and RunClueBookWeaponCategory.
                 mov     ax, [bx]
                 mov     word_32974, ax
                 call    LoadItemCatalogRecord
@@ -7145,13 +7145,13 @@ sub_1472A       proc near               ; CODE XREF: RunClueBookItemCategory↑p
                 test    word ptr [bx+2], 800h
                 jnz     short loc_14775
 
-loc_14757:                              ; CODE XREF: sub_1472A+39↓j
-                                        ; sub_1472A+49↓j
+loc_14757:                              ; CODE XREF: ListCompatibleClueBookItems+39↓j
+                                        ; ListCompatibleClueBookItems+49↓j
                 mov     word_328FE, 0
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1475E:                              ; CODE XREF: sub_1472A+20↑j
+loc_1475E:                              ; CODE XREF: ListCompatibleClueBookItems+20↑j
                 test    word ptr [bx+0Ch], 0E00h
                 jz      short loc_14757
                 or      word_328FE, 1
@@ -7159,7 +7159,7 @@ loc_1475E:                              ; CODE XREF: sub_1472A+20↑j
                 test    word ptr [bx+2], 100h
                 jz      short loc_14757
 
-loc_14775:                              ; CODE XREF: sub_1472A+2B↑j
+loc_14775:                              ; CODE XREF: ListCompatibleClueBookItems+2B↑j
                 mov     di, 6976h
                 mov     x, 15h
                 mov     y, 88h
@@ -7169,7 +7169,7 @@ loc_14775:                              ; CODE XREF: sub_1472A+2B↑j
                 call    sub_147D8
                 call    sub_147D8
 
-loc_14796:                              ; CODE XREF: sub_1472A+9D↓j
+loc_14796:                              ; CODE XREF: ListCompatibleClueBookItems+9D↓j
                 inc     word_32974
                 mov     ax, word_32974
                 call    LoadItemCatalogRecord
@@ -7181,33 +7181,33 @@ loc_14796:                              ; CODE XREF: sub_1472A+9D↓j
                 jmp     short loc_147C9
 ; ---------------------------------------------------------------------------
 
-loc_147B7:                              ; CODE XREF: sub_1472A+7E↑j
+loc_147B7:                              ; CODE XREF: ListCompatibleClueBookItems+7E↑j
                 mov     bx, word_2E548
                 test    word ptr [bx+2], 100h
                 jnz     short loc_147C4
                 jmp     short loc_147C9
 ; ---------------------------------------------------------------------------
 
-loc_147C4:                              ; CODE XREF: sub_1472A+89↑j
-                                        ; sub_1472A+96↑j
+loc_147C4:                              ; CODE XREF: ListCompatibleClueBookItems+89↑j
+                                        ; ListCompatibleClueBookItems+96↑j
                 call    sub_147D8
                 loop    loc_14796
 
-loc_147C9:                              ; CODE XREF: sub_1472A+8B↑j
-                                        ; sub_1472A+98↑j
+loc_147C9:                              ; CODE XREF: ListCompatibleClueBookItems+8B↑j
+                                        ; ListCompatibleClueBookItems+98↑j
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 mov     word_32974, ax
                 call    LoadItemCatalogRecord
                 retn
-sub_1472A       endp
+ListCompatibleClueBookItems endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_147D8       proc near               ; CODE XREF: sub_1472A+66↑p
-                                        ; sub_1472A+69↑p ...
+sub_147D8       proc near               ; CODE XREF: ListCompatibleClueBookItems+66↑p
+                                        ; ListCompatibleClueBookItems+69↑p ...
                 mov     ax, x
                 mov     [di], ax
                 add     ax, 10h

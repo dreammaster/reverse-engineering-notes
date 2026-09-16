@@ -1990,7 +1990,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X14723);
 	op_hex		(x,	1);
+	set_cmt	(0X1472A,	"Checks the current item's usability flags ([+0xC] bits 0xC000/0xE00, word_2E548[+2] bits 0x800/0x100); if eligible, iterates up to 9 more catalog ids re-checking eligibility and drawing each match (sub_147D8) -- a filtered compatible-items list for the F8 clue book's weapon/armor category view. Called from RunClueBookItemCategory and RunClueBookWeaponCategory.",	0);
 	create_insn	(0X1472A);
+	set_name	(0X1472A,	"ListCompatibleClueBookItems");
 	create_insn	(x=0X14745);
 	op_hex		(x,	1);
 	create_insn	(x=0X14750);
@@ -3462,6 +3464,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1953D);
 	create_insn	(0X1954B);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X19553);
 	create_insn	(0X19583);
 	create_insn	(0X19598);
@@ -3492,15 +3503,6 @@ static Bytes_0(void) {
 	set_cmt	(0X19768,	"Given a class id (ax, 1-27), returns a pointer (bx) into one of two contiguous 11-byte-stride string tables -- a real class-name table (FIGHTER/MERCHANT/ROGUE/MONK/ALCHEMIST/PALADIN/MAGE/DRUID/MARKSMAN for 1-9; WARRIOR/TINKERER/THIEF/CLERIC/TRANSMUTER/CAVALIER/WIZARD/ENCHANTER/RANGER/CHAMPION/BLACKSMITH/ASSASSIN/PRIEST/HEALER/HERO/SORCERER/SAGE/KNIGHT for 10-27). Confirms +0xE is a class id.",	0);
 	create_insn	(0X19768);
 	set_name	(0X19768,	"GetClassNameString");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1978F);
 	create_insn	(0X197B9);
 	set_cmt	(0X19957,	"Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).",	0);
@@ -5571,6 +5573,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X212EB);
 	op_hex		(x,	1);
 	set_name	(0X212EB,	"RenderActiveMonsterSprites");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X21306,	"Builds the local scratch cell buffer (di=0x6D60) that every dungeon-rendering pass reads from: computes a facing-dependent row stride/side-step (word_36CF5 tier bits) from the current position, then calls CopyDungeonRowCells 7x (same row-count pattern as RenderDungeonViewport) to copy the visible cells from the level's map data. Called first in RedrawDungeonScreen.",	0);
 	create_insn	(x=0X21306);
 	op_hex		(x,	1);
@@ -5581,15 +5592,6 @@ static Bytes_1(void) {
 	set_cmt	(0X213D4,	"Copies one row of 8-byte cell records from the level's map data (es:si, advancing by bp, the facing-dependent stride) into the scratch viewport buffer (di, advancing by 8), then steps si to the next row's start (+= word_2E560). Called 7x by BuildDungeonViewportCells.",	0);
 	create_insn	(0X213D4);
 	set_name	(0X213D4,	"CopyDungeonRowCells");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X213FC,	"Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.",	0);
 	create_insn	(0X213FC);
 	set_name	(0X213FC,	"ComputeDungeonCellVisibility");
@@ -7652,6 +7654,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2899C,	"Generic error/exit path: runs the RestoreInt1cVector / FreeVideoBuffer / ShutdownAudioDrivers cleanup trio, then (if the mouse/video subsystem flag ds:40FCh bit0 is set) resets the mouse driver and video mode 3, prints the DOS '$'-terminated string at DS:AX (set by the ErrorTable handler that jumped here), and exits via INT 21h/AH=4Ch with errorCode as the exit code.",	0);
 	create_insn	(0X2899C);
 	set_name	(0X2899C,	"ErrorExit");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X289AC);
 	op_hex		(x,	1);
 	set_cmt	(0X289B7,	"- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",	0);
@@ -7682,15 +7693,6 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X289D8,	"ShowErr_ProblemWithPalette");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X289DD);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -10753,6 +10755,15 @@ static Bytes_3(void) {
 	set_name	(0X359A7,	"aEnhanceItem");
 	create_strlit	(0X359B4,	0X6);
 	set_name	(0X359B4,	"aCost");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X359BA,	0XA);
 	set_name	(0X359BA,	"aICanNot");
 	create_strlit	(0X359C4,	0XD);
@@ -10783,15 +10794,6 @@ static Bytes_3(void) {
 	set_name	(0X35A78,	"aCanOnlyFlyBetw");
 	create_strlit	(0X35A8D,	0XD);
 	set_name	(0X35A8D,	"a12amAnd6pm");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35A9A,	0XD);
 	set_name	(0X35A9A,	"a6pmAnd12am");
 	create_strlit	(0X35AA7,	0X1D);
