@@ -6086,6 +6086,18 @@ condition before a new game begins.
 
 692 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleShopCatalogSlotClick
+
+Named `sub_17032` -> `HandleShopCatalogSlotClick`, called from
+`RunShopScreen` and `sub_1869D`: the click handler for the shop's
+catalog item grid (`HitTestCatalogSlot`). With an empty hand, buys
+directly (`PayGoldAndAcquireItem`) if a mode flag is set, else
+dispatches on the item's own flags — sell it for gold, two other
+branches not traced, or (default) pick it up into the held-item
+state and redraw the shop grid and item description.
+
+693 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

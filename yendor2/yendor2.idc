@@ -2785,7 +2785,9 @@ static Bytes_0(void) {
 	set_name	(0X1700E,	"StrCat");
 	create_insn	(x=0X17015);
 	op_seg		(x,	1);
+	set_cmt	(0X17032,	"Click handler for the shop's catalog item grid (HitTestCatalogSlot). With an empty hand: buys directly via PayGoldAndAcquireItem if word_328C6 bit 0x20 is set, else dispatches on the item's [+0xC] flags (0x80=sell for gold, 0x40/0x20=other branches, default=pick up into held-item state). Called from RunShopScreen and sub_1869D.",	0);
 	create_insn	(0X17032);
+	set_name	(0X17032,	"HandleShopCatalogSlotClick");
 	create_insn	(0X1703B);
 	create_insn	(0X17045);
 	create_insn	(0X1704C);
@@ -2896,6 +2898,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1766F,	"LoadLockState(ax=1-based lock/object id): reads a bit-packed 'previously unlocked?' array from CURGAME (block 0x556C, (id-1)/8 byte + (id-1)%8 bit -> word_32DC8 mask), reads a second CURGAME block (0x556D) into an EMS buffer at offset id*0x1A, and splits word_32DD0 into word_32DC0/word_32DC2 via /100. Feeds word_32DCE and friends, which ShowLockStatus reads to choose its message.",	0);
 	create_insn	(0X1766F);
 	set_name	(0X1766F,	"LoadLockState");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X17671,	"this",	0);
 	set_cmt	(0X1767F,	"this",	0);
 	set_cmt	(0X176B4,	"this",	0);
@@ -2907,15 +2918,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1770C,	"Reads a record from CURGAME (the active savegame, FileEntry bx=0x8FFB) via EMS paging, indexed by word_32DBC*4 + 0x1A*_val9 (plausibly a per-character row). Splits word_32DD0 by 100 into word_32DC0 (quotient)/word_32DC2 (remainder) -- typical of a currency or time value split into two denominations, not confirmed which.",	0);
 	create_insn	(0X1770C);
 	set_name	(0X1770C,	"LoadCurgameRecord");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1770E,	"this",	0);
 	set_cmt	(0X17734,	"this",	0);
 	create_insn	(x=0X17772);

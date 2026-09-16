@@ -11633,7 +11633,7 @@ seg019          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ClearMessageBoxArea proc far            ; CODE XREF: sub_17032+E5↓P
+ClearMessageBoxArea proc far            ; CODE XREF: HandleShopCatalogSlotClick+E5↓P
                                         ; UseAbilityCommand+37↓P ...
                 push    di              ; Clears a VGA video-memory region (fill 0x0404), sized by combat state (word_328CA bit 0x1000). Generic message/status-box clear reused by sub_17032, UseAbilityCommand, and RestPartyAndAdvanceClock.
                 push    es
@@ -11888,28 +11888,28 @@ seg023          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17032       proc far                ; CODE XREF: RunShopScreen+13A↓p
+HandleShopCatalogSlotClick proc far     ; CODE XREF: RunShopScreen+13A↓p
                                         ; sub_1869D+E9↓P
-                call    HitTestCatalogSlot
+                call    HitTestCatalogSlot ; Click handler for the shop's catalog item grid (HitTestCatalogSlot). With an empty hand: buys directly via PayGoldAndAcquireItem if word_328C6 bit 0x20 is set, else dispatches on the item's [+0xC] flags (0x80=sell for gold, 0x40/0x20=other branches, default=pick up into held-item state). Called from RunShopScreen and sub_1869D.
                 cmp     ax, 0
                 jnz     short loc_1703B
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1703B:                              ; CODE XREF: sub_17032+6↑j
+loc_1703B:                              ; CODE XREF: HandleShopCatalogSlotClick+6↑j
                 cmp     word_31946, 0
                 jz      short loc_17045
                 jmp     loc_171B8
 ; ---------------------------------------------------------------------------
 
-loc_17045:                              ; CODE XREF: sub_17032+E↑j
+loc_17045:                              ; CODE XREF: HandleShopCatalogSlotClick+E↑j
                 mov     ax, [si]
                 or      ax, ax
                 jnz     short loc_1704C
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1704C:                              ; CODE XREF: sub_17032+17↑j
+loc_1704C:                              ; CODE XREF: HandleShopCatalogSlotClick+17↑j
                 mov     word_31948, ax
                 call    LoadItemCatalogRecord
                 test    word_328C6, 20h
@@ -11918,7 +11918,7 @@ loc_1704C:                              ; CODE XREF: sub_17032+17↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_17060:                              ; CODE XREF: sub_17032+28↑j
+loc_17060:                              ; CODE XREF: HandleShopCatalogSlotClick+28↑j
                 test    word ptr [bx+0Ch], 80h
                 jnz     short loc_170C8
                 test    word ptr [bx+0Ch], 40h
@@ -11926,13 +11926,13 @@ loc_17060:                              ; CODE XREF: sub_17032+28↑j
                 jmp     loc_17172
 ; ---------------------------------------------------------------------------
 
-loc_17071:                              ; CODE XREF: sub_17032+3A↑j
+loc_17071:                              ; CODE XREF: HandleShopCatalogSlotClick+3A↑j
                 test    word ptr [bx+0Ch], 20h
                 jz      short loc_1707B
                 jmp     loc_17195
 ; ---------------------------------------------------------------------------
 
-loc_1707B:                              ; CODE XREF: sub_17032+44↑j
+loc_1707B:                              ; CODE XREF: HandleShopCatalogSlotClick+44↑j
                 mov     ax, [bx+8]
                 mov     word_31946, ax
                 mov     word_2E530, ax
@@ -11948,10 +11948,10 @@ loc_1707B:                              ; CODE XREF: sub_17032+44↑j
                 jz      short loc_170A3
                 shr     al, cl
 
-loc_170A3:                              ; CODE XREF: sub_17032+6D↑j
+loc_170A3:                              ; CODE XREF: HandleShopCatalogSlotClick+6D↑j
                 or      byte_32DCC, al
 
-loc_170A7:                              ; CODE XREF: sub_17032+237↓j
+loc_170A7:                              ; CODE XREF: HandleShopCatalogSlotClick+237↓j
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
                 push    cs
@@ -11963,7 +11963,7 @@ loc_170A7:                              ; CODE XREF: sub_17032+237↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_170C8:                              ; CODE XREF: sub_17032+33↑j
+loc_170C8:                              ; CODE XREF: HandleShopCatalogSlotClick+33↑j
                 mov     ax, 7
                 call    TriggerSoundEvent
                 mov     ax, [si]
@@ -11976,8 +11976,8 @@ loc_170C8:                              ; CODE XREF: sub_17032+33↑j
                 pop     si
                 mov     bx, 7C55h
 
-loc_170E8:                              ; CODE XREF: sub_17032+160↓j
-                                        ; sub_17032+183↓j
+loc_170E8:                              ; CODE XREF: HandleShopCatalogSlotClick+160↓j
+                                        ; HandleShopCatalogSlotClick+183↓j
                 mov     ax, [si+2]
                 push    ax
                 push    bx
@@ -11989,7 +11989,7 @@ loc_170E8:                              ; CODE XREF: sub_17032+160↓j
                 jz      short loc_17100
                 shr     al, cl
 
-loc_17100:                              ; CODE XREF: sub_17032+CA↑j
+loc_17100:                              ; CODE XREF: HandleShopCatalogSlotClick+CA↑j
                 or      byte_32DCC, al
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowResourceDepletedOverlay
@@ -12018,7 +12018,7 @@ loc_17100:                              ; CODE XREF: sub_17032+CA↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_17172:                              ; CODE XREF: sub_17032+3C↑j
+loc_17172:                              ; CODE XREF: HandleShopCatalogSlotClick+3C↑j
                 mov     ax, 7
                 call    TriggerSoundEvent
                 mov     ax, [si]
@@ -12033,7 +12033,7 @@ loc_17172:                              ; CODE XREF: sub_17032+3C↑j
                 jmp     loc_170E8
 ; ---------------------------------------------------------------------------
 
-loc_17195:                              ; CODE XREF: sub_17032+46↑j
+loc_17195:                              ; CODE XREF: HandleShopCatalogSlotClick+46↑j
                 mov     ax, 7
                 call    TriggerSoundEvent
                 mov     ax, [si]
@@ -12048,7 +12048,7 @@ loc_17195:                              ; CODE XREF: sub_17032+46↑j
                 jmp     loc_170E8
 ; ---------------------------------------------------------------------------
 
-loc_171B8:                              ; CODE XREF: sub_17032+10↑j
+loc_171B8:                              ; CODE XREF: HandleShopCatalogSlotClick+10↑j
                 mov     ax, word_31948
                 mov     dx, word_3194C
                 mov     byte_2E668, 80h
@@ -12056,17 +12056,17 @@ loc_171B8:                              ; CODE XREF: sub_17032+10↑j
                 mov     di, 5572h
                 mov     cx, 8
 
-loc_171CD:                              ; CODE XREF: sub_17032+1B6↓j
+loc_171CD:                              ; CODE XREF: HandleShopCatalogSlotClick+1B6↓j
                 test    word_328C6, 20h
                 jnz     short loc_171DA
                 cmp     word ptr [si], 0
                 jnz     short loc_171DE
 
-loc_171DA:                              ; CODE XREF: sub_17032+1A1↑j
+loc_171DA:                              ; CODE XREF: HandleShopCatalogSlotClick+1A1↑j
                 cmp     ax, [di]
                 jz      short loc_171F0
 
-loc_171DE:                              ; CODE XREF: sub_17032+1A6↑j
+loc_171DE:                              ; CODE XREF: HandleShopCatalogSlotClick+1A6↑j
                 add     si, 4
                 add     di, 2
                 shr     byte_2E668, 1
@@ -12075,7 +12075,7 @@ loc_171DE:                              ; CODE XREF: sub_17032+1A6↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_171F0:                              ; CODE XREF: sub_17032+1AA↑j
+loc_171F0:                              ; CODE XREF: HandleShopCatalogSlotClick+1AA↑j
                 mov     ax, [di]
                 call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
@@ -12087,7 +12087,7 @@ loc_171F0:                              ; CODE XREF: sub_17032+1AA↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1720D:                              ; CODE XREF: sub_17032+1CA↑j
+loc_1720D:                              ; CODE XREF: HandleShopCatalogSlotClick+1CA↑j
                 test    word ptr [bx+0Ch], 100h
                 jz      short loc_1722F
                 mov     bx, ax
@@ -12102,8 +12102,8 @@ loc_1720D:                              ; CODE XREF: sub_17032+1CA↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1722F:                              ; CODE XREF: sub_17032+1D3↑j
-                                        ; sub_17032+1E0↑j ...
+loc_1722F:                              ; CODE XREF: HandleShopCatalogSlotClick+1D3↑j
+                                        ; HandleShopCatalogSlotClick+1E0↑j ...
                 test    word_328C6, 20h
                 jnz     short loc_1726C
                 mov     ax, word_31948
@@ -12120,10 +12120,10 @@ loc_1722F:                              ; CODE XREF: sub_17032+1D3↑j
                 jmp     loc_170A7
 ; ---------------------------------------------------------------------------
 
-loc_1726C:                              ; CODE XREF: sub_17032+203↑j
+loc_1726C:                              ; CODE XREF: HandleShopCatalogSlotClick+203↑j
                 call    SellClickedCatalogItem
                 retf
-sub_17032       endp
+HandleShopCatalogSlotClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12154,8 +12154,8 @@ TryHandleCatalogSlotClick endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawShopItemSlotGrid proc far           ; CODE XREF: sub_17032+80↑p
-                                        ; sub_17032+DD↑p ...
+DrawShopItemSlotGrid proc far           ; CODE XREF: HandleShopCatalogSlotClick+80↑p
+                                        ; HandleShopCatalogSlotClick+DD↑p ...
                 push    es              ; Clears the shop item-slot grid area, then draws up to 8 item icons (from a position table at 0x63C8 and an item-id table at 0x558A) via LoadItemCatalogRecord + DrawPicture. Shows 'EMPTY' and sets a word_328C6 flag bit if no items were drawn. Called twice from sub_17032.
                 and     word_328C6, 0FFBFh
                 mov     ax, _videoBufferSeg
@@ -12369,7 +12369,7 @@ loc_1745A:                              ; CODE XREF: RunShopScreen+125↑j
                 cmp     ax, 5
                 jnz     short loc_1746B
                 push    cs
-                call    near ptr sub_17032
+                call    near ptr HandleShopCatalogSlotClick
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
@@ -13041,7 +13041,7 @@ ConsumeAbilityChargeAndRefresh endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PayGoldAndAcquireItem proc near         ; CODE XREF: sub_17032+2A↑p
+PayGoldAndAcquireItem proc near         ; CODE XREF: HandleShopCatalogSlotClick+2A↑p
                 push    si              ; Core 'pay and receive' step of a shop purchase: CompareBCD4/SubBCD4(g_partyGold, [0xB30]) -- bails if unaffordable, shows ShowResourceDepletedOverlay on an exact-drain special case -- then stages the acquired item (word_31946/3194A/3194C) the same way TrySellItemForGold/TryEnhanceItemForGold/TryRepairItemForGold stage theirs. Called from sub_17032, a shop-catalog click handler (main input loop, word_328C6 bit 0x200).
                 mov     ax, [si]
                 mov     si, word_2E546
@@ -13093,7 +13093,7 @@ PayGoldAndAcquireItem endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SellClickedCatalogItem proc near        ; CODE XREF: sub_17032:loc_1726C↑p
+SellClickedCatalogItem proc near        ; CODE XREF: HandleShopCatalogSlotClick:loc_1726C↑p
                 mov     ax, word_31948  ; Credits gold (AddBCD4(g_partyGold, [0xB30])) instead of spending it, clears the held/staged item, refreshes the material/gold HUD -- a 'sell this catalog item back' action, the click counterpart to TrySellItemForGold. Called from sub_17032.
                 mov     si, word_2E546
                 add     si, 4
@@ -13124,7 +13124,7 @@ SellClickedCatalogItem endp
 ; =============== S U B R O U T I N E =======================================
 
 
-HitTestCatalogSlot proc near            ; CODE XREF: sub_17032↑p
+HitTestCatalogSlot proc near            ; CODE XREF: HandleShopCatalogSlotClick↑p
                                         ; TryHandleCatalogSlotClick↑p
                 mov     ax, word_2E76E  ; Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.
                 mov     bx, word_2E770
@@ -14782,7 +14782,7 @@ loc_1877B:                              ; CODE XREF: sub_1869D+5B↑j
 loc_1877E:                              ; CODE XREF: sub_1869D+6E↑j
                 test    word_328C6, 200h
                 jz      short loc_1877B
-                call    sub_17032
+                call    HandleShopCatalogSlotClick
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -16819,8 +16819,8 @@ AddBCD4         endp
 ; =============== S U B R O U T I N E =======================================
 
 
-AddToBCDCounter proc far                ; CODE XREF: sub_17032+AD↑P
-                                        ; sub_17032+157↑P ...
+AddToBCDCounter proc far                ; CODE XREF: HandleShopCatalogSlotClick+AD↑P
+                                        ; HandleShopCatalogSlotClick+157↑P ...
                 push    cx              ; AddToBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then AddBCD4 into the counter at si.
                 push    dx
                 push    di
@@ -18399,8 +18399,8 @@ seg036          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-FlashStatusWarning proc far             ; CODE XREF: sub_17032+1B8↑P
-                                        ; sub_17032+1D5↑P ...
+FlashStatusWarning proc far             ; CODE XREF: HandleShopCatalogSlotClick+1B8↑P
+                                        ; HandleShopCatalogSlotClick+1D5↑P ...
                 push    word_31946      ; Moderate confidence: plays a sound, briefly shows picture id 0xE for 7 ticks (saving/restoring the previous picture id), then restores. Called from HandleGameCommand when a status effect is already active -- a periodic warning flash.
                 mov     ax, 3
                 call    TriggerSoundEvent
@@ -31429,7 +31429,8 @@ sub_219FA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RedrawItemDescriptionAndMaterials proc far ; CODE XREF: sub_17032+8B↑P
+RedrawItemDescriptionAndMaterials proc far
+                                        ; CODE XREF: HandleShopCatalogSlotClick+8B↑P
                                         ; sub_1869D:loc_18759↑P ...
                 call    ClearStatusPanelIfDirty ; Clears status panel if dirty, sets word_328C4 bit 0x100, positions text at (0xF0,0x60), draws a 3-line text field from word_2E546+0x13 (current item record's description text) via DrawStringColumn, then ShowMaterialCounterHud + DrawMouseCursor. Standard post-LoadItemCatalogRecord refresh in shop/trade screens. Called from sub_17032 and sub_1869D.
                 or      word_328C4, 100h
@@ -37838,7 +37839,7 @@ seg079          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-StripSpaces     proc far                ; CODE XREF: sub_17032+130↑P
+StripSpaces     proc far                ; CODE XREF: HandleShopCatalogSlotClick+130↑P
                                         ; FormatAndDrawBCD4+4C↑P ...
                 push    di              ; Strips all space characters from a string in place (compacting it). Called from FormatAndDrawBCD4 and others.
                 push    si
@@ -57234,8 +57235,8 @@ word_2E664      dw 0                    ; DATA XREF: DrawClueBookMapGrid+7↑r
                                         ; DrawClueBookMapGrid+21↑r ...
 word_2E666      dw 0                    ; DATA XREF: DrawClueBookMapGrid+16↑w
                                         ; DrawClueBookMapGrid+9F↑r ...
-byte_2E668      db 0                    ; DATA XREF: sub_17032+18D↑w
-                                        ; sub_17032+1B2↑w ...
+byte_2E668      db 0                    ; DATA XREF: HandleShopCatalogSlotClick+18D↑w
+                                        ; HandleShopCatalogSlotClick+1B2↑w ...
                 align 4
 word_2E66C      dw 0                    ; DATA XREF: ShowConfirmPrompt+38↑w
                                         ; ShowConfirmPrompt+CE↑r ...
@@ -75493,8 +75494,8 @@ word_32DC8      dw 0                    ; DATA XREF: start:loc_101B8↑r
                                         ; start:loc_10248↑r ...
 word_32DCA      dw 0                    ; DATA XREF: LoadLockState+7↑w
                                         ; RunGameDialog+53B↑w ...
-byte_32DCC      db 0                    ; DATA XREF: sub_17032:loc_170A3↑w
-                                        ; sub_17032:loc_17100↑w ...
+byte_32DCC      db 0                    ; DATA XREF: HandleShopCatalogSlotClick:loc_170A3↑w
+                                        ; HandleShopCatalogSlotClick:loc_17100↑w ...
 byte_32DCD      db 0                    ; DATA XREF: start+1BB↑w
                                         ; start+24B↑w ...
 word_32DCE      dw 0                    ; DATA XREF: RunShopScreen+24C↑r
@@ -86136,15 +86137,15 @@ g_globalFlags   db    0                 ; Global boolean flag bitfield (quest/wo
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36D6D      dw 0                    ; DATA XREF: sub_17032+A0↑w
+word_36D6D      dw 0                    ; DATA XREF: HandleShopCatalogSlotClick+A0↑w
                                         ; PayGoldAndAcquireItem+3A↑w ...
                 db    0
                 db    0
-word_36D71      dw 0                    ; DATA XREF: sub_17032+14A↑w
+word_36D71      dw 0                    ; DATA XREF: HandleShopCatalogSlotClick+14A↑w
                                         ; PromptBuyOreQuantity+140↑r ...
                 db    0
                 db    0
-word_36D75      dw 0                    ; DATA XREF: sub_17032+16D↑w
+word_36D75      dw 0                    ; DATA XREF: HandleShopCatalogSlotClick+16D↑w
                                         ; PromptBuyOreQuantity+15A↑r ...
                 db    0
                 db    0
