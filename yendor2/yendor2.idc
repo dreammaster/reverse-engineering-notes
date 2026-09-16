@@ -2146,7 +2146,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X14FB2);
 	op_hex		(x,	1);
 	set_cmt	(0X14FB4,	"numPara",	0);
+	set_cmt	(0X150B8,	"Saves the entire VGA screen (0xA000) to EMS page 0x5616 -- the save counterpart of RestoreClueBookBackgroundFromEMS, called earlier in ShowClueBook before the clue book UI draws over the screen. Called only from ShowClueBook.",	0);
 	create_insn	(0X150B8);
+	set_name	(0X150B8,	"SaveClueBookBackgroundToEMS");
 	set_cmt	(0X150E5,	"Draws a box (via sub_14B24) then two lines of text from word_2E3F8/word_2E3FA (both commented 'msg'), positioned via word_2E3FC. Called by ShowPagedEntryScreen.",	0);
 	create_insn	(0X150E5);
 	set_name	(0X150E5,	"DrawMessageBox");

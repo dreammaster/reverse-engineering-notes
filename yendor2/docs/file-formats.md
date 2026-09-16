@@ -575,7 +575,9 @@ finds and wipes an empty `g_partyRecords` slot.
 
 ### The on-line clue book (F8)
 
-`ShowClueBook` (the manual's "F8 On-line clue book") closes by calling
+`ShowClueBook` (the manual's "F8 On-line clue book") opens by calling
+`SaveClueBookBackgroundToEMS` (was `sub_150B8`) to back up the current
+VGA screen, and closes by calling
 `RestoreClueBookBackgroundFromEMS` (was `sub_14DFC`) — a full-screen
 restore from its own dedicated EMS page (`0x5616`, distinct from the
 `0x55D8` page the portrait/dungeon-screen cluster uses) — bringing back

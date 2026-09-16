@@ -1280,7 +1280,7 @@ loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
                 call    StopMusicAndResetTimer
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_25862
-                call    sub_150B8
+                call    SaveClueBookBackgroundToEMS
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 and     word_328C4, 0FBFFh
@@ -8223,8 +8223,8 @@ sub_14F92       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_150B8       proc far                ; CODE XREF: ShowClueBook+43↑P
-                push    cx
+SaveClueBookBackgroundToEMS proc far    ; CODE XREF: ShowClueBook+43↑P
+                push    cx              ; Saves the entire VGA screen (0xA000) to EMS page 0x5616 -- the save counterpart of RestoreClueBookBackgroundFromEMS, called earlier in ShowClueBook before the clue book UI draws over the screen. Called only from ShowClueBook.
                 push    es
                 push    si
                 push    di
@@ -8248,7 +8248,7 @@ sub_150B8       proc far                ; CODE XREF: ShowClueBook+43↑P
                 pop     es
                 pop     cx
                 retf
-sub_150B8       endp
+SaveClueBookBackgroundToEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================

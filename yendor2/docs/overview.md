@@ -4265,6 +4265,19 @@ the same fixed glyph `DrawMinimap` itself uses for its 7×9 grid
 
 525 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SaveClueBookBackgroundToEMS
+
+Named `sub_150B8` -> `SaveClueBookBackgroundToEMS`, called once from
+`ShowClueBook` before the already-named
+`RestoreClueBookBackgroundFromEMS` is called later — its exact save
+counterpart. Maps EMS page `0x5616` (the dedicated clue-book
+full-screen page) and copies the entire real VGA screen (`0xA000`)
+into it, the mirror image of the restore function's EMS-to-
+`_videoBufferSeg` copy. Straightforward round-trip pair, quickly
+resolved thanks to the restore function's existing comment.
+
+526 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
