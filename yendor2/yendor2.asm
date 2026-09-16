@@ -18148,7 +18148,7 @@ seg035          segment byte public 'CODE' use16
 
 
 sub_1A3F0       proc far                ; CODE XREF: start+64D↑P
-                                        ; sub_2D60A+28↓P
+                                        ; ExamineTarget+28↓P
                 mov     word_2E516, ax
                 dec     ax
                 mov     bx, 10h
@@ -45478,7 +45478,7 @@ seg107          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2940E       proc far                ; CODE XREF: sub_294A3+1↓p
+sub_2940E       proc far                ; CODE XREF: UseAbilityOnTarget+1↓p
                                         ; sub_29738:loc_29747↓P ...
                 call    sub_21C79
                 mov     word_2E530, 0Fh
@@ -45520,7 +45520,7 @@ sub_2940E       endp
 
 
 sub_29461       proc far                ; CODE XREF: sub_178A6+EC↑P
-                                        ; sub_294A3+75↓p ...
+                                        ; UseAbilityOnTarget+75↓p ...
                 push    bx
                 push    cx
                 call    sub_16E18
@@ -45544,19 +45544,19 @@ sub_29461       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_294A3       proc far                ; CODE XREF: sub_2AE3C:loc_2AE82↓P
-                push    cs
+UseAbilityOnTarget proc far             ; CODE XREF: sub_2AE3C:loc_2AE82↓P
+                push    cs              ; Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.
                 call    near ptr sub_2940E
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_294CE
 
-loc_294AE:                              ; CODE XREF: sub_294A3+35↓j
-                                        ; sub_294A3+3E↓j
+loc_294AE:                              ; CODE XREF: UseAbilityOnTarget+35↓j
+                                        ; UseAbilityOnTarget+3E↓j
                 call    sub_16E18
                 call    DrawMouseCursor
 
-loc_294B8:                              ; CODE XREF: sub_294A3+4C↓j
-                                        ; sub_294A3+78↓j ...
+loc_294B8:                              ; CODE XREF: UseAbilityOnTarget+4C↓j
+                                        ; UseAbilityOnTarget+78↓j ...
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_23874
@@ -45564,7 +45564,7 @@ loc_294B8:                              ; CODE XREF: sub_294A3+4C↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_294CE:                              ; CODE XREF: sub_294A3+9↑j
+loc_294CE:                              ; CODE XREF: UseAbilityOnTarget+9↑j
                 call    ProbeFacingTile
                 cmp     errorCode, 0
                 jz      short loc_294AE
@@ -45573,12 +45573,12 @@ loc_294CE:                              ; CODE XREF: sub_294A3+9↑j
                 jmp     short loc_294AE
 ; ---------------------------------------------------------------------------
 
-loc_294E3:                              ; CODE XREF: sub_294A3+3C↑j
+loc_294E3:                              ; CODE XREF: UseAbilityOnTarget+3C↑j
                 mov     ax, [si+4]
                 mov     word_2E516, ax
                 mov     di, 0DFBBh
 
-loc_294EC:                              ; CODE XREF: sub_294A3+55↓j
+loc_294EC:                              ; CODE XREF: UseAbilityOnTarget+55↓j
                 cmp     word ptr [di], 0FFFFh
                 jz      short loc_294B8
                 cmp     [di], ax
@@ -45587,7 +45587,7 @@ loc_294EC:                              ; CODE XREF: sub_294A3+55↓j
                 jmp     short loc_294EC
 ; ---------------------------------------------------------------------------
 
-loc_294FA:                              ; CODE XREF: sub_294A3+50↑j
+loc_294FA:                              ; CODE XREF: UseAbilityOnTarget+50↑j
                 mov     bx, [di+2]
                 mov     ax, [di+4]
                 test    [bx], ax
@@ -45595,13 +45595,13 @@ loc_294FA:                              ; CODE XREF: sub_294A3+50↑j
                 jmp     short loc_29511
 ; ---------------------------------------------------------------------------
 
-loc_29506:                              ; CODE XREF: sub_294A3+5F↑j
+loc_29506:                              ; CODE XREF: UseAbilityOnTarget+5F↑j
                 mov     cx, word_32974
                 cmp     [di+8], cx
                 jnz     short loc_2951D
                 or      [bx], ax
 
-loc_29511:                              ; CODE XREF: sub_294A3+61↑j
+loc_29511:                              ; CODE XREF: UseAbilityOnTarget+61↑j
                 mov     cx, 1
                 mov     bx, 7BAEh
                 push    cs
@@ -45609,13 +45609,13 @@ loc_29511:                              ; CODE XREF: sub_294A3+61↑j
                 jmp     short loc_294B8
 ; ---------------------------------------------------------------------------
 
-loc_2951D:                              ; CODE XREF: sub_294A3+6A↑j
+loc_2951D:                              ; CODE XREF: UseAbilityOnTarget+6A↑j
                 mov     cx, 1
                 mov     bx, 7BCEh
                 push    cs
                 call    near ptr sub_29461
                 jmp     short loc_294B8
-sub_294A3       endp
+UseAbilityOnTarget endp
 
 seg107          ends
 
@@ -45895,7 +45895,7 @@ loc_29712:                              ; CODE XREF: HandleGameCommand+162↑j
 ; ---------------------------------------------------------------------------
 
 loc_29727:                              ; CODE XREF: HandleGameCommand+17A↑j
-                call    sub_2D60A
+                call    ExamineTarget
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -49034,7 +49034,7 @@ seg116          segment byte public 'CODE' use16
 
 
 sub_2AE3C       proc far                ; CODE XREF: HandleGameCommand:loc_2972D↑P
-                cmp     word_32974, 253h ; Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler (sub_294A3, an ESC-cancelable list-selection routine). 0x246-0x249 (4 codes) each flash a small icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the full trace.
+                cmp     word_32974, 253h ; Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 (4 codes) each flash an icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the original trace.
                 jnz     short loc_2AE48
                 call    sub_2B2CF
                 retf
@@ -49068,7 +49068,7 @@ loc_2AE60:                              ; CODE XREF: sub_2AE3C+1E↑j
 
 loc_2AE82:                              ; CODE XREF: sub_2AE3C+2A↑j
                                         ; sub_2AE3C+32↑j ...
-                call    sub_294A3
+                call    UseAbilityOnTarget
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -53345,13 +53345,13 @@ seg127          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D60A       proc far                ; CODE XREF: HandleGameCommand:loc_29727↑P
-                mov     bx, word_2E548
+ExamineTarget   proc far                ; CODE XREF: HandleGameCommand:loc_29727↑P
+                mov     bx, word_2E548  ; Looks up the currently-targeted object (word_2E548) in the 0xDFBB capability table; if its capability is already known, shows one message (sub_29461), otherwise (or if not in the table at all) shows a generic description (sub_1A3F0). The 'examine' counterpart to UseAbilityOnTarget's 'try it'.
                 mov     ax, [bx+4]
                 mov     word_2E516, ax
                 mov     di, 0DFBBh
 
-loc_2D617:                              ; CODE XREF: sub_2D60A+19↓j
+loc_2D617:                              ; CODE XREF: ExamineTarget+19↓j
                 cmp     word ptr [di], 0FFFFh
                 jz      short loc_2D62F
                 cmp     [di], ax
@@ -53360,30 +53360,30 @@ loc_2D617:                              ; CODE XREF: sub_2D60A+19↓j
                 jmp     short loc_2D617
 ; ---------------------------------------------------------------------------
 
-loc_2D625:                              ; CODE XREF: sub_2D60A+14↑j
+loc_2D625:                              ; CODE XREF: ExamineTarget+14↑j
                 mov     bx, [di+2]
                 mov     ax, [di+4]
                 test    [bx], ax
                 jz      short loc_2D639
 
-loc_2D62F:                              ; CODE XREF: sub_2D60A+10↑j
+loc_2D62F:                              ; CODE XREF: ExamineTarget+10↑j
                 mov     ax, word_2E516
                 call    sub_1A3F0
                 jmp     short loc_2D644
 ; ---------------------------------------------------------------------------
 
-loc_2D639:                              ; CODE XREF: sub_2D60A+23↑j
+loc_2D639:                              ; CODE XREF: ExamineTarget+23↑j
                 mov     cx, 1
                 mov     bx, 7D1Fh
                 call    sub_29461
 
-loc_2D644:                              ; CODE XREF: sub_2D60A+2D↑j
+loc_2D644:                              ; CODE XREF: ExamineTarget+2D↑j
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_23874
                 call    sub_238CD
                 retf
-sub_2D60A       endp
+ExamineTarget   endp
 
 seg127          ends
 
@@ -101684,7 +101684,7 @@ BLOCK_OFFSETS   db  8Bh
                 db    0
                 db    0
                 db    0
-                db    2
+                db    2                 ; Object-type capability table, 0x16-byte entries (0xFFFF at +0 terminates): +0 object type, +2 ptr to a per-type 'known/unlocked' flags byte, +4 bitmask, +8 the command code required to unlock it. Read by UseAbilityOnTarget (tries to unlock via the current command) and ExamineTarget (just checks whether it's already known).
                 db    0
                 db 0DFh
                 db  94h

@@ -628,6 +628,29 @@ session that wants to tackle both at once.
 
 102 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the 0xDFBB discovery mechanic
+
+Resolved both loose ends flagged last round together — `sub_294A3` (the
+item-icon dispatcher `sub_2AE3C`'s 0x242-0x245 handler, whose original
+"character panel" guess didn't hold up) and `sub_2D60A`
+(`HandleGameCommand`'s other fallback) both turned out to read the same
+table at `DS:0xDFBB`, now fully decoded: 22-byte entries keyed by object
+type, each holding a pointer+bitmask pair (a per-object-type "known/
+unlocked" flag) and a required command code.
+
+It's a **discovery mechanic**: `UseAbilityOnTarget` (was `sub_294A3`)
+tries the player's current command against whatever they're facing
+(`ProbeFacingTile`) — if it's the right one, the capability gets
+permanently unlocked for that object type and a success message shows;
+otherwise a fail/hint message. `ExamineTarget` (was `sub_2D60A`) is the
+non-destructive counterpart — just checks whether the capability is
+already known and shows one message or another, without attempting to
+unlock anything. Corrected `sub_2AE3C`'s comment to match (the earlier
+"character panel" guess is now definitively ruled out rather than just
+unconfirmed).
+
+104 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -7257,7 +7257,9 @@ static Bytes_1(void) {
 	create_insn	(0X29461);
 	create_insn	(x=0X29468);
 	op_hex		(x,	1);
+	set_cmt	(0X294A3,	"Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.",	0);
 	create_insn	(0X294A3);
+	set_name	(0X294A3,	"UseAbilityOnTarget");
 	create_insn	(0X294CE);
 	create_insn	(x=0X294DA);
 	op_hex		(x,	1);
@@ -8303,7 +8305,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE26);
 	op_hex		(x,	1);
-	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler (sub_294A3, an ESC-cancelable list-selection routine). 0x246-0x249 (4 codes) each flash a small icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the full trace.",	0);
+	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 (4 codes) each flash an icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
 	create_insn	(0X2AE3C);
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
@@ -9025,7 +9027,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D602);
 	op_hex		(x,	1);
+	set_cmt	(0X2D60A,	"Looks up the currently-targeted object (word_2E548) in the 0xDFBB capability table; if its capability is already known, shows one message (sub_29461), otherwise (or if not in the table at all) shows a generic description (sub_1A3F0). The 'examine' counterpart to UseAbilityOnTarget's 'try it'.",	0);
 	create_insn	(0X2D60A);
+	set_name	(0X2D60A,	"ExamineTarget");
 	create_insn	(0X2D625);
 	create_insn	(0X2D639);
 	set_cmt	(0X2D65A,	"Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.",	0);
@@ -10515,6 +10519,15 @@ static Bytes_1(void) {
 	set_name	(0X3684F,	"aBXxx");
 	create_strlit	(0X36855,	0X6);
 	set_name	(0X36855,	"aFXxx");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_name	(0X3685B,	"curGame");
 	create_word	(0X3685D);
 	create_word	(0X3685F);
@@ -10584,15 +10597,6 @@ static Bytes_1(void) {
 	create_word	(0X36CF7);
 	create_word	(0X36CF9);
 	create_word	(0X36CFB);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(0X36CFD);
 	create_word	(0X36CFF);
 	create_word	(0X36D01);
@@ -10923,6 +10927,7 @@ static Bytes_2(void) {
 	set_name	(0X3A6C7,	"_worldDatOffset6");
 	set_name	(0X3A6CB,	"_worldDatOffset4");
 	set_name	(0X3A755,	"BLOCK_OFFSETS");
+	set_cmt	(0X3B81B,	"Object-type capability table, 0x16-byte entries (0xFFFF at +0 terminates): +0 object type, +2 ptr to a per-type 'known/unlocked' flags byte, +4 bitmask, +8 the command code required to unlock it. Read by UseAbilityOnTarget (tries to unlock via the current command) and ExamineTarget (just checks whether it's already known).",	0);
 	create_word	(0X3CC76);
 	set_name	(0X3CC78,	"g_soundDriverFarPtr");
 	set_cmt	(0X3CC7A,	"Segment half of the far pointer g_soundDriverFarPtr (0x3CC78); reused directly as the ES segment to free when shutting the driver down.",	0);
