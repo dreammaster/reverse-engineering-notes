@@ -20191,12 +20191,12 @@ loc_1B571:                              ; CODE XREF: sub_1B4C2+103↓j
                 jle     short loc_1B5BB
                 add     ax, word_3293E
                 mov     [si], ax
-                call    sub_1B5DA
+                call    ClampValueAtSlotToTypeCap
                 add     si, 40h ; '@'
                 mov     ax, [si]
                 add     ax, word_3293E
                 mov     [si], ax
-                call    sub_1B5DA
+                call    ClampValueAtSlotToTypeCap
                 mov     word ptr [di+8], 3
                 mov     ax, word_32904
                 mov     [di+0Ah], ax
@@ -20223,9 +20223,9 @@ sub_1B4C2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B5DA       proc near               ; CODE XREF: sub_1B4C2+D8↑p
+ClampValueAtSlotToTypeCap proc near     ; CODE XREF: sub_1B4C2+D8↑p
                                         ; sub_1B4C2+E6↑p
-                cmp     word_32940, 52h ; 'R'
+                cmp     word_32940, 52h ; 'R' ; If ax exceeds a cap, writes the cap into [si]; else no-op. Cap is 0x270F (9999) when word_32940=='R'/'T' (item-type marker, not confirmed), else 0x3E7 (999) -- the same cap ApplyMultiStatEffectForItem uses. Called from sub_1B4C2.
                 jz      short loc_1B5F3
                 cmp     word_32940, 54h ; 'T'
                 jz      short loc_1B5F3
@@ -20235,16 +20235,16 @@ sub_1B5DA       proc near               ; CODE XREF: sub_1B4C2+D8↑p
                 jmp     short locret_1B5FC
 ; ---------------------------------------------------------------------------
 
-loc_1B5F3:                              ; CODE XREF: sub_1B5DA+5↑j
-                                        ; sub_1B5DA+C↑j
+loc_1B5F3:                              ; CODE XREF: ClampValueAtSlotToTypeCap+5↑j
+                                        ; ClampValueAtSlotToTypeCap+C↑j
                 cmp     ax, 270Fh
                 jle     short locret_1B5FC
                 mov     word ptr [si], 270Fh
 
-locret_1B5FC:                           ; CODE XREF: sub_1B5DA+11↑j
-                                        ; sub_1B5DA+17↑j ...
+locret_1B5FC:                           ; CODE XREF: ClampValueAtSlotToTypeCap+11↑j
+                                        ; ClampValueAtSlotToTypeCap+17↑j ...
                 retn
-sub_1B5DA       endp
+ClampValueAtSlotToTypeCap endp
 
 
 ; =============== S U B R O U T I N E =======================================

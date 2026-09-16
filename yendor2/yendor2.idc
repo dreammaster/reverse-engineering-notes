@@ -4075,7 +4075,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1B53B,	"msg",	0);
 	create_insn	(x=0X1B582);
 	op_hex		(x,	1);
+	set_cmt	(0X1B5DA,	"If ax exceeds a cap, writes the cap into [si]; else no-op. Cap is 0x270F (9999) when word_32940=='R'/'T' (item-type marker, not confirmed), else 0x3E7 (999) -- the same cap ApplyMultiStatEffectForItem uses. Called from sub_1B4C2.",	0);
 	create_insn	(0X1B5DA);
+	set_name	(0X1B5DA,	"ClampValueAtSlotToTypeCap");
 	create_insn	(0X1B5F3);
 	create_insn	(0X1B5FD);
 	create_insn	(0X1B60F);
@@ -5323,11 +5325,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1FD24,	"5-minute periodic sweep (AdvanceGameClock). Runs TickAilmentDuration over the 6-entry table at 0x9519 and every party member's 8 main inventory slots ([+0x11A]) -- ailments occupy the same slot storage as items/world-table rows. Calls sub_1FE0A once (a related status sweep, not traced). Sums all 12 known status-duration counters; if all 0, clears word_3295A bit 0x800 so this timer stops firing until something needs it again.",	0);
 	create_insn	(0X1FD24);
 	set_name	(0X1FD24,	"TickWorldAilments");
-	create_insn	(x=0X1FDA2);
-	op_hex		(x,	1);
-	set_cmt	(0X1FDB1,	"TickAilmentDuration(si=slot array, cx=count, dx=elapsed delta): for each 4-byte slot whose [si] is one of the 3 ailment codes (9/0xF/0xC, matching TickStatusEffects), decrements [si+2] by dx; on expiry, zeroes it, bumps [si], and decrements one of 3 global per-ailment counters (0x9425/0x9429/0x942B). At 0, clears the matching word_36C79 bit and flags a redraw.",	0);
-	create_insn	(0X1FDB1);
-	set_name	(0X1FDB1,	"TickAilmentDuration");
 }
 
 //------------------------------------------------------------------------
@@ -5337,6 +5334,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1FDA2);
+	op_hex		(x,	1);
+	set_cmt	(0X1FDB1,	"TickAilmentDuration(si=slot array, cx=count, dx=elapsed delta): for each 4-byte slot whose [si] is one of the 3 ailment codes (9/0xF/0xC, matching TickStatusEffects), decrements [si+2] by dx; on expiry, zeroes it, bumps [si], and decrements one of 3 global per-ailment counters (0x9425/0x9429/0x942B). At 0, clears the matching word_36C79 bit and flags a redraw.",	0);
+	create_insn	(0X1FDB1);
+	set_name	(0X1FDB1,	"TickAilmentDuration");
 	create_insn	(0X1FDC6);
 	create_insn	(0X1FDCE);
 	create_insn	(0X1FDD6);
@@ -7087,9 +7089,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2687B,	"Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.",	0);
 	create_insn	(0X2687B);
 	set_name	(0X2687B,	"PlaceHeldItemIntoEmptySlot");
-	set_cmt	(0X268A0,	"Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.",	0);
-	create_insn	(0X268A0);
-	set_name	(0X268A0,	"SwapHeldItemWithSlot");
 }
 
 //------------------------------------------------------------------------
@@ -7099,6 +7098,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X268A0,	"Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.",	0);
+	create_insn	(0X268A0);
+	set_name	(0X268A0,	"SwapHeldItemWithSlot");
 	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
 	create_insn	(0X268F4);
 	set_name	(0X268F4,	"SaveAndCloseContainer");
@@ -9373,6 +9375,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2BA1D);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2BA24);
 	op_hex		(x,	1);
 	create_insn	(0X2BA30);
@@ -9388,15 +9399,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2BA62,	"Plays a sound, restores the cursor background, loads the held item's catalog record, ORs a value derived from its flag byte into word_36C81 (not otherwise documented), then clears the held-item cursor (UpdateCursorForHeldItem(0)). Called from sub_2621C (a still-untraced container-related handler) and sub_271DC.",	0);
 	create_insn	(0X2BA62);
 	set_name	(0X2BA62,	"FinishPlacingHeldItem");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2BA7D);
 	op_hex		(x,	1);
 	create_insn	(0X2BA88);

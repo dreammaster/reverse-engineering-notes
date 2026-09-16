@@ -4964,6 +4964,18 @@ calculation a concrete mechanism.
 
 587 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ClampValueAtSlotToTypeCap
+
+Named `sub_1B5DA` -> `ClampValueAtSlotToTypeCap`, called twice from
+unnamed `sub_1B4C2`: a saturating clamp — if `ax` exceeds a
+type-dependent cap, writes the cap into `[si]` (otherwise a no-op).
+The cap is `0x270F` (9999) when `word_32940` equals `'R'`/`'T'`
+(plausibly single-character item-type markers, not confirmed), else
+`0x3E7` (999) — the same cap `ApplyMultiStatEffectForItem` already
+uses for its own stat additions.
+
+588 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
