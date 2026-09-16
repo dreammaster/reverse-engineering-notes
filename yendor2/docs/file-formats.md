@@ -1334,6 +1334,23 @@ by a fixed 8 hours (`word_36D01 += 0x1E0`, matching the classic
 "resting takes 8 hours" convention); a separate `+0x3C` (1-hour) advance
 exists elsewhere too, context not traced.
 
+A **separate** per-member status icon bar exists alongside
+`TickWorldAilments`' 6-slot world table: `TickPartyAilmentIconBar` (was
+`sub_1A085`, called from `RunDungeonGameLoop` and
+`ApplyMapTriggerEffect`) periodically (a counter reaching 40, or a
+much slower ~32768-call wraparound path gated on a 4th `word_36C79`
+flag, bit `2`) recomputes each of the 4 roster members' ailment
+severity via `PrepareTrapEffectSlots(ax=2` or `0xE)` plus a helper that
+checks `+0x1C` status bits (`0x2000`/`0x4000`/`0x8000` — the same group
+`CastSpell`'s `0x18` dispel code clears — for the normal path; a
+different group, `0x80`/`0x100`/`0x200`, gated on having MP (`+0x54 !=
+0`) for the second helper) or, on the slow path, tiers off the derived
+stat `+0x58` instead. Whenever severity is nonzero it populates a
+per-member icon-bar slot and calls `ApplyEffectAndDrawIconBar`. The
+exact ailments behind effect ids `2`/`0xE` and the `word_36C79` bit-`2`
+condition aren't confirmed — this is a mechanically-clear but
+narratively-open sibling system to `TickWorldAilments`.
+
 **Shareware relevance**: the guide notes the shareware version has a
 blocked portal that can be bypassed by giving a character the "Key of
 Pariah" (item `0x31`, modifier `00`) — directly explains the registration

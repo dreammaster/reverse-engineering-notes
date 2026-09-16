@@ -3591,8 +3591,10 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1A075);
 	create_insn	(0X1A07E);
+	set_cmt	(0X1A085,	"Periodically (word_36CBD reaching 40, or a much slower word_36CBF wraparound path gated on word_36C79 bit 2) recomputes each party member's ailment severity via PrepareTrapEffectSlots(ax=2/0xE) + helper checks against +0x1C status bits (or +0x58 for the slow path), populates the icon-bar slot when nonzero, and calls ApplyEffectAndDrawIconBar. Called from RunDungeonGameLoop and ApplyMapTriggerEffect. Exact ailment identities behind effect ids 2/0xE not confirmed.",	0);
 	create_insn	(x=0X1A085);
 	op_hex		(x,	1);
+	set_name	(0X1A085,	"TickPartyAilmentIconBar");
 	create_insn	(x=0X1A08E);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A0A3);
@@ -5766,6 +5768,15 @@ static Bytes_1(void) {
 	set_cmt	(0X21EE7,	"this",	0);
 	set_cmt	(0X21EFB,	"this",	0);
 	set_cmt	(0X21F88,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X21FAE,	"msg",	0);
 	create_insn	(x=0X21FF6);
 	op_hex		(x,	1);
@@ -5788,15 +5799,6 @@ static Bytes_1(void) {
 	set_cmt	(0X22140,	"Draws 40 columns of one ShowLocalAreaMap row. Per cell, tests the explored/fog-of-war bitmap bit (same format PersistExploredCell writes): unexplored -> fixed blank/fog tile (g_pictureDir entry 0x13); explored -> DrawLocalMapCell.",	0);
 	create_insn	(0X22140);
 	set_name	(0X22140,	"DrawLocalMapRow");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X22173);
 	op_hex		(x,	1);
 	create_insn	(0X22180);
@@ -8424,6 +8426,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F9D);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29FA9);
 	create_insn	(x=0X29FAA);
 	op_stkvar	(x,	1);
@@ -8501,15 +8512,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2A11B,	"The real mouse-cursor draw: if word_3195C bit1 is set, first saves the video buffer content at the cursor's new position into 0xE0E (so RestoreCursorBackground can erase it later), then blits the cursor sprite from 0x3FE6 onto the video buffer with 0xFF as a transparent color key. Not a screen fade despite the inherited name/hedge -- explains why it's called so pervasively (once per cursor move).",	0);
 	create_insn	(0X2A11B);
 	set_name	(0X2A11B,	"DrawMouseCursor");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2A121);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A131);
@@ -11501,6 +11503,15 @@ static Bytes_3(void) {
 	create_strlit	(0X3A0B9,	0X2);
 	create_strlit	(0X3A0BB,	0X1B);
 	set_name	(0X3A0BB,	"aSteveSmith");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A0D6,	0X2);
 	create_strlit	(0X3A0D8,	0X2);
 	create_strlit	(0X3A0DA,	0X1D);
@@ -11562,15 +11573,6 @@ static Bytes_3(void) {
 	set_name	(0X3A318,	"aIrudon");
 	create_strlit	(0X3A32C,	0X20);
 	set_name	(0X3A32C,	"aSomethingStran");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A34C,	0X1D);
 	set_name	(0X3A34C,	"aAfterDroppingT");
 	create_strlit	(0X3A369,	0X1B);

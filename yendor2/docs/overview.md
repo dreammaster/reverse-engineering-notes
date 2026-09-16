@@ -3364,6 +3364,21 @@ enhance/repair cost previews when the clicked item qualifies.
 
 431 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TickPartyAilmentIconBar
+
+Named `sub_1A085` -> `TickPartyAilmentIconBar`, moderate confidence:
+called from `RunDungeonGameLoop` and `ApplyMapTriggerEffect`. A
+mechanically-clear but narratively-open sibling of `TickWorldAilments`:
+periodically recomputes each roster member's ailment severity (via
+`PrepareTrapEffectSlots` + helpers checking `+0x1C` status bits, or the
+derived stat `+0x58` on a much slower path) and refreshes a per-member
+icon bar via `ApplyEffectAndDrawIconBar`. Didn't force names onto the
+lower-level helpers (`sub_1A14D`/`sub_1A195`/`sub_1A233`) or pin down
+which specific ailments effect ids `2`/`0xE` represent — flagged as
+open in file-formats.md rather than guessed.
+
+432 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

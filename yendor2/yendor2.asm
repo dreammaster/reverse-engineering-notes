@@ -10141,7 +10141,7 @@ RunDungeonGameLoop proc far             ; CODE XREF: start+4B↑P
                 mov     byte_2E400, 0
                 or      word_328C4, 1800h
                 mov     word_36CBD, 28h ; '('
-                call    sub_1A085
+                call    TickPartyAilmentIconBar
                 and     word_328C4, 0F7FFh
                 cmp     byte_2E400, 0
                 jz      short loc_16324
@@ -17454,7 +17454,7 @@ loc_19E68:                              ; CODE XREF: ApplyMapTriggerEffect+E↑j
                 cmp     byte_2E400, 0
                 jnz     short locret_19E73
                 push    cs
-                call    near ptr sub_1A085
+                call    near ptr TickPartyAilmentIconBar
 
 locret_19E73:                           ; CODE XREF: ApplyMapTriggerEffect+17↑j
                                         ; ApplyMapTriggerEffect+72↓j ...
@@ -17702,17 +17702,17 @@ IsPositionInTriggerList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A085       proc far                ; CODE XREF: RunDungeonGameLoop+1B↑P
+TickPartyAilmentIconBar proc far        ; CODE XREF: RunDungeonGameLoop+1B↑P
                                         ; ApplyMapTriggerEffect+1A↑p
 
 ; FUNCTION CHUNK AT 0393 SIZE 00000050 BYTES
 
-                test    word_328C4, 1800h
+                test    word_328C4, 1800h ; Periodically (word_36CBD reaching 40, or a much slower word_36CBF wraparound path gated on word_36C79 bit 2) recomputes each party member's ailment severity via PrepareTrapEffectSlots(ax=2/0xE) + helper checks against +0x1C status bits (or +0x58 for the slow path), populates the icon-bar slot when nonzero, and calls ApplyEffectAndDrawIconBar. Called from RunDungeonGameLoop and ApplyMapTriggerEffect. Exact ailment identities behind effect ids 2/0xE not confirmed.
                 jnz     short loc_1A08E
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1A08E:                              ; CODE XREF: sub_1A085+6↑j
+loc_1A08E:                              ; CODE XREF: TickPartyAilmentIconBar+6↑j
                 and     word_328CA, 0FEFFh
                 mov     ax, 2
                 call    PrepareTrapEffectSlots
@@ -17723,21 +17723,21 @@ loc_1A08E:                              ; CODE XREF: sub_1A085+6↑j
                 jmp     loc_1A1E3
 ; ---------------------------------------------------------------------------
 
-loc_1A0AE:                              ; CODE XREF: sub_1A085+24↑j
-                                        ; sub_1A085:loc_1A230↓j
+loc_1A0AE:                              ; CODE XREF: TickPartyAilmentIconBar+24↑j
+                                        ; TickPartyAilmentIconBar:loc_1A230↓j
                 inc     word_36CBD
                 cmp     word_36CBD, 28h ; '('
                 jge     short loc_1A0BA
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1A0BA:                              ; CODE XREF: sub_1A085+32↑j
+loc_1A0BA:                              ; CODE XREF: TickPartyAilmentIconBar+32↑j
                 mov     word_36CBD, 1
                 mov     word_32924, 95EBh
                 mov     di, 0C50h
                 mov     cx, 4
 
-loc_1A0CC:                              ; CODE XREF: sub_1A085+62↓j
+loc_1A0CC:                              ; CODE XREF: TickPartyAilmentIconBar+62↓j
                 mov     si, word_32924
                 mov     ax, [si]
                 cmp     ax, 0
@@ -17748,14 +17748,14 @@ loc_1A0CC:                              ; CODE XREF: sub_1A085+62↓j
                 add     di, 14h
                 loop    loc_1A0CC
 
-loc_1A0E9:                              ; CODE XREF: sub_1A085+50↑j
+loc_1A0E9:                              ; CODE XREF: TickPartyAilmentIconBar+50↑j
                 test    word_328CA, 100h
                 jz      short loc_1A101
                 call    ApplyEffectAndDrawIconBar
                 call    sub_25AAC
                 and     word_328CA, 0FEFFh
 
-loc_1A101:                              ; CODE XREF: sub_1A085+6A↑j
+loc_1A101:                              ; CODE XREF: TickPartyAilmentIconBar+6A↑j
                 mov     ax, 0Eh
                 call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
@@ -17764,7 +17764,7 @@ loc_1A101:                              ; CODE XREF: sub_1A085+6A↑j
                 mov     di, 0C50h
                 mov     cx, 4
 
-loc_1A11C:                              ; CODE XREF: sub_1A085+B2↓j
+loc_1A11C:                              ; CODE XREF: TickPartyAilmentIconBar+B2↓j
                 mov     si, word_32924
                 mov     ax, [si]
                 cmp     ax, 0
@@ -17775,21 +17775,21 @@ loc_1A11C:                              ; CODE XREF: sub_1A085+B2↓j
                 add     di, 14h
                 loop    loc_1A11C
 
-loc_1A139:                              ; CODE XREF: sub_1A085+A0↑j
+loc_1A139:                              ; CODE XREF: TickPartyAilmentIconBar+A0↑j
                 test    word_328CA, 100h
                 jz      short locret_1A14C
                 call    ApplyEffectAndDrawIconBar
                 and     word_328CA, 0FEFFh
 
-locret_1A14C:                           ; CODE XREF: sub_1A085+BA↑j
+locret_1A14C:                           ; CODE XREF: TickPartyAilmentIconBar+BA↑j
                 retf
-sub_1A085       endp
+TickPartyAilmentIconBar endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A14D       proc near               ; CODE XREF: sub_1A085+57↑p
+sub_1A14D       proc near               ; CODE XREF: TickPartyAilmentIconBar+57↑p
                 mov     bx, word_328D4
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short locret_1A194
@@ -17826,7 +17826,7 @@ sub_1A14D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A195       proc near               ; CODE XREF: sub_1A085+A7↑p
+sub_1A195       proc near               ; CODE XREF: TickPartyAilmentIconBar+A7↑p
                 mov     bx, word_328D4
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short locret_1A1E2
@@ -17862,9 +17862,9 @@ locret_1A1E2:                           ; CODE XREF: sub_1A195+9↑j
 sub_1A195       endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_1A085
+; START OF FUNCTION CHUNK FOR TickPartyAilmentIconBar
 
-loc_1A1E3:                              ; CODE XREF: sub_1A085+26↑j
+loc_1A1E3:                              ; CODE XREF: TickPartyAilmentIconBar+26↑j
                 inc     word_36CBF
                 cmp     word_36CBF, 0
                 jl      short loc_1A21D
@@ -17873,7 +17873,7 @@ loc_1A1E3:                              ; CODE XREF: sub_1A085+26↑j
                 mov     di, 0C50h
                 mov     cx, 4
 
-loc_1A200:                              ; CODE XREF: sub_1A085+196↓j
+loc_1A200:                              ; CODE XREF: TickPartyAilmentIconBar+196↓j
                 mov     si, word_32924
                 mov     ax, [si]
                 cmp     ax, 0
@@ -17884,21 +17884,21 @@ loc_1A200:                              ; CODE XREF: sub_1A085+196↓j
                 add     di, 14h
                 loop    loc_1A200
 
-loc_1A21D:                              ; CODE XREF: sub_1A085+167↑j
-                                        ; sub_1A085+184↑j
+loc_1A21D:                              ; CODE XREF: TickPartyAilmentIconBar+167↑j
+                                        ; TickPartyAilmentIconBar+184↑j
                 test    word_328CA, 100h
                 jz      short loc_1A230
                 call    ApplyEffectAndDrawIconBar
                 and     word_328CA, 0FEFFh
 
-loc_1A230:                              ; CODE XREF: sub_1A085+19E↑j
+loc_1A230:                              ; CODE XREF: TickPartyAilmentIconBar+19E↑j
                 jmp     loc_1A0AE
-; END OF FUNCTION CHUNK FOR sub_1A085
+; END OF FUNCTION CHUNK FOR TickPartyAilmentIconBar
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A233       proc near               ; CODE XREF: sub_1A085+18B↑p
+sub_1A233       proc near               ; CODE XREF: TickPartyAilmentIconBar+18B↑p
                 mov     bx, word_328D4
                 test    word ptr [bx+1Ch], 40h
                 jnz     short locret_1A293
@@ -85930,8 +85930,8 @@ word_36CB3      dw 0                    ; DATA XREF: TravelToDestination+B8↑w
                 db    0
 word_36CBD      dw 0                    ; DATA XREF: RunDungeonGameLoop+15↑w
                                         ; RunDungeonGameLoop+10A↑w ...
-word_36CBF      dw 0                    ; DATA XREF: sub_1A085:loc_1A1E3↑w
-                                        ; sub_1A085+162↑r ...
+word_36CBF      dw 0                    ; DATA XREF: TickPartyAilmentIconBar:loc_1A1E3↑w
+                                        ; TickPartyAilmentIconBar+162↑r ...
                 db 0FFh
                 db 0FFh
                 db 0FFh
