@@ -4296,6 +4296,22 @@ confirmed, so left open for a future round.
 
 527 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ScrollClueEntryListPageUp / PageDown
+
+Named the pair `sub_13014` -> `ScrollClueEntryListPageUp` and
+`sub_12FED` -> `ScrollClueEntryListPageDown` — the two functions
+`HandleClueEntryScrollInput` defers to in its "special mode" branches,
+also shared with another unnamed caller (`sub_12D5C`). Both jump the
+clue entry list's scroll offset (`word_2E3F0`) by a fixed page size of
+`0x38` (56) — up clamped to a minimum of `word_2E3EA+2`, down clamped
+against upper bound `word_2E3F2` — adjust `word_2E3EE` by the delta,
+call still-unnamed `sub_12FC1` (plausibly a redraw), and set
+`errorCode` (1/2) matching `HandleClueEntryScrollInput`'s own
+convention. Resolves both of that function's previously-open
+deferred-to callees in one round.
+
+529 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

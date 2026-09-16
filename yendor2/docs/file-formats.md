@@ -626,8 +626,12 @@ entry-list scroll handler — the same "I"/"Q" hotkey convention as
 current index `word_2E3EE` from candidate `word_2E3F0` ('I') or
 `word_2E3F2` ('Q') and signaling which via `errorCode`
 (1/2/0=unchanged) — unless a `word_328CC` bit (`0x100`/`0x80`) defers
-to a still-unnamed handler instead (`sub_13014`/`sub_12FED`
-respectively).
+to a full-page jump instead: `ScrollClueEntryListPageUp`/
+`ScrollClueEntryListPageDown` (was `sub_13014`/`sub_12FED`, also
+shared with another unnamed caller, `sub_12D5C`), which move
+`word_2E3F0` by a fixed page size of `0x38` (56) entries/rows, clamped
+against `word_2E3EA+2`/`word_2E3F2` respectively, then call
+still-unnamed `sub_12FC1` (plausibly the actual page redraw).
 
 `HandleClueCategorySelection` (was `sub_14D26`) is `RunClueEntryMenu`'s
 category-switching input handler: keyboard (`ESC`/digit keys, plus

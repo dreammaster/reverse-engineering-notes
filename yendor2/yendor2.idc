@@ -1654,8 +1654,12 @@ static Bytes_0(void) {
 	create_insn	(0X12FAB);
 	create_insn	(0X12FB0);
 	create_insn	(0X12FC1);
+	set_cmt	(0X12FED,	"Full page-down jump for the clue entry list: recomputes word_2E3F0 += 0x38 (word_2E3EE clamped to upper bound word_2E3F2), calls sub_12FC1 (redraw), errorCode=2. Called from HandleClueEntryScrollInput and sub_12D5C.",	0);
 	create_insn	(0X12FED);
+	set_name	(0X12FED,	"ScrollClueEntryListPageDown");
+	set_cmt	(0X13014,	"Full page-up jump for the clue entry list: recomputes word_2E3F0 -= 0x38 (clamped to word_2E3EA+2), adjusts word_2E3EE by the delta, calls sub_12FC1 (redraw), errorCode=1. Called from HandleClueEntryScrollInput and sub_12D5C.",	0);
 	create_insn	(0X13014);
+	set_name	(0X13014,	"ScrollClueEntryListPageUp");
 	create_insn	(0X1303C);
 	set_cmt	(0X1305E,	"Loops calling PollKeyboardInput (with a Fade? each iteration) until a key event is seen (errorCode != 0 as an input-event flag, see PollKeyboardInput), then for event types 1-3 calls sub_14D26.",	0);
 	create_insn	(x=0X1305E);
@@ -3406,6 +3410,15 @@ static Bytes_0(void) {
 	set_cmt	(0X18FDA,	"Space-bar 'enhance item' action (sub_1869D, sibling of TrySellItemForGold). Eligibility via sub_1B147 (a level/stat range check against table 0xBCE); on failure, 'I CAN NOT ENHANCE THAT' (msg 0x815A). Else CompareBCD4(g_partyGold, [table 0xCB2]) -- on insufficient gold, 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, via sub_190AF); else SubBCD4(g_partyGold -= [0xCB2]), advances the item to the next catalog entry (word_32974+1) and reloads it as the enhanced result.",	0);
 	create_insn	(0X18FDA);
 	set_name	(0X18FDA,	"TryEnhanceItemForGold");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X18FEC);
 	op_hex		(x,	1);
 	create_insn	(0X19021);
@@ -3420,15 +3433,6 @@ static Bytes_0(void) {
 	set_cmt	(0X190E9,	"Resolves a party record (SelectPartyRecordById), calls sub_266A9 (not traced), then restores a portrait-sized EMS-cached region (page 0x55D8) at a position from word_328BC/word_328C0. Called from sub_1869D and sub_18F6C.",	0);
 	create_insn	(0X190E9);
 	set_name	(0X190E9,	"RestorePortraitAreaAtPosition");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X190EF);
 	set_cmt	(0X19133,	"Resolves a party slot's record id to a pointer (sub_25B14) then draws its portrait (DrawPartyMemberPortrait). Called from RefreshPartyPortraits/HandlePortraitClick.",	0);
 	create_insn	(0X19133);
@@ -5412,6 +5416,15 @@ static Bytes_1(void) {
 	set_cmt	(0X206A0,	"Redraws the full visible 40x24 cell grid in the map editor: for every cell, PersistExploredCell + LoadWorldDatTilePalette + DrawCellIconPair. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X206A0);
 	set_name	(0X206A0,	"RedrawMapEditorGrid");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X206E5);
 	op_seg		(x,	1);
 	create_insn	(0X2070C);
@@ -5435,15 +5448,6 @@ static Bytes_1(void) {
 	set_cmt	(0X208CA,	"Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.",	0);
 	create_insn	(0X208CA);
 	set_name	(0X208CA,	"TickStatusEffects");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X208F9);
 	create_insn	(x=0X20900);
 	op_hex		(x,	1);
@@ -7375,6 +7379,15 @@ static Bytes_2(void) {
 	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
 	create_insn	(0X27A46);
 	set_name	(0X27A46,	"SetGlobalFlag");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27A4E);
 	set_cmt	(0X27A56,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
 	create_insn	(0X27A56);
@@ -7389,15 +7402,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27A98,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
 	create_insn	(0X27A98);
 	set_name	(0X27A98,	"GetGlobalFlagBitAndWord");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X27AC1,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).",	0);
 	create_insn	(0X27AC1);
 	set_name	(0X27AC1,	"GetRecordFlagBitAndWord_CA");
@@ -10061,6 +10065,15 @@ static Bytes_3(void) {
 	create_word	(0X2E554);
 	create_word	(0X2E556);
 	create_word	(0X2E558);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E55A);
 	create_word	(0X2E55C);
 	create_word	(0X2E55E);
@@ -10132,15 +10145,6 @@ static Bytes_3(void) {
 	create_word	(0X328C2);
 	create_word	(0X328C4);
 	create_word	(0X328C6);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X328C8);
 	create_word	(0X328CA);
 	create_word	(0X328CC);
