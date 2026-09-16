@@ -279,9 +279,16 @@ a solid new lead for pinning them down.
 `[di+0x58]` from a `di`-pointed record of unconfirmed type (attacker?
 target? monster?) — *not* assumed to be the same party-record fields
 documented above, since combat code may operate on a differently-
-shaped monster or scratch struct at the same numeric offsets. Filed as
-an explicit non-finding to avoid conflating the two if `di`'s type is
-pinned down later.
+shaped monster or scratch struct at the same numeric offsets. Its
+sibling in the same sequence, `ApplyTargetResistancesToAttack` (was
+`sub_2D1C2`), reinforces this: it reads target immunity/resistance
+*bitflags* at `[di+0x96]`/`[di+0x98]` (not weight-capacity-like
+numbers) and drains an elemental resource counter at `[di+0x10]`/
+`[di+0x54]`/`[di+0x56]`/`[di+0x58]`/`[di+0x5A]` — clearly a different
+field layout than the party record's HP/MP/capacity fields at those
+same numeric offsets. Filed as an explicit non-finding to avoid
+conflating the two if `di`'s type is pinned down later (a monster
+record struct is the leading candidate, still unlocated).
 
 **Skill values found**: `ShowCharacterSkills` clears a **16-word array
 at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before

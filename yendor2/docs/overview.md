@@ -4181,6 +4181,28 @@ single-purpose.
 
 521 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyTargetResistancesToAttack
+
+Named `sub_2D1C2` -> `ApplyTargetResistancesToAttack`, called once
+from unnamed `sub_2D4B6` right after `TryResolveAttackAgainstTarget` —
+the resistance/immunity-filtering half of the same damage-application
+sequence. Bundles four distinct behaviors, each gated by comparing the
+attack's flag words (`word_33304`/`word_33306`) against matching bits
+on the target record (`[di+0x96]`/`[di+0x98]`): filters 6 "high"
+status-effect bits by target immunity into the accumulated to-apply
+flags (`word_2E49A`); fully negates the staged damage
+(`word_2E49C`=0) on a match against 5 "low" bits; halves the staged
+damage on a match against 7 resistance-category bits; and drains a
+fixed amount (`word_332E0`) from one of 5 elemental resource fields on
+the target (offset selected by a 5-way priority-encoded bit test),
+floored at 0. As with the sibling function, deliberately did not
+identify the elemental-resource field offsets (`0x10`/`0x54`/`0x56`/
+`0x58`/`0x5A`) with the similarly-numbered party-record fields
+documented elsewhere, since `di`'s record type here remains
+unconfirmed.
+
+522 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

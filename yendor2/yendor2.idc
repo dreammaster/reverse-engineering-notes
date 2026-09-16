@@ -9684,8 +9684,10 @@ static Bytes_3(void) {
 	set_cmt	(0X2D195,	"Calls ResolveAttack, then latches word_332E8 into word_2E49C the first time through (only if word_2E49C was still 0), setting errorCode=1. Field identities ([di+0x58], party record +0x62, word_332E8) not confirmed. Called once from the still-unnamed sub_2C0FE.",	0);
 	create_insn	(0X2D195);
 	set_name	(0X2D195,	"ResolveAttackAndLatchFirstHit");
+	set_cmt	(0X2D1C2,	"Filters pending status-effect flags (word_33304 high bits) by target immunity ([di+0x96]) into word_2E49A; fully negates damage (word_2E49C=0) if a low-bit status/immunity match is found; halves damage for a resistance-category match (word_33306 vs [di+0x98]); and drains word_332E0 from an elemental resource field on the target (offset selected by word_33304 bits 0x20-0x200), floored at 0. Called from sub_2D4B6, right after TryResolveAttackAgainstTarget.",	0);
 	create_insn	(x=0X2D1C2);
 	op_hex		(x,	1);
+	set_name	(0X2D1C2,	"ApplyTargetResistancesToAttack");
 	create_insn	(x=0X2D1CD);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D1D5);
@@ -10266,6 +10268,15 @@ static Bytes_3(void) {
 	set_name	(0X329B6,	"_val39");
 	create_word	(0X329B8);
 	set_name	(0X329B8,	"_val40");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X329BA);
 	set_name	(0X329BA,	"_val41");
 	create_word	(0X329BC);
@@ -10301,15 +10312,6 @@ static Bytes_3(void) {
 	set_name	(0X329DA,	"_ptr2");
 	create_word	(0X329DC);
 	set_name	(0X329DC,	"_ptr3");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X329DE);
 	set_name	(0X329DE,	"_ptr4");
 	create_word	(0X329E0);

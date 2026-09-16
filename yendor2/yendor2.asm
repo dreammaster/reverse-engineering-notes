@@ -52755,134 +52755,135 @@ ResolveAttackAndLatchFirstHit endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D1C2       proc near               ; CODE XREF: sub_2D4B6:loc_2D4EC↓p
-                test    word_33304, 0FC00h
+ApplyTargetResistancesToAttack proc near
+                                        ; CODE XREF: sub_2D4B6:loc_2D4EC↓p
+                test    word_33304, 0FC00h ; Filters pending status-effect flags (word_33304 high bits) by target immunity ([di+0x96]) into word_2E49A; fully negates damage (word_2E49C=0) if a low-bit status/immunity match is found; halves damage for a resistance-category match (word_33306 vs [di+0x98]); and drains word_332E0 from an elemental resource field on the target (offset selected by word_33304 bits 0x20-0x200), floored at 0. Called from sub_2D4B6, right after TryResolveAttackAgainstTarget.
                 jnz     short loc_2D1CD
                 jmp     loc_2D251
 ; ---------------------------------------------------------------------------
 
-loc_2D1CD:                              ; CODE XREF: sub_2D1C2+6↑j
+loc_2D1CD:                              ; CODE XREF: ApplyTargetResistancesToAttack+6↑j
                 test    word_33304, 8000h
                 jz      short loc_2D1E3
                 test    word ptr [di+96h], 8000h
                 jnz     short loc_2D1E3
                 or      word_2E49A, 8000h
 
-loc_2D1E3:                              ; CODE XREF: sub_2D1C2+11↑j
-                                        ; sub_2D1C2+19↑j
+loc_2D1E3:                              ; CODE XREF: ApplyTargetResistancesToAttack+11↑j
+                                        ; ApplyTargetResistancesToAttack+19↑j
                 test    word_33304, 4000h
                 jz      short loc_2D1F9
                 test    word ptr [di+96h], 4000h
                 jnz     short loc_2D1F9
                 or      word_2E49A, 4000h
 
-loc_2D1F9:                              ; CODE XREF: sub_2D1C2+27↑j
-                                        ; sub_2D1C2+2F↑j
+loc_2D1F9:                              ; CODE XREF: ApplyTargetResistancesToAttack+27↑j
+                                        ; ApplyTargetResistancesToAttack+2F↑j
                 test    word_33304, 2000h
                 jz      short loc_2D20F
                 test    word ptr [di+96h], 2000h
                 jnz     short loc_2D20F
                 or      word_2E49A, 2000h
 
-loc_2D20F:                              ; CODE XREF: sub_2D1C2+3D↑j
-                                        ; sub_2D1C2+45↑j
+loc_2D20F:                              ; CODE XREF: ApplyTargetResistancesToAttack+3D↑j
+                                        ; ApplyTargetResistancesToAttack+45↑j
                 test    word_33304, 1000h
                 jz      short loc_2D225
                 test    word ptr [di+96h], 1000h
                 jnz     short loc_2D225
                 or      word_2E49A, 1000h
 
-loc_2D225:                              ; CODE XREF: sub_2D1C2+53↑j
-                                        ; sub_2D1C2+5B↑j
+loc_2D225:                              ; CODE XREF: ApplyTargetResistancesToAttack+53↑j
+                                        ; ApplyTargetResistancesToAttack+5B↑j
                 test    word_33304, 800h
                 jz      short loc_2D23B
                 test    word ptr [di+96h], 800h
                 jnz     short loc_2D23B
                 or      word_2E49A, 800h
 
-loc_2D23B:                              ; CODE XREF: sub_2D1C2+69↑j
-                                        ; sub_2D1C2+71↑j
+loc_2D23B:                              ; CODE XREF: ApplyTargetResistancesToAttack+69↑j
+                                        ; ApplyTargetResistancesToAttack+71↑j
                 test    word_33304, 400h
                 jz      short loc_2D251
                 test    word ptr [di+96h], 400h
                 jnz     short loc_2D251
                 or      word_2E49A, 400h
 
-loc_2D251:                              ; CODE XREF: sub_2D1C2+8↑j
-                                        ; sub_2D1C2+7F↑j ...
+loc_2D251:                              ; CODE XREF: ApplyTargetResistancesToAttack+8↑j
+                                        ; ApplyTargetResistancesToAttack+7F↑j ...
                 test    word_33304, 8
                 jz      short loc_2D261
                 test    word ptr [di+96h], 8
                 jnz     short loc_2D2A1
 
-loc_2D261:                              ; CODE XREF: sub_2D1C2+95↑j
+loc_2D261:                              ; CODE XREF: ApplyTargetResistancesToAttack+95↑j
                 test    word_33304, 4
                 jz      short loc_2D271
                 test    word ptr [di+96h], 4
                 jnz     short loc_2D2A1
 
-loc_2D271:                              ; CODE XREF: sub_2D1C2+A5↑j
+loc_2D271:                              ; CODE XREF: ApplyTargetResistancesToAttack+A5↑j
                 test    word_33304, 2
                 jz      short loc_2D281
                 test    word ptr [di+96h], 2
                 jnz     short loc_2D2A1
 
-loc_2D281:                              ; CODE XREF: sub_2D1C2+B5↑j
+loc_2D281:                              ; CODE XREF: ApplyTargetResistancesToAttack+B5↑j
                 test    word_33304, 1
                 jz      short loc_2D291
                 test    word ptr [di+96h], 1
                 jnz     short loc_2D2A1
 
-loc_2D291:                              ; CODE XREF: sub_2D1C2+C5↑j
+loc_2D291:                              ; CODE XREF: ApplyTargetResistancesToAttack+C5↑j
                 test    word_33304, 10h
                 jz      short loc_2D2A8
                 test    word ptr [di+96h], 10h
                 jz      short loc_2D2A8
 
-loc_2D2A1:                              ; CODE XREF: sub_2D1C2+9D↑j
-                                        ; sub_2D1C2+AD↑j ...
+loc_2D2A1:                              ; CODE XREF: ApplyTargetResistancesToAttack+9D↑j
+                                        ; ApplyTargetResistancesToAttack+AD↑j ...
                 mov     word_2E49C, 0
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2D2A8:                              ; CODE XREF: sub_2D1C2+D5↑j
-                                        ; sub_2D1C2+DD↑j
+loc_2D2A8:                              ; CODE XREF: ApplyTargetResistancesToAttack+D5↑j
+                                        ; ApplyTargetResistancesToAttack+DD↑j
                 test    word_33306, 8000h
                 jz      short loc_2D2B8
                 test    word ptr [di+98h], 8000h
                 jnz     short loc_2D319
 
-loc_2D2B8:                              ; CODE XREF: sub_2D1C2+EC↑j
+loc_2D2B8:                              ; CODE XREF: ApplyTargetResistancesToAttack+EC↑j
                 test    word_33306, 4000h
                 jz      short loc_2D2C8
                 test    word ptr [di+98h], 4000h
                 jnz     short loc_2D319
 
-loc_2D2C8:                              ; CODE XREF: sub_2D1C2+FC↑j
+loc_2D2C8:                              ; CODE XREF: ApplyTargetResistancesToAttack+FC↑j
                 test    word_33306, 2000h
                 jz      short loc_2D2D8
                 test    word ptr [di+98h], 2000h
                 jnz     short loc_2D319
 
-loc_2D2D8:                              ; CODE XREF: sub_2D1C2+10C↑j
+loc_2D2D8:                              ; CODE XREF: ApplyTargetResistancesToAttack+10C↑j
                 test    word_33306, 1000h
                 jz      short loc_2D2E8
                 test    word ptr [di+98h], 1000h
                 jnz     short loc_2D319
 
-loc_2D2E8:                              ; CODE XREF: sub_2D1C2+11C↑j
+loc_2D2E8:                              ; CODE XREF: ApplyTargetResistancesToAttack+11C↑j
                 test    word_33306, 800h
                 jz      short loc_2D2F8
                 test    word ptr [di+98h], 800h
                 jnz     short loc_2D319
 
-loc_2D2F8:                              ; CODE XREF: sub_2D1C2+12C↑j
+loc_2D2F8:                              ; CODE XREF: ApplyTargetResistancesToAttack+12C↑j
                 test    word_33306, 400h
                 jz      short loc_2D308
                 test    word ptr [di+98h], 400h
                 jnz     short loc_2D319
 
-loc_2D308:                              ; CODE XREF: sub_2D1C2+13C↑j
+loc_2D308:                              ; CODE XREF: ApplyTargetResistancesToAttack+13C↑j
                 test    word_33306, 200h
                 jz      short loc_2D322
                 test    word ptr [di+98h], 200h
@@ -52890,15 +52891,15 @@ loc_2D308:                              ; CODE XREF: sub_2D1C2+13C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2D319:                              ; CODE XREF: sub_2D1C2+F4↑j
-                                        ; sub_2D1C2+104↑j ...
+loc_2D319:                              ; CODE XREF: ApplyTargetResistancesToAttack+F4↑j
+                                        ; ApplyTargetResistancesToAttack+104↑j ...
                 mov     ax, word_2E49C
                 shr     ax, 1
                 mov     word_2E49C, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2D322:                              ; CODE XREF: sub_2D1C2+14C↑j
+loc_2D322:                              ; CODE XREF: ApplyTargetResistancesToAttack+14C↑j
                 test    word_33304, 3E0h
                 jz      short locret_2D36F
                 mov     bx, 10h
@@ -52917,18 +52918,18 @@ loc_2D322:                              ; CODE XREF: sub_2D1C2+14C↑j
                 test    word_33304, 20h
                 jz      short locret_2D36F
 
-loc_2D361:                              ; CODE XREF: sub_2D1C2+171↑j
-                                        ; sub_2D1C2+17C↑j ...
+loc_2D361:                              ; CODE XREF: ApplyTargetResistancesToAttack+171↑j
+                                        ; ApplyTargetResistancesToAttack+17C↑j ...
                 mov     ax, word_332E0
                 sub     [bx+di], ax
                 cmp     word ptr [bx+di], 0
                 jg      short locret_2D36F
                 mov     word ptr [bx+di], 0
 
-locret_2D36F:                           ; CODE XREF: sub_2D1C2+166↑j
-                                        ; sub_2D1C2+19D↑j ...
+locret_2D36F:                           ; CODE XREF: ApplyTargetResistancesToAttack+166↑j
+                                        ; ApplyTargetResistancesToAttack+19D↑j ...
                 retn
-sub_2D1C2       endp
+ApplyTargetResistancesToAttack endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -53141,7 +53142,7 @@ loc_2D4E2:                              ; CODE XREF: sub_2D4B6+12↑j
                 jz      short locret_2D4FD
 
 loc_2D4EC:                              ; CODE XREF: sub_2D4B6+2A↑j
-                call    sub_2D1C2
+                call    ApplyTargetResistancesToAttack
                 cmp     word_2E49C, 0
                 jnz     short loc_2D4FE
                 cmp     word_2E49A, 0
@@ -76798,7 +76799,7 @@ word_33300      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+2C0
 word_33302      dw 0                    ; DATA XREF: ShowClueBookSpellDetail:loc_13CCF↑r
                                         ; ShowClueBookSpellDetail+1A6↑r ...
 word_33304      dw 0                    ; DATA XREF: sub_2C0FE+9E1↑r
-                                        ; sub_2D1C2↑r ...
+                                        ; ApplyTargetResistancesToAttack↑r ...
 word_33306      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+19E↑r
                                         ; ShowClueBookSpellDetail+1DB↑r ...
                 db    0
