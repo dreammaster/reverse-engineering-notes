@@ -6012,7 +6012,9 @@ static Bytes_2(void) {
 	set_cmt	(0X222F8,	"Unconditionally redraws all 4 g_partySlotAssignment status panels via far calls to DrawPartyMemberStatusPanel -- a different-segment, non-identical counterpart to RedrawAllPartyStatusPanels. Called from HandleMovementInput and InitGame.",	0);
 	create_insn	(0X222F8);
 	set_name	(0X222F8,	"RedrawAllPartyStatusPanelsAlt");
+	set_cmt	(0X22315,	"Draws picture variant 1/3 (gated on word_328CA bit 0x1000) at fixed position (0xEF,0x43), then caches the drawn region into EMS page 0x55D8 (the portrait/dungeon cluster page). Called from HandleMovementInput and ProcessLevelMonsters.",	0);
 	create_insn	(0X22315);
+	set_name	(0X22315,	"DrawAndCacheStatusIcon");
 	create_insn	(x=0X2231F);
 	op_hex		(x,	1);
 	set_cmt	(0X22387,	"Draws a full-screen picture (dir 0, id=word_2E530, set by caller) at (1,1), then saves the resulting screen to EMS page 0x55D8 (0x7D00 words = one full VGA screen). Generic full-screen draw-then-cache utility; called from many different screens (InitGame, RunDungeonGameLoop, ShowCreateCharacterPrompt, etc.) each with their own picture id.",	0);
@@ -6910,10 +6912,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X25C61);
 	op_hex		(x,	1);
 	set_name	(0X25C61,	"ShowLevelUpMessage");
-	set_cmt	(0X25C70,	"msg",	0);
-	set_cmt	(0X25CFA,	"If the character has learned any special ability (+0xB4 nonzero), draws each learned ability's name (table 0x77C6) in bright/dim color depending on whether its charge field (+0xB6/+0xB8/+0xBA/+0xBC) meets the table's threshold and, for some abilities, whether the current time of day (word_36D01) is in the required window. Called from UseItem and UseAbilityScroll.",	0);
-	create_insn	(0X25CFA);
-	set_name	(0X25CFA,	"DrawAbilityReadinessList");
 }
 
 //------------------------------------------------------------------------
@@ -6923,6 +6921,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X25C70,	"msg",	0);
+	set_cmt	(0X25CFA,	"If the character has learned any special ability (+0xB4 nonzero), draws each learned ability's name (table 0x77C6) in bright/dim color depending on whether its charge field (+0xB6/+0xB8/+0xBA/+0xBC) meets the table's threshold and, for some abilities, whether the current time of day (word_36D01) is in the required window. Called from UseItem and UseAbilityScroll.",	0);
+	create_insn	(0X25CFA);
+	set_name	(0X25CFA,	"DrawAbilityReadinessList");
 	create_insn	(0X25D02);
 	create_insn	(x=0X25D04);
 	op_hex		(x,	1);
@@ -9305,6 +9307,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2B17F,	"Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.",	0);
 	create_insn	(0X2B17F);
 	set_name	(0X2B17F,	"CheckQuestItemsCompleted");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B184);
 	op_hex		(x,	1);
 	create_insn	(0X2B1C3);
@@ -9317,15 +9328,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B2CF,	"Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.",	0);
 	create_insn	(0X2B2CF);
 	set_name	(0X2B2CF,	"ShowVisionAtLocation");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B2EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B2F4);

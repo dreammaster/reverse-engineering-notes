@@ -5264,6 +5264,18 @@ field) at a second cursor position, persists, and redraws.
 
 612 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawAndCacheStatusIcon
+
+Named `sub_22315` -> `DrawAndCacheStatusIcon`, called from
+`HandleMovementInput` and `ProcessLevelMonsters`: draws a small status
+icon (one of 2 variants, gated on `word_328CA` bit `0x1000`, the
+same "in combat" style flag seen elsewhere) at a fixed position, then
+caches the drawn region into EMS page `0x55D8` — the confirmed
+portrait/dungeon-screen cluster page — for later restoration, the
+same convention already documented for the portrait cache.
+
+613 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

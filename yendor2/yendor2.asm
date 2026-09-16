@@ -2373,7 +2373,7 @@ loc_115C8:                              ; CODE XREF: HandleMovementInput+323↓j
 
 loc_115D5:                              ; CODE XREF: HandleMovementInput+31D↑j
                 or      word_328CA, 1000h
-                call    sub_22315
+                call    DrawAndCacheStatusIcon
                 push    si
                 mov     di, 525Ch
                 mov     es, word_2E4AA
@@ -32124,9 +32124,9 @@ RedrawAllPartyStatusPanelsAlt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22315       proc far                ; CODE XREF: HandleMovementInput+32D↑P
+DrawAndCacheStatusIcon proc far         ; CODE XREF: HandleMovementInput+32D↑P
                                         ; ProcessLevelMonsters+294↓P ...
-                push    si
+                push    si              ; Draws picture variant 1/3 (gated on word_328CA bit 0x1000) at fixed position (0xEF,0x43), then caches the drawn region into EMS page 0x55D8 (the portrait/dungeon cluster page). Called from HandleMovementInput and ProcessLevelMonsters.
                 push    di
                 push    es
                 push    ds
@@ -32135,7 +32135,7 @@ sub_22315       proc far                ; CODE XREF: HandleMovementInput+32D↑P
                 jnz     short loc_2232D
                 mov     word_2E530, 1
 
-loc_2232D:                              ; CODE XREF: sub_22315+10↑j
+loc_2232D:                              ; CODE XREF: DrawAndCacheStatusIcon+10↑j
                 mov     x, 0EFh
                 mov     y, 43h ; 'C'
                 mov     word_2E532, 80h
@@ -32154,7 +32154,7 @@ loc_2232D:                              ; CODE XREF: sub_22315+10↑j
                 mov     ds, ax
                 mov     cx, 10h
 
-loc_22371:                              ; CODE XREF: sub_22315+6B↓j
+loc_22371:                              ; CODE XREF: DrawAndCacheStatusIcon+6B↓j
                 push    cx
                 mov     cx, 8
                 rep movsw
@@ -32167,7 +32167,7 @@ loc_22371:                              ; CODE XREF: sub_22315+6B↓j
                 pop     di
                 pop     si
                 retf
-sub_22315       endp
+DrawAndCacheStatusIcon endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33614,7 +33614,7 @@ loc_22FCC:                              ; CODE XREF: ProcessLevelMonsters+22E↑
                 jnz     short loc_2300C
                 mov     word_32A1E, 0
                 or      word_328CA, 1000h
-                call    sub_22315
+                call    DrawAndCacheStatusIcon
                 push    si
                 mov     di, 525Ch
                 mov     es, word_2E4AA
@@ -51568,7 +51568,7 @@ loc_2C4F5:                              ; CODE XREF: sub_2C0FE+400↓j
 
 loc_2C502:                              ; CODE XREF: sub_2C0FE+3FA↑j
                 or      word_328CA, 1000h
-                call    sub_22315
+                call    DrawAndCacheStatusIcon
                 push    si
                 mov     di, 525Ch
                 mov     es, word_2E4AA
