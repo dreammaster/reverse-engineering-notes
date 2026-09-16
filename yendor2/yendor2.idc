@@ -5513,7 +5513,9 @@ static Bytes_2(void) {
 	set_name	(0X206A0,	"RedrawMapEditorGrid");
 	create_insn	(x=0X206E5);
 	op_seg		(x,	1);
+	set_cmt	(0X2070C,	"Overlay/wall-tile sibling of PaintCursorCellAndPersist: paints word_2E4A2 into the cell record's [si+2] (overlay field) at cursor word_2E772/word_2E774, persists via FileEntry_Write(errorCode=9), redraws via DrawCellIconPair. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X2070C);
+	set_name	(0X2070C,	"PaintCursorOverlayCellAndPersist");
 	create_insn	(x=0X20750);
 	op_seg		(x,	1);
 	create_insn	(x=0X2075B);
@@ -6912,11 +6914,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25CFA,	"If the character has learned any special ability (+0xB4 nonzero), draws each learned ability's name (table 0x77C6) in bright/dim color depending on whether its charge field (+0xB6/+0xB8/+0xBA/+0xBC) meets the table's threshold and, for some abilities, whether the current time of day (word_36D01) is in the required window. Called from UseItem and UseAbilityScroll.",	0);
 	create_insn	(0X25CFA);
 	set_name	(0X25CFA,	"DrawAbilityReadinessList");
-	create_insn	(0X25D02);
-	create_insn	(x=0X25D04);
-	op_hex		(x,	1);
-	create_insn	(x=0X25D0A);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -6926,6 +6923,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X25D02);
+	create_insn	(x=0X25D04);
+	op_hex		(x,	1);
+	create_insn	(x=0X25D0A);
+	op_hex		(x,	1);
 	set_cmt	(0X25D19,	"msg",	0);
 	create_insn	(x=0X25D34);
 	op_hex		(x,	1);

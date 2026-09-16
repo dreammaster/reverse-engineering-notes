@@ -5254,6 +5254,16 @@ cell, persists it via `FileEntry_Write`, and redraws it via
 
 611 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PaintCursorOverlayCellAndPersist
+
+Named `sub_2070C` -> `PaintCursorOverlayCellAndPersist`, called once
+from `RunMapEditorScreen` — the overlay/wall-tile sibling of
+`PaintCursorCellAndPersist` (byte-for-byte the same structure, with
+different globals): paints into the cell record's `[si+2]` (overlay
+field) at a second cursor position, persists, and redraws.
+
+612 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

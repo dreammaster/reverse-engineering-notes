@@ -2232,8 +2232,10 @@ loops over the whole visible 40×24 cell grid and, per cell
 `WORLD.DAT`-backed record and calls `FileEntry_Write` — a real,
 persisted bulk edit. The single-cell counterpart,
 `PaintCursorCellAndPersist` (was `sub_20652`), does the same for just
-the cursor's current cell — paint, persist, redraw via
-`DrawCellIconPair`. `BrowseWallTilePalette`/`BrowseFloorTilePalette` (`B`/`F`) jump the
+the cursor's current cell (the floor field) — paint, persist, redraw
+via `DrawCellIconPair`; `PaintCursorOverlayCellAndPersist` (was
+`sub_2070C`) is its overlay/wall-field sibling, at a second cursor
+position. `BrowseWallTilePalette`/`BrowseFloorTilePalette` (`B`/`F`) jump the
 legend strips to a per-level tile palette read from `WORLD.DAT` via
 `LoadWorldDatTilePalette` (FileEntry `bx=0x9043`, record selected by
 `_blockSize3*word_329FE`), which calls `PrepareWorldDatRead` — a

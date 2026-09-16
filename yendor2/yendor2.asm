@@ -28488,7 +28488,7 @@ loc_20336:                              ; CODE XREF: RunMapEditorScreen+2C1↑j
                 cmp     ax, 14h
                 jl      short loc_20348
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2070C
+                call    PaintCursorOverlayCellAndPersist
                 call    sub_238CD
 
 loc_20348:                              ; CODE XREF: RunMapEditorScreen+2C9↑j
@@ -28945,8 +28945,9 @@ RedrawMapEditorGrid endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2070C       proc near               ; CODE XREF: RunMapEditorScreen+2D0↑p
-                mov     ax, word_2E772
+PaintCursorOverlayCellAndPersist proc near
+                                        ; CODE XREF: RunMapEditorScreen+2D0↑p
+                mov     ax, word_2E772  ; Overlay/wall-tile sibling of PaintCursorCellAndPersist: paints word_2E4A2 into the cell record's [si+2] (overlay field) at cursor word_2E772/word_2E774, persists via FileEntry_Write(errorCode=9), redraws via DrawCellIconPair. Called from RunMapEditorScreen.
                 mov     word_3293E, ax
                 mov     ax, word_2E774
                 mov     word_32940, ax
@@ -28972,7 +28973,7 @@ sub_2070C       proc near               ; CODE XREF: RunMapEditorScreen+2D0↑p
                 mov     bx, si
                 call    DrawCellIconPair
                 retn
-sub_2070C       endp
+PaintCursorOverlayCellAndPersist endp
 
 
 ; =============== S U B R O U T I N E =======================================
