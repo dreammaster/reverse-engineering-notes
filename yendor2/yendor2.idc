@@ -3092,8 +3092,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X182B9);
 	op_hex		(x,	1);
+	set_cmt	(0X182CE,	"Applies a capped (bit 0x100) or floored (bit 0x80) stat delta via the icon-bar slot (fields selected by data, not hardcoded), clears a +0x1C status bit range, then finishes with UpdatePartyAverageStatTiers + CheckForLevelUp -- the level-up check suggests a gradual/staged XP-like effect, but the specific field isn't confirmed. Called from ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(x=0X182CE);
 	op_hex		(x,	1);
+	set_name	(0X182CE,	"ApplyIconBarStatDelta");
 	create_insn	(0X182D6);
 	create_insn	(x=0X182DB);
 	op_hex		(x,	1);
@@ -3421,15 +3423,6 @@ static Bytes_0(void) {
 	set_name	(0X19140,	"TryRepairItemForGold");
 	create_insn	(x=0X19152);
 	op_hex		(x,	1);
-	create_insn	(0X19187);
-	create_insn	(0X19198);
-	set_cmt	(0X191FC,	"Restores a large rectangular area (136 rows x 112 words/row) from EMS page 0x55D8. Called from sub_1869D; exact panel identity not confirmed.",	0);
-	create_insn	(0X191FC);
-	set_name	(0X191FC,	"RestoreLargePanelFromEMS");
-	set_cmt	(0X1922C,	"If no portrait-dirty bits are set (word_328C6 & 0x7800), blits a cached background region from EMS-paged memory back into the video buffer (136 rows x 224 bytes) -- restores the portrait panel area without a full redraw. Called from RefreshPartyPortraits and sub_18504.",	0);
-	create_insn	(x=0X1922C);
-	op_hex		(x,	1);
-	set_name	(0X1922C,	"RestorePortraitPanelFromEMS");
 }
 
 //------------------------------------------------------------------------
@@ -3439,6 +3432,15 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X19187);
+	create_insn	(0X19198);
+	set_cmt	(0X191FC,	"Restores a large rectangular area (136 rows x 112 words/row) from EMS page 0x55D8. Called from sub_1869D; exact panel identity not confirmed.",	0);
+	create_insn	(0X191FC);
+	set_name	(0X191FC,	"RestoreLargePanelFromEMS");
+	set_cmt	(0X1922C,	"If no portrait-dirty bits are set (word_328C6 & 0x7800), blits a cached background region from EMS-paged memory back into the video buffer (136 rows x 224 bytes) -- restores the portrait panel area without a full redraw. Called from RefreshPartyPortraits and sub_18504.",	0);
+	create_insn	(x=0X1922C);
+	op_hex		(x,	1);
+	set_name	(0X1922C,	"RestorePortraitPanelFromEMS");
 	set_cmt	(0X19264,	"Space-bar 'sell item' action (sub_1869D main loop, word_328C6 bit 0x10) while carrying an item: if the held item's type mask doesn't overlap the standing location's accepted-type mask, shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise sells the item, crediting its value (word_32920, via AddBCD4) to g_partyGold, then ShowMaterialCounterHud. Renamed from TryConvertItemToMaterial after confirming g_partyGold's identity (HUD label is a literal '$', and the 'SPACEBAR TO SELL ITEM OR ESC TO UNDO' prompt lives in the same message bank).",	0);
 	create_insn	(0X19264);
 	set_name	(0X19264,	"TrySellItemForGold");
@@ -5452,6 +5454,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X209C0);
 	create_insn	(0X209C9);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X209D2);
 	create_insn	(0X209FF);
 	create_insn	(0X20A23);
@@ -5486,15 +5497,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20C1E,	"Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.",	0);
 	create_insn	(0X20C1E);
 	set_name	(0X20C1E,	"RedrawDungeonScreen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X20C32);
 	op_hex		(x,	1);
 	create_insn	(x=0X20C3F);
@@ -7423,6 +7425,15 @@ static Bytes_2(void) {
 	create_insn	(0X27D20);
 	create_insn	(x=0X27D2B);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X27D2E);
 	op_hex		(x,	1);
 	create_insn	(0X27D55);
@@ -7463,15 +7474,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27FE0,	"Generic WORLD.DAT FileEntry setup, sibling of WorldDat_setBlock1-6: sets [+4]=ax (caller-supplied id, not a fixed block number), [+0xA]/[+0xC] from table 0xCDEF, [+6]=4*_blockSize3 (default, often overridden by the caller). Called from DrawClueBookMapGrid, LoadWorldDatTilePalette, and sub_111C1.",	0);
 	create_insn	(0X27FE0);
 	set_name	(0X27FE0,	"PrepareWorldDatRead");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X28000);
 	create_insn	(0X2801A);
 	create_insn	(x=0X28034);
@@ -10348,6 +10350,15 @@ static Bytes_3(void) {
 	create_word	(0X32BF6);
 	create_word	(0X32BF8);
 	create_word	(0X32BFA);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32BFC);
 	set_cmt	(0X32BFE,	"14 x 8-byte combat turn-order scratch list, rebuilt every RunDungeonGameLoop iteration by BuildCombatTurnOrder. +0 record ptr, +2 party-slot address (0 for monsters), +4 speed/initiative (sort key, descending), +6 flags (0x8000=monster, 0x2000=?, 0x4000=plausibly defeated).",	0);
 	set_name	(0X32BFE,	"g_combatTurnOrder");
@@ -10400,15 +10411,6 @@ static Bytes_3(void) {
 	create_word	(0X3330E);
 	create_word	(0X33310);
 	create_word	(0X33312);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X33314);
 	create_word	(0X33316);
 	create_word	(0X33318);

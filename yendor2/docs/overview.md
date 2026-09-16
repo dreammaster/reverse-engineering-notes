@@ -4100,6 +4100,16 @@ flag allows it.
 
 517 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyIconBarStatDelta
+
+Named `sub_182CE` -> `ApplyIconBarStatDelta`, called from
+`ApplyEffectAndDrawIconBar`: applies a capped/floored stat delta to a
+data-selected party field, clears a status-bit range, then finishes
+with `CheckForLevelUp` — suggesting a gradual/staged XP-granting use,
+though the specific field isn't confirmed.
+
+518 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

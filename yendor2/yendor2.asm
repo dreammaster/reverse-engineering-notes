@@ -13857,7 +13857,7 @@ loc_1815A:                              ; CODE XREF: ApplyEffectAndDrawIconBar+7
 ; ---------------------------------------------------------------------------
 
 loc_18171:                              ; CODE XREF: ApplyEffectAndDrawIconBar+7C↑j
-                call    sub_182CE
+                call    ApplyIconBarStatDelta
                 mov     ax, [si]
                 mov     x, ax
                 mov     ax, [si+2]
@@ -14051,13 +14051,13 @@ ApplyEffectCost endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_182CE       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar:loc_18171↑p
-                test    word ptr [di+0Ah], 180h
+ApplyIconBarStatDelta proc near         ; CODE XREF: ApplyEffectAndDrawIconBar:loc_18171↑p
+                test    word ptr [di+0Ah], 180h ; Applies a capped (bit 0x100) or floored (bit 0x80) stat delta via the icon-bar slot (fields selected by data, not hardcoded), clears a +0x1C status bit range, then finishes with UpdatePartyAverageStatTiers + CheckForLevelUp -- the level-up check suggests a gradual/staged XP-like effect, but the specific field isn't confirmed. Called from ApplyEffectAndDrawIconBar.
                 jnz     short loc_182D6
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_182D6:                              ; CODE XREF: sub_182CE+5↑j
+loc_182D6:                              ; CODE XREF: ApplyIconBarStatDelta+5↑j
                 push    di
                 push    si
                 mov     bx, [si+0Ch]
@@ -14071,12 +14071,12 @@ loc_182D6:                              ; CODE XREF: sub_182CE+5↑j
                 jle     short loc_182F3
                 mov     ax, [bx+di]
 
-loc_182F3:                              ; CODE XREF: sub_182CE+21↑j
+loc_182F3:                              ; CODE XREF: ApplyIconBarStatDelta+21↑j
                 mov     [bx+si], ax
                 jmp     short loc_18310
 ; ---------------------------------------------------------------------------
 
-loc_182F7:                              ; CODE XREF: sub_182CE+12↑j
+loc_182F7:                              ; CODE XREF: ApplyIconBarStatDelta+12↑j
                 test    word ptr [di+0Ah], 80h
                 jz      short loc_18310
                 add     bx, [si+10h]
@@ -14086,11 +14086,11 @@ loc_182F7:                              ; CODE XREF: sub_182CE+12↑j
                 jge     short loc_1830E
                 mov     ax, 0
 
-loc_1830E:                              ; CODE XREF: sub_182CE+3B↑j
+loc_1830E:                              ; CODE XREF: ApplyIconBarStatDelta+3B↑j
                 mov     [bx], ax
 
-loc_18310:                              ; CODE XREF: sub_182CE+27↑j
-                                        ; sub_182CE+2E↑j
+loc_18310:                              ; CODE XREF: ApplyIconBarStatDelta+27↑j
+                                        ; ApplyIconBarStatDelta+2E↑j
                 pop     si
                 pop     di
                 test    word_33306, 0C0h
@@ -14099,12 +14099,12 @@ loc_18310:                              ; CODE XREF: sub_182CE+27↑j
                 mov     ax, word_332E2
                 and     [bx+1Ch], ax
 
-loc_18323:                              ; CODE XREF: sub_182CE+4A↑j
+loc_18323:                              ; CODE XREF: ApplyIconBarStatDelta+4A↑j
                 call    sub_1AA9B
                 call    UpdatePartyAverageStatTiers
                 call    CheckForLevelUp
                 retn
-sub_182CE       endp
+ApplyIconBarStatDelta endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -18944,7 +18944,7 @@ AddToStatCapped endp
 
 
 sub_1AA9B       proc far                ; CODE XREF: HandleIconBarItemExpiry:loc_181F6↑P
-                                        ; sub_182CE:loc_18323↑P ...
+                                        ; ApplyIconBarStatDelta:loc_18323↑P ...
                 push    ax
                 push    bx
                 push    cx
@@ -20016,7 +20016,7 @@ seg043          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-CheckForLevelUp proc far                ; CODE XREF: sub_182CE+5F↑P
+CheckForLevelUp proc far                ; CODE XREF: ApplyIconBarStatDelta+5F↑P
                                         ; sub_1B5FD+B4↓P ...
                 push    si              ; CheckForLevelUp (implicit si=word_328D4): walks the XP-threshold table at 0x9277 (65 x 4-byte packed-BCD entries, one per level) starting at the character's current level [+0x16], comparing their XP [+0x18] against each threshold and advancing while >=. If the result exceeds the current level, stores it into [+0x1E] (pending new level, not yet applied).
                 push    di
@@ -76768,7 +76768,7 @@ word_332DE      dw 0                    ; DATA XREF: sub_2C0FE+7AF↑r
                                         ; sub_2C0FE+80E↑r ...
 word_332E0      dw 0                    ; DATA XREF: sub_2C0FE+119↑r
                                         ; sub_2C0FE+166↑r ...
-word_332E2      dw 0                    ; DATA XREF: sub_182CE+4F↑r
+word_332E2      dw 0                    ; DATA XREF: ApplyIconBarStatDelta+4F↑r
                                         ; sub_2C0FE+B88↑r ...
 word_332E4      dw 0                    ; DATA XREF: sub_2C0FE+194↑r
                                         ; sub_2C0FE+BAC↑r ...

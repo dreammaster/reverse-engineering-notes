@@ -1749,6 +1749,14 @@ severity is nonzero it populates a per-member icon-bar slot and calls
 `ApplyEffectAndDrawIconBar`. The `word_36C79` bit-`2` slow-path
 condition still isn't confirmed.
 
+`ApplyEffectAndDrawIconBar` also calls `ApplyIconBarStatDelta` (was
+`sub_182CE`): applies a capped or floored stat delta to a
+data-selected party field via the icon-bar slot, clears a `+0x1C`
+status-bit range, then finishes with `UpdatePartyAverageStatTiers` and
+— notably — `CheckForLevelUp`, suggesting at least one use is a
+gradual/staged XP-granting effect (the specific field isn't hardcoded
+here, so not confirmed).
+
 `ApplyEffectAndDrawIconBar` itself calls `HandleIconBarItemExpiry` (was
 `sub_1819B`) — a significant find: when an icon-bar item's timed effect
 expires, it strips the item's stat bonuses via `RemoveMultiStatEffect`,
