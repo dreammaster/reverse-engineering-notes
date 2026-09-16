@@ -4534,7 +4534,9 @@ static Bytes_1(void) {
 	set_name	(0X1D118,	"HitTestRegionTable");
 	create_insn	(0X1D127);
 	create_insn	(0X1D141);
+	set_cmt	(0X1D146,	"Calls EditTextField to read a typed string, then parses it digit-by-digit into a 16-bit integer at [si] (errorCode=4 on a non-digit character). A generic typed-integer prompt, used by the map editor's legend-number editors among others.",	0);
 	create_insn	(0X1D146);
+	set_name	(0X1D146,	"ReadTypedInteger");
 	create_insn	(0X1D161);
 	create_insn	(0X1D18E);
 	set_cmt	(0X1D198,	"Maps in EMS page 0x5610 and copies one 80-byte spell record (1-based index in ax) into scratch buffer 0x5A5A. Called from BuildClueEntryText and RunClueBookSpellCategory (F8 clue book, F3 SPELLS).",	0);
@@ -5533,12 +5535,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X20F96);
 	op_hex		(x,	1);
-	create_insn	(x=0X20FA6);
-	op_hex		(x,	1);
-	create_insn	(0X20FAB);
-	set_cmt	(0X20FB7,	"First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 6x with decreasing cell counts (0x11/0x11/5/3/3/3) and different row-data pointers (word_328E6..F0), then sub_21217 once more (word_328F2). Called from sub_20C1E and sub_20C46.",	0);
-	create_insn	(0X20FB7);
-	set_name	(0X20FB7,	"RenderDungeonViewport");
 }
 
 //------------------------------------------------------------------------
@@ -5548,6 +5544,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X20FA6);
+	op_hex		(x,	1);
+	create_insn	(0X20FAB);
+	set_cmt	(0X20FB7,	"First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 6x with decreasing cell counts (0x11/0x11/5/3/3/3) and different row-data pointers (word_328E6..F0), then sub_21217 once more (word_328F2). Called from sub_20C1E and sub_20C46.",	0);
+	create_insn	(0X20FB7);
+	set_name	(0X20FB7,	"RenderDungeonViewport");
 	set_cmt	(0X21015,	"Renders one depth row of the dungeon corridor view: iterates 8-byte cell records (forward then backward from a midpoint), drawing each cell's picture (table 0xE551, 12-byte stride) via sub_29B0F, and calls TryTriggerMonsterEncounterAtCell once per cell while incrementing/decrementing word_3292C (a per-frame row depth counter). Called 6x by RenderDungeonViewport.",	0);
 	create_insn	(0X21015);
 	set_name	(0X21015,	"RenderDungeonViewRow");
@@ -7526,15 +7528,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X283EA);
 	op_hex		(x,	1);
 	set_name	(0X283EA,	"InitSoundSystem");
-	create_insn	(x=0X283F2);
-	op_hex		(x,	1);
-	create_insn	(x=0X283FB);
-	op_hex		(x,	1);
-	create_insn	(x=0X28406);
-	op_hex		(x,	1);
-	set_cmt	(0X28412,	"Sound driver dispatch, called with a command in AX. If the driver isn't active (g_driverStateFlags bit3 clear), only handles AX==3 (via sub_16DEA) and otherwise no-ops. When active: reads data via FileEntry_Read using the FileEntry at bx=0x9043 (same fixed instance the 0x27CFE-family resource stubs configure), ErrorChecks it, then calls g_soundDriverFarPtr with bx=6 and es:di pointing past a small header (es:0x14) in the loaded driver segment (word_3292E). Likely 'load+play a sound effect', but command 6's exact meaning per the driver's own protocol isn't confirmed -- see ida_scripts/document_sound_dispatch.py.",	0);
-	create_insn	(x=0X28412);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7544,6 +7537,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X283F2);
+	op_hex		(x,	1);
+	create_insn	(x=0X283FB);
+	op_hex		(x,	1);
+	create_insn	(x=0X28406);
+	op_hex		(x,	1);
+	set_cmt	(0X28412,	"Sound driver dispatch, called with a command in AX. If the driver isn't active (g_driverStateFlags bit3 clear), only handles AX==3 (via sub_16DEA) and otherwise no-ops. When active: reads data via FileEntry_Read using the FileEntry at bx=0x9043 (same fixed instance the 0x27CFE-family resource stubs configure), ErrorChecks it, then calls g_soundDriverFarPtr with bx=6 and es:di pointing past a small header (es:0x14) in the loaded driver segment (word_3292E). Likely 'load+play a sound effect', but command 6's exact meaning per the driver's own protocol isn't confirmed -- see ida_scripts/document_sound_dispatch.py.",	0);
+	create_insn	(x=0X28412);
+	op_hex		(x,	1);
 	create_insn	(0X28425);
 	set_cmt	(0X28443,	"this",	0);
 	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
@@ -10495,6 +10497,15 @@ static Bytes_3(void) {
 	set_name	(0X35288,	"aTakeUpToFour");
 	create_strlit	(0X35298,	0X6);
 	set_name	(0X35298,	"aItems");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3529E,	0XF);
 	set_name	(0X3529E,	"aNameCharacter");
 	create_strlit	(0X352AD,	0XF);
@@ -10531,15 +10542,6 @@ static Bytes_3(void) {
 	set_name	(0X35341,	"aStoned");
 	create_strlit	(0X35348,	0X7);
 	set_name	(0X35348,	"aFrozen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3534F,	0XA);
 	set_name	(0X3534F,	"aParalyzed");
 	create_strlit	(0X35359,	0X7);

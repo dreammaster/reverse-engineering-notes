@@ -3990,6 +3990,14 @@ earlier this session (`DrawShadowedText`/`DrawShadowedTextAlt`).
 
 506 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ReadTypedInteger
+
+Named `sub_1D146` -> `ReadTypedInteger`, called 7 times incl. from the
+map editor's `EditWallLegendTypeNumber`/`EditFloorLegendTypeNumber`: a
+generic typed-integer prompt built on `EditTextField`.
+
+507 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -787,8 +787,10 @@ between zones.
 `RunMapEditorScreen` (name pre-existing from an earlier session; not
 otherwise documented) hosts a wall/floor legend editor:
 `EditWallLegendTypeNumber` and `EditFloorLegendTypeNumber` are a
-symmetric pair of numeric-entry fields (via an untraced `sub_1D146`)
-storing a wall/floor type number into `word_2E384`/`word_2E386`, then
+symmetric pair of numeric-entry fields (via `ReadTypedInteger`, was
+`sub_1D146` — a generic typed-integer prompt built on `EditTextField`,
+reused 7 times) storing a wall/floor type number into
+`word_2E384`/`word_2E386`, then
 redrawing the corresponding legend row (`DrawWallTypeLegendRow`/
 `DrawFloorTypeLegendRow`). One error path in the floor field falls
 through into the wall field, suggesting Tab-style navigation between

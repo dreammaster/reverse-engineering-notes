@@ -23266,9 +23266,9 @@ seg051          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D146       proc far                ; CODE XREF: EditWallLegendTypeNumber+28↓P
+ReadTypedInteger proc far               ; CODE XREF: EditWallLegendTypeNumber+28↓P
                                         ; EditFloorLegendTypeNumber+28↓P ...
-                push    si
+                push    si              ; Calls EditTextField to read a typed string, then parses it digit-by-digit into a 16-bit integer at [si] (errorCode=4 on a non-digit character). A generic typed-integer prompt, used by the map editor's legend-number editors among others.
                 push    dx
                 push    ax
                 push    cx
@@ -23283,13 +23283,13 @@ sub_1D146       proc far                ; CODE XREF: EditWallLegendTypeNumber+28
                 jmp     short loc_1D194
 ; ---------------------------------------------------------------------------
 
-loc_1D161:                              ; CODE XREF: sub_1D146+14↑j
+loc_1D161:                              ; CODE XREF: ReadTypedInteger+14↑j
                 pop     bx
                 pop     si
                 pop     si
                 mov     word ptr [si], 0
 
-loc_1D168:                              ; CODE XREF: sub_1D146+46↓j
+loc_1D168:                              ; CODE XREF: ReadTypedInteger+46↓j
                 cmp     byte ptr [bx], 0
                 jz      short loc_1D194
                 sub     byte ptr [bx], 30h ; '0'
@@ -23310,16 +23310,16 @@ loc_1D168:                              ; CODE XREF: sub_1D146+46↓j
                 jmp     short loc_1D168
 ; ---------------------------------------------------------------------------
 
-loc_1D18E:                              ; CODE XREF: sub_1D146+2D↑j
-                                        ; sub_1D146+32↑j
+loc_1D18E:                              ; CODE XREF: ReadTypedInteger+2D↑j
+                                        ; ReadTypedInteger+32↑j
                 mov     errorCode, 4
 
-loc_1D194:                              ; CODE XREF: sub_1D146+19↑j
-                                        ; sub_1D146+25↑j
+loc_1D194:                              ; CODE XREF: ReadTypedInteger+19↑j
+                                        ; ReadTypedInteger+25↑j
                 pop     dx
                 pop     si
                 retf
-sub_1D146       endp
+ReadTypedInteger endp
 
 seg051          ends
 
@@ -28737,7 +28737,7 @@ EditWallLegendTypeNumber proc near      ; CODE XREF: RunMapEditorScreen+25B↑p
                 mov     ax, 50DEh
                 mov     bx, 0AFA8h
                 mov     cx, 4
-                call    sub_1D146
+                call    ReadTypedInteger
                 cmp     errorCode, 2
                 jz      short loc_20564
                 cmp     errorCode, 0
@@ -28766,7 +28766,7 @@ EditFloorLegendTypeNumber proc near     ; CODE XREF: RunMapEditorScreen+266↑p
                 mov     ax, 50DEh
                 mov     bx, 0AFA8h
                 mov     cx, 4
-                call    sub_1D146
+                call    ReadTypedInteger
                 cmp     errorCode, 2
                 jz      short loc_205B4
                 cmp     errorCode, 0
@@ -40741,7 +40741,7 @@ sub_26D54       proc far                ; CODE XREF: seg000:09C3↑P
                 mov     bx, 0AFA8h
                 mov     ax, 0B28h
                 mov     cx, 5
-                call    sub_1D146
+                call    ReadTypedInteger
                 cmp     errorCode, 2
                 jz      short loc_26DF2
                 cmp     errorCode, 0
@@ -40761,7 +40761,7 @@ loc_26DA3:                              ; CODE XREF: sub_26D54+81↓j
                 mov     bx, 0AFA8h
                 mov     ax, 0B2Ah
                 mov     cx, 5
-                call    sub_1D146
+                call    ReadTypedInteger
                 cmp     errorCode, 2
                 jz      short loc_26DF2
                 cmp     errorCode, 0
@@ -40802,7 +40802,7 @@ sub_26E11       proc far                ; CODE XREF: seg000:0AD2↑P
                 mov     bx, 0AFA8h
                 mov     ax, 0CD0h
                 mov     cx, 4
-                call    sub_1D146
+                call    ReadTypedInteger
                 cmp     errorCode, 2
                 jnz     short loc_26E4D
                 jmp     loc_26ECE
@@ -40869,7 +40869,7 @@ sub_26EE8       proc far                ; CODE XREF: seg000:0AEA↑P
                 mov     bx, 0AFA8h
                 mov     ax, 0CD0h
                 mov     cx, 4
-                call    sub_1D146
+                call    ReadTypedInteger
                 cmp     errorCode, 2
                 jnz     short loc_26F24
                 jmp     loc_26FA9
@@ -40937,7 +40937,7 @@ sub_26FC3       proc far                ; CODE XREF: seg000:09AB↑P
                 mov     bx, 0AFA8h
                 mov     ax, 50CCh
                 mov     cx, 4
-                call    sub_1D146
+                call    ReadTypedInteger
                 cmp     errorCode, 2
                 jz      short loc_27031
                 cmp     errorCode, 0
