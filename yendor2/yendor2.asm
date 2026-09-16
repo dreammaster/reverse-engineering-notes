@@ -5423,8 +5423,8 @@ RunClueBookTransportCategory endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13380       proc near               ; CODE XREF: DrawClueBookMapGrid:loc_14108↓p
-                xor     dx, dx
+DrawClueBookMapLocationMarker proc near ; CODE XREF: DrawClueBookMapGrid:loc_14108↓p
+                xor     dx, dx          ; Per-entry loop body for DrawClueBookMapGrid: converts a world-coordinate location-marker record (es:[di]) into an on-screen bounding box + id (stored at [si]) and draws a marker icon (picture 0x73) at the computed position. Advances si+=0xA, di+=8.
                 mov     ax, es:[di+2]
                 mov     bx, 28h ; '('
                 div     bx
@@ -5462,7 +5462,7 @@ sub_13380       proc near               ; CODE XREF: DrawClueBookMapGrid:loc_141
                 add     si, 0Ah
                 add     di, 8
                 retn
-sub_13380       endp
+DrawClueBookMapLocationMarker endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6628,7 +6628,7 @@ loc_140F7:                              ; CODE XREF: DrawClueBookMapGrid+135↓j
 ; ---------------------------------------------------------------------------
 
 loc_14108:                              ; CODE XREF: DrawClueBookMapGrid+130↑j
-                call    sub_13380
+                call    DrawClueBookMapLocationMarker
                 mov     ax, word_2E664
                 cmp     es:[di], ax
                 jz      short loc_140F7
@@ -7167,8 +7167,8 @@ loc_14775:                              ; CODE XREF: ListCompatibleClueBookItems
                 or      word_328FE, 8000h
                 mov     dx, 1
                 mov     cx, 9
-                call    sub_147D8
-                call    sub_147D8
+                call    AppendClueBookItemHitTestSlot
+                call    AppendClueBookItemHitTestSlot
 
 loc_14796:                              ; CODE XREF: ListCompatibleClueBookItems+9D↓j
                 inc     word_32974
@@ -7191,7 +7191,7 @@ loc_147B7:                              ; CODE XREF: ListCompatibleClueBookItems
 
 loc_147C4:                              ; CODE XREF: ListCompatibleClueBookItems+89↑j
                                         ; ListCompatibleClueBookItems+96↑j
-                call    sub_147D8
+                call    AppendClueBookItemHitTestSlot
                 loop    loc_14796
 
 loc_147C9:                              ; CODE XREF: ListCompatibleClueBookItems+8B↑j
@@ -7207,9 +7207,9 @@ ListCompatibleClueBookItems endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_147D8       proc near               ; CODE XREF: ListCompatibleClueBookItems+66↑p
+AppendClueBookItemHitTestSlot proc near ; CODE XREF: ListCompatibleClueBookItems+66↑p
                                         ; ListCompatibleClueBookItems+69↑p ...
-                mov     ax, x
+                mov     ax, x           ; Per-entry loop body for ListCompatibleClueBookItems: appends one 10-byte hit-test region entry (x0/x1, y0/y1, auto-incrementing id) at the current x/y, then advances x by 0x1A for the next slot.
                 mov     [di], ax
                 add     ax, 10h
                 mov     [di+2], ax
@@ -7223,7 +7223,7 @@ sub_147D8       proc near               ; CODE XREF: ListCompatibleClueBookItems
                 add     x, 1Ah
                 add     di, 0Ah
                 retn
-sub_147D8       endp
+AppendClueBookItemHitTestSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14975,7 +14975,7 @@ loc_188F3:                              ; CODE XREF: sub_1869D+233↑j
                 mov     bx, word_3293E
                 mov     ax, [bx+2]
                 mov     bx, 0AFA8h
-                call    sub_19091
+                call    LoadGroundItemSlotRecord
                 mov     ax, word_32940
                 mov     bx, word_38808
                 jmp     short loc_18935
@@ -15777,8 +15777,8 @@ TryEnhanceItemForGold endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19091       proc near               ; CODE XREF: sub_1869D+289↑p
-                mov     word_36863, ax
+LoadGroundItemSlotRecord proc near      ; CODE XREF: sub_1869D+289↑p
+                mov     word_36863, ax  ; Caches ax into word_36863 (the confirmed ground/world-object item slot record cache, also used by PlaceItemOnGround), loads that record type (FileEntry errorCode 0xB) via sub_27E3A. Called once from sub_1869D.
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
                 call    sub_27E3A
@@ -15786,7 +15786,7 @@ sub_19091       proc near               ; CODE XREF: sub_1869D+289↑p
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_19091       endp
+LoadGroundItemSlotRecord endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42901,7 +42901,7 @@ sub_27E20       endp
 
 
 ; void __usercall sub_27E3A(FileEntry *this@<eds:ebx.2>)
-sub_27E3A       proc far                ; CODE XREF: sub_19091+8↑P
+sub_27E3A       proc far                ; CODE XREF: LoadGroundItemSlotRecord+8↑P
                                         ; ReadGroundItemSlot+8↑P ...
                 push    si
                 mov     si, 0CDDBh
@@ -84865,7 +84865,7 @@ word_3685F      dw 0                    ; DATA XREF: PrepareGroundItemSlotWrite�
                                         ; PrepareGroundItemSlotWrite+4↑w ...
 word_36861      dw 0                    ; DATA XREF: RunGameDialog+4B4↑w
                                         ; RunGameDialog+557↑w ...
-word_36863      dw 0                    ; DATA XREF: sub_19091↑w
+word_36863      dw 0                    ; DATA XREF: LoadGroundItemSlotRecord↑w
                                         ; PlaceItemOnGround+18↑r ...
 word_36865      dw 0                    ; DATA XREF: DrawLocalMapCell+A↑r
                                         ; DrawLocalMapCell+3A↑w ...

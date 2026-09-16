@@ -5785,6 +5785,24 @@ Its two row-drawing helpers, `sub_135E8` ->
 
 664 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: LoadGroundItemSlotRecord, DrawClueBookMapLocationMarker, AppendClueBookItemHitTestSlot
+
+Named `sub_19091` -> `LoadGroundItemSlotRecord`, called once from
+`sub_1869D`: caches its input into `word_36863` — the confirmed
+ground/world-object item slot record cache also used by
+`PlaceItemOnGround` — then loads that same record type.
+
+Named `sub_13380` -> `DrawClueBookMapLocationMarker`, the per-entry
+loop body for `DrawClueBookMapGrid`'s F1 map grid: converts a
+world-coordinate location-marker record into an on-screen bounding
+box and draws a marker icon at the computed position.
+
+Named `sub_147D8` -> `AppendClueBookItemHitTestSlot`, the per-entry
+loop body for `ListCompatibleClueBookItems`: appends one hit-test
+region entry for an equally-spaced row of clickable icon slots.
+
+667 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

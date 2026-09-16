@@ -1749,7 +1749,9 @@ static Bytes_0(void) {
 	set_name	(0X1334E,	"RunClueBookTransportCategory");
 	create_insn	(x=0X1337A);
 	op_hex		(x,	1);
+	set_cmt	(0X13380,	"Per-entry loop body for DrawClueBookMapGrid: converts a world-coordinate location-marker record (es:[di]) into an on-screen bounding box + id (stored at [si]) and draws a marker icon (picture 0x73) at the computed position. Advances si+=0xA, di+=8.",	0);
 	create_insn	(0X13380);
+	set_name	(0X13380,	"DrawClueBookMapLocationMarker");
 	create_insn	(x=0X13395);
 	op_hex		(x,	1);
 	create_insn	(x=0X13397);
@@ -2065,7 +2067,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X147BB);
 	op_hex		(x,	1);
 	create_insn	(0X147C4);
+	set_cmt	(0X147D8,	"Per-entry loop body for ListCompatibleClueBookItems: appends one 10-byte hit-test region entry (x0/x1, y0/y1, auto-incrementing id) at the current x/y, then advances x by 0x1A for the next slot.",	0);
 	create_insn	(0X147D8);
+	set_name	(0X147D8,	"AppendClueBookItemHitTestSlot");
 	set_cmt	(0X147FF,	"Draws a label (bx=msg) then the BCD4 value at si only if nonzero (IsBCDCounterAtLeast vs threshold 0). Used by ShowClueBookItemDetail and ShowClueBookMonsterDetail for several stat fields.",	0);
 	create_insn	(0X147FF);
 	set_name	(0X147FF,	"DrawLabeledBCDIfNonzero");
@@ -2936,6 +2940,15 @@ static Bytes_0(void) {
 	set_cmt	(0X178A6,	"Top-level 'use ability on a target' command, called directly from `start`. Dispatches on a caller-supplied record's +2 flags (bit 0x8000 -> weight/capacity check via sub_1766F, else LoadCurgameRecord for the target). Confirms via ShowConfirmPrompt, validates the target (status mask 0x1C40, else FlashStatusWarning), writes the result to CURGAME (FileEntry 0x8FFB) when gated flags allow, and shows a message box. If the action record's +2 bit 0x8000 was set, ends by calling ShowMaterialCounterHud (via sub_1732B) -- explains that HUD element's calling context.",	0);
 	create_insn	(0X178A6);
 	set_name	(0X178A6,	"UseAbilityCommand");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X178C5);
 	op_hex		(x,	1);
 	create_insn	(0X178D1);
@@ -2958,15 +2971,6 @@ static Bytes_0(void) {
 	set_cmt	(0X179AE,	"Clears the 0x558A/word_2E4AA scratch buffer, then walks the 8-entry category table (0x5572) gated by byte_32DCC's bits, storing [category_id, value] pairs -- ids 1/2/3 get fixed globals (word_32DE2/32DE4/32DE6), others pull from their own catalog record's [+4] field when eligible. Called from RunShopScreen.",	0);
 	create_insn	(0X179AE);
 	set_name	(0X179AE,	"BuildShopCategoryTabList");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X179CB);
 	op_hex		(x,	1);
 	create_insn	(x=0X179FC);
@@ -3511,7 +3515,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X19021);
 	create_insn	(0X19032);
+	set_cmt	(0X19091,	"Caches ax into word_36863 (the confirmed ground/world-object item slot record cache, also used by PlaceItemOnGround), loads that record type (FileEntry errorCode 0xB) via sub_27E3A. Called once from sub_1869D.",	0);
 	create_insn	(0X19091);
+	set_name	(0X19091,	"LoadGroundItemSlotRecord");
 	set_cmt	(0X19096,	"this",	0);
 	set_cmt	(0X190AF,	"Shared rejection message for TryEnhanceItemForGold/TryRepairItemForGold when g_partyGold is below the action's cost: 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, cx=3).",	0);
 	create_insn	(0X190AF);
@@ -4836,6 +4842,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1DA60);
 	op_hex		(x,	1);
 	set_name	(0X1DA60,	"ResolveAttackOrAbilityAction");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1DA78);
 	op_hex		(x,	1);
 	create_insn	(0X1DA82);
@@ -4859,15 +4874,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1DB73,	"Ability/spell effect resolver: 85% success roll, then dispatches on word_32974 (ability id) to set a flat damage amount (word_2E49C) and, for several ids, a status-effect flag (word_2E49A) plus duration ([si+0x1C]/[0x1E]) unless already afflicted ([si+0x96]). Two ids (area-effect spells, per ShowClueBookSpellDetail's targeting text) are gated on not being in combat. Called from sub_1DA60.",	0);
 	create_insn	(0X1DB73);
 	set_name	(0X1DB73,	"ResolveAbilityEffect");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1DB9D);
 	create_insn	(0X1DBAE);
 	create_insn	(x=0X1DBB3);
@@ -6633,9 +6639,6 @@ static Bytes_2(void) {
 	set_cmt	(0X23F58,	"Computes a family of derived stats from the 6 base attributes: each a weighted percentage blend (ScaleByPercentRounded) of 2-3 attributes plus a class-dependent bonus, mirrored into current/max pairs +0x58/+0x98, +0x5A/+0x9A, +0x5C/+0x9C, +0x5E/+0x9E, +0x60/+0xA0, and more. Confirms +0x58 (DrawMonsterInfoPanel's reveal-gate stat) is derived, not raw-rolled. Called from ShowCharacterSkills and ShowCharacterStats.",	0);
 	create_insn	(0X23F58);
 	set_name	(0X23F58,	"ComputeDerivedCharacterStats");
-	set_cmt	(0X2438B,	"Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).",	0);
-	create_insn	(0X2438B);
-	set_name	(0X2438B,	"RestoreWorldMapAreaFromEMS");
 }
 
 //------------------------------------------------------------------------
@@ -6645,6 +6648,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2438B,	"Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).",	0);
+	create_insn	(0X2438B);
+	set_name	(0X2438B,	"RestoreWorldMapAreaFromEMS");
 	set_cmt	(0X243C3,	"Zeroes exactly 0xFA words (500 bytes = the confirmed g_partyRecords stride 0x1F4) at es:di, di=word_328D4 -- wipes one entire party record clean.",	0);
 	create_insn	(0X243C3);
 	set_name	(0X243C3,	"ClearPartyRecord");
@@ -8555,6 +8561,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X29C90);
 	op_stkvar	(x,	0);
 	set_cmt	(0X29C95,	"x",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X29C99,	"y",	0);
 	create_insn	(x=0X29C9F);
 	op_stkvar	(x,	0);
@@ -8581,15 +8596,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29CD6);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29CD9);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29CDF);
@@ -11329,6 +11335,15 @@ static Bytes_4(void) {
 	set_name	(0X3609D,	"aDarkUnion");
 	create_strlit	(0X360A8,	0X12);
 	set_name	(0X360A8,	"aSpellInformati");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X360BA,	0X17);
 	set_name	(0X360BA,	"aMagicUserInfor");
 	create_strlit	(0X360D1,	0X5);
@@ -11341,15 +11356,6 @@ static Bytes_4(void) {
 	set_name	(0X360FF,	"aHelpScreen");
 	create_strlit	(0X3610B,	0X15);
 	set_name	(0X3610B,	"aSelectLegendOr");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36120,	0X10);
 	set_name	(0X36120,	"aInventoryItems");
 	create_strlit	(0X36130,	0XA);
