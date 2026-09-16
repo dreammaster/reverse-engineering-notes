@@ -6667,7 +6667,9 @@ static Bytes_3(void) {
 	create_insn	(0X23BC8);
 	create_insn	(x=0X23BF5);
 	op_hex		(x,	1);
+	set_cmt	(0X23C18,	"Roster screen's character-detail popup: draws the same content as DrawCharacterSheetPanel plus navigation hint lines, then loops via WaitForClickOrEscape (hit-test table 0x5F7E) letting the player click/tab through party members without leaving the overlay. Called once from ShowWorldMap.",	0);
 	create_insn	(0X23C18);
+	set_name	(0X23C18,	"RunCharacterDetailOverlay");
 	set_cmt	(0X23C47,	"msg",	0);
 	set_cmt	(0X23CA6,	"msg",	0);
 	set_cmt	(0X23CC0,	"msg",	0);
@@ -8204,6 +8206,15 @@ static Bytes_3(void) {
 	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
 	create_insn	(0X28CFF);
 	set_name	(0X28CFF,	"RevealMapRegion");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X28D1D);
 	op_hex		(x,	1);
 	create_insn	(0X28D2D);
@@ -8229,15 +8240,6 @@ static Bytes_3(void) {
 	create_insn	(0X28F4B);
 	set_cmt	(0X28F9C,	"this",	0);
 	create_insn	(0X28FAA);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
 	create_insn	(0X28FF9);
 	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
@@ -10886,6 +10888,15 @@ static Bytes_4(void) {
 	set_name	(0X352AD,	"aEnterTheName");
 	create_strlit	(0X352BC,	0XF);
 	set_name	(0X352BC,	"aKeepCharacter");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X352CB,	0X12);
 	set_name	(0X352CB,	"aCharacterPrevi");
 	create_strlit	(0X352DD,	0X7);
@@ -10900,15 +10911,6 @@ static Bytes_4(void) {
 	set_name	(0X35305,	"aNoKeep");
 	create_strlit	(0X3530E,	0X5);
 	set_name	(0X3530E,	"aDead");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35313,	0XD);
 	set_name	(0X35313,	"aAfflictions");
 	create_strlit	(0X35320,	0X5);

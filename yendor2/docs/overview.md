@@ -6122,6 +6122,18 @@ copy documented in `file-formats.md`'s `CURGAME`/`SAVGAME1` section.
 
 695 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunCharacterDetailOverlay
+
+Named `sub_23C18` -> `RunCharacterDetailOverlay`, called once from
+`ShowWorldMap` (the party roster screen) — closes out one of the
+larger functions this session had been leaving unnamed. Draws the
+same content as `DrawCharacterSheetPanel` plus navigation hint lines,
+then loops via `WaitForClickOrEscape` letting the player click/tab
+through party members without leaving the overlay. The roster
+screen's character-detail popup.
+
+696 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

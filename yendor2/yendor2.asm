@@ -17966,7 +17966,7 @@ seg033          segment byte public 'CODE' use16
 
 
 PlaceItemOnGround proc far              ; CODE XREF: TryDropHeldItem+55↓P
-                                        ; sub_23C18+300↓P
+                                        ; RunCharacterDetailOverlay+300↓P
                 push    cx              ; Places the held item on the ground; if it's a container ([+0xC] bit 0x2000), recursively processes its 8-slot contents the same way via sub_1A34C -- persists a dropped container's full contents. Called from TryDropHeldItem.
                 push    dx
                 push    si
@@ -34998,7 +34998,7 @@ seg075          segment byte public 'CODE' use16
 
 
 WriteTwoToneString proc far             ; CODE XREF: RunItemServiceRecipientLoop+7A↑P
-                                        ; sub_23C18+D5↓P ...
+                                        ; RunCharacterDetailOverlay+D5↓P ...
                 push    _textPos_x      ; Draws a string (bx) with the first character in word_2E412's color and the rest in word_2E414's -- a highlighted-hotkey-letter label style. Called from sub_193BE and sub_23C18.
                 mov     ax, word_2E412
                 mov     _font_fgColor, ax
@@ -35251,8 +35251,8 @@ ShowPartyMembers endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
-                mov     word_328BC, 74h ; 't'
+RunCharacterDetailOverlay proc far      ; CODE XREF: ShowWorldMap+144↓P
+                mov     word_328BC, 74h ; 't' ; Roster screen's character-detail popup: draws the same content as DrawCharacterSheetPanel plus navigation hint lines, then loops via WaitForClickOrEscape (hit-test table 0x5F7E) letting the player click/tab through party members without leaving the overlay. Called once from ShowWorldMap.
                 mov     word_328C0, 3Ch ; '<'
                 mov     word_2E530, 3
                 call    DrawFullScreenPictureAndCacheToEMS
@@ -35305,8 +35305,8 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 jmp     short loc_23D8D
 ; ---------------------------------------------------------------------------
 
-loc_23D17:                              ; CODE XREF: sub_23C18+218↓j
-                                        ; sub_23C18+2AB↓j ...
+loc_23D17:                              ; CODE XREF: RunCharacterDetailOverlay+218↓j
+                                        ; RunCharacterDetailOverlay+2AB↓j ...
                 call    RestoreCursorBackgroundIfDirty
                 call    RestoreWorldMapAreaFromEMS
                 mov     _font_bgTransparent, 1
@@ -35332,8 +35332,8 @@ loc_23D17:                              ; CODE XREF: sub_23C18+218↓j
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
-loc_23D8D:                              ; CODE XREF: sub_23C18+FD↑j
-                                        ; sub_23C18+17E↓j ...
+loc_23D8D:                              ; CODE XREF: RunCharacterDetailOverlay+FD↑j
+                                        ; RunCharacterDetailOverlay+17E↓j ...
                 mov     si, 5F7Eh
                 call    WaitForClickOrEscape
                 cmp     ax, 0
@@ -35344,7 +35344,7 @@ loc_23D8D:                              ; CODE XREF: sub_23C18+FD↑j
                 jmp     short loc_23D8D
 ; ---------------------------------------------------------------------------
 
-loc_23DA3:                              ; CODE XREF: sub_23C18+180↑j
+loc_23DA3:                              ; CODE XREF: RunCharacterDetailOverlay+180↑j
                 cmp     byte_2E400, 44h ; 'D'
                 jz      short loc_23DC3
                 cmp     byte_2E400, 52h ; 'R'
@@ -35352,24 +35352,24 @@ loc_23DA3:                              ; CODE XREF: sub_23C18+180↑j
                 jmp     short loc_23D8D
 ; ---------------------------------------------------------------------------
 
-loc_23DB3:                              ; CODE XREF: sub_23C18+187↑j
+loc_23DB3:                              ; CODE XREF: RunCharacterDetailOverlay+187↑j
                 cmp     ax, 1
                 jz      short loc_23DC3
                 cmp     ax, 11h
                 jnz     short loc_23D8D
 
-loc_23DBD:                              ; CODE XREF: sub_23C18+197↑j
+loc_23DBD:                              ; CODE XREF: RunCharacterDetailOverlay+197↑j
                 call    sub_25862
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_23DC3:                              ; CODE XREF: sub_23C18+190↑j
-                                        ; sub_23C18+19E↑j
+loc_23DC3:                              ; CODE XREF: RunCharacterDetailOverlay+190↑j
+                                        ; RunCharacterDetailOverlay+19E↑j
                 mov     cx, 0Eh
                 mov     si, word_328D4
                 add     si, 11Ah
 
-loc_23DCE:                              ; CODE XREF: sub_23C18+1D0↓j
+loc_23DCE:                              ; CODE XREF: RunCharacterDetailOverlay+1D0↓j
                 cmp     word ptr [si], 0
                 jz      short loc_23DE5
                 mov     ax, [si]
@@ -35379,7 +35379,7 @@ loc_23DCE:                              ; CODE XREF: sub_23C18+1D0↓j
                 call    IsItemDroppable
                 jnz     short loc_23E1F
 
-loc_23DE5:                              ; CODE XREF: sub_23C18+1B9↑j
+loc_23DE5:                              ; CODE XREF: RunCharacterDetailOverlay+1B9↑j
                 add     si, 4
                 loop    loc_23DCE
                 mov     word_3194C, 0
@@ -35387,7 +35387,7 @@ loc_23DE5:                              ; CODE XREF: sub_23C18+1B9↑j
                 mov     si, word_328D4
                 add     si, 152h
 
-loc_23DFB:                              ; CODE XREF: sub_23C18+1F7↓j
+loc_23DFB:                              ; CODE XREF: RunCharacterDetailOverlay+1F7↓j
                 cmp     word ptr [si], 0
                 jz      short loc_23E0C
                 mov     ax, [si]
@@ -35395,7 +35395,7 @@ loc_23DFB:                              ; CODE XREF: sub_23C18+1F7↓j
                 call    IsItemDroppable
                 jnz     short loc_23E1F
 
-loc_23E0C:                              ; CODE XREF: sub_23C18+1E6↑j
+loc_23E0C:                              ; CODE XREF: RunCharacterDetailOverlay+1E6↑j
                 add     si, 4
                 loop    loc_23DFB
                 mov     word_31948, 0
@@ -35403,15 +35403,15 @@ loc_23E0C:                              ; CODE XREF: sub_23C18+1E6↑j
                 jmp     short loc_23E33
 ; ---------------------------------------------------------------------------
 
-loc_23E1F:                              ; CODE XREF: sub_23C18+1CB↑j
-                                        ; sub_23C18+1F2↑j
+loc_23E1F:                              ; CODE XREF: RunCharacterDetailOverlay+1CB↑j
+                                        ; RunCharacterDetailOverlay+1F2↑j
                 mov     word_31948, 0
                 mov     word_3194C, 0
                 call    FlashStatusWarning
                 jmp     loc_23D17
 ; ---------------------------------------------------------------------------
 
-loc_23E33:                              ; CODE XREF: sub_23C18+205↑j
+loc_23E33:                              ; CODE XREF: RunCharacterDetailOverlay+205↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    RestoreWorldMapAreaFromEMS
                 mov     _font_bgTransparent, 1
@@ -35435,8 +35435,8 @@ loc_23E33:                              ; CODE XREF: sub_23C18+205↑j
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
 
-loc_23E9F:                              ; CODE XREF: sub_23C18+290↓j
-                                        ; sub_23C18+29B↓j ...
+loc_23E9F:                              ; CODE XREF: RunCharacterDetailOverlay+290↓j
+                                        ; RunCharacterDetailOverlay+29B↓j ...
                 mov     si, 5F7Eh
                 call    WaitForClickOrEscape
                 cmp     ax, 0
@@ -35447,7 +35447,7 @@ loc_23E9F:                              ; CODE XREF: sub_23C18+290↓j
                 jmp     short loc_23E9F
 ; ---------------------------------------------------------------------------
 
-loc_23EB5:                              ; CODE XREF: sub_23C18+292↑j
+loc_23EB5:                              ; CODE XREF: RunCharacterDetailOverlay+292↑j
                 cmp     byte_2E400, 59h ; 'Y'
                 jz      short loc_23ED3
                 cmp     byte_2E400, 4Eh ; 'N'
@@ -35455,17 +35455,17 @@ loc_23EB5:                              ; CODE XREF: sub_23C18+292↑j
                 jmp     loc_23D17
 ; ---------------------------------------------------------------------------
 
-loc_23EC6:                              ; CODE XREF: sub_23C18+299↑j
+loc_23EC6:                              ; CODE XREF: RunCharacterDetailOverlay+299↑j
                 cmp     ax, 3
                 jnz     short loc_23ECE
                 jmp     loc_23D17
 ; ---------------------------------------------------------------------------
 
-loc_23ECE:                              ; CODE XREF: sub_23C18+2B1↑j
+loc_23ECE:                              ; CODE XREF: RunCharacterDetailOverlay+2B1↑j
                 cmp     ax, 1
                 jnz     short loc_23E9F
 
-loc_23ED3:                              ; CODE XREF: sub_23C18+2A2↑j
+loc_23ED3:                              ; CODE XREF: RunCharacterDetailOverlay+2A2↑j
                 mov     ax, word_328D4
                 sub     ax, 95F3h
                 xor     dx, dx
@@ -35475,7 +35475,7 @@ loc_23ED3:                              ; CODE XREF: sub_23C18+2A2↑j
                 mov     di, 95EBh
                 mov     cx, 4
 
-loc_23EE7:                              ; CODE XREF: sub_23C18+2D6↓j
+loc_23EE7:                              ; CODE XREF: RunCharacterDetailOverlay+2D6↓j
                 cmp     [di], ax
                 jz      short loc_23EF2
                 add     di, 2
@@ -35483,25 +35483,25 @@ loc_23EE7:                              ; CODE XREF: sub_23C18+2D6↓j
                 jmp     short loc_23F09
 ; ---------------------------------------------------------------------------
 
-loc_23EF2:                              ; CODE XREF: sub_23C18+2D1↑j
+loc_23EF2:                              ; CODE XREF: RunCharacterDetailOverlay+2D1↑j
                 mov     word ptr [di], 0
                 mov     di, 94A3h
                 mov     cx, 5
 
-loc_23EFC:                              ; CODE XREF: sub_23C18+2EF↓j
+loc_23EFC:                              ; CODE XREF: RunCharacterDetailOverlay+2EF↓j
                 cmp     [di], ax
                 jnz     short loc_23F04
                 mov     word ptr [di], 0
 
-loc_23F04:                              ; CODE XREF: sub_23C18+2E6↑j
+loc_23F04:                              ; CODE XREF: RunCharacterDetailOverlay+2E6↑j
                 add     di, 2
                 loop    loc_23EFC
 
-loc_23F09:                              ; CODE XREF: sub_23C18+2D8↑j
+loc_23F09:                              ; CODE XREF: RunCharacterDetailOverlay+2D8↑j
                 mov     si, word_328D4
                 mov     cx, 0Bh
 
-loc_23F10:                              ; CODE XREF: sub_23C18+308↓j
+loc_23F10:                              ; CODE XREF: RunCharacterDetailOverlay+308↓j
                 mov     ax, [si+11Ah]
                 mov     bx, [si+11Ch]
                 call    PlaceItemOnGround
@@ -35520,7 +35520,7 @@ loc_23F10:                              ; CODE XREF: sub_23C18+308↓j
                 call    FileEntry_Write
                 call    ErrorCheck
                 retf
-sub_23C18       endp
+RunCharacterDetailOverlay endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35930,8 +35930,8 @@ ComputeDerivedCharacterStats endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RestoreWorldMapAreaFromEMS proc near    ; CODE XREF: sub_23C18+104↑p
-                                        ; sub_23C18+220↑p ...
+RestoreWorldMapAreaFromEMS proc near    ; CODE XREF: RunCharacterDetailOverlay+104↑p
+                                        ; RunCharacterDetailOverlay+220↑p ...
                 push    dx              ; Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).
                 push    di
                 push    si
@@ -35966,7 +35966,7 @@ RestoreWorldMapAreaFromEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ClearPartyRecord proc near              ; CODE XREF: sub_23C18+30A↑p
+ClearPartyRecord proc near              ; CODE XREF: RunCharacterDetailOverlay+30A↑p
                                         ; ShowCharacterSkills+1A3↓p ...
                 mov     es, word_2E4AA  ; Zeroes exactly 0xFA words (500 bytes = the confirmed g_partyRecords stride 0x1F4) at es:di, di=word_328D4 -- wipes one entire party record clean.
                 mov     di, word_328D4
@@ -36814,7 +36814,7 @@ ShowCharacterStats endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawThreeThresholdStats proc near       ; CODE XREF: sub_23C18+78↑p
+DrawThreeThresholdStats proc near       ; CODE XREF: RunCharacterDetailOverlay+78↑p
                                         ; ShowCharacterSkills+1D7↑p ...
                 mov     si, word_328D4  ; Draws 3 threshold-highlighted stat values from the current party record: [+0x4C]/[+0x8C], [+0x4E]/[+0x8E], [+0x50]/[+0x90]. CORRECTION: NOT the 6 primary attributes -- those are confirmed at a different offset range (+0x3C/+0x7C..+0x46/+0x86, per RollCharacterAttributes' own comment). These 3 fields' identity is not confirmed; drawn alongside the attributes on the post-attribute-roll display in ShowCharacterSkills. Called from sub_23C18 and ShowCharacterSkills.
                 mov     _textPos_x, 0CBh
@@ -36851,7 +36851,7 @@ DrawThreeThresholdStats endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawCharacterStatSheet proc near        ; CODE XREF: sub_23C18+75↑p
+DrawCharacterStatSheet proc near        ; CODE XREF: RunCharacterDetailOverlay+75↑p
                                         ; ShowCharacterSkills+1D4↑p ...
                 call    RestoreCursorBackgroundIfDirty ; Character sheet's main stat renderer: left column draws the 6 core attributes plus the +0x4C/+0x4E/+0x50 trio (same column, slots 7-9), then HP/MP rows and packed-BCD XP; right column draws 13 derived stats (+0x58..+0x70), the last 5 highlighted when this character holds one of 5 globally-assigned party roles (word_36D03/05/07/09/0B). Called from ShowCharacterSkills and sub_23C18.
                 mov     si, word_328D4
@@ -37079,7 +37079,7 @@ DrawListEntryLabel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawCharacterClassAndLevel proc near    ; CODE XREF: sub_23C18+7B↑p
+DrawCharacterClassAndLevel proc near    ; CODE XREF: RunCharacterDetailOverlay+7B↑p
                                         ; ShowCharacterSkills+1B8↑p ...
                 mov     si, word_328D4  ; Draws the current character's (word_328D4) class name (GetClassNameString) and level (+0x16, via DrawValueWithThresholdColor with ax==bx so no highlight ever fires -- a plain number draw). Shared by ShowCharacterSkills and sub_23C18.
                 call    GetClassNameString
@@ -37645,8 +37645,8 @@ DrawQuitOrReturnLabel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-WaitForClickOrEscape proc near          ; CODE XREF: sub_23C18+178↑p
-                                        ; sub_23C18+28A↑p ...
+WaitForClickOrEscape proc near          ; CODE XREF: RunCharacterDetailOverlay+178↑p
+                                        ; RunCharacterDetailOverlay+28A↑p ...
                 call    UpdateAmbientMusic ; Generic 'wait for a click or ESC' loop, ticking UpdateAmbientMusic each iteration. Returns ax=0xFFFF on ESC, else the HitTestRegionTable result for the click. Called from sub_23C18.
                 call    PollKeyboardInput
                 cmp     errorCode, 0
@@ -37951,7 +37951,7 @@ seg082          segment byte public 'CODE' use16
 
 
 IsItemDroppable proc far                ; CODE XREF: TryDropHeldItem+12↑P
-                                        ; sub_23C18+1C6↑P ...
+                                        ; RunCharacterDetailOverlay+1C6↑P ...
                 push    di              ; Checks the held item's catalog [+0xC] flags (bit 1 / bit 0x2000, the container flag) to determine droppability. Called from TryDropHeldItem.
                 push    si
                 push    dx
@@ -50767,7 +50767,7 @@ loc_2BE3D:                              ; CODE XREF: ShowWorldMap+F0↑j
 
 loc_2BE59:                              ; CODE XREF: ShowWorldMap+13A↑j
                 call    sub_25862
-                call    sub_23C18
+                call    RunCharacterDetailOverlay
                 jmp     near ptr ShowWorldMap
 ; ---------------------------------------------------------------------------
 
