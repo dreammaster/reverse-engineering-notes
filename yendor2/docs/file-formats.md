@@ -271,7 +271,13 @@ designated navigator, mapper, barterer, etc., per the earlier
 attribute/skill string survey) where the game highlights whichever
 character currently holds that role. Individual field-to-skill-name
 assignment isn't confirmed yet, but the "5 assignable roles" shape is
-a solid new lead for pinning them down.
+a solid new lead for pinning them down. **One data point**:
+`ComputeAlchemyRefinementYield` (was `sub_2AD32`, called from
+`CastSpell`) gates a divisor (better yield for a higher stat) on the
+last field in this group, `[+0x70]`, in what looks like an
+alchemy/ore-refining calculation — consistent with `[+0x70]` being an
+"alchemist"-flavored role, though not confirmed against the other 4
+fields or the string survey's exact role names.
 
 **A caution about reusing these offsets in combat code**:
 `TryResolveAttackAgainstTarget` (was `sub_2D171`, part of the

@@ -9089,7 +9089,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AD27);
 	op_hex		(x,	1);
+	set_cmt	(0X2AD32,	"Caps a BCD counter (word_32904, resource identity unconfirmed) at 100 (or reads its binary value via sub_19B3E if under 100), then divides by a divisor (2/4/5/10) tiered by party member [+0x70] -- higher stat, smaller divisor, better yield. Result in word_32940. Called from CastSpell.",	0);
 	create_insn	(0X2AD32);
+	set_name	(0X2AD32,	"ComputeAlchemyRefinementYield");
 	set_cmt	(0X2AD94,	"Shows a confirm prompt (msg 0x12); if declined, refreshes the material/gold HUD and returns 0. If confirmed, resolves the selected party record (word_32990 -> sub_25B14) and returns word_328D6. Called from ApplyMultiStatEffect and RestCharacter.",	0);
 	create_insn	(0X2AD94);
 	set_name	(0X2AD94,	"ConfirmAndSelectPartyTarget");
@@ -9916,6 +9918,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2D65A,	"Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.",	0);
 	create_insn	(0X2D65A);
 	set_name	(0X2D65A,	"InteractWithContainer");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D66B);
 	op_hex		(x,	1);
 	create_insn	(0X2D682);
@@ -9930,15 +9941,6 @@ static Bytes_3(void) {
 	create_insn	(0X2D6D3);
 	create_insn	(x=0X2D6DE);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D6E9);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D6EF);

@@ -4453,6 +4453,24 @@ effect before it's redrawn.
 
 541 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ComputeAlchemyRefinementYield
+
+Named `sub_2AD32` -> `ComputeAlchemyRefinementYield`, called once from
+`CastSpell`: caps a BCD counter (`word_32904`, a pointer reused
+generically elsewhere so its resource identity here isn't confirmed —
+plausibly MAGIC ORE or NUORE given the alchemy context) at 100 (or
+reads its binary value via still-unnamed `sub_19B3E` if under 100),
+then divides by a divisor (2/4/5/10) tiered by the current party
+member's `[+0x70]` stat — the last of the 13-entry derived-stat
+column, and one of the 5 fields highlighted for a party "role" holder
+— higher stat, smaller divisor, better yield. A small new data point
+for that still-open "5 assignable roles" lead: `[+0x70]` gating an
+alchemy/refining-flavored yield calculation is consistent with an
+"alchemist"-type role. The final `div;mul;div` sequence is
+mathematically redundant with a single division and isn't explained.
+
+542 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

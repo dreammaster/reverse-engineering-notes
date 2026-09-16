@@ -16970,7 +16970,7 @@ ConvertWordToBCD4 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19B3E       proc far                ; CODE XREF: sub_2AD32+15↓P
+sub_19B3E       proc far                ; CODE XREF: ComputeAlchemyRefinementYield+15↓P
                 push    di
                 push    dx
                 push    cx
@@ -48830,7 +48830,7 @@ loc_2AC2B:                              ; CODE XREF: CastSpell+194↑j
 
 loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
                                         ; CastSpell+1F3↑j
-                call    sub_2AD32
+                call    ComputeAlchemyRefinementYield
                 push    word_32940
                 mov     si, word_32904
                 call    SubtractFromBCDCounter
@@ -48901,8 +48901,8 @@ CastSpell       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AD32       proc near               ; CODE XREF: CastSpell:loc_2AC4F↑p
-                mov     word_3293E, 64h ; 'd'
+ComputeAlchemyRefinementYield proc near ; CODE XREF: CastSpell:loc_2AC4F↑p
+                mov     word_3293E, 64h ; 'd' ; Caps a BCD counter (word_32904, resource identity unconfirmed) at 100 (or reads its binary value via sub_19B3E if under 100), then divides by a divisor (2/4/5/10) tiered by party member [+0x70] -- higher stat, smaller divisor, better yield. Result in word_32940. Called from CastSpell.
                 mov     si, word_32904
                 call    IsBCDCounterAtLeast
                 jnb     short loc_2AD4F
@@ -48910,7 +48910,7 @@ sub_2AD32       proc near               ; CODE XREF: CastSpell:loc_2AC4F↑p
                 call    sub_19B3E
                 mov     word_3293E, ax
 
-loc_2AD4F:                              ; CODE XREF: sub_2AD32+F↑j
+loc_2AD4F:                              ; CODE XREF: ComputeAlchemyRefinementYield+F↑j
                 mov     si, word_328D4
                 mov     word_32940, 2
                 cmp     word ptr [si+70h], 6Eh ; 'n'
@@ -48923,8 +48923,8 @@ loc_2AD4F:                              ; CODE XREF: sub_2AD32+F↑j
                 jge     short loc_2AD7D
                 mov     word_32940, 0Ah
 
-loc_2AD7D:                              ; CODE XREF: sub_2AD32+2B↑j
-                                        ; sub_2AD32+37↑j ...
+loc_2AD7D:                              ; CODE XREF: ComputeAlchemyRefinementYield+2B↑j
+                                        ; ComputeAlchemyRefinementYield+37↑j ...
                 xor     dx, dx
                 mov     ax, word_3293E
                 div     word_32940
@@ -48933,7 +48933,7 @@ loc_2AD7D:                              ; CODE XREF: sub_2AD32+2B↑j
                 div     word_32940
                 mov     word_32940, ax
                 retn
-sub_2AD32       endp
+ComputeAlchemyRefinementYield endp
 
 
 ; =============== S U B R O U T I N E =======================================
