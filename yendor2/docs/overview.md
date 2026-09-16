@@ -5276,6 +5276,17 @@ same convention already documented for the portrait cache.
 
 613 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowAbilityDescriptionColumn
+
+Named `sub_29461` -> `ShowAbilityDescriptionColumn`, called from
+`UseAbilityCommand` and `UseAbilityOnTarget`: clears the status panel
+if dirty, positions text at a fixed spot with a highlight color,
+restores the cursor background if dirty, then calls the still-unnamed
+`DrawStringColumn` (a heavily-referenced multi-line text renderer) —
+plausibly showing an ability's description or effect text.
+
+614 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -12899,7 +12899,7 @@ loc_17980:                              ; CODE XREF: UseAbilityCommand+D7↑j
                 jz      short loc_1799D
                 mov     cx, 2
                 mov     bx, 7CA8h
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 and     word_328C4, 0FEFFh
 
 loc_1799D:                              ; CODE XREF: UseAbilityCommand+95↑j
@@ -45539,9 +45539,9 @@ WaitForTargetClick endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29461       proc far                ; CODE XREF: UseAbilityCommand+EC↑P
+ShowAbilityDescriptionColumn proc far   ; CODE XREF: UseAbilityCommand+EC↑P
                                         ; UseAbilityOnTarget+75↓p ...
-                push    bx
+                push    bx              ; Clears the status panel if dirty, sets word_328C4 bit 0x100, positions text (0xF0,0x60) color 0x8A transparent, restores the cursor background if dirty, then calls DrawStringColumn with the caller's bx/cx (preserved through setup) -- a multi-line text column, plausibly an ability's description. Called from UseAbilityCommand and UseAbilityOnTarget.
                 push    cx
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
@@ -45558,7 +45558,7 @@ sub_29461       proc far                ; CODE XREF: UseAbilityCommand+EC↑P
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
-sub_29461       endp
+ShowAbilityDescriptionColumn endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -45625,7 +45625,7 @@ loc_29511:                              ; CODE XREF: UseAbilityOnTarget+61↑j
                 mov     cx, 1
                 mov     bx, 7BAEh
                 push    cs
-                call    near ptr sub_29461
+                call    near ptr ShowAbilityDescriptionColumn
                 jmp     short loc_294B8
 ; ---------------------------------------------------------------------------
 
@@ -45633,7 +45633,7 @@ loc_2951D:                              ; CODE XREF: UseAbilityOnTarget+6A↑j
                 mov     cx, 1
                 mov     bx, 7BCEh
                 push    cs
-                call    near ptr sub_29461
+                call    near ptr ShowAbilityDescriptionColumn
                 jmp     short loc_294B8
 UseAbilityOnTarget endp
 
@@ -46001,7 +46001,7 @@ loc_297A8:                              ; CODE XREF: UnlockDoorCommand+66↑j
                 jz      short loc_297BE
                 mov     cx, 1
                 mov     bx, 7BB7h
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 jmp     short loc_2975D
 ; ---------------------------------------------------------------------------
 
@@ -46071,7 +46071,7 @@ loc_2982E:                              ; CODE XREF: UnlockDoorCommand+EC↑j
                 call    ErrorCheck
                 mov     cx, 1
                 mov     bx, 7BAEh
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 cmp     word_32DE8, 0
                 jz      short loc_29874
                 push    es
@@ -48332,7 +48332,7 @@ loc_2A82F:                              ; CODE XREF: sub_2A788+9D↑j
                 jz      short loc_2A845
                 mov     cx, 1
                 mov     bx, 7BB7h
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 jmp     short loc_2A7DA
 ; ---------------------------------------------------------------------------
 
@@ -48357,7 +48357,7 @@ loc_2A854:                              ; CODE XREF: sub_2A788+C3↑j
                 call    sub_274B4
                 mov     cx, 2
                 mov     bx, 7C89h
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 cmp     word_3297A, 0
                 jnz     short loc_2A896
                 mov     bx, word_32924
@@ -48393,14 +48393,14 @@ loc_2A8A8:                              ; CODE XREF: sub_2A788+116↑j
 loc_2A8DF:                              ; CODE XREF: sub_2A788+152↑j
                 mov     cx, 2
                 mov     bx, 7CA8h
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 jmp     loc_2A7DA
 ; ---------------------------------------------------------------------------
 
 loc_2A8ED:                              ; CODE XREF: sub_2A788+14D↑j
                 mov     cx, 1
                 mov     bx, 7BAEh
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 cmp     word_32DE8, 0
                 jz      short loc_2A911
                 push    es
@@ -48795,7 +48795,7 @@ loc_2ABC8:                              ; CODE XREF: CastSpell+166↑j
                 jge     short loc_2ABDC
                 mov     bx, 7D7Eh
                 mov     cx, 3
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
@@ -48823,7 +48823,7 @@ loc_2ABFB:                              ; CODE XREF: CastSpell+199↑j
 loc_2AC1D:                              ; CODE XREF: CastSpell+1F5↓j
                 mov     bx, 802Bh
                 mov     cx, 4
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
@@ -51031,7 +51031,7 @@ loc_2C0AC:                              ; CODE XREF: RepairItemCommand+93↑j
                 call    TriggerSoundEvent
                 mov     cx, 6
                 mov     bx, 8304h
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 or      word_328C8, 4000h
                 jmp     short loc_2C0ED
 ; ---------------------------------------------------------------------------
@@ -51039,7 +51039,7 @@ loc_2C0AC:                              ; CODE XREF: RepairItemCommand+93↑j
 loc_2C0C7:                              ; CODE XREF: RepairItemCommand+9A↑j
                 mov     cx, 4
                 mov     bx, 82D8h
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 jmp     short loc_2C0F2
 ; ---------------------------------------------------------------------------
 
@@ -51048,7 +51048,7 @@ loc_2C0D4:                              ; CODE XREF: RepairItemCommand+98↑j
                 call    TriggerSoundEvent
                 mov     cx, 2
                 mov     bx, 8349h
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 or      word_328C8, 8000h
 
 loc_2C0ED:                              ; CODE XREF: RepairItemCommand+B5↑j
@@ -51872,7 +51872,7 @@ loc_2C836:                              ; CODE XREF: sub_2C0FE+72E↑j
                 mov     bx, 7BAEh
 
 loc_2C83C:                              ; CODE XREF: sub_2C0FE+736↑j
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
                 mov     ax, word_32DC8
                 or      byte_32DCD, al
                 mov     ax, 556Dh
@@ -53399,7 +53399,7 @@ loc_2D62F:                              ; CODE XREF: ExamineTarget+10↑j
 loc_2D639:                              ; CODE XREF: ExamineTarget+23↑j
                 mov     cx, 1
                 mov     bx, 7D1Fh
-                call    sub_29461
+                call    ShowAbilityDescriptionColumn
 
 loc_2D644:                              ; CODE XREF: ExamineTarget+2D↑j
                 mov     word_2E530, 0

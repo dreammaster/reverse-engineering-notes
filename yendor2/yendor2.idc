@@ -8150,7 +8150,9 @@ static Bytes_3(void) {
 	set_name	(0X2940E,	"WaitForTargetClick");
 	create_insn	(0X2943F);
 	create_insn	(0X29447);
+	set_cmt	(0X29461,	"Clears the status panel if dirty, sets word_328C4 bit 0x100, positions text (0xF0,0x60) color 0x8A transparent, restores the cursor background if dirty, then calls DrawStringColumn with the caller's bx/cx (preserved through setup) -- a multi-line text column, plausibly an ability's description. Called from UseAbilityCommand and UseAbilityOnTarget.",	0);
 	create_insn	(0X29461);
+	set_name	(0X29461,	"ShowAbilityDescriptionColumn");
 	create_insn	(x=0X29468);
 	op_hex		(x,	1);
 	set_cmt	(0X294A3,	"Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.",	0);
@@ -9302,11 +9304,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X2B14F);
 	op_hex		(x,	1);
 	set_name	(0X2B14F,	"InstantKillActiveMonster");
-	create_insn	(x=0X2B174);
-	op_hex		(x,	1);
-	set_cmt	(0X2B17F,	"Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.",	0);
-	create_insn	(0X2B17F);
-	set_name	(0X2B17F,	"CheckQuestItemsCompleted");
 }
 
 //------------------------------------------------------------------------
@@ -9316,6 +9313,11 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2B174);
+	op_hex		(x,	1);
+	set_cmt	(0X2B17F,	"Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.",	0);
+	create_insn	(0X2B17F);
+	set_name	(0X2B17F,	"CheckQuestItemsCompleted");
 	create_insn	(x=0X2B184);
 	op_hex		(x,	1);
 	create_insn	(0X2B1C3);
