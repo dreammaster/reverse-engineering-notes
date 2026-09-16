@@ -1080,7 +1080,23 @@ the party's position and, when it changes, reads that region's
 between zones. It configures that `WORLD.DAT` read via
 `PrepareAmbientMusicBlockRead` (was `sub_2801A`), the same shape as
 the codebase's other resource-stub helpers, keyed by global
-`_blockSize5`.
+`_blockSize5`. `g_currentMusicTrack` caches the currently-playing/
+forced track id: `RefreshDungeonMapWindow` compares it against two
+region-specific track ids on entry to decide whether to call
+`StopMusicAndResetTimer` before a region change, and the driver-reset
+path clears it alongside stopping playback — distinct from
+`g_forcedMusicTrack` (the "0 = let the ambient system choose" override
+flag `RunTitleScreen` and character creation toggle).
+
+### The EMS page-mapping call cache
+
+`MapUnmapPages` (the central `int 67h` LIM EMS 4.0 page-mapping
+primitive, called from every `loadWorldDatN`-style resource loader)
+caches its `bx` parameter — a pointer to the mapping-array descriptor —
+in `g_lastEmsMappingArrayPtr`, and skips the actual EMS call entirely
+if called again with the same pointer. A simple call-memoization guard
+against redundant remaps when consecutive loaders want the same page
+mapping.
 
 ### The map legend editor
 
@@ -1134,6 +1150,13 @@ all derived from) are themselves clamped to
 `g_dragCursorMaxY` — bounds `RunMapEditorScreen` temporarily overrides
 and restores around its own editing session (the map editor evidently
 needs a different valid drag region than the normal game screens).
+
+Separate from all of the above (which record *where a click/motion
+event happened*): `g_mouseCursorX`/`g_mouseCursorY` track the cursor
+*sprite's* current on-screen draw position — written by the cursor-draw
+routines (including a fixed default of `(0xE6,0xB4)` at one call site)
+and read by `RestoreCursorBackground` to erase the cursor from its
+previous position before redrawing it at the new one.
 
 ### The main pause/options dialog
 

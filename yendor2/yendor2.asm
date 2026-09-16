@@ -3936,9 +3936,9 @@ MapUnmapPages   proc far                ; CODE XREF: loadWorldDat2+7↑P
                                         ; loadWorldDat3+7↑P ...
                 push    cx
                 push    si
-                cmp     bx, word_2E500
+                cmp     bx, g_lastEmsMappingArrayPtr
                 jz      short loc_12674
-                mov     word_2E500, bx
+                mov     g_lastEmsMappingArrayPtr, bx
                 mov     cx, [bx]
                 add     bx, 2
                 mov     si, bx
@@ -4042,7 +4042,7 @@ loc_126E5:                              ; CODE XREF: InitMemory+67↑j
 
 loc_12702:                              ; CODE XREF: InitMemory+84↑j
                 mov     _emsPointer1?, dx
-                mov     word_2E500, 0
+                mov     g_lastEmsMappingArrayPtr, 0
                 mov     errorCode, 0Ch
                 mov     bx, _emsPageCount
                 cmp     bx, 180h
@@ -28839,9 +28839,9 @@ LoadWorldDatTilePalette endp
 
 BrowseWallTilePalette proc near         ; CODE XREF: RunMapEditorScreen+144↑p
                 call    RestoreCursorBackgroundIfDirty ; 'B' key handler: picks a wall type from the tile palette at the clicked position (LoadWorldDatTilePalette), stores it to word_2E384/word_2E496 (same fields EditWallLegendTypeNumber writes), redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen.
-                mov     ax, word_2E776
+                mov     ax, g_mouseCursorX
                 mov     word_3293E, ax
-                mov     ax, word_31956
+                mov     ax, g_mouseCursorY
                 mov     word_32940, ax
                 call    ComputeMapEditorBlockOrigin
                 call    LoadWorldDatTilePalette
@@ -28860,9 +28860,9 @@ BrowseWallTilePalette endp
 
 BrowseFloorTilePalette proc near        ; CODE XREF: RunMapEditorScreen+151↑p
                 call    RestoreCursorBackgroundIfDirty ; 'F' key handler, floor counterpart to BrowseWallTilePalette: picks a floor type from the palette, stores to word_2E386/word_2E4A2, redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen.
-                mov     ax, word_2E776
+                mov     ax, g_mouseCursorX
                 mov     word_3293E, ax
-                mov     ax, word_31956
+                mov     ax, g_mouseCursorY
                 mov     word_32940, ax
                 call    ComputeMapEditorBlockOrigin
                 call    LoadWorldDatTilePalette
@@ -29079,9 +29079,9 @@ ShowMapEditorBlockCoordsAndRedraw proc near
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgColor, 0
                 mov     _font_bgTransparent, 0
-                mov     ax, word_2E776
+                mov     ax, g_mouseCursorX
                 mov     word_3293E, ax
-                mov     ax, word_31956
+                mov     ax, g_mouseCursorY
                 mov     word_32940, ax
                 call    ComputeMapEditorBlockOrigin
                 push    bx
@@ -29285,7 +29285,7 @@ seg062          segment byte public 'CODE' use16
 
 RefreshDungeonMapWindow proc far        ; CODE XREF: start+1DA↑P
                                         ; start+26A↑P ...
-                mov     ax, word_2E4A6  ; Loads/refreshes the in-memory 78x78 dungeon map-grid window (segment word_2E562) around the party's position from WORLD.DAT, bakes per-cell interaction markers via TryInteractAtPosition, updates region music, and places/despawns g_levelMonsters entries as they scroll into/out of the window. Called from 16 sites in `start`, always right before RedrawDungeonScreen+BuildMinimapTileData+DrawMinimap.
+                mov     ax, g_currentMusicTrack ; Loads/refreshes the in-memory 78x78 dungeon map-grid window (segment word_2E562) around the party's position from WORLD.DAT, bakes per-cell interaction markers via TryInteractAtPosition, updates region music, and places/despawns g_levelMonsters entries as they scroll into/out of the window. Called from 16 sites in `start`, always right before RedrawDungeonScreen+BuildMinimapTileData+DrawMinimap.
                 cmp     ax, 0
                 jz      short loc_209EB
                 cmp     ax, word_36CB1
@@ -34533,9 +34533,9 @@ loc_23782:                              ; CODE XREF: seg073:009E↑j
                 jnz     short loc_237A7
                 call    RestoreCursorBackground
                 mov     ax, g_dragCursorX
-                mov     word_2E776, ax
+                mov     g_mouseCursorX, ax
                 mov     ax, g_dragCursorY
-                mov     word_31956, ax
+                mov     g_mouseCursorY, ax
                 call    SaveCursorBackgroundPixels
                 call    BlitCursorSprite
 
@@ -34614,8 +34614,8 @@ loc_237F7:                              ; CODE XREF: InitMouse+1C↑j
 loc_23802:                              ; CODE XREF: InitMouse+27↑j
                 or      word_3195C, 1
                 and     word_3195C, 0FFFDh
-                mov     word_2E776, 0E6h
-                mov     word_31956, 0B4h
+                mov     g_mouseCursorX, 0E6h
+                mov     g_mouseCursorY, 0B4h
                 mov     g_dragCursorX, 0E6h
                 mov     g_dragCursorY, 0B4h
                 mov     g_pictureId, 0
@@ -34644,9 +34644,9 @@ InitMouse       endp
                 jz      short loc_2386F
                 call    RestoreCursorBackground
                 mov     ax, g_dragCursorX
-                mov     word_2E776, ax
+                mov     g_mouseCursorX, ax
                 mov     ax, g_dragCursorY
-                mov     word_31956, ax
+                mov     g_mouseCursorY, ax
                 call    SaveCursorBackgroundPixels
                 call    BlitCursorSprite
 
@@ -34712,9 +34712,9 @@ loc_238DB:                              ; CODE XREF: DrawMouseCursorAlt+6↑j
 
 loc_238E4:                              ; CODE XREF: DrawMouseCursorAlt+14↑j
                 mov     ax, g_dragCursorX
-                mov     word_2E776, ax
+                mov     g_mouseCursorX, ax
                 mov     ax, g_dragCursorY
-                mov     word_31956, ax
+                mov     g_mouseCursorY, ax
                 push    errorCode
                 call    SaveCursorBackgroundPixels
                 or      word_3195C, 2
@@ -34750,8 +34750,8 @@ SaveCursorBackgroundPixels proc near    ; CODE XREF: seg073:00C1↑p
                 push    ds
                 or      word_3195C, 4
                 mov     ax, 140h
-                mul     word_31956
-                add     ax, word_2E776
+                mul     g_mouseCursorY
+                add     ax, g_mouseCursorX
                 mov     si, ax
                 mov     di, 0E0Eh
                 mov     ax, seg seg129
@@ -34805,8 +34805,8 @@ loc_2396E:                              ; CODE XREF: BlitCursorSprite+6↑j
                 push    di
                 push    es
                 mov     ax, 140h
-                mul     word_31956
-                add     ax, word_2E776
+                mul     g_mouseCursorY
+                add     ax, g_mouseCursorX
                 mov     di, ax
                 mov     si, 3FE6h
                 mov     ax, 0A000h
@@ -34818,9 +34818,9 @@ loc_2398C:                              ; CODE XREF: BlitCursorSprite+5F↓j
                 push    cx
                 mov     cx, 10h
                 xor     dx, dx
-                cmp     word_2E776, 130h
+                cmp     g_mouseCursorX, 130h
                 jle     short loc_239A4
-                mov     dx, word_2E776
+                mov     dx, g_mouseCursorX
                 sub     dx, 130h
                 sub     cx, dx
 
@@ -34921,8 +34921,8 @@ RestoreCursorBackground proc near       ; CODE XREF: seg073:00B2↑p
                 push    di
                 push    es
                 mov     ax, 140h
-                mul     word_31956
-                add     ax, word_2E776
+                mul     g_mouseCursorY
+                add     ax, g_mouseCursorX
                 mov     di, ax
                 mov     si, 0E0Eh
                 mov     ax, 0A000h
@@ -43534,7 +43534,7 @@ loc_2829F:                              ; CODE XREF: PlayMusicTrack+6↑j
                 push    cx
                 push    dx
                 push    es
-                mov     word_2E4A6, ax
+                mov     g_currentMusicTrack, ax
                 or      ax, ax
                 jz      short loc_2831B
                 cmp     byte ptr word_2E492, 0
@@ -43547,7 +43547,7 @@ loc_282B3:                              ; CODE XREF: PlayMusicTrack+19↑j
                 mov     ax, word_3195E
                 mov     word_368A5, ax
                 xor     ax, ax
-                mov     bx, word_2E4A6
+                mov     bx, g_currentMusicTrack
                 call    LookupMusicTrackBlockOffset
                 mov     bx, 9043h
                 mov     errorCode, 7
@@ -43629,7 +43629,7 @@ loc_28376:                              ; CODE XREF: UpdateAmbientMusic+49↑j
 
 loc_28382:                              ; CODE XREF: UpdateAmbientMusic+3E↑j
                 and     word_328CA, 0FFEFh
-                mov     word_2E4A6, ax
+                mov     g_currentMusicTrack, ax
                 push    cs
                 call    near ptr PlayMusicTrack
                 retf
@@ -43780,7 +43780,7 @@ StopMusicAndResetTimer proc far         ; CODE XREF: start+2BA↑P
 loc_284A5:                              ; CODE XREF: StopMusicAndResetTimer+6↑j
                 mov     bx, 7
                 call    near ptr byte_28616
-                mov     word_2E4A6, 0
+                mov     g_currentMusicTrack, 0
                 test    word_3295A, 200h
                 jnz     short loc_284C5
                 mov     word_32958, 14h
@@ -47353,8 +47353,8 @@ loc_2A143:                              ; CODE XREF: DrawMouseCursor+21↑j
                 or      word_3195C, 4
                 test    word_3195C, 2
                 jz      short loc_2A1C9
-                mov     ax, word_2E776  ; x
-                mov     bx, word_31956  ; y
+                mov     ax, g_mouseCursorX ; x
+                mov     bx, g_mouseCursorY ; y
                 call    getTextPos
                 push    ax
                 mov     si, ax
@@ -47386,9 +47386,9 @@ loc_2A18F:                              ; CODE XREF: DrawMouseCursor+AC↓j
                 push    cx
                 mov     cx, 10h
                 xor     dx, dx
-                cmp     word_2E776, 130h
+                cmp     g_mouseCursorX, 130h
                 jle     short loc_2A1A7
-                mov     dx, word_2E776
+                mov     dx, g_mouseCursorX
                 sub     dx, 130h
                 sub     cx, dx
 
@@ -48152,7 +48152,7 @@ loc_2A6BF:                              ; CODE XREF: LoadPictureIntoEms+2E↑j
                                         ; AL = 00h / 01h, DX = handle, CX = number of entries in array
                                         ; DS:SI -> mapping array
                                         ; Return: AH = status
-                mov     word_2E500, 0
+                mov     g_lastEmsMappingArrayPtr, 0
                 mov     si, es:[di+4]
                 retn
 ; ---------------------------------------------------------------------------
@@ -48203,7 +48203,7 @@ loc_2A732:                              ; CODE XREF: LoadPictureIntoEms+A1↑j
                                         ; AL = 00h / 01h, DX = handle, CX = number of entries in array
                                         ; DS:SI -> mapping array
                                         ; Return: AH = status
-                mov     word_2E500, 0
+                mov     g_lastEmsMappingArrayPtr, 0
                 mov     si, es:[di+4]
                 mov     bx, 9011h
                 mov     errorCode, 2
@@ -50317,7 +50317,7 @@ SaveActionIconPanelToEMS proc far       ; CODE XREF: HandleRangedOrCombatAction+
                 push    dx
                 push    cx
                 mov     bx, 55FEh
-                cmp     bx, word_2E500
+                cmp     bx, g_lastEmsMappingArrayPtr
                 jz      short loc_2BB31
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
@@ -50354,7 +50354,7 @@ SaveActionIconPanelToEMS endp
                 push    dx
                 push    cx
                 mov     bx, 55FEh
-                cmp     bx, word_2E500
+                cmp     bx, g_lastEmsMappingArrayPtr
                 jz      short loc_2BB6F
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
@@ -50394,7 +50394,7 @@ SaveCorridorBackgroundToEMS proc far    ; CODE XREF: HandleRangedOrCombatAction+
                 push    dx
                 push    cx
                 mov     bx, 55FEh
-                cmp     bx, word_2E500
+                cmp     bx, g_lastEmsMappingArrayPtr
                 jz      short loc_2BBAE
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
@@ -50484,7 +50484,7 @@ RestoreCorridorBackgroundFromEMS proc far
                 push    dx
                 push    cx
                 mov     bx, 55FEh
-                cmp     bx, word_2E500
+                cmp     bx, g_lastEmsMappingArrayPtr
                 jz      short loc_2BC2D
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
@@ -50603,7 +50603,7 @@ loc_2BCCF:                              ; CODE XREF: ScrollCorridorBackgroundFro
 loc_2BCDA:                              ; CODE XREF: ScrollCorridorBackgroundFromEMS+4C↑j
                                         ; ScrollCorridorBackgroundFromEMS+5B↑j
                 mov     bx, 55FEh
-                cmp     bx, word_2E500
+                cmp     bx, g_lastEmsMappingArrayPtr
                 jz      short loc_2BCEC
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
@@ -56821,7 +56821,7 @@ g_mapEditorFloorScrollIndex dw 0        ; DATA XREF: RunMapEditorScreen+38↑w
                                         ; RunMapEditorScreen+294↑w ...
                 db    0
                 db    0
-word_2E4A6      dw 0                    ; DATA XREF: RefreshDungeonMapWindow↑r
+g_currentMusicTrack dw 0                ; DATA XREF: RefreshDungeonMapWindow↑r
                                         ; PlayMusicTrack+D↑w ...
 word_2E4A8      dw 0                    ; DATA XREF: InitializeDungeonLevel+15↑w
                                         ; UpdateAmbientMusicForRegion+1D↑r ...
@@ -56911,7 +56911,7 @@ g_partyEffectIconSlots db    0          ; 4 entries x 20 bytes. +0/+2, +4/+6: tw
                 db    0
                 db    0
                 db    0
-word_2E500      dw 0                    ; DATA XREF: MapUnmapPages+2↑r
+g_lastEmsMappingArrayPtr dw 0           ; DATA XREF: MapUnmapPages+2↑r
                                         ; MapUnmapPages+8↑w ...
 _emsPointer1?   dw 0FFFFh               ; DATA XREF: loadWorldDat2↑r
                                         ; loadWorldDat3↑r ...
@@ -57521,8 +57521,8 @@ g_mouseRightDownX dw 0                  ; DATA XREF: start:loc_10503↑r
                                         ; start:loc_106C7↑r ...
 g_mouseRightDownY dw 0                  ; DATA XREF: start+506↑r
                                         ; start+6CA↑r ...
-; int word_2E776
-word_2E776      dw 0                    ; DATA XREF: BrowseWallTilePalette+5↑r
+; int g_mouseCursorX
+g_mouseCursorX  dw 0                    ; DATA XREF: BrowseWallTilePalette+5↑r
                                         ; BrowseFloorTilePalette+5↑r ...
 g_dragCursorMaxX dw 13Ch                ; DATA XREF: RunMapEditorScreen+E↑r
                                         ; RunMapEditorScreen+123↑w ...
@@ -70283,8 +70283,8 @@ g_mouseLeftUpX  dw 0                    ; DATA XREF: seg073:006D↑w
 g_mouseLeftUpY  dw 0                    ; DATA XREF: seg073:0071↑w
 g_mouseRightUpX dw 0                    ; DATA XREF: seg073:0093↑w
 g_mouseRightUpY dw 0                    ; DATA XREF: seg073:0097↑w
-; int word_31956
-word_31956      dw 0                    ; DATA XREF: BrowseWallTilePalette+B↑r
+; int g_mouseCursorY
+g_mouseCursorY  dw 0                    ; DATA XREF: BrowseWallTilePalette+B↑r
                                         ; BrowseFloorTilePalette+B↑r ...
 g_dragCursorMaxY dw 0C3h                ; DATA XREF: RunMapEditorScreen+12↑r
                                         ; RunMapEditorScreen+11F↑w ...

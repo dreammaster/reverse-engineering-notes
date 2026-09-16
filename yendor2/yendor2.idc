@@ -10519,6 +10519,7 @@ static Bytes_5(void) {
 	create_word	(0X2E4A2);
 	set_name	(0X2E4A2,	"g_mapEditorFloorScrollIndex");
 	create_word	(0X2E4A6);
+	set_name	(0X2E4A6,	"g_currentMusicTrack");
 	create_word	(0X2E4A8);
 	create_word	(0X2E4AA);
 	create_word	(0X2E4AC);
@@ -10527,6 +10528,7 @@ static Bytes_5(void) {
 	set_cmt	(0X2E4B0,	"4 entries x 20 bytes. +0/+2, +4/+6: two (x,y) screen-position pairs (set once at init by sub_1251D). +8: a message/data value. +0xA: pointer to the effect-definition record (g_trapEffectDefs entry) for this slot. +0xC: pointer to the affected party-member record. +0x10/+0x12: extra position/amount fields, meaning varies by which ApplyMapTriggerEffect branch populated it.",	0);
 	set_name	(0X2E4B0,	"g_partyEffectIconSlots");
 	create_word	(0X2E500);
+	set_name	(0X2E500,	"g_lastEmsMappingArrayPtr");
 	create_word	(0X2E502);
 	set_name	(0X2E502,	"_emsPointer1?");
 	create_word	(0X2E504);
@@ -10602,6 +10604,7 @@ static Bytes_5(void) {
 	create_word	(0X2E774);
 	set_name	(0X2E774,	"g_mouseRightDownY");
 	create_word	(0X2E776);
+	set_name	(0X2E776,	"g_mouseCursorX");
 	create_word	(0X2E778);
 	set_name	(0X2E778,	"g_dragCursorMaxX");
 	create_word	(0X2E77A);
@@ -10628,6 +10631,7 @@ static Bytes_5(void) {
 	create_word	(0X31954);
 	set_name	(0X31954,	"g_mouseRightUpY");
 	create_word	(0X31956);
+	set_name	(0X31956,	"g_mouseCursorY");
 	create_word	(0X31958);
 	set_name	(0X31958,	"g_dragCursorMaxY");
 	create_word	(0X3195A);

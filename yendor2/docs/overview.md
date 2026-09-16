@@ -7006,6 +7006,31 @@ new data point that should feed into eventually nailing down what the
 5 role slots actually represent and how `word_32990` itself relates to
 them — left `word_32990` unrenamed pending that.
 
+### 2026-09-16 session update, continued: global variable renaming, round 7
+
+Four more globals, continuing the fresh-disassembly-tracing approach:
+- `word_2E776` → **`g_mouseCursorX`**, `word_31956` → **`g_mouseCursorY`**:
+  the mouse cursor sprite's current on-screen draw position (distinct
+  from round 6's click-event latches, which record where a button
+  transition happened rather than where the cursor currently is) —
+  written by the cursor-draw routines and read by
+  `RestoreCursorBackground` to erase the cursor from its previous
+  position.
+- `word_2E500` → **`g_lastEmsMappingArrayPtr`**: read directly from
+  `MapUnmapPages`, the central `int 67h` EMS page-mapping primitive —
+  caches its `bx` mapping-array-descriptor pointer and skips the
+  actual EMS call entirely on a repeat with the same pointer, a simple
+  call-memoization guard.
+- `word_2E4A6` → **`g_currentMusicTrack`**: the currently-playing/
+  forced track id, compared by `RefreshDungeonMapWindow` against two
+  region track ids to decide whether to stop music before a region
+  change — distinct from `g_forcedMusicTrack` (the override-vs-ambient
+  selector flag).
+
+Documented both new finds in file-formats.md under new "The EMS
+page-mapping call cache" and extended "Ambient music by map region"/
+"Mouse input" sections.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

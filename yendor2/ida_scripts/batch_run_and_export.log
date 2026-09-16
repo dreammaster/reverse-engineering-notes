@@ -173896,3 +173896,25 @@ total names seen: 1491, matched default pattern: 0
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor2\yendor2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rename_globals_round7.py']
+[*] reading rename_globals_round7.py
+[*] executing rename_globals_round7.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2e776  'word_2E776' -> 'g_mouseCursorX': ok
+0x31956  'word_31956' -> 'g_mouseCursorY': ok
+0x2e500  'word_2E500' -> 'g_lastEmsMappingArrayPtr': ok
+0x2e4a6  'word_2E4A6' -> 'g_currentMusicTrack': ok
+----- end target script output -----
+[*] finished executing rename_globals_round7.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106988
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
