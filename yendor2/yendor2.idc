@@ -2059,7 +2059,9 @@ static Bytes_0(void) {
 	set_cmt	(0X14B10,	"Fills the entire 320x200 video buffer (_videoBufferSeg) with the byte passed in AL (replicated to AH before the word-store loop). cx=0x7D00 = 32000 words = 64000 bytes = one full VGA Mode 13h-style frame.",	0);
 	create_insn	(0X14B10);
 	set_name	(0X14B10,	"FillVideoBuffer");
+	set_cmt	(0X14B24,	"Builds '<+0x13> <+0x20> <+0x2D>' (space-separated, trimmed) from an item catalog record loaded via LoadItemCatalogRecord -- the item-detail sibling of BuildMonsterDisplayName (same separator string at 0x7960). Called from BuildClueEntryText and ShowClueBookItemDetail. Per-field semantics not confirmed.",	0);
 	create_insn	(0X14B24);
+	set_name	(0X14B24,	"BuildItemDisplayName");
 	set_cmt	(0X14B85,	"Builds '<field1> <field2>' (space-separated) from two WORLD.DAT- sourced text buffers (0xAFDA, 0xAFE7) into 0xAFA8, returned in bx. Same WorldDat_setBlock5/FileEntry_Read(errorCode=9) pattern as LoadClueBookMonsterEntry (WORLD.DAT block 0x32, MONSTER STATISTICS). Called only from BuildClueEntryText and ShowClueBookMonsterDetail -- plausibly a monster name + type/category label; exact field semantics not independently confirmed.",	0);
 	create_insn	(0X14B85);
 	set_name	(0X14B85,	"BuildMonsterDisplayName");
@@ -3518,15 +3520,6 @@ static Bytes_0(void) {
 	set_cmt	(0X19B80,	"FormatAndDrawBCD4(si=4-byte packed-BCD value): formats it into a comma-grouped ASCII decimal string (leading zero suppressed unless dl forces it) and draws it via writeString. The BCD counterpart to FormatNumber.",	0);
 	create_insn	(0X19B80);
 	set_name	(0X19B80,	"FormatAndDrawBCD4");
-	create_insn	(x=0X19BAF);
-	op_hex		(x,	1);
-	create_insn	(0X19BE6);
-	create_insn	(0X19C2E);
-	create_insn	(0X19C51);
-	create_insn	(0X19C57);
-	set_cmt	(0X19C7B,	"Raw 4-byte packed-BCD subtraction: [si] -= [di], DAS-adjusted, least-significant byte first with borrow propagation.",	0);
-	create_insn	(0X19C7B);
-	set_name	(0X19C7B,	"SubBCD4");
 }
 
 //------------------------------------------------------------------------
@@ -3536,6 +3529,15 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X19BAF);
+	op_hex		(x,	1);
+	create_insn	(0X19BE6);
+	create_insn	(0X19C2E);
+	create_insn	(0X19C51);
+	create_insn	(0X19C57);
+	set_cmt	(0X19C7B,	"Raw 4-byte packed-BCD subtraction: [si] -= [di], DAS-adjusted, least-significant byte first with borrow propagation.",	0);
+	create_insn	(0X19C7B);
+	set_name	(0X19C7B,	"SubBCD4");
 	set_cmt	(0X19CA1,	"Multiplies a packed-BCD4 value at [si] by a 16-bit word (word_32940), digit-by-digit via repeated BCD addition (AddToBCDCounter/AddBCD4), writing the BCD4 product back to [si]. A MulBCD4-style sibling of ConvertWordToBCD4/CompareBCD4/AddBCD4/ SubBCD4. Called (twice each) from ComputeBarterPricingPreview.",	0);
 	create_insn	(0X19CA1);
 	set_name	(0X19CA1,	"MulBCD4ByWord");
@@ -5737,11 +5739,6 @@ static Bytes_1(void) {
 	set_cmt	(0X21CC2,	"Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.",	0);
 	create_insn	(0X21CC2);
 	set_name	(0X21CC2,	"PersistExploredCell");
-	set_cmt	(0X21CC6,	"this",	0);
-	set_cmt	(0X21CD4,	"this",	0);
-	set_cmt	(0X21D30,	"Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.",	0);
-	create_insn	(0X21D30);
-	set_name	(0X21D30,	"RevealCellsAroundPlayer");
 }
 
 //------------------------------------------------------------------------
@@ -5751,6 +5748,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X21CC6,	"this",	0);
+	set_cmt	(0X21CD4,	"this",	0);
+	set_cmt	(0X21D30,	"Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.",	0);
+	create_insn	(0X21D30);
+	set_name	(0X21D30,	"RevealCellsAroundPlayer");
 	create_insn	(0X21D51);
 	create_insn	(0X21D60);
 	create_insn	(0X21D6F);
@@ -8156,6 +8158,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29C90);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X29C95,	"x",	0);
 	set_cmt	(0X29C99,	"y",	0);
 	create_insn	(x=0X29C9F);
@@ -8187,15 +8198,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29CDF);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29CE2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29CE5);
@@ -11359,6 +11361,15 @@ static Bytes_3(void) {
 	set_name	(0X397E9,	"aItHasBeenOnlyA");
 	create_strlit	(0X3981B,	0X2F);
 	set_name	(0X3981B,	"aTrekThroughThe");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3984A,	0X31);
 	set_name	(0X3984A,	"aNowTakeYouToTh");
 	create_strlit	(0X3987B,	0X30);
@@ -11375,15 +11386,6 @@ static Bytes_3(void) {
 	set_name	(0X39939,	"aYourSleep");
 	create_strlit	(0X39945,	0X31);
 	set_name	(0X39945,	"aOnceEnchantedT");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39976,	0X1A);
 	set_name	(0X39976,	"aCreaturesFromT");
 	create_strlit	(0X39990,	0X2D);

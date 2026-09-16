@@ -3452,6 +3452,17 @@ EMS restore on its own dedicated page (`0x5616`), called only from
 
 442 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: BuildItemDisplayName
+
+Named `sub_14B24` -> `BuildItemDisplayName`: the item-detail sibling of
+`BuildMonsterDisplayName`, called from `BuildClueEntryText` and
+`ShowClueBookItemDetail`. Loads an item catalog record via
+`LoadItemCatalogRecord` and joins 3 of its text fields (`+0x13`,
+`+0x20`, `+0x2D`) with the same single-space separator
+`BuildMonsterDisplayName` uses. Per-field semantics not confirmed.
+
+443 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

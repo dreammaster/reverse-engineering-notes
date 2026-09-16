@@ -372,7 +372,12 @@ STATISTICS", per its own pre-existing comment) into a fresh buffer, and
 `WorldDat_setBlock5`/`FileEntry_Read(errorCode=9)` pattern to build a
 single space-joined display string from two `WORLD.DAT`-sourced text
 fields — plausibly a monster's name and its type/category label, though
-the exact field semantics aren't independently confirmed.
+the exact field semantics aren't independently confirmed. The item-detail
+sibling, `BuildItemDisplayName` (was `sub_14B24`, called from
+`BuildClueEntryText` and `ShowClueBookItemDetail`), does the same thing
+for items: `LoadItemCatalogRecord` then join 3 text fields (`+0x13`,
+`+0x20`, `+0x2D`) with the same single-space separator — per-field
+semantics (name/material/type?) likewise not confirmed.
 
 Some clue entries are **registration-locked**: `RunClueEntryMenu` shows
 `ShowClueBookRegistrationNag` ("REGISTER YOUR COPY OF THE CLUE BOOK

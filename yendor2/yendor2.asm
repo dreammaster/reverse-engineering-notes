@@ -4943,7 +4943,7 @@ loc_12FA0:                              ; CODE XREF: BuildClueEntryText+CA↑j
 loc_12FA2:                              ; CODE XREF: BuildClueEntryText+4B↑j
                                         ; BuildClueEntryText+55↑j ...
                 mov     ax, [si]
-                call    sub_14B24
+                call    BuildItemDisplayName
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
@@ -5663,7 +5663,7 @@ sub_13630       endp
 ShowClueBookItemDetail proc near        ; CODE XREF: RunClueBookItemCategory:loc_130AD↑p
                                         ; RunClueBookItemDetailWithAbilityInfo+E↑p ...
                 mov     ax, word_32974  ; Clue book 'F5 INVENTORY ITEMS' entry detail screen: message box + DrawClueBookNavBar, then the entry's icon (word_2E546) and two labeled fields, confirmed via message dump to be 'BASE VALUE:' and 'WEIGHT:'.
-                call    sub_14B24
+                call    BuildItemDisplayName
                 mov     ax, 0AFA8h
                 mov     word_2E3F8, ax
                 mov     word_2E3FE, 0Dh
@@ -7621,9 +7621,9 @@ FillVideoBuffer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B24       proc far                ; CODE XREF: BuildClueEntryText+D7↑P
+BuildItemDisplayName proc far           ; CODE XREF: BuildClueEntryText+D7↑P
                                         ; ShowClueBookItemDetail+3↑P
-                call    LoadItemCatalogRecord
+                call    LoadItemCatalogRecord ; Builds '<+0x13> <+0x20> <+0x2D>' (space-separated, trimmed) from an item catalog record loaded via LoadItemCatalogRecord -- the item-detail sibling of BuildMonsterDisplayName (same separator string at 0x7960). Called from BuildClueEntryText and ShowClueBookItemDetail. Per-field semantics not confirmed.
                 mov     ax, word_2E546
                 add     ax, 13h
                 mov     bx, 0AFA8h
@@ -7650,7 +7650,7 @@ sub_14B24       proc far                ; CODE XREF: BuildClueEntryText+D7↑P
                 call    TrimTrailingSpaces
                 mov     bx, 0AFA8h
                 retf
-sub_14B24       endp
+BuildItemDisplayName endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11589,8 +11589,8 @@ seg018          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-TrimTrailingSpaces proc far             ; CODE XREF: sub_14B24+16↑P
-                                        ; sub_14B24+37↑P ...
+TrimTrailingSpaces proc far             ; CODE XREF: BuildItemDisplayName+16↑P
+                                        ; BuildItemDisplayName+37↑P ...
                 push    di              ; rtrim(bx): finds the end via StrLen, then walks backward replacing trailing space (0x20) bytes with 0x00.
                 call    StrLen
                 add     ax, bx
@@ -34938,7 +34938,7 @@ seg074          segment byte public 'CODE' use16
 
 
 StpCpy          proc far                ; CODE XREF: findSavegame+6C↑P
-                                        ; sub_14B24+E↑P ...
+                                        ; BuildItemDisplayName+E↑P ...
                 push    es              ; stpcpy(dest=bx, src=ax): copies src including its null terminator into dest; returns bx = pointer to the copied terminator (ready for a further append).
                 push    si
                 push    di
