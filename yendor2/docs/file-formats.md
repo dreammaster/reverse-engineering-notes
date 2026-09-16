@@ -297,8 +297,21 @@ unnamed combat dispatcher `sub_2C0FE`) calls
 `ApplyTargetResistancesToAttack` to filter it by the target's
 resistances, then commits the surviving damage/status directly into
 the target's `[di+0xC]`/`[di+0x10]`/`[di+0x1C]`/`[di+0x1E]`/`[di+0x96]`
-fields. This is a solid, fully-traced combat sub-pipeline; only the
-identity of `di`'s record type and `sub_2C0FE` itself remain open.
+fields. This is a solid, fully-traced combat sub-pipeline; only
+`sub_2C0FE` itself remains untraced.
+
+**`di`'s record type is now confirmed**: `ApplyAttackAlongCorridorLine`
+(was `sub_2D470`, a sibling of `ApplyDamageAlongCorridorLine` driving
+this fuller pipeline) moves `GetMonsterAtViewportRow`'s result
+directly into `di` before calling `ApplyAttackToTarget(di)` — so `di`
+throughout this whole cluster is a **monster record**, not the party
+record. The `[di+0xC]`/`[di+0x96]`/`[di+0x98]`/`[di+0x1C]`/`[di+0x1E]`/
+`[di+0x4E]`/`[di+0x58]` etc. fields referenced by these functions are
+therefore a *separate, still-unlocated monster-record struct* that
+happens to share some numeric offsets with the party record — the
+caution notes above were warranted, and none of those field identities
+should be merged with the party-record documentation elsewhere in this
+file.
 
 **Skill values found**: `ShowCharacterSkills` clears a **16-word array
 at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before

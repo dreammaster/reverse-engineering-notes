@@ -4225,6 +4225,31 @@ unnamed.
 
 523 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyAttackAlongCorridorLine — resolves the `di` question
+
+Named `sub_2D470` -> `ApplyAttackAlongCorridorLine`, called 3 times in
+a row from unnamed `sub_2C0FE` (a sibling of the already-named
+`ApplyDamageAlongCorridorLine`, but driving the full resistance-aware
+pipeline). Loops 3 times over consecutive viewport rows starting at
+`word_3292C` (incrementing it each iteration), calls
+`GetMonsterAtViewportRow` to find a monster at each row, and — **this
+resolves the open question from the last two rounds** —
+`GetMonsterAtViewportRow`'s result (`si`) is moved directly into `di`
+before calling `ApplyAttackToTarget(di)`. So `di` throughout the whole
+`ApplyAttackToTarget`/`ApplyTargetResistancesToAttack`/
+`TryResolveAttackAgainstTarget` cluster **is a monster record**, not a
+party record — confirming the caution notes added for those three
+functions were warranted, and that `[di+0x96]`/`[di+0x98]`/`[di+0x1C]`
+etc. are monster-record fields distinct from the party record's
+same-numbered fields. If any damage/status was left pending after the
+attack, also calls a still-unnamed sibling, `sub_2D428` — a
+similar-shaped commit sequence (a proper bit-by-bit compounding
+resistance-halving loop, unlike `ApplyTargetResistancesToAttack`'s
+single first-match halving) whose exact relationship to
+`ApplyAttackToTarget`'s own commit isn't resolved, so left unnamed.
+
+524 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

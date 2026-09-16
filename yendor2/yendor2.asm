@@ -52246,11 +52246,11 @@ loc_2CC2E:                              ; CODE XREF: sub_2C0FE+B1D↑j
 loc_2CC3D:                              ; CODE XREF: sub_2C0FE+AFE↑j
                                         ; sub_2C0FE+B16↑j ...
                 pop     word_3292C
-                call    sub_2D470
+                call    ApplyAttackAlongCorridorLine
                 pop     word_3292C
-                call    sub_2D470
+                call    ApplyAttackAlongCorridorLine
                 pop     word_3292C
-                call    sub_2D470
+                call    ApplyAttackAlongCorridorLine
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     si, 0F26h
@@ -53025,7 +53025,7 @@ DrawAnimationFrameAndAdvance endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D428       proc near               ; CODE XREF: sub_2D470+1C↓p
+sub_2D428       proc near               ; CODE XREF: ApplyAttackAlongCorridorLine+1C↓p
                 mov     ax, [di+96h]
                 not     ax
                 and     ax, word_2E49A
@@ -53064,12 +53064,12 @@ sub_2D428       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D470       proc near               ; CODE XREF: sub_2C0FE+B43↑p
+ApplyAttackAlongCorridorLine proc near  ; CODE XREF: sub_2C0FE+B43↑p
                                         ; sub_2C0FE+B4A↑p ...
-                push    cx
+                push    cx              ; Sibling of ApplyDamageAlongCorridorLine using the full resistance-aware pipeline: for 3 consecutive viewport rows starting at word_3292C (incrementing it each iteration), finds a monster via GetMonsterAtViewportRow and calls ApplyAttackToTarget against it, then conditionally calls still-unnamed sub_2D428 if any damage/status is pending. Called 3x in a row from sub_2C0FE, once per starting row of a 3-row band.
                 mov     cx, 3
 
-loc_2D474:                              ; CODE XREF: sub_2D470+24↓j
+loc_2D474:                              ; CODE XREF: ApplyAttackAlongCorridorLine+24↓j
                 push    cx
                 call    GetMonsterAtViewportRow
                 jz      short loc_2D48F
@@ -53081,14 +53081,14 @@ loc_2D474:                              ; CODE XREF: sub_2D470+24↓j
                 jz      short loc_2D48F
                 call    sub_2D428
 
-loc_2D48F:                              ; CODE XREF: sub_2D470+A↑j
-                                        ; sub_2D470+1A↑j
+loc_2D48F:                              ; CODE XREF: ApplyAttackAlongCorridorLine+A↑j
+                                        ; ApplyAttackAlongCorridorLine+1A↑j
                 inc     word_3292C
                 pop     cx
                 loop    loc_2D474
                 pop     cx
                 retn
-sub_2D470       endp
+ApplyAttackAlongCorridorLine endp
 
 
 ; =============== S U B R O U T I N E =======================================

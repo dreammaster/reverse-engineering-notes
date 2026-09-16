@@ -9824,7 +9824,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D46B);
 	op_hex		(x,	1);
+	set_cmt	(0X2D470,	"Sibling of ApplyDamageAlongCorridorLine using the full resistance-aware pipeline: for 3 consecutive viewport rows starting at word_3292C (incrementing it each iteration), finds a monster via GetMonsterAtViewportRow and calls ApplyAttackToTarget against it, then conditionally calls still-unnamed sub_2D428 if any damage/status is pending. Called 3x in a row from sub_2C0FE, once per starting row of a 3-row band.",	0);
 	create_insn	(0X2D470);
+	set_name	(0X2D470,	"ApplyAttackAlongCorridorLine");
 	create_insn	(0X2D498);
 	set_cmt	(0X2D4A1,	"ticks",	0);
 	create_insn	(0X2D4AA);
@@ -10192,6 +10194,15 @@ static Bytes_3(void) {
 	create_word	(0X32946);
 	set_name	(0X32946,	"fe");
 	create_word	(0X32948);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X3294A);
 	set_name	(0X3294A,	"_textPos_x");
 	create_word	(0X3294C);
@@ -10236,15 +10247,6 @@ static Bytes_3(void) {
 	set_name	(0X32994,	"_val16");
 	create_word	(0X32996);
 	set_name	(0X32996,	"_val17");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32998);
 	set_name	(0X32998,	"_val18");
 	create_word	(0X3299A);
