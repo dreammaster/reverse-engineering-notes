@@ -5178,8 +5178,10 @@ static Bytes_2(void) {
 	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
 	create_insn	(0X1F1F4);
 	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
+	set_cmt	(0X1F217,	"One-time initial label draw for RunGameDialog's pause/system menu: draws each of SAVE/LOAD/NEW GAME/DOS/ANIMATION/RETURN, each skipped if its word_328C4 bit is set (0x80/0x40/0x20/0x10/0x8/0x4 respectively; ANIMATION calls sub_1F884 instead when its bit is set), then always draws MUSIC/SOUND FX labels gated on g_driverStateFlags bits 1/4, and two DrawCheckboxIndicator calls gated on g_driverStateFlags bits 8/2. Called once from RunGameDialog.",	0);
 	create_insn	(x=0X1F217);
 	op_hex		(x,	1);
+	set_name	(0X1F217,	"DrawGameDialogMenuLabels");
 	create_insn	(x=0X1F222);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F22D);
@@ -5475,7 +5477,9 @@ static Bytes_2(void) {
 	create_insn	(0X2044C);
 	set_name	(0X2044C,	"DrawMapEditorCoordinateReadout");
 	set_cmt	(0X20472,	"msg",	0);
+	set_cmt	(0X2047B,	"Draws word_2E386 (currently-selected map editor floor tile type) zero-padded at (0xA4,1) via FormatNumberZeroPadded + writeString. Sibling of DrawMapEditorCoordinateReadout. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X2047B);
+	set_name	(0X2047B,	"DrawMapEditorFloorTypeReadout");
 	set_cmt	(0X204A1,	"msg",	0);
 	set_cmt	(0X204AA,	"Draws a scrollable 17-icon horizontal strip from table 0xE175 (field +8), starting at index word_2E386, at y=0 x=0xB8+.",	0);
 	create_insn	(0X204AA);
@@ -6871,15 +6875,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25A63,	"- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",	0);
 	create_insn	(x=0X25A63);
 	op_hex		(x,	0);
-	set_cmt	(0X25A66,	"ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.",	0);
-	create_insn	(0X25A66);
-	set_name	(0X25A66,	"ScaleByPercentRounded");
-	set_cmt	(0X25A73,	"ResolveAttack(ax=target defense, bx=attacker accuracy, cx=weapon damage power): miss (word_2E49C=0) if cx==0, if bx<ax, or if RandomInRange(55) beats (bx-ax). Otherwise hit: word_2E49C = (cx*(bx-ax)+50)/100, minimum 1.",	0);
-	create_insn	(0X25A73);
-	set_name	(0X25A73,	"ResolveAttack");
-	set_cmt	(0X25AAC,	"If every one of the 4 party slots is either empty or has one of +0x1C bits 6/10/11/12 set (bits 10/11 = the confirmed TickStatusEffects/ApplyStatusEffect timed-ailment flags) -- i.e. no member is currently unafflicted -- shows ShowPartyWipeScreen, then RunGameDialog, then InitializeDungeonLevel (unless byte_2E400==0xFF). Reads as a 'whole party incapacitated' handler. Called from RunDungeonGameLoop and ApplyEffectAndDrawIconBar.",	0);
-	create_insn	(0X25AAC);
-	set_name	(0X25AAC,	"CheckPartyWipeAndReinitLevel");
 }
 
 //------------------------------------------------------------------------
@@ -6889,6 +6884,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X25A66,	"ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.",	0);
+	create_insn	(0X25A66);
+	set_name	(0X25A66,	"ScaleByPercentRounded");
+	set_cmt	(0X25A73,	"ResolveAttack(ax=target defense, bx=attacker accuracy, cx=weapon damage power): miss (word_2E49C=0) if cx==0, if bx<ax, or if RandomInRange(55) beats (bx-ax). Otherwise hit: word_2E49C = (cx*(bx-ax)+50)/100, minimum 1.",	0);
+	create_insn	(0X25A73);
+	set_name	(0X25A73,	"ResolveAttack");
+	set_cmt	(0X25AAC,	"If every one of the 4 party slots is either empty or has one of +0x1C bits 6/10/11/12 set (bits 10/11 = the confirmed TickStatusEffects/ApplyStatusEffect timed-ailment flags) -- i.e. no member is currently unafflicted -- shows ShowPartyWipeScreen, then RunGameDialog, then InitializeDungeonLevel (unless byte_2E400==0xFF). Reads as a 'whole party incapacitated' handler. Called from RunDungeonGameLoop and ApplyEffectAndDrawIconBar.",	0);
+	create_insn	(0X25AAC);
+	set_name	(0X25AAC,	"CheckPartyWipeAndReinitLevel");
 	create_insn	(x=0X25ACF);
 	op_hex		(x,	1);
 	create_insn	(x=0X25AE6);
@@ -9257,6 +9261,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
 	create_insn	(0X2AE3C);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
 	create_insn	(0X2AE60);
@@ -9267,15 +9280,6 @@ static Bytes_3(void) {
 	create_insn	(0X2AEC7);
 	create_insn	(0X2AED3);
 	create_insn	(0X2AEDF);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2AEE7);
 	op_hex		(x,	1);
 	create_insn	(0X2AEF3);
@@ -11994,6 +11998,15 @@ static Bytes_4(void) {
 	set_name	(0X3CC78,	"g_soundDriverFarPtr");
 	set_cmt	(0X3CC7A,	"Segment half of the far pointer g_soundDriverFarPtr (0x3CC78); reused directly as the ES segment to free when shutting the driver down.",	0);
 	create_word	(0X3CC7A);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	make_array	(0X3CC7C,	0X4);
 	create_byte	(0X3CC80);
 	make_array	(0X3CC80,	0X200);
@@ -15458,6 +15471,7 @@ static Bytes(void) {
 	Bytes_2();
 	Bytes_3();
 	Bytes_4();
+	Bytes_5();
         end_type_updating(UTP_STRUCT);
 }
 

@@ -26100,7 +26100,7 @@ loc_1EAD0:                              ; CODE XREF: RunGameDialog:loc_1EC0B↓j
                 mov     word_2E532, 10h
                 mov     word_2E530, 0
                 call    DrawPicture
-                call    sub_1F217
+                call    DrawGameDialogMenuLabels
                 call    ClearMessageBoxArea
                 test    word_328C4, 1
                 jz      short loc_1EB27
@@ -26775,52 +26775,52 @@ DrawCheckboxIndicator endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F217       proc near               ; CODE XREF: RunGameDialog+8B↑p
-                test    word_328C4, 80h
+DrawGameDialogMenuLabels proc near      ; CODE XREF: RunGameDialog+8B↑p
+                test    word_328C4, 80h ; One-time initial label draw for RunGameDialog's pause/system menu: draws each of SAVE/LOAD/NEW GAME/DOS/ANIMATION/RETURN, each skipped if its word_328C4 bit is set (0x80/0x40/0x20/0x10/0x8/0x4 respectively; ANIMATION calls sub_1F884 instead when its bit is set), then always draws MUSIC/SOUND FX labels gated on g_driverStateFlags bits 1/4, and two DrawCheckboxIndicator calls gated on g_driverStateFlags bits 8/2. Called once from RunGameDialog.
                 jnz     short loc_1F222
                 call    GameDialog_drawSave
 
-loc_1F222:                              ; CODE XREF: sub_1F217+6↑j
+loc_1F222:                              ; CODE XREF: DrawGameDialogMenuLabels+6↑j
                 test    word_328C4, 40h
                 jnz     short loc_1F22D
                 call    GameDialog_drawLoad
 
-loc_1F22D:                              ; CODE XREF: sub_1F217+11↑j
+loc_1F22D:                              ; CODE XREF: DrawGameDialogMenuLabels+11↑j
                 test    word_328C4, 20h
                 jnz     short loc_1F238
                 call    GameDialog_drawNewGame
 
-loc_1F238:                              ; CODE XREF: sub_1F217+1C↑j
+loc_1F238:                              ; CODE XREF: DrawGameDialogMenuLabels+1C↑j
                 test    word_328C4, 10h
                 jnz     short loc_1F243
                 call    GameDialog_drawDos
 
-loc_1F243:                              ; CODE XREF: sub_1F217+27↑j
+loc_1F243:                              ; CODE XREF: DrawGameDialogMenuLabels+27↑j
                 test    word_328C4, 8
                 jnz     short loc_1F250
                 call    GameDialog_drawAnimation
                 jmp     short loc_1F253
 ; ---------------------------------------------------------------------------
 
-loc_1F250:                              ; CODE XREF: sub_1F217+32↑j
+loc_1F250:                              ; CODE XREF: DrawGameDialogMenuLabels+32↑j
                 call    sub_1F884
 
-loc_1F253:                              ; CODE XREF: sub_1F217+37↑j
+loc_1F253:                              ; CODE XREF: DrawGameDialogMenuLabels+37↑j
                 test    word_328C4, 4
                 jnz     short loc_1F25E
                 call    GameDialog_drawReturn
 
-loc_1F25E:                              ; CODE XREF: sub_1F217+42↑j
+loc_1F25E:                              ; CODE XREF: DrawGameDialogMenuLabels+42↑j
                 test    g_driverStateFlags, 1
                 jnz     short loc_1F269
                 call    GameDialog_drawMusic
 
-loc_1F269:                              ; CODE XREF: sub_1F217+4D↑j
+loc_1F269:                              ; CODE XREF: DrawGameDialogMenuLabels+4D↑j
                 test    g_driverStateFlags, 4
                 jnz     short loc_1F274
                 call    GameDialog_drawSoundFx
 
-loc_1F274:                              ; CODE XREF: sub_1F217+58↑j
+loc_1F274:                              ; CODE XREF: DrawGameDialogMenuLabels+58↑j
                 test    g_driverStateFlags, 8
                 jz      short loc_1F288
                 mov     ax, 0AAh
@@ -26828,7 +26828,7 @@ loc_1F274:                              ; CODE XREF: sub_1F217+58↑j
                 mov     cx, 12h
                 call    DrawCheckboxIndicator
 
-loc_1F288:                              ; CODE XREF: sub_1F217+63↑j
+loc_1F288:                              ; CODE XREF: DrawGameDialogMenuLabels+63↑j
                 test    g_driverStateFlags, 2
                 jz      short locret_1F29C
                 mov     ax, 61h ; 'a'
@@ -26836,9 +26836,9 @@ loc_1F288:                              ; CODE XREF: sub_1F217+63↑j
                 mov     cx, 12h
                 call    DrawCheckboxIndicator
 
-locret_1F29C:                           ; CODE XREF: sub_1F217+77↑j
+locret_1F29C:                           ; CODE XREF: DrawGameDialogMenuLabels+77↑j
                 retn
-sub_1F217       endp
+DrawGameDialogMenuLabels endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27019,7 +27019,7 @@ GameDialog_drawButtons endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GameDialog_drawAnimation proc near      ; CODE XREF: sub_1F217+34↑p
+GameDialog_drawAnimation proc near      ; CODE XREF: DrawGameDialogMenuLabels+34↑p
                                         ; GameDialog_drawButtons+AA↑p
                 mov     _font_fgColor, 6
                 mov     _textPos_x, 26h ; '&'
@@ -27042,7 +27042,7 @@ GameDialog_drawAnimation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GameDialog_drawDos proc near            ; CODE XREF: sub_1F217+29↑p
+GameDialog_drawDos proc near            ; CODE XREF: DrawGameDialogMenuLabels+29↑p
                                         ; GameDialog_drawButtons+2F↑p ...
                 mov     _font_fgColor, 6
                 mov     _textPos_x, 0B3h
@@ -27056,7 +27056,7 @@ GameDialog_drawDos endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GameDialog_drawReturn proc near         ; CODE XREF: sub_1F217+44↑p
+GameDialog_drawReturn proc near         ; CODE XREF: DrawGameDialogMenuLabels+44↑p
                                         ; GameDialog_drawButtons+A7↑p
                 mov     _font_fgColor, 6
                 mov     _textPos_x, 0A6h
@@ -27070,7 +27070,7 @@ GameDialog_drawReturn endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GameDialog_drawLoad proc near           ; CODE XREF: sub_1F217+13↑p
+GameDialog_drawLoad proc near           ; CODE XREF: DrawGameDialogMenuLabels+13↑p
                                         ; GameDialog_drawButtons+2C↑p ...
                 mov     _font_fgColor, 6
                 mov     _textPos_x, 51h ; 'Q'
@@ -27084,7 +27084,7 @@ GameDialog_drawLoad endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GameDialog_drawMusic proc near          ; CODE XREF: sub_1F217+4F↑p
+GameDialog_drawMusic proc near          ; CODE XREF: DrawGameDialogMenuLabels+4F↑p
                                         ; GameDialog_drawButtons:loc_1F42B↑p
                 mov     _font_fgColor, 6
                 mov     _textPos_x, 40h ; '@'
@@ -27098,7 +27098,7 @@ GameDialog_drawMusic endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GameDialog_drawNewGame proc near        ; CODE XREF: sub_1F217+1E↑p
+GameDialog_drawNewGame proc near        ; CODE XREF: DrawGameDialogMenuLabels+1E↑p
                                         ; GameDialog_drawButtons+32↑p ...
                 mov     _font_fgColor, 6
                 mov     _textPos_x, 76h ; 'v'
@@ -27112,7 +27112,7 @@ GameDialog_drawNewGame endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GameDialog_drawSave proc near           ; CODE XREF: sub_1F217+8↑p
+GameDialog_drawSave proc near           ; CODE XREF: DrawGameDialogMenuLabels+8↑p
                                         ; GameDialog_drawButtons+50↑p ...
                 mov     _font_fgColor, 6
                 mov     _textPos_x, 2Ch ; ','
@@ -27126,7 +27126,7 @@ GameDialog_drawSave endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GameDialog_drawSoundFx proc near        ; CODE XREF: sub_1F217+5A↑p
+GameDialog_drawSoundFx proc near        ; CODE XREF: DrawGameDialogMenuLabels+5A↑p
                                         ; GameDialog_drawButtons+A4↑p
                 mov     _font_fgColor, 6
                 mov     _textPos_x, 77h ; 'w'
@@ -27401,7 +27401,7 @@ sub_1F5FF       endp
 
 
 sub_1F884       proc near               ; CODE XREF: CycleAnimationSetting+2B↑p
-                                        ; sub_1F217:loc_1F250↑p
+                                        ; DrawGameDialogMenuLabels:loc_1F250↑p
                 mov     bx, 8402h
                 cmp     word_36CE7, 1
                 jz      short loc_1F89B
@@ -28238,7 +28238,7 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
-                call    sub_2047B
+                call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
                 xor     dx, dx
                 mov     bx, 28h ; '('
@@ -28354,7 +28354,7 @@ loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
                 call    ClearVideoMemoryRegion
                 call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
-                call    sub_2047B
+                call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 jmp     loc_20126
@@ -28387,7 +28387,7 @@ loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
                 call    ClearVideoMemoryRegion
                 call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
-                call    sub_2047B
+                call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 jmp     loc_20126
@@ -28651,9 +28651,9 @@ DrawMapEditorCoordinateReadout endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2047B       proc near               ; CODE XREF: RunMapEditorScreen+77↑p
+DrawMapEditorFloorTypeReadout proc near ; CODE XREF: RunMapEditorScreen+77↑p
                                         ; RunMapEditorScreen+1B0↑p ...
-                mov     _textPos_x, 0A4h
+                mov     _textPos_x, 0A4h ; Draws word_2E386 (currently-selected map editor floor tile type) zero-padded at (0xA4,1) via FormatNumberZeroPadded + writeString. Sibling of DrawMapEditorCoordinateReadout. Called from RunMapEditorScreen.
                 mov     _textPos_y, 1
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgColor, 0
@@ -28663,7 +28663,7 @@ sub_2047B       proc near               ; CODE XREF: RunMapEditorScreen+77↑p
                 add     bx, 2           ; msg
                 call    writeString
                 retn
-sub_2047B       endp
+DrawMapEditorFloorTypeReadout endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28784,7 +28784,7 @@ loc_205AE:                              ; CODE XREF: EditFloorLegendTypeNumber+3
                 mov     word_2E386, ax
 
 loc_205B4:                              ; CODE XREF: EditFloorLegendTypeNumber+32↑j
-                call    sub_2047B
+                call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 retn
@@ -28853,7 +28853,7 @@ BrowseFloorTilePalette proc near        ; CODE XREF: RunMapEditorScreen+151↑p
                 mov     ax, [si+2]
                 mov     word_2E386, ax
                 mov     word_2E4A2, ax
-                call    sub_2047B
+                call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 retn
@@ -29079,7 +29079,7 @@ sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
                 call    WaitForKeypressTickingMusic
                 call    ClearVideoMemoryRegion
                 call    DrawMapEditorCoordinateReadout
-                call    sub_2047B
+                call    DrawMapEditorFloorTypeReadout
                 call    DrawWallTypeLegendRow
                 call    DrawFloorTypeLegendRow
                 call    sub_238CD
@@ -37915,7 +37915,7 @@ seg081          segment byte public 'CODE' use16
 
 
 FormatNumberZeroPadded proc far         ; CODE XREF: DrawMapEditorCoordinateReadout+21↑P
-                                        ; sub_2047B+21↑P ...
+                                        ; DrawMapEditorFloorTypeReadout+21↑P ...
                 mov     bx, 0AFA8h      ; FormatNumber then StripCommasZeroPadSpaces on the shared 0xAFA8 buffer -- zero-padded sibling of FormatNumberCompact. Called from sub_2044C, sub_2047B, and others.
                 call    FormatNumber
                 mov     bx, 0AFA8h

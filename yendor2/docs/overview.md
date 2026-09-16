@@ -5348,6 +5348,32 @@ independently confirmed.
 
 618 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawGameDialogMenuLabels, DrawMapEditorFloorTypeReadout
+
+Named `sub_1F217` -> `DrawGameDialogMenuLabels`, called once from
+`RunGameDialog` (the in-game pause/system menu handler) right after
+dialog setup: draws each of the SAVE/LOAD/NEW GAME/DOS/ANIMATION/
+RETURN menu labels, each one skipped if its own `word_328C4` bit is
+already set (`0x80`/`0x40`/`0x20`/`0x10`/`0x8`/`0x4` respectively —
+the ANIMATION case calls `sub_1F884` instead of
+`GameDialog_drawAnimation` when its bit is set), then always draws
+MUSIC/SOUND FX labels gated on `g_driverStateFlags` bits 1/4, and two
+`DrawCheckboxIndicator` calls gated on `g_driverStateFlags` bits 8/2.
+Reads as the dialog's one-time initial label draw, where each
+`word_328C4` bit suppresses a label that isn't applicable in the
+current context; the exact per-bit "why unavailable" reason is not
+confirmed.
+
+Named `sub_2047B` -> `DrawMapEditorFloorTypeReadout`, called from
+`RunMapEditorScreen`: draws `word_2E386` (the map editor's
+currently-selected floor tile type — confirmed by existing comments
+as set by the 'F' picker handler and consumed by
+`DrawFloorTypeLegendRow`) zero-padded at a fixed top-of-screen
+position, the floor-type sibling of the already-named
+`DrawMapEditorCoordinateReadout`.
+
+620 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
