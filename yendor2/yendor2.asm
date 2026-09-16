@@ -32862,7 +32862,7 @@ sub_2281F       endp
 
 sub_22989       proc near               ; CODE XREF: sub_2278C+51↑p
                 push    cx
-                call    sub_22A35
+                call    PickRandomActivePartyMember
                 mov     bx, word_328D4
                 mov     [di+6], bx
                 mov     ax, [bx+50h]
@@ -32936,11 +32936,11 @@ sub_22989       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22A35       proc near               ; CODE XREF: sub_22989+1↑p
-                push    si
+PickRandomActivePartyMember proc near   ; CODE XREF: sub_22989+1↑p
+                push    si              ; Retries RandomInRange(3) until it lands on an occupied, non-incapacitated (+0x1C bits 0x1C40) party slot, leaving it selected via SelectPartyRecordById. Also computes di=0xBC28+slot*0x18 (a smaller per-slot table, not confirmed) for the caller. Called from sub_22989.
 
-loc_22A36:                              ; CODE XREF: sub_22A35+20↓j
-                                        ; sub_22A35+2E↓j
+loc_22A36:                              ; CODE XREF: PickRandomActivePartyMember+20↓j
+                                        ; PickRandomActivePartyMember+2E↓j
                 mov     ax, 3
                 call    RandomInRange
                 push    ax
@@ -32961,7 +32961,7 @@ loc_22A36:                              ; CODE XREF: sub_22A35+20↓j
                 jnz     short loc_22A36
                 pop     si
                 retn
-sub_22A35       endp
+PickRandomActivePartyMember endp
 
 seg071          ends
 

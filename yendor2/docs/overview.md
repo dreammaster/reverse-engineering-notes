@@ -3961,6 +3961,15 @@ rather than guessed further.
 
 503 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PickRandomActivePartyMember
+
+Named `sub_22A35` -> `PickRandomActivePartyMember`, called from
+`sub_22989`: retry-picks a random party slot until it lands on one
+that's occupied and not incapacitated (the confirmed `0x1C40` mask) —
+a classic "pick a valid random target" utility.
+
+504 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

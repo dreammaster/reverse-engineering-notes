@@ -153,7 +153,11 @@ DISEASED/POISONED/SICK (the *dispellable-only* group);
 DEAD+STONED+FROZEN+PARALYZED — literally "can't act"; and
 `TickPartyAilmentIconBar`'s two effect-id groups are DISEASED/
 POISONED/SICK (id `2`, all characters) vs. CURSED/HEXED/JINXED (id
-`0xE`, MP-gated characters only).
+`0xE`, MP-gated characters only); and `PickRandomActivePartyMember`
+(was `sub_22A35`, called from `sub_22989`) uses the same `0x1C40` mask
+to retry-pick a random party slot until it lands on one that's
+occupied and not incapacitated — a classic "pick a valid random
+target" utility.
 
 **`+0x20`–`+0x30`: 9 contiguous 2-byte protection/resistance values**
 (`+0x20`, `+0x22`, `+0x24`, `+0x26`, `+0x28`, `+0x2A`, `+0x2C`, `+0x2E`,

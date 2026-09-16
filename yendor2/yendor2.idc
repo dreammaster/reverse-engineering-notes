@@ -5990,7 +5990,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X22A2E);
 	op_hex		(x,	1);
+	set_cmt	(0X22A35,	"Retries RandomInRange(3) until it lands on an occupied, non-incapacitated (+0x1C bits 0x1C40) party slot, leaving it selected via SelectPartyRecordById. Also computes di=0xBC28+slot*0x18 (a smaller per-slot table, not confirmed) for the caller. Called from sub_22989.",	0);
 	create_insn	(0X22A35);
+	set_name	(0X22A35,	"PickRandomActivePartyMember");
 	create_insn	(x=0X22A4A);
 	op_hex		(x,	1);
 	create_insn	(x=0X22A5E);
@@ -7535,6 +7537,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X2849C);
 	op_hex		(x,	1);
 	set_name	(0X2849C,	"StopMusicAndResetTimer");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X284A5);
 	create_insn	(x=0X284B1);
 	op_hex		(x,	1);
@@ -7545,15 +7556,6 @@ static Bytes_2(void) {
 	set_cmt	(0X284CB,	"Scans DOS interrupt vectors (0x80-0xBE) for an installed sound/music driver's 5-byte signature; on a match, allocates its buffer and sets g_driverStateFlags bits 0/1 (detected/active), else sets bit 0x40 (not found). Called from sub_283EA.",	0);
 	create_insn	(0X284CB);
 	set_name	(0X284CB,	"DetectSoundDriver");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X284D7);
 	op_hex		(x,	1);
 	set_cmt	(0X284D9,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
@@ -10545,6 +10547,15 @@ static Bytes_3(void) {
 	set_name	(0X35391,	"aDisease");
 	create_strlit	(0X35399,	0X7);
 	set_name	(0X35399,	"aPoison");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X353A0,	0X9);
 	set_name	(0X353A0,	"aSickness");
 	create_strlit	(0X353A9,	0X8);
@@ -10563,15 +10574,6 @@ static Bytes_3(void) {
 	set_name	(0X353D8,	"aTraining");
 	create_strlit	(0X353E2,	0XA);
 	set_name	(0X353E2,	"aReadyFor");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X353EC,	0X6);
 	set_name	(0X353EC,	"aLevel");
 	create_strlit	(0X353F2,	0XC);
