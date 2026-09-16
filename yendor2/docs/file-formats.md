@@ -157,7 +157,11 @@ POISONED/SICK (id `2`, all characters) vs. CURSED/HEXED/JINXED (id
 (was `sub_22A35`, called from `sub_22989`) uses the same `0x1C40` mask
 to retry-pick a random party slot until it lands on one that's
 occupied and not incapacitated — a classic "pick a valid random
-target" utility.
+target" utility. `TickStatusEffects` itself has two call sites: directly
+from `HandleGameCommand`, and via `CheckAndTickAvailableAilment` (was
+`sub_1A5A6`, called 3 times from `sub_1A582`) — a loop that calls
+`IsItemRangeAvailable` and ticks the status effect whenever an item
+turns up in range.
 
 **`+0x20`–`+0x30`: 9 contiguous 2-byte protection/resistance values**
 (`+0x20`, `+0x22`, `+0x24`, `+0x26`, `+0x28`, `+0x2A`, `+0x2C`, `+0x2E`,

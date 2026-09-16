@@ -3735,7 +3735,9 @@ static Bytes_1(void) {
 	create_insn	(0X1A574);
 	create_insn	(x=0X1A582);
 	op_hex		(x,	1);
+	set_cmt	(0X1A5A6,	"Loops cx times calling IsItemRangeAvailable(ax); calls TickStatusEffects whenever it sets word_32974 nonzero. Called 3 times from sub_1A582.",	0);
 	create_insn	(0X1A5A6);
+	set_name	(0X1A5A6,	"CheckAndTickAvailableAilment");
 	create_insn	(0X1A5AC);
 	create_insn	(x=0X1A5C8);
 	op_hex		(x,	1);
@@ -5500,12 +5502,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20C7C,	"Fuzzy/paired equality: returns ax==bx, or (ax's even/odd pair partner)==bx -- i.e. ax+1==bx if ax is even, ax-1==bx if ax is odd. Lets a caller treat two adjacent table indices as a match.",	0);
 	create_insn	(0X20C7C);
 	set_name	(0X20C7C,	"IsPairedValueMatch");
-	create_insn	(x=0X20C81);
-	op_hex		(x,	1);
-	create_insn	(0X20C8A);
-	set_cmt	(0X20C8E,	"Ceiling-extension driver: same 7-call row pattern as RenderDungeonViewport, calling ExtendDungeonCeilingTexture. Called from RedrawDungeonScreen/RefreshDungeonScreen between DrawDungeonFloorAndCeiling and RenderDungeonViewport.",	0);
-	create_insn	(0X20C8E);
-	set_name	(0X20C8E,	"ExtendDungeonCeilingPass");
 }
 
 //------------------------------------------------------------------------
@@ -5515,6 +5511,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X20C81);
+	op_hex		(x,	1);
+	create_insn	(0X20C8A);
+	set_cmt	(0X20C8E,	"Ceiling-extension driver: same 7-call row pattern as RenderDungeonViewport, calling ExtendDungeonCeilingTexture. Called from RedrawDungeonScreen/RefreshDungeonScreen between DrawDungeonFloorAndCeiling and RenderDungeonViewport.",	0);
+	create_insn	(0X20C8E);
+	set_name	(0X20C8E,	"ExtendDungeonCeilingPass");
 	set_cmt	(0X20CEC,	"Ceiling counterpart to ExtendDungeonFloorTexture: draws the current ceiling picture (word_2E498) at z-layer 2 for cells whose [+2] ceiling field matches (IsPairedValueMatch). Called 6x by ExtendDungeonCeilingPass.",	0);
 	create_insn	(0X20CEC);
 	set_name	(0X20CEC,	"ExtendDungeonCeilingTexture");
@@ -7482,11 +7484,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
 	create_insn	(0X2814C);
 	set_name	(0X2814C,	"ComputeGameClockTime");
-	create_insn	(0X28172);
-	create_insn	(0X2818B);
-	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
-	create_insn	(0X2819F);
-	set_name	(0X2819F,	"ShowGameClockCommand");
 }
 
 //------------------------------------------------------------------------
@@ -7496,6 +7493,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X28172);
+	create_insn	(0X2818B);
+	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
+	create_insn	(0X2819F);
+	set_name	(0X2819F,	"ShowGameClockCommand");
 	create_insn	(x=0X281A4);
 	op_hex		(x,	1);
 	set_cmt	(0X2821E,	"msg",	0);
@@ -10426,6 +10428,15 @@ static Bytes_3(void) {
 	create_strlit	(0X345A7,	0X19);
 	set_name	(0X345A7,	"aEmpty_0");
 	create_word	(0X34748);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35026,	0XD);
 	set_name	(0X35026,	"aPegasus");
 	create_strlit	(0X35040,	0XD);
@@ -10436,15 +10447,6 @@ static Bytes_3(void) {
 	set_name	(0X35074,	"aMagicDragon");
 	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:\n  0: 318x198 @ 0x0        -- \"SmithWare\" splash-screen logo\n  1: 210x105 @ 0xE694C    -- GameDialog button panel background\n  2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene\n  3: 190x110 @ 0x779552   -- wolf/monster silhouette\n  4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)\n  5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient\n  6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)\n  7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)\n  8: 16x16   @ 0xBCF3DA   -- mouse cursor\n  9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon\nIndexed as g_pictureDir + word_2E532 (p" "i",	0);
 	set_name	(0X3508E,	"g_pictureDir");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3512E,	0X9);
 	set_name	(0X3512E,	"aNorth");
 	create_strlit	(0X35137,	0X9);

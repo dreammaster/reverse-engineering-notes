@@ -4081,6 +4081,16 @@ effect with a different item's, per category.
 
 515 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CheckAndTickAvailableAilment
+
+Named `sub_1A5A6` -> `CheckAndTickAvailableAilment`, called 3 times
+from `sub_1A582`: matches `TickStatusEffects`' own pre-existing comment
+noting this as one of its two call sites (the other being
+`HandleGameCommand` directly) — loops calling `IsItemRangeAvailable`
+and ticks the status effect whenever an item turns up in range.
+
+516 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

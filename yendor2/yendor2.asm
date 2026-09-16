@@ -18336,13 +18336,13 @@ sub_1A582       proc near               ; CODE XREF: TravelToDestination+45↑p
                 and     word_328C4, 0FFBFh
                 mov     cx, word_36C85
                 mov     ax, 9
-                call    sub_1A5A6
+                call    CheckAndTickAvailableAilment
                 mov     cx, word_36C89
                 mov     ax, 0Fh
-                call    sub_1A5A6
+                call    CheckAndTickAvailableAilment
                 mov     cx, word_36C8B
                 mov     ax, 0Ch
-                call    sub_1A5A6
+                call    CheckAndTickAvailableAilment
                 retn
 sub_1A582       endp
 
@@ -18350,15 +18350,15 @@ sub_1A582       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A5A6       proc near               ; CODE XREF: sub_1A582+C↑p
+CheckAndTickAvailableAilment proc near  ; CODE XREF: sub_1A582+C↑p
                                         ; sub_1A582+16↑p ...
-                cmp     cx, 0
+                cmp     cx, 0           ; Loops cx times calling IsItemRangeAvailable(ax); calls TickStatusEffects whenever it sets word_32974 nonzero. Called 3 times from sub_1A582.
                 jnz     short loc_1A5AC
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A5AC:                              ; CODE XREF: sub_1A5A6+3↑j
-                                        ; sub_1A5A6+1F↓j
+loc_1A5AC:                              ; CODE XREF: CheckAndTickAvailableAilment+3↑j
+                                        ; CheckAndTickAvailableAilment+1F↓j
                 push    ax
                 mov     word_3293E, ax
                 mov     word_32940, ax
@@ -18371,10 +18371,10 @@ loc_1A5AC:                              ; CODE XREF: sub_1A5A6+3↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A5C8:                              ; CODE XREF: sub_1A5A6+17↑j
+loc_1A5C8:                              ; CODE XREF: CheckAndTickAvailableAilment+17↑j
                 add     sp, 2
                 retn
-sub_1A5A6       endp
+CheckAndTickAvailableAilment endp
 
 seg035          ends
 
@@ -29124,7 +29124,7 @@ seg061          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-TickStatusEffects proc far              ; CODE XREF: sub_1A5A6+19↑P
+TickStatusEffects proc far              ; CODE XREF: CheckAndTickAvailableAilment+19↑P
                                         ; HandleGameCommand+87↓P
                 push    si              ; Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.
                 call    sub_238CD
