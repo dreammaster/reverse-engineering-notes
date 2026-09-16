@@ -4570,7 +4570,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X1EA18);
 	op_hex		(x,	1);
 	create_insn	(0X1EA27);
+	set_cmt	(0X1EA6E,	"In-game options dialog: draws the panel background (DrawPicture id 1) + mouse cursor (id 8) + GameDialog_drawButtons, then loops on PollKeyboardInput dispatching each of the panel's 8 hotkeys: A=Animation(sub_1F163) D=Dos(sub_1F8C7) F=SoundFx(sub_1F93D) L=Load M=Music(sub_1F8F5) N=NewGame(sub_1F5A5) R/ESC=Return S=Save. Called directly from `start` and InitGame.",	0);
 	create_insn	(0X1EA6E);
+	set_name	(0X1EA6E,	"RunGameDialog");
 	create_insn	(0X1EA83);
 	create_insn	(x=0X1EA92);
 	op_hex		(x,	1);
@@ -6318,6 +6320,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X26735);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2673D);
 	op_hex		(x,	1);
 	create_insn	(x=0X26745);
@@ -6361,15 +6372,6 @@ static Bytes_0(void) {
 	create_insn	(0X269BF);
 	create_insn	(0X269C8);
 	create_insn	(0X269D1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X269DA);
 	create_insn	(0X269E3);
 	create_insn	(0X269EC);
@@ -10834,6 +10836,15 @@ static Bytes_1(void) {
 	set_name	(0X3A305,	"aCyril");
 	create_strlit	(0X3A318,	0X14);
 	set_name	(0X3A318,	"aIrudon");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A32C,	0X20);
 	set_name	(0X3A32C,	"aSomethingStran");
 	create_strlit	(0X3A34C,	0X1D);
@@ -10852,15 +10863,6 @@ static Bytes_1(void) {
 	set_name	(0X3A402,	"aOutsideOfTheAt");
 	create_strlit	(0X3A423,	0X22);
 	set_name	(0X3A423,	"aYouGatherYourW");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A445,	0X1F);
 	set_name	(0X3A445,	"aQuicklyHeadIns");
 	create_strlit	(0X3A464,	0X1B);

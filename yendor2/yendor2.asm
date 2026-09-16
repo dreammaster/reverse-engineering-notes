@@ -907,7 +907,7 @@ loc_107CE:                              ; CODE XREF: start+4AC↑j
                 and     word_328C4, 0FF00h
                 or      word_328C4, 0FEh
                 and     word_3295A, 9FFFh
-                call    sub_1EA6E
+                call    RunGameDialog
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_107EF
                 jmp     loc_10286
@@ -3374,7 +3374,7 @@ loc_12046:                              ; CODE XREF: InitGame+161↑j
 loc_1204C:                              ; CODE XREF: InitGame+168↑j
                 and     word_3295A, 1FFFh
                 call    Fade?
-                call    sub_1EA6E
+                call    RunGameDialog
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_12064
                 retf
@@ -10699,7 +10699,7 @@ loc_167F9:                              ; CODE XREF: sub_16407+DA↑j
                 and     word_328C4, 0FF00h
                 or      word_328C4, 5Eh
                 and     word_3295A, 9FFFh
-                call    sub_1EA6E
+                call    RunGameDialog
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_16817
                 retn
@@ -26052,16 +26052,16 @@ seg058          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1EA6E       proc far                ; CODE XREF: start+7E0↑P
+RunGameDialog   proc far                ; CODE XREF: start+7E0↑P
                                         ; InitGame+17B↑P ...
-                mov     byte_2E400, 0
+                mov     byte_2E400, 0   ; In-game options dialog: draws the panel background (DrawPicture id 1) + mouse cursor (id 8) + GameDialog_drawButtons, then loops on PollKeyboardInput dispatching each of the panel's 8 hotkeys: A=Animation(sub_1F163) D=Dos(sub_1F8C7) F=SoundFx(sub_1F93D) L=Load M=Music(sub_1F8F5) N=NewGame(sub_1F5A5) R/ESC=Return S=Save. Called directly from `start` and InitGame.
                 mov     word_3291E, 0
                 cmp     word_31946, 0
                 jz      short loc_1EA83
                 jmp     loc_1EC69
 ; ---------------------------------------------------------------------------
 
-loc_1EA83:                              ; CODE XREF: sub_1EA6E+10↑j
+loc_1EA83:                              ; CODE XREF: RunGameDialog+10↑j
                 call    sub_16E18
                 call    sub_28246
                 call    sub_16EFA
@@ -26070,7 +26070,7 @@ loc_1EA83:                              ; CODE XREF: sub_1EA6E+10↑j
                 mov     ax, 1
                 call    sub_28412
 
-loc_1EAA2:                              ; CODE XREF: sub_1EA6E+2A↑j
+loc_1EAA2:                              ; CODE XREF: RunGameDialog+2A↑j
                 call    sub_237B0
                 mov     x, 128h
                 mov     y, 43h ; 'C'
@@ -26080,8 +26080,8 @@ loc_1EAA2:                              ; CODE XREF: sub_1EA6E+2A↑j
                 mov     word_2E530, 0Ah
                 call    DrawPicture
 
-loc_1EAD0:                              ; CODE XREF: sub_1EA6E:loc_1EC0B↓j
-                                        ; sub_1EA6E+1D7↓j ...
+loc_1EAD0:                              ; CODE XREF: RunGameDialog:loc_1EC0B↓j
+                                        ; RunGameDialog+1D7↓j ...
                 mov     word_3291E, 0
                 mov     x, 18h
                 mov     y, 17h
@@ -26102,12 +26102,12 @@ loc_1EAD0:                              ; CODE XREF: sub_1EA6E:loc_1EC0B↓j
                 call    sub_2589A
                 or      word_328C4, 2
 
-loc_1EB27:                              ; CODE XREF: sub_1EA6E+99↑j
-                                        ; sub_1EA6E+A1↑j
+loc_1EB27:                              ; CODE XREF: RunGameDialog+99↑j
+                                        ; RunGameDialog+A1↑j
                 call    sub_238CD
 
-loc_1EB2C:                              ; CODE XREF: sub_1EA6E+C8↓j
-                                        ; sub_1EA6E+DD↓j ...
+loc_1EB2C:                              ; CODE XREF: RunGameDialog+C8↓j
+                                        ; RunGameDialog+DD↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1EB2C
@@ -26120,7 +26120,7 @@ loc_1EB2C:                              ; CODE XREF: sub_1EA6E+C8↓j
                 jmp     loc_1EC48
 ; ---------------------------------------------------------------------------
 
-loc_1EB50:                              ; CODE XREF: sub_1EA6E+D6↑j
+loc_1EB50:                              ; CODE XREF: RunGameDialog+D6↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5CD0h
@@ -26130,7 +26130,7 @@ loc_1EB50:                              ; CODE XREF: sub_1EA6E+D6↑j
                 jmp     short loc_1EB2C
 ; ---------------------------------------------------------------------------
 
-loc_1EB66:                              ; CODE XREF: sub_1EA6E+CF↑j
+loc_1EB66:                              ; CODE XREF: RunGameDialog+CF↑j
                 cmp     byte_2E400, 41h ; 'A'
                 jz      short loc_1EBEB
                 cmp     byte_2E400, 44h ; 'D'
@@ -26138,53 +26138,53 @@ loc_1EB66:                              ; CODE XREF: sub_1EA6E+CF↑j
                 jmp     loc_1EBF9
 ; ---------------------------------------------------------------------------
 
-loc_1EB77:                              ; CODE XREF: sub_1EA6E+104↑j
+loc_1EB77:                              ; CODE XREF: RunGameDialog+104↑j
                 cmp     byte_2E400, 46h ; 'F'
                 jnz     short loc_1EB81
                 jmp     loc_1EC0E
 ; ---------------------------------------------------------------------------
 
-loc_1EB81:                              ; CODE XREF: sub_1EA6E+10E↑j
+loc_1EB81:                              ; CODE XREF: RunGameDialog+10E↑j
                 cmp     byte_2E400, 4Ch ; 'L'
                 jnz     short loc_1EB8B
                 jmp     loc_1EC14
 ; ---------------------------------------------------------------------------
 
-loc_1EB8B:                              ; CODE XREF: sub_1EA6E+118↑j
+loc_1EB8B:                              ; CODE XREF: RunGameDialog+118↑j
                 cmp     byte_2E400, 4Dh ; 'M'
                 jnz     short loc_1EB95
                 jmp     loc_1EC1F
 ; ---------------------------------------------------------------------------
 
-loc_1EB95:                              ; CODE XREF: sub_1EA6E+122↑j
+loc_1EB95:                              ; CODE XREF: RunGameDialog+122↑j
                 cmp     byte_2E400, 4Eh ; 'N'
                 jnz     short loc_1EB9F
                 jmp     loc_1EC25
 ; ---------------------------------------------------------------------------
 
-loc_1EB9F:                              ; CODE XREF: sub_1EA6E+12C↑j
+loc_1EB9F:                              ; CODE XREF: RunGameDialog+12C↑j
                 cmp     byte_2E400, 52h ; 'R'
                 jnz     short loc_1EBA9
                 jmp     loc_1EC48
 ; ---------------------------------------------------------------------------
 
-loc_1EBA9:                              ; CODE XREF: sub_1EA6E+136↑j
+loc_1EBA9:                              ; CODE XREF: RunGameDialog+136↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1EBB3
                 jmp     loc_1EC48
 ; ---------------------------------------------------------------------------
 
-loc_1EBB3:                              ; CODE XREF: sub_1EA6E+140↑j
+loc_1EBB3:                              ; CODE XREF: RunGameDialog+140↑j
                 cmp     byte_2E400, 53h ; 'S'
                 jnz     short loc_1EBBD
                 jmp     loc_1EC5F
 ; ---------------------------------------------------------------------------
 
-loc_1EBBD:                              ; CODE XREF: sub_1EA6E+14A↑j
+loc_1EBBD:                              ; CODE XREF: RunGameDialog+14A↑j
                 jmp     loc_1EB2C
 ; ---------------------------------------------------------------------------
 
-loc_1EBC0:                              ; CODE XREF: sub_1EA6E+F4↑j
+loc_1EBC0:                              ; CODE XREF: RunGameDialog+F4↑j
                 cmp     ax, 0Dh
                 jz      short loc_1EBEB
                 cmp     ax, 0Ah
@@ -26202,52 +26202,52 @@ loc_1EBC0:                              ; CODE XREF: sub_1EA6E+F4↑j
                 cmp     ax, 7
                 jz      short loc_1EC5F
 
-loc_1EBE8:                              ; CODE XREF: sub_1EA6E+183↓j
-                                        ; sub_1EA6E+191↓j ...
+loc_1EBE8:                              ; CODE XREF: RunGameDialog+183↓j
+                                        ; RunGameDialog+191↓j ...
                 jmp     loc_1EB2C
 ; ---------------------------------------------------------------------------
 
-loc_1EBEB:                              ; CODE XREF: sub_1EA6E+FD↑j
-                                        ; sub_1EA6E+155↑j
+loc_1EBEB:                              ; CODE XREF: RunGameDialog+FD↑j
+                                        ; RunGameDialog+155↑j
                 test    word_328C4, 8
                 jz      short loc_1EBE8
                 call    sub_1F163
                 jmp     loc_1EB2C
 ; ---------------------------------------------------------------------------
 
-loc_1EBF9:                              ; CODE XREF: sub_1EA6E+106↑j
-                                        ; sub_1EA6E+15A↑j
+loc_1EBF9:                              ; CODE XREF: RunGameDialog+106↑j
+                                        ; RunGameDialog+15A↑j
                 test    word_328C4, 10h
                 jz      short loc_1EBE8
                 call    sub_1F8C7
                 cmp     byte_2E400, 0FFh
                 jz      short loc_1EC69
 
-loc_1EC0B:                              ; CODE XREF: sub_1EA6E+1C7↓j
+loc_1EC0B:                              ; CODE XREF: RunGameDialog+1C7↓j
                 jmp     loc_1EAD0
 ; ---------------------------------------------------------------------------
 
-loc_1EC0E:                              ; CODE XREF: sub_1EA6E+110↑j
-                                        ; sub_1EA6E+15F↑j
+loc_1EC0E:                              ; CODE XREF: RunGameDialog+110↑j
+                                        ; RunGameDialog+15F↑j
                 call    sub_1F93D
                 jmp     loc_1EB2C
 ; ---------------------------------------------------------------------------
 
-loc_1EC14:                              ; CODE XREF: sub_1EA6E+11A↑j
-                                        ; sub_1EA6E+164↑j
+loc_1EC14:                              ; CODE XREF: RunGameDialog+11A↑j
+                                        ; RunGameDialog+164↑j
                 test    word_328C4, 40h
                 jz      short loc_1EBE8
                 jmp     loc_1EDAA
 ; ---------------------------------------------------------------------------
 
-loc_1EC1F:                              ; CODE XREF: sub_1EA6E+124↑j
-                                        ; sub_1EA6E+169↑j
+loc_1EC1F:                              ; CODE XREF: RunGameDialog+124↑j
+                                        ; RunGameDialog+169↑j
                 call    sub_1F8F5
                 jmp     loc_1EB2C
 ; ---------------------------------------------------------------------------
 
-loc_1EC25:                              ; CODE XREF: sub_1EA6E+12E↑j
-                                        ; sub_1EA6E+16E↑j
+loc_1EC25:                              ; CODE XREF: RunGameDialog+12E↑j
+                                        ; RunGameDialog+16E↑j
                 test    word_328C4, 20h
                 jz      short loc_1EBE8
                 call    sub_1F5A5
@@ -26260,8 +26260,8 @@ loc_1EC25:                              ; CODE XREF: sub_1EA6E+12E↑j
                 jmp     loc_1EAD0
 ; ---------------------------------------------------------------------------
 
-loc_1EC48:                              ; CODE XREF: sub_1EA6E+DF↑j
-                                        ; sub_1EA6E+138↑j ...
+loc_1EC48:                              ; CODE XREF: RunGameDialog+DF↑j
+                                        ; RunGameDialog+138↑j ...
                 test    word_328C4, 4
                 jz      short loc_1EBE8
                 mov     ax, 1
@@ -26270,15 +26270,15 @@ loc_1EC48:                              ; CODE XREF: sub_1EA6E+DF↑j
                 jmp     short loc_1EC69
 ; ---------------------------------------------------------------------------
 
-loc_1EC5F:                              ; CODE XREF: sub_1EA6E+14C↑j
-                                        ; sub_1EA6E+178↑j
+loc_1EC5F:                              ; CODE XREF: RunGameDialog+14C↑j
+                                        ; RunGameDialog+178↑j
                 test    word_328C4, 80h
                 jz      short loc_1EBE8
                 jmp     short loc_1EC7C
 ; ---------------------------------------------------------------------------
 
-loc_1EC69:                              ; CODE XREF: sub_1EA6E+12↑j
-                                        ; sub_1EA6E+19B↑j ...
+loc_1EC69:                              ; CODE XREF: RunGameDialog+12↑j
+                                        ; RunGameDialog+19B↑j ...
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 and     word_328C4, 0FF00h
@@ -26286,13 +26286,13 @@ loc_1EC69:                              ; CODE XREF: sub_1EA6E+12↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1EC7C:                              ; CODE XREF: sub_1EA6E+1F9↑j
+loc_1EC7C:                              ; CODE XREF: RunGameDialog+1F9↑j
                 call    sub_237B0
                 mov     ax, 1           ; styleNum
                 call    GameDialog_drawButtons
                 call    sub_1F53E
 
-loc_1EC8A:                              ; CODE XREF: sub_1EA6E+304↓j
+loc_1EC8A:                              ; CODE XREF: RunGameDialog+304↓j
                 mov     word_32910, 2Ch ; ','
                 call    sub_238CD
                 call    sub_1F29D
@@ -26302,7 +26302,7 @@ loc_1EC8A:                              ; CODE XREF: sub_1EA6E+304↓j
                 jmp     loc_1EAD0
 ; ---------------------------------------------------------------------------
 
-loc_1ECA7:                              ; CODE XREF: sub_1EA6E+234↑j
+loc_1ECA7:                              ; CODE XREF: RunGameDialog+234↑j
                 mov     ax, 4
                 call    sub_28412
                 mov     _font_fgColor, 0Fh
@@ -26319,7 +26319,7 @@ loc_1ECA7:                              ; CODE XREF: sub_1EA6E+234↑j
                 jmp     short loc_1ED31
 ; ---------------------------------------------------------------------------
 
-loc_1ECDC:                              ; CODE XREF: sub_1EA6E+265↑j
+loc_1ECDC:                              ; CODE XREF: RunGameDialog+265↑j
                 add     bx, 2
                 call    StrLen
                 mov     ah, 6
@@ -26328,14 +26328,14 @@ loc_1ECDC:                              ; CODE XREF: sub_1EA6E+265↑j
                 mov     al, 2Dh ; '-'
                 call    writeChar
 
-loc_1ECF3:                              ; CODE XREF: sub_1EA6E+296↓j
+loc_1ECF3:                              ; CODE XREF: RunGameDialog+296↓j
                 call    PollKeyboardInput
                 cmp     errorCode, 1
                 jz      short loc_1ED06
                 cmp     errorCode, 2
                 jnz     short loc_1ECF3
 
-loc_1ED06:                              ; CODE XREF: sub_1EA6E+28F↑j
+loc_1ED06:                              ; CODE XREF: RunGameDialog+28F↑j
                 cmp     byte_2E400, 1Bh
                 jz      short loc_1ED53
                 cmp     byte_2E400, 0Dh
@@ -26351,8 +26351,8 @@ loc_1ED06:                              ; CODE XREF: sub_1EA6E+28F↑j
                 jmp     short loc_1ED8F
 ; ---------------------------------------------------------------------------
 
-loc_1ED31:                              ; CODE XREF: sub_1EA6E+26C↑j
-                                        ; sub_1EA6E+2A4↑j
+loc_1ED31:                              ; CODE XREF: RunGameDialog+26C↑j
+                                        ; RunGameDialog+2A4↑j
                 call    EraseLabelText
                 mov     bx, 0AFA8h
                 mov     cx, 18h
@@ -26364,8 +26364,8 @@ loc_1ED31:                              ; CODE XREF: sub_1EA6E+26C↑j
                 cmp     ax, 5
                 jz      short loc_1ED75
 
-loc_1ED53:                              ; CODE XREF: sub_1EA6E+29D↑j
-                                        ; sub_1EA6E+2B1↑j ...
+loc_1ED53:                              ; CODE XREF: RunGameDialog+29D↑j
+                                        ; RunGameDialog+2B1↑j ...
                 call    sub_16EFA
                 call    sub_237B0
                 mov     bx, word_32904
@@ -26378,7 +26378,7 @@ loc_1ED53:                              ; CODE XREF: sub_1EA6E+29D↑j
                 jmp     loc_1EC8A
 ; ---------------------------------------------------------------------------
 
-loc_1ED75:                              ; CODE XREF: sub_1EA6E+2E3↑j
+loc_1ED75:                              ; CODE XREF: RunGameDialog+2E3↑j
                 mov     ax, 0AFA8h
                 mov     bx, word_32906
                 add     bx, 2
@@ -26387,7 +26387,7 @@ loc_1ED75:                              ; CODE XREF: sub_1EA6E+2E3↑j
                 mov     bx, 93FFh
                 call    StpCpy
 
-loc_1ED8F:                              ; CODE XREF: sub_1EA6E+2C1↑j
+loc_1ED8F:                              ; CODE XREF: RunGameDialog+2C1↑j
                 or      word_328C4, 4000h
                 call    sub_1F5FF
                 call    Fade?
@@ -26396,13 +26396,13 @@ loc_1ED8F:                              ; CODE XREF: sub_1EA6E+2C1↑j
                 jmp     loc_1EC69
 ; ---------------------------------------------------------------------------
 
-loc_1EDAA:                              ; CODE XREF: sub_1EA6E+1AE↑j
+loc_1EDAA:                              ; CODE XREF: RunGameDialog+1AE↑j
                 call    sub_237B0
                 mov     ax, 2           ; styleNum
                 call    GameDialog_drawButtons
                 call    sub_1F53E
 
-loc_1EDB8:                              ; CODE XREF: sub_1EA6E+3B3↓j
+loc_1EDB8:                              ; CODE XREF: RunGameDialog+3B3↓j
                 mov     word_32910, 51h ; 'Q'
                 call    sub_238CD
                 call    sub_1F29D
@@ -26412,7 +26412,7 @@ loc_1EDB8:                              ; CODE XREF: sub_1EA6E+3B3↓j
                 jmp     loc_1EAD0
 ; ---------------------------------------------------------------------------
 
-loc_1EDD5:                              ; CODE XREF: sub_1EA6E+35D↑j
+loc_1EDD5:                              ; CODE XREF: RunGameDialog+35D↑j
                 call    GetListItemPosition
                 mov     al, [bx]
                 mov     byte_368A1, al
@@ -26423,7 +26423,7 @@ loc_1EDD5:                              ; CODE XREF: sub_1EA6E+35D↑j
                 jmp     short loc_1EE02
 ; ---------------------------------------------------------------------------
 
-loc_1EDED:                              ; CODE XREF: sub_1EA6E+373↑j
+loc_1EDED:                              ; CODE XREF: RunGameDialog+373↑j
                 mov     ax, 4
                 call    sub_28412
                 mov     ax, 3
@@ -26431,7 +26431,7 @@ loc_1EDED:                              ; CODE XREF: sub_1EA6E+373↑j
                 cmp     ax, 5
                 jz      short loc_1EE23
 
-loc_1EE02:                              ; CODE XREF: sub_1EA6E+37D↑j
+loc_1EE02:                              ; CODE XREF: RunGameDialog+37D↑j
                 call    sub_16EFA
                 call    sub_237B0
                 mov     bx, word_32904
@@ -26444,7 +26444,7 @@ loc_1EE02:                              ; CODE XREF: sub_1EA6E+37D↑j
                 jmp     short loc_1EDB8
 ; ---------------------------------------------------------------------------
 
-loc_1EE23:                              ; CODE XREF: sub_1EA6E+392↑j
+loc_1EE23:                              ; CODE XREF: RunGameDialog+392↑j
                 call    sub_16EFA
                 mov     word_2E530, 0Bh
                 call    sub_23874
@@ -26470,13 +26470,13 @@ loc_1EE23:                              ; CODE XREF: sub_1EA6E+392↑j
                 or      ax, 2
                 or      g_driverStateFlags, 1
 
-loc_1EE82:                              ; CODE XREF: sub_1EA6E+40A↑j
+loc_1EE82:                              ; CODE XREF: RunGameDialog+40A↑j
                 test    ax, 4
                 jz      short loc_1EE8F
                 or      ax, 8
                 or      g_driverStateFlags, 4
 
-loc_1EE8F:                              ; CODE XREF: sub_1EA6E+417↑j
+loc_1EE8F:                              ; CODE XREF: RunGameDialog+417↑j
                 and     g_driverStateFlags, ax
                 mov     ax, 93FFh
                 mov     bx, 8FFBh       ; this
@@ -26494,7 +26494,7 @@ loc_1EE8F:                              ; CODE XREF: sub_1EA6E+417↑j
                 mov     word ptr [bx+8], 0
                 mov     cx, word_32A12
 
-loc_1EED2:                              ; CODE XREF: sub_1EA6E+492↓j
+loc_1EED2:                              ; CODE XREF: RunGameDialog+492↓j
                 mov     bx, 902Ch
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
@@ -26518,7 +26518,7 @@ loc_1EED2:                              ; CODE XREF: sub_1EA6E+492↓j
                 mov     word_36892, 0AC2h
                 mov     cx, 10h
 
-loc_1EF31:                              ; CODE XREF: sub_1EA6E+4F1↓j
+loc_1EF31:                              ; CODE XREF: RunGameDialog+4F1↓j
                 mov     bx, 902Ch
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
@@ -26558,13 +26558,13 @@ loc_1EF31:                              ; CODE XREF: sub_1EA6E+4F1↓j
                 mov     word_36892, 0BB8h
                 mov     cx, _val10
 
-loc_1EFD5:                              ; CODE XREF: sub_1EA6E+5A7↓j
+loc_1EFD5:                              ; CODE XREF: RunGameDialog+5A7↓j
                 cmp     cx, 0BB8h
                 jge     short loc_1EFE3
                 mov     word_36861, cx
                 mov     word_36892, cx
 
-loc_1EFE3:                              ; CODE XREF: sub_1EA6E+56B↑j
+loc_1EFE3:                              ; CODE XREF: RunGameDialog+56B↑j
                 mov     bx, 902Ch
                 mov     errorCode, 0Bh
                 call    FileEntry_Read
@@ -26620,7 +26620,7 @@ loc_1EFE3:                              ; CODE XREF: sub_1EA6E+56B↑j
                 mov     byte_2E400, 0FEh
                 call    sub_1F58D
                 jmp     loc_1EC69
-sub_1EA6E       endp
+RunGameDialog   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -26674,7 +26674,7 @@ sub_1F0CD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F163       proc near               ; CODE XREF: sub_1EA6E+185↑p
+sub_1F163       proc near               ; CODE XREF: RunGameDialog+185↑p
                 mov     _textPos_x, 61h ; 'a'
                 mov     _textPos_y, 77h ; 'w'
                 mov     ax, 9
@@ -26698,8 +26698,8 @@ sub_1F163       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-EraseLabelText  proc near               ; CODE XREF: sub_1EA6E:loc_1ED31↑p
-                                        ; sub_1EA6E+2FE↑p ...
+EraseLabelText  proc near               ; CODE XREF: RunGameDialog:loc_1ED31↑p
+                                        ; RunGameDialog+2FE↑p ...
                 mov     ah, 19h         ; Blanks the 25-byte scratch label buffer (0xAFA8) via StrFillN, then writeString's it at the stored position -- erases whatever label text was previously drawn there.
                 mov     al, 20h ; ' '
                 mov     bx, 0AFA8h
@@ -26717,8 +26717,8 @@ EraseLabelText  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-GetListItemPosition proc near           ; CODE XREF: sub_1EA6E+259↑p
-                                        ; sub_1EA6E:loc_1EDD5↑p
+GetListItemPosition proc near           ; CODE XREF: RunGameDialog+259↑p
+                                        ; RunGameDialog:loc_1EDD5↑p
                 mov     ax, word_3291E  ; Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.
                 mov     bx, 0Ah
                 dec     ax
@@ -26748,8 +26748,8 @@ GetListItemPosition endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F1F4       proc near               ; CODE XREF: sub_1EA6E+2FB↑p
-                                        ; sub_1EA6E+3AA↑p ...
+sub_1F1F4       proc near               ; CODE XREF: RunGameDialog+2FB↑p
+                                        ; RunGameDialog+3AA↑p ...
                 mov     x, ax
                 mov     y, bx
                 mov     word_2E530, cx
@@ -26764,7 +26764,7 @@ sub_1F1F4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F217       proc near               ; CODE XREF: sub_1EA6E+8B↑p
+sub_1F217       proc near               ; CODE XREF: RunGameDialog+8B↑p
                 test    word_328C4, 80h
                 jnz     short loc_1F222
                 call    GameDialog_drawSave
@@ -26833,8 +26833,8 @@ sub_1F217       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F29D       proc near               ; CODE XREF: sub_1EA6E+227↑p
-                                        ; sub_1EA6E+355↑p ...
+sub_1F29D       proc near               ; CODE XREF: RunGameDialog+227↑p
+                                        ; RunGameDialog+355↑p ...
                 mov     byte_2E400, 0
                 call    PollKeyboardInput
                 cmp     errorCode, 0
@@ -26940,8 +26940,8 @@ sub_1F29D       endp
 
 
 ; void __usercall GameDialog_drawButtons(int styleNum@<ax>)
-GameDialog_drawButtons proc near        ; CODE XREF: sub_1EA6E+216↑p
-                                        ; sub_1EA6E+344↑p ...
+GameDialog_drawButtons proc near        ; CODE XREF: RunGameDialog+216↑p
+                                        ; RunGameDialog+344↑p ...
                 mov     _font_fgColor, 8Ah
                 mov     _font_bgTransparent, 1
                 mov     bx, 0A000h
@@ -27129,8 +27129,8 @@ GameDialog_drawSoundFx endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F53E       proc near               ; CODE XREF: sub_1EA6E+219↑p
-                                        ; sub_1EA6E+301↑p ...
+sub_1F53E       proc near               ; CODE XREF: RunGameDialog+219↑p
+                                        ; RunGameDialog+301↑p ...
                 mov     _font_bgTransparent, 0
                 mov     _videoSegment, 0A000h
                 mov     cx, 6
@@ -27164,7 +27164,7 @@ sub_1F53E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F58D       proc near               ; CODE XREF: sub_1EA6E+659↑p
+sub_1F58D       proc near               ; CODE XREF: RunGameDialog+659↑p
                                         ; sub_1F5FF+281↓p
                 mov     si, 6CBEh
                 mov     cx, 6
@@ -27182,7 +27182,7 @@ sub_1F58D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F5A5       proc near               ; CODE XREF: sub_1EA6E+1BF↑p
+sub_1F5A5       proc near               ; CODE XREF: RunGameDialog+1BF↑p
                 call    sub_237B0
                 mov     ax, 4           ; styleNum
                 call    GameDialog_drawButtons
@@ -27216,7 +27216,7 @@ sub_1F5A5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F5FF       proc near               ; CODE XREF: sub_1EA6E+327↑p
+sub_1F5FF       proc near               ; CODE XREF: RunGameDialog+327↑p
                 call    sub_16EFA
                 mov     word_2E530, 0Bh
                 call    sub_23874
@@ -27416,7 +27416,7 @@ sub_1F884       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F8C7       proc near               ; CODE XREF: sub_1EA6E+193↑p
+sub_1F8C7       proc near               ; CODE XREF: RunGameDialog+193↑p
                 call    sub_237B0
                 mov     ax, 3           ; styleNum
                 call    GameDialog_drawButtons
@@ -27439,7 +27439,7 @@ sub_1F8C7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F8F5       proc near               ; CODE XREF: sub_1EA6E:loc_1EC1F↑p
+sub_1F8F5       proc near               ; CODE XREF: RunGameDialog:loc_1EC1F↑p
                 test    g_driverStateFlags, 1
                 jz      short locret_1F93C
                 call    sub_237B0
@@ -27472,7 +27472,7 @@ sub_1F8F5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F93D       proc near               ; CODE XREF: sub_1EA6E:loc_1EC0E↑p
+sub_1F93D       proc near               ; CODE XREF: RunGameDialog:loc_1EC0E↑p
                 test    g_driverStateFlags, 4
                 jz      short locret_1F97A
                 call    sub_237B0
@@ -38519,7 +38519,7 @@ loc_25ADB:                              ; CODE XREF: sub_25AAC+1B↑j
                 and     word_328C4, 0FF00h
                 or      word_328C4, 70h
                 and     word_3295A, 1FFFh
-                call    sub_1EA6E
+                call    RunGameDialog
                 cmp     byte_2E400, 0FFh
                 jz      short loc_25B08
                 call    sub_1F0CD
@@ -42751,8 +42751,8 @@ sub_27D55       endp
 
 
 ; void __usercall sub_27D8A(FileEntry *this@<eds:ebx.2>)
-sub_27D8A       proc far                ; CODE XREF: sub_1EA6E+5FA↑P
-                                        ; sub_1EA6E+605↑P ...
+sub_27D8A       proc far                ; CODE XREF: RunGameDialog+5FA↑P
+                                        ; RunGameDialog+605↑P ...
                 push    si
                 mov     si, 0CDEBh
                 mov     [bx+4], ax
@@ -42771,8 +42771,8 @@ sub_27D8A       endp
 
 
 ; void __usercall sub_27DA8(FileEntry *this@<eds:ebx.2>)
-sub_27DA8       proc far                ; CODE XREF: sub_1EA6E+3EC↑P
-                                        ; sub_1EA6E+42B↑P ...
+sub_27DA8       proc far                ; CODE XREF: RunGameDialog+3EC↑P
+                                        ; RunGameDialog+42B↑P ...
                 push    si
                 mov     si, 0CDD3h
                 mov     [bx+4], ax
@@ -42833,8 +42833,8 @@ sub_27DE5       endp
 
 
 ; void __usercall sub_27E04(FileEntry *this@<eds:ebx.2>)
-sub_27E04       proc far                ; CODE XREF: sub_1EA6E+5B2↑P
-                                        ; sub_1EA6E+5C0↑P ...
+sub_27E04       proc far                ; CODE XREF: RunGameDialog+5B2↑P
+                                        ; RunGameDialog+5C0↑P ...
                 push    si
                 mov     si, 0CDE7h
                 mov     [bx+4], ax
@@ -42853,8 +42853,8 @@ sub_27E04       endp
 
 
 ; void __usercall sub_27E20(FileEntry *this@<eds:ebx.2>)
-sub_27E20       proc far                ; CODE XREF: sub_1EA6E+446↑P
-                                        ; sub_1EA6E+456↑P ...
+sub_27E20       proc far                ; CODE XREF: RunGameDialog+446↑P
+                                        ; RunGameDialog+456↑P ...
                 push    si
                 mov     si, 0CDD7h
                 mov     [bx+4], ax
@@ -43408,7 +43408,7 @@ seg099          segment byte public 'CODE' use16
 
 
 sub_28246       proc far                ; CODE XREF: sub_1E64A:loc_1E6AE↑P
-                                        ; sub_1EA6E+1A↑P
+                                        ; RunGameDialog+1A↑P
                 push    si
                 push    di
                 push    es
@@ -74250,8 +74250,8 @@ word_3290C      dw 0                    ; DATA XREF: sub_17B92+151↑r
                                         ; sub_1AEF8+B↑w ...
 word_3290E      dw 0                    ; DATA XREF: sub_13FCF+A6↑w
                                         ; sub_13FCF+BE↑r ...
-word_32910      dw 0                    ; DATA XREF: sub_1EA6E:loc_1EC8A↑w
-                                        ; sub_1EA6E:loc_1EDB8↑w ...
+word_32910      dw 0                    ; DATA XREF: RunGameDialog:loc_1EC8A↑w
+                                        ; RunGameDialog:loc_1EDB8↑w ...
 word_32912      dw 0                    ; DATA XREF: EraseLabelText+12↑r
                                         ; GetListItemPosition+22↑w
 word_32914      dw 0                    ; DATA XREF: sub_28564+3E↑r
@@ -74264,8 +74264,8 @@ word_3291A      dw 0                    ; DATA XREF: sub_124EC+E↑w
                                         ; sub_124EC+1B↑r ...
 _videoBufferSeg dw 0                    ; DATA XREF: sub_1075E+49↑r
                                         ; ShowClueBook+48↑r ...
-word_3291E      dw 0                    ; DATA XREF: sub_1EA6E+5↑w
-                                        ; sub_1EA6E:loc_1EAD0↑w ...
+word_3291E      dw 0                    ; DATA XREF: RunGameDialog+5↑w
+                                        ; RunGameDialog:loc_1EAD0↑w ...
 word_32920      dw 0                    ; DATA XREF: sub_19264+66↑r
                                         ; sub_1CCBC+C↑w
 word_32922      dw 0                    ; DATA XREF: sub_19264+6C↑r
@@ -74421,7 +74421,7 @@ _val37          dw 0                    ; DATA XREF: InitGlobals+102↑w
 _val38          dw 0                    ; DATA XREF: InitGlobals+108↑w
                                         ; sub_22445+70↑r ...
 _val39          dw 0                    ; DATA XREF: InitGlobals+10E↑w
-                                        ; sub_1EA6E+504↑r ...
+                                        ; RunGameDialog+504↑r ...
 _val40          dw 0                    ; DATA XREF: InitGlobals+114↑w
                                         ; sub_1A5F6+5↑r
 _val41          dw 0                    ; DATA XREF: InitGlobals+11A↑w
@@ -74443,7 +74443,7 @@ _val47          dw 0                    ; DATA XREF: InitGlobals+13E↑w
 _val49          dw 0                    ; DATA XREF: InitGlobals+14A↑w
                                         ; sub_1D937:loc_1D9A6↑r
 _val48          dw 0                    ; DATA XREF: InitGlobals+144↑w
-                                        ; sub_1EA6E+5C5↑r ...
+                                        ; RunGameDialog+5C5↑r ...
 word_329CE      dw 0                    ; DATA XREF: InitGlobals+150↑w
                                         ; sub_2BAD5+27↑r
 _val11          dw 0                    ; DATA XREF: InitGlobals+3C↑w
@@ -74511,7 +74511,7 @@ word_32A0E      dw 0                    ; DATA XREF: InitGlobals+1E0↑w
 _blockSize3     dw 0                    ; DATA XREF: InitGlobals+1C2↑w
                                         ; sub_205C0+13↑r ...
 word_32A12      dw 0                    ; DATA XREF: InitGlobals+1E6↑w
-                                        ; sub_1EA6E+460↑r ...
+                                        ; RunGameDialog+460↑r ...
 _blockSize2     dw 0                    ; DATA XREF: InitGlobals+1EC↑w
                                         ; sub_27CFE+15↑r
 word_32A16      dw 0                    ; DATA XREF: sub_22CBC↑w
@@ -75450,7 +75450,7 @@ word_32DC6      dw 0                    ; DATA XREF: sub_1766F+A↑w
 word_32DC8      dw 0                    ; DATA XREF: start:loc_101B8↑r
                                         ; start:loc_10248↑r ...
 word_32DCA      dw 0                    ; DATA XREF: sub_1766F+7↑w
-                                        ; sub_1EA6E+53B↑w ...
+                                        ; RunGameDialog+53B↑w ...
 byte_32DCC      db 0                    ; DATA XREF: sub_17032:loc_170A3↑w
                                         ; sub_17032:loc_17100↑w ...
 byte_32DCD      db 0                    ; DATA XREF: start+1BB↑w
@@ -84826,8 +84826,8 @@ curGame         db 0FFh
 word_3685D      dw 0                    ; DATA XREF: InitGame+20↑w
 word_3685F      dw 0                    ; DATA XREF: sub_1A320↑r
                                         ; sub_1A320+4↑w ...
-word_36861      dw 0                    ; DATA XREF: sub_1EA6E+4B4↑w
-                                        ; sub_1EA6E+557↑w ...
+word_36861      dw 0                    ; DATA XREF: RunGameDialog+4B4↑w
+                                        ; RunGameDialog+557↑w ...
 word_36863      dw 0                    ; DATA XREF: sub_19091↑w
                                         ; sub_1A294+18↑r ...
 word_36865      dw 0                    ; DATA XREF: sub_221A0+A↑r
@@ -84855,10 +84855,10 @@ savegameX       db 0FFh
 word_3688E      dw 0                    ; DATA XREF: InitGame+1C↑w
                 db    0
                 db    0
-word_36892      dw 0                    ; DATA XREF: sub_1EA6E+4BA↑w
-                                        ; sub_1EA6E+55D↑w ...
-word_36894      dw 0                    ; DATA XREF: sub_1EA6E+48E↑w
-                                        ; sub_1EA6E+4ED↑w ...
+word_36892      dw 0                    ; DATA XREF: RunGameDialog+4BA↑w
+                                        ; RunGameDialog+55D↑w ...
+word_36894      dw 0                    ; DATA XREF: RunGameDialog+48E↑w
+                                        ; RunGameDialog+4ED↑w ...
                 db    0
                 db    0
                 db    0
@@ -84870,8 +84870,8 @@ aSavgamex       db  53h ; S
                 db  41h ; A
                 db  4Dh ; M
                 db  45h ; E
-byte_368A1      db 58h                  ; DATA XREF: sub_1EA6E+25E↑w
-                                        ; sub_1EA6E+36C↑w
+byte_368A1      db 58h                  ; DATA XREF: RunGameDialog+25E↑w
+                                        ; RunGameDialog+36C↑w
                 db    0
 worldDat        db 0FFh
                 db 0FFh

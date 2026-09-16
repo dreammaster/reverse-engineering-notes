@@ -452,6 +452,24 @@ for that specific image.) Full writeup in
 Sent Paul the recolored set. 83 named of 769 functions as of this
 update.
 
+### 2026-09-15 session update, continued: RunGameDialog identified
+
+Went back to `sub_1EA6E` (1631 bytes, flagged much earlier this session
+as "almost certainly a major top-level screen" but too large to
+confidently name) now that far more of its surroundings are understood.
+It draws `DrawPicture` id 1 — the 210×105 `GameDialog_draw*` panel
+decoded (and now, with the real palette, fully *read*) earlier this
+session — plus the mouse cursor, calls `GameDialog_drawButtons`, then
+loops on `PollKeyboardInput` dispatching **all 8 of the panel's own
+button hotkeys** (A/D/F/L/M/N/R/S → Animation/Dos/SoundFx/Load/Music/
+NewGame/Return/Save) to their own handler functions — an exhaustive,
+unambiguous match against the decoded panel. Named it `RunGameDialog`
+(`ida_scripts/name_game_dialog.py`); the 5 individual per-key handler
+functions (`sub_1F163` etc.) are noted in its comment by which key they
+handle but not yet renamed — their actual behavior isn't traced yet.
+
+84 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
