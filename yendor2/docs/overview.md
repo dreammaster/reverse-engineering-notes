@@ -4312,6 +4312,29 @@ deferred-to callees in one round.
 
 529 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleClueEntryRowScrollInput + RecomputeClueEntryPageBounds
+
+Named `sub_12D5C` -> `HandleClueEntryRowScrollInput` (called from
+`RunClueEntryMenu`, a sibling to `HandleClueEntryScrollInput` handling
+'H'/'P' keys for a single-row (step 4) scroll of the clue entry list,
+paging via `ScrollClueEntryListPageUp`/`Down` only at the current
+page's boundary) and `sub_12FC1` -> `RecomputeClueEntryPageBounds`
+(called from those two page-scroll functions — **correction**: when
+they were named last round it was speculated this might be "a
+redraw"; tracing it directly shows it's actually pure bounds
+arithmetic, no drawing at all). It recomputes the page's upper bound
+(`word_2E3F2 = word_2E3F0+0x34`, clamped to total count `word_2E3F4`)
+and visible-row count (`word_2E3EC`, defaulting to `0xE` or the
+remaining-rows count on the last partial page) — the `/4` in that
+remaining-rows math confirms a 4-entries-per-row grid layout for the
+clue entry list, matching the step-by-4 stride in
+`HandleClueEntryRowScrollInput`. This resolves the entire clue-entry-
+list scrolling cluster (`HandleClueEntryScrollInput`,
+`HandleClueEntryRowScrollInput`, `ScrollClueEntryListPageUp`/`Down`,
+`RecomputeClueEntryPageBounds`) end to end.
+
+531 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

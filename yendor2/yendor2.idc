@@ -1604,7 +1604,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X12D3B);
 	op_hex		(x,	1);
+	set_cmt	(0X12D5C,	"'H'/'P' single-row (step 4) scroll for the clue entry list, paging via ScrollClueEntryListPageUp/Down only at the current page's top/bottom bound (word_2E3F0/word_2E3F2). errorCode=1/2, 0 if no active list/key. Called from RunClueEntryMenu.",	0);
 	create_insn	(0X12D5C);
+	set_name	(0X12D5C,	"HandleClueEntryRowScrollInput");
 	create_insn	(0X12D82);
 	create_insn	(x=0X12D90);
 	op_hex		(x,	1);
@@ -1653,7 +1655,9 @@ static Bytes_0(void) {
 	create_insn	(0X12FA2);
 	create_insn	(0X12FAB);
 	create_insn	(0X12FB0);
+	set_cmt	(0X12FC1,	"Recomputes the clue entry list's page window from the new word_2E3F0: word_2E3F2 = word_2E3F0+0x34, clamped to total count word_2E3F4; word_2E3EC (visible row count) defaults to 0xE, or (word_2E3F4-word_2E3F0)/4+1 on the last partial page. Called from ScrollClueEntryListPageUp/Down.",	0);
 	create_insn	(0X12FC1);
+	set_name	(0X12FC1,	"RecomputeClueEntryPageBounds");
 	set_cmt	(0X12FED,	"Full page-down jump for the clue entry list: recomputes word_2E3F0 += 0x38 (word_2E3EE clamped to upper bound word_2E3F2), calls sub_12FC1 (redraw), errorCode=2. Called from HandleClueEntryScrollInput and sub_12D5C.",	0);
 	create_insn	(0X12FED);
 	set_name	(0X12FED,	"ScrollClueEntryListPageDown");
@@ -3406,10 +3410,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X18FC5);
 	op_hex		(x,	1);
 	set_name	(0X18FC5,	"TryLoadNextContainerLink");
-	create_insn	(0X18FCD);
-	set_cmt	(0X18FDA,	"Space-bar 'enhance item' action (sub_1869D, sibling of TrySellItemForGold). Eligibility via sub_1B147 (a level/stat range check against table 0xBCE); on failure, 'I CAN NOT ENHANCE THAT' (msg 0x815A). Else CompareBCD4(g_partyGold, [table 0xCB2]) -- on insufficient gold, 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, via sub_190AF); else SubBCD4(g_partyGold -= [0xCB2]), advances the item to the next catalog entry (word_32974+1) and reloads it as the enhanced result.",	0);
-	create_insn	(0X18FDA);
-	set_name	(0X18FDA,	"TryEnhanceItemForGold");
 }
 
 //------------------------------------------------------------------------
@@ -3419,6 +3419,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X18FCD);
+	set_cmt	(0X18FDA,	"Space-bar 'enhance item' action (sub_1869D, sibling of TrySellItemForGold). Eligibility via sub_1B147 (a level/stat range check against table 0xBCE); on failure, 'I CAN NOT ENHANCE THAT' (msg 0x815A). Else CompareBCD4(g_partyGold, [table 0xCB2]) -- on insufficient gold, 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, via sub_190AF); else SubBCD4(g_partyGold -= [0xCB2]), advances the item to the next catalog entry (word_32974+1) and reloads it as the enhanced result.",	0);
+	create_insn	(0X18FDA);
+	set_name	(0X18FDA,	"TryEnhanceItemForGold");
 	create_insn	(x=0X18FEC);
 	op_hex		(x,	1);
 	create_insn	(0X19021);
@@ -5407,15 +5411,6 @@ static Bytes_1(void) {
 	set_cmt	(0X205FB,	"'B' key handler: picks a wall type from the tile palette at the clicked position (LoadWorldDatTilePalette), stores it to word_2E384/word_2E496 (same fields EditWallLegendTypeNumber writes), redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X205FB);
 	set_name	(0X205FB,	"BrowseWallTilePalette");
-	set_cmt	(0X20626,	"'F' key handler, floor counterpart to BrowseWallTilePalette: picks a floor type from the palette, stores to word_2E386/word_2E4A2, redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen.",	0);
-	create_insn	(0X20626);
-	set_name	(0X20626,	"BrowseFloorTilePalette");
-	create_insn	(0X20652);
-	create_insn	(x=0X20695);
-	op_seg		(x,	1);
-	set_cmt	(0X206A0,	"Redraws the full visible 40x24 cell grid in the map editor: for every cell, PersistExploredCell + LoadWorldDatTilePalette + DrawCellIconPair. Called from RunMapEditorScreen.",	0);
-	create_insn	(0X206A0);
-	set_name	(0X206A0,	"RedrawMapEditorGrid");
 }
 
 //------------------------------------------------------------------------
@@ -5425,6 +5420,15 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X20626,	"'F' key handler, floor counterpart to BrowseWallTilePalette: picks a floor type from the palette, stores to word_2E386/word_2E4A2, redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen.",	0);
+	create_insn	(0X20626);
+	set_name	(0X20626,	"BrowseFloorTilePalette");
+	create_insn	(0X20652);
+	create_insn	(x=0X20695);
+	op_seg		(x,	1);
+	set_cmt	(0X206A0,	"Redraws the full visible 40x24 cell grid in the map editor: for every cell, PersistExploredCell + LoadWorldDatTilePalette + DrawCellIconPair. Called from RunMapEditorScreen.",	0);
+	create_insn	(0X206A0);
+	set_name	(0X206A0,	"RedrawMapEditorGrid");
 	create_insn	(x=0X206E5);
 	op_seg		(x,	1);
 	create_insn	(0X2070C);
@@ -7372,13 +7376,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27A2A,	"ClearGlobalFlag(ax=flag index): [si] &= ~mask.",	0);
 	create_insn	(0X27A2A);
 	set_name	(0X27A2A,	"ClearGlobalFlag");
-	create_insn	(0X27A34);
-	set_cmt	(0X27A3E,	"SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.",	0);
-	create_insn	(0X27A3E);
-	set_name	(0X27A3E,	"SetRecordFlag_10C");
-	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
-	create_insn	(0X27A46);
-	set_name	(0X27A46,	"SetGlobalFlag");
 }
 
 //------------------------------------------------------------------------
@@ -7388,6 +7385,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X27A34);
+	set_cmt	(0X27A3E,	"SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.",	0);
+	create_insn	(0X27A3E);
+	set_name	(0X27A3E,	"SetRecordFlag_10C");
+	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
+	create_insn	(0X27A46);
+	set_name	(0X27A46,	"SetGlobalFlag");
 	create_insn	(0X27A4E);
 	set_cmt	(0X27A56,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
 	create_insn	(0X27A56);
@@ -10030,6 +10034,15 @@ static Bytes_3(void) {
 	create_word	(0X2E512);
 	create_word	(0X2E514);
 	create_word	(0X2E516);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X2E518,	0X9);
 	set_name	(0X2E518,	"aBlaster");
 	create_strlit	(0X2E521,	0X7);
@@ -10065,15 +10078,6 @@ static Bytes_3(void) {
 	create_word	(0X2E554);
 	create_word	(0X2E556);
 	create_word	(0X2E558);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E55A);
 	create_word	(0X2E55C);
 	create_word	(0X2E55E);

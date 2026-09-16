@@ -628,10 +628,18 @@ current index `word_2E3EE` from candidate `word_2E3F0` ('I') or
 (1/2/0=unchanged) — unless a `word_328CC` bit (`0x100`/`0x80`) defers
 to a full-page jump instead: `ScrollClueEntryListPageUp`/
 `ScrollClueEntryListPageDown` (was `sub_13014`/`sub_12FED`, also
-shared with another unnamed caller, `sub_12D5C`), which move
+shared with `HandleClueEntryRowScrollInput` below), which move
 `word_2E3F0` by a fixed page size of `0x38` (56) entries/rows, clamped
 against `word_2E3EA+2`/`word_2E3F2` respectively, then call
-still-unnamed `sub_12FC1` (plausibly the actual page redraw).
+`RecomputeClueEntryPageBounds` (was `sub_12FC1` — **correction**: not
+a redraw as first speculated; it's pure bounds arithmetic, recomputing
+`word_2E3F2`/`word_2E3EC` from the new `word_2E3F0`, with a `/4` in
+its last-partial-page math confirming a 4-entries-per-row grid). The
+list's other scroll input, `HandleClueEntryRowScrollInput` (was
+`sub_12D5C`), handles 'H'/'P' for a single-row (step 4) scroll,
+falling through to the same two page-jump functions only at the
+current page's boundary — together these five functions cover the
+entire clue-entry-list scrolling mechanism end to end.
 
 `HandleClueCategorySelection` (was `sub_14D26`) is `RunClueEntryMenu`'s
 category-switching input handler: keyboard (`ESC`/digit keys, plus

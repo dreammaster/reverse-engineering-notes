@@ -4444,7 +4444,7 @@ loc_12BD1:                              ; CODE XREF: RunClueEntryMenu+3E↑j
 ; ---------------------------------------------------------------------------
 
 loc_12BE0:                              ; CODE XREF: RunClueEntryMenu+55↑j
-                call    sub_12D5C
+                call    HandleClueEntryRowScrollInput
                 cmp     errorCode, 0
                 jz      short loc_12BEF
                 call    ShowClueCategoryEntries
@@ -4610,8 +4610,8 @@ DrawClueEntryList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12D5C       proc near               ; CODE XREF: RunClueEntryMenu:loc_12BE0↑p
-                cmp     word_2E3EA, 0
+HandleClueEntryRowScrollInput proc near ; CODE XREF: RunClueEntryMenu:loc_12BE0↑p
+                cmp     word_2E3EA, 0   ; 'H'/'P' single-row (step 4) scroll for the clue entry list, paging via ScrollClueEntryListPageUp/Down only at the current page's top/bottom bound (word_2E3F0/word_2E3F2). errorCode=1/2, 0 if no active list/key. Called from RunClueEntryMenu.
                 jz      short loc_12D7B
                 mov     ax, word_2E3EE
                 cmp     byte_2E400, 0
@@ -4621,13 +4621,13 @@ sub_12D5C       proc near               ; CODE XREF: RunClueEntryMenu:loc_12BE0�
                 cmp     byte_2E400, 50h ; 'P'
                 jz      short loc_12DAD
 
-loc_12D7B:                              ; CODE XREF: sub_12D5C+5↑j
-                                        ; sub_12D5C+F↑j
+loc_12D7B:                              ; CODE XREF: HandleClueEntryRowScrollInput+5↑j
+                                        ; HandleClueEntryRowScrollInput+F↑j
                 mov     errorCode, 0
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12D82:                              ; CODE XREF: sub_12D5C+16↑j
+loc_12D82:                              ; CODE XREF: HandleClueEntryRowScrollInput+16↑j
                 cmp     word_2E3F0, ax
                 jz      short loc_12D90
                 mov     ax, word_2E3EE
@@ -4635,7 +4635,7 @@ loc_12D82:                              ; CODE XREF: sub_12D5C+16↑j
                 jmp     short loc_12DA3
 ; ---------------------------------------------------------------------------
 
-loc_12D90:                              ; CODE XREF: sub_12D5C+2A↑j
+loc_12D90:                              ; CODE XREF: HandleClueEntryRowScrollInput+2A↑j
                 test    word_328CC, 100h
                 jz      short loc_12DA0
                 call    ScrollClueEntryListPageUp
@@ -4643,17 +4643,17 @@ loc_12D90:                              ; CODE XREF: sub_12D5C+2A↑j
                 jmp     short loc_12DA3
 ; ---------------------------------------------------------------------------
 
-loc_12DA0:                              ; CODE XREF: sub_12D5C+3A↑j
+loc_12DA0:                              ; CODE XREF: HandleClueEntryRowScrollInput+3A↑j
                 mov     ax, word_2E3F0
 
-loc_12DA3:                              ; CODE XREF: sub_12D5C+32↑j
-                                        ; sub_12D5C+42↑j
+loc_12DA3:                              ; CODE XREF: HandleClueEntryRowScrollInput+32↑j
+                                        ; HandleClueEntryRowScrollInput+42↑j
                 mov     word_2E3EE, ax
                 mov     errorCode, 1
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12DAD:                              ; CODE XREF: sub_12D5C+1D↑j
+loc_12DAD:                              ; CODE XREF: HandleClueEntryRowScrollInput+1D↑j
                 cmp     word_2E3F2, ax
                 jz      short loc_12DBB
                 mov     ax, word_2E3EE
@@ -4661,7 +4661,7 @@ loc_12DAD:                              ; CODE XREF: sub_12D5C+1D↑j
                 jmp     short loc_12DCE
 ; ---------------------------------------------------------------------------
 
-loc_12DBB:                              ; CODE XREF: sub_12D5C+55↑j
+loc_12DBB:                              ; CODE XREF: HandleClueEntryRowScrollInput+55↑j
                 test    word_328CC, 80h
                 jz      short loc_12DCB
                 call    ScrollClueEntryListPageDown
@@ -4669,15 +4669,15 @@ loc_12DBB:                              ; CODE XREF: sub_12D5C+55↑j
                 jmp     short loc_12DCE
 ; ---------------------------------------------------------------------------
 
-loc_12DCB:                              ; CODE XREF: sub_12D5C+65↑j
+loc_12DCB:                              ; CODE XREF: HandleClueEntryRowScrollInput+65↑j
                 mov     ax, word_2E3F2
 
-loc_12DCE:                              ; CODE XREF: sub_12D5C+5D↑j
-                                        ; sub_12D5C+6D↑j
+loc_12DCE:                              ; CODE XREF: HandleClueEntryRowScrollInput+5D↑j
+                                        ; HandleClueEntryRowScrollInput+6D↑j
                 mov     word_2E3EE, ax
                 mov     errorCode, 2
                 retn
-sub_12D5C       endp
+HandleClueEntryRowScrollInput endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4976,9 +4976,9 @@ sub_12FB0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12FC1       proc near               ; CODE XREF: ScrollClueEntryListPageDown+11↓p
+RecomputeClueEntryPageBounds proc near  ; CODE XREF: ScrollClueEntryListPageDown+11↓p
                                         ; ScrollClueEntryListPageUp+1E↓p
-                mov     word_2E3EC, 0Eh
+                mov     word_2E3EC, 0Eh ; Recomputes the clue entry list's page window from the new word_2E3F0: word_2E3F2 = word_2E3F0+0x34, clamped to total count word_2E3F4; word_2E3EC (visible row count) defaults to 0xE, or (word_2E3F4-word_2E3F0)/4+1 on the last partial page. Called from ScrollClueEntryListPageUp/Down.
                 mov     ax, 34h ; '4'
                 add     ax, word_2E3F0
                 mov     word_2E3F2, ax
@@ -4993,22 +4993,22 @@ sub_12FC1       proc near               ; CODE XREF: ScrollClueEntryListPageDown
                 inc     ax
                 mov     word_2E3EC, ax
 
-locret_12FEC:                           ; CODE XREF: sub_12FC1+14↑j
+locret_12FEC:                           ; CODE XREF: RecomputeClueEntryPageBounds+14↑j
                 retn
-sub_12FC1       endp
+RecomputeClueEntryPageBounds endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-ScrollClueEntryListPageDown proc near   ; CODE XREF: sub_12D5C+67↑p
+ScrollClueEntryListPageDown proc near   ; CODE XREF: HandleClueEntryRowScrollInput+67↑p
                                         ; HandleClueEntryScrollInput+63↑p
                 mov     ax, word_2E3F0  ; Full page-down jump for the clue entry list: recomputes word_2E3F0 += 0x38 (word_2E3EE clamped to upper bound word_2E3F2), calls sub_12FC1 (redraw), errorCode=2. Called from HandleClueEntryScrollInput and sub_12D5C.
                 sub     word_2E3EE, ax
                 add     ax, 38h ; '8'
                 mov     word_2E3F0, ax
                 add     word_2E3EE, ax
-                call    sub_12FC1
+                call    RecomputeClueEntryPageBounds
                 mov     ax, word_2E3F2
                 cmp     word_2E3EE, ax
                 jbe     short loc_1300D
@@ -5023,7 +5023,7 @@ ScrollClueEntryListPageDown endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ScrollClueEntryListPageUp proc near     ; CODE XREF: sub_12D5C+3C↑p
+ScrollClueEntryListPageUp proc near     ; CODE XREF: HandleClueEntryRowScrollInput+3C↑p
                                         ; HandleClueEntryScrollInput+3F↑p
                 mov     ax, word_2E3F0  ; Full page-up jump for the clue entry list: recomputes word_2E3F0 -= 0x38 (clamped to word_2E3EA+2), adjusts word_2E3EE by the delta, calls sub_12FC1 (redraw), errorCode=1. Called from HandleClueEntryScrollInput and sub_12D5C.
                 sub     word_2E3EE, ax
@@ -5037,7 +5037,7 @@ ScrollClueEntryListPageUp proc near     ; CODE XREF: sub_12D5C+3C↑p
 loc_1302B:                              ; CODE XREF: ScrollClueEntryListPageUp+13↑j
                 mov     word_2E3F0, ax
                 add     word_2E3EE, ax
-                call    sub_12FC1
+                call    RecomputeClueEntryPageBounds
                 mov     errorCode, 1
                 retn
 ScrollClueEntryListPageUp endp
@@ -56594,7 +56594,7 @@ word_2E3EE      dw 0                    ; DATA XREF: ShowClueBook+1F3↑r
 word_2E3F0      dw 0                    ; DATA XREF: RunClueEntryMenu+95↑r
                                         ; RunClueEntryMenu+D7↑r ...
 word_2E3F2      dw 0                    ; DATA XREF: DrawClueEntryList+9A↑r
-                                        ; sub_12D5C+3F↑r ...
+                                        ; HandleClueEntryRowScrollInput+3F↑r ...
 word_2E3F4      dw 0                    ; DATA XREF: DrawClueEntryList:loc_12D2C↑r
                                         ; ShowClueCategoryEntries+4B↑w ...
 word_2E3F6      dw 0                    ; DATA XREF: ShowClueBook+7A↑w
