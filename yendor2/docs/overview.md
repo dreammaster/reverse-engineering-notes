@@ -3849,6 +3849,16 @@ only, without forcing a name onto `sub_2C0FE` itself.
 
 490 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PreloadMonsterStatsTable
+
+Named `sub_124EC` -> `PreloadMonsterStatsTable`, called once from
+`InitGame`: allocates a large one-time buffer and reads into it with
+the same `errorCode=9` `LoadClueBookMonsterEntry` uses for WORLD.DAT's
+MONSTER STATISTICS block, plausibly preloading the whole table at
+startup rather than per-entry.
+
+491 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

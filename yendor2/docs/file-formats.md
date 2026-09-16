@@ -611,7 +611,11 @@ each drawn via `DrawLabeledBCDIfNonzero` — a small reused helper
 label then the BCD4 value only if it's nonzero.
 `DrawRecordFieldBCDIfNonzero` is its sibling, taking a record pointer
 instead of a direct value pointer.
-The F2 "MONSTER STATISTICS" category follows the same pattern:
+The F2 "MONSTER STATISTICS" category follows the same pattern (and is
+plausibly preloaded wholesale at startup: `PreloadMonsterStatsTable`,
+was `sub_124EC`, called once from `InitGame`, allocates a large
+~18.4KB block and reads into it with the same `errorCode=9`
+`LoadClueBookMonsterEntry` uses for this data):
 `RunClueBookMonsterCategory` (called from `ShowClueBook`) calls
 `LoadClueBookMonsterEntry` once (reads `WORLD.DAT` block `0x32` for
 the current entry into a fresh buffer) then loops redrawing

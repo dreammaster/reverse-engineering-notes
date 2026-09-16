@@ -3286,7 +3286,7 @@ InitGame        proc far                ; CODE XREF: start+2F↑P
 loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 call    FileEntry_OpenFile
                 call    ErrorCheck
-                call    sub_124EC
+                call    PreloadMonsterStatsTable
                 call    sub_12449
                 mov     errorCode, 0Ah
                 mov     bx, 8FFBh
@@ -3718,8 +3718,8 @@ loadWorldDat5   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_124EC       proc near               ; CODE XREF: InitGame+58↑p
-                mov     errorCode, 1
+PreloadMonsterStatsTable proc near      ; CODE XREF: InitGame+58↑p
+                mov     errorCode, 1    ; Allocates a large (~18.4KB) block and reads into it with errorCode=9 -- the same code LoadClueBookMonsterEntry uses for WORLD.DAT block 0x32 (MONSTER STATISTICS), but with a much larger one-time buffer, plausibly preloading the whole table. Called once from InitGame.
                 mov     bx, 49Ah        ; numPara
                 call    allocMem
                 mov     word_3291A, ax
@@ -3732,7 +3732,7 @@ sub_124EC       proc near               ; CODE XREF: InitGame+58↑p
                 call    FileEntry_Read
                 mov     word_368A5, ds
                 retn
-sub_124EC       endp
+PreloadMonsterStatsTable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42682,7 +42682,7 @@ sub_27CC9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27CFE       proc far                ; CODE XREF: sub_124EC+16↑P
+sub_27CFE       proc far                ; CODE XREF: PreloadMonsterStatsTable+16↑P
                 push    si
                 mov     bx, 9043h
                 mov     si, 0CE5Bh
@@ -74273,8 +74273,8 @@ word_32916      dw 0                    ; DATA XREF: InitMusicDriver+34↑r
                                         ; sub_28619+6A↑w
 word_32918      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+3EA↑w
                                         ; ExtendDungeonCeilingTexture+21↑w ...
-word_3291A      dw 0                    ; DATA XREF: sub_124EC+E↑w
-                                        ; sub_124EC+1B↑r ...
+word_3291A      dw 0                    ; DATA XREF: PreloadMonsterStatsTable+E↑w
+                                        ; PreloadMonsterStatsTable+1B↑r ...
 _videoBufferSeg dw 0                    ; DATA XREF: sub_1075E+49↑r
                                         ; ShowClueBook+48↑r ...
 word_3291E      dw 0                    ; DATA XREF: RunGameDialog+5↑w

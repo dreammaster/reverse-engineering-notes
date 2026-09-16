@@ -1484,7 +1484,9 @@ static Bytes_0(void) {
 	set_name	(0X124AB,	"loadWorldDat5");
 	set_cmt	(0X124AE,	"this",	0);
 	set_cmt	(0X124CE,	"this",	0);
+	set_cmt	(0X124EC,	"Allocates a large (~18.4KB) block and reads into it with errorCode=9 -- the same code LoadClueBookMonsterEntry uses for WORLD.DAT block 0x32 (MONSTER STATISTICS), but with a much larger one-time buffer, plausibly preloading the whole table. Called once from InitGame.",	0);
 	create_insn	(0X124EC);
+	set_name	(0X124EC,	"PreloadMonsterStatsTable");
 	set_cmt	(0X124F2,	"numPara",	0);
 	create_insn	(0X1251D);
 	set_cmt	(0X12554,	"LoadItemCatalogRecord(ax=item id): maps in EMS item-catalog pages, copies the item's 58-byte record into a scratch buffer (0xB50). If [+2] is nonzero, also loads word_2E54A (the multi-stat-effect table ApplyMultiStatEffect walks) from an 8-word sub-block. Also sets up word_2E548 -- the 'current target' pointer read throughout the codebase -- based on a flag test on [+0xC]. The single most pervasively-used item lookup in the executable.",	0);
