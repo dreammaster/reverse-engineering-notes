@@ -5070,6 +5070,18 @@ traced end to end.
 
 594 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ExtractDecimalDigit
+
+Named `sub_18041` -> `ExtractDecimalDigit`, called repeatedly from
+`FormatNumber`'s own implementation: the digit-extraction helper for
+its digit-by-digit decimal conversion loop — divides the remaining
+value by a power-of-10 divisor, writes the quotient as an ASCII digit,
+subtracts it back out, and blanks a leading zero to a space unless a
+flag marks this as the final (ones) digit. Gives `FormatNumber`'s own
+internals a concrete, named building block.
+
+595 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -13624,14 +13624,14 @@ var_2           = word ptr -2
 
 loc_17FE7:                              ; CODE XREF: FormatNumber+16↑j
                 mov     [bp+var_4], 2710h
-                call    sub_18041
+                call    ExtractDecimalDigit
                 cmp     al, 0
                 jz      short loc_17FF7
                 mov     [bp+var_6], 1
 
 loc_17FF7:                              ; CODE XREF: FormatNumber+39↑j
                 mov     [bp+var_4], 3E8h
-                call    sub_18041
+                call    ExtractDecimalDigit
                 cmp     al, 0
                 jz      short loc_18007
                 mov     [bp+var_6], 1
@@ -13644,21 +13644,21 @@ loc_18007:                              ; CODE XREF: FormatNumber+49↑j
 
 loc_18011:                              ; CODE XREF: FormatNumber+53↑j
                 mov     [bp+var_4], 64h ; 'd'
-                call    sub_18041
+                call    ExtractDecimalDigit
                 cmp     al, 0
                 jz      short loc_18021
                 mov     [bp+var_6], 1
 
 loc_18021:                              ; CODE XREF: FormatNumber+63↑j
                 mov     [bp+var_4], 0Ah
-                call    sub_18041
+                call    ExtractDecimalDigit
                 cmp     al, 0
                 jz      short loc_18031
                 mov     [bp+var_6], 1
 
 loc_18031:                              ; CODE XREF: FormatNumber+73↑j
                 mov     [bp+var_4], 1
-                call    sub_18041
+                call    ExtractDecimalDigit
 
 loc_18039:                              ; CODE XREF: FormatNumber+2D↑j
                 mov     byte ptr [bx], 0
@@ -13672,9 +13672,9 @@ FormatNumber    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18041       proc near               ; CODE XREF: FormatNumber+34↑p
+ExtractDecimalDigit proc near           ; CODE XREF: FormatNumber+34↑p
                                         ; FormatNumber+44↑p ...
-                mov     ax, [bp-2]
+                mov     ax, [bp-2]      ; Divides [bp-2] by divisor [bp-4], writes the quotient digit at [bx] (+'0'), subtracts it back out of [bp-2], advances bx. Blanks a leading zero to a space unless [bp-6]==1. Called repeatedly from FormatNumber's digit-conversion loop.
                 mov     dx, 0
                 div     word ptr [bp-4]
                 mov     [bx], al
@@ -13688,10 +13688,10 @@ sub_18041       proc near               ; CODE XREF: FormatNumber+34↑p
                 jnz     short locret_18066
                 mov     byte ptr [bx-1], 20h ; ' '
 
-locret_18066:                           ; CODE XREF: sub_18041+19↑j
-                                        ; sub_18041+1F↑j
+locret_18066:                           ; CODE XREF: ExtractDecimalDigit+19↑j
+                                        ; ExtractDecimalDigit+1F↑j
                 retn
-sub_18041       endp
+ExtractDecimalDigit endp
 
 seg025          ends
 

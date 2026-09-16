@@ -3070,7 +3070,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X18031);
 	op_stkvar	(x,	0);
+	set_cmt	(0X18041,	"Divides [bp-2] by divisor [bp-4], writes the quotient digit at [bx] (+'0'), subtracts it back out of [bp-2], advances bx. Blanks a leading zero to a space unless [bp-6]==1. Called repeatedly from FormatNumber's digit-conversion loop.",	0);
 	create_insn	(0X18041);
+	set_name	(0X18041,	"ExtractDecimalDigit");
 	set_cmt	(0X18068,	"PrepareTrapEffectSlots(ax=effect id): returns bx = g_trapEffectDefs + id*0xC (the effect-definition record). Also clears the [+8..+0x14) fields of all 4 g_partyEffectIconSlots entries first -- reset before repopulate. ax is left 0 on return.",	0);
 	create_insn	(0X18068);
 	set_name	(0X18068,	"PrepareTrapEffectSlots");
@@ -3192,6 +3194,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1842B,	"DOS - 2+ - CLOSE A FILE WITH HANDLE\nBX = file handle",	0);
 	create_insn	(x=0X1842B);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1843D);
 	create_insn	(0X18440);
 	create_insn	(x=0X18448);
@@ -3204,15 +3215,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1845C,	"DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)\nCX = attributes for file\nDS:DX -> ASCIZ filename (may include drive and path)",	0);
 	create_insn	(x=0X1845C);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1846B);
 	create_insn	(0X18472);
 	set_name	(0X18472,	"FileEntry_OpenFile");
@@ -5219,6 +5221,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F5DD);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1F5FF);
 	create_insn	(x=0X1F613);
 	op_hex		(x,	1);
@@ -5243,15 +5254,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1F898,	"msg",	0);
 	create_insn	(0X1F8C7);
 	set_name	(0X1F8C7,	"ConfirmQuitToDos");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1F8CC,	"styleNum",	0);
 	create_insn	(0X1F8EF);
 	create_insn	(x=0X1F8F5);
@@ -7049,6 +7051,15 @@ static Bytes_2(void) {
 	create_insn	(0X265BD);
 	create_insn	(x=0X265D5);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X265E9);
 	op_hex		(x,	1);
 	create_insn	(x=0X265FE);
@@ -7060,15 +7071,6 @@ static Bytes_2(void) {
 	set_cmt	(0X266A9,	"Clears [si+0x15C] high bits (above 0xFFF) then calls SaveAndCloseContainer for each of the 3 alternate-bag marker offsets (0x17C/0x1A2/0x1C8) -- closes every open bag for the current party member. Called from RestorePortraitAreaAtPosition.",	0);
 	create_insn	(0X266A9);
 	set_name	(0X266A9,	"CloseAllAlternateBags");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X266B4);
 	op_hex		(x,	1);
 	set_cmt	(0X266D4,	"Places the held item into slot di and adds its value to one of 3 equipment-section running totals (+0x180/+0x1A6/+0x1CC, selected by [+0x15C] flag bits) or the general total (+0x118) -- the exact mirror of PickUpItemFromSlot. Called from SwapHeldItemWithSlot and PlaceHeldItemIntoEmptySlot.",	0);
@@ -9360,9 +9362,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B771,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B771);
 	set_name	(0X2B771,	"LoadConversationText_800");
-	set_cmt	(0X2B78D,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
-	create_insn	(0X2B78D);
-	set_name	(0X2B78D,	"ShowConversationText_4000");
 }
 
 //------------------------------------------------------------------------
@@ -9372,6 +9371,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2B78D,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
+	create_insn	(0X2B78D);
+	set_name	(0X2B78D,	"ShowConversationText_4000");
 	create_insn	(0X2B7FB);
 	create_insn	(0X2B845);
 	set_cmt	(0X2B866,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
