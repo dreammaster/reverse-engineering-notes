@@ -575,7 +575,7 @@ loc_104AF:                              ; CODE XREF: start+4AA↑j
 loc_104B2:                              ; CODE XREF: start+347↑j
                 cmp     word_31946, 0
                 jz      short loc_104D2
-                call    sub_18C79
+                call    HandleItemDropOnPartyPortrait
                 cmp     errorCode, 0
                 jnz     short loc_104CF
                 call    ClearStatusPanelIfDirty
@@ -10504,7 +10504,7 @@ loc_16620:                              ; CODE XREF: HandleDungeonInput+215↑j
 ; ---------------------------------------------------------------------------
 
 loc_16634:                              ; CODE XREF: HandleDungeonInput+223↑j
-                call    sub_18C79
+                call    HandleItemDropOnPartyPortrait
                 cmp     errorCode, 0
                 jnz     short loc_16645
                 call    DrawMouseCursor
@@ -12410,7 +12410,7 @@ loc_174A2:                              ; CODE XREF: RunShopScreen+132↑j
 ; ---------------------------------------------------------------------------
 
 loc_174B1:                              ; CODE XREF: RunShopScreen+17C↑j
-                call    sub_18C79
+                call    HandleItemDropOnPartyPortrait
                 cmp     errorCode, 0
                 jnz     short loc_1746B
                 push    cs
@@ -15201,7 +15201,7 @@ loc_18B3D:                              ; CODE XREF: sub_1869D+478↑j
 
 loc_18B40:                              ; CODE XREF: sub_1869D+F8↑j
                 push    cs
-                call    near ptr sub_18C79
+                call    near ptr HandleItemDropOnPartyPortrait
                 cmp     errorCode, 0
                 jnz     short loc_18B91
                 mov     si, word_32924
@@ -15328,23 +15328,23 @@ sub_1869D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18C79       proc far                ; CODE XREF: start+4B9↑P
+HandleItemDropOnPartyPortrait proc far  ; CODE XREF: start+4B9↑P
                                         ; HandleDungeonInput:loc_16634↑P ...
-                mov     ax, word_2E76E
+                mov     ax, word_2E76E  ; Drop-held-item-onto-portrait handler (give/equip via drag-and-drop): hit-tests table 0x61C2 for one of the 4 portrait zones, checks carry-capacity, then dispatches on the item's [+0xC] category flags. Called from `start` and HandleDungeonInput.
                 mov     bx, word_2E770
                 mov     si, 61C2h
                 call    HitTestRegionTable
                 cmp     ax, 0
                 jnz     short loc_18C99
 
-loc_18C8D:                              ; CODE XREF: sub_18C79+65↓j
-                                        ; sub_18C79+79↓j ...
+loc_18C8D:                              ; CODE XREF: HandleItemDropOnPartyPortrait+65↓j
+                                        ; HandleItemDropOnPartyPortrait+79↓j ...
                 call    FlashStatusWarning
                 mov     errorCode, 1
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_18C99:                              ; CODE XREF: sub_18C79+12↑j
+loc_18C99:                              ; CODE XREF: HandleItemDropOnPartyPortrait+12↑j
                 cmp     ax, 1
                 jnz     short loc_18CAF
                 mov     word_328BC, 8
@@ -15353,7 +15353,7 @@ loc_18C99:                              ; CODE XREF: sub_18C79+12↑j
                 jmp     short loc_18CEF
 ; ---------------------------------------------------------------------------
 
-loc_18CAF:                              ; CODE XREF: sub_18C79+23↑j
+loc_18CAF:                              ; CODE XREF: HandleItemDropOnPartyPortrait+23↑j
                 cmp     ax, 0Bh
                 jnz     short loc_18CC5
                 mov     word_328BC, 40h ; '@'
@@ -15362,7 +15362,7 @@ loc_18CAF:                              ; CODE XREF: sub_18C79+23↑j
                 jmp     short loc_18CEF
 ; ---------------------------------------------------------------------------
 
-loc_18CC5:                              ; CODE XREF: sub_18C79+39↑j
+loc_18CC5:                              ; CODE XREF: HandleItemDropOnPartyPortrait+39↑j
                 cmp     ax, 15h
                 jnz     short loc_18CDB
                 mov     word_328BC, 78h ; 'x'
@@ -15371,15 +15371,15 @@ loc_18CC5:                              ; CODE XREF: sub_18C79+39↑j
                 jmp     short loc_18CEF
 ; ---------------------------------------------------------------------------
 
-loc_18CDB:                              ; CODE XREF: sub_18C79+4F↑j
+loc_18CDB:                              ; CODE XREF: HandleItemDropOnPartyPortrait+4F↑j
                 cmp     ax, 1Fh
                 jnz     short loc_18C8D
                 mov     word_328BC, 0B0h
                 mov     word_328C0, 8
                 mov     si, 95F1h
 
-loc_18CEF:                              ; CODE XREF: sub_18C79+34↑j
-                                        ; sub_18C79+4A↑j ...
+loc_18CEF:                              ; CODE XREF: HandleItemDropOnPartyPortrait+34↑j
+                                        ; HandleItemDropOnPartyPortrait+4A↑j ...
                 cmp     word ptr [si], 0
                 jz      short loc_18C8D
                 mov     word_32924, si
@@ -15395,8 +15395,8 @@ loc_18CEF:                              ; CODE XREF: sub_18C79+34↑j
                 jmp     loc_18C8D
 ; ---------------------------------------------------------------------------
 
-loc_18D18:                              ; CODE XREF: sub_18C79+8D↑j
-                                        ; sub_18C79+9A↑j
+loc_18D18:                              ; CODE XREF: HandleItemDropOnPartyPortrait+8D↑j
+                                        ; HandleItemDropOnPartyPortrait+9A↑j
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
                 mov     cx, word_31948
@@ -15412,55 +15412,55 @@ loc_18D18:                              ; CODE XREF: sub_18C79+8D↑j
                 jmp     loc_18DC7
 ; ---------------------------------------------------------------------------
 
-loc_18D47:                              ; CODE XREF: sub_18C79+C9↑j
+loc_18D47:                              ; CODE XREF: HandleItemDropOnPartyPortrait+C9↑j
                 test    word ptr [bx+0Ch], 400h
                 jz      short loc_18D51
                 jmp     loc_18DED
 ; ---------------------------------------------------------------------------
 
-loc_18D51:                              ; CODE XREF: sub_18C79+D3↑j
+loc_18D51:                              ; CODE XREF: HandleItemDropOnPartyPortrait+D3↑j
                 test    word ptr [bx+0Ch], 200h
                 jz      short loc_18D5B
                 jmp     loc_18E0F
 ; ---------------------------------------------------------------------------
 
-loc_18D5B:                              ; CODE XREF: sub_18C79+DD↑j
+loc_18D5B:                              ; CODE XREF: HandleItemDropOnPartyPortrait+DD↑j
                 jmp     loc_18E84
 ; ---------------------------------------------------------------------------
 
-loc_18D5E:                              ; CODE XREF: sub_18C79+B4↑j
+loc_18D5E:                              ; CODE XREF: HandleItemDropOnPartyPortrait+B4↑j
                 cmp     word ptr [si+13Ah], 0
                 jz      short loc_18D68
                 jmp     loc_18E84
 ; ---------------------------------------------------------------------------
 
-loc_18D68:                              ; CODE XREF: sub_18C79+EA↑j
+loc_18D68:                              ; CODE XREF: HandleItemDropOnPartyPortrait+EA↑j
                 mov     [si+13Ah], cx
                 mov     [si+13Ch], dx
                 mov     word ptr [si+0BEh], 0
                 jmp     loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18D79:                              ; CODE XREF: sub_18C79+BB↑j
+loc_18D79:                              ; CODE XREF: HandleItemDropOnPartyPortrait+BB↑j
                 cmp     word ptr [si+13Eh], 0
                 jz      short loc_18D83
                 jmp     loc_18E84
 ; ---------------------------------------------------------------------------
 
-loc_18D83:                              ; CODE XREF: sub_18C79+105↑j
+loc_18D83:                              ; CODE XREF: HandleItemDropOnPartyPortrait+105↑j
                 mov     [si+13Eh], cx
                 call    TryLoadNextContainerLink
                 mov     [si+140h], dx
                 jmp     loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18D91:                              ; CODE XREF: sub_18C79+C2↑j
+loc_18D91:                              ; CODE XREF: HandleItemDropOnPartyPortrait+C2↑j
                 cmp     word ptr [si+142h], 0
                 jz      short loc_18D9B
                 jmp     loc_18E84
 ; ---------------------------------------------------------------------------
 
-loc_18D9B:                              ; CODE XREF: sub_18C79+11D↑j
+loc_18D9B:                              ; CODE XREF: HandleItemDropOnPartyPortrait+11D↑j
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
                 mov     bx, ax
@@ -15471,34 +15471,34 @@ loc_18D9B:                              ; CODE XREF: sub_18C79+11D↑j
                 jmp     loc_18E84
 ; ---------------------------------------------------------------------------
 
-loc_18DB6:                              ; CODE XREF: sub_18C79+131↑j
-                                        ; sub_18C79+138↑j
+loc_18DB6:                              ; CODE XREF: HandleItemDropOnPartyPortrait+131↑j
+                                        ; HandleItemDropOnPartyPortrait+138↑j
                 mov     [si+142h], cx
                 mov     [si+144h], dx
                 mov     word ptr [si+0C0h], 0
                 jmp     loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18DC7:                              ; CODE XREF: sub_18C79+CB↑j
+loc_18DC7:                              ; CODE XREF: HandleItemDropOnPartyPortrait+CB↑j
                 cmp     word ptr [si+146h], 0
                 jz      short loc_18DD1
                 jmp     loc_18E84
 ; ---------------------------------------------------------------------------
 
-loc_18DD1:                              ; CODE XREF: sub_18C79+153↑j
+loc_18DD1:                              ; CODE XREF: HandleItemDropOnPartyPortrait+153↑j
                 test    word ptr [si+15Ch], 20h
                 jz      short loc_18DDC
                 jmp     loc_18E84
 ; ---------------------------------------------------------------------------
 
-loc_18DDC:                              ; CODE XREF: sub_18C79+15E↑j
+loc_18DDC:                              ; CODE XREF: HandleItemDropOnPartyPortrait+15E↑j
                 mov     [si+146h], cx
                 mov     [si+148h], dx
                 mov     word ptr [si+0C2h], 0
                 jmp     loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18DED:                              ; CODE XREF: sub_18C79+D5↑j
+loc_18DED:                              ; CODE XREF: HandleItemDropOnPartyPortrait+D5↑j
                 cmp     word ptr [si+14Ah], 0
                 jnz     short loc_18DFE
                 mov     [si+14Ah], cx
@@ -15506,7 +15506,7 @@ loc_18DED:                              ; CODE XREF: sub_18C79+D5↑j
                 jmp     short loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18DFE:                              ; CODE XREF: sub_18C79+179↑j
+loc_18DFE:                              ; CODE XREF: HandleItemDropOnPartyPortrait+179↑j
                 cmp     word ptr [si+14Eh], 0
                 jnz     short loc_18E84
                 mov     [si+14Eh], cx
@@ -15514,7 +15514,7 @@ loc_18DFE:                              ; CODE XREF: sub_18C79+179↑j
                 jmp     short loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18E0F:                              ; CODE XREF: sub_18C79+DF↑j
+loc_18E0F:                              ; CODE XREF: HandleItemDropOnPartyPortrait+DF↑j
                 mov     bx, ax
                 test    word ptr [bx+2], 8000h
                 jnz     short loc_18E36
@@ -15529,41 +15529,41 @@ loc_18E0F:                              ; CODE XREF: sub_18C79+DF↑j
                 jmp     short loc_18E84
 ; ---------------------------------------------------------------------------
 
-loc_18E36:                              ; CODE XREF: sub_18C79+19D↑j
+loc_18E36:                              ; CODE XREF: HandleItemDropOnPartyPortrait+19D↑j
                 cmp     word ptr [si+152h], 0
                 jnz     short loc_18E84
                 mov     [si+152h], cx
                 jmp     short loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18E43:                              ; CODE XREF: sub_18C79+1A4↑j
+loc_18E43:                              ; CODE XREF: HandleItemDropOnPartyPortrait+1A4↑j
                 cmp     word ptr [si+154h], 0
                 jnz     short loc_18E84
                 mov     [si+154h], cx
                 jmp     short loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18E50:                              ; CODE XREF: sub_18C79+1AB↑j
+loc_18E50:                              ; CODE XREF: HandleItemDropOnPartyPortrait+1AB↑j
                 cmp     word ptr [si+156h], 0
                 jnz     short loc_18E84
                 mov     [si+156h], cx
                 jmp     short loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18E5D:                              ; CODE XREF: sub_18C79+1B2↑j
+loc_18E5D:                              ; CODE XREF: HandleItemDropOnPartyPortrait+1B2↑j
                 cmp     word ptr [si+158h], 0
                 jnz     short loc_18E84
                 mov     [si+158h], cx
                 jmp     short loc_18E75
 ; ---------------------------------------------------------------------------
 
-loc_18E6A:                              ; CODE XREF: sub_18C79+1B9↑j
+loc_18E6A:                              ; CODE XREF: HandleItemDropOnPartyPortrait+1B9↑j
                 cmp     word ptr [si+15Ah], 0
                 jnz     short loc_18E84
                 mov     [si+15Ah], cx
 
-loc_18E75:                              ; CODE XREF: sub_18C79+FD↑j
-                                        ; sub_18C79+14B↑j ...
+loc_18E75:                              ; CODE XREF: HandleItemDropOnPartyPortrait+FD↑j
+                                        ; HandleItemDropOnPartyPortrait+14B↑j ...
                 mov     di, 0AFA8h
                 mov     [di], cx
                 mov     ax, cx
@@ -15571,8 +15571,8 @@ loc_18E75:                              ; CODE XREF: sub_18C79+FD↑j
                 jmp     loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18E84:                              ; CODE XREF: sub_18C79:loc_18D5B↑j
-                                        ; sub_18C79+EC↑j ...
+loc_18E84:                              ; CODE XREF: HandleItemDropOnPartyPortrait:loc_18D5B↑j
+                                        ; HandleItemDropOnPartyPortrait+EC↑j ...
                 cmp     word ptr [si+11Ah], 0
                 jnz     short loc_18E99
                 mov     [si+11Ah], cx
@@ -15581,7 +15581,7 @@ loc_18E84:                              ; CODE XREF: sub_18C79:loc_18D5B↑j
                 jmp     loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18E99:                              ; CODE XREF: sub_18C79+210↑j
+loc_18E99:                              ; CODE XREF: HandleItemDropOnPartyPortrait+210↑j
                 cmp     word ptr [si+11Eh], 0
                 jnz     short loc_18EAD
                 mov     [si+11Eh], cx
@@ -15590,7 +15590,7 @@ loc_18E99:                              ; CODE XREF: sub_18C79+210↑j
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18EAD:                              ; CODE XREF: sub_18C79+225↑j
+loc_18EAD:                              ; CODE XREF: HandleItemDropOnPartyPortrait+225↑j
                 cmp     word ptr [si+122h], 0
                 jnz     short loc_18EC1
                 mov     [si+122h], cx
@@ -15599,7 +15599,7 @@ loc_18EAD:                              ; CODE XREF: sub_18C79+225↑j
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18EC1:                              ; CODE XREF: sub_18C79+239↑j
+loc_18EC1:                              ; CODE XREF: HandleItemDropOnPartyPortrait+239↑j
                 cmp     word ptr [si+126h], 0
                 jnz     short loc_18ED5
                 mov     [si+126h], cx
@@ -15608,7 +15608,7 @@ loc_18EC1:                              ; CODE XREF: sub_18C79+239↑j
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18ED5:                              ; CODE XREF: sub_18C79+24D↑j
+loc_18ED5:                              ; CODE XREF: HandleItemDropOnPartyPortrait+24D↑j
                 cmp     word ptr [si+12Ah], 0
                 jnz     short loc_18EE9
                 mov     [si+12Ah], cx
@@ -15617,7 +15617,7 @@ loc_18ED5:                              ; CODE XREF: sub_18C79+24D↑j
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18EE9:                              ; CODE XREF: sub_18C79+261↑j
+loc_18EE9:                              ; CODE XREF: HandleItemDropOnPartyPortrait+261↑j
                 cmp     word ptr [si+12Eh], 0
                 jnz     short loc_18EFD
                 mov     [si+12Eh], cx
@@ -15626,7 +15626,7 @@ loc_18EE9:                              ; CODE XREF: sub_18C79+261↑j
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18EFD:                              ; CODE XREF: sub_18C79+275↑j
+loc_18EFD:                              ; CODE XREF: HandleItemDropOnPartyPortrait+275↑j
                 cmp     word ptr [si+132h], 0
                 jnz     short loc_18F11
                 mov     [si+132h], cx
@@ -15635,25 +15635,25 @@ loc_18EFD:                              ; CODE XREF: sub_18C79+275↑j
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
 
-loc_18F11:                              ; CODE XREF: sub_18C79+289↑j
+loc_18F11:                              ; CODE XREF: HandleItemDropOnPartyPortrait+289↑j
                 cmp     word ptr [si+136h], 0
                 jz      short loc_18F1B
                 jmp     loc_18C8D
 ; ---------------------------------------------------------------------------
 
-loc_18F1B:                              ; CODE XREF: sub_18C79+29D↑j
+loc_18F1B:                              ; CODE XREF: HandleItemDropOnPartyPortrait+29D↑j
                 mov     [si+136h], cx
                 call    TryLoadNextContainerLink
                 mov     [si+138h], dx
 
-loc_18F26:                              ; CODE XREF: sub_18C79+115↑j
-                                        ; sub_18C79+208↑j ...
+loc_18F26:                              ; CODE XREF: HandleItemDropOnPartyPortrait+115↑j
+                                        ; HandleItemDropOnPartyPortrait+208↑j ...
                 cmp     word_31948, 11h
                 jz      short loc_18F34
                 mov     ax, word_3194A
                 add     [si+118h], ax
 
-loc_18F34:                              ; CODE XREF: sub_18C79+2B2↑j
+loc_18F34:                              ; CODE XREF: HandleItemDropOnPartyPortrait+2B2↑j
                 mov     word_3194A, 0
                 mov     word_31948, 0
                 mov     word_3194C, 0
@@ -15665,7 +15665,7 @@ loc_18F34:                              ; CODE XREF: sub_18C79+2B2↑j
                 call    DrawPartyMemberStatusPanel
                 mov     errorCode, 0
                 retf
-sub_18C79       endp
+HandleItemDropOnPartyPortrait endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15699,8 +15699,8 @@ RestoreAllPortraitsFromEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TryLoadNextContainerLink proc near      ; CODE XREF: sub_18C79+10E↑p
-                                        ; sub_18C79+216↑p ...
+TryLoadNextContainerLink proc near      ; CODE XREF: HandleItemDropOnPartyPortrait+10E↑p
+                                        ; HandleItemDropOnPartyPortrait+216↑p ...
                 test    word ptr [bx+0Ch], 2000h ; If the item is a container ([+0xC] bit 0x2000) and dx==0, calls LoadNextContainerInChain and stores the result in dx; no-op otherwise. Called 9 times from sub_18C79.
                 jnz     short loc_18FCD
                 retn
@@ -18856,7 +18856,7 @@ seg039          segment byte public 'CODE' use16
 
 
 ApplyMultiStatEffectForItem proc far    ; CODE XREF: HandleIconBarItemExpiry+38↑P
-                                        ; sub_18C79+203↑P ...
+                                        ; HandleItemDropOnPartyPortrait+203↑P ...
                 push    si              ; ADD-side mirror of RemoveMultiStatEffect: walks the loaded item's multi-stat-effect table (word_2E54A), adding each entry's amount to the matching party field (capped at 0x3E7), then sub_1AA9B+UpdatePartyAverageStatTiers. Distinct from the higher-level ApplyMultiStatEffect command handler. Called from HandleIconBarItemExpiry and sub_18C79, among others.
                 push    di
                 call    LoadItemCatalogRecord
@@ -19898,7 +19898,7 @@ seg042          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-RecomputeEquipmentStatBonuses proc far  ; CODE XREF: sub_18C79+2DE↑P
+RecomputeEquipmentStatBonuses proc far  ; CODE XREF: HandleItemDropOnPartyPortrait+2DE↑P
                                         ; RefreshCarryCapacityAndAttributeBonuses:loc_1AB19↑P ...
                 push    cx              ; Resets [si+0x48..0x50]/[si+0x88..0x90] from their base values ([si+0x32..0x3A]/[si+0x72..0x7A]), then adds each equipped item's catalog stat bonus (weapon +0x13A, slot +0x142, 3-array +0x146, 5-array +0x152) via LoadItemCatalogRecord. Also sets/clears [si+0x15C] bit 0x20 from the +0x142 item's catalog flags. A full equipment-derived stat recompute. Called from sub_18C79, sub_1AA9B, and sub_274B4.
                 push    dx

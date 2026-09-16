@@ -6152,6 +6152,18 @@ detail. Updated all 3 informal `sub_1BBED` references in
 
 697 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleItemDropOnPartyPortrait
+
+Named `sub_18C79` -> `HandleItemDropOnPartyPortrait`, called from
+`start` and `HandleDungeonInput` — the "drop held item onto a party
+member's portrait" handler (give/equip via drag-and-drop). Hit-tests
+the same table `HandlePartyStatusPanelInput` uses to pick one of the
+4 portrait zones, checks whether the held item's weight fits the
+character's remaining carry capacity, then dispatches on the item's
+category flags to apply it appropriately.
+
+698 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

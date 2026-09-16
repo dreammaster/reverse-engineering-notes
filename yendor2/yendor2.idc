@@ -3449,7 +3449,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18C6B);
 	op_hex		(x,	1);
+	set_cmt	(0X18C79,	"Drop-held-item-onto-portrait handler (give/equip via drag-and-drop): hit-tests table 0x61C2 for one of the 4 portrait zones, checks carry-capacity, then dispatches on the item's [+0xC] category flags. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X18C79);
+	set_name	(0X18C79,	"HandleItemDropOnPartyPortrait");
 	create_insn	(0X18C99);
 	create_insn	(0X18CAF);
 	create_insn	(0X18CC5);
@@ -4728,6 +4730,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1D1D4,	"Generic single-line text input editor (bx=buffer, cx=max length): draws a '-' cursor, polls keyboard for Enter (confirm, errorCode=0), Backspace (delete/beep), Escape (cancel, errorCode=2), or printable chars (append/beep at limit). One of its 6 call sites is inside EditCharacterName.",	0);
 	create_insn	(0X1D1D4);
 	set_name	(0X1D1D4,	"EditTextField");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1D1E9);
 	create_insn	(0X1D213);
 	create_insn	(0X1D23F);
@@ -4738,15 +4749,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: replays whatever picture is already showing (entry 2, since word_2E530/532 aren't reset here) via ShowIntroPicture's fade+wait-for-key -- doesn't show distinct content, so its actual purpose (About/credits/register nag?) isn't confirmed. I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
 	create_insn	(0X1D2A6);
 	set_name	(0X1D2A6,	"RunTitleScreen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1D2BB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D2C3);
@@ -6426,6 +6428,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X233F5);
 	op_hex		(x,	1);
 	set_name	(0X233F5,	"TryActivateMonsterByDistance");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X233FD);
 	create_insn	(x=0X23404);
 	op_hex		(x,	1);
@@ -6446,15 +6457,6 @@ static Bytes_2(void) {
 	set_cmt	(0X234D3,	"Draws one monster's info panel (si = g_monsterSlots entry): name strings, then progressively more detail icons as the party's average word_36CA9 stat (an 'identify'-style tier) crosses 3 thresholds, selected by 2-bit quality flags on the monster's own [+0xC] field.",	0);
 	create_insn	(0X234D3);
 	set_name	(0X234D3,	"DrawMonsterInfoPanel");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X234D9);
 	op_hex		(x,	1);
 	create_insn	(x=0X234E5);
@@ -8204,10 +8206,6 @@ static Bytes_3(void) {
 	set_cmt	(0X28CB1,	"Reads WORLD.DAT block 3 for a given position (ax), preserving the caller's own block-read context (nested-read guard), and returns one byte from the result. Exact meaning of the byte not identified. Called from RevealMapRegion/RevealMapRegionRow.",	0);
 	create_insn	(0X28CB1);
 	set_name	(0X28CB1,	"ReadMapCellAttributeByte");
-	set_cmt	(0X28CC2,	"this",	0);
-	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
-	create_insn	(0X28CFF);
-	set_name	(0X28CFF,	"RevealMapRegion");
 }
 
 //------------------------------------------------------------------------
@@ -8217,6 +8215,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X28CC2,	"this",	0);
+	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
+	create_insn	(0X28CFF);
+	set_name	(0X28CFF,	"RevealMapRegion");
 	create_insn	(x=0X28D1D);
 	op_hex		(x,	1);
 	create_insn	(0X28D2D);
@@ -10856,6 +10858,15 @@ static Bytes_4(void) {
 	set_name	(0X351F8,	"aRogue");
 	create_strlit	(0X35203,	0XB);
 	set_name	(0X35203,	"aMonk");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3520E,	0XB);
 	set_name	(0X3520E,	"aAlchemist");
 	create_strlit	(0X35219,	0XB);
@@ -10890,15 +10901,6 @@ static Bytes_4(void) {
 	set_name	(0X352AD,	"aEnterTheName");
 	create_strlit	(0X352BC,	0XF);
 	set_name	(0X352BC,	"aKeepCharacter");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X352CB,	0X12);
 	set_name	(0X352CB,	"aCharacterPrevi");
 	create_strlit	(0X352DD,	0X7);
