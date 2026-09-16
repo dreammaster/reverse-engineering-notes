@@ -18186,7 +18186,7 @@ loc_1A41B:                              ; CODE XREF: TravelToDestination+24↑j
 loc_1A42E:                              ; CODE XREF: TravelToDestination+35↑j
                 test    word ptr [si+0Eh], 4000h
                 jz      short loc_1A445
-                call    sub_1A582
+                call    TickTravelResourceAilments
                 or      word_36C79, 2
                 mov     word_36CBF, 0
                 jmp     short loc_1A451
@@ -18333,8 +18333,8 @@ IsDestinationUnlocked endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A582       proc near               ; CODE XREF: TravelToDestination+45↑p
-                and     word_328C4, 0FFBFh
+TickTravelResourceAilments proc near    ; CODE XREF: TravelToDestination+45↑p
+                and     word_328C4, 0FFBFh ; Clears word_328C4 bit 0x40, then calls CheckAndTickAvailableAilment 3x with (ax=9,cx=word_36C85), (ax=0xF,cx=word_36C89), (ax=0xC,cx=word_36C8B) -- checks 3 resource/consumable item types for availability during travel, plausibly food/water/light-source tracking. Called from TravelToDestination.
                 mov     cx, word_36C85
                 mov     ax, 9
                 call    CheckAndTickAvailableAilment
@@ -18345,14 +18345,14 @@ sub_1A582       proc near               ; CODE XREF: TravelToDestination+45↑p
                 mov     ax, 0Ch
                 call    CheckAndTickAvailableAilment
                 retn
-sub_1A582       endp
+TickTravelResourceAilments endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-CheckAndTickAvailableAilment proc near  ; CODE XREF: sub_1A582+C↑p
-                                        ; sub_1A582+16↑p ...
+CheckAndTickAvailableAilment proc near  ; CODE XREF: TickTravelResourceAilments+C↑p
+                                        ; TickTravelResourceAilments+16↑p ...
                 cmp     cx, 0           ; Loops cx times calling IsItemRangeAvailable(ax); calls TickStatusEffects whenever it sets word_32974 nonzero. Called 3 times from sub_1A582.
                 jnz     short loc_1A5AC
                 retn
@@ -85886,13 +85886,13 @@ word_36C81      dw 0                    ; DATA XREF: sub_219FA+23D↑r
                                         ; UnlockDoorCommand+9A↑r ...
 word_36C83      dw 0                    ; DATA XREF: TickWorldAilments+4B↑r
                                         ; TickStatusEffects+1B↑w ...
-word_36C85      dw 0                    ; DATA XREF: sub_1A582+5↑r
+word_36C85      dw 0                    ; DATA XREF: TickTravelResourceAilments+5↑r
                                         ; TickWorldAilments+4E↑r ...
 word_36C87      dw 0                    ; DATA XREF: TickWorldAilments+52↑r
                                         ; TickStatusEffects+21↑w ...
-word_36C89      dw 0                    ; DATA XREF: sub_1A582+F↑r
+word_36C89      dw 0                    ; DATA XREF: TickTravelResourceAilments+F↑r
                                         ; TickWorldAilments+56↑r ...
-word_36C8B      dw 0                    ; DATA XREF: sub_1A582+19↑r
+word_36C8B      dw 0                    ; DATA XREF: TickTravelResourceAilments+19↑r
                                         ; TickWorldAilments+5A↑r ...
 word_36C8D      dw 0                    ; DATA XREF: TickWorldAilments+5E↑r
                                         ; TickStatusEffects+27↑w ...

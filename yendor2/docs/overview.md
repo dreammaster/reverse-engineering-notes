@@ -5015,6 +5015,19 @@ scaled threshold bonus into `+0x3A`/`+0x7A`.
 
 590 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TickTravelResourceAilments
+
+Named `sub_1A582` -> `TickTravelResourceAilments`, called once from
+`TravelToDestination` — resolves the caller referenced in an earlier
+`CheckAndTickAvailableAilment` entry. Clears `word_328C4` bit `0x40`,
+then calls `CheckAndTickAvailableAilment` 3 times with distinct
+(item/effect id, range/count) pairs — checking 3 resource/consumable
+item types for availability during world travel, plausibly
+food/water/light-source tracking, though the specific item ids aren't
+confirmed.
+
+591 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

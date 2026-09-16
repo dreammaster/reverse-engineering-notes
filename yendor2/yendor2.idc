@@ -3775,8 +3775,10 @@ static Bytes_1(void) {
 	set_cmt	(0X1A51D,	"msg",	0);
 	create_insn	(0X1A533);
 	create_insn	(0X1A574);
+	set_cmt	(0X1A582,	"Clears word_328C4 bit 0x40, then calls CheckAndTickAvailableAilment 3x with (ax=9,cx=word_36C85), (ax=0xF,cx=word_36C89), (ax=0xC,cx=word_36C8B) -- checks 3 resource/consumable item types for availability during travel, plausibly food/water/light-source tracking. Called from TravelToDestination.",	0);
 	create_insn	(x=0X1A582);
 	op_hex		(x,	1);
+	set_name	(0X1A582,	"TickTravelResourceAilments");
 	set_cmt	(0X1A5A6,	"Loops cx times calling IsItemRangeAvailable(ax); calls TickStatusEffects whenever it sets word_32974 nonzero. Called 3 times from sub_1A582.",	0);
 	create_insn	(0X1A5A6);
 	set_name	(0X1A5A6,	"CheckAndTickAvailableAilment");
@@ -5298,6 +5300,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1FC21);
 	op_hex		(x,	1);
 	set_name	(0X1FC21,	"RestoreInt1cVector");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1FC34);
 	op_hex		(x,	1);
 	set_cmt	(0X1FC37,	"DOS - SET INTERRUPT VECTOR\nAL = interrupt number\nDS:DX = new vector to be used for specified interrupt",	0);
@@ -5309,15 +5320,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X1FC3F);
 	op_hex		(x,	1);
 	set_name	(0X1FC3F,	"MaybeForceTickWorldAilments");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1FC48);
 	create_insn	(0X1FC53);
 	create_insn	(x=0X1FC58);
@@ -7072,6 +7074,15 @@ static Bytes_2(void) {
 	set_cmt	(0X267A7,	"Draws up to cx equipped-item icons next to a portrait: for each nonzero item id, loads its catalog record and draws its icon at a position offset by word_328BC/word_328C0, using an 'active' icon variant ([+4] vs [+8]) when word_328C6 bit 0x8000 and the item's [+0xC] bit 0x400 are both set. Called from DrawPartyMemberPortrait.",	0);
 	create_insn	(0X267A7);
 	set_name	(0X267A7,	"DrawEquippedItemIcons");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X267C6);
 	op_hex		(x,	1);
 	create_insn	(x=0X267CE);
@@ -7083,15 +7094,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2681B,	"Sibling of DrawPortraitOverlayIconA, at offset (0x26,0x24). Called from DrawPartyMemberPortrait.",	0);
 	create_insn	(0X2681B);
 	set_name	(0X2681B,	"DrawPortraitOverlayIconB");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X26846,	"LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).",	0);
 	create_insn	(0X26846);
 	set_name	(0X26846,	"LoadContainerContents");
@@ -9364,10 +9366,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B8D7,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B8D7);
 	set_name	(0X2B8D7,	"ShowConversationText_1000");
-	create_insn	(0X2B93C);
-	set_cmt	(0X2B948,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
-	create_insn	(0X2B948);
-	set_name	(0X2B948,	"ShowConversationText_800");
 }
 
 //------------------------------------------------------------------------
@@ -9377,6 +9375,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2B93C);
+	set_cmt	(0X2B948,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
+	create_insn	(0X2B948);
+	set_name	(0X2B948,	"ShowConversationText_800");
 	create_insn	(0X2B9C8);
 	set_cmt	(0X2B9D4,	"Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.",	0);
 	create_insn	(x=0X2B9D4);
