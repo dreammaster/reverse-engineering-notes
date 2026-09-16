@@ -12216,7 +12216,7 @@ RunShopScreen   proc far                ; CODE XREF: UseAbilityCommand+104↓p
                 call    ClearStatusPanelIfDirty ; Umbrella shop screen, reached from UseAbilityCommand. Calls sub_1869D (main input loop -- hosts the sell/enhance/repair Space-bar cluster) directly, twice; calls sub_17032 (the mouse-click 'buy' handler reaching PayGoldAndAcquireItem); redraws ShowMaterialCounterHud repeatedly; hit-tests several region tables; writes state via FileEntry_Write near an exit path. Ties the whole shop cluster together. Many internal helper calls not individually traced yet.
                 call    ClearPortraitPanelAreas
                 or      word_328C6, 200h
-                call    sub_179AE
+                call    BuildShopCategoryTabList
                 push    cs
                 call    near ptr sub_1728A
                 push    cs
@@ -12920,8 +12920,8 @@ UseAbilityCommand endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_179AE       proc near               ; CODE XREF: RunShopScreen+10↑p
-                mov     es, word_2E4AA
+BuildShopCategoryTabList proc near      ; CODE XREF: RunShopScreen+10↑p
+                mov     es, word_2E4AA  ; Clears the 0x558A/word_2E4AA scratch buffer, then walks the 8-entry category table (0x5572) gated by byte_32DCC's bits, storing [category_id, value] pairs -- ids 1/2/3 get fixed globals (word_32DE2/32DE4/32DE6), others pull from their own catalog record's [+4] field when eligible. Called from RunShopScreen.
                 mov     di, 558Ah
                 xor     ax, ax
                 mov     cx, 10h
@@ -12931,7 +12931,7 @@ sub_179AE       proc near               ; CODE XREF: RunShopScreen+10↑p
                 mov     cx, 8
                 mov     bl, byte_32DCC
 
-loc_179C9:                              ; CODE XREF: sub_179AE+70↓j
+loc_179C9:                              ; CODE XREF: BuildShopCategoryTabList+70↓j
                 mov     ax, [si]
                 shl     bl, 1
                 jb      short loc_17A18
@@ -12958,24 +12958,24 @@ loc_179C9:                              ; CODE XREF: sub_179AE+70↓j
                 jz      short loc_17A0F
                 mov     dx, [bx+4]
 
-loc_17A0F:                              ; CODE XREF: sub_179AE+53↑j
-                                        ; sub_179AE+5C↑j
+loc_17A0F:                              ; CODE XREF: BuildShopCategoryTabList+53↑j
+                                        ; BuildShopCategoryTabList+5C↑j
                 mov     [di+2], dx
                 pop     bx
                 jmp     short loc_17A18
 ; ---------------------------------------------------------------------------
 
-loc_17A15:                              ; CODE XREF: sub_179AE+2F↑j
-                                        ; sub_179AE+38↑j ...
+loc_17A15:                              ; CODE XREF: BuildShopCategoryTabList+2F↑j
+                                        ; BuildShopCategoryTabList+38↑j ...
                 mov     [di+2], dx
 
-loc_17A18:                              ; CODE XREF: sub_179AE+1F↑j
-                                        ; sub_179AE+24↑j ...
+loc_17A18:                              ; CODE XREF: BuildShopCategoryTabList+1F↑j
+                                        ; BuildShopCategoryTabList+24↑j ...
                 add     di, 4
                 add     si, 2
                 loop    loc_179C9
                 retn
-sub_179AE       endp
+BuildShopCategoryTabList endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -75502,9 +75502,9 @@ word_32DD0      dw 0                    ; DATA XREF: LoadLockState+88↑r
                 db    0
                 db    0
                 db    0
-word_32DE2      dw 0                    ; DATA XREF: sub_179AE+28↑r
-word_32DE4      dw 0                    ; DATA XREF: sub_179AE+3A↑r
-word_32DE6      dw 0                    ; DATA XREF: sub_179AE+31↑r
+word_32DE2      dw 0                    ; DATA XREF: BuildShopCategoryTabList+28↑r
+word_32DE4      dw 0                    ; DATA XREF: BuildShopCategoryTabList+3A↑r
+word_32DE6      dw 0                    ; DATA XREF: BuildShopCategoryTabList+31↑r
 word_32DE8      dw 0                    ; DATA XREF: ProbeFacingTile+D↑w
                                         ; ProbeFacingTile+2D↑w ...
                 db    0

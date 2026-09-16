@@ -5082,6 +5082,19 @@ internals a concrete, named building block.
 
 595 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: BuildShopCategoryTabList
+
+Named `sub_179AE` -> `BuildShopCategoryTabList`, called once from
+`RunShopScreen` near the start: clears an EMS-mapped scratch buffer
+then walks a fixed 8-entry category table gated by a per-shop-type
+bitmask (`byte_32DCC`), storing `[category_id, value]` pairs — ids
+`1`/`2`/`3` get fixed globals (plausibly special currency-like tabs
+such as gold/ore/nuore exchange), other categories pull a value from
+their own catalog record when eligible. Sets up the shop screen's
+category tab list.
+
+596 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

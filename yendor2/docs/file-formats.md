@@ -955,7 +955,12 @@ not `UseItem`): it calls the main input loop `sub_1869D` directly
 (twice, enabling the Space-bar cluster) and `sub_17032` (enabling the
 click-to-buy path), redraws `ShowMaterialCounterHud` repeatedly, and
 writes state back via `FileEntry_Write` near an exit. Its many
-internal helpers aren't individually traced yet.
+internal helpers aren't individually traced yet, though one now is:
+`BuildShopCategoryTabList` (was `sub_179AE`, called near the start)
+sets up the screen's category tab list — an 8-entry table gated by a
+per-shop-type bitmask (`byte_32DCC`), pairing each enabled category id
+with a value (fixed globals for 3 special currency-like tabs, else
+pulled from the category's own catalog record).
 
 A separate, likely shop/vendor "buy" `UseItem` handler (`sub_1BBED`,
 reached from `UseItem+0x65`) spends `g_partyGold` via

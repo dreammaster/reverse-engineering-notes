@@ -2901,7 +2901,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X1799D);
 	op_hex		(x,	1);
 	create_insn	(0X179A6);
+	set_cmt	(0X179AE,	"Clears the 0x558A/word_2E4AA scratch buffer, then walks the 8-entry category table (0x5572) gated by byte_32DCC's bits, storing [category_id, value] pairs -- ids 1/2/3 get fixed globals (word_32DE2/32DE4/32DE6), others pull from their own catalog record's [+4] field when eligible. Called from RunShopScreen.",	0);
 	create_insn	(0X179AE);
+	set_name	(0X179AE,	"BuildShopCategoryTabList");
 	create_insn	(x=0X179CB);
 	op_hex		(x,	1);
 	create_insn	(x=0X179FC);
@@ -3184,6 +3186,15 @@ static Bytes_0(void) {
 	set_cmt	(0X18414,	"CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",	0);
 	create_insn	(x=0X18414);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1841A,	"CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",	0);
 	create_insn	(x=0X1841A);
 	op_hex		(x,	0);
@@ -3194,15 +3205,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1842B,	"DOS - 2+ - CLOSE A FILE WITH HANDLE\nBX = file handle",	0);
 	create_insn	(x=0X1842B);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1843D);
 	create_insn	(0X18440);
 	create_insn	(x=0X18448);
@@ -5197,6 +5199,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1F4E4,	"msg",	0);
 	create_insn	(0X1F4ED);
 	set_name	(0X1F4ED,	"GameDialog_drawNewGame");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1F4FF,	"msg",	0);
 	create_insn	(0X1F508);
 	set_name	(0X1F508,	"GameDialog_drawSave");
@@ -5221,15 +5232,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F5DD);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1F5FF);
 	create_insn	(x=0X1F613);
 	op_hex		(x,	1);
@@ -7013,6 +7015,15 @@ static Bytes_2(void) {
 	create_insn	(0X26441);
 	create_insn	(x=0X2645B);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X26469);
 	op_hex		(x,	1);
 	create_insn	(0X26473);
@@ -7051,15 +7062,6 @@ static Bytes_2(void) {
 	create_insn	(0X265BD);
 	create_insn	(x=0X265D5);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X265E9);
 	op_hex		(x,	1);
 	create_insn	(x=0X265FE);
@@ -9359,9 +9361,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B755,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B755);
 	set_name	(0X2B755,	"LoadConversationText_2000");
-	set_cmt	(0X2B771,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
-	create_insn	(0X2B771);
-	set_name	(0X2B771,	"LoadConversationText_800");
 }
 
 //------------------------------------------------------------------------
@@ -9371,6 +9370,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2B771,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
+	create_insn	(0X2B771);
+	set_name	(0X2B771,	"LoadConversationText_800");
 	set_cmt	(0X2B78D,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B78D);
 	set_name	(0X2B78D,	"ShowConversationText_4000");
