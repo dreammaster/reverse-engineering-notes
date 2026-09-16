@@ -1291,14 +1291,20 @@ convention — the perspective/depth-aware counterpart to the simpler
 general-purpose `DrawPicture`. **First foothold into its internals**:
 two RLE run-record blit primitives it calls are now named —
 `DrawRleMaskedShadedRun` (was `sub_2A589`, a contiguous run copy with
-optional `0xFF`-transparency and two further chained, still-unnamed
-per-pixel effects `sub_2A4B0`/`sub_2A217`) and
-`DrawRleScaledSpriteColumn` (was `sub_2A5F7`, destination steps by a
-full `320`-byte screen row per pixel while the source steps by a
-caller-supplied stride — the classic shape for a perspective-scaled
-sprite column). Both shade every pixel via `ShiftPaletteShadeClamped`.
-The run-record producer(s) and the two chained effects remain
-untraced.
+optional `0xFF`-transparency) and `DrawRleScaledSpriteColumn` (was
+`sub_2A5F7`, destination steps by a full `320`-byte screen row per
+pixel while the source steps by a caller-supplied stride — the
+classic shape for a perspective-scaled sprite column). Both shade
+every pixel via `ShiftPaletteShadeClamped`. `DrawRleMaskedShadedRun`
+also conditionally chains two more per-pixel effects, now also named:
+`RemapOrMaskColorByHueTable` (was `sub_2A4B0`, though it turned out to
+be called from `DrawPicture` directly too — splits a color into
+hue-group/shade nibbles and looks up the hue-group in a 16-entry
+table to remap it or force full transparency, plausibly a
+status-effect tint) and `InvokePixelEffectCallback` (was `sub_2A217`,
+a tiny tail-jump to a caller-configured function-pointer hook). The
+run-record producer(s) that build the 6-byte run tables these
+blitters consume remain untraced.
 
 `RenderDungeonViewport`'s 7th and final call is
 `RenderDungeonVanishingPoint`, structurally different from the other

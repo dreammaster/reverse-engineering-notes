@@ -8723,7 +8723,9 @@ static Bytes_3(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X2A20B);
 	op_hex		(x,	1);
+	set_cmt	(0X2A217,	"Stashes ax into [bp-0x4C] then tail-jumps to the caller-configured function pointer at [bp-0x2A] -- a per-pixel effect callback hook. Called from DrawRleMaskedShadedRun.",	0);
 	create_insn	(0X2A217);
+	set_name	(0X2A217,	"InvokePixelEffectCallback");
 	create_dword	(x=0X2A21F);
 	op_plain_offset	(x,	0,	0X2D860);
 	op_plain_offset	(x,	128,	0X2D860);
@@ -8927,7 +8929,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_byte	(0X2A458);
 	make_array	(0X2A458,	0X58);
+	set_cmt	(0X2A4B0,	"Looks up al's high nibble (hue group) in a 16-entry stack table ([bp-0x4A]); no match leaves al unchanged; a match with low byte 0x0F forces al=0xFF (hue-group-wide transparency); otherwise replaces just the hue-group nibble, keeping the shade nibble -- a per-hue-group color remap/mask, plausibly for status-effect tinting. Called from DrawPicture.",	0);
 	create_insn	(0X2A4B0);
+	set_name	(0X2A4B0,	"RemapOrMaskColorByHueTable");
 	create_insn	(0X2A4D7);
 	create_insn	(0X2A4E4);
 	create_insn	(0X2A4EA);
@@ -9875,6 +9879,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2D4B6,	"Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.",	0);
 	create_insn	(0X2D4B6);
 	set_name	(0X2D4B6,	"ApplyAttackToTarget");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D4C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D4CA);
@@ -9894,15 +9907,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D547);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D553);
 	op_hex		(x,	1);
 	create_insn	(0X2D56A);

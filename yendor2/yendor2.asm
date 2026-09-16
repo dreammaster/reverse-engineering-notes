@@ -46163,7 +46163,7 @@ loc_298F0:                              ; CODE XREF: DrawPicture+8B↓j
                 jz      short loc_29907
                 cmp     [bp+var_4A], 0
                 jz      short loc_29902
-                call    sub_2A4B0
+                call    RemapOrMaskColorByHueTable
                 cmp     al, 0FFh
                 jz      short loc_29907
 
@@ -46390,7 +46390,7 @@ loc_29A6C:                              ; CODE XREF: DrawPicture+203↓j
                 lodsb
                 cmp     [bp+var_4A], 0
                 jz      short loc_29A76
-                call    sub_2A4B0
+                call    RemapOrMaskColorByHueTable
 
 loc_29A76:                              ; CODE XREF: DrawPicture+1F9↑j
                 cmp     al, 0FFh
@@ -47429,11 +47429,11 @@ DrawMouseCursor endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A217       proc near               ; CODE XREF: DrawRleMaskedShadedRun+51↓p
-                mov     [bp-4Ch], ax
+InvokePixelEffectCallback proc near     ; CODE XREF: DrawRleMaskedShadedRun+51↓p
+                mov     [bp-4Ch], ax    ; Stashes ax into [bp-0x4C] then tail-jumps to the caller-configured function pointer at [bp-0x2A] -- a per-pixel effect callback hook. Called from DrawRleMaskedShadedRun.
                 mov     ax, [bp-2Ah]
                 jmp     ax
-sub_2A217       endp
+InvokePixelEffectCallback endp
 
 ; ---------------------------------------------------------------------------
                 dd unk_3907E
@@ -47720,9 +47720,9 @@ locret_2A289:                           ; CODE XREF: seg111:09EE↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A4B0       proc near               ; CODE XREF: DrawPicture+83↑p
+RemapOrMaskColorByHueTable proc near    ; CODE XREF: DrawPicture+83↑p
                                         ; DrawPicture+1FB↑p ...
-                push    bx
+                push    bx              ; Looks up al's high nibble (hue group) in a 16-entry stack table ([bp-0x4A]); no match leaves al unchanged; a match with low byte 0x0F forces al=0xFF (hue-group-wide transparency); otherwise replaces just the hue-group nibble, keeping the shade nibble -- a per-hue-group color remap/mask, plausibly for status-effect tinting. Called from DrawPicture.
                 push    cx
                 push    di
                 mov     di, bp
@@ -47732,7 +47732,7 @@ sub_2A4B0       proc near               ; CODE XREF: DrawPicture+83↑p
                 shl     ax, cl
                 mov     cx, 10h
 
-loc_2A4C1:                              ; CODE XREF: sub_2A4B0+2A↓j
+loc_2A4C1:                              ; CODE XREF: RemapOrMaskColorByHueTable+2A↓j
                 mov     bx, ss:[di]
                 or      bx, bx
                 jz      short loc_2A4DC
@@ -47745,12 +47745,12 @@ loc_2A4C1:                              ; CODE XREF: sub_2A4B0+2A↓j
                 jmp     short loc_2A4DC
 ; ---------------------------------------------------------------------------
 
-loc_2A4D7:                              ; CODE XREF: sub_2A4B0+1C↑j
+loc_2A4D7:                              ; CODE XREF: RemapOrMaskColorByHueTable+1C↑j
                 add     di, 2
                 loop    loc_2A4C1
 
-loc_2A4DC:                              ; CODE XREF: sub_2A4B0+16↑j
-                                        ; sub_2A4B0+1A↑j ...
+loc_2A4DC:                              ; CODE XREF: RemapOrMaskColorByHueTable+16↑j
+                                        ; RemapOrMaskColorByHueTable+1A↑j ...
                 mov     cl, 4
                 shr     ax, cl
                 pop     di
@@ -47759,13 +47759,13 @@ loc_2A4DC:                              ; CODE XREF: sub_2A4B0+16↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2A4E4:                              ; CODE XREF: sub_2A4B0+21↑j
+loc_2A4E4:                              ; CODE XREF: RemapOrMaskColorByHueTable+21↑j
                 mov     al, 0FFh
                 pop     di
                 pop     cx
                 pop     bx
                 retn
-sub_2A4B0       endp
+RemapOrMaskColorByHueTable endp
 
 ; ---------------------------------------------------------------------------
                 mov     cx, [bp-14h]
@@ -47921,14 +47921,14 @@ loc_2A5C4:                              ; CODE XREF: DrawRleMaskedShadedRun+35�
                 call    ShiftPaletteShadeClamped
                 cmp     word ptr [bp-4Ah], 0
                 jz      short loc_2A5D4
-                call    sub_2A4B0
+                call    RemapOrMaskColorByHueTable
                 cmp     al, 0FFh
                 jz      short loc_2A5E6
 
 loc_2A5D4:                              ; CODE XREF: DrawRleMaskedShadedRun+42↑j
                 cmp     word ptr [bp-2Ah], 0
                 jz      short loc_2A5E1
-                call    sub_2A217
+                call    InvokePixelEffectCallback
                 cmp     al, 0FFh
                 jz      short loc_2A5E6
 

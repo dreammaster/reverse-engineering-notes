@@ -4517,6 +4517,27 @@ untraced.
 
 545 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: InvokePixelEffectCallback + RemapOrMaskColorByHueTable
+
+Named the two chained per-pixel effects from
+`DrawRleMaskedShadedRun`'s call chain, resolving that function's
+remaining open callees. `sub_2A217` -> `InvokePixelEffectCallback`:
+tiny — stashes `ax` into `[bp-0x4C]` then tail-jumps to a
+caller-configured function pointer at `[bp-0x2A]`, a per-pixel effect
+callback hook (doesn't itself return; the callback presumably returns
+to `DrawRleMaskedShadedRun`'s own return address). `sub_2A4B0` ->
+`RemapOrMaskColorByHueTable` — turned out to be called from
+`DrawPicture` directly, not the sprite-blit chain: splits a color byte
+into hue-group (high nibble) and shade (low nibble), searches a
+16-entry stack table for a matching hue-group, and on a match either
+forces full transparency (`al=0xFF`, when the table entry's low byte
+is `0x0F`) or remaps just the hue-group nibble while preserving the
+shade — plausibly a status-effect tint/recolor mechanism (stun flash,
+poison tint) that recolors a sprite's whole hue band without
+disturbing its shading gradient.
+
+547 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
