@@ -39149,7 +39149,7 @@ loc_2605F:                              ; CODE XREF: LoadNextContainerInChain+34
                 rep stosw
                 pop     di
                 pop     es
-                call    sub_26C0E
+                call    CommitContainerWrite
                 mov     ax, word_36863
                 pop     bx
                 retf
@@ -39511,7 +39511,7 @@ loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_26C0E
+                call    CommitContainerWrite
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
@@ -40575,14 +40575,14 @@ PickUpItemFromSlot endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26C0E       proc near               ; CODE XREF: LoadNextContainerInChain+55↑p
+CommitContainerWrite proc near          ; CODE XREF: LoadNextContainerInChain+55↑p
                                         ; sub_2621C+1BE↑p
-                mov     bx, 8FFBh
+                mov     bx, 8FFBh       ; Minimal write-commit: FileEntry_Write(errorCode=0xB) + ErrorCheck, assuming the caller already configured the container-write descriptor (unlike SyncContainerContents, which configures it itself via sub_27E3A). Called from LoadNextContainerInChain and sub_2621C.
                 mov     errorCode, 0Bh
                 call    FileEntry_Write
                 call    ErrorCheck
                 retn
-sub_26C0E       endp
+CommitContainerWrite endp
 
 
 ; =============== S U B R O U T I N E =======================================

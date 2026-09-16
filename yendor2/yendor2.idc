@@ -7032,7 +7032,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X26BDB);
 	op_hex		(x,	1);
 	create_insn	(0X26BE5);
+	set_cmt	(0X26C0E,	"Minimal write-commit: FileEntry_Write(errorCode=0xB) + ErrorCheck, assuming the caller already configured the container-write descriptor (unlike SyncContainerContents, which configures it itself via sub_27E3A). Called from LoadNextContainerInChain and sub_2621C.",	0);
 	create_insn	(0X26C0E);
+	set_name	(0X26C0E,	"CommitContainerWrite");
 	set_cmt	(0X26C22,	"Checks whether the currently-open container (one of the '3 alternate bags', selected via [+0x15C]/[+0x17C]/[+0x1A2]/[+0x1C8]) matches an allowed-type bitmask (word_3293E). Rejects with FlashStatusWarning if not. Called from sub_2621C.",	0);
 	create_insn	(0X26C22);
 	set_name	(0X26C22,	"IsContainerTypeCompatible");
@@ -7868,6 +7870,15 @@ static Bytes_2(void) {
 	create_insn	(0X292C0);
 	create_insn	(0X292D7);
 	create_insn	(0X292E0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X292F2);
 	op_hex		(x,	1);
 	create_insn	(x=0X292F4);
@@ -7890,15 +7901,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2940E,	"Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.",	0);
 	create_insn	(0X2940E);
 	set_name	(0X2940E,	"WaitForTargetClick");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2943F);
 	create_insn	(0X29447);
 	create_insn	(0X29461);
@@ -11043,6 +11045,15 @@ static Bytes_3(void) {
 	set_name	(0X36366,	"aToAn");
 	create_strlit	(0X3636C,	0XA);
 	set_name	(0X3636C,	"aAttribute");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36376,	0X5);
 	set_name	(0X36376,	"aToA");
 	create_strlit	(0X3637B,	0X6);
@@ -11067,15 +11078,6 @@ static Bytes_3(void) {
 	set_name	(0X363BF,	"aMagic_0");
 	create_strlit	(0X363C6,	0X8);
 	set_name	(0X363C6,	"aPercent");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X363CE,	0XF);
 	set_name	(0X363CE,	"aPartyAttack");
 	create_strlit	(0X363DD,	0X7);

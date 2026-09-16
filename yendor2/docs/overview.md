@@ -3639,6 +3639,15 @@ completes the 4-action item-slot cluster called from `sub_2621C`.
 
 464 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CommitContainerWrite
+
+Named `sub_26C0E` -> `CommitContainerWrite` (called from
+`LoadNextContainerInChain` and `sub_2621C`): a minimal write-commit
+step, distinguished from the similarly-shaped `SyncContainerContents`
+by doing no descriptor setup of its own.
+
+465 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

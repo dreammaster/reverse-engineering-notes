@@ -269,7 +269,13 @@ letting an item be placed into it, rejecting with
 `LoadNextContainerInChain`, which walks a linked chain of container/
 world-object records via `CURGAME` (each record's own `[+8]` field
 points to the next id) — e.g. multiple containers found together —
-loading each via `LoadContainerContents` in turn.
+loading each via `LoadContainerContents` in turn. Both
+`LoadNextContainerInChain` and `sub_2621C` also call
+`CommitContainerWrite` (was `sub_26C0E`) — a minimal write-commit
+(`FileEntry_Write(errorCode=0xB)` + `ErrorCheck`) that, unlike the
+similarly-shaped `SyncContainerContents`, does no descriptor setup of
+its own and assumes the caller already configured the container-write
+descriptor.
 
 **Dropping a held item**: `TryDropHeldItem` (checks `IsItemDroppable`,
 warns and bails if not; shows a confirm prompt; calls
