@@ -3489,6 +3489,20 @@ via `PollKeyboardInput`. Reused across 6 different text-entry screens.
 
 446 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PromptBuyOreQuantity, PromptForBCD4Quantity
+
+Named `sub_1AF49` -> `PromptBuyOreQuantity` and `sub_19BE6` ->
+`PromptForBCD4Quantity`, found via a distinctive message cluster ("ORE
+COSTS 10 GOLD PER UNIT.", "ENTER QUANTITY TO BUY", "GOLD COINS:").
+`PromptBuyOreQuantity` (called from `UseItem`) is the purchase flow for
+an Ore-type inventory item: shows the price/balance, reads a quantity
+via `PromptForBCD4Quantity` (parses a digit string typed through
+`EditTextField` into packed-BCD4), then validates affordability via
+`CompareBCD4`. Plausibly connected to the already-documented but still-
+unnamed `sub_1BBED`'s quantity-loop purchase path — not confirmed.
+
+448 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

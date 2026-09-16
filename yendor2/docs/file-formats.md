@@ -593,6 +593,17 @@ elsewhere, and redraws the gold readout afterward via
 adds the unit price to both `g_partyGold` and a second counter
 `0xB30`) not yet disentangled with enough confidence to name safely.
 
+A specific, fully-traced instance of a quantity-purchase flow:
+`PromptBuyOreQuantity` (was `sub_1AF49`, called from `UseItem`) shows
+"ORE COSTS 10 GOLD PER UNIT.", the current gold balance ("GOLD COINS:"),
+and "ENTER QUANTITY TO BUY", reads the quantity via
+`PromptForBCD4Quantity` (was `sub_19BE6` — parses a digit string typed
+through `EditTextField` backward into a packed-BCD4 value), then
+validates affordability via `CompareBCD4` against `g_partyGold`. This
+is the purchase flow for using an Ore-type item from the inventory —
+plausibly connected to the unnamed `sub_1BBED`'s quantity-loop path
+above, though that link isn't confirmed.
+
 ### Ambient music by map region
 
 `UpdateAmbientMusicForRegion` computes a coarse map-region index from

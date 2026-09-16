@@ -3531,7 +3531,9 @@ static Bytes_1(void) {
 
 	create_insn	(x=0X19BAF);
 	op_hex		(x,	1);
+	set_cmt	(0X19BE6,	"Reads a digit string via EditTextField (max 11 chars) and parses it backward into a packed-BCD4 value (2 digits/byte). errorCode=1 if the result is zero (empty/invalid entry). Called from PromptBuyOreQuantity.",	0);
 	create_insn	(0X19BE6);
+	set_name	(0X19BE6,	"PromptForBCD4Quantity");
 	create_insn	(0X19C2E);
 	create_insn	(0X19C51);
 	create_insn	(0X19C57);
@@ -3859,7 +3861,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1AF38);
 	op_hex		(x,	1);
+	set_cmt	(0X1AF49,	"Shows 'ORE COSTS 10 GOLD PER UNIT.', the party's gold balance, and 'ENTER QUANTITY TO BUY', then reads a quantity via PromptForBCD4Quantity and validates affordability via CompareBCD4 against g_partyGold. Called from UseItem for an Ore-type item.",	0);
 	create_insn	(0X1AF49);
+	set_name	(0X1AF49,	"PromptBuyOreQuantity");
 	set_cmt	(0X1AF63,	"msg",	0);
 	set_cmt	(0X1AFC5,	"msg",	0);
 	set_cmt	(0X1AFD9,	"msg",	0);
@@ -5658,6 +5662,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2186F,	"Map object lookup: bounds-checks (ax=x, bx=y) against the current map's valid range, indexes a per-column array to a row of 6-byte entries, scans for y==bx (0xFFFF terminates). Found: copies 3 words to word_2E554/556/558, returns si=0xCF4. Not found/out of bounds: si=0.",	0);
 	create_insn	(0X2186F);
 	set_name	(0X2186F,	"FindObjectAtPosition");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2188B);
 	create_insn	(x=0X21893);
 	op_hex		(x,	1);
@@ -5681,15 +5694,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X219B8);
 	op_hex		(x,	1);
 	create_insn	(0X219BD);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X219D5);
 	op_hex		(x,	1);
 	create_insn	(0X219DA);
@@ -8068,14 +8072,6 @@ static Bytes_2(void) {
 	set_cmt	(0X29B06,	"Frees the video buffer segment (_videoBufferSeg) via INT 21h/AH=49h. Called unconditionally from ErrorExit before exiting.",	0);
 	create_insn	(0X29B06);
 	set_name	(0X29B06,	"FreeVideoBuffer");
-	create_insn	(x=0X29B0A);
-	op_hex		(x,	1);
-	set_cmt	(0X29B0C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
-	create_insn	(x=0X29B0C);
-	op_hex		(x,	0);
-	set_cmt	(0X29B0F,	"Core dungeon-viewport sprite/picture blitter (632 lines, internals not traced): draws word_2E530 (picture id) at a scale class (word_2E532) and z-layer/depth (word_32918), honoring _font_bgTransparent. Called by every dungeon-viewport rendering function named this session (walls, floor/ceiling extension, doors, vanishing point, monsters) -- the depth-aware counterpart to the simpler general-purpose DrawPicture.",	0);
-	create_insn	(0X29B0F);
-	set_name	(0X29B0F,	"DrawViewportSprite");
 }
 
 //------------------------------------------------------------------------
@@ -8085,6 +8081,14 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X29B0A);
+	op_hex		(x,	1);
+	set_cmt	(0X29B0C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
+	create_insn	(x=0X29B0C);
+	op_hex		(x,	0);
+	set_cmt	(0X29B0F,	"Core dungeon-viewport sprite/picture blitter (632 lines, internals not traced): draws word_2E530 (picture id) at a scale class (word_2E532) and z-layer/depth (word_32918), honoring _font_bgTransparent. Called by every dungeon-viewport rendering function named this session (walls, floor/ceiling extension, doors, vanishing point, monsters) -- the depth-aware counterpart to the simpler general-purpose DrawPicture.",	0);
+	create_insn	(0X29B0F);
+	set_name	(0X29B0F,	"DrawViewportSprite");
 	create_insn	(x=0X29B19);
 	op_hex		(x,	1);
 	create_insn	(x=0X29B23);
@@ -11310,6 +11314,15 @@ static Bytes_3(void) {
 	set_cmt	(0X36D13,	"Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per-tier cost table at DS:0xCB2), credited by TrySellItemForGold (sells a held item of a matching type), and also touched by ApplyEffectCost's trap/status-effect cost dispatch alongside the two ore counters (0x94B7/0x94BB).",	0);
 	create_word	(0X36D13);
 	set_name	(0X36D13,	"g_partyGold");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X36D15);
 	set_cmt	(0X36D31,	"Global boolean flag bitfield (quest/world-state flags), accessed via SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag/GetGlobalFlagBitAndWord. GrantMonsterRewards sets/clears specific flags on monster death via its [+0x14]/[+0x16] signed flag-index fields.",	0);
 	set_name	(0X36D31,	"g_globalFlags");
@@ -11324,15 +11337,6 @@ static Bytes_3(void) {
 	set_cmt	(0X36E4B,	"4 entries x 2 bytes: which 1-based g_partyRecords index occupies UI/effect slot N (0 = empty).",	0);
 	create_word	(0X36E4B);
 	set_name	(0X36E4B,	"g_partySlotAssignment");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(0X36E4D);
 	create_word	(0X36E4F);
 	create_word	(0X36E51);

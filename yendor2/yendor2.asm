@@ -13332,7 +13332,7 @@ loc_17D69:                              ; CODE XREF: UseItem+1CE↑j
                 test    word ptr es:[si+0Eh], 80h
                 jz      short loc_17D7D
                 mov     ax, es:[si+10h]
-                call    sub_1AF49
+                call    PromptBuyOreQuantity
                 jmp     loc_17BA4
 ; ---------------------------------------------------------------------------
 
@@ -17067,8 +17067,8 @@ FormatAndDrawBCD4 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19BE6       proc far                ; CODE XREF: sub_1AF49+D1↓P
-                push    dx
+PromptForBCD4Quantity proc far          ; CODE XREF: PromptBuyOreQuantity+D1↓P
+                push    dx              ; Reads a digit string via EditTextField (max 11 chars) and parses it backward into a packed-BCD4 value (2 digits/byte). errorCode=1 if the result is zero (empty/invalid entry). Called from PromptBuyOreQuantity.
                 push    cx
                 push    _videoSegment
                 push    _font_bgTransparent
@@ -17087,15 +17087,15 @@ sub_19BE6       proc far                ; CODE XREF: sub_1AF49+D1↓P
                 add     si, 3
                 mov     cx, 4
 
-loc_19C26:                              ; CODE XREF: sub_19BE6+46↓j
+loc_19C26:                              ; CODE XREF: PromptForBCD4Quantity+46↓j
                 cmp     byte ptr [bx], 0
                 jz      short loc_19C2E
                 inc     bx
                 jmp     short loc_19C26
 ; ---------------------------------------------------------------------------
 
-loc_19C2E:                              ; CODE XREF: sub_19BE6+43↑j
-                                        ; sub_19BE6+53↓j ...
+loc_19C2E:                              ; CODE XREF: PromptForBCD4Quantity+43↑j
+                                        ; PromptForBCD4Quantity+53↓j ...
                 cmp     bx, 0AFA8h
                 jz      short loc_19C57
                 dec     bx
@@ -17115,18 +17115,18 @@ loc_19C2E:                              ; CODE XREF: sub_19BE6+43↑j
                 jmp     short loc_19C2E
 ; ---------------------------------------------------------------------------
 
-loc_19C51:                              ; CODE XREF: sub_19BE6+5E↑j
+loc_19C51:                              ; CODE XREF: PromptForBCD4Quantity+5E↑j
                 mov     ah, al
                 mov     ch, 1
                 jmp     short loc_19C2E
 ; ---------------------------------------------------------------------------
 
-loc_19C57:                              ; CODE XREF: sub_19BE6+4C↑j
+loc_19C57:                              ; CODE XREF: PromptForBCD4Quantity+4C↑j
                 cmp     ch, 1
                 jnz     short loc_19C5E
                 mov     [si], ah
 
-loc_19C5E:                              ; CODE XREF: sub_19BE6+74↑j
+loc_19C5E:                              ; CODE XREF: PromptForBCD4Quantity+74↑j
                 pop     si
                 cmp     word ptr [si], 0
                 jnz     short loc_19C70
@@ -17134,14 +17134,14 @@ loc_19C5E:                              ; CODE XREF: sub_19BE6+74↑j
                 jnz     short loc_19C70
                 mov     errorCode, 1
 
-loc_19C70:                              ; CODE XREF: sub_19BE6+2B↑j
-                                        ; sub_19BE6+7C↑j ...
+loc_19C70:                              ; CODE XREF: PromptForBCD4Quantity+2B↑j
+                                        ; PromptForBCD4Quantity+7C↑j ...
                 pop     _font_bgTransparent
                 pop     _videoSegment
                 pop     cx
                 pop     dx
                 retf
-sub_19BE6       endp
+PromptForBCD4Quantity endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19544,10 +19544,10 @@ UseKeyItem      endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AF49       proc far                ; CODE XREF: UseItem+1E3↑P
-                mov     word_32974, ax
+PromptBuyOreQuantity proc far           ; CODE XREF: UseItem+1E3↑P
+                mov     word_32974, ax  ; Shows 'ORE COSTS 10 GOLD PER UNIT.', the party's gold balance, and 'ENTER QUANTITY TO BUY', then reads a quantity via PromptForBCD4Quantity and validates affordability via CompareBCD4 against g_partyGold. Called from UseItem for an Ore-type item.
 
-loc_1AF4C:                              ; CODE XREF: sub_1AF49+116↓j
+loc_1AF4C:                              ; CODE XREF: PromptBuyOreQuantity+116↓j
                 call    sub_1B8AB
                 mov     _textPos_x, 4Ch ; 'L'
                 mov     _textPos_y, 2Ch ; ','
@@ -19590,14 +19590,14 @@ loc_1AF4C:                              ; CODE XREF: sub_1AF49+116↓j
                 mov     _font_bgColor, 44h ; 'D'
                 mov     _font_fgColor, 0Fh
                 mov     si, 0AFC2h
-                call    sub_19BE6
+                call    PromptForBCD4Quantity
                 call    sub_238CD
                 cmp     errorCode, 0
                 jz      short loc_1B02E
                 jmp     loc_1B0C8
 ; ---------------------------------------------------------------------------
 
-loc_1B02E:                              ; CODE XREF: sub_1AF49+E0↑j
+loc_1B02E:                              ; CODE XREF: PromptBuyOreQuantity+E0↑j
                 mov     si, 0AFBCh
                 mov     di, 0AFC2h
                 call    CompareBCD4
@@ -19612,12 +19612,12 @@ loc_1B02E:                              ; CODE XREF: sub_1AF49+E0↑j
                 jmp     loc_1AF4C
 ; ---------------------------------------------------------------------------
 
-loc_1B062:                              ; CODE XREF: sub_1AF49+F0↑j
+loc_1B062:                              ; CODE XREF: PromptBuyOreQuantity+F0↑j
                 jnz     short loc_1B06F
                 mov     word_36D6D, 0
                 call    ShowResourceDepletedOverlay
 
-loc_1B06F:                              ; CODE XREF: sub_1AF49:loc_1B062↑j
+loc_1B06F:                              ; CODE XREF: PromptBuyOreQuantity:loc_1B062↑j
                 mov     ax, 7
                 call    sub_28412
                 mov     si, 94B7h
@@ -19631,7 +19631,7 @@ loc_1B06F:                              ; CODE XREF: sub_1AF49:loc_1B062↑j
                 jmp     short loc_1B0B0
 ; ---------------------------------------------------------------------------
 
-loc_1B098:                              ; CODE XREF: sub_1AF49+136↑j
+loc_1B098:                              ; CODE XREF: PromptBuyOreQuantity+136↑j
                 mov     si, 94BBh
                 mov     di, 0AFC2h
                 call    AddBCD4
@@ -19639,21 +19639,21 @@ loc_1B098:                              ; CODE XREF: sub_1AF49+136↑j
                 jnz     short loc_1B0B5
                 mov     word_36D75, 3
 
-loc_1B0B0:                              ; CODE XREF: sub_1AF49+14D↑j
+loc_1B0B0:                              ; CODE XREF: PromptBuyOreQuantity+14D↑j
                 call    ShowResourceDepletedOverlay
 
-loc_1B0B5:                              ; CODE XREF: sub_1AF49+145↑j
-                                        ; sub_1AF49+15F↑j
+loc_1B0B5:                              ; CODE XREF: PromptBuyOreQuantity+145↑j
+                                        ; PromptBuyOreQuantity+15F↑j
                 mov     si, 0AFC2h
                 call    sub_19DA3
                 mov     si, 94B3h
                 mov     di, 0AFC2h
                 call    SubBCD4
 
-loc_1B0C8:                              ; CODE XREF: sub_1AF49+E2↑j
+loc_1B0C8:                              ; CODE XREF: PromptBuyOreQuantity+E2↑j
                 mov     word_2E550, 1
                 retf
-sub_1AF49       endp
+PromptBuyOreQuantity endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -23379,7 +23379,7 @@ seg053          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-EditTextField   proc far                ; CODE XREF: sub_19BE6+21↑P
+EditTextField   proc far                ; CODE XREF: PromptForBCD4Quantity+21↑P
                                         ; sub_1A5F6+D5↑P ...
                 push    si              ; Generic single-line text input editor (bx=buffer, cx=max length): draws a '-' cursor, polls keyboard for Enter (confirm, errorCode=0), Backspace (delete/beep), Escape (cancel, errorCode=2), or printable chars (append/beep at limit). One of its 6 call sites is inside EditCharacterName.
                 push    bx
@@ -86017,9 +86017,9 @@ word_36D0B      dw 0                    ; DATA XREF: sub_197B9+188↑r
                 db 0FFh
                 db 0FFh
                 db 0FFh
-g_partyGold     dw 0                    ; DATA XREF: sub_1AF49+3F↑r
+g_partyGold     dw 0                    ; DATA XREF: PromptBuyOreQuantity+3F↑r
                                         ; Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per-tier cost table at DS:0xCB2), credited by TrySellItemForGold (sells a held item of a matching type), and also touched by ApplyEffectCost's trap/status-effect cost dispatch alongside the two ore counters (0x94B7/0x94BB).
-word_36D15      dw 0                    ; DATA XREF: sub_1AF49+45↑r
+word_36D15      dw 0                    ; DATA XREF: PromptBuyOreQuantity+45↑r
                 db    0
                 db    0
                 db    0
@@ -86111,11 +86111,11 @@ word_36D6D      dw 0                    ; DATA XREF: sub_17032+A0↑w
                 db    0
                 db    0
 word_36D71      dw 0                    ; DATA XREF: sub_17032+14A↑w
-                                        ; sub_1AF49+140↑r ...
+                                        ; PromptBuyOreQuantity+140↑r ...
                 db    0
                 db    0
 word_36D75      dw 0                    ; DATA XREF: sub_17032+16D↑w
-                                        ; sub_1AF49+15A↑r ...
+                                        ; PromptBuyOreQuantity+15A↑r ...
                 db    0
                 db    0
                 db    0
@@ -92936,9 +92936,9 @@ word_38812      dw 0                    ; DATA XREF: MulBCD4ByWord+16↑w
                 db    0
                 db    0
                 db    0
-word_3881C      dw 0                    ; DATA XREF: sub_1AF49+42↑w
+word_3881C      dw 0                    ; DATA XREF: PromptBuyOreQuantity+42↑w
                                         ; sub_1BBED+193↑w ...
-word_3881E      dw 0                    ; DATA XREF: sub_1AF49+48↑w
+word_3881E      dw 0                    ; DATA XREF: PromptBuyOreQuantity+48↑w
                 db    0
                 db    0
                 db    0
