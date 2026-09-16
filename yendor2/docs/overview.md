@@ -966,13 +966,13 @@ One more small, self-contained find while in this area: `sub_2A53C`
 (`DrawPicture`'s only callee) turned out to be a factored-out copy of a
 mask-expand loop that also appears inlined twice more — directly in
 `DrawPicture` and in `sub_29B0F` (the tile-legend cluster's other blit
-routine). All three are byte-identical: if `word_328C6` bit 0 is set,
+routine). All three are byte-identical: if `g_uiScratchFlags2` bit 0 is set,
 walk a byte mask (`word_2E48E`/`word_2E490`, set from ~12 call sites
 throughout the game) and expand each byte's low nibble into a
 zero-extended word — a standard VGA masked-blit prep step for sprites
 with an explicit transparency mask rather than a simple color key.
 Named `ExpandBlitMaskNibbles`, `g_blitMaskPtr`, `g_blitMaskLen`.
-`word_328C6` itself is left alone — it's a broad flags word reused by
+`g_uiScratchFlags2` itself is left alone — it's a broad flags word reused by
 many unrelated subsystems, confirmed by the wide variety of other bit
 patterns tested against it elsewhere.
 
@@ -1589,7 +1589,7 @@ Traced its body: it reads a bit-packed "previously unlocked?" array
 from `CURGAME`, a second `CURGAME` block into an EMS buffer, and
 splits a value via `/100` — nothing to do with weight. Confirmed by
 its call site: right afterward, `TryInteractAtPosition` tests the
-exact globals (`byte_32DCD`, `word_32DCE` bits `0x20`/`0x40`)
+exact globals (`g_lockUnlockedAccumulator`, `word_32DCE` bits `0x20`/`0x40`)
 `ShowLockStatus` reads to pick its message. Named `LoadLockState` and
 corrected `TryInteractAtPosition`'s stale comment (the old wording is
 left standing in this log's earlier dated entries, per this session's
@@ -2045,7 +2045,7 @@ Named `sub_14C37`, called twice from `RunClueEntryMenu`: draws the clue
 book's top navigation bar — two conditional hotkey hints ("d) LIST" /
 "c) MAP", confirmed via raw message bytes) plus a row of 7 category-tab
 icons, each swapped to a highlighted variant (base id +1) when its bit
-in `word_328CC` (0x8000 down to 0x200) is set. Only the drawing
+in `g_clueBookNavFlags` (0x8000 down to 0x200) is set. Only the drawing
 mechanism is confirmed; which tab corresponds to which clue-book
 category is not traced.
 
@@ -2054,7 +2054,7 @@ category is not traced.
 ### 2026-09-15 session update, continued: TryConvertItemToMaterial
 
 Named `sub_19264`, a Space-bar action in the main input loop
-(`sub_1869D`, `word_328C6` bit `0x10`) while carrying an item: checks
+(`sub_1869D`, `g_uiScratchFlags2` bit `0x10`) while carrying an item: checks
 whether the held item's type mask overlaps the standing location's
 accepted-type mask; on mismatch shows "I HAVE NO NEED FOR THAT TYPE OF
 ITEM." (dumped from msg `0x7FF7`, which turned out to share a table
@@ -2092,7 +2092,7 @@ material-counter section is corrected in place.
 ### 2026-09-15 session update, continued: TryRepairItemForGold
 
 Named `sub_19140`, the third Space-bar sibling in `sub_1869D`'s main
-loop (`word_328C6` bit 4, alongside `TrySellItemForGold`'s bit `0x10`
+loop (`g_uiScratchFlags2` bit 4, alongside `TrySellItemForGold`'s bit `0x10`
 and `TryEnhanceItemForGold`'s bit 8). Structurally identical to
 `TryEnhanceItemForGold`: rejects with "I CAN NOT REPAIR THAT" if
 ineligible, else spends `g_partyGold` against a cost table at `0x5082`
@@ -2120,7 +2120,7 @@ so only their confirmed primary behavior is documented.
 Named `sub_190AF` (the shared "YOU DON'T HAVE ENOUGH GOLD!" rejection
 used by both `TryEnhanceItemForGold` and `TryRepairItemForGold`) and
 `sub_1B245` (reached from `UseItem` when the used item's `[+0xE]`
-flags have bit `0x4000` set): sets `word_328C6` bit `0x10` — the exact
+flags have bit `0x4000` set): sets `g_uiScratchFlags2` bit `0x10` — the exact
 bit gating `TrySellItemForGold` — then runs the main input loop
 (`sub_1869D`) itself so the player can interactively sell items,
 cleaning up and redrawing the minimap on exit. This is the entry point
@@ -2236,7 +2236,7 @@ individually traced.
 
 ### 2026-09-15 session update, continued: PayGoldAndAcquireItem
 
-Named `sub_17A8D`, a 4th shop-mode action (`word_328C6` bit `0x200`,
+Named `sub_17A8D`, a 4th shop-mode action (`g_uiScratchFlags2` bit `0x200`,
 alongside sell/enhance/repair's `0x10`/`8`/`4`) reached via mouse
 click (region table `0x5AC0`) rather than Space: pays `g_partyGold`
 against a price at `0xB30`, bailing if unaffordable and special-casing
@@ -2361,7 +2361,7 @@ category dispatch.
 
 Named the two remaining entry points completing the shop cluster,
 siblings of `RunSellItemScreen`: `RunEnhanceItemScreen`
-(`UseItem+0x1C1`, sets `word_328C6` bit 8) and `RunRepairItemScreen`
+(`UseItem+0x1C1`, sets `g_uiScratchFlags2` bit 8) and `RunRepairItemScreen`
 (`UseItem+0x1D0`, sets bit 4) — both otherwise identical to
 `RunSellItemScreen`. All three of `UseItem`'s shop entry points are
 now named.
@@ -2466,7 +2466,7 @@ then runs the same per-cell side-feature and encounter checks as
 ### 2026-09-15 session update, continued: RenderActiveMonsterSprites
 
 Named `sub_212EB`, called from `RenderDungeonVanishingPoint` when
-`word_328CA` bit `0x1000` is set: iterates the 3 `g_monsterSlots`
+`g_uiScratchFlags4` bit `0x1000` is set: iterates the 3 `g_monsterSlots`
 records and draws each occupied one's sprite into the dungeon
 viewport.
 
@@ -3383,7 +3383,7 @@ open in file-formats.md rather than guessed.
 
 Named `sub_1930E` -> `SelectClickedRosterPortrait`: hit-tests region
 table `0x6304` for one of 4 portrait slots (each gated on a
-`word_328C6` visibility bit), sets the draw position, and resolves the
+`g_uiScratchFlags2` visibility bit), sets the draw position, and resolves the
 clicked slot's character via `g_partySlotAssignment` + `
 SelectPartyRecordById`. Confirms `g_partySlotAssignment`'s exact base
 address (`0x95EB`) and 4-slot layout, previously only described
@@ -3439,11 +3439,11 @@ Named `sub_14D26` -> `HandleClueCategorySelection`: `RunClueEntryMenu`'s
 category-switching input handler (keyboard + mouse, both funneling into
 a shared "apply new category" block). Caught and fixed my own comment
 before it was ever committed: initially guessed its `K`/`P` hotkeys'
-gating bits (`word_328CC` `0x40`/`0x20`) were "plausibly the same
+gating bits (`g_clueBookNavFlags` `0x40`/`0x20`) were "plausibly the same
 registration-lock bits `ShowClueBookRegistrationNag` checks" — wrong;
 `DrawClueBookNavBar`'s own pre-existing comment already documents those
 exact bits as the "d) LIST"/"c) MAP" hotkey-hint toggles, a completely
-different flag from the actual registration lock (`word_328CA` bit 1 +
+different flag from the actual registration lock (`g_uiScratchFlags4` bit 1 +
 an entry's own `+2` bit `0x8000`).
 
 Named `sub_14DFC` -> `RestoreClueBookBackgroundFromEMS`: a full-screen
@@ -3761,7 +3761,7 @@ function reached from `start` (`sub_11A10`) respectively.
 Named `sub_25595` -> `DrawQuitOrReturnLabel` (called from
 `ShowCharacterSkills` and `ShowCharacterInventory`): draws a bottom-left
 exit button toggling between `QUIT "CREATE"` and `RETURN` based on
-`word_328CA` bit `0x8000` — these screens are shared between viewing an
+`g_uiScratchFlags4` bit `0x8000` — these screens are shared between viewing an
 existing character and mid-chargen review.
 
 480 named of 769 functions as of this update.
@@ -4117,7 +4117,7 @@ unnamed `sub_16881`: picks between a record's primary trap effect id
 (`[+0x6C]`) and an alternate (`[+0x6E]`). If flag `[+0xC]` bit `0x400`
 is set, or there's no alternate, always uses the primary. Otherwise
 rolls `RandomInRange(100)`: a 25% chance (roll `< 0x19`) swaps in the
-alternate instead (and sets `word_328CA` bit `0x200`), else falls back
+alternate instead (and sets `g_uiScratchFlags4` bit `0x200`), else falls back
 to the primary. Either way, resolves the chosen id via
 `PrepareTrapEffectSlots`, staging the result into `word_3293E`/
 `word_32940` — the same staging globals used elsewhere for the
@@ -4142,7 +4142,7 @@ resource-stub helper pointing a heavily-reused shared scratch buffer
 `CURGAME` (`FileEntry` `bx=0x8FFB`), then this function reads that
 record (`errorCode=0xA`), applies the *exact same* category-dependent
 charge/transfer/swap logic the caller applies to its own in-memory
-copy (`word_328C8` bits `0x8000`/`0x4000`/`0x2000`: transfer a
+copy (`g_uiScratchFlags3` bits `0x8000`/`0x4000`/`0x2000`: transfer a
 secondary count into primary, decrement a shared charge counter with
 depletion handling, or call `SwapItemMultiStatEffect`) to the field at
 `[0xAFA8+dx]`, then writes the record back — except for the "transfer"
@@ -4286,11 +4286,11 @@ family as the previously-named `HandlePagedEntryNavigation`, but for
 the clue book's entry list, additionally driven by a mouse hit-test
 (`HitTestRegionTable` against table `0x6960`). 'I'/hit-region-1 adopts
 candidate index `g_clueEntryScrollOffset` into `g_clueEntrySelectedIndex` (signaling change via
-`errorCode=1`) unless `word_328CC` bit `0x100` defers entirely to
+`errorCode=1`) unless `g_clueBookNavFlags` bit `0x100` defers entirely to
 still-unnamed `sub_13014`; 'Q'/hit-region-2 mirrors this with
-`word_2E3F2` (`errorCode=2`), deferring to still-unnamed `sub_12FED`
-on `word_328CC` bit `0x80`. `errorCode=0` if nothing changed. The
-exact identity of `g_clueEntryScrollOffset`/`word_2E3F2` (plausibly precomputed
+`g_clueEntryPageUpperBound` (`errorCode=2`), deferring to still-unnamed `sub_12FED`
+on `g_clueBookNavFlags` bit `0x80`. `errorCode=0` if nothing changed. The
+exact identity of `g_clueEntryScrollOffset`/`g_clueEntryPageUpperBound` (plausibly precomputed
 clamped prev/next indices) and of the two deferred-to functions isn't
 confirmed, so left open for a future round.
 
@@ -4303,8 +4303,8 @@ Named the pair `sub_13014` -> `ScrollClueEntryListPageUp` and
 `HandleClueEntryScrollInput` defers to in its "special mode" branches,
 also shared with another unnamed caller (`sub_12D5C`). Both jump the
 clue entry list's scroll offset (`g_clueEntryScrollOffset`) by a fixed page size of
-`0x38` (56) — up clamped to a minimum of `word_2E3EA+2`, down clamped
-against upper bound `word_2E3F2` — adjust `g_clueEntrySelectedIndex` by the delta,
+`0x38` (56) — up clamped to a minimum of `g_clueEntryLowerBound+2`, down clamped
+against upper bound `g_clueEntryPageUpperBound` — adjust `g_clueEntrySelectedIndex` by the delta,
 call still-unnamed `sub_12FC1` (plausibly a redraw), and set
 `errorCode` (1/2) matching `HandleClueEntryScrollInput`'s own
 convention. Resolves both of that function's previously-open
@@ -4323,8 +4323,8 @@ page's boundary) and `sub_12FC1` -> `RecomputeClueEntryPageBounds`
 they were named last round it was speculated this might be "a
 redraw"; tracing it directly shows it's actually pure bounds
 arithmetic, no drawing at all). It recomputes the page's upper bound
-(`word_2E3F2 = g_clueEntryScrollOffset+0x34`, clamped to total count `word_2E3F4`)
-and visible-row count (`word_2E3EC`, defaulting to `0xE` or the
+(`g_clueEntryPageUpperBound = g_clueEntryScrollOffset+0x34`, clamped to total count `g_clueEntryTotalCount`)
+and visible-row count (`g_clueEntryVisibleRowCount`, defaulting to `0xE` or the
 remaining-rows count on the last partial page) — the `/4` in that
 remaining-rows math confirms a 4-entries-per-row grid layout for the
 clue entry list, matching the step-by-4 stride in
@@ -4359,7 +4359,7 @@ creation screen's opening animated sequence. Decodes a 768-byte
 simple-obfuscated (each byte `-0x3F`) graphics block, plays music
 track `0x12`, then runs several staged sub-animations (frame loops of
 63/5/20/10/10/20), each abortable via `PollForEscapeKeyOnlyAlt` and
-each honoring a `word_328C4` bit `0x400` "fast/skip" check. The
+each honoring a `g_uiScratchFlags1` bit `0x400` "fast/skip" check. The
 various low-level draw helpers it drives (`sub_160D6`, `sub_152EF`,
 `sub_16180`, `sub_1618E`, `sub_1619F`, `sub_160C3`, `sub_2589A`,
 `sub_160B0`) are animation-frame primitives specific to this sequence,
@@ -4370,7 +4370,7 @@ not traced/named this round.
 ### 2026-09-15 session update, continued: WaitFrameTicksOrEscape
 
 Named `sub_119E0` -> `WaitFrameTicksOrEscape`, called once from
-`ShowIntroPicture`: busy-waits for `word_328C4` bit `0x400` ("tick
+`ShowIntroPicture`: busy-waits for `g_uiScratchFlags1` bit `0x400` ("tick
 ready", the same flag `PlayCharacterCreationIntroAnimation`'s staged
 sub-animations check — plausibly raised by an untraced timer/vsync
 interrupt handler), checks for ESC via `PollForEscapeKeyOnly`
@@ -4886,7 +4886,7 @@ reused across multiple unrelated systems, not single-purpose fields.
 Named the two remaining functions that complete the "side trap"
 system uncovered this session. `sub_2278C` -> `ProcessSideTrapsOnMovement`
 (called directly from `start`, likely after each movement step):
-fast-exits unless `word_328C8` bit `0x10` is set, otherwise walks an
+fast-exits unless `g_uiScratchFlags3` bit `0x10` is set, otherwise walks an
 80-entry wall/cell table (stride `0x9C`) calling
 `TriggerSideTrapForRandomPartyMember` for every entry flagged with a
 side trap, then hands off to `sub_2281F`. `sub_2281F` ->
@@ -5019,7 +5019,7 @@ scaled threshold bonus into `+0x3A`/`+0x7A`.
 
 Named `sub_1A582` -> `TickTravelResourceAilments`, called once from
 `TravelToDestination` — resolves the caller referenced in an earlier
-`CheckAndTickAvailableAilment` entry. Clears `word_328C4` bit `0x40`,
+`CheckAndTickAvailableAilment` entry. Clears `g_uiScratchFlags1` bit `0x40`,
 then calls `CheckAndTickAvailableAilment` 3 times with distinct
 (item/effect id, range/count) pairs — checking 3 resource/consumable
 item types for availability during world travel, plausibly
@@ -5037,7 +5037,7 @@ against 6 ascending thresholds to a *decreasing* severity/duration
 value (higher perception, smaller value), and — if nonzero — fills an
 icon-bar slot with it alongside the staged effect id/magnitude pair
 (`word_3293E`/`word_32940`) and the character pointer, then sets
-`word_328CA` bit `0x100`. A perception-gated ailment effect,
+`g_uiScratchFlags4` bit `0x100`. A perception-gated ailment effect,
 plausibly confusion/disorientation-flavored, whose severity shrinks
 as perception rises.
 
@@ -5113,10 +5113,10 @@ its confirmed gate behavior; `sub_219FA` itself remains an open lead.
 Named `sub_16F84` -> `ParseCommandLineSwitches`, called directly from
 `start` at program entry — a classic DOS command-line switch parser.
 Reads the PSP command-tail (`INT 21h AH=0x51`) and scans for
-`/`-prefixed switches: `/P` sets `word_328C4` bit `0x8000`; `/NOM`
-sets `word_328C8` bit `2` (plausibly no-music, tying into the
+`/`-prefixed switches: `/P` sets `g_uiScratchFlags1` bit `0x8000`; `/NOM`
+sets `g_uiScratchFlags3` bit `2` (plausibly no-music, tying into the
 BLASTER/sound-driver detection traced earlier this session); `/NOS`
-sets `word_328C8` bit `1` (plausibly no-sound).
+sets `g_uiScratchFlags3` bit `1` (plausibly no-sound).
 
 598 named of 769 functions as of this update.
 
@@ -5268,7 +5268,7 @@ field) at a second cursor position, persists, and redraws.
 
 Named `sub_22315` -> `DrawAndCacheStatusIcon`, called from
 `HandleMovementInput` and `ProcessLevelMonsters`: draws a small status
-icon (one of 2 variants, gated on `word_328CA` bit `0x1000`, the
+icon (one of 2 variants, gated on `g_uiScratchFlags4` bit `0x1000`, the
 same "in combat" style flag seen elsewhere) at a fixed position, then
 caches the drawn region into EMS page `0x55D8` — the confirmed
 portrait/dungeon-screen cluster page — for later restoration, the
@@ -5293,7 +5293,7 @@ Named `sub_28A76` -> `DrawIndentedTextColumn`, called from
 `ShowHealingCostPrompt` and unnamed `sub_1A5F6` — a mode-dispatching
 wrapper around the plain `DrawStringColumn` and a per-line helper
 `sub_28B94`, selecting between several "how many leading lines get
-zero indent" wrapping patterns based on `word_328C4` bits. Reads as a
+zero indent" wrapping patterns based on `g_uiScratchFlags1` bits. Reads as a
 word-wrapped text column with a caller-selectable hanging-indent
 style, where `fontOffset` is the per-line indent and the selected mode
 controls how many leading lines start unindented before continuation
@@ -5336,7 +5336,7 @@ barter-pricing preview is needed (the alternate branch instead calls
 `ComputeBarterPricingPreview`).
 
 Named `sub_2075B` -> `DrawMapEditorInteractionTypeOverlay`, called
-from `RunMapEditorScreen`, gated on `word_328C4` bit `0x400` (a
+from `RunMapEditorScreen`, gated on `g_uiScratchFlags1` bit `0x400` (a
 debug/overlay toggle — returns immediately if clear). When active,
 scans a 40x24 grid of map-editor tile positions and calls
 `TryInteractAtPosition` per cell, then draws a single debug letter
@@ -5353,14 +5353,14 @@ independently confirmed.
 Named `sub_1F217` -> `DrawGameDialogMenuLabels`, called once from
 `RunGameDialog` (the in-game pause/system menu handler) right after
 dialog setup: draws each of the SAVE/LOAD/NEW GAME/DOS/ANIMATION/
-RETURN menu labels, each one skipped if its own `word_328C4` bit is
+RETURN menu labels, each one skipped if its own `g_uiScratchFlags1` bit is
 already set (`0x80`/`0x40`/`0x20`/`0x10`/`0x8`/`0x4` respectively —
 the ANIMATION case calls `sub_1F884` instead of
 `GameDialog_drawAnimation` when its bit is set), then always draws
 MUSIC/SOUND FX labels gated on `g_driverStateFlags` bits 1/4, and two
 `DrawCheckboxIndicator` calls gated on `g_driverStateFlags` bits 8/2.
 Reads as the dialog's one-time initial label draw, where each
-`word_328C4` bit suppresses a label that isn't applicable in the
+`g_uiScratchFlags1` bit suppresses a label that isn't applicable in the
 current context; the exact per-bit "why unavailable" reason is not
 confirmed.
 
@@ -5384,14 +5384,14 @@ entry) paired with a position table, drawing each entry's text in a
 highlighted color if its flags byte has bit `0x40` set, else the
 normal color. This is the selection-highlight redraw counterpart to
 the earlier `DrawGameDialogMenuLabels` (which draws the same 6
-pause-menu entries once at setup, gated on different `word_328C4`
+pause-menu entries once at setup, gated on different `g_uiScratchFlags1`
 availability bits) — here bit `0x40` marks the currently
 highlighted/selected entry.
 
 Named `sub_1F884` -> `DrawAnimationSpeedLabel`, called from
 `CycleAnimationSetting` and from `DrawGameDialogMenuLabels`'s
 ANIMATION branch (in place of `GameDialog_drawAnimation`, when
-`word_328C4` bit `0x8` is set): draws one of 3 messages at the
+`g_uiScratchFlags1` bit `0x8` is set): draws one of 3 messages at the
 animation label position selected by `g_animationSpeed`'s value (1, 5, or
 9). `CycleAnimationSetting` confirms `g_animationSpeed` cycles through
 exactly `{1, 5, 9}` on each activation, so this is the label for a
@@ -5410,14 +5410,14 @@ cursor — the header draw for a clue book map category page.
 
 Named `sub_1075E` -> `EnforceDemoBoundary` — a genuinely interesting
 find. It checks the party's position against one hardcoded
-coordinate triple, and if matched (and `word_328CA` bit `0x2` is
+coordinate triple, and if matched (and `g_uiScratchFlags4` bit `0x2` is
 clear), shows a 2-line "REGISTER TODAY!" message and blocks the
 caller's subsequent `TravelToDestination` call. This is the classic
 shareware "you've reached the edge of the demo area, please
 register" boundary gate. **However, it is confirmed dead code in
-this binary**: `start` unconditionally sets `word_328CA` bit `0x2`
-right after `ParseCommandLineSwitches` (`or word_328CA, 2`), and a
-search of every `and word_328CA, <imm>` mask in the whole binary
+this binary**: `start` unconditionally sets `g_uiScratchFlags4` bit `0x2`
+right after `ParseCommandLineSwitches` (`or g_uiScratchFlags4, 2`), and a
+search of every `and g_uiScratchFlags4, <imm>` mask in the whole binary
 confirms none of them ever clears that bit again — so the `jnz` at
 the top of `EnforceDemoBoundary` is always taken and the block can
 never fire. A second, related dead branch was found in the same
@@ -5425,7 +5425,7 @@ sweep: at the game's shutdown sequence in `start`, right after
 `ReleaseEmsHandles`, the same bit is tested again, and when clear
 (never, per the above) prints via DOS `INT 21h AH=9`: "Thank You for
 playing Yendorian Tales Book I Chapter 2" / "Please register your
-copy today." — also unreachable. Read together, `word_328CA` bit
+copy today." — also unreachable. Read together, `g_uiScratchFlags4` bit
 `0x2` looks like a "registered version" flag that this particular
 `SW.EXE` build forces on unconditionally, permanently disabling both
 the in-game demo-boundary nag and the exit-time registration
@@ -5461,8 +5461,8 @@ resolved into a named function — not independently confirmed, but
 plausibly a low-level tick hook given how early the call site sits
 and how heavily this function is gated against interfering with
 other screens. Only runs when a specific debug flag combination
-holds (`word_328C6` bits `0x80`/`0x200` clear, `word_328CA` bit
-`0x1000` clear, `word_328C4` bit `0x2000` set), then draws 3 rows of
+holds (`g_uiScratchFlags2` bits `0x80`/`0x200` clear, `g_uiScratchFlags4` bit
+`0x1000` clear, `g_uiScratchFlags1` bit `0x2000` set), then draws 3 rows of
 labeled numeric pairs: `'H'`/`'V'` for `g_dungeonMapGridOriginCol`/`g_dungeonMapGridOriginRow`,
 `'H'`/`'V'` again for `g_partyWorldX`/`g_partyWorldY` (the confirmed party
 world X/Y position), and `'B'`/`'F'` for a pair read via a
@@ -5649,7 +5649,7 @@ shop buy handler `sub_17032`: clears the shop's item-slot grid area,
 then draws up to 8 item icons (position table + item-id table) via
 `LoadItemCatalogRecord` + `DrawPicture`, counting how many were
 drawn. Shows "EMPTY" (confirmed via string dump) and sets a
-`word_328C6` flag bit if the shop has nothing to show.
+`g_uiScratchFlags2` flag bit if the shop has nothing to show.
 
 Named `sub_23442` -> `DrawMonsterHealthBar`, called once from
 `DrawMonsterInfoPanel` with `bx`/`cx` (current/max value) set by the
@@ -5668,7 +5668,7 @@ twice from `RunAlchemyScreen`: a standard "can scroll up"/"can scroll
 down" pagination indicator for the alchemy screen's 13-spells-per-page
 list, drawing an up-arrow glyph when not on the first page and a
 down-arrow glyph when a later page exists, each setting its own
-`word_328CA` flag bit.
+`g_uiScratchFlags4` flag bit.
 
 Named `sub_1CBC4` -> `DrawConfirmPromptGoldLine`, called from
 `ShowHealingCostPrompt` and unnamed `sub_1BBED`: draws "GOLD COINS:"
@@ -5766,7 +5766,7 @@ A milestone: **660 named of 769 functions as of this update.**
 Named `sub_17A21` -> `TriggerShopExitSoundAndPersist`, called once
 from `RunShopScreen` in the branch reached via its hit-test table
 index 1 (plausibly a door/exit icon, not independently confirmed):
-gated on `word_328C6` shop-mode flags, plays a sound and decrements a
+gated on `g_uiScratchFlags2` shop-mode flags, plays a sound and decrements a
 per-slot counter, then always persists a `WORLD.DAT`-backed record.
 
 Named a 3-function clue book sub-page cluster, called from
@@ -5849,7 +5849,7 @@ an "equipment/character-panel only" flag.
 Named `sub_1CB37` -> `ComputeCostMessageIndentMode`, called from
 `sub_1A5F6` and `ShowHealingCostPrompt` (both known
 `DrawIndentedTextColumn` preparers): picks a wrapping mode
-(`word_328C4` bits `0x2`/`0x4`/`0x8`/`0x10`/`0x20` + `fontOffset`)
+(`g_uiScratchFlags1` bits `0x2`/`0x4`/`0x8`/`0x10`/`0x20` + `fontOffset`)
 based on which of 4 ascending thresholds a cost/quantity record field
 falls into, with the threshold table itself selected by
 `word_3197C`. Reads as: pick the hanging-indent wrapping style
@@ -5996,7 +5996,7 @@ and resets the counter.
 Named `sub_16BF6` -> `ResolveAttackerActionOutcome`, called twice
 from the still-unnamed combat dispatcher `sub_16881`. Resolves one
 attacker-vs-defender action outcome via one of 3 paths, selected by
-`word_328CA` bit `0x200` and the attacker's special-attack flags:
+`g_uiScratchFlags4` bit `0x200` and the attacker's special-attack flags:
 (1) the normal `ResolveAttack` damage roll, (2) a
 `FailsSavingThrow`-gated status-effect application, or (3) — a
 genuinely new find — a weaker-DC `FailsSavingThrow` gating an
@@ -6020,7 +6020,7 @@ optional wrapped description, then opens a 34-character text-entry
 field ("PRESS ESCAPE TO EXIT" shown as a standing hint) and compares
 the typed text byte-for-byte against the expected string. Confirmed
 via string dump: "THAT SOUNDS GOOD TO ME." on a match (sets a
-`word_328C6` unlock flag), "THAT IS INCORRECT." on a mismatch —
+`g_uiScratchFlags2` unlock flag), "THAT IS INCORRECT." on a mismatch —
 either way looping back to prompt again unless the player cancels.
 
 688 named of 769 functions as of this update.
@@ -6404,7 +6404,7 @@ locates a qualifying inventory item, to actually consume it as
 payment.
 
 It's driven entirely by caller-configured globals rather than
-explicit parameters: `word_328C8` bits `0x8000`/`0x4000`/`0x2000`
+explicit parameters: `g_uiScratchFlags3` bits `0x8000`/`0x4000`/`0x2000`
 select the consumption mode — "recharge and reset wear" (also zeroes
 the matching equipped-item durability counter, tying directly into
 this session's `TickEquippedItemDurability`), "full discard", "swap
@@ -6729,15 +6729,15 @@ Also swept `docs/file-formats.md` and updated all existing prose
 mentions of these 7 raw addresses to the new names for consistency.
 
 Many more high-reference-count globals remain, ranked by the grep
-frequency count (e.g. `word_3293E` 209 refs, `word_328C6` 152,
-`word_328CA` 150, `word_328C8` 146, `word_32940` 128, `g_viewportRowDepth` 121,
+frequency count (e.g. `word_3293E` 209 refs, `g_uiScratchFlags2` 152,
+`g_uiScratchFlags4` 150, `g_uiScratchFlags3` 146, `word_32940` 128, `g_viewportRowDepth` 121,
 `word_36C7F` 86 — a party-average-stat-tier-driven minimap/lighting
 visibility bitfield, exact real-world meaning (light source vs. mapping
 skill) not fully confirmed, `word_2E548` 83 — an item-effect-swap
 sub-flag/field table, exact structure not fully confirmed, `g_currentCommandCode`
-83, `word_3295A` 80, `word_328CC` 72, `word_2E412` 70, `word_36C79` 69
+83, `word_3295A` 80, `g_clueBookNavFlags` 72, `word_2E412` 70, `word_36C79` 69
 — confirmed environmental-timer bits, `g_stagedAttackDamage` 65). Several of the
-very highest-ref globals (`word_328C4`/`C6`/`C8`/`CA`/`CC`, `word_3293E`,
+very highest-ref globals (`g_uiScratchFlags1`/`C6`/`C8`/`CA`/`CC`, `word_3293E`,
 `word_32940`) are multi-purpose bitfield/scratch-parameter words whose
 individual bits or call-site-specific meaning don't reduce to one clean
 name — deferring those in favor of continuing through the
@@ -6869,8 +6869,8 @@ Renamed 6 more globals:
   highlighted entry index within the clue entry list, adjusted
   alongside the scroll offset.
 
-Left the rest of the clue-book state cluster (`word_2E3EA`/`word_2E3F2`/
-`word_2E3F4`) alone — file-formats.md itself flags their "exact
+Left the rest of the clue-book state cluster (`g_clueEntryLowerBound`/`g_clueEntryPageUpperBound`/
+`g_clueEntryTotalCount`) alone — file-formats.md itself flags their "exact
 identity... not confirmed" beyond being bounds/count values paired with
 the ones just renamed. Also checked `word_332E8`/`word_332E0` (values
 latched into the attack-staging pair) and `word_31980`/`word_2E412`
@@ -6933,12 +6933,12 @@ disassembly read) to confirm each before renaming. 17 more globals:
   shared by `RunClueBookItemCategory`/`RunClueBookWeaponCategory`.
 
 Also took a fresh, harder look at the big multi-purpose bitfields
-(`word_328C4`/`C6`/`C8`/`CA`/`CC`) to see if any had a coherent enough
-theme to name as a group. They don't: `word_328C6` was already
+(`g_uiScratchFlags1`/`C6`/`C8`/`CA`/`CC`) to see if any had a coherent enough
+theme to name as a group. They don't: `g_uiScratchFlags2` was already
 explicitly flagged several rounds ago as "a broad flags word reused by
 many unrelated subsystems" (confirmed again here — its bit 0 controls
 `DrawPicture`'s masked-blit prep, completely unrelated to its other
-shop/inventory-mode bits), and `word_328C4`/`word_328C8` similarly mix
+shop/inventory-mode bits), and `g_uiScratchFlags1`/`g_uiScratchFlags3` similarly mix
 command-line startup switches, pause-menu label suppression, combat-mode
 selection, and item-consumption parameters under one address. Naming
 these as a group would misrepresent them as having one purpose: left
@@ -7030,6 +7030,64 @@ Four more globals, continuing the fresh-disassembly-tracing approach:
 Documented both new finds in file-formats.md under new "The EMS
 page-mapping call cache" and extended "Ambient music by map region"/
 "Mouse input" sections.
+
+### 2026-09-16 session update, continued: global variable renaming, round 8 (structures and bitfields)
+
+Per Paul's steer, shifted focus specifically to likely structures and
+the biggest remaining multi-purpose flag words, skipping single-
+function-local scratch values. 12 more globals:
+
+**The clue-book pagination struct, completed.** Rounds 4/5 named
+`g_clueBookCategory`/`g_clueEntryScrollOffset`/`g_clueEntrySelectedIndex`;
+fresh reads of `RunClueEntryMenu`'s scroll/page handlers confirmed the
+remaining 4 fields of the same cluster: `word_2E3EA` →
+**`g_clueEntryLowerBound`** (an "active list loaded?" sentinel and the
+lower clamp bound when paging up), `word_2E3EC` →
+**`g_clueEntryVisibleRowCount`** (how many entries fit on screen),
+`word_2E3F2` → **`g_clueEntryPageUpperBound`**, `word_2E3F4` →
+**`g_clueEntryTotalCount`**.
+
+**The lock-state pair**, read directly from `LoadLockState`:
+`word_32DC8` → **`g_lockUnlockedMask`** (a freshly-loaded, bit-packed
+"previously unlocked?" mask per lock/object id) and `byte_32DCD` →
+**`g_lockUnlockedAccumulator`** (consistently OR'd/tested against it,
+then written back to `CURGAME` — a running per-id-group record of
+unlocked locks).
+
+**`word_32DC4` → `g_currentToolbarIconPtr`**: selects between two
+fixed small records (`0x6ED0`/`0x6EE8`) for the SHOOT/CAST action-
+toolbar icons; `[bx+2]` is consistently incremented/decremented as a
+charge/uses counter across both the main dispatcher's icon-click
+handling and `UseAbilityCommand`.
+
+**The big multi-purpose flag words.** Enumerated every `and`/`or`/
+`test` bit-mask constant used against `word_328C4`/`C6`/`C8`/`CA`/`CC`
+across the whole binary — the most thorough per-bit sweep done on any
+of these so far. Four of the five are confirmed, genuine grab-bags:
+the *same* bit value is reused for unrelated purposes depending on
+which mutually-exclusive screen is active (e.g. `word_328C6` bit 0
+gates `DrawPicture`'s masked-blit prep, nothing to do with its
+shop-mode/portrait-dirty bits elsewhere in the same word). Rather than
+force a falsely-specific name onto them, gave them honest, generic
+names and wrote a full confirmed-bit catalog into an IDA comment on
+each (also transcribed into file-formats.md):
+- `word_328C4` → **`g_uiScratchFlags1`**
+- `word_328C6` → **`g_uiScratchFlags2`**
+- `word_328C8` → **`g_uiScratchFlags3`**
+- `word_328CA` → **`g_uiScratchFlags4`**
+
+The fifth is different: essentially every confirmed bit is specifically
+about the clue book's category nav bar (per-tab highlight bits,
+LIST/MAP hint toggles), so it earned a real name:
+- `word_328CC` → **`g_clueBookNavFlags`**
+
+Also checked `word_3293E` (209 refs, the single highest-ref-count
+global left) directly in the disassembly: it's not a bitfield at all —
+it's a scratch parameter register for the BCD-arithmetic helpers
+(`AddToBCDCounter`/`SubtractFromBCDCounter`/`IsBCDCounterAtLeast`,
+confirmed by their own inline comments), reused elsewhere as an
+icon-bar slot's staged effect-id field. Confirms the original
+characterization from earlier rounds — correctly left alone.
 
 ## Next steps (not started this session)
 

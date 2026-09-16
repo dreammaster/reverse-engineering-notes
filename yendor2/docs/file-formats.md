@@ -43,8 +43,14 @@ convention was found). `LoadCurgameRecord` (`0x1770C`,
 paging, indexed by `word_32DBC*4 + 0x1A*_val9` — the `0x1A`-word (26)
 row stride is a plausible per-character record size, worth checking
 against the item-slot layout above once the struct is actually located.
-Splits one field by 100 into quotient/remainder (currency or time value,
-not confirmed which).
+Splits one field (`word_32DD0`) by 100 into a quotient/remainder pair
+(currency or time value, not confirmed which; the quotient/remainder
+globals themselves are reused as generic scratch parameters elsewhere,
+so left unnamed). `LoadLockState` also freshly loads the queried lock's
+bit-packed "previously unlocked?" mask into `g_lockUnlockedMask`, and
+consistently OR's/tests it against `g_lockUnlockedAccumulator` (written
+back to `CURGAME`) — a running per-lock-id-group record of which locks
+have been unlocked.
 
 **Autosave on movement**: `start`'s main loop writes a small, *fixed-
 offset* record (`ax=0x556D`, via the resource stub `sub_27DE5`) back to
@@ -410,7 +416,7 @@ strings; the numeric skill values themselves must be drawn by an
 untraced call in the same function). Both `ShowCharacterSkills` and
 `ShowCharacterInventory` also call `DrawQuitOrReturnLabel` (was
 `sub_25595`) for their bottom-left exit button: `QUIT "CREATE"`
-(highlighting the `Q`) when `word_328CA` bit `0x8000` is clear, or
+(highlighting the `Q`) when `g_uiScratchFlags4` bit `0x8000` is clear, or
 `RETURN` when set — these screens are shared between viewing an
 existing character and the character-creation flow, and the button
 text/behavior switches accordingly. **This also sharpens an earlier hedge**: since
@@ -501,7 +507,7 @@ read into or write from. **`ConsumeItemChargeResource`** (was
 `sub_274B4`, called from 21 sites including `CheckAndPaySpecialItemCost`
 and `HandleSearchCommand`'s failed-trap-search) is the shared "spend
 one use of an item-based resource" engine: driven entirely by
-caller-configured globals, `word_328C8` bits `0x8000`/`0x4000`/
+caller-configured globals, `g_uiScratchFlags3` bits `0x8000`/`0x4000`/
 `0x2000` select the consumption mode — recharge-and-reset-wear (also
 zeroing the matching equipped-item durability counter,
 `+0xBE`/`+0xC0`/`+0xC2`, the same fields `TickEquippedItemDurability`
@@ -767,7 +773,7 @@ semantics (name/material/type?) likewise not confirmed.
 Some clue entries are **registration-locked**: `RunClueEntryMenu` shows
 `ShowClueBookRegistrationNag` ("REGISTER YOUR COPY OF THE CLUE BOOK
 TODAY!") instead of an entry's detail when the global "registered"
-flag (`word_328CA` bit 1) is clear and that entry's own flag
+flag (`g_uiScratchFlags4` bit 1) is clear and that entry's own flag
 (`[+2]` bit `0x8000`) marks it as requiring registration — a shareware
 limitation.
 
@@ -776,16 +782,16 @@ entry-list scroll handler — the same "I"/"Q" hotkey convention as
 `HandlePagedEntryNavigation` elsewhere, plus a mouse hit-test
 (`HitTestRegionTable` table `0x6960`) as an alternate input, updating
 current index `g_clueEntrySelectedIndex` from candidate `g_clueEntryScrollOffset` ('I') or
-`word_2E3F2` ('Q') and signaling which via `errorCode`
-(1/2/0=unchanged) — unless a `word_328CC` bit (`0x100`/`0x80`) defers
+`g_clueEntryPageUpperBound` ('Q') and signaling which via `errorCode`
+(1/2/0=unchanged) — unless a `g_clueBookNavFlags` bit (`0x100`/`0x80`) defers
 to a full-page jump instead: `ScrollClueEntryListPageUp`/
 `ScrollClueEntryListPageDown` (was `sub_13014`/`sub_12FED`, also
 shared with `HandleClueEntryRowScrollInput` below), which move
 `g_clueEntryScrollOffset` by a fixed page size of `0x38` (56) entries/rows, clamped
-against `word_2E3EA+2`/`word_2E3F2` respectively, then call
+against `g_clueEntryLowerBound+2`/`g_clueEntryPageUpperBound` respectively, then call
 `RecomputeClueEntryPageBounds` (was `sub_12FC1` — **correction**: not
 a redraw as first speculated; it's pure bounds arithmetic, recomputing
-`word_2E3F2`/`word_2E3EC` from the new `g_clueEntryScrollOffset`, with a `/4` in
+`g_clueEntryPageUpperBound`/`g_clueEntryVisibleRowCount` from the new `g_clueEntryScrollOffset`, with a `/4` in
 its last-partial-page math confirming a 4-entries-per-row grid). The
 list's other scroll input, `HandleClueEntryRowScrollInput` (was
 `sub_12D5C`), handles 'H'/'P' for a single-row (step 4) scroll,
@@ -795,18 +801,18 @@ entire clue-entry-list scrolling mechanism end to end.
 
 `HandleClueCategorySelection` (was `sub_14D26`) is `RunClueEntryMenu`'s
 category-switching input handler: keyboard (`ESC`/digit keys, plus
-`K`/`P` hotkeys gated on the same `word_328CC` `0x40`/`0x20` bits
+`K`/`P` hotkeys gated on the same `g_clueBookNavFlags` `0x40`/`0x20` bits
 `DrawClueBookNavBar` uses for its "d) LIST"/"c) MAP" hints — not the
 registration lock, a different flag) and mouse (region table `0x6876`,
 categories 1-9) both funnel into a shared "apply new category" block
-that walks a 7-bit category mask in `word_328CC` and plays a sound cue
+that walks a 7-bit category mask in `g_clueBookNavFlags` and plays a sound cue
 on change.
 
 `RunClueEntryMenu` also calls `DrawClueBookNavBar` (twice) to draw the
 book's top bar: conditional "d) LIST" / "c) MAP" hotkey hints
-(`word_328CC` bits `0x40`/`0x20`), then a row of 7 category-tab icons
+(`g_clueBookNavFlags` bits `0x40`/`0x20`), then a row of 7 category-tab icons
 (fixed base picture ids, each swapped to a highlighted +1 variant when
-its bit in `word_328CC`, `0x8000` down to `0x200`, is set).
+its bit in `g_clueBookNavFlags`, `0x8000` down to `0x200`, is set).
 
 `ShowClueBook` also calls `ShowClueBookHelpScreen` (bound to TAB,
 per its own title text), which lists the clue book's categories: F1
@@ -993,7 +999,7 @@ computed by `ComputeAfflictionHealingCost` (was `sub_1BA35`, called
 twice from `UseHealingItem`): a flat per-affliction price summed over
 the confirmed `+0x1C` bitfield (SICK `+5` through STONED `+60`).
 
-A 4th shop-mode bit, `word_328C6` `0x200`, gates a mouse-click-driven
+A 4th shop-mode bit, `g_uiScratchFlags2` `0x200`, gates a mouse-click-driven
 shop purchase path: `HandleShopCatalogSlotClick` (was `sub_17032`, a
 catalog-click handler reached from the main input loop via a hit-test
 against region table `0x5AC0` — its own click gate is
@@ -1301,7 +1307,7 @@ not confirmed.
 **Ranged attacks and area-effect abilities against a corridor monster**:
 `ResolveAttackOrAbilityAction` (called from `HandleRangedOrCombatAction`,
 the combat-round driver, itself called from `start`) handles two modes,
-selected by `word_328C8` bit `0x100` (set by the caller — e.g.
+selected by `g_uiScratchFlags3` bit `0x100` (set by the caller — e.g.
 `start`'s loc_10A65 branch, gated on *not* being in formal combat):
 
 - **Set (ranged/thrown weapon)**: finds an equipped item in a party
@@ -1331,9 +1337,9 @@ bit-scan (the attack's type flags vs. the target's `[+0x98]`
 resistance flags, halving per match) before subtracting from HP.
 
 **The full ranged-weapon shot sequence**, `HandleRangedOrCombatAction`
-(called from `start`, 2 sites — one sets `word_328C8` bit `0x100`
+(called from `start`, 2 sites — one sets `g_uiScratchFlags3` bit `0x100`
 first): a 3-way combat-action dispatcher. If already in formal combat
-(`word_328CA` bit `0x1000`), branches elsewhere (not traced). If the
+(`g_uiScratchFlags4` bit `0x1000`), branches elsewhere (not traced). If the
 caller set bit `0x100` (a ranged-attack request): scans the 4 party
 inventory slots for a character with an eligible ranged weapon (item
 `0x13A`, status-gated), bails if none; else draws a 4-icon weapon-select
@@ -1371,7 +1377,7 @@ converge on a common epilogue: if the loot-staging counter (`0x51B6`)
 has accumulated enough, `ShowLootAndAwardExperience` fires, then
 `ProcessLevelMonsters` ticks and the screen/minimap redraw.
 
-**The in-combat melee branch** (formal combat, `word_328CA` bit
+**The in-combat melee branch** (formal combat, `g_uiScratchFlags4` bit
 `0x1000` set) is much simpler: `HighlightSelectedAbilityIcon` marks
 the selected ability in the UI, one `AnimateProjectileStep`, then
 `ResolveAttackOrAbilityAction` directly against `g_activeCombatMonster` (the
@@ -1399,7 +1405,7 @@ then opens a 34-character text-entry field (`EditTextField`) for the
 player to type an answer — "PRESS ESCAPE TO EXIT" shown as a standing
 hint. The typed text is compared byte-for-byte against the expected
 answer string; a match shows "THAT SOUNDS GOOD TO ME." and sets a
-`word_328C6` unlock flag, a mismatch shows "THAT IS INCORRECT." —
+`g_uiScratchFlags2` unlock flag, a mismatch shows "THAT IS INCORRECT." —
 either way looping back to prompt again unless the player cancels.
 Reads as a riddle, puzzle-lock, or "speak the password" item; which
 specific quest item(s) use this path is not identified.
@@ -1601,7 +1607,7 @@ solid next-round candidate now that its main inner loop is understood.
 six: draws the far-wall/vanishing-point cells at the end of the
 visible corridor (a different `0xE551` table field, z-layer 6), then
 runs the same per-cell side-feature and encounter checks as
-`RenderDungeonViewRow` for the final cell, and (when `word_328CA` bit
+`RenderDungeonViewRow` for the final cell, and (when `g_uiScratchFlags4` bit
 `0x1000` is set, plausibly "in combat") calls
 `RenderActiveMonsterSprites` to draw the 3 `g_monsterSlots` combat
 monsters into the viewport.
@@ -1716,7 +1722,7 @@ accordingly, falling back to `SelectDefaultAlchemyCaster` (was
 `sub_1E447` — the first occupied, `+0x94`-eligible slot) otherwise.
 `RunAlchemyScreen` also calls `ShowCompassDirection`, a
 "NORTH"/"SOUTH"/"EAST"/"WEST" HUD readout gated on an unidentified
-"compass active" mode (`word_328CA` bit `0x1000` clear, `word_36C7F`
+"compass active" mode (`g_uiScratchFlags4` bit `0x1000` clear, `word_36C7F`
 bit `0x400` set), drawn at the same screen position as the
 material/gold HUD. `DrawMinimap` has its own small graphical
 counterpart, `DrawMinimapCompassIcon` (was `sub_2169C`): draws a fixed
@@ -1739,7 +1745,7 @@ first framed as a generic "material counter" (below), but its HUD
 label (`ShowMaterialCounterHud`, msg `0x7FC4`) turned out to be a
 literal `"$"`, and its two consumer functions were renamed to match:
 `TrySellItemForGold` (was `TryConvertItemToMaterial` — a Space-bar
-action, main input loop `word_328C6` bit `0x10`, while carrying an
+action, main input loop `g_uiScratchFlags2` bit `0x10`, while carrying an
 item: rebuffed with "I HAVE NO NEED FOR THAT TYPE OF ITEM." if the
 item's type doesn't match what the standing location accepts,
 otherwise sells it and credits `g_partyGold`) and
@@ -1751,7 +1757,7 @@ and advances the held item to the next entry in the item catalog —
 the item "enhancement" itself). `ApplyEffectCost`'s trap/status-effect
 cost dispatch also spends from this same 3-counter family, so a trap
 stealing party gold is plausible. A third Space-bar sibling,
-`TryRepairItemForGold` (`word_328C6` bit 4), pays gold (cost table
+`TryRepairItemForGold` (`g_uiScratchFlags2` bit 4), pays gold (cost table
 `0x5082`) to repair the held item, rejecting with "I CAN NOT REPAIR
 THAT" if ineligible — distinct from the skill-based `RepairItemCommand`
 minigame below, which can critically fail and destroy the item. Its
@@ -1801,18 +1807,18 @@ flags have bit `0x4000` set). A sibling branch, gated on the item's
 name literally matching `"BUY "` or its `[+0xE]` flags having bit
 `0xC000` set, calls `ConfirmAndValidatePartyTarget` — a confirm
 prompt to pick a party member, re-prompting with a warning if the
-pick is incapacitated (caching the valid choice): sets `word_328C6` bit `0x10` and runs
+pick is incapacitated (caching the valid choice): sets `g_uiScratchFlags2` bit `0x10` and runs
 `RunPartyInventoryScreen` (was `sub_1869D`) so Space triggers
 `TrySellItemForGold`, then rebuilds/redraws the minimap on exit. Its
 two siblings, `RunEnhanceItemScreen` (`UseItem+0x1C1`, sets bit 8) and
 `RunRepairItemScreen` (`UseItem+0x1D0`, sets bit 4), are otherwise
 identical — completing the shop cluster's three `UseItem`-reachable
 entry points (sell/enhance/repair), each just setting a different
-`word_328C6` action bit before running the same main input loop.
+`g_uiScratchFlags2` action bit before running the same main input loop.
 All three, plus `start` and `HandleDungeonInput` generally, call
 `RefreshPartyPortraits`: its core role is refreshing the 4 party
 portrait slots, but when a shop action bit is active
-(`word_328C6 & 0x1C`) it also draws a context hint — "SPACEBAR TO
+(`g_uiScratchFlags2 & 0x1C`) it also draws a context hint — "SPACEBAR TO
 ENHANCE ITEM" / "SPACEBAR TO REPAIR ITEM" / default "SPACEBAR TO SELL
 ITEM OR ESC TO UNDO". A simpler sibling, `RestoreAllPortraitsFromEMS`
 (was `sub_18F6C`, called from `RunPartyInventoryScreen`), does the
@@ -2116,7 +2122,7 @@ A second, independent trap system — fully traced end to end this
 session, separate from `SelectTrapEffectVariant` above though both
 ultimately feed `PrepareTrapEffectSlots`. `ProcessSideTrapsOnMovement`
 (was `sub_2278C`, called directly from `start`, likely once per
-movement step) fast-exits unless `word_328C8` bit `0x10` is set,
+movement step) fast-exits unless `g_uiScratchFlags3` bit `0x10` is set,
 otherwise walks an 80-entry wall/cell table (stride `0x9C`) and calls
 `TriggerSideTrapForRandomPartyMember` (was `sub_22989`) for every
 entry flagged with a side trap (`[+0xE]` bit `0x1000`). That function
@@ -2229,7 +2235,7 @@ the status area from an EMS cache before drawing, and
 `UseAbilityCommand` also calls `ConsumeAbilityChargeAndRefresh` (was
 `sub_17A65`): shows `ShowResourceDepletedOverlay`, then — unless a
 flag (`word_32DCE` bit 1) says otherwise — plays a sound, increments a
-counter at `[word_32DC4+2]` (plausibly the ability's charge/uses
+counter at `[g_currentToolbarIconPtr+2]` (plausibly the ability's charge/uses
 count, alongside the already-known `word_32DC0`/`word_32DC2`
 effect-id/threshold parameters feeding `ApplySavingThrowEffect`), and
 refreshes the dungeon screen.
@@ -2308,7 +2314,7 @@ from a "bigger stat, bigger effect" reading, consistent with `+0x58`
 being a perception stat that *reduces* susceptibility. All three share
 an identical tail: if the summed severity is nonzero, populate the
 per-member icon-bar slot (`[di+8]`/`[di+0xA]`=the staged effect id/
-magnitude, `[di+0xC]`=the character pointer) and set `word_328CA` bit
+magnitude, `[di+0xC]`=the character pointer) and set `g_uiScratchFlags4` bit
 `0x100`; `TickPartyAilmentIconBar` itself then calls
 `ApplyEffectAndDrawIconBar`. This closes out
 `TickPartyAilmentIconBar`'s dispatch structure end to end — only the
@@ -2544,7 +2550,7 @@ draws the *same* base glyph, and the varying table value instead feeds
 `sub_2A53C` first thing. Checked whether that's a per-cell color/remap
 parameter by reading `sub_2A53C` — **ruled out**: it never reads
 `[bp+var_21]` at all (it's a local stack-buffer init/copy routine keyed
-off different globals, `word_328C6`/`word_2E48E`/`word_2E490`). So
+off different globals, `g_uiScratchFlags2`/`word_2E48E`/`word_2E490`). So
 `g_shadeShiftDelta`'s actual role in `DrawPicture` — and by extension what the
 `0x16`-`0x50` table values mean — is still unknown; genuinely open,
 not a working theory.
@@ -2670,7 +2676,7 @@ named). `0x442A` is a heavily-referenced address elsewhere in the
 binary, plausibly a shared palette/DAC staging buffer, not traced
 further. Also related: `WaitFrameTicksOrEscape` (was `sub_119E0`,
 called from `ShowIntroPicture`) is a frame-paced wait-with-abort
-primitive — busy-waits for `word_328C4` bit `0x400` ("tick ready",
+primitive — busy-waits for `g_uiScratchFlags1` bit `0x400` ("tick ready",
 plausibly raised by an untraced timer/vsync interrupt handler), checks
 ESC via `PollForEscapeKeyOnly`, clears the bit, repeats for `cx`
 ticks.
@@ -2683,8 +2689,8 @@ entry, didn't fit an obvious role from the entries examined so far).
 
 `ParseCommandLineSwitches` (was `sub_16F84`, called directly from
 `start` at program entry) scans the PSP command-tail for `/`-prefixed
-switches: `/P` sets `word_328C4` bit `0x8000`; `/NOM` sets
-`word_328C8` bit `2` (plausibly no-music); `/NOS` sets `word_328C8`
+switches: `/P` sets `g_uiScratchFlags1` bit `0x8000`; `/NOM` sets
+`g_uiScratchFlags3` bit `2` (plausibly no-music); `/NOS` sets `g_uiScratchFlags3`
 bit `1` (plausibly no-sound) — the latter two tie into the
 sound-driver detection below.
 
@@ -2757,15 +2763,15 @@ dead code, rather than reinterpreted.
   hardcoded coordinate triple and, if matched, shows a 2-line
   "REGISTER TODAY!" message and blocks movement past that point,
   the classic shareware "edge of the demo area" gate, guarded by
-  `word_328CA` bit `0x2`. That bit is unconditionally forced on at
-  boot in `start` (`or word_328CA, 2`, right after
+  `g_uiScratchFlags4` bit `0x2`. That bit is unconditionally forced on at
+  boot in `start` (`or g_uiScratchFlags4, 2`, right after
   `ParseCommandLineSwitches`) and is never cleared anywhere else in
   the binary, so the check can never actually trigger. A second dead
   branch exists in the game's shutdown sequence (`start`, right after
   `ReleaseEmsHandles`): the same bit gates two DOS `INT 21h AH=9`
   prints, `"Thank You for playing Yendorian Tales Book I Chapter 2"`
   and `"Please register your copy today."`, also unreachable. Reads
-  as `word_328CA` bit `0x2` being a "registered version" flag that
+  as `g_uiScratchFlags4` bit `0x2` being a "registered version" flag that
   this particular `SW.EXE` build forces on unconditionally -- the
   shareware-era code and its message strings are still compiled in,
   just permanently disabled.

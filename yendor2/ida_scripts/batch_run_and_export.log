@@ -173918,3 +173918,37 @@ total names seen: 1491, matched default pattern: 0
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor2\yendor2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rename_globals_round8.py']
+[*] reading rename_globals_round8.py
+[*] executing rename_globals_round8.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2e3ea  'word_2E3EA' -> 'g_clueEntryLowerBound': ok
+0x2e3ec  'word_2E3EC' -> 'g_clueEntryVisibleRowCount': ok
+0x2e3f2  'word_2E3F2' -> 'g_clueEntryPageUpperBound': ok
+0x2e3f4  'word_2E3F4' -> 'g_clueEntryTotalCount': ok
+0x32dc8  'word_32DC8' -> 'g_lockUnlockedMask': ok
+0x32dcd  'byte_32DCD' -> 'g_lockUnlockedAccumulator': ok
+0x32dc4  'word_32DC4' -> 'g_currentToolbarIconPtr': ok
+0x328c4  'word_328C4' -> 'g_uiScratchFlags1': ok
+0x328c6  'word_328C6' -> 'g_uiScratchFlags2': ok
+0x328c8  'word_328C8' -> 'g_uiScratchFlags3': ok
+0x328ca  'word_328CA' -> 'g_uiScratchFlags4': ok
+0x328cc  'word_328CC' -> 'g_clueBookNavFlags': ok
+0x328c4  comment set (996 chars)
+0x328c6  comment set (1026 chars)
+0x328c8  comment set (829 chars)
+0x328ca  comment set (645 chars)
+----- end target script output -----
+[*] finished executing rename_globals_round8.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106992
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

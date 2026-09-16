@@ -52,9 +52,9 @@ start           proc near
                 mov     ds, ax
                 mov     word_2E4AA, ax
                 call    ParseCommandLineSwitches
-                and     word_328C4, 7FFFh
-                or      word_328CA, 2
-                and     word_328CA, 0FFFEh
+                and     g_uiScratchFlags1, 7FFFh
+                or      g_uiScratchFlags4, 2
+                and     g_uiScratchFlags4, 0FFFEh
                 call    InitGame
                 cmp     g_lastKeyChar, 0FFh
                 jnz     short loc_1003E
@@ -66,7 +66,7 @@ loc_1003E:                              ; CODE XREF: start+39↑j
 
 loc_10043:                              ; CODE XREF: start+7B↓j
                                         ; start+99↓j ...
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_1005A
                 call    RunDungeonGameLoop
                 cmp     g_lastKeyChar, 0FFh
@@ -76,7 +76,7 @@ loc_10043:                              ; CODE XREF: start+7B↓j
 
 loc_1005A:                              ; CODE XREF: start+49↑j
                                         ; start+55↑j ...
-                test    word_328C8, 20h
+                test    g_uiScratchFlags3, 20h
                 jz      short loc_1007D
                 call    ProcessLevelMonsters
                 cmp     g_lastKeyChar, 0FFh
@@ -91,7 +91,7 @@ loc_10071:                              ; CODE XREF: start+6C↑j
 ; ---------------------------------------------------------------------------
 
 loc_1007D:                              ; CODE XREF: start+60↑j
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_1008F
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -182,7 +182,7 @@ loc_10110:                              ; CODE XREF: start+10B↑j
 loc_10125:                              ; CODE XREF: start+120↑j
                 jmp     ax
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jz      short loc_10152
                 call    ProcessLevelMonsters
                 call    RedrawDungeonScreen
@@ -198,7 +198,7 @@ loc_10152:                              ; CODE XREF: start+12D↑j
                                         ; start+14D↑j
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_10160
                 jmp     loc_101F3
 ; ---------------------------------------------------------------------------
@@ -240,8 +240,8 @@ loc_1019B:                              ; CODE XREF: start+170↑j
 
 loc_101B8:                              ; CODE XREF: start+1AD↑j
                                         ; start+1B4↑j
-                mov     ax, word_32DC8
-                or      byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                or      g_lockUnlockedAccumulator, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -258,7 +258,7 @@ loc_101F3:                              ; CODE XREF: start+15D↑j
                                         ; start+172↑j ...
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_10201
                 jmp     loc_10283
 ; ---------------------------------------------------------------------------
@@ -291,8 +291,8 @@ loc_1022B:                              ; CODE XREF: start+20D↑j
 
 loc_10248:                              ; CODE XREF: start+23D↑j
                                         ; start+244↑j
-                mov     ax, word_32DC8
-                or      byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                or      g_lockUnlockedAccumulator, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -319,7 +319,7 @@ loc_10286:                              ; CODE XREF: start+3B↑j
                 call    FileEntry_Write
                 mov     bx, 8FFBh
                 call    FileEntry_Close
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jz      short loc_102B5
                 mov     bx, 9043h
                 call    FileEntry_Close
@@ -342,7 +342,7 @@ loc_102B5:                              ; CODE XREF: start+2AB↑j
                 mov     ax, 3
                 int     10h             ; - VIDEO - SET VIDEO MODE
                                         ; AL = mode
-                test    word_328CA, 2
+                test    g_uiScratchFlags4, 2
                 jnz     short loc_102FF
                 mov     dx, 8E8Eh
                 mov     ah, 9
@@ -630,7 +630,7 @@ loc_1051A:                              ; CODE XREF: start+515↑j
 loc_1052C:                              ; CODE XREF: start+51D↑j
                 call    ClearStatusPanelIfDirty
                 call    HandlePortraitClick
-                test    word_328C6, 7800h
+                test    g_uiScratchFlags2, 7800h
                 jnz     short loc_10541
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -765,8 +765,8 @@ loc_10660:                              ; CODE XREF: start+5BD↑j
 loc_1067D:                              ; CODE XREF: start+678↑j
                 cmp     word_2E52A, 2
                 jnz     short loc_10693
-                and     word_328C6, 0FBFFh
-                and     word_328C4, 0BFFFh
+                and     g_uiScratchFlags2, 0FBFFh
+                and     g_uiScratchFlags1, 0BFFFh
                 jmp     loc_109F9
 ; ---------------------------------------------------------------------------
 
@@ -775,7 +775,7 @@ loc_10693:                              ; CODE XREF: start+682↑j
 ; ---------------------------------------------------------------------------
 
 loc_10696:                              ; CODE XREF: start+33F↑j
-                test    word_328C8, 1000h
+                test    g_uiScratchFlags3, 1000h
                 jnz     short loc_106A1
 
 loc_1069E:                              ; CODE XREF: start+6B3↓j
@@ -823,10 +823,10 @@ loc_106E6:                              ; CODE XREF: start+5C7↑j
 ; ---------------------------------------------------------------------------
 
 loc_106EF:                              ; CODE XREF: start+6EA↑j
-                mov     word_32DC4, 6ED0h
+                mov     g_currentToolbarIconPtr, 6ED0h
                 cmp     errorCode, 2
                 jz      short loc_10702
-                mov     word_32DC4, 6EE8h
+                mov     g_currentToolbarIconPtr, 6EE8h
 
 loc_10702:                              ; CODE XREF: start+6FA↑j
                 mov     ax, 69h ; 'i'
@@ -852,7 +852,7 @@ loc_1072E:                              ; CODE XREF: start+71E↑j
                 call    StopMusicAndResetTimer
                 mov     ax, _val30
                 call    TriggerSoundEvent
-                mov     bx, word_32DC4
+                mov     bx, g_currentToolbarIconPtr
                 inc     word ptr [bx+2]
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -880,10 +880,10 @@ locret_1077B:                           ; CODE XREF: EnforceDemoBoundary+C↑j
 ; ---------------------------------------------------------------------------
 
 loc_1077C:                              ; CODE XREF: EnforceDemoBoundary+1B↑j
-                test    word_328CA, 2
+                test    g_uiScratchFlags4, 2
                 jnz     short locret_1077B
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 8Ah
@@ -904,8 +904,8 @@ EnforceDemoBoundary endp
 ; START OF FUNCTION CHUNK FOR start
 
 loc_107CE:                              ; CODE XREF: start+4AC↑j
-                and     word_328C4, 0FF00h
-                or      word_328C4, 0FEh
+                and     g_uiScratchFlags1, 0FF00h
+                or      g_uiScratchFlags1, 0FEh
                 and     word_3295A, 9FFFh
                 call    RunGameDialog
                 cmp     g_lastKeyChar, 0FFh
@@ -977,7 +977,7 @@ loc_10897:                              ; CODE XREF: seg000:0885↑j
 loc_108B7:                              ; CODE XREF: seg000:08B0↑j
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_108C5
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -998,7 +998,7 @@ loc_108DB:                              ; CODE XREF: seg000:08D3↑j
                 call    DrawMouseCursor
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_108F3
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1014,7 +1014,7 @@ loc_10903:                              ; CODE XREF: seg000:08F9↑j
                 or      word_36C79, 2000h
                 jmp     short loc_108DB
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_10916
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1030,7 +1030,7 @@ loc_10926:                              ; CODE XREF: seg000:091C↑j
                 or      word_36C79, 1000h
                 jmp     short loc_108DB
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_10939
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1046,7 +1046,7 @@ loc_10949:                              ; CODE XREF: seg000:093F↑j
                 or      word_36C79, 800h
                 jmp     short loc_108DB
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_1095C
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1062,7 +1062,7 @@ loc_1096D:                              ; CODE XREF: seg000:0962↑j
                 or      word_36C79, 400h
                 jmp     loc_108DB
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_10981
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1078,7 +1078,7 @@ loc_10992:                              ; CODE XREF: seg000:0987↑j
                 or      word_36C79, 200h
                 jmp     loc_108DB
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_109A6
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1088,7 +1088,7 @@ loc_109A6:                              ; CODE XREF: seg000:09A1↑j
                 call    DebugToggleViewportCellHidden
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_109BE
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1098,7 +1098,7 @@ loc_109BE:                              ; CODE XREF: seg000:09B9↑j
                 call    DebugTeleportToCoordinates
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_109D6
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1110,7 +1110,7 @@ loc_109D6:                              ; CODE XREF: seg000:09D1↑j
                 call    MarkScreenRedrawFlags
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_109F9
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1120,7 +1120,7 @@ loc_109F9:                              ; CODE XREF: start+67A↑j
                                         ; start+690↑j ...
                 call    StopMusicAndResetTimer
                 call    ClearStatusPanelIfDirty
-                and     word_328C4, 0DFFFh
+                and     g_uiScratchFlags1, 0DFFFh
                 and     word_3295A, 9FFFh
                 call    RunTitleScreen
                 cmp     g_lastKeyChar, 0FFh
@@ -1161,11 +1161,11 @@ loc_10A62:                              ; CODE XREF: seg000:0A4E↑j
 ; ---------------------------------------------------------------------------
 
 loc_10A65:                              ; CODE XREF: start+494↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_10A62
-                or      word_328C8, 100h
+                or      g_uiScratchFlags3, 100h
                 call    HandleRangedOrCombatAction
-                and     word_328C8, 0FEFFh
+                and     g_uiScratchFlags3, 0FEFFh
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -1180,7 +1180,7 @@ loc_10A90:                              ; CODE XREF: start+A8B↑j
                 jmp     loc_10043
 ; END OF FUNCTION CHUNK FOR start
 ; ---------------------------------------------------------------------------
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_10A62
                 call    HandleRangedOrCombatAction
                 jmp     loc_10043
@@ -1203,7 +1203,7 @@ loc_10ABF:                              ; CODE XREF: start+ABA↑j
                 jmp     loc_10043
 ; END OF FUNCTION CHUNK FOR start
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_10ACD
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1213,7 +1213,7 @@ loc_10ACD:                              ; CODE XREF: seg000:0AC8↑j
                 call    DebugSetFloorTileByNumber
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_10AE5
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1223,7 +1223,7 @@ loc_10AE5:                              ; CODE XREF: seg000:0AE0↑j
                 call    DebugSetOverlayTileByNumber
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jz      short loc_10B04
                 call    DrawDebugPositionOverlay
                 call    DrawMouseCursor
@@ -1276,16 +1276,16 @@ ShowClueBook    proc far                ; CODE XREF: seg000:0AA3↑P
                 mov     word_3294C, ax
 
 loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
-                or      word_328CA, 8
+                or      g_uiScratchFlags4, 8
                 call    StopMusicAndResetTimer
                 call    RestoreCursorBackgroundIfDirty
                 call    TriggerFullPaletteFadeOut
                 call    SaveClueBookBackgroundToEMS
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 and     word_3295A, 17FFh
-                and     word_328CC, 101Fh
+                and     g_clueBookNavFlags, 101Fh
                 mov     ax, 15h
                 mov     g_forcedMusicTrack, ax
                 call    PlayClueBookOpenAnimation
@@ -1294,7 +1294,7 @@ loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
 
 loc_10CB5:                              ; CODE XREF: ShowClueBook+F3↓j
                                         ; ShowClueBook+157↓j ...
-                and     word_328CC, 0FF9Fh
+                and     g_clueBookNavFlags, 0FF9Fh
                 mov     g_clueBookCategory, 0
                 call    RunClueEntryMenu
 
@@ -1308,42 +1308,42 @@ loc_10CC5:                              ; CODE XREF: ShowClueBook:loc_10D6B↓j
 loc_10CCF:                              ; CODE XREF: ShowClueBook+8A↑j
                 cmp     g_currentCommandCode, 2
                 jnz     short loc_10CDE
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
                 jmp     short loc_10D35
 ; ---------------------------------------------------------------------------
 
 loc_10CDE:                              ; CODE XREF: ShowClueBook+94↑j
                 cmp     g_currentCommandCode, 3
                 jnz     short loc_10CEE
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
                 jmp     loc_10D6E
 ; ---------------------------------------------------------------------------
 
 loc_10CEE:                              ; CODE XREF: ShowClueBook+A3↑j
                 cmp     g_currentCommandCode, 4
                 jnz     short loc_10CFE
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
                 jmp     loc_10DBD
 ; ---------------------------------------------------------------------------
 
 loc_10CFE:                              ; CODE XREF: ShowClueBook+B3↑j
                 cmp     g_currentCommandCode, 5
                 jnz     short loc_10D0E
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
                 jmp     loc_10DFB
 ; ---------------------------------------------------------------------------
 
 loc_10D0E:                              ; CODE XREF: ShowClueBook+C3↑j
                 cmp     g_currentCommandCode, 6
                 jnz     short loc_10D1E
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
 loc_10D1E:                              ; CODE XREF: ShowClueBook+D3↑j
                 cmp     g_currentCommandCode, 7
                 jnz     short loc_10D2E
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
                 jmp     loc_110D9
 ; ---------------------------------------------------------------------------
 
@@ -1353,10 +1353,10 @@ loc_10D2E:                              ; CODE XREF: ShowClueBook+E3↑j
 ; ---------------------------------------------------------------------------
 
 loc_10D35:                              ; CODE XREF: ShowClueBook+9C↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
 
 loc_10D3B:                              ; CODE XREF: ShowClueBook+129↓j
-                and     word_328CC, 0FF9Fh
+                and     g_clueBookNavFlags, 0FF9Fh
                 mov     word_2E3FC, 123h
                 mov     ax, 883Dh
                 mov     word_2E3F8, ax
@@ -1376,7 +1376,7 @@ loc_10D6B:                              ; CODE XREF: ShowClueBook+122↑j
 
 loc_10D6E:                              ; CODE XREF: ShowClueBook+AB↑j
                                         ; ShowClueBook+178↓j
-                and     word_328CC, 0FF9Fh
+                and     g_clueBookNavFlags, 0FF9Fh
                 mov     word_2E3FC, 0D0h
                 mov     ax, 883Dh
                 mov     word_2E3F8, ax
@@ -1409,10 +1409,10 @@ loc_10DB3:                              ; CODE XREF: ShowClueBook+16E↑j
 ; ---------------------------------------------------------------------------
 
 loc_10DBD:                              ; CODE XREF: ShowClueBook+BB↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
 
 loc_10DC3:                              ; CODE XREF: ShowClueBook+1B6↓j
-                and     word_328CC, 0FF9Fh
+                and     g_clueBookNavFlags, 0FF9Fh
                 mov     word_2E3FC, 0D5h
                 mov     ax, 883Dh
                 mov     word_2E3F8, ax
@@ -1432,8 +1432,8 @@ loc_10DF8:                              ; CODE XREF: ShowClueBook+1AA↑j
 
 loc_10DFB:                              ; CODE XREF: ShowClueBook+CB↑j
                                         ; ShowClueBook+222↓j
-                mov     word_2E3EA, 0
-                and     word_328CC, 0FF9Fh
+                mov     g_clueEntryLowerBound, 0
+                and     g_clueBookNavFlags, 0FF9Fh
                 mov     word_2E3FC, 0B7h
                 mov     ax, 883Dh
                 mov     word_2E3F8, ax
@@ -1447,14 +1447,14 @@ loc_10DFB:                              ; CODE XREF: ShowClueBook+CB↑j
 ; ---------------------------------------------------------------------------
 
 loc_10E2D:                              ; CODE XREF: ShowClueBook+1E8↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
                 mov     bx, g_clueEntrySelectedIndex
                 mov     ax, [bx]
                 add     ax, 4
                 mov     g_clueBookCategory, ax
 
 loc_10E3F:                              ; CODE XREF: ShowClueBook+238↓j
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     word_2E3FC, 0D5h
                 mov     ax, 883Dh
                 mov     word_2E3F8, ax
@@ -1481,14 +1481,14 @@ loc_10E6E:                              ; CODE XREF: ShowClueBook+229↑j
 
 loc_10E7D:                              ; CODE XREF: ShowClueBook+DB↑j
                                         ; ShowClueBook+2AE↓j ...
-                and     word_328CC, 0FF9Fh
+                and     g_clueBookNavFlags, 0FF9Fh
                 mov     word_2E3FC, 0E1h
                 mov     ax, 883Dh
                 mov     word_2E3F8, ax
                 mov     ax, 88C0h
                 mov     word_2E3FA, ax
                 mov     g_clueBookCategory, 0Bh
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
                 call    RunClueEntryMenu
                 cmp     g_currentCommandCode, 0
                 jz      short loc_10EAF
@@ -1546,10 +1546,10 @@ loc_10EEB:                              ; CODE XREF: ShowClueBook+2A6↑j
 ; ---------------------------------------------------------------------------
 
 loc_10EF3:                              ; CODE XREF: ShowClueBook+27A↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
 
 loc_10EF9:                              ; CODE XREF: ShowClueBook+2F9↓j
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
                 mov     word_2E3FC, 0F9h
@@ -1587,10 +1587,10 @@ loc_10F4D:                              ; CODE XREF: ShowClueBook+308↑j
 ; ---------------------------------------------------------------------------
 
 loc_10F50:                              ; CODE XREF: ShowClueBook+288↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
 
 loc_10F56:                              ; CODE XREF: ShowClueBook+356↓j
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
                 mov     word_2E3FC, 8Dh
@@ -1617,10 +1617,10 @@ loc_10F8C:                              ; CODE XREF: ShowClueBook+347↑j
 ; ---------------------------------------------------------------------------
 
 loc_10F9B:                              ; CODE XREF: ShowClueBook+290↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
 
 loc_10FA1:                              ; CODE XREF: ShowClueBook+3A1↓j
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
                 mov     word_2E3FC, 0C3h
@@ -1647,10 +1647,10 @@ loc_10FD7:                              ; CODE XREF: ShowClueBook+392↑j
 ; ---------------------------------------------------------------------------
 
 loc_10FE6:                              ; CODE XREF: ShowClueBook+298↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
 
 loc_10FEC:                              ; CODE XREF: ShowClueBook+3EC↓j
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
                 mov     word_2E3FC, 111h
@@ -1677,10 +1677,10 @@ loc_11022:                              ; CODE XREF: ShowClueBook+3DD↑j
 ; ---------------------------------------------------------------------------
 
 loc_11031:                              ; CODE XREF: ShowClueBook+2A0↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
 
 loc_11037:                              ; CODE XREF: ShowClueBook+437↓j
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
                 mov     word_2E3FC, 0EDh
@@ -1718,10 +1718,10 @@ loc_1108B:                              ; CODE XREF: ShowClueBook+446↑j
 ; ---------------------------------------------------------------------------
 
 loc_1108E:                              ; CODE XREF: ShowClueBook+2B0↑j
-                mov     word_2E3EA, 0
+                mov     g_clueEntryLowerBound, 0
 
 loc_11094:                              ; CODE XREF: ShowClueBook+494↓j
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
                 mov     word_2E3FC, 111h
@@ -1748,7 +1748,7 @@ loc_110CA:                              ; CODE XREF: ShowClueBook+485↑j
 ; ---------------------------------------------------------------------------
 
 loc_110D9:                              ; CODE XREF: ShowClueBook+EB↑j
-                and     word_328CC, 0FF9Fh
+                and     g_clueBookNavFlags, 0FF9Fh
                 call    ShowPagedEntryScreen
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
@@ -1768,7 +1768,7 @@ loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
                 call    ErrorCheck
                 call    UpdateScrollingBannerWindow
                 call    TriggerFullPaletteFadeIn
-                and     word_328CA, 0FF7h
+                and     g_uiScratchFlags4, 0FF7h
                 cmp     fe, 0
                 jz      short loc_11144
                 mov     es, fe
@@ -1781,7 +1781,7 @@ loc_11144:                              ; CODE XREF: ShowClueBook+4F4↑j
                 pop     fe
                 call    RestoreUiStateForClueBook
                 pop     fe
-                or      word_328CC, 10h
+                or      g_clueBookNavFlags, 10h
                 pop     bp
                 pop     es
                 pop     si
@@ -2006,7 +2006,7 @@ HandleMovementInput proc far            ; CODE XREF: start+AB0↑P
                 xor     bx, bx
                 xor     cx, cx
                 xor     dx, dx
-                and     word_328C4, 0E7FFh
+                and     g_uiScratchFlags1, 0E7FFh
                 cmp     g_lastKeyChar, 48h ; 'H'
                 jz      short loc_11334
                 cmp     g_lastKeyChar, 50h ; 'P'
@@ -2240,18 +2240,18 @@ loc_1149D:                              ; CODE XREF: HandleMovementInput+1DA↑j
 
 loc_114A4:                              ; CODE XREF: HandleMovementInput+6C↑j
                                         ; HandleMovementInput+83↑j ...
-                or      word_328C4, 1000h
+                or      g_uiScratchFlags1, 1000h
                 jmp     short loc_114B2
 ; ---------------------------------------------------------------------------
 
 loc_114AC:                              ; CODE XREF: HandleMovementInput+74↑j
                                         ; HandleMovementInput+7C↑j ...
-                or      word_328C4, 800h
+                or      g_uiScratchFlags1, 800h
 
 loc_114B2:                              ; CODE XREF: HandleMovementInput+1FC↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_114C2
-                and     word_328C4, 0E7FFh
+                and     g_uiScratchFlags1, 0E7FFh
                 jmp     short loc_114F0
 ; ---------------------------------------------------------------------------
 
@@ -2318,7 +2318,7 @@ loc_11535:                              ; CODE XREF: HandleMovementInput+282↑j
 
 loc_11555:                              ; CODE XREF: HandleMovementInput+26F↑j
                                         ; HandleMovementInput+275↑j
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_11598
                 mov     ax, es:[bx]
                 push    cs
@@ -2357,7 +2357,7 @@ loc_11598:                              ; CODE XREF: HandleMovementInput+27A↑j
                 add     bx, word_2E404
                 mov     word_328D2, bx
                 call    RevealCellsAroundPlayer
-                test    word_328C4, 1800h
+                test    g_uiScratchFlags1, 1800h
                 jz      short loc_11613
                 mov     ax, word_328D2
                 mov     si, 0F26h
@@ -2372,7 +2372,7 @@ loc_115C8:                              ; CODE XREF: HandleMovementInput+323↓j
 ; ---------------------------------------------------------------------------
 
 loc_115D5:                              ; CODE XREF: HandleMovementInput+31D↑j
-                or      word_328CA, 1000h
+                or      g_uiScratchFlags4, 1000h
                 call    DrawAndCacheStatusIcon
                 push    si
                 mov     di, 525Ch
@@ -2389,7 +2389,7 @@ loc_115D5:                              ; CODE XREF: HandleMovementInput+31D↑j
                 and     word ptr es:[bx+6], 0FBFFh
                 mov     word ptr es:[bx+4], 0
                 mov     ax, [si+92h]
-                or      word_328CA, ax
+                or      g_uiScratchFlags4, ax
 
 loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
                                         ; HandleMovementInput+325↑j
@@ -2398,9 +2398,9 @@ loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_11652
-                test    word_328C4, 1800h
+                test    g_uiScratchFlags1, 1800h
                 jz      short loc_11652
                 call    ProcessLevelMonsters
                 call    RedrawDungeonScreen
@@ -2415,7 +2415,7 @@ loc_11652:                              ; CODE XREF: HandleMovementInput+384↑j
                 jnz     short loc_116C8
                 call    RedrawAllPartyStatusPanelsAlt
                 call    DrawMouseCursor
-                test    word_328C4, 1800h
+                test    g_uiScratchFlags1, 1800h
                 jz      short loc_116C8
                 mov     ax, g_dungeonMapGridOriginCol
                 add     ax, 9
@@ -2439,7 +2439,7 @@ loc_11652:                              ; CODE XREF: HandleMovementInput+384↑j
 loc_116A2:                              ; CODE XREF: HandleMovementInput+3CC↑j
                                         ; HandleMovementInput+3D8↑j ...
                 call    RefreshDungeonMapWindow
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jz      short loc_116C8
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
@@ -2449,7 +2449,7 @@ loc_116A2:                              ; CODE XREF: HandleMovementInput+3CC↑j
 
 loc_116C8:                              ; CODE XREF: HandleMovementInput+3A2↑j
                                         ; HandleMovementInput+3AE↑j ...
-                and     word_328C4, 0E7FFh
+                and     g_uiScratchFlags1, 0E7FFh
                 retf
 HandleMovementInput endp
 
@@ -2545,7 +2545,7 @@ seg003          segment byte public 'CODE' use16
 
 ShowIntroPicture proc far               ; CODE XREF: start+756↑P
                                         ; InitGame+C2↓P ...
-                or      word_328CA, 8   ; Shows a picture (DrawPicture, id from word_2E530/word_2E532) with a palette fade (FadePaletteStep) and waits for a keypress (byte_2E400, filled by PollKeyboardInput). Called directly from `start` and InitGame -- likely the boot-time splash/logo display.
+                or      g_uiScratchFlags4, 8 ; Shows a picture (DrawPicture, id from word_2E530/word_2E532) with a palette fade (FadePaletteStep) and waits for a keypress (byte_2E400, filled by PollKeyboardInput). Called directly from `start` and InitGame -- likely the boot-time splash/logo display.
                 mov     ax, 1
                 mov     g_forcedMusicTrack, ax
                 call    PlayMusicTrack
@@ -2558,7 +2558,7 @@ ShowIntroPicture proc far               ; CODE XREF: start+756↑P
                 mov     _videoSegment, ax
                 mov     g_pictureId, 5
                 call    DrawPicture
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -2578,9 +2578,9 @@ loc_117EE:                              ; CODE XREF: ShowIntroPicture+7A↓j
                 inc     si
                 inc     di
                 loop    loc_117EE
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 call    DrawMouseCursor
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     cx, 3Fh ; '?'
                 call    PollForEscapeKeyOnly
                 jnz     short loc_11814
@@ -2609,7 +2609,7 @@ loc_11814:                              ; CODE XREF: ShowIntroPicture+93↑j
                 jz      short loc_118B6
                 mov     _font_bgTransparent, 1
                 or      word_3295A, 8000h
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 mov     si, 0C2FBh
 
 loc_11858:                              ; CODE XREF: ShowIntroPicture+138↓j
@@ -2645,9 +2645,9 @@ loc_118B6:                              ; CODE XREF: ShowIntroPicture+95↑j
                                         ; ShowIntroPicture+C5↑j ...
                 call    TriggerPaletteRange16FadeDownAlt
                 call    TriggerFullPaletteFadeOut
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 and     word_3295A, 7FFFh
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -2657,7 +2657,7 @@ loc_118B6:                              ; CODE XREF: ShowIntroPicture+95↑j
                 call    ErrorCheck
                 call    TriggerFullPaletteFadeOut
                 call    DrawMouseCursorAlt
-                and     word_328CA, 0FFF7h
+                and     g_uiScratchFlags4, 0FFF7h
                 retf
 ShowIntroPicture endp
 
@@ -2820,11 +2820,11 @@ RunPaletteRange16FadeUpAlt endp
 
 WaitFrameTicksOrEscape proc near        ; CODE XREF: ShowIntroPicture+12D↑p
                                         ; WaitFrameTicksOrEscape+6↓j ...
-                test    word_328C4, 400h ; Busy-waits for word_328C4 bit 0x400 ('tick ready', plausibly set by an untraced timer/vsync interrupt handler), checks ESC via PollForEscapeKeyOnly (returns immediately if pressed), else clears the bit and repeats for cx ticks. Called from ShowIntroPicture.
+                test    g_uiScratchFlags1, 400h ; Busy-waits for word_328C4 bit 0x400 ('tick ready', plausibly set by an untraced timer/vsync interrupt handler), checks ESC via PollForEscapeKeyOnly (returns immediately if pressed), else clears the bit and repeats for cx ticks. Called from ShowIntroPicture.
                 jz      short WaitFrameTicksOrEscape
                 call    PollForEscapeKeyOnly
                 jz      short locret_119F5
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 loop    WaitFrameTicksOrEscape
 
 locret_119F5:                           ; CODE XREF: WaitFrameTicksOrEscape+B↑j
@@ -2838,7 +2838,7 @@ WaitFrameTicksOrEscape endp
 TriggerPaletteRange16FadeDownAlt proc near
                                         ; CODE XREF: ShowIntroPicture+E2↑p
                                         ; ShowIntroPicture:loc_118B6↑p
-                or      word_328C8, 800h ; Overlay-segment duplicate of TriggerPaletteRange16FadeDown. Called from ShowIntroPicture.
+                or      g_uiScratchFlags3, 800h ; Overlay-segment duplicate of TriggerPaletteRange16FadeDown. Called from ShowIntroPicture.
                 mov     dx, 0E0h
                 call    RunPaletteRange16FadeDownAlt
                 retn
@@ -2850,7 +2850,7 @@ TriggerPaletteRange16FadeDownAlt endp
 
 TriggerPaletteRange16FadeUpAlt proc near
                                         ; CODE XREF: ShowIntroPicture+127↑p
-                or      word_328C8, 800h ; Overlay-segment duplicate of TriggerPaletteRange16FadeUp. Called from ShowIntroPicture.
+                or      g_uiScratchFlags3, 800h ; Overlay-segment duplicate of TriggerPaletteRange16FadeUp. Called from ShowIntroPicture.
                 mov     dx, 0E0h
                 call    RunPaletteRange16FadeUpAlt
                 retn
@@ -2869,7 +2869,7 @@ seg004          segment byte public 'CODE' use16
 
 
 PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
-                or      word_328C8, 800h ; The game's studio/publisher credits intro cinematic: music, several picture reveals, multiple DrawShadowedTextAlt credit panels, sound cues, and 2 effect helpers (PlayCreditsWipeAnimation, PlayCreditsFrameAnimation), before loading a new master palette and finishing with a 3-part wipe/transition. Called once from `start`.
+                or      g_uiScratchFlags3, 800h ; The game's studio/publisher credits intro cinematic: music, several picture reveals, multiple DrawShadowedTextAlt credit panels, sound cues, and 2 effect helpers (PlayCreditsWipeAnimation, PlayCreditsFrameAnimation), before loading a new master palette and finishing with a 3-part wipe/transition. Called once from `start`.
                 or      word_3295A, 8000h
                 mov     ax, 0Ah         ; ticks
                 call    wait
@@ -2949,7 +2949,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 call    DrawMouseCursor
                 mov     ax, 15Eh        ; ticks
                 call    wait
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 call    TriggerFullPaletteFadeOut
                 mov     _font_bgTransparent, 0
                 mov     g_pictureId, 0Ah
@@ -2964,7 +2964,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 call    TriggerFullPaletteFadeIn
                 mov     ax, 28h ; '('   ; ticks
                 call    wait
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     ax, 0FFFFh
                 mov     bx, 0CC1Fh
                 mov     cx, 6
@@ -3157,9 +3157,9 @@ PlaySoundSequenceGH endp
 
 WaitForTickFlagAndClearAlt proc near    ; CODE XREF: WaitForTickFlagAndClearAlt+6↓j
                                         ; WaitForTickFlagAndClearAlt+E↓j ...
-                test    word_328C4, 400h ; Overlay-segment duplicate of WaitForTickFlagAndClear. Called from TryPlaySoundCueAlt.
+                test    g_uiScratchFlags1, 400h ; Overlay-segment duplicate of WaitForTickFlagAndClear. Called from TryPlaySoundCueAlt.
                 jz      short WaitForTickFlagAndClearAlt
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 loop    WaitForTickFlagAndClearAlt
                 retn
 WaitForTickFlagAndClearAlt endp
@@ -3282,7 +3282,7 @@ InitGame        proc far                ; CODE XREF: start+2F↑P
                 mov     errorCode, 9
                 mov     bx, 9043h
                 mov     al, 2
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_11F2A
                 mov     al, 0
 
@@ -3306,7 +3306,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 call    loadWorldDat5
                 call    TriggerFullPaletteFadeOut
                 mov     g_lastKeyChar, 0
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_11FDF
                 call    PlayTitleScreenSequence
                 call    InstallInt1cTimerHandler
@@ -3319,7 +3319,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
 
 loc_11FA3:                              ; CODE XREF: InitGame+B4↑j
                                         ; InitGame+C0↑j
-                test    word_328C4, 4000h
+                test    g_uiScratchFlags1, 4000h
                 jz      short loc_11FBD
                 cmp     byte ptr word_2E492, 0
                 jz      short loc_11FBD
@@ -3331,7 +3331,7 @@ loc_11FBD:                              ; CODE XREF: InitGame+CD↑j
                 call    DrawMouseCursorAlt
                 call    loadWorldDat5
                 call    TriggerFullPaletteFadeOut
-                test    word_328C4, 4000h
+                test    g_uiScratchFlags1, 4000h
                 jnz     short loc_11FFE
                 call    RunTitleScreen
                 cmp     g_lastKeyChar, 0FFh
@@ -3342,7 +3342,7 @@ loc_11FBD:                              ; CODE XREF: InitGame+CD↑j
 loc_11FDF:                              ; CODE XREF: InitGame+A3↑j
                 call    InstallInt1cTimerHandler
                 call    DrawMouseCursorAlt
-                test    word_328C4, 4000h
+                test    g_uiScratchFlags1, 4000h
                 jnz     short loc_11FFE
                 call    RunTitleScreen
                 cmp     g_lastKeyChar, 0FFh
@@ -3354,7 +3354,7 @@ loc_11FFE:                              ; CODE XREF: InitGame+F4↑j
                                         ; InitGame+100↑j ...
                 mov     g_pictureId, 1
                 call    DrawFullScreenPictureAndCacheToEMS
-                test    word_328C4, 4000h
+                test    g_uiScratchFlags1, 4000h
                 jnz     short loc_12016
                 call    RedrawAllPartyStatusPanelsAlt
 
@@ -3365,15 +3365,15 @@ loc_12016:                              ; CODE XREF: InitGame+133↑j
                 mov     g_dungeonMapGridSegment, ax
                 call    TriggerFullPaletteFadeOut
                 call    RestoreAndRedrawFixedStatusIcon
-                and     word_328C4, 0FF00h
-                test    word_328C4, 4000h
+                and     g_uiScratchFlags1, 0FF00h
+                test    g_uiScratchFlags1, 4000h
                 jz      short loc_12046
-                or      word_328C4, 71h
+                or      g_uiScratchFlags1, 71h
                 jmp     short loc_1204C
 ; ---------------------------------------------------------------------------
 
 loc_12046:                              ; CODE XREF: InitGame+161↑j
-                or      word_328C4, 9Dh
+                or      g_uiScratchFlags1, 9Dh
 
 loc_1204C:                              ; CODE XREF: InitGame+168↑j
                 and     word_3295A, 1FFFh
@@ -3428,7 +3428,7 @@ loc_12093:                              ; CODE XREF: findSavegame+75↓j
                                         ; DS:DX -> ASCIZ filespec
                                         ; (drive, path, and wildcards allowed)
                 jb      short loc_120E6
-                or      word_328C4, 4000h
+                or      g_uiScratchFlags1, 4000h
                 or      byte ptr [di+1], 80h
                 mov     errorCode, 0Bh
                 mov     al, 0
@@ -4412,7 +4412,7 @@ RunClueEntryMenu proc far               ; CODE XREF: ShowClueBook+80↑P
                 push    di
                 push    si
                 push    es
-                and     word_328CC, 0FE7Fh
+                and     g_clueBookNavFlags, 0FE7Fh
                 cmp     g_clueBookCategory, 0
                 jz      short loc_12B9B
                 call    ShowClueCategoryEntries
@@ -4509,7 +4509,7 @@ loc_12C55:                              ; CODE XREF: RunClueEntryMenu+CC↑j
 loc_12C65:                              ; CODE XREF: RunClueEntryMenu+70↑j
                                         ; RunClueEntryMenu+77↑j
                 mov     g_currentCommandCode, 0
-                test    word_328CA, 1
+                test    g_uiScratchFlags4, 1
                 jnz     short loc_12C86
                 mov     bx, g_clueEntrySelectedIndex
                 test    word ptr [bx+2], 8000h
@@ -4525,7 +4525,7 @@ loc_12C86:                              ; CODE XREF: RunClueEntryMenu+ED↑j
 
 loc_12C88:                              ; CODE XREF: RunClueEntryMenu+4A↑j
                                         ; RunClueEntryMenu+B8↑j ...
-                and     word_328CC, 0FE7Fh
+                and     g_clueBookNavFlags, 0FE7Fh
                 pop     es
                 pop     si
                 pop     di
@@ -4543,7 +4543,7 @@ RunClueEntryMenu endp
 DrawClueEntryList proc near             ; CODE XREF: ShowClueCategoryEntries+6B↓p
                 mov     di, 68D2h       ; CORRECTED from 'DrawSaveSlotList'. Draws the scrollable list of individual clue-book entries for the current category (word_2E3EC entries, table at 0x68D2), highlighting the selected one (word_2E3EE), text from BuildClueEntryText, with scroll indicators when the category has more entries than fit on screen.
                 mov     si, g_clueEntryScrollOffset
-                mov     cx, word_2E3EC
+                mov     cx, g_clueEntryVisibleRowCount
 
 loc_12CA1:                              ; CODE XREF: DrawClueEntryList+67↓j
                 mov     ax, [di]
@@ -4553,7 +4553,7 @@ loc_12CA1:                              ; CODE XREF: DrawClueEntryList+67↓j
                 cmp     si, g_clueEntrySelectedIndex
                 jnz     short loc_12CCF
                 mov     _font_fgColor, 8Ah
-                test    word_328CA, 1
+                test    g_uiScratchFlags4, 1
                 jnz     short loc_12CEA
                 test    word ptr [si+2], 8000h
                 jnz     short loc_12CEA
@@ -4563,7 +4563,7 @@ loc_12CA1:                              ; CODE XREF: DrawClueEntryList+67↓j
 
 loc_12CCF:                              ; CODE XREF: DrawClueEntryList+1A↑j
                 mov     _font_fgColor, 0Ah
-                test    word_328CA, 1
+                test    g_uiScratchFlags4, 1
                 jnz     short loc_12CEA
                 test    word ptr [si+2], 8000h
                 jnz     short loc_12CEA
@@ -4580,24 +4580,24 @@ loc_12CF7:                              ; CODE XREF: DrawClueEntryList+5A↑j
                 add     si, 4
                 add     di, 0Ah
                 loop    loc_12CA1
-                and     word_328CC, 0FE7Fh
+                and     g_clueBookNavFlags, 0FE7Fh
                 mov     aAMoreB, 20h ; ' '
                 mov     byte_36755, 20h ; ' '
-                mov     bx, word_2E3EA
+                mov     bx, g_clueEntryLowerBound
                 cmp     word ptr [bx], 0Eh
                 jle     short locret_12D5B
                 add     bx, 2
                 cmp     g_clueEntryScrollOffset, bx
                 jz      short loc_12D2C
                 mov     aAMoreB, 61h ; 'a'
-                or      word_328CC, 100h
+                or      g_clueBookNavFlags, 100h
 
 loc_12D2C:                              ; CODE XREF: DrawClueEntryList+89↑j
-                mov     bx, word_2E3F4
-                cmp     word_2E3F2, bx
+                mov     bx, g_clueEntryTotalCount
+                cmp     g_clueEntryPageUpperBound, bx
                 jz      short loc_12D41
                 mov     byte_36755, 62h ; 'b'
-                or      word_328CC, 80h
+                or      g_clueBookNavFlags, 80h
 
 loc_12D41:                              ; CODE XREF: DrawClueEntryList+9E↑j
                 mov     _textPos_x, 81h
@@ -4615,7 +4615,7 @@ DrawClueEntryList endp
 
 
 HandleClueEntryRowScrollInput proc near ; CODE XREF: RunClueEntryMenu:loc_12BE0↑p
-                cmp     word_2E3EA, 0   ; 'H'/'P' single-row (step 4) scroll for the clue entry list, paging via ScrollClueEntryListPageUp/Down only at the current page's top/bottom bound (word_2E3F0/word_2E3F2). errorCode=1/2, 0 if no active list/key. Called from RunClueEntryMenu.
+                cmp     g_clueEntryLowerBound, 0 ; 'H'/'P' single-row (step 4) scroll for the clue entry list, paging via ScrollClueEntryListPageUp/Down only at the current page's top/bottom bound (word_2E3F0/word_2E3F2). errorCode=1/2, 0 if no active list/key. Called from RunClueEntryMenu.
                 jz      short loc_12D7B
                 mov     ax, g_clueEntrySelectedIndex
                 cmp     g_lastKeyChar, 0
@@ -4640,10 +4640,10 @@ loc_12D82:                              ; CODE XREF: HandleClueEntryRowScrollInp
 ; ---------------------------------------------------------------------------
 
 loc_12D90:                              ; CODE XREF: HandleClueEntryRowScrollInput+2A↑j
-                test    word_328CC, 100h
+                test    g_clueBookNavFlags, 100h
                 jz      short loc_12DA0
                 call    ScrollClueEntryListPageUp
-                mov     ax, word_2E3F2
+                mov     ax, g_clueEntryPageUpperBound
                 jmp     short loc_12DA3
 ; ---------------------------------------------------------------------------
 
@@ -4658,7 +4658,7 @@ loc_12DA3:                              ; CODE XREF: HandleClueEntryRowScrollInp
 ; ---------------------------------------------------------------------------
 
 loc_12DAD:                              ; CODE XREF: HandleClueEntryRowScrollInput+1D↑j
-                cmp     word_2E3F2, ax
+                cmp     g_clueEntryPageUpperBound, ax
                 jz      short loc_12DBB
                 mov     ax, g_clueEntrySelectedIndex
                 add     ax, 4
@@ -4666,7 +4666,7 @@ loc_12DAD:                              ; CODE XREF: HandleClueEntryRowScrollInp
 ; ---------------------------------------------------------------------------
 
 loc_12DBB:                              ; CODE XREF: HandleClueEntryRowScrollInput+55↑j
-                test    word_328CC, 80h
+                test    g_clueBookNavFlags, 80h
                 jz      short loc_12DCB
                 call    ScrollClueEntryListPageDown
                 mov     ax, g_clueEntryScrollOffset
@@ -4674,7 +4674,7 @@ loc_12DBB:                              ; CODE XREF: HandleClueEntryRowScrollInp
 ; ---------------------------------------------------------------------------
 
 loc_12DCB:                              ; CODE XREF: HandleClueEntryRowScrollInput+65↑j
-                mov     ax, word_2E3F2
+                mov     ax, g_clueEntryPageUpperBound
 
 loc_12DCE:                              ; CODE XREF: HandleClueEntryRowScrollInput+5D↑j
                                         ; HandleClueEntryRowScrollInput+6D↑j
@@ -4688,7 +4688,7 @@ HandleClueEntryRowScrollInput endp
 
 
 HandleClueEntryScrollInput proc near    ; CODE XREF: RunClueEntryMenu:loc_12BD1↑p
-                cmp     word_2E3EA, 0   ; Pagination handler for RunClueEntryMenu's entry list: 'I' key or a HitTestRegionTable(0x6960) mouse hit region 1 adopts word_2E3F0 into word_2E3EE (errorCode=1) unless word_328CC bit 0x100 defers to sub_13014; 'Q'/region 2 does the same with word_2E3F2 (errorCode=2), deferring to sub_12FED on word_328CC bit 0x80. errorCode=0 if nothing changed. Called from RunClueEntryMenu.
+                cmp     g_clueEntryLowerBound, 0 ; Pagination handler for RunClueEntryMenu's entry list: 'I' key or a HitTestRegionTable(0x6960) mouse hit region 1 adopts word_2E3F0 into word_2E3EE (errorCode=1) unless word_328CC bit 0x100 defers to sub_13014; 'Q'/region 2 does the same with word_2E3F2 (errorCode=2), deferring to sub_12FED on word_328CC bit 0x80. errorCode=0 if nothing changed. Called from RunClueEntryMenu.
                 jz      short loc_12E52
                 cmp     g_lastKeyChar, 0
                 jz      short loc_12DF6
@@ -4710,7 +4710,7 @@ loc_12DF6:                              ; CODE XREF: HandleClueEntryScrollInput+
                 jnz     short loc_12E2E
 
 loc_12E0F:                              ; CODE XREF: HandleClueEntryScrollInput+13↑j
-                test    word_328CC, 100h
+                test    g_clueBookNavFlags, 100h
                 jz      short loc_12E1B
                 call    ScrollClueEntryListPageUp
                 retn
@@ -4730,14 +4730,14 @@ loc_12E2E:                              ; CODE XREF: HandleClueEntryScrollInput+
                 jnz     short loc_12E52
 
 loc_12E33:                              ; CODE XREF: HandleClueEntryScrollInput+1A↑j
-                test    word_328CC, 80h
+                test    g_clueBookNavFlags, 80h
                 jz      short loc_12E3F
                 call    ScrollClueEntryListPageDown
                 retn
 ; ---------------------------------------------------------------------------
 
 loc_12E3F:                              ; CODE XREF: HandleClueEntryScrollInput+61↑j
-                mov     ax, word_2E3F2
+                mov     ax, g_clueEntryPageUpperBound
                 cmp     g_clueEntrySelectedIndex, ax
                 jz      short loc_12E52
                 mov     g_clueEntrySelectedIndex, ax
@@ -4757,39 +4757,39 @@ HandleClueEntryScrollInput endp
 
 ShowClueCategoryEntries proc near       ; CODE XREF: RunClueEntryMenu+14↑p
                                         ; RunClueEntryMenu+57↑p ...
-                cmp     word_2E3EA, 0   ; CORRECTED from 'ShowSaveSlotMenu'. Per-category clue-book init+draw: on first call, reads this category's entry count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state; every call draws the frame (DrawMessageBox) plus header/footer and the entry list (DrawClueEntryList).
+                cmp     g_clueEntryLowerBound, 0 ; CORRECTED from 'ShowSaveSlotMenu'. Per-category clue-book init+draw: on first call, reads this category's entry count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state; every call draws the frame (DrawMessageBox) plus header/footer and the entry list (DrawClueEntryList).
                 jnz     short loc_12EB1
                 mov     bx, g_clueBookCategory
                 dec     bx
                 shl     bx, 1
                 add     bx, 0F3F4h
                 mov     ax, [bx]
-                mov     word_2E3EA, ax
+                mov     g_clueEntryLowerBound, ax
                 add     ax, 2
                 mov     g_clueEntrySelectedIndex, ax
                 mov     g_clueEntryScrollOffset, ax
                 call    ClearClueCategoryEntryIds
-                mov     bx, word_2E3EA
+                mov     bx, g_clueEntryLowerBound
                 mov     ax, [bx]
                 cmp     ax, 0Eh
                 jle     short loc_12E8A
                 mov     ax, 0Eh
 
 loc_12E8A:                              ; CODE XREF: ShowClueCategoryEntries+2C↑j
-                mov     word_2E3EC, ax
+                mov     g_clueEntryVisibleRowCount, ax
                 dec     ax
                 mov     bx, 4
                 mul     bx
                 add     ax, g_clueEntryScrollOffset
-                mov     word_2E3F2, ax
-                mov     bx, word_2E3EA
+                mov     g_clueEntryPageUpperBound, ax
+                mov     bx, g_clueEntryLowerBound
                 mov     ax, [bx]
                 dec     ax
                 add     bx, 2
-                mov     word_2E3F4, bx
+                mov     g_clueEntryTotalCount, bx
                 mov     bx, 4
                 mul     bx
-                add     word_2E3F4, ax
+                add     g_clueEntryTotalCount, ax
 
 loc_12EB1:                              ; CODE XREF: ShowClueCategoryEntries+5↑j
                 mov     word_2E3FE, 0Eh
@@ -4982,20 +4982,20 @@ ClearClueCategoryEntryIds endp
 
 RecomputeClueEntryPageBounds proc near  ; CODE XREF: ScrollClueEntryListPageDown+11↓p
                                         ; ScrollClueEntryListPageUp+1E↓p
-                mov     word_2E3EC, 0Eh ; Recomputes the clue entry list's page window from the new word_2E3F0: word_2E3F2 = word_2E3F0+0x34, clamped to total count word_2E3F4; word_2E3EC (visible row count) defaults to 0xE, or (word_2E3F4-word_2E3F0)/4+1 on the last partial page. Called from ScrollClueEntryListPageUp/Down.
+                mov     g_clueEntryVisibleRowCount, 0Eh ; Recomputes the clue entry list's page window from the new word_2E3F0: word_2E3F2 = word_2E3F0+0x34, clamped to total count word_2E3F4; word_2E3EC (visible row count) defaults to 0xE, or (word_2E3F4-word_2E3F0)/4+1 on the last partial page. Called from ScrollClueEntryListPageUp/Down.
                 mov     ax, 34h ; '4'
                 add     ax, g_clueEntryScrollOffset
-                mov     word_2E3F2, ax
-                cmp     ax, word_2E3F4
+                mov     g_clueEntryPageUpperBound, ax
+                cmp     ax, g_clueEntryTotalCount
                 jbe     short locret_12FEC
-                mov     ax, word_2E3F4
-                mov     word_2E3F2, ax
+                mov     ax, g_clueEntryTotalCount
+                mov     g_clueEntryPageUpperBound, ax
                 sub     ax, g_clueEntryScrollOffset
                 xor     dx, dx
                 mov     bx, 4
                 div     bx
                 inc     ax
-                mov     word_2E3EC, ax
+                mov     g_clueEntryVisibleRowCount, ax
 
 locret_12FEC:                           ; CODE XREF: RecomputeClueEntryPageBounds+14↑j
                 retn
@@ -5013,7 +5013,7 @@ ScrollClueEntryListPageDown proc near   ; CODE XREF: HandleClueEntryRowScrollInp
                 mov     g_clueEntryScrollOffset, ax
                 add     g_clueEntrySelectedIndex, ax
                 call    RecomputeClueEntryPageBounds
-                mov     ax, word_2E3F2
+                mov     ax, g_clueEntryPageUpperBound
                 cmp     g_clueEntrySelectedIndex, ax
                 jbe     short loc_1300D
                 mov     g_clueEntrySelectedIndex, ax
@@ -5032,7 +5032,7 @@ ScrollClueEntryListPageUp proc near     ; CODE XREF: HandleClueEntryRowScrollInp
                 mov     ax, g_clueEntryScrollOffset ; Full page-up jump for the clue entry list: recomputes word_2E3F0 -= 0x38 (clamped to word_2E3EA+2), adjusts word_2E3EE by the delta, calls sub_12FC1 (redraw), errorCode=1. Called from HandleClueEntryScrollInput and sub_12D5C.
                 sub     g_clueEntrySelectedIndex, ax
                 sub     ax, 38h ; '8'
-                mov     bx, word_2E3EA
+                mov     bx, g_clueEntryLowerBound
                 add     bx, 2
                 cmp     ax, bx
                 jnb     short loc_1302B
@@ -5055,7 +5055,7 @@ AssignClueCategoryEntryIds proc near    ; CODE XREF: ShowClueCategoryEntries+68�
                 push    cx
                 call    ClearClueCategoryEntryIds
                 mov     si, g_clueEntryScrollOffset
-                mov     cx, word_2E3EC
+                mov     cx, g_clueEntryVisibleRowCount
                 mov     bx, 68D2h
                 mov     ax, 1
 
@@ -5084,7 +5084,7 @@ seg009          segment byte public 'CODE' use16
 
 
 WaitForKeypress proc far                ; CODE XREF: ShowClueBook:loc_10F3E↑P
-                or      word_328CC, 40h ; Loops calling PollKeyboardInput (with a Fade? each iteration) until a key event is seen (errorCode != 0 as an input-event flag, see PollKeyboardInput), then for event types 1-3 calls sub_14D26.
+                or      g_clueBookNavFlags, 40h ; Loops calling PollKeyboardInput (with a Fade? each iteration) until a key event is seen (errorCode != 0 as an input-event flag, see PollKeyboardInput), then for event types 1-3 calls sub_14D26.
                 call    ShowConsumableItemTypeLegend
                 call    DrawMouseCursor
 
@@ -5098,7 +5098,7 @@ loc_1306B:                              ; CODE XREF: WaitForKeypress+17↓j
                 call    HandleClueCategorySelection
                 cmp     g_currentCommandCode, 0
                 jz      short loc_1306B
-                and     word_328CC, 0FFBFh
+                and     g_clueBookNavFlags, 0FFBFh
                 retf
 WaitForKeypress endp
 
@@ -5108,7 +5108,7 @@ WaitForKeypress endp
 
 RunClueBookItemCategory proc far        ; CODE XREF: ShowClueBook:loc_10F2F↑P
                 call    ListCompatibleClueBookItems ; F5 'INVENTORY ITEMS' clue-book category loop (called once from ShowClueBook). Draws the current entry via ShowClueBookItemDetail, polls input, hit-tests a region table (0x6976) so the player can click a sub-icon to jump to a specific entry (word_328FE tracks the selection), loops until ESC.
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     word_2E3FC, 0F9h
                 mov     ax, 8A01h
                 mov     word_2E3FA, ax
@@ -5152,7 +5152,7 @@ loc_13107:                              ; CODE XREF: RunClueBookItemCategory+4D�
                 call    HandleClueCategorySelection
                 cmp     g_currentCommandCode, 0
                 jz      short loc_130B8
-                and     word_328CC, 0FFBFh
+                and     g_clueBookNavFlags, 0FFBFh
                 retf
 RunClueBookItemCategory endp
 
@@ -5163,7 +5163,7 @@ RunClueBookItemCategory endp
 RunClueBookItemDetailWithAbilityInfo proc far
                                         ; CODE XREF: ShowClueBook:loc_10F8C↑P
                                         ; ShowClueBook:loc_10FD7↑P ...
-                or      word_328CC, 40h ; Shared F5 item-subtype 3-6 category loop (Jewels/Artifacts/Unique, Magic Scrolls/Quartz, Potions, Supplies/Food): draws via ShowClueBookItemDetail, then -- if a flag bit is set or the item id falls in RestCharacter's or CastSpell's dispatch range -- an extra ability-info overlay (sub_1381C/sub_13957, not traced). Some clue-book items (plausibly Magic Scrolls) grant a spell when used, and this shows what it does.
+                or      g_clueBookNavFlags, 40h ; Shared F5 item-subtype 3-6 category loop (Jewels/Artifacts/Unique, Magic Scrolls/Quartz, Potions, Supplies/Food): draws via ShowClueBookItemDetail, then -- if a flag bit is set or the item id falls in RestCharacter's or CastSpell's dispatch range -- an extra ability-info overlay (sub_1381C/sub_13957, not traced). Some clue-book items (plausibly Magic Scrolls) grant a spell when used, and this shows what it does.
                 mov     bx, g_clueEntrySelectedIndex
                 mov     ax, [bx]
                 mov     g_currentActionId, ax
@@ -5210,7 +5210,7 @@ loc_13168:                              ; CODE XREF: RunClueBookItemDetailWithAb
                 call    HandleClueCategorySelection
                 cmp     g_currentCommandCode, 0
                 jz      short loc_13168
-                and     word_328CC, 0FFBFh
+                and     g_clueBookNavFlags, 0FFBFh
                 retf
 RunClueBookItemDetailWithAbilityInfo endp
 
@@ -5220,7 +5220,7 @@ RunClueBookItemDetailWithAbilityInfo endp
 
 RunClueBookWeaponCategory proc far      ; CODE XREF: ShowClueBook:loc_110CA↑P
                 call    ListCompatibleClueBookItems ; F5 item-subtype-8 'WEAPONS' clue-book category loop (called from ShowClueBook), structurally identical to RunClueBookItemCategory (subtype 1, 'ARMOR/RINGS'): ShowClueBookItemDetail + sub_1385C, region-table 0x6976 hit-testing for sub-icon clicks, until ESC.
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 mov     word_2E3FC, 111h
                 mov     ax, 8A7Ah
                 mov     word_2E3FA, ax
@@ -5264,7 +5264,7 @@ loc_13204:                              ; CODE XREF: RunClueBookWeaponCategory+4
                 call    HandleClueCategorySelection
                 cmp     g_currentCommandCode, 0
                 jz      short loc_131B5
-                and     word_328CC, 0FFBFh
+                and     g_clueBookNavFlags, 0FFBFh
                 retf
 RunClueBookWeaponCategory endp
 
@@ -5274,7 +5274,7 @@ RunClueBookWeaponCategory endp
 
 RunClueBookSpellCategory proc far       ; CODE XREF: ShowClueBook+1AC↑P
                                         ; ShowClueBook:loc_10E6E↑P
-                or      word_328CC, 40h ; F3 'SPELLS' / F4 'MAGIC USERS' clue-book category loop (called from ShowClueBook at 2 sites). Loads the spell id via sub_1D198, draws message box + nav bar + ShowClueBookSpellDetail, loops until ESC.
+                or      g_clueBookNavFlags, 40h ; F3 'SPELLS' / F4 'MAGIC USERS' clue-book category loop (called from ShowClueBook at 2 sites). Loads the spell id via sub_1D198, draws message box + nav bar + ShowClueBookSpellDetail, loops until ESC.
                 mov     bx, g_clueEntrySelectedIndex
                 mov     ax, [bx]
                 mov     g_clueBookClassId, ax
@@ -5299,7 +5299,7 @@ loc_13253:                              ; CODE XREF: RunClueBookSpellCategory+47
                 call    HandleClueCategorySelection
                 cmp     g_currentCommandCode, 0
                 jz      short loc_13253
-                and     word_328CC, 0FFBFh
+                and     g_clueBookNavFlags, 0FFBFh
                 retf
 RunClueBookSpellCategory endp
 
@@ -5342,7 +5342,7 @@ RunClueBookMonsterCategory proc far     ; CODE XREF: ShowClueBook:loc_10DA4↑P
 
 loc_132B8:                              ; CODE XREF: RunClueBookMonsterCategory+22↓j
                                         ; RunClueBookMonsterCategory+29↓j ...
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_132CD
                 call    ShowClueBookMonsterDetail
                 call    DrawClueBookNavBar
@@ -5357,7 +5357,7 @@ loc_132CD:                              ; CODE XREF: RunClueBookMonsterCategory+
                 call    HandleClueCategorySelection
                 cmp     g_currentCommandCode, 0
                 jz      short loc_132B8
-                and     word_328CC, 0FFBFh
+                and     g_clueBookNavFlags, 0FFBFh
                 retf
 RunClueBookMonsterCategory endp
 
@@ -5405,7 +5405,7 @@ ShowPagedEntryScreen endp
 
 
 RunClueBookTransportCategory proc far   ; CODE XREF: ShowClueBook:loc_1107C↑P
-                or      word_328CC, 40h ; F5 item-subtype-7 'TRANSPORTATIONS' clue-book category loop (called from ShowClueBook). Draws via ShowClueBookTransportDetail, polls input until ESC.
+                or      g_clueBookNavFlags, 40h ; F5 item-subtype-7 'TRANSPORTATIONS' clue-book category loop (called from ShowClueBook). Draws via ShowClueBookTransportDetail, polls input until ESC.
                 call    ShowClueBookTransportDetail
                 call    DrawMouseCursor
 
@@ -5419,7 +5419,7 @@ loc_1335B:                              ; CODE XREF: RunClueBookTransportCategor
                 call    HandleClueCategorySelection
                 cmp     g_currentCommandCode, 0
                 jz      short loc_1335B
-                and     word_328CC, 0FFBFh
+                and     g_clueBookNavFlags, 0FFBFh
                 retf
 RunClueBookTransportCategory endp
 
@@ -5493,7 +5493,7 @@ loc_13402:                              ; CODE XREF: HandlePagedEntryNavigation+
                 jnz     short loc_1342E
 
 loc_1341B:                              ; CODE XREF: HandlePagedEntryNavigation+C↑j
-                test    word_328CC, 100h
+                test    g_clueBookNavFlags, 100h
                 jz      short loc_1345C
                 dec     g_pagedEntryIndex
                 mov     errorCode, 1
@@ -5505,9 +5505,9 @@ loc_1342E:                              ; CODE XREF: HandlePagedEntryNavigation+
                 jnz     short loc_1345C
 
 loc_13433:                              ; CODE XREF: HandlePagedEntryNavigation+13↑j
-                test    word_328CC, 80h
+                test    g_clueBookNavFlags, 80h
                 jz      short loc_1345C
-                test    word_328CA, 1
+                test    g_uiScratchFlags4, 1
                 jnz     short loc_13451
                 cmp     g_pagedEntryIndex, 5
                 jle     short loc_13451
@@ -5875,18 +5875,18 @@ ShowWeaponDetailRow endp
 
 
 UpdateScrollArrows proc near            ; CODE XREF: ShowPagedEntryScreen+23↑p
-                and     word_328CC, 0FE7Fh ; Shows/hides the two scroll-arrow glyphs (aAMoreB / byte_36755) based on whether word_3293A (current entry index) is at the first (1) or last (0x1F) entry, then loads that entry's data via FileEntry_Read (fixed FileEntry at bx=0x9043, record size 0x4FB) and draws its icon + message.
+                and     g_clueBookNavFlags, 0FE7Fh ; Shows/hides the two scroll-arrow glyphs (aAMoreB / byte_36755) based on whether word_3293A (current entry index) is at the first (1) or last (0x1F) entry, then loads that entry's data via FileEntry_Read (fixed FileEntry at bx=0x9043, record size 0x4FB) and draws its icon + message.
                 mov     aAMoreB, 20h ; ' '
                 mov     byte_36755, 20h ; ' '
                 cmp     g_pagedEntryIndex, 1
                 jz      short loc_138E2
-                or      word_328CC, 100h
+                or      g_clueBookNavFlags, 100h
                 mov     aAMoreB, 61h ; 'a'
 
 loc_138E2:                              ; CODE XREF: UpdateScrollArrows+15↑j
                 cmp     g_pagedEntryIndex, 1Fh
                 jz      short loc_138F4
-                or      word_328CC, 80h
+                or      g_clueBookNavFlags, 80h
                 mov     byte_36755, 62h ; 'b'
 
 loc_138F4:                              ; CODE XREF: UpdateScrollArrows+27↑j
@@ -6530,7 +6530,7 @@ ResetClueBookMarkerBuffer endp
 
 
 DrawClueBookMapGrid proc near           ; CODE XREF: RunClueBookMapCategory+3↑p
-                and     word_328CA, 0FFFBh ; Draws the F1 map grid: computes a row/col layout (id-1 / 20) from the loaded map id, clears the video buffer, and draws per-cell location labels via BuildClueLocationSuffix.
+                and     g_uiScratchFlags4, 0FFFBh ; Draws the F1 map grid: computes a row/col layout (id-1 / 20) from the loaded map id, clears the video buffer, and draws per-cell location labels via BuildClueLocationSuffix.
                 xor     dx, dx
                 mov     ax, word_2E664
                 dec     ax
@@ -7010,7 +7010,7 @@ loc_14595:                              ; CODE XREF: ShowClueBookMonsterDetail+2
                 mov     y, ax
                 test    word ptr es:[si+92h], 4
                 jz      short loc_145EB
-                or      word_328C6, 1
+                or      g_uiScratchFlags2, 1
                 mov     ax, es:[si+72h]
                 mov     word_32964, ax
                 mov     ax, es:[si+74h]
@@ -7023,7 +7023,7 @@ loc_14595:                              ; CODE XREF: ShowClueBookMonsterDetail+2
 
 loc_145EB:                              ; CODE XREF: ShowClueBookMonsterDetail+3EA↑j
                 call    DrawPicture
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 inc     word_32938
                 cmp     word_32938, 49h ; 'I'
                 jl      short loc_14645
@@ -7070,7 +7070,7 @@ loc_1464A:                              ; CODE XREF: ShowClueBookMonsterDetail+4
 
 loc_14667:                              ; CODE XREF: ShowClueBookMonsterDetail+46A↑j
                                         ; ShowClueBookMonsterDetail+477↑j
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 retn
 ShowClueBookMonsterDetail endp
 
@@ -7122,13 +7122,13 @@ loc_1467D:                              ; CODE XREF: LoadClueBookMonsterEntry+9�
 
 loc_14700:                              ; CODE XREF: LoadClueBookMonsterEntry+7E↑j
                 mov     word_32938, 1
-                or      word_328CC, 40h
+                or      g_clueBookNavFlags, 40h
                 call    ShowClueBookMonsterDetail
                 call    DrawClueBookNavBar
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
                 or      word_3295A, 8000h
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 retn
 LoadClueBookMonsterEntry endp
 
@@ -7695,7 +7695,7 @@ BuildMonsterDisplayName endp
 
 ShowClueBookHelpScreen proc far         ; CODE XREF: ShowClueBook+6B↑P
                                         ; ShowClueBook:loc_10D2E↑P ...
-                and     word_328CC, 7Fh ; Clue book TAB help/index screen (called from ShowClueBook). Title: '** PRESS TAB AT ANY TIME TO SEE THIS SCREEN **'. Body lists the categories: F1 Maps, F2 Monster Statistics, F3 Spells, F4 Magic Users (spells by class), F5 Inventory Items, F6 Complete Walk Through, ESC Return to Game -- identifying (at least 6 of) DrawClueBookNavBar's 7 category tabs.
+                and     g_clueBookNavFlags, 7Fh ; Clue book TAB help/index screen (called from ShowClueBook). Title: '** PRESS TAB AT ANY TIME TO SEE THIS SCREEN **'. Body lists the categories: F1 Maps, F2 Monster Statistics, F3 Spells, F4 Magic Users (spells by class), F5 Inventory Items, F6 Complete Walk Through, ESC Return to Game -- identifying (at least 6 of) DrawClueBookNavBar's 7 category tabs.
                 mov     word_2E3FC, 0F9h
                 mov     ax, 86F6h
                 mov     word_2E3F8, ax
@@ -7727,7 +7727,7 @@ ShowClueBookHelpScreen endp
 
 DrawClueBookNavBar proc far             ; CODE XREF: RunClueEntryMenu+40↑P
                                         ; RunClueEntryMenu+AE↑P ...
-                test    word_328CC, 40h ; Clue book (F8) nav bar, called from RunClueEntryMenu. Draws two conditional hotkey hints (word_328CC bit 0x40 -> 'd) LIST', bit 0x20 -> 'c) MAP'), then a row of 7 category-tab icons at y=0xB4 (x from 0x3E, step 0x1E): 7 base picture ids (0x20/0x145/0x147/0x153/0x149/0x14B/0x14D), each +1'd to a highlighted variant when its bit (word_328CC 0x8000..0x200) is set, drawn via DrawPicture. Category identities not traced -- only the mechanism is confirmed.
+                test    g_clueBookNavFlags, 40h ; Clue book (F8) nav bar, called from RunClueEntryMenu. Draws two conditional hotkey hints (word_328CC bit 0x40 -> 'd) LIST', bit 0x20 -> 'c) MAP'), then a row of 7 category-tab icons at y=0xB4 (x from 0x3E, step 0x1E): 7 base picture ids (0x20/0x145/0x147/0x153/0x149/0x14B/0x14D), each +1'd to a highlighted variant when its bit (word_328CC 0x8000..0x200) is set, drawn via DrawPicture. Category identities not traced -- only the mechanism is confirmed.
                 jz      short loc_14C59
                 mov     _textPos_x, 0Bh
                 mov     _textPos_y, 0B9h
@@ -7736,7 +7736,7 @@ DrawClueBookNavBar proc far             ; CODE XREF: RunClueEntryMenu+40↑P
                 call    writeString
 
 loc_14C59:                              ; CODE XREF: DrawClueBookNavBar+6↑j
-                test    word_328CC, 20h
+                test    g_clueBookNavFlags, 20h
                 jz      short loc_14C7B
                 mov     _textPos_x, 110h
                 mov     _textPos_y, 0B9h
@@ -7751,43 +7751,43 @@ loc_14C7B:                              ; CODE XREF: DrawClueBookNavBar+28↑j
                 mov     word_3880A, 3Eh ; '>'
                 mov     bx, 0AFACh
                 mov     word ptr [bx], 20h ; ' '
-                test    word_328CC, 8000h
+                test    g_clueBookNavFlags, 8000h
                 jz      short loc_14CA4
                 inc     word ptr [bx]
 
 loc_14CA4:                              ; CODE XREF: DrawClueBookNavBar+69↑j
                 mov     word ptr [bx+2], 145h
-                test    word_328CC, 4000h
+                test    g_clueBookNavFlags, 4000h
                 jz      short loc_14CB4
                 inc     word ptr [bx+2]
 
 loc_14CB4:                              ; CODE XREF: DrawClueBookNavBar+78↑j
                 mov     word ptr [bx+4], 147h
-                test    word_328CC, 2000h
+                test    g_clueBookNavFlags, 2000h
                 jz      short loc_14CC4
                 inc     word ptr [bx+4]
 
 loc_14CC4:                              ; CODE XREF: DrawClueBookNavBar+88↑j
                 mov     word ptr [bx+6], 153h
-                test    word_328CC, 1000h
+                test    g_clueBookNavFlags, 1000h
                 jz      short loc_14CD4
                 inc     word ptr [bx+6]
 
 loc_14CD4:                              ; CODE XREF: DrawClueBookNavBar+98↑j
                 mov     word ptr [bx+8], 149h
-                test    word_328CC, 800h
+                test    g_clueBookNavFlags, 800h
                 jz      short loc_14CE4
                 inc     word ptr [bx+8]
 
 loc_14CE4:                              ; CODE XREF: DrawClueBookNavBar+A8↑j
                 mov     word ptr [bx+0Ah], 14Bh
-                test    word_328CC, 400h
+                test    g_clueBookNavFlags, 400h
                 jz      short loc_14CF4
                 inc     word ptr [bx+0Ah]
 
 loc_14CF4:                              ; CODE XREF: DrawClueBookNavBar+B8↑j
                 mov     word ptr [bx+0Ch], 14Dh
-                test    word_328CC, 200h
+                test    g_clueBookNavFlags, 200h
                 jz      short loc_14D04
                 inc     word ptr [bx+0Ch]
 
@@ -7830,7 +7830,7 @@ loc_14D3D:                              ; CODE XREF: HandleClueCategorySelection
                 jz      short loc_14DBD
                 cmp     g_lastKeyChar, 9
                 jnz     short loc_14D70
-                and     word_328CC, 0FF9Fh
+                and     g_clueBookNavFlags, 0FF9Fh
                 push    cs
                 call    near ptr ShowClueBookHelpScreen
                 mov     g_currentCommandCode, 0FFFFh
@@ -7863,7 +7863,7 @@ loc_14D8E:                              ; CODE XREF: HandleClueCategorySelection
                 jnz     short loc_14DB8
 
 loc_14DAE:                              ; CODE XREF: HandleClueCategorySelection+22↑j
-                test    word_328CC, 40h
+                test    g_clueBookNavFlags, 40h
                 jz      short loc_14DF5
                 jmp     short locret_14DFB
 ; ---------------------------------------------------------------------------
@@ -7873,7 +7873,7 @@ loc_14DB8:                              ; CODE XREF: HandleClueCategorySelection
                 jnz     short loc_14DC7
 
 loc_14DBD:                              ; CODE XREF: HandleClueCategorySelection+2F↑j
-                test    word_328CC, 20h
+                test    g_clueBookNavFlags, 20h
                 jz      short loc_14DF5
                 jmp     short locret_14DFB
 ; ---------------------------------------------------------------------------
@@ -7887,10 +7887,10 @@ loc_14DC7:                              ; CODE XREF: HandleClueCategorySelection
 loc_14DD0:                              ; CODE XREF: HandleClueCategorySelection+CD↓j
                 cmp     g_currentCommandCode, dx
                 jnz     short loc_14DF0
-                test    word_328CC, bx
+                test    g_clueBookNavFlags, bx
                 jnz     short loc_14DF5
-                and     word_328CC, 1FFh
-                or      word_328CC, bx
+                and     g_clueBookNavFlags, 1FFh
+                or      g_clueBookNavFlags, bx
                 mov     ax, 1
                 call    TriggerSoundEvent
                 jmp     short locret_14DFB
@@ -8005,15 +8005,15 @@ RestoreUiStateForClueBook proc far      ; CODE XREF: ShowClueBook+508↑P
                 lodsw
                 mov     es:word_3194C, ax
                 lodsw
-                mov     es:word_328C4, ax
+                mov     es:g_uiScratchFlags1, ax
                 lodsw
-                mov     es:word_328C6, ax
+                mov     es:g_uiScratchFlags2, ax
                 lodsw
-                mov     es:word_328C8, ax
+                mov     es:g_uiScratchFlags3, ax
                 lodsw
-                mov     es:word_328CA, ax
+                mov     es:g_uiScratchFlags4, ax
                 lodsw
-                mov     es:word_328CC, ax
+                mov     es:g_clueBookNavFlags, ax
                 lodsw
                 mov     es:word_32904, ax
                 lodsw
@@ -8163,15 +8163,15 @@ SaveUiStateForClueBook proc far         ; CODE XREF: ShowClueBook+C↑P
                 stosw
                 mov     ax, word_3194C
                 stosw
-                mov     ax, word_328C4
+                mov     ax, g_uiScratchFlags1
                 stosw
-                mov     ax, word_328C6
+                mov     ax, g_uiScratchFlags2
                 stosw
-                mov     ax, word_328C8
+                mov     ax, g_uiScratchFlags3
                 stosw
-                mov     ax, word_328CA
+                mov     ax, g_uiScratchFlags4
                 stosw
-                mov     ax, word_328CC
+                mov     ax, g_clueBookNavFlags
                 stosw
                 mov     ax, word_32904
                 stosw
@@ -8297,19 +8297,19 @@ PlayClueBookOpenAnimation proc far      ; CODE XREF: ShowClueBook+66↑P
                 push    si
                 push    di
                 push    ds              ; this
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jz      short loc_15152
                 jmp     loc_15217
 ; ---------------------------------------------------------------------------
 
 loc_15152:                              ; CODE XREF: PlayClueBookOpenAnimation+B↑j
-                test    word_328CC, 10h
+                test    g_clueBookNavFlags, 10h
                 jz      short loc_1515D
                 jmp     loc_15217
 ; ---------------------------------------------------------------------------
 
 loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+16↑j
-                or      word_328CC, 10h
+                or      g_clueBookNavFlags, 10h
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -8325,7 +8325,7 @@ loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+1
                 mov     g_pictureId, 0Ch
                 call    DrawPicture
                 call    DrawMouseCursor
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0AFh
@@ -8341,7 +8341,7 @@ loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+1
                 mov     ax, 23h ; '#'   ; ticks
                 call    wait
                 call    TriggerFullPaletteFadeOut
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -8419,9 +8419,9 @@ PollForEscapeKeyOnlyAlt endp
 
 FinalizeCharacterCreation proc near     ; CODE XREF: RunCharacterCreation:loc_15245↑p
                 call    TriggerFullPaletteFadeOut ; Character creation's finalize/cleanup step (always runs, even on ESC-cancel from any of the 3 prior steps -- see RunCharacterCreation). Loads a transition palette, reads file entry #3, frees a temp memory block if allocated, clears the screen, and stops the character-creation music before returning.
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 and     word_3295A, 7FFFh
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -8451,7 +8451,7 @@ loc_152B2:                              ; CODE XREF: FinalizeCharacterCreation+4
 loc_152D6:                              ; CODE XREF: FinalizeCharacterCreation+59↑j
                                         ; FinalizeCharacterCreation+60↑j
                 call    DrawMouseCursorAlt
-                and     word_328CA, 0FFF7h
+                and     g_uiScratchFlags4, 0FFF7h
                 retn
 FinalizeCharacterCreation endp
 
@@ -8501,7 +8501,7 @@ loc_1531E:                              ; CODE XREF: DrawCharacterCreationAnimat
                                         ; DrawCharacterCreationAnimationFrame+A1↓j ...
                 add     si, 14h
                 loop    loc_15318
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 call    DrawMouseCursor
 
 loc_1532E:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+44↓j
@@ -8573,7 +8573,7 @@ loc_153D2:                              ; CODE XREF: DrawCharacterCreationAnimat
 ; ---------------------------------------------------------------------------
 
 loc_153E0:                              ; CODE XREF: DrawCharacterCreationAnimationFrame+EC↑j
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jnz     short loc_153EB
                 jmp     loc_1531E
 ; ---------------------------------------------------------------------------
@@ -8638,7 +8638,7 @@ loc_15432:                              ; CODE XREF: PlayCharacterCreationIntroA
                 loop    loc_15432
                 mov     ax, 12h
                 call    PlayMusicTrack
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 call    DrawMouseCursor
                 mov     cx, 3Fh ; '?'
 
@@ -8652,7 +8652,7 @@ loc_15452:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     cx, 80h
                 mov     dx, 80h
                 call    RunPaletteFadeSequence
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_15476
                 call    DrawCharacterCreationAnimationFrame
 
@@ -8682,7 +8682,7 @@ loc_15489:                              ; CODE XREF: PlayCharacterCreationIntroA
 
 loc_154B1:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+A8↓j
                 call    RestoreWipeEffectPixel
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_154BF
                 call    DrawCharacterCreationAnimationFrame
 
@@ -8696,7 +8696,7 @@ loc_154BF:                              ; CODE XREF: PlayCharacterCreationIntroA
 
 loc_154D6:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+D1↓j
                 call    RestoreWipeEffectPixel
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_154E4
                 call    DrawCharacterCreationAnimationFrame
 
@@ -8716,14 +8716,14 @@ loc_154E4:                              ; CODE XREF: PlayCharacterCreationIntroA
 loc_15505:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+D9↑j
                 mov     cx, 0Ah
                 call    WaitForTickAndDrawCreationFrame
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     cx, 3Fh ; '?'
 
 loc_15514:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+FE↓j
                 push    cx
                 mov     dx, 40h ; '@'
                 call    StepPaletteRange16FadeUp
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_15526
                 call    DrawCharacterCreationAnimationFrame
 
@@ -8752,7 +8752,7 @@ loc_1553E:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     cx, 30h ; '0'
                 mov     dx, 50h ; 'P'
                 call    StepPaletteFadeRange
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_1555B
                 call    DrawCharacterCreationAnimationFrame
 
@@ -8783,7 +8783,7 @@ loc_15573:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     cx, 30h ; '0'
                 mov     dx, 50h ; 'P'
                 call    StepPaletteFadeRange
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_15596
                 call    DrawCharacterCreationAnimationFrame
 
@@ -8808,7 +8808,7 @@ loc_155A9:                              ; CODE XREF: RunCharacterCreationSelecti
                 inc     word_2E406
                 call    DrawCharacterCreationAnimationFrame
                 loop    loc_155A9
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     dx, 40h ; '@'
                 call    RunPaletteRange16FadeUp
                 mov     cx, 27h ; '''
@@ -8872,14 +8872,14 @@ loc_15602:                              ; CODE XREF: RunCharacterCreationSelecti
 ; ---------------------------------------------------------------------------
 
 loc_15666:                              ; CODE XREF: RunCharacterCreationSelectionStep+C9↑j
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     cx, 3Fh ; '?'
 
 loc_1566F:                              ; CODE XREF: RunCharacterCreationSelectionStep+E8↓j
                 push    cx
                 mov     dx, 93h
                 call    StepPaletteRange16FadeUp
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_15681
                 call    DrawCharacterCreationAnimationFrame
 
@@ -8913,7 +8913,7 @@ loc_156A6:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     cx, 0FFh
                 mov     dx, 0
                 call    StepPaletteFadeRange
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_156C3
                 call    DrawCharacterCreationAnimationFrame
 
@@ -8933,7 +8933,7 @@ loc_156CC:                              ; CODE XREF: RunCharacterCreationSelecti
 ; ---------------------------------------------------------------------------
 
 loc_156DB:                              ; CODE XREF: RunCharacterCreationSelectionStep+13E↑j
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -8979,7 +8979,7 @@ loc_15756:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     g_pictureId, 27h ; '''
                 call    DrawPicture
                 call    DrawMouseCursor
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     dx, 0C0h
                 call    RunPaletteRange16FadeUp
                 mov     cx, 0FFFFh
@@ -9003,7 +9003,7 @@ loc_15799:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    DrawShadowedText
                 call    DrawMouseCursor
                 call    TriggerPaletteRange16FadeUp
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     dx, 0B0h
                 call    RunPaletteRange16FadeUp
                 mov     cx, 1Eh
@@ -9016,7 +9016,7 @@ loc_15799:                              ; CODE XREF: RunCharacterCreationSelecti
 loc_157E9:                              ; CODE XREF: RunCharacterCreationSelectionStep+24C↑j
                 mov     ax, 11h
                 call    TriggerSoundEvent
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     dx, 0B0h
                 call    RunPaletteRange16FadeDown
                 call    TriggerPaletteRange16FadeDown
@@ -9054,10 +9054,10 @@ loc_15859:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    TryPlaySoundCue
                 mov     ax, 13h
                 call    TriggerSoundEvent
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 call    TriggerPaletteRange16FadeUp
                 call    TriggerPaletteRange16FadeDown
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_1587F
                 retn
@@ -9092,7 +9092,7 @@ loc_1587F:                              ; CODE XREF: RunCharacterCreationSelecti
 ; ---------------------------------------------------------------------------
 
 loc_158D5:                              ; CODE XREF: RunCharacterCreationSelectionStep+338↑j
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -9121,7 +9121,7 @@ loc_15927:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     ax, 19h
                 call    TriggerSoundEvent
                 call    TriggerPaletteRange16FadeDown
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 60h ; '`'
@@ -9151,7 +9151,7 @@ loc_15927:                              ; CODE XREF: RunCharacterCreationSelecti
 ; ---------------------------------------------------------------------------
 
 loc_1598C:                              ; CODE XREF: RunCharacterCreationSelectionStep+3EF↑j
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -9220,7 +9220,7 @@ loc_159D9:                              ; CODE XREF: RunCharacterCreationSelecti
 ; ---------------------------------------------------------------------------
 
 loc_15AB1:                              ; CODE XREF: RunCharacterCreationSelectionStep+514↑j
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     ax, 4
                 mov     bx, 3Fh ; '?'
                 mov     cx, 20h ; ' '
@@ -9228,15 +9228,15 @@ loc_15AB1:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    StepPaletteFadeRange
                 mov     dx, 30h ; '0'
                 call    RunPaletteRange16FadeUp
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     dx, 10h
                 call    RunPaletteRange16FadeUp
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     dx, 50h ; 'P'
                 call    RunPaletteRange16FadeUp
                 mov     dx, 40h ; '@'
                 call    RunPaletteRange16FadeUp
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     dx, 90h
                 call    RunPaletteRange16FadeUp
                 call    PollForEscapeKeyOnlyAlt
@@ -9245,7 +9245,7 @@ loc_15AB1:                              ; CODE XREF: RunCharacterCreationSelecti
 ; ---------------------------------------------------------------------------
 
 loc_15AFE:                              ; CODE XREF: RunCharacterCreationSelectionStep+561↑j
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     dx, 20h ; ' '
                 call    RunPaletteRange16FadeUp
                 mov     dx, 80h
@@ -9318,7 +9318,7 @@ loc_15B9D:                              ; CODE XREF: RunCharacterCreationSelecti
 ; ---------------------------------------------------------------------------
 
 loc_15BBA:                              ; CODE XREF: RunCharacterCreationSelectionStep+61D↑j
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0C0h
@@ -9364,7 +9364,7 @@ loc_15C3D:                              ; CODE XREF: RunCharacterCreationSelecti
                 mov     si, 6DC4h
                 or      word ptr [si], 0C000h
                 call    DrawCharacterCreationAnimationFrame
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 mov     ax, 2
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0C0h
@@ -9435,7 +9435,7 @@ loc_15CF3:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    WaitForTickFlagAndClear
                 mov     si, 6DC4h
                 and     word ptr [si], 3FFFh
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 call    TriggerFullPaletteFadeOut
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
@@ -9507,9 +9507,9 @@ loc_15D97:                              ; CODE XREF: RunCharacterCreationSelecti
                 call    StepPaletteFadeRange
 
 loc_15DD7:                              ; CODE XREF: RunCharacterCreationSelectionStep+843↓j
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_15DD7
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 5
@@ -9547,7 +9547,7 @@ RunCharacterCreationSelectionStep endp
 
 
 ComposeCharacterPortrait proc near      ; CODE XREF: RunCharacterCreation↑p
-                or      word_328CA, 8
+                or      g_uiScratchFlags4, 8
                 cmp     byte ptr word_2E492, 0
                 jz      short loc_15E5D
                 call    StopMusicAndResetTimer
@@ -9586,7 +9586,7 @@ loc_15E5D:                              ; CODE XREF: ComposeCharacterPortrait+A�
                 mov     _videoSegment, ax
                 mov     g_pictureId, 5
                 call    DrawPicture
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
                 call    LoadMasterPalette
@@ -9692,7 +9692,7 @@ loc_15F35:                              ; CODE XREF: ComposeCharacterPortrait+FA
                 mov     _videoSegment, ax
                 call    DrawCharacterCreationAnimationFrame
                 or      word_3295A, 8000h
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 call    RestoreCursorBackgroundIfDirty
                 retn
 ComposeCharacterPortrait endp
@@ -9844,9 +9844,9 @@ RunPaletteRange16FadeUp endp
 
 WaitForTickFlagAndClear proc near       ; CODE XREF: RunCharacterCreationSelectionStep+1B0↑p
                                         ; RunCharacterCreationSelectionStep+617↑p ...
-                test    word_328C4, 400h ; Busy-waits on word_328C4 bit 0x400, clears it once set, loops cx times. A tick-synced busy-wait/clear primitive.
+                test    g_uiScratchFlags1, 400h ; Busy-waits on word_328C4 bit 0x400, clears it once set, loops cx times. A tick-synced busy-wait/clear primitive.
                 jz      short WaitForTickFlagAndClear
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 loop    WaitForTickFlagAndClear
                 retn
 WaitForTickFlagAndClear endp
@@ -9858,7 +9858,7 @@ WaitForTickFlagAndClear endp
 WaitForTickAndDrawCreationFrame proc near
                                         ; CODE XREF: PlayCharacterCreationIntroAnimation+63↑p
                                         ; PlayCharacterCreationIntroAnimation+DF↑p ...
-                test    word_328C4, 400h ; Busy-waits on word_328C4 bit 0x400 then draws one DrawCharacterCreationAnimationFrame, loops cx times. Called from PlayCharacterCreationIntroAnimation.
+                test    g_uiScratchFlags1, 400h ; Busy-waits on word_328C4 bit 0x400 then draws one DrawCharacterCreationAnimationFrame, loops cx times. Called from PlayCharacterCreationIntroAnimation.
                 jz      short WaitForTickAndDrawCreationFrame
                 call    DrawCharacterCreationAnimationFrame
                 loop    WaitForTickAndDrawCreationFrame
@@ -9901,7 +9901,7 @@ SetWipeEffectPixel endp
 
 TriggerPaletteRange16FadeDown proc near ; CODE XREF: RunCharacterCreationSelectionStep+1B3↑p
                                         ; RunCharacterCreationSelectionStep+263↑p ...
-                or      word_328C8, 800h ; Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeDown to completion. Called from RunCharacterCreationSelectionStep.
+                or      g_uiScratchFlags3, 800h ; Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeDown to completion. Called from RunCharacterCreationSelectionStep.
                 mov     dx, 90h
                 call    RunPaletteRange16FadeDown
                 retn
@@ -9913,7 +9913,7 @@ TriggerPaletteRange16FadeDown endp
 
 TriggerPaletteRange16FadeUp proc near   ; CODE XREF: RunCharacterCreationSelectionStep+1A4↑p
                                         ; RunCharacterCreationSelectionStep+234↑p ...
-                or      word_328C8, 800h ; Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeUp to completion. Called from RunCharacterCreationSelectionStep.
+                or      g_uiScratchFlags3, 800h ; Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeUp to completion. Called from RunCharacterCreationSelectionStep.
                 mov     dx, 90h
                 call    RunPaletteRange16FadeUp
                 retn
@@ -10149,13 +10149,13 @@ seg015          segment byte public 'CODE' use16
 
 RunDungeonGameLoop proc far             ; CODE XREF: start+4B↑P
                                         ; RestPartyAndAdvanceClock+1DC↓P
-                and     word_328C8, 0FFDFh ; Main dungeon game loop, called once from `start`. Each iteration: checks movement/menu input (sub_16407/sub_16881/sub_25AAC), redraws (sub_20C1E, BuildMinimapTileData, DrawMinimap), shows a resource-depleted overlay if needed, draws 3 fixed status/info widgets via sub_232A8, and checks a BCD counter at 0x51B6 to conditionally call sub_23151. Loops via jmp back to its own body until byte_2E400 signals exit.
+                and     g_uiScratchFlags3, 0FFDFh ; Main dungeon game loop, called once from `start`. Each iteration: checks movement/menu input (sub_16407/sub_16881/sub_25AAC), redraws (sub_20C1E, BuildMinimapTileData, DrawMinimap), shows a resource-depleted overlay if needed, draws 3 fixed status/info widgets via sub_232A8, and checks a BCD counter at 0x51B6 to conditionally call sub_23151. Loops via jmp back to its own body until byte_2E400 signals exit.
                 call    ResetCombatRoundScratchState
                 mov     g_lastKeyChar, 0
-                or      word_328C4, 1800h
+                or      g_uiScratchFlags1, 1800h
                 mov     word_36CBD, 28h ; '('
                 call    TickPartyAilmentIconBar
-                and     word_328C4, 0F7FFh
+                and     g_uiScratchFlags1, 0F7FFh
                 cmp     g_lastKeyChar, 0
                 jz      short loc_16324
                 retf
@@ -10221,7 +10221,7 @@ loc_163A0:                              ; CODE XREF: RunDungeonGameLoop+90↑j
 ; ---------------------------------------------------------------------------
 
 loc_163B1:                              ; CODE XREF: RunDungeonGameLoop+89↑j
-                and     word_328CA, 0FFFh
+                and     g_uiScratchFlags4, 0FFFh
                 mov     g_pictureId, 1
                 call    DrawFullScreenPictureAndCacheToEMS
                 call    RedrawAllPartyStatusPanelsAlt
@@ -10239,7 +10239,7 @@ loc_163B1:                              ; CODE XREF: RunDungeonGameLoop+89↑j
                 call    ShowLootAndAwardExperience
 
 loc_163FB:                              ; CODE XREF: RunDungeonGameLoop+FE↑j
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
                 mov     word_36CBD, 1
                 retf
 RunDungeonGameLoop endp
@@ -10278,12 +10278,12 @@ loc_16432:                              ; CODE XREF: HandleDungeonInput+12C↓j
 
 loc_16451:                              ; CODE XREF: HandleDungeonInput:loc_16524↓j
                                         ; HandleDungeonInput:loc_16560↓j ...
-                test    word_328C8, 20h
+                test    g_uiScratchFlags3, 20h
                 jnz     short loc_164B0
 
 loc_16459:                              ; CODE XREF: HandleDungeonInput+6E↓j
                                         ; HandleDungeonInput+A4↓j
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_1646B
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -10325,7 +10325,7 @@ loc_164A6:                              ; CODE XREF: HandleDungeonInput+9A↑j
 
 loc_164B0:                              ; CODE XREF: HandleDungeonInput+50↑j
                                         ; HandleDungeonInput+109↓j ...
-                and     word_328C8, 0FFDFh
+                and     g_uiScratchFlags3, 0FFDFh
                 mov     g_selectedPartySlotPtr, 0
                 call    DrawPartyStatusIconRow
                 mov     g_lastKeyChar, 0
@@ -10365,7 +10365,7 @@ loc_164EE:                              ; CODE XREF: HandleDungeonInput+E2↑j
 
 loc_16501:                              ; CODE XREF: HandleDungeonInput+EC↑j
                                         ; HandleDungeonInput+F3↑j
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jz      short loc_16512
                 cmp     g_lastKeyChar, 9
                 jnz     short loc_16512
@@ -10374,7 +10374,7 @@ loc_16501:                              ; CODE XREF: HandleDungeonInput+EC↑j
 
 loc_16512:                              ; CODE XREF: HandleDungeonInput+100↑j
                                         ; HandleDungeonInput+107↑j
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jz      short loc_16524
                 cmp     g_lastKeyChar, 51h ; 'Q'
                 jnz     short loc_16524
@@ -10396,7 +10396,7 @@ loc_16527:                              ; CODE XREF: HandleDungeonInput+92↑j
 loc_16536:                              ; CODE XREF: HandleDungeonInput+7E↑j
                                         ; HandleDungeonInput+12A↑j
                 call    RunPartyMemberDetailScreen
-                or      word_328C4, 400h
+                or      g_uiScratchFlags1, 400h
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
@@ -10440,7 +10440,7 @@ loc_1658C:                              ; CODE XREF: HandleDungeonInput+179↑j
 loc_16594:                              ; CODE XREF: HandleDungeonInput+17E↑j
                 call    ClearStatusPanelIfDirty
                 call    HandlePortraitClick
-                test    word_328C6, 7800h
+                test    g_uiScratchFlags2, 7800h
                 jz      short loc_1658C
                 jmp     loc_16852
 ; ---------------------------------------------------------------------------
@@ -10451,7 +10451,7 @@ loc_165A9:                              ; CODE XREF: HandleDungeonInput+183↑j
                 jnz     short loc_1658C
                 call    RestoreCursorBackgroundIfDirty
                 call    HandleGameCommand
-                test    word_328C8, 20h
+                test    g_uiScratchFlags3, 20h
                 jz      short loc_165CF
                 mov     ax, 0Ah         ; ticks
                 call    wait
@@ -10711,8 +10711,8 @@ loc_167F1:                              ; CODE XREF: HandleDungeonInput+D0↑j
 
 loc_167F9:                              ; CODE XREF: HandleDungeonInput+DA↑j
                                         ; HandleDungeonInput+26D↑j
-                and     word_328C4, 0FF00h
-                or      word_328C4, 5Eh
+                and     g_uiScratchFlags1, 0FF00h
+                or      g_uiScratchFlags1, 5Eh
                 and     word_3295A, 9FFFh
                 call    RunGameDialog
                 cmp     g_lastKeyChar, 0FFh
@@ -10728,7 +10728,7 @@ loc_16817:                              ; CODE XREF: HandleDungeonInput+40D↑j
 ; ---------------------------------------------------------------------------
 
 loc_16824:                              ; CODE XREF: HandleDungeonInput+415↑j
-                or      word_328CA, 1000h
+                or      g_uiScratchFlags4, 1000h
                 call    MarkScreenRedrawFlags
                 call    DrawMonsterInfoPanels
                 jmp     loc_16451
@@ -10842,7 +10842,7 @@ loc_1693D:                              ; CODE XREF: ProcessMonsterAttackTurn+AA
 ; ---------------------------------------------------------------------------
 
 loc_16950:                              ; CODE XREF: ProcessMonsterAttackTurn+CC↑j
-                test    word_328CA, 200h
+                test    g_uiScratchFlags4, 200h
                 jz      short loc_1695B
                 jmp     loc_16A1E
 ; ---------------------------------------------------------------------------
@@ -10876,7 +10876,7 @@ loc_16978:                              ; CODE XREF: ProcessMonsterAttackTurn+EA
 loc_1698C:                              ; CODE XREF: ProcessMonsterAttackTurn+72↑j
                 push    bp
                 call    SelectTrapEffectVariant
-                and     word_328C8, 0FFFBh
+                and     g_uiScratchFlags3, 0FFFBh
                 mov     ax, 0C50h
                 mov     word_32906, ax
                 mov     bp, 95EBh
@@ -10898,9 +10898,9 @@ loc_169A1:                              ; CODE XREF: ProcessMonsterAttackTurn+17
                 call    ResolveAttackerActionOutcome
                 cmp     g_stagedAttackDamage, 0
                 jz      short loc_169EF
-                test    word_328C8, 4
+                test    g_uiScratchFlags3, 4
                 jnz     short loc_169EF
-                or      word_328C8, 4
+                or      g_uiScratchFlags3, 4
                 call    WaitForSoundDriverIdle
                 jnz     short loc_169EF
                 mov     si, word_32904
@@ -10918,13 +10918,13 @@ loc_169EF:                              ; CODE XREF: ProcessMonsterAttackTurn+13
 
 loc_169FA:                              ; CODE XREF: ProcessMonsterAttackTurn+127↑j
                 pop     bp
-                test    word_328C8, 4
+                test    g_uiScratchFlags3, 4
                 jnz     short loc_16A06
                 jmp     loc_16966
 ; ---------------------------------------------------------------------------
 
 loc_16A06:                              ; CODE XREF: ProcessMonsterAttackTurn+180↑j
-                and     word_328C8, 0FFFBh
+                and     g_uiScratchFlags3, 0FFFBh
                 mov     ax, [si+52h]
                 mov     word_32DC0, ax
                 call    ApplyEffectAndDrawIconBar
@@ -11174,7 +11174,7 @@ ResolveAttackerActionOutcome proc near  ; CODE XREF: ProcessMonsterAttackTurn+9B
                                         ; ProcessMonsterAttackTurn+140↑p
                 mov     si, word_32904  ; Resolves one attacker-vs-defender action outcome, one of 3 paths selected by word_328CA bit 0x200 and the attacker's [+0x92] special-attack flags: (1) normal ResolveAttack damage roll, (2) a FailsSavingThrow-gated status-effect application, or (3) a weaker-DC FailsSavingThrow gating an 'equipment corrosion' effect that targets the defender's equipped item instead of HP. Called twice from sub_16881.
                 mov     di, word_32908
-                test    word_328CA, 200h
+                test    g_uiScratchFlags4, 200h
                 jz      short loc_16C24
                 test    word ptr [si+92h], 0E00h
                 jz      short loc_16C11
@@ -11372,7 +11372,7 @@ SelectActiveMonster endp
 
 SelectTrapEffectVariant proc near       ; CODE XREF: ProcessMonsterAttackTurn+98↑p
                                         ; ProcessMonsterAttackTurn+10C↑p
-                and     word_328CA, 0FDFFh ; Picks between a record's primary ([+0x6C]) and alternate ([+0x6E]) trap effect id: always primary if flag [+0xC] bit 0x400 is set or no alternate exists, else a 25% chance (RandomInRange(100)<0x19) of the alternate. Resolves the chosen id via PrepareTrapEffectSlots. Called from sub_16881.
+                and     g_uiScratchFlags4, 0FDFFh ; Picks between a record's primary ([+0x6C]) and alternate ([+0x6E]) trap effect id: always primary if flag [+0xC] bit 0x400 is set or no alternate exists, else a 25% chance (RandomInRange(100)<0x19) of the alternate. Resolves the chosen id via PrepareTrapEffectSlots. Called from sub_16881.
                 mov     ax, [si+6Ch]
                 test    word ptr [si+0Ch], 400h
                 jnz     short loc_16DDD
@@ -11387,7 +11387,7 @@ loc_16DC2:                              ; CODE XREF: SelectTrapEffectVariant+14�
                 cmp     ax, 19h
                 jge     short loc_16DDA
                 mov     ax, [si+6Eh]
-                or      word_328CA, 200h
+                or      g_uiScratchFlags4, 200h
                 jmp     short loc_16DDD
 ; ---------------------------------------------------------------------------
 
@@ -11485,7 +11485,7 @@ seg017          segment byte public 'CODE' use16
 
 ClearStatusPanelIfDirty proc far        ; CODE XREF: start:loc_103BA↑P
                                         ; start+41D↑P ...
-                test    word_328C4, 100h ; Gated on word_328C4 bit 0x100 (the widespread 'redraw needed' dirty flag): if set, blits a fill pattern over fixed screen regions via the EMS page-frame trick (same technique as ShowResourceDepletedOverlay) -- erases the status panel before it gets redrawn. Called very widely, including directly from `start`.
+                test    g_uiScratchFlags1, 100h ; Gated on word_328C4 bit 0x100 (the widespread 'redraw needed' dirty flag): if set, blits a fill pattern over fixed screen regions via the EMS page-frame trick (same technique as ShowResourceDepletedOverlay) -- erases the status panel before it gets redrawn. Called very widely, including directly from `start`.
                 jnz     short loc_16E21
                 retf
 ; ---------------------------------------------------------------------------
@@ -11498,7 +11498,7 @@ loc_16E21:                              ; CODE XREF: ClearStatusPanelIfDirty+6�
                 mov     bx, 55D8h
                 call    MapUnmapPages
                 mov     es, _emsSegmentPageFrame
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_16E3E
                 jmp     short loc_16EAA
 ; ---------------------------------------------------------------------------
@@ -11551,8 +11551,8 @@ loc_16E8D:                              ; CODE XREF: ClearStatusPanelIfDirty+80�
                 loop    loc_16E8D
 
 loc_16E9A:                              ; CODE XREF: ClearStatusPanelIfDirty+C4↓j
-                and     word_328C4, 0FEFFh
-                and     word_328C8, 0EFFFh
+                and     g_uiScratchFlags1, 0FEFFh
+                and     g_uiScratchFlags3, 0EFFFh
                 pop     cx
                 pop     es
                 pop     di
@@ -11647,7 +11647,7 @@ ClearMessageBoxArea proc far            ; CODE XREF: HandleShopCatalogSlotClick+
                 mov     ax, 0A000h
                 mov     es, ax
                 assume es:nothing
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_16F44
                 mov     di, 78F0h
                 mov     cx, 3Ch ; '<'
@@ -11785,7 +11785,7 @@ loc_16FA9:                              ; CODE XREF: ParseCommandLineSwitches+19
 
 loc_16FC3:                              ; CODE XREF: ParseCommandLineSwitches+29↑j
                                         ; ParseCommandLineSwitches+2F↑j
-                or      word_328C4, 8000h
+                or      g_uiScratchFlags1, 8000h
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
@@ -11819,13 +11819,13 @@ loc_16FDF:                              ; CODE XREF: ParseCommandLineSwitches+51
 
 loc_16FFF:                              ; CODE XREF: ParseCommandLineSwitches+65↑j
                                         ; ParseCommandLineSwitches+6B↑j
-                or      word_328C8, 2
+                or      g_uiScratchFlags3, 2
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
 loc_17006:                              ; CODE XREF: ParseCommandLineSwitches+71↑j
                                         ; ParseCommandLineSwitches+77↑j
-                or      word_328C8, 1
+                or      g_uiScratchFlags3, 1
                 jmp     short loc_16F93
 ; ---------------------------------------------------------------------------
 
@@ -11917,7 +11917,7 @@ loc_17045:                              ; CODE XREF: HandleShopCatalogSlotClick+
 loc_1704C:                              ; CODE XREF: HandleShopCatalogSlotClick+17↑j
                 mov     word_31948, ax
                 call    LoadItemCatalogRecord
-                test    word_328C6, 20h
+                test    g_uiScratchFlags2, 20h
                 jz      short loc_17060
                 call    PayGoldAndAcquireItem
                 retf
@@ -12062,7 +12062,7 @@ loc_171B8:                              ; CODE XREF: HandleShopCatalogSlotClick+
                 mov     cx, 8
 
 loc_171CD:                              ; CODE XREF: HandleShopCatalogSlotClick+1B6↓j
-                test    word_328C6, 20h
+                test    g_uiScratchFlags2, 20h
                 jnz     short loc_171DA
                 cmp     word ptr [si], 0
                 jnz     short loc_171DE
@@ -12109,7 +12109,7 @@ loc_1720D:                              ; CODE XREF: HandleShopCatalogSlotClick+
 
 loc_1722F:                              ; CODE XREF: HandleShopCatalogSlotClick+1D3↑j
                                         ; HandleShopCatalogSlotClick+1E0↑j ...
-                test    word_328C6, 20h
+                test    g_uiScratchFlags2, 20h
                 jnz     short loc_1726C
                 mov     ax, word_31948
                 mov     [si], ax
@@ -12162,7 +12162,7 @@ TryHandleCatalogSlotClick endp
 DrawShopItemSlotGrid proc far           ; CODE XREF: HandleShopCatalogSlotClick+80↑p
                                         ; HandleShopCatalogSlotClick+DD↑p ...
                 push    es              ; Clears the shop item-slot grid area, then draws up to 8 item icons (from a position table at 0x63C8 and an item-id table at 0x558A) via LoadItemCatalogRecord + DrawPicture. Shows 'EMPTY' and sets a word_328C6 flag bit if no items were drawn. Called twice from sub_17032.
-                and     word_328C6, 0FFBFh
+                and     g_uiScratchFlags2, 0FFBFh
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     es, ax
@@ -12205,7 +12205,7 @@ loc_172EF:                              ; CODE XREF: DrawShopItemSlotGrid+4F↑j
                 pop     es
                 cmp     word_3293E, 0
                 jnz     short locret_1732A
-                or      word_328C6, 40h
+                or      g_uiScratchFlags2, 40h
                 mov     _textPos_x, 103h
                 mov     _textPos_y, 0B3h
                 mov     _font_bgColor, 4
@@ -12226,7 +12226,7 @@ RunShopScreen   proc far                ; CODE XREF: UseAbilityCommand+104↓p
                                         ; UseKeyItem+1C↓P ...
                 call    ClearStatusPanelIfDirty ; Umbrella shop screen, reached from UseAbilityCommand. Calls sub_1869D (main input loop -- hosts the sell/enhance/repair Space-bar cluster) directly, twice; calls sub_17032 (the mouse-click 'buy' handler reaching PayGoldAndAcquireItem); redraws ShowMaterialCounterHud repeatedly; hit-tests several region tables; writes state via FileEntry_Write near an exit path. Ties the whole shop cluster together. Many internal helper calls not individually traced yet.
                 call    ClearPortraitPanelAreas
-                or      word_328C6, 200h
+                or      g_uiScratchFlags2, 200h
                 call    BuildShopCategoryTabList
                 push    cs
                 call    near ptr DrawShopItemSlotGrid
@@ -12332,7 +12332,7 @@ loc_17403:                              ; CODE XREF: RunShopScreen+41↑j
                                         ; RunShopScreen+C5↑j
                 call    RunPartyMemberDetailScreen
                 call    RefreshDungeonScreen
-                test    word_328C6, 80h
+                test    g_uiScratchFlags2, 80h
                 jz      short loc_17422
                 mov     di, 0BB8h
                 mov     ax, [di]
@@ -12384,7 +12384,7 @@ loc_1746B:                              ; CODE XREF: RunShopScreen+119↑j
 ; ---------------------------------------------------------------------------
 
 loc_1746E:                              ; CODE XREF: RunShopScreen+120↑j
-                test    word_328C6, 80h
+                test    g_uiScratchFlags2, 80h
                 jnz     short loc_17485
                 cmp     g_heldItemType, 0
                 jz      short loc_17482
@@ -12453,12 +12453,12 @@ loc_17500:                              ; CODE XREF: RunShopScreen+72↑j
                 call    TriggerShopExitSoundAndPersist
 
 loc_17507:                              ; CODE XREF: RunShopScreen+284↓j
-                and     word_328C6, 0FDFFh
+                and     g_uiScratchFlags2, 0FDFFh
                 mov     g_pictureId, 1
                 call    DrawFullScreenPictureAndCacheToEMS
                 call    RedrawAllPartyStatusPanelsAlt
                 call    RefreshDungeonScreen
-                test    word_328C6, 80h
+                test    g_uiScratchFlags2, 80h
                 jnz     short loc_1752F
                 call    DrawMouseCursor
 
@@ -12470,7 +12470,7 @@ loc_1752F:                              ; CODE XREF: RunShopScreen+1FD↑j
 
 loc_1753B:                              ; CODE XREF: RunShopScreen+1BF↑j
                 call    HandlePortraitClick
-                test    word_328C6, 7800h
+                test    g_uiScratchFlags2, 7800h
                 jz      short loc_1754D
                 call    RunPartyInventoryScreen
 
@@ -12493,11 +12493,11 @@ loc_17557:                              ; CODE XREF: RunShopScreen+8F↑j
 ; ---------------------------------------------------------------------------
 
 loc_1756F:                              ; CODE XREF: RunShopScreen+234↑j
-                test    word_328C6, 80h
+                test    g_uiScratchFlags2, 80h
                 jnz     short loc_175BD
                 test    word_32DCE, 2
                 jnz     short loc_17590
-                mov     bx, word_32DC4
+                mov     bx, g_currentToolbarIconPtr
                 dec     word ptr [bx+2]
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -12515,7 +12515,7 @@ loc_17590:                              ; CODE XREF: RunShopScreen+252↑j
 ; ---------------------------------------------------------------------------
 
 loc_175B2:                              ; CODE XREF: RunShopScreen+23A↑j
-                test    word_328C6, 80h
+                test    g_uiScratchFlags2, 80h
                 jnz     short loc_175BD
                 jmp     loc_17500
 ; ---------------------------------------------------------------------------
@@ -12556,7 +12556,7 @@ RunShopScreen   endp
 
 ShowMaterialCounterHud proc far         ; CODE XREF: RunShopScreen+18↑p
                                         ; RunShopScreen+193↑p ...
-                test    word_328C6, 80h ; Gated on word_328C6 bit 0x80: draws a fixed label (0x7FC4) plus the current value of material counter 0x94B3 via FormatAndDrawBCD4 -- a small HUD element. Only traced caller is sub_1732B.
+                test    g_uiScratchFlags2, 80h ; Gated on word_328C6 bit 0x80: draws a fixed label (0x7FC4) plus the current value of material counter 0x94B3 via FormatAndDrawBCD4 -- a small HUD element. Only traced caller is sub_1732B.
                 jnz     short loc_175FD
                 retf
 ; ---------------------------------------------------------------------------
@@ -12569,7 +12569,7 @@ loc_175FD:                              ; CODE XREF: ShowMaterialCounterHud+6↑
                 push    _font_bgTransparent
                 push    word_2E412
                 push    si
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 57h ; 'W'
                 mov     _font_fgColor, 8Ah
@@ -12620,7 +12620,7 @@ LoadLockState   proc far                ; CODE XREF: UseAbilityCommand+2C↓p
                 shr     al, cl
                 mov     ah, al
                 not     ah
-                mov     word_32DC8, ax
+                mov     g_lockUnlockedMask, ax
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -12675,7 +12675,7 @@ LoadCurgameRecord proc far              ; CODE XREF: UseAbilityCommand+26↓p
                 shr     al, cl
                 mov     ah, al
                 not     ah
-                mov     word_32DC8, ax
+                mov     g_lockUnlockedMask, ax
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -12719,7 +12719,7 @@ LoadCurgameRecord endp
 ShowLockStatus  proc far                ; CODE XREF: HandleMovementInput+2A0↑P
                                         ; UseAbilityCommand+98↓p ...
                 call    ClearStatusPanelIfDirty ; Lock-examination message shower (called from UseAbilityCommand and HandleMovementInput). Shows 'NOT LOCKED'/'LOCKED'/'MAGICALLY LOCKED' (word_32DCE bit 0x20)/'LOCKED AND TRAPPED', or 'REQUIRES SPECIAL KEY: <tier> KEY' -- the exact 7-tier key hierarchy (BRASS/BRONZE/COPPER/IRON/STEEL/SILVER/GOLD, word_32DCE bits 0x200-0x8000) already cross-confirmed early in the session against the Hex Hacking Item Guide's door-key item table. Gated on the current party member's [+0x6C] field (plausibly a lockpicking/perception skill) against thresholds.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 8Ah
@@ -12820,10 +12820,10 @@ ShowLockStatus  endp
 
 UseAbilityCommand proc far              ; CODE XREF: start+5DD↑P
                 mov     g_lastKeyChar, 0 ; Top-level 'use ability on a target' command, called directly from `start`. Dispatches on a caller-supplied record's +2 flags (bit 0x8000 -> weight/capacity check via sub_1766F, else LoadCurgameRecord for the target). Confirms via ShowConfirmPrompt, validates the target (status mask 0x1C40, else FlashStatusWarning), writes the result to CURGAME (FileEntry 0x8FFB) when gated flags allow, and shows a message box. If the action record's +2 bit 0x8000 was set, ends by calling ShowMaterialCounterHud (via sub_1732B) -- explains that HUD element's calling context.
-                mov     word_32DC4, 6EE8h
+                mov     g_currentToolbarIconPtr, 6EE8h
                 cmp     errorCode, 1
                 jz      short loc_178BE
-                mov     word_32DC4, 6ED0h
+                mov     g_currentToolbarIconPtr, 6ED0h
 
 loc_178BE:                              ; CODE XREF: UseAbilityCommand+10↑j
                 mov     bx, [si+2]
@@ -12876,8 +12876,8 @@ loc_17927:                              ; CODE XREF: UseAbilityCommand+72↑j
                 call    RestoreCursorBackgroundIfDirty
                 test    word_32DCE, 80h
                 jnz     short loc_17948
-                mov     ax, word_32DC8
-                test    byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                test    g_lockUnlockedAccumulator, al
                 jnz     short loc_1799D
                 push    cs
                 call    near ptr ShowLockStatus
@@ -12886,11 +12886,11 @@ loc_17927:                              ; CODE XREF: UseAbilityCommand+72↑j
 ; ---------------------------------------------------------------------------
 
 loc_17948:                              ; CODE XREF: UseAbilityCommand+8C↑j
-                mov     ax, word_32DC8
-                test    byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                test    g_lockUnlockedAccumulator, al
                 jnz     short loc_1799D
-                mov     ax, word_32DC8
-                or      byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                or      g_lockUnlockedAccumulator, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -12911,7 +12911,7 @@ loc_17980:                              ; CODE XREF: UseAbilityCommand+D7↑j
                 mov     cx, 2
                 mov     bx, 7CA8h
                 call    ShowAbilityDescriptionColumn
-                and     word_328C4, 0FEFFh
+                and     g_uiScratchFlags1, 0FEFFh
 
 loc_1799D:                              ; CODE XREF: UseAbilityCommand+95↑j
                                         ; UseAbilityCommand+A9↑j ...
@@ -12994,9 +12994,9 @@ BuildShopCategoryTabList endp
 
 TriggerShopExitSoundAndPersist proc near
                                         ; CODE XREF: RunShopScreen+1D9↑p
-                test    word_328C6, 80h ; Gated on word_328C6 bits 0x80/0x20; if not skipped and word_32DCE bit 0x2 is clear, plays a sound (ax=6) and decrements [word_32DC4+2]. Always writes back a WORLD.DAT record via sub_27DC6 + FileEntry_Write. Called once from RunShopScreen, reached via its hit-test table index 1.
+                test    g_uiScratchFlags2, 80h ; Gated on word_328C6 bits 0x80/0x20; if not skipped and word_32DCE bit 0x2 is clear, plays a sound (ax=6) and decrements [word_32DC4+2]. Always writes back a WORLD.DAT record via sub_27DC6 + FileEntry_Write. Called once from RunShopScreen, reached via its hit-test table index 1.
                 jz      short loc_17A32
-                test    word_328C6, 20h
+                test    g_uiScratchFlags2, 20h
                 jz      short loc_17A49
                 retn
 ; ---------------------------------------------------------------------------
@@ -13006,7 +13006,7 @@ loc_17A32:                              ; CODE XREF: TriggerShopExitSoundAndPers
                 jnz     short loc_17A49
                 mov     ax, 6
                 call    TriggerSoundEvent
-                mov     bx, word_32DC4
+                mov     bx, g_currentToolbarIconPtr
                 dec     word ptr [bx+2]
 
 loc_17A49:                              ; CODE XREF: TriggerShopExitSoundAndPersist+E↑j
@@ -13035,7 +13035,7 @@ ConsumeAbilityChargeAndRefresh proc near
 loc_17A73:                              ; CODE XREF: ConsumeAbilityChargeAndRefresh+B↑j
                 mov     ax, 6
                 call    TriggerSoundEvent
-                mov     bx, word_32DC4
+                mov     bx, g_currentToolbarIconPtr
                 inc     word ptr [bx+2]
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -13176,7 +13176,7 @@ UseItem         proc far                ; CODE XREF: start+669↑P
 
 loc_17BA4:                              ; CODE XREF: UseItem+D↑j
                                         ; UseItem+1A6↓j ...
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 test    word_2E410, 8000h
                 jz      short loc_17BBF
@@ -13300,7 +13300,7 @@ loc_17CBE:                              ; CODE XREF: UseItem+125↑j
                 call    DrawMouseCursor
 
 loc_17D04:                              ; CODE XREF: UseItem+13A↑j
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 call    WaitForKeypressTickingMusic
                 mov     si, word_2E54E
@@ -13504,9 +13504,9 @@ loc_17EA8:                              ; CODE XREF: UseItem+2F2↑j
                 mov     ax, word_32902
                 mov     word_2E550, ax
                 call    SelectItemUseRecord
-                test    word_328C6, 2
+                test    g_uiScratchFlags2, 2
                 jz      short loc_17F18
-                and     word_328C6, 0FFFDh
+                and     g_uiScratchFlags2, 0FFFDh
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 67h ; 'g'
                 mov     _font_fgColor, 44h ; 'D'
@@ -13592,7 +13592,7 @@ loc_17F8D:                              ; CODE XREF: UseItem+3F1↑j
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 call    DrawMouseCursor
-                and     word_328C6, 0FF7Fh
+                and     g_uiScratchFlags2, 0FF7Fh
                 retf
 UseItem         endp
 
@@ -13792,7 +13792,7 @@ ApplyEffectAndDrawIconBar proc far      ; CODE XREF: ProcessMonsterAttackTurn+C2
                 push    di
                 push    dx
                 push    cx
-                and     word_328C8, 0FFFBh
+                and     g_uiScratchFlags3, 0FFFBh
                 mov     cx, 4
                 mov     si, 0C50h
 
@@ -13804,7 +13804,7 @@ loc_180CF:                              ; CODE XREF: ApplyEffectAndDrawIconBar+D
                 add     si, 14h
                 loop    loc_180C9
                 call    DrawMouseCursor
-                test    word_328C8, 4
+                test    g_uiScratchFlags3, 4
                 jz      short loc_180E8
                 call    WaitForSoundDriverIdle
                 jz      short loc_180F0
@@ -13829,7 +13829,7 @@ loc_18104:                              ; CODE XREF: ApplyEffectAndDrawIconBar+1
                 push    si
                 mov     ax, [si+0Ah]
                 mov     di, ax
-                test    word_328C8, 4
+                test    g_uiScratchFlags3, 4
                 jnz     short loc_1812A
                 call    WaitForSoundDriverIdle
                 jnz     short loc_18125
@@ -13840,7 +13840,7 @@ loc_18104:                              ; CODE XREF: ApplyEffectAndDrawIconBar+1
 
 loc_18125:                              ; CODE XREF: ApplyEffectAndDrawIconBar+5E↑j
                                         ; ApplyEffectAndDrawIconBar+64↑j
-                or      word_328C8, 4
+                or      g_uiScratchFlags3, 4
 
 loc_1812A:                              ; CODE XREF: ApplyEffectAndDrawIconBar+57↑j
                 test    word ptr [di+0Ah], 600h
@@ -14578,7 +14578,7 @@ loc_1857E:                              ; CODE XREF: HandlePortraitClick+2F↑j
                                         ; HandlePortraitClick+48↑j ...
                 cmp     word ptr [si], 0
                 jz      short locret_1851B
-                or      word_328C6, bx
+                or      g_uiScratchFlags2, bx
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowPartyPortraitForSlot
                 mov     ax, 1
@@ -14599,7 +14599,7 @@ RefreshPartyPortraits proc far          ; CODE XREF: start+81D↑P
                 mov     si, 95EBh
                 cmp     word ptr [si], 0
                 jz      short loc_185C7
-                or      word_328C6, 4000h
+                or      g_uiScratchFlags2, 4000h
                 mov     word_328BC, 8
                 mov     word_328C0, 8
                 call    ShowPartyPortraitForSlot
@@ -14608,7 +14608,7 @@ loc_185C7:                              ; CODE XREF: RefreshPartyPortraits+E↑j
                 mov     si, 95EDh
                 cmp     word ptr [si], 0
                 jz      short loc_185E4
-                or      word_328C6, 2000h
+                or      g_uiScratchFlags2, 2000h
                 mov     word_328BC, 40h ; '@'
                 mov     word_328C0, 8
                 call    ShowPartyPortraitForSlot
@@ -14617,7 +14617,7 @@ loc_185E4:                              ; CODE XREF: RefreshPartyPortraits+2B↑
                 mov     si, 95EFh
                 cmp     word ptr [si], 0
                 jz      short loc_18601
-                or      word_328C6, 1000h
+                or      g_uiScratchFlags2, 1000h
                 mov     word_328BC, 78h ; 'x'
                 mov     word_328C0, 8
                 call    ShowPartyPortraitForSlot
@@ -14626,7 +14626,7 @@ loc_18601:                              ; CODE XREF: RefreshPartyPortraits+48↑
                 mov     si, 95F1h
                 cmp     word ptr [si], 0
                 jz      short loc_1861E
-                or      word_328C6, 800h
+                or      g_uiScratchFlags2, 800h
                 mov     word_328BC, 0B0h
                 mov     word_328C0, 8
                 call    ShowPartyPortraitForSlot
@@ -14634,7 +14634,7 @@ loc_18601:                              ; CODE XREF: RefreshPartyPortraits+48↑
 loc_1861E:                              ; CODE XREF: RefreshPartyPortraits+65↑j
                 mov     ax, 1
                 call    TriggerSoundEvent
-                test    word_328C6, 1Ch
+                test    g_uiScratchFlags2, 1Ch
                 jz      short loc_18692
                 call    ClearPortraitPanelAreas
                 mov     _textPos_x, 0F1h
@@ -14642,9 +14642,9 @@ loc_1861E:                              ; CODE XREF: RefreshPartyPortraits+65↑
                 mov     _font_bgColor, 4
                 mov     _font_fgColor, 7Bh ; '{'
                 mov     _font_bgTransparent, 0
-                test    word_328C6, 8
+                test    g_uiScratchFlags2, 8
                 jnz     short loc_1866E
-                test    word_328C6, 4
+                test    g_uiScratchFlags2, 4
                 jnz     short loc_18681
                 mov     cx, 3
                 mov     bx, 7FD0h
@@ -14762,7 +14762,7 @@ loc_1872D:                              ; CODE XREF: RunPartyInventoryScreen+86�
                 call    LoadItemCatalogRecord
                 cmp     g_heldItemType, 0
                 jz      short loc_18759
-                test    word_328C6, 1Ch
+                test    g_uiScratchFlags2, 1Ch
                 jnz     short loc_18761
 
 loc_18759:                              ; CODE XREF: RunPartyInventoryScreen+B2↑j
@@ -14786,7 +14786,7 @@ loc_1877B:                              ; CODE XREF: RunPartyInventoryScreen+5B�
 ; ---------------------------------------------------------------------------
 
 loc_1877E:                              ; CODE XREF: RunPartyInventoryScreen+6E↑j
-                test    word_328C6, 200h
+                test    g_uiScratchFlags2, 200h
                 jz      short loc_1877B
                 call    HandleShopCatalogSlotClick
                 jmp     near ptr RunPartyInventoryScreen
@@ -14824,7 +14824,7 @@ loc_187BC:                              ; CODE XREF: RunPartyInventoryScreen+11A
 ; ---------------------------------------------------------------------------
 
 loc_187C9:                              ; CODE XREF: RunPartyInventoryScreen+127↑j
-                test    word_328C6, 200h
+                test    g_uiScratchFlags2, 200h
                 jz      short loc_187D4
                 jmp     loc_18857
 ; ---------------------------------------------------------------------------
@@ -14838,7 +14838,7 @@ loc_187D7:                              ; CODE XREF: RunPartyInventoryScreen+1D�
                                         ; RunPartyInventoryScreen+122↑j
                 call    RunPartyMemberDetailScreen
                 call    RestoreLargePanelFromEMS
-                test    word_328C6, 4000h
+                test    g_uiScratchFlags2, 4000h
                 jz      short loc_187F9
                 mov     si, 95EBh
                 mov     word_328BC, 8
@@ -14846,7 +14846,7 @@ loc_187D7:                              ; CODE XREF: RunPartyInventoryScreen+1D�
                 call    ShowPartyPortraitForSlot
 
 loc_187F9:                              ; CODE XREF: RunPartyInventoryScreen+148↑j
-                test    word_328C6, 2000h
+                test    g_uiScratchFlags2, 2000h
                 jz      short loc_18813
                 mov     si, 95EDh
                 mov     word_328BC, 40h ; '@'
@@ -14854,7 +14854,7 @@ loc_187F9:                              ; CODE XREF: RunPartyInventoryScreen+148
                 call    ShowPartyPortraitForSlot
 
 loc_18813:                              ; CODE XREF: RunPartyInventoryScreen+162↑j
-                test    word_328C6, 1000h
+                test    g_uiScratchFlags2, 1000h
                 jz      short loc_1882D
                 mov     si, 95EFh
                 mov     word_328BC, 78h ; 'x'
@@ -14862,7 +14862,7 @@ loc_18813:                              ; CODE XREF: RunPartyInventoryScreen+162
                 call    ShowPartyPortraitForSlot
 
 loc_1882D:                              ; CODE XREF: RunPartyInventoryScreen+17C↑j
-                test    word_328C6, 800h
+                test    g_uiScratchFlags2, 800h
                 jz      short loc_18847
                 mov     si, 95F1h
                 mov     word_328BC, 0B0h
@@ -14995,10 +14995,10 @@ loc_18932:                              ; CODE XREF: RunPartyInventoryScreen+267
                 mov     bx, 0
 
 loc_18935:                              ; CODE XREF: RunPartyInventoryScreen+293↑j
-                push    word_328C6
-                and     word_328C6, 0FFC3h
+                push    g_uiScratchFlags2
+                and     g_uiScratchFlags2, 0FFC3h
                 call    ShowItemPurchaseConfirmPrompt
-                pop     word_328C6
+                pop     g_uiScratchFlags2
 
 loc_18947:                              ; CODE XREF: RunPartyInventoryScreen+261↑j
                 jmp     near ptr RunPartyInventoryScreen
@@ -15055,9 +15055,9 @@ loc_189B4:                              ; CODE XREF: RunPartyInventoryScreen+2DD
                 test    word ptr [bx], 10h
                 jnz     short loc_189F8
                 call    HandleGameCommand
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_189F5
-                test    word_328C8, 20h
+                test    g_uiScratchFlags3, 20h
                 jz      short loc_189F5
                 mov     ax, 0Ah         ; ticks
                 call    wait
@@ -15074,13 +15074,13 @@ loc_189F5:                              ; CODE XREF: RunPartyInventoryScreen+332
 ; ---------------------------------------------------------------------------
 
 loc_189F8:                              ; CODE XREF: RunPartyInventoryScreen+325↑j
-                test    word_328C6, 80h
+                test    g_uiScratchFlags2, 80h
                 jnz     short loc_18A1A
                 mov     ax, 1
                 call    TriggerSoundEvent
 
 loc_18A08:                              ; CODE XREF: RunPartyInventoryScreen+31F↑j
-                test    word_328C6, 80h
+                test    g_uiScratchFlags2, 80h
                 jnz     short loc_18A1A
                 call    RestoreAllPortraitsFromEMS
                 mov     errorCode, 2
@@ -15146,9 +15146,9 @@ loc_18AA0:                              ; CODE XREF: RunPartyInventoryScreen+3B8
                                         ; RunPartyInventoryScreen+3D1↑j ...
                 cmp     word ptr [si], 0
                 jz      short loc_18B00
-                test    word_328C6, bx
+                test    g_uiScratchFlags2, bx
                 jnz     short loc_18ACC
-                or      word_328C6, bx
+                or      g_uiScratchFlags2, bx
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowPartyPortraitForSlot
                 mov     ax, 1
@@ -15160,14 +15160,14 @@ loc_18AA0:                              ; CODE XREF: RunPartyInventoryScreen+3B8
 
 loc_18ACC:                              ; CODE XREF: RunPartyInventoryScreen+40C↑j
                 not     bx
-                and     word_328C6, bx
+                and     g_uiScratchFlags2, bx
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 1
                 call    TriggerSoundEvent
                 call    RestorePortraitAreaAtPosition
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
-                test    word_328C6, 7800h
+                test    g_uiScratchFlags2, 7800h
                 jnz     short loc_18B00
                 call    ClearStatusPanelIfDirty
                 mov     errorCode, 0
@@ -15225,7 +15225,7 @@ loc_18B40:                              ; CODE XREF: RunPartyInventoryScreen+F8�
 
 loc_18B6F:                              ; CODE XREF: RunPartyInventoryScreen+4BB↑j
                                         ; RunPartyInventoryScreen+4C4↑j ...
-                test    word_328C6, bx
+                test    g_uiScratchFlags2, bx
                 jz      short loc_18B82
                 mov     ax, 6
                 call    TriggerSoundEvent
@@ -15272,21 +15272,21 @@ loc_18BD1:                              ; CODE XREF: RunPartyInventoryScreen+504
                 jnz     short loc_18C09
                 cmp     g_heldItemType, 0
                 jz      short loc_18C06
-                test    word_328C6, 10h
+                test    g_uiScratchFlags2, 10h
                 jz      short loc_18BED
                 call    TrySellItemForGold
                 jmp     near ptr RunPartyInventoryScreen
 ; ---------------------------------------------------------------------------
 
 loc_18BED:                              ; CODE XREF: RunPartyInventoryScreen+548↑j
-                test    word_328C6, 8
+                test    g_uiScratchFlags2, 8
                 jz      short loc_18BFB
                 call    TryEnhanceItemForGold
                 jmp     near ptr RunPartyInventoryScreen
 ; ---------------------------------------------------------------------------
 
 loc_18BFB:                              ; CODE XREF: RunPartyInventoryScreen+556↑j
-                test    word_328C6, 4
+                test    g_uiScratchFlags2, 4
                 jz      short loc_18C06
                 call    TryRepairItemForGold
 
@@ -15305,7 +15305,7 @@ loc_18C09:                              ; CODE XREF: RunPartyInventoryScreen+539
 ; ---------------------------------------------------------------------------
 
 loc_18C1F:                              ; CODE XREF: RunPartyInventoryScreen+578↑j
-                test    word_328CA, 20h
+                test    g_uiScratchFlags4, 20h
                 jz      short loc_18C06
                 mov     ax, word_32968
                 mov     word_31948, ax
@@ -15325,7 +15325,7 @@ loc_18C1F:                              ; CODE XREF: RunPartyInventoryScreen+578
                 call    DrawMouseCursorAlt
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
-                and     word_328CA, 0FFDFh
+                and     g_uiScratchFlags4, 0FFDFh
                 mov     word_32968, 0
                 jmp     loc_18761
 RunPartyInventoryScreen endp
@@ -15696,7 +15696,7 @@ RestoreAllPortraitsFromEMS proc near    ; CODE XREF: RunPartyInventoryScreen+344
                 mov     word_328C0, 8
                 mov     si, 95F1h
                 call    RestorePortraitAreaAtPosition
-                and     word_328C6, 87FFh
+                and     g_uiScratchFlags2, 87FFh
                 call    ClearStatusPanelIfDirty
                 retn
 RestoreAllPortraitsFromEMS endp
@@ -15732,7 +15732,7 @@ TryEnhanceItemForGold proc near         ; CODE XREF: RunPartyInventoryScreen+558
                 call    IsItemEligibleForEnhance
                 jz      short loc_19021
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_bgColor, 4
@@ -15804,7 +15804,7 @@ LoadGroundItemSlotRecord endp
 ShowInsufficientGoldMessage proc near   ; CODE XREF: TryEnhanceItemForGold+54↑p
                                         ; TryRepairItemForGold+54↓p
                 call    ClearStatusPanelIfDirty ; Shared rejection message for TryEnhanceItemForGold/TryRepairItemForGold when g_partyGold is below the action's cost: 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, cx=3).
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_bgColor, 4
@@ -15879,7 +15879,7 @@ TryRepairItemForGold proc near          ; CODE XREF: RunPartyInventoryScreen+566
                 call    IsItemEligibleForRepair
                 jz      short loc_19187
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_bgColor, 4
@@ -15963,7 +15963,7 @@ RestoreLargePanelFromEMS endp
 
 RestorePortraitPanelFromEMS proc near   ; CODE XREF: HandlePortraitClick↑p
                                         ; RefreshPartyPortraits+5↑p
-                test    word_328C6, 7800h ; If no portrait-dirty bits are set (word_328C6 & 0x7800), blits a cached background region from EMS-paged memory back into the video buffer (136 rows x 224 bytes) -- restores the portrait panel area without a full redraw. Called from RefreshPartyPortraits and sub_18504.
+                test    g_uiScratchFlags2, 7800h ; If no portrait-dirty bits are set (word_328C6 & 0x7800), blits a cached background region from EMS-paged memory back into the video buffer (136 rows x 224 bytes) -- restores the portrait panel area without a full redraw. Called from RefreshPartyPortraits and sub_18504.
                 jnz     short locret_19263
                 push    ds
                 mov     dx, _emsPointer1?
@@ -16004,7 +16004,7 @@ TrySellItemForGold proc near            ; CODE XREF: RunPartyInventoryScreen+54A
                 test    [bx+10h], ax
                 jnz     short loc_192B9
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_bgColor, 4
@@ -16018,7 +16018,7 @@ TrySellItemForGold proc near            ; CODE XREF: RunPartyInventoryScreen+54A
 ; ---------------------------------------------------------------------------
 
 loc_192B9:                              ; CODE XREF: TrySellItemForGold+19↑j
-                or      word_328CA, 20h
+                or      g_uiScratchFlags4, 20h
                 mov     ax, word_31948
                 mov     word_32968, ax
                 mov     ax, word_3194C
@@ -16061,7 +16061,7 @@ locret_19321:                           ; CODE XREF: SelectClickedRosterPortrait
 loc_19322:                              ; CODE XREF: SelectClickedRosterPortrait+11↑j
                 cmp     ax, 1
                 jnz     short loc_19343
-                test    word_328C6, 4000h
+                test    g_uiScratchFlags2, 4000h
                 jz      short locret_19321
                 mov     word_328BC, 8
                 mov     word_328C0, 8
@@ -16072,7 +16072,7 @@ loc_19322:                              ; CODE XREF: SelectClickedRosterPortrait
 loc_19343:                              ; CODE XREF: SelectClickedRosterPortrait+17↑j
                 cmp     ax, 2
                 jnz     short loc_19364
-                test    word_328C6, 2000h
+                test    g_uiScratchFlags2, 2000h
                 jz      short locret_19321
                 mov     word_328BC, 40h ; '@'
                 mov     word_328C0, 8
@@ -16083,7 +16083,7 @@ loc_19343:                              ; CODE XREF: SelectClickedRosterPortrait
 loc_19364:                              ; CODE XREF: SelectClickedRosterPortrait+38↑j
                 cmp     ax, 3
                 jnz     short loc_19385
-                test    word_328C6, 1000h
+                test    g_uiScratchFlags2, 1000h
                 jz      short locret_19321
                 mov     word_328BC, 78h ; 'x'
                 mov     word_328C0, 8
@@ -16094,7 +16094,7 @@ loc_19364:                              ; CODE XREF: SelectClickedRosterPortrait
 loc_19385:                              ; CODE XREF: SelectClickedRosterPortrait+59↑j
                 cmp     ax, 4
                 jnz     short locret_19321
-                test    word_328C6, 800h
+                test    g_uiScratchFlags2, 800h
                 jz      short locret_19321
                 mov     word_328BC, 0B0h
                 mov     word_328C0, 8
@@ -16184,7 +16184,7 @@ loc_19465:                              ; CODE XREF: RunItemServiceRecipientLoop
 
 loc_19473:                              ; CODE XREF: RunItemServiceRecipientLoop+AC↑j
                                         ; RunItemServiceRecipientLoop+E0↓j
-                test    word_328C4, 8000h
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_19482
                 cmp     word_2E38E, 0
                 jnz     short loc_19442
@@ -17723,13 +17723,13 @@ TickPartyAilmentIconBar proc far        ; CODE XREF: RunDungeonGameLoop+1B↑P
 
 ; FUNCTION CHUNK AT 0393 SIZE 00000050 BYTES
 
-                test    word_328C4, 1800h ; Periodically (word_36CBD reaching 40, or a much slower word_36CBF wraparound path gated on word_36C79 bit 2) recomputes each party member's ailment severity via PrepareTrapEffectSlots(ax=2/0xE) + helper checks against +0x1C status bits (or +0x58 for the slow path), populates the icon-bar slot when nonzero, and calls ApplyEffectAndDrawIconBar. Called from RunDungeonGameLoop and ApplyMapTriggerEffect. Exact ailment identities behind effect ids 2/0xE not confirmed.
+                test    g_uiScratchFlags1, 1800h ; Periodically (word_36CBD reaching 40, or a much slower word_36CBF wraparound path gated on word_36C79 bit 2) recomputes each party member's ailment severity via PrepareTrapEffectSlots(ax=2/0xE) + helper checks against +0x1C status bits (or +0x58 for the slow path), populates the icon-bar slot when nonzero, and calls ApplyEffectAndDrawIconBar. Called from RunDungeonGameLoop and ApplyMapTriggerEffect. Exact ailment identities behind effect ids 2/0xE not confirmed.
                 jnz     short loc_1A08E
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_1A08E:                              ; CODE XREF: TickPartyAilmentIconBar+6↑j
-                and     word_328CA, 0FEFFh
+                and     g_uiScratchFlags4, 0FEFFh
                 mov     ax, 2
                 call    PrepareTrapEffectSlots
                 mov     word_3293E, ax
@@ -17765,11 +17765,11 @@ loc_1A0CC:                              ; CODE XREF: TickPartyAilmentIconBar+62�
                 loop    loc_1A0CC
 
 loc_1A0E9:                              ; CODE XREF: TickPartyAilmentIconBar+50↑j
-                test    word_328CA, 100h
+                test    g_uiScratchFlags4, 100h
                 jz      short loc_1A101
                 call    ApplyEffectAndDrawIconBar
                 call    CheckPartyWipeAndReinitLevel
-                and     word_328CA, 0FEFFh
+                and     g_uiScratchFlags4, 0FEFFh
 
 loc_1A101:                              ; CODE XREF: TickPartyAilmentIconBar+6A↑j
                 mov     ax, 0Eh
@@ -17792,10 +17792,10 @@ loc_1A11C:                              ; CODE XREF: TickPartyAilmentIconBar+B2�
                 loop    loc_1A11C
 
 loc_1A139:                              ; CODE XREF: TickPartyAilmentIconBar+A0↑j
-                test    word_328CA, 100h
+                test    g_uiScratchFlags4, 100h
                 jz      short locret_1A14C
                 call    ApplyEffectAndDrawIconBar
-                and     word_328CA, 0FEFFh
+                and     g_uiScratchFlags4, 0FEFFh
 
 locret_1A14C:                           ; CODE XREF: TickPartyAilmentIconBar+BA↑j
                 retf
@@ -17832,7 +17832,7 @@ loc_1A179:                              ; CODE XREF: TickDiseasePoisonSickAilmen
                 mov     ax, word_32940
                 mov     [di+0Ah], ax
                 mov     [di+0Ch], bx
-                or      word_328CA, 100h
+                or      g_uiScratchFlags4, 100h
 
 locret_1A194:                           ; CODE XREF: TickDiseasePoisonSickAilmentSlot+9↑j
                                         ; TickDiseasePoisonSickAilmentSlot+30↑j
@@ -17871,7 +17871,7 @@ loc_1A1C7:                              ; CODE XREF: TickCurseHexJinxAilmentSlot
                 mov     ax, word_32940
                 mov     [di+0Ah], ax
                 mov     [di+0Ch], bx
-                or      word_328CA, 100h
+                or      g_uiScratchFlags4, 100h
 
 locret_1A1E2:                           ; CODE XREF: TickCurseHexJinxAilmentSlot+9↑j
                                         ; TickCurseHexJinxAilmentSlot+F↑j ...
@@ -17903,10 +17903,10 @@ loc_1A200:                              ; CODE XREF: TickPartyAilmentIconBar+196
 
 loc_1A21D:                              ; CODE XREF: TickPartyAilmentIconBar+167↑j
                                         ; TickPartyAilmentIconBar+184↑j
-                test    word_328CA, 100h
+                test    g_uiScratchFlags4, 100h
                 jz      short loc_1A230
                 call    ApplyEffectAndDrawIconBar
-                and     word_328CA, 0FEFFh
+                and     g_uiScratchFlags4, 0FEFFh
 
 loc_1A230:                              ; CODE XREF: TickPartyAilmentIconBar+19E↑j
                 jmp     loc_1A0AE
@@ -17951,7 +17951,7 @@ loc_1A276:                              ; CODE XREF: TickPerceptionGatedAilmentS
                 mov     ax, word_32940
                 mov     [di+0Ah], ax
                 mov     [di+0Ch], bx
-                or      word_328CA, 100h
+                or      g_uiScratchFlags4, 100h
 
 locret_1A293:                           ; CODE XREF: TickPerceptionGatedAilmentSlot+9↑j
                                         ; TickPerceptionGatedAilmentSlot+46↑j
@@ -18285,7 +18285,7 @@ loc_1A4E9:                              ; CODE XREF: IsDestinationUnlocked+1D↑
                 cmp     word ptr [si+8], 0
                 jz      short loc_1A533
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 8Ah
@@ -18349,7 +18349,7 @@ IsDestinationUnlocked endp
 
 
 TickTravelResourceAilments proc near    ; CODE XREF: TravelToDestination+45↑p
-                and     word_328C4, 0FFBFh ; Clears word_328C4 bit 0x40, then calls CheckAndTickAvailableAilment 3x with (ax=9,cx=word_36C85), (ax=0xF,cx=word_36C89), (ax=0xC,cx=word_36C8B) -- checks 3 resource/consumable item types for availability during travel, plausibly food/water/light-source tracking. Called from TravelToDestination.
+                and     g_uiScratchFlags1, 0FFBFh ; Clears word_328C4 bit 0x40, then calls CheckAndTickAvailableAilment 3x with (ax=9,cx=word_36C85), (ax=0xF,cx=word_36C89), (ax=0xC,cx=word_36C8B) -- checks 3 resource/consumable item types for availability during travel, plausibly food/water/light-source tracking. Called from TravelToDestination.
                 mov     cx, word_36C85
                 mov     ax, 9
                 call    CheckAndTickAvailableAilment
@@ -18434,7 +18434,7 @@ seg037          segment byte public 'CODE' use16
 
 
 UseRiddleAnswerItem proc far            ; CODE XREF: UseItem+A5↑P
-                and     word_328C6, 0FFBFh ; Riddle/password item: opens a text-entry field for the player to type an answer, comparing it byte-for-byte against an expected string looked up via the item's tier value. Confirmed via string dump: 'THAT SOUNDS GOOD TO ME.' on a match, 'THAT IS INCORRECT.' on a mismatch. Called once from UseItem.
+                and     g_uiScratchFlags2, 0FFBFh ; Riddle/password item: opens a text-entry field for the player to type an answer, comparing it byte-for-byte against an expected string looked up via the item's tier value. Confirmed via string dump: 'THAT SOUNDS GOOD TO ME.' on a match, 'THAT IS INCORRECT.' on a mismatch. Called once from UseItem.
                 cmp     ax, _val40
                 jle     short loc_1A604
                 jmp     locret_1A76C
@@ -18544,7 +18544,7 @@ loc_1A73E:                              ; CODE XREF: UseRiddleAnswerItem+11A↑j
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
                 call    WaitForKeypressTickingMusic
-                or      word_328C6, 40h
+                or      g_uiScratchFlags2, 40h
 
 locret_1A76C:                           ; CODE XREF: UseRiddleAnswerItem+B↑j
                                         ; UseRiddleAnswerItem+EE↑j
@@ -19113,7 +19113,7 @@ loc_1AC01:                              ; CODE XREF: UpdatePartyAverageStatTiers
                 jnz     short loc_1AC23
                 and     word_36C7F, 7FFFh
                 or      word_36C7F, 1000h
-                or      word_328C4, 400h
+                or      g_uiScratchFlags1, 400h
 
 loc_1AC23:                              ; CODE XREF: UpdatePartyAverageStatTiers+E1↑j
                                         ; UpdatePartyAverageStatTiers+E9↑j
@@ -19536,7 +19536,7 @@ seg041          segment byte public 'CODE' use16
 
 
 UseKeyItem      proc far                ; CODE XREF: UseItem+1B1↑P
-                or      word_328C6, 20h ; UseItem dispatch branch for key items: passes the item's own type-flags field (es:[si+0x10]) directly as the lock/object id to LoadLockState -- the item's catalog 'type' value doubles as which numbered door/lock it opens.
+                or      g_uiScratchFlags2, 20h ; UseItem dispatch branch for key items: passes the item's own type-flags field (es:[si+0x10]) directly as the lock/object id to LoadLockState -- the item's catalog 'type' value doubles as which numbered door/lock it opens.
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
@@ -19547,12 +19547,12 @@ UseKeyItem      proc far                ; CODE XREF: UseItem+1B1↑P
                 mov     di, 0BB8h
                 mov     ax, [di]
                 mov     word_2E550, ax
-                and     word_328C6, 0FFDFh
+                and     g_uiScratchFlags2, 0FFDFh
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
                 call    FinishItemUse
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
@@ -19678,8 +19678,8 @@ PromptBuyOreQuantity endp
 
 
 RunEnhanceItemScreen proc far           ; CODE XREF: UseItem+1C1↑P
-                or      word_328C6, 8   ; Entry point for the interactive enhance-item screen, reached from UseItem+0x1C1. Sets word_328C6 bit 8 (gates TryEnhanceItemForGold in the main input loop sub_1869D), shows the resource-depleted overlay and material/gold HUD, runs sub_1869D, then rebuilds/redraws the minimap on exit. Sibling of RunSellItemScreen (bit 0x10) and RunRepairItemScreen (bit 4).
-                or      word_328C4, 100h
+                or      g_uiScratchFlags2, 8 ; Entry point for the interactive enhance-item screen, reached from UseItem+0x1C1. Sets word_328C6 bit 8 (gates TryEnhanceItemForGold in the main input loop sub_1869D), shows the resource-depleted overlay and material/gold HUD, runs sub_1869D, then rebuilds/redraws the minimap on exit. Sibling of RunSellItemScreen (bit 0x10) and RunRepairItemScreen (bit 4).
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
                 and     ax, 7000h
@@ -19688,19 +19688,19 @@ RunEnhanceItemScreen proc far           ; CODE XREF: UseItem+1C1↑P
                 call    RefreshPartyPortraits
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
-                and     word_328CA, 0FFDFh
+                and     g_uiScratchFlags4, 0FFDFh
                 mov     byte ptr word_32968, 0
                 call    RunPartyInventoryScreen
-                and     word_328CA, 0FFDFh
+                and     g_uiScratchFlags4, 0FFDFh
                 mov     byte ptr word_32968, 0
-                and     word_328C6, 0FFF7h
+                and     g_uiScratchFlags2, 0FFF7h
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
                 call    ClearPortraitPanelAreas
                 call    BuildMinimapTileData
                 call    DrawMinimap
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
@@ -19758,8 +19758,8 @@ IsItemEligibleForEnhance endp
 
 
 RunRepairItemScreen proc far            ; CODE XREF: UseItem+1D0↑P
-                or      word_328C6, 4   ; Entry point for the interactive repair-item screen, reached from UseItem+0x1D0. Sets word_328C6 bit 4 (gates TryRepairItemForGold in the main input loop sub_1869D). Otherwise identical to RunSellItemScreen (bit 0x10) and RunEnhanceItemScreen (bit 8).
-                or      word_328C4, 100h
+                or      g_uiScratchFlags2, 4 ; Entry point for the interactive repair-item screen, reached from UseItem+0x1D0. Sets word_328C6 bit 4 (gates TryRepairItemForGold in the main input loop sub_1869D). Otherwise identical to RunSellItemScreen (bit 0x10) and RunEnhanceItemScreen (bit 8).
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
                 and     ax, 7000h
@@ -19768,19 +19768,19 @@ RunRepairItemScreen proc far            ; CODE XREF: UseItem+1D0↑P
                 call    RefreshPartyPortraits
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
-                and     word_328CA, 0FFDFh
+                and     g_uiScratchFlags4, 0FFDFh
                 mov     byte ptr word_32968, 0
                 call    RunPartyInventoryScreen
-                and     word_328CA, 0FFDFh
+                and     g_uiScratchFlags4, 0FFDFh
                 mov     byte ptr word_32968, 0
-                and     word_328C6, 0FFFBh
+                and     g_uiScratchFlags2, 0FFFBh
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
                 call    ClearPortraitPanelAreas
                 call    BuildMinimapTileData
                 call    DrawMinimap
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
@@ -19825,8 +19825,8 @@ IsItemEligibleForRepair endp
 
 
 RunSellItemScreen proc far              ; CODE XREF: UseItem+E0↑P
-                or      word_328C6, 10h ; Entry point for the interactive sell-item screen, reached from UseItem when the used item's [+0xE] flags have bit 0x4000 set. Sets word_328C6 bit 0x10 (gates TrySellItemForGold in the main input loop sub_1869D), shows the resource-depleted overlay and material/gold HUD, runs sub_1869D so Space sells items, then on exit clears state and rebuilds/redraws the minimap.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags2, 10h ; Entry point for the interactive sell-item screen, reached from UseItem when the used item's [+0xE] flags have bit 0x4000 set. Sets word_328C6 bit 0x10 (gates TrySellItemForGold in the main input loop sub_1869D), shows the resource-depleted overlay and material/gold HUD, runs sub_1869D so Space sells items, then on exit clears state and rebuilds/redraws the minimap.
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
                 and     ax, 7000h
@@ -19835,19 +19835,19 @@ RunSellItemScreen proc far              ; CODE XREF: UseItem+E0↑P
                 call    RefreshPartyPortraits
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
-                and     word_328CA, 0FFDFh
+                and     g_uiScratchFlags4, 0FFDFh
                 mov     byte ptr word_32968, 0
                 call    RunPartyInventoryScreen
-                and     word_328CA, 0FFDFh
+                and     g_uiScratchFlags4, 0FFDFh
                 mov     byte ptr word_32968, 0
-                and     word_328C6, 0FFEFh
+                and     g_uiScratchFlags2, 0FFEFh
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
                 call    ClearPortraitPanelAreas
                 call    BuildMinimapTileData
                 call    DrawMinimap
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
@@ -20153,7 +20153,7 @@ loc_1B4D2:                              ; CODE XREF: UseAttributeBoostItem+C↑j
                 call    RestoreCursorBackgroundIfDirty
                 push    cx
                 push    si
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -20282,7 +20282,7 @@ loc_1B60F:                              ; CODE XREF: UseExperienceBoostItem+D↑
                 call    RestoreCursorBackgroundIfDirty
                 push    cx
                 push    si
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -20355,11 +20355,11 @@ FinishItemUse   proc far                ; CODE XREF: RunShopScreen+F2↑P
                 call    near ptr DrawItemUseConfirmDialog
                 push    cs
                 call    near ptr BuildItemUseMessage
-                test    word_328C4, 1
+                test    g_uiScratchFlags1, 1
                 jz      short loc_1B6FD
                 call    DrawMouseCursor
                 call    WaitForKeypressTickingMusic
-                and     word_328C4, 0FFFEh
+                and     g_uiScratchFlags1, 0FFFEh
 
 loc_1B6FD:                              ; CODE XREF: FinishItemUse+E↑j
                 push    cs
@@ -20824,7 +20824,7 @@ BuildItemUseMessage proc far            ; CODE XREF: FinishItemUse+5↑p
                 jz      short loc_1BAF2
                 push    cs
                 call    near ptr CheckAndPaySpecialItemCost
-                test    word_328C6, 40h
+                test    g_uiScratchFlags2, 40h
                 jz      short loc_1BABC
                 push    cs
                 call    near ptr ApplyItemEffectFlags
@@ -20948,7 +20948,7 @@ loc_1BB8D:                              ; CODE XREF: ApplyItemEffectFlags+2F↑j
                 or      word_2E40E, ax
                 test    word ptr es:[si+0Eh], 2
                 jz      short loc_1BBC1
-                test    word_328C6, 40h
+                test    g_uiScratchFlags2, 40h
                 jz      short loc_1BBE4
 
 loc_1BBC1:                              ; CODE XREF: ApplyItemEffectFlags+6F↑j
@@ -20974,7 +20974,7 @@ loc_1BBDF:                              ; CODE XREF: ApplyItemEffectFlags+85↑j
                 loop    loc_1BBC7
 
 loc_1BBE4:                              ; CODE XREF: ApplyItemEffectFlags+77↑j
-                and     word_328C6, 0FFBFh
+                and     g_uiScratchFlags2, 0FFBFh
                 pop     si
                 pop     di
                 pop     cx
@@ -21949,7 +21949,7 @@ loc_1C5D2:                              ; CODE XREF: UseAbilityScroll+1D↑j
                 mov     ax, es:[si+12h]
                 test    [bx+0B4h], ax
                 jz      short loc_1C60B
-                or      word_328C6, 2
+                or      g_uiScratchFlags2, 2
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 67h ; 'g'
                 mov     _font_fgColor, 7Bh ; '{'
@@ -21965,7 +21965,7 @@ loc_1C60B:                              ; CODE XREF: UseAbilityScroll+55↑j
                 mov     di, 512Ah
                 call    CompareBCD4
                 jnb     short loc_1C643
-                or      word_328C6, 2
+                or      g_uiScratchFlags2, 2
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 67h ; 'g'
                 mov     _font_fgColor, 7Bh ; '{'
@@ -22148,7 +22148,7 @@ UseAbilityScroll endp
 
 
 CheckAndPaySpecialItemCost proc far     ; CODE XREF: BuildItemUseMessage+15↑p
-                and     word_328C6, 0FFBFh ; Checks and pays a special item's usage cost by [+0x10] tag: 1=gold, 2=NUORE, 3=MAGIC ORE (all CompareBCD4/SubBCD4 against price table 0xBEA), else a specific inventory item (IsItemRangeAvailable). Sets word_328C6 bit 0x40 on success -- the flag BuildItemUseMessage checks. Called from BuildItemUseMessage.
+                and     g_uiScratchFlags2, 0FFBFh ; Checks and pays a special item's usage cost by [+0x10] tag: 1=gold, 2=NUORE, 3=MAGIC ORE (all CompareBCD4/SubBCD4 against price table 0xBEA), else a specific inventory item (IsItemRangeAvailable). Sets word_328C6 bit 0x40 on success -- the flag BuildItemUseMessage checks. Called from BuildItemUseMessage.
                 mov     ax, es:[si+10h]
                 cmp     ax, 1
                 jz      short loc_1C83E
@@ -22162,7 +22162,7 @@ CheckAndPaySpecialItemCost proc far     ; CODE XREF: BuildItemUseMessage+15↑p
                 cmp     g_currentActionId, 0
                 jz      short locret_1C83D
                 call    ConsumeItemChargeResource
-                or      word_328C6, 40h
+                or      g_uiScratchFlags2, 40h
 
 locret_1C83D:                           ; CODE XREF: CheckAndPaySpecialItemCost+28↑j
                 retf
@@ -22176,7 +22176,7 @@ loc_1C83E:                              ; CODE XREF: CheckAndPaySpecialItemCost+
                 call    CompareBCD4
                 jb      short loc_1C88D
                 call    SubBCD4
-                or      word_328C6, 40h
+                or      g_uiScratchFlags2, 40h
                 jmp     short loc_1C88D
 ; ---------------------------------------------------------------------------
 
@@ -22188,7 +22188,7 @@ loc_1C859:                              ; CODE XREF: CheckAndPaySpecialItemCost+
                 call    CompareBCD4
                 jb      short loc_1C88D
                 call    SubBCD4
-                or      word_328C6, 40h
+                or      g_uiScratchFlags2, 40h
                 jmp     short loc_1C88D
 ; ---------------------------------------------------------------------------
 
@@ -22200,7 +22200,7 @@ loc_1C874:                              ; CODE XREF: CheckAndPaySpecialItemCost+
                 call    CompareBCD4
                 jb      short loc_1C88D
                 call    SubBCD4
-                or      word_328C6, 40h
+                or      g_uiScratchFlags2, 40h
 
 loc_1C88D:                              ; CODE XREF: CheckAndPaySpecialItemCost+42↑j
                                         ; CheckAndPaySpecialItemCost+4E↑j ...
@@ -22231,7 +22231,7 @@ loc_1C8A2:                              ; CODE XREF: LoadItemData+8↑j
                                         ; ES = segment address of area to be freed
 
 loc_1C8B1:                              ; CODE XREF: LoadItemData+17↑j
-                or      word_328C6, 80h
+                or      g_uiScratchFlags2, 80h
                 mov     ax, 0BCEh
                 call    PrepareItemDataBlockRead28
                 mov     ax, word_2E42C
@@ -22328,7 +22328,7 @@ loc_1C9AF:                              ; CODE XREF: LoadItemData+102↑j
 loc_1C9D0:                              ; CODE XREF: LoadItemData+FA↑j
                                         ; LoadItemData+131↑j
                 call    ClearMessageBoxArea
-                or      word_328C4, 1
+                or      g_uiScratchFlags1, 1
                 mov     si, 0BCEh
                 mov     word_2E550, 2
                 mov     ax, [si+0Ch]
@@ -22377,7 +22377,7 @@ loc_1CA4F:                              ; CODE XREF: LoadItemData+1A6↑j
                 call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+0Eh], 1
                 jz      short loc_1CA60
-                and     word_328C4, 0FFFEh
+                and     g_uiScratchFlags1, 0FFFEh
 
 loc_1CA60:                              ; CODE XREF: LoadItemData+1C9↑j
                 mov     ax, 0
@@ -22407,7 +22407,7 @@ ShowItemUsagePreview proc far           ; CODE XREF: UseItem+82↑P
                 call    near ptr BuildItemUseMessage
                 call    DrawMouseCursor
                 call    WaitForKeypressTickingMusic
-                and     word_328C4, 0FFFEh
+                and     g_uiScratchFlags1, 0FFFEh
                 test    word_2E410, 8000h
                 jz      short loc_1CAB2
                 push    cs
@@ -22478,7 +22478,7 @@ ShowItemUsagePreview endp
 
 ComputeCostMessageIndentMode proc far   ; CODE XREF: UseRiddleAnswerItem+6B↑P
                                         ; ShowHealingCostPrompt+73↑p ...
-                and     word_328C4, 0FFC1h ; Picks a DrawIndentedTextColumn wrapping mode (word_328C4 bits 0x2/0x4/0x8/0x10/0x20 + fontOffset) based on which of 4 ascending thresholds the record at word_3197E's [+0x6E] field falls into, with the threshold table itself selected by word_3197C. Called from sub_1A5F6 and ShowHealingCostPrompt before drawing a wrapped cost message.
+                and     g_uiScratchFlags1, 0FFC1h ; Picks a DrawIndentedTextColumn wrapping mode (word_328C4 bits 0x2/0x4/0x8/0x10/0x20 + fontOffset) based on which of 4 ascending thresholds the record at word_3197E's [+0x6E] field falls into, with the threshold table itself selected by word_3197C. Called from sub_1A5F6 and ShowHealingCostPrompt before drawing a wrapped cost message.
                 mov     fontOffset, 2
                 mov     ax, 41h ; 'A'
                 mov     dx, 46h ; 'F'
@@ -22500,7 +22500,7 @@ ComputeCostMessageIndentMode proc far   ; CODE XREF: UseRiddleAnswerItem+6B↑P
                 mov     si, 69h ; 'i'
                 cmp     word_3197C, 4
                 jz      short loc_1CB93
-                or      word_328C4, 20h
+                or      g_uiScratchFlags1, 20h
                 mov     fontOffset, 0
                 retf
 ; ---------------------------------------------------------------------------
@@ -22520,22 +22520,22 @@ loc_1CB9D:                              ; CODE XREF: ComputeCostMessageIndentMod
                 jl      short loc_1CBB8
                 cmp     [bx+6Eh], si
                 jl      short loc_1CBB2
-                or      word_328C4, 2
+                or      g_uiScratchFlags1, 2
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_1CBB2:                              ; CODE XREF: ComputeCostMessageIndentMode+73↑j
-                or      word_328C4, 4
+                or      g_uiScratchFlags1, 4
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_1CBB8:                              ; CODE XREF: ComputeCostMessageIndentMode+6E↑j
-                or      word_328C4, 8
+                or      g_uiScratchFlags1, 8
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_1CBBE:                              ; CODE XREF: ComputeCostMessageIndentMode+69↑j
-                or      word_328C4, 10h
+                or      g_uiScratchFlags1, 10h
                 retf
 ComputeCostMessageIndentMode endp
 
@@ -23169,7 +23169,7 @@ loc_1D06E:                              ; CODE XREF: PollKeyboardInput+1E↑j
                 mov     errorCode, 2
                 cmp     al, 42h ; 'B'
                 jnz     short loc_1D08E
-                test    word_328CA, 8
+                test    g_uiScratchFlags4, 8
                 jnz     short loc_1D08E
                 call    ShowClueBook
 
@@ -23528,9 +23528,9 @@ RunTitleScreen  proc far                ; CODE XREF: start+A0F↑P
                 mov     ax, 1
                 mov     g_forcedMusicTrack, ax
                 call    TriggerFullPaletteFadeOut
-                test    word_328C6, 400h
+                test    g_uiScratchFlags2, 400h
                 jnz     short loc_1D2D0
-                test    word_328C4, 4000h
+                test    g_uiScratchFlags1, 4000h
                 jnz     short loc_1D2D0
                 call    InitializeNewGameWorldState
 
@@ -23546,14 +23546,14 @@ loc_1D2D0:                              ; CODE XREF: RunTitleScreen+1B↑j
                 call    DrawPicture
                 call    DrawMouseCursor
                 call    TriggerFullPaletteFadeIn
-                and     word_328C4, 0FDFFh
+                and     g_uiScratchFlags1, 0FDFFh
                 mov     ax, g_partySlotAssignment
                 add     ax, word_36E4D
                 add     ax, word_36E4F
                 add     ax, word_36E51
                 cmp     ax, 0
                 jz      short loc_1D323
-                or      word_328C4, 200h
+                or      g_uiScratchFlags1, 200h
 
 loc_1D323:                              ; CODE XREF: RunTitleScreen+75↑j
                                         ; RunTitleScreen+87↓j ...
@@ -23689,7 +23689,7 @@ loc_1D41E:                              ; CODE XREF: RunTitleScreen+169↑j
                 jnz     short loc_1D484
 
 loc_1D423:                              ; CODE XREF: RunTitleScreen+B7↑j
-                test    word_328C4, 200h
+                test    g_uiScratchFlags1, 200h
                 jnz     short loc_1D436
                 mov     ax, 3
                 call    TriggerSoundEvent
@@ -23697,10 +23697,10 @@ loc_1D423:                              ; CODE XREF: RunTitleScreen+B7↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D436:                              ; CODE XREF: RunTitleScreen+183↑j
-                test    word_328C6, 100h
+                test    g_uiScratchFlags2, 100h
                 jz      short loc_1D46A
-                and     word_328C6, 0FEFFh
-                test    word_328C4, 8000h
+                and     g_uiScratchFlags2, 0FEFFh
+                test    g_uiScratchFlags1, 8000h
                 jnz     short loc_1D46A
                 mov     cx, 4
                 mov     si, 95EBh
@@ -23774,16 +23774,16 @@ HandleRangedOrCombatAction proc far     ; CODE XREF: start+A73↑P
 ; ---------------------------------------------------------------------------
 
 loc_1D4C0:                              ; CODE XREF: HandleRangedOrCombatAction+5↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_1D4CB
                 jmp     loc_1D902
 ; ---------------------------------------------------------------------------
 
 loc_1D4CB:                              ; CODE XREF: HandleRangedOrCombatAction+E↑j
                 mov     g_attacksRemaining, 0
-                and     word_328C8, 0FBFFh
+                and     g_uiScratchFlags3, 0FBFFh
                 call    ResetCombatRoundScratchState
-                test    word_328C8, 100h
+                test    g_uiScratchFlags3, 100h
                 jnz     short loc_1D4E7
                 jmp     loc_1D77B
 ; ---------------------------------------------------------------------------
@@ -23826,7 +23826,7 @@ loc_1D538:                              ; CODE XREF: HandleRangedOrCombatAction+
 ; ---------------------------------------------------------------------------
 
 loc_1D540:                              ; CODE XREF: HandleRangedOrCombatAction+85↑j
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
                 call    RestoreCursorBackgroundIfDirty
                 mov     x, 0EFh
                 mov     y, 43h ; 'C'
@@ -23921,7 +23921,7 @@ loc_1D68B:                              ; CODE XREF: HandleRangedOrCombatAction+
                                         ; HandleRangedOrCombatAction+1EF↓j ...
                 call    ResetWeaponSlotDisplayCache
                 call    ResolveAttackOrAbilityAction
-                test    word_328C8, 200h
+                test    g_uiScratchFlags3, 200h
                 jnz     short loc_1D6AC
                 mov     ax, _val43
                 call    ShowCombatMessageOrWait
@@ -23932,9 +23932,9 @@ loc_1D68B:                              ; CODE XREF: HandleRangedOrCombatAction+
 ; ---------------------------------------------------------------------------
 
 loc_1D6AC:                              ; CODE XREF: HandleRangedOrCombatAction+1DF↑j
-                test    word_328C8, 400h
+                test    g_uiScratchFlags3, 400h
                 jnz     short loc_1D6CE
-                or      word_328C8, 400h
+                or      g_uiScratchFlags3, 400h
                 push    g_viewportRowDepth
                 push    si
                 call    RedrawDungeonScreen
@@ -23957,7 +23957,7 @@ loc_1D6CE:                              ; CODE XREF: HandleRangedOrCombatAction+
 loc_1D6EA:                              ; CODE XREF: HandleRangedOrCombatAction+227↑j
                 call    GrantMonsterRewards
                 call    RemoveMonsterFromMap
-                and     word_328C8, 0FBFFh
+                and     g_uiScratchFlags3, 0FBFFh
                 push    g_viewportRowDepth
                 call    RedrawDungeonScreen
                 call    DrawMouseCursor
@@ -24009,7 +24009,7 @@ loc_1D75C:                              ; CODE XREF: HandleRangedOrCombatAction+
 ; ---------------------------------------------------------------------------
 
 loc_1D77B:                              ; CODE XREF: HandleRangedOrCombatAction+2C↑j
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
                 call    HighlightSelectedAbilityIcon
                 mov     g_viewportRowDepth, 31h ; '1'
                 call    AnimateProjectileStep
@@ -24064,7 +24064,7 @@ loc_1D813:                              ; CODE XREF: HandleRangedOrCombatAction+
 
 loc_1D832:                              ; CODE XREF: HandleRangedOrCombatAction+360↑j
                 call    ResolveAttackOrAbilityAction
-                test    word_328C8, 200h
+                test    g_uiScratchFlags3, 200h
                 jnz     short loc_1D840
                 jmp     loc_1D747
 ; ---------------------------------------------------------------------------
@@ -24112,9 +24112,9 @@ loc_1D87F:                              ; CODE XREF: HandleRangedOrCombatAction+
 loc_1D8B1:                              ; CODE XREF: HandleRangedOrCombatAction+424↓j
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                or      word_328C6, 1
+                or      g_uiScratchFlags2, 1
                 call    DrawViewportSprite
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 call    DrawMouseCursor
                 call    RestoreCorridorBackgroundFromEMS
                 mov     ax, 1           ; ticks
@@ -24145,7 +24145,7 @@ loc_1D902:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    AnimateProjectileStep
                 mov     si, g_activeCombatMonster
                 call    ResolveAttackOrAbilityAction
-                test    word_328C8, 200h
+                test    g_uiScratchFlags3, 200h
                 jnz     short loc_1D921
                 jmp     short loc_1D931
 ; ---------------------------------------------------------------------------
@@ -24251,7 +24251,7 @@ loc_1DA0E:                              ; CODE XREF: ApplyResolvedDamageWithResi
 loc_1DA1D:                              ; CODE XREF: ApplyResolvedDamageWithResistance+33↑j
                 mov     [si+10h], bx
                 or      word ptr [si+0Ch], 3
-                or      word_328C8, 200h
+                or      g_uiScratchFlags3, 200h
 
 loc_1DA2A:                              ; CODE XREF: ApplyResolvedDamageWithResistance+6↑j
                 pop     cx
@@ -24309,11 +24309,11 @@ ShowCombatMessageOrWait endp ; sp-analysis failed
 
 ResolveAttackOrAbilityAction proc near  ; CODE XREF: HandleRangedOrCombatAction+1D6↑p
                                         ; HandleRangedOrCombatAction:loc_1D832↑p ...
-                and     word_328C8, 0FDFFh ; Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).
+                and     g_uiScratchFlags3, 0FDFFh ; Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).
                 mov     g_stagedAttackStatusFlags, 0
                 mov     g_stagedAttackDamage, 0
                 mov     g_stagedAttackTypeFlags, 0
-                test    word_328C8, 100h
+                test    g_uiScratchFlags3, 100h
                 jnz     short loc_1DA82
                 jmp     short loc_1DADE
 ; ---------------------------------------------------------------------------
@@ -24372,7 +24372,7 @@ loc_1DADE:                              ; CODE XREF: ResolveAttackOrAbilityActio
 
 loc_1DAF1:                              ; CODE XREF: ResolveAttackOrAbilityAction+85↑j
                                         ; ResolveAttackOrAbilityAction+8B↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short locret_1DA98
                 push    g_viewportRowDepth
                 sub     sp, 6
@@ -24490,7 +24490,7 @@ loc_1DC0C:                              ; CODE XREF: ResolveAbilityEffect+87↑j
 loc_1DC14:                              ; CODE XREF: ResolveAbilityEffect+7F↑j
                 cmp     ax, _val46
                 jnz     short loc_1DC2A
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short locret_1DC72
                 mov     g_stagedAttackDamage, 28h ; '('
                 jmp     short loc_1DC4E
@@ -24499,7 +24499,7 @@ loc_1DC14:                              ; CODE XREF: ResolveAbilityEffect+7F↑j
 loc_1DC2A:                              ; CODE XREF: ResolveAbilityEffect+A5↑j
                 cmp     ax, _val29
                 jnz     short loc_1DC4E
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short locret_1DC72
                 or      g_stagedAttackStatusFlags, 4000h
                 mov     word ptr [si+1Ch], 0Ch
@@ -24615,7 +24615,7 @@ seg056          segment byte public 'CODE' use16
 RunAlchemyScreen proc far               ; CODE XREF: start:loc_10A81↑P
                                         ; HandleDungeonInput:loc_167F1↑P
                 and     word_3295A, 9FFFh ; Alchemy screen driver loop, reached directly from `start`. Redraws via DrawAlchemyStatusPanel after various sub-actions, polls input, hit-tests region tables for clickable elements, uses sub_25B34 for party-member selection, shows ShowConfirmPrompt (plausibly for an ore conversion), and calls ApplyMapTriggerEffect on an exit path back to the dungeon. Many internal helper calls not individually traced yet.
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_1DD00
                 call    RestoreOrSelectAlchemyCaster
                 cmp     g_selectedPartySlotPtr, 0
@@ -24713,7 +24713,7 @@ loc_1DDAB:                              ; CODE XREF: RunAlchemyScreen+C6↑j
 ; ---------------------------------------------------------------------------
 
 loc_1DDB5:                              ; CODE XREF: RunAlchemyScreen+D0↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_1DDE8
                 mov     bx, 95EBh
                 cmp     g_lastKeyChar, 3Bh ; ';'
@@ -24805,7 +24805,7 @@ loc_1DE40:                              ; CODE XREF: RunAlchemyScreen+151↑j
 ; ---------------------------------------------------------------------------
 
 loc_1DE5B:                              ; CODE XREF: RunAlchemyScreen+129↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_1DE9C
                 mov     g_lastKeyChar, 0
                 mov     ax, g_mouseLeftDownX
@@ -25011,10 +25011,10 @@ loc_1E037:                              ; CODE XREF: RunAlchemyScreen+319↑j
 ; ---------------------------------------------------------------------------
 
 loc_1E067:                              ; CODE XREF: RunAlchemyScreen+374↑j
-                and     word_328C4, 0FF7Fh
+                and     g_uiScratchFlags1, 0FF7Fh
                 cmp     ax, 5
                 jnz     short loc_1E082
-                or      word_328C4, 80h
+                or      g_uiScratchFlags1, 80h
                 mov     ax, 34h ; '4'
                 call    TriggerSoundEvent
                 jmp     short loc_1E08F
@@ -25052,7 +25052,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    DrawMouseCursorAlt
                 mov     ax, word_3331E
                 call    LoadClueBookSpellEntry
-                and     word_328CA, 0FF7Fh
+                and     g_uiScratchFlags4, 0FF7Fh
                 call    ApplyEncodedItemEffect
                 call    ApplyMapTriggerEffect
                 call    RedrawAllPartyStatusPanelsAlt
@@ -25260,7 +25260,7 @@ CheckSpellCastability proc near         ; CODE XREF: BuildAlchemySpellList:loc_1
                 mov     word ptr [di+2], 6 ; Loads the spell (LoadClueBookSpellEntry) and checks context-gating flags plus NUORE (0x94BB)/MAGIC ORE (0x94B7)/MP (+0x54) affordability; sets the spell's icon-state to 0xF if all pass. Called from BuildAlchemySpellList.
                 mov     ax, [di]
                 call    LoadClueBookSpellEntry
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_1E2A3
                 test    word_33300, 400h
                 jnz     short locret_1E2E4
@@ -25353,28 +25353,28 @@ DrawSpellCostValue endp
 DrawAlchemySpellListScrollArrows proc near
                                         ; CODE XREF: RunAlchemyScreen+5B↑p
                                         ; RunAlchemyScreen+21D↑p ...
-                and     word_328CA, 0F3FFh ; Pagination scroll-arrow indicator: draws an up-arrow glyph (x=0xA5, sets word_328CA bit 0x800) if word_33316 (current page) > 1, and a down-arrow glyph (x=0xB0, sets bit 0x400) if word_33314 (last page) > word_33316. Called from RunAlchemyScreen for its 13-spells-per-page list.
+                and     g_uiScratchFlags4, 0F3FFh ; Pagination scroll-arrow indicator: draws an up-arrow glyph (x=0xA5, sets word_328CA bit 0x800) if word_33316 (current page) > 1, and a down-arrow glyph (x=0xB0, sets bit 0x400) if word_33314 (last page) > word_33316. Called from RunAlchemyScreen for its 13-spells-per-page list.
                 cmp     word_33316, 1
                 jle     short loc_1E369
-                or      word_328CA, 800h
+                or      g_uiScratchFlags4, 800h
 
 loc_1E369:                              ; CODE XREF: DrawAlchemySpellListScrollArrows+B↑j
                 mov     ax, word_33314
                 cmp     ax, word_33316
                 jle     short loc_1E378
-                or      word_328CA, 400h
+                or      g_uiScratchFlags4, 400h
 
 loc_1E378:                              ; CODE XREF: DrawAlchemySpellListScrollArrows+1A↑j
                 mov     _font_fgColor, 0Fh
                 mov     _textPos_y, 77h ; 'w'
-                test    word_328CA, 800h
+                test    g_uiScratchFlags4, 800h
                 jz      short loc_1E399
                 mov     al, 61h ; 'a'
                 mov     _textPos_x, 0A5h
                 call    writeChar
 
 loc_1E399:                              ; CODE XREF: DrawAlchemySpellListScrollArrows+34↑j
-                test    word_328CA, 400h
+                test    g_uiScratchFlags4, 400h
                 jz      short locret_1E3AE
                 mov     al, 62h ; 'b'
                 mov     _textPos_x, 0B0h
@@ -25596,7 +25596,7 @@ DrawAlchemyConfirmDialogBackground endp
 DrawAlchemyStatusPanel proc near        ; CODE XREF: RunAlchemyScreen+5E↑p
                                         ; RunAlchemyScreen+220↑p ...
                 call    ClearStatusPanelIfDirty ; Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     ax, 0F1h
                 mov     _textPos_x, ax
                 mov     ax, 57h ; 'W'
@@ -25692,7 +25692,7 @@ RestPartyAndAdvanceClock proc far       ; CODE XREF: start:loc_10A26↑P
 ; ---------------------------------------------------------------------------
 
 loc_1E657:                              ; CODE XREF: RestPartyAndAdvanceClock+A↑j
-                test    word_328C4, 2
+                test    g_uiScratchFlags1, 2
                 jz      short loc_1E662
                 jmp     loc_1E6FB
 ; ---------------------------------------------------------------------------
@@ -25702,7 +25702,7 @@ loc_1E662:                              ; CODE XREF: RestPartyAndAdvanceClock+13
                 call    IsRestingAllowedHere
                 cmp     errorCode, 0
                 jz      short loc_1E6AE
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -25722,7 +25722,7 @@ loc_1E6AE:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 call    RestoreDialogAreaFromEMS
                 call    ClearMessageBoxArea
                 mov     g_lastKeyChar, 0
-                test    word_328C4, 1
+                test    g_uiScratchFlags1, 1
                 jnz     short loc_1E6CD
                 mov     ax, 1
                 call    TriggerSoundEvent
@@ -25743,7 +25743,7 @@ loc_1E6FB:                              ; CODE XREF: RestPartyAndAdvanceClock+15
                 and     word_3295A, 1FFFh
                 mov     word_32940, 1
                 mov     cx, 8
-                test    word_328C4, 2
+                test    g_uiScratchFlags1, 2
                 jz      short loc_1E72A
                 add     g_gameClockMinutes, 1E0h
                 mov     word_32940, 8
@@ -25753,7 +25753,7 @@ loc_1E6FB:                              ; CODE XREF: RestPartyAndAdvanceClock+15
 loc_1E72A:                              ; CODE XREF: RestPartyAndAdvanceClock+D0↑j
                                         ; RestPartyAndAdvanceClock+F6↓j
                 call    ProcessLevelMonsters
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_1E746
                 add     g_gameClockMinutes, 3Ch ; '<'
                 inc     word_32940
@@ -25783,13 +25783,13 @@ loc_1E761:                              ; CODE XREF: RestPartyAndAdvanceClock+10
 loc_1E786:                              ; CODE XREF: RestPartyAndAdvanceClock+102↑j
                                         ; RestPartyAndAdvanceClock+125↑j ...
                 call    UpdateScrollingBannerWindow
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_1E796
                 jmp     loc_1E82C
 ; ---------------------------------------------------------------------------
 
 loc_1E796:                              ; CODE XREF: RestPartyAndAdvanceClock+147↑j
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -25816,7 +25816,7 @@ loc_1E796:                              ; CODE XREF: RestPartyAndAdvanceClock+14
                 call    TriggerFullPaletteFadeIn
 
 loc_1E808:                              ; CODE XREF: RestPartyAndAdvanceClock+1DA↓j
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_1E81A
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -25888,11 +25888,11 @@ loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 call    DrawFullScreenPictureAndCacheToEMS
                 call    RedrawAllPartyStatusPanelsAlt
                 call    UpdatePartyAverageStatTiers
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -26091,7 +26091,7 @@ loc_1EA83:                              ; CODE XREF: RunGameDialog+10↑j
                 call    ClearStatusPanelIfDirty
                 call    RestoreDialogAreaFromEMS
                 call    ClearMessageBoxArea
-                test    word_328C4, 1
+                test    g_uiScratchFlags1, 1
                 jnz     short loc_1EAA2
                 mov     ax, 1
                 call    TriggerSoundEvent
@@ -26117,16 +26117,16 @@ loc_1EAD0:                              ; CODE XREF: RunGameDialog:loc_1EC0B↓j
                 call    DrawPicture
                 call    DrawGameDialogMenuLabels
                 call    ClearMessageBoxArea
-                test    word_328C4, 1
+                test    g_uiScratchFlags1, 1
                 jz      short loc_1EB27
-                test    word_328C4, 2
+                test    g_uiScratchFlags1, 2
                 jnz     short loc_1EB27
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 0E0h
                 mov     dx, 0
                 call    StepPaletteFadeRange
-                or      word_328C4, 2
+                or      g_uiScratchFlags1, 2
 
 loc_1EB27:                              ; CODE XREF: RunGameDialog+99↑j
                                         ; RunGameDialog+A1↑j
@@ -26235,7 +26235,7 @@ loc_1EBE8:                              ; CODE XREF: RunGameDialog+183↓j
 
 loc_1EBEB:                              ; CODE XREF: RunGameDialog+FD↑j
                                         ; RunGameDialog+155↑j
-                test    word_328C4, 8
+                test    g_uiScratchFlags1, 8
                 jz      short loc_1EBE8
                 call    CycleAnimationSetting
                 jmp     loc_1EB2C
@@ -26243,7 +26243,7 @@ loc_1EBEB:                              ; CODE XREF: RunGameDialog+FD↑j
 
 loc_1EBF9:                              ; CODE XREF: RunGameDialog+106↑j
                                         ; RunGameDialog+15A↑j
-                test    word_328C4, 10h
+                test    g_uiScratchFlags1, 10h
                 jz      short loc_1EBE8
                 call    ConfirmQuitToDos
                 cmp     g_lastKeyChar, 0FFh
@@ -26261,7 +26261,7 @@ loc_1EC0E:                              ; CODE XREF: RunGameDialog+110↑j
 
 loc_1EC14:                              ; CODE XREF: RunGameDialog+11A↑j
                                         ; RunGameDialog+164↑j
-                test    word_328C4, 40h
+                test    g_uiScratchFlags1, 40h
                 jz      short loc_1EBE8
                 jmp     loc_1EDAA
 ; ---------------------------------------------------------------------------
@@ -26274,7 +26274,7 @@ loc_1EC1F:                              ; CODE XREF: RunGameDialog+124↑j
 
 loc_1EC25:                              ; CODE XREF: RunGameDialog+12E↑j
                                         ; RunGameDialog+16E↑j
-                test    word_328C4, 20h
+                test    g_uiScratchFlags1, 20h
                 jz      short loc_1EBE8
                 call    ConfirmNewGame
                 cmp     g_lastKeyChar, 0
@@ -26288,7 +26288,7 @@ loc_1EC25:                              ; CODE XREF: RunGameDialog+12E↑j
 
 loc_1EC48:                              ; CODE XREF: RunGameDialog+DF↑j
                                         ; RunGameDialog+138↑j ...
-                test    word_328C4, 4
+                test    g_uiScratchFlags1, 4
                 jz      short loc_1EBE8
                 mov     ax, 1
                 call    TriggerSoundEvent
@@ -26298,7 +26298,7 @@ loc_1EC48:                              ; CODE XREF: RunGameDialog+DF↑j
 
 loc_1EC5F:                              ; CODE XREF: RunGameDialog+14C↑j
                                         ; RunGameDialog+178↑j
-                test    word_328C4, 80h
+                test    g_uiScratchFlags1, 80h
                 jz      short loc_1EBE8
                 jmp     short loc_1EC7C
 ; ---------------------------------------------------------------------------
@@ -26307,8 +26307,8 @@ loc_1EC69:                              ; CODE XREF: RunGameDialog+12↑j
                                         ; RunGameDialog+19B↑j ...
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                and     word_328C4, 0FF00h
-                and     word_328CA, 0FFFh
+                and     g_uiScratchFlags1, 0FF00h
+                and     g_uiScratchFlags4, 0FFFh
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -26414,7 +26414,7 @@ loc_1ED75:                              ; CODE XREF: RunGameDialog+2E3↑j
                 call    StpCpy
 
 loc_1ED8F:                              ; CODE XREF: RunGameDialog+2C1↑j
-                or      word_328C4, 4000h
+                or      g_uiScratchFlags1, 4000h
                 call    SaveCurrentGameToSlot
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
@@ -26680,7 +26680,7 @@ InitializeDungeonLevel proc far         ; CODE XREF: start+7F6↑P
                 or      word_3295A, 800h
 
 loc_1F13A:                              ; CODE XREF: InitializeDungeonLevel+5F↑j
-                and     word_328CA, 0FFFh
+                and     g_uiScratchFlags4, 0FFFh
                 mov     di, 51C0h
                 mov     cx, 0EAh
                 mov     es, word_2E4AA
@@ -26791,27 +26791,27 @@ DrawCheckboxIndicator endp
 
 
 DrawGameDialogMenuLabels proc near      ; CODE XREF: RunGameDialog+8B↑p
-                test    word_328C4, 80h ; One-time initial label draw for RunGameDialog's pause/system menu: draws each of SAVE/LOAD/NEW GAME/DOS/ANIMATION/RETURN, each skipped if its word_328C4 bit is set (0x80/0x40/0x20/0x10/0x8/0x4 respectively; ANIMATION calls sub_1F884 instead when its bit is set), then always draws MUSIC/SOUND FX labels gated on g_driverStateFlags bits 1/4, and two DrawCheckboxIndicator calls gated on g_driverStateFlags bits 8/2. Called once from RunGameDialog.
+                test    g_uiScratchFlags1, 80h ; One-time initial label draw for RunGameDialog's pause/system menu: draws each of SAVE/LOAD/NEW GAME/DOS/ANIMATION/RETURN, each skipped if its word_328C4 bit is set (0x80/0x40/0x20/0x10/0x8/0x4 respectively; ANIMATION calls sub_1F884 instead when its bit is set), then always draws MUSIC/SOUND FX labels gated on g_driverStateFlags bits 1/4, and two DrawCheckboxIndicator calls gated on g_driverStateFlags bits 8/2. Called once from RunGameDialog.
                 jnz     short loc_1F222
                 call    GameDialog_drawSave
 
 loc_1F222:                              ; CODE XREF: DrawGameDialogMenuLabels+6↑j
-                test    word_328C4, 40h
+                test    g_uiScratchFlags1, 40h
                 jnz     short loc_1F22D
                 call    GameDialog_drawLoad
 
 loc_1F22D:                              ; CODE XREF: DrawGameDialogMenuLabels+11↑j
-                test    word_328C4, 20h
+                test    g_uiScratchFlags1, 20h
                 jnz     short loc_1F238
                 call    GameDialog_drawNewGame
 
 loc_1F238:                              ; CODE XREF: DrawGameDialogMenuLabels+1C↑j
-                test    word_328C4, 10h
+                test    g_uiScratchFlags1, 10h
                 jnz     short loc_1F243
                 call    GameDialog_drawDos
 
 loc_1F243:                              ; CODE XREF: DrawGameDialogMenuLabels+27↑j
-                test    word_328C4, 8
+                test    g_uiScratchFlags1, 8
                 jnz     short loc_1F250
                 call    GameDialog_drawAnimation
                 jmp     short loc_1F253
@@ -26821,7 +26821,7 @@ loc_1F250:                              ; CODE XREF: DrawGameDialogMenuLabels+32
                 call    DrawAnimationSpeedLabel
 
 loc_1F253:                              ; CODE XREF: DrawGameDialogMenuLabels+37↑j
-                test    word_328C4, 4
+                test    g_uiScratchFlags1, 4
                 jnz     short loc_1F25E
                 call    GameDialog_drawReturn
 
@@ -27226,8 +27226,8 @@ ConfirmNewGame  proc near               ; CODE XREF: RunGameDialog+1BF↑p
 loc_1F5CD:                              ; CODE XREF: ConfirmNewGame+16↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    StopMusicAndResetTimer
-                and     word_328C6, 0FBFFh
-                and     word_328C4, 9FFFh
+                and     g_uiScratchFlags2, 0FBFFh
+                and     g_uiScratchFlags1, 9FFFh
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursorAlt
                 call    RunTitleScreen
@@ -27599,7 +27599,7 @@ loc_1FB9D:                              ; CODE XREF: seg059:0222↑j
                 dec     word_32958
                 jnz     short loc_1FBC5
                 and     word_3295A, 0FDFFh
-                or      word_328CA, 10h
+                or      g_uiScratchFlags4, 10h
 
 loc_1FBC5:                              ; CODE XREF: seg059:0242↑j
                                         ; seg059:0248↑j
@@ -27786,7 +27786,7 @@ MarkScreenRedrawFlags endp
 
 
 TickRedrawTimer proc near               ; CODE XREF: seg059:01F7↑p
-                or      word_328C4, 400h ; Timer-ISR sub-task (word_3294C, word_3295A bit 0x8000): reloads its own countdown from word_36CE7 and flags a redraw (word_328C4 |= 0x400).
+                or      g_uiScratchFlags1, 400h ; Timer-ISR sub-task (word_3294C, word_3295A bit 0x8000): reloads its own countdown from word_36CE7 and flags a redraw (word_328C4 |= 0x400).
                 mov     ax, g_animationSpeed
                 mov     word_3294C, ax
                 retn
@@ -27909,12 +27909,12 @@ loc_1FDDC:                              ; CODE XREF: TickAilmentDuration+1B↑j
                 jg      short loc_1FDFE
                 mov     word ptr [bx], 0
                 and     word_36C79, ax
-                or      word_328C4, 400h
+                or      g_uiScratchFlags1, 400h
 
 loc_1FDFE:                              ; CODE XREF: TickAilmentDuration+3D↑j
                 cmp     dx, 1
                 jg      short loc_1FDC0
-                or      word_328CA, 40h
+                or      g_uiScratchFlags4, 40h
                 jmp     short loc_1FDC0
 TickAilmentDuration endp
 
@@ -27948,7 +27948,7 @@ loc_1FE29:                              ; CODE XREF: TickWorldAilmentTimers+1B�
 ; ---------------------------------------------------------------------------
 
 loc_1FE35:                              ; CODE XREF: TickWorldAilmentTimers+21↑j
-                or      word_328C4, 400h
+                or      g_uiScratchFlags1, 400h
 
 loc_1FE3B:                              ; CODE XREF: TickWorldAilmentTimers+1D↑j
                 mov     word ptr [bx], 0
@@ -28244,8 +28244,8 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 mov     g_mapEditorFloorScrollIndex, 0
                 mov     g_pictureCategory, 90h
                 mov     _videoSegment, 0A000h
-                and     word_328C4, 0FBFFh
-                or      word_328C4, 1
+                and     g_uiScratchFlags1, 0FBFFh
+                or      g_uiScratchFlags1, 1
                 call    ShowLocalAreaMap
                 call    DrawMouseCursorAlt
                 call    TriggerFullPaletteFadeIn
@@ -28305,7 +28305,7 @@ loc_20157:                              ; CODE XREF: RunMapEditorScreen+C7↑j
                 cmp     g_lastKeyChar, 1Bh
                 jnz     short loc_201A0
                 call    TriggerFullPaletteFadeOut
-                and     word_328C4, 0FFFEh
+                and     g_uiScratchFlags1, 0FFFEh
                 call    RefreshDungeonMapWindow
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
@@ -28361,9 +28361,9 @@ loc_201DE:                              ; CODE XREF: RunMapEditorScreen+15C↑j
 loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
                 cmp     g_lastKeyChar, 53h ; 'S'
                 jnz     short loc_20241
-                test    word_328C4, 400h
+                test    g_uiScratchFlags1, 400h
                 jz      short loc_2022E
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowLocalAreaMap
                 call    DrawMapEditorInteractionTypeOverlay
@@ -28377,7 +28377,7 @@ loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
 ; ---------------------------------------------------------------------------
 
 loc_2022E:                              ; CODE XREF: RunMapEditorScreen+192↑j
-                or      word_328C4, 400h
+                or      g_uiScratchFlags1, 400h
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawMapEditorInteractionTypeOverlay
                 call    DrawMouseCursorAlt
@@ -28998,7 +28998,7 @@ PaintCursorOverlayCellAndPersist endp
 DrawMapEditorInteractionTypeOverlay proc near
                                         ; CODE XREF: RunMapEditorScreen+166↑p
                                         ; RunMapEditorScreen+17D↑p ...
-                test    word_328C4, 400h ; Debug overlay gated on word_328C4 bit 0x400. Scans a 40x24 grid of map-editor tile positions, calling TryInteractAtPosition per cell and drawing a one-letter code (N/I/M/C, or nothing) based on errorCode / word_32DCE / word_328C8 / [si+2] flag bits -- labels what TryInteractAtPosition considers present at each tile. Called from RunMapEditorScreen.
+                test    g_uiScratchFlags1, 400h ; Debug overlay gated on word_328C4 bit 0x400. Scans a 40x24 grid of map-editor tile positions, calling TryInteractAtPosition per cell and drawing a one-letter code (N/I/M/C, or nothing) based on errorCode / word_32DCE / word_328C8 / [si+2] flag bits -- labels what TryInteractAtPosition considers present at each tile. Called from RunMapEditorScreen.
                 jnz     short loc_20764
                 retn
 ; ---------------------------------------------------------------------------
@@ -29043,7 +29043,7 @@ loc_207B1:                              ; CODE XREF: DrawMapEditorInteractionTyp
                 test    word_32DCE, 8
                 jnz     short loc_207F1
                 mov     al, 4Dh ; 'M'
-                test    word_328C8, 80h
+                test    g_uiScratchFlags3, 80h
                 jnz     short loc_207F1
                 mov     al, 43h ; 'C'
                 test    word ptr [si+2], 8000h
@@ -29194,7 +29194,7 @@ loc_20936:                              ; CODE XREF: TickStatusEffects+34↑j
                 dec     word ptr [si]
                 mov     ax, 9
                 call    TriggerSoundEvent
-                test    word_328C4, 40h
+                test    g_uiScratchFlags1, 40h
                 jnz     short loc_2094E
                 pop     si
                 retf
@@ -29408,7 +29408,7 @@ loc_20ABF:                              ; CODE XREF: RefreshDungeonMapWindow+E7�
                 pop     bx
                 add     ax, bx
                 mov     word_328D2, ax
-                or      word_328C4, 2000h
+                or      g_uiScratchFlags1, 2000h
                 mov     ax, g_dungeonMapGridOriginCol
                 mov     x, ax
                 mov     cx, 4Eh ; 'N'
@@ -29581,7 +29581,7 @@ RedrawDungeonScreen proc far            ; CODE XREF: start:loc_10071↑P
                 call    ShowResourceDepletedOverlay
 
 loc_20C3F:                              ; CODE XREF: RedrawDungeonScreen+1A↑j
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 retf
 RedrawDungeonScreen endp
 
@@ -29598,7 +29598,7 @@ RefreshDungeonScreen proc far           ; CODE XREF: start+85↑P
                 test    word_36C7F, 1000h
                 jz      short loc_20C68
                 call    ShowResourceDepletedOverlay
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -29608,7 +29608,7 @@ loc_20C68:                              ; CODE XREF: RefreshDungeonScreen+14↑j
                 call    DrawMinimap
 
 loc_20C75:                              ; CODE XREF: RefreshDungeonScreen+28↑j
-                and     word_328C4, 0FBFFh
+                and     g_uiScratchFlags1, 0FBFFh
                 retf
 RefreshDungeonScreen endp
 
@@ -29825,7 +29825,7 @@ DrawMonsterAndUpdateAttackState proc near
                                         ; RenderActiveMonsterSprites+11↓p
                 test    word ptr [si+92h], 4 ; Draws a monster's sprite in the dungeon viewport (base picture, wound-flash animation via [+0xC] bits 2/4, optional overlay via bit 0x10, plus a weapon/attack-effect sprite), then checks [+0xC] bits 0x3010 (same flags ProcessLevelMonsters documents for TickMonsterTimer's two-phase countdown): if set, resets the countdown; else calls sub_25656 (not traced, plausibly attack resolution). Called from TryTriggerMonsterEncounterAtCell and RenderActiveMonsterSprites.
                 jz      short loc_20E6F
-                or      word_328C6, 1
+                or      g_uiScratchFlags2, 1
                 mov     ax, si
                 add     ax, 72h ; 'r'
                 mov     g_blitMaskPtr, ax
@@ -29869,7 +29869,7 @@ loc_20ECA:                              ; CODE XREF: DrawMonsterAndUpdateAttackS
                 call    DrawViewportSprite
                 mov     word_32984, 0
                 mov     word ptr [si+18h], 0
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 test    word ptr [si+0Ch], 10h
                 jz      short loc_20EF1
                 mov     ax, [si+1Ah]
@@ -30270,7 +30270,7 @@ loc_21298:                              ; CODE XREF: RenderDungeonVanishingPoint
 
 loc_212A9:                              ; CODE XREF: RenderDungeonVanishingPoint+8D↑j
                 call    TryTriggerMonsterEncounterAtCell
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short locret_212B7
                 call    RenderActiveMonsterSprites
 
@@ -30607,7 +30607,7 @@ seg064          segment byte public 'CODE' use16
 
 ShowCompassDirection proc far           ; CODE XREF: RunAlchemyScreen+255↑P
                                         ; RunAlchemyScreen+3F3↑P ...
-                test    word_328CA, 1000h ; Compass/facing-direction HUD readout ('NORTH'/'SOUTH'/'EAST'/'WEST', selected by word_36CF5 tier bits), gated on word_328CA bit 0x1000 clear and word_36C7F bit 0x400 set. Drawn at the same screen position as ShowMaterialCounterHud/RedrawPartyGoldDisplay. Called from RunAlchemyScreen.
+                test    g_uiScratchFlags4, 1000h ; Compass/facing-direction HUD readout ('NORTH'/'SOUTH'/'EAST'/'WEST', selected by word_36CF5 tier bits), gated on word_328CA bit 0x1000 clear and word_36C7F bit 0x400 set. Drawn at the same screen position as ShowMaterialCounterHud/RedrawPartyGoldDisplay. Called from RunAlchemyScreen.
                 jnz     short locret_21587
                 test    word_36C7F, 400h
                 jz      short locret_21587
@@ -30816,7 +30816,7 @@ TryInteractAtPosition proc far          ; CODE XREF: start+1A3↑P
                 push    di
                 push    dx
                 push    cx
-                and     word_328C8, 0FF7Fh
+                and     g_uiScratchFlags3, 0FF7Fh
                 call    FindObjectAtPosition
                 cmp     si, 0
                 jz      short loc_2172A
@@ -30845,8 +30845,8 @@ loc_2172A:                              ; CODE XREF: TryInteractAtPosition+10↑
 loc_21733:                              ; CODE XREF: TryInteractAtPosition+17↑j
                 mov     ax, [si+4]
                 call    LoadLockState
-                mov     ax, word_32DC8
-                test    byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                test    g_lockUnlockedAccumulator, al
                 jnz     short loc_2172A
                 mov     errorCode, 3
                 test    word_32DCE, 20h
@@ -30872,8 +30872,8 @@ loc_21775:                              ; CODE XREF: TryInteractAtPosition+1E↑
                 mov     ax, [si+4]
                 call    LoadCurgameRecord
                 mov     errorCode, 0
-                mov     ax, word_32DC8
-                test    byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                test    g_lockUnlockedAccumulator, al
                 jnz     short loc_2172A
                 mov     errorCode, 6
                 test    word_32DCE, 10h
@@ -30893,7 +30893,7 @@ loc_21775:                              ; CODE XREF: TryInteractAtPosition+1E↑
 
 loc_217CC:                              ; CODE XREF: TryInteractAtPosition+37↑j
                 mov     errorCode, 0
-                or      word_328C8, 80h
+                or      g_uiScratchFlags3, 80h
                 mov     ax, [si+4]      ; int
                 call    TestCellMonsterSpawnedFlag
                 jnz     short loc_217E8
@@ -31103,7 +31103,7 @@ loc_21980:                              ; CODE XREF: PlayTitleScreenSequence+93�
                 mov     g_lastKeyChar, 0
                 mov     ax, 3
                 call    PlayMusicTrack
-                or      word_328C8, 800h
+                or      g_uiScratchFlags3, 800h
                 call    TriggerFullPaletteFadeIn
                 mov     ah, 0
                 int     1Ah             ; CLOCK - GET TIME OF DAY
@@ -31160,7 +31160,7 @@ loc_219DA:                              ; CODE XREF: PlayTitleScreenSequence+EB�
 loc_219ED:                              ; CODE XREF: PlayTitleScreenSequence+DF↑j
                                         ; PlayTitleScreenSequence+FC↑j ...
                 call    TriggerFullPaletteFadeOut
-                and     word_328C8, 0F7FFh
+                and     g_uiScratchFlags3, 0F7FFh
                 retf
 PlayTitleScreenSequence endp
 
@@ -31189,7 +31189,7 @@ ShowItemPurchaseConfirmPrompt proc far  ; CODE XREF: TryHandleCatalogSlotClick+1
                 mov     word_3293E, bx
                 mov     g_currentActionId, ax
                 call    LoadItemCatalogRecord
-                test    word_328C6, 3Ch
+                test    g_uiScratchFlags2, 3Ch
                 jnz     short loc_21A55
 
 loc_21A17:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+59↓j
@@ -31231,7 +31231,7 @@ loc_21A55:                              ; CODE XREF: ShowItemPurchaseConfirmProm
 
 loc_21A73:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+6F↑j
                 mov     _textPos_y, 78h ; 'x'
-                test    word_328C6, 3Ch
+                test    g_uiScratchFlags2, 3Ch
                 jnz     short loc_21A8E
                 mov     bx, g_currentPartyRecord
                 cmp     word ptr [bx+6Ah], 41h ; 'A'
@@ -31265,7 +31265,7 @@ loc_21A8E:                              ; CODE XREF: ShowItemPurchaseConfirmProm
 ; ---------------------------------------------------------------------------
 
 loc_21AEA:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+E5↑j
-                test    word_328C6, 3Ch
+                test    g_uiScratchFlags2, 3Ch
                 jnz     short loc_21AFF
                 mov     bx, g_currentPartyRecord
                 cmp     word ptr [bx+6Ah], 50h ; 'P'
@@ -31306,16 +31306,16 @@ loc_21B3F:                              ; CODE XREF: ShowItemPurchaseConfirmProm
 
 loc_21B5A:                              ; CODE XREF: ShowItemPurchaseConfirmPrompt+130↑j
                 mov     si, 0B30h
-                test    word_328C6, 20h
+                test    g_uiScratchFlags2, 20h
                 jnz     short loc_21BBD
                 mov     si, 50C0h
-                test    word_328C6, 10h
+                test    g_uiScratchFlags2, 10h
                 jnz     short loc_21BBD
                 mov     si, 0CB2h
-                test    word_328C6, 8
+                test    g_uiScratchFlags2, 8
                 jnz     short loc_21BBD
                 mov     si, 5082h
-                test    word_328C6, 4
+                test    g_uiScratchFlags2, 4
                 jnz     short loc_21BBD
                 mov     bx, g_currentPartyRecord
                 cmp     word ptr [bx+6Ah], 5Fh ; '_'
@@ -31342,11 +31342,11 @@ loc_21BBD:                              ; CODE XREF: ShowItemPurchaseConfirmProm
                 mov     _textPos_y, 90h
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7FBDh
-                test    word_328C6, 30h
+                test    g_uiScratchFlags2, 30h
                 jnz     short loc_21BFC
-                test    word_328C6, 8
+                test    g_uiScratchFlags2, 8
                 jnz     short loc_21BE6
-                test    word_328C6, 4
+                test    g_uiScratchFlags2, 4
                 jnz     short loc_21BF2
                 jmp     short loc_21BFC
 ; ---------------------------------------------------------------------------
@@ -31439,7 +31439,7 @@ RedrawItemDescriptionAndMaterials proc far
                                         ; CODE XREF: HandleShopCatalogSlotClick+8B↑P
                                         ; RunPartyInventoryScreen:loc_18759↑P ...
                 call    ClearStatusPanelIfDirty ; Clears status panel if dirty, sets word_328C4 bit 0x100, positions text at (0xF0,0x60), draws a 3-line text field from word_2E546+0x13 (current item record's description text) via DrawStringColumn, then ShowMaterialCounterHud + DrawMouseCursor. Standard post-LoadItemCatalogRecord refresh in shop/trade screens. Called from sub_17032 and sub_1869D.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     _textPos_x, 0F0h
@@ -31675,7 +31675,7 @@ BuildClueLocationSuffix endp
 
 ShowLocalAreaMap proc far               ; CODE XREF: seg000:085D↑P
                                         ; RunMapEditorScreen+55↑P ...
-                test    word_328C4, 1   ; HandleGameCommand's handler for word_32974==0x1E (also called from RunMapEditorScreen). Renders a full-screen (24-row) map view centered on the player (word_36CF7/word_36CF9): for each row, reads a block from WORLD.DAT and CURGAME and draws it via sub_22140 (not traced). Falls back to a smaller view (sub_222BD) when word_328C4 bit 1 is clear. Distinct from the overworld ShowWorldMap -- reads as the 'full local area map'.
+                test    g_uiScratchFlags1, 1 ; HandleGameCommand's handler for word_32974==0x1E (also called from RunMapEditorScreen). Renders a full-screen (24-row) map view centered on the player (word_36CF7/word_36CF9): for each row, reads a block from WORLD.DAT and CURGAME and draws it via sub_22140 (not traced). Falls back to a smaller view (sub_222BD) when word_328C4 bit 1 is clear. Distinct from the overworld ShowWorldMap -- reads as the 'full local area map'.
                 jnz     short loc_21E8F
                 test    word_36C7F, 200h
                 jnz     short loc_21E8A
@@ -31689,7 +31689,7 @@ loc_21E8A:                              ; CODE XREF: ShowLocalAreaMap+E↑j
 
 loc_21E8F:                              ; CODE XREF: ShowLocalAreaMap+6↑j
                 call    RestoreCursorBackgroundIfDirty
-                or      word_328CA, 4
+                or      g_uiScratchFlags4, 4
                 mov     ax, 0A000h
                 mov     _videoSegment, ax
                 xor     dx, dx
@@ -31863,7 +31863,7 @@ loc_22037:                              ; CODE XREF: ShowLocalAreaMap+1C2↑j
                 call    writeString
 
 loc_220B1:                              ; CODE XREF: ShowLocalAreaMap+1C4↑j
-                test    word_328C4, 1
+                test    g_uiScratchFlags1, 1
                 jz      short loc_220BA
                 retf
 ; ---------------------------------------------------------------------------
@@ -31973,7 +31973,7 @@ DrawLocalMapRow endp
 
 
 DrawLocalMapCell proc near              ; CODE XREF: DrawLocalMapRow:loc_22180↑p
-                test    word_328CA, 4   ; Draws one local-area-map cell. If word_328CA bit 4 is set, calls TryInteractAtPosition on the cell to check for a special interactive object (errorCode 6/7 select an overlay tile); otherwise uses the cell's own stored tile-type fields.
+                test    g_uiScratchFlags4, 4 ; Draws one local-area-map cell. If word_328CA bit 4 is set, calls TryInteractAtPosition on the cell to check for a special interactive object (errorCode 6/7 select an overlay tile); otherwise uses the cell's own stored tile-type fields.
                 jz      short loc_221EE
                 push    si
                 push    bp
@@ -32094,7 +32094,7 @@ DrawPlayerPositionMarker endp
 ShowMapSkillTooLowMessage proc near     ; CODE XREF: ShowLocalAreaMap+10↑p
                                         ; ToggleMapViewMode+8↑p
                 call    ClearStatusPanelIfDirty ; 'YOUR SKILL IS NOT HIGH ENOUGH!' (msg 0x7D7E, cx=3) -- a mapping/cartography skill gate rejection, called from ShowLocalAreaMap and ToggleMapViewMode.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_fgColor, 8Ah
                 mov     _font_bgTransparent, 1
                 mov     _textPos_x, 0F0h
@@ -32150,7 +32150,7 @@ DrawAndCacheStatusIcon proc far         ; CODE XREF: HandleMovementInput+32D↑P
                 push    es
                 push    ds
                 mov     g_pictureId, 3
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_2232D
                 mov     g_pictureId, 1
 
@@ -32654,7 +32654,7 @@ seg071          segment byte public 'CODE' use16
 ProcessSideTrapsOnMovement proc far     ; CODE XREF: start+76↑P
                                         ; start+143↑P ...
                 mov     g_lastKeyChar, 0 ; Fast-exits unless word_328C8 bit 0x10 is set. Otherwise clears the 0xBC28 trap-result scratch table (4 entries, stride 0x18) and walks 80 wall/cell records (0xF26, stride 0x9C) calling TriggerSideTrapForRandomPartyMember for every one flagged with a side trap ([+0xE] bit 0x1000), then calls PresentTriggeredSideTrapEffects. Called from start.
-                test    word_328C8, 10h
+                test    g_uiScratchFlags3, 10h
                 jnz     short loc_2279F
                 call    DrawMouseCursor
                 retf
@@ -32676,7 +32676,7 @@ loc_2279F:                              ; CODE XREF: ProcessSideTrapsOnMovement+
                 mov     word_394A8, 36h ; '6'
                 mov     word_394C0, 69h ; 'i'
                 mov     word_394D8, 9Dh
-                and     word_328C8, 0FFE7h
+                and     g_uiScratchFlags3, 0FFE7h
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
@@ -32689,7 +32689,7 @@ loc_227E0:                              ; CODE XREF: ProcessSideTrapsOnMovement+
                 add     si, 9Ch
                 loop    loc_227D6
                 call    PresentTriggeredSideTrapEffects
-                and     word_328C8, 0FFE7h
+                and     g_uiScratchFlags3, 0FFE7h
                 pop     es
                 pop     di
                 pop     si
@@ -32751,7 +32751,7 @@ loc_2283A:                              ; CODE XREF: PresentTriggeredSideTrapEff
 
 loc_2283F:                              ; CODE XREF: PresentTriggeredSideTrapEffects+5↑j
                                         ; PresentTriggeredSideTrapEffects+19↑j
-                test    word_328C8, 8
+                test    g_uiScratchFlags3, 8
                 jnz     short loc_2284A
                 jmp     loc_2293B
 ; ---------------------------------------------------------------------------
@@ -32773,10 +32773,10 @@ loc_2286D:                              ; CODE XREF: PresentTriggeredSideTrapEff
                 mov     g_blitMaskPtr, ax
                 mov     ax, [di+0Eh]
                 mov     g_blitMaskLen, ax
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 test    word ptr [di+10h], 2
                 jz      short loc_22890
-                or      word_328C6, 1
+                or      g_uiScratchFlags2, 1
 
 loc_22890:                              ; CODE XREF: PresentTriggeredSideTrapEffects+6A↑j
                 mov     ax, [di+8]
@@ -32786,7 +32786,7 @@ loc_22890:                              ; CODE XREF: PresentTriggeredSideTrapEff
 loc_2289B:                              ; CODE XREF: PresentTriggeredSideTrapEffects+52↑j
                 add     di, 18h
                 loop    loc_2286D
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 call    SaveActionIconPanelToEMS
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
@@ -32846,7 +32846,7 @@ loc_22920:                              ; CODE XREF: PresentTriggeredSideTrapEff
                 call    DrawMouseCursor
 
 loc_2293B:                              ; CODE XREF: PresentTriggeredSideTrapEffects+28↑j
-                test    word_328C8, 10h
+                test    g_uiScratchFlags3, 10h
                 jnz     short loc_22944
                 retn
 ; ---------------------------------------------------------------------------
@@ -32900,7 +32900,7 @@ TriggerSideTrapForRandomPartyMember proc near
                 mov     [di], ax
                 cmp     ax, 0
                 jz      short loc_229AF
-                or      word_328C8, 10h
+                or      g_uiScratchFlags3, 10h
 
 loc_229AF:                              ; CODE XREF: TriggerSideTrapForRandomPartyMember+1F↑j
                 cmp     g_partyFacing, 8000h
@@ -32941,7 +32941,7 @@ loc_229FB:                              ; CODE XREF: TriggerSideTrapForRandomPar
                 mov     cx, [si+62h]
                 mov     [di+14h], cx
                 jz      short loc_22A2E
-                or      word_328C8, 8
+                or      g_uiScratchFlags3, 8
                 mov     [di+0Ah], ax
                 mov     ax, [si+60h]
                 mov     [di+4], ax
@@ -33372,7 +33372,7 @@ ProcessLevelMonsters proc far           ; CODE XREF: start+62↑P
                 push    dx
                 push    si
                 push    di
-                and     word_328C8, 0FFCFh
+                and     g_uiScratchFlags3, 0FFCFh
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
@@ -33386,7 +33386,7 @@ loc_22D63:                              ; CODE XREF: ProcessLevelMonsters+4B↓j
                 pop     cx
                 add     si, 9Ch
                 loop    loc_22D5D
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_22D8B
                 mov     word_3293E, 0
                 mov     si, 51B6h
@@ -33527,7 +33527,7 @@ loc_22EAE:                              ; CODE XREF: ProcessLevelMonsters+13C↑
                 cmp     ax, bx
                 jg      short loc_22EBF
                 or      word ptr [si+0Eh], 1000h
-                or      word_328C8, 10h
+                or      g_uiScratchFlags3, 10h
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
@@ -33536,7 +33536,7 @@ loc_22EBF:                              ; CODE XREF: ProcessLevelMonsters+71↑j
                 mov     word_2E402, 0
                 mov     word_2E406, 0
                 mov     word_2E404, 0
-                and     word_328C8, 0FFBFh
+                and     g_uiScratchFlags3, 0FFBFh
                 and     word ptr [si+0Eh], 0E0FFh
                 mov     ax, [si+4]
                 cmp     ax, g_partyWorldY
@@ -33544,7 +33544,7 @@ loc_22EBF:                              ; CODE XREF: ProcessLevelMonsters+71↑j
                 inc     ax
                 cmp     ax, g_partyWorldY
                 jnz     short loc_22EFE
-                or      word_328C8, 40h
+                or      g_uiScratchFlags3, 40h
                 mov     word_2E406, 1
                 mov     word_2E404, 270h
                 jmp     short loc_22F63
@@ -33554,7 +33554,7 @@ loc_22EFE:                              ; CODE XREF: ProcessLevelMonsters+19D↑
                 sub     ax, 2
                 cmp     ax, g_partyWorldY
                 jnz     short loc_22F1A
-                or      word_328C8, 40h
+                or      g_uiScratchFlags3, 40h
                 mov     word_2E406, 0FFFFh
                 mov     word_2E404, 0FD90h
                 jmp     short loc_22F63
@@ -33603,9 +33603,9 @@ loc_22F63:                              ; CODE XREF: ProcessLevelMonsters+1B0↑
 ; ---------------------------------------------------------------------------
 
 loc_22F83:                              ; CODE XREF: ProcessLevelMonsters+221↑j
-                test    word_328C8, 40h
+                test    g_uiScratchFlags3, 40h
                 jz      short loc_22FA5
-                and     word_328C8, 0FFBFh
+                and     g_uiScratchFlags3, 0FFBFh
                 mov     word_2E402, 0
                 mov     word_2E406, 0
                 mov     word_2E404, 0
@@ -33629,10 +33629,10 @@ loc_22FAF:                              ; CODE XREF: ProcessLevelMonsters+25E↑
 ; ---------------------------------------------------------------------------
 
 loc_22FCC:                              ; CODE XREF: ProcessLevelMonsters+22E↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_2300C
                 mov     g_activeCombatMonster, 0
-                or      word_328CA, 1000h
+                or      g_uiScratchFlags4, 1000h
                 call    DrawAndCacheStatusIcon
                 push    si
                 mov     di, 525Ch
@@ -33647,14 +33647,14 @@ loc_22FCC:                              ; CODE XREF: ProcessLevelMonsters+22E↑
                 mov     si, 525Ch
                 mov     ax, [si+92h]
                 and     ax, 0E000h
-                or      word_328CA, ax
+                or      g_uiScratchFlags4, ax
                 jmp     loc_2309D
 ; ---------------------------------------------------------------------------
 
 loc_2300C:                              ; CODE XREF: ProcessLevelMonsters+286↑j
                 test    word ptr [si+92h], 8000h
                 jz      short loc_2301C
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jnz     short loc_2301F
 
 loc_2301C:                              ; CODE XREF: ProcessLevelMonsters+2C6↑j
@@ -33663,7 +33663,7 @@ loc_2301C:                              ; CODE XREF: ProcessLevelMonsters+2C6↑
 ; ---------------------------------------------------------------------------
 
 loc_2301F:                              ; CODE XREF: ProcessLevelMonsters+2CE↑j
-                test    word_328CA, 2000h
+                test    g_uiScratchFlags4, 2000h
                 jz      short loc_2302A
                 jmp     loc_230B7
 ; ---------------------------------------------------------------------------
@@ -33702,18 +33702,18 @@ loc_23041:                              ; CODE XREF: ProcessLevelMonsters+2EA↑
                 xor     ax, ax
                 rep stosw
                 dec     word_32A2A
-                and     word_328CA, 9FFFh
+                and     g_uiScratchFlags4, 9FFFh
                 test    word_32AB2, 4000h
                 jnz     short loc_23094
                 test    word_32BEA, 4000h
                 jnz     short loc_23094
-                or      word_328CA, 2000h
+                or      g_uiScratchFlags4, 2000h
                 jmp     short loc_2309A
 ; ---------------------------------------------------------------------------
 
 loc_23094:                              ; CODE XREF: ProcessLevelMonsters+336↑j
                                         ; ProcessLevelMonsters+33E↑j
-                or      word_328CA, 4000h
+                or      g_uiScratchFlags4, 4000h
 
 loc_2309A:                              ; CODE XREF: ProcessLevelMonsters+346↑j
                 mov     si, 51C0h
@@ -33837,7 +33837,7 @@ ShowLootAndAwardExperience proc far     ; CODE XREF: RunDungeonGameLoop+100↑P
 
 loc_23164:                              ; CODE XREF: ShowLootAndAwardExperience+9↑j
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     _textPos_x, 0F0h
@@ -33949,7 +33949,7 @@ DrawMonsterInfoPanels proc far          ; CODE XREF: RunDungeonGameLoop+48↑P
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 57h ; 'W'
@@ -34267,7 +34267,7 @@ DrawMonsterInfoPanel proc near          ; CODE XREF: DrawMonsterInfoPanels+2B↑
 ; ---------------------------------------------------------------------------
 
 loc_234D9:                              ; CODE XREF: DrawMonsterInfoPanel+3↑j
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_fgColor, 0AAh
                 test    word ptr [si+0Ch], 20h
                 jnz     short loc_234FE
@@ -35114,7 +35114,7 @@ ShowStatusPanelMessage proc far         ; CODE XREF: start+5A0↑P
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    RestoreCursorBackgroundIfDirty
                 pop     bx
                 push    cs
@@ -35238,7 +35238,7 @@ loc_23BC8:                              ; CODE XREF: ShowPartyMembers+17↑j
                 cmp     g_lastKeyChar, 51h ; 'Q'
                 jz      short loc_23C12
                 mov     word_3293E, 0
-                and     word_328C4, 0FF00h
+                and     g_uiScratchFlags1, 0FF00h
                 call    ShowCharacterInventory
                 cmp     g_lastKeyChar, 51h ; 'Q'
                 jz      short loc_23C12
@@ -36094,7 +36094,7 @@ loc_244F7:                              ; CODE XREF: ShowCharacterSkills+11F↑j
                 mov     ax, 9
                 cmp     g_lastKeyChar, 4Bh ; 'K'
                 jz      short loc_2457F
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jz      short loc_24564
                 cmp     g_lastKeyChar, 45h ; 'E'
                 jz      short locret_24563
@@ -36113,7 +36113,7 @@ loc_24564:                              ; CODE XREF: ShowCharacterSkills+184↑j
 
 loc_2456E:                              ; CODE XREF: ShowCharacterSkills+117↑j
                                         ; ShowCharacterSkills+196↑j
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jnz     short loc_24579
                 call    ClearPartyRecord
 
@@ -36128,7 +36128,7 @@ loc_2457F:                              ; CODE XREF: ShowCharacterSkills+121↑j
                 mov     [si+0Eh], ax
                 mov     word ptr [si+16h], 1
                 call    DrawCharacterClassAndLevel
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jnz     short loc_2459C
                 mov     g_lastKeyChar, 0
                 retn
@@ -36167,63 +36167,63 @@ loc_245B4:                              ; CODE XREF: ShowCharacterInventory+2AE�
                 mov     _font_fgColor, 0Fh
                 mov     x, 8
                 mov     _textPos_x, 19h
-                test    word_328C4, 80h
+                test    g_uiScratchFlags1, 80h
                 jnz     short loc_24612
                 mov     y, 2Ah ; '*'
                 mov     ax, _val1
                 call    DrawListEntryLabel
 
 loc_24612:                              ; CODE XREF: ShowCharacterInventory+56↑j
-                test    word_328C4, 40h
+                test    g_uiScratchFlags1, 40h
                 jnz     short loc_24626
                 mov     y, 3Ah ; ':'
                 mov     ax, _val2
                 call    DrawListEntryLabel
 
 loc_24626:                              ; CODE XREF: ShowCharacterInventory+6A↑j
-                test    word_328C4, 20h
+                test    g_uiScratchFlags1, 20h
                 jnz     short loc_2463A
                 mov     y, 4Ah ; 'J'
                 mov     ax, _val3
                 call    DrawListEntryLabel
 
 loc_2463A:                              ; CODE XREF: ShowCharacterInventory+7E↑j
-                test    word_328C4, 10h
+                test    g_uiScratchFlags1, 10h
                 jnz     short loc_2464E
                 mov     y, 5Ah ; 'Z'
                 mov     ax, _val4
                 call    DrawListEntryLabel
 
 loc_2464E:                              ; CODE XREF: ShowCharacterInventory+92↑j
-                test    word_328C4, 8
+                test    g_uiScratchFlags1, 8
                 jnz     short loc_24662
                 mov     y, 6Ah ; 'j'
                 mov     ax, _val5
                 call    DrawListEntryLabel
 
 loc_24662:                              ; CODE XREF: ShowCharacterInventory+A6↑j
-                test    word_328C4, 4
+                test    g_uiScratchFlags1, 4
                 jnz     short loc_24676
                 mov     y, 7Ah ; 'z'
                 mov     ax, _val6
                 call    DrawListEntryLabel
 
 loc_24676:                              ; CODE XREF: ShowCharacterInventory+BA↑j
-                test    word_328C4, 2
+                test    g_uiScratchFlags1, 2
                 jnz     short loc_2468A
                 mov     y, 8Ah
                 mov     ax, _val7
                 call    DrawListEntryLabel
 
 loc_2468A:                              ; CODE XREF: ShowCharacterInventory+CE↑j
-                test    word_328C4, 1
+                test    g_uiScratchFlags1, 1
                 jnz     short loc_2469E
                 mov     y, 9Ah
                 mov     ax, _val8
                 call    DrawListEntryLabel
 
 loc_2469E:                              ; CODE XREF: ShowCharacterInventory+E2↑j
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jnz     short loc_246C9
                 mov     _textPos_x, 8
                 mov     _textPos_y, 0B0h
@@ -36253,7 +36253,7 @@ loc_246D6:                              ; CODE XREF: ShowCharacterInventory+131�
 ; ---------------------------------------------------------------------------
 
 loc_246F3:                              ; CODE XREF: ShowCharacterInventory+133↑j
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jz      short loc_24703
                 cmp     g_lastKeyChar, 45h ; 'E'
                 jnz     short loc_246D6
@@ -36300,7 +36300,7 @@ loc_24736:                              ; CODE XREF: ShowCharacterInventory+183�
 ; ---------------------------------------------------------------------------
 
 loc_24751:                              ; CODE XREF: ShowCharacterInventory+18B↑j
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jnz     short loc_24780
                 cmp     ax, 10h
                 jnz     short loc_24780
@@ -36323,7 +36323,7 @@ loc_24780:                              ; CODE XREF: ShowCharacterInventory+1A9�
 ; ---------------------------------------------------------------------------
 
 loc_24788:                              ; CODE XREF: ShowCharacterInventory+1D5↑j
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jz      short loc_2479C
                 mov     g_pictureId, 0
                 call    UpdateCursorForHeldItem
@@ -36336,7 +36336,7 @@ loc_2479C:                              ; CODE XREF: ShowCharacterInventory+163�
                 mov     word_3194C, 0
                 mov     g_pictureId, 0
                 call    UpdateCursorForHeldItem
-                and     word_328C4, 0FF00h
+                and     g_uiScratchFlags1, 0FF00h
                 mov     g_lastKeyChar, 51h ; 'Q'
                 retn
 ; ---------------------------------------------------------------------------
@@ -36383,7 +36383,7 @@ loc_247D3:                              ; CODE XREF: ShowCharacterInventory+220�
 
 loc_24821:                              ; CODE XREF: ShowCharacterInventory+238↑j
                                         ; ShowCharacterInventory+241↑j ...
-                and     word_328C4, ax
+                and     g_uiScratchFlags1, ax
                 mov     ax, word_31948
                 mov     word_32940, ax
                 mov     word_31948, 0
@@ -36448,12 +36448,12 @@ loc_248D2:                              ; CODE XREF: ShowCharacterInventory+2D3�
                                         ; ShowCharacterInventory+2DF↑j ...
                 mov     word_31948, cx
                 pop     cx
-                test    word_328C4, bx
+                test    g_uiScratchFlags1, bx
                 jnz     short loc_24917
                 mov     ax, word_31948
                 cmp     ax, word_32940
                 jz      short loc_24917
-                or      word_328C4, bx
+                or      g_uiScratchFlags1, bx
                 call    LoadItemCatalogRecord
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, [bx+8]
@@ -36538,7 +36538,7 @@ EditCharacterName proc near             ; CODE XREF: ShowPartyMembers+57↑p
                 mov     g_lastKeyChar, 0
                 call    EditTextField
                 mov     _font_bgTransparent, 1
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jz      short loc_24A03
                 cmp     errorCode, 2
                 jnz     short loc_24A03
@@ -36671,7 +36671,7 @@ loc_24B52:                              ; CODE XREF: ShowCharacterEquipment+EE�
 ; ---------------------------------------------------------------------------
 
 loc_24B60:                              ; CODE XREF: ShowCharacterEquipment+FC↑j
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jz      short loc_24B70
                 cmp     g_lastKeyChar, 45h ; 'E'
                 jnz     short loc_24B08
@@ -36700,7 +36700,7 @@ loc_24B8B:                              ; CODE XREF: ShowCharacterEquipment+126�
 
 loc_24B93:                              ; CODE XREF: ShowCharacterEquipment+BD↑j
                                         ; ShowCharacterEquipment+11A↑j
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jnz     short loc_24B9E
                 call    ClearPartyRecord
 
@@ -37291,18 +37291,18 @@ loc_25246:                              ; CODE XREF: ShowCharacterSummary+13E↑
 loc_25248:                              ; CODE XREF: ShowCharacterSummary+ED↑j
                                         ; ShowCharacterSummary+125↑j
                 call    RestoreWorldMapAreaFromEMS
-                or      word_328CA, 8000h
+                or      g_uiScratchFlags4, 8000h
                 call    ShowCharacterSkills
-                and     word_328CA, 7FFFh
+                and     g_uiScratchFlags4, 7FFFh
                 jmp     ShowCharacterSummary
 ; ---------------------------------------------------------------------------
 
 loc_2525D:                              ; CODE XREF: ShowCharacterSummary+F4↑j
                                         ; ShowCharacterSummary+12A↑j
                 call    RestoreWorldMapAreaFromEMS
-                or      word_328CA, 8000h
+                or      g_uiScratchFlags4, 8000h
                 call    ShowCharacterEquipment
-                and     word_328CA, 7FFFh
+                and     g_uiScratchFlags4, 7FFFh
                 jmp     ShowCharacterSummary
 ; ---------------------------------------------------------------------------
 
@@ -37317,20 +37317,20 @@ loc_25272:                              ; CODE XREF: ShowCharacterSummary+FB↑j
 loc_25280:                              ; CODE XREF: ShowCharacterSummary+102↑j
                                         ; ShowCharacterSummary+134↑j
                 call    RestoreWorldMapAreaFromEMS
-                or      word_328CA, 8000h
+                or      g_uiScratchFlags4, 8000h
                 call    ShowCharacterInventory
-                and     word_328CA, 7FFFh
+                and     g_uiScratchFlags4, 7FFFh
                 jmp     ShowCharacterSummary
 ; ---------------------------------------------------------------------------
 
 loc_25295:                              ; CODE XREF: ShowCharacterSummary+10B↑j
                                         ; ShowCharacterSummary+139↑j
                 call    RestoreWorldMapAreaFromEMS
-                or      word_328CA, 8000h
+                or      g_uiScratchFlags4, 8000h
                 call    EditCharacterName
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                and     word_328CA, 7FFFh
+                and     g_uiScratchFlags4, 7FFFh
                 jmp     ShowCharacterSummary
 ; ---------------------------------------------------------------------------
 
@@ -37604,7 +37604,7 @@ ShowCreateCharacterPrompt proc near     ; CODE XREF: ShowPartyMembers+5↑p
                                         ; ShowPartyMembers:loc_23BBD↑p
                 mov     word_328BC, 74h ; 't' ; Uses SelectDefaultPartyRecord's empty-slot scan (first record with +0xE==0); if none found, returns (roster full, no prompt). Otherwise wipes the slot (ClearPartyRecord), draws picture 3 full-screen (DrawFullScreenPictureAndCacheToEMS), and writes 'CHARACTER CREATION'. Called from ShowPartyMembers.
                 mov     word_328C0, 3Ch ; '<'
-                and     word_328CA, 7FFFh
+                and     g_uiScratchFlags4, 7FFFh
                 call    SelectDefaultPartyRecord
                 cmp     g_currentPartyRecord, 0
                 jnz     short loc_25561
@@ -37637,7 +37637,7 @@ DrawQuitOrReturnLabel proc near         ; CODE XREF: ShowCharacterSkills+F8↑p
                 mov     word_2E414, 0Fh
                 mov     bx, 79E5h
                 mov     cx, 1
-                test    word_328CA, 8000h
+                test    g_uiScratchFlags4, 8000h
                 jz      short loc_255C1
                 mov     bx, 7A84h
                 mov     cx, 2
@@ -38412,7 +38412,7 @@ StepPaletteFadeRange endp
 
 SetPaletteRange proc far                ; CODE XREF: FadePaletteStep+6E↑P
                                         ; SetPaletteToWhiteAlt+18↑P ...
-                test    word_328C8, 800h ; Direct VGA DAC I/O (bypasses BIOS): optionally waits for vertical retrace (port 0x3DA bit 3), writes bl to port 0x3C8 (DAC write address), then cx RGB triples from ds:si to port 0x3C9 (DAC data). The real palette-set primitive.
+                test    g_uiScratchFlags3, 800h ; Direct VGA DAC I/O (bypasses BIOS): optionally waits for vertical retrace (port 0x3DA bit 3), writes bl to port 0x3C8 (DAC write address), then cx RGB triples from ds:si to port 0x3C9 (DAC data). The real palette-set primitive.
                 jz      short loc_25A4B
                 mov     dx, 3DAh
 
@@ -38553,8 +38553,8 @@ loc_25AC2:                              ; CODE XREF: CheckPartyWipeAndReinitLeve
 loc_25ADB:                              ; CODE XREF: CheckPartyWipeAndReinitLevel+1B↑j
                 call    ShowPartyWipeScreen
                 mov     g_heldItemType, 0
-                and     word_328C4, 0FF00h
-                or      word_328C4, 70h
+                and     g_uiScratchFlags1, 0FF00h
+                or      g_uiScratchFlags1, 70h
                 and     word_3295A, 1FFFh
                 call    RunGameDialog
                 cmp     g_lastKeyChar, 0FFh
@@ -38674,7 +38674,7 @@ loc_25B9F:                              ; CODE XREF: HandlePartyStatusPanelInput
                 mov     g_currentCommandCode, ax
                 call    ClearStatusPanelIfDirty
                 call    RestoreCursorBackgroundIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     ax, si
                 call    SelectPartyRecordById
                 mov     si, ax
@@ -38753,10 +38753,10 @@ loc_25C2D:                              ; CODE XREF: HandlePartyStatusPanelInput
                 mul     si
                 mov     si, 95F3h
                 add     si, ax
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    ClearStatusPanelIfDirty
                 call    RestoreCursorBackgroundIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 call    DrawThreeStatBars
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
@@ -38772,7 +38772,7 @@ HandlePartyStatusPanelInput endp
 
 ShowLevelUpMessage proc far             ; CODE XREF: CheckAndAnnounceLevelUp+33↑P
                                         ; HandlePartyStatusPanelInput+B4↑p
-                or      word_328C4, 100h ; ShowLevelUpMessage(si=character): shows current level [+0x16], and if [+0x1E] (pending new level, from CheckForLevelUp) is nonzero, also shows it as a second line -- the level-up notification screen.
+                or      g_uiScratchFlags1, 100h ; ShowLevelUpMessage(si=character): shows current level [+0x16], and if [+0x1E] (pending new level, from CheckForLevelUp) is nonzero, also shows it as a second line -- the level-up notification screen.
                 call    DrawCharacterNameHeader
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7B78h       ; msg
@@ -38828,8 +38828,8 @@ DrawAbilityReadinessList proc far       ; CODE XREF: UseItem+338↑P
 loc_25D02:                              ; CODE XREF: DrawAbilityReadinessList+5↑j
                 push    di
                 push    si
-                or      word_328C4, 100h
-                or      word_328C8, 1000h
+                or      g_uiScratchFlags1, 100h
+                or      g_uiScratchFlags3, 1000h
                 call    DrawCharacterNameHeader
                 mov     _font_fgColor, 0AAh
                 mov     bx, 7B92h       ; msg
@@ -39197,7 +39197,7 @@ DrawPartyMemberPortrait proc far        ; CODE XREF: RunPartyInventoryScreen+4E0
                 push    di
                 push    es
                 push    g_pictureCategory
-                and     word_328C6, 7FFFh
+                and     g_uiScratchFlags2, 7FFFh
                 mov     g_pictureCategory, 60h ; '`'
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
@@ -39297,14 +39297,14 @@ loc_26196:                              ; CODE XREF: DrawPartyMemberPortrait+E1�
                 mov     di, 60EEh
                 mov     cx, 8
                 call    DrawEquippedItemIcons
-                or      word_328C6, 8000h
+                or      g_uiScratchFlags2, 8000h
                 mov     g_pictureCategory, 90h
                 mov     si, g_currentPartyRecord
                 add     si, 14Ah
                 mov     di, 6170h
                 mov     cx, 2
                 call    DrawEquippedItemIcons
-                and     word_328C6, 7FFFh
+                and     g_uiScratchFlags2, 7FFFh
                 mov     g_pictureCategory, 70h ; 'p'
                 mov     si, g_currentPartyRecord
                 mov     ax, [si+152h]
@@ -39998,7 +39998,7 @@ DrawEquippedItemIcons proc near         ; CODE XREF: DrawPartyMemberPortrait+58�
                 mov     y, ax
                 mov     ax, [si]
                 call    LoadItemCatalogRecord
-                test    word_328C6, 8000h
+                test    g_uiScratchFlags2, 8000h
                 jz      short loc_267DC
                 test    word ptr [bx+0Ch], 400h
                 jz      short loc_267DC
@@ -41136,7 +41136,7 @@ DrawResourceCounterPanel proc far       ; CODE XREF: start+3DB↑P
                                         ; HandleStatusPanelItemSlotClick+21↓p ...
                 push    si              ; Draws the status panel's fully-labeled resource readout at (0xF0,0x60): 'GOLD COINS:' + BCD4 0x94B3 (g_partyGold), 'MAGIC ORE: ' + BCD4 0x94B7, 'NUORE: ' + BCD4 0x94BB. Called from `start`'s status-panel redraw path (after ShowResourceDepletedOverlay) and from sub_271DC.
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     _textPos_x, 0F0h
@@ -41334,7 +41334,7 @@ loc_27348:                              ; CODE XREF: HandleStatusPanelItemSlotCl
                 call    near ptr ShowResourceDepletedOverlay
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
-                test    word_328C6, 1Ch
+                test    g_uiScratchFlags2, 1Ch
                 jnz     short loc_27369
                 call    RedrawItemDescriptionAndMaterials
                 jmp     loc_2728F
@@ -41557,11 +41557,11 @@ ConsumeItemChargeResource proc far      ; CODE XREF: CheckAndPaySpecialItemCost+
 loc_274C8:                              ; CODE XREF: ConsumeItemChargeResource+F↑j
                 mov     si, word_2E548
                 mov     bx, word_3297A
-                test    word_328C8, 8000h
+                test    g_uiScratchFlags3, 8000h
                 jnz     short loc_27513
-                test    word_328C8, 4000h
+                test    g_uiScratchFlags3, 4000h
                 jnz     short loc_274F7
-                test    word_328C8, 2000h
+                test    g_uiScratchFlags3, 2000h
                 jnz     short loc_27557
                 test    word ptr [si+2], 1
                 jz      short loc_274F7
@@ -41626,11 +41626,11 @@ loc_2755C:                              ; CODE XREF: ConsumeItemChargeResource+1
                 add     bx, word_3297C
                 cmp     word_3296C, 0
                 jnz     short loc_275EA
-                test    word_328C8, 8000h
+                test    g_uiScratchFlags3, 8000h
                 jnz     short loc_275A7
-                test    word_328C8, 4000h
+                test    g_uiScratchFlags3, 4000h
                 jnz     short loc_2759C
-                test    word_328C8, 2000h
+                test    g_uiScratchFlags3, 2000h
                 jnz     short loc_275E5
                 mov     si, word_2E548
                 test    word ptr [si+2], 1
@@ -41693,7 +41693,7 @@ loc_275EA:                              ; CODE XREF: ConsumeItemChargeResource+B
                 call    SyncItemChargeFieldToCurgame
 
 loc_27616:                              ; CODE XREF: ConsumeItemChargeResource+F1↑j
-                test    word_328C8, 8000h
+                test    g_uiScratchFlags3, 8000h
                 jnz     short loc_27629
                 mov     bx, word_32978
                 mov     ax, word_3293E
@@ -41704,7 +41704,7 @@ loc_27629:                              ; CODE XREF: ConsumeItemChargeResource+1
                 mov     ax, word_32976
                 cmp     ax, g_partySlotAssignment
                 jnz     short loc_2764B
-                test    word_328C6, 4000h
+                test    g_uiScratchFlags2, 4000h
                 jnz     short loc_2763D
                 jmp     loc_276C2
 ; ---------------------------------------------------------------------------
@@ -41718,7 +41718,7 @@ loc_2763D:                              ; CODE XREF: ConsumeItemChargeResource+1
 loc_2764B:                              ; CODE XREF: ConsumeItemChargeResource+17C↑j
                 cmp     ax, word_36E4D
                 jnz     short loc_27667
-                test    word_328C6, 2000h
+                test    g_uiScratchFlags2, 2000h
                 jz      short loc_276C2
                 mov     word_328BC, 40h ; '@'
                 mov     word_328C0, 8
@@ -41728,7 +41728,7 @@ loc_2764B:                              ; CODE XREF: ConsumeItemChargeResource+1
 loc_27667:                              ; CODE XREF: ConsumeItemChargeResource+19B↑j
                 cmp     ax, word_36E4F
                 jnz     short loc_27683
-                test    word_328C6, 1000h
+                test    g_uiScratchFlags2, 1000h
                 jz      short loc_276C2
                 mov     word_328BC, 78h ; 'x'
                 mov     word_328C0, 8
@@ -41738,7 +41738,7 @@ loc_27667:                              ; CODE XREF: ConsumeItemChargeResource+1
 loc_27683:                              ; CODE XREF: ConsumeItemChargeResource+1B7↑j
                 cmp     ax, word_36E51
                 jnz     short loc_2769D
-                test    word_328C6, 800h
+                test    g_uiScratchFlags2, 800h
                 jz      short loc_276C2
                 mov     word_328BC, 0B0h
                 mov     word_328C0, 8
@@ -41750,7 +41750,7 @@ loc_2769D:                              ; CODE XREF: ConsumeItemChargeResource+1
                 mov     si, ax
                 call    SyncAlternateBagsToSave
                 call    DrawPartyMemberPortrait
-                test    word_328C8, 0E000h
+                test    g_uiScratchFlags3, 0E000h
                 jz      short loc_276C2
                 mov     ax, word_31948
                 call    ApplyMultiStatEffectForItem
@@ -41880,11 +41880,11 @@ SyncItemChargeFieldToCurgame proc near  ; CODE XREF: ConsumeItemChargeResource+1
                 jz      short loc_277E8
                 mov     bx, 0AFA8h
                 add     bx, dx
-                test    word_328C8, 8000h
+                test    g_uiScratchFlags3, 8000h
                 jnz     short loc_2780B
-                test    word_328C8, 4000h
+                test    g_uiScratchFlags3, 4000h
                 jnz     short loc_277DF
-                test    word_328C8, 2000h
+                test    g_uiScratchFlags3, 2000h
                 jnz     short loc_27817
                 push    bx
                 mov     bx, word_2E548
@@ -41903,7 +41903,7 @@ loc_277DF:                              ; CODE XREF: SyncItemChargeFieldToCurgam
                 mov     word ptr [bx+2], 0
 
 loc_277E8:                              ; CODE XREF: SyncItemChargeFieldToCurgame+19↑j
-                test    word_328C8, 8000h
+                test    g_uiScratchFlags3, 8000h
                 jnz     short locret_2780A
                 mov     ax, word_3293E
                 sub     word_38808, ax
@@ -41995,7 +41995,7 @@ ComputeAmbientLightingTable proc far    ; CODE XREF: AdvanceDayNightPaletteFade+
                 push    di
                 push    es
                 push    bp
-                or      word_328C4, 400h
+                or      g_uiScratchFlags1, 400h
                 mov     es, word_2E4AA
                 mov     si, 76CAh
                 test    word_36C79, 4
@@ -43249,13 +43249,13 @@ seg097          segment byte public 'CODE' use16
 
 
 DrawDebugPositionOverlay proc far       ; CODE XREF: seg000:0AFA↑P
-                test    word_328C6, 80h ; Debug HUD overlay, gated on word_328C6 bits 0x80/0x200 clear, word_328CA bit 0x1000 clear, and word_328C4 bit 0x2000 set. Draws 3 rows of labeled numeric pairs: 'H'/'V' for word_2E55C/word_2E564, 'H'/'V' again for word_36CF7/word_36CF9 (confirmed party world X/Y), and 'B'/'F' for a pair read via a word_328D2-indexed table. Called from an unresolved raw address (seg000:0AFA), plausibly a low-level tick hook.
+                test    g_uiScratchFlags2, 80h ; Debug HUD overlay, gated on word_328C6 bits 0x80/0x200 clear, word_328CA bit 0x1000 clear, and word_328C4 bit 0x2000 set. Draws 3 rows of labeled numeric pairs: 'H'/'V' for word_2E55C/word_2E564, 'H'/'V' again for word_36CF7/word_36CF9 (confirmed party world X/Y), and 'B'/'F' for a pair read via a word_328D2-indexed table. Called from an unresolved raw address (seg000:0AFA), plausibly a low-level tick hook.
                 jnz     short locret_28054
-                test    word_328C6, 200h
+                test    g_uiScratchFlags2, 200h
                 jnz     short locret_28054
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short locret_28054
-                test    word_328C4, 2000h
+                test    g_uiScratchFlags1, 2000h
                 jnz     short loc_28055
 
 locret_28054:                           ; CODE XREF: DrawDebugPositionOverlay+6↑j
@@ -43265,7 +43265,7 @@ locret_28054:                           ; CODE XREF: DrawDebugPositionOverlay+6�
 
 loc_28055:                              ; CODE XREF: DrawDebugPositionOverlay+1E↑j
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -43397,7 +43397,7 @@ ComputeGameClockTime endp
 ShowGameClockCommand proc far           ; CODE XREF: seg000:08B2↑P
                                         ; HandleGameCommand+EC↓P
                 call    ClearStatusPanelIfDirty ; HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 push    cs
                 call    near ptr ComputeGameClockTime
                 mov     _font_fgColor, 0Fh
@@ -43592,7 +43592,7 @@ UpdateAmbientMusic proc far             ; CODE XREF: WaitForKeypressTickingMusic
                 jz      short locret_28358
                 cmp     byte ptr word_2E492, 0
                 jnz     short locret_28358
-                test    word_328CA, 10h
+                test    g_uiScratchFlags4, 10h
                 jnz     short loc_28359
                 test    word_3295A, 200h
                 jnz     short locret_28358
@@ -43624,11 +43624,11 @@ loc_28376:                              ; CODE XREF: UpdateAmbientMusic+49↑j
                                         ; UpdateAmbientMusic+51↑j
                 or      ax, ax
                 jz      short locret_28358
-                test    word_328C4, 2000h
+                test    g_uiScratchFlags1, 2000h
                 jz      short locret_28358
 
 loc_28382:                              ; CODE XREF: UpdateAmbientMusic+3E↑j
-                and     word_328CA, 0FFEFh
+                and     g_uiScratchFlags4, 0FFEFh
                 mov     g_currentMusicTrack, ax
                 push    cs
                 call    near ptr PlayMusicTrack
@@ -43694,12 +43694,12 @@ InitSoundSystem proc far                ; CODE XREF: InitGame+85↑P
 ; ---------------------------------------------------------------------------
 
 loc_283FB:                              ; CODE XREF: InitSoundSystem+E↑j
-                test    word_328C8, 2
+                test    g_uiScratchFlags3, 2
                 jnz     short loc_28406
                 call    DetectSoundDriver
 
 loc_28406:                              ; CODE XREF: InitSoundSystem+17↑j
-                test    word_328C8, 1
+                test    g_uiScratchFlags3, 1
                 jnz     short locret_28411
                 call    InitMusicDriver
 
@@ -43787,7 +43787,7 @@ loc_284A5:                              ; CODE XREF: StopMusicAndResetTimer+6↑
                 or      word_3295A, 200h
 
 loc_284C5:                              ; CODE XREF: StopMusicAndResetTimer+1B↑j
-                and     word_328CA, 0FFEFh
+                and     g_uiScratchFlags4, 0FFEFh
                 retf
 StopMusicAndResetTimer endp
 
@@ -44462,9 +44462,9 @@ seg104          segment byte public 'CODE' use16
 
 DrawIndentedTextColumn proc far         ; CODE XREF: UseRiddleAnswerItem+89↑P
                                         ; ShowHealingCostPrompt+8E↑P ...
-                test    word_328C4, 20h ; Dispatches on word_328C4 bits to either call DrawStringColumn directly, or loop sub_28B94 (per-line draw, cx==0 stops) with one of 3 'how many leading lines get fontOffset reset to 0' patterns (bit 0x10=every line, 0x8=first 2, 0x4=first 4 of 5) -- a hanging-indent text column mode selector. Called from ShowHealingCostPrompt and sub_1A5F6.
+                test    g_uiScratchFlags1, 20h ; Dispatches on word_328C4 bits to either call DrawStringColumn directly, or loop sub_28B94 (per-line draw, cx==0 stops) with one of 3 'how many leading lines get fontOffset reset to 0' patterns (bit 0x10=every line, 0x8=first 2, 0x4=first 4 of 5) -- a hanging-indent text column mode selector. Called from ShowHealingCostPrompt and sub_1A5F6.
                 jnz     short loc_28A8C
-                test    word_328C4, 2
+                test    g_uiScratchFlags1, 2
                 jz      short loc_28A92
                 mov     fontOffset, 0
 
@@ -44476,11 +44476,11 @@ loc_28A8C:                              ; CODE XREF: DrawIndentedTextColumn+6↑
 
 loc_28A92:                              ; CODE XREF: DrawIndentedTextColumn+E↑j
                 mov     dx, _textPos_x
-                test    word_328C4, 10h
+                test    g_uiScratchFlags1, 10h
                 jnz     short loc_28AB1
-                test    word_328C4, 8
+                test    g_uiScratchFlags1, 8
                 jnz     short loc_28AEA
-                test    word_328C4, 4
+                test    g_uiScratchFlags1, 4
                 jz      short loc_28A8C
                 jmp     loc_28B31
 ; ---------------------------------------------------------------------------
@@ -45573,7 +45573,7 @@ ShowAbilityDescriptionColumn proc far   ; CODE XREF: UseAbilityCommand+EC↑P
                 push    bx              ; Clears the status panel if dirty, sets word_328C4 bit 0x100, positions text (0xF0,0x60) color 0x8A transparent, restores the cursor background if dirty, then calls DrawStringColumn with the caller's bx/cx (preserved through setup) -- a multi-line text column, plausibly an ability's description. Called from UseAbilityCommand and UseAbilityOnTarget.
                 push    cx
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 8Ah
@@ -45826,7 +45826,7 @@ loc_29624:                              ; CODE XREF: HandleGameCommand+6F↑j
 
 loc_2962A:                              ; CODE XREF: HandleGameCommand+57↑j
                                         ; HandleGameCommand+5E↑j ...
-                or      word_328C4, 40h
+                or      g_uiScratchFlags1, 40h
                 call    TickStatusEffects
                 retf
 ; ---------------------------------------------------------------------------
@@ -45873,7 +45873,7 @@ loc_29673:                              ; CODE XREF: HandleGameCommand+C3↑j
 loc_29680:                              ; CODE XREF: HandleGameCommand+D0↑j
                 cmp     g_currentActionId, 7
                 jnz     short loc_296A5
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_2969A
                 call    DrawMouseCursorAlt
                 call    ShowGameClockCommand
@@ -45914,7 +45914,7 @@ loc_296C6:                              ; CODE XREF: HandleGameCommand+102↑j
 loc_296E5:                              ; CODE XREF: HandleGameCommand+11C↑j
                 mov     bx, word_2E548
                 call    RepairItemCommand
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -45938,7 +45938,7 @@ loc_29712:                              ; CODE XREF: HandleGameCommand+162↑j
                 mov     bx, word_2E548
                 test    word ptr [bx], 4
                 jz      short loc_2972D
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_29727
                 jmp     loc_2969A
 ; ---------------------------------------------------------------------------
@@ -45969,7 +45969,7 @@ seg110          segment byte public 'CODE' use16
 
 UnlockDoorCommand proc far              ; CODE XREF: seg000:0A5D↑P
                                         ; HandleGameCommand:loc_295DF↑P
-                test    word_328CA, 1000h ; HandleGameCommand's unlock-door handler (word_32974 in 0x21-0x2E or ==0x2F). Uses ProbeFacingTile to find what's ahead; if it's a lock-type object, loads its state via LoadLockState/LoadCurgameRecord. Shows 'NOT LOCKED' directly if the already-unlocked bit is set (same test as ShowLockStatus). Otherwise compares the door's required-key flags (word_32DCE) against the player's held key (word_36C81/word_2E548) to resolve the unlock attempt.
+                test    g_uiScratchFlags4, 1000h ; HandleGameCommand's unlock-door handler (word_32974 in 0x21-0x2E or ==0x2F). Uses ProbeFacingTile to find what's ahead; if it's a lock-type object, loads its state via LoadLockState/LoadCurgameRecord. Shows 'NOT LOCKED' directly if the already-unlocked bit is set (same test as ShowLockStatus). Otherwise compares the door's required-key flags (word_32DCE) against the player's held key (word_36C81/word_2E548) to resolve the unlock attempt.
                 jz      short loc_29747
                 call    FlashStatusWarning
                 jmp     short loc_2975D
@@ -46025,8 +46025,8 @@ loc_297A0:                              ; CODE XREF: UnlockDoorCommand+4D↑j
                 call    LoadCurgameRecord
 
 loc_297A8:                              ; CODE XREF: UnlockDoorCommand+66↑j
-                mov     ax, word_32DC8
-                test    byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                test    g_lockUnlockedAccumulator, al
                 jz      short loc_297BE
                 mov     cx, 1
                 mov     bx, 7BB7h
@@ -46090,8 +46090,8 @@ loc_2981F:                              ; CODE XREF: UnlockDoorCommand+B1↑j
                 call    TriggerSoundEvent
 
 loc_2982E:                              ; CODE XREF: UnlockDoorCommand+EC↑j
-                mov     ax, word_32DC8
-                or      byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                or      g_lockUnlockedAccumulator, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -46334,7 +46334,7 @@ loc_299A3:                              ; CODE XREF: DrawPicture+126↑j
 ; ---------------------------------------------------------------------------
 
 loc_299B6:                              ; CODE XREF: DrawPicture+6D↑j
-                test    word_328C6, 1
+                test    g_uiScratchFlags2, 1
                 jnz     short loc_29A02
                 mov     [bp+var_A], bx
                 mov     bx, ax
@@ -46631,7 +46631,7 @@ loc_29B86:                              ; CODE XREF: DrawViewportSprite+6C↑j
                 mov     cx, 0Fh
                 xor     ax, ax
                 rep stosw
-                test    word_328C6, 1
+                test    g_uiScratchFlags2, 1
                 jz      short loc_29BD8
                 mov     si, g_blitMaskPtr
                 mov     di, bp
@@ -47338,16 +47338,16 @@ DrawMouseCursor proc far                ; CODE XREF: start+8A↑P
                 push    cx
                 push    bx
                 push    es
-                test    word_328CA, 40h
+                test    g_uiScratchFlags4, 40h
                 jz      short loc_2A136
                 mov     ax, 9
                 call    TriggerSoundEvent
-                and     word_328CA, 0FFBFh
+                and     g_uiScratchFlags4, 0FFBFh
 
 loc_2A136:                              ; CODE XREF: DrawMouseCursor+C↑j
-                test    word_328CA, 10h
+                test    g_uiScratchFlags4, 10h
                 jz      short loc_2A143
-                and     word_328CA, 0FFEFh
+                and     g_uiScratchFlags4, 0FFEFh
 
 loc_2A143:                              ; CODE XREF: DrawMouseCursor+21↑j
                 or      word_3195C, 4
@@ -47887,7 +47887,7 @@ ExpandBlitMaskNibbles proc near         ; CODE XREF: DrawPicture+13↑p
                 mov     cx, 0Fh
                 xor     ax, ax
                 rep stosw
-                test    word_328C6, 1
+                test    g_uiScratchFlags2, 1
                 jz      short loc_2A583
                 mov     si, g_blitMaskPtr
                 mov     di, bp
@@ -48356,8 +48356,8 @@ loc_2A827:                              ; CODE XREF: HandleSearchCommand+84↑j
                 call    LoadCurgameRecord
 
 loc_2A82F:                              ; CODE XREF: HandleSearchCommand+9D↑j
-                mov     ax, word_32DC8
-                test    byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                test    g_lockUnlockedAccumulator, al
                 jz      short loc_2A845
                 mov     cx, 1
                 mov     bx, 7BB7h
@@ -48403,8 +48403,8 @@ loc_2A899:                              ; CODE XREF: HandleSearchCommand+E4↑j
                 call    TriggerSoundEvent
 
 loc_2A8A8:                              ; CODE XREF: HandleSearchCommand+116↑j
-                mov     ax, word_32DC8
-                or      byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                or      g_lockUnlockedAccumulator, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -48602,7 +48602,7 @@ loc_2AA28:                              ; CODE XREF: RestCharacter+75↑j
 
 loc_2AA2B:                              ; CODE XREF: RestCharacter+3C↑j
                                         ; RestCharacter+5D↑j
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
                 call    ConsumeItemChargeResource
                 call    RedrawAllPartyStatusPanels
                 call    ClearStatusPanelIfDirty
@@ -48715,7 +48715,7 @@ loc_2AAF7:                              ; CODE XREF: CastSpell+99↑j
 
 loc_2AAFA:                              ; CODE XREF: CastSpell+D7↓j
                                         ; CastSpell+E5↓j ...
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
                 call    ConsumeItemChargeResource
                 call    RedrawAllPartyStatusPanels
                 call    DrawMouseCursor
@@ -48878,7 +48878,7 @@ loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
                 call    AddToBCDCounter
                 call    ShowResourceDepletedOverlay
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -48901,7 +48901,7 @@ loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
 ; ---------------------------------------------------------------------------
 
 loc_2ACD0:                              ; CODE XREF: CastSpell+10↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_2ACEE
                 mov     ax, g_currentActionId
                 cmp     ax, _val46
@@ -48927,9 +48927,9 @@ loc_2AD02:                              ; CODE XREF: CastSpell+2A5↑j
                 call    ConsumeItemChargeResource
                 call    RedrawAllPartyStatusPanels
                 call    HandleRangedOrCombatAction
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_2AD2C
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
 
 loc_2AD2C:                              ; CODE XREF: CastSpell+2CD↑j
                 call    ApplyMapTriggerEffect
@@ -49058,9 +49058,9 @@ ShowPartyWipeScreen endp
 
 
 ResetCombatStateOnPartyWipe proc near   ; CODE XREF: ShowPartyWipeScreen:loc_2ADFC↑p
-                and     word_328C4, 0DAFFh ; Clears UI flag bits and zeroes g_combatTurnOrder (0x539E). Called once from ShowPartyWipeScreen.
-                and     word_328C8, 803h
-                and     word_328CA, 0FFFh
+                and     g_uiScratchFlags1, 0DAFFh ; Clears UI flag bits and zeroes g_combatTurnOrder (0x539E). Called once from ShowPartyWipeScreen.
+                and     g_uiScratchFlags3, 803h
+                and     g_uiScratchFlags4, 0FFFh
                 mov     es, word_2E4AA
                 mov     di, 539Eh
                 mov     cx, 38h ; '8'
@@ -49166,7 +49166,7 @@ loc_2AED3:                              ; CODE XREF: DispatchItemAbilityCommand+
 loc_2AEDF:                              ; CODE XREF: DispatchItemAbilityCommand+9D↑j
                 cmp     g_currentActionId, 249h
                 jnz     short locret_2AF2D
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_2AEF3
                 call    InstantKillActiveMonster
                 retf
@@ -49175,7 +49175,7 @@ loc_2AEDF:                              ; CODE XREF: DispatchItemAbilityCommand+
 loc_2AEF3:                              ; CODE XREF: DispatchItemAbilityCommand+7D↑j
                                         ; DispatchItemAbilityCommand+B1↑j
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -49200,7 +49200,7 @@ DispatchItemAbilityCommand endp
 
 UseLocationBoundPotion proc near        ; CODE XREF: DispatchItemAbilityCommand+14↑p
                 call    ClearStatusPanelIfDirty ; Item-icon-dispatch handler (word_32974==0x258). A potion that only works at one specific map cell (word_36CF7==0x68, word_36CF9==0x6E): there, shows 'THE POTION WORKED SUCCESSFULLY', confirms item 0x258 is present (IsItemRangeAvailable), and sets global quest flag 0x48 (SetGlobalFlag). Elsewhere: 'YOU CAN NOT USE THAT HERE!'.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -49220,7 +49220,7 @@ UseLocationBoundPotion proc near        ; CODE XREF: DispatchItemAbilityCommand+
                 mov     word_3293E, 258h
                 mov     word_32940, 258h
                 call    IsItemRangeAvailable
-                and     word_328C8, 1FFFh
+                and     g_uiScratchFlags3, 1FFFh
                 call    ConsumeItemChargeResource
                 call    DrawMouseCursor
                 mov     ax, 48h ; 'H'
@@ -49245,7 +49245,7 @@ CollectMagicOreCache proc near          ; CODE XREF: DispatchItemAbilityCommand+
                 mov     ax, 7           ; Item-icon-dispatch handler (word_32974==0x247). Shows '+5,000 MAGIC ORE', confirms item 0x247 present, adds 5000 to global material counter 0x94B7.
                 call    TriggerSoundEvent
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -49255,7 +49255,7 @@ CollectMagicOreCache proc near          ; CODE XREF: DispatchItemAbilityCommand+
                 mov     bx, 8E3Dh
                 mov     cx, 2
                 call    DrawStringColumn
-                and     word_328C8, 1FFFh
+                and     g_uiScratchFlags3, 1FFFh
                 mov     word_3293E, 247h
                 mov     word_32940, 247h
                 call    IsItemRangeAvailable
@@ -49276,7 +49276,7 @@ CollectNuoreCache proc near             ; CODE XREF: DispatchItemAbilityCommand+
                 mov     ax, 7           ; Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.
                 call    TriggerSoundEvent
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -49286,7 +49286,7 @@ CollectNuoreCache proc near             ; CODE XREF: DispatchItemAbilityCommand+
                 mov     bx, 8E30h
                 mov     cx, 2
                 call    DrawStringColumn
-                and     word_328C8, 1FFFh
+                and     g_uiScratchFlags3, 1FFFh
                 mov     word_3293E, 246h
                 mov     word_32940, 246h
                 call    IsItemRangeAvailable
@@ -49305,7 +49305,7 @@ CollectNuoreCache endp
 
 PartyMassHealAndOverheal proc near      ; CODE XREF: DispatchItemAbilityCommand+9F↑p
                 call    ClearStatusPanelIfDirty ; Item-icon-dispatch handler (word_32974==0x248). Shows '2 X HEALTH'/'2 X MAGIC': cures all ailments and sets every party member's current HP/MP to 2x their max (an overheal effect), drawing a heal icon (PrepareTrapEffectSlots id 3, same as UseHealingItem) on each via ApplyEffectAndDrawIconBar.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -49315,7 +49315,7 @@ PartyMassHealAndOverheal proc near      ; CODE XREF: DispatchItemAbilityCommand+
                 mov     bx, 8E4Eh
                 mov     cx, 2
                 call    DrawStringColumn
-                and     word_328C8, 1FFFh
+                and     g_uiScratchFlags3, 1FFFh
                 mov     word_3293E, 248h
                 mov     word_32940, 248h
                 call    IsItemRangeAvailable
@@ -49361,14 +49361,14 @@ PartyMassHealAndOverheal endp
 
 
 InstantKillActiveMonster proc near      ; CODE XREF: DispatchItemAbilityCommand+B3↑p
-                and     word_328C8, 1FFFh ; Item-icon-dispatch handler (word_32974==0x249, also gated on word_328CA bit 0x1000). Zeroes the active monster's HP ([word_32A1E+0x10]=0) directly -- an instant-kill effect.
+                and     g_uiScratchFlags3, 1FFFh ; Item-icon-dispatch handler (word_32974==0x249, also gated on word_328CA bit 0x1000). Zeroes the active monster's HP ([word_32A1E+0x10]=0) directly -- an instant-kill effect.
                 mov     word_3293E, 249h
                 mov     word_32940, 249h
                 call    IsItemRangeAvailable
                 call    ConsumeItemChargeResource
                 mov     si, g_activeCombatMonster
                 mov     word ptr [si+10h], 0
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
                 call    ShowResourceDepletedOverlay
                 retn
 InstantKillActiveMonster endp
@@ -49379,7 +49379,7 @@ InstantKillActiveMonster endp
 
 CheckQuestItemsCompleted proc near      ; CODE XREF: DispatchItemAbilityCommand+20↑p
                 call    ClearStatusPanelIfDirty ; Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -49424,7 +49424,7 @@ loc_2B1F9:                              ; CODE XREF: CheckQuestItemsCompleted+75
 loc_2B214:                              ; CODE XREF: CheckQuestItemsCompleted+90↑j
                 mov     ax, 7
                 call    TriggerSoundEvent
-                and     word_328C8, 1FFFh
+                and     g_uiScratchFlags3, 1FFFh
                 call    ConsumeItemChargeResource
                 call    DrawMouseCursor
                 mov     word_3293E, 256h
@@ -49771,8 +49771,8 @@ loc_2B5D7:                              ; CODE XREF: InitializeNewGameWorldState
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
-                or      word_328C6, 400h
-                or      word_328C6, 100h
+                or      g_uiScratchFlags2, 400h
+                or      g_uiScratchFlags2, 100h
                 retf
 InitializeNewGameWorldState endp
 
@@ -49862,7 +49862,7 @@ loc_2B6FF:                              ; CODE XREF: RunConversation+9F↑j
 
 loc_2B70C:                              ; CODE XREF: RunConversation+2C↑j
                                         ; RunConversation+89↑j ...
-                and     word_328C4, 0FFC1h
+                and     g_uiScratchFlags1, 0FFC1h
                 or      word_3295A, 800h
                 call    MarkScreenRedrawFlags
                 retf
@@ -50136,7 +50136,7 @@ ShowConversationText_800 endp
 
 ClassifyConversationSkillTier proc near ; CODE XREF: RunConversation+83↑p
                                         ; RunConversation+92↑p ...
-                and     word_328C4, 0FFC1h ; Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.
+                and     g_uiScratchFlags1, 0FFC1h ; Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.
                 mov     fontOffset, 2
                 mov     ax, 41h ; 'A'
                 mov     dx, 46h ; 'F'
@@ -50158,7 +50158,7 @@ ClassifyConversationSkillTier proc near ; CODE XREF: RunConversation+83↑p
                 mov     si, 69h ; 'i'
                 test    word ptr [bx+2], 2
                 jnz     short loc_2BA30
-                or      word_328C4, 20h
+                or      g_uiScratchFlags1, 20h
                 mov     fontOffset, 0
                 retn
 ; ---------------------------------------------------------------------------
@@ -50178,22 +50178,22 @@ loc_2BA3A:                              ; CODE XREF: ClassifyConversationSkillTi
                 jl      short loc_2BA55
                 cmp     [bx+6Eh], si
                 jl      short loc_2BA4F
-                or      word_328C4, 2
+                or      g_uiScratchFlags1, 2
                 retn
 ; ---------------------------------------------------------------------------
 
 loc_2BA4F:                              ; CODE XREF: ClassifyConversationSkillTier+73↑j
-                or      word_328C4, 4
+                or      g_uiScratchFlags1, 4
                 retn
 ; ---------------------------------------------------------------------------
 
 loc_2BA55:                              ; CODE XREF: ClassifyConversationSkillTier+6E↑j
-                or      word_328C4, 8
+                or      g_uiScratchFlags1, 8
                 retn
 ; ---------------------------------------------------------------------------
 
 loc_2BA5B:                              ; CODE XREF: ClassifyConversationSkillTier+69↑j
-                or      word_328C4, 10h
+                or      g_uiScratchFlags1, 10h
                 retn
 ClassifyConversationSkillTier endp
 
@@ -50284,7 +50284,7 @@ loc_2BADB:                              ; CODE XREF: DrawWeaponSelectIcon+3↑j
                 mov     x, ax
                 mov     word_32980, ax
                 mov     g_pictureId, bx
-                test    word_328C8, 8
+                test    g_uiScratchFlags3, 8
                 jnz     short loc_2BB02
                 mov     ax, _val15
                 cmp     bx, word_3292A
@@ -50882,7 +50882,7 @@ ShowWorldMap    endp
 
 
 CompactPartyRosterSlots proc near       ; CODE XREF: ShowWorldMap+11F↑p
-                and     word_328C4, 0FDFFh ; Cascades non-empty roster entries down to fill gaps across the 4 active slots (g_partySlotAssignment=0x95EB, plus 0x95ED/0x95EF/0x95F1) and 3 reserve slots (word_36E4D/36E4F/36E51, not otherwise documented), setting word_328C4 bit 0x200 if anything changed. Called from ShowWorldMap's exit path ('D' key or equivalent mouse click), right before it returns -- a cleanup-on-exit step.
+                and     g_uiScratchFlags1, 0FDFFh ; Cascades non-empty roster entries down to fill gaps across the 4 active slots (g_partySlotAssignment=0x95EB, plus 0x95ED/0x95EF/0x95F1) and 3 reserve slots (word_36E4D/36E4F/36E51, not otherwise documented), setting word_328C4 bit 0x200 if anything changed. Called from ShowWorldMap's exit path ('D' key or equivalent mouse click), right before it returns -- a cleanup-on-exit step.
                 mov     ax, g_partySlotAssignment
                 add     ax, word_36E4D
                 add     ax, word_36E4F
@@ -50893,7 +50893,7 @@ CompactPartyRosterSlots proc near       ; CODE XREF: ShowWorldMap+11F↑p
 ; ---------------------------------------------------------------------------
 
 loc_2BF57:                              ; CODE XREF: CompactPartyRosterSlots+18↑j
-                or      word_328C4, 200h
+                or      g_uiScratchFlags1, 200h
                 cmp     g_partySlotAssignment, 0
                 jnz     short loc_2BF7F
                 mov     si, 95EDh
@@ -51062,7 +51062,7 @@ loc_2C0AC:                              ; CODE XREF: RepairItemCommand+93↑j
                 mov     cx, 6
                 mov     bx, 8304h
                 call    ShowAbilityDescriptionColumn
-                or      word_328C8, 4000h
+                or      g_uiScratchFlags3, 4000h
                 jmp     short loc_2C0ED
 ; ---------------------------------------------------------------------------
 
@@ -51079,13 +51079,13 @@ loc_2C0D4:                              ; CODE XREF: RepairItemCommand+98↑j
                 mov     cx, 2
                 mov     bx, 8349h
                 call    ShowAbilityDescriptionColumn
-                or      word_328C8, 8000h
+                or      g_uiScratchFlags3, 8000h
 
 loc_2C0ED:                              ; CODE XREF: RepairItemCommand+B5↑j
                 call    ConsumeItemChargeResource
 
 loc_2C0F2:                              ; CODE XREF: RepairItemCommand+C2↑j
-                and     word_328C8, 3FFFh
+                and     g_uiScratchFlags3, 3FFFh
                 call    DrawMouseCursor
                 retf
 RepairItemCommand endp
@@ -51105,7 +51105,7 @@ seg124          segment byte public 'CODE' use16
 
 ApplyEncodedItemEffect proc far         ; CODE XREF: RunAlchemyScreen+415↑P
                                         ; InteractWithContainer+8A↓P
-                or      word_328C8, 20h ; Bitmask-switch effect dispatcher (word_33302/word_33306, ~19 distinct effect types, one handled per call) applying a spell's/container's coded magical effect. Confirmed via InteractWithContainer: called right before ConsumeItemChargeResource, i.e. 'apply the effect, then spend the charge'. Covers single-target and whole-party icon-bar status effects plus other effect types (world-state timers, etc.) not individually traced. Called from RunAlchemyScreen and InteractWithContainer.
+                or      g_uiScratchFlags3, 20h ; Bitmask-switch effect dispatcher (word_33302/word_33306, ~19 distinct effect types, one handled per call) applying a spell's/container's coded magical effect. Confirmed via InteractWithContainer: called right before ConsumeItemChargeResource, i.e. 'apply the effect, then spend the charge'. Covers single-target and whole-party icon-bar status effects plus other effect types (world-state timers, etc.) not individually traced. Called from RunAlchemyScreen and InteractWithContainer.
                 test    word_33302, 8000h
                 jz      short loc_2C10E
                 jmp     loc_2C1CF
@@ -51490,7 +51490,7 @@ loc_2C400:                              ; CODE XREF: ApplyEncodedItemEffect+202�
                 mov     ax, 3
                 call    TriggerSoundEvent
                 call    ClearStatusPanelIfDirty
-                or      word_328C4, 100h
+                or      g_uiScratchFlags1, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 59h ; 'Y'
@@ -51597,7 +51597,7 @@ loc_2C4F5:                              ; CODE XREF: ApplyEncodedItemEffect+400�
 ; ---------------------------------------------------------------------------
 
 loc_2C502:                              ; CODE XREF: ApplyEncodedItemEffect+3FA↑j
-                or      word_328CA, 1000h
+                or      g_uiScratchFlags4, 1000h
                 call    DrawAndCacheStatusIcon
                 push    si
                 mov     di, 525Ch
@@ -51615,7 +51615,7 @@ loc_2C502:                              ; CODE XREF: ApplyEncodedItemEffect+3FA�
                 mov     word ptr es:[bx+4], 0
                 mov     ax, [si+92h]
                 and     ax, 0E000h
-                or      word_328CA, ax
+                or      g_uiScratchFlags4, ax
 
 loc_2C543:                              ; CODE XREF: ApplyEncodedItemEffect+3F5↑j
                                         ; ApplyEncodedItemEffect+402↑j
@@ -51686,7 +51686,7 @@ loc_2C5D9:                              ; CODE XREF: ApplyEncodedItemEffect+44�
                 mov     si, g_currentPartyRecord
                 mov     ax, word_332FA
                 add     si, ax
-                test    word_328C4, 80h
+                test    g_uiScratchFlags1, 80h
                 jz      short loc_2C619
                 mov     ax, g_partyWorldX
                 mov     [si], ax
@@ -51769,8 +51769,8 @@ loc_2C6BD:                              ; CODE XREF: ApplyEncodedItemEffect+5B3�
                                         ; ApplyEncodedItemEffect+5BA↑j
                 mov     ax, 3Bh ; ';'
                 call    TriggerSoundEvent
-                mov     ax, word_32DC8
-                or      byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                or      g_lockUnlockedAccumulator, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -51786,9 +51786,9 @@ loc_2C6BD:                              ; CODE XREF: ApplyEncodedItemEffect+5B3�
 ; ---------------------------------------------------------------------------
 
 loc_2C703:                              ; CODE XREF: ApplyEncodedItemEffect+5A↑j
-                or      word_328C4, 2
+                or      g_uiScratchFlags1, 2
                 call    RestPartyAndAdvanceClock
-                and     word_328C4, 0FFFDh
+                and     g_uiScratchFlags1, 0FFFDh
                 mov     ax, 14h         ; ticks
                 call    wait
                 jmp     loc_2C1C9
@@ -51833,8 +51833,8 @@ loc_2C777:                              ; CODE XREF: ApplyEncodedItemEffect+66D�
                                         ; ApplyEncodedItemEffect+674↑j
                 mov     ax, 2Ah ; '*'
                 call    TriggerSoundEvent
-                mov     ax, word_32DC8
-                or      byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                or      g_lockUnlockedAccumulator, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -51903,8 +51903,8 @@ loc_2C836:                              ; CODE XREF: ApplyEncodedItemEffect+72E�
 
 loc_2C83C:                              ; CODE XREF: ApplyEncodedItemEffect+736↑j
                 call    ShowAbilityDescriptionColumn
-                mov     ax, word_32DC8
-                or      byte_32DCD, al
+                mov     ax, g_lockUnlockedMask
+                or      g_lockUnlockedAccumulator, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -52005,9 +52005,9 @@ loc_2C92A:                              ; CODE XREF: ApplyEncodedItemEffect+91�
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     g_pictureCategory, 10h
-                or      word_328C8, 8
+                or      g_uiScratchFlags3, 8
                 mov     ax, 36h ; '6'
-                test    word_328CA, 80h
+                test    g_uiScratchFlags4, 80h
                 jnz     short loc_2C989
                 mov     ax, 0
                 mov     dx, g_selectedPartySlotPtr
@@ -52023,24 +52023,24 @@ loc_2C92A:                              ; CODE XREF: ApplyEncodedItemEffect+91�
 
 loc_2C989:                              ; CODE XREF: ApplyEncodedItemEffect+867↑j
                                         ; ApplyEncodedItemEffect+874↑j ...
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 mov     bx, word_332F0
                 or      bx, bx
                 jz      short loc_2C9A7
                 mov     g_blitMaskPtr, 5A90h
                 mov     g_blitMaskLen, 6
-                or      word_328C6, 1
+                or      g_uiScratchFlags2, 1
 
 loc_2C9A7:                              ; CODE XREF: ApplyEncodedItemEffect+896↑j
                 mov     bx, word_332E0
                 call    DrawWeaponSelectIcon
-                and     word_328C6, 0FFFEh
-                and     word_328C8, 0FFF7h
+                and     g_uiScratchFlags2, 0FFFEh
+                and     g_uiScratchFlags3, 0FFF7h
                 call    SaveActionIconPanelToEMS
                 call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    DrawMinimap
-                and     word_328C4, 0FFBFh
+                and     g_uiScratchFlags1, 0FFBFh
                 call    SaveCorridorBackgroundToEMS
                 mov     g_viewportRowDepth, 31h ; '1'
                 call    AnimateProjectileStep
@@ -52055,7 +52055,7 @@ loc_2C9A7:                              ; CODE XREF: ApplyEncodedItemEffect+896�
 loc_2C9FD:                              ; CODE XREF: ApplyEncodedItemEffect+8FA↑j
                                         ; ApplyEncodedItemEffect+A97↓j
                 mov     g_viewportRowDepth, 2Bh ; '+'
-                test    word_328C4, 40h
+                test    g_uiScratchFlags1, 40h
                 jnz     short loc_2CA10
                 call    AnimateProjectileStep
 
@@ -52066,7 +52066,7 @@ loc_2CA10:                              ; CODE XREF: ApplyEncodedItemEffect+90B�
 
 loc_2CA1C:                              ; CODE XREF: ApplyEncodedItemEffect+AA1↓j
                 mov     g_viewportRowDepth, 28h ; '('
-                test    word_328C4, 40h
+                test    g_uiScratchFlags1, 40h
                 jnz     short loc_2CA2F
                 call    AnimateProjectileStep
 
@@ -52077,7 +52077,7 @@ loc_2CA2F:                              ; CODE XREF: ApplyEncodedItemEffect+92A�
 
 loc_2CA3B:                              ; CODE XREF: ApplyEncodedItemEffect+AAB↓j
                 mov     g_viewportRowDepth, 24h ; '$'
-                test    word_328C4, 40h
+                test    g_uiScratchFlags1, 40h
                 jnz     short loc_2CA4E
                 call    AnimateProjectileStep
 
@@ -52094,7 +52094,7 @@ loc_2CA5A:                              ; CODE XREF: ApplyEncodedItemEffect+AB5�
 
 loc_2CA65:                              ; CODE XREF: ApplyEncodedItemEffect+962↑j
                 mov     g_viewportRowDepth, 19h
-                test    word_328C4, 40h
+                test    g_uiScratchFlags1, 40h
                 jnz     short loc_2CA78
                 call    AnimateProjectileStep
 
@@ -52198,7 +52198,7 @@ loc_2CB4F:                              ; CODE XREF: ApplyEncodedItemEffect+9CA�
 ; ---------------------------------------------------------------------------
 
 loc_2CB63:                              ; CODE XREF: ApplyEncodedItemEffect+A55↑j
-                or      word_328C4, 40h
+                or      g_uiScratchFlags1, 40h
 
 loc_2CB68:                              ; CODE XREF: ApplyEncodedItemEffect+A63↑j
                 push    g_viewportRowDepth
@@ -52235,7 +52235,7 @@ loc_2CBAC:                              ; CODE XREF: ApplyEncodedItemEffect+AA9�
 
 loc_2CBB6:                              ; CODE XREF: ApplyEncodedItemEffect+964↑j
                                         ; ApplyEncodedItemEffect+986↑j ...
-                and     word_328C4, 0FFBFh
+                and     g_uiScratchFlags1, 0FFBFh
                 mov     word_3293E, 0
                 mov     si, 51B6h
                 call    IsBCDCounterAtLeast
@@ -52326,9 +52326,9 @@ loc_2CC77:                              ; CODE XREF: ApplyEncodedItemEffect+B67�
 loc_2CCB4:                              ; CODE XREF: ApplyEncodedItemEffect+BE1↓j
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                or      word_328C6, 1
+                or      g_uiScratchFlags2, 1
                 call    DrawViewportSprite
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 call    DrawMouseCursor
                 call    RestoreCorridorBackgroundFromEMS
                 mov     ax, 1           ; ticks
@@ -52517,7 +52517,7 @@ loc_2CEE7:                              ; CODE XREF: ApplyEncodedItemEffect+9C�
 
 loc_2CEED:                              ; CODE XREF: ApplyEncodedItemEffect+DE7↑j
                                         ; ApplyEncodedItemEffect+1036↓j ...
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jz      short loc_2CF09
                 mov     cx, 3
                 mov     di, 51C0h
@@ -53029,9 +53029,9 @@ ApplyDamageToMapMonster endp
 
 AnimateEffectFrame proc near            ; CODE XREF: ApplyEncodedItemEffect+C2B↑p
                                         ; ApplyEncodedItemEffect+C3B↑p ...
-                or      word_328C6, 1   ; One animation frame (same shape as AnimateProjectileStep, but word_328C6 bit 1 and a 5-tick wait): draws via DrawViewportSprite, redraws cursor, restores background via RestoreCorridorBackgroundFromEMS. Called from sub_2C0FE (a large unnamed dispatcher).
+                or      g_uiScratchFlags2, 1 ; One animation frame (same shape as AnimateProjectileStep, but word_328C6 bit 1 and a 5-tick wait): draws via DrawViewportSprite, redraws cursor, restores background via RestoreCorridorBackgroundFromEMS. Called from sub_2C0FE (a large unnamed dispatcher).
                 call    DrawViewportSprite
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 call    DrawMouseCursor
                 call    RestoreCorridorBackgroundFromEMS
                 mov     ax, 5           ; ticks
@@ -53045,11 +53045,11 @@ AnimateEffectFrame endp
 
 DrawAnimationFrameAndAdvance proc near  ; CODE XREF: ApplyEncodedItemEffect+FF7↑p
                                         ; ApplyEncodedItemEffect+1003↑p ...
-                or      word_328C6, 1   ; Draws a picture (ax=id, bx=x) guarded by word_328C6 bit 0, then returns the next frame index (ax+1, wrapping to word_332EC once it reaches word_332EC+word_332EE). Called from the still-unnamed combat dispatcher sub_2C0FE.
+                or      g_uiScratchFlags2, 1 ; Draws a picture (ax=id, bx=x) guarded by word_328C6 bit 0, then returns the next frame index (ax+1, wrapping to word_332EC once it reaches word_332EC+word_332EE). Called from the still-unnamed combat dispatcher sub_2C0FE.
                 mov     g_pictureId, ax
                 mov     x, bx
                 call    DrawPicture
-                and     word_328C6, 0FFFEh
+                and     g_uiScratchFlags2, 0FFFEh
                 mov     ax, g_pictureId
                 inc     ax
                 mov     bx, word_332EC
@@ -53165,7 +53165,7 @@ ApplyAttackToTarget proc near           ; CODE XREF: ApplyEncodedItemEffect+798�
                                         ; ApplyEncodedItemEffect+7E9↑p ...
                 mov     g_stagedAttackDamage, 0 ; Resolves base damage (TryResolveAttackAgainstTarget, or a direct word_332E8/[di+0x5A]/2 path), filters it through ApplyTargetResistancesToAttack, then -- if any damage or status flags survived -- commits to the target: [di+0xC]|=3, [di+0x10]-=damage, ORs surviving status flags into [di+0xC] (and [di+0x96] if word_33300 bit 0x200), overwrites [di+0x1C]/[di+0x1E] with word_332EE/word_332FC, and conditionally clears [di+0xC] bit 0. Called twice from sub_2C0FE.
                 mov     g_stagedAttackStatusFlags, 0
-                test    word_328CA, 80h
+                test    g_uiScratchFlags4, 80h
                 jz      short loc_2D4E2
                 test    word_33306, 100h
                 jz      short loc_2D4DA
@@ -53481,7 +53481,7 @@ loc_2D682:                              ; CODE XREF: InteractWithContainer+23↑
 
 loc_2D696:                              ; CODE XREF: InteractWithContainer+16↑j
                                         ; InteractWithContainer+2B↑j
-                test    word_328CA, 1000h
+                test    g_uiScratchFlags4, 1000h
                 jnz     short loc_2D6B1
                 test    word_33302, 3000h
                 jz      short loc_2D6B9
@@ -53512,10 +53512,10 @@ loc_2D6D3:                              ; CODE XREF: InteractWithContainer+74↑
                 mov     word_33318, ax
 
 loc_2D6DE:                              ; CODE XREF: InteractWithContainer+65↑j
-                or      word_328CA, 80h
+                or      g_uiScratchFlags4, 80h
                 call    ApplyEncodedItemEffect
-                and     word_328CA, 0FF7Fh
-                or      word_328C8, 20h
+                and     g_uiScratchFlags4, 0FF7Fh
+                or      g_uiScratchFlags3, 20h
                 call    ConsumeItemChargeResource
                 jmp     loc_2D78A
 ; ---------------------------------------------------------------------------
@@ -53556,7 +53556,7 @@ loc_2D73C:                              ; CODE XREF: InteractWithContainer+D9↑
                 mov     [si+8], ax
                 mov     [si+0Ah], bx
                 call    ApplyEffectAndDrawIconBar
-                or      word_328C8, 20h
+                or      g_uiScratchFlags3, 20h
                 call    ConsumeItemChargeResource
 
 loc_2D77A:                              ; CODE XREF: InteractWithContainer+25↑j
@@ -56629,17 +56629,17 @@ word_2E392      dw 0                    ; DATA XREF: UseItemType_800+E8↑w
                 db    0
                 db    0
                 db    0
-word_2E3EA      dw 0                    ; DATA XREF: ShowClueBook+96↑w
+g_clueEntryLowerBound dw 0              ; DATA XREF: ShowClueBook+96↑w
                                         ; ShowClueBook+A5↑w ...
-word_2E3EC      dw 0                    ; DATA XREF: DrawClueEntryList+7↑r
+g_clueEntryVisibleRowCount dw 0         ; DATA XREF: DrawClueEntryList+7↑r
                                         ; ShowClueCategoryEntries:loc_12E8A↑w ...
 g_clueEntrySelectedIndex dw 0           ; DATA XREF: ShowClueBook+1F3↑r
                                         ; ShowClueBook:loc_10EAF↑r ...
 g_clueEntryScrollOffset dw 0            ; DATA XREF: RunClueEntryMenu+95↑r
                                         ; RunClueEntryMenu+D7↑r ...
-word_2E3F2      dw 0                    ; DATA XREF: DrawClueEntryList+9A↑r
+g_clueEntryPageUpperBound dw 0          ; DATA XREF: DrawClueEntryList+9A↑r
                                         ; HandleClueEntryRowScrollInput+3F↑r ...
-word_2E3F4      dw 0                    ; DATA XREF: DrawClueEntryList:loc_12D2C↑r
+g_clueEntryTotalCount dw 0              ; DATA XREF: DrawClueEntryList:loc_12D2C↑r
                                         ; ShowClueCategoryEntries+4B↑w ...
 g_clueBookCategory dw 0                 ; DATA XREF: ShowClueBook+7A↑w
                                         ; ShowClueBook+112↑w ...
@@ -74234,15 +74234,19 @@ word_328C0      dw 0                    ; DATA XREF: HandlePortraitClick+23↑w
                                         ; HandlePortraitClick+3C↑w ...
 word_328C2      dw 0                    ; DATA XREF: RestPartyAndAdvanceClock+245↑w
                                         ; ApplyRestEffectsToCharacter+8A↑r ...
-word_328C4      dw 0                    ; DATA XREF: start+1F↑w
+g_uiScratchFlags1 dw 0                  ; DATA XREF: start+1F↑w
                                         ; start:loc_1007D↑r ...
-word_328C6      dw 0                    ; DATA XREF: start+536↑r
+                                        ; General-purpose UI/game-state scratch flags word, reused by many unrelated, mutually-exclusive-screen systems -- not one coherent mode register. Confirmed bits: 0x1=full local-area-map render toggle (HandleGameCommand 0x1E / RunMapEditorScreen); 0x2/0x4/0x8/0x10/0x20=DrawIndentedTextColumn wrap-mode selector, the SAME bits also gate RunGameDialog's pause-menu SAVE/LOAD/NEWGAME/DOS/ANIMATION label suppression and (separately) a 4-tier NPC conversation response-detail gate; 0x100=widespread 'redraw needed' dirty flag; 0x200=roster-cleanup 'something changed' flag (ShowWorldMap exit); 0x400='tick ready', a periodic timer/vsync flag consumed by many independent busy-wait call sites (ShowIntroPicture, character-creation intro, WaitForTickFlagAndClear, debug overlays); 0x800/0x1000 (tested together as 0x1800)=ailment icon-bar periodic-timer gate; 0x2000=debug HUD toggle; 0x8000=command-line /P switch. Other bit combinations are OR'd/AND'd at additional call sites not individually traced.
+g_uiScratchFlags2 dw 0                  ; DATA XREF: start+536↑r
                                         ; start+684↑w ...
-word_328C8      dw 0                    ; DATA XREF: start:loc_1005A↑r
+                                        ; General-purpose UI scratch flags word, mostly party-inventory/shop-screen action and portrait-dirty bits but NOT exclusively -- e.g. bit 0 gates DrawPicture's masked-blit-mask-expand prep, unrelated to its shop bits. Confirmed bits: 0x1=masked-blit toggle (DrawPicture and friends); 0x2=an AnimateProjectileStep variant selector in ApplyEncodedItemEffect; 0x4=RunRepairItemScreen action mode (gates TryRepairItemForGold in the inventory main loop); 0x8=RunEnhanceItemScreen action mode (gates TryEnhanceItemForGold); 0x10=RunSellItemScreen action mode (gates TrySellItemForGold); 0x20=UseItem's key-item dispatch (item type value doubles as a lock/door id) and (tested with 0x80 as 0x1Ch) an item-use context hint; 0x40=BuildItemUseMessage 'could afford this special cost' success flag; 0x200=shop-has-nothing-to-show flag; 0x800/0x1000/0x2000/0x4000 (tested together as 0x7800)=portrait-dirty bits gating a cached-EMS background restore. Other bit combinations are OR'd/AND'd at additional call sites not individually trace
+g_uiScratchFlags3 dw 0                  ; DATA XREF: start:loc_1005A↑r
                                         ; start:loc_10696↑r ...
-word_328CA      dw 0                    ; DATA XREF: start+25↑w
+                                        ; General-purpose scratch flags word spanning combat, item-use, palette-fade, and audio-setting systems -- not one coherent mode register. Confirmed bits: 0x1=command-line /NOS (no sound) switch; 0x2=command-line /NOM (no music) switch; 0x10=dungeon-movement-input fast-exit gate; 0x20=ApplyEncodedItemEffect's bitmask-switch item/spell effect dispatcher entry; 0x100=combat-action mode selector (set = ranged/thrown-weapon attack request, clear = spell/ability cast); 0x800=palette-fade-in-progress flag, reused across ShowIntroPicture/RunCharacterCreationSelectionStep/the credits intro; 0x2000/0x4000/0x8000=ConsumeItemChargeResource's caller-configured consumption-mode bits (recharge+reset-wear / full discard / swap-effect-then-discard). Other bit combinations are OR'd/AND'd at additional call sites not individually traced.
+g_uiScratchFlags4 dw 0                  ; DATA XREF: start+25↑w
                                         ; start+2A↑w ...
-word_328CC      dw 0                    ; DATA XREF: ShowClueBook+5A↑w
+                                        ; General-purpose scratch flags word. Confirmed bits: 0x2='registered version' flag (unconditionally set at boot; the shareware-demo boundary check it guards is dead code in this binary); 0x4=local-area-map cell draw mode (TryInteractAtPosition special-object check vs. plain stored tile); 0x400/0x800=clue-book/alchemy-screen pagination scroll-arrow indicators; 0x1000=the widely-read 'in formal (row-based) combat' flag, gating the combat-action dispatcher's melee-vs-ranged/ability branch, the compass HUD, the unlock-door handler, and a debug HUD overlay. Other bit combinations are OR'd/AND'd at additional call sites not individually traced.
+g_clueBookNavFlags dw 0                 ; DATA XREF: ShowClueBook+5A↑w
                                         ; ShowClueBook:loc_10CB5↑w ...
 word_328CE      dw 0                    ; DATA XREF: AnimatePaletteCycle+12↑r
                                         ; AnimatePaletteCycle+EF↑w ...
@@ -75503,17 +75507,17 @@ word_32DC0      dw 0                    ; DATA XREF: ProcessMonsterAttackTurn+BF
                                         ; ProcessMonsterAttackTurn+18D↑w ...
 word_32DC2      dw 0                    ; DATA XREF: LoadLockState+95↑w
                                         ; LoadCurgameRecord+81↑w ...
-word_32DC4      dw 0                    ; DATA XREF: start:loc_106EF↑w
+g_currentToolbarIconPtr dw 0            ; DATA XREF: start:loc_106EF↑w
                                         ; start+6FC↑w ...
 word_32DC6      dw 0                    ; DATA XREF: LoadLockState+A↑w
                                         ; LoadLockState+2A↑r ...
-word_32DC8      dw 0                    ; DATA XREF: start:loc_101B8↑r
+g_lockUnlockedMask dw 0                 ; DATA XREF: start:loc_101B8↑r
                                         ; start:loc_10248↑r ...
 word_32DCA      dw 0                    ; DATA XREF: LoadLockState+7↑w
                                         ; RunGameDialog+53B↑w ...
 byte_32DCC      db 0                    ; DATA XREF: HandleShopCatalogSlotClick:loc_170A3↑w
                                         ; HandleShopCatalogSlotClick:loc_17100↑w ...
-byte_32DCD      db 0                    ; DATA XREF: start+1BB↑w
+g_lockUnlockedAccumulator db 0          ; DATA XREF: start+1BB↑w
                                         ; start+24B↑w ...
 word_32DCE      dw 0                    ; DATA XREF: RunShopScreen+24C↑r
                                         ; ShowLockStatus+38↑r ...
