@@ -3998,6 +3998,17 @@ generic typed-integer prompt built on `EditTextField`.
 
 507 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ClassifyItemServiceTier
+
+Named `sub_1AE9D` -> `ClassifyItemServiceTier`, called 6 times from
+two other unnamed functions: loads an item and returns one of 3 tier
+codes (or a 4th "wrong item type") based on its flags — plausibly
+gating which service an item qualifies for, alongside the shop
+cluster's `IsItemEligibleForEnhance`/`IsItemEligibleForRepair`, but not
+confirmed.
+
+508 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

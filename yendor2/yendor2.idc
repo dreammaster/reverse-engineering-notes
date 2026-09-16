@@ -3858,7 +3858,9 @@ static Bytes_1(void) {
 	create_insn	(0X1AE4C);
 	create_insn	(x=0X1AE59);
 	op_hex		(x,	1);
+	set_cmt	(0X1AE9D,	"Loads an item and classifies it via errorCode: 3 if neither [+0xC] bit 0xC000 nor 0x800 is set (wrong item type), else 2 or 1 based on a secondary [+2] flag pair. A 3-tier item-compatibility classifier; exact tier meanings and the callers' (sub_1AC80/sub_1ACD7) purpose aren't confirmed.",	0);
 	create_insn	(0X1AE9D);
+	set_name	(0X1AE9D,	"ClassifyItemServiceTier");
 	create_insn	(x=0X1AEAB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AEB2);
@@ -5509,6 +5511,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X20E54);
 	op_hex		(x,	1);
 	set_name	(0X20E54,	"DrawMonsterAndUpdateAttackState");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X20E5C);
 	op_hex		(x,	1);
 	create_insn	(x=0X20E7B);
@@ -5535,15 +5546,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X20F96);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X20FA6);
 	op_hex		(x,	1);
 	create_insn	(0X20FAB);
@@ -7521,13 +7523,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X283E5);
 	op_hex		(x,	1);
-	set_cmt	(0X283E7,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
-	create_insn	(x=0X283E7);
-	op_hex		(x,	0);
-	set_cmt	(0X283EA,	"Top-level sound/music driver init, called from InitGame: bails early if already initialized (g_driverStateFlags bits 0xC000), else conditionally runs DetectSoundDriver and sub_28564 gated on word_328C8 bits 1/0 (plausibly sound/music disable flags).",	0);
-	create_insn	(x=0X283EA);
-	op_hex		(x,	1);
-	set_name	(0X283EA,	"InitSoundSystem");
 }
 
 //------------------------------------------------------------------------
@@ -7537,6 +7532,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X283E7,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
+	create_insn	(x=0X283E7);
+	op_hex		(x,	0);
+	set_cmt	(0X283EA,	"Top-level sound/music driver init, called from InitGame: bails early if already initialized (g_driverStateFlags bits 0xC000), else conditionally runs DetectSoundDriver and sub_28564 gated on word_328C8 bits 1/0 (plausibly sound/music disable flags).",	0);
+	create_insn	(x=0X283EA);
+	op_hex		(x,	1);
+	set_name	(0X283EA,	"InitSoundSystem");
 	create_insn	(x=0X283F2);
 	op_hex		(x,	1);
 	create_insn	(x=0X283FB);
@@ -10477,6 +10479,15 @@ static Bytes_3(void) {
 	set_name	(0X35224,	"aMage");
 	create_strlit	(0X3522F,	0XB);
 	set_name	(0X3522F,	"aDruid");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3523A,	0XB);
 	set_name	(0X3523A,	"aMarksman");
 	create_strlit	(0X35245,	0XE);
@@ -10497,15 +10508,6 @@ static Bytes_3(void) {
 	set_name	(0X35288,	"aTakeUpToFour");
 	create_strlit	(0X35298,	0X6);
 	set_name	(0X35298,	"aItems");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3529E,	0XF);
 	set_name	(0X3529E,	"aNameCharacter");
 	create_strlit	(0X352AD,	0XF);

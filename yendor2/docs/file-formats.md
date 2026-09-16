@@ -1294,7 +1294,12 @@ eligibility check is `IsItemEligibleForRepair` (a location/item
 flag-pair match); `TryEnhanceItemForGold`'s is `IsItemEligibleForEnhance`
 (a location-selected item field checked against a range table at
 `0xBCE`). Both have other, untraced callers beyond this Space-bar
-cluster. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
+cluster. A related classifier: `ClassifyItemServiceTier` (was
+`sub_1AE9D`, called 6 times from two other unnamed functions) loads an
+item and, based on its `[+0xC]`/`[+2]` flags, returns one of 3 tier
+codes (or a 4th "wrong item type" code) — plausibly gating which
+service (repair/enhance-style) the item qualifies for, but not
+confirmed. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
 `ShowInsufficientGoldMessage`. The whole sell-item screen is entered
 via `RunSellItemScreen` (from `UseItem`, when the used item's `[+0xE]`
 flags have bit `0x4000` set). A sibling branch, gated on the item's

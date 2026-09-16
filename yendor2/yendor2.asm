@@ -19182,7 +19182,7 @@ sub_1AC80       proc far                ; CODE XREF: ApplyMapTriggerEffect:loc_1
                 mov     word_32906, bx
                 mov     ax, [bx+di]
                 mov     word_3290A, ax
-                call    sub_1AE9D
+                call    ClassifyItemServiceTier
                 cmp     errorCode, 0
                 jz      short loc_1AC94
                 retf
@@ -19237,7 +19237,7 @@ sub_1ACD7       proc far                ; CODE XREF: HandleDungeonInput+337↑P
 
 loc_1ACED:                              ; CODE XREF: sub_1ACD7+11↑j
                 mov     ax, [bx+13Ah]
-                call    sub_1AE9D
+                call    ClassifyItemServiceTier
                 mov     bx, word_328D4
                 mov     ax, 13Ah
                 cmp     errorCode, 0
@@ -19258,7 +19258,7 @@ loc_1AD12:                              ; CODE XREF: sub_1ACD7+A↑j
                 cmp     word ptr [bx+142h], 0
                 jz      short loc_1AD85
                 mov     ax, [bx+142h]
-                call    sub_1AE9D
+                call    ClassifyItemServiceTier
                 mov     bx, word_328D4
                 mov     ax, 142h
                 cmp     errorCode, 0
@@ -19279,7 +19279,7 @@ loc_1AD42:                              ; CODE XREF: sub_1ACD7+3E↑j
                 cmp     word ptr [bx+146h], 0
                 jz      short loc_1AD85
                 mov     ax, [bx+146h]
-                call    sub_1AE9D
+                call    ClassifyItemServiceTier
                 mov     bx, word_328D4
                 mov     ax, 146h
                 cmp     errorCode, 0
@@ -19323,7 +19323,7 @@ loc_1AD8E:                              ; CODE XREF: sub_1ACD7+2B↑j
 loc_1AD95:                              ; CODE XREF: sub_1ACD7+AC↑j
                 mov     word_32904, bx
                 mov     word_3290A, ax
-                call    sub_1AE9D
+                call    ClassifyItemServiceTier
                 cmp     errorCode, 0
                 jz      short loc_1ADAB
                 mov     ax, word_3290A
@@ -19392,7 +19392,7 @@ sub_1ACD7       endp
 
 sub_1AE23       proc far                ; CODE XREF: sub_16BF6+139↑P
                 push    ax
-                call    sub_1AE9D
+                call    ClassifyItemServiceTier
                 cmp     errorCode, 0
                 jz      short loc_1AE33
                 mov     bx, 0
@@ -19457,9 +19457,9 @@ sub_1AE4C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AE9D       proc near               ; CODE XREF: sub_1AC80+9↑p
+ClassifyItemServiceTier proc near       ; CODE XREF: sub_1AC80+9↑p
                                         ; sub_1ACD7+1A↑p ...
-                mov     errorCode, 0
+                mov     errorCode, 0    ; Loads an item and classifies it via errorCode: 3 if neither [+0xC] bit 0xC000 nor 0x800 is set (wrong item type), else 2 or 1 based on a secondary [+2] flag pair. A 3-tier item-compatibility classifier; exact tier meanings and the callers' (sub_1AC80/sub_1ACD7) purpose aren't confirmed.
                 mov     word_3290A, ax
                 call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 0C000h
@@ -19470,7 +19470,7 @@ sub_1AE9D       proc near               ; CODE XREF: sub_1AC80+9↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1AEC0:                              ; CODE XREF: sub_1AE9D+13↑j
+loc_1AEC0:                              ; CODE XREF: ClassifyItemServiceTier+13↑j
                 mov     bx, ax
                 test    word ptr [bx+2], 100h
                 jnz     short loc_1AEE4
@@ -19479,7 +19479,7 @@ loc_1AEC0:                              ; CODE XREF: sub_1AE9D+13↑j
                 jmp     short loc_1AEF2
 ; ---------------------------------------------------------------------------
 
-loc_1AED2:                              ; CODE XREF: sub_1AE9D+1A↑j
+loc_1AED2:                              ; CODE XREF: ClassifyItemServiceTier+1A↑j
                 mov     bx, ax
                 test    word ptr [bx+2], 40h
                 jnz     short loc_1AEE4
@@ -19488,21 +19488,21 @@ loc_1AED2:                              ; CODE XREF: sub_1AE9D+1A↑j
                 jmp     short loc_1AEF2
 ; ---------------------------------------------------------------------------
 
-loc_1AEE4:                              ; CODE XREF: sub_1AE9D+2A↑j
-                                        ; sub_1AE9D+3C↑j
+loc_1AEE4:                              ; CODE XREF: ClassifyItemServiceTier+2A↑j
+                                        ; ClassifyItemServiceTier+3C↑j
                 mov     errorCode, 2
                 jmp     short loc_1AEF2
 ; ---------------------------------------------------------------------------
 
-loc_1AEEC:                              ; CODE XREF: sub_1AE9D+31↑j
-                                        ; sub_1AE9D+43↑j
+loc_1AEEC:                              ; CODE XREF: ClassifyItemServiceTier+31↑j
+                                        ; ClassifyItemServiceTier+43↑j
                 mov     errorCode, 1
 
-loc_1AEF2:                              ; CODE XREF: sub_1AE9D+33↑j
-                                        ; sub_1AE9D+45↑j ...
+loc_1AEF2:                              ; CODE XREF: ClassifyItemServiceTier+33↑j
+                                        ; ClassifyItemServiceTier+45↑j ...
                 mov     bx, word_2E546
                 retn
-sub_1AE9D       endp
+ClassifyItemServiceTier endp
 
 seg040          ends
 
