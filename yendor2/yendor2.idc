@@ -1377,8 +1377,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X11A03);
 	op_hex		(x,	1);
+	set_cmt	(0X11A10,	"The game's studio/publisher credits intro cinematic: music, several picture reveals, multiple DrawShadowedTextAlt credit panels, sound cues, and 2 effect helpers (PlayCreditsWipeAnimation, PlayCreditsFrameAnimation), before loading a new master palette and finishing with a 3-part wipe/transition. Called once from `start`.",	0);
 	create_insn	(x=0X11A10);
 	op_hex		(x,	1);
+	set_name	(0X11A10,	"PlayStudioCreditsIntro");
 	create_insn	(x=0X11A16);
 	op_hex		(x,	1);
 	set_cmt	(0X11A1C,	"ticks",	0);
@@ -1410,8 +1412,12 @@ static Bytes_0(void) {
 	set_cmt	(0X11D58,	"Byte-for-byte duplicate of ClearOffscreenBuffer (sub_152E1). Called from sub_11A10.",	0);
 	create_insn	(0X11D58);
 	set_name	(0X11D58,	"ClearOffscreenBufferAlt");
+	set_cmt	(0X11D66,	"Progressive reveal/wipe effect: loops 0x41 times drawing two overlapping pictures at a shrinking y while a reveal-height counter grows by 3, gated by a tick-driven busy-wait each iteration. Called once from PlayStudioCreditsIntro.",	0);
 	create_insn	(0X11D66);
+	set_name	(0X11D66,	"PlayCreditsWipeAnimation");
+	set_cmt	(0X11DE2,	"Plays a 14-frame picture sequence (ids 0x22-0x2F), 2 ticks per frame -- a short animated flourish. Called once from PlayStudioCreditsIntro.",	0);
 	create_insn	(0X11DE2);
+	set_name	(0X11DE2,	"PlayCreditsFrameAnimation");
 	set_cmt	(0X11E11,	"ticks",	0);
 	set_cmt	(0X11E1C,	"Waits for driver idle (via TryPlaySoundCueAlt(cx=0xFFFF), always a no-op cue but still runs its idle-wait), triggers sound event 0x47, waits again, triggers event 0x48. A two-part sound cue. Called from sub_11A10.",	0);
 	create_insn	(0X11E1C);
@@ -2969,15 +2975,6 @@ static Bytes_0(void) {
 	set_cmt	(0X17A8D,	"Core 'pay and receive' step of a shop purchase: CompareBCD4/SubBCD4(g_partyGold, [0xB30]) -- bails if unaffordable, shows ShowResourceDepletedOverlay on an exact-drain special case -- then stages the acquired item (word_31946/3194A/3194C) the same way TrySellItemForGold/TryEnhanceItemForGold/TryRepairItemForGold stage theirs. Called from sub_17032, a shop-catalog click handler (main input loop, word_328C6 bit 0x200).",	0);
 	create_insn	(0X17A8D);
 	set_name	(0X17A8D,	"PayGoldAndAcquireItem");
-	create_insn	(x=0X17ABC);
-	op_hex		(x,	1);
-	create_insn	(0X17AC5);
-	set_cmt	(0X17B09,	"Credits gold (AddBCD4(g_partyGold, [0xB30])) instead of spending it, clears the held/staged item, refreshes the material/gold HUD -- a 'sell this catalog item back' action, the click counterpart to TrySellItemForGold. Called from sub_17032.",	0);
-	create_insn	(0X17B09);
-	set_name	(0X17B09,	"SellClickedCatalogItem");
-	set_cmt	(0X17B67,	"Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.",	0);
-	create_insn	(0X17B67);
-	set_name	(0X17B67,	"HitTestCatalogSlot");
 }
 
 //------------------------------------------------------------------------
@@ -2987,6 +2984,15 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X17ABC);
+	op_hex		(x,	1);
+	create_insn	(0X17AC5);
+	set_cmt	(0X17B09,	"Credits gold (AddBCD4(g_partyGold, [0xB30])) instead of spending it, clears the held/staged item, refreshes the material/gold HUD -- a 'sell this catalog item back' action, the click counterpart to TrySellItemForGold. Called from sub_17032.",	0);
+	create_insn	(0X17B09);
+	set_name	(0X17B09,	"SellClickedCatalogItem");
+	set_cmt	(0X17B67,	"Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.",	0);
+	create_insn	(0X17B67);
+	set_name	(0X17B67,	"HitTestCatalogSlot");
 	set_cmt	(0X17B92,	"UseItem, reached from a normal keyboard command slot (called directly from `start`). Calls LoadItemData first; if that signals nothing to do, bails. Otherwise dispatches on word_2E410 (the loaded item's type-flags word) to one of several type-specific effect handlers (sub_1BF94/sub_1C123/sub_1C589/sub_1BEA1/sub_1BBED/sub_1BB48, plus a fallback keyed on a secondary type field) -- none named yet.",	0);
 	create_insn	(0X17B92);
 	set_name	(0X17B92,	"UseItem");
@@ -4956,6 +4962,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1E285,	"Loads the spell (LoadClueBookSpellEntry) and checks context-gating flags plus NUORE (0x94BB)/MAGIC ORE (0x94B7)/MP (+0x54) affordability; sets the spell's icon-state to 0xF if all pass. Called from BuildAlchemySpellList.",	0);
 	create_insn	(0X1E285);
 	set_name	(0X1E285,	"CheckSpellCastability");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1E291);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E299);
@@ -4969,15 +4984,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1E340,	"Draws one spell cost value at the given x position. Called from DrawAlchemySpellList.",	0);
 	create_insn	(0X1E340);
 	set_name	(0X1E340,	"DrawSpellCostValue");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1E356,	"Pagination scroll-arrow indicator: draws an up-arrow glyph (x=0xA5, sets word_328CA bit 0x800) if word_33316 (current page) > 1, and a down-arrow glyph (x=0xB0, sets bit 0x400) if word_33314 (last page) > word_33316. Called from RunAlchemyScreen for its 13-spells-per-page list.",	0);
 	create_insn	(x=0X1E356);
 	op_hex		(x,	1);
@@ -6713,10 +6719,6 @@ static Bytes_2(void) {
 	set_name	(0X24CAD,	"DrawThreeThresholdStats");
 	set_cmt	(0X24CD5,	"msg",	0);
 	set_cmt	(0X24CE3,	"msg",	0);
-	set_cmt	(0X24CF1,	"msg",	0);
-	set_cmt	(0X24D30,	"Character sheet's main stat renderer: left column draws the 6 core attributes plus the +0x4C/+0x4E/+0x50 trio (same column, slots 7-9), then HP/MP rows and packed-BCD XP; right column draws 13 derived stats (+0x58..+0x70), the last 5 highlighted when this character holds one of 5 globally-assigned party roles (word_36D03/05/07/09/0B). Called from ShowCharacterSkills and sub_23C18.",	0);
-	create_insn	(0X24D30);
-	set_name	(0X24D30,	"DrawCharacterStatSheet");
 }
 
 //------------------------------------------------------------------------
@@ -6726,6 +6728,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X24CF1,	"msg",	0);
+	set_cmt	(0X24D30,	"Character sheet's main stat renderer: left column draws the 6 core attributes plus the +0x4C/+0x4E/+0x50 trio (same column, slots 7-9), then HP/MP rows and packed-BCD XP; right column draws 13 derived stats (+0x58..+0x70), the last 5 highlighted when this character holds one of 5 globally-assigned party roles (word_36D03/05/07/09/0B). Called from ShowCharacterSkills and sub_23C18.",	0);
+	create_insn	(0X24D30);
+	set_name	(0X24D30,	"DrawCharacterStatSheet");
 	set_cmt	(0X24FFC,	"Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.",	0);
 	create_insn	(0X24FFC);
 	set_name	(0X24FFC,	"DrawListEntryLabel");
@@ -8850,6 +8856,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2A030);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2A035);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2A044);
@@ -8888,15 +8903,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2A0FC,	"Copies a 224-pixel-wide row from si to di, shading each pixel via ShiftPaletteShadeClamped, then advances both by 0x140 (320) and repeats for the caller's outer count. Called from unnamed sub_29FF6.",	0);
 	create_insn	(0X2A0FC);
 	set_name	(0X2A0FC,	"CopyShadedViewportRows");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2A11B,	"The real mouse-cursor draw: if word_3195C bit1 is set, first saves the video buffer content at the cursor's new position into 0xE0E (so RestoreCursorBackground can erase it later), then blits the cursor sprite from 0x3FE6 onto the video buffer with 0xFF as a transparent color key. Not a screen fade despite the inherited name/hedge -- explains why it's called so pervasively (once per cursor move).",	0);
 	create_insn	(0X2A11B);
 	set_name	(0X2A11B,	"DrawMouseCursor");
@@ -11493,6 +11499,15 @@ static Bytes_4(void) {
 	set_name	(0X364B3,	"aRestores");
 	create_strlit	(0X364BD,	0X6);
 	set_name	(0X364BD,	"a3X3");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X364C3,	0X7);
 	set_name	(0X364C3,	"aCures");
 	create_strlit	(0X364CA,	0X16);
@@ -11525,15 +11540,6 @@ static Bytes_4(void) {
 	set_name	(0X36551,	"aOne");
 	create_strlit	(0X36555,	0X8);
 	set_name	(0X36555,	"aMonster");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3655D,	0XA);
 	set_name	(0X3655D,	"aCharacter");
 	create_strlit	(0X36567,	0X2);

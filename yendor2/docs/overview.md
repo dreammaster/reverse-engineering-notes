@@ -5679,6 +5679,28 @@ inline in a gold-cost confirm prompt.
 
 648 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PlayStudioCreditsIntro, PlayCreditsWipeAnimation, PlayCreditsFrameAnimation
+
+Named `sub_11A10` -> `PlayStudioCreditsIntro`, called once from
+`start` (distinct from the earlier `PlayTitleScreenSequence`, which
+is called from `InitGame`): an elaborate multi-scene animated
+sequence — music, several picture reveals, multiple
+`DrawShadowedTextAlt` credit-text panels each with their own
+wait/fade timing, sound cues, and its two effect helpers below,
+before loading a new master palette and finishing with a 3-part
+wipe/transition. Reads as the game's studio/publisher credits intro
+cinematic, distinct from the title screen and from the already-named
+`ShowIntroPicture`.
+
+Its two helpers: `sub_11D66` -> `PlayCreditsWipeAnimation` (a
+progressive reveal/wipe effect — two overlapping pictures drawn at a
+shrinking y position over 65 iterations while a reveal-height counter
+grows, gated by a tick-driven busy-wait each step) and `sub_11DE2` ->
+`PlayCreditsFrameAnimation` (a short 14-frame animated flourish, 2
+ticks per frame).
+
+651 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

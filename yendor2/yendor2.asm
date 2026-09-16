@@ -856,7 +856,7 @@ loc_1072E:                              ; CODE XREF: start+71E↑j
                 inc     word ptr [bx+2]
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
-                call    sub_11A10
+                call    PlayStudioCreditsIntro
                 call    ShowIntroPicture
                 jmp     loc_10286
 start           endp
@@ -2865,8 +2865,8 @@ seg004          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11A10       proc far                ; CODE XREF: start+751↑P
-                or      word_328C8, 800h
+PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
+                or      word_328C8, 800h ; The game's studio/publisher credits intro cinematic: music, several picture reveals, multiple DrawShadowedTextAlt credit panels, sound cues, and 2 effect helpers (PlayCreditsWipeAnimation, PlayCreditsFrameAnimation), before loading a new master palette and finishing with a 3-part wipe/transition. Called once from `start`.
                 or      word_3295A, 8000h
                 mov     ax, 0Ah         ; ticks
                 call    wait
@@ -2895,7 +2895,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 call    DrawMouseCursor
                 mov     ax, 64h ; 'd'   ; ticks
                 call    wait
-                call    sub_11D66
+                call    PlayCreditsWipeAnimation
                 mov     bx, 14h
                 mov     cx, 71h ; 'q'
                 mov     dx, 0
@@ -2988,7 +2988,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 call    DrawShadowedTextAlt
                 mov     cx, 14h
                 call    TryPlaySoundCueAlt
-                call    sub_11DE2
+                call    PlayCreditsFrameAnimation
                 call    PlaySoundSequenceGH
                 mov     ax, 64h ; 'd'   ; ticks
                 call    wait
@@ -3050,14 +3050,14 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 test    g_driverStateFlags, 2
                 jz      short loc_11D51
 
-loc_11D4A:                              ; CODE XREF: sub_11A10+33F↓j
+loc_11D4A:                              ; CODE XREF: PlayStudioCreditsIntro+33F↓j
                 cmp     byte ptr word_2E492, 0
                 jnz     short loc_11D4A
 
-loc_11D51:                              ; CODE XREF: sub_11A10+338↑j
+loc_11D51:                              ; CODE XREF: PlayStudioCreditsIntro+338↑j
                 call    sub_25862
                 retf
-sub_11A10       endp
+PlayStudioCreditsIntro endp
 
 ; ---------------------------------------------------------------------------
                 retn
@@ -3065,7 +3065,7 @@ sub_11A10       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ClearOffscreenBufferAlt proc near       ; CODE XREF: sub_11A10+247↑p
+ClearOffscreenBufferAlt proc near       ; CODE XREF: PlayStudioCreditsIntro+247↑p
                 mov     es, _videoBufferSeg ; Byte-for-byte duplicate of ClearOffscreenBuffer (sub_152E1). Called from sub_11A10.
                 xor     di, di
                 xor     ax, ax
@@ -3078,8 +3078,8 @@ ClearOffscreenBufferAlt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11D66       proc near               ; CODE XREF: sub_11A10+89↑p
-                mov     word_32956, 0
+PlayCreditsWipeAnimation proc near      ; CODE XREF: PlayStudioCreditsIntro+89↑p
+                mov     word_32956, 0   ; Progressive reveal/wipe effect: loops 0x41 times drawing two overlapping pictures at a shrinking y while a reveal-height counter grows by 3, gated by a tick-driven busy-wait each iteration. Called once from PlayStudioCreditsIntro.
                 mov     word_2E532, 0
                 mov     x, 1
                 mov     y, 0C6h
@@ -3089,7 +3089,7 @@ sub_11D66       proc near               ; CODE XREF: sub_11A10+89↑p
                 mov     word_32988, 1
                 mov     cx, 41h ; 'A'
 
-loc_11D99:                              ; CODE XREF: sub_11D66+79↓j
+loc_11D99:                              ; CODE XREF: PlayCreditsWipeAnimation+79↓j
                 push    y
                 mov     y, 1
                 mov     _font_bgTransparent, 0
@@ -3101,28 +3101,28 @@ loc_11D99:                              ; CODE XREF: sub_11D66+79↓j
                 call    DrawPicture
                 call    DrawMouseCursor
 
-loc_11DCE:                              ; CODE XREF: sub_11D66+6D↓j
+loc_11DCE:                              ; CODE XREF: PlayCreditsWipeAnimation+6D↓j
                 cmp     word_32956, 3
                 jl      short loc_11DCE
                 add     word_32988, 3
                 sub     y, 3
                 loop    loc_11D99
                 retn
-sub_11D66       endp
+PlayCreditsWipeAnimation endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11DE2       proc near               ; CODE XREF: sub_11A10+234↑p
-                mov     word_2E532, 60h ; '`'
+PlayCreditsFrameAnimation proc near     ; CODE XREF: PlayStudioCreditsIntro+234↑p
+                mov     word_2E532, 60h ; '`' ; Plays a 14-frame picture sequence (ids 0x22-0x2F), 2 ticks per frame -- a short animated flourish. Called once from PlayStudioCreditsIntro.
                 mov     y, 1
                 mov     x, 7Ch ; '|'
                 mov     y, 2Ah ; '*'
                 mov     word_2E530, 22h ; '"'
                 mov     cx, 0Eh
 
-loc_11E03:                              ; CODE XREF: sub_11DE2+37↓j
+loc_11E03:                              ; CODE XREF: PlayCreditsFrameAnimation+37↓j
                 call    DrawPicture
                 call    DrawMouseCursor
                 inc     word_2E530
@@ -3130,13 +3130,13 @@ loc_11E03:                              ; CODE XREF: sub_11DE2+37↓j
                 call    wait
                 loop    loc_11E03
                 retn
-sub_11DE2       endp
+PlayCreditsFrameAnimation endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-PlaySoundSequenceGH proc near           ; CODE XREF: sub_11A10+237↑p
+PlaySoundSequenceGH proc near           ; CODE XREF: PlayStudioCreditsIntro+237↑p
                 mov     cx, 0FFFFh      ; Waits for driver idle (via TryPlaySoundCueAlt(cx=0xFFFF), always a no-op cue but still runs its idle-wait), triggers sound event 0x47, waits again, triggers event 0x48. A two-part sound cue. Called from sub_11A10.
                 call    TryPlaySoundCueAlt
                 mov     ax, 47h ; 'G'
@@ -3165,8 +3165,8 @@ sub_11E39       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawShadowedTextAlt proc near           ; CODE XREF: sub_11A10+79↑p
-                                        ; sub_11A10+C4↑p ...
+DrawShadowedTextAlt proc near           ; CODE XREF: PlayStudioCreditsIntro+79↑p
+                                        ; PlayStudioCreditsIntro+C4↑p ...
                 test    g_driverStateFlags, 8 ; Draws text/a string column with a 1-pixel drop-shadow (background color pass, then foreground color pass shifted up-left). Single line via writeString when cx<=1, multi-line via DrawStringColumn otherwise. Optionally plays a sound first. Called from sub_11A10. Byte-for-byte identical to DrawShadowedText.
                 jz      short loc_11E5D
                 cmp     ax, 0FFFFh
@@ -3218,7 +3218,7 @@ DrawShadowedTextAlt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TryPlaySoundCueAlt proc near            ; CODE XREF: sub_11A10+231↑p
+TryPlaySoundCueAlt proc near            ; CODE XREF: PlayStudioCreditsIntro+231↑p
                                         ; PlaySoundSequenceGH+3↑p ...
                 call    WaitForSoundDriverIdle ; Byte-for-byte duplicate of TryPlaySoundCue (sub_16234); dispatches via still-unnamed sub_11E39. Called from sub_11A10, sub_11E1C, and others.
                 jz      short locret_11EBD
@@ -3235,7 +3235,7 @@ TryPlaySoundCueAlt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SetPaletteToWhiteAlt proc near          ; CODE XREF: sub_11A10+E2↑p
+SetPaletteToWhiteAlt proc near          ; CODE XREF: PlayStudioCreditsIntro+E2↑p
                 mov     es, word_2E4AA  ; Byte-for-byte duplicate of SetPaletteToWhite (sub_16244), in a different overlay segment. Called from sub_11A10.
                 mov     di, 4D5Ch
                 mov     ax, 3F3Fh
@@ -14243,8 +14243,8 @@ seg027          segment byte public 'CODE' use16
 
 
 ; void __usercall wait(int ticks@<ax>)
-wait            proc far                ; CODE XREF: sub_11A10+F↑P
-                                        ; sub_11A10+4D↑P ...
+wait            proc far                ; CODE XREF: PlayStudioCreditsIntro+F↑P
+                                        ; PlayStudioCreditsIntro+4D↑P ...
                 push    bx
                 push    cx
                 push    dx
@@ -27683,7 +27683,7 @@ MaybeForceTickWorldAilments endp
 
 
 sub_1FC53       proc far                ; CODE XREF: ShowClueBook+4DF↑P
-                                        ; sub_11A10+EB↑P ...
+                                        ; PlayStudioCreditsIntro+EB↑P ...
                 push    es
                 push    di
                 push    si
@@ -43500,7 +43500,7 @@ WaitForSoundDriverIdle endp
 
 
 PlayMusicTrack  proc far                ; CODE XREF: ShowIntroPicture+B↑P
-                                        ; sub_11A10+17↑P ...
+                                        ; PlayStudioCreditsIntro+17↑P ...
                 test    g_driverStateFlags, 2 ; Plays music track ax (no-op if g_driverStateFlags bit1/music-active isn't set). Sets up a driver call param (sub_27BAD) then reads the track's data from WORLD.DAT (fixed FileEntry bx=0x9043).
                 jnz     short loc_2829F
                 retf
@@ -56497,8 +56497,8 @@ font3           db    0
                 db    0
                 db 0F8h
                 db    0
-_font_bgColor   dw 0                    ; DATA XREF: sub_11A10+6D↑w
-                                        ; sub_11A10+B8↑w ...
+_font_bgColor   dw 0                    ; DATA XREF: PlayStudioCreditsIntro+6D↑w
+                                        ; PlayStudioCreditsIntro+B8↑w ...
 word_2E384      dw 0                    ; DATA XREF: RunMapEditorScreen+26↑w
                                         ; RunMapEditorScreen+279↑r ...
 word_2E386      dw 0                    ; DATA XREF: RunMapEditorScreen+2C↑w
@@ -56776,7 +56776,7 @@ g_blitMaskPtr   dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+4
 g_blitMaskLen   dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+40C↑w
                                         ; RestoreUiStateForClueBook+39↑w ...
                                         ; Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.
-word_2E492      dw 0FFh                 ; DATA XREF: sub_11A10:loc_11D4A↑r
+word_2E492      dw 0FFh                 ; DATA XREF: PlayStudioCreditsIntro:loc_11D4A↑r
                                         ; InitGame+CF↑r ...
 word_2E494      dw 0FFFFh               ; DATA XREF: WaitForSoundDriverIdle:loc_28289↑r
 word_2E496      dw 0                    ; DATA XREF: RunMapEditorScreen+32↑w
@@ -74356,8 +74356,8 @@ word_32952      dw 0                    ; DATA XREF: seg059:0224↑w
                                         ; sub_1FBE1+18↑w ...
 word_32954      dw 0                    ; DATA XREF: InitializeDungeonLevel+61↑w
                                         ; AdvanceGameClock+5C↑r ...
-word_32956      dw 0                    ; DATA XREF: sub_11D66↑w
-                                        ; sub_11D66:loc_11DCE↑r ...
+word_32956      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation↑w
+                                        ; PlayCreditsWipeAnimation:loc_11DCE↑r ...
 word_32958      dw 0                    ; DATA XREF: seg059:0244↑w
                                         ; UpdateAmbientMusic+1F↑w ...
 word_3295A      dw 0                    ; DATA XREF: start+552↑w
@@ -74399,16 +74399,16 @@ word_3297C      dw 0                    ; DATA XREF: IsItemRangeAvailable+1D↑w
                                         ; IsItemRangeAvailable:loc_1CE52↑w ...
 word_3297E      dw 0                    ; DATA XREF: ShowClueBook+63↑w
                                         ; ShowIntroPicture+8↑w ...
-word_32980      dw 0                    ; DATA XREF: sub_11D66+18↑w
+word_32980      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+18↑w
                                         ; sub_152EF+71↑w ...
-word_32982      dw 0                    ; DATA XREF: sub_11D66+1E↑w
+word_32982      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+1E↑w
                                         ; sub_152EF+80↑w ...
 word_32984      dw 0                    ; DATA XREF: DrawMonsterAndUpdateAttackState+44↑w
                                         ; DrawMonsterAndUpdateAttackState+7B↑w ...
-word_32986      dw 0                    ; DATA XREF: sub_11D66+24↑w
+word_32986      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+24↑w
                                         ; sub_152EF+6B↑w ...
-word_32988      dw 0                    ; DATA XREF: sub_11D66+2A↑w
-                                        ; sub_11D66+6F↑w ...
+word_32988      dw 0                    ; DATA XREF: PlayCreditsWipeAnimation+2A↑w
+                                        ; PlayCreditsWipeAnimation+6F↑w ...
 word_3298A      dw 0                    ; DATA XREF: sub_1BBED+1FE↑w
                                         ; UseAbilityScroll+224↑w ...
 word_3298C      dw 0                    ; DATA XREF: sub_1BBED+204↑w
@@ -85993,7 +85993,7 @@ word_36CE3      dw 3                    ; DATA XREF: ParseSoundBlasterEnvironmen
                                         ; sub_2B436+4↑r ...
 ; FileEntry *g_driverStateFlags
 g_driverStateFlags dw offset loc_2D869+1 - offset locret_2D860
-                                        ; DATA XREF: sub_11A10+332↑r
+                                        ; DATA XREF: PlayStudioCreditsIntro+332↑r
                                         ; DrawShadowedTextAlt↑r ...
 word_36CE7      dw 0                    ; DATA XREF: ShowClueBook+1B↑r
                                         ; ShowClueBook+25↑r ...
@@ -86021,7 +86021,7 @@ word_36CFD      dw 0Bh                  ; DATA XREF: RestPartyAndAdvanceClock+12
                                         ; RestPartyAndAdvanceClock+131↑r ...
 word_36CFF      dw 222h                 ; DATA XREF: RestPartyAndAdvanceClock+138↑w
                                         ; AdvanceGameClock+45↑w ...
-word_36D01      dw 1E0h                 ; DATA XREF: sub_11A10+E5↑w
+word_36D01      dw 1E0h                 ; DATA XREF: PlayStudioCreditsIntro+E5↑w
                                         ; TravelToDestination+87↑r ...
 word_36D03      dw 0                    ; DATA XREF: sub_197B9+D4↑r
                                         ; ConfirmAndValidatePartyTarget↑r ...

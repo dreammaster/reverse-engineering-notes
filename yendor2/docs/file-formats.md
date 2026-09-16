@@ -2391,7 +2391,15 @@ and calls `SetPaletteRange` — called once per animation frame by
 `ShowIntroPicture` (`0x1177C`, called directly from `start` and
 `InitGame`: shows a picture via `DrawPicture`, fades its palette via
 `FadePaletteStep`, waits for a keypress) to fade a picture's palette in
-or out smoothly.
+or out smoothly. The full boot sequence is now mapped: `InitGame`
+calls `PlayTitleScreenSequence` (title picture + theme music, timed
+or skippable) then `ShowIntroPicture`; `start` separately calls
+`PlayStudioCreditsIntro` (an elaborate multi-scene animated credits
+cinematic — several picture reveals, multiple `DrawShadowedTextAlt`
+credit panels, sound cues, and two small effect helpers,
+`PlayCreditsWipeAnimation` and `PlayCreditsFrameAnimation`) plus its
+own separate call to `ShowIntroPicture` for the splash-screen logo
+(entry 0, the "SmithWare" logo below).
 
 **Found: the master palette.** `ShowIntroPicture` calls
 `LoadMasterPalette` (`0x27CB0` — one of the resource-block-setup stub
