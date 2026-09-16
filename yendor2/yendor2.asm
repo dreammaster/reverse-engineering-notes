@@ -24957,7 +24957,7 @@ loc_1DFBA:                              ; CODE XREF: RunAlchemyScreen+2D5↑j
                 test    word_33300, 8000h
                 jz      short loc_1E037
                 push    word_328D6
-                call    sub_1E4FA
+                call    ConfirmAlchemyInteraction
                 cmp     word_3331A, 0
                 jnz     short loc_1E01E
                 pop     word_328D6
@@ -25542,8 +25542,8 @@ ShowAlchemyIconIdle endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E4FA       proc near               ; CODE XREF: RunAlchemyScreen+31F↑p
-                mov     word_2E530, 0Fh
+ConfirmAlchemyInteraction proc near     ; CODE XREF: RunAlchemyScreen+31F↑p
+                mov     word_2E530, 0Fh ; Byte-for-byte identical to ConfirmContainerInteraction (yes/no confirm prompt, message id 0x12, storing result + slot selection) -- likely duplicated into this overlay segment. Called from RunAlchemyScreen.
                 call    UpdateCursorForHeldItem
                 mov     ax, 12h
                 call    ShowConfirmPrompt
@@ -25553,7 +25553,7 @@ sub_1E4FA       proc near               ; CODE XREF: RunAlchemyScreen+31F↑p
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
                 retn
-sub_1E4FA       endp
+ConfirmAlchemyInteraction endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -76821,7 +76821,7 @@ word_33318      dw 0                    ; DATA XREF: RunAlchemyScreen+34A↑w
                                         ; sub_2C0FE+DD↑r ...
 word_3331A      dw 0                    ; DATA XREF: RunAlchemyScreen+322↑r
                                         ; RunAlchemyScreen+342↑r ...
-word_3331C      dw 0                    ; DATA XREF: sub_1E4FA+19↑w
+word_3331C      dw 0                    ; DATA XREF: ConfirmAlchemyInteraction+19↑w
                                         ; sub_2C0FE:loc_2C1CF↑r ...
 word_3331E      dw 0                    ; DATA XREF: RunAlchemyScreen+2E0↑w
                                         ; RunAlchemyScreen+407↑r

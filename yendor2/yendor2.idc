@@ -4864,7 +4864,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1E4D6,	"Draws alchemy-screen picture 5 at (0x102,0x43) -- sibling of ShowAlchemyIconActive. Called from RunAlchemyScreen (2 sites).",	0);
 	create_insn	(0X1E4D6);
 	set_name	(0X1E4D6,	"ShowAlchemyIconIdle");
+	set_cmt	(0X1E4FA,	"Byte-for-byte identical to ConfirmContainerInteraction (yes/no confirm prompt, message id 0x12, storing result + slot selection) -- likely duplicated into this overlay segment. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E4FA);
+	set_name	(0X1E4FA,	"ConfirmAlchemyInteraction");
 	create_insn	(0X1E522);
 	set_cmt	(0X1E546,	"Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.",	0);
 	create_insn	(0X1E546);
@@ -5537,9 +5539,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20FB7,	"First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 6x with decreasing cell counts (0x11/0x11/5/3/3/3) and different row-data pointers (word_328E6..F0), then sub_21217 once more (word_328F2). Called from sub_20C1E and sub_20C46.",	0);
 	create_insn	(0X20FB7);
 	set_name	(0X20FB7,	"RenderDungeonViewport");
-	set_cmt	(0X21015,	"Renders one depth row of the dungeon corridor view: iterates 8-byte cell records (forward then backward from a midpoint), drawing each cell's picture (table 0xE551, 12-byte stride) via sub_29B0F, and calls TryTriggerMonsterEncounterAtCell once per cell while incrementing/decrementing word_3292C (a per-frame row depth counter). Called 6x by RenderDungeonViewport.",	0);
-	create_insn	(0X21015);
-	set_name	(0X21015,	"RenderDungeonViewRow");
 }
 
 //------------------------------------------------------------------------
@@ -5549,6 +5548,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X21015,	"Renders one depth row of the dungeon corridor view: iterates 8-byte cell records (forward then backward from a midpoint), drawing each cell's picture (table 0xE551, 12-byte stride) via sub_29B0F, and calls TryTriggerMonsterEncounterAtCell once per cell while incrementing/decrementing word_3292C (a per-frame row depth counter). Called 6x by RenderDungeonViewport.",	0);
+	create_insn	(0X21015);
+	set_name	(0X21015,	"RenderDungeonViewRow");
 	create_insn	(x=0X21018);
 	op_hex		(x,	1);
 	create_insn	(x=0X2101E);

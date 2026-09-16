@@ -3981,6 +3981,15 @@ isn't purely beneficial when the party is afflicted.
 
 505 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ConfirmAlchemyInteraction
+
+Named `sub_1E4FA` -> `ConfirmAlchemyInteraction`, called from
+`RunAlchemyScreen`: byte-for-byte identical to `ConfirmContainerInteraction`,
+another instance of the overlay-segment duplication pattern found
+earlier this session (`DrawShadowedText`/`DrawShadowedTextAlt`).
+
+506 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

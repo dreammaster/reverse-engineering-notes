@@ -1395,7 +1395,11 @@ confirm prompt (message id `0x12`), storing the result and the current
 slot selection for the caller to act on afterward, and
 `ClearIneligibleFlagForAllMembers` (was `sub_2D7EA`) — the exact
 inverse of `MarkIneligiblePartyMembers`, unconditionally clearing
-`+0x15E` bit `0x8000` for all 4 slots.
+`+0x15E` bit `0x8000` for all 4 slots. `RunAlchemyScreen` uses a
+byte-for-byte duplicate of `ConfirmContainerInteraction`,
+`ConfirmAlchemyInteraction` (was `sub_1E4FA`) — the same
+`DrawShadowedText`/`DrawShadowedTextAlt`-style overlay-segment
+duplication found earlier this session.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
