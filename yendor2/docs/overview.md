@@ -3625,6 +3625,20 @@ than a new name forced onto an under-evidenced function.
 
 461 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PickUpItemFromSlot, PlaceItemInSlot, PickUpHeldItemFromSlot
+
+Named 3 more functions in the item-slot cluster: `sub_26B4F` ->
+`PickUpItemFromSlot` and `sub_266D4` -> `PlaceItemInSlot`, confirmed as
+exact mirror images (subtract vs. add the same item value across the
+same 3 equipment-section running totals plus a general total) —
+resolving the "resists a confident name" caveat from the previous
+round now that the symmetry makes the mechanical shape unambiguous.
+Also named `sub_26864` -> `PickUpHeldItemFromSlot`, the simple
+"pick up only" counterpart to `PlaceHeldItemIntoEmptySlot`. This
+completes the 4-action item-slot cluster called from `sub_2621C`.
+
+464 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

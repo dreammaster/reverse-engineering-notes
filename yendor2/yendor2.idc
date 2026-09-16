@@ -6884,7 +6884,9 @@ static Bytes_2(void) {
 	create_insn	(0X266A9);
 	create_insn	(x=0X266B4);
 	op_hex		(x,	1);
+	set_cmt	(0X266D4,	"Places the held item into slot di and adds its value to one of 3 equipment-section running totals (+0x180/+0x1A6/+0x1CC, selected by [+0x15C] flag bits) or the general total (+0x118) -- the exact mirror of PickUpItemFromSlot. Called from SwapHeldItemWithSlot and PlaceHeldItemIntoEmptySlot.",	0);
 	create_insn	(0X266D4);
+	set_name	(0X266D4,	"PlaceItemInSlot");
 	create_insn	(x=0X26728);
 	op_hex		(x,	1);
 	create_insn	(x=0X26735);
@@ -6915,7 +6917,9 @@ static Bytes_2(void) {
 	create_insn	(0X26846);
 	set_name	(0X26846,	"LoadContainerContents");
 	set_cmt	(0X2684B,	"this",	0);
+	set_cmt	(0X26864,	"Restores the cursor, calls PickUpItemFromSlot (no placement step), updates the cursor and portrait. Called from sub_2621C -- the pickup counterpart to PlaceHeldItemIntoEmptySlot.",	0);
 	create_insn	(0X26864);
+	set_name	(0X26864,	"PickUpHeldItemFromSlot");
 	set_cmt	(0X2687B,	"Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.",	0);
 	create_insn	(0X2687B);
 	set_name	(0X2687B,	"PlaceHeldItemIntoEmptySlot");
@@ -7014,7 +7018,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X26B47);
 	op_hex		(x,	1);
+	set_cmt	(0X26B4F,	"Removes the item at slot di into the held-item globals, loads its catalog record, and subtracts its value from one of 3 equipment- section running totals (+0x180/+0x1A6/+0x1CC, selected by [+0x15C] flag bits) or the general total (+0x118) -- the exact mirror of PlaceItemInSlot. Called from SwapHeldItemWithSlot and PickUpHeldItemFromSlot.",	0);
 	create_insn	(0X26B4F);
+	set_name	(0X26B4F,	"PickUpItemFromSlot");
 	create_insn	(x=0X26B82);
 	op_hex		(x,	1);
 	create_insn	(x=0X26BBC);
@@ -7884,6 +7890,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2940E,	"Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.",	0);
 	create_insn	(0X2940E);
 	set_name	(0X2940E,	"WaitForTargetClick");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2943F);
 	create_insn	(0X29447);
 	create_insn	(0X29461);
@@ -7905,15 +7920,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2955C,	"Calls SyncContainerContents for all 3 of word_328D4's bag slots (+0x17C/+0x1A2/+0x1C8).",	0);
 	create_insn	(0X2955C);
 	set_name	(0X2955C,	"SyncPartyMemberContainers");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2957E,	"Like SaveAndCloseContainer's write-back (if the bag at [di] has contents, write them to CURGAME) but doesn't clear the marker afterward -- saves without closing.",	0);
 	create_insn	(0X2957E);
 	set_name	(0X2957E,	"SyncContainerContents");
@@ -11061,6 +11067,15 @@ static Bytes_3(void) {
 	set_name	(0X363BF,	"aMagic_0");
 	create_strlit	(0X363C6,	0X8);
 	set_name	(0X363C6,	"aPercent");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X363CE,	0XF);
 	set_name	(0X363CE,	"aPartyAttack");
 	create_strlit	(0X363DD,	0X7);
@@ -11111,15 +11126,6 @@ static Bytes_3(void) {
 	set_name	(0X364B3,	"aRestores");
 	create_strlit	(0X364BD,	0X6);
 	set_name	(0X364BD,	"a3X3");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X364C3,	0X7);
 	set_name	(0X364C3,	"aCures");
 	create_strlit	(0X364CA,	0X16);

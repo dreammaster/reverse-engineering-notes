@@ -19115,7 +19115,7 @@ UpdatePartyAverageStatTiers endp
 
 
 sub_1AC2F       proc far                ; CODE XREF: sub_1819B+D↑P
-                                        ; sub_26B4F+61↓P ...
+                                        ; PickUpItemFromSlot+61↓P ...
                 push    si
                 push    di
                 call    LoadItemCatalogRecord
@@ -39365,7 +39365,7 @@ loc_2626E:                              ; CODE XREF: sub_2621C+4D↑j
 
 loc_2628F:                              ; CODE XREF: sub_2621C+5B↑j
                                         ; sub_2621C+63↑j
-                call    sub_26864
+                call    PickUpHeldItemFromSlot
                 jmp     loc_26409
 ; ---------------------------------------------------------------------------
 
@@ -39507,7 +39507,7 @@ loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
                 mov     di, bx
                 mov     ax, 6
                 call    sub_28412
-                call    sub_266D4
+                call    PlaceItemInSlot
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
@@ -39856,16 +39856,16 @@ sub_266A9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_266D4       proc near               ; CODE XREF: sub_2621C+1AB↑p
+PlaceItemInSlot proc near               ; CODE XREF: sub_2621C+1AB↑p
                                         ; PlaceHeldItemIntoEmptySlot+D↓p ...
-                mov     si, word_328D4
+                mov     si, word_328D4  ; Places the held item into slot di and adds its value to one of 3 equipment-section running totals (+0x180/+0x1A6/+0x1CC, selected by [+0x15C] flag bits) or the general total (+0x118) -- the exact mirror of PickUpItemFromSlot. Called from SwapHeldItemWithSlot and PlaceHeldItemIntoEmptySlot.
                 cmp     word_2E40A, 10h
                 jge     short loc_266EB
                 mov     ax, word_3194C
                 mov     [di+2], ax
                 mov     word_3194C, 0
 
-loc_266EB:                              ; CODE XREF: sub_266D4+9↑j
+loc_266EB:                              ; CODE XREF: PlaceItemInSlot+9↑j
                 mov     ax, word_31948
                 mov     [di], ax
                 mov     word_31948, 0
@@ -39884,14 +39884,14 @@ loc_266EB:                              ; CODE XREF: sub_266D4+9↑j
                 jmp     short loc_26774
 ; ---------------------------------------------------------------------------
 
-loc_26728:                              ; CODE XREF: sub_266D4+39↑j
-                                        ; sub_266D4+40↑j
+loc_26728:                              ; CODE XREF: PlaceItemInSlot+39↑j
+                                        ; PlaceItemInSlot+40↑j
                 test    word ptr [si+15Ch], 80h
                 jz      short loc_26735
                 cmp     word ptr [di], 11h
                 jz      short loc_26774
 
-loc_26735:                              ; CODE XREF: sub_266D4+5A↑j
+loc_26735:                              ; CODE XREF: PlaceItemInSlot+5A↑j
                 test    word ptr [si+15Ch], 400h
                 jnz     short loc_2674F
                 test    word ptr [si+15Ch], 200h
@@ -39901,31 +39901,31 @@ loc_26735:                              ; CODE XREF: sub_266D4+5A↑j
                 jmp     short loc_26770
 ; ---------------------------------------------------------------------------
 
-loc_2674F:                              ; CODE XREF: sub_266D4+67↑j
+loc_2674F:                              ; CODE XREF: PlaceItemInSlot+67↑j
                 cmp     word ptr [si+17Ch], 11h
                 jz      short loc_2675A
                 add     [si+180h], ax
 
-loc_2675A:                              ; CODE XREF: sub_266D4+6F↑j
-                                        ; sub_266D4+80↑j
+loc_2675A:                              ; CODE XREF: PlaceItemInSlot+6F↑j
+                                        ; PlaceItemInSlot+80↑j
                 cmp     word ptr [si+1A2h], 11h
                 jz      short loc_26765
                 add     [si+1A6h], ax
 
-loc_26765:                              ; CODE XREF: sub_266D4+77↑j
-                                        ; sub_266D4+8B↑j
+loc_26765:                              ; CODE XREF: PlaceItemInSlot+77↑j
+                                        ; PlaceItemInSlot+8B↑j
                 cmp     word ptr [si+1C8h], 11h
                 jz      short loc_26774
                 add     [si+1CCh], ax
 
-loc_26770:                              ; CODE XREF: sub_266D4+79↑j
+loc_26770:                              ; CODE XREF: PlaceItemInSlot+79↑j
                 add     [si+118h], ax
 
-loc_26774:                              ; CODE XREF: sub_266D4+52↑j
-                                        ; sub_266D4+5F↑j ...
+loc_26774:                              ; CODE XREF: PlaceItemInSlot+52↑j
+                                        ; PlaceItemInSlot+5F↑j ...
                 call    sub_26928
                 retn
-sub_266D4       endp
+PlaceItemInSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -40055,15 +40055,15 @@ LoadContainerContents endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26864       proc near               ; CODE XREF: sub_2621C:loc_2628F↑p
-                call    RestoreCursorBackgroundIfDirty
-                call    sub_26B4F
+PickUpHeldItemFromSlot proc near        ; CODE XREF: sub_2621C:loc_2628F↑p
+                call    RestoreCursorBackgroundIfDirty ; Restores the cursor, calls PickUpItemFromSlot (no placement step), updates the cursor and portrait. Called from sub_2621C -- the pickup counterpart to PlaceHeldItemIntoEmptySlot.
+                call    PickUpItemFromSlot
                 call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
                 retn
-sub_26864       endp
+PickUpHeldItemFromSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -40073,7 +40073,7 @@ PlaceHeldItemIntoEmptySlot proc near    ; CODE XREF: sub_2621C+1EA↑p
                 mov     ax, 6           ; Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.
                 call    sub_28412
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_266D4
+                call    PlaceItemInSlot
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
                 push    cs
@@ -40093,7 +40093,7 @@ SwapHeldItemWithSlot proc near          ; CODE XREF: sub_2621C+EA↑p
                 push    word_31948
                 push    word_3194C
                 push    word_3194A
-                call    sub_26B4F
+                call    PickUpItemFromSlot
                 pop     cx
                 pop     bx
                 pop     ax
@@ -40103,7 +40103,7 @@ SwapHeldItemWithSlot proc near          ; CODE XREF: sub_2621C+EA↑p
                 mov     word_31948, ax
                 mov     word_3194C, bx
                 mov     word_3194A, cx
-                call    sub_266D4
+                call    PlaceItemInSlot
                 pop     word_3194A
                 pop     word_3194C
                 pop     word_31948
@@ -40143,8 +40143,8 @@ SaveAndCloseContainer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26928       proc near               ; CODE XREF: sub_266D4:loc_26774↑p
-                                        ; sub_26B4F:loc_26C0A↓p
+sub_26928       proc near               ; CODE XREF: PlaceItemInSlot:loc_26774↑p
+                                        ; PickUpItemFromSlot:loc_26C0A↓p
                 cmp     word_2E40A, 0Ah
                 jnz     short loc_26937
                 mov     word ptr [si+0BEh], 0
@@ -40488,9 +40488,9 @@ sub_26A75       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26B4F       proc near               ; CODE XREF: sub_26864+5↑p
+PickUpItemFromSlot proc near            ; CODE XREF: PickUpHeldItemFromSlot+5↑p
                                         ; SwapHeldItemWithSlot+19↑p
-                mov     word_3194C, 0
+                mov     word_3194C, 0   ; Removes the item at slot di into the held-item globals, loads its catalog record, and subtracts its value from one of 3 equipment- section running totals (+0x180/+0x1A6/+0x1CC, selected by [+0x15C] flag bits) or the general total (+0x118) -- the exact mirror of PlaceItemInSlot. Called from SwapHeldItemWithSlot and PickUpHeldItemFromSlot.
                 mov     si, word_328D4
                 cmp     word_2E40A, 10h
                 jge     short loc_26B6B
@@ -40498,7 +40498,7 @@ sub_26B4F       proc near               ; CODE XREF: sub_26864+5↑p
                 mov     word_3194C, ax
                 mov     word ptr [di+2], 0
 
-loc_26B6B:                              ; CODE XREF: sub_26B4F+F↑j
+loc_26B6B:                              ; CODE XREF: PickUpItemFromSlot+F↑j
                 mov     ax, [di]
                 mov     word_31948, ax
                 mov     word ptr [di], 0
@@ -40515,7 +40515,7 @@ loc_26B6B:                              ; CODE XREF: sub_26B4F+F↑j
                 pop     ax
                 add     ax, word_38808
 
-loc_26B98:                              ; CODE XREF: sub_26B4F+38↑j
+loc_26B98:                              ; CODE XREF: PickUpItemFromSlot+38↑j
                 mov     word_3194A, ax
                 cmp     word_2E40A, 0Ah
                 jl      short loc_26BBC
@@ -40528,14 +40528,14 @@ loc_26B98:                              ; CODE XREF: sub_26B4F+38↑j
                 jmp     short loc_26C0A
 ; ---------------------------------------------------------------------------
 
-loc_26BBC:                              ; CODE XREF: sub_26B4F+51↑j
-                                        ; sub_26B4F+58↑j
+loc_26BBC:                              ; CODE XREF: PickUpItemFromSlot+51↑j
+                                        ; PickUpItemFromSlot+58↑j
                 test    word ptr [si+15Ch], 80h
                 jz      short loc_26BCB
                 cmp     word_31948, 11h
                 jz      short loc_26C0A
 
-loc_26BCB:                              ; CODE XREF: sub_26B4F+73↑j
+loc_26BCB:                              ; CODE XREF: PickUpItemFromSlot+73↑j
                 test    word ptr [si+15Ch], 400h
                 jnz     short loc_26BE5
                 test    word ptr [si+15Ch], 200h
@@ -40545,31 +40545,31 @@ loc_26BCB:                              ; CODE XREF: sub_26B4F+73↑j
                 jmp     short loc_26C06
 ; ---------------------------------------------------------------------------
 
-loc_26BE5:                              ; CODE XREF: sub_26B4F+82↑j
+loc_26BE5:                              ; CODE XREF: PickUpItemFromSlot+82↑j
                 cmp     word ptr [si+17Ch], 11h
                 jz      short loc_26BF0
                 sub     [si+180h], ax
 
-loc_26BF0:                              ; CODE XREF: sub_26B4F+8A↑j
-                                        ; sub_26B4F+9B↑j
+loc_26BF0:                              ; CODE XREF: PickUpItemFromSlot+8A↑j
+                                        ; PickUpItemFromSlot+9B↑j
                 cmp     word ptr [si+1A2h], 11h
                 jz      short loc_26BFB
                 sub     [si+1A6h], ax
 
-loc_26BFB:                              ; CODE XREF: sub_26B4F+92↑j
-                                        ; sub_26B4F+A6↑j
+loc_26BFB:                              ; CODE XREF: PickUpItemFromSlot+92↑j
+                                        ; PickUpItemFromSlot+A6↑j
                 cmp     word ptr [si+1C8h], 11h
                 jz      short loc_26C0A
                 sub     [si+1CCh], ax
 
-loc_26C06:                              ; CODE XREF: sub_26B4F+94↑j
+loc_26C06:                              ; CODE XREF: PickUpItemFromSlot+94↑j
                 sub     [si+118h], ax
 
-loc_26C0A:                              ; CODE XREF: sub_26B4F+6B↑j
-                                        ; sub_26B4F+7A↑j ...
+loc_26C0A:                              ; CODE XREF: PickUpItemFromSlot+6B↑j
+                                        ; PickUpItemFromSlot+7A↑j ...
                 call    sub_26928
                 retn
-sub_26B4F       endp
+PickUpItemFromSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
