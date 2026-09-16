@@ -1288,7 +1288,14 @@ called every `RunDungeonGameLoop` iteration, it checks every occupied
 was the active target, and calls `GrantMonsterRewards` — closing the
 loop from `HandleDungeonInput`'s HP subtraction through to loot. If no
 monster died that pass, it instead advances the turn to the next
-living combatant in `g_combatTurnOrder`.
+living combatant in `g_combatTurnOrder`. After a death pass and
+`SelectActiveMonster` has picked the new active monster,
+`ProcessCombatRound` calls `CompactMonsterSlots` (was `sub_2333B`):
+shifts the remaining live `g_monsterSlots` records into a contiguous
+front-loaded arrangement (picking source/destination among the 3
+fixed slot addresses based on occupancy), then rewrites any
+`g_combatTurnOrder` entry still pointing at the old, now-vacated
+address.
 
 `word_32A1E`, the "currently active monster" global read throughout
 the combat-adjacent code already documented this session

@@ -5429,7 +5429,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_name	(0X1FC3F,	"MaybeForceTickWorldAilments");
 	create_insn	(0X1FC48);
+	set_cmt	(0X1FC53,	"Computes a scroll offset into a fixed source table (0x4A5C) from the tick value word_36D01, with distinct entry/steady/exit zones (0x167-0x1D9/0x1D9-0x438/0x438-0x4AA), then copies a fixed 0x30-word window through a scratch buffer (0x9535) to a destination at 0x46CA. Called from PlayStudioCreditsIntro and ShowClueBook.",	0);
 	create_insn	(0X1FC53);
+	set_name	(0X1FC53,	"UpdateScrollingBannerWindow");
 	create_insn	(x=0X1FC58);
 	op_hex		(x,	1);
 	create_insn	(0X1FC95);
@@ -6390,7 +6392,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2332E);
 	op_hex		(x,	1);
+	set_cmt	(0X2333B,	"After a monster death pass, shifts the remaining live g_monsterSlots records into a contiguous front-loaded arrangement (picking source/dest among the 3 fixed slot addresses based on occupancy), then rewrites any g_combatTurnOrder entry that still points at the old address. Called once from ProcessCombatRound.",	0);
 	create_insn	(0X2333B);
+	set_name	(0X2333B,	"CompactMonsterSlots");
 	create_insn	(0X23360);
 	create_insn	(0X23372);
 	create_insn	(0X2337D);
@@ -6557,6 +6561,15 @@ static Bytes_2(void) {
 	set_cmt	(0X23874,	"Updates the mouse cursor to show the currently-held item's icon (word_2E530 -> word_31946), rebuilding the cursor-sprite definition via FileEntry (bx=0x9011). Called throughout the item-manipulation functions after staging/clearing a held item.",	0);
 	create_insn	(0X23874);
 	set_name	(0X23874,	"UpdateCursorForHeldItem");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2387A,	"this",	0);
 	create_insn	(x=0X2388B);
 	op_seg		(x,	1);
@@ -6580,15 +6593,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2391C,	"Copies the 16x16-pixel VGA region at the cached cursor position into the fixed save buffer at 0xE0E (stride 0x140 per row, clipped to 320x200). Called from DrawMouseCursorAlt.",	0);
 	create_insn	(0X2391C);
 	set_name	(0X2391C,	"SaveCursorBackgroundPixels");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X23923);
 	op_hex		(x,	1);
 	create_insn	(x=0X23938);
@@ -8285,6 +8289,15 @@ static Bytes_3(void) {
 	set_cmt	(0X29461,	"Clears the status panel if dirty, sets word_328C4 bit 0x100, positions text (0xF0,0x60) color 0x8A transparent, restores the cursor background if dirty, then calls DrawStringColumn with the caller's bx/cx (preserved through setup) -- a multi-line text column, plausibly an ability's description. Called from UseAbilityCommand and UseAbilityOnTarget.",	0);
 	create_insn	(0X29461);
 	set_name	(0X29461,	"ShowAbilityDescriptionColumn");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29468);
 	op_hex		(x,	1);
 	set_cmt	(0X294A3,	"Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.",	0);
@@ -8300,15 +8313,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2952A,	"Iterates all 4 g_partySlotAssignment members, calling SyncPartyMemberContainers for each -- commits every open bag's contents to CURGAME across the whole party.",	0);
 	create_insn	(0X2952A);
 	set_name	(0X2952A,	"SyncAllContainers");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2955C,	"Calls SyncContainerContents for all 3 of word_328D4's bag slots (+0x17C/+0x1A2/+0x1C8).",	0);
 	create_insn	(0X2955C);
 	set_name	(0X2955C,	"SyncPartyMemberContainers");
@@ -11100,6 +11104,15 @@ static Bytes_4(void) {
 	create_strlit	(0X35824,	0XC);
 	create_strlit	(0X35830,	0XD);
 	set_name	(0X35830,	"aSpacebarTo");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3583D,	0XD);
 	set_name	(0X3583D,	"aSellItemOr");
 	create_strlit	(0X3584A,	0XD);
@@ -11138,15 +11151,6 @@ static Bytes_4(void) {
 	set_name	(0X3594A,	"aNowYouCanSpend");
 	create_strlit	(0X35967,	0XA);
 	set_name	(0X35967,	"aPoints");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35971,	0X1D);
 	set_name	(0X35971,	"aYouHaveLearned");
 	create_strlit	(0X3598E,	0XD);

@@ -1766,7 +1766,7 @@ loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
                 mov     errorCode, 3
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_1FC53
+                call    UpdateScrollingBannerWindow
                 call    sub_2587E
                 and     word_328CA, 0FF7h
                 cmp     fe, 0
@@ -2919,7 +2919,7 @@ PlayStudioCreditsIntro proc far         ; CODE XREF: start+751↑P
                 and     word_3295A, 0EFFFh
                 call    SetPaletteToWhiteAlt
                 mov     word_36D01, 1E0h
-                call    sub_1FC53
+                call    UpdateScrollingBannerWindow
                 mov     _font_bgTransparent, 0
                 mov     x, 1
                 mov     y, 1
@@ -11140,7 +11140,7 @@ loc_16BB4:                              ; CODE XREF: ProcessCombatRound+11↑j
                 call    SelectActiveMonster
 
 loc_16BCB:                              ; CODE XREF: ProcessCombatRound+63↑j
-                call    sub_2333B
+                call    CompactMonsterSlots
                 mov     errorCode, 1
                 mov     si, word_32BF4
 
@@ -25775,7 +25775,7 @@ loc_1E761:                              ; CODE XREF: RestPartyAndAdvanceClock+10
 
 loc_1E786:                              ; CODE XREF: RestPartyAndAdvanceClock+102↑j
                                         ; RestPartyAndAdvanceClock+125↑j ...
-                call    sub_1FC53
+                call    UpdateScrollingBannerWindow
                 test    word_328CA, 1000h
                 jnz     short loc_1E796
                 jmp     loc_1E82C
@@ -27687,9 +27687,9 @@ MaybeForceTickWorldAilments endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FC53       proc far                ; CODE XREF: ShowClueBook+4DF↑P
+UpdateScrollingBannerWindow proc far    ; CODE XREF: ShowClueBook+4DF↑P
                                         ; PlayStudioCreditsIntro+EB↑P ...
-                push    es
+                push    es              ; Computes a scroll offset into a fixed source table (0x4A5C) from the tick value word_36D01, with distinct entry/steady/exit zones (0x167-0x1D9/0x1D9-0x438/0x438-0x4AA), then copies a fixed 0x30-word window through a scratch buffer (0x9535) to a destination at 0x46CA. Called from PlayStudioCreditsIntro and ShowClueBook.
                 push    di
                 push    si
                 push    dx
@@ -27710,7 +27710,7 @@ sub_1FC53       proc far                ; CODE XREF: ShowClueBook+4DF↑P
                 jmp     short loc_1FCE1
 ; ---------------------------------------------------------------------------
 
-loc_1FC95:                              ; CODE XREF: sub_1FC53+30↑j
+loc_1FC95:                              ; CODE XREF: UpdateScrollingBannerWindow+30↑j
                 mov     word_36D93, 3
                 mov     word_36DF5, 71h ; 'q'
                 mov     ax, word_36D01
@@ -27722,7 +27722,7 @@ loc_1FC95:                              ; CODE XREF: sub_1FC53+30↑j
                 jmp     short loc_1FCD5
 ; ---------------------------------------------------------------------------
 
-loc_1FCB6:                              ; CODE XREF: sub_1FC53+3E↑j
+loc_1FCB6:                              ; CODE XREF: UpdateScrollingBannerWindow+3E↑j
                 mov     word_36D93, 0FFFDh
                 mov     word_36DF5, 71h ; 'q'
                 mov     ax, word_36D01
@@ -27732,12 +27732,12 @@ loc_1FCB6:                              ; CODE XREF: sub_1FC53+3E↑j
                 mul     bx
                 sub     word_36D91, ax
 
-loc_1FCD5:                              ; CODE XREF: sub_1FC53+61↑j
+loc_1FCD5:                              ; CODE XREF: UpdateScrollingBannerWindow+61↑j
                 or      word_3295A, 2000h
                 mov     word_32950, 5Bh ; '['
 
-loc_1FCE1:                              ; CODE XREF: sub_1FC53+20↑j
-                                        ; sub_1FC53+28↑j ...
+loc_1FCE1:                              ; CODE XREF: UpdateScrollingBannerWindow+20↑j
+                                        ; UpdateScrollingBannerWindow+28↑j ...
                 mov     cx, 30h ; '0'
                 mov     si, 4A5Ch
                 add     si, word_36D91
@@ -27757,7 +27757,7 @@ loc_1FCE1:                              ; CODE XREF: sub_1FC53+20↑j
                 pop     es
                 assume es:nothing
                 retf
-sub_1FC53       endp
+UpdateScrollingBannerWindow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33990,8 +33990,8 @@ sub_23305       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2333B       proc far                ; CODE XREF: ProcessCombatRound:loc_16BCB↑P
-                push    cx
+CompactMonsterSlots proc far            ; CODE XREF: ProcessCombatRound:loc_16BCB↑P
+                push    cx              ; After a monster death pass, shifts the remaining live g_monsterSlots records into a contiguous front-loaded arrangement (picking source/dest among the 3 fixed slot addresses based on occupancy), then rewrites any g_combatTurnOrder entry that still points at the old address. Called once from ProcessCombatRound.
                 push    si
                 push    di
                 push    es
@@ -34001,7 +34001,7 @@ sub_2333B       proc far                ; CODE XREF: ProcessCombatRound:loc_16BC
                 mov     ax, [di]
                 mov     word_32A1E, ax
 
-loc_2334F:                              ; CODE XREF: sub_2333B+9↑j
+loc_2334F:                              ; CODE XREF: CompactMonsterSlots+9↑j
                 mov     si, 51C0h
                 cmp     word ptr [si], 0
                 jz      short loc_2337D
@@ -34010,7 +34010,7 @@ loc_2334F:                              ; CODE XREF: sub_2333B+9↑j
                 jmp     short loc_233C8
 ; ---------------------------------------------------------------------------
 
-loc_23360:                              ; CODE XREF: sub_2333B+21↑j
+loc_23360:                              ; CODE XREF: CompactMonsterSlots+21↑j
                 cmp     word ptr [si+9Ch], 0
                 jz      short loc_23372
                 mov     si, 525Ch
@@ -34019,14 +34019,14 @@ loc_23360:                              ; CODE XREF: sub_2333B+21↑j
                 jmp     short loc_2339F
 ; ---------------------------------------------------------------------------
 
-loc_23372:                              ; CODE XREF: sub_2333B+2A↑j
+loc_23372:                              ; CODE XREF: CompactMonsterSlots+2A↑j
                 mov     si, 51C0h
                 mov     di, 525Ch
                 inc     word ptr [si+0Ah]
                 jmp     short loc_2339F
 ; ---------------------------------------------------------------------------
 
-loc_2337D:                              ; CODE XREF: sub_2333B+1A↑j
+loc_2337D:                              ; CODE XREF: CompactMonsterSlots+1A↑j
                 cmp     word ptr [si+138h], 0
                 jz      short loc_233C8
                 cmp     word ptr [si+9Ch], 0
@@ -34037,13 +34037,13 @@ loc_2337D:                              ; CODE XREF: sub_2333B+1A↑j
                 jmp     short loc_2339F
 ; ---------------------------------------------------------------------------
 
-loc_23396:                              ; CODE XREF: sub_2333B+4E↑j
+loc_23396:                              ; CODE XREF: CompactMonsterSlots+4E↑j
                 mov     si, 52F8h
                 mov     di, 525Ch
                 dec     word ptr [si+0Ah]
 
-loc_2339F:                              ; CODE XREF: sub_2333B+35↑j
-                                        ; sub_2333B+40↑j ...
+loc_2339F:                              ; CODE XREF: CompactMonsterSlots+35↑j
+                                        ; CompactMonsterSlots+40↑j ...
                 push    di
                 push    si
                 push    si
@@ -34059,7 +34059,7 @@ loc_2339F:                              ; CODE XREF: sub_2333B+35↑j
                 pop     ax
                 pop     bx
 
-loc_233BB:                              ; CODE XREF: sub_2333B+87↓j
+loc_233BB:                              ; CODE XREF: CompactMonsterSlots+87↓j
                 cmp     ax, [si]
                 jz      short loc_233C6
                 add     si, 8
@@ -34067,18 +34067,18 @@ loc_233BB:                              ; CODE XREF: sub_2333B+87↓j
                 jmp     short loc_233C8
 ; ---------------------------------------------------------------------------
 
-loc_233C6:                              ; CODE XREF: sub_2333B+82↑j
+loc_233C6:                              ; CODE XREF: CompactMonsterSlots+82↑j
                 mov     [si], bx
 
-loc_233C8:                              ; CODE XREF: sub_2333B+23↑j
-                                        ; sub_2333B+47↑j ...
+loc_233C8:                              ; CODE XREF: CompactMonsterSlots+23↑j
+                                        ; CompactMonsterSlots+47↑j ...
                 call    sub_234A7
                 pop     es
                 pop     di
                 pop     si
                 pop     cx
                 retf
-sub_2333B       endp
+CompactMonsterSlots endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34216,7 +34216,7 @@ DrawMonsterHealthBar endp
 
 
 sub_234A7       proc near               ; CODE XREF: ProcessLevelMonsters+364↑p
-                                        ; sub_2333B:loc_233C8↑p
+                                        ; CompactMonsterSlots:loc_233C8↑p
                 cmp     word_32A1E, 0
                 jnz     short loc_234AF
                 retn
@@ -86171,10 +86171,10 @@ word_36D75      dw 0                    ; DATA XREF: sub_17032+16D↑w
                 db    0
                 db    0
                 db    0
-word_36D91      dw 0                    ; DATA XREF: sub_1FC53+B↑w
-                                        ; sub_1FC53+32↑w ...
-word_36D93      dw 0                    ; DATA XREF: sub_1FC53:loc_1FC95↑w
-                                        ; sub_1FC53:loc_1FCB6↑w ...
+word_36D91      dw 0                    ; DATA XREF: UpdateScrollingBannerWindow+B↑w
+                                        ; UpdateScrollingBannerWindow+32↑w ...
+word_36D93      dw 0                    ; DATA XREF: UpdateScrollingBannerWindow:loc_1FC95↑w
+                                        ; UpdateScrollingBannerWindow:loc_1FCB6↑w ...
                 db    0
                 db    0
                 db    0
@@ -86271,8 +86271,8 @@ word_36D93      dw 0                    ; DATA XREF: sub_1FC53:loc_1FC95↑w
                 db    0
                 db    0
                 db    0
-word_36DF5      dw 0                    ; DATA XREF: sub_1FC53+11↑w
-                                        ; sub_1FC53+48↑w ...
+word_36DF5      dw 0                    ; DATA XREF: UpdateScrollingBannerWindow+11↑w
+                                        ; UpdateScrollingBannerWindow+48↑w ...
                 db 0FFh
                 db 0FFh
                 db 0FFh

@@ -5921,6 +5921,27 @@ timer is still running.
 
 681 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UpdateScrollingBannerWindow, CompactMonsterSlots
+
+Named `sub_1FC53` -> `UpdateScrollingBannerWindow`, called from
+`PlayStudioCreditsIntro` (right after setting the tick value
+`word_36D01`) and from `ShowClueBook`: computes a scroll offset into
+a fixed source table from the tick value, with distinct entry/
+steady/exit zones, then copies a fixed 96-byte window through to a
+destination buffer — most likely the mechanism behind the credits
+sequence's scrolling banner; the exact nature of the source table's
+content wasn't independently confirmed.
+
+Named `sub_2333B` -> `CompactMonsterSlots`, called once from
+`ProcessCombatRound` after a death pass completes: operates on the
+confirmed `g_monsterSlots` pool (3 fixed 156-byte records) to shift
+the remaining live monsters into a contiguous front-loaded
+arrangement after one dies, then rewrites any stale
+`g_combatTurnOrder` pointer left over from the move — closing a gap
+in the "Combat: monster slots and turn order" documentation.
+
+683 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
