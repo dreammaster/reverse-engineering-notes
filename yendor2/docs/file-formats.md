@@ -258,7 +258,12 @@ that stood since early in the session): 6 base/derived field pairs,
 each rolled `RandomInRange(15)+45` (45–59) into the base field, copied
 to the derived field 0x40 higher: `+0x3C`/`+0x7C` (also ×10 into a
 weight-like derived stat at `+0x56`/`+0x96` — plausibly **Strength**,
-carry capacity); `+0x3E`/`+0x7E` (no secondary use found yet);
+carry capacity); `+0x3E`/`+0x7E` (**secondary use found**:
+`RefreshCarryCapacityAndAttributeBonuses`, was `sub_1AA9B`, scales 20%
+of the value above 72 into `+0x3A`/`+0x7A` as a threshold-gated
+bonus, run whenever an icon-bar effect changes carry-relevant stats —
+the same threshold/scaling treatment `+0x3C`/`+0x7C`'s own excess
+above 72 gets into `+0x38`/`+0x78`);
 `+0x42`/`+0x82` (one component of `UseTrainingItem`'s MP-growth blend —
 plausibly **Intelligence**); `+0x44`/`+0x84` (the other MP-growth
 component — plausibly **Wisdom**); `+0x46`/`+0x86` (feeds a separate

@@ -13913,7 +13913,7 @@ loc_181DA:                              ; CODE XREF: HandleIconBarItemExpiry+1D�
                 sub     [bx+118h], ax
 
 loc_181F6:                              ; CODE XREF: HandleIconBarItemExpiry+3D↑j
-                call    sub_1AA9B
+                call    RefreshCarryCapacityAndAttributeBonuses
                 call    UpdatePartyAverageStatTiers
                 pop     word_328D4
                 retn
@@ -14101,7 +14101,7 @@ loc_18310:                              ; CODE XREF: ApplyIconBarStatDelta+27↑
                 and     [bx+1Ch], ax
 
 loc_18323:                              ; CODE XREF: ApplyIconBarStatDelta+4A↑j
-                call    sub_1AA9B
+                call    RefreshCarryCapacityAndAttributeBonuses
                 call    UpdatePartyAverageStatTiers
                 call    CheckForLevelUp
                 retn
@@ -16264,7 +16264,7 @@ loc_19516:                              ; CODE XREF: sub_193BE+136↑j
                 dec     word_2E38E
 
 loc_19527:                              ; CODE XREF: sub_193BE+193↓j
-                call    sub_1AA9B
+                call    RefreshCarryCapacityAndAttributeBonuses
                 call    UpdatePartyAverageStatTiers
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
@@ -18885,7 +18885,7 @@ loc_1AA42:                              ; CODE XREF: ApplyMultiStatEffectForItem
 
 loc_1AA47:                              ; CODE XREF: ApplyMultiStatEffectForItem+17↑j
                 push    cs
-                call    near ptr sub_1AA9B
+                call    near ptr RefreshCarryCapacityAndAttributeBonuses
                 push    cs
                 call    near ptr UpdatePartyAverageStatTiers
 
@@ -18944,9 +18944,10 @@ AddToStatCapped endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AA9B       proc far                ; CODE XREF: HandleIconBarItemExpiry:loc_181F6↑P
+RefreshCarryCapacityAndAttributeBonuses proc far
+                                        ; CODE XREF: HandleIconBarItemExpiry:loc_181F6↑P
                                         ; ApplyIconBarStatDelta:loc_18323↑P ...
-                push    ax
+                push    ax              ; Recomputes carry capacity ([si+0x56]/[si+0x96] = [si+0x3C]/[si+0x7C] * 10), then for [si+0x3C]->[si+0x38], [si+0x3E]->[si+0x3A], [si+0x7C]->[si+0x78], [si+0x7E]->[si+0x7A]: if the source exceeds 0x48 (72), scales 20% of the excess into the target (else zeroes it). Finishes with RecomputeEquipmentStatBonuses. Called from HandleIconBarItemExpiry and ApplyIconBarStatDelta.
                 push    bx
                 push    cx
                 push    dx
@@ -18968,7 +18969,7 @@ sub_1AA9B       proc far                ; CODE XREF: HandleIconBarItemExpiry:loc
                 call    ScaleByPercentRounded
                 mov     [si+38h], ax
 
-loc_1AAD1:                              ; CODE XREF: sub_1AA9B+29↑j
+loc_1AAD1:                              ; CODE XREF: RefreshCarryCapacityAndAttributeBonuses+29↑j
                 mov     word ptr [si+3Ah], 0
                 mov     ax, [si+3Eh]
                 sub     ax, 48h ; 'H'
@@ -18984,7 +18985,7 @@ loc_1AAD1:                              ; CODE XREF: sub_1AA9B+29↑j
                 call    ScaleByPercentRounded
                 mov     [si+78h], ax
 
-loc_1AB01:                              ; CODE XREF: sub_1AA9B+59↑j
+loc_1AB01:                              ; CODE XREF: RefreshCarryCapacityAndAttributeBonuses+59↑j
                 mov     word ptr [si+7Ah], 0
                 mov     ax, [si+7Eh]
                 sub     ax, 48h ; 'H'
@@ -18993,8 +18994,8 @@ loc_1AB01:                              ; CODE XREF: sub_1AA9B+59↑j
                 call    ScaleByPercentRounded
                 mov     [si+7Ah], ax
 
-loc_1AB19:                              ; CODE XREF: sub_1AA9B+41↑j
-                                        ; sub_1AA9B+71↑j
+loc_1AB19:                              ; CODE XREF: RefreshCarryCapacityAndAttributeBonuses+41↑j
+                                        ; RefreshCarryCapacityAndAttributeBonuses+71↑j
                 call    RecomputeEquipmentStatBonuses
                 pop     es
                 pop     si
@@ -19004,7 +19005,7 @@ loc_1AB19:                              ; CODE XREF: sub_1AA9B+41↑j
                 pop     bx
                 pop     ax
                 retf
-sub_1AA9B       endp
+RefreshCarryCapacityAndAttributeBonuses endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19155,7 +19156,7 @@ loc_1AC6F:                              ; CODE XREF: RemoveMultiStatEffect+27↑
 
 loc_1AC74:                              ; CODE XREF: RemoveMultiStatEffect+17↑j
                 push    cs
-                call    near ptr sub_1AA9B
+                call    near ptr RefreshCarryCapacityAndAttributeBonuses
                 push    cs
                 call    near ptr UpdatePartyAverageStatTiers
 
@@ -19447,7 +19448,7 @@ ApplyItemEffectIconSlot proc near       ; CODE XREF: sub_1ACD7:loc_1ADE8↑p
                 sub     bx, ax
                 mov     [si+0Eh], bx
                 call    ApplyEffectAndDrawIconBar
-                call    sub_1AA9B
+                call    RefreshCarryCapacityAndAttributeBonuses
                 mov     ax, word_3290A
                 pop     di
                 pop     si
@@ -19889,7 +19890,7 @@ seg042          segment byte public 'CODE' use16
 
 
 RecomputeEquipmentStatBonuses proc far  ; CODE XREF: sub_18C79+2DE↑P
-                                        ; sub_1AA9B:loc_1AB19↑P ...
+                                        ; RefreshCarryCapacityAndAttributeBonuses:loc_1AB19↑P ...
                 push    cx              ; Resets [si+0x48..0x50]/[si+0x88..0x90] from their base values ([si+0x32..0x3A]/[si+0x72..0x7A]), then adds each equipped item's catalog stat bonus (weapon +0x13A, slot +0x142, 3-array +0x146, 5-array +0x152) via LoadItemCatalogRecord. Also sets/clears [si+0x15C] bit 0x20 from the +0x142 item's catalog flags. A full equipment-derived stat recompute. Called from sub_18C79, sub_1AA9B, and sub_274B4.
                 push    dx
                 push    si
@@ -20200,7 +20201,7 @@ loc_1B571:                              ; CODE XREF: sub_1B4C2+103↓j
                 mov     word ptr [di+8], 3
                 mov     ax, word_32904
                 mov     [di+0Ah], ax
-                call    sub_1AA9B
+                call    RefreshCarryCapacityAndAttributeBonuses
 
 loc_1B5BB:                              ; CODE XREF: sub_1B4C2+C5↑j
                                         ; sub_1B4C2+D0↑j
@@ -21824,7 +21825,7 @@ loc_1C460:                              ; CODE XREF: UseTrainingItem+331↑j
 
 loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
                 call    sub_1CC98
-                call    sub_1AA9B
+                call    RefreshCarryCapacityAndAttributeBonuses
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
                 mov     _textPos_x, 16h
@@ -38448,8 +38449,8 @@ seg084          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ScaleByPercentRounded proc far          ; CODE XREF: sub_1AA9B+2E↑P
-                                        ; sub_1AA9B+46↑P ...
+ScaleByPercentRounded proc far          ; CODE XREF: RefreshCarryCapacityAndAttributeBonuses+2E↑P
+                                        ; RefreshCarryCapacityAndAttributeBonuses+46↑P ...
                 mul     bx              ; ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.
                 add     ax, 32h ; '2'
                 xor     dx, dx
@@ -48459,7 +48460,7 @@ loc_2A950:                              ; CODE XREF: ApplyMultiStatEffect+35↑j
                 loop    loc_2A93C
 
 loc_2A955:                              ; CODE XREF: ApplyMultiStatEffect+2B↑j
-                call    sub_1AA9B
+                call    RefreshCarryCapacityAndAttributeBonuses
                 call    UpdatePartyAverageStatTiers
                 call    sub_274B4
                 call    RedrawAllPartyStatusPanels
@@ -49310,7 +49311,7 @@ loc_2B0FF:                              ; CODE XREF: PartyMassHealAndOverheal+9E
                 mov     word ptr [di+8], 3
                 mov     ax, word_32904
                 mov     [di+0Ah], ax
-                call    sub_1AA9B
+                call    RefreshCarryCapacityAndAttributeBonuses
                 add     bx, 2
                 add     di, 14h
                 loop    loc_2B0FF

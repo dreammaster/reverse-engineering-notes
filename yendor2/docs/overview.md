@@ -4998,6 +4998,23 @@ the dispatcher itself remains untraced.
 
 589 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RefreshCarryCapacityAndAttributeBonuses — new data point on `+0x3E`/`+0x7E`
+
+Named `sub_1AA9B` -> `RefreshCarryCapacityAndAttributeBonuses`, called
+from `HandleIconBarItemExpiry` and `ApplyIconBarStatDelta`. Recomputes
+carry capacity (`[+0x56]`/`[+0x96] = [+0x3C]`/`[+0x7C] * 10`,
+re-confirming the documented Strength-derived carry-capacity fields),
+then for 4 fields — `[+0x3C]→[+0x38]`, `[+0x3E]→[+0x3A]`,
+`[+0x7C]→[+0x78]`, `[+0x7E]→[+0x7A]` — zeroes the target unless the
+source exceeds `0x48` (72), in which case `20%` of the excess is
+scaled in via `ScaleByPercentRounded`. Finishes by calling
+`RecomputeEquipmentStatBonuses`. This gives `+0x3E`/`+0x7E` (one of
+the 6 core attributes previously noted as having "no secondary use
+found yet") its first concrete secondary use: values above 72 grant a
+scaled threshold bonus into `+0x3A`/`+0x7A`.
+
+590 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

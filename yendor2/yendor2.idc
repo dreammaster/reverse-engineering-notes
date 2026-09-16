@@ -3844,7 +3844,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1AA53,	"AddToStatCapped(ax=delta, bx=field offset on word_328D4): [word_328D4+bx] += ax, clamped at 9999 for HP/MP fields (+0x52/+0x92/+0x54/+0x94) or 999 otherwise. errorCode: 2 if the field was 0 (uninitialized, not applied), 1 if clamped, 0 if applied cleanly.",	0);
 	create_insn	(0X1AA53);
 	set_name	(0X1AA53,	"AddToStatCapped");
+	set_cmt	(0X1AA9B,	"Recomputes carry capacity ([si+0x56]/[si+0x96] = [si+0x3C]/[si+0x7C] * 10), then for [si+0x3C]->[si+0x38], [si+0x3E]->[si+0x3A], [si+0x7C]->[si+0x78], [si+0x7E]->[si+0x7A]: if the source exceeds 0x48 (72), scales 20% of the excess into the target (else zeroes it). Finishes with RecomputeEquipmentStatBonuses. Called from HandleIconBarItemExpiry and ApplyIconBarStatDelta.",	0);
 	create_insn	(0X1AA9B);
+	set_name	(0X1AA9B,	"RefreshCarryCapacityAndAttributeBonuses");
 	set_cmt	(0X1AB26,	"Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.",	0);
 	create_insn	(0X1AB26);
 	set_name	(0X1AB26,	"UpdatePartyAverageStatTiers");
@@ -5307,6 +5309,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1FC3F);
 	op_hex		(x,	1);
 	set_name	(0X1FC3F,	"MaybeForceTickWorldAilments");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1FC48);
 	create_insn	(0X1FC53);
 	create_insn	(x=0X1FC58);
@@ -5324,15 +5335,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X1FD17);
 	op_hex		(x,	1);
 	set_name	(0X1FD17,	"TickRedrawTimer");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1FD24,	"5-minute periodic sweep (AdvanceGameClock). Runs TickAilmentDuration over the 6-entry table at 0x9519 and every party member's 8 main inventory slots ([+0x11A]) -- ailments occupy the same slot storage as items/world-table rows. Calls sub_1FE0A once (a related status sweep, not traced). Sums all 12 known status-duration counters; if all 0, clears word_3295A bit 0x800 so this timer stops firing until something needs it again.",	0);
 	create_insn	(0X1FD24);
 	set_name	(0X1FD24,	"TickWorldAilments");
@@ -7081,9 +7083,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2681B,	"Sibling of DrawPortraitOverlayIconA, at offset (0x26,0x24). Called from DrawPartyMemberPortrait.",	0);
 	create_insn	(0X2681B);
 	set_name	(0X2681B,	"DrawPortraitOverlayIconB");
-	set_cmt	(0X26846,	"LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).",	0);
-	create_insn	(0X26846);
-	set_name	(0X26846,	"LoadContainerContents");
 }
 
 //------------------------------------------------------------------------
@@ -7093,6 +7092,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X26846,	"LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).",	0);
+	create_insn	(0X26846);
+	set_name	(0X26846,	"LoadContainerContents");
 	set_cmt	(0X2684B,	"this",	0);
 	set_cmt	(0X26864,	"Restores the cursor, calls PickUpItemFromSlot (no placement step), updates the cursor and portrait. Called from sub_2621C -- the pickup counterpart to PlaceHeldItemIntoEmptySlot.",	0);
 	create_insn	(0X26864);
@@ -9366,11 +9368,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2B948,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B948);
 	set_name	(0X2B948,	"ShowConversationText_800");
-	create_insn	(0X2B9C8);
-	set_cmt	(0X2B9D4,	"Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.",	0);
-	create_insn	(x=0X2B9D4);
-	op_hex		(x,	1);
-	set_name	(0X2B9D4,	"ClassifyConversationSkillTier");
 }
 
 //------------------------------------------------------------------------
@@ -9380,6 +9377,11 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2B9C8);
+	set_cmt	(0X2B9D4,	"Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.",	0);
+	create_insn	(x=0X2B9D4);
+	op_hex		(x,	1);
+	set_name	(0X2B9D4,	"ClassifyConversationSkillTier");
 	create_insn	(x=0X2B9EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X2BA04);
