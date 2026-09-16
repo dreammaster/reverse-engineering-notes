@@ -3826,7 +3826,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1AC2F);
 	create_insn	(0X1AC58);
+	set_cmt	(0X1AC80,	"Map-trigger counterpart to ApplyItemEffectIconSlot: classifies an item via ClassifyItemServiceTier and, if valid, populates an icon-bar slot with its id/pointer, a caller-supplied flag, and the same word_2E548 category-based field GetClassifiedItemStatField selects. Called from ApplyMapTriggerEffect.",	0);
 	create_insn	(0X1AC80);
+	set_name	(0X1AC80,	"ApplyTriggerEffectIconSlot");
 	create_insn	(0X1AC94);
 	create_insn	(x=0X1ACAC);
 	op_hex		(x,	1);
@@ -5506,9 +5508,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20D2F,	"Draws the dungeon backdrop: ceiling (word_2E498) and floor (word_2E4A0) pictures from the current cell's 0xE551 table entry, then calls ExtendDungeonFloorTexture 6x (same row-pointer pattern as RenderDungeonViewport) to extend the floor texture across matching cells. Called from RedrawDungeonScreen/RefreshDungeonScreen just before RenderDungeonViewport.",	0);
 	create_insn	(0X20D2F);
 	set_name	(0X20D2F,	"DrawDungeonFloorAndCeiling");
-	set_cmt	(0X20E12,	"For each cell in one row, draws the current floor picture (word_2E4A0) if the cell's type shares that same floor (IsPairedValueMatch) -- a seamless-floor pass, simpler than RenderDungeonViewRow's full wall/object rendering. Called 6x by DrawDungeonFloorAndCeiling.",	0);
-	create_insn	(0X20E12);
-	set_name	(0X20E12,	"ExtendDungeonFloorTexture");
 }
 
 //------------------------------------------------------------------------
@@ -5518,6 +5517,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X20E12,	"For each cell in one row, draws the current floor picture (word_2E4A0) if the cell's type shares that same floor (IsPairedValueMatch) -- a seamless-floor pass, simpler than RenderDungeonViewRow's full wall/object rendering. Called 6x by DrawDungeonFloorAndCeiling.",	0);
+	create_insn	(0X20E12);
+	set_name	(0X20E12,	"ExtendDungeonFloorTexture");
 	create_insn	(x=0X20E13);
 	op_hex		(x,	1);
 	set_cmt	(0X20E54,	"Draws a monster's sprite in the dungeon viewport (base picture, wound-flash animation via [+0xC] bits 2/4, optional overlay via bit 0x10, plus a weapon/attack-effect sprite), then checks [+0xC] bits 0x3010 (same flags ProcessLevelMonsters documents for TickMonsterTimer's two-phase countdown): if set, resets the countdown; else calls sub_25656 (not traced, plausibly attack resolution). Called from TryTriggerMonsterEncounterAtCell and RenderActiveMonsterSprites.",	0);
@@ -7498,6 +7500,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X28320);
 	op_hex		(x,	1);
 	set_name	(0X28320,	"UpdateAmbientMusic");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2832F);
 	op_hex		(x,	1);
 	create_insn	(x=0X28337);
@@ -7513,15 +7524,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X2838F);
 	op_hex		(x,	1);
 	set_name	(0X2838F,	"ShutdownAudioDrivers");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X283B0);
 	op_hex		(x,	1);
 	set_cmt	(0X283B2,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -10444,6 +10446,15 @@ static Bytes_3(void) {
 	set_name	(0X35160,	"aMusic");
 	create_strlit	(0X35166,	0X9);
 	set_name	(0X35166,	"aSoundFx");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3516F,	0X7);
 	set_name	(0X3516F,	"aReturn");
 	create_strlit	(0X35176,	0X9);
@@ -10469,15 +10480,6 @@ static Bytes_3(void) {
 	set_name	(0X351D5,	"aPickAClass");
 	create_strlit	(0X351E2,	0XB);
 	set_name	(0X351E2,	"aFighter");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X351ED,	0XB);
 	set_name	(0X351ED,	"aMerchant");
 	create_strlit	(0X351F8,	0XB);

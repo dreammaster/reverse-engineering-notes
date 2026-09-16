@@ -1308,7 +1308,10 @@ callers (`sub_1ACD7`) also calls
 (the same `0xC50 + slot*0x14` layout `TickPartyAilmentIconBar`/
 `ApplySavingThrowEffect` use) for effect id `0` — a new id not seen
 elsewhere — tied to the current item and party record, then calls
-`ApplyEffectAndDrawIconBar`. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
+`ApplyEffectAndDrawIconBar`. Its other caller (`sub_1AC80` ->
+`ApplyTriggerEffectIconSlot`) is the same pattern reached from
+`ApplyMapTriggerEffect` instead of direct item use — a map trap
+triggering the same icon-bar-slot effect machinery. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
 `ShowInsufficientGoldMessage`. The whole sell-item screen is entered
 via `RunSellItemScreen` (from `UseItem`, when the used item's `[+0xE]`
 flags have bit `0x4000` set). A sibling branch, gated on the item's

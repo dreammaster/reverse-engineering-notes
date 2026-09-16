@@ -4028,6 +4028,15 @@ classification failure.
 
 510 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyTriggerEffectIconSlot
+
+Named `sub_1AC80` -> `ApplyTriggerEffectIconSlot`, called from
+`ApplyMapTriggerEffect`: the map-trigger counterpart to
+`ApplyItemEffectIconSlot` — a map trap reaching the same icon-bar-slot
+effect machinery instead of direct item use.
+
+511 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

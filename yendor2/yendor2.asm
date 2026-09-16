@@ -17562,7 +17562,7 @@ loc_19F4A:                              ; CODE XREF: ApplyMapTriggerEffect+126�
 ; ---------------------------------------------------------------------------
 
 loc_19F70:                              ; CODE XREF: ApplyMapTriggerEffect+115↑j
-                call    sub_1AC80
+                call    ApplyTriggerEffectIconSlot
                 pop     di
 
 loc_19F76:                              ; CODE XREF: ApplyMapTriggerEffect+10B↑j
@@ -19178,8 +19178,8 @@ seg040          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AC80       proc far                ; CODE XREF: ApplyMapTriggerEffect:loc_19F70↑P
-                mov     word_32906, bx
+ApplyTriggerEffectIconSlot proc far     ; CODE XREF: ApplyMapTriggerEffect:loc_19F70↑P
+                mov     word_32906, bx  ; Map-trigger counterpart to ApplyItemEffectIconSlot: classifies an item via ClassifyItemServiceTier and, if valid, populates an icon-bar slot with its id/pointer, a caller-supplied flag, and the same word_2E548 category-based field GetClassifiedItemStatField selects. Called from ApplyMapTriggerEffect.
                 mov     ax, [bx+di]
                 mov     word_3290A, ax
                 call    ClassifyItemServiceTier
@@ -19188,7 +19188,7 @@ sub_1AC80       proc far                ; CODE XREF: ApplyMapTriggerEffect:loc_1
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1AC94:                              ; CODE XREF: sub_1AC80+11↑j
+loc_1AC94:                              ; CODE XREF: ApplyTriggerEffectIconSlot+11↑j
                 mov     ax, word_32906
                 mov     [si+0Ch], ax
                 mov     [si+0Eh], di
@@ -19201,7 +19201,7 @@ loc_1AC94:                              ; CODE XREF: sub_1AC80+11↑j
                 jnz     short loc_1ACB7
                 mov     ax, 1
 
-loc_1ACB7:                              ; CODE XREF: sub_1AC80+32↑j
+loc_1ACB7:                              ; CODE XREF: ApplyTriggerEffectIconSlot+32↑j
                 mov     [si+8], ax
                 test    word ptr [bx+0Ch], 0C000h
                 jnz     short loc_1ACCC
@@ -19211,12 +19211,12 @@ loc_1ACB7:                              ; CODE XREF: sub_1AC80+32↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1ACCC:                              ; CODE XREF: sub_1AC80+3F↑j
+loc_1ACCC:                              ; CODE XREF: ApplyTriggerEffectIconSlot+3F↑j
                 mov     bx, word_2E548
                 mov     ax, [bx+4]
                 mov     [si+12h], ax
                 retf
-sub_1AC80       endp
+ApplyTriggerEffectIconSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19457,7 +19457,7 @@ ApplyItemEffectIconSlot endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ClassifyItemServiceTier proc near       ; CODE XREF: sub_1AC80+9↑p
+ClassifyItemServiceTier proc near       ; CODE XREF: ApplyTriggerEffectIconSlot+9↑p
                                         ; sub_1ACD7+1A↑p ...
                 mov     errorCode, 0    ; Loads an item and classifies it via errorCode: 3 if neither [+0xC] bit 0xC000 nor 0x800 is set (wrong item type), else 2 or 1 based on a secondary [+2] flag pair. A 3-tier item-compatibility classifier; exact tier meanings and the callers' (sub_1AC80/sub_1ACD7) purpose aren't confirmed.
                 mov     word_3290A, ax
@@ -74258,8 +74258,8 @@ word_32906      dw 0                    ; DATA XREF: DrawClueBookMapGrid+46↑w
                                         ; sub_14E28+B1↑w ...
 word_32908      dw 0                    ; DATA XREF: sub_16881+4D↑w
                                         ; sub_16881:loc_168F6↑r ...
-word_3290A      dw 0                    ; DATA XREF: sub_1AC80+6↑w
-                                        ; sub_1AC80+1D↑r ...
+word_3290A      dw 0                    ; DATA XREF: ApplyTriggerEffectIconSlot+6↑w
+                                        ; ApplyTriggerEffectIconSlot+1D↑r ...
 word_3290C      dw 0                    ; DATA XREF: UseItem+151↑r
                                         ; UseKeyItem+B↑w ...
 word_3290E      dw 0                    ; DATA XREF: DrawClueBookMapGrid+A6↑w
