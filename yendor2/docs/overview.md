@@ -5484,6 +5484,26 @@ screens).
 
 628 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowStatusPanelMessage, DrawClueBookMonsterStatRow
+
+Named `sub_23B19` -> `ShowStatusPanelMessage`, called from `start`'s
+main command loop with a caller-supplied message pointer/line count:
+sets up the status panel position/colors, clears/restores as needed,
+then draws the message via `DrawStringColumn`. Confirmed via string
+dump at both traced call sites: "NOTHING HERE" (after a failed
+`ProbeFacingTile` search) and "YOU ARE NOT" / "YET READY!" (after a
+3-flag quest-gate check fails) — a generic "show an N-line message in
+the status panel" utility.
+
+Named `sub_148B2` -> `DrawClueBookMonsterStatRow`, called 7 times
+from `ShowClueBookMonsterDetail`, once per bestiary stat row. Draws a
+caller-supplied label, then reinterprets the caller's `ax` as a field
+offset within the loaded monster record (popped into `bx`): if that
+field is zero, the value draw is skipped entirely (stat not
+applicable to this monster), otherwise the field's numeric value is
+drawn right-aligned at a fixed column. A milestone: **630 named of
+769 functions as of this update.**
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

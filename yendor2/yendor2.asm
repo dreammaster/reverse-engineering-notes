@@ -670,7 +670,7 @@ loc_1058E:                              ; CODE XREF: start+527↑j
                 jnz     short loc_105A8
                 mov     bx, 7D71h
                 mov     cx, 1
-                call    sub_23B19
+                call    ShowStatusPanelMessage
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -843,7 +843,7 @@ loc_10720:                              ; CODE XREF: start+70A↑j
                                         ; start+714↑j
                 mov     bx, 86ADh
                 mov     cx, 2
-                call    sub_23B19
+                call    ShowStatusPanelMessage
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -6741,37 +6741,37 @@ ShowClueBookMonsterDetail proc near     ; CODE XREF: RunClueBookMonsterCategory+
                 mov     _textPos_y, 2Eh ; '.'
                 mov     bx, 8911h
                 mov     ax, 50h ; 'P'
-                call    sub_148B2
+                call    DrawClueBookMonsterStatRow
                 mov     _textPos_x, 0DDh
                 mov     _textPos_y, 34h ; '4'
                 mov     bx, 8919h
                 mov     ax, 54h ; 'T'
-                call    sub_148B2
+                call    DrawClueBookMonsterStatRow
                 mov     _textPos_x, 0D7h
                 mov     _textPos_y, 3Ah ; ':'
                 mov     bx, 8923h
                 mov     ax, 56h ; 'V'
-                call    sub_148B2
+                call    DrawClueBookMonsterStatRow
                 mov     _textPos_x, 0D1h
                 mov     _textPos_y, 40h ; '@'
                 mov     bx, 892Eh
                 mov     ax, 58h ; 'X'
-                call    sub_148B2
+                call    DrawClueBookMonsterStatRow
                 mov     _textPos_x, 0E9h
                 mov     _textPos_y, 46h ; 'F'
                 mov     bx, 893Ah
                 mov     ax, 5Ah ; 'Z'
-                call    sub_148B2
+                call    DrawClueBookMonsterStatRow
                 mov     _textPos_x, 0CBh
                 mov     _textPos_y, 4Ch ; 'L'
                 mov     bx, 8942h
                 mov     ax, 64h ; 'd'
-                call    sub_148B2
+                call    DrawClueBookMonsterStatRow
                 mov     _textPos_x, 0CBh
                 mov     _textPos_y, 52h ; 'R'
                 mov     bx, 894Fh
                 mov     ax, 66h ; 'f'
-                call    sub_148B2
+                call    DrawClueBookMonsterStatRow
                 mov     _textPos_x, 0DDh
                 mov     _textPos_y, 5Eh ; '^'
                 mov     bx, 895Ch
@@ -7309,9 +7309,9 @@ DrawLabeledNumberIfNonzero endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_148B2       proc near               ; CODE XREF: ShowClueBookMonsterDetail+93↑p
+DrawClueBookMonsterStatRow proc near    ; CODE XREF: ShowClueBookMonsterDetail+93↑p
                                         ; ShowClueBookMonsterDetail+A8↑p ...
-                push    ax
+                push    ax              ; Draws one bestiary stat row: label via writeString (caller sets bx=msg), then treats the caller's ax as a monster-record field offset (popped into bx) -- if es:[bx]==0, skips the value (stat not applicable), else draws es:[bx]'s value right-aligned at x=0x113. Called 7 times from ShowClueBookMonsterDetail, one per stat row.
                 mov     _font_fgColor, 0Ah
                 call    writeString
                 pop     bx
@@ -7326,9 +7326,9 @@ sub_148B2       proc near               ; CODE XREF: ShowClueBookMonsterDetail+9
                 call    StripCommasAndSpaces
                 call    writeString
 
-locret_148E9:                           ; CODE XREF: sub_148B2+11↑j
+locret_148E9:                           ; CODE XREF: DrawClueBookMonsterStatRow+11↑j
                 retn
-sub_148B2       endp
+DrawClueBookMonsterStatRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35086,9 +35086,9 @@ WriteStringWithHighlightedChar endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23B19       proc far                ; CODE XREF: start+5A0↑P
+ShowStatusPanelMessage proc far         ; CODE XREF: start+5A0↑P
                                         ; start+726↑P
-                push    bx
+                push    bx              ; Generic status-panel message display: sets position (0xF0,0x60) and colors, clears the panel if dirty, restores cursor background if dirty, then DrawStringColumn(bx, cx) + DrawMouseCursor + sub_238CD. Callers pass bx=message pointer, cx=line count. Confirmed uses: 'NOTHING HERE' (1 line, after a failed search) and 'YOU ARE NOT'/'YET READY!' (2 lines, after a quest-flag gate). Called from `start`.
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 8Ah
@@ -35105,7 +35105,7 @@ sub_23B19       proc far                ; CODE XREF: start+5A0↑P
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
-sub_23B19       endp
+ShowStatusPanelMessage endp
 
 
 ; =============== S U B R O U T I N E =======================================

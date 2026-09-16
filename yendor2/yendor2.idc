@@ -2063,7 +2063,9 @@ static Bytes_0(void) {
 	set_cmt	(0X14876,	"Draws a label then a plain integer (not packed-BCD) via FormatNumber, only if [si] is nonzero. Plain-integer sibling of DrawLabeledBCDIfNonzero. Called from ShowClueBookItemDetail, ShowItemEffectDuration, ShowItemAbilityEffectInfo, and sub_13780.",	0);
 	create_insn	(0X14876);
 	set_name	(0X14876,	"DrawLabeledNumberIfNonzero");
+	set_cmt	(0X148B2,	"Draws one bestiary stat row: label via writeString (caller sets bx=msg), then treats the caller's ax as a monster-record field offset (popped into bx) -- if es:[bx]==0, skips the value (stat not applicable), else draws es:[bx]'s value right-aligned at x=0x113. Called 7 times from ShowClueBookMonsterDetail, one per stat row.",	0);
 	create_insn	(0X148B2);
+	set_name	(0X148B2,	"DrawClueBookMonsterStatRow");
 	set_cmt	(0X148EA,	"'ADDS:' attribute/skill bonus list for word_2E54A entries with type id >= 0x7C: table 0x7DC7 is the canonical 27-entry attribute/skill name list (STRENGTH..LINGUISTICS and beyond). Called from ShowArmorDetailRow.",	0);
 	create_insn	(0X148EA);
 	set_name	(0X148EA,	"ShowArmorAttributeBonusList");
@@ -3068,6 +3070,15 @@ static Bytes_0(void) {
 	set_cmt	(0X17F7C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X17F7C);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X17F89);
 	op_hex		(x,	1);
 	set_cmt	(0X17F8B,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -3078,15 +3089,6 @@ static Bytes_0(void) {
 	set_cmt	(0X17FB8,	"Formats ax as a decimal string into the buffer at bx (space-padded '0' for ax==0). Extracts digits via successive divisors with leading-zero suppression (sub_18041).",	0);
 	create_insn	(0X17FB8);
 	set_name	(0X17FB8,	"FormatNumber");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X17FBC);
 	op_hex		(x,	1);
 	create_insn	(x=0X17FBF);
@@ -4999,9 +5001,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1E61B,	"Deducts alchemy spell costs: MP (word_332D2) from [bx+0x54], NUORE (word_332D4, counter 0x94BB) and MAGIC ORE (word_332D6, counter 0x94B7) via SubtractFromBCDCounter. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E61B);
 	set_name	(0X1E61B,	"DeductAlchemySpellCosts");
-	set_cmt	(0X1E64A,	"The party rest/camp action ('R rest'). Checks eligibility (sub_1EA18), advances the game clock (8 hours flat for a full rest, or up to 8 hourly ticks calling ProcessLevelMonsters and stopping if combat starts), handles day rollover (ResetDailyAbilityCharges + calendar counters), shows hours rested, then resumes via RunDungeonGameLoop. Called from `start` and sub_2C0FE.",	0);
-	create_insn	(0X1E64A);
-	set_name	(0X1E64A,	"RestPartyAndAdvanceClock");
 }
 
 //------------------------------------------------------------------------
@@ -5011,6 +5010,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1E64A,	"The party rest/camp action ('R rest'). Checks eligibility (sub_1EA18), advances the game clock (8 hours flat for a full rest, or up to 8 hourly ticks calling ProcessLevelMonsters and stopping if combat starts), handles day rollover (ResetDailyAbilityCharges + calendar counters), shows hours rested, then resumes via RunDungeonGameLoop. Called from `start` and sub_2C0FE.",	0);
+	create_insn	(0X1E64A);
+	set_name	(0X1E64A,	"RestPartyAndAdvanceClock");
 	create_insn	(x=0X1E657);
 	op_hex		(x,	1);
 	create_insn	(0X1E662);
@@ -6535,7 +6537,9 @@ static Bytes_2(void) {
 	create_insn	(0X23AF2);
 	set_name	(0X23AF2,	"WriteStringWithHighlightedChar");
 	create_insn	(0X23B13);
+	set_cmt	(0X23B19,	"Generic status-panel message display: sets position (0xF0,0x60) and colors, clears the panel if dirty, restores cursor background if dirty, then DrawStringColumn(bx, cx) + DrawMouseCursor + sub_238CD. Callers pass bx=message pointer, cx=line count. Confirmed uses: 'NOTHING HERE' (1 line, after a failed search) and 'YOU ARE NOT'/'YET READY!' (2 lines, after a quest-flag gate). Called from `start`.",	0);
 	create_insn	(0X23B19);
+	set_name	(0X23B19,	"ShowStatusPanelMessage");
 	create_insn	(x=0X23B43);
 	op_hex		(x,	1);
 	create_insn	(0X23B5E);
@@ -6782,6 +6786,15 @@ static Bytes_2(void) {
 	set_cmt	(0X25608,	"Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.",	0);
 	create_insn	(0X25608);
 	set_name	(0X25608,	"UpdateAmbientMusicForRegion");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X25656,	"Advances a monster's idle/walk animation frame ([+8]) within a small cycle relative to a base frame ([+0x4C]), mode selected by [+0x92] bits 0x20/0x10 (skipped entirely if bit 0x40 set). Called from DrawMonsterAndUpdateAttackState (non-attacking case) and ShowClueBookMonsterDetail (animates the clue-book preview the same way).",	0);
 	create_insn	(x=0X25656);
 	op_hex		(x,	1);
@@ -6814,15 +6827,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2570C,	"Strips ',' and ' ' from an in-place NUL-terminated string -- the counterpart to FormatNumber's thousands-separator insertion. Called from ShowItemAbilityEffectInfo and others.",	0);
 	create_insn	(0X2570C);
 	set_name	(0X2570C,	"StripCommasAndSpaces");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X25726);
 	set_cmt	(0X2572C,	"FormatNumber then StripCommasZeroPadSpaces on the shared 0xAFA8 buffer -- zero-padded sibling of FormatNumberCompact. Called from sub_2044C, sub_2047B, and others.",	0);
 	create_insn	(0X2572C);
@@ -9181,6 +9185,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2A914,	"First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.",	0);
 	create_insn	(0X2A914);
 	set_name	(0X2A914,	"ApplyMultiStatEffect");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A923);
 	create_insn	(x=0X2A92E);
 	op_hex		(x,	1);
@@ -9197,15 +9210,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2A9EB);
 	create_insn	(0X2AA0C);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2AA2B);
 	op_hex		(x,	1);
 	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
@@ -11809,6 +11813,15 @@ static Bytes_4(void) {
 	set_name	(0X39C9C,	"aDChrisYoung");
 	create_strlit	(0X39CB9,	0X1E);
 	set_name	(0X39CB9,	"aVOICES");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39CD7,	0X2);
 	create_strlit	(0X39CD9,	0X2);
 	create_strlit	(0X39CDB,	0X2);
@@ -11846,15 +11859,6 @@ static Bytes_4(void) {
 	create_strlit	(0X39E34,	0X2);
 	create_strlit	(0X39E36,	0X22);
 	set_name	(0X39E36,	"aPatriciaFrankl");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39E58,	0X2);
 	create_strlit	(0X39E5A,	0X2);
 	create_strlit	(0X39E5C,	0X24);
