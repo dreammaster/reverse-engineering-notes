@@ -3390,8 +3390,10 @@ static Bytes_0(void) {
 	set_name	(0X18F6C,	"RestoreAllPortraitsFromEMS");
 	create_insn	(x=0X18FB9);
 	op_hex		(x,	1);
+	set_cmt	(0X18FC5,	"If the item is a container ([+0xC] bit 0x2000) and dx==0, calls LoadNextContainerInChain and stores the result in dx; no-op otherwise. Called 9 times from sub_18C79.",	0);
 	create_insn	(x=0X18FC5);
 	op_hex		(x,	1);
+	set_name	(0X18FC5,	"TryLoadNextContainerLink");
 	create_insn	(0X18FCD);
 	set_cmt	(0X18FDA,	"Space-bar 'enhance item' action (sub_1869D, sibling of TrySellItemForGold). Eligibility via sub_1B147 (a level/stat range check against table 0xBCE); on failure, 'I CAN NOT ENHANCE THAT' (msg 0x815A). Else CompareBCD4(g_partyGold, [table 0xCB2]) -- on insufficient gold, 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, via sub_190AF); else SubBCD4(g_partyGold -= [0xCB2]), advances the item to the next catalog entry (word_32974+1) and reloads it as the enhanced result.",	0);
 	create_insn	(0X18FDA);
@@ -3428,9 +3430,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1922C);
 	op_hex		(x,	1);
 	set_name	(0X1922C,	"RestorePortraitPanelFromEMS");
-	set_cmt	(0X19264,	"Space-bar 'sell item' action (sub_1869D main loop, word_328C6 bit 0x10) while carrying an item: if the held item's type mask doesn't overlap the standing location's accepted-type mask, shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise sells the item, crediting its value (word_32920, via AddBCD4) to g_partyGold, then ShowMaterialCounterHud. Renamed from TryConvertItemToMaterial after confirming g_partyGold's identity (HUD label is a literal '$', and the 'SPACEBAR TO SELL ITEM OR ESC TO UNDO' prompt lives in the same message bank).",	0);
-	create_insn	(0X19264);
-	set_name	(0X19264,	"TrySellItemForGold");
 }
 
 //------------------------------------------------------------------------
@@ -3440,6 +3439,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X19264,	"Space-bar 'sell item' action (sub_1869D main loop, word_328C6 bit 0x10) while carrying an item: if the held item's type mask doesn't overlap the standing location's accepted-type mask, shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise sells the item, crediting its value (word_32920, via AddBCD4) to g_partyGold, then ShowMaterialCounterHud. Renamed from TryConvertItemToMaterial after confirming g_partyGold's identity (HUD label is a literal '$', and the 'SPACEBAR TO SELL ITEM OR ESC TO UNDO' prompt lives in the same message bank).",	0);
+	create_insn	(0X19264);
+	set_name	(0X19264,	"TrySellItemForGold");
 	create_insn	(x=0X19284);
 	op_hex		(x,	1);
 	create_insn	(x=0X192B9);
@@ -5484,6 +5486,15 @@ static Bytes_1(void) {
 	set_cmt	(0X20C1E,	"Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.",	0);
 	create_insn	(0X20C1E);
 	set_name	(0X20C1E,	"RedrawDungeonScreen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X20C32);
 	op_hex		(x,	1);
 	create_insn	(x=0X20C3F);
@@ -5502,15 +5513,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20C7C,	"Fuzzy/paired equality: returns ax==bx, or (ax's even/odd pair partner)==bx -- i.e. ax+1==bx if ax is even, ax-1==bx if ax is odd. Lets a caller treat two adjacent table indices as a match.",	0);
 	create_insn	(0X20C7C);
 	set_name	(0X20C7C,	"IsPairedValueMatch");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X20C81);
 	op_hex		(x,	1);
 	create_insn	(0X20C8A);
@@ -7461,6 +7463,15 @@ static Bytes_2(void) {
 	set_cmt	(0X27FE0,	"Generic WORLD.DAT FileEntry setup, sibling of WorldDat_setBlock1-6: sets [+4]=ax (caller-supplied id, not a fixed block number), [+0xA]/[+0xC] from table 0xCDEF, [+6]=4*_blockSize3 (default, often overridden by the caller). Called from DrawClueBookMapGrid, LoadWorldDatTilePalette, and sub_111C1.",	0);
 	create_insn	(0X27FE0);
 	set_name	(0X27FE0,	"PrepareWorldDatRead");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X28000);
 	create_insn	(0X2801A);
 	create_insn	(x=0X28034);
@@ -7484,15 +7495,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
 	create_insn	(0X2814C);
 	set_name	(0X2814C,	"ComputeGameClockTime");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X28172);
 	create_insn	(0X2818B);
 	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
@@ -10398,6 +10400,15 @@ static Bytes_3(void) {
 	create_word	(0X3330E);
 	create_word	(0X33310);
 	create_word	(0X33312);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(0X33314);
 	create_word	(0X33316);
 	create_word	(0X33318);
@@ -10428,15 +10439,6 @@ static Bytes_3(void) {
 	create_strlit	(0X345A7,	0X19);
 	set_name	(0X345A7,	"aEmpty_0");
 	create_word	(0X34748);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35026,	0XD);
 	set_name	(0X35026,	"aPegasus");
 	create_strlit	(0X35040,	0XD);

@@ -4091,6 +4091,15 @@ and ticks the status effect whenever an item turns up in range.
 
 516 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryLoadNextContainerLink
+
+Named `sub_18FC5` -> `TryLoadNextContainerLink`, called 9 times from
+`sub_18C79`: a small guard wrapping `LoadNextContainerInChain`, only
+calling it when the item is itself a container and a caller-supplied
+flag allows it.
+
+517 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

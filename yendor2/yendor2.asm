@@ -15441,7 +15441,7 @@ loc_18D79:                              ; CODE XREF: sub_18C79+BB↑j
 
 loc_18D83:                              ; CODE XREF: sub_18C79+105↑j
                 mov     [si+13Eh], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+140h], dx
                 jmp     loc_18F26
 ; ---------------------------------------------------------------------------
@@ -15568,7 +15568,7 @@ loc_18E84:                              ; CODE XREF: sub_18C79:loc_18D5B↑j
                 cmp     word ptr [si+11Ah], 0
                 jnz     short loc_18E99
                 mov     [si+11Ah], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+11Ch], dx
                 jmp     loc_18F26
 ; ---------------------------------------------------------------------------
@@ -15577,7 +15577,7 @@ loc_18E99:                              ; CODE XREF: sub_18C79+210↑j
                 cmp     word ptr [si+11Eh], 0
                 jnz     short loc_18EAD
                 mov     [si+11Eh], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+120h], dx
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
@@ -15586,7 +15586,7 @@ loc_18EAD:                              ; CODE XREF: sub_18C79+225↑j
                 cmp     word ptr [si+122h], 0
                 jnz     short loc_18EC1
                 mov     [si+122h], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+124h], dx
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
@@ -15595,7 +15595,7 @@ loc_18EC1:                              ; CODE XREF: sub_18C79+239↑j
                 cmp     word ptr [si+126h], 0
                 jnz     short loc_18ED5
                 mov     [si+126h], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+128h], dx
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
@@ -15604,7 +15604,7 @@ loc_18ED5:                              ; CODE XREF: sub_18C79+24D↑j
                 cmp     word ptr [si+12Ah], 0
                 jnz     short loc_18EE9
                 mov     [si+12Ah], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+12Ch], dx
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
@@ -15613,7 +15613,7 @@ loc_18EE9:                              ; CODE XREF: sub_18C79+261↑j
                 cmp     word ptr [si+12Eh], 0
                 jnz     short loc_18EFD
                 mov     [si+12Eh], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+130h], dx
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
@@ -15622,7 +15622,7 @@ loc_18EFD:                              ; CODE XREF: sub_18C79+275↑j
                 cmp     word ptr [si+132h], 0
                 jnz     short loc_18F11
                 mov     [si+132h], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+134h], dx
                 jmp     short loc_18F26
 ; ---------------------------------------------------------------------------
@@ -15635,7 +15635,7 @@ loc_18F11:                              ; CODE XREF: sub_18C79+289↑j
 
 loc_18F1B:                              ; CODE XREF: sub_18C79+29D↑j
                 mov     [si+136h], cx
-                call    sub_18FC5
+                call    TryLoadNextContainerLink
                 mov     [si+138h], dx
 
 loc_18F26:                              ; CODE XREF: sub_18C79+115↑j
@@ -15691,22 +15691,22 @@ RestoreAllPortraitsFromEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18FC5       proc near               ; CODE XREF: sub_18C79+10E↑p
+TryLoadNextContainerLink proc near      ; CODE XREF: sub_18C79+10E↑p
                                         ; sub_18C79+216↑p ...
-                test    word ptr [bx+0Ch], 2000h
+                test    word ptr [bx+0Ch], 2000h ; If the item is a container ([+0xC] bit 0x2000) and dx==0, calls LoadNextContainerInChain and stores the result in dx; no-op otherwise. Called 9 times from sub_18C79.
                 jnz     short loc_18FCD
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18FCD:                              ; CODE XREF: sub_18FC5+5↑j
+loc_18FCD:                              ; CODE XREF: TryLoadNextContainerLink+5↑j
                 cmp     dx, 0
                 jnz     short locret_18FD9
                 call    LoadNextContainerInChain
                 mov     dx, ax
 
-locret_18FD9:                           ; CODE XREF: sub_18FC5+B↑j
+locret_18FD9:                           ; CODE XREF: TryLoadNextContainerLink+B↑j
                 retn
-sub_18FC5       endp
+TryLoadNextContainerLink endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -39115,7 +39115,7 @@ seg087          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-LoadNextContainerInChain proc far       ; CODE XREF: sub_18FC5+D↑P
+LoadNextContainerInChain proc far       ; CODE XREF: TryLoadNextContainerLink+D↑P
                                         ; sub_2621C+A5↓p
                 push    bx              ; Iterates a chain of container/world-object records: if word_36E0F (next-id pointer) is set, reads its CURGAME record and advances to the next id from that record's own [+8] field (linked-list walk); else uses a simple counter (word_36E0D). Loads the result via LoadContainerContents. Called from sub_18FC5 and sub_2621C.
                 cmp     word_36E0F, 0

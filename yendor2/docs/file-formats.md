@@ -343,7 +343,11 @@ letting an item be placed into it, rejecting with
 `LoadNextContainerInChain`, which walks a linked chain of container/
 world-object records via `CURGAME` (each record's own `[+8]` field
 points to the next id) — e.g. multiple containers found together —
-loading each via `LoadContainerContents` in turn. Both
+loading each via `LoadContainerContents` in turn. `TryLoadNextContainerLink`
+(was `sub_18FC5`, called 9 times from `sub_18C79`) is a small guard
+wrapping this: only calls `LoadNextContainerInChain` if the item is
+itself a container ([+0xC] bit `0x2000`) and a caller-supplied flag
+allows it. Both
 `LoadNextContainerInChain` and `sub_2621C` also call
 `CommitContainerWrite` (was `sub_26C0E`) — a minimal write-commit
 (`FileEntry_Write(errorCode=0xB)` + `ErrorCheck`) that, unlike the
