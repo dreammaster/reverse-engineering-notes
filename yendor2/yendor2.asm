@@ -499,7 +499,7 @@ loc_10403:                              ; CODE XREF: start+3FB↑j
 
 loc_1040D:                              ; CODE XREF: start+3E0↑j
                 mov     ax, 2
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    DrawMouseCursor
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -851,7 +851,7 @@ loc_1072E:                              ; CODE XREF: start+71E↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    StopMusicAndResetTimer
                 mov     ax, _val30
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     bx, word_32DC4
                 inc     word ptr [bx+2]
                 call    RefreshDungeonScreen
@@ -2337,7 +2337,7 @@ loc_1157A:                              ; CODE XREF: HandleMovementInput+2BB↑j
 
 loc_11581:                              ; CODE XREF: HandleMovementInput+2A5↑j
                 mov     ax, _val33
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_11589:                              ; CODE XREF: HandleMovementInput+2D1↑j
                 mov     ax, word_32940
@@ -2482,7 +2482,7 @@ HandleSpecialCellEntry proc near        ; CODE XREF: HandleMovementInput+277↑p
                 cmp     byte_2E400, 48h ; 'H' ; Called from HandleMovementInput when the destination cell's type is in the [_val32,_val31] range (same range-check shape as IsMonsterStepBlocked's 'special' branch). If byte_2E400=='H', looks up 0xE551 tile-type table entries (destination cell's type, plus a fixed index 0x6EB8) into scratch 0xE821, then RefreshDungeonScreen + a sound; otherwise just a different sound. Both paths fall through to the shared movement-apply code. Exact nature of the special cell type and the 'H' condition not confirmed.
                 jz      short loc_11704
                 mov     ax, _val30
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short loc_1175B
 ; ---------------------------------------------------------------------------
 
@@ -2515,7 +2515,7 @@ loc_11704:                              ; CODE XREF: HandleSpecialCellEntry+5↑
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, _val30
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_1175B:                              ; CODE XREF: HandleSpecialCellEntry+F↑j
                 mov     ax, word_2E402
@@ -2914,7 +2914,7 @@ sub_11A10       proc far                ; CODE XREF: start+751↑P
                 mov     ax, 12Ch        ; ticks
                 call    wait
                 mov     ax, 0Ah
-                call    sub_28412
+                call    TriggerSoundEvent
                 and     word_3295A, 0EFFFh
                 call    sub_11EBE
                 mov     word_36D01, 1E0h
@@ -3140,11 +3140,11 @@ sub_11E1C       proc near               ; CODE XREF: sub_11A10+237↑p
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCueAlt
                 mov     ax, 47h ; 'G'
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCueAlt
                 mov     ax, 48h ; 'H'
-                call    sub_28412
+                call    TriggerSoundEvent
                 retn
 sub_11E1C       endp
 
@@ -3171,7 +3171,7 @@ DrawShadowedTextAlt proc near           ; CODE XREF: sub_11A10+79↑p
                 jz      short loc_11E5D
                 cmp     ax, 0FFFFh
                 jz      short loc_11E5D
-                call    sub_28412
+                call    TriggerSoundEvent
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -7033,7 +7033,7 @@ loc_14612:                              ; CODE XREF: ShowClueBookMonsterDetail+4
                 mov     ax, es:[si+5Ch]
                 or      ax, ax
                 jz      short loc_1464A
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short loc_1464A
 ; ---------------------------------------------------------------------------
 
@@ -7587,7 +7587,7 @@ seg010          segment byte public 'CODE' use16
 ShowClueBookRegistrationNag proc far    ; CODE XREF: RunClueEntryMenu+FA↑P
                                         ; HandlePagedEntryNavigation+5F↑P
                 mov     ax, 3           ; Plays a sound and shows 'REGISTER YOUR COPY OF THE CLUE BOOK TODAY!' -- the shareware registration nag for clue-book entries that require registration (called when the global 'registered' flag, word_328CA bit 1, is clear and the entry's own bit 0x8000 says it's registration-locked).
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     _textPos_x, 23h ; '#'
                 mov     _textPos_y, 10h
                 mov     _font_fgColor, 59h ; 'Y'
@@ -7884,7 +7884,7 @@ loc_14DD0:                              ; CODE XREF: HandleClueCategorySelection
                 and     word_328CC, 1FFh
                 or      word_328CC, bx
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short locret_14DFB
 ; ---------------------------------------------------------------------------
 
@@ -9005,7 +9005,7 @@ loc_15799:                              ; CODE XREF: sub_1559A+1FC↑j
 
 loc_157E9:                              ; CODE XREF: sub_1559A+24C↑j
                 mov     ax, 11h
-                call    sub_28412
+                call    TriggerSoundEvent
                 or      word_328C8, 800h
                 mov     dx, 0B0h
                 call    sub_16159
@@ -9027,7 +9027,7 @@ loc_15806:                              ; CODE XREF: sub_1559A+269↑j
                 call    TryPlaySoundCue
                 call    sub_16244
                 mov     ax, 12h
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    DrawMouseCursor
                 mov     ax, 5
                 mov     bx, 3Fh ; '?'
@@ -9043,7 +9043,7 @@ loc_15859:                              ; CODE XREF: sub_1559A+2BC↑j
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 13h
-                call    sub_28412
+                call    TriggerSoundEvent
                 and     word_328C8, 0F7FFh
                 call    sub_161C3
                 call    sub_161B6
@@ -9099,7 +9099,7 @@ loc_158D5:                              ; CODE XREF: sub_1559A+338↑j
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 18h
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15927
                 retn
@@ -9109,7 +9109,7 @@ loc_15927:                              ; CODE XREF: sub_1559A+38A↑j
                 mov     cx, 19h
                 call    TryPlaySoundCue
                 mov     ax, 19h
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    sub_161B6
                 and     word_328C8, 0F7FFh
                 mov     ax, 0
@@ -9260,7 +9260,7 @@ loc_15B34:                              ; CODE XREF: sub_1559A+597↑j
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 12h
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    sub_152E1
                 call    PollForEscapeKeyOnlyAlt
                 jnz     short loc_15B54
@@ -9380,7 +9380,7 @@ loc_15C81:                              ; CODE XREF: sub_1559A+6E4↑j
 
 loc_15C8D:                              ; CODE XREF: sub_1559A+6F0↑j
                 mov     ax, 16h
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 call    PollForEscapeKeyOnlyAlt
@@ -9401,7 +9401,7 @@ loc_15CB7:                              ; CODE XREF: sub_1559A+70D↑j
                 mov     cx, 3
                 call    sub_16180
                 mov     ax, 1Ah
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     cx, 2
                 call    sub_16180
                 mov     ax, 0
@@ -9444,7 +9444,7 @@ loc_15D39:                              ; CODE XREF: sub_1559A+79C↑j
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 1Bh
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    sub_161C3
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -9475,7 +9475,7 @@ loc_15D85:                              ; CODE XREF: sub_1559A+7E8↑j
 
 loc_15D97:                              ; CODE XREF: sub_1559A+7FA↑j
                 mov     ax, 1Bh
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     si, 6DD8h
                 or      word ptr [si], 0C000h
                 call    sub_152EF
@@ -9503,7 +9503,7 @@ loc_15DD7:                              ; CODE XREF: sub_1559A+843↓j
                 mov     cx, 0FFFFh
                 call    TryPlaySoundCue
                 mov     ax, 5
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     cx, 5
                 call    sub_16180
                 mov     cx, 0FFFFh
@@ -9918,7 +9918,7 @@ DrawShadowedText proc near              ; CODE XREF: sub_1559A+BB↑p
                 jz      short loc_161E3
                 cmp     ax, 0FFFFh
                 jz      short loc_161E3
-                call    sub_28412
+                call    TriggerSoundEvent
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -10646,7 +10646,7 @@ loc_1670D:                              ; CODE XREF: HandleDungeonInput+C6↑j
                 call    WaitForSoundDriverIdle
                 jnz     short loc_16776
                 mov     ax, _val43
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_16776:                              ; CODE XREF: HandleDungeonInput+365↑j
                 jmp     short loc_167B3
@@ -10665,7 +10665,7 @@ loc_16778:                              ; CODE XREF: HandleDungeonInput+35E↑j
                 mov     ax, [bx+0Ah]
                 or      ax, ax
                 jz      short loc_167A9
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_167A9:                              ; CODE XREF: HandleDungeonInput+385↑j
                                         ; HandleDungeonInput+39B↑j
@@ -10818,7 +10818,7 @@ loc_168F6:                              ; CODE XREF: sub_16881+70↑j
                 mov     ax, [si+5Ch]
                 or      ax, ax
                 jz      short loc_1693D
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_1693D:                              ; CODE XREF: sub_16881+AA↑j
                                         ; sub_16881+B5↑j
@@ -10858,7 +10858,7 @@ loc_16978:                              ; CODE XREF: sub_16881+EA↑j
                 mov     ax, [si+5Eh]
                 cmp     ax, 0
                 jz      short loc_1696D
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_16A1E
 ; ---------------------------------------------------------------------------
 
@@ -10896,7 +10896,7 @@ loc_169A1:                              ; CODE XREF: sub_16881+177↓j
                 mov     ax, [si+5Ch]
                 or      ax, ax
                 jz      short loc_169EF
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_169EF:                              ; CODE XREF: sub_16881+13A↑j
                                         ; sub_16881+148↑j ...
@@ -11404,8 +11404,8 @@ seg016          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16DEA       proc far                ; CODE XREF: sub_28412+D↓P
-                push    ax
+PlayPcSpeakerBeep proc far              ; CODE XREF: TriggerSoundEvent+D↓P
+                push    ax              ; Classic PC speaker beep: programs PIT channel 2 (0x34DE/0x708 divisor) via ports 0x43/0x42, gates it to the speaker via port 0x61 bits 0-1, waits 4 ticks, then disables it. Called from TriggerSoundEvent's driver-inactive fallback path (ax==3).
                 push    bx
                 push    cx
                 push    dx
@@ -11457,7 +11457,7 @@ sub_16DEA       proc far                ; CODE XREF: sub_28412+D↓P
                 pop     bx
                 pop     ax
                 retf
-sub_16DEA       endp
+PlayPcSpeakerBeep endp
 
 seg016          ends
 
@@ -11959,7 +11959,7 @@ loc_170A7:                              ; CODE XREF: sub_17032+237↓j
 
 loc_170C8:                              ; CODE XREF: sub_17032+33↑j
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, [si]
                 mov     word_36D6D, ax
                 mov     ax, [si+2]
@@ -12014,7 +12014,7 @@ loc_17100:                              ; CODE XREF: sub_17032+CA↑j
 
 loc_17172:                              ; CODE XREF: sub_17032+3C↑j
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, [si]
                 mov     word_36D71, ax
                 mov     ax, [si+2]
@@ -12029,7 +12029,7 @@ loc_17172:                              ; CODE XREF: sub_17032+3C↑j
 
 loc_17195:                              ; CODE XREF: sub_17032+46↑j
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, [si]
                 mov     word_36D75, ax
                 mov     ax, [si+2]
@@ -12993,7 +12993,7 @@ loc_17A32:                              ; CODE XREF: sub_17A21+6↑j
                 test    word_32DCE, 2
                 jnz     short loc_17A49
                 mov     ax, 6
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     bx, word_32DC4
                 dec     word ptr [bx+2]
 
@@ -13022,7 +13022,7 @@ ConsumeAbilityChargeAndRefresh proc near
 
 loc_17A73:                              ; CODE XREF: ConsumeAbilityChargeAndRefresh+B↑j
                 mov     ax, 6
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     bx, word_32DC4
                 inc     word ptr [bx+2]
                 call    RefreshDungeonScreen
@@ -13823,7 +13823,7 @@ loc_18104:                              ; CODE XREF: ApplyEffectAndDrawIconBar+1
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_18125
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_18125:                              ; CODE XREF: ApplyEffectAndDrawIconBar+5E↑j
                                         ; ApplyEffectAndDrawIconBar+64↑j
@@ -14569,7 +14569,7 @@ loc_1857E:                              ; CODE XREF: HandlePortraitClick+2F↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowPartyPortraitForSlot
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
@@ -14620,7 +14620,7 @@ loc_18601:                              ; CODE XREF: RefreshPartyPortraits+48↑
 
 loc_1861E:                              ; CODE XREF: RefreshPartyPortraits+65↑j
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
                 test    word_328C6, 1Ch
                 jz      short loc_18692
                 call    ClearPortraitPanelAreas
@@ -15064,7 +15064,7 @@ loc_189F8:                              ; CODE XREF: sub_1869D+325↑j
                 test    word_328C6, 80h
                 jnz     short loc_18A1A
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_18A08:                              ; CODE XREF: sub_1869D+31F↑j
                 test    word_328C6, 80h
@@ -15139,7 +15139,7 @@ loc_18AA0:                              ; CODE XREF: sub_1869D+3B8↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowPartyPortraitForSlot
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    DrawMouseCursor
                 call    sub_238CD
                 jmp     near ptr sub_1869D
@@ -15150,7 +15150,7 @@ loc_18ACC:                              ; CODE XREF: sub_1869D+40C↑j
                 and     word_328C6, bx
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    RestorePortraitAreaAtPosition
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -15178,7 +15178,7 @@ loc_18B03:                              ; CODE XREF: sub_1869D+44↑j
 
 loc_18B1C:                              ; CODE XREF: sub_1869D+51B↓j
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    RestoreAllPortraitsFromEMS
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
@@ -15215,7 +15215,7 @@ loc_18B6F:                              ; CODE XREF: sub_1869D+4BB↑j
                 test    word_328C6, bx
                 jz      short loc_18B82
                 mov     ax, 6
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    DrawPartyMemberPortrait
 
 loc_18B82:                              ; CODE XREF: sub_1869D+4D6↑j
@@ -16348,7 +16348,7 @@ loc_195BF:                              ; CODE XREF: sub_19553+69↑j
                 and     word_3295A, 3FFFh
                 mov     word_32924, bx
                 mov     ax, 2
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     bx, word_32924
 
 loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
@@ -16508,7 +16508,7 @@ loc_19701:                              ; CODE XREF: sub_19553+BA↑j
 loc_19712:                              ; CODE XREF: sub_19553+D5↑j
                                         ; sub_19553+F5↑j ...
                 mov     ax, 2
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     word_32924, 0
                 call    DrawPartyStatusIconRow
                 call    ShowMaterialCounterHud
@@ -17470,7 +17470,7 @@ loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑
                 mov     word_2E530, 0Bh
                 call    UpdateCursorForHeldItem
                 mov     ax, 0Ah
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, [di+4]
                 mov     word_36CF7, ax
                 mov     ax, [di+6]
@@ -18175,7 +18175,7 @@ loc_1A40E:                              ; CODE XREF: TravelToDestination+13↑j
                 mov     ax, [si+6]
                 cmp     ax, 0
                 jz      short loc_1A41B
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_1A41B:                              ; CODE XREF: TravelToDestination+24↑j
                 and     word_36C79, 0FFF8h
@@ -18396,7 +18396,7 @@ FlashStatusWarning proc far             ; CODE XREF: sub_17032+1B8↑P
                                         ; sub_17032+1D5↑P ...
                 push    word_31946      ; Moderate confidence: plays a sound, briefly shows picture id 0xE for 7 ticks (saving/restoring the previous picture id), then restores. Called from HandleGameCommand when a status effect is already active -- a periodic warning flash.
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     word_2E530, 0Eh
                 call    UpdateCursorForHeldItem
                 mov     ax, 7           ; ticks
@@ -19624,7 +19624,7 @@ loc_1B062:                              ; CODE XREF: PromptBuyOreQuantity+F0↑j
 
 loc_1B06F:                              ; CODE XREF: PromptBuyOreQuantity:loc_1B062↑j
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     si, 94B7h
                 cmp     word_32974, 2
                 jnz     short loc_1B098
@@ -21042,7 +21042,7 @@ loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 cmp     bx, [si]
                 jle     short loc_1BCCC
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 push    cs
                 call    near ptr sub_1B8AB
                 mov     _textPos_x, 16h
@@ -21079,7 +21079,7 @@ loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
                 mov     ax, [bx+1Ah]
                 call    SetRecordFlag_10C
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 push    cs
                 call    near ptr sub_1B8AB
                 mov     _textPos_x, 16h
@@ -22124,7 +22124,7 @@ loc_1C7D9:                              ; CODE XREF: UseAbilityScroll+151↑j
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 push    cs
                 call    near ptr RedrawPartyGoldDisplay
                 jmp     loc_1C707
@@ -23449,7 +23449,7 @@ loc_1D24B:                              ; CODE XREF: EditTextField+5C↑j
                 inc     cx
                 push    cx
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short loc_1D1F0
 ; ---------------------------------------------------------------------------
 
@@ -23476,7 +23476,7 @@ loc_1D273:                              ; CODE XREF: EditTextField+3D↑j
                 push    ax
                 push    cx
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_1D1F0
 ; ---------------------------------------------------------------------------
 
@@ -23679,7 +23679,7 @@ loc_1D423:                              ; CODE XREF: RunTitleScreen+B7↑j
                 test    word_328C4, 200h
                 jnz     short loc_1D436
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
@@ -23848,7 +23848,7 @@ loc_1D540:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    DrawMinimap
                 call    DrawMouseCursor
                 mov     ax, _val19
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    SaveCorridorBackgroundToEMS
                 mov     word_3292C, 31h ; '1'
                 call    AnimateProjectileStep
@@ -24197,7 +24197,7 @@ loc_1D9A6:                              ; CODE XREF: HighlightSelectedAbilityIco
                 call    DrawMinimap
                 call    DrawMouseCursor
                 mov     ax, _val43
-                call    sub_28412
+                call    TriggerSoundEvent
 
 locret_1D9E4:                           ; CODE XREF: HighlightSelectedAbilityIcon+7↑j
                 retn
@@ -24286,7 +24286,7 @@ loc_1DA54:                              ; CODE XREF: ShowCombatMessageOrWait+6�
                 pop     ax
                 cmp     ax, 0
                 jz      short loc_1DA54
-                call    sub_28412
+                call    TriggerSoundEvent
                 retn
 ShowCombatMessageOrWait endp ; sp-analysis failed
 
@@ -24616,7 +24616,7 @@ loc_1DD00:                              ; CODE XREF: RunAlchemyScreen+C↑j
                 cmp     word ptr [bx+94h], 0
                 jnz     short loc_1DD16
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_1DF49
 ; ---------------------------------------------------------------------------
 
@@ -24880,7 +24880,7 @@ loc_1DF0B:                              ; CODE XREF: RunAlchemyScreen+1C7↑j
 loc_1DF15:                              ; CODE XREF: RunAlchemyScreen+85↑j
                                         ; RunAlchemyScreen+8F↑j ...
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
                 call    DrawPartyStatusIconRow
@@ -24924,7 +24924,7 @@ loc_1DF87:                              ; CODE XREF: RunAlchemyScreen+292↑j
                 cmp     byte_2E400, 0
                 jz      short loc_1DFA5
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
@@ -25003,7 +25003,7 @@ loc_1E067:                              ; CODE XREF: RunAlchemyScreen+374↑j
                 jnz     short loc_1E082
                 or      word_328C4, 80h
                 mov     ax, 34h ; '4'
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short loc_1E08F
 ; ---------------------------------------------------------------------------
 
@@ -25011,7 +25011,7 @@ loc_1E082:                              ; CODE XREF: RunAlchemyScreen+390↑j
                 cmp     ax, 7
                 jnz     short loc_1E037
                 mov     ax, 0Bh
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                                         ; RunAlchemyScreen+35D↑j ...
@@ -25515,7 +25515,7 @@ RestoreOrSelectAlchemyCaster endp
 
 ShowAlchemyIconActive proc near         ; CODE XREF: RunAlchemyScreen+4D↑p
                 mov     ax, 1           ; Draws alchemy-screen picture 6 at (0x102,0x43), plus message 1. Called from RunAlchemyScreen. Exact narrative (vs. ShowAlchemyIconIdle) not confirmed.
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     x, 102h
                 mov     y, 43h ; 'C'
                 mov     ax, _videoBufferSeg
@@ -25699,7 +25699,7 @@ loc_1E662:                              ; CODE XREF: RestPartyAndAdvanceClock+13
                 call    DrawStringColumn
                 call    DrawMouseCursor
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -25710,7 +25710,7 @@ loc_1E6AE:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 test    word_328C4, 1
                 jnz     short loc_1E6CD
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_1E6CD:                              ; CODE XREF: RestPartyAndAdvanceClock+79↑j
                 call    RestoreCursorBackgroundIfDirty
@@ -26079,7 +26079,7 @@ loc_1EA83:                              ; CODE XREF: RunGameDialog+10↑j
                 test    word_328C4, 1
                 jnz     short loc_1EAA2
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_1EAA2:                              ; CODE XREF: RunGameDialog+2A↑j
                 call    RestoreCursorBackgroundIfDirty
@@ -26276,7 +26276,7 @@ loc_1EC48:                              ; CODE XREF: RunGameDialog+DF↑j
                 test    word_328C4, 4
                 jz      short loc_1EBE8
                 mov     ax, 1
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    DrawMouseCursor
                 jmp     short loc_1EC69
 ; ---------------------------------------------------------------------------
@@ -26315,7 +26315,7 @@ loc_1EC8A:                              ; CODE XREF: RunGameDialog+304↓j
 
 loc_1ECA7:                              ; CODE XREF: RunGameDialog+234↑j
                 mov     ax, 4
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgColor, 4
                 mov     _font_bgTransparent, 0
@@ -26430,13 +26430,13 @@ loc_1EDD5:                              ; CODE XREF: RunGameDialog+35D↑j
                 test    byte ptr [bx+1], 80h
                 jnz     short loc_1EDED
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short loc_1EE02
 ; ---------------------------------------------------------------------------
 
 loc_1EDED:                              ; CODE XREF: RunGameDialog+373↑j
                 mov     ax, 4
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, 3
                 call    ShowConfirmPrompt
                 cmp     ax, 5
@@ -27455,7 +27455,7 @@ ToggleMusicSetting proc near            ; CODE XREF: RunGameDialog:loc_1EC1F↑p
                 jz      short locret_1F93C
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 4
-                call    sub_28412
+                call    TriggerSoundEvent
                 test    g_driverStateFlags, 2
                 jz      short loc_1F921
                 call    StopMusicAndResetTimer
@@ -27504,7 +27504,7 @@ loc_1F964:                              ; CODE XREF: ToggleSoundFxSetting+1D↑j
                 call    DrawCheckboxIndicator
                 call    sub_238CD
                 mov     ax, 4
-                call    sub_28412
+                call    TriggerSoundEvent
 
 locret_1F97A:                           ; CODE XREF: ToggleSoundFxSetting+6↑j
                 retn
@@ -29174,7 +29174,7 @@ loc_20936:                              ; CODE XREF: TickStatusEffects+34↑j
                 call    near ptr sub_209C0
                 dec     word ptr [si]
                 mov     ax, 9
-                call    sub_28412
+                call    TriggerSoundEvent
                 test    word_328C4, 40h
                 jnz     short loc_2094E
                 pop     si
@@ -32727,7 +32727,7 @@ loc_2282C:                              ; CODE XREF: PresentTriggeredSideTrapEff
 ; ---------------------------------------------------------------------------
 
 loc_2283A:                              ; CODE XREF: PresentTriggeredSideTrapEffects+12↑j
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_2283F:                              ; CODE XREF: PresentTriggeredSideTrapEffects+5↑j
                                         ; PresentTriggeredSideTrapEffects+19↑j
@@ -32998,7 +32998,7 @@ loc_22A71:                              ; CODE XREF: SpawnMonsterInFacingDirecti
                 loop    loc_22A71
                 mov     si, 0
                 mov     ax, 13h
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_22B73
 ; ---------------------------------------------------------------------------
 
@@ -33813,7 +33813,7 @@ ShowLootAndAwardExperience proc far     ; CODE XREF: RunDungeonGameLoop+100↑P
                 call    WaitForSoundDriverIdle
                 jnz     short loc_23164
                 mov     ax, _val16
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_23164:                              ; CODE XREF: ShowLootAndAwardExperience+9↑j
                 call    ClearStatusPanelIfDirty
@@ -36336,7 +36336,7 @@ loc_247C9:                              ; CODE XREF: ShowCharacterInventory+216�
 loc_247D3:                              ; CODE XREF: ShowCharacterInventory+220↑j
                                         ; ShowCharacterInventory+3D2↓j
                 mov     ax, 6
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     bx, word_31948
                 mov     ax, 0FF7Fh
                 cmp     bx, _val1
@@ -39514,7 +39514,7 @@ loc_263A9:                              ; CODE XREF: sub_2621C+179↑j
 loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
                 mov     di, bx
                 mov     ax, 6
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    PlaceItemInSlot
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
@@ -40079,7 +40079,7 @@ PickUpHeldItemFromSlot endp
 
 PlaceHeldItemIntoEmptySlot proc near    ; CODE XREF: sub_2621C+1EA↑p
                 mov     ax, 6           ; Places the held item into an already-empty slot via sub_266D4 (no pickup step, unlike SwapHeldItemWithSlot), then clears the held-item cursor. Called from sub_2621C.
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    RestoreCursorBackgroundIfDirty
                 call    PlaceItemInSlot
                 mov     word_2E530, 0
@@ -40096,7 +40096,7 @@ PlaceHeldItemIntoEmptySlot endp
 
 SwapHeldItemWithSlot proc near          ; CODE XREF: sub_2621C+EA↑p
                 mov     ax, 6           ; Swaps the currently-held item (word_31948/3194C/3194A) with a target slot's item via a save/restore dance around sub_26B4F (pick up the slot's item) and sub_266D4 (place the original held item into the slot). Called from the still-untraced, container-related sub_2621C.
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    RestoreCursorBackgroundIfDirty
                 push    word_31948
                 push    word_3194C
@@ -41253,7 +41253,7 @@ loc_2728F:                              ; CODE XREF: sub_271DC+24↑j
 
 loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 mov     ax, 6
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, word_31948
                 mov     [di], ax
                 mov     ax, word_3194C
@@ -41275,7 +41275,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
 
 loc_272E6:                              ; CODE XREF: sub_271DC+A6↑j
                 mov     ax, 6
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, word_31948
                 push    word_31948
                 push    word_3194C
@@ -42909,7 +42909,7 @@ sub_27E3A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27E53       proc far                ; CODE XREF: sub_28412+3F↓P
+sub_27E53       proc far                ; CODE XREF: TriggerSoundEvent+3F↓P
                 mov     word_368AB, 0
                 mov     word_368A7, ax
                 dec     bx
@@ -43681,19 +43681,19 @@ InitSoundSystem endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28412       proc far                ; CODE XREF: start+410↑P
+TriggerSoundEvent proc far              ; CODE XREF: start+410↑P
                                         ; start+73B↑P ...
-                test    g_driverStateFlags, 8 ; Sound driver dispatch, called with a command in AX. If the driver isn't active (g_driverStateFlags bit3 clear), only handles AX==3 (via sub_16DEA) and otherwise no-ops. When active: reads data via FileEntry_Read using the FileEntry at bx=0x9043 (same fixed instance the 0x27CFE-family resource stubs configure), ErrorChecks it, then calls g_soundDriverFarPtr with bx=6 and es:di pointing past a small header (es:0x14) in the loaded driver segment (word_3292E). Likely 'load+play a sound effect', but command 6's exact meaning per the driver's own protocol isn't confirmed -- see ida_scripts/document_sound_dispatch.py.
+                test    g_driverStateFlags, 8 ; Sound event dispatcher, command in ax. If the driver isn't active (g_driverStateFlags bit 3 clear), only ax==3 does anything (PlayPcSpeakerBeep fallback); else no-op. If active, reads driver data (FileEntry bx=0x9043) then forwards to g_soundDriverFarPtr(bx=6) -- likely 'load+play a sound effect' in the driver's own protocol. Called from start.
                 jnz     short loc_28425
                 cmp     ax, 3
                 jnz     short locret_28424
-                call    sub_16DEA
+                call    PlayPcSpeakerBeep
 
-locret_28424:                           ; CODE XREF: sub_28412+B↑j
+locret_28424:                           ; CODE XREF: TriggerSoundEvent+B↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28425:                              ; CODE XREF: sub_28412+6↑j
+loc_28425:                              ; CODE XREF: TriggerSoundEvent+6↑j
                 push    bx
                 push    cx
                 push    dx
@@ -43734,7 +43734,7 @@ loc_28425:                              ; CODE XREF: sub_28412+6↑j
                 pop     cx
                 pop     bx
                 retf
-sub_28412       endp
+TriggerSoundEvent endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -45980,7 +45980,7 @@ loc_29787:                              ; CODE XREF: UnlockDoorCommand+3B↑j
                                         ; UnlockDoorCommand+4B↑j ...
                 mov     byte_2E400, 0
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short loc_29753
 ; ---------------------------------------------------------------------------
 
@@ -46057,7 +46057,7 @@ loc_2981F:                              ; CODE XREF: UnlockDoorCommand+B1↑j
                 call    WaitForSoundDriverIdle
                 jnz     short loc_2982E
                 mov     ax, word_329EE
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_2982E:                              ; CODE XREF: UnlockDoorCommand+EC↑j
                 mov     ax, word_32DC8
@@ -47311,7 +47311,7 @@ DrawMouseCursor proc far                ; CODE XREF: start+8A↑P
                 test    word_328CA, 40h
                 jz      short loc_2A136
                 mov     ax, 9
-                call    sub_28412
+                call    TriggerSoundEvent
                 and     word_328CA, 0FFBFh
 
 loc_2A136:                              ; CODE XREF: DrawMouseCursor+C↑j
@@ -48311,7 +48311,7 @@ loc_2A80E:                              ; CODE XREF: sub_2A788+72↑j
                                         ; sub_2A788+82↑j
                 mov     byte_2E400, 0
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short loc_2A7D0
 ; ---------------------------------------------------------------------------
 
@@ -48352,7 +48352,7 @@ loc_2A854:                              ; CODE XREF: sub_2A788+C3↑j
                 cmp     ax, 0
                 jz      short loc_2A899
                 mov     ax, 4
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    sub_274B4
                 mov     cx, 2
                 mov     bx, 7C89h
@@ -48370,7 +48370,7 @@ loc_2A899:                              ; CODE XREF: sub_2A788+E4↑j
                 call    WaitForSoundDriverIdle
                 jnz     short loc_2A8A8
                 mov     ax, word_329EE
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_2A8A8:                              ; CODE XREF: sub_2A788+116↑j
                 mov     ax, word_32DC8
@@ -48866,7 +48866,7 @@ loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
                 mov     bx, 0AFAAh      ; msg
                 call    writeString
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_2AAFA
 ; ---------------------------------------------------------------------------
 
@@ -49011,7 +49011,7 @@ ShowPartyWipeScreen proc far            ; CODE XREF: CheckPartyWipeAndReinitLeve
                 call    WaitForSoundDriverIdle
                 jnz     short loc_2ADFC
                 mov     ax, 13h
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_2ADFC:                              ; CODE XREF: ShowPartyWipeScreen+A↑j
                 call    sub_2AE1A
@@ -49182,7 +49182,7 @@ UseLocationBoundPotion proc near        ; CODE XREF: sub_2AE3C+14↑p
                 cmp     word_36CF9, 6Eh ; 'n'
                 jnz     short loc_2AFA7
                 mov     ax, 0Eh
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     bx, 8DBEh
                 mov     cx, 3
                 call    DrawStringColumn
@@ -49213,7 +49213,7 @@ UseLocationBoundPotion endp
 
 CollectMagicOreCache proc near          ; CODE XREF: sub_2AE3C+93↑p
                 mov     ax, 7           ; Item-icon-dispatch handler (word_32974==0x247). Shows '+5,000 MAGIC ORE', confirms item 0x247 present, adds 5000 to global material counter 0x94B7.
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
@@ -49244,7 +49244,7 @@ CollectMagicOreCache endp
 
 CollectNuoreCache proc near             ; CODE XREF: sub_2AE3C+87↑p
                 mov     ax, 7           ; Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
@@ -49393,7 +49393,7 @@ loc_2B1F9:                              ; CODE XREF: CheckQuestItemsCompleted+75
 
 loc_2B214:                              ; CODE XREF: CheckQuestItemsCompleted+90↑j
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 and     word_328C8, 1FFFh
                 call    sub_274B4
                 call    DrawMouseCursor
@@ -50184,7 +50184,7 @@ seg120          segment byte public 'CODE' use16
 FinishPlacingHeldItem proc far          ; CODE XREF: sub_2621C+101↑P
                                         ; sub_271DC+81↑P
                 mov     ax, 4           ; Plays a sound, restores the cursor background, loads the held item's catalog record, ORs a value derived from its flag byte into word_36C81 (not otherwise documented), then clears the held-item cursor (UpdateCursorForHeldItem(0)). Called from sub_2621C (a still-untraced container-related handler) and sub_271DC.
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
@@ -50814,7 +50814,7 @@ loc_2BED0:                              ; CODE XREF: ShowWorldMap+1BE↓j
                 add     di, 2
                 loop    loc_2BED0
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_2BDAA
 ; ---------------------------------------------------------------------------
 
@@ -50825,7 +50825,7 @@ loc_2BEE5:                              ; CODE XREF: ShowWorldMap+1B9↑j
 
 loc_2BEF3:                              ; CODE XREF: ShowWorldMap+1AB↑j
                 mov     ax, 4
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_3293E
                 dec     bx
@@ -51027,7 +51027,7 @@ loc_2C094:                              ; CODE XREF: RepairItemCommand+64↑j
 
 loc_2C0AC:                              ; CODE XREF: RepairItemCommand+93↑j
                 mov     ax, _val20
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     cx, 6
                 mov     bx, 8304h
                 call    sub_29461
@@ -51044,7 +51044,7 @@ loc_2C0C7:                              ; CODE XREF: RepairItemCommand+9A↑j
 
 loc_2C0D4:                              ; CODE XREF: RepairItemCommand+98↑j
                 mov     ax, 7
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     cx, 2
                 mov     bx, 8349h
                 call    sub_29461
@@ -51276,7 +51276,7 @@ loc_2C27F:                              ; CODE XREF: sub_2C0FE+14E↑j
 
 loc_2C287:                              ; CODE XREF: sub_2C0FE+23↑j
                 mov     ax, 0Ah
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, word_332E6
                 mov     bx, word_332E4
                 cmp     bx, 1
@@ -51342,7 +51342,7 @@ loc_2C2F9:                              ; CODE XREF: sub_2C0FE+2E↑j
 
 loc_2C303:                              ; CODE XREF: sub_2C0FE+200↑j
                 mov     ax, 33h ; '3'
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, word_332E8
                 or      ax, ax
                 jnz     short loc_2C322
@@ -51457,7 +51457,7 @@ loc_2C3F5:                              ; CODE XREF: sub_2C0FE+2DB↑j
 loc_2C400:                              ; CODE XREF: sub_2C0FE+202↑j
                                         ; sub_2C0FE+2FD↑j ...
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
@@ -51541,7 +51541,7 @@ loc_2C4B4:                              ; CODE XREF: sub_2C0FE+3A0↑j
 loc_2C4C7:                              ; CODE XREF: sub_2C0FE+3C4↑j
                 loop    loc_2C47C
                 mov     ax, 31h ; '1'
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_2C4D1:                              ; CODE XREF: sub_2C0FE+4D8↓j
                 mov     ax, word_328FA
@@ -51647,7 +51647,7 @@ loc_2C59F:                              ; CODE XREF: sub_2C0FE+472↑j
                 cmp     errorCode, 0
                 jnz     short loc_2C59C
                 mov     ax, 3Ah ; ':'
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_2C4D1
 ; ---------------------------------------------------------------------------
 
@@ -51737,7 +51737,7 @@ loc_2C69F:                              ; CODE XREF: sub_2C0FE+583↑j
 loc_2C6BD:                              ; CODE XREF: sub_2C0FE+5B3↑j
                                         ; sub_2C0FE+5BA↑j
                 mov     ax, 3Bh ; ';'
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, word_32DC8
                 or      byte_32DCD, al
                 mov     ax, 556Dh
@@ -51801,7 +51801,7 @@ loc_2C759:                              ; CODE XREF: sub_2C0FE+62F↑j
 loc_2C777:                              ; CODE XREF: sub_2C0FE+66D↑j
                                         ; sub_2C0FE+674↑j
                 mov     ax, 2Ah ; '*'
-                call    sub_28412
+                call    TriggerSoundEvent
                 mov     ax, word_32DC8
                 or      byte_32DCD, al
                 mov     ax, 556Dh
@@ -51858,7 +51858,7 @@ loc_2C7F9:                              ; CODE XREF: sub_2C0FE+6CF↑j
 loc_2C81E:                              ; CODE XREF: sub_2C0FE+70D↑j
                                         ; sub_2C0FE+714↑j ...
                 mov     ax, 2Ah ; '*'
-                call    sub_28412
+                call    TriggerSoundEvent
                 test    word_32DCE, 80h
                 jz      short loc_2C836
                 mov     cx, 2
@@ -52411,7 +52411,7 @@ loc_2CDEC:                              ; CODE XREF: sub_2C0FE+CD1↑j
                 mov     ax, word_332DC
                 cmp     ax, 0
                 jz      short loc_2CE33
-                call    sub_28412
+                call    TriggerSoundEvent
 
 loc_2CE33:                              ; CODE XREF: sub_2C0FE+D2E↑j
                                         ; sub_2C0FE+D3C↓j
@@ -53121,7 +53121,7 @@ loc_2D4AA:                              ; CODE XREF: sub_2D498+6↑j
                 pop     ax
                 cmp     ax, 0
                 jz      short loc_2D4AA
-                call    sub_28412
+                call    TriggerSoundEvent
                 retn
 sub_2D498       endp ; sp-analysis failed
 
@@ -53442,7 +53442,7 @@ loc_2D682:                              ; CODE XREF: InteractWithContainer+23↑
                 cmp     ax, 7
                 jz      short loc_2D6FC
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     short near ptr InteractWithContainer
 ; ---------------------------------------------------------------------------
 
@@ -53455,7 +53455,7 @@ loc_2D696:                              ; CODE XREF: InteractWithContainer+16↑
 
 loc_2D6A6:                              ; CODE XREF: InteractWithContainer+5D↓j
                 mov     ax, 3
-                call    sub_28412
+                call    TriggerSoundEvent
                 jmp     loc_2D77A
 ; ---------------------------------------------------------------------------
 
@@ -74307,7 +74307,7 @@ word_3292A      dw 0                    ; DATA XREF: InitGlobals+15C↑w
 word_3292C      dw 0                    ; DATA XREF: ClassifyObstacleAtViewportRow+9↑r
                                         ; HandleRangedOrCombatAction+133↑w ...
 word_3292E      dw 0                    ; DATA XREF: ShutdownAudioDrivers+25↑r
-                                        ; sub_28412+37↑r ...
+                                        ; TriggerSoundEvent+37↑r ...
 errorCode       dw 0                    ; DATA XREF: start+94↑r
                                         ; start+9B↑r ...
 word_32932      dw 0                    ; DATA XREF: RenderDungeonVanishingPoint+27↑w

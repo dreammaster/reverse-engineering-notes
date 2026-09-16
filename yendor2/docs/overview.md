@@ -5120,6 +5120,31 @@ sets `word_328C8` bit `1` (plausibly no-sound).
 
 598 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PlayPcSpeakerBeep + TriggerSoundEvent — 600 named, and the sound-driver dispatch lead finally resolved
+
+Named `sub_16DEA` -> `PlayPcSpeakerBeep`: a classic PC speaker beep —
+programs the 8253/8254 PIT channel 2 with a tone divisor, gates it to
+the speaker via PPI port `0x61`, waits 4 ticks, then disables it.
+Called from the long-open `sub_28412` — which this round is also
+finally named, `TriggerSoundEvent`. That function's own pre-existing
+comment already explained most of its shape (a sound-event dispatcher
+taking a command in `ax`); with `PlayPcSpeakerBeep` now identified,
+the picture is complete: when the Sound Blaster driver isn't active
+(`g_driverStateFlags` bit `3` clear), only `ax==3` does anything — the
+PC-speaker fallback beep — every other command is silently ignored.
+When the driver *is* active, it reads driver data and forwards to the
+loaded driver's own routine via `g_soundDriverFarPtr(bx=6)` — likely
+"load+play a sound effect" in the driver's own external protocol,
+which (being outside this binary) still isn't independently
+confirmed. **Correction**: when `PlayPcSpeakerBeep` was first named
+this round, its comment speculated it might correspond to "command
+6" — wrong; it's actually reached via `ax==3` in the driver-*inactive*
+fallback path, while `6` is the unrelated value forwarded to the
+*active* driver. Fixed in place. This closes out a lead that had
+stood open since very early in this session's work.
+
+600 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

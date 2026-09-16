@@ -2652,7 +2652,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X16DD2);
 	op_hex		(x,	1);
 	create_insn	(0X16DDA);
+	set_cmt	(0X16DEA,	"Classic PC speaker beep: programs PIT channel 2 (0x34DE/0x708 divisor) via ports 0x43/0x42, gates it to the speaker via port 0x61 bits 0-1, waits 4 ticks, then disables it. Called from TriggerSoundEvent's driver-inactive fallback path (ax==3).",	0);
 	create_insn	(0X16DEA);
+	set_name	(0X16DEA,	"PlayPcSpeakerBeep");
 	set_cmt	(0X16DF9,	"Timer 8253-5 (AT: 8254.2).",	0);
 	create_insn	(x=0X16DF9);
 	op_hex		(x,	0);
@@ -3152,6 +3154,15 @@ static Bytes_0(void) {
 	set_cmt	(0X18333,	"RollEffectResistance: if [si+0xE]==0 (not yet resolved this pass) and the effect's high cost-flag bits (di+8 & 0xFF80) are set, sums the party member's equipment/bonus resistance fields (+0x20..+0x30, one per matching high bit of di+8) and calls FailsSavingThrow (threshold=word_32DC0). Records 0 into [si+0xE] if resisted, or the raw high cost-flags if the save failed.",	0);
 	create_insn	(0X18333);
 	set_name	(0X18333,	"RollEffectResistance");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1833E);
 	create_insn	(x=0X18341);
 	op_hex		(x,	1);
@@ -3167,15 +3178,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18381);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1838B);
 	op_hex		(x,	1);
 	create_insn	(x=0X18395);
@@ -7677,9 +7679,10 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X28406);
 	op_hex		(x,	1);
-	set_cmt	(0X28412,	"Sound driver dispatch, called with a command in AX. If the driver isn't active (g_driverStateFlags bit3 clear), only handles AX==3 (via sub_16DEA) and otherwise no-ops. When active: reads data via FileEntry_Read using the FileEntry at bx=0x9043 (same fixed instance the 0x27CFE-family resource stubs configure), ErrorChecks it, then calls g_soundDriverFarPtr with bx=6 and es:di pointing past a small header (es:0x14) in the loaded driver segment (word_3292E). Likely 'load+play a sound effect', but command 6's exact meaning per the driver's own protocol isn't confirmed -- see ida_scripts/document_sound_dispatch.py.",	0);
+	set_cmt	(0X28412,	"Sound event dispatcher, command in ax. If the driver isn't active (g_driverStateFlags bit 3 clear), only ax==3 does anything (PlayPcSpeakerBeep fallback); else no-op. If active, reads driver data (FileEntry bx=0x9043) then forwards to g_soundDriverFarPtr(bx=6) -- likely 'load+play a sound effect' in the driver's own protocol. Called from start.",	0);
 	create_insn	(x=0X28412);
 	op_hex		(x,	1);
+	set_name	(0X28412,	"TriggerSoundEvent");
 	create_insn	(0X28425);
 	set_cmt	(0X28443,	"this",	0);
 	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);

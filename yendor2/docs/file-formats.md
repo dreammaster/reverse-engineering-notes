@@ -2426,7 +2426,18 @@ identification rests on the unambiguous parsing logic rather than a
 confirmed string match. `WaitForSoundDriverIdle` (was `sub_2827E`)
 is a small companion gate used elsewhere: returns immediately unless
 `g_driverStateFlags` bit `0x8` is set, in which case it busy-waits for
-`word_2E494` to reach 0. Its two main consumers are the byte-for-byte-
+`word_2E494` to reach 0. **The top-level sound-event dispatcher,
+`TriggerSoundEvent` (was `sub_28412`), is now named too** — resolves a
+lead flagged early this session. Takes a command in `ax`: if the
+driver isn't active (`g_driverStateFlags` bit `3` clear), only
+`ax==3` does anything, calling `PlayPcSpeakerBeep` (was `sub_16DEA`, a
+classic PIT-channel-2 + PPI-port-`0x61` PC speaker beep) as a
+fallback; every other command is silently ignored. If the driver is
+active, it reads driver data (`FileEntry` `bx=0x9043`) and forwards to
+the loaded driver's own routine via `g_soundDriverFarPtr(bx=6)` —
+likely "load+play a sound effect" in that external driver's own
+protocol, which remains unconfirmed since it lives outside this
+binary. Its two main consumers are the byte-for-byte-
 identical overlay-segment duplicate pair `TryPlaySoundCue`/
 `TryPlaySoundCueAlt` (was `sub_16234`/`sub_11EAE`, another instance of
 this session's recurring duplication pattern): drop a sound cue if the
