@@ -1477,8 +1477,10 @@ routine, and shows a confirm prompt (plausibly for an ore conversion)
 before exiting back to the dungeon via `ApplyMapTriggerEffect`. Its
 many internal helper calls aren't individually traced yet, but one
 cluster now is: `BuildAlchemySpellList` (was `sub_1E1A7`) builds the
-filtered list of known spells (an eligibility check, `sub_27A66`, not
-itself traced) unless the character is incapacitated, then calls
+filtered list of known spells (an eligibility check, `TestRecordFlag_CA`
+— **correction**: was described as untraced here; it's since been
+named as the `+0xCA` per-record flag-bank test accessor) unless the
+character is incapacitated, then calls
 `CheckSpellCastability` (was `sub_1E285`) on each to check whether the
 character can currently afford it — enough MP (`+0x54`), MAGIC ORE
 (`0x94B7`), and NUORE (`0x94BB`), loading each spell's cost data via
@@ -1486,7 +1488,13 @@ character can currently afford it — enough MP (`+0x54`), MAGIC ORE
 that qualify. Pagination is 13 spells/page. `DrawAlchemySpellList`
 (was `sub_1E3AF`) is the visual counterpart, drawing each page's rows
 (name colored by castability, cost values via `DrawSpellCostValue`,
-was `sub_1E340`) and highlighting the current selection.
+was `sub_1E340`) and highlighting the current selection. Casting a
+spell pays for it via `DeductAlchemySpellCosts` (was `sub_1E61B`) —
+subtracting MP and the same two BCD ore counters. On screen entry,
+`RestoreOrSelectAlchemyCaster` (was `sub_1E473`) re-validates a cached
+caster id against `g_partySlotAssignment` (gated on the same `+0x94`
+marker `ApplySecondaryClassTierFlags` uses) and sets `word_32924`
+accordingly, falling back to a default-selection helper otherwise.
 `RunAlchemyScreen` also calls `ShowCompassDirection`, a
 "NORTH"/"SOUTH"/"EAST"/"WEST" HUD readout gated on an unidentified
 "compass active" mode (`word_328CA` bit `0x1000` clear, `word_36C7F`

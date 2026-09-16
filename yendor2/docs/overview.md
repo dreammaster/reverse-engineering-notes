@@ -4920,6 +4920,22 @@ a counter (`word_1F984`) to `0x270F` (9999) and calls the already-named
 
 582 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DeductAlchemySpellCosts + RestoreOrSelectAlchemyCaster
+
+Named two more `RunAlchemyScreen` helpers. `sub_1E61B` ->
+`DeductAlchemySpellCosts`: subtracts an MP cost from the current party
+member's MP (`[bx+0x54]`), then pays NUORE and MAGIC ORE costs via
+`SubtractFromBCDCounter` against the confirmed `0x94BB`/`0x94B7`
+counters — matching the documented "MP:"/"NUORE:"/"ORE:" cost fields.
+`sub_1E473` -> `RestoreOrSelectAlchemyCaster` (called at screen entry):
+re-validates a cached caster id against `g_partySlotAssignment` (using
+the same `[+0x94]` "class-tier eligible" marker `ApplySecondaryClassTierFlags`
+gates on) and sets `word_32924` (the same party-record slot pointer
+`AccumulateLearnedAbilityFlags` reads) to the matching slot, falling
+back to unnamed `sub_1E447` otherwise.
+
+584 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

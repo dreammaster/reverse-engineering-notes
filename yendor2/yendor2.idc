@@ -4916,7 +4916,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1E405,	"msg",	0);
 	create_insn	(0X1E447);
 	create_insn	(0X1E46B);
+	set_cmt	(0X1E473,	"Re-validates the cached caster (word_36CCD) via SelectPartyRecordById + [bx+0x94] check, finds their slot in g_partySlotAssignment matching word_328D6, and sets word_32924 to it; falls back to sub_1E447 otherwise. Called from RunAlchemyScreen (screen entry).",	0);
 	create_insn	(0X1E473);
+	set_name	(0X1E473,	"RestoreOrSelectAlchemyCaster");
 	create_insn	(0X1E4A5);
 	set_cmt	(0X1E4AA,	"Draws alchemy-screen picture 6 at (0x102,0x43), plus message 1. Called from RunAlchemyScreen. Exact narrative (vs. ShowAlchemyIconIdle) not confirmed.",	0);
 	create_insn	(0X1E4AA);
@@ -4938,7 +4940,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1E5AF,	"msg",	0);
 	set_cmt	(0X1E5E5,	"msg",	0);
 	set_cmt	(0X1E605,	"msg",	0);
+	set_cmt	(0X1E61B,	"Deducts alchemy spell costs: MP (word_332D2) from [bx+0x54], NUORE (word_332D4, counter 0x94BB) and MAGIC ORE (word_332D6, counter 0x94B7) via SubtractFromBCDCounter. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E61B);
+	set_name	(0X1E61B,	"DeductAlchemySpellCosts");
 	set_cmt	(0X1E64A,	"The party rest/camp action ('R rest'). Checks eligibility (sub_1EA18), advances the game clock (8 hours flat for a full rest, or up to 8 hourly ticks calling ProcessLevelMonsters and stopping if combat starts), handles day rollover (ResetDailyAbilityCharges + calendar counters), shows hours rested, then resumes via RunDungeonGameLoop. Called from `start` and sub_2C0FE.",	0);
 	create_insn	(0X1E64A);
 	set_name	(0X1E64A,	"RestPartyAndAdvanceClock");
@@ -5339,6 +5343,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1FE4F,	"Master per-minute game-clock tick. Increments word_36D01; past 1440 (a full day), calls sub_28FF9 ('new day', not traced), resets to 1, and rolls the calendar: day (word_36CFB) wraps at 31 into month (word_36CFD), which wraps at 13 into year (word_36CFF) -- a 30-day-month, 12-month-year calendar. Fires sub_1FFE4 (not traced, plausibly lighting/spawn-rate) at exactly 6:00 AM or 6:00 PM -- dawn/dusk. Also runs a separate 5-minute periodic countdown (word_32954, gated on word_3295A bit 0x800) calling sub_1FD24 when it lapses.",	0);
 	create_insn	(0X1FE4F);
 	set_name	(0X1FE4F,	"AdvanceGameClock");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1FE6D);
 	create_insn	(0X1FEA0);
 	create_insn	(x=0X1FEA3);
@@ -5353,15 +5366,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1FFE4,	"AdvanceGameClock's dawn/dusk handler (fired at exactly 6:00 AM/6:00 PM). Sets up (or continues) a gradual 113-step palette fade through a snapshot table at 0x4A5C -- backward from dusk, forward from dawn -- writing 32-RGB-triple chunks into VGA palette entries 0xE0-0xFF (the last 32 slots, plausibly a sky/ambient-light ramp) via SetPaletteRange. Guarded by word_3295A bit 0x2000 so it only initializes once per transition.",	0);
 	create_insn	(0X1FFE4);
 	set_name	(0X1FFE4,	"AdvanceDayNightPaletteFade");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1FFEB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1FFF3);
@@ -7092,6 +7096,15 @@ static Bytes_2(void) {
 	set_cmt	(0X26954,	"GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.",	0);
 	create_insn	(0X26954);
 	set_name	(0X26954,	"GetInventorySlotPtr");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X26958);
 	op_hex		(x,	1);
 	create_insn	(0X2696A);
@@ -7133,15 +7146,6 @@ static Bytes_2(void) {
 	set_cmt	(0X26A75,	"Generalized eligibility gate for inventory command codes (ax=word_2E40A) against an item's catalog flags (bx, [bx+0xC]) or word_2E548[+2]. Codes <=8 always pass; 9-0x14 each check a specific bit, two also checking the current party member's own record. errorCode=1 if ineligible. Called from sub_2621C.",	0);
 	create_insn	(0X26A75);
 	set_name	(0X26A75,	"IsItemEligibleForCommand");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X26A81);
 	create_insn	(x=0X26A86);
 	op_hex		(x,	1);
@@ -9394,6 +9398,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2BB1A,	"Caches the action-icon panel area (video buffer -> EMS page frame, offset 0,0). Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.",	0);
 	create_insn	(0X2BB1A);
 	set_name	(0X2BB1A,	"SaveActionIconPanelToEMS");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2BB4D);
 	op_seg		(x,	1);
 	create_insn	(0X2BB58);
@@ -9407,15 +9420,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2BBD7,	"Fills ~11.7KB of the offscreen buffer (starting at offset 0) with byte 0xFF via 105 overlapping row-strided rep stosw passes -- clears whatever mask/overlay buffer backs the action-icon highlight effect. Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.",	0);
 	create_insn	(0X2BBD7);
 	set_name	(0X2BBD7,	"ClearActionIconHighlightMask");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2BBDA);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);

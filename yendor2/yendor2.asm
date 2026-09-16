@@ -17350,8 +17350,8 @@ sub_19DCF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SubtractFromBCDCounter proc far         ; CODE XREF: sub_1E61B+1A↓P
-                                        ; sub_1E61B+28↓P ...
+SubtractFromBCDCounter proc far         ; CODE XREF: DeductAlchemySpellCosts+1A↓P
+                                        ; DeductAlchemySpellCosts+28↓P ...
                 push    cx              ; SubtractFromBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then SubBCD4 from the counter at si.
                 push    dx
                 push    di
@@ -24601,7 +24601,7 @@ RunAlchemyScreen proc far               ; CODE XREF: start:loc_10A81↑P
                 and     word_3295A, 9FFFh ; Alchemy screen driver loop, reached directly from `start`. Redraws via DrawAlchemyStatusPanel after various sub-actions, polls input, hit-tests region tables for clickable elements, uses sub_25B34 for party-member selection, shows ShowConfirmPrompt (plausibly for an ore conversion), and calls ApplyMapTriggerEffect on an exit path back to the dungeon. Many internal helper calls not individually traced yet.
                 test    word_328CA, 1000h
                 jnz     short loc_1DD00
-                call    sub_1E473
+                call    RestoreOrSelectAlchemyCaster
                 cmp     word_32924, 0
                 jnz     short loc_1DD16
                 call    FlashStatusWarning
@@ -25016,7 +25016,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 mov     bx, word_32924
                 mov     ax, [bx]
                 call    SelectPartyRecordById
-                call    sub_1E61B
+                call    DeductAlchemySpellCosts
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32924
                 call    DrawPartyMemberStatusPanel
@@ -25441,7 +25441,7 @@ DrawAlchemySpellList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E447       proc near               ; CODE XREF: sub_1E473:loc_1E4A1↓p
+sub_1E447       proc near               ; CODE XREF: RestoreOrSelectAlchemyCaster:loc_1E4A1↓p
                 push    si
                 push    cx
                 push    bx
@@ -25476,8 +25476,8 @@ sub_1E447       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E473       proc near               ; CODE XREF: RunAlchemyScreen+E↑p
-                mov     word_32924, 0
+RestoreOrSelectAlchemyCaster proc near  ; CODE XREF: RunAlchemyScreen+E↑p
+                mov     word_32924, 0   ; Re-validates the cached caster (word_36CCD) via SelectPartyRecordById + [bx+0x94] check, finds their slot in g_partySlotAssignment matching word_328D6, and sets word_32924 to it; falls back to sub_1E447 otherwise. Called from RunAlchemyScreen (screen entry).
                 mov     ax, word_36CCD
                 cmp     ax, 0
                 jz      short loc_1E4A1
@@ -25489,22 +25489,22 @@ sub_1E473       proc near               ; CODE XREF: RunAlchemyScreen+E↑p
                 mov     si, 95EBh
                 mov     ax, word_328D6
 
-loc_1E498:                              ; CODE XREF: sub_1E473+2C↓j
+loc_1E498:                              ; CODE XREF: RestoreOrSelectAlchemyCaster+2C↓j
                 cmp     ax, [si]
                 jz      short loc_1E4A5
                 add     si, 2
                 loop    loc_1E498
 
-loc_1E4A1:                              ; CODE XREF: sub_1E473+C↑j
-                                        ; sub_1E473+1A↑j
+loc_1E4A1:                              ; CODE XREF: RestoreOrSelectAlchemyCaster+C↑j
+                                        ; RestoreOrSelectAlchemyCaster+1A↑j
                 call    sub_1E447
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1E4A5:                              ; CODE XREF: sub_1E473+27↑j
+loc_1E4A5:                              ; CODE XREF: RestoreOrSelectAlchemyCaster+27↑j
                 mov     word_32924, si
                 retn
-sub_1E473       endp
+RestoreOrSelectAlchemyCaster endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25633,8 +25633,8 @@ DrawAlchemyStatusPanel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E61B       proc near               ; CODE XREF: RunAlchemyScreen+3BE↑p
-                push    si
+DeductAlchemySpellCosts proc near       ; CODE XREF: RunAlchemyScreen+3BE↑p
+                push    si              ; Deducts alchemy spell costs: MP (word_332D2) from [bx+0x54], NUORE (word_332D4, counter 0x94BB) and MAGIC ORE (word_332D6, counter 0x94B7) via SubtractFromBCDCounter. Called from RunAlchemyScreen.
                 mov     ax, word_328D6
                 mov     word_36CCD, ax
                 mov     bx, word_328D4
@@ -25650,7 +25650,7 @@ sub_1E61B       proc near               ; CODE XREF: RunAlchemyScreen+3BE↑p
                 call    SubtractFromBCDCounter
                 pop     si
                 retn
-sub_1E61B       endp
+DeductAlchemySpellCosts endp
 
 seg056          ends
 
@@ -85957,8 +85957,8 @@ word_36CBF      dw 0                    ; DATA XREF: TickPartyAilmentIconBar:loc
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36CCD      dw 0                    ; DATA XREF: sub_1E473+6↑r
-                                        ; sub_1E61B+4↑w
+word_36CCD      dw 0                    ; DATA XREF: RestoreOrSelectAlchemyCaster+6↑r
+                                        ; DeductAlchemySpellCosts+4↑w
                 db 0FFh
                 db 0FFh
                 db 0FFh
