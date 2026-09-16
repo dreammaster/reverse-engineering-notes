@@ -8375,7 +8375,7 @@ RunCharacterCreation proc far           ; CODE XREF: InitGame+B6↑P
                 call    ComposeCharacterPortrait ; Character creation wizard: three steps (sub_15E44/ComposeCharacterPortrait, sub_15429, sub_1559A, each ESC-cancelable) then a finalize step (sub_15267). Matches the CHARACTER CREATION/PICK A CLASS/MALE/FEMALE/PICK A PORTRAIT string cluster near g_pictureDir. Called from InitGame and from RunTitleScreen's 'I' key.
                 cmp     byte_2E400, 1Bh
                 jz      short loc_15245
-                call    sub_15429
+                call    PlayCharacterCreationIntroAnimation
                 cmp     byte_2E400, 1Bh
                 jz      short loc_15245
                 call    sub_1559A
@@ -8390,8 +8390,8 @@ RunCharacterCreation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PollForEscapeKeyOnlyAlt proc near       ; CODE XREF: sub_15429+5A↓p
-                                        ; sub_15429+D6↓p ...
+PollForEscapeKeyOnlyAlt proc near       ; CODE XREF: PlayCharacterCreationIntroAnimation+5A↓p
+                                        ; PlayCharacterCreationIntroAnimation+D6↓p ...
                 call    PollKeyboardInput ; Byte-for-byte duplicate of PollForEscapeKeyOnly (sub_11900), in a different overlay segment. Called from unnamed sub_15429.
                 cmp     errorCode, 0
                 jz      short loc_15261
@@ -8465,8 +8465,8 @@ sub_152E1       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_152EF       proc near               ; CODE XREF: sub_15429+4A↓p
-                                        ; sub_15429+93↓p ...
+sub_152EF       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+4A↓p
+                                        ; PlayCharacterCreationIntroAnimation+93↓p ...
                 push    cx
                 push    di
                 push    si
@@ -8614,12 +8614,13 @@ sub_152EF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15429       proc near               ; CODE XREF: RunCharacterCreation+A↑p
-                mov     di, 4D5Ch
+PlayCharacterCreationIntroAnimation proc near
+                                        ; CODE XREF: RunCharacterCreation+A↑p
+                mov     di, 4D5Ch       ; Character creation's opening animated sequence: decodes a 768-byte block (byte-0x3F), plays music track 0x12, then runs several staged sub-animations (63/5/20/10/10/20 frame loops via unnamed helpers), abortable via PollForEscapeKeyOnlyAlt after each stage. Called once from RunCharacterCreation.
                 mov     si, 442Ah
                 mov     cx, 300h
 
-loc_15432:                              ; CODE XREF: sub_15429+11↓j
+loc_15432:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+11↓j
                 mov     al, [si]
                 sub     al, 3Fh ; '?'
                 mov     [di], al
@@ -8632,7 +8633,7 @@ loc_15432:                              ; CODE XREF: sub_15429+11↓j
                 call    DrawMouseCursor
                 mov     cx, 3Fh ; '?'
 
-loc_15452:                              ; CODE XREF: sub_15429+4E↓j
+loc_15452:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+4E↓j
                 push    cx
                 mov     bx, 1
                 mov     cx, 40h ; '@'
@@ -8646,7 +8647,7 @@ loc_15452:                              ; CODE XREF: sub_15429+4E↓j
                 jz      short loc_15476
                 call    sub_152EF
 
-loc_15476:                              ; CODE XREF: sub_15429+48↑j
+loc_15476:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+48↑j
                 pop     cx
                 loop    loc_15452
                 mov     di, 475Ah
@@ -8658,7 +8659,7 @@ loc_15476:                              ; CODE XREF: sub_15429+48↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15489:                              ; CODE XREF: sub_15429+5D↑j
+loc_15489:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+5D↑j
                 mov     cx, 5
                 call    sub_16180
                 mov     ax, _videoBufferSeg
@@ -8670,13 +8671,13 @@ loc_15489:                              ; CODE XREF: sub_15429+5D↑j
                 call    sub_1619F
                 call    DrawMouseCursor
 
-loc_154B1:                              ; CODE XREF: sub_15429+A8↓j
+loc_154B1:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+A8↓j
                 call    sub_1618E
                 test    word_328C4, 400h
                 jz      short loc_154BF
                 call    sub_152EF
 
-loc_154BF:                              ; CODE XREF: sub_15429+91↑j
+loc_154BF:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+91↑j
                 sub     word_328FA, 2
                 add     word_32900, 2
                 call    sub_1619F
@@ -8684,13 +8685,13 @@ loc_154BF:                              ; CODE XREF: sub_15429+91↑j
                 loop    loc_154B1
                 mov     cx, 14h
 
-loc_154D6:                              ; CODE XREF: sub_15429+D1↓j
+loc_154D6:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+D1↓j
                 call    sub_1618E
                 test    word_328C4, 400h
                 jz      short loc_154E4
                 call    sub_152EF
 
-loc_154E4:                              ; CODE XREF: sub_15429+B6↑j
+loc_154E4:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+B6↑j
                 sub     word_328FA, 2
                 add     word_32900, 2
                 dec     _font_fgColor
@@ -8703,13 +8704,13 @@ loc_154E4:                              ; CODE XREF: sub_15429+B6↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15505:                              ; CODE XREF: sub_15429+D9↑j
+loc_15505:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+D9↑j
                 mov     cx, 0Ah
                 call    sub_16180
                 or      word_328C8, 800h
                 mov     cx, 3Fh ; '?'
 
-loc_15514:                              ; CODE XREF: sub_15429+FE↓j
+loc_15514:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+FE↓j
                 push    cx
                 mov     dx, 40h ; '@'
                 call    sub_160C3
@@ -8717,7 +8718,7 @@ loc_15514:                              ; CODE XREF: sub_15429+FE↓j
                 jz      short loc_15526
                 call    sub_152EF
 
-loc_15526:                              ; CODE XREF: sub_15429+F8↑j
+loc_15526:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+F8↑j
                 pop     cx
                 loop    loc_15514
                 call    PollForEscapeKeyOnlyAlt
@@ -8725,7 +8726,7 @@ loc_15526:                              ; CODE XREF: sub_15429+F8↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1552F:                              ; CODE XREF: sub_15429+103↑j
+loc_1552F:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+103↑j
                 mov     cx, 0Ah
                 call    sub_16180
                 mov     cx, 3Fh ; '?'
@@ -8734,8 +8735,8 @@ loc_1552F:                              ; CODE XREF: sub_15429+103↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1553E:                              ; CODE XREF: sub_15429+112↑j
-                                        ; sub_15429+133↓j
+loc_1553E:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+112↑j
+                                        ; PlayCharacterCreationIntroAnimation+133↓j
                 push    cx
                 mov     ax, 4
                 mov     bx, 1
@@ -8746,7 +8747,7 @@ loc_1553E:                              ; CODE XREF: sub_15429+112↑j
                 jz      short loc_1555B
                 call    sub_152EF
 
-loc_1555B:                              ; CODE XREF: sub_15429+12D↑j
+loc_1555B:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+12D↑j
                 pop     cx
                 loop    loc_1553E
                 call    PollForEscapeKeyOnlyAlt
@@ -8754,7 +8755,7 @@ loc_1555B:                              ; CODE XREF: sub_15429+12D↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15564:                              ; CODE XREF: sub_15429+138↑j
+loc_15564:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+138↑j
                 mov     cx, 14h
                 call    sub_16180
                 mov     cx, 3Fh ; '?'
@@ -8763,8 +8764,8 @@ loc_15564:                              ; CODE XREF: sub_15429+138↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15573:                              ; CODE XREF: sub_15429+147↑j
-                                        ; sub_15429+16E↓j
+loc_15573:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+147↑j
+                                        ; PlayCharacterCreationIntroAnimation+16E↓j
                 push    cx
                 mov     dx, 40h ; '@'
                 call    sub_160B0
@@ -8777,11 +8778,11 @@ loc_15573:                              ; CODE XREF: sub_15429+147↑j
                 jz      short loc_15596
                 call    sub_152EF
 
-loc_15596:                              ; CODE XREF: sub_15429+168↑j
+loc_15596:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+168↑j
                 pop     cx
                 loop    loc_15573
                 retn
-sub_15429       endp
+PlayCharacterCreationIntroAnimation endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9690,7 +9691,7 @@ ComposeCharacterPortrait endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_160B0       proc near               ; CODE XREF: sub_15429+14E↑p
+sub_160B0       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+14E↑p
                                         ; sub_16159:loc_1615D↓p
                 push    cx
                 push    dx
@@ -9707,7 +9708,7 @@ sub_160B0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_160C3       proc near               ; CODE XREF: sub_15429+EF↑p
+sub_160C3       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+EF↑p
                                         ; sub_1559A+D9↑p ...
                 push    cx
                 push    dx
@@ -9724,8 +9725,8 @@ sub_160C3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_160D6       proc near               ; CODE XREF: sub_15429+33↑p
-                                        ; sub_15429+3F↑p
+sub_160D6       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+33↑p
+                                        ; PlayCharacterCreationIntroAnimation+3F↑p
                 mov     word_31984, bx
                 mov     word_31982, cx
                 mov     word_31976, cx
@@ -9844,8 +9845,8 @@ sub_1616F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16180       proc near               ; CODE XREF: sub_15429+63↑p
-                                        ; sub_15429+DF↑p ...
+sub_16180       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+63↑p
+                                        ; PlayCharacterCreationIntroAnimation+DF↑p ...
                 test    word_328C4, 400h
                 jz      short sub_16180
                 call    sub_152EF
@@ -9857,8 +9858,8 @@ sub_16180       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1618E       proc near               ; CODE XREF: sub_15429:loc_154B1↑p
-                                        ; sub_15429:loc_154D6↑p ...
+sub_1618E       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation:loc_154B1↑p
+                                        ; PlayCharacterCreationIntroAnimation:loc_154D6↑p ...
                 mov     ax, word_328FA
                 mov     bx, word_32900
                 call    sub_1614D
@@ -9871,8 +9872,8 @@ sub_1618E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1619F       proc near               ; CODE XREF: sub_15429+80↑p
-                                        ; sub_15429+A0↑p ...
+sub_1619F       proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+80↑p
+                                        ; PlayCharacterCreationIntroAnimation+A0↑p ...
                 mov     ax, word_328FA
                 mov     bx, word_32900
                 call    sub_1614D
@@ -74243,14 +74244,14 @@ word_328F6      dw 0                    ; DATA XREF: ApplyItemEffectFlags+12↑w
                                         ; ApplyItemEffectFlags+1B↑w ...
 word_328F8      dw 0                    ; DATA XREF: ApplyItemEffectFlags+22↑w
                                         ; ApplyItemEffectFlags+2B↑w ...
-word_328FA      dw 0                    ; DATA XREF: sub_15429+6B↑w
-                                        ; sub_15429:loc_154BF↑w ...
+word_328FA      dw 0                    ; DATA XREF: PlayCharacterCreationIntroAnimation+6B↑w
+                                        ; PlayCharacterCreationIntroAnimation:loc_154BF↑w ...
 word_328FC      dw 0                    ; DATA XREF: sub_2C0FE+376↑w
                                         ; sub_2C0FE+38F↑w ...
 word_328FE      dw 0                    ; DATA XREF: RunClueBookItemCategory+5B↑w
                                         ; RunClueBookItemCategory+68↑w ...
-word_32900      dw 0                    ; DATA XREF: sub_15429+71↑w
-                                        ; sub_15429+9B↑w ...
+word_32900      dw 0                    ; DATA XREF: PlayCharacterCreationIntroAnimation+71↑w
+                                        ; PlayCharacterCreationIntroAnimation+9B↑w ...
 word_32902      dw 0                    ; DATA XREF: UseItem:loc_17E8B↑r
                                         ; UseItem+33D↑r ...
 word_32904      dw 0                    ; DATA XREF: HandleMovementInput+4A↑w

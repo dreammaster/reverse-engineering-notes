@@ -555,8 +555,12 @@ at least 3 reserve slots.
 `RunCharacterCreation` (called from `InitGame` and from
 `RunTitleScreen`'s `I` key, per its own pre-existing comment) is a
 3-step wizard, each step ESC-cancelable: `ComposeCharacterPortrait`
-(step 1), `sub_15429` (step 2, not yet traced), `sub_1559A` (step 3,
-not yet traced), then always `FinalizeCharacterCreation` (was
+(step 1), `PlayCharacterCreationIntroAnimation` (was `sub_15429`, step
+2 — **correction**: not a wizard step at all, but an opening animated
+sequence run before the wizard's actual steps: decodes a small
+graphics block, plays music, and runs several staged sub-animations,
+each ESC-abortable), `sub_1559A` (step 3, not yet traced), then always
+`FinalizeCharacterCreation` (was
 `sub_15267`, runs regardless of which step was reached). Matches the
 manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/
 `FEMALE`/`PICK A PORTRAIT` cluster. Step 3 (`sub_1559A`) calls

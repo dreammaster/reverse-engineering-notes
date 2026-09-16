@@ -2238,7 +2238,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1541B);
 	create_insn	(0X15420);
+	set_cmt	(0X15429,	"Character creation's opening animated sequence: decodes a 768-byte block (byte-0x3F), plays music track 0x12, then runs several staged sub-animations (63/5/20/10/10/20 frame loops via unnamed helpers), abortable via PollForEscapeKeyOnlyAlt after each stage. Called once from RunCharacterCreation.",	0);
 	create_insn	(0X15429);
+	set_name	(0X15429,	"PlayCharacterCreationIntroAnimation");
 	create_insn	(x=0X15444);
 	op_hex		(x,	1);
 	create_insn	(x=0X1546B);
@@ -3344,6 +3346,15 @@ static Bytes_0(void) {
 	create_insn	(0X18C09);
 	create_insn	(x=0X18C1F);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X18C6B);
 	op_hex		(x,	1);
 	create_insn	(0X18C79);
@@ -3385,15 +3396,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18E18);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X18E1F);
 	op_hex		(x,	1);
 	create_insn	(x=0X18E26);
@@ -5399,10 +5401,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20523,	"Reads a numeric wall-type entry (sub_1D146, not traced) into word_2E384, then redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen; falls through from EditFloorLegendTypeNumber on one error path.",	0);
 	create_insn	(0X20523);
 	set_name	(0X20523,	"EditWallLegendTypeNumber");
-	set_cmt	(0X2053A,	"msg",	0);
-	set_cmt	(0X20570,	"Reads a numeric floor-type entry (sub_1D146, not traced) into word_2E386, then redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen; falls through to EditWallLegendTypeNumber on one error path.",	0);
-	create_insn	(0X20570);
-	set_name	(0X20570,	"EditFloorLegendTypeNumber");
 }
 
 //------------------------------------------------------------------------
@@ -5412,6 +5410,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2053A,	"msg",	0);
+	set_cmt	(0X20570,	"Reads a numeric floor-type entry (sub_1D146, not traced) into word_2E386, then redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen; falls through to EditWallLegendTypeNumber on one error path.",	0);
+	create_insn	(0X20570);
+	set_name	(0X20570,	"EditFloorLegendTypeNumber");
 	set_cmt	(0X20587,	"msg",	0);
 	create_insn	(0X205AE);
 	set_cmt	(0X205C0,	"Loads a per-level tile-palette record from WORLD.DAT: PrepareWorldDatRead then overrides the block offset with _blockSize3*word_329FE (selects one record among several) before FileEntry_Read. Called from PaintCellAndPersist and sub_205FB -- feeds RunMapEditorScreen's B/F palette-browsing keys.",	0);
@@ -7315,6 +7317,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2778D,	"Reads (FileEntry bx=8FFB/CURGAME, errorCode=0xA) the shared 0xAFA8 scratch record the caller just configured, applies the same category-dependent charge/transfer/swap logic sub_274B4 applies to its in-memory copy to the field at [0xAFA8+dx], then writes it back -- except for the 'transfer' category with dx==0, where it instead subtracts the staged amount (word_3293E) from scratch var word_38808 and skips the write. Called 3x from sub_274B4 with different (ax,dx) field selectors.",	0);
 	create_insn	(0X2778D);
 	set_name	(0X2778D,	"SyncItemChargeFieldToCurgame");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X277AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X277B5);
@@ -7327,15 +7338,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X277E8);
 	op_hex		(x,	1);
 	create_insn	(0X2780B);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27817);
 	set_cmt	(0X2781C,	"FailsSavingThrow(si=party-member record, word_3293E=difficulty threshold, word_32940=resistance bonus): chance = max(5, 5*([si+0x16]-threshold) + bonus); rolls RandomInRange(100) against it. Returns 1 if the roll exceeds the chance (save fails, effect applies), 0 if resisted.",	0);
 	create_insn	(0X2781C);

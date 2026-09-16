@@ -4350,6 +4350,23 @@ called 3x from still-unnamed `sub_15429`.
 
 533 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PlayCharacterCreationIntroAnimation
+
+Named `sub_15429` -> `PlayCharacterCreationIntroAnimation`, called
+once from the very start of `RunCharacterCreation` (resolving the
+"still-unnamed `sub_15429`" note from last round) — the character
+creation screen's opening animated sequence. Decodes a 768-byte
+simple-obfuscated (each byte `-0x3F`) graphics block, plays music
+track `0x12`, then runs several staged sub-animations (frame loops of
+63/5/20/10/10/20), each abortable via `PollForEscapeKeyOnlyAlt` and
+each honoring a `word_328C4` bit `0x400` "fast/skip" check. The
+various low-level draw helpers it drives (`sub_160D6`, `sub_152EF`,
+`sub_16180`, `sub_1618E`, `sub_1619F`, `sub_160C3`, `sub_2589A`,
+`sub_160B0`) are animation-frame primitives specific to this sequence,
+not traced/named this round.
+
+534 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
