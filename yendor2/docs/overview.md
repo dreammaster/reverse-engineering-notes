@@ -3914,6 +3914,20 @@ and cost values.
 
 499 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CompactPartyRosterSlots — 500/769 milestone
+
+Named `sub_2BF3C` -> `CompactPartyRosterSlots`, called from
+`ShowWorldMap`'s exit path (`D` key or equivalent mouse click) as a
+cleanup-on-exit step: cascades non-empty roster entries down to fill
+gaps across the 4 active `g_partySlotAssignment` slots *and* 3 more
+"reserve" globals (`word_36E4D`/`word_36E4F`/`word_36E51`) not
+previously documented — confirming the party roster extends beyond the
+4 active members into at least 3 reserve slots, a genuinely new
+structural finding.
+
+**500 named of 769 functions as of this update** — the session crossed
+the two-thirds mark (419 → 500, +81 functions this session).
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

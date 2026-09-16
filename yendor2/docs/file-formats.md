@@ -451,7 +451,14 @@ slot's index from two small lookup tables (`0x95EB`, 5 slots at
 `0x94A3`) before falling through — plausibly a recruit/dismiss
 mechanic (adding/removing a character from the active adventuring
 group), but not confirmed. Worth revisiting once `sub_23C18` is
-traced.
+traced. Separately, `ShowWorldMap`'s exit path (`D` key or an
+equivalent mouse click, both leading straight to a `retf`) calls
+`CompactPartyRosterSlots` (was `sub_2BF3C`) as a cleanup-on-exit step:
+it cascades non-empty roster entries down to fill gaps, across not
+just the 4 active slots but **3 more "reserve" globals**
+(`word_36E4D`/`word_36E4F`/`word_36E51`, not otherwise documented) —
+confirming the roster extends beyond the 4 active party members into
+at least 3 reserve slots.
 
 ### Character creation wizard (`RunCharacterCreation`)
 

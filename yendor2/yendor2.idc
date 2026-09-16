@@ -9350,8 +9350,10 @@ static Bytes_3(void) {
 	create_insn	(0X2BEE5);
 	create_insn	(x=0X2BEE7);
 	op_hex		(x,	1);
+	set_cmt	(0X2BF3C,	"Cascades non-empty roster entries down to fill gaps across the 4 active slots (g_partySlotAssignment=0x95EB, plus 0x95ED/0x95EF/0x95F1) and 3 reserve slots (word_36E4D/36E4F/36E51, not otherwise documented), setting word_328C4 bit 0x200 if anything changed. Called from ShowWorldMap's exit path ('D' key or equivalent mouse click), right before it returns -- a cleanup-on-exit step.",	0);
 	create_insn	(x=0X2BF3C);
 	op_hex		(x,	1);
+	set_name	(0X2BF3C,	"CompactPartyRosterSlots");
 	create_insn	(x=0X2BF57);
 	op_hex		(x,	1);
 	create_insn	(0X2BF76);
@@ -10603,6 +10605,15 @@ static Bytes_3(void) {
 	set_name	(0X354C1,	"aMagicOre");
 	create_strlit	(0X354CD,	0X8);
 	set_name	(0X354CD,	"aNuore");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X354D5,	0XC);
 	set_name	(0X354D5,	"aAbsorption");
 	create_strlit	(0X354E1,	0X8);
@@ -10627,15 +10638,6 @@ static Bytes_3(void) {
 	set_name	(0X35531,	"aCopper");
 	create_strlit	(0X3553E,	0XD);
 	set_name	(0X3553E,	"aIron");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3554B,	0XD);
 	set_name	(0X3554B,	"aSteel");
 	create_strlit	(0X35558,	0XD);

@@ -50721,7 +50721,7 @@ loc_2BE22:                              ; CODE XREF: ShowWorldMap+104↑j
 loc_2BE34:                              ; CODE XREF: ShowWorldMap+D7↑j
                                         ; ShowWorldMap+115↑j
                 call    sub_25862
-                call    sub_2BF3C
+                call    CompactPartyRosterSlots
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -50840,8 +50840,8 @@ ShowWorldMap    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BF3C       proc near               ; CODE XREF: ShowWorldMap+11F↑p
-                and     word_328C4, 0FDFFh
+CompactPartyRosterSlots proc near       ; CODE XREF: ShowWorldMap+11F↑p
+                and     word_328C4, 0FDFFh ; Cascades non-empty roster entries down to fill gaps across the 4 active slots (g_partySlotAssignment=0x95EB, plus 0x95ED/0x95EF/0x95F1) and 3 reserve slots (word_36E4D/36E4F/36E51, not otherwise documented), setting word_328C4 bit 0x200 if anything changed. Called from ShowWorldMap's exit path ('D' key or equivalent mouse click), right before it returns -- a cleanup-on-exit step.
                 mov     ax, g_partySlotAssignment
                 add     ax, word_36E4D
                 add     ax, word_36E4F
@@ -50851,14 +50851,14 @@ sub_2BF3C       proc near               ; CODE XREF: ShowWorldMap+11F↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2BF57:                              ; CODE XREF: sub_2BF3C+18↑j
+loc_2BF57:                              ; CODE XREF: CompactPartyRosterSlots+18↑j
                 or      word_328C4, 200h
                 cmp     g_partySlotAssignment, 0
                 jnz     short loc_2BF7F
                 mov     si, 95EDh
                 mov     cx, 3
 
-loc_2BF6A:                              ; CODE XREF: sub_2BF3C+36↓j
+loc_2BF6A:                              ; CODE XREF: CompactPartyRosterSlots+36↓j
                 cmp     word ptr [si], 0
                 jnz     short loc_2BF76
                 add     si, 2
@@ -50866,19 +50866,19 @@ loc_2BF6A:                              ; CODE XREF: sub_2BF3C+36↓j
                 jmp     short loc_2BF7F
 ; ---------------------------------------------------------------------------
 
-loc_2BF76:                              ; CODE XREF: sub_2BF3C+31↑j
+loc_2BF76:                              ; CODE XREF: CompactPartyRosterSlots+31↑j
                 mov     ax, [si]
                 mov     word ptr [si], 0
                 mov     g_partySlotAssignment, ax
 
-loc_2BF7F:                              ; CODE XREF: sub_2BF3C+26↑j
-                                        ; sub_2BF3C+38↑j
+loc_2BF7F:                              ; CODE XREF: CompactPartyRosterSlots+26↑j
+                                        ; CompactPartyRosterSlots+38↑j
                 cmp     word_36E4D, 0
                 jnz     short loc_2BFA1
                 mov     si, 95EFh
                 mov     cx, 2
 
-loc_2BF8C:                              ; CODE XREF: sub_2BF3C+58↓j
+loc_2BF8C:                              ; CODE XREF: CompactPartyRosterSlots+58↓j
                 cmp     word ptr [si], 0
                 jnz     short loc_2BF98
                 add     si, 2
@@ -50886,13 +50886,13 @@ loc_2BF8C:                              ; CODE XREF: sub_2BF3C+58↓j
                 jmp     short loc_2BFA1
 ; ---------------------------------------------------------------------------
 
-loc_2BF98:                              ; CODE XREF: sub_2BF3C+53↑j
+loc_2BF98:                              ; CODE XREF: CompactPartyRosterSlots+53↑j
                 mov     ax, [si]
                 mov     word ptr [si], 0
                 mov     word_36E4D, ax
 
-loc_2BFA1:                              ; CODE XREF: sub_2BF3C+48↑j
-                                        ; sub_2BF3C+5A↑j
+loc_2BFA1:                              ; CODE XREF: CompactPartyRosterSlots+48↑j
+                                        ; CompactPartyRosterSlots+5A↑j
                 cmp     word_36E4F, 0
                 jnz     short locret_2BFBB
                 cmp     word_36E51, 0
@@ -50901,10 +50901,10 @@ loc_2BFA1:                              ; CODE XREF: sub_2BF3C+48↑j
                 mov     word_36E4F, ax
                 mov     word_36E51, 0
 
-locret_2BFBB:                           ; CODE XREF: sub_2BF3C+6A↑j
-                                        ; sub_2BF3C+71↑j
+locret_2BFBB:                           ; CODE XREF: CompactPartyRosterSlots+6A↑j
+                                        ; CompactPartyRosterSlots+71↑j
                 retn
-sub_2BF3C       endp
+CompactPartyRosterSlots endp
 
 
 ; =============== S U B R O U T I N E =======================================
