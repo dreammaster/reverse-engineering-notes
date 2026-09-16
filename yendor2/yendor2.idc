@@ -3511,7 +3511,9 @@ static Bytes_0(void) {
 	set_cmt	(0X1A750,	"msg",	0);
 	create_insn	(x=0X1A767);
 	op_hex		(x,	1);
+	set_cmt	(0X1A76E,	"Shows a yes/no confirmation prompt for message id ax; returns 5 when the user confirms (per both call sites -- ConfirmQuitToDos, ConfirmNewGame).",	0);
 	create_insn	(0X1A76E);
+	set_name	(0X1A76E,	"ShowConfirmPrompt");
 	create_insn	(x=0X1A779);
 	op_hex		(x,	1);
 	create_insn	(0X1A789);
@@ -4670,6 +4672,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1F13A);
 	op_hex		(x,	1);
 	create_insn	(0X1F163);
+	set_name	(0X1F163,	"CycleAnimationSetting");
 	set_cmt	(0X1F197,	"Blanks the 25-byte scratch label buffer (0xAFA8) via StrFillN, then writeString's it at the stored position -- erases whatever label text was previously drawn there.",	0);
 	create_insn	(0X1F197);
 	set_name	(0X1F197,	"EraseLabelText");
@@ -4677,7 +4680,9 @@ static Bytes_0(void) {
 	set_cmt	(0X1F1B8,	"Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.",	0);
 	create_insn	(0X1F1B8);
 	set_name	(0X1F1B8,	"GetListItemPosition");
+	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
 	create_insn	(0X1F1F4);
+	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
 	create_insn	(x=0X1F217);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F222);
@@ -4747,6 +4752,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1F5A0);
 	op_hex		(x,	1);
 	create_insn	(0X1F5A5);
+	set_name	(0X1F5A5,	"ConfirmNewGame");
 	set_cmt	(0X1F5AA,	"styleNum",	0);
 	create_insn	(0X1F5CD);
 	create_insn	(x=0X1F5D7);
@@ -4776,10 +4782,12 @@ static Bytes_0(void) {
 	create_insn	(0X1F884);
 	set_cmt	(0X1F898,	"msg",	0);
 	create_insn	(0X1F8C7);
+	set_name	(0X1F8C7,	"ConfirmQuitToDos");
 	set_cmt	(0X1F8CC,	"styleNum",	0);
 	create_insn	(0X1F8EF);
 	create_insn	(x=0X1F8F5);
 	op_hex		(x,	1);
+	set_name	(0X1F8F5,	"ToggleMusicSetting");
 	create_insn	(x=0X1F90A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F917);
@@ -4788,6 +4796,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F93D);
 	op_hex		(x,	1);
+	set_name	(0X1F93D,	"ToggleSoundFxSetting");
 	create_insn	(x=0X1F94A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F952);
@@ -6200,6 +6209,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X25E55,	"msg",	0);
 	create_insn	(0X25E5E);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X25EC8,	"msg",	0);
 	create_insn	(0X25ED1);
 	set_cmt	(0X25EF3,	"msg",	0);
@@ -6258,15 +6276,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2635C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X26366);
 	op_hex		(x,	1);
 	create_insn	(x=0X26370);
@@ -10760,6 +10769,15 @@ static Bytes_1(void) {
 	create_strlit	(0X39FCF,	0X2);
 	create_strlit	(0X39FD1,	0X24);
 	set_name	(0X39FD1,	"aJudyVanoverDeb");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39FF5,	0X2);
 	create_strlit	(0X39FF7,	0X22);
 	set_name	(0X39FF7,	"aDianeElpersMik");
@@ -10790,15 +10808,6 @@ static Bytes_1(void) {
 	create_strlit	(0X3A0F9,	0X2);
 	create_strlit	(0X3A0FB,	0X1C);
 	set_name	(0X3A0FB,	"aCraigShirley");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A117,	0X2);
 	create_strlit	(0X3A119,	0X2);
 	create_strlit	(0X3A11B,	0X2);

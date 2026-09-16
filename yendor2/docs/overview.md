@@ -493,6 +493,27 @@ throughout the binary are just every point the cursor moves.
 
 86 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunGameDialog's remaining handlers
+
+Traced the rest of `RunGameDialog`'s per-key handlers
+(`ida_scripts/name_dialog_handlers.py`), all reading cleanly and
+consistently: `ConfirmQuitToDos` and `ConfirmNewGame` (Dos/New Game —
+both draw a confirmation panel state then call the shared
+`ShowConfirmPrompt(msg_id)` yes/no prompt, proceeding only on
+confirmation), `ToggleMusicSetting`/`ToggleSoundFxSetting` (Music/Sound
+Fx — flip a `g_driverStateFlags` bit, start/stop the driver, redraw a
+checkbox via the shared `DrawCheckboxIndicator`), and
+`CycleAnimationSetting` (Animation — cycles a 3-value setting, not a
+plain on/off). The Load and Save flows are large inline blocks within
+`RunGameDialog` itself (list-browsing via `GetListItemPosition`, text
+entry for save names) rather than separate callable functions, so
+they're covered by `RunGameDialog`'s own comment instead of a new name.
+
+This closes out `RunGameDialog` essentially completely — every hotkey
+now has a named, understood handler.
+
+93 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

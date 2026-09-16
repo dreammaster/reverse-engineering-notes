@@ -12836,7 +12836,7 @@ loc_178D5:                              ; CODE XREF: sub_178A6+29↑j
                 mov     ax, 5
 
 loc_178F0:                              ; CODE XREF: sub_178A6+45↑j
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_17906
                 call    sub_16EFA
@@ -18109,7 +18109,7 @@ loc_1A39E:                              ; CODE XREF: sub_1A37E+17↑j
                 mov     word_2E530, 0
                 call    sub_23874
                 mov     ax, 4
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_1A3CB
                 pop     word_2E530
@@ -18287,7 +18287,7 @@ loc_1A52F:                              ; CODE XREF: sub_1A4C5+A↑j
 loc_1A533:                              ; CODE XREF: sub_1A4C5+28↑j
                 call    sub_16EFA
                 mov     ax, [si+6]
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jz      short loc_1A574
                 mov     bx, [si+2]
@@ -18545,9 +18545,9 @@ seg038          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A76E       proc far                ; CODE XREF: sub_178A6:loc_178F0↑P
+ShowConfirmPrompt proc far              ; CODE XREF: sub_178A6:loc_178F0↑P
                                         ; sub_1A37E+38↑P ...
-                push    _videoSegment
+                push    _videoSegment   ; Shows a yes/no confirmation prompt for message id ax; returns 5 when the user confirms (per both call sites -- ConfirmQuitToDos, ConfirmNewGame).
                 push    bx
                 push    cx
                 push    dx
@@ -18564,7 +18564,7 @@ sub_1A76E       proc far                ; CODE XREF: sub_178A6:loc_178F0↑P
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A789:                              ; CODE XREF: sub_1A76E+16↑j
+loc_1A789:                              ; CODE XREF: ShowConfirmPrompt+16↑j
                 mov     _font_bgTransparent, 1
                 mov     _videoSegment, 0A000h
                 mov     ax, [si]
@@ -18577,7 +18577,7 @@ loc_1A789:                              ; CODE XREF: sub_1A76E+16↑j
                 add     si, 8
                 call    RestoreCursorBackgroundIfDirty
 
-loc_1A7B1:                              ; CODE XREF: sub_1A76E+64↓j
+loc_1A7B1:                              ; CODE XREF: ShowConfirmPrompt+64↓j
                 push    cx
                 mov     ax, [si]
                 mov     _font_fgColor, ax
@@ -18599,25 +18599,25 @@ loc_1A7B1:                              ; CODE XREF: sub_1A76E+64↓j
                 jmp     loc_1A87B
 ; ---------------------------------------------------------------------------
 
-loc_1A7EC:                              ; CODE XREF: sub_1A76E+79↑j
+loc_1A7EC:                              ; CODE XREF: ShowConfirmPrompt+79↑j
                 test    word_328E0, 2000h
                 jz      short loc_1A7F7
                 jmp     loc_1A950
 ; ---------------------------------------------------------------------------
 
-loc_1A7F7:                              ; CODE XREF: sub_1A76E+84↑j
+loc_1A7F7:                              ; CODE XREF: ShowConfirmPrompt+84↑j
                 test    word_328E0, 1000h
                 jz      short loc_1A802
                 jmp     loc_1A9A8
 ; ---------------------------------------------------------------------------
 
-loc_1A802:                              ; CODE XREF: sub_1A76E+8F↑j
+loc_1A802:                              ; CODE XREF: ShowConfirmPrompt+8F↑j
                 mov     ax, 0
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A808:                              ; CODE XREF: sub_1A76E+71↑j
-                                        ; sub_1A76E+A4↓j ...
+loc_1A808:                              ; CODE XREF: ShowConfirmPrompt+71↑j
+                                        ; ShowConfirmPrompt+A4↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1A808
@@ -18638,7 +18638,7 @@ loc_1A808:                              ; CODE XREF: sub_1A76E+71↑j
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A845:                              ; CODE XREF: sub_1A76E+AB↑j
+loc_1A845:                              ; CODE XREF: ShowConfirmPrompt+AB↑j
                 test    word_328E0, 8000h
                 jz      short loc_1A808
                 mov     ax, word_2E780
@@ -18647,27 +18647,27 @@ loc_1A845:                              ; CODE XREF: sub_1A76E+AB↑j
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A85A:                              ; CODE XREF: sub_1A76E+E7↑j
+loc_1A85A:                              ; CODE XREF: ShowConfirmPrompt+E7↑j
                 cmp     byte_2E400, 0Dh
                 jnz     short loc_1A864
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A864:                              ; CODE XREF: sub_1A76E+F1↑j
+loc_1A864:                              ; CODE XREF: ShowConfirmPrompt+F1↑j
                 mov     ax, word_2E66C
                 cmp     byte_2E400, 4Eh ; 'N'
                 jnz     short loc_1A871
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A871:                              ; CODE XREF: sub_1A76E+FE↑j
+loc_1A871:                              ; CODE XREF: ShowConfirmPrompt+FE↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1A808
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A87B:                              ; CODE XREF: sub_1A76E+7B↑j
-                                        ; sub_1A76E+117↓j ...
+loc_1A87B:                              ; CODE XREF: ShowConfirmPrompt+7B↑j
+                                        ; ShowConfirmPrompt+117↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1A87B
@@ -18692,7 +18692,7 @@ loc_1A87B:                              ; CODE XREF: sub_1A76E+7B↑j
                 jmp     short loc_1A8F5
 ; ---------------------------------------------------------------------------
 
-loc_1A8C7:                              ; CODE XREF: sub_1A76E+14C↑j
+loc_1A8C7:                              ; CODE XREF: ShowConfirmPrompt+14C↑j
                 cmp     ax, 0Bh
                 jnz     short loc_1A8D7
                 mov     ax, word_36E4D
@@ -18700,7 +18700,7 @@ loc_1A8C7:                              ; CODE XREF: sub_1A76E+14C↑j
                 jmp     short loc_1A8F5
 ; ---------------------------------------------------------------------------
 
-loc_1A8D7:                              ; CODE XREF: sub_1A76E+15C↑j
+loc_1A8D7:                              ; CODE XREF: ShowConfirmPrompt+15C↑j
                 cmp     ax, 15h
                 jnz     short loc_1A8E7
                 mov     ax, word_36E4F
@@ -18708,32 +18708,32 @@ loc_1A8D7:                              ; CODE XREF: sub_1A76E+15C↑j
                 jmp     short loc_1A8F5
 ; ---------------------------------------------------------------------------
 
-loc_1A8E7:                              ; CODE XREF: sub_1A76E+16C↑j
+loc_1A8E7:                              ; CODE XREF: ShowConfirmPrompt+16C↑j
                 cmp     ax, 1Fh
                 jnz     short loc_1A87B
                 mov     ax, word_36E51
                 mov     word_32924, 95F1h
 
-loc_1A8F5:                              ; CODE XREF: sub_1A76E+157↑j
-                                        ; sub_1A76E+167↑j ...
+loc_1A8F5:                              ; CODE XREF: ShowConfirmPrompt+157↑j
+                                        ; ShowConfirmPrompt+167↑j ...
                 cmp     ax, 0
                 jz      short loc_1A87B
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A8FD:                              ; CODE XREF: sub_1A76E+11E↑j
+loc_1A8FD:                              ; CODE XREF: ShowConfirmPrompt+11E↑j
                 cmp     byte_2E400, 1Bh
                 jz      short loc_1A907
                 jmp     loc_1A87B
 ; ---------------------------------------------------------------------------
 
-loc_1A907:                              ; CODE XREF: sub_1A76E+12C↑j
-                                        ; sub_1A76E+194↑j
+loc_1A907:                              ; CODE XREF: ShowConfirmPrompt+12C↑j
+                                        ; ShowConfirmPrompt+194↑j
                 mov     ax, 0
                 jmp     loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A90D:                              ; CODE XREF: sub_1A76E+125↑j
+loc_1A90D:                              ; CODE XREF: ShowConfirmPrompt+125↑j
                 mov     word_32924, 95EBh
                 mov     ax, word_36E4B
                 cmp     byte_2E400, 3Bh ; ';'
@@ -18753,7 +18753,7 @@ loc_1A90D:                              ; CODE XREF: sub_1A76E+125↑j
                 jmp     loc_1A87B
 ; ---------------------------------------------------------------------------
 
-loc_1A950:                              ; CODE XREF: sub_1A76E+86↑j
+loc_1A950:                              ; CODE XREF: ShowConfirmPrompt+86↑j
                 mov     cx, 6
                 mov     di, 0AFA8h
                 mov     es, word_2E4AA
@@ -18776,13 +18776,13 @@ loc_1A950:                              ; CODE XREF: sub_1A76E+86↑j
                 jmp     short loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A9A3:                              ; CODE XREF: sub_1A76E+22E↑j
+loc_1A9A3:                              ; CODE XREF: ShowConfirmPrompt+22E↑j
                 mov     ax, 2
                 jmp     short loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A9A8:                              ; CODE XREF: sub_1A76E+91↑j
-                                        ; sub_1A76E+244↓j ...
+loc_1A9A8:                              ; CODE XREF: ShowConfirmPrompt+91↑j
+                                        ; ShowConfirmPrompt+244↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1A9A8
@@ -18796,7 +18796,7 @@ loc_1A9A8:                              ; CODE XREF: sub_1A76E+91↑j
                 jmp     short loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A9CE:                              ; CODE XREF: sub_1A76E+252↑j
+loc_1A9CE:                              ; CODE XREF: ShowConfirmPrompt+252↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5D5Eh
@@ -18810,13 +18810,13 @@ loc_1A9CE:                              ; CODE XREF: sub_1A76E+252↑j
                 jmp     short loc_1A9FA
 ; ---------------------------------------------------------------------------
 
-loc_1A9F0:                              ; CODE XREF: sub_1A76E+24B↑j
+loc_1A9F0:                              ; CODE XREF: ShowConfirmPrompt+24B↑j
                 mov     ax, 0
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1A9A8
 
-loc_1A9FA:                              ; CODE XREF: sub_1A76E+18↑j
-                                        ; sub_1A76E+97↑j ...
+loc_1A9FA:                              ; CODE XREF: ShowConfirmPrompt+18↑j
+                                        ; ShowConfirmPrompt+97↑j ...
                 pop     bp
                 pop     di
                 pop     si
@@ -18825,7 +18825,7 @@ loc_1A9FA:                              ; CODE XREF: sub_1A76E+18↑j
                 pop     bx
                 pop     _videoSegment
                 retf
-sub_1A76E       endp
+ShowConfirmPrompt endp
 
 seg038          ends
 
@@ -19843,7 +19843,7 @@ sub_1B2BD       proc far                ; CODE XREF: sub_17B92:loc_17C5B↑P
                 jnz     short loc_1B2DF
                 call    sub_16EFA
                 mov     ax, 0Ah
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_1B2DF
                 mov     errorCode, 1
@@ -22281,7 +22281,7 @@ loc_1C98C:                              ; CODE XREF: sub_1C890+13E↓j
                 jnz     short loc_1C9AF
                 call    sub_16EFA
                 mov     ax, 0Bh
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_1C9AF
                 call    sub_16EFA
@@ -24977,7 +24977,7 @@ loc_1E037:                              ; CODE XREF: sub_1DCE0+319↑j
                 call    sub_16E18
                 call    DrawMouseCursor
                 mov     ax, 22h ; '"'
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_1E067
                 call    sub_16E18
@@ -25539,7 +25539,7 @@ sub_1E4FA       proc near               ; CODE XREF: sub_1DCE0+31F↑p
                 mov     word_2E530, 0Fh
                 call    sub_23874
                 mov     ax, 12h
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 mov     word_3331A, ax
                 mov     ax, word_32924
                 mov     word_3331C, ax
@@ -26211,7 +26211,7 @@ loc_1EBEB:                              ; CODE XREF: RunGameDialog+FD↑j
                                         ; RunGameDialog+155↑j
                 test    word_328C4, 8
                 jz      short loc_1EBE8
-                call    sub_1F163
+                call    CycleAnimationSetting
                 jmp     loc_1EB2C
 ; ---------------------------------------------------------------------------
 
@@ -26219,7 +26219,7 @@ loc_1EBF9:                              ; CODE XREF: RunGameDialog+106↑j
                                         ; RunGameDialog+15A↑j
                 test    word_328C4, 10h
                 jz      short loc_1EBE8
-                call    sub_1F8C7
+                call    ConfirmQuitToDos
                 cmp     byte_2E400, 0FFh
                 jz      short loc_1EC69
 
@@ -26229,7 +26229,7 @@ loc_1EC0B:                              ; CODE XREF: RunGameDialog+1C7↓j
 
 loc_1EC0E:                              ; CODE XREF: RunGameDialog+110↑j
                                         ; RunGameDialog+15F↑j
-                call    sub_1F93D
+                call    ToggleSoundFxSetting
                 jmp     loc_1EB2C
 ; ---------------------------------------------------------------------------
 
@@ -26242,7 +26242,7 @@ loc_1EC14:                              ; CODE XREF: RunGameDialog+11A↑j
 
 loc_1EC1F:                              ; CODE XREF: RunGameDialog+124↑j
                                         ; RunGameDialog+169↑j
-                call    sub_1F8F5
+                call    ToggleMusicSetting
                 jmp     loc_1EB2C
 ; ---------------------------------------------------------------------------
 
@@ -26250,7 +26250,7 @@ loc_1EC25:                              ; CODE XREF: RunGameDialog+12E↑j
                                         ; RunGameDialog+16E↑j
                 test    word_328C4, 20h
                 jz      short loc_1EBE8
-                call    sub_1F5A5
+                call    ConfirmNewGame
                 cmp     byte_2E400, 0
                 jz      short loc_1EC0B
                 cmp     byte_2E400, 0FFh
@@ -26341,7 +26341,7 @@ loc_1ED06:                              ; CODE XREF: RunGameDialog+28F↑j
                 cmp     byte_2E400, 0Dh
                 jnz     short loc_1ED31
                 mov     ax, 2
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 5
                 jnz     short loc_1ED53
                 mov     ax, word_32906
@@ -26360,7 +26360,7 @@ loc_1ED31:                              ; CODE XREF: RunGameDialog+26C↑j
                 cmp     errorCode, 2
                 jz      short loc_1ED53
                 mov     ax, 2
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_1ED75
 
@@ -26372,7 +26372,7 @@ loc_1ED53:                              ; CODE XREF: RunGameDialog+29D↑j
                 mov     ax, [bx]
                 mov     bx, [bx+4]
                 mov     cx, 11h
-                call    sub_1F1F4
+                call    DrawCheckboxIndicator
                 call    EraseLabelText
                 call    sub_1F53E
                 jmp     loc_1EC8A
@@ -26427,7 +26427,7 @@ loc_1EDED:                              ; CODE XREF: RunGameDialog+373↑j
                 mov     ax, 4
                 call    sub_28412
                 mov     ax, 3
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_1EE23
 
@@ -26438,7 +26438,7 @@ loc_1EE02:                              ; CODE XREF: RunGameDialog+37D↑j
                 mov     ax, [bx]
                 mov     bx, [bx+4]
                 mov     cx, 11h
-                call    sub_1F1F4
+                call    DrawCheckboxIndicator
                 call    EraseLabelText
                 call    sub_1F53E
                 jmp     short loc_1EDB8
@@ -26674,7 +26674,7 @@ sub_1F0CD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F163       proc near               ; CODE XREF: RunGameDialog+185↑p
+CycleAnimationSetting proc near         ; CODE XREF: RunGameDialog+185↑p
                 mov     _textPos_x, 61h ; 'a'
                 mov     _textPos_y, 77h ; 'w'
                 mov     ax, 9
@@ -26685,14 +26685,14 @@ sub_1F163       proc near               ; CODE XREF: RunGameDialog+185↑p
                 jz      short loc_1F186
                 mov     ax, 5
 
-loc_1F186:                              ; CODE XREF: sub_1F163+14↑j
-                                        ; sub_1F163+1E↑j
+loc_1F186:                              ; CODE XREF: CycleAnimationSetting+14↑j
+                                        ; CycleAnimationSetting+1E↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_36CE7, ax
                 call    sub_1F884
                 call    sub_238CD
                 retn
-sub_1F163       endp
+CycleAnimationSetting endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -26748,9 +26748,9 @@ GetListItemPosition endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F1F4       proc near               ; CODE XREF: RunGameDialog+2FB↑p
+DrawCheckboxIndicator proc near         ; CODE XREF: RunGameDialog+2FB↑p
                                         ; RunGameDialog+3AA↑p ...
-                mov     x, ax
+                mov     x, ax           ; Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.
                 mov     y, bx
                 mov     word_2E530, cx
                 mov     _font_bgTransparent, 0
@@ -26758,7 +26758,7 @@ sub_1F1F4       proc near               ; CODE XREF: RunGameDialog+2FB↑p
                 mov     word_2E532, 90h
                 call    DrawPicture
                 retn
-sub_1F1F4       endp
+DrawCheckboxIndicator endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -26815,7 +26815,7 @@ loc_1F274:                              ; CODE XREF: sub_1F217+58↑j
                 mov     ax, 0AAh
                 mov     bx, 6Ah ; 'j'
                 mov     cx, 12h
-                call    sub_1F1F4
+                call    DrawCheckboxIndicator
 
 loc_1F288:                              ; CODE XREF: sub_1F217+63↑j
                 test    g_driverStateFlags, 2
@@ -26823,7 +26823,7 @@ loc_1F288:                              ; CODE XREF: sub_1F217+63↑j
                 mov     ax, 61h ; 'a'
                 mov     bx, 6Ah ; 'j'
                 mov     cx, 12h
-                call    sub_1F1F4
+                call    DrawCheckboxIndicator
 
 locret_1F29C:                           ; CODE XREF: sub_1F217+77↑j
                 retn
@@ -26930,7 +26930,7 @@ loc_1F362:                              ; CODE XREF: sub_1F29D+3D↑j
                 mov     ax, [bx]
                 mov     bx, [bx+4]
                 mov     cx, 12h
-                call    sub_1F1F4
+                call    DrawCheckboxIndicator
                 call    sub_238CD
                 retn
 sub_1F29D       endp
@@ -27182,12 +27182,12 @@ sub_1F58D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F5A5       proc near               ; CODE XREF: RunGameDialog+1BF↑p
+ConfirmNewGame  proc near               ; CODE XREF: RunGameDialog+1BF↑p
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 4           ; styleNum
                 call    GameDialog_drawButtons
                 mov     ax, 1Fh
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_1F5CD
                 call    sub_16EFA
@@ -27196,7 +27196,7 @@ sub_1F5A5       proc near               ; CODE XREF: RunGameDialog+1BF↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1F5CD:                              ; CODE XREF: sub_1F5A5+16↑j
+loc_1F5CD:                              ; CODE XREF: ConfirmNewGame+16↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_2849C
                 and     word_328C6, 0FBFFh
@@ -27208,9 +27208,9 @@ loc_1F5CD:                              ; CODE XREF: sub_1F5A5+16↑j
                 jz      short locret_1F5FE
                 mov     byte_2E400, 0FEh
 
-locret_1F5FE:                           ; CODE XREF: sub_1F5A5+52↑j
+locret_1F5FE:                           ; CODE XREF: ConfirmNewGame+52↑j
                 retn
-sub_1F5A5       endp
+ConfirmNewGame  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27389,7 +27389,7 @@ sub_1F5FF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F884       proc near               ; CODE XREF: sub_1F163+2B↑p
+sub_1F884       proc near               ; CODE XREF: CycleAnimationSetting+2B↑p
                                         ; sub_1F217:loc_1F250↑p
                 mov     bx, 8402h
                 cmp     word_36CE7, 1
@@ -27416,12 +27416,12 @@ sub_1F884       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F8C7       proc near               ; CODE XREF: RunGameDialog+193↑p
+ConfirmQuitToDos proc near              ; CODE XREF: RunGameDialog+193↑p
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 3           ; styleNum
                 call    GameDialog_drawButtons
                 mov     ax, 1
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_1F8EF
                 call    sub_16EFA
@@ -27430,16 +27430,16 @@ sub_1F8C7       proc near               ; CODE XREF: RunGameDialog+193↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1F8EF:                              ; CODE XREF: sub_1F8C7+16↑j
+loc_1F8EF:                              ; CODE XREF: ConfirmQuitToDos+16↑j
                 mov     byte_2E400, 0FFh
                 retn
-sub_1F8C7       endp
+ConfirmQuitToDos endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F8F5       proc near               ; CODE XREF: RunGameDialog:loc_1EC1F↑p
+ToggleMusicSetting proc near            ; CODE XREF: RunGameDialog:loc_1EC1F↑p
                 test    g_driverStateFlags, 1
                 jz      short locret_1F93C
                 call    RestoreCursorBackgroundIfDirty
@@ -27453,26 +27453,26 @@ sub_1F8F5       proc near               ; CODE XREF: RunGameDialog:loc_1EC1F↑p
                 jmp     short loc_1F92E
 ; ---------------------------------------------------------------------------
 
-loc_1F921:                              ; CODE XREF: sub_1F8F5+1B↑j
+loc_1F921:                              ; CODE XREF: ToggleMusicSetting+1B↑j
                 or      g_driverStateFlags, 2
                 call    sub_28320
                 mov     cx, 12h
 
-loc_1F92E:                              ; CODE XREF: sub_1F8F5+2A↑j
+loc_1F92E:                              ; CODE XREF: ToggleMusicSetting+2A↑j
                 mov     ax, 61h ; 'a'
                 mov     bx, 6Ah ; 'j'
-                call    sub_1F1F4
+                call    DrawCheckboxIndicator
                 call    sub_238CD
 
-locret_1F93C:                           ; CODE XREF: sub_1F8F5+6↑j
+locret_1F93C:                           ; CODE XREF: ToggleMusicSetting+6↑j
                 retn
-sub_1F8F5       endp
+ToggleMusicSetting endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F93D       proc near               ; CODE XREF: RunGameDialog:loc_1EC0E↑p
+ToggleSoundFxSetting proc near          ; CODE XREF: RunGameDialog:loc_1EC0E↑p
                 test    g_driverStateFlags, 4
                 jz      short locret_1F97A
                 call    RestoreCursorBackgroundIfDirty
@@ -27483,21 +27483,21 @@ sub_1F93D       proc near               ; CODE XREF: RunGameDialog:loc_1EC0E↑p
                 jmp     short loc_1F964
 ; ---------------------------------------------------------------------------
 
-loc_1F95C:                              ; CODE XREF: sub_1F93D+13↑j
+loc_1F95C:                              ; CODE XREF: ToggleSoundFxSetting+13↑j
                 or      g_driverStateFlags, 8
                 mov     cx, 12h
 
-loc_1F964:                              ; CODE XREF: sub_1F93D+1D↑j
+loc_1F964:                              ; CODE XREF: ToggleSoundFxSetting+1D↑j
                 mov     ax, 0AAh
                 mov     bx, 6Ah ; 'j'
-                call    sub_1F1F4
+                call    DrawCheckboxIndicator
                 call    sub_238CD
                 mov     ax, 4
                 call    sub_28412
 
-locret_1F97A:                           ; CODE XREF: sub_1F93D+6↑j
+locret_1F97A:                           ; CODE XREF: ToggleSoundFxSetting+6↑j
                 retn
-sub_1F93D       endp
+ToggleSoundFxSetting endp
 
 seg058          ends
 
@@ -31164,7 +31164,7 @@ loc_21A17:                              ; CODE XREF: sub_219FA+59↓j
                 jnz     short loc_21A39
                 call    sub_16EFA
                 mov     ax, 7
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_21A39
                 call    sub_16EFA
@@ -48235,7 +48235,7 @@ sub_2A788       proc far                ; CODE XREF: sub_295A8+1C↑P
                 jnz     short loc_2A7A8
                 call    sub_16EFA
                 mov     ax, 8
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2A7A8
                 call    sub_16EFA
@@ -48750,7 +48750,7 @@ loc_2AB8F:                              ; CODE XREF: sub_2AA58+16E↓j
                 cmp     ax, 0
                 jnz     short loc_2ABAC
                 mov     ax, 8
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2ABAC
                 call    sub_16EFA
@@ -48781,7 +48781,7 @@ loc_2ABC8:                              ; CODE XREF: sub_2AA58+166↑j
 loc_2ABDC:                              ; CODE XREF: sub_2AA58+174↑j
                 call    sub_16EFA
                 mov     ax, 23h ; '#'
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_2AC2B
                 cmp     ax, 7
@@ -48934,7 +48934,7 @@ sub_2AD94       proc near               ; CODE XREF: sub_2A914+5↑p
                 call    sub_23874
                 call    sub_238CD
                 mov     ax, 12h
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2ADC4
                 call    sub_16E18
@@ -49751,7 +49751,7 @@ loc_2B663:                              ; CODE XREF: sub_2B656+4E↓j
                 jnz     short loc_2B685
                 call    sub_16EFA
                 mov     ax, 0Bh
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2B685
                 call    sub_16EFA
@@ -50952,7 +50952,7 @@ loc_2C01D:                              ; CODE XREF: sub_2C010+52↓j
                 jnz     short loc_2C03D
                 call    sub_16EFA
                 mov     ax, 9
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2C03D
                 call    sub_16EFA
@@ -53407,7 +53407,7 @@ sub_2D65A       proc far                ; CODE XREF: sub_295A8+157↑P
                 test    word ptr [bx+2], 200h
                 jz      short loc_2D696
                 mov     ax, 20h ; ' '
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2D682
                 jmp     loc_2D77A
@@ -53473,7 +53473,7 @@ loc_2D6FC:                              ; CODE XREF: sub_2D65A+30↑j
                 call    sub_2D7A7
                 call    DrawMouseCursor
                 mov     ax, 21h ; '!'
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jz      short loc_2D77A
                 call    sub_25B14
@@ -53587,7 +53587,7 @@ sub_2D809       proc near               ; CODE XREF: sub_2D65A+6C↑p
                 mov     word_2E530, 0Fh
                 call    sub_23874
                 mov     ax, 12h
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 mov     word_3331A, ax
                 mov     ax, word_32924
                 mov     word_3331C, ax
@@ -53601,7 +53601,7 @@ sub_2D809       endp
                 call    sub_23874
                 call    sub_238CD
                 mov     ax, 12h
-                call    sub_1A76E
+                call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2D861
                 call    sub_16E18
@@ -57196,8 +57196,8 @@ word_2E666      dw 0                    ; DATA XREF: sub_13FCF+16↑w
 byte_2E668      db 0                    ; DATA XREF: sub_17032+18D↑w
                                         ; sub_17032+1B2↑w ...
                 align 4
-word_2E66C      dw 0                    ; DATA XREF: sub_1A76E+38↑w
-                                        ; sub_1A76E+CE↑r ...
+word_2E66C      dw 0                    ; DATA XREF: ShowConfirmPrompt+38↑w
+                                        ; ShowConfirmPrompt+CE↑r ...
                 db    0
                 db    0
                 db    0
@@ -57470,8 +57470,8 @@ word_2E778      dw 13Ch                 ; DATA XREF: sub_20070+E↑r
 word_2E77A      dw 1                    ; DATA XREF: sub_20070+A↑r
                                         ; sub_20070+1A↑w ...
                 align 8
-word_2E780      dw 0                    ; DATA XREF: sub_1A76E+32↑w
-                                        ; sub_1A76E+C8↑r ...
+word_2E780      dw 0                    ; DATA XREF: ShowConfirmPrompt+32↑w
+                                        ; ShowConfirmPrompt+C8↑r ...
 word_2E782      dw 0                    ; DATA XREF: seg073:00B5↑r
                                         ; InitMouse+40↑w ...
 word_2E784      dw 0                    ; DATA XREF: seg073:00BB↑r
@@ -74202,8 +74202,8 @@ word_328DA      dw 0                    ; DATA XREF: sub_1D4B8+EC↑r
 word_328DC      dw 0                    ; DATA XREF: sub_1D4B8+F8↑r
                                         ; sub_1DC73+21↑r
 word_328DE      dw 0                    ; DATA XREF: sub_1D4B8+104↑r
-word_328E0      dw 0                    ; DATA XREF: sub_1A76E+29↑w
-                                        ; sub_1A76E+6B↑r ...
+word_328E0      dw 0                    ; DATA XREF: ShowConfirmPrompt+29↑w
+                                        ; ShowConfirmPrompt+6B↑r ...
 word_328E2      dw 0                    ; DATA XREF: sub_1CCBC+C5↑w
                                         ; sub_1CCBC+DC↑w
 word_328E4      dw 0                    ; DATA XREF: sub_1CCBC+CB↑w
@@ -86318,11 +86318,11 @@ word_36E0F      dw 0                    ; DATA XREF: sub_1A320+18↑r
 word_36E4B      dw 0                    ; DATA XREF: sub_112AE+284↑r
                                         ; sub_1869D+4B7↑r ...
 word_36E4D      dw 0                    ; DATA XREF: sub_1869D+4C0↑r
-                                        ; sub_1A76E+15E↑r ...
+                                        ; ShowConfirmPrompt+15E↑r ...
 word_36E4F      dw 0                    ; DATA XREF: sub_1869D+4C9↑r
-                                        ; sub_1A76E+16E↑r ...
-word_36E51      dw 0                    ; DATA XREF: sub_1A76E+17E↑r
-                                        ; sub_1A76E+1D5↑r ...
+                                        ; ShowConfirmPrompt+16E↑r ...
+word_36E51      dw 0                    ; DATA XREF: ShowConfirmPrompt+17E↑r
+                                        ; ShowConfirmPrompt+1D5↑r ...
                 db    0
                 db    0
                 db    0
