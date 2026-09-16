@@ -8956,10 +8956,14 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A578);
 	op_hex		(x,	1);
+	set_cmt	(0X2A589,	"RLE run-record blitter (6-byte records: outer count/inner count/skip at [bx]/[bx+2]/[bx+4]): contiguous lodsb/stosb copy, optional 0xFF-transparent skip, ShiftPaletteShadeClamped shading, then optional chained effects (sub_2A4B0/sub_2A217). Tail-loops to the next record. Called from DrawViewportSprite.",	0);
 	create_insn	(0X2A589);
+	set_name	(0X2A589,	"DrawRleMaskedShadedRun");
 	create_insn	(0X2A5B1);
 	create_insn	(0X2A5E6);
+	set_cmt	(0X2A5F7,	"RLE run-record blitter drawing one screen column (dest advances by 0x140/320 per pixel, source by a caller-supplied stride) -- the perspective-scaled-sprite-column shape. Optional 0xFF-transparent skip, shaded via ShiftPaletteShadeClamped. Called from DrawViewportSprite.",	0);
 	create_insn	(0X2A5F7);
+	set_name	(0X2A5F7,	"DrawRleScaledSpriteColumn");
 	create_insn	(0X2A61F);
 	set_cmt	(0X2A653,	"Shifts color al by the shared [bp+var_21] delta (DrawPicture's copy of word_32926) within its 16-entry palette hue-block (floor al&0xF0, ceiling al|0x0F), clamped at the block edges; no-op if delta==0 or al>=0xD0. A distance/light dimming shade primitive. Called 9x from DrawPicture and sibling picture-draw code.",	0);
 	create_insn	(0X2A653);
@@ -9890,6 +9894,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D547);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D553);
 	op_hex		(x,	1);
 	create_insn	(0X2D56A);
@@ -9915,15 +9928,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2D60A,	"Looks up the currently-targeted object (word_2E548) in the 0xDFBB capability table; if its capability is already known, shows one message (sub_29461), otherwise (or if not in the table at all) shows a generic description (sub_1A3F0). The 'examine' counterpart to UseAbilityOnTarget's 'try it'.",	0);
 	create_insn	(0X2D60A);
 	set_name	(0X2D60A,	"ExamineTarget");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2D625);
 	create_insn	(0X2D639);
 	set_cmt	(0X2D65A,	"Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.",	0);

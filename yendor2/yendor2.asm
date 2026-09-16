@@ -46750,7 +46750,7 @@ loc_29CC1:                              ; CODE XREF: DrawViewportSprite+1CE↓j
                 push    cx
                 mov     si, [bp+var_4]
                 mov     di, [bp+var_8]
-                call    sub_2A589
+                call    DrawRleMaskedShadedRun
                 add     [bp+var_8], 140h
                 mov     ax, [bp+var_1C]
                 mov     [bp+var_12], ax
@@ -46922,7 +46922,7 @@ loc_29E26:                              ; CODE XREF: DrawViewportSprite+304↑j
                 mov     di, [bp+var_8]
                 mov     ds, [bp+var_2]
                 mov     si, [bp+var_4]
-                call    sub_2A5F7
+                call    DrawRleScaledSpriteColumn
                 inc     [bp+var_4]
                 inc     [bp+var_8]
                 mov     ax, [bp+var_12]
@@ -46984,7 +46984,7 @@ loc_29EA8:                              ; CODE XREF: DrawViewportSprite+386↑j
                 mov     di, [bp+var_8]
                 mov     ds, [bp+var_2]
                 mov     si, [bp+var_4]
-                call    sub_2A5F7
+                call    DrawRleScaledSpriteColumn
                 inc     [bp+var_4]
                 inc     [bp+var_8]
                 mov     ax, [bp+var_12]
@@ -47047,7 +47047,7 @@ loc_29F36:                              ; CODE XREF: DrawViewportSprite+443↓j
                 push    cx
                 mov     si, [bp+var_4]
                 mov     di, [bp+var_8]
-                call    sub_2A589
+                call    DrawRleMaskedShadedRun
                 add     [bp+var_8], 140h
                 mov     ax, [bp+var_1C]
                 mov     [bp+var_12], ax
@@ -47117,7 +47117,7 @@ loc_29FBA:                              ; CODE XREF: DrawViewportSprite+4C7↓j
                 push    cx
                 mov     si, [bp+var_4]
                 mov     di, [bp+var_8]
-                call    sub_2A589
+                call    DrawRleMaskedShadedRun
                 add     [bp+var_8], 140h
                 mov     ax, [bp+var_1C]
                 mov     [bp+var_12], ax
@@ -47429,7 +47429,7 @@ DrawMouseCursor endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A217       proc near               ; CODE XREF: sub_2A589+51↓p
+sub_2A217       proc near               ; CODE XREF: DrawRleMaskedShadedRun+51↓p
                 mov     [bp-4Ch], ax
                 mov     ax, [bp-2Ah]
                 jmp     ax
@@ -47884,9 +47884,9 @@ ExpandBlitMaskNibbles endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A589       proc near               ; CODE XREF: DrawViewportSprite+1B9↑p
+DrawRleMaskedShadedRun proc near        ; CODE XREF: DrawViewportSprite+1B9↑p
                                         ; DrawViewportSprite+42E↑p ...
-                mov     ax, es
+                mov     ax, es          ; RLE run-record blitter (6-byte records: outer count/inner count/skip at [bx]/[bx+2]/[bx+4]): contiguous lodsb/stosb copy, optional 0xFF-transparent skip, ShiftPaletteShadeClamped shading, then optional chained effects (sub_2A4B0/sub_2A217). Tail-loops to the next record. Called from DrawViewportSprite.
                 mov     es, word ptr [bp-0Eh]
                 mov     bx, [bp-12h]
                 mov     cx, es:[bx+2]
@@ -47902,22 +47902,22 @@ sub_2A589       proc near               ; CODE XREF: DrawViewportSprite+1B9↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2A5B1:                              ; CODE XREF: sub_2A589+25↑j
-                                        ; sub_2A589+6A↓j
+loc_2A5B1:                              ; CODE XREF: DrawRleMaskedShadedRun+25↑j
+                                        ; DrawRleMaskedShadedRun+6A↓j
                 push    cx
                 mov     cx, [bp-14h]
                 or      cx, cx
                 jz      short loc_2A5E9
 
-loc_2A5B9:                              ; CODE XREF: sub_2A589+59↓j
-                                        ; sub_2A589+5E↓j
+loc_2A5B9:                              ; CODE XREF: DrawRleMaskedShadedRun+59↓j
+                                        ; DrawRleMaskedShadedRun+5E↓j
                 lodsb
                 cmp     byte ptr [bp-20h], 0
                 jz      short loc_2A5C4
                 cmp     al, 0FFh
                 jz      short loc_2A5E6
 
-loc_2A5C4:                              ; CODE XREF: sub_2A589+35↑j
+loc_2A5C4:                              ; CODE XREF: DrawRleMaskedShadedRun+35↑j
                 call    ShiftPaletteShadeClamped
                 cmp     word ptr [bp-4Ah], 0
                 jz      short loc_2A5D4
@@ -47925,43 +47925,43 @@ loc_2A5C4:                              ; CODE XREF: sub_2A589+35↑j
                 cmp     al, 0FFh
                 jz      short loc_2A5E6
 
-loc_2A5D4:                              ; CODE XREF: sub_2A589+42↑j
+loc_2A5D4:                              ; CODE XREF: DrawRleMaskedShadedRun+42↑j
                 cmp     word ptr [bp-2Ah], 0
                 jz      short loc_2A5E1
                 call    sub_2A217
                 cmp     al, 0FFh
                 jz      short loc_2A5E6
 
-loc_2A5E1:                              ; CODE XREF: sub_2A589+4F↑j
+loc_2A5E1:                              ; CODE XREF: DrawRleMaskedShadedRun+4F↑j
                 stosb
                 loop    loc_2A5B9
                 jmp     short loc_2A5E9
 ; ---------------------------------------------------------------------------
 
-loc_2A5E6:                              ; CODE XREF: sub_2A589+39↑j
-                                        ; sub_2A589+49↑j ...
+loc_2A5E6:                              ; CODE XREF: DrawRleMaskedShadedRun+39↑j
+                                        ; DrawRleMaskedShadedRun+49↑j ...
                 inc     di
                 loop    loc_2A5B9
 
-loc_2A5E9:                              ; CODE XREF: sub_2A589+2E↑j
-                                        ; sub_2A589+5B↑j
+loc_2A5E9:                              ; CODE XREF: DrawRleMaskedShadedRun+2E↑j
+                                        ; DrawRleMaskedShadedRun+5B↑j
                 cmp     word ptr [bp-16h], 0
                 jz      short loc_2A5F2
                 add     si, [bp-16h]
 
-loc_2A5F2:                              ; CODE XREF: sub_2A589+64↑j
+loc_2A5F2:                              ; CODE XREF: DrawRleMaskedShadedRun+64↑j
                 pop     cx
                 loop    loc_2A5B1
-                jmp     short sub_2A589
-sub_2A589       endp
+                jmp     short DrawRleMaskedShadedRun
+DrawRleMaskedShadedRun endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A5F7       proc near               ; CODE XREF: DrawViewportSprite+32D↑p
+DrawRleScaledSpriteColumn proc near     ; CODE XREF: DrawViewportSprite+32D↑p
                                         ; DrawViewportSprite+3AF↑p ...
-                mov     ax, es
+                mov     ax, es          ; RLE run-record blitter drawing one screen column (dest advances by 0x140/320 per pixel, source by a caller-supplied stride) -- the perspective-scaled-sprite-column shape. Optional 0xFF-transparent skip, shaded via ShiftPaletteShadeClamped. Called from DrawViewportSprite.
                 mov     es, word ptr [bp-0Eh]
                 mov     bx, [bp-1Ch]
                 mov     cx, es:[bx+2]
@@ -47977,14 +47977,14 @@ sub_2A5F7       proc near               ; CODE XREF: DrawViewportSprite+32D↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2A61F:                              ; CODE XREF: sub_2A5F7+25↑j
-                                        ; sub_2A5F7+58↓j
+loc_2A61F:                              ; CODE XREF: DrawRleScaledSpriteColumn+25↑j
+                                        ; DrawRleScaledSpriteColumn+58↓j
                 push    cx
                 mov     cx, [bp-14h]
                 or      cx, cx
                 jz      short loc_2A642
 
-loc_2A627:                              ; CODE XREF: sub_2A5F7+49↓j
+loc_2A627:                              ; CODE XREF: DrawRleScaledSpriteColumn+49↓j
                 mov     al, [si]
                 add     si, [bp-0Ah]
                 cmp     byte ptr [bp-20h], 0
@@ -47992,28 +47992,28 @@ loc_2A627:                              ; CODE XREF: sub_2A5F7+49↓j
                 cmp     al, 0FFh
                 jz      short loc_2A63C
 
-loc_2A636:                              ; CODE XREF: sub_2A5F7+39↑j
+loc_2A636:                              ; CODE XREF: DrawRleScaledSpriteColumn+39↑j
                 call    ShiftPaletteShadeClamped
                 mov     es:[di], al
 
-loc_2A63C:                              ; CODE XREF: sub_2A5F7+3D↑j
+loc_2A63C:                              ; CODE XREF: DrawRleScaledSpriteColumn+3D↑j
                 add     di, 140h
                 loop    loc_2A627
 
-loc_2A642:                              ; CODE XREF: sub_2A5F7+2E↑j
+loc_2A642:                              ; CODE XREF: DrawRleScaledSpriteColumn+2E↑j
                 mov     cx, [bp-16h]
                 or      cx, cx
                 jz      short loc_2A64E
 
-loc_2A649:                              ; CODE XREF: sub_2A5F7+55↓j
+loc_2A649:                              ; CODE XREF: DrawRleScaledSpriteColumn+55↓j
                 add     si, [bp-0Ah]
                 loop    loc_2A649
 
-loc_2A64E:                              ; CODE XREF: sub_2A5F7+50↑j
+loc_2A64E:                              ; CODE XREF: DrawRleScaledSpriteColumn+50↑j
                 pop     cx
                 loop    loc_2A61F
-                jmp     short sub_2A5F7
-sub_2A5F7       endp
+                jmp     short DrawRleScaledSpriteColumn
+DrawRleScaledSpriteColumn endp
 
 
 ; =============== S U B R O U T I N E =======================================

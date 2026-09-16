@@ -1288,7 +1288,17 @@ not traced): every viewport-rendering function this session calls it
 with the same (picture id `word_2E530`, scale class `word_2E532`,
 z-layer/depth `word_32918`, transparency `_font_bgTransparent`)
 convention — the perspective/depth-aware counterpart to the simpler
-general-purpose `DrawPicture`.
+general-purpose `DrawPicture`. **First foothold into its internals**:
+two RLE run-record blit primitives it calls are now named —
+`DrawRleMaskedShadedRun` (was `sub_2A589`, a contiguous run copy with
+optional `0xFF`-transparency and two further chained, still-unnamed
+per-pixel effects `sub_2A4B0`/`sub_2A217`) and
+`DrawRleScaledSpriteColumn` (was `sub_2A5F7`, destination steps by a
+full `320`-byte screen row per pixel while the source steps by a
+caller-supplied stride — the classic shape for a perspective-scaled
+sprite column). Both shade every pixel via `ShiftPaletteShadeClamped`.
+The run-record producer(s) and the two chained effects remain
+untraced.
 
 `RenderDungeonViewport`'s 7th and final call is
 `RenderDungeonVanishingPoint`, structurally different from the other

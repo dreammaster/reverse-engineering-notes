@@ -4495,6 +4495,28 @@ not remap/color-table indices.
 
 543 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: first crack into DrawViewportSprite's internals
+
+Named two internal RLE sprite-blit primitives called from
+`DrawViewportSprite` (632 lines, previously "internals not traced") —
+found via `ShiftPaletteShadeClamped`'s new cross-references. Both
+process a run-record table (6 bytes/record: outer-repeat-count,
+inner-draw-count, skip-amount) and shade each pixel via
+`ShiftPaletteShadeClamped`, tail-looping to the next record.
+`sub_2A589` -> `DrawRleMaskedShadedRun`: a contiguous `lodsb`/`stosb`
+run copy, optionally treating `0xFF` as transparent, with two more
+chained (still-unnamed) per-pixel effects, `sub_2A4B0`/`sub_2A217`.
+`sub_2A5F7` -> `DrawRleScaledSpriteColumn`: structurally different —
+the destination always advances by `0x140` (320, one full mode-13h
+screen row) while the source steps by a caller-supplied stride — the
+classic shape for drawing one perspective-scaled sprite column,
+top-to-bottom. This is a first foothold into how `DrawViewportSprite`
+actually draws monster/object sprites at varying depths; the two
+chained effect functions and the run-record producer(s) remain
+untraced.
+
+545 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
