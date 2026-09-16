@@ -7680,25 +7680,37 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27AF7);
 	op_hex		(x,	1);
+	set_cmt	(0X27B0D,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from LoadConversationText_4000.",	0);
 	create_insn	(0X27B0D);
+	set_name	(0X27B0D,	"LookupConversationTextBlockOffset_4000");
 	create_insn	(x=0X27B18);
 	op_hex		(x,	1);
 	create_insn	(x=0X27B1B);
 	op_hex		(x,	1);
+	set_cmt	(0X27B42,	"Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a fixed-size (0x3A) record read. Called from LoadItemData.",	0);
 	create_insn	(0X27B42);
+	set_name	(0X27B42,	"PrepareItemDataBlockRead3A");
 	create_insn	(0X27B63);
+	set_cmt	(0X27B84,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from UpdateScrollArrows and ShowClueBookSpellDetail.",	0);
 	create_insn	(0X27B84);
+	set_name	(0X27B84,	"LookupSpellDescriptionBlockOffset");
 	create_insn	(x=0X27B8E);
 	op_hex		(x,	1);
 	create_insn	(x=0X27B91);
 	op_hex		(x,	1);
+	set_cmt	(0X27BAD,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from PlayMusicTrack.",	0);
 	create_insn	(0X27BAD);
+	set_name	(0X27BAD,	"LookupMusicTrackBlockOffset");
 	create_insn	(x=0X27BB7);
 	op_hex		(x,	1);
 	create_insn	(x=0X27BBA);
 	op_hex		(x,	1);
+	set_cmt	(0X27BD6,	"Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a fixed-size (0x28) record read. Called from LoadItemData.",	0);
 	create_insn	(0X27BD6);
+	set_name	(0X27BD6,	"PrepareItemDataBlockRead28");
+	set_cmt	(0X27BF7,	"Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a fixed-size (0x22) record read. Called from LoadItemData.",	0);
 	create_insn	(0X27BF7);
+	set_name	(0X27BF7,	"PrepareItemDataBlockRead22");
 	create_insn	(0X27C18);
 	create_insn	(0X27C39);
 	set_cmt	(0X27C5A,	"Sets up a WORLD.DAT-style read context for a fixed data block (table 0xCE23, size 0x9BD) -- preparing to read the sound driver's music/instrument data. Called from InitMusicDriver.",	0);
@@ -7711,7 +7723,9 @@ static Bytes_3(void) {
 	set_cmt	(0X27CB0,	"Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.",	0);
 	create_insn	(0X27CB0);
 	set_name	(0X27CB0,	"LoadMasterPalette");
+	set_cmt	(0X27CC9,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from LoadConversationText_1000.",	0);
 	create_insn	(0X27CC9);
+	set_name	(0X27CC9,	"LookupConversationTextBlockOffset_1000");
 	create_insn	(x=0X27CD4);
 	op_hex		(x,	1);
 	create_insn	(x=0X27CD7);
@@ -7719,24 +7733,34 @@ static Bytes_3(void) {
 	set_cmt	(0X27CFE,	"Resource-block-setup stub (same family as LoadMasterPalette, distinct from the WorldDat_setBlock1-6 cluster): configures a FileEntry struct from fixed table 0xCE5B, record size _blockSize2. Called from PreloadMonsterStatsTable.",	0);
 	create_insn	(0X27CFE);
 	set_name	(0X27CFE,	"PrepareMonsterStatsTableBlockRead");
+	set_cmt	(0X27D20,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from LoadConversationText_2000.",	0);
 	create_insn	(0X27D20);
+	set_name	(0X27D20,	"LookupConversationTextBlockOffset_2000");
 	create_insn	(x=0X27D2B);
 	op_hex		(x,	1);
 	create_insn	(x=0X27D2E);
 	op_hex		(x,	1);
+	set_cmt	(0X27D55,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from LoadConversationText_800.",	0);
 	create_insn	(0X27D55);
+	set_name	(0X27D55,	"LookupConversationTextBlockOffset_800");
 	create_insn	(x=0X27D60);
 	op_hex		(x,	1);
 	create_insn	(x=0X27D63);
 	op_hex		(x,	1);
 	create_insn	(0X27D8A);
 	create_insn	(0X27DA8);
+	set_cmt	(0X27DC6,	"Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a single-record read/write from table 0xCDE3, indexed by word_32DCA rather than a caller-supplied value.",	0);
 	create_insn	(0X27DC6);
+	set_name	(0X27DC6,	"PrepareRecordAtIndexDCA");
+	set_cmt	(0X27DE5,	"Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a single-record read/write from table 0xCDDF, indexed by word_32DC6 rather than a caller-supplied value.",	0);
 	create_insn	(0X27DE5);
+	set_name	(0X27DE5,	"PrepareRecordAtIndexDC6");
 	create_insn	(0X27E04);
 	create_insn	(0X27E20);
 	create_insn	(0X27E3A);
+	set_cmt	(0X27E53,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from TriggerSoundEvent.",	0);
 	create_insn	(0X27E53);
+	set_name	(0X27E53,	"LookupSoundEffectBlockOffset");
 	create_insn	(x=0X27E5D);
 	op_hex		(x,	1);
 	create_insn	(x=0X27E60);
@@ -8098,6 +8122,15 @@ static Bytes_3(void) {
 	set_cmt	(0X28A1F,	"ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.",	0);
 	create_insn	(0X28A1F);
 	set_name	(0X28A1F,	"ErrorExitCode285");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X28A25,	"ErrorTable slot with ax set to a raw small value (not a real 'offset aXxx' string pointer like its siblings -- too small to address the message-string block near aMemoryAllocati), before jmp ErrorExit. Plausibly a vestigial/incomplete error-code slot, not confirmed to ever be triggered.",	0);
 	create_insn	(0X28A25);
 	set_name	(0X28A25,	"ErrorExitCode289");
@@ -8193,15 +8226,6 @@ static Bytes_3(void) {
 	set_cmt	(0X28B94,	"Draws one word from [bx] (skipping leading/trailing spaces, writeChar per character). On hitting NUL: resets _textPos_x to dx, advances _textPos_y, decrements cx (line-end). On hitting another word: returns without decrementing cx (same line continues). Text is pre-wrapped by NUL line separators, not wrapped here. Called from DrawIndentedTextColumn.",	0);
 	create_insn	(0X28B94);
 	set_name	(0X28B94,	"DrawWordToken");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X28BA1);
 	create_insn	(0X28BB3);
 	create_insn	(0X28BC5);
@@ -10711,6 +10735,15 @@ static Bytes_4(void) {
 	set_cmt	(0X32A20,	"3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.",	0);
 	create_word	(0X32A20);
 	set_name	(0X32A20,	"g_monsterSlots");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32A2A);
 	create_word	(0X32AB2);
 	create_word	(0X32ABC);
@@ -10813,15 +10846,6 @@ static Bytes_4(void) {
 	set_name	(0X35074,	"aMagicDragon");
 	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:\n  0: 318x198 @ 0x0        -- \"SmithWare\" splash-screen logo\n  1: 210x105 @ 0xE694C    -- GameDialog button panel background\n  2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene\n  3: 190x110 @ 0x779552   -- wolf/monster silhouette\n  4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)\n  5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient\n  6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)\n  7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)\n  8: 16x16   @ 0xBCF3DA   -- mouse cursor\n  9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon\nIndexed as g_pictureDir + word_2E532 (p" "i",	0);
 	set_name	(0X3508E,	"g_pictureDir");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3512E,	0X9);
 	set_name	(0X3512E,	"aNorth");
 	create_strlit	(0X35137,	0X9);
@@ -14033,11 +14057,11 @@ static Functions_0(void) {
 	set_frame_size(0X27DA8, 0X2, 0, 0);
 	add_func    (0X27DC6,0X27DE5);
 	set_func_flags(0X27DC6,0x5402);
-	SetType(0X27DC6, "void __usercall sub_27DC6(FileEntry *this@<eds:ebx.2>);");
+	SetType(0X27DC6, "void __usercall PrepareRecordAtIndexDCA(FileEntry *this@<eds:ebx.2>);");
 	set_frame_size(0X27DC6, 0X2, 0, 0);
 	add_func    (0X27DE5,0X27E04);
 	set_func_flags(0X27DE5,0x5402);
-	SetType(0X27DE5, "void __usercall sub_27DE5(FileEntry *this@<eds:ebx.2>);");
+	SetType(0X27DE5, "void __usercall PrepareRecordAtIndexDC6(FileEntry *this@<eds:ebx.2>);");
 	set_frame_size(0X27DE5, 0X2, 0, 0);
 	add_func    (0X27E04,0X27E20);
 	set_func_flags(0X27E04,0x5402);

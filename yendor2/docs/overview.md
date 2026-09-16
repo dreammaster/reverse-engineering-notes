@@ -6194,6 +6194,39 @@ eligibility for the current command and rejects on failure.
 
 A milestone: **700 named of 769 functions as of this update.**
 
+### 2026-09-15 session update, continued: WORLD.DAT lookup/block-prep stub cluster
+
+Named 12 more small, low-level `WORLD.DAT` resource stubs, closing
+out most of the remaining `LoadMasterPalette`-family functions.
+
+Two sub-families identified:
+
+**Prepare-a-record-read stubs** (configure a `FileEntry` for a fixed
+record read, indexed by a specific global rather than a
+caller-supplied value): `sub_27DC6` -> `PrepareRecordAtIndexDCA`
+(16 refs, indexed by `word_32DCA`) and `sub_27DE5` ->
+`PrepareRecordAtIndexDC6` (30 refs, indexed by `word_32DC6`, called
+from `start`, `SaveCurrentGameToSlot`, `HandleSearchCommand`, and
+more).
+
+**Lookup-only stubs** (given an id and category index, compute a
+32-bit file offset + length without touching a `FileEntry`, each
+with one distinct already-named caller):
+`LookupConversationTextBlockOffset_800`/`_1000`/`_2000`/`_4000`
+(one per `LoadConversationText_N` sibling),
+`LookupSpellDescriptionBlockOffset` (`UpdateScrollArrows`,
+`ShowClueBookSpellDetail`), `LookupMusicTrackBlockOffset`
+(`PlayMusicTrack`), and `LookupSoundEffectBlockOffset`
+(`TriggerSoundEvent`).
+
+**Item-data block-read stubs**: `LoadItemData` turns out to read 3
+differently-sized item-data sub-blocks, each via its own prep stub —
+`PrepareItemDataBlockRead28`/`PrepareItemDataBlockRead3A`/
+`PrepareItemDataBlockRead22` (named by their fixed record size, since
+no more specific semantic distinction was established).
+
+712 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

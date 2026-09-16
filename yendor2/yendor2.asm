@@ -244,7 +244,7 @@ loc_101B8:                              ; CODE XREF: start+1AD↑j
                 or      byte_32DCD, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -295,7 +295,7 @@ loc_10248:                              ; CODE XREF: start+23D↑j
                 or      byte_32DCD, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -5889,7 +5889,7 @@ loc_138E2:                              ; CODE XREF: UpdateScrollArrows+15↑j
 loc_138F4:                              ; CODE XREF: UpdateScrollArrows+27↑j
                 mov     ax, 0AFA8h
                 mov     bx, 2
-                call    sub_27B84
+                call    LookupSpellDescriptionBlockOffset
                 mov     word_368A9, 4FBh
                 mov     ax, word_3293A
                 dec     ax
@@ -6389,14 +6389,14 @@ loc_13E15:                              ; CODE XREF: ShowClueBookSpellDetail+2C6
                 mov     _font_fgColor, 0Dh
                 mov     ax, 0AFA8h
                 mov     bx, 5
-                call    sub_27B84
+                call    LookupSpellDescriptionBlockOffset
                 mov     bx, 9043h
                 mov     errorCode, 9
                 call    FileEntry_Read
                 call    ErrorCheck
                 mov     ax, 0AFA8h
                 mov     bx, 6
-                call    sub_27B84
+                call    LookupSpellDescriptionBlockOffset
                 mov     ax, 4
                 mul     word_3330A
                 mov     bx, 0AFA8h
@@ -6597,7 +6597,7 @@ loc_14081:                              ; CODE XREF: DrawClueBookMapGrid+110↓j
                 call    ErrorCheck
                 mov     ax, 0BC28h
                 mov     bx, 1
-                call    sub_27B84
+                call    LookupSpellDescriptionBlockOffset
                 mov     ax, word_329FA
                 mov     word_368A9, ax
                 mov     ax, word_3290E
@@ -6653,7 +6653,7 @@ DrawClueBookMapCategoryHeader proc near ; CODE XREF: RunClueBookMapCategory+32�
                 push    ax              ; Formats a label via sub_27B84 into buffer 0xAFA8, loads a graphic via FileEntry_Read (errorCode=9, record 0x1A) + ErrorCheck, draws it via DrawPicture at (0xA1,0) sized (0x90,0x73), draws the label text at (0xAA,1), then DrawMouseCursor. Called once from RunClueBookMapCategory.
                 mov     ax, 0AFA8h
                 mov     bx, 4
-                call    sub_27B84
+                call    LookupSpellDescriptionBlockOffset
                 mov     bx, 9043h
                 pop     ax
                 mov     [bx+8], ax
@@ -6690,7 +6690,7 @@ LoadClueBookMapEntry proc near          ; CODE XREF: RunClueBookMapCategory↑p
                 push    word_368A5      ; this
                 mov     ax, 0
                 mov     bx, 3
-                call    sub_27B84
+                call    LookupSpellDescriptionBlockOffset
                 mov     bx, 0CBh        ; numPara
                 call    allocMem
                 mov     fe, ax
@@ -12501,7 +12501,7 @@ loc_1756F:                              ; CODE XREF: RunShopScreen+234↑j
 loc_17590:                              ; CODE XREF: RunShopScreen+252↑j
                 mov     ax, 556Ch
                 mov     bx, 8FFBh       ; this
-                call    sub_27DC6
+                call    PrepareRecordAtIndexDCA
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -12602,7 +12602,7 @@ LoadLockState   proc far                ; CODE XREF: UseAbilityCommand+2C↓p
                 mov     word_32DC6, ax
                 mov     ax, 556Ch
                 mov     bx, 8FFBh       ; this
-                call    sub_27DC6
+                call    PrepareRecordAtIndexDCA
                 mov     errorCode, 0Ah
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -12619,7 +12619,7 @@ LoadLockState   proc far                ; CODE XREF: UseAbilityCommand+2C↓p
                 mov     word_32DC8, ax
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -12674,7 +12674,7 @@ LoadCurgameRecord proc far              ; CODE XREF: UseAbilityCommand+26↓p
                 mov     word_32DC8, ax
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -12889,7 +12889,7 @@ loc_17948:                              ; CODE XREF: UseAbilityCommand+8C↑j
                 or      byte_32DCD, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -13009,7 +13009,7 @@ loc_17A49:                              ; CODE XREF: TriggerShopExitSoundAndPers
                                         ; TriggerShopExitSoundAndPersist+17↑j
                 mov     ax, 556Ch
                 mov     bx, 8FFBh       ; this
-                call    sub_27DC6
+                call    PrepareRecordAtIndexDCA
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -22228,7 +22228,7 @@ loc_1C8A2:                              ; CODE XREF: LoadItemData+8↑j
 loc_1C8B1:                              ; CODE XREF: LoadItemData+17↑j
                 or      word_328C6, 80h
                 mov     ax, 0BCEh
-                call    sub_27BD6
+                call    PrepareItemDataBlockRead28
                 mov     ax, word_2E42C
                 mov     [bx+8], ax
                 mov     errorCode, 0Fh
@@ -22237,7 +22237,7 @@ loc_1C8B1:                              ; CODE XREF: LoadItemData+17↑j
                 mov     si, 0BCEh
                 mov     errorCode, 1
                 xor     ax, ax
-                call    sub_27B42
+                call    PrepareItemDataBlockRead3A
                 mov     ax, [si+8]
                 mov     [bx+8], ax
                 mov     ax, 3Ah ; ':'
@@ -22262,7 +22262,7 @@ loc_1C90F:                              ; CODE XREF: LoadItemData+96↓j
                 loop    loc_1C90F
                 mov     errorCode, 1
                 xor     ax, ax
-                call    sub_27BF7
+                call    PrepareItemDataBlockRead22
                 mov     ax, [si+0Ah]
                 mov     [bx+8], ax
                 mov     ax, 22h ; '"'
@@ -26554,7 +26554,7 @@ loc_1EF31:                              ; CODE XREF: RunGameDialog+4F1↓j
                 mov     word_32DC6, 0
                 mov     ax, 0AFA8h
                 mov     bx, 902Ch       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     ax, _val39
                 mov     [bx+6], ax
                 mov     errorCode, 0Bh
@@ -26562,7 +26562,7 @@ loc_1EF31:                              ; CODE XREF: RunGameDialog+4F1↓j
                 call    ErrorCheck
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     ax, _val39
                 mov     [bx+6], ax
                 mov     errorCode, 0Ah
@@ -26571,10 +26571,10 @@ loc_1EF31:                              ; CODE XREF: RunGameDialog+4F1↓j
                 mov     word_32DCA, 0
                 mov     ax, 0AFA8h
                 mov     bx, 902Ch       ; this
-                call    sub_27DC6
+                call    PrepareRecordAtIndexDCA
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27DC6
+                call    PrepareRecordAtIndexDCA
                 mov     word_36861, 0BB8h
                 mov     word_36892, 0BB8h
                 mov     cx, _val10
@@ -27322,7 +27322,7 @@ loc_1F700:                              ; CODE XREF: SaveCurrentGameToSlot+12F�
                 mov     word_32DC6, 0
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     ax, _val39
                 mov     [bx+6], ax
                 mov     errorCode, 0Bh
@@ -27330,7 +27330,7 @@ loc_1F700:                              ; CODE XREF: SaveCurrentGameToSlot+12F�
                 call    ErrorCheck
                 mov     ax, 0AFA8h
                 mov     bx, 902Ch       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     ax, _val39
                 mov     [bx+6], ax
                 mov     errorCode, 0Ah
@@ -27339,10 +27339,10 @@ loc_1F700:                              ; CODE XREF: SaveCurrentGameToSlot+12F�
                 mov     word_32DCA, 0
                 mov     ax, 0AFA8h
                 mov     bx, 902Ch       ; this
-                call    sub_27DC6
+                call    PrepareRecordAtIndexDCA
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27DC6
+                call    PrepareRecordAtIndexDCA
                 mov     word_36861, 0BB8h
                 mov     word_36892, 0BB8h
                 mov     cx, _val10
@@ -42433,8 +42433,9 @@ seg096          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27B0D       proc far                ; CODE XREF: LoadConversationText_4000+3↓P
-                push    dx
+LookupConversationTextBlockOffset_4000 proc far
+                                        ; CODE XREF: LoadConversationText_4000+3↓P
+                push    dx              ; Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from LoadConversationText_4000.
                 mov     word_368AB, 0
                 mov     word_368A7, ax
                 dec     bx
@@ -42456,14 +42457,14 @@ sub_27B0D       proc far                ; CODE XREF: LoadConversationText_4000+3
                 mov     word_31980, ax
                 pop     dx
                 retf
-sub_27B0D       endp
+LookupConversationTextBlockOffset_4000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27B42       proc far                ; CODE XREF: LoadItemData+50↑P
-                push    si
+PrepareItemDataBlockRead3A proc far     ; CODE XREF: LoadItemData+50↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a fixed-size (0x3A) record read. Called from LoadItemData.
                 mov     bx, 9043h
                 mov     si, 0CE47h
                 mov     [bx+4], ax
@@ -42475,7 +42476,7 @@ sub_27B42       proc far                ; CODE XREF: LoadItemData+50↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27B42       endp
+PrepareItemDataBlockRead3A endp
 
 ; ---------------------------------------------------------------------------
                 push    si
@@ -42494,9 +42495,10 @@ sub_27B42       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27B84       proc far                ; CODE XREF: UpdateScrollArrows+3A↑P
+LookupSpellDescriptionBlockOffset proc far
+                                        ; CODE XREF: UpdateScrollArrows+3A↑P
                                         ; ShowClueBookSpellDetail+2F3↑P ...
-                mov     word_368AB, 0
+                mov     word_368AB, 0   ; Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from UpdateScrollArrows and ShowClueBookSpellDetail.
                 mov     word_368A7, ax
                 dec     bx
                 shl     bx, 1
@@ -42512,14 +42514,14 @@ sub_27B84       proc far                ; CODE XREF: UpdateScrollArrows+3A↑P
                 mov     ax, [bx]
                 mov     word_368A9, ax
                 retf
-sub_27B84       endp
+LookupSpellDescriptionBlockOffset endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27BAD       proc far                ; CODE XREF: PlayMusicTrack+2D↓P
-                mov     word_368AB, 0
+LookupMusicTrackBlockOffset proc far    ; CODE XREF: PlayMusicTrack+2D↓P
+                mov     word_368AB, 0   ; Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from PlayMusicTrack.
                 mov     word_368A7, ax
                 dec     bx
                 shl     bx, 1
@@ -42535,14 +42537,14 @@ sub_27BAD       proc far                ; CODE XREF: PlayMusicTrack+2D↓P
                 mov     ax, [bx]
                 mov     word_368A9, ax
                 retf
-sub_27BAD       endp
+LookupMusicTrackBlockOffset endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27BD6       proc far                ; CODE XREF: LoadItemData+2A↑P
-                push    si
+PrepareItemDataBlockRead28 proc far     ; CODE XREF: LoadItemData+2A↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a fixed-size (0x28) record read. Called from LoadItemData.
                 mov     bx, 9043h
                 mov     si, 0CE43h
                 mov     [bx+4], ax
@@ -42554,14 +42556,14 @@ sub_27BD6       proc far                ; CODE XREF: LoadItemData+2A↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27BD6       endp
+PrepareItemDataBlockRead28 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27BF7       proc far                ; CODE XREF: LoadItemData+A0↑P
-                push    si
+PrepareItemDataBlockRead22 proc far     ; CODE XREF: LoadItemData+A0↑P
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a fixed-size (0x22) record read. Called from LoadItemData.
                 mov     bx, 9043h
                 mov     si, 0CE4Fh
                 mov     [bx+4], ax
@@ -42573,7 +42575,7 @@ sub_27BF7       proc far                ; CODE XREF: LoadItemData+A0↑P
                 mov     word ptr [bx+8], 0
                 pop     si
                 retf
-sub_27BF7       endp
+PrepareItemDataBlockRead22 endp
 
 ; ---------------------------------------------------------------------------
                 push    si
@@ -42676,8 +42678,9 @@ LoadMasterPalette endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27CC9       proc far                ; CODE XREF: LoadConversationText_1000+3↓P
-                push    dx
+LookupConversationTextBlockOffset_1000 proc far
+                                        ; CODE XREF: LoadConversationText_1000+3↓P
+                push    dx              ; Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from LoadConversationText_1000.
                 mov     word_368AB, 0
                 mov     word_368A7, ax
                 dec     bx
@@ -42699,7 +42702,7 @@ sub_27CC9       proc far                ; CODE XREF: LoadConversationText_1000+3
                 mov     word_31980, ax
                 pop     dx
                 retf
-sub_27CC9       endp
+LookupConversationTextBlockOffset_1000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42726,8 +42729,9 @@ PrepareMonsterStatsTableBlockRead endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27D20       proc far                ; CODE XREF: LoadConversationText_2000+3↓P
-                push    dx
+LookupConversationTextBlockOffset_2000 proc far
+                                        ; CODE XREF: LoadConversationText_2000+3↓P
+                push    dx              ; Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from LoadConversationText_2000.
                 mov     word_368AB, 0
                 mov     word_368A7, ax
                 dec     bx
@@ -42749,14 +42753,15 @@ sub_27D20       proc far                ; CODE XREF: LoadConversationText_2000+3
                 mov     word_31980, ax
                 pop     dx
                 retf
-sub_27D20       endp
+LookupConversationTextBlockOffset_2000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27D55       proc far                ; CODE XREF: LoadConversationText_800+3↓P
-                push    dx
+LookupConversationTextBlockOffset_800 proc far
+                                        ; CODE XREF: LoadConversationText_800+3↓P
+                push    dx              ; Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from LoadConversationText_800.
                 mov     word_368AB, 0
                 mov     word_368A7, ax
                 dec     bx
@@ -42778,7 +42783,7 @@ sub_27D55       proc far                ; CODE XREF: LoadConversationText_800+3�
                 mov     word_31980, ax
                 pop     dx
                 retf
-sub_27D55       endp
+LookupConversationTextBlockOffset_800 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42824,10 +42829,10 @@ sub_27DA8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; void __usercall sub_27DC6(FileEntry *this@<eds:ebx.2>)
-sub_27DC6       proc far                ; CODE XREF: RunShopScreen+26B↑P
+; void __usercall PrepareRecordAtIndexDCA(FileEntry *this@<eds:ebx.2>)
+PrepareRecordAtIndexDCA proc far        ; CODE XREF: RunShopScreen+26B↑P
                                         ; LoadLockState+13↑P ...
-                push    si
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a single-record read/write from table 0xCDE3, indexed by word_32DCA rather than a caller-supplied value.
                 mov     si, 0CDE3h
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42839,16 +42844,16 @@ sub_27DC6       proc far                ; CODE XREF: RunShopScreen+26B↑P
                 mov     word ptr [bx+6], 1
                 pop     si
                 retf
-sub_27DC6       endp
+PrepareRecordAtIndexDCA endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-; void __usercall sub_27DE5(FileEntry *this@<eds:ebx.2>)
-sub_27DE5       proc far                ; CODE XREF: start+1C5↑P
+; void __usercall PrepareRecordAtIndexDC6(FileEntry *this@<eds:ebx.2>)
+PrepareRecordAtIndexDC6 proc far        ; CODE XREF: start+1C5↑P
                                         ; start+255↑P ...
-                push    si
+                push    si              ; Resource-block-setup stub (LoadMasterPalette family): configures a FileEntry for a single-record read/write from table 0xCDDF, indexed by word_32DC6 rather than a caller-supplied value.
                 mov     si, 0CDDFh
                 mov     [bx+4], ax
                 mov     ax, [si]
@@ -42860,7 +42865,7 @@ sub_27DE5       proc far                ; CODE XREF: start+1C5↑P
                 mov     word ptr [bx+6], 1
                 pop     si
                 retf
-sub_27DE5       endp
+PrepareRecordAtIndexDC6 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42925,8 +42930,8 @@ sub_27E3A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27E53       proc far                ; CODE XREF: TriggerSoundEvent+3F↓P
-                mov     word_368AB, 0
+LookupSoundEffectBlockOffset proc far   ; CODE XREF: TriggerSoundEvent+3F↓P
+                mov     word_368AB, 0   ; Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from TriggerSoundEvent.
                 mov     word_368A7, ax
                 dec     bx
                 shl     bx, 1
@@ -42942,7 +42947,7 @@ sub_27E53       proc far                ; CODE XREF: TriggerSoundEvent+3F↓P
                 mov     ax, [bx]
                 mov     word_368A9, ax
                 retf
-sub_27E53       endp
+LookupSoundEffectBlockOffset endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43535,7 +43540,7 @@ loc_282B3:                              ; CODE XREF: PlayMusicTrack+19↑j
                 mov     word_368A5, ax
                 xor     ax, ax
                 mov     bx, word_2E4A6
-                call    sub_27BAD
+                call    LookupMusicTrackBlockOffset
                 mov     bx, 9043h
                 mov     errorCode, 7
                 call    FileEntry_Read
@@ -43728,7 +43733,7 @@ loc_28425:                              ; CODE XREF: TriggerSoundEvent+6↑j
                 mov     ax, word_3292E
                 mov     word_368A5, ax
                 xor     ax, ax
-                call    sub_27E53
+                call    LookupSoundEffectBlockOffset
                 mov     errorCode, 7
                 mov     bx, 9043h
                 call    FileEntry_Read
@@ -46081,7 +46086,7 @@ loc_2982E:                              ; CODE XREF: UnlockDoorCommand+EC↑j
                 or      byte_32DCD, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -48394,7 +48399,7 @@ loc_2A8A8:                              ; CODE XREF: HandleSearchCommand+116↑j
                 or      byte_32DCD, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -49705,7 +49710,7 @@ loc_2B55D:                              ; CODE XREF: InitializeNewGameWorldState
                 mov     word_32DC6, 0
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     word ptr [bx+6], 284h
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
@@ -49718,7 +49723,7 @@ loc_2B55D:                              ; CODE XREF: InitializeNewGameWorldState
                 mov     word_32DCA, 0
                 mov     ax, 0AFA8h
                 mov     bx, 8FFBh       ; this
-                call    sub_27DC6
+                call    PrepareRecordAtIndexDCA
                 mov     word ptr [bx+6], 0BB8h
                 mov     cx, 260h
 
@@ -49861,7 +49866,7 @@ RunConversation endp
 
 LoadConversationText_4000 proc near     ; CODE XREF: ShowConversationText_4000+7↓p
                 mov     ax, 0AFA8h      ; Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.
-                call    sub_27B0D
+                call    LookupConversationTextBlockOffset_4000
                 mov     bx, 9043h
                 mov     errorCode, 0Dh
                 call    FileEntry_Read
@@ -49875,7 +49880,7 @@ LoadConversationText_4000 endp
 
 LoadConversationText_1000 proc near     ; CODE XREF: ShowConversationText_1000+7↓p
                 mov     ax, 0AFA8h      ; Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.
-                call    sub_27CC9
+                call    LookupConversationTextBlockOffset_1000
                 mov     bx, 9043h
                 mov     errorCode, 0Dh
                 call    FileEntry_Read
@@ -49889,7 +49894,7 @@ LoadConversationText_1000 endp
 
 LoadConversationText_2000 proc near     ; CODE XREF: ShowConversationText_2000+7↓p
                 mov     ax, 0AFA8h      ; Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.
-                call    sub_27D20
+                call    LookupConversationTextBlockOffset_2000
                 mov     bx, 9043h
                 mov     errorCode, 0Dh
                 call    FileEntry_Read
@@ -49903,7 +49908,7 @@ LoadConversationText_2000 endp
 
 LoadConversationText_800 proc near      ; CODE XREF: ShowConversationText_800+7↓p
                 mov     ax, 0AFA8h      ; Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.
-                call    sub_27D55
+                call    LookupConversationTextBlockOffset_800
                 mov     bx, 9043h
                 mov     errorCode, 0Dh
                 call    FileEntry_Read
@@ -51759,7 +51764,7 @@ loc_2C6BD:                              ; CODE XREF: sub_2C0FE+5B3↑j
                 or      byte_32DCD, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -51823,7 +51828,7 @@ loc_2C777:                              ; CODE XREF: sub_2C0FE+66D↑j
                 or      byte_32DCD, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -51893,7 +51898,7 @@ loc_2C83C:                              ; CODE XREF: sub_2C0FE+736↑j
                 or      byte_32DCD, al
                 mov     ax, 556Dh
                 mov     bx, 8FFBh       ; this
-                call    sub_27DE5
+                call    PrepareRecordAtIndexDC6
                 mov     errorCode, 0Ah
                 call    FileEntry_Write
                 call    ErrorCheck
@@ -70310,8 +70315,8 @@ word_3197C      dw 0                    ; DATA XREF: LoadItemData+F4↑w
                                         ; ComputeCostMessageIndentMode+17↑r ...
 word_3197E      dw 0                    ; DATA XREF: LoadItemData+127↑w
                                         ; ComputeCostMessageIndentMode:loc_1CB93↑r
-word_31980      dw 0                    ; DATA XREF: sub_27B0D+30↑w
-                                        ; sub_27CC9+30↑w ...
+word_31980      dw 0                    ; DATA XREF: LookupConversationTextBlockOffset_4000+30↑w
+                                        ; LookupConversationTextBlockOffset_1000+30↑w ...
 word_31982      dw 0                    ; DATA XREF: FadePaletteStep+4↑w
                                         ; FadePaletteStep+63↑r ...
 word_31984      dw 0                    ; DATA XREF: FadePaletteStep↑w
@@ -84930,10 +84935,10 @@ word_368A9      dw 0                    ; DATA XREF: UpdateScrollArrows+3F↑w
 word_368AB      dw 0                    ; DATA XREF: ClassifyObstacleAtWorldPosition+9↑w
                                         ; UpdateScrollArrows+49↑w ...
 word_368AD      dw 0                    ; DATA XREF: seg096:001D↑w
-                                        ; sub_27B0D+16↑w ...
+                                        ; LookupConversationTextBlockOffset_4000+16↑w ...
 ; FileEntry *word_368AF
 word_368AF      dw 0                    ; DATA XREF: seg096:0023↑w
-                                        ; sub_27B0D+1C↑w ...
+                                        ; LookupConversationTextBlockOffset_4000+1C↑w ...
 aWorldDat       db 'WORLD.DAT',0
 g_trapEffectDefs db    0                ; 12-byte-stride trap/status-effect definition records, indexed by effect id (PrepareTrapEffectSlots computes id*0xC + this base). Confirmed fields: +2 = g_pictureDir icon offset, +8 = cost-type flags (ApplyEffectCost), +0xA = display-mode flags (ApplyEffectAndDrawIconBar).
                 db    0
