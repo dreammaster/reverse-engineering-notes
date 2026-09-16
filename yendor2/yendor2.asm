@@ -895,7 +895,7 @@ loc_1077C:                              ; CODE XREF: EnforceDemoBoundary+1B↑j
                 mov     cx, 2
                 call    DrawStringColumn
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     errorCode, 1
                 retn
 EnforceDemoBoundary endp
@@ -2656,7 +2656,7 @@ loc_118B6:                              ; CODE XREF: ShowIntroPicture+95↑j
                 call    FileEntry_Read
                 call    ErrorCheck
                 call    sub_25862
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 and     word_328CA, 0FFF7h
                 retf
 ShowIntroPicture endp
@@ -3326,7 +3326,7 @@ loc_11FA3:                              ; CODE XREF: InitGame+B4↑j
 
 loc_11FBD:                              ; CODE XREF: InitGame+CD↑j
                                         ; InitGame+D4↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    loadWorldDat5
                 call    sub_25862
                 test    word_328C4, 4000h
@@ -3339,7 +3339,7 @@ loc_11FBD:                              ; CODE XREF: InitGame+CD↑j
 
 loc_11FDF:                              ; CODE XREF: InitGame+A3↑j
                 call    sub_1FBE1
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 test    word_328C4, 4000h
                 jnz     short loc_11FFE
                 call    RunTitleScreen
@@ -7123,7 +7123,7 @@ loc_14700:                              ; CODE XREF: LoadClueBookMonsterEntry+7E
                 call    ShowClueBookMonsterDetail
                 call    DrawClueBookNavBar
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 or      word_3295A, 8000h
                 and     word_328C4, 0FBFFh
                 retn
@@ -8076,7 +8076,7 @@ RestoreUiStateForClueBook proc far      ; CODE XREF: ShowClueBook+508↑P
                 mov     ax, word_31946
                 mov     word_2E530, ax
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 pop     errorCode
                 pop     word_2E532
                 pop     word_2E530
@@ -8352,7 +8352,7 @@ loc_15217:                              ; CODE XREF: PlayClueBookOpenAnimation+D
                                         ; PlayClueBookOpenAnimation+18↑j
                 mov     word_2E530, 1Dh
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 pop     ds
                 pop     di
                 pop     si
@@ -8447,7 +8447,7 @@ loc_152B2:                              ; CODE XREF: FinalizeCharacterCreation+4
 
 loc_152D6:                              ; CODE XREF: FinalizeCharacterCreation+59↑j
                                         ; FinalizeCharacterCreation+60↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 and     word_328CA, 0FFF7h
                 retn
 FinalizeCharacterCreation endp
@@ -10451,7 +10451,7 @@ loc_165A9:                              ; CODE XREF: HandleDungeonInput+183↑j
                 call    wait
 
 loc_165CF:                              ; CODE XREF: HandleDungeonInput+1BE↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
@@ -10742,7 +10742,7 @@ loc_16852:                              ; CODE XREF: HandleDungeonInput+19F↑j
                 cmp     errorCode, 2
                 jnz     short loc_1686D
                 call    HandleGameCommand
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_1686D:                              ; CODE XREF: HandleDungeonInput+45A↑j
                 call    DrawMonsterInfoPanels
@@ -11665,7 +11665,7 @@ loc_16F2E:                              ; CODE XREF: ClearMessageBoxArea+3F↓j
                 add     di, 0F8h
                 pop     cx
                 loop    loc_16F2E
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 pop     cx
                 pop     es
                 assume es:nothing
@@ -11686,7 +11686,7 @@ loc_16F4D:                              ; CODE XREF: ClearMessageBoxArea+5F↓j
                 add     di, 0F7h
                 pop     cx
                 loop    loc_16F4D
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 pop     cx
                 pop     es
                 pop     di
@@ -11958,7 +11958,7 @@ loc_170A7:                              ; CODE XREF: sub_17032+237↓j
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
                 call    RedrawItemDescriptionAndMaterials
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -12013,7 +12013,7 @@ loc_17100:                              ; CODE XREF: sub_17032+CA↑j
                 mov     bx, 0AFA8h
                 call    StripSpaces
                 call    writeString
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -12226,7 +12226,7 @@ RunShopScreen   proc far                ; CODE XREF: UseAbilityCommand+104↓p
                 call    near ptr DrawShopItemSlotGrid
                 push    cs
                 call    near ptr ShowMaterialCounterHud
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
 loc_17350:                              ; CODE XREF: RunShopScreen+2F↓j
@@ -12516,7 +12516,7 @@ loc_175B2:                              ; CODE XREF: RunShopScreen+23A↑j
 
 loc_175BD:                              ; CODE XREF: RunShopScreen+24A↑j
                                         ; RunShopScreen+28D↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    FlashStatusWarning
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
@@ -12804,7 +12804,7 @@ loc_17896:                              ; CODE XREF: ShowLockStatus+40↑j
                                         ; ShowLockStatus+57↑j ...
                 call    DrawStringColumn
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ShowLockStatus  endp
 
@@ -13290,7 +13290,7 @@ loc_17CBE:                              ; CODE XREF: UseItem+125↑j
                 or      word_36C7F, ax
                 call    BuildMinimapTileData
                 call    DrawMinimap
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
 loc_17D04:                              ; CODE XREF: UseItem+13A↑j
@@ -13480,7 +13480,7 @@ loc_17E8B:                              ; CODE XREF: UseItem+2CC↑j
                 call    SelectItemUseRecord
                 call    FinishItemUse
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
@@ -13514,7 +13514,7 @@ loc_17EA8:                              ; CODE XREF: UseItem+2F2↑j
 
 loc_17F18:                              ; CODE XREF: UseItem+34E↑j
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
@@ -14577,7 +14577,7 @@ loc_1857E:                              ; CODE XREF: HandlePortraitClick+2F↑j
                 mov     ax, 1
                 call    TriggerSoundEvent
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 HandlePortraitClick endp
 
@@ -14662,7 +14662,7 @@ loc_18681:                              ; CODE XREF: RefreshPartyPortraits+BD↑
 loc_18692:                              ; CODE XREF: RefreshPartyPortraits+8A↑j
                                         ; RefreshPartyPortraits+CA↑j ...
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 RefreshPartyPortraits endp
 
@@ -15056,7 +15056,7 @@ loc_189B4:                              ; CODE XREF: sub_1869D+2DD↑j
                 call    wait
                 call    RestoreAllPortraitsFromEMS
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     errorCode, 0
                 retf
 ; ---------------------------------------------------------------------------
@@ -15082,7 +15082,7 @@ loc_18A08:                              ; CODE XREF: sub_1869D+31F↑j
 
 loc_18A1A:                              ; CODE XREF: sub_1869D+361↑j
                                         ; sub_1869D+371↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    FlashStatusWarning
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
@@ -15147,7 +15147,7 @@ loc_18AA0:                              ; CODE XREF: sub_1869D+3B8↑j
                 mov     ax, 1
                 call    TriggerSoundEvent
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -15159,7 +15159,7 @@ loc_18ACC:                              ; CODE XREF: sub_1869D+40C↑j
                 call    TriggerSoundEvent
                 call    RestorePortraitAreaAtPosition
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 test    word_328C6, 7800h
                 jnz     short loc_18B00
                 call    ClearStatusPanelIfDirty
@@ -15188,7 +15188,7 @@ loc_18B1C:                              ; CODE XREF: sub_1869D+51B↓j
                 call    RestoreAllPortraitsFromEMS
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     errorCode, 0
                 retf
 ; ---------------------------------------------------------------------------
@@ -15315,7 +15315,7 @@ loc_18C1F:                              ; CODE XREF: sub_1869D+578↑j
                 call    SubBCD4
                 call    ClearStatusPanelIfDirty
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
@@ -15769,7 +15769,7 @@ loc_19032:                              ; CODE XREF: TryEnhanceItemForGold+52↑
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
@@ -15916,7 +15916,7 @@ loc_19198:                              ; CODE XREF: TryRepairItemForGold+52↑j
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
@@ -16365,7 +16365,7 @@ loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
                 call    SelectAndDrawPartyStatusRow
                 call    DrawTrainingScreenStatSheet
                 call    DrawPartyStatusIconRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
 loc_195FA:                              ; CODE XREF: sub_19553+B1↓j
@@ -16545,7 +16545,7 @@ loc_1974F:                              ; CODE XREF: sub_19553+1F6↑j
 loc_19753:                              ; CODE XREF: sub_19553+1FA↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawTrainingScreenStatSheet
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 jmp     loc_195FA
 sub_19553       endp
@@ -18289,7 +18289,7 @@ loc_1A4E9:                              ; CODE XREF: IsDestinationUnlocked+1D↑
                 mov     bx, 7BCEh       ; msg
                 call    writeString
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_1A52F:                              ; CODE XREF: IsDestinationUnlocked+A↑j
                 xor     ax, ax
@@ -18322,7 +18322,7 @@ loc_1A554:                              ; CODE XREF: IsDestinationUnlocked+9C↓
 loc_1A563:                              ; CODE XREF: IsDestinationUnlocked+94↑j
                 or      [bx], ax
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     ax, 2
                 pop     si
                 retn
@@ -18331,7 +18331,7 @@ loc_1A563:                              ; CODE XREF: IsDestinationUnlocked+94↑
 loc_1A574:                              ; CODE XREF: IsDestinationUnlocked+7E↑j
                                         ; IsDestinationUnlocked+98↑j
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 xor     ax, ax
                 pop     si
                 retn
@@ -18494,7 +18494,7 @@ loc_1A68F:                              ; CODE XREF: sub_1A5F6+48↑j
                 pop     _videoSegment
                 cmp     errorCode, 2
                 jnz     short loc_1A6E7
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     locret_1A76C
 ; ---------------------------------------------------------------------------
 
@@ -18523,7 +18523,7 @@ loc_1A712:                              ; CODE XREF: sub_1A5F6+F6↑j
                 mov     bx, 8409h       ; msg
                 call    writeString
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    WaitForKeypressTickingMusic
                 jmp     loc_1A611
 ; ---------------------------------------------------------------------------
@@ -18535,7 +18535,7 @@ loc_1A73E:                              ; CODE XREF: sub_1A5F6+11A↑j
                 mov     bx, 841Ch       ; msg
                 call    writeString
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    WaitForKeypressTickingMusic
                 or      word_328C6, 40h
 
@@ -18604,7 +18604,7 @@ loc_1A7B1:                              ; CODE XREF: ShowConfirmPrompt+64↓j
                 pop     cx
                 add     si, 0Ah
                 loop    loc_1A7B1
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 test    word_328E0, 8000h
                 jnz     short loc_1A808
                 test    word_328E0, 4000h
@@ -19602,7 +19602,7 @@ loc_1AF4C:                              ; CODE XREF: PromptBuyOreQuantity+116↓
                 mov     _font_fgColor, 0Fh
                 mov     si, 0AFC2h
                 call    PromptForBCD4Quantity
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 cmp     errorCode, 0
                 jz      short loc_1B02E
                 jmp     loc_1B0C8
@@ -20221,7 +20221,7 @@ loc_1B5BB:                              ; CODE XREF: UseAttributeBoostItem+C5↑
                 call    ApplyEffectAndDrawIconBar
 
 loc_1B5D1:                              ; CODE XREF: UseAttributeBoostItem+B3↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 pop     si
                 pop     cx
                 pop     di
@@ -20330,7 +20330,7 @@ loc_1B6C2:                              ; CODE XREF: UseExperienceBoostItem+A7�
                 call    ApplyEffectAndDrawIconBar
 
 loc_1B6D4:                              ; CODE XREF: UseExperienceBoostItem+99↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 pop     si
                 pop     cx
                 pop     di
@@ -21928,7 +21928,7 @@ loc_1C5A9:                              ; CODE XREF: UseAbilityScroll+15↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
                 call    DrawPartyStatusIconRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 push    cs
                 call    near ptr ApplyItemEffectFlags
                 push    cs
@@ -22012,7 +22012,7 @@ loc_1C693:                              ; CODE XREF: UseAbilityScroll+E3↑j
                 mov     si, word_328D4
                 call    DrawAbilityReadinessList
                 call    DrawPartyStatusIconRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -22038,7 +22038,7 @@ loc_1C6DE:                              ; CODE XREF: UseAbilityScroll+13F↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
                 call    DrawPartyStatusIconRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 push    cs
                 call    near ptr ApplyItemEffectFlags
                 push    cs
@@ -22058,7 +22058,7 @@ loc_1C707:                              ; CODE XREF: UseAbilityScroll+147↑j
                 call    near ptr SelectItemUseRecord
                 push    cs
                 call    near ptr FinishItemUse
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -22436,7 +22436,7 @@ loc_1CADA:                              ; CODE XREF: ShowItemUsagePreview+4C↑j
                 call    near ptr DrawEligibleItemList
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawPartyStatusIconRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -22460,7 +22460,7 @@ loc_1CB15:                              ; CODE XREF: ShowItemUsagePreview+A8↑j
                 mov     si, ax
                 call    DrawAbilityReadinessList
                 call    ShowTransportUsagePreview
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 retf
 ShowItemUsagePreview endp
@@ -23997,7 +23997,7 @@ loc_1D75C:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    ProcessSideTrapsOnMovement
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -24150,7 +24150,7 @@ loc_1D921:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    ShowCombatMessageOrWait
 
 loc_1D931:                              ; CODE XREF: HandleRangedOrCombatAction+467↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 HandleRangedOrCombatAction endp
 
@@ -24647,7 +24647,7 @@ loc_1DD35:                              ; CODE XREF: RunAlchemyScreen+178↓j
                 call    DrawAlchemySpellListScrollArrows
                 call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_1DD4B:                              ; CODE XREF: RunAlchemyScreen+75↓j
                                         ; RunAlchemyScreen+A1↓j ...
@@ -24895,7 +24895,7 @@ loc_1DF15:                              ; CODE XREF: RunAlchemyScreen+85↑j
                 call    ShowCompassDirection
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_1DF49:                              ; CODE XREF: RunAlchemyScreen+1D↑j
                                         ; RunAlchemyScreen+33↑j ...
@@ -25042,7 +25042,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    ShowCompassDirection
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     ax, word_3331E
                 call    LoadClueBookSpellEntry
                 and     word_328CA, 0FF7Fh
@@ -25804,7 +25804,7 @@ loc_1E796:                              ; CODE XREF: RestPartyAndAdvanceClock+14
                 call    DrawStringColumn
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    sub_1FD03
                 call    sub_2587E
 
@@ -25905,7 +25905,7 @@ loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+25
                 mov     cx, 2
                 call    DrawStringColumn
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    sub_1FD03
                 call    UpdateAmbientMusicForRegion
                 call    sub_2587E
@@ -26123,7 +26123,7 @@ loc_1EAD0:                              ; CODE XREF: RunGameDialog:loc_1EC0B↓j
 
 loc_1EB27:                              ; CODE XREF: RunGameDialog+99↑j
                                         ; RunGameDialog+A1↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_1EB2C:                              ; CODE XREF: RunGameDialog+C8↓j
                                         ; RunGameDialog+DD↓j ...
@@ -26313,7 +26313,7 @@ loc_1EC7C:                              ; CODE XREF: RunGameDialog+1F9↑j
 
 loc_1EC8A:                              ; CODE XREF: RunGameDialog+304↓j
                 mov     word_32910, 2Ch ; ','
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    SelectGameDialogOption
                 call    RestoreCursorBackgroundIfDirty
                 cmp     byte_2E400, 1Bh
@@ -26410,7 +26410,7 @@ loc_1ED8F:                              ; CODE XREF: RunGameDialog+2C1↑j
                 or      word_328C4, 4000h
                 call    sub_1F5FF
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     byte_2E400, 0
                 jmp     loc_1EC69
 ; ---------------------------------------------------------------------------
@@ -26423,7 +26423,7 @@ loc_1EDAA:                              ; CODE XREF: RunGameDialog+1AE↑j
 
 loc_1EDB8:                              ; CODE XREF: RunGameDialog+3B3↓j
                 mov     word_32910, 51h ; 'Q'
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    SelectGameDialogOption
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1EDD5
@@ -26709,7 +26709,7 @@ loc_1F186:                              ; CODE XREF: CycleAnimationSetting+14↑
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_36CE7, ax
                 call    DrawAnimationSpeedLabel
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 CycleAnimationSetting endp
 
@@ -26950,7 +26950,7 @@ loc_1F362:                              ; CODE XREF: SelectGameDialogOption+3D�
                 mov     bx, [bx+4]
                 mov     cx, 12h
                 call    DrawCheckboxIndicator
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 SelectGameDialogOption endp
 
@@ -27222,7 +27222,7 @@ loc_1F5CD:                              ; CODE XREF: ConfirmNewGame+16↑j
                 and     word_328C6, 0FBFFh
                 and     word_328C4, 9FFFh
                 call    ClearStatusPanelIfDirty
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    RunTitleScreen
                 cmp     byte_2E400, 0FFh
                 jz      short locret_1F5FE
@@ -27482,7 +27482,7 @@ loc_1F92E:                              ; CODE XREF: ToggleMusicSetting+2A↑j
                 mov     ax, 61h ; 'a'
                 mov     bx, 6Ah ; 'j'
                 call    DrawCheckboxIndicator
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 locret_1F93C:                           ; CODE XREF: ToggleMusicSetting+6↑j
                 retn
@@ -27511,7 +27511,7 @@ loc_1F964:                              ; CODE XREF: ToggleSoundFxSetting+1D↑j
                 mov     ax, 0AAh
                 mov     bx, 6Ah ; 'j'
                 call    DrawCheckboxIndicator
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     ax, 4
                 call    TriggerSoundEvent
 
@@ -28240,7 +28240,7 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 and     word_328C4, 0FBFFh
                 or      word_328C4, 1
                 call    ShowLocalAreaMap
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    sub_2587E
                 call    WaitForKeypressTickingMusic
                 call    ClearVideoMemoryRegion
@@ -28268,7 +28268,7 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 mov     bx, word_36CF9
                 call    GetMapCellPtr
                 call    DrawCellIconPair
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_20126:                              ; CODE XREF: RunMapEditorScreen+C0↓j
                                         ; RunMapEditorScreen+E2↓j ...
@@ -28341,7 +28341,7 @@ loc_201C7:                              ; CODE XREF: RunMapEditorScreen+14F↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    FillVisibleAreaWithSelectedTile
                 call    DrawMapEditorInteractionTypeOverlay
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_201DE:                              ; CODE XREF: RunMapEditorScreen+15C↑j
                 cmp     byte_2E400, 4Dh ; 'M'
@@ -28349,7 +28349,7 @@ loc_201DE:                              ; CODE XREF: RunMapEditorScreen+15C↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    RedrawMapEditorGrid
                 call    DrawMapEditorInteractionTypeOverlay
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
                 cmp     byte_2E400, 53h ; 'S'
@@ -28365,7 +28365,7 @@ loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
                 call    DrawWallTypeLegendRow
                 call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
@@ -28373,7 +28373,7 @@ loc_2022E:                              ; CODE XREF: RunMapEditorScreen+192↑j
                 or      word_328C4, 400h
                 call    RestoreCursorBackgroundIfDirty
                 call    DrawMapEditorInteractionTypeOverlay
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_20241:                              ; CODE XREF: RunMapEditorScreen+18A↑j
                 jmp     loc_20126
@@ -28398,7 +28398,7 @@ loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
                 call    DrawWallTypeLegendRow
                 call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
@@ -28477,7 +28477,7 @@ loc_2030A:                              ; CODE XREF: RunMapEditorScreen+286↑j
                 jl      short loc_2031C
                 call    RestoreCursorBackgroundIfDirty
                 call    PaintCursorCellAndPersist
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_2031C:                              ; CODE XREF: RunMapEditorScreen+29D↑j
                 jmp     loc_20126
@@ -28498,7 +28498,7 @@ loc_20336:                              ; CODE XREF: RunMapEditorScreen+2C1↑j
                 jl      short loc_20348
                 call    RestoreCursorBackgroundIfDirty
                 call    PaintCursorOverlayCellAndPersist
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_20348:                              ; CODE XREF: RunMapEditorScreen+2C9↑j
                 jmp     loc_20126
@@ -28762,7 +28762,7 @@ EditWallLegendTypeNumber proc near      ; CODE XREF: RunMapEditorScreen+25B↑p
 loc_20564:                              ; CODE XREF: EditWallLegendTypeNumber+32↑j
                 call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 EditWallLegendTypeNumber endp
 
@@ -28795,7 +28795,7 @@ loc_205AE:                              ; CODE XREF: EditFloorLegendTypeNumber+3
 loc_205B4:                              ; CODE XREF: EditFloorLegendTypeNumber+32↑j
                 call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 EditFloorLegendTypeNumber endp
 
@@ -28843,7 +28843,7 @@ BrowseWallTilePalette proc near         ; CODE XREF: RunMapEditorScreen+144↑p
                 mov     word_2E496, ax
                 call    DrawMapEditorCoordinateReadout
                 call    DrawWallTypeLegendRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 BrowseWallTilePalette endp
 
@@ -28864,7 +28864,7 @@ BrowseFloorTilePalette proc near        ; CODE XREF: RunMapEditorScreen+151↑p
                 mov     word_2E4A2, ax
                 call    DrawMapEditorFloorTypeReadout
                 call    DrawFloorTypeLegendRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 BrowseFloorTilePalette endp
 
@@ -29092,7 +29092,7 @@ ShowMapEditorBlockCoordsAndRedraw proc near
                 call    DrawMapEditorFloorTypeReadout
                 call    DrawWallTypeLegendRow
                 call    DrawFloorTypeLegendRow
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 ShowMapEditorBlockCoordsAndRedraw endp
 
@@ -29144,7 +29144,7 @@ seg061          segment byte public 'CODE' use16
 TickStatusEffects proc far              ; CODE XREF: CheckAndTickAvailableAilment+19↑P
                                         ; HandleGameCommand+87↓P
                 push    si              ; Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 cmp     word_32974, 9
                 jz      short loc_208F9
                 cmp     word_32974, 0Fh
@@ -29205,7 +29205,7 @@ TickStatusEffects endp
 
 
 ApplyStatusEffect proc far              ; CODE XREF: HandleGameCommand:loc_29624↓P
-                call    sub_238CD       ; Applies/extends a timed status effect: on word_32974==8/0xE/0xB, sets the corresponding active flag (word_36C79) and increments the matching duration counter (word_36C85/36C89/36C8B) -- the exact mirror of TickStatusEffects, which decrements these and clears the flag on expiry.
+                call    DrawMouseCursorAlt ; Applies/extends a timed status effect: on word_32974==8/0xE/0xB, sets the corresponding active flag (word_36C79) and increments the matching duration counter (word_36C85/36C89/36C8B) -- the exact mirror of TickStatusEffects, which decrements these and clears the flag on expiry.
                 cmp     word_32974, 8
                 jz      short loc_20987
                 cmp     word_32974, 0Eh
@@ -31369,7 +31369,7 @@ loc_21C11:                              ; CODE XREF: sub_219FA+91↑j
 
 loc_21C16:                              ; CODE XREF: sub_219FA+196↑j
                                         ; sub_219FA+19F↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
 loc_21C20:                              ; CODE XREF: sub_219FA+3C↑j
@@ -31672,7 +31672,7 @@ ShowLocalAreaMap proc far               ; CODE XREF: seg000:085D↑P
                 test    word_36C7F, 200h
                 jnz     short loc_21E8A
                 call    ShowMapSkillTooLowMessage
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -31865,7 +31865,7 @@ loc_220BA:                              ; CODE XREF: ShowLocalAreaMap+246↑j
                 call    WaitForKeypressTickingMusic
                 call    sub_25862
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    sub_2587E
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -31881,7 +31881,7 @@ ToggleMapViewMode proc far              ; CODE XREF: seg000:088D↑P
                 test    word_36C7F, 100h ; HandleGameCommand's handler for word_32974==0x1F. If word_36C7F bit 0x100 is clear, does a normal small-view redraw (sub_222BD); if set, draws a full-screen picture (g_pictureDir entry 6, x=0,y=0 -- fills the whole screen rather than the small minimap position) instead. Exact trigger for the bit itself not traced.
                 jnz     short loc_220F0
                 call    ShowMapSkillTooLowMessage
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -31901,7 +31901,7 @@ loc_220F0:                              ; CODE XREF: ToggleMapViewMode+6↑j
                 call    sub_25862
                 call    DrawMouseCursor
                 call    sub_2587E
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ToggleMapViewMode endp
 
@@ -34528,8 +34528,8 @@ loc_23782:                              ; CODE XREF: seg073:009E↑j
                 mov     word_2E776, ax
                 mov     ax, word_2E784
                 mov     word_31956, ax
-                call    sub_2391C
-                call    sub_23965
+                call    SaveCursorBackgroundPixels
+                call    BlitCursorSprite
 
 loc_237A7:                              ; CODE XREF: seg073:0029↑j
                                         ; seg073:0034↑j ...
@@ -34639,8 +34639,8 @@ InitMouse       endp
                 mov     word_2E776, ax
                 mov     ax, word_2E784
                 mov     word_31956, ax
-                call    sub_2391C
-                call    sub_23965
+                call    SaveCursorBackgroundPixels
+                call    BlitCursorSprite
 
 loc_2386F:                              ; CODE XREF: seg073:0178↑j
                 pop     errorCode
@@ -34680,7 +34680,7 @@ UpdateCursorForHeldItem proc far        ; CODE XREF: start+645↑P
 
 loc_238C6:                              ; CODE XREF: UpdateCursorForHeldItem+4F↑j
                 call    RestoreCursorBackground
-                call    sub_23965
+                call    BlitCursorSprite
                 retf
 UpdateCursorForHeldItem endp
 
@@ -34688,32 +34688,32 @@ UpdateCursorForHeldItem endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_238CD       proc far                ; CODE XREF: EnforceDemoBoundary+64↑P
+DrawMouseCursorAlt proc far             ; CODE XREF: EnforceDemoBoundary+64↑P
                                         ; ShowIntroPicture+179↑P ...
-                test    word_3195C, 1
+                test    word_3195C, 1   ; Overlay-segment duplicate of DrawMouseCursor's inline cursor-position-sync logic: if word_3195C bit 0x1 is set and bit 0x2 isn't, caches the new cursor position and calls SaveCursorBackgroundPixels + BlitCursorSprite. Called from dozens of sites (264 refs) throughout the game -- the other overlay segment's copy of the same per-event cursor-draw call DrawMouseCursor itself handles inline.
                 jnz     short loc_238DB
                 and     word_3195C, 0FFFDh
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_238DB:                              ; CODE XREF: sub_238CD+6↑j
+loc_238DB:                              ; CODE XREF: DrawMouseCursorAlt+6↑j
                 test    word_3195C, 2
                 jz      short loc_238E4
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_238E4:                              ; CODE XREF: sub_238CD+14↑j
+loc_238E4:                              ; CODE XREF: DrawMouseCursorAlt+14↑j
                 mov     ax, word_2E782
                 mov     word_2E776, ax
                 mov     ax, word_2E784
                 mov     word_31956, ax
                 push    errorCode
-                call    sub_2391C
+                call    SaveCursorBackgroundPixels
                 or      word_3195C, 2
-                call    sub_23965
+                call    BlitCursorSprite
                 pop     errorCode
                 retf
-sub_238CD       endp
+DrawMouseCursorAlt endp
 
 ; ---------------------------------------------------------------------------
                 test    word_3195C, 2
@@ -34723,17 +34723,17 @@ sub_238CD       endp
 
 loc_2390D:                              ; CODE XREF: seg073:022A↑j
                 push    errorCode
-                call    sub_2391C
-                call    sub_23965
+                call    SaveCursorBackgroundPixels
+                call    BlitCursorSprite
                 pop     errorCode
                 retf
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2391C       proc near               ; CODE XREF: seg073:00C1↑p
+SaveCursorBackgroundPixels proc near    ; CODE XREF: seg073:00C1↑p
                                         ; seg073:0189↑p ...
-                push    ax
+                push    ax              ; Copies the 16x16-pixel VGA region at the cached cursor position into the fixed save buffer at 0xE0E (stride 0x140 per row, clipped to 320x200). Called from DrawMouseCursorAlt.
                 push    cx
                 push    dx
                 push    si
@@ -34754,7 +34754,7 @@ sub_2391C       proc near               ; CODE XREF: seg073:00C1↑p
                 assume ds:nothing
                 mov     cx, 10h
 
-loc_23945:                              ; CODE XREF: sub_2391C+3A↓j
+loc_23945:                              ; CODE XREF: SaveCursorBackgroundPixels+3A↓j
                 push    cx
                 mov     cx, 8
                 rep movsw
@@ -34764,7 +34764,7 @@ loc_23945:                              ; CODE XREF: sub_2391C+3A↓j
                 ja      short loc_23958
                 loop    loc_23945
 
-loc_23958:                              ; CODE XREF: sub_2391C+38↑j
+loc_23958:                              ; CODE XREF: SaveCursorBackgroundPixels+38↑j
                 pop     ds
                 assume ds:seg129
                 and     word_3195C, 0FFFBh
@@ -34776,20 +34776,20 @@ loc_23958:                              ; CODE XREF: sub_2391C+38↑j
                 pop     cx
                 pop     ax
                 retn
-sub_2391C       endp
+SaveCursorBackgroundPixels endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23965       proc near               ; CODE XREF: seg073:00C4↑p
+BlitCursorSprite proc near              ; CODE XREF: seg073:00C4↑p
                                         ; seg073:018C↑p ...
-                test    word_3195C, 2
+                test    word_3195C, 2   ; Blits the 16x16 cursor sprite bitmap (source 0x3FE6) onto VGA memory at the cached cursor position, 0xFF as the transparent color key, clipped to the screen edge. Called from DrawMouseCursorAlt.
                 jnz     short loc_2396E
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2396E:                              ; CODE XREF: sub_23965+6↑j
+loc_2396E:                              ; CODE XREF: BlitCursorSprite+6↑j
                 push    ax
                 push    cx
                 push    dx
@@ -34806,7 +34806,7 @@ loc_2396E:                              ; CODE XREF: sub_23965+6↑j
                 assume es:nothing
                 mov     cx, 10h
 
-loc_2398C:                              ; CODE XREF: sub_23965+5F↓j
+loc_2398C:                              ; CODE XREF: BlitCursorSprite+5F↓j
                 push    cx
                 mov     cx, 10h
                 xor     dx, dx
@@ -34816,8 +34816,8 @@ loc_2398C:                              ; CODE XREF: sub_23965+5F↓j
                 sub     dx, 130h
                 sub     cx, dx
 
-loc_239A4:                              ; CODE XREF: sub_23965+33↑j
-                                        ; sub_23965+45↓j ...
+loc_239A4:                              ; CODE XREF: BlitCursorSprite+33↑j
+                                        ; BlitCursorSprite+45↓j ...
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_239AE
@@ -34826,24 +34826,24 @@ loc_239A4:                              ; CODE XREF: sub_23965+33↑j
                 jmp     short loc_239B1
 ; ---------------------------------------------------------------------------
 
-loc_239AE:                              ; CODE XREF: sub_23965+42↑j
+loc_239AE:                              ; CODE XREF: BlitCursorSprite+42↑j
                 inc     di
                 loop    loc_239A4
 
-loc_239B1:                              ; CODE XREF: sub_23965+47↑j
+loc_239B1:                              ; CODE XREF: BlitCursorSprite+47↑j
                 or      dx, dx
                 jz      short loc_239B9
                 add     si, dx
                 add     di, dx
 
-loc_239B9:                              ; CODE XREF: sub_23965+4E↑j
+loc_239B9:                              ; CODE XREF: BlitCursorSprite+4E↑j
                 add     di, 130h
                 pop     cx
                 cmp     di, 0FA00h
                 ja      short loc_239C6
                 loop    loc_2398C
 
-loc_239C6:                              ; CODE XREF: sub_23965+5D↑j
+loc_239C6:                              ; CODE XREF: BlitCursorSprite+5D↑j
                 pop     es
                 assume es:nothing
                 pop     di
@@ -34852,7 +34852,7 @@ loc_239C6:                              ; CODE XREF: sub_23965+5D↑j
                 pop     cx
                 pop     ax
                 retn
-sub_23965       endp
+BlitCursorSprite endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35112,7 +35112,7 @@ ShowStatusPanelMessage proc far         ; CODE XREF: start+5A0↑P
                 push    cs
                 call    near ptr DrawStringColumn
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ShowStatusPanelMessage endp
 
@@ -35297,7 +35297,7 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 mov     _textPos_y, 0B9h
                 mov     bx, 7A84h
                 call    WriteTwoToneString
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 call    sub_2587E
                 jmp     short loc_23D8D
@@ -35327,7 +35327,7 @@ loc_23D17:                              ; CODE XREF: sub_23C18+218↓j
                 mov     _textPos_y, 0B9h
                 mov     bx, 7A84h
                 call    WriteTwoToneString
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
 loc_23D8D:                              ; CODE XREF: sub_23C18+FD↑j
@@ -35431,7 +35431,7 @@ loc_23E33:                              ; CODE XREF: sub_23C18+205↑j
                 mov     bx, 7AA5h
                 call    WriteTwoToneString
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_23E9F:                              ; CODE XREF: sub_23C18+290↓j
                                         ; sub_23C18+29B↓j ...
@@ -36038,7 +36038,7 @@ ShowCharacterSkills proc near           ; CODE XREF: ShowPartyMembers:loc_23BC8�
                 call    WriteStringWithHighlightedChar
                 call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_244D8:                              ; CODE XREF: ShowCharacterSkills+110↓j
                                         ; ShowCharacterSkills+11D↓j ...
@@ -36228,7 +36228,7 @@ loc_2469E:                              ; CODE XREF: ShowCharacterInventory+E2�
 loc_246C9:                              ; CODE XREF: ShowCharacterInventory+F6↑j
                 call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_246D6:                              ; CODE XREF: ShowCharacterInventory+131↓j
                                         ; ShowCharacterInventory+143↓j ...
@@ -36383,7 +36383,7 @@ loc_24821:                              ; CODE XREF: ShowCharacterInventory+238�
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 dec     word_3293E
 
 loc_24850:                              ; CODE XREF: ShowCharacterInventory+218↑j
@@ -36455,7 +36455,7 @@ loc_248D2:                              ; CODE XREF: ShowCharacterInventory+2D3�
                 mov     word_3194A, ax
                 call    UpdateCursorForHeldItem
                 call    RestoreWorldMapAreaFromEMS
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 inc     word_3293E
 
 loc_24917:                              ; CODE XREF: ShowCharacterInventory+32D↑j
@@ -36619,7 +36619,7 @@ loc_24AF0:                              ; CODE XREF: ShowCharacterEquipment+90�
                 mov     _font_bgTransparent, 1
                 call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_24B08:                              ; CODE XREF: ShowCharacterEquipment+B8↓j
                                         ; ShowCharacterEquipment+C7↓j ...
@@ -37038,7 +37038,7 @@ loc_24FEB:                              ; CODE XREF: DrawCharacterStatSheet+2A0�
 
 loc_24FF0:                              ; CODE XREF: DrawCharacterStatSheet+26D↑j
                 mov     _font_fgColor, 0Fh
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 DrawCharacterStatSheet endp
 
@@ -37210,7 +37210,7 @@ ShowCharacterSummary proc near          ; CODE XREF: ShowPartyMembers+5A↑p
                 call    WriteStringWithHighlightedChar
                 call    DrawQuitOrReturnLabel
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_251CB:                              ; CODE XREF: ShowCharacterSummary+D1↓j
                                         ; ShowCharacterSummary+DC↓j ...
@@ -38705,7 +38705,7 @@ loc_25BED:                              ; CODE XREF: sub_25B34+B1↑j
 
 loc_25BF0:                              ; CODE XREF: sub_25B34+97↑j
                                         ; sub_25B34+A1↑j ...
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -38750,7 +38750,7 @@ loc_25C2D:                              ; CODE XREF: sub_25B34+D2↑j
                 call    RestoreCursorBackgroundIfDirty
                 or      word_328C4, 100h
                 call    DrawThreeStatBars
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
 locret_25C60:                           ; CODE XREF: sub_25B34+F3↑j
@@ -39534,7 +39534,7 @@ loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
                 call    CommitContainerWrite
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     short loc_26409
 ; ---------------------------------------------------------------------------
 
@@ -40081,7 +40081,7 @@ PickUpHeldItemFromSlot proc near        ; CODE XREF: sub_2621C:loc_2628F↑p
                 call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 PickUpHeldItemFromSlot endp
 
@@ -40098,7 +40098,7 @@ PlaceHeldItemIntoEmptySlot proc near    ; CODE XREF: sub_2621C+1EA↑p
                 call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 PlaceHeldItemIntoEmptySlot endp
 
@@ -40130,7 +40130,7 @@ SwapHeldItemWithSlot proc near          ; CODE XREF: sub_2621C+EA↑p
                 call    UpdateCursorForHeldItem
                 push    cs
                 call    near ptr DrawPartyMemberPortrait
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retn
 SwapHeldItemWithSlot endp
 
@@ -41280,7 +41280,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 call    near ptr ShowResourceDepletedOverlay
                 call    ClearStatusPanelIfDirty
                 call    ShowMaterialCounterHud
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
                 jmp     short loc_2728F
 ; ---------------------------------------------------------------------------
@@ -44971,7 +44971,7 @@ loc_28E86:                              ; CODE XREF: RevealMapRegion+1A1↓j
                 mov     bx, 836Ah       ; msg
                 call    writeString
                 mov     word_3195A, 0
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
 loc_28F26:                              ; CODE XREF: RevealMapRegion+231↓j
@@ -45042,7 +45042,7 @@ loc_28FAC:                              ; CODE XREF: RevealMapRegion+24A↑j
                 call    ApplyMapTriggerEffect
                 call    RedrawAllPartyStatusPanelsAlt
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 RevealMapRegion endp
 
@@ -45516,7 +45516,7 @@ WaitForTargetClick proc far             ; CODE XREF: UseAbilityOnTarget+1↓p
                 call    RedrawItemDescriptionAndMaterials ; Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.
                 mov     word_2E530, 0Fh
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_29423:                              ; CODE XREF: WaitForTargetClick+1F↓j
                                         ; WaitForTargetClick+2D↓j ...
@@ -45569,7 +45569,7 @@ ShowAbilityDescriptionColumn proc far   ; CODE XREF: UseAbilityCommand+EC↑P
                 pop     bx
                 call    DrawStringColumn
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ShowAbilityDescriptionColumn endp
 
@@ -45593,7 +45593,7 @@ loc_294B8:                              ; CODE XREF: UseAbilityOnTarget+4C↓j
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -45798,7 +45798,7 @@ loc_29611:                              ; CODE XREF: HandleGameCommand+42↑j
                                         ; HandleGameCommand+49↑j ...
                 test    word_36C79, 2
                 jz      short loc_29624
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    FlashStatusWarning
                 retf
 ; ---------------------------------------------------------------------------
@@ -45859,14 +45859,14 @@ loc_29680:                              ; CODE XREF: HandleGameCommand+D0↑j
                 jnz     short loc_296A5
                 test    word_328CA, 1000h
                 jnz     short loc_2969A
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    ShowGameClockCommand
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_2969A:                              ; CODE XREF: HandleGameCommand+E5↑j
                                         ; HandleGameCommand+17C↓j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    FlashStatusWarning
                 retf
 ; ---------------------------------------------------------------------------
@@ -45934,7 +45934,7 @@ loc_29727:                              ; CODE XREF: HandleGameCommand+17A↑j
 
 loc_2972D:                              ; CODE XREF: HandleGameCommand+172↑j
                 call    DispatchItemAbilityCommand
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 HandleGameCommand endp
 
@@ -48302,7 +48302,7 @@ loc_2A7DA:                              ; CODE XREF: sub_2A788+BB↓j
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -48486,7 +48486,7 @@ loc_2A955:                              ; CODE XREF: ApplyMultiStatEffect+2B↑j
 loc_2A971:                              ; CODE XREF: ApplyMultiStatEffect+D↑j
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ApplyMultiStatEffect endp
 
@@ -48596,7 +48596,7 @@ loc_2AA2B:                              ; CODE XREF: RestCharacter+3C↑j
 loc_2AA47:                              ; CODE XREF: RestCharacter+D↑j
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 RestCharacter   endp
 
@@ -48623,7 +48623,7 @@ loc_2AA75:                              ; CODE XREF: CastSpell+18↑j
                                         ; CastSpell+39↓j ...
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -48890,7 +48890,7 @@ loc_2ACD0:                              ; CODE XREF: CastSpell+10↑j
                 mov     ax, word_32974
                 cmp     ax, _val46
                 jnz     short loc_2ACEE
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    FlashStatusWarning
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
@@ -48966,7 +48966,7 @@ ConfirmAndSelectPartyTarget proc near   ; CODE XREF: ApplyMultiStatEffect+5↑p
                                         ; RestCharacter+5↑p ...
                 mov     word_2E530, 0Fh ; Shows a confirm prompt (msg 0x12); if declined, refreshes the material/gold HUD and returns 0. If confirmed, resolves the selected party record (word_32990 -> sub_25B14) and returns word_328D6. Called from ApplyMultiStatEffect and RestCharacter.
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     ax, 12h
                 call    ShowConfirmPrompt
                 cmp     ax, 0
@@ -49462,7 +49462,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: DispatchItemAbilityCommand+
                 push    word_36CF9
                 push    word_36CF5
                 push    word_36C79
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     word_2E530, 0Bh
                 call    UpdateCursorForHeldItem
                 and     word_36C79, 0FFF8h
@@ -49935,7 +49935,7 @@ loc_2B79A:                              ; CODE XREF: ShowConversationText_4000+6
                 mov     cx, 0Dh
                 call    DrawIndentedTextColumn
                 mov     si, bx
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    WaitForKeypressTickingMusic
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B85A
@@ -49968,7 +49968,7 @@ loc_2B845:                              ; CODE XREF: ShowConversationText_4000+9
                 call    DrawIndentedTextColumn
 
 loc_2B850:                              ; CODE XREF: ShowConversationText_4000+B6↑j
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    WaitForKeypressTickingMusic
 
 loc_2B85A:                              ; CODE XREF: ShowConversationText_4000+65↑j
@@ -50002,7 +50002,7 @@ loc_2B873:                              ; CODE XREF: ShowConversationText_2000+6
 loc_2B8A0:                              ; CODE XREF: ShowConversationText_2000+34↑j
                 call    DrawIndentedTextColumn
                 mov     si, bx
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    WaitForKeypressTickingMusic
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B8CB
@@ -50045,7 +50045,7 @@ loc_2B8E4:                              ; CODE XREF: ShowConversationText_1000+6
 loc_2B911:                              ; CODE XREF: ShowConversationText_1000+34↑j
                 call    DrawIndentedTextColumn
                 mov     si, bx
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    WaitForKeypressTickingMusic
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B93C
@@ -50096,7 +50096,7 @@ loc_2B982:                              ; CODE XREF: ShowConversationText_800+34
                 pop     cx
                 call    DrawIndentedTextColumn
                 mov     si, bx
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    WaitForKeypressTickingMusic
                 cmp     byte_2E400, 1Bh
                 jz      short loc_2B9C8
@@ -50218,7 +50218,7 @@ loc_2BA8A:                              ; CODE XREF: FinishPlacingHeldItem+24↑
                 or      word_36C81, ax
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 FinishPlacingHeldItem endp
 
@@ -50856,7 +50856,7 @@ loc_2BEF3:                              ; CODE XREF: ShowWorldMap+1AB↑j
                 mov     _font_bgTransparent, 0
                 mov     _videoSegment, 0A000h
                 call    DrawPicture
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     loc_2BDAA
 ShowWorldMap    endp
 
@@ -50979,7 +50979,7 @@ seg123          segment byte public 'CODE' use16
 RepairItemCommand proc far              ; CODE XREF: HandleGameCommand+141↑P
                 mov     word_3293E, ax  ; Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).
                 call    SyncAllContainers
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_2C01D:                              ; CODE XREF: RepairItemCommand+52↓j
                 mov     ax, word_36D05
@@ -52228,7 +52228,7 @@ loc_2CBB6:                              ; CODE XREF: sub_2C0FE+964↑j
 loc_2CBD0:                              ; CODE XREF: sub_2C0FE+ACB↑j
                                         ; sub_2C0FE+CBD↓j ...
                 call    DrawMouseCursor
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
 
@@ -53418,7 +53418,7 @@ loc_2D644:                              ; CODE XREF: ExamineTarget+2D↑j
                 mov     word_2E530, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 retf
 ExamineTarget   endp
 
@@ -53505,7 +53505,7 @@ loc_2D6FC:                              ; CODE XREF: InteractWithContainer+30↑
                                         ; InteractWithContainer+E0↓j
                 mov     word_2E530, 0Fh
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 call    ClearStatusPanelIfDirty
                 call    MarkIneligiblePartyMembers
                 call    DrawMouseCursor
@@ -53544,7 +53544,7 @@ loc_2D77A:                              ; CODE XREF: InteractWithContainer+25↑
                                         ; InteractWithContainer+54↑j ...
                 mov     word_2E530, 0
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
 
 loc_2D78A:                              ; CODE XREF: InteractWithContainer+9F↑j
                 call    ClearIneligibleFlagForAllMembers
@@ -53637,7 +53637,7 @@ ConfirmContainerInteraction endp
 ; ---------------------------------------------------------------------------
                 mov     word_2E530, 0Fh
                 call    UpdateCursorForHeldItem
-                call    sub_238CD
+                call    DrawMouseCursorAlt
                 mov     ax, 12h
                 call    ShowConfirmPrompt
                 cmp     ax, 0

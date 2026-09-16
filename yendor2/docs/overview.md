@@ -5863,6 +5863,32 @@ back buffer.
 
 674 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawMouseCursorAlt cluster (resolves an early-session open lead)
+
+Resolved `sub_238CD` — flagged earlier this session as "too broad/
+general-purpose to name confidently" despite 264 call sites across
+the entire game. Tracing its two small helpers reveals it's actually
+the overlay-segment byte-for-byte duplicate of `DrawMouseCursor`'s
+own inline logic: `DrawMouseCursor`'s pre-existing comment already
+describes the exact same sequence — save the video buffer under the
+cursor's new position, then blit the cursor sprite with a
+transparent color key. `sub_238CD` implements the identical
+save+blit sequence via two helper calls instead of inline code, the
+same "recompiled into a different overlay segment" duplication
+pattern seen repeatedly this session (`DrawShadowedText`/`Alt`,
+`ConfirmContainerInteraction`/`ConfirmAlchemyInteraction`,
+`SetPaletteToWhite`/`Alt`, etc). This also explains the huge
+264-reference count: it's the *other* overlay segment's copy of the
+single most pervasive per-event call in the game.
+
+Named `sub_238CD` -> `DrawMouseCursorAlt`, `sub_2391C` ->
+`SaveCursorBackgroundPixels` (copies the 16×16-pixel VGA region
+under the cursor into the fixed save buffer), and `sub_23965` ->
+`BlitCursorSprite` (blits the 16×16 cursor sprite with `0xFF` as the
+transparent color key).
+
+677 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

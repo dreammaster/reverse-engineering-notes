@@ -6555,8 +6555,10 @@ static Bytes_2(void) {
 	create_insn	(x=0X238BD);
 	op_hex		(x,	1);
 	create_insn	(0X238C6);
+	set_cmt	(0X238CD,	"Overlay-segment duplicate of DrawMouseCursor's inline cursor-position-sync logic: if word_3195C bit 0x1 is set and bit 0x2 isn't, caches the new cursor position and calls SaveCursorBackgroundPixels + BlitCursorSprite. Called from dozens of sites (264 refs) throughout the game -- the other overlay segment's copy of the same per-event cursor-draw call DrawMouseCursor itself handles inline.",	0);
 	create_insn	(x=0X238CD);
 	op_hex		(x,	1);
+	set_name	(0X238CD,	"DrawMouseCursorAlt");
 	create_insn	(x=0X238D5);
 	op_hex		(x,	1);
 	create_insn	(x=0X238DB);
@@ -6567,15 +6569,19 @@ static Bytes_2(void) {
 	create_insn	(x=0X23904);
 	op_hex		(x,	1);
 	create_insn	(0X2390D);
+	set_cmt	(0X2391C,	"Copies the 16x16-pixel VGA region at the cached cursor position into the fixed save buffer at 0xE0E (stride 0x140 per row, clipped to 320x200). Called from DrawMouseCursorAlt.",	0);
 	create_insn	(0X2391C);
+	set_name	(0X2391C,	"SaveCursorBackgroundPixels");
 	create_insn	(x=0X23923);
 	op_hex		(x,	1);
 	create_insn	(x=0X23938);
 	op_seg		(x,	1);
 	create_insn	(x=0X23959);
 	op_hex		(x,	1);
+	set_cmt	(0X23965,	"Blits the 16x16 cursor sprite bitmap (source 0x3FE6) onto VGA memory at the cached cursor position, 0xFF as the transparent color key, clipped to the screen edge. Called from DrawMouseCursorAlt.",	0);
 	create_insn	(x=0X23965);
 	op_hex		(x,	1);
+	set_name	(0X23965,	"BlitCursorSprite");
 	create_insn	(0X2396E);
 	create_insn	(0X239AE);
 	set_cmt	(0X239CD,	"Clamps an accumulated drag position (word_2E782/word_2E784) within bounds, then offsets by (8,8) unless the held item type (word_31946) is 0 or 0x1D -- plausibly the cursor position used to draw a held/dragged item. Referenced from a data/jump table in seg073.",	0);
@@ -6591,6 +6597,15 @@ static Bytes_2(void) {
 	set_cmt	(0X23A64,	"stpcpy(dest=bx, src=ax): copies src including its null terminator into dest; returns bx = pointer to the copied terminator (ready for a further append).",	0);
 	create_insn	(0X23A64);
 	set_name	(0X23A64,	"StpCpy");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23A6B);
 	op_seg		(x,	1);
 	set_cmt	(0X23A7C,	"Draws a string (bx) with the first character in word_2E412's color and the rest in word_2E414's -- a highlighted-hotkey-letter label style. Called from sub_193BE and sub_23C18.",	0);
@@ -6606,15 +6621,6 @@ static Bytes_2(void) {
 	set_cmt	(0X23B19,	"Generic status-panel message display: sets position (0xF0,0x60) and colors, clears the panel if dirty, restores cursor background if dirty, then DrawStringColumn(bx, cx) + DrawMouseCursor + sub_238CD. Callers pass bx=message pointer, cx=line count. Confirmed uses: 'NOTHING HERE' (1 line, after a failed search) and 'YOU ARE NOT'/'YET READY!' (2 lines, after a quest-flag gate). Called from `start`.",	0);
 	create_insn	(0X23B19);
 	set_name	(0X23B19,	"ShowStatusPanelMessage");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X23B43);
 	op_hex		(x,	1);
 	create_insn	(0X23B5E);
@@ -8322,6 +8328,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X296EE);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X296F4);
 	create_insn	(x=0X296F8);
 	op_hex		(x,	1);
@@ -8367,15 +8382,6 @@ static Bytes_3(void) {
 	set_cmt	(0X29878,	"Core picture-drawing primitive: looks up g_pictureDir[word_2E532], calls LoadPictureIntoEms to ensure it's EMS-resident, then blits width x height pixels from the EMS page frame to the video buffer at (x, y). Blit mode selected by _font_bgTransparent (0-5 -- different transparency/color-key branches).",	0);
 	create_insn	(0X29878);
 	set_name	(0X29878,	"DrawPicture");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29882);
 	op_hex		(x,	1);
 	create_insn	(x=0X29888);
@@ -11180,6 +11186,15 @@ static Bytes_4(void) {
 	set_name	(0X35B1C,	"aDoYouWantToSel");
 	create_strlit	(0X35B38,	0XD);
 	set_name	(0X35B38,	"aYourAttempt");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35B45,	0XA);
 	set_name	(0X35B45,	"aToRepair");
 	create_strlit	(0X35B4F,	0XD);
@@ -11240,15 +11255,6 @@ static Bytes_4(void) {
 	set_name	(0X35CB5,	"aCleric");
 	create_strlit	(0X35CC0,	0XB);
 	set_name	(0X35CC0,	"aTransmuter");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35CCB,	0XB);
 	set_name	(0X35CCB,	"aCavalier");
 	create_strlit	(0X35CD6,	0XB);
