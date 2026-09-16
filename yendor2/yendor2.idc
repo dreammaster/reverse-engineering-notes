@@ -10439,7 +10439,9 @@ static Bytes_5(void) {
 	create_word	(0X2E382);
 	set_name	(0X2E382,	"_font_bgColor");
 	create_word	(0X2E384);
+	set_name	(0X2E384,	"g_mapEditorWallType");
 	create_word	(0X2E386);
+	set_name	(0X2E386,	"g_mapEditorFloorType");
 	create_word	(0X2E388);
 	set_name	(0X2E388,	"x");
 	create_word	(0X2E38A);
@@ -10559,6 +10561,7 @@ static Bytes_5(void) {
 	create_word	(0X2E542);
 	set_name	(0X2E542,	"_val24");
 	create_word	(0X2E544);
+	set_name	(0X2E544,	"g_attacksRemaining");
 	create_word	(0X2E546);
 	set_name	(0X2E546,	"g_currentItemRecord");
 	create_word	(0X2E548);
@@ -10597,7 +10600,9 @@ static Bytes_5(void) {
 	make_array	(0X2E77C,	0X4);
 	create_word	(0X2E780);
 	create_word	(0X2E782);
+	set_name	(0X2E782,	"g_dragCursorX");
 	create_word	(0X2E784);
+	set_name	(0X2E784,	"g_dragCursorY");
 	set_cmt	(0X2E786,	"80 x 0x9C-byte monster records (per-level monster pool, feeding the 3-slot g_monsterSlots active-combat array). Same record stride and [+0xC] flag conventions as g_monsterSlots.",	0);
 	set_name	(0X2E786,	"g_levelMonsters");
 	create_word	(0X31946);
@@ -10677,6 +10682,7 @@ static Bytes_5(void) {
 	set_name	(0X328FA,	"g_wipeEffectX");
 	create_word	(0X328FC);
 	create_word	(0X328FE);
+	set_name	(0X328FE,	"g_clueBookIconSelectionMask");
 	create_word	(0X32900);
 	set_name	(0X32900,	"g_wipeEffectY");
 	create_word	(0X32902);
@@ -10714,6 +10720,7 @@ static Bytes_5(void) {
 	set_name	(0X32936,	"_videoSegment");
 	create_word	(0X32938);
 	create_word	(0X3293A);
+	set_name	(0X3293A,	"g_pagedEntryIndex");
 	create_word	(0X3293C);
 	create_word	(0X3293E);
 	create_word	(0X32940);
@@ -10752,6 +10759,7 @@ static Bytes_5(void) {
 	create_word	(0X3297A);
 	create_word	(0X3297C);
 	create_word	(0X3297E);
+	set_name	(0X3297E,	"g_forcedMusicTrack");
 	create_word	(0X32980);
 	create_word	(0X32982);
 	create_word	(0X32984);
@@ -10940,6 +10948,7 @@ static Bytes_5(void) {
 	create_word	(0X33304);
 	create_word	(0X33306);
 	create_word	(0X3330A);
+	set_name	(0X3330A,	"g_clueBookClassId");
 	create_word	(0X3330C);
 	create_word	(0X3330E);
 	create_word	(0X33310);
@@ -11917,6 +11926,7 @@ static Bytes_5(void) {
 	set_name	(0X3685B,	"curGame");
 	create_word	(0X3685D);
 	create_word	(0X3685F);
+	set_name	(0X3685F,	"g_exploredMapBitmapBase");
 	create_word	(0X36861);
 	create_word	(0X36863);
 	set_name	(0X36863,	"g_groundItemSlotRecord");
@@ -11968,7 +11978,9 @@ static Bytes_5(void) {
 	create_word	(0X36C9D);
 	create_word	(0X36CA5);
 	create_word	(0X36CA7);
+	set_name	(0X36CA7,	"g_mapRevealAreaTier");
 	create_word	(0X36CA9);
+	set_name	(0X36CA9,	"g_monsterDetailRevealTier");
 	create_word	(0X36CAF);
 	create_word	(0X36CB1);
 	create_word	(0X36CB3);
@@ -11998,10 +12010,15 @@ static Bytes_5(void) {
 	create_word	(0X36D01);
 	set_name	(0X36D01,	"g_gameClockMinutes");
 	create_word	(0X36D03);
+	set_name	(0X36D03,	"g_partyRoleAssignment1");
 	create_word	(0X36D05);
+	set_name	(0X36D05,	"g_partyRoleAssignment2");
 	create_word	(0X36D07);
+	set_name	(0X36D07,	"g_partyRoleAssignment3");
 	create_word	(0X36D09);
+	set_name	(0X36D09,	"g_partyRoleAssignment4");
 	create_word	(0X36D0B);
+	set_name	(0X36D0B,	"g_partyRoleAssignment5");
 	set_cmt	(0X36D13,	"Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per-tier cost table at DS:0xCB2), credited by TrySellItemForGold (sells a held item of a matching type), and also touched by ApplyEffectCost's trap/status-effect cost dispatch alongside the two ore counters (0x94B7/0x94BB).",	0);
 	create_word	(0X36D13);
 	set_name	(0X36D13,	"g_partyGold");

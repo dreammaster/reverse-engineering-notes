@@ -173828,3 +173828,38 @@ total names seen: 1491, matched default pattern: 0
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor2\yendor2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'rename_globals_round5.py']
+[*] reading rename_globals_round5.py
+[*] executing rename_globals_round5.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x36ca7  'word_36CA7' -> 'g_mapRevealAreaTier': ok
+0x36ca9  'word_36CA9' -> 'g_monsterDetailRevealTier': ok
+0x3297e  'word_3297E' -> 'g_forcedMusicTrack': ok
+0x36d03  'word_36D03' -> 'g_partyRoleAssignment1': ok
+0x36d05  'word_36D05' -> 'g_partyRoleAssignment2': ok
+0x36d07  'word_36D07' -> 'g_partyRoleAssignment3': ok
+0x36d09  'word_36D09' -> 'g_partyRoleAssignment4': ok
+0x36d0b  'word_36D0B' -> 'g_partyRoleAssignment5': ok
+0x3330a  'word_3330A' -> 'g_clueBookClassId': ok
+0x3293a  'word_3293A' -> 'g_pagedEntryIndex': ok
+0x2e386  'word_2E386' -> 'g_mapEditorFloorType': ok
+0x2e384  'word_2E384' -> 'g_mapEditorWallType': ok
+0x2e544  'word_2E544' -> 'g_attacksRemaining': ok
+0x3685f  'word_3685F' -> 'g_exploredMapBitmapBase': ok
+0x2e782  'word_2E782' -> 'g_dragCursorX': ok
+0x2e784  'word_2E784' -> 'g_dragCursorY': ok
+0x328fe  'word_328FE' -> 'g_clueBookIconSelectionMask': ok
+----- end target script output -----
+[*] finished executing rename_globals_round5.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106988
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

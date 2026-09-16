@@ -264,7 +264,7 @@ self-contained UI cluster and named it with real confidence
 (`ida_scripts/name_paged_screen.py`): `ShowPagedEntryScreen` (0x132F2,
 top-level: shows one entry + scroll-arrow state + fade transition),
 `UpdateScrollArrows` (0x138C0: shows/hides two arrow glyphs depending on
-whether the current page index `word_3293A` is at the first/last of up
+whether the current page index `g_pagedEntryIndex` is at the first/last of up
 to 31 entries, then loads that entry via `FileEntry_Read` and draws its
 icon+message), `DrawMessageBox` (0x150E5: draws a box then two lines of
 text). Exact content type (book/sign text vs. a spell/item catalog)
@@ -872,7 +872,7 @@ rendering code.
 `MarkCellExplored`'s reveal action, `PersistExploredCell` (was
 `sub_21CC2`), turned out to be about *persistence* rather than
 rendering: it writes the explored-cell bit directly into `CURGAME`
-(bit-packed, byte = x/8 + `word_3685F`, bit = x%8) — the automap survives
+(bit-packed, byte = x/8 + `g_exploredMapBitmapBase`, bit = x%8) — the automap survives
 save/load because it's stored in the savegame itself, not kept in
 memory only.
 
@@ -1191,7 +1191,7 @@ record matches a `g_partySlotAssignment` slot.
 With monster slots identified, `DrawMonsterInfoPanels`/
 `DrawMonsterInfoPanel` (was `sub_232A8`/`sub_234D3`) now make sense as
 a monster info display gated by the party's average "identify" stat
-(`word_36CA9`) from two rounds ago — restoring that original hypothesis
+(`g_monsterDetailRevealTier`) from two rounds ago — restoring that original hypothesis
 on firmer ground, just wrong before about *why* there were exactly 3
 slots.
 
@@ -1844,7 +1844,7 @@ whole clock-system investigation this round.
 
 ### 2026-09-15 session update, continued: confirmed the music-override handoff
 
-Checked `word_3297E` (the "forced track" override `UpdateAmbientMusic`
+Checked `g_forcedMusicTrack` (the "forced track" override `UpdateAmbientMusic`
 respects) at its other write sites: `RunTitleScreen` forces title
 music on entry and clears the override right at its `E`
 ("Enter"/leave-title-screen) exit — handing control to the ambient
@@ -3720,7 +3720,7 @@ function draws the 6 core attributes and the still-mysterious
 in the same visual list, slots 7-9, without resolving what they are),
 and a 13-entry derived-stat column (`+0x58`-`+0x70`) in the other,
 where the last 5 entries highlight when this character holds one of 5
-globally-assigned party roles (`word_36D03`/`05`/`07`/`09`/`0B`) — a
+globally-assigned party roles (`g_partyRoleAssignment1`/`05`/`07`/`09`/`0B`) — a
 solid new lead for eventually naming those fields (navigator, mapper,
 barterer, etc., per the attribute/skill string survey from early in
 the session).
@@ -4713,7 +4713,7 @@ Named `sub_13C86` -> `DrawLabeledNumberRow`, called from
 `ShowClueBookSpellDetail` (for its "MP:"/"NUORE:"/"ORE:" cost-field
 rows) and from sibling `sub_13C1D` (using it for a fixed value of `1`
 with a special highlight color, gated on a 2-entry class-id match
-against `word_3330A` — plausibly part of the documented "6-class
+against `g_clueBookClassId` — plausibly part of the documented "6-class
 eligibility marker row"). A generic row-drawing primitive: writes a
 caller-preset string at `x=0x7A`, a `FormatNumber`+
 `StripCommasAndSpaces`'d number at `x=0x68`, writes again at `x=0x2C`,
@@ -4730,11 +4730,11 @@ traced.
 Named two more `ShowClueBookSpellDetail` helpers built on
 `DrawLabeledNumberRow`. `sub_13C4B` -> `DrawSpellLevelForCurrentClass`:
 searches a 20-level × 2-class-slot table for a match against the
-current class id (`word_3330A`), and on a match draws the matched
+current class id (`g_clueBookClassId`), and on a match draws the matched
 level via `DrawLabeledNumberRow` with a fixed "LEVEL:" label —
 resolving the documented "LEVEL:" field's mechanism. `sub_13C1D` ->
 `DrawClassEligibilityMarker`: checks a 2-entry candidate array against
-the same `word_3330A` and, on a match, draws a fixed `1` in a
+the same `g_clueBookClassId` and, on a match, draws a fixed `1` in a
 highlight color — plausibly one cell of the documented "6-class
 eligibility marker row." Both round out the spell-detail screen's
 per-field drawing logic.
@@ -4826,7 +4826,7 @@ after removing thousands separators). `sub_2572C` ->
 zero-padded sibling of `FormatNumberCompact`. `sub_239CD` ->
 `ClampDragCursorPosition` (referenced from a data/jump table in
 `seg073`, not a direct call): clamps an accumulated drag position
-(`word_2E782`/`word_2E784`) within bounds, then offsets it by `(8,8)`
+(`g_dragCursorX`/`g_dragCursorY`) within bounds, then offsets it by `(8,8)`
 unless the currently-held item type (`g_heldItemType`) is `0` (none) or
 `0x1D` (a specific item type that apparently doesn't need the hotspot
 offset) — plausibly the cursor position used to draw a held/dragged
@@ -4837,12 +4837,12 @@ item.
 ### 2026-09-15 session update, continued: DrawMapEditorCoordinateReadout
 
 Named `sub_2044C` -> `DrawMapEditorCoordinateReadout`, called from
-`RunMapEditorScreen` at multiple points: draws `word_2E384`,
+`RunMapEditorScreen` at multiple points: draws `g_mapEditorWallType`,
 zero-padded via `FormatNumberZeroPadded`, at a fixed screen position
 `(4,1)`, then skips the first 2 characters of the formatted result
 before drawing — plausibly trimming a fixed-width zero-padded value
 down to its last 2 significant digits. A small coordinate/position
-readout in the editor's corner; the exact field `word_2E384`
+readout in the editor's corner; the exact field `g_mapEditorWallType`
 represents (row, column, or cursor index) isn't confirmed. Also
 looked at `sub_22989` (called from unnamed `sub_2278C`, combines
 `PickRandomActivePartyMember`, the still-open `+0x50` field from the
@@ -5365,7 +5365,7 @@ current context; the exact per-bit "why unavailable" reason is not
 confirmed.
 
 Named `sub_2047B` -> `DrawMapEditorFloorTypeReadout`, called from
-`RunMapEditorScreen`: draws `word_2E386` (the map editor's
+`RunMapEditorScreen`: draws `g_mapEditorFloorType` (the map editor's
 currently-selected floor tile type — confirmed by existing comments
 as set by the 'F' picker handler and consumed by
 `DrawFloorTypeLegendRow`) zero-padded at a fixed top-of-screen
@@ -6876,6 +6876,73 @@ the ones just renamed. Also checked `word_332E8`/`word_332E0` (values
 latched into the attack-staging pair) and `word_31980`/`word_2E412`
 (no supporting documentation beyond raw reference counts) — none had
 enough confirmed evidence to name yet.
+
+### 2026-09-16 session update, continued: global variable renaming, round 5
+
+The pure frequency-count candidate list is now mostly exhausted, so
+this round pushed into globals with only partial existing
+documentation, cross-referencing multiple scattered mentions (and one
+disassembly read) to confirm each before renaming. 17 more globals:
+- `word_36CA7` → **`g_mapRevealAreaTier`**, `word_36CA9` →
+  **`g_monsterDetailRevealTier`**: two of the three "party-average
+  derived stat" tiered systems file-formats.md documents (`+0x58`/
+  `+0x64`/`+0x66`, each averaged by `UpdatePartyAverageStatTiers`).
+  `+0x66`'s average gates `RevealMapRegion`'s reveal-area size (a
+  Locate/Scout/Magic-Mapping-style ability); `+0x58`'s average gates
+  progressively-revealed monster-detail icons in
+  `DrawMonsterInfoPanel` (a perception/identify-style stat). Both
+  explicitly called "now on solid ground" in file-formats.md. Left the
+  third of the trio, `word_36CA5` (`+0x64`'s average, feeding the
+  minimap/lighting bitfield `word_36C7F`), unrenamed — its underlying
+  real-world identity (torch fuel vs. mapping) is still flagged as an
+  unconfirmed guess.
+- `word_3297E` → **`g_forcedMusicTrack`**: the "forced track" override
+  `UpdateAmbientMusic` checks (`0` = let the ambient day/night system
+  choose); `RunTitleScreen` sets it to `1` on entry, clears it to `0`
+  on exit, and it's briefly forced to `0` (silence) during character
+  creation.
+- `word_36D03`/`05`/`07`/`09`/`0B` → **`g_partyRoleAssignment1`..`5`**:
+  a confirmed 5-slot array, each holding the roster-slot number of
+  whichever party member currently holds one of 5 assignable practical
+  roles; `DrawCharacterStatSheet` highlights a character's derived-stat
+  field when their own slot number matches. Individual role-to-name
+  mapping isn't confirmed, only the "5 assignable roles" array shape.
+- `word_3330A` → **`g_clueBookClassId`**: the current class id
+  `ShowClueBookSpellDetail`'s helpers compare against for the
+  spell-detail screen's per-class level/eligibility display.
+- `word_3293A` → **`g_pagedEntryIndex`**: the current page index for
+  the generic `ShowPagedEntryScreen` paginated single-entry viewer.
+- `word_2E386` → **`g_mapEditorFloorType`**, `word_2E384` →
+  **`g_mapEditorWallType`**: the map legend editor's currently-selected
+  floor/wall tile type numbers.
+- `word_2E544` → **`g_attacksRemaining`**: the "attempts left"
+  multi-shot attack counter, decremented per hit that doesn't kill the
+  target, continuing the ranged/spell-cast attack loop to the next
+  depth row.
+- `word_3685F` → **`g_exploredMapBitmapBase`**: the base offset
+  `PersistExploredCell` adds to (`x/8`) to compute the `CURGAME` byte
+  offset for the bit-packed "explored" automap bitmap — why the automap
+  survives save/load.
+- `word_2E782` → **`g_dragCursorX`**, `word_2E784` → **`g_dragCursorY`**:
+  the accumulated drag-cursor position `ClampDragCursorPosition` clamps
+  and offsets by `(8,8)` for the held/dragged item's draw position;
+  confirmed `cx`/`dx` (x/y) register usage by reading the actual
+  disassembly.
+- `word_328FE` → **`g_clueBookIconSelectionMask`**: a bit-per-icon
+  toggle mask for the clue book's clickable sub-icon selector strip,
+  shared by `RunClueBookItemCategory`/`RunClueBookWeaponCategory`.
+
+Also took a fresh, harder look at the big multi-purpose bitfields
+(`word_328C4`/`C6`/`C8`/`CA`/`CC`) to see if any had a coherent enough
+theme to name as a group. They don't: `word_328C6` was already
+explicitly flagged several rounds ago as "a broad flags word reused by
+many unrelated subsystems" (confirmed again here — its bit 0 controls
+`DrawPicture`'s masked-blit prep, completely unrelated to its other
+shop/inventory-mode bits), and `word_328C4`/`word_328C8` similarly mix
+command-line startup switches, pause-menu label suppression, combat-mode
+selection, and item-consumption parameters under one address. Naming
+these as a group would misrepresent them as having one purpose: left
+alone, same as previous rounds.
 
 ## Next steps (not started this session)
 

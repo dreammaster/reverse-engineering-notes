@@ -222,16 +222,16 @@ into `g_shadeShiftDelta` (the shade delta `DrawPicture`/
 walls, monsters, floor, and ceiling consistently by depth row (see
 the `RenderDungeonViewport` correction below for detail). Where the
 gradient values themselves get computed isn't traced yet; `+0x66` →
-`word_36CA7`, gating a 4-tier area size in
+`g_mapRevealAreaTier`, gating a 4-tier area size in
 `RevealMapRegion` (**correction**: previously guessed "plausibly
 weather" — traced further and it's a `Locate`/`Scout`/`Magic-Mapping`-
 style special ability that reads `WORLD.DAT`/`CURGAME` directly and
-reveals a `word_36CA7`-sized box of the map around the player, not a
+reveals a `g_mapRevealAreaTier`-sized box of the map around the player, not a
 visual weather effect). `RevealMapRegion` also calls
 `TryTravelToClickedMapCell`: click a cell within the revealed area
 (gated on that cell's "explored" bit) to instantly travel/teleport the
 party there — a scry-then-teleport interaction consistent with a
-Locate/Scout/Magic-Mapping ability; `+0x58` → `word_36CA9`, gating progressively-
+Locate/Scout/Magic-Mapping ability; `+0x58` → `g_monsterDetailRevealTier`, gating progressively-
 revealed detail icons in `DrawMonsterInfoPanel` (**correction, round
 2**: the "3 fixed addresses" turned out to be `g_monsterSlots` — 3
 active-combat monster records, found via `BuildCombatTurnOrder` — so
@@ -326,8 +326,8 @@ derived stats, `+0x58` through `+0x70` — confirming `ComputeDerivedCharacterSt
 block extends that far — and the *last 5* of them (`+0x68`/`+0x6A`/
 `+0x6C`/`+0x6E`/`+0x70`) get a highlight color specifically when this
 character's own roster-slot number matches one of 5 global "assigned
-role" slots (`word_36D03`/`word_36D05`/`word_36D07`/`word_36D09`/
-`word_36D0B`) — consistent with practical party-role skills (a
+role" slots (`g_partyRoleAssignment1`/`g_partyRoleAssignment2`/`g_partyRoleAssignment3`/`g_partyRoleAssignment4`/
+`g_partyRoleAssignment5`) — consistent with practical party-role skills (a
 designated navigator, mapper, barterer, etc., per the earlier
 attribute/skill string survey) where the game highlights whichever
 character currently holds that role. Individual field-to-skill-name
@@ -839,7 +839,7 @@ field row is drawn via `DrawLabeledNumberRow` (was `sub_13C86`) — a
 generic "label, formatted number, label again, next line" primitive.
 The "LEVEL:" field itself is resolved by `DrawSpellLevelForCurrentClass`
 (was `sub_13C4B`): searches a 20-level × 2-class-slot table for a
-match against the current class id (`word_3330A`) and draws the
+match against the current class id (`g_clueBookClassId`) and draws the
 matched level. Each cell of the eligibility row is drawn by
 `DrawClassEligibilityMarker` (was `sub_13C1D`): a fixed value of `1`
 in a highlight color when a 2-entry candidate array matches the same
@@ -927,7 +927,7 @@ the generic fields; `RunClueBookWeaponCategory` (subtype 8) similarly
 adds `ShowWeaponDetailRow` ("DAMAGE:" and "2-HANDED: YES/NO"); both
 end with `DrawSubIconSelectorRow`, drawing the clickable sub-icon
 indicator strip (region table `0x6976`, the same table
-`RunClueBookItemCategory` hit-tests, toggled by `word_328FE` bits). Both
+`RunClueBookItemCategory` hit-tests, toggled by `g_clueBookIconSelectionMask` bits). Both
 also call `ListCompatibleClueBookItems` (was `sub_1472A`, using the
 same `0x6976` table/position): checks the current entry's usability
 flags, and if eligible, scans up to 9 more catalog ids re-checking the
@@ -1090,7 +1090,7 @@ otherwise documented) hosts a wall/floor legend editor:
 symmetric pair of numeric-entry fields (via `ReadTypedInteger`, was
 `sub_1D146` — a generic typed-integer prompt built on `EditTextField`,
 reused 7 times) storing a wall/floor type number into
-`word_2E384`/`word_2E386`, then
+`g_mapEditorWallType`/`g_mapEditorFloorType`, then
 redrawing the corresponding legend row (`DrawWallTypeLegendRow`/
 `DrawFloorTypeLegendRow`). One error path in the floor field falls
 through into the wall field, suggesting Tab-style navigation between
@@ -1302,7 +1302,7 @@ sequence**: `HighlightSelectedAbilityIcon` then the *identical*
 row-by-row `AnimateProjectileStep`/`ClassifyObstacleAtViewportRow`
 scan the ranged-weapon branch uses — both paths converge into the same
 code. On a hit that doesn't kill the target but the shooter has more
-attempts left (`word_2E544`, decremented via `sub_1DCC6`), the loop
+attempts left (`g_attacksRemaining`, decremented via `sub_1DCC6`), the loop
 continues to the next depth row automatically — a multi-shot
 continuation for characters with more than one attack. All paths
 converge on a common epilogue: if the loot-staging counter (`0x51B6`)
@@ -2111,7 +2111,7 @@ not fully decoded), and `UpdateAmbientMusic` — the 5th sub-task
 (`word_32958`, ~1-second period), which switches between day and night
 background music tracks based on `g_gameClockMinutes` (the clock) falling
 inside or outside `[0x1A4, 0x474]` (7:00 AM–7:00 PM), via the
-already-named `PlayMusicTrack`. `word_3297E` is the "forced track"
+already-named `PlayMusicTrack`. `g_forcedMusicTrack` is the "forced track"
 override this checks (0 = let the ambient day/night system choose):
 `RunTitleScreen` sets it to `1` (title music) on entry and clears it
 to `0` right at its `E` ("Enter"/leave-the-title-screen) exit point,
