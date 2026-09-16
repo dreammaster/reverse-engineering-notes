@@ -45792,7 +45792,7 @@ loc_29635:                              ; CODE XREF: HandleGameCommand+67↑j
                 jnz     short loc_29652
 
 loc_2964C:                              ; CODE XREF: HandleGameCommand+99↑j
-                call    sub_2AA58
+                call    CastSpell
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -45802,7 +45802,7 @@ loc_29652:                              ; CODE XREF: HandleGameCommand+92↑j
                 jl      short loc_29666
                 cmp     word_32974, 46h ; 'F'
                 jg      short loc_29666
-                call    sub_2A9AD
+                call    RestCharacter
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -48491,15 +48491,15 @@ sub_2A982       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A9AD       proc far                ; CODE XREF: HandleGameCommand+B8↑P
-                call    sub_21C79
+RestCharacter   proc far                ; CODE XREF: HandleGameCommand+B8↑P
+                call    sub_21C79       ; Rest/regeneration: if a time-of-day check on [si+0xE] (si=party member) fails, sets a 'resting'-ish flag ([si+0x1C] |= 0x8000) instead. Otherwise regenerates one of two stats (current/max at +0x52/+0x92 or +0x54/+0x94, selected by a flag on the target) by a percentage of max, capped at max. Matches the manual's 'R rest (1 food per person needed)'.
                 call    sub_2AD94
                 cmp     ax, 0
                 jnz     short loc_2A9BD
                 jmp     loc_2AA47
 ; ---------------------------------------------------------------------------
 
-loc_2A9BD:                              ; CODE XREF: sub_2A9AD+B↑j
+loc_2A9BD:                              ; CODE XREF: RestCharacter+B↑j
                 mov     si, word_328D4
                 mov     bx, word_2E548
                 test    word ptr [bx+2], 8000h
@@ -48512,15 +48512,15 @@ loc_2A9BD:                              ; CODE XREF: sub_2A9AD+B↑j
                 jle     short loc_2A9DF
                 sub     ax, 0Ah
 
-loc_2A9DF:                              ; CODE XREF: sub_2A9AD+25↑j
-                                        ; sub_2A9AD+2D↑j
+loc_2A9DF:                              ; CODE XREF: RestCharacter+25↑j
+                                        ; RestCharacter+2D↑j
                 cmp     ax, 4
                 jge     short loc_2A9EB
                 or      word ptr [si+1Ch], 8000h
                 jmp     short loc_2AA2B
 ; ---------------------------------------------------------------------------
 
-loc_2A9EB:                              ; CODE XREF: sub_2A9AD+35↑j
+loc_2A9EB:                              ; CODE XREF: RestCharacter+35↑j
                 mov     ax, [si+94h]
                 mul     word ptr [bx+4]
                 mov     bx, 64h ; 'd'
@@ -48531,12 +48531,12 @@ loc_2A9EB:                              ; CODE XREF: sub_2A9AD+35↑j
                 jle     short loc_2AA07
                 mov     ax, [si+94h]
 
-loc_2AA07:                              ; CODE XREF: sub_2A9AD+54↑j
+loc_2AA07:                              ; CODE XREF: RestCharacter+54↑j
                 mov     [si+54h], ax
                 jmp     short loc_2AA2B
 ; ---------------------------------------------------------------------------
 
-loc_2AA0C:                              ; CODE XREF: sub_2A9AD+1D↑j
+loc_2AA0C:                              ; CODE XREF: RestCharacter+1D↑j
                 mov     ax, [si+92h]
                 mul     word ptr [bx+4]
                 mov     bx, 64h ; 'd'
@@ -48547,11 +48547,11 @@ loc_2AA0C:                              ; CODE XREF: sub_2A9AD+1D↑j
                 jle     short loc_2AA28
                 mov     ax, [si+92h]
 
-loc_2AA28:                              ; CODE XREF: sub_2A9AD+75↑j
+loc_2AA28:                              ; CODE XREF: RestCharacter+75↑j
                 mov     [si+52h], ax
 
-loc_2AA2B:                              ; CODE XREF: sub_2A9AD+3C↑j
-                                        ; sub_2A9AD+5D↑j
+loc_2AA2B:                              ; CODE XREF: RestCharacter+3C↑j
+                                        ; RestCharacter+5D↑j
                 or      word_328C8, 20h
                 call    sub_274B4
                 call    sub_2ADD0
@@ -48559,19 +48559,19 @@ loc_2AA2B:                              ; CODE XREF: sub_2A9AD+3C↑j
                 call    sub_175F4
                 call    DrawMouseCursor
 
-loc_2AA47:                              ; CODE XREF: sub_2A9AD+D↑j
+loc_2AA47:                              ; CODE XREF: RestCharacter+D↑j
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_238CD
                 retf
-sub_2A9AD       endp
+RestCharacter   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AA58       proc far                ; CODE XREF: HandleGameCommand:loc_2964C↑P
-                mov     bx, word_2E548
+CastSpell       proc far                ; CODE XREF: HandleGameCommand:loc_2964C↑P
+                mov     bx, word_2E548  ; Spell dispatch on word_32974 (0x12-0x1D range). Gates on target validity flags (word_2E548's +0 bits 1/2). 0x12/0x13: heal [si+0x52] (HP-like stat) by 25%/50% of the missing amount, capped at [si+0x92] max -- minor/major heal. Other codes (0x14/0x17/0x18/0x1D) not yet traced. Matches the manual's 'C cast spell'.
                 test    word ptr [bx], 2
                 jnz     short loc_2AA86
                 test    word ptr [bx], 1
@@ -48579,24 +48579,24 @@ sub_2AA58       proc far                ; CODE XREF: HandleGameCommand:loc_2964C
                 jmp     loc_2ACD0
 ; ---------------------------------------------------------------------------
 
-loc_2AA6B:                              ; CODE XREF: sub_2AA58+E↑j
+loc_2AA6B:                              ; CODE XREF: CastSpell+E↑j
                 cmp     word_32974, 1Ch
                 jnz     short loc_2AA75
                 jmp     loc_2AB8A
 ; ---------------------------------------------------------------------------
 
-loc_2AA75:                              ; CODE XREF: sub_2AA58+18↑j
-                                        ; sub_2AA58+39↓j ...
+loc_2AA75:                              ; CODE XREF: CastSpell+18↑j
+                                        ; CastSpell+39↓j ...
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2AA86:                              ; CODE XREF: sub_2AA58+8↑j
+loc_2AA86:                              ; CODE XREF: CastSpell+8↑j
                 call    sub_21C79
 
-loc_2AA8B:                              ; CODE XREF: sub_2AA58+8C↓j
+loc_2AA8B:                              ; CODE XREF: CastSpell+8C↓j
                 call    sub_2AD94
                 cmp     ax, 0
                 jz      short loc_2AA75
@@ -48607,52 +48607,52 @@ loc_2AA8B:                              ; CODE XREF: sub_2AA58+8C↓j
                 jmp     short loc_2AAD6
 ; ---------------------------------------------------------------------------
 
-loc_2AAA5:                              ; CODE XREF: sub_2AA58+49↑j
+loc_2AAA5:                              ; CODE XREF: CastSpell+49↑j
                 cmp     word_32974, 13h
                 jnz     short loc_2AAAE
                 jmp     short loc_2AB14
 ; ---------------------------------------------------------------------------
 
-loc_2AAAE:                              ; CODE XREF: sub_2AA58+52↑j
+loc_2AAAE:                              ; CODE XREF: CastSpell+52↑j
                 cmp     word_32974, 14h
                 jnz     short loc_2AAB7
                 jmp     short loc_2AB31
 ; ---------------------------------------------------------------------------
 
-loc_2AAB7:                              ; CODE XREF: sub_2AA58+5B↑j
+loc_2AAB7:                              ; CODE XREF: CastSpell+5B↑j
                 cmp     word_32974, 1Dh
                 jnz     short loc_2AAC0
                 jmp     short loc_2AB3F
 ; ---------------------------------------------------------------------------
 
-loc_2AAC0:                              ; CODE XREF: sub_2AA58+64↑j
+loc_2AAC0:                              ; CODE XREF: CastSpell+64↑j
                 cmp     word_32974, 17h
                 jnz     short loc_2AACA
                 jmp     loc_2AB60
 ; ---------------------------------------------------------------------------
 
-loc_2AACA:                              ; CODE XREF: sub_2AA58+6D↑j
+loc_2AACA:                              ; CODE XREF: CastSpell+6D↑j
                 cmp     word_32974, 18h
                 jnz     short loc_2AAD4
                 jmp     loc_2AB78
 ; ---------------------------------------------------------------------------
 
-loc_2AAD4:                              ; CODE XREF: sub_2AA58+77↑j
+loc_2AAD4:                              ; CODE XREF: CastSpell+77↑j
                 jmp     short loc_2AA75
 ; ---------------------------------------------------------------------------
 
-loc_2AAD6:                              ; CODE XREF: sub_2AA58+4B↑j
+loc_2AAD6:                              ; CODE XREF: CastSpell+4B↑j
                 mov     ax, [si+92h]
                 cmp     ax, [si+52h]
                 jg      short loc_2AAE6
 
-loc_2AADF:                              ; CODE XREF: sub_2AA58+C3↓j
-                                        ; sub_2AA58+E0↓j ...
+loc_2AADF:                              ; CODE XREF: CastSpell+C3↓j
+                                        ; CastSpell+E0↓j ...
                 call    sub_1A5CC
                 jmp     short loc_2AA8B
 ; ---------------------------------------------------------------------------
 
-loc_2AAE6:                              ; CODE XREF: sub_2AA58+85↑j
+loc_2AAE6:                              ; CODE XREF: CastSpell+85↑j
                 shr     ax, 1
                 shr     ax, 1
                 add     ax, [si+52h]
@@ -48660,11 +48660,11 @@ loc_2AAE6:                              ; CODE XREF: sub_2AA58+85↑j
                 jle     short loc_2AAF7
                 mov     ax, [si+92h]
 
-loc_2AAF7:                              ; CODE XREF: sub_2AA58+99↑j
+loc_2AAF7:                              ; CODE XREF: CastSpell+99↑j
                 mov     [si+52h], ax
 
-loc_2AAFA:                              ; CODE XREF: sub_2AA58+D7↓j
-                                        ; sub_2AA58+E5↓j ...
+loc_2AAFA:                              ; CODE XREF: CastSpell+D7↓j
+                                        ; CastSpell+E5↓j ...
                 or      word_328C8, 20h
                 call    sub_274B4
                 call    sub_2ADD0
@@ -48673,7 +48673,7 @@ loc_2AAFA:                              ; CODE XREF: sub_2AA58+D7↓j
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
-loc_2AB14:                              ; CODE XREF: sub_2AA58+54↑j
+loc_2AB14:                              ; CODE XREF: CastSpell+54↑j
                 mov     ax, [si+92h]
                 cmp     ax, [si+52h]
                 jle     short loc_2AADF
@@ -48683,12 +48683,12 @@ loc_2AB14:                              ; CODE XREF: sub_2AA58+54↑j
                 jle     short loc_2AB2C
                 mov     ax, [si+92h]
 
-loc_2AB2C:                              ; CODE XREF: sub_2AA58+CE↑j
+loc_2AB2C:                              ; CODE XREF: CastSpell+CE↑j
                 mov     [si+52h], ax
                 jmp     short loc_2AAFA
 ; ---------------------------------------------------------------------------
 
-loc_2AB31:                              ; CODE XREF: sub_2AA58+5D↑j
+loc_2AB31:                              ; CODE XREF: CastSpell+5D↑j
                 mov     ax, [si+92h]
                 cmp     ax, [si+52h]
                 jle     short loc_2AADF
@@ -48696,7 +48696,7 @@ loc_2AB31:                              ; CODE XREF: sub_2AA58+5D↑j
                 jmp     short loc_2AAFA
 ; ---------------------------------------------------------------------------
 
-loc_2AB3F:                              ; CODE XREF: sub_2AA58+66↑j
+loc_2AB3F:                              ; CODE XREF: CastSpell+66↑j
                 mov     ax, [si+94h]
                 or      ax, ax
                 jz      short loc_2AADF
@@ -48708,44 +48708,44 @@ loc_2AB3F:                              ; CODE XREF: sub_2AA58+66↑j
                 jle     short loc_2AB5B
                 mov     ax, [si+94h]
 
-loc_2AB5B:                              ; CODE XREF: sub_2AA58+FD↑j
+loc_2AB5B:                              ; CODE XREF: CastSpell+FD↑j
                 mov     [si+54h], ax
                 jmp     short loc_2AAFA
 ; ---------------------------------------------------------------------------
 
-loc_2AB60:                              ; CODE XREF: sub_2AA58+6F↑j
+loc_2AB60:                              ; CODE XREF: CastSpell+6F↑j
                 mov     ax, [si+94h]
                 or      ax, ax
                 jnz     short loc_2AB6B
                 jmp     loc_2AADF
 ; ---------------------------------------------------------------------------
 
-loc_2AB6B:                              ; CODE XREF: sub_2AA58+10E↑j
+loc_2AB6B:                              ; CODE XREF: CastSpell+10E↑j
                 cmp     ax, [si+54h]
                 jg      short loc_2AB73
                 jmp     loc_2AADF
 ; ---------------------------------------------------------------------------
 
-loc_2AB73:                              ; CODE XREF: sub_2AA58+116↑j
+loc_2AB73:                              ; CODE XREF: CastSpell+116↑j
                 mov     [si+54h], ax
                 jmp     short loc_2AAFA
 ; ---------------------------------------------------------------------------
 
-loc_2AB78:                              ; CODE XREF: sub_2AA58+79↑j
+loc_2AB78:                              ; CODE XREF: CastSpell+79↑j
                 test    word ptr [si+1Ch], 0E000h
                 jnz     short loc_2AB82
                 jmp     loc_2AADF
 ; ---------------------------------------------------------------------------
 
-loc_2AB82:                              ; CODE XREF: sub_2AA58+125↑j
+loc_2AB82:                              ; CODE XREF: CastSpell+125↑j
                 and     word ptr [si+1Ch], 1FFFh
                 jmp     loc_2AAFA
 ; ---------------------------------------------------------------------------
 
-loc_2AB8A:                              ; CODE XREF: sub_2AA58+1A↑j
+loc_2AB8A:                              ; CODE XREF: CastSpell+1A↑j
                 call    sub_16EFA
 
-loc_2AB8F:                              ; CODE XREF: sub_2AA58+16E↓j
+loc_2AB8F:                              ; CODE XREF: CastSpell+16E↓j
                 mov     ax, word_36D0B
                 cmp     ax, 0
                 jnz     short loc_2ABAC
@@ -48757,8 +48757,8 @@ loc_2AB8F:                              ; CODE XREF: sub_2AA58+16E↓j
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
-loc_2ABAC:                              ; CODE XREF: sub_2AA58+13D↑j
-                                        ; sub_2AA58+14A↑j
+loc_2ABAC:                              ; CODE XREF: CastSpell+13D↑j
+                                        ; CastSpell+14A↑j
                 mov     word_32990, ax
                 mov     word_36D0B, ax
                 call    sub_25B14
@@ -48769,7 +48769,7 @@ loc_2ABAC:                              ; CODE XREF: sub_2AA58+13D↑j
                 jmp     short loc_2AB8F
 ; ---------------------------------------------------------------------------
 
-loc_2ABC8:                              ; CODE XREF: sub_2AA58+166↑j
+loc_2ABC8:                              ; CODE XREF: CastSpell+166↑j
                 cmp     word ptr [si+70h], 41h ; 'A'
                 jge     short loc_2ABDC
                 mov     bx, 7D7Eh
@@ -48778,7 +48778,7 @@ loc_2ABC8:                              ; CODE XREF: sub_2AA58+166↑j
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
-loc_2ABDC:                              ; CODE XREF: sub_2AA58+174↑j
+loc_2ABDC:                              ; CODE XREF: CastSpell+174↑j
                 call    sub_16EFA
                 mov     ax, 23h ; '#'
                 call    ShowConfirmPrompt
@@ -48790,7 +48790,7 @@ loc_2ABDC:                              ; CODE XREF: sub_2AA58+174↑j
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
-loc_2ABFB:                              ; CODE XREF: sub_2AA58+199↑j
+loc_2ABFB:                              ; CODE XREF: CastSpell+199↑j
                 mov     word_32904, 94BBh
                 mov     word_32906, 94B7h
                 mov     word_32908, 8D8Ch
@@ -48799,14 +48799,14 @@ loc_2ABFB:                              ; CODE XREF: sub_2AA58+199↑j
                 call    sub_19A7C
                 jnb     short loc_2AC4F
 
-loc_2AC1D:                              ; CODE XREF: sub_2AA58+1F5↓j
+loc_2AC1D:                              ; CODE XREF: CastSpell+1F5↓j
                 mov     bx, 802Bh
                 mov     cx, 4
                 call    sub_29461
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
-loc_2AC2B:                              ; CODE XREF: sub_2AA58+194↑j
+loc_2AC2B:                              ; CODE XREF: CastSpell+194↑j
                 mov     word_32904, 94B7h
                 mov     word_32906, 94BBh
                 mov     word_32908, 7D2Ch
@@ -48817,8 +48817,8 @@ loc_2AC2B:                              ; CODE XREF: sub_2AA58+194↑j
                 jmp     short loc_2AC1D
 ; ---------------------------------------------------------------------------
 
-loc_2AC4F:                              ; CODE XREF: sub_2AA58+1C3↑j
-                                        ; sub_2AA58+1F3↑j
+loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
+                                        ; CastSpell+1F3↑j
                 call    sub_2AD32
                 push    word_32940
                 mov     si, word_32904
@@ -48850,7 +48850,7 @@ loc_2AC4F:                              ; CODE XREF: sub_2AA58+1C3↑j
                 jmp     loc_2AAFA
 ; ---------------------------------------------------------------------------
 
-loc_2ACD0:                              ; CODE XREF: sub_2AA58+10↑j
+loc_2ACD0:                              ; CODE XREF: CastSpell+10↑j
                 test    word_328CA, 1000h
                 jz      short loc_2ACEE
                 mov     ax, word_32974
@@ -48861,8 +48861,8 @@ loc_2ACD0:                              ; CODE XREF: sub_2AA58+10↑j
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
-loc_2ACEE:                              ; CODE XREF: sub_2AA58+27E↑j
-                                        ; sub_2AA58+287↑j
+loc_2ACEE:                              ; CODE XREF: CastSpell+27E↑j
+                                        ; CastSpell+287↑j
                 call    sub_21C79
                 call    sub_2940E
                 cmp     byte_2E400, 1Bh
@@ -48870,7 +48870,7 @@ loc_2ACEE:                              ; CODE XREF: sub_2AA58+27E↑j
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
-loc_2AD02:                              ; CODE XREF: sub_2AA58+2A5↑j
+loc_2AD02:                              ; CODE XREF: CastSpell+2A5↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
                 call    sub_23874
@@ -48881,16 +48881,16 @@ loc_2AD02:                              ; CODE XREF: sub_2AA58+2A5↑j
                 jz      short loc_2AD2C
                 or      word_328C8, 20h
 
-loc_2AD2C:                              ; CODE XREF: sub_2AA58+2CD↑j
+loc_2AD2C:                              ; CODE XREF: CastSpell+2CD↑j
                 call    sub_19E56
                 retf
-sub_2AA58       endp
+CastSpell       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AD32       proc near               ; CODE XREF: sub_2AA58:loc_2AC4F↑p
+sub_2AD32       proc near               ; CODE XREF: CastSpell:loc_2AC4F↑p
                 mov     word_3293E, 64h ; 'd'
                 mov     si, word_32904
                 call    sub_19A7C
@@ -48929,7 +48929,7 @@ sub_2AD32       endp
 
 
 sub_2AD94       proc near               ; CODE XREF: sub_2A914+5↑p
-                                        ; sub_2A9AD+5↑p ...
+                                        ; RestCharacter+5↑p ...
                 mov     word_2E530, 0Fh
                 call    sub_23874
                 call    sub_238CD
@@ -48956,7 +48956,7 @@ sub_2AD94       endp
 
 
 sub_2ADD0       proc near               ; CODE XREF: sub_2A914+50↑p
-                                        ; sub_2A9AD+88↑p ...
+                                        ; RestCharacter+88↑p ...
                 mov     bx, 95EBh
                 mov     cx, 4
 

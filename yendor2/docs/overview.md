@@ -764,6 +764,25 @@ as a concrete starting point for locating the rest of the struct.
 
 116 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: first combat/spell functions
+
+Picked a fresh anchor: the two `HandleGameCommand` branches covering
+wide numeric ranges neither `RunGameDialog` nor the item-icon
+dispatcher claimed. `RestCharacter` (was `sub_2A9AD`, codes
+`0x36`-`0x46`) matches the manual's "R rest": a time-of-day gate, then
+percentage-of-max regeneration on one of two stat pairs. `CastSpell`
+(was `sub_2AA58`, codes `0x12`-`0x1D`) matches "C cast spell": a
+target-validity gate, then per-code effects — two confirmed as minor/
+major heal (25%/50% of missing HP, capped at max). Both read/write the
+same party-member record fields, letting the struct map in
+[file-formats.md](file-formats.md#curgame--savgame1-and-presumably-savgamen)
+grow concretely: `+0x52`/`+0x92` confirmed HP current/max, `+0x54`/
+`+0x94` plausibly MP, `+0xE` a time-of-day value. Several of
+`CastSpell`'s other codes (`0x14`/`0x17`/`0x18`/`0x1D`) aren't traced
+yet — likely more spells.
+
+118 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

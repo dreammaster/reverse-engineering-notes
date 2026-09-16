@@ -8251,7 +8251,9 @@ static Bytes_1(void) {
 	create_insn	(0X2A93C);
 	create_insn	(0X2A982);
 	create_insn	(0X2A9A2);
+	set_cmt	(0X2A9AD,	"Rest/regeneration: if a time-of-day check on [si+0xE] (si=party member) fails, sets a 'resting'-ish flag ([si+0x1C] |= 0x8000) instead. Otherwise regenerates one of two stats (current/max at +0x52/+0x92 or +0x54/+0x94, selected by a flag on the target) by a percentage of max, capped at max. Matches the manual's 'R rest (1 food per person needed)'.",	0);
 	create_insn	(0X2A9AD);
+	set_name	(0X2A9AD,	"RestCharacter");
 	create_insn	(0X2A9BD);
 	create_insn	(x=0X2A9C5);
 	op_hex		(x,	1);
@@ -8261,7 +8263,9 @@ static Bytes_1(void) {
 	create_insn	(0X2AA0C);
 	create_insn	(x=0X2AA2B);
 	op_hex		(x,	1);
+	set_cmt	(0X2AA58,	"Spell dispatch on word_32974 (0x12-0x1D range). Gates on target validity flags (word_2E548's +0 bits 1/2). 0x12/0x13: heal [si+0x52] (HP-like stat) by 25%/50% of the missing amount, capped at [si+0x92] max -- minor/major heal. Other codes (0x14/0x17/0x18/0x1D) not yet traced. Matches the manual's 'C cast spell'.",	0);
 	create_insn	(0X2AA58);
+	set_name	(0X2AA58,	"CastSpell");
 	create_insn	(x=0X2AA5C);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AA62);
@@ -10302,6 +10306,15 @@ static Bytes_1(void) {
 	set_name	(0X36311,	"aCharacterPanel");
 	create_strlit	(0X36321,	0XA);
 	set_name	(0X36321,	"aAnyPanel");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3632B,	0XA);
 	set_name	(0X3632B,	"aBackpack");
 	create_strlit	(0X36335,	0X5);
@@ -10344,15 +10357,6 @@ static Bytes_1(void) {
 	set_name	(0X363B7,	"aHealth_1");
 	create_strlit	(0X363BF,	0X7);
 	set_name	(0X363BF,	"aMagic_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X363C6,	0X8);
 	set_name	(0X363C6,	"aPercent");
 	create_strlit	(0X363CE,	0XF);
