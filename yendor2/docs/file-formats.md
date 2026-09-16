@@ -1059,7 +1059,21 @@ ENHANCE ITEM" / "SPACEBAR TO REPAIR ITEM" / default "SPACEBAR TO SELL
 ITEM OR ESC TO UNDO". It opens with `RestorePortraitPanelFromEMS`,
 which — only when none of the portrait-dirty bits are already set —
 blits a cached background region from EMS-paged memory straight back
-into the video buffer instead of a full redraw. `HandlePortraitClick`
+into the video buffer instead of a full redraw. Its sibling
+`ClearPortraitPanelAreas` (was `sub_1B47A`, also called from
+`RunShopScreen`) instead *blanks* (fills with a fixed pattern) the same
+portrait-sized EMS page (`0x55D8`) in both the cache and the live video
+buffer — resetting it so a later restore doesn't show stale portrait
+data. A few more `0x55D8`-page siblings were named alongside it:
+`RestoreFullScreenFromEMS` (was `sub_223D4`, a full-screen restore,
+called from `HandleMovementInput`) and `RestoreLargePanelFromEMS` (was
+`sub_191FC`, a large-but-not-full-screen area restore, called from the
+still-unnamed `sub_1869D`). Separately, `RestoreAndRedrawFixedStatusIcon`
+(was `sub_22402`, 6 call sites incl. `start`) restores a small EMS-
+cached area then redraws a fixed picture via `DrawFixedStatusIcon` (was
+`sub_225F1`) — a picture from the same directory category (`0x60`)
+`DrawPartyMemberPortrait` uses, drawn at a fixed screen position; which
+specific HUD icon this is isn't confirmed. `HandlePortraitClick`
 is the mouse-click counterpart to the keyboard `1`-`4` selector
 (`sub_25B34`): hit-tests the 4 portrait zones and sets the matching
 highlight bit when clicked. Both draw via `ShowPartyPortraitForSlot`

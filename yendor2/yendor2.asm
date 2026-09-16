@@ -485,7 +485,7 @@ loc_103E2:                              ; CODE XREF: start+3D1↑j
                 test    word_36C7F, 8000h
                 jnz     short loc_103FD
                 or      word_36C7F, 2000h
-                call    sub_22402
+                call    RestoreAndRedrawFixedStatusIcon
                 jmp     short loc_10403
 ; ---------------------------------------------------------------------------
 
@@ -530,7 +530,7 @@ loc_1044E:                              ; CODE XREF: start+428↑j
 loc_10465:                              ; CODE XREF: start+454↑j
                 and     word_36C7F, 8FFFh
                 or      word_36C7F, 2000h
-                call    sub_22402
+                call    RestoreAndRedrawFixedStatusIcon
                 jmp     short loc_10403
 ; ---------------------------------------------------------------------------
 
@@ -2393,7 +2393,7 @@ loc_115D5:                              ; CODE XREF: HandleMovementInput+31D↑j
 
 loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
                                         ; HandleMovementInput+325↑j
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -2441,7 +2441,7 @@ loc_116A2:                              ; CODE XREF: HandleMovementInput+3CC↑j
                 call    sub_209D2
                 test    word_328C4, 8000h
                 jz      short loc_116C8
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -3361,7 +3361,7 @@ loc_12016:                              ; CODE XREF: InitGame+133↑j
                 call    allocMem
                 mov     word_2E562, ax
                 call    sub_25862
-                call    sub_22402
+                call    RestoreAndRedrawFixedStatusIcon
                 and     word_328C4, 0FF00h
                 test    word_328C4, 4000h
                 jz      short loc_12046
@@ -12212,7 +12212,7 @@ sub_1728A       endp
 RunShopScreen   proc far                ; CODE XREF: UseAbilityCommand+104↓p
                                         ; UseKeyItem+1C↓P ...
                 call    ClearStatusPanelIfDirty ; Umbrella shop screen, reached from UseAbilityCommand. Calls sub_1869D (main input loop -- hosts the sell/enhance/repair Space-bar cluster) directly, twice; calls sub_17032 (the mouse-click 'buy' handler reaching PayGoldAndAcquireItem); redraws ShowMaterialCounterHud repeatedly; hit-tests several region tables; writes state via FileEntry_Write near an exit path. Ties the whole shop cluster together. Many internal helper calls not individually traced yet.
-                call    sub_1B47A
+                call    ClearPortraitPanelAreas
                 or      word_328C6, 200h
                 call    sub_179AE
                 push    cs
@@ -14620,7 +14620,7 @@ loc_1861E:                              ; CODE XREF: RefreshPartyPortraits+65↑
                 call    sub_28412
                 test    word_328C6, 1Ch
                 jz      short loc_18692
-                call    sub_1B47A
+                call    ClearPortraitPanelAreas
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 0ADh
                 mov     _font_bgColor, 4
@@ -14821,7 +14821,7 @@ loc_187D4:                              ; CODE XREF: sub_1869D+115↑j
 loc_187D7:                              ; CODE XREF: sub_1869D+1D↑j
                                         ; sub_1869D+122↑j
                 call    sub_19553
-                call    sub_191FC
+                call    RestoreLargePanelFromEMS
                 test    word_328C6, 4000h
                 jz      short loc_187F9
                 mov     si, 95EBh
@@ -15917,8 +15917,8 @@ TryRepairItemForGold endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_191FC       proc near               ; CODE XREF: sub_1869D+13F↑p
-                push    ds
+RestoreLargePanelFromEMS proc near      ; CODE XREF: sub_1869D+13F↑p
+                push    ds              ; Restores a large rectangular area (136 rows x 112 words/row) from EMS page 0x55D8. Called from sub_1869D; exact panel identity not confirmed.
                 mov     dx, _emsPointer1?
                 mov     bx, 55D8h
                 call    MapUnmapPages
@@ -15928,7 +15928,7 @@ sub_191FC       proc near               ; CODE XREF: sub_1869D+13F↑p
                 mov     es, _videoBufferSeg
                 mov     ds, _emsSegmentPageFrame
 
-loc_19219:                              ; CODE XREF: sub_191FC+2C↓j
+loc_19219:                              ; CODE XREF: RestoreLargePanelFromEMS+2C↓j
                 push    cx
                 mov     cx, 70h ; 'p'
                 mov     si, bx
@@ -15939,7 +15939,7 @@ loc_19219:                              ; CODE XREF: sub_191FC+2C↓j
                 loop    loc_19219
                 pop     ds
                 retn
-sub_191FC       endp
+RestoreLargePanelFromEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17473,7 +17473,7 @@ loc_19E74:                              ; CODE XREF: ApplyMapTriggerEffect+10↑
                 mov     ax, [di+6]
                 mov     word_36CF9, ax
                 call    sub_209D2
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -18227,7 +18227,7 @@ loc_1A493:                              ; CODE XREF: TravelToDestination+77↑j
                 mov     word_36CB1, ax
                 mov     ax, [si+0Ch]
                 mov     word_36CB3, ax
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -19678,7 +19678,7 @@ RunEnhanceItemScreen proc far           ; CODE XREF: UseItem+1C1↑P
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
-                call    sub_1B47A
+                call    ClearPortraitPanelAreas
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 or      word_328C4, 100h
@@ -19758,7 +19758,7 @@ RunRepairItemScreen proc far            ; CODE XREF: UseItem+1D0↑P
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
-                call    sub_1B47A
+                call    ClearPortraitPanelAreas
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 or      word_328C4, 100h
@@ -19825,7 +19825,7 @@ RunSellItemScreen proc far              ; CODE XREF: UseItem+E0↑P
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
-                call    sub_1B47A
+                call    ClearPortraitPanelAreas
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 or      word_328C4, 100h
@@ -20068,9 +20068,9 @@ seg044          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B47A       proc far                ; CODE XREF: RunShopScreen+5↑P
+ClearPortraitPanelAreas proc far        ; CODE XREF: RunShopScreen+5↑P
                                         ; RefreshPartyPortraits+8C↑P ...
-                push    di
+                push    di              ; Blanks (fills with 0x0404) the same screen region in both the EMS page-0x55D8 cache and the live video buffer -- at a location page 0x55D8 is elsewhere documented as portrait-sized, and one of the two callers is RefreshPartyPortraits.
                 push    es
                 push    cx
                 mov     dx, _emsPointer1?
@@ -20081,7 +20081,7 @@ sub_1B47A       proc far                ; CODE XREF: RunShopScreen+5↑P
                 mov     cx, 23h ; '#'
                 mov     ax, 404h
 
-loc_1B496:                              ; CODE XREF: sub_1B47A+27↓j
+loc_1B496:                              ; CODE XREF: ClearPortraitPanelAreas+27↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -20093,7 +20093,7 @@ loc_1B496:                              ; CODE XREF: sub_1B47A+27↓j
                 mov     cx, 23h ; '#'
                 mov     ax, 404h
 
-loc_1B4B0:                              ; CODE XREF: sub_1B47A+41↓j
+loc_1B4B0:                              ; CODE XREF: ClearPortraitPanelAreas+41↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -20104,7 +20104,7 @@ loc_1B4B0:                              ; CODE XREF: sub_1B47A+41↓j
                 pop     es
                 pop     di
                 retf
-sub_1B47A       endp
+ClearPortraitPanelAreas endp
 
 seg044          ends
 
@@ -23836,7 +23836,7 @@ loc_1D540:                              ; CODE XREF: HandleRangedOrCombatAction+
                 mov     bx, word_328DE
                 call    DrawWeaponSelectIcon
                 call    SaveActionIconPanelToEMS
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -24185,7 +24185,7 @@ loc_1D9A6:                              ; CODE XREF: HighlightSelectedAbilityIco
                 mov     word_32988, 69h ; 'i'
                 call    DrawPicture
                 call    SaveActionIconPanelToEMS
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    DrawMouseCursor
@@ -28284,7 +28284,7 @@ loc_20157:                              ; CODE XREF: RunMapEditorScreen+C7↑j
                 call    sub_25862
                 and     word_328C4, 0FFFEh
                 call    sub_209D2
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -30618,7 +30618,7 @@ DrawMinimap     proc far                ; CODE XREF: start+13E↑P
                                         ; start+1E9↑P ...
                 test    word_36C7F, 2000h ; Draws the 7x9 minimap grid BuildMinimapTileData just built (same 0xD06 buffer): base tile + optional overlay per cell, 8x8 pixels each, at a fixed on-screen position. The dungeon view is this small tile-grid minimap widget, not a full-screen first-person render.
                 jz      short loc_21596
-                call    sub_22402
+                call    RestoreAndRedrawFixedStatusIcon
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -32201,9 +32201,9 @@ DrawFullScreenPictureAndCacheToEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_223D4       proc far                ; CODE XREF: HandleMovementInput:loc_11613↑P
+RestoreFullScreenFromEMS proc far       ; CODE XREF: HandleMovementInput:loc_11613↑P
                                         ; HandleMovementInput+401↑P ...
-                push    ax
+                push    ax              ; Restores the entire video buffer from EMS page 0x55D8 (0x7D00 words = one full VGA screen). Called from HandleMovementInput.
                 push    bx
                 push    cx
                 push    dx
@@ -32229,15 +32229,15 @@ sub_223D4       proc far                ; CODE XREF: HandleMovementInput:loc_116
                 pop     bx
                 pop     ax
                 retf
-sub_223D4       endp
+RestoreFullScreenFromEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22402       proc far                ; CODE XREF: start+3F6↑P
+RestoreAndRedrawFixedStatusIcon proc far ; CODE XREF: start+3F6↑P
                                         ; start+471↑P ...
-                push    cx
+                push    cx              ; Restores a small area from EMS page 0x55D8 (58 rows x 37 words/row), then redraws a fixed status icon (DrawFixedStatusIcon, picture id 0x15). Exact icon identity not confirmed. 6 call sites incl. `start`.
                 push    dx
                 push    si
                 push    di
@@ -32252,7 +32252,7 @@ sub_22402       proc far                ; CODE XREF: start+3F6↑P
                 mov     ds, _emsSegmentPageFrame
                 mov     cx, 3Ah ; ':'
 
-loc_22424:                              ; CODE XREF: sub_22402+31↓j
+loc_22424:                              ; CODE XREF: RestoreAndRedrawFixedStatusIcon+31↓j
                 push    cx
                 mov     cx, 25h ; '%'
                 mov     si, bx
@@ -32263,14 +32263,14 @@ loc_22424:                              ; CODE XREF: sub_22402+31↓j
                 loop    loc_22424
                 pop     ds
                 mov     word_2E530, 15h
-                call    sub_225F1
+                call    DrawFixedStatusIcon
                 pop     es
                 pop     di
                 pop     si
                 pop     dx
                 pop     cx
                 retf
-sub_22402       endp
+RestoreAndRedrawFixedStatusIcon endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32436,8 +32436,8 @@ DrawPartyMemberStatusPanel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_225F1       proc near               ; CODE XREF: sub_22402+3A↑p
-                mov     x, 0F8h
+DrawFixedStatusIcon proc near           ; CODE XREF: RestoreAndRedrawFixedStatusIcon+3A↑p
+                mov     x, 0F8h         ; Draws a fixed picture (id=word_2E530, category 0x60 -- same directory DrawPartyMemberPortrait uses) at position (0xF8, 9). Called only from RestoreAndRedrawFixedStatusIcon.
                 mov     y, 9
                 mov     word_2E532, 60h ; '`'
                 mov     ax, _videoBufferSeg
@@ -32445,7 +32445,7 @@ sub_225F1       proc near               ; CODE XREF: sub_22402+3A↑p
                 mov     _font_bgTransparent, 1
                 call    DrawPicture
                 retn
-sub_225F1       endp
+DrawFixedStatusIcon endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32759,7 +32759,7 @@ loc_2289B:                              ; CODE XREF: sub_2281F+52↑j
                 loop    loc_2286D
                 and     word_328C6, 0FFFEh
                 call    SaveActionIconPanelToEMS
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    SaveCorridorBackgroundToEMS
@@ -40776,7 +40776,7 @@ loc_26DA3:                              ; CODE XREF: sub_26D54+81↓j
 loc_26DF2:                              ; CODE XREF: sub_26D54+37↑j
                                         ; sub_26D54+7A↑j
                 call    sub_209D2
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -40843,7 +40843,7 @@ loc_26E4D:                              ; CODE XREF: sub_26E11+37↑j
                 call    ErrorCheck
 
 loc_26ECE:                              ; CODE XREF: sub_26E11+39↑j
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -40911,7 +40911,7 @@ loc_26F24:                              ; CODE XREF: sub_26EE8+37↑j
                 call    ErrorCheck
 
 loc_26FA9:                              ; CODE XREF: sub_26EE8+39↑j
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -40953,14 +40953,14 @@ loc_2701C:                              ; CODE XREF: sub_26FC3+51↑j
                 and     word ptr [bx+6], 0FFFEh
 
 loc_27020:                              ; CODE XREF: sub_26FC3+57↑j
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 jmp     short near ptr sub_26FC3
 ; ---------------------------------------------------------------------------
 
 loc_27031:                              ; CODE XREF: sub_26FC3+37↑j
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -44825,7 +44825,7 @@ loc_28D54:                              ; CODE XREF: RevealMapRegion+4B↑j
                 push    word_36C7F      ; this
                 and     word_36C7F, 0AFFFh
                 or      word_36C7F, 2000h
-                call    sub_22402
+                call    RestoreAndRedrawFixedStatusIcon
                 mov     word_328FA, 0Bh
                 mov     word_32900, 7
                 mov     word_3293E, 4Ch ; 'L'
@@ -45003,7 +45003,7 @@ loc_28FAA:                              ; CODE XREF: RevealMapRegion+254↑j
 
 loc_28FAC:                              ; CODE XREF: RevealMapRegion+24A↑j
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 pop     word_36C7F
                 mov     word_3195A, 8
                 mov     word_2E530, 0
@@ -49004,7 +49004,7 @@ loc_2ADFC:                              ; CODE XREF: sub_2ADE8+A↑j
                 call    sub_2AE1A
                 mov     word_2E530, 1
                 call    DrawFullScreenPictureAndCacheToEMS
-                call    sub_22402
+                call    RestoreAndRedrawFixedStatusIcon
                 call    sub_2827E
                 call    DrawMouseCursor
                 retf
@@ -49443,7 +49443,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
                 mov     word_36CF7, 154h
                 mov     word_36CF9, 63h ; 'c'
                 mov     word_36CF5, 8000h
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    sub_209D2
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -49458,7 +49458,7 @@ ShowVisionAtLocation proc near          ; CODE XREF: sub_2AE3C+8↑p
                 pop     word_36CF5
                 pop     word_36CF9
                 pop     word_36CF7
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    sub_209D2
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -51575,7 +51575,7 @@ loc_2C502:                              ; CODE XREF: sub_2C0FE+3FA↑j
 
 loc_2C543:                              ; CODE XREF: sub_2C0FE+3F5↑j
                                         ; sub_2C0FE+402↑j
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -51686,7 +51686,7 @@ loc_2C621:                              ; CODE XREF: sub_2C0FE+51E↑j
                 and     ax, 7
                 or      word_36C79, ax
                 call    sub_209D2
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -51993,7 +51993,7 @@ loc_2C9A7:                              ; CODE XREF: sub_2C0FE+896↑j
                 and     word_328C6, 0FFFEh
                 and     word_328C8, 0FFF7h
                 call    SaveActionIconPanelToEMS
-                call    sub_223D4
+                call    RestoreFullScreenFromEMS
                 call    RedrawDungeonScreen
                 call    DrawMinimap
                 and     word_328C4, 0FFBFh

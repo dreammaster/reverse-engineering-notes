@@ -3393,7 +3393,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X19187);
 	create_insn	(0X19198);
+	set_cmt	(0X191FC,	"Restores a large rectangular area (136 rows x 112 words/row) from EMS page 0x55D8. Called from sub_1869D; exact panel identity not confirmed.",	0);
 	create_insn	(0X191FC);
+	set_name	(0X191FC,	"RestoreLargePanelFromEMS");
 	set_cmt	(0X1922C,	"If no portrait-dirty bits are set (word_328C6 & 0x7800), blits a cached background region from EMS-paged memory back into the video buffer (136 rows x 224 bytes) -- restores the portrait panel area without a full redraw. Called from RefreshPartyPortraits and sub_18504.",	0);
 	create_insn	(x=0X1922C);
 	op_hex		(x,	1);
@@ -3966,7 +3968,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B443);
 	op_hex		(x,	1);
+	set_cmt	(0X1B47A,	"Blanks (fills with 0x0404) the same screen region in both the EMS page-0x55D8 cache and the live video buffer -- at a location page 0x55D8 is elsewhere documented as portrait-sized, and one of the two callers is RefreshPartyPortraits.",	0);
 	create_insn	(0X1B47A);
+	set_name	(0X1B47A,	"ClearPortraitPanelAreas");
 	create_insn	(0X1B4C2);
 	create_insn	(0X1B4D2);
 	create_insn	(x=0X1B4D9);
@@ -5758,6 +5762,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X21E71);
 	op_hex		(x,	1);
 	set_name	(0X21E71,	"ShowLocalAreaMap");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X21E79);
 	op_hex		(x,	1);
 	create_insn	(0X21E8A);
@@ -5770,15 +5783,6 @@ static Bytes_1(void) {
 	set_cmt	(0X21EE7,	"this",	0);
 	set_cmt	(0X21EFB,	"this",	0);
 	set_cmt	(0X21F88,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X21FAE,	"msg",	0);
 	create_insn	(x=0X21FF6);
 	op_hex		(x,	1);
@@ -5826,8 +5830,12 @@ static Bytes_2(void) {
 	set_cmt	(0X22387,	"Draws a full-screen picture (dir 0, id=word_2E530, set by caller) at (1,1), then saves the resulting screen to EMS page 0x55D8 (0x7D00 words = one full VGA screen). Generic full-screen draw-then-cache utility; called from many different screens (InitGame, RunDungeonGameLoop, ShowCreateCharacterPrompt, etc.) each with their own picture id.",	0);
 	create_insn	(0X22387);
 	set_name	(0X22387,	"DrawFullScreenPictureAndCacheToEMS");
+	set_cmt	(0X223D4,	"Restores the entire video buffer from EMS page 0x55D8 (0x7D00 words = one full VGA screen). Called from HandleMovementInput.",	0);
 	create_insn	(0X223D4);
+	set_name	(0X223D4,	"RestoreFullScreenFromEMS");
+	set_cmt	(0X22402,	"Restores a small area from EMS page 0x55D8 (58 rows x 37 words/row), then redraws a fixed status icon (DrawFixedStatusIcon, picture id 0x15). Exact icon identity not confirmed. 6 call sites incl. `start`.",	0);
 	create_insn	(0X22402);
+	set_name	(0X22402,	"RestoreAndRedrawFixedStatusIcon");
 	set_cmt	(0X22445,	"Draws one party member's full status panel: portrait, unconscious/dead overlay, three DrawStatBar gauges (HP [+0x52]/[+0x92], MP [+0x54]/[+0x94], a third stat [+0x118]/[+0x56] not identified), an ability-readiness icon ([+0xB4]), and level-up/training text ([+0x1C] bit 0x40, [+0x1E]). Called from the main input loop sub_1869D.",	0);
 	create_insn	(0X22445);
 	set_name	(0X22445,	"DrawPartyMemberStatusPanel");
@@ -5846,7 +5854,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X2258C);
 	op_hex		(x,	1);
 	set_cmt	(0X225AE,	"msg",	0);
+	set_cmt	(0X225F1,	"Draws a fixed picture (id=word_2E530, category 0x60 -- same directory DrawPartyMemberPortrait uses) at position (0xF8, 9). Called only from RestoreAndRedrawFixedStatusIcon.",	0);
 	create_insn	(0X225F1);
+	set_name	(0X225F1,	"DrawFixedStatusIcon");
 	create_insn	(0X22615);
 	create_insn	(x=0X2262D);
 	op_hex		(x,	1);
@@ -8353,6 +8363,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29ED0);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29ED5);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29EDB);
@@ -8428,15 +8447,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F9D);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X29FA9);
 	create_insn	(x=0X29FAA);
 	op_stkvar	(x,	1);
@@ -11465,6 +11475,15 @@ static Bytes_3(void) {
 	create_strlit	(0X39EF3,	0X20);
 	set_name	(0X39EF3,	"aDonnaKarpenkoN");
 	create_strlit	(0X39F13,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39F15,	0X20);
 	set_name	(0X39F15,	"aSharonLehmanTJ");
 	create_strlit	(0X39F35,	0X2);
@@ -11505,15 +11524,6 @@ static Bytes_3(void) {
 	create_strlit	(0X3A0B9,	0X2);
 	create_strlit	(0X3A0BB,	0X1B);
 	set_name	(0X3A0BB,	"aSteveSmith");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A0D6,	0X2);
 	create_strlit	(0X3A0D8,	0X2);
 	create_strlit	(0X3A0DA,	0X1D);

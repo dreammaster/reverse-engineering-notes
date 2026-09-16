@@ -3391,6 +3391,31 @@ generically. Called from the still-unnamed, large `sub_1869D`.
 
 433 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: EMS screen-cache cluster (5 functions)
+
+The naming-candidate ranker surfaced a cluster of 4 remaining
+`MapUnmapPages`/EMS-page-`0x55D8` functions, all following the
+established `RestoreXFromEMS`/`SaveXToEMS` shape:
+
+- `RestoreFullScreenFromEMS` (was `sub_223D4`, called from
+  `HandleMovementInput`): full-screen restore.
+- `RestoreLargePanelFromEMS` (was `sub_191FC`, called from the
+  still-unnamed `sub_1869D`): a large-but-not-full-screen area restore.
+- `ClearPortraitPanelAreas` (was `sub_1B47A`, called from
+  `RunShopScreen` and `RefreshPartyPortraits`): the odd one out — it
+  *blanks* (fixed fill pattern) the same region in both the EMS cache
+  and the live video buffer, rather than restoring. Page `0x55D8` is
+  elsewhere documented as portrait-sized, and one caller is literally
+  `RefreshPartyPortraits`, so this is plausibly resetting the portrait
+  panel's cache to avoid a later restore showing stale data.
+- `RestoreAndRedrawFixedStatusIcon` (was `sub_22402`, 6 call sites incl.
+  `start`) + its helper `DrawFixedStatusIcon` (was `sub_225F1`):
+  restores a small area then redraws a fixed picture (category `0x60`,
+  the same directory `DrawPartyMemberPortrait` uses) at a fixed
+  position — some HUD icon, exact identity not confirmed.
+
+438 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
