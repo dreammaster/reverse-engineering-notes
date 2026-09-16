@@ -5504,6 +5504,33 @@ applicable to this monster), otherwise the field's numeric value is
 drawn right-aligned at a fixed column. A milestone: **630 named of
 769 functions as of this update.**
 
+### 2026-09-15 session update, continued: monster immune/resistant flag rows, weapon skill-type row
+
+Named `sub_1496B` -> `DrawClueBookMonsterImmuneFlagRow` and
+`sub_14A5E` -> `DrawClueBookMonsterResistantFlagRow`, siblings of
+`DrawClueBookMonsterStatRow`, both called twice from
+`ShowClueBookMonsterDetail`: draw a caller-supplied label, then test
+the loaded monster record's flag word at a fixed offset (`[si+0x96]`
+or `[si+0x98]`) against the caller's `ax` bitmask, drawing "IMMUNE"
+or "RESISTANT" (confirmed via string dump) if any bit matches.
+
+Named `sub_23BA4` -> `AdvanceToNextPackedString`, a small generic
+utility (also called from `BuildClueEntryText`) that walks `bx` past
+the current NUL-terminated string and the NUL itself, to the start of
+the next string in a packed string table.
+
+Named `sub_14A87` -> `DrawWeaponSkillTypeRow`, called from
+`ShowWeaponDetailRow`: draws "SKILL:" then selects one of 5 packed
+strings — confirmed via string dump to be "PROJECTILE"/"SLASHING"/
+"BASHING"/"POLEARM"/"CASTING" — by testing `word_2E548`'s `+2` flag
+word against `0x8000`/`0x4000`/`0x2000`/`0x1000` in descending order
+(walking forward with `AdvanceToNextPackedString` for each bit that
+doesn't match), defaulting to "CASTING" if none of the 4 bits are
+set. This identifies `word_2E548+2` as the held item's weapon
+skill-type classification.
+
+634 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

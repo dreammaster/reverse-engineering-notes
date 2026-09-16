@@ -2073,7 +2073,9 @@ static Bytes_0(void) {
 	create_insn	(0X14900);
 	set_cmt	(0X1493B,	"msg",	0);
 	create_insn	(0X14954);
+	set_cmt	(0X1496B,	"Draws a caller-supplied label, then tests the loaded monster record's flag word at [si+0x96] against the caller's ax bitmask; if any bit matches, draws 'IMMUNE' at x=0x107. Called twice from ShowClueBookMonsterDetail, sibling of DrawClueBookMonsterStatRow.",	0);
 	create_insn	(0X1496B);
+	set_name	(0X1496B,	"DrawClueBookMonsterImmuneFlagRow");
 	set_cmt	(0X1498B,	"msg",	0);
 	set_cmt	(0X14994,	"Draws the row of clickable sub-icon selector indicators (region table 0x6976, same as RunClueBookItemCategory's click hit-testing), toggling each between two picture variants based on word_328FE bits. Called from ShowArmorDetailRow/ShowWeaponDetailRow.",	0);
 	create_insn	(0X14994);
@@ -2089,9 +2091,13 @@ static Bytes_0(void) {
 	create_insn	(0X149F3);
 	set_cmt	(0X14A2E,	"msg",	0);
 	create_insn	(0X14A47);
+	set_cmt	(0X14A5E,	"Draws a caller-supplied label, then tests the loaded monster record's flag word at [si+0x98] against the caller's ax bitmask; if any bit matches, draws 'RESISTANT' at x=0x107. Called twice from ShowClueBookMonsterDetail, sibling of DrawClueBookMonsterStatRow.",	0);
 	create_insn	(0X14A5E);
+	set_name	(0X14A5E,	"DrawClueBookMonsterResistantFlagRow");
 	set_cmt	(0X14A7E,	"msg",	0);
+	set_cmt	(0X14A87,	"Draws 'SKILL:' then one of 5 packed strings (PROJECTILE/SLASHING/BASHING/POLEARM/CASTING) selected by testing word_2E548+2's flag bits 0x8000/0x4000/0x2000/0x1000 in descending order via AdvanceToNextPackedString, defaulting to CASTING if none match. Identifies word_2E548+2 as the held item's weapon skill-type classification. Called from ShowWeaponDetailRow.",	0);
 	create_insn	(0X14A87);
+	set_name	(0X14A87,	"DrawWeaponSkillTypeRow");
 	set_cmt	(0X14A93,	"msg",	0);
 	create_insn	(x=0X14AB4);
 	op_hex		(x,	1);
@@ -2973,6 +2979,15 @@ static Bytes_0(void) {
 	set_cmt	(0X17B92,	"UseItem, reached from a normal keyboard command slot (called directly from `start`). Calls LoadItemData first; if that signals nothing to do, bails. Otherwise dispatches on word_2E410 (the loaded item's type-flags word) to one of several type-specific effect handlers (sub_1BF94/sub_1C123/sub_1C589/sub_1BEA1/sub_1BBED/sub_1BB48, plus a fallback keyed on a secondary type field) -- none named yet.",	0);
 	create_insn	(0X17B92);
 	set_name	(0X17B92,	"UseItem");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X17BA4);
 	op_hex		(x,	1);
 	create_insn	(x=0X17BAF);
@@ -3070,15 +3085,6 @@ static Bytes_0(void) {
 	set_cmt	(0X17F7C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X17F7C);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X17F89);
 	op_hex		(x,	1);
 	set_cmt	(0X17F8B,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -4987,6 +4993,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1E4FA,	"Byte-for-byte identical to ConfirmContainerInteraction (yes/no confirm prompt, message id 0x12, storing result + slot selection) -- likely duplicated into this overlay segment. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E4FA);
 	set_name	(0X1E4FA,	"ConfirmAlchemyInteraction");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1E522);
 	set_cmt	(0X1E546,	"Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.",	0);
 	create_insn	(0X1E546);
@@ -5001,15 +5016,6 @@ static Bytes_1(void) {
 	set_cmt	(0X1E61B,	"Deducts alchemy spell costs: MP (word_332D2) from [bx+0x54], NUORE (word_332D4, counter 0x94BB) and MAGIC ORE (word_332D6, counter 0x94B7) via SubtractFromBCDCounter. Called from RunAlchemyScreen.",	0);
 	create_insn	(0X1E61B);
 	set_name	(0X1E61B,	"DeductAlchemySpellCosts");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1E64A,	"The party rest/camp action ('R rest'). Checks eligibility (sub_1EA18), advances the game clock (8 hours flat for a full rest, or up to 8 hourly ticks calling ProcessLevelMonsters and stopping if combat starts), handles day rollover (ResetDailyAbilityCharges + calendar counters), shows hours rested, then resumes via RunDungeonGameLoop. Called from `start` and sub_2C0FE.",	0);
 	create_insn	(0X1E64A);
 	set_name	(0X1E64A,	"RestPartyAndAdvanceClock");
@@ -6549,7 +6555,9 @@ static Bytes_2(void) {
 	create_insn	(0X23B76);
 	set_name	(0X23B76,	"DrawStringColumn");
 	create_insn	(0X23B8E);
+	set_cmt	(0X23BA4,	"Advances bx past the current NUL-terminated string and past the NUL, to the start of the next string in a packed string table. Called from DrawWeaponSkillTypeRow and BuildClueEntryText.",	0);
 	create_insn	(0X23BA4);
+	set_name	(0X23BA4,	"AdvanceToNextPackedString");
 	create_insn	(0X23BAC);
 	set_cmt	(0X23BAE,	"Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
 	create_insn	(0X23BAE);
@@ -6769,6 +6777,15 @@ static Bytes_2(void) {
 	set_cmt	(0X25544,	"Uses SelectDefaultPartyRecord's empty-slot scan (first record with +0xE==0); if none found, returns (roster full, no prompt). Otherwise wipes the slot (ClearPartyRecord), draws picture 3 full-screen (DrawFullScreenPictureAndCacheToEMS), and writes 'CHARACTER CREATION'. Called from ShowPartyMembers.",	0);
 	create_insn	(0X25544);
 	set_name	(0X25544,	"ShowCreateCharacterPrompt");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X25550);
 	op_hex		(x,	1);
 	create_insn	(0X25561);
@@ -6786,15 +6803,6 @@ static Bytes_2(void) {
 	set_cmt	(0X25608,	"Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.",	0);
 	create_insn	(0X25608);
 	set_name	(0X25608,	"UpdateAmbientMusicForRegion");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25656,	"Advances a monster's idle/walk animation frame ([+8]) within a small cycle relative to a base frame ([+0x4C]), mode selected by [+0x92] bits 0x20/0x10 (skipped entirely if bit 0x40 set). Called from DrawMonsterAndUpdateAttackState (non-attacking case) and ShowClueBookMonsterDetail (animates the clue-book preview the same way).",	0);
 	create_insn	(x=0X25656);
 	op_hex		(x,	1);
@@ -9149,6 +9157,15 @@ static Bytes_3(void) {
 	set_cmt	(0X2A6CB,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A6CB);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A6D8);
 	set_cmt	(0X2A73E,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A73E);
@@ -9185,15 +9202,6 @@ static Bytes_3(void) {
 	set_cmt	(0X2A914,	"First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.",	0);
 	create_insn	(0X2A914);
 	set_name	(0X2A914,	"ApplyMultiStatEffect");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A923);
 	create_insn	(x=0X2A92E);
 	op_hex		(x,	1);
@@ -11757,6 +11765,15 @@ static Bytes_4(void) {
 	set_name	(0X3990E,	"aALoudKnockOnTh");
 	create_strlit	(0X39939,	0XC);
 	set_name	(0X39939,	"aYourSleep");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39945,	0X31);
 	set_name	(0X39945,	"aOnceEnchantedT");
 	create_strlit	(0X39976,	0X1A);
@@ -11813,15 +11830,6 @@ static Bytes_4(void) {
 	set_name	(0X39C9C,	"aDChrisYoung");
 	create_strlit	(0X39CB9,	0X1E);
 	set_name	(0X39CB9,	"aVOICES");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39CD7,	0X2);
 	create_strlit	(0X39CD9,	0X2);
 	create_strlit	(0X39CDB,	0X2);

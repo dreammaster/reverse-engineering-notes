@@ -4918,7 +4918,7 @@ loc_12F7A:                              ; CODE XREF: BuildClueEntryText+28↑j
                 jz      short loc_12F8C
 
 loc_12F85:                              ; CODE XREF: BuildClueEntryText+BD↓j
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 loop    loc_12F85
 
 loc_12F8C:                              ; CODE XREF: BuildClueEntryText+B6↑j
@@ -4933,7 +4933,7 @@ loc_12F8E:                              ; CODE XREF: BuildClueEntryText+42↑j
                 jz      short loc_12FA0
 
 loc_12F99:                              ; CODE XREF: BuildClueEntryText+D1↓j
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 loop    loc_12F99
 
 loc_12FA0:                              ; CODE XREF: BuildClueEntryText+CA↑j
@@ -5844,7 +5844,7 @@ ShowWeaponDetailRow proc near           ; CODE XREF: RunClueBookWeaponCategory+2
                 mov     cx, 59h ; 'Y'
                 mov     word_2E4AC, 0
                 call    DrawLabeledNumberIfNonzero
-                call    sub_14A87
+                call    DrawWeaponSkillTypeRow
                 mov     _textPos_y, 78h ; 'x'
                 mov     _textPos_x, 67h ; 'g'
                 mov     bx, 8ADEh       ; msg
@@ -6136,7 +6136,7 @@ loc_13BDC:                              ; CODE XREF: ShowClueBookSpellDetail+D9�
                 test    word_332FE, dx
                 jnz     short loc_13C01
                 mov     bx, si
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 mov     si, bx
                 jmp     short loc_13C10
 ; ---------------------------------------------------------------------------
@@ -6776,57 +6776,57 @@ ShowClueBookMonsterDetail proc near     ; CODE XREF: RunClueBookMonsterCategory+
                 mov     _textPos_y, 5Eh ; '^'
                 mov     bx, 895Ch
                 mov     ax, 8000h
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0D7h
                 mov     _textPos_y, 64h ; 'd'
                 mov     bx, 8964h
                 mov     ax, 4000h
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0CBh
                 mov     _textPos_y, 6Ah ; 'j'
                 mov     bx, 896Dh
                 mov     ax, 2000h
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0D1h
                 mov     _textPos_y, 70h ; 'p'
                 mov     bx, 8978h
                 mov     ax, 1000h
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0DDh
                 mov     _textPos_y, 76h ; 'v'
                 mov     bx, 8982h
                 mov     ax, 800h
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0D7h
                 mov     _textPos_y, 7Ch ; '|'
                 mov     bx, 898Ah
                 mov     ax, 400h
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0E9h
                 mov     _textPos_y, 82h
                 mov     bx, 8993h
                 mov     ax, 8
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0E9h
                 mov     _textPos_y, 88h
                 mov     bx, 8999h
                 mov     ax, 4
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0D1h
                 mov     _textPos_y, 8Eh
                 mov     bx, 899Fh
                 mov     ax, 2
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0E3h
                 mov     _textPos_y, 94h
                 mov     bx, 89A9h
                 mov     ax, 1
-                call    sub_1496B
+                call    DrawClueBookMonsterImmuneFlagRow
                 mov     _textPos_x, 0B9h
                 mov     _textPos_y, 9Ah
                 mov     bx, 89B0h
                 mov     ax, 3A00h
-                call    sub_14A5E
+                call    DrawClueBookMonsterResistantFlagRow
                 test    word ptr es:[si+96h], 10h
                 jz      short loc_143F1
                 mov     _font_fgColor, 0A7h
@@ -6839,7 +6839,7 @@ loc_143F1:                              ; CODE XREF: ShowClueBookMonsterDetail+2
                 mov     _textPos_y, 0A0h
                 mov     bx, 89BEh
                 mov     ax, 0C000h
-                call    sub_14A5E
+                call    DrawClueBookMonsterResistantFlagRow
                 mov     byte ptr word_38808, 0
                 mov     _textPos_x, 0ABh
                 mov     _textPos_y, 0A9h
@@ -7371,7 +7371,7 @@ loc_14944:                              ; CODE XREF: ShowArmorAttributeBonusList
                 cmp     ax, [si]
                 jz      short loc_14954
                 add     ax, 2
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 loop    loc_14944
                 jmp     short loc_14959
 ; ---------------------------------------------------------------------------
@@ -7397,9 +7397,10 @@ ShowArmorAttributeBonusList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1496B       proc near               ; CODE XREF: ShowClueBookMonsterDetail+126↑p
+DrawClueBookMonsterImmuneFlagRow proc near
+                                        ; CODE XREF: ShowClueBookMonsterDetail+126↑p
                                         ; ShowClueBookMonsterDetail+13B↑p ...
-                push    ax
+                push    ax              ; Draws a caller-supplied label, then tests the loaded monster record's flag word at [si+0x96] against the caller's ax bitmask; if any bit matches, draws 'IMMUNE' at x=0x107. Called twice from ShowClueBookMonsterDetail, sibling of DrawClueBookMonsterStatRow.
                 mov     _font_fgColor, 0Ah
                 call    writeString
                 pop     ax
@@ -7410,9 +7411,9 @@ sub_1496B       proc near               ; CODE XREF: ShowClueBookMonsterDetail+1
                 mov     bx, 89DFh       ; msg
                 call    writeString
 
-locret_14993:                           ; CODE XREF: sub_1496B+12↑j
+locret_14993:                           ; CODE XREF: DrawClueBookMonsterImmuneFlagRow+12↑j
                 retn
-sub_1496B       endp
+DrawClueBookMonsterImmuneFlagRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7495,7 +7496,7 @@ loc_14A37:                              ; CODE XREF: ShowArmorProtectionsList+66
                 cmp     ax, [si]
                 jz      short loc_14A47
                 add     ax, 2
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 loop    loc_14A37
                 jmp     short loc_14A4C
 ; ---------------------------------------------------------------------------
@@ -7521,9 +7522,10 @@ ShowArmorProtectionsList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14A5E       proc near               ; CODE XREF: ShowClueBookMonsterDetail+1F8↑p
+DrawClueBookMonsterResistantFlagRow proc near
+                                        ; CODE XREF: ShowClueBookMonsterDetail+1F8↑p
                                         ; ShowClueBookMonsterDetail+22A↑p
-                push    ax
+                push    ax              ; Draws a caller-supplied label, then tests the loaded monster record's flag word at [si+0x98] against the caller's ax bitmask; if any bit matches, draws 'RESISTANT' at x=0x107. Called twice from ShowClueBookMonsterDetail, sibling of DrawClueBookMonsterStatRow.
                 mov     _font_fgColor, 0Ah
                 call    writeString
                 pop     ax
@@ -7534,16 +7536,16 @@ sub_14A5E       proc near               ; CODE XREF: ShowClueBookMonsterDetail+1
                 mov     bx, 89E6h       ; msg
                 call    writeString
 
-locret_14A86:                           ; CODE XREF: sub_14A5E+12↑j
+locret_14A86:                           ; CODE XREF: DrawClueBookMonsterResistantFlagRow+12↑j
                 retn
-sub_14A5E       endp
+DrawClueBookMonsterResistantFlagRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14A87       proc near               ; CODE XREF: ShowWeaponDetailRow+21↑p
-                mov     _textPos_y, 5Ah ; 'Z'
+DrawWeaponSkillTypeRow proc near        ; CODE XREF: ShowWeaponDetailRow+21↑p
+                mov     _textPos_y, 5Ah ; 'Z' ; Draws 'SKILL:' then one of 5 packed strings (PROJECTILE/SLASHING/BASHING/POLEARM/CASTING) selected by testing word_2E548+2's flag bits 0x8000/0x4000/0x2000/0x1000 in descending order via AdvanceToNextPackedString, defaulting to CASTING if none match. Identifies word_2E548+2 as the held item's weapon skill-type classification. Called from ShowWeaponDetailRow.
                 mov     _textPos_x, 79h ; 'y'
                 mov     bx, 8AEFh       ; msg
                 mov     _font_fgColor, 0Ah
@@ -7554,22 +7556,22 @@ sub_14A87       proc near               ; CODE XREF: ShowWeaponDetailRow+21↑p
                 mov     di, word_2E548
                 test    word ptr [di+2], 8000h
                 jnz     short loc_14AE2
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 test    word ptr [di+2], 4000h
                 jnz     short loc_14AE2
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 test    word ptr [di+2], 2000h
                 jnz     short loc_14AE2
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 test    word ptr [di+2], 1000h
                 jnz     short loc_14AE2
                 mov     bx, 7E8Ah       ; msg
 
-loc_14AE2:                              ; CODE XREF: sub_14A87+32↑j
-                                        ; sub_14A87+3E↑j ...
+loc_14AE2:                              ; CODE XREF: DrawWeaponSkillTypeRow+32↑j
+                                        ; DrawWeaponSkillTypeRow+3E↑j ...
                 call    writeString
                 retn
-sub_14A87       endp
+DrawWeaponSkillTypeRow endp
 
 seg009          ends
 
@@ -35175,18 +35177,18 @@ seg076          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23BA4       proc far                ; CODE XREF: BuildClueEntryText:loc_12F85↑P
+AdvanceToNextPackedString proc far      ; CODE XREF: BuildClueEntryText:loc_12F85↑P
                                         ; BuildClueEntryText:loc_12F99↑P ...
-                cmp     byte ptr [bx], 0
+                cmp     byte ptr [bx], 0 ; Advances bx past the current NUL-terminated string and past the NUL, to the start of the next string in a packed string table. Called from DrawWeaponSkillTypeRow and BuildClueEntryText.
                 jz      short loc_23BAC
                 inc     bx
-                jmp     short near ptr sub_23BA4
+                jmp     short near ptr AdvanceToNextPackedString
 ; ---------------------------------------------------------------------------
 
-loc_23BAC:                              ; CODE XREF: sub_23BA4+3↑j
+loc_23BAC:                              ; CODE XREF: AdvanceToNextPackedString+3↑j
                 inc     bx
                 retf
-sub_23BA4       endp
+AdvanceToNextPackedString endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37015,13 +37017,13 @@ loc_24F96:                              ; CODE XREF: DrawCharacterStatSheet+258�
                 mov     bx, 8FA2h
                 cmp     ax, 31h ; '1'
                 jle     short loc_24FEB
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 cmp     ax, 34h ; '4'
                 jle     short loc_24FEB
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
                 cmp     ax, 37h ; '7'
                 jle     short loc_24FEB
-                call    sub_23BA4
+                call    AdvanceToNextPackedString
 
 loc_24FEB:                              ; CODE XREF: DrawCharacterStatSheet+2A0↑j
                                         ; DrawCharacterStatSheet+2AA↑j ...
