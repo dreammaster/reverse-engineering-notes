@@ -1476,7 +1476,9 @@ static Bytes_0(void) {
 	set_name	(0X12355,	"loadWorldDat1");
 	set_cmt	(0X12367,	"size",	0);
 	set_cmt	(0X12369,	"fileEntry",	0);
+	set_cmt	(0X12449,	"Same shape as PreloadMonsterStatsTable (allocate a large one-time buffer, read with errorCode=9) but via a different resource-setup stub (sub_27C96, table at 0xCE5F) -- a different WORLD.DAT block, not confirmed which. Called from InitGame.",	0);
 	create_insn	(0X12449);
+	set_name	(0X12449,	"PreloadWorldDataTable");
 	set_cmt	(0X1244F,	"numPara",	0);
 	create_insn	(0X1247A);
 	set_name	(0X1247A,	"loadWorldDat4");
@@ -3427,13 +3429,6 @@ static Bytes_0(void) {
 	set_cmt	(0X19264,	"Space-bar 'sell item' action (sub_1869D main loop, word_328C6 bit 0x10) while carrying an item: if the held item's type mask doesn't overlap the standing location's accepted-type mask, shows 'I HAVE NO NEED FOR THAT TYPE OF ITEM.' (msg 0x7FF7). Otherwise sells the item, crediting its value (word_32920, via AddBCD4) to g_partyGold, then ShowMaterialCounterHud. Renamed from TryConvertItemToMaterial after confirming g_partyGold's identity (HUD label is a literal '$', and the 'SPACEBAR TO SELL ITEM OR ESC TO UNDO' prompt lives in the same message bank).",	0);
 	create_insn	(0X19264);
 	set_name	(0X19264,	"TrySellItemForGold");
-	create_insn	(x=0X19284);
-	op_hex		(x,	1);
-	create_insn	(x=0X192B9);
-	op_hex		(x,	1);
-	set_cmt	(0X1930E,	"Hit-tests region table 0x6304 for one of 4 portrait slots, each gated on a word_328C6 visibility bit; sets the draw position and word_32924 to the matching g_partySlotAssignment entry (0x95EB/0x95ED/0x95EF/0x95F1), then resolves it via SelectPartyRecordById. errorCode=0 on success, 1 on a miss/empty/hidden slot. Called from sub_1869D.",	0);
-	create_insn	(0X1930E);
-	set_name	(0X1930E,	"SelectClickedRosterPortrait");
 }
 
 //------------------------------------------------------------------------
@@ -3443,6 +3438,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X19284);
+	op_hex		(x,	1);
+	create_insn	(x=0X192B9);
+	op_hex		(x,	1);
+	set_cmt	(0X1930E,	"Hit-tests region table 0x6304 for one of 4 portrait slots, each gated on a word_328C6 visibility bit; sets the draw position and word_32924 to the matching g_partySlotAssignment entry (0x95EB/0x95ED/0x95EF/0x95F1), then resolves it via SelectPartyRecordById. errorCode=0 on success, 1 on a miss/empty/hidden slot. Called from sub_1869D.",	0);
+	create_insn	(0X1930E);
+	set_name	(0X1930E,	"SelectClickedRosterPortrait");
 	create_insn	(0X19322);
 	create_insn	(x=0X19327);
 	op_hex		(x,	1);
@@ -5561,13 +5563,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X21217);
 	op_hex		(x,	1);
 	set_name	(0X21217,	"RenderDungeonVanishingPoint");
-	create_insn	(x=0X2125A);
-	op_hex		(x,	1);
-	create_insn	(x=0X212AC);
-	op_hex		(x,	1);
-	set_cmt	(0X212B8,	"Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); skips spawning if this monster type already exists on the level (FindMonsterTypeInLevelPool -- CORRECTION: not a probability roll as first described), then calls SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.",	0);
-	create_insn	(0X212B8);
-	set_name	(0X212B8,	"TryTriggerMonsterEncounterAtCell");
 }
 
 //------------------------------------------------------------------------
@@ -5577,6 +5572,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2125A);
+	op_hex		(x,	1);
+	create_insn	(x=0X212AC);
+	op_hex		(x,	1);
+	set_cmt	(0X212B8,	"Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); skips spawning if this monster type already exists on the level (FindMonsterTypeInLevelPool -- CORRECTION: not a probability roll as first described), then calls SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.",	0);
+	create_insn	(0X212B8);
+	set_name	(0X212B8,	"TryTriggerMonsterEncounterAtCell");
 	create_insn	(x=0X212C0);
 	op_hex		(x,	1);
 	create_insn	(x=0X212C8);
@@ -7620,6 +7622,15 @@ static Bytes_2(void) {
 	create_byte	(0X287D3);
 	make_array	(0X287D3,	0X31);
 	set_name	(0X287D3,	"aMinimumOf1mbEx");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X28804);
 	make_array	(0X28804,	0X25);
 	set_name	(0X28804,	"aAnEmmMappingEr");
@@ -7647,15 +7658,6 @@ static Bytes_2(void) {
 	create_byte	(0X2892A);
 	make_array	(0X2892A,	0X1F);
 	set_name	(0X2892A,	"aProblemRetreiv_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X28949);
 	make_array	(0X28949,	0X34);
 	set_name	(0X28949,	"aProblemRetreiv_1");
@@ -10694,6 +10696,15 @@ static Bytes_3(void) {
 	set_name	(0X3575F,	"aThievery");
 	create_strlit	(0X3576C,	0XD);
 	set_name	(0X3576C,	"aLinguistics");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35779,	0XD);
 	set_name	(0X35779,	"aChemistry");
 	create_strlit	(0X35786,	0X21);
@@ -10719,15 +10730,6 @@ static Bytes_3(void) {
 	set_name	(0X3584A,	"aEscToUndo");
 	create_strlit	(0X35857,	0XD);
 	set_name	(0X35857,	"aIHaveNo");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35864,	0XD);
 	set_name	(0X35864,	"aNeedFor");
 	create_strlit	(0X35871,	0XD);

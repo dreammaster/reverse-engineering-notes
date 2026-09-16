@@ -3287,7 +3287,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 call    FileEntry_OpenFile
                 call    ErrorCheck
                 call    PreloadMonsterStatsTable
-                call    sub_12449
+                call    PreloadWorldDataTable
                 mov     errorCode, 0Ah
                 mov     bx, 8FFBh
                 call    FileEntry_CreateFile
@@ -3655,8 +3655,8 @@ loadWorldDat1   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12449       proc near               ; CODE XREF: InitGame+5B↑p
-                mov     errorCode, 1
+PreloadWorldDataTable proc near         ; CODE XREF: InitGame+5B↑p
+                mov     errorCode, 1    ; Same shape as PreloadMonsterStatsTable (allocate a large one-time buffer, read with errorCode=9) but via a different resource-setup stub (sub_27C96, table at 0xCE5F) -- a different WORLD.DAT block, not confirmed which. Called from InitGame.
                 mov     bx, 677h        ; numPara
                 call    allocMem
                 mov     word_2E55A, ax
@@ -3669,7 +3669,7 @@ sub_12449       proc near               ; CODE XREF: InitGame+5B↑p
                 call    FileEntry_Read
                 mov     word_368A5, ds
                 retn
-sub_12449       endp
+PreloadWorldDataTable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10061,7 +10061,7 @@ seg013          segment byte public 'CODE' use16
 
 ; int __usercall allocMem@<ax>(int numPara@<bx>)
 allocMem        proc far                ; CODE XREF: InitGame+143↑P
-                                        ; sub_12449+9↑P ...
+                                        ; PreloadWorldDataTable+9↑P ...
                 mov     ah, 48h
                 int     21h             ; DOS - 2+ - ALLOCATE MEMORY
                                         ; BX = number of 16-byte paragraphs desired
@@ -42616,7 +42616,7 @@ sub_27C78       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27C96       proc far                ; CODE XREF: sub_12449+16↑P
+sub_27C96       proc far                ; CODE XREF: PreloadWorldDataTable+16↑P
                 push    si
                 mov     si, 0CE5Fh
                 mov     [bx+4], ax
@@ -56936,8 +56936,8 @@ word_2E556      dw 0                    ; DATA XREF: FindObjectAtPosition+43↑w
                                         ; FindObjectAtPosition+5E↑w
 word_2E558      dw 0                    ; DATA XREF: FindObjectAtPosition+49↑w
                                         ; FindObjectAtPosition+65↑w
-word_2E55A      dw 0                    ; DATA XREF: sub_12449+E↑w
-                                        ; sub_12449+1B↑r ...
+word_2E55A      dw 0                    ; DATA XREF: PreloadWorldDataTable+E↑w
+                                        ; PreloadWorldDataTable+1B↑r ...
 word_2E55C      dw 0                    ; DATA XREF: HandleMovementInput+3C2↑r
                                         ; HandleMovementInput+3CE↑r ...
 word_2E55E      dw 0                    ; DATA XREF: BuildDungeonViewportCells+1E↑w

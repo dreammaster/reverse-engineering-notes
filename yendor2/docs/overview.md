@@ -3859,6 +3859,16 @@ startup rather than per-entry.
 
 491 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PreloadWorldDataTable
+
+Named `sub_12449` -> `PreloadWorldDataTable`, called from `InitGame`
+immediately before `PreloadMonsterStatsTable`: an identically-shaped
+sibling (allocate a large one-time buffer, read with `errorCode=9`)
+but via a different resource-setup stub, so a different `WORLD.DAT`
+block — not confirmed which one.
+
+492 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -615,7 +615,10 @@ The F2 "MONSTER STATISTICS" category follows the same pattern (and is
 plausibly preloaded wholesale at startup: `PreloadMonsterStatsTable`,
 was `sub_124EC`, called once from `InitGame`, allocates a large
 ~18.4KB block and reads into it with the same `errorCode=9`
-`LoadClueBookMonsterEntry` uses for this data):
+`LoadClueBookMonsterEntry` uses for this data — immediately preceded in
+`InitGame` by an identically-shaped sibling, `PreloadWorldDataTable`
+(was `sub_12449`, ~25.9KB, via a different resource-setup stub whose
+`WORLD.DAT` block isn't confirmed)):
 `RunClueBookMonsterCategory` (called from `ShowClueBook`) calls
 `LoadClueBookMonsterEntry` once (reads `WORLD.DAT` block `0x32` for
 the current entry into a fresh buffer) then loops redrawing
