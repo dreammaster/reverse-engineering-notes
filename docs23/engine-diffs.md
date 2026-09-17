@@ -609,11 +609,33 @@ BinDiff separately (and wrongly, 0.01 similarity) labeled
 `TickPerceptionGatedAilmentSlot` is actually `sub_1AF5C` -- the normal-
 path worker, which itself calls the real (already-named)
 `TickDiseasePoisonSickAilmentSlot` and `TickCurseHexJinxAilmentSlot`.
-Neither `sub_1AF5C` nor `sub_1B085` renamed yet: `sub_1B085` in
-particular looks like genuinely new logic (three new
-`PrepareTrapEffectSlots` calls with ids `0x2E`/`0x2F`/`0x30` not seen
-elsewhere, a random 1-3 roll, and a new helper `sub_1B10C`) worth a
-dedicated future look rather than a rushed name.
+
+**`sub_1B085` traced further**: it's a genuinely new "random party
+ailment" mechanic, no yendor2 equivalent. Prepares three trap-effect
+slot records via `PrepareTrapEffectSlots` (ids `0x2E`, `0x2F`, `0x30`
+-- new ids, not seen elsewhere), rolls a random 1-3 value, then loops
+the 4 `g_partySlotAssignment` entries (confirmed by the loop init
+using `g_partySlotAssignment`'s real address directly) calling
+`SelectPartyRecordById` + a second worker, `sub_1B10C`, per member.
+`sub_1B10C` skips members that are dead/incapacitated (status bits
+`0x1C40`) or a specific class id (`0x10B`); for the one member whose
+position happens to match the random 1-3 roll, it applies the `0x2F`
+trap-effect slot *plus* an extra side effect (writes
+`[member+0x16]+4` to a scratch global, `ds:0x5882`); every other
+member gets the `0x2E` slot instead. Both cases mark the party status
+icon bar dirty (`ds:0x5370` bit `0x100`) so `ApplyEffectAndDrawIconBar`
+picks it up. The third prepared slot (`0x30`) isn't consumed anywhere
+in this function -- possibly used by `PrepareTrapEffectSlots` itself
+for a shared/aggregate record, not confirmed. Reads as "each tick, one
+random party member takes a slightly worse version of a periodic
+ailment/hazard than the rest of the party" -- plausibly a new
+difficulty mechanic (a roaming curse, environmental hazard, or
+group-trap effect) rather than anything tied to a specific spell or
+item. Exact gameplay meaning of ids `0x2E`/`0x2F`/`0x30` not decoded
+(would need reading `PrepareTrapEffectSlots`' own effect-definition
+table). Left unrenamed pending that -- a description this specific
+without full certainty on the trap-effect semantics risks a
+misleading name.
 
 ### Round 9: closed out the low-confidence tier, two more real matches found via caller context
 
@@ -715,16 +737,28 @@ been spot-checked at least once.
   found via the caller-structure technique once `g_uiScratchFlags4`
   (already resolved in yendor3 as `word_33120`) made the search
   possible; `ParseCommandLineSwitches` was found as a bonus in the
-  same pass. Remaining open leads for future sessions (not blocking,
-  just unresolved identities): `DrawShadowedTextAlt` (needs
-  `PlayStudioCreditsIntro`'s real identity found first, since that's
-  its only caller and is itself still unresolved), the real
-  `RunClueEntryMenu`-suggested address (0x2566C),
-  `TryHandleCatalogSlotClick`-suggested address (0x144D4),
-  `ErrorCheck`-suggested address (0x11E56 -- note: since resolved as
-  `ParseCommandLineSwitches`), `RunCharacterDetailOverlay`-suggested
-  address (0x11778), and the character-creation-region cluster noted
-  above (0x2BD4A/0x2BBB5/0x2BC75). `sub_1B085`'s new ailment mechanic
-  and `sub_156C9`'s identity (a small item-range-check loop, confirmed
-  not `RestPartyAndAdvanceClock`) also remain open from earlier
-  rounds.
+  same pass.
+- **`sub_156C9` resolved** (round 11) -- a verbatim structural match to
+  yendor2's `CheckAndTickAvailableAilment` (identical loop shape,
+  identical `IsItemRangeAvailable`/`g_currentActionId`-gated
+  `TickStatusEffects` call, called from the same position right after
+  `TickTravelResourceAilments`). Not `RestPartyAndAdvanceClock`, as
+  originally guessed -- that turned out to be a different address
+  entirely (round 7). Also traced `sub_1B085`'s new ailment mechanic in
+  more depth (round 11): a genuinely new "random party member takes a
+  worse periodic effect than the rest" mechanic, no yendor2 equivalent
+  -- see the dedicated write-up above. Left unrenamed pending full
+  decoding of its trap-effect ids.
+
+Remaining open leads for future sessions (not blocking, just
+unresolved identities): `DrawShadowedTextAlt` (needs
+`PlayStudioCreditsIntro`'s real identity found first, since that's its
+only caller and is itself still unresolved -- its usual `start`-tail
+call position doesn't have an obvious equivalent in yendor3, may have
+been restructured), the real `RunClueEntryMenu`-suggested address
+(0x2566C), `TryHandleCatalogSlotClick`-suggested address (0x144D4),
+`ErrorCheck`-suggested address (0x11E56 -- note: since resolved as
+`ParseCommandLineSwitches`), `RunCharacterDetailOverlay`-suggested
+address (0x11778), the character-creation-region cluster noted above
+(0x2BD4A/0x2BBB5/0x2BC75), and `sub_1B085`'s exact trap-effect-id
+semantics.

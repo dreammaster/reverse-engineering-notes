@@ -10260,20 +10260,20 @@ IsDestinationUnlocked endp
                 and     word ptr ds:536Ah, 0FFBFh
                 mov     cx, ds:0CF07h
                 mov     ax, 23h ; '#'
-                call    sub_156C9
+                call    CheckAndTickAvailableAilment_0
                 retn
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_156C9       proc near               ; CODE XREF: seg022:01B5↑p
+CheckAndTickAvailableAilment_0 proc near ; CODE XREF: seg022:01B5↑p
                 cmp     cx, 0
                 jnz     short loc_156CF
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_156CF:                              ; CODE XREF: sub_156C9+3↑j
-                                        ; sub_156C9+1F↓j
+loc_156CF:                              ; CODE XREF: CheckAndTickAvailableAilment_0+3↑j
+                                        ; CheckAndTickAvailableAilment_0+1F↓j
                 push    ax
                 mov     ds:53EEh, ax
                 mov     ds:53F0h, ax
@@ -10286,10 +10286,10 @@ loc_156CF:                              ; CODE XREF: sub_156C9+3↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_156EB:                              ; CODE XREF: sub_156C9+17↑j
+loc_156EB:                              ; CODE XREF: CheckAndTickAvailableAilment_0+17↑j
                 add     sp, 2
                 retn
-sub_156C9       endp
+CheckAndTickAvailableAilment_0 endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -28298,7 +28298,7 @@ seg062          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-TickStatusEffects proc far              ; CODE XREF: sub_156C9+19↑P
+TickStatusEffects proc far              ; CODE XREF: CheckAndTickAvailableAilment_0+19↑P
                                         ; CheckAndTickAvailableAilment+19↑P ...
                 push    si
                 call    DrawMouseCursorAlt

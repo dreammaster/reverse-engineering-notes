@@ -2445,6 +2445,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X156B9);
 	op_hex		(x,	1);
 	create_insn	(0X156C9);
+	set_name	(0X156C9,	"CheckAndTickAvailableAilment_0");
 	create_insn	(0X156CF);
 	create_insn	(x=0X156EB);
 	op_hex		(x,	1);

@@ -7601,6 +7601,33 @@ review: `DrawShadowedTextAlt`. Its only caller, `PlayStudioCreditsIntro`,
 is itself still unresolved, so finding it needs that caller identified
 first — a natural next step for a future round.
 
+### 2026-09-16 session update, continued: Chapter 3 review round 11 — resolved sub_156C9, traced sub_1B085's new ailment mechanic
+
+Tried the caller-structure approach on `DrawShadowedTextAlt` next, but
+its only yendor2 caller (`PlayStudioCreditsIntro`) is itself one of
+the still-unresolved addresses, and searching for its usual
+`start`-tail trigger sequence (a hidden 3-flag check unlocking a
+credits easter egg) didn't turn up an obvious match in yendor3 —
+possibly restructured or moved. Left open rather than guessing.
+
+Pivoted to `sub_156C9` instead (the "small item-range-check loop"
+flagged unidentified since round 7) and found it directly: its body is
+a verbatim match to yendor2's `CheckAndTickAvailableAilment` — same
+loop shape, same `IsItemRangeAvailable`/`g_currentActionId`-gated
+`TickStatusEffects` call, called from the exact same position right
+after `TickTravelResourceAilments`. Renamed.
+
+Also spent time fully tracing `sub_1B085` (`TickPartyAilmentIconBar`'s
+slow/random-tick worker, flagged since round 7 as "genuinely new
+logic"). It's a new mechanic with no yendor2 equivalent: each tick, it
+rolls a random 1-3 value and loops the party (confirmed via
+`g_partySlotAssignment`'s real address in the loop setup), applying a
+"worse" trap-effect variant to whichever single member matches the
+roll and a "baseline" variant to everyone else, then marks the status
+icon bar dirty. Read as a new roaming hazard/curse mechanic. Left
+unrenamed since the exact gameplay meaning of its trap-effect ids
+isn't decoded yet — full write-up in `docs23/engine-diffs.md`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
