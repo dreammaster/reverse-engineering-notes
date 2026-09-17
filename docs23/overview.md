@@ -7218,6 +7218,53 @@ needs to decide what's shared vs. per-game.
 **Not done yet**: the 52 mid-confidence and 77 low-confidence matches
 are entirely unreviewed — next step once resumed.
 
+### 2026-09-16 session update, continued: Chapter 3 high-confidence review, round 1
+
+First real review round of the 68 bulk-imported high-confidence
+matches (~40 checked), using an automated helper
+(`diff_functions.py`, kept in the session scratchpad, not the repo):
+extracts each function's body from both `.asm` files, diffs the
+called-target sequence, and resolves any yendor3 `sub_XXXXX` target
+through the full 197-row BinDiff match table so a target that's merely
+not-yet-renamed elsewhere doesn't look like a spurious diff. Real
+diffs stood out immediately.
+
+Biggest finding: `ErrorCheck`'s yendor3 address had been weakly
+mismatched by BinDiff to `FileEntry_Close` (0.04 similarity) instead —
+confirmed by reading it side-by-side with yendor2's `ErrorCheck`
+(byte-for-byte identical structure). This one bad match was
+responsible for a misleading "ErrorCheck missing" pattern across
+several otherwise-clean function diffs. Fixed by renaming the correct
+address. yendor3's real `FileEntry_Close` is still unidentified.
+
+Also found and documented in `docs23/engine-diffs.md`: a new
+barter-pricing-preview feature inserted before purchase confirmation
+at 3 separate call sites (matches the manual's `BARTERING` skill
+mechanic); a new `RefreshMultiStatEffects` function
+(remove-then-reapply all multi-stat effects, called from
+`UseTrainingItem`); resolved the earlier "mystery hook" `sub_286D8` as
+a conditional call to the sound driver far pointer (same one
+`TriggerSoundEvent` uses as `g_soundDriverFarPtr`) rather than a
+general event system; confirmed `WaitForSoundDriverIdle` gained several
+new call sites beyond the one found last round; and two likely-new
+tile-id classification/bounds-check helpers (`sub_1BC98`/`sub_1BCDB`)
+feeding the wall/floor rendering and map-editor legend code.
+
+Applied 4 renames this round (`apply_round1_corrections.py`):
+`ErrorCheck` (correction), `TryHandleCatalogSlotClick` (the
+`RunShopScreen` call site specifically — its `RunPartyInventoryScreen`
+call site has forked into a separate, not-yet-named function in
+Chapter 3), `RefreshMultiStatEffects`, and an attempted
+`g_soundDriverFarPtr` at `ds:0xFA00` that failed (IDA reports the
+address unloaded — needs a proper segment-offset "convert to offset"
+pass, not a plain linear rename, since this is a 16-bit segmented
+operand rather than the flat-address style most globals in this
+codebase use).
+
+~28 of the 68 high-confidence matches remain unchecked; the 52
+mid-confidence and 77 low-confidence tiers are still untouched. Next
+round: continue through the remaining high-confidence functions.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

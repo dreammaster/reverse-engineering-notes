@@ -56,7 +56,7 @@ start           proc near
                 test    word_33122, 1
                 jnz     short loc_10032
                 mov     word_33190, 12h
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_10032:                              ; CODE XREF: start+25↑j
                 and     word_3311A, 7FFFh
@@ -69,7 +69,7 @@ loc_10032:                              ; CODE XREF: start+25↑j
 ; ---------------------------------------------------------------------------
 
 loc_10051:                              ; CODE XREF: start+4C↑j
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_10056:                              ; CODE XREF: start+A0↓j
                                         ; start+CB↓j ...
@@ -879,7 +879,7 @@ loc_106CC:                              ; CODE XREF: start+4E↑j
                 mov     bx, 96C2h
                 mov     word_33190, 63h ; 'c'
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     cx, 370h
                 mov     si, 9926h
                 mov     di, 0
@@ -2785,7 +2785,7 @@ loc_1179D:                              ; CODE XREF: sub_11778+18↑j
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds:53EEh
                 cmp     word ptr ds:5424h, 0
                 jz      short loc_117E6
@@ -2854,7 +2854,7 @@ loc_11821:                              ; CODE XREF: sub_117FC+18↑j
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds:53EEh
                 pop     word ptr ds:5424h
                 add     sp, 4
@@ -2922,7 +2922,7 @@ sub_118A3       proc near               ; CODE XREF: sub_11778+5↑p
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 sub_118A3       endp
 
@@ -2943,7 +2943,7 @@ sub_118C2       proc near               ; CODE XREF: sub_11778+1A↑p
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds:53EEh
                 retn
 sub_118C2       endp
@@ -3568,7 +3568,7 @@ loc_11DE2:                              ; CODE XREF: sub_1197C+96↑j
                 mov     word ptr [bx+8], 0
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    UpdateScrollingBannerWindow
                 call    sub_2566C
                 and     word ptr ds:5370h, 0FF7h
@@ -4133,7 +4133,7 @@ loc_12299:                              ; CODE XREF: RunShopScreen+55↑j
                 jz      short loc_122E9
                 cmp     ax, 5
                 jnz     short loc_122BF
-                call    sub_128F4
+                call    TryHandleCatalogSlotClick
 
 loc_122BF:                              ; CODE XREF: RunShopScreen+C0↑j
                                         ; RunShopScreen+CF↑j
@@ -4320,7 +4320,7 @@ loc_1244F:                              ; CODE XREF: RunShopScreen+251↑j
                 call    PrepareRecordAtIndexDCA
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 2
                 push    ax
                 jmp     loc_123C6
@@ -4421,7 +4421,7 @@ LoadLockState   proc far                ; CODE XREF: UseAbilityCommand+2C↓p
                 call    PrepareRecordAtIndexDCA
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 xor     dx, dx
                 mov     ax, ds:5888h
                 mov     cx, 8
@@ -4438,7 +4438,7 @@ LoadLockState   proc far                ; CODE XREF: UseAbilityCommand+2C↓p
                 call    PrepareRecordAtIndexDC6
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     dx, ds:0F9Ch
                 mov     bx, 590Ch
                 call    MapUnmapPages
@@ -4494,7 +4494,7 @@ LoadCurgameRecord proc far              ; CODE XREF: UseAbilityCommand+26↓p
                 call    PrepareRecordAtIndexDC6
                 mov     word_33190, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     dx, word_2ED4C
                 mov     bx, 590Ch
                 call    MapUnmapPages
@@ -4716,7 +4716,7 @@ loc_1281B:                              ; CODE XREF: UseAbilityCommand+9A↑j
                 call    PrepareRecordAtIndexDC6
                 mov     word_33190, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 call    ApplySavingThrowEffect
                 cmp     byte_2EC4A, 0
                 jz      short loc_12853
@@ -4812,7 +4812,7 @@ BuildShopCategoryTabList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_128F4       proc near               ; CODE XREF: RunShopScreen+D1↑p
+TryHandleCatalogSlotClick proc near     ; CODE XREF: RunShopScreen+D1↑p
                 call    HitTestCatalogSlot
                 cmp     ax, 0
                 jz      short locret_12933
@@ -4833,10 +4833,10 @@ sub_128F4       proc near               ; CODE XREF: RunShopScreen+D1↑p
                 call    ShowItemPurchaseConfirmPrompt
                 pop     word_3311C
 
-locret_12933:                           ; CODE XREF: sub_128F4+6↑j
-                                        ; sub_128F4+B↑j
+locret_12933:                           ; CODE XREF: TryHandleCatalogSlotClick+6↑j
+                                        ; TryHandleCatalogSlotClick+B↑j
                 retn
-sub_128F4       endp
+TryHandleCatalogSlotClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4866,7 +4866,7 @@ loc_1295C:                              ; CODE XREF: TriggerShopExitSoundAndPers
                 call    PrepareRecordAtIndexDCA
                 mov     word_33190, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 TriggerShopExitSoundAndPersist endp
 
@@ -4981,7 +4981,7 @@ SellClickedCatalogItem endp
 
 
 HitTestCatalogSlot proc near            ; CODE XREF: HandleShopCatalogSlotClick↑p
-                                        ; sub_128F4↑p
+                                        ; TryHandleCatalogSlotClick↑p
                 mov     ax, word_2EFC4  ; Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.
                 mov     bx, word_2EFC6
                 mov     si, 6700h
@@ -5534,7 +5534,7 @@ sub_12F2B       proc far                ; CODE XREF: ProcessLevelMonsters+D3↓P
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, ds:0E9Ch
                 shl     bx, 1
                 shl     bx, 1
@@ -8334,7 +8334,7 @@ LoadGroundItemSlotRecord proc near      ; CODE XREF: RunPartyInventoryScreen+287
                 call    PrepareGroundItemSlotBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 LoadGroundItemSlotRecord endp
 
@@ -9381,7 +9381,7 @@ sub_14FDA       proc near               ; CODE XREF: sub_14F40:loc_14FD6↑p
                 mov     word ptr [bx+8], 0
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    TriggerFullPaletteFadeOut
                 call    DrawMouseCursorAlt
                 and     word ptr ds:5370h, 0FFF7h
@@ -9543,7 +9543,7 @@ sub_150BE       proc near               ; CODE XREF: sub_14F40↑p
                 mov     word ptr [bx+8], 3
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
@@ -9696,7 +9696,7 @@ ReadGroundItemSlot proc near            ; CODE XREF: PlaceItemOnGround+15↑p
                 call    PrepareGroundItemSlotBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 ReadGroundItemSlot endp
 
@@ -9708,7 +9708,7 @@ CommitGroundItemWrite proc near         ; CODE XREF: PrepareGroundItemSlotWrite+
                 mov     bx, 967Ah       ; Minimal write-commit (FileEntry_Write, errorCode=0xB) for the ground-item slot, the same shape as CommitContainerWrite. Called from PrepareGroundItemSlotWrite.
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 CommitGroundItemWrite endp
 
@@ -10337,9 +10337,9 @@ allocMem        proc far                ; CODE XREF: sub_15472+2A↑P
                 int     21h             ; DOS - 2+ - ALLOCATE MEMORY
                                         ; BX = number of 16-byte paragraphs desired
                 jnb     short loc_15730
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:53E0h, 0FFFFh
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_15730:                              ; CODE XREF: allocMem+4↑j
                 mov     word ptr ds:53E0h, 0
@@ -13648,7 +13648,7 @@ loc_173C6:                              ; CODE XREF: UpdateScrollArrows+27↑j
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:0FBFh, 0Dh
                 mov     word ptr ds:53FAh, 0Ah
                 mov     word ptr ds:5414h, 17h
@@ -14131,7 +14131,7 @@ loc_178B4:                              ; CODE XREF: ShowClueBookSpellDetail+2C2
                 mov     bx, 96C2h
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 9926h
                 mov     bx, 6
                 call    LookupSpellDescriptionBlockOffset
@@ -14149,7 +14149,7 @@ loc_1790E:                              ; CODE XREF: ShowClueBookSpellDetail+352
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 9926h
                 call    writeString
                 add     word ptr ds:5414h, 6
@@ -14332,7 +14332,7 @@ loc_17B20:                              ; CODE XREF: DrawClueBookMapGrid+110↓j
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 0A5A6h
                 mov     bx, 1
                 call    LookupSpellDescriptionBlockOffset
@@ -14343,7 +14343,7 @@ loc_17B20:                              ; CODE XREF: DrawClueBookMapGrid+110↓j
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    DrawLocalMapRow
                 inc     word ptr ds:53B6h
                 add     word ptr ds:0E26h, 8
@@ -14398,7 +14398,7 @@ DrawClueBookMapCategoryHeader proc near ; CODE XREF: RunClueBookMapCategory+32�
                 mov     word ptr [bx+6], 1Ah
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 push    word ptr ds:0E28h
                 mov     word ptr ds:0E28h, 0
                 mov     word ptr ds:0E24h, 0A1h
@@ -14436,7 +14436,7 @@ LoadClueBookMapEntry proc near          ; CODE XREF: RunClueBookMapCategory↑p
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 pop     word ptr ds:96C4h
                 retn
 LoadClueBookMapEntry endp
@@ -14840,11 +14840,11 @@ loc_1812B:                              ; CODE XREF: LoadClueBookMonsterEntry+9�
                 mov     di, 0
                 xor     ax, ax
                 rep stosw
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds
                 mov     ds:96C4h, ax
                 mov     es, word ptr ds:53F6h
@@ -15418,7 +15418,7 @@ BuildMonsterDisplayName proc far        ; CODE XREF: BuildClueEntryText+9A↑P
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 9965h
                 call    TrimTrailingSpaces
                 mov     bx, 9958h
@@ -16096,7 +16096,7 @@ loc_18C6E:                              ; CODE XREF: sub_18C53+16↑j
                 mov     word ptr [bx+8], 5
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    TriggerFullPaletteFadeOut
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
@@ -16128,7 +16128,7 @@ loc_18C6E:                              ; CODE XREF: sub_18C53+16↑j
                 mov     word ptr [bx+8], 0
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    TriggerFullPaletteFadeOut
 
 loc_18D28:                              ; CODE XREF: sub_18C53+D↑j
@@ -17881,7 +17881,7 @@ loc_19D2A:                              ; CODE XREF: UseTrainingItem+337↑j
                 call    RunItemServiceRecipientLoop
                 call    DrawPartyStatusIconRow
                 call    CopyPartyStatBlockToEmsCache
-                call    sub_1A5C5
+                call    RefreshMultiStatEffects
                 jmp     loc_199E9
 ; ---------------------------------------------------------------------------
 
@@ -18327,7 +18327,7 @@ loc_1A1E4:                              ; CODE XREF: sub_1A1B7+1D↑j
                 mov     [bx+8], ax
                 mov     word_33190, 0Fh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     si, 0EC8h
                 mov     ax, [si+22h]
                 cmp     ax, 0
@@ -18354,7 +18354,7 @@ loc_1A224:                              ; CODE XREF: sub_1A1B7+5A↑j
                 mov     bx, ax
                 call    allocMem
                 mov     word_2ED97, ax
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 96C2h
                 mov     [bx+2], ax
                 mov     cx, [si+4]
@@ -18362,7 +18362,7 @@ loc_1A224:                              ; CODE XREF: sub_1A1B7+5A↑j
 loc_1A25B:                              ; CODE XREF: sub_1A1B7+BB↓j
                 mov     word_33190, 0Fh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr [bx+8]
                 add     word ptr [bx+4], 3Ch ; '<'
                 loop    loc_1A25B
@@ -18379,7 +18379,7 @@ loc_1A25B:                              ; CODE XREF: sub_1A1B7+BB↓j
                 mov     bx, ax
                 call    allocMem
                 mov     word_3314C, ax
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 96C2h
                 mov     [bx+2], ax
                 mov     cx, [si+6]
@@ -18387,7 +18387,7 @@ loc_1A25B:                              ; CODE XREF: sub_1A1B7+BB↓j
 loc_1A2AB:                              ; CODE XREF: sub_1A1B7+10B↓j
                 mov     word_33190, 0Fh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr [bx+8]
                 add     word ptr [bx+4], 22h ; '"'
                 loop    loc_1A2AB
@@ -18714,61 +18714,61 @@ RedrawPartyGoldDisplay endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A5C5       proc near               ; CODE XREF: UseTrainingItem+3BB↑p
+RefreshMultiStatEffects proc near       ; CODE XREF: UseTrainingItem+3BB↑p
                 mov     bx, word_3312C
                 mov     cx, 6
                 mov     si, 13Ah
 
-loc_1A5CF:                              ; CODE XREF: sub_1A5C5+19↓j
+loc_1A5CF:                              ; CODE XREF: RefreshMultiStatEffects+19↓j
                 mov     ax, [bx+si]
                 cmp     ax, 0
                 jz      short loc_1A5DB
                 call    RemoveMultiStatEffect
 
-loc_1A5DB:                              ; CODE XREF: sub_1A5C5+F↑j
+loc_1A5DB:                              ; CODE XREF: RefreshMultiStatEffects+F↑j
                 add     si, 4
                 loop    loc_1A5CF
                 mov     bx, word_3312C
                 mov     cx, 5
                 mov     si, 152h
 
-loc_1A5EA:                              ; CODE XREF: sub_1A5C5+34↓j
+loc_1A5EA:                              ; CODE XREF: RefreshMultiStatEffects+34↓j
                 mov     ax, [bx+si]
                 cmp     ax, 0
                 jz      short loc_1A5F6
                 call    RemoveMultiStatEffect
 
-loc_1A5F6:                              ; CODE XREF: sub_1A5C5+2A↑j
+loc_1A5F6:                              ; CODE XREF: RefreshMultiStatEffects+2A↑j
                 add     si, 2
                 loop    loc_1A5EA
                 call    SyncPartyRecordStagedStats
                 mov     cx, 6
                 mov     si, 13Ah
 
-loc_1A604:                              ; CODE XREF: sub_1A5C5+4E↓j
+loc_1A604:                              ; CODE XREF: RefreshMultiStatEffects+4E↓j
                 mov     ax, [bx+si]
                 cmp     ax, 0
                 jz      short loc_1A610
                 call    ApplyMultiStatEffectForItem
 
-loc_1A610:                              ; CODE XREF: sub_1A5C5+44↑j
+loc_1A610:                              ; CODE XREF: RefreshMultiStatEffects+44↑j
                 add     si, 4
                 loop    loc_1A604
                 mov     bx, word_3312C
                 mov     cx, 5
                 mov     si, 152h
 
-loc_1A61F:                              ; CODE XREF: sub_1A5C5+69↓j
+loc_1A61F:                              ; CODE XREF: RefreshMultiStatEffects+69↓j
                 mov     ax, [bx+si]
                 cmp     ax, 0
                 jz      short loc_1A62B
                 call    ApplyMultiStatEffectForItem
 
-loc_1A62B:                              ; CODE XREF: sub_1A5C5+5F↑j
+loc_1A62B:                              ; CODE XREF: RefreshMultiStatEffects+5F↑j
                 add     si, 2
                 loop    loc_1A61F
                 retn
-sub_1A5C5       endp
+RefreshMultiStatEffects endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -18866,7 +18866,7 @@ seg039          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ComputeBarterPricingPreview proc far    ; CODE XREF: sub_128F4+1C↑P
+ComputeBarterPricingPreview proc far    ; CODE XREF: TryHandleCatalogSlotClick+1C↑P
                                         ; PayGoldAndAcquireItem+A↑P ...
                 push    word ptr ds:5426h ; Computes a tiered discount/markup percentage from party record field +0x68 (plausibly the BARTERING skill/stat) via 7 descending thresholds, applies it via MulBCD4ByWord to preview a scaled sell/ buy price, then -- gated on IsItemEligibleForEnhance / IsItemEligibleForRepair -- computes further scaled preview prices for enhance/repair costs. Called from PayGoldAndAcquireItem and SellClickedCatalogItem.
                 mov     ds:5426h, ax
@@ -20621,7 +20621,7 @@ FindItemInsideContainer proc near       ; CODE XREF: sub_1B2AB+46↑p
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     di, 0A5A8h
                 mov     cx, 8
 
@@ -20690,7 +20690,7 @@ FindItemInsideContainerLevel2 proc near ; CODE XREF: FindItemInsideContainer+5B�
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     di, 0A5CAh
                 mov     cx, 8
 
@@ -20750,7 +20750,7 @@ FindItemInsideContainerLevel3 proc near ; CODE XREF: FindItemInsideContainerLeve
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     di, 0A5ECh
                 mov     cx, 8
 
@@ -21935,7 +21935,7 @@ loc_1BEC8:                              ; CODE XREF: sub_1BE7E+42↑j
                 mov     word ptr [bx+8], 0
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
                 mov     word ptr ds:0E28h, 0
@@ -25038,7 +25038,7 @@ loc_1DBDB:                              ; CODE XREF: RunGameDialog+392↑j
                 mov     bx, 96ABh
                 mov     al, 2
                 call    FileEntry_OpenFile
-                call    sub_28C1A
+                call    ErrorCheck
                 call    StopMusicAndResetTimer
                 mov     ax, ds:0CF63h
                 and     ax, 5
@@ -25048,7 +25048,7 @@ loc_1DBDB:                              ; CODE XREF: RunGameDialog+392↑j
                 call    PrepareMasterHeaderBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 and     word ptr ds:0CF63h, 0FFFAh
                 pop     ax
                 test    ax, 1
@@ -25069,7 +25069,7 @@ loc_1DC47:                              ; CODE XREF: RunGameDialog+417↑j
                 call    PrepareMasterHeaderBlockRead
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 0A5A6h
                 mov     bx, 967Ah       ; this
                 call    PrepareGameDialogSizedBlockRead
@@ -25084,11 +25084,11 @@ loc_1DC8A:                              ; CODE XREF: RunGameDialog+492↓j
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr ds:9682h
                 inc     word ptr ds:96B3h
                 loop    loc_1DC8A
@@ -25108,11 +25108,11 @@ loc_1DCE9:                              ; CODE XREF: RunGameDialog+4F1↓j
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr ds:9682h
                 inc     word ptr ds:96B3h
                 loop    loc_1DCE9
@@ -25124,7 +25124,7 @@ loc_1DCE9:                              ; CODE XREF: RunGameDialog+4F1↓j
                 mov     [bx+6], ax
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 9926h
                 mov     bx, 967Ah       ; this
                 call    PrepareRecordAtIndexDC6
@@ -25132,7 +25132,7 @@ loc_1DCE9:                              ; CODE XREF: RunGameDialog+4F1↓j
                 mov     [bx+6], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:588Ch, 0
                 mov     ax, 9926h
                 mov     bx, 96ABh       ; this
@@ -25154,11 +25154,11 @@ loc_1DD9B:                              ; CODE XREF: RunGameDialog+56B↑j
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr ds:9682h
                 inc     word ptr ds:96B3h
                 sub     cx, 0BB8h
@@ -25177,11 +25177,11 @@ loc_1DD9B:                              ; CODE XREF: RunGameDialog+56B↑j
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 122Ch
                 mov     bx, 96ABh       ; this
                 call    PrepareGameDialogLargeBlockRead
@@ -25191,11 +25191,11 @@ loc_1DD9B:                              ; CODE XREF: RunGameDialog+56B↑j
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 call    ResetCombatRoundScratchState
                 mov     word ptr ds:54B6h, 0
                 mov     word ptr ds:568Ch, 0
@@ -25810,7 +25810,7 @@ SaveCurrentGameToSlot proc near         ; CODE XREF: RunGameDialog+327↑p
                 mov     word ptr ds:53E0h, 0Bh
                 mov     bx, 96ABh
                 call    FileEntry_CreateFile
-                call    sub_28C1A
+                call    ErrorCheck
                 jmp     short loc_1E3FA
 ; ---------------------------------------------------------------------------
 
@@ -25819,7 +25819,7 @@ loc_1E3E5:                              ; CODE XREF: SaveCurrentGameToSlot+18↑
                 mov     bx, 96ABh
                 mov     al, 2
                 call    FileEntry_OpenFile
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_1E3FA:                              ; CODE XREF: SaveCurrentGameToSlot+31↑j
                 mov     ax, 0CEDDh
@@ -25827,13 +25827,13 @@ loc_1E3FA:                              ; CODE XREF: SaveCurrentGameToSlot+31↑
                 call    PrepareMasterHeaderBlockRead
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 0CEDDh
                 mov     bx, 96ABh       ; this
                 call    PrepareMasterHeaderBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 0A5A6h
                 mov     bx, 967Ah       ; this
                 call    PrepareGameDialogSizedBlockRead
@@ -25848,11 +25848,11 @@ loc_1E454:                              ; CODE XREF: SaveCurrentGameToSlot+D0↓
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr ds:9682h
                 inc     word ptr ds:96B3h
                 loop    loc_1E454
@@ -25872,11 +25872,11 @@ loc_1E4B3:                              ; CODE XREF: SaveCurrentGameToSlot+12F�
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr ds:9682h
                 inc     word ptr ds:96B3h
                 loop    loc_1E4B3
@@ -25888,7 +25888,7 @@ loc_1E4B3:                              ; CODE XREF: SaveCurrentGameToSlot+12F�
                 mov     [bx+6], ax
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 9926h
                 mov     bx, 96ABh       ; this
                 call    PrepareRecordAtIndexDC6
@@ -25896,7 +25896,7 @@ loc_1E4B3:                              ; CODE XREF: SaveCurrentGameToSlot+12F�
                 mov     [bx+6], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:588Ch, 0
                 mov     ax, 9926h
                 mov     bx, 96ABh       ; this
@@ -25918,11 +25918,11 @@ loc_1E565:                              ; CODE XREF: SaveCurrentGameToSlot+1A9�
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr ds:9682h
                 inc     word ptr ds:96B3h
                 sub     cx, 0BB8h
@@ -25941,11 +25941,11 @@ loc_1E565:                              ; CODE XREF: SaveCurrentGameToSlot+1A9�
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 122Ch
                 mov     bx, 96ABh       ; this
                 call    PrepareGameDialogLargeBlockRead
@@ -25955,11 +25955,11 @@ loc_1E565:                              ; CODE XREF: SaveCurrentGameToSlot+1A9�
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 96ABh
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 96ABh
                 call    sub_1392A
                 mov     word ptr ds:0FC3h, 0
@@ -26221,7 +26221,7 @@ InstallInt1cTimerHandler endp
 
 
 RestoreInt1cVector proc far             ; CODE XREF: start+6F9↑P
-                                        ; sub_28C1A+20↓P
+                                        ; ErrorCheck+20↓P
                 and     word_331BC, 0CFFh ; Restores the original INT 1Ch (timer tick) vector if this session installed a custom one (dword_1F97C != 0), via INT 21h/AH=25h. Called unconditionally from ErrorExit before exiting.
                 cmp     word ptr cs:dword_1E72E+2, 0
                 jz      short locret_1EA09
@@ -26785,7 +26785,7 @@ seg060          segment byte public 'CODE' use16
 InitGame        proc far                ; CODE XREF: start+42↑P
                 call    InitMemory
                 call    InitGraphics
-                call    sub_28C1A
+                call    ErrorCheck
                 call    clear_kbd_buffer
                 call    sub_1F040
                 call    InitializeStatusIconBarHitTestRegions
@@ -26796,7 +26796,7 @@ InitGame        proc far                ; CODE XREF: start+42↑P
                 mov     bx, 9690h
                 mov     al, 0
                 call    FileEntry_OpenFile
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 mov     al, 2
@@ -26806,13 +26806,13 @@ InitGame        proc far                ; CODE XREF: start+42↑P
 
 loc_1EE7A:                              ; CODE XREF: InitGame+4A↑j
                 call    FileEntry_OpenFile
-                call    sub_28C1A
+                call    ErrorCheck
                 call    PreloadMonsterStatsTable
                 call    PreloadWorldDataTable
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_CreateFile
-                call    sub_28C1A
+                call    ErrorCheck
                 call    findSavegame
                 call    loadWorldDat1
                 call    loadWorldDat2
@@ -26952,10 +26952,10 @@ loc_1EFE6:                              ; CODE XREF: findSavegame+75↓j
                 mov     word ptr ds:53E0h, 0Bh
                 mov     al, 0
                 call    FileEntry_OpenFile
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    sub_1392A
                 mov     ax, 0CEDDh
                 mov     bx, di
@@ -27132,28 +27132,28 @@ loadWorldDat1   proc near               ; CODE XREF: InitGame+74↑p
                 mov     word ptr [bx+6], 940h
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 940h
                 mov     bx, 96C2h
                 call    PrepareWorldDat1Block2Read
                 mov     word ptr [bx+6], 0A5Ch
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 139Ch
                 mov     bx, 96C2h
                 call    PrepareWorldDat1Block3Read
                 mov     word ptr [bx+6], 4B8h
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 1854h
                 mov     bx, 96C2h
                 call    PrepareWorldDat1Block4Read
                 mov     word ptr [bx+6], 9D8h
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:96C4h, ds
                 retn
 loadWorldDat1   endp
@@ -27210,14 +27210,14 @@ loadWorldDat5   proc near               ; CODE XREF: InitGame+90↑p
                 mov     word ptr [bx+8], 2
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 4730h
                 mov     bx, 96C2h       ; this
                 call    LoadMasterPalette
                 mov     word ptr [bx+8], 0
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 loadWorldDat5   endp
 
@@ -27725,7 +27725,7 @@ PaintCellAndPersist proc near           ; CODE XREF: FillVisibleAreaWithSelected
                 mov     [si], ax
                 mov     word_33190, 9
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, seg seg133
                 mov     es, ax
                 assume es:seg133
@@ -27973,7 +27973,7 @@ LoadWorldDatTilePalette proc near       ; CODE XREF: PaintCellAndPersist+C↑p
                 mov     [bx+6], ax
                 mov     word_33190, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     si, word_3319E
                 shl     si, 1
                 shl     si, 1
@@ -28040,7 +28040,7 @@ PaintCursorOverlayCellAndPersist proc near ; CODE XREF: seg061:0384↑p
                 mov     [si], ax
                 mov     word_33190, 9
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     cx, 3
                 mov     ax, word_2EFC4
                 shr     ax, cl
@@ -28122,7 +28122,7 @@ PaintCursorCellAndPersist proc near     ; CODE XREF: seg061:03B0↑p
                 mov     [si+2], ax
                 mov     word_33190, 9
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     cx, 3
                 mov     ax, word_2EFC8
                 shr     ax, cl
@@ -28485,11 +28485,11 @@ loc_1FEF6:                              ; CODE XREF: RefreshDungeonMapWindow+F8�
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     si, ds:0FF9h
                 shl     si, 1
                 shl     si, 1
@@ -30342,7 +30342,7 @@ sub_20F3C       proc near               ; CODE XREF: sub_20DC4+38↑p
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    TriggerFullPaletteFadeOut
                 retn
 sub_20F3C       endp
@@ -30405,7 +30405,7 @@ seg068          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowItemPurchaseConfirmPrompt proc far  ; CODE XREF: sub_128F4+36↑P
+ShowItemPurchaseConfirmPrompt proc far  ; CODE XREF: TryHandleCatalogSlotClick+36↑P
                                         ; PayGoldAndAcquireItem+15↑P ...
                 push    es
                 push    di
@@ -30710,7 +30710,7 @@ PersistExploredCell proc far            ; CODE XREF: PaintCellAndPersist+7↑P
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 xor     dx, dx
                 mov     ax, ds:53EEh
                 mov     bx, 8
@@ -30724,7 +30724,7 @@ PersistExploredCell proc far            ; CODE XREF: PaintCellAndPersist+7↑P
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds:53EEh
                 mov     bx, ds:53F0h
                 pop     word ptr ds:53F0h
@@ -30854,7 +30854,7 @@ BuildClueLocationSuffix proc far        ; CODE XREF: BuildClueEntryText+83↑P
                 call    WorldDat_setBlock3
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     byte ptr ds:993Ah, 0
                 mov     byte ptr ds:9944h, 0
                 mov     byte ptr ds:996Eh, 0
@@ -30867,7 +30867,7 @@ BuildClueLocationSuffix proc far        ; CODE XREF: BuildClueEntryText+83↑P
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 push    es
                 push    di
                 push    si
@@ -30893,7 +30893,7 @@ BuildClueLocationSuffix proc far        ; CODE XREF: BuildClueEntryText+83↑P
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     bx, 9926h
                 call    TrimTrailingSpaces
                 cmp     byte ptr ds:9958h, 30h ; '0'
@@ -30995,11 +30995,11 @@ loc_2150D:                              ; CODE XREF: sub_2147B+CB↓j
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 push    cs
                 call    near ptr DrawLocalMapRow
                 inc     word ptr ds:96CAh
@@ -31975,7 +31975,7 @@ MapUnmapPages   proc far                ; CODE XREF: ClearStatusPanelIfDirty+13�
                 or      ah, ah
                 jz      short loc_21DFA
                 mov     word ptr ds:53E0h, 6
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21DFA:                              ; CODE XREF: MapUnmapPages+6↑j
                                         ; MapUnmapPages+1A↑j
@@ -32008,7 +32008,7 @@ InitMemory      proc far                ; CODE XREF: InitGame↑P
                 cld
                 repe cmpsb
                 jz      short loc_21E23
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21E23:                              ; CODE XREF: InitMemory+1F↑j
                 mov     ah, 40h ; '@'
@@ -32016,7 +32016,7 @@ loc_21E23:                              ; CODE XREF: InitMemory+1F↑j
                                         ; Return: AH = status
                 or      ah, ah
                 jz      short loc_21E30
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21E30:                              ; CODE XREF: InitMemory+2C↑j
                 mov     ah, 46h ; 'F'
@@ -32024,12 +32024,12 @@ loc_21E30:                              ; CODE XREF: InitMemory+2C↑j
                                         ; Return: AH = status
                 or      ah, ah
                 jz      short loc_21E3D
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21E3D:                              ; CODE XREF: InitMemory+39↑j
                 cmp     al, 40h ; '@'
                 jnb     short loc_21E46
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21E46:                              ; CODE XREF: InitMemory+42↑j
                 mov     ah, 41h ; 'A'
@@ -32038,7 +32038,7 @@ loc_21E46:                              ; CODE XREF: InitMemory+42↑j
                                         ; AH = error code
                 or      ah, ah
                 jz      short loc_21E53
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21E53:                              ; CODE XREF: InitMemory+4F↑j
                 mov     ds:0FAAh, bx
@@ -32050,7 +32050,7 @@ loc_21E53:                              ; CODE XREF: InitMemory+4F↑j
                                         ; AH = error code
                 cmp     bx, 40h ; '@'
                 jge     short loc_21E6B
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21E6B:                              ; CODE XREF: InitMemory+67↑j
                 sub     bx, 20h ; ' '
@@ -32063,7 +32063,7 @@ loc_21E6B:                              ; CODE XREF: InitMemory+67↑j
                                         ; Return: AH = status
                 or      ah, ah
                 jz      short loc_21E88
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21E88:                              ; CODE XREF: InitMemory+84↑j
                 mov     ds:0F9Ch, dx
@@ -32081,7 +32081,7 @@ loc_21EA5:                              ; CODE XREF: InitMemory+A3↑j
                                         ; Return: AH = status
                 or      ah, ah
                 jz      short loc_21EB2
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_21EB2:                              ; CODE XREF: InitMemory+AE↑j
                 mov     ds:0F9Eh, dx
@@ -32803,7 +32803,7 @@ loc_22600:                              ; CODE XREF: SpawnMonsterInFacingDirecti
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, si
                 add     ax, 32h ; '2'
                 mov     bx, ds:9926h
@@ -32811,7 +32811,7 @@ loc_22600:                              ; CODE XREF: SpawnMonsterInFacingDirecti
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds:53DCh
                 shl     ax, 1
                 mov     bx, 73BEh
@@ -32988,7 +32988,7 @@ ClearCellMonsterSpawnedFlag proc far    ; CODE XREF: RefreshDungeonMapWindow+244
                 call    PrepareGameDialogIndexedBlockRead
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     cx, dx
                 mov     ah, 80h
                 shr     ah, cl
@@ -32996,7 +32996,7 @@ ClearCellMonsterSpawnedFlag proc far    ; CODE XREF: RefreshDungeonMapWindow+244
                 and     ds:9926h, ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 pop     dx
                 pop     cx
                 pop     bx
@@ -33022,14 +33022,14 @@ SetCellMonsterSpawnedFlag proc far      ; CODE XREF: SpawnMonsterInFacingDirecti
                 call    PrepareGameDialogIndexedBlockRead
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     cx, dx
                 mov     ah, 80h
                 shr     ah, cl
                 or      ds:9926h, ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 pop     dx
                 pop     cx
                 pop     bx
@@ -33055,7 +33055,7 @@ TestCellMonsterSpawnedFlag proc far     ; CODE XREF: TryInteractAtPosition+FB↑
                 call    PrepareGameDialogIndexedBlockRead
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     cx, dx
                 mov     ah, 80h
                 shr     ah, cl
@@ -34477,7 +34477,7 @@ UpdateCursorForHeldItem proc far        ; CODE XREF: start+4B6↑P
                 mov     bx, 9690h
                 mov     word ptr ds:53E0h, 2
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 pop     bx
                 test    word ptr ds:4402h, 2
                 jnz     short loc_23462
@@ -35313,7 +35313,7 @@ loc_23AAB:                              ; CODE XREF: sub_237BA+301↓j
                 mov     word ptr [bx+6], 1388h
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 retf
 sub_237BA       endp
 
@@ -36245,7 +36245,7 @@ loc_2447F:                              ; CODE XREF: ShowCharacterInventory+222�
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     si, 9926h
                 cmp     word ptr [si+2], 0
                 jnz     short loc_244E2
@@ -37095,7 +37095,7 @@ loc_24DE1:                              ; CODE XREF: ShowCharacterSummary+E5↑j
                 mov     word ptr [bx+6], 1388h
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     byte ptr ds:0E9Ah, 0
                 retn
 ; ---------------------------------------------------------------------------
@@ -37448,7 +37448,7 @@ InitializeNewGameWorldState proc far    ; CODE XREF: sub_1BE7E+25↑P
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:0D0C9h, 0
                 mov     word ptr ds:0D0CBh, 0
                 mov     word ptr ds:0D0CDh, 0
@@ -37482,7 +37482,7 @@ loc_2516C:                              ; CODE XREF: InitializeNewGameWorldState
                 mov     bx, 967Ah
                 call    PrepareMasterHeaderBlockRead
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 9926h
                 mov     bx, 967Ah
                 call    PrepareGameDialogSizedBlockRead
@@ -37497,7 +37497,7 @@ loc_2516C:                              ; CODE XREF: InitializeNewGameWorldState
 loc_25214:                              ; CODE XREF: InitializeNewGameWorldState+103↓j
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr [bx+8]
                 loop    loc_25214
                 mov     es, word ptr ds:0F44h
@@ -37515,7 +37515,7 @@ loc_25214:                              ; CODE XREF: InitializeNewGameWorldState
 loc_25251:                              ; CODE XREF: InitializeNewGameWorldState+141↓j
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr ds:9682h
                 loop    loc_25251
                 mov     es, word ptr ds:0F44h
@@ -37530,7 +37530,7 @@ loc_25251:                              ; CODE XREF: InitializeNewGameWorldState
                 mov     word ptr [bx+6], 423h
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     es, word ptr ds:0F44h
                 mov     di, 9926h
                 xor     ax, ax
@@ -37551,7 +37551,7 @@ loc_252C2:                              ; CODE XREF: InitializeNewGameWorldState
 loc_252CB:                              ; CODE XREF: InitializeNewGameWorldState+1A2↑j
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 inc     word ptr [bx+8]
                 sub     cx, 0BB8h
                 jge     short loc_252C2
@@ -37567,7 +37567,7 @@ loc_252CB:                              ; CODE XREF: InitializeNewGameWorldState
                 rep stosb
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 122Ch
                 mov     bx, 967Ah
                 call    PrepareGameDialogLargeBlockRead
@@ -37578,7 +37578,7 @@ loc_252CB:                              ; CODE XREF: InitializeNewGameWorldState
                 rep stosw
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 or      word ptr ds:536Ch, 400h
                 or      word ptr ds:536Ch, 100h
                 retf
@@ -37621,7 +37621,7 @@ UpdateAmbientMusicForRegion proc far    ; CODE XREF: sub_1D358+33E↑P
                 call    PrepareAmbientMusicBlockRead
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds:9926h
                 call    PlayMusicTrack
 
@@ -37989,7 +37989,7 @@ loc_25549:                              ; CODE XREF: sub_25512+25↑j
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     di, 0A5A8h
                 mov     cx, 8
 
@@ -38029,7 +38029,7 @@ sub_2559F       proc near               ; CODE XREF: sub_25512+7E↑p
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     di, 0A5CAh
                 mov     cx, 8
 
@@ -38080,7 +38080,7 @@ sub_255FF       proc near               ; CODE XREF: sub_2559F+49↑p
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     di, 0A5ECh
                 mov     cx, 8
 
@@ -39439,7 +39439,7 @@ LoadNextContainerInChain proc far       ; CODE XREF: TryLoadNextContainerLink+D�
                 mov     [bx+8], ax
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds:0D08Dh
                 mov     bx, ds:9926h
                 mov     ds:0D08Dh, bx
@@ -40107,7 +40107,7 @@ loc_26645:                              ; CODE XREF: HandleInventoryGridClick+20
                 call    PrepareGroundItemSlotBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_26669:                              ; CODE XREF: HandleInventoryGridClick+1D1↑j
                 mov     ax, ds:537Ch
@@ -40357,7 +40357,7 @@ LoadContainerContents proc near         ; CODE XREF: LoadNextContainerInChain+40
                 call    PrepareGroundItemSlotBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 LoadContainerContents endp
 
@@ -40441,7 +40441,7 @@ SaveAndCloseContainer proc near         ; CODE XREF: HandleInventoryGridClick+86
                 call    PrepareGroundItemSlotBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_26903:                              ; CODE XREF: SaveAndCloseContainer+5↑j
                 mov     word ptr [di], 0
@@ -40884,7 +40884,7 @@ CommitContainerWrite proc near          ; CODE XREF: LoadNextContainerInChain+55
                 mov     bx, 967Ah       ; Minimal write-commit: FileEntry_Write(errorCode=0xB) + ErrorCheck, assuming the caller already configured the container-write descriptor (unlike SyncContainerContents, which configures it itself via sub_27E3A). Called from LoadNextContainerInChain and sub_2621C.
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 CommitContainerWrite endp
 
@@ -41175,7 +41175,7 @@ loc_26E55:                              ; CODE XREF: seg094:0130↑j
                 mov     [bx+6], ax
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     es, word ptr ds:0FFFh
                 mov     ax, 4
                 mul     word ptr ds:0CF75h
@@ -41189,7 +41189,7 @@ loc_26E55:                              ; CODE XREF: seg094:0130↑j
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_26EDC:                              ; CODE XREF: seg094:0132↑j
                 call    RestoreFullScreenFromEMS
@@ -41240,7 +41240,7 @@ loc_26F32:                              ; CODE XREF: seg094:020D↑j
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     es, word ptr ds:0FFFh
                 mov     ax, 4
                 mul     word ptr ds:0CF75h
@@ -41254,7 +41254,7 @@ loc_26F32:                              ; CODE XREF: seg094:020D↑j
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
 
 loc_26FBD:                              ; CODE XREF: seg094:020F↑j
                 call    RestoreFullScreenFromEMS
@@ -42200,7 +42200,7 @@ WriteContainerSubBlock proc near        ; CODE XREF: SyncAlternateBagsToSave+13�
                 call    PrepareGroundItemSlotBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 WriteContainerSubBlock endp
 
@@ -42214,7 +42214,7 @@ SyncItemChargeFieldToCurgame proc near  ; CODE XREF: ConsumeItemChargeResource+1
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 cmp     dx, 0
                 jz      short loc_2784E
                 mov     bx, 9926h
@@ -42252,7 +42252,7 @@ loc_2785D:                              ; CODE XREF: SyncItemChargeFieldToCurgam
                 mov     bx, 967Ah
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
 
 locret_27870:                           ; CODE XREF: SyncItemChargeFieldToCurgame+61↑j
                 retn
@@ -43894,7 +43894,7 @@ loc_2835A:                              ; CODE XREF: sub_28340+28↓j
                 mov     word ptr [bx+8], 6
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    TriggerFullPaletteFadeOut
                 mov     word ptr ds:0FC3h, 0Fh
                 mov     word ptr ds:53EEh, 23h ; '#'
@@ -44013,7 +44013,7 @@ loc_28464:                              ; CODE XREF: sub_28446+10↑j
                 mov     word ptr [bx+8], 0
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 call    TriggerFullPaletteFadeOut
                 call    ClearOffscreenBufferAlt
                 or      word ptr ds:540Ch, 8000h
@@ -44093,7 +44093,7 @@ loc_284E9:                              ; CODE XREF: PlayMusicTrack+19↑j
                 mov     bx, 96C2h
                 mov     word ptr ds:53E0h, 7
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 pop     word ptr ds:96C4h
                 mov     es, word ptr ds:4404h
                 mov     dx, es
@@ -44181,7 +44181,7 @@ UpdateAmbientMusic endp
 
 
 ShutdownAudioDrivers proc far           ; CODE XREF: start+719↑P
-                                        ; sub_28C1A+2A↓P
+                                        ; ErrorCheck+2A↓P
                 test    word ptr ds:0CF63h, 4 ; Shuts down whichever audio driver(s) are currently active (per g_driverStateFlags), sending shutdown-style commands through each driver's function-pointer dispatch table before freeing its memory block via INT 21h/AH=49h. Called unconditionally from ErrorExit before exiting.
                 jz      short loc_285F2
                 cmp     word ptr ds:0FA02h, 0
@@ -44288,7 +44288,7 @@ loc_2865B:                              ; CODE XREF: TriggerSoundEvent+6↑j
                 mov     word ptr ds:53E0h, 7
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     es, word ptr ds:53DEh
                 mov     di, es:14h
                 mov     bx, 6
@@ -44445,7 +44445,7 @@ InitMusicDriver proc near               ; CODE XREF: InitSoundSystem+24↑p
                 mov     bx, 96C2h
                 mov     word ptr ds:53E0h, 8
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:96C4h, seg seg133
                 mov     ax, ds:53BEh
                 mov     bx, 1
@@ -44705,14 +44705,14 @@ seg107          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28C1A       proc far                ; CODE XREF: start+2D↑P
+ErrorCheck      proc far                ; CODE XREF: start+2D↑P
                                         ; start:loc_10051↑P ...
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_28C22
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28C22:                              ; CODE XREF: sub_28C1A+5↑j
+loc_28C22:                              ; CODE XREF: ErrorCheck+5↑j
                 mov     ax, 4
                 mov     bx, ds:53E0h
                 cmp     bx, 0FFFFh
@@ -44723,7 +44723,7 @@ loc_28C22:                              ; CODE XREF: sub_28C1A+5↑j
                 jmp     ax
 ; ---------------------------------------------------------------------------
 
-loc_28C39:                              ; CODE XREF: sub_28C1A+12↑j
+loc_28C39:                              ; CODE XREF: ErrorCheck+12↑j
                                         ; seg107:033E↓j ...
                 push    ax
                 call    RestoreInt1cVector
@@ -44736,7 +44736,7 @@ loc_28C39:                              ; CODE XREF: sub_28C1A+12↑j
                                         ; Return: AX = status
                                         ; BX = number of buttons
 
-loc_28C56:                              ; CODE XREF: sub_28C1A+35↑j
+loc_28C56:                              ; CODE XREF: ErrorCheck+35↑j
                 mov     ax, 3
                 int     10h             ; - VIDEO - SET VIDEO MODE
                                         ; AL = mode
@@ -44753,7 +44753,7 @@ loc_28C56:                              ; CODE XREF: sub_28C1A+35↑j
                 mov     ax, ds:53E0h
                 mov     ah, 4Ch
                 int     21h             ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
-sub_28C1A       endp                    ; AL = exit code
+ErrorCheck      endp                    ; AL = exit code
 
 ; ---------------------------------------------------------------------------
                 mov     ax, 1Dh
@@ -45199,7 +45199,7 @@ ReadMapCellAttributeByte proc far       ; CODE XREF: RevealMapRegion+152↓p
                 call    WorldDat_setBlock3
                 mov     word ptr ds:53E0h, 9
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 xor     ax, ax
                 mov     al, ds:992Bh
                 pop     word ptr ds:96C8h
@@ -45662,7 +45662,7 @@ RevealMapRegionRow proc near            ; CODE XREF: RevealMapRegion+18D↑p
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     si, ds:0E9Ch
                 shl     si, 1
                 shl     si, 1
@@ -45670,7 +45670,7 @@ RevealMapRegionRow proc near            ; CODE XREF: RevealMapRegion+18D↑p
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 xor     dx, dx
                 mov     ax, ds:0E9Ch
                 mov     bx, 8
@@ -45813,11 +45813,11 @@ loc_29574:                              ; CODE XREF: sub_2952B+44↑j
                 mov     word ptr ds:53E0h, 9
                 mov     bx, 96C2h
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     word ptr ds:53E0h, 0Ah
                 mov     bx, 967Ah
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, ds:0E9Ch
                 mov     bx, ds:0EA0h
                 push    cs
@@ -46168,7 +46168,7 @@ SyncContainerContents proc near         ; CODE XREF: SyncPartyMemberContainers+8
                 call    PrepareGroundItemSlotBlockRead
                 mov     word ptr ds:53E0h, 0Bh
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
 
 locret_29866:                           ; CODE XREF: SyncContainerContents+3↑j
                 retn
@@ -46497,7 +46497,7 @@ loc_29AB2:                              ; CODE XREF: UnlockDoorCommand+EC↑j
                 call    PrepareRecordAtIndexDC6
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     cx, 1
                 mov     bx, 7EE0h
                 call    sub_2971B
@@ -46969,7 +46969,7 @@ writeChar       endp
 
 
 FreeVideoBuffer proc far                ; CODE XREF: start+714↑P
-                                        ; sub_28C1A+25↑P
+                                        ; ErrorCheck+25↑P
                 mov     es, word_3317C  ; Frees the video buffer segment (_videoBufferSeg) via INT 21h/AH=49h. Called unconditionally from ErrorExit before exiting.
                 assume es:nothing
                 mov     ah, 49h
@@ -48880,7 +48880,7 @@ loc_2AB72:                              ; CODE XREF: LoadPictureIntoEms+A1↑j
                 mov     bx, 9690h
                 mov     word ptr ds:53E0h, 2
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 LoadPictureIntoEms endp
 
@@ -49084,7 +49084,7 @@ loc_2ACEE:                              ; CODE XREF: HandleSearchCommand+11C↑j
                 call    PrepareRecordAtIndexDC6
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 call    ApplySavingThrowEffect
                 test    word ptr ds:5890h, 80h
                 jz      short loc_2AD33
@@ -49642,7 +49642,7 @@ LoadConversationText_4000 proc near     ; CODE XREF: ShowConversationText_4000+7
                 mov     bx, 96C2h
                 mov     word ptr ds:53E0h, 0Dh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 LoadConversationText_4000 endp
 
@@ -49656,7 +49656,7 @@ LoadConversationText_1000 proc near     ; CODE XREF: ShowConversationText_1000+7
                 mov     bx, 96C2h
                 mov     word ptr ds:53E0h, 0Dh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 LoadConversationText_1000 endp
 
@@ -49670,7 +49670,7 @@ LoadConversationText_2000 proc near     ; CODE XREF: ShowConversationText_2000+7
                 mov     bx, 96C2h
                 mov     word ptr ds:53E0h, 0Dh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 LoadConversationText_2000 endp
 
@@ -49684,7 +49684,7 @@ LoadConversationText_800 proc near      ; CODE XREF: ShowConversationText_800+7�
                 mov     bx, 96C2h
                 mov     word ptr ds:53E0h, 0Dh
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 retn
 LoadConversationText_800 endp
 
@@ -51015,7 +51015,7 @@ sub_2BBD3       proc near               ; CODE XREF: sub_2BB7C:loc_2BBB1↑p
                 mov     word ptr [bx+8], 0
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
@@ -51335,7 +51335,7 @@ sub_2BF44       proc near               ; CODE XREF: sub_2BB7C+32↑p
                 mov     word ptr [bx+8], 0
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
@@ -51732,7 +51732,7 @@ loc_2C2E3:                              ; CODE XREF: sub_2C2CA+A↑j
                 mov     word ptr [bx+8], 3
                 mov     word ptr ds:53E0h, 3
                 call    FileEntry_Read
-                call    sub_28C1A
+                call    ErrorCheck
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
@@ -52677,7 +52677,7 @@ loc_2CB0B:                              ; CODE XREF: ApplyEncodedItemEffect+61B�
                 call    PrepareRecordAtIndexDC6
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 call    RefreshDungeonMapWindow
                 call    sub_200CE
                 call    BuildMinimapTileData
@@ -52741,7 +52741,7 @@ loc_2CBC5:                              ; CODE XREF: ApplyEncodedItemEffect+6D5�
                 call    PrepareRecordAtIndexDC6
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 call    RefreshDungeonMapWindow
                 call    sub_200CE
                 call    BuildMinimapTileData
@@ -52811,7 +52811,7 @@ loc_2CC8A:                              ; CODE XREF: ApplyEncodedItemEffect+79E�
                 call    PrepareRecordAtIndexDC6
                 mov     word ptr ds:53E0h, 0Ah
                 call    FileEntry_Write
-                call    sub_28C1A
+                call    ErrorCheck
                 call    RefreshDungeonMapWindow
                 call    sub_200CE
                 call    BuildMinimapTileData
@@ -58750,7 +58750,7 @@ word_2ED75      dw 0                    ; DATA XREF: RestoreUiStateForClueBook+1
                 db    0
                 db    0
                 db    0
-word_2ED91      dw 0                    ; DATA XREF: sub_128F4+15↑r
+word_2ED91      dw 0                    ; DATA XREF: TryHandleCatalogSlotClick+15↑r
                                         ; PayGoldAndAcquireItem+3↑r ...
 word_2ED93      dw 0                    ; DATA XREF: SaveUiStateForClueBook+79↑r
                                         ; LoadItemCatalogRecord:loc_1F4C3↑w ...

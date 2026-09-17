@@ -1485,6 +1485,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X128E8);
 	create_insn	(0X128F4);
+	set_name	(0X128F4,	"TryHandleCatalogSlotClick");
 	create_insn	(x=0X1291A);
 	op_hex		(x,	1);
 	create_insn	(x=0X12920);
@@ -3781,6 +3782,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1A5B7);
 	op_hex		(x,	1);
 	create_insn	(0X1A5C5);
+	set_name	(0X1A5C5,	"RefreshMultiStatEffects");
 	set_cmt	(0X1A631,	"Copies 30 words from word_328D4+0x32 to the same relative offset (+0x72, the confirmed base->derived stat delta) in segment word_2E4AA, then calls UpdatePartyAverageStatTiers -- plausibly a before/after stat snapshot for a stat-changing item. Called from UseItemType_400 and UseTrainingItem.",	0);
 	create_insn	(0X1A631);
 	set_name	(0X1A631,	"CopyPartyStatBlockToEmsCache");
@@ -7700,6 +7702,7 @@ static Bytes_3(void) {
 	create_byte	(0X28B45);
 	make_array	(0X28B45,	0XD5);
 	create_insn	(0X28C1A);
+	set_name	(0X28C1A,	"ErrorCheck");
 	create_insn	(0X28C22);
 	create_insn	(x=0X28C2E);
 	op_hex		(x,	1);

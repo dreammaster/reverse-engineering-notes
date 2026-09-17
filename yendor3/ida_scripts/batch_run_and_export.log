@@ -86,3 +86,44 @@
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round1_corrections.py']
+[*] reading apply_round1_corrections.py
+[*] executing apply_round1_corrections.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x28c1a  'sub_28C1A' -> 'ErrorCheck': ok
+0x128f4  'sub_128F4' -> 'TryHandleCatalogSlotClick': ok
+0x1a5c5  'sub_1A5C5' -> 'RefreshMultiStatEffects': ok
+0xfa00  '' -> 'g_soundDriverFarPtr': FAILED
+----- end target script output -----
+[*] finished executing apply_round1_corrections.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118628
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'check_fa00.py', 'noexport']
+[*] reading check_fa00.py
+[*] executing check_fa00.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg: None
+is_loaded: False
+flags: 0x0
+get_name: ''
+item_size: 1
+----- end target script output -----
+[*] finished executing check_fa00.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
