@@ -6,3 +6,9 @@
 *.til
 yendor2/game/
 yendor3/game/
+
+# C build artifacts (reimplementation work under yendor2/src, yendor2/tests)
+*.obj
+*.pdb
+*.ilk
+yendor2/tests/*.exe

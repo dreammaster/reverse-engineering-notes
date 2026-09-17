@@ -7124,6 +7124,54 @@ aren't confirmed enough to name individually — flagged in
 file-formats.md as a target for a future dedicated trace rather than
 guessed at.
 
+### 2026-09-16 session update, continued: starting the C reimplementation — bcd4 module
+
+With naming/documentation now covering all 769 functions and ~90
+globals, started the actual C reimplementation Paul asked about,
+picking a first module deliberately to prove the workflow: the
+packed-BCD arithmetic library (`AddBCD4`/`SubBCD4`/`CompareBCD4`/
+`ConvertWordToBCD4`/`AddToBCDCounter`/`SubtractFromBCDCounter`/
+`IsBCDCounterAtLeast`, `yendor2.asm:16803`-`17382`) — the engine behind
+gold and other large in-game counters, confirmed via the original's
+`DAA`/`DAS` opcodes. Chosen as the first module because it's fully
+self-contained (no dependency on party records, screens, or file I/O),
+already well-documented, and has 81 call sites across the binary, so it
+exercises the workflow against real breadth rather than a toy example.
+
+Added `src/bcd4.h`/`src/bcd4.c` (naming convention per Paul: lowercase-
+first camelCase for functions/variables, `g_` prefix reserved for
+actual globals) and `tests/test_bcd4.c`. Implementation notes:
+- `Bcd4` is a 4-byte array, most-significant digit pair first, matching
+  the original's byte layout (confirmed by `CompareBCD4`'s
+  most-significant-byte-first comparison order).
+- `bcd4Add`/`bcd4Sub` reimplement the `DAA`/`DAS` decimal-correction
+  algorithm directly in C (byte-wise, carry/borrow-propagating) rather
+  than transliterating the original's specific instruction sequence —
+  the goal is correct, clean C, not a literal translation.
+- `bcd4Compare` simplifies the original's two-pass (high-nibble-then-
+  low-nibble) comparison to a single byte-wise comparison — provably
+  equivalent since packed-BCD nibbles only ever hold digits 0-9, so
+  nibble order can't create a byte-comparison ambiguity.
+- The original's shared scratch buffer at `ds:0xAFA8`
+  (`word_38808`/`word_3880A`) disappears entirely in the C version —
+  it's purely internal to this cluster, so it becomes a local stack
+  array (`bcd4FromU16`'s output buffer) instead of needing a name. A
+  concrete first example of the "resolve inline" approach agreed on
+  for remaining globals: some of them won't need global names at all
+  once they're seen in the context of a specific reimplementation.
+
+**Verified two ways**, since no C compiler was initially found in
+PATH: first indpendently in Python, re-deriving the DAA/DAS correction
+logic from scratch and cross-checking it against a decimal-arithmetic
+oracle across normal cases plus both overflow (`99999999+1` wraps to
+`0`) and underflow (`0-1` wraps to `99999999`) — all matched. Then
+found Visual Studio 2019 was actually installed
+(`vcvars64.bat`/`cl.exe` not on PATH by default) and properly compiled
+the real `bcd4.c`/`test_bcd4.c` with `/W4` (no warnings) — all 15 unit
+tests passed for real. Build command documented directly in
+`test_bcd4.c`'s header comment (both a portable `cc` form and the MSVC
+form actually used here).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
