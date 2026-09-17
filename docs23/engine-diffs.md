@@ -36,6 +36,18 @@ a low-confidence BinDiff match can point at entirely the wrong
 function — don't trust one in isolation, verify by reading.
 yendor3's real `FileEntry_Close` still isn't identified.
 
+**Two more confirmed-bad matches found in round 2**, both still
+unresolved (i.e. don't trust these BinDiff labels going forward):
+- The address BinDiff labeled `ShowLocalAreaMap` (similarity 0.01) is
+  not that function at all -- reading it directly, it's a small
+  wrapper (see `ReassignPartySlotReference` below) with 10 real call
+  sites, none of them related to drawing a local map.
+- The address BinDiff labeled `IsRestingAllowedHere` (similarity 0.32,
+  found via `ProcessLevelMonsters`) is also wrong -- it's monster
+  trap/ambush-trigger logic (`IsPositionInTriggerList` +
+  `PrepareTrapEffectSlots` + `TriggerSoundEvent`), nothing to do with
+  resting eligibility. Not yet identified/named.
+
 ## Confirmed differences
 
 ### New feature: a barter-pricing preview before purchase confirmation
@@ -105,9 +117,13 @@ plausible fix for an audio-timing bug in Chapter 2.
 ### Likely new tile-classification helpers: `sub_1BC98` / `sub_1BCDB`
 
 Found via `RenderDungeonVanishingPoint`, `BuildMinimapTileData`,
-`RenderDungeonViewRow`, and `HandleSpecialCellEntry` (dungeon
-rendering) plus `DrawFloorTypeLegendRow` and `DrawCellIconPair` (map
-editor) — no yendor2 equivalent. Both take a raw tile id in `ax`,
+`RenderDungeonViewRow`, `HandleSpecialCellEntry`,
+`DrawDungeonFloorAndCeiling`, `DrawDungeonCellWallTexture`, and
+`DrawRevealedCellIcon` (dungeon rendering) plus `DrawWallTypeLegendRow`,
+`DrawFloorTypeLegendRow`, and `DrawCellIconPair` (map editor) — no
+yendor2 equivalent. Consistently inserted immediately before a
+`DrawPicture` call each time, confirming these are "validate/convert a
+raw tile id, then draw it" wrappers, not incidental. Both take a raw tile id in `ax`,
 split it into a group (`id/100`) and remainder, index into a lookup
 table (stride `0xC` for `sub_1BC98`, `0xA` for `sub_1BCDB` — matching
 the already-confirmed 12-byte wall-table/10-byte floor-table entry
@@ -117,6 +133,47 @@ entry while setting `errorCode=1` on out-of-range input. Hypothesis
 (not confirmed): Chapter 3 added a validated/clamped tile-id lookup
 layer, plausibly because it introduced more wall/floor tile types than
 fit Chapter 2's direct-index approach safely.
+
+### New function: `ReassignPartySlotReference` / `ClearCharacterFromPartySlots`
+
+A small helper pair, confirmed via 10 call sites this round
+(`UseAbilityCommand`, `RunConversation`, `HandleSearchCommand`,
+`RepairItemCommand`, `RunPartyMemberDetailScreen`, and 5 more).
+`ClearCharacterFromPartySlots(bx=character ptr)` loops the 4
+`g_partySlotAssignment` entries and zeroes any that equal `bx` --
+removing a character's active-roster-slot reference wherever it
+appears. `ReassignPartySlotReference(si=optional output ptr, bx=character
+ptr)` wraps it: always clears `bx` from the roster first, and if
+`si != 0` also writes `bx` into `[si]` -- effectively "move this
+character's slot reference." No yendor2 equivalent; plausibly a fix
+for a stale-slot-reference bug when a character is reassigned or
+becomes ineligible mid-action. The underlying table's yendor3 address
+(`ds:0xCF81`) is confirmed to be the same `g_partySlotAssignment`
+table yendor2 uses (per several already-existing inline comments
+describing it exactly that way), but attempting to rename it hit the
+same segmented-addressing snag as `g_soundDriverFarPtr` last round
+(IDA reports it unloaded) -- needs a proper convert-to-offset pass.
+
+### New function: `ApplyScriptedMapCellOverrides` (yendor3 `sub_1B704`)
+
+Called from `RefreshDungeonMapWindow`, no yendor2 equivalent. Checks
+the current map cell's position against 2 fixed coordinate pairs; if
+one matches and a specific global flag is set (checked via
+`TestGlobalFlag`), sets a new flag bit (`0x200`) on the cell record and
+overwrites its overlay tile id. Reads as a scripted/quest-flag-gated
+map decoration system -- e.g. a marker that only appears on the map
+after some quest milestone. Exactly which flags/locations, and what
+the two tile ids (`0xD2`/`0xDF`) represent, isn't traced.
+
+### New function: `RefreshMultiStatEffectsAlt` (yendor3 `sub_1D76B`)
+
+Called from `ApplyRestEffectsToCharacter`. Same remove-then-reapply
+multi-stat-effect pattern as round 1's `RefreshMultiStatEffects`
+(identical field offsets/strides), but with an added raw block-copy
+step in the middle (an EMS-segment-relative copy, offsets `0x72`->`0x32`)
+-- likely syncing an additional field range that
+`RefreshMultiStatEffects` doesn't touch. Exact fields being copied not
+identified.
 
 ### Unidentified new call in `MarkIneligiblePartyMembers` (yendor3 `sub_2DCE6`)
 
@@ -130,11 +187,13 @@ but the consuming code (what reads this bitmask) hasn't been found.
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
-  (`yendor3/ida_scripts/apply_bindiff_high_confidence.py`); roughly 40
-  of those spot-checked this round (`apply_round1_corrections.py`),
-  turning up all of the above. The remaining ~28 are still unverified
-  beyond the similarity score.
-- 52 functions at similarity 0.70-0.95: not yet reviewed.
+  (`yendor3/ida_scripts/apply_bindiff_high_confidence.py`); all 68 now
+  spot-checked across rounds 1-2 (`apply_round1_corrections.py`,
+  `apply_round2_findings.py`), turning up all of the findings above.
+  This tier is done for now, though "spot-checked via call-target diff"
+  is not the same guarantee as a full instruction-by-instruction read
+  -- treat as high-confidence, not certain.
+- 52 functions at similarity 0.70-0.95: not yet reviewed. Next round.
 - 77 functions at similarity <0.70: not yet reviewed. Many of the
   lowest scores (well under 0.3) may not be genuine matches at all —
   treat the suggested yendor2 name as a weak hint, not a starting

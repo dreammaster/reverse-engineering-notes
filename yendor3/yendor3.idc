@@ -4106,6 +4106,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B6DA);
 	op_hex		(x,	1);
 	create_insn	(0X1B704);
+	set_name	(0X1B704,	"ApplyScriptedMapCellOverrides");
 	create_insn	(x=0X1B71D);
 	op_hex		(x,	1);
 	create_insn	(0X1B72A);
@@ -4621,6 +4622,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1D718);
 	create_insn	(0X1D76B);
+	set_name	(0X1D76B,	"RefreshMultiStatEffectsAlt");
 	create_insn	(0X1D7F2);
 	create_insn	(x=0X1D7F8);
 	op_hex		(x,	1);
@@ -7107,8 +7109,10 @@ static Bytes_2(void) {
 	create_insn	(x=0X26CFC);
 	op_hex		(x,	1);
 	create_insn	(0X26D2E);
+	set_name	(0X26D2E,	"ReassignPartySlotReference");
 	create_insn	(0X26D3C);
 	create_insn	(0X26D47);
+	set_name	(0X26D47,	"ClearCharacterFromPartySlots");
 	create_insn	(0X26D5C);
 	create_insn	(0X26E19);
 	create_insn	(0X26E55);
@@ -7369,8 +7373,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27C22,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from UpdateScrollArrows and ShowClueBookSpellDetail.",	0);
 	create_insn	(0X27C22);
 	set_name	(0X27C22,	"LookupSpellDescriptionBlockOffset");
-	create_insn	(x=0X27C2C);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7380,6 +7382,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X27C2C);
+	op_hex		(x,	1);
 	create_insn	(x=0X27C2F);
 	op_hex		(x,	1);
 	set_cmt	(0X27C4B,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from PlayMusicTrack.",	0);

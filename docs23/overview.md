@@ -7265,6 +7265,40 @@ codebase use).
 mid-confidence and 77 low-confidence tiers are still untouched. Next
 round: continue through the remaining high-confidence functions.
 
+### 2026-09-16 session update, continued: Chapter 3 high-confidence review, round 2 (tier complete)
+
+Finished spot-checking the remaining ~27 of the 68 high-confidence
+BinDiff matches, completing that whole tier across rounds 1-2.
+
+Found two more BinDiff matches that are simply wrong (same failure
+mode as round 1's ErrorCheck mismatch): the address labeled
+"ShowLocalAreaMap" (0.01 similarity) and the one labeled
+"IsRestingAllowedHere" (0.32) are both unrelated functions -- the
+former turned out to be a genuinely new, widely-used (10 call sites)
+party-slot-reference helper, the latter is monster trap/ambush-trigger
+logic. Neither BinDiff label should be trusted going forward.
+
+Three more real Chapter 3 additions found and documented in
+`docs23/engine-diffs.md`: `ReassignPartySlotReference`/
+`ClearCharacterFromPartySlots` (a new pair clearing/reassigning a
+character's `g_partySlotAssignment` reference, called from 10 action-
+target-selection sites -- plausibly a stale-reference bug fix),
+`ApplyScriptedMapCellOverrides` (a new quest-flag-gated map decoration
+system checked on every map-window refresh), and
+`RefreshMultiStatEffectsAlt` (round 1's `RefreshMultiStatEffects`
+pattern with an extra field-sync step, called from
+`ApplyRestEffectsToCharacter`). Also confirmed the tile-classification
+helper hypothesis from round 1 across 4 more call sites.
+
+Applied 4 renames this round (`apply_round2_findings.py`); a 5th
+(`g_partySlotAssignment`'s new-table address, `ds:0xCF81`) failed the
+same way `g_soundDriverFarPtr` did last round -- another segmented
+operand needing a proper convert-to-offset pass rather than a plain
+rename.
+
+**The 68-function high-confidence tier is now fully spot-checked.**
+Next: the 52 mid-confidence (0.70-0.95) matches.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -4690,7 +4690,7 @@ loc_127E6:                              ; CODE XREF: UseAbilityCommand+38↑j
                                         ; UseAbilityCommand+72↑j
                 mov     bx, word_331F2
                 mov     si, 0CF85h
-                call    sub_26D2E
+                call    ReassignPartySlotReference
                 mov     ax, word_331F2
                 call    SelectPartyRecordById
                 call    RestoreCursorBackgroundIfDirty
@@ -6480,7 +6480,7 @@ sub_136F6       proc near               ; CODE XREF: DeductHPClamped+14↓p
                 inc     ax
                 mov     bx, ax
                 mov     si, 0
-                call    sub_26D2E
+                call    ReassignPartySlotReference
                 pop     si
                 pop     dx
                 pop     bx
@@ -9080,7 +9080,7 @@ loc_14C98:                              ; CODE XREF: RunPartyMemberDetailScreen+
                 mov     si, 0
 
 loc_14CA5:                              ; CODE XREF: RunPartyMemberDetailScreen+1EB↑j
-                call    sub_26D2E
+                call    ReassignPartySlotReference
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_14D10
                 call    DrawMouseCursorAlt
@@ -11868,7 +11868,7 @@ loc_16485:                              ; CODE XREF: sub_16447+A↑j
                                         ; sub_16447+35↑j
                 mov     bx, ds:5442h
                 mov     si, 0CF81h
-                call    sub_26D2E
+                call    ReassignPartySlotReference
                 mov     word ptr ds:53E0h, 0
 
 loc_16497:                              ; CODE XREF: sub_16447+24↑j
@@ -18429,7 +18429,7 @@ loc_1A311:                              ; CODE XREF: sub_1A1B7+12A↑j
                 mov     word_321D4, ax
                 mov     bx, word_331F2
                 mov     si, 0CF87h
-                call    sub_26D2E
+                call    ReassignPartySlotReference
 
 loc_1A325:                              ; CODE XREF: sub_1A1B7+11F↑j
                 call    ClearMessageBoxArea
@@ -21005,7 +21005,7 @@ sub_1B490       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B704       proc far                ; CODE XREF: RefreshDungeonMapWindow:loc_20049↓P
+ApplyScriptedMapCellOverrides proc far  ; CODE XREF: RefreshDungeonMapWindow:loc_20049↓P
                 cmp     word ptr ds:0E24h, 28h ; '('
                 jnz     short loc_1B72A
                 cmp     word ptr ds:0E26h, 3Eh ; '>'
@@ -21016,14 +21016,14 @@ sub_1B704       proc far                ; CODE XREF: RefreshDungeonMapWindow:loc
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B71D:                              ; CODE XREF: sub_1B704+16↑j
+loc_1B71D:                              ; CODE XREF: ApplyScriptedMapCellOverrides+16↑j
                 or      word ptr es:[di+6], 200h
                 mov     word ptr es:[di+2], 0D2h
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B72A:                              ; CODE XREF: sub_1B704+5↑j
-                                        ; sub_1B704+C↑j
+loc_1B72A:                              ; CODE XREF: ApplyScriptedMapCellOverrides+5↑j
+                                        ; ApplyScriptedMapCellOverrides+C↑j
                 cmp     word ptr ds:0E24h, 45h ; 'E'
                 jnz     short locret_1B750
                 cmp     word ptr ds:0E26h, 32h ; '2'
@@ -21034,16 +21034,16 @@ loc_1B72A:                              ; CODE XREF: sub_1B704+5↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B743:                              ; CODE XREF: sub_1B704+3C↑j
+loc_1B743:                              ; CODE XREF: ApplyScriptedMapCellOverrides+3C↑j
                 or      word ptr es:[di+6], 200h
                 mov     word ptr es:[di+2], 0DFh
                 retf
 ; ---------------------------------------------------------------------------
 
-locret_1B750:                           ; CODE XREF: sub_1B704+2B↑j
-                                        ; sub_1B704+32↑j
+locret_1B750:                           ; CODE XREF: ApplyScriptedMapCellOverrides+2B↑j
+                                        ; ApplyScriptedMapCellOverrides+32↑j
                 retf
-sub_1B704       endp
+ApplyScriptedMapCellOverrides endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -24442,7 +24442,7 @@ ApplyRestEffectsToCharacter proc near   ; CODE XREF: sub_1D358+2A9↑p
 ; ---------------------------------------------------------------------------
 
 loc_1D6BE:                              ; CODE XREF: ApplyRestEffectsToCharacter+13↑j
-                call    sub_1D76B
+                call    RefreshMultiStatEffectsAlt
                 test    word ptr [bx+1Ch], 0E380h
                 jz      short loc_1D718
                 test    word ptr [bx+1Ch], 8000h
@@ -24531,31 +24531,31 @@ ApplyRestEffectsToCharacter endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D76B       proc near               ; CODE XREF: ApplyRestEffectsToCharacter:loc_1D6BE↑p
+RefreshMultiStatEffectsAlt proc near    ; CODE XREF: ApplyRestEffectsToCharacter:loc_1D6BE↑p
                 mov     bx, ds:537Ch
                 mov     cx, 6
                 mov     si, 13Ah
 
-loc_1D775:                              ; CODE XREF: sub_1D76B+19↓j
+loc_1D775:                              ; CODE XREF: RefreshMultiStatEffectsAlt+19↓j
                 mov     ax, [bx+si]
                 cmp     ax, 0
                 jz      short loc_1D781
                 call    RemoveMultiStatEffect
 
-loc_1D781:                              ; CODE XREF: sub_1D76B+F↑j
+loc_1D781:                              ; CODE XREF: RefreshMultiStatEffectsAlt+F↑j
                 add     si, 4
                 loop    loc_1D775
                 mov     bx, ds:537Ch
                 mov     cx, 5
                 mov     si, 152h
 
-loc_1D790:                              ; CODE XREF: sub_1D76B+34↓j
+loc_1D790:                              ; CODE XREF: RefreshMultiStatEffectsAlt+34↓j
                 mov     ax, [bx+si]
                 cmp     ax, 0
                 jz      short loc_1D79C
                 call    RemoveMultiStatEffect
 
-loc_1D79C:                              ; CODE XREF: sub_1D76B+2A↑j
+loc_1D79C:                              ; CODE XREF: RefreshMultiStatEffectsAlt+2A↑j
                 add     si, 2
                 loop    loc_1D790
                 mov     es, word ptr ds:0F44h
@@ -24572,30 +24572,30 @@ loc_1D79C:                              ; CODE XREF: sub_1D76B+2A↑j
                 mov     cx, 6
                 mov     si, 13Ah
 
-loc_1D7C5:                              ; CODE XREF: sub_1D76B+69↓j
+loc_1D7C5:                              ; CODE XREF: RefreshMultiStatEffectsAlt+69↓j
                 mov     ax, [bx+si]
                 cmp     ax, 0
                 jz      short loc_1D7D1
                 call    ApplyMultiStatEffectForItem
 
-loc_1D7D1:                              ; CODE XREF: sub_1D76B+5F↑j
+loc_1D7D1:                              ; CODE XREF: RefreshMultiStatEffectsAlt+5F↑j
                 add     si, 4
                 loop    loc_1D7C5
                 mov     bx, ds:537Ch
                 mov     cx, 5
                 mov     si, 152h
 
-loc_1D7E0:                              ; CODE XREF: sub_1D76B+84↓j
+loc_1D7E0:                              ; CODE XREF: RefreshMultiStatEffectsAlt+84↓j
                 mov     ax, [bx+si]
                 cmp     ax, 0
                 jz      short loc_1D7EC
                 call    ApplyMultiStatEffectForItem
 
-loc_1D7EC:                              ; CODE XREF: sub_1D76B+7A↑j
+loc_1D7EC:                              ; CODE XREF: RefreshMultiStatEffectsAlt+7A↑j
                 add     si, 2
                 loop    loc_1D7E0
                 retn
-sub_1D76B       endp
+RefreshMultiStatEffectsAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28629,7 +28629,7 @@ loc_2003A:                              ; CODE XREF: RefreshDungeonMapWindow+16E
 ; ---------------------------------------------------------------------------
 
 loc_20049:                              ; CODE XREF: RefreshDungeonMapWindow+183↑j
-                call    sub_1B704
+                call    ApplyScriptedMapCellOverrides
                 jmp     short loc_1FFF9
 ; ---------------------------------------------------------------------------
 
@@ -35290,7 +35290,7 @@ loc_23A94:                              ; CODE XREF: sub_237BA+2D1↑j
                 mov     word ptr [di], 0
                 mov     si, 0
                 mov     bx, ds:53EEh
-                call    sub_26D2E
+                call    ReassignPartySlotReference
 
 loc_23AA4:                              ; CODE XREF: sub_237BA+2D8↑j
                 mov     si, ds:537Ch
@@ -41032,49 +41032,49 @@ seg094          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26D2E       proc far                ; CODE XREF: UseAbilityCommand+82↑P
+ReassignPartySlotReference proc far     ; CODE XREF: UseAbilityCommand+82↑P
                                         ; sub_136F6+13↑P ...
                 push    di
                 push    cx
                 cmp     si, 0
                 jnz     short loc_26D3C
                 push    cs
-                call    near ptr sub_26D47
+                call    near ptr ClearCharacterFromPartySlots
                 pop     cx
                 pop     di
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_26D3C:                              ; CODE XREF: sub_26D2E+5↑j
+loc_26D3C:                              ; CODE XREF: ReassignPartySlotReference+5↑j
                 push    si
                 push    cs
-                call    near ptr sub_26D47
+                call    near ptr ClearCharacterFromPartySlots
                 pop     si
                 mov     [si], bx
                 pop     cx
                 pop     di
                 retf
-sub_26D2E       endp
+ReassignPartySlotReference endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26D47       proc far                ; CODE XREF: sub_26D2E+8↑p
-                                        ; sub_26D2E+10↑p
+ClearCharacterFromPartySlots proc far   ; CODE XREF: ReassignPartySlotReference+8↑p
+                                        ; ReassignPartySlotReference+10↑p
                 mov     cx, 4
                 mov     di, 0CF81h
 
-loc_26D4D:                              ; CODE XREF: sub_26D47+11↓j
+loc_26D4D:                              ; CODE XREF: ClearCharacterFromPartySlots+11↓j
                 cmp     bx, [di]
                 jnz     short loc_26D55
                 mov     word ptr [di], 0
 
-loc_26D55:                              ; CODE XREF: sub_26D47+8↑j
+loc_26D55:                              ; CODE XREF: ClearCharacterFromPartySlots+8↑j
                 add     di, 2
                 loop    loc_26D4D
                 retf
-sub_26D47       endp
+ClearCharacterFromPartySlots endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -48978,7 +48978,7 @@ loc_2ABFE:                              ; CODE XREF: HandleSearchCommand+9↑j
                                         ; HandleSearchCommand+32↑j
                 mov     bx, ds:5442h
                 mov     si, 0CF85h
-                call    sub_26D2E
+                call    ReassignPartySlotReference
                 call    WaitForTargetClick
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jnz     short loc_2AC36
@@ -49583,7 +49583,7 @@ loc_2B09C:                              ; CODE XREF: RunConversation+1A↑j
 loc_2B0B4:                              ; CODE XREF: RunConversation+45↑j
                 mov     bx, ds:5442h
                 mov     si, 0CF87h
-                call    sub_26D2E
+                call    ReassignPartySlotReference
 
 loc_2B0C0:                              ; CODE XREF: RunConversation+F↑j
                 call    ClearMessageBoxArea
@@ -50667,7 +50667,7 @@ loc_2B942:                              ; CODE XREF: sub_2B7AE+18B↑j
                 mov     word ptr [di], 0
                 mov     si, 0
                 mov     bx, ds:53EEh
-                call    sub_26D2E
+                call    ReassignPartySlotReference
                 jmp     short loc_2B980
 ; ---------------------------------------------------------------------------
 
@@ -51894,7 +51894,7 @@ loc_2C434:                              ; CODE XREF: RepairItemCommand+16↑j
                                         ; RepairItemCommand+45↑j
                 mov     bx, ds:5442h
                 mov     si, 0CF83h
-                call    sub_26D2E
+                call    ReassignPartySlotReference
                 mov     ax, ds:5442h
                 call    SelectPartyRecordById
                 mov     bx, ax

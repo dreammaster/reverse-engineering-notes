@@ -127,3 +127,26 @@ item_size: 1
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round2_findings.py']
+[*] reading apply_round2_findings.py
+[*] executing apply_round2_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0xcf81  '' -> 'g_partySlotAssignment': FAILED
+0x26d47  'sub_26D47' -> 'ClearCharacterFromPartySlots': ok
+0x26d2e  'sub_26D2E' -> 'ReassignPartySlotReference': ok
+0x1b704  'sub_1B704' -> 'ApplyScriptedMapCellOverrides': ok
+0x1d76b  'sub_1D76B' -> 'RefreshMultiStatEffectsAlt': ok
+----- end target script output -----
+[*] finished executing apply_round2_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118628
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
