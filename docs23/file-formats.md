@@ -2,14 +2,19 @@
 
 On-disk data formats used by "Yendorian Tales Book I: Chapter 2"
 (`SW.EXE`), cross-referenced against the disassembly as they're decoded.
-**Nothing below is confirmed against the actual IDB/code yet** — this is
-still a placeholder with the observational starting points from the
-initial setup session (2026-09-14), now supplemented with two reference
-documents Paul added the same day: `docs/manual.txt` (the official game
-manual) and `docs/Hex Hacking Item Guide.txt` (a community-written 2004
-guide by Josh Hines on hex-editing savegame items — freely
-redistributable per its own footer). See [overview.md](overview.md) for
-the full session notes and [roadmap.md](roadmap.md) for priority order.
+
+**Status (last updated 2026-09-17)**: the three major formats below
+(`CURGAME`/`SAVGAME*`, `WORLD.DAT`, `PICTURES.VGA`) are all decoded to
+the level of "confirmed against the actual code, traced record layouts
+and field meanings" — not placeholders. Cross-referenced throughout
+against two reference documents Paul added early on: `docs/manual.txt`
+(the official game manual) and `docs/Hex Hacking Item Guide.txt` (a
+community-written 2004 guide by Josh Hines on hex-editing savegame
+items — freely redistributable per its own footer). Only
+`SBFMDRV.COM` (the third-party Sound Blaster driver, not game logic)
+remains genuinely unexamined — see "Not yet examined" below. See
+[overview.md](overview.md) for the full session narrative and
+[roadmap.md](roadmap.md) for current priorities.
 
 ## `CURGAME` / `SAVGAME1` (and presumably `SAVGAMEn`)
 

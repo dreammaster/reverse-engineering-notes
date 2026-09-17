@@ -7,18 +7,43 @@ same overall approach as the sibling [`ultima1`](../../ultima1) and
 [`ultima2`](../../ultima2) projects, adapted for this game's shape.
 
 This file is the entry point into `docs/`. See also:
-- [roadmap.md](roadmap.md) — prioritized list of what's investigated vs.
-  still open.
+- [roadmap.md](roadmap.md) — current status and prioritized next steps
+  (kept up to date; read this first for "what's left").
 - [file-formats.md](file-formats.md) — on-disk data formats (`WORLD.DAT`,
-  savegames, `PICTURES.VGA`), once documented. Not started yet.
+  savegames, `PICTURES.VGA`) — largely decoded, see its own status note.
 
-**Status of this pass (2026-09-14)**: initial setup only, per Paul's
-request — got the headless IDA pipeline working end-to-end against the
-existing `yendor2.idb`, and did a first read of the executable's strings
-and structure to gauge whether there's enough to work with. No renaming
-or structural changes made yet. **Existing names in the IDB are from
-earlier, unfinished sessions and should not be presumed accurate** —
-verify before relying on any of them.
+**Current status (last updated 2026-09-17)**: disassembly-level analysis
+of both `yendor2.idb` (Chapter 2) and `yendor3.idb` (Chapter 3) is
+essentially complete; work has moved on to the C reimplementation.
+Specifically:
+- **`yendor2.idb`**: all 769 functions named (100%), all global
+  variables named across 9 dedicated rounds, and the three major
+  on-disk formats (`CURGAME`/`SAVGAME*`, `WORLD.DAT`, `PICTURES.VGA`)
+  decoded well enough to reimplement — see `file-formats.md`.
+- **`yendor3.idb`** (Chapter 3, confirmed via BinDiff to share
+  `yendor2`'s engine): the full 197-function BinDiff match review is
+  done (all three confidence tiers spot-checked, ~44 of the low-tier
+  matches were simply wrong and corrected), the segmented-addressing
+  global-rename blocker is fixed, and every genuine Chapter 2 vs.
+  Chapter 3 behavioral difference found so far is written up in
+  `file-formats.md`'s sibling, [`engine-diffs.md`](engine-diffs.md).
+  A handful of very minor, non-blocking identities remain open (see
+  `engine-diffs.md`'s "Review status" section at the bottom for the
+  current list) but nothing that blocks reimplementation.
+- **C reimplementation (`src23/`)**: just started. One module done —
+  `bcd4.c`/`bcd4.h` (packed-BCD arithmetic), with `src23/tests/test_bcd4.c`
+  passing and a real MSVC compile verified. No second module scoped
+  yet — see `roadmap.md` for how to pick one.
+
+**On trusting names in the IDBs**: by this point the vast majority of
+names in both IDBs come from this project's own verified renaming
+work (spot-checked via call-target diffing, and in many cases a full
+read) and can be trusted. The exceptions are explicitly flagged inline
+wherever they occur — grep for "not confirmed", "not traced", or
+"open lead" in this file and `engine-diffs.md` for the remaining soft
+spots. Earlier-session names that predated this project's own
+verification pass (mentioned in this file's original 2026-09-14
+entries below) have since been superseded/reconfirmed by that work.
 
 ## The game and its files
 

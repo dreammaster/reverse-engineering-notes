@@ -1,108 +1,105 @@
 # Roadmap
 
-Prioritized list of what's investigated vs. still open for `yendor2.idb`
-(`SW.EXE`). See [overview.md](overview.md) for narrative detail behind
-each item.
+Current status and prioritized next steps for the shared Chapter 2/3
+engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
+[overview.md](overview.md) for the full narrative and
+[engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
+behavioral-difference reference.
 
-## Not started (all of it — this was a setup-only session, 2026-09-14)
+## Status (last updated 2026-09-17)
 
-Roughly in likely investigation order, not a hard sequence:
+**Disassembly-level analysis is essentially done.** This is the
+important thing to know before starting the C reimplementation: you
+should not need to go back to IDA for basic engine logic — the
+groundwork below is already in place.
 
-1. **Locate and verify the per-character/item savegame struct**
-   (`CURGAME`), now that `docs/Hex Hacking Item Guide.txt` (added by Paul
-   2026-09-14) gives a strong external hypothesis to check against: 8
-   item slots/character × 4 characters, each slot 4 bytes
-   (`item_id`/`modifier`/`uses`/`unknown`), plus a near-complete 3-page
-   item ID table. This is now the **lowest-risk, highest-value first
-   target** — promoted above item #1 below because, unlike everything
-   else in this list, we already have a candidate answer to verify
-   rather than needing to derive one from scratch (`ultima1`'s
-   `Savegame`-struct work is the closest parallel, but that started with
-   no external reference at all). Candidate struct: the already-present
-   but unidentified `Struc1` in the IDB — check whether its size/shape
-   is consistent with this layout before assuming it's a match. See
-   file-formats.md for full detail.
-2. **Spot-check the 45 pre-existing function names** against their
-   actual disassembly before trusting any of them further — they're
-   from earlier, unfinished sessions and Paul has explicitly flagged
-   they may not be accurate. Start with the highest-confidence-looking
-   cluster (`FileEntry_*` + `loadWorldDat*`/`WorldDat_setBlock*`, cross-
-   checked against the `WORLD.DAT`/`CURGAME` error strings) since that's
-   the fastest way to build or lose confidence in the rest.
-3. **Confirm single-executable vs. overlay/chain architecture.** No
-   second executable filename or `INT 21h`/`4Bh` EXEC pattern spotted in
-   a first string pass, but not specifically traced in code yet. Matters
-   for how the eventual C++/ScummVM structure should be shaped —
-   `ultima1` was 5 chained EXEs, `ultima2` was 1; this looks like
-   `ultima2`'s shape but isn't confirmed.
-4. **EMS/expanded-memory subsystem.** Already-named `MapUnmapPages`/
-   `InitMemory` plus the mandatory-EMS error strings (`EMM Ver 4.0`,
-   `1MB Expanded RAM`, `EMMXXXX0` device signature) suggest this game
-   pages large assets (especially the 12MB `PICTURES.VGA`) through EMS
-   rather than loading flat — understanding this early will likely
-   clarify a lot of the `WORLD.DAT`/graphics loading code once traced.
-   Also now has a discrepancy to resolve: the in-EXE string says "1MB"
-   minimum, `manual.txt` says "2MB" minimum/"8MB" used if available —
-   see overview.md.
-5. **`WORLD.DAT` format.** 1.76MB, referenced by `loadWorldDat1`-`5` and
-   `WorldDat_setBlock1`-`6` (names unverified, see #2). Likely holds
-   maps, NPC data, conversation/text data, and item tables per the
-   error strings (`"Problem retreiving text/NPC/conversation data."`).
-   No structure investigated yet.
-6. **`PICTURES.VGA` format.** 12.5MB — clearly a large sprite/tile/image
-   atlas rather than a single image. Not investigated. Likely tied
-   closely to #4 (EMS paging) given its size.
-7. **130-segment structure.** No `CODE`/`DATA` renaming attempted (see
-   overview.md's note on why this is lower priority than in
-   `ultima1`/`ultima2` — 130 segments is a lot to rename individually).
-   Revisit once enough functions are named to see if a smaller number of
-   "real" logical regions emerges (e.g. most segments turning out to
-   belong to a handful of purpose clusters).
-8. **Command/dispatch structure for the first-person dungeon-crawling
-   loop** (movement, 90° turn/rotation, wall rendering) — the core
-   gameplay loop Paul is most interested in eventually, per the
-   Eye-of-the-Beholder-style description. Not located yet; expect this
-   to be reachable from `InitGraphics`/`InitGame`'s callees once traced.
-   `manual.txt`'s control scheme (arrow keys move/turn, `Ctrl`+arrow
-   strafe) is now a concrete spec to match against once found.
-9. **Character-creation and class-advancement system.** Now has a
-   precise spec from `manual.txt`, not just string evidence: each of the
-   9 base classes is a percentage blend of two of three archetypes
-   (Fighter/Thief, Cleric, Wizard) — e.g. `Alchemist = 75% Cleric, 25%
-   Wizard`. No functions identified yet, but this gives an exact,
-   checkable target the way `ultima1`'s point-buy mechanic did once
-   found — see overview.md for the full class table.
-10. **Shop/economy system** (buy/sell/enhance/repair, 3-currency economy
-    of gold/ore/`NUORE`) — rich string evidence, no functions traced.
-    `manual.txt` confirms `BARTERING` skill affects shop profit margins
-    and `CHEMISTRY` converts ore via a "brown potion" — a concrete
-    mechanic to look for once this cluster is found.
+- `yendor2.idb`: all 769 functions named, all global variables named,
+  and the three major on-disk formats decoded (see `file-formats.md`).
+- `yendor3.idb`: the full 197-function BinDiff match review against
+  `yendor2.idb` is complete (all three confidence tiers), the
+  segmented-addressing global-rename blocker is fixed, and every
+  confirmed Chapter 2 vs. Chapter 3 behavioral difference is written
+  up in `engine-diffs.md`. A handful of very minor, non-blocking
+  function identities remain unresolved (`engine-diffs.md`'s "Review
+  status" section has the current list) — none of them are load-bearing
+  for reimplementation; they're mostly debug hooks, a studio-credits
+  easter egg, and one new item-registry helper whose exact semantics
+  aren't pinned down.
+- `src23/`: the C reimplementation has just started. One module is
+  done (`bcd4.c`/`bcd4.h`, packed-BCD arithmetic — see below). No
+  second module has been scoped yet.
 
-## Open questions
+## Next: continue the C reimplementation
+
+This is the current priority. Recommended approach (established
+early in this project and still the right one): scope one module at a
+time rather than trying to plan the whole engine up front, doing any
+remaining disassembly-level verification inline as each module is
+written rather than as a separate upfront pass — the groundwork above
+means that should rarely be necessary now.
+
+**Naming conventions** (established, keep following them):
+lowerCamelCase for C functions/variables (e.g. `bcd4Add`,
+`bcd4FromU16`); `g_` prefix for actual global variables; PascalCase
+for type names (e.g. `Bcd4`).
+
+**Write for both games from the start.** `src23/` is shared between
+Chapter 2 and Chapter 3 specifically so this doesn't need to be
+revisited later — when a function differs between the two (check
+`engine-diffs.md` first), reimplement the union of behavior with a
+runtime or compile-time switch rather than picking one game's version.
+
+**Picking the next module** — candidates, roughly in a sensible
+dependency order (not a hard sequence; pick whatever's most useful
+next):
+1. **Round out `bcd4`'s own scope**: `MulBCD4ByWord` and
+   `ShiftBCD4LeftNibble` (`yendor2.asm`, both already named, used by
+   `PromptBuyOreQuantity` and the ore-purchase flow in both games) —
+   the same BCD family as the existing module, natural to finish
+   before moving to unrelated logic.
+2. **Savegame I/O** (`CURGAME`/`SAVGAME*`, fully decoded in
+   `file-formats.md`) — a self-contained, well-understood format with
+   no rendering/input dependencies, good next module for exercising
+   the project's file-I/O conventions early.
+3. **Party/character record structures** — the core data model
+   (`g_partyRecords`, the 4-slot roster via `g_partySlotAssignment`,
+   equipment/inventory layout) that almost everything else depends on;
+   getting this right early avoids rework.
+4. **Core dungeon-crawling loop** (movement, 90°-turn rendering) —
+   the gameplay Paul is most interested in eventually, per the
+   Eye-of-the-Beholder-style description in `overview.md`; bigger and
+   more rendering-dependent than the above, probably comes after the
+   data-model pieces it needs are in place.
+
+`WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
+will be needed once map/graphics loading is in scope, but don't need
+their own dedicated module ahead of that.
+
+## Remaining minor open threads (not blocking)
+
+From `engine-diffs.md`'s "Review status" section — only worth chasing
+if reimplementing the specific function that touches them:
+- `DrawShadowedTextAlt`/`PlayStudioCreditsIntro` (yendor3): a studio
+  credits easter egg, real identity still not found.
+- `sub_1B085` (yendor3): a new random party-ailment mechanic, traced
+  structurally but its exact trap-effect id semantics aren't decoded.
+- `sub_11778` (yendor3): a "limited item instance" registry helper,
+  purpose not fully pinned down.
+- `sub_2566C` (yendor3): a small, generic, widely-reused palette-fade
+  stub with no confirmed yendor2 name.
+
+## Open questions (yendor2, from earlier sessions, still unresolved)
 
 - Is `NUORE` a currency, a resource, or both? Appears alongside "MAGIC
-  ORE" in several UI strings (e.g. `"GOLD COINS:"` / `"MAGIC ORE:"` /
-  `"NUORE:"` together) — looks like a 3-resource economy, not just
-  gold + one crafting material, but not confirmed against actual game
-  logic yet.
+  ORE" in several UI strings — looks like a 3-resource economy. Note:
+  `engine-diffs.md` documents that Chapter 3 appears to remove/replace
+  the NUORE mechanic with a new 5-artifact quest system, which may
+  make this moot for Chapter 3 but still matters for Chapter 2.
 - Relationship between the "region" passwords (`YENDORIAN`,
   `BARIAGIAN`, `OBVERSIAN`, `MONTESERIAN`, `SLATORIAN`, `HEARDONIAN`)
   and the "town" passwords (`PORT HOPE`, `THIEF'S DEN`, etc.) — two
-  separate systems, or one list split across two string clusters by the
-  crude scan? Needs checking against the actual code once located.
-- Whether this executable really has zero overlay/chain behavior, or
-  whether that's just because the crude string scan wouldn't have
-  caught a chained filename buried mid-binary without an obvious
-  `.exe`/`.com` suffix nearby — worth a targeted string search for
-  `.EXE`/`.COM` substrings specifically, not done this session.
-- What `sg0977`/`sg0ffc`/`sg1486`/`sg195C`/`sg1ABC` (the 5 segments with
-  IDA hex-address names instead of sequential `segNNN`) actually are —
-  gap in the sequential numbering, or something IDA treated differently
-  at analysis time. Not investigated.
-- Whether `Hex Hacking Item Guide.txt`'s item table (3 pages of ~256,
-  ~768 total) is complete/current for *this* executable specifically —
-  it's undated against a specific game version, and the shareware
-  Chapter 2 release may not expose every item the full retail game (or a
-  later chapter) does. Treat gaps/mismatches against the IDB as
-  possible version drift, not necessarily guide error, given how well it
-  cross-confirms on the parts checked so far (see file-formats.md).
+  separate systems, or one list split across two string clusters.
+- What `sg0977`/`sg0ffc`/`sg1486`/`sg195C`/`sg1ABC` (the 5 segments
+  with IDA hex-address names instead of sequential `segNNN`) actually
+  are — likely harmless IDA bookkeeping, not investigated further
+  since it hasn't blocked anything.
