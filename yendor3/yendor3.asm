@@ -3112,7 +3112,7 @@ loc_119FB:                              ; CODE XREF: ShowClueBook+FC↓j
                                         ; ShowClueBook+154↓j ...
                 and     word ptr ds:5372h, 0FF9Fh
                 mov     word ptr ds:0E92h, 0
-                call    sub_16654
+                call    RunClueEntryMenu
 
 loc_11A0B:                              ; CODE XREF: ShowClueBook:loc_11AAA↓j
                                         ; ShowClueBook+15E↓j ...
@@ -3178,7 +3178,7 @@ loc_11A80:                              ; CODE XREF: ShowClueBook+12C↓j
                 mov     ax, 8B92h
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 1
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 0
                 jnz     short loc_11AAA
                 call    RunClueBookMapCategory
@@ -3197,7 +3197,7 @@ loc_11AAD:                              ; CODE XREF: ShowClueBook+B5↑j
                 mov     ax, 8B97h
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 2
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 0FFFFh
                 jnz     short loc_11AD3
                 jmp     loc_119FB
@@ -3232,7 +3232,7 @@ loc_11AFC:                              ; CODE XREF: ShowClueBook+1AD↓j
                 mov     ax, 8B69h
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 3
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 0
                 jnz     short loc_11B2B
                 call    RunClueBookSpellCategory
@@ -3252,7 +3252,7 @@ loc_11B2E:                              ; CODE XREF: ShowClueBook+D4↑j
                 mov     ax, 8B7Bh
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 4
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 0
                 jz      short loc_11B5A
                 jmp     loc_11A0B
@@ -3271,7 +3271,7 @@ loc_11B6C:                              ; CODE XREF: ShowClueBook+223↓j
                 mov     ds:0E94h, ax
                 mov     ax, 8B69h
                 mov     ds:0E96h, ax
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 1
                 jnz     short loc_11B8B
                 jmp     short loc_11B2E
@@ -3299,7 +3299,7 @@ loc_11BA4:                              ; CODE XREF: ShowClueBook+E4↑j
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 0Bh
                 mov     word ptr ds:0E86h, 0
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 0
                 jz      short loc_11BD0
                 jmp     loc_11A0B
@@ -3365,7 +3365,7 @@ loc_11C19:                              ; CODE XREF: ShowClueBook+2D7↓j
                 mov     ax, 8D22h
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 0Ch
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 1
                 jnz     short loc_11C3F
                 jmp     loc_11BA4
@@ -3405,7 +3405,7 @@ loc_11C70:                              ; CODE XREF: ShowClueBook+32E↓j
                 mov     ax, 8D44h
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 0Dh
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 1
                 jnz     short loc_11C96
                 jmp     loc_11BA4
@@ -3434,7 +3434,7 @@ loc_11CB5:                              ; CODE XREF: ShowClueBook+373↓j
                 mov     ax, 8D5Dh
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 0Eh
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 1
                 jnz     short loc_11CDB
                 jmp     loc_11BA4
@@ -3463,7 +3463,7 @@ loc_11CFA:                              ; CODE XREF: ShowClueBook+3B8↓j
                 mov     ax, 8D6Bh
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 0Fh
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 1
                 jnz     short loc_11D20
                 jmp     loc_11BA4
@@ -3492,7 +3492,7 @@ loc_11D3F:                              ; CODE XREF: ShowClueBook+3FD↓j
                 mov     ax, 8D80h
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 10h
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 1
                 jnz     short loc_11D65
                 jmp     loc_11BA4
@@ -3532,7 +3532,7 @@ loc_11D96:                              ; CODE XREF: ShowClueBook+454↓j
                 mov     ax, 8D99h
                 mov     ds:0E96h, ax
                 mov     word ptr ds:0E92h, 11h
-                call    sub_16654
+                call    RunClueEntryMenu
                 cmp     word ptr ds:0EA4h, 1
                 jnz     short loc_11DBC
                 jmp     loc_11BA4
@@ -12127,7 +12127,7 @@ seg034          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16654       proc far                ; CODE XREF: ShowClueBook+8A↑P
+RunClueEntryMenu proc far               ; CODE XREF: ShowClueBook+8A↑P
                                         ; ShowClueBook+11B↑P ...
                 push    ax
                 push    bx
@@ -12141,8 +12141,8 @@ sub_16654       proc far                ; CODE XREF: ShowClueBook+8A↑P
                 jz      short loc_1666B
                 call    ShowClueCategoryEntries
 
-loc_1666B:                              ; CODE XREF: sub_16654+12↑j
-                                        ; sub_16654+21↓j ...
+loc_1666B:                              ; CODE XREF: RunClueEntryMenu+12↑j
+                                        ; RunClueEntryMenu+21↓j ...
                 call    PollKeyboardInput
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_1666B
@@ -12153,7 +12153,7 @@ loc_1666B:                              ; CODE XREF: sub_16654+12↑j
                 jmp     loc_16718
 ; ---------------------------------------------------------------------------
 
-loc_16688:                              ; CODE XREF: sub_16654+2F↑j
+loc_16688:                              ; CODE XREF: RunClueEntryMenu+2F↑j
                 call    HandleClueCategorySelection
                 cmp     word ptr ds:0EA4h, 0
                 jz      short loc_166A1
@@ -12162,8 +12162,8 @@ loc_16688:                              ; CODE XREF: sub_16654+2F↑j
                 jmp     loc_1676C
 ; ---------------------------------------------------------------------------
 
-loc_166A1:                              ; CODE XREF: sub_16654+3E↑j
-                                        ; sub_16654+B6↓j
+loc_166A1:                              ; CODE XREF: RunClueEntryMenu+3E↑j
+                                        ; RunClueEntryMenu+B6↓j
                 call    HandleClueEntryScrollInput
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_166B0
@@ -12171,7 +12171,7 @@ loc_166A1:                              ; CODE XREF: sub_16654+3E↑j
                 jmp     short loc_1666B
 ; ---------------------------------------------------------------------------
 
-loc_166B0:                              ; CODE XREF: sub_16654+55↑j
+loc_166B0:                              ; CODE XREF: RunClueEntryMenu+55↑j
                 call    HandleClueEntryRowScrollInput
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_166BF
@@ -12179,19 +12179,19 @@ loc_166B0:                              ; CODE XREF: sub_16654+55↑j
                 jmp     short loc_1666B
 ; ---------------------------------------------------------------------------
 
-loc_166BF:                              ; CODE XREF: sub_16654+64↑j
+loc_166BF:                              ; CODE XREF: RunClueEntryMenu+64↑j
                 cmp     byte ptr ds:0E9Ah, 0Dh
                 jnz     short loc_166C9
                 jmp     loc_16749
 ; ---------------------------------------------------------------------------
 
-loc_166C9:                              ; CODE XREF: sub_16654+70↑j
+loc_166C9:                              ; CODE XREF: RunClueEntryMenu+70↑j
                 cmp     byte ptr ds:0E9Ah, 20h ; ' '
                 jz      short loc_16749
                 jmp     short loc_1666B
 ; ---------------------------------------------------------------------------
 
-loc_166D2:                              ; CODE XREF: sub_16654+28↑j
+loc_166D2:                              ; CODE XREF: RunClueEntryMenu+28↑j
                 cmp     word ptr ds:0E92h, 0
                 jz      short loc_16700
                 mov     ax, ds:1214h
@@ -12209,8 +12209,8 @@ loc_166D2:                              ; CODE XREF: sub_16654+28↑j
                 jmp     loc_1666B
 ; ---------------------------------------------------------------------------
 
-loc_16700:                              ; CODE XREF: sub_16654+83↑j
-                                        ; sub_16654+97↑j
+loc_16700:                              ; CODE XREF: RunClueEntryMenu+83↑j
+                                        ; RunClueEntryMenu+97↑j
                 call    HandleClueCategorySelection
                 cmp     word ptr ds:0EA4h, 0
                 jz      short loc_166A1
@@ -12219,13 +12219,13 @@ loc_16700:                              ; CODE XREF: sub_16654+83↑j
                 jmp     short loc_1676C
 ; ---------------------------------------------------------------------------
 
-loc_16718:                              ; CODE XREF: sub_16654+31↑j
+loc_16718:                              ; CODE XREF: RunClueEntryMenu+31↑j
                 cmp     word ptr ds:0E92h, 0
                 jnz     short loc_16722
                 jmp     loc_1666B
 ; ---------------------------------------------------------------------------
 
-loc_16722:                              ; CODE XREF: sub_16654+C9↑j
+loc_16722:                              ; CODE XREF: RunClueEntryMenu+C9↑j
                 mov     ax, ds:1214h
                 mov     bx, ds:1216h
                 mov     si, 6C00h
@@ -12235,7 +12235,7 @@ loc_16722:                              ; CODE XREF: sub_16654+C9↑j
                 jmp     loc_1666B
 ; ---------------------------------------------------------------------------
 
-loc_16739:                              ; CODE XREF: sub_16654+E0↑j
+loc_16739:                              ; CODE XREF: RunClueEntryMenu+E0↑j
                 dec     ax
                 mov     bx, 4
                 mul     bx
@@ -12243,8 +12243,8 @@ loc_16739:                              ; CODE XREF: sub_16654+E0↑j
                 mov     ds:0E8Ah, ax
                 call    ShowClueCategoryEntries
 
-loc_16749:                              ; CODE XREF: sub_16654+72↑j
-                                        ; sub_16654+7A↑j
+loc_16749:                              ; CODE XREF: RunClueEntryMenu+72↑j
+                                        ; RunClueEntryMenu+7A↑j
                 mov     word ptr ds:0EA4h, 0
                 test    word ptr ds:5370h, 1
                 jnz     short loc_1676A
@@ -12255,13 +12255,13 @@ loc_16749:                              ; CODE XREF: sub_16654+72↑j
                 jmp     loc_1666B
 ; ---------------------------------------------------------------------------
 
-loc_1676A:                              ; CODE XREF: sub_16654+101↑j
-                                        ; sub_16654+10C↑j
+loc_1676A:                              ; CODE XREF: RunClueEntryMenu+101↑j
+                                        ; RunClueEntryMenu+10C↑j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_1676C:                              ; CODE XREF: sub_16654+4A↑j
-                                        ; sub_16654+C2↑j ...
+loc_1676C:                              ; CODE XREF: RunClueEntryMenu+4A↑j
+                                        ; RunClueEntryMenu+C2↑j ...
                 and     word ptr ds:5372h, 0FE7Fh
                 pop     es
                 pop     si
@@ -12271,7 +12271,7 @@ loc_1676C:                              ; CODE XREF: sub_16654+4A↑j
                 pop     bx
                 pop     ax
                 retf
-sub_16654       endp
+RunClueEntryMenu endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12351,7 +12351,7 @@ DrawClueEntryList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-HandleClueEntryRowScrollInput proc near ; CODE XREF: sub_16654:loc_166B0↑p
+HandleClueEntryRowScrollInput proc near ; CODE XREF: RunClueEntryMenu:loc_166B0↑p
                 cmp     word ptr ds:0E86h, 0 ; 'H'/'P' single-row (step 4) scroll for the clue entry list, paging via ScrollClueEntryListPageUp/Down only at the current page's top/bottom bound (word_2E3F0/word_2E3F2). errorCode=1/2, 0 if no active list/key. Called from RunClueEntryMenu.
                 jz      short loc_1685F
                 mov     ax, ds:0E8Ah
@@ -12424,7 +12424,7 @@ HandleClueEntryRowScrollInput endp
 ; =============== S U B R O U T I N E =======================================
 
 
-HandleClueEntryScrollInput proc near    ; CODE XREF: sub_16654:loc_166A1↑p
+HandleClueEntryScrollInput proc near    ; CODE XREF: RunClueEntryMenu:loc_166A1↑p
                 cmp     word ptr ds:0E86h, 0 ; Pagination handler for RunClueEntryMenu's entry list: 'I' key or a HitTestRegionTable(0x6960) mouse hit region 1 adopts word_2E3F0 into word_2E3EE (errorCode=1) unless word_328CC bit 0x100 defers to sub_13014; 'Q'/region 2 does the same with word_2E3F2 (errorCode=2), deferring to sub_12FED on word_328CC bit 0x80. errorCode=0 if nothing changed. Called from RunClueEntryMenu.
                 jz      short loc_16936
                 cmp     byte ptr ds:0E9Ah, 0
@@ -12492,8 +12492,8 @@ HandleClueEntryScrollInput endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowClueCategoryEntries proc near       ; CODE XREF: sub_16654+14↑p
-                                        ; sub_16654+57↑p ...
+ShowClueCategoryEntries proc near       ; CODE XREF: RunClueEntryMenu+14↑p
+                                        ; RunClueEntryMenu+57↑p ...
                 cmp     word ptr ds:0E86h, 0 ; CORRECTED from 'ShowSaveSlotMenu'. Per-category clue-book init+draw: on first call, reads this category's entry count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state; every call draws the frame (DrawMessageBox) plus header/footer and the entry list (DrawClueEntryList).
                 jnz     short loc_16995
                 mov     bx, ds:0E92h
@@ -15343,7 +15343,7 @@ seg036          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowClueBookRegistrationNag proc far    ; CODE XREF: sub_16654+10E↑P
+ShowClueBookRegistrationNag proc far    ; CODE XREF: RunClueEntryMenu+10E↑P
                                         ; HandlePagedEntryNavigation+5F↑P
                 mov     ax, 3           ; Plays a sound and shows 'REGISTER YOUR COPY OF THE CLUE BOOK TODAY!' -- the shareware registration nag for clue-book entries that require registration (called when the global 'registered' flag, word_328CA bit 1, is clear and the entry's own bit 0x8000 says it's registration-locked).
                 call    TriggerSoundEvent
@@ -15475,8 +15475,8 @@ sub_18691       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawClueBookNavBar proc far             ; CODE XREF: sub_16654+40↑P
-                                        ; sub_16654+B8↑P ...
+DrawClueBookNavBar proc far             ; CODE XREF: RunClueEntryMenu+40↑P
+                                        ; RunClueEntryMenu+B8↑P ...
                 test    word ptr ds:5372h, 40h ; Clue book (F8) nav bar, called from RunClueEntryMenu. Draws two conditional hotkey hints (word_328CC bit 0x40 -> 'd) LIST', bit 0x20 -> 'c) MAP'), then a row of 7 category-tab icons at y=0xB4 (x from 0x3E, step 0x1E): 7 base picture ids (0x20/0x145/0x147/0x153/0x149/0x14B/0x14D), each +1'd to a highlighted variant when its bit (word_328CC 0x8000..0x200) is set, drawn via DrawPicture. Category identities not traced -- only the mechanism is confirmed.
                 jz      short loc_1870F
                 mov     word ptr ds:53FAh, 0Bh
@@ -15561,8 +15561,8 @@ DrawClueBookNavBar endp
 ; =============== S U B R O U T I N E =======================================
 
 
-HandleClueCategorySelection proc far    ; CODE XREF: sub_16654:loc_16688↑P
-                                        ; sub_16654:loc_16700↑P ...
+HandleClueCategorySelection proc far    ; CODE XREF: RunClueEntryMenu:loc_16688↑P
+                                        ; RunClueEntryMenu:loc_16700↑P ...
                 cmp     byte ptr ds:0E9Ah, 0 ; RunClueEntryMenu's category-switching input handler: keyboard (ESC/digit keys/'K'/'P' hotkeys, byte_2E400==9 for ShowClueBookHelpScreen) and mouse (region table 0x6876, categories 1-9) both feed into a shared 'apply new category' block that walks a 7-bit category mask in word_328CC and plays a sound cue on change. 'K'/'P' gated on word_328CC bits 0x40/0x20 -- the same 'd) LIST'/'c) MAP' hotkey-hint bits DrawClueBookNavBar draws (NOT the registration-lock flag, which is a different bit).
                 jz      short loc_18844
                 mov     word ptr ds:0EA4h, 8
@@ -50976,7 +50976,7 @@ RunCharacterCreation proc far           ; CODE XREF: sub_1BE7E:loc_1BF89↑P
                 call    PlayCharacterCreationIntroAnimation
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
-                call    sub_2BF44
+                call    RunCharacterCreationSelectionStep
 
 loc_2BBB1:                              ; CODE XREF: RunCharacterCreation+8↑j
                                         ; RunCharacterCreation+12↑j ...
@@ -51059,7 +51059,7 @@ FinalizeCharacterCreation endp
 
 
 ClearOffscreenBuffer proc near          ; CODE XREF: FinalizeCharacterCreation+1D↑p
-                                        ; sub_2BF44↓p ...
+                                        ; RunCharacterCreationSelectionStep↓p ...
                 mov     es, word ptr ds:53CCh
                 xor     di, di
                 xor     eax, eax
@@ -51336,7 +51336,8 @@ PlayCharacterCreationIntroAnimation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BF44       proc near               ; CODE XREF: RunCharacterCreation+32↑p
+RunCharacterCreationSelectionStep proc near
+                                        ; CODE XREF: RunCharacterCreation+32↑p
                 call    ClearOffscreenBuffer
                 mov     ax, 4730h
                 mov     bx, 96C2h
@@ -51367,7 +51368,7 @@ sub_2BF44       proc near               ; CODE XREF: RunCharacterCreation+32↑p
                 call    StepPaletteFadeRange
                 mov     cx, 0Ah
 
-loc_2BFBA:                              ; CODE XREF: sub_2BF44+83↓j
+loc_2BFBA:                              ; CODE XREF: RunCharacterCreationSelectionStep+83↓j
                 call    sub_2BBB5
                 jz      short locret_2BFCB
                 mov     ax, 5
@@ -51376,12 +51377,12 @@ loc_2BFBA:                              ; CODE XREF: sub_2BF44+83↓j
                 jmp     short loc_2BFCC
 ; ---------------------------------------------------------------------------
 
-locret_2BFCB:                           ; CODE XREF: sub_2BF44+79↑j
-                                        ; sub_2BF44+117↓j ...
+locret_2BFCB:                           ; CODE XREF: RunCharacterCreationSelectionStep+79↑j
+                                        ; RunCharacterCreationSelectionStep+117↓j ...
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2BFCC:                              ; CODE XREF: sub_2BF44+85↑j
+loc_2BFCC:                              ; CODE XREF: RunCharacterCreationSelectionStep+85↑j
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
@@ -51397,7 +51398,7 @@ loc_2BFCC:                              ; CODE XREF: sub_2BF44+85↑j
                 mov     si, 4730h
                 mov     cx, 300h
 
-loc_2BFF9:                              ; CODE XREF: sub_2BF44+BD↓j
+loc_2BFF9:                              ; CODE XREF: RunCharacterCreationSelectionStep+BD↓j
                 mov     al, [si]
                 sub     al, 3Fh ; '?'
                 mov     [di], al
@@ -51412,12 +51413,12 @@ loc_2BFF9:                              ; CODE XREF: sub_2BF44+BD↓j
                 mov     word ptr ds:0E28h, 0
                 mov     cx, 7
 
-loc_2C025:                              ; CODE XREF: sub_2BF44+112↓j
+loc_2C025:                              ; CODE XREF: RunCharacterCreationSelectionStep+112↓j
                 push    cx
                 mov     word ptr ds:0FC3h, 28h ; '('
                 mov     cx, 5
 
-loc_2C02F:                              ; CODE XREF: sub_2BF44+10F↓j
+loc_2C02F:                              ; CODE XREF: RunCharacterCreationSelectionStep+10F↓j
                 call    DrawPicture
                 call    DrawMouseCursor
                 push    cx
@@ -51466,12 +51467,12 @@ loc_2C02F:                              ; CODE XREF: sub_2BF44+10F↓j
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jnz     short loc_2C0D2
 
-locret_2C0D1:                           ; CODE XREF: sub_2BF44+C2↑j
-                                        ; sub_2BF44+13B↑j ...
+locret_2C0D1:                           ; CODE XREF: RunCharacterCreationSelectionStep+C2↑j
+                                        ; RunCharacterCreationSelectionStep+13B↑j ...
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2C0D2:                              ; CODE XREF: sub_2BF44+18B↑j
+loc_2C0D2:                              ; CODE XREF: RunCharacterCreationSelectionStep+18B↑j
                 mov     es, word ptr ds:0F44h
                 mov     di, 5062h
                 mov     si, 4730h
@@ -51479,12 +51480,12 @@ loc_2C0D2:                              ; CODE XREF: sub_2BF44+18B↑j
                 rep movsd
                 mov     cx, 5
 
-loc_2C0E5:                              ; CODE XREF: sub_2BF44+1D7↓j
+loc_2C0E5:                              ; CODE XREF: RunCharacterCreationSelectionStep+1D7↓j
                 push    cx
                 mov     word ptr ds:0FC3h, 49h ; 'I'
                 mov     cx, 7
 
-loc_2C0EF:                              ; CODE XREF: sub_2BF44+1CF↓j
+loc_2C0EF:                              ; CODE XREF: RunCharacterCreationSelectionStep+1CF↓j
                 call    DrawPicture
                 call    DrawMouseCursor
                 push    cx
@@ -51502,16 +51503,16 @@ loc_2C0EF:                              ; CODE XREF: sub_2BF44+1CF↓j
                 jz      short locret_2C11D
                 loop    loc_2C0E5
 
-locret_2C11D:                           ; CODE XREF: sub_2BF44+1D5↑j
+locret_2C11D:                           ; CODE XREF: RunCharacterCreationSelectionStep+1D5↑j
                 retn
-sub_2BF44       endp
+RunCharacterCreationSelectionStep endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C11E       proc near               ; CODE XREF: sub_2BF44+133↑p
-                                        ; sub_2BF44+14E↑p ...
+sub_2C11E       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+133↑p
+                                        ; RunCharacterCreationSelectionStep+14E↑p ...
                 call    DrawPicture
                 call    DrawMouseCursor
                 inc     word ptr ds:0FC3h
@@ -51529,8 +51530,8 @@ sub_2C11E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C13C       proc near               ; CODE XREF: sub_2BF44+11E↑p
-                                        ; sub_2BF44+15B↑p ...
+sub_2C13C       proc near               ; CODE XREF: RunCharacterCreationSelectionStep+11E↑p
+                                        ; RunCharacterCreationSelectionStep+15B↑p ...
                 test    word ptr ds:0CF63h, 8
                 jz      short loc_2C146
                 jmp     short loc_2C1A2
@@ -51611,7 +51612,7 @@ sub_2C13C       endp
 
 
 FadePaletteStep proc near               ; CODE XREF: PlayCharacterCreationIntroAnimation+125↑p
-                                        ; sub_2BF44+1BF↑p
+                                        ; RunCharacterCreationSelectionStep+1BF↑p
                 mov     ds:442Ah, bx
                 mov     ds:4428h, cx
                 mov     ds:441Ch, cx
@@ -51653,7 +51654,7 @@ FadePaletteStep endp
 
 
 RunPaletteFadeSequence proc near        ; CODE XREF: PlayCharacterCreationIntroAnimation+162↑p
-                                        ; sub_2BF44+FF↑p
+                                        ; RunCharacterCreationSelectionStep+FF↑p
                 mov     ds:442Ah, bx    ; Runs bx steps of a palette fade: nudges 0x4D5C (current) toward 0x442A (target) byte-by-byte, mirrors into 0x475A (output) unless a 0x80 sentinel bit is set, then SetPaletteRange's the output segment (dx=start index, cx=RGB-triple count). A multi-step sibling of FadePaletteStep. Called from PlayCharacterCreationIntroAnimation.
                 mov     ds:4428h, cx
                 mov     ds:441Ch, cx

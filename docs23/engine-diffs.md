@@ -557,6 +557,68 @@ particular looks like genuinely new logic (three new
 elsewhere, a random 1-3 roll, and a new helper `sub_1B10C`) worth a
 dedicated future look rather than a rushed name.
 
+### Round 9: closed out the low-confidence tier, two more real matches found via caller context
+
+The last ~14 unverified low-confidence functions were checked this
+round. 12 confirmed bad (wildly different call lists/instruction
+counts from their BinDiff-suggested yendor2 counterpart -- consistent
+with this tier's established pattern). Two real matches found, both by
+caller-context confirmation rather than trusting the raw call-list
+diff, since Chapter 3 restructured their internals heavily:
+
+- **`RunClueEntryMenu`**: the address BinDiff called
+  `ParseCommandLineSwitches` (0x16654, 0.28 similarity) is actually the
+  real `RunClueEntryMenu`. Its call list is an exact 17-call sequence
+  match to yendor2's `RunClueEntryMenu`
+  (`ShowClueCategoryEntries`/`PollKeyboardInput`/
+  `HandleClueCategorySelection`/.../`ShowClueBookRegistrationNag`),
+  and it's called from `ShowClueBook`, exactly like yendor2's version
+  (13 call sites there). The address BinDiff itself suggested for
+  `RunClueEntryMenu` (0x2566C, 0.12 similarity) is unrelated (near-
+  empty, a single `StepPaletteFadeRange` call) -- still unidentified.
+- **`RunCharacterCreationSelectionStep`**: the address BinDiff
+  suggested (0x2BF44, 0.27 similarity) is actually correct, confirmed
+  by caller position -- it's called from `RunCharacterCreation` in the
+  same slot yendor2's version occupies. Its raw call list looks
+  totally different (623 yendor2 instructions collapse to 140 in
+  yendor3) because Chapter 3 factored the screen's many repeated
+  `StepPaletteFadeRange`/`TriggerPaletteRange16FadeUp`/`Down`/
+  `PollForEscapeKeyOnlyAlt` animation sequences into new shared
+  helpers (a `RunPaletteFadeSequence`-style wrapper, plus `sub_2C11E`,
+  `sub_2C376`). A genuine internal rewrite, not a bad match -- another
+  example of the "consolidate repeated sequences into shared helpers"
+  pattern.
+
+Confirmed bad, left unrenamed: `TriggerFullPaletteFadeIn` (0x18691),
+the address separately mislabeled `RunCharacterDetailOverlay`
+(0x11778 -- the real one is at 0x237BA, already renamed round 7; this
+address is still unidentified, small, uses `LoadItemCatalogRecord`/
+file I/O, matching round 7's prediction exactly), `ComposeCharacterPortrait`
+(0x2BD4A), `RunMapEditorScreen` (0x2B7AE), the address separately
+mislabeled `TryHandleCatalogSlotClick` (0x144D4 -- the real one is at
+0x128F4, already renamed round 1), `PlayCreditsWipeAnimation`
+(0x14F40), the address separately mislabeled `ErrorCheck` (0x11E56 --
+the real one is at 0x28C1A, already renamed round 1),
+`DrawCharacterCreationAnimationFrame` (0x2BBB5),
+`ComputeAlchemyRefinementYield` (0x1C13E -- y3 side is a huge
+combat/projectile function, nothing like BCD refinement math),
+`DebugToggleViewportCellHidden` (0x2BC75), `DebugSetOverlayTileByNumber`
+(0x2147B -- y3 side handles clue-location string formatting, possibly
+a new "show location" feature, worth a dedicated future look).
+
+**Cluster observation**: several of the still-unidentified addresses
+in this batch (0x2BD4A, 0x2BBB5, 0x2BC75, plus the now-confirmed
+`RunCharacterCreationSelectionStep` at 0x2BF44) all sit in the same
+0x2BB7C-0x2BF44 code region and share calls to a small set of new
+helpers (`~DrawCharacterCreationAnimationFrame`, `StepPaletteFadeRange`,
+`DrawPicture`, `wait`). This whole region looks like Chapter 3's
+restructured character-creation screen code -- likely worth a
+dedicated future pass rather than one-off diffing.
+
+This closes out the full 77-function low-confidence tier: all three
+BinDiff match tiers (68 high, 52 mid, 77 low = 197 total) have now
+been spot-checked at least once.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
@@ -577,20 +639,24 @@ dedicated future look rather than a rushed name.
   generic tick-wait duplicate, not that function, see above). The
   address matched to `PollForEscapeKeyOnlyAlt` (0.90) *was* resolved
   this round -- see the correction above.
-- 77 functions at similarity <0.70: 63 checked across rounds 5-8, 31
-  renamed to their real (sometimes non-obvious) identity
+- 77 functions at similarity <0.70: **all 77 now checked**, 33 renamed
+  to their real (sometimes non-obvious) identity across rounds 5-9
   (`apply_round5_findings.py`, `apply_round5b_findings.py`,
   `apply_round6_findings.py`, `apply_round6b.py`, `apply_round6c.py`,
-  `apply_round7_findings.py`, `apply_round8_findings.py`). ~35
-  confirmed-bad BinDiff matches found in this tier so far -- this
-  tier's true bad-match rate looks like it may exceed 60-70% once
-  fully reviewed. `CastSpell` and `DispatchItemAbilityCommand` are now
-  both resolved (round 8); `HandleRangedOrCombatAction` and
-  `DrawShadowedTextAlt` remain genuinely missing, and finding them
-  will likely need the same structural-caller-analysis approach rather
-  than more candidate-diffing, since their yendor2 callers use flag
-  globals (`g_uiScratchFlags4`, etc.) not yet identified at their
-  yendor3 addresses. ~14 low-confidence functions remain entirely
-  unchecked, for future rounds. Treat
-  *any* match under roughly 0.5 as unverified until read directly --
-  this tier's bad-match rate is now higher than good.
+  `apply_round7_findings.py`, `apply_round8_findings.py`,
+  `apply_round9_findings.py`). ~45 confirmed-bad BinDiff matches found
+  in this tier -- a roughly 55-60% bad-match rate once fully reviewed,
+  confirming the "below 0.5 similarity, assume wrong until proven"
+  rule of thumb. This tier is now closed out. Remaining open leads for
+  future sessions (not blocking, just unresolved identities): the real
+  `HandleRangedOrCombatAction` and `DrawShadowedTextAlt` (need the
+  structural-caller-analysis approach, blocked on identifying
+  `g_uiScratchFlags4` at its yendor3 address -- see the segmented-
+  addressing blocker below), the real `RunClueEntryMenu`-suggested
+  address (0x2566C), `TryHandleCatalogSlotClick`-suggested address
+  (0x144D4), `ErrorCheck`-suggested address (0x11E56),
+  `RunCharacterDetailOverlay`-suggested address (0x11778), and the
+  character-creation-region cluster noted above (0x2BD4A/0x2BBB5/
+  0x2BC75). `sub_1B085`'s new ailment mechanic and `sub_156C9`'s
+  identity (a small item-range-check loop, confirmed not
+  `RestPartyAndAdvanceClock`) also remain open from earlier rounds.

@@ -431,3 +431,118 @@ item_size: 1
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'check_low_tier_status.py']
+[*] reading check_low_tier_status.py
+[*] executing check_low_tier_status.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2121f  SAME  suggested='RedrawItemDescriptionAndMaterials'           current='RedrawItemDescriptionAndMaterials'
+0x201b1  SAME  suggested='ExtendDungeonCeilingTexture'                 current='ExtendDungeonCeilingTexture'
+0x27184  SAME  suggested='DrawResourceCounterPanel'                    current='DrawResourceCounterPanel'
+0x2971b  SAME  suggested='ShowAbilityDescriptionColumn'                current='ShowAbilityDescriptionColumn'
+0x2bc65  SAME  suggested='ClearOffscreenBuffer'                        current='ClearOffscreenBuffer'
+0x188b2  SAME  suggested='RestoreClueBookBackgroundFromEMS'            current='RestoreClueBookBackgroundFromEMS'
+0x16f2f  SAME  suggested='ShowConsumableItemTypeLegend'                current='ShowConsumableItemTypeLegend'
+0x2825b  SAME  suggested='ShowGameClockCommand'                        current='ShowGameClockCommand'
+0x1a09d  SAME  suggested='CheckAndPaySpecialItemCost'                  current='CheckAndPaySpecialItemCost'
+0x1709c  SAME  suggested='DrawItemTypeLegendAttributeRow'              current='DrawItemTypeLegendAttributeRow'
+0x170e7  SAME  suggested='DrawItemTypeLegendSkillRow'                  current='DrawItemTypeLegendSkillRow'
+0x1f040  SAME  suggested='InitGlobals'                                 current='InitGlobals'
+0x18be4  SAME  suggested='DrawMessageBox'                              current='DrawMessageBox'
+0x1d336  SAME  suggested='DeductAlchemySpellCosts'                     current='DeductAlchemySpellCosts'
+0x10999  SAME  suggested='TickTravelResourceAilments'                  current='TickTravelResourceAilments'
+0x18b92  SAME  suggested='SaveClueBookBackgroundToEMS'                 current='SaveClueBookBackgroundToEMS'
+0x15512  SAME  suggested='TravelToDestination'                         current='TravelToDestination'
+0x18691  DIFF  suggested='TriggerFullPaletteFadeIn'                    current='sub_18691'
+0x1b490  DIFF  suggested='DispatchItemAbilityCommand'                  current='HandleSpecialQuestCommand'
+0x2bbd3  SAME  suggested='FinalizeCharacterCreation'                   current='FinalizeCharacterCreation'
+0x236b5  SAME  suggested='ShowStatusPanelMessage'                      current='ShowStatusPanelMessage'
+0x1af19  SAME  suggested='TickPartyAilmentIconBar'                     current='TickPartyAilmentIconBar'
+0x2a366  DIFF  suggested='IsPairedValueMatch'                          current='sub_2A366'
+0x20f10  DIFF  suggested='SetPaletteToWhite'                           current='sub_20F10'
+0x1531f  DIFF  suggested='CollectNuoreCache'                           current='sub_1531F'
+0x15290  DIFF  suggested='PlayCreditsFrameAnimation'                   current='sub_15290'
+0x2c3c4  DIFF  suggested='InstantKillActiveMonster'                    current='sub_2C3C4'
+0x1530f  DIFF  suggested='RestoreWipeEffectPixel'                      current='sub_1530F'
+0x25a3c  DIFF  suggested='StepPaletteRange16FadeDownAlt'               current='sub_25A3C'
+0x27b6c  DIFF  suggested='PlaySoundSequenceGH'                         current='sub_27B6C'
+0x283ce  DIFF  suggested='TriggerPaletteRange16FadeUpAlt'              current='sub_283CE'
+0x14fda  DIFF  suggested='ShowVisionAtLocation'                        current='sub_14FDA'
+0x118c2  DIFF  suggested='ClearVideoBackBufferLowerRegion'             current='sub_118C2'
+0x27d4e  DIFF  suggested='StepPaletteRange16FadeDown'                  current='sub_27D4E'
+0x12f2b  SAME  suggested='ClassifyObstacleAtWorldPosition'             current='ClassifyObstacleAtWorldPosition'
+0x27b52  DIFF  suggested='TriggerPaletteRange16FadeDownAlt'            current='sub_27B52'
+0x20dc4  DIFF  suggested='PlayTitleScreenSequence'                     current='sub_20DC4'
+0x1fdfe  SAME  suggested='ApplyStatusEffect'                           current='ApplyStatusEffect'
+0x1b7a8  DIFF  suggested='CastSpell'                                   current='HandleScriptedStoryEventTrigger'
+0x2bdb0  SAME  suggested='PlayCharacterCreationIntroAnimation'         current='PlayCharacterCreationIntroAnimation'
+0x1ae77  DIFF  suggested='IsRestingAllowedHere'                        current='sub_1AE77'
+0x156c9  DIFF  suggested='RestPartyAndAdvanceClock'                    current='sub_156C9'
+0x16654  DIFF  suggested='ParseCommandLineSwitches'                    current='sub_16654'
+0x2bf44  DIFF  suggested='RunCharacterCreationSelectionStep'           current='sub_2BF44'
+0x1d358  DIFF  suggested='HandleRangedOrCombatAction'                  current='RestPartyAndAdvanceClock'
+0x28340  DIFF  suggested='ShowIntroPicture'                            current='sub_28340'
+0x1161c  DIFF  suggested='CheckQuestItemsCompleted'                    current='sub_1161C'
+0x136f6  SAME  suggested='ClearPartySlotReferenceOnDamage'             current='ClearPartySlotReferenceOnDamage'
+0x1055f  DIFF  suggested='EnforceDemoBoundary'                         current='sub_1055F'
+0x18c53  DIFF  suggested='ShowClueBookHelpScreen'                      current='sub_18C53'
+0x2ae87  DIFF  suggested='PartyMassHealAndOverheal'                    current='CastSpell'
+0x11778  DIFF  suggested='RunCharacterDetailOverlay'                   current='sub_11778'
+0x153c0  DIFF  suggested='CollectMagicOreCache'                        current='sub_153C0'
+0x2566c  DIFF  suggested='RunClueEntryMenu'                            current='sub_2566C'
+0x2bd4a  DIFF  suggested='ComposeCharacterPortrait'                    current='sub_2BD4A'
+0x2b7ae  DIFF  suggested='RunMapEditorScreen'                          current='sub_2B7AE'
+0x144d4  DIFF  suggested='TryHandleCatalogSlotClick'                   current='sub_144D4'
+0x14f40  DIFF  suggested='PlayCreditsWipeAnimation'                    current='sub_14F40'
+0x11e56  DIFF  suggested='ErrorCheck'                                  current='sub_11E56'
+0x2bbb5  DIFF  suggested='DrawCharacterCreationAnimationFrame'         current='sub_2BBB5'
+0x1c13e  DIFF  suggested='ComputeAlchemyRefinementYield'               current='sub_1C13E'
+0x28c1a  DIFF  suggested='FileEntry_Close'                             current='ErrorCheck'
+0x237ba  DIFF  suggested='DrawShadowedTextAlt'                         current='RunCharacterDetailOverlay'
+0x2c13c  DIFF  suggested='DrawShadowedText'                            current='sub_2C13C'
+0x2bc75  DIFF  suggested='DebugToggleViewportCellHidden'               current='sub_2BC75'
+0x2147b  DIFF  suggested='DebugSetOverlayTileByNumber'                 current='sub_2147B'
+0x25a4e  DIFF  suggested='RunPaletteRange16FadeDown'                   current='sub_25A4E'
+0x258a8  DIFF  suggested='RunPaletteRange16FadeDownAlt'                current='sub_258A8'
+0x26d2e  DIFF  suggested='ShowLocalAreaMap'                            current='ReassignPartySlotReference'
+0x1af5c  DIFF  suggested='TickPerceptionGatedAilmentSlot'              current='sub_1AF5C'
+0x152b6  DIFF  suggested='ToggleMapViewMode'                           current='sub_152B6'
+0x118a3  DIFF  suggested='PlayStudioCreditsIntro'                      current='sub_118A3'
+0x283f0  DIFF  suggested='DebugTeleportToCoordinates'                  current='sub_283F0'
+0x150be  DIFF  suggested='PlayClueBookOpenAnimation'                   current='sub_150BE'
+0x108b4  DIFF  suggested='UseLocationBoundPotion'                      current='sub_108B4'
+0x20f3c  DIFF  suggested='DebugSetFloorTileByNumber'                   current='sub_20F3C'
+0x20ef2  DIFF  suggested='ShowWorldMap'                                current='sub_20EF2'
+----- end target script output -----
+[*] finished executing check_low_tier_status.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118638
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round9_findings.py']
+[*] reading apply_round9_findings.py
+[*] executing apply_round9_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x16654  'sub_16654' -> 'RunClueEntryMenu': ok
+0x2bf44  'sub_2BF44' -> 'RunCharacterCreationSelectionStep': ok
+----- end target script output -----
+[*] finished executing apply_round9_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118639
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0

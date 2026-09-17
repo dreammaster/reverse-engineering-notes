@@ -7525,6 +7525,46 @@ at all), so this specific search needs that groundwork first.
 31 of 77 low-confidence functions now renamed. ~14 remain entirely
 unchecked.
 
+### 2026-09-16 session update, continued: Chapter 3 review round 9 — closed out the low-confidence tier
+
+Checked the last ~14 unverified low-confidence functions. 12 confirmed
+bad (call lists bearing no resemblance to their BinDiff-suggested
+yendor2 counterpart, consistent with the tier's established pattern).
+Two more real matches found, both via caller-context confirmation
+rather than trusting the raw call-list diff — Chapter 3 had
+restructured both functions' internals enough that the diff alone was
+misleading:
+
+- `RunClueEntryMenu`: the address BinDiff called
+  `ParseCommandLineSwitches` (0.28 similarity) turned out to be the
+  real `RunClueEntryMenu` — exact 17-call sequence match to yendor2's
+  version, and called from `ShowClueBook` just like yendor2's is.
+  BinDiff's own suggested address for `RunClueEntryMenu` (0.12
+  similarity) is unrelated and still unidentified.
+- `RunCharacterCreationSelectionStep`: BinDiff's suggested address was
+  actually correct — confirmed by its caller (`RunCharacterCreation`,
+  same call slot as yendor2). The call list looked totally different
+  (623 yendor2 instructions down to 140) because Chapter 3 factored
+  the screen's many repeated palette-fade/keypress-poll sequences into
+  new shared helper functions — a genuine internal rewrite, not a bad
+  match. Another instance of the "consolidate repeated sequences into
+  shared helpers" pattern seen elsewhere in this engine.
+
+This closes out the full 77-function low-confidence tier — all three
+BinDiff match tiers (197 functions total) have now been spot-checked
+at least once. 33 of 77 low-confidence functions renamed; ~45
+confirmed bad (a ~55-60% bad-match rate in this tier). Remaining open
+threads for future sessions: real identities for
+`HandleRangedOrCombatAction`, `DrawShadowedTextAlt`,
+`PartyMassHealAndOverheal`, and several addresses BinDiff mislabeled
+that are still unidentified; `sub_1B085`'s new ailment mechanic;
+`sub_156C9`'s identity; a character-creation-region code cluster
+(0x2BD4A/0x2BBB5/0x2BC75) that looks restructured but wasn't
+individually resolved; and the still-unresolved segmented-addressing
+blocker preventing some global renames (`g_soundDriverFarPtr`,
+`g_partySlotAssignment`, `g_driverStateFlags`), which is also what's
+blocking the caller-structure approach for `HandleRangedOrCombatAction`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

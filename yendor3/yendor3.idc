@@ -2760,6 +2760,7 @@ static Bytes_0(void) {
 	create_insn	(0X1660C);
 	set_name	(0X1660C,	"ClearPortraitPanelAreas");
 	create_insn	(0X16654);
+	set_name	(0X16654,	"RunClueEntryMenu");
 	create_insn	(x=0X1665B);
 	op_hex		(x,	1);
 	create_insn	(0X16688);
@@ -3215,9 +3216,6 @@ static Bytes_0(void) {
 	set_cmt	(0X182AD,	"Draws a label (bx=msg) then the BCD4 value at si only if nonzero (IsBCDCounterAtLeast vs threshold 0). Used by ShowClueBookItemDetail and ShowClueBookMonsterDetail for several stat fields.",	0);
 	create_insn	(0X182AD);
 	set_name	(0X182AD,	"DrawLabeledBCDIfNonzero");
-	set_cmt	(0X182E1,	"Draws a label (bx=msg) then, copying a 4-byte field from a caller-supplied record (es:[bx]) into scratch word_5104, the BCD4 value only if nonzero. Same role as DrawLabeledBCDIfNonzero but takes a record pointer instead of a direct value pointer.",	0);
-	create_insn	(0X182E1);
-	set_name	(0X182E1,	"DrawRecordFieldBCDIfNonzero");
 }
 
 //------------------------------------------------------------------------
@@ -3227,6 +3225,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X182E1,	"Draws a label (bx=msg) then, copying a 4-byte field from a caller-supplied record (es:[bx]) into scratch word_5104, the BCD4 value only if nonzero. Same role as DrawLabeledBCDIfNonzero but takes a record pointer instead of a direct value pointer.",	0);
+	create_insn	(0X182E1);
+	set_name	(0X182E1,	"DrawRecordFieldBCDIfNonzero");
 	set_cmt	(0X18324,	"Draws a label then a plain integer (not packed-BCD) via FormatNumber, only if [si] is nonzero. Plain-integer sibling of DrawLabeledBCDIfNonzero. Called from ShowClueBookItemDetail, ShowItemEffectDuration, ShowItemAbilityEffectInfo, and sub_13780.",	0);
 	create_insn	(0X18324);
 	set_name	(0X18324,	"DrawLabeledNumberIfNonzero");
@@ -5413,6 +5414,15 @@ static Bytes_1(void) {
 	create_insn	(0X206B9);
 	create_insn	(x=0X206DC);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X206FE);
 	op_hex		(x,	1);
 	set_name	(0X206FE,	"RenderDungeonVanishingPoint");
@@ -5423,15 +5433,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2079B,	"Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); skips spawning if this monster type already exists on the level (FindMonsterTypeInLevelPool -- CORRECTION: not a probability roll as first described), then calls SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.",	0);
 	create_insn	(0X2079B);
 	set_name	(0X2079B,	"TryTriggerMonsterEncounterAtCell");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X207A3);
 	op_hex		(x,	1);
 	create_insn	(x=0X207AB);
@@ -7389,15 +7390,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27AA4,	"SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.",	0);
 	create_insn	(0X27AA4);
 	set_name	(0X27AA4,	"SetRecordFlag_10C");
-	set_cmt	(0X27AAC,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
-	create_insn	(0X27AAC);
-	set_name	(0X27AAC,	"SetGlobalFlag");
-	set_cmt	(0X27AB4,	"Sets a bit in the +0xCA per-record flag bank: ORs GetRecordFlagBitAndWord_CA's mask into [si]. Called from UseTrainingItem, sub_25456, and others.",	0);
-	create_insn	(0X27AB4);
-	set_name	(0X27AB4,	"SetRecordFlag_CA");
-	set_cmt	(0X27ABC,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
-	create_insn	(0X27ABC);
-	set_name	(0X27ABC,	"TestRecordFlag_10C");
 }
 
 //------------------------------------------------------------------------
@@ -7407,6 +7399,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X27AAC,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
+	create_insn	(0X27AAC);
+	set_name	(0X27AAC,	"SetGlobalFlag");
+	set_cmt	(0X27AB4,	"Sets a bit in the +0xCA per-record flag bank: ORs GetRecordFlagBitAndWord_CA's mask into [si]. Called from UseTrainingItem, sub_25456, and others.",	0);
+	create_insn	(0X27AB4);
+	set_name	(0X27AB4,	"SetRecordFlag_CA");
+	set_cmt	(0X27ABC,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
+	create_insn	(0X27ABC);
+	set_name	(0X27ABC,	"TestRecordFlag_10C");
 	set_cmt	(0X27AC4,	"TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.",	0);
 	create_insn	(0X27AC4);
 	set_name	(0X27AC4,	"TestGlobalFlag");
@@ -9358,6 +9359,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2BEE0);
 	op_hex		(x,	1);
 	create_insn	(0X2BF44);
+	set_name	(0X2BF44,	"RunCharacterCreationSelectionStep");
 	create_insn	(x=0X2BF78);
 	op_hex		(x,	1);
 	create_insn	(0X2BFCB);
