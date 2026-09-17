@@ -1064,6 +1064,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11304);
 	op_hex		(x,	1);
 	create_insn	(0X11318);
+	set_name	(0X11318,	"ResolveAttackerActionOutcome");
 	create_insn	(x=0X11320);
 	op_hex		(x,	1);
 	create_insn	(x=0X11328);
@@ -1188,6 +1189,7 @@ static Bytes_0(void) {
 	create_insn	(0X1195C);
 	set_name	(0X1195C,	"GetMapCellPtr");
 	create_insn	(0X1197C);
+	set_name	(0X1197C,	"ShowClueBook");
 	create_insn	(x=0X119AB);
 	op_hex		(x,	1);
 	create_insn	(x=0X119CA);
@@ -1637,6 +1639,7 @@ static Bytes_0(void) {
 	create_insn	(0X12F85);
 	create_insn	(0X12F8C);
 	create_insn	(0X12F93);
+	set_name	(0X12F93,	"ClassifyObstacleAtViewportRow");
 	create_insn	(x=0X12FA5);
 	op_hex		(x,	1);
 	create_insn	(x=0X12FBE);
@@ -1873,6 +1876,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X137D9);
 	op_hex		(x,	1);
+	set_name	(0X137D9,	"ApplyIconBarStatDelta");
 	create_insn	(0X137E1);
 	create_insn	(x=0X137E6);
 	op_hex		(x,	1);
@@ -2289,6 +2293,7 @@ static Bytes_0(void) {
 	create_insn	(0X14CE6);
 	set_name	(0X14CE6,	"DrawStatValueWithCapColor");
 	create_insn	(0X14D10);
+	set_name	(0X14D10,	"DrawTrainingScreenStatSheet");
 	set_cmt	(0X14E81,	"Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).",	0);
 	create_insn	(0X14E81);
 	set_name	(0X14E81,	"SelectAndDrawPartyStatusRow");
@@ -2415,6 +2420,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15548);
 	op_hex		(x,	1);
 	create_insn	(0X155A3);
+	set_name	(0X155A3,	"IsDestinationUnlocked");
 	create_insn	(0X155B8);
 	create_insn	(0X155C7);
 	create_insn	(x=0X155D2);
@@ -3091,6 +3097,7 @@ static Bytes_0(void) {
 	set_cmt	(0X17C43,	"this",	0);
 	set_cmt	(0X17C52,	"numPara",	0);
 	create_insn	(0X17C78);
+	set_name	(0X17C78,	"ShowClueBookMonsterDetail");
 	create_insn	(x=0X17E6D);
 	op_hex		(x,	1);
 	create_insn	(x=0X17EC3);
@@ -3202,9 +3209,6 @@ static Bytes_0(void) {
 	set_cmt	(0X18324,	"Draws a label then a plain integer (not packed-BCD) via FormatNumber, only if [si] is nonzero. Plain-integer sibling of DrawLabeledBCDIfNonzero. Called from ShowClueBookItemDetail, ShowItemEffectDuration, ShowItemAbilityEffectInfo, and sub_13780.",	0);
 	create_insn	(0X18324);
 	set_name	(0X18324,	"DrawLabeledNumberIfNonzero");
-	set_cmt	(0X18360,	"Draws one bestiary stat row: label via writeString (caller sets bx=msg), then treats the caller's ax as a monster-record field offset (popped into bx) -- if es:[bx]==0, skips the value (stat not applicable), else draws es:[bx]'s value right-aligned at x=0x113. Called 7 times from ShowClueBookMonsterDetail, one per stat row.",	0);
-	create_insn	(0X18360);
-	set_name	(0X18360,	"DrawClueBookMonsterStatRow");
 }
 
 //------------------------------------------------------------------------
@@ -3214,7 +3218,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X18360,	"Draws one bestiary stat row: label via writeString (caller sets bx=msg), then treats the caller's ax as a monster-record field offset (popped into bx) -- if es:[bx]==0, skips the value (stat not applicable), else draws es:[bx]'s value right-aligned at x=0x113. Called 7 times from ShowClueBookMonsterDetail, one per stat row.",	0);
+	create_insn	(0X18360);
+	set_name	(0X18360,	"DrawClueBookMonsterStatRow");
 	create_insn	(0X18398);
+	set_name	(0X18398,	"ShowArmorAttributeBonusList");
 	create_insn	(0X183AE);
 	create_insn	(0X18410);
 	set_cmt	(0X18427,	"Draws a caller-supplied label, then tests the loaded monster record's flag word at [si+0x96] against the caller's ax bitmask; if any bit matches, draws 'IMMUNE' at x=0x107. Called twice from ShowClueBookMonsterDetail, sibling of DrawClueBookMonsterStatRow.",	0);
@@ -3470,6 +3478,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X19307);
 	op_hex		(x,	1);
 	create_insn	(0X19312);
+	set_name	(0X19312,	"BuildItemUseMessage");
 	create_insn	(x=0X1931E);
 	op_hex		(x,	1);
 	create_insn	(x=0X1932A);
@@ -3696,6 +3705,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1A1AF);
 	op_hex		(x,	1);
 	create_insn	(0X1A1B7);
+	set_name	(0X1A1B7,	"LoadItemData");
 	create_insn	(x=0X1A1C5);
 	op_hex		(x,	1);
 	set_cmt	(0X1A1C7,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -3884,6 +3894,7 @@ static Bytes_1(void) {
 	create_insn	(0X1ABB3);
 	create_insn	(0X1ABC5);
 	create_insn	(0X1ABD2);
+	set_name	(0X1ABD2,	"ApplyMapTriggerEffect");
 	create_insn	(0X1ABEC);
 	create_insn	(x=0X1ABF8);
 	op_hex		(x,	1);
@@ -4030,6 +4041,7 @@ static Bytes_1(void) {
 	create_insn	(0X1B265);
 	create_insn	(0X1B292);
 	create_insn	(0X1B2AB);
+	set_name	(0X1B2AB,	"FindItemInInventoryRange");
 	create_insn	(0X1B2C7);
 	create_insn	(0X1B2E5);
 	create_insn	(x=0X1B2EA);
@@ -4509,6 +4521,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1CFB0);
 	create_insn	(0X1CFCC);
+	set_name	(0X1CFCC,	"CheckSpellCastability");
 	create_insn	(x=0X1CFD8);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CFEA);
@@ -4537,6 +4550,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1D0DE);
 	op_hex		(x,	1);
 	create_insn	(0X1D0F4);
+	set_name	(0X1D0F4,	"DrawAlchemySpellList");
 	create_insn	(0X1D13E);
 	set_cmt	(0X1D17C,	"Scans g_partySlotAssignment for the first occupied slot whose record has [+0x94] set, sets word_32924 to it -- default alchemy caster fallback. Called from RestoreOrSelectAlchemyCaster.",	0);
 	create_insn	(0X1D17C);
@@ -4560,6 +4574,7 @@ static Bytes_1(void) {
 	set_name	(0X1D257,	"DrawAlchemyConfirmDialogBackground");
 	create_insn	(x=0X1D27B);
 	op_hex		(x,	1);
+	set_name	(0X1D27B,	"DrawAlchemyStatusPanel");
 	create_insn	(x=0X1D286);
 	op_hex		(x,	1);
 	create_insn	(0X1D336);
@@ -5192,6 +5207,7 @@ static Bytes_1(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X1FC03);
 	op_hex		(x,	1);
+	set_name	(0X1FC03,	"DrawMapEditorInteractionTypeOverlay");
 	create_insn	(0X1FC0C);
 	create_insn	(x=0X1FC7B);
 	op_hex		(x,	1);
@@ -5205,6 +5221,7 @@ static Bytes_1(void) {
 	create_insn	(0X1FCC4);
 	set_name	(0X1FCC4,	"ShowMapEditorBlockCoordsAndRedraw");
 	create_insn	(0X1FD35);
+	set_name	(0X1FD35,	"DrawCellIconPair");
 	create_insn	(0X1FD70);
 	create_insn	(0X1FD9D);
 	create_insn	(x=0X1FDA4);
@@ -5263,12 +5280,14 @@ static Bytes_1(void) {
 	create_insn	(0X200B6);
 	create_insn	(x=0X200CE);
 	op_hex		(x,	1);
+	set_name	(0X200CE,	"RedrawDungeonScreen");
 	create_insn	(x=0X200EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X200FC);
 	op_hex		(x,	1);
 	create_insn	(x=0X20103);
 	op_hex		(x,	1);
+	set_name	(0X20103,	"RefreshDungeonScreen");
 	create_insn	(x=0X2011E);
 	op_hex		(x,	1);
 	create_insn	(x=0X2012D);
@@ -5354,7 +5373,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X20633);
 	op_hex		(x,	1);
 	create_insn	(0X20657);
+	set_name	(0X20657,	"TryDrawDungeonCellSideFeature");
 	create_insn	(0X2065F);
+	set_name	(0X2065F,	"DrawDungeonCellSideFeature");
 	create_insn	(x=0X20668);
 	op_hex		(x,	1);
 	create_insn	(x=0X20673);
@@ -5387,15 +5408,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X207E9);
 	op_hex		(x,	1);
 	set_name	(0X207E9,	"BuildDungeonViewportCells");
-	create_insn	(0X2081B);
-	create_insn	(0X2082F);
-	create_insn	(0X20843);
-	set_cmt	(0X208B7,	"Copies one row of 8-byte cell records from the level's map data (es:si, advancing by bp, the facing-dependent stride) into the scratch viewport buffer (di, advancing by 8), then steps si to the next row's start (+= word_2E560). Called 7x by BuildDungeonViewportCells.",	0);
-	create_insn	(0X208B7);
-	set_name	(0X208B7,	"CopyDungeonRowCells");
-	set_cmt	(0X208DF,	"Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.",	0);
-	create_insn	(0X208DF);
-	set_name	(0X208DF,	"ComputeDungeonCellVisibility");
 }
 
 //------------------------------------------------------------------------
@@ -5405,6 +5417,15 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2081B);
+	create_insn	(0X2082F);
+	create_insn	(0X20843);
+	set_cmt	(0X208B7,	"Copies one row of 8-byte cell records from the level's map data (es:si, advancing by bp, the facing-dependent stride) into the scratch viewport buffer (di, advancing by 8), then steps si to the next row's start (+= word_2E560). Called 7x by BuildDungeonViewportCells.",	0);
+	create_insn	(0X208B7);
+	set_name	(0X208B7,	"CopyDungeonRowCells");
+	set_cmt	(0X208DF,	"Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.",	0);
+	create_insn	(0X208DF);
+	set_name	(0X208DF,	"ComputeDungeonCellVisibility");
 	create_insn	(0X208F4);
 	create_insn	(x=0X20941);
 	op_hex		(x,	1);
@@ -5664,6 +5685,7 @@ static Bytes_2(void) {
 	create_insn	(0X21792);
 	create_insn	(x=0X217B2);
 	op_hex		(x,	1);
+	set_name	(0X217B2,	"DrawLocalMapCell");
 	create_insn	(0X21808);
 	create_insn	(0X21824);
 	create_insn	(0X21831);
@@ -6065,6 +6087,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X22FCD);
 	op_hex		(x,	1);
 	create_insn	(0X22FD2);
+	set_name	(0X22FD2,	"DrawMonsterHealthBar");
 	set_cmt	(0X23043,	"Re-finds word_32A1E (active-combat-monster pointer) among the 3 g_monsterSlots entries after it's moved, fixing up the pointer. Called from ProcessLevelMonsters and CompactMonsterSlots.",	0);
 	create_insn	(0X23043);
 	set_name	(0X23043,	"RelocateActiveMonsterPointer");
@@ -6299,6 +6322,7 @@ static Bytes_2(void) {
 	create_insn	(0X23A70);
 	create_insn	(0X23A94);
 	create_insn	(0X23AF3);
+	set_name	(0X23AF3,	"ComputeDerivedCharacterStats");
 	set_cmt	(0X23EEE,	"Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).",	0);
 	create_insn	(0X23EEE);
 	set_name	(0X23EEE,	"RestoreWorldMapAreaFromEMS");
@@ -6404,6 +6428,7 @@ static Bytes_2(void) {
 	set_cmt	(0X24842,	"msg",	0);
 	set_cmt	(0X24850,	"msg",	0);
 	create_insn	(0X2488F);
+	set_name	(0X2488F,	"DrawCharacterStatSheet");
 	set_cmt	(0X24B2D,	"Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.",	0);
 	create_insn	(0X24B2D);
 	set_name	(0X24B2D,	"DrawListEntryLabel");
@@ -6547,6 +6572,7 @@ static Bytes_2(void) {
 	create_insn	(0X2546E);
 	set_name	(0X2546E,	"FormatNumberZeroPadded");
 	create_insn	(0X25482);
+	set_name	(0X25482,	"IsMonsterStepBlocked");
 	create_insn	(x=0X25493);
 	op_hex		(x,	1);
 	create_insn	(x=0X2549C);
@@ -6564,6 +6590,7 @@ static Bytes_2(void) {
 	create_insn	(0X254F7);
 	create_insn	(0X25507);
 	create_insn	(0X25512);
+	set_name	(0X25512,	"IsItemDroppable");
 	create_insn	(x=0X25524);
 	op_hex		(x,	1);
 	create_insn	(x=0X2552B);
@@ -6579,6 +6606,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X25589);
 	op_hex		(x,	1);
 	create_insn	(0X2559F);
+	set_name	(0X2559F,	"HasDroppableItemInInventory");
 	create_insn	(x=0X255D3);
 	op_hex		(x,	1);
 	create_insn	(x=0X255DA);
@@ -6587,6 +6615,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X255F9);
 	create_insn	(0X255FF);
+	set_name	(0X255FF,	"HasDroppableItemInContainer");
 	create_insn	(x=0X25633);
 	op_hex		(x,	1);
 	create_insn	(x=0X2563A);
@@ -7349,6 +7378,15 @@ static Bytes_2(void) {
 	set_cmt	(0X27AFE,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
 	create_insn	(0X27AFE);
 	set_name	(0X27AFE,	"GetGlobalFlagBitAndWord");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X27B27,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).",	0);
 	create_insn	(0X27B27);
 	set_name	(0X27B27,	"GetRecordFlagBitAndWord_CA");
@@ -7373,15 +7411,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27C22,	"Resource-lookup stub: given an id (ax) and category index (bx), indexes two fixed tables to compute word_368A7/A9/AD/AF (id, length, offset-lo, offset-hi). Called from UpdateScrollArrows and ShowClueBookSpellDetail.",	0);
 	create_insn	(0X27C22);
 	set_name	(0X27C22,	"LookupSpellDescriptionBlockOffset");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X27C2C);
 	op_hex		(x,	1);
 	create_insn	(x=0X27C2F);
@@ -7681,6 +7710,7 @@ static Bytes_3(void) {
 	create_insn	(0X28867);
 	create_insn	(x=0X28868);
 	op_hex		(x,	1);
+	set_name	(0X28868,	"ParseSoundBlasterEnvironmentVariable");
 	create_insn	(x=0X2887D);
 	op_hex		(x,	1);
 	create_insn	(0X28884);
@@ -7868,6 +7898,7 @@ static Bytes_3(void) {
 	create_insn	(0X294F5);
 	set_name	(0X294F5,	"DrawRevealedCellIcon");
 	create_insn	(0X2952B);
+	set_name	(0X2952B,	"TryTravelToClickedMapCell");
 	create_insn	(0X2954B);
 	create_insn	(0X29554);
 	create_insn	(0X2956B);
@@ -7926,6 +7957,7 @@ static Bytes_3(void) {
 	set_name	(0X2983E,	"SyncContainerContents");
 	set_cmt	(0X29843,	"this",	0);
 	create_insn	(0X29868);
+	set_name	(0X29868,	"HandleGameCommand");
 	create_insn	(0X2987D);
 	create_insn	(0X2988A);
 	create_insn	(0X298A5);
@@ -7992,6 +8024,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X29AF0);
 	op_hex		(x,	1);
 	create_insn	(0X29AFC);
+	set_name	(0X29AFC,	"DrawPicture");
 	create_insn	(x=0X29B06);
 	op_hex		(x,	1);
 	create_insn	(x=0X29B0C);
@@ -8901,6 +8934,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2A97D);
 	op_hex		(x,	1);
 	create_insn	(0X2A98E);
+	set_name	(0X2A98E,	"DrawRleMaskedShadedRun");
 	create_insn	(0X2A9B6);
 	create_insn	(x=0X2A9CF);
 	op_hex		(x,	1);
@@ -8908,6 +8942,7 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2AA08);
 	create_insn	(0X2AA1A);
+	set_name	(0X2AA1A,	"DrawRleScaledSpriteColumn");
 	create_insn	(0X2AA42);
 	create_insn	(x=0X2AA5F);
 	op_hex		(x,	1);
@@ -8968,6 +9003,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2AD4F);
 	op_hex		(x,	1);
 	create_insn	(0X2AD5A);
+	set_name	(0X2AD5A,	"ApplyMultiStatEffect");
 	create_insn	(0X2AD69);
 	create_insn	(x=0X2AD74);
 	op_hex		(x,	1);
@@ -8977,6 +9013,7 @@ static Bytes_3(void) {
 	set_name	(0X2ADDA,	"ClampStatEffectValue");
 	create_insn	(0X2ADFA);
 	create_insn	(0X2AE05);
+	set_name	(0X2AE05,	"RestCharacter");
 	create_insn	(x=0X2AE32);
 	op_hex		(x,	1);
 	create_insn	(0X2AE39);
@@ -9126,6 +9163,7 @@ static Bytes_3(void) {
 	set_name	(0X2B512,	"AnimateProjectileStep");
 	set_cmt	(0X2B538,	"ticks",	0);
 	create_insn	(0X2B547);
+	set_name	(0X2B547,	"DrawWeaponSelectIcon");
 	create_insn	(0X2B54D);
 	create_insn	(x=0X2B557);
 	op_hex		(x,	1);

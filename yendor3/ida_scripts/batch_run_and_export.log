@@ -150,3 +150,78 @@ item_size: 1
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round3_findings.py']
+[*] reading apply_round3_findings.py
+[*] executing apply_round3_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0xcf63  '' -> 'g_driverStateFlags': FAILED
+0x11318  'sub_11318' -> 'ResolveAttackerActionOutcome': ok
+0x20657  'sub_20657' -> 'TryDrawDungeonCellSideFeature': ok
+0x137d9  'sub_137D9' -> 'ApplyIconBarStatDelta': ok
+0x1d27b  'sub_1D27B' -> 'DrawAlchemyStatusPanel': ok
+0x1fc03  'sub_1FC03' -> 'DrawMapEditorInteractionTypeOverlay': ok
+0x2065f  'sub_2065F' -> 'DrawDungeonCellSideFeature': ok
+0x2559f  'sub_2559F' -> 'HasDroppableItemInInventory': ok
+0x29afc  'sub_29AFC' -> 'DrawPicture': ok
+0x17c78  'sub_17C78' -> 'ShowClueBookMonsterDetail': ok
+0x1fd35  'sub_1FD35' -> 'DrawCellIconPair': ok
+0x19312  'sub_19312' -> 'BuildItemUseMessage': ok
+0x25512  'sub_25512' -> 'IsItemDroppable': ok
+0x18398  'sub_18398' -> 'ShowArmorAttributeBonusList': ok
+0x29868  'sub_29868' -> 'HandleGameCommand': ok
+0x1a1b7  'sub_1A1B7' -> 'LoadItemData': ok
+0x28868  'sub_28868' -> 'ParseSoundBlasterEnvironmentVariable': ok
+0x255ff  'sub_255FF' -> 'HasDroppableItemInContainer': ok
+0x155a3  'sub_155A3' -> 'IsDestinationUnlocked': ok
+0x2488f  'sub_2488F' -> 'DrawCharacterStatSheet': ok
+0x2952b  'sub_2952B' -> 'TryTravelToClickedMapCell': ok
+----- end target script output -----
+[*] finished executing apply_round3_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118630
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round3b_findings.py']
+[*] reading apply_round3b_findings.py
+[*] executing apply_round3b_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x14d10  'sub_14D10' -> 'DrawTrainingScreenStatSheet': ok
+0x1d0f4  'sub_1D0F4' -> 'DrawAlchemySpellList': ok
+0x2ad5a  'sub_2AD5A' -> 'ApplyMultiStatEffect': ok
+0x1197c  'sub_1197C' -> 'ShowClueBook': ok
+0x1b2ab  'sub_1B2AB' -> 'FindItemInInventoryRange': ok
+0x2a98e  'sub_2A98E' -> 'DrawRleMaskedShadedRun': ok
+0x1cfcc  'sub_1CFCC' -> 'CheckSpellCastability': ok
+0x23af3  'sub_23AF3' -> 'ComputeDerivedCharacterStats': ok
+0x217b2  'sub_217B2' -> 'DrawLocalMapCell': ok
+0x25482  'sub_25482' -> 'IsMonsterStepBlocked': ok
+0x22fd2  'sub_22FD2' -> 'DrawMonsterHealthBar': ok
+0x200ce  'sub_200CE' -> 'RedrawDungeonScreen': ok
+0x2aa1a  'sub_2AA1A' -> 'DrawRleScaledSpriteColumn': ok
+0x2b547  'sub_2B547' -> 'DrawWeaponSelectIcon': ok
+0x2ae05  'sub_2AE05' -> 'RestCharacter': ok
+0x1abd2  'sub_1ABD2' -> 'ApplyMapTriggerEffect': ok
+0x20103  'sub_20103' -> 'RefreshDungeonScreen': ok
+0x12f93  'sub_12F93' -> 'ClassifyObstacleAtViewportRow': ok
+----- end target script output -----
+[*] finished executing apply_round3b_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118630
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0

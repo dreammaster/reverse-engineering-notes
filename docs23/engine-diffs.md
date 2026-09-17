@@ -184,6 +184,117 @@ Reads a level-like field (`[si+0xE]`), folds it into a 0-9 range
 traced — plausibly a new level-gated eligibility/highlight indicator,
 but the consuming code (what reads this bitmask) hasn't been found.
 
+### `g_driverStateFlags` identified at a new address
+
+Confirmed via `ParseSoundBlasterEnvironmentVariable`, which ANDs/ORs
+`ds:0xCF63` with the exact same masks (`0x3FF0`/`0x8000`/`0xC000`)
+yendor2's version uses on `g_driverStateFlags`. This also resolves
+round 1's open question about `sub_286D8`: it tests bit `0x8` of this
+same flags word -- one of the two bits `DrawCheckboxIndicator` already
+gates the pause-menu MUSIC/SOUND FX checkboxes on. Renaming the actual
+address failed the same way `g_soundDriverFarPtr` and
+`g_partySlotAssignment` did in earlier rounds (IDA reports it
+unloaded) -- a growing list of segmented-operand globals that need a
+proper convert-to-offset pass, tracked here rather than each rename
+attempt being repeated.
+
+### Possible pattern: several UI panels show one fewer value
+
+Four different display functions each lost exactly one repeated
+sub-call compared to yendor2, all in the same shape ("draw N of these"
+became "draw N-1"):
+- `DrawAlchemyStatusPanel`: lost its final `writeString`+
+  `FormatAndDrawBCD4` pair (was showing 2 BCD-formatted resource
+  values, now 1).
+- `DrawTrainingScreenStatSheet`: 8 `DrawStatValueWithCapColor` calls
+  became 7.
+- `DrawAlchemySpellList`: 3 `DrawSpellCostValue` calls became 2.
+- `ComputeDerivedCharacterStats`: 19 `ScaleByPercentRounded` calls
+  became 17 (two fewer, not one -- the outlier, or two separate
+  removals).
+
+Hypothesis, not confirmed: Chapter 3 may have consolidated or removed
+a resource/stat field (a leading candidate given the manual's
+documented `NUORE`/`ORE`/gold 3-currency economy: dropping `NUORE` as
+a separate currency would explain the alchemy-panel and
+spell-cost-list reductions specifically). Worth a dedicated pass:
+finding exactly *which* value each function stopped drawing, and
+whether `ComputeDerivedCharacterStats`'s two missing scale operations
+correspond to the same removed field(s).
+
+### `CheckSpellCastability`: one resource check replaced with a flag check
+
+Was `[LoadClueBookSpellEntry, IsBCDCounterAtLeast, IsBCDCounterAtLeast]`
+(two resource-sufficiency checks, presumably MP and a material cost);
+now `[LoadClueBookSpellEntry, TestGlobalFlag, IsBCDCounterAtLeast]` --
+one of the two checks now tests a global flag instead of a BCD
+counter threshold. Plausibly related to the "one fewer value" pattern
+above (if a cost resource was removed, its check would change shape
+like this), or a new "spell already known"/cheat-flag gate. Not traced
+further.
+
+### New pre-redraw processing step: `sub_2BA9C`
+
+Called from both `RedrawDungeonScreen` and `RefreshDungeonScreen`, no
+yendor2 equivalent. Saves a large set of registers/globals, clears a
+flag bit, loops 6 times over a table calling another new function
+(`sub_2BB3E`, not yet examined), then for each of the 4
+`g_partySlotAssignment` members with a valid record, walks 8 entries
+of their inventory (`[+0x11A]`, the confirmed main-inventory field).
+Substantial new logic (73 lines) whose exact purpose isn't traced --
+plausibly a new per-item tick (degradation, curse, or quest-flag
+check) run before every dungeon-screen redraw. Worth a dedicated pass.
+
+### `ApplyMapTriggerEffect` gained new calls
+
+Two real additions found: `RevealCellsAroundPlayer` (already a known
+function, newly called here) and `TickTravelResourceAilments` +
+`TriggerSoundEvent` (paired, inserted after `TickPartyAilmentIconBar`).
+Not traced further, but consistent with the same "more careful
+sound-driver/ailment bookkeeping" theme as round 2's
+`WaitForSoundDriverIdle` findings.
+
+### Not yet resolved: `PollForEscapeKeyOnlyAlt` and `RunTitleScreen`
+
+Deliberately **not renamed** this round -- their called-target
+sequences differ too much from yendor2's to confirm via the diff
+heuristic alone, unlike everything else in this batch:
+- The address BinDiff matched to `PollForEscapeKeyOnlyAlt` (0.90
+  similarity) calls `WaitForSoundDriverIdle` and (via a weak,
+  unverified resolution) `WaitForTickAndDrawCreationFrame` -- nothing
+  resembling yendor2's simple single-`PollKeyboardInput` body. Possibly
+  a real match with a heavily changed body, possibly a bad match
+  (BinDiff has been wrong before this session, see above) -- needs a
+  direct read.
+- The address matched to `RunTitleScreen` (0.88) is 40 instructions
+  longer, with a new early resource-load
+  (`LoadMasterPalette`/`FileEntry_Read`/`ErrorCheck`) and calls that
+  resolve (with varying confidence) to `PlayTitleScreenSequence`,
+  `RunMapEditorScreen`, and `PlayCreditsWipeAnimation` -- the latter
+  two are almost certainly further bad low-confidence matches (0.09
+  and 0.08 in the original list) contaminating the picture, similar to
+  this session's other bad-match findings. Needs a direct read before
+  trusting any conclusion about what changed.
+
+### `ShowClueBook`: mostly noise from other bad matches, one real addition
+
+Most of this diff is contamination from the same
+`ParseCommandLineSwitches`-labeled address appearing repeatedly where
+`RunClueEntryMenu` should be (that BinDiff label is almost certainly
+wrong too, given it's a 0.28-similarity match being asked to explain 9
+different call sites in a simple category-dispatch loop). One clean,
+unambiguous real addition: a new `UpdateAmbientMusic` call right after
+opening the clue book background -- plausibly fixing music not
+continuing correctly while the clue book is open.
+
+### `DrawLocalMapCell` and `DrawDungeonCellSideFeature` gained extra draws
+
+`DrawLocalMapCell` gained a new call, `sub_1B751` (not yet examined),
+alongside the by-now-expected tile-classification helpers.
+`DrawDungeonCellSideFeature` gained a third `DrawViewportSprite` call
+(yendor2 draws 2, yendor3 draws 3) alongside its tile-classification
+helper -- plausibly an added decorative layer for side features.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
@@ -193,8 +304,20 @@ but the consuming code (what reads this bitmask) hasn't been found.
   This tier is done for now, though "spot-checked via call-target diff"
   is not the same guarantee as a full instruction-by-instruction read
   -- treat as high-confidence, not certain.
-- 52 functions at similarity 0.70-0.95: not yet reviewed. Next round.
+- 52 functions at similarity 0.70-0.95: 40 spot-checked this round
+  (`apply_round3_findings.py`, `apply_round3b_findings.py`), turning up
+  the findings above. 2 of those 40 deliberately left unrenamed
+  (`PollForEscapeKeyOnlyAlt`, `RunTitleScreen` -- see above). 10 not
+  yet reviewed: `ExtendDungeonFloorTexture`, `ShowHealingItemPercentInfo`,
+  `ConfirmAndValidatePartyTarget`, `ClassifyFloorType`,
+  `RunCharacterCreation`, `WaitForTickAndDrawCreationFrame`,
+  `ExamineTarget`, `FadePaletteStep`, `TickStatusEffects`,
+  `IsCellTypeImpassable`, `TickAilmentDuration`.
 - 77 functions at similarity <0.70: not yet reviewed. Many of the
   lowest scores (well under 0.3) may not be genuine matches at all —
   treat the suggested yendor2 name as a weak hint, not a starting
-  assumption, when reviewing these.
+  assumption, when reviewing these. This session already found 4
+  confirmed-bad matches at similarities 0.32, 0.28 (`ParseCommandLineSwitches`,
+  used above to explain the `ShowClueBook` noise), 0.09, and 0.08, plus
+  the earlier 0.04/0.01 ones from rounds 1-2 -- treat *any* match under
+  roughly 0.5 as unverified until read directly.

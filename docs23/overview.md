@@ -7299,6 +7299,49 @@ rename.
 **The 68-function high-confidence tier is now fully spot-checked.**
 Next: the 52 mid-confidence (0.70-0.95) matches.
 
+### 2026-09-16 session update, continued: Chapter 3 mid-confidence review, round 3
+
+Started the 52-function mid-confidence (0.70-0.95) BinDiff tier, using
+the same call-target-diff method as the high-confidence rounds (now
+matching by yendor3 address rather than name, since these functions
+aren't renamed yet). Checked 40 of 52 across two batches.
+
+Identified `g_driverStateFlags`'s yendor3 address (confirmed via
+`ParseSoundBlasterEnvironmentVariable`'s matching bitmask constants),
+resolving round 1's open question about `sub_286D8`'s flag check.
+Renaming the address itself failed the same segmented-operand way as
+2 earlier globals this session — a growing list needing a proper
+convert-to-offset pass later.
+
+Noticed a possible pattern worth a dedicated future pass: 4 different
+display functions (`DrawAlchemyStatusPanel`, `DrawTrainingScreenStatSheet`,
+`DrawAlchemySpellList`, `ComputeDerivedCharacterStats`) each draw/compute
+one fewer repeated value than their yendor2 counterpart — plausibly a
+removed or consolidated stat/resource field (the manual's 3-currency
+`NUORE`/`ORE`/gold economy is a leading candidate, given the alchemy-
+specific functions in that list).
+
+Also found: a substantial new pre-dungeon-redraw processing step
+(`sub_2BA9C`, walks every party member's inventory, purpose not fully
+traced), new calls in `ApplyMapTriggerEffect`
+(`RevealCellsAroundPlayer`, `TickTravelResourceAilments`), a resource
+check in `CheckSpellCastability` replaced by a flag check, and two more
+confirmed-bad BinDiff matches (`ParseCommandLineSwitches` at 0.28, the
+address matched to `PollForEscapeKeyOnlyAlt`'s body bears no
+resemblance to it). Deliberately left `PollForEscapeKeyOnlyAlt` and
+`RunTitleScreen` unrenamed — their diffs are too large/noisy to trust
+without a direct read. Applied 38 renames total this round across two
+scripts (`apply_round3_findings.py`, `apply_round3b_findings.py`).
+
+10 mid-confidence functions remain unchecked
+(`ExtendDungeonFloorTexture`, `ShowHealingItemPercentInfo`,
+`ConfirmAndValidatePartyTarget`, `ClassifyFloorType`,
+`RunCharacterCreation`, `WaitForTickAndDrawCreationFrame`,
+`ExamineTarget`, `FadePaletteStep`, `TickStatusEffects`,
+`IsCellTypeImpassable`, `TickAilmentDuration`), plus the 2 deliberately
+deferred and the entire 77-function low-confidence tier, for future
+rounds.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
