@@ -7172,6 +7172,52 @@ tests passed for real. Build command documented directly in
 `test_bcd4.c`'s header comment (both a portable `cc` form and the MSVC
 form actually used here).
 
+### 2026-09-16 session update, continued: starting Chapter 3 (yendor3) analysis
+
+Paul confirmed via BinDiff that Book I Chapter 3 (`yendor3.idb`) shares
+Chapter 2's engine, and provided a match list against the
+already-fully-named `yendor2.idb`. Repo restructured to reflect this:
+`docs/`, `src/`, `tests/` moved out from under `yendor2/` into
+top-level `docs23/`/`src23/` (shared Chapters 2+3 engine understanding
+and reimplementation), with `yendor2/`/`yendor3/` now holding only
+genuinely per-executable artifacts (idb/asm/idc, `ida_scripts/`, game
+files). `docs1/`/`src1/` added as placeholders for the unrelated-engine
+Chapter 1, for later. See the new top-level `docs/README.md` for the
+full layout rationale.
+
+Set up `yendor3/ida_scripts/` mirroring yendor2's headless pipeline
+(the driver, `batch_run_and_export.py`, is path-generic and didn't
+need changes; `run_ida_script.ps1` is a copy pointed at `yendor3.idb`).
+Paul had already applied BinDiff's 100%-confidence exact matches
+directly (confirmed by finding `BuildCombatTurnOrder` present by name
+in `yendor3.asm`); triaged the remaining 197-row match list he
+provided by similarity score: 68 at >=0.95 (near-certain same
+function), 52 at 0.70-0.95 (worth individual review), 77 below 0.70
+(many probably not genuine matches at all, given several score under
+0.05).
+
+Bulk-imported the 68 high-confidence names
+(`apply_bindiff_high_confidence.py`) — all succeeded. Spot-checked a
+few with a lightweight method (diff each function's called-target
+sequence between the two games, after filtering out targets that only
+look different because *that* function hasn't been renamed in yendor3
+yet): this immediately found two real differences even at 0.99/0.98
+similarity — see the new `docs23/engine-diffs.md` for details
+(`ProcessMonsterAttackTurn` gained a new hook/callback call, and
+`ApplyEncodedItemEffect` gained new `WaitForSoundDriverIdle` calls).
+Confirms high BinDiff similarity is a strong filter, not a verdict —
+the remaining 66 high-confidence functions are still only
+score-verified, not individually confirmed identical.
+
+`docs23/engine-diffs.md` started as a new living-reference file
+(edited in place like `file-formats.md`, distinct from this dated log)
+specifically for confirmed Chapter 2 vs. 3 behavioral differences,
+since that's what will actually matter once the C reimplementation
+needs to decide what's shared vs. per-game.
+
+**Not done yet**: the 52 mid-confidence and 77 low-confidence matches
+are entirely unreviewed — next step once resumed.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -1,0 +1,88 @@
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_bindiff_high_confidence.py']
+[*] reading apply_bindiff_high_confidence.py
+[*] executing apply_bindiff_high_confidence.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x23f36  'sub_23F36' -> 'ShowCharacterSkills': ok
+0x121eb  'sub_121EB' -> 'RunShopScreen': ok
+0x199b4  'sub_199B4' -> 'UseTrainingItem': ok
+0x10f9e  'sub_10F9E' -> 'ProcessMonsterAttackTurn': ok
+0x175e2  'sub_175E2' -> 'ShowClueBookSpellDetail': ok
+0x20f9a  'sub_20F9A' -> 'ShowItemPurchaseConfirmPrompt': ok
+0x12654  'sub_12654' -> 'ShowLockStatus': ok
+0x25b1a  'sub_25B1A' -> 'HandlePartyStatusPanelInput': ok
+0x1ee2c  'sub_1EE2C' -> 'InitGame': ok
+0x109fa  'sub_109FA' -> 'RunDungeonGameLoop': ok
+0x1ec05  'sub_1EC05' -> 'AdvanceGameClock': ok
+0x1bb84  'sub_1BB84' -> 'PollKeyboardInput': ok
+0x25688  'sub_25688' -> 'StepPaletteFadeRange': ok
+0x2606b  'sub_2606B' -> 'DrawPartyMemberPortrait': ok
+0x2db48  'sub_2DB48' -> 'InteractWithContainer': ok
+0x25124  'sub_25124' -> 'InitializeNewGameWorldState': ok
+0x13763  'sub_13763' -> 'ApplyEffectCost': ok
+0x12ffe  'sub_12FFE' -> 'HandleMovementInput': ok
+0x1c5c8  'sub_1C5C8' -> 'HighlightSelectedAbilityIcon': ok
+0x1f44c  'sub_1F44C' -> 'LoadItemCatalogRecord': ok
+0x225e6  'sub_225E6' -> 'SpawnMonsterInFacingDirection': ok
+0x16c6b  'sub_16C6B' -> 'RunClueBookWeaponCategory': ok
+0x2a4bf  'sub_2A4BF' -> 'DrawMouseCursor': ok
+0x16b74  'sub_16B74' -> 'RunClueBookItemCategory': ok
+0x10b10  'sub_10B10' -> 'HandleDungeonInput': ok
+0x13ba3  'sub_13BA3' -> 'RunPartyInventoryScreen': ok
+0x2dca1  'sub_2DCA1' -> 'MarkIneligiblePartyMembers': ok
+0x1ae45  'sub_1AE45' -> 'IsPositionInTriggerList': ok
+0x15db5  'sub_15DB5' -> 'RemoveMultiStatEffect': ok
+0x28648  'sub_28648' -> 'TriggerSoundEvent': ok
+0x206fe  'sub_206FE' -> 'RenderDungeonVanishingPoint': ok
+0x16dc4  'sub_16DC4' -> 'ShowPagedEntryScreen': ok
+0x15b88  'sub_15B88' -> 'ApplyMultiStatEffectForItem': ok
+0x20af4  'sub_20AF4' -> 'BuildMinimapTileData': ok
+0x20506  'sub_20506' -> 'RenderDungeonViewRow': ok
+0x12aac  'sub_12AAC' -> 'UseItem': ok
+0x12a1c  'sub_12A1C' -> 'SellClickedCatalogItem': ok
+0x14188  'sub_14188' -> 'HandleItemDropOnPartyPortrait': ok
+0x13447  'sub_13447' -> 'HandleSpecialCellEntry': ok
+0x27112  'sub_27112' -> 'HandleStatusIconBarClick': ok
+0x2c4e4  'sub_2C4E4' -> 'ApplyEncodedItemEffect': ok
+0x1fe74  'sub_1FE74' -> 'RefreshDungeonMapWindow': ok
+0x1d6a6  'sub_1D6A6' -> 'ApplyRestEffectsToCharacter': ok
+0x26939  'sub_26939' -> 'GetInventorySlotPtr': ok
+0x228c2  'sub_228C2' -> 'ProcessLevelMonsters': ok
+0x1276b  'sub_1276B' -> 'UseAbilityCommand': ok
+0x16cee  'sub_16CEE' -> 'RunClueBookSpellCategory': ok
+0x13737  'sub_13737' -> 'DeductHPClamped': ok
+0x2020b  'sub_2020B' -> 'DrawDungeonFloorAndCeiling': ok
+0x278b0  'sub_278B0' -> 'ComputeAmbientLightingTable': ok
+0x1731f  'sub_1731F' -> 'ShowWeaponDetailRow': ok
+0x20605  'sub_20605' -> 'DrawDungeonCellWallTexture': ok
+0x294f5  'sub_294F5' -> 'DrawRevealedCellIcon': ok
+0x1de85  'sub_1DE85' -> 'InitializeDungeonLevel': ok
+0x14ab5  'sub_14AB5' -> 'RunPartyMemberDetailScreen': ok
+0x2c3e6  'sub_2C3E6' -> 'RepairItemCommand': ok
+0x20bc8  'sub_20BC8' -> 'TryInteractAtPosition': ok
+0x17429  'sub_17429' -> 'ShowItemAbilityEffectInfo': ok
+0x20337  'sub_20337' -> 'DrawMonsterAndUpdateAttackState': ok
+0x24f87  'sub_24F87' -> 'ApplySecondaryClassTierFlags': ok
+0x1f8b6  'sub_1F8B6' -> 'DrawWallTypeLegendRow': ok
+0x1f956  'sub_1F956' -> 'DrawFloorTypeLegendRow': ok
+0x29dc9  'sub_29DC9' -> 'DrawViewportSprite': ok
+0x2b066  'sub_2B066' -> 'RunConversation': ok
+0x1c976  'sub_1C976' -> 'RunAlchemyScreen': ok
+0x2abc8  'sub_2ABC8' -> 'HandleSearchCommand': ok
+0x274f4  'sub_274F4' -> 'ConsumeItemChargeResource': ok
+0x21388  'sub_21388' -> 'BuildClueLocationSuffix': ok
+
+68 renamed, 0 failed, 68 total
+----- end target script output -----
+[*] finished executing apply_bindiff_high_confidence.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118628
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
