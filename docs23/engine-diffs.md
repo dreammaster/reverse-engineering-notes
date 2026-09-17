@@ -757,8 +757,8 @@ only caller and is itself still unresolved -- its usual `start`-tail
 call position doesn't have an obvious equivalent in yendor3, may have
 been restructured), the real `RunClueEntryMenu`-suggested address
 (0x2566C), `TryHandleCatalogSlotClick`-suggested address (0x144D4),
-`ErrorCheck`-suggested address (0x11E56 -- note: since resolved as
-`ParseCommandLineSwitches`), `RunCharacterDetailOverlay`-suggested
-address (0x11778), the character-creation-region cluster noted above
-(0x2BD4A/0x2BBB5/0x2BC75), and `sub_1B085`'s exact trap-effect-id
-semantics.
+`RunCharacterDetailOverlay`-suggested address (0x11778), the
+character-creation-region cluster noted above (0x2BD4A/0x2BBB5/
+0x2BC75), and `sub_1B085`'s exact trap-effect-id semantics. (The
+address BinDiff suggested for `ErrorCheck`, 0x11E56, is resolved --
+it's `ParseCommandLineSwitches`, round 10.)
