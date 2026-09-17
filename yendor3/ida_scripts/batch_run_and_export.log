@@ -225,3 +225,52 @@ item_size: 1
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round4_findings.py']
+[*] reading apply_round4_findings.py
+[*] executing apply_round4_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x202f7  'sub_202F7' -> 'ExtendDungeonFloorTexture': ok
+0x1728f  'sub_1728F' -> 'ShowHealingItemPercentInfo': ok
+0x16447  'sub_16447' -> 'ConfirmAndValidatePartyTarget': ok
+0x12eea  'sub_12EEA' -> 'ClassifyFloorType': ok
+0x2c1e8  'sub_2C1E8' -> 'FadePaletteStep': ok
+0x1fd70  'sub_1FD70' -> 'TickStatusEffects': ok
+0x12f13  'sub_12F13' -> 'IsCellTypeImpassable': ok
+0x1eb7c  'sub_1EB7C' -> 'TickAilmentDuration': ok
+0x2bb7c  'sub_2BB7C' -> 'RunCharacterCreation': ok
+0x2c2ca  'sub_2C2CA' -> 'PlayCharacterCreationOpeningSetup': ok
+0x2bcd1  'sub_2BCD1' -> 'PlayCharacterCreationOpeningSequence': ok
+0x2c3b4  'sub_2C3B4' -> 'WaitForSoundDriverThenTicks': ok
+----- end target script output -----
+[*] finished executing apply_round4_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118632
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round4b.py']
+[*] reading apply_round4b.py
+[*] executing apply_round4b.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2da90  'sub_2DA90' -> 'ExamineTarget': ok
+----- end target script output -----
+[*] finished executing apply_round4b.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118632
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0

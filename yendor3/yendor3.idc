@@ -1626,9 +1626,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X12EE2);
 	op_hex		(x,	1);
 	create_insn	(0X12EEA);
+	set_name	(0X12EEA,	"ClassifyFloorType");
 	create_insn	(0X12F05);
 	create_insn	(0X12F0C);
 	create_insn	(0X12F13);
+	set_name	(0X12F13,	"IsCellTypeImpassable");
 	create_insn	(0X12F24);
 	create_insn	(0X12F2B);
 	create_insn	(x=0X12F59);
@@ -2721,6 +2723,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16436);
 	op_hex		(x,	1);
 	create_insn	(0X16447);
+	set_name	(0X16447,	"ConfirmAndValidatePartyTarget");
 	create_insn	(0X1646D);
 	create_insn	(x=0X16477);
 	op_hex		(x,	1);
@@ -2968,6 +2971,7 @@ static Bytes_0(void) {
 	create_insn	(0X1724C);
 	set_name	(0X1724C,	"ShowArmorDetailRow");
 	create_insn	(0X1728F);
+	set_name	(0X1728F,	"ShowHealingItemPercentInfo");
 	create_insn	(x=0X17293);
 	op_hex		(x,	1);
 	set_cmt	(0X172DF,	"Shows 'DURATION- <n> MINUTES' for a scroll/potion's timed effect (value from word_2E548's [+4] field x10). Called from RunClueBookItemDetailWithAbilityInfo.",	0);
@@ -4975,6 +4979,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1EB6D);
 	op_hex		(x,	1);
 	create_insn	(0X1EB7C);
+	set_name	(0X1EB7C,	"TickAilmentDuration");
 	create_insn	(0X1EB87);
 	create_insn	(0X1EB8F);
 	create_insn	(x=0X1EBA9);
@@ -5223,6 +5228,7 @@ static Bytes_1(void) {
 	create_insn	(0X1FD35);
 	set_name	(0X1FD35,	"DrawCellIconPair");
 	create_insn	(0X1FD70);
+	set_name	(0X1FD70,	"TickStatusEffects");
 	create_insn	(0X1FD9D);
 	create_insn	(x=0X1FDA4);
 	op_hex		(x,	1);
@@ -5313,6 +5319,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X20244);
 	op_hex		(x,	1);
 	create_insn	(0X202F7);
+	set_name	(0X202F7,	"ExtendDungeonFloorTexture");
 	create_insn	(x=0X202F8);
 	op_hex		(x,	1);
 	create_insn	(x=0X2030A);
@@ -9295,6 +9302,7 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2BB3E);
 	create_insn	(0X2BB7C);
+	set_name	(0X2BB7C,	"RunCharacterCreation");
 	create_insn	(0X2BBB5);
 	create_insn	(0X2BBD3);
 	create_insn	(x=0X2BBE4);
@@ -9313,6 +9321,7 @@ static Bytes_3(void) {
 	create_insn	(0X2BC65);
 	create_insn	(0X2BC75);
 	create_insn	(0X2BCD1);
+	set_name	(0X2BCD1,	"PlayCharacterCreationOpeningSequence");
 	create_insn	(0X2BD4A);
 	create_insn	(0X2BDB0);
 	create_insn	(x=0X2BEE0);
@@ -9330,6 +9339,7 @@ static Bytes_3(void) {
 	create_insn	(0X2C1A1);
 	create_insn	(0X2C1A2);
 	create_insn	(0X2C1E8);
+	set_name	(0X2C1E8,	"FadePaletteStep");
 	set_cmt	(0X2C242,	"Runs bx steps of a palette fade: nudges 0x4D5C (current) toward 0x442A (target) byte-by-byte, mirrors into 0x475A (output) unless a 0x80 sentinel bit is set, then SetPaletteRange's the output segment (dx=start index, cx=RGB-triple count). A multi-step sibling of FadePaletteStep. Called from PlayCharacterCreationIntroAnimation.",	0);
 	create_insn	(0X2C242);
 	set_name	(0X2C242,	"RunPaletteFadeSequence");
@@ -9343,6 +9353,7 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C2CA);
 	op_hex		(x,	1);
+	set_name	(0X2C2CA,	"PlayCharacterCreationOpeningSetup");
 	create_insn	(x=0X2C364);
 	op_hex		(x,	1);
 	create_insn	(x=0X2C36A);
@@ -9354,6 +9365,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2C3AE);
 	op_seg		(x,	1);
 	create_insn	(0X2C3B4);
+	set_name	(0X2C3B4,	"WaitForSoundDriverThenTicks");
 	create_insn	(0X2C3C4);
 	create_insn	(0X2C3E6);
 	set_name	(0X2C3E6,	"RepairItemCommand");
@@ -9816,6 +9828,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2DA88);
 	op_hex		(x,	1);
 	create_insn	(0X2DA90);
+	set_name	(0X2DA90,	"ExamineTarget");
 	create_insn	(0X2DAC7);
 	create_insn	(x=0X2DAD2);
 	op_hex		(x,	1);

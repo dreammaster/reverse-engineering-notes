@@ -295,6 +295,62 @@ alongside the by-now-expected tile-classification helpers.
 (yendor2 draws 2, yendor3 draws 3) alongside its tile-classification
 helper -- plausibly an added decorative layer for side features.
 
+### Corrects a 0.90-similarity BinDiff match -- the highest-confidence wrong one found this session
+
+BinDiff labeled this address `PollForEscapeKeyOnlyAlt` (0.90
+similarity -- every other wrong match found this session scored under
+0.5). Read directly, its actual body is: call `WaitForSoundDriverIdle`;
+if not idle, or if `cx==0xFFFF`, return immediately; otherwise wait
+`cx` ticks via the generic tick-wait-and-clear primitive. Nothing
+resembling Escape-key polling. Renamed to **`WaitForSoundDriverThenTicks`**
+(confirmed via its actual caller, the new animation sequence below, which
+calls it with tick counts and no Escape-related follow-up). Lesson:
+even a 0.90 match needs verification before trusting it, not just the
+low ones.
+
+A related function this same investigation turned up,
+**deliberately left unnamed**: the address BinDiff separately labeled
+`WaitForTickAndDrawCreationFrame` (0.77 similarity) is a bare
+tick-wait-and-clear primitive with *no* frame-drawing call at all --
+matching the shape of the already-named
+`WaitForTickFlagAndClear`/`WaitForTickFlagAndClearAlt` overlay-segment
+duplicates (this codebase has several near-identical copies of this
+same primitive compiled into different overlay segments) rather than
+the frame-drawing function BinDiff suggested. Yet another such
+duplicate, not confirmed to deserve a distinct name of its own yet.
+
+### New function pair: a character-creation opening sequence
+
+`RunCharacterCreation` gained 2 new calls prepended before its original
+4 (`ComposeCharacterPortrait`/`PlayCharacterCreationIntroAnimation`/
+`RunCharacterCreationSelectionStep`/`FinalizeCharacterCreation`, all
+still present and in the same order):
+- **`PlayCharacterCreationOpeningSetup`**: loads a new palette/picture
+  pair, allocates and zeroes a ~64000-byte buffer, sets a couple of
+  new flag bits, and plays a music track (9).
+- **`PlayCharacterCreationOpeningSequence`**: draws the picture from
+  the setup step, then drives a two-phase sound-and-animation loop (3
+  iterations, then 5 more, incrementing a sound-cue id each time),
+  checking a per-frame completion flag to bail early and calling
+  `WaitForSoundDriverThenTicks` between frames.
+
+Reads as a new animated intro sequence played before the existing
+character-creation flow starts -- a nice-to-have visual addition, not
+a mechanical change to character creation itself. One resolved call in
+`RunCharacterCreation`'s diff (`DebugToggleViewportCellHidden`, at a
+position that makes no sense in this context) is almost certainly yet
+another bad low-confidence match, not investigated further.
+
+### `ExamineTarget` gained a new item-requirement gate
+
+All of yendor2's original calls (`TravelToDestination`,
+`ShowAbilityDescriptionColumn` ×2, `RestoreCursorBackgroundIfDirty`,
+`UpdateCursorForHeldItem`, `DrawMouseCursorAlt`) are still present in
+the same order, with 4 new calls prepended: `TestGlobalFlag`,
+`IsItemRangeAvailable`, `ClearGlobalFlag`, `LoadItemCatalogRecord`.
+Plausibly a new "you need a specific item to examine/search this
+target" requirement check. Not traced further.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
@@ -304,15 +360,17 @@ helper -- plausibly an added decorative layer for side features.
   This tier is done for now, though "spot-checked via call-target diff"
   is not the same guarantee as a full instruction-by-instruction read
   -- treat as high-confidence, not certain.
-- 52 functions at similarity 0.70-0.95: 40 spot-checked this round
-  (`apply_round3_findings.py`, `apply_round3b_findings.py`), turning up
-  the findings above. 2 of those 40 deliberately left unrenamed
-  (`PollForEscapeKeyOnlyAlt`, `RunTitleScreen` -- see above). 10 not
-  yet reviewed: `ExtendDungeonFloorTexture`, `ShowHealingItemPercentInfo`,
-  `ConfirmAndValidatePartyTarget`, `ClassifyFloorType`,
-  `RunCharacterCreation`, `WaitForTickAndDrawCreationFrame`,
-  `ExamineTarget`, `FadePaletteStep`, `TickStatusEffects`,
-  `IsCellTypeImpassable`, `TickAilmentDuration`.
+- 52 functions at similarity 0.70-0.95: **all 52 now spot-checked**
+  across rounds 3-4 (`apply_round3_findings.py`,
+  `apply_round3b_findings.py`, `apply_round4_findings.py`,
+  `apply_round4b.py`), turning up all of the findings above. This tier
+  is done for now, with two exceptions left deliberately unrenamed:
+  the address BinDiff matched to `RunTitleScreen` (0.88 -- still too
+  large/noisy to trust without a dedicated read) and the one matched
+  to `WaitForTickAndDrawCreationFrame` (0.77 -- confirmed to be a
+  generic tick-wait duplicate, not that function, see above). The
+  address matched to `PollForEscapeKeyOnlyAlt` (0.90) *was* resolved
+  this round -- see the correction above.
 - 77 functions at similarity <0.70: not yet reviewed. Many of the
   lowest scores (well under 0.3) may not be genuine matches at all —
   treat the suggested yendor2 name as a weak hint, not a starting

@@ -7342,6 +7342,45 @@ scripts (`apply_round3_findings.py`, `apply_round3b_findings.py`).
 deferred and the entire 77-function low-confidence tier, for future
 rounds.
 
+### 2026-09-16 session update, continued: Chapter 3 mid-confidence review, round 4 (tier complete)
+
+Finished the mid-confidence tier: checked the remaining 11 functions
+plus went back and properly resolved 2 of round 3's deferred ones by
+direct reading rather than leaving them open indefinitely.
+
+Biggest finding: BinDiff's `PollForEscapeKeyOnlyAlt` match was wrong
+at **0.90 similarity** -- every other bad match found this session
+scored under 0.5, so this meaningfully raises the bar for "how
+confident is confident enough." Its real body (confirmed by reading
+it) is a sound-driver-idle-then-tick-wait primitive with nothing to do
+with Escape polling; renamed to `WaitForSoundDriverThenTicks` once its
+real caller (a new character-creation animation sequence) made its
+actual role clear. The function BinDiff separately called
+`WaitForTickAndDrawCreationFrame` turned out to be yet another
+overlay-segment duplicate of the already-named generic tick-wait
+primitive, not a frame-drawing function at all -- left unnamed rather
+than force the misleading suggested name onto it.
+
+Also found and named a genuinely new feature: `RunCharacterCreation`
+gained two new setup/animation functions
+(`PlayCharacterCreationOpeningSetup`, `PlayCharacterCreationOpeningSequence`)
+that play a new animated intro sequence (palette load, buffer alloc,
+a sound-and-frame animation loop) before the existing character-
+creation flow starts. And `ExamineTarget` gained a new item-requirement
+gate (4 new calls) before its existing behavior.
+
+**The entire 52-function mid-confidence tier is now fully
+spot-checked** (rounds 3-4), matching the high-confidence tier's
+completion last round. Combined with the two tiers together: 120 of
+197 BinDiff matches reviewed, with 8 confirmed-bad BinDiff labels found
+along the way (documented in `docs23/engine-diffs.md`) and roughly a
+dozen genuine Chapter 3 additions/changes characterized.
+
+**Next**: the 77-function low-confidence (<0.70) tier -- expect a much
+higher proportion of bad/spurious matches there based on this
+session's pattern (wrong matches got progressively more common as
+similarity dropped, until this round's 0.90 outlier).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

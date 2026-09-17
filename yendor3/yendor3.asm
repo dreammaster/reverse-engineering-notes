@@ -5098,7 +5098,7 @@ loc_12B6D:                              ; CODE XREF: UseItem+90↑j
                 jz      short loc_12B94
 
 loc_12B75:                              ; CODE XREF: UseItem+9F↑j
-                call    sub_16447
+                call    ConfirmAndValidatePartyTarget
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_12B84
                 jmp     loc_12C97
@@ -5471,7 +5471,7 @@ seg012          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12EEA       proc far                ; CODE XREF: HandleMovementInput+2B4↓p
+ClassifyFloorType proc far              ; CODE XREF: HandleMovementInput+2B4↓p
                                         ; IsMonsterStepBlocked+78↓P ...
                 mov     word ptr ds:53E0h, 0
                 cmp     ax, 1
@@ -5483,26 +5483,26 @@ sub_12EEA       proc far                ; CODE XREF: HandleMovementInput+2B4↓p
                 cmp     ax, 12Bh
                 jle     short loc_12F05
 
-locret_12F04:                           ; CODE XREF: sub_12EEA+13↑j
+locret_12F04:                           ; CODE XREF: ClassifyFloorType+13↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_12F05:                              ; CODE XREF: sub_12EEA+E↑j
-                                        ; sub_12EEA+18↑j
+loc_12F05:                              ; CODE XREF: ClassifyFloorType+E↑j
+                                        ; ClassifyFloorType+18↑j
                 mov     word ptr ds:53E0h, 1
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_12F0C:                              ; CODE XREF: sub_12EEA+9↑j
+loc_12F0C:                              ; CODE XREF: ClassifyFloorType+9↑j
                 mov     word ptr ds:53E0h, 2
                 retf
-sub_12EEA       endp
+ClassifyFloorType endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12F13       proc far                ; CODE XREF: HandleMovementInput+2C3↓p
+IsCellTypeImpassable proc far           ; CODE XREF: HandleMovementInput+2C3↓p
                                         ; IsMonsterStepBlocked+89↓P ...
                 mov     word ptr ds:53E0h, 0
                 cmp     ax, 0C8h
@@ -5510,14 +5510,14 @@ sub_12F13       proc far                ; CODE XREF: HandleMovementInput+2C3↓p
                 cmp     ax, 18Fh
                 jle     short loc_12F24
 
-locret_12F23:                           ; CODE XREF: sub_12F13+9↑j
+locret_12F23:                           ; CODE XREF: IsCellTypeImpassable+9↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_12F24:                              ; CODE XREF: sub_12F13+E↑j
+loc_12F24:                              ; CODE XREF: IsCellTypeImpassable+E↑j
                 mov     word ptr ds:53E0h, 3
                 retf
-sub_12F13       endp
+IsCellTypeImpassable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5955,12 +5955,12 @@ loc_132A6:                              ; CODE XREF: HandleMovementInput+270↑j
                 jnz     short loc_132E9
                 mov     ax, es:[bx]
                 push    cs
-                call    near ptr sub_12EEA
+                call    near ptr ClassifyFloorType
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_132CB
                 mov     ax, es:[bx+2]
                 push    cs
-                call    near ptr sub_12F13
+                call    near ptr IsCellTypeImpassable
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_132E9
 
@@ -10076,7 +10076,7 @@ seg022          segment byte public 'CODE' use16
 
 
 sub_15512       proc far                ; CODE XREF: start+4BE↑P
-                                        ; sub_2DA90+90↓P
+                                        ; ExamineTarget+90↓P
                 mov     ds:0FB0h, ax
                 dec     ax
                 mov     bx, 12h
@@ -10278,7 +10278,7 @@ loc_156CF:                              ; CODE XREF: sub_156C9+3↑j
                 call    IsItemRangeAvailable
                 cmp     word ptr ds:5426h, 0
                 jz      short loc_156EB
-                call    sub_1FD70
+                call    TickStatusEffects
                 pop     ax
                 loop    loc_156CF
                 retn
@@ -11838,8 +11838,8 @@ RunSellItemScreen endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16447       proc far                ; CODE XREF: UseItem:loc_12B75↑P
-                                        ; sub_16447+3C↓j
+ConfirmAndValidatePartyTarget proc far  ; CODE XREF: UseItem:loc_12B75↑P
+                                        ; ConfirmAndValidatePartyTarget+3C↓j
                 push    si
                 mov     ax, ds:0CF81h
                 mov     ds:5442h, ax
@@ -11854,28 +11854,28 @@ sub_16447       proc far                ; CODE XREF: UseItem:loc_12B75↑P
                 jmp     short loc_16497
 ; ---------------------------------------------------------------------------
 
-loc_1646D:                              ; CODE XREF: sub_16447+1C↑j
+loc_1646D:                              ; CODE XREF: ConfirmAndValidatePartyTarget+1C↑j
                 mov     ds:5442h, ax
                 call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_16485
                 call    FlashStatusWarning
-                jmp     short near ptr sub_16447
+                jmp     short near ptr ConfirmAndValidatePartyTarget
 ; ---------------------------------------------------------------------------
 
-loc_16485:                              ; CODE XREF: sub_16447+A↑j
-                                        ; sub_16447+35↑j
+loc_16485:                              ; CODE XREF: ConfirmAndValidatePartyTarget+A↑j
+                                        ; ConfirmAndValidatePartyTarget+35↑j
                 mov     bx, ds:5442h
                 mov     si, 0CF81h
                 call    ReassignPartySlotReference
                 mov     word ptr ds:53E0h, 0
 
-loc_16497:                              ; CODE XREF: sub_16447+24↑j
+loc_16497:                              ; CODE XREF: ConfirmAndValidatePartyTarget+24↑j
                 call    DrawMouseCursor
                 pop     si
                 retf
-sub_16447       endp ; sp-analysis failed
+ConfirmAndValidatePartyTarget endp ; sp-analysis failed
 
 seg030          ends
 
@@ -12913,7 +12913,7 @@ loc_16C14:                              ; CODE XREF: RunClueBookItemDetailWithAb
                 jl      short loc_16C27
                 cmp     word ptr ds:5426h, 20h ; ' '
                 jg      short loc_16C27
-                call    sub_1728F
+                call    ShowHealingItemPercentInfo
                 jmp     short loc_16C41
 ; ---------------------------------------------------------------------------
 
@@ -13532,7 +13532,7 @@ ShowArmorDetailRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1728F       proc near               ; CODE XREF: RunClueBookItemDetailWithAbilityInfo+2B↑p
+ShowHealingItemPercentInfo proc near    ; CODE XREF: RunClueBookItemDetailWithAbilityInfo+2B↑p
                 mov     si, ds:0FE3h
                 test    word ptr [si+2], 8000h
                 jz      short locret_172DE
@@ -13550,14 +13550,14 @@ sub_1728F       proc near               ; CODE XREF: RunClueBookItemDetailWithAb
                 jge     short loc_172D0
                 sub     word ptr ds:53FAh, 6
 
-loc_172D0:                              ; CODE XREF: sub_1728F+3A↑j
+loc_172D0:                              ; CODE XREF: ShowHealingItemPercentInfo+3A↑j
                 mov     bx, 8E83h
                 mov     word ptr ds:0FBFh, 0Dh
                 call    writeString
 
-locret_172DE:                           ; CODE XREF: sub_1728F+9↑j
+locret_172DE:                           ; CODE XREF: ShowHealingItemPercentInfo+9↑j
                 retn
-sub_1728F       endp
+ShowHealingItemPercentInfo endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -20294,7 +20294,7 @@ loc_1B166:                              ; CODE XREF: CheckAndTickAvailableAilmen
                 call    IsItemRangeAvailable
                 cmp     word ptr ds:5426h, 0
                 jz      short loc_1B182
-                call    sub_1FD70
+                call    TickStatusEffects
                 pop     ax
                 loop    loc_1B166
                 retn
@@ -21976,7 +21976,7 @@ loc_1BF44:                              ; CODE XREF: sub_1BE7E+12F↓j
 ; ---------------------------------------------------------------------------
 
 loc_1BF89:                              ; CODE XREF: sub_1BE7E+106↑j
-                call    sub_2BB7C
+                call    RunCharacterCreation
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jnz     short loc_1BF98
                 jmp     loc_1BEC8
@@ -22177,7 +22177,7 @@ loc_1C11C:                              ; CODE XREF: sub_1BE7E+173↑j
                 mov     word ptr ds:5430h, 0
                 call    TriggerFullPaletteFadeOut
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2BB7C
+                call    RunCharacterCreation
                 mov     word ptr ds:5430h, 1
                 jmp     loc_1BEC8
 ; ---------------------------------------------------------------------------
@@ -26376,7 +26376,7 @@ TickWorldAilments proc near             ; CODE XREF: MaybeForceTickWorldAilments
                 mov     si, 0CFF7h
                 mov     cx, 6
                 mov     dx, cs:word_1E736
-                call    sub_1EB7C
+                call    TickAilmentDuration
                 mov     di, 0D0C9h
                 mov     cx, 4
 
@@ -26393,7 +26393,7 @@ loc_1EB0B:                              ; CODE XREF: TickWorldAilments+41↓j
                 mov     si, ax
                 mov     cx, 8
                 mov     dx, cs:word_1E736
-                call    sub_1EB7C
+                call    TickAilmentDuration
                 pop     cx
                 add     di, 2
                 loop    loc_1EB0B
@@ -26433,25 +26433,25 @@ TickWorldAilments endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1EB7C       proc near               ; CODE XREF: TickWorldAilments+13↑p
+TickAilmentDuration proc near           ; CODE XREF: TickWorldAilments+13↑p
                                         ; TickWorldAilments+3A↑p ...
                 cmp     word ptr [si], 23h ; '#'
                 jz      short loc_1EB87
 
-loc_1EB81:                              ; CODE XREF: sub_1EB7C+16↓j
-                                        ; sub_1EB7C+3B↓j ...
+loc_1EB81:                              ; CODE XREF: TickAilmentDuration+16↓j
+                                        ; TickAilmentDuration+3B↓j ...
                 add     si, 4
-                loop    sub_1EB7C
+                loop    TickAilmentDuration
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1EB87:                              ; CODE XREF: sub_1EB7C+3↑j
+loc_1EB87:                              ; CODE XREF: TickAilmentDuration+3↑j
                 mov     bx, 0CF07h
                 mov     ax, 0F7FFh
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_1EB8F:                              ; CODE XREF: sub_1EB7C+11↑j
+loc_1EB8F:                              ; CODE XREF: TickAilmentDuration+11↑j
                 sub     [si+2], dx
                 jg      short loc_1EB81
                 mov     word ptr [si+2], 0
@@ -26463,12 +26463,12 @@ loc_1EB8F:                              ; CODE XREF: sub_1EB7C+11↑j
                 or      word_3311A, 400h
                 or      word_33122, 4
 
-loc_1EBB4:                              ; CODE XREF: sub_1EB7C+23↑j
+loc_1EBB4:                              ; CODE XREF: TickAilmentDuration+23↑j
                 cmp     dx, 1
                 jg      short loc_1EB81
                 or      word_33120, 40h
                 jmp     short loc_1EB81
-sub_1EB7C       endp
+TickAilmentDuration endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -26831,7 +26831,7 @@ loc_1EE7A:                              ; CODE XREF: InitGame+4A↑j
                 call    InstallInt1cTimerHandler
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_1EEF6
-                call    sub_2BB7C
+                call    RunCharacterCreation
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_1EEF6
                 mov     ax, 14h
@@ -28294,7 +28294,7 @@ seg062          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FD70       proc far                ; CODE XREF: sub_156C9+19↑P
+TickStatusEffects proc far              ; CODE XREF: sub_156C9+19↑P
                                         ; CheckAndTickAvailableAilment+19↑P ...
                 push    si
                 call    DrawMouseCursorAlt
@@ -28315,7 +28315,7 @@ sub_1FD70       proc far                ; CODE XREF: sub_156C9+19↑P
                 jmp     short loc_1FDDA
 ; ---------------------------------------------------------------------------
 
-loc_1FDB2:                              ; CODE XREF: sub_1FD70+B↑j
+loc_1FDB2:                              ; CODE XREF: TickStatusEffects+B↑j
                 sub     word ptr ds:0CF07h, 1
                 jg      short loc_1FDDA
                 and     word ptr ds:0CEF7h, 0F7FFh
@@ -28327,8 +28327,8 @@ loc_1FDB2:                              ; CODE XREF: sub_1FD70+B↑j
                 and     word ptr ds:0CEF7h, 0FBFFh
                 mov     word ptr ds:0CF09h, 0
 
-loc_1FDDA:                              ; CODE XREF: sub_1FD70+32↑j
-                                        ; sub_1FD70+40↑j ...
+loc_1FDDA:                              ; CODE XREF: TickStatusEffects+32↑j
+                                        ; TickStatusEffects+40↑j ...
                 push    cs
                 call    near ptr ResolveIconBarBaseAddress
                 dec     word ptr [si]
@@ -28340,12 +28340,12 @@ loc_1FDDA:                              ; CODE XREF: sub_1FD70+32↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1FDF2:                              ; CODE XREF: sub_1FD70+7E↑j
+loc_1FDF2:                              ; CODE XREF: TickStatusEffects+7E↑j
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 pop     si
                 retf
-sub_1FD70       endp
+TickStatusEffects endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28390,7 +28390,7 @@ sub_1FDFE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ResolveIconBarBaseAddress proc far      ; CODE XREF: sub_1FD70+6B↑p
+ResolveIconBarBaseAddress proc far      ; CODE XREF: TickStatusEffects+6B↑p
                                         ; sub_1FDFE+54↑p
                 mov     si, ds:542Ch    ; Returns word_3297A if nonzero (an active override), else word_32978+word_3297C (computed base+offset). Called from TickStatusEffects and ApplyStatusEffect.
                 or      si, si
@@ -28912,31 +28912,31 @@ loc_20237:                              ; CODE XREF: DrawDungeonFloorAndCeiling+
                 mov     cx, 11h
                 mov     ax, ds:538Eh
                 mov     ds:53D6h, ax
-                call    sub_202F7
+                call    ExtendDungeonFloorTexture
                 mov     cx, 11h
                 mov     ax, ds:5390h
                 mov     ds:53D6h, ax
-                call    sub_202F7
+                call    ExtendDungeonFloorTexture
                 mov     cx, 5
                 mov     ax, ds:5392h
                 mov     ds:53D6h, ax
-                call    sub_202F7
+                call    ExtendDungeonFloorTexture
                 mov     cx, 3
                 mov     ax, ds:5394h
                 mov     ds:53D6h, ax
-                call    sub_202F7
+                call    ExtendDungeonFloorTexture
                 mov     cx, 3
                 mov     ax, ds:5396h
                 mov     ds:53D6h, ax
-                call    sub_202F7
+                call    ExtendDungeonFloorTexture
                 mov     cx, 3
                 mov     ax, ds:5398h
                 mov     ds:53D6h, ax
-                call    sub_202F7
+                call    ExtendDungeonFloorTexture
                 mov     cx, 3
                 mov     ax, ds:539Ah
                 mov     ds:53D6h, ax
-                call    sub_202F7
+                call    ExtendDungeonFloorTexture
                 retn
 DrawDungeonFloorAndCeiling endp
 
@@ -28944,7 +28944,7 @@ DrawDungeonFloorAndCeiling endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_202F7       proc near               ; CODE XREF: DrawDungeonFloorAndCeiling+A0↑p
+ExtendDungeonFloorTexture proc near     ; CODE XREF: DrawDungeonFloorAndCeiling+A0↑p
                                         ; DrawDungeonFloorAndCeiling+AC↑p ...
                 push    cx
                 test    word ptr [di+6], 1
@@ -28961,13 +28961,13 @@ sub_202F7       proc near               ; CODE XREF: DrawDungeonFloorAndCeiling+
                 mov     word ptr ds:0E28h, 0
                 call    DrawViewportSprite
 
-loc_2032C:                              ; CODE XREF: sub_202F7+6↑j
+loc_2032C:                              ; CODE XREF: ExtendDungeonFloorTexture+6↑j
                 add     di, 8
                 inc     word ptr ds:53DCh
                 pop     cx
-                loop    sub_202F7
+                loop    ExtendDungeonFloorTexture
                 retn
-sub_202F7       endp
+ExtendDungeonFloorTexture endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37918,7 +37918,7 @@ loc_254EE:                              ; CODE XREF: IsMonsterStepBlocked+61↑j
 
 loc_254F7:                              ; CODE XREF: IsMonsterStepBlocked+72↑j
                 mov     ax, es:[bx]
-                call    sub_12EEA
+                call    ClassifyFloorType
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_25507
                 retf
@@ -37926,7 +37926,7 @@ loc_254F7:                              ; CODE XREF: IsMonsterStepBlocked+72↑j
 
 loc_25507:                              ; CODE XREF: IsMonsterStepBlocked+82↑j
                 mov     ax, es:[bx+2]
-                call    sub_12F13
+                call    IsCellTypeImpassable
                 retf
 IsMonsterStepBlocked endp
 
@@ -45858,11 +45858,11 @@ loc_295FA:                              ; CODE XREF: TryTravelToClickedMapCell+C
                 shl     byte ptr ds:[bp+0], 1
                 jnb     short loc_29658
                 mov     ax, [si+2]
-                call    sub_12F13
+                call    IsCellTypeImpassable
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_29660
                 mov     ax, [si]
-                call    sub_12EEA
+                call    ClassifyFloorType
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_29668
                 push    si
@@ -46236,7 +46236,7 @@ loc_298B5:                              ; CODE XREF: HandleGameCommand+42↑j
 
 loc_298BB:                              ; CODE XREF: HandleGameCommand+49↑j
                 or      word ptr ds:536Ah, 40h
-                call    sub_1FD70
+                call    TickStatusEffects
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -46346,7 +46346,7 @@ loc_29996:                              ; CODE XREF: HandleGameCommand+126↑j
 ; ---------------------------------------------------------------------------
 
 loc_299AB:                              ; CODE XREF: HandleGameCommand+13E↑j
-                call    sub_2DA90
+                call    ExamineTarget
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -50954,15 +50954,15 @@ seg126          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BB7C       proc far                ; CODE XREF: sub_1BE7E:loc_1BF89↑P
+RunCharacterCreation proc far           ; CODE XREF: sub_1BE7E:loc_1BF89↑P
                                         ; sub_1BE7E+2AE↑P ...
-                call    sub_2C2CA
+                call    PlayCharacterCreationOpeningSetup
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
                 call    sub_2BC75
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
-                call    sub_2BCD1
+                call    PlayCharacterCreationOpeningSequence
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
                 call    sub_2BD4A
@@ -50973,11 +50973,11 @@ sub_2BB7C       proc far                ; CODE XREF: sub_1BE7E:loc_1BF89↑P
                 jz      short loc_2BBB1
                 call    sub_2BF44
 
-loc_2BBB1:                              ; CODE XREF: sub_2BB7C+8↑j
-                                        ; sub_2BB7C+12↑j ...
+loc_2BBB1:                              ; CODE XREF: RunCharacterCreation+8↑j
+                                        ; RunCharacterCreation+12↑j ...
                 call    sub_2BBD3
                 retf
-sub_2BB7C       endp
+RunCharacterCreation endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51002,7 +51002,7 @@ sub_2BBB5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BBD3       proc near               ; CODE XREF: sub_2BB7C:loc_2BBB1↑p
+sub_2BBD3       proc near               ; CODE XREF: RunCharacterCreation:loc_2BBB1↑p
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
@@ -51067,7 +51067,7 @@ sub_2BC65       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BC75       proc near               ; CODE XREF: sub_2BB7C+A↑p
+sub_2BC75       proc near               ; CODE XREF: RunCharacterCreation+A↑p
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
                 mov     word ptr ds:0E28h, 0
@@ -51104,7 +51104,8 @@ sub_2BC75       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BCD1       proc near               ; CODE XREF: sub_2BB7C+14↑p
+PlayCharacterCreationOpeningSequence proc near
+                                        ; CODE XREF: RunCharacterCreation+14↑p
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
                 mov     word ptr ds:0E28h, 0
@@ -51121,12 +51122,12 @@ sub_2BCD1       proc near               ; CODE XREF: sub_2BB7C+14↑p
                 mov     cx, 3
                 mov     ax, 33h ; '3'
 
-loc_2BD0D:                              ; CODE XREF: sub_2BCD1+51↓j
+loc_2BD0D:                              ; CODE XREF: PlayCharacterCreationOpeningSequence+51↓j
                 push    cx
                 push    ax
                 call    TriggerSoundEvent
                 mov     cx, 8
-                call    sub_2C3B4
+                call    WaitForSoundDriverThenTicks
                 pop     ax
                 inc     ax
                 pop     cx
@@ -51138,12 +51139,12 @@ loc_2BD0D:                              ; CODE XREF: sub_2BCD1+51↓j
                 mov     cx, 5
                 mov     ax, 36h ; '6'
 
-loc_2BD32:                              ; CODE XREF: sub_2BCD1+76↓j
+loc_2BD32:                              ; CODE XREF: PlayCharacterCreationOpeningSequence+76↓j
                 push    cx
                 push    ax
                 call    TriggerSoundEvent
                 mov     cx, 0Ah
-                call    sub_2C3B4
+                call    WaitForSoundDriverThenTicks
                 pop     ax
                 inc     ax
                 pop     cx
@@ -51151,16 +51152,16 @@ loc_2BD32:                              ; CODE XREF: sub_2BCD1+76↓j
                 jz      short locret_2BD49
                 loop    loc_2BD32
 
-locret_2BD49:                           ; CODE XREF: sub_2BCD1+2C↑j
-                                        ; sub_2BCD1+34↑j ...
+locret_2BD49:                           ; CODE XREF: PlayCharacterCreationOpeningSequence+2C↑j
+                                        ; PlayCharacterCreationOpeningSequence+34↑j ...
                 retn
-sub_2BCD1       endp
+PlayCharacterCreationOpeningSequence endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BD4A       proc near               ; CODE XREF: sub_2BB7C+1E↑p
+sub_2BD4A       proc near               ; CODE XREF: RunCharacterCreation+1E↑p
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
                 mov     word ptr ds:0E28h, 0
@@ -51182,7 +51183,7 @@ loc_2BD86:                              ; CODE XREF: sub_2BD4A+51↓j
                 push    ax
                 call    TriggerSoundEvent
                 mov     cx, 9
-                call    sub_2C3B4
+                call    WaitForSoundDriverThenTicks
                 pop     ax
                 inc     ax
                 pop     cx
@@ -51207,9 +51208,9 @@ sub_2BD4A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BDB0       proc near               ; CODE XREF: sub_2BB7C+28↑p
+sub_2BDB0       proc near               ; CODE XREF: RunCharacterCreation+28↑p
                 mov     cx, 0FFFFh
-                call    sub_2C3B4
+                call    WaitForSoundDriverThenTicks
                 call    StopMusicAndResetTimer
                 mov     ax, 0Ah
                 call    PlayMusicTrack
@@ -51282,7 +51283,7 @@ loc_2BE8A:                              ; CODE XREF: sub_2BDB0+12E↓j
                 mov     bx, 2
                 mov     cx, 0E0h
                 mov     dx, 0
-                call    sub_2C1E8
+                call    FadePaletteStep
                 pop     cx
                 call    sub_2BBB5
                 jz      short locret_2BF43
@@ -51329,7 +51330,7 @@ sub_2BDB0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BF44       proc near               ; CODE XREF: sub_2BB7C+32↑p
+sub_2BF44       proc near               ; CODE XREF: RunCharacterCreation+32↑p
                 call    sub_2BC65
                 mov     ax, 4730h
                 mov     bx, 96C2h
@@ -51484,7 +51485,7 @@ loc_2C0EF:                              ; CODE XREF: sub_2BF44+1CF↓j
                 mov     bx, 2
                 mov     cx, 0FFh
                 mov     dx, 0
-                call    sub_2C1E8
+                call    FadePaletteStep
                 inc     word ptr ds:0FC3h
                 mov     ax, 2
                 call    wait
@@ -51603,7 +51604,7 @@ sub_2C13C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C1E8       proc near               ; CODE XREF: sub_2BDB0+125↑p
+FadePaletteStep proc near               ; CODE XREF: sub_2BDB0+125↑p
                                         ; sub_2BF44+1BF↑p
                 mov     ds:442Ah, bx
                 mov     ds:4428h, cx
@@ -51617,18 +51618,18 @@ sub_2C1E8       proc near               ; CODE XREF: sub_2BDB0+125↑p
                 mov     es, word ptr ds:0F44h
                 mov     cx, ds:442Ah
 
-loc_2C214:                              ; CODE XREF: sub_2C1E8+57↓j
+loc_2C214:                              ; CODE XREF: FadePaletteStep+57↓j
                 push    cx
                 mov     di, 5062h
                 add     di, ds:4D60h
                 mov     cx, ds:441Ch
 
-loc_2C220:                              ; CODE XREF: sub_2C1E8+40↓j
+loc_2C220:                              ; CODE XREF: FadePaletteStep+40↓j
                 cmp     byte ptr [di], 0
                 jle     short loc_2C227
                 dec     byte ptr [di]
 
-loc_2C227:                              ; CODE XREF: sub_2C1E8+3B↑j
+loc_2C227:                              ; CODE XREF: FadePaletteStep+3B↑j
                 inc     di
                 loop    loc_2C220
                 mov     bx, ds:0FC1h
@@ -51639,7 +51640,7 @@ loc_2C227:                              ; CODE XREF: sub_2C1E8+3B↑j
                 pop     cx
                 loop    loc_2C214
                 retn
-sub_2C1E8       endp
+FadePaletteStep endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51716,7 +51717,8 @@ sub_2C2B9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C2CA       proc near               ; CODE XREF: sub_2BB7C↑p
+PlayCharacterCreationOpeningSetup proc near
+                                        ; CODE XREF: RunCharacterCreation↑p
                 or      word ptr ds:5370h, 8
                 cmp     byte ptr ds:0F2Ch, 0
                 jz      short loc_2C2E3
@@ -51724,7 +51726,7 @@ sub_2C2CA       proc near               ; CODE XREF: sub_2BB7C↑p
                 mov     ax, 14h
                 call    wait
 
-loc_2C2E3:                              ; CODE XREF: sub_2C2CA+A↑j
+loc_2C2E3:                              ; CODE XREF: PlayCharacterCreationOpeningSetup+A↑j
                 mov     ax, 9
                 call    PlayMusicTrack
                 call    sub_2BC65
@@ -51764,13 +51766,13 @@ loc_2C2E3:                              ; CODE XREF: sub_2C2CA+A↑j
                 or      word ptr ds:540Ch, 8000h
                 call    RestoreCursorBackgroundIfDirty
                 retn
-sub_2C2CA       endp
+PlayCharacterCreationOpeningSetup endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C376       proc near               ; CODE XREF: sub_2BCD1+2E↑p
+sub_2C376       proc near               ; CODE XREF: PlayCharacterCreationOpeningSequence+2E↑p
                                         ; sub_2BD4A+2E↑p
                 mov     si, 13Ch
                 mov     di, 13Ch
@@ -51818,18 +51820,18 @@ sub_2C376       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C3B4       proc near               ; CODE XREF: sub_2BCD1+46↑p
-                                        ; sub_2BCD1+6B↑p ...
+WaitForSoundDriverThenTicks proc near   ; CODE XREF: PlayCharacterCreationOpeningSequence+46↑p
+                                        ; PlayCharacterCreationOpeningSequence+6B↑p ...
                 call    WaitForSoundDriverIdle
                 jz      short locret_2C3C3
                 cmp     cx, 0FFFFh
                 jz      short locret_2C3C3
                 call    sub_2C2B9
 
-locret_2C3C3:                           ; CODE XREF: sub_2C3B4+5↑j
-                                        ; sub_2C3B4+A↑j
+locret_2C3C3:                           ; CODE XREF: WaitForSoundDriverThenTicks+5↑j
+                                        ; WaitForSoundDriverThenTicks+A↑j
                 retn
-sub_2C3B4       endp
+WaitForSoundDriverThenTicks endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -52432,7 +52434,7 @@ loc_2C86B:                              ; CODE XREF: ApplyEncodedItemEffect:loc_
                 jz      short loc_2C8A3
 
 loc_2C894:                              ; CODE XREF: ApplyEncodedItemEffect+3A4↑j
-                call    sub_12EEA
+                call    ClassifyFloorType
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_2C8A3
                 jmp     loc_2C7EF
@@ -52441,7 +52443,7 @@ loc_2C894:                              ; CODE XREF: ApplyEncodedItemEffect+3A4�
 loc_2C8A3:                              ; CODE XREF: ApplyEncodedItemEffect+3A9↑j
                                         ; ApplyEncodedItemEffect+3AE↑j ...
                 mov     ax, es:[si+2]
-                call    sub_12F13
+                call    IsCellTypeImpassable
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_2C8B6
                 jmp     loc_2C7EF
@@ -52580,11 +52582,11 @@ loc_2C9E4:                              ; CODE XREF: ApplyEncodedItemEffect+4C5�
                 call    GetMapCellPtr
                 mov     ds:53A4h, bx
                 mov     ax, es:[bx]
-                call    sub_12EEA
+                call    ClassifyFloorType
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_2C9E1
                 mov     ax, es:[bx+2]
-                call    sub_12F13
+                call    IsCellTypeImpassable
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_2C9E1
                 mov     ax, 6Bh ; 'k'
@@ -54321,7 +54323,7 @@ seg131          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2DA90       proc far                ; CODE XREF: HandleGameCommand:loc_299AB↑P
+ExamineTarget   proc far                ; CODE XREF: HandleGameCommand:loc_299AB↑P
                 push    word ptr ds:5426h
                 push    ax
                 push    bx
@@ -54343,7 +54345,7 @@ sub_2DA90       proc far                ; CODE XREF: HandleGameCommand:loc_299AB
                 jmp     short loc_2DAE5
 ; ---------------------------------------------------------------------------
 
-loc_2DAC7:                              ; CODE XREF: sub_2DA90+2B↑j
+loc_2DAC7:                              ; CODE XREF: ExamineTarget+2B↑j
                 mov     cx, 3
                 mov     bx, 90BAh
                 call    sub_2971B
@@ -54359,8 +54361,8 @@ loc_2DAC7:                              ; CODE XREF: sub_2DA90+2B↑j
                 jmp     short loc_2DB32
 ; ---------------------------------------------------------------------------
 
-loc_2DAE5:                              ; CODE XREF: sub_2DA90+13↑j
-                                        ; sub_2DA90+35↑j
+loc_2DAE5:                              ; CODE XREF: ExamineTarget+13↑j
+                                        ; ExamineTarget+35↑j
                 pop     es
                 pop     si
                 pop     di
@@ -54376,7 +54378,7 @@ loc_2DAE5:                              ; CODE XREF: sub_2DA90+13↑j
                 mov     ds:0FB0h, ax
                 mov     di, 0C45Bh
 
-loc_2DB05:                              ; CODE XREF: sub_2DA90+81↓j
+loc_2DB05:                              ; CODE XREF: ExamineTarget+81↓j
                 cmp     word ptr [di], 0FFFFh
                 jz      short loc_2DB1D
                 cmp     [di], ax
@@ -54385,31 +54387,31 @@ loc_2DB05:                              ; CODE XREF: sub_2DA90+81↓j
                 jmp     short loc_2DB05
 ; ---------------------------------------------------------------------------
 
-loc_2DB13:                              ; CODE XREF: sub_2DA90+7C↑j
+loc_2DB13:                              ; CODE XREF: ExamineTarget+7C↑j
                 mov     bx, [di+2]
                 mov     ax, [di+4]
                 test    [bx], ax
                 jz      short loc_2DB27
 
-loc_2DB1D:                              ; CODE XREF: sub_2DA90+78↑j
+loc_2DB1D:                              ; CODE XREF: ExamineTarget+78↑j
                 mov     ax, ds:0FB0h
                 call    sub_15512
                 jmp     short loc_2DB32
 ; ---------------------------------------------------------------------------
 
-loc_2DB27:                              ; CODE XREF: sub_2DA90+8B↑j
+loc_2DB27:                              ; CODE XREF: ExamineTarget+8B↑j
                 mov     cx, 1
                 mov     bx, 804Ch
                 call    sub_2971B
 
-loc_2DB32:                              ; CODE XREF: sub_2DA90+53↑j
-                                        ; sub_2DA90+95↑j
+loc_2DB32:                              ; CODE XREF: ExamineTarget+53↑j
+                                        ; ExamineTarget+95↑j
                 mov     word ptr ds:0FC3h, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
                 call    DrawMouseCursorAlt
                 retf
-sub_2DA90       endp
+ExamineTarget   endp
 
 seg131          ends
 
@@ -107591,7 +107593,7 @@ unk_395CE       db    0                 ; DATA XREF: seg116:0B1A↑o
                 db    0
                 db    0
                 db    0
-word_3ACA7      dw 0                    ; DATA XREF: sub_1EB7C+29↑w
+word_3ACA7      dw 0                    ; DATA XREF: TickAilmentDuration+29↑w
                                         ; TickWorldAilmentTimers↑r ...
                 db    0
                 db    0
