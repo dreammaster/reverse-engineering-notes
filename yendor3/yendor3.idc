@@ -9054,6 +9054,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2AE5A);
 	op_hex		(x,	1);
 	create_insn	(0X2AE87);
+	set_name	(0X2AE87,	"CastSpell");
 	create_insn	(x=0X2AE8B);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE91);

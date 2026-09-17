@@ -7487,6 +7487,44 @@ future rounds here may have better return chasing specific open leads
 `sub_1B085`'s new ailment mechanic) rather than continuing to grind
 through the remaining unchecked low-confidence addresses in order.
 
+### 2026-09-16 session update, continued: Chapter 3 review round 8 — found the real CastSpell via its caller, not more diffing
+
+Took a different approach for the two remaining open leads
+(`CastSpell`, `DispatchItemAbilityCommand`): instead of diffing more
+candidate addresses, read yendor2's `HandleGameCommand` to find
+`CastSpell`'s exact dispatch gate — a distinctive 3-comparison shape
+(range check plus a variable-equality exception) — then found the
+identical shape already sitting in yendor3's `HandleGameCommand`
+(renamed back in round 3), pointing at `sub_2AE87`. That address is
+the one BinDiff had separately mislabeled `PartyMassHealAndOverheal`
+at only 0.17 similarity; its own call list independently confirms
+`CastSpell`'s shape too. Renamed. The real yendor3
+`PartyMassHealAndOverheal` is now the open question instead.
+
+The same read fully settles `DispatchItemAbilityCommand`: yendor3's
+`HandleGameCommand` calls `HandleSpecialQuestCommand` (round 6's find)
+at the *exact* old dispatch position `DispatchItemAbilityCommand` used
+to occupy. There's no separate real one hiding elsewhere — Chapter 3
+genuinely replaced that whole command slot, and with it the NUORE/
+magic-ore/heal/kill relic mechanic, with the new 5-artifact quest
+system. Meaningfully firms up the NUORE hypothesis: it's not just that
+one address looks different now, the game command that used to invoke
+NUORE collection doesn't exist anymore.
+
+**Methodological note for future rounds**: when a target function is
+dispatched from an already-identified, structurally distinctive caller
+(a command table, a fixed tail pattern), finding its dispatch gate in
+the *caller* is often faster and more reliable than diffing candidate
+callee bodies one at a time. Tried the same approach for
+`HandleRangedOrCombatAction` (called from `start` gated on
+`g_uiScratchFlags4` bit `0x1000`) but couldn't complete it this round
+-- `g_uiScratchFlags4`'s yendor3 address isn't identified yet (most of
+the yendor2-side global renames haven't been carried over to yendor3
+at all), so this specific search needs that groundwork first.
+
+31 of 77 low-confidence functions now renamed. ~14 remain entirely
+unchecked.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

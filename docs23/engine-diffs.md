@@ -453,6 +453,43 @@ different calling convention) is as strong a red flag as a low
 similarity score — worth checking `CODE XREF` on any deferred function
 before spending time reading its body.
 
+### Round 8: found the real `CastSpell` by structural analysis, and confirmed `DispatchItemAbilityCommand`'s command slot was genuinely replaced
+
+Rather than keep diffing candidate addresses, read yendor2's
+`HandleGameCommand` to find `CastSpell`'s exact dispatch gate shape — a
+distinctive 3-comparison pattern (range-low check, range-high-or-call
+check, then a variable-equality exception: `g_currentActionId` in
+`[0x12,0x1D]` or `== _val46`). The identical shape exists in yendor3's
+already-renamed `HandleGameCommand`: `ds:0x5426` in `[0x34,0x3F]` or
+`== ds:0x5464` → call `sub_2AE87`. That address is the one BinDiff had
+separately (and wrongly, 0.17 similarity) labeled
+`PartyMassHealAndOverheal` — and its own call list independently
+matches `CastSpell`'s self-heal/target-effect shape
+(`RedrawItemDescriptionAndMaterials`/`ConfirmAndSelectPartyTarget`/
+`ConsumeItemChargeResource`/`RedrawAllPartyStatusPanels`/
+`ApplyMapTriggerEffect`), two independent confirmations agreeing.
+Renamed **`CastSpell`**. The real yendor3 `PartyMassHealAndOverheal`
+is now unidentified in turn.
+
+The same `HandleGameCommand` read also settles the
+`DispatchItemAbilityCommand` question for good: its exact old tail
+dispatch position (`call X; call DrawMouseCursorAlt; retf`, the very
+last thing in the function) now calls `HandleSpecialQuestCommand` in
+yendor3, not some other, still-hidden function. **There is no separate
+"real" `DispatchItemAbilityCommand` to find** — Chapter 3 replaced
+that whole command slot (and, with it, the NUORE/magic-ore/heal/kill
+relic-item mechanic) with the new 5-artifact quest mechanic. This is
+meaningfully stronger evidence for the NUORE hypothesis than round 5's
+original (now-corrected) framing: it's not just that one address
+doesn't look like `CollectNuoreCache` anymore — the entire game
+command that used to invoke it is gone.
+
+**Takeaway for future rounds**: when a target function is dispatched
+from an already-identified, structurally-distinctive caller (a
+`HandleGameCommand`-style command table, a fixed tail pattern, etc.),
+finding its exact dispatch gate in the *caller* is often faster and
+more reliable than diffing candidate callee addresses one at a time.
+
 ### New failure mode: BinDiff swapping two related functions with each other
 
 Round 7 found something beyond "matched to something unrelated": two
@@ -540,13 +577,20 @@ dedicated future look rather than a rushed name.
   generic tick-wait duplicate, not that function, see above). The
   address matched to `PollForEscapeKeyOnlyAlt` (0.90) *was* resolved
   this round -- see the correction above.
-- 77 functions at similarity <0.70: 62 checked across rounds 5-7, 30
+- 77 functions at similarity <0.70: 63 checked across rounds 5-8, 31
   renamed to their real (sometimes non-obvious) identity
   (`apply_round5_findings.py`, `apply_round5b_findings.py`,
   `apply_round6_findings.py`, `apply_round6b.py`, `apply_round6c.py`,
-  `apply_round7_findings.py`). ~35 confirmed-bad BinDiff matches found
-  in this tier so far -- this tier's true bad-match rate looks like it
-  may exceed 60-70% once fully reviewed. ~15 low-confidence functions
-  remain unchecked, for future rounds. Treat
+  `apply_round7_findings.py`, `apply_round8_findings.py`). ~35
+  confirmed-bad BinDiff matches found in this tier so far -- this
+  tier's true bad-match rate looks like it may exceed 60-70% once
+  fully reviewed. `CastSpell` and `DispatchItemAbilityCommand` are now
+  both resolved (round 8); `HandleRangedOrCombatAction` and
+  `DrawShadowedTextAlt` remain genuinely missing, and finding them
+  will likely need the same structural-caller-analysis approach rather
+  than more candidate-diffing, since their yendor2 callers use flag
+  globals (`g_uiScratchFlags4`, etc.) not yet identified at their
+  yendor3 addresses. ~14 low-confidence functions remain entirely
+  unchecked, for future rounds. Treat
   *any* match under roughly 0.5 as unverified until read directly --
   this tier's bad-match rate is now higher than good.
