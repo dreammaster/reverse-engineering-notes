@@ -7381,6 +7381,38 @@ higher proportion of bad/spurious matches there based on this
 session's pattern (wrong matches got progressively more common as
 similarity dropped, until this round's 0.90 outlier).
 
+### 2026-09-16 session update, continued: Chapter 3 low-confidence review, round 5
+
+Started the 77-function low-confidence (<0.70) tier, checking 37 and
+renaming 23 across two batches. As expected, the bad-match rate jumped
+sharply: 12 of one 20-function batch (0.33-0.51 similarity) were
+confirmed bad by direct reading — call lists bearing no resemblance,
+several with zero calls on one side. This tier's practical rule is now
+"assume wrong below ~0.5 until proven otherwise," a flip from the
+high/mid tiers where that was the exception.
+
+Found growing (not yet conclusive) evidence for a hypothesis worth its
+own future round: Chapter 3 may have removed or restructured NUORE (the
+manual's third currency alongside gold/ore) as a mechanic.
+`DeductAlchemySpellCosts` lost one of its two resource-deduction calls;
+the address BinDiff suggested for `CollectNuoreCache` turned out to be
+a confirmed-bad match with a totally unrelated (picture/sound/music)
+body; and `DispatchItemAbilityCommand`'s heavily-grown call list no
+longer includes `CollectNuoreCache` or `CollectMagicOreCache` at all.
+Three independent signals pointing the same direction.
+
+Deliberately left 3 large, substantially-restructured functions
+unrenamed rather than guess: `CheckAndPaySpecialItemCost` (+41
+instructions, a new BCD helper `ShiftBCD4LeftNibble` appeared),
+`DispatchItemAbilityCommand` (+70 instructions, more than doubled —
+probably the single highest-value function left for understanding the
+NUORE question), and `CastSpell` (radically different shape hidden
+behind a modest size change — the same 8-call travel/redraw sequence
+repeats 5-6 times, suggesting several now-inlined spell-effect
+branches).
+
+~40 low-confidence functions remain unchecked for future rounds.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

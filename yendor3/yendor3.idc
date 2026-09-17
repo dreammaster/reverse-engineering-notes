@@ -888,6 +888,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1098C);
 	op_hex		(x,	1);
 	create_insn	(0X10999);
+	set_name	(0X10999,	"TickTravelResourceAilments");
 	create_insn	(x=0X1099F);
 	op_hex		(x,	1);
 	create_insn	(x=0X109A5);
@@ -1633,6 +1634,7 @@ static Bytes_0(void) {
 	set_name	(0X12F13,	"IsCellTypeImpassable");
 	create_insn	(0X12F24);
 	create_insn	(0X12F2B);
+	set_name	(0X12F2B,	"ClassifyObstacleAtWorldPosition");
 	create_insn	(x=0X12F59);
 	op_hex		(x,	1);
 	create_insn	(x=0X12F5B);
@@ -2416,6 +2418,7 @@ static Bytes_0(void) {
 	create_insn	(0X15501);
 	set_name	(0X15501,	"TryPlaySoundCue");
 	create_insn	(0X15512);
+	set_name	(0X15512,	"TravelToDestination");
 	create_insn	(x=0X15520);
 	op_hex		(x,	1);
 	create_insn	(0X15530);
@@ -2945,9 +2948,13 @@ static Bytes_0(void) {
 	create_insn	(0X16F1D);
 	create_insn	(0X16F28);
 	create_insn	(0X16F2F);
+	set_name	(0X16F2F,	"ShowConsumableItemTypeLegend");
 	create_insn	(0X1709C);
+	set_name	(0X1709C,	"DrawItemTypeLegendAttributeRow");
 	create_insn	(0X170E7);
+	set_name	(0X170E7,	"DrawItemTypeLegendSkillRow");
 	create_insn	(0X17132);
+	set_name	(0X17132,	"AccumulateTextColumnWidth");
 	set_cmt	(0X17144,	"Clue book 'F5 INVENTORY ITEMS' entry detail screen: message box + DrawClueBookNavBar, then the entry's icon (word_2E546) and two labeled fields, confirmed via message dump to be 'BASE VALUE:' and 'WEIGHT:'.",	0);
 	create_insn	(0X17144);
 	set_name	(0X17144,	"ShowClueBookItemDetail");
@@ -3210,9 +3217,6 @@ static Bytes_0(void) {
 	set_cmt	(0X182E1,	"Draws a label (bx=msg) then, copying a 4-byte field from a caller-supplied record (es:[bx]) into scratch word_5104, the BCD4 value only if nonzero. Same role as DrawLabeledBCDIfNonzero but takes a record pointer instead of a direct value pointer.",	0);
 	create_insn	(0X182E1);
 	set_name	(0X182E1,	"DrawRecordFieldBCDIfNonzero");
-	set_cmt	(0X18324,	"Draws a label then a plain integer (not packed-BCD) via FormatNumber, only if [si] is nonzero. Plain-integer sibling of DrawLabeledBCDIfNonzero. Called from ShowClueBookItemDetail, ShowItemEffectDuration, ShowItemAbilityEffectInfo, and sub_13780.",	0);
-	create_insn	(0X18324);
-	set_name	(0X18324,	"DrawLabeledNumberIfNonzero");
 }
 
 //------------------------------------------------------------------------
@@ -3222,6 +3226,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X18324,	"Draws a label then a plain integer (not packed-BCD) via FormatNumber, only if [si] is nonzero. Plain-integer sibling of DrawLabeledBCDIfNonzero. Called from ShowClueBookItemDetail, ShowItemEffectDuration, ShowItemAbilityEffectInfo, and sub_13780.",	0);
+	create_insn	(0X18324);
+	set_name	(0X18324,	"DrawLabeledNumberIfNonzero");
 	set_cmt	(0X18360,	"Draws one bestiary stat row: label via writeString (caller sets bx=msg), then treats the caller's ax as a monster-record field offset (popped into bx) -- if es:[bx]==0, skips the value (stat not applicable), else draws es:[bx]'s value right-aligned at x=0x113. Called 7 times from ShowClueBookMonsterDetail, one per stat row.",	0);
 	create_insn	(0X18360);
 	set_name	(0X18360,	"DrawClueBookMonsterStatRow");
@@ -3321,6 +3328,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X188A7);
 	op_hex		(x,	1);
 	create_insn	(0X188B2);
+	set_name	(0X188B2,	"RestoreClueBookBackgroundFromEMS");
 	set_cmt	(0X18902,	"Reads the scratch block referenced by `fe` and lodsw's the same ~45 global UI/display-state words back out, in the same order SaveUiStateForClueBook wrote them. Called once from ShowClueBook's cleanup path.",	0);
 	create_insn	(0X18902);
 	set_name	(0X18902,	"RestoreUiStateForClueBook");
@@ -3344,7 +3352,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X18A8E,	"numPara",	0);
 	create_insn	(0X18B92);
+	set_name	(0X18B92,	"SaveClueBookBackgroundToEMS");
 	create_insn	(0X18BE4);
+	set_name	(0X18BE4,	"DrawMessageBox");
 	create_insn	(0X18C53);
 	create_insn	(x=0X18C58);
 	op_hex		(x,	1);
@@ -3950,6 +3960,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1AF19);
 	op_hex		(x,	1);
+	set_name	(0X1AF19,	"TickPartyAilmentIconBar");
 	create_insn	(x=0X1AF22);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AF45);
@@ -4582,6 +4593,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1D286);
 	op_hex		(x,	1);
 	create_insn	(0X1D336);
+	set_name	(0X1D336,	"DeductAlchemySpellCosts");
 	create_insn	(0X1D358);
 	create_insn	(0X1D365);
 	create_insn	(x=0X1D394);
@@ -5071,6 +5083,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1F001);
 	op_hex		(x,	1);
 	create_insn	(0X1F040);
+	set_name	(0X1F040,	"InitGlobals");
 	create_insn	(0X1F1EB);
 	set_name	(0X1F1EB,	"loadWorldDat2");
 	create_insn	(0X1F21C);
@@ -5242,6 +5255,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1FDF2);
 	create_insn	(0X1FDFE);
+	set_name	(0X1FDFE,	"ApplyStatusEffect");
 	create_insn	(x=0X1FE29);
 	op_hex		(x,	1);
 	create_insn	(x=0X1FE35);
@@ -5308,6 +5322,7 @@ static Bytes_1(void) {
 	create_insn	(0X20153);
 	set_name	(0X20153,	"ExtendDungeonCeilingPass");
 	create_insn	(0X201B1);
+	set_name	(0X201B1,	"ExtendDungeonCeilingTexture");
 	create_insn	(x=0X201B2);
 	op_hex		(x,	1);
 	create_insn	(x=0X201DE);
@@ -5402,6 +5417,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2079B,	"Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); skips spawning if this monster type already exists on the level (FindMonsterTypeInLevelPool -- CORRECTION: not a probability roll as first described), then calls SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.",	0);
 	create_insn	(0X2079B);
 	set_name	(0X2079B,	"TryTriggerMonsterEncounterAtCell");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X207A3);
 	op_hex		(x,	1);
 	create_insn	(x=0X207AB);
@@ -5415,15 +5439,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X207E9);
 	op_hex		(x,	1);
 	set_name	(0X207E9,	"BuildDungeonViewportCells");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2081B);
 	create_insn	(0X2082F);
 	create_insn	(0X20843);
@@ -5627,6 +5642,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X21209);
 	op_hex		(x,	1);
 	create_insn	(0X2121F);
+	set_name	(0X2121F,	"RedrawItemDescriptionAndMaterials");
 	create_insn	(x=0X21261);
 	op_hex		(x,	1);
 	set_cmt	(0X21268,	"Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.",	0);
@@ -6295,6 +6311,7 @@ static Bytes_2(void) {
 	set_name	(0X2368E,	"WriteStringWithHighlightedChar");
 	create_insn	(0X236AF);
 	create_insn	(0X236B5);
+	set_name	(0X236B5,	"ShowStatusPanelMessage");
 	create_insn	(x=0X236B6);
 	op_hex		(x,	1);
 	create_insn	(x=0X236C1);
@@ -7178,6 +7195,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2717B);
 	create_insn	(0X27184);
+	set_name	(0X27184,	"DrawResourceCounterPanel");
 	create_insn	(x=0X27185);
 	op_hex		(x,	1);
 	create_insn	(x=0X27190);
@@ -7373,6 +7391,15 @@ static Bytes_2(void) {
 	set_cmt	(0X27ABC,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
 	create_insn	(0X27ABC);
 	set_name	(0X27ABC,	"TestRecordFlag_10C");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X27AC4,	"TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.",	0);
 	create_insn	(0X27AC4);
 	set_name	(0X27AC4,	"TestGlobalFlag");
@@ -7385,15 +7412,6 @@ static Bytes_2(void) {
 	set_cmt	(0X27AFE,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
 	create_insn	(0X27AFE);
 	set_name	(0X27AFE,	"GetGlobalFlagBitAndWord");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X27B27,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).",	0);
 	create_insn	(0X27B27);
 	set_name	(0X27B27,	"GetRecordFlagBitAndWord_CA");
@@ -7562,6 +7580,7 @@ static Bytes_3(void) {
 	create_insn	(0X28247);
 	create_insn	(x=0X2825B);
 	op_hex		(x,	1);
+	set_name	(0X2825B,	"ShowGameClockCommand");
 	create_insn	(x=0X28266);
 	op_hex		(x,	1);
 	set_cmt	(0X28308,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
@@ -7939,6 +7958,7 @@ static Bytes_3(void) {
 	create_insn	(0X296F9);
 	create_insn	(0X29701);
 	create_insn	(0X2971B);
+	set_name	(0X2971B,	"ShowAbilityDescriptionColumn");
 	create_insn	(x=0X2971D);
 	op_hex		(x,	1);
 	create_insn	(x=0X29728);
@@ -9305,6 +9325,7 @@ static Bytes_3(void) {
 	set_name	(0X2BB7C,	"RunCharacterCreation");
 	create_insn	(0X2BBB5);
 	create_insn	(0X2BBD3);
+	set_name	(0X2BBD3,	"FinalizeCharacterCreation");
 	create_insn	(x=0X2BBE4);
 	op_hex		(x,	1);
 	create_insn	(x=0X2BBEA);
@@ -9319,11 +9340,13 @@ static Bytes_3(void) {
 	create_insn	(x=0X2BC5F);
 	op_hex		(x,	1);
 	create_insn	(0X2BC65);
+	set_name	(0X2BC65,	"ClearOffscreenBuffer");
 	create_insn	(0X2BC75);
 	create_insn	(0X2BCD1);
 	set_name	(0X2BCD1,	"PlayCharacterCreationOpeningSequence");
 	create_insn	(0X2BD4A);
 	create_insn	(0X2BDB0);
+	set_name	(0X2BDB0,	"PlayCharacterCreationIntroAnimation");
 	create_insn	(x=0X2BEE0);
 	op_hex		(x,	1);
 	create_insn	(0X2BF44);

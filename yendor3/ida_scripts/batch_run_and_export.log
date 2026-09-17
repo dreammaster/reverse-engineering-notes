@@ -274,3 +274,62 @@ item_size: 1
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round5_findings.py']
+[*] reading apply_round5_findings.py
+[*] executing apply_round5_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2121f  'sub_2121F' -> 'RedrawItemDescriptionAndMaterials': ok
+0x201b1  'sub_201B1' -> 'ExtendDungeonCeilingTexture': ok
+0x27184  'sub_27184' -> 'DrawResourceCounterPanel': ok
+0x2971b  'sub_2971B' -> 'ShowAbilityDescriptionColumn': ok
+0x2bc65  'sub_2BC65' -> 'ClearOffscreenBuffer': ok
+0x188b2  'sub_188B2' -> 'RestoreClueBookBackgroundFromEMS': ok
+0x16f2f  'sub_16F2F' -> 'ShowConsumableItemTypeLegend': ok
+0x2825b  'sub_2825B' -> 'ShowGameClockCommand': ok
+0x1709c  'sub_1709C' -> 'DrawItemTypeLegendAttributeRow': ok
+0x170e7  'sub_170E7' -> 'DrawItemTypeLegendSkillRow': ok
+0x1f040  'sub_1F040' -> 'InitGlobals': ok
+0x18be4  'sub_18BE4' -> 'DrawMessageBox': ok
+0x1d336  'sub_1D336' -> 'DeductAlchemySpellCosts': ok
+0x10999  'sub_10999' -> 'TickTravelResourceAilments': ok
+0x18b92  'sub_18B92' -> 'SaveClueBookBackgroundToEMS': ok
+0x15512  'sub_15512' -> 'TravelToDestination': ok
+0x2bbd3  'sub_2BBD3' -> 'FinalizeCharacterCreation': ok
+0x17132  'sub_17132' -> 'AccumulateTextColumnWidth': ok
+----- end target script output -----
+[*] finished executing apply_round5_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118635
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round5b_findings.py']
+[*] reading apply_round5b_findings.py
+[*] executing apply_round5b_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x236b5  'sub_236B5' -> 'ShowStatusPanelMessage': ok
+0x12f2b  'sub_12F2B' -> 'ClassifyObstacleAtWorldPosition': ok
+0x1fdfe  'sub_1FDFE' -> 'ApplyStatusEffect': ok
+0x1af19  'sub_1AF19' -> 'TickPartyAilmentIconBar': ok
+0x2bdb0  'sub_2BDB0' -> 'PlayCharacterCreationIntroAnimation': ok
+----- end target script output -----
+[*] finished executing apply_round5b_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118637
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0

@@ -351,6 +351,79 @@ the same order, with 4 new calls prepended: `TestGlobalFlag`,
 Plausibly a new "you need a specific item to examine/search this
 target" requirement check. Not traced further.
 
+### Starting the low-confidence tier: bad matches are now the majority, not the exception
+
+Round 5 checked ~37 of the 77 low-confidence (<0.70) functions. Of a
+20-function batch in the 0.33-0.51 range, **12 were confirmed bad**
+(call lists bearing no resemblance at all, several with zero calls on
+one side and several on the other, or vice versa) — a much higher
+proportion than the high/mid tiers. Confirmed bad, left unrenamed:
+`IsPairedValueMatch`, `SetPaletteToWhite`, `CollectNuoreCache`,
+`InstantKillActiveMonster`, `PlaySoundSequenceGH`,
+`TriggerPaletteRange16FadeUpAlt`, `ShowVisionAtLocation`,
+`ClearVideoBackBufferLowerRegion`, `StepPaletteRange16FadeDown`,
+`StepPaletteRange16FadeDownAlt`, `TriggerPaletteRange16FadeDownAlt`,
+`PlayTitleScreenSequence`. `RestoreWipeEffectPixel` and
+`PlayCreditsFrameAnimation` are also suspect (near-empty or
+heavily-contaminated call lists) but not conclusively wrong.
+**Practical upshot for future rounds**: below ~0.5 similarity, assume
+the match is wrong until a direct read says otherwise — it's now the
+more likely outcome, not the exception.
+
+### Growing evidence for the "NUORE removed/restructured" hypothesis
+
+Three independent data points now point the same direction:
+- `DeductAlchemySpellCosts` lost one of its two
+  `SubtractFromBCDCounter` calls (was deducting 2 resources per spell
+  cast, now 1).
+- The address matched to `CollectNuoreCache` (0.44, confirmed bad
+  above) doesn't resemble a resource-collection function at all
+  anymore — it plays a picture/sound/music sequence instead. If
+  that's really what replaced the old `CollectNuoreCache` call site,
+  NUORE collection itself may have been removed or replaced by a
+  different mechanic (a triggered event/cutscene?).
+- `DispatchItemAbilityCommand`'s call list (see below) no longer
+  includes `CollectNuoreCache` or `CollectMagicOreCache` at all, while
+  growing by 70 instructions overall.
+
+Still a hypothesis, not confirmed — but three unrelated functions all
+pointing at NUORE-related code disappearing or changing shape is
+enough to prioritize a dedicated round on this specifically: find
+every remaining `CollectNuoreCache`/`AddToBCDCounter`-with-NUORE-offset
+call site in yendor3 and see what actually replaced each one.
+
+### Deliberately not renamed: 3 functions too large/changed to trust a quick read
+
+- **`CheckAndPaySpecialItemCost`** (0.65): grew from 45 to 86
+  instructions. New calls include `RemoveMultiStatEffect`,
+  `RecomputeEquipmentStatBonuses`, and a brand-new BCD helper,
+  `ShiftBCD4LeftNibble` (called twice) — not part of the already-named
+  BCD family (`bcd4.c`'s reimplementation target list may need to grow
+  by one). Reads like a new "pay with an enchanted item, removing its
+  stat bonus" payment option, but not confirmed.
+- **`DispatchItemAbilityCommand`** (0.60): grew from 69 to 139
+  instructions — more than doubled. Several yendor2 branches
+  (`ShowVisionAtLocation`, `UseLocationBoundPotion`,
+  `CheckQuestItemsCompleted`, `CollectNuoreCache`,
+  `CollectMagicOreCache`, `PartyMassHealAndOverheal`,
+  `InstantKillActiveMonster`) are entirely absent from yendor3's call
+  list, replaced by a much longer sequence built around 5 repeated
+  `IsItemRangeAvailable`+`ConsumeItemChargeResource` pairs and several
+  `TestGlobalFlag`/`SetGlobalFlag` calls. This is probably the single
+  highest-value function left to fully understand, given its
+  connection to the NUORE hypothesis above — worth a dedicated round.
+- **`CastSpell`** (0.36): a 202-line function became 216 lines with a
+  radically different shape — the same 8-call sequence
+  (`TickTravelResourceAilments`/`RefreshDungeonMapWindow`/
+  `RevealCellsAroundPlayer`/`RestoreFullScreenFromEMS`/
+  `RedrawDungeonScreen`/`BuildMinimapTileData`/`DrawMinimap`/
+  `DrawMouseCursor`) repeats 5-6 times almost verbatim, suggesting
+  several spell-effect branches (teleport home? recall? multiple
+  destination options?) each inline what used to be shared
+  travel/redraw logic rather than calling a common helper. Modest
+  overall size change hides a much bigger shape change — needs a real
+  read, not a call-list skim.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
@@ -371,11 +444,13 @@ target" requirement check. Not traced further.
   generic tick-wait duplicate, not that function, see above). The
   address matched to `PollForEscapeKeyOnlyAlt` (0.90) *was* resolved
   this round -- see the correction above.
-- 77 functions at similarity <0.70: not yet reviewed. Many of the
-  lowest scores (well under 0.3) may not be genuine matches at all —
-  treat the suggested yendor2 name as a weak hint, not a starting
-  assumption, when reviewing these. This session already found 4
-  confirmed-bad matches at similarities 0.32, 0.28 (`ParseCommandLineSwitches`,
-  used above to explain the `ShowClueBook` noise), 0.09, and 0.08, plus
-  the earlier 0.04/0.01 ones from rounds 1-2 -- treat *any* match under
-  roughly 0.5 as unverified until read directly.
+- 77 functions at similarity <0.70: 37 checked in round 5, 23 renamed
+  (`apply_round5_findings.py`, `apply_round5b_findings.py`). 12 more
+  confirmed-bad matches found this round alone (see above), bringing
+  the session total to 16-ish confirmed-bad BinDiff labels. 3 large,
+  substantially-changed functions deliberately left unrenamed pending
+  a dedicated read (`CheckAndPaySpecialItemCost`,
+  `DispatchItemAbilityCommand`, `CastSpell` -- see above). ~40 low-
+  confidence functions remain unchecked, for future rounds. Treat
+  *any* match under roughly 0.5 as unverified until read directly --
+  this tier's bad-match rate is now higher than good.
