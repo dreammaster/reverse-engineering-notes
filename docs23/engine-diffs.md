@@ -453,6 +453,73 @@ different calling convention) is as strong a red flag as a low
 similarity score — worth checking `CODE XREF` on any deferred function
 before spending time reading its body.
 
+### New failure mode: BinDiff swapping two related functions with each other
+
+Round 7 found something beyond "matched to something unrelated": two
+cases where BinDiff appears to have **crossed the wires between two
+real, related functions** rather than picking a random wrong one:
+- The address labeled `HandleRangedOrCombatAction` (0.26 similarity)
+  is actually `RestPartyAndAdvanceClock` -- its call sequence matches
+  yendor2's `RestPartyAndAdvanceClock` almost verbatim
+  (`ClearStatusPanelIfDirty`/.../`MaybeForceTickWorldAilments`/
+  `ProcessLevelMonsters`/`ResetDailyAbilityCharges`/.../
+  `ApplyRestEffectsToCharacter`/.../`TickTravelResourceAilments`),
+  nothing like the combat/`AnimateProjectileStep` logic
+  `HandleRangedOrCombatAction` should have. Corrected. The real
+  yendor3 `HandleRangedOrCombatAction` is still unidentified -- not
+  necessarily at the address BinDiff originally called
+  `RestPartyAndAdvanceClock` either; that wasn't checked.
+- The address labeled `DrawShadowedTextAlt` (0.04 similarity) is
+  actually `RunCharacterDetailOverlay` -- its call sequence matches
+  yendor2's version call-for-call in order, plus one new
+  `ReassignPartySlotReference` call. Corrected. The real yendor3
+  `DrawShadowedTextAlt`, and the real identity of the address BinDiff
+  mislabeled `RunCharacterDetailOverlay` (a much smaller function
+  involving `LoadItemCatalogRecord` and file I/O), are both still
+  unknown.
+
+Also confirmed as a real match this round: **`ClearPartySlotReferenceOnDamage`**
+gained exactly the call its own name always implied it needed
+(`ReassignPartySlotReference`), even though yendor2's version had no
+sub-calls at all (fully inlined) -- a clean example of the
+"a function with zero calls doesn't necessarily mean a bad match"
+exception to the usual heuristic.
+
+**Practical implication**: when a function's call-list diff looks
+totally unrelated, it's worth a quick check of whether *another*
+low-confidence match nearby (especially one with a similarly wrong-
+looking diff) might actually be describing this function's real body --
+not just assuming both are independently bad.
+
+### Confirmed bad in this round's large batch (not renamed)
+
+`ShowIntroPicture`, `CheckQuestItemsCompleted`, `EnforceDemoBoundary`,
+`ShowClueBookHelpScreen`, `PartyMassHealAndOverheal`,
+`CollectMagicOreCache`, `DrawShadowedText`, `RunPaletteRange16FadeDown`,
+`RunPaletteRange16FadeDownAlt`, `TickPerceptionGatedAilmentSlot`
+(see below), `ToggleMapViewMode`, `PlayStudioCreditsIntro`,
+`DebugTeleportToCoordinates`, `PlayClueBookOpenAnimation`,
+`UseLocationBoundPotion`, `DebugSetFloorTileByNumber`, `ShowWorldMap` --
+17 more confirmed-bad matches, on top of the ~18 from round 5. This
+tier's true bad-match rate is looking like it may exceed 60-70%
+overall once fully reviewed.
+
+### Open lead: `TickPartyAilmentIconBar`'s two worker functions
+
+While re-verifying `TickPartyAilmentIconBar` (confirmed still correctly
+named -- its real body is a small gate/counter wrapper calling two
+worker sub-functions, `sub_1AF5C` on the normal-frequency path and
+`sub_1B085` on a separate slow/random path), found that the address
+BinDiff separately (and wrongly, 0.01 similarity) labeled
+`TickPerceptionGatedAilmentSlot` is actually `sub_1AF5C` -- the normal-
+path worker, which itself calls the real (already-named)
+`TickDiseasePoisonSickAilmentSlot` and `TickCurseHexJinxAilmentSlot`.
+Neither `sub_1AF5C` nor `sub_1B085` renamed yet: `sub_1B085` in
+particular looks like genuinely new logic (three new
+`PrepareTrapEffectSlots` calls with ids `0x2E`/`0x2F`/`0x30` not seen
+elsewhere, a random 1-3 roll, and a new helper `sub_1B10C`) worth a
+dedicated future look rather than a rushed name.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
@@ -473,14 +540,13 @@ before spending time reading its body.
   generic tick-wait duplicate, not that function, see above). The
   address matched to `PollForEscapeKeyOnlyAlt` (0.90) *was* resolved
   this round -- see the correction above.
-- 77 functions at similarity <0.70: 40 checked across rounds 5-6, 26
+- 77 functions at similarity <0.70: 62 checked across rounds 5-7, 30
   renamed to their real (sometimes non-obvious) identity
   (`apply_round5_findings.py`, `apply_round5b_findings.py`,
-  `apply_round6_findings.py`, `apply_round6b.py`, `apply_round6c.py`).
-  18 confirmed-bad BinDiff matches found in this tier so far (12 from
-  round 5, 2 more from round 6's deep dives, plus others from earlier
-  spot-checks) -- roughly 20 confirmed-bad labels across the whole
-  session. ~37 low-confidence functions remain unchecked, for future
-  rounds. Treat
+  `apply_round6_findings.py`, `apply_round6b.py`, `apply_round6c.py`,
+  `apply_round7_findings.py`). ~35 confirmed-bad BinDiff matches found
+  in this tier so far -- this tier's true bad-match rate looks like it
+  may exceed 60-70% once fully reviewed. ~15 low-confidence functions
+  remain unchecked, for future rounds. Treat
   *any* match under roughly 0.5 as unverified until read directly --
   this tier's bad-match rate is now higher than good.

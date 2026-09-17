@@ -390,3 +390,25 @@ item_size: 1
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round7_findings.py']
+[*] reading apply_round7_findings.py
+[*] executing apply_round7_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x1d358  'sub_1D358' -> 'RestPartyAndAdvanceClock': ok
+0x1d7f2  'sub_1D7F2' -> 'IsRestingAllowedHere': ok
+0x237ba  'sub_237BA' -> 'RunCharacterDetailOverlay': ok
+0x136f6  'sub_136F6' -> 'ClearPartySlotReferenceOnDamage': ok
+----- end target script output -----
+[*] finished executing apply_round7_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118638
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0

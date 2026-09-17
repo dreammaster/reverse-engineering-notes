@@ -7454,6 +7454,39 @@ shape (different caller/calling convention) is as strong a red flag as
 a low similarity score, worth checking before investing time reading a
 function's body.
 
+### 2026-09-16 session update, continued: Chapter 3 review round 7 -- BinDiff swapping related functions
+
+Checked 22 more low-confidence functions, mostly to disappointing
+effect (17 more confirmed-bad matches, continuing the low tier's poor
+hit rate) but with two genuinely useful finds: BinDiff had **crossed
+the wires between two related functions** rather than just matching
+one to something unrelated, in two separate cases. The address labeled
+`HandleRangedOrCombatAction` is actually `RestPartyAndAdvanceClock`
+(confirmed by an almost-verbatim call sequence match, including
+finding the real `IsRestingAllowedHere` as its first call -- replacing
+an earlier, separately-wrong low-confidence match for that name). The
+address labeled `DrawShadowedTextAlt` is actually
+`RunCharacterDetailOverlay` (matched call-for-call in order). Both
+corrected; the real yendor3 identities of `HandleRangedOrCombatAction`
+and `DrawShadowedTextAlt` are both still unknown, likely hiding
+elsewhere in the unchecked remainder.
+
+Also confirmed `ClearPartySlotReferenceOnDamage` as a real match (a
+function with zero yendor2 calls isn't automatically a bad match --
+it gained exactly the `ReassignPartySlotReference` call its own name
+always implied it needed), and traced `TickPartyAilmentIconBar`'s
+internal structure enough to find its two worker sub-functions, one of
+which (`sub_1B085`) looks like genuinely new slow-path/random-effect
+ailment logic worth a dedicated future round.
+
+30 of 77 low-confidence functions now renamed, ~35 confirmed bad, ~15
+still unchecked. Given how poor this tier's hit rate has become,
+future rounds here may have better return chasing specific open leads
+(the real `CastSpell`, `DispatchItemAbilityCommand`,
+`HandleRangedOrCombatAction`, `DrawShadowedTextAlt`, and
+`sub_1B085`'s new ailment mechanic) rather than continuing to grind
+through the remaining unchecked low-confidence addresses in order.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

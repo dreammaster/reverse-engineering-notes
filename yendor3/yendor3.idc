@@ -1850,6 +1850,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X136CB);
 	create_insn	(0X136F6);
+	set_name	(0X136F6,	"ClearPartySlotReferenceOnDamage");
 	set_cmt	(0X13712,	"SpendMaterialCounterClamped(ax=BCD counter addr, bx=ptr to 4-byte BCD amount): if counter > amount, SubBCD4 normally; otherwise the counter can't cover it -- zeroed outright (never negative), then sub_2704C is called (presumably a 'resource depleted' hook).",	0);
 	create_insn	(0X13712);
 	set_name	(0X13712,	"SpendMaterialCounterClamped");
@@ -4598,6 +4599,7 @@ static Bytes_1(void) {
 	create_insn	(0X1D336);
 	set_name	(0X1D336,	"DeductAlchemySpellCosts");
 	create_insn	(0X1D358);
+	set_name	(0X1D358,	"RestPartyAndAdvanceClock");
 	create_insn	(0X1D365);
 	create_insn	(x=0X1D394);
 	op_hex		(x,	1);
@@ -4658,6 +4660,7 @@ static Bytes_1(void) {
 	create_insn	(0X1D76B);
 	set_name	(0X1D76B,	"RefreshMultiStatEffectsAlt");
 	create_insn	(0X1D7F2);
+	set_name	(0X1D7F2,	"IsRestingAllowedHere");
 	create_insn	(x=0X1D7F8);
 	op_hex		(x,	1);
 	create_insn	(0X1D807);
@@ -6338,6 +6341,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X23797);
 	op_hex		(x,	1);
 	create_insn	(0X237BA);
+	set_name	(0X237BA,	"RunCharacterDetailOverlay");
 	create_insn	(0X238B9);
 	create_insn	(0X23945);
 	create_insn	(0X23955);

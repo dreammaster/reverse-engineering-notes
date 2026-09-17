@@ -769,7 +769,7 @@ loc_1062F:                              ; CODE XREF: seg000:0628↑j
 ; START OF FUNCTION CHUNK FOR start
 
 loc_10632:                              ; CODE XREF: start+306↑j
-                call    sub_1D358
+                call    RestPartyAndAdvanceClock
                 cmp     byte_2EC4A, 0FFh
                 jnz     short loc_10641
                 jmp     loc_106CC
@@ -1118,7 +1118,7 @@ seg002          segment byte public 'CODE' use16
 
 
 RunDungeonGameLoop proc far             ; CODE XREF: start+5E↑P
-                                        ; sub_1D358+223↓P
+                                        ; RestPartyAndAdvanceClock+223↓P
                 and     word ptr ds:536Eh, 0FFDFh
                 call    ResetCombatRoundScratchState
                 mov     byte ptr ds:0E9Ah, 0
@@ -6469,7 +6469,8 @@ HandleIconBarItemExpiry endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_136F6       proc near               ; CODE XREF: DeductHPClamped+14↓p
+ClearPartySlotReferenceOnDamage proc near
+                                        ; CODE XREF: DeductHPClamped+14↓p
                                         ; ApplyEffectCost+6B↓p
                 push    bx
                 push    dx
@@ -6486,7 +6487,7 @@ sub_136F6       proc near               ; CODE XREF: DeductHPClamped+14↓p
                 pop     dx
                 pop     bx
                 retn
-sub_136F6       endp
+ClearPartySlotReferenceOnDamage endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6526,7 +6527,7 @@ DeductHPClamped proc near               ; CODE XREF: ApplyEffectCost+F↓p
                 mov     word ptr [bx+52h], 0
                 or      word ptr [bx+1Ch], 40h
                 mov     ax, bx
-                call    sub_136F6
+                call    ClearPartySlotReferenceOnDamage
                 call    UpdatePartyAverageStatTiers
 
 locret_13753:                           ; CODE XREF: DeductHPClamped+7↑j
@@ -6605,7 +6606,7 @@ loc_137B8:                              ; CODE XREF: ApplyEffectCost+12↑j
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_137D6
                 mov     ax, bx
-                call    sub_136F6
+                call    ClearPartySlotReferenceOnDamage
                 call    UpdatePartyAverageStatTiers
 
 loc_137D6:                              ; CODE XREF: ApplyEffectCost+5A↑j
@@ -9591,7 +9592,7 @@ seg019          segment byte public 'CODE' use16
 
 
 PlaceItemOnGround proc far              ; CODE XREF: TryDropHeldItem+55↓P
-                                        ; sub_237BA+2F9↓P
+                                        ; RunCharacterDetailOverlay+2F9↓P
                 push    cx              ; Places the held item on the ground; if it's a container ([+0xC] bit 0x2000), recursively processes its 8-slot contents the same way via sub_1A34C -- persists a dropped container's full contents. Called from TryDropHeldItem.
                 push    dx
                 push    si
@@ -19154,7 +19155,7 @@ ConvertWordToBCD4 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-UnpackBCD2ToWord proc far               ; CODE XREF: sub_1D358:loc_1D5D0↓P
+UnpackBCD2ToWord proc far               ; CODE XREF: RestPartyAndAdvanceClock:loc_1D5D0↓P
                 push    di              ; Unpacks 4 packed-BCD digits from [si+2]/[si+3] (2 bytes) into their decimal value (high([si+2])*1000 + low([si+2])*100 + high([si+3])*10 + low([si+3])). Distinct from the 4-byte BCD4 bignum library used elsewhere. Called once from ComputeAlchemyRefinementYield.
                 push    dx
                 push    cx
@@ -19533,7 +19534,7 @@ ShiftBCD4RightNibble endp
 
 
 SubtractFromBCDCounter proc far         ; CODE XREF: DeductAlchemySpellCosts+1A↓P
-                                        ; sub_1D358+26B↓P
+                                        ; RestPartyAndAdvanceClock+26B↓P
                 push    cx              ; SubtractFromBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then SubBCD4 from the counter at si.
                 push    dx
                 push    di
@@ -24168,7 +24169,7 @@ seg057          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D358       proc far                ; CODE XREF: start:loc_10632↑P
+RestPartyAndAdvanceClock proc far       ; CODE XREF: start:loc_10632↑P
                                         ; ApplyEncodedItemEffect+672↓P
                 mov     byte ptr ds:0E9Ah, 0
                 cmp     word ptr ds:43ECh, 0
@@ -24176,9 +24177,9 @@ sub_1D358       proc far                ; CODE XREF: start:loc_10632↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D365:                              ; CODE XREF: sub_1D358+A↑j
+loc_1D365:                              ; CODE XREF: RestPartyAndAdvanceClock+A↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_1D7F2
+                call    IsRestingAllowedHere
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_1D3CB
                 mov     bx, 80D2h
@@ -24192,8 +24193,8 @@ loc_1D365:                              ; CODE XREF: sub_1D358+A↑j
                 mov     bx, 80D2h
                 mov     cx, 2
 
-loc_1D394:                              ; CODE XREF: sub_1D358+27↑j
-                                        ; sub_1D358+34↑j
+loc_1D394:                              ; CODE XREF: RestPartyAndAdvanceClock+27↑j
+                                        ; RestPartyAndAdvanceClock+34↑j
                 or      word ptr ds:536Ah, 100h
                 mov     word ptr ds:0E28h, 1
                 mov     ax, ds:53CCh
@@ -24208,7 +24209,7 @@ loc_1D394:                              ; CODE XREF: sub_1D358+27↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D3CB:                              ; CODE XREF: sub_1D358+1A↑j
+loc_1D3CB:                              ; CODE XREF: RestPartyAndAdvanceClock+1A↑j
                 test    word ptr ds:536Ah, 2
                 jnz     short loc_1D445
                 call    RestoreDialogAreaFromEMS
@@ -24219,7 +24220,7 @@ loc_1D3CB:                              ; CODE XREF: sub_1D358+1A↑j
                 mov     ax, 1
                 call    TriggerSoundEvent
 
-loc_1D3F2:                              ; CODE XREF: sub_1D358+90↑j
+loc_1D3F2:                              ; CODE XREF: RestPartyAndAdvanceClock+90↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word ptr ds:0E24h, 115h
                 mov     word ptr ds:0E26h, 43h ; 'C'
@@ -24240,8 +24241,8 @@ loc_1D3F2:                              ; CODE XREF: sub_1D358+90↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D445:                              ; CODE XREF: sub_1D358+79↑j
-                                        ; sub_1D358+D8↑j
+loc_1D445:                              ; CODE XREF: RestPartyAndAdvanceClock+79↑j
+                                        ; RestPartyAndAdvanceClock+D8↑j
                 call    TriggerFullPaletteFadeOut
                 call    MaybeForceTickWorldAilments
                 and     word ptr ds:540Ch, 1FFFh
@@ -24254,8 +24255,8 @@ loc_1D445:                              ; CODE XREF: sub_1D358+79↑j
                 jmp     short loc_1D490
 ; ---------------------------------------------------------------------------
 
-loc_1D474:                              ; CODE XREF: sub_1D358+10C↑j
-                                        ; sub_1D358+132↓j
+loc_1D474:                              ; CODE XREF: RestPartyAndAdvanceClock+10C↑j
+                                        ; RestPartyAndAdvanceClock+132↓j
                 call    ProcessLevelMonsters
                 test    word ptr ds:5370h, 1000h
                 jnz     short loc_1D490
@@ -24264,8 +24265,8 @@ loc_1D474:                              ; CODE XREF: sub_1D358+10C↑j
                 loop    loc_1D474
                 dec     word ptr ds:53F0h
 
-loc_1D490:                              ; CODE XREF: sub_1D358+11A↑j
-                                        ; sub_1D358+127↑j
+loc_1D490:                              ; CODE XREF: RestPartyAndAdvanceClock+11A↑j
+                                        ; RestPartyAndAdvanceClock+127↑j
                 cmp     word ptr ds:0CF7Fh, 59Fh
                 jl      short loc_1D4D6
                 sub     word ptr ds:0CF7Fh, 5A0h
@@ -24273,7 +24274,7 @@ loc_1D490:                              ; CODE XREF: sub_1D358+11A↑j
                 jnz     short loc_1D4AB
                 mov     word ptr ds:0CF7Fh, 1
 
-loc_1D4AB:                              ; CODE XREF: sub_1D358+14B↑j
+loc_1D4AB:                              ; CODE XREF: RestPartyAndAdvanceClock+14B↑j
                 and     word ptr ds:0CF35h, 0FFFh
                 call    ResetDailyAbilityCharges
                 inc     word ptr ds:0CF79h
@@ -24285,15 +24286,15 @@ loc_1D4AB:                              ; CODE XREF: sub_1D358+14B↑j
                 jnz     short loc_1D4D6
                 inc     word ptr ds:0CF7Dh
 
-loc_1D4D6:                              ; CODE XREF: sub_1D358+13E↑j
-                                        ; sub_1D358+167↑j ...
+loc_1D4D6:                              ; CODE XREF: RestPartyAndAdvanceClock+13E↑j
+                                        ; RestPartyAndAdvanceClock+167↑j ...
                 call    UpdateScrollingBannerWindow
                 test    word ptr ds:5370h, 1000h
                 jnz     short loc_1D4E6
                 jmp     loc_1D581
 ; ---------------------------------------------------------------------------
 
-loc_1D4E6:                              ; CODE XREF: sub_1D358+189↑j
+loc_1D4E6:                              ; CODE XREF: RestPartyAndAdvanceClock+189↑j
                 or      word ptr ds:536Ah, 100h
                 mov     word ptr ds:0E28h, 0
                 mov     ax, ds:53CCh
@@ -24321,13 +24322,13 @@ loc_1D4E6:                              ; CODE XREF: sub_1D358+189↑j
                 call    sub_2566C
                 call    TickTravelResourceAilments
 
-loc_1D55D:                              ; CODE XREF: sub_1D358+221↓j
+loc_1D55D:                              ; CODE XREF: RestPartyAndAdvanceClock+221↓j
                 test    word ptr ds:536Ah, 400h
                 jz      short loc_1D56F
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
 
-loc_1D56F:                              ; CODE XREF: sub_1D358+20B↑j
+loc_1D56F:                              ; CODE XREF: RestPartyAndAdvanceClock+20B↑j
                 call    PollKeyboardInput
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_1D55D
@@ -24335,13 +24336,13 @@ loc_1D56F:                              ; CODE XREF: sub_1D358+20B↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D581:                              ; CODE XREF: sub_1D358+18B↑j
+loc_1D581:                              ; CODE XREF: RestPartyAndAdvanceClock+18B↑j
                 mov     word ptr ds:441Ah, 0
                 mov     word ptr ds:0FD7h, 0
                 mov     cx, 4
                 mov     si, 0D0C9h
 
-loc_1D593:                              ; CODE XREF: sub_1D358+256↓j
+loc_1D593:                              ; CODE XREF: RestPartyAndAdvanceClock+256↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1D5B0
@@ -24351,11 +24352,11 @@ loc_1D593:                              ; CODE XREF: sub_1D358+256↓j
                 jnz     short loc_1D5AB
                 inc     word ptr ds:441Ah
 
-loc_1D5AB:                              ; CODE XREF: sub_1D358+24D↑j
+loc_1D5AB:                              ; CODE XREF: RestPartyAndAdvanceClock+24D↑j
                 add     si, 2
                 loop    loc_1D593
 
-loc_1D5B0:                              ; CODE XREF: sub_1D358+23F↑j
+loc_1D5B0:                              ; CODE XREF: RestPartyAndAdvanceClock+23F↑j
                 mov     ax, ds:441Ah
                 mov     ds:53EEh, ax
                 mov     si, 0CF95h
@@ -24368,13 +24369,13 @@ loc_1D5B0:                              ; CODE XREF: sub_1D358+23F↑j
                 jmp     short loc_1D5E4
 ; ---------------------------------------------------------------------------
 
-loc_1D5D0:                              ; CODE XREF: sub_1D358+266↑j
+loc_1D5D0:                              ; CODE XREF: RestPartyAndAdvanceClock+266↑j
                 call    UnpackBCD2ToWord
                 mov     ds:0FD7h, ax
                 mov     word ptr ds:0CF95h, 0
                 mov     word ptr ds:0CF97h, 0
 
-loc_1D5E4:                              ; CODE XREF: sub_1D358+276↑j
+loc_1D5E4:                              ; CODE XREF: RestPartyAndAdvanceClock+276↑j
                 xor     dx, dx
                 mov     ax, 64h ; 'd'
                 div     word ptr ds:441Ah
@@ -24383,7 +24384,7 @@ loc_1D5E4:                              ; CODE XREF: sub_1D358+276↑j
                 mov     cx, 4
                 mov     si, 0D0C9h
 
-loc_1D5FA:                              ; CODE XREF: sub_1D358+2AF↓j
+loc_1D5FA:                              ; CODE XREF: RestPartyAndAdvanceClock+2AF↓j
                 mov     ax, [si]
                 cmp     ax, 0
                 jz      short loc_1D609
@@ -24391,7 +24392,7 @@ loc_1D5FA:                              ; CODE XREF: sub_1D358+2AF↓j
                 add     si, 2
                 loop    loc_1D5FA
 
-loc_1D609:                              ; CODE XREF: sub_1D358+2A7↑j
+loc_1D609:                              ; CODE XREF: RestPartyAndAdvanceClock+2A7↑j
                 mov     word ptr ds:0FC3h, 1
                 call    DrawFullScreenPictureAndCacheToEMS
                 call    RedrawAllPartyStatusPanelsAlt
@@ -24426,13 +24427,13 @@ loc_1D609:                              ; CODE XREF: sub_1D358+2A7↑j
                 call    sub_2566C
                 call    TickTravelResourceAilments
                 retf
-sub_1D358       endp
+RestPartyAndAdvanceClock endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-ApplyRestEffectsToCharacter proc near   ; CODE XREF: sub_1D358+2A9↑p
+ApplyRestEffectsToCharacter proc near   ; CODE XREF: RestPartyAndAdvanceClock+2A9↑p
                 push    cx
                 push    si
                 push    di
@@ -24605,7 +24606,7 @@ RefreshMultiStatEffectsAlt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D7F2       proc near               ; CODE XREF: sub_1D358+12↑p
+IsRestingAllowedHere proc near          ; CODE XREF: RestPartyAndAdvanceClock+12↑p
                 mov     word ptr ds:53E0h, 0
                 test    word ptr ds:0CEF9h, 1
                 jz      short loc_1D807
@@ -24613,7 +24614,7 @@ sub_1D7F2       proc near               ; CODE XREF: sub_1D358+12↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1D807:                              ; CODE XREF: sub_1D7F2+C↑j
+loc_1D807:                              ; CODE XREF: IsRestingAllowedHere+C↑j
                 push    es
                 push    si
                 mov     es, word ptr ds:0FFFh
@@ -24623,11 +24624,11 @@ loc_1D807:                              ; CODE XREF: sub_1D7F2+C↑j
                 jz      short loc_1D823
                 mov     word ptr ds:53E0h, 4
 
-loc_1D823:                              ; CODE XREF: sub_1D7F2+29↑j
+loc_1D823:                              ; CODE XREF: IsRestingAllowedHere+29↑j
                 pop     si
                 pop     es
                 retn
-sub_1D7F2       endp
+IsRestingAllowedHere endp
 
 seg057          ends
 
@@ -26248,7 +26249,7 @@ RestoreInt1cVector endp
 
 
 MaybeForceTickWorldAilments proc far    ; CODE XREF: ApplyMapTriggerEffect+D6↑P
-                                        ; sub_1D358+F2↑P
+                                        ; RestPartyAndAdvanceClock+F2↑P
                 test    word_331BC, 800h ; If word_3295A bit 0x800 is set, resets cs:word_1F984 to 0x270F (9999) and calls TickWorldAilments; no-op otherwise. Called from ApplyMapTriggerEffect and RestPartyAndAdvanceClock.
                 jnz     short loc_1EA13
                 retf
@@ -26265,7 +26266,7 @@ MaybeForceTickWorldAilments endp
 
 
 UpdateScrollingBannerWindow proc far    ; CODE XREF: ShowClueBook+49A↑P
-                                        ; sub_1D358:loc_1D4D6↑P ...
+                                        ; RestPartyAndAdvanceClock:loc_1D4D6↑P ...
                 push    es              ; Computes a scroll offset into a fixed source table (0x4A5C) from the tick value word_36D01, with distinct entry/steady/exit zones (0x167-0x1D9/0x1D9-0x438/0x438-0x4AA), then copies a fixed 0x30-word window through a scratch buffer (0x9535) to a destination at 0x46CA. Called from PlayStudioCreditsIntro and ShowClueBook.
                 push    di
                 push    si
@@ -34806,7 +34807,7 @@ seg077          segment byte public 'CODE' use16
 
 
 WriteTwoToneString proc far             ; CODE XREF: RunItemServiceRecipientLoop+7A↑P
-                                        ; sub_237BA+D5↓P ...
+                                        ; RunCharacterDetailOverlay+D5↓P ...
                 push    word ptr ds:53FAh ; Draws a string (bx) with the first character in word_2E412's color and the rest in word_2E414's -- a highlighted-hotkey-letter label style. Called from sub_193BE and sub_23C18.
                 mov     ax, ds:0EACh
                 mov     ds:0FBFh, ax
@@ -35059,7 +35060,7 @@ ShowPartyMembers endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_237BA       proc far                ; CODE XREF: sub_2B7AE+144↓P
+RunCharacterDetailOverlay proc far      ; CODE XREF: sub_2B7AE+144↓P
                 mov     word ptr ds:5362h, 74h ; 't'
                 mov     word ptr ds:5366h, 3Ch ; '<'
                 mov     word ptr ds:0FC3h, 3
@@ -35113,8 +35114,8 @@ sub_237BA       proc far                ; CODE XREF: sub_2B7AE+144↓P
                 jmp     short loc_2392F
 ; ---------------------------------------------------------------------------
 
-loc_238B9:                              ; CODE XREF: sub_237BA+218↓j
-                                        ; sub_237BA+2AB↓j ...
+loc_238B9:                              ; CODE XREF: RunCharacterDetailOverlay+218↓j
+                                        ; RunCharacterDetailOverlay+2AB↓j ...
                 call    RestoreCursorBackgroundIfDirty
                 call    RestoreWorldMapAreaFromEMS
                 mov     word ptr ds:0E28h, 1
@@ -35140,8 +35141,8 @@ loc_238B9:                              ; CODE XREF: sub_237BA+218↓j
                 call    DrawMouseCursorAlt
                 call    DrawMouseCursor
 
-loc_2392F:                              ; CODE XREF: sub_237BA+FD↑j
-                                        ; sub_237BA+17E↓j ...
+loc_2392F:                              ; CODE XREF: RunCharacterDetailOverlay+FD↑j
+                                        ; RunCharacterDetailOverlay+17E↓j ...
                 mov     si, 62CAh
                 call    WaitForClickOrEscape
                 cmp     ax, 0
@@ -35152,7 +35153,7 @@ loc_2392F:                              ; CODE XREF: sub_237BA+FD↑j
                 jmp     short loc_2392F
 ; ---------------------------------------------------------------------------
 
-loc_23945:                              ; CODE XREF: sub_237BA+180↑j
+loc_23945:                              ; CODE XREF: RunCharacterDetailOverlay+180↑j
                 cmp     byte ptr ds:0E9Ah, 44h ; 'D'
                 jz      short loc_23965
                 cmp     byte ptr ds:0E9Ah, 52h ; 'R'
@@ -35160,24 +35161,24 @@ loc_23945:                              ; CODE XREF: sub_237BA+180↑j
                 jmp     short loc_2392F
 ; ---------------------------------------------------------------------------
 
-loc_23955:                              ; CODE XREF: sub_237BA+187↑j
+loc_23955:                              ; CODE XREF: RunCharacterDetailOverlay+187↑j
                 cmp     ax, 1
                 jz      short loc_23965
                 cmp     ax, 11h
                 jnz     short loc_2392F
 
-loc_2395F:                              ; CODE XREF: sub_237BA+197↑j
+loc_2395F:                              ; CODE XREF: RunCharacterDetailOverlay+197↑j
                 call    TriggerFullPaletteFadeOut
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_23965:                              ; CODE XREF: sub_237BA+190↑j
-                                        ; sub_237BA+19E↑j
+loc_23965:                              ; CODE XREF: RunCharacterDetailOverlay+190↑j
+                                        ; RunCharacterDetailOverlay+19E↑j
                 mov     cx, 0Eh
                 mov     si, ds:537Ch
                 add     si, 11Ah
 
-loc_23970:                              ; CODE XREF: sub_237BA+1D0↓j
+loc_23970:                              ; CODE XREF: RunCharacterDetailOverlay+1D0↓j
                 cmp     word ptr [si], 0
                 jz      short loc_23987
                 mov     ax, [si]
@@ -35187,7 +35188,7 @@ loc_23970:                              ; CODE XREF: sub_237BA+1D0↓j
                 call    IsItemDroppable
                 jnz     short loc_239C1
 
-loc_23987:                              ; CODE XREF: sub_237BA+1B9↑j
+loc_23987:                              ; CODE XREF: RunCharacterDetailOverlay+1B9↑j
                 add     si, 4
                 loop    loc_23970
                 mov     word ptr ds:43F2h, 0
@@ -35195,7 +35196,7 @@ loc_23987:                              ; CODE XREF: sub_237BA+1B9↑j
                 mov     si, ds:537Ch
                 add     si, 152h
 
-loc_2399D:                              ; CODE XREF: sub_237BA+1F7↓j
+loc_2399D:                              ; CODE XREF: RunCharacterDetailOverlay+1F7↓j
                 cmp     word ptr [si], 0
                 jz      short loc_239AE
                 mov     ax, [si]
@@ -35203,7 +35204,7 @@ loc_2399D:                              ; CODE XREF: sub_237BA+1F7↓j
                 call    IsItemDroppable
                 jnz     short loc_239C1
 
-loc_239AE:                              ; CODE XREF: sub_237BA+1E6↑j
+loc_239AE:                              ; CODE XREF: RunCharacterDetailOverlay+1E6↑j
                 add     si, 4
                 loop    loc_2399D
                 mov     word ptr ds:43EEh, 0
@@ -35211,15 +35212,15 @@ loc_239AE:                              ; CODE XREF: sub_237BA+1E6↑j
                 jmp     short loc_239D5
 ; ---------------------------------------------------------------------------
 
-loc_239C1:                              ; CODE XREF: sub_237BA+1CB↑j
-                                        ; sub_237BA+1F2↑j
+loc_239C1:                              ; CODE XREF: RunCharacterDetailOverlay+1CB↑j
+                                        ; RunCharacterDetailOverlay+1F2↑j
                 mov     word ptr ds:43EEh, 0
                 mov     word ptr ds:43F2h, 0
                 call    FlashStatusWarning
                 jmp     loc_238B9
 ; ---------------------------------------------------------------------------
 
-loc_239D5:                              ; CODE XREF: sub_237BA+205↑j
+loc_239D5:                              ; CODE XREF: RunCharacterDetailOverlay+205↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    RestoreWorldMapAreaFromEMS
                 mov     word ptr ds:0E28h, 1
@@ -35243,8 +35244,8 @@ loc_239D5:                              ; CODE XREF: sub_237BA+205↑j
                 call    DrawMouseCursor
                 call    DrawMouseCursorAlt
 
-loc_23A41:                              ; CODE XREF: sub_237BA+290↓j
-                                        ; sub_237BA+29B↓j ...
+loc_23A41:                              ; CODE XREF: RunCharacterDetailOverlay+290↓j
+                                        ; RunCharacterDetailOverlay+29B↓j ...
                 mov     si, 62CAh
                 call    WaitForClickOrEscape
                 cmp     ax, 0
@@ -35255,7 +35256,7 @@ loc_23A41:                              ; CODE XREF: sub_237BA+290↓j
                 jmp     short loc_23A41
 ; ---------------------------------------------------------------------------
 
-loc_23A57:                              ; CODE XREF: sub_237BA+292↑j
+loc_23A57:                              ; CODE XREF: RunCharacterDetailOverlay+292↑j
                 cmp     byte ptr ds:0E9Ah, 59h ; 'Y'
                 jz      short loc_23A75
                 cmp     byte ptr ds:0E9Ah, 4Eh ; 'N'
@@ -35263,17 +35264,17 @@ loc_23A57:                              ; CODE XREF: sub_237BA+292↑j
                 jmp     loc_238B9
 ; ---------------------------------------------------------------------------
 
-loc_23A68:                              ; CODE XREF: sub_237BA+299↑j
+loc_23A68:                              ; CODE XREF: RunCharacterDetailOverlay+299↑j
                 cmp     ax, 3
                 jnz     short loc_23A70
                 jmp     loc_238B9
 ; ---------------------------------------------------------------------------
 
-loc_23A70:                              ; CODE XREF: sub_237BA+2B1↑j
+loc_23A70:                              ; CODE XREF: RunCharacterDetailOverlay+2B1↑j
                 cmp     ax, 1
                 jnz     short loc_23A41
 
-loc_23A75:                              ; CODE XREF: sub_237BA+2A2↑j
+loc_23A75:                              ; CODE XREF: RunCharacterDetailOverlay+2A2↑j
                 mov     ax, ds:537Ch
                 sub     ax, 0D0D1h
                 xor     dx, dx
@@ -35283,7 +35284,7 @@ loc_23A75:                              ; CODE XREF: sub_237BA+2A2↑j
                 mov     di, 0D0C9h
                 mov     cx, 4
 
-loc_23A89:                              ; CODE XREF: sub_237BA+2D6↓j
+loc_23A89:                              ; CODE XREF: RunCharacterDetailOverlay+2D6↓j
                 cmp     [di], ax
                 jz      short loc_23A94
                 add     di, 2
@@ -35291,17 +35292,17 @@ loc_23A89:                              ; CODE XREF: sub_237BA+2D6↓j
                 jmp     short loc_23AA4
 ; ---------------------------------------------------------------------------
 
-loc_23A94:                              ; CODE XREF: sub_237BA+2D1↑j
+loc_23A94:                              ; CODE XREF: RunCharacterDetailOverlay+2D1↑j
                 mov     word ptr [di], 0
                 mov     si, 0
                 mov     bx, ds:53EEh
                 call    ReassignPartySlotReference
 
-loc_23AA4:                              ; CODE XREF: sub_237BA+2D8↑j
+loc_23AA4:                              ; CODE XREF: RunCharacterDetailOverlay+2D8↑j
                 mov     si, ds:537Ch
                 mov     cx, 0Bh
 
-loc_23AAB:                              ; CODE XREF: sub_237BA+301↓j
+loc_23AAB:                              ; CODE XREF: RunCharacterDetailOverlay+301↓j
                 mov     ax, [si+11Ah]
                 mov     bx, [si+11Ch]
                 call    PlaceItemOnGround
@@ -35320,7 +35321,7 @@ loc_23AAB:                              ; CODE XREF: sub_237BA+301↓j
                 call    FileEntry_Write
                 call    ErrorCheck
                 retf
-sub_237BA       endp
+RunCharacterDetailOverlay endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35703,8 +35704,8 @@ ComputeDerivedCharacterStats endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RestoreWorldMapAreaFromEMS proc near    ; CODE XREF: sub_237BA+104↑p
-                                        ; sub_237BA+220↑p ...
+RestoreWorldMapAreaFromEMS proc near    ; CODE XREF: RunCharacterDetailOverlay+104↑p
+                                        ; RunCharacterDetailOverlay+220↑p ...
                 push    dx              ; Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).
                 push    di
                 push    si
@@ -35739,7 +35740,7 @@ RestoreWorldMapAreaFromEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ClearPartyRecord proc near              ; CODE XREF: sub_237BA+303↑p
+ClearPartyRecord proc near              ; CODE XREF: RunCharacterDetailOverlay+303↑p
                                         ; ShowCharacterSkills+19F↓p ...
                 mov     es, word ptr ds:0F44h ; Zeroes exactly 0xFA words (500 bytes = the confirmed g_partyRecords stride 0x1F4) at es:di, di=word_328D4 -- wipes one entire party record clean.
                 mov     di, ds:537Ch
@@ -36586,7 +36587,7 @@ ShowCharacterStats endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawThreeThresholdStats proc near       ; CODE XREF: sub_237BA+78↑p
+DrawThreeThresholdStats proc near       ; CODE XREF: RunCharacterDetailOverlay+78↑p
                                         ; ShowCharacterSkills+1D3↑p ...
                 mov     si, ds:537Ch    ; Draws 3 threshold-highlighted stat values from the current party record: [+0x4C]/[+0x8C], [+0x4E]/[+0x8E], [+0x50]/[+0x90]. CORRECTION: NOT the 6 primary attributes -- those are confirmed at a different offset range (+0x3C/+0x7C..+0x46/+0x86, per RollCharacterAttributes' own comment). These 3 fields' identity is not confirmed; drawn alongside the attributes on the post-attribute-roll display in ShowCharacterSkills. Called from sub_23C18 and ShowCharacterSkills.
                 mov     word ptr ds:53FAh, 0CBh
@@ -36623,7 +36624,7 @@ DrawThreeThresholdStats endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawCharacterStatSheet proc near        ; CODE XREF: sub_237BA+75↑p
+DrawCharacterStatSheet proc near        ; CODE XREF: RunCharacterDetailOverlay+75↑p
                                         ; ShowCharacterSkills+1D0↑p ...
                 call    RestoreCursorBackgroundIfDirty
                 mov     si, ds:537Ch
@@ -36839,7 +36840,7 @@ DrawListEntryLabel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawCharacterClassAndLevel proc near    ; CODE XREF: sub_237BA+7B↑p
+DrawCharacterClassAndLevel proc near    ; CODE XREF: RunCharacterDetailOverlay+7B↑p
                                         ; ShowCharacterSkills+1B4↑p ...
                 mov     si, ds:537Ch    ; Draws the current character's (word_328D4) class name (GetClassNameString) and level (+0x16, via DrawValueWithThresholdColor with ax==bx so no highlight ever fires -- a plain number draw). Shared by ShowCharacterSkills and sub_23C18.
                 call    GetClassNameString
@@ -37398,8 +37399,8 @@ DrawQuitOrReturnLabel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-WaitForClickOrEscape proc near          ; CODE XREF: sub_237BA+178↑p
-                                        ; sub_237BA+28A↑p ...
+WaitForClickOrEscape proc near          ; CODE XREF: RunCharacterDetailOverlay+178↑p
+                                        ; RunCharacterDetailOverlay+28A↑p ...
                 call    UpdateAmbientMusic ; Generic 'wait for a click or ESC' loop, ticking UpdateAmbientMusic each iteration. Returns ax=0xFFFF on ESC, else the HitTestRegionTable result for the click. Called from sub_23C18.
                 call    PollKeyboardInput
                 cmp     word ptr ds:53E0h, 0
@@ -37603,7 +37604,7 @@ seg080          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-UpdateAmbientMusicForRegion proc far    ; CODE XREF: sub_1D358+33E↑P
+UpdateAmbientMusicForRegion proc far    ; CODE XREF: RestPartyAndAdvanceClock+33E↑P
                                         ; RefreshDungeonMapWindow:loc_20050↑P
                 xor     dx, dx          ; Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.
                 mov     bx, 18h
@@ -37949,7 +37950,7 @@ seg086          segment byte public 'CODE' use16
 
 
 IsItemDroppable proc far                ; CODE XREF: TryDropHeldItem+12↑P
-                                        ; sub_237BA+1C6↑P ...
+                                        ; RunCharacterDetailOverlay+1C6↑P ...
                 push    di
                 push    si
                 push    dx
@@ -41038,7 +41039,7 @@ seg094          segment byte public 'CODE' use16
 
 
 ReassignPartySlotReference proc far     ; CODE XREF: UseAbilityCommand+82↑P
-                                        ; sub_136F6+13↑P ...
+                                        ; ClearPartySlotReferenceOnDamage+13↑P ...
                 push    di
                 push    cx
                 cmp     si, 0
@@ -43828,7 +43829,7 @@ seg103          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-RestoreDialogAreaFromEMS proc far       ; CODE XREF: sub_1D358+7B↑P
+RestoreDialogAreaFromEMS proc far       ; CODE XREF: RestPartyAndAdvanceClock+7B↑P
                                         ; RunGameDialog+1A↑P
                 push    si              ; Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.
                 push    di
@@ -45479,7 +45480,7 @@ RevealMapRegion endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ResetDailyAbilityCharges proc far       ; CODE XREF: sub_1D358+159↑P
+ResetDailyAbilityCharges proc far       ; CODE XREF: RestPartyAndAdvanceClock+159↑P
                                         ; AdvanceGameClock+24↑P
                 push    ax              ; AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.
                 push    bx
@@ -50633,7 +50634,7 @@ loc_2B8D1:                              ; CODE XREF: sub_2B7AE+F0↑j
 
 loc_2B8ED:                              ; CODE XREF: sub_2B7AE+13A↑j
                 call    TriggerFullPaletteFadeOut
-                call    sub_237BA
+                call    RunCharacterDetailOverlay
                 jmp     near ptr sub_2B7AE
 ; ---------------------------------------------------------------------------
 
@@ -52697,7 +52698,7 @@ loc_2CB0B:                              ; CODE XREF: ApplyEncodedItemEffect+61B�
 
 loc_2CB51:                              ; CODE XREF: ApplyEncodedItemEffect+5A↑j
                 or      word ptr ds:536Ah, 2
-                call    sub_1D358
+                call    RestPartyAndAdvanceClock
                 and     word ptr ds:536Ah, 0FFFDh
                 mov     ax, 14h
                 call    wait
