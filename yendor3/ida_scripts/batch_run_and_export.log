@@ -864,3 +864,42 @@ offset=0xd0c9 ea=0x3ae79  'g_partySlotAssignment' -> 'g_partySlotAssignment': ok
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round12_findings.py']
+[*] reading apply_round12_findings.py
+[*] executing apply_round12_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x1161c  'sub_1161C' -> 'SwapItemInstanceEverywhere': ok
+0x116ef  'sub_116EF' -> 'SwapItemInMemberInventory': ok
+----- end target script output -----
+[*] finished executing apply_round12_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118640
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round13_findings.py']
+[*] reading apply_round13_findings.py
+[*] executing apply_round13_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x144d4  'sub_144D4' -> 'TryHandlePartyInventorySlotClick': ok
+----- end target script output -----
+[*] finished executing apply_round13_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118641
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0

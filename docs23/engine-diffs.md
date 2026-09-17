@@ -699,6 +699,54 @@ This closes out the full 77-function low-confidence tier: all three
 BinDiff match tiers (68 high, 52 mid, 77 low = 197 total) have now
 been spot-checked at least once.
 
+### Round 12: a new quest-item-conversion utility chain (ruled out `RunCharacterDetailOverlay` for good)
+
+Traced the address BinDiff suggested for `RunCharacterDetailOverlay`
+(0x11778, 0.15 sim -- the real one is at 0x237BA, round 7) all the way
+through its call chain. It's unrelated: a genuinely new Chapter 3
+item-conversion system with no yendor2 equivalent, reached from
+`HandleScriptedStoryEventTrigger` (the new 5-artifact quest handler).
+`SwapItemInstanceEverywhere` (yendor3 `sub_1161C`) takes a target item
+id and a replacement item id: checks a 6-entry shared table first,
+then loops all 4 party members via `g_partySlotAssignment` calling
+`SwapItemInMemberInventory` (`sub_116EF`) on each, which searches that
+member's 14-slot inventory (plus one equipped-item slot) for the
+target item and swaps it in place (reapplying multi-stat effects).
+`HandleScriptedStoryEventTrigger` calls it in a loop (item `0xC6` ->
+`0xCD`) tallying conversions -- "convert every instance of item X the
+party is carrying into item Y," presumably a quest-artifact
+transformation step. Both renamed.
+
+A third helper in the chain, `sub_11778` (called for *catalogued
+limited* items, catalog flag `0x2000`), manages an 8-slot table
+(base `ds:0xA5A6`, referenced widely elsewhere in the codebase, likely
+an existing yendor2 global not yet cross-referenced) and persists it
+to disk via `FileEntry_Write` -- looks like a registry of
+limited/unique item instances currently in play, but left unnamed;
+its exact purpose needs the `ds:0xA5A6` table's yendor2 identity
+confirmed first.
+
+### Round 13: two more low-confidence guesses ruled out / resolved
+
+- The address BinDiff suggested for `RunClueEntryMenu` (0x2566C, 0.12
+  sim) is conclusively NOT that function -- its body is a tiny 2-
+  instruction stub (`StepPaletteFadeRange` with fixed params, then set
+  a screen-dirty flag bit) called from 14 places scattered across
+  totally unrelated code, not anything ShowClueBook-specific. A
+  small, generic, widely-reused utility -- left unnamed as too generic
+  to confidently map to one yendor2 identity.
+- The address BinDiff suggested for `TryHandleCatalogSlotClick`
+  (0x144D4, 0.09 sim -- the real one is at 0x128F4, round 1) turned
+  out to be a genuinely new helper: it factors out a sequence that's
+  inlined directly in yendor2's `RunPartyInventoryScreen` (hit-test a
+  slot, then `ComputeBarterPricingPreview` + `ShowItemPurchaseConfirmPrompt`
+  in the same order) into its own function, called from
+  `RunPartyInventoryScreen` in yendor3. Renamed
+  `TryHandlePartyInventorySlotClick` (moderate confidence -- the
+  hit-test/8-entry-table wrapper itself isn't present verbatim in
+  yendor2, only the barter-preview-then-confirm tail is a confirmed
+  match).
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
@@ -750,15 +798,24 @@ been spot-checked at least once.
   -- see the dedicated write-up above. Left unrenamed pending full
   decoding of its trap-effect ids.
 
+- **Rounds 12-13**: ruled out (or resolved) all remaining low-priority
+  suggested-address leads. `RunCharacterDetailOverlay`'s suggested
+  address (0x11778) turned out to be part of a new quest-item-
+  conversion chain, `RunClueEntryMenu`'s (0x2566C) a generic
+  widely-reused stub, and `TryHandleCatalogSlotClick`'s (0x144D4) a
+  new factored-out helper -- see the round 12/13 write-ups above.
+  `SwapItemInstanceEverywhere`, `SwapItemInMemberInventory`, and
+  `TryHandlePartyInventorySlotClick` are now named; `sub_2566C` and
+  `sub_11778` (the `ds:0xA5A6`-table registry) are left unnamed as
+  genuinely too uncertain/generic to name with confidence.
+
 Remaining open leads for future sessions (not blocking, just
 unresolved identities): `DrawShadowedTextAlt` (needs
 `PlayStudioCreditsIntro`'s real identity found first, since that's its
 only caller and is itself still unresolved -- its usual `start`-tail
 call position doesn't have an obvious equivalent in yendor3, may have
-been restructured), the real `RunClueEntryMenu`-suggested address
-(0x2566C), `TryHandleCatalogSlotClick`-suggested address (0x144D4),
-`RunCharacterDetailOverlay`-suggested address (0x11778), the
-character-creation-region cluster noted above (0x2BD4A/0x2BBB5/
-0x2BC75), and `sub_1B085`'s exact trap-effect-id semantics. (The
-address BinDiff suggested for `ErrorCheck`, 0x11E56, is resolved --
-it's `ParseCommandLineSwitches`, round 10.)
+been restructured), the character-creation-region cluster noted above
+(0x2BD4A/0x2BBB5/0x2BC75), `sub_1B085`'s exact trap-effect-id
+semantics, `sub_11778`'s exact purpose (the `ds:0xA5A6` 8-slot
+"limited item" registry), and `sub_2566C`'s yendor2 identity (a
+generic palette-fade-and-mark-dirty stub, 14 call sites).

@@ -1144,10 +1144,12 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X115E8);
 	create_insn	(0X1161C);
+	set_name	(0X1161C,	"SwapItemInstanceEverywhere");
 	create_insn	(0X1165B);
 	create_insn	(0X11680);
 	create_insn	(0X116D6);
 	create_insn	(0X116EF);
+	set_name	(0X116EF,	"SwapItemInMemberInventory");
 	create_insn	(0X1172D);
 	create_insn	(x=0X11732);
 	op_hex		(x,	1);
@@ -2176,6 +2178,7 @@ static Bytes_0(void) {
 	set_name	(0X144BF,	"TryLoadNextContainerLink");
 	create_insn	(0X144C7);
 	create_insn	(0X144D4);
+	set_name	(0X144D4,	"TryHandlePartyInventorySlotClick");
 	create_insn	(0X14500);
 	create_insn	(x=0X14519);
 	op_hex		(x,	1);

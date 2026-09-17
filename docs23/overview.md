@@ -7628,6 +7628,40 @@ icon bar dirty. Read as a new roaming hazard/curse mechanic. Left
 unrenamed since the exact gameplay meaning of its trap-effect ids
 isn't decoded yet — full write-up in `docs23/engine-diffs.md`.
 
+### 2026-09-16 session update, continued: Chapter 3 review rounds 12-13 — chased down the last few low-priority leads
+
+User asked to keep chasing remaining threads. Went after the
+`RunCharacterDetailOverlay`-suggested address (0x11778) next, since
+the real one was already found in round 7. Traced its whole call
+chain and found something unexpected: it's part of a brand new
+Chapter 3 quest-item-conversion system, unrelated to character detail
+screens at all. `HandleScriptedStoryEventTrigger` (the new 5-artifact
+quest handler) calls a top-level "convert every instance of item X the
+party carries into item Y" utility, which checks a shared 6-entry
+table first, then loops all 4 party members swapping the item and
+reapplying its stat effects. Named both the top-level function and its
+per-member worker; left a third helper (an 8-slot "limited item
+instance" registry that persists to disk) unnamed since its exact
+purpose still needs more digging.
+
+Also ruled out two more low-confidence BinDiff guesses: the
+`RunClueEntryMenu`-suggested address turned out to be a tiny, generic,
+widely-reused palette-fade utility with no specific connection to the
+clue book at all (14 call sites scattered everywhere), and the
+`TryHandleCatalogSlotClick`-suggested address turned out to be a new
+helper that factors out an item-purchase-confirmation sequence
+Chapter 2 has inlined directly in `RunPartyInventoryScreen` — named it
+descriptively.
+
+Only `DrawShadowedTextAlt` remains as a genuinely blocked identity
+(its only caller is itself unresolved); a handful of minor open
+threads remain (the character-creation code cluster, `sub_1B085`'s
+exact trap-effect semantics, the new item-registry helper, and the
+generic palette-fade stub) but none are blocking anything else at this
+point — the Chapter 3 BinDiff review is now about as complete as it
+can get without a dedicated deep-read pass on specific remaining
+functions.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

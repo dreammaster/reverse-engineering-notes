@@ -2586,7 +2586,7 @@ seg005          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1161C       proc far                ; CODE XREF: HandleScriptedStoryEventTrigger+1F2↓P
+SwapItemInstanceEverywhere proc far     ; CODE XREF: HandleScriptedStoryEventTrigger+1F2↓P
                 push    di
                 push    si
                 push    dx
@@ -2606,11 +2606,11 @@ sub_1161C       proc far                ; CODE XREF: HandleScriptedStoryEventTri
                 jmp     loc_116E9
 ; ---------------------------------------------------------------------------
 
-loc_1165B:                              ; CODE XREF: sub_1161C+3A↑j
+loc_1165B:                              ; CODE XREF: SwapItemInstanceEverywhere+3A↑j
                 mov     di, 0CFF7h
                 mov     cx, 6
 
-loc_11661:                              ; CODE XREF: sub_1161C+67↓j
+loc_11661:                              ; CODE XREF: SwapItemInstanceEverywhere+67↓j
                 mov     ax, [di]
                 cmp     ax, ds:53EEh
                 jnz     short loc_11680
@@ -2623,7 +2623,7 @@ loc_11661:                              ; CODE XREF: sub_1161C+67↓j
                 jmp     short loc_116E9
 ; ---------------------------------------------------------------------------
 
-loc_11680:                              ; CODE XREF: sub_1161C+4B↑j
+loc_11680:                              ; CODE XREF: SwapItemInstanceEverywhere+4B↑j
                 add     di, 4
                 loop    loc_11661
                 call    SyncAllContainers
@@ -2639,18 +2639,18 @@ loc_11680:                              ; CODE XREF: sub_1161C+4B↑j
                 mov     ax, [bx+0Ah]
                 add     ds:53F2h, ax
 
-loc_116B3:                              ; CODE XREF: sub_1161C+89↑j
+loc_116B3:                              ; CODE XREF: SwapItemInstanceEverywhere+89↑j
                 mov     si, 0D0C9h
                 mov     cx, 4
 
-loc_116B9:                              ; CODE XREF: sub_1161C+B6↓j
+loc_116B9:                              ; CODE XREF: SwapItemInstanceEverywhere+B6↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_116E9
                 push    cx
                 push    si
                 call    SelectPartyRecordById
-                call    sub_116EF
+                call    SwapItemInMemberInventory
                 pop     si
                 pop     cx
                 or      ax, ax
@@ -2660,7 +2660,7 @@ loc_116B9:                              ; CODE XREF: sub_1161C+B6↓j
                 jmp     short loc_116E9
 ; ---------------------------------------------------------------------------
 
-loc_116D6:                              ; CODE XREF: sub_1161C+B1↑j
+loc_116D6:                              ; CODE XREF: SwapItemInstanceEverywhere+B1↑j
                 mov     ds:542Eh, di
                 mov     ds:5426h, ax
                 mov     ax, ds:537Eh
@@ -2668,26 +2668,26 @@ loc_116D6:                              ; CODE XREF: sub_1161C+B1↑j
                 mov     ax, ds:537Ch
                 mov     ds:542Ah, ax
 
-loc_116E9:                              ; CODE XREF: sub_1161C+3C↑j
-                                        ; sub_1161C+62↑j ...
+loc_116E9:                              ; CODE XREF: SwapItemInstanceEverywhere+3C↑j
+                                        ; SwapItemInstanceEverywhere+62↑j ...
                 pop     bx
                 pop     cx
                 pop     dx
                 pop     si
                 pop     di
                 retf
-sub_1161C       endp
+SwapItemInstanceEverywhere endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_116EF       proc near               ; CODE XREF: sub_1161C+AA↑p
+SwapItemInMemberInventory proc near     ; CODE XREF: SwapItemInstanceEverywhere+AA↑p
                 mov     di, ds:537Ch
                 add     di, 11Ah
                 mov     cx, 0Eh
 
-loc_116FA:                              ; CODE XREF: sub_116EF+54↓j
+loc_116FA:                              ; CODE XREF: SwapItemInMemberInventory+54↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_11740
@@ -2706,7 +2706,7 @@ loc_116FA:                              ; CODE XREF: sub_116EF+54↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1172D:                              ; CODE XREF: sub_116EF+15↑j
+loc_1172D:                              ; CODE XREF: SwapItemInMemberInventory+15↑j
                 call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_11740
@@ -2714,8 +2714,8 @@ loc_1172D:                              ; CODE XREF: sub_116EF+15↑j
                 or      ax, ax
                 jnz     short loc_11766
 
-loc_11740:                              ; CODE XREF: sub_116EF+F↑j
-                                        ; sub_116EF+48↑j
+loc_11740:                              ; CODE XREF: SwapItemInMemberInventory+F↑j
+                                        ; SwapItemInMemberInventory+48↑j
                 add     di, 4
                 loop    loc_116FA
                 mov     di, ds:537Ch
@@ -2730,7 +2730,7 @@ loc_11740:                              ; CODE XREF: sub_116EF+F↑j
                 or      ax, ax
                 jz      short loc_11775
 
-loc_11766:                              ; CODE XREF: sub_116EF+4F↑j
+loc_11766:                              ; CODE XREF: SwapItemInMemberInventory+4F↑j
                 mov     bx, ds:537Ch
                 mov     ax, ds:53F2h
                 add     [bx+118h], ax
@@ -2738,18 +2738,18 @@ loc_11766:                              ; CODE XREF: sub_116EF+4F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11775:                              ; CODE XREF: sub_116EF+62↑j
-                                        ; sub_116EF+6E↑j ...
+loc_11775:                              ; CODE XREF: SwapItemInMemberInventory+62↑j
+                                        ; SwapItemInMemberInventory+6E↑j ...
                 xor     ax, ax
                 retn
-sub_116EF       endp
+SwapItemInMemberInventory endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11778       proc near               ; CODE XREF: sub_116EF+4A↑p
-                                        ; sub_116EF+70↑p
+sub_11778       proc near               ; CODE XREF: SwapItemInMemberInventory+4A↑p
+                                        ; SwapItemInMemberInventory+70↑p
                 push    di
                 push    cx
                 mov     ax, 0A5A6h
@@ -7378,7 +7378,7 @@ loc_13D55:                              ; CODE XREF: RunPartyInventoryScreen+129
 ; ---------------------------------------------------------------------------
 
 loc_13D5D:                              ; CODE XREF: RunPartyInventoryScreen+134↑j
-                call    sub_144D4
+                call    TryHandlePartyInventorySlotClick
                 jmp     near ptr RunPartyInventoryScreen
 ; ---------------------------------------------------------------------------
 
@@ -8220,7 +8220,8 @@ TryLoadNextContainerLink endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_144D4       proc near               ; CODE XREF: RunPartyInventoryScreen:loc_13D5D↑p
+TryHandlePartyInventorySlotClick proc near
+                                        ; CODE XREF: RunPartyInventoryScreen:loc_13D5D↑p
                 mov     ax, ds:1214h
                 mov     bx, ds:1216h
                 mov     si, 6700h
@@ -8231,7 +8232,7 @@ sub_144D4       proc near               ; CODE XREF: RunPartyInventoryScreen:loc
                 mov     si, 58ACh
                 mov     cx, 8
 
-loc_144F1:                              ; CODE XREF: sub_144D4+28↓j
+loc_144F1:                              ; CODE XREF: TryHandlePartyInventorySlotClick+28↓j
                 cmp     ax, [di+8]
                 jz      short loc_14500
                 add     si, 4
@@ -8240,7 +8241,7 @@ loc_144F1:                              ; CODE XREF: sub_144D4+28↓j
                 jmp     short locret_1453A
 ; ---------------------------------------------------------------------------
 
-loc_14500:                              ; CODE XREF: sub_144D4+20↑j
+loc_14500:                              ; CODE XREF: TryHandlePartyInventorySlotClick+20↑j
                 push    si
                 mov     ax, [si]
                 call    LoadItemCatalogRecord
@@ -8254,16 +8255,16 @@ loc_14500:                              ; CODE XREF: sub_144D4+20↑j
                 and     word ptr ds:536Ch, 0FC3h
                 or      word ptr ds:536Ch, 10h
 
-loc_1452C:                              ; CODE XREF: sub_144D4+4B↑j
+loc_1452C:                              ; CODE XREF: TryHandlePartyInventorySlotClick+4B↑j
                 mov     ax, [si]
                 mov     bx, 0
                 call    ShowItemPurchaseConfirmPrompt
                 pop     word ptr ds:536Ch
 
-locret_1453A:                           ; CODE XREF: sub_144D4+12↑j
-                                        ; sub_144D4+2A↑j
+locret_1453A:                           ; CODE XREF: TryHandlePartyInventorySlotClick+12↑j
+                                        ; TryHandlePartyInventorySlotClick+2A↑j
                 retn
-sub_144D4       endp
+TryHandlePartyInventorySlotClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10836,7 +10837,7 @@ seg028          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ApplyMultiStatEffectForItem proc far    ; CODE XREF: sub_116EF+21↑P
+ApplyMultiStatEffectForItem proc far    ; CODE XREF: SwapItemInMemberInventory+21↑P
                                         ; HandleIconBarItemExpiry+38↑P ...
                 push    bx
                 push    cx
@@ -11111,7 +11112,7 @@ UpdatePartyAverageStatTiers endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RemoveMultiStatEffect proc far          ; CODE XREF: sub_116EF+17↑P
+RemoveMultiStatEffect proc far          ; CODE XREF: SwapItemInMemberInventory+17↑P
                                         ; HandleIconBarItemExpiry+D↑P ...
                 push    bx
                 push    cx
@@ -11892,7 +11893,7 @@ seg031          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-RecomputeEquipmentStatBonuses proc far  ; CODE XREF: sub_116EF+26↑P
+RecomputeEquipmentStatBonuses proc far  ; CODE XREF: SwapItemInMemberInventory+26↑P
                                         ; HandleItemDropOnPartyPortrait+2C9↑P ...
                 push    cx              ; Resets [si+0x48..0x50]/[si+0x88..0x90] from their base values ([si+0x32..0x3A]/[si+0x72..0x7A]), then adds each equipped item's catalog stat bonus (weapon +0x13A, slot +0x142, 3-array +0x146, 5-array +0x152) via LoadItemCatalogRecord. Also sets/clears [si+0x15C] bit 0x20 from the +0x142 item's catalog flags. A full equipment-derived stat recompute. Called from sub_18C79, sub_1AA9B, and sub_274B4.
                 push    dx
@@ -21256,7 +21257,7 @@ loc_1B959:                              ; CODE XREF: HandleScriptedStoryEventTri
 loc_1B98E:                              ; CODE XREF: HandleScriptedStoryEventTrigger+202↓j
                 mov     word ptr ds:53EEh, 0C6h
                 mov     word ptr ds:53F0h, 0CDh
-                call    sub_1161C
+                call    SwapItemInstanceEverywhere
                 cmp     word ptr ds:5426h, 0
                 jz      short loc_1B9AC
                 inc     word ptr ds:53F4h
@@ -46112,7 +46113,7 @@ seg113          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-SyncAllContainers proc far              ; CODE XREF: sub_1161C+69↑P
+SyncAllContainers proc far              ; CODE XREF: SwapItemInstanceEverywhere+69↑P
                                         ; IsItemRangeAvailable+6E↑P ...
                 push    di              ; Iterates all 4 g_partySlotAssignment members, calling SyncPartyMemberContainers for each -- commits every open bag's contents to CURGAME across the whole party.
                 push    si
