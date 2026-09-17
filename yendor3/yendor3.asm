@@ -546,7 +546,7 @@ loc_1041B:                              ; CODE XREF: start+416↑j
 loc_10425:                              ; CODE XREF: start+420↑j
                 test    word ptr [si+2], 400h
                 jz      short loc_10431
-                call    sub_1B7A8
+                call    HandleScriptedStoryEventTrigger
 
 loc_10431:                              ; CODE XREF: start+3EB↑j
                                         ; start+42A↑j
@@ -2586,7 +2586,7 @@ seg005          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1161C       proc far                ; CODE XREF: sub_1B7A8+1F2↓P
+sub_1161C       proc far                ; CODE XREF: HandleScriptedStoryEventTrigger+1F2↓P
                 push    di
                 push    si
                 push    dx
@@ -5019,7 +5019,7 @@ seg011          segment byte public 'CODE' use16
 
 
 UseItem         proc far                ; CODE XREF: start+4DA↑P
-                                        ; sub_1B490+20F↓P
+                                        ; HandleSpecialQuestCommand+20F↓P
                 mov     word ptr ds:0FBDh, 0
                 call    LoadItemData
                 or      ax, ax
@@ -16846,7 +16846,7 @@ BuildItemUseMessage proc far            ; CODE XREF: FinishItemUse+5↑p
                 test    word ptr es:[si+0Eh], 2000h
                 jz      short loc_19383
                 push    cs
-                call    near ptr sub_1A09D
+                call    near ptr CheckAndPaySpecialItemCost
                 test    word_3311C, 40h
                 jz      short loc_19338
                 push    cs
@@ -18179,7 +18179,7 @@ UseAbilityScroll endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A09D       proc far                ; CODE XREF: BuildItemUseMessage+15↑p
+CheckAndPaySpecialItemCost proc far     ; CODE XREF: BuildItemUseMessage+15↑p
                 and     word_3311C, 0FFBFh
                 mov     ax, es:[si+12h]
                 cmp     ax, 1
@@ -18189,19 +18189,19 @@ sub_1A09D       proc far                ; CODE XREF: BuildItemUseMessage+15↑p
                 jmp     loc_1A134
 ; ---------------------------------------------------------------------------
 
-loc_1A0B3:                              ; CODE XREF: sub_1A09D+11↑j
+loc_1A0B3:                              ; CODE XREF: CheckAndPaySpecialItemCost+11↑j
                 cmp     ax, 2
                 jnz     short loc_1A0BB
                 jmp     loc_1A168
 ; ---------------------------------------------------------------------------
 
-loc_1A0BB:                              ; CODE XREF: sub_1A09D+19↑j
+loc_1A0BB:                              ; CODE XREF: CheckAndPaySpecialItemCost+19↑j
                 cmp     ax, 3
                 jnz     short loc_1A0C3
                 jmp     loc_1A18F
 ; ---------------------------------------------------------------------------
 
-loc_1A0C3:                              ; CODE XREF: sub_1A09D+21↑j
+loc_1A0C3:                              ; CODE XREF: CheckAndPaySpecialItemCost+21↑j
                 mov     word_3319E, ax
                 mov     word_331A0, ax
                 call    IsItemRangeAvailable
@@ -18224,19 +18224,19 @@ loc_1A0C3:                              ; CODE XREF: sub_1A09D+21↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1A110:                              ; CODE XREF: sub_1A09D+48↑j
-                                        ; sub_1A09D+50↑j ...
+loc_1A110:                              ; CODE XREF: CheckAndPaySpecialItemCost+48↑j
+                                        ; CheckAndPaySpecialItemCost+50↑j ...
                 mov     ax, word_331DA
                 mov     word_3312C, ax
                 mov     ax, word_331D6
                 call    RemoveMultiStatEffect
                 call    RecomputeEquipmentStatBonuses
 
-locret_1A123:                           ; CODE XREF: sub_1A09D+36↑j
+locret_1A123:                           ; CODE XREF: CheckAndPaySpecialItemCost+36↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1A124:                              ; CODE XREF: sub_1A09D+C↑j
+loc_1A124:                              ; CODE XREF: CheckAndPaySpecialItemCost+C↑j
                 push    si
                 push    di
                 mov     ax, es:[si+10h]
@@ -18245,7 +18245,7 @@ loc_1A124:                              ; CODE XREF: sub_1A09D+C↑j
                 jmp     short loc_1A14F
 ; ---------------------------------------------------------------------------
 
-loc_1A134:                              ; CODE XREF: sub_1A09D+13↑j
+loc_1A134:                              ; CODE XREF: CheckAndPaySpecialItemCost+13↑j
                 push    si
                 push    di
                 mov     ax, es:[si+10h]
@@ -18255,7 +18255,7 @@ loc_1A134:                              ; CODE XREF: sub_1A09D+13↑j
                 call    ShiftBCD4LeftNibble
                 call    ShiftBCD4LeftNibble
 
-loc_1A14F:                              ; CODE XREF: sub_1A09D+95↑j
+loc_1A14F:                              ; CODE XREF: CheckAndPaySpecialItemCost+95↑j
                 mov     di, 9926h
                 mov     si, 0CF91h
                 call    CompareBCD4
@@ -18265,7 +18265,7 @@ loc_1A14F:                              ; CODE XREF: sub_1A09D+95↑j
                 jmp     short loc_1A1B4
 ; ---------------------------------------------------------------------------
 
-loc_1A168:                              ; CODE XREF: sub_1A09D+1B↑j
+loc_1A168:                              ; CODE XREF: CheckAndPaySpecialItemCost+1B↑j
                 push    si
                 push    di
                 mov     ax, es:[si+10h]
@@ -18280,7 +18280,7 @@ loc_1A168:                              ; CODE XREF: sub_1A09D+1B↑j
                 jmp     short loc_1A1B4
 ; ---------------------------------------------------------------------------
 
-loc_1A18F:                              ; CODE XREF: sub_1A09D+23↑j
+loc_1A18F:                              ; CODE XREF: CheckAndPaySpecialItemCost+23↑j
                 push    si
                 push    di
                 mov     ax, es:[si+10h]
@@ -18293,12 +18293,12 @@ loc_1A18F:                              ; CODE XREF: sub_1A09D+23↑j
                 call    SubBCD4
                 or      word_3311C, 40h
 
-loc_1A1B4:                              ; CODE XREF: sub_1A09D+BD↑j
-                                        ; sub_1A09D+C9↑j ...
+loc_1A1B4:                              ; CODE XREF: CheckAndPaySpecialItemCost+BD↑j
+                                        ; CheckAndPaySpecialItemCost+C9↑j ...
                 pop     di
                 pop     si
                 retf
-sub_1A09D       endp
+CheckAndPaySpecialItemCost endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19095,8 +19095,8 @@ IsBCDCounterAtLeast endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ConvertWordToBCD4 proc far              ; CODE XREF: sub_1A09D+90↑P
-                                        ; sub_1A09D+A0↑P ...
+ConvertWordToBCD4 proc far              ; CODE XREF: CheckAndPaySpecialItemCost+90↑P
+                                        ; CheckAndPaySpecialItemCost+A0↑P ...
                 xor     dx, dx          ; Converts a 16-bit binary value (word_3293E) into 4-byte packed BCD, written to ds:0xAFA8 (word_38808/word_3880A -- a generic scratch pair reused for unrelated things elsewhere).
                 mov     word ptr ds:9926h, 0
                 mov     word ptr ds:9928h, 0
@@ -19479,7 +19479,7 @@ MulBCD4ByWord   endp ; sp-analysis failed
 
 
 ShiftBCD4LeftNibble proc far            ; CODE XREF: PromptBuyOreQuantity+16F↑P
-                                        ; sub_1A09D+A8↑P ...
+                                        ; CheckAndPaySpecialItemCost+A8↑P ...
                 push    cx              ; Shifts the 4-byte packed-BCD buffer at si left by one nibble. Called only from MulBCD4ByWord.
                 mov     cx, 4
                 mov     ah, [si]
@@ -20830,7 +20830,7 @@ seg047          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B490       proc far                ; CODE XREF: HandleGameCommand:loc_299B1↓P
+HandleSpecialQuestCommand proc far      ; CODE XREF: HandleGameCommand:loc_299B1↓P
                 cmp     word ptr ds:5426h, 176h
                 jz      short loc_1B4A9
                 cmp     word ptr ds:5426h, 17Eh
@@ -20840,20 +20840,20 @@ sub_1B490       proc far                ; CODE XREF: HandleGameCommand:loc_299B1
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B4A9:                              ; CODE XREF: sub_1B490+6↑j
+loc_1B4A9:                              ; CODE XREF: HandleSpecialQuestCommand+6↑j
                 call    UseAbilityOnTarget
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B4AF:                              ; CODE XREF: sub_1B490+E↑j
+loc_1B4AF:                              ; CODE XREF: HandleSpecialQuestCommand+E↑j
                 call    WaitForTargetClick
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jnz     short loc_1B4DB
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
-loc_1B4C5:                              ; CODE XREF: sub_1B490+51↓j
-                                        ; sub_1B490+58↓j ...
+loc_1B4C5:                              ; CODE XREF: HandleSpecialQuestCommand+51↓j
+                                        ; HandleSpecialQuestCommand+58↓j ...
                 mov     word ptr ds:0FC3h, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
@@ -20861,7 +20861,7 @@ loc_1B4C5:                              ; CODE XREF: sub_1B490+51↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B4DB:                              ; CODE XREF: sub_1B490+29↑j
+loc_1B4DB:                              ; CODE XREF: HandleSpecialQuestCommand+29↑j
                 cmp     word ptr ds:0CF75h, 160h
                 jnz     short loc_1B4C5
                 cmp     word ptr ds:0CF77h, 43h ; 'C'
@@ -20876,7 +20876,7 @@ loc_1B4DB:                              ; CODE XREF: sub_1B490+29↑j
                 jmp     short loc_1B4C5
 ; ---------------------------------------------------------------------------
 
-loc_1B507:                              ; CODE XREF: sub_1B490+16↑j
+loc_1B507:                              ; CODE XREF: HandleSpecialQuestCommand+16↑j
                 call    WaitForTargetClick
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jnz     short loc_1B533
@@ -20889,7 +20889,7 @@ loc_1B507:                              ; CODE XREF: sub_1B490+16↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B533:                              ; CODE XREF: sub_1B490+81↑j
+loc_1B533:                              ; CODE XREF: HandleSpecialQuestCommand+81↑j
                 mov     word ptr ds:0FC3h, 0
                 call    RestoreCursorBackgroundIfDirty
                 call    UpdateCursorForHeldItem
@@ -20901,15 +20901,15 @@ loc_1B533:                              ; CODE XREF: sub_1B490+81↑j
                 test    word ptr ds:0CF73h, 2000h
                 jnz     short loc_1B56B
 
-loc_1B55F:                              ; CODE XREF: sub_1B490+BE↑j
-                                        ; sub_1B490+C5↑j
+loc_1B55F:                              ; CODE XREF: HandleSpecialQuestCommand+BE↑j
+                                        ; HandleSpecialQuestCommand+C5↑j
                 mov     cx, 3
                 mov     bx, 95E5h
                 call    ShowAbilityDescriptionColumn
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B56B:                              ; CODE XREF: sub_1B490+CD↑j
+loc_1B56B:                              ; CODE XREF: HandleSpecialQuestCommand+CD↑j
                 mov     ax, 0DFh
                 call    TestGlobalFlag
                 jnz     short loc_1B581
@@ -20919,7 +20919,7 @@ loc_1B56B:                              ; CODE XREF: sub_1B490+CD↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B581:                              ; CODE XREF: sub_1B490+E3↑j
+loc_1B581:                              ; CODE XREF: HandleSpecialQuestCommand+E3↑j
                 mov     word ptr ds:53EEh, 0D6h
                 mov     word ptr ds:53F0h, 0D6h
                 call    IsItemRangeAvailable
@@ -20946,15 +20946,15 @@ loc_1B581:                              ; CODE XREF: sub_1B490+E3↑j
                 cmp     word ptr ds:5426h, 0
                 jnz     short loc_1B605
 
-loc_1B5F9:                              ; CODE XREF: sub_1B490+107↑j
-                                        ; sub_1B490+11F↑j ...
+loc_1B5F9:                              ; CODE XREF: HandleSpecialQuestCommand+107↑j
+                                        ; HandleSpecialQuestCommand+11F↑j ...
                 mov     cx, 3
                 mov     bx, 95C0h
                 call    ShowAbilityDescriptionColumn
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B605:                              ; CODE XREF: sub_1B490+167↑j
+loc_1B605:                              ; CODE XREF: HandleSpecialQuestCommand+167↑j
                 mov     word ptr ds:53EEh, 0D6h
                 mov     word ptr ds:53F0h, 0D6h
                 call    IsItemRangeAvailable
@@ -21003,7 +21003,7 @@ loc_1B605:                              ; CODE XREF: sub_1B490+167↑j
                 call    DrawMinimap
                 call    DrawMouseCursor
                 retf
-sub_1B490       endp
+HandleSpecialQuestCommand endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -21119,20 +21119,20 @@ sub_1B751       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B7A8       proc far                ; CODE XREF: start+42C↑P
+HandleScriptedStoryEventTrigger proc far ; CODE XREF: start+42C↑P
                 cmp     word ptr [si+4], 1
                 jz      short loc_1B7B1
                 jmp     loc_1B847
 ; ---------------------------------------------------------------------------
 
-loc_1B7B1:                              ; CODE XREF: sub_1B7A8+4↑j
+loc_1B7B1:                              ; CODE XREF: HandleScriptedStoryEventTrigger+4↑j
                 mov     ax, 5
                 call    TestGlobalFlag
                 jz      short loc_1B7BC
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B7BC:                              ; CODE XREF: sub_1B7A8+11↑j
+loc_1B7BC:                              ; CODE XREF: HandleScriptedStoryEventTrigger+11↑j
                 mov     ax, 5
                 call    SetGlobalFlag
                 mov     ax, 21h ; '!'
@@ -21163,7 +21163,7 @@ loc_1B7BC:                              ; CODE XREF: sub_1B7A8+11↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B847:                              ; CODE XREF: sub_1B7A8+6↑j
+loc_1B847:                              ; CODE XREF: HandleScriptedStoryEventTrigger+6↑j
                 cmp     word ptr [si+4], 2
                 jnz     short loc_1B8B9
                 mov     ax, 1Bh
@@ -21172,7 +21172,7 @@ loc_1B847:                              ; CODE XREF: sub_1B7A8+6↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B858:                              ; CODE XREF: sub_1B7A8+AD↑j
+loc_1B858:                              ; CODE XREF: HandleScriptedStoryEventTrigger+AD↑j
                 and     word ptr ds:0CEF9h, 1FFCh
                 mov     ax, 54h ; 'T'
                 call    TriggerSoundEvent
@@ -21194,13 +21194,13 @@ loc_1B858:                              ; CODE XREF: sub_1B7A8+AD↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B8B9:                              ; CODE XREF: sub_1B7A8+A3↑j
+loc_1B8B9:                              ; CODE XREF: HandleScriptedStoryEventTrigger+A3↑j
                 cmp     word ptr [si+4], 3
                 jz      short loc_1B8C2
                 jmp     loc_1B950
 ; ---------------------------------------------------------------------------
 
-loc_1B8C2:                              ; CODE XREF: sub_1B7A8+115↑j
+loc_1B8C2:                              ; CODE XREF: HandleScriptedStoryEventTrigger+115↑j
                 mov     ax, 2Eh ; '.'
                 call    TestGlobalFlag
                 jnz     short loc_1B8FD
@@ -21216,7 +21216,7 @@ loc_1B8C2:                              ; CODE XREF: sub_1B7A8+115↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B8FD:                              ; CODE XREF: sub_1B7A8+122↑j
+loc_1B8FD:                              ; CODE XREF: HandleScriptedStoryEventTrigger+122↑j
                 mov     word ptr ds:0CF33h, 5
                 call    TickTravelResourceAilments
                 mov     word ptr ds:0CF75h, 27Eh
@@ -21235,13 +21235,13 @@ loc_1B8FD:                              ; CODE XREF: sub_1B7A8+122↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B950:                              ; CODE XREF: sub_1B7A8+117↑j
+loc_1B950:                              ; CODE XREF: HandleScriptedStoryEventTrigger+117↑j
                 cmp     word ptr [si+4], 4
                 jz      short loc_1B959
                 jmp     loc_1BA12
 ; ---------------------------------------------------------------------------
 
-loc_1B959:                              ; CODE XREF: sub_1B7A8+1AC↑j
+loc_1B959:                              ; CODE XREF: HandleScriptedStoryEventTrigger+1AC↑j
                 mov     word ptr ds:0CF33h, 5
                 call    TickTravelResourceAilments
                 mov     word ptr ds:0CF75h, 26Bh
@@ -21252,7 +21252,7 @@ loc_1B959:                              ; CODE XREF: sub_1B7A8+1AC↑j
                 or      word ptr ds:0CEF9h, 2000h
                 mov     word ptr ds:53F4h, 0
 
-loc_1B98E:                              ; CODE XREF: sub_1B7A8+202↓j
+loc_1B98E:                              ; CODE XREF: HandleScriptedStoryEventTrigger+202↓j
                 mov     word ptr ds:53EEh, 0C6h
                 mov     word ptr ds:53F0h, 0CDh
                 call    sub_1161C
@@ -21262,7 +21262,7 @@ loc_1B98E:                              ; CODE XREF: sub_1B7A8+202↓j
                 jmp     short loc_1B98E
 ; ---------------------------------------------------------------------------
 
-loc_1B9AC:                              ; CODE XREF: sub_1B7A8+1FC↑j
+loc_1B9AC:                              ; CODE XREF: HandleScriptedStoryEventTrigger+1FC↑j
                 mov     ax, 2Ch ; ','
                 call    TriggerSoundEvent
                 call    RefreshDungeonMapWindow
@@ -21284,18 +21284,18 @@ loc_1B9AC:                              ; CODE XREF: sub_1B7A8+1FC↑j
                 mov     cx, 3
                 call    DrawStringColumn
 
-loc_1BA0C:                              ; CODE XREF: sub_1B7A8+22F↑j
+loc_1BA0C:                              ; CODE XREF: HandleScriptedStoryEventTrigger+22F↑j
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BA12:                              ; CODE XREF: sub_1B7A8+1AE↑j
+loc_1BA12:                              ; CODE XREF: HandleScriptedStoryEventTrigger+1AE↑j
                 cmp     word ptr [si+4], 5
                 jz      short loc_1BA1B
                 jmp     loc_1BA9E
 ; ---------------------------------------------------------------------------
 
-loc_1BA1B:                              ; CODE XREF: sub_1B7A8+26E↑j
+loc_1BA1B:                              ; CODE XREF: HandleScriptedStoryEventTrigger+26E↑j
                 mov     ax, 91h
                 call    TestGlobalFlag
                 jnz     short loc_1BA31
@@ -21305,7 +21305,7 @@ loc_1BA1B:                              ; CODE XREF: sub_1B7A8+26E↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BA31:                              ; CODE XREF: sub_1B7A8+27B↑j
+loc_1BA31:                              ; CODE XREF: HandleScriptedStoryEventTrigger+27B↑j
                 mov     word ptr ds:0CF33h, 8
                 call    TickTravelResourceAilments
                 mov     word ptr ds:0CF75h, 25Ch
@@ -21330,13 +21330,13 @@ loc_1BA31:                              ; CODE XREF: sub_1B7A8+27B↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BA9E:                              ; CODE XREF: sub_1B7A8+270↑j
+loc_1BA9E:                              ; CODE XREF: HandleScriptedStoryEventTrigger+270↑j
                 cmp     word ptr [si+4], 6
                 jz      short loc_1BAA7
                 jmp     locret_1BB83
 ; ---------------------------------------------------------------------------
 
-loc_1BAA7:                              ; CODE XREF: sub_1B7A8+2FA↑j
+loc_1BAA7:                              ; CODE XREF: HandleScriptedStoryEventTrigger+2FA↑j
                 mov     word ptr ds:0CF33h, 2
                 call    TickTravelResourceAilments
                 mov     word ptr ds:0CF75h, 14Ch
@@ -21356,8 +21356,8 @@ loc_1BAA7:                              ; CODE XREF: sub_1B7A8+2FA↑j
                 mov     ax, 9Eh
                 call    SetGlobalFlag
 
-loc_1BB04:                              ; CODE XREF: sub_1B7A8+352↑j
-                                        ; sub_1B7A8+390↓j
+loc_1BB04:                              ; CODE XREF: HandleScriptedStoryEventTrigger+352↑j
+                                        ; HandleScriptedStoryEventTrigger+390↓j
                 mov     word ptr ds:53EEh, 17Fh
                 mov     word ptr ds:53F0h, 181h
                 call    IsItemRangeAvailable
@@ -21372,7 +21372,7 @@ loc_1BB04:                              ; CODE XREF: sub_1B7A8+352↑j
                 jmp     short loc_1BB04
 ; ---------------------------------------------------------------------------
 
-loc_1BB3A:                              ; CODE XREF: sub_1B7A8+372↑j
+loc_1BB3A:                              ; CODE XREF: HandleScriptedStoryEventTrigger+372↑j
                 mov     ax, 2Ch ; ','
                 call    TriggerSoundEvent
                 call    RefreshDungeonMapWindow
@@ -21389,14 +21389,14 @@ loc_1BB3A:                              ; CODE XREF: sub_1B7A8+372↑j
                 call    ShowAbilityDescriptionColumn
                 or      word ptr ds:536Ah, 100h
 
-loc_1BB7D:                              ; CODE XREF: sub_1B7A8+3C2↑j
+loc_1BB7D:                              ; CODE XREF: HandleScriptedStoryEventTrigger+3C2↑j
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
-locret_1BB83:                           ; CODE XREF: sub_1B7A8+2FC↑j
+locret_1BB83:                           ; CODE XREF: HandleScriptedStoryEventTrigger+2FC↑j
                 retf
-sub_1B7A8       endp
+HandleScriptedStoryEventTrigger endp
 
 seg047          ends
 
@@ -41868,8 +41868,8 @@ seg097          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ConsumeItemChargeResource proc far      ; CODE XREF: sub_1A09D+38↑P
-                                        ; sub_1B490+18C↑P ...
+ConsumeItemChargeResource proc far      ; CODE XREF: CheckAndPaySpecialItemCost+38↑P
+                                        ; HandleSpecialQuestCommand+18C↑P ...
                 push    si
                 push    cx
                 mov     ax, ds:5426h
@@ -45957,8 +45957,8 @@ seg112          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-WaitForTargetClick proc far             ; CODE XREF: sub_1B490:loc_1B4AF↑P
-                                        ; sub_1B490:loc_1B507↑P ...
+WaitForTargetClick proc far             ; CODE XREF: HandleSpecialQuestCommand:loc_1B4AF↑P
+                                        ; HandleSpecialQuestCommand:loc_1B507↑P ...
                 call    RedrawItemDescriptionAndMaterials ; Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.
                 mov     word ptr ds:0FC3h, 0Fh
                 call    UpdateCursorForHeldItem
@@ -45999,7 +45999,7 @@ WaitForTargetClick endp
 
 
 ShowAbilityDescriptionColumn proc far   ; CODE XREF: UseAbilityCommand+FA↑P
-                                        ; sub_1B490+70↑P ...
+                                        ; HandleSpecialQuestCommand+70↑P ...
                 push    bx
                 push    cx
                 or      word ptr ds:536Ah, 100h
@@ -46024,7 +46024,7 @@ ShowAbilityDescriptionColumn endp
 ; =============== S U B R O U T I N E =======================================
 
 
-UseAbilityOnTarget proc far             ; CODE XREF: sub_1B490:loc_1B4A9↑P
+UseAbilityOnTarget proc far             ; CODE XREF: HandleSpecialQuestCommand:loc_1B4A9↑P
                 push    cs              ; Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.
                 call    near ptr WaitForTargetClick
                 cmp     byte ptr ds:0E9Ah, 1Bh
@@ -46355,7 +46355,7 @@ loc_299AB:                              ; CODE XREF: HandleGameCommand+13E↑j
 ; ---------------------------------------------------------------------------
 
 loc_299B1:                              ; CODE XREF: HandleGameCommand+136↑j
-                call    sub_1B490
+                call    HandleSpecialQuestCommand
                 call    DrawMouseCursorAlt
                 retf
 HandleGameCommand endp
@@ -76212,11 +76212,11 @@ word_331D6      dw 0                    ; DATA XREF: seg000:05F0↑r
                                         ; seg000:0623↑r ...
                 db    0
                 db    0
-word_331DA      dw 0                    ; DATA XREF: sub_1A09D:loc_1A110↑r
+word_331DA      dw 0                    ; DATA XREF: CheckAndPaySpecialItemCost:loc_1A110↑r
                 db    0
                 db    0
-word_331DE      dw 0                    ; DATA XREF: sub_1A09D+42↑r
-                                        ; sub_1A09D+4A↑r ...
+word_331DE      dw 0                    ; DATA XREF: CheckAndPaySpecialItemCost+42↑r
+                                        ; CheckAndPaySpecialItemCost+4A↑r ...
 word_331E0      dw 0                    ; DATA XREF: start+6CF↑w
                                         ; SaveUiStateForClueBook+E9↑r
                 db    0

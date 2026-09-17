@@ -7413,6 +7413,47 @@ branches).
 
 ~40 low-confidence functions remain unchecked for future rounds.
 
+### 2026-09-16 session update, continued: Chapter 3 review round 6 — resolving round 5's 3 deferred functions
+
+Rather than continue grinding through more of the low-confidence tier,
+went back and gave round 5's 3 deferred functions (too large/changed
+to trust a quick call-list skim) a full direct read each, since two of
+them were flagged as central to the emerging NUORE hypothesis.
+
+Result: 2 of the 3 were bad BinDiff matches, not the functions they
+were compared against — bringing the confirmed-bad count for this
+tier alone to double digits:
+- The address matched to `DispatchItemAbilityCommand` turned out to be
+  a genuinely new quest mechanic: collect 5 specific items, then get
+  teleported to a new location. Renamed `HandleSpecialQuestCommand`.
+- The address matched to `CastSpell` turned out to be a shared
+  "resolve one scripted one-time story/world-unlock event" handler,
+  caught by a structural tell (it's called directly from `start`,
+  not through `HandleGameCommand` like the real `CastSpell` is).
+  Renamed `HandleScriptedStoryEventTrigger`.
+- The third, `CheckAndPaySpecialItemCost`, *was* confirmed real:
+  gained a 4th special-payment cost type (a ×100-scaled variant) and a
+  bug-fix-shaped addition (removing an equipped item's stat effect
+  when it's spent as payment).
+
+**This required correcting round 5's NUORE-removal hypothesis**: one
+of its three supporting data points (`DispatchItemAbilityCommand`
+"missing" `CollectNuoreCache`/`CollectMagicOreCache` calls) wasn't real
+evidence, since that address was never actually `DispatchItemAbilityCommand`
+in the first place. The hypothesis isn't dead, just weaker — down to 2
+data points instead of 3. Also corrected a smaller round 5 claim:
+`ShiftBCD4LeftNibble` isn't a brand-new BCD helper, it already exists
+in both games (just wasn't part of the original `bcd4.c` reimplementation
+scoping).
+
+Both real yendor2-equivalents (the actual Chapter 3 `CastSpell` and
+`DispatchItemAbilityCommand`) are still unidentified, presumably among
+the remaining ~37 unchecked low-confidence functions or possibly
+unmatched by BinDiff entirely. Lesson reinforced: a mismatched call-site
+shape (different caller/calling convention) is as strong a red flag as
+a low similarity score, worth checking before investing time reading a
+function's body.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

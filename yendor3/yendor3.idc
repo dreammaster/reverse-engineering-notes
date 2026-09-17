@@ -3702,6 +3702,7 @@ static Bytes_1(void) {
 	create_insn	(0X1A06D);
 	create_insn	(x=0X1A09D);
 	op_hex		(x,	1);
+	set_name	(0X1A09D,	"CheckAndPaySpecialItemCost");
 	create_insn	(0X1A0B3);
 	create_insn	(0X1A0BB);
 	create_insn	(0X1A0C3);
@@ -4106,6 +4107,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B479);
 	op_seg		(x,	1);
 	create_insn	(0X1B490);
+	set_name	(0X1B490,	"HandleSpecialQuestCommand");
 	create_insn	(0X1B4A9);
 	create_insn	(0X1B4AF);
 	create_insn	(0X1B4DB);
@@ -4150,6 +4152,7 @@ static Bytes_1(void) {
 	create_insn	(0X1B79D);
 	create_insn	(0X1B7A7);
 	create_insn	(0X1B7A8);
+	set_name	(0X1B7A8,	"HandleScriptedStoryEventTrigger");
 	create_insn	(0X1B7B1);
 	create_insn	(0X1B7BC);
 	create_insn	(x=0X1B81D);

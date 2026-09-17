@@ -386,43 +386,72 @@ Three independent data points now point the same direction:
   includes `CollectNuoreCache` or `CollectMagicOreCache` at all, while
   growing by 70 instructions overall.
 
-Still a hypothesis, not confirmed — but three unrelated functions all
-pointing at NUORE-related code disappearing or changing shape is
-enough to prioritize a dedicated round on this specifically: find
-every remaining `CollectNuoreCache`/`AddToBCDCounter`-with-NUORE-offset
-call site in yendor3 and see what actually replaced each one.
+**Correction (round 6)**: this hypothesis needs a partial retraction.
+All 3 deferred functions from round 5 were fully read this round, and
+2 of the 3 turned out to be bad BinDiff matches entirely unrelated to
+the functions they were compared against — see below. That means the
+`DispatchItemAbilityCommand` data point above wasn't real evidence: it
+wasn't actually that function, so its "missing `CollectNuoreCache`
+call" observation is meaningless (it was never going to have one). The
+other two data points (`DeductAlchemySpellCosts` losing a call, and
+the confirmed-bad `CollectNuoreCache` match itself having an unrelated
+body) still stand, but the hypothesis is weaker than round 5 made it
+sound — down to 2 data points, one of which (the bad match itself)
+only shows *that specific address* isn't `CollectNuoreCache`, not that
+NUORE collection was removed from the game. Worth still checking, but
+with reduced confidence.
 
-### Deliberately not renamed: 3 functions too large/changed to trust a quick read
+### Round 5's 3 deferred functions, resolved: 2 more bad matches, 1 real one substantially enhanced
 
-- **`CheckAndPaySpecialItemCost`** (0.65): grew from 45 to 86
-  instructions. New calls include `RemoveMultiStatEffect`,
-  `RecomputeEquipmentStatBonuses`, and a brand-new BCD helper,
-  `ShiftBCD4LeftNibble` (called twice) — not part of the already-named
-  BCD family (`bcd4.c`'s reimplementation target list may need to grow
-  by one). Reads like a new "pay with an enchanted item, removing its
-  stat bonus" payment option, but not confirmed.
-- **`DispatchItemAbilityCommand`** (0.60): grew from 69 to 139
-  instructions — more than doubled. Several yendor2 branches
-  (`ShowVisionAtLocation`, `UseLocationBoundPotion`,
-  `CheckQuestItemsCompleted`, `CollectNuoreCache`,
-  `CollectMagicOreCache`, `PartyMassHealAndOverheal`,
-  `InstantKillActiveMonster`) are entirely absent from yendor3's call
-  list, replaced by a much longer sequence built around 5 repeated
-  `IsItemRangeAvailable`+`ConsumeItemChargeResource` pairs and several
-  `TestGlobalFlag`/`SetGlobalFlag` calls. This is probably the single
-  highest-value function left to fully understand, given its
-  connection to the NUORE hypothesis above — worth a dedicated round.
-- **`CastSpell`** (0.36): a 202-line function became 216 lines with a
-  radically different shape — the same 8-call sequence
-  (`TickTravelResourceAilments`/`RefreshDungeonMapWindow`/
-  `RevealCellsAroundPlayer`/`RestoreFullScreenFromEMS`/
-  `RedrawDungeonScreen`/`BuildMinimapTileData`/`DrawMinimap`/
-  `DrawMouseCursor`) repeats 5-6 times almost verbatim, suggesting
-  several spell-effect branches (teleport home? recall? multiple
-  destination options?) each inline what used to be shared
-  travel/redraw logic rather than calling a common helper. Modest
-  overall size change hides a much bigger shape change — needs a real
-  read, not a call-list skim.
+- **`CheckAndPaySpecialItemCost`** (0.65) — **confirmed real**, genuinely
+  enhanced. Gained a 4th special-cost type (tag `0x270F`, alongside the
+  existing gold/NUORE/magic-ore tags `1`/`2`/`3`): converts the cost to
+  BCD then applies `ShiftBCD4LeftNibble` twice (a ×100 scale) before
+  comparing against a shared price table — a new cost type using a
+  different unit scale from the other three. Also: the generic
+  "pay with a specific inventory item" branch now checks whether the
+  consumed item occupied one of the 6 confirmed multi-stat-effect
+  equipment slots (the exact same 6 offsets `RefreshMultiStatEffects`
+  walks) and, if so, calls `RemoveMultiStatEffect` +
+  `RecomputeEquipmentStatBonuses` — reads as a bug fix: previously,
+  spending an equipped magic item as a special payment might not
+  correctly remove the stat bonus it was granting.
+  **Correction to round 5's writeup**: `ShiftBCD4LeftNibble` is *not*
+  a brand-new BCD helper — it already exists in both games (yendor2:
+  called from `MulBCD4ByWord`; yendor3: also called from
+  `PromptBuyOreQuantity`). Round 5 assumed "new" without checking
+  yendor2 first. `bcd4.c`'s reimplementation scope should still grow
+  to include the wider BCD family (`MulBCD4ByWord`,
+  `ShiftBCD4LeftNibble`) when that work resumes — just not because
+  they're Chapter-3-only.
+- **`DispatchItemAbilityCommand`** (0.60) — **confirmed bad match**.
+  The real body has nothing to do with relic-item dispatch: it checks
+  a 3-way key against `0x176`/`0x17E`/`0x277`, handling a plain
+  ability-on-target passthrough, a specific-target ability check, and
+  (the interesting branch) gating on 5 specific item ids
+  (`0xD6`/`0x12C`/`0x20B`/`0x224`/`0x276`) all being available,
+  consuming all 5, then teleporting the party to a fixed new location.
+  Reads as a genuinely new **"collect 5 quest artifacts, then unlock a
+  new area"** mechanic. Renamed **`HandleSpecialQuestCommand`**. The
+  real yendor3 equivalent of yendor2's `DispatchItemAbilityCommand`
+  (the NUORE/ore/heal/kill relic dispatcher) is still unidentified.
+- **`CastSpell`** (0.36) — **confirmed bad match**, and a structural
+  tell should have caught it sooner: yendor2's `CastSpell` is called
+  from `HandleGameCommand`'s action-id dispatch, but this address is
+  called directly from `start` — a fundamentally different call site.
+  Reading it: dispatches on a record field (`[si+4]` = 1, 2, ...),
+  each branch gated on a distinct one-time global flag, triggering a
+  teleport-and-message sequence on first activation. Reads as a shared
+  **"resolve one scripted one-time story/world-unlock event"**
+  handler — structurally a sibling to the already-known
+  `ApplyMapTriggerEffect`, but for one-time story beats instead of
+  repeatable map triggers. Renamed **`HandleScriptedStoryEventTrigger`**.
+  The real yendor3 `CastSpell` is still unidentified.
+
+**Takeaway**: a mismatched call-site *shape* (different caller,
+different calling convention) is as strong a red flag as a low
+similarity score — worth checking `CODE XREF` on any deferred function
+before spending time reading its body.
 
 ## Review status
 
@@ -444,13 +473,14 @@ call site in yendor3 and see what actually replaced each one.
   generic tick-wait duplicate, not that function, see above). The
   address matched to `PollForEscapeKeyOnlyAlt` (0.90) *was* resolved
   this round -- see the correction above.
-- 77 functions at similarity <0.70: 37 checked in round 5, 23 renamed
-  (`apply_round5_findings.py`, `apply_round5b_findings.py`). 12 more
-  confirmed-bad matches found this round alone (see above), bringing
-  the session total to 16-ish confirmed-bad BinDiff labels. 3 large,
-  substantially-changed functions deliberately left unrenamed pending
-  a dedicated read (`CheckAndPaySpecialItemCost`,
-  `DispatchItemAbilityCommand`, `CastSpell` -- see above). ~40 low-
-  confidence functions remain unchecked, for future rounds. Treat
+- 77 functions at similarity <0.70: 40 checked across rounds 5-6, 26
+  renamed to their real (sometimes non-obvious) identity
+  (`apply_round5_findings.py`, `apply_round5b_findings.py`,
+  `apply_round6_findings.py`, `apply_round6b.py`, `apply_round6c.py`).
+  18 confirmed-bad BinDiff matches found in this tier so far (12 from
+  round 5, 2 more from round 6's deep dives, plus others from earlier
+  spot-checks) -- roughly 20 confirmed-bad labels across the whole
+  session. ~37 low-confidence functions remain unchecked, for future
+  rounds. Treat
   *any* match under roughly 0.5 as unverified until read directly --
   this tier's bad-match rate is now higher than good.
