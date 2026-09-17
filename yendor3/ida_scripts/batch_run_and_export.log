@@ -924,3 +924,60 @@ offset=0xd0c9 ea=0x3ae79  'g_partySlotAssignment' -> 'g_partySlotAssignment': ok
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round14b_fix.py']
+[*] reading apply_round14b_fix.py
+[*] executing apply_round14b_fix.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2bbb5  'PollForEscapeKeyOnly_0' -> 'PollForEscapeKeyOnlyAlt': ok
+----- end target script output -----
+[*] finished executing apply_round14b_fix.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118643
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round15_findings.py']
+[*] reading apply_round15_findings.py
+[*] executing apply_round15_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x14f40  'sub_14F40' -> 'ShowIntroPicture': ok
+----- end target script output -----
+[*] finished executing apply_round15_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118643
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round15b_findings.py']
+[*] reading apply_round15b_findings.py
+[*] executing apply_round15b_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x1be7e  'sub_1BE7E' -> 'RunTitleScreen': ok
+----- end target script output -----
+[*] finished executing apply_round15b_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118643
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0

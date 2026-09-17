@@ -7676,14 +7676,42 @@ byte-for-byte structural clone of the already-named
 entirely — the address BinDiff had suggested for it turned out to be
 one of the two new title-card screens instead, nothing to do with
 portraits. The escape-poll gate both new screens share turned out to
-be a byte-for-byte match for yendor2's `PollForEscapeKeyOnly`. All
+be a byte-for-byte match for yendor2's `PollForEscapeKeyOnlyAlt` (a
+naming collision on the first attempt — it silently landed on an
+already-taken plain `PollForEscapeKeyOnly` at a different address, IDA
+auto-suffixed it without erroring, caught and fixed right after). All
 three renamed.
 
-That leaves only `DrawShadowedTextAlt`, `sub_1B085`'s exact
-trap-effect semantics, `sub_11778`'s item-registry purpose, and
-`sub_2566C`'s identity as open threads — none blocking, all
-low-priority deep-read items for whenever there's appetite to keep
-going.
+### 2026-09-16 session update, continued: Chapter 3 review round 15 — found ShowIntroPicture, finally confirmed RunTitleScreen
+
+Kept chasing `DrawShadowedTextAlt` by tracing its blocker
+(`PlayStudioCreditsIntro`) from a new angle, and found something even
+better along the way. The address round 9 had flagged as a
+confirmed-bad `PlayCreditsWipeAnimation` guess turned out to be the
+real `ShowIntroPicture` — draws a picture, reloads the master palette,
+then loops a data table of credit-style text entries with escape
+checks and fade transitions between them, matching yendor2's version
+closely (whose "shadow text" effect turns out to be two manual offset
+text draws, not `DrawShadowedTextAlt` — meaning `ShowIntroPicture`
+never used that function in either game, only `PlayStudioCreditsIntro`
+does, which is still unresolved).
+
+That was the real prize, though: `ShowIntroPicture`'s caller, in turn,
+is called from the already-known `ConfirmNewGame`, and diffing it
+against yendor2's `RunTitleScreen` — the address BinDiff itself had
+suggested at 0.88 similarity, deliberately left unrenamed back in
+round 4 as "too large/noisy to trust without a dedicated read" —
+showed the same roughly 20-call sequence in the same order in both
+games. Confirmed and renamed. That resolves the last of round 4's
+long-deferred exceptions.
+
+`DrawShadowedTextAlt` and `PlayStudioCreditsIntro` remain the one
+genuinely open identity — `RunTitleScreen` doesn't call it, consistent
+with yendor2 where it's reached only from one hidden `start`-tail
+easter egg that still doesn't have an obvious yendor3 counterpart. The
+other minor open threads (`sub_1B085`'s trap-effect semantics,
+`sub_11778`'s item-registry purpose, `sub_2566C`'s identity) remain
+low-priority and non-blocking.
 
 ## Next steps (not started this session)
 

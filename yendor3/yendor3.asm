@@ -9321,7 +9321,7 @@ seg018          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14F40       proc far                ; CODE XREF: sub_1BE7E+291↓P
+ShowIntroPicture proc far               ; CODE XREF: RunTitleScreen+291↓P
                 call    sub_150BE
                 mov     word ptr ds:0E24h, 0F0h
                 mov     word ptr ds:0E26h, 0
@@ -9340,7 +9340,7 @@ sub_14F40       proc far                ; CODE XREF: sub_1BE7E+291↓P
                 and     word ptr ds:536Ah, 0FBFFh
                 mov     si, 0A919h
 
-loc_14F8A:                              ; CODE XREF: sub_14F40+94↓j
+loc_14F8A:                              ; CODE XREF: ShowIntroPicture+94↓j
                 cmp     word ptr [si], 0FFFFh
                 jz      short loc_14FD6
                 push    si
@@ -9364,17 +9364,17 @@ loc_14F8A:                              ; CODE XREF: sub_14F40+94↓j
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jnz     short loc_14F8A
 
-loc_14FD6:                              ; CODE XREF: sub_14F40+39↑j
-                                        ; sub_14F40+4D↑j ...
+loc_14FD6:                              ; CODE XREF: ShowIntroPicture+39↑j
+                                        ; ShowIntroPicture+4D↑j ...
                 call    sub_14FDA
                 retf
-sub_14F40       endp
+ShowIntroPicture endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14FDA       proc near               ; CODE XREF: sub_14F40:loc_14FD6↑p
+sub_14FDA       proc near               ; CODE XREF: ShowIntroPicture:loc_14FD6↑p
                 and     word ptr ds:536Eh, 0F7FFh
                 and     word ptr ds:540Ch, 7FFFh
                 and     word ptr ds:536Ah, 0FBFFh
@@ -9408,8 +9408,8 @@ sub_1501C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PollForEscapeKeyOnly proc near          ; CODE XREF: sub_14F40+36↑p
-                                        ; sub_14F40+7E↑p ...
+PollForEscapeKeyOnly proc near          ; CODE XREF: ShowIntroPicture+36↑p
+                                        ; ShowIntroPicture+7E↑p ...
                 call    PollKeyboardInput ; Polls for a keypress but only cares about ESC: any other key is silently discarded (byte_2E400 cleared). Returns ZF set iff byte_2E400==0x1B. Called from ShowIntroPicture. Byte-for-byte identical to PollForEscapeKeyOnlyAlt (sub_15249), another overlay-segment duplicate.
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_15044
@@ -9427,7 +9427,7 @@ PollForEscapeKeyOnly endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1504A       proc near               ; CODE XREF: sub_14F40+53↑p
+sub_1504A       proc near               ; CODE XREF: ShowIntroPicture+53↑p
                 push    cx
                 push    di
                 push    es
@@ -9515,7 +9515,7 @@ RunPaletteRange16FadeUpAlt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-WaitFrameTicksOrEscape proc near        ; CODE XREF: sub_14F40+89↑p
+WaitFrameTicksOrEscape proc near        ; CODE XREF: ShowIntroPicture+89↑p
                                         ; WaitFrameTicksOrEscape+6↓j ...
                 test    word ptr ds:536Ah, 400h ; Busy-waits for word_328C4 bit 0x400 ('tick ready', plausibly set by an untraced timer/vsync interrupt handler), checks ESC via PollForEscapeKeyOnly (returns immediately if pressed), else clears the bit and repeats for cx ticks. Called from ShowIntroPicture.
                 jz      short WaitFrameTicksOrEscape
@@ -9532,7 +9532,7 @@ WaitFrameTicksOrEscape endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_150BE       proc near               ; CODE XREF: sub_14F40↑p
+sub_150BE       proc near               ; CODE XREF: ShowIntroPicture↑p
                 call    RestoreCursorBackgroundIfDirty
                 or      word ptr ds:5370h, 8
                 mov     word ptr ds:0E28h, 0
@@ -9561,7 +9561,7 @@ sub_150BE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TriggerPaletteRange16FadeDown proc near ; CODE XREF: sub_14F40+50↑p
+TriggerPaletteRange16FadeDown proc near ; CODE XREF: ShowIntroPicture+50↑p
                 or      word ptr ds:536Eh, 800h ; Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeDown to completion. Called from RunCharacterCreationSelectionStep.
                 mov     dx, 0F0h
                 call    RunPaletteRange16FadeUp
@@ -9572,7 +9572,7 @@ TriggerPaletteRange16FadeDown endp
 ; =============== S U B R O U T I N E =======================================
 
 
-TriggerPaletteRange16FadeUp proc near   ; CODE XREF: sub_14F40+83↑p
+TriggerPaletteRange16FadeUp proc near   ; CODE XREF: ShowIntroPicture+83↑p
                 or      word ptr ds:536Eh, 800h ; Sets word_328C8 bit 0x800, then runs RunPaletteRange16FadeUp to completion. Called from RunCharacterCreationSelectionStep.
                 mov     dx, 0F0h
                 call    RunPaletteRange16FadeUpAlt
@@ -21907,7 +21907,7 @@ seg054          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BE7E       proc far                ; CODE XREF: ConfirmNewGame+48↓P
+RunTitleScreen  proc far                ; CODE XREF: ConfirmNewGame+48↓P
                                         ; InitGame+F9↓P ...
                 push    word ptr ds:0CF65h
                 mov     word ptr ds:0CF65h, 3
@@ -21920,8 +21920,8 @@ sub_1BE7E       proc far                ; CODE XREF: ConfirmNewGame+48↓P
                 jnz     short loc_1BEA8
                 call    InitializeNewGameWorldState
 
-loc_1BEA8:                              ; CODE XREF: sub_1BE7E+1B↑j
-                                        ; sub_1BE7E+23↑j ...
+loc_1BEA8:                              ; CODE XREF: RunTitleScreen+1B↑j
+                                        ; RunTitleScreen+23↑j ...
                 and     word ptr ds:536Ah, 0FDFFh
                 mov     ax, ds:0D0C9h
                 add     ax, ds:0D0CBh
@@ -21931,8 +21931,8 @@ loc_1BEA8:                              ; CODE XREF: sub_1BE7E+1B↑j
                 jz      short loc_1BEC8
                 or      word ptr ds:536Ah, 200h
 
-loc_1BEC8:                              ; CODE XREF: sub_1BE7E+42↑j
-                                        ; sub_1BE7E+108↓j ...
+loc_1BEC8:                              ; CODE XREF: RunTitleScreen+42↑j
+                                        ; RunTitleScreen+108↓j ...
                 mov     word ptr ds:5430h, 1
                 call    DrawMouseCursorAlt
                 mov     ax, 4730h
@@ -21960,8 +21960,8 @@ loc_1BEC8:                              ; CODE XREF: sub_1BE7E+42↑j
                 or      word ptr ds:540Ch, 8000h
                 and     word ptr ds:540Ch, 0EFFFh
 
-loc_1BF44:                              ; CODE XREF: sub_1BE7E+12F↓j
-                                        ; sub_1BE7E:loc_1BFC0↓j ...
+loc_1BF44:                              ; CODE XREF: RunTitleScreen+12F↓j
+                                        ; RunTitleScreen:loc_1BFC0↓j ...
                 test    word ptr ds:536Ah, 400h
                 jz      short loc_1BFA3
                 and     word ptr ds:536Ah, 0FBFFh
@@ -21980,21 +21980,21 @@ loc_1BF44:                              ; CODE XREF: sub_1BE7E+12F↓j
                 jmp     loc_1BEC8
 ; ---------------------------------------------------------------------------
 
-loc_1BF89:                              ; CODE XREF: sub_1BE7E+106↑j
+loc_1BF89:                              ; CODE XREF: RunTitleScreen+106↑j
                 call    RunCharacterCreation
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jnz     short loc_1BF98
                 jmp     loc_1BEC8
 ; ---------------------------------------------------------------------------
 
-loc_1BF98:                              ; CODE XREF: sub_1BE7E+115↑j
+loc_1BF98:                              ; CODE XREF: RunTitleScreen+115↑j
                 mov     ax, 14h
                 call    sub_28340
                 jmp     loc_1BEC8
 ; ---------------------------------------------------------------------------
 
-loc_1BFA3:                              ; CODE XREF: sub_1BE7E+CC↑j
-                                        ; sub_1BE7E+DD↑j
+loc_1BFA3:                              ; CODE XREF: RunTitleScreen+CC↑j
+                                        ; RunTitleScreen+DD↑j
                 call    PollKeyboardInput
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_1BF44
@@ -22005,41 +22005,41 @@ loc_1BFA3:                              ; CODE XREF: sub_1BE7E+CC↑j
                 jmp     loc_1C064
 ; ---------------------------------------------------------------------------
 
-loc_1BFC0:                              ; CODE XREF: sub_1BE7E+13D↑j
+loc_1BFC0:                              ; CODE XREF: RunTitleScreen+13D↑j
                 jmp     short loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1BFC2:                              ; CODE XREF: sub_1BE7E+136↑j
+loc_1BFC2:                              ; CODE XREF: RunTitleScreen+136↑j
                 cmp     byte ptr ds:0E9Ah, 43h ; 'C'
                 jnz     short loc_1BFCC
                 jmp     loc_1C080
 ; ---------------------------------------------------------------------------
 
-loc_1BFCC:                              ; CODE XREF: sub_1BE7E+149↑j
+loc_1BFCC:                              ; CODE XREF: RunTitleScreen+149↑j
                 cmp     byte ptr ds:0E9Ah, 41h ; 'A'
                 jnz     short loc_1BFD6
                 jmp     loc_1C092
 ; ---------------------------------------------------------------------------
 
-loc_1BFD6:                              ; CODE XREF: sub_1BE7E+153↑j
+loc_1BFD6:                              ; CODE XREF: RunTitleScreen+153↑j
                 cmp     byte ptr ds:0E9Ah, 45h ; 'E'
                 jnz     short loc_1BFE0
                 jmp     loc_1C0A4
 ; ---------------------------------------------------------------------------
 
-loc_1BFE0:                              ; CODE XREF: sub_1BE7E+15D↑j
+loc_1BFE0:                              ; CODE XREF: RunTitleScreen+15D↑j
                 cmp     byte ptr ds:0E9Ah, 52h ; 'R'
                 jnz     short loc_1BFEA
                 jmp     loc_1C10A
 ; ---------------------------------------------------------------------------
 
-loc_1BFEA:                              ; CODE XREF: sub_1BE7E+167↑j
+loc_1BFEA:                              ; CODE XREF: RunTitleScreen+167↑j
                 cmp     byte ptr ds:0E9Ah, 49h ; 'I'
                 jnz     short loc_1BFF4
                 jmp     loc_1C11C
 ; ---------------------------------------------------------------------------
 
-loc_1BFF4:                              ; CODE XREF: sub_1BE7E+171↑j
+loc_1BFF4:                              ; CODE XREF: RunTitleScreen+171↑j
                 cmp     byte ptr ds:0E9Ah, 11h
                 jz      short loc_1C00C
                 cmp     byte ptr ds:0E9Ah, 0Dh
@@ -22049,12 +22049,12 @@ loc_1BFF4:                              ; CODE XREF: sub_1BE7E+171↑j
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C00C:                              ; CODE XREF: sub_1BE7E+17B↑j
+loc_1C00C:                              ; CODE XREF: RunTitleScreen+17B↑j
                 mov     byte ptr ds:0E9Ah, 0FFh
                 jmp     loc_1C0EB
 ; ---------------------------------------------------------------------------
 
-loc_1C014:                              ; CODE XREF: sub_1BE7E+182↑j
+loc_1C014:                              ; CODE XREF: RunTitleScreen+182↑j
                 test    word ptr ds:0CF63h, 2
                 jz      short loc_1C029
                 call    StopMusicAndResetTimer
@@ -22062,37 +22062,37 @@ loc_1C014:                              ; CODE XREF: sub_1BE7E+182↑j
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C029:                              ; CODE XREF: sub_1BE7E+19C↑j
+loc_1C029:                              ; CODE XREF: RunTitleScreen+19C↑j
                 test    word ptr ds:0CF63h, 1
                 jnz     short loc_1C034
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C034:                              ; CODE XREF: sub_1BE7E+1B1↑j
+loc_1C034:                              ; CODE XREF: RunTitleScreen+1B1↑j
                 or      word ptr ds:0CF63h, 2
                 call    UpdateAmbientMusic
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C041:                              ; CODE XREF: sub_1BE7E+189↑j
+loc_1C041:                              ; CODE XREF: RunTitleScreen+189↑j
                 test    word ptr ds:0CF63h, 8
                 jz      short loc_1C051
                 and     word ptr ds:0CF63h, 0FFF7h
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C051:                              ; CODE XREF: sub_1BE7E+1C9↑j
+loc_1C051:                              ; CODE XREF: RunTitleScreen+1C9↑j
                 test    word ptr ds:0CF63h, 4
                 jnz     short loc_1C05C
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C05C:                              ; CODE XREF: sub_1BE7E+1D9↑j
+loc_1C05C:                              ; CODE XREF: RunTitleScreen+1D9↑j
                 or      word ptr ds:0CF63h, 8
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C064:                              ; CODE XREF: sub_1BE7E+13F↑j
+loc_1C064:                              ; CODE XREF: RunTitleScreen+13F↑j
                 mov     ax, ds:1214h
                 mov     bx, ds:1216h
                 mov     si, 5E4Ah
@@ -22102,31 +22102,31 @@ loc_1C064:                              ; CODE XREF: sub_1BE7E+13F↑j
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C07B:                              ; CODE XREF: sub_1BE7E+1F8↑j
+loc_1C07B:                              ; CODE XREF: RunTitleScreen+1F8↑j
                 cmp     ax, 1
                 jnz     short loc_1C08D
 
-loc_1C080:                              ; CODE XREF: sub_1BE7E+14B↑j
+loc_1C080:                              ; CODE XREF: RunTitleScreen+14B↑j
                 call    TriggerFullPaletteFadeOut
                 call    ShowPartyMembers
                 jmp     loc_1BEC8
 ; ---------------------------------------------------------------------------
 
-loc_1C08D:                              ; CODE XREF: sub_1BE7E+200↑j
+loc_1C08D:                              ; CODE XREF: RunTitleScreen+200↑j
                 cmp     ax, 2
                 jnz     short loc_1C09F
 
-loc_1C092:                              ; CODE XREF: sub_1BE7E+155↑j
+loc_1C092:                              ; CODE XREF: RunTitleScreen+155↑j
                 call    TriggerFullPaletteFadeOut
                 call    sub_2B7AE
                 jmp     loc_1BEC8
 ; ---------------------------------------------------------------------------
 
-loc_1C09F:                              ; CODE XREF: sub_1BE7E+212↑j
+loc_1C09F:                              ; CODE XREF: RunTitleScreen+212↑j
                 cmp     ax, 3
                 jnz     short loc_1C105
 
-loc_1C0A4:                              ; CODE XREF: sub_1BE7E+15F↑j
+loc_1C0A4:                              ; CODE XREF: RunTitleScreen+15F↑j
                 test    word ptr ds:536Ah, 200h
                 jnz     short loc_1C0B7
                 mov     ax, 3
@@ -22134,7 +22134,7 @@ loc_1C0A4:                              ; CODE XREF: sub_1BE7E+15F↑j
                 jmp     loc_1BF44
 ; ---------------------------------------------------------------------------
 
-loc_1C0B7:                              ; CODE XREF: sub_1BE7E+22C↑j
+loc_1C0B7:                              ; CODE XREF: RunTitleScreen+22C↑j
                 test    word ptr ds:536Ch, 100h
                 jz      short loc_1C0EB
                 and     word ptr ds:536Ch, 0FEFFh
@@ -22143,7 +22143,7 @@ loc_1C0B7:                              ; CODE XREF: sub_1BE7E+22C↑j
                 mov     cx, 4
                 mov     si, 0D0C9h
 
-loc_1C0D3:                              ; CODE XREF: sub_1BE7E+26B↓j
+loc_1C0D3:                              ; CODE XREF: RunTitleScreen+26B↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1C0EB
@@ -22154,8 +22154,8 @@ loc_1C0D3:                              ; CODE XREF: sub_1BE7E+26B↓j
                 add     si, 2
                 loop    loc_1C0D3
 
-loc_1C0EB:                              ; CODE XREF: sub_1BE7E+193↑j
-                                        ; sub_1BE7E+23F↑j ...
+loc_1C0EB:                              ; CODE XREF: RunTitleScreen+193↑j
+                                        ; RunTitleScreen+23F↑j ...
                 mov     word ptr ds:5430h, 0
                 call    StopMusicAndResetTimer
                 call    TriggerFullPaletteFadeOut
@@ -22164,21 +22164,21 @@ loc_1C0EB:                              ; CODE XREF: sub_1BE7E+193↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C105:                              ; CODE XREF: sub_1BE7E+224↑j
+loc_1C105:                              ; CODE XREF: RunTitleScreen+224↑j
                 cmp     ax, 4
                 jnz     short loc_1C117
 
-loc_1C10A:                              ; CODE XREF: sub_1BE7E+169↑j
+loc_1C10A:                              ; CODE XREF: RunTitleScreen+169↑j
                 call    TriggerFullPaletteFadeOut
-                call    sub_14F40
+                call    ShowIntroPicture
                 jmp     loc_1BEA8
 ; ---------------------------------------------------------------------------
 
-loc_1C117:                              ; CODE XREF: sub_1BE7E+28A↑j
+loc_1C117:                              ; CODE XREF: RunTitleScreen+28A↑j
                 cmp     ax, 5
                 jnz     short loc_1C13A
 
-loc_1C11C:                              ; CODE XREF: sub_1BE7E+173↑j
+loc_1C11C:                              ; CODE XREF: RunTitleScreen+173↑j
                 mov     word ptr ds:5430h, 0
                 call    TriggerFullPaletteFadeOut
                 call    RestoreCursorBackgroundIfDirty
@@ -22187,9 +22187,9 @@ loc_1C11C:                              ; CODE XREF: sub_1BE7E+173↑j
                 jmp     loc_1BEC8
 ; ---------------------------------------------------------------------------
 
-loc_1C13A:                              ; CODE XREF: sub_1BE7E+29C↑j
+loc_1C13A:                              ; CODE XREF: RunTitleScreen+29C↑j
                 jmp     loc_1BF44
-sub_1BE7E       endp
+RunTitleScreen  endp
 
 seg054          ends
 
@@ -25792,7 +25792,7 @@ loc_1E380:                              ; CODE XREF: ConfirmNewGame+16↑j
                 and     word ptr ds:536Ah, 9FFFh
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursorAlt
-                call    sub_1BE7E
+                call    RunTitleScreen
                 cmp     byte ptr ds:0E9Ah, 0FFh
                 jz      short locret_1E3B1
                 mov     byte ptr ds:0E9Ah, 0FEh
@@ -26858,7 +26858,7 @@ loc_1EF10:                              ; CODE XREF: InitGame+D0↑j
                 call    TriggerFullPaletteFadeOut
                 test    word ptr ds:536Ah, 4000h
                 jnz     short loc_1EF51
-                call    sub_1BE7E
+                call    RunTitleScreen
                 cmp     byte ptr ds:0E9Ah, 0FFh
                 jnz     short loc_1EF51
                 retf
@@ -26869,7 +26869,7 @@ loc_1EF32:                              ; CODE XREF: InitGame+A3↑j
                 call    DrawMouseCursorAlt
                 test    word ptr ds:536Ah, 4000h
                 jnz     short loc_1EF51
-                call    sub_1BE7E
+                call    RunTitleScreen
                 cmp     byte ptr ds:0E9Ah, 0FFh
                 jnz     short loc_1EF51
                 retf
@@ -30189,7 +30189,7 @@ seg067          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20DC4       proc far                ; CODE XREF: sub_1BE7E+FC↑P
+sub_20DC4       proc far                ; CODE XREF: RunTitleScreen+FC↑P
                                         ; InitGame+A5↑P
                 call    sub_20EF2
                 jnz     short loc_20DCA
@@ -35013,7 +35013,7 @@ seg078          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowPartyMembers proc far               ; CODE XREF: sub_1BE7E+207↑P
+ShowPartyMembers proc far               ; CODE XREF: RunTitleScreen+207↑P
                 call    TriggerFullPaletteFadeOut ; Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.
                 call    ShowCreateCharacterPrompt
                 call    sub_2566C
@@ -37445,7 +37445,7 @@ seg079          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-InitializeNewGameWorldState proc far    ; CODE XREF: sub_1BE7E+25↑P
+InitializeNewGameWorldState proc far    ; CODE XREF: RunTitleScreen+25↑P
                 push    word ptr ds:0CF5Fh
                 push    word ptr ds:0CF61h
                 push    word ptr ds:0CF63h
@@ -38169,7 +38169,7 @@ sub_2566C       endp
 
 
 StepPaletteFadeRange proc far           ; CODE XREF: start+70F↑P
-                                        ; sub_14F40+31↑P ...
+                                        ; ShowIntroPicture+31↑P ...
                 push    si
                 push    di
                 push    es
@@ -43876,7 +43876,7 @@ seg104          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28340       proc far                ; CODE XREF: sub_1BE7E+11D↑P
+sub_28340       proc far                ; CODE XREF: RunTitleScreen+11D↑P
                                         ; InitGame+C5↑P
                 mov     ds:53EEh, ax
                 push    word ptr ds:540Ch
@@ -50502,7 +50502,7 @@ seg124          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B7AE       proc far                ; CODE XREF: sub_1BE7E+219↑P
+sub_2B7AE       proc far                ; CODE XREF: RunTitleScreen+219↑P
                                         ; sub_2B7AE+149↓j
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
@@ -50961,8 +50961,8 @@ seg126          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-RunCharacterCreation proc far           ; CODE XREF: sub_1BE7E:loc_1BF89↑P
-                                        ; sub_1BE7E+2AE↑P ...
+RunCharacterCreation proc far           ; CODE XREF: RunTitleScreen:loc_1BF89↑P
+                                        ; RunTitleScreen+2AE↑P ...
                 call    PlayCharacterCreationOpeningSetup
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
@@ -50990,7 +50990,7 @@ RunCharacterCreation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-PollForEscapeKeyOnly_0 proc near        ; CODE XREF: PlayCharacterCreationOpeningPicture+2E↓p
+PollForEscapeKeyOnlyAlt proc near       ; CODE XREF: PlayCharacterCreationOpeningPicture+2E↓p
                                         ; PlayCharacterCreationOpeningPicture+44↓p ...
                 call    PollKeyboardInput
                 cmp     word ptr ds:53E0h, 0
@@ -50999,11 +50999,11 @@ PollForEscapeKeyOnly_0 proc near        ; CODE XREF: PlayCharacterCreationOpenin
                 jz      short loc_2BBCD
                 mov     byte ptr ds:0E9Ah, 0
 
-loc_2BBCD:                              ; CODE XREF: PollForEscapeKeyOnly_0+A↑j
-                                        ; PollForEscapeKeyOnly_0+11↑j
+loc_2BBCD:                              ; CODE XREF: PollForEscapeKeyOnlyAlt+A↑j
+                                        ; PollForEscapeKeyOnlyAlt+11↑j
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 retn
-PollForEscapeKeyOnly_0 endp
+PollForEscapeKeyOnlyAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51085,19 +51085,19 @@ PlayCharacterCreationOpeningPicture proc near
                 mov     word ptr ds:0FC3h, 8
                 call    DrawPicture
                 call    DrawMouseCursor
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BCD0
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
                 mov     dx, 0
                 call    StepPaletteFadeRange
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BCD0
                 mov     cx, 7
 
 loc_2BCC1:                              ; CODE XREF: PlayCharacterCreationOpeningPicture+59↓j
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BCD0
                 mov     ax, 5
                 call    wait
@@ -51122,10 +51122,10 @@ PlayCharacterCreationOpeningSequence proc near
                 mov     word ptr ds:0FC5h, 0
                 mov     word ptr ds:0FC3h, 9
                 call    DrawPicture
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BD49
                 call    sub_2C376
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BD49
                 mov     cx, 3
                 mov     ax, 33h ; '3'
@@ -51139,7 +51139,7 @@ loc_2BD0D:                              ; CODE XREF: PlayCharacterCreationOpenin
                 pop     ax
                 inc     ax
                 pop     cx
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BD49
                 loop    loc_2BD0D
                 mov     ax, 3
@@ -51156,7 +51156,7 @@ loc_2BD32:                              ; CODE XREF: PlayCharacterCreationOpenin
                 pop     ax
                 inc     ax
                 pop     cx
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BD49
                 loop    loc_2BD32
 
@@ -51179,10 +51179,10 @@ PlayCharacterCreationOpeningSequenceAlt proc near
                 mov     word ptr ds:0FC5h, 0
                 mov     word ptr ds:0FC3h, 0Ah
                 call    DrawPicture
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BDAF
                 call    sub_2C376
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BDAF
                 mov     cx, 8
                 mov     ax, 3Bh ; ';'
@@ -51196,13 +51196,13 @@ loc_2BD86:                              ; CODE XREF: PlayCharacterCreationOpenin
                 pop     ax
                 inc     ax
                 pop     cx
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BDAF
                 loop    loc_2BD86
                 mov     cx, 5
 
 loc_2BDA0:                              ; CODE XREF: PlayCharacterCreationOpeningSequenceAlt+63↓j
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BDAF
                 mov     ax, 5
                 call    wait
@@ -51225,12 +51225,12 @@ PlayCharacterCreationIntroAnimation proc near
                 mov     ax, 0Ah
                 call    PlayMusicTrack
                 call    sub_2C3C4
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      locret_2BF43
                 mov     ax, 53h ; 'S'
                 call    TriggerSoundEvent
                 call    DrawMouseCursor
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      locret_2BF43
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
@@ -51246,12 +51246,12 @@ PlayCharacterCreationIntroAnimation proc near
                 mov     cx, 0FFh
                 mov     dx, 0
                 call    StepPaletteFadeRange
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      locret_2BF43
                 mov     cx, 14h
 
 loc_2BE2A:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+89↓j
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      locret_2BF43
                 mov     ax, 5
                 call    wait
@@ -51295,7 +51295,7 @@ loc_2BE8A:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     dx, 0
                 call    FadePaletteStep
                 pop     cx
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BF43
                 loop    loc_2BE8A
                 or      word ptr ds:536Eh, 800h
@@ -51320,7 +51320,7 @@ loc_2BF08:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     cx, 0Fh
 
 loc_2BF23:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+180↓j
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BF43
                 mov     ax, 5
                 call    wait
@@ -51373,7 +51373,7 @@ RunCharacterCreationSelectionStep proc near
                 mov     cx, 0Ah
 
 loc_2BFBA:                              ; CODE XREF: RunCharacterCreationSelectionStep+83↓j
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2BFCB
                 mov     ax, 5
                 call    wait
@@ -51409,7 +51409,7 @@ loc_2BFF9:                              ; CODE XREF: RunCharacterCreationSelecti
                 inc     si
                 inc     di
                 loop    loc_2BFF9
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      locret_2C0D1
                 mov     word ptr ds:0E24h, 46h ; 'F'
                 mov     word ptr ds:0E26h, 28h ; '('
@@ -51437,7 +51437,7 @@ loc_2C02F:                              ; CODE XREF: RunCharacterCreationSelecti
                 loop    loc_2C02F
                 pop     cx
                 loop    loc_2C025
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      locret_2BFCB
                 mov     si, 597Ch
                 call    sub_2C13C
@@ -51503,7 +51503,7 @@ loc_2C0EF:                              ; CODE XREF: RunCharacterCreationSelecti
                 pop     cx
                 loop    loc_2C0EF
                 pop     cx
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2C11D
                 loop    loc_2C0E5
 
@@ -51522,7 +51522,7 @@ sub_2C11E       proc near               ; CODE XREF: RunCharacterCreationSelecti
                 inc     word ptr ds:0FC3h
                 mov     ax, 2
                 call    wait
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2C13B
                 loop    sub_2C11E
 
@@ -51564,7 +51564,7 @@ loc_2C17B:                              ; CODE XREF: sub_2C13C+61↓j
                 inc     word ptr ds:0FC3h
                 mov     ax, 2
                 call    wait
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2C1A1
                 sub     word ptr ds:53EEh, 2
                 jle     short locret_2C1A1
@@ -51603,7 +51603,7 @@ loc_2C1BC:                              ; CODE XREF: sub_2C13C+96↓j
                 jnz     short loc_2C1B3
                 pop     cx
                 inc     word ptr ds:53EEh
-                call    PollForEscapeKeyOnly_0
+                call    PollForEscapeKeyOnlyAlt
                 jz      short locret_2C1E7
                 loop    loc_2C1AA
 

@@ -2307,6 +2307,7 @@ static Bytes_0(void) {
 	create_insn	(0X14E81);
 	set_name	(0X14E81,	"SelectAndDrawPartyStatusRow");
 	create_insn	(0X14F40);
+	set_name	(0X14F40,	"ShowIntroPicture");
 	create_insn	(x=0X14F7B);
 	op_hex		(x,	1);
 	create_insn	(x=0X14F81);
@@ -4268,6 +4269,7 @@ static Bytes_1(void) {
 	create_insn	(0X1BE4B);
 	create_insn	(0X1BE5E);
 	create_insn	(0X1BE7E);
+	set_name	(0X1BE7E,	"RunTitleScreen");
 	create_insn	(x=0X1BE93);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BE9B);
@@ -5411,10 +5413,6 @@ static Bytes_1(void) {
 	set_name	(0X20657,	"TryDrawDungeonCellSideFeature");
 	create_insn	(0X2065F);
 	set_name	(0X2065F,	"DrawDungeonCellSideFeature");
-	create_insn	(x=0X20668);
-	op_hex		(x,	1);
-	create_insn	(x=0X20673);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -5424,6 +5422,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X20668);
+	op_hex		(x,	1);
+	create_insn	(x=0X20673);
+	op_hex		(x,	1);
 	create_insn	(x=0X2067E);
 	op_hex		(x,	1);
 	create_insn	(0X206B9);
@@ -9339,7 +9341,7 @@ static Bytes_3(void) {
 	create_insn	(0X2BB7C);
 	set_name	(0X2BB7C,	"RunCharacterCreation");
 	create_insn	(0X2BBB5);
-	set_name	(0X2BBB5,	"PollForEscapeKeyOnly_0");
+	set_name	(0X2BBB5,	"PollForEscapeKeyOnlyAlt");
 	create_insn	(0X2BBD3);
 	set_name	(0X2BBD3,	"FinalizeCharacterCreation");
 	create_insn	(x=0X2BBE4);

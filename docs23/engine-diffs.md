@@ -773,15 +773,62 @@ see below).
   the address BinDiff had suggested for `ComposeCharacterPortrait` --
   ruled out once the full body was read: nothing here resembles
   portrait composition, it's another title-card screen.)
-- `sub_2BBB5` -> **`PollForEscapeKeyOnly`** (the escape-poll gate both
-  of the above call repeatedly): byte-for-byte identical to yendor2's
-  version (poll keyboard, discard anything but ESC, return ZF on ESC).
+- `sub_2BBB5` -> **`PollForEscapeKeyOnlyAlt`** (the escape-poll gate
+  both of the above call repeatedly): byte-for-byte identical to
+  yendor2's `PollForEscapeKeyOnly`/`PollForEscapeKeyOnlyAlt` (both are
+  byte-identical overlay-segment duplicates in yendor2 too). **Correction**:
+  first applied as plain `PollForEscapeKeyOnly`, which silently
+  collided with an already-correctly-named function at a *different*
+  yendor3 address (0x15044, unrelated to this cluster) -- IDA
+  auto-suffixed it to `PollForEscapeKeyOnly_0` without erroring, caught
+  and fixed in a follow-up check. The caller
+  (`PlayCharacterCreationIntroAnimation` calls
+  `PollForEscapeKeyOnlyAlt` in yendor2) confirms `PollForEscapeKeyOnlyAlt`
+  is the correct one of the two names for this address.
 
 This resolves the whole cluster flagged since round 9. Reads as:
 Chapter 3 added two more opening/title-card screens (one silent
 picture, one picture-plus-sound-cue) to the character creation intro
 sequence, and removed the portrait-composition step entirely (or moved
 it elsewhere, not found).
+
+### Round 15: found the real `ShowIntroPicture` and confirmed `RunTitleScreen` at last
+
+Continued chasing `DrawShadowedTextAlt` by tracing its blocker
+(`PlayStudioCreditsIntro`) from a different angle -- found something
+even more valuable along the way. `sub_14F40` (round 9's confirmed-bad
+`PlayCreditsWipeAnimation` guess) is actually the real
+`ShowIntroPicture`: draws a picture, reloads the master palette
+(`LoadMasterPalette`/`FileEntry_Read`/`ErrorCheck`/
+`TriggerFullPaletteFadeOut`, via a tail helper reordered to run after
+the main loop instead of before), then loops a data table of text
+entries calling `DrawStringColumn` with `PollForEscapeKeyOnly` checks
+and fade transitions between entries -- the exact shape of yendor2's
+`ShowIntroPicture` (whose "shadow text" effect turns out to be two
+manual offset `DrawStringColumn` calls, not `DrawShadowedTextAlt` --
+confirming `ShowIntroPicture` never used `DrawShadowedTextAlt` in
+either game, only `PlayStudioCreditsIntro` does). Clinched by
+`WaitFrameTicksOrEscape`'s inherited comment ("Called from
+ShowIntroPicture") matching its only yendor3 caller. Renamed.
+
+That let a much bigger fish get landed: `sub_14F40`'s caller,
+`sub_1BE7E`, is called from the already-established `ConfirmNewGame`
+-- and a direct diff against yendor2's `RunTitleScreen` (BinDiff's own
+0.88-similarity suggestion for this exact address, left deliberately
+unrenamed back in round 4 as "too large/noisy to trust without a
+dedicated read") shows the same ~20-call core sequence in the same
+order in both games, including both `ShowIntroPicture` and
+`RunCharacterCreation` called twice each, matching exactly. **Confirmed
+and renamed `RunTitleScreen`** -- closing out one of round 4's two
+long-deferred mid-confidence exceptions (the other,
+`WaitForTickAndDrawCreationFrame`'s suggested address, was already
+separately resolved as a generic tick-wait duplicate).
+
+`PlayStudioCreditsIntro` (and therefore `DrawShadowedTextAlt`) is
+still not found -- `RunTitleScreen` doesn't call it, consistent with
+yendor2 where it's only reached from one specific `start`-tail easter
+egg (a hidden 3-flag check) that still hasn't turned up an equivalent
+in yendor3.
 
 ## Review status
 
@@ -796,13 +843,13 @@ it elsewhere, not found).
   across rounds 3-4 (`apply_round3_findings.py`,
   `apply_round3b_findings.py`, `apply_round4_findings.py`,
   `apply_round4b.py`), turning up all of the findings above. This tier
-  is done for now, with two exceptions left deliberately unrenamed:
-  the address BinDiff matched to `RunTitleScreen` (0.88 -- still too
-  large/noisy to trust without a dedicated read) and the one matched
-  to `WaitForTickAndDrawCreationFrame` (0.77 -- confirmed to be a
-  generic tick-wait duplicate, not that function, see above). The
-  address matched to `PollForEscapeKeyOnlyAlt` (0.90) *was* resolved
-  this round -- see the correction above.
+  is done for now. Of the two exceptions originally left deliberately
+  unrenamed, `RunTitleScreen` (0.88) was confirmed and renamed in
+  round 15 (a direct diff finally justified the trust); the one
+  matched to `WaitForTickAndDrawCreationFrame` (0.77) remains
+  unrenamed, confirmed to be a generic tick-wait duplicate, not that
+  function (see above). The address matched to `PollForEscapeKeyOnlyAlt`
+  (0.90) *was* resolved in round 4 -- see the correction above.
 - 77 functions at similarity <0.70: **all 77 now checked**, 34 renamed
   to their real (sometimes non-obvious) identity across rounds 5-10
   (`apply_round5_findings.py`, `apply_round5b_findings.py`,
@@ -848,14 +895,24 @@ it elsewhere, not found).
 - **Round 14**: resolved the character-creation-region cluster
   (0x2BD4A/0x2BBB5/0x2BC75) -- see the dedicated write-up above.
   `PlayCharacterCreationOpeningPicture`, `PlayCharacterCreationOpeningSequenceAlt`,
-  and `PollForEscapeKeyOnly` are now named.
+  and `PollForEscapeKeyOnlyAlt` are now named (the last one corrected
+  from an initial `PollForEscapeKeyOnly` naming collision -- see the
+  correction note above).
+- **Round 15**: found the real `ShowIntroPicture` (round 9's
+  confirmed-bad `PlayCreditsWipeAnimation` guess) and, via its caller
+  chain, finally confirmed `RunTitleScreen` at the address BinDiff
+  suggested all along -- closing out the last deliberately-deferred
+  mid-confidence exception from round 4. See the dedicated write-up
+  above.
 
 Remaining open leads for future sessions (not blocking, just
-unresolved identities): `DrawShadowedTextAlt` (needs
-`PlayStudioCreditsIntro`'s real identity found first, since that's its
-only caller and is itself still unresolved -- its usual `start`-tail
-call position doesn't have an obvious equivalent in yendor3, may have
-been restructured), `sub_1B085`'s exact trap-effect-id semantics,
-`sub_11778`'s exact purpose (the `ds:0xA5A6` 8-slot "limited item"
-registry), and `sub_2566C`'s yendor2 identity (a generic
-palette-fade-and-mark-dirty stub, 14 call sites).
+unresolved identities): `DrawShadowedTextAlt`/`PlayStudioCreditsIntro`
+(its only caller in yendor2 is one specific `start`-tail easter egg --
+a hidden 3-flag check -- that hasn't turned up an equivalent in
+yendor3, and `RunTitleScreen` doesn't call it either), `sub_1B085`'s
+exact trap-effect-id semantics, `sub_11778`'s exact purpose (the
+`ds:0xA5A6` 8-slot "limited item" registry), `sub_2566C`'s yendor2
+identity (a generic palette-fade-and-mark-dirty stub, 14 call sites),
+and the still-unverified `PlayTitleScreenSequence` guess (0x20DC4 --
+now a confirmed real call from `RunTitleScreen`, but not independently
+diffed).
