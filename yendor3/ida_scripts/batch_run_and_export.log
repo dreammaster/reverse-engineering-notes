@@ -903,3 +903,24 @@ offset=0xd0c9 ea=0x3ae79  'g_partySlotAssignment' -> 'g_partySlotAssignment': ok
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round14_findings.py']
+[*] reading apply_round14_findings.py
+[*] executing apply_round14_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2bc75  'sub_2BC75' -> 'PlayCharacterCreationOpeningPicture': ok
+0x2bd4a  'sub_2BD4A' -> 'PlayCharacterCreationOpeningSequenceAlt': ok
+0x2bbb5  'sub_2BBB5' -> 'PollForEscapeKeyOnly': ok
+----- end target script output -----
+[*] finished executing apply_round14_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118643
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0

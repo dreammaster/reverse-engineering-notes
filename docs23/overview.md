@@ -7662,6 +7662,29 @@ point — the Chapter 3 BinDiff review is now about as complete as it
 can get without a dedicated deep-read pass on specific remaining
 functions.
 
+### 2026-09-16 session update, continued: Chapter 3 review round 14 — resolved the character-creation cluster
+
+Went after the character-creation code cluster next. Rather than
+diffing the three candidate addresses individually again, read
+`RunCharacterCreation`'s actual call sequence in yendor3 end to end —
+it turned out to answer everything at once. Chapter 3 added two more
+opening/title-card screens to the character-creation intro (one silent
+picture display, one picture-plus-sound-cue sequence that's a
+byte-for-byte structural clone of the already-named
+`PlayCharacterCreationOpeningSequence`), and yendor2's
+`ComposeCharacterPortrait` step is simply gone from the sequence
+entirely — the address BinDiff had suggested for it turned out to be
+one of the two new title-card screens instead, nothing to do with
+portraits. The escape-poll gate both new screens share turned out to
+be a byte-for-byte match for yendor2's `PollForEscapeKeyOnly`. All
+three renamed.
+
+That leaves only `DrawShadowedTextAlt`, `sub_1B085`'s exact
+trap-effect semantics, `sub_11778`'s item-registry purpose, and
+`sub_2566C`'s identity as open threads — none blocking, all
+low-priority deep-read items for whenever there's appetite to keep
+going.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

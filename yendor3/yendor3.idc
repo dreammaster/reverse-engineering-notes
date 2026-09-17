@@ -9339,6 +9339,7 @@ static Bytes_3(void) {
 	create_insn	(0X2BB7C);
 	set_name	(0X2BB7C,	"RunCharacterCreation");
 	create_insn	(0X2BBB5);
+	set_name	(0X2BBB5,	"PollForEscapeKeyOnly_0");
 	create_insn	(0X2BBD3);
 	set_name	(0X2BBD3,	"FinalizeCharacterCreation");
 	create_insn	(x=0X2BBE4);
@@ -9357,9 +9358,11 @@ static Bytes_3(void) {
 	create_insn	(0X2BC65);
 	set_name	(0X2BC65,	"ClearOffscreenBuffer");
 	create_insn	(0X2BC75);
+	set_name	(0X2BC75,	"PlayCharacterCreationOpeningPicture");
 	create_insn	(0X2BCD1);
 	set_name	(0X2BCD1,	"PlayCharacterCreationOpeningSequence");
 	create_insn	(0X2BD4A);
+	set_name	(0X2BD4A,	"PlayCharacterCreationOpeningSequenceAlt");
 	create_insn	(0X2BDB0);
 	set_name	(0X2BDB0,	"PlayCharacterCreationIntroAnimation");
 	create_insn	(x=0X2BEE0);

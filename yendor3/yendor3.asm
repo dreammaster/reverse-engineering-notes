@@ -50966,13 +50966,13 @@ RunCharacterCreation proc far           ; CODE XREF: sub_1BE7E:loc_1BF89↑P
                 call    PlayCharacterCreationOpeningSetup
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
-                call    sub_2BC75
+                call    PlayCharacterCreationOpeningPicture
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
                 call    PlayCharacterCreationOpeningSequence
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
-                call    sub_2BD4A
+                call    PlayCharacterCreationOpeningSequenceAlt
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 jz      short loc_2BBB1
                 call    PlayCharacterCreationIntroAnimation
@@ -50990,8 +50990,8 @@ RunCharacterCreation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BBB5       proc near               ; CODE XREF: sub_2BC75+2E↓p
-                                        ; sub_2BC75+44↓p ...
+PollForEscapeKeyOnly_0 proc near        ; CODE XREF: PlayCharacterCreationOpeningPicture+2E↓p
+                                        ; PlayCharacterCreationOpeningPicture+44↓p ...
                 call    PollKeyboardInput
                 cmp     word ptr ds:53E0h, 0
                 jz      short loc_2BBCD
@@ -50999,11 +50999,11 @@ sub_2BBB5       proc near               ; CODE XREF: sub_2BC75+2E↓p
                 jz      short loc_2BBCD
                 mov     byte ptr ds:0E9Ah, 0
 
-loc_2BBCD:                              ; CODE XREF: sub_2BBB5+A↑j
-                                        ; sub_2BBB5+11↑j
+loc_2BBCD:                              ; CODE XREF: PollForEscapeKeyOnly_0+A↑j
+                                        ; PollForEscapeKeyOnly_0+11↑j
                 cmp     byte ptr ds:0E9Ah, 1Bh
                 retn
-sub_2BBB5       endp
+PollForEscapeKeyOnly_0 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51074,7 +51074,8 @@ ClearOffscreenBuffer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BC75       proc near               ; CODE XREF: RunCharacterCreation+A↑p
+PlayCharacterCreationOpeningPicture proc near
+                                        ; CODE XREF: RunCharacterCreation+A↑p
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
                 mov     word ptr ds:0E28h, 0
@@ -51084,28 +51085,28 @@ sub_2BC75       proc near               ; CODE XREF: RunCharacterCreation+A↑p
                 mov     word ptr ds:0FC3h, 8
                 call    DrawPicture
                 call    DrawMouseCursor
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BCD0
                 mov     ax, 1
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
                 mov     dx, 0
                 call    StepPaletteFadeRange
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BCD0
                 mov     cx, 7
 
-loc_2BCC1:                              ; CODE XREF: sub_2BC75+59↓j
-                call    sub_2BBB5
+loc_2BCC1:                              ; CODE XREF: PlayCharacterCreationOpeningPicture+59↓j
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BCD0
                 mov     ax, 5
                 call    wait
                 loop    loc_2BCC1
 
-locret_2BCD0:                           ; CODE XREF: sub_2BC75+31↑j
-                                        ; sub_2BC75+47↑j ...
+locret_2BCD0:                           ; CODE XREF: PlayCharacterCreationOpeningPicture+31↑j
+                                        ; PlayCharacterCreationOpeningPicture+47↑j ...
                 retn
-sub_2BC75       endp
+PlayCharacterCreationOpeningPicture endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51121,10 +51122,10 @@ PlayCharacterCreationOpeningSequence proc near
                 mov     word ptr ds:0FC5h, 0
                 mov     word ptr ds:0FC3h, 9
                 call    DrawPicture
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BD49
                 call    sub_2C376
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BD49
                 mov     cx, 3
                 mov     ax, 33h ; '3'
@@ -51138,7 +51139,7 @@ loc_2BD0D:                              ; CODE XREF: PlayCharacterCreationOpenin
                 pop     ax
                 inc     ax
                 pop     cx
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BD49
                 loop    loc_2BD0D
                 mov     ax, 3
@@ -51155,7 +51156,7 @@ loc_2BD32:                              ; CODE XREF: PlayCharacterCreationOpenin
                 pop     ax
                 inc     ax
                 pop     cx
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BD49
                 loop    loc_2BD32
 
@@ -51168,7 +51169,8 @@ PlayCharacterCreationOpeningSequence endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BD4A       proc near               ; CODE XREF: RunCharacterCreation+1E↑p
+PlayCharacterCreationOpeningSequenceAlt proc near
+                                        ; CODE XREF: RunCharacterCreation+1E↑p
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
                 mov     word ptr ds:0E28h, 0
@@ -51177,15 +51179,15 @@ sub_2BD4A       proc near               ; CODE XREF: RunCharacterCreation+1E↑p
                 mov     word ptr ds:0FC5h, 0
                 mov     word ptr ds:0FC3h, 0Ah
                 call    DrawPicture
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BDAF
                 call    sub_2C376
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BDAF
                 mov     cx, 8
                 mov     ax, 3Bh ; ';'
 
-loc_2BD86:                              ; CODE XREF: sub_2BD4A+51↓j
+loc_2BD86:                              ; CODE XREF: PlayCharacterCreationOpeningSequenceAlt+51↓j
                 push    cx
                 push    ax
                 call    TriggerSoundEvent
@@ -51194,22 +51196,22 @@ loc_2BD86:                              ; CODE XREF: sub_2BD4A+51↓j
                 pop     ax
                 inc     ax
                 pop     cx
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BDAF
                 loop    loc_2BD86
                 mov     cx, 5
 
-loc_2BDA0:                              ; CODE XREF: sub_2BD4A+63↓j
-                call    sub_2BBB5
+loc_2BDA0:                              ; CODE XREF: PlayCharacterCreationOpeningSequenceAlt+63↓j
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BDAF
                 mov     ax, 5
                 call    wait
                 loop    loc_2BDA0
 
-locret_2BDAF:                           ; CODE XREF: sub_2BD4A+2C↑j
-                                        ; sub_2BD4A+34↑j ...
+locret_2BDAF:                           ; CODE XREF: PlayCharacterCreationOpeningSequenceAlt+2C↑j
+                                        ; PlayCharacterCreationOpeningSequenceAlt+34↑j ...
                 retn
-sub_2BD4A       endp
+PlayCharacterCreationOpeningSequenceAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51223,12 +51225,12 @@ PlayCharacterCreationIntroAnimation proc near
                 mov     ax, 0Ah
                 call    PlayMusicTrack
                 call    sub_2C3C4
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      locret_2BF43
                 mov     ax, 53h ; 'S'
                 call    TriggerSoundEvent
                 call    DrawMouseCursor
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      locret_2BF43
                 mov     word ptr ds:0E24h, 1
                 mov     word ptr ds:0E26h, 1
@@ -51244,12 +51246,12 @@ PlayCharacterCreationIntroAnimation proc near
                 mov     cx, 0FFh
                 mov     dx, 0
                 call    StepPaletteFadeRange
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      locret_2BF43
                 mov     cx, 14h
 
 loc_2BE2A:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+89↓j
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      locret_2BF43
                 mov     ax, 5
                 call    wait
@@ -51293,7 +51295,7 @@ loc_2BE8A:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     dx, 0
                 call    FadePaletteStep
                 pop     cx
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BF43
                 loop    loc_2BE8A
                 or      word ptr ds:536Eh, 800h
@@ -51318,7 +51320,7 @@ loc_2BF08:                              ; CODE XREF: PlayCharacterCreationIntroA
                 mov     cx, 0Fh
 
 loc_2BF23:                              ; CODE XREF: PlayCharacterCreationIntroAnimation+180↓j
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BF43
                 mov     ax, 5
                 call    wait
@@ -51371,7 +51373,7 @@ RunCharacterCreationSelectionStep proc near
                 mov     cx, 0Ah
 
 loc_2BFBA:                              ; CODE XREF: RunCharacterCreationSelectionStep+83↓j
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2BFCB
                 mov     ax, 5
                 call    wait
@@ -51407,7 +51409,7 @@ loc_2BFF9:                              ; CODE XREF: RunCharacterCreationSelecti
                 inc     si
                 inc     di
                 loop    loc_2BFF9
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      locret_2C0D1
                 mov     word ptr ds:0E24h, 46h ; 'F'
                 mov     word ptr ds:0E26h, 28h ; '('
@@ -51435,7 +51437,7 @@ loc_2C02F:                              ; CODE XREF: RunCharacterCreationSelecti
                 loop    loc_2C02F
                 pop     cx
                 loop    loc_2C025
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      locret_2BFCB
                 mov     si, 597Ch
                 call    sub_2C13C
@@ -51501,7 +51503,7 @@ loc_2C0EF:                              ; CODE XREF: RunCharacterCreationSelecti
                 pop     cx
                 loop    loc_2C0EF
                 pop     cx
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2C11D
                 loop    loc_2C0E5
 
@@ -51520,7 +51522,7 @@ sub_2C11E       proc near               ; CODE XREF: RunCharacterCreationSelecti
                 inc     word ptr ds:0FC3h
                 mov     ax, 2
                 call    wait
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2C13B
                 loop    sub_2C11E
 
@@ -51562,7 +51564,7 @@ loc_2C17B:                              ; CODE XREF: sub_2C13C+61↓j
                 inc     word ptr ds:0FC3h
                 mov     ax, 2
                 call    wait
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2C1A1
                 sub     word ptr ds:53EEh, 2
                 jle     short locret_2C1A1
@@ -51601,7 +51603,7 @@ loc_2C1BC:                              ; CODE XREF: sub_2C13C+96↓j
                 jnz     short loc_2C1B3
                 pop     cx
                 inc     word ptr ds:53EEh
-                call    sub_2BBB5
+                call    PollForEscapeKeyOnly_0
                 jz      short locret_2C1E7
                 loop    loc_2C1AA
 
@@ -51782,7 +51784,7 @@ PlayCharacterCreationOpeningSetup endp
 
 
 sub_2C376       proc near               ; CODE XREF: PlayCharacterCreationOpeningSequence+2E↑p
-                                        ; sub_2BD4A+2E↑p
+                                        ; PlayCharacterCreationOpeningSequenceAlt+2E↑p
                 mov     si, 13Ch
                 mov     di, 13Ch
                 mov     ax, 0A000h

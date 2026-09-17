@@ -747,6 +747,42 @@ confirmed first.
   yendor2, only the barter-preview-then-confirm tail is a confirmed
   match).
 
+### Round 14: the character-creation-region cluster resolved
+
+Read `RunCharacterCreation`'s full yendor3 call sequence directly
+rather than diffing candidates one at a time:
+`PlayCharacterCreationOpeningSetup` -> `sub_2BC75` ->
+`PlayCharacterCreationOpeningSequence` -> `sub_2BD4A` ->
+`PlayCharacterCreationIntroAnimation` -> `RunCharacterCreationSelectionStep`
+-> `FinalizeCharacterCreation`. Notably, yendor2's `ComposeCharacterPortrait`
+does not appear anywhere in this sequence -- it looks to have been
+dropped in favor of extra opening-screen content instead (its
+suggested address, 0x2BD4A, turned out to be something else entirely,
+see below).
+
+- `sub_2BC75` -> **`PlayCharacterCreationOpeningPicture`**: draws
+  picture id `8`, then an escape-pollable wait loop, no sound sequence
+  -- the same "one static picture + wait" shape as
+  `PlayCharacterCreationOpeningSetup` right before it.
+- `sub_2BD4A` -> **`PlayCharacterCreationOpeningSequenceAlt`**: draws
+  picture id `0xA`, then a `TriggerSoundEvent`/`WaitForSoundDriverThenTicks`
+  cue loop -- byte-for-byte the same shape as
+  `PlayCharacterCreationOpeningSequence` right before it, just
+  different picture/sound ids and loop counts. A structural clone,
+  matching this project's established `...Alt` convention. (This is
+  the address BinDiff had suggested for `ComposeCharacterPortrait` --
+  ruled out once the full body was read: nothing here resembles
+  portrait composition, it's another title-card screen.)
+- `sub_2BBB5` -> **`PollForEscapeKeyOnly`** (the escape-poll gate both
+  of the above call repeatedly): byte-for-byte identical to yendor2's
+  version (poll keyboard, discard anything but ESC, return ZF on ESC).
+
+This resolves the whole cluster flagged since round 9. Reads as:
+Chapter 3 added two more opening/title-card screens (one silent
+picture, one picture-plus-sound-cue) to the character creation intro
+sequence, and removed the portrait-composition step entirely (or moved
+it elsewhere, not found).
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
@@ -809,13 +845,17 @@ confirmed first.
   `sub_11778` (the `ds:0xA5A6`-table registry) are left unnamed as
   genuinely too uncertain/generic to name with confidence.
 
+- **Round 14**: resolved the character-creation-region cluster
+  (0x2BD4A/0x2BBB5/0x2BC75) -- see the dedicated write-up above.
+  `PlayCharacterCreationOpeningPicture`, `PlayCharacterCreationOpeningSequenceAlt`,
+  and `PollForEscapeKeyOnly` are now named.
+
 Remaining open leads for future sessions (not blocking, just
 unresolved identities): `DrawShadowedTextAlt` (needs
 `PlayStudioCreditsIntro`'s real identity found first, since that's its
 only caller and is itself still unresolved -- its usual `start`-tail
 call position doesn't have an obvious equivalent in yendor3, may have
-been restructured), the character-creation-region cluster noted above
-(0x2BD4A/0x2BBB5/0x2BC75), `sub_1B085`'s exact trap-effect-id
-semantics, `sub_11778`'s exact purpose (the `ds:0xA5A6` 8-slot
-"limited item" registry), and `sub_2566C`'s yendor2 identity (a
-generic palette-fade-and-mark-dirty stub, 14 call sites).
+been restructured), `sub_1B085`'s exact trap-effect-id semantics,
+`sub_11778`'s exact purpose (the `ds:0xA5A6` 8-slot "limited item"
+registry), and `sub_2566C`'s yendor2 identity (a generic
+palette-fade-and-mark-dirty stub, 14 call sites).
