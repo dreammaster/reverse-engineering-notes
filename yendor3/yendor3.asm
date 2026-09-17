@@ -52,7 +52,7 @@ start           proc near
                 mov     ds, ax
                 assume ds:seg133
                 mov     word_2ECF4, ax
-                call    sub_11E56
+                call    ParseCommandLineSwitches
                 test    word_33122, 1
                 jnz     short loc_10032
                 mov     word_33190, 12h
@@ -799,7 +799,7 @@ loc_10671:                              ; CODE XREF: start+2F6↑j
                 test    word_33120, 1000h
                 jnz     short loc_1066E
                 or      word_3311E, 100h
-                call    sub_1C13E
+                call    HandleRangedOrCombatAction
                 and     word_3311E, 0FEFFh
                 jmp     loc_10056
 ; ---------------------------------------------------------------------------
@@ -817,7 +817,7 @@ loc_1069B:                              ; CODE XREF: start+697↑j
 ; ---------------------------------------------------------------------------
                 test    word_33120, 1000h
                 jz      short loc_1066E
-                call    sub_1C13E
+                call    HandleRangedOrCombatAction
                 jmp     loc_10056
 ; ---------------------------------------------------------------------------
                 call    ShowClueBook
@@ -3609,7 +3609,7 @@ seg009          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11E56       proc far                ; CODE XREF: start+1A↑P
+ParseCommandLineSwitches proc far       ; CODE XREF: start+1A↑P
                 mov     ah, 51h
                 int     21h             ; DOS - 2+ internal - GET PSP SEGMENT
                                         ; Return: BX = current PSP segment
@@ -3618,8 +3618,8 @@ sub_11E56       proc far                ; CODE XREF: start+1A↑P
                 mov     cl, es:[bx-1]
                 xor     ch, ch
 
-loc_11E65:                              ; CODE XREF: sub_11E56+22↓j
-                                        ; sub_11E56+57↓j ...
+loc_11E65:                              ; CODE XREF: ParseCommandLineSwitches+22↓j
+                                        ; ParseCommandLineSwitches+57↓j ...
                 cmp     byte ptr es:[bx], 2Fh ; '/'
                 jnz     short loc_11E74
                 inc     bx
@@ -3628,14 +3628,14 @@ loc_11E65:                              ; CODE XREF: sub_11E56+22↓j
                 jmp     locret_11F0B
 ; ---------------------------------------------------------------------------
 
-loc_11E74:                              ; CODE XREF: sub_11E56+13↑j
+loc_11E74:                              ; CODE XREF: ParseCommandLineSwitches+13↑j
                 inc     bx
                 sub     cx, 1
                 jg      short loc_11E65
                 jmp     locret_11F0B
 ; ---------------------------------------------------------------------------
 
-loc_11E7D:                              ; CODE XREF: sub_11E56+19↑j
+loc_11E7D:                              ; CODE XREF: ParseCommandLineSwitches+19↑j
                 cmp     byte ptr es:[bx], 70h ; 'p'
                 jz      short loc_11EAF
                 cmp     byte ptr es:[bx], 50h ; 'P'
@@ -3655,26 +3655,26 @@ loc_11E7D:                              ; CODE XREF: sub_11E56+19↑j
                 jmp     short loc_11E65
 ; ---------------------------------------------------------------------------
 
-loc_11EAF:                              ; CODE XREF: sub_11E56+2B↑j
-                                        ; sub_11E56+31↑j
+loc_11EAF:                              ; CODE XREF: ParseCommandLineSwitches+2B↑j
+                                        ; ParseCommandLineSwitches+31↑j
                 or      word ptr ds:536Ah, 8000h
                 jmp     short loc_11E65
 ; ---------------------------------------------------------------------------
 
-loc_11EB7:                              ; CODE XREF: sub_11E56+37↑j
-                                        ; sub_11E56+3D↑j
+loc_11EB7:                              ; CODE XREF: ParseCommandLineSwitches+37↑j
+                                        ; ParseCommandLineSwitches+3D↑j
                 or      word ptr ds:5372h, 1
                 jmp     short loc_11E65
 ; ---------------------------------------------------------------------------
 
-loc_11EBE:                              ; CODE XREF: sub_11E56+43↑j
-                                        ; sub_11E56+49↑j
+loc_11EBE:                              ; CODE XREF: ParseCommandLineSwitches+43↑j
+                                        ; ParseCommandLineSwitches+49↑j
                 or      word ptr ds:5374h, 8000h
                 jmp     short loc_11E65
 ; ---------------------------------------------------------------------------
 
-loc_11EC6:                              ; CODE XREF: sub_11E56+4F↑j
-                                        ; sub_11E56+55↑j
+loc_11EC6:                              ; CODE XREF: ParseCommandLineSwitches+4F↑j
+                                        ; ParseCommandLineSwitches+55↑j
                 inc     bx
                 sub     cx, 1
                 jle     short locret_11F0B
@@ -3685,8 +3685,8 @@ loc_11EC6:                              ; CODE XREF: sub_11E56+4F↑j
                 jmp     short loc_11E65
 ; ---------------------------------------------------------------------------
 
-loc_11EDA:                              ; CODE XREF: sub_11E56+7A↑j
-                                        ; sub_11E56+80↑j
+loc_11EDA:                              ; CODE XREF: ParseCommandLineSwitches+7A↑j
+                                        ; ParseCommandLineSwitches+80↑j
                 inc     bx
                 sub     cx, 1
                 jle     short locret_11F0B
@@ -3701,22 +3701,22 @@ loc_11EDA:                              ; CODE XREF: sub_11E56+7A↑j
                 jmp     loc_11E65
 ; ---------------------------------------------------------------------------
 
-loc_11EFB:                              ; CODE XREF: sub_11E56+8E↑j
-                                        ; sub_11E56+94↑j
+loc_11EFB:                              ; CODE XREF: ParseCommandLineSwitches+8E↑j
+                                        ; ParseCommandLineSwitches+94↑j
                 or      word ptr ds:536Eh, 2
                 jmp     loc_11E65
 ; ---------------------------------------------------------------------------
 
-loc_11F03:                              ; CODE XREF: sub_11E56+9A↑j
-                                        ; sub_11E56+A0↑j
+loc_11F03:                              ; CODE XREF: ParseCommandLineSwitches+9A↑j
+                                        ; ParseCommandLineSwitches+A0↑j
                 or      word ptr ds:536Eh, 1
                 jmp     loc_11E65
 ; ---------------------------------------------------------------------------
 
-locret_11F0B:                           ; CODE XREF: sub_11E56+1B↑j
-                                        ; sub_11E56+24↑j ...
+locret_11F0B:                           ; CODE XREF: ParseCommandLineSwitches+1B↑j
+                                        ; ParseCommandLineSwitches+24↑j ...
                 retf
-sub_11E56       endp
+ParseCommandLineSwitches endp
 
 seg009          ends
 
@@ -5575,8 +5575,8 @@ ClassifyObstacleAtWorldPosition endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ClassifyObstacleAtViewportRow proc far  ; CODE XREF: sub_1C13E+14E↓P
-                                        ; sub_1C13E+165↓P ...
+ClassifyObstacleAtViewportRow proc far  ; CODE XREF: HandleRangedOrCombatAction+14E↓P
+                                        ; HandleRangedOrCombatAction+165↓P ...
                 mov     word ptr ds:53E0h, 0
                 mov     ax, 8
                 mul     word ptr ds:53DCh
@@ -22204,20 +22204,20 @@ seg055          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C13E       proc far                ; CODE XREF: start+67F↑P
+HandleRangedOrCombatAction proc far     ; CODE XREF: start+67F↑P
                                         ; seg000:06A6↑P ...
                 cmp     word ptr ds:43ECh, 0
                 jz      short loc_1C146
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C146:                              ; CODE XREF: sub_1C13E+5↑j
+loc_1C146:                              ; CODE XREF: HandleRangedOrCombatAction+5↑j
                 test    word ptr ds:5370h, 1000h
                 jz      short loc_1C151
                 jmp     loc_1C593
 ; ---------------------------------------------------------------------------
 
-loc_1C151:                              ; CODE XREF: sub_1C13E+E↑j
+loc_1C151:                              ; CODE XREF: HandleRangedOrCombatAction+E↑j
                 mov     word ptr ds:0FD7h, 0
                 and     word ptr ds:536Eh, 0FBFFh
                 call    ResetCombatRoundScratchState
@@ -22226,7 +22226,7 @@ loc_1C151:                              ; CODE XREF: sub_1C13E+E↑j
                 jmp     loc_1C405
 ; ---------------------------------------------------------------------------
 
-loc_1C16D:                              ; CODE XREF: sub_1C13E+2A↑j
+loc_1C16D:                              ; CODE XREF: HandleRangedOrCombatAction+2A↑j
                 mov     cx, 4
                 mov     di, 5380h
                 mov     word ptr [di], 0
@@ -22235,7 +22235,7 @@ loc_1C16D:                              ; CODE XREF: sub_1C13E+2A↑j
                 mov     word ptr [di+6], 0
                 mov     si, 0D0C9h
 
-loc_1C189:                              ; CODE XREF: sub_1C13E+7E↓j
+loc_1C189:                              ; CODE XREF: HandleRangedOrCombatAction+7E↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1C1BE
@@ -22251,19 +22251,19 @@ loc_1C189:                              ; CODE XREF: sub_1C13E+7E↓j
                 inc     word ptr ds:0FD7h
                 mov     [di], ax
 
-loc_1C1B6:                              ; CODE XREF: sub_1C13E+5D↑j
-                                        ; sub_1C13E+70↑j
+loc_1C1B6:                              ; CODE XREF: HandleRangedOrCombatAction+5D↑j
+                                        ; HandleRangedOrCombatAction+70↑j
                 add     si, 2
                 add     di, 2
                 loop    loc_1C189
 
-loc_1C1BE:                              ; CODE XREF: sub_1C13E+4F↑j
+loc_1C1BE:                              ; CODE XREF: HandleRangedOrCombatAction+4F↑j
                 cmp     word ptr ds:0FD7h, 0
                 jnz     short loc_1C1C6
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C1C6:                              ; CODE XREF: sub_1C13E+85↑j
+loc_1C1C6:                              ; CODE XREF: HandleRangedOrCombatAction+85↑j
                 or      word ptr ds:536Eh, 20h
                 call    RestoreCursorBackgroundIfDirty
                 mov     word ptr ds:0E24h, 0EFh
@@ -22310,28 +22310,28 @@ loc_1C1C6:                              ; CODE XREF: sub_1C13E+85↑j
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_1C2F7
 
-loc_1C298:                              ; CODE XREF: sub_1C13E+272↓j
+loc_1C298:                              ; CODE XREF: HandleRangedOrCombatAction+272↓j
                 mov     word ptr ds:53DCh, 2Bh ; '+'
                 call    AnimateProjectileStep
                 call    ClassifyObstacleAtViewportRow
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_1C2F7
 
-loc_1C2AF:                              ; CODE XREF: sub_1C13E+27C↓j
+loc_1C2AF:                              ; CODE XREF: HandleRangedOrCombatAction+27C↓j
                 mov     word ptr ds:53DCh, 28h ; '('
                 call    AnimateProjectileStep
                 call    ClassifyObstacleAtViewportRow
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_1C2F7
 
-loc_1C2C6:                              ; CODE XREF: sub_1C13E+286↓j
+loc_1C2C6:                              ; CODE XREF: HandleRangedOrCombatAction+286↓j
                 mov     word ptr ds:53DCh, 24h ; '$'
                 call    AnimateProjectileStep
                 call    ClassifyObstacleAtViewportRow
                 cmp     word ptr ds:53E0h, 0
                 jnz     short loc_1C2F7
 
-loc_1C2DD:                              ; CODE XREF: sub_1C13E+290↓j
+loc_1C2DD:                              ; CODE XREF: HandleRangedOrCombatAction+290↓j
                 mov     word ptr ds:53DCh, 19h
                 call    AnimateProjectileStep
                 call    ClassifyObstacleAtViewportRow
@@ -22340,15 +22340,15 @@ loc_1C2DD:                              ; CODE XREF: sub_1C13E+290↓j
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C2F7:                              ; CODE XREF: sub_1C13E+158↑j
-                                        ; sub_1C13E+16F↑j ...
+loc_1C2F7:                              ; CODE XREF: HandleRangedOrCombatAction+158↑j
+                                        ; HandleRangedOrCombatAction+16F↑j ...
                 call    DrawMouseCursor
                 cmp     word ptr ds:53E0h, 3
                 jnz     short loc_1C306
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C306:                              ; CODE XREF: sub_1C13E+1C3↑j
+loc_1C306:                              ; CODE XREF: HandleRangedOrCombatAction+1C3↑j
                 cmp     word ptr ds:53E0h, 4
                 jz      short loc_1C316
                 mov     ax, 0Dh
@@ -22356,8 +22356,8 @@ loc_1C306:                              ; CODE XREF: sub_1C13E+1C3↑j
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C316:                              ; CODE XREF: sub_1C13E+1CD↑j
-                                        ; sub_1C13E+232↓j
+loc_1C316:                              ; CODE XREF: HandleRangedOrCombatAction+1CD↑j
+                                        ; HandleRangedOrCombatAction+232↓j
                 mov     ax, 3
                 call    wait
                 call    ResetWeaponSlotDisplayCache
@@ -22368,7 +22368,7 @@ loc_1C316:                              ; CODE XREF: sub_1C13E+1CD↑j
                 jmp     short loc_1C35F
 ; ---------------------------------------------------------------------------
 
-loc_1C331:                              ; CODE XREF: sub_1C13E+1EC↑j
+loc_1C331:                              ; CODE XREF: HandleRangedOrCombatAction+1EC↑j
                 test    word ptr ds:536Eh, 400h
                 jnz     short loc_1C358
                 or      word ptr ds:536Eh, 400h
@@ -22380,11 +22380,11 @@ loc_1C331:                              ; CODE XREF: sub_1C13E+1EC↑j
                 pop     word ptr ds:53DCh
                 call    sub_286D8
 
-loc_1C358:                              ; CODE XREF: sub_1C13E+1F9↑j
+loc_1C358:                              ; CODE XREF: HandleRangedOrCombatAction+1F9↑j
                 and     word ptr [si+0Ch], 0FFFDh
                 mov     ax, 22h ; '"'
 
-loc_1C35F:                              ; CODE XREF: sub_1C13E+1F1↑j
+loc_1C35F:                              ; CODE XREF: HandleRangedOrCombatAction+1F1↑j
                 call    ShowCombatMessageOrWait
                 call    ClearFirstOccupiedCombatSlot
                 cmp     word ptr [si+10h], 0
@@ -22394,7 +22394,7 @@ loc_1C35F:                              ; CODE XREF: sub_1C13E+1F1↑j
                 jmp     short loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C374:                              ; CODE XREF: sub_1C13E+22B↑j
+loc_1C374:                              ; CODE XREF: HandleRangedOrCombatAction+22B↑j
                 call    GrantMonsterRewards
                 call    RemoveMonsterFromMap
                 and     word ptr ds:536Eh, 0FBFFh
@@ -22412,33 +22412,33 @@ loc_1C374:                              ; CODE XREF: sub_1C13E+22B↑j
                 jmp     loc_1C298
 ; ---------------------------------------------------------------------------
 
-loc_1C3B3:                              ; CODE XREF: sub_1C13E+270↑j
+loc_1C3B3:                              ; CODE XREF: HandleRangedOrCombatAction+270↑j
                 cmp     word ptr ds:53DCh, 2Bh ; '+'
                 jnz     short loc_1C3BD
                 jmp     loc_1C2AF
 ; ---------------------------------------------------------------------------
 
-loc_1C3BD:                              ; CODE XREF: sub_1C13E+27A↑j
+loc_1C3BD:                              ; CODE XREF: HandleRangedOrCombatAction+27A↑j
                 cmp     word ptr ds:53DCh, 28h ; '('
                 jnz     short loc_1C3C7
                 jmp     loc_1C2C6
 ; ---------------------------------------------------------------------------
 
-loc_1C3C7:                              ; CODE XREF: sub_1C13E+284↑j
+loc_1C3C7:                              ; CODE XREF: HandleRangedOrCombatAction+284↑j
                 cmp     word ptr ds:53DCh, 24h ; '$'
                 jnz     short loc_1C3D1
                 jmp     loc_1C2DD
 ; ---------------------------------------------------------------------------
 
-loc_1C3D1:                              ; CODE XREF: sub_1C13E+1B6↑j
-                                        ; sub_1C13E+1C5↑j ...
+loc_1C3D1:                              ; CODE XREF: HandleRangedOrCombatAction+1B6↑j
+                                        ; HandleRangedOrCombatAction+1C5↑j ...
                 mov     word ptr ds:53EEh, 0
                 mov     si, 54AEh
                 call    IsBCDCounterAtLeast
                 jz      short loc_1C3E6
                 call    ShowLootAndAwardExperience
 
-loc_1C3E6:                              ; CODE XREF: sub_1C13E+2A1↑j
+loc_1C3E6:                              ; CODE XREF: HandleRangedOrCombatAction+2A1↑j
                 call    DrawMouseCursor
                 call    ProcessLevelMonsters
                 call    RedrawDungeonScreen
@@ -22448,7 +22448,7 @@ loc_1C3E6:                              ; CODE XREF: sub_1C13E+2A1↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C405:                              ; CODE XREF: sub_1C13E+2C↑j
+loc_1C405:                              ; CODE XREF: HandleRangedOrCombatAction+2C↑j
                 or      word ptr ds:536Eh, 20h
                 call    HighlightSelectedAbilityIcon
                 mov     word ptr ds:53DCh, 31h ; '1'
@@ -22481,15 +22481,15 @@ loc_1C405:                              ; CODE XREF: sub_1C13E+2C↑j
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C48E:                              ; CODE XREF: sub_1C13E+2EF↑j
-                                        ; sub_1C13E+306↑j ...
+loc_1C48E:                              ; CODE XREF: HandleRangedOrCombatAction+2EF↑j
+                                        ; HandleRangedOrCombatAction+306↑j ...
                 call    DrawMouseCursor
                 cmp     word ptr ds:53E0h, 3
                 jnz     short loc_1C49D
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C49D:                              ; CODE XREF: sub_1C13E+35A↑j
+loc_1C49D:                              ; CODE XREF: HandleRangedOrCombatAction+35A↑j
                 cmp     word ptr ds:53E0h, 4
                 jz      short loc_1C4C3
                 mov     ax, ds:5426h
@@ -22503,14 +22503,14 @@ loc_1C49D:                              ; CODE XREF: sub_1C13E+35A↑j
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C4C3:                              ; CODE XREF: sub_1C13E+364↑j
+loc_1C4C3:                              ; CODE XREF: HandleRangedOrCombatAction+364↑j
                 call    ResolveAttackOrAbilityAction
                 test    word ptr ds:536Eh, 200h
                 jnz     short loc_1C4D1
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C4D1:                              ; CODE XREF: sub_1C13E+38E↑j
+loc_1C4D1:                              ; CODE XREF: HandleRangedOrCombatAction+38E↑j
                 push    word ptr ds:53DCh
                 push    si
                 call    RefreshDungeonScreen
@@ -22529,14 +22529,14 @@ loc_1C4D1:                              ; CODE XREF: sub_1C13E+38E↑j
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C503:                              ; CODE XREF: sub_1C13E+3C0↑j
+loc_1C503:                              ; CODE XREF: HandleRangedOrCombatAction+3C0↑j
                 call    GrantMonsterRewards
                 call    RemoveMonsterFromMap
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C510:                              ; CODE XREF: sub_1C13E+36D↑j
-                                        ; sub_1C13E+373↑j ...
+loc_1C510:                              ; CODE XREF: HandleRangedOrCombatAction+36D↑j
+                                        ; HandleRangedOrCombatAction+373↑j ...
                 call    SaveCorridorBackgroundToEMS
                 mov     ax, 4Ch ; 'L'
                 call    ShowCombatMessageOrWait
@@ -22549,7 +22549,7 @@ loc_1C510:                              ; CODE XREF: sub_1C13E+36D↑j
                 mov     word ptr ds:0FC3h, 50h ; 'P'
                 mov     cx, 0Ah
 
-loc_1C542:                              ; CODE XREF: sub_1C13E+42F↓j
+loc_1C542:                              ; CODE XREF: HandleRangedOrCombatAction+42F↓j
                 mov     ax, ds:53CCh
                 mov     ds:53E6h, ax
                 or      word ptr ds:536Ch, 1
@@ -22564,7 +22564,7 @@ loc_1C542:                              ; CODE XREF: sub_1C13E+42F↓j
                 mov     si, 122Ch
                 mov     cx, 50h ; 'P'
 
-loc_1C575:                              ; CODE XREF: sub_1C13E+450↓j
+loc_1C575:                              ; CODE XREF: HandleRangedOrCombatAction+450↓j
                 cmp     word ptr [si], 0
                 jz      short loc_1C58A
                 cmp     word ptr [si+10h], 0
@@ -22572,14 +22572,14 @@ loc_1C575:                              ; CODE XREF: sub_1C13E+450↓j
                 call    GrantMonsterRewards
                 call    RemoveMonsterFromMap
 
-loc_1C58A:                              ; CODE XREF: sub_1C13E+43A↑j
-                                        ; sub_1C13E+440↑j
+loc_1C58A:                              ; CODE XREF: HandleRangedOrCombatAction+43A↑j
+                                        ; HandleRangedOrCombatAction+440↑j
                 add     si, 9Ch
                 loop    loc_1C575
                 jmp     loc_1C3D1
 ; ---------------------------------------------------------------------------
 
-loc_1C593:                              ; CODE XREF: sub_1C13E+10↑j
+loc_1C593:                              ; CODE XREF: HandleRangedOrCombatAction+10↑j
                 call    HighlightSelectedAbilityIcon
                 mov     word ptr ds:53DCh, 31h ; '1'
                 call    AnimateProjectileStep
@@ -22590,23 +22590,23 @@ loc_1C593:                              ; CODE XREF: sub_1C13E+10↑j
                 jmp     short loc_1C5C2
 ; ---------------------------------------------------------------------------
 
-loc_1C5B2:                              ; CODE XREF: sub_1C13E+470↑j
+loc_1C5B2:                              ; CODE XREF: HandleRangedOrCombatAction+470↑j
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, 0Ah
                 call    ShowCombatMessageOrWait
 
-loc_1C5C2:                              ; CODE XREF: sub_1C13E+472↑j
+loc_1C5C2:                              ; CODE XREF: HandleRangedOrCombatAction+472↑j
                 call    DrawMouseCursorAlt
                 retf
-sub_1C13E       endp
+HandleRangedOrCombatAction endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-HighlightSelectedAbilityIcon proc near  ; CODE XREF: sub_1C13E+2CC↑p
-                                        ; sub_1C13E:loc_1C593↑p
+HighlightSelectedAbilityIcon proc near  ; CODE XREF: HandleRangedOrCombatAction+2CC↑p
+                                        ; HandleRangedOrCombatAction:loc_1C593↑p
                 cmp     word ptr ds:5426h, 0
                 jnz     short loc_1C5D2
                 jmp     locret_1C67A
@@ -22723,8 +22723,8 @@ ApplyDamageAlongCorridorLine endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowCombatMessageOrWait proc near       ; CODE XREF: sub_1C13E+1D2↑p
-                                        ; sub_1C13E:loc_1C35F↑p ...
+ShowCombatMessageOrWait proc near       ; CODE XREF: HandleRangedOrCombatAction+1D2↑p
+                                        ; HandleRangedOrCombatAction:loc_1C35F↑p ...
                 push    ax              ; Shows a combat message (ax, via sub_28412) unless sub_2827E reports speech/sound busy, in which case it just waits 6 ticks instead. Called from HandleRangedOrCombatAction.
                 call    WaitForSoundDriverIdle
                 jz      short loc_1C6EA
@@ -22747,8 +22747,8 @@ ShowCombatMessageOrWait endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-ResolveAttackOrAbilityAction proc near  ; CODE XREF: sub_1C13E+1E3↑p
-                                        ; sub_1C13E:loc_1C4C3↑p ...
+ResolveAttackOrAbilityAction proc near  ; CODE XREF: HandleRangedOrCombatAction+1E3↑p
+                                        ; HandleRangedOrCombatAction:loc_1C4C3↑p ...
                 and     word ptr ds:536Eh, 0FDFFh ; Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).
                 mov     word ptr ds:0F34h, 0
                 mov     word ptr ds:0F36h, 0
@@ -22969,7 +22969,7 @@ ResolveAbilityEffect endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ResetWeaponSlotDisplayCache proc near   ; CODE XREF: sub_1C13E+1E0↑p
+ResetWeaponSlotDisplayCache proc near   ; CODE XREF: HandleRangedOrCombatAction+1E0↑p
                 dec     word ptr ds:0FD7h ; Every Nth call (word_2E544 countdown), clears a 105-row region of EMS page 0x55FE at the x-offset of the first empty weapon-select slot (word_328D8/DA/DC, the same globals/positions HandleRangedOrCombatAction feeds to DrawWeaponSelectIcon). Plausibly resets a per-slot display/animation cache. Called from HandleRangedOrCombatAction.
                 jnz     short loc_1C910
                 retn
@@ -23018,7 +23018,7 @@ ResetWeaponSlotDisplayCache endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ClearFirstOccupiedCombatSlot proc near  ; CODE XREF: sub_1C13E+224↑p
+ClearFirstOccupiedCombatSlot proc near  ; CODE XREF: HandleRangedOrCombatAction+224↑p
                 push    cx              ; Scans a 3-entry table (0x5078) for the first nonzero entry and clears it. Called from HandleRangedOrCombatAction.
                 push    di
                 mov     cx, 3
@@ -32929,7 +32929,7 @@ FindMonsterTypeInLevelPool endp
 
 
 GrantMonsterRewards proc far            ; CODE XREF: ProcessCombatRound:loc_112C4↑P
-                                        ; sub_1C13E:loc_1C374↑P ...
+                                        ; HandleRangedOrCombatAction:loc_1C374↑P ...
                 push    si              ; Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.
                 push    di
                 mov     di, si
@@ -33078,7 +33078,7 @@ TestCellMonsterSpawnedFlag endp
 
 
 ResetCombatRoundScratchState proc far   ; CODE XREF: RunDungeonGameLoop+5↑P
-                                        ; sub_1C13E+1F↑P ...
+                                        ; HandleRangedOrCombatAction+1F↑P ...
                 mov     word ptr ds:54AEh, 0 ; Zeroes 8 combat scratch words (word_32A16-1C, word_32BF6-FC). Called from RunDungeonGameLoop and HandleRangedOrCombatAction.
                 mov     word ptr ds:54B0h, 0
                 mov     word ptr ds:54B2h, 0
@@ -33574,8 +33574,8 @@ ProcessLevelMonsters endp
 ; =============== S U B R O U T I N E =======================================
 
 
-RemoveMonsterFromMap proc far           ; CODE XREF: sub_1C13E+23B↑P
-                                        ; sub_1C13E+3CA↑P ...
+RemoveMonsterFromMap proc far           ; CODE XREF: HandleRangedOrCombatAction+23B↑P
+                                        ; HandleRangedOrCombatAction+3CA↑P ...
                 push    cx              ; Removes a monster from the map and wipes its record: clears the 'present here' flag (bit 0x400) on the map cell its [+6] field points at and zeroes that cell's [+4] occupant reference, then zeroes the entire g_levelMonsters/g_monsterSlots-layout record (0x9C bytes).
                 push    di
                 push    es
@@ -33618,7 +33618,7 @@ ClearMonsterSlotRecord endp
 
 
 ShowLootAndAwardExperience proc far     ; CODE XREF: RunDungeonGameLoop+105↑P
-                                        ; sub_1C13E+2A3↑P ...
+                                        ; HandleRangedOrCombatAction+2A3↑P ...
                 push    cx              ; Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).
                 push    dx
                 push    si
@@ -44320,7 +44320,7 @@ TriggerSoundEvent endp
 
 
 sub_286D8       proc far                ; CODE XREF: ProcessMonsterAttackTurn+A5↑P
-                                        ; sub_1C13E+126↑P ...
+                                        ; HandleRangedOrCombatAction+126↑P ...
                 test    word ptr ds:0CF63h, 8
                 jnz     short loc_286E1
                 retf
@@ -46990,7 +46990,7 @@ FreeVideoBuffer endp
 
 ; Attributes: bp-based frame
 
-DrawViewportSprite proc far             ; CODE XREF: sub_1C13E+40F↑P
+DrawViewportSprite proc far             ; CODE XREF: HandleRangedOrCombatAction+40F↑P
                                         ; ExtendDungeonCeilingTexture+4A↑P ...
 
 var_66          = word ptr -66h
@@ -49483,7 +49483,7 @@ loc_2AFE1:                              ; CODE XREF: CastSpell+155↑j
                 call    UpdateCursorForHeldItem
                 call    ConsumeItemChargeResource
                 call    RedrawAllPartyStatusPanels
-                call    sub_1C13E
+                call    HandleRangedOrCombatAction
                 test    word ptr ds:5370h, 1000h
                 jz      short loc_2B00B
                 or      word ptr ds:536Eh, 20h
@@ -50070,8 +50070,8 @@ seg123          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-AnimateProjectileStep proc far          ; CODE XREF: sub_1C13E+13E↑P
-                                        ; sub_1C13E+149↑P ...
+AnimateProjectileStep proc far          ; CODE XREF: HandleRangedOrCombatAction+13E↑P
+                                        ; HandleRangedOrCombatAction+149↑P ...
                 mov     ax, ds:53CCh    ; One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, restores the background via RestoreCorridorBackgroundFromEMS (CORRECTION: not a sound effect as first guessed -- it's an EMS-backed graphics blit), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.
                 mov     ds:53E6h, ax
                 mov     word ptr ds:0FC5h, 10h
@@ -50091,8 +50091,8 @@ AnimateProjectileStep endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawWeaponSelectIcon proc far           ; CODE XREF: sub_1C13E+E4↑P
-                                        ; sub_1C13E+F0↑P ...
+DrawWeaponSelectIcon proc far           ; CODE XREF: HandleRangedOrCombatAction+E4↑P
+                                        ; HandleRangedOrCombatAction+F0↑P ...
                 cmp     bx, 0
                 jnz     short loc_2B54D
                 retf
@@ -50140,7 +50140,7 @@ DrawWeaponSelectIcon endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SaveActionIconPanelToEMS proc far       ; CODE XREF: sub_1C13E+10D↑P
+SaveActionIconPanelToEMS proc far       ; CODE XREF: HandleRangedOrCombatAction+10D↑P
                                         ; HighlightSelectedAbilityIcon+8C↑P ...
                 push    es              ; Caches the action-icon panel area (video buffer -> EMS page frame, offset 0,0). Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.
                 push    di
@@ -50222,8 +50222,8 @@ loc_2B612:                              ; CODE XREF: seg123:010D↓j
 ; =============== S U B R O U T I N E =======================================
 
 
-SaveCorridorBackgroundToEMS proc far    ; CODE XREF: sub_1C13E+133↑P
-                                        ; sub_1C13E+258↑P ...
+SaveCorridorBackgroundToEMS proc far    ; CODE XREF: HandleRangedOrCombatAction+133↑P
+                                        ; HandleRangedOrCombatAction+258↑P ...
                 push    es              ; Caches the corridor viewport background (video buffer -> EMS page frame, same region as RestoreCorridorBackgroundFromEMS) before an animated overlay draws over it. Called from HandleRangedOrCombatAction.
                 push    di
                 push    si
@@ -50268,7 +50268,7 @@ SaveCorridorBackgroundToEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ClearActionIconHighlightMask proc far   ; CODE XREF: sub_1C13E+C0↑P
+ClearActionIconHighlightMask proc far   ; CODE XREF: HandleRangedOrCombatAction+C0↑P
                                         ; HighlightSelectedAbilityIcon+F↑P ...
                 push    es              ; Fills ~11.7KB of the offscreen buffer (starting at offset 0) with byte 0xFF via 105 overlapping row-strided rep stosw passes -- clears whatever mask/overlay buffer backs the action-icon highlight effect. Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.
                 push    di
@@ -50319,7 +50319,8 @@ loc_2B695:                              ; CODE XREF: seg123:0193↓j
 ; =============== S U B R O U T I N E =======================================
 
 
-RestoreCorridorBackgroundFromEMS proc far ; CODE XREF: sub_1C13E+41E↑P
+RestoreCorridorBackgroundFromEMS proc far
+                                        ; CODE XREF: HandleRangedOrCombatAction+41E↑P
                                         ; AnimateProjectileStep+23↑p ...
                 push    es              ; Maps EMS page 0x55FE if not cached, blits a fixed 136x112-word region from the EMS page frame into the video buffer at offset 0xA08 -- restores the corridor viewport background over a drawn sprite. Called from HandleRangedOrCombatAction and AnimateProjectileStep (NOT a sound effect, despite an earlier comment's guess).
                 push    di
@@ -107695,7 +107696,7 @@ word_3ACE5      dw 0                    ; DATA XREF: AdvanceGameClock:loc_1EC23�
                 db    0
                 db    3
                 db    0
-                db  0Ah
+g_driverStateFlags db  0Ah
                 db    0
 word_3AD15      dw 0                    ; DATA XREF: SaveUiStateForClueBook+71↑r
                                         ; TickRedrawTimer+6↑r
@@ -108050,7 +108051,7 @@ word_3AE23      dw 0                    ; DATA XREF: UpdateScrollingBannerWindow
                 db 0FFh
                 db 0FFh
                 db 0FFh
-                db    0
+g_partySlotAssignment db    0
                 db    0
                 db    0
                 db    0
@@ -118601,7 +118602,7 @@ word_3AE23      dw 0                    ; DATA XREF: UpdateScrollingBannerWindow
                 db    0
                 db    0
                 db    0
-                db    0
+g_soundDriverFarPtr db    0
                 db    0
                 db    0
                 db    0

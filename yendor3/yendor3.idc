@@ -1288,6 +1288,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X11E56);
 	op_hex		(x,	1);
+	set_name	(0X11E56,	"ParseCommandLineSwitches");
 	set_cmt	(0X11E58,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);
 	create_insn	(x=0X11E58);
 	op_hex		(x,	0);
@@ -4322,6 +4323,7 @@ static Bytes_1(void) {
 	create_insn	(0X1C117);
 	create_insn	(0X1C13A);
 	create_insn	(0X1C13E);
+	set_name	(0X1C13E,	"HandleRangedOrCombatAction");
 	create_insn	(x=0X1C146);
 	op_hex		(x,	1);
 	create_insn	(0X1C151);
@@ -5409,11 +5411,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X20673);
 	op_hex		(x,	1);
-	create_insn	(x=0X2067E);
-	op_hex		(x,	1);
-	create_insn	(0X206B9);
-	create_insn	(x=0X206DC);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -5423,6 +5420,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2067E);
+	op_hex		(x,	1);
+	create_insn	(0X206B9);
+	create_insn	(x=0X206DC);
+	op_hex		(x,	1);
 	create_insn	(x=0X206FE);
 	op_hex		(x,	1);
 	set_name	(0X206FE,	"RenderDungeonVanishingPoint");
@@ -10095,6 +10097,7 @@ static Bytes_3(void) {
 	create_word	(0X3ACC9);
 	create_word	(0X3ACCB);
 	create_word	(0X3ACE5);
+	set_name	(0X3AD13,	"g_driverStateFlags");
 	create_word	(0X3AD15);
 	create_word	(0X3AD25);
 	create_word	(0X3AD27);
@@ -10108,6 +10111,8 @@ static Bytes_3(void) {
 	create_word	(0X3ADBF);
 	create_word	(0X3ADC1);
 	create_word	(0X3AE23);
+	set_name	(0X3AE79,	"g_partySlotAssignment");
+	set_name	(0X3D7B0,	"g_soundDriverFarPtr");
 	create_byte	(0X3D7C0);
 	make_array	(0X3D7C0,	0X200);
 }

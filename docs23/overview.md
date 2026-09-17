@@ -7565,6 +7565,42 @@ blocker preventing some global renames (`g_soundDriverFarPtr`,
 `g_partySlotAssignment`, `g_driverStateFlags`), which is also what's
 blocking the caller-structure approach for `HandleRangedOrCombatAction`.
 
+### 2026-09-16 session update, continued: Chapter 3 review round 10 — fixed the global-rename blocker, resolved HandleRangedOrCombatAction
+
+Went back to the segmented-addressing blocker that had been open since
+round 1. It turned out to be a data-entry bug, not a real IDA
+limitation: the addresses used back then (0xFA00/0xCF81/0xCF63) were
+never valid linear addresses in either game — 0xFA00 was an unrelated
+literal constant from a nearby comparison instruction, and 0xCF63/
+0xCF81 were unresolved `ds:`-relative offsets misread as flat
+addresses (0xCF81 was also simply the wrong offset). Found the real
+yendor2 addresses directly by name lookup (they're already correctly
+named there), then resolved the yendor3 equivalents using
+`idc.to_ea(segment_selector, offset)` on the raw offsets still showing
+in the disassembly, cross-validated by checking that known globals'
+relative byte-distances from each other match exactly between the two
+games. All three globals (`g_soundDriverFarPtr`, `g_partySlotAssignment`,
+`g_driverStateFlags`) are now correctly named.
+
+That unblocked the caller-structure search for `HandleRangedOrCombatAction`:
+`g_uiScratchFlags4` turned out to already be a resolved symbol in
+yendor3 (no translation needed, since it's referenced directly inside
+`start` where IDA does track the segment assumption). Its two gate
+checks in `start` matched yendor2's two `HandleRangedOrCombatAction`
+call sites exactly, both calling an address round 9 had flagged as a
+confirmed-bad `ComputeAlchemyRefinementYield` guess with a suspiciously
+large combat/projectile call list — a direct diff confirmed an exact
+292/292 instruction match. Renamed. Found `ParseCommandLineSwitches`
+as a bonus in the same pass (it sits in the exact `start` call slot
+yendor2 uses for it, right after DS segment setup) — resolving another
+long-standing "this BinDiff label is probably wrong" loose end from
+the mid-confidence rounds.
+
+Only one major open identity remains from the full 197-function
+review: `DrawShadowedTextAlt`. Its only caller, `PlayStudioCreditsIntro`,
+is itself still unresolved, so finding it needs that caller identified
+first — a natural next step for a future round.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -94,16 +94,13 @@ bit `0x8`) and, if set, calls a far function pointer at `ds:0xFA00`
 with `bx=8`. That function pointer is the same one yendor2's
 `TriggerSoundEvent` calls as `g_soundDriverFarPtr` — confirmed by
 `TriggerSoundEvent` itself showing the identical call in both games'
-disassembly, just through a raw, not-yet-converted `ds:0xFA00` operand
-in yendor3 (attempting `set_name` on it failed: IDA reports the
-address as unloaded, meaning the segment:offset needs a proper
-"convert to offset" pass before it can be named — not just a plain
-linear address the way most other globals in this codebase are).
+disassembly. Both `g_soundDriverFarPtr` (ea `0x3D7B0`) and
+`g_driverStateFlags` (`ds:0xCF63`, ea `0x3AD13`) are now properly
+named — see the "segmented-addressing blocker resolved" note below.
 So `sub_286D8` is a **new "if flag X, poke the sound driver with
 sub-function 8" wrapper**, called from at least 3 places — plausibly a
 new sound-driver keepalive/reset call added around specific game
-events, not a general event/hook system. `ds:0xCF63`'s exact meaning
-is still unconfirmed.
+events, not a general event/hook system.
 
 ### `WaitForSoundDriverIdle` gained many new call sites
 
@@ -147,12 +144,11 @@ ptr)` wraps it: always clears `bx` from the roster first, and if
 `si != 0` also writes `bx` into `[si]` -- effectively "move this
 character's slot reference." No yendor2 equivalent; plausibly a fix
 for a stale-slot-reference bug when a character is reassigned or
-becomes ineligible mid-action. The underlying table's yendor3 address
-(`ds:0xCF81`) is confirmed to be the same `g_partySlotAssignment`
-table yendor2 uses (per several already-existing inline comments
-describing it exactly that way), but attempting to rename it hit the
-same segmented-addressing snag as `g_soundDriverFarPtr` last round
-(IDA reports it unloaded) -- needs a proper convert-to-offset pass.
+becomes ineligible mid-action. The underlying table is
+`g_partySlotAssignment`, now correctly named at its real yendor3
+address (ea `0x3AE79`, raw offset `0xD0C9` -- round 2's original
+`0xCF81` guess for this table was simply wrong; see the
+"segmented-addressing blocker resolved" note below).
 
 ### New function: `ApplyScriptedMapCellOverrides` (yendor3 `sub_1B704`)
 
@@ -191,12 +187,74 @@ Confirmed via `ParseSoundBlasterEnvironmentVariable`, which ANDs/ORs
 yendor2's version uses on `g_driverStateFlags`. This also resolves
 round 1's open question about `sub_286D8`: it tests bit `0x8` of this
 same flags word -- one of the two bits `DrawCheckboxIndicator` already
-gates the pause-menu MUSIC/SOUND FX checkboxes on. Renaming the actual
-address failed the same way `g_soundDriverFarPtr` and
-`g_partySlotAssignment` did in earlier rounds (IDA reports it
-unloaded) -- a growing list of segmented-operand globals that need a
-proper convert-to-offset pass, tracked here rather than each rename
-attempt being repeated.
+gates the pause-menu MUSIC/SOUND FX checkboxes on. Now correctly named
+at ea `0x3AD13` -- see the "segmented-addressing blocker resolved"
+note below.
+
+### Round 10: the "segmented-addressing" global-rename blocker resolved (it was a data-entry bug)
+
+Every global-rename failure noted above (`g_soundDriverFarPtr`,
+`g_partySlotAssignment`, `g_driverStateFlags`) turned out to share one
+root cause, and it wasn't a real IDA limitation: **the addresses used
+in rounds 1-3 were never valid linear addresses in *either* game.**
+`0xFA00` was an unrelated literal constant from a nearby `cmp`
+instruction; `0xCF63` and `0xCF81` were raw, unresolved `ds:`-relative
+offsets misread as if they were flat addresses (0xCF81 was also
+simply the wrong offset for `g_partySlotAssignment` -- the real one is
+`0xD0C9`). The real yendor2 addresses (found via
+`idc.get_name_ea_simple`, where all three are already correctly named)
+are `0x3CC78` / `0x36E4B` / `0x36CE5`.
+
+The actual fix: these globals are referenced via unresolved
+`ds:0NNNNh` raw offsets in yendor3 because `assume ds:seg133` (set
+explicitly near the top of `start`) doesn't propagate into other code
+segments (`ShutdownAudioDrivers`, `HandleMovementInput`, etc., each
+compiled as their own segment) -- so IDA can't compute a linear
+address for those operands and just shows the raw 16-bit immediate.
+`idc.to_ea(seg133.sel, offset)` resolves them correctly (plain
+`selector*16 + offset` arithmetic is unreliable here -- IDA's internal
+selector table doesn't work that way). Cross-validated two ways: (1)
+the reference sites' bit masks and call patterns match yendor2's usage
+exactly, and (2) a relative-offset check -- yendor2's
+`g_partyFacing`/`g_partyRoleAssignment3`/`g_partySlotAssignment` sit
+at fixed byte deltas from `g_driverStateFlags` (`+0x10`/`+0x22`/
+`+0x166`), and yendor3's raw DS-offsets at the matching code positions
+sit at the *exact same* deltas from `0xCF63` (`+0x10 -> 0xCF73`,
+`+0x22 -> 0xCF85`, `+0x166 -> 0xD0C9`) -- strong evidence this
+near-data cluster's layout is byte-for-byte identical between the two
+games. All three now correctly named: `g_driverStateFlags` (ea
+`0x3AD13`), `g_soundDriverFarPtr` (ea `0x3D7B0`),
+`g_partySlotAssignment` (ea `0x3AE79`).
+
+**This unblocked `HandleRangedOrCombatAction`.** Its yendor2 callers
+(both in `start`) gate on `g_uiScratchFlags4` bit `0x1000`; that
+global turned out to already be a resolved symbol in yendor3
+(`word_33120`, since it's referenced directly inside `start` where
+`assume ds:` *is* tracked) -- no offset translation needed. Its two
+`test word_33120, 1000h` gates sit at the exact positions of yendor2's
+two `HandleRangedOrCombatAction` call sites, both calling the same
+`sub_1C13E` -- the address round 9 flagged as a confirmed-bad
+`ComputeAlchemyRefinementYield` guess with a mysteriously huge
+combat/projectile call list. A direct diff confirms it: 292/292
+instructions (delta 0), call list identical except for a few new
+`sub_286D8` sound-driver-hook calls (already documented above) and one
+new `wait`. Renamed.
+
+**Bonus find while tracing `start`**: `sub_11E56` (round 9's
+confirmed-bad `ErrorCheck` guess, empty call list) sits in the exact
+`start` call slot yendor2 uses for `ParseCommandLineSwitches`, right
+after the DS segment setup. Direct diff: calls match exactly. Renamed
+-- this also resolves the long-standing "ParseCommandLineSwitches is
+almost certainly a wrong BinDiff label contaminating other diffs"
+observation from the mid-confidence rounds; its real address was never
+the one BinDiff suggested.
+
+Only one major open thread remains from the whole 197-function review:
+`DrawShadowedTextAlt`'s real yendor3 identity. Its only yendor2 caller
+is `PlayStudioCreditsIntro` (5 call sites), but that caller's own
+yendor3 identity is itself still unresolved (confirmed bad, rounds
+7/9), so the caller-structure trick needs `PlayStudioCreditsIntro`
+found first -- left for a future round.
 
 ### Possible pattern: several UI panels show one fewer value
 
@@ -639,24 +697,34 @@ been spot-checked at least once.
   generic tick-wait duplicate, not that function, see above). The
   address matched to `PollForEscapeKeyOnlyAlt` (0.90) *was* resolved
   this round -- see the correction above.
-- 77 functions at similarity <0.70: **all 77 now checked**, 33 renamed
-  to their real (sometimes non-obvious) identity across rounds 5-9
+- 77 functions at similarity <0.70: **all 77 now checked**, 34 renamed
+  to their real (sometimes non-obvious) identity across rounds 5-10
   (`apply_round5_findings.py`, `apply_round5b_findings.py`,
   `apply_round6_findings.py`, `apply_round6b.py`, `apply_round6c.py`,
   `apply_round7_findings.py`, `apply_round8_findings.py`,
-  `apply_round9_findings.py`). ~45 confirmed-bad BinDiff matches found
-  in this tier -- a roughly 55-60% bad-match rate once fully reviewed,
-  confirming the "below 0.5 similarity, assume wrong until proven"
-  rule of thumb. This tier is now closed out. Remaining open leads for
-  future sessions (not blocking, just unresolved identities): the real
-  `HandleRangedOrCombatAction` and `DrawShadowedTextAlt` (need the
-  structural-caller-analysis approach, blocked on identifying
-  `g_uiScratchFlags4` at its yendor3 address -- see the segmented-
-  addressing blocker below), the real `RunClueEntryMenu`-suggested
-  address (0x2566C), `TryHandleCatalogSlotClick`-suggested address
-  (0x144D4), `ErrorCheck`-suggested address (0x11E56),
-  `RunCharacterDetailOverlay`-suggested address (0x11778), and the
-  character-creation-region cluster noted above (0x2BD4A/0x2BBB5/
-  0x2BC75). `sub_1B085`'s new ailment mechanic and `sub_156C9`'s
-  identity (a small item-range-check loop, confirmed not
-  `RestPartyAndAdvanceClock`) also remain open from earlier rounds.
+  `apply_round9_findings.py`, `apply_round10_findings.py`). ~44
+  confirmed-bad BinDiff matches found in this tier -- a roughly 55-60%
+  bad-match rate once fully reviewed, confirming the "below 0.5
+  similarity, assume wrong until proven" rule of thumb. This tier is
+  now closed out.
+- **The segmented-addressing global-rename blocker (rounds 1-3) is
+  resolved** (round 10) -- it was a data-entry bug (wrong/misread
+  addresses), not a real IDA limitation. `g_soundDriverFarPtr`,
+  `g_partySlotAssignment`, and `g_driverStateFlags` are all correctly
+  named now. This directly unblocked `HandleRangedOrCombatAction`,
+  found via the caller-structure technique once `g_uiScratchFlags4`
+  (already resolved in yendor3 as `word_33120`) made the search
+  possible; `ParseCommandLineSwitches` was found as a bonus in the
+  same pass. Remaining open leads for future sessions (not blocking,
+  just unresolved identities): `DrawShadowedTextAlt` (needs
+  `PlayStudioCreditsIntro`'s real identity found first, since that's
+  its only caller and is itself still unresolved), the real
+  `RunClueEntryMenu`-suggested address (0x2566C),
+  `TryHandleCatalogSlotClick`-suggested address (0x144D4),
+  `ErrorCheck`-suggested address (0x11E56 -- note: since resolved as
+  `ParseCommandLineSwitches`), `RunCharacterDetailOverlay`-suggested
+  address (0x11778), and the character-creation-region cluster noted
+  above (0x2BD4A/0x2BBB5/0x2BC75). `sub_1B085`'s new ailment mechanic
+  and `sub_156C9`'s identity (a small item-range-check loop, confirmed
+  not `RestPartyAndAdvanceClock`) also remain open from earlier
+  rounds.

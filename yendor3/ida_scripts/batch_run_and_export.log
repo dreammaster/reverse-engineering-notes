@@ -546,3 +546,302 @@ item_size: 1
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'list_segments.py']
+[*] reading list_segments.py
+[*] executing list_segments.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/yendor/yendor3/ida_scripts/batch_run_and_export.py", line 89, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "list_segments.py", line 18, in <module>
+    f"para={idc.sel2para(seg.sel):#x}")
+  File "C:\Program Files\IDA Pro 8.2\python\3\idc.py", line 2146, in sel2para
+    res,tmp = ida_segment.getn_selector(sel, s.cast(), base.cast())
+  File "C:\Program Files\IDA Pro 8.2\python\3\ida_segment.py", line 735, in getn_selector
+    return _ida_segment.getn_selector(*args)
+TypeError: _ida_segment.getn_selector() takes exactly one argument (3 given)
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'list_segments.py']
+[*] reading list_segments.py
+[*] executing list_segments.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000        start=0x10000  end=0x108b3  size=0x8b3  sel=4096  para=0x1000
+seg001        start=0x108b3  end=0x109f9  size=0x146  sel=4235  para=0x108b
+seg002        start=0x109f9  end=0x11528  size=0xb2f  sel=4255  para=0x109f
+seg003        start=0x11528  end=0x11556  size=0x2e  sel=4434  para=0x1152
+seg004        start=0x11556  end=0x1161c  size=0xc6  sel=4437  para=0x1155
+seg005        start=0x1161c  end=0x118f2  size=0x2d6  sel=4449  para=0x1161
+seg006        start=0x118f2  end=0x1195c  size=0x6a  sel=4495  para=0x118f
+seg007        start=0x1195c  end=0x1197b  size=0x1f  sel=4501  para=0x1195
+seg008        start=0x1197b  end=0x11e56  size=0x4db  sel=4503  para=0x1197
+seg009        start=0x11e56  end=0x11f0c  size=0xb6  sel=4581  para=0x11e5
+seg010        start=0x11f0c  end=0x12aab  size=0xb9f  sel=4592  para=0x11f0
+seg011        start=0x12aab  end=0x12ee9  size=0x43e  sel=4778  para=0x12aa
+seg012        start=0x12ee9  end=0x134ce  size=0x5e5  sel=4846  para=0x12ee
+seg013        start=0x134ce  end=0x1357d  size=0xaf  sel=4940  para=0x134c
+seg014        start=0x1357d  end=0x13929  size=0x3ac  sel=4951  para=0x1357
+seg015        start=0x13929  end=0x13a0a  size=0xe1  sel=5010  para=0x1392
+seg016        start=0x13a0a  end=0x14920  size=0xf16  sel=5024  para=0x13a0
+seg017        start=0x14920  end=0x14f40  size=0x620  sel=5266  para=0x1492
+seg018        start=0x14f40  end=0x15134  size=0x1f4  sel=5364  para=0x14f4
+seg019        start=0x15134  end=0x1521e  size=0xea  sel=5395  para=0x1513
+seg020        start=0x1521e  end=0x15290  size=0x72  sel=5409  para=0x1521
+seg021        start=0x15290  end=0x15511  size=0x281  sel=5417  para=0x1529
+seg022        start=0x15511  end=0x156f0  size=0x1df  sel=5457  para=0x1551
+seg023        start=0x156f0  end=0x15719  size=0x29  sel=5487  para=0x156f
+seg024        start=0x15719  end=0x15737  size=0x1e  sel=5489  para=0x1571
+seg025        start=0x15737  end=0x158b0  size=0x179  sel=5491  para=0x1573
+seg026        start=0x158b0  end=0x158f0  size=0x40  sel=5515  para=0x158b
+seg027        start=0x158f0  end=0x15b87  size=0x297  sel=5519  para=0x158f
+seg028        start=0x15b87  end=0x15e09  size=0x282  sel=5560  para=0x15b8
+seg029        start=0x15e09  end=0x16081  size=0x278  sel=5600  para=0x15e0
+seg030        start=0x16081  end=0x1649e  size=0x41d  sel=5640  para=0x1608
+seg031        start=0x1649e  end=0x165ba  size=0x11c  sel=5705  para=0x1649
+seg032        start=0x165ba  end=0x1660c  size=0x52  sel=5723  para=0x165b
+seg033        start=0x1660c  end=0x16653  size=0x47  sel=5728  para=0x1660
+seg034        start=0x16653  end=0x16b42  size=0x4ef  sel=5733  para=0x1665
+seg035        start=0x16b42  end=0x185a4  size=0x1a62  sel=5812  para=0x16b4
+seg036        start=0x185a4  end=0x18d3e  size=0x79a  sel=6234  para=0x185a
+seg037        start=0x18d3e  end=0x1a67c  size=0x193e  sel=6355  para=0x18d3
+seg038        start=0x1a67c  end=0x1a692  size=0x16  sel=6759  para=0x1a67
+seg039        start=0x1a692  end=0x1a792  size=0x100  sel=6761  para=0x1a69
+seg040        start=0x1a792  end=0x1abd2  size=0x440  sel=6777  para=0x1a79
+seg041        start=0x1abd2  end=0x1b186  size=0x5b4  sel=6845  para=0x1abd
+seg042        start=0x1b186  end=0x1b1bc  size=0x36  sel=6936  para=0x1b18
+seg043        start=0x1b1bc  end=0x1b1d8  size=0x1c  sel=6939  para=0x1b1b
+seg044        start=0x1b1d8  end=0x1b1fb  size=0x23  sel=6941  para=0x1b1d
+seg045        start=0x1b1fb  end=0x1b475  size=0x27a  sel=6943  para=0x1b1f
+seg046        start=0x1b475  end=0x1b490  size=0x1b  sel=6983  para=0x1b47
+seg047        start=0x1b490  end=0x1bb84  size=0x6f4  sel=6985  para=0x1b49
+seg048        start=0x1bb84  end=0x1bc6a  size=0xe6  sel=7096  para=0x1bb8
+seg049        start=0x1bc6a  end=0x1bc98  size=0x2e  sel=7110  para=0x1bc6
+seg050        start=0x1bc98  end=0x1bd1e  size=0x86  sel=7113  para=0x1bc9
+seg051        start=0x1bd1e  end=0x1bd70  size=0x52  sel=7121  para=0x1bd1
+seg052        start=0x1bd70  end=0x1bdac  size=0x3c  sel=7127  para=0x1bd7
+seg053        start=0x1bdac  end=0x1be7d  size=0xd1  sel=7130  para=0x1bda
+seg054        start=0x1be7d  end=0x1c13d  size=0x2c0  sel=7143  para=0x1be7
+seg055        start=0x1c13d  end=0x1c975  size=0x838  sel=7187  para=0x1c13
+seg056        start=0x1c975  end=0x1d357  size=0x9e2  sel=7319  para=0x1c97
+seg057        start=0x1d357  end=0x1d826  size=0x4cf  sel=7477  para=0x1d35
+seg058        start=0x1d826  end=0x1e72e  size=0xf08  sel=7554  para=0x1d82
+seg059        start=0x1e72e  end=0x1ee2c  size=0x6fe  sel=7794  para=0x1e72
+seg060        start=0x1ee2c  end=0x1f44c  size=0x620  sel=7906  para=0x1ee2
+seg061        start=0x1f44c  end=0x1fd70  size=0x924  sel=8004  para=0x1f44
+seg062        start=0x1fd70  end=0x1fe74  size=0x104  sel=8151  para=0x1fd7
+seg063        start=0x1fe74  end=0x200ce  size=0x25a  sel=8167  para=0x1fe7
+seg064        start=0x200ce  end=0x20a12  size=0x944  sel=8204  para=0x200c
+seg065        start=0x20a12  end=0x20bc8  size=0x1b6  sel=8353  para=0x20a1
+seg066        start=0x20bc8  end=0x20dc4  size=0x1fc  sel=8380  para=0x20bc
+seg067        start=0x20dc4  end=0x20f99  size=0x1d5  sel=8412  para=0x20dc
+seg068        start=0x20f99  end=0x21268  size=0x2cf  sel=8441  para=0x20f9
+seg069        start=0x21268  end=0x21387  size=0x11f  sel=8486  para=0x2126
+seg070        start=0x21387  end=0x21916  size=0x58f  sel=8504  para=0x2138
+seg071        start=0x21916  end=0x21da9  size=0x493  sel=8593  para=0x2191
+seg072        start=0x21da9  end=0x2230a  size=0x561  sel=8666  para=0x21da
+seg073        start=0x2230a  end=0x225e5  size=0x2db  sel=8752  para=0x2230
+seg074        start=0x225e5  end=0x23287  size=0xca2  sel=8798  para=0x225e
+seg075        start=0x23287  end=0x23600  size=0x379  sel=9000  para=0x2328
+seg076        start=0x23600  end=0x23618  size=0x18  sel=9056  para=0x2360
+seg077        start=0x23618  end=0x23750  size=0x138  sel=9057  para=0x2361
+seg078        start=0x23750  end=0x25123  size=0x19d3  sel=9077  para=0x2375
+seg079        start=0x25123  end=0x25349  size=0x226  sel=9490  para=0x2512
+seg080        start=0x25349  end=0x25397  size=0x4e  sel=9524  para=0x2534
+seg081        start=0x25397  end=0x25431  size=0x9a  sel=9529  para=0x2539
+seg082        start=0x25431  end=0x2544d  size=0x1c  sel=9539  para=0x2543
+seg083        start=0x2544d  end=0x2546d  size=0x20  sel=9540  para=0x2544
+seg084        start=0x2546d  end=0x25481  size=0x14  sel=9542  para=0x2546
+seg085        start=0x25481  end=0x25511  size=0x90  sel=9544  para=0x2548
+seg086        start=0x25511  end=0x25650  size=0x13f  sel=9553  para=0x2551
+seg087        start=0x25650  end=0x25862  size=0x212  sel=9573  para=0x2565
+seg088        start=0x25862  end=0x258a7  size=0x45  sel=9606  para=0x2586
+seg089        start=0x258a7  end=0x25a92  size=0x1eb  sel=9610  para=0x258a
+seg090        start=0x25a92  end=0x25b19  size=0x87  sel=9641  para=0x25a9
+seg091        start=0x25b19  end=0x2600d  size=0x4f4  sel=9649  para=0x25b1
+seg092        start=0x2600d  end=0x26c78  size=0xc6b  sel=9728  para=0x2600
+seg093        start=0x26c78  end=0x26d2e  size=0xb6  sel=9927  para=0x26c7
+seg094        start=0x26d2e  end=0x27060  size=0x332  sel=9938  para=0x26d2
+seg095        start=0x27060  end=0x274ac  size=0x44c  sel=9990  para=0x2706
+seg096        start=0x274ac  end=0x274f4  size=0x48  sel=10058  para=0x274a
+seg097        start=0x274f4  end=0x27882  size=0x38e  sel=10063  para=0x274f
+seg098        start=0x27882  end=0x278b0  size=0x2e  sel=10120  para=0x2788
+seg099        start=0x278b0  end=0x27a86  size=0x1d6  sel=10123  para=0x278b
+seg100        start=0x27a86  end=0x27b51  size=0xcb  sel=10152  para=0x27a8
+seg101        start=0x27b51  end=0x28207  size=0x6b6  sel=10165  para=0x27b5
+seg102        start=0x28207  end=0x28307  size=0x100  sel=10272  para=0x2820
+seg103        start=0x28307  end=0x28340  size=0x39  sel=10288  para=0x2830
+seg104        start=0x28340  end=0x284b4  size=0x174  sel=10292  para=0x2834
+seg105        start=0x284b4  end=0x288ea  size=0x436  sel=10315  para=0x284b
+seg106        start=0x288ea  end=0x28934  size=0x4a  sel=10382  para=0x288e
+seg107        start=0x28934  end=0x28cf1  size=0x3bd  sel=10387  para=0x2893
+seg108        start=0x28cf1  end=0x28d11  size=0x20  sel=10447  para=0x28cf
+seg109        start=0x28d11  end=0x28e6d  size=0x15c  sel=10449  para=0x28d1
+seg110        start=0x28e6d  end=0x28f30  size=0xc3  sel=10470  para=0x28e6
+seg111        start=0x28f30  end=0x296c8  size=0x798  sel=10483  para=0x28f3
+seg112        start=0x296c8  end=0x297e9  size=0x121  sel=10604  para=0x296c
+seg113        start=0x297e9  end=0x29867  size=0x7e  sel=10622  para=0x297e
+seg114        start=0x29867  end=0x299bc  size=0x155  sel=10630  para=0x2986
+seg115        start=0x299bc  end=0x29afb  size=0x13f  sel=10651  para=0x299b
+seg116        start=0x29afb  end=0x2aba5  size=0x10aa  sel=10671  para=0x29af
+seg117        start=0x2aba5  end=0x2abc7  size=0x22  sel=10938  para=0x2aba
+seg118        start=0x2abc7  end=0x2ad5a  size=0x193  sel=10940  para=0x2abc
+seg119        start=0x2ad5a  end=0x2b065  size=0x30b  sel=10965  para=0x2ad5
+seg120        start=0x2b065  end=0x2b480  size=0x41b  sel=11014  para=0x2b06
+seg121        start=0x2b480  end=0x2b4bd  size=0x3d  sel=11080  para=0x2b48
+seg122        start=0x2b4bd  end=0x2b511  size=0x54  sel=11083  para=0x2b4b
+seg123        start=0x2b511  end=0x2b7ad  size=0x29c  sel=11089  para=0x2b51
+seg124        start=0x2b7ad  end=0x2ba9c  size=0x2ef  sel=11130  para=0x2b7a
+seg125        start=0x2ba9c  end=0x2bb7c  size=0xe0  sel=11177  para=0x2ba9
+seg126        start=0x2bb7c  end=0x2c3e6  size=0x86a  sel=11191  para=0x2bb7
+seg127        start=0x2c3e6  end=0x2c4e4  size=0xfe  sel=11326  para=0x2c3e
+seg128        start=0x2c4e4  end=0x2d9fe  size=0x151a  sel=11342  para=0x2c4e
+seg129        start=0x2d9fe  end=0x2da66  size=0x68  sel=11679  para=0x2d9f
+seg130        start=0x2da66  end=0x2da90  size=0x2a  sel=11686  para=0x2da6
+seg131        start=0x2da90  end=0x2db48  size=0xb8  sel=11689  para=0x2da9
+seg132        start=0x2db48  end=0x2ddb2  size=0x26a  sel=11700  para=0x2db4
+seg133        start=0x2ddb2  end=0x3d7c0  size=0xfa0e  sel=11739  para=0x2ddb
+seg134        start=0x3d7c0  end=0x3d9c0  size=0x200  sel=15740  para=0x3d7c
+----- end target script output -----
+[*] finished executing list_segments.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118639
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'resolve_real_addrs.py']
+[*] reading resolve_real_addrs.py
+[*] executing resolve_real_addrs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+--- ShutdownAudioDrivers (0x285c5) scanning for data operands ---
+  0x285c5: op0 type=2 addr=0xcf63  disasm="test    word ptr ds:0CF63h, 4; Shuts down whichever audio driver(s) are currently active (per g_driverStateFlags), sending shutdown-style commands through each driver's function-pointer dispatch table before freeing its memory block via INT 21h/AH=49h. Called unconditionally from ErrorExit before exiting."
+  0x285cd: op0 type=2 addr=0xfa02  disasm='cmp     word ptr ds:0FA02h, 0'
+  0x285d7: op0 type=2 addr=0xfa00  disasm='call    dword ptr ds:0FA00h'
+  0x285ea: op1 type=2 addr=0x53de  disasm='mov     es, word ptr ds:53DEh'
+  0x285fa: op0 type=2 addr=0x3b6  disasm='cmp     cs:byte_28866, 0'
+  0x28617: op1 type=2 addr=0x4404  disasm='mov     es, word ptr ds:4404h'
+--- ShutdownAudioDrivers (0x285c5) scanning for data operands ---
+  0x285c5: op0 type=2 addr=0xcf63  disasm="test    word ptr ds:0CF63h, 4; Shuts down whichever audio driver(s) are currently active (per g_driverStateFlags), sending shutdown-style commands through each driver's function-pointer dispatch table before freeing its memory block via INT 21h/AH=49h. Called unconditionally from ErrorExit before exiting."
+  0x285cd: op0 type=2 addr=0xfa02  disasm='cmp     word ptr ds:0FA02h, 0'
+  0x285d7: op0 type=2 addr=0xfa00  disasm='call    dword ptr ds:0FA00h'
+  0x285ea: op1 type=2 addr=0x53de  disasm='mov     es, word ptr ds:53DEh'
+  0x285fa: op0 type=2 addr=0x3b6  disasm='cmp     cs:byte_28866, 0'
+  0x28617: op1 type=2 addr=0x4404  disasm='mov     es, word ptr ds:4404h'
+--- HandleMovementInput (0x12ffe) scanning for data operands ---
+  0x12ffe: op1 type=2 addr=0xcf73  disasm='mov     ax, ds:0CF73h'
+  0x13007: op0 type=2 addr=0x536a  disasm='and     word ptr ds:536Ah, 0E7FFh'
+  0x1300d: op0 type=2 addr=0xe9a  disasm="cmp     byte ptr ds:0E9Ah, 48h ; 'H'"
+  0x1303c: op0 type=2 addr=0xfc3  disasm='mov     word ptr ds:0FC3h, 1Ah'
+  0x13042: op0 type=2 addr=0x53f0  disasm='mov     word ptr ds:53F0h, 19h'
+  0x13048: op0 type=2 addr=0x53ac  disasm='mov     word ptr ds:53ACh, 677Ah'
+  0x13202: op0 type=2 addr=0x5370  disasm='test    word ptr ds:5370h, 1000h'
+  0x13215: op0 type=2 addr=0xe9c  disasm='mov     ds:0E9Ch, bx'
+  0x13219: op0 type=2 addr=0xea0  disasm='mov     ds:0EA0h, cx'
+  0x1321d: op0 type=2 addr=0xe9e  disasm='mov     ds:0E9Eh, dx'
+  0x13221: op1 type=2 addr=0xcf75  disasm='add     bx, ds:0CF75h'
+  0x13225: op1 type=2 addr=0xcf77  disasm='add     cx, ds:0CF77h'
+  0x13253: op1 type=2 addr=0xfff  disasm='mov     es, word ptr ds:0FFFh'
+  0x13257: op1 type=2 addr=0x537a  disasm='mov     bx, ds:537Ah'
+  0x1325f: op0 type=4 addr=0x6  disasm='test    word ptr es:[bx+6], 6000h'
+  0x1326a: op1 type=2 addr=0x5452  disasm='cmp     ax, ds:5452h'
+  0x13270: op1 type=2 addr=0x5450  disasm='cmp     ax, ds:5450h'
+  0x1327b: op1 type=2 addr=0xcf85  disasm='mov     ax, ds:0CF85h'
+  0x13283: op1 type=2 addr=0xd0c9  disasm='mov     ax, ds:0D0C9h'
+  0x132b5: op0 type=2 addr=0x53e0  disasm='cmp     word ptr ds:53E0h, 0'
+  0x132bc: op1 type=4 addr=0x2  disasm='mov     ax, es:[bx+2]'
+  0x13335: op1 type=2 addr=0xf44  disasm='mov     es, word ptr ds:0F44h'
+  0x13356: op0 type=4 addr=0x4  disasm='mov     word ptr es:[bx+4], 0'
+  0x1335c: op1 type=4 addr=0x92  disasm='mov     ax, [si+92h]'
+  0x133c4: op1 type=2 addr=0xff9  disasm='mov     ax, ds:0FF9h'
+  0x133dc: op1 type=2 addr=0x1001  disasm='mov     ax, ds:1001h'
+----- end target script output -----
+[*] finished executing resolve_real_addrs.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118639
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'resolve_ds_offsets.py']
+[*] reading resolve_ds_offsets.py
+[*] executing resolve_ds_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg133: sel=11739  start_ea=0x2ddb2  end_ea=0x3d7c0
+g_driverStateFlags: offset=0xcf63 -> ea=0x3ad13  in_seg133_range=True  cur_name=''
+g_partyFacing: offset=0xcf73 -> ea=0x3ad23  in_seg133_range=True  cur_name=''
+g_soundDriverFarPtr: offset=0xfa00 -> ea=0x3d7b0  in_seg133_range=True  cur_name=''
+g_soundDriverFarPtr_seg: offset=0xfa02 -> ea=0x3d7b2  in_seg133_range=True  cur_name=''
+g_partySlotAssignment_maybe: offset=0xcf81 -> ea=0x3ad31  in_seg133_range=True  cur_name=''
+----- end target script output -----
+[*] finished executing resolve_ds_offsets.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118639
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_global_rename_fix.py']
+[*] reading apply_global_rename_fix.py
+[*] executing apply_global_rename_fix.py
+[*] captured stdout from target script:
+----- begin target script output -----
+offset=0xcf63 ea=0x3ad13  '' -> 'g_driverStateFlags': ok
+offset=0xfa00 ea=0x3d7b0  '' -> 'g_soundDriverFarPtr': ok
+offset=0xd0c9 ea=0x3ae79  '' -> 'g_partySlotAssignment': ok
+----- end target script output -----
+[*] finished executing apply_global_rename_fix.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118639
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'apply_round10_findings.py']
+[*] reading apply_round10_findings.py
+[*] executing apply_round10_findings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+offset=0xcf63 ea=0x3ad13  'g_driverStateFlags' -> 'g_driverStateFlags': ok
+offset=0xfa00 ea=0x3d7b0  'g_soundDriverFarPtr' -> 'g_soundDriverFarPtr': ok
+offset=0xd0c9 ea=0x3ae79  'g_partySlotAssignment' -> 'g_partySlotAssignment': ok
+0x1c13e  'sub_1C13E' -> 'HandleRangedOrCombatAction': ok
+0x11e56  'sub_11E56' -> 'ParseCommandLineSwitches': ok
+----- end target script output -----
+[*] finished executing apply_round10_findings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor3\yendor3.asm
+[*] gen_file(OFILE_ASM) returned 118640
+[*] exporting IDC to C:\dev\yendor\yendor3\yendor3.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor3\yendor3.idb
+[*] done, exiting 0
