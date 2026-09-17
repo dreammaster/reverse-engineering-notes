@@ -1,8 +1,8 @@
 /*
  * Build and run:
- *   cc -I ../src -o test_bcd4 test_bcd4.c ../src/bcd4.c && ./test_bcd4
+ *   cc -I .. -o test_bcd4 test_bcd4.c ../bcd4.c && ./test_bcd4
  * or, from an MSVC developer prompt:
- *   cl /nologo /W4 /I ..\src test_bcd4.c ..\src\bcd4.c && test_bcd4.exe
+ *   cl /nologo /W4 /I .. test_bcd4.c ..\bcd4.c && test_bcd4.exe
  */
 #include <stdio.h>
 #include <string.h>

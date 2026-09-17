@@ -7,8 +7,9 @@
 yendor2/game/
 yendor3/game/
 
-# C build artifacts (reimplementation work under yendor2/src, yendor2/tests)
+# C build artifacts (reimplementation work under src23/, src1/)
 *.obj
 *.pdb
 *.ilk
-yendor2/tests/*.exe
+src23/tests/*.exe
+src1/tests/*.exe
