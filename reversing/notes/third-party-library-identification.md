@@ -760,3 +760,50 @@ project, now observed in a third-party library too. Left unnamed
 rather than force a name onto a shape neither archived function
 actually has, but its own `matches.json` entry is now far richer than
 the original "doesn't cleanly match" framing.
+
+### The entire JGMOD format-detection cascade closes -- 14 more matches
+
+`load_mod`'s own body (already matched, fully reading its own real
+`Engine/acsound.cpp:1116`-equivalent call site) implements JGMOD's
+whole multi-format cascade INLINE -- no separate top-level dispatcher
+function exists in this build at all, meaning `load_mod` itself IS the
+real `JGMOD *load_mod(char *filename)` from `mod.c:159-214`, not a
+thin wrapper around one. Its own already-recorded call sequence
+(8 `detect_*`/`load_*` pairs plus the leading JGMOD-native check) turns
+out to match source's own call ORDER exactly, branch for branch, with
+zero reordering -- letting every remaining cascade function be
+identified purely by position, several without even reading their own
+bodies:
+
+- **`detect_jgm`**(`sub_47D9E0`), **`detect_it`**(`sub_47D4D0`),
+  **`detect_xm`**(`sub_47C4C0`), **`detect_s3m`**(`sub_47B4E0`),
+  **`detect_m31`**(`sub_47AD30`), **`detect_unreal_it`**
+  (`sub_47D400`), **`detect_unreal_xm`**(`sub_47C360`) -- all already
+  had thin matches.json entries from earlier string-matching rounds;
+  this round confirms each against its own real source body (opens
+  the file, reads N bytes, `memcmp`s against the exact already-known
+  magic string/offset) and formally renames them.
+- **`load_it`**(`sub_47D5D0`), **`load_xm`**(`sub_47C520`),
+  **`load_s3m`**(`sub_47B710`), **`load_m`**(`sub_47ADB0`),
+  **`load_jgm`**(`sub_47DA80`) -- the five format-specific loaders,
+  each a brand-new match (no prior entry existed), identified purely
+  via call-order position matching source's own `load_mod()` body
+  (`load_m`'s own 2-argument `(filename, no_inst)` signature explains
+  why it's called TWICE, once for the 31-instrument MOD variant and
+  once for the 15-instrument one).
+- **`detect_unreal_s3m`**(`sub_47B410`), **`detect_m15`**
+  (`sub_47B2B0`) -- the last two functions in the whole cascade this
+  project's own notes had explicitly flagged as "not examined this
+  round" several sessions ago ("the last 2 format pairs... haven't
+  been read yet"). Closed the same way, by call-order position.
+
+With this, **every single function in JGMOD's own format-detection
+cascade is now named** -- a whole library subsystem fully closed out,
+not just individually characterized fragments. The shared unresolved
+`0xC1832A9E` 4-byte constant `detect_unreal_it`/`detect_unreal_xm`
+both check before their own text scans remains genuinely undecoded
+(not addressed by having real function names now) -- a small, low-
+priority loose end for a future round if it ever matters.
+
+Renamed all 14, applied to the live IDB and re-exported (2586
+functions, 973 named).

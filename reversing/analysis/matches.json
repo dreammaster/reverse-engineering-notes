@@ -5164,56 +5164,56 @@
   {
     "kind": "manual",
     "asm_name": "sub_47C360",
-    "new_name": null,
+    "new_name": "detect_unreal_xm",
     "source_file": null,
-    "source_line": null,
+    "source_line": 146,
     "confidence": "medium",
-    "evidence": "JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C3FA0, bytes C1 83 2A 9E, NOT printable ASCII -- IDENTICAL to a constant checked first in sub_47D400, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"Extended Module: \" (aExtendedModule) -- an XM-format-adjacent check, structurally different from sub_47C4C0's simple fixed-offset XM check (this one scans for the signature at a non-fixed position within the first several bytes rather than a single fixed read). The fact that the SAME leading 4-byte constant appears in both this function AND sub_47D400 (which does an equivalent sliding-window scan for \"IMPM\"/IT instead) strongly suggests both are instances of a shared, generic JGMOD-internal helper pattern (a common \"packed/wrapped module\" pre-check applied identically before several different format-specific text scans), rather than two independently-written format checks that coincidentally share a constant. MEDIUM confidence: the XM-adjacent role is clear, but the leading 4-byte constant's exact purpose is not resolved. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md."
+    "evidence": "JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C3FA0, bytes C1 83 2A 9E, NOT printable ASCII -- IDENTICAL to a constant checked first in sub_47D400, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"Extended Module: \" (aExtendedModule) -- an XM-format-adjacent check, structurally different from sub_47C4C0's simple fixed-offset XM check (this one scans for the signature at a non-fixed position within the first several bytes rather than a single fixed read). The fact that the SAME leading 4-byte constant appears in both this function AND sub_47D400 (which does an equivalent sliding-window scan for \"IMPM\"/IT instead) strongly suggests both are instances of a shared, generic JGMOD-internal helper pattern (a common \"packed/wrapped module\" pre-check applied identically before several different format-specific text scans), rather than two independently-written format checks that coincidentally share a constant. MEDIUM confidence: the XM-adjacent role is clear, but the leading 4-byte constant's exact purpose is not resolved. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_unreal_xm(char *filename) -- the Unreal-embedded-XM sibling of detect_xm, sliding-window scan for \"Extended Module: \" plus the same shared 0xC1832A9E pre-check as detect_unreal_it. Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   },
   {
     "kind": "manual",
     "asm_name": "sub_47D9E0",
-    "new_name": null,
+    "new_name": "detect_jgm",
     "source_file": null,
-    "source_line": null,
+    "source_line": 38,
     "confidence": "high",
-    "evidence": "JGMOD library, format-1 check-then-load in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 18 bytes, compares 9 words against the matched string \"JGMOD 01 module : \" (aJgmod01Module). This is JGMOD's own native/proprietary module format (not a generic tracker format like MOD/S3M/XM/IT). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md for the complete JGMOD cascade writeup."
+    "evidence": "JGMOD library, format-1 check-then-load in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 18 bytes, compares 9 words against the matched string \"JGMOD 01 module : \" (aJgmod01Module). This is JGMOD's own native/proprietary module format (not a generic tracker format like MOD/S3M/XM/IT). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md for the complete JGMOD cascade writeup. RENAMED: int detect_jgm(char *filename) -- confirmed exact match to source's own opens \"rb\", reads 18 bytes, memcmp against JGM_SIG. Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   },
   {
     "kind": "manual",
     "asm_name": "sub_47D4D0",
-    "new_name": null,
+    "new_name": "detect_it",
     "source_file": null,
-    "source_line": null,
+    "source_line": 77,
     "confidence": "high",
-    "evidence": "JGMOD library, format-2 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes, compares against the matched string \"IMPM\" (aImpm_0) -- the standard Impulse Tracker (.it) file format magic signature. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md."
+    "evidence": "JGMOD library, format-2 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes, compares against the matched string \"IMPM\" (aImpm_0) -- the standard Impulse Tracker (.it) file format magic signature. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_it(char *filename) -- confirmed exact match to source's own opens \"rb\", reads 4 bytes, memcmp \"IMPM\". Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   },
   {
     "kind": "manual",
     "asm_name": "sub_47B4E0",
-    "new_name": null,
+    "new_name": "detect_s3m",
     "source_file": null,
-    "source_line": null,
+    "source_line": 122,
     "confidence": "high",
-    "evidence": "JGMOD library, format-3 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x2C(44), reads 4 bytes, compares against the matched string \"SCRM\" (aScrm_0) -- the standard Scream Tracker 3 (.s3m) file format magic signature, at its standard file offset. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md."
+    "evidence": "JGMOD library, format-3 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x2C(44), reads 4 bytes, compares against the matched string \"SCRM\" (aScrm_0) -- the standard Scream Tracker 3 (.s3m) file format magic signature, at its standard file offset. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_s3m(char *filename) -- confirmed exact match to source's own seek to +0x2C, read 4 bytes, memcmp \"SCRM\". Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   },
   {
     "kind": "manual",
     "asm_name": "sub_47AD30",
-    "new_name": null,
+    "new_name": "detect_m31",
     "source_file": null,
-    "source_line": null,
+    "source_line": 161,
     "confidence": "high",
-    "evidence": "JGMOD library, format-4 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x438(1080), reads 4 bytes, and loops comparing against a table of classic ProTracker-family MOD magic tags starting with the matched string \"M.K.\" (aMK), stepping 6 bytes per table entry -- the standard MOD file format magic signature at its standard file offset, checked against multiple known tag variants (M.K./M!K!/FLT4/etc., a well-known JGMOD/MOD-loader convention). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md."
+    "evidence": "JGMOD library, format-4 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x438(1080), reads 4 bytes, and loops comparing against a table of classic ProTracker-family MOD magic tags starting with the matched string \"M.K.\" (aMK), stepping 6 bytes per table entry -- the standard MOD file format magic signature at its standard file offset, checked against multiple known tag variants (M.K./M!K!/FLT4/etc., a well-known JGMOD/MOD-loader convention). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_m31(char *filename) -- confirmed exact match to source's own seek to +0x438, read 4 bytes, loop through the classic ProTracker MOD magic-tag table starting \"M.K.\"; 'm31' names the 31-instrument variant of the classic MOD format. Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   },
   {
     "kind": "manual",
     "asm_name": "sub_47D400",
-    "new_name": null,
+    "new_name": "detect_unreal_it",
     "source_file": null,
-    "source_line": null,
+    "source_line": 37,
     "confidence": "medium",
-    "evidence": "JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C41E4, bytes C1 83 2A 9E, NOT printable ASCII -- identical to a constant checked first in sub_47C360, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"IMPM\" (aImpm) -- an IT-format-adjacent check, but structurally different from sub_47D4D0's simple fixed-offset IT check (this one returns a position/index rather than a boolean, used by the caller as an argument to the load function rather than a plain yes/no gate -- possibly indexing into a multi-module container or archive format). MEDIUM confidence: the IT-adjacent role is clear, but the leading 4-byte constant's purpose and the returned-index semantics are not resolved. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md."
+    "evidence": "JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C41E4, bytes C1 83 2A 9E, NOT printable ASCII -- identical to a constant checked first in sub_47C360, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"IMPM\" (aImpm) -- an IT-format-adjacent check, but structurally different from sub_47D4D0's simple fixed-offset IT check (this one returns a position/index rather than a boolean, used by the caller as an argument to the load function rather than a plain yes/no gate -- possibly indexing into a multi-module container or archive format). MEDIUM confidence: the IT-adjacent role is clear, but the leading 4-byte constant's purpose and the returned-index semantics are not resolved. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_unreal_it(char *filename) -- a sliding-window scan for an embedded IT module (Unreal Tournament .umx-style container), returning a byte OFFSET rather than a plain boolean -- matching this function's own previously-flagged 'returns a position/index, not a boolean' oddity exactly. Checks the same unresolved 4-byte constant (0xC1832A9E) before its own text scan as detect_unreal_xm does -- plausibly a shared JGMOD-internal container pre-check, still not individually decoded. Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   },
   {
     "kind": "function",
@@ -7086,20 +7086,20 @@
   {
     "kind": "manual",
     "asm_name": "sub_47C4C0",
-    "new_name": null,
+    "new_name": "detect_xm",
     "source_file": null,
-    "source_line": null,
+    "source_line": 199,
     "confidence": "high",
-    "evidence": "JGMOD library, format-5 (XM) check in the load_mod (already matched) cascade -- opens the file \"rb\", reads 17 (0x11) bytes, compares against the matched string \"Extended Module: \" (aExtendedModule_0), the standard FastTracker II Extended Module (.xm) file magic signature at a fixed leading offset. Already referenced in load_mod's own evidence text (\"sub_47C4C0(check)/sub_47C520(load) for XM\") but had no dedicated entry of its own until now -- the same 'documented in prose, never given its own record' gap already found and fixed for several other functions this session. Structurally the simplest of the two XM-adjacent checks in this cascade (contrast sub_47D400, which does a sliding-window scan for this same string after first checking an unidentified leading 4-byte constant). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md."
+    "evidence": "JGMOD library, format-5 (XM) check in the load_mod (already matched) cascade -- opens the file \"rb\", reads 17 (0x11) bytes, compares against the matched string \"Extended Module: \" (aExtendedModule_0), the standard FastTracker II Extended Module (.xm) file magic signature at a fixed leading offset. Already referenced in load_mod's own evidence text (\"sub_47C4C0(check)/sub_47C520(load) for XM\") but had no dedicated entry of its own until now -- the same 'documented in prose, never given its own record' gap already found and fixed for several other functions this session. Structurally the simplest of the two XM-adjacent checks in this cascade (contrast sub_47D400, which does a sliding-window scan for this same string after first checking an unidentified leading 4-byte constant). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md. RENAMED: int detect_xm(char *filename) -- confirmed exact match to source's own opens \"rb\", reads 17 bytes, memcmp \"Extended Module: \". Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   },
   {
     "kind": "manual",
     "asm_name": "sub_47C520",
-    "new_name": null,
+    "new_name": "load_xm",
     "source_file": null,
-    "source_line": null,
+    "source_line": 217,
     "confidence": "high",
-    "evidence": "JGMOD library, format-5 (XM) LOADER in the load_mod (already matched) cascade -- called immediately after sub_47C4C0's own magic-string check passes (\"sub_47C4C0(check)/sub_47C520(load) for XM\", per load_mod's own evidence text, formalized as its own entry here). A large (~1200-line) function doing the actual XM-format parse/load (pattern data, instrument/sample tables, etc.) -- per this project's own third-party-library scope rule, this is exactly the kind of library-internal parsing logic a ScummVM reimplementation would replace wholesale with its own XM loader, so it is not traced further than confirming its role as the check-then-load pair's LOAD half. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md."
+    "evidence": "JGMOD library, format-5 (XM) LOADER in the load_mod (already matched) cascade -- called immediately after sub_47C4C0's own magic-string check passes (\"sub_47C4C0(check)/sub_47C520(load) for XM\", per load_mod's own evidence text, formalized as its own entry here). A large (~1200-line) function doing the actual XM-format parse/load (pattern data, instrument/sample tables, etc.) -- per this project's own third-party-library scope rule, this is exactly the kind of library-internal parsing logic a ScummVM reimplementation would replace wholesale with its own XM loader, so it is not traced further than confirming its role as the check-then-load pair's LOAD half. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: JGMOD *load_xm(char *filename, int start_offset) -- confirmed via call-order position (load_mod's own 3rd cascade branch) and the already-independently-confirmed ~0x558-byte JGMOD-struct malloc; called twice (normal + Unreal-embedded paths). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   },
   {
     "kind": "manual",
@@ -8353,5 +8353,65 @@
     "confidence": "medium",
     "is_library": true,
     "evidence": "ENRICHED CHARACTERIZATION (fresh round, using the newly-added ALMP3 2.0.5 src/almp3.c and Allegro 4.0.2 sources): this function operates on an ALMP3_MP3STREAM-shaped struct (huge field offsets around +0xA6xx, consistent with an embedded mpg123 'struct mpstr' decoder state, which is genuinely tens of KB) and now decisively calls Allegro's own play_audio_stream (sub_443050, this round's own new match) with a byte-count-to-sample-count conversion using [mp3+0xA698] as the stream's own sample-rate divisor and [mp3+0xA6B8] as a stereo flag -- exactly matching play_audio_stream(len,bits,stereo,freq,vol,pan)'s own role. Conditionally calls the already-matched adjust_sample when its own speed-like argument (arg_10) is NOT the literal 0x3E8(1000, a percentage-based '100%=normal speed' convention). STILL NOT RENAMED: this 6-argument shape doesn't cleanly match ANY single function ALMP3 2.0.5's own archived src/almp3.c declares -- almp3_play_mp3stream is a separate 4-argument function (mp3, buffer_len, vol, pan) and almp3_adjust_mp3stream is a separate 4-argument function too (mp3, vol, pan, speed, no loop param) -- neither matches this function's own combined play+speed+loop shape. Most plausible explanation: this 2002 build's own ALMP3 version fused what the archived (later) source keeps as two separate functions into one, the same 'one big pre-refactor function' pattern already found repeatedly for AGS's own code in this project, just now observed in a third-party library too. Left unnamed rather than force a name onto a shape neither archived function actually has -- but now MUCH better understood than the original 'doesn't cleanly match' framing."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47D5D0",
+    "new_name": "load_it",
+    "source_file": "Engine/libsrc/jgmod/load_it.c",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "JGMOD *load_it(char *filename, int start_offset) -- the IT-format loader, called twice from load_mod (normal path, offset implicitly 0, and the Unreal-embedded path with a real nonzero offset from detect_unreal_it). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47B710",
+    "new_name": "load_s3m",
+    "source_file": "Engine/libsrc/jgmod/load_s3m.c",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "JGMOD *load_s3m(char *filename, int start_offset) -- the S3M-format loader, called twice from load_mod (normal + Unreal-embedded paths). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47ADB0",
+    "new_name": "load_m",
+    "source_file": "Engine/libsrc/jgmod/load_mod.c",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "JGMOD *load_m(char *filename, int no_inst) -- the classic-MOD-format loader, taking the instrument count (31 or 15) as its second argument; called twice from load_mod, once for the 31-instrument path (after detect_m31) and once for the 15-instrument path (after detect_m15). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47B410",
+    "new_name": "detect_unreal_s3m",
+    "source_file": "Engine/libsrc/jgmod/load_s3m.c",
+    "source_line": 81,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int detect_unreal_s3m(char *filename) -- the Unreal-embedded-S3M sibling of detect_s3m, returning a byte offset. Previously left entirely unexamined ('sub_47B410/sub_47B2B0, not examined this round') -- now identified via call-order position alone (load_mod's own 8th cascade branch, matching source's own detect_unreal_s3m call at the identical position). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47B2B0",
+    "new_name": "detect_m15",
+    "source_file": "Engine/libsrc/jgmod/load_mod.c",
+    "source_line": 407,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int detect_m15(char *filename) -- the 15-instrument classic-MOD detector (an older, simpler MOD variant predating the 31-instrument format, deliberately checked LAST per source's own 'enable_m15==TRUE... detect this last' comment). Previously left entirely unexamined -- now identified via call-order position. Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47DA80",
+    "new_name": "load_jgm",
+    "source_file": "Engine/libsrc/jgmod/load_jgm.c",
+    "source_line": 66,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "JGMOD *load_jgm(JGMOD_FILE *f) -- JGMOD's own native-format loader, taking an ALREADY-OPEN file handle (not a filename) per source's own load_mod() body: 'f=jgmod_fopen(filename,\"rb\"); j=load_jgm(f); jgmod_fclose(f);' -- matching load_mod's own call sequence exactly (called immediately after jgmod_fopen, before the file is closed). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
   }
 ]

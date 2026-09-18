@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 959 named, 1627 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 973 named, 1613 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5213,8 +5213,19 @@ names its own 6-argument callee as Allegro's `play_audio_stream`
 cleanly match either of ALMP3's own separately-declared 4-argument
 `almp3_play_mp3stream`/`almp3_adjust_mp3stream` — most likely this
 2002 build fuses what the archived source keeps as two functions into
-one, left unnamed but far better characterized than before (2586
-functions, 959 named). See
+one, left unnamed but far better characterized than before. A final
+round the same session closed **the entire JGMOD format-detection
+cascade** — `load_mod` itself turns out to BE the real `load_mod()`
+from `mod.c`, not a wrapper, and its own already-recorded call
+sequence matches source's own 9-branch cascade order exactly, letting
+every remaining function be identified by position alone:
+`detect_jgm`/`detect_it`/`detect_xm`/`detect_s3m`/`detect_m31`/
+`detect_unreal_it`/`detect_unreal_xm` (renaming already-thin entries)
+plus five brand-new matches — `load_it`/`load_xm`/`load_s3m`/`load_m`/
+`load_jgm` — and the two functions flagged "not examined" several
+sessions ago, `detect_unreal_s3m`/`detect_m15`. Every function in
+JGMOD's own detection cascade is now named (2586 functions, 973 named
+— up from 535 at the start of this project). See
 `reversing/notes/third-party-library-identification.md` for the
 complete writeup.
 

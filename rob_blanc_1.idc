@@ -105180,6 +105180,7 @@ static Bytes_18(void) {
 	make_array	(0X47AD22,	0XE);
 	create_insn	(x=0X47AD30);
 	op_stkvar	(x,	1);
+	set_name	(0X47AD30,	"detect_m31");
 	create_insn	(x=0X47AD35);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -105207,6 +105208,7 @@ static Bytes_18(void) {
 	make_array	(0X47ADAB,	0X5);
 	create_insn	(x=0X47ADB0);
 	op_hex		(x,	1);
+	set_name	(0X47ADB0,	"load_m");
 	create_insn	(x=0X47ADB6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47ADC5);
@@ -105422,6 +105424,7 @@ static Bytes_18(void) {
 	make_array	(0X47B2A7,	0X9);
 	create_insn	(x=0X47B2B0);
 	op_stkvar	(x,	1);
+	set_name	(0X47B2B0,	"detect_m15");
 	create_insn	(x=0X47B2B6);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -105499,6 +105502,7 @@ static Bytes_18(void) {
 	make_array	(0X47B405,	0XB);
 	create_insn	(x=0X47B410);
 	op_stkvar	(x,	1);
+	set_name	(0X47B410,	"detect_unreal_s3m");
 	create_insn	(x=0X47B418);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -105554,6 +105558,7 @@ static Bytes_18(void) {
 	create_insn	(0X47B4D8);
 	create_insn	(x=0X47B4E0);
 	op_stkvar	(x,	1);
+	set_name	(0X47B4E0,	"detect_s3m");
 	create_insn	(x=0X47B4E5);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -105666,6 +105671,7 @@ static Bytes_18(void) {
 	make_array	(0X47B705,	0XB);
 	create_insn	(x=0X47B710);
 	op_hex		(x,	1);
+	set_name	(0X47B710,	"load_s3m");
 	create_insn	(x=0X47B719);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47B721);
@@ -106222,6 +106228,7 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X47C360);
 	op_hex		(x,	1);
+	set_name	(0X47C360,	"detect_unreal_xm");
 	create_insn	(x=0X47C363);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47C36D);
@@ -106344,6 +106351,7 @@ static Bytes_18(void) {
 	make_array	(0X47C4B6,	0XA);
 	create_insn	(x=0X47C4C0);
 	op_stkvar	(x,	1);
+	set_name	(0X47C4C0,	"detect_xm");
 	create_insn	(x=0X47C4C4);
 	op_hex		(x,	1);
 	create_insn	(x=0X47C4C8);
@@ -106371,6 +106379,7 @@ static Bytes_18(void) {
 	make_array	(0X47C51A,	0X6);
 	create_insn	(x=0X47C520);
 	op_hex		(x,	1);
+	set_name	(0X47C520,	"load_xm");
 	set_cmt	(0X47C52A,	"Size",	0);
 	create_insn	(x=0X47C536);
 	op_hex		(x,	1);
@@ -107049,6 +107058,7 @@ static Bytes_18(void) {
 	make_array	(0X47D3FA,	0X6);
 	create_insn	(x=0X47D400);
 	op_stkvar	(x,	1);
+	set_name	(0X47D400,	"detect_unreal_it");
 	create_insn	(x=0X47D408);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -107104,6 +107114,7 @@ static Bytes_18(void) {
 	create_insn	(0X47D4C8);
 	create_insn	(x=0X47D4D0);
 	op_stkvar	(x,	1);
+	set_name	(0X47D4D0,	"detect_it");
 	create_insn	(x=0X47D4D5);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -107169,6 +107180,7 @@ static Bytes_18(void) {
 	make_array	(0X47D5CC,	0X4);
 	create_insn	(x=0X47D5D0);
 	op_stkvar	(x,	1);
+	set_name	(0X47D5D0,	"load_it");
 	create_insn	(x=0X47D5D6);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -107390,6 +107402,7 @@ static Bytes_18(void) {
 	make_array	(0X47D9D9,	0X7);
 	create_insn	(x=0X47D9E0);
 	op_stkvar	(x,	1);
+	set_name	(0X47D9E0,	"detect_jgm");
 	create_insn	(x=0X47D9E4);
 	op_hex		(x,	1);
 	create_insn	(x=0X47D9E8);
@@ -107432,6 +107445,7 @@ static Bytes_18(void) {
 	make_array	(0X47DA7D,	0X3);
 	create_insn	(x=0X47DA80);
 	op_hex		(x,	1);
+	set_name	(0X47DA80,	"load_jgm");
 	set_cmt	(0X47DA87,	"Size",	0);
 	create_insn	(x=0X47DA93);
 	op_hex		(x,	1);
@@ -111262,6 +111276,15 @@ static Bytes_18(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X484964);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_19(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X484998);
 	op_hex		(x,	1);
 	create_insn	(x=0X4849A4);
@@ -111297,15 +111320,6 @@ static Bytes_18(void) {
 	create_insn	(0X484A90);
 	create_insn	(x=0X484A91);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_19(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X484A9A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X484A9F);
@@ -117579,6 +117593,15 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E3ED);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_20(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X48E3F7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E3FB);
@@ -117615,15 +117638,6 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E45E);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_20(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X48E463);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E467);
@@ -124045,6 +124059,15 @@ static Bytes_20(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X49768E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_21(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X497692);
 	make_array	(0X497697,	0X9);
 	create_insn	(x=0X4976A0);
@@ -124082,15 +124105,6 @@ static Bytes_20(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X497786);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_21(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X497793);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4977A0);
@@ -130080,6 +130094,15 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A065D);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_22(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4A0663);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4A0672,	"jumptable 004A01EF case 4",	1);
@@ -130102,15 +130125,6 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A06FD);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_22(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A0710);
 	op_hex		(x,	1);
 	set_cmt	(0X4A0745,	"jumptable 004A01EF case 9",	1);
@@ -136062,6 +136076,15 @@ static Bytes_22(void) {
 	create_insn	(0X4A96D9);
 	set_cmt	(0X4A96E1,	"jumptable 004A96B2 case 4",	1);
 	create_insn	(0X4A96E1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_23(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4A96E9,	"jumptable 004A96B2 case 5",	1);
 	create_insn	(0X4A96E9);
 	set_cmt	(0X4A96F1,	"jumptable 004A96B2 default case",	1);
@@ -136082,15 +136105,6 @@ static Bytes_22(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4A974C);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_23(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A9757);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9764);
@@ -141216,6 +141230,15 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEF94);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_24(void) {
+        auto x;
+#define id x
+
 	create_dword	(x=0X4AEF98);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -141246,15 +141269,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEFBC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_24(void) {
-        auto x;
-#define id x
-
 	create_dword	(x=0X4AEFC0);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145623,6 +145637,15 @@ static Bytes_24(void) {
 	make_array	(0X4B44BE,	0X2);
 	create_strlit	(0X4B44C0,	0XA);
 	set_name	(0X4B44C0,	"aBitAnd");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_25(void) {
+        auto x;
+#define id x
+
 	make_array	(0X4B44CA,	0X2);
 	create_strlit	(0X4B44CC,	0X9);
 	set_name	(0X4B44CC,	"aBitOr");
@@ -145643,15 +145666,6 @@ static Bytes_24(void) {
 	make_array	(0X4B44FE,	0X2);
 	create_strlit	(0X4B4500,	0X6);
 	set_name	(0X4B4500,	"aLte");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_25(void) {
-        auto x;
-#define id x
-
 	make_array	(0X4B4506,	0X2);
 	create_strlit	(0X4B4508,	0X6);
 	set_name	(0X4B4508,	"aAnd");
@@ -148999,6 +149013,15 @@ static Bytes_25(void) {
 	make_array	(0X4BBB51,	0X3);
 	create_strlit	(0X4BBB54,	0X9);
 	set_name	(0X4BBB54,	"aFarcall_2");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_26(void) {
+        auto x;
+#define id x
+
 	make_array	(0X4BBB5D,	0X3);
 	create_strlit	(0X4BBB60,	0X9);
 	set_name	(0X4BBB60,	"aFarpush_2");
@@ -149017,15 +149040,6 @@ static Bytes_25(void) {
 	create_strlit	(0X4BBB9C,	0X5);
 	set_name	(0X4BBB9C,	"aNull_7");
 	make_array	(0X4BBBA1,	0X3);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_26(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X4BBBA4,	0X3);
 	set_name	(0X4BBBA4,	"aSp_2");
 	create_strlit	(0X4BBBA8,	0X4);
@@ -152583,6 +152597,15 @@ static Bytes_26(void) {
 	make_array	(0X4CB2A5,	0X3);
 	create_strlit	(0X4CB2A8,	0X7);
 	set_name	(0X4CB2A8,	"aH22073");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_27(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X4CB2B0,	0X7);
 	set_name	(0X4CB2B0,	"aH18551");
 	create_strlit	(0X4CB2B8,	0X7);
@@ -152601,15 +152624,6 @@ static Bytes_26(void) {
 	set_name	(0X4CB2EC,	"aGcircumflex");
 	create_strlit	(0X4CB2F8,	0X7);
 	set_name	(0X4CB2F8,	"aGcaron");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_27(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X4CB300,	0X7);
 	set_name	(0X4CB300,	"aGbreve");
 	create_strlit	(0X4CB308,	0X6);
@@ -162817,13 +162831,15 @@ static Functions_13(void) {
 	set_frame_size(0X47AC70, 0XC, 0, 0);
 	add_func    (0X47AD30,0X47ADAB);
 	set_func_flags(0X47AD30,0x5400);
-	set_func_cmt(0X47AD30,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-4 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x438(1080), reads 4 bytes, and loops comparing against a table of classic ProTracker-family MOD magic tags starting with the matched string \"M.K.\" (aMK), stepping 6 bytes per table entry -- the standard MOD file format magic signature at its standard file offset, checked against multiple known tag variants (M.K./M!K!/FLT4/etc., a well-known JGMOD/MOD-loader convention). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
+	set_func_cmt(0X47AD30,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-4 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x438(1080), reads 4 bytes, and loops comparing against a table of classic ProTracker-family MOD magic tags starting with the matched string \"M.K.\" (aMK), stepping 6 bytes per table entry -- the standard MOD file format magic signature at its standard file offset, checked against multiple known tag variants (M.K./M!K!/FLT4/etc., a well-known JGMOD/MOD-loader convention). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_m31(char *filename) -- confirmed exact match to source's own seek to +0x438, read 4 bytes, loop through the classic ProTracker MOD magic-tag table starting \"M.K.\"; 'm31' names the 31-instrument variant of the classic MOD format. Found via the newly-added JGMOD source tree (Engine/libsrc/jg" "mod/), confirmed via matching call ORDER: load", 1);
 	set_frame_size(0X47AD30, 0X4, 0, 0);
 	add_func    (0X47ADB0,0X47B2A7);
 	set_func_flags(0X47ADB0,0x5400);
+	set_func_cmt(0X47ADB0,	"[reversing] confirmed match\nsource: Engine/libsrc/jgmod/load_mod.c\nconfidence: high\nevidence: JGMOD *load_m(char *filename, int no_inst) -- the classic-MOD-format loader, taking the instrument count (31 or 15) as its second argument; called twice from load_mod, once for the 31-instrument path (after detect_m31) and once for the 15-instrument path (after detect_m15). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
 	set_frame_size(0X47ADB0, 0X1C, 0, 0);
 	add_func    (0X47B2B0,0X47B32D);
 	set_func_flags(0X47B2B0,0x5400);
+	set_func_cmt(0X47B2B0,	"[reversing] confirmed match\nsource: Engine/libsrc/jgmod/load_mod.c\nconfidence: high\nevidence: int detect_m15(char *filename) -- the 15-instrument classic-MOD detector (an older, simpler MOD variant predating the 31-instrument format, deliberately checked LAST per source's own 'enable_m15==TRUE... detect this last' comment). Previously left entirely unexamined -- now identified via call-order position. Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
 	set_frame_size(0X47B2B0, 0X8, 0, 0);
 	add_func    (0X47B330,0X47B358);
 	set_func_flags(0X47B330,0x5400);
@@ -162839,10 +162855,11 @@ static Functions_13(void) {
 	set_frame_size(0X47B370, 0X8, 0, 0);
 	add_func    (0X47B410,0X47B4E0);
 	set_func_flags(0X47B410,0x5400);
+	set_func_cmt(0X47B410,	"[reversing] confirmed match\nsource: Engine/libsrc/jgmod/load_s3m.c\nconfidence: high\nevidence: int detect_unreal_s3m(char *filename) -- the Unreal-embedded-S3M sibling of detect_s3m, returning a byte offset. Previously left entirely unexamined ('sub_47B410/sub_47B2B0, not examined this round') -- now identified via call-order position alone (load_mod's own 8th cascade branch, matching source's own detect_unreal_s3m call at the identical position). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
 	set_frame_size(0X47B410, 0X10, 0, 0);
 	add_func    (0X47B4E0,0X47B531);
 	set_func_flags(0X47B4E0,0x5400);
-	set_func_cmt(0X47B4E0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-3 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x2C(44), reads 4 bytes, compares against the matched string \"SCRM\" (aScrm_0) -- the standard Scream Tracker 3 (.s3m) file format magic signature, at its standard file offset. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
+	set_func_cmt(0X47B4E0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-3 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x2C(44), reads 4 bytes, compares against the matched string \"SCRM\" (aScrm_0) -- the standard Scream Tracker 3 (.s3m) file format magic signature, at its standard file offset. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_s3m(char *filename) -- confirmed exact match to source's own seek to +0x2C, read 4 bytes, memcmp \"SCRM\". Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* " "functions -- branch for branch, with zero reor", 1);
 	set_frame_size(0X47B4E0, 0X4, 0, 0);
 	add_func    (0X47B540,0X47B5A5);
 	set_func_flags(0X47B540,0x5400);
@@ -162855,6 +162872,7 @@ static Functions_13(void) {
 	set_frame_size(0X47B6A0, 0X8, 0, 0);
 	add_func    (0X47B710,0X47BFAE);
 	set_func_flags(0X47B710,0x5400);
+	set_func_cmt(0X47B710,	"[reversing] confirmed match\nsource: Engine/libsrc/jgmod/load_s3m.c\nconfidence: high\nevidence: JGMOD *load_s3m(char *filename, int start_offset) -- the S3M-format loader, called twice from load_mod (normal + Unreal-embedded paths). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
 	set_frame_size(0X47B710, 0XBC, 0, 0);
 	define_local_var(0X47B710, 0X47BFAE, "[bp-0XA8]", "Block");
 	add_func    (0X47BFB0,0X47C1C2);
@@ -162872,11 +162890,11 @@ static Functions_13(void) {
 	set_frame_size(0X47C360, 0X24, 0, 0);
 	add_func    (0X47C4C0,0X47C51A);
 	set_func_flags(0X47C4C0,0x5400);
-	set_func_cmt(0X47C4C0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-5 (XM) check in the load_mod (already matched) cascade -- opens the file \"rb\", reads 17 (0x11) bytes, compares against the matched string \"Extended Module: \" (aExtendedModule_0), the standard FastTracker II Extended Module (.xm) file magic signature at a fixed leading offset. Already referenced in load_mod's own evidence text (\"sub_47C4C0(check)/sub_47C520(load) for XM\") but had no dedicated entry of its own until now -- the same 'documented in prose, never given its own record' gap already found and fixed for several other functions this session. Structurally the simplest of the two XM-adjacent checks in this cascade (contrast sub_47D400, which does a sliding-window scan for this same string after first checking an unidentified leading 4-byte constant). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md.", 1);
+	set_func_cmt(0X47C4C0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-5 (XM) check in the load_mod (already matched) cascade -- opens the file \"rb\", reads 17 (0x11) bytes, compares against the matched string \"Extended Module: \" (aExtendedModule_0), the standard FastTracker II Extended Module (.xm) file magic signature at a fixed leading offset. Already referenced in load_mod's own evidence text (\"sub_47C4C0(check)/sub_47C520(load) for XM\") but had no dedicated entry of its own until now -- the same 'documented in prose, never given its own record' gap already found and fixed for several other functions this session. Structurally the simplest of the two XM-adjacent checks in this cascade (contrast sub_47D400, which does a sliding-window scan for this same string after first checking an unidentified leading 4-byte constant). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md. RENAMED: int detect" "_xm(char *filename) -- confirmed exact match t", 1);
 	set_frame_size(0X47C4C0, 0X18, 0, 0);
 	add_func    (0X47C520,0X47D1C0);
 	set_func_flags(0X47C520,0x5400);
-	set_func_cmt(0X47C520,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-5 (XM) LOADER in the load_mod (already matched) cascade -- called immediately after sub_47C4C0's own magic-string check passes (\"sub_47C4C0(check)/sub_47C520(load) for XM\", per load_mod's own evidence text, formalized as its own entry here). A large (~1200-line) function doing the actual XM-format parse/load (pattern data, instrument/sample tables, etc.) -- per this project's own third-party-library scope rule, this is exactly the kind of library-internal parsing logic a ScummVM reimplementation would replace wholesale with its own XM loader, so it is not traced further than confirming its role as the check-then-load pair's LOAD half. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
+	set_func_cmt(0X47C520,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-5 (XM) LOADER in the load_mod (already matched) cascade -- called immediately after sub_47C4C0's own magic-string check passes (\"sub_47C4C0(check)/sub_47C520(load) for XM\", per load_mod's own evidence text, formalized as its own entry here). A large (~1200-line) function doing the actual XM-format parse/load (pattern data, instrument/sample tables, etc.) -- per this project's own third-party-library scope rule, this is exactly the kind of library-internal parsing logic a ScummVM reimplementation would replace wholesale with its own XM loader, so it is not traced further than confirming its role as the check-then-load pair's LOAD half. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: JGMOD *load_xm(char *filename, int start_offset) -- confirmed via call-order position (load_mod's own 3rd cascade branch) and the alre" "ady-independently-confirmed ~0x558-byte JGMOD-", 1);
 	set_frame_size(0X47C520, 0X448, 0, 0);
 	define_local_var(0X47C520, 0X47D1C0, "[bp-0X420]", "Block");
 	add_func    (0X47D1C0,0X47D3FA);
@@ -162888,13 +162906,14 @@ static Functions_13(void) {
 	set_frame_size(0X47D400, 0X10, 0, 0);
 	add_func    (0X47D4D0,0X47D521);
 	set_func_flags(0X47D4D0,0x5400);
-	set_func_cmt(0X47D4D0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-2 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes, compares against the matched string \"IMPM\" (aImpm_0) -- the standard Impulse Tracker (.it) file format magic signature. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
+	set_func_cmt(0X47D4D0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-2 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes, compares against the matched string \"IMPM\" (aImpm_0) -- the standard Impulse Tracker (.it) file format magic signature. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_it(char *filename) -- confirmed exact match to source's own opens \"rb\", reads 4 bytes, memcmp \"IMPM\". Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
 	set_frame_size(0X47D4D0, 0X4, 0, 0);
 	add_func    (0X47D530,0X47D5CC);
 	set_func_flags(0X47D530,0x5400);
 	set_frame_size(0X47D530, 0X8, 0, 0);
 	add_func    (0X47D5D0,0X47D66C);
 	set_func_flags(0X47D5D0,0x5400);
+	set_func_cmt(0X47D5D0,	"[reversing] confirmed match\nsource: Engine/libsrc/jgmod/load_it.c\nconfidence: high\nevidence: JGMOD *load_it(char *filename, int start_offset) -- the IT-format loader, called twice from load_mod (normal path, offset implicitly 0, and the Unreal-embedded path with a real nonzero offset from detect_unreal_it). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
 	set_frame_size(0X47D5D0, 0X8, 0, 0);
 	add_func    (0X47D670,0X47D684);
 	set_func_flags(0X47D670,0x5400);
@@ -162946,13 +162965,14 @@ static Functions_13(void) {
 	set_frame_size(0X47D940, 0X14, 0, 0);
 	add_func    (0X47D9E0,0X47DA3E);
 	set_func_flags(0X47D9E0,0x5400);
-	set_func_cmt(0X47D9E0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-1 check-then-load in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 18 bytes, compares 9 words against the matched string \"JGMOD 01 module : \" (aJgmod01Module). This is JGMOD's own native/proprietary module format (not a generic tracker format like MOD/S3M/XM/IT). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md for the complete JGMOD cascade writeup.", 1);
+	set_func_cmt(0X47D9E0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-1 check-then-load in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 18 bytes, compares 9 words against the matched string \"JGMOD 01 module : \" (aJgmod01Module). This is JGMOD's own native/proprietary module format (not a generic tracker format like MOD/S3M/XM/IT). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md for the complete JGMOD cascade writeup. RENAMED: int detect_jgm(char *filename) -- confirmed exact match to source's own opens \"rb\", reads 18 bytes, memcmp against JGM_SIG. Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/" "detect_unreal_xm/detect_unreal_s3m/detect_m15 ", 1);
 	set_frame_size(0X47D9E0, 0X18, 0, 0);
 	add_func    (0X47DA40,0X47DA7D);
 	set_func_flags(0X47DA40,0x5400);
 	set_frame_size(0X47DA40, 0X8, 0, 0);
 	add_func    (0X47DA80,0X47E216);
 	set_func_flags(0X47DA80,0x5400);
+	set_func_cmt(0X47DA80,	"[reversing] confirmed match\nsource: Engine/libsrc/jgmod/load_jgm.c\nconfidence: high\nevidence: JGMOD *load_jgm(JGMOD_FILE *f) -- JGMOD's own native-format loader, taking an ALREADY-OPEN file handle (not a filename) per source's own load_mod() body: 'f=jgmod_fopen(filename,\"rb\"); j=load_jgm(f); jgmod_fclose(f);' -- matching load_mod's own call sequence exactly (called immediately after jgmod_fopen, before the file is closed). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
 	set_frame_size(0X47DA80, 0X20, 0, 0);
 	add_func    (0X47E220,0X47E251);
 	set_func_flags(0X47E220,0x5400);
@@ -163902,6 +163922,10 @@ static Functions_13(void) {
 	add_func    (0X48EA80,0X48EAE1);
 	set_func_flags(0X48EA80,0x5400);
 	set_frame_size(0X48EA80, 0X10, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X48EAF0,0X48EB27);
 	set_func_flags(0X48EAF0,0x5400);
 	set_frame_size(0X48EAF0, 0X8, 0, 0);
@@ -164260,10 +164284,6 @@ static Functions_13(void) {
 	set_func_flags(0X497660,0x5400);
 	SetType(0X497660, "int __cdecl sub_497660(const void *, const void *);");
 	set_frame_size(0X497660, 0X4, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X4976A0,0X497830);
 	set_func_flags(0X4976A0,0x5400);
 	set_frame_size(0X4976A0, 0X18, 0, 0);

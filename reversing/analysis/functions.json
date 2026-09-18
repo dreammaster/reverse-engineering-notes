@@ -8570,19 +8570,19 @@
   "is_named": false
  },
  {
-  "name": "sub_47AD30",
+  "name": "detect_m31",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47ADB0",
+  "name": "load_m",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47B2B0",
+  "name": "detect_m15",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47B330",
@@ -8600,14 +8600,14 @@
   "is_named": false
  },
  {
-  "name": "sub_47B410",
+  "name": "detect_unreal_s3m",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47B4E0",
+  "name": "detect_s3m",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47B540",
@@ -8625,9 +8625,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47B710",
+  "name": "load_s3m",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47BFB0",
@@ -8645,19 +8645,19 @@
   "is_named": false
  },
  {
-  "name": "sub_47C360",
+  "name": "detect_unreal_xm",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47C4C0",
+  "name": "detect_xm",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47C520",
+  "name": "load_xm",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47D1C0",
@@ -8665,14 +8665,14 @@
   "is_named": false
  },
  {
-  "name": "sub_47D400",
+  "name": "detect_unreal_it",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47D4D0",
+  "name": "detect_it",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47D530",
@@ -8680,9 +8680,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47D5D0",
+  "name": "load_it",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "jgmod_fopen",
@@ -8750,9 +8750,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47D9E0",
+  "name": "detect_jgm",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47DA40",
@@ -8760,9 +8760,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47DA80",
+  "name": "load_jgm",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47E220",
