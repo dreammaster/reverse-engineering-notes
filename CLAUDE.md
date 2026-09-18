@@ -4960,6 +4960,15 @@ disassembly work.
   `rectfill`/`line` DIRECTLY, bypassing those thin AGS wrappers, the
   same inlining pattern already seen elsewhere this session. See
   `reversing/notes/struct-layout-drift.md`.
+- **`GUITextBox::Draw`'s own trailing cursor-caret block: present, but
+  unconditionally so.** The entry had stopped describing the function
+  right after its `wouttext_outline` call, never checking whether
+  source's own trailing cursor-caret block exists here too. It does,
+  closely matching `acgui.cpp:415-417`'s computation -- but the
+  disassembly falls straight through into it with no branch at all,
+  where source gates it behind `!IsDisabled()`. A real, confirmed
+  visual drift: this build draws the text-cursor caret even on a
+  disabled textbox. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

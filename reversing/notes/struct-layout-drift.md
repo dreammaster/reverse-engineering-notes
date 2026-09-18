@@ -16596,3 +16596,23 @@ Allegro's own `line(...)` DIRECTLY, bypassing AGS's `wbar()`/`wline()`
 thin wrappers entirely -- the same "trivial AGS wrapper inlined at the
 call site" pattern already established for `wbar` elsewhere this
 session, now confirmed at a second, independent call site.
+
+### `GUITextBox::Draw`'s own trailing cursor-caret block: present, but unconditionally so
+
+Same "thin entry, keep reading past where the previous round stopped"
+move, applied to `GUITextBox::Draw`'s own entry -- which had stopped
+describing the function right after its `wouttext_outline` call,
+without checking whether source's own trailing cursor-caret block
+(drawn only `if(!IsDisabled())`) exists here too.
+
+It does: `startx=wgettextwidth(text,font)+x+3; starty=wgettextheight(
+"BigyjTEXT",font)+y+1; wrectangle(startx,starty,startx+5*<scale>-1,
+starty+<scale>-1);` matches source's own cursor-caret computation
+(`acgui.cpp:415-417`) closely, using this build's own established
+`current_screen_resolution_multiplier_x` in place of `get_fixed_pixel_
+size()`. **Real, confirmed drift**: the disassembly falls straight
+through from the preceding `wouttext_outline` call into this block with
+no branch, no condition, nothing -- the cursor caret is drawn
+UNCONDITIONALLY, even on a disabled textbox, where 2011 explicitly
+gates it behind `!IsDisabled()`. A genuine visual behavioral difference
+this time, not another instance of the usual predates-`gfxDriver` gap.
