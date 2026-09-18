@@ -1868,6 +1868,15 @@ struct GameSetupStructBase {
                             // branch exactly (a bitwise, non-short-circuiting `&`, matching source's
                             // own unusual literal choice of `&` over `&&`), landing with zero slack
                             // on 0x513337(index-1 base)+2=0x513338.
+                            // options[7]=OPT_NOSKIPTEXT (acroom.h:2713) confirmed by cross-referencing
+                            // GameState.cant_skip_speech's own already-established finding (see its own
+                            // entry below): main's init block does "movsx ecx,byte_51333D;
+                            // dword_4EF248=ecx;" -- a raw, unconverted copy of this exact byte into
+                            // cant_skip_speech, matching 2011's own
+                            // "play.cant_skip_speech=user_to_internal_skip_speech(game.
+                            // options[OPT_NOSKIPTEXT]);" in role (this build has no conversion
+                            // function at all, see cant_skip_speech's own entry for the full story).
+                            // byte_51333D lands with zero slack on 0x513337(index-1 base)+6=0x51333D.
   unsigned char paluses[256];     // +0x32, high confidence: confirmed directly via a shared loop in
                             // `main` (also used for defpal below) -- "for (ee=0; ee<256; ee++) if
                             // (paluses[ee]!=2) palette[ee]=defpal[ee];" -- disasm's `cmp
