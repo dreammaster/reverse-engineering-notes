@@ -5011,6 +5011,23 @@ disassembly work.
   `SetMouseCursor(MODE_USE)`; a second click type toggles cmode between
   `MODE_LOOK`/`CURS_ARROW`. See `reversing/notes/
   struct-layout-drift.md`.
+- **A sweep for stale "future round" marker phrases in `matches.json`
+  fixes two genuinely stale cross-references and resolves one real open
+  lead.** Most flagged entries turned out already resolved within their
+  own later-appended text. Two were real staleness: `PlayAmbientSound`
+  still called its own MP3-loader lead "unmatched" though it was
+  renamed to `my_load_static_mp3` and confirmed in a later round;
+  `SystemImports::get_index_of` still called a caller "sub_42A934, a
+  future-round lead" though that address is `SystemImports::
+  is_script_import`, matched in its own later round. Both fixed in
+  place. One lead was genuinely open and got resolved: `sub_40A6D8`'s
+  opening branch (`cmp dword_51D2F0,1; jle loc_40A9DF` -- gating on the
+  already-confirmed `GameSetupStructBase.color_depth`) decisively
+  confirms it dispatches between two separate fade implementations by
+  color depth, with the `color_depth<=1` (8-bit) path delegating
+  entirely to `sub_40A21C`'s manual palette-interpolation loop -- not
+  just "plausible" as the standing caution had it. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

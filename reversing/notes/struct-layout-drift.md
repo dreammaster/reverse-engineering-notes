@@ -16736,3 +16736,45 @@ The function's own return value (`var_360`) is the picked-up/looked-at
 item number, or -1, passed back to its already-matched caller
 (`InventoryScreen`). With this, all 1133 lines of `__actual_invscreen`
 are read and documented end to end.
+
+### Two stale "future round" cross-references fixed, plus a real one resolved
+
+A sweep of `matches.json` for entries still carrying "future round" /
+"left unnamed" -type marker phrases found several already resolved
+within their own later-appended text (`PlayAmbientSound`'s own
+`sub_408811` lead, `run_dialog_script`'s opcode table, `sub_41CDC3`'s
+opcode table, `MoveToWalkableArea`, `quit`, `EndSkippingUntilCharStops`,
+`wait_loop_still_valid` -- all already carry their own "RESOLVED"/"FULL
+... CLOSED" follow-up text later in the same entry, just never had
+their EARLIER, now-stale wording removed or cross-referenced). Two were
+genuinely stale CROSS-REFERENCES pointing at a name that had since
+changed elsewhere without this entry being updated -- fixed both:
+
+- `PlayAmbientSound`'s own entry still called its MP3-loader lead
+  "sub_408811, an unmatched near-duplicate ... open lead for a future
+  round" -- but `sub_408811` was renamed to `my_load_static_mp3` and
+  fully confirmed via a complete field-offset match in a much later
+  round (see that function's own entry). Fixed the stale wording in
+  place.
+- `SystemImports::get_index_of`'s own entry named its second caller as
+  "sub_42A934 (a lead for a future round, likely SystemImports::
+  is_valid_import or ccGetSymbolAddress-adjacent)" -- but that address
+  is `SystemImports::is_script_import`, independently matched in its
+  own later round (confirmed directly: the call site sits inside the
+  `SystemImports__is_script_import proc near` boundary). Fixed the
+  stale wording in place.
+
+One flagged lead was GENUINELY open and got a real resolution this
+round: `sub_40A21C`'s entry had only "plausibly" connected `sub_40A6D8`'s
+own low-color-depth code path to a call into `sub_40A21C`, "not
+independently verified". Reading `sub_40A6D8`'s own opening branch
+settles it decisively: `cmp dword_51D2F0,1; jle loc_40A9DF`, where
+`dword_51D2F0` is the already-confirmed `GameSetupStructBase.
+color_depth` and `loc_40A9DF` is the exact block that calls
+`sub_40A21C`. `sub_40A6D8` is a genuine dispatcher between two entirely
+different fade implementations gated on `color_depth<=1` (8-bit
+paletted game): the low-color-depth path delegates its whole job to
+`sub_40A21C`'s manual palette-interpolation loop, while the rest of
+`sub_40A6D8`'s own body implements a separate high-color-depth manual
+pixel-darkening technique (already characterized in an earlier round).
+Both of `sub_40A21C`'s callers are now fully accounted for.
