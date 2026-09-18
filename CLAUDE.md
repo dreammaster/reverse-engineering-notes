@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 973 named, 1613 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 980 named, 1606 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5224,10 +5224,20 @@ every remaining function be identified by position alone:
 plus five brand-new matches — `load_it`/`load_xm`/`load_s3m`/`load_m`/
 `load_jgm` — and the two functions flagged "not examined" several
 sessions ago, `detect_unreal_s3m`/`detect_m15`. Every function in
-JGMOD's own detection cascade is now named (2586 functions, 973 named
-— up from 535 at the start of this project). See
-`reversing/notes/third-party-library-identification.md` for the
-complete writeup.
+JGMOD's own detection cascade is now named. A final round went back to
+`almp3_create_mp3`'s own remaining callees: `almp3_get_big_endian`
+(a decisive match, found via the mp3's Xing VBR header parsing) plus
+the mpg123 decoder's own two public entry points, `ExitMP3`/
+`decodeMP3` (library boundary, MEDIUM confidence). Bonus: all four
+`SOUNDCLIP`-family AGS-side constructors (`SOUNDCLIP::SOUNDCLIP`/
+`MYWAVE::MYWAVE`/`MYMP3::MYMP3`/`MYSTATICMP3::MYSTATICMP3`),
+cross-confirmed via three independent derived constructors all
+calling the same base constructor before patching their own vtable —
+resolving `my_load_static_mp3`'s own long-standing unresolved
+`operator new(0x18)` forward reference from several sessions ago
+(2586 functions, 980 named — up from 535 at the start of this
+project). See `reversing/notes/third-party-library-identification.md`
+for the complete writeup.
 
 ## Conventions when annotating the IDB
 

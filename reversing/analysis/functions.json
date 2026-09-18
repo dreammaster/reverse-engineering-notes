@@ -2720,9 +2720,9 @@
   "is_named": true
  },
  {
-  "name": "sub_424A60",
+  "name": "MYWAVE__MYWAVE",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_424A80",
@@ -2740,14 +2740,14 @@
   "is_named": false
  },
  {
-  "name": "sub_424B10",
+  "name": "SOUNDCLIP__SOUNDCLIP",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424B30",
+  "name": "MYMP3__MYMP3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_424B50",
@@ -2765,9 +2765,9 @@
   "is_named": false
  },
  {
-  "name": "sub_424CC0",
+  "name": "MYSTATICMP3__MYSTATICMP3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_424CE0",
@@ -8790,9 +8790,9 @@
   "is_named": true
  },
  {
-  "name": "sub_47E730",
+  "name": "almp3_get_big_endian",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47E760",
@@ -8965,14 +8965,14 @@
   "is_named": false
  },
  {
-  "name": "sub_4818A0",
+  "name": "ExitMP3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4818C0",
+  "name": "decodeMP3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_481BC0",

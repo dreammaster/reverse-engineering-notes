@@ -807,3 +807,49 @@ priority loose end for a future round if it ever matters.
 
 Renamed all 14, applied to the live IDB and re-exported (2586
 functions, 973 named).
+
+### `almp3_create_mp3`'s own remaining callees close, plus a bonus: all four `SOUNDCLIP`-family AGS-side constructors
+
+Went back to `almp3_create_mp3`'s (already matched) own body with
+`almp3.c`/`decoder/interface.c` in hand, since it has several still-
+unnamed callees.
+
+- **`almp3_get_big_endian`**(`sub_47E730`) -- a DECISIVE, complete
+  match. `almp3_create_mp3` parses an mp3's Xing VBR header (`memcmp`
+  against `"Xing"`, already visible in the disassembly but not
+  previously connected to source): one unconditional call for
+  `xing_header->flags`, then up to three more gated on bits 1/2/8 of
+  that value (`XING_FRAMES_FLAG`/`XING_BYTES_FLAG`/
+  `XING_VBR_SCALE_FLAG`), while bit 4 (`XING_TOC_FLAG`) is a raw
+  100-byte copy loop with NO function call at all -- matching
+  source's own `for(j=0;j<100;j++,p++) mp3->xing_header->toc[j]=*p;`
+  exactly (single bytes, not big-endian dwords, so no call needed).
+  Four real call sites in the disassembly, matching source's own four
+  (1 unconditional + 3 conditional) exactly.
+- **`ExitMP3`**(`sub_4818A0`) and **`decodeMP3`**(`sub_4818C0`) -- the
+  mpg123 decoder's own two public entry points `almp3_create_mp3`
+  calls directly (1-arg cleanup, 6-arg frame-decode-probe
+  respectively), identified via call-shape and role at MEDIUM
+  confidence -- THIRD-PARTY LIBRARY BOUNDARY per this project's own
+  scope rule, their own internal decode logic not chased further.
+- **Bonus, found while confirming `ExitMP3`'s caller context: all
+  four `SOUNDCLIP`-family AGS-side constructors** (`Engine/
+  acsound.cpp`, already partially documented via struct-recovery work
+  many sessions ago, but never actually matched as functions).
+  `SOUNDCLIP::SOUNDCLIP`(`sub_424B10`) is this build's own base-class
+  constructor -- confirmed via TRIPLE cross-confirmation, called as
+  the first step of three independent derived constructors, each
+  setting its own vtable pointer immediately after it returns:
+  `MYWAVE::MYWAVE`(`sub_424A60`, from `my_load_wave`),
+  `MYMP3::MYMP3`(`sub_424B30`, from `my_load_mp3`), and
+  `MYSTATICMP3::MYSTATICMP3`(`sub_424CC0`, from `my_load_static_mp3`
+  -- resolving that function's own long-standing "operator new(0x18)
+  -> a constructor call (sub_424CC0)" forward reference from several
+  sessions ago). All three derived constructors are genuinely empty
+  bodies in source (`ClassName() : SOUNDCLIP() {}`), matching the
+  disassembly's own "call base ctor, patch vtable, return" shape
+  exactly. Flat-named as C++ member functions per this project's
+  established convention.
+
+Applied all 7, re-exported (2586 functions, 980 named -- up from 535
+at the start of this project).

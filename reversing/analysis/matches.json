@@ -8413,5 +8413,75 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "JGMOD *load_jgm(JGMOD_FILE *f) -- JGMOD's own native-format loader, taking an ALREADY-OPEN file handle (not a filename) per source's own load_mod() body: 'f=jgmod_fopen(filename,\"rb\"); j=load_jgm(f); jgmod_fclose(f);' -- matching load_mod's own call sequence exactly (called immediately after jgmod_fopen, before the file is closed). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47E730",
+    "new_name": "almp3_get_big_endian",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 147,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "static int almp3_get_big_endian(unsigned char *p) { int x; x=*p; x<<=8; x|=*(p+1); x<<=8; x|=*(p+2); x<<=8; x|=*(p+3); return x; } at almp3.c:147-154 -- Allegro MP3 library's own big-endian 32-bit reader, used to parse an mp3's Xing VBR header. DECISIVE match: found via almp3_create_mp3's own Xing-header-parsing block (already matched) -- the disassembly checks the 'Xing' magic string, then calls this function once unconditionally for `xing_header->flags`, and conditionally up to 3 more times gated on bits 1/2/8 of that flags value (matching source's own XING_FRAMES_FLAG/XING_BYTES_FLAG/XING_VBR_SCALE_FLAG exactly), with bit 4 (XING_TOC_FLAG) handled as a raw 100-byte copy loop with NO function call -- matching source's own `for(j=0;j<100;j++,p++) mp3->xing_header->toc[j]=*p;` exactly (no almp3_get_big_endian call for the TOC bytes, since they're single bytes not big-endian dwords). Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4818A0",
+    "new_name": "ExitMP3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/decoder/interface.c",
+    "source_line": 39,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "void ExitMP3(struct mpstr *mp) at interface.c:39 -- mpg123 decoder's own public cleanup entry point (declared 1-arg, taking the decoder-state struct). Identified via call-shape and role: called with a single pointer argument (the local `struct mpstr` decoder-state variable) from almp3_create_mp3 (already matched) on BOTH of its own error-return paths (malloc failure, frame-search failure) -- matching source's own `ExitMP3(&test_mpeg); return NULL;` cleanup-on-failure pattern exactly, at both call sites. MEDIUM confidence: own body not instruction-traced this round (genuine mpg123-decoder-internal cleanup, THIRD-PARTY LIBRARY BOUNDARY per this project's own scope rule, not chased further). Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4818C0",
+    "new_name": "decodeMP3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/decoder/interface.c",
+    "source_line": 138,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "int decodeMP3(struct mpstr *mp, char *in, int isize, char *out, int osize, int *done) at interface.c:138 -- mpg123 decoder's own public per-frame decode entry point (declared 6-arg). Identified via call-shape and role: called from almp3_create_mp3's (already matched) own frame-validation probe, matching source's own `decodeMP3(&test_mpeg, p, data_left, test_outbuf, 8192, &test_size);` call in the same role (test-decode one frame to confirm the MP3 stream is valid before committing to it). MEDIUM confidence: own body not instruction-traced (genuine mpg123-decoder-internal frame decode, THIRD-PARTY LIBRARY BOUNDARY per this project's own scope rule, not chased further -- this is the actual MP3 bitstream decode engine). Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424B10",
+    "new_name": "SOUNDCLIP__SOUNDCLIP",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "SOUNDCLIP's own base-class constructor (not itself visible as a body in this repo's acsound.cpp -- only the derived classes' own trivial `ClassName() : SOUNDCLIP() {}` constructors are, e.g. MYWAVE at acsound.cpp:146, MYMP3 at :291, MYSTATICMP3 at :433). DECISIVE via triple cross-confirmation: this exact function is called as the FIRST step of three separate, independently-identified derived-class constructors this round (sub_424A60=MYWAVE::MYWAVE, sub_424B30=MYMP3::MYMP3, sub_424CC0=MYSTATICMP3::MYSTATICMP3), each of which then sets its OWN vtable pointer immediately after this call returns -- exactly matching C++'s own base-then-derived constructor/vtable-patching order. This build's own SOUNDCLIP base (already established as `{vtable; int done;}`, 8 bytes) has its constructor set only the vtable pointer here (`off_4AD5A8`, SOUNDCLIP's own vtable) -- no visible `done=0` write, plausibly zero-initialized by the caller's own `new` allocation instead. Flat-named as a C++ member function per this project's established convention."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424A60",
+    "new_name": "MYWAVE__MYWAVE",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 146,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYWAVE() : SOUNDCLIP() {} at acsound.cpp:146-147 -- an empty-body constructor that only calls the base SOUNDCLIP() constructor. Exact, complete match: this function's entire body is 'call SOUNDCLIP__SOUNDCLIP(this); this->vtbl = off_4AD59C(MYWAVE's own vtable); return this;' -- matching C++'s own base-constructor-then-vtable-patch compiled shape for a genuinely empty derived constructor. Called from my_load_wave (already matched), matching source's own `thiswave = new MYWAVE();`-equivalent construction site. Flat-named as a C++ member function."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424B30",
+    "new_name": "MYMP3__MYMP3",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 291,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYMP3() : SOUNDCLIP() {} at acsound.cpp:291-292 -- an empty-body constructor, same pattern as MYWAVE::MYWAVE (this round's own sibling match): calls SOUNDCLIP__SOUNDCLIP(this) then sets its own vtable (`off_4AD5B4`). Called from my_load_mp3 (already matched). Flat-named as a C++ member function."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424CC0",
+    "new_name": "MYSTATICMP3__MYSTATICMP3",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 433,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYSTATICMP3() : SOUNDCLIP() {} at acsound.cpp:433-434 -- an empty-body constructor, same pattern as MYWAVE::MYWAVE and MYMP3::MYMP3 (this round's own sibling matches): calls SOUNDCLIP__SOUNDCLIP(this) then sets its own vtable (`off_4AD5C0`). Called from my_load_static_mp3 (already matched), matching that function's own already-documented 'operator new(0x18) -> a constructor call (sub_424CC0)' citation from an earlier round -- resolving that previously-unnamed forward reference. Flat-named as a C++ member function."
   }
 ]
