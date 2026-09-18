@@ -735,6 +735,11 @@ struct CharacterInfo {
                            // SetCharacterIgnoreLight (already matched) confirms CHF_NOLIGHTING=
                            // 0x20 (acroom.h:2484) the same way: `and al,0DFh` (~0x20) then
                            // conditional `or edx,20h`, zero drift.
+                           // fix_player_sprite (already matched) confirms CHF_NOTURNING=0x40
+                           // (acroom.h:2485): "[chi+0x20]&0x40" gates skipping the automatic mid-walk
+                           // direction-turning logic (start_character_turning, see this struct's own
+                           // ROTATECHARS/options[18] cross-reference below), matching source's
+                           // "(chinf->flags&CHF_NOTURNING)!=0" (Engine/acchars.cpp:248) exactly.
                            // Top byte doubles as a packed talkcolor/speech-color field (no
                            // standalone talkcolor field exists in this build): SetTalkingColor
                            // (already matched) does "flags=(flags&0x00FFFFFF)|((ncol<<24)&
@@ -1877,6 +1882,98 @@ struct GameSetupStructBase {
                             // options[OPT_NOSKIPTEXT]);" in role (this build has no conversion
                             // function at all, see cant_skip_speech's own entry for the full story).
                             // byte_51333D lands with zero slack on 0x513337(index-1 base)+6=0x51333D.
+                            // FRESH SWEEP (checked every remaining index's own byte address for a
+                            // live XREF, rather than waiting for one to surface incidentally):
+                            // options[0]=OPT_DEBUGMODE (acroom.h:2706) confirmed via `main`'s own
+                            // GameState-init block: "movsx eax,byte_513336; mov play_debug_mode,eax;"
+                            // matches source's "play.debug_mode=game.options[OPT_DEBUGMODE];"
+                            // (AC.CPP:26285) exactly, also giving the pre-existing IDA label
+                            // `play_debug_mode` its first real behavioral confirmation.
+                            // options[3]=OPT_DIALOGIFACE (acroom.h:2709) confirmed via do_conversation
+                            // (already matched): "movsx ecx,byte_513339; test ecx,ecx; jle <skip>;
+                            // ...guib=&guis[byte_513339] (0x184-byte GUIMain stride, both already
+                            // confirmed)..." matches source's "else if(game.options[OPT_DIALOGIFACE]>0)
+                            // { GUIMain*guib=&guis[game.options[OPT_DIALOGIFACE]]; ...}" (AC.CPP:22022-
+                            // 22024) in role and structure -- the custom Dialog Options GUI selector.
+                            // options[4]=OPT_ANTIGLIDE (acroom.h:2710) confirmed via update_stuff
+                            // (already matched): "movsx ecx,byte_51333A; ...; and eax,edx" gates
+                            // whether do_movelist_move runs when chars[].wait@+0x1C>0, matching the
+                            // OPT_ANTIGLIDE/CHF_ANTIGLIDE role (acroom.h:2710/2496) -- this build checks
+                            // the raw GLOBAL option directly at the per-frame walk-update site rather
+                            // than a per-character CHF_ANTIGLIDE flag, a real, confirmed architectural
+                            // difference from 2011's per-character-configurable version.
+                            // options[6]=OPT_DIALOGGAP (acroom.h:2712) confirmed via sub_41D7F7
+                            // (do_conversation's own private per-option layout helper, already
+                            // documented): "movsx edx,byte_51333C; add [ebp+arg_4],edx" matches
+                            // source's "curyp+=multiply_up_coordinate(game.options[OPT_DIALOGGAP]);"
+                            // (AC.CPP:21893) in role (this build adds the raw value directly, with no
+                            // resolution-scaling wrapper call).
+                            // options[8]=OPT_DISABLEOFF (acroom.h:2714) confirmed via
+                            // draw_screen_overlay (already matched): "movsx ecx,byte_51333E; cmp
+                            // ecx,1/2; ...or [flags-bitmask],2/4..." builds a local GUI-disabled-style
+                            // bitmask inline at draw time, matching 2011's role (its own
+                            // convert_gui_disabled_style(), AC.CPP:12695-12708, precomputes and CACHES
+                            // the same style choice once at startup instead) -- another instance of
+                            // this build inlining logic 2011 later extracted into a shared function.
+                            // options[13]=OPT_LETTERBOX (acroom.h:2719) confirmed DECISIVELY via `main`
+                            // (already matched): "movsx eax,byte_513343; mov dword_5230C8,eax" (caching
+                            // it into a new global, `usetup_want_letterbox`, matching 2011's own
+                            // "usetup.want_letterbox=game.options[OPT_LETTERBOX];", AC.CPP:27801) then
+                            // an if(letterbox==0){try init_gfx_mode(w,h,16);} <unconditionally> try
+                            // init_gfx_mode(w, h*12/10, 16); [repeat at 15-bit]; if(scrnwid!=w)
+                            // {init_gfx_mode(scrnwid,scrnhit,16); ...,15);} sequence -- a COMPLETE,
+                            // near-zero-drift match to 2011's own separately-named `switch_to_
+                            // graphics_mode()` (AC.CPP:26925-26959), fused directly into `main` (the
+                            // usual pre-refactor pattern), including the exact literal 12/10 letterbox
+                            // scaling ratio. CONFIRMED ABSENT: 2011's `try_widescreen_bordered_
+                            // graphics_mode_if_appropriate()` calls (widescreen pillarbox/letterbox
+                            // support for non-4:3 desktops) -- this build has no widescreen-aware
+                            // fallback path at all, consistent with predating wide monitors as a
+                            // real-world concern.
+                            // options[14]=OPT_FIXEDINVCURSOR (acroom.h:2720) confirmed via sub_40CF16
+                            // (the already-matched inventory-cursor-update helper): "movsx eax,
+                            // byte_513344" gates the MODE_USE cursor hotspot auto-centering logic,
+                            // matching source's "if((game.options[OPT_FIXEDINVCURSOR]==0) &&
+                            // (invnum>0))" (AC.CPP:5000) in role.
+                            // options[15]=OPT_NOLOSEINV (acroom.h:2721) confirmed via run_event_block
+                            // (already matched): "movsx ecx,byte_513345; test ecx,ecx; jz <continue>;
+                            // jmp <skip>" gates a data[i]-range check ([0,0x63)) near the top of the
+                            // per-command matching loop -- role plausibly related to an inventory-item
+                            // requirement/consumption check on EventBlock commands, not traced to full
+                            // certainty this round.
+                            // options[16]=OPT_NOSCALEFNT (acroom.h:2722) confirmed via load_ac2game_dta
+                            // (already matched, =2011's load_game_file): "movsx edx,byte_513346; test
+                            // edx,edx; jnz <skip>; cmp usetup_screenres,0; jle <skip>; fontsize<<=1;"
+                            // matches source's "if((game.options[OPT_NOSCALEFNT]==0) &&
+                            // (game.default_resolution>2)) fontsize*=2;" (AC.CPP:11967-11968) closely
+                            // (this build checks `usetup_screenres` -- a setup/INI value -- rather than
+                            // `game.default_resolution`, a real difference in WHICH resolution signal
+                            // gates the doubling, though the same NOSCALEFNT option and *2 behavior).
+                            // options[18]=OPT_ROTATECHARS (acroom.h:2724) confirmed DECISIVELY via
+                            // fix_player_sprite (already matched, previously only "plausibly inlines
+                            // start_character_turning"): "movsx edx,byte_513348; test edx,edx; jz
+                            // <apply-loop-directly>; [chi+0x20]&0x40; jz <apply-loop-directly>"
+                            // matches source's "if((game.options[OPT_ROTATECHARS]==0) ||
+                            // ((chinf->flags&CHF_NOTURNING)!=0)) { chinf->loop=useloop; return; }"
+                            // (Engine/acchars.cpp:248) with ZERO drift -- including identifying the bit
+                            // this build tests, 0x40, as CHF_NOTURNING (acroom.h:2485), a brand new
+                            // CharacterInfo.flags bit confirmation. Past that check, this build's own
+                            // remaining code (two find_looporder_index calls, already matched, plus a
+                            // walking%1000-style wait-value computation) DECISIVELY confirms
+                            // start_character_turning() really is implemented here -- promoting the
+                            // earlier "plausibly inlines" hedge to a confirmed identification. This is
+                            // a SEPARATE feature from FaceLocation's own script-API gradual-turn (still
+                            // correctly confirmed absent, see FaceLocation's own entry) -- automatic
+                            // mid-walk direction turning and the explicit FaceLocation()/FaceCharacter()
+                            // command are two different AGS mechanisms; only the latter is absent here.
+                            // NOT FOUND: options[17]=OPT_SPLITRESOURCES (acroom.h:2723) has zero XREFs
+                            // anywhere in this build's disassembly -- but checked against 2011's own
+                            // Engine/ tree too, which ALSO never reads it anywhere (only Common/ editor-
+                            // side code would) -- genuinely an editor/compile-time-only option in BOTH
+                            // eras, not a runtime engine concern, so its absence here is expected and
+                            // not further chased. options[17]'s own position in this build's own
+                            // options[20] array is otherwise unconfirmed by direct evidence but boxed
+                            // in with zero slack between the confirmed neighbors on both sides.
   unsigned char paluses[256];     // +0x32, high confidence: confirmed directly via a shared loop in
                             // `main` (also used for defpal below) -- "for (ee=0; ee<256; ee++) if
                             // (paluses[ee]!=2) palette[ee]=defpal[ee];" -- disasm's `cmp

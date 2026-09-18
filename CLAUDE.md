@@ -4887,6 +4887,29 @@ disassembly work.
   Flagged explicitly so a future round doesn't assume a numeric
   correspondence exists elsewhere just because value 9 happened to line
   up.
+- **A near-complete `options[]` sweep: 11 new indices confirmed in one
+  round, plus `switch_to_graphics_mode` and a new `CHF_NOTURNING`
+  bit.** Checked every remaining unconfirmed `GameSetupStructBase.
+  options[20]` index's own byte address directly rather than waiting
+  for incidental discovery -- 11 hits, all in already-matched functions
+  never read with that field in mind. Headline finds: `options[13]=
+  OPT_LETTERBOX` matches 2011's own `switch_to_graphics_mode()`
+  (fused into `main`) almost completely, including the exact 12/10
+  letterbox ratio -- CONFIRMED ABSENT is 2011's widescreen-pillarbox
+  fallback path entirely. `options[18]=OPT_ROTATECHARS` decisively
+  closes `fix_player_sprite`'s own long-hedged "plausibly inlines
+  start_character_turning," identifying a new `CharacterInfo.flags`
+  bit (`CHF_NOTURNING=0x40`) and confirming `start_character_turning()`
+  really is implemented here -- a genuinely separate feature from
+  `FaceLocation`'s own still-correctly-absent gradual-turn-to-face.
+  Also closes `options[0]`(DEBUGMODE)/`[3]`(DIALOGIFACE)/`[4]`
+  (ANTIGLIDE, with a real per-character-vs-global drift)/`[6]`
+  (DIALOGGAP)/`[8]`(DISABLEOFF)/`[14]`(FIXEDINVCURSOR)/`[15]`
+  (NOLOSEINV)/`[16]`(NOSCALEFNT)/`[19]`(FADETYPE, fade_effect's own
+  init assignment). `options[17]`(SPLITRESOURCES) is confirmed
+  editor-only in BOTH eras (2011's own Engine/ never reads it either),
+  not merely unfound. `options[]` now stands at 19/20 indices
+  individually confirmed. See `reversing/notes/struct-layout-drift.md`.
 - **A small self-caught correction: `process_event` doesn't call
   `run_event_block` "via" `sub_40C335`.** Cross-checking two entries
   against each other found `process_event`'s own phrasing implied a

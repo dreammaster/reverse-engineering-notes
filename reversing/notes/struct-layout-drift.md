@@ -16393,6 +16393,109 @@ type-to-`GiveScore` mapping. Worth flagging so a future round doesn't
 assume a numeric correspondence exists elsewhere just because value 9
 happened to line up.
 
+### A near-complete `options[]` sweep: 11 new indices confirmed in one round, plus `switch_to_graphics_mode` and a new `CHF_NOTURNING` bit
+
+Went back to `GameSetupStructBase.options[20]` -- only 8 of its 20
+possible indices had ever been individually confirmed (1/2/5/7/9/10/11/
+12) despite the struct itself being fully closed years ago. Rather than
+wait for a confirmation to surface incidentally (the pattern that had
+closed those 8), checked every REMAINING index's own byte address
+directly for a live disassembly cross-reference. Eleven hits, all in
+already-matched functions that had simply never been read with this
+specific field in mind:
+
+- **`options[0]=OPT_DEBUGMODE`** -- `main`'s own GameState-init block:
+  `play_debug_mode=byte_513336`, matching `play.debug_mode=game.
+  options[OPT_DEBUGMODE];` (`AC.CPP:26285`) exactly -- also the first
+  real behavioral confirmation for the pre-existing IDA label
+  `play_debug_mode` itself.
+- **`options[3]=OPT_DIALOGIFACE`** -- a previously-unread branch inside
+  `do_conversation`: custom Dialog Options GUI selection, `if(options[3]
+  >0) guib=&guis[options[3]];`, matching `AC.CPP:22022-22024` in role.
+- **`options[4]=OPT_ANTIGLIDE`** -- `update_stuff` gates whether
+  `do_movelist_move` runs based on `(character.wait>0) &&
+  options[4]`. REAL DRIFT: this build checks the raw GLOBAL option
+  directly at the per-frame site, not a per-character `CHF_ANTIGLIDE`
+  flag (`acroom.h:2496`) the way 2011's own logic does elsewhere
+  (`AC.CPP:6606-6658`) -- antiglide is all-characters-uniform here, not
+  configurable per character.
+- **`options[6]=OPT_DIALOGGAP`** -- `sub_41D7F7` (`do_conversation`'s
+  own private per-option layout helper): adds the raw byte directly to
+  a running Y-coordinate, matching `curyp+=multiply_up_coordinate(game.
+  options[OPT_DIALOGGAP]);` (`AC.CPP:21893`) in role.
+- **`options[8]=OPT_DISABLEOFF`** -- `draw_screen_overlay` builds a
+  GUI-disabled-style bitmask INLINE at draw time; 2011's own
+  `convert_gui_disabled_style()` (`AC.CPP:12695-12708`) precomputes and
+  caches the same choice once at startup instead -- another instance of
+  this project's repeated "later refactor extracted a shared function"
+  pattern.
+- **`options[13]=OPT_LETTERBOX`** -- the headline find. `main` matches
+  2011's own separately-named `switch_to_graphics_mode()`
+  (`AC.CPP:26925-26959`) almost completely, fused directly in: cache the
+  option into a new global (`dword_5230C8`=`usetup_want_letterbox`,
+  matching `usetup.want_letterbox=game.options[OPT_LETTERBOX];`,
+  `AC.CPP:27801`), then `if(letterbox==0) try init_gfx_mode(w,h,16);`
+  followed UNCONDITIONALLY by `try init_gfx_mode(w, h*12/10, 16);` --
+  the exact literal `12/10` letterbox-scaling ratio from source's own
+  `initasyLetterbox = (initasy*12)/10;` -- repeated for 15-bit depth,
+  then a final native-resolution fallback pair if the requested and
+  actual resolutions differ. CONFIRMED ABSENT: 2011's
+  `try_widescreen_bordered_graphics_mode_if_appropriate()` calls --
+  this build has no widescreen-pillarbox-aware fallback path at all.
+- **`options[14]=OPT_FIXEDINVCURSOR`** -- `sub_40CF16` (the already-
+  matched inventory-cursor-update helper) gates its MODE_USE
+  cursor-hotspot auto-centering logic on it, matching `AC.CPP:5000`.
+- **`options[15]=OPT_NOLOSEINV`** -- `run_event_block` gates a `data[i]`
+  range check (`[0,0x63)`, an inventory-item-number-shaped bound) near
+  the top of its per-command matching loop. Role plausibly an
+  inventory-item requirement/consumption check tied to a specific
+  EventBlock command; not traced to full certainty this round.
+- **`options[16]=OPT_NOSCALEFNT`** -- `load_game_file`'s font-loading
+  loop doubles the requested font size when the option is off and
+  `usetup_screenres>0`, matching `AC.CPP:11967-11968` in role (this
+  build checks `usetup_screenres`, a setup/INI value, rather than
+  `game.default_resolution` -- a real difference in WHICH signal gates
+  the doubling).
+- **`options[18]=OPT_ROTATECHARS`**, the second headline find --
+  decisively closes `fix_player_sprite`'s own long-standing "plausibly
+  inlines `start_character_turning`" hedge. `if(!options[18] ||
+  (chi->flags&0x40)) { chi->loop=useloop; return; }` matches
+  `if((game.options[OPT_ROTATECHARS]==0) ||
+  ((chinf->flags&CHF_NOTURNING)!=0)) { chinf->loop=useloop; return; }`
+  (`Engine/acchars.cpp:248`) with ZERO drift -- also identifying bit
+  `0x40` on `CharacterInfo.flags` as `CHF_NOTURNING` (`acroom.h:2485`),
+  a brand new flag confirmation. Past that gate, this build's own
+  remaining code (two `find_looporder_index` calls, already matched,
+  plus a `walking%1000`-style wait-value computation matching this
+  project's own established `walking`-field convention) DECISIVELY
+  confirms `start_character_turning()` really is implemented here.
+  **Important clarification**: this is a genuinely SEPARATE feature
+  from `FaceLocation`'s own script-API gradual-turn-to-face, which
+  remains correctly confirmed absent (see its own entry) -- automatic
+  mid-walk direction turning during ordinary movement, and the explicit
+  `FaceLocation()`/`FaceCharacter()` script commands, are two different
+  AGS mechanisms that happen to share the word "turning." Only the
+  latter is absent from this build; the former is alive and well.
+- **`options[19]=OPT_FADETYPE`** -- `load_game_file` sets `fade_effect`
+  (already confirmed) from this option at startup, matching `play.
+  fade_effect=game.options[OPT_FADETYPE];` (`AC.CPP:11975`) exactly --
+  `fade_effect`'s own INITIAL value assignment, previously only known
+  from its write-side (`SetScreenTransition`) and read-side
+  (`process_event`) uses.
+
+**Checked and explained, not just unfound**: `options[17]=
+OPT_SPLITRESOURCES` has zero cross-references anywhere in this build's
+disassembly -- but a check of 2011's own `Engine/` tree shows it ALSO
+never reads this option anywhere (only the editor/`Common/`-side
+packaging code would, in either era). Genuinely an editor/compile-time-
+only concern in both eras, not a runtime engine gap -- its absence here
+needs no further explanation and isn't chased further.
+
+With this round, `options[]` stands at 19 of 20 indices individually
+confirmed (everything except `OPT_SPLITRESOURCES`, which is confirmed
+*inapplicable* to the engine rather than unconfirmed) -- essentially
+complete, joining `GameSetupStructBase`'s other fully-mapped arrays.
+
 ### A small self-caught correction: `process_event` doesn't call `run_event_block` "via" `sub_40C335`
 
 Cross-checking `sub_40C335`'s own entry (which says it's called *only*
