@@ -4874,7 +4874,32 @@ disassembly work.
   Message, carries a dead commented-out line implementing the identical
   character-attribution mechanism this build's `respond==5` branch
   still actively performs -- independent confirmation that finding
-  wasn't a guess. See `reversing/notes/struct-layout-drift.md`.
+  wasn't a guess.
+- **Clarifying note: `respond[]` uses its own numbering, unrelated to
+  2011's action codes.** Checked the rest of `run_interaction_
+  commandlist`'s own action-code table (cases 2-26) for any other
+  `respond[]` correspondences beyond value 9's own match -- none exist.
+  2011's Play Sound/Play Flic/Run Dialog/Add Inventory/Object Off/
+  Object On/Stop Walking correspond to this build's `respond==0xB/0xC/
+  0xE/8/6/0xD/2` -- different numbers throughout, no arithmetic
+  relationship. 2011's "Add Score" and the Move-Object/Animate family
+  have no `respond[]` equivalent at all in this build's [0,14] range.
+  Flagged explicitly so a future round doesn't assume a numeric
+  correspondence exists elsewhere just because value 9 happened to line
+  up.
+- **A small self-caught correction: `process_event` doesn't call
+  `run_event_block` "via" `sub_40C335`.** Cross-checking two entries
+  against each other found `process_event`'s own phrasing implied a
+  call chain through `sub_40C335` that doesn't exist -- the
+  disassembly's own CODE XREF list shows `sub_40C335` has exactly one
+  caller (`new_room`); `process_event` calls `run_event_block` directly,
+  a separate, parallel call site. While fixing it, traced the real
+  dispatch: `EventHappened.data1==1` (EVB_HOTSPOT) selects
+  `hscond[data2]`, `data1==2` (EVB_ROOM) selects `misccond`, anything
+  else hits the "unknown evb type" error -- matching 2011's own
+  EVB_HOTSPOT/EVB_ROOM if/else-if with zero drift (2011 declares only
+  those two constants, so the error fallback is a confirmed exhaustive
+  match). See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

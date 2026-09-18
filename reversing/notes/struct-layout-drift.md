@@ -16392,3 +16392,28 @@ still-older predecessor, being the one place with a direct
 type-to-`GiveScore` mapping. Worth flagging so a future round doesn't
 assume a numeric correspondence exists elsewhere just because value 9
 happened to line up.
+
+### A small self-caught correction: `process_event` doesn't call `run_event_block` "via" `sub_40C335`
+
+Cross-checking `sub_40C335`'s own entry (which says it's called *only*
+from `new_room`) against `process_event`'s own entry (which describes
+its `EV_RUNEVBLOCK` handling as running "via `sub_40C335`/
+`run_event_block`") turned up a real inconsistency -- both entries were
+individually correct on their own facts, but `process_event`'s phrasing
+implied a call CHAIN through `sub_40C335` that doesn't exist. Checking
+the disassembly's own `CODE XREF` list settles it: `sub_40C335` has
+exactly one caller (`new_room`), and `process_event` calls
+`run_event_block` DIRECTLY -- a second, entirely separate, parallel
+call site, not a chain.
+
+While fixing the phrasing, traced the real dispatch: `process_event`'s
+`EV_RUNEVBLOCK` handler resolves which `EventBlock` to use from
+`EventHappened.data1`: `data1==1` (`EVB_HOTSPOT`) selects
+`hscond[data2]`; `data1==2` (`EVB_ROOM`) selects `misccond` (with the
+already-known `in_enters_screen++` for `data3==5`); anything else falls
+through with no block resolved, hitting `"process_event: RunEvBlock:
+unknown evb type"`. This matches 2011's own `EVB_HOTSPOT`/`EVB_ROOM`
+if/else-if dispatch (`AC.CPP:4750-4791`) with zero drift -- 2011 only
+ever declares those same two `EVB_*` constants, so the fall-through
+error path is a confirmed exhaustive match, not evidence of a missing
+`EVB_OBJECT` case in either era.
