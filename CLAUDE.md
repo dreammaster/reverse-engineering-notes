@@ -4755,6 +4755,22 @@ disassembly work.
   UNNAMED rather than force the wrong identity onto it -- most likely
   an unrelated 2002-era predecessor mechanic. See `reversing/notes/
   struct-layout-drift.md`.
+- **Fresh AGS-side subsystem: `Region`s, confirmed entirely absent.**
+  The whole feature (`GetRegionAt`/`RunRegionInteraction`/
+  `SetRegionTint`/`DisableRegion`/`EnableRegion`, by name or error
+  string) has zero occurrences anywhere in the binary. Dated via
+  `ags-archives/ags255/docs/CHANGES.TXT` (AGS 2.55, May 2003, "Added
+  'regions' as a new room area mask type. These take over light levels
+  from walkable areas...") -- after this build's own `<2.5` pin,
+  explaining why the already-matched `SetAreaLightLevel` writes
+  `RoomStruct.walk_area_light[]` rather than a region-specific array:
+  it's the pre-hand-off original, not coincidental drift. Bonus: the
+  room-file LOADER already reserves and loads a regions-shaped mask
+  bitmap (`RoomStruct.regions`@+0x10, gated on room version>=8) even
+  though nothing in this engine ever reads it back -- the same "data
+  loaded, feature not built yet" pattern already found for
+  `InterfaceElement`'s `iface[10]`. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

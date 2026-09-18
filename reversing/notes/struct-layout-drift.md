@@ -15995,3 +15995,59 @@ comment for this field now documents the finding and the two reasons
 it doesn't fit the obvious 2011 label, upgrading it from "UNCONFIRMED"
 to "a real bit is tested here, role unresolved" -- an honest middle
 ground between "no evidence" and "confirmed match."
+
+### Fresh AGS-side subsystem: `Region`s, confirmed entirely absent -- with a "data loaded but never read" bonus
+
+Picked a genuinely never-surveyed subsystem: AGS "regions" -- invisible
+room zones that trigger interactions and override a character's tint/
+light level, distinct from walkable areas. A grep across the whole
+project turned up zero prior mentions of `RegionStruct`, `GetRegionAt`,
+`RunRegionInteraction`, or any region-specific function -- genuinely
+untouched.
+
+**Confirmed entirely absent, exhaustively.** A grep for `GetRegionAt`/
+`RunRegionInteraction`/`SetRegionTint`/`DisableRegion`/`EnableRegion`
+(by name) and their self-identifying error strings (`"invalid region"`,
+`"Region %d light level set to"`, etc.) across the whole 917k-line
+disassembly finds **zero** occurrences of any of them. Dated decisively
+via `ags-archives/ags255/docs/CHANGES.TXT` (VERSION 2.55, May 2003):
+*"Added 'regions' as a new room area mask type. These take over light
+levels from walkable areas, and also add 'Player Walks Onto' and
+'Player Walks Off' interactions."* -- strictly after this build's own
+established `<2.5` upper-bound pin. The feature genuinely doesn't exist
+in this compiled engine yet, not merely unfound.
+
+**This retroactively explains an already-confirmed fact that had never
+been connected back to it.** `SetAreaLightLevel` (matched several
+rounds ago) writes `RoomStruct.walk_area_light[]`, not a 2011-style
+`regionLightLevel[]` array -- at the time this was recorded as
+unremarkable drift. The 2.55 changelog's own wording -- regions "take
+over light levels FROM walkable areas" -- says exactly why: this
+build's `SetAreaLightLevel` is the pre-hand-off ORIGINAL implementation,
+predating the split that regions later introduced, not a coincidentally
+similar predecessor.
+
+**A genuine surprise along the way: the room-file loader already loads
+a regions-shaped mask, even though nothing ever reads it back.**
+`load_main_block`'s own already-documented mask-loading sequence (5
+`loadcompressed_allegro`/`load_lzw` calls) includes one gated on room
+version >= 8 that targets `RoomStruct`'s confirmed `regions`@+0x10 slot
+(the same field 2011 still declares, `Common/acroom.h:808`) --
+`loadcompressed_allegro(Stream, &rst->regions, &rst->pal)`, matching
+2011's own room-loading shape exactly. For room versions < 8, this
+build substitutes a blank, all-zero 320x200 8-bit bitmap instead of
+reading one from the file. So the ROOM FILE FORMAT'S slot for a
+regions mask predates the RUNTIME FEATURE that would ever read it back
+by at least one full room-format-version generation -- this engine
+faithfully loads (or blanks) the bitmap into memory every room change,
+then never touches it again, since no `GetRegionAt` exists anywhere to
+consume it. This is the same "data exists, code never reads it"
+pattern already found for `InterfaceElement`'s `iface[10]` data
+(`dump_interface_elements.py`'s own writeup) -- a second instance of a
+room/game asset slot being populated well before the feature that
+would use it was ever written.
+
+No struct to formalize (there's nothing here to name -- the whole
+feature is confirmed absent), but a clean, fully-evidenced closure of
+a subsystem this project had never even attempted before, plus a
+retroactive explanation for an old, previously-unremarked-upon finding.
