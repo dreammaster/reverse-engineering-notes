@@ -16051,3 +16051,47 @@ No struct to formalize (there's nothing here to name -- the whole
 feature is confirmed absent), but a clean, fully-evidenced closure of
 a subsystem this project had never even attempted before, plus a
 retroactive explanation for an old, previously-unremarked-upon finding.
+
+### Both of AGS's lip-sync mechanisms confirmed absent, closing an old loose thread
+
+A much earlier round's `stop_speech` entry had noted, purely in
+passing, that `curLipLine=-1` (2011's "no lip-sync line active"
+sentinel reset) has no counterpart in this build's version of that
+function -- filed as "consistent with this build's unimplemented
+lip-sync subsystem" but never actually traced back to source or given
+its own investigation. Picked that thread up properly this round.
+
+**Voice-file lip sync (`SpeechLipSyncLine`/`splipsync`) is CONFIRMED
+ABSENT, decisively.** Source's own speech-vox initialization
+(`AC.CPP:27455-27492`) does, in order: open `speech.vox`, `csetlib()`
+it, THEN open `syncdata.dat` via `clibfopen` and -- only if that
+succeeds -- read a format-version `getw()`, `numLipLines`, and
+malloc/populate the whole `splipsync[]` array, before finally setting
+`play.want_speech=1`. This build's own already-matched `main()`
+sequence does the identical `fopen`/`csetlib(game_file_name)` pair,
+but goes straight from a successful `csetlib()` to `play_want_speech=1`
+with zero intervening code -- no `syncdata.dat` open, no format check,
+no `splipsync` allocation, nothing at all. An exhaustive grep for the
+literal string `"syncdata.dat"` across the entire disassembly finds
+**zero** occurrences -- the one string this feature would need just to
+locate its own data file doesn't exist anywhere in the binary. Not
+disabled, not unfound: never implemented in this build.
+
+**Text-based lip sync (`GetLipSyncFrame`/`lipSyncFrameLetters[]`) was
+already independently confirmed absent, just never connected to the
+same feature.** `game.default_lipsync_frame` (the fallback frame for
+an unrecognized character, `AC.CPP:6102`) was one of the four fields
+this project's own `GameSetupStructBase` full-mapping round explicitly
+listed as CONFIRMED ABSENT -- no room exists for it anywhere in that
+struct's own fully-accounted-for 49028 bytes. `lipSyncFrameLetters[]`
+itself belongs to the further-derived 2011 `GameSetupStruct`, not the
+`OriGameSetupStruct` ancestor this build's own global actually is.
+Neither fact had ever been framed as "AGS's OTHER lip-sync mechanism"
+before -- they're the same absence, just never named as such.
+
+Together: AGS had (and still has, in 2011) two entirely independent
+ways to animate a talking character's mouth -- guess a frame from the
+displayed TEXT, or sync frames to actual recorded speech PHONEMES.
+Neither exists in Rob Blanc 1's engine. Characters presumably just use
+a single static or looping talk-view frame while speaking, with no
+mouth-shape animation of either kind.

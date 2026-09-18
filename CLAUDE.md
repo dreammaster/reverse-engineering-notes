@@ -4771,6 +4771,19 @@ disassembly work.
   loaded, feature not built yet" pattern already found for
   `InterfaceElement`'s `iface[10]`. See `reversing/notes/
   struct-layout-drift.md`.
+- **Both of AGS's lip-sync mechanisms confirmed absent, closing an old
+  loose thread.** Voice-file lip sync (`SpeechLipSyncLine`/`splipsync`)
+  is decisively absent: this build's `main()` goes straight from a
+  successful speech-vox `csetlib()` to `play_want_speech=1` with none
+  of source's intervening `syncdata.dat` open/format-check/`splipsync`
+  allocation, and the literal string `"syncdata.dat"` has zero
+  occurrences anywhere in the binary. Text-based lip sync
+  (`GetLipSyncFrame`/`lipSyncFrameLetters[]`) turns out to have already
+  been independently confirmed absent (via `GameSetupStructBase.
+  default_lipsync_frame`'s own confirmed-absent status from its
+  full-mapping round) -- just never connected to the same feature or
+  named as such. Neither of AGS's two mouth-animation mechanisms exists
+  in this build. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
