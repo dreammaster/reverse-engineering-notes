@@ -4847,8 +4847,22 @@ disassembly work.
   anywhere except a reset-to-0, meaning this entire encode-edge-into-
   one-int mechanism was fully removed by 2011, joining GRAPHSCRIPT and
   the EventBlock arrays as another subsystem it preserves only as a
-  dead decode path. 8/15 `respond[]` values now confirmed; 7 remain for
-  a future round. See `reversing/notes/struct-layout-drift.md`.
+  dead decode path.
+- **Immediate follow-up: the full `respond[]` table closes, all 15
+  values, zero gaps.** Read the remaining branches (6/7/8/9/0xB/0xC/
+  0xD/0xE) plus the final default case, which calls `quit("unknown
+  response encountered in block")` for anything outside [0,14] --
+  proving the table complete, not just "values seen so far." Full
+  picture: 0=NewRoom, 1=no-op, 2=StopMoving, 3=run_on_event(GE_MAN_DIES),
+  4=Run Animation, 5=DisplayMessage(+speech attribution), 6=ObjectOff,
+  7=ObjectOff+add_inventory (a genuine compound response), 8=add_inventory
+  alone, 9=Run Script (a lettered function name via make_ts_func_name)
+  +audio catch-up, 0xA=run_graph_script, 0xB=PlaySound, 0xC=PlayFlic,
+  0xD=ObjectOn, 0xE=RunDialog. Nearly every individual action was
+  already matched from its own call sites -- what closes here is the
+  missing piece connecting them all as EventBlock's own unified
+  dispatch, entirely undocumented in 2011 and reconstructed purely from
+  this build's disassembly. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

@@ -16282,3 +16282,49 @@ BOTTOM -- wasn't pinned down this round.)
 Eight of the fifteen `respond[]` values are now individually confirmed
 (`0`/`1`/`2`/`3`/`4`/`5`/`9` partially/`0xA`); `6`/`7`/`8`/`0xB`/`0xC`/
 `0xD`/`0xE` remain unread -- a well-scoped candidate for a future round.
+
+### Immediate follow-up: the full `respond[]` table closes, all 15 values, zero gaps
+
+Picked the "well-scoped candidate for a future round" straight back up
+in the same session. Read the remaining branches (`6`/`7`/`8`/`9`/
+`0xB`/`0xC`/`0xD`/`0xE`) and, crucially, the final default case -- which
+calls `quit("unknown response encountered in block")` for anything
+outside `[0,14]`, decisively confirming the enum is **exhaustive**, not
+just "these are the values seen so far."
+
+The complete table, reconstructed entirely from this build's own
+disassembly (no living or dead-commented 2011 declaration exists for
+this whole subsystem, unlike the smaller `SCMD_*`/`DCMD_*`/`GE_*`
+enums this project has closed elsewhere):
+
+| `respond[i]` | Action |
+|---|---|
+| 0 | `NewRoom(respondval[i])` -- plus the edge-position encoding into `new_room_pos` documented above, when fired from `misccond` |
+| 1 | no-op (a placeholder "None" response) |
+| 2 | `StopMoving(playerchar)` |
+| 3 | `run_on_event(GE_MAN_DIES=3, data[i])` |
+| 4 | Run Animation (the `GameAnimation`/`AnimationStruct` command-list system) |
+| 5 | `DisplayMessage(respondval[i])`, optionally attributed as speech from a character via `data[i]` |
+| 6 | `ObjectOff(respondval[i])` |
+| 7 | `ObjectOff(respondval[i])` **then** `add_inventory(data[i])` -- a genuine compound response |
+| 8 | `add_inventory(data[i])` alone |
+| 9 | Run Script -- builds a lettered function name (e.g. `hotspot3_a`) via `make_ts_func_name`, dispatches through `ExecutingScript::run_another` (character contexts) or `run_script_function_if_exist` (everything else), then runs the MP3-crossfade-continuation + three-channel audio-poll sequence before returning |
+| 0xA | `run_graph_script(respondval[i])` -- the GRAPHSCRIPT subsystem |
+| 0xB | `PlaySound(respondval[i])` |
+| 0xC | `PlayFlic(data[i], respondval[i])` |
+| 0xD | `ObjectOn(respondval[i])` -- the exact mirror of 6 |
+| 0xE | `RunDialog(respondval[i])` |
+| else | `quit("unknown response encountered in block")` -- proves the table above is complete |
+
+Nearly every individual action (`ObjectOff`/`ObjectOn`/`add_inventory`/
+`PlaySound`/`PlayFlic`/`RunDialog`/`run_graph_script`) was ALREADY
+independently matched from its own call sites elsewhere in the binary
+-- what closes here is the missing piece connecting all of them
+together as EventBlock's own unified dispatch, plus the two genuinely
+new behaviors (7's compound Object-Off-and-give-item action, and 9's
+Run-Script-then-catch-up-audio sequence). A satisfying capstone to a
+subsystem (`EventBlock`/`RoomStatus.hscond`/`objcond`/`misccond`/
+`RoomStruct`'s own source copies of the same) this project has slowly
+pieced together across many separate rounds over the whole session --
+every field is now not just positionally confirmed but behaviorally
+understood end to end.
