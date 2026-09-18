@@ -4812,8 +4812,13 @@ disassembly work.
   for the first time, and its walk-to-hotspot logic gives an
   already-flagged gap (missing `play.auto_use_walkto_points` gating,
   previously only seen at `ProcessClick`'s own call site) a second,
-  independent confirmation. See `reversing/notes/
-  struct-layout-drift.md`.
+  independent confirmation. Immediate follow-up closed the third of the
+  trio, `RunCharacterInteraction` (also previously thin) -- same
+  mood-dispatch shape, same pre-2.4b Mode 8/9 branches, and (matching
+  2011, which has no walk-to-point logic for characters either) no
+  `auto_use_walkto_points` gap here, confirming that absence is
+  hotspot-specific rather than a third instance of the same drift. See
+  `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

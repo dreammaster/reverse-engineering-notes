@@ -16174,3 +16174,14 @@ body settles that: past the `OPT_WALKONLOOK` check, it goes straight to
 a plain `mood==WALK ? skip : MoveCharacterToHotspot(...)`, with no
 `auto_use_walkto_points`/`check_interaction_only` gating at all -- the
 same absence, now confirmed at a second, independent call site.
+
+**Immediate follow-up closed the third of the trio, `RunCharacterInteraction`**
+(also previously thin, matched only for its `__charcond[]` array-position
+role). Complete, zero-drift match to `AC.CPP:16341-16370`, same
+mood-dispatch shape (again including the pre-2.4b User Mode 8/9
+branches) and its own leading `is_valid_character` guard with matching
+error string. As expected -- 2011's own `RunCharacterInteraction` has
+no walk-to-point logic either -- this build has none here, confirming
+the missing `auto_use_walkto_points` gating found at `RunHotspotInteraction`
+genuinely doesn't apply to characters in either era, not a third
+instance of the same drift.
