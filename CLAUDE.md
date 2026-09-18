@@ -4819,6 +4819,19 @@ disassembly work.
   `auto_use_walkto_points` gap here, confirming that absence is
   hotspot-specific rather than a third instance of the same drift. See
   `reversing/notes/struct-layout-drift.md`.
+- **`run_event_block` has exactly one exit point, explaining why none of
+  its three callers check its return value.** Reading its entire
+  ~908-line body end to end found every branch converges on a single
+  shared epilogue with no dedicated return-value assignment anywhere --
+  structurally incapable of signaling "stop processing" back to a
+  caller, unlike 2011's own `run_interaction_event`/`run_interaction_script`
+  (which DO return a real boolean for exactly this purpose). Real,
+  confirmed behavioral consequence: in this build, clicking a
+  hotspot/object/character ALWAYS fires its "any click" interaction in
+  addition to its mode-specific one, with no way for the mode-specific
+  interaction to suppress it -- a design property of this simpler
+  EventBlock-era dispatch, not a caller-side bug. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

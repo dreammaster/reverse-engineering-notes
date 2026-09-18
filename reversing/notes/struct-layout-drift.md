@@ -16185,3 +16185,39 @@ no walk-to-point logic either -- this build has none here, confirming
 the missing `auto_use_walkto_points` gating found at `RunHotspotInteraction`
 genuinely doesn't apply to characters in either era, not a third
 instance of the same drift.
+
+### `run_event_block` has exactly one exit point -- explaining why none of its callers check its return value
+
+A loose end from the trio round above: all three functions call
+`run_event_block` twice each (once for the mode-specific interaction,
+once unconditionally for the "any click" fallback) with NO check of the
+first call's return value in between -- just an unconditional fall-
+through. Worth understanding why, since 2011's own
+`run_interaction_event`/`run_interaction_script` (the dead-declaration
+source this project names `run_event_block` after) DO return a real
+boolean specifically so callers can skip the "any click" event once the
+mode-specific interaction already did something conclusive.
+
+Read `run_event_block`'s entire ~908-line body end to end looking for
+early-return points. There's exactly ONE: every branch, regardless of
+which `EventBlock.respond[]` type it dispatches to, converges via jumps
+onto a single shared epilogue label (`loc_4178B0: pop esi; pop ebx; mov
+esp,ebp; pop ebp; retn`), with no dedicated `mov eax,1`/`mov eax,0`
+signal set anywhere before it. Whatever value `eax` holds on exit is
+incidental -- typically whatever the last-called helper (e.g.
+`run_text_script_2iparam`) itself happened to return -- not a
+deliberate "did I handle this" boolean.
+
+This settles the question definitively: `run_event_block` structurally
+CANNOT communicate a "stop processing" signal back to its callers,
+because it has no code path that ever sets one. The three callers'
+unconditional fall-through isn't a caller-side omission at all -- there
+is nothing meaningful for any of them to check. **Practical
+consequence**: in this build, clicking a hotspot/object/character
+ALWAYS fires its "any click" interaction in addition to whatever
+mode-specific interaction ran, with no way for the mode-specific one to
+suppress it -- a real, confirmed behavioral difference from 2011 (where
+a mode-specific interaction that changes rooms, say, DOES suppress the
+trailing "any click" event), rooted in this build's fundamentally
+simpler, non-short-circuiting EventBlock-era dispatch design rather than
+a bug in any one caller.
