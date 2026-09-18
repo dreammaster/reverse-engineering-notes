@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 946 named, 1640 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 948 named, 1638 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5052,6 +5052,17 @@ disassembly work.
   public `set_palette()` (`gfx.c:216-219`) verbatim, including
   Allegro's own `TRUE==-1` convention. Third-party library boundary,
   not chased further. See `reversing/notes/struct-layout-drift.md`.
+- **`request_refresh_rate`/`clear_2` -- two more Allegro matches from
+  the same sweep.** `sub_434CB0` (called from `init_gfx_mode`) matches
+  Allegro's public `request_refresh_rate(int)` verbatim, called with a
+  literal 85Hz argument right before mode-setting. `sub_428DE0` (called
+  from `dxmedia_play_video`) is a second, duplicate compiled instance
+  of the `clear(bmp)` macro already matched once under the plain name
+  `clear` -- renamed `clear_2` following the established `_N`
+  collision convention. A related lead, `sub_425600`'s `GFX_VTABLE`
+  dispatch, didn't cleanly reconcile with the reference slot order and
+  was left open rather than forced. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

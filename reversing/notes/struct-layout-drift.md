@@ -16845,3 +16845,43 @@ this project) both match exactly. Renamed `sub_43C460` ->
 (2586 functions, 946 named). Third-party library boundary per this
 project's own scope rule -- not chased further, its own callee
 `set_palette_range` is already independently matched.
+
+### `request_refresh_rate`/`clear_2` -- two more small Allegro API matches from the same sweep
+
+Two more targets from the same whole-binary AGS-side-callee sweep,
+both closing cleanly:
+
+- **`sub_434CB0`, called from `init_gfx_mode`** (already matched):
+  a 3-instruction wrapper whose entire body is `dword_537020 = arg_0;
+  retn`. Matches Allegro's own public `void request_refresh_rate(int
+  rate) { _refresh_rate_request = rate; }` (`graphics.c:164-170`)
+  verbatim, identifying `dword_537020` as that library global.
+  `init_gfx_mode`'s own call site passes a literal `0x55`(85) argument
+  right before its `final_scrn_wid`/`hit`/`col_dep` setup and
+  `set_gfx_mode` call -- a plausible fixed 85Hz refresh-rate request,
+  matching the function's own documented role and call position
+  exactly. Renamed `sub_434CB0` -> `request_refresh_rate`.
+- **`sub_428DE0`, called from `dxmedia_play_video`** (already matched):
+  already carried a full IDB comment from an earlier round (found
+  while matching `clear_to_color_2`) that had simply never been synced
+  into `matches.json` -- a small data-hygiene gap, not a new
+  investigation. Its own body (`push arg_0; call clear_to_color_2`) is
+  a second, DUPLICATE compiled instance of Allegro's `clear(bmp)`
+  macro (`#define clear(bmp) clear_to_color(bmp, 0)`), already matched
+  once before under the plain name `clear` at a different address --
+  the same "one macro, multiple out-of-line compiled copies" pattern
+  already named with a `_2` suffix for `clear_to_color_2` itself.
+  Renamed `sub_428DE0` -> `clear_2` following that established
+  collision-naming convention.
+
+Both applied to the live IDB and re-exported this round (2586
+functions, 948 named). Both are third-party library boundary matches
+per this project's own scope rule -- not chased further. A related
+lead, `sub_425600` (called from `put_sprite_256`, a `color_depth==32`
+gate dispatching between two `GFX_VTABLE` slots 4 bytes apart),
+was investigated but left unidentified: its own dispatch shape doesn't
+cleanly reconcile with the reference header's declared slot order even
+after applying this project's own already-established vtable-shift
+correction (the missing `draw_trans_rgba_sprite` slot) -- rather than
+force an uncertain identification, it's left open for a future round
+with more context.

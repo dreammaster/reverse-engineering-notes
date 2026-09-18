@@ -3225,9 +3225,9 @@
   "is_named": true
  },
  {
-  "name": "sub_428DE0",
+  "name": "clear_2",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "DialogFunc",
@@ -4075,9 +4075,9 @@
   "is_named": true
  },
  {
-  "name": "sub_434CB0",
+  "name": "request_refresh_rate",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_434CC0",

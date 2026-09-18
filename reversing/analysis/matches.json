@@ -8173,5 +8173,25 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "void set_palette(AL_CONST PALETTE p) at gfx.c:216-219 -- Allegro's own public 'set the entire color palette' API. Exact, complete match: this function's entire body is 'push -1(retracesync); push 0xFF(to); push 0(from); push p(arg_0); call set_palette_range' -- matching source's own one-line body 'set_palette_range(p, 0, PAL_SIZE-1, TRUE);' verbatim, including Allegro's own TRUE==-1 convention (already established elsewhere in this project, e.g. release_voice) matching the literal 0FFFFFFFFh push exactly and PAL_SIZE-1=255=0xFF matching the literal 0FFh push exactly. Called from FadeOut and sub_40A6D8 (both already matched) -- FadeOut's own call applies the fully-computed target palette in one shot after its own fade_interpolate loop finishes (color_depth>1 manual-darkening path), and sub_40A6D8's own call sits in its own color_depth>1, dword_4EEB4C!=0 branch (a shortcut applying the palette directly with no fade animation at all). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule) -- not chased further, its own callee set_palette_range is already independently matched."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_434CB0",
+    "new_name": "request_refresh_rate",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/graphics.c",
+    "source_line": 164,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void request_refresh_rate(int rate) { _refresh_rate_request = rate; } at graphics.c:164-170 -- Allegro's own public 'request a refresh rate for the next set_gfx_mode() call' API. Exact, complete match: this function's entire 3-instruction body is 'dword_537020 = arg_0; retn', matching source's one-line assignment to the module-global _refresh_rate_request verbatim (identifying dword_537020 as that global). Called from init_gfx_mode (already matched) with a literal 0x55(85) argument, immediately before the final_scrn_wid/hit/col_dep setup and set_gfx_mode call -- a plausible fixed 85Hz refresh-rate request, matching the function's own documented role and call position exactly (called right before mode-setting, per source's own doc comment 'Requests that the next call to set_gfx_mode() use the specified refresh rate'). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule) -- not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_428DE0",
+    "new_name": "clear_2",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "clear(bmp) -- Allegro's public macro, '#define clear(bmp) clear_to_color(bmp, 0)'. This function's entire body is 'push arg_0; call clear_to_color_2; pop ebp; retn' -- a second, DUPLICATE compiled instance of the exact same macro expansion already matched under the plain name `clear` at a different address (that entry's own asm_name is already `clear`, IDA-assigned, new_name None since no rename was needed there) -- the same one-macro/two-compiled-copies pattern already named with a `_2` suffix for `clear_to_color_2` itself. Called from dxmedia_play_video (already matched), consistent with a separate translation unit generating its own out-of-line copy of the macro rather than sharing the other one. Renamed `sub_428DE0` -> `clear_2` following the established `_N` collision-naming convention. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
   }
 ]
