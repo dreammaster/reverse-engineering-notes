@@ -853,3 +853,38 @@ unnamed callees.
 
 Applied all 7, re-exported (2586 functions, 980 named -- up from 535
 at the start of this project).
+
+### `sub_47F160`/`sub_47F130`: the MP3STREAM-flavored twin of `sub_47E7A0`, plus `almp3_is_playing_mp3stream`
+
+`my_load_mp3`'s own remaining callee, `sub_47F130`, turns out to be a
+thin wrapper around `sub_47F160` -- and `sub_47F160` is structurally
+IDENTICAL to `sub_47E7A0` (this project's own earlier ALMP3 lead,
+characterized but left unnamed a few rounds ago): both compute a
+sample count from a caller-supplied byte count, call the already-
+matched `play_audio_stream`, then conditionally call the already-
+matched `adjust_sample` when a trailing argument isn't the literal
+`1000` ("100%=normal speed"). `sub_47E7A0` operates on `ALMP3_MP3`
+fields; `sub_47F160` operates on the `ALMP3_MP3STREAM`-shaped
+equivalent (the same huge `+0xA6xx` offsets), matching ALMP3's own
+static-vs-streaming API split.
+
+One piece closes decisively: `sub_47F160`'s own opening guard,
+`sub_47F690`, is `int almp3_is_playing_mp3stream(ALMP3_MP3STREAM
+*mp3) { if (mp3->audiostream==NULL) return FALSE; else return TRUE; }`
+(`almp3.c:1901-1906`) -- its entire body is the classic `(x!=0)?-1:0`
+idiom testing exactly the field `sub_47F160` itself writes with
+`play_audio_stream`'s own return value, confirming both the field
+identity and the function match at once. Renamed.
+
+`sub_47F160`/`sub_47F130` themselves stay UNNAMED for the same reason
+as `sub_47E7A0`: their fused 5-argument play+adjust shape doesn't
+cleanly match either of ALMP3 2.0.5's own separately-declared
+4-argument `almp3_play_mp3stream`/`almp3_adjust_mp3stream` -- this
+2002 build most likely fuses what the archived source keeps as two
+functions into one, for BOTH the static and streaming MP3 cases
+identically. `sub_47F130` itself is just a convenience wrapper
+defaulting the speed argument to `1000`, matching `my_load_mp3`'s own
+lack of any reason to request non-default playback speed at load
+time. Both are now richly characterized in `matches.json` even though
+left unnamed, matching this project's established "record what's
+known, don't force a name" convention.

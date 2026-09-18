@@ -108587,6 +108587,7 @@ static Bytes_18(void) {
 	make_array	(0X47F687,	0X9);
 	create_insn	(x=0X47F690);
 	op_stkvar	(x,	1);
+	set_name	(0X47F690,	"almp3_is_playing_mp3stream");
 	create_insn	(x=0X47F6A0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47F6A4);
@@ -111260,11 +111261,6 @@ static Bytes_18(void) {
 	create_insn	(x=0X4848C4);
 	op_hex		(x,	1);
 	make_array	(0X4848DA,	0X6);
-	create_insn	(0X4848E0);
-	create_insn	(x=0X4848E1);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4848E6);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -111274,6 +111270,11 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_insn	(0X4848E0);
+	create_insn	(x=0X4848E1);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4848E6);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4848F2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4848F7);
@@ -117578,10 +117579,6 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E3AF);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X48E3B3);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X48E3B7);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -117591,6 +117588,10 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X48E3B3);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X48E3B7);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X48E3BB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E3BF);
@@ -124048,7 +124049,6 @@ static Bytes_20(void) {
 	create_insn	(x=0X49763F);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	set_cmt	(0X497644,	"SizeOfElements",	0);
 }
 
 //------------------------------------------------------------------------
@@ -124058,6 +124058,7 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X497644,	"SizeOfElements",	0);
 	set_cmt	(0X497646,	"NumOfElements",	0);
 	set_cmt	(0X497649,	"Base",	0);
 	create_insn	(x=0X49764F);
@@ -130081,8 +130082,6 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0610);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4A0616);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -130092,6 +130091,8 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A0616);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0625);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A0633);
@@ -163063,9 +163064,11 @@ static Functions_13(void) {
 	define_local_var(0X47F0D0, 0X47F123, "[bp+0X4]", "Block");
 	add_func    (0X47F130,0X47F152);
 	set_func_flags(0X47F130,0x5400);
+	set_func_cmt(0X47F130,	"[reversing] confirmed match\nconfidence: medium\nevidence: Thin wrapper around sub_47F160 (this round's own new entry, the MP3STREAM-flavored structural twin of sub_47E7A0's fused play+adjust function): forwards its own 4 arguments unchanged and inserts a literal 0x3E8(1000, 'normal/100% speed') as the 5th argument sub_47F160 itself conditionally acts on. Called from my_load_mp3 (already matched), which has no reason to request a non-default playback speed at load time -- matching this build's own established pattern of default-parameter convenience wrappers around a more general fused function. Left unnamed for the same reason as sub_47F160 itself: no single ALMP3 2.0.5 declared function matches this exact shape.", 1);
 	set_frame_size(0X47F130, 0, 0, 0);
 	add_func    (0X47F160,0X47F236);
 	set_func_flags(0X47F160,0x5400);
+	set_func_cmt(0X47F160,	"[reversing] confirmed match\nconfidence: medium\nevidence: STRUCTURAL TWIN OF sub_47E7A0 (this project's own earlier characterization of the ALMP3_MP3-flavored version of this exact shape): operates on an ALMP3_MP3STREAM-shaped struct (same huge +0xA6xx field offsets as sub_47E7A0's own ALMP3_MP3 struct, consistent with both embedding a similar mpg123 decoder-state prefix), opens with a guard via the newly-matched almp3_is_playing_mp3stream (sub_47F690), computes a sample count from a caller-supplied byte count using [mp3+0xA6AC] as the stream's own sample-rate divisor and [mp3+0xA6CC] as a stereo flag, calls the already-matched play_audio_stream, then CONDITIONALLY calls the already-matched adjust_sample when its own 5th argument is NOT the literal 0x3E8(1000, the same '100%=normal speed' percentage convention already established for sub_47E7A0). STILL NOT RENAMED for the same reason as sub_47E7A0: this 5-argument fused play+adjust shape doesn't cleanly match EITHER of ALMP3 2.0.5's own separately-declared 4-" "argument almp3_play_mp3stream(mp3,buffer_len,vol", 1);
 	set_frame_size(0X47F160, 0X4, 0, 0);
 	add_func    (0X47F240,0X47F24C);
 	set_func_flags(0X47F240,0x5400);
@@ -163087,6 +163090,7 @@ static Functions_13(void) {
 	set_frame_size(0X47F650, 0X4, 0, 0);
 	add_func    (0X47F690,0X47F69F);
 	set_func_flags(0X47F690,0x5400);
+	set_func_cmt(0X47F690,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: int almp3_is_playing_mp3stream(ALMP3_MP3STREAM *mp3) { if (mp3->audiostream==NULL) return FALSE; else return TRUE; } at almp3.c:1901-1906. DECISIVE match: entire body is 'eax=[mp3+0xA6C4]; neg eax; sbb eax,eax; return eax;' -- the classic '(x!=0) ? -1 : 0' boolean idiom testing the exact field (+0xA6C4) that sub_47F160 (this project's own 'MP3STREAM-flavored twin of sub_47E7A0', see its own entry) writes with `play_audio_stream`'s own AUDIOSTREAM* return value immediately after calling it -- confirming +0xA6C4 is `mp3->audiostream` and this function is exactly source's own NULL-check. Called from sub_47F160 as its own opening 'return if already playing' guard, matching source's own role (this function is called from almost every other almp3_*_mp3stream API as a leading guard). Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47F690, 0, 0, 0);
 	add_func    (0X47F6A0,0X47F6B9);
 	set_func_flags(0X47F6A0,0x5400);
@@ -163567,6 +163571,10 @@ static Functions_13(void) {
 	set_func_flags(0X48B330,0x5400);
 	set_func_cmt(0X48B330,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: alfont's own public API measuring a string's rendered pixel width in a TrueType font (no local alfont source tree exists in this repo -- identified by call-shape/role). Iterates the string character by character via a decode-next-character function-pointer call (off_4B28F0, plausibly ugetc/a UTF-8-aware character iterator), looks up each character's glyph via an internal helper (sub_48AE80, not chased further per scope), and accumulates `glyph->advance.x>>6` into a running total -- the `>>6` shift is FreeType's own unmistakable 26.6 fixed-point advance-width convention, a decisive identifying signature. Called from wgettextwidth (already matched) and from the newly-identified alfont text-output helper (sub_48B140). THIRD-PARTY LIBRARY BOUNDARY, not chased further (its own internal glyph-cache helpers sub_48AE80/sub_48CF60 left unnamed).", 1);
 	set_frame_size(0X48B330, 0X4, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X48B3A0,0X48B41C);
 	set_func_flags(0X48B3A0,0x5400);
 	set_frame_size(0X48B3A0, 0X8, 0, 0);
@@ -163666,10 +163674,6 @@ static Functions_13(void) {
 	add_func    (0X48C200,0X48C296);
 	set_func_flags(0X48C200,0x5400);
 	set_frame_size(0X48C200, 0X8, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X48C2A0,0X48C301);
 	set_func_flags(0X48C2A0,0x5400);
 	set_frame_size(0X48C2A0, 0X10, 0, 0);

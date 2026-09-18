@@ -8910,9 +8910,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47F690",
+  "name": "almp3_is_playing_mp3stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47F6A0",

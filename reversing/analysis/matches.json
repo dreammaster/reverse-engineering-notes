@@ -8483,5 +8483,35 @@
     "confidence": "high",
     "is_library": false,
     "evidence": "MYSTATICMP3() : SOUNDCLIP() {} at acsound.cpp:433-434 -- an empty-body constructor, same pattern as MYWAVE::MYWAVE and MYMP3::MYMP3 (this round's own sibling matches): calls SOUNDCLIP__SOUNDCLIP(this) then sets its own vtable (`off_4AD5C0`). Called from my_load_static_mp3 (already matched), matching that function's own already-documented 'operator new(0x18) -> a constructor call (sub_424CC0)' citation from an earlier round -- resolving that previously-unnamed forward reference. Flat-named as a C++ member function."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F690",
+    "new_name": "almp3_is_playing_mp3stream",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 1901,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int almp3_is_playing_mp3stream(ALMP3_MP3STREAM *mp3) { if (mp3->audiostream==NULL) return FALSE; else return TRUE; } at almp3.c:1901-1906. DECISIVE match: entire body is 'eax=[mp3+0xA6C4]; neg eax; sbb eax,eax; return eax;' -- the classic '(x!=0) ? -1 : 0' boolean idiom testing the exact field (+0xA6C4) that sub_47F160 (this project's own 'MP3STREAM-flavored twin of sub_47E7A0', see its own entry) writes with `play_audio_stream`'s own AUDIOSTREAM* return value immediately after calling it -- confirming +0xA6C4 is `mp3->audiostream` and this function is exactly source's own NULL-check. Called from sub_47F160 as its own opening 'return if already playing' guard, matching source's own role (this function is called from almost every other almp3_*_mp3stream API as a leading guard). Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F160",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "STRUCTURAL TWIN OF sub_47E7A0 (this project's own earlier characterization of the ALMP3_MP3-flavored version of this exact shape): operates on an ALMP3_MP3STREAM-shaped struct (same huge +0xA6xx field offsets as sub_47E7A0's own ALMP3_MP3 struct, consistent with both embedding a similar mpg123 decoder-state prefix), opens with a guard via the newly-matched almp3_is_playing_mp3stream (sub_47F690), computes a sample count from a caller-supplied byte count using [mp3+0xA6AC] as the stream's own sample-rate divisor and [mp3+0xA6CC] as a stereo flag, calls the already-matched play_audio_stream, then CONDITIONALLY calls the already-matched adjust_sample when its own 5th argument is NOT the literal 0x3E8(1000, the same '100%=normal speed' percentage convention already established for sub_47E7A0). STILL NOT RENAMED for the same reason as sub_47E7A0: this 5-argument fused play+adjust shape doesn't cleanly match EITHER of ALMP3 2.0.5's own separately-declared 4-argument almp3_play_mp3stream(mp3,buffer_len,vol,pan) or almp3_adjust_mp3stream(mp3,vol,pan,speed) -- most likely this 2002 build's own ALMP3 version fuses what the archived (later) source keeps as two separate functions into one, for BOTH the static-MP3 and streaming-MP3 cases identically. Called from sub_47F130 (this round's own new entry, a thin wrapper hardcoding this function's own speed argument to the literal 1000/normal-speed default)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F130",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "Thin wrapper around sub_47F160 (this round's own new entry, the MP3STREAM-flavored structural twin of sub_47E7A0's fused play+adjust function): forwards its own 4 arguments unchanged and inserts a literal 0x3E8(1000, 'normal/100% speed') as the 5th argument sub_47F160 itself conditionally acts on. Called from my_load_mp3 (already matched), which has no reason to request a non-default playback speed at load time -- matching this build's own established pattern of default-parameter convenience wrappers around a more general fused function. Left unnamed for the same reason as sub_47F160 itself: no single ALMP3 2.0.5 declared function matches this exact shape."
   }
 ]

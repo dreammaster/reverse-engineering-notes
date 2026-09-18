@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 980 named, 1606 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 981 named, 1605 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5234,8 +5234,18 @@ the mpg123 decoder's own two public entry points, `ExitMP3`/
 cross-confirmed via three independent derived constructors all
 calling the same base constructor before patching their own vtable —
 resolving `my_load_static_mp3`'s own long-standing unresolved
-`operator new(0x18)` forward reference from several sessions ago
-(2586 functions, 980 named — up from 535 at the start of this
+`operator new(0x18)` forward reference from several sessions ago.
+One more round found `sub_47F160`, `my_load_mp3`'s own remaining
+callee, is structurally IDENTICAL to the long-open `sub_47E7A0` lead
+— both a fused play+adjust shape gated on a literal `1000`
+("normal speed"), just operating on `ALMP3_MP3STREAM` instead of
+`ALMP3_MP3`. Its own opening guard, `almp3_is_playing_mp3stream`
+(`sub_47F690`), closes decisively via the classic `(x!=0)?-1:0` idiom
+testing the exact field `sub_47F160` itself writes with
+`play_audio_stream`'s return value. `sub_47F160` and its own thin
+default-speed wrapper `sub_47F130` stay unnamed (no clean ALMP3 2.0.5
+match) but are now richly characterized rather than left as bare
+leads (2586 functions, 981 named — up from 535 at the start of this
 project). See `reversing/notes/third-party-library-identification.md`
 for the complete writeup.
 
