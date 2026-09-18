@@ -8333,5 +8333,25 @@
     "confidence": "medium",
     "is_library": true,
     "evidence": "int _sort_out_getc(PACKFILE *f) at file.c:2078-2081 -- 'Helper function for the pack_getc() macro' per source's own doc comment. Identified via pointer target (ds:off_4B28DC points here) and call-shape/role match: 1-argument function, called from pack_getc's own fallback path (this round's own pack_getc identification, matching source's 'return _sort_out_getc(f);' exactly) AND from pack_fread (already matched) -- both matching source's own two real callers of this function. THIRD-PARTY LIBRARY BOUNDARY, not chased further -- its own body (the real slow-path decompression/buffer-refill logic) isn't traced per this project's own scope rule."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_443050",
+    "new_name": "play_audio_stream",
+    "source_file": "Engine/libsrc/allegro-4.0.2/src/stream.c",
+    "source_line": 27,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "AUDIOSTREAM *play_audio_stream(int len, int bits, int stereo, int freq, int vol, int pan) at stream.c:23-27 -- Allegro's public streamed-audio-playback API. Exact 6-argument signature match: called from sub_47E7A0 (the long-open 'sub_47E7A0' ALMP3 lead from an earlier round) with (computed sample count, [mp3+0xA6BC], [mp3+0xA6B8], [mp3+0xA6B4], arg_8, arg_C) -- the leading computed value is derived by dividing a caller-supplied byte count (arg_4) by [mp3+0xA698] then adjusting for a stereo flag ([mp3+0xA6B8], tested nonzero just before), matching 'len' converted from bytes to samples with a stereo doubling factor exactly as play_audio_stream's own role requires. Found via the newly-added Allegro 4.0.2 source tree. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47E7A0",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "ENRICHED CHARACTERIZATION (fresh round, using the newly-added ALMP3 2.0.5 src/almp3.c and Allegro 4.0.2 sources): this function operates on an ALMP3_MP3STREAM-shaped struct (huge field offsets around +0xA6xx, consistent with an embedded mpg123 'struct mpstr' decoder state, which is genuinely tens of KB) and now decisively calls Allegro's own play_audio_stream (sub_443050, this round's own new match) with a byte-count-to-sample-count conversion using [mp3+0xA698] as the stream's own sample-rate divisor and [mp3+0xA6B8] as a stereo flag -- exactly matching play_audio_stream(len,bits,stereo,freq,vol,pan)'s own role. Conditionally calls the already-matched adjust_sample when its own speed-like argument (arg_10) is NOT the literal 0x3E8(1000, a percentage-based '100%=normal speed' convention). STILL NOT RENAMED: this 6-argument shape doesn't cleanly match ANY single function ALMP3 2.0.5's own archived src/almp3.c declares -- almp3_play_mp3stream is a separate 4-argument function (mp3, buffer_len, vol, pan) and almp3_adjust_mp3stream is a separate 4-argument function too (mp3, vol, pan, speed, no loop param) -- neither matches this function's own combined play+speed+loop shape. Most plausible explanation: this 2002 build's own ALMP3 version fused what the archived (later) source keeps as two separate functions into one, the same 'one big pre-refactor function' pattern already found repeatedly for AGS's own code in this project, just now observed in a third-party library too. Left unnamed rather than force a name onto a shape neither archived function actually has -- but now MUCH better understood than the original 'doesn't cleanly match' framing."
   }
 ]

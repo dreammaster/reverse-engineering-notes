@@ -728,3 +728,35 @@ rather than guessed.
 
 Renamed all 10, applied to the live IDB and re-exported (2586
 functions, 958 named -- up from 535 at the start of this project).
+
+### `sub_47E7A0` (the long-open ALMP3 lead) re-investigated -- one solid new match, the shape itself still doesn't fit
+
+Went back to the standing `sub_47E7A0` open lead with ALMP3's own
+newly-available `almp3.c` in hand. Its own 6-argument callee,
+`sub_443050`, is a decisive match: `AUDIOSTREAM *play_audio_stream(int
+len, int bits, int stereo, int freq, int vol, int pan)`
+(`allegro-4.0.2/src/stream.c:23-27`) -- Allegro's public streamed-
+audio API, matching the exact 6-argument shape, with the leading `len`
+argument computed by dividing a caller-supplied byte count by a
+stream-rate divisor read from the struct itself and adjusting for a
+stereo flag, exactly matching `play_audio_stream`'s own documented
+role. Renamed `sub_443050` -> `play_audio_stream`.
+
+`sub_47E7A0` itself is now MUCH better understood -- it operates on an
+`ALMP3_MP3STREAM`-shaped struct (huge `+0xA6xx` field offsets,
+consistent with an embedded `mpg123` decoder state, genuinely tens of
+KB), calls the newly-identified `play_audio_stream`, and conditionally
+calls the already-matched `adjust_sample` when its own speed-like
+argument isn't the literal `1000` (a percentage-based "100%=normal"
+convention) -- but its own 6-argument shape still doesn't cleanly
+match EITHER of ALMP3 2.0.5's own separately-declared
+`almp3_play_mp3stream(mp3,buffer_len,vol,pan)` (4 args) or
+`almp3_adjust_mp3stream(mp3,vol,pan,speed)` (4 args, no loop
+parameter). Most plausible explanation: this 2002 build's own ALMP3
+version fused what the archived (later) source keeps as two separate
+functions into one -- the same "one big pre-refactor function, later
+split" pattern already found repeatedly for AGS's own code in this
+project, now observed in a third-party library too. Left unnamed
+rather than force a name onto a shape neither archived function
+actually has, but its own `matches.json` entry is now far richer than
+the original "doesn't cleanly match" framing.

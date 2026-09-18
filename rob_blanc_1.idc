@@ -67487,6 +67487,7 @@ static Bytes_11(void) {
 	op_hex		(x,	1);
 	make_array	(0X443044,	0XC);
 	create_insn	(0X443050);
+	set_name	(0X443050,	"play_audio_stream");
 	create_insn	(0X44306A);
 	create_insn	(x=0X44306F);
 	op_stkvar	(x,	1);
@@ -69945,9 +69946,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X4462F6);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44630A);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -69957,6 +69955,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44630A);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X446310);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -76129,11 +76130,6 @@ static Bytes_12(void) {
 	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X44E30E);
 	op_hex		(x,	1);
-	create_insn	(0X44E317);
-	create_insn	(x=0X44E31D);
-	op_hex		(x,	1);
-	create_insn	(x=0X44E324);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -76143,6 +76139,11 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(0X44E317);
+	create_insn	(x=0X44E31D);
+	op_hex		(x,	1);
+	create_insn	(x=0X44E324);
+	op_hex		(x,	1);
 	create_insn	(x=0X44E32E);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -81396,9 +81397,6 @@ static Bytes_13(void) {
 	create_insn	(x=0X4563B1);
 	op_stkvar	(x,	1);
 	make_array	(0X4563C9,	0X7);
-	create_insn	(x=0X4563D0);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -81408,6 +81406,9 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4563D0);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X4563E9);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -87578,8 +87579,6 @@ static Bytes_14(void) {
 	create_insn	(x=0X462D04);
 	op_hex		(x,	1);
 	set_cmt	(0X462D0D,	"Block",	0);
-	create_insn	(x=0X462D14);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -87589,6 +87588,8 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X462D14);
+	op_hex		(x,	1);
 	set_cmt	(0X462D22,	"Block",	0);
 	create_insn	(x=0X462D29);
 	op_hex		(x,	1);
@@ -93396,12 +93397,6 @@ static Bytes_15(void) {
 	set_name	(0X46B613,	"def_46B5B0");
 	create_insn	(x=0X46B617);
 	op_hex		(x,	1);
-	set_cmt	(0X46B61C,	"jump table for switch statement",	0);
-	create_dword	(x=0X46B61C);
-	make_array	(x,	0X5);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	set_name	(0X46B61C,	"jpt_46B5B0");
 }
 
 //------------------------------------------------------------------------
@@ -93411,6 +93406,12 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X46B61C,	"jump table for switch statement",	0);
+	create_dword	(x=0X46B61C);
+	make_array	(x,	0X5);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	set_name	(0X46B61C,	"jpt_46B5B0");
 	set_cmt	(0X46B630,	"indirect table for switch statement",	0);
 	create_byte	(0X46B630);
 	make_array	(0X46B630,	0X12);
@@ -99343,6 +99344,15 @@ static Bytes_16(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X473686);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_17(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47368D);
 	op_hex		(x,	1);
 	create_insn	(x=0X473692);
@@ -99355,15 +99365,6 @@ static Bytes_16(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4736B2);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_17(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4736BC);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4736C7,	"Size",	0);
@@ -105146,6 +105147,15 @@ static Bytes_17(void) {
 	create_insn	(x=0X47ACD2);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_18(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47ACD7);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -105157,15 +105167,6 @@ static Bytes_17(void) {
 	set_cmt	(0X47ACF7,	"Block",	0);
 	create_insn	(x=0X47ACFD);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_18(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47AD09);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -111296,6 +111297,15 @@ static Bytes_18(void) {
 	create_insn	(0X484A90);
 	create_insn	(x=0X484A91);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_19(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X484A9A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X484A9F);
@@ -111306,15 +111316,6 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X484AE4);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_19(void) {
-        auto x;
-#define id x
-
 	make_array	(0X484AFA,	0X6);
 	create_insn	(0X484B00);
 	create_insn	(x=0X484B01);
@@ -117614,6 +117615,15 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E45E);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_20(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X48E463);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E467);
@@ -117624,15 +117634,6 @@ static Bytes_19(void) {
 	create_insn	(x=0X48E47E);
 	op_hex		(x,	1);
 	create_insn	(0X48E482);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_20(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X48E48B);
 	op_hex		(x,	1);
 	create_insn	(0X48E490);
@@ -124081,6 +124082,15 @@ static Bytes_20(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X497786);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_21(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X497793);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4977A0);
@@ -124091,15 +124101,6 @@ static Bytes_20(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4977B9);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_21(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4977BD);
 	op_hex		(x,	1);
 	create_insn	(x=0X4977C4);
@@ -130101,15 +130102,6 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A06FD);
 	op_hex		(x,	1);
-	create_insn	(x=0X4A0710);
-	op_hex		(x,	1);
-	set_cmt	(0X4A0745,	"jumptable 004A01EF case 9",	1);
-	create_insn	(x=0X4A0745);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A0751);
-	op_hex		(x,	1);
-	set_cmt	(0X4A0768,	"jumptable 004A01EF case 10",	1);
-	create_insn	(0X4A0768);
 }
 
 //------------------------------------------------------------------------
@@ -130119,6 +130111,15 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A0710);
+	op_hex		(x,	1);
+	set_cmt	(0X4A0745,	"jumptable 004A01EF case 9",	1);
+	create_insn	(x=0X4A0745);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A0751);
+	op_hex		(x,	1);
+	set_cmt	(0X4A0768,	"jumptable 004A01EF case 10",	1);
+	create_insn	(0X4A0768);
 	create_insn	(x=0X4A076D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0775);
@@ -136081,6 +136082,15 @@ static Bytes_22(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4A974C);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_23(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4A9757);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9764);
@@ -136095,15 +136105,6 @@ static Bytes_22(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A979D);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_23(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A97A3);
 	op_stkvar	(x,	0);
 	create_insn	(0X4A97D9);
@@ -141245,6 +141246,15 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEFBC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_24(void) {
+        auto x;
+#define id x
+
 	create_dword	(x=0X4AEFC0);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -141257,15 +141267,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEFCC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_24(void) {
-        auto x;
-#define id x
-
 	create_dword	(x=0X4AEFD0);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145642,13 +145643,6 @@ static Bytes_24(void) {
 	make_array	(0X4B44FE,	0X2);
 	create_strlit	(0X4B4500,	0X6);
 	set_name	(0X4B4500,	"aLte");
-	make_array	(0X4B4506,	0X2);
-	create_strlit	(0X4B4508,	0X6);
-	set_name	(0X4B4508,	"aAnd");
-	make_array	(0X4B450E,	0X2);
-	create_strlit	(0X4B4510,	0X5);
-	set_name	(0X4B4510,	"aOr");
-	make_array	(0X4B4515,	0X3);
 }
 
 //------------------------------------------------------------------------
@@ -145658,6 +145652,13 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	make_array	(0X4B4506,	0X2);
+	create_strlit	(0X4B4508,	0X6);
+	set_name	(0X4B4508,	"aAnd");
+	make_array	(0X4B450E,	0X2);
+	create_strlit	(0X4B4510,	0X5);
+	set_name	(0X4B4510,	"aOr");
+	make_array	(0X4B4515,	0X3);
 	create_strlit	(0X4B4518,	0X6);
 	set_name	(0X4B4518,	"aCall");
 	make_array	(0X4B451E,	0X2);
@@ -149016,14 +149017,6 @@ static Bytes_25(void) {
 	create_strlit	(0X4BBB9C,	0X5);
 	set_name	(0X4BBB9C,	"aNull_7");
 	make_array	(0X4BBBA1,	0X3);
-	create_strlit	(0X4BBBA4,	0X3);
-	set_name	(0X4BBBA4,	"aSp_2");
-	create_strlit	(0X4BBBA8,	0X4);
-	set_name	(0X4BBBA8,	"aMar_2");
-	create_strlit	(0X4BBBAC,	0X3);
-	set_name	(0X4BBBAC,	"aAx_2");
-	create_strlit	(0X4BBBB0,	0X3);
-	set_name	(0X4BBBB0,	"aBx_2");
 }
 
 //------------------------------------------------------------------------
@@ -149033,6 +149026,14 @@ static Bytes_26(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4BBBA4,	0X3);
+	set_name	(0X4BBBA4,	"aSp_2");
+	create_strlit	(0X4BBBA8,	0X4);
+	set_name	(0X4BBBA8,	"aMar_2");
+	create_strlit	(0X4BBBAC,	0X3);
+	set_name	(0X4BBBAC,	"aAx_2");
+	create_strlit	(0X4BBBB0,	0X3);
+	set_name	(0X4BBBB0,	"aBx_2");
 	create_strlit	(0X4BBBB4,	0X3);
 	set_name	(0X4BBBB4,	"aCx_2");
 	create_dword	(0X4BBBB8);
@@ -152600,14 +152601,6 @@ static Bytes_26(void) {
 	set_name	(0X4CB2EC,	"aGcircumflex");
 	create_strlit	(0X4CB2F8,	0X7);
 	set_name	(0X4CB2F8,	"aGcaron");
-	create_strlit	(0X4CB300,	0X7);
-	set_name	(0X4CB300,	"aGbreve");
-	create_strlit	(0X4CB308,	0X6);
-	set_name	(0X4CB308,	"aGamma");
-	make_array	(0X4CB30E,	0X2);
-	create_strlit	(0X4CB310,	0X5);
-	set_name	(0X4CB310,	"aEuro");
-	make_array	(0X4CB315,	0X3);
 }
 
 //------------------------------------------------------------------------
@@ -152617,6 +152610,14 @@ static Bytes_27(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4CB300,	0X7);
+	set_name	(0X4CB300,	"aGbreve");
+	create_strlit	(0X4CB308,	0X6);
+	set_name	(0X4CB308,	"aGamma");
+	make_array	(0X4CB30E,	0X2);
+	create_strlit	(0X4CB310,	0X5);
+	set_name	(0X4CB310,	"aEuro");
+	make_array	(0X4CB315,	0X3);
 	create_strlit	(0X4CB318,	0X9);
 	set_name	(0X4CB318,	"aEtatonos");
 	make_array	(0X4CB321,	0X3);
@@ -160177,6 +160178,7 @@ static Functions_11(void) {
 	define_local_var(0X443010, 0X443044, "[bp+0XC]", "aty");
 	add_func    (0X443050,0X44319C);
 	set_func_flags(0X443050,0x5400);
+	set_func_cmt(0X443050,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.0.2/src/stream.c\nconfidence: high\nevidence: AUDIOSTREAM *play_audio_stream(int len, int bits, int stereo, int freq, int vol, int pan) at stream.c:23-27 -- Allegro's public streamed-audio-playback API. Exact 6-argument signature match: called from sub_47E7A0 (the long-open 'sub_47E7A0' ALMP3 lead from an earlier round) with (computed sample count, [mp3+0xA6BC], [mp3+0xA6B8], [mp3+0xA6B4], arg_8, arg_C) -- the leading computed value is derived by dividing a caller-supplied byte count (arg_4) by [mp3+0xA698] then adjusting for a stereo flag ([mp3+0xA6B8], tested nonzero just before), matching 'len' converted from bytes to samples with a stereo doubling factor exactly as play_audio_stream's own role requires. Found via the newly-added Allegro 4.0.2 source tree. THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X443050, 0X10, 0, 0);
 	add_func    (0X4431A0,0X4431E5);
 	set_func_flags(0X4431A0,0x5400);
@@ -160821,6 +160823,10 @@ static Functions_11(void) {
 	set_func_flags(0X44C9C0,0x5400);
 	set_func_cmt(0X44C9C0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/flood.c\nconfidence: high\nevidence: _soft_floodfill(BITMAP*bmp,int x,int y,int color) (flood.c:209-277) -- Allegro own public flood-fill implementation. A near-exhaustive, field-for-field match: the opening clip-bounds check (\"if(x<bmp->cl||x>=bmp->cr||y<bmp->ct||y>=bmp->cb) return;\") matches the disasm own 4-way comparison against bmp own cl/cr@+0x0C/+0x10 and ct/cb@+0x14/+0x18 exactly; acquire_bitmap(bmp) matches the conditional vtable-slot-0x10 call; \"src_color=getpixel(bmp,x,y); if(src_color==color) {release_bitmap(bmp); return;}\" matches the vtable-slot-0x20(getpixel)-then-compare-then-conditional-slot-0x14(release) sequence exactly; \"_grow_scratch_mem(sizeof(FLOODED_LINE)*bmp->cb)\" matches the realloc-based scratch-buffer-growing logic against dword_536FA0/dword_536FA4 (matching Allegro own internal _scratch_mem/_scratch_mem_size globals); the FLOODED_LINE initialization loop (\"p[c].flags=0; p[c].lpos=SHRT_MAX; p[c].rpos=SHRT_MIN; p[c]." "y=y; p[c].next=0;\") matches the disasm own 5-word-per-entry init loop field for field. GENUINE", 1);
 	set_frame_size(0X44C9C0, 0X10, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X44CBB0,0X44CF0A);
 	set_func_flags(0X44CBB0,0x5410);
 	set_frame_size(0X44CBB0, 0X10, 4, 0);
@@ -160832,10 +160838,6 @@ static Functions_11(void) {
 	set_func_cmt(0X44CFC0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:pcx.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:pcx.obj", 1);
 	set_frame_size(0X44CFC0, 0X434, 0, 0);
 	define_local_var(0X44CFC0, 0X44D542, "[bp-0X420]", "Block");
-}
-
-static Functions_12(void) {
-
 	add_func    (0X44D550,0X44DAF3);
 	set_func_flags(0X44D550,0x15400);
 	set_func_cmt(0X44D550,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:pcx.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:pcx.obj", 1);
@@ -162568,14 +162570,14 @@ static Functions_12(void) {
 	set_func_flags(0X477320,0x5400);
 	set_func_cmt(0X477320,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, JGMOD *load_mod(char *filename) -- referenced (not defined, the library body itself is not in this repo's checkout -- no Engine/libsrc/jgmod/ tree exists) at Engine/acsound.cpp:1116, \"JGMOD *modPtr = load_mod((char *)filname); if (modPtr == NULL) return NULL;\" inside my_load_mod (compiled under the ACTIVE #ifdef JGMOD_MOD_PLAYER branch, acsound.cpp:1025). CORRECTS an earlier investigation round that mistook this function's internal XM-signature check (it checks for \"Extended Module: \", the standard XM file magic) for evidence of dumb-0.9.2's XM loader -- dumb-0.9.2 is conclusively NOT linked into this binary at all (released April 2003, seven months after this binary's 2002-07-21 link date, the same \"wrong era\" pattern already established for apeg-1.2.1). Confirmed via caller pattern: PlayMusic (already matched) builds candidate filenames (\"music%d.mod\", \"music%d.xm\", \"music%d.s3m\") and calls this func" "tion on each in turn, checking for a non-NULL result -- exactly matching ", 1);
 	set_frame_size(0X477320, 0X8, 0, 0);
-	add_func    (0X477470,0X47778D);
-	set_func_flags(0X477470,0x5400);
-	set_func_cmt(0X477470,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void play_mod(JGMOD *j, int loop) -- referenced at Engine/acsound.cpp:1103, \"play_mod(tune, repeat);\" inside MYMOD::play() (JGMOD_MOD_PLAYER branch). Confirmed via a distinctive literal error string, \"Can't play a JGMOD pointer with null value\", guarding a NULL check on its first argument -- exactly the kind of defensive check a public \"play this tune\" API would have. Called from PlayMusic (already matched) immediately after a successful load_mod (sub_477320, see its own entry) call, matching the source's load-then-play sequence exactly. Confirms dword_4EF028 (already-established GameState.music_repeat) as play_mod's second argument, matching source's 'play_mod(tune,repeat);' (acsound.cpp:1103) exactly -- the same global MYMIDI's own play_midi call uses in the identical role (see PlayMusic's own entry).", 1);
-	set_frame_size(0X477470, 0X8, 0, 0);
 }
 
 static Functions_13(void) {
 
+	add_func    (0X477470,0X47778D);
+	set_func_flags(0X477470,0x5400);
+	set_func_cmt(0X477470,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void play_mod(JGMOD *j, int loop) -- referenced at Engine/acsound.cpp:1103, \"play_mod(tune, repeat);\" inside MYMOD::play() (JGMOD_MOD_PLAYER branch). Confirmed via a distinctive literal error string, \"Can't play a JGMOD pointer with null value\", guarding a NULL check on its first argument -- exactly the kind of defensive check a public \"play this tune\" API would have. Called from PlayMusic (already matched) immediately after a successful load_mod (sub_477320, see its own entry) call, matching the source's load-then-play sequence exactly. Confirms dword_4EF028 (already-established GameState.music_repeat) as play_mod's second argument, matching source's 'play_mod(tune,repeat);' (acsound.cpp:1103) exactly -- the same global MYMIDI's own play_midi call uses in the identical role (see PlayMusic's own entry).", 1);
+	set_frame_size(0X477470, 0X8, 0, 0);
 	add_func    (0X477790,0X4777FE);
 	set_func_flags(0X477790,0x5400);
 	set_func_cmt(0X477790,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void stop_mod(void) -- referenced at Engine/acsound.cpp:1055 inside MYMOD::destroy() ('stop_mod(); destroy_mod(tune); tune=NULL;'). Called from scr_StopMusic (already matched) with ZERO arguments, immediately after is_mod_playing() (sub_4778B0, see its own entry) returns true, and immediately before destroy_mod (sub_4779A0, see its own entry) -- matching source's exact call order and arg count.", 1);
@@ -162978,6 +162980,7 @@ static Functions_13(void) {
 	define_local_var(0X47E760, 0X47E799, "[bp+0X4]", "Block");
 	add_func    (0X47E7A0,0X47E880);
 	set_func_flags(0X47E7A0,0x5400);
+	set_func_cmt(0X47E7A0,	"[reversing] confirmed match\nconfidence: medium\nevidence: ENRICHED CHARACTERIZATION (fresh round, using the newly-added ALMP3 2.0.5 src/almp3.c and Allegro 4.0.2 sources): this function operates on an ALMP3_MP3STREAM-shaped struct (huge field offsets around +0xA6xx, consistent with an embedded mpg123 'struct mpstr' decoder state, which is genuinely tens of KB) and now decisively calls Allegro's own play_audio_stream (sub_443050, this round's own new match) with a byte-count-to-sample-count conversion using [mp3+0xA698] as the stream's own sample-rate divisor and [mp3+0xA6B8] as a stereo flag -- exactly matching play_audio_stream(len,bits,stereo,freq,vol,pan)'s own role. Conditionally calls the already-matched adjust_sample when its own speed-like argument (arg_10) is NOT the literal 0x3E8(1000, a percentage-based '100%=normal speed' convention). STILL NOT RENAMED: this 6-argument shape doesn't cleanly match ANY single function ALMP3 2.0.5's own archived src/almp3.c declares -- almp3_play_mp3stream is a separa" "te 4-argument function (mp3, buffer_len, vol, pa", 1);
 	set_frame_size(0X47E7A0, 0X4, 0, 0);
 	add_func    (0X47E880,0X47E88C);
 	set_func_flags(0X47E880,0x5400);
@@ -164257,6 +164260,10 @@ static Functions_13(void) {
 	set_func_flags(0X497660,0x5400);
 	SetType(0X497660, "int __cdecl sub_497660(const void *, const void *);");
 	set_frame_size(0X497660, 0X4, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X4976A0,0X497830);
 	set_func_flags(0X4976A0,0x5400);
 	set_frame_size(0X4976A0, 0X18, 0, 0);
@@ -164362,10 +164369,6 @@ static Functions_13(void) {
 	add_func    (0X49A530,0X49A5E5);
 	set_func_flags(0X49A530,0x5400);
 	set_frame_size(0X49A530, 0XC, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X49A5F0,0X49A726);
 	set_func_flags(0X49A5F0,0x5400);
 	set_frame_size(0X49A5F0, 0XC, 0, 0);

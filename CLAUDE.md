@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 958 named, 1628 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 959 named, 1627 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5206,7 +5206,15 @@ is actually Allegro's own `pack_getc()` — and two more Allegro
 internals (`pack_fseek`, `_sort_out_getc`). One promising lead
 (`sub_477CE0`, sharing `load_mod`'s own cascade shape but gated by a
 second argument `load_mod` itself doesn't have) was investigated and
-correctly left open rather than forced. See
+correctly left open rather than forced. A follow-up round revisited
+the long-standing `sub_47E7A0` ALMP3 lead with `almp3.c` in hand:
+names its own 6-argument callee as Allegro's `play_audio_stream`
+(exact signature match), but `sub_47E7A0` itself still doesn't
+cleanly match either of ALMP3's own separately-declared 4-argument
+`almp3_play_mp3stream`/`almp3_adjust_mp3stream` — most likely this
+2002 build fuses what the archived source keeps as two functions into
+one, left unnamed but far better characterized than before (2586
+functions, 959 named). See
 `reversing/notes/third-party-library-identification.md` for the
 complete writeup.
 

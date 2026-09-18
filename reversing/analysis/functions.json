@@ -4645,9 +4645,9 @@
   "is_named": true
  },
  {
-  "name": "sub_443050",
+  "name": "play_audio_stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4431A0",
