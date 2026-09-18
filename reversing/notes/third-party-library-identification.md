@@ -972,3 +972,34 @@ THIN WRAPPER + a separate, more-general "_ex"-style real workhorse
 before concluding there's no match at all -- this pattern (`almp3_
 play_mp3`/`almp3_play_ex_mp3`, mirrored for the streaming API) is
 exactly what tripped up both of this project's own earlier attempts.
+
+### `SeekMP3PosMillis`'s own callee chain closes -- 3 more ALMP3 matches, no corrections needed this time
+
+A quick follow-up sweep of `SeekMP3PosMillis` (already matched, one of
+the few AGS-side MP3 script-API functions whose own ALMP3 callee had
+never been individually traced) found a clean 3-function chain with no
+surprises. `sub_47E970` (`SeekMP3PosMillis`'s direct callee) is a
+DECISIVE, complete 2-argument match to `almp3_seek_abs_msecs_mp3
+(ALMP3_MP3 *mp3, int msec)` (`almp3.c:597-601`):
+
+```c
+void almp3_seek_abs_msecs_mp3(ALMP3_MP3 *mp3, int msec) {
+  int frame;
+  frame = msec / almp3_get_msecs_per_frame_mp3(mp3);
+  almp3_seek_abs_frames_mp3(mp3, frame);
+}
+```
+
+Its own two callees match the source's own two-call sequence exactly:
+`sub_47EC30` is `almp3_get_msecs_per_frame_mp3(ALMP3_MP3*)`
+(`almp3.c:914`, 1-arg, int-returning, called once as a divisor), and
+`sub_47E900` is `almp3_seek_abs_frames_mp3(ALMP3_MP3*, int frame)`
+(`almp3.c:574`, 2-arg, void-returning, called with the just-computed
+frame number). All three renamed with high confidence.
+
+Checked `sub_477AF0`/`sub_47C1D0` (JGMOD's own internal per-format
+loader helpers, called only from `load_m`/`load_xm`'s own bodies) and
+deliberately left them uninvestigated -- exactly the class of
+library-internal helper this project's own third-party scope rule
+says not to chase once the library itself is confirmed. Applied all 3
+matches, re-exported (2586 functions, 993 named).

@@ -8573,5 +8573,35 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "int almp3_poll_mp3(ALMP3_MP3 *mp3) at almp3.c:688 -- ALMP3_MP3's own per-frame poll/decode-and-buffer-fill function, the non-streaming sibling of the already-matched almp3_poll_mp3stream (itself a substantial ~200-line function). Opening guard matches exactly: 'if (!almp3_is_playing_mp3(mp3)) return ALMP3_POLL_NOTPLAYING;' -- calls the already-matched almp3_is_playing_mp3 (sub_47ECC0) and returns -1 (matching ALMP3_POLL_NOTPLAYING) on failure. Function size (237 disassembly lines) is consistent with almp3_poll_mp3's own substantial real decode-loop body. Called from sub_4084E0 (this build's own MP3-crossfade-continuation check, already matched) -- matching that function's own existing citation of 'polling the already-confirmed PlayMusic MP3 stream handle' exactly. HIGH confidence via the decisive opening-guard match; own body past that point not instruction-traced this round given its size, per this project's own convention for large functions. Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47E970",
+    "new_name": "almp3_seek_abs_msecs_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 597,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_seek_abs_msecs_mp3(ALMP3_MP3 *mp3, int msec) { int frame; frame = msec / almp3_get_msecs_per_frame_mp3(mp3); almp3_seek_abs_frames_mp3(mp3, frame); } at almp3.c:597-601. DECISIVE, complete, 2-argument match: calls sub_47EC30 (this round's own almp3_get_msecs_per_frame_mp3 match), divides the caller's msec argument by the result, then calls sub_47E900 (this round's own almp3_seek_abs_frames_mp3 match) with the computed frame number -- matching source's own two-call sequence exactly. Called from SeekMP3PosMillis (already matched, the AGS script-API entry point for this feature). Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47EC30",
+    "new_name": "almp3_get_msecs_per_frame_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 914,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int almp3_get_msecs_per_frame_mp3(ALMP3_MP3 *mp3) at almp3.c:914 -- 1-argument, int-returning, matching sub_47E970's own call shape exactly (called once, its return value used as a divisor). Confirmed via almp3_seek_abs_msecs_mp3's own decisive match (this round's sub_47E970 entry). Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47E900",
+    "new_name": "almp3_seek_abs_frames_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 574,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_seek_abs_frames_mp3(ALMP3_MP3 *mp3, int frame) at almp3.c:574 -- 2-argument, void-returning, matching sub_47E970's own final call shape exactly (mp3, computed frame number). Confirmed via almp3_seek_abs_msecs_mp3's own decisive match (this round's sub_47E970 entry). Found via the newly-added ALMP3 2.0.5 source tree."
   }
 ]

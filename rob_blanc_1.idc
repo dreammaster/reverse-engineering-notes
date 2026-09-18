@@ -108054,6 +108054,7 @@ static Bytes_18(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X47E8FE,	0X2);
 	create_insn	(0X47E900);
+	set_name	(0X47E900,	"almp3_seek_abs_frames_mp3");
 	create_insn	(x=0X47E902);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47E90A);
@@ -108063,6 +108064,7 @@ static Bytes_18(void) {
 	create_insn	(0X47E93E);
 	make_array	(0X47E961,	0XF);
 	create_insn	(0X47E970);
+	set_name	(0X47E970,	"almp3_seek_abs_msecs_mp3");
 	create_insn	(x=0X47E971);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47E97D);
@@ -108142,6 +108144,7 @@ static Bytes_18(void) {
 	make_array	(0X47EC25,	0XB);
 	create_insn	(x=0X47EC30);
 	op_hex		(x,	1);
+	set_name	(0X47EC30,	"almp3_get_msecs_per_frame_mp3");
 	create_insn	(x=0X47EC33);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47EC3E);
@@ -111233,6 +111236,15 @@ static Bytes_18(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4847BF);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_19(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4847C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X4847D3);
@@ -111245,15 +111257,6 @@ static Bytes_18(void) {
 	create_insn	(0X484800);
 	create_insn	(x=0X484801);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_19(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X48480A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48480F);
@@ -117549,6 +117552,15 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E309);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_20(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X48E319);
 	create_insn	(x=0X48E321);
 	op_stkvar	(x,	0);
@@ -117562,15 +117574,6 @@ static Bytes_19(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X48E35D);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_20(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X48E36B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E371);
@@ -124022,6 +124025,15 @@ static Bytes_20(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X497594);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_21(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X497598);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4975A3);
@@ -124034,15 +124046,6 @@ static Bytes_20(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4975DE);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_21(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4975E7);
 	op_hex		(x,	1);
 	create_insn	(x=0X4975F6);
@@ -130063,14 +130066,6 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X4A053E,	"jumptable 004A03FF case 3",	1);
 	create_insn	(0X4A053E);
-	create_insn	(x=0X4A0565);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4A0569);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A057C);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A0587);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -130080,6 +130075,14 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A0565);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4A0569);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A057C);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A0587);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4A058B);
 	op_hex		(x,	1);
 	set_cmt	(0X4A0599,	"jumptable 004A03FF cases 12,13",	1);
@@ -136056,14 +136059,6 @@ static Bytes_22(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A964D);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4A9651);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A9655);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A9664);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4A966C);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -136073,6 +136068,14 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A9651);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A9655);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A9664);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4A966C);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9675);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A9679);
@@ -141193,12 +141196,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEF4C);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AEF50);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AEF54);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -141208,6 +141205,12 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4AEF50);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_dword	(x=0X4AEF54);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4AEF58);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145620,10 +145623,6 @@ static Bytes_24(void) {
 	make_array	(0X4B4455,	0X3);
 	create_strlit	(0X4B4458,	0X5);
 	set_name	(0X4B4458,	"aAdd");
-	make_array	(0X4B445D,	0X3);
-	create_strlit	(0X4B4460,	0X5);
-	set_name	(0X4B4460,	"aSub");
-	make_array	(0X4B4465,	0X3);
 }
 
 //------------------------------------------------------------------------
@@ -145633,6 +145632,10 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	make_array	(0X4B445D,	0X3);
+	create_strlit	(0X4B4460,	0X5);
+	set_name	(0X4B4460,	"aSub");
+	make_array	(0X4B4465,	0X3);
 	create_strlit	(0X4B4468,	0X6);
 	set_name	(0X4B4468,	"aMov");
 	make_array	(0X4B446E,	0X2);
@@ -148998,11 +149001,6 @@ static Bytes_25(void) {
 	create_strlit	(0X4BBAE4,	0X6);
 	set_name	(0X4BBAE4,	"aLte_2");
 	make_array	(0X4BBAEA,	0X2);
-	create_strlit	(0X4BBAEC,	0X6);
-	set_name	(0X4BBAEC,	"aAnd_2");
-	make_array	(0X4BBAF2,	0X2);
-	create_strlit	(0X4BBAF4,	0X5);
-	set_name	(0X4BBAF4,	"aOr_2");
 }
 
 //------------------------------------------------------------------------
@@ -149012,6 +149010,11 @@ static Bytes_26(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4BBAEC,	0X6);
+	set_name	(0X4BBAEC,	"aAnd_2");
+	make_array	(0X4BBAF2,	0X2);
+	create_strlit	(0X4BBAF4,	0X5);
+	set_name	(0X4BBAF4,	"aOr_2");
 	make_array	(0X4BBAF9,	0X3);
 	create_strlit	(0X4BBAFC,	0X6);
 	set_name	(0X4BBAFC,	"aCall_2");
@@ -152584,9 +152587,6 @@ static Bytes_26(void) {
 	set_name	(0X4CB224,	"aItilde");
 	create_strlit	(0X4CB22C,	0XA);
 	set_name	(0X4CB22C,	"aIotatonos");
-	make_array	(0X4CB236,	0X2);
-	create_strlit	(0X4CB238,	0XD);
-	set_name	(0X4CB238,	"aIotadieresis");
 }
 
 //------------------------------------------------------------------------
@@ -152596,6 +152596,9 @@ static Bytes_27(void) {
         auto x;
 #define id x
 
+	make_array	(0X4CB236,	0X2);
+	create_strlit	(0X4CB238,	0XD);
+	set_name	(0X4CB238,	"aIotadieresis");
 	make_array	(0X4CB245,	0X3);
 	create_strlit	(0X4CB248,	0X5);
 	set_name	(0X4CB248,	"aIota");
@@ -163038,10 +163041,11 @@ static Functions_13(void) {
 	set_frame_size(0X47E8E0, 0, 0, 0);
 	add_func    (0X47E900,0X47E961);
 	set_func_flags(0X47E900,0x5400);
+	set_func_cmt(0X47E900,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: void almp3_seek_abs_frames_mp3(ALMP3_MP3 *mp3, int frame) at almp3.c:574 -- 2-argument, void-returning, matching sub_47E970's own final call shape exactly (mp3, computed frame number). Confirmed via almp3_seek_abs_msecs_mp3's own decisive match (this round's sub_47E970 entry). Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47E900, 0X8, 0, 0);
 	add_func    (0X47E970,0X47E990);
 	set_func_flags(0X47E970,0x5400);
-	set_func_cmt(0X47E970,	"[reversing] confirmed match\nconfidence: medium\nevidence: ALMP3's own internal 'seek to millisecond position' implementation -- found while sweeping SeekMP3PosMillis's (already matched) own remaining callee. Converts a millisecond offset to a frame index (via sub_47EC30, plausibly a 'milliseconds per frame' calculator) then calls sub_47E900 (plausibly a 'seek to frame index' primitive) with (handle,frame) -- matching ALMP3's documented public API role, almp3_seek_abs_msecs_mp3, at the behavioral level. Left unnamed per this project's standing convention for ALMP3 internals -- no ALMP3 source exists in this repo to verify exact names against.", 1);
+	set_func_cmt(0X47E970,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: void almp3_seek_abs_msecs_mp3(ALMP3_MP3 *mp3, int msec) { int frame; frame = msec / almp3_get_msecs_per_frame_mp3(mp3); almp3_seek_abs_frames_mp3(mp3, frame); } at almp3.c:597-601. DECISIVE, complete, 2-argument match: calls sub_47EC30 (this round's own almp3_get_msecs_per_frame_mp3 match), divides the caller's msec argument by the result, then calls sub_47E900 (this round's own almp3_seek_abs_frames_mp3 match) with the computed frame number -- matching source's own two-call sequence exactly. Called from SeekMP3PosMillis (already matched, the AGS script-API entry point for this feature). Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47E970, 0X4, 0, 0);
 	add_func    (0X47E990,0X47EBC1);
 	set_func_flags(0X47E990,0x5400);
@@ -163053,6 +163057,7 @@ static Functions_13(void) {
 	set_frame_size(0X47EBD0, 0X4, 0, 0);
 	add_func    (0X47EC30,0X47EC62);
 	set_func_flags(0X47EC30,0x5400);
+	set_func_cmt(0X47EC30,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: int almp3_get_msecs_per_frame_mp3(ALMP3_MP3 *mp3) at almp3.c:914 -- 1-argument, int-returning, matching sub_47E970's own call shape exactly (called once, its return value used as a divisor). Confirmed via almp3_seek_abs_msecs_mp3's own decisive match (this round's sub_47E970 entry). Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47EC30, 0X8, 0, 0);
 	add_func    (0X47EC70,0X47ECB1);
 	set_func_flags(0X47EC70,0x5400);
@@ -163498,6 +163503,10 @@ static Functions_13(void) {
 	add_func    (0X489860,0X489A0B);
 	set_func_flags(0X489860,0x5400);
 	set_frame_size(0X489860, 0X14, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X489A10,0X489BBB);
 	set_func_flags(0X489A10,0x5400);
 	set_frame_size(0X489A10, 0X14, 0, 0);
@@ -163549,10 +163558,6 @@ static Functions_13(void) {
 	add_func    (0X48AEF0,0X48AF45);
 	set_func_flags(0X48AEF0,0x5400);
 	set_frame_size(0X48AEF0, 0X4, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X48AF50,0X48AFCA);
 	set_func_flags(0X48AF50,0x5400);
 	set_func_cmt(0X48AF50,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public font-size-setting API (the alfont library wraps FreeType; no local alfont source tree exists in this repo to verify the exact name against, so identified by call-shape/role only, matching this project's established convention for ALMP3/JGMOD). Takes 3 arguments (font handle, a literal 0, requested size) and opens with the classic \"already at this size, skip\" idiom -- comparing two cached fields (@+4/+8 on the font handle) against the two size-like arguments before doing any real work, matching FreeType's own `FT_Set_Pixel_Sizes(face,width,height)` convention (0 for width meaning \"derive it automatically from height\") that alfont's real `alfont_set_font_size` is known to wrap. Called from sub_401AAC (this build's own font-load-and-size-adjust helper) and from the newly-identified alfont_load_font_from_mem (sub_48B020, presumably applying a default size right after loading). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule)" ", not chased further.", 1);
@@ -165765,6 +165770,10 @@ static Functions_14(void) {
 	define_local_var(0X4AB4C2, 0X4AB4C8, "[bp+0X4]", "FileHandle");
 	define_local_var(0X4AB4C2, 0X4AB4C8, "[bp+0X8]", "Buf");
 	define_local_var(0X4AB4C2, 0X4AB4C8, "[bp+0XC]", "MaxCharCount");
+}
+
+static Functions_15(void) {
+
 	add_func    (0X4AB4C8,0X4AB4CE);
 	set_func_flags(0X4AB4C8,0x5480);
 	set_frame_size(0X4AB4C8, 0, 0, 0);
@@ -165807,10 +165816,6 @@ static Functions_14(void) {
 	set_func_flags(0X4AB580,0x5480);
 	set_func_cmt(0X4AB580,	"[reversing] confirmed match\nsource obj (library): dinput:DINPUT.dll\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=dinput:DINPUT.dll", 1);
 	set_frame_size(0X4AB580, 0, 0, 0X10);
-}
-
-static Functions_15(void) {
-
 	add_func    (0X4AC1B4,0X4AC1B7);
 	set_func_flags(0X4AC1B4,0x5400);
 	set_frame_size(0X4AC1B4, 0, 0, 0);

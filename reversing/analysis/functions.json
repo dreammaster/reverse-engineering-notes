@@ -8820,14 +8820,14 @@
   "is_named": false
  },
  {
-  "name": "sub_47E900",
+  "name": "almp3_seek_abs_frames_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47E970",
+  "name": "almp3_seek_abs_msecs_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "almp3_poll_mp3",
@@ -8840,9 +8840,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47EC30",
+  "name": "almp3_get_msecs_per_frame_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "almp3_adjust_mp3",

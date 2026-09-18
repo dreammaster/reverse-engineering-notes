@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 990 named, 1596 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 993 named, 1593 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5267,6 +5267,16 @@ the source file has a thin wrapper plus a separate `_ex`-style real
 workhorse before concluding there's no match at all. See
 `reversing/notes/third-party-library-identification.md` for the
 complete writeup.
+- **`SeekMP3PosMillis`'s own callee chain closes -- 3 more ALMP3
+  matches, no corrections needed.** `sub_47E970` decisively matches
+  `almp3_seek_abs_msecs_mp3(mp3,msec)` (`almp3.c:597-601`), which
+  calls `almp3_get_msecs_per_frame_mp3`(`sub_47EC30`, `almp3.c:914`)
+  as a divisor and `almp3_seek_abs_frames_mp3`(`sub_47E900`,
+  `almp3.c:574`) with the computed frame -- both matching their own
+  call shapes exactly. Deliberately left `sub_477AF0`/`sub_47C1D0`
+  (JGMOD's own internal `load_m`/`load_xm` per-format loader helpers)
+  uninvestigated, per the third-party scope rule (2586 functions, 993
+  named).
 
 ## Conventions when annotating the IDB
 
