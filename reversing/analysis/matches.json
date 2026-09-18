@@ -8347,12 +8347,12 @@
   {
     "kind": "manual",
     "asm_name": "sub_47E7A0",
-    "new_name": null,
-    "source_file": null,
-    "source_line": null,
-    "confidence": "medium",
+    "new_name": "almp3_play_ex_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 519,
+    "confidence": "high",
     "is_library": true,
-    "evidence": "ENRICHED CHARACTERIZATION (fresh round, using the newly-added ALMP3 2.0.5 src/almp3.c and Allegro 4.0.2 sources): this function operates on an ALMP3_MP3STREAM-shaped struct (huge field offsets around +0xA6xx, consistent with an embedded mpg123 'struct mpstr' decoder state, which is genuinely tens of KB) and now decisively calls Allegro's own play_audio_stream (sub_443050, this round's own new match) with a byte-count-to-sample-count conversion using [mp3+0xA698] as the stream's own sample-rate divisor and [mp3+0xA6B8] as a stereo flag -- exactly matching play_audio_stream(len,bits,stereo,freq,vol,pan)'s own role. Conditionally calls the already-matched adjust_sample when its own speed-like argument (arg_10) is NOT the literal 0x3E8(1000, a percentage-based '100%=normal speed' convention). STILL NOT RENAMED: this 6-argument shape doesn't cleanly match ANY single function ALMP3 2.0.5's own archived src/almp3.c declares -- almp3_play_mp3stream is a separate 4-argument function (mp3, buffer_len, vol, pan) and almp3_adjust_mp3stream is a separate 4-argument function too (mp3, vol, pan, speed, no loop param) -- neither matches this function's own combined play+speed+loop shape. Most plausible explanation: this 2002 build's own ALMP3 version fused what the archived (later) source keeps as two separate functions into one, the same 'one big pre-refactor function' pattern already found repeatedly for AGS's own code in this project, just now observed in a third-party library too. Left unnamed rather than force a name onto a shape neither archived function actually has -- but now MUCH better understood than the original 'doesn't cleanly match' framing."
+    "evidence": "ENRICHED CHARACTERIZATION (fresh round, using the newly-added ALMP3 2.0.5 src/almp3.c and Allegro 4.0.2 sources): this function operates on an ALMP3_MP3STREAM-shaped struct (huge field offsets around +0xA6xx, consistent with an embedded mpg123 'struct mpstr' decoder state, which is genuinely tens of KB) and now decisively calls Allegro's own play_audio_stream (sub_443050, this round's own new match) with a byte-count-to-sample-count conversion using [mp3+0xA698] as the stream's own sample-rate divisor and [mp3+0xA6B8] as a stereo flag -- exactly matching play_audio_stream(len,bits,stereo,freq,vol,pan)'s own role. Conditionally calls the already-matched adjust_sample when its own speed-like argument (arg_10) is NOT the literal 0x3E8(1000, a percentage-based '100%=normal speed' convention). STILL NOT RENAMED: this 6-argument shape doesn't cleanly match ANY single function ALMP3 2.0.5's own archived src/almp3.c declares -- almp3_play_mp3stream is a separate 4-argument function (mp3, buffer_len, vol, pan) and almp3_adjust_mp3stream is a separate 4-argument function too (mp3, vol, pan, speed, no loop param) -- neither matches this function's own combined play+speed+loop shape. Most plausible explanation: this 2002 build's own ALMP3 version fused what the archived (later) source keeps as two separate functions into one, the same 'one big pre-refactor function' pattern already found repeatedly for AGS's own code in this project, just now observed in a third-party library too. Left unnamed rather than force a name onto a shape neither archived function actually has -- but now MUCH better understood than the original 'doesn't cleanly match' framing. MAJOR CORRECTION (immediate follow-up, same session): this function IS a clean, decisive match after all -- the earlier 'doesn't cleanly match either declared function' conclusion was wrong because it only checked almp3_play_mp3(4 args)/almp3_adjust_mp3(5 args) without noticing almp3.c's OWN real workhorse, int almp3_play_ex_mp3(ALMP3_MP3 *mp3, int buffer_len, int vol, int pan, int speed, int loop) at almp3.c:519-549 -- a genuine 6-argument function almp3_play_mp3 itself thinly wraps ('return almp3_play_ex_mp3(mp3,buffer_len,vol,pan,1000,FALSE);', almp3.c:514-516). COMPLETE, word-for-word match: 'if (almp3_is_playing_mp3(mp3)) return ALMP3_OK;' (the already-matched almp3_is_playing_mp3/sub_47ECC0 guard), 'mp3->frames_per_poll=buffer_len/mp3->outbytes_per_frame;' (matching the disassembly's own idiv), 'samples=...; mp3->audiostream=play_audio_stream(samples,mp3->bits,mp3->stereo,mp3->freq,vol,pan);' (already-matched play_audio_stream call), 'if(speed!=1000) adjust_sample(mp3->audiostream->samp,vol,pan,speed,TRUE);' (already-matched adjust_sample call, gated on the literal 1000 exactly as previously observed), and 'mp3->loop=loop; mp3->wait_for_audio_stop=0;' (matching the disassembly's own trailing [esi+0xA6C8]/[esi+0xA6D0] writes exactly). Renamed sub_47E7A0 -> almp3_play_ex_mp3, retracting the earlier 'left unnamed, no clean match' framing."
   },
   {
     "kind": "manual",
@@ -8497,21 +8497,81 @@
   {
     "kind": "manual",
     "asm_name": "sub_47F160",
-    "new_name": null,
-    "source_file": null,
-    "source_line": null,
-    "confidence": "medium",
+    "new_name": "almp3_play_ex_mp3stream",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 1473,
+    "confidence": "high",
     "is_library": true,
-    "evidence": "STRUCTURAL TWIN OF sub_47E7A0 (this project's own earlier characterization of the ALMP3_MP3-flavored version of this exact shape): operates on an ALMP3_MP3STREAM-shaped struct (same huge +0xA6xx field offsets as sub_47E7A0's own ALMP3_MP3 struct, consistent with both embedding a similar mpg123 decoder-state prefix), opens with a guard via the newly-matched almp3_is_playing_mp3stream (sub_47F690), computes a sample count from a caller-supplied byte count using [mp3+0xA6AC] as the stream's own sample-rate divisor and [mp3+0xA6CC] as a stereo flag, calls the already-matched play_audio_stream, then CONDITIONALLY calls the already-matched adjust_sample when its own 5th argument is NOT the literal 0x3E8(1000, the same '100%=normal speed' percentage convention already established for sub_47E7A0). STILL NOT RENAMED for the same reason as sub_47E7A0: this 5-argument fused play+adjust shape doesn't cleanly match EITHER of ALMP3 2.0.5's own separately-declared 4-argument almp3_play_mp3stream(mp3,buffer_len,vol,pan) or almp3_adjust_mp3stream(mp3,vol,pan,speed) -- most likely this 2002 build's own ALMP3 version fuses what the archived (later) source keeps as two separate functions into one, for BOTH the static-MP3 and streaming-MP3 cases identically. Called from sub_47F130 (this round's own new entry, a thin wrapper hardcoding this function's own speed argument to the literal 1000/normal-speed default)."
+    "evidence": "STRUCTURAL TWIN OF sub_47E7A0 (this project's own earlier characterization of the ALMP3_MP3-flavored version of this exact shape): operates on an ALMP3_MP3STREAM-shaped struct (same huge +0xA6xx field offsets as sub_47E7A0's own ALMP3_MP3 struct, consistent with both embedding a similar mpg123 decoder-state prefix), opens with a guard via the newly-matched almp3_is_playing_mp3stream (sub_47F690), computes a sample count from a caller-supplied byte count using [mp3+0xA6AC] as the stream's own sample-rate divisor and [mp3+0xA6CC] as a stereo flag, calls the already-matched play_audio_stream, then CONDITIONALLY calls the already-matched adjust_sample when its own 5th argument is NOT the literal 0x3E8(1000, the same '100%=normal speed' percentage convention already established for sub_47E7A0). STILL NOT RENAMED for the same reason as sub_47E7A0: this 5-argument fused play+adjust shape doesn't cleanly match EITHER of ALMP3 2.0.5's own separately-declared 4-argument almp3_play_mp3stream(mp3,buffer_len,vol,pan) or almp3_adjust_mp3stream(mp3,vol,pan,speed) -- most likely this 2002 build's own ALMP3 version fuses what the archived (later) source keeps as two separate functions into one, for BOTH the static-MP3 and streaming-MP3 cases identically. Called from sub_47F130 (this round's own new entry, a thin wrapper hardcoding this function's own speed argument to the literal 1000/normal-speed default). MAJOR CORRECTION (immediate follow-up, same session): decisive match after all -- int almp3_play_ex_mp3stream(ALMP3_MP3STREAM *mp3, int buffer_len, int vol, int pan, int speed) at almp3.c:1473-1502, the streaming sibling of almp3_play_ex_mp3 (this round's own correction). almp3_play_mp3stream itself thinly wraps it ('return almp3_play_ex_mp3stream(mp3,buffer_len,vol,pan,1000);', almp3.c:1468-1470 -- matching sub_47F130, this round's own new entry). Complete match: the same is_playing guard/sample-count computation/play_audio_stream call/speed!=1000-gated adjust_sample pattern as almp3_play_ex_mp3, just without the trailing 'loop' field write (almp3_play_ex_mp3stream has no loop parameter, matching almp3_adjust_mp3stream's own declared 4-arg shape lacking one too). Renamed sub_47F160 -> almp3_play_ex_mp3stream, retracting the earlier 'left unnamed' framing."
   },
   {
     "kind": "manual",
     "asm_name": "sub_47F130",
-    "new_name": null,
-    "source_file": null,
-    "source_line": null,
-    "confidence": "medium",
+    "new_name": "almp3_play_mp3stream",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 1468,
+    "confidence": "high",
     "is_library": true,
-    "evidence": "Thin wrapper around sub_47F160 (this round's own new entry, the MP3STREAM-flavored structural twin of sub_47E7A0's fused play+adjust function): forwards its own 4 arguments unchanged and inserts a literal 0x3E8(1000, 'normal/100% speed') as the 5th argument sub_47F160 itself conditionally acts on. Called from my_load_mp3 (already matched), which has no reason to request a non-default playback speed at load time -- matching this build's own established pattern of default-parameter convenience wrappers around a more general fused function. Left unnamed for the same reason as sub_47F160 itself: no single ALMP3 2.0.5 declared function matches this exact shape."
+    "evidence": "Thin wrapper around sub_47F160 (this round's own new entry, the MP3STREAM-flavored structural twin of sub_47E7A0's fused play+adjust function): forwards its own 4 arguments unchanged and inserts a literal 0x3E8(1000, 'normal/100% speed') as the 5th argument sub_47F160 itself conditionally acts on. Called from my_load_mp3 (already matched), which has no reason to request a non-default playback speed at load time -- matching this build's own established pattern of default-parameter convenience wrappers around a more general fused function. Left unnamed for the same reason as sub_47F160 itself: no single ALMP3 2.0.5 declared function matches this exact shape. RENAMED (immediate follow-up, same session): this is exactly int almp3_play_mp3stream(ALMP3_MP3STREAM *mp3, int buffer_len, int vol, int pan) { return almp3_play_ex_mp3stream(mp3,buffer_len,vol,pan,1000); } at almp3.c:1468-1470 -- its own 4-arg forward plus a literal 1000 fifth argument matches source's own thin wrapper exactly, now that almp3_play_ex_mp3stream (this round's own sub_47F160 correction) is confirmed."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47ECC0",
+    "new_name": "almp3_is_playing_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int almp3_is_playing_mp3(ALMP3_MP3 *mp3) { if (mp3->audiostream==NULL) return FALSE; else return TRUE; } -- the ALMP3_MP3 sibling of the already-matched almp3_is_playing_mp3stream, same exact '(x!=0)?-1:0' idiom testing the +0xA6B0 field (mp3->audiostream). Called as the opening guard from almp3_play_ex_mp3 (this session's own correction), almp3_adjust_mp3, almp3_stop_mp3, and almp3_poll_mp3 (all this round's own new matches) -- four independent confirmation sites. Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47EC70",
+    "new_name": "almp3_adjust_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 1055,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_adjust_mp3(ALMP3_MP3 *mp3, int vol, int pan, int speed, int loop) { if (!almp3_is_playing_mp3(mp3)) return; adjust_sample(mp3->audiostream->samp, vol, pan, speed, TRUE); mp3->loop = loop; } -- a DECISIVE, complete 5-argument match: guard via the already-matched almp3_is_playing_mp3 (sub_47ECC0), call to the already-matched adjust_sample with a HARDCODED TRUE(-1) for its own loop argument (matching source's own literal TRUE, not the real caller-supplied loop value), then a SEPARATE write of the real loop argument into mp3->loop@+0xA6C0 -- matching the disassembly's own two-step pattern (call adjust_sample with hardcoded -1, then `mov [esi+0xA6C0], edx` using the actual 5th argument) exactly. Called from update_music_volume's own MP3-branch helper (sub_408356, already matched). Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47E890",
+    "new_name": "almp3_stop_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 552,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_stop_mp3(ALMP3_MP3 *mp3) { if (!almp3_is_playing_mp3(mp3)) return; if (mp3->auto_polling) remove_param_int(...); stop_audio_stream(mp3->audiostream); mp3->audiostream=NULL; } at almp3.c:552-564. DECISIVE match: guard via the already-matched almp3_is_playing_mp3, calls a newly-identified stop_audio_stream(mp3->audiostream@+0xA6B0) (this round's own sub_4431A0 match), then zeroes the same field -- the `auto_polling`/`remove_param_int` branch is CONFIRMED ABSENT (no such check exists here). Called from sub_408392 (PlayMusic's own MP3-crossfade cleanup helper, already matched) and sub_424D80. Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47E760",
+    "new_name": "almp3_destroy_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 501,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_destroy_mp3(ALMP3_MP3 *mp3) { if (mp3==NULL) return; almp3_stop_mp3(mp3); ExitMP3(&mp3->mpeg); if (mp3->xing_header) free(mp3->xing_header); free(mp3); } at almp3.c:501-511. DECISIVE, complete, word-for-word match: NULL check, call to the already-matched almp3_stop_mp3 (sub_47E890, this round's own match), call to the already-matched ExitMP3 with `&mp3->mpeg`(+0xC), conditional free of `mp3->xing_header`@+0xA690 (this same round's own Xing-header work via almp3_get_big_endian), then free(mp3) itself. Called from sub_408392 (already matched) and sub_424D80. Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4431A0",
+    "new_name": "stop_audio_stream",
+    "source_file": "Engine/libsrc/allegro-4.0.2/src/stream.c",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void stop_audio_stream(AUDIOSTREAM *stream) -- Allegro's public API to stop and free a streamed-audio playback handle, the natural counterpart of the already-matched play_audio_stream. Identified via role and argument: called with `mp3->audiostream`(the exact field play_audio_stream's own return value populates) from the newly-matched almp3_stop_mp3, matching source's own `stop_audio_stream(mp3->audiostream);` call exactly. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47E990",
+    "new_name": "almp3_poll_mp3",
+    "source_file": "Engine/libsrc/almp3-2.0.5/src/almp3.c",
+    "source_line": 688,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int almp3_poll_mp3(ALMP3_MP3 *mp3) at almp3.c:688 -- ALMP3_MP3's own per-frame poll/decode-and-buffer-fill function, the non-streaming sibling of the already-matched almp3_poll_mp3stream (itself a substantial ~200-line function). Opening guard matches exactly: 'if (!almp3_is_playing_mp3(mp3)) return ALMP3_POLL_NOTPLAYING;' -- calls the already-matched almp3_is_playing_mp3 (sub_47ECC0) and returns -1 (matching ALMP3_POLL_NOTPLAYING) on failure. Function size (237 disassembly lines) is consistent with almp3_poll_mp3's own substantial real decode-loop body. Called from sub_4084E0 (this build's own MP3-crossfade-continuation check, already matched) -- matching that function's own existing citation of 'polling the already-confirmed PlayMusic MP3 stream handle' exactly. HIGH confidence via the decisive opening-guard match; own body past that point not instruction-traced this round given its size, per this project's own convention for large functions. Found via the newly-added ALMP3 2.0.5 source tree."
   }
 ]

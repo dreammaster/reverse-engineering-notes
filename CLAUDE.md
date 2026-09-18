@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 981 named, 1605 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 990 named, 1596 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5242,12 +5242,31 @@ callee, is structurally IDENTICAL to the long-open `sub_47E7A0` lead
 `ALMP3_MP3`. Its own opening guard, `almp3_is_playing_mp3stream`
 (`sub_47F690`), closes decisively via the classic `(x!=0)?-1:0` idiom
 testing the exact field `sub_47F160` itself writes with
-`play_audio_stream`'s return value. `sub_47F160` and its own thin
-default-speed wrapper `sub_47F130` stay unnamed (no clean ALMP3 2.0.5
-match) but are now richly characterized rather than left as bare
-leads (2586 functions, 981 named — up from 535 at the start of this
-project). See `reversing/notes/third-party-library-identification.md`
-for the complete writeup.
+`play_audio_stream`'s return value.
+
+**MAJOR CORRECTION, immediate follow-up: `sub_47E7A0`/`sub_47F160` ARE
+clean matches after all.** Both this round's and an earlier session's
+"doesn't cleanly match" conclusions had checked only `almp3_play_mp3`
+(4 args)/`almp3_adjust_mp3`(5 args) without noticing `almp3.c`'s own
+real 6-argument workhorse, `almp3_play_ex_mp3(mp3,buffer_len,vol,pan,
+speed,loop)`, which `almp3_play_mp3` only thinly wraps
+(`return almp3_play_ex_mp3(mp3,buffer_len,vol,pan,1000,FALSE);`).
+Found while reading `almp3_destroy_mp3`'s own neighboring source —
+a COMPLETE, word-for-word match once connected. Renamed `sub_47E7A0`
+-> `almp3_play_ex_mp3`, `sub_47F160` -> `almp3_play_ex_mp3stream`,
+`sub_47F130` -> `almp3_play_mp3stream` (its own thin wrapper). The
+rest of the cluster then closed in one pass: `almp3_is_playing_mp3`
+(`sub_47ECC0`), `almp3_adjust_mp3`(`sub_47EC70`), `almp3_stop_mp3`
+(`sub_47E890`, also naming Allegro's `stop_audio_stream`), `almp3_
+destroy_mp3`(`sub_47E760`), and `almp3_poll_mp3`(`sub_47E990`). **The
+entire ALMP3 public play/stop/destroy/poll/adjust API surface, for
+both static and streaming MP3, is now fully named** (2586 functions,
+990 named — up from 535 at the start of this project). Process
+lesson: when a "doesn't cleanly match" call is reached, check whether
+the source file has a thin wrapper plus a separate `_ex`-style real
+workhorse before concluding there's no match at all. See
+`reversing/notes/third-party-library-identification.md` for the
+complete writeup.
 
 ## Conventions when annotating the IDB
 

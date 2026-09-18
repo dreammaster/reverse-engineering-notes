@@ -4650,9 +4650,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4431A0",
+  "name": "stop_audio_stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4431F0",
@@ -8795,14 +8795,14 @@
   "is_named": true
  },
  {
-  "name": "sub_47E760",
+  "name": "almp3_destroy_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47E7A0",
+  "name": "almp3_play_ex_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47E880",
@@ -8810,9 +8810,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47E890",
+  "name": "almp3_stop_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47E8E0",
@@ -8830,9 +8830,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47E990",
+  "name": "almp3_poll_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47EBD0",
@@ -8845,14 +8845,14 @@
   "is_named": false
  },
  {
-  "name": "sub_47EC70",
+  "name": "almp3_adjust_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47ECC0",
+  "name": "almp3_is_playing_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47ECD0",
@@ -8870,14 +8870,14 @@
   "is_named": false
  },
  {
-  "name": "sub_47F130",
+  "name": "almp3_play_mp3stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47F160",
+  "name": "almp3_play_ex_mp3stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47F240",

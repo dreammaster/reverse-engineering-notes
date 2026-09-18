@@ -67541,6 +67541,7 @@ static Bytes_11(void) {
 	op_hex		(x,	1);
 	make_array	(0X44319C,	0X4);
 	create_insn	(0X4431A0);
+	set_name	(0X4431A0,	"stop_audio_stream");
 	create_insn	(x=0X4431A1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4431BD);
@@ -69937,8 +69938,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X4462D0);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X4462DC);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -69948,6 +69947,8 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4462DC);
+	op_hex		(x,	1);
 	create_insn	(x=0X4462E1);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -107985,6 +107986,7 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	make_array	(0X47E752,	0XE);
 	create_insn	(0X47E760);
+	set_name	(0X47E760,	"almp3_destroy_mp3");
 	create_insn	(x=0X47E761);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47E77E);
@@ -107997,6 +107999,7 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	make_array	(0X47E799,	0X7);
 	create_insn	(0X47E7A0);
+	set_name	(0X47E7A0,	"almp3_play_ex_mp3");
 	create_insn	(x=0X47E7A1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47E7AB);
@@ -108033,6 +108036,7 @@ static Bytes_18(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X47E88C,	0X4);
 	create_insn	(0X47E890);
+	set_name	(0X47E890,	"almp3_stop_mp3");
 	create_insn	(x=0X47E891);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47E89B);
@@ -108066,6 +108070,7 @@ static Bytes_18(void) {
 	create_insn	(x=0X47E98B);
 	op_hex		(x,	1);
 	create_insn	(0X47E990);
+	set_name	(0X47E990,	"almp3_poll_mp3");
 	create_insn	(x=0X47E994);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47E99F);
@@ -108151,6 +108156,7 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	make_array	(0X47EC62,	0XE);
 	create_insn	(0X47EC70);
+	set_name	(0X47EC70,	"almp3_adjust_mp3");
 	create_insn	(x=0X47EC71);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47EC7B);
@@ -108168,6 +108174,7 @@ static Bytes_18(void) {
 	make_array	(0X47ECB1,	0XF);
 	create_insn	(x=0X47ECC0);
 	op_stkvar	(x,	1);
+	set_name	(0X47ECC0,	"almp3_is_playing_mp3");
 	create_insn	(x=0X47ECD0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47ECEB);
@@ -108372,6 +108379,7 @@ static Bytes_18(void) {
 	make_array	(0X47F123,	0XD);
 	create_insn	(x=0X47F130);
 	op_stkvar	(x,	1);
+	set_name	(0X47F130,	"almp3_play_mp3stream");
 	create_insn	(x=0X47F134);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47F138);
@@ -108382,6 +108390,7 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	make_array	(0X47F152,	0XE);
 	create_insn	(0X47F160);
+	set_name	(0X47F160,	"almp3_play_ex_mp3stream");
 	create_insn	(x=0X47F161);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47F16B);
@@ -111236,6 +111245,15 @@ static Bytes_18(void) {
 	create_insn	(0X484800);
 	create_insn	(x=0X484801);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_19(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X48480A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48480F);
@@ -111261,15 +111279,6 @@ static Bytes_18(void) {
 	create_insn	(x=0X4848C4);
 	op_hex		(x,	1);
 	make_array	(0X4848DA,	0X6);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_19(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X4848E0);
 	create_insn	(x=0X4848E1);
 	op_stkvar	(x,	1);
@@ -117553,6 +117562,15 @@ static Bytes_19(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X48E35D);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_20(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X48E36B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E371);
@@ -117579,15 +117597,6 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E3AF);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_20(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X48E3B3);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E3B7);
@@ -124025,6 +124034,15 @@ static Bytes_20(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4975DE);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_21(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4975E7);
 	op_hex		(x,	1);
 	create_insn	(x=0X4975F6);
@@ -124049,15 +124067,6 @@ static Bytes_20(void) {
 	create_insn	(x=0X49763F);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_21(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X497644,	"SizeOfElements",	0);
 	set_cmt	(0X497646,	"NumOfElements",	0);
 	set_cmt	(0X497649,	"Base",	0);
@@ -130062,6 +130071,15 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0587);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_22(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4A058B);
 	op_hex		(x,	1);
 	set_cmt	(0X4A0599,	"jumptable 004A03FF cases 12,13",	1);
@@ -130082,15 +130100,6 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0610);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_22(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A0616);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0625);
@@ -136055,6 +136064,15 @@ static Bytes_22(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A966C);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_23(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4A9675);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A9679);
@@ -136076,15 +136094,6 @@ static Bytes_22(void) {
 	create_insn	(0X4A96B9);
 	set_cmt	(0X4A96C1,	"jumptable 004A96B2 case 1",	1);
 	create_insn	(0X4A96C1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_23(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4A96C9,	"jumptable 004A96B2 case 2",	1);
 	create_insn	(0X4A96C9);
 	set_cmt	(0X4A96D1,	"jumptable 004A96B2 case 3",	1);
@@ -141190,6 +141199,15 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEF54);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_24(void) {
+        auto x;
+#define id x
+
 	create_dword	(x=0X4AEF58);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -141220,15 +141238,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEF7C);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_24(void) {
-        auto x;
-#define id x
-
 	create_dword	(x=0X4AEF80);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145615,6 +145624,15 @@ static Bytes_24(void) {
 	create_strlit	(0X4B4460,	0X5);
 	set_name	(0X4B4460,	"aSub");
 	make_array	(0X4B4465,	0X3);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_25(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X4B4468,	0X6);
 	set_name	(0X4B4468,	"aMov");
 	make_array	(0X4B446E,	0X2);
@@ -145633,15 +145651,6 @@ static Bytes_24(void) {
 	make_array	(0X4B449E,	0X2);
 	create_strlit	(0X4B44A0,	0X6);
 	set_name	(0X4B44A0,	"aMul");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_25(void) {
-        auto x;
-#define id x
-
 	make_array	(0X4B44A6,	0X2);
 	create_strlit	(0X4B44A8,	0X6);
 	set_name	(0X4B44A8,	"aDiv");
@@ -148994,6 +149003,15 @@ static Bytes_25(void) {
 	make_array	(0X4BBAF2,	0X2);
 	create_strlit	(0X4BBAF4,	0X5);
 	set_name	(0X4BBAF4,	"aOr_2");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_26(void) {
+        auto x;
+#define id x
+
 	make_array	(0X4BBAF9,	0X3);
 	create_strlit	(0X4BBAFC,	0X6);
 	set_name	(0X4BBAFC,	"aCall_2");
@@ -149010,15 +149028,6 @@ static Bytes_25(void) {
 	set_name	(0X4BBB34,	"aJz_2");
 	create_strlit	(0X4BBB38,	0X6);
 	set_name	(0X4BBB38,	"aPush_2");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_26(void) {
-        auto x;
-#define id x
-
 	make_array	(0X4BBB3E,	0X2);
 	create_strlit	(0X4BBB40,	0X5);
 	set_name	(0X4BBB40,	"aPop_2");
@@ -152578,6 +152587,15 @@ static Bytes_26(void) {
 	make_array	(0X4CB236,	0X2);
 	create_strlit	(0X4CB238,	0XD);
 	set_name	(0X4CB238,	"aIotadieresis");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_27(void) {
+        auto x;
+#define id x
+
 	make_array	(0X4CB245,	0X3);
 	create_strlit	(0X4CB248,	0X5);
 	set_name	(0X4CB248,	"aIota");
@@ -152595,15 +152613,6 @@ static Bytes_26(void) {
 	set_name	(0X4CB278,	"aIbreve");
 	create_strlit	(0X4CB280,	0X3);
 	set_name	(0X4CB280,	"aIj_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_27(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X4CB284,	0XD);
 	set_name	(0X4CB284,	"aHungarumlaut_0");
 	make_array	(0X4CB291,	0X3);
@@ -160208,7 +160217,8 @@ static Functions_11(void) {
 	set_frame_size(0X443050, 0X10, 0, 0);
 	add_func    (0X4431A0,0X4431E5);
 	set_func_flags(0X4431A0,0x5400);
-	SetType(0X4431A0, "int __cdecl sub_4431A0(void *Block);");
+	SetType(0X4431A0, "int __cdecl stop_audio_stream(void *Block);");
+	set_func_cmt(0X4431A0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.0.2/src/stream.c\nconfidence: high\nevidence: void stop_audio_stream(AUDIOSTREAM *stream) -- Allegro's public API to stop and free a streamed-audio playback handle, the natural counterpart of the already-matched play_audio_stream. Identified via role and argument: called with `mp3->audiostream`(the exact field play_audio_stream's own return value populates) from the newly-matched almp3_stop_mp3, matching source's own `stop_audio_stream(mp3->audiostream);` call exactly. THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X4431A0, 0X4, 0, 0);
 	define_local_var(0X4431A0, 0X4431E5, "[bp+0X4]", "Block");
 	add_func    (0X4431F0,0X4432D8);
@@ -163008,18 +163018,20 @@ static Functions_13(void) {
 	set_frame_size(0X47E730, 0, 0, 0);
 	add_func    (0X47E760,0X47E799);
 	set_func_flags(0X47E760,0x5400);
-	SetType(0X47E760, "int __cdecl sub_47E760(void *Block);");
+	SetType(0X47E760, "int __cdecl almp3_destroy_mp3(void *Block);");
+	set_func_cmt(0X47E760,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: void almp3_destroy_mp3(ALMP3_MP3 *mp3) { if (mp3==NULL) return; almp3_stop_mp3(mp3); ExitMP3(&mp3->mpeg); if (mp3->xing_header) free(mp3->xing_header); free(mp3); } at almp3.c:501-511. DECISIVE, complete, word-for-word match: NULL check, call to the already-matched almp3_stop_mp3 (sub_47E890, this round's own match), call to the already-matched ExitMP3 with `&mp3->mpeg`(+0xC), conditional free of `mp3->xing_header`@+0xA690 (this same round's own Xing-header work via almp3_get_big_endian), then free(mp3) itself. Called from sub_408392 (already matched) and sub_424D80. Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47E760, 0X4, 0, 0);
 	define_local_var(0X47E760, 0X47E799, "[bp+0X4]", "Block");
 	add_func    (0X47E7A0,0X47E880);
 	set_func_flags(0X47E7A0,0x5400);
-	set_func_cmt(0X47E7A0,	"[reversing] confirmed match\nconfidence: medium\nevidence: ENRICHED CHARACTERIZATION (fresh round, using the newly-added ALMP3 2.0.5 src/almp3.c and Allegro 4.0.2 sources): this function operates on an ALMP3_MP3STREAM-shaped struct (huge field offsets around +0xA6xx, consistent with an embedded mpg123 'struct mpstr' decoder state, which is genuinely tens of KB) and now decisively calls Allegro's own play_audio_stream (sub_443050, this round's own new match) with a byte-count-to-sample-count conversion using [mp3+0xA698] as the stream's own sample-rate divisor and [mp3+0xA6B8] as a stereo flag -- exactly matching play_audio_stream(len,bits,stereo,freq,vol,pan)'s own role. Conditionally calls the already-matched adjust_sample when its own speed-like argument (arg_10) is NOT the literal 0x3E8(1000, a percentage-based '100%=normal speed' convention). STILL NOT RENAMED: this 6-argument shape doesn't cleanly match ANY single function ALMP3 2.0.5's own archived src/almp3.c declares -- almp3_play_mp3stream is a separa" "te 4-argument function (mp3, buffer_len, vol, pa", 1);
+	set_func_cmt(0X47E7A0,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: ENRICHED CHARACTERIZATION (fresh round, using the newly-added ALMP3 2.0.5 src/almp3.c and Allegro 4.0.2 sources): this function operates on an ALMP3_MP3STREAM-shaped struct (huge field offsets around +0xA6xx, consistent with an embedded mpg123 'struct mpstr' decoder state, which is genuinely tens of KB) and now decisively calls Allegro's own play_audio_stream (sub_443050, this round's own new match) with a byte-count-to-sample-count conversion using [mp3+0xA698] as the stream's own sample-rate divisor and [mp3+0xA6B8] as a stereo flag -- exactly matching play_audio_stream(len,bits,stereo,freq,vol,pan)'s own role. Conditionally calls the already-matched adjust_sample when its own speed-like argument (arg_10) is NOT the literal 0x3E8(1000, a percentage-based '100%=normal speed' convention). STILL NOT RENAMED: this 6-argument shape doesn't cleanly match ANY single function ALMP3 2.0.5's own archived src/almp3.c " "declares -- almp3_play_mp3stream is a separate 4-argument function (mp3, buffer_len, vol, pa", 1);
 	set_frame_size(0X47E7A0, 0X4, 0, 0);
 	add_func    (0X47E880,0X47E88C);
 	set_func_flags(0X47E880,0x5400);
 	set_frame_size(0X47E880, 0, 0, 0);
 	add_func    (0X47E890,0X47E8D5);
 	set_func_flags(0X47E890,0x5400);
+	set_func_cmt(0X47E890,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: void almp3_stop_mp3(ALMP3_MP3 *mp3) { if (!almp3_is_playing_mp3(mp3)) return; if (mp3->auto_polling) remove_param_int(...); stop_audio_stream(mp3->audiostream); mp3->audiostream=NULL; } at almp3.c:552-564. DECISIVE match: guard via the already-matched almp3_is_playing_mp3, calls a newly-identified stop_audio_stream(mp3->audiostream@+0xA6B0) (this round's own sub_4431A0 match), then zeroes the same field -- the `auto_polling`/`remove_param_int` branch is CONFIRMED ABSENT (no such check exists here). Called from sub_408392 (PlayMusic's own MP3-crossfade cleanup helper, already matched) and sub_424D80. Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47E890, 0X4, 0, 0);
 	add_func    (0X47E8E0,0X47E8FE);
 	set_func_flags(0X47E8E0,0x5400);
@@ -163033,6 +163045,7 @@ static Functions_13(void) {
 	set_frame_size(0X47E970, 0X4, 0, 0);
 	add_func    (0X47E990,0X47EBC1);
 	set_func_flags(0X47E990,0x5400);
+	set_func_cmt(0X47E990,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: int almp3_poll_mp3(ALMP3_MP3 *mp3) at almp3.c:688 -- ALMP3_MP3's own per-frame poll/decode-and-buffer-fill function, the non-streaming sibling of the already-matched almp3_poll_mp3stream (itself a substantial ~200-line function). Opening guard matches exactly: 'if (!almp3_is_playing_mp3(mp3)) return ALMP3_POLL_NOTPLAYING;' -- calls the already-matched almp3_is_playing_mp3 (sub_47ECC0) and returns -1 (matching ALMP3_POLL_NOTPLAYING) on failure. Function size (237 disassembly lines) is consistent with almp3_poll_mp3's own substantial real decode-loop body. Called from sub_4084E0 (this build's own MP3-crossfade-continuation check, already matched) -- matching that function's own existing citation of 'polling the already-confirmed PlayMusic MP3 stream handle' exactly. HIGH confidence via the decisive opening-guard match; own body past that point not instruction-traced this round given its size, per this project's" " own convention for large functions. Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47E990, 0X14, 0, 0);
 	add_func    (0X47EBD0,0X47EC25);
 	set_func_flags(0X47EBD0,0x5400);
@@ -163043,9 +163056,11 @@ static Functions_13(void) {
 	set_frame_size(0X47EC30, 0X8, 0, 0);
 	add_func    (0X47EC70,0X47ECB1);
 	set_func_flags(0X47EC70,0x5400);
+	set_func_cmt(0X47EC70,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: void almp3_adjust_mp3(ALMP3_MP3 *mp3, int vol, int pan, int speed, int loop) { if (!almp3_is_playing_mp3(mp3)) return; adjust_sample(mp3->audiostream->samp, vol, pan, speed, TRUE); mp3->loop = loop; } -- a DECISIVE, complete 5-argument match: guard via the already-matched almp3_is_playing_mp3 (sub_47ECC0), call to the already-matched adjust_sample with a HARDCODED TRUE(-1) for its own loop argument (matching source's own literal TRUE, not the real caller-supplied loop value), then a SEPARATE write of the real loop argument into mp3->loop@+0xA6C0 -- matching the disassembly's own two-step pattern (call adjust_sample with hardcoded -1, then `mov [esi+0xA6C0], edx` using the actual 5th argument) exactly. Called from update_music_volume's own MP3-branch helper (sub_408356, already matched). Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47EC70, 0X4, 0, 0);
 	add_func    (0X47ECC0,0X47ECCF);
 	set_func_flags(0X47ECC0,0x5400);
+	set_func_cmt(0X47ECC0,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: int almp3_is_playing_mp3(ALMP3_MP3 *mp3) { if (mp3->audiostream==NULL) return FALSE; else return TRUE; } -- the ALMP3_MP3 sibling of the already-matched almp3_is_playing_mp3stream, same exact '(x!=0)?-1:0' idiom testing the +0xA6B0 field (mp3->audiostream). Called as the opening guard from almp3_play_ex_mp3 (this session's own correction), almp3_adjust_mp3, almp3_stop_mp3, and almp3_poll_mp3 (all this round's own new matches) -- four independent confirmation sites. Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47ECC0, 0, 0, 0);
 	add_func    (0X47ECD0,0X47ED0B);
 	set_func_flags(0X47ECD0,0x5400);
@@ -163064,11 +163079,11 @@ static Functions_13(void) {
 	define_local_var(0X47F0D0, 0X47F123, "[bp+0X4]", "Block");
 	add_func    (0X47F130,0X47F152);
 	set_func_flags(0X47F130,0x5400);
-	set_func_cmt(0X47F130,	"[reversing] confirmed match\nconfidence: medium\nevidence: Thin wrapper around sub_47F160 (this round's own new entry, the MP3STREAM-flavored structural twin of sub_47E7A0's fused play+adjust function): forwards its own 4 arguments unchanged and inserts a literal 0x3E8(1000, 'normal/100% speed') as the 5th argument sub_47F160 itself conditionally acts on. Called from my_load_mp3 (already matched), which has no reason to request a non-default playback speed at load time -- matching this build's own established pattern of default-parameter convenience wrappers around a more general fused function. Left unnamed for the same reason as sub_47F160 itself: no single ALMP3 2.0.5 declared function matches this exact shape.", 1);
+	set_func_cmt(0X47F130,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: Thin wrapper around sub_47F160 (this round's own new entry, the MP3STREAM-flavored structural twin of sub_47E7A0's fused play+adjust function): forwards its own 4 arguments unchanged and inserts a literal 0x3E8(1000, 'normal/100% speed') as the 5th argument sub_47F160 itself conditionally acts on. Called from my_load_mp3 (already matched), which has no reason to request a non-default playback speed at load time -- matching this build's own established pattern of default-parameter convenience wrappers around a more general fused function. Left unnamed for the same reason as sub_47F160 itself: no single ALMP3 2.0.5 declared function matches this exact shape. RENAMED (immediate follow-up, same session): this is exactly int almp3_play_mp3stream(ALMP3_MP3STREAM *mp3, int buffer_len, int vol, int pan) { return almp3_play_ex_mp3stream(mp3,buffer_len,vol,pan,1000); } at almp3.c:1468-1470 -- its own 4-arg forward plus" " a literal 1000 fifth argument matches source's own thin wrapper exactly, now that almp3_pla", 1);
 	set_frame_size(0X47F130, 0, 0, 0);
 	add_func    (0X47F160,0X47F236);
 	set_func_flags(0X47F160,0x5400);
-	set_func_cmt(0X47F160,	"[reversing] confirmed match\nconfidence: medium\nevidence: STRUCTURAL TWIN OF sub_47E7A0 (this project's own earlier characterization of the ALMP3_MP3-flavored version of this exact shape): operates on an ALMP3_MP3STREAM-shaped struct (same huge +0xA6xx field offsets as sub_47E7A0's own ALMP3_MP3 struct, consistent with both embedding a similar mpg123 decoder-state prefix), opens with a guard via the newly-matched almp3_is_playing_mp3stream (sub_47F690), computes a sample count from a caller-supplied byte count using [mp3+0xA6AC] as the stream's own sample-rate divisor and [mp3+0xA6CC] as a stereo flag, calls the already-matched play_audio_stream, then CONDITIONALLY calls the already-matched adjust_sample when its own 5th argument is NOT the literal 0x3E8(1000, the same '100%=normal speed' percentage convention already established for sub_47E7A0). STILL NOT RENAMED for the same reason as sub_47E7A0: this 5-argument fused play+adjust shape doesn't cleanly match EITHER of ALMP3 2.0.5's own separately-declared 4-" "argument almp3_play_mp3stream(mp3,buffer_len,vol", 1);
+	set_func_cmt(0X47F160,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: STRUCTURAL TWIN OF sub_47E7A0 (this project's own earlier characterization of the ALMP3_MP3-flavored version of this exact shape): operates on an ALMP3_MP3STREAM-shaped struct (same huge +0xA6xx field offsets as sub_47E7A0's own ALMP3_MP3 struct, consistent with both embedding a similar mpg123 decoder-state prefix), opens with a guard via the newly-matched almp3_is_playing_mp3stream (sub_47F690), computes a sample count from a caller-supplied byte count using [mp3+0xA6AC] as the stream's own sample-rate divisor and [mp3+0xA6CC] as a stereo flag, calls the already-matched play_audio_stream, then CONDITIONALLY calls the already-matched adjust_sample when its own 5th argument is NOT the literal 0x3E8(1000, the same '100%=normal speed' percentage convention already established for sub_47E7A0). STILL NOT RENAMED for the same reason as sub_47E7A0: this 5-argument fused play+adjust shape doesn't cleanly match EITHER" " of ALMP3 2.0.5's own separately-declared 4-argument almp3_play_mp3stream(mp3,buffer_len,vol", 1);
 	set_frame_size(0X47F160, 0X4, 0, 0);
 	add_func    (0X47F240,0X47F24C);
 	set_func_flags(0X47F240,0x5400);
@@ -163534,6 +163549,10 @@ static Functions_13(void) {
 	add_func    (0X48AEF0,0X48AF45);
 	set_func_flags(0X48AEF0,0x5400);
 	set_frame_size(0X48AEF0, 0X4, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X48AF50,0X48AFCA);
 	set_func_flags(0X48AF50,0x5400);
 	set_func_cmt(0X48AF50,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public font-size-setting API (the alfont library wraps FreeType; no local alfont source tree exists in this repo to verify the exact name against, so identified by call-shape/role only, matching this project's established convention for ALMP3/JGMOD). Takes 3 arguments (font handle, a literal 0, requested size) and opens with the classic \"already at this size, skip\" idiom -- comparing two cached fields (@+4/+8 on the font handle) against the two size-like arguments before doing any real work, matching FreeType's own `FT_Set_Pixel_Sizes(face,width,height)` convention (0 for width meaning \"derive it automatically from height\") that alfont's real `alfont_set_font_size` is known to wrap. Called from sub_401AAC (this build's own font-load-and-size-adjust helper) and from the newly-identified alfont_load_font_from_mem (sub_48B020, presumably applying a default size right after loading). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule)" ", not chased further.", 1);
@@ -163571,10 +163590,6 @@ static Functions_13(void) {
 	set_func_flags(0X48B330,0x5400);
 	set_func_cmt(0X48B330,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: alfont's own public API measuring a string's rendered pixel width in a TrueType font (no local alfont source tree exists in this repo -- identified by call-shape/role). Iterates the string character by character via a decode-next-character function-pointer call (off_4B28F0, plausibly ugetc/a UTF-8-aware character iterator), looks up each character's glyph via an internal helper (sub_48AE80, not chased further per scope), and accumulates `glyph->advance.x>>6` into a running total -- the `>>6` shift is FreeType's own unmistakable 26.6 fixed-point advance-width convention, a decisive identifying signature. Called from wgettextwidth (already matched) and from the newly-identified alfont text-output helper (sub_48B140). THIRD-PARTY LIBRARY BOUNDARY, not chased further (its own internal glyph-cache helpers sub_48AE80/sub_48CF60 left unnamed).", 1);
 	set_frame_size(0X48B330, 0X4, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X48B3A0,0X48B41C);
 	set_func_flags(0X48B3A0,0x5400);
 	set_frame_size(0X48B3A0, 0X8, 0, 0);
@@ -165792,6 +165807,10 @@ static Functions_14(void) {
 	set_func_flags(0X4AB580,0x5480);
 	set_func_cmt(0X4AB580,	"[reversing] confirmed match\nsource obj (library): dinput:DINPUT.dll\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=dinput:DINPUT.dll", 1);
 	set_frame_size(0X4AB580, 0, 0, 0X10);
+}
+
+static Functions_15(void) {
+
 	add_func    (0X4AC1B4,0X4AC1B7);
 	set_func_flags(0X4AC1B4,0x5400);
 	set_frame_size(0X4AC1B4, 0, 0, 0);
@@ -165845,6 +165864,7 @@ static Functions(void) {
 	Functions_12();
 	Functions_13();
 	Functions_14();
+	Functions_15();
 }
 
 //------------------------------------------------------------------------

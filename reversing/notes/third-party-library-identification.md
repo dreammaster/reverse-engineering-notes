@@ -888,3 +888,87 @@ lack of any reason to request non-default playback speed at load
 time. Both are now richly characterized in `matches.json` even though
 left unnamed, matching this project's established "record what's
 known, don't force a name" convention.
+
+### MAJOR CORRECTION, immediate follow-up: `sub_47E7A0`/`sub_47F160` ARE clean matches after all -- the whole ALMP3 play/stop/destroy/poll cluster closes
+
+Continuing to `sub_408392`'s (PlayMusic's own MP3-crossfade cleanup
+helper, already matched) remaining callees turned up
+`almp3_destroy_mp3`, whose own body happens to cite
+`almp3.c:514-516`'s neighbor -- `almp3_play_mp3`'s own real
+declaration:
+
+```c
+int almp3_play_mp3(ALMP3_MP3 *mp3, int buffer_len, int vol, int pan) {
+  return almp3_play_ex_mp3(mp3, buffer_len, vol, pan, 1000, FALSE);
+}
+```
+
+**This is the function this project's own earlier rounds (both a few
+sessions ago for `sub_47E7A0`, and just one round ago in THIS session
+for `sub_47F160`) had missed entirely.** Both earlier "doesn't cleanly
+match either declared function" conclusions checked only
+`almp3_play_mp3`(4 args)/`almp3_adjust_mp3`(5 args) -- neither round
+noticed `almp3.c`'s own real 6-argument workhorse, `almp3_play_ex_mp3
+(ALMP3_MP3 *mp3, int buffer_len, int vol, int pan, int speed, int
+loop)` (`almp3.c:519-549`), which `almp3_play_mp3` itself only thinly
+wraps. Reading it against `sub_47E7A0`'s own already-fully-transcribed
+body finds a COMPLETE, word-for-word match: the `almp3_is_playing_mp3`
+guard, the `buffer_len/outbytes_per_frame` division, the `play_audio_
+stream` call, the `speed!=1000`-gated `adjust_sample` call (the exact
+literal this project's own earlier rounds had already flagged, just
+without connecting it to this function), and the trailing `mp3->loop=
+loop; mp3->wait_for_audio_stop=0;` writes. **Renamed `sub_47E7A0` ->
+`almp3_play_ex_mp3`, retracting the earlier "left unnamed" framing.**
+The streaming sibling, `almp3_play_ex_mp3stream(mp3,buffer_len,vol,
+pan,speed)` (`almp3.c:1473-1502`, no `loop` parameter -- matching
+`almp3_adjust_mp3stream`'s own declared 4-arg shape lacking one too)
+closes `sub_47F160` the same way, and its own thin wrapper `almp3_
+play_mp3stream(mp3,buffer_len,vol,pan){return almp3_play_ex_mp3stream
+(mp3,buffer_len,vol,pan,1000);}` (`almp3.c:1468-1470`) closes
+`sub_47F130` exactly as hypothesized.
+
+With those two corrected, the rest of the cluster fell into place in
+one pass, each a decisive or near-decisive match:
+
+- **`almp3_is_playing_mp3`**(`sub_47ECC0`) -- the `ALMP3_MP3` sibling
+  of the already-matched `almp3_is_playing_mp3stream`, same exact
+  `(x!=0)?-1:0` idiom, now cross-confirmed via FOUR independent
+  callers (`almp3_play_ex_mp3`, `almp3_adjust_mp3`, `almp3_stop_mp3`,
+  `almp3_poll_mp3`, all this round's own matches).
+- **`almp3_adjust_mp3`**(`sub_47EC70`) -- a DECISIVE 5-argument match:
+  guard, then `adjust_sample` called with a HARDCODED `TRUE` for its
+  own loop argument (matching source's own literal, not the real
+  caller-supplied value) followed by a SEPARATE write of the real
+  `loop` argument into `mp3->loop` -- matching the disassembly's own
+  two-step pattern exactly.
+- **`almp3_stop_mp3`**(`sub_47E890`) -- guard, call a newly-identified
+  `stop_audio_stream`(`sub_4431A0`, Allegro's own public counterpart
+  to the already-matched `play_audio_stream`) on `mp3->audiostream`,
+  zero the field. The `auto_polling` branch confirmed absent.
+  Bonus: identifies `stop_audio_stream` itself.
+- **`almp3_destroy_mp3`**(`sub_47E760`) -- the function whose own
+  reading kicked off this whole correction round: NULL check, call
+  `almp3_stop_mp3`, call the already-matched `ExitMP3(&mp3->mpeg)`,
+  conditional free of `mp3->xing_header` (this same session's own
+  `almp3_get_big_endian`/Xing-header work), free the struct itself --
+  word-for-word.
+- **`almp3_poll_mp3`**(`sub_47E990`) -- the `ALMP3_MP3` sibling of
+  the already-matched `almp3_poll_mp3stream`, itself a substantial
+  ~200-line function; closes via a decisive opening-guard match
+  (`almp3_is_playing_mp3`, returning `ALMP3_POLL_NOTPLAYING`=-1 on
+  failure) with the rest of its own ~230-line body left untraced past
+  that point, consistent with this project's usual treatment of large
+  functions.
+
+**With this, the entire ALMP3 public play/stop/destroy/poll/adjust
+API surface -- for BOTH the static-MP3 and streaming-MP3 cases -- is
+now fully named**, closing out essentially all of Task #10's own
+long-standing ALMP3 open leads in one extended sitting. Applied all 9
+matches (2 corrections + 7 new), re-exported (2586 functions, 990
+named -- up from 535 at the start of this project). Process lesson:
+when a "doesn't cleanly match the declared function" conclusion is
+reached, it's worth double-checking whether the SOURCE FILE has a
+THIN WRAPPER + a separate, more-general "_ex"-style real workhorse
+before concluding there's no match at all -- this pattern (`almp3_
+play_mp3`/`almp3_play_ex_mp3`, mirrored for the streaming API) is
+exactly what tripped up both of this project's own earlier attempts.
