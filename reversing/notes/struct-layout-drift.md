@@ -16373,3 +16373,22 @@ from the command's own data field right before displaying) that this
 build's `xx`-setting behavior implements live -- independent
 confirmation that finding wasn't a guess, just a mechanism 2011 later
 disabled without removing the trace of it.
+
+**Clarifying note, checked while reading the rest of the same 2011
+function**: `respond[]`'s numbering is its own, entirely independent
+scheme -- not the same enum as 2011's `NewInteractionCommand` action
+codes at any value besides 9's own coincidental match. 2011's Play
+Sound/Play Flic/Run Dialog/Add Inventory/Object Off/Object On/Stop
+Walking (cases 7/8/9/13/15/16/24) correspond to this build's `respond==
+0xB/0xC/0xE/8/6/0xD/2` -- different numbers throughout. 2011's own "Add
+Score" (cases 2/3) and the Move-Object/Set-View/Animate/Move-Character
+family (cases 14/17-19) have no `respond[]` equivalent in `[0,14]` at
+all -- the latter only reachable via the separate `EventBlockCmd`
+"Run Animation" system (`respond==4`), and score-giving not directly
+triggerable from a `respond[]` value in this build at all (only
+indirectly, e.g. a Run Script response calling a function that itself
+calls `GiveScore`) -- consistent with `GRAPHSCRIPT`, this build's own
+still-older predecessor, being the one place with a direct
+type-to-`GiveScore` mapping. Worth flagging so a future round doesn't
+assume a numeric correspondence exists elsewhere just because value 9
+happened to line up.
