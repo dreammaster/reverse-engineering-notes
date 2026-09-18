@@ -16778,3 +16778,46 @@ paletted game): the low-color-depth path delegates its whole job to
 `sub_40A6D8`'s own body implements a separate high-color-depth manual
 pixel-darkening technique (already characterized in an earlier round).
 Both of `sub_40A21C`'s callers are now fully accounted for.
+
+### `GetLocationType`'s own dispatch body closes -- a zero-drift `LOCTYPE_*` confirmation
+
+A fresh sweep for central AGS-side functions with still-unnamed direct
+callees found `GetLocationType` calling `sub_417ECD` -- but `sub_417ECD`
+turned out to already be a fully-matched, deliberately-unnamed helper
+(the character-hit-test internal used by `GetCharacterAt`). The real
+finding is that `GetLocationType`'s OWN dispatch body -- previously
+never read at all, its `matches.json` entry only citing one incidental
+finding from inside a callee's animation code -- closes cleanly on its
+own.
+
+This build's `GetLocationType(xxx,yyy)` is NOT 2011's thin 2-line
+`return __GetLocationType(xxx,yyy,0);` wrapper (`AC.CPP:20540-20541`)
+-- it implements the real dispatch logic directly, matching 2011's own
+`__GetLocationType` body (`AC.CPP:20466-20539`) closely instead:
+bounds-checks the point against `RoomStruct.width`/`.height`
+(already confirmed) after adjusting for `offsetx`/`offsety` (already-
+confirmed globals), returning 0 out of bounds; then tries, in order, a
+character hit-test (`sub_417ECD`, returning `LOCTYPE_CHAR`=2 on a hit
+-- this function's SECOND confirmed caller, alongside `GetCharacterAt`),
+an object hit-test (`GetObjectAt`, returning `LOCTYPE_OBJ`=3), and a
+hotspot hit-test (`get_hotspot_at`, returning `LOCTYPE_HOTSPOT`=1),
+falling through to 0 if nothing hit. All three `LOCTYPE_*` values match
+`AC.CPP:660-662`'s `#define`d constants with zero drift and the exact
+same priority order 2011's own `winner=` cascade uses
+(`AC.CPP:20501-20524`: character beats object beats hotspot).
+
+**Bonus observation, not chased further**: `GetLocationType`'s own
+caller, `__GetLocationType` (`sub_411E70`, already matched), turns out
+to call it from a genuinely DIFFERENT context than that entry's own
+existing citation (the `get_hotspot_at`-matching dispatch logic at
+`AC.CPP:20482`) -- a mouse-cursor idle-animation branch gated on
+`MouseCursor`'s own "is this cursor animated" flag, using
+`GetLocationType`'s result purely as an "is anything under the mouse"
+gate before advancing the idle-cursor animation frame. 2011's own
+`__GetLocationType` has no cursor-idle-animation logic in it at all --
+this build's `sub_411E70` plausibly FUSES two separate 2011-era
+responsibilities into one function, the same "one big pre-refactor
+function, later split" pattern already seen repeatedly in this project
+(`cc_run_code`, `unload_old_room`, `offset_over_inv`, etc). Not
+independently confirmed which 2011 function the idle-animation logic
+maps to -- left as an open observation for a future round.

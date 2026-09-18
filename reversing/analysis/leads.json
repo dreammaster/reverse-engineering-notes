@@ -6,6 +6,13 @@
   ],
   "evidence": [
    {
+    "label": "aStackOverflow",
+    "text": "stack overflow",
+    "files": [
+     "Common/CSRUN.CPP"
+    ]
+   },
+   {
     "label": "aSpecifiedCodeO",
     "text": "specified code offset is not valid",
     "files": [
@@ -13,7 +20,7 @@
     ]
    },
    {
-    "label": "aStackOverflow_1",
+    "label": "aStackOverflow_0",
     "text": "stack overflow",
     "files": [
      "Common/CSRUN.CPP"
@@ -27,6 +34,13 @@
     ]
    },
    {
+    "label": "aInvalidInstruc",
+    "text": "invalid instruction %d found in code stream",
+    "files": [
+     "Common/CSRUN.CPP"
+    ]
+   },
+   {
     "label": "aStackOverflow_2",
     "text": "stack overflow",
     "files": [
@@ -34,22 +48,8 @@
     ]
    },
    {
-    "label": "aStackOverflow_0",
+    "label": "aStackOverflow_1",
     "text": "stack overflow",
-    "files": [
-     "Common/CSRUN.CPP"
-    ]
-   },
-   {
-    "label": "aStackOverflow",
-    "text": "stack overflow",
-    "files": [
-     "Common/CSRUN.CPP"
-    ]
-   },
-   {
-    "label": "aInvalidInstruc",
-    "text": "invalid instruction %d found in code stream",
     "files": [
      "Common/CSRUN.CPP"
     ]
@@ -63,15 +63,15 @@
   ],
   "evidence": [
    {
-    "label": "a0123456789abcd",
-    "text": "0123456789ABCDEF",
+    "label": "a0123456789abcd_0",
+    "text": "0123456789abcdef",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/unicode.c"
     ]
    },
    {
-    "label": "a0123456789abcd_0",
-    "text": "0123456789abcdef",
+    "label": "a0123456789abcd",
+    "text": "0123456789ABCDEF",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/unicode.c"
     ]
@@ -85,15 +85,15 @@
   ],
   "evidence": [
    {
-    "label": "aWaveout22050hz",
-    "text": "WaveOut 22050hz 8bit mono",
+    "label": "aWaveout44100hz",
+    "text": "WaveOut 44100hz 16bit stereo",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/win/wsndwo.c"
     ]
    },
    {
-    "label": "aWaveout44100hz",
-    "text": "WaveOut 44100hz 16bit stereo",
+    "label": "aWaveout22050hz",
+    "text": "WaveOut 22050hz 8bit mono",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/win/wsndwo.c"
     ]
@@ -294,45 +294,6 @@
     ]
    },
    {
-    "label": "aLanguage_3",
-    "text": "language",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-    ]
-   },
-   {
-    "label": "aTextCfg",
-    "text": "text.cfg",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/config.c"
-    ]
-   },
-   {
-    "label": "aLanguageDat",
-    "text": "language.dat",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c"
-    ]
-   },
-   {
-    "label": "aLanguage_2",
-    "text": "language",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-    ]
-   },
-   {
     "label": "aSystem_2",
     "text": "system",
     "files": [
@@ -373,6 +334,45 @@
      "Engine/libsrc/allegro-4.2.2/tools/macosx/fixbundle.c",
      "Engine/libsrc/apeg-1.2.1/audio/readers.c",
      "Engine/libsrc/apeg-1.2.1/getbits.c"
+    ]
+   },
+   {
+    "label": "aTextCfg",
+    "text": "text.cfg",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/config.c"
+    ]
+   },
+   {
+    "label": "aLanguage_2",
+    "text": "language",
+    "files": [
+     "Engine/AC.CPP",
+     "Engine/ACWSETUP.CPP",
+     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
+    ]
+   },
+   {
+    "label": "aLanguageDat",
+    "text": "language.dat",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c"
+    ]
+   },
+   {
+    "label": "aLanguage_3",
+    "text": "language",
+    "files": [
+     "Engine/AC.CPP",
+     "Engine/ACWSETUP.CPP",
+     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
     ]
    }
   ]
@@ -435,10 +435,29 @@
     ]
    },
    {
+    "label": "aPatches",
+    "text": "patches",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.2.2/src/misc/fm_instr.h",
+     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
+    ]
+   },
+   {
     "label": "aUltradir",
     "text": "ULTRADIR",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/digmid.c"
+    ]
+   },
+   {
+    "label": "aPatchesDat",
+    "text": "patches.dat",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
     ]
    },
    {
@@ -488,25 +507,6 @@
      "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
      "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
     ]
-   },
-   {
-    "label": "aPatchesDat",
-    "text": "patches.dat",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aPatches",
-    "text": "patches",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/fm_instr.h",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
    }
   ]
  },
@@ -527,6 +527,13 @@
   ],
   "evidence": [
    {
+    "label": "aOle32DllCanTBe",
+    "text": "OLE32.DLL can't be loaded.",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
+    ]
+   },
+   {
     "label": "aMicrosoftDistr",
     "text": "Microsoft Distributed COM is not installed on this system. If you",
     "files": [
@@ -536,13 +543,6 @@
    {
     "label": "aDcomNotFound",
     "text": "DCOM not found",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
-    ]
-   },
-   {
-    "label": "aOle32DllCanTBe",
-    "text": "OLE32.DLL can't be loaded.",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
     ]
@@ -681,6 +681,15 @@
     ]
    },
    {
+    "label": "aColorConversio",
+    "text": "color conversion",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
+     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
+     "Engine/libsrc/allegro-4.2.2/tools/dat.c"
+    ]
+   },
+   {
     "label": "aMatching",
     "text": "matching",
     "files": [
@@ -690,15 +699,6 @@
      "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
      "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
      "Engine/libsrc/allegro-4.2.2/src/x/xwin.c"
-    ]
-   },
-   {
-    "label": "aColorConversio",
-    "text": "color conversion",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-     "Engine/libsrc/allegro-4.2.2/tools/dat.c"
     ]
    }
   ]

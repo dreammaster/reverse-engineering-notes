@@ -5028,6 +5028,20 @@ disassembly work.
   entirely to `sub_40A21C`'s manual palette-interpolation loop -- not
   just "plausible" as the standing caution had it. See `reversing/notes/
   struct-layout-drift.md`.
+- **`GetLocationType`'s own dispatch body closes -- zero-drift
+  `LOCTYPE_*` confirmation.** Found via a fresh sweep for central
+  functions with still-unnamed direct callees. This build's
+  `GetLocationType` is NOT 2011's thin wrapper -- it implements the
+  real dispatch logic directly, trying character/object/hotspot hit-
+  tests in order (`sub_417ECD`/`GetObjectAt`/`get_hotspot_at`, all
+  already matched) and returning `LOCTYPE_CHAR=2`/`LOCTYPE_OBJ=3`/
+  `LOCTYPE_HOTSPOT=1` with zero drift from `AC.CPP:660-662`'s
+  constants, in 2011's exact same priority order. Bonus: its own caller
+  `__GetLocationType` turns out to call it from a genuinely different
+  context (mouse-cursor idle-animation gating) than that function's own
+  existing citation -- plausibly fusing two separate 2011 functions
+  into one, left as an open observation. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
