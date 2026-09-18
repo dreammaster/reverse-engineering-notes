@@ -421,20 +421,30 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2587 functions total (grew from 2582 after several libcda functions
-  received IDA function boundaries mid-session): 690 named, 1897 unnamed
-  (`sub_*`) as of the last IDB re-export (started this project at 535
-  named). `matches.json` has since grown to 511 entries — fully applied/
-  in sync with the last re-export as of this writing.
+- 2586 functions total: 944 named, 1642 unnamed (`sub_*`/`nullsub_*`) as of the last
+  IDB re-export (started this project at 535 named). `matches.json` has
+  since grown to 861 entries — fully applied/in sync with the last
+  re-export as of this writing. (These per-round numbers below this point
+  are historical snapshots from whenever each round wrote them, not kept
+  current — trust the two counts just given, and the "regenerate via the
+  scripts above" note at the top of this section, over any older figure
+  quoted deeper in the log that follows.)
 - 2727 string literals extracted from `.data`/`.rdata`; 1096 of those
   matched verbatim into source (819 to a single file) after the full
   Allegro 4.2.2 tree was added under `Engine/libsrc/allegro-4.2.2/` (was
-  944/776 before that addition) — this pool was "largely exhausted" for
-  Engine/Common code specifically; a productive third-party-library round
-  (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 589 entries (function + struct-field
+  944/776 before that addition) — this pool has been independently
+  reconfirmed "fully exhausted" (unchanged 1096/2727) on several separate
+  `cross_reference.py` re-runs across many hundreds of renames since, the
+  most recent late in this same session. `build_leads.py` likewise sits
+  at a steady 32 leads (10 single-candidate-file), all of which trace to
+  third-party-library internals with no AGS-side caller — see "Tried
+  numeric-constant/struct-offset matching" and the callgraph-ranking
+  entries below for the full saturation writeup. Task #10 (third-party
+  library identification) is paused, not abandoned — see its own section
+  below.
+- `reversing/analysis/matches.json` has 861 entries (function + struct-field
   matches combined)
-- 25 struct definitions built entirely from disassembly evidence (not
+- 38 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
   `MouseCursor` (`game.mcurs[]`, found incidentally while investigating
   `GameSetupStructBase`'s `hotdot`/`hotdotouter` — a rare full match to
