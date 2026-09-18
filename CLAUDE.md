@@ -4995,6 +4995,22 @@ disassembly work.
   (`AC.CPP:4998-5016`). The first rename (not just documentation
   addition) of this session's continuation. See `reversing/notes/
   struct-layout-drift.md`.
+- **`__actual_invscreen` closes completely -- all 1133 lines now read
+  end to end.** The remaining ~600-line event loop (no 2011 source
+  counterpart exists for this whole mechanism -- 2011's own default
+  inventory display is entirely GUI-based) closes at the structural/
+  behavioral level: ANY keypress unconditionally exits the screen; a
+  per-frame item-index/hover-highlight tracker maintains the
+  highlighted-slot box via already-matched `wsetcolor`/`wrectangle`
+  calls; `rec_mgetbutton()`'s edge-triggered click result dispatches on
+  the current cursor mode -- `cmode==1`(`MODE_LOOK`) calls
+  `run_event_block_inv(item,aaa=0,...)` ("Look"), `cmode==4`(
+  `MODE_USE`) calls it with `aaa=3` ("UseInv") after checking the
+  player's own owned-count via `CharacterInfo.inv[]`, any other cmode
+  picks the item up via the just-renamed `update_inv_cursor`+
+  `SetMouseCursor(MODE_USE)`; a second click type toggles cmode between
+  `MODE_LOOK`/`CURS_ARROW`. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

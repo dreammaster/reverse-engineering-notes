@@ -16674,3 +16674,65 @@ own declaration had already suggested (`update_inv_cursor(int invnum)`,
 `AC.CPP:4998-5016`) but this project had never had a strong enough call
 site to confirm. Renamed `sub_40CF16` -> `update_inv_cursor`, applied
 to the live IDB and re-exported this round (2586 functions, 945 named).
+
+### `__actual_invscreen` closes completely -- the full ~600-line event loop read
+
+The remaining body past the opening/setup section (already closed a
+round ago) is the function's own per-frame interactive loop. No 2011
+source counterpart exists for this specific mechanism at all -- 2011's
+own default inventory display is entirely GUI-based (`GUIInv`, already
+matched separately as its own struct/draw method), where this build's
+default inventory screen is a standalone, full-screen procedural loop
+with nothing in the reference source to diff against line by line. This
+closes at the structural/behavioral level instead, the same treatment
+already given to other no-2011-counterpart functions in this project
+(`run_graph_script`, `EventBlockCmd`, the CSCI dialog subsystem, etc).
+
+Confirmed structure, in full:
+
+- **Exit condition**: the main loop (`loc_41F8E2`) polls `kbhit()`
+  first, every frame -- ANY keypress at all (not a specific key, e.g.
+  not gated to Escape) unconditionally exits the whole screen. It
+  drains the keyboard buffer via a `getch()` loop, runs the already-
+  matched `SetDefaultCursor`/`domouse`/`sub_40976A` cleanup trio
+  (restoring the pre-screen cursor and virtual-screen draw target), and
+  returns.
+- **Per-frame item-index tracking**: recomputes which item slot the
+  mouse is over every frame, reusing the same layout-math formula
+  already confirmed in the opening section's own read.
+- **Click dispatch via `rec_mgetbutton()`** (already matched,
+  edge-triggered): three branches --
+  1. **No new click** falls through to scroll-arrow-hover handling
+     (auto-scrolling the display up/down by one row while the mouse
+     rests on the up/down arrow icons the opening section already
+     confirmed are drawn) and hover-highlight maintenance -- erasing
+     the old highlight box (`wsetcolor(0)`+`wrectangle`) and drawing
+     the new one (`wsetcolor(0xE)`+`wrectangle`), both already-matched
+     calls, both previously flagged in the opening-section round as
+     "not yet traced".
+  2. **A left-click-equivalent on a real item slot** dispatches on the
+     current cursor mode (`var_348`, already established in the
+     opening-section round as plausibly `1`=`MODE_LOOK`/`4`=`MODE_USE`/
+     `6`=`CURS_ARROW`, now confirmed via this branch's own behavior):
+     `cmode==1` calls the already-matched `run_event_block_inv(invNum,
+     aaa=0, -1, 1)` directly -- a "Look at inventory item" interaction,
+     `aaa=0` matching this project's own already-established
+     EventBlock interaction-type numbering where 0=Look. `cmode==4`
+     (`MODE_USE`, i.e. already holding a picked-up item) calls the same
+     function with `aaa=3` (the established UseInv slot) after first
+     writing `GameState.used_inv_on` (`play_usedinv?`, already
+     confirmed) and checking the PLAYER'S OWN owned-count for that item
+     via `playerchar->inv[]` (`CharacterInfo`'s already-established
+     field) -- resetting to the plain arrow cursor if the count hits
+     zero. Any OTHER `cmode` value treats the click as simply picking
+     the item up: calls the just-renamed `update_inv_cursor(item)` then
+     `SetMouseCursor(MODE_USE)`, entering use-mode.
+  3. **A second-button-equivalent click** (`var_380==1`) is a plain
+     cursor-mode TOGGLE between `cmode` 1 (`MODE_LOOK`) and 6
+     (`CURS_ARROW`), independent of which item is under the mouse --
+     right-click cycles Look<->plain-arrow.
+
+The function's own return value (`var_360`) is the picked-up/looked-at
+item number, or -1, passed back to its already-matched caller
+(`InventoryScreen`). With this, all 1133 lines of `__actual_invscreen`
+are read and documented end to end.
