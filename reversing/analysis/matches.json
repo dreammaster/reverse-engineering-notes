@@ -8233,5 +8233,105 @@
     "confidence": "medium",
     "is_library": true,
     "evidence": "fixed fixatan(fixed x) (also aliased as `fatan`, alcompat.h:55) -- Allegro's public fixed-point arctangent. Identified by call-shape/role only (a 1-argument function at a different, more distant address than the sin/cos/div cluster, consistent with a larger/more complex lookup-plus-interpolation implementation typical of fixatan) -- reached via a thin forwarding trampoline (sub_433DFF, left unnamed) called from calculate_move_stage (already matched) matching source's own fatan(fdiv(ydist,xdist)) call, the last of calculate_move_stage's math-helper call sites to be identified. THIRD-PARTY LIBRARY BOUNDARY, its own body not traced. Data-hygiene fix: already in the live IDB comment, never given its own matches.json entry."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47D670",
+    "new_name": "jgmod_fopen",
+    "source_file": "Engine/libsrc/jgmod/file_io.c",
+    "source_line": 26,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "JGMOD_FILE *jgmod_fopen(char *filename, char *mode) at file_io.c:26-33 -- '#ifdef JGMOD_PACKFILE return pack_fopen(filename, mode);'. Exact, complete match: this function's entire body is a 2-argument forward to the already-matched pack_fopen (via ds:off_4B28CC). Confirms JGMOD_PACKFILE is defined in this build (AGS packages its music assets inside the CLIB archive, so JGMOD reads through Allegro's own packfile layer rather than raw fopen). Called from load_mod (already matched) and sub_477CE0 (a related, not-yet-conclusively-identified variant cascade). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47D700",
+    "new_name": "jgmod_fread",
+    "source_file": "Engine/libsrc/jgmod/file_io.c",
+    "source_line": 69,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int jgmod_fread(char *buf, int size, JGMOD_FILE *f) at file_io.c:69-76 -- '#ifdef JGMOD_PACKFILE return pack_fread(buf, size, f);'. Exact, complete match: entire body is a 3-argument forward (buf, size, f) to the already-matched pack_fread (via ds:off_4B28D8), argument order confirmed via cdecl push sequence. Found via the newly-added JGMOD source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47D6A0",
+    "new_name": "jgmod_fseek",
+    "source_file": "Engine/libsrc/jgmod/file_io.c",
+    "source_line": 46,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void jgmod_fseek(JGMOD_FILE **f, char *filename, int offset) at file_io.c:46-56 -- '#ifdef JGMOD_PACKFILE pack_fclose(*f); *f = pack_fopen(filename, \"r\"); pack_fseek(*f, offset);'. Exact, complete match: pack_fclose(*f) via the already-matched ds:off_4B28D0, pack_fopen(filename,\"r\") via the already-matched ds:off_4B28CC (literal \"r\" mode string matches source exactly, not \"rb\"), storing the new handle back into *f, then pack_fseek(*f, offset) via ds:off_4B28D4 (newly identified as pack_fseek this round, pointing at sub_42F43B). Found via the newly-added JGMOD source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47D6E0",
+    "new_name": "jgmod_skip",
+    "source_file": "Engine/libsrc/jgmod/file_io.c",
+    "source_line": 59,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void jgmod_skip(JGMOD_FILE *f, int skip) at file_io.c:59-66 -- '#ifdef JGMOD_PACKFILE pack_fseek(f, skip);'. Exact, complete match: entire body is a 2-argument forward to pack_fseek (via ds:off_4B28D4, the same pointer jgmod_fseek uses). Found via the newly-added JGMOD source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47B360",
+    "new_name": "jgmod_calloc",
+    "source_file": "Engine/libsrc/jgmod/load_mod.c",
+    "source_line": 459,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void *jgmod_calloc(int size) at load_mod.c:459-467 -- 'return calloc(1, size);'. Exact, complete match: entire body is 'push Size; push 1; call calloc' (already-matched CRT calloc). JGMOD's own universal allocation helper, used throughout every format loader (load_mod.c/load_s3m.c/load_xm.c/load_it.c/load_jgm.c/mod.c all call it heavily). Called from install_mod (already matched) -- this retroactively confirms install_mod's own 'malloc'd init-sample struct' description should read 'jgmod_calloc'd'. Found via the newly-added JGMOD source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47D800",
+    "new_name": "jgmod_igetw",
+    "source_file": "Engine/libsrc/jgmod/file_io.c",
+    "source_line": 115,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int jgmod_igetw(JGMOD_FILE *f) at file_io.c:115-124 -- reads two bytes via jgmod_getc and combines as '(b2<<8)+b1' (Intel/little-endian byte order), returning EOF(-1) if either read fails. Exact, complete match: calls sub_47D720 (this round's own pack_getc identification) twice, first result in esi(b1), second in eax(b2), computes 'eax=(eax<<8)+esi' -- since jgmod_getc's own trivial '#ifdef JGMOD_PACKFILE return pack_getc(f);' body is small enough that the compiler inlined it away entirely here (explaining why no separate jgmod_getc function survives in this binary at all -- every caller reaches pack_getc directly). Found via the newly-added JGMOD source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47D840",
+    "new_name": "jgmod_igetl",
+    "source_file": "Engine/libsrc/jgmod/file_io.c",
+    "source_line": 127,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "long jgmod_igetl(JGMOD_FILE *f) at file_io.c:127-138 -- reads four bytes via jgmod_getc and combines as '(b4<<24)+(b3<<16)+(b2<<8)+b1' (Intel/little-endian byte order), returning EOF(-1) if any read fails. Exact, complete match: calls sub_47D720 (pack_getc) four times in order (ebp=b1,ebx=b2,edi=b3,eax=b4), then combines via three successive 'eax=(eax<<8)+prev' steps landing exactly on the source's declared byte order with zero drift. Same jgmod_getc-inlined-away pattern as jgmod_igetw. Found via the newly-added JGMOD source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47D720",
+    "new_name": "pack_getc",
+    "source_file": "Engine/libsrc/allegro-4.0.2/include/allegro/inline/file.inl",
+    "source_line": 26,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "CORRECTION (this round): this function was previously informally described in a much earlier round's prose as 'sub_47D720 -- read-1-byte' and grouped alongside the JGMOD I/O wrappers (jgmod_fopen/jgmod_fread) as if it were their sibling jgmod_getc -- but it's actually Allegro's OWN AL_INLINE pack_getc(PACKFILE *f) (file.inl:26-32), compiled here as a real out-of-line function rather than truly inlined. DECISIVE, field-for-field match: 'f->buf_size--; if (f->buf_size>0) return *(f->buf_pos++); else return _sort_out_getc(f);' matches the disassembly exactly -- [ecx+0xC]=buf_size (decremented, tested >0), [ecx+8]=buf_pos (read then incremented on the fast path), falling through to a 1-arg call (ds:off_4B28DC, this round's own _sort_out_getc identification) on the slow path. This ALSO cross-confirms Allegro 4.0.2's own PACKFILE struct layout (hndl@0x00/flags@0x04/buf_pos@0x08/buf_size@0x0C/todo@0x10) matches this binary's real, disassembly-observed field offsets exactly -- independently resolving the long-standing MEDIUM-confidence caution on pack_fopen/pack_fread ('the PACKFILE.todo field this build reads at +0x10 doesn't match the 4.2.2 reference's declared +0x1C offset') in favor of 4.0.2 being the correct-era Allegro version for this specific struct, even though a direct GFX_VTABLE check this same round found neither 4.0.2 nor 4.1.1 to be a perfect match for THAT particular struct (see struct-layout-drift.md for the full writeup) -- the real linked version is most likely an untitled WIP snapshot between official releases, not recoverable exactly. Renamed sub_47D720 -> pack_getc, correcting the earlier informal 'JGMOD io helper' framing."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42F43B",
+    "new_name": "pack_fseek",
+    "source_file": "Engine/libsrc/allegro-4.0.2/src/file.c",
+    "source_line": 1714,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "int pack_fseek(PACKFILE *f, int offset) at file.c:1714-... -- Allegro's public forward-seek API. Identified via pointer target (ds:off_4B28D4 points here) and call-shape/role match: 2-argument (file,offset) function, called from jgmod_fseek/jgmod_skip's own confirmed forwards (both matching source's own pack_fseek call exactly), and a substantial multi-branch body (165 lines) consistent with pack_fseek's real complexity (buffer-skip fast path, compressed-file byte-by-byte fallback, parent-file handling) rather than a trivial wrapper. MEDIUM confidence: own body not instruction-traced this round, matched at the call-shape/pointer-target level. THIRD-PARTY LIBRARY BOUNDARY, not chased further per this project's own scope rule."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42FC67",
+    "new_name": "_sort_out_getc",
+    "source_file": "Engine/libsrc/allegro-4.0.2/src/file.c",
+    "source_line": 2081,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "int _sort_out_getc(PACKFILE *f) at file.c:2078-2081 -- 'Helper function for the pack_getc() macro' per source's own doc comment. Identified via pointer target (ds:off_4B28DC points here) and call-shape/role match: 1-argument function, called from pack_getc's own fallback path (this round's own pack_getc identification, matching source's 'return _sort_out_getc(f);' exactly) AND from pack_fread (already matched) -- both matching source's own two real callers of this function. THIRD-PARTY LIBRARY BOUNDARY, not chased further -- its own body (the real slow-path decompression/buffer-refill logic) isn't traced per this project's own scope rule."
   }
 ]

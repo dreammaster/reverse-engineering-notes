@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 948 named, 1638 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 958 named, 1628 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5111,10 +5111,10 @@ source at all, ruling out this project's main technique categorically
 progress). **`almp3-2.0.5` yielded 5 solid matches** via caller-shape
 analysis of `PlayMusic`'s already-known `"music%d.mp3"` attempt:
 `my_load_static_mp3`, `almp3_create_mp3`, plus 3 supporting Allegro
-`PACKFILE` functions (`pack_fopen`/`pack_fread`/`pack_fclose`, MEDIUM
-confidence — the `PACKFILE.todo` field offset this build reads doesn't
-match the 4.2.2 reference declaration, likely struct-layout drift, not
-a function-identity doubt). One open lead remains there (`sub_47E7A0`,
+`PACKFILE` functions (`pack_fopen`/`pack_fread`/`pack_fclose` — the
+`PACKFILE.todo` offset caution against the 4.2.2 reference is now
+RESOLVED, see the Allegro 4.0.2 addition below: 4.0.2's own struct
+layout matches this build's real offsets exactly). One open lead remains there (`sub_47E7A0`,
 called right after `almp3_create_mp3` with an argument shape that
 doesn't cleanly match a single known ALMP3 API function). A later round
 found a SECOND call site with the identical argument shape, inside a
@@ -5180,6 +5180,35 @@ avenues, roughly in order of effort:
    than strings.
 3. Structural/size fingerprinting against the reference build (function
    byte-length, local variable frame size, branch count) — not yet tooled.
+
+**Real source added for Allegro/JGMOD/ALMP3 (per the user's own
+request) — the three biggest reference-material gaps in this whole
+task are now closed.** `Engine/libsrc/allegro-4.0.2/` (SourceForge,
+released 2002-07-03 — 18 days before Rob Blanc 1's own link date, far
+closer than the existing 4.2.2 reference's ~2005 release),
+`Engine/libsrc/jgmod/` (JGMOD's own `src/` tree, previously entirely
+absent from this repo despite the library being conclusively
+identified for several sessions), and ALMP3 2.0.5's missing top-level
+`src/almp3.c`/`include/*.h` (the repo only ever had the `decoder/`
+subfolder). A genuine precision limit was found and recorded honestly
+rather than glossed over: neither 4.0.2 nor 4.1.1 (also checked) has a
+byte-perfect `GFX_VTABLE` match against this build's own disassembly-
+observed offsets — the real linked Allegro is most likely an untitled
+WIP snapshot between official releases, not exactly recoverable — but
+4.0.2's `PACKFILE` struct DOES match exactly, resolving the
+`pack_fopen`/`pack_fread` caution above. **10 new matches** fell out
+of reading JGMOD's own `file_io.c` against this project's own already-
+isolated I/O-helper cluster in one pass: `jgmod_fopen`/`jgmod_fread`/
+`jgmod_fseek`/`jgmod_skip`/`jgmod_calloc`/`jgmod_igetw`/`jgmod_igetl`
+(all genuine JGMOD wrappers), plus a correction — `sub_47D720`,
+previously informally described as a "JGMOD io helper" in prose only,
+is actually Allegro's own `pack_getc()` — and two more Allegro
+internals (`pack_fseek`, `_sort_out_getc`). One promising lead
+(`sub_477CE0`, sharing `load_mod`'s own cascade shape but gated by a
+second argument `load_mod` itself doesn't have) was investigated and
+correctly left open rather than forced. See
+`reversing/notes/third-party-library-identification.md` for the
+complete writeup.
 
 ## Conventions when annotating the IDB
 

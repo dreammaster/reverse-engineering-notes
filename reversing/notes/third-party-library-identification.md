@@ -601,3 +601,130 @@ signature check -- not investigated further.
   `aastr` specifically there's decent circumstantial evidence (see its
   own section above) that its actual sprite-zoom-antialiasing use case
   may not even be present in this build at all. Low priority.
+
+## Real source added for Allegro/JGMOD/ALMP3 -- the three biggest gaps closed
+
+Per the user's own request, three concrete source gaps flagged
+throughout this file were closed by downloading real reference
+material (all official releases, from their original hosting):
+
+- **Allegro 4.0.2** (`Engine/libsrc/allegro-4.0.2/`, SourceForge,
+  released 2002-07-03 -- 18 days before Rob Blanc 1's own 2002-07-21
+  link date, vs. the existing 4.2.2 reference's ~2005 release).
+- **JGMOD's full `src/` tree** (`Engine/libsrc/jgmod/`,
+  `ArtificialRaccoon/JGMOD` GitHub archive) -- this library had ZERO
+  source in the repo before now, identified purely by its own
+  distinctive error strings. Its own `history.txt` shows no recorded
+  changes between April 2001 and October 2002, so this snapshot should
+  be functionally equivalent to whatever Rob Blanc 1 actually linked
+  in July 2002.
+- **ALMP3 2.0.5's missing top-level `src/almp3.c`/`include/*.h`**
+  (SourceForge `almp3` project) -- the repo already had the
+  `decoder/` (mpg123-derived internals) subfolder, but never the
+  actual public-API implementation these already-matched call sites
+  need to verify against.
+
+### A genuine vtable-version nuance found and honestly recorded, not papered over
+
+Before trusting 4.0.2 as "the" Allegro version, cross-checked its own
+`GFX_VTABLE` declaration (`include/allegro/gfx.h`) against this
+project's own long-standing disassembly-observed vtable-shift finding
+(draw_lit_sprite sits at disassembly offset `+0x5C`, one slot earlier
+than the 4.2.2 reference's declared `+0x60`, previously explained as
+"draw_trans_rgba_sprite doesn't exist yet in this build's older
+Allegro"). Diffing 4.0.2's `gfx.h` against 4.2.2's found 4.0.2 is
+missing an ENTIRELY DIFFERENT slot instead -- `set_blender_mode`
+(between `restore_video_state` and `fetch_mode_list`) and, separately,
+`fastline` (between `line` and `rectfill`) -- while `draw_trans_rgba_
+sprite` itself is STILL PRESENT in 4.0.2, unlike the original
+hypothesis assumed.
+
+Working through the arithmetic precisely (anchored on the already-
+disassembly-confirmed `draw_256_sprite`@`+0x48`, which requires
+`fastline` to be PRESENT in the real linked build) shows 4.0.2's own
+vtable is NOT a perfect match either -- it's missing `fastline`, which
+the disassembly proves is present. Checked Allegro 4.1.1 (SourceForge
+OldFiles, released 2002-08-25) too: same result, `fastline` still
+absent there as well. **Neither available snapshot has a byte-perfect
+vtable match** -- the real linked version is most likely an untitled
+WIP/CVS snapshot from sometime in the March-August 2002 window that
+happens to sit between what's publicly archived. This doesn't
+invalidate 4.0.2 as the working reference (it's still by far the
+closest available, correct for the vast majority of non-`GFX_VTABLE`
+code, and the ORIGINAL vtable-shift hypothesis -- one slot missing
+somewhere between `draw_256_sprite` and `draw_lit_sprite` -- still
+holds up independently of which exact intermediate slot is responsible)
+-- just recorded honestly as an unresolved precision limit rather than
+claimed as settled.
+
+**One direct payoff from the same investigation**: Allegro 4.0.2's own
+`PACKFILE` struct declaration (`include/allegro/file.h`) matches this
+binary's real, disassembly-observed field offsets EXACTLY --
+`hndl`@0x00/`flags`@0x04/`buf_pos`@0x08/`buf_size`@0x0C/`todo`@0x10 --
+independently resolving the long-standing MEDIUM-confidence caution on
+`pack_fopen`/`pack_fread` ("the `todo` field this build reads at
+`+0x10` doesn't match the 4.2.2 reference's declared `+0x1C` offset")
+in favor of 4.0.2 for this specific struct, even though the vtable
+itself isn't a perfect match.
+
+### 10 new matches from the JGMOD/Allegro I/O cluster in one pass
+
+Reading JGMOD's own `file_io.c` (now available) against the cluster of
+previously-unnamed low-level I/O helpers this project's own earlier
+rounds had already isolated (called from `load_mod`'s format-detection
+cascade) closed the whole group in one sitting:
+
+- **`jgmod_fopen`**(`sub_47D670`), **`jgmod_fread`**(`sub_47D700`),
+  **`jgmod_fseek`**(`sub_47D6A0`), **`jgmod_skip`**(`sub_47D6E0`) --
+  all exact, complete matches to `file_io.c`'s own thin `#ifdef
+  JGMOD_PACKFILE` forwarding wrappers around Allegro's `pack_fopen`/
+  `pack_fread`/`pack_fclose`/`pack_fseek` (all four of those already
+  matched from earlier rounds). Confirms `JGMOD_PACKFILE` is defined
+  in this build (AGS's music assets live inside the CLIB archive, so
+  JGMOD reads through Allegro's packfile layer, not raw `fopen`).
+- **`jgmod_calloc`**(`sub_47B360`) -- exact match to `load_mod.c`'s
+  own `void *jgmod_calloc(int size) { return calloc(1, size); }`,
+  JGMOD's universal allocator used throughout every format loader.
+  Retroactively corrects `install_mod`'s own citation of a
+  "`malloc`'d init-sample struct" -- it's `jgmod_calloc`'d.
+- **`jgmod_igetw`**(`sub_47D800`)/**`jgmod_igetl`**(`sub_47D840`) --
+  exact matches to `file_io.c`'s own little-endian 16/32-bit buffered
+  reads, each built from repeated `jgmod_getc` calls. Both call
+  `pack_getc` DIRECTLY (see next point) rather than through a separate
+  `jgmod_getc` function -- confirming `jgmod_getc`'s own trivial
+  `#ifdef JGMOD_PACKFILE return pack_getc(f);` body was small enough
+  for the compiler to inline away entirely, leaving no standalone
+  function to find.
+- **CORRECTION: `pack_getc`(`sub_47D720`)** -- a much earlier round
+  had informally described this function in prose only (never a real
+  `matches.json` entry) as "read-1-byte", grouping it alongside the
+  genuine JGMOD wrappers above as if it were their sibling
+  `jgmod_getc`. It's actually Allegro's OWN `AL_INLINE pack_getc`
+  (`file.inl:26-32`), compiled here as a real out-of-line function.
+  Decisive, field-for-field match: `f->buf_size--; if (f->buf_size>0)
+  return *(f->buf_pos++); else return _sort_out_getc(f);` matches the
+  disassembly exactly, including the exact `PACKFILE` field offsets
+  (see above). This is the direct source of the earlier "PACKFILE
+  layout drift" caution's resolution.
+- **`pack_fseek`**(`sub_42F43B`) and **`_sort_out_getc`**
+  (`sub_42FC67`) -- two more Allegro internals identified via pointer-
+  target + call-shape/role (both reached only through already-matched
+  JGMOD/Allegro functions' own confirmed calls), MEDIUM confidence,
+  own bodies not instruction-traced per the third-party scope rule.
+
+**One promising lead investigated but correctly left open rather than
+forced**: `sub_477CE0` shares the exact same format-detection cascade
+shape as the already-matched `load_mod` (calling the same `detect_*`-
+equivalent functions in the same order), but takes a SECOND argument
+that gates the entire cascade behind a non-zero check -- not matching
+`load_mod`'s own already-confirmed 1-argument body (which implements
+the cascade unconditionally, with no such gate, and does NOT call
+`sub_477CE0` at all). Plausibly a variant entry point (the archived
+source's own `detect_unreal_*` functions return an offset rather than
+a boolean, hinting at Unreal Tournament `.umx`-embedded-module
+support, which would need exactly this kind of second argument) --
+not conclusively identified this round, left as a genuine open lead
+rather than guessed.
+
+Renamed all 10, applied to the live IDB and re-exported (2586
+functions, 958 named -- up from 535 at the start of this project).

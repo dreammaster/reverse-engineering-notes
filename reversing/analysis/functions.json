@@ -3555,9 +3555,9 @@
   "is_named": false
  },
  {
-  "name": "sub_42F43B",
+  "name": "pack_fseek",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_42F59A",
@@ -3620,9 +3620,9 @@
   "is_named": false
  },
  {
-  "name": "sub_42FC67",
+  "name": "_sort_out_getc",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_42FCB6",
@@ -8590,9 +8590,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47B360",
+  "name": "jgmod_calloc",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47B370",
@@ -8685,9 +8685,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47D670",
+  "name": "jgmod_fopen",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "??3@YAXPAX@Z_1",
@@ -8695,24 +8695,24 @@
   "is_named": true
  },
  {
-  "name": "sub_47D6A0",
+  "name": "jgmod_fseek",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47D6E0",
+  "name": "jgmod_skip",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47D700",
+  "name": "jgmod_fread",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47D720",
+  "name": "pack_getc",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47D750",
@@ -8725,14 +8725,14 @@
   "is_named": false
  },
  {
-  "name": "sub_47D800",
+  "name": "jgmod_igetw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47D840",
+  "name": "jgmod_igetl",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47D8B0",
