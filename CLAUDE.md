@@ -4969,6 +4969,19 @@ disassembly work.
   where source gates it behind `!IsDisabled()`. A real, confirmed
   visual drift: this build draws the text-cursor caret even on a
   disabled textbox. See `reversing/notes/struct-layout-drift.md`.
+- **`__actual_invscreen`'s opening/setup portion closes cleanly, with a
+  full-scope future lead flagged honestly.** This 1133-line default-
+  inventory-screen renderer had only ever been cited for one small
+  piece despite being used as an evidence source repeatedly elsewhere.
+  Read the first ~500 lines (matching source's own setup section)
+  cleanly: `cmode=CURS_ARROW` confirmed, `ICONSPERLINE=4` confirmed
+  zero drift, the minimum-window-width/`BUTTONAREAHEIGHT` literals
+  (105/30) match exactly, the Select/Look/OK button sprite numbers
+  (2041/2042/2043) match with zero drift, and the scroll-arrow icon
+  drawing matches closely. The function's own remaining ~600 lines (the
+  actual mouse-driven event loop) are left honestly unread -- a
+  well-scoped candidate for a future round. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

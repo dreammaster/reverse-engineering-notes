@@ -16616,3 +16616,48 @@ no branch, no condition, nothing -- the cursor caret is drawn
 UNCONDITIONALLY, even on a disabled textbox, where 2011 explicitly
 gates it behind `!IsDisabled()`. A genuine visual behavioral difference
 this time, not another instance of the usual predates-`gfxDriver` gap.
+
+### `__actual_invscreen`'s opening/setup portion closes cleanly, with a full-scope future lead flagged honestly
+
+`__actual_invscreen` -- the default inventory-screen renderer, a huge
+1133-line function -- had only ever been cited for one small piece
+(the `sierra_inv_color`/`wsetcolor`/`wbar` background-fill pair) despite
+being repeatedly used *as an evidence source* by many OTHER entries
+across this project's whole history. Read roughly the first 500 lines
+(matching source's own setup section, `AC.CPP:23859-23957`, everything
+before the interactive mouse-driven event loop begins) and it closes
+with multiple clean, zero-drift confirmations:
+
+- The opening `int cmode=CURS_ARROW;` local matches exactly -- a local
+  variable initialized to the literal `6`, matching `CURS_ARROW=6`
+  (`Common/acruntim.h:826`), later reassigned to `1`/`4`/`6` elsewhere in
+  the function's own mouse-hover handling (plausibly `MODE_LOOK`/
+  `MODE_USE`/back-to-arrow, matching this project's own established
+  cursor-mode numbering).
+- The `DisplayInvItem`-array-building loop matches source's own loop in
+  role, built from this build's already-established `play_invorder[]`/
+  `play_inv_numorder` single-character predecessor globals.
+- The window-sizing math (`shl eax,2`/`sar eax,2`/`and edx,3` -- classic
+  compiler divide-by-4-with-rounding idioms) confirms `ICONSPERLINE=4`
+  with ZERO drift from 2011's own `#define` (`AC.CPP:23853`).
+- The minimum-window-width (`35*3=105`) and `BUTTONAREAHEIGHT` (`30`)
+  computations both match source's own `get_fixed_pixel_size(105)`/
+  `get_fixed_pixel_size(30)` literals exactly, using this build's own
+  established `current_screen_resolution_multiplier_x/y` in place of
+  `get_fixed_pixel_size()`'s own scaling.
+- The button-graphic sprite numbers (`0x7F9`/`0x7FA`/`0x7FB` =
+  `2041`/`2042`/`2043`) match source's own hardcoded Select/Look/OK
+  sprite numbers with ZERO drift.
+- The scroll-arrow icon drawing (`create_bitmap` + three `line()` calls
+  + `_soft_floodfill`, all already-matched) matches source's own
+  triangular up/down-arrow drawing sequence (`AC.CPP:23939-23949`)
+  closely.
+
+**Left honestly unread**: the function's own remaining ~600 lines
+implement the actual interactive event loop -- mouse-hover item
+detection, Select/Look/OK button clicks, scroll-arrow clicks, item
+drag-and-drop. A substantial, well-scoped body of work, explicitly
+flagged as a candidate for a future round rather than forced through in
+one sitting -- consistent with this project's own established practice
+of honest incremental progress on large functions (`run_event_block`,
+`RoomStruct`'s own room-loader, etc. all took multiple rounds each).
