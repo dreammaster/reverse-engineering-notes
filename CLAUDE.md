@@ -4798,6 +4798,22 @@ disassembly work.
   against `matches.json` found zero real gaps -- both apparent misses
   were already-matched internals under a different script-export
   alias. See `reversing/notes/struct-layout-drift.md`.
+- **`RunHotspotInteraction`/`RunObjectInteraction` thin entries closed,
+  confirming a pre-2.4b feature and a new `options[]` index.** Both had
+  only ever been matched for a single array-position fact; their own
+  mood-dispatch bodies had never been read. Both close as complete,
+  zero-drift matches, INCLUDING the "User Mode 8 & 9" branches
+  (`ags-archives/ags240` VERSION 2.4: "added User Mode 8 & 9 events to
+  character, object and hotspot interactions") -- a feature that
+  predates this build's 2.4b pin, so its presence here is the
+  confirming case for the changelog cross-reference technique, not an
+  absence. New find: `RunHotspotInteraction`'s own `OPT_WALKONLOOK`
+  check confirms `GameSetupStructBase.options[2]`=`OPT_WALKONLOOK`
+  for the first time, and its walk-to-hotspot logic gives an
+  already-flagged gap (missing `play.auto_use_walkto_points` gating,
+  previously only seen at `ProcessClick`'s own call site) a second,
+  independent confirmation. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

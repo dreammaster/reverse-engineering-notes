@@ -16136,3 +16136,41 @@ exported under a different script-facing alias name via
 `setup_script_exports`'s own table, independently reconfirming that
 function's own earlier "zero still-unnamed `sub_*` targets" coverage
 claim a second time.
+
+### `RunHotspotInteraction`/`RunObjectInteraction`: thin entries closed, confirming a pre-2.4b feature and a new `options[]` index
+
+Both functions were only ever matched for the single `RoomStatus.
+hscond[]`/`objcond[]` array-position fact their call sites happened to
+supply -- their own bodies (the actual mood-to-response dispatch logic)
+had never been read. Both close as complete, zero-drift matches to
+`AC.CPP:16606-16634`/`16241-16273` once actually read.
+
+**Confirms a genuinely PRE-2.4b feature is present, as expected.** Both
+functions' `mood`->`passon` dispatch tables include the "User Mode 8 &
+9" branches (`MODE_CUSTOM1`/`MODE_CUSTOM2`) that `ags-archives/ags240/
+docs/CHANGES.TXT`'s own VERSION 2.4 entry describes: *"Added missing
+'Pick up character' event, and added User Mode 8 & 9 events to
+character, object and hotspot interactions."* Since 2.4 (and its own
+2.4a/2.4b follow-ups) is this build's own pinned version, this is the
+CONFIRMING case for the changelog cross-reference technique, not an
+absence -- a useful contrast with the session's other two "confirmed
+absent" results (`Region`s, lip sync), showing the technique works in
+both directions.
+
+**A new `GameSetupStructBase.options[]` index closes.** `RunHotspotInteraction`'s
+own `OPT_WALKONLOOK`-gated no-op branch --
+`"movsx eax,byte_513338; neg eax; sbb eax,eax; inc eax; ...cmp mood,1;
+..."` -- matches source's own `"if ((game.options[OPT_WALKONLOOK]==0)
+& (mood==MODE_LOOK)) ;"` line for line, right down to source's own
+unusual bitwise `&` (not `&&`). Confirms `options[2]`=`OPT_WALKONLOOK`
+(`Common/acroom.h:2708`) with zero slack.
+
+**A second, independent confirmation of an already-flagged gap.**
+`ProcessClick`'s own entry had already found that this build's
+walk-to-hotspot-before-interacting logic is missing 2011's
+`play.auto_use_walkto_points==0` gate at ITS call site, but left it "not
+searched for elsewhere in GameState yet." `RunHotspotInteraction`'s own
+body settles that: past the `OPT_WALKONLOOK` check, it goes straight to
+a plain `mood==WALK ? skip : MoveCharacterToHotspot(...)`, with no
+`auto_use_walkto_points`/`check_interaction_only` gating at all -- the
+same absence, now confirmed at a second, independent call site.

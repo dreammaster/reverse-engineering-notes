@@ -1860,6 +1860,14 @@ struct GameSetupStructBase {
                             // "movsx eax,byte_51333B; test eax,eax; jnz <use-arg-ifnum>" matches
                             // source's "if(ifnum<0) ifnum=game.options[OPT_TWCUSTOM];" exactly, and
                             // byte_51333B lands with zero slack on 0x513336(base)+5.
+                            // options[2]=OPT_WALKONLOOK (acroom.h:2708) confirmed via
+                            // RunHotspotInteraction (already matched, full body read for the first
+                            // time): "movsx eax,byte_513338; neg eax; sbb eax,eax; inc eax; ...
+                            // cmp mood,1; ..." implements source's own
+                            // "if ((game.options[OPT_WALKONLOOK]==0) & (mood==MODE_LOOK)) ;" no-op
+                            // branch exactly (a bitwise, non-short-circuiting `&`, matching source's
+                            // own unusual literal choice of `&` over `&&`), landing with zero slack
+                            // on 0x513337(index-1 base)+2=0x513338.
   unsigned char paluses[256];     // +0x32, high confidence: confirmed directly via a shared loop in
                             // `main` (also used for defpal below) -- "for (ee=0; ee<256; ee++) if
                             // (paluses[ee]!=2) palette[ee]=defpal[ee];" -- disasm's `cmp
