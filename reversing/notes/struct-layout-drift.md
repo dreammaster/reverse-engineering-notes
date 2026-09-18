@@ -16556,3 +16556,43 @@ in the same session, reinforcing it as a repeatable move: whenever a
 small options/settings array has only some indices confirmed, grep
 every remaining index's own absolute byte address directly rather than
 waiting for a confirmation to surface incidentally.
+
+### `GUIButton::Draw` read in full: a new `GUIF_DEFAULT` bit, and a real side-effect drift
+
+Went looking for another thin entry worth a full-body read, the same
+move that closed the `RunHotspotInteraction`/`RunObjectInteraction`/
+`RunCharacterInteraction` trio earlier. `GUIButton::Draw` fit perfectly
+-- previously matched only via its own `"(INV)"`/`"(INVNS)"`/
+`"(INVSHR)"` string sentinels plus vtable-slot structure, never traced
+field by field despite being a substantial, ~713-line function.
+
+**New bit confirmed**: the text-button "default button" highlight --
+`if(flags&1) { wsetcolor(16); wrectangle(x-1,y-1,x+wid,y+hit); }` --
+matches source's `if(flags&GUIF_DEFAULT) {...}` (`acgui.cpp:848-851`)
+exactly, confirming `GUIObject.flags` bit `0x1` = `GUIF_DEFAULT`
+(`Common/acgui.h:111`) -- a genuinely different enum from `GUIMain`'s
+own `flags` field, whose bit `0x1` is `GUIF_NOCLICK` (`acgui.h:662`).
+Two completely separate flags fields on two different structs happening
+to both use bit 0 is exactly the kind of coincidence worth flagging
+explicitly so it's never conflated.
+
+**A real architectural drift, not just a predates-`gfxDriver` gap this
+time**: source computes `drawDisabled` as a plain local variable at the
+top of `Draw()`, cleared back to 0 for `GUIDIS_UNCHANGED`/`GUIDIS_
+GUIOFF` styles. This build instead MUTATES the button's own PERSISTENT
+`flags` field directly: `if((interface-disabled bit) && !(UNCHANGED-
+style bit)) { flags|=4/*GUIF_DISABLED*/; }` (both tested bits already
+established via `draw_screen_overlay`'s own `dword_5230F0` finding from
+the `options[]` sweep round). A real, confirmed side effect that
+persists past a single `Draw()` call, where 2011's own temporary local
+has none.
+
+**Explains a small mystery from the very first read of this function**:
+grepping this function for `call wbar`/`call wline` earlier had found
+nothing, which looked odd for a function that clearly fills and outlines
+a button. Reading the actual body shows why -- the fill calls Allegro's
+own `rectfill(...,currentcolor)` DIRECTLY, and the 3D-bevel border calls
+Allegro's own `line(...)` DIRECTLY, bypassing AGS's `wbar()`/`wline()`
+thin wrappers entirely -- the same "trivial AGS wrapper inlined at the
+call site" pattern already established for `wbar` elsewhere this
+session, now confirmed at a second, independent call site.

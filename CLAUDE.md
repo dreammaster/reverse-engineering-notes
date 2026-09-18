@@ -4946,6 +4946,20 @@ disassembly work.
   EVB_HOTSPOT/EVB_ROOM if/else-if with zero drift (2011 declares only
   those two constants, so the error fallback is a confirmed exhaustive
   match). See `reversing/notes/struct-layout-drift.md`.
+- **`GUIButton::Draw` read in full: a new `GUIF_DEFAULT` bit, and a real
+  side-effect drift.** Previously matched only via its own string
+  sentinels and vtable-slot structure, never traced field by field.
+  Full body read confirms `GUIObject.flags` bit `0x1`=`GUIF_DEFAULT`
+  (`acgui.h:111`, a genuinely different enum from `GUIMain.flags`'s own
+  bit-0 `GUIF_NOCLICK`) via the "default button" highlight border. Real
+  drift: this build implements `drawDisabled` by MUTATING the button's
+  own PERSISTENT flags directly (`flags|=GUIF_DISABLED`) rather than
+  using a temporary local the way 2011 does -- a real side effect that
+  outlives one `Draw()` call. Also explains why grepping this function
+  for `wbar`/`wline` calls finds nothing: it calls Allegro's own
+  `rectfill`/`line` DIRECTLY, bypassing those thin AGS wrappers, the
+  same inlining pattern already seen elsewhere this session. See
+  `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

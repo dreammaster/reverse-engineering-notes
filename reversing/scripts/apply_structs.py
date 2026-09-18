@@ -1094,6 +1094,12 @@ struct GUIButton {
   void *vtbl;                  // +0x00, implicit (not read directly, inferred from calling convention)
   unsigned int flags;           // +0x04, high confidence (GUIObject base field): confirmed via
                             // GUIButton::MouseUp's IsDisabled()/IsClickable() check (`[this+4] & 4`).
+                            // Bit 0x1=GUIF_DEFAULT (acgui.h:111, a DIFFERENT enum from GUIMain's own
+                            // flags field's GUIF_NOCLICK=1) confirmed via GUIButton::Draw (already
+                            // matched, full body read): "if(flags&1) { wsetcolor(16);
+                            // wrectangle(x-1,y-1,x+wid,y+hit); }" matches source's
+                            // "if(flags&GUIF_DEFAULT) {...}" (acgui.cpp:848-851) exactly -- the
+                            // highlighted-border marker for a dialog's "default" button.
   int x;                        // +0x08, high confidence (GUIObject base field): CORRECTED from opaque
                             // padding -- resolved via GUITextBox::Draw's wrectangle(x,y,x+wid-1,y+hit-1)
                             // call (a sibling GUIObject-derived class; same base-subobject layout applies
