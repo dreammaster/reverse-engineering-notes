@@ -16885,3 +16885,23 @@ after applying this project's own already-established vtable-shift
 correction (the missing `draw_trans_rgba_sprite` slot) -- rather than
 force an uncertain identification, it's left open for a future round
 with more context.
+
+### Data-hygiene: `calculate_move_stage`'s four math trampolines get `matches.json` entries; `sub_43E8A0`/`sub_425600` confirmed out of scope
+
+A re-run of the whole-binary AGS-side-callee sweep (after the
+`set_palette`/`request_refresh_rate`/`clear_2` renames) found the same
+"documented in the live IDB comment, never given a `matches.json`
+entry" gap on `calculate_move_stage`'s own four math-helper
+trampolines -- `sub_433DC8`/`sub_433DDD`/`sub_433DEE`/`sub_433DFF`
+(`fixdiv`/`fixcos`/`fixsin`/`fixatan` respectively, all already
+correctly identified and described in-place several rounds ago).
+Added proper entries for all four, no IDB changes needed (already
+correctly annotated). Two genuinely new leads surfaced from the same
+sweep: `sub_43E8A0` (called directly from `render_to_screen`, already
+matched, explaining its own previously-flagged "genuinely expanded
+6-parameter signature") turns out to be Allegro's own internal scaled-
+blit primitive -- its own IDA-recorded caller is Allegro's public
+`stretch_blit` itself, confirming it's a shared library-internal
+routine reached two ways, correctly out of scope per this project's
+own third-party scope rule, not traced further. `sub_47DA80` (a JGMOD
+internal, called from `load_mod`) is likewise correctly out of scope.

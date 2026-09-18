@@ -5063,6 +5063,17 @@ disassembly work.
   dispatch, didn't cleanly reconcile with the reference slot order and
   was left open rather than forced. See `reversing/notes/
   struct-layout-drift.md`.
+- **Data-hygiene: `calculate_move_stage`'s four math trampolines get
+  `matches.json` entries; two more leads confirmed out of scope.** A
+  re-run of the whole-binary sweep found `fixdiv`/`fixcos`/`fixsin`/
+  `fixatan`'s own forwarding trampolines already correctly annotated
+  in the live IDB comments from several rounds ago but never given
+  `matches.json` entries -- fixed. `sub_43E8A0` (called from
+  `render_to_screen`, explaining its own previously-flagged expanded
+  6-parameter signature) turns out to be Allegro's own internal
+  scaled-blit primitive, also called from Allegro's public
+  `stretch_blit` -- correctly out of scope. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
