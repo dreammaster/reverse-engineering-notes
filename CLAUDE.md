@@ -4832,6 +4832,23 @@ disassembly work.
   interaction to suppress it -- a design property of this simpler
   EventBlock-era dispatch, not a caller-side bug. See `reversing/notes/
   struct-layout-drift.md`.
+- **`run_event_block`'s `respond[]` enum is much bigger than documented
+  -- two more close, including the missing `new_room_pos` producer.**
+  The dispatch chain actually tests 15 values (0-0xE), not the 6
+  previously implied. `respond[i]==5` closes as Display Message with
+  optional character attribution (identifies the global `xx` as
+  DisplayMessage's own "who said this" context). `respond[i]==0` closes
+  as New Room -- and when fired from the room's `misccond` block for a
+  room-edge condition, it COMPUTES the already-named `new_room_pos`
+  global (`edgeIndex*1000 + playerchar x/y`) before calling NewRoom --
+  the missing PRODUCER half of a picture `load_new_room`'s own entry
+  had already fully documented from the consumer (decode) side only.
+  Striking asymmetry: 2011's own source no longer sets `new_room_pos`
+  anywhere except a reset-to-0, meaning this entire encode-edge-into-
+  one-int mechanism was fully removed by 2011, joining GRAPHSCRIPT and
+  the EventBlock arrays as another subsystem it preserves only as a
+  dead decode path. 8/15 `respond[]` values now confirmed; 7 remain for
+  a future round. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

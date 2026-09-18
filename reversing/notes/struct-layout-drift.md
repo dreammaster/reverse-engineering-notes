@@ -16221,3 +16221,64 @@ a mode-specific interaction that changes rooms, say, DOES suppress the
 trailing "any click" event), rooted in this build's fundamentally
 simpler, non-short-circuiting EventBlock-era dispatch design rather than
 a bug in any one caller.
+
+### `run_event_block`'s `respond[]` enum is much bigger than documented -- two more values close, including the missing `new_room_pos` producer
+
+While reading the single-exit-point finding above, noticed the dispatch
+chain actually tests `respond[i]` against **fifteen** values (0 through
+`0x0E`), not the five (1/2/3/4/5) plus one (`0xA`, GRAPHSCRIPT) this
+entry's own text had previously implied were the whole picture. Closed
+two more this round.
+
+**`respond[i]==5`: Display Message, with optional character
+attribution.** Calls `DisplayMessage(respondval[i])` -- but first, if
+the caller's own `extra` argument is `>=0`, sets a global `xx` to
+`data[i]`. Tracing `xx` (found via its own `DATA XREF` straight from
+inside `DisplayMessage`'s body) shows it's DisplayMessage's own "who is
+this message from" context: `if(xx>0) _displayspeech(text,xx,1,...);
+else Display(text);` -- exactly matching the role 2011's own
+`MessageInfo.displayas`-driven dispatch plays (this project's own
+`msgi[100][2]` struct, `RoomStruct.msgi[]`). A neighboring error string,
+`"!DisplayMessage: data column specified a character for local..."`,
+independently confirms the same "data column" terminology is used
+elsewhere in `DisplayMessage` too.
+
+**`respond[i]==0`: New Room -- and the missing `new_room_pos` PRODUCER
+finally turns up.** Unconditionally calls `NewRoom(respondval[i])`. But
+when this specific call fires from the room's own `misccond` EventBlock
+(`arg_0 == croom+0x12C8`, the already-confirmed `RoomStatus.misccond`
+address) for one of the four room-edge conditions (`list[i]<4`) with no
+explicit override (`data[i]==0`), it first computes a combined position
+code -- `edgeIndex = (list[i]+1)` with 1<->2 and 3<->4 swapped, then
+`new_room_pos = edgeIndex*1000 + (edgeIndex<3 ? playerchar->y :
+playerchar->x)` -- and stores it into the already-named global
+`new_room_pos` (`dword_5231C4`, first identified several rounds ago via
+`NewRoomEx`'s own reset-to-0 call).
+
+This closes a loose end that had gone unnoticed simply because nobody
+had gone looking for it: `load_new_room`'s own entry already fully
+documents `new_room_pos`'s CONSUMER side (its `>=4000/>=3000/>=2000/
+>=1000` threshold cascade, matching 2011's `AC.CPP:4453-4499`
+instruction for instruction), but nothing had ever located where the
+value gets SET to something meaningful in the first place. This branch
+is that missing producer.
+
+**A genuine, striking asymmetry**: 2011's own `AC.CPP` has no remaining
+assignment to `new_room_pos` ANYWHERE except its declaration (`=0`) and
+`NewRoomEx`'s own reset. The entire "encode which edge plus a carried-
+over coordinate into one combined integer" mechanism has been
+*completely removed* from the shipped 2011 engine -- it keeps decoding
+a value nothing sets anymore. This joins `GRAPHSCRIPT`, the
+`Animations` resource table, and `RoomStatus`'s own `hscond`/`objcond`/
+`misccond` EventBlock arrays as yet another subsystem 2011 preserves
+only as a dead, unreachable remnant (here: a decode path with nothing
+left upstream to feed it), while this 2002 build still actively
+computes and consumes it on every room-edge exit.
+
+(Left open: the exact edge-index-to-physical-side correspondence --
+which of the four remapped values is LEFT vs. RIGHT vs. TOP vs.
+BOTTOM -- wasn't pinned down this round.)
+
+Eight of the fifteen `respond[]` values are now individually confirmed
+(`0`/`1`/`2`/`3`/`4`/`5`/`9` partially/`0xA`); `6`/`7`/`8`/`0xB`/`0xC`/
+`0xD`/`0xE` remain unread -- a well-scoped candidate for a future round.
