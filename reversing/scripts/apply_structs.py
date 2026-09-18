@@ -4913,6 +4913,31 @@ struct RoomStruct {
                             // (already matched): "options[ST_VOLUME]=newvol" where ST_VOLUME=4
                             // (Common/acroom.h:139), landing exactly on
                             // thisroom+0x941+4=0x51FFCD with zero slack.
+                            // FULL SWEEP (fresh round, checking every remaining index's own byte
+                            // address directly): all 5 of 2011's declared ST_* constants
+                            // (`Common/acroom.h:139`: ST_TUNE=0, ST_SAVELOAD=1, ST_MANDISABLED=2,
+                            // ST_MANVIEW=3, ST_VOLUME=4) are now individually confirmed, all inside
+                            // `load_new_room` (already matched) except ST_SAVELOAD:
+                            // options[0]=ST_TUNE -- "if(byte_51FFC9>0) PlayMusic(byte_51FFC9);"
+                            // matches "if(thisroom.options[ST_TUNE]>0)
+                            // PlayMusicResetQueue(thisroom.options[ST_TUNE]);" (AC.CPP:4552-4553) in
+                            // role (calls PlayMusic directly, no ResetQueue-style multi-track logic).
+                            // options[1]=ST_SAVELOAD -- confirmed via RestoreGameDialog (already
+                            // matched): "if(byte_51FFCA==1) { Display(GetTranslation("Sorry, not
+                            // now.")); return; }" matches "if(thisroom.options[ST_SAVELOAD]==1)
+                            // {...Display("Sorry, not now.");...}" (AC.CPP:3003-3020) verbatim,
+                            // including the literal string.
+                            // options[2]=ST_MANDISABLED -- "if(byte_51FFCB==0) { forchar->on(+0x13E,
+                            // already confirmed)=1; EnableCursorMode(0); } else { forchar->on=0;
+                            // DisableCursorMode(0); }" matches "if(thisroom.options[ST_MANDISABLED]
+                            // ==0) { forchar->on=1; ...}" (AC.CPP:4557) exactly.
+                            // options[3]=ST_MANVIEW -- "if(byte_51FFCC==0) forchar->view=forchar->
+                            // defview; else forchar->view=byte_51FFCC-1;" matches "else
+                            // if(thisroom.options[ST_MANVIEW]==0) forchar->view=forchar->defview;
+                            // else forchar->view=thisroom.options[ST_MANVIEW]-1;" (AC.CPP:4568-4569)
+                            // with ZERO drift, word for word. `RoomStruct.options[10]` is now fully
+                            // mapped: all 5 declared indices confirmed, the remaining 5 bytes
+                            // genuinely unused (2011 itself never declares an ST_* constant past 4).
   char _pad_align_message[1]; // +0x94B..0x94C, compiler alignment padding (not a real field) --
                             // boxed in with zero slack by `options`'s own confirmed end and
                             // `message[]`'s own confirmed start (needs 4-byte alignment for its

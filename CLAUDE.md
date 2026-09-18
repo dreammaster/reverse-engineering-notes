@@ -4910,6 +4910,19 @@ disassembly work.
   editor-only in BOTH eras (2011's own Engine/ never reads it either),
   not merely unfound. `options[]` now stands at 19/20 indices
   individually confirmed. See `reversing/notes/struct-layout-drift.md`.
+- **`RoomStruct.options[10]`'s own room-level options close completely,
+  same technique.** Applied the exact same "grep every remaining byte
+  address directly" move to `RoomStruct`'s separate, smaller
+  `options[10]` array (2011's `ST_*` constants, distinct from the
+  game-level `OPT_*` namespace). Only `ST_VOLUME` had been confirmed;
+  all four remaining indices close in one pass -- `ST_TUNE`(0) via
+  `load_new_room`'s direct `PlayMusic` call, `ST_SAVELOAD`(1) via
+  `RestoreGameDialog`'s verbatim "Sorry, not now." string match,
+  `ST_MANDISABLED`(2)/`ST_MANVIEW`(3) via `load_new_room`'s own
+  character-setup logic, all zero drift. `RoomStruct.options[10]` is
+  now fully mapped -- all 5 declared `ST_*` indices confirmed, the
+  remaining 5 bytes genuinely unused even in 2011. See `reversing/
+  notes/struct-layout-drift.md`.
 - **A small self-caught correction: `process_event` doesn't call
   `run_event_block` "via" `sub_40C335`.** Cross-checking two entries
   against each other found `process_event`'s own phrasing implied a

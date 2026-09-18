@@ -16520,3 +16520,39 @@ if/else-if dispatch (`AC.CPP:4750-4791`) with zero drift -- 2011 only
 ever declares those same two `EVB_*` constants, so the fall-through
 error path is a confirmed exhaustive match, not evidence of a missing
 `EVB_OBJECT` case in either era.
+
+### `RoomStruct.options[10]`'s own room-level options close completely, same technique
+
+Applied the exact same "grep every remaining byte address directly"
+technique that just closed 11 of `GameSetupStructBase.options[20]`'s
+indices to `RoomStruct`'s own SEPARATE, much smaller `options[10]`
+array (2011's `ST_*` constants -- room-level settings like the room's
+startup music, distinct from the game-level `OPT_*` options namespace).
+Only `ST_VOLUME`(4) had ever been confirmed. All four remaining
+declared indices close in one pass, three of them inside `load_new_room`
+(already matched) and the fourth in `RestoreGameDialog` (also already
+matched) -- all zero-drift, decisive matches:
+
+- **`ST_TUNE`(0)**: `if(options[0]>0) PlayMusic(options[0]);` matches
+  `AC.CPP:4552-4553` in role (calls `PlayMusic` directly, not the later
+  `PlayMusicResetQueue` multi-track variant).
+- **`ST_SAVELOAD`(1)**: `RestoreGameDialog` -- `if(options[1]==1) {
+  Display(GetTranslation("Sorry, not now.")); return; }` matches
+  `AC.CPP:3003-3020` VERBATIM, including the literal string -- the
+  "restoring saved games is disabled in this room" check.
+- **`ST_MANDISABLED`(2)**: `if(options[2]==0) { forchar->on=1;
+  EnableCursorMode(0); } else { forchar->on=0; DisableCursorMode(0); }`
+  matches `AC.CPP:4557` exactly.
+- **`ST_MANVIEW`(3)**: `if(options[3]==0) forchar->view=forchar->
+  defview; else forchar->view=options[3]-1;` matches `AC.CPP:4568-4569`
+  word for word.
+
+`RoomStruct.options[10]` is now fully and completely mapped: all 5 of
+2011's own declared `ST_*` constants confirmed, and the remaining 5
+bytes of the array are genuinely unused in the reference source too
+(2011 itself never declares an `ST_*` constant past 4) -- not merely
+unfound here. A second array closed via the same systematic technique
+in the same session, reinforcing it as a repeatable move: whenever a
+small options/settings array has only some indices confirmed, grep
+every remaining index's own absolute byte address directly rather than
+waiting for a confirmation to surface incidentally.
