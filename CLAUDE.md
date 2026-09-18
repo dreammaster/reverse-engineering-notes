@@ -4862,7 +4862,19 @@ disassembly work.
   already matched from its own call sites -- what closes here is the
   missing piece connecting them all as EventBlock's own unified
   dispatch, entirely undocumented in 2011 and reconstructed purely from
-  this build's disassembly. See `reversing/notes/struct-layout-drift.md`.
+  this build's disassembly.
+- **`respond[i]==9`'s own open caveat resolves: one case has a real,
+  near-verbatim 2011 descendant.** Unlike every other `respond[]`
+  value, `9` (Run Script) turns out to match `run_interaction_
+  commandlist`'s own `case 1: Run script` (AC.CPP:21462-21487, the
+  NewInteraction-based successor) practically line for line -- INCLUDING
+  the literal `"|"` prefix string this build's disassembly showed with
+  no prior explanation (marks a deferred call as targeting `roominst`
+  rather than `gameinst`). Bonus: the very next 2011 case, Display
+  Message, carries a dead commented-out line implementing the identical
+  character-attribution mechanism this build's `respond==5` branch
+  still actively performs -- independent confirmation that finding
+  wasn't a guess. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

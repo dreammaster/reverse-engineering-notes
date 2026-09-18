@@ -16328,3 +16328,48 @@ subsystem (`EventBlock`/`RoomStatus.hscond`/`objcond`/`misccond`/
 pieced together across many separate rounds over the whole session --
 every field is now not just positionally confirmed but behaviorally
 understood end to end.
+
+### `respond[i]==9`'s own open caveat resolves: a single case with a real, near-verbatim 2011 descendant
+
+Every other `respond[]` value has zero counterpart in 2011 -- the whole
+EventBlock subsystem was replaced. Value `9` (Run Script) turns out to
+be the one exception: `run_interaction_commandlist`'s own `case 1: Run
+script` (`AC.CPP:21462-21487`, the *successor* `NewInteraction`-based
+command runner) implements practically the identical logic, right down
+to the literal `"|"` prefix string this build's own disassembly showed
+without explanation:
+
+```c
+if (strstr(evblockbasename,"character") || strstr(evblockbasename,"inventory")) {
+  char *torun = make_ts_func_name(evblockbasename, evblocknum, ...);
+  if (inside_script) curscript->run_another(torun, 0, 0);
+  else run_text_script(gameinst, torun);
+} else {
+  if (inside_script) {
+    char funcName[60];
+    strcpy(funcName, "|");
+    strcat(funcName, make_ts_func_name(...));
+    curscript->run_another(funcName, 0, 0);
+  } else run_text_script(roominst, make_ts_func_name(...));
+}
+```
+
+This settles what had been left as "a small formatting detail, not
+traced further": the `"|"` prefix marks a deferred `run_another` call
+as targeting `roominst` rather than `gameinst`, distinguishing
+room-script deferrals from character/inventory-script ones. It also
+closes the "plausibly a catch-up step, not confirmed" caveat on the
+surrounding crossfade/audio-poll code -- source brackets this exact
+case with the same `UPDATE_MP3` macro both before and after, matching
+this build's sequence literally, not just in spirit.
+
+**Bonus corroboration for `respond[i]==5`.** The very next case in this
+same 2011 function, `case 4: Display Message`, carries a revealing
+DEAD, commented-out line exactly where this build's `respond==5` branch
+still actively executes: `/* if(comprdata<0) display_message_aschar=
+evb->data[ss]; */ DisplayMessage(IPARAM1);`. 2011 still preserves the
+remnant of the identical character-attribution mechanism (set a global
+from the command's own data field right before displaying) that this
+build's `xx`-setting behavior implements live -- independent
+confirmation that finding wasn't a guess, just a mechanism 2011 later
+disabled without removing the trace of it.
