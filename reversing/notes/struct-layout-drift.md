@@ -16661,3 +16661,16 @@ flagged as a candidate for a future round rather than forced through in
 one sitting -- consistent with this project's own established practice
 of honest incremental progress on large functions (`run_event_block`,
 `RoomStruct`'s own room-loader, etc. all took multiple rounds each).
+
+**Bonus rename found along the way**: `sub_40CF16` (previously left
+unnamed, "role only, not independently confirmed" -- called from
+`SetInvItemPic`/`SetMouseCursor`) is called directly inside
+`__actual_invscreen`'s own `MODE_USE` item-selection branch,
+immediately before `SetMouseCursor(MODE_USE)` -- matching source's own
+exact call sequence `update_inv_cursor(toret); set_mouse_cursor(
+MODE_USE); cmode=MODE_USE;` (`AC.CPP:24022-24024`) at the one call site
+that names the function. This decisively resolves the identity source's
+own declaration had already suggested (`update_inv_cursor(int invnum)`,
+`AC.CPP:4998-5016`) but this project had never had a strong enough call
+site to confirm. Renamed `sub_40CF16` -> `update_inv_cursor`, applied
+to the live IDB and re-exported this round (2586 functions, 945 named).

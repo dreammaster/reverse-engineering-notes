@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 944 named, 1642 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 945 named, 1641 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -4981,6 +4981,19 @@ disassembly work.
   drawing matches closely. The function's own remaining ~600 lines (the
   actual mouse-driven event loop) are left honestly unread -- a
   well-scoped candidate for a future round. See `reversing/notes/
+  struct-layout-drift.md`.
+- **`sub_40CF16` renamed to `update_inv_cursor`, found while reading
+  `__actual_invscreen`'s own opening section.** Previously left
+  deliberately unnamed ("role only, not independently confirmed
+  identity"), despite already being called from `SetInvItemPic`/
+  `SetMouseCursor`. `__actual_invscreen`'s own `MODE_USE` item-selection
+  branch calls it directly, immediately followed by `SetMouseCursor(
+  MODE_USE)` -- matching source's own exact call sequence
+  `update_inv_cursor(toret); set_mouse_cursor(MODE_USE); cmode=
+  MODE_USE;` (`AC.CPP:24022-24024`), the one call site that actually
+  names 2011's own declared `update_inv_cursor(int invnum)`
+  (`AC.CPP:4998-5016`). The first rename (not just documentation
+  addition) of this session's continuation. See `reversing/notes/
   struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)

@@ -890,9 +890,9 @@
   "is_named": true
  },
  {
-  "name": "sub_40CF16",
+  "name": "update_inv_cursor",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "putpixel_compensate",
