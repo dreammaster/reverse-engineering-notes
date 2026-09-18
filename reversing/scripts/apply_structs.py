@@ -2015,6 +2015,11 @@ struct GameSetupStructBase {
                             // reasoning (this does NOT invalidate the separately-verified +8-byte
                             // OFFSET CORRECTION below `dict` -- that correction's byte-count is
                             // still exactly right regardless of how this one gap is interpreted).
+                            // DATED: ags-archives/ags256/docs/CHANGES.TXT's VERSION 2.56 (August 2003)
+                            // entry, "Increased max cursors to 20," independently confirms this
+                            // build's 10-cursor capacity as the pre-2.56 baseline (matching this
+                            // build's own <2.5 pin comfortably) -- 2011's later MAX_CURSOR=20
+                            // (acroom.h:2699) is that exact 2.56 bump, not an arbitrary later choice.
   char *globalscript;             // +0x2634, medium-high confidence: `dword_51594C`. Identified via
                             // restore_game_data (already matched): before re-`fread`-ing the whole
                             // struct from a save file, the function explicitly SAVES this field off
@@ -3304,6 +3309,11 @@ struct RoomStatus {
                             // reduction, consistent with this project's "smaller fixed capacity"
                             // pattern, and matching `RoomObject`'s own independently-confirmed
                             // array capacity elsewhere in this project with zero further drift.
+                            // DATED: ags-archives/ags256/docs/CHANGES.TXT's VERSION 2.55 (May 2003)
+                            // entry, "Increased max objects per room from 10 to 15," independently
+                            // confirms this exact capacity (10) as the pre-2.55 baseline this build's
+                            // own <2.5 pin predates -- 2011's much larger MAX_INIT_SPR=40 reflects at
+                            // least one more increase past even that 2.55 bump, not one single jump.
   short flagstates[15];              // +0x148..0x166 (30 bytes), high confidence (UPGRADED from
                             // MEDIUM, found in a later round): `load_new_room` (already matched)
                             // -- immediately after the `obj[]` initialization loop just confirmed
