@@ -4784,6 +4784,20 @@ disassembly work.
   full-mapping round) -- just never connected to the same feature or
   named as such. Neither of AGS's two mouth-animation mechanisms exists
   in this build. See `reversing/notes/struct-layout-drift.md`.
+- **A changelog cross-reference sweep dates three already-confirmed-
+  absent findings precisely, no new investigation needed.**
+  `parse_sentence`'s player-triggerable `']'`/`'['` crash bug matches
+  `ags-archives/ags256/docs/CHANGES.TXT`'s own 2.56a "Fixed crash if
+  the player typed [ or ] into the text parser" verbatim -- datable on
+  both ends (predates 2.4b, fixed in 2.56a). `find_word_in_dictionary`'s
+  confirmed-absent plural-matching fallback and two of
+  `run_dialog_script`'s confirmed-absent `DCMD_*` opcodes
+  (`GOTOPREVIOUS`/`LOSEINV`) both match dated AGS 2.56 changelog
+  entries just as precisely. A follow-up sweep checking 2.4-series-
+  added script functions (`StrToLowerCase`/`UpdateInventory`/etc.)
+  against `matches.json` found zero real gaps -- both apparent misses
+  were already-matched internals under a different script-export
+  alias. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

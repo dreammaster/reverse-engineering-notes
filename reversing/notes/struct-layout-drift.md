@@ -16095,3 +16095,44 @@ displayed TEXT, or sync frames to actual recorded speech PHONEMES.
 Neither exists in Rob Blanc 1's engine. Characters presumably just use
 a single static or looping talk-view frame while speaking, with no
 mouth-shape animation of either kind.
+
+### A changelog cross-reference sweep dates three already-confirmed-absent findings precisely
+
+Systematically read through `ags-archives/ags240/docs/CHANGES.TXT` and
+`ags256/docs/CHANGES.TXT`'s own "Fixed crash"/"Added" entries looking
+for wording that matches this project's own ALREADY-confirmed findings
+but had never actually been cross-referenced back to a specific
+changelog line. Three hits:
+
+1. **`parse_sentence`'s player-triggerable `'!Said: unexpected ]'`
+   crash** (typing a literal `[`/`]` during ordinary text entry) is
+   `ags256/docs/CHANGES.TXT`'s own VERSION 2.56a (August 2003) entry:
+   *"Fixed crash if the player typed [ or ] into the text parser."*
+   Since this build is pinned to 2.4b (July 2002), the bug was live in
+   shipped AGS games for roughly 13 months before being fixed -- a rare
+   case where a disassembly-found bug can be dated on BOTH ends
+   (present-by/predates AND fixed-in), not just a single boundary.
+2. **`find_word_in_dictionary`'s confirmed-absent plural-matching
+   fallback** is `ags256`'s own VERSION 2.56 (August 2003) entry:
+   *"Text parser now accepts ' and - characters, and automatically
+   accepts plurals of all words (ie. an 's' on the end)."*
+3. **Two of `run_dialog_script`'s four confirmed-absent `DCMD_*`
+   opcodes** (`DCMD_GOTOPREVIOUS`/`DCMD_LOSEINV`) are named directly in
+   `ags256`'s own VERSION 2.56 entry: *"Added 'goto-previous' dialog
+   script command to return to previous topic, and 'lose-inv' command
+   to lose the player inventory."*
+
+No new investigation in any of these three -- purely strengthening
+already-closed findings with hard external dates, the same technique
+that closed `Region`s and lip sync this session, just applied
+backward onto older results instead of a fresh subsystem. A systematic
+sweep of the same two changelogs' remaining "Added"/"Fixed crash"
+entries against `matches.json`'s already-matched function set (checking
+whether 2.4-series-added script functions like `StrToLowerCase`/
+`StrToUpperCase`/`UpdateInventory` are covered) turned up zero real
+gaps -- both apparent misses turned out to be already-matched engine-
+internal functions (`_sc_strlower`/`_sc_strupper`, `update_invorder`)
+exported under a different script-facing alias name via
+`setup_script_exports`'s own table, independently reconfirming that
+function's own earlier "zero still-unnamed `sub_*` targets" coverage
+claim a second time.
