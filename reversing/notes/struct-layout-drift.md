@@ -16821,3 +16821,27 @@ function, later split" pattern already seen repeatedly in this project
 (`cc_run_code`, `unload_old_room`, `offset_over_inv`, etc). Not
 independently confirmed which 2011 function the idle-animation logic
 maps to -- left as an open observation for a future round.
+
+### `sub_43C460` named as Allegro's own public `set_palette()`
+
+A comprehensive fresh sweep (not just spot-checking a few central
+functions, but scanning every "call sub_XXXXXX" line in the whole
+disassembly for ones whose caller is an already-matched AGS-side, non-
+library function) found 54 still-undocumented `sub_*` targets --
+almost all JGMOD/ALMP3 third-party-library internals correctly out of
+scope per this project's own rule, plus the already-documented
+`getr16`-family Allegro color-component-extractor siblings. One
+genuine new find stood out: `sub_43C460`, called directly from two
+already-matched AGS-side functions (`FadeOut` and `sub_40A6D8`, the
+fade-dispatch helper closed a couple of rounds ago), a trivial
+5-instruction wrapper whose entire body is `push -1(retracesync); push
+0xFF(to); push 0(from); push p; call set_palette_range`. Matches
+`Engine/libsrc/allegro-4.2.2/src/gfx.c:216-219`'s own public
+`set_palette(AL_CONST PALETTE p) { set_palette_range(p, 0,
+PAL_SIZE-1, TRUE); }` verbatim -- `PAL_SIZE-1`=255=`0xFF` and
+Allegro's own `TRUE==-1` convention (already established elsewhere in
+this project) both match exactly. Renamed `sub_43C460` ->
+`set_palette`, applied to the live IDB and re-exported this round
+(2586 functions, 946 named). Third-party library boundary per this
+project's own scope rule -- not chased further, its own callee
+`set_palette_range` is already independently matched.

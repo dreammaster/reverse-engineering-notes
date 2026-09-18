@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 945 named, 1641 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 946 named, 1640 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5042,6 +5042,16 @@ disassembly work.
   existing citation -- plausibly fusing two separate 2011 functions
   into one, left as an open observation. See `reversing/notes/
   struct-layout-drift.md`.
+- **`sub_43C460` renamed to `set_palette`, found via a comprehensive
+  whole-binary sweep for AGS-side-called `sub_*` functions.** Scanned
+  every call site in the disassembly whose caller is an already-
+  matched non-library function, not just a handful of central ones --
+  found 54 still-undocumented targets, almost all JGMOD/ALMP3 internals
+  correctly out of scope. One real find: a trivial 5-instruction
+  wrapper called from `FadeOut`/`sub_40A6D8` matches Allegro's own
+  public `set_palette()` (`gfx.c:216-219`) verbatim, including
+  Allegro's own `TRUE==-1` convention. Third-party library boundary,
+  not chased further. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

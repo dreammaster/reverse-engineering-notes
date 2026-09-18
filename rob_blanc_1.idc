@@ -61096,6 +61096,7 @@ static Bytes_10(void) {
 	make_array	(0X43C45B,	0X5);
 	create_insn	(x=0X43C460);
 	op_stkvar	(x,	1);
+	set_name	(0X43C460,	"set_palette");
 	set_cmt	(0X43C464,	"retracesync",	0);
 	set_cmt	(0X43C466,	"to",	0);
 	set_cmt	(0X43C46B,	"from",	0);
@@ -63905,8 +63906,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F0A6);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F0AB);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -63916,6 +63915,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F0AB);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43F0AF);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F0B3);
@@ -69953,9 +69954,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X44631F);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X446325);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -69965,6 +69963,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446325);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X44632C);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -76139,11 +76140,6 @@ static Bytes_12(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X44E358);
 	op_hex		(x,	1);
-	create_insn	(x=0X44E362);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X44E36A);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -76153,6 +76149,11 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44E362);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X44E36A);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	make_array	(0X44E38A,	0X6);
 	create_insn	(x=0X44E390);
 	op_hex		(x,	1);
@@ -81404,11 +81405,6 @@ static Bytes_13(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X456403);
 	op_stkvar	(x,	1);
-	make_array	(0X456417,	0X9);
-	create_insn	(x=0X456420);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X456425);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -81418,6 +81414,11 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	make_array	(0X456417,	0X9);
+	create_insn	(x=0X456420);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X456425);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X45642C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X456447);
@@ -87584,13 +87585,6 @@ static Bytes_14(void) {
 	set_cmt	(0X462D44,	"Size",	0);
 	create_insn	(x=0X462D53);
 	op_hex		(x,	1);
-	create_insn	(0X462D6C);
-	create_insn	(x=0X462D81);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X462D8B);
-	op_hex		(x,	1);
-	create_insn	(x=0X462D97);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -87600,6 +87594,13 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(0X462D6C);
+	create_insn	(x=0X462D81);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X462D8B);
+	op_hex		(x,	1);
+	create_insn	(x=0X462D97);
+	op_hex		(x,	1);
 	set_cmt	(0X462DA1,	"Size",	0);
 	set_cmt	(0X462DA3,	"int",	0);
 	set_cmt	(0X462DA4,	"int",	0);
@@ -156419,7 +156420,7 @@ static Functions_3(void) {
 	add_func    (0X411E70,0X4121D0);
 	set_func_flags(0X411E70,0x5410);
 	SetType(0X411E70, "int __stdcall _GetLocationType(int xxx, int yyy, int allowHotspot0);");
-	set_func_cmt(0X411E70,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int __GetLocationType(int,int,int) at AC.CPP:20466. Found via callgraph: calls sub_411E2A (matched above to get_hotspot_at) internally, exactly matching source line 20482 (int hsat = get_hotspot_at(xxx,yyy);). Takes 3 params matching the source signature. Called from mainloop (already matched), matching source line 25535 (__GetLocationType(...) == LOCTYPE_HOTSPOT check). ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): body reads \"movsx eax, word_515864[cur_cursor*0x18]\" (using the already-confirmed cur_cursor global and MouseCursor's 0x18-byte stride), matching source's use of the current cursor's `view` field. New field evidence: word_515864 = MouseCursor.view, at struct offset +0x08 -- also independently corroborated by a cursor-precache loop in main passing the same field directly to the already-matched precache_view. See reversing/scripts/apply_structs.py for the full MouseCursor struct writeup.", 1);
+	set_func_cmt(0X411E70,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int __GetLocationType(int,int,int) at AC.CPP:20466. Found via callgraph: calls sub_411E2A (matched above to get_hotspot_at) internally, exactly matching source line 20482 (int hsat = get_hotspot_at(xxx,yyy);). Takes 3 params matching the source signature. Called from mainloop (already matched), matching source line 25535 (__GetLocationType(...) == LOCTYPE_HOTSPOT check). ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): body reads \"movsx eax, word_515864[cur_cursor*0x18]\" (using the already-confirmed cur_cursor global and MouseCursor's 0x18-byte stride), matching source's use of the current cursor's `view` field. New field evidence: word_515864 = MouseCursor.view, at struct offset +0x08 -- also independently corroborated by a cursor-precache loop in main passing the same field directly to the already-matched precache_view. See reversing/scripts/apply_structs.py for the full MouseCursor struct writeup. ADDENDUM (fou" "nd while closing GetLocationType's own dispatch body this round): th", 1);
 	set_frame_size(0X411E70, 0X14, 4, 0XC);
 	define_local_var(0X411E70, 0X4121D0, "[bp-0X14]", "ev2");
 	define_local_var(0X411E70, 0X4121D0, "[bp+0X8]", "xxx");
@@ -157762,7 +157763,7 @@ static Functions_6(void) {
 	add_func    (0X41B339,0X41B423);
 	set_func_flags(0X41B339,0x5410);
 	SetType(0X41B339, "int __stdcall GetLocationType(int xxx, int yyy);");
-	set_func_cmt(0X41B339,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj ADDITIONAL FIELD EVIDENCE (found later, ViewFrame272 remaining-fields round): the mouse cursor idle-animation code inside this function (gated by `byte_515870[cur_cursor*0x18] & 8`, an \"is this cursor animated\" flag on the already-recovered `MouseCursor` struct) independently re-confirms `ViewFrame272.speed`@+0x08 via a THIRD distinct code path (after `update_stuff` and `AnimateObject`): \"wait = frames[frame].speed + 5\" when advancing the cursor to its next animation frame, then reloads the sprite via SpriteCache::operator[](frames[frame].pic) -- the same view/loop/frame stride math (0x8D4/0x118/0x1C) applied to `MouseCursor.view` (loop fixed at 0) instead of a `RoomObject`, cross-confirming that ViewStruct272/ViewFrame272 is a shared animation-data format used by cursors, room objects, AND characters alike, not something object-specific. See reversing/notes/st" "ruct-layout-drift.md.", 1);
+	set_func_cmt(0X41B339,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj ADDITIONAL FIELD EVIDENCE (found later, ViewFrame272 remaining-fields round): the mouse cursor idle-animation code inside this function (gated by `byte_515870[cur_cursor*0x18] & 8`, an \"is this cursor animated\" flag on the already-recovered `MouseCursor` struct) independently re-confirms `ViewFrame272.speed`@+0x08 via a THIRD distinct code path (after `update_stuff` and `AnimateObject`): \"wait = frames[frame].speed + 5\" when advancing the cursor to its next animation frame, then reloads the sprite via SpriteCache::operator[](frames[frame].pic) -- the same view/loop/frame stride math (0x8D4/0x118/0x1C) applied to `MouseCursor.view` (loop fixed at 0) instead of a `RoomObject`, cross-confirming that ViewStruct272/ViewFrame272 is a shared animation-data format used by cursors, room objects, AND characters alike, not something object-specific. See reversing/notes/st" "ruct-layout-drift.md. OWN DISPATCH BODY CLOSES CLEANLY (fresh round ", 1);
 	set_frame_size(0X41B339, 0, 4, 0X8);
 	define_local_var(0X41B339, 0X41B423, "[bp+0X8]", "xxx");
 	define_local_var(0X41B339, 0X41B423, "[bp+0XC]", "yyy");
@@ -159065,7 +159066,7 @@ static Functions_9(void) {
 	add_func    (0X42A8E1,0X42A934);
 	set_func_flags(0X42A8E1,0x5410);
 	SetType(0X42A8E1, "int __stdcall SystemImports__get_index_of(char *Str2);");
-	set_func_cmt(0X42A8E1,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: int SystemImports::get_index_of(char*) at CSRUN.CPP:660. The 2011 body has been rewritten to use a btree, but the OLD implementation survives as a comment in the same function: \"for (o=0;o<numimports;o++) { if (strcmp(name[o],namw)==0) return o; ... }\". The disassembly matches that commented-out code line for line: loop bounded by [this+0xE10] (numimports, same offset confirmed via SystemImports::add above), strcmp against name[o] at [this+o*4], return o on match, -1 if the loop completes. Called from SystemImports::add (already matched) and sub_42A934 (a lead for a future round, likely SystemImports::is_valid_import or ccGetSymbolAddress-adjacent). Flat-named as a C++ member function.", 1);
+	set_func_cmt(0X42A8E1,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: int SystemImports::get_index_of(char*) at CSRUN.CPP:660. The 2011 body has been rewritten to use a btree, but the OLD implementation survives as a comment in the same function: \"for (o=0;o<numimports;o++) { if (strcmp(name[o],namw)==0) return o; ... }\". The disassembly matches that commented-out code line for line: loop bounded by [this+0xE10] (numimports, same offset confirmed via SystemImports::add above), strcmp against name[o] at [this+o*4], return o on match, -1 if the loop completes. Called from SystemImports::add (already matched) and SystemImports::is_script_import (also already matched -- this citation's earlier 'sub_42A934, a lead for a future round' wording is stale, the caller was independently identified and named in a later round without this entry being updated). Flat-named as a C++ member function.", 1);
 	set_frame_size(0X42A8E1, 0X8, 4, 0X4);
 	define_local_var(0X42A8E1, 0X42A934, "[bp+0X8]", "Str2");
 	add_func    (0X42A934,0X42A969);
@@ -160014,6 +160015,7 @@ static Functions_11(void) {
 	set_frame_size(0X43C420, 0, 0, 0);
 	add_func    (0X43C460,0X43C477);
 	set_func_flags(0X43C460,0x5400);
+	set_func_cmt(0X43C460,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/gfx.c\nconfidence: high\nevidence: void set_palette(AL_CONST PALETTE p) at gfx.c:216-219 -- Allegro's own public 'set the entire color palette' API. Exact, complete match: this function's entire body is 'push -1(retracesync); push 0xFF(to); push 0(from); push p(arg_0); call set_palette_range' -- matching source's own one-line body 'set_palette_range(p, 0, PAL_SIZE-1, TRUE);' verbatim, including Allegro's own TRUE==-1 convention (already established elsewhere in this project, e.g. release_voice) matching the literal 0FFFFFFFFh push exactly and PAL_SIZE-1=255=0xFF matching the literal 0FFh push exactly. Called from FadeOut and sub_40A6D8 (both already matched) -- FadeOut's own call applies the fully-computed target palette in one shot after its own fade_interpolate loop finishes (color_depth>1 manual-darkening path), and sub_40A6D8's own call sits in its own color_depth>1, dword_4EEB4C!=0 branch (a shortcut applying the palette directly with no " "fade animation at all). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule) -- ", 1);
 	set_frame_size(0X43C460, 0, 0, 0);
 	define_local_var(0X43C460, 0X43C477, "[bp+0X4]", "p");
 	add_func    (0X43C480,0X43C565);
@@ -161023,14 +161025,14 @@ static Functions_11(void) {
 	set_func_flags(0X452700,0x5400);
 	set_func_cmt(0X452700,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/unicode.c\nconfidence: high\nevidence: char *uconvert(AL_CONST char*,int,char*,int,int) -- the underlying function the `uconvert_ascii(s,buf)` macro expands to: \"uconvert(s, U_ASCII, buf, U_CURRENT, sizeof(buf))\" (Common/libinclude/allegro/unicode.h:45). sub_452700's own prologue declares exactly 5 dword parameters (arg_0..arg_10), matching this 5-argument shape precisely. Called twice from the already-matched mouse_directx_init (sub_464A30) with the two matched strings \"mouse_accel_factor\"/\"mouse\" as the `s` argument, alongside constant operands plausibly corresponding to U_ASCII/U_CURRENT (not independently decoded/confirmed this round). Confidence medium rather than high: uconvert's actual implementation (Allegro's unicode.c) is not present in this checkout of Engine/libsrc/allegro-4.2.2-agspatch/ (only the Windows-platform-specific win/*.c patch files were kept, not the generic library core), so the body could not be traced statement-by-st" "atement against real source -- this match rests on parameter-count shape + call-site correlation", 1);
 	set_frame_size(0X452700, 0XC, 0, 0);
-	add_func    (0X452770,0X4527C4);
-	set_func_flags(0X452770,0x5400);
-	set_func_cmt(0X452770,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/unicode.c\nconfidence: high\nevidence: Allegro's public uoffset(AL_CONST char *s,int pos) -- converts a character index into a byte offset. Found as get_extension's own final-return call and ugetat's own call. Exact match: `if(pos<0) pos+=ustrlen(s);` (calling the already-confirmed sub_453DA0=ustrlen exactly when the input is negative), then a loop advancing `pos` characters through the string via the current encoding's character-width stepping. THIRD-PARTY LIBRARY BOUNDARY, its own per-character stepping loop not traced further.", 1);
-	set_frame_size(0X452770, 0XC, 0, 0);
 }
 
 static Functions_12(void) {
 
+	add_func    (0X452770,0X4527C4);
+	set_func_flags(0X452770,0x5400);
+	set_func_cmt(0X452770,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/unicode.c\nconfidence: high\nevidence: Allegro's public uoffset(AL_CONST char *s,int pos) -- converts a character index into a byte offset. Found as get_extension's own final-return call and ugetat's own call. Exact match: `if(pos<0) pos+=ustrlen(s);` (calling the already-confirmed sub_453DA0=ustrlen exactly when the input is negative), then a loop advancing `pos` characters through the string via the current encoding's character-width stepping. THIRD-PARTY LIBRARY BOUNDARY, its own per-character stepping loop not traced further.", 1);
+	set_frame_size(0X452770, 0XC, 0, 0);
 	add_func    (0X4527D0,0X4527EE);
 	set_func_flags(0X4527D0,0x5400);
 	set_func_cmt(0X4527D0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/unicode.c\nconfidence: high\nevidence: Allegro's public ugetat(AL_CONST char *s,int pos) -- `s += uoffset(s,pos); return ugetc(s);`. Found as get_extension's own backward-scan call. Exact match: calls uoffset (sub_452770, confirmed below) to get the byte offset for character index `pos`, adds it to `s`, then dispatches through a global function pointer (off_4BDF5C, this build's current-encoding plain 'get char at pointer, no advance' slot -- the sibling of ustrlen/ustrsize's off_4BDF64 advance-and-return variant) to read the character there. THIRD-PARTY LIBRARY BOUNDARY, its own encoding-dispatch table not chased further.", 1);
@@ -162661,6 +162663,10 @@ static Functions_12(void) {
 	add_func    (0X479440,0X479533);
 	set_func_flags(0X479440,0x5400);
 	set_frame_size(0X479440, 0, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X479540,0X4795A8);
 	set_func_flags(0X479540,0x5400);
 	set_frame_size(0X479540, 0, 0, 0);
@@ -162694,10 +162700,6 @@ static Functions_12(void) {
 	add_func    (0X479970,0X479ADE);
 	set_func_flags(0X479970,0x5400);
 	set_frame_size(0X479970, 0X4, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X479B10,0X479CFA);
 	set_func_flags(0X479B10,0x5400);
 	set_frame_size(0X479B10, 0X4, 0, 0);
@@ -164943,6 +164945,10 @@ static Functions_13(void) {
 	add_func    (0X4A4520,0X4A45D1);
 	set_func_flags(0X4A4520,0x5400);
 	set_frame_size(0X4A4520, 0X10, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X4A45E0,0X4A45FC);
 	set_func_flags(0X4A45E0,0x5400);
 	set_frame_size(0X4A45E0, 0, 0, 0);
@@ -164976,10 +164982,6 @@ static Functions_13(void) {
 	add_func    (0X4A5200,0X4A523C);
 	set_func_flags(0X4A5200,0x5400);
 	set_frame_size(0X4A5200, 0X4, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X4A5240,0X4A52AB);
 	set_func_flags(0X4A5240,0x5400);
 	set_frame_size(0X4A5240, 0X8, 0, 0);
