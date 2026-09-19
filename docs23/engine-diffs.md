@@ -877,6 +877,17 @@ format are identical. What differs:
   system may sit alongside it, not replace it).
 - `SAPHIRE` (sic) is spelled `SAPPHIRE` in Chapter 3.
 
+## Monster catalog: same block format, bigger roster
+
+Found while writing `src23/monster.c` (2026-09-19), checked against both real
+`WORLD.DAT` files. The 106-byte stat block, its field offsets, the two-level
+lookup (type id -> block index -> block) and the spawn code are identical.
+Differences: **73 blocks vs. Chapter 2's 62** (a different monster list: Ch2
+starts ALLIGATOR, ARMY ANT, BATS...; Ch3 starts WASP, CENTIPEDE, WASP QUEEN...
+and ends PURPLE DRAGON), one `NOT USED` filler block (Ch3 block 62), a lookup
+covering types up to 1862 instead of 2143, and **23 boss/quest death flags vs.
+17**. Monster type ids and block indices, like item ids, are per-game.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

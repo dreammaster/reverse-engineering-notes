@@ -1191,3 +1191,51 @@ PrepareWorldDat1Block4Read: si=0xb1ab offset=0x8e632 (583218) recsize=12
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_ch3_flags.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_flags.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_flags.py
+[*] captured stdout from target script:
+----- begin target script output -----
+OFFSETS
+  DS:0xb1f3 = 0x40bf71
+  DS:0xb1f7 = 0x41090d
+  DS:0xb1fb = 0x417075
+  DS:0xb1ff = 0x418eaf
+  DS:0xb203 = 0x41b5bf
+  DS:0xb207 = 0x41d72f
+  DS:0xb20b = 0x41eab7
+  DS:0xb20f = 0x425cd5
+FLAGTABLE @0xCE51 (id, flagA, flagB) signed
+  count 23
+  rows [(1, 1, 0), (10, 6, 0), (39, 9, 0), (145, 20, 0), (203, 34, 0), (241, 41, 0), (310, 52, 0), (314, 56, 0), (362, 59, 0), (444, 68, 0), (487, 80, 0), (806, 99, 0), (849, 103, 0), (900, 108, 0), (992, 114, 0), (1154, 162, 0), (1181, 163, 0), (1243, 183, 0), (1422, 201, 0), (1566, 206, 0), (1750, 211, 0), (1861, 223, 0), (1862, 224, 0)]
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_flags.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'dump_monster_tables.py', 'noexport']
+[*] reading dump_monster_tables.py
+[*] executing dump_monster_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+OFFSETS
+  DS:0xb1f7 = 0x41090d
+  DS:0xb1fb = 0x417075
+  DS:0xb1ff = 0x418eaf
+  DS:0xb203 = 0x41b5bf
+DEATH FLAG TABLE @0xCE51 (type id, flagA, flagB), signed
+  count 23
+  rows [(1, 1, 0), (10, 6, 0), (39, 9, 0), (145, 20, 0), (203, 34, 0), (241, 41, 0), (310, 52, 0), (314, 56, 0), (362, 59, 0), (444, 68, 0), (487, 80, 0), (806, 99, 0), (849, 103, 0), (900, 108, 0), (992, 114, 0), (1154, 162, 0), (1181, 163, 0), (1243, 183, 0), (1422, 201, 0), (1566, 206, 0), (1750, 211, 0), (1861, 223, 0), (1862, 224, 0)]
+----- end target script output -----
+[*] finished executing dump_monster_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

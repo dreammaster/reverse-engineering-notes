@@ -1,0 +1,201 @@
+#ifndef YENDOR23_MONSTER_H
+#define YENDOR23_MONSTER_H
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+#include "game.h"
+
+/*
+ * Monsters. A live monster is a 156-byte record: 50 bytes of runtime state
+ * followed by a verbatim copy of its 106-byte catalog block from WORLD.DAT
+ * (SpawnMonsterInFacingDirection loads the block straight to record + 0x32,
+ * yendor2.asm:33008). The same record shape is used by the 80-entry
+ * g_levelMonsters pool saved in CURGAME and by the 3 active combat slots.
+ *
+ * The catalog is a table of 106-byte blocks (index 0 is empty) followed by a
+ * table of u16 values mapping a monster *type id* (the id stored on a map
+ * cell and in record +0x00) to a block index. Layout and field meanings were
+ * checked against both games' real WORLD.DAT files; the runtime prefix comes
+ * from the code only, since the available saves hold no live monsters.
+ *
+ * All field offsets below are record offsets (catalog block offset + 0x32).
+ */
+
+enum {
+    MonsterRecordSize = 156,
+    MonsterBlockSize = 106,
+    MonsterBlockOffset = 0x32, /* where the catalog block sits in a record */
+    MonsterPoolSize = 80,      /* g_levelMonsters */
+    MonsterActiveSlots = 3,    /* g_monsterSlots */
+
+    MonsterBlockCountMax = 73,
+    MonsterLookupCountMax = 2500,
+
+    MonsterNameLineSize = 13,
+    MonsterNameBufferSize = 28 /* two 12-character lines, a space, NUL, with room */
+};
+
+typedef enum {
+    /* Runtime state (0x00-0x31). */
+    MonsterFieldType = 0x00,      /* u16 type id; 0 = empty pool slot */
+    MonsterFieldWorldX = 0x02,    /* u16 */
+    MonsterFieldWorldY = 0x04,    /* u16 */
+    MonsterFieldCell = 0x06,      /* u16 byte offset of its cell in the dungeon grid */
+    MonsterFieldAnim = 0x08,      /* u16; starts at MonsterFieldSpriteBase + random 0-4 */
+    MonsterFieldAnimSet = 0x0A,   /* u16; 0xA when MonsterFlagAltSprite is set, else 0xD */
+    MonsterFieldState = 0x0C,     /* u16, MonsterState bits */
+    MonsterFieldWound = 0x0E,     /* u16 wound severity: 0x8000 light, 0x4000 moderate, 0x2000 severe */
+    MonsterFieldHealth = 0x10,    /* u16 current hit points */
+    MonsterFieldTarget = 0x12,    /* runtime pointer to the party member being attacked; meaningless on disk */
+    MonsterFieldFlagOnDeath = 0x14, /* i16 global flag index set (>0) or cleared (<0) when it dies */
+    MonsterFieldFlagOnDeath2 = 0x16, /* i16 second such flag */
+
+    /* Catalog block (0x32-0x9B). */
+    MonsterFieldName1 = 0x32,     /* 13-byte text lines, 12 characters + NUL */
+    MonsterFieldName2 = 0x3F,
+    MonsterFieldSpriteBase = 0x4C, /* u16 first picture id of its sprite */
+    MonsterFieldUnknown4E = 0x4E, /* u16, 1-13 in real data; not identified */
+    MonsterFieldMaxHealth = 0x50, /* u16 ("HEALTH-") */
+    MonsterFieldSaveDifficulty = 0x52, /* u16 saving-throw DC for its effects */
+    MonsterFieldAccuracy = 0x54,  /* u16 ("ACCURACY-") */
+    MonsterFieldDexterity = 0x56, /* u16 ("DEXTERITY-"); also the turn-order initiative */
+    MonsterFieldAbsorption = 0x58, /* u16 ("ABSORPTION-") */
+    MonsterFieldDamage = 0x5A,    /* u16 ("DAMAGE-") */
+    MonsterFieldHitSound = 0x5C,  /* u16 sound id when it hits */
+    MonsterFieldIdleSound = 0x5E, /* u16 sound id when it has no target */
+    MonsterFieldRangedAccuracy = 0x64, /* u16 ("RANGED ACC.-") */
+    MonsterFieldRangedDamage = 0x66,   /* u16 ("RANGED DAM.-") */
+    MonsterFieldSpecialAttack = 0x6E,  /* u16 trap/status effect id ("SPECIAL ATTACK-"), 0 = none */
+    MonsterFieldPalette = 0x72,   /* 3 x u16 colour remap, used when MonsterFlagRemapPalette is set */
+    MonsterFieldLootGold = 0x7E,  /* Bcd4 */
+    MonsterFieldLootNuore = 0x82, /* Bcd4 */
+    MonsterFieldLootOre = 0x86,   /* Bcd4, magic ore */
+    MonsterFieldExperience = 0x8A, /* Bcd4 */
+    MonsterFieldFlags = 0x92,     /* u16, MonsterFlag bits */
+    MonsterFieldAwareness = 0x94, /* u16, MonsterAwareness bits */
+    MonsterFieldImmunities = 0x96, /* u16, MonsterImmunity bits */
+    MonsterFieldResistances = 0x98 /* u16, MonsterResistance bits */
+} MonsterField;
+
+/* MonsterFieldState bits. */
+typedef enum {
+    MonsterStateAware = 0x0001 /* it has noticed the party (TryActivateMonsterByDistance) */
+} MonsterState;
+
+/* MonsterFieldFlags bits (only those the code tests). */
+typedef enum {
+    MonsterFlagAltSprite = 0x0001,    /* alternate sprite layout: anim set 0xA (else 0xD), clue-book category 0x30 (else 0x20) */
+    MonsterFlagRemapPalette = 0x0004, /* apply MonsterFieldPalette */
+    MonsterFlagAreaAttack = 0x1000,   /* hits the whole party, not one target */
+    MonsterFlagSpecialMask = 0x0E00   /* modifiers shown next to its special attack */
+} MonsterFlag;
+
+/*
+ * MonsterFieldAwareness: how far away it notices the party. Zero means the
+ * default; the other bits select 0x2C (0x40), 0x29 (0x80) or 0x26 (0x100)
+ * viewport rows; 0x20 means it never wakes on distance.
+ */
+typedef enum {
+    MonsterAwarenessNever = 0x0020,
+    MonsterAwarenessFar = 0x0040,
+    MonsterAwarenessMiddle = 0x0080,
+    MonsterAwarenessNear = 0x0100
+} MonsterAwareness;
+
+/* MonsterFieldImmunities bits (the clue book's "IMMUNE" rows). */
+typedef enum {
+    MonsterImmuneMagicResist = 0x0010, /* also drives "MAGIC DAMAGE: RESISTANT" */
+    MonsterImmunePoison = 0x8000,
+    MonsterImmuneDisease = 0x4000,
+    MonsterImmuneParalysis = 0x2000,
+    MonsterImmuneFreezing = 0x1000,
+    MonsterImmuneHexing = 0x0800,
+    MonsterImmuneCursing = 0x0400,
+    MonsterImmuneFire = 0x0008,
+    MonsterImmuneCold = 0x0004,
+    MonsterImmuneElectric = 0x0002,
+    MonsterImmunePower = 0x0001
+} MonsterImmunity;
+
+/* MonsterFieldResistances bits (the clue book's "RESISTANT" rows). */
+typedef enum {
+    MonsterResistMagicMask = 0x3A00,
+    MonsterResistPhysicalMask = 0xC000
+} MonsterResistance;
+
+typedef enum {
+    MonsterLootGold,
+    MonsterLootNuore,
+    MonsterLootOre,
+    MonsterLootExperience
+} MonsterLoot;
+
+typedef struct {
+    uint32_t blocksOffset; /* WORLD.DAT offset; the lookup table follows the last block */
+    uint16_t blockCount;
+    uint16_t lookupCount;
+    uint32_t totalSize;    /* blocks + lookup bytes */
+} MonsterCatalogLayout;
+
+typedef struct {
+    GameKind game;
+    uint16_t blockCount;
+    uint16_t lookupCount;
+    uint8_t blocks[MonsterBlockCountMax * MonsterBlockSize];
+    uint8_t lookup[MonsterLookupCountMax * 2];
+} MonsterCatalog;
+
+const MonsterCatalogLayout *monsterCatalogLayout(GameKind game);
+
+/* Parses the region starting at layout->blocksOffset; false if size is too small. */
+bool monsterCatalogParse(MonsterCatalog *catalog, GameKind game, const uint8_t *region, size_t size);
+bool monsterCatalogParseWorldDat(MonsterCatalog *catalog, GameKind game, const uint8_t *worldDat, size_t size);
+
+/* Catalog block by index (0 is the empty block), or NULL if out of range. */
+const uint8_t *monsterCatalogBlock(const MonsterCatalog *catalog, unsigned index);
+
+/* Block index for a monster type id; 0 if the type is unknown or maps outside the catalog. */
+unsigned monsterCatalogBlockIndex(const MonsterCatalog *catalog, unsigned typeId);
+
+/*
+ * Builds a new live record the way SpawnMonsterInFacingDirection does apart
+ * from position, animation and randomness: zeroes it, stores the type id,
+ * copies the catalog block, sets current health to maximum and applies the
+ * type's on-death flag deltas. False (record untouched) if the type is unknown.
+ */
+bool monsterRecordSpawn(uint8_t *record, const MonsterCatalog *catalog, unsigned typeId);
+
+/* Sets world position and the grid cell offset ((y - originRow) * 0x270 + (x - originCol) * 8). */
+void monsterRecordPlace(uint8_t *record, uint16_t x, uint16_t y, uint16_t gridOriginRow, uint16_t gridOriginCol);
+
+/* Sets the animation start to sprite base + randomExtra (0-4) and the anim set from MonsterFlagAltSprite. */
+void monsterRecordStartAnimation(uint8_t *record, unsigned randomExtra);
+
+uint16_t monsterGetU16(const uint8_t *record, unsigned offset);
+void monsterSetU16(uint8_t *record, unsigned offset, uint16_t value);
+
+const uint8_t *monsterLoot(const uint8_t *record, MonsterLoot kind); /* Bcd4 */
+
+bool monsterIsImmune(const uint8_t *record, MonsterImmunity kind);
+bool monsterResistsMagic(const uint8_t *record);
+bool monsterResistsPhysical(const uint8_t *record);
+
+/* Trimmed name lines. */
+void monsterGetNameLine(const uint8_t *record, unsigned line, char out[MonsterNameLineSize]);
+
+/*
+ * The display name exactly as BuildMonsterDisplayName builds it: line 1, a
+ * space, line 2, each trimmed first. A one-line name therefore ends in a
+ * space ("ALLIGATOR "), as in the original.
+ */
+void monsterGetName(const uint8_t *record, char out[MonsterNameBufferSize]);
+
+/*
+ * The in-EXE table of monster types whose death sets or clears a global flag
+ * (17 entries in Chapter 2, 23 in Chapter 3). False if the type has none.
+ */
+bool monsterDeathFlags(GameKind game, unsigned typeId, int16_t *flagA, int16_t *flagB);
+
+#endif

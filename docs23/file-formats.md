@@ -2618,6 +2618,54 @@ unsigned (max 500 in Ch2, 100 in Ch3). `ApplyMultiStatEffectForItem` skips a
 stat whose current value is 0 and caps at 999. Reimplemented in
 `src23/item.c`.
 
+### Monster catalog and records (decoded 2026-09-19)
+
+**Live record** (156 bytes; the 80-entry `g_levelMonsters` pool saved in
+`CURGAME` section 7, and the 3 active combat slots): **50 bytes of runtime
+state followed by a verbatim 106-byte copy of the monster's catalog block**
+(`SpawnMonsterInFacingDirection` reads the block straight to record `+0x32`;
+`0x32 + 0x6A = 0x9C`, the record's end). The real saves contain no live
+monsters, so the runtime prefix is from the code only: `+0x00` type id (0 =
+empty slot), `+0x02`/`+0x04` world x/y, `+0x06` byte offset of its cell in the
+dungeon grid (`(y-originRow)*0x270 + (x-originCol)*8`), `+0x08` animation
+frame (sprite base + random 0-4), `+0x0A` anim set (`0xA` if flag `0x1` of
+`+0x92`, else `0xD`), `+0x0C` state bits (bit 0 = aware), `+0x0E` wound tier
+(`0x8000`/`0x4000`/`0x2000`), `+0x10` current HP (set to `+0x50` at spawn),
+`+0x12` target pointer (a runtime address, meaningless on disk), `+0x14`/
+`+0x16` global flag indices set (>0) or cleared (<0) when it dies.
+
+**Catalog block fields** (record offsets), all confirmed against the clue-book
+monster sheet (`ShowClueBookMonsterDetail`) and real data: `+0x32`/`+0x3F` two
+13-byte name lines; `+0x4C` sprite base picture id; `+0x4E` unidentified
+(1-13); `+0x50` HEALTH; `+0x52` save difficulty; `+0x54` ACCURACY; `+0x56`
+DEXTERITY (also the initiative); `+0x58` ABSORPTION; `+0x5A` DAMAGE; `+0x5C`
+hit sound, `+0x5E` idle sound; `+0x64` RANGED ACC.; `+0x66` RANGED DAM.;
+`+0x6E` special attack (a trap/status effect id); `+0x72`..`+0x76` colour
+remap (used when flag `0x4` is set); loot as packed BCD4: **`+0x7E` GOLD,
+`+0x82` NUORE, `+0x86` MAGIC ORE, `+0x8A` EXPERIENCE** (an ALLIGATOR gives 495
+gold, 10 NUORE, 5 ore, 1340 XP; the RED DRAGON 1,000,000 gold); `+0x92` flags
+(`0x1` alternate sprite layout, `0x4` remap palette, `0x1000` area attack,
+`0xE00` special-attack modifiers); `+0x94` awareness range (`0x20` never
+wakes by distance, `0x40`/`0x80`/`0x100` pick 0x2C/0x29/0x26 viewport rows);
+**`+0x96` immunities** (`0x8000` poison, `0x4000` disease, `0x2000` paralysis,
+`0x1000` freezing, `0x800` hexing, `0x400` cursing, `0x8` fire, `0x4` cold,
+`0x2` electric, `0x1` power, `0x10` magic-damage "resistant"); **`+0x98`
+resistances** (`0x3A00` magic damage, `0xC000` physical damage).
+
+**Catalog in `WORLD.DAT`**: an array of 106-byte blocks (block 0 is empty)
+followed directly by a lookup of `u16` entries mapping a **type id** (what a
+map cell holds) to a block index, addressed as `base + index * size` by the
+generic read descriptor `{dest, length, index, base}` (`WorldDat_setBlock5` /
+`_6`). Chapter 2: blocks `0x1A78A9` (62 x 106 = 6572), lookup `0x1A9255`
+(2500 entries, real ones up to type 2143). Chapter 3: blocks `0x417075` (73 x
+106), lookup `0x418EAF` (real entries end at type 1862 — the highest id in its
+flag table; what follows are the engine's `InitGlobals` constants, the same
+kind of data that trails Chapter 2's item table). Chapter 3 block 62 is a
+`NOT USED` filler. **In `SW.EXE`/`Yendor3-full.exe`** a sorted table of 6-byte
+`(type id, flagA, flagB)` entries (Ch2 `DS:0xE4E9`, 17 entries; Ch3 `DS:0xCE51`,
+23) lists the boss/quest monsters whose death sets a global flag; every type in
+it is a real monster in its game's lookup. Reimplemented in `src23/monster.c`.
+
 ### In-memory dungeon map grid
 
 **The loader is now found**: `RefreshDungeonMapWindow` (was

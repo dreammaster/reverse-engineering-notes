@@ -174941,3 +174941,111 @@ CLASS tier 2 (ids 21-29): ['CHAMPION', 'BLACKSMITH', 'ASSASSIN', 'PRIEST', 'HEAL
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_mon_tables.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_mon_tables.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_mon_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DS:0xce43 = 0x1677a1 (1472417)
+DS:0xce47 = 0x168f11 (1478417)
+DS:0xce4b = 0x17173b (1513275)
+DS:0xce4f = 0x1771db (1536475)
+DS:0xce53 = 0x183935 (1587509)
+DS:0xce57 = 0x19006d (1638509)
+DS:0xce5b = 0x19c7a5 (1689509)
+DS:0xce5f = 0x1a1141 (1708353)
+DS:0xce63 = 0x1a78a9 (1734825)
+DS:0xce67 = 0x1a9255 (1741397)
+DS:0xce6b = 0x1aa5dd (1746397)
+DS:0xce6f = 0x1acced (1756397)
+DS:0xce73 = 0x1ae075 (1761397)
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_mon_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_mon_labels.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_mon_labels.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_mon_labels.py
+[*] captured stdout from target script:
+----- begin target script output -----
+LOOT   +0x8a 'EXPERIENCE:'
+LOOT   +0x7e 'GOLD:'
+LOOT   +0x86 'MAGIC ORE: '
+LOOT   +0x82 'NUORE: '
+STAT   +0x50 'HEALTH-'
+STAT   +0x54 'ACCURACY-'
+STAT   +0x56 'DEXTERITY-'
+STAT   +0x58 'ABSORPTION-'
+STAT   +0x5a 'DAMAGE-'
+STAT   +0x64 'RANGED ACC.-'
+STAT   +0x66 'RANGED DAM.-'
+IMMUNE mask 0x8000 'POISON:'
+IMMUNE mask 0x4000 'DISEASE:'
+IMMUNE mask 0x2000 'PARALYSIS:'
+IMMUNE mask 0x1000 'FREEZING:'
+IMMUNE mask 0x0800 'HEXING:'
+IMMUNE mask 0x0400 'CURSING:'
+IMMUNE mask 0x0008 'FIRE:'
+IMMUNE mask 0x0004 'COLD:'
+IMMUNE mask 0x0002 'ELECTRIC:'
+IMMUNE mask 0x0001 'POWER:'
+RESIST mask 0x3a00 'MAGIC DAMAGE:'
+RESIST mask 0xc000 'PHYSICAL DAMAGE:'
+special: 'RESISTANT' 'SPECIAL ATTACK-'
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_mon_labels.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_ch2_flags.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch2_flags.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch2_flags.py
+[*] captured stdout from target script:
+----- begin target script output -----
+OFFSETS
+  DS:0xce63 = 0x1a78a9
+  DS:0xce67 = 0x1a9255
+  DS:0xce6b = 0x1aa5dd
+FLAGTABLE @0xE4E9 (id, flagA, flagB) signed
+  count 17
+  rows [(15, 14, 0), (207, 25, 0), (275, 22, 0), (376, 147, 0), (780, 48, 0), (929, 116, 0), (990, 133, 0), (1099, 78, 0), (1216, 86, 0), (1261, 83, 0), (1309, 92, 0), (1758, 105, 0), (1759, 106, 0), (1760, 107, 0), (1786, 42, 0), (1819, 66, 0), (1959, 143, 0)]
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch2_flags.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_monster_tables.py', 'noexport']
+[*] reading dump_monster_tables.py
+[*] executing dump_monster_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+OFFSETS
+  DS:0xce5f = 0x1a1141
+  DS:0xce63 = 0x1a78a9
+  DS:0xce67 = 0x1a9255
+  DS:0xce6b = 0x1aa5dd
+DEATH FLAG TABLE @0xE4E9 (type id, flagA, flagB), signed
+  count 17
+  rows [(15, 14, 0), (207, 25, 0), (275, 22, 0), (376, 147, 0), (780, 48, 0), (929, 116, 0), (990, 133, 0), (1099, 78, 0), (1216, 86, 0), (1261, 83, 0), (1309, 92, 0), (1758, 105, 0), (1759, 106, 0), (1760, 107, 0), (1786, 42, 0), (1819, 66, 0), (1959, 143, 0)]
+----- end target script output -----
+[*] finished executing dump_monster_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

@@ -38,9 +38,11 @@ groundwork below is already in place.
   flag banks; game-aware for Chapter 3's small differences), with shared
   `game.h`; tests in `tests/test_party.c`. Fourth module, `item.c`/`.h`
   (`WORLD.DAT` item catalog for both games: records, target and effect
-  tables, name joining), tests in `tests/test_item.c`. Monster records (the
-  `g_levelMonsters` save block plus `WORLD.DAT`'s monster statistics) and the
-  `WORLD.DAT` map/text blocks are the next candidates.
+  tables, name joining), tests in `tests/test_item.c`. Fifth module,
+  `monster.c`/`.h` (catalog blocks + type lookup for both games, the 156-byte
+  live record, spawn, death flags), tests in `tests/test_monster.c`. The
+  `WORLD.DAT` map/text blocks and the trap/status effect table (`0xE...`
+  `g_trapEffectDefs`) are the next candidates, then the dungeon loop.
 
 ## Next: continue the C reimplementation
 

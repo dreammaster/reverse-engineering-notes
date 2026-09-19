@@ -7863,6 +7863,33 @@ Left for later: the consumable target words, the `+0x10` class bits' exact
 mapping, and the weapon targets' damage fields (the clue-book weapon screen,
 `RunClueBookWeaponCategory`, is the place to decode them).
 
+### 2026-09-19 session update, continued: C reimplementation, monster module
+
+Wrote `src23/monster.c`/`.h` (+ `monster_stdio.c`), completing the save-file
+monster block and its `WORLD.DAT` source. Full layout in `file-formats.md`.
+- **A live monster record is 50 bytes of runtime state plus a verbatim copy of
+  the 106-byte catalog block** at `+0x32`; `SpawnMonsterInFacingDirection`
+  loads it straight in. That made every catalog field addressable by record
+  offset, and the clue-book monster sheet labels gave all of them names (loot
+  is `+0x7E` gold, `+0x82` NUORE, `+0x86` magic ore, `+0x8A` experience).
+- The catalog is two-level: type id (map cell) -> `u16` lookup -> block index
+  -> block. `WORLD.DAT`'s tail is a chain of resource tables ending exactly at
+  the file size (`0x1AE075` in Ch2), read through a generic descriptor
+  `{dest, length, index, base}`.
+- Chapter 3's lookup region shares its 10,000 bytes with the engine's
+  `InitGlobals` constants (the same kind of data trails Ch2's item table, which
+  is why item 745 there contains a build path). The real lookup ends at type
+  1862, confirmed by the game's own death-flag table.
+- A small in-EXE table lists monster types whose death sets a global flag (17
+  in Ch2, 23 in Ch3, extracted by IDA script). Every type in it is a real
+  monster in the lookup of its own game — a check that caught nothing wrong
+  but tied the EXE data to `WORLD.DAT`.
+- Two of my own first guesses were wrong and fixed before commit: which
+  `+0x92` state selects anim set `0xA` (set, not clear), and calling that bit
+  "large" (not established; renamed `MonsterFlagAltSprite`).
+Left for later: `+0x4E` (1-13), the trap-effect ids behind `+0x6E` (needs the
+trap effect table), and the runtime prefix, which no available save exercises.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
