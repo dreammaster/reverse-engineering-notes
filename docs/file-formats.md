@@ -40,13 +40,13 @@ FCB random-block I/O, not stream I/O.
 - Filename on disk: `MAPXnn` where `nn` are the two ASCII digits of the
   map number, e.g. `MAPXFF` seen throughout the disassembly is a
   placeholder that `load_map` (asm 6618) patches in-place from
-  `player._mapNum1`/`_mapNum2` before each `access_file` call:
+  `player._mapEra`/`_mapType` before each `access_file` call:
   ```
   clc
-  mov al, player._mapNum1
+  mov al, player._mapEra
   adc al, '0'                    ; digit -> ASCII
   mov byte ptr cs:aMapxff+4, al  ; patches the 'F' at offset 4
-  mov al, player._mapNum2
+  mov al, player._mapType
   adc al, '0'
   mov byte ptr cs:aMapxff+5, al  ; patches the 'F' at offset 5
   ```

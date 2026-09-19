@@ -331,16 +331,16 @@ sessions, unlike a one-off todo list.
       question.
 - [x] Traced `cast`'s Down Ladder/Up Ladder "non-dungeon" branches —
       **the premise was wrong, not just incomplete**. There is no
-      non-dungeon case: the earlier `_mapNum2>=4` gate already
+      non-dungeon case: the earlier `_mapType>=4` gate already
       guarantees Tower (4) or Dungeon (5) by the time these branches
-      run. The real `_mapNum2==4` check distinguishes **Tower vs.
+      run. The real `_mapType==4` check distinguishes **Tower vs.
       Dungeon**, which matters because the two number their levels in
       opposite directions. Both spells route into one of two shared
       primitives (increment-capped-at-15, or decrement-with-surface-
       at-0) depending on map type + direction needed. Along the way,
       corrected an earlier wrong assumption in `docs/overview.md` that
-      Tower was `_mapNum2==0` (it's `4`; `0` is the overworld; Dungeon
-      is `5`, not shared with Tower) — added a proper `_mapNum2` value
+      Tower was `_mapType==0` (it's `4`; `0` is the overworld; Dungeon
+      is `5`, not shared with Tower) — added a proper `_mapType` value
       table to `docs/overview.md` and fixed the now-stale
       `alert_town_guards` description that inherited the same error.
       Full trace in
@@ -369,7 +369,7 @@ sessions, unlike a one-off todo list.
       `_bootsOwned`, `player+0xA4`→`_cloakOwned`, `player+0xAE`→
       `_idolOwned`.
 - [x] Traced `board`'s full vehicle-boarding requirements. Two
-      preconditions (`_mapNum2<4` — no vehicles underground; `_playerTileId>=0x78`
+      preconditions (`_mapType<4` — no vehicles underground; `_playerTileId>=0x78`
       — must be on foot, confirmed as exactly the 4 class sprite tiles
       via the ×2 `TileId` encoding), then reads the tile stood on,
       matched exactly against Horse/Ship/Airplane/Rocket (`0x22/0x24/

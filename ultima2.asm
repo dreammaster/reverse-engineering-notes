@@ -740,7 +740,7 @@ loc_1086F:                              ; CODE XREF: CODE:loc_10C5F↓j
                                         ; end_of_turn+8A8↓j
                 nop
                 mov     sp, 100h
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jb      short loc_1087D
                 jmp     loc_127C0
@@ -1045,7 +1045,7 @@ end_of_turn2:                           ; CODE XREF: play_game+161↑j
                 mov     byte_17432, al
                 mov     byte_17430, al
                 mov     _commandWaitCtr, al
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jz      short loc_10A6D
                 cmp     al, 1
@@ -1248,7 +1248,7 @@ loc_10B9D:                              ; CODE XREF: end_of_turn+169↑j
 loc_10BA0:                              ; CODE XREF: end_of_turn+13F↑j
                                         ; end_of_turn+147↑j
                 nop
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jz      short loc_10BAB
                 jmp     loc_11040
@@ -1302,7 +1302,7 @@ loc_10BD1:                              ; CODE XREF: end_of_turn+187↑j
                 cmc
                 mov     player._hp, al
                 jnb     short dead
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jz      short loc_10C1C
                 mov     byte_17432, al
@@ -1322,7 +1322,7 @@ end_of_turn     endp ; sp-analysis failed
 
                 mov     al, 4
                 mov     _outsideMapTile, al
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jnz     short loc_10C33
                 mov     al, 0FFh
@@ -2105,7 +2105,7 @@ loc_1112F:                              ; CODE XREF: canMoveToTile-12FD↑j
 
 alert_town_guards proc near             ; CODE XREF: attack+5A↓p
                                         ; steal+6C↓p
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jnz     short loc_11142
                 retn
@@ -2772,7 +2772,7 @@ loc_115A2:                              ; CODE XREF: transact-2ABA↑j
 
 loc_115AC:                              ; CODE XREF: transact-2AB3↑j
                 nop
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 2
                 jnz     short loc_115B7
                 jmp     loc_11D1D
@@ -2784,7 +2784,7 @@ loc_115B7:                              ; CODE XREF: transact-2A9E↑j
 
 loc_115BA:                              ; CODE XREF: transact-2AA9↑j
                 nop
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 2
                 jnz     short loc_115C5
                 jmp     loc_11E4F
@@ -2796,7 +2796,7 @@ loc_115C5:                              ; CODE XREF: transact-2A90↑j
 
 loc_115C8:                              ; CODE XREF: transact-2AB1↑j
                 nop
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 2
                 jnz     short loc_115D3
                 jmp     loc_11F75
@@ -2808,7 +2808,7 @@ loc_115D3:                              ; CODE XREF: transact-2A82↑j
 
 loc_115D6:                              ; CODE XREF: transact-2AA7↑j
                 nop
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 2
                 jnz     short loc_115E1
                 jmp     short loc_115E4
@@ -3663,7 +3663,7 @@ loc_1216E:                              ; CODE XREF: canMoveToTile-2C9↑j
                 jz      short loc_12201
 
 loc_1218B:                              ; CODE XREF: canMoveToTile-210↓j
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 0
                 jz      short loc_12195
                 jmp     loc_11040
@@ -3730,7 +3730,7 @@ loc_121D8:                              ; CODE XREF: check_monster_collision+13�
 
 loc_121E2:                              ; CODE XREF: check_monster_collision+22↑j
                                         ; check_monster_collision+36↑j ...
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 0
                 jz      short loc_121F7
                 mov     al, _playerX
@@ -3795,7 +3795,7 @@ loc_12216:                              ; CODE XREF: canMoveToTile-21B↑j
                 mov     al, _monsterType[di]
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 0
                 jz      short loc_12272
                 jmp     loc_11040
@@ -3829,11 +3829,11 @@ dead2:                                  ; CODE XREF: play_game+1CC↑j
 load_map        proc near               ; CODE XREF: play_game:loc_10807↑p
                                         ; canMoveToTile+2D↓p ...
                 clc
-                mov     al, player._mapNum1
+                mov     al, player._mapEra
                 adc     al, 30h ; '0'
                 mov     byte ptr cs:aMapxff+4, al ; "FF  "
                 mov     cs:byte_122C9+4, al
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 adc     al, 30h ; '0'
                 mov     byte ptr cs:aMapxff+5, al ; "F  "
                 mov     cs:byte_122C9+5, al
@@ -3868,10 +3868,10 @@ load_map        endp
 load_talk_file  proc near               ; CODE XREF: enter+B3↓p
                                         ; enter+E8↓p ...
                 clc
-                mov     al, player._mapNum1
+                mov     al, player._mapEra
                 adc     al, '0'
                 mov     byte ptr cs:aTlkxff+4, al ; "FF  "
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 adc     al, '0'
                 mov     byte ptr cs:aTlkxff+5, al ; "F  "
                 mov     ah, 27h ; '''
@@ -3901,11 +3901,11 @@ save_game       proc near               ; CODE XREF: normal_movement+13F↓p
 
 save_game1:                             ; CODE XREF: save_game+5↑j
                 clc
-                mov     al, player._mapNum1
+                mov     al, player._mapEra
                 adc     al, '0'
                 mov     byte ptr cs:aMapxff_0+4, al ; "FF  "
                 mov     byte ptr cs:aMonxff+4, al ; "FF  "
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 adc     al, '0'
                 mov     byte ptr cs:aMapxff_0+5, al ; "F  "
                 mov     byte ptr cs:aMonxff+5, al ; "F  "
@@ -4078,7 +4078,7 @@ canMoveToTile   proc near               ; CODE XREF: play_game+201↑p
 ; FUNCTION CHUNK AT 2607 SIZE 0000001F BYTES
 
                 mov     points_to_distrubte, al
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 0
                 jz      short within_map
                 mov     al, _mapX
@@ -4100,7 +4100,7 @@ loc_1243E:                              ; CODE XREF: canMoveToTile+F↑j
                 mov     al, player._mapY
                 mov     _mapY, al
                 mov     al, 0
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 call    load_map
                 mov     al, player._disableSave
                 cmp     al, 0
@@ -4475,16 +4475,16 @@ loc_12677:                              ; CODE XREF: normal_movement+54↑j
                 mov     al, player._patrolWaypoint
                 clc
                 rcr     al, 1
-                cmp     al, player._mapNum1
+                cmp     al, player._mapEra
                 jb      short loc_126C6
                 clc
                 adc     al, 1
 
 loc_126C6:                              ; CODE XREF: normal_movement+14C↑j
-                mov     player._mapNum1, al
+                mov     player._mapEra, al
                 call    load_map
                 clc
-                mov     al, player._mapNum1
+                mov     al, player._mapEra
                 add     al, al
                 add     al, al
                 add     al, al
@@ -4520,7 +4520,7 @@ loc_12701:                              ; CODE XREF: update_patrol_marker+5↑j
 
 loc_12708:                              ; CODE XREF: update_patrol_marker+C↑j
                 clc
-                mov     al, player._mapNum1
+                mov     al, player._mapEra
                 add     al, al
                 add     al, al
                 add     al, al
@@ -5184,7 +5184,7 @@ attack          proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; ---------------------------------------------------------------------------
 aAttack         db 'ATTACK--',0
 ; ---------------------------------------------------------------------------
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jb      short loc_12BA5
                 jmp     loc_12E16
@@ -5646,7 +5646,7 @@ board           proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; ---------------------------------------------------------------------------
 aBoard          db 'BOARD',0
 ; ---------------------------------------------------------------------------
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jb      short loc_12F96
 
@@ -5940,7 +5940,7 @@ loc_131B0:                              ; CODE XREF: cast+8F↑j
                 das
                 cmc
                 mov     player._spellCharges[di], al
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jnb     short loc_131E2
                 call    write_string    ; -FAILED!
@@ -6004,7 +6004,7 @@ loc_1321C:                              ; CODE XREF: cast+E4↑j
 ; ---------------------------------------------------------------------------
 
 loc_13224:                              ; CODE XREF: cast+E8↑j
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jz      short loc_1325A
 
@@ -6035,7 +6035,7 @@ loc_13244:                              ; CODE XREF: cast+125↑j
 ; ---------------------------------------------------------------------------
 
 loc_13253:                              ; CODE XREF: cast+EC↑j
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jz      short loc_1322B
 
@@ -6196,7 +6196,7 @@ descend         proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; ---------------------------------------------------------------------------
 aDescend        db 'DESCEND',0
 ; ---------------------------------------------------------------------------
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 5
                 jz      short loc_13370
                 cmp     al, 4
@@ -6215,7 +6215,7 @@ loc_13370:                              ; CODE XREF: descend+10↑j
                 mov     al, _tilePlayerCenter
                 and     al, 20h
                 jz      short loc_13363
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jnz     short loc_13381
                 jmp     loc_13823
@@ -6238,7 +6238,7 @@ enter           proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; ---------------------------------------------------------------------------
 aEnter          db 'ENTER',0
 ; ---------------------------------------------------------------------------
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jz      short loc_133A6
                 call    write_string    ;  WHAT?
@@ -6341,7 +6341,7 @@ aVillage        db '-VILLAGE',0
                 mov     al, 3Eh ; '>'
                 mov     _mapY, al
                 mov     al, 1
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 call    load_map
                 call    load_talk_file
                 mov     al, 4
@@ -6364,7 +6364,7 @@ aTown           db '-TOWN',0
                 mov     al, 3Eh ; '>'
                 mov     _mapY, al
                 mov     al, 2
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 call    load_map
                 call    load_talk_file
                 mov     al, 4
@@ -6391,7 +6391,7 @@ aTower          db '-TOWER',0
                 mov     _mapX, al
                 mov     _mapY, al
                 mov     al, 4
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 call    load_map
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
@@ -6411,7 +6411,7 @@ aCastle         db '-CASTLE',0
                 mov     al, 3Eh ; '>'
                 mov     _mapY, al
                 mov     al, 3
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 call    load_map
                 call    load_talk_file
                 mov     al, 4
@@ -6437,7 +6437,7 @@ aDungeon        db '-DUNGEON',0
                 mov     al, 5
                 mov     _mapX, al
                 mov     _mapY, al
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 call    load_map
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
@@ -6448,7 +6448,7 @@ loc_13525:                              ; CODE XREF: enter+75↑j
 aTheSignReads   db '-THE SIGN READS:',0Dh,0
 ; ---------------------------------------------------------------------------
                 mov     bh, 0
-                mov     bl, player._mapNum1
+                mov     bl, player._mapEra
                 mov     di, bx
                 or      di, di
                 jz      short loc_13565
@@ -6551,7 +6551,7 @@ fire            endp
 
 
 clear_picked_up_tile proc near          ; CODE XREF: get+35↓p get+6B↓p
-                cmp     player._mapNum2, 4
+                cmp     player._mapType, 4
                 jnb     short locret_1363A
                 mov     al, _mapX
                 mov     _playerX, al
@@ -6576,7 +6576,7 @@ get             proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; ---------------------------------------------------------------------------
 aGet            db 'GET',0
 ; ---------------------------------------------------------------------------
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jb      short loc_1364C
                 jmp     short loc_136C3
@@ -6753,7 +6753,7 @@ ignite_torch    proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; ---------------------------------------------------------------------------
 aIgniteTorch    db 'IGNITE TORCH',0
 ; ---------------------------------------------------------------------------
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jnb     short loc_137AE
                 jmp     end_of_turn2
@@ -6806,7 +6806,7 @@ klimb           proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; ---------------------------------------------------------------------------
 aKlimb          db 'KLIMB',0
 ; ---------------------------------------------------------------------------
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 5
                 jz      short loc_13812
                 cmp     al, 4
@@ -6825,7 +6825,7 @@ loc_13812:                              ; CODE XREF: klimb+E↑j
                 mov     al, _tilePlayerCenter
                 and     al, 10h
                 jz      short loc_13805
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jnz     short loc_13823
                 jmp     loc_13381
@@ -6866,7 +6866,7 @@ loc_13857:                              ; CODE XREF: klimb+71↓j
                 sub     bx, 2
                 jns     short loc_13857
                 mov     al, 0
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 call    load_map
                 mov     al, player._mapX
                 mov     _mapX, al
@@ -6948,7 +6948,7 @@ loc_13923:                              ; CODE XREF: launch+39↑j
                 mov     al, player._disableSave
                 or      al, al
                 jnz     short loc_1395D
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jnz     short loc_1395D
                 mov     al, _mapX
@@ -7110,7 +7110,7 @@ loc_13A9B:                              ; CODE XREF: launch+1BE↑j
                 adc     al, byte_17432
                 and     al, 3Fh
                 mov     _mapY, al
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jz      short loc_13AD5
                 mov     al, _mapX
@@ -7312,10 +7312,10 @@ aHowMuch100     db 'HOW MUCH (*100) ? ',0
                 mov     al, _monsterOfferFlag[di]
                 or      al, al
                 jns     short loc_13CB6
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 2
                 jnz     short loc_13CB6
-                mov     al, player._mapNum1
+                mov     al, player._mapEra
                 cmp     al, 3
                 jnz     short loc_13CB6
                 jmp     short loc_13CD2
@@ -7459,7 +7459,7 @@ quit            proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; ---------------------------------------------------------------------------
 aQuitOrSaveGame db 'QUIT OR SAVE GAME.',0
 ; ---------------------------------------------------------------------------
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jz      short loc_13DFA
                 call    write_string    ; ONLY OUTDOORS!
@@ -7636,7 +7636,7 @@ loc_13FA5:                              ; CODE XREF: steal+79↑j
                 mov     al, _monsterOfferFlag
                 cmp     al, 1
                 jz      short loc_13F7E
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 1
                 jz      short loc_13FCE
                 cmp     al, 2
@@ -7741,7 +7741,7 @@ aTransact       db 'TRANSACT-',0
                 mov     byte_17430, bl
                 mov     al, 8Dh
                 call    print_char
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 or      al, al
                 jz      short loc_140A6
                 mov     bx, di
@@ -7892,7 +7892,7 @@ loc_14217:                              ; CODE XREF: transact+1C8↓j
                 mov     al, player._disableSave
                 cmp     al, 9
                 jnz     short loc_14246
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 3
                 jnz     short loc_14246
                 mov     al, [di+1D7h]
@@ -8043,7 +8043,7 @@ aViewWhat       db 'VIEW WHAT?',0
 ; ---------------------------------------------------------------------------
 
 loc_14396:                              ; CODE XREF: view+5↑j
-                mov     al, player._mapNum2
+                mov     al, player._mapType
                 cmp     al, 4
                 jnb     short loc_14385
                 call    write_string    ; VIEW
@@ -10612,7 +10612,7 @@ loc_159D8:                              ; CODE XREF: CODE:59D3↑j
                 mov     al, 20
                 mov     player._mapY, al
                 mov     al, 2
-                mov     player._mapNum1, al
+                mov     player._mapEra, al
                 mov     al, 4
                 mov     player._hp, al
                 mov     player._food, al
@@ -14077,9 +14077,9 @@ loc_171E8:                              ; CODE XREF: CODE:71CF↑j
                 nop
                 nop
                 mov     al, 0
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 mov     al, 4
-                mov     player._mapNum1, al
+                mov     player._mapEra, al
                 call    speaker_off_once
                 retn
 ; ---------------------------------------------------------------------------
@@ -14118,9 +14118,9 @@ loc_17222:                              ; CODE XREF: CODE:loc_17207↑j
                 nop
                 nop
                 mov     al, 0
-                mov     player._mapNum2, al
+                mov     player._mapType, al
                 mov     al, player._disableSave
-                mov     player._mapNum1, al
+                mov     player._mapEra, al
                 call    speaker_off_once
                 retn
 
