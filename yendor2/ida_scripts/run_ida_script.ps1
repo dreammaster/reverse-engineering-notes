@@ -31,7 +31,7 @@ param(
 
 $ScriptsDir = $PSScriptRoot
 $RootDir = Split-Path $ScriptsDir -Parent
-$IdatExe = "C:\Program Files\IDA Pro 8.2\idat.exe"
+$IdatExe = "C:\Program Files\IDA Pro 8.3\idat.exe"
 $IdbPath = Join-Path $RootDir "yendor2.idb"
 $Driver = Join-Path $ScriptsDir "batch_run_and_export.py"
 
