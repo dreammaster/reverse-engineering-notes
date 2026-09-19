@@ -101,8 +101,8 @@ RENAMES = [
      "see docs/roadmap.md."),
 
     (0x1113A, "alert_town_guards",
-     "no-op only on the overworld (player._mapNum2==0 -- see the "
-     "_mapNum2 value table in docs/overview.md: 0=overworld, "
+     "no-op only on the overworld (player._mapType==0 -- see the "
+     "_mapType value table in docs/overview.md: 0=overworld, "
      "1-3=village/town/castle, 4=tower, 5=dungeon). Everywhere else: "
      "sets [di+1D7h]=1 for monster slots 0-7 plus the current target "
      "slot. Called from attack, steal -- committing a hostile act "
@@ -604,7 +604,7 @@ RENAMES = [
      "cursor-based and cast-only."),
 
     (0x1361C, "clear_picked_up_tile",
-     "only runs above ground (player._mapNum2<4): reads the tile at "
+     "only runs above ground (player._mapType<4): reads the tile at "
      "_mapX/_mapY via get_player_tile then overwrites it with tile "
      "value 8 (plain ground). Called twice from get -- clears a "
      "picked-up item's tile off the overworld map."),

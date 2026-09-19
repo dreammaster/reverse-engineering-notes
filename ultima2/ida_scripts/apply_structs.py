@@ -346,7 +346,7 @@ OPERATIONS = [
              "to \"THE RING IS YOURS!\" (sets _ringOwned=1); if zero, "
              "\"EARN THE RING!\" instead (asm ~7367-7374). Set to 1 "
              "elsewhere when player._disableSave==9 && "
-             "player._mapNum2==3 (Castle) && a specific NPC's "
+             "player._mapType==3 (Castle) && a specific NPC's "
              "_monsterOfferFlag==0x81 all match (asm ~7892-7902) -- "
              "note _disableSave==9 here is a distinct special value, "
              "separate from its 0-8 planet-index/0xA deep-space "
@@ -377,6 +377,25 @@ OPERATIONS = [
              "gated by byte ptr _sleepFlag2?>=5), same one-shot-flag "
              "shape as the Ring quest (set to 1, never read back "
              "elsewhere in the code found so far). Asm ~7350-7359."},
+
+    # -- 2026-09-19, Paul's call: rename the two map-number members to
+    # reflect what they actually hold. load_map/patch_map_filename
+    # build the MAPXFF/MONXFF/TLKXFF filename digits from them --
+    # first digit = era/time period, second digit = map type. See
+    # docs/overview.md's "_mapType value reference". --
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x13,
+     "new_name": "_mapEra",
+     "note": "formerly _mapNum1: the FIRST digit of the mapx??/monx??/"
+             "tlkx?? filename (era/time period), patched into the "
+             "filename template by load_map/patch_map_filename."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x14,
+     "new_name": "_mapType",
+     "note": "formerly _mapNum2: the SECOND digit of the map filename, "
+             "which is also the map type: 0=overworld, 1=village, "
+             "2=town, 3=castle, 4=tower, 5=dungeon. See docs/overview.md's "
+             "'_mapType value reference'."},
 ]
 
 _SIZE_FLAGS = {1: idc.FF_BYTE, 2: idc.FF_WORD, 4: idc.FF_DWORD}

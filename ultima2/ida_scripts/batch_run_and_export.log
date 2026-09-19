@@ -2955,3 +2955,101 @@ AttributeError: module 'ida_bytes' has no attribute 'op_plain_offset'
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_check_mapnum_offsets.py']
+[*] reading _tmp_check_mapnum_offsets.py
+[*] executing _tmp_check_mapnum_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+F: None
+Savegame+10: '_sex'
+Savegame+11: '_class'
+Savegame+12: '_race'
+----- end target script output -----
+[*] finished executing _tmp_check_mapnum_offsets.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15272
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_check_mapnum_offsets.py']
+[*] reading _tmp_check_mapnum_offsets.py
+[*] executing _tmp_check_mapnum_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+12: '_race'
+Savegame+13: '_mapNum1'
+Savegame+14: '_mapNum2'
+Savegame+15: '_strength'
+Savegame+16: '_agility'
+----- end target script output -----
+[*] finished executing _tmp_check_mapnum_offsets.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15272
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'apply_structs.py']
+[*] reading apply_structs.py
+[*] executing apply_structs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+2E: already '_torches' -- skipping
+Savegame+2F: already '_keys' -- skipping
+Savegame+30: already '_thievesTools' -- skipping
+Savegame+2B: already '_readiedWeapon' -- skipping
+Savegame+2C: already '_readiedArmor' -- skipping
+Savegame+2D: already '_readiedSpell' -- skipping
+Savegame+A5: already '_helmsOwned' -- skipping
+Savegame+A1: already '_wands' -- skipping
+Savegame+A2: already '_staves' -- skipping
+Savegame+60: already '_armorOwned' -- skipping (not re-verifying size; delete the member by hand in IDA first if it needs correcting again)
+Savegame+76: already '_weaponOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+80: already '_spellCharges' -- skipping (not re-verifying size; delete the member by hand in IDA first if it needs correcting again)
+Savegame+A3: already '_bootsOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+A4: already '_cloakOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+AE: already '_idolOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+A7: already '_ankhOwned' -- skipping
+Savegame+AC: already '_frigateAllowed' -- skipping
+Savegame+A9: already '_planeAllowed' -- skipping
+Savegame+AF: already '_triLithium' -- skipping
+Savegame+AD: already '_strangeCoin' -- skipping
+Savegame+AB: already '_brassButtonOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+A6: already '_gemOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+A8: already '_redGemOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+AA: already '_greenGemOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+A0: already '_ringOwned' -- skipping
+Savegame+33: already '_inSpace' -- skipping
+Savegame+34: already '_launchMapX' -- skipping
+Savegame+35: already '_launchMapY' -- skipping
+Savegame+36: already '_ringQuestFlag' -- skipping
+Savegame+38: already '_patrolWaypoint' -- skipping
+Savegame+40: already '_offerRewardItems' -- skipping (not re-verifying size; delete the member by hand in IDA first if it needs correcting again)
+Savegame+49: already '_enilnoOwned' -- skipping
+Savegame+13: '_mapNum1' -> '_mapEra'
+    formerly _mapNum1: the FIRST digit of the mapx??/monx??/tlkx?? filename (era/time period), patched into the filename template by load_map/patch_map_filename.
+Savegame+14: '_mapNum2' -> '_mapType'
+    formerly _mapNum2: the SECOND digit of the map filename, which is also the map type: 0=overworld, 1=village, 2=town, 3=castle, 4=tower, 5=dungeon. See docs/overview.md's '_mapType value reference'.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_structs.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15272
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0

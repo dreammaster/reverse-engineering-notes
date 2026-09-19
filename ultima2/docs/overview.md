@@ -127,15 +127,15 @@ block (asm ~6631-6649, now `load_talk_file`, formerly `sub_122D5`) is
 Ultima II. `T` is `transact` (shop/trade), matching the classic Ultima
 key set. Instead, `load_talk_file` is called directly from inside
 `enter` (`E`) at three of its five "what did you walk onto" branches —
-asm 9136 (`-VILLAGE`, sets `player._mapNum2 = 1`), asm 9159 (`-TOWN`,
-`_mapNum2 = 2`), and asm 9206 (`-CASTLE`, `_mapNum2 = 3`), each right
+asm 9136 (`-VILLAGE`, sets `player._mapType = 1`), asm 9159 (`-TOWN`,
+`_mapType = 2`), and asm 9206 (`-CASTLE`, `_mapType = 3`), each right
 after the `load_map` call for that branch. The `-TOWER` branch (asm
-9165-9186, `_mapNum2 = 4`) does **not** call it — towers/dungeons have
+9165-9186, `_mapType = 4`) does **not** call it — towers/dungeons have
 no NPCs. So talk data loads automatically the moment you enter a
 settlement, not via a standalone keypress.
 
 `load_talk_file` itself (asm 6631-6649) confirms the earlier hand-decode:
-patches `player._mapNum1`/`_mapNum2` into the `TLKXFF  ` template (same
+patches `player._mapEra`/`_mapType` into the `TLKXFF  ` template (same
 digit-patching pattern as `load_map`), then `mov ah, 27h` (FCB random
 block read), `mov cx, 100h` (256 bytes), `mov dx, word_17886` (dest
 buffer offset `2800h` within the `sg08e3` data segment), `call
@@ -194,13 +194,14 @@ This is the in-memory player-state struct (backed by the `player` save
 file — see file-formats.md). Fields identified so far:
 
 ```
-_name           db 13 dup(?)
-_sex            db ?
-_class          db ?
-_race           db ?
-_mapNum1        db ?   ; ASCII digit ('0'-'9') of current map number, tens? ones?
-_mapNum2        db ?   ; the other digit — see load_map, asm 6618
-_strength       db ?
+_name           db 13 dup(?)   ; +0x00
+; gap 0x0D-0x0F, no individually-referenced members here yet
+_sex            db ?           ; +0x10
+_class          db ?           ; +0x11
+_race           db ?           ; +0x12
+_mapEra         db ?           ; +0x13 first digit of the mapx??/monx??/tlkx?? filename (formerly _mapNum1)
+_mapType        db ?           ; +0x14 second digit = map type, see value table below (formerly _mapNum2)
+_strength       db ?           ; +0x15
 _agility        db ?
 _stamina        db ?
 _charisma       db ?
@@ -297,13 +298,13 @@ monster kills) and the
 [`TEXT_STRINGS` section below](#text_strings--the-cs4c60h-table-fully-decoded)
 for `_readiedWeapon`/`_readiedArmor`/`_readiedSpell`.
 
-Note `_mapNum1`/`_mapNum2` are stored as **raw digit values that get
+Note `_mapEra`/`_mapType` are stored as **raw digit values that get
 `+ '0'` at use time** (see `load_map`, asm 6620-6628: `clc` /
 `adc al, '0'`), not as pre-formatted ASCII — i.e. the struct fields hold
 0-9, not '0'-'9'. Confirm this against the wiki's save-game format notes
 if/when a page for it is found.
 
-### `_mapNum2` value reference
+### `_mapType` value reference
 
 Confirmed from `enter`'s dispatch (asm 6585-6846, sets this field right
 before each `load_map` call) — **corrects an earlier assumption in this
@@ -321,10 +322,10 @@ doc that tower was `0`**, actually traced properly while chasing
 
 Matches the wiki's "file number ends in 4-5" note for dungeon/tower
 maps (`docs/file-formats.md`) — Tower=4, Dungeon=5, not a shared value.
-`canMoveToTile`/`cast`'s gate checks (`_mapNum2==0` = overworld,
-`_mapNum2>=4` = tower-or-dungeon) both read correctly against this
+`canMoveToTile`/`cast`'s gate checks (`_mapType==0` = overworld,
+`_mapType>=4` = tower-or-dungeon) both read correctly against this
 table; earlier informal descriptions elsewhere in this doc calling
-`_mapNum2==4` generically "a dungeon" were imprecise — see the `cast`
+`_mapType==4` generically "a dungeon" were imprecise — see the `cast`
 Down/Up Ladder writeup below for why the 4-vs-5 distinction actually
 matters (towers and dungeons number their levels in opposite
 directions).
@@ -336,7 +337,7 @@ directions).
 | `start_` | 325 | main entry (near) |
 | `start` | 27533 | far entry stub in `seg002`, presumably the actual MZ entrypoint that jumps to `start_` |
 | `access_file` | 17318 | shared FCB-based file I/O; see above |
-| `load_map` | 6618 | loads `mapx??`/`monx??` for current map, patches filename digits from `player._mapNum1/2` |
+| `load_map` | 6618 | loads `mapx??`/`monx??` for current map, patches filename digits from `player._mapEra`/`_mapType` |
 | `load_talk_file` | 6631 | loads `tlkx??` for the current map; called from `enter` on VILLAGE/TOWN/CASTLE only — see inline-data-trick section above |
 | `print_indexed_shop_string` | 3383 | indexed null-string lookup + print into the `load_talk_file` buffer; called only from `transact` (shopkeeper NPC response) |
 | `write_character` | 12639 | universal char-output primitive; `and al,7Fh` here is the de facto ROT-128 decode for `tlkx` text, no dedicated decrypt step exists |
@@ -372,7 +373,7 @@ confirmed in the `.asm`:
 | `find_target_monster` (0x123E6) | attack, fire, offer, transact | Computes the cursor+facing-direction target cell, scans all 32 monster slots for one active (`[di+197h]!=0`) and positioned there, returns its slot index in `di` (0 if none found). The core "who does this command act on" lookup. |
 | `read_digit_keypress` (0x12028) | magic, offer, ready, wear_armor | Blocks on keypress until a `'0'`-`'9'` digit, echoes it + a cursor-control byte, returns the numeric value 0-9 in AX. Used for "which spell/item number?" prompts. |
 | `print_indexed_menu_string` (0x1508C) | cast, magic, ready, wear_armor, zstats | Same *mechanism* as `print_indexed_shop_string` (find the Nth null-terminated string, print it) but against a **fixed** compile-time table at `cs:4C60h` (`TEXT_STRINGS`), not the runtime talk buffer — see full table below. |
-| `alert_town_guards` (0x1113A) | attack, steal | No-op only on the overworld (`player._mapNum2==0` — see the `_mapNum2` value table below). Everywhere else (village/town/castle/tower/dungeon) it sets `[di+1D7h]=1` for monster slots 0-7 plus the current target slot. Committing a hostile act (attacking or stealing) raises an alarm flag on a block of slots — plausibly the town's reserved "guard" slots (the tower/dungeon case is presumably moot in practice, no NPCs there to alert). Note `[di+1D7h]` is the same byte `transact` reads as a shopkeeper item-index (high bit set); the two uses don't collide since this only ever writes `1`, never `>=0x80`. |
+| `alert_town_guards` (0x1113A) | attack, steal | No-op only on the overworld (`player._mapType==0` — see the `_mapType` value table below). Everywhere else (village/town/castle/tower/dungeon) it sets `[di+1D7h]=1` for monster slots 0-7 plus the current target slot. Committing a hostile act (attacking or stealing) raises an alarm flag on a block of slots — plausibly the town's reserved "guard" slots (the tower/dungeon case is presumably moot in practice, no NPCs there to alert). Note `[di+1D7h]` is the same byte `transact` reads as a shopkeeper item-index (high bit set); the two uses don't collide since this only ever writes `1`, never `>=0x80`. |
 | `try_spend_gold` (0x12052) | offer, transact | Subtracts a 2-byte BCD amount (`byte_17438`/`_sleepFlag2?` as low/high) from `player._gold`; on underflow, undoes the subtraction and prints "YOU DONT HAVE THAT MUCH!"; returns 0 (via AL, checked by caller) on failure. |
 | `play_hit_sound` (0x15ED7) | attack | Thin wrapper: calls `play_tone_sweep` with fixed parameters, right after a successful melee hit. |
 | `play_tone_sweep` (0x15DA9) | (via `play_hit_sound`, `pause?`, others) | Checks a mute flag (`byte_1795D`, toggled elsewhere via `xor ...,0FFh` — a sound on/off setting), then sweeps the PC speaker from one frequency to another over N steps. Generic tone-sweep primitive reused for multiple sound effects, not attack-specific itself. |
@@ -550,17 +551,17 @@ same field:
 5. **Consumes a charge**: `_spellCharges[_readiedSpell]` decremented by
    1 (BCD), unconditionally, before checking whether the cast can even
    succeed — so a failed cast still costs a charge.
-6. Requires `player._mapNum2 >= 4` — i.e. Tower (4) or Dungeon (5)
-   only, see the `_mapNum2` value table above — else `"-FAILED!"`.
+6. Requires `player._mapType >= 4` — i.e. Tower (4) or Dungeon (5)
+   only, see the `_mapType` value table above — else `"-FAILED!"`.
 7. Dispatches on `_readiedSpell`'s value to 9 distinct effects, all
    confirmed by reading each branch's actual implementation:
 
    | `_readiedSpell` | Spell | Effect |
    |---|---|---|
    | 1 | Light | Sets `byte_17436 = 150` — identical mechanism to `ignite_torch` (asm ~9648), same light-duration timer. |
-   | 2 / 3 | Down Ladder / Up Ladder | **Tower vs. Dungeon, not "in vs. out of a dungeon"** — see the full trace below. Given the gate above, `_mapNum2` is always 4 or 5 by the time these run; the branch tests `_mapNum2==4` specifically (Tower) against the implicit "else" (Dungeon), not a dungeon/non-dungeon split as earlier notes here assumed. |
+   | 2 / 3 | Down Ladder / Up Ladder | **Tower vs. Dungeon, not "in vs. out of a dungeon"** — see the full trace below. Given the gate above, `_mapType` is always 4 or 5 by the time these run; the branch tests `_mapType==4` specifically (Tower) against the implicit "else" (Dungeon), not a dungeon/non-dungeon split as earlier notes here assumed. |
    | 4 | Passwall | Computes a position local to a 16-cell dungeon block; requires `loc_11451` to find a wall there (high bit set — `0x80`+ per the dungeon tile encoding in `docs/file-formats.md`) — you can only Passwall an actual wall; on success, writes `0` (floor) into the map there. |
-   | 5 | Surface | Restores the player's overworld `_mapX/_mapY`, clears loaded monster data, sets `_mapNum2 = 0`, reloads the map — returns from a dungeon to the surface. **Shares its entire implementation with the `klimb` command** (asm 9720, xref'd from both `cast` and `klimb+37`) — "cast Surface" and "climb out" are the same code. |
+   | 5 | Surface | Restores the player's overworld `_mapX/_mapY`, clears loaded monster data, sets `_mapType = 0`, reloads the map — returns from a dungeon to the surface. **Shares its entire implementation with the `klimb` command** (asm 9720, xref'd from both `cast` and `klimb+37`) — "cast Surface" and "climb out" are the same code. |
    | 6 | Prayer | Random chance of failure (`rand_byte`, high bit = fail); on success, finds a targeted monster (`sub_1330C`) and — **if one's found — instantly kills it**, jumping straight into `attack`'s own monster-death cleanup (`loc_12ED1`, see below). Effectively "smite," not a defensive/healing prayer. |
    | 7 | Magic Missile | Finds a targeted monster via `sub_1330C` (position + type match, not `find_target_monster` — a different monster-lookup helper), then damages its magic-HP pool (`_mapMonsters+0x40`, see `docs/file-formats.md`) by a formula based on `player._experience`. |
    | 8 | Blink | Random short-range teleport within a 16-cell block; requires `loc_11451` to confirm the random destination is floor (`0x00`) before teleporting there. |
@@ -571,10 +572,10 @@ same field:
    Superseded an earlier, wrong assumption in this doc (that these two
    branches distinguished "in a dungeon" from "outside one," searching
    for a nearby entrance in the latter case). That can't happen: the
-   gate above (`_mapNum2>=4`) already guarantees `_mapNum2` is 4
+   gate above (`_mapType>=4`) already guarantees `_mapType` is 4
    (Tower) or 5 (Dungeon) by the time either branch runs — there's no
    "not in a dungeon-like map" case left to handle. The real
-   distinction the `_mapNum2==4` check makes is **Tower vs. Dungeon**,
+   distinction the `_mapType==4` check makes is **Tower vs. Dungeon**,
    and it matters because the two map types number their levels in
    opposite directions (`docs/file-formats.md`: "level 0 = top for
    dungeons, bottom for towers, depth increases with level number").
@@ -617,7 +618,7 @@ same field:
      reads, all consistent with the dungeon tile encoding table in
      `docs/file-formats.md` (`0x00` floor, `0x80`+ wall/door types).
    - **`attack`'s dungeon-combat variant** (asm ~6214-6370, taken when
-     `player._mapNum2 >= 4`, i.e. actually in a dungeon/tower — a
+     `player._mapType >= 4`, i.e. actually in a dungeon/tower — a
      separate code path from the overworld `attack` traced two
      sessions ago) calls it *twice*:
      1. To read the current-level cell in front of the player and
@@ -728,7 +729,7 @@ same field:
 
    `board` (asm 5961-6161) gates on two things before it even looks at
    what you're standing on:
-   1. `player._mapNum2 < 4` — no boarding in a Tower or Dungeon (no
+   1. `player._mapType < 4` — no boarding in a Tower or Dungeon (no
       vehicles underground). Else `"THINK AGAIN <name>"`.
    2. `_playerTileId >= 0x78` — confirms **exactly** the four class
       sprite tiles (`TileId` Fighter/Cleric/Mage/Thief = 60-63, ×2

@@ -196,8 +196,8 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_sex",	0X10,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_class",	0X11,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_race",	0X12,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"_mapNum1",	0X13,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"_mapNum2",	0X14,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_mapEra",	0X13,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_mapType",	0X14,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_strength",	0X15,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_agility",	0X16,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_stamina",	0X17,	0x00000400,	-1,	1);
