@@ -830,6 +830,21 @@ yendor2 where it's only reached from one specific `start`-tail easter
 egg (a hidden 3-flag check) that still hasn't turned up an equivalent
 in yendor3.
 
+## Savegame (`CURGAME`/`SAVGAMEn`) layout differs in section sizes
+
+Found while writing `src23/savegame.c` (2026-09-19). The save/load code
+(`SaveCurrentGameToSlot`, `RunGameDialog`'s load path) has an identical
+structure in both games, and the same 7 contiguous sections, but four
+section sizes grow in Chapter 3 (the larger world), each read from the
+`InitGlobals` constants and cross-checked against the stub offset
+tables: explored-map rows 144 -> 168 (x100 bytes), the `DC6` state
+section 644 -> 1059, the `DCA` state section 608 -> 1008, and the
+monster-spawned bitmap 313 -> 626. Item instances (1296 x 34), the
+80 x 156 monster block, the 5000-byte header/party block and the 500-byte
+party record stride are unchanged. Total file size 77,509 -> 81,037. See
+`file-formats.md`'s byte-layout table. `src23/savegame.c` selects between
+the two layouts by exact file size.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

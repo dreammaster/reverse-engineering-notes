@@ -3,7 +3,7 @@
 On-disk data formats used by "Yendorian Tales Book I: Chapter 2"
 (`SW.EXE`), cross-referenced against the disassembly as they're decoded.
 
-**Status (last updated 2026-09-17)**: the three major formats below
+**Status (last updated 2026-09-19)**: the three major formats below
 (`CURGAME`/`SAVGAME*`, `WORLD.DAT`, `PICTURES.VGA`) are all decoded to
 the level of "confirmed against the actual code, traced record layouts
 and field meanings" — not placeholders. Cross-referenced throughout
@@ -24,14 +24,73 @@ in-EXE error string `"Problem with CURGAME."` / `"Problem with a SAVED
 GAME file."` confirms `CURGAME` is the active/working copy distinct from
 the numbered save slots.
 
+### Byte layout (confirmed 2026-09-19)
+
+The file is **7 contiguous sections**; each section's start is the
+previous start plus the previous size, and Chapter 2's sizes sum to
+exactly 77,509. Section starts come from the seven "record-setup" stubs
+(`PrepareMasterHeaderBlockRead` `0x27DA8`, `PrepareGameDialogSizedBlockRead`
+`0x27E20`, `PrepareGroundItemSlotBlockRead` `0x27E3A`,
+`PrepareRecordAtIndexDC6` `0x27DE5`, `PrepareRecordAtIndexDCA` `0x27DC6`,
+`PrepareGameDialogIndexedBlockRead` `0x27E04`,
+`PrepareGameDialogLargeBlockRead` `0x27D8A`), each of which loads a
+32-bit base offset from a static table at `DS:0xCDD3`-`0xCDEB` and sets
+the `FileEntry`'s size field; sizes come from `InitGlobals` constants.
+`FileEntry` (`FileEntry_Seek`, `0x184E7`): `+0` DOS handle, `+2`/`+4`
+buffer far pointer, `+6` byte count, `+8` block index, `+0xA`/`+0xC`
+32-bit base offset, `+0xE` ASCIZ filename; seek position =
+`count * index + base`.
+
+| # | Ch2 offset | Ch2 size | Ch3 offset | Ch3 size | Contents |
+|---|---|---|---|---|---|
+| 1 | `0x0000` | 5000 | `0x0000` | 5000 | 500-byte game-state block + 9 x 500-byte party records; in-memory `DS:0x93FF` (Ch3 `0xCEDD`) |
+| 2 | `0x1388` | 144 x 100 | `0x1388` | 168 x 100 | fog-of-war bitmap (`PersistExploredCell`, `RevealMapRegion`, `ShowLocalAreaMap`, `RefreshDungeonMapWindow`) |
+| 3 | `0x4BC8` | 1296 x 34 | `0x5528` | 1296 x 34 | item instances: ground slots and container contents (`LoadGroundItemSlotRecord`, `LoadContainerContents`, `SaveAndCloseContainer`, ...) |
+| 4 | `0xF7E8` | 644 | `0x10148` | 1059 | byte-addressed state (`LoadCurgameRecord`, `HandleSearchCommand`, `UnlockDoorCommand`, `UseAbilityCommand`, `ApplyEncodedItemEffect`, `start`'s autosave) |
+| 5 | `0xFA6C` | 608 | `0x1056B` | 1008 | byte-addressed lock/shop state (`LoadLockState`, `RunShopScreen`, `TriggerShopExitSoundAndPersist`) |
+| 6 | `0xFCCC` | 313 | `0x1095B` | 626 | monster-spawned flag bitmap (`Set`/`Clear`/`TestCellMonsterSpawnedFlag`) |
+| 7 | `0xFE05` | 80 x 156 | `0x10BCD` | 80 x 156 | `g_levelMonsters`; in-memory `DS:0x0F26` (Ch3 `0x122C`) |
+| | total | **77,509** | total | **81,037** | |
+
+Sections 1 and 7 are in-memory snapshots: `SaveCurrentGameToSlot` writes
+them from memory to both `CURGAME` and the slot, then copies sections 2-6
+file-to-file (the game edits those in `CURGAME` on demand). A save slot is
+therefore a byte-for-byte copy of `CURGAME`, and loading (the
+`RunGameDialog` path) is the reverse. Section 3's 44,064 bytes are copied
+in 16 chunks of `0xAC2`; section 5 in chunks of `0xBB8` (3000). Chapter 3
+grows only sections 2, 4, 5 and 6 (the larger world); its offset chain was
+verified end to end, but no Chapter 3 save file exists locally, so it has
+not been checked against real data.
+
+**Save slots**: six, `SAVGAME1`-`SAVGAME6` (the `SAVGAMEX` template's `X`
+is patched with the slot digit from a 27-byte-per-entry UI table at
+`DS:0x6CBE`: `+0` slot char, `+1` bit `0x80` = slot in use, `+2` the
+displayed name, initially `- EMPTY -`). The in-use flag is runtime UI
+state set at startup, not stored in the file.
+
+**Section 1 game-state block** (offsets from the block start; verified
+against real Chapter 2 files unless noted): `+0x00` the save's name, a
+NUL-terminated string of at most 24 characters copied with a plain
+string copy, so a shorter name leaves the tail of the previous one
+behind — this is why `CURGAME` starts `SMITHWARE PARTY\0WARE\0` and the
+real `SAVGAME1` starts `DAN\0HWARE PARTY\0` (**correction**: the string
+was earlier read as a "header/magic string"; it is just the default save
+name plus stale bytes, and there is no magic number). `+0x96` facing
+(`0x8000` north, `0x4000` south, `0x1000` east, `0x2000` west, from
+`ShowCompassDirection`), `+0x98`/`+0x9A` world X/Y, `+0x9C`/`+0x9E`/
+`+0xA0`/`+0xA2` day/month/year/clock minutes, `+0xA4`... five party-role
+assignments, `+0xB4` gold (packed BCD4), `+0xB8`/`+0xBC` the two ore
+counters (packed BCD4), `+0x10E`/`+0x112`/`+0x116` flag words set by the
+ore purchase, `+0x1EC` the 4-entry party-slot table (1-based party
+record id, 0 = empty). Gold, ore and the three flag words were
+independently confirmed at the same offsets in Chapter 3. The 9 party
+records follow at `+0x1F4`, stride 500. Reimplemented in `src23/savegame.c`.
+
 First 32 bytes of `CURGAME` (hex-decoded):
 ```
 53 4D 49 54 48 57 41 52 45 20 50 41 52 54 59 00   SMITHWARE PARTY\0
 57 41 52 45 00 20 20 20 00 00 00 00 00 00 00 00   WARE\0   \0...
 ```
-`"SMITHWARE PARTY\0WARE\0"` — identifies the developer as **SmithWare**
-(matches `SW.EXE`'s name) and suggests a header/magic string rather than
-game data proper.
 
 **The actual save operation is now traced**: `SaveCurrentGameToSlot`
 (was `sub_1F5FF`, called once from `RunGameDialog`'s SAVE option)

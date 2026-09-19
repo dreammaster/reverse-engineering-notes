@@ -174569,3 +174569,230 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'extract_resource_stubs.py', 'noexport']
+[*] reading extract_resource_stubs.py
+[*] executing extract_resource_stubs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+27 resource stubs found
+
+0x27b42 (sz=33): si_raw=0xce47 real_si=0x3a6a7 offset=0x168f11 blocksize_expr=3Ah
+0x27bd6 (sz=33): si_raw=0xce43 real_si=0x3a6a3 offset=0x1677a1 blocksize_expr=28h
+0x27bf7 (sz=33): si_raw=0xce4f real_si=0x3a6af offset=0x1771db blocksize_expr=22h
+0x27c78 (sz=30): si_raw=0xce6f real_si=0x3a6cf offset=0x1acced blocksize_expr=1388h
+0x27c96 (sz=26): si_raw=0xce5f real_si=0x3a6bf offset=0x1a1141 blocksize_expr=ax
+0x27cb0 (sz=25): si_raw=0xce1f real_si=0x3a67f offset=0x8270a blocksize_expr=300h
+0x27cfe (sz=34): si_raw=0xce5b real_si=0x3a6bb offset=0x19c7a5 blocksize_expr=ax
+0x27d8a (sz=30): si_raw=0xcdeb real_si=0x3a64b offset=0xfe05 blocksize_expr=30C0h
+0x27da8 (sz=30): si_raw=0xcdd3 real_si=0x3a633 offset=0x0 blocksize_expr=1388h
+0x27dc6 (sz=31): si_raw=0xcde3 real_si=0x3a643 offset=0xfa6c blocksize_expr=1
+0x27de5 (sz=31): si_raw=0xcddf real_si=0x3a63f offset=0xf7e8 blocksize_expr=1
+0x27e04 (sz=28): si_raw=0xcde7 real_si=0x3a647 offset=0xfccc blocksize_expr=1
+0x27e20 (sz=26): si_raw=0xcdd7 real_si=0x3a637 offset=0x1388 blocksize_expr=ax
+0x27e3a (sz=25): si_raw=0xcddb real_si=0x3a63b offset=0x4bc8 blocksize_expr=22h
+0x27e7c (sz=30): si_raw=0xce07 real_si=0x3a667 offset=0x7bd2e blocksize_expr=10h
+0x27e9a (sz=30): si_raw=0xce0b real_si=0x3a66b offset=0x7c81e blocksize_expr=0Ch
+0x27eb8 (sz=30): si_raw=0xce0f real_si=0x3a66f offset=0x7d502 blocksize_expr=8
+0x27ed6 (sz=30): si_raw=0xce13 real_si=0x3a673 offset=0x7dcd2 blocksize_expr=0Ch
+0x27ef4 (sz=30): si_raw=0xce17 real_si=0x3a677 offset=0x7e5ba blocksize_expr=1Ah
+0x27f12 (sz=30): si_raw=0xce1b real_si=0x3a67b offset=0x822aa blocksize_expr=4
+0x27f30 (sz=30): si_raw=0xcdff real_si=0x3a65f offset=0x71138 blocksize_expr=3Ah
+0x27f4e (sz=30): si_raw=0xce03 real_si=0x3a663 offset=0x7af96 blocksize_expr=3Ah
+0x27f6c (sz=26): si_raw=0xcdf3 real_si=0x3a653 offset=0x70800 blocksize_expr=ax
+0x27f86 (sz=30): si_raw=0xce6b real_si=0x3a6cb offset=0x1aa5dd blocksize_expr=50h
+0x27fe0 (sz=32): si_raw=0xcdef real_si=0x3a64f offset=0x0 blocksize_expr=ax
+0x28000 (sz=26): si_raw=0xcdf7 real_si=0x3a657 offset=0x70ad0 blocksize_expr=ax
+0x2801a (sz=26): si_raw=0xcdfb real_si=0x3a65b offset=0x71048 blocksize_expr=ax
+----- end target script output -----
+[*] finished executing extract_resource_stubs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_curgame_layout.py', 'noexport']
+[*] reading dump_curgame_layout.py
+[*] executing dump_curgame_layout.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+=== header+party block: DS:0x93ff-0xa787 ===
+  DS:0x93ff (+0x0000) _savegameBuffer
+  DS:0x9419 (+0x001a) word_36C79
+  DS:0x941f (+0x0020) word_36C7F
+  DS:0x9421 (+0x0022) g_heldKeyFlags
+  DS:0x9423 (+0x0024) word_36C83
+  DS:0x9425 (+0x0026) word_36C85
+  DS:0x9427 (+0x0028) word_36C87
+  DS:0x9429 (+0x002a) word_36C89
+  DS:0x942b (+0x002c) word_36C8B
+  DS:0x942d (+0x002e) word_36C8D
+  DS:0x9433 (+0x0034) word_36C93
+  DS:0x9435 (+0x0036) word_36C95
+  DS:0x9437 (+0x0038) word_36C97
+  DS:0x9439 (+0x003a) word_36C99
+  DS:0x943b (+0x003c) word_36C9B
+  DS:0x943d (+0x003e) word_36C9D
+  DS:0x9445 (+0x0046) word_36CA5
+  DS:0x9447 (+0x0048) g_mapRevealAreaTier
+  DS:0x9449 (+0x004a) g_monsterDetailRevealTier
+  DS:0x944f (+0x0050) word_36CAF
+  DS:0x9451 (+0x0052) word_36CB1
+  DS:0x9453 (+0x0054) word_36CB3
+  DS:0x945d (+0x005e) word_36CBD
+  DS:0x945f (+0x0060) word_36CBF
+  DS:0x946d (+0x006e) word_36CCD
+  DS:0x9481 (+0x0082) word_36CE1
+  DS:0x9483 (+0x0084) word_36CE3
+  DS:0x9485 (+0x0086) g_driverStateFlags
+  DS:0x9487 (+0x0088) g_animationSpeed
+  DS:0x9495 (+0x0096) g_partyFacing
+  DS:0x9497 (+0x0098) g_partyWorldX
+  DS:0x9499 (+0x009a) g_partyWorldY
+  DS:0x949b (+0x009c) g_gameDay
+  DS:0x949d (+0x009e) g_gameMonth
+  DS:0x949f (+0x00a0) g_gameYear
+  DS:0x94a1 (+0x00a2) g_gameClockMinutes
+  DS:0x94a3 (+0x00a4) g_partyRoleAssignment1
+  DS:0x94a5 (+0x00a6) g_partyRoleAssignment2
+  DS:0x94a7 (+0x00a8) g_partyRoleAssignment3
+  DS:0x94a9 (+0x00aa) g_partyRoleAssignment4
+  DS:0x94ab (+0x00ac) g_partyRoleAssignment5
+  DS:0x94b3 (+0x00b4) g_partyGold  ; Party gold (packed-BCD4, most-significant-digit-first). HUD label is a literal '$' (msg 0x7FC4, via ShowMaterialCounterHud). Spent by TryEnhanceItemForGold (per
+  DS:0x94b5 (+0x00b6) word_36D15
+  DS:0x950d (+0x010e) word_36D6D
+  DS:0x9511 (+0x0112) word_36D71
+  DS:0x9515 (+0x0116) word_36D75
+  DS:0x9531 (+0x0132) word_36D91
+  DS:0x9533 (+0x0134) word_36D93
+  DS:0x9595 (+0x0196) word_36DF5
+  DS:0x95ad (+0x01ae) word_36E0D
+  DS:0x95af (+0x01b0) word_36E0F
+  DS:0x95eb (+0x01ec) g_partySlotAssignment  ; 4 entries x 2 bytes: which 1-based g_partyRecords index occupies UI/effect slot N (0 = empty).
+  DS:0x95ed (+0x01ee) g_partyReserveSlot1
+  DS:0x95ef (+0x01f0) g_partyReserveSlot2
+  DS:0x95f1 (+0x01f2) g_partyReserveSlot3
+
+=== level-monster block: DS:0x0f26-0x3fe6 ===
+  DS:0x0f26 (+0x0000) g_levelMonsters  ; 80 x 0x9C-byte monster records (per-level monster pool, feeding the 3-slot g_monsterSlots active-combat array). Same record stride and [+0xC] flag conventions a
+
+=== callers of each CURGAME record-setup stub ===
+
+PrepareMasterHeaderBlockRead @ 0x27da8: 5 call sites
+    InitializeNewGameWorldState  x1  0x2b4f0
+    RunGameDialog  x2  0x1ee5a, 0x1ee99
+    SaveCurrentGameToSlot  x2  0x1f64d, 0x1f668
+
+PrepareGameDialogSizedBlockRead @ 0x27e20: 10 call sites
+    InitializeNewGameWorldState  x1  0x2b505
+    PersistExploredCell  x1  0x21cd7
+    RefreshDungeonMapWindow  x1  0x20a4a
+    RevealMapRegion  x2  0x28e71, 0x28fa2
+    RunGameDialog  x2  0x1eeb4, 0x1eec4
+    SaveCurrentGameToSlot  x2  0x1f683, 0x1f693
+    ShowLocalAreaMap  x1  0x21eed
+
+PrepareGroundItemSlotBlockRead @ 0x27e3a: 20 call sites
+    ConsumeItemChargeResource  x1  0x275f0
+    FindItemInsideContainer  x1  0x1ced3
+    FindItemInsideContainerLevel2  x1  0x1cf58
+    FindItemInsideContainerLevel3  x1  0x1cfd0
+    HandleInventoryGridClick  x1  0x2666f
+    HasDroppableItemInContainer  x1  0x25820
+    HasDroppableItemInInventory  x1  0x257c7
+    InitializeNewGameWorldState  x1  0x2b549
+    IsItemDroppable  x1  0x25776
+    LoadContainerContents  x1  0x2684e
+    LoadGroundItemSlotRecord  x1  0x19099
+    LoadNextContainerInChain  x1  0x26030
+    ReadGroundItemSlot  x1  0x1a354
+    RunGameDialog  x2  0x1ef0d, 0x1ef1d
+    SaveAndCloseContainer  x1  0x26909
+    SaveCurrentGameToSlot  x2  0x1f6dc, 0x1f6ec
+    SyncContainerContents  x1  0x29591
+    WriteContainerSubBlock  x1  0x27777
+
+PrepareRecordAtIndexDC6 @ 0x27de5: 15 call sites
+    ApplyEncodedItemEffect  x3  0x2c6d2, 0x2c78c, 0x2c84e
+    HandleSearchCommand  x1  0x2a8b5
+    InitializeNewGameWorldState  x1  0x2b58d
+    LoadCurgameRecord  x1  0x17737
+    LoadLockState  x1  0x176b7
+    RunGameDialog  x2  0x1ef6d, 0x1ef8e
+    SaveCurrentGameToSlot  x2  0x1f73c, 0x1f75d
+    UnlockDoorCommand  x1  0x2983b
+    UseAbilityCommand  x1  0x1795e
+    start  x2  0x101c5, 0x10255
+
+PrepareRecordAtIndexDCA @ 0x27dc6: 8 call sites
+    InitializeNewGameWorldState  x1  0x2b5c1
+    LoadLockState  x1  0x17682
+    RunGameDialog  x2  0x1efb5, 0x1efc0
+    RunShopScreen  x1  0x17596
+    SaveCurrentGameToSlot  x2  0x1f784, 0x1f78f
+    TriggerShopExitSoundAndPersist  x1  0x17a4f
+
+PrepareGameDialogIndexedBlockRead @ 0x27e04: 8 call sites
+    ClearCellMonsterSpawnedFlag  x1  0x22c08
+    InitializeNewGameWorldState  x1  0x2b5f9
+    RunGameDialog  x2  0x1f020, 0x1f02e
+    SaveCurrentGameToSlot  x2  0x1f7ef, 0x1f7fd
+    SetCellMonsterSpawnedFlag  x1  0x22c51
+    TestCellMonsterSpawnedFlag  x1  0x22c98
+
+PrepareGameDialogLargeBlockRead @ 0x27d8a: 5 call sites
+    InitializeNewGameWorldState  x1  0x2b625
+    RunGameDialog  x2  0x1f068, 0x1f073
+    SaveCurrentGameToSlot  x2  0x1f837, 0x1f842
+----- end target script output -----
+[*] finished executing dump_curgame_layout.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_slots.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_slots.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_slots.py
+[*] captured stdout from target script:
+----- begin target script output -----
+row 1: 310020202020202020202d20454d505459202d2020202020202000  b'1\x00        - EMPTY -       \x00'
+row 2: 320020202020202020202d20454d505459202d2020202020202000  b'2\x00        - EMPTY -       \x00'
+row 3: 330020202020202020202d20454d505459202d2020202020202000  b'3\x00        - EMPTY -       \x00'
+row 4: 340020202020202020202d20454d505459202d2020202020202000  b'4\x00        - EMPTY -       \x00'
+row 5: 350020202020202020202d20454d505459202d2020202020202000  b'5\x00        - EMPTY -       \x00'
+row 6: 360020202020202020202d20454d505459202d2020202020202000  b'6\x00        - EMPTY -       \x00'
+row 7: 000000000000000000000000000000000000000000000000000000  b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+row 8: 000000000000000000000000000000000000000000000000000000  b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+row 9: 000000000000000000000000000000000000000000000000000000  b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+row 10: 000000000000000000000000000000000000000000000000000000  b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+row 11: 000000000000000000000000000000000000000000000000000000  b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+row 12: 000000000000000000000000000000000000000000000000000000  b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+filename template @0x902C+0xE: b'SAVGAMEX\x00\xff\xff\x00'
+CURGAME name @0x8FFB+0xE: b'CURGAME\x00\xff\xff\x00\x00'
+row-pos table @0x5CD0:
+  1: 2700c9001b0021000100
+  2: 2700c90026002c000200
+  3: 2700c900310037000300
+  4: 2700c9003c0042000400
+  5: 2700c90047004d000500
+  6: 2700c900520058000600
+  7: 2a0043005d0064000700
+  8: 4f0069005d0064000800
+  9: 7400a5005d0064000900
+  10: a400ca0075007c000e00
+  11: 3e006800690071000b00
+  12: 7500b200690071000c00
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_slots.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

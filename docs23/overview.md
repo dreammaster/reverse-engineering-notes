@@ -7777,6 +7777,36 @@ Lesson for later modules: property/differential tests against a simple
 reference model catch bugs that hand-picked cases miss — worth doing for
 any arithmetic module.
 
+### 2026-09-19 session update, continued: C reimplementation, savegame I/O module
+
+Wrote `src23/savegame.c`/`.h` (+ `savegame_stdio.c` for tools). The roadmap
+called this format "fully decoded", but `file-formats.md` only had scattered
+prose, so the byte layout was derived from the code:
+- The seven record-setup stubs each load a 32-bit base offset from a static
+  table and set a `FileEntry` size; `InitGlobals` supplies the counts. The
+  chain of offsets sums exactly to 77,509 (Ch2 file size) — the strongest
+  confirmation available. Full table now in `file-formats.md`.
+- Sections 1 (header + 9 party records) and 7 (80 x 156 monster records) are
+  in-memory snapshots written at save time; 2-6 exist only in the file and
+  are copied file-to-file. A save slot is a byte-for-byte `CURGAME` copy.
+- **The "SMITHWARE PARTY\0WARE\0" string is not a magic number**: it's the
+  default save name, copied with a plain string copy, leaving stale tail bytes
+  (real `SAVGAME1` reads `DAN\0HWARE PARTY\0`). Corrected in `file-formats.md`.
+- Facing is a bit flag (`0x8000` N, `0x4000` S, `0x1000` E, `0x2000` W).
+- Six save slots (`SAVGAME1`-`6`); the "slot in use" flag is UI state, not
+  in the file.
+- **Chapter 3's sizes differ** (four sections grow; file is 81,037 bytes) —
+  new entry in `engine-diffs.md`. No Ch3 save exists locally, so that layout
+  is verified by offset-chain arithmetic and code reading only.
+- Header field offsets checked against the real Ch2 `CURGAME`/`SAVGAME1`
+  (party names, slot table `[7,8,9,6]`, position, date); gold/ore/flag words
+  also matched in Ch3's code.
+New read-only script: `yendor2/ida_scripts/dump_curgame_layout.py`.
+Tools note: the yendor3 database has no `ds` segment register set (the
+yendor2-only `fix_ds_segreg.py` was never applied), so scripts that resolve
+`si` offsets there must use the data segment's paragraph-aligned start
+(`seg133` `& ~0xF`), not `seg.start_ea`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

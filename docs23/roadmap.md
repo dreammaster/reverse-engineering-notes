@@ -30,7 +30,10 @@ groundwork below is already in place.
   shifts and `bcd4MulPercent`, i.e. `MulBCD4ByWord`, which is really a
   multiply-by-percent). Build/test with MinGW GCC:
   `gcc -Wall -Wextra -std=c99 -I .. -o test_bcd4 test_bcd4.c ../bcd4.c`
-  from `src23/tests/`. No second module has been scoped yet.
+  from `src23/tests/`. Second module, `savegame.c`/`.h`
+  (`CURGAME`/`SAVGAMEn` container: layouts for both games, section and
+  record accessors, name/header-field helpers), also done; tests in
+  `tests/test_savegame.c`. Party/character *field* structures are next.
 
 ## Next: continue the C reimplementation
 
@@ -58,10 +61,11 @@ next):
 1. ~~Round out `bcd4`'s own scope~~ — **done 2026-09-19**
    (`bcd4ShiftLeftNibble`/`bcd4ShiftRightNibble`/`bcd4MulPercent`; also
    fixed a half-carry bug in `bcd4Add`, see `overview.md`).
-2. **Savegame I/O** (`CURGAME`/`SAVGAME*`, fully decoded in
-   `file-formats.md`) — a self-contained, well-understood format with
-   no rendering/input dependencies, good next module for exercising
-   the project's file-I/O conventions early.
+2. ~~Savegame I/O~~ — **done 2026-09-19** (`savegame.c`/`.h`). Still
+   open there: the "new game" initializer (`InitializeNewGameWorldState`
+   writes every section's defaults), and decoding sections 2-6's
+   internals (fog-of-war bit order, item-instance fields, state-byte
+   meanings) — do those with the modules that consume them.
 3. **Party/character record structures** — the core data model
    (`g_partyRecords`, the 4-slot roster via `g_partySlotAssignment`,
    equipment/inventory layout) that almost everything else depends on;

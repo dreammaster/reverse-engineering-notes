@@ -981,3 +981,83 @@ offset=0xd0c9 ea=0x3ae79  'g_partySlotAssignment' -> 'g_partySlotAssignment': ok
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\yendor\yendor3\yendor3.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_stub_offsets.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+PrepareMasterHeaderBlockRead: ds=0xffffffff si=0xb167 lin=0x100000b157 offset=0xffffffff (4294967295)
+PrepareGameDialogSizedBlockRead: ds=0xffffffff si=0xb16b lin=0x100000b15b offset=0xffffffff (4294967295)
+PrepareGroundItemSlotBlockRead: ds=0xffffffff si=0xb16f lin=0x100000b15f offset=0xffffffff (4294967295)
+PrepareRecordAtIndexDC6: ds=0xffffffff si=0xb173 lin=0x100000b163 offset=0xffffffff (4294967295)
+PrepareRecordAtIndexDCA: ds=0xffffffff si=0xb177 lin=0x100000b167 offset=0xffffffff (4294967295)
+PrepareGameDialogIndexedBlockRead: ds=0xffffffff si=0xb17b lin=0x100000b16b offset=0xffffffff (4294967295)
+PrepareGameDialogLargeBlockRead: ds=0xffffffff si=0xb17f lin=0x100000b16f offset=0xffffffff (4294967295)
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_stub_offsets.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/yendor/yendor3/ida_scripts/batch_run_and_export.py", line 89, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py", line 18, in <module>
+    lin = DS_BASE + si
+TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_stub_offsets.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg133 start (DS_BASE): 0x2ddb2 end 0x3d7c0
+PrepareMasterHeaderBlockRead: si=0xb167 lin=0x38f19 offset=0x13880000 (327680000)
+PrepareGameDialogSizedBlockRead: si=0xb16b lin=0x38f1d offset=0x55280000 (1428684800)
+PrepareGroundItemSlotBlockRead: si=0xb16f lin=0x38f21 offset=0x1480000 (21495808)
+PrepareRecordAtIndexDC6: si=0xb173 lin=0x38f25 offset=0x56b0001 (90898433)
+PrepareRecordAtIndexDCA: si=0xb177 lin=0x38f29 offset=0x95b0001 (156958721)
+PrepareGameDialogIndexedBlockRead: si=0xb17b lin=0x38f2d offset=0xbcd0001 (197984257)
+PrepareGameDialogLargeBlockRead: si=0xb17f lin=0x38f31 offset=0x1 (1)
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_stub_offsets.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg133 start (DS_BASE): 0x2ddb0 end 0x3d7c0
+PrepareMasterHeaderBlockRead: si=0xb167 lin=0x38f17 offset=0x0 (0)
+PrepareGameDialogSizedBlockRead: si=0xb16b lin=0x38f1b offset=0x1388 (5000)
+PrepareGroundItemSlotBlockRead: si=0xb16f lin=0x38f1f offset=0x5528 (21800)
+PrepareRecordAtIndexDC6: si=0xb173 lin=0x38f23 offset=0x10148 (65864)
+PrepareRecordAtIndexDCA: si=0xb177 lin=0x38f27 offset=0x1056b (66923)
+PrepareGameDialogIndexedBlockRead: si=0xb17b lin=0x38f2b offset=0x1095b (67931)
+PrepareGameDialogLargeBlockRead: si=0xb17f lin=0x38f2f offset=0x10bcd (68557)
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_stub_offsets.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
