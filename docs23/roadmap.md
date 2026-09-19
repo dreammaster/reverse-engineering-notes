@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-17)
+## Status (last updated 2026-09-19)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -25,9 +25,12 @@ groundwork below is already in place.
   for reimplementation; they're mostly debug hooks, a studio-credits
   easter egg, and one new item-registry helper whose exact semantics
   aren't pinned down.
-- `src23/`: the C reimplementation has just started. One module is
-  done (`bcd4.c`/`bcd4.h`, packed-BCD arithmetic — see below). No
-  second module has been scoped yet.
+- `src23/`: the C reimplementation is under way. One module is done:
+  `bcd4.c`/`bcd4.h` (packed-BCD arithmetic, now including the digit
+  shifts and `bcd4MulPercent`, i.e. `MulBCD4ByWord`, which is really a
+  multiply-by-percent). Build/test with MinGW GCC:
+  `gcc -Wall -Wextra -std=c99 -I .. -o test_bcd4 test_bcd4.c ../bcd4.c`
+  from `src23/tests/`. No second module has been scoped yet.
 
 ## Next: continue the C reimplementation
 
@@ -52,11 +55,9 @@ runtime or compile-time switch rather than picking one game's version.
 **Picking the next module** — candidates, roughly in a sensible
 dependency order (not a hard sequence; pick whatever's most useful
 next):
-1. **Round out `bcd4`'s own scope**: `MulBCD4ByWord` and
-   `ShiftBCD4LeftNibble` (`yendor2.asm`, both already named, used by
-   `PromptBuyOreQuantity` and the ore-purchase flow in both games) —
-   the same BCD family as the existing module, natural to finish
-   before moving to unrelated logic.
+1. ~~Round out `bcd4`'s own scope~~ — **done 2026-09-19**
+   (`bcd4ShiftLeftNibble`/`bcd4ShiftRightNibble`/`bcd4MulPercent`; also
+   fixed a half-carry bug in `bcd4Add`, see `overview.md`).
 2. **Savegame I/O** (`CURGAME`/`SAVGAME*`, fully decoded in
    `file-formats.md`) — a self-contained, well-understood format with
    no rendering/input dependencies, good next module for exercising

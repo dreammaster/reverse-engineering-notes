@@ -35,4 +35,25 @@ void bcd4SubU16(Bcd4 counter, uint16_t amount);
 /* True if counter >= threshold (was IsBCDCounterAtLeast). */
 bool bcd4AtLeastU16(const Bcd4 counter, uint16_t threshold);
 
+/*
+ * Shifts the whole 8-digit value left one digit, i.e. x10; the top digit
+ * is discarded on overflow (was ShiftBCD4LeftNibble).
+ */
+void bcd4ShiftLeftNibble(Bcd4 value);
+
+/* Shifts right one digit, i.e. truncating /10 (was ShiftBCD4RightNibble). */
+void bcd4ShiftRightNibble(Bcd4 value);
+
+/*
+ * value = value * percent / 100, rounded half-up on the low three digits
+ * only (was MulBCD4ByWord). Used for barter discounts/markups with
+ * percent = 100 +/- a skill-tiered adjustment. Faithful to the original's
+ * quirks: each digit*percent partial product is truncated to 16 bits
+ * (so percent above 7281 can overflow), and digits carried past the top
+ * of the 8-digit range are silently lost. Chapter 2 and Chapter 3's
+ * copies are identical. The original also left scratch globals
+ * (word_3293E etc.) behind, which nothing reads afterwards.
+ */
+void bcd4MulPercent(Bcd4 value, uint16_t percent);
+
 #endif

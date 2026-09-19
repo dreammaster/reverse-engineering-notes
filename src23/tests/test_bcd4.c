@@ -102,11 +102,150 @@ static void testCompareAndThreshold(void) {
     checkBool("0 >= 1", bcd4AtLeastU16(zero, 1), false);
 }
 
+static void bcd4FromU32(Bcd4 out, uint32_t value) {
+    for (int i = 3; i >= 0; i--) {
+        uint8_t low = (uint8_t)(value % 10);
+        value /= 10;
+        uint8_t high = (uint8_t)(value % 10);
+        value /= 10;
+        out[i] = (uint8_t)((high << 4) | low);
+    }
+}
+
+static uint32_t bcd4ToU32(const Bcd4 in) {
+    uint32_t value = 0;
+    for (int i = 0; i < 4; i++) {
+        value = value * 100 + (uint32_t)(in[i] >> 4) * 10 + (in[i] & 0x0F);
+    }
+    return value;
+}
+
+static void testAddSubAgainstBinary(void) {
+    const uint32_t modulus = 100000000u;
+    int failures = 0;
+
+    /* Half-carry regression: every 2-digit pair (e.g. 8+8, 99+99). */
+    for (uint32_t a = 0; a < 100; a++) {
+        for (uint32_t b = 0; b < 100; b++) {
+            Bcd4 sum, diff, other;
+            bcd4FromU32(sum, a);
+            bcd4FromU32(diff, a);
+            bcd4FromU32(other, b);
+            bcd4Add(sum, other);
+            bcd4Sub(diff, other);
+            if (bcd4ToU32(sum) != a + b || bcd4ToU32(diff) != (a + modulus - b) % modulus) {
+                failures++;
+            }
+        }
+    }
+
+    /* Pseudo-random pairs across the whole 8-digit range, incl. wraparound. */
+    uint32_t state = 12345u;
+    for (int i = 0; i < 200000; i++) {
+        state = state * 1664525u + 1013904223u;
+        uint32_t a = (state >> 3) % modulus;
+        state = state * 1664525u + 1013904223u;
+        uint32_t b = (state >> 3) % modulus;
+        Bcd4 sum, diff, other;
+        bcd4FromU32(sum, a);
+        bcd4FromU32(diff, a);
+        bcd4FromU32(other, b);
+        bcd4Add(sum, other);
+        bcd4Sub(diff, other);
+        if (bcd4ToU32(sum) != (a + b) % modulus || bcd4ToU32(diff) != (a + modulus - b) % modulus) {
+            if (failures++ < 5) {
+                printf("FAIL add/sub %u, %u\n", a, b);
+            }
+        }
+    }
+
+    if (failures > 0) {
+        g_failureCount++;
+        printf("FAIL add/sub vs binary: %d mismatches\n", failures);
+    } else {
+        printf("PASS add/sub vs binary (exhaustive 2-digit + 200k random 8-digit)\n");
+    }
+}
+
+static void testShifts(void) {
+    Bcd4 value = {0x00, 0x12, 0x34, 0x56};
+    bcd4ShiftLeftNibble(value);
+    checkBcd4Equal("shiftLeft(123456)", value, (Bcd4){0x01, 0x23, 0x45, 0x60});
+
+    /* The top digit is lost on overflow. */
+    Bcd4 full = {0x91, 0x23, 0x45, 0x67};
+    bcd4ShiftLeftNibble(full);
+    checkBcd4Equal("shiftLeft(91234567) drops top digit", full, (Bcd4){0x12, 0x34, 0x56, 0x70});
+
+    Bcd4 right = {0x12, 0x34, 0x56, 0x78};
+    bcd4ShiftRightNibble(right);
+    checkBcd4Equal("shiftRight(12345678)", right, (Bcd4){0x01, 0x23, 0x45, 0x67});
+}
+
+static void checkMulPercent(const char *label, uint32_t value, uint16_t percent, uint32_t expected) {
+    Bcd4 counter;
+    Bcd4 want;
+    bcd4FromU32(counter, value);
+    bcd4FromU32(want, expected);
+    bcd4MulPercent(counter, percent);
+    checkBcd4Equal(label, counter, want);
+}
+
+static void testMulPercent(void) {
+    checkMulPercent("1000 * 100% = 1000", 1000, 100, 1000);
+    checkMulPercent("250 * 110% = 275", 250, 110, 275);
+    checkMulPercent("5 * 50% = 3 (2.5 rounds half-up)", 5, 50, 3);
+    checkMulPercent("4 * 50% = 2", 4, 50, 2);
+    checkMulPercent("999 * 55% = 549", 999, 55, 549);
+    checkMulPercent("0 * 155% = 0", 0, 155, 0);
+    checkMulPercent("12345678 * 100% = 12345678", 12345678, 100, 12345678);
+    checkMulPercent("99999999 * 100% = 99999999", 99999999, 100, 99999999);
+    checkMulPercent("100 * 45% = 45 (barter discount tier)", 100, 45, 45);
+
+    /*
+     * Differential sweep against the closed form. Restricted to percent
+     * <= 7270 (9 * 7270 + 50 < 65536, so the original's 16-bit digit
+     * products can't truncate) and results < 10^8 (no digits shifted off
+     * the top).
+     */
+    static const uint16_t percents[] = {1, 2, 8, 15, 25, 35, 45, 55, 98, 100, 102, 108, 115, 145, 155, 199, 500, 1000, 7270};
+    int sweepFailures = 0;
+    for (size_t p = 0; p < sizeof(percents) / sizeof(percents[0]); p++) {
+        for (uint32_t value = 0; value < 100000000u; value += 7919u) {
+            /* closed form: floor((low3*W + 50)/100) + floor(V/1000)*W*10 */
+            uint64_t low3 = value % 1000;
+            uint64_t high = value / 1000;
+            uint64_t expected = (low3 * percents[p] + 50) / 100 + high * percents[p] * 10;
+            if (expected >= 100000000u) {
+                continue;
+            }
+            Bcd4 counter;
+            bcd4FromU32(counter, value);
+            bcd4MulPercent(counter, percents[p]);
+            if (bcd4ToU32(counter) != (uint32_t)expected) {
+                if (sweepFailures++ < 5) {
+                    printf("FAIL sweep %u * %u%%: got %u, want %u\n", value, percents[p],
+                           bcd4ToU32(counter), (uint32_t)expected);
+                }
+            }
+        }
+    }
+    if (sweepFailures > 0) {
+        g_failureCount++;
+        printf("FAIL mulPercent sweep: %d mismatches\n", sweepFailures);
+    } else {
+        printf("PASS mulPercent sweep vs closed form\n");
+    }
+}
+
 int main(void) {
     testFromU16();
     testAdd();
     testSub();
     testCompareAndThreshold();
+    testAddSubAgainstBinary();
+    testShifts();
+    testMulPercent();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

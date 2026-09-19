@@ -3,16 +3,25 @@
 void bcd4Add(Bcd4 dst, const Bcd4 src) {
     int carry = 0;
     for (int i = 3; i >= 0; i--) {
-        int sum = dst[i] + src[i] + carry;
-        carry = 0;
-        if ((sum & 0x0F) > 9) {
-            sum += 0x06;
+        /* ADD/ADC followed by DAA, per the x86 definition of DAA. */
+        unsigned sum = (unsigned)dst[i] + src[i] + carry;
+        int cf = sum > 0xFF;
+        int af = ((dst[i] & 0x0F) + (src[i] & 0x0F) + carry) > 0x0F;
+        uint8_t al = (uint8_t)sum;
+        uint8_t oldAl = al;
+        int oldCf = cf;
+
+        if ((al & 0x0F) > 9 || af) {
+            al = (uint8_t)(al + 0x06);
         }
-        if (sum > 0x9F) {
-            sum += 0x60;
-            carry = 1;
+        if (oldAl > 0x99 || oldCf) {
+            al = (uint8_t)(al + 0x60);
+            cf = 1;
+        } else {
+            cf = 0;
         }
-        dst[i] = (uint8_t)sum;
+        dst[i] = al;
+        carry = cf;
     }
 }
 
@@ -79,4 +88,61 @@ bool bcd4AtLeastU16(const Bcd4 counter, uint16_t threshold) {
     Bcd4 encoded;
     bcd4FromU16(encoded, threshold);
     return bcd4Compare(counter, encoded) >= 0;
+}
+
+static uint32_t bcd4Load(const Bcd4 value) {
+    return ((uint32_t)value[0] << 24) | ((uint32_t)value[1] << 16) |
+           ((uint32_t)value[2] << 8) | (uint32_t)value[3];
+}
+
+static void bcd4Store(Bcd4 value, uint32_t bits) {
+    value[0] = (uint8_t)(bits >> 24);
+    value[1] = (uint8_t)(bits >> 16);
+    value[2] = (uint8_t)(bits >> 8);
+    value[3] = (uint8_t)bits;
+}
+
+void bcd4ShiftLeftNibble(Bcd4 value) {
+    bcd4Store(value, bcd4Load(value) << 4);
+}
+
+void bcd4ShiftRightNibble(Bcd4 value) {
+    bcd4Store(value, bcd4Load(value) >> 4);
+}
+
+static void bcd4AddShiftedProduct(Bcd4 acc, unsigned digit, uint16_t percent, int shift) {
+    Bcd4 term;
+    bcd4FromU16(term, (uint16_t)(digit * percent));
+    for (int i = 0; i < shift; i++) {
+        bcd4ShiftLeftNibble(term);
+    }
+    bcd4Add(acc, term);
+}
+
+void bcd4MulPercent(Bcd4 value, uint16_t percent) {
+    unsigned digit[8];
+    for (int i = 0; i < 4; i++) {
+        digit[i * 2] = value[i] >> 4;
+        digit[i * 2 + 1] = value[i] & 0x0F;
+    }
+
+    /*
+     * The low three digits (weights 1, 10, 100) are accumulated first,
+     * with +50 rounding folded into the units term, then shifted right two
+     * digits (/100). The five higher digits (weights 10^3..10^7) already
+     * include the /100, so they're added afterwards at weights 10^1..10^5.
+     */
+    Bcd4 acc;
+    bcd4FromU16(acc, (uint16_t)(digit[7] * percent + 50));
+    bcd4AddShiftedProduct(acc, digit[6], percent, 1);
+    bcd4AddShiftedProduct(acc, digit[5], percent, 2);
+    bcd4ShiftRightNibble(acc);
+    bcd4ShiftRightNibble(acc);
+    for (int shift = 1; shift <= 5; shift++) {
+        bcd4AddShiftedProduct(acc, digit[5 - shift], percent, shift);
+    }
+
+    for (int i = 0; i < 4; i++) {
+        value[i] = acc[i];
+    }
 }

@@ -7738,6 +7738,45 @@ other minor open threads (`sub_1B085`'s trap-effect semantics,
 `sub_11778`'s item-registry purpose, `sub_2566C`'s identity) remain
 low-priority and non-blocking.
 
+### 2026-09-19 session update: C reimplementation, bcd4 module completed (and an old bug fixed)
+
+New machine setup: IDA Pro 8.3 (was 8.2) — only the hardcoded `idat.exe`
+path in both `run_ida_script.ps1` scripts needed updating; the headless
+pipeline and `.idb` files open without any upgrade friction. Also
+installed MinGW-w64 GCC (relocated to `C:\mingw64`; its default winget
+path contained a space, which breaks `ld`).
+
+Finished `src23/bcd4.c`'s scope (roadmap item 1), verifying against
+`yendor2.asm` and `yendor3.asm` inline:
+- `ShiftBCD4LeftNibble`/`ShiftBCD4RightNibble` are plain 32-bit
+  big-endian shifts by one digit (x10 / truncating /10). Now
+  `bcd4ShiftLeftNibble`/`bcd4ShiftRightNibble`.
+- **`MulBCD4ByWord` is really a "multiply by percent" operation**, not a
+  general BCD multiply: it accumulates `digit * word` partial products for
+  the low three digits with `+0x32` (50) folded into the units term, shifts
+  the accumulator right two nibbles (/100), then adds the five high digits
+  at weights 10^1..10^5. Net effect: `value * percent / 100`, rounded
+  half-up on the low three digits only. Confirmed by its only caller,
+  `ComputeBarterPricingPreview`, passing `100 + adj` / `100 - adj` with
+  `adj` from a 7-tier skill lookup (55/45/35/25/15/8/2). Quirks preserved
+  in `bcd4MulPercent`: each `digit*percent` partial product truncates to 16
+  bits (`9*percent + 50` overflows above percent 7270), and digits shifted
+  past the 8-digit top are lost. Chapter 2's and Chapter 3's copies are
+  logically identical (only data addresses differ) — no game switch.
+- **Bug found in the previously-written `bcd4Add`** (fixed): it only
+  applied the DAA low-nibble correction when the nibble exceeded 9, but
+  real `DAA` also corrects on the auxiliary (half) carry, so e.g. 8+8
+  gave 0x10 instead of 0x16 and 99+99 gave 0x92 instead of 0x98. The
+  original 15 tests never hit a half-carry. Rewritten as an exact
+  x86-`DAA` emulation; found by the new `bcd4MulPercent` differential
+  sweep. `bcd4Sub` was checked against the same kind of test (exhaustive
+  2-digit pairs + 200k random 8-digit pairs vs binary arithmetic) and
+  was already correct.
+
+Lesson for later modules: property/differential tests against a simple
+reference model catch bugs that hand-picked cases miss — worth doing for
+any arithmetic module.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
