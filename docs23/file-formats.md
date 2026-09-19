@@ -86,6 +86,70 @@ record id, 0 = empty). Gold, ore and the three flag words were
 independently confirmed at the same offsets in Chapter 3. The 9 party
 records follow at `+0x1F4`, stride 500. Reimplemented in `src23/savegame.c`.
 
+### Party record layout (consolidated 2026-09-19)
+
+500 bytes, little-endian words. This table supersedes the piecemeal
+prose below wherever they disagree; every row was checked against the
+four real Chapter 2 characters (`SQUIRE`, `DIANA`, `YENDOR`, `JOSEPHINE`)
+unless marked otherwise. Reimplemented in `src23/party.c`.
+
+| Offset | Field |
+|---|---|
+| `+0x00` | name, NUL-terminated, at most 13 characters |
+| `+0x0E` | class id: `tier*10 + base`, base 1-9, tier 0-2; valid ids 1-9, 11-19, 21-29 (`GetClassNameString` gives garbage for 10 and 20). Names: FIGHTER MERCHANT ROGUE MONK ALCHEMIST PALADIN MAGE DRUID MARKSMAN / WARRIOR TINKERER THIEF CLERIC TRANSMUTER CAVALIER WIZARD ENCHANTER RANGER / CHAMPION BLACKSMITH ASSASSIN PRIEST HEALER HERO SORCERER SAGE KNIGHT |
+| `+0x10` | gender: 1 or 2 (the two real female characters are 2) |
+| `+0x12` | unidentified (20-33 in real data) |
+| `+0x14` | portrait icon id |
+| `+0x16` | level |
+| `+0x18` | experience, packed BCD4 |
+| `+0x1C` | status flags. `0x40` dead, `0x80` cursed, `0x100` hexed, `0x200` jinxed, `0x400` stoned, `0x800` frozen, `0x1000` paralyzed, `0x2000` diseased, `0x4000` poisoned, `0x8000` sick. Low 6 bits = secondary-class reached, `0x20 >> (class-4)` for class ids 4-9 (real: MONK `0x20`, MAGE `0x04`, DRUID `0x02`) |
+| `+0x20`..`+0x30` | 9 protection values: disease, poison, sickness, stoning, frozen, paralyze, cursing, hexing, jinxing |
+| `+0x3C`..`+0x70` | 27 **current** stat values, indexed by the game's 27-entry name table |
+| `+0x7C`..`+0xB0` | the same 27 stats' **maximum** values (current + `0x40`) |
+| `+0xB4` | learned-abilities bitmask (`0x8000`..`0x1000`); `+0xB6`..`+0xBC` one charge counter per ability bit |
+| `+0xBE`/`+0xC0`/`+0xC2` | wear counters for equipment slots `0xA`/`0xC`/`0xD` |
+| `+0xCA`..`+0xE9` | 256-bit flag bank (known spells/abilities) |
+| `+0x10C`..`+0x117` | 96-bit flag bank (per-character one-time events) |
+| `+0x118`..`+0x139` | main inventory group (below) |
+| `+0x13A`..`+0x15B` | equipment slots (below) |
+| `+0x15C` | UI flags word set by the slot lookup: `0x80` main group shown, `0x400`/`0x200`/`0x100` bag 1/2/3, `0x40` last lookup was a 2-byte slot |
+| `+0x17C`, `+0x1A2`, `+0x1C8` | three open-bag records of `0x26` bytes (below) |
+
+**Stat name table** (`DS:0x7DC7`, 13-byte stride; entry *i* is the stat at `+0x3C+2i` current, `+0x7C+2i` max — from `UseAttributeBoostItem`'s `(offset-0x3C)/2` index and `ShowArmorAttributeBonusList`'s `0x7C` scan):
+0 STRENGTH, 1 DEXTERITY, 2 STAMINA, 3 INTELLIGENCE, 4 WISDOM, 5 CHARISMA,
+6-10 unnamed (five equipment-derived ratings, `+0x48`..`+0x50`), 11 HIT POINTS,
+12 MAGIC POINTS, 13 unnamed (carry capacity, `+0x56`, exactly 10 x Strength in
+real data), 14 SURVIVAL, 15 PROJECTILE, 16 SLASHING, 17 BASHING, 18 POLEARM,
+19 CASTING, 20 MAPPING, 21 NAVIGATION, 22 BARTERING, 23 REPAIR, 24 THIEVERY,
+25 LINGUISTICS, 26 CHEMISTRY. **This resolves several earlier guesses**: the
+`+0x58`..`+0x70` block is the 13 *skills*; `+0x68` is BARTERING (what
+`ComputeBarterPricingPreview` reads), `+0x64` is MAPPING (not "light-source
+fuel"; it drives the minimap tiers), `+0x66` NAVIGATION (map-reveal size),
+`+0x58` SURVIVAL (monster-detail reveal), `+0x70` CHEMISTRY (alchemy yield).
+The six attributes' name-to-offset order is therefore confirmed, not a guess.
+
+**Inventory group** (34 bytes): `u16` total carried weight, then 8 slots of
+4 bytes (`u16` item id, `u16` extra; id 0 = empty). Slot *n* is at
+`group + 2 + (n-1)*4`. **The same layout is a save file's item-instance record**
+(section 3, 1296 of them). Carry capacity `+0x56` is checked against the main
+group's weight. **Open bags**: at each marker `M`, `[M+0]` is the container's
+item id (0 = closed), `[M+2]` is the item-instance record number where its
+contents are saved (`SaveAndCloseContainer` writes the 34 bytes at `M+4` to
+that record; the older text calling this a "count" was wrong), `[M+4]` the
+contents. `GetInventorySlotPtr` acts on the first open bag (bag 1, 2, 3
+priority) else the main group.
+
+**Equipment slots** by command code (`GetInventorySlotPtr`): codes `0xA`-`0xF`
+are 4-byte slots at `+0x13A`, `+0x13E`, `+0x142`, `+0x146`, `+0x14A`, `+0x14E`;
+codes `0x10`-`0x14` are 2-byte id-only slots at `+0x152`, `+0x154`, `+0x156`,
+`+0x158`, `+0x15A`. (Code 9 is not a slot; the docs' "slot 1-9" was wrong.)
+
+**Correction**: the `+0xCA` "16-word skill array" below is really the 256-bit
+flag bank above (`TestRecordFlag_CA`/`SetRecordFlag_CA`; index *n* is 1-based
+and MSB-first, word `(n-1)/16`, mask `0x8000 >> ((n-1)%16)`), and it *does*
+live on the party record (each real caster has exactly two bits set, the two
+grants `ApplySecondaryClassTierFlags` makes per class).
+
 First 32 bytes of `CURGAME` (hex-decoded):
 ```
 53 4D 49 54 48 57 41 52 45 20 50 41 52 54 59 00   SMITHWARE PARTY\0

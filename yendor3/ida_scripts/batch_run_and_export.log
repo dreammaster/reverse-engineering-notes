@@ -1061,3 +1061,93 @@ PrepareGameDialogLargeBlockRead: si=0xb17f lin=0x38f2f offset=0x10bcd (68557)
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_ch3_names.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_names.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_names.py
+[*] captured stdout from target script:
+----- begin target script output -----
+STAT TABLE @0x80F4 (13-byte stride):
+  idx  0 field=+0x7c name='STRENGTH'
+  idx  1 field=+0x7e name='DEXTERITY'
+  idx  2 field=+0x80 name='STAMINA'
+  idx  3 field=+0x82 name='INTELLIGENCE'
+  idx  4 field=+0x84 name='WISDOM'
+  idx  5 field=+0x86 name='CHARISMA'
+  idx  6 field=+0x88 name=''
+  idx  7 field=+0x8a name=''
+  idx  8 field=+0x8c name=''
+  idx  9 field=+0x8e name=''
+  idx 10 field=+0x90 name=''
+  idx 11 field=+0x92 name='HEALTH'
+  idx 12 field=+0x94 name='MAGIC POINTS'
+  idx 13 field=+0x96 name=''
+  idx 14 field=+0x98 name='SURVIVAL'
+  idx 15 field=+0x9a name='PROJECTILE'
+  idx 16 field=+0x9c name='SLASHING'
+  idx 17 field=+0x9e name='BASHING'
+  idx 18 field=+0xa0 name='POLEARM'
+  idx 19 field=+0xa2 name='CASTING'
+  idx 20 field=+0xa4 name='MAPPING'
+  idx 21 field=+0xa6 name='NAVIGATION'
+  idx 22 field=+0xa8 name='BARTERING'
+  idx 23 field=+0xaa name='REPAIR'
+  idx 24 field=+0xac name='THIEVERY'
+  idx 25 field=+0xae name='LINGUISTICS'
+  idx 26 field=+0xb0 name=''
+CLASS tier 0: ['FIGHTER', 'MERCHANT', 'ROGUE', 'MONK', 'ALCHEMIST', 'PALADIN', 'MAGE', 'DRUID', 'MARKSMAN']
+CLASS tier 1: ['WARRIOR', 'TINKERER', 'THIEF', 'CLERIC', 'TRANSMUTER', 'CAVALIER', 'WIZARD', 'ENCHANTER', 'RANGER']
+CLASS tier 2: ['CHAMPION', 'BLACKSMITH', 'ASSASSIN', 'PRIEST', 'HEALER', 'HERO', 'SORCERER', 'SAGE', 'KNIGHT']
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_names.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'dump_party_tables.py', 'noexport']
+[*] reading dump_party_tables.py
+[*] executing dump_party_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+STAT TABLE @0x80F4:
+  idx  0 current=+0x3c max=+0x7c name='STRENGTH'
+  idx  1 current=+0x3e max=+0x7e name='DEXTERITY'
+  idx  2 current=+0x40 max=+0x80 name='STAMINA'
+  idx  3 current=+0x42 max=+0x82 name='INTELLIGENCE'
+  idx  4 current=+0x44 max=+0x84 name='WISDOM'
+  idx  5 current=+0x46 max=+0x86 name='CHARISMA'
+  idx  6 current=+0x48 max=+0x88 name=''
+  idx  7 current=+0x4a max=+0x8a name=''
+  idx  8 current=+0x4c max=+0x8c name=''
+  idx  9 current=+0x4e max=+0x8e name=''
+  idx 10 current=+0x50 max=+0x90 name=''
+  idx 11 current=+0x52 max=+0x92 name='HEALTH'
+  idx 12 current=+0x54 max=+0x94 name='MAGIC POINTS'
+  idx 13 current=+0x56 max=+0x96 name=''
+  idx 14 current=+0x58 max=+0x98 name='SURVIVAL'
+  idx 15 current=+0x5a max=+0x9a name='PROJECTILE'
+  idx 16 current=+0x5c max=+0x9c name='SLASHING'
+  idx 17 current=+0x5e max=+0x9e name='BASHING'
+  idx 18 current=+0x60 max=+0xa0 name='POLEARM'
+  idx 19 current=+0x62 max=+0xa2 name='CASTING'
+  idx 20 current=+0x64 max=+0xa4 name='MAPPING'
+  idx 21 current=+0x66 max=+0xa6 name='NAVIGATION'
+  idx 22 current=+0x68 max=+0xa8 name='BARTERING'
+  idx 23 current=+0x6a max=+0xaa name='REPAIR'
+  idx 24 current=+0x6c max=+0xac name='THIEVERY'
+  idx 25 current=+0x6e max=+0xae name='LINGUISTICS'
+  idx 26 current=+0x70 max=+0xb0 name=''
+CLASS tier 0 (ids 1-9): ['FIGHTER', 'MERCHANT', 'ROGUE', 'MONK', 'ALCHEMIST', 'PALADIN', 'MAGE', 'DRUID', 'MARKSMAN']
+CLASS tier 1 (ids 11-19): ['WARRIOR', 'TINKERER', 'THIEF', 'CLERIC', 'TRANSMUTER', 'CAVALIER', 'WIZARD', 'ENCHANTER', 'RANGER']
+CLASS tier 2 (ids 21-29): ['CHAMPION', 'BLACKSMITH', 'ASSASSIN', 'PRIEST', 'HEALER', 'HERO', 'SORCERER', 'SAGE', 'KNIGHT']
+----- end target script output -----
+[*] finished executing dump_party_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

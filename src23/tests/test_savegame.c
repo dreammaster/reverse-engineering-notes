@@ -37,7 +37,7 @@ static SaveGame g_save;
 static SaveGame g_other;
 static uint8_t g_image[SaveFileSizeMax + 8];
 
-static void testLayout(SaveGameKind kind, const char *label, uint32_t expectedTotal) {
+static void testLayout(GameKind kind, const char *label, uint32_t expectedTotal) {
     const SaveLayout *layout = saveLayoutFor(kind);
     char text[96];
 
@@ -66,10 +66,10 @@ static void testLayout(SaveGameKind kind, const char *label, uint32_t expectedTo
 }
 
 static void testLayouts(void) {
-    testLayout(SaveGameYendor2, "yendor2", SaveFileSizeYendor2);
-    testLayout(SaveGameYendor3, "yendor3", SaveFileSizeYendor3);
+    testLayout(GameYendor2, "yendor2", SaveFileSizeYendor2);
+    testLayout(GameYendor3, "yendor3", SaveFileSizeYendor3);
 
-    const SaveLayout *layout2 = saveLayoutFor(SaveGameYendor2);
+    const SaveLayout *layout2 = saveLayoutFor(GameYendor2);
     checkU32("header block + 9 party records = section 1",
              SaveHeaderRecordSize + SavePartyRecordCount * SavePartyRecordSize,
              layout2->sections[SaveSectionHeaderAndParty].size);
@@ -100,7 +100,7 @@ static void testLoadStore(void) {
     }
     check("wrong-sized files are rejected", rejected);
 
-    SaveGameKind kinds[] = {SaveGameYendor2, SaveGameYendor3};
+    GameKind kinds[] = {GameYendor2, GameYendor3};
     size_t fileSizes[] = {SaveFileSizeYendor2, SaveFileSizeYendor3};
     for (int k = 0; k < 2; k++) {
         char label[64];
@@ -116,8 +116,8 @@ static void testLoadStore(void) {
 }
 
 static void testAccessors(void) {
-    saveGameInit(&g_save, SaveGameYendor2);
-    const SaveLayout *layout = saveLayoutFor(SaveGameYendor2);
+    saveGameInit(&g_save, GameYendor2);
+    const SaveLayout *layout = saveLayoutFor(GameYendor2);
 
     check("section pointer at its offset",
           saveGameSection(&g_save, SaveSectionMonsters) == g_save.bytes + 0xFE05);
@@ -142,7 +142,7 @@ static void testAccessors(void) {
     check("id 0 is NULL", saveGamePartyRecordById(&g_save, 0) == NULL);
     check("id 10 is NULL", saveGamePartyRecordById(&g_save, 10) == NULL);
 
-    saveGameInit(&g_other, SaveGameYendor3);
+    saveGameInit(&g_other, GameYendor3);
     check("yendor3 explored map uses 168 rows",
           saveGameRecord(&g_other, SaveSectionExploredMap, 167) != NULL &&
               saveGameRecord(&g_other, SaveSectionExploredMap, 168) == NULL);
@@ -152,7 +152,7 @@ static void testAccessors(void) {
 }
 
 static void testHeaderFields(void) {
-    saveGameInit(&g_save, SaveGameYendor2);
+    saveGameInit(&g_save, GameYendor2);
     saveHeaderSetU16(&g_save, SaveHeaderWorldX, 0x1234);
     check("u16 is stored little-endian",
           g_save.bytes[SaveHeaderWorldX] == 0x34 && g_save.bytes[SaveHeaderWorldX + 1] == 0x12);
@@ -174,7 +174,7 @@ static void testHeaderFields(void) {
 
 static void testName(void) {
     char name[SaveNameBufferSize];
-    saveGameInit(&g_save, SaveGameYendor2);
+    saveGameInit(&g_save, GameYendor2);
 
     /*
      * Matches the real SAVGAME1 header, which reads "DAN\0HWARE PARTY\0":
@@ -232,7 +232,7 @@ static void testRealFiles(void) {
     }
 
     char name[SaveNameBufferSize];
-    check("real CURGAME is detected as yendor2", g_save.kind == SaveGameYendor2);
+    check("real CURGAME is detected as yendor2", g_save.kind == GameYendor2);
     saveGetName(&g_save, name);
     check("real CURGAME name is SMITHWARE PARTY", strcmp(name, "SMITHWARE PARTY") == 0);
     checkU32("real CURGAME world X", saveHeaderGetU16(&g_save, SaveHeaderWorldX), 166);

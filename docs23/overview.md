@@ -7807,6 +7807,36 @@ yendor2-only `fix_ds_segreg.py` was never applied), so scripts that resolve
 `si` offsets there must use the data segment's paragraph-aligned start
 (`seg133` `& ~0xF`), not `seg.start_ea`.
 
+### 2026-09-19 session update, continued: C reimplementation, party record module
+
+Wrote `src23/party.c`/`.h` (+ shared `src23/game.h`, `GameKind`; the savegame
+module's own kind enum was folded into it). Findings, all now in
+`file-formats.md`'s consolidated party-record table:
+- **The 27-entry name table at `0x7DC7` is indexed by record offset**
+  (`(offset-0x3C)/2` for current values, `(offset-0x7C)/2` for maxima), which
+  turned several earlier hedges into facts: `+0x58..+0x70` are the 13 skills
+  (`+0x68` BARTERING, `+0x64` MAPPING, `+0x66` NAVIGATION, `+0x70`
+  CHEMISTRY), and the six attributes' name order is confirmed.
+- Class ids are `tier*10 + base` (1-9, 11-19, 21-29), not a flat 1-27; 10 and
+  20 index before their tables (a latent quirk in `GetClassNameString`).
+- An inventory group (`u16` weight + 8 x 4-byte slots) is *also* the save
+  file's 34-byte item-instance record; an open bag's `[+2]` is that record's
+  number, not a "count". Equipment slots are two runs (six 4-byte, five
+  2-byte) selected by command codes `0xA`-`0x14`.
+- `+0xCA` is a 256-bit MSB-first flag bank, not a skill array; `+0x10C` a
+  96-bit one. Verified by real data: each caster has exactly the two bits set
+  that `ApplySecondaryClassTierFlags` grants.
+- Data-driven checks on the real characters caught nothing wrong but gave
+  strong confirmation: all 27 stats start equal to their maximum, and carry
+  capacity equals 10 x strength for all four.
+- Chapter 3 differs in `HEALTH` naming, a blank CHEMISTRY skill, and a missing
+  `0x12` equipment case (see `engine-diffs.md`). New read-only scripts:
+  `yendor2`/`yendor3` `ida_scripts/dump_party_tables.py`.
+Deliberately left for later: `+0x12`, the five equipment ratings
+(`+0x48..+0x50`), the global flag bank (`0x94D1`, extent unknown, all zero in
+the available saves), and item ids/catalog fields (the catalog lives in
+`WORLD.DAT`).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

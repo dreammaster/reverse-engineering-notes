@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "game.h"
+
 /*
  * CURGAME / SAVGAMEn: the live game file and its six save slots. A save is
  * a byte-for-byte copy of CURGAME (SaveCurrentGameToSlot / RunGameDialog's
@@ -22,11 +24,6 @@
  * copied with a plain string copy, so a shorter name leaves the tail of
  * the previous one behind).
  */
-
-typedef enum {
-    SaveGameYendor2, /* Book I Chapter 2: 77,509 bytes */
-    SaveGameYendor3  /* Book I Chapter 3: 81,037 bytes */
-} SaveGameKind;
 
 typedef enum {
     /* Game-state block (record 0) followed by 9 party records (records 1-9). */
@@ -109,14 +106,14 @@ typedef enum {
 } SaveFacing;
 
 typedef struct {
-    SaveGameKind kind;
+    GameKind kind;
     uint8_t bytes[SaveFileSizeMax];
 } SaveGame;
 
-const SaveLayout *saveLayoutFor(SaveGameKind kind);
+const SaveLayout *saveLayoutFor(GameKind kind);
 
 /* A zero-filled image of the right size for a new game. */
-void saveGameInit(SaveGame *save, SaveGameKind kind);
+void saveGameInit(SaveGame *save, GameKind kind);
 
 /* Copies a whole file in; the kind is inferred from the exact size. */
 bool saveGameLoad(SaveGame *save, const uint8_t *data, size_t size);

@@ -34,27 +34,27 @@ static const SaveLayout g_layoutYendor3 = {
     },
 };
 
-const SaveLayout *saveLayoutFor(SaveGameKind kind) {
+const SaveLayout *saveLayoutFor(GameKind kind) {
     switch (kind) {
-    case SaveGameYendor2:
+    case GameYendor2:
         return &g_layoutYendor2;
-    case SaveGameYendor3:
+    case GameYendor3:
         return &g_layoutYendor3;
     }
     return NULL;
 }
 
-void saveGameInit(SaveGame *save, SaveGameKind kind) {
+void saveGameInit(SaveGame *save, GameKind kind) {
     memset(save, 0, sizeof(*save));
     save->kind = kind;
 }
 
 bool saveGameLoad(SaveGame *save, const uint8_t *data, size_t size) {
-    SaveGameKind kind;
+    GameKind kind;
     if (size == SaveFileSizeYendor2) {
-        kind = SaveGameYendor2;
+        kind = GameYendor2;
     } else if (size == SaveFileSizeYendor3) {
-        kind = SaveGameYendor3;
+        kind = GameYendor3;
     } else {
         return false;
     }

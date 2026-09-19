@@ -845,6 +845,21 @@ party record stride are unchanged. Total file size 77,509 -> 81,037. See
 `file-formats.md`'s byte-layout table. `src23/savegame.c` selects between
 the two layouts by exact file size.
 
+## Party record: same layout, three small differences
+
+Found while writing `src23/party.c` (2026-09-19). Chapter 3's record uses
+the same offsets (its `GetInventorySlotPtr` offsets, class tables and
+27-entry stat-name table all index identically, and it reads bartering at
+`+0x68`), with these differences:
+- The stat table calls hit points `HEALTH` instead of `HIT POINTS`.
+- The `CHEMISTRY` entry (`+0x70`/`+0xB0`) is blank: the chemistry skill has
+  no name in Chapter 3, consistent with the alchemy changes above.
+- `GetInventorySlotPtr` has no case for equipment code `0x12`, so it falls
+  through to `+0x15A` (the same as code `0x14`) and slot `+0x156` cannot be
+  reached through it; Chapter 2 maps `0x12` to `+0x156`. Looks like an
+  accidental omission rather than a design change.
+`partyStatName` and `partyEquipmentSlot` take a `GameKind` for these.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

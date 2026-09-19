@@ -33,7 +33,11 @@ groundwork below is already in place.
   from `src23/tests/`. Second module, `savegame.c`/`.h`
   (`CURGAME`/`SAVGAMEn` container: layouts for both games, section and
   record accessors, name/header-field helpers), also done; tests in
-  `tests/test_savegame.c`. Party/character *field* structures are next.
+  `tests/test_savegame.c`. Third module, `party.c`/`.h` (500-byte party
+  record: fields, the 27-stat table, classes, inventory/equipment/bags,
+  flag banks; game-aware for Chapter 3's small differences), with shared
+  `game.h`; tests in `tests/test_party.c`. The item catalog and monsters
+  are next candidates.
 
 ## Next: continue the C reimplementation
 
@@ -66,10 +70,10 @@ next):
    writes every section's defaults), and decoding sections 2-6's
    internals (fog-of-war bit order, item-instance fields, state-byte
    meanings) — do those with the modules that consume them.
-3. **Party/character record structures** — the core data model
-   (`g_partyRecords`, the 4-slot roster via `g_partySlotAssignment`,
-   equipment/inventory layout) that almost everything else depends on;
-   getting this right early avoids rework.
+3. ~~Party/character record structures~~ — **done 2026-09-19**
+   (`party.c`/`.h`). Still open there: `+0x12`, the five equipment
+   ratings `+0x48..+0x50`, and the item catalog fields (in `WORLD.DAT`),
+   which the inventory slots' item ids refer to.
 4. **Core dungeon-crawling loop** (movement, 90°-turn rendering) —
    the gameplay Paul is most interested in eventually, per the
    Eye-of-the-Beholder-style description in `overview.md`; bigger and
