@@ -2553,6 +2553,71 @@ item's raw data in. Item contents/size/count not yet examined —
 `sub_27B42`'s own signature (id in, offset+size out) would be the
 fastest way to enumerate the whole catalog if that's wanted later.
 
+### Item catalog (decoded 2026-09-19)
+
+A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
+`LoadItemCatalogRecord`. It is five back-to-back tables (each starts where the
+previous ends; both games' chains verified against their real files):
+
+| Table | Ch2 offset | Ch2 count x size | Ch3 offset | Ch3 count x size |
+|---|---|---|---|---|
+| item records | `0x71138` | 759 x 58 (699 + 60, two reads) | `0x83EE8` | 631 x 58 |
+| effects | `0x7BD2E` | 175 x 16 | `0x8CDDE` | 148 x 16 |
+| wearable targets | `0x7C81E` | 275 x 12 | `0x8D71E` | 221 x 12 |
+| consumable targets | `0x7D502` | 250 x 8 | `0x8E17A` | 151 x 8 |
+| weapon targets | `0x7DCD2` | 190 x 12 | `0x8E632` | 210 x 12 |
+| end | `0x7E5BA` | | `0x8F00A` | |
+
+**Ids** are 1-based; an inventory slot's id is `page * 256 + number` (the
+community item guide's "second byte is the page"; `0x21E` = page 2, number
+`0x1E` = SLING). The slot's second word is the uses/charges count (low byte;
+the guide says 0 and 1 both mean one use). Chapter 2's real items are ids
+1-744 (`SCROLL OF RESURRECTION` is last); the 15 records after it are slack in
+the game's block size and hold unrelated data (record 745 even contains a
+leftover build path, `BK1_CH2\GAME\`). All 631 Chapter 3 records are items.
+**Ids differ between the games** (Ch3 id 2 is FOOD, id 6 CLOTHES +2). Names
+match the guide for 321 of 759 exactly; the rest differ only in the guide's
+paraphrasing (`Wood shield` / `+1`), the game's own misspelling `SAPHIRE`
+(fixed to `SAPPHIRE` in Ch3), and `NOT USED` placeholders.
+
+**Item record** (58 bytes): `+0x00` u16 byte offset into a target table (see
+below); `+0x02` u16 byte offset into the effect table, 0 = none; `+0x04` packed
+BCD4 gold price; `+0x08` icon picture id (category `0x80`, +1 if flag `0x1000`);
+`+0x0A` u16 weight; `+0x0C` flags; `+0x0E` fit flags; `+0x10` class bits
+(`0x8000` gear, `0x4000` potions, `0x1000` food, `0x800` gems, `0x2000` bags;
+not fully mapped); `+0x13`, `+0x20`, `+0x2D` three 13-byte text lines (12
+characters + NUL) that `BuildItemDisplayName` joins as
+`trim(l1) + " " + l2`, trimmed, `+ " " + l3`, trimmed (an empty middle line
+therefore collapses to one space).
+
+**Flags `+0x0C`** say which inventory slot codes accept the item
+(`IsItemEligibleForCommand`): `0x8000` code `0xA`, `0x2000` code `0xB` (also
+containers), `0x4000` code `0xC`, `0x800` code `0xD`, `0x400` codes `0xE`/`0xF`
+(rings), `0x200` codes `0x10`-`0x14` (which one is chosen by the wearable
+target's flag word: `0x8000`/`0x4000`/`0x2000`/`0x1000`/`0x800` = `0x10`..
+`0x14`), `0x100` consumable, `0x1000` alternate icon. **Fit flags `+0x0E`**:
+`0x8000` backpack, `0x4000` box, `0x2000` bag (`0xE000` fits all).
+
+**Target tables**, chosen by the flags in this order (`LoadItemCatalogRecord`):
+`0xE00` bits -> wearable table (12 B); else `0xC000` -> weapon table (12 B);
+else `0x100` -> consumable table (8 B). Wearable/weapon words: `[0]`
+absorption ("ABSORPTION-"), `[1]` flags (for weapons the skill type: `0x8000`
+projectile, `0x4000` slashing ...), `[2]`/`[3]` and `[4]`/`[5]` two
+(replacement item id, break-chance %) pairs used by
+`TickEquippedItemDurability`. The consumable words are not decoded (bread is
+`{0,0,10,0}`, potions `{2,1,...}`). Records with none of those flags but a
+nonzero `+0x00` (e.g. bags: 24) use it for something else.
+
+**Effect entries** are 4 pairs of `(party-record field offset, amount)`, read up
+to the first zero offset. The offsets are exactly the party record's
+protection (`0x20`-`0x30`), current-stat (`0x3C`-`0x70`) and maximum-stat
+(`0x7C`-`0xB0`) fields: HALFLING HELMET OF INTELLIGENCE is `(0x82,+24)`
+(INTELLIGENCE max), `(0x42,+24)` (current), `(0x30,+30)`, `(0x2E,+15)` (jinxing
+and hexing protection); STRENGTH POTION is `(0x7C,+2)`, `(0x3C,+2)`. Amounts are
+unsigned (max 500 in Ch2, 100 in Ch3). `ApplyMultiStatEffectForItem` skips a
+stat whose current value is 0 and caps at 999. Reimplemented in
+`src23/item.c`.
+
 ### In-memory dungeon map grid
 
 **The loader is now found**: `RefreshDungeonMapWindow` (was

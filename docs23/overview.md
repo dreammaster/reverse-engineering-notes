@@ -7837,6 +7837,32 @@ Deliberately left for later: `+0x12`, the five equipment ratings
 the available saves), and item ids/catalog fields (the catalog lives in
 `WORLD.DAT`).
 
+### 2026-09-19 session update, continued: C reimplementation, item catalog module
+
+Wrote `src23/item.c`/`.h` (+ `item_stdio.c`), the layer inventory slot ids
+point into. Derived from `loadWorldDat1`, `LoadItemCatalogRecord`,
+`ShowClueBookItemDetail`, `IsItemEligibleForCommand`, `BuildItemDisplayName`
+and both games' real `WORLD.DAT` files; full layout in `file-formats.md`.
+- The catalog is one contiguous region of five tables whose offsets chain
+  exactly (Ch2: `0x71138`..`0x7E5BA`, Ch3: `0x83EE8`..`0x8F00A`); the game's
+  own two-step read of Ch2's item table (699 + 60 records) is one adjacent
+  table.
+- **Effect entries are `(party-record field offset, amount)` pairs**, and every
+  offset in both games' real catalogs lands in the party record's protection,
+  stat or stat-maximum range — a strong cross-check of both this module and
+  the party record table. Target-table offsets are all aligned and in range.
+- Slot ids are `page*256 + number` (community guide; confirmed against the
+  catalog: `0x21E` is SLING). That the slot's second word is a use count also
+  comes from the guide only; the code path (`PlaceItemInSlot`) just copies it.
+- The catalog flags (`+0x0C`) turn out to be per-slot eligibility bits, which
+  ties items to the equipment slot codes from the party module.
+- Chapter 2's real items end at id 744; the game loads 15 extra records whose
+  contents are unrelated (one holds a leftover build path). Ch3 renumbers every
+  item, swaps MAGIC ORE for FOOD, and keeps NUORE (see `engine-diffs.md`).
+Left for later: the consumable target words, the `+0x10` class bits' exact
+mapping, and the weapon targets' damage fields (the clue-book weapon screen,
+`RunClueBookWeaponCategory`, is the place to decode them).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

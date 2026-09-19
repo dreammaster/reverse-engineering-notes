@@ -36,8 +36,11 @@ groundwork below is already in place.
   `tests/test_savegame.c`. Third module, `party.c`/`.h` (500-byte party
   record: fields, the 27-stat table, classes, inventory/equipment/bags,
   flag banks; game-aware for Chapter 3's small differences), with shared
-  `game.h`; tests in `tests/test_party.c`. The item catalog and monsters
-  are next candidates.
+  `game.h`; tests in `tests/test_party.c`. Fourth module, `item.c`/`.h`
+  (`WORLD.DAT` item catalog for both games: records, target and effect
+  tables, name joining), tests in `tests/test_item.c`. Monster records (the
+  `g_levelMonsters` save block plus `WORLD.DAT`'s monster statistics) and the
+  `WORLD.DAT` map/text blocks are the next candidates.
 
 ## Next: continue the C reimplementation
 

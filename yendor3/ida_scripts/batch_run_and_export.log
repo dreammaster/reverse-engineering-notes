@@ -1151,3 +1151,43 @@ CLASS tier 2 (ids 21-29): ['CHAMPION', 'BLACKSMITH', 'ASSASSIN', 'PRIEST', 'HEAL
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_ch3_catalog.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_catalog.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_catalog.py
+[*] captured stdout from target script:
+----- begin target script output -----
+WorldDat_setBlock1: si=0xb197 offset=0x83ee8 (540392) recsize=58
+WorldDat_setBlock2: si=0xb19b offset=0x8cdde (576990) recsize=58
+PrepareWorldDat1Block1Read: si=0xb19f offset=0x8cdde (576990) recsize=16
+PrepareWorldDat1Block2Read: si=0xb1a3 offset=0x8d71e (579358) recsize=12
+PrepareWorldDat1Block3Read: si=0xb1a7 offset=0x8e17a (582010) recsize=8
+PrepareWorldDat1Block4Read: si=0xb1ab offset=0x8e632 (583218) recsize=12
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_catalog.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'dump_catalog_layout.py', 'noexport']
+[*] reading dump_catalog_layout.py
+[*] executing dump_catalog_layout.py
+[*] captured stdout from target script:
+----- begin target script output -----
+WorldDat_setBlock1: si=0xb197 offset=0x83ee8 (540392) recsize=58
+WorldDat_setBlock2: si=0xb19b offset=0x8cdde (576990) recsize=58
+PrepareWorldDat1Block1Read: si=0xb19f offset=0x8cdde (576990) recsize=16
+PrepareWorldDat1Block2Read: si=0xb1a3 offset=0x8d71e (579358) recsize=12
+PrepareWorldDat1Block3Read: si=0xb1a7 offset=0x8e17a (582010) recsize=8
+PrepareWorldDat1Block4Read: si=0xb1ab offset=0x8e632 (583218) recsize=12
+----- end target script output -----
+[*] finished executing dump_catalog_layout.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

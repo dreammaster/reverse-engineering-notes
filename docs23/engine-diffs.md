@@ -860,6 +860,23 @@ the same offsets (its `GetInventorySlotPtr` offsets, class tables and
   accidental omission rather than a design change.
 `partyStatName` and `partyEquipmentSlot` take a `GameKind` for these.
 
+## Item catalog: different contents and sizes, same record format
+
+Found while writing `src23/item.c` (2026-09-19); checked against both real
+`WORLD.DAT` files. The record format, table selection rules and effect-pair
+format are identical. What differs:
+- **Size**: 631 items (all real) vs. Chapter 2's 744 real items (759 loaded);
+  the effect/wearable/consumable/weapon tables are 148/221/151/210 entries vs.
+  175/275/250/190. Table offsets are in `file-formats.md`.
+- **Ids are renumbered** (Ch2 id 2 MAGIC ORE, 6 BAG, 55 BREAD; Ch3 id 2 FOOD,
+  6 CLOTHES +2, 55 PINK POTION), so item ids must never be shared between games.
+- **The resource items changed**: Ch2's first three are GOLD COINS, MAGIC ORE
+  and NUORE; Ch3's are GOLD COINS, **FOOD** and NUORE. So Chapter 3 swapped
+  MAGIC ORE for FOOD and *kept NUORE*, which weakens the earlier hypothesis
+  here that Chapter 3 removes the NUORE mechanic (the new 5-artifact quest
+  system may sit alongside it, not replace it).
+- `SAPHIRE` (sic) is spelled `SAPPHIRE` in Chapter 3.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
