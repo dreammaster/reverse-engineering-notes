@@ -41,8 +41,8 @@ groundwork below is already in place.
   tables, name joining), tests in `tests/test_item.c`. Fifth module,
   `monster.c`/`.h` (catalog blocks + type lookup for both games, the 156-byte
   live record, spawn, death flags), tests in `tests/test_monster.c`. The
-  `WORLD.DAT` map/text blocks and the trap/status effect table (`0xE...`
-  `g_trapEffectDefs`) are the next candidates, then the dungeon loop.
+  `WORLD.DAT` map/text blocks and the trap/status effect table
+  (`g_trapEffectDefs`) are the next candidates, then the dungeon loop.
 
 ## Next: continue the C reimplementation
 
