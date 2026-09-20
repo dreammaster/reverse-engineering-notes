@@ -8985,5 +8985,25 @@
     "confidence": "high",
     "is_library": false,
     "evidence": "Global GUIListBox object pool -- see GUIListBox::GUIListBox's own entry, identified via `rebuild_array`'s GOBJ_LISTBOX dispatch (acgui.cpp:1124's own `&guilist[thisnum]` operand). Fixed 81-element array."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4240B0",
+    "new_name": "GUIButton__MouseOver",
+    "source_file": "Common/acgui.h",
+    "source_line": 581,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUIButton::MouseOver() at acgui.h:581-589: 'if(ispushed) usepic=pushedpic; else usepic=overpic; isover=1;'. DECISIVE, exact match, found by dumping GUIButton's own vtable (off_4AD4A0) completely and cross-referencing GUIObject's own declared virtual-method order (acgui.h:137-155: MouseMove(0)/MouseOver(1)/MouseLeave(2)/MouseDown(3)/MouseUp(4)/KeyPress(5)/Draw(6)/WriteToFile(7)/ReadFromFile(8) -- confirming this build's own GUIObject base vtable, off_4AD4C4, has exactly these 9 slots, all `_purecall` -- 2011's later `IsOverControl`/`Resized`/`GetNumEvents`/`GetEventName`/`GetEventArgs` additions are CONFIRMED ABSENT from the vtable shape itself). Slot 1 (MouseOver) matches `cmp [this+0x64](ispushed),0; jz <use overpic>; [this+0x60](usepic)=[this+0x5C](pushedpic); <else> [this+0x60]=[this+0x58](overpic); [this+0x68](isover)=1;` exactly, reusing GUIButton's own already-fully-confirmed field offsets."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4240F0",
+    "new_name": "GUIButton__MouseLeave",
+    "source_file": "Common/acgui.h",
+    "source_line": 591,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUIButton::MouseLeave() at acgui.h:591-595: 'usepic=pic; isover=0;'. DECISIVE, exact match -- slot 2 of GUIButton's vtable (off_4AD4A0), found alongside MouseOver (this round's own sibling match): `[this+0x60](usepic)=[this+0x54](pic); [this+0x68](isover)=0;` matches exactly. Closes GUIButton's own vtable completely -- all 9 slots now individually confirmed (MouseMove/MouseOver/MouseLeave/MouseDown/MouseUp/KeyPress/Draw/WriteToFile/ReadFromFile), the only one of the six GUIObject-derived classes with REAL, non-trivial implementations of MouseOver/MouseLeave -- every sibling class's own equivalent slots point to a single shared no-op stub (FLIRT-mislabeled `unknown_libname_3`, matching this project's own established 'trivial method bodies get linker-folded into one shared stub' pattern, e.g. MyLabel/MyTextBox's own `pressedon()`), confirming 2011's GUIObject base itself doesn't declare these pure-virtual in this build (a class with an unimplemented pure virtual couldn't be instantiated) -- they default to a shared no-op instead."
   }
 ]

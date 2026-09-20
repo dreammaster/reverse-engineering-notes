@@ -35831,6 +35831,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	make_array	(0X4240AD,	0X3);
 	create_insn	(0X4240B0);
+	set_name	(0X4240B0,	"GUIButton__MouseOver");
 	create_insn	(x=0X4240B4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4240B7);
@@ -35847,6 +35848,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X4240E8,	0X8);
 	create_insn	(0X4240F0);
+	set_name	(0X4240F0,	"GUIButton__MouseLeave");
 	create_insn	(x=0X4240F4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4240F7);
@@ -40506,12 +40508,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42835E);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X428363);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X42836A);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X428376);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -40521,6 +40517,12 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X428363);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X42836A);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X428376);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X42837F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X428385);
@@ -46018,11 +46020,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42D3A9);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42D3B5);
-	op_hex		(x,	1);
-	create_insn	(x=0X42D3BF);
-	op_stkvar	(x,	1);
-	set_cmt	(0X42D3C5,	"Block",	0);
 }
 
 //------------------------------------------------------------------------
@@ -46032,6 +46029,11 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42D3B5);
+	op_hex		(x,	1);
+	create_insn	(x=0X42D3BF);
+	op_stkvar	(x,	1);
+	set_cmt	(0X42D3C5,	"Block",	0);
 	create_insn	(x=0X42D3CB);
 	op_hex		(x,	1);
 	create_insn	(x=0X42D3DD);
@@ -52224,12 +52226,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432CEE);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X432CF4);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X432CFA);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X432D00);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52239,6 +52235,12 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X432CF4);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X432CFA);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X432D00);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X432D0D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432D20);
@@ -58131,7 +58133,6 @@ static Bytes_9(void) {
 	set_cmt	(0X43903C,	"indirect table for switch statement",	0);
 	create_byte	(0X43903C);
 	make_array	(0X43903C,	0X11);
-	make_array	(0X43904D,	0X3);
 }
 
 //------------------------------------------------------------------------
@@ -58141,6 +58142,7 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	make_array	(0X43904D,	0X3);
 	create_insn	(0X439050);
 	set_name	(0X439050,	"nullsub_13");
 	make_array	(0X439051,	0XF);
@@ -63843,8 +63845,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43EF5E);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43EF62);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -63854,6 +63854,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43EF62);
+	op_hex		(x,	1);
 	create_insn	(x=0X43EF65);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43EF6C);
@@ -158458,9 +158460,11 @@ static Functions_8(void) {
 	set_frame_size(0X4240A0, 0X4, 4, 0X8);
 	add_func    (0X4240B0,0X4240E8);
 	set_func_flags(0X4240B0,0x5410);
+	set_func_cmt(0X4240B0,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: GUIButton::MouseOver() at acgui.h:581-589: 'if(ispushed) usepic=pushedpic; else usepic=overpic; isover=1;'. DECISIVE, exact match, found by dumping GUIButton's own vtable (off_4AD4A0) completely and cross-referencing GUIObject's own declared virtual-method order (acgui.h:137-155: MouseMove(0)/MouseOver(1)/MouseLeave(2)/MouseDown(3)/MouseUp(4)/KeyPress(5)/Draw(6)/WriteToFile(7)/ReadFromFile(8) -- confirming this build's own GUIObject base vtable, off_4AD4C4, has exactly these 9 slots, all `_purecall` -- 2011's later `IsOverControl`/`Resized`/`GetNumEvents`/`GetEventName`/`GetEventArgs` additions are CONFIRMED ABSENT from the vtable shape itself). Slot 1 (MouseOver) matches `cmp [this+0x64](ispushed),0; jz <use overpic>; [this+0x60](usepic)=[this+0x5C](pushedpic); <else> [this+0x60]=[this+0x58](overpic); [this+0x68](isover)=1;` exactly, reusing GUIButton's own already-fully-confirmed field offsets.", 1);
 	set_frame_size(0X4240B0, 0X4, 4, 0);
 	add_func    (0X4240F0,0X424111);
 	set_func_flags(0X4240F0,0x5410);
+	set_func_cmt(0X4240F0,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: GUIButton::MouseLeave() at acgui.h:591-595: 'usepic=pic; isover=0;'. DECISIVE, exact match -- slot 2 of GUIButton's vtable (off_4AD4A0), found alongside MouseOver (this round's own sibling match): `[this+0x60](usepic)=[this+0x54](pic); [this+0x68](isover)=0;` matches exactly. Closes GUIButton's own vtable completely -- all 9 slots now individually confirmed (MouseMove/MouseOver/MouseLeave/MouseDown/MouseUp/KeyPress/Draw/WriteToFile/ReadFromFile), the only one of the six GUIObject-derived classes with REAL, non-trivial implementations of MouseOver/MouseLeave -- every sibling class's own equivalent slots point to a single shared no-op stub (FLIRT-mislabeled `unknown_libname_3`, matching this project's own established 'trivial method bodies get linker-folded into one shared stub' pattern, e.g. MyLabel/MyTextBox's own `pressedon()`), confirming 2011's GUIObject base itself doesn't declare these pure-virtual in this build (a class with " "an unimplemented pure virtual couldn't be instantiated) -- they defau", 1);
 	set_frame_size(0X4240F0, 0X4, 4, 0);
 	add_func    (0X424120,0X42414A);
 	set_func_flags(0X424120,0x5410);
@@ -158817,14 +158821,14 @@ static Functions_8(void) {
 	set_func_flags(0X425836,0x5410);
 	set_func_cmt(0X425836,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: int CSCIDrawWindow(int,int,int,int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox (this round's new match) with literal arguments (80,80,160,40) matching source's CSCIDrawWindow(80,80,240-80,120-80) exactly -- identified via call-signature/literal-argument evidence only, medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read against its real source, Engine/acdialog.h:667-700): \"ignore_bounds++; multiply_up(&xx,&yy,&wid,&hit); find a free slot in oswi[MAXSCREENWINDOWS]; if none, quit(\\\"Too many windows created.\\\"); windowcount++; xx-=2;yy-=2;wid+=4;hit+=4; oswi[slot].buffer=wnewblock(xx,yy,xx+wid,yy+hit); oswi[slot].x=xx; oswi[slot].y=yy; wbutt(xx+1,yy+1,xx+wid-1,yy+hit-1); oswi[slot].oldtop=topwindowhandle; topwindowhandle=slot; return slot;\" -- matches instruction for instruction, including the literal MAXSCRE" "ENWINDOWS=5 loop bound (Engine/acdialog.h:630, ZERO drift) and every com", 1);
 	set_frame_size(0X425836, 0X8, 4, 0);
-	add_func    (0X425988,0X425A22);
-	set_func_flags(0X425988,0x5410);
-	set_func_cmt(0X425988,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIEraseWindow(int handle) { domouse(2); mouse_hide_count--; wputblock(x[handle],y[handle],savedbg[handle],0); destroy_bitmap(savedbg[handle]); domouse(1); savedbg[handle]=NULL; window_count--; }\" -- hides the mouse cursor, restores the screen area under the CSCI window from a saved background bitmap (a 16-byte-per-window slot table: dword_523528=saved bitmap, dword_52352C/dword_523530=x/y, all new globals), destroys the saved bitmap, re-shows the mouse, and decrements an active-CSCI-window counter (dword_523708, a new " "global). domouse (already matched) and wputblock (already matched) both co", 1);
-	set_frame_size(0X425988, 0, 4, 0);
 }
 
 static Functions_9(void) {
 
+	add_func    (0X425988,0X425A22);
+	set_func_flags(0X425988,0x5410);
+	set_func_cmt(0X425988,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIEraseWindow(int handle) { domouse(2); mouse_hide_count--; wputblock(x[handle],y[handle],savedbg[handle],0); destroy_bitmap(savedbg[handle]); domouse(1); savedbg[handle]=NULL; window_count--; }\" -- hides the mouse cursor, restores the screen area under the CSCI window from a saved background bitmap (a 16-byte-per-window slot table: dword_523528=saved bitmap, dword_52352C/dword_523530=x/y, all new globals), destroys the saved bitmap, re-shows the mouse, and decrements an active-CSCI-window counter (dword_523708, a new " "global). domouse (already matched) and wputblock (already matched) both co", 1);
+	set_frame_size(0X425988, 0, 4, 0);
 	add_func    (0X425A22,0X425A93);
 	set_func_flags(0X425A22,0x5410);
 	set_func_cmt(0X425A22,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: checkcontrols() (acdialog.h:715-727) -- a complete, exact, zero-drift match: smcode(dword_523704)=0; for(kk=0;kk<MAXCONTROLS(0x14=20, zero drift, matching this build's own already-confirmed MAXCONTROLS value); if(vobjs[kk](dword_523578[kk], already established via CSCISendControlMessage's own entry)!=NULL); if(vobjs[kk]->mouseisinarea() (vtable slot 0, already matched this round as NewControl::mouseisinarea)); controlid(dword_523710)=kk; return vobjs[kk]->pressedon() (vtable slot 1, called via [edx+4] -- cross-confirming the vtable slot ordering draw()=0/pressedon()=1/processmessage()=2 already established from the pressedon()/processmessage() side, now confirmed from this call site too). Called from CSCIWaitMessage (already matched) as part of its own message-polling loop.", 1);
@@ -159153,6 +159157,10 @@ static Functions_9(void) {
 	set_func_flags(0X42A4DB,0x5410);
 	set_func_cmt(0X42A4DB,	"[reversing] confirmed match\nsource: Common/cscommon.cpp\nconfidence: high\nevidence: void ccFreeScript(ccScript*) at Common/cscommon.cpp:116. Exact, line-for-line match: conditionally frees globaldata@+0x00/code@+0x08/strings@+0x10/fixuptypes@+0x18/fixups@+0x1C (each null-checked individually) then zeroes all five; then \"for(aa=0;aa<numimports;aa++) if(imports[aa]) free(imports[aa]);\" (cscommon.cpp:140-143) and \"for(aa=0;aa<numexports;aa++) free(exports[aa]);\" (cscommon.cpp:145-146, no null check in source either -- matches this build's unconditional free exactly); then zeroes numimports@+0x984/numexports@+0x1C48 and returns. Called from load_room (already matched) right at the start, passed RoomStruct.compiled_script@+0x39F8 -- matches source's role as the ccScript destructor called before loading a new room's own compiled script. This build's version stops immediately after the exports loop, with NO third loop over numSections/sectionNames and no free(imports)/free(exports)/free(export_addr) calls for the ar" "rays themselves (cscommon.cpp:148-167) -- confirms ccScript.imports[600]/e", 1);
 	set_frame_size(0X42A4DB, 0X4, 4, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X42A620,0X42A7D3);
 	set_func_flags(0X42A620,0x5410);
 	SetType(0X42A620, "void __stdcall dump_instruction(unsigned int *codeptr, int cps, int spp);");
@@ -159162,10 +159170,6 @@ static Functions_9(void) {
 	define_local_var(0X42A620, 0X42A7D3, "[bp+0X8]", "codeptr");
 	define_local_var(0X42A620, 0X42A7D3, "[bp+0XC]", "cps");
 	define_local_var(0X42A620, 0X42A7D3, "[bp+0X10]", "spp");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X42A7D3,0X42A885);
 	set_func_flags(0X42A7D3,0x5410);
 	SetType(0X42A7D3, "int __stdcall SystemImports__add(char *Str2, int, int);");
@@ -159668,6 +159672,10 @@ static Functions_10(void) {
 	set_func_flags(0X433E20,0x5410);
 	set_func_cmt(0X433E20,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: fixed fixdiv(fixed x,fixed y) (also aliased as `fdiv`, alcompat.h:47) -- Allegro's public 16.16 fixed-point division. Matches the well-known algorithm exactly: takes absolute values of both operands (tracking sign via an XOR-parity counter), does the shifted `(x<<16)/y` division, calls an overflow handler on overflow (returning 0x7FFFFFFF), then reapplies the sign. Reached via a thin forwarding trampoline (sub_433DC8, left unnamed/undocumented as a compiler-generated stub) called from calculate_move_stage (already matched) matching source's own `fixdiv(xdist,xdist+ydist)`/`fdiv(ydist,xdist)` call sites (the same underlying function, since `fdiv` is just `fixdiv`'s own alias). THIRD-PARTY LIBRARY BOUNDARY, not chased further (its own overflow-handler callee, sub_433E70, not chased).", 1);
 	set_frame_size(0X433E20, 0XC, 4, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X433E70,0X433E80);
 	set_func_flags(0X433E70,0x5410);
 	set_frame_size(0X433E70, 0, 4, 0);
@@ -159679,10 +159687,6 @@ static Functions_10(void) {
 	set_func_flags(0X433EA0,0x5410);
 	set_func_cmt(0X433EA0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl\nconfidence: high\nevidence: fixed fixsin(fixed x) { return _cos_tbl[((x-0x400000+0x4000)>>15)&0x1FF]; } (fmaths.inl:199-202, aliased as `fsin`, alcompat.h:51) -- a complete, exact, zero-drift match: `(arg_0-0x3FC000)>>15 & 0x1FF` -- and `0x400000-0x4000=0x3FC000` exactly, confirming the combined-constant matches source's own two-step subtraction precisely, indexing the same already-identified `_cos_tbl[512]` (dword_4BE1F4). Reached via a thin forwarding trampoline (sub_433DEE, left unnamed) called from calculate_move_stage (already matched) matching source's own `fsin(angl)` call. THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X433EA0, 0, 4, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X433EC0,0X433EE5);
 	set_func_flags(0X433EC0,0x15410);
 	SetType(0X433EC0, "wxRichToolTip *__thiscall wxRichToolTip__wxRichToolTip(wxRichToolTip *this, const wxString *title, const wxString *message);");
@@ -160369,6 +160373,10 @@ static Functions_11(void) {
 	set_func_flags(0X444560,0x15400);
 	set_func_cmt(0X444560,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
 	set_frame_size(0X444560, 0X28, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X4447F0,0X444A0C);
 	set_func_flags(0X4447F0,0x15400);
 	set_func_cmt(0X4447F0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
@@ -160386,10 +160394,6 @@ static Functions_11(void) {
 	set_func_flags(0X444AF0,0x5400);
 	set_func_cmt(0X444AF0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library, int play_sample(const SAMPLE *spl, int vol, int pan, int freq, int loop) -- well-known third-party API. Called from sub_408556 (this round's new match, my_load_wave, with (sample,voll,128,1000,loop) -- an exact argument match: pan=128=PAN_CENTER, freq=1000=Allegro's 'normal speed' sentinel) and from PlayMusic (already matched). Body is a decisive, complete match to Allegro's real implementation: calls the already-matched `allocate_voice` first (exact linker-symbol match), returns early if negative (matching 'if (v<0) return v;'), then calls voice-volume/voice-pan helpers (sub_445260/sub_445560), a freq==1000 special case ('cmp eax,3E8h; jnz...') exactly matching source's 'if (freq==1000) voice_set_frequency(v,spl->freq); else {scaled}', where the else-branch computes the scaled frequency via a classic MSVC divide-by-1000 reciprocal-multiplication magic constant (0x10624DD3) -- exactly matching '(spl->f" "req * freq) / 1000' -- then a loop!=0 boolean feeding a playmode helper (sub_4451A", 1);
 	set_frame_size(0X444AF0, 0X8, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X444B80,0X444BFE);
 	set_func_flags(0X444B80,0x5400);
 	set_func_cmt(0X444B80,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: void adjust_sample(AL_CONST SAMPLE*spl,int vol,int pan,int freq,int loop) (sound.c:1224-1238) -- a complete, exact, zero-drift match. `for(c=0;c<VIRTUAL_VOICES;c++) if(virt_voice[c].sample==spl) { voice_set_volume(c,vol); voice_set_pan(c,pan); voice_set_frequency(c,absolute_freq(freq,spl)); voice_set_playmode(c,loop?PLAYMODE_LOOP:PLAYMODE_PLAY); return; }` matches the disassembly's own search loop over the already-established `virt_voice[]` array (dword_550040, 20-byte stride) and its calls into the already-matched `voice_set_volume`/`voice_set_pan`/`voice_set_playmode` exactly. Called from update_music_volume (already matched, this build's own MP3-branch helper sub_408356 -- see its own entry) and from sub_47E7A0 (previously characterized, tentatively, as 'plausibly ALMP3's own volume/pan/speed/loop adjustment entry point' -- this new call site is worth revisiting in a future round, since a call into Alleg" "ro's own SAMPLE-based `adjust_sample` is inconsistent with sub_47E7A0 being purely an ALMP3-in", 1);
@@ -161686,6 +161690,10 @@ static Functions_12(void) {
 	SetType(0X4615F0, "int __cdecl sub_4615F0(void *, int);");
 	set_frame_size(0X4615F0, 0X18, 0, 0);
 	define_local_var(0X4615F0, 0X4618D6, "[bp-0X8]", "Block");
+}
+
+static Functions_13(void) {
+
 	add_func    (0X461920,0X46197C);
 	set_func_flags(0X461920,0x5400);
 	SetType(0X461920, "int __cdecl sub_461920(int, int, size_t Size);");
@@ -161757,10 +161765,6 @@ static Functions_12(void) {
 	set_func_flags(0X463940,0x15400);
 	set_func_cmt(0X463940,	"[reversing] confirmed match\nconfidence: high\nevidence: Confirmed as Allegro's own datafile (.dat) object-fixup routine via its own internal dispatch on Allegro's well-known 4-byte object-type tag constants (0x424D5020=\"BMP \"/DAT_BITMAP, 0x524C4520=\"RLE \"/DAT_RLE_SPRITE, and presumably others further in -- not individually enumerated). A large (772-line) third-party library function; per this project's scope rule, not chased further -- a ScummVM reimplementation replaces Allegro's whole datafile-loading system wholesale, and this project's own earlier survey work already established Rob Blanc 1 doesn't use Allegro .dat files for its own game assets (it uses the CLIB format instead, see csetlib's own entry) -- this function is plausibly linked in but unused, or used only for a minor internal Allegro resource.", 1);
 	set_frame_size(0X463940, 0X18, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X464020,0X4640CA);
 	set_func_flags(0X464020,0x5410);
 	set_frame_size(0X464020, 0, 4, 0);
@@ -163060,6 +163064,10 @@ static Functions_13(void) {
 	set_func_flags(0X47DA80,0x5400);
 	set_func_cmt(0X47DA80,	"[reversing] confirmed match\nsource: Engine/libsrc/jgmod/load_jgm.c\nconfidence: high\nevidence: JGMOD *load_jgm(JGMOD_FILE *f) -- JGMOD's own native-format loader, taking an ALREADY-OPEN file handle (not a filename) per source's own load_mod() body: 'f=jgmod_fopen(filename,\"rb\"); j=load_jgm(f); jgmod_fclose(f);' -- matching load_mod's own call sequence exactly (called immediately after jgmod_fopen, before the file is closed). Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
 	set_frame_size(0X47DA80, 0X20, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X47E220,0X47E251);
 	set_func_flags(0X47E220,0x5400);
 	set_frame_size(0X47E220, 0, 0, 0);
@@ -163080,10 +163088,6 @@ static Functions_13(void) {
 	set_func_flags(0X47E730,0x5400);
 	set_func_cmt(0X47E730,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: static int almp3_get_big_endian(unsigned char *p) { int x; x=*p; x<<=8; x|=*(p+1); x<<=8; x|=*(p+2); x<<=8; x|=*(p+3); return x; } at almp3.c:147-154 -- Allegro MP3 library's own big-endian 32-bit reader, used to parse an mp3's Xing VBR header. DECISIVE match: found via almp3_create_mp3's own Xing-header-parsing block (already matched) -- the disassembly checks the 'Xing' magic string, then calls this function once unconditionally for `xing_header->flags`, and conditionally up to 3 more times gated on bits 1/2/8 of that flags value (matching source's own XING_FRAMES_FLAG/XING_BYTES_FLAG/XING_VBR_SCALE_FLAG exactly), with bit 4 (XING_TOC_FLAG) handled as a raw 100-byte copy loop with NO function call -- matching source's own `for(j=0;j<100;j++,p++) mp3->xing_header->toc[j]=*p;` exactly (no almp3_get_big_endian call for the TOC bytes, since they're single bytes not big-endian dwords). Found via the newly-added " "ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47E730, 0, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X47E760,0X47E799);
 	set_func_flags(0X47E760,0x5400);
 	SetType(0X47E760, "int __cdecl almp3_destroy_mp3(void *Block);");
@@ -164935,6 +164939,10 @@ static Functions_14(void) {
 	add_func    (0X4A0F10,0X4A0F24);
 	set_func_flags(0X4A0F10,0x5400);
 	set_frame_size(0X4A0F10, 0, 0, 0);
+}
+
+static Functions_15(void) {
+
 	add_func    (0X4A0F30,0X4A0FCF);
 	set_func_flags(0X4A0F30,0x5400);
 	set_frame_size(0X4A0F30, 0X8, 0, 0);
@@ -165039,10 +165047,6 @@ static Functions_14(void) {
 	add_func    (0X4A3150,0X4A3450);
 	set_func_flags(0X4A3150,0x5400);
 	set_frame_size(0X4A3150, 0X38, 0, 0);
-}
-
-static Functions_15(void) {
-
 	add_func    (0X4A3450,0X4A347E);
 	set_func_flags(0X4A3450,0x5400);
 	set_frame_size(0X4A3450, 0X4, 0, 0);

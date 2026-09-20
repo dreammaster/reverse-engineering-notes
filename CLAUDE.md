@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 1022 named, 1564 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 1024 named, 1562 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5295,6 +5295,24 @@ disassembly work.
   identically to a genuine first-time rename, worth remembering so a
   future session doesn't mistake a long "OK ... renamed" log for 30
   fresh discoveries when checking a log like this one.
+- **`GUIButton::MouseOver`/`MouseLeave` close its vtable completely,
+  and confirm the full 9-slot `GUIObject` virtual-method order.**
+  Cross-referencing `GUIObject`'s own declared virtual-method order
+  (`Common/acgui.h:137-155`: `MouseMove`/`MouseOver`/`MouseLeave`/
+  `MouseDown`/`MouseUp`/`KeyPress`/`Draw`/`WriteToFile`/`ReadFromFile`)
+  against the already-confirmed 9-slot pure-virtual base vtable pins
+  down every class's own slot order exactly. `sub_4240B0`/`sub_4240F0`
+  (`GUIButton`'s own slots 1/2) match `acgui.h:581-595`'s `MouseOver`/
+  `MouseLeave` word for word, reusing every already-confirmed `pic`/
+  `overpic`/`pushedpic`/`usepic`/`ispushed`/`isover` field. `GUIButton`
+  is the ONLY one of the six derived classes with real, non-trivial
+  `MouseOver`/`MouseLeave` implementations -- every sibling class's
+  equivalent slots point to one shared, FLIRT-mislabeled no-op stub
+  (`unknown_libname_3`), matching the already-established "trivial
+  method bodies get linker-folded into one shared stub" pattern.
+  2011's later `IsOverControl`/`Resized`/`GetNumEvents`/`GetEventName`/
+  `GetEventArgs` virtual-method additions are CONFIRMED ABSENT from
+  every one of these vtables' shape itself, not merely unused.
 
 ## Third-party library identification (Task #10)
 

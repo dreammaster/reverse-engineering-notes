@@ -2530,14 +2530,14 @@
   "is_named": true
  },
  {
-  "name": "sub_4240B0",
+  "name": "GUIButton__MouseOver",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4240F0",
+  "name": "GUIButton__MouseLeave",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIButton__MouseDown",
