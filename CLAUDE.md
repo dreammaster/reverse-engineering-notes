@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 1024 named, 1562 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 1029 named, 1557 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5332,6 +5332,35 @@ disassembly work.
   rather than `GUIObject::GUIObject()` doing it once -- consistent with
   that shared base constructor's own observed minimal body (just the
   vtable write).
+- **The CRT's own pre-`main()` static-initializer table walked
+  systematically, finding 5 more global-object constructors.** Rather
+  than stumbling into these one at a time, grepped the whole `.data`
+  segment for the initializer table itself and traced every still-
+  unexplored entry. `ExecutingScript::ExecutingScript` is a thin
+  wrapper around the already-known `init()`, and its own construction
+  site is a `vector_constructor_iterator(dword_4CC848, 0x6C(108), 0xA
+  (10), ...)` -- a THIRD independent confirmation of `ExecutingScript`'s
+  own 108-byte total size, and the first confirmation that `scripts[]`
+  itself holds exactly 10 slots. `SystemImports::SystemImports` (on the
+  global `simp`) closes `numimports`@+0xE10 -- the first field offset
+  ever confirmed for this struct beyond its own methods' role-level
+  behavior. `RoomStatus::RoomStatus` (on the global fallback dummy
+  instance) reconfirms `beenhere`/`numobj`/`tsdatasize`/`tsdata` a
+  fourth independent way. `GameSetup::GameSetup` (on `usetup`) confirms
+  `digicard`/`midicard`@+0x00/+0x04 via Allegro's own `DIGI_AUTODETECT`/
+  `MIDI_AUTODETECT`=-1 sentinel, though the remaining six fields'
+  exact offset mapping stays unconfirmed pending further evidence --
+  and confirms `usetup_base_width`/`usetup_base_height` (from the
+  `PlayFlic` round) are genuinely SEPARATE standalone globals, not
+  fields of this same object, the "2002 standalone, 2011 consolidated"
+  pattern running in the less-common direction. Finally, `game_
+  gamename` turns out to BE `GameSetupStructBase`'s own base address
+  (its first field, `gamename`, is why IDA auto-named it that) --
+  tracing its own 3-layer constructor chain to `sub_424830` finds TWO
+  MORE independent, hard-allocation-size confirmations of
+  `iface[10]`@+0x534 and `mcurs[10]`@+0x2544, and names `MouseCursor`'s
+  own default constructor (`pic`=2054, `hotx`/`hoty`=0, `view`=-1, all
+  matching already-confirmed offsets exactly).
 
 ## Third-party library identification (Task #10)
 

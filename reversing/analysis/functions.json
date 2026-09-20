@@ -2695,24 +2695,24 @@
   "is_named": true
  },
  {
-  "name": "sub_4248F0",
+  "name": "MouseCursor__MouseCursor",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424930",
+  "name": "RoomStatus__RoomStatus",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424970",
+  "name": "GameSetup__GameSetup",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4249E0",
+  "name": "ExecutingScript__ExecutingScript",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "ExecutingScript__init",
@@ -3425,9 +3425,9 @@
   "is_named": true
  },
  {
-  "name": "sub_42C640",
+  "name": "SystemImports__SystemImports",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_42C660",

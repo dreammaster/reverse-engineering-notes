@@ -9055,5 +9055,85 @@
     "confidence": "high",
     "is_library": false,
     "evidence": "GUIListBox::GUIListBox()'s own constructor-continuation. Sets nine fields: `[+0x1BC]=0, [+0x1C0]=0, [+0x1C]=0, [+0x1B0]=0, [+0x1B8]=0, [+0x1B4]=0, [+0x1CC]=0, [+0x1D0]=0, [+0x1D4]=7`. DECISIVE, zero-drift positional match: with `items[100]` already confirmed as a plain 4-byte-stride array starting at +0x20 (400 bytes, `saveGameIndex[]` confirmed absent), 2011's own declared field order right after items[]/saveGameIndex[] -- `int numItems, selected, topItem, mousexp, mouseyp; int rowheight, num_items_fit; int font, textcol, backcol, exflags;` (acgui.h:388-390) -- lands EXACTLY on the reset offsets in sequence: numItems@+0x1B0=0, selected@+0x1B4=0, topItem@+0x1B8=0, mousexp@+0x1BC=0, mouseyp@+0x1C0=0, [gap: rowheight@+0x1C4/num_items_fit@+0x1C8 not reset here], font@+0x1CC=0, textcol@+0x1D0=0, backcol@+0x1D4=7 (a REAL non-zero default -- GUIListBox's own initial background color, not previously confirmed). Also resets `activated`@+0x1C=0 (GUIObject's own inherited field, same per-derived-class-reset pattern already seen in GUISlider). NEW FIELD EVIDENCE: confirms numItems/selected/topItem/mousexp/mouseyp/font/textcol/backcol's exact offsets for the first time, all with zero drift from 2011's declared order. `exflags`/`selectedbgcol`/`alignment`/`reserved1` are not reset here -- consistent with `exflags`'s own already-confirmed unused bits and `selectedbgcol`/`alignment` being confirmed-never-read from `GUIListBox::Draw`'s own earlier round. Left unnamed, same reasoning as sub_424160."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4249E0",
+    "new_name": "ExecutingScript__ExecutingScript",
+    "source_file": "Common/acruntim.h",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "ExecutingScript's own default constructor -- a thin wrapper calling the already-matched ExecutingScript::init() directly (ecx=this). Found by tracing the CRT static-initializer table (.data:004B4030's own entry, sub_40823D->sub_408247) to its own vector-constructor-iterator call: `push offset sub_4249E0; push 0xA(10); push 0x6C(108); push offset dword_4CC848; call vector_constructor_iterator` -- CONSTRUCTING dword_4CC848 (the already-confirmed base address of `ExecutingScript scripts[]`, pinned down in an earlier round via cancel_all_scripts) as a genuine 10-element, 108-byte-stride array. This is a DECISIVE, independent THIRD confirmation of ExecutingScript's own total size (already established at exactly 0x6C/108 bytes from zero-gap field mapping) via a hard allocation-size anchor for the first time, and confirms `scripts[]`'s own capacity is exactly 10 slots (previously only inferred from usage, never directly confirmed by a construction-site literal)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42C640",
+    "new_name": "SystemImports__SystemImports",
+    "source_file": "Common/cscommon.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "SystemImports's own default constructor, found by tracing the CRT static-initializer table (.data:004B4034's own entry, sub_42AA6F->sub_42AA79->sub_42C640) called on `&simp` (the already-confirmed global SystemImports object). Body: a single `[this+0xE10]=0` write. NEW FIELD EVIDENCE: this is SystemImports's own `numimports`-style entry counter, confirmed at +0xE10 for the first time -- previously this struct's own internal layout (beyond its already-matched `add`/`get_index_of`/`is_script_import` methods' role-level behavior) had no confirmed field offsets at all."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424930",
+    "new_name": "RoomStatus__RoomStatus",
+    "source_file": "Engine/AC.CPP",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "RoomStatus's own default constructor, for the global dummy fallback instance `dword_4EF3A0` (already confirmed via load_new_room's own out-of-range-room fallback: 'mov dword_523128, offset dword_4EF3A0'). Found by tracing the CRT static-initializer table (.data:004B4024's own entry, sub_4081ED->sub_4081F7->sub_424930). DECISIVE match: `[this+0]=0, [this+4]=0, [this+0x168]=0, [this+0x16C]=0` lands exactly on RoomStatus's own four already-confirmed scalar fields -- beenhere@+0x00, numobj@+0x04, tsdatasize@+0x168, tsdata@+0x16C -- a FOURTH independent confirmation of each, this time from the write side of a genuine default constructor. The struct's own large array fields (obj[]/hscond[]/objcond[]/misccond/flagstates[]/walkbehind_base[]) are left uninitialized by this constructor, consistent with this build's simple design (no per-array default-value convention needed for raw scratch memory)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424970",
+    "new_name": "GameSetup__GameSetup",
+    "source_file": "Common/acruntim.h",
+    "source_line": 247,
+    "confidence": "medium-high",
+    "is_library": false,
+    "evidence": "GameSetup's own default constructor, for the global `usetup` object (already known via `usetup_digicard`/`usetup_base_width`/`usetup_base_height`, though those last two turn out to be standalone globals NOT touched by this constructor -- see below). Found by tracing the CRT static-initializer table (.data:004B4028's own entry, sub_408206->sub_408210->sub_424970). DECISIVE identity match via the leading two fields: `[this+0]=-1, [this+4]=-1` matches source's own `digicard=DIGI_AUTODETECT; midicard=MIDI_AUTODETECT;` (acruntim.h:248) exactly -- Allegro's own DIGI_AUTODETECT/MIDI_AUTODETECT sentinel value is literally -1. The remaining six writes (`[+8]=0, [+0xC]=1, [+0x14]=1, [+0x18]=0, [+0x1C]=0, [+0x20](byte)=0, [+0x21](byte)=0, [+0x24]=0`) plausibly correspond to `mod_player`/`textheight`/`mp3_player`/`want_letterbox`/`windowed`/`no_speech_pack`/`enable_antialiasing`/`force_hicolor_mode` in some order matching the TWO fields set to 1 (mod_player/mp3_player, both source-declared =1) and the rest to 0 -- but the exact offset-to-field mapping beyond digicard/midicard is NOT independently confirmed this round (this build's own field order may differ from 2011's declared one, per this project's usual caution). `base_width`/`base_height` are NOT set by this constructor at all -- consistent with `usetup_base_width`/`usetup_base_height` (already established from the PlayFlic investigation) being genuinely separate, standalone globals in this build rather than fields of this same GameSetup object -- matching the well-established 'later AGS versions consolidate several independent 2002 globals into one struct' pattern, just in the OPPOSITE direction observed here (2002 standalone, 2011 consolidated)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4247F0",
+    "new_name": null,
+    "source_file": "Common/acroom.h",
+    "source_line": 2769,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "Part of GameSetupStructBase's (this build's own confirmed OriGameSetupStruct-lineage global 'game' object's) own constructor chain -- found while tracing the CRT static-initializer table's `game_gamename`-rooted entry (.data:004B4020, sub_4081D4->sub_4081DE->sub_4247F0->sub_424810->sub_424830). `game_gamename` turns out to be this struct's own base address (gamename@+0x00 is its first field, so IDA auto-named the global after that field, not a separate object) -- a thin wrapper, one level of several, forwarding `this` down to sub_424810/sub_424830. Left unnamed (part of one logical constructor split across several compiler-generated thunks, not itself a distinct 2011 method) -- see sub_424830's own entry for the decisive field evidence."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424810",
+    "new_name": null,
+    "source_file": "Common/acroom.h",
+    "source_line": 2769,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "A further thin forwarding link in GameSetupStructBase's own constructor chain (sub_4247F0 -> sub_424810 -> sub_424830). Left unnamed, same reasoning as sub_4247F0."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424830",
+    "new_name": null,
+    "source_file": "Common/acroom.h",
+    "source_line": 2769,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "The real body of GameSetupStructBase's own constructor (reached via sub_4247F0/sub_424810's own thin forwarding). DECISIVE, independent THIRD/FOURTH confirmation of two already-fully-mapped array fields via hard allocation-size anchors: `vector_constructor_iterator(this+0x534, 0x334(820), 0xA(10), InterfaceElement::InterfaceElement)` -- landing exactly on the already-confirmed `iface[10]`@+0x534 (this build's own InterfaceElement array, whose own 820-byte stride is independently consistent with its already-mapped header fields plus `button[MAXBUTTON=20]` at 36 bytes each) -- and `vector_constructor_iterator(this+0x2544, 0x18(24), 0xA(10), sub_4248F0)` -- landing exactly on the already-confirmed `mcurs[10]`@+0x2544 (this build's own MouseCursor array, 24-byte stride, zero drift from the already-confirmed total). Identifies sub_4248F0 as MouseCursor's own default constructor (see its own entry). Left unnamed -- this function itself, despite doing the real construction work, has no distinct 2011 name of its own beyond 'GameSetupStructBase's constructor', which the OVERALL chain (sub_4247F0/424810/424830) collectively represents; no single one of the three is individually nameable."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4248F0",
+    "new_name": "MouseCursor__MouseCursor",
+    "source_file": "Common/acroom.h",
+    "source_line": null,
+    "confidence": "medium-high",
+    "is_library": false,
+    "evidence": "MouseCursor's own default constructor, identified as the per-element callback for `mcurs[10]`'s own construction (see GameSetupStructBase's own constructor entry, sub_424830). `[this+0]=0x806(2054)` matches `pic`@+0x00 (a specific default cursor sprite number). `[this+8]=0xFFFF` matches `view`@+0x08 as a SHORT set to -1 ('no animation view assigned', this build's own already-established convention). `[this+4]=0, [this+6]=0` match `hotx`@+0x04/`hoty`@+0x06 (both shorts) reset to 0. `[this+0xA](byte)=0` plausibly `flags`@+0x0A. `[this+0x14](byte)=0` falls inside the already-confirmed `name[10]` buffer's own byte range -- plausibly a partial clear/null-terminator rather than a distinctly-named field. pic/hotx/hoty/view all confirmed at HIGH confidence via exact offset match to already-established fields; the two byte-writes are lower confidence."
   }
 ]
