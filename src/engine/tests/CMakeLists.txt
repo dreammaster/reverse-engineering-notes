@@ -10,3 +10,9 @@ target_link_libraries(test_struct_sizes PRIVATE agsengine)
 # the original evidence directly, not just each struct's total size.
 add_executable(test_field_offsets test_field_offsets.c)
 target_link_libraries(test_field_offsets PRIVATE agsengine)
+
+# M1 (src/PLAN.md): the CLIB manifest reader. Output format matches
+# reversing/scripts/parse_clib_manifest.py's own exactly, for a direct
+# diff against that already-verified Python prototype.
+add_executable(test_clib_manifest test_clib_manifest.c)
+target_link_libraries(test_clib_manifest PRIVATE agsengine)
