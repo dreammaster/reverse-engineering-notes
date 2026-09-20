@@ -29,3 +29,11 @@ target_link_libraries(test_gamesetup PRIVATE agsengine)
 # dump_characters_from_data.py's own (corrected) output.
 add_executable(test_characters test_characters.c)
 target_link_libraries(test_characters PRIVATE agsengine)
+
+# M4 (src/PLAN.md): "Run the interpreter on nothing" -- reads the real
+# compiled global script (ags_cc_read_script), creates an instance, and
+# calls its game_start() export through the real 38-opcode VM
+# (ags/interp.h), logging every native call the script makes via
+# AGS_STUB.
+add_executable(test_interpreter test_interpreter.c)
+target_link_libraries(test_interpreter PRIVATE agsengine)

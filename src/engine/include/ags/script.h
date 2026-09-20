@@ -14,6 +14,16 @@
 
 #include "ags/types.h"
 
+/* This build's own confirmed fixed capacity for ccScript.imports[]/
+ * exports[]/export_addr[] (a genuine 2002 limit, not a later addition
+ * 2011 removed -- see the struct's own comment below). Named here
+ * purely for clarity in code that iterates these arrays; the struct
+ * layout itself is already locked in and offsetof()-verified (Step 0)
+ * with the literal 600 below, so these macros don't change anything
+ * about the byte layout. */
+#define AGS_CC_MAX_IMPORTS 600
+#define AGS_CC_MAX_EXPORTS 600
+
 /* ccScript -- one compiled script "module" (the global script, a
  * room script, or a dialog script), as loaded by fread_script. This
  * build fixes what 2011 keeps as separately-malloc'd dynamic arrays

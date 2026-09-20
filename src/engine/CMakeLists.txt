@@ -2,12 +2,17 @@
 # strategy. Step 0: struct headers only, no behavior -- see
 # include/ags/*.h. stub.c is the AGS_STUB()/AGS_STUB_VOID() logging
 # convention every later milestone's not-yet-implemented functions
-# use. M1 (src/PLAN.md): clib.c, the CLIB asset-library reader.
+# use. M1 (src/PLAN.md): clib.c, the CLIB asset-library reader. M4:
+# script_loader.c (a real, decoding fread_script port) + interp.c
+# (ccCreateInstanceEx/ccCallInstance/cc_run_code, the 38-opcode
+# script VM).
 
 add_library(agsengine STATIC
   src/stub.c
   src/clib.c
   src/loader.c
+  src/script_loader.c
+  src/interp.c
 )
 
 target_include_directories(agsengine PUBLIC
