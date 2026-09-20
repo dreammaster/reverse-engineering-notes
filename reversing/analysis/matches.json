@@ -9005,5 +9005,55 @@
     "confidence": "high",
     "is_library": false,
     "evidence": "GUIButton::MouseLeave() at acgui.h:591-595: 'usepic=pic; isover=0;'. DECISIVE, exact match -- slot 2 of GUIButton's vtable (off_4AD4A0), found alongside MouseOver (this round's own sibling match): `[this+0x60](usepic)=[this+0x54](pic); [this+0x68](isover)=0;` matches exactly. Closes GUIButton's own vtable completely -- all 9 slots now individually confirmed (MouseMove/MouseOver/MouseLeave/MouseDown/MouseUp/KeyPress/Draw/WriteToFile/ReadFromFile), the only one of the six GUIObject-derived classes with REAL, non-trivial implementations of MouseOver/MouseLeave -- every sibling class's own equivalent slots point to a single shared no-op stub (FLIRT-mislabeled `unknown_libname_3`, matching this project's own established 'trivial method bodies get linker-folded into one shared stub' pattern, e.g. MyLabel/MyTextBox's own `pressedon()`), confirming 2011's GUIObject base itself doesn't declare these pure-virtual in this build (a class with an unimplemented pure virtual couldn't be instantiated) -- they default to a shared no-op instead."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424160",
+    "new_name": null,
+    "source_file": "Common/acgui.h",
+    "source_line": 562,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUIButton::GUIButton()'s own constructor-continuation, called immediately after the vtable patch (see GUIButton::GUIButton's own entry). Resets pic/overpic/pushedpic/usepic(-1), ispushed/isover(0), and text[0]=0, matching GUIButton::ReadFromFile's own already-confirmed field list exactly. Left unnamed -- part of one logical constructor the compiler split in two, not a separate 2011 method."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424220",
+    "new_name": null,
+    "source_file": "Common/acgui.h",
+    "source_line": 284,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUILabel::GUILabel()'s own constructor-continuation (same pattern as GUIButton's sub_424160, this round's own sibling match). Sets `[this+0xE8]=0, [this+0xEC]=0, [this+0xF0]=0, [this+0x20](byte)=0` -- matching 2011's own declared field order exactly: `int font, textcol, align;` (acgui.h:290) as three consecutive dwords, plus `text[0]=0` (this build's fixed inline text buffer, not source's dynamic `char*`). NEW FIELD EVIDENCE: confirms `GUILabel.font`@+0xE8, `.textcol`@+0xEC, `.align`@+0xF0 -- the first direct confirmation of `align`'s own offset (previously only referenced by role, e.g. GUIListBox's own confirmed-absent-alignment-check round used the word 'alignment' generically). Left unnamed, same reasoning as sub_424160."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4243C0",
+    "new_name": null,
+    "source_file": "Common/acgui.h",
+    "source_line": 214,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUISlider::GUISlider()'s own constructor-continuation. Sets `[this+0x20]=0, [this+0x24]=10, [this+0x28]=0, [this+0x1C]=0`. Matches 2011's declared field order `int min, max; int value,mpressed;` (acgui.h:216-217) for the first three (min@+0x20=0, max@+0x24=10 -- a real non-zero default, GUISlider's own initial range ceiling, not previously confirmed -- value@+0x28=0), and additionally resets GUIObject's own inherited `activated`@+0x1C=0 (a base-class field each derived constructor resets individually in this build rather than GUIObject::GUIObject() itself doing it, consistent with that shared base constructor's own observed minimal body). `mpressed`/`handlepic`/`handleoffset`/`bgimage` are not reset here -- CONFIRMED ABSENT or left to another init path; `handlepic`/`bgimage`/`handleoffset` custom-graphic support was already independently confirmed absent from `GUISlider::Draw`. Left unnamed, same reasoning as sub_424160."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424430",
+    "new_name": null,
+    "source_file": "Common/acgui.h",
+    "source_line": 337,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUITextBox::GUITextBox()'s own constructor-continuation. Sets `[this+0xE8]=0, [this+0xEC]=0, [this+0x20](byte)=0` -- the same `font`/`textcol` positions as GUILabel (this round's own sibling match, both classes sharing font@+0xE8/textcol@+0xEC positionally), plus `text[0]=0` for this build's own fixed inline text buffer. Left unnamed, same reasoning as sub_424160."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4244D0",
+    "new_name": null,
+    "source_file": "Common/acgui.h",
+    "source_line": 384,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUIListBox::GUIListBox()'s own constructor-continuation. Sets nine fields: `[+0x1BC]=0, [+0x1C0]=0, [+0x1C]=0, [+0x1B0]=0, [+0x1B8]=0, [+0x1B4]=0, [+0x1CC]=0, [+0x1D0]=0, [+0x1D4]=7`. DECISIVE, zero-drift positional match: with `items[100]` already confirmed as a plain 4-byte-stride array starting at +0x20 (400 bytes, `saveGameIndex[]` confirmed absent), 2011's own declared field order right after items[]/saveGameIndex[] -- `int numItems, selected, topItem, mousexp, mouseyp; int rowheight, num_items_fit; int font, textcol, backcol, exflags;` (acgui.h:388-390) -- lands EXACTLY on the reset offsets in sequence: numItems@+0x1B0=0, selected@+0x1B4=0, topItem@+0x1B8=0, mousexp@+0x1BC=0, mouseyp@+0x1C0=0, [gap: rowheight@+0x1C4/num_items_fit@+0x1C8 not reset here], font@+0x1CC=0, textcol@+0x1D0=0, backcol@+0x1D4=7 (a REAL non-zero default -- GUIListBox's own initial background color, not previously confirmed). Also resets `activated`@+0x1C=0 (GUIObject's own inherited field, same per-derived-class-reset pattern already seen in GUISlider). NEW FIELD EVIDENCE: confirms numItems/selected/topItem/mousexp/mouseyp/font/textcol/backcol's exact offsets for the first time, all with zero drift from 2011's declared order. `exflags`/`selectedbgcol`/`alignment`/`reserved1` are not reset here -- consistent with `exflags`'s own already-confirmed unused bits and `selectedbgcol`/`alignment` being confirmed-never-read from `GUIListBox::Draw`'s own earlier round. Left unnamed, same reasoning as sub_424160."
   }
 ]

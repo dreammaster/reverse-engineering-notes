@@ -5313,6 +5313,25 @@ disassembly work.
   2011's later `IsOverControl`/`Resized`/`GetNumEvents`/`GetEventName`/
   `GetEventArgs` virtual-method additions are CONFIRMED ABSENT from
   every one of these vtables' shape itself, not merely unused.
+- **Each remaining GUIObject-derived class's own constructor-
+  continuation helper found and documented (left unnamed, matching
+  `GUIButton`'s own `sub_424160` precedent).** Found via a callee sweep
+  from the six newly-matched constructors. `GUILabel`'s
+  (`sub_424220`) confirms `font`@+0xE8/`textcol`@+0xEC/`align`@+0xF0 as
+  three consecutive dwords, matching `Common/acgui.h:290`'s declared
+  order exactly -- the first direct confirmation of `align`'s own
+  offset. `GUISlider`'s (`sub_4243C0`) confirms `min`@+0x20=0/`max`
+  @+0x24=10(a real non-zero default)/`value`@+0x28=0. `GUITextBox`'s
+  (`sub_424430`) confirms the same `font`/`textcol` positions as
+  `GUILabel`. `GUIListBox`'s (`sub_4244D0`, the richest of the four)
+  closes `numItems`/`selected`/`topItem`/`mousexp`/`mouseyp`/`font`/
+  `textcol`/`backcol`'s exact offsets with zero drift from 2011's own
+  declared order, plus `backcol`'s real default value (7, not zero).
+  A recurring, minor architectural note: each derived class resets
+  `GUIObject`'s own inherited `activated`@+0x1C field individually
+  rather than `GUIObject::GUIObject()` doing it once -- consistent with
+  that shared base constructor's own observed minimal body (just the
+  vtable write).
 
 ## Third-party library identification (Task #10)
 
