@@ -150,14 +150,14 @@
   "is_named": true
  },
  {
-  "name": "sub_402B7F",
+  "name": "cpackbitl",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_402CF6",
+  "name": "csavecompressed",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "cunpackbitl",

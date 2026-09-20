@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 994 named, 1592 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 996 named, 1590 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5114,6 +5114,26 @@ disassembly work.
   left over from an earlier round's own tentative guess, superseded by
   round 343's decisive `almp3_seek_abs_msecs_mp3` match but never
   removed.
+- **`cpackbitl`/`csavecompressed` close the RLE-compression subsystem's
+  write side, completing the pair with the already-matched
+  `cunpackbitl`/`loadcompressed_allegro`.** Same size-ranking sweep, one
+  candidate down the list. `sub_402B7F` is a complete, instruction-for-
+  instruction match to `cpackbitl(unsigned char*,int,FILE*)`
+  (`Common/compress.cpp:63-97`) -- the classic PackBits run/literal
+  encoder, right down to the literal `126`(0x7E) max-run-length constant
+  and the negative-count-means-run/positive-count-means-literal
+  convention `cunpackbitl` already established from the read side.
+  `sub_402CF6` is `csavecompressed(char*,__block,color[256],long)`
+  (`compress.cpp:172-213`) -- header write, the per-row `cpackbitl` call
+  loop, the trailing 256-entry RGB palette write, all matching exactly
+  (this build calls plain `fopen`, not source's `ci_fopen` -- yet
+  another confirmation of that function's total absence, not a new
+  finding). CALLER IDENTIFIED, same boundary-less-function gap as
+  `mloadwcursor`/`mnewcursor`/`mfreemem`: `savecompressed_allegro`
+  (`Common/acroom.h:1424-1437`), sitting as bare `.text` code right
+  after `load_lzw`'s own `endp` with no `proc`/`endp` of its own --
+  documented in `matches.json` evidence for a human to define later.
+  Genuinely AGS-owned code throughout, not third-party.
 
 ## Third-party library identification (Task #10)
 
