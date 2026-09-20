@@ -5342,10 +5342,15 @@ disassembly work.
   (10), ...)` -- a THIRD independent confirmation of `ExecutingScript`'s
   own 108-byte total size, and the first confirmation that `scripts[]`
   itself holds exactly 10 slots. `SystemImports::SystemImports` (on the
-  global `simp`) closes `numimports`@+0xE10 -- the first field offset
-  ever confirmed for this struct beyond its own methods' role-level
-  behavior. `RoomStatus::RoomStatus` (on the global fallback dummy
-  instance) reconfirms `beenhere`/`numobj`/`tsdatasize`/`tsdata` a
+  global `simp`) reconfirms `numimports`@+0xE10 from its own write side
+  -- SELF-CORRECTION: an earlier draft of this bullet claimed this was
+  the first-ever confirmation of that offset, but `SystemImports::add`/
+  `get_index_of`/`get_addr_of` (all already matched) had independently
+  established it well before this round; this is a further, roughly
+  fifth confirmation, not a fresh discovery -- caught and fixed in
+  `matches.json` directly. `RoomStatus::RoomStatus` (on the global
+  fallback dummy instance) reconfirms `beenhere`/`numobj`/`tsdatasize`/
+  `tsdata` a
   fourth independent way. `GameSetup::GameSetup` (on `usetup`) confirms
   `digicard`/`midicard`@+0x00/+0x04 via Allegro's own `DIGI_AUTODETECT`/
   `MIDI_AUTODETECT`=-1 sentinel, though the remaining six fields'

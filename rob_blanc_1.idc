@@ -159318,7 +159318,7 @@ static Functions_10(void) {
 	define_local_var(0X42C337, 0X42C639, "[bp+0X8]", "Stream");
 	add_func    (0X42C640,0X42C65B);
 	set_func_flags(0X42C640,0x5410);
-	set_func_cmt(0X42C640,	"[reversing] confirmed match\nsource: Common/cscommon.cpp\nconfidence: high\nevidence: SystemImports's own default constructor, found by tracing the CRT static-initializer table (.data:004B4034's own entry, sub_42AA6F->sub_42AA79->sub_42C640) called on `&simp` (the already-confirmed global SystemImports object). Body: a single `[this+0xE10]=0` write. NEW FIELD EVIDENCE: this is SystemImports's own `numimports`-style entry counter, confirmed at +0xE10 for the first time -- previously this struct's own internal layout (beyond its already-matched `add`/`get_index_of`/`is_script_import` methods' role-level behavior) had no confirmed field offsets at all.", 1);
+	set_func_cmt(0X42C640,	"[reversing] confirmed match\nsource: Common/cscommon.cpp\nconfidence: high\nevidence: SystemImports's own default constructor, found by tracing the CRT static-initializer table (.data:004B4034's own entry, sub_42AA6F->sub_42AA79->sub_42C640) called on `&simp` (the already-confirmed global SystemImports object). Body: a single `[this+0xE10]=0` write. SELF-CORRECTION: this offset was NOT actually a first-time discovery -- SystemImports::add/get_index_of/get_addr_of (all already matched) had already independently confirmed numimports@+0xE10 (alongside name[400]@0/addr[400]@0x640/isScriptImp[400]@0xC80) well before this round. This constructor write is still a genuine, further (roughly fifth) independent confirmation of that same offset, just from the write side of a real default constructor rather than a fresh discovery -- corrected here rather than left as an overclaim.", 1);
 	set_frame_size(0X42C640, 0X4, 4, 0);
 	add_func    (0X42C660,0X42C67A);
 	set_func_flags(0X42C660,0x5410);
@@ -159628,14 +159628,14 @@ static Functions_10(void) {
 	set_func_flags(0X432459,0x5410);
 	set_func_cmt(0X432459,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int try_this_square(int srcx,int srcy,int tox,int toy) (routefnd.cpp:292-401) -- a decisive match on its own opening two guard checks: `if(beenhere[srcy][srcx]&0x80) return 0;` matches the disassembly's own bit-0x80 test on a `beenhere`-array read exactly, and `if(nesting>7000) return 0;` matches the disassembly's own literal `cmp dword_536C28,0x1B58(7000); jle <continue>` exactly, identifying `nesting`=dword_536C28. Called from __find_route (already matched) as the fallback path AFTER find_route_dijkstra fails, matching source's own call order exactly. A recursive function (its own `try_again:` direction-retry loop, per source, includes a path that calls itself again -- matching the disassembly's own self-referencing CODE XREF). Not traced past the header given its size and the decisive match already in hand.", 1);
 	set_frame_size(0X432459, 0X20, 4, 0);
-	add_func    (0X432796,0X4328A4);
-	set_func_flags(0X432796,0x5410);
-	set_func_cmt(0X432796,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void round_down_coords(int&tmpx,int&tmpy) (routefnd.cpp:402-423) -- a decisive, complete match. `int startgran=walk_area_granularity[_getpixel(wallscreen,tmpx,tmpy)];` matches the disassembly's own call into the already-matched Allegro 8-bit `_getpixel` fast path (sub_425490) followed by `dword_535900[eax*4]`, newly identifying that global as `walk_area_granularity[]`. `tmpy=tmpy-tmpy%startgran; if(tmpy<0) tmpy=0;` matches the disassembly's own `idiv`/subtract-remainder/clamp-to-zero sequence exactly (and the same shape repeats for `tmpx`, read past this excerpt). Called TWICE from find_route_dijkstra (already matched), matching source's own two calls exactly (once on the start point, once on a temporary copy of the destination point).", 1);
-	set_frame_size(0X432796, 0X4, 4, 0);
 }
 
 static Functions_11(void) {
 
+	add_func    (0X432796,0X4328A4);
+	set_func_flags(0X432796,0x5410);
+	set_func_cmt(0X432796,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void round_down_coords(int&tmpx,int&tmpy) (routefnd.cpp:402-423) -- a decisive, complete match. `int startgran=walk_area_granularity[_getpixel(wallscreen,tmpx,tmpy)];` matches the disassembly's own call into the already-matched Allegro 8-bit `_getpixel` fast path (sub_425490) followed by `dword_535900[eax*4]`, newly identifying that global as `walk_area_granularity[]`. `tmpy=tmpy-tmpy%startgran; if(tmpy<0) tmpy=0;` matches the disassembly's own `idiv`/subtract-remainder/clamp-to-zero sequence exactly (and the same shape repeats for `tmpx`, read past this excerpt). Called TWICE from find_route_dijkstra (already matched), matching source's own two calls exactly (once on the start point, once on a temporary copy of the destination point).", 1);
+	set_frame_size(0X432796, 0X4, 4, 0);
 	add_func    (0X4328A4,0X43358C);
 	set_func_flags(0X4328A4,0x5410);
 	set_func_cmt(0X4328A4,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int find_route_dijkstra(int fromx,int fromy,int destx,int desty) (routefnd.cpp:425-606) -- a decisive header match, genuinely AGS-owned pathfinding code (not a third-party library). `if(leftorright==1) return 0;` matches the disassembly's own `cmp dword_536C24,1; jnz <continue>; xor eax,eax; return;` exactly, confirming `leftorright`=dword_536C24. The following `for(i=0;i<wallscreen->h;i++) memset(&beenhere[i][0],0xff,wallscreen->w*BEENHERE_SIZE);` matches the disassembly's own loop (bound=`[wallscreen+4]`, `memset(dword_535948[i*4],0xFF,[wallscreen]*2)`) exactly, confirming `BEENHERE_SIZE=2` via the literal `shl ecx,1`. Called from __find_route (already matched) BEFORE the newly-matched try_this_square (sub_432459), matching source's own call order exactly (`else if(find_route_dijkstra(...)) return 1; ... try_this_square(...)`). This is a substantial (~885-line) Dijkstra-based pathfinding search implementing its own malloc'd " "`parent[]`/`visited[]` arrays and a granularity-based grid search -- not t", 1);
@@ -160234,6 +160234,10 @@ static Functions_11(void) {
 	set_func_flags(0X43D620,0x15400);
 	set_func_cmt(0X43D620,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:gfx.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:gfx.obj", 1);
 	set_frame_size(0X43D620, 0X18, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X43DA00,0X43DAD9);
 	set_func_flags(0X43DA00,0x5400);
 	set_frame_size(0X43DA00, 0X10, 0, 0);
@@ -160257,10 +160261,6 @@ static Functions_11(void) {
 	set_func_flags(0X43E590,0x15400);
 	set_func_cmt(0X43E590,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:polygon.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:polygon.obj", 1);
 	set_frame_size(0X43E590, 0X1C, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X43E7D0,0X43E853);
 	set_func_flags(0X43E7D0,0x5400);
 	set_func_cmt(0X43E7D0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library API function. Called from RawDrawTriangle (already matched) with 8 arguments (bitmap,x1,y1,x2,y2,x3,y3,color) -- an exact match to Allegro's own triangle() signature (declared in libsrc/allegro-4.2.2/include/allegro/draw.h) and to 2011's own call, \"triangle(thisroom.ebscene[play.bg_frame],x1,y1,x2,y2,x3,y3,play.raw_color);\" (AC.CPP:14601). Third-party library boundary call, not chased into Allegro's own internals per this project's scope rule.", 1);
@@ -161454,6 +161454,10 @@ static Functions_12(void) {
 	add_func    (0X456B20,0X456B28);
 	set_func_flags(0X456B20,0x5400);
 	set_frame_size(0X456B20, 0, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X456B30,0X456B9B);
 	set_func_flags(0X456B30,0x5400);
 	set_frame_size(0X456B30, 0X400, 0, 0);
@@ -161489,10 +161493,6 @@ static Functions_12(void) {
 	set_func_flags(0X4577C0,0x5400);
 	set_func_cmt(0X4577C0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:mouse.obj\nconfidence: high\nevidence: Allegro library function, confirmed via refmap_symbols.json exact match (_position_mouse, alleg_s_crt:mouse.obj). Called from msetgraphpos (matched above), matching Common/MOUSEW32.CPP:256 exactly.", 1);
 	set_frame_size(0X4577C0, 0X4, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X457850,0X4578A9);
 	set_func_flags(0X457850,0x5400);
 	set_func_cmt(0X457850,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:mouse.obj\nconfidence: high\nevidence: Allegro library function, confirmed via refmap_symbols.json exact match (_set_mouse_range, alleg_s_crt:mouse.obj). Called from mgraphconfine (matched above), matching Common/MOUSEW32.CPP:84 exactly.", 1);
@@ -163005,6 +163005,10 @@ static Functions_13(void) {
 	set_func_cmt(0X47C520,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-5 (XM) LOADER in the load_mod (already matched) cascade -- called immediately after sub_47C4C0's own magic-string check passes (\"sub_47C4C0(check)/sub_47C520(load) for XM\", per load_mod's own evidence text, formalized as its own entry here). A large (~1200-line) function doing the actual XM-format parse/load (pattern data, instrument/sample tables, etc.) -- per this project's own third-party-library scope rule, this is exactly the kind of library-internal parsing logic a ScummVM reimplementation would replace wholesale with its own XM loader, so it is not traced further than confirming its role as the check-then-load pair's LOAD half. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: JGMOD *load_xm(char *filename, int start_offset) -- confirmed via call-order position (load_mod's own 3rd cascade branch) and the alre" "ady-independently-confirmed ~0x558-byte JGMOD-", 1);
 	set_frame_size(0X47C520, 0X448, 0, 0);
 	define_local_var(0X47C520, 0X47D1C0, "[bp-0X420]", "Block");
+}
+
+static Functions_14(void) {
+
 	add_func    (0X47D1C0,0X47D3FA);
 	set_func_flags(0X47D1C0,0x5400);
 	set_frame_size(0X47D1C0, 0X8, 0, 0);
@@ -163012,10 +163016,6 @@ static Functions_13(void) {
 	set_func_flags(0X47D400,0x5400);
 	set_func_cmt(0X47D400,	"[reversing] confirmed match\nconfidence: medium\nevidence: JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C41E4, bytes C1 83 2A 9E, NOT printable ASCII -- identical to a constant checked first in sub_47C360, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"IMPM\" (aImpm) -- an IT-format-adjacent check, but structurally different from sub_47D4D0's simple fixed-offset IT check (this one returns a position/index rather than a boolean, used by the caller as an argument to the load function rather than a plain yes/no gate -- possibly indexing into a multi-module container or archive format). MEDIUM confidence: the IT-adjacent role is clear, but the leading 4-byte constant's purpose and the returned-index semantics are not resolved. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name agains" "t. See reversing/notes/third-party-library-ident", 1);
 	set_frame_size(0X47D400, 0X10, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X47D4D0,0X47D521);
 	set_func_flags(0X47D4D0,0x5400);
 	set_func_cmt(0X47D4D0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-2 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes, compares against the matched string \"IMPM\" (aImpm_0) -- the standard Impulse Tracker (.it) file format magic signature. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md. RENAMED: int detect_it(char *filename) -- confirmed exact match to source's own opens \"rb\", reads 4 bytes, memcmp \"IMPM\". Found via the newly-added JGMOD source tree (Engine/libsrc/jgmod/), confirmed via matching call ORDER: load_mod's own already-matched body calls this same sequence of functions in the EXACT order source's real load_mod() (mod.c:159-214) calls detect_jgm/detect_it/detect_xm/detect_s3m/detect_m31/detect_unreal_it/detect_unreal_xm/detect_unreal_s3m/detect_m15 and their paired load_* functions -- branch for branch, with zero reordering.", 1);
@@ -164403,6 +164403,10 @@ static Functions_14(void) {
 	add_func    (0X497340,0X49742B);
 	set_func_flags(0X497340,0x5400);
 	set_frame_size(0X497340, 0XC, 0, 0);
+}
+
+static Functions_15(void) {
+
 	add_func    (0X497430,0X49765C);
 	set_func_flags(0X497430,0x5400);
 	SetType(0X497430, "int __cdecl sub_497430(void *, int);");
@@ -164468,10 +164472,6 @@ static Functions_14(void) {
 	add_func    (0X498E80,0X498F03);
 	set_func_flags(0X498E80,0x5400);
 	set_frame_size(0X498E80, 0, 0, 0);
-}
-
-static Functions_15(void) {
-
 	add_func    (0X498F90,0X4990C4);
 	set_func_flags(0X498F90,0x5400);
 	set_frame_size(0X498F90, 0X10, 0, 0);

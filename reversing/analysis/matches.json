@@ -9074,7 +9074,7 @@
     "source_line": null,
     "confidence": "high",
     "is_library": false,
-    "evidence": "SystemImports's own default constructor, found by tracing the CRT static-initializer table (.data:004B4034's own entry, sub_42AA6F->sub_42AA79->sub_42C640) called on `&simp` (the already-confirmed global SystemImports object). Body: a single `[this+0xE10]=0` write. NEW FIELD EVIDENCE: this is SystemImports's own `numimports`-style entry counter, confirmed at +0xE10 for the first time -- previously this struct's own internal layout (beyond its already-matched `add`/`get_index_of`/`is_script_import` methods' role-level behavior) had no confirmed field offsets at all."
+    "evidence": "SystemImports's own default constructor, found by tracing the CRT static-initializer table (.data:004B4034's own entry, sub_42AA6F->sub_42AA79->sub_42C640) called on `&simp` (the already-confirmed global SystemImports object). Body: a single `[this+0xE10]=0` write. SELF-CORRECTION: this offset was NOT actually a first-time discovery -- SystemImports::add/get_index_of/get_addr_of (all already matched) had already independently confirmed numimports@+0xE10 (alongside name[400]@0/addr[400]@0x640/isScriptImp[400]@0xC80) well before this round. This constructor write is still a genuine, further (roughly fifth) independent confirmation of that same offset, just from the write side of a real default constructor rather than a fresh discovery -- corrected here rather than left as an overclaim."
   },
   {
     "kind": "manual",
