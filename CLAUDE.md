@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 996 named, 1590 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 998 named, 1588 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5156,6 +5156,24 @@ disassembly work.
   CONFIRMED-PRESENT feature (this build implements it correctly),
   unlike most of this project's other version-dated findings which
   confirm a later feature's absence.
+- **`bestfit_color`/`bestfit_init` named; a bitmap-palette-remap utility
+  characterized but left unnamed.** Continuing the size-ranked sweep.
+  `sub_439B40`/`sub_439BF0` are Allegro's own public `bestfit_color`/
+  `bestfit_init` (`Engine/libsrc/allegro-4.0.2/src/color.c:271-323`) --
+  decisive matches including the white/mask-color special case and the
+  squared-distance lookup tables (split into three 128-entry arrays here
+  vs. source's one 384-entry array, a harmless layout difference).
+  THIRD-PARTY LIBRARY BOUNDARY. Their caller, `sub_401FF8`, builds a
+  256-entry `bestfit_color` translation table from a source palette
+  against a target palette, then remaps an entire `BITMAP`'s pixels
+  through it via `getpixel`/`putpixel` -- sitting in the low address
+  range right next to `wloadsprites`/the sprite-file-writer, AGS's own
+  bitmap/palette utility neighborhood, not the deep third-party ranges.
+  No 2011/Allegro source counterpart found despite a targeted search;
+  its own caller has zero other callers found via direct CODE XREF and
+  sits beside three no-op stub functions, consistent with the whole
+  cluster being reachable only through an indirect function-pointer
+  table not yet located -- left unnamed, documented for a future round.
 
 ## Third-party library identification (Task #10)
 

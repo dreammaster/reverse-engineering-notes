@@ -4290,14 +4290,14 @@
   "is_named": false
  },
  {
-  "name": "sub_439B40",
+  "name": "bestfit_color",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_439BF0",
+  "name": "bestfit_init",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_439C60",
