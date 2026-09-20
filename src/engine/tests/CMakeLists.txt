@@ -16,3 +16,9 @@ target_link_libraries(test_field_offsets PRIVATE agsengine)
 # diff against that already-verified Python prototype.
 add_executable(test_clib_manifest test_clib_manifest.c)
 target_link_libraries(test_clib_manifest PRIVATE agsengine)
+
+# M2 (src/PLAN.md): the ac2game.dta header + GameSetupStructBase
+# loader. Field list matches reversing/scripts/
+# dump_gamesetup_from_data.py's own for a direct comparison.
+add_executable(test_gamesetup test_gamesetup.c)
+target_link_libraries(test_gamesetup PRIVATE agsengine)

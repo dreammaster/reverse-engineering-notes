@@ -7,6 +7,7 @@
 add_library(agsengine STATIC
   src/stub.c
   src/clib.c
+  src/loader.c
 )
 
 target_include_directories(agsengine PUBLIC
