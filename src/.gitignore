@@ -1,0 +1,13 @@
+# CMake build output (regenerate with the commands in CMakeLists.txt /
+# cmake/toolchain-mingw32.cmake -- not checked in).
+/build/
+
+# Smoke-test runtime artifact.
+smoketest.log
+
+# Generic build byproducts, in case anything is ever built in-tree.
+*.o
+*.obj
+*.a
+*.exe
+*.log
