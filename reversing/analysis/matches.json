@@ -8675,5 +8675,105 @@
     "confidence": "high",
     "is_library": false,
     "evidence": "SpriteCache::SpriteCache(long maxElements) at sprcache.cpp:46-54, fused with init()/changeMaxSize() (lines 56-85) into one flat function -- this build's constructor never separates them. DECISIVE, over-determined match: found via a size-ranked sweep of large unnamed AGS-side functions, called (this+arg_0=0x1771=6001) from sub_408229 with `ecx=offset spriteset` (the already-known global SpriteCache instance) -- '6001' matches MAX_SPRITES=6000+1 exactly, the same capacity already independently confirmed via GameSetupStructBase.spriteflags[6000]'s own bounds check. Every field write lands EXACTLY on an already-established SpriteCache offset from this project's own prior rounds (loadSprite/removeOldest/set entries): `[this+0]`=calloc->`offsets[]`@+0x00, `[this+8]`=calloc->`images[]`@+0x08, `[this+0x14]`=calloc->`mrulist[]`@+0x14, `[this+0x18]`=calloc->`mrubacklink[]`@+0x18 (all four zero-slack matches to already-confirmed offsets), `[this+0x10]`=0 matches `cachesize=0;`@+0x10 (already established), `[this+0x1C]`=-1 matches `liststart=-1;`@+0x1C (already established), `[this+0x24]`=-2 matches `lastLoad=-2;`@+0x24 (already established). TWO NEW FIELDS closed by this same match: `[this+0xC]`=0 is `lockedSize`@+0x0C (source's `lockedSize=0;`, sitting exactly between `elements`@+0x04 and `cachesize`@+0x10 with the expected 2-field gap), and `[this+0x20]`=-1 is `listend`@+0x20 (source's `listend=-1;`, matching `removeOldest`'s own earlier DRIFT#2 text -- 'source's if(liststart==listend)' -- which had already named the FIELD's ROLE without its offset). `[this+4]`=arg_0(6001) is `elements`@+0x04. `[this+0x28]`=a literal 5,000,000 (0x4C4B40, IDA auto-labeled as `offset unk_4C4B40` since the raw immediate value happens to coincide with a valid in-image address -- the same 'numeric constant misread as a pointer' artifact already seen with the TTF tag string and `recalced`) is `maxCacheSize`@+0x28, matching source's `maxCacheSize=DEFAULTCACHESIZE;` in ROLE, but a REAL DRIFT in VALUE: this build's own default cache size is 5,000,000 bytes (~4.77MB), a clean 4.048x reduction from 2011's own declared `#define DEFAULTCACHESIZE 20240000` (~19.3MB) -- the familiar smaller-capacity pattern, here applied to a byte budget rather than an element count. Only 4 callocs appear (offsets/images/mrulist/mrubacklink), not source's 6 -- a FOURTH independent confirmation that `sizes[]`/`flags[]` (and by extension `spritesAreCompressed`) are genuinely absent from this build's SpriteCache, joining the three confirmations already on record from `loadSprite`'s own round. Source's `ff=NULL;`/`sprite0InitialOffset=0;`/`spritesAreCompressed=false;` constructor-body assignments are likewise silently absent -- a further confirmation route (not a new finding) for those already-established absences. CALLER CHAIN: sub_408229 (a thin 1-line wrapper hardcoding the 6001/spriteset arguments) is itself called from sub_40821F, which is registered directly in a CRT static-initializer pointer table (DATA XREF from .data:004B402C) -- the exact same pre-main()-construction pattern already found for the global `rstruc` object's own dynamic initializer. Neither wrapper has a clean 2011 name to adopt (they're compiler-generated global-object-construction plumbing, not source-level functions); left unnamed, documented here for the record."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_403239",
+    "new_name": "WordsDictionary__find_index",
+    "source_file": "Common/acroom.h",
+    "source_line": 951,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "int WordsDictionary::find_index(const char *wrem) at acroom.h:951-958: 'for(aa=0;aa<num_words;aa++) if(stricmp(wrem,word[aa])==0) return aa; return -1;'. DECISIVE, zero-drift, instruction-for-instruction match: found via a size-ranked sweep of large unnamed AGS-side functions. `[this+0]`=num_words (the loop bound), `[this+4+i*0x1E]`=word[i] (the already-established 30-byte-stride word array, matching MAX_PARSER_WORD_LENGTH's own confirmed 30-byte capacity), _stricmp against the String1 argument, returning the matching index or -1 -- exactly source's own body, a genuine C++ class method this build compiles as a plain thiscall. A SECOND, functionally-identical implementation of the same lookup already exists as the free function `find_word_in_dictionary` (already matched, reads the global `dict` pointer directly rather than taking `this` as a parameter) -- this build has two separate call sites doing the same linear stricmp scan, one through the free function and one through this genuine WordsDictionary method, the same 'more than one implementation of the same lookup' pattern already seen elsewhere in this project (e.g. find_nearest_walkable_area vs. is_route_possible's own private search). CALLER IDENTIFIED (no 2011 counterpart -- WordsDictionary's own struct declaration at acroom.h:341 has no remove-by-name method at all, only allocate_memory/free_memory/sort/find_index): a boundary-less function immediately following this one in .text calls find_index, and on a successful match (index>=0) decrements num_words, then shifts every LATER entry down by one slot in BOTH the word[] name array (via strcpy) and the wordnum[] short array (already confirmed at +0xAFCC/+0xAFCE) -- a genuine 'remove this word from the dictionary' operation this 2002 build supports that 2011's own declared class interface has since dropped entirely. Same boundary-less-function tooling gap as mloadwcursor/savecompressed_allegro -- left undocumented as its own matches.json entry pending a human-defined IDA boundary, recorded here for the record instead."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_423FD0",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "WordsDictionary's own word-insertion primitive: sub_423FD0(this, char *Source, short arg_4) checks `this->num_words>=1500` (the MAX_PARSER_WORD_LENGTH-adjacent capacity already confirmed for this build's fixed WordsDictionary blob) and returns -1 if full; otherwise `strcpy(word[num_words],Source)` (the already-established 30-byte-stride word[] array at +4), `wordnum[num_words]=arg_4` (the already-established wordnum[] short array at +0xAFCC), increments num_words, and returns the index just used. Found via a size-ranked sweep, called from a boundary-less wrapper (immediately preceding this function in .text) that first scans every existing wordnum[] entry to find the smallest category number NOT already in use (a classic 'assign this new word its own unique synonym-group' algorithm), then calls this function with that freshly-computed category. 2011's own WordsDictionary struct declaration (acroom.h:341) only declares allocate_memory/free_memory/sort/find_index -- no add-word method of any name exists there, so this pair (and its own caller, not yet traced further) is plausibly a 2002-only runtime feature (e.g. auto-registering room/object names as new parser vocabulary) that 2011 dropped entirely, matching this project's now-repeated pattern of finding richer pre-refactor functionality in this build's own text-parser subsystem (mirroring the already-found remove-by-name method). Left unnamed for lack of a 2011 identifier; the function itself has a real IDA boundary and could be renamed if a fitting name is ever adopted."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "WordsDictionary__sort_wrapper",
+    "new_name": null,
+    "source_file": "Common/acroom.h",
+    "source_line": 931,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "WordsDictionary::sort() at acroom.h:931-949 -- DECISIVE, complete, instruction-for-instruction match found immediately after sub_423FD0 (this round's own new find) while tracing the surrounding boundary-less functions. Outer/inner loop bounds (aa/bb over num_words), the swap condition '((wordnum[aa]==wordnum[bb])&&(stricmp(word[aa],word[bb])>0)) || (wordnum[aa]>wordnum[bb])', the 3-way strcpy shuffle through a 30-byte stack temp buffer, the wordnum[] swap via a 2-byte temp, and the trailing 'bb=aa;' restart-inner-loop step all match source exactly, zero drift. GENUINE TOOLING GAP: this function (like mloadwcursor/savecompressed_allegro/WordsDictionary's own remove-by-name method) has NO formal IDA function boundary (bare .text code, no proc/endp) -- documented here under a synthetic asm_name (this address has no real IDA-visible label to key a normal entry off of) pending a human manually defining the function so apply_matches.py can push the real rename. Address: immediately follows sub_423FD0's own caller wrapper, both sitting between fgetstring's endp and WordsDictionary::find_index's own proc header in the disassembly's address order."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424B50",
+    "new_name": "MYMP3__poll",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 185,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYMP3::poll() at acsound.cpp:185-210. Found via off_4AD5B4, MYMP3's own vtable (its address is written into `this->vtable` inside the already-matched MYMP3::MYMP3() constructor) -- a size-ranked sweep candidate that turned out to be a real vtable slot rather than third-party internals. DECISIVE, complete match, pinning down MYMP3's exact field layout for the first time (previously only relative order/24-byte total size was confirmed): calls sub_47F2A0([this+8]) comparing the result to the literal 1 -- matching almp3.h's own `#define ALMP3_POLL_PLAYJUSTFINISHED 1` exactly, confirming sub_47F2A0=`almp3_poll_mp3stream` and `stream`@+0x08 (right after the inherited SOUNDCLIP base's vtable@0/done@4, this build's own already-confirmed minimal 8-byte SOUNDCLIP) -- setting `done`@+0x04=1 on a match. Then, gated on `done==0`, calls sub_47F5B0(stream) (tempbuf=almp3_get_mp3stream_buffer(stream)), checks `chunksize@+0x14 > in->todo` (`in`@+0x0C, `todo`@+0x10 of the already-confirmed PACKFILE layout) clamping chunksize down and setting a free_val flag exactly matching source's `if(chunksize>in->todo){chunksize=in->todo; free_val=chunksize;}`, then `pack_fread(tempbuf,chunksize,in)` and `sub_47F5E0(stream,free_val)` (almp3_free_mp3stream_buffer) -- both exact 2/3-arg matches to source's own two calls. This build's own compiled order differs slightly from source's textual layout (poll_mp3stream is called BEFORE the buffer-refill block here, not after) and the `paused` check is CONFIRMED ABSENT (consistent with this build's minimal SOUNDCLIP base having no `paused` field at all) -- a real, minor structural drift, not a misidentification. Closes `MYMP3` field layout completely: vtable@0, done@4, stream@8, in@0xC, buffer@0x10, chunksize@0x14 -- sizeof(MYMP3)==0x18(24), matching the already-confirmed total exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424C50",
+    "new_name": "MYMP3__destroy",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 225,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYMP3::destroy() at acsound.cpp:225-238. DECISIVE, complete, essentially instruction-for-instruction match, found via the same off_4AD5B4 (MYMP3's vtable) sweep as MYMP3::poll (this round's own sibling match). `if(!done) almp3_stop_mp3stream(stream);` matches `cmp [this+4],0; jnz <skip>; call sub_47F250([this+8])` exactly, confirming sub_47F250=`almp3_stop_mp3stream`. `almp3_destroy_mp3stream(stream);` (unconditional) matches `call sub_47F0D0([this+8])` exactly, confirming sub_47F0D0=`almp3_destroy_mp3stream`. `if(buffer!=NULL) free(buffer); buffer=NULL;` matches `cmp [this+0x10],0; jz <skip>; call free([this+0x10]); ...; [this+0x10]=0` exactly, a THIRD independent confirmation of `buffer`@+0x10 (after poll's own two routes). `pack_fclose(in);` matches `call pack_fclose([this+0xC])` exactly, a further confirmation of `in`@+0xC. Together with MYMP3::poll, closes every field of MYMP3 with zero remaining ambiguity."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F2A0",
+    "new_name": "almp3_poll_mp3stream",
+    "source_file": "Engine/libsrc/almp3-2.0.5/include/almp3.h",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "ALMP3's public almp3_poll_mp3stream(ALMP3_MP3STREAM*) -- identified via MYMP3::poll's own decisive call (comparing the return value against the literal 1, matching almp3.h's `#define ALMP3_POLL_PLAYJUSTFINISHED 1` exactly). THIRD-PARTY LIBRARY BOUNDARY, its own body not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F5B0",
+    "new_name": "almp3_get_mp3stream_buffer",
+    "source_file": "Engine/libsrc/almp3-2.0.5/include/almp3.h",
+    "source_line": 116,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void *almp3_get_mp3stream_buffer(ALMP3_MP3STREAM *mp3) at almp3.h:116 -- identified via MYMP3::poll's own 1-argument call (stream), whose result is checked for non-NULL before the chunksize-clamp/pack_fread/free_mp3stream_buffer sequence, matching source's `tempbuf=almp3_get_mp3stream_buffer(stream); if(tempbuf!=NULL){...}` exactly. THIRD-PARTY LIBRARY BOUNDARY."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F5E0",
+    "new_name": "almp3_free_mp3stream_buffer",
+    "source_file": "Engine/libsrc/almp3-2.0.5/include/almp3.h",
+    "source_line": 117,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_free_mp3stream_buffer(ALMP3_MP3STREAM *mp3, int bytes_used) at almp3.h:117 -- identified via MYMP3::poll's own exact 2-argument call (stream, free_val), matching source's `almp3_free_mp3stream_buffer(stream,free_val);` exactly. THIRD-PARTY LIBRARY BOUNDARY."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F250",
+    "new_name": "almp3_stop_mp3stream",
+    "source_file": "Engine/libsrc/almp3-2.0.5/include/almp3.h",
+    "source_line": 110,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_stop_mp3stream(ALMP3_MP3STREAM *mp3) at almp3.h:110 -- identified via MYMP3::destroy's own 1-argument, `!done`-gated call (stream), matching source's `if(!done) almp3_stop_mp3stream(stream);` exactly. THIRD-PARTY LIBRARY BOUNDARY."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F0D0",
+    "new_name": "almp3_destroy_mp3stream",
+    "source_file": "Engine/libsrc/almp3-2.0.5/include/almp3.h",
+    "source_line": 106,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_destroy_mp3stream(ALMP3_MP3STREAM *mp3) at almp3.h:106 -- identified via MYMP3::destroy's own unconditional 1-argument call (stream), matching source's `almp3_destroy_mp3stream(stream);` exactly. THIRD-PARTY LIBRARY BOUNDARY."
   }
 ]

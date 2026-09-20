@@ -175,9 +175,9 @@
   "is_named": true
  },
  {
-  "name": "sub_403239",
+  "name": "WordsDictionary__find_index",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "roomstruct__freemessage",
@@ -2750,9 +2750,9 @@
   "is_named": true
  },
  {
-  "name": "sub_424B50",
+  "name": "MYMP3__poll",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_424C00",
@@ -2760,9 +2760,9 @@
   "is_named": false
  },
  {
-  "name": "sub_424C50",
+  "name": "MYMP3__destroy",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "MYSTATICMP3__MYSTATICMP3",
@@ -8865,9 +8865,9 @@
   "is_named": true
  },
  {
-  "name": "sub_47F0D0",
+  "name": "almp3_destroy_mp3stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "almp3_play_mp3stream",
@@ -8885,24 +8885,24 @@
   "is_named": false
  },
  {
-  "name": "sub_47F250",
+  "name": "almp3_stop_mp3stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47F2A0",
+  "name": "almp3_poll_mp3stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47F5B0",
+  "name": "almp3_get_mp3stream_buffer",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_47F5E0",
+  "name": "almp3_free_mp3stream_buffer",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47F650",

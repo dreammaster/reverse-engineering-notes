@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 999 named, 1587 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 1007 named, 1579 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5200,6 +5200,40 @@ disassembly work.
   global-construction pattern already found for `rstruc`'s own
   initializer -- neither wrapper has a clean name to adopt, left
   unnamed.
+- **`WordsDictionary::find_index`/`sort` close, plus a genuine pre-refactor
+  word-insertion primitive with no 2011 name.** `sub_403239` is a "zero
+  drift" match to `WordsDictionary::find_index` (`Common/acroom.h:951`).
+  Immediately following it, a boundary-less function is `WordsDictionary
+  ::sort()` (`acroom.h:931`), matching source's swap condition and 3-way
+  strcpy shuffle exactly -- same no-`proc`/`endp` tooling gap as
+  `mloadwcursor`. A second boundary-less function nearby (before
+  `find_index`) computes the smallest word-category number NOT already
+  in use, then calls `sub_423FD0` -- a genuine `add_word`-style insertion
+  primitive (capacity-checked against the already-confirmed 1500-word
+  limit) that 2011's own struct declaration doesn't declare under any
+  name at all (only `allocate_memory`/`free_memory`/`sort`/`find_index`
+  survive to 2011) -- left unnamed, joining the already-found remove-by-
+  name method as further evidence of a richer 2002-era text-parser
+  dictionary-editing feature 2011 dropped.
+- **`MYMP3::poll`/`destroy` close, pinning down every `MYMP3` field
+  offset for the first time and naming 5 more ALMP3 boundary
+  functions.** Found via `off_4AD5B4`, `MYMP3`'s own vtable (already
+  known from its constructor). `sub_424B50`=`MYMP3::poll`
+  (`Engine/acsound.cpp:185`) confirms `stream`@+0x08, `in`@+0x0C,
+  `buffer`@+0x10, `chunksize`@+0x14 via its chunksize/`in->todo`-clamp
+  and `pack_fread` sequence, naming `almp3_poll_mp3stream`/`almp3_get_
+  mp3stream_buffer`/`almp3_free_mp3stream_buffer` along the way (matching
+  `ALMP3_POLL_PLAYJUSTFINISHED=1` with zero drift; the source-order-vs-
+  compiled-order difference and the confirmed-absent `paused` check are
+  both minor, already-expected drifts, not misidentifications).
+  `sub_424C50`=`MYMP3::destroy` (`acsound.cpp:225`) reconfirms `buffer`/
+  `in` from a second angle and names `almp3_stop_mp3stream`/`almp3_
+  destroy_mp3stream`. `MYMP3`'s full layout is now closed with zero
+  ambiguity: vtable@0, done@4, stream@8, in@0xC, buffer@0x10,
+  chunksize@0x14, sizeof==0x18. A second, unrelated vtable (`off_4AD4A4`,
+  touching a much larger ~0x7C-byte object) was found in the same
+  address neighborhood but its owning class/constructor wasn't located
+  this round -- left as an open lead.
 
 ## Third-party library identification (Task #10)
 
