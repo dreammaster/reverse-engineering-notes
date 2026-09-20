@@ -157044,6 +157044,7 @@ static Functions_4(void) {
 	define_local_var(0X4166DC, 0X416719, "[bp+0X10]", "subd");
 	add_func    (0X416719,0X4168C9);
 	set_func_flags(0X416719,0x5410);
+	set_func_cmt(0X416719,	"[reversing] confirmed match\nconfidence: high\nevidence: PlayFlic's own per-frame update callback, registered with Allegro's public play_fli(const char*,BITMAP*,int,int(*callback)(void)) -- found via a size-ranked sweep of large unnamed AGS-side functions, identified via its own DATA XREF from inside PlayFlic (already matched). No 2011 counterpart exists to compare against -- this whole FLI/FLC subsystem is already confirmed entirely absent from the 2011 reference build -- so left unnamed per this project's usual convention for functions with no 2011 identifier to adopt, but fully characterized here. Body, in order: (1) MP3-crossfade-continuation poll (calls the already-characterized sub_4084E0/sub_408392 pair, gated on the already-confirmed crossFading? global) -- a THIRD caller of both, reinforcing their existing characterization; (2) polls all three of this build's already-established single-channel audio systems the same way (null-check + vtable-slot-0 call) -- speech (dword_52321C=speechmp3), sound effect" "s (dword_523220), and ambient sound via the al", 1);
 	set_frame_size(0X416719, 0X4, 4, 0);
 	add_func    (0X4168C9,0X416B75);
 	set_func_flags(0X4168C9,0x5410);
@@ -157140,16 +157141,16 @@ static Functions_4(void) {
 	set_frame_size(0X417D60, 0X8, 4, 0X8);
 	define_local_var(0X417D60, 0X417E77, "[bp+0X8]", "aa");
 	define_local_var(0X417D60, 0X417E77, "[bp+0XC]", "mood");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X417E77,0X417ECD);
 	set_func_flags(0X417E77,0x5410);
 	set_func_cmt(0X417E77,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int check_click_on_object(int,int,int) at AC.CPP:16280-16285. Already correctly named in the live IDB (from an earlier ProcessClick round) but never given its own matches.json entry. A complete, exact, zero-drift match: \"aa=GetObjectAt(xx-divide_down_coordinate(offsetx),yy-divide_down_coordinate(offsety)); if(aa<0) return 0; RunObjectInteraction(aa,mood); return 1;\" -- both GetObjectAt and RunObjectInteraction already matched, divide_down_coordinate confirmed as an inlined division by current_screen_resolution_multiplier_x/y. Called from ProcessClick (already matched).", 1);
 	set_frame_size(0X417E77, 0X4, 4, 0);
 	define_local_var(0X417E77, 0X417ECD, "[bp-0X4]", "aa");
 	define_local_var(0X417E77, 0X417ECD, "[bp+0X10]", "mood");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X417ECD,0X4180B9);
 	set_func_flags(0X417ECD,0x5410);
 	set_func_cmt(0X417ECD,	"[reversing] confirmed match\nconfidence: high\nevidence: Unnamed internal helper, called from GetCharacterAt (already matched) -- finds which character (if any) is under a given screen pixel. Loops all characters, filtering each on: room@+0x0C == newnum (must be in current room), on@+0x13E != 0 (must be visible), !(flags@+0x20 & 4) (not CHF_NOINTERACT-style bit), view@+0x08 >= 0 (has an assigned view), then does pixel-precise hit-testing against the character's current sprite (view/loop/frame -> ViewStruct272/ViewFrame272 lookup, matching the same stride math confirmed elsewhere). NEW FIELD EVIDENCE: confirms CharacterInfo.on@+0x13E directly, matching 2011's declared OldCharacterInfo LAST field (Common/acroom.h:2620) in position and semantic role (\"is this character visible/clickable\") exactly. No living or dead-commented 2011 function declaration corresponds to this specific internal helper (2011's GetCharacterAt/get_character_at logic is structured differently) -- left unnamed rather than force an invented n" "ame. See reversing/notes/struct-layout-drift.m", 1);
@@ -157563,6 +157564,10 @@ static Functions_5(void) {
 	set_frame_size(0X41A201, 0X4, 4, 0X8);
 	define_local_var(0X41A201, 0X41A224, "[bp+0X8]", "guin");
 	define_local_var(0X41A201, 0X41A224, "[bp+0XC]", "objn");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41A224,0X41A25C);
 	set_func_flags(0X41A224,0x5410);
 	SetType(0X41A224, "void __stdcall ListBoxAdd(int guin, int objn, const char *newitem);");
@@ -157571,10 +157576,6 @@ static Functions_5(void) {
 	define_local_var(0X41A224, 0X41A25C, "[bp+0X8]", "guin");
 	define_local_var(0X41A224, 0X41A25C, "[bp+0XC]", "objn");
 	define_local_var(0X41A224, 0X41A25C, "[bp+0X10]", "Str");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41A25C,0X41A2A5);
 	set_func_flags(0X41A25C,0x5410);
 	SetType(0X41A25C, "int __stdcall ListBoxGetSelected(int guin, int objn);");
@@ -158003,15 +158004,15 @@ static Functions_6(void) {
 	set_frame_size(0X41C4BD, 0, 4, 0X8);
 	define_local_var(0X41C4BD, 0X41C4EF, "[bp+0X8]", "offsx");
 	define_local_var(0X41C4BD, 0X41C4EF, "[bp+0XC]", "offsy");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X41C4EF,0X41C4FD);
 	set_func_flags(0X41C4EF,0x5410);
 	SetType(0X41C4EF, "void ReleaseViewport(void);");
 	set_func_cmt(0X41C4EF,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a one-line exact match, \"word_4EF236=0;\" matching source's \"play.offsets_locked=0;\" exactly -- a FOURTH independent confirmation of GameState.offsets_locked.", 1);
 	set_frame_size(0X41C4EF, 0, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X41C4FD,0X41C50E);
 	set_func_flags(0X41C4FD,0x5410);
 	SetType(0X41C4FD, "int GetViewportX(void);");
@@ -158427,16 +158428,16 @@ static Functions_7(void) {
 	set_func_flags(0X424150,0x5414);
 	set_func_cmt(0X424150,	"Microsoft VisualC 2-14/net runtime\n\n[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIButton::KeyPress(int keycode) {} at acgui.h:606 -- empty inline body. Exact match: unknown_libname_2 does nothing but save `this` and return, with `retn 4` (1 int param). Vtable slot 5/+0x14, immediately before the already-matched Draw at slot 6/+0x18. Same FLIRT-mistag/COMDAT-folding situation as GUIButton__MouseMove above (also referenced from a second vtable location). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424150, 0X4, 4, 0X4);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X424160,0X4241E0);
 	set_func_flags(0X424160,0x5410);
 	set_frame_size(0X424160, 0X4, 4, 0);
 	add_func    (0X4241E0,0X424207);
 	set_func_flags(0X4241E0,0x5410);
 	set_frame_size(0X4241E0, 0X4, 4, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X424210,0X42421B);
 	set_func_flags(0X424210,0x5414);
 	set_func_cmt(0X424210,	"Microsoft VisualC 2-14/net runtime", 1);

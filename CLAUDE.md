@@ -5134,6 +5134,28 @@ disassembly work.
   after `load_lzw`'s own `endp` with no `proc`/`endp` of its own --
   documented in `matches.json` evidence for a human to define later.
   Genuinely AGS-owned code throughout, not third-party.
+- **`PlayFlic`'s own per-frame callback fully characterized (left
+  unnamed, no 2011 counterpart), decisively confirming its OPTIONS
+  parameter's exact encoding against AGS 2.3's own official manual.**
+  `sub_416719`, found via its own DATA XREF inside `PlayFlic` (already
+  matched), is the update callback Allegro's public `play_fli()` calls
+  once per frame: polls the already-established MP3-crossfade-
+  continuation pair and all three single-channel audio systems (speech/
+  sound/ambient, the same per-tick pattern already established for
+  `mainloop`/`FadeOut`), blits the current FLI frame (a new global,
+  `dword_4CD218`) either scaled (`stretch_blit`) or unscaled (`blit`)
+  depending on `dword_4B42EC`, then checks `dword_52340C` against 1/2
+  via keyboard (ESC)/`rec_mgetbutton()` (click) to decide whether to
+  return 1 (abort, matching `play_fli`'s own callback convention) or 0
+  (continue). `PlayFlic`'s own body computes `dword_52340C=arg_4%10`
+  and `dword_4B42EC=(arg_4<10)`, which — checked against AGS 2.3's
+  (January 2002) own manual entry (`ags-archives/ags230/DOCS/ags.txt`):
+  `"PlayFlic(int flic_number,int options) -- 0 can't skip, 1 ESC to
+  skip, 2 any key/click to skip; +10 do not stretch to full-screen"` —
+  matches the documented `OPTIONS` encoding with zero drift. A genuine
+  CONFIRMED-PRESENT feature (this build implements it correctly),
+  unlike most of this project's other version-dated findings which
+  confirm a later feature's absence.
 
 ## Third-party library identification (Task #10)
 
