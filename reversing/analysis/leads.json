@@ -143,44 +143,6 @@
   ],
   "evidence": [
    {
-    "label": "aTextCfg",
-    "text": "text.cfg",
-    "files": [
-     "Engine/libsrc/allegro-4.0.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c"
-    ]
-   },
-   {
-    "label": "aLanguage_3",
-    "text": "language",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/libsrc/allegro-4.0.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.0.2/src/config.c",
-     "Engine/libsrc/allegro-4.0.2/tools/textconv.c",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-    ]
-   },
-   {
-    "label": "aLanguage_2",
-    "text": "language",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/libsrc/allegro-4.0.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.0.2/src/config.c",
-     "Engine/libsrc/allegro-4.0.2/tools/textconv.c",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-    ]
-   },
-   {
     "label": "aSystem_2",
     "text": "system",
     "files": [
@@ -249,13 +211,18 @@
     ]
    },
    {
-    "label": "aLanguageDat",
-    "text": "language.dat",
+    "label": "aLanguage_3",
+    "text": "language",
     "files": [
+     "Engine/AC.CPP",
+     "Engine/ACWSETUP.CPP",
      "Engine/libsrc/allegro-4.0.2/setup/setup.c",
      "Engine/libsrc/allegro-4.0.2/src/config.c",
+     "Engine/libsrc/allegro-4.0.2/tools/textconv.c",
+     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
      "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c"
+     "Engine/libsrc/allegro-4.2.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
     ]
    },
    {
@@ -324,6 +291,39 @@
      "Engine/libsrc/allegro-4.2.2/tools/macosx/fixbundle.c",
      "Engine/libsrc/apeg-1.2.1/audio/readers.c",
      "Engine/libsrc/apeg-1.2.1/getbits.c"
+    ]
+   },
+   {
+    "label": "aLanguage_2",
+    "text": "language",
+    "files": [
+     "Engine/AC.CPP",
+     "Engine/ACWSETUP.CPP",
+     "Engine/libsrc/allegro-4.0.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.0.2/src/config.c",
+     "Engine/libsrc/allegro-4.0.2/tools/textconv.c",
+     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
+    ]
+   },
+   {
+    "label": "aLanguageDat",
+    "text": "language.dat",
+    "files": [
+     "Engine/libsrc/allegro-4.0.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.0.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c"
+    ]
+   },
+   {
+    "label": "aTextCfg",
+    "text": "text.cfg",
+    "files": [
+     "Engine/libsrc/allegro-4.0.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c"
     ]
    }
   ]
@@ -423,6 +423,38 @@
     ]
    },
    {
+    "label": "aDefaultCfg",
+    "text": "default.cfg",
+    "files": [
+     "Engine/libsrc/allegro-4.0.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.0.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.0.2/tools/pat2dat.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
+    ]
+   },
+   {
+    "label": "aPatchesDat",
+    "text": "patches.dat",
+    "files": [
+     "Engine/libsrc/allegro-4.0.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.0.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.0.2/tools/pat2dat.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
+    ]
+   },
+   {
+    "label": "aUltradir",
+    "text": "ULTRADIR",
+    "files": [
+     "Engine/libsrc/allegro-4.0.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c"
+    ]
+   },
+   {
     "label": "aSound_22",
     "text": "sound",
     "files": [
@@ -500,38 +532,6 @@
      "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c",
      "Engine/libsrc/jgmod/jgmod.c"
     ]
-   },
-   {
-    "label": "aDefaultCfg",
-    "text": "default.cfg",
-    "files": [
-     "Engine/libsrc/allegro-4.0.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.0.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.0.2/tools/pat2dat.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aPatchesDat",
-    "text": "patches.dat",
-    "files": [
-     "Engine/libsrc/allegro-4.0.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.0.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.0.2/tools/pat2dat.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aUltradir",
-    "text": "ULTRADIR",
-    "files": [
-     "Engine/libsrc/allegro-4.0.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c"
-    ]
    }
   ]
  },
@@ -560,6 +560,14 @@
   ],
   "evidence": [
    {
+    "label": "aOle32DllCanTBe",
+    "text": "OLE32.DLL can't be loaded.",
+    "files": [
+     "Engine/libsrc/allegro-4.0.2/src/win/wthread.c",
+     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
+    ]
+   },
+   {
     "label": "aDcomNotFound",
     "text": "DCOM not found",
     "files": [
@@ -570,14 +578,6 @@
    {
     "label": "aMicrosoftDistr",
     "text": "Microsoft Distributed COM is not installed on this system. If you",
-    "files": [
-     "Engine/libsrc/allegro-4.0.2/src/win/wthread.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
-    ]
-   },
-   {
-    "label": "aOle32DllCanTBe",
-    "text": "OLE32.DLL can't be loaded.",
     "files": [
      "Engine/libsrc/allegro-4.0.2/src/win/wthread.c",
      "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
@@ -633,6 +633,20 @@
   ],
   "evidence": [
    {
+    "label": "aMod15Samples",
+    "text": "MOD (15 Samples)",
+    "files": [
+     "Engine/libsrc/jgmod/load_mod.c"
+    ]
+   },
+   {
+    "label": "aModMustHave15O",
+    "text": "MOD must have 15 or 31 samples",
+    "files": [
+     "Engine/libsrc/jgmod/load_mod.c"
+    ]
+   },
+   {
     "label": "aMod31Samples",
     "text": "MOD (31 Samples)",
     "files": [
@@ -660,20 +674,6 @@
      "Engine/libsrc/jgmod/load_s3m.c",
      "Engine/libsrc/jgmod/load_xm.c",
      "Engine/libsrc/jgmod/mod.c"
-    ]
-   },
-   {
-    "label": "aMod15Samples",
-    "text": "MOD (15 Samples)",
-    "files": [
-     "Engine/libsrc/jgmod/load_mod.c"
-    ]
-   },
-   {
-    "label": "aModMustHave15O",
-    "text": "MOD must have 15 or 31 samples",
-    "files": [
-     "Engine/libsrc/jgmod/load_mod.c"
     ]
    }
   ]
@@ -848,6 +848,17 @@
   ],
   "evidence": [
    {
+    "label": "aColorConversio",
+    "text": "color conversion",
+    "files": [
+     "Engine/libsrc/allegro-4.0.2/src/win/wddwin.c",
+     "Engine/libsrc/allegro-4.0.2/tools/dat.c",
+     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
+     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
+     "Engine/libsrc/allegro-4.2.2/tools/dat.c"
+    ]
+   },
+   {
     "label": "aMatching",
     "text": "matching",
     "files": [
@@ -862,17 +873,6 @@
      "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
      "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
      "Engine/libsrc/allegro-4.2.2/src/x/xwin.c"
-    ]
-   },
-   {
-    "label": "aColorConversio",
-    "text": "color conversion",
-    "files": [
-     "Engine/libsrc/allegro-4.0.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.0.2/tools/dat.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-     "Engine/libsrc/allegro-4.2.2/tools/dat.c"
     ]
    },
    {
@@ -1086,6 +1086,13 @@
   ],
   "evidence": [
    {
+    "label": "aUnrealXmUmx",
+    "text": "Unreal XM (UMX)",
+    "files": [
+     "Engine/libsrc/jgmod/load_xm.c"
+    ]
+   },
+   {
     "label": "aUnableToOpenS_5",
     "text": "Unable to open %s",
     "files": [
@@ -1106,13 +1113,6 @@
      "Engine/libsrc/jgmod/load_s3m.c",
      "Engine/libsrc/jgmod/load_xm.c",
      "Engine/libsrc/jgmod/mod.c"
-    ]
-   },
-   {
-    "label": "aUnrealXmUmx",
-    "text": "Unreal XM (UMX)",
-    "files": [
-     "Engine/libsrc/jgmod/load_xm.c"
     ]
    }
   ]
@@ -1140,13 +1140,6 @@
   ],
   "evidence": [
    {
-    "label": "aUnrealItUmx",
-    "text": "Unreal IT (UMX)",
-    "files": [
-     "Engine/libsrc/jgmod/load_it.c"
-    ]
-   },
-   {
     "label": "aUnableToOpenS_6",
     "text": "Unable to open %s",
     "files": [
@@ -1167,6 +1160,13 @@
      "Engine/libsrc/jgmod/load_s3m.c",
      "Engine/libsrc/jgmod/load_xm.c",
      "Engine/libsrc/jgmod/mod.c"
+    ]
+   },
+   {
+    "label": "aUnrealItUmx",
+    "text": "Unreal IT (UMX)",
+    "files": [
+     "Engine/libsrc/jgmod/load_it.c"
     ]
    }
   ]
