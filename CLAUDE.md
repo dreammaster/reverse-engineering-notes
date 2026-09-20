@@ -5377,6 +5377,26 @@ disassembly work.
   (...); else bmp->vtable->draw_trans_sprite(...);` matches the
   disassembly's own dispatch on slots +0x54/+0x58 exactly. Called from
   `put_sprite_256` (already matched). THIRD-PARTY LIBRARY BOUNDARY.
+- **Subsystem-callee-sweep checkpoint: CSCI/dialog, graph-script/FLIC,
+  the script interpreter, room-loading, and save-game families all
+  checked for remaining direct callees -- all five come back
+  completely closed, zero undocumented calls anywhere (verified via
+  each function's own raw, unfiltered call list for the largest ones
+  in each family, not just the automated sweep).** The font-rendering
+  family is the first to break that streak: `alfont_set_font_size`/
+  `alfont_load_font_from_mem`/`alfont_text_length`/the already-
+  characterized TTF rendering delegate (`sub_48B140`) call into a
+  small cluster of genuinely undocumented functions -- but tracing two
+  of them (`sub_48ADF0`/`sub_48AEF0`) finds a matched allocate/cleanup
+  pair for alfont's own internal per-face glyph-bitmap cache, and a
+  third (`sub_48C640`) an alfont font-face-loading wrapper diving into
+  what is almost certainly FreeType's own face-creation internals --
+  correctly out of scope per the third-party rule (alfont/FreeType
+  are already confirmed as the library boundary via `FT_New_Library`/
+  `FT_Done_Library` and this project's own earlier alfont matches), and
+  deliberately not chased further into FreeType's own internals given
+  no local FreeType source exists in this repo to verify beyond a
+  role-level characterization.
 
 ## Third-party library identification (Task #10)
 

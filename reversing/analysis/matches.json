@@ -9145,5 +9145,45 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "Allegro's own public draw_trans_sprite(BITMAP*bmp,BITMAP*sprite,int x,int y) at draw.inl:121-136. DECISIVE, zero-drift, word-for-word match: 'if(sprite->vtable->color_depth==32) bmp->vtable->draw_trans_rgba_sprite(bmp,sprite,x,y); else bmp->vtable->draw_trans_sprite(bmp,sprite,x,y);' matches the disassembly's own check on `[arg_4+0x1C]`(sprite->vtable)+0 (color_depth) against the literal 0x20(32), dispatching to `[arg_0+0x1C]`(bmp->vtable)+0x58 (draw_trans_rgba_sprite) or +0x54 (draw_trans_sprite) exactly. RESOLVES a long-standing open lead from an earlier round ('sub_425600's GFX_VTABLE dispatch didn't cleanly reconcile with the reference slot order and was left open rather than forced') -- the earlier attempt used the 4.2.2 reference's own GFX_VTABLE layout, which is offset differently due to this build's own confirmed vtable-shift (missing slots 4.2.2 later added); using Allegro 4.0.2's own header instead (already established as the closer reference to this build's actual 2002-07-21 link date) gives slots 0x54/0x58 = draw_trans_sprite/draw_trans_rgba_sprite directly, with NO shift needed at all -- resolving the ambiguity outright rather than needing to guess at a correction. Called from put_sprite_256 (already matched). THIRD-PARTY LIBRARY BOUNDARY (Allegro's own public API), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48ADF0",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "alfont's own internal glyph-bitmap-cache CLEANUP helper, found while checking the font-rendering family's remaining direct callees (alfont_set_font_size, this project's own already-matched entry, calls this at +0x67). Iterates a per-face glyph array ([face+0x14], gated on [face+0x18]'s own parallel 'in use' byte-flag array, both matching the classic alfont glyph-bitmap-cache design), calling sub_48BA20 (this round's own 'free one glyph' match, itself dispatching into what is almost certainly FreeType's own FT_Done_Glyph via a class-vtable-style function-pointer call at [glyph+4][+0xC]) for every populated slot, then clearing the flag. THIRD-PARTY LIBRARY BOUNDARY (alfont/FreeType, both already confirmed elsewhere in this project) -- its own callee's internal FreeType glyph-class dispatch not chased further, per this project's scope rule. Sibling of sub_48AEF0 (this round's own allocator match, the same cache's own init/grow step)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48AEF0",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "alfont's own internal glyph-bitmap-cache ALLOCATOR, called from alfont_load_font_from_mem (already matched). Lazily mallocs a per-face glyph-bitmap-pointer array ([face+0]+0x10 entries * 4 bytes -> [face+0x14]) and a matching 'in use' byte-flag array ([face+0]+0x10 entries -> [face+0x18]) the first time either is needed, then zeroes the flag array -- the same cache sub_48ADF0 (this round's own sibling match) tears down. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48BA20",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "low",
+    "is_library": true,
+    "evidence": "A 'free one glyph' helper called from alfont's own glyph-cache cleanup (sub_48ADF0, this round's own sibling match) and from sub_48B140 (the already-characterized, deliberately-unnamed TTF text-rendering delegate). Dereferences its argument twice and calls a function pointer at a fixed offset (+4 then +0xC) -- the classic shape of FreeType's own FT_Done_Glyph(FT_Glyph) dispatching through a glyph class's own 'done' method -- then calls sub_48BDB0 (not independently examined) to release the glyph's own memory pool. THIRD-PARTY LIBRARY BOUNDARY (alfont/FreeType), not chased further -- no local FreeType source exists in this repo to confirm the exact FT_* identifier, and per this project's scope rule that precision isn't worth the effort for library-internal code a ScummVM port replaces wholesale regardless."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48C640",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "alfont's own internal font-face-loading wrapper, called from alfont_load_font_from_mem (already matched). Checks its second argument for NULL (returning a literal error code 6, consistent with FreeType's own FT_Err_Invalid_Argument-style small-integer error convention) then forwards 4 arguments plus a hardcoded literal `1` flag into sub_48C690 (not independently examined) -- almost certainly the real underlying FT_New_Memory_Face/FT_Open_Face call or a thin wrapper immediately around it. THIRD-PARTY LIBRARY BOUNDARY, deliberately not chased further into FreeType's own face-creation internals -- no local FreeType source exists in this repo to verify beyond this role-level characterization, and per this project's scope rule, going deeper into a library already confirmed (FT_New_Library/FT_Done_Library, and alfont's own wrapper functions, all already matched) has zero ScummVM-reconstruction payoff."
   }
 ]

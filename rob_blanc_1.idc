@@ -163639,6 +163639,7 @@ static Functions_14(void) {
 	set_frame_size(0X48ACC0, 0X4C, 0, 0);
 	add_func    (0X48ADF0,0X48AE39);
 	set_func_flags(0X48ADF0,0x5400);
+	set_func_cmt(0X48ADF0,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own internal glyph-bitmap-cache CLEANUP helper, found while checking the font-rendering family's remaining direct callees (alfont_set_font_size, this project's own already-matched entry, calls this at +0x67). Iterates a per-face glyph array ([face+0x14], gated on [face+0x18]'s own parallel 'in use' byte-flag array, both matching the classic alfont glyph-bitmap-cache design), calling sub_48BA20 (this round's own 'free one glyph' match, itself dispatching into what is almost certainly FreeType's own FT_Done_Glyph via a class-vtable-style function-pointer call at [glyph+4][+0xC]) for every populated slot, then clearing the flag. THIRD-PARTY LIBRARY BOUNDARY (alfont/FreeType, both already confirmed elsewhere in this project) -- its own callee's internal FreeType glyph-class dispatch not chased further, per this project's scope rule. Sibling of sub_48AEF0 (this round's own allocator match, the same cache's own init/grow step).", 1);
 	set_frame_size(0X48ADF0, 0X8, 0, 0);
 	add_func    (0X48AE40,0X48AE7E);
 	set_func_flags(0X48AE40,0x5400);
@@ -163648,6 +163649,7 @@ static Functions_14(void) {
 	set_frame_size(0X48AE80, 0X8, 0, 0);
 	add_func    (0X48AEF0,0X48AF45);
 	set_func_flags(0X48AEF0,0x5400);
+	set_func_cmt(0X48AEF0,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own internal glyph-bitmap-cache ALLOCATOR, called from alfont_load_font_from_mem (already matched). Lazily mallocs a per-face glyph-bitmap-pointer array ([face+0]+0x10 entries * 4 bytes -> [face+0x14]) and a matching 'in use' byte-flag array ([face+0]+0x10 entries -> [face+0x18]) the first time either is needed, then zeroes the flag array -- the same cache sub_48ADF0 (this round's own sibling match) tears down. THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X48AEF0, 0X4, 0, 0);
 	add_func    (0X48AF50,0X48AFCA);
 	set_func_flags(0X48AF50,0x5400);
@@ -163715,6 +163717,7 @@ static Functions_14(void) {
 	set_frame_size(0X48B8E0, 0XA8, 0, 0);
 	add_func    (0X48BA20,0X48BA4D);
 	set_func_flags(0X48BA20,0x5400);
+	set_func_cmt(0X48BA20,	"[reversing] confirmed match\nconfidence: low\nevidence: A 'free one glyph' helper called from alfont's own glyph-cache cleanup (sub_48ADF0, this round's own sibling match) and from sub_48B140 (the already-characterized, deliberately-unnamed TTF text-rendering delegate). Dereferences its argument twice and calls a function pointer at a fixed offset (+4 then +0xC) -- the classic shape of FreeType's own FT_Done_Glyph(FT_Glyph) dispatching through a glyph class's own 'done' method -- then calls sub_48BDB0 (not independently examined) to release the glyph's own memory pool. THIRD-PARTY LIBRARY BOUNDARY (alfont/FreeType), not chased further -- no local FreeType source exists in this repo to confirm the exact FT_* identifier, and per this project's scope rule that precision isn't worth the effort for library-internal code a ScummVM port replaces wholesale regardless.", 1);
 	set_frame_size(0X48BA20, 0, 0, 0);
 	add_func    (0X48BA50,0X48BA73);
 	set_func_flags(0X48BA50,0x15400);
@@ -163802,6 +163805,7 @@ static Functions_14(void) {
 	set_frame_size(0X48C5C0, 0X8, 0, 0);
 	add_func    (0X48C640,0X48C688);
 	set_func_flags(0X48C640,0x5400);
+	set_func_cmt(0X48C640,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own internal font-face-loading wrapper, called from alfont_load_font_from_mem (already matched). Checks its second argument for NULL (returning a literal error code 6, consistent with FreeType's own FT_Err_Invalid_Argument-style small-integer error convention) then forwards 4 arguments plus a hardcoded literal `1` flag into sub_48C690 (not independently examined) -- almost certainly the real underlying FT_New_Memory_Face/FT_Open_Face call or a thin wrapper immediately around it. THIRD-PARTY LIBRARY BOUNDARY, deliberately not chased further into FreeType's own face-creation internals -- no local FreeType source exists in this repo to verify beyond this role-level characterization, and per this project's scope rule, going deeper into a library already confirmed (FT_New_Library/FT_Done_Library, and alfont's own wrapper functions, all already matched) has zero ScummVM-reconstruction payoff.", 1);
 	set_frame_size(0X48C640, 0X20, 0, 0);
 	add_func    (0X48C690,0X48C8C5);
 	set_func_flags(0X48C690,0x5400);
@@ -164234,6 +164238,10 @@ static Functions_14(void) {
 	add_func    (0X492D70,0X4931A5);
 	set_func_flags(0X492D70,0x5400);
 	set_frame_size(0X492D70, 0X48, 0, 0);
+}
+
+static Functions_15(void) {
+
 	add_func    (0X4931B0,0X4931F3);
 	set_func_flags(0X4931B0,0x5400);
 	set_frame_size(0X4931B0, 0X8, 0, 0);
@@ -164405,10 +164413,6 @@ static Functions_14(void) {
 	add_func    (0X497340,0X49742B);
 	set_func_flags(0X497340,0x5400);
 	set_frame_size(0X497340, 0XC, 0, 0);
-}
-
-static Functions_15(void) {
-
 	add_func    (0X497430,0X49765C);
 	set_func_flags(0X497430,0x5400);
 	SetType(0X497430, "int __cdecl sub_497430(void *, int);");
