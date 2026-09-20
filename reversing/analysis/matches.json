@@ -8133,14 +8133,6 @@
   },
   {
     "kind": "manual",
-    "asm_name": "sub_47E970",
-    "new_name": null,
-    "source_file": null,
-    "confidence": "medium",
-    "evidence": "ALMP3's own internal 'seek to millisecond position' implementation -- found while sweeping SeekMP3PosMillis's (already matched) own remaining callee. Converts a millisecond offset to a frame index (via sub_47EC30, plausibly a 'milliseconds per frame' calculator) then calls sub_47E900 (plausibly a 'seek to frame index' primitive) with (handle,frame) -- matching ALMP3's documented public API role, almp3_seek_abs_msecs_mp3, at the behavioral level. Left unnamed per this project's standing convention for ALMP3 internals -- no ALMP3 source exists in this repo to verify exact names against."
-  },
-  {
-    "kind": "manual",
     "asm_name": "sub_47EBD0",
     "new_name": null,
     "source_file": null,
@@ -8603,5 +8595,15 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "void almp3_seek_abs_frames_mp3(ALMP3_MP3 *mp3, int frame) at almp3.c:574 -- 2-argument, void-returning, matching sub_47E970's own final call shape exactly (mp3, computed frame number). Confirmed via almp3_seek_abs_msecs_mp3's own decisive match (this round's sub_47E970 entry). Found via the newly-added ALMP3 2.0.5 source tree."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4012DF",
+    "new_name": "wloadsprites",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": 245,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "int wloadsprites(color *pall, char *filnam, block *sarray, int strt, int eend) at Wgt2allg.h:245-304. DECISIVE, essentially complete instruction-for-instruction match, found via a fresh size-ranked sweep of large still-unnamed functions in the AGS-side (sub-0x420000) address range. Every control-flow branch matches: getshort(ff) into a version field (vers/var_14), fread(buff,13,1,ff) (a 13-byte header skip), a 256-iteration fread(&pall[vv],3,1,ff) loop (the RGB palette, 3 bytes per entry into a 4-byte-stride buffer -- matches the disassembly's own [edx+ecx*4] Buffer addressing exactly), 'if(vers>4) return -1', a vers==4-gated getshort() for numspri vs. the else branch's own getshort() call, a 'for(vv=strt;vv<=eend;vv++) sarray[vv]=NULL' zeroing loop (arg_8[var_10]=0 for var_10 in [arg_C,arg_10]), then the main 'for(vv=0;vv<=numspri;vv++)' frame loop reading a per-frame coldep via getshort (0 means empty slot -> sarray[vv]=NULL, with an feof(ff) break), width/height via two more getshort calls, an fseek(ff,wdd*htt,SEEK_CUR) skip for vv<strt, and create_bitmap_ex(coldep*8,wdd,htt) + a raw per-row fread loop into the created bitmap's own line[] array (matching the disassembly's '[eax+ecx*4+0x40]' BITMAP.line[] addressing) for vv in [strt,eend]. Parameter order confirmed via the caller's own cdecl push sequence (arg_0=local 256-entry color buffer, FileName, arg_8=the bitmap-array pointer, arg_C=strt=0, arg_10=eend). TWO REAL DRIFTS found: (1) this build calls the already-matched clibfopen (AGS's own CLIB-asset-library-aware file opener) instead of source's plain fopen(filnam,\"rb\") -- meaning this build can load the mouse-cursor-set file from inside the packaged CLIB data, where the reference source only ever reads it as a loose disk file; (2) the else (non-version-4) branch's getshort() return value is read (consuming the file's own numspri field bytes, keeping the read cursor correctly positioned) but then UNCONDITIONALLY discarded in favor of a hardcoded 200, rather than source's own 'if((numspri<2)||(numspri>200)) numspri=200;' clamp -- this build's compiled version never actually uses a file-declared count below 200 for pre-v4 cursor files, always falling back to the same default regardless of what the file says. CALLER IDENTIFIED: mloadwcursor(char *namm) at Common/MOUSEW32.CPP:215-222 -- 'color dummypal[256]; if(wloadsprites(&dummypal[0],namm,mousecurs,0,MAXCURSORS)) exit(1);' matches the disassembly's own local 1024-byte buffer (256*4), literal push of 0x14 (MAXCURSORS=20, MOUSEW32.CPP:34), the offset-of-dword_535878 argument (already established as mousecurs[MAXCURSORS], MOUSEW32.CPP:71, domouse's own cursor-bitmap cache -- a genuinely SEPARATE, lower-level array from GameSetupStructBase.mcurs[]/MouseCursor.pic at dword_51585C, not the same global), and the exit(1)-on-failure tail exactly. GENUINE TOOLING GAP: mloadwcursor has NO formal IDA function boundary at all (no proc/endp, sitting as bare .text code between two other equally boundary-less call sites) -- the same gap this project already hit for GUIMain::init(). Two SIBLING boundary-less functions identified in the same immediate neighborhood while reading this: mnewcursor(char cursno) at MOUSEW32.CPP:207-212 ('domouse(2); currentcursor=cursno; domouse(1);', matching the disassembly's own two domouse(2)/domouse(1) calls bracketing a single-byte parameter store exactly) and mfreemem() at MOUSEW32.CPP:199-205 ('for(re=0;re<numcurso;re++) if(mousecurs[re]!=NULL) wfreeblock(mousecurs[re]);', matching the disassembly's own destroy_bitmap-calling loop over dword_535878[] bounded by dword_4BB8F4 -- a new global, plausibly numcurso -- almost exactly, modulo wfreeblock vs. the already-matched destroy_bitmap, the same wrapper-vs-underlying-Allegro-call substitution already established elsewhere in this project). All three need a human to manually define an IDA function boundary before apply_matches.py can push a rename for them; recorded here for the record, not yet resolvable mechanically. numcurso@dword_4BB8F4 is a new global identification worth a future round's confirmation."
   }
 ]

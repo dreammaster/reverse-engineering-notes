@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 993 named, 1593 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 994 named, 1592 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5074,6 +5074,46 @@ disassembly work.
   scaled-blit primitive, also called from Allegro's public
   `stretch_blit` -- correctly out of scope. See `reversing/notes/
   struct-layout-drift.md`.
+- **`wloadsprites` found via a fresh technique for this project: ranking
+  unnamed functions by size.** With string-matching, callgraph-following,
+  and bare-mechanical-entry sweeps all re-confirmed saturated this
+  session, tried ranking every still-unnamed function by its own
+  disassembly line count instead. The largest few (`sub_4A6780`/2412
+  lines, `sub_47FD90`/2185, and a whole 0x42D000-0x437000 cluster) all
+  turned out to be deep third-party internals (FreeType's TrueType
+  hinting VM, mpg123's decoder, Allegro's Unicode/fixed-point-math
+  cluster) -- confirming, via a FIFTH independent method, this project's
+  own repeated "large unnamed functions are third-party" finding.
+  Filtering the ranking to addresses below 0x420000 (AGS's own code
+  range) surfaced a real hit: `sub_4012DF` (316 lines) calls
+  `clibfopen`/`getshort`/`fread`/`fseek`/`create_bitmap_ex`/`fclose` in a
+  shape matching `Common/Wgt2allg.h:245`'s own `wloadsprites(color*,
+  char*,block*,int,int)` almost completely -- a 256-entry RGB palette
+  read, a version-gated frame count, then a per-frame coldep/width/
+  height read with either an `fseek` skip or a real `create_bitmap_ex`+
+  raw-row `fread` for the requested `[strt,eend]` range. TWO REAL
+  DRIFTS: this build routes the file open through `clibfopen` (CLIB-
+  asset-library-aware) rather than source's plain `fopen`, and the
+  non-version-4 branch's own `numspri` clamp is compiled away into an
+  unconditional `200` (still reading, but discarding, the file's own
+  count field). The caller, `mloadwcursor(char*)`
+  (`Common/MOUSEW32.CPP:215-222`), matches its own 3-line body exactly
+  (`color dummypal[256]; wloadsprites(&dummypal[0],namm,mousecurs,0,
+  MAXCURSORS); exit(1) on failure`) -- confirming `dword_535878` is
+  `mousecurs[MAXCURSORS=20]`, `domouse`'s own low-level cursor-bitmap
+  cache, genuinely separate from `GameSetupStructBase.mcurs[]`/
+  `MouseCursor.pic` at `dword_51585C`. Two sibling functions in the same
+  neighborhood, `mnewcursor`/`mfreemem`, were identified the same way.
+  All three callers share a real tooling gap already seen once before
+  (`GUIMain::init()`): no formal IDA function boundary exists for any
+  of them (bare `.text` code with no `proc`/`endp`), so only
+  `wloadsprites` itself (a real bounded function) could be renamed
+  mechanically -- the other three are documented in `matches.json`'s
+  evidence text for a human to manually define later. Also caught and
+  fixed a genuine stale duplicate `matches.json` entry for `sub_47E970`
+  left over from an earlier round's own tentative guess, superseded by
+  round 343's decisive `almp3_seek_abs_msecs_mp3` match but never
+  removed.
 
 ## Third-party library identification (Task #10)
 
