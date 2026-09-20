@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 1015 named, 1571 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 1022 named, 1564 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5259,6 +5259,42 @@ disassembly work.
   Every `SOUNDCLIP`-derived class in this build now has every field AND
   every virtual method individually confirmed -- a complete subsystem
   closure.
+- **The six per-control-type GUI object pools found, plus their
+  constructors and the shared `GUIObject` base constructor -- this
+  session's single biggest find.** Tracing `GUIMain::rebuild_array`'s
+  (already matched) own GOBJ_* dispatch table (`objs[ff]=&guibuts[
+  thisnum]; ...=&guilabels[...]; ...=&guiinv[...]; ...=&guislider[...];
+  ...=&guitext[...]; ...=&guilist[...];`, `Engine/acgui.cpp:1114-1124`)
+  back to its six operands' own construction sites (each reached via a
+  real MSVC `vector constructor iterator` call building a fixed array
+  of C++ objects) identified all six of 2011's own dynamically-
+  resizable `DynamicArray<T>` pools (`guibuts`/`guilabels`/`guiinv`/
+  `guislider`/`guitext`/`guilist`) as FIXED 81-element arrays in this
+  build -- a genuine architectural simplification, not just a smaller
+  capacity number. Their six per-element constructors (`GUIButton::
+  GUIButton`/`GUILabel::GUILabel`/`GUIInv::GUIInv`/`GUISlider::
+  GUISlider`/`GUITextBox::GUITextBox`/`GUIListBox::GUIListBox`) each
+  call a newly-identified SHARED base constructor, `GUIObject::
+  GUIObject()`, before patching their own more-derived vtable in -- the
+  exact base-then-derived pattern already established for `SOUNDCLIP`.
+  Along the way, this closes FOUR structs' own total `sizeof` for the
+  first time via their per-element stride (`GUILabel`==0xF4/244,
+  `GUIInv`==0x24/36, `GUISlider`==0x30/48, `GUITextBox`==0xF4/244,
+  `GUIListBox`==0x1DC/476 -- `GUIButton`==0x84/132 was already
+  confirmed, now doubly so via this same stride). `GUIButton::
+  GUIButton`'s own tail calls the already-characterized `sub_424160`
+  field-reset helper, matching `GUIButton::ReadFromFile`'s own already-
+  confirmed field list exactly. A pleasant side effect of this round's
+  own `apply_all_and_export.py` run: roughly 30 OTHER `GUIListBox`/
+  `GUITextBox`/`GUIInv`/`GUISlider` methods (`Draw`/`WriteToFile`/
+  `ReadFromFile`/`MouseDown`/`MouseUp`/`MouseMove`/`MouseOver`/
+  `MouseLeave`/`KeyPress`/`Clear`/`AddItem`) that had already been
+  correctly matched in `matches.json` from much earlier rounds got
+  re-applied in the same log -- not new identifications, just
+  `apply_matches.py`'s own idempotent no-op re-confirmation logging
+  identically to a genuine first-time rename, worth remembering so a
+  future session doesn't mistake a long "OK ... renamed" log for 30
+  fresh discoveries when checking a log like this one.
 
 ## Third-party library identification (Task #10)
 

@@ -2515,14 +2515,14 @@
   "is_named": true
  },
  {
-  "name": "sub_424050",
+  "name": "GUIButton__GUIButton",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424080",
+  "name": "GUIObject__GUIObject",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIButton__MouseMove",
@@ -2555,9 +2555,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4241E0",
+  "name": "GUILabel__GUILabel",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "unknown_libname_3",
@@ -2570,9 +2570,9 @@
   "is_named": false
  },
  {
-  "name": "sub_424260",
+  "name": "GUIInv__GUIInv",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIInv__WriteToFile",
@@ -2600,9 +2600,9 @@
   "is_named": true
  },
  {
-  "name": "sub_424350",
+  "name": "GUISlider__GUISlider",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUISlider__MouseDown",
@@ -2620,9 +2620,9 @@
   "is_named": false
  },
  {
-  "name": "sub_424400",
+  "name": "GUITextBox__GUITextBox",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_424430",
@@ -2630,9 +2630,9 @@
   "is_named": false
  },
  {
-  "name": "sub_424460",
+  "name": "GUIListBox__GUIListBox",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIListBox__MouseMove",

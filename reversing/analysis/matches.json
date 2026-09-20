@@ -8855,5 +8855,135 @@
     "confidence": "high",
     "is_library": false,
     "evidence": "MYSTATICMP3::destroy() at acsound.cpp:365-377. `if(tune!=NULL){almp3_stop_mp3(tune); almp3_destroy_mp3(tune); tune=NULL;} if(mp3buffer!=NULL){free(mp3buffer); mp3buffer=NULL;}` matches exactly, confirming `tune`@+0x08 (third route) and, for the first time, `mp3buffer`@+0x10. Together with poll/set_volume, closes MYSTATICMP3's entire field layout: vtable@0, done@4, tune@8, vol@0xC, mp3buffer@0x10, repeat@0x14(byte) -- rounding to the already-confirmed sizeof==0x18(24) total with zero remaining ambiguity. Completes a full sweep of every SOUNDCLIP-derived class's entire vtable this session -- SOUNDCLIP/MYWAVE/MYMP3/MYSTATICMP3 all now have every field AND every virtual method confirmed."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424080",
+    "new_name": "GUIObject__GUIObject",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUIObject's own shared base-class constructor -- found by tracing `GUIMain::rebuild_array`'s (already matched) own type-dispatch table (acgui.cpp:1114-1124: `objs[ff]=&guibuts[thisnum]; ...=&guilabels[...]; ...=&guiinv[...]; ...=&guislider[...]; ...=&guitext[...]; ...=&guilist[...];`) back to its six operands' own construction sites. This function sets `this->vtable=off_4AD4C4` and is called as the FIRST step of all six derived-class constructors (GUIButton/GUILabel/GUIInv/GUISlider/GUITextBox/GUIListBox, all this round's own new matches) before each patches its own more-derived vtable in -- exactly matching C++'s base-then-derived constructor/vtable-patching order, the same pattern already established for the SOUNDCLIP family's own SOUNDCLIP::SOUNDCLIP. No visible field-init body beyond the vtable write, consistent with GUIObject's own base fields (x/y/wid/hit/zorder/activated) being left to each derived class's own constructor to initialize (matching GUIMain::init()'s own already-confirmed pattern for the separate GUIMain class, though GUIObject is unrelated to GUIMain)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424050",
+    "new_name": "GUIButton__GUIButton",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 959,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUIButton's own constructor. DECISIVE identification chain: `GUIMain::rebuild_array` (acgui.cpp:1114) does `objs[ff]=&guibuts[thisnum];` for GOBJ_BUTTON(1) -- the already-confirmed GOBJ_* enum value -- and the disassembly's own matching branch computes `unk_4FB060 + thisnum*0x84` (0x84=132, exactly GUIButton's own already-confirmed total size) into `objs[ff]`@+0x94, decisively identifying `unk_4FB060` as the global `guibuts[]` array. That array's own construction (found via a `vector constructor iterator` call, MSVC's real array-of-C++-objects helper, `push offset unk_4FB060; push 0x84(size); push 0x51(81, ELEMENT COUNT); push offset sub_424050(ctor)`) identifies sub_424050 as `guibuts[]`'s own per-element constructor, i.e. `GUIButton::GUIButton()`. Calls the newly-matched `GUIObject::GUIObject()` base constructor first, patches its own vtable (`off_4AD4A0`), then calls a further helper (`sub_424160`, this round's own field-reset function, already independently characterized as resetting `pic`/`overpic`/`pushedpic`/`usepic`/`ispushed`/`isover`/`font`/`textcol`/`leftclick`/`rightclick` to their `-1`/`0` defaults plus `text[0]=0` -- matching GUIButton's own already-confirmed field list from `GUIButton::ReadFromFile`'s round exactly). CAPACITY FINDING: `guibuts[]` (and, per the same construction pattern, all five sibling arrays) has a FIXED capacity of 81 (0x51) elements in this build, replacing 2011's own dynamically-resizable `DynamicArray<GUIButton> guibuts;` (acgui.cpp:959) entirely -- a genuine architectural simplification (fixed pool vs. dynamic growth), not merely a smaller capacity number."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4241E0",
+    "new_name": "GUILabel__GUILabel",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 963,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUILabel's own constructor, identified the same decisive way as GUIButton::GUIButton (this round's own sibling match): `rebuild_array`'s GOBJ_LABEL(2) branch computes `unk_50E1F8 + thisnum*0xF4`, identifying `unk_50E1F8` as the global `guilabels[]` array (replacing 2011's own `DynamicArray<GUILabel> guilabels;`, acgui.cpp:963) and, via its own vector-constructor-iterator call (size=0xF4, count=0x51=81), identifying sub_4241E0 as `GUILabel::GUILabel()`. NEW FIELD EVIDENCE: this closes `GUILabel`'s own total size at 0xF4(244) bytes for the first time -- previously unconfirmed beyond its individual field offsets."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424260",
+    "new_name": "GUIInv__GUIInv",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUIInv's own constructor, identified via `rebuild_array`'s GOBJ_INVENTORY(3) branch: `unk_4E45E0 + thisnum*0x24`, identifying `unk_4E45E0` as the global `guiinv[]` array (acgui.cpp:1118's own operand) and sub_424260 (size=0x24=36, count=0x51=81) as `GUIInv::GUIInv()`. Calls the shared `GUIObject::GUIObject()` base constructor, patches its own vtable (`off_4AD50C`), then does a single `[this+0x20]=0` field reset -- consistent with `GUIInv`'s own already-established minimal footprint (just the shared `GUIObject` base persisted, no `charId`/`itemWidth`/`itemHeight`/`topIndex` fields in this build). NEW FIELD EVIDENCE: closes `GUIInv`'s own total size at 0x24(36) bytes for the first time."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424350",
+    "new_name": "GUISlider__GUISlider",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 969,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUISlider's own constructor, identified via `rebuild_array`'s GOBJ_SLIDER(4) branch: `unk_4EDAE8 + thisnum*0x30`, identifying `unk_4EDAE8` as the global `guislider[]` array (replacing 2011's own `DynamicArray<GUISlider> guislider;`, acgui.cpp:969) and sub_424350 (size=0x30=48, count=0x51=81) as `GUISlider::GUISlider()`. NEW FIELD EVIDENCE: closes `GUISlider`'s own total size at 0x30(48) bytes for the first time."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424400",
+    "new_name": "GUITextBox__GUITextBox",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUITextBox's own constructor, identified via `rebuild_array`'s GOBJ_TEXTBOX(5) branch: `unk_4F26F0 + thisnum*0xF4`, identifying `unk_4F26F0` as the global `guitext[]` array (acgui.cpp:1122's own operand) and sub_424400 (size=0xF4=244, count=0x51=81) as `GUITextBox::GUITextBox()`. NEW FIELD EVIDENCE: closes `GUITextBox`'s own total size at 0xF4(244) bytes for the first time -- the same size as `GUILabel`, consistent with both sharing a similarly-sized text buffer."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424460",
+    "new_name": "GUIListBox__GUIListBox",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "GUIListBox's own constructor, identified via `rebuild_array`'s GOBJ_LISTBOX(6) branch: `unk_4D31D0 + thisnum*0x1DC`, identifying `unk_4D31D0` as the global `guilist[]` array (acgui.cpp:1124's own operand) and sub_424460 (size=0x1DC=476, count=0x51=81) as `GUIListBox::GUIListBox()`. NEW FIELD EVIDENCE: closes `GUIListBox`'s own total size at 0x1DC(476) bytes for the first time -- the largest of the six, consistent with its own already-confirmed `items[100]` array (a plain 4-byte-stride `char*[100]`, per this project's own earlier round) dominating its footprint."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "unk_4FB060",
+    "new_name": "guibuts",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 959,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "Global GUIButton object pool -- see GUIButton::GUIButton's own entry for the complete identification chain via `rebuild_array`'s GOBJ_BUTTON dispatch. Replaces 2011's `DynamicArray<GUIButton> guibuts;` (acgui.cpp:959) with a fixed 81-element array."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "unk_50E1F8",
+    "new_name": "guilabels",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 963,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "Global GUILabel object pool -- see GUILabel::GUILabel's own entry. Replaces 2011's `DynamicArray<GUILabel> guilabels;` (acgui.cpp:963) with a fixed 81-element array."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "unk_4E45E0",
+    "new_name": "guiinv",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "Global GUIInv object pool -- see GUIInv::GUIInv's own entry, identified via `rebuild_array`'s GOBJ_INVENTORY dispatch (acgui.cpp:1118's own `&guiinv[thisnum]` operand). Fixed 81-element array. Distinct from GameState's own separate, already-confirmed-absent `obsolete`-style multi-inventory-window backwards-compatibility array of the same declared name in 2011's source -- this is the real, current, per-object-type pool, not that older concept."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "unk_4EDAE8",
+    "new_name": "guislider",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 969,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "Global GUISlider object pool -- see GUISlider::GUISlider's own entry. Replaces 2011's `DynamicArray<GUISlider> guislider;` (acgui.cpp:969) with a fixed 81-element array."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "unk_4F26F0",
+    "new_name": "guitext",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "Global GUITextBox object pool -- see GUITextBox::GUITextBox's own entry, identified via `rebuild_array`'s GOBJ_TEXTBOX dispatch (acgui.cpp:1122's own `&guitext[thisnum]` operand). Fixed 81-element array."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "unk_4D31D0",
+    "new_name": "guilist",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "Global GUIListBox object pool -- see GUIListBox::GUIListBox's own entry, identified via `rebuild_array`'s GOBJ_LISTBOX dispatch (acgui.cpp:1124's own `&guilist[thisnum]` operand). Fixed 81-element array."
   }
 ]

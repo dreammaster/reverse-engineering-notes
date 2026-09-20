@@ -35798,6 +35798,7 @@ static Bytes_6(void) {
 	set_name	(0X424040,	"check_font");
 	make_array	(0X424045,	0XB);
 	create_insn	(0X424050);
+	set_name	(0X424050,	"GUIButton__GUIButton");
 	create_insn	(x=0X424054);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X424057);
@@ -35813,6 +35814,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X424077,	0X9);
 	create_insn	(0X424080);
+	set_name	(0X424080,	"GUIObject__GUIObject");
 	create_insn	(x=0X424084);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X424087);
@@ -35900,6 +35902,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X4241D2);
 	op_stkvar	(x,	1);
 	create_insn	(0X4241E0);
+	set_name	(0X4241E0,	"GUILabel__GUILabel");
 	create_insn	(x=0X4241E4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4241E7);
@@ -35932,6 +35935,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X424259,	0X7);
 	create_insn	(0X424260);
+	set_name	(0X424260,	"GUIInv__GUIInv");
 	create_insn	(x=0X424264);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X424267);
@@ -36000,6 +36004,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X42434E,	0X2);
 	create_insn	(0X424350);
+	set_name	(0X424350,	"GUISlider__GUISlider");
 	create_insn	(x=0X424354);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X424357);
@@ -36041,6 +36046,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X4243F3,	0XD);
 	create_insn	(0X424400);
+	set_name	(0X424400,	"GUITextBox__GUITextBox");
 	create_insn	(x=0X424404);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X424407);
@@ -36066,6 +36072,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X42445C,	0X4);
 	create_insn	(0X424460);
+	set_name	(0X424460,	"GUIListBox__GUIListBox");
 	create_insn	(x=0X424464);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X424467);
@@ -40505,6 +40512,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X428376);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X42837F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X428385);
@@ -40529,15 +40545,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4283BC);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4283BF);
 	op_hex		(x,	1);
 	create_insn	(x=0X4283C2);
@@ -46016,6 +46023,15 @@ static Bytes_7(void) {
 	create_insn	(x=0X42D3BF);
 	op_stkvar	(x,	1);
 	set_cmt	(0X42D3C5,	"Block",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_8(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X42D3CB);
 	op_hex		(x,	1);
 	create_insn	(x=0X42D3DD);
@@ -46042,15 +46058,6 @@ static Bytes_7(void) {
 	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X42D449);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_8(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X42D455);
 	op_hex		(x,	1);
 	create_insn	(x=0X42D458);
@@ -52223,6 +52230,15 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432D00);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_9(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X432D0D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432D20);
@@ -52247,15 +52263,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432D8A);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_9(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X432D94);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432D9A);
@@ -58125,6 +58132,15 @@ static Bytes_9(void) {
 	create_byte	(0X43903C);
 	make_array	(0X43903C,	0X11);
 	make_array	(0X43904D,	0X3);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_10(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X439050);
 	set_name	(0X439050,	"nullsub_13");
 	make_array	(0X439051,	0XF);
@@ -58144,15 +58160,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X439090);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_10(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X439094);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43909D);
@@ -63838,6 +63845,15 @@ static Bytes_10(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43EF62);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_11(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X43EF65);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43EF6C);
@@ -63862,15 +63878,6 @@ static Bytes_10(void) {
 	set_cmt	(0X43EFCC,	"Block",	0);
 	create_insn	(x=0X43EFCD);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_11(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X43EFD7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43EFDB);
@@ -69887,6 +69894,15 @@ static Bytes_11(void) {
 	create_insn	(x=0X446185);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_12(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X44618F);
 	op_hex		(x,	1);
 	make_array	(0X446193,	0XD);
@@ -69915,15 +69931,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X446244);
 	op_hex		(x,	1);
 	make_array	(0X446255,	0XB);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_12(void) {
-        auto x;
-#define id x
-
 	update_extra_cmt		(0X446260,	E_PREV + 0,	"; Exported entry 505. poll_keyboard");
 	create_insn	(0X446260);
 	set_name	(0X446260,	"poll_keyboard");
@@ -76069,6 +76076,15 @@ static Bytes_12(void) {
 	create_insn	(x=0X44E200);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_13(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X44E206);
 	op_hex		(x,	1);
 	create_insn	(x=0X44E20F);
@@ -76097,15 +76113,6 @@ static Bytes_12(void) {
 	create_insn	(x=0X44E271);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_13(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X44E279);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X44E283);
@@ -81341,6 +81348,15 @@ static Bytes_13(void) {
 	op_hex		(x,	1);
 	create_insn	(0X4561B4);
 	make_array	(0X4561D1,	0XF);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_14(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4561E0);
 	op_stkvar	(x,	1);
 	set_name	(0X4561E0,	"__mkgmtime_0");
@@ -81364,15 +81380,6 @@ static Bytes_13(void) {
 	create_insn	(x=0X456266);
 	op_hex		(x,	1);
 	make_array	(0X45626B,	0X5);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_14(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X456270);
 	create_insn	(x=0X456278);
 	op_hex		(x,	1);
@@ -87511,6 +87518,15 @@ static Bytes_14(void) {
 	create_insn	(x=0X462A5D);
 	op_hex		(x,	1);
 	create_insn	(0X462A61);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_15(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X462A65);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X462A6C);
@@ -87540,15 +87556,6 @@ static Bytes_14(void) {
 	create_insn	(x=0X462AED);
 	op_hex		(x,	1);
 	make_array	(0X462AF1,	0XF);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_15(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X462B00);
 	set_cmt	(0X462B01,	"Size",	0);
 	create_insn	(x=0X462B0E);
@@ -93349,6 +93356,15 @@ static Bytes_15(void) {
 	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X46B4E1);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_16(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X46B509);
 	op_hex		(x,	1);
 	create_insn	(x=0X46B50D);
@@ -93380,15 +93396,6 @@ static Bytes_15(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X46B56E);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_16(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X46B571);
 	op_hex		(x,	1);
 	create_insn	(x=0X46B575);
@@ -99274,6 +99281,15 @@ static Bytes_16(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4734DE);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_17(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4734E5);
 	op_hex		(x,	1);
 	create_insn	(x=0X4734EA);
@@ -99305,15 +99321,6 @@ static Bytes_16(void) {
 	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X473561);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_17(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X473583);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X473588);
@@ -105100,6 +105107,15 @@ static Bytes_17(void) {
 	set_cmt	(0X47ABBD,	"jumptable 0047A8F3 case 20",	1);
 	create_insn	(x=0X47ABBD);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_18(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47ABC1);
 	op_hex		(x,	1);
 	create_insn	(x=0X47ABCB);
@@ -105127,15 +105143,6 @@ static Bytes_17(void) {
 	create_insn	(x=0X47ABFC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_18(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X47AC02,	"jumptable 0047A8F3 default case, cases 5,6,14,15",	1);
 	set_name	(0X47AC02,	"def_47A8F3");
 	set_cmt	(0X47AC04,	"jump table for switch statement",	0);
@@ -111166,6 +111173,15 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4844E5);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_19(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4844E8);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -111194,15 +111210,6 @@ static Bytes_18(void) {
 	create_insn	(x=0X4845B4);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_19(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4845BE);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -117477,6 +117484,15 @@ static Bytes_19(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X48E17D);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_20(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X48E183);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X48E187);
@@ -117507,15 +117523,6 @@ static Bytes_19(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X48E1D9);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_20(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X48E1DF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E1E3);
@@ -123943,6 +123950,15 @@ static Bytes_20(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4972F6);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_21(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X49730F);
 	op_hex		(x,	1);
 	create_insn	(0X497321);
@@ -123974,15 +123990,6 @@ static Bytes_20(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4973E5);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_21(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4973FB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X497409);
@@ -130022,6 +130029,15 @@ static Bytes_21(void) {
 	create_insn	(0X4A02FE);
 	set_cmt	(0X4A0308,	"jumptable 004A02CF case 12",	1);
 	create_insn	(0X4A0308);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_22(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4A0312,	"jumptable 004A02CF case 17",	1);
 	create_insn	(0X4A0312);
 	set_cmt	(0X4A031C,	"jumptable 004A02CF case 33",	1);
@@ -130037,15 +130053,6 @@ static Bytes_21(void) {
 	set_cmt	(0X4A0354,	"jumptable 004A01B6 default case, cases 2,15-20,23-29,32-254",	1);
 	create_insn	(0X4A0354);
 	set_name	(0X4A0354,	"def_4A01B6");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_22(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A0363);
 	op_hex		(x,	1);
 	create_insn	(0X4A036F);
@@ -135986,6 +135993,15 @@ static Bytes_22(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A940B);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_23(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4A9411);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A9415);
@@ -136017,15 +136033,6 @@ static Bytes_22(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4A94D1);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_23(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A94EA);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A94F7);
@@ -141131,6 +141138,15 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEED8);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_24(void) {
+        auto x;
+#define id x
+
 	create_dword	(x=0X4AEEDC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -141158,15 +141174,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AEEFC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_24(void) {
-        auto x;
-#define id x
-
 	create_dword	(x=0X4AEF00);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145579,6 +145586,15 @@ static Bytes_24(void) {
 	op_plain_offset	(x,	128,	0);
 	create_dword	(0X4B4290);
 	set_name	(0X4B4290,	"frames_per_second");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_25(void) {
+        auto x;
+#define id x
+
 	create_dword	(0X4B4294);
 	create_dword	(0X4B4298);
 	create_dword	(0X4B429C);
@@ -145603,15 +145619,6 @@ static Bytes_24(void) {
 	set_name	(0X4B42B8,	"time_between_timers");
 	create_dword	(0X4B42BC);
 	set_name	(0X4B42BC,	"_places_r");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_25(void) {
-        auto x;
-#define id x
-
 	create_dword	(0X4B42C0);
 	set_name	(0X4B42C0,	"_places_g");
 	create_dword	(0X4B42C4);
@@ -148971,6 +148978,15 @@ static Bytes_25(void) {
 	make_array	(0X4BBA41,	0X3);
 	create_strlit	(0X4BBA44,	0X5);
 	set_name	(0X4BBA44,	"aSub_5");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_26(void) {
+        auto x;
+#define id x
+
 	make_array	(0X4BBA49,	0X3);
 	create_strlit	(0X4BBA4C,	0X6);
 	set_name	(0X4BBA4C,	"aMov_5");
@@ -148987,15 +149003,6 @@ static Bytes_25(void) {
 	make_array	(0X4BBA75,	0X3);
 	create_strlit	(0X4BBA78,	0XA);
 	set_name	(0X4BBA78,	"aMemwrite_2");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_26(void) {
-        auto x;
-#define id x
-
 	make_array	(0X4BBA82,	0X2);
 	create_strlit	(0X4BBA84,	0X6);
 	set_name	(0X4BBA84,	"aMul_5");
@@ -152559,6 +152566,15 @@ static Bytes_26(void) {
 	set_name	(0X4CB160,	"aOmegatonos");
 	create_strlit	(0X4CB16C,	0X6);
 	set_name	(0X4CB16C,	"aOmega");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_27(void) {
+        auto x;
+#define id x
+
 	make_array	(0X4CB172,	0X2);
 	create_strlit	(0X4CB174,	0X8);
 	set_name	(0X4CB174,	"aOmacron");
@@ -152574,15 +152590,6 @@ static Bytes_26(void) {
 	set_name	(0X4CB19C,	"aNu_0");
 	create_strlit	(0X4CB1A0,	0XD);
 	set_name	(0X4CB1A0,	"aNcommaaccent");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_27(void) {
-        auto x;
-#define id x
-
 	make_array	(0X4CB1AD,	0X3);
 	create_strlit	(0X4CB1B0,	0X7);
 	set_name	(0X4CB1B0,	"aNcaron");
@@ -153885,6 +153892,7 @@ static Bytes_27(void) {
 	create_dword	(0X4D31C8);
 	set_name	(0X4D31C8,	"cur_cursor");
 	make_array	(0X4D31CC,	0X4);
+	set_name	(0X4D31D0,	"guilist");
 	create_dword	(0X4DC870);
 	create_dword	(0X4DC874);
 	create_dword	(0X4DC878);
@@ -153903,6 +153911,7 @@ static Bytes_27(void) {
 	set_name	(0X4E45C4,	"roomstats");
 	create_dword	(0X4E45C8);
 	make_array	(0X4E45CC,	0X14);
+	set_name	(0X4E45E0,	"guiinv");
 	create_byte	(0X4E4940);
 	make_array	(0X4E4940,	0X804);
 	create_dword	(0X4E5144);
@@ -153945,6 +153954,7 @@ static Bytes_27(void) {
 	create_byte	(0X4EDA80);
 	make_array	(0X4EDA80,	0X64);
 	create_dword	(0X4EDAE4);
+	set_name	(0X4EDAE8,	"guislider");
 	create_dword	(0X4EE89C);
 	create_dword	(0X4EEA18);
 	set_name	(0X4EEA18,	"play");
@@ -154075,6 +154085,7 @@ static Bytes_27(void) {
 	create_dword	(0X4F26E4);
 	set_name	(0X4F26E4,	"myerrno");
 	make_array	(0X4F26E8,	0X8);
+	set_name	(0X4F26F0,	"guitext");
 	create_dword	(0X4F7424);
 	MakeStruct	(0X4F7450,	"SpriteCache");
 	make_array	(0X4F7450,	0);
@@ -154090,12 +154101,14 @@ static Bytes_27(void) {
 	create_dword	(0X4F7490);
 	create_dword	(0X4F75C0);
 	create_dword	(0X4FB05C);
+	set_name	(0X4FB060,	"guibuts");
 	create_dword	(0X4FB0B4);
 	create_byte	(0X50DA28);
 	make_array	(0X50DA28,	0XC8);
 	set_name	(0X50DA28,	"conffilebuf");
 	create_byte	(0X50DAF0);
 	make_array	(0X50DAF0,	0X708);
+	set_name	(0X50E1F8,	"guilabels");
 	create_byte	(0X512F2C);
 	make_array	(0X512F2C,	0X3EC);
 	create_byte	(0X513318);
@@ -158433,9 +158446,11 @@ static Functions_8(void) {
 
 	add_func    (0X424050,0X424077);
 	set_func_flags(0X424050,0x5410);
+	set_func_cmt(0X424050,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUIButton's own constructor. DECISIVE identification chain: `GUIMain::rebuild_array` (acgui.cpp:1114) does `objs[ff]=&guibuts[thisnum];` for GOBJ_BUTTON(1) -- the already-confirmed GOBJ_* enum value -- and the disassembly's own matching branch computes `unk_4FB060 + thisnum*0x84` (0x84=132, exactly GUIButton's own already-confirmed total size) into `objs[ff]`@+0x94, decisively identifying `unk_4FB060` as the global `guibuts[]` array. That array's own construction (found via a `vector constructor iterator` call, MSVC's real array-of-C++-objects helper, `push offset unk_4FB060; push 0x84(size); push 0x51(81, ELEMENT COUNT); push offset sub_424050(ctor)`) identifies sub_424050 as `guibuts[]`'s own per-element constructor, i.e. `GUIButton::GUIButton()`. Calls the newly-matched `GUIObject::GUIObject()` base constructor first, patches its own vtable (`off_4AD4A0`), then calls a further helper (`sub_424160`, this round's own field-reset" " function, already independently characterized as resetting `pic`/`over", 1);
 	set_frame_size(0X424050, 0X4, 4, 0);
 	add_func    (0X424080,0X424097);
 	set_func_flags(0X424080,0x5410);
+	set_func_cmt(0X424080,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUIObject's own shared base-class constructor -- found by tracing `GUIMain::rebuild_array`'s (already matched) own type-dispatch table (acgui.cpp:1114-1124: `objs[ff]=&guibuts[thisnum]; ...=&guilabels[...]; ...=&guiinv[...]; ...=&guislider[...]; ...=&guitext[...]; ...=&guilist[...];`) back to its six operands' own construction sites. This function sets `this->vtable=off_4AD4C4` and is called as the FIRST step of all six derived-class constructors (GUIButton/GUILabel/GUIInv/GUISlider/GUITextBox/GUIListBox, all this round's own new matches) before each patches its own more-derived vtable in -- exactly matching C++'s base-then-derived constructor/vtable-patching order, the same pattern already established for the SOUNDCLIP family's own SOUNDCLIP::SOUNDCLIP. No visible field-init body beyond the vtable write, consistent with GUIObject's own base fields (x/y/wid/hit/zorder/activated) being left to each derived class's own constructor " "to initialize (matching GUIMain::init()'s own already-confirmed pattern", 1);
 	set_frame_size(0X424080, 0X4, 4, 0);
 	add_func    (0X4240A0,0X4240AD);
 	set_func_flags(0X4240A0,0x5414);
@@ -158460,6 +158475,7 @@ static Functions_8(void) {
 	set_frame_size(0X424160, 0X4, 4, 0);
 	add_func    (0X4241E0,0X424207);
 	set_func_flags(0X4241E0,0x5410);
+	set_func_cmt(0X4241E0,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUILabel's own constructor, identified the same decisive way as GUIButton::GUIButton (this round's own sibling match): `rebuild_array`'s GOBJ_LABEL(2) branch computes `unk_50E1F8 + thisnum*0xF4`, identifying `unk_50E1F8` as the global `guilabels[]` array (replacing 2011's own `DynamicArray<GUILabel> guilabels;`, acgui.cpp:963) and, via its own vector-constructor-iterator call (size=0xF4, count=0x51=81), identifying sub_4241E0 as `GUILabel::GUILabel()`. NEW FIELD EVIDENCE: this closes `GUILabel`'s own total size at 0xF4(244) bytes for the first time -- previously unconfirmed beyond its individual field offsets.", 1);
 	set_frame_size(0X4241E0, 0X4, 4, 0);
 	add_func    (0X424210,0X42421B);
 	set_func_flags(0X424210,0x5414);
@@ -158470,6 +158486,7 @@ static Functions_8(void) {
 	set_frame_size(0X424220, 0X4, 4, 0);
 	add_func    (0X424260,0X424289);
 	set_func_flags(0X424260,0x5410);
+	set_func_cmt(0X424260,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUIInv's own constructor, identified via `rebuild_array`'s GOBJ_INVENTORY(3) branch: `unk_4E45E0 + thisnum*0x24`, identifying `unk_4E45E0` as the global `guiinv[]` array (acgui.cpp:1118's own operand) and sub_424260 (size=0x24=36, count=0x51=81) as `GUIInv::GUIInv()`. Calls the shared `GUIObject::GUIObject()` base constructor, patches its own vtable (`off_4AD50C`), then does a single `[this+0x20]=0` field reset -- consistent with `GUIInv`'s own already-established minimal footprint (just the shared `GUIObject` base persisted, no `charId`/`itemWidth`/`itemHeight`/`topIndex` fields in this build). NEW FIELD EVIDENCE: closes `GUIInv`'s own total size at 0x24(36) bytes for the first time.", 1);
 	set_frame_size(0X424260, 0X4, 4, 0);
 	add_func    (0X424290,0X4242B4);
 	set_func_flags(0X424290,0x5410);
@@ -158497,6 +158514,7 @@ static Functions_8(void) {
 	set_frame_size(0X424330, 0X4, 4, 0);
 	add_func    (0X424350,0X424377);
 	set_func_flags(0X424350,0x5410);
+	set_func_cmt(0X424350,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUISlider's own constructor, identified via `rebuild_array`'s GOBJ_SLIDER(4) branch: `unk_4EDAE8 + thisnum*0x30`, identifying `unk_4EDAE8` as the global `guislider[]` array (replacing 2011's own `DynamicArray<GUISlider> guislider;`, acgui.cpp:969) and sub_424350 (size=0x30=48, count=0x51=81) as `GUISlider::GUISlider()`. NEW FIELD EVIDENCE: closes `GUISlider`'s own total size at 0x30(48) bytes for the first time.", 1);
 	set_frame_size(0X424350, 0X4, 4, 0);
 	add_func    (0X424380,0X424395);
 	set_func_flags(0X424380,0x5410);
@@ -158511,12 +158529,14 @@ static Functions_8(void) {
 	set_frame_size(0X4243C0, 0X4, 4, 0);
 	add_func    (0X424400,0X424427);
 	set_func_flags(0X424400,0x5410);
+	set_func_cmt(0X424400,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUITextBox's own constructor, identified via `rebuild_array`'s GOBJ_TEXTBOX(5) branch: `unk_4F26F0 + thisnum*0xF4`, identifying `unk_4F26F0` as the global `guitext[]` array (acgui.cpp:1122's own operand) and sub_424400 (size=0xF4=244, count=0x51=81) as `GUITextBox::GUITextBox()`. NEW FIELD EVIDENCE: closes `GUITextBox`'s own total size at 0xF4(244) bytes for the first time -- the same size as `GUILabel`, consistent with both sharing a similarly-sized text buffer.", 1);
 	set_frame_size(0X424400, 0X4, 4, 0);
 	add_func    (0X424430,0X42445C);
 	set_func_flags(0X424430,0x5410);
 	set_frame_size(0X424430, 0X4, 4, 0);
 	add_func    (0X424460,0X424487);
 	set_func_flags(0X424460,0x5410);
+	set_func_cmt(0X424460,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUIListBox's own constructor, identified via `rebuild_array`'s GOBJ_LISTBOX(6) branch: `unk_4D31D0 + thisnum*0x1DC`, identifying `unk_4D31D0` as the global `guilist[]` array (acgui.cpp:1124's own operand) and sub_424460 (size=0x1DC=476, count=0x51=81) as `GUIListBox::GUIListBox()`. NEW FIELD EVIDENCE: closes `GUIListBox`'s own total size at 0x1DC(476) bytes for the first time -- the largest of the six, consistent with its own already-confirmed `items[100]` array (a plain 4-byte-stride `char*[100]`, per this project's own earlier round) dominating its footprint.", 1);
 	set_frame_size(0X424460, 0X4, 4, 0);
 	add_func    (0X424490,0X4244C1);
 	set_func_flags(0X424490,0x5410);
@@ -158801,6 +158821,10 @@ static Functions_8(void) {
 	set_func_flags(0X425988,0x5410);
 	set_func_cmt(0X425988,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIEraseWindow(int handle) { domouse(2); mouse_hide_count--; wputblock(x[handle],y[handle],savedbg[handle],0); destroy_bitmap(savedbg[handle]); domouse(1); savedbg[handle]=NULL; window_count--; }\" -- hides the mouse cursor, restores the screen area under the CSCI window from a saved background bitmap (a 16-byte-per-window slot table: dword_523528=saved bitmap, dword_52352C/dword_523530=x/y, all new globals), destroys the saved bitmap, re-shows the mouse, and decrements an active-CSCI-window counter (dword_523708, a new " "global). domouse (already matched) and wputblock (already matched) both co", 1);
 	set_frame_size(0X425988, 0, 4, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X425A22,0X425A93);
 	set_func_flags(0X425A22,0x5410);
 	set_func_cmt(0X425A22,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: checkcontrols() (acdialog.h:715-727) -- a complete, exact, zero-drift match: smcode(dword_523704)=0; for(kk=0;kk<MAXCONTROLS(0x14=20, zero drift, matching this build's own already-confirmed MAXCONTROLS value); if(vobjs[kk](dword_523578[kk], already established via CSCISendControlMessage's own entry)!=NULL); if(vobjs[kk]->mouseisinarea() (vtable slot 0, already matched this round as NewControl::mouseisinarea)); controlid(dword_523710)=kk; return vobjs[kk]->pressedon() (vtable slot 1, called via [edx+4] -- cross-confirming the vtable slot ordering draw()=0/pressedon()=1/processmessage()=2 already established from the pressedon()/processmessage() side, now confirmed from this call site too). Called from CSCIWaitMessage (already matched) as part of its own message-polling loop.", 1);
@@ -158823,10 +158847,6 @@ static Functions_8(void) {
 	set_func_flags(0X425FC7,0x5410);
 	set_func_cmt(0X425FC7,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void CSCIDeleteControl(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox's cleanup sequence (this round's new match) with the 3 control handles created earlier in the same function (btnPlay/btnQuit/lbl1), matching source's 3 CSCIDeleteControl calls exactly in both count and argument identity -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIDeleteControl(int handle) { operator delete(dword_523578[handle]); dword_523578[handle]=NULL; }\" -- a control-handle-table lookup (dword_523578[], a new global -- the array of live CSCI control objects, indexed by handle) followed by a genuine C++ operator delete call and a slot-clear. Matches the expected role (free a control created by CSCICreateControl) exactly. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialo" "g.h:857-861): confirms the null-check-free direct sequence \"delete vobjs[h", 1);
 	set_frame_size(0X425FC7, 0X4, 4, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X425FF6,0X426032);
 	set_func_flags(0X425FF6,0x5410);
 	set_func_cmt(0X425FF6,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: int CSCISendControlMessage(int haa,int mess,int wPar,long lPar) at acdialog.h:863-868: \"if(vobjs[haa]==NULL) return -1; return vobjs[haa]->processmessage(mess,wPar,lPar);\". A complete, exact, zero-drift match: null-checks dword_523578[haa] (already established control-handle table), returns -1 if empty, else calls vobjs[haa]->vtbl[2](mess,wPar,lPar) -- decisively identifying NewControl's vtable slot 2 as processmessage(int,int,long) (alongside slot 0=draw(), already established via CSCICreateControl's own entry). Called from enterstringwindow (already matched, this round's own updated entry) as \"CSCISendControlMessage(ctrltbox,CTB_GETTEXT,0,(long)&buffer2[0]);\" -- the literal CTB_GETTEXT=1 (acdialog.h:149) matches the disasm's own literal argument exactly.", 1);
@@ -159142,6 +159162,10 @@ static Functions_9(void) {
 	define_local_var(0X42A620, 0X42A7D3, "[bp+0X8]", "codeptr");
 	define_local_var(0X42A620, 0X42A7D3, "[bp+0XC]", "cps");
 	define_local_var(0X42A620, 0X42A7D3, "[bp+0X10]", "spp");
+}
+
+static Functions_10(void) {
+
 	add_func    (0X42A7D3,0X42A885);
 	set_func_flags(0X42A7D3,0x5410);
 	SetType(0X42A7D3, "int __stdcall SystemImports__add(char *Str2, int, int);");
@@ -159188,10 +159212,6 @@ static Functions_9(void) {
 	set_func_cmt(0X42AA88,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: ccAddExternalSymbol is a macro (\"#define scAdd_External_Symbol ccAddExternalSymbol\", AC.CPP:24236) whose expansion target IS this function's own literal linked-symbol name -- decisively identifying it. A thin one-line wrapper: \"SystemImports::add(name,addr,NULL);\" (already matched, see its own entry for the complete fixed-400-entry-array-vs-dynamic-realloc drift writeup). Called from setup_script_exports and load_ac2game_dta (both already matched) to register every script-visible global symbol -- already correctly named via linker symbol but never given its own dedicated matches.json entry until now.", 1);
 	set_frame_size(0X42AA88, 0, 4, 0);
 	define_local_var(0X42AA88, 0X42AAA1, "[bp+0X8]", "Str2");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X42AAA1,0X42AAAB);
 	set_func_flags(0X42AAA1,0x5410);
 	set_func_cmt(0X42AAA1,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: Found while chasing ccInstance's 2400-byte gap: this is a trivial 3-instruction getter (`push ebp; mov ebp,esp; mov eax,dword_534800; pop ebp; retn`) that just returns the global `dword_534800` -- matches 2011's `ccInstance *ccGetCurrentInstance() { return current_instance; }` (CSRUN.CPP:770-772) exactly, both in triviality and in the global it returns. `dword_534800` independently confirmed as `current_instance` via sub_42B394 (SCMD_RET/CALLAS handlers) and sub_42BF84/ccCallInstance (top-level reset) -- see their entries. Called from `quit` (already matched), consistent with shutdown code checking/using the currently-executing script instance.", 1);
@@ -159659,6 +159679,10 @@ static Functions_10(void) {
 	set_func_flags(0X433EA0,0x5410);
 	set_func_cmt(0X433EA0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl\nconfidence: high\nevidence: fixed fixsin(fixed x) { return _cos_tbl[((x-0x400000+0x4000)>>15)&0x1FF]; } (fmaths.inl:199-202, aliased as `fsin`, alcompat.h:51) -- a complete, exact, zero-drift match: `(arg_0-0x3FC000)>>15 & 0x1FF` -- and `0x400000-0x4000=0x3FC000` exactly, confirming the combined-constant matches source's own two-step subtraction precisely, indexing the same already-identified `_cos_tbl[512]` (dword_4BE1F4). Reached via a thin forwarding trampoline (sub_433DEE, left unnamed) called from calculate_move_stage (already matched) matching source's own `fsin(angl)` call. THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X433EA0, 0, 4, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X433EC0,0X433EE5);
 	set_func_flags(0X433EC0,0x15410);
 	SetType(0X433EC0, "wxRichToolTip *__thiscall wxRichToolTip__wxRichToolTip(wxRichToolTip *this, const wxString *title, const wxString *message);");
@@ -159706,10 +159730,6 @@ static Functions_10(void) {
 	define_local_var(0X4340F5, 0X4341ED, "[bp-0X4]", "Buffer");
 	define_local_var(0X4340F5, 0X4341ED, "[bp+0X8]", "Stream");
 	define_local_var(0X4340F5, 0X4341ED, "[bp+0XC]", "rst");
-}
-
-static Functions_11(void) {
-
 	add_func    (0X4341F0,0X43422B);
 	set_func_flags(0X4341F0,0x5410);
 	SetType(0X4341F0, "int cd_init(void);");
@@ -160366,6 +160386,10 @@ static Functions_11(void) {
 	set_func_flags(0X444AF0,0x5400);
 	set_func_cmt(0X444AF0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library, int play_sample(const SAMPLE *spl, int vol, int pan, int freq, int loop) -- well-known third-party API. Called from sub_408556 (this round's new match, my_load_wave, with (sample,voll,128,1000,loop) -- an exact argument match: pan=128=PAN_CENTER, freq=1000=Allegro's 'normal speed' sentinel) and from PlayMusic (already matched). Body is a decisive, complete match to Allegro's real implementation: calls the already-matched `allocate_voice` first (exact linker-symbol match), returns early if negative (matching 'if (v<0) return v;'), then calls voice-volume/voice-pan helpers (sub_445260/sub_445560), a freq==1000 special case ('cmp eax,3E8h; jnz...') exactly matching source's 'if (freq==1000) voice_set_frequency(v,spl->freq); else {scaled}', where the else-branch computes the scaled frequency via a classic MSVC divide-by-1000 reciprocal-multiplication magic constant (0x10624DD3) -- exactly matching '(spl->f" "req * freq) / 1000' -- then a loop!=0 boolean feeding a playmode helper (sub_4451A", 1);
 	set_frame_size(0X444AF0, 0X8, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X444B80,0X444BFE);
 	set_func_flags(0X444B80,0x5400);
 	set_func_cmt(0X444B80,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: void adjust_sample(AL_CONST SAMPLE*spl,int vol,int pan,int freq,int loop) (sound.c:1224-1238) -- a complete, exact, zero-drift match. `for(c=0;c<VIRTUAL_VOICES;c++) if(virt_voice[c].sample==spl) { voice_set_volume(c,vol); voice_set_pan(c,pan); voice_set_frequency(c,absolute_freq(freq,spl)); voice_set_playmode(c,loop?PLAYMODE_LOOP:PLAYMODE_PLAY); return; }` matches the disassembly's own search loop over the already-established `virt_voice[]` array (dword_550040, 20-byte stride) and its calls into the already-matched `voice_set_volume`/`voice_set_pan`/`voice_set_playmode` exactly. Called from update_music_volume (already matched, this build's own MP3-branch helper sub_408356 -- see its own entry) and from sub_47E7A0 (previously characterized, tentatively, as 'plausibly ALMP3's own volume/pan/speed/loop adjustment entry point' -- this new call site is worth revisiting in a future round, since a call into Alleg" "ro's own SAMPLE-based `adjust_sample` is inconsistent with sub_47E7A0 being purely an ALMP3-in", 1);
@@ -160403,10 +160427,6 @@ static Functions_11(void) {
 	set_func_flags(0X445140,0x5400);
 	set_func_cmt(0X445140,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: int voice_get_position(int voice) (sound.c:1562-1569) -- Allegro's public API. Matches exactly: `if(virt_voice[voice].num>=0) return digi_driver->get_position(virt_voice[voice].num); else return -1;` -- the disassembly reads `virt_voice[voice].num`@+0x04 (dword_550044, 20-byte stride matching the already-established virt_voice[] array), tests negative (matches ASSERT-guarded `<0` check yielding -1), else calls a vtable dispatch through `off_4BD554`(newly identified as `digi_driver`) at slot +0x50 (`get_position`). Called from IsMusicPlaying (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X445140, 0, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X445170,0X445195);
 	set_func_flags(0X445170,0x5400);
 	set_frame_size(0X445170, 0, 0, 0);
@@ -161737,6 +161757,10 @@ static Functions_12(void) {
 	set_func_flags(0X463940,0x15400);
 	set_func_cmt(0X463940,	"[reversing] confirmed match\nconfidence: high\nevidence: Confirmed as Allegro's own datafile (.dat) object-fixup routine via its own internal dispatch on Allegro's well-known 4-byte object-type tag constants (0x424D5020=\"BMP \"/DAT_BITMAP, 0x524C4520=\"RLE \"/DAT_RLE_SPRITE, and presumably others further in -- not individually enumerated). A large (772-line) third-party library function; per this project's scope rule, not chased further -- a ScummVM reimplementation replaces Allegro's whole datafile-loading system wholesale, and this project's own earlier survey work already established Rob Blanc 1 doesn't use Allegro .dat files for its own game assets (it uses the CLIB format instead, see csetlib's own entry) -- this function is plausibly linked in but unused, or used only for a minor internal Allegro resource.", 1);
 	set_frame_size(0X463940, 0X18, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X464020,0X4640CA);
 	set_func_flags(0X464020,0x5410);
 	set_frame_size(0X464020, 0, 4, 0);
@@ -161921,10 +161945,6 @@ static Functions_12(void) {
 	set_func_flags(0X466B00,0x15400);
 	set_func_cmt(0X466B00,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:tga.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:tga.obj", 1);
 	set_frame_size(0X466B00, 0X82C, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X467210,0X4672D2);
 	set_func_flags(0X467210,0x5400);
 	set_frame_size(0X467210, 0X10, 0, 0);
@@ -163060,6 +163080,10 @@ static Functions_13(void) {
 	set_func_flags(0X47E730,0x5400);
 	set_func_cmt(0X47E730,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: static int almp3_get_big_endian(unsigned char *p) { int x; x=*p; x<<=8; x|=*(p+1); x<<=8; x|=*(p+2); x<<=8; x|=*(p+3); return x; } at almp3.c:147-154 -- Allegro MP3 library's own big-endian 32-bit reader, used to parse an mp3's Xing VBR header. DECISIVE match: found via almp3_create_mp3's own Xing-header-parsing block (already matched) -- the disassembly checks the 'Xing' magic string, then calls this function once unconditionally for `xing_header->flags`, and conditionally up to 3 more times gated on bits 1/2/8 of that flags value (matching source's own XING_FRAMES_FLAG/XING_BYTES_FLAG/XING_VBR_SCALE_FLAG exactly), with bit 4 (XING_TOC_FLAG) handled as a raw 100-byte copy loop with NO function call -- matching source's own `for(j=0;j<100;j++,p++) mp3->xing_header->toc[j]=*p;` exactly (no almp3_get_big_endian call for the TOC bytes, since they're single bytes not big-endian dwords). Found via the newly-added " "ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47E730, 0, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X47E760,0X47E799);
 	set_func_flags(0X47E760,0x5400);
 	SetType(0X47E760, "int __cdecl almp3_destroy_mp3(void *Block);");
@@ -163092,10 +163116,6 @@ static Functions_13(void) {
 	set_func_flags(0X47E990,0x5400);
 	set_func_cmt(0X47E990,	"[reversing] confirmed match\nsource: Engine/libsrc/almp3-2.0.5/src/almp3.c\nconfidence: high\nevidence: int almp3_poll_mp3(ALMP3_MP3 *mp3) at almp3.c:688 -- ALMP3_MP3's own per-frame poll/decode-and-buffer-fill function, the non-streaming sibling of the already-matched almp3_poll_mp3stream (itself a substantial ~200-line function). Opening guard matches exactly: 'if (!almp3_is_playing_mp3(mp3)) return ALMP3_POLL_NOTPLAYING;' -- calls the already-matched almp3_is_playing_mp3 (sub_47ECC0) and returns -1 (matching ALMP3_POLL_NOTPLAYING) on failure. Function size (237 disassembly lines) is consistent with almp3_poll_mp3's own substantial real decode-loop body. Called from sub_4084E0 (this build's own MP3-crossfade-continuation check, already matched) -- matching that function's own existing citation of 'polling the already-confirmed PlayMusic MP3 stream handle' exactly. HIGH confidence via the decisive opening-guard match; own body past that point not instruction-traced this round given its size, per this project's" " own convention for large functions. Found via the newly-added ALMP3 2.0.5 source tree.", 1);
 	set_frame_size(0X47E990, 0X14, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X47EBD0,0X47EC25);
 	set_func_flags(0X47EBD0,0x5400);
 	set_func_cmt(0X47EBD0,	"[reversing] confirmed match\nconfidence: medium\nevidence: ALMP3's own internal 'current playback position in milliseconds' implementation -- found while sweeping GetMP3PosMillis's (already matched) own remaining callee. Reads several fields deep inside a large structure (offsets +0xA6AC/+0xA6B8/+0xA698/+0xA6BC/+0xA6B4, plausibly frame count/bitrate/samples-per-frame-style MPEG stream-state fields), computes a floating-point seconds value, multiplies by a literal 1000.0 constant (flt_4AD860) to convert to milliseconds, and truncates via _ftol -- matching ALMP3's documented public API role, almp3_get_pos_msecs_mp3, at the behavioral level. Left unnamed per this project's standing convention for ALMP3 internals -- no ALMP3 source exists in this repo to verify exact field/function names against.", 1);
@@ -165019,6 +165039,10 @@ static Functions_14(void) {
 	add_func    (0X4A3150,0X4A3450);
 	set_func_flags(0X4A3150,0x5400);
 	set_frame_size(0X4A3150, 0X38, 0, 0);
+}
+
+static Functions_15(void) {
+
 	add_func    (0X4A3450,0X4A347E);
 	set_func_flags(0X4A3450,0x5400);
 	set_frame_size(0X4A3450, 0X4, 0, 0);
@@ -165296,10 +165320,6 @@ static Functions_14(void) {
 	add_func    (0X4AA7D0,0X4AA823);
 	set_func_flags(0X4AA7D0,0x5400);
 	set_frame_size(0X4AA7D0, 0X8, 0, 0);
-}
-
-static Functions_15(void) {
-
 	add_func    (0X4AA830,0X4AA89B);
 	set_func_flags(0X4AA830,0x5400);
 	set_frame_size(0X4AA830, 0X8, 0, 0);
