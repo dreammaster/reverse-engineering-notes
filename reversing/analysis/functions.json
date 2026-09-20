@@ -2940,9 +2940,9 @@
   "is_named": true
  },
  {
-  "name": "sub_425600",
+  "name": "draw_trans_sprite",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "draw_sprite_v_flip",

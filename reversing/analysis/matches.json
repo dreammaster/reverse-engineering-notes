@@ -9135,5 +9135,15 @@
     "confidence": "medium-high",
     "is_library": false,
     "evidence": "MouseCursor's own default constructor, identified as the per-element callback for `mcurs[10]`'s own construction (see GameSetupStructBase's own constructor entry, sub_424830). `[this+0]=0x806(2054)` matches `pic`@+0x00 (a specific default cursor sprite number). `[this+8]=0xFFFF` matches `view`@+0x08 as a SHORT set to -1 ('no animation view assigned', this build's own already-established convention). `[this+4]=0, [this+6]=0` match `hotx`@+0x04/`hoty`@+0x06 (both shorts) reset to 0. `[this+0xA](byte)=0` plausibly `flags`@+0x0A. `[this+0x14](byte)=0` falls inside the already-confirmed `name[10]` buffer's own byte range -- plausibly a partial clear/null-terminator rather than a distinctly-named field. pic/hotx/hoty/view all confirmed at HIGH confidence via exact offset match to already-established fields; the two byte-writes are lower confidence."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425600",
+    "new_name": "draw_trans_sprite",
+    "source_file": "Engine/libsrc/allegro-4.0.2/include/allegro/inline/draw.inl",
+    "source_line": 121,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's own public draw_trans_sprite(BITMAP*bmp,BITMAP*sprite,int x,int y) at draw.inl:121-136. DECISIVE, zero-drift, word-for-word match: 'if(sprite->vtable->color_depth==32) bmp->vtable->draw_trans_rgba_sprite(bmp,sprite,x,y); else bmp->vtable->draw_trans_sprite(bmp,sprite,x,y);' matches the disassembly's own check on `[arg_4+0x1C]`(sprite->vtable)+0 (color_depth) against the literal 0x20(32), dispatching to `[arg_0+0x1C]`(bmp->vtable)+0x58 (draw_trans_rgba_sprite) or +0x54 (draw_trans_sprite) exactly. RESOLVES a long-standing open lead from an earlier round ('sub_425600's GFX_VTABLE dispatch didn't cleanly reconcile with the reference slot order and was left open rather than forced') -- the earlier attempt used the 4.2.2 reference's own GFX_VTABLE layout, which is offset differently due to this build's own confirmed vtable-shift (missing slots 4.2.2 later added); using Allegro 4.0.2's own header instead (already established as the closer reference to this build's actual 2002-07-21 link date) gives slots 0x54/0x58 = draw_trans_sprite/draw_trans_rgba_sprite directly, with NO shift needed at all -- resolving the ambiguity outright rather than needing to guess at a correction. Called from put_sprite_256 (already matched). THIRD-PARTY LIBRARY BOUNDARY (Allegro's own public API), not chased further."
   }
 ]

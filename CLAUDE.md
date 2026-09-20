@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 1029 named, 1557 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 1030 named, 1556 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5366,6 +5366,17 @@ disassembly work.
   `iface[10]`@+0x534 and `mcurs[10]`@+0x2544, and names `MouseCursor`'s
   own default constructor (`pic`=2054, `hotx`/`hoty`=0, `view`=-1, all
   matching already-confirmed offsets exactly).
+- **`sub_425600` resolves a long-standing open lead: it's Allegro's own
+  public `draw_trans_sprite`.** An earlier round had tried matching this
+  `GFX_VTABLE` dispatch against the 4.2.2 reference and left it open
+  because the slot order didn't cleanly reconcile (a consequence of
+  this build's own confirmed vtable-shift versus 4.2.2). Re-checking
+  against Allegro 4.0.2's own header instead (`include/allegro/inline/
+  draw.inl:121-136`) resolves it outright with zero shift needed: `if
+  (sprite->vtable->color_depth==32) bmp->vtable->draw_trans_rgba_sprite
+  (...); else bmp->vtable->draw_trans_sprite(...);` matches the
+  disassembly's own dispatch on slots +0x54/+0x58 exactly. Called from
+  `put_sprite_256` (already matched). THIRD-PARTY LIBRARY BOUNDARY.
 
 ## Third-party library identification (Task #10)
 
