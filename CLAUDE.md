@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 998 named, 1588 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 999 named, 1587 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5174,6 +5174,32 @@ disassembly work.
   sits beside three no-op stub functions, consistent with the whole
   cluster being reachable only through an indirect function-pointer
   table not yet located -- left unnamed, documented for a future round.
+- **`SpriteCache::SpriteCache` found, closing the last major unmatched
+  `SpriteCache` method.** Continuing the size-ranked sweep. `sub_40237B`
+  is the constructor, fused with `init()`/`changeMaxSize()`
+  (`Common/sprcache.cpp:46-85`) into one flat function -- an
+  over-determined match, called with the literal `6001`(`MAX_SPRITES`
+  +1, already established) on the global `spriteset`. Every one of its
+  4 `calloc`+field-zero writes lands exactly on an already-confirmed
+  offset from earlier rounds (`offsets[]`@+0x00, `images[]`@+0x08,
+  `mrulist[]`@+0x14, `mrubacklink[]`@+0x18, `cachesize`@+0x10=0,
+  `liststart`@+0x1C=-1, `lastLoad`@+0x24=-2), and closes TWO fields
+  that had never had their own offset pinned down before:
+  `lockedSize`@+0x0C=0 and `listend`@+0x20=-1 (the latter's ROLE was
+  already known from `removeOldest`'s own text, just not its address).
+  Only 4 `calloc`s appear, not source's 6 -- a fourth independent
+  confirmation that `sizes[]`/`flags[]`/`spritesAreCompressed` are
+  genuinely absent. REAL DRIFT: `maxCacheSize`@+0x28 is initialized to a
+  literal 5,000,000 bytes (~4.77MB, IDA auto-labeled as a bogus `offset
+  unk_4C4B40` since the raw immediate coincides with a valid in-image
+  address -- the same artifact already seen with the `"TTF\0"` tag and
+  `recalced`), a clean 4.048x reduction from 2011's own declared
+  `DEFAULTCACHESIZE=20240000`. The caller chain (`sub_408229`, a thin
+  wrapper, itself called from `sub_40821F`, registered directly in a
+  CRT static-initializer pointer table) matches the exact pre-`main()`
+  global-construction pattern already found for `rstruc`'s own
+  initializer -- neither wrapper has a clean name to adopt, left
+  unnamed.
 
 ## Third-party library identification (Task #10)
 

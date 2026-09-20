@@ -105,9 +105,9 @@
   "is_named": false
  },
  {
-  "name": "sub_40237B",
+  "name": "SpriteCache__SpriteCache",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SpriteCache__set",
