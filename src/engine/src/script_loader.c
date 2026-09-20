@@ -202,3 +202,38 @@ struct ccScript *ags_cc_read_script(FILE *f, enum AgsScriptLoadError *out_error)
     scri->instances = 0;
     return scri;
 }
+
+void ags_cc_free_script(struct ccScript *scri)
+{
+    int i;
+
+    if (!scri) {
+        return;
+    }
+
+    free(scri->globaldata);
+    free(scri->code);
+    free(scri->strings);
+    free(scri->fixuptypes);
+    free(scri->fixups);
+    scri->globaldata = NULL;
+    scri->code = NULL;
+    scri->strings = NULL;
+    scri->fixuptypes = NULL;
+    scri->fixups = NULL;
+
+    for (i = 0; i < scri->numimports; i++) {
+        if (scri->imports[i]) {
+            free(scri->imports[i]);
+        }
+    }
+    for (i = 0; i < scri->numexports; i++) {
+        free(scri->exports[i]);
+    }
+    scri->numimports = 0;
+    scri->numexports = 0;
+
+    /* see ags/script_loader.h's own comment: the real ccFreeScript
+     * stops here, leaking the shell -- this port frees it too. */
+    free(scri);
+}

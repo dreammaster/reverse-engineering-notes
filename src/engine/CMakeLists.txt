@@ -5,7 +5,8 @@
 # use. M1 (src/PLAN.md): clib.c, the CLIB asset-library reader. M4:
 # script_loader.c (a real, decoding fread_script port) + interp.c
 # (ccCreateInstanceEx/ccCallInstance/cc_run_code, the 38-opcode
-# script VM).
+# script VM). M5: lzw.c (LZW/RLE decompression primitives) +
+# room_loader.c (load_room/load_main_block's block-type dispatch).
 
 add_library(agsengine STATIC
   src/stub.c
@@ -13,6 +14,8 @@ add_library(agsengine STATIC
   src/loader.c
   src/script_loader.c
   src/interp.c
+  src/lzw.c
+  src/room_loader.c
 )
 
 target_include_directories(agsengine PUBLIC

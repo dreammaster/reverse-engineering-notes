@@ -24,9 +24,30 @@ enum AgsScriptLoadError {
 
 /* Reads and fully decodes a compiled script from the CURRENT position
  * of `f`. Returns a malloc'd struct ccScript* on success (caller
- * owns it -- there's no ags_cc_free_script() yet; M4 is a first real
- * test of the interpreter, not production memory management yet),
- * NULL on failure with *out_error set to why. */
+ * owns it -- free with ags_cc_free_script()), NULL on failure with
+ * *out_error set to why. */
 struct ccScript *ags_cc_read_script(FILE *f, enum AgsScriptLoadError *out_error);
+
+/* ccFreeScript(ccScript*) (Common/cscommon.cpp:116) -- a direct port,
+ * added in M5 (src/PLAN.md) once room reloading needed a real
+ * destructor for RoomStruct.compiled_script. Frees globaldata/code/
+ * strings/fixuptypes/fixups (each individually null-checked) and
+ * every non-NULL imports[]/every exports[] entry (source's own
+ * exports loop has no null check either -- matched exactly), then
+ * zeroes numimports/numexports, matching this build's own confirmed
+ * simpler predecessor (no numSections loop, no free of the imports/
+ * exports/export_addr ARRAYS themselves -- they're fixed embedded
+ * arrays here, not 2011's separately malloc'd dynamic ones).
+ * DELIBERATE DEVIATION: matches.json's own entry for the real
+ * ccFreeScript confirms its body stops after zeroing numimports/
+ * numexports -- it never frees the ccScript object itself, and
+ * load_room's own disassembly (this build's one traced caller) never
+ * does either, meaning the original engine leaks the (by-then-empty)
+ * ccScript shell on every room reload. This port additionally frees
+ * `scri` itself, since nothing in this codebase needs to keep a
+ * freed script's empty shell around -- a real, intentional
+ * improvement over the original's own behavior, not a faithfulness
+ * gap. NULL-safe (a no-op on NULL). */
+void ags_cc_free_script(struct ccScript *scri);
 
 #endif /* AGS_SCRIPT_LOADER_H */

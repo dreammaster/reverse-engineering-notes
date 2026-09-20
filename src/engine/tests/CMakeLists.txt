@@ -37,3 +37,9 @@ target_link_libraries(test_characters PRIVATE agsengine)
 # AGS_STUB.
 add_executable(test_interpreter test_interpreter.c)
 target_link_libraries(test_interpreter PRIVATE agsengine)
+
+# M5 (src/PLAN.md): "Open a room" -- load_room/load_main_block's
+# block-type dispatch, real LZW/RLE decompression, printing room 1's
+# width/height/hotspot names/object count from the real .crm file.
+add_executable(test_room test_room.c)
+target_link_libraries(test_room PRIVATE agsengine)
