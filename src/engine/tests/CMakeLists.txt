@@ -22,3 +22,10 @@ target_link_libraries(test_clib_manifest PRIVATE agsengine)
 # dump_gamesetup_from_data.py's own for a direct comparison.
 add_executable(test_gamesetup test_gamesetup.c)
 target_link_libraries(test_gamesetup PRIVATE agsengine)
+
+# M3 (src/PLAN.md): "Meet the cast" -- walks past WordsDictionary/the
+# compiled script/ViewStruct272[]/a second skip to reach and decode
+# the real CharacterInfo array. Matches reversing/scripts/
+# dump_characters_from_data.py's own (corrected) output.
+add_executable(test_characters test_characters.c)
+target_link_libraries(test_characters PRIVATE agsengine)

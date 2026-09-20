@@ -174,14 +174,25 @@ def walk_to_characters(buf):
 
 
 def decode_character(rec):
+    """CORRECTED (found while porting this walk to C for src/PLAN.md's M3):
+    this function used to read x@+0x10/y@+0x14, predating apply_structs.py's
+    own later-confirmed `prevroom` field landing at +0x10 (see
+    CharacterInfo's own struct-layout-drift.md entry, "CharacterInfo.prevroom
+    closes") -- every real run of this script therefore printed `prevroom`'s
+    value mislabeled as `x` (always 0, since no character has changed rooms
+    at compile time) and the REAL `x` mislabeled as `y`, while the actual
+    `y` field (+0x18) was never read at all. Fixed to match
+    CharacterInfo's own already-verified (525 offsetof() assertions,
+    src/engine/tests/test_field_offsets.c) field layout exactly."""
     def i32(off): return struct.unpack_from('<i', rec, off)[0]
     return {
         "defview": i32(0x00),
         "talkview": i32(0x04),
         "view": i32(0x08),
         "room": i32(0x0C),
-        "x": i32(0x10),
-        "y": i32(0x14),
+        "prevroom": i32(0x10),
+        "x": i32(0x14),
+        "y": i32(0x18),
         "name": rec[0x110:0x110 + 30].split(b"\x00", 1)[0].decode("latin1"),
         "scrname": rec[0x12E:0x12E + 16].split(b"\x00", 1)[0].decode("latin1"),
     }
