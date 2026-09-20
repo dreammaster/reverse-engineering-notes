@@ -2725,19 +2725,19 @@
   "is_named": true
  },
  {
-  "name": "sub_424A80",
+  "name": "MYWAVE__poll",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424AC0",
+  "name": "MYWAVE__set_volume",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424AE0",
+  "name": "MYWAVE__destroy",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SOUNDCLIP__SOUNDCLIP",
@@ -2755,9 +2755,9 @@
   "is_named": true
  },
  {
-  "name": "sub_424C00",
+  "name": "MYMP3__set_volume",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "MYMP3__destroy",
@@ -2770,19 +2770,19 @@
   "is_named": true
  },
  {
-  "name": "sub_424CE0",
+  "name": "MYSTATICMP3__poll",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424D30",
+  "name": "MYSTATICMP3__set_volume",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424D80",
+  "name": "MYSTATICMP3__destroy",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "TreeMap__TreeMap",
@@ -8905,9 +8905,9 @@
   "is_named": true
  },
  {
-  "name": "sub_47F650",
+  "name": "almp3_adjust_mp3stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "almp3_is_playing_mp3stream",

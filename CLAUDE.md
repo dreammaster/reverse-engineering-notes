@@ -421,7 +421,7 @@ reversing/
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
 
-- 2586 functions total: 1007 named, 1579 unnamed (`sub_*`/`nullsub_*`) as of the last
+- 2586 functions total: 1015 named, 1571 unnamed (`sub_*`/`nullsub_*`) as of the last
   IDB re-export (started this project at 535 named). `matches.json` has
   since grown to 861 entries — fully applied/in sync with the last
   re-export as of this writing. (These per-round numbers below this point
@@ -5234,6 +5234,31 @@ disassembly work.
   touching a much larger ~0x7C-byte object) was found in the same
   address neighborhood but its owning class/constructor wasn't located
   this round -- left as an open lead.
+- **Immediate follow-up closes the ENTIRE `SOUNDCLIP` class hierarchy's
+  vtables, in every remaining derived class at once.** Reading
+  `off_4AD5A8`, `SOUNDCLIP`'s own base vtable, directly settled a
+  question this project had never explicitly checked: it has exactly
+  **THREE** pure-virtual (`_purecall`) slots, not 2011's ~11 (`seek`/
+  `get_pos`/`get_pos_ms`/`get_length_ms`/`restart`/`get_voice`/
+  `get_sound_type`/`play` are all CONFIRMED ABSENT from the vtable
+  itself, not merely unused) -- `poll`/`destroy`/`set_volume` are the
+  entire interface. `MYMP3::set_volume` (`sub_424C00`, slot 2) matches
+  `acsound.cpp:212` with `vol`/`volModifier`/`directionalVolModifier`
+  all confirmed absent and panning hardcoded to `0x80`, naming
+  `almp3_adjust_mp3stream`. `MYWAVE`'s all three (`poll`/`set_volume`/
+  `destroy`, `acsound.cpp:57-91`) close cleanly, confirming `wave`@+0x08/
+  `voice`@+0x0C from multiple routes each -- `sizeof(MYWAVE)==0x10`(16),
+  matching the already-confirmed total exactly. `MYSTATICMP3`'s all
+  three (`acsound.cpp:338-377`) close too, and REOPEN a genuinely useful
+  distinction: unlike `MYMP3`/`MYWAVE`, this class DOES carry its own
+  local `vol`@+0x0C and `repeat`@+0x14 (a single BYTE, not source's
+  presumed int -- a real field-size drift) fields, confirming this
+  project's own earlier prediction that `MYSTATICMP3`'s base-class
+  shrinkage forced exactly these two fields to become local additions
+  here specifically. `sizeof(MYSTATICMP3)==0x18`(24), fully closed.
+  Every `SOUNDCLIP`-derived class in this build now has every field AND
+  every virtual method individually confirmed -- a complete subsystem
+  closure.
 
 ## Third-party library identification (Task #10)
 

@@ -8775,5 +8775,85 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "void almp3_destroy_mp3stream(ALMP3_MP3STREAM *mp3) at almp3.h:106 -- identified via MYMP3::destroy's own unconditional 1-argument call (stream), matching source's `almp3_destroy_mp3stream(stream);` exactly. THIRD-PARTY LIBRARY BOUNDARY."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47F650",
+    "new_name": "almp3_adjust_mp3stream",
+    "source_file": "Engine/libsrc/almp3-2.0.5/include/almp3.h",
+    "source_line": 111,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void almp3_adjust_mp3stream(ALMP3_MP3STREAM*,int vol,int pan,int speed) at almp3.h. Identified via MYMP3::set_volume's own decisive 4-argument call (stream, newvol, hardcoded 0x80 pan, hardcoded 1000 speed). THIRD-PARTY LIBRARY BOUNDARY."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424C00",
+    "new_name": "MYMP3__set_volume",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 212,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYMP3::set_volume(int) at acsound.cpp:212-223 -- MYMP3's own vtable slot 2 (off_4AD5B4+8), completing the class alongside poll/destroy (this session's own earlier matches). `newvol+=20; if(newvol>255) newvol=255;` matches exactly; source's own `vol=newvol;` write is CONFIRMED ABSENT (no `vol` field exists in this build's minimal SOUNDCLIP-derived classes -- MYMP3 stays at its already-confirmed 24-byte total with no room for one), and `newvol+=volModifier+directionalVolModifier;` is likewise CONFIRMED ABSENT -- calls almp3_adjust_mp3stream(stream,newvol,0x80/*hardcoded pan, no real panning field*/,1000) directly. MAJOR STRUCTURAL FINDING (confirmed by reading `off_4AD5A8`, SOUNDCLIP's own base vtable, directly): this build's whole SOUNDCLIP class hierarchy has exactly THREE virtual methods (poll/destroy/set_volume), not 2011's ~11 (seek/get_pos/get_pos_ms/get_length_ms/restart/get_voice/get_sound_type/play are all CONFIRMED ABSENT from the vtable itself, not merely unused) -- SOUNDCLIP's own base vtable is exactly 3 slots of the FLIRT-identified `_purecall` (pure-virtual thunk), matching this count with zero ambiguity."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424A80",
+    "new_name": "MYWAVE__poll",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 57,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYWAVE::poll() at acsound.cpp:57-73. `if(wave==NULL) return 1;` matches `[this+8]==0` exactly; source's `paused`/`firstTime` checks are CONFIRMED ABSENT (no such fields exist); `voice_get_position(voice); if(<0) done=1; return done;` matches `[this+0xC]` (voice) exactly. Confirms MYWAVE's field layout from a first route: wave@+0x08, voice@+0x0C."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424AC0",
+    "new_name": "MYWAVE__set_volume",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 75,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYWAVE::set_volume(int) at acsound.cpp:75-85. Calls voice_set_volume(voice@+0xC, newvol) directly with source's `vol=newvol;` write, `voice>=0` guard, and `volModifier+directionalVolModifier` addition all CONFIRMED ABSENT (matching the same simplification already found in MYMP3::set_volume) -- MYWAVE's vtable slot 2. Second confirmation route for voice@+0x0C."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424AE0",
+    "new_name": "MYWAVE__destroy",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 87,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYWAVE::destroy() at acsound.cpp:87-91: `destroy_sample(wave); wave=NULL;` matches `[this+8]` exactly, MYWAVE's vtable slot 1. Second confirmation route for wave@+0x08. Together with poll/set_volume, closes MYWAVE's entire field layout with zero ambiguity: vtable@0, done@4, wave@8, voice@0xC, sizeof==0x10(16), matching the already-confirmed total exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424CE0",
+    "new_name": "MYSTATICMP3__poll",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 338,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYSTATICMP3::poll() at acsound.cpp:338-350. `if(tune!=NULL){ if(almp3_poll_mp3(tune)==ALMP3_POLL_PLAYJUSTFINISHED(1) && !repeat) done=1; } return done;` matches exactly (source's `our_eip` debug-bookkeeping writes are CONFIRMED ABSENT, consistent with this build predating that diagnostic mechanism). Confirms `tune`@+0x08 and, for the first time, `repeat`@+0x14 as a single BYTE (not source's presumed int) -- a genuine field-size drift, matching this project's established smaller-field pattern."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424D30",
+    "new_name": "MYSTATICMP3__set_volume",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 352,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYSTATICMP3::set_volume(int) at acsound.cpp:352-363. `vol=newvol;` matches an UNCONDITIONAL `[this+0xC]=arg_0` write exactly -- CONFIRMING `vol`@+0x0C is a genuine, real LOCAL field in this build's MYSTATICMP3 (unlike MYMP3/MYWAVE, which have no `vol` field at all -- matching this project's own earlier prediction that MYSTATICMP3's base-class shrinkage forced `vol`/`repeat` to become local fields here specifically). `if(tune!=NULL){newvol+=volModifier+directionalVolModifier; almp3_adjust_mp3(tune,newvol,panning,1000,repeat);}` matches `if([this+8]!=0)` gating a 5-argument almp3_adjust_mp3 call with a hardcoded 0x80 panning default (volModifier/directionalVolModifier/real panning CONFIRMED ABSENT, matching the family-wide pattern) and the real `repeat`@+0x14 byte value passed through. Second confirmation route each for tune@+0x08 and repeat@+0x14."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424D80",
+    "new_name": "MYSTATICMP3__destroy",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 365,
+    "confidence": "high",
+    "is_library": false,
+    "evidence": "MYSTATICMP3::destroy() at acsound.cpp:365-377. `if(tune!=NULL){almp3_stop_mp3(tune); almp3_destroy_mp3(tune); tune=NULL;} if(mp3buffer!=NULL){free(mp3buffer); mp3buffer=NULL;}` matches exactly, confirming `tune`@+0x08 (third route) and, for the first time, `mp3buffer`@+0x10. Together with poll/set_volume, closes MYSTATICMP3's entire field layout: vtable@0, done@4, tune@8, vol@0xC, mp3buffer@0x10, repeat@0x14(byte) -- rounding to the already-confirmed sizeof==0x18(24) total with zero remaining ambiguity. Completes a full sweep of every SOUNDCLIP-derived class's entire vtable this session -- SOUNDCLIP/MYWAVE/MYMP3/MYSTATICMP3 all now have every field AND every virtual method confirmed."
   }
 ]
