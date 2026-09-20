@@ -1,0 +1,12 @@
+# One small executable per milestone (see src/PLAN.md). Step 0 gets
+# test_struct_sizes -- no real behavior yet, just proof every struct
+# header lays out exactly as struct-layout-drift.md says it should.
+
+add_executable(test_struct_sizes test_struct_sizes.c)
+target_link_libraries(test_struct_sizes PRIVATE agsengine)
+
+# Auto-generated from apply_structs.py -- see the generator note at the
+# top of test_field_offsets.c. Every field's offsetof() checked against
+# the original evidence directly, not just each struct's total size.
+add_executable(test_field_offsets test_field_offsets.c)
+target_link_libraries(test_field_offsets PRIVATE agsengine)
