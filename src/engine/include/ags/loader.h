@@ -31,6 +31,7 @@
 
 #include "ags/gamesetup.h"
 #include "ags/character.h"
+#include "ags/view.h"
 
 /* This build's own load_game_file checks the header's marker field
  * against exactly this literal (per dump_gamesetup_from_data.py's own
@@ -133,6 +134,17 @@ int ags_skip_compiled_script(FILE *f, struct AgsScriptBlockInfo *out_info);
  * -- skipped for now (decoding ViewStruct272's own contents is later
  * milestone work, though ags/view.h's struct is already verified). */
 int ags_skip_views(FILE *f, const struct GameSetupStructBase *game);
+
+/* Step 4, decoding variant (M7, "Meet the room's people", see
+ * src/PLAN.md): the same game->numviews-sized flat block
+ * ags_skip_views jumps over, but read for real into caller-allocated
+ * `out` (at least game->numviews slots) -- one bulk fread per view,
+ * matching ViewStruct272's own already byte-verified packed layout
+ * (Step 0) exactly, since the on-disk format IS that struct's own
+ * raw bytes (already proven by ags_skip_views's own successful
+ * byte-count skip in M3/M4/M5/M6's test runs). Returns 0 on success,
+ * -1 on a short read. */
+int ags_load_views(FILE *f, const struct GameSetupStructBase *game, struct ViewStruct272 *out);
 
 /* Step 5: a second getw()-prefixed forward skip, this time SCALED by
  * 0x204 bytes per unit -- role not identified either. */

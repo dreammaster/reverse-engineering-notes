@@ -9,7 +9,9 @@
 # room_loader.c (load_room/load_main_block's block-type dispatch).
 # M6: gfx.c, the thinnest possible wiring onto Allegro's own real
 # display pipeline (open a window, apply the room palette, blit the
-# decompressed background).
+# decompressed background). M7: sprite_loader.c (SpriteCache::
+# initFile/loadSprite's real, uncompressed-sprite path) + loader.c
+# gains ags_load_views (decoding ViewStruct272[] for real).
 
 add_library(agsengine STATIC
   src/stub.c
@@ -20,6 +22,7 @@ add_library(agsengine STATIC
   src/lzw.c
   src/room_loader.c
   src/gfx.c
+  src/sprite_loader.c
 )
 
 target_include_directories(agsengine PUBLIC

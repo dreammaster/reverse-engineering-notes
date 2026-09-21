@@ -50,3 +50,11 @@ target_link_libraries(test_room PRIVATE agsengine)
 # for after-the-fact visual verification.
 add_executable(test_see_room test_see_room.c)
 target_link_libraries(test_see_room PRIVATE agsengine)
+
+# M7 (src/PLAN.md): "Meet the room's people" -- decodes ViewStruct272[]
+# for real (ags_load_views), looks up the player character's current
+# view/loop/frame sprite number, loads it (ags/sprite_loader.h) and
+# their own real starting room, and draws their static pose at their
+# own room position.
+add_executable(test_meet_people test_meet_people.c)
+target_link_libraries(test_meet_people PRIVATE agsengine)

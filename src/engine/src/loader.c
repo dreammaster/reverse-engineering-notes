@@ -218,6 +218,17 @@ int ags_skip_views(FILE *f, const struct GameSetupStructBase *game)
     return 0;
 }
 
+int ags_load_views(FILE *f, const struct GameSetupStructBase *game, struct ViewStruct272 *out)
+{
+    if (game->numviews <= 0) {
+        return 0;
+    }
+    if (fread(out, sizeof(struct ViewStruct272), (size_t)game->numviews, f) != (size_t)game->numviews) {
+        return -1;
+    }
+    return 0;
+}
+
 int ags_skip_unidentified_block2(FILE *f)
 {
     int units;
