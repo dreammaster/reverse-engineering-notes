@@ -43,3 +43,10 @@ target_link_libraries(test_interpreter PRIVATE agsengine)
 # width/height/hotspot names/object count from the real .crm file.
 add_executable(test_room test_room.c)
 target_link_libraries(test_room PRIVATE agsengine)
+
+# M6 (src/PLAN.md): "See the room" -- opens a real windowed Allegro
+# graphics mode, applies the room's own palette, and blits its
+# decompressed background onto the visible screen; saves a screenshot
+# for after-the-fact visual verification.
+add_executable(test_see_room test_see_room.c)
+target_link_libraries(test_see_room PRIVATE agsengine)

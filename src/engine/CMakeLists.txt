@@ -7,6 +7,9 @@
 # (ccCreateInstanceEx/ccCallInstance/cc_run_code, the 38-opcode
 # script VM). M5: lzw.c (LZW/RLE decompression primitives) +
 # room_loader.c (load_room/load_main_block's block-type dispatch).
+# M6: gfx.c, the thinnest possible wiring onto Allegro's own real
+# display pipeline (open a window, apply the room palette, blit the
+# decompressed background).
 
 add_library(agsengine STATIC
   src/stub.c
@@ -16,6 +19,7 @@ add_library(agsengine STATIC
   src/interp.c
   src/lzw.c
   src/room_loader.c
+  src/gfx.c
 )
 
 target_include_directories(agsengine PUBLIC
