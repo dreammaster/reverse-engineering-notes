@@ -58,3 +58,12 @@ target_link_libraries(test_see_room PRIVATE agsengine)
 # own room position.
 add_executable(test_meet_people test_meet_people.c)
 target_link_libraries(test_meet_people PRIVATE agsengine)
+
+# M8 (src/PLAN.md): "The world starts moving" -- a real mainloop with
+# live keyboard/mouse polling (click to walk, ESC to quit), plus an
+# automatic walk across room 1's own real walkable-area mask for
+# scripted verification. See ags/walk.h's own file-level comment for
+# this milestone's scoping decisions (straight-line movement only, no
+# gradual-turning animation).
+add_executable(test_walk_room test_walk_room.c)
+target_link_libraries(test_walk_room PRIVATE agsengine)

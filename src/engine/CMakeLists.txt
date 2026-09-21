@@ -11,7 +11,10 @@
 # display pipeline (open a window, apply the room palette, blit the
 # decompressed background). M7: sprite_loader.c (SpriteCache::
 # initFile/loadSprite's real, uncompressed-sprite path) + loader.c
-# gains ags_load_views (decoding ViewStruct272[] for real).
+# gains ags_load_views (decoding ViewStruct272[] for real). M8: walk.c
+# (straight-line walk_character/find_route/calculate_move_stage/
+# do_movelist_move/fix_player_sprite, see ags/walk.h's own file-level
+# comment for scope).
 
 add_library(agsengine STATIC
   src/stub.c
@@ -23,6 +26,7 @@ add_library(agsengine STATIC
   src/room_loader.c
   src/gfx.c
   src/sprite_loader.c
+  src/walk.c
 )
 
 target_include_directories(agsengine PUBLIC
