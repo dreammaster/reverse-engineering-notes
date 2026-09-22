@@ -74,3 +74,10 @@ target_link_libraries(test_walk_room PRIVATE agsengine)
 # real hotspot with real interaction data is clicked.
 add_executable(test_say_something test_say_something.c)
 target_link_libraries(test_say_something PRIVATE agsengine)
+
+# M10 (src/PLAN.md): "It has a voice" -- real PlayMusic wired into
+# Allegro's own MIDI playback (ags/audio.h), verified by polling
+# GetMIDIPosition() across real wall-clock time to confirm actual
+# playback, not just a successful call.
+add_executable(test_music test_music.c)
+target_link_libraries(test_music PRIVATE agsengine)

@@ -18,7 +18,10 @@
 # RunHotspotInteraction/run_event_block's full respond[] dispatch,
 # plus a minimal real DisplayMessage text-box renderer -- see
 # ags/interaction.h's own file-level comment for the real-vs-stubbed
-# split).
+# split). M10: audio.c (PlayMusic/PlaySound/PlaySpeech, see
+# ags/audio.h's own file-level comment for the real-vs-stubbed split
+# -- Rob Blanc 1's own real data ships only two MIDI music files and
+# no sound/speech assets at all).
 
 add_library(agsengine STATIC
   src/stub.c
@@ -32,6 +35,7 @@ add_library(agsengine STATIC
   src/sprite_loader.c
   src/walk.c
   src/interaction.c
+  src/audio.c
 )
 
 target_include_directories(agsengine PUBLIC
