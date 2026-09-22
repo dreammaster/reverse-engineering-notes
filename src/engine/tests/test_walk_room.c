@@ -61,9 +61,10 @@ static block load_current_pose(struct AgsSpriteSet *sprites, const struct Charac
     return ags_spriteset_load(sprites, pic);
 }
 
-static void draw_frame(const struct RoomStruct *rst, block sprite_bmp, const struct CharacterInfo *chin)
+static void draw_frame(const struct RoomStruct *rst, const struct GameSetupStructBase *game,
+                        block sprite_bmp, const struct CharacterInfo *chin)
 {
-    ags_gfx_show_background(rst);
+    ags_gfx_show_background(rst, game);
     if (sprite_bmp) {
         int draw_x = chin->x - sprite_bmp->w / 2;
         int draw_y = chin->y - sprite_bmp->h;
@@ -252,13 +253,15 @@ int main(int argc, char **argv)
         ags_advance_walk_animation(pc, &walk, views);
 
         sprite_bmp = load_current_pose(&sprites, pc, views);
-        draw_frame(&rst, sprite_bmp, pc);
+        draw_frame(&rst, &game, sprite_bmp, pc);
 
         if (frame_count == 0 || frame_count == 30 ||
             (walk.active == 0 && walk_started && shot_num < 3)) {
             char name[64];
+            RGB merged[256];
             sprintf(name, "walk_frame_%d.bmp", shot_num++);
-            save_bitmap(name, screen, (const RGB *)rst.pal);
+            ags_gfx_build_merged_palette(&rst, &game, merged);
+            save_bitmap(name, screen, merged);
             printf("frame %d: player at (%d,%d) loop=%d frame=%d -- saved %s\n",
                    frame_count, pc->x, pc->y, pc->loop, pc->frame, name);
             if (walk.active == 0 && walk_started && shot_num >= 2) {

@@ -167,7 +167,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    ags_gfx_show_background(&rst);
+    ags_gfx_show_background(&rst, &game);
 
     /* AGS's own character-drawing convention: (x,y) is where the
      * character's feet stand, horizontally centered on the sprite --
@@ -182,10 +182,14 @@ int main(int argc, char **argv)
 
     rest(500);
 
-    if (save_bitmap("room_with_player.bmp", screen, (const RGB *)rst.pal) != 0) {
-        fprintf(stderr, "save_bitmap failed\n");
-    } else {
-        printf("screenshot saved: room_with_player.bmp\n");
+    {
+        RGB merged[256];
+        ags_gfx_build_merged_palette(&rst, &game, merged);
+        if (save_bitmap("room_with_player.bmp", screen, merged) != 0) {
+            fprintf(stderr, "save_bitmap failed\n");
+        } else {
+            printf("screenshot saved: room_with_player.bmp\n");
+        }
     }
 
     destroy_bitmap(sprite_bmp);

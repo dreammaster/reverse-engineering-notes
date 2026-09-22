@@ -13,6 +13,7 @@
  *   test_see_room.exe <path to rb.exe>
  */
 #include "ags/clib.h"
+#include "ags/loader.h"
 #include "ags/room_loader.h"
 #include "ags/gfx.h"
 
@@ -22,8 +23,11 @@
 
 int main(int argc, char **argv)
 {
+    struct GameSetupStructBase game;
+    struct AgsGameFileHeader hdr;
     struct RoomStruct rst;
     enum AgsRoomLoadError rc;
+    FILE *f;
 
     if (argc < 2) {
         fprintf(stderr, "usage: %s <path to rb.exe>\n", argv[0]);
@@ -40,6 +44,15 @@ int main(int argc, char **argv)
         allegro_exit();
         return 1;
     }
+
+    f = ags_clib_fopen("ac2game.dta", "rb");
+    if (!f || ags_load_game_file_header(f, &hdr) != 0 || ags_load_gamesetup(f, &game) != 0) {
+        fprintf(stderr, "failed to load game.paluses/defpal (M6's own palette-merge fix needs them)\n");
+        if (f) fclose(f);
+        allegro_exit();
+        return 1;
+    }
+    fclose(f);
 
     memset(&rst, 0, sizeof(rst));
     rc = ags_load_room("room1.crm", &rst);
@@ -61,7 +74,7 @@ int main(int argc, char **argv)
     }
     printf("graphics mode opened: %dx%d, color depth %d\n", SCREEN_W, SCREEN_H, bitmap_color_depth(screen));
 
-    ags_gfx_show_background(&rst);
+    ags_gfx_show_background(&rst, &game);
 
     /* Give the window a moment to actually paint before we grab a
      * screenshot and tear it down -- this is a scripted/automated
@@ -69,10 +82,14 @@ int main(int argc, char **argv)
      * keypress. */
     rest(500);
 
-    if (save_bitmap("room1_screenshot.bmp", screen, (const RGB *)rst.pal) != 0) {
-        fprintf(stderr, "save_bitmap failed\n");
-        allegro_exit();
-        return 1;
+    {
+        RGB merged[256];
+        ags_gfx_build_merged_palette(&rst, &game, merged);
+        if (save_bitmap("room1_screenshot.bmp", screen, merged) != 0) {
+            fprintf(stderr, "save_bitmap failed\n");
+            allegro_exit();
+            return 1;
+        }
     }
     printf("screenshot saved: room1_screenshot.bmp\n");
 
