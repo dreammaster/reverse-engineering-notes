@@ -81,3 +81,13 @@ target_link_libraries(test_say_something PRIVATE agsengine)
 # playback, not just a successful call.
 add_executable(test_music test_music.c)
 target_link_libraries(test_music PRIVATE agsengine)
+
+# M11 (src/PLAN.md): "the long tail", GUI rendering slice -- extends
+# the M2/M3 loader past CharacterInfo[] through messages[500]/
+# DialogTopic[]/dlgmessage[] (all new, ags/loader.h) to reach and
+# decode the real on-disk GUIMain[]/control data (ags_load_guis,
+# ags/gui_loader.h -- a direct read_gui/GUIMain::rebuild_array port),
+# then renders every "on" GUI (ags_gui_draw_all, ags/gui_render.h) on
+# top of a real room background.
+add_executable(test_gui test_gui.c)
+target_link_libraries(test_gui PRIVATE agsengine)

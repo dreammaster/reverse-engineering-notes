@@ -32,6 +32,7 @@
 #include "ags/gamesetup.h"
 #include "ags/character.h"
 #include "ags/view.h"
+#include "ags/dialog.h"
 
 /* This build's own load_game_file checks the header's marker field
  * against exactly this literal (per dump_gamesetup_from_data.py's own
@@ -156,5 +157,72 @@ int ags_skip_unidentified_block2(FILE *f);
  * sizeof(CharacterInfo)*numcharacters,1,iii)"-shaped call. Returns 0
  * on success, -1 on a short read. */
 int ags_load_characters(FILE *f, const struct GameSetupStructBase *game, struct CharacterInfo *out);
+
+/* --- M11 ("the long tail" / GUI rendering, see src/PLAN.md) --------
+ * load_game_file's own sequence continues past CharacterInfo[] with
+ * three more variable-length sections before it finally reaches
+ * read_gui (see ags/gui_loader.h) -- all read here directly from
+ * rob_blanc_1.asm (load_game_file, the region right after the
+ * already-verified character-array fread), since matches.json's own
+ * prose only covered load_game_file up through CharacterInfo[]
+ * ("extend past step 8 ... if a future round needs to validate").
+ * Call these three in order immediately after ags_load_characters:
+ *   7. ags_load_messages
+ *   8. ags_load_dialog_topics
+ *   9. ags_load_dlgmessages
+ * then game->numgui is finally at its real on-disk value and
+ * ags_load_guis (ags/gui_loader.h) can run.
+ */
+
+/* Step 7: GameSetupStructBase.messages[500] (already bulk-read as
+ * part of ags_load_gamesetup -- each non-NULL slot is this build's
+ * own on-disk "populate this slot" presence flag, the same idiom as
+ * ccScript/dict) each get a fresh malloc(500)+fgetstring(f) in file
+ * order. Matches load_game_file's own "for(i=0;i<500;i++)
+ * if(messages[i]!=0){messages[i]=malloc(500); fgetstring(messages[i],
+ * f);}" loop exactly (disassembly read directly, no 2011 source
+ * counterpart named for this specific loop). Immediately followed
+ * (real behavior, not modeled here since it touches no file bytes) by
+ * 12 unconditional built-in-message defaults (MSG_RESTORE=984 through
+ * MSG_QUITDIALOG=995, matching set_default_glmsg's own already-
+ * confirmed 12 call sites) -- call ags_set_builtin_glmsg_defaults()
+ * separately if those defaults matter to a caller; skipped by default
+ * here since Rob Blanc 1's own real data always overrides all 12 (see
+ * struct-layout-drift.md). Returns 0 on success, -1 on a short read
+ * or allocation failure. Caller owns freeing any newly-malloc'd
+ * messages[i] afterward. */
+int ags_load_messages(FILE *f, struct GameSetupStructBase *game);
+
+/* Sets the 12 built-in default global messages (MSG_RESTORE=984
+ * through MSG_QUITDIALOG=995) on any still-NULL game->messages[]
+ * slot, matching set_default_glmsg's own lazy-init malloc(strlen+5)
+ * pattern. Optional -- see ags_load_messages's own comment. */
+void ags_set_builtin_glmsg_defaults(struct GameSetupStructBase *game);
+
+/* Step 8: game->numdialog DialogTopic entries (ags/dialog.h), read as
+ * one bulk fread(dialog,0x484,numdialog,f) matching load_game_file's
+ * own call exactly, followed per-topic by a conditional codesize-sized
+ * fread into a freshly malloc'd optionscripts buffer (gated on the
+ * bulk-read's own optionscripts field being non-NULL, the on-disk
+ * presence-flag idiom again) AND, unconditionally per topic regardless
+ * of that gate, one more getw()-prefixed forward fseek(SEEK_CUR) whose
+ * role isn't identified (this build's own load_game_file walks past it
+ * either way -- same "unidentified skip, walked but not decoded"
+ * status as ags_skip_unidentified_block/2 above). `*out` receives a
+ * freshly malloc'd array of `numdialog` entries (caller must free it,
+ * and each non-NULL .optionscripts, when done). Returns 0 on success,
+ * -1 on a short read or allocation failure. */
+int ags_load_dialog_topics(FILE *f, int numdialog, struct DialogTopic **out);
+
+/* Step 9: game->numdlgmessage (a separate GameSetupStructBase field
+ * from numdialog -- legacy free-text dialog lines, distinct from
+ * DialogTopic's own inline optionnames[]) consecutive malloc(500)+
+ * fgetstring(f) strings, gated by a literal "numdlgmessage > 2000 =>
+ * quit(\"too many dialog lines\")" bounds check matching
+ * load_game_file's own disassembly exactly. `*out` receives a freshly
+ * malloc'd `char*[numdlgmessage]` array (caller must free each string
+ * and the array itself). Returns 0 on success, -1 on a short read,
+ * allocation failure, or numdlgmessage>2000. */
+int ags_load_dlgmessages(FILE *f, int numdlgmessage, char ***out);
 
 #endif /* AGS_LOADER_H */

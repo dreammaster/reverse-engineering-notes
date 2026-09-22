@@ -21,7 +21,13 @@
 # split). M10: audio.c (PlayMusic/PlaySound/PlaySpeech, see
 # ags/audio.h's own file-level comment for the real-vs-stubbed split
 # -- Rob Blanc 1's own real data ships only two MIDI music files and
-# no sound/speech assets at all).
+# no sound/speech assets at all). M11 (long tail, GUI rendering
+# slice): gui_loader.c (read_gui/GUIMain::rebuild_array, plus
+# loader.c's own new messages[500]/DialogTopic/dlgmessage steps
+# needed to REACH the real on-disk GUI data) + gui_render.c
+# (GUIMain::draw_at plus a scoped Button/Label Draw() subset -- see
+# ags/gui_render.h's own file-level comment for the real-vs-stubbed
+# split).
 
 add_library(agsengine STATIC
   src/stub.c
@@ -36,6 +42,8 @@ add_library(agsengine STATIC
   src/walk.c
   src/interaction.c
   src/audio.c
+  src/gui_loader.c
+  src/gui_render.c
 )
 
 target_include_directories(agsengine PUBLIC
