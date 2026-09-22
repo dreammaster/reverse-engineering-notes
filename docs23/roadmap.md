@@ -91,9 +91,29 @@ be smaller. Practical implications for upcoming modules:
   `word_368A7` family) — not yet decoded. When that's tackled, target
   SDL_mixer or raw SDL audio callbacks rather than emulating the
   original driver protocol.
-- No SDL-specific code has been written yet; this section exists so
-  the decision is on record before the rendering-dependent modules
+- No SDL-specific game code has been written yet; this section exists
+  so the decision is on record before the rendering-dependent modules
   (dungeon loop, `PICTURES.VGA`) start.
+
+**SDL2 is installed on this machine** (2026-09-22): SDL2 2.32.10 mingw
+devel package at `C:\sdk\SDL2-2.32.10` (headers under `include\SDL2`,
+import libs under `lib`, `SDL2.dll` under `bin`) — not part of this
+repo, a machine-local SDK matching `C:\mingw64`'s toolchain. Verified
+with a smoke test (`SDL_Init`, driver enumeration, clean `SDL_Quit`).
+Build/link a program against it:
+```
+gcc -I C:\sdk\SDL2-2.32.10\include\SDL2 -c yourfile.c -o yourfile.o
+gcc -o yourprogram.exe yourfile.o -L C:\sdk\SDL2-2.32.10\lib -lmingw32 -lSDL2main -lSDL2 -mwindows
+```
+`SDL2.dll` must be next to the built `.exe` to run (copy it from
+`C:\sdk\SDL2-2.32.10\bin`). `-lmingw32 -lSDL2main` before `-lSDL2`,
+plus `-mwindows`, are required — `SDL2main` supplies the real `main`
+that sets up console/argv redirection before calling the program's
+`main`. A future SDL-consuming module's own test/build instructions
+should follow this same pattern (mirroring how `src23/tests/*.c` state
+their own `gcc` command in a header comment). If this repo is set up
+on another machine, SDL2 needs reinstalling the same way (download the
+mingw devel package matching the installed GCC).
 
 **Picking the next module** — candidates, roughly in a sensible
 dependency order (not a hard sequence; pick whatever's most useful
