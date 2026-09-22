@@ -1,14 +1,27 @@
-/* M11 test (see src/PLAN.md): "the long tail" -- dialog system slice.
- * Walks the full M2/M3/M11 loader chain (through messages[500]/
- * DialogTopic[]/dlgmessage[], same as test_gui.c) plus M4's own real
- * script interpreter (to give DCMD_RUNTEXTSCRIPT's own "dialog_request"
- * hook lookup a real ccInstance* to check against), then actually RUNS
+/* M11 test (see src/PLAN.md): "the long tail" -- dialog system slice,
+ * now with the real options-menu UI (ags/dialog_menu.h). Walks the
+ * full M2/M3/M11 loader chain (through messages[500]/DialogTopic[]/
+ * dlgmessage[]/guis[], same as test_gui.c) plus M4's own real script
+ * interpreter (to give DCMD_RUNTEXTSCRIPT's own "dialog_request" hook
+ * lookup a real ccInstance* to check against), then actually RUNS
  * Rob Blanc 1's own real compiled dialog-script bytecode through
  * ags_run_dialog_script (ags/dialog_run.h) -- first each topic's own
- * startupentrypoint, then (a minimal stand-in for do_conversation's own
- * options menu, which this milestone doesn't render) the first
- * currently-on option's entrypoint, following DCMD_GOTODIALOG chains a
- * few hops deep.
+ * startupentrypoint, then a REAL, rendered, mouse/keyboard-driven
+ * options menu (ags_show_dialog_options, ags/dialog_menu.h) hosted on
+ * this game's own real dialog-interface GUI (game.options[
+ * OPT_DIALOGIFACE], confirmed ==4 for Rob Blanc 1's own real data),
+ * following DCMD_GOTODIALOG chains a few hops deep.
+ *
+ * Since a scripted test run has no human at the keyboard, option
+ * selection is driven via Allegro's own real simulate_keypress() API
+ * (a legitimate, documented testing/playback primitive -- injects a
+ * genuine key event into the same buffer keypressed()/readkey() read
+ * from, not a bypass of the real interactive code path): one ENTER
+ * per menu, always choosing whichever option ags_show_dialog_options
+ * is currently hovering (index 0, the first enabled option, on
+ * entry) -- the same choice this milestone's own earlier "pick the
+ * first ON option" stand-in made, just now exercised through the
+ * real rendered/polled menu instead of bypassing it.
  *
  * Usage:
  *   test_dialog.exe <path to rb.exe>
@@ -18,6 +31,8 @@
 #include "ags/script_loader.h"
 #include "ags/interp.h"
 #include "ags/dialog_run.h"
+#include "ags/dialog_menu.h"
+#include "ags/gui_loader.h"
 #include "ags/gfx.h"
 #include "ags/stub.h"
 
@@ -26,7 +41,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void run_topic(struct AgsDialogRunContext *ctx, struct GameState *play, int dlgnum)
+static void run_topic(struct AgsDialogRunContext *ctx, struct GameState *play, int dlgnum,
+                       const struct GUIMain *dialogface_gui)
 {
     int hops;
     int cur = dlgnum;
@@ -49,24 +65,16 @@ static void run_topic(struct AgsDialogRunContext *ctx, struct GameState *play, i
             continue;
         }
 
-        /* Minimal stand-in for do_conversation's own options menu
-         * (not rendered this milestone): pick the first option whose
-         * optionflags[]&1 (DFLG_ON) is set. */
-        chosen = -1;
-        {
-            int i;
-            for (i = 0; i < dtpp->numoptions && i < 15; i++) {
-                if (dtpp->optionflags[i] & 1) {
-                    chosen = i;
-                    break;
-                }
-            }
-        }
+        printf("showing real options menu for dialog %d (simulating ENTER to choose "
+               "the first enabled option)...\n", cur);
+        simulate_keypress(KEY_ENTER << 8);
+        chosen = ags_show_dialog_options(dtpp, dialogface_gui, 320, 200);
         if (chosen < 0) {
-            printf("dialog %d: no options currently on -- conversation ends\n", cur);
+            printf("dialog %d: no option chosen (all off, or cancelled/timed out) -- "
+                   "conversation ends\n", cur);
             return;
         }
-        printf("choosing option %d: \"%s\"\n", chosen, dtpp->optionnames[chosen]);
+        printf("chose option %d: \"%s\"\n", chosen, dtpp->optionnames[chosen]);
         rc = ags_run_dialog_script(ctx, dtpp, play, dtpp->entrypoints[chosen]);
         printf("--- option %d run returned %d ---\n", chosen, rc);
         if (rc == AGS_DIALOG_STOP) {
@@ -77,11 +85,29 @@ static void run_topic(struct AgsDialogRunContext *ctx, struct GameState *play, i
             cur = rc;
             continue;
         }
-        /* AGS_DIALOG_RETURN: real do_conversation would redisplay the
-         * options menu for the SAME topic -- this stand-in just stops,
-         * since there's no menu here to redisplay. */
-        printf("dialog %d: option %d returned to the options menu (not redisplayed "
-               "by this milestone's own minimal driver)\n", cur, chosen);
+        /* AGS_DIALOG_RETURN: real do_conversation redisplays the
+         * options menu for the SAME topic -- this driver does too,
+         * one more time, then stops (avoiding an unbounded loop if a
+         * game script somehow never turns every option off). */
+        printf("dialog %d: option %d returned to the options menu -- showing it once more\n",
+               cur, chosen);
+        simulate_keypress(KEY_ENTER << 8);
+        chosen = ags_show_dialog_options(dtpp, dialogface_gui, 320, 200);
+        if (chosen < 0) {
+            printf("dialog %d: no option chosen the second time -- conversation ends\n", cur);
+            return;
+        }
+        printf("chose option %d: \"%s\"\n", chosen, dtpp->optionnames[chosen]);
+        rc = ags_run_dialog_script(ctx, dtpp, play, dtpp->entrypoints[chosen]);
+        printf("--- option %d run returned %d ---\n", chosen, rc);
+        if (rc >= 0 && rc != AGS_DIALOG_RETURN) {
+            if (rc == AGS_DIALOG_STOP) {
+                printf("dialog %d: STOPDIALOG after option %d\n", cur, chosen);
+                return;
+            }
+            cur = rc;
+            continue;
+        }
         return;
     }
 }
@@ -95,6 +121,8 @@ int main(int argc, char **argv)
     struct CharacterInfo *chars = NULL;
     struct DialogTopic *dialogs = NULL;
     char **dlgmessages = NULL;
+    struct AgsGuiSet guiset;
+    const struct GUIMain *dialogface_gui = NULL;
     struct AgsDialogRunContext ctx;
     struct ccScript *scri = NULL;
     struct ccInstance *inst = NULL;
@@ -113,8 +141,8 @@ int main(int argc, char **argv)
      * exactly like every other visual milestone test (M6+), even
      * though this test's own acceptance check is about the bytecode
      * interpreter, not the picture. */
-    if (allegro_init() != 0) {
-        fprintf(stderr, "allegro_init failed\n");
+    if (allegro_init() != 0 || install_keyboard() != 0 || install_mouse() < 0) {
+        fprintf(stderr, "allegro_init/install_keyboard/install_mouse failed\n");
         return 1;
     }
     if (ags_gfx_init_windowed(320, 200, 8) != 0) {
@@ -179,10 +207,26 @@ int main(int argc, char **argv)
         return 1;
     }
     rc = ags_load_dlgmessages(f, game.numdlgmessage, &dlgmessages);
-    fclose(f);
     if (rc != 0) {
         fprintf(stderr, "ags_load_dlgmessages failed: %d\n", rc);
+        fclose(f);
         return 1;
+    }
+
+    rc = (int)ags_load_guis(f, &game, &guiset);
+    fclose(f);
+    if (rc != AGS_GUI_LOAD_OK) {
+        fprintf(stderr, "ags_load_guis failed: %d\n", rc);
+        return 1;
+    }
+    printf("game.options[OPT_DIALOGIFACE]=%d numgui=%d\n", game.options[3], guiset.numgui);
+    if (game.options[3] > 0 && game.options[3] < guiset.numgui) {
+        dialogface_gui = &guiset.guis[game.options[3]];
+        printf("using guis[%d] as the dialog-options GUI: x=%d y=%d wid=%d hit=%d bgcol=%d fgcol=%d\n",
+               game.options[3], dialogface_gui->x, dialogface_gui->y, dialogface_gui->wid,
+               dialogface_gui->hit, dialogface_gui->bgcol, dialogface_gui->fgcol);
+    } else {
+        printf("no custom dialog-options GUI configured -- using the default bottom-of-screen box\n");
     }
 
     printf("\ndlgmessages:\n");
@@ -224,7 +268,7 @@ int main(int argc, char **argv)
     ctx.numdialogs = game.numdialog;
 
     for (i = 0; i < game.numdialog; i++) {
-        run_topic(&ctx, &play, i);
+        run_topic(&ctx, &play, i, dialogface_gui);
     }
 
     ags_stub_dump_summary();

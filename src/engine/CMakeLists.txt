@@ -30,7 +30,10 @@
 # split). dialog_run.c (M11 long-tail, dialog system slice):
 # run_dialog_script's own full DCMD_* byte-code interpreter -- see
 # ags/dialog_run.h's own file-level comment for the complete opcode
-# table and evidence.
+# table and evidence. dialog_menu.c (M11 long-tail, options-menu UI):
+# a real, data-driven do_conversation options-menu renderer -- see
+# ags/dialog_menu.h's own file-level comment for the deliberate scope
+# decision vs. a byte-exact do_conversation port.
 
 add_library(agsengine STATIC
   src/stub.c
@@ -48,6 +51,7 @@ add_library(agsengine STATIC
   src/gui_loader.c
   src/gui_render.c
   src/dialog_run.c
+  src/dialog_menu.c
 )
 
 target_include_directories(agsengine PUBLIC
