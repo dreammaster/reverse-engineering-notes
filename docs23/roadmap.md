@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-19)
+## Status (last updated 2026-09-22)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -40,9 +40,13 @@ groundwork below is already in place.
   (`WORLD.DAT` item catalog for both games: records, target and effect
   tables, name joining), tests in `tests/test_item.c`. Fifth module,
   `monster.c`/`.h` (catalog blocks + type lookup for both games, the 156-byte
-  live record, spawn, death flags), tests in `tests/test_monster.c`. The
-  `WORLD.DAT` map/text blocks and the trap/status effect table
-  (`g_trapEffectDefs`) are the next candidates, then the dungeon loop.
+  live record, spawn, death flags), tests in `tests/test_monster.c`. Sixth
+  module, `effect.c`/`.h` (`g_trapEffectDefs` for both games: cost,
+  resistance and magnitude decoding), plus a new `random.c`/`.h` (faithful
+  `RandomInRange` port — its range is inclusive, see `file-formats.md`),
+  tests in `tests/test_effect.c` and `tests/test_random.c`. The `WORLD.DAT`
+  map/text blocks are the next candidate, then the core dungeon loop, which
+  will need `random.c` for movement/combat rolls.
 
 ## Next: continue the C reimplementation
 

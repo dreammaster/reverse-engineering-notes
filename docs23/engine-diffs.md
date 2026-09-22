@@ -888,6 +888,17 @@ and ends PURPLE DRAGON), one `NOT USED` filler block (Ch3 block 62), a lookup
 covering types up to 1862 instead of 2143, and **23 boss/quest death flags vs.
 17**. Monster type ids and block indices, like item ids, are per-game.
 
+## Trap/status effect table: same record format, more effects
+
+Found while writing `src23/effect.c` (2026-09-22). The 12-byte definition
+format, `PrepareTrapEffectSlots`'s indexing, and the whole cost/resistance/
+magnitude pipeline (`ApplyEffectCost`, `RollEffectMagnitude`,
+`RollEffectResistance`, `ApplyIconBarStatDelta`) are identical between the
+games. Chapter 3 defines **49 effects vs. Chapter 2's 45**, at a different
+base address (`DS:0x96DA` vs `DS:0x905B`) with its own sound/icon ids per
+effect — confirmed by round-tripping every monster's attack/special-attack
+effect id against its own game's table with no exceptions.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

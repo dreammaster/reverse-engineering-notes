@@ -7890,6 +7890,38 @@ monster block and its `WORLD.DAT` source. Full layout in `file-formats.md`.
 Left for later: `+0x4E` (1-13), the trap-effect ids behind `+0x6E` (needs the
 trap effect table), and the runtime prefix, which no available save exercises.
 
+### 2026-09-22 session update: C reimplementation, trap/status effect module
+
+Wrote `src23/effect.c`/`.h` (the `g_trapEffectDefs` table both monsters and
+traps resolve through) plus `src23/random.c`/`.h` (a faithful port of
+`RandomInRange`, needed to reason about magnitude rolls precisely). Full
+writeup in `file-formats.md`'s new "Trap and status effect definitions"
+section.
+- **The high bits of an effect's cost flags (`0xFF80`) are exactly the party
+  record's own status bits** (cursed..sick) — the same field, same bit
+  positions, just read from a different structure. That single finding
+  explained the whole "inflict a status after a resistance roll" mechanism.
+- **`RandomInRange(n)` is inclusive of `n`**, not exclusive as its name and
+  every prior use of it here assumed. Verified by sampling 200k draws per
+  bound in `src23/tests/test_random.c` (every bound value came up, nothing
+  exceeded it). This retroactively **corrects** the attribute-roll note from
+  earlier in this doc: `RandomInRange(15)+45` is 45-60, not 45-59 — real
+  characters can and do roll a 60 in an attribute. Worth keeping in mind for
+  any other `RandomInRange(n)+k` read as "up to n+k-1" elsewhere in these
+  docs; none of the ones already written up as *magnitude tables* turned out
+  to matter (they're all consumed as `[+min, +max)` ranges already, except
+  this one case), but it's the kind of off-by-one worth double-checking when
+  next reading a `RandomInRange` call closely.
+- Cross-checked both effect tables against both monster catalogs (`+0x6C`
+  primary attack, `+0x6E` special attack): every id in every real monster
+  resolves to a real effect, and every primary-attack effect costs HP — a
+  clean round trip, no exceptions, in either game.
+- Chapter 3 has 49 effects to Chapter 2's 45, different table base address,
+  otherwise the same format — see `engine-diffs.md`.
+Left for later: `+0x4E` and `+0x92`'s low "special-attack modifier" bits
+(`0xE00`) on the monster record remain unidentified; they weren't needed to
+finish this module.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

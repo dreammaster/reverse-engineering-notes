@@ -400,7 +400,9 @@ than the one `TickStatusEffects`/`ApplyStatusEffect` manage (bits
 **The 6 core attributes are now mapped** (found via `RollCharacterAttributes`,
 character creation's stat roller — resolves the "not yet mapped" note
 that stood since early in the session): 6 base/derived field pairs,
-each rolled `RandomInRange(15)+45` (45–59) into the base field, copied
+each rolled `RandomInRange(15)+45` (**45–60**: that routine's range is
+inclusive of its bound — see the note under "Trap and status effect
+definitions" — so real characters do roll 60s) into the base field, copied
 to the derived field 0x40 higher: `+0x3C`/`+0x7C` (also ×10 into a
 weight-like derived stat at `+0x56`/`+0x96` — plausibly **Strength**,
 carry capacity); `+0x3E`/`+0x7E` (**secondary use found**:
@@ -2618,6 +2620,48 @@ unsigned (max 500 in Ch2, 100 in Ch3). `ApplyMultiStatEffectForItem` skips a
 stat whose current value is 0 and caps at 999. Reimplemented in
 `src23/item.c`.
 
+### Trap and status effect definitions (decoded 2026-09-22)
+
+`g_trapEffectDefs`: a static, in-EXE table (not in `WORLD.DAT`) of 12-byte
+records — `DS:0x905B` in Chapter 2 (45 entries), `DS:0x96DA` in Chapter 3 (49)
+— indexed by effect id via `PrepareTrapEffectSlots` (`id*0xC + base`). An
+effect is the unit every trap, monster attack, ailment tick, healing item and
+expiring item ultimately applies to a party member — it's what the game means
+by an "effect": a cost (HP/MP/gold/ore) plus, after a saving throw, one or
+more status conditions inflicted. Both games' tables embedded verbatim in
+`src23/effect.c` (extracted with `ida_scripts/dump_trap_effects.py`).
+
+Record layout, decoded from `ApplyEffectAndDrawIconBar`/`ApplyEffectCost`/
+`RollEffectMagnitude`/`RollEffectResistance`/`ApplyIconBarStatDelta`: `+0`
+sound id; `+2` icon picture id (category `0x70`, or `0x80` for the two
+item-expiry effects, ids 0 and 22 — `InitGlobals` overwrites their sound word
+at startup with `_val20`/`8`); `+4`/`+6` magnitude min/max; `+8` cost flags —
+low bits select what's spent (`0x10` HP, `0x8` MP, `0x20` HP+MP, `0x1` gold,
+`0x4`/`0x2` the two ore counters, checked in that order, first match wins),
+**high bits `0xFF80` double as the inflicted-status bitmask — exactly the
+party record's own `+0x1C` status bits** (`0x80` cursed through `0x8000`
+sick); `+0xA` mode flags: `0x1000` roll a saving throw (protection sum vs.
+`FailsSavingThrow`, only when high cost bits are set), `0x2000` magnitude =
+min×level (no random roll), `0x4000` magnitude = min (fixed), `0x80`/`0x100`
+a stat-delta effect (floored at 0 / capped at max) instead of a status effect,
+`0x200`/`0x400` an item-expiry effect (destroy / replace).
+
+**Magnitude and the RNG's range are inclusive of the bound**: `RollEffectMagnitude`
+computes `(RandomInRange(max-min) + min) * level` (or just `min×level`/`min`
+per the mode bits above), and `RandomInRange(n)` (`yendor2.asm:41476`) returns
+a value in **`0..n` inclusive**, not the more usual `0..n-1` — confirmed by
+sampling every result over 200k draws per bound (`src23/tests/test_random.c`).
+This means an effect defined `min=1,max=10` (`RandomInRange(9)+1`) reaches 10,
+not 9. **This corrects an earlier note**: `RollCharacterAttributes`'s stat
+roll, `RandomInRange(15)+45`, actually ranges 45–60, not 45–59 as previously
+written (see the attribute section above). Reimplemented in `src23/random.c`
+(faithful LCG port, same seeding and masking) and `src23/effect.c`.
+
+**Cross-checked against both monster catalogs** (`+0x6C`/`+0x6E`, see below):
+every monster's primary-attack effect id resolves to a real, HP-costing
+effect in its own game's table, and every nonzero special-attack id resolves
+to a real effect — a full round-trip check with no exceptions in either game.
+
 ### Monster catalog and records (decoded 2026-09-19)
 
 **Live record** (156 bytes; the 80-entry `g_levelMonsters` pool saved in
@@ -2628,7 +2672,7 @@ state followed by a verbatim 106-byte copy of the monster's catalog block**
 monsters, so the runtime prefix is from the code only: `+0x00` type id (0 =
 empty slot), `+0x02`/`+0x04` world x/y, `+0x06` byte offset of its cell in the
 dungeon grid (`(y-originRow)*0x270 + (x-originCol)*8`), `+0x08` animation
-frame (sprite base + random 0-4), `+0x0A` anim set (`0xA` if flag `0x1` of
+frame (sprite base + `RandomInRange(5)`, i.e. 0-5 inclusive), `+0x0A` anim set (`0xA` if flag `0x1` of
 `+0x92`, else `0xD`), `+0x0C` state bits (bit 0 = aware), `+0x0E` wound tier
 (`0x8000`/`0x4000`/`0x2000`), `+0x10` current HP (set to `+0x50` at spawn),
 `+0x12` target pointer (a runtime address, meaningless on disk), `+0x14`/
@@ -2640,7 +2684,9 @@ monster sheet (`ShowClueBookMonsterDetail`) and real data: `+0x32`/`+0x3F` two
 (1-13); `+0x50` HEALTH; `+0x52` save difficulty; `+0x54` ACCURACY; `+0x56`
 DEXTERITY (also the initiative); `+0x58` ABSORPTION; `+0x5A` DAMAGE; `+0x5C`
 hit sound, `+0x5E` idle sound; `+0x64` RANGED ACC.; `+0x66` RANGED DAM.;
-`+0x6E` special attack (a trap/status effect id); `+0x72`..`+0x76` colour
+`+0x6C` its ordinary attack (an effect id, always HP-cost — see "Trap and
+status effect definitions" above), `+0x6E` special attack (an effect id, 0 =
+none, used 25% of the time per `SelectTrapEffectVariant`); `+0x72`..`+0x76` colour
 remap (used when flag `0x4` is set); loot as packed BCD4: **`+0x7E` GOLD,
 `+0x82` NUORE, `+0x86` MAGIC ORE, `+0x8A` EXPERIENCE** (an ALLIGATOR gives 495
 gold, 10 NUORE, 5 ore, 1340 XP; the RED DRAGON 1,000,000 gold); `+0x92` flags

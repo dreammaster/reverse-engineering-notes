@@ -43,7 +43,7 @@ typedef enum {
     MonsterFieldWorldX = 0x02,    /* u16 */
     MonsterFieldWorldY = 0x04,    /* u16 */
     MonsterFieldCell = 0x06,      /* u16 byte offset of its cell in the dungeon grid */
-    MonsterFieldAnim = 0x08,      /* u16; starts at MonsterFieldSpriteBase + random 0-4 */
+    MonsterFieldAnim = 0x08,      /* u16; starts at MonsterFieldSpriteBase + RandomInRange(5), i.e. 0-5 */
     MonsterFieldAnimSet = 0x0A,   /* u16; 0xA when MonsterFlagAltSprite is set, else 0xD */
     MonsterFieldState = 0x0C,     /* u16, MonsterState bits */
     MonsterFieldWound = 0x0E,     /* u16 wound severity: 0x8000 light, 0x4000 moderate, 0x2000 severe */
@@ -67,7 +67,8 @@ typedef enum {
     MonsterFieldIdleSound = 0x5E, /* u16 sound id when it has no target */
     MonsterFieldRangedAccuracy = 0x64, /* u16 ("RANGED ACC.-") */
     MonsterFieldRangedDamage = 0x66,   /* u16 ("RANGED DAM.-") */
-    MonsterFieldSpecialAttack = 0x6E,  /* u16 trap/status effect id ("SPECIAL ATTACK-"), 0 = none */
+    MonsterFieldAttackEffect = 0x6C,   /* u16 effect id (effect.h) of its ordinary attack; always an HP-cost effect */
+    MonsterFieldSpecialAttack = 0x6E,  /* u16 effect id of its special attack ("SPECIAL ATTACK-"), 0 = none; chosen 25% of the time */
     MonsterFieldPalette = 0x72,   /* 3 x u16 colour remap, used when MonsterFlagRemapPalette is set */
     MonsterFieldLootGold = 0x7E,  /* Bcd4 */
     MonsterFieldLootNuore = 0x82, /* Bcd4 */
@@ -170,7 +171,7 @@ bool monsterRecordSpawn(uint8_t *record, const MonsterCatalog *catalog, unsigned
 /* Sets world position and the grid cell offset ((y - originRow) * 0x270 + (x - originCol) * 8). */
 void monsterRecordPlace(uint8_t *record, uint16_t x, uint16_t y, uint16_t gridOriginRow, uint16_t gridOriginCol);
 
-/* Sets the animation start to sprite base + randomExtra (0-4) and the anim set from MonsterFlagAltSprite. */
+/* Sets the animation start to sprite base + randomExtra (RandomInRange(5), 0-5) and the anim set from MonsterFlagAltSprite. */
 void monsterRecordStartAnimation(uint8_t *record, unsigned randomExtra);
 
 uint16_t monsterGetU16(const uint8_t *record, unsigned offset);
