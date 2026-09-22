@@ -67,3 +67,10 @@ target_link_libraries(test_meet_people PRIVATE agsengine)
 # gradual-turning animation).
 add_executable(test_walk_room test_walk_room.c)
 target_link_libraries(test_walk_room PRIVATE agsengine)
+
+# M9 (src/PLAN.md): "Say something" -- get_hotspot_at/
+# RunHotspotInteraction/run_event_block's full respond[] dispatch
+# (ags/interaction.h), showing a real DisplayMessage text box when a
+# real hotspot with real interaction data is clicked.
+add_executable(test_say_something test_say_something.c)
+target_link_libraries(test_say_something PRIVATE agsengine)

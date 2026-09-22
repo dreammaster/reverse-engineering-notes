@@ -14,7 +14,11 @@
 # gains ags_load_views (decoding ViewStruct272[] for real). M8: walk.c
 # (straight-line walk_character/find_route/calculate_move_stage/
 # do_movelist_move/fix_player_sprite, see ags/walk.h's own file-level
-# comment for scope).
+# comment for scope). M9: interaction.c (get_hotspot_at/
+# RunHotspotInteraction/run_event_block's full respond[] dispatch,
+# plus a minimal real DisplayMessage text-box renderer -- see
+# ags/interaction.h's own file-level comment for the real-vs-stubbed
+# split).
 
 add_library(agsengine STATIC
   src/stub.c
@@ -27,6 +31,7 @@ add_library(agsengine STATIC
   src/gfx.c
   src/sprite_loader.c
   src/walk.c
+  src/interaction.c
 )
 
 target_include_directories(agsengine PUBLIC
