@@ -7975,6 +7975,44 @@ Text/conversation/NPC data (the other "text blocks" half of this
 roadmap item) is still undecoded — deliberately out of scope for this
 pass; the map decode alone was a large, self-contained piece of work.
 
+### 2026-09-23 session update: C reimplementation, in-world text module — the "text blocks" half of the roadmap's next item
+
+Wrote `src23/document.c`/`.h` (+ `document_stdio.c`), decoding what
+`RunConversation` actually displays. Full writeup in `file-formats.md`'s
+new "In-world readable text" section.
+- **The name "RunConversation" was wrong — this isn't NPC dialogue.**
+  Traced its real caller: `HandleGameCommand`'s item-use dispatch reaches
+  it via the same `word_2E548` item-classification record
+  `RepairItemCommand`/`InteractWithContainer` read right next to it in the
+  same function. It's triggered by using/reading an in-world item — a
+  book, note, sign, or plaque — not by talking to a character. Confirmed
+  by content, not just structure: real text was read out of both real
+  `WORLD.DAT` files and it's clearly found documents (a puzzle with an
+  answer sequence, a faction manifesto, a short story "BY JASPER", dated
+  history-log entries, undated verses, and — in Chapter 3 — a note that's
+  literally a spoken password signed "QUEEN OBVERSIA").
+- **The index tables live in the executable, not `WORLD.DAT`** — a first
+  for this project's `WORLD.DAT`-catalog modules (item/monster/effect/
+  worldmap all had their index *and* data both in `WORLD.DAT`). Only the
+  actual text is in the file. All four categories' real entries turned
+  out to tile one small contiguous span exactly (no gaps between
+  categories, confirmed both games) even though each has its own
+  separate index table.
+- Line width per category confirmed the strong way: byte length / line
+  width has a **zero remainder on every single real entry in both
+  games** — no fuzzy tolerance needed, this either works cleanly or it
+  doesn't.
+- Chapter 3 doesn't just have more text — it moved content between pools
+  (Note empty->8 real entries, Document 26 real->6 real of the same 26
+  slots); see `engine-diffs.md`.
+- Left open: which item-catalog field actually supplies the `(category,
+  id)` that reaches a given item's `RunConversation` call — the *format*
+  of the text is fully decoded, but not yet *which items are books*. Two
+  new read-only IDA scripts, `dump_document_tables.py` in both `yendor2/`
+  and `yendor3/ida_scripts/`.
+With this, both halves of the roadmap's "`WORLD.DAT` map/text blocks" item
+are done. Core dungeon loop is next.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

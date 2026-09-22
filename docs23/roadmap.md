@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-22, world map module)
+## Status (last updated 2026-09-23, in-world text module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -49,8 +49,11 @@ groundwork below is already in place.
   both games, plus Chapter 2's wall/floor tile-legend tables), tests in
   `tests/test_worldmap.c`. **Big finding**: there is no per-level map data
   — the whole game (towns, wilderness, dungeons) is one seamless coordinate
-  space. `WORLD.DAT`'s text/conversation/NPC blocks are still undecoded and
-  are the next candidate, then the core dungeon loop, which will need
+  space. Eighth module, `document.c`/`.h` (in-world readable text: found
+  books/notes/plaques, *not* NPC dialogue despite the disassembly's
+  "RunConversation" name — see `engine-diffs.md`), tests in
+  `tests/test_document.c`. Both halves of the previous "`WORLD.DAT` map/text
+  blocks" item are now done. The core dungeon loop is next, which will need
   `random.c` for movement/combat rolls and `worldmap.c` for the map itself.
 
 ## Next: continue the C reimplementation
@@ -174,7 +177,13 @@ if reimplementing the specific function that touches them:
   files (`file-formats.md`'s "World map"), these are plausibly just
   named teleport coordinates into that single map rather than separate
   loadable areas — worth checking against whatever function actually
-  consumes a matched password next time this is picked up.
+  consumes a matched password next time this is picked up. **New lead
+  (2026-09-23)**: the in-world text decode found a Chapter 3 "Note"
+  entry that is literally `THE PASSWORD IS` `` `RUSE~ `` (`file-formats.md`'s
+  "In-world readable text"), signed by an NPC — real evidence that at
+  least some passwords in this game are narrative/spoken, discovered and
+  entered by the player, which may or may not be the same mechanism as
+  the region/town password list; worth cross-checking directly.
 - What `sg0977`/`sg0ffc`/`sg1486`/`sg195C`/`sg1ABC` (the 5 segments
   with IDA hex-address names instead of sequential `segNNN`) actually
   are — likely harmless IDA bookkeeping, not investigated further

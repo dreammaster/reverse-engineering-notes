@@ -2538,7 +2538,10 @@ data."`), and maps. **The first bytes are now identified, not a guess**:
 they're the start of the world map's tile grid (see "World map" below) —
 the repeating `00 00 00 00 01 00 00 00` pattern first read here as "a table
 of `(flag/type, count-or-offset)` pairs" is the map's own bordering "void"
-band, wall-type column values alternating 0/1.
+band, wall-type column values alternating 0/1. **The "conversation data"
+the error string alludes to is also now decoded** — see "In-world readable
+text" below; despite the string, it turned out to be found books/notes/
+plaques, not NPC dialogue. "NPC data" itself is still unidentified.
 
 **One resource confirmed**: offset `0x8270A`, 768 bytes, is the game's
 master 256-color VGA palette (see `PICTURES.VGA`'s "Palette" section
@@ -3132,6 +3135,71 @@ behaves the
 IDA "sp-analysis failed" flag on its `ax==0` path (a jump back into
 its own `pop` instruction) — left as observed, most likely unreachable
 dead code, rather than reinterpreted.
+
+### In-world readable text (decoded 2026-09-23)
+
+**"RunConversation" isn't NPC dialogue — it's found books, notes, and
+plaques.** The name was an early, unverified guess. Tracing its real
+caller settles it: `RunConversation` is reached from `HandleGameCommand`'s
+item-use dispatch, gated on `word_2E548` (the item-classification record
+`GetClassifiedItemStatField` populates) — the exact same record
+`RepairItemCommand`/`InteractWithContainer` read right next to it in the
+same function. Using/reading an in-world item — a book, sign, plaque, or
+note — is what triggers it, not talking to a character.
+
+**Four independent id-indexed text pools**, one per `word_2E548[+2]` flag
+bit (`0x4000`/`0x2000`/`0x1000`/`0x800`), each read via its own
+`LookupConversationTextBlockOffset_*` stub (`yendor2.asm:42441` on).
+Unlike every other `WORLD.DAT` catalog documented so far, **the index
+tables themselves are baked into the executable, not `WORLD.DAT`** — two
+small static tables per category, `(offset-lo, offset-hi)` dwords and
+`length` words, both indexed by a 1-based id. Only the actual *text* lives
+in `WORLD.DAT`. All four categories' real entries turned out to tile one
+small contiguous span exactly, no gaps: **Chapter 2: 14,332 bytes at
+`0x15181C`; Chapter 3: 11,986 bytes at `0x3C2030`** — confirmed by every
+entry's `offset` and `length` adding up perfectly to the next entry's
+`offset`, end to end, in both games.
+
+**Record format**: fixed-width lines, category-specific width, NUL after
+the real content, no cross-line word-wrap (pre-wrapped at authoring time,
+same convention already noted for `DrawWordToken`). Line count = byte
+length / line width, with a **zero remainder on every single real entry
+in both games** — the strongest possible structural confirmation of each
+category's width. Leading/trailing spaces are meaningful (used to center
+short lines) and not trimmed by the reimplementation.
+
+| Category (was) | Line width | Ch2 entries | Ch3 entries |
+|---|---|---|---|
+| Journal (`_4000`) | 16 bytes (15 chars) | 6 | 8 |
+| Note (`_1000`) | 23 bytes (22 chars) | 1, empty | 8 |
+| Document (`_2000`) | 22 bytes (21 chars) | 26 | 26 (only 6 real; 7-26 are real, present, zero-length entries) |
+| Unused (`_800`) | 23 bytes (22 chars) | 1, empty | 1, empty |
+
+Category names describe what was actually found in the text, not a
+confirmed official taxonomy — **Journal** mixes dated `MM/DD/YYY`
+history/lore entries and undated verses (Ch2 id 6 is a short poem, no
+date); **Note** holds short in-world messages — one Chapter 3 entry
+(id 3) is *literally a spoken password*, `THE PASSWORD IS` `` `RUSE~ ``,
+signed `-QUEEN OBVERSIA` — worth revisiting against the "region
+password"/"town password" open question below; **Document** holds longer
+found documents, letters and short stories (Chapter 2 id 1 is a puzzle
+with a numbered diagram and answer sequence `1-2-3-4-5-1-4-2-5-3-1`;
+Chapter 3 id 1 is a short story titled `%THE BLACK CAT%`, `BY JASPER`);
+**Unused** has no real content in either game examined — wired up in the
+engine (the driver code and lookup stub both exist) but with an empty
+index table, like a few other "engine supports more than this chapter's
+data uses" cases already documented (Chapter 2's 15 slack item-catalog
+records, Chapter 3's empty monster block 62). Note: the game's font
+renders `` ` `` and `~` as opening/closing curly-quote glyphs, and `~` also
+substitutes for an apostrophe (`I~VE` = "I'VE") — a DOS custom-font
+limitation, not a transcription error.
+
+**Not yet traced**: which field of an item's own catalog record supplies
+the `(category, id)` pair that reaches `RunConversation` — i.e. which
+items are books/notes/plaques and what they each say isn't mapped, only
+the text-storage mechanism itself. Reimplemented in `src23/document.c`
+(`ida_scripts/dump_document_tables.py` in both `yendor2/` and `yendor3/`
+extracts the underlying tables).
 
 ## Not yet examined
 

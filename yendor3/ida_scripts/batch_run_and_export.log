@@ -1370,3 +1370,126 @@ _blockSize3-equiv (0x54A8) = 0x0
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_ch3_conv.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_conv.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_conv.py
+[*] captured stdout from target script:
+----- begin target script output -----
+category 4000 (divisor 0x10, 8 entries):
+  id 1: offset=0x3c2030 length=0x340(832) lines=52 rem=0
+  id 2: offset=0x3c2370 length=0x4e0(1248) lines=78 rem=0
+  id 3: offset=0x3c2850 length=0x5b0(1456) lines=91 rem=0
+  id 4: offset=0x3c2e00 length=0x340(832) lines=52 rem=0
+  id 5: offset=0x3c3140 length=0x270(624) lines=39 rem=0
+  id 6: offset=0x3c33b0 length=0x340(832) lines=52 rem=0
+  id 7: offset=0x3c36f0 length=0x270(624) lines=39 rem=0
+  id 8: offset=0x3c3960 length=0x1a0(416) lines=26 rem=0
+category 1000 (divisor 0x17, 9 entries):
+  id 1: offset=0x3c3b00 length=0x170(368) lines=16 rem=0
+  id 2: offset=0x3c3c70 length=0x170(368) lines=16 rem=0
+  id 3: offset=0x3c3de0 length=0x170(368) lines=16 rem=0
+  id 4: offset=0x3c3f50 length=0x170(368) lines=16 rem=0
+  id 5: offset=0x3c40c0 length=0x170(368) lines=16 rem=0
+  id 6: offset=0x3c4230 length=0x170(368) lines=16 rem=0
+  id 7: offset=0x3c43a0 length=0x170(368) lines=16 rem=0
+  id 8: offset=0x3c4510 length=0x170(368) lines=16 rem=0
+  id 9: offset=0x3c4680 length=0x4680(18048) lines=784 rem=16
+category 2000 (divisor 0x16, 26 entries):
+  id 1: offset=0x3c4680 length=0x2d6(726) lines=33 rem=0
+  id 2: offset=0x3c4956 length=0x1e4(484) lines=22 rem=0
+  id 3: offset=0x3c4b3a length=0xf2(242) lines=11 rem=0
+  id 4: offset=0x3c4c2c length=0xf2(242) lines=11 rem=0
+  id 5: offset=0x3c4d1e length=0xf2(242) lines=11 rem=0
+  id 6: offset=0x3c4e10 length=0xf2(242) lines=11 rem=0
+  id 7: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 8: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 9: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 10: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 11: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 12: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 13: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 14: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 15: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 16: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 17: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 18: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 19: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 20: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 21: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 22: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 23: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 24: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 25: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 26: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+category 800 (divisor 0x17, 1 entries):
+  id 1: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_ch3_conv.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'dump_document_tables.py', 'noexport']
+[*] reading dump_document_tables.py
+[*] executing dump_document_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Journal (was _4000): offset table @0xb5f5, length table @0xb615, 8 entries, 16-byte lines
+  id  1: offset=0x3c2030 length=0x340(832) lines=52 rem=0
+  id  2: offset=0x3c2370 length=0x4e0(1248) lines=78 rem=0
+  id  3: offset=0x3c2850 length=0x5b0(1456) lines=91 rem=0
+  id  4: offset=0x3c2e00 length=0x340(832) lines=52 rem=0
+  id  5: offset=0x3c3140 length=0x270(624) lines=39 rem=0
+  id  6: offset=0x3c33b0 length=0x340(832) lines=52 rem=0
+  id  7: offset=0x3c36f0 length=0x270(624) lines=39 rem=0
+  id  8: offset=0x3c3960 length=0x1a0(416) lines=26 rem=0
+Note (was _1000): offset table @0xb625, length table @0xb649, 8 entries, 23-byte lines
+  id  1: offset=0x3c3b00 length=0x170(368) lines=16 rem=0
+  id  2: offset=0x3c3c70 length=0x170(368) lines=16 rem=0
+  id  3: offset=0x3c3de0 length=0x170(368) lines=16 rem=0
+  id  4: offset=0x3c3f50 length=0x170(368) lines=16 rem=0
+  id  5: offset=0x3c40c0 length=0x170(368) lines=16 rem=0
+  id  6: offset=0x3c4230 length=0x170(368) lines=16 rem=0
+  id  7: offset=0x3c43a0 length=0x170(368) lines=16 rem=0
+  id  8: offset=0x3c4510 length=0x170(368) lines=16 rem=0
+Document (was _2000): offset table @0xb659, length table @0xb6c1, 26 entries, 22-byte lines
+  id  1: offset=0x3c4680 length=0x2d6(726) lines=33 rem=0
+  id  2: offset=0x3c4956 length=0x1e4(484) lines=22 rem=0
+  id  3: offset=0x3c4b3a length=0xf2(242) lines=11 rem=0
+  id  4: offset=0x3c4c2c length=0xf2(242) lines=11 rem=0
+  id  5: offset=0x3c4d1e length=0xf2(242) lines=11 rem=0
+  id  6: offset=0x3c4e10 length=0xf2(242) lines=11 rem=0
+  id  7: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id  8: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id  9: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 10: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 11: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 12: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 13: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 14: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 15: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 16: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 17: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 18: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 19: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 20: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 21: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 22: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 23: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 24: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 25: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+  id 26: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+Unused (was _800): offset table @0xb6f5, length table @0xb6f9, 1 entries, 23-byte lines
+  id  1: offset=0x3c4f02 length=0x0(0) lines=0 rem=0
+----- end target script output -----
+[*] finished executing dump_document_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

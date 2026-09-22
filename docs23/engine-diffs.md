@@ -919,6 +919,28 @@ here it's a structural change, not just bigger constants. Not fully
 traced (see `file-formats.md`'s "World map" section) — `src23/worldmap.c`
 only resolves wall/floor picture offsets for Chapter 2 as a result.
 
+## In-world readable text: same mechanism, very different content mix
+
+Found while writing `src23/document.c` (2026-09-23), checked against both
+real `WORLD.DAT` files. The mechanism is identical: four id-indexed text
+pools, in-EXE offset/length index tables (different addresses, same
+shape), fixed-width NUL-terminated lines, all four categories' real
+entries tiling one small contiguous `WORLD.DAT` span exactly. What
+differs is which categories actually have content:
+- **Note** (`_1000`): empty in Chapter 2 (1 placeholder entry, length 0)
+  but has **8 real entries** in Chapter 3 (short messages, including a
+  spoken password signed by "Queen Obversia").
+- **Document** (`_2000`): Chapter 2 uses all 26 reserved slots; Chapter 3
+  reserves the same 26 slots but only **6** have real content (7-26 are
+  present, real, and legitimately zero-length).
+- **Journal** (`_4000`) grew from 6 entries to 8.
+Net effect: Chapter 3 shifted some of its "found text" content from the
+Document pool into the previously-unused Note pool, rather than simply
+having more text overall. `src23/document.c` embeds both games' full
+tables as compile-time data (like `effect.c`'s `g_trapEffectDefs`) since,
+unlike every other per-game difference documented here, this data lives
+in the executable itself, not `WORLD.DAT`.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
