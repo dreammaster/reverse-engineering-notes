@@ -38,7 +38,10 @@
 # update_invorder/SetActiveInventory core (ags/inventory.h).
 # invscreen.c: a real, data-driven __actual_invscreen stand-in (ags/
 # invscreen.h) -- see that header's own scope decision vs. the
-# original's pixel-exact 1133-line legacy screen.
+# original's pixel-exact 1133-line legacy screen. saveload.c (M11
+# long-tail, save/restore): a real, scoped SaveGameSlot/
+# restore_game_data port -- see ags/saveload.h's own file-level
+# comment for the exact real file format and scope decision.
 
 add_library(agsengine STATIC
   src/stub.c
@@ -59,6 +62,7 @@ add_library(agsengine STATIC
   src/dialog_menu.c
   src/inventory.c
   src/invscreen.c
+  src/saveload.c
 )
 
 target_include_directories(agsengine PUBLIC

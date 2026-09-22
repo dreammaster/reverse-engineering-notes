@@ -109,3 +109,10 @@ target_link_libraries(test_dialog PRIVATE agsengine)
 # real default inventory screen (ags/invscreen.h).
 add_executable(test_inventory test_inventory.c)
 target_link_libraries(test_inventory PRIVATE agsengine)
+
+# M11 (src/PLAN.md): "the long tail", save/restore slice -- real
+# GameState/CharacterInfo[]/DialogTopic.optionflags[] round-trip
+# through a real save file (ags/saveload.h), against this game's own
+# real data.
+add_executable(test_saveload test_saveload.c)
+target_link_libraries(test_saveload PRIVATE agsengine)
