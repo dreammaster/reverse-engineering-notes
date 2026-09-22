@@ -3,6 +3,7 @@
  * in this repo) for the source this is ported from.
  */
 #include "ags/interp.h"
+#include "ags/native_api.h"
 #include "ags/stub.h"
 
 #include <stdlib.h>
@@ -498,8 +499,11 @@ static enum AgsCcRunError ags_cc_run_code(struct ccInstance *inst, long curpc)
              * see ags/interp.h's file-level comment. */
             void *handle = (void *)(size_t)(unsigned)inst->registers[arg1];
             const char *name = ags_system_imports_get_name_of(handle);
-            ags_stub_hit(name ? name : "<unresolved import>", "<script CALLEXT>", 0);
-            inst->registers[SREG_AX] = 0; /* the stubbed function's "safe default" return value */
+            /* ags/native_api.h -- M11's own "remaining script-API
+             * entries" slice: dispatches to a real handler when one
+             * exists, otherwise falls back to the exact same
+             * ags_stub_hit logging this case always did. */
+            inst->registers[SREG_AX] = ags_native_api_call(name, callstack, callstacksize);
             was_just_callas = -1;
             break;
         }

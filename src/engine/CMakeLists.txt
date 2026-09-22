@@ -42,6 +42,10 @@
 # long-tail, save/restore): a real, scoped SaveGameSlot/
 # restore_game_data port -- see ags/saveload.h's own file-level
 # comment for the exact real file format and scope decision.
+# native_api.c (M11 long-tail, remaining script-API entries): wires
+# the script interpreter's own SCMD_CALLEXT opcode to real engine
+# functions -- see ags/native_api.h's own file-level comment for the
+# calling convention and dispatch table.
 
 add_library(agsengine STATIC
   src/stub.c
@@ -63,6 +67,7 @@ add_library(agsengine STATIC
   src/inventory.c
   src/invscreen.c
   src/saveload.c
+  src/native_api.c
 )
 
 target_include_directories(agsengine PUBLIC

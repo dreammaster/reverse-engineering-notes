@@ -116,3 +116,12 @@ target_link_libraries(test_inventory PRIVATE agsengine)
 # real data.
 add_executable(test_saveload test_saveload.c)
 target_link_libraries(test_saveload PRIVATE agsengine)
+
+# M11 (src/PLAN.md): "the long tail", the remaining script-API
+# entries slice -- runs Rob Blanc 1's own real compiled script
+# (game_start/repeatedly_execute/on_mouse_click/on_key_press) through
+# the real interpreter with a real ags/native_api.h dispatch context,
+# confirming SCMD_CALLEXT's own native calls now mutate real engine
+# state instead of just being logged.
+add_executable(test_native_api test_native_api.c)
+target_link_libraries(test_native_api PRIVATE agsengine)

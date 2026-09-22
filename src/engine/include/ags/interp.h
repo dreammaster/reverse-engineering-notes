@@ -40,11 +40,20 @@
  * registered (and failing instance creation on any that aren't, like
  * the real ccCreateInstanceEx does), ags_system_imports_get_addr_of()
  * lazily fabricates a unique handle for ANY name -- so instance
- * creation always succeeds, and every native call the script actually
- * makes gets logged via AGS_STUB the first time it happens (see
- * SCMD_CALLEXT's own handling in interp.c). This is a deliberate,
- * documented divergence from the original engine's strict behavior,
- * not an oversight.
+ * creation always succeeds regardless of which native functions this
+ * engine has actually implemented yet.
+ *
+ * SCMD_CALLEXT itself (interp.c) no longer just logs-and-returns-0
+ * unconditionally -- M11's own "remaining script-API entries" slice
+ * (ags/native_api.h) gave it a real dispatch table, so a native call
+ * this project has already built a real implementation of elsewhere
+ * (DisplayMessage, AddInventory, ProcessClick, ...) now actually runs
+ * that real code when the compiled script calls it, not just this
+ * project's own test harnesses calling the same C function directly.
+ * Anything NOT in that table still falls back to the original
+ * log-and-return-0 behavior (ags_stub_hit, "<script CALLEXT>") --
+ * that backlog is still the intended "implement these next" list,
+ * just smaller than it was before this slice.
  */
 #ifndef AGS_INTERP_H
 #define AGS_INTERP_H

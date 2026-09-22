@@ -31,7 +31,21 @@ void ags_stub_hit(const char *func, const char *file, int line)
     }
 
     for (i = 0; i < s_site_count; i++) {
-        if (s_sites[i].line == line && s_sites[i].file == file) {
+        /* `func` must be part of the identity too, not just (file,
+         * line): SCMD_CALLEXT (ags/interp.c) deliberately passes the
+         * SAME "<script CALLEXT>"/0 pseudo-location for every native
+         * call regardless of which function was actually named --
+         * without this check, the SECOND distinct native function
+         * ever logged from a script would silently be counted under
+         * the FIRST one's name instead of getting its own entry (a
+         * real bug this project's own M11 native-API dispatch round
+         * found: comparing two runs' hit counts for the same name
+         * disagreed, tracing back to exactly this). strcmp, not
+         * pointer equality -- a resolved import name is the same
+         * pointer across repeat calls to the SAME import, but not
+         * guaranteed across different ones. */
+        if (s_sites[i].line == line && s_sites[i].file == file &&
+            strcmp(s_sites[i].func, func) == 0) {
             s_sites[i].hits++;
             return;
         }
