@@ -91,3 +91,13 @@ target_link_libraries(test_music PRIVATE agsengine)
 # top of a real room background.
 add_executable(test_gui test_gui.c)
 target_link_libraries(test_gui PRIVATE agsengine)
+
+# M11 (src/PLAN.md): "the long tail", dialog system slice -- loads
+# this game's own real compiled DialogTopic[]/dlgmessage[] data (same
+# new loader.h steps as test_gui.c) plus M4's real script interpreter,
+# then actually RUNS the real DCMD_* byte-code through
+# ags_run_dialog_script (ags/dialog_run.h), following GOTODIALOG
+# chains and a minimal options-menu stand-in (do_conversation's own
+# real menu rendering isn't built yet).
+add_executable(test_dialog test_dialog.c)
+target_link_libraries(test_dialog PRIVATE agsengine)

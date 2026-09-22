@@ -174,25 +174,31 @@ static int wrap_text(const char *text, int max_width, char lines[][256], int max
     return n;
 }
 
-void ags_display_message(const struct RoomStruct *rst, int msgnum)
+void ags_display_text_box(int box_w_room, int box_h_room, const char *speaker_name, const char *text)
 {
     char lines[16][256];
+    char prefixed[280];
+    const char *effective_text = text;
     int nlines;
     int line_h = text_height(font);
-    int box_w = rst->width - 20;
+    int box_w = box_w_room - 20;
     int box_h;
     int box_x = 10, box_y;
     int i;
     int frames_waited = 0;
     const int max_wait_frames = 130; /* ~2 seconds at rest(15) */
 
-    if (msgnum < 0 || msgnum >= 100 || !rst->message[msgnum]) {
+    if (!text) {
         return;
     }
+    if (speaker_name && speaker_name[0]) {
+        sprintf(prefixed, "%s: %s", speaker_name, text);
+        effective_text = prefixed;
+    }
 
-    nlines = wrap_text(rst->message[msgnum], box_w - 16, lines, 16);
+    nlines = wrap_text(effective_text, box_w - 16, lines, 16);
     box_h = nlines * line_h + 16;
-    box_y = rst->height - box_h - 10;
+    box_y = box_h_room - box_h - 10;
     if (box_y < 0) box_y = 0;
 
     rectfill(screen, box_x, box_y, box_x + box_w, box_y + box_h, makecol(0, 0, 0));
@@ -218,4 +224,12 @@ void ags_display_message(const struct RoomStruct *rst, int msgnum)
         }
         rest(15);
     }
+}
+
+void ags_display_message(const struct RoomStruct *rst, int msgnum)
+{
+    if (msgnum < 0 || msgnum >= 100 || !rst->message[msgnum]) {
+        return;
+    }
+    ags_display_text_box(rst->width, rst->height, NULL, rst->message[msgnum]);
 }

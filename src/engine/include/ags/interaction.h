@@ -129,4 +129,17 @@ void ags_run_hotspot_interaction(struct AgsGameContext *ctx, int hotspot, int mo
  * caller can't hang forever waiting for input nobody will provide. */
 void ags_display_message(const struct RoomStruct *rst, int msgnum);
 
+/* Shared box-drawing/word-wrap/blocking-wait core ags_display_message
+ * itself is built on (M9), pulled out here (M11) so ags/dialog_run.h's
+ * own DCMD_SAY handler can reuse the identical real rendering instead
+ * of a second, divergent implementation. `box_w`/`box_h` size the text
+ * box against (typically the current room's width/height, same as
+ * ags_display_message's own convention). `speaker_name`, if non-NULL,
+ * is prefixed as "NAME: " -- a deliberate, documented simplification
+ * standing in for _displayspeech's own real portrait/sierra-style
+ * rendering (not ported -- no character portrait sprites are wired up
+ * yet), matching real character speech's own textual content exactly,
+ * just without the graphical frills. */
+void ags_display_text_box(int box_w, int box_h, const char *speaker_name, const char *text);
+
 #endif /* AGS_INTERACTION_H */

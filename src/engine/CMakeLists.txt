@@ -27,7 +27,10 @@
 # needed to REACH the real on-disk GUI data) + gui_render.c
 # (GUIMain::draw_at plus a scoped Button/Label Draw() subset -- see
 # ags/gui_render.h's own file-level comment for the real-vs-stubbed
-# split).
+# split). dialog_run.c (M11 long-tail, dialog system slice):
+# run_dialog_script's own full DCMD_* byte-code interpreter -- see
+# ags/dialog_run.h's own file-level comment for the complete opcode
+# table and evidence.
 
 add_library(agsengine STATIC
   src/stub.c
@@ -44,6 +47,7 @@ add_library(agsengine STATIC
   src/audio.c
   src/gui_loader.c
   src/gui_render.c
+  src/dialog_run.c
 )
 
 target_include_directories(agsengine PUBLIC
