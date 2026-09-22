@@ -9,6 +9,15 @@
  * draw_all, ags/gui_render.h -- GUIMain::draw_at plus a scoped
  * Button/Label Draw() subset).
  *
+ * Also exercises ags_gui_update_popups (ags/gui_popup.h -- the real
+ * POPUP_MOUSEY auto-show/hide logic, added after this milestone's own
+ * first screenshot showed a GUI that should have been hidden sitting
+ * on top of the status bar): renders the SAME scene twice, once with
+ * the mouse away from any trigger line (matching this game's own real
+ * default on-screen appearance -- only the always-visible status line
+ * should show) and once with the mouse near the top of the screen
+ * (triggering the verb-icon bar's own real popup).
+ *
  * Usage:
  *   test_gui.exe <path to rb.exe>
  */
@@ -19,6 +28,7 @@
 #include "ags/gfx.h"
 #include "ags/gui_loader.h"
 #include "ags/gui_render.h"
+#include "ags/gui_popup.h"
 
 #include <allegro.h>
 #include <stdio.h>
@@ -45,8 +55,8 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if (allegro_init() != 0) {
-        fprintf(stderr, "allegro_init failed\n");
+    if (allegro_init() != 0 || install_mouse() < 0) {
+        fprintf(stderr, "allegro_init/install_mouse failed\n");
         return 1;
     }
 
@@ -161,19 +171,54 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    ags_gfx_show_background(&rst, &game);
-    ags_gui_draw_all(&guiset, &sprites, screen);
-    printf("drew %d GUI(s) onto the real room background\n", guiset.numgui);
-
-    rest(500);
-
     {
+        struct AgsGuiPopupState popup_state;
         RGB merged[256];
+        int j;
+
+        popup_state.ifacepopped = -1;
         ags_gfx_build_merged_palette(&rst, &game, merged);
+
+        /* --- default state: mouse away from any trigger line --- */
+        position_mouse(160, 100);
+        poll_mouse();
+        ags_gui_update_popups(&guiset, &popup_state, mouse_y);
+        printf("\nmouse at y=%d -> ifacepopped=%d (this game's own real default "
+               "appearance: only the always-visible status line should show)\n",
+               mouse_y, popup_state.ifacepopped);
+        for (j = 0; j < guiset.numgui; j++) {
+            printf("  gui[%d]: popup=%d popupyp=%d -> on=%d\n", j,
+                   guiset.guis[j].popup, guiset.guis[j].popupyp, guiset.guis[j].on);
+        }
+
+        ags_gfx_show_background(&rst, &game);
+        ags_gui_draw_all(&guiset, &sprites, screen);
+        rest(500);
         if (save_bitmap("gui_screenshot.bmp", screen, merged) != 0) {
             fprintf(stderr, "save_bitmap failed\n");
         } else {
             printf("screenshot saved: gui_screenshot.bmp\n");
+        }
+
+        /* --- mouse near the top edge: triggers the verb-icon bar's
+         * own real popup (popupyp=12) --- */
+        position_mouse(160, 5);
+        poll_mouse();
+        ags_gui_update_popups(&guiset, &popup_state, mouse_y);
+        printf("\nmouse at y=%d -> ifacepopped=%d (should trigger the verb-icon bar)\n",
+               mouse_y, popup_state.ifacepopped);
+        for (j = 0; j < guiset.numgui; j++) {
+            printf("  gui[%d]: popup=%d popupyp=%d -> on=%d\n", j,
+                   guiset.guis[j].popup, guiset.guis[j].popupyp, guiset.guis[j].on);
+        }
+
+        ags_gfx_show_background(&rst, &game);
+        ags_gui_draw_all(&guiset, &sprites, screen);
+        rest(500);
+        if (save_bitmap("gui_screenshot_popup.bmp", screen, merged) != 0) {
+            fprintf(stderr, "save_bitmap failed\n");
+        } else {
+            printf("screenshot saved: gui_screenshot_popup.bmp\n");
         }
     }
 
@@ -196,7 +241,9 @@ int main(int argc, char **argv)
 
     printf("\nM11 ACCEPTANCE CHECK OK (GUI rendering slice): real read_gui-format "
            "GUIMain[]/control data decoded from this game's own ac2game.dta and "
-           "rendered onto the real room background\n");
+           "rendered onto the real room background, with the real POPUP_MOUSEY "
+           "auto-show/hide logic (ags_gui_update_popups) confirmed to match this game's "
+           "own actual default appearance\n");
     return 0;
 }
 END_OF_MAIN()

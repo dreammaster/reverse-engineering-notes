@@ -27,7 +27,10 @@
 # needed to REACH the real on-disk GUI data) + gui_render.c
 # (GUIMain::draw_at plus a scoped Button/Label Draw() subset -- see
 # ags/gui_render.h's own file-level comment for the real-vs-stubbed
-# split). dialog_run.c (M11 long-tail, dialog system slice):
+# split) + gui_popup.c (check_controls's own real POPUP_MOUSEY
+# auto-show/hide logic -- see ags/gui_popup.h's own file-level
+# comment for the evidence and the visual bug it was found fixing).
+# dialog_run.c (M11 long-tail, dialog system slice):
 # run_dialog_script's own full DCMD_* byte-code interpreter -- see
 # ags/dialog_run.h's own file-level comment for the complete opcode
 # table and evidence. dialog_menu.c (M11 long-tail, options-menu UI):
@@ -62,6 +65,7 @@ add_library(agsengine STATIC
   src/audio.c
   src/gui_loader.c
   src/gui_render.c
+  src/gui_popup.c
   src/dialog_run.c
   src/dialog_menu.c
   src/inventory.c
