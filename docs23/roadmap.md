@@ -68,6 +68,33 @@ revisited later — when a function differs between the two (check
 `engine-diffs.md` first), reimplement the union of behavior with a
 runtime or compile-time switch rather than picking one game's version.
 
+**Platform backend: SDL2**, decided 2026-09-22. Graphics, sound, and
+input in the C reimplementation are built on SDL2, not a bespoke
+DOS-VGA/EMS-shaped layer — chosen specifically because the eventual
+target is a ScummVM engine, and SDL is the closest available API shape
+to what ScummVM's own backend expects, so the adaptation later should
+be smaller. Practical implications for upcoming modules:
+- Keep a clean split between game logic (the data-model modules
+  written so far: `bcd4`, `savegame`, `party`, `item`, `monster`,
+  `effect`, `random`, all platform-independent) and a thin platform
+  layer that owns the SDL2 calls — window/surface, blitting,
+  palette/color conversion, audio playback, keyboard/mouse polling.
+  Don't let SDL types leak into the data-model headers.
+- The original renders into a palettized VGA framebuffer
+  (`PICTURES.VGA`, a master 256-color palette at `WORLD.DAT` offset
+  `0x8270A` — see `file-formats.md`); the SDL platform layer should
+  decode/composite into an indexed or converted-RGB surface and let
+  SDL handle the actual blit/present, rather than reimplementing
+  VGA-register tricks.
+- Audio: the original drives Sound Blaster/FM synth through
+  `SBFMDRV.COM` and an in-EXE sound-event table (`TriggerSoundEvent`,
+  `word_368A7` family) — not yet decoded. When that's tackled, target
+  SDL_mixer or raw SDL audio callbacks rather than emulating the
+  original driver protocol.
+- No SDL-specific code has been written yet; this section exists so
+  the decision is on record before the rendering-dependent modules
+  (dungeon loop, `PICTURES.VGA`) start.
+
 **Picking the next module** — candidates, roughly in a sensible
 dependency order (not a hard sequence; pick whatever's most useful
 next):

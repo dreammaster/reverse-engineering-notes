@@ -7922,6 +7922,20 @@ Left for later: `+0x4E` and `+0x92`'s low "special-attack modifier" bits
 (`0xE00`) on the monster record remain unidentified; they weren't needed to
 finish this module.
 
+### 2026-09-22 session update, continued: platform backend decided — SDL2
+
+Paul specified the graphics/sound/input backend for `src23/`: **SDL2**,
+chosen because the eventual goal is a ScummVM engine, and SDL is the
+closest fit to ScummVM's own backend shape, minimizing later adaptation
+work. Recorded as a standing project decision in `roadmap.md` (new
+"Platform backend: SDL2" note under "Next: continue the C
+reimplementation") rather than acted on immediately — no rendering
+module has started yet, so there's no SDL code to write yet. The
+practical takeaway for future modules: keep the data-model modules
+(everything written so far) platform-independent, and confine SDL2
+calls to a thin platform layer once the dungeon-loop/`PICTURES.VGA`
+work begins.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
