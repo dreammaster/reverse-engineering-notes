@@ -33,10 +33,12 @@
  * compiled global script actually references (confirmed via
  * test_interpreter.c's own printed import list) that this project
  * already has a real, evidence-cited implementation for elsewhere.
- * Left unmapped (falls to the same stub-logging path as before,
- * cleanly documented rather than guessed at): AnimateObject/
- * MoveObject/ObjectOn (no RoomObject subsystem exists yet, same scope
- * decision ags/interaction.h's own respond==6/13 already made),
+ * ObjectOn/ObjectOff joined this table once ags/roomobj.h existed
+ * (M11+'s own room-objects slice). Left unmapped (falls to the same
+ * stub-logging path as before, cleanly documented rather than guessed
+ * at): AnimateObject/MoveObject (real per-frame view-animation-
+ * stepping/pathfinding-based movement, not built yet -- ags/roomobj.h
+ * only covers RoomObject's own static, non-moving state so far),
  * RestoreGameDialog/SaveGameDialog (CSCI legacy dialog controls,
  * explicitly out of scope per src/PLAN.md's own "Explicitly deferred"
  * list), Debug (no real per-command behavior traced).

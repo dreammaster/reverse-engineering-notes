@@ -49,6 +49,12 @@
 # the script interpreter's own SCMD_CALLEXT opcode to real engine
 # functions -- see ags/native_api.h's own file-level comment for the
 # calling convention and dispatch table.
+# roomobj.c (M11+ long-tail, room objects): load_new_room's own real
+# RoomStatus/RoomObject init, ObjectOn/ObjectOff, and a scoped static-
+# pose renderer -- see ags/roomobj.h's own file-level comment for the
+# evidence and scope decisions, and its own PLAN.md-cited motivation
+# (test_interpreter.c's real import list names AnimateObject/ObjectOn/
+# MoveObject directly).
 
 add_library(agsengine STATIC
   src/stub.c
@@ -72,6 +78,7 @@ add_library(agsengine STATIC
   src/invscreen.c
   src/saveload.c
   src/native_api.c
+  src/roomobj.c
 )
 
 target_include_directories(agsengine PUBLIC

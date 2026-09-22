@@ -125,3 +125,11 @@ target_link_libraries(test_saveload PRIVATE agsengine)
 # state instead of just being logged.
 add_executable(test_native_api test_native_api.c)
 target_link_libraries(test_native_api PRIVATE agsengine)
+
+# M11+ (src/PLAN.md): "the long tail", room objects slice -- real
+# load_new_room "first visit" RoomStatus/RoomObject init
+# (ags_init_room_status), ObjectOn/ObjectOff, and a scoped static-pose
+# renderer (ags/roomobj.h), checked against this game's own real
+# room14.crm/room15.crm initial-object data.
+add_executable(test_room_objects test_room_objects.c)
+target_link_libraries(test_room_objects PRIVATE agsengine)

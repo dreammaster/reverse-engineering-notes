@@ -5,6 +5,7 @@
 #include "ags/interaction.h"
 #include "ags/room_loader.h"
 #include "ags/inventory.h"
+#include "ags/roomobj.h"
 #include "ags/stub.h"
 
 #include <stdio.h>
@@ -57,11 +58,19 @@ void ags_run_event_block(struct AgsGameContext *ctx, const struct EventBlock *bl
         case 5: /* DisplayMessage(respondval) -- character-attribution extension not ported */
             ags_display_message(ctx->rst, block->respondval[i]);
             break;
-        case 6: /* ObjectOff(respondval) -- no RoomObject tracking yet */
-            AGS_STUB_VOID();
+        case 6: /* ObjectOff(respondval) -- ags/roomobj.h, M11+'s own room-objects slice */
+            if (ctx->croom) {
+                ags_object_off(ctx->croom, block->respondval[i]);
+            } else {
+                AGS_STUB_VOID();
+            }
             break;
         case 7: /* ObjectOff(respondval) + add_inventory(data) -- compound */
-            AGS_STUB_VOID(); /* ObjectOff half -- no RoomObject tracking yet */
+            if (ctx->croom) {
+                ags_object_off(ctx->croom, block->respondval[i]);
+            } else {
+                AGS_STUB_VOID();
+            }
             if (ctx->player && ctx->play) {
                 ags_add_inventory(ctx->player, ctx->play, block->data[i]);
             }
@@ -85,8 +94,12 @@ void ags_run_event_block(struct AgsGameContext *ctx, const struct EventBlock *bl
         case 12: /* PlayFlic(data, respondval) */
             AGS_STUB_VOID();
             break;
-        case 13: /* ObjectOn(respondval) -- no RoomObject tracking yet */
-            AGS_STUB_VOID();
+        case 13: /* ObjectOn(respondval) -- ags/roomobj.h, M11+'s own room-objects slice */
+            if (ctx->croom) {
+                ags_object_on(ctx->croom, block->respondval[i]);
+            } else {
+                AGS_STUB_VOID();
+            }
             break;
         case 14: /* RunDialog(respondval) -- dialog subsystem not built yet */
             AGS_STUB_VOID();

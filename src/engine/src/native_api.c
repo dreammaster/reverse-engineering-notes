@@ -6,6 +6,7 @@
 #include "ags/inventory.h"
 #include "ags/invscreen.h"
 #include "ags/room_loader.h"
+#include "ags/roomobj.h"
 #include "ags/stub.h"
 
 #include <allegro.h>
@@ -213,6 +214,27 @@ static long native_InterfaceOff(const long *args, int numargs)
     return 0;
 }
 
+static long native_ObjectOn(const long *args, int numargs)
+{
+    /* ags/roomobj.h, M11+'s own room-objects slice -- see
+     * ags/interaction.h's own respond==13 case for the same real
+     * call. */
+    if (numargs < 1 || !s_ctx || !s_ctx->game_ctx || !s_ctx->game_ctx->croom) {
+        return 0;
+    }
+    ags_object_on(s_ctx->game_ctx->croom, (int)args[0]);
+    return 0;
+}
+
+static long native_ObjectOff(const long *args, int numargs)
+{
+    if (numargs < 1 || !s_ctx || !s_ctx->game_ctx || !s_ctx->game_ctx->croom) {
+        return 0;
+    }
+    ags_object_off(s_ctx->game_ctx->croom, (int)args[0]);
+    return 0;
+}
+
 static long native_InterfaceOn(const long *args, int numargs)
 {
     (void)args; (void)numargs;
@@ -248,6 +270,8 @@ static const struct AgsNativeApiEntry s_dispatch[] = {
     { "EndCutscene", native_EndCutscene },
     { "InterfaceOff", native_InterfaceOff },
     { "InterfaceOn", native_InterfaceOn },
+    { "ObjectOn", native_ObjectOn },
+    { "ObjectOff", native_ObjectOff },
 };
 #define AGS_NATIVE_API_DISPATCH_COUNT (sizeof(s_dispatch) / sizeof(s_dispatch[0]))
 

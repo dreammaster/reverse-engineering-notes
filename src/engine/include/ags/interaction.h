@@ -33,10 +33,9 @@
  *        speech via the `extra`/`xx` mechanism when called with a
  *        non-negative `extra` argument -- not reproduced here, no
  *        speech/portrait rendering exists yet]
- *   6  = ObjectOff(respondval)
+ *   6  = ObjectOff(respondval)                  [now REAL, ags/roomobj.h]
  *   7  = ObjectOff(respondval) THEN add_inventory(data)  (compound --
- *        the add_inventory half is now real, ags/inventory.h; ObjectOff
- *        stays stubbed, no RoomObject tracking exists yet)
+ *        both halves now REAL, ags/roomobj.h + ags/inventory.h)
  *   8  = add_inventory(data)                [now REAL, ags/inventory.h]
  *   9  = Run Script (make_ts_func_name + run_another/
  *        run_text_script_2iparam-equivalent dispatch)
@@ -45,16 +44,20 @@
  *                                          doesn't extract its data)
  *   11 = PlaySound(respondval)
  *   12 = PlayFlic(data, respondval)
- *   13 = ObjectOn(respondval)
+ *   13 = ObjectOn(respondval)                  [now REAL, ags/roomobj.h]
  *   14 = RunDialog(respondval)
  *
  * SCOPE, this milestone: 0 (NewRoom), 1 (no-op), 2 (StopMoving), 5
- * (DisplayMessage, MINUS the character-attribution extension), and
- * -- promoted in M11's own inventory slice, now that ags/inventory.h
- * exists -- 8's own add_inventory (and 7's add_inventory half) get
- * REAL implementations. Every other case calls AGS_STUB_VOID() instead of
- * silently doing nothing -- per PLAN.md's own stub convention, a
- * real, logged "implement this next" marker, not a fake no-op.
+ * (DisplayMessage, MINUS the character-attribution extension), 8's own
+ * add_inventory (M11's own inventory slice, ags/inventory.h), and --
+ * promoted in M11+'s own room-objects slice, now that ags/roomobj.h
+ * exists -- 6/7/13's own ObjectOff/ObjectOn get REAL implementations
+ * too (both fall back to AGS_STUB_VOID() if the caller has no
+ * `croom`, matching this project's own "log it instead of guessing"
+ * convention for a missing-context case, same as `play`). Every other
+ * case calls AGS_STUB_VOID() instead of silently doing nothing -- per
+ * PLAN.md's own stub convention, a real, logged "implement this next"
+ * marker, not a fake no-op.
  *
  * checkAgainst matching: this module treats each EventBlock command's
  * `list[i]` as a plain equality test against `checkAgainst` --
@@ -102,6 +105,12 @@ struct AgsGameContext {
      * AGS_STUB_VOID() without it, matching this project's own "no
      * state threaded through, log it instead of guessing" convention. */
     struct GameState *play;
+    /* M11+ (room objects, ags/roomobj.h): the current room's own
+     * per-save-slot object/EventBlock state (roomstats[displayed_room]
+     * in the real engine). May be NULL -- respond==6/7/13's own
+     * ObjectOff/ObjectOn calls fall back to AGS_STUB_VOID() without
+     * it, same convention as `play` above. */
+    struct RoomStatus *croom;
 };
 
 /* get_hotspot_at (Engine/AC.CPP:8939) -- a real port, minus 2011's
