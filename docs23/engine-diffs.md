@@ -899,6 +899,26 @@ base address (`DS:0x96DA` vs `DS:0x905B`) with its own sound/icon ids per
 effect — confirmed by round-tripping every monster's attack/special-attack
 effect id against its own game's table with no exceptions.
 
+## World map: same format, bigger grid — and a genuinely different tile-legend mechanism
+
+Found while writing `src23/worldmap.c` (2026-09-22), checked against both
+real `WORLD.DAT` files. The map is one continuous 800-column-wide tile
+grid starting at file offset 0 in both games, same row byte format (two
+`u16` tile-type indices per column), same row size (3200 bytes,
+`4*_blockSize3` with `_blockSize3=0x320` in both games). Chapter 3 is
+**168 rows tall vs. Chapter 2's 144** (cross-checked against each game's
+own `CURGAME` fog-of-war bitmap row count, which matches exactly).
+
+**The wall/floor tile-legend tables are not just relocated — Chapter 3
+uses a different, paged mechanism.** Chapter 2's are flat arrays
+(`id*stride + base`). Chapter 3's legend-row drawers instead call
+`sub_1BC98`/`sub_1BCDB`, which divide the tile-type id by 100 and select
+a **page** before indexing — the same style of scaling-up seen elsewhere
+for Chapter 3's larger resources (bigger item/monster/effect tables), but
+here it's a structural change, not just bigger constants. Not fully
+traced (see `file-formats.md`'s "World map" section) — `src23/worldmap.c`
+only resolves wall/floor picture offsets for Chapter 2 as a result.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

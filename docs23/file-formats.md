@@ -2532,12 +2532,13 @@ guide rather than assuming it's exactly right.
 
 1,761,397 bytes. Referenced by (unverified names, see overview.md)
 `loadWorldDat1` through `loadWorldDat5` and `WorldDat_setBlock1` through
-`WorldDat_setBlock6`. First 8 bytes read as repeating
-`00 00 00 00 01 00 00 00` pairs in a quick raw peek — consistent with a
-table of `(flag/type, count-or-offset)` pairs or similar, but this is a
-guess from 64 bytes, not a traced format. Error strings suggest it holds
-at least: text data, NPC data, conversation data (per `"Problem
-retreiving text/NPC/conversation data."`), and presumably maps.
+`WorldDat_setBlock6`. Error strings suggest it holds at least: text data,
+NPC data, conversation data (per `"Problem retreiving text/NPC/conversation
+data."`), and maps. **The first bytes are now identified, not a guess**:
+they're the start of the world map's tile grid (see "World map" below) —
+the repeating `00 00 00 00 01 00 00 00` pattern first read here as "a table
+of `(flag/type, count-or-offset)` pairs" is the map's own bordering "void"
+band, wall-type column values alternating 0/1.
 
 **One resource confirmed**: offset `0x8270A`, 768 bytes, is the game's
 master 256-color VGA palette (see `PICTURES.VGA`'s "Palette" section
@@ -2712,13 +2713,92 @@ kind of data that trails Chapter 2's item table). Chapter 3 block 62 is a
 23) lists the boss/quest monsters whose death sets a global flag; every type in
 it is a real monster in its game's lookup. Reimplemented in `src23/monster.c`.
 
+### World map (decoded 2026-09-22)
+
+**There is no separate per-level map data — the whole game is one
+continuous tile grid at the very start of `WORLD.DAT`** (byte offset 0).
+`RefreshDungeonMapWindow` (below) reads map rows through the generic
+`PrepareWorldDatRead` stub, whose 32-bit base offset (table `DS:0xCDEF`,
+`ida_scripts/dump_map_layout.py`) is a **static 0** — not a per-level
+value set elsewhere, and there's no "current level" selector anywhere in
+the read path. `g_partyWorldX`/`g_partyWorldY` address this one grid
+directly, so towns, wilderness, and dungeon interiors are all baked into
+a single coordinate space (matching how the "region passwords" — see
+"Open questions" below — read more like teleport coordinates into one
+world than separate files to load).
+
+**Row size 3200 bytes, confirmed two ways**: `PrepareWorldDatRead` sets
+the read size to `4*_blockSize3`, and `InitGlobals` sets `_blockSize3 =
+0x320` (800) in *both* games (yendor2.asm and yendor3.asm each have their
+own `mov _blockSize3-equivalent, 320h`) — record size `4*0x320 = 0xC80` =
+**3200 bytes**. **800 columns** follows directly (3200 / 4 bytes/column).
+**Row count**: 144 (Chapter 2) / 168 (Chapter 3) — found from where the
+row pattern gives way to the item catalog (a different, already-decoded
+region), and cross-checked two independent ways: it lands on a whole
+number of rows with no partial row at the boundary, and it matches
+`CURGAME`'s own fog-of-war bitmap row count *exactly* — `100 bytes/row =
+800 columns / 8 explored-bits-per-byte`, the same `144`/`168` already
+documented for that savegame section. Total map region: `0` to `0x70800`
+(Ch2) / `0` to `0x84D00` (Ch3), i.e. **800×144** / **800×168** tiles.
+Both games' full grids were checked against their real `WORLD.DAT` files:
+every tileA/tileB value stays within the two legend tables' real range
+(below), and the party's actual saved position (`CURGAME`'s X=166/Y=36)
+decodes to a sane in-range cell.
+
+**Column format**: 4 bytes, two `u16` tile-type indices — identical to
+the first 4 bytes of the in-memory 8-byte dungeon-grid cell copied from
+here (see "In-memory dungeon map grid" below): **tileA** (`+0`) indexes
+the **wall type** table (`0xE551`, below); **tileB** (`+2`) indexes the
+**floor/overlay type** table (`0xE175`, below). The first several rows of
+both games are a distinctive placeholder/border pattern — tileA
+alternating `0`/`1` column by column, tileB always `0` — a bordering
+"void" band around the real playable area, not a decode error (this is
+literally `WORLD.DAT`'s first 8 bytes, `00 00 00 00 01 00 00 00`
+repeating, previously read as an unrelated unknown table). The last few
+rows are a similarly low-variety, bounded pattern using different small
+wall-type values, not yet characterized as precisely.
+
+**Wall type table** (`0xE551`, 12-byte stride, `ida_scripts/dump_tile_type_tables.py`):
+58 real entries (indices `0`-`57`, matching the highest tileA value seen
+in real Chapter 2 map data exactly), then zero-filled reserved slots.
+Confirmed field **`+0xA`: `g_pictureDir` picture offset**
+(`DrawWallTypeLegendRow`, the map editor's wall-type legend strip). The
+other five words per entry (`+0`, `+2`, `+4`, `+6`, `+8`) aren't
+individually traced — some look like they might encode facing-variant
+sub-ids (entries 26-37 read like paired/rotated variants of 16-25), but
+that's a read of the data, not a confirmed finding. **Floor/overlay type
+table** (`0xE175`, 10-byte stride): 65 real entries (`0`-`64`; tileB does
+go up to `67` in real data, but `65`-`67` are legitimately zero-filled
+reserved slots, not missing data — confirmed by dumping past them).
+Confirmed field **`+8`: `g_pictureDir` picture offset**
+(`DrawFloorTypeLegendRow`). Both tables reimplemented (picture-offset
+column only, the only confirmed field) in `src23/worldmap.c`.
+
+**Chapter 3's equivalent tables are a genuinely different, undecoded
+mechanism** — not just a different address. `RunMapEditorScreen`'s
+Chapter 3 legend-row drawers (`DrawWallTypeLegendRow`/
+`DrawFloorTypeLegendRow`) call `sub_1BC98`/`sub_1BCDB` instead of doing a
+flat `id*stride+base` lookup inline: those functions divide the tile-type
+id by 100, use the quotient to select a **page** (a small table at
+`DS:0xC8E7` for the floor side; the wall side's own page-table base
+wasn't pinned down — its code only shows `+2`, suggesting it's relative
+to something not yet identified, plausibly an EMS-paged resource
+segment), then index within that 100-entry page. This looks like the
+same "paged as country grows" pattern used elsewhere for larger Chapter 3
+resources, consistent with its bigger map, but the paging mechanism
+itself isn't traced. `src23/worldmap.c`'s `worldMapWallPictureOffset`/
+`worldMapFloorPictureOffset` return `false` for `GameYendor3` until this
+is done — a real, open gap, not silently wrong data.
+
 ### In-memory dungeon map grid
 
 **The loader is now found**: `RefreshDungeonMapWindow` (was
 `sub_209D2`, called from 16 sites in `start`, always right before
 `RedrawDungeonScreen`+`BuildMinimapTileData`+`DrawMinimap` — i.e.
 after any position-changing action) (re)builds this grid from
-`WORLD.DAT` around the party's current position: reads 78 rows,
+`WORLD.DAT`'s world map (**"World map" above** — this function is what
+that section's decode is based on) around the party's current position:
+reads 78 rows,
 unpacking a packed-bit "explored" flag per cell alongside the two
 tile-type indices below, then a second pass calls
 `TryInteractAtPosition` per cell to bake item/trigger/trap markers
@@ -2738,8 +2818,9 @@ absolute origin. Confirmed fields: **`+0`/`+2`: two tile-type indices**
 (used by `BuildMinimapTileData` — `ida_scripts/name_minimap.py` — as
 lookups into two small tables, 12 bytes/entry at `0xE551` and 10
 bytes/entry at `0xE175`, giving the two picture ids `DrawMinimap`
-draws per cell — plausibly floor/base tile and a wall or object
-overlay); **`+6`, a flags word, bit `0x8000` = "already explored"** —
+draws per cell — **now fully decoded, see "World map" above**: `+0` is
+the wall type, `+2` the floor/overlay type, copied verbatim from the
+on-disk world map); **`+6`, a flags word, bit `0x8000` = "already explored"** —
 the automap's "cells become known as you walk near them" mechanic
 (matches the manual's "M uses the party map"). The reveal action itself
 (`PersistExploredCell`) writes the explored bit into `CURGAME` — the

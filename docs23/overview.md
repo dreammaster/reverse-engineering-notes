@@ -7936,6 +7936,45 @@ practical takeaway for future modules: keep the data-model modules
 calls to a thin platform layer once the dungeon-loop/`PICTURES.VGA`
 work begins.
 
+### 2026-09-22 session update, continued: C reimplementation, world map module — the "map blocks" half of the roadmap's next item
+
+Wrote `src23/worldmap.c`/`.h` (+ `worldmap_stdio.c`), decoding `WORLD.DAT`'s
+map data end to end. Full writeup in `file-formats.md`'s new "World map"
+section (and updates to the existing "In-memory dungeon map grid" section,
+whose loader function, `RefreshDungeonMapWindow`, this decode is built on).
+- **The single biggest surprise: there's no per-level map data at all.**
+  The entire game — towns, wilderness, dungeon interiors — is one
+  continuous 800-column tile grid starting at `WORLD.DAT` offset 0, and
+  `g_partyWorldX`/`Y` address it directly. `PrepareWorldDatRead`'s base
+  offset (a static table entry, confirmed 0) and the total absence of any
+  "current level" selector in `RefreshDungeonMapWindow`'s read path both
+  point the same way. This reframes the "region passwords" open question
+  below: they're very plausibly just teleport coordinates into this one
+  map, not separate areas/files.
+- Row size (3200 bytes = 800 columns) came from `_blockSize3`, a
+  runtime-only global whose InitGlobals-assigned value (`0x320`) had to
+  be read from the disassembly directly — the static `.idb` snapshot
+  reads 0 for it, a trap worth remembering for any other `_blockSize*`
+  global.
+- Row count (144 Ch2 / 168 Ch3) was found empirically (where the row
+  pattern gives way to the already-known item catalog) and then
+  cross-checked independently against `CURGAME`'s own fog-of-war bitmap
+  row count, which matches exactly both games — strong mutual
+  confirmation between two modules written on different days.
+- Decoded the wall/floor tile-legend tables (`0xE551`/`0xE175`) for
+  Chapter 2, confirming the picture-offset field via the map editor's own
+  legend-strip drawers. **Chapter 3 turned out to use a genuinely
+  different, paged lookup** (`sub_1BC98`/`sub_1BCDB`, div-by-100 into a
+  page table) rather than a flat array at a different address — a real
+  engine difference, not just relocated data; see `engine-diffs.md`. Left
+  undecoded rather than guessed at.
+- Two new read-only IDA scripts: `ida_scripts/dump_map_layout.py` and
+  `ida_scripts/dump_tile_type_tables.py` (yendor2 only; yendor3's paged
+  table needs its own tracing pass before a dump script is worth writing).
+Text/conversation/NPC data (the other "text blocks" half of this
+roadmap item) is still undecoded — deliberately out of scope for this
+pass; the map decode alone was a large, self-contained piece of work.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

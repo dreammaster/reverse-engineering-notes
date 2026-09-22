@@ -175164,3 +175164,460 @@ TRAP EFFECTS @DS:0x905b x100
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_map_offset.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_map_offset.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_map_offset.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DS:0xCDEF dword = 0x0
+_blockSize3 (0x329F4) = 0xffff
+_blockSize1 (0x329F0-2? check) = 0xffff
+g_exploredMapBitmapBase 0x3685f
+g_dungeonMapGridSegment 0x2e562
+word_329FA 0x329fa
+word_368A7 0x368a7
+g_groundItemSlotRecord 0x36863
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_map_offset.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_fileentry_fields.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_fileentry_fields.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_fileentry_fields.py
+[*] captured stdout from target script:
+----- begin target script output -----
+WORLD.DAT FileEntry (0x9043)
+  +0x0  ea=0x368a3  name='worldDat'  word=0xffff
+  +0x2  ea=0x368a5  name='word_368A5'  word=0x0
+  +0x4  ea=0x368a7  name='word_368A7'  word=0x0
+  +0x6  ea=0x368a9  name='word_368A9'  word=0x0
+  +0x8  ea=0x368ab  name='word_368AB'  word=0x0
+  +0xa  ea=0x368ad  name='word_368AD'  word=0x0
+  +0xc  ea=0x368af  name='word_368AF'  word=0x0
+  +0xe  ea=0x368b1  name='aWorldDat'  word=0x4f57
+CURGAME FileEntry (0x8FFB)
+  +0x0  ea=0x3685b  name='curGame'  word=0xffff
+  +0x2  ea=0x3685d  name='word_3685D'  word=0x0
+  +0x4  ea=0x3685f  name='g_exploredMapBitmapBase'  word=0x0
+  +0x6  ea=0x36861  name='word_36861'  word=0x0
+  +0x8  ea=0x36863  name='g_groundItemSlotRecord'  word=0x0
+  +0xa  ea=0x36865  name='word_36865'  word=0x0
+  +0xc  ea=0x36867  name='word_36867'  word=0x0
+  +0xe  ea=0x36869  name='aCurgame'  word=0x5543
+SAVGAME FileEntry (0x902C)
+  +0x0  ea=0x3688c  name='savegameX'  word=0xffff
+  +0x2  ea=0x3688e  name='word_3688E'  word=0x0
+  +0x4  ea=0x36890  name=''  word=0x0
+  +0x6  ea=0x36892  name='word_36892'  word=0x0
+  +0x8  ea=0x36894  name='word_36894'  word=0x0
+  +0xa  ea=0x36896  name=''  word=0x0
+  +0xc  ea=0x36898  name=''  word=0x0
+  +0xe  ea=0x3689a  name='aSavgamex'  word=0x4153
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_fileentry_fields.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_tile_tables.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_tile_tables.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_tile_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0xE551 (12B): next named symbol at +0xec7 (g_soundDriverFarPtr), i.e. ~315 entries
+0xE175 (10B): next named symbol at +-0x1 (None), i.e. ~-1 entries
+
+Full 0xE551 table (12 bytes = 6 words each), first 90 entries or until a long run of zero:
+   0: 0000 0000 0000 0000 0000 0016
+   1: 0001 0000 0000 0000 0000 0017
+   2: 0000 0000 0034 0016 0000 0018
+   3: 0000 0000 0013 0016 000e 001b
+   4: 0000 0000 0019 0016 001c 001e
+   5: 0000 0000 0041 0016 002a 0020
+   6: 0000 0000 003d 0016 0000 0022
+   7: 0000 0000 002e 0016 0000 0018
+   8: 0000 0000 003b 0016 000e 0022
+   9: 0000 0000 002c 0016 000e 001b
+  10: 0000 0000 0009 0016 001c 0050
+  11: 0000 0000 0042 0016 002a 0022
+  12: 0000 0000 0000 0016 0000 0018
+  13: 0000 0000 0000 0016 000e 001b
+  14: 0000 0000 0000 0016 001c 001e
+  15: 0000 0000 0000 0016 002a 0020
+  16: 0004 0000 0000 0000 0000 0025
+  17: 0005 0000 0000 0000 0000 0026
+  18: 0006 0000 0000 0000 0000 0027
+  19: 0007 0000 0000 0000 0000 0028
+  20: 0002 0000 0000 0000 0000 0029
+  21: 0003 0000 0000 0000 0000 0029
+  22: 000c 0000 0000 0000 0000 002a
+  23: 000d 0000 0000 0000 0000 002a
+  24: 000a 0000 0000 0000 0000 002c
+  25: 000b 0000 0000 0000 0000 002d
+  26: 0004 0004 0000 0000 0000 0025
+  27: 0005 0005 0000 0000 0000 0026
+  28: 000c 0004 0000 0000 0000 002a
+  29: 000d 0005 0000 0000 0000 002a
+  30: 0002 0004 0000 0000 0000 0029
+  31: 0003 0005 0000 0000 0000 0029
+  32: 000a 0004 0000 0000 0000 002c
+  33: 000b 0005 0000 0000 0000 002d
+  34: 000c 0002 0000 0000 0000 002a
+  35: 000d 0003 0000 0000 0000 002a
+  36: 0002 0002 0000 0000 0000 0029
+  37: 0003 0003 0000 0000 0000 0029
+  38: 0008 0000 0000 0000 0000 0047
+  39: 0008 0000 0000 0000 0000 0047
+  40: 0008 0004 0000 0000 0000 0047
+  41: 0008 0005 0000 0000 0000 0047
+  42: 0008 0002 0000 0000 0000 0047
+  43: 0008 0003 0000 0000 0000 0047
+  44: 0004 0008 0000 0000 0000 0025
+  45: 0005 0009 0000 0000 0000 0026
+  46: 000c 0008 0000 0000 0000 002a
+  47: 000d 0009 0000 0000 0000 002a
+  48: 000a 0008 0000 0000 0000 002c
+  49: 000b 0009 0000 0000 0000 002d
+  50: 0004 0006 0000 0000 0000 0025
+  51: 0005 0007 0000 0000 0000 0026
+  52: 000e 000a 0000 0000 0000 0024
+  53: 000f 000b 0000 0000 0000 0024
+  54: 0010 0004 0000 0000 0000 000f
+  55: 0011 0005 0000 0000 0000 0010
+  56: 0010 0000 0000 0000 0000 000f
+  57: 0011 0000 0000 0000 0000 0010
+  58: 0000 0000 0000 0000 0000 0000
+  59: 0000 0000 0000 0000 0000 0000
+  60: 0000 0000 0000 0000 0000 0000
+  61: 0000 0000 0000 0000 0000 0000
+  62: 0000 0000 0000 0000 0000 0000
+  63: 0000 0000 0000 0000 0000 0000
+  64: 0000 0000 0000 0000 0000 0000
+  65: 0000 0000 0000 0000 0000 0000
+  66: 0000 0000 0000 0000 0000 0000
+  67: 0000 0000 0000 0000 0000 0000
+  68: 0000 0000 0000 0000 0000 0000
+  69: 0000 0000 0000 0000 0000 0000
+  70: 0000 0000 0000 0000 0000 0000
+  71: 0000 0000 0000 0000 0000 0000
+  72: 0000 0000 0000 0000 0000 0000
+  73: 0000 0000 0000 0000 0000 0000
+  74: 0000 0000 0000 0000 0000 0000
+  75: 0000 0000 0000 0000 0000 0000
+  76: 0000 0000 0000 0000 0000 0000
+  77: 0000 0000 0000 0000 0000 0000
+  78: 3700 4400 0000 1f00 0000 2000
+  79: 0000 2100 0000 2200 0000 4900
+  80: 0000 3200 0000 4300 0000 5d00
+  81: 0000 4600 0000 5c00 0000 5e00
+  82: 0000 5b00 0000 3e00 0000 3f00
+  83: 0000 4000 0000 4100 0000 5200
+  84: 0000 5300 0000 5400 0000 5500
+  85: 0000 3300 0000 3400 0000 3700
+  86: 0000 3800 0000 2f00 0000 3000
+  87: 0000 3100 0000 2300 0000 2400
+  88: 0000 1900 0000 1a80 0000 1b80
+  89: 0000 4b80 0000 4c00 0000 5700
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_tile_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'C:\\Users\\PAULGI~1\\AppData\\Local\\Temp\\claude\\C--dev-yendor\\0313d11a-e9d9-416e-a626-568b88e69e13\\scratchpad\\dump_e175.py', 'noexport']
+[*] reading C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_e175.py
+[*] executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_e175.py
+[*] captured stdout from target script:
+----- begin target script output -----
+   0: 0000 0000 0000 0000 0000
+   1: 002b 002b 002b 002b 0031
+   2: 001c 001a 0020 0020 0040
+   3: 001d 001b 001f 001e 0040
+   4: 001a 001c 0020 0020 0040
+   5: 001b 001d 001e 001f 0040
+   6: 0020 0020 001c 001a 0041
+   7: 001e 001f 001d 001b 0041
+   8: 0020 0020 001a 001c 0041
+   9: 001f 001e 001b 001d 0041
+  10: 000b 000b 000b 000b 0042
+  11: 000c 000c 000c 000c 0042
+  12: 0037 0037 0037 0037 0039
+  13: 000e 000d 000f 0010 003a
+  14: 000d 000e 0010 000f 003b
+  15: 000f 0010 000d 000e 003c
+  16: 0010 000f 000e 000d 003d
+  17: 0047 0047 0047 0047 0051
+  18: 0048 0048 0048 0048 0052
+  19: 0029 0029 0029 0029 0053
+  20: 002a 002a 002a 002a 0054
+  21: 0045 0045 0045 0045 0021
+  22: 0046 0046 0046 0046 0021
+  23: 0033 0033 0033 0033 0019
+  24: 0032 0032 0032 0032 001a
+  25: 0021 0021 0021 0021 0022
+  26: 0035 0035 0035 0035 002b
+  27: 0012 0012 0012 0012 001c
+  28: 0011 0011 0011 0011 001d
+  29: 0014 0014 0014 0014 002b
+  30: 0018 0018 0018 0018 001f
+  31: 0022 0022 0022 0022 0023
+  32: 0040 0040 0040 0040 002b
+  33: 0044 0044 0044 0044 0055
+  34: 0017 0017 0017 0017 0034
+  35: 0025 0025 0025 0025 0037
+  36: 0039 0039 0039 0039 002e
+  37: 003a 003a 003a 003a 002f
+  38: 0036 0036 0036 0036 0030
+  39: 0015 0015 0015 0015 0032
+  40: 0016 0016 0016 0016 0033
+  41: 0023 0023 0023 0023 0035
+  42: 0024 0024 0024 0024 0036
+  43: 003f 003f 003f 003f 0038
+  44: 0026 0026 0026 0026 003e
+  45: 0030 0030 0030 0030 003f
+  46: 0031 0031 0031 0031 003f
+  47: 0038 0000 0000 0000 0043
+  48: 0000 0038 0000 0000 0044
+  49: 0000 0000 0038 0000 0045
+  50: 0000 0000 0000 0038 0046
+  51: 0053 0053 0053 0053 0056
+  52: 0054 0054 0054 0054 0056
+  53: 0055 0055 0055 0055 0056
+  54: 0056 0056 0056 0056 0056
+  55: 0057 0057 0057 0057 0057
+  56: 0058 0058 0058 0058 0056
+  57: 0059 0059 0059 0059 0056
+  58: 005a 005a 005a 005a 0057
+  59: 005b 005b 005b 005b 0056
+  60: 005c 005c 005c 005c 0056
+  61: 005d 005d 005d 005d 0056
+  62: 005e 005e 005e 005e 0058
+  63: 002a 002a 002a 002a 0054
+  64: 0048 0048 0048 0048 0052
+  65: 0000 0000 0000 0000 0000
+  66: 0000 0000 0000 0000 0000
+  67: 0000 0000 0000 0000 0000
+  68: 0000 0000 0000 0000 0000
+  69: 0000 0000 0000 0000 0000
+  70: 0000 0000 0000 0000 0000
+  71: 0000 0000 0000 0000 0000
+  72: 0000 0000 0000 0000 0000
+  73: 0000 0000 0000 0000 0000
+  74: 0000 0000 0000 0000 0000
+  75: 0000 0000 0000 0000 0000
+  76: 0000 0000 0000 0000 0000
+  77: 0000 0000 0000 0000 0000
+  78: 0000 0000 0000 0000 0000
+  79: 0000 0000 0000 0000 0000
+----- end target script output -----
+[*] finished executing C:\Users\PAULGI~1\AppData\Local\Temp\claude\C--dev-yendor\0313d11a-e9d9-416e-a626-568b88e69e13\scratchpad\dump_e175.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_map_layout.py', 'noexport']
+[*] reading dump_map_layout.py
+[*] executing dump_map_layout.py
+[*] captured stdout from target script:
+----- begin target script output -----
+map base-offset table @DS:0xCDEF = 0x0
+
+FileEntry field names (this confirms which named global is which struct field):
+  WORLD.DAT FileEntry (0x9043)
+    +0x0  name='worldDat'
+    +0x2  name='word_368A5'
+    +0x4  name='word_368A7'
+    +0x6  name='word_368A9'
+    +0x8  name='word_368AB'
+    +0xa  name='word_368AD'
+    +0xc  name='word_368AF'
+    +0xe  name='aWorldDat'
+  CURGAME FileEntry (0x8FFB)
+    +0x0  name='curGame'
+    +0x2  name='word_3685D'
+    +0x4  name='g_exploredMapBitmapBase'
+    +0x6  name='word_36861'
+    +0x8  name='g_groundItemSlotRecord'
+    +0xa  name='word_36865'
+    +0xc  name='word_36867'
+    +0xe  name='aCurgame'
+----- end target script output -----
+[*] finished executing dump_map_layout.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_tile_type_tables.py', 'noexport']
+[*] reading dump_tile_type_tables.py
+[*] executing dump_tile_type_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+wall type table (0xE551) @DS:0xe551 (12-byte stride):
+   0: 0000 0000 0000 0000 0000 0016
+   1: 0001 0000 0000 0000 0000 0017
+   2: 0000 0000 0034 0016 0000 0018
+   3: 0000 0000 0013 0016 000e 001b
+   4: 0000 0000 0019 0016 001c 001e
+   5: 0000 0000 0041 0016 002a 0020
+   6: 0000 0000 003d 0016 0000 0022
+   7: 0000 0000 002e 0016 0000 0018
+   8: 0000 0000 003b 0016 000e 0022
+   9: 0000 0000 002c 0016 000e 001b
+  10: 0000 0000 0009 0016 001c 0050
+  11: 0000 0000 0042 0016 002a 0022
+  12: 0000 0000 0000 0016 0000 0018
+  13: 0000 0000 0000 0016 000e 001b
+  14: 0000 0000 0000 0016 001c 001e
+  15: 0000 0000 0000 0016 002a 0020
+  16: 0004 0000 0000 0000 0000 0025
+  17: 0005 0000 0000 0000 0000 0026
+  18: 0006 0000 0000 0000 0000 0027
+  19: 0007 0000 0000 0000 0000 0028
+  20: 0002 0000 0000 0000 0000 0029
+  21: 0003 0000 0000 0000 0000 0029
+  22: 000c 0000 0000 0000 0000 002a
+  23: 000d 0000 0000 0000 0000 002a
+  24: 000a 0000 0000 0000 0000 002c
+  25: 000b 0000 0000 0000 0000 002d
+  26: 0004 0004 0000 0000 0000 0025
+  27: 0005 0005 0000 0000 0000 0026
+  28: 000c 0004 0000 0000 0000 002a
+  29: 000d 0005 0000 0000 0000 002a
+  30: 0002 0004 0000 0000 0000 0029
+  31: 0003 0005 0000 0000 0000 0029
+  32: 000a 0004 0000 0000 0000 002c
+  33: 000b 0005 0000 0000 0000 002d
+  34: 000c 0002 0000 0000 0000 002a
+  35: 000d 0003 0000 0000 0000 002a
+  36: 0002 0002 0000 0000 0000 0029
+  37: 0003 0003 0000 0000 0000 0029
+  38: 0008 0000 0000 0000 0000 0047
+  39: 0008 0000 0000 0000 0000 0047
+  40: 0008 0004 0000 0000 0000 0047
+  41: 0008 0005 0000 0000 0000 0047
+  42: 0008 0002 0000 0000 0000 0047
+  43: 0008 0003 0000 0000 0000 0047
+  44: 0004 0008 0000 0000 0000 0025
+  45: 0005 0009 0000 0000 0000 0026
+  46: 000c 0008 0000 0000 0000 002a
+  47: 000d 0009 0000 0000 0000 002a
+  48: 000a 0008 0000 0000 0000 002c
+  49: 000b 0009 0000 0000 0000 002d
+  50: 0004 0006 0000 0000 0000 0025
+  51: 0005 0007 0000 0000 0000 0026
+  52: 000e 000a 0000 0000 0000 0024
+  53: 000f 000b 0000 0000 0000 0024
+  54: 0010 0004 0000 0000 0000 000f
+  55: 0011 0005 0000 0000 0000 0010
+  56: 0010 0000 0000 0000 0000 000f
+  57: 0011 0000 0000 0000 0000 0010
+  58: 0000 0000 0000 0000 0000 0000
+  59: 0000 0000 0000 0000 0000 0000
+  60: 0000 0000 0000 0000 0000 0000
+  61: 0000 0000 0000 0000 0000 0000
+  62: 0000 0000 0000 0000 0000 0000
+  63: 0000 0000 0000 0000 0000 0000
+  64: 0000 0000 0000 0000 0000 0000
+
+floor/overlay type table (0xE175) @DS:0xe175 (10-byte stride):
+   0: 0000 0000 0000 0000 0000
+   1: 002b 002b 002b 002b 0031
+   2: 001c 001a 0020 0020 0040
+   3: 001d 001b 001f 001e 0040
+   4: 001a 001c 0020 0020 0040
+   5: 001b 001d 001e 001f 0040
+   6: 0020 0020 001c 001a 0041
+   7: 001e 001f 001d 001b 0041
+   8: 0020 0020 001a 001c 0041
+   9: 001f 001e 001b 001d 0041
+  10: 000b 000b 000b 000b 0042
+  11: 000c 000c 000c 000c 0042
+  12: 0037 0037 0037 0037 0039
+  13: 000e 000d 000f 0010 003a
+  14: 000d 000e 0010 000f 003b
+  15: 000f 0010 000d 000e 003c
+  16: 0010 000f 000e 000d 003d
+  17: 0047 0047 0047 0047 0051
+  18: 0048 0048 0048 0048 0052
+  19: 0029 0029 0029 0029 0053
+  20: 002a 002a 002a 002a 0054
+  21: 0045 0045 0045 0045 0021
+  22: 0046 0046 0046 0046 0021
+  23: 0033 0033 0033 0033 0019
+  24: 0032 0032 0032 0032 001a
+  25: 0021 0021 0021 0021 0022
+  26: 0035 0035 0035 0035 002b
+  27: 0012 0012 0012 0012 001c
+  28: 0011 0011 0011 0011 001d
+  29: 0014 0014 0014 0014 002b
+  30: 0018 0018 0018 0018 001f
+  31: 0022 0022 0022 0022 0023
+  32: 0040 0040 0040 0040 002b
+  33: 0044 0044 0044 0044 0055
+  34: 0017 0017 0017 0017 0034
+  35: 0025 0025 0025 0025 0037
+  36: 0039 0039 0039 0039 002e
+  37: 003a 003a 003a 003a 002f
+  38: 0036 0036 0036 0036 0030
+  39: 0015 0015 0015 0015 0032
+  40: 0016 0016 0016 0016 0033
+  41: 0023 0023 0023 0023 0035
+  42: 0024 0024 0024 0024 0036
+  43: 003f 003f 003f 003f 0038
+  44: 0026 0026 0026 0026 003e
+  45: 0030 0030 0030 0030 003f
+  46: 0031 0031 0031 0031 003f
+  47: 0038 0000 0000 0000 0043
+  48: 0000 0038 0000 0000 0044
+  49: 0000 0000 0038 0000 0045
+  50: 0000 0000 0000 0038 0046
+  51: 0053 0053 0053 0053 0056
+  52: 0054 0054 0054 0054 0056
+  53: 0055 0055 0055 0055 0056
+  54: 0056 0056 0056 0056 0056
+  55: 0057 0057 0057 0057 0057
+  56: 0058 0058 0058 0058 0056
+  57: 0059 0059 0059 0059 0056
+  58: 005a 005a 005a 005a 0057
+  59: 005b 005b 005b 005b 0056
+  60: 005c 005c 005c 005c 0056
+  61: 005d 005d 005d 005d 0056
+  62: 005e 005e 005e 005e 0058
+  63: 002a 002a 002a 002a 0054
+  64: 0048 0048 0048 0048 0052
+  65: 0000 0000 0000 0000 0000
+  66: 0000 0000 0000 0000 0000
+  67: 0000 0000 0000 0000 0000
+  68: 0000 0000 0000 0000 0000
+  69: 0000 0000 0000 0000 0000
+  70: 0000 0000 0000 0000 0000
+  71: 0000 0000 0000 0000 0000
+  72: 0000 0000 0000 0000 0000
+  73: 0000 0000 0000 0000 0000
+  74: 0000 0000 0000 0000 0000
+----- end target script output -----
+[*] finished executing dump_tile_type_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-22)
+## Status (last updated 2026-09-22, world map module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -44,9 +44,14 @@ groundwork below is already in place.
   module, `effect.c`/`.h` (`g_trapEffectDefs` for both games: cost,
   resistance and magnitude decoding), plus a new `random.c`/`.h` (faithful
   `RandomInRange` port — its range is inclusive, see `file-formats.md`),
-  tests in `tests/test_effect.c` and `tests/test_random.c`. The `WORLD.DAT`
-  map/text blocks are the next candidate, then the core dungeon loop, which
-  will need `random.c` for movement/combat rolls.
+  tests in `tests/test_effect.c` and `tests/test_random.c`. Seventh module,
+  `worldmap.c`/`.h` (the world map: one continuous 800-column tile grid for
+  both games, plus Chapter 2's wall/floor tile-legend tables), tests in
+  `tests/test_worldmap.c`. **Big finding**: there is no per-level map data
+  — the whole game (towns, wilderness, dungeons) is one seamless coordinate
+  space. `WORLD.DAT`'s text/conversation/NPC blocks are still undecoded and
+  are the next candidate, then the core dungeon loop, which will need
+  `random.c` for movement/combat rolls and `worldmap.c` for the map itself.
 
 ## Next: continue the C reimplementation
 
@@ -164,6 +169,12 @@ if reimplementing the specific function that touches them:
   `BARIAGIAN`, `OBVERSIAN`, `MONTESERIAN`, `SLATORIAN`, `HEARDONIAN`)
   and the "town" passwords (`PORT HOPE`, `THIEF'S DEN`, etc.) — two
   separate systems, or one list split across two string clusters.
+  **Sharper hypothesis as of the world-map decode (2026-09-22)**: since
+  the whole game is one seamless coordinate space with no per-level
+  files (`file-formats.md`'s "World map"), these are plausibly just
+  named teleport coordinates into that single map rather than separate
+  loadable areas — worth checking against whatever function actually
+  consumes a matched password next time this is picked up.
 - What `sg0977`/`sg0ffc`/`sg1486`/`sg195C`/`sg1ABC` (the 5 segments
   with IDA hex-address names instead of sequential `segNNN`) actually
   are — likely harmless IDA bookkeeping, not investigated further
