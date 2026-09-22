@@ -101,3 +101,11 @@ target_link_libraries(test_gui PRIVATE agsengine)
 # real menu rendering isn't built yet).
 add_executable(test_dialog test_dialog.c)
 target_link_libraries(test_dialog PRIVATE agsengine)
+
+# M11 (src/PLAN.md): "the long tail", inventory slice -- real
+# add_inventory/LoseInventory/update_invorder/SetActiveInventory
+# (ags/inventory.h) against this game's own real invinfo[]/
+# CharacterInfo data, a real EventBlock respond==8 dispatch, and the
+# real default inventory screen (ags/invscreen.h).
+add_executable(test_inventory test_inventory.c)
+target_link_libraries(test_inventory PRIVATE agsengine)

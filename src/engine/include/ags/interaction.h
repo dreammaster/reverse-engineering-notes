@@ -34,8 +34,10 @@
  *        non-negative `extra` argument -- not reproduced here, no
  *        speech/portrait rendering exists yet]
  *   6  = ObjectOff(respondval)
- *   7  = ObjectOff(respondval) THEN add_inventory(data)  (compound)
- *   8  = add_inventory(data)
+ *   7  = ObjectOff(respondval) THEN add_inventory(data)  (compound --
+ *        the add_inventory half is now real, ags/inventory.h; ObjectOff
+ *        stays stubbed, no RoomObject tracking exists yet)
+ *   8  = add_inventory(data)                [now REAL, ags/inventory.h]
  *   9  = Run Script (make_ts_func_name + run_another/
  *        run_text_script_2iparam-equivalent dispatch)
  *   10 = run_graph_script(respondval)   (the separate GRAPHSCRIPT
@@ -46,15 +48,11 @@
  *   13 = ObjectOn(respondval)
  *   14 = RunDialog(respondval)
  *
- * SCOPE, this milestone: only 0 (NewRoom), 1 (no-op), 2 (StopMoving),
- * and 5 (DisplayMessage, MINUS the character-attribution extension)
- * get REAL implementations -- exactly the ones both reachable with
- * this engine's own current infrastructure (no RoomObject/inventory/
- * dialog/sound/named-script-function-call machinery exists yet, and
- * M5 deliberately never extracts the GRAPHSCRIPT payload) and
- * actually exercised by real room data this milestone's own test
- * uses (room6.crm's own real hotspot interactions are respond==5 and
- * respond==10). Every other case calls AGS_STUB_VOID() instead of
+ * SCOPE, this milestone: 0 (NewRoom), 1 (no-op), 2 (StopMoving), 5
+ * (DisplayMessage, MINUS the character-attribution extension), and
+ * -- promoted in M11's own inventory slice, now that ags/inventory.h
+ * exists -- 8's own add_inventory (and 7's add_inventory half) get
+ * REAL implementations. Every other case calls AGS_STUB_VOID() instead of
  * silently doing nothing -- per PLAN.md's own stub convention, a
  * real, logged "implement this next" marker, not a fake no-op.
  *
@@ -76,6 +74,7 @@
 #include "ags/room.h"
 #include "ags/character.h"
 #include "ags/walk.h"
+#include "ags/gamestate.h"
 
 /* This build's own confirmed mood->passon values (Common/acruntim.h,
  * matching RunHotspotInteraction's own dispatch table exactly). */
@@ -98,6 +97,11 @@ struct AgsGameContext {
     struct CharacterInfo *player;
     struct AgsWalkState *player_walk;
     int quit_requested; /* set by a NewRoom targeting a room this engine can't load, so the caller can stop cleanly instead of pressing on with a stale room */
+    /* M11 (inventory slice): may be NULL -- respond==7/8's own
+     * add_inventory calls (ags/inventory.h) fall back to
+     * AGS_STUB_VOID() without it, matching this project's own "no
+     * state threaded through, log it instead of guessing" convention. */
+    struct GameState *play;
 };
 
 /* get_hotspot_at (Engine/AC.CPP:8939) -- a real port, minus 2011's

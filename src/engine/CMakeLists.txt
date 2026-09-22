@@ -33,7 +33,12 @@
 # table and evidence. dialog_menu.c (M11 long-tail, options-menu UI):
 # a real, data-driven do_conversation options-menu renderer -- see
 # ags/dialog_menu.h's own file-level comment for the deliberate scope
-# decision vs. a byte-exact do_conversation port.
+# decision vs. a byte-exact do_conversation port. inventory.c (M11
+# long-tail, inventory): the shared add_inventory/LoseInventory/
+# update_invorder/SetActiveInventory core (ags/inventory.h).
+# invscreen.c: a real, data-driven __actual_invscreen stand-in (ags/
+# invscreen.h) -- see that header's own scope decision vs. the
+# original's pixel-exact 1133-line legacy screen.
 
 add_library(agsengine STATIC
   src/stub.c
@@ -52,6 +57,8 @@ add_library(agsengine STATIC
   src/gui_render.c
   src/dialog_run.c
   src/dialog_menu.c
+  src/inventory.c
+  src/invscreen.c
 )
 
 target_include_directories(agsengine PUBLIC

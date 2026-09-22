@@ -4,6 +4,7 @@
  */
 #include "ags/interaction.h"
 #include "ags/room_loader.h"
+#include "ags/inventory.h"
 #include "ags/stub.h"
 
 #include <stdio.h>
@@ -59,11 +60,18 @@ void ags_run_event_block(struct AgsGameContext *ctx, const struct EventBlock *bl
         case 6: /* ObjectOff(respondval) -- no RoomObject tracking yet */
             AGS_STUB_VOID();
             break;
-        case 7: /* ObjectOff(respondval) + add_inventory(data) -- compound, neither half built yet */
-            AGS_STUB_VOID();
+        case 7: /* ObjectOff(respondval) + add_inventory(data) -- compound */
+            AGS_STUB_VOID(); /* ObjectOff half -- no RoomObject tracking yet */
+            if (ctx->player && ctx->play) {
+                ags_add_inventory(ctx->player, ctx->play, block->data[i]);
+            }
             break;
-        case 8: /* add_inventory(data) -- no inventory tracking yet */
-            AGS_STUB_VOID();
+        case 8: /* add_inventory(data) -- ags/inventory.h, M11's own inventory slice */
+            if (ctx->player && ctx->play) {
+                ags_add_inventory(ctx->player, ctx->play, block->data[i]);
+            } else {
+                AGS_STUB_VOID();
+            }
             break;
         case 9: /* Run Script -- named-script-function dispatch, not built yet */
             AGS_STUB_VOID();

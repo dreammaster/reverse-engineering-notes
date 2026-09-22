@@ -5,6 +5,7 @@
 #include "ags/interp.h"
 #include "ags/interaction.h"
 #include "ags/audio.h"
+#include "ags/inventory.h"
 #include "ags/room_loader.h"
 #include "ags/stub.h"
 
@@ -15,39 +16,20 @@ static short read_s16(const unsigned char *p)
     return (short)((unsigned int)p[0] | ((unsigned int)p[1] << 8));
 }
 
-/* DCMD_ADDINV -- add_inventory(int inum)'s own real algorithm
- * (matches.json: validated [0,MAX_INV=100), increments the PLAYER's
- * own CharacterInfo.inv[inum], appends to play_invorder[]/
- * inv_numorder if not already present -- minus its own trailing
- * run_on_event(7,inum) hook call, no event-hook subsystem exists
- * yet). This port operates on chars[0] as a stand-in for
- * "playerchar" (no separate playercharacter-index lookup is threaded
- * through this context -- a real limitation for a game whose player
- * character isn't index 0, documented rather than silently assumed
- * correct for every game). */
+/* DCMD_ADDINV -- now just the shared, real ags_add_inventory
+ * (ags/inventory.h, promoted out of this file once M11's own
+ * inventory slice built it as a proper shared module -- see that
+ * header for the full evidence). Operates on chars[0] as a stand-in
+ * for "playerchar" (no separate playercharacter-index lookup is
+ * threaded through this context -- a real limitation for a game
+ * whose player character isn't index 0, documented rather than
+ * silently assumed correct for every game). */
 static void add_inventory(struct AgsDialogRunContext *ctx, struct GameState *play, int inum)
 {
-    struct CharacterInfo *playerchar;
-    int i;
-
-    if (inum < 0 || inum >= 100) {
-        return; /* source's own "!AddInventory: invalid invnetory number" quit() -- mapped to a no-op */
-    }
     if (ctx->numcharacters <= 0) {
         return;
     }
-    playerchar = &ctx->chars[0];
-    playerchar->inv[inum]++;
-
-    for (i = 0; i < play->inv_numorder; i++) {
-        if (play->play_invorder[i] == inum) {
-            return; /* already present */
-        }
-    }
-    if (play->inv_numorder < 100) {
-        play->play_invorder[play->inv_numorder] = (short)inum;
-        play->inv_numorder++;
-    }
+    ags_add_inventory(&ctx->chars[0], play, inum);
 }
 
 /* DCMD_NEWROOM/DCMD_RUNTEXTSCRIPT's own NewRoom(nrnum) call -- a
