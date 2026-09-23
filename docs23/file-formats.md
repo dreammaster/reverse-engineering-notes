@@ -2830,6 +2830,50 @@ the automap's "cells become known as you walk near them" mechanic
 automap survives save/load because it's part of the savegame, not just
 in-memory state.
 
+**The window, its build process, and a corrected field count (decoded
+2026-09-23).** `RefreshDungeonMapWindow` (`yendor2.asm:29286`,
+`yendor3.asm:28425`, both traced fully) is what (re)builds this grid,
+called after every position-changing action right before
+`RedrawDungeonScreen`/`BuildMinimapTileData`/`DrawMinimap`. It's a
+**78x78 window**, not an unbounded grid — confirmed by both the outer
+(row) and inner (column) loop counts (`cx = 0x4E = 78`). Its origin is
+recomputed every call, centered on the party but clamped to stay
+within 15 cells of the playable bounding box (`movement.h`'s
+`MovementBounds` — same constants, confirmed identical values in both
+games' `InitGlobals`) rather than the party's raw position:
+```
+origin = clamp(partyPos - 39, boundsMin - 15, boundsMax - 15)   // independently per axis
+```
+39 is half the 78-cell window; the `-15` slack means the window can
+show at most 15 cells of the map's void border past the playable
+edge, never more. Reimplemented as `dungeonGridComputeOrigin` in
+`src23/dungeongrid.c`.
+
+The build itself, per cell: copies the wall/floor type words verbatim
+from the world map (the `+0`/`+2` fields above) via a row-buffered
+read, then **a third word previously miscounted as part of the flags
+field — `+4`, zeroed here** (`xor ax,ax` / `stosw` right after the two
+tile-type words) **— making the layout `+0`/`+2`/`+4`/`+6`, still 8
+bytes total, not `+0`/`+2`/`+6` with 2 bytes of padding.** `+4`'s
+write side isn't traced, but `HandleMovementInput`'s monster-despawn
+branch (see "Movement and cell passability" below) explicitly
+re-zeroes the same `+4` word when a monster scrolls out of a cell,
+alongside clearing a bit in `+6` — strong circumstantial evidence
+`+4` is an occupant reference into `g_levelMonsters`, set by
+monster-placement code not yet traced. The explored bit (`+6` bit
+`0x8000`) is filled from `CURGAME`'s `SaveSectionExploredMap` bitmap
+in the same per-cell pass, packed **MSB-first within each byte** (byte
+`col/8`, bit `7 - col%8`) — derived directly from the shift-and-test
+sequence that extracts it, not guessed.
+
+Explicitly **not** covered by this base-window build, both left for
+later modules: `TryInteractAtPosition`'s per-cell marker baking (which
+is what actually sets the door/lock flag, `+6` bit `0x6000`, and other
+item/trap/trigger markers — this base pass never sets bits below
+`0x8000`), and `g_levelMonsters` placement/despawn as monsters scroll
+into or out of the window. Reimplemented (base window only) in
+`src23/dungeongrid.c`/`.h`.
+
 `ProbeFacingTile` computes `g_facingTileCellPtr` — the grid cell
 directly ahead of the party — by offsetting the party's own cell
 address by one row (`0x270`, matching the confirmed row stride) or one

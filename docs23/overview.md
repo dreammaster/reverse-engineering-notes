@@ -8059,6 +8059,44 @@ differences section.
   rendering) — each is its own later module in the dungeon-loop
   sequence.
 
+### 2026-09-23 session update: C reimplementation, in-memory dungeon grid module
+
+Wrote `src23/dungeongrid.c`/`.h` + `tests/test_dungeongrid.c`, decoding
+`RefreshDungeonMapWindow` — the loader flagged as the movement module's
+next open item. Full writeup in `file-formats.md`'s expanded
+"In-memory dungeon map grid" section and `engine-diffs.md`'s new
+dungeon-grid section.
+- The 78x78 window's origin-clamp formula (`clamp(partyPos - 39,
+  boundsMin - 15, boundsMax - 15)`, independently per axis) reuses
+  `movement.h`'s `MovementBounds` directly rather than duplicating the
+  bounding-box constants — the same values, confirmed identical in
+  both games' `InitGlobals`, that `HandleMovementInput` clamps
+  destination cells against.
+- **Corrected a field-count mistake in the existing docs**: the
+  in-memory grid cell was documented as `+0`/`+2` tile types plus `+6`
+  flags with 2 bytes of unaccounted padding. Tracing the actual copy
+  loop found a **third word at `+4`**, explicitly zeroed on build —
+  not padding. `HandleMovementInput`'s monster-despawn branch
+  re-zeroes the same `+4` word when clearing a cell's monster
+  occupant, which is suggestive (an occupant slot reference) but not
+  confirmed — the write side (monster placement) isn't traced yet.
+- Confirmed the explored-bit bitmap's exact packing (MSB-first within
+  each byte) directly from the shift-and-test extraction sequence,
+  rather than assuming a convention.
+- **Genuinely no Chapter 2 vs. Chapter 3 behavioral difference found**
+  here, unlike every other module so far — both games' windowing code
+  is instruction-for-instruction identical once the shared
+  `MovementBounds` are factored out. Worth recording explicitly so a
+  future pass doesn't re-derive this from scratch looking for a diff
+  that isn't there.
+- Scope deliberately excludes `TryInteractAtPosition`'s per-cell
+  marker baking (which is what actually sets the door/lock flag this
+  module leaves as a bare `bool` for `movement.c`'s API) and
+  `g_levelMonsters` placement/despawn — both stay open items for later
+  dungeon-loop modules.
+- All 11 test suites (10 existing + the new `dungeongrid` one) still
+  pass after a full rebuild — no regressions.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -987,6 +987,23 @@ check the real disassembly range for each function independently, the
 same way `src23/movement.c`'s two classification functions had to be
 written as explicit per-game band lists rather than one shared formula.
 
+## In-memory dungeon grid: no behavioral difference found
+
+Found while writing `src23/dungeongrid.c` (2026-09-23), from a full
+instruction-level trace of both games' `RefreshDungeonMapWindow`
+(`yendor2.asm:29286`, `yendor3.asm:28425`). Unlike every other module
+documented in this file, **no difference at all** turned up here — the
+78x78 window size, the origin-clamp formula and its constants (39,
+15), the per-cell copy shape (two tile-type words, a zeroed third
+word, an explored-bit word), and the MSB-first explored-bitmap
+bit-packing are all instruction-for-instruction identical between the
+two games. The only per-game input is the playable bounding box
+(`movement.h`'s `MovementBounds`, already documented above as
+differing only in Chapter 3's taller row range) that the origin clamps
+against — reused directly rather than duplicated. Recorded here mainly
+so a future session doesn't waste time re-checking a game-diff that
+was already ruled out.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

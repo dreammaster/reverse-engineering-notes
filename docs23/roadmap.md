@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, movement module)
+## Status (last updated 2026-09-23, in-memory dungeon grid module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -63,12 +63,24 @@ groundwork below is already in place.
   note**: an earlier, uncommitted pass at this module got the threshold
   bands wrong by extrapolating instead of reading the real compare
   chains — see `engine-diffs.md`'s movement section for the corrected
-  exact bands and the lesson. Still open for the dungeon loop: the
-  in-memory dungeon grid as a real data structure (not just a plain
-  `bool` door-flag parameter), `HandleSpecialCellEntry`/`ShowLockStatus`,
-  and everything downstream of a committed move (monster processing,
-  side-trap processing, map-trigger effects, first-person viewport
-  rendering).
+  exact bands and the lesson. Tenth module, `dungeongrid.c`/`.h` (the
+  in-memory 78x78 dungeon-grid window: `RefreshDungeonMapWindow`'s
+  origin-clamp formula, reusing `movement.h`'s `MovementBounds`
+  directly, and the base per-cell copy — wall/floor types from the
+  world map plus the explored-map bit from `CURGAME`, MSB-first
+  packed), tests in `tests/test_dungeongrid.c`. **Corrected the
+  existing grid-cell field count**: there's a third word at `+4`,
+  zeroed on build, not 2 bytes of padding after `+2` — see
+  `file-formats.md`. **No Chapter 2 vs. Chapter 3 behavioral
+  difference found in this module** (see `engine-diffs.md`), the first
+  module in this project where that's been true. Still open for the
+  dungeon loop: `TryInteractAtPosition`'s per-cell marker baking (the
+  actual source of the door/lock flag `movement.c`'s API currently
+  takes as a plain `bool`, plus item/trap/trigger markers),
+  `HandleSpecialCellEntry`/`ShowLockStatus`, `g_levelMonsters`
+  placement/despawn, and everything downstream of a committed move
+  (monster processing, side-trap processing, map-trigger effects,
+  first-person viewport rendering).
 
 ## Next: continue the C reimplementation
 
@@ -145,20 +157,24 @@ next):
    fixed a half-carry bug in `bcd4Add`, see `overview.md`).
 2. ~~Savegame I/O~~ — **done 2026-09-19** (`savegame.c`/`.h`). Still
    open there: the "new game" initializer (`InitializeNewGameWorldState`
-   writes every section's defaults), and decoding sections 2-6's
-   internals (fog-of-war bit order, item-instance fields, state-byte
-   meanings) — do those with the modules that consume them.
+   writes every section's defaults), and decoding sections 3-6's
+   internals (item-instance fields, state-byte meanings) — do those
+   with the modules that consume them. Section 2's fog-of-war bit order
+   is now resolved (MSB-first per byte — see `dungeongrid.c` below and
+   `file-formats.md`'s "In-memory dungeon map grid").
 3. ~~Party/character record structures~~ — **done 2026-09-19**
    (`party.c`/`.h`). Still open there: `+0x12`, the five equipment
    ratings `+0x48..+0x50`, and the item catalog fields (in `WORLD.DAT`),
    which the inventory slots' item ids refer to.
 4. **Core dungeon-crawling loop** (90°-turn rendering, monster
    processing on movement, side-trap processing, map-trigger effects,
-   the in-memory dungeon grid as a real data structure,
+   `TryInteractAtPosition`'s per-cell marker baking,
    `HandleSpecialCellEntry`/`ShowLockStatus`) — the gameplay Paul is
    most interested in eventually, per the Eye-of-the-Beholder-style
    description in `overview.md`. Movement itself (direction/turn math,
-   playable bounds, cell passability) is **done** — see `movement.c`
+   playable bounds, cell passability) and the in-memory dungeon grid's
+   base window (windowing/origin-clamp, per-cell wall/floor/explored
+   data) are **done** — see `movement.c`/`dungeongrid.c`
    above; the remaining pieces are bigger and more rendering-dependent.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
