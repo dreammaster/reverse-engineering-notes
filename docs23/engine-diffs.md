@@ -941,6 +941,52 @@ tables as compile-time data (like `effect.c`'s `g_trapEffectDefs`) since,
 unlike every other per-game difference documented here, this data lives
 in the executable itself, not `WORLD.DAT`.
 
+## Movement/passability: identical algorithm, unrelated numeric thresholds
+
+Found while writing `src23/movement.c` (2026-09-23), from direct
+instruction-level reading of both games' `HandleMovementInput`,
+`ClassifyFloorType`, and `IsCellTypeImpassable` (see `file-formats.md`'s
+"Movement and cell passability" for the full per-cell decision). The
+direction/turn/strafe math is instruction-for-instruction identical —
+every facing-bit remap and every `(Δcol, Δrow)` pair matches exactly
+between the two games' disassembly, nothing shared here needed a
+game-aware branch. What differs is purely the numeric classification
+thresholds fed into that shared shape, and they are **not** simply
+Chapter 3's numbers scaled up by some constant factor — the band
+structure itself changes shape:
+
+- **Playable bounding box**: same column range (`0x28`-`0x2F7`) both
+  games; row range grows from Chapter 2's `0x18`-`0x77` to Chapter 3's
+  `0x18`-`0x8F`, matching the already-documented 144-vs-168-row map
+  height above.
+- **`ClassifyFloorType`** (wall-type → void/blocked/normal): Chapter 2
+  is void/blocked/normal/blocked-again in four bands (`{0,1}`,
+  `[2,15]`, `[16,57]`, `58+`); Chapter 3 is void/blocked/normal/blocked/
+  normal in five (`{0,1}`, `[2,99]`, `[100,199]`, `[200,299]`, `300+`).
+  Chapter 3's isn't Chapter 2's shape at 100x scale — Chapter 2 ends on
+  an unbounded *blocked* band past its table, Chapter 3 ends on an
+  unbounded *normal* one.
+- **`IsCellTypeImpassable`** (floor/overlay-type impassability):
+  Chapter 2's impassable set is three disjoint pieces — `[21,35]`, the
+  single value `37`, and `[39,42]` — not a range at all; Chapter 3's is
+  one contiguous range, `[200,399]`.
+- **Special-cell-entry range** (bypasses passability, always enters):
+  Chapter 2 is `6`-`11` (`_val32`/`_val31`), sitting inside its own
+  `ClassifyFloorType`'s first blocked band; Chapter 3 is `200`-`299`
+  (`ds:5450h`/`5452h`), which is *exactly* its `ClassifyFloorType`'s
+  second blocked band, not a narrow sub-range within a bigger one —
+  the "special" and "blocked-by-default" concepts fully coincide for
+  that one page in Chapter 3, where in Chapter 2 they're a small
+  special carve-out inside a wider blocked range. Consistent with (but
+  not fully explained by) Chapter 3's already-documented EMS-paged,
+  100-entries-per-page tile-legend mechanism above.
+
+Net effect for anyone touching this code later: don't assume any
+Chapter 3 passability constant is a Chapter 2 constant times 100 —
+check the real disassembly range for each function independently, the
+same way `src23/movement.c`'s two classification functions had to be
+written as explicit per-game band lists rather than one shared formula.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

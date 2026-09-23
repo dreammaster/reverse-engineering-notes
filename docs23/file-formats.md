@@ -3201,6 +3201,116 @@ the text-storage mechanism itself. Reimplemented in `src23/document.c`
 (`ida_scripts/dump_document_tables.py` in both `yendor2/` and `yendor3/`
 extracts the underlying tables).
 
+### Movement and cell passability (decoded 2026-09-23)
+
+`HandleMovementInput` (`yendor2.asm:2004`, `yendor3.asm:5638`) is the
+shared handler for all 6 movement/turn actions — forward, backward,
+turn left, turn right, strafe left, strafe right — reached both from
+the arrow keys (BIOS extended scan codes `'H'`/`'P'`/`'K'`/`'M'`
+remapped by the input layer) and from an on-screen 6-button
+directional pad (a mouse hit-test dispatcher right before
+`HandleMovementInput` maps its 6 click zones to the same key codes).
+Its key dispatch is a 5-way explicit compare (`'H'`/`'P'`/`'K'`/`'M'`/`'s'`)
+with everything else falling through to a 6th, implicit branch — the
+caller only ever sets `g_lastKeyChar` to one of the 6 real action keys,
+so the unlabeled 6th branch is a real action too, not a dead default.
+Traced instruction-for-instruction identical between both games (same
+key set, same facing-bit remap, same relative position deltas) —
+reimplemented once in `src23/movement.c`/`.h`.
+
+**Facing and turning**: `g_partyFacing`/`word_328D2` is one of the four
+`SaveFacing` bits (`file-formats.md`'s CURGAME header field). `'K'`
+(Left arrow) rotates counterclockwise (N→W→S→E→N) by remapping the bit
+directly, no numeric direction index; `'M'` (Right arrow) rotates
+clockwise (N→E→S→W→N), the exact mirror. Turning changes only facing,
+never position.
+
+**Moving/strafing**: the other 4 actions add a facing-dependent
+`(Δcol, Δrow)` to the party's world position (`bx`/`cx`, later added to
+`g_partyWorldX`/`g_partyWorldY`; the matching grid-pointer delta `dx`,
+in ±8/±0x270 units, is the in-memory dungeon grid's per-cell/per-row
+stride — see "In-memory dungeon map grid" above):
+
+| Action | Key | North | South | East | West |
+|---|---|---|---|---|---|
+| Forward | `'H'` | row −1 | row +1 | col +1 | col −1 |
+| Backward | `'P'` | row +1 | row −1 | col −1 | col +1 |
+| Strafe left | `'s'` | col −1 | col +1 | row −1 | row +1 |
+| Strafe right | (6th/implicit) | col +1 | col −1 | row +1 | row −1 |
+
+**Playable bounding box**: the destination `(col, row)` is rejected
+before any tile lookup if outside a fixed rectangle — **Chapter 2**:
+col `0x28`-`0x2F7`, row `0x18`-`0x77`; **Chapter 3**: same columns, row
+`0x18`-`0x8F` (taller, matching Chapter 3's 168-row map vs. Chapter
+2's 144-row map, see "World map" above). This is a strict subset of
+the full map grid — the bordering "void" band (wall type alternating
+0/1) sits outside it.
+
+**Per-cell decision**, checked in this exact order once the
+destination is in bounds:
+1. **Door/lock** — if the destination's in-memory grid cell (`+6` flags
+   word) has bit `0x6000` set, the move is always rejected: the code
+   calls `SelectPartyRecordById`, `TryInteractAtPosition`, then
+   `ShowLockStatus` (not reimplemented here) and falls straight into
+   the "blocked, play a sound" path — it never reaches the
+   position-commit code, regardless of any other flag.
+2. **Special wall type** — if the wall type (`+0` word, `worldMapTileA`)
+   is in the game's special range, the move always commits, and
+   `HandleSpecialCellEntry` (not reimplemented here) is called first.
+   Chapter 2: `6`-`11` (`_val32`/`_val31`, from
+   `InitGlobals`); Chapter 3: `200`-`299` (`ds:5450h`/`5452h`) — see
+   below, this is exactly Chapter 3's second "blocked" band from its
+   own `ClassifyFloorType`.
+3. **Force-move override** — `g_uiScratchFlags1` bit `0x8000` (set by
+   callers not yet traced) skips the remaining checks and commits
+   immediately.
+4. **`ClassifyFloorType`** (`yendor2.asm:1810`, `yendor3.asm:5474`), on
+   the wall type — a 3-way result, not a simple low/high split:
+   - **Chapter 2**: void `{0,1}` (silent block, matches the map's own
+     border band); blocked `[2,15]` (bump sound; note this fully
+     contains the special range `6`-`11`, which is intercepted at step 2
+     before this runs); normal `[16,57]`; blocked again `58+`
+     unbounded — anything past the real 58-entry wall-type table also
+     blocks, it isn't treated as open floor.
+   - **Chapter 3**: void `{0,1}`; blocked `[2,99]`; normal
+     `[100,199]`; blocked `[200,299]` (exactly the special range from
+     step 2); normal `300+` unbounded.
+   A void result blocks silently; a blocked result plays a bump sound
+   (`TriggerSoundEvent` with `_val33` = 6 in Chapter 2) and blocks.
+5. **`IsCellTypeImpassable`** (`yendor2.asm:1849`, `yendor3.asm:5505`),
+   on the floor/overlay type (`+2` word, `worldMapTileB`) — only
+   consulted once step 4 returns "normal". **Chapter 2**'s impassable
+   set is three disjoint pieces, not one range: `[21,35]`, the single
+   value `37` (`36` and `38` are passable gaps), and `[39,42]`.
+   **Chapter 3**'s is one contiguous range, `[200,399]`. An impassable
+   result always plays the bump sound and blocks (never silent) — the
+   original reuses the same "was it errorCode 2?" check from step 4 to
+   decide silent-vs-sound, and `IsCellTypeImpassable` never produces
+   that value, so this path is always the sound variant.
+6. Otherwise the move commits: world position and the grid pointer
+   advance, `RevealCellsAroundPlayer` runs (automap reveal), then (for
+   move/strafe only, not turns) monster processing, side-trap
+   processing, and map-trigger effects run.
+
+**Turning re-checks the current cell.** Since `'K'`/`'M'` never touch
+`bx`/`cx`/`dx`, the shared tail code above still runs with a zero
+delta — i.e. turning in place re-evaluates the *party's own* cell
+through the exact same door/special/passability logic. In practice
+this can't reject the turn (the party is already standing there), but
+it does mean a door cell re-shows lock status and a special cell
+re-triggers `HandleSpecialCellEntry` on every turn, not just on entry
+— not yet confirmed against real gameplay, just what the branch
+structure implies.
+
+Reimplemented in `src23/movement.c`/`.h`: `movementApply` (pure
+direction/turn math), `movementBounds`/`movementInBounds`,
+`movementClassifyFloorType`, `movementIsFloorTypeImpassable`,
+`movementIsSpecialWallType`, and `movementClassifyCell` (the full
+per-cell decision, steps 1-5 above, as one function returning an
+outcome enum). `HandleSpecialCellEntry` and `ShowLockStatus` themselves
+are out of scope for this module — the caller is expected to invoke
+them based on the returned outcome.
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not

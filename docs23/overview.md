@@ -8013,6 +8013,52 @@ new "In-world readable text" section.
 With this, both halves of the roadmap's "`WORLD.DAT` map/text blocks" item
 are done. Core dungeon loop is next.
 
+### 2026-09-23 session update: C reimplementation, movement module — first slice of the core dungeon loop
+
+Wrote `src23/movement.c`/`.h` + `tests/test_movement.c`, decoding
+`HandleMovementInput` and its two passability helpers in both games.
+Full writeup in `file-formats.md`'s new "Movement and cell
+passability" section and `engine-diffs.md`'s new movement/passability
+differences section.
+- The direction/turn/strafe math (6 actions: forward, backward, turn
+  left, turn right, strafe left, strafe right) is
+  instruction-for-instruction identical between both games — read every
+  branch of both games' `HandleMovementInput` directly rather than
+  assuming from structure, and every facing-bit remap and position
+  delta matched exactly.
+- **Caught and fixed a real mistake mid-session**: an earlier pass (not
+  yet committed) had guessed `ClassifyFloorType`/`IsCellTypeImpassable`'s
+  numeric thresholds by extrapolation rather than reading the actual
+  compare chains, and got them wrong in a way that looked plausible
+  (simple low/blocked-high/normal splits). Rereading the real
+  disassembly found the actual shape is a 4-5 band alternation
+  (void/blocked/normal/blocked[/normal]) in both games, and Chapter 2's
+  `IsCellTypeImpassable` range is three *disjoint* pieces
+  (`[21,35]`, `37` alone, `[39,42]`), not a contiguous range at all.
+  Lesson: for threshold-heavy classification functions, always trace
+  the literal compare/jump chain rather than inferring a shape from a
+  couple of known boundary values — see `engine-diffs.md` for the
+  corrected, exact bands.
+- Confirmed a genuine structural difference: Chapter 3's special-cell
+  range (`200`-`299`) coincides *exactly* with its own
+  `ClassifyFloorType`'s second blocked band, where Chapter 2's special
+  range (`6`-`11`) is a narrow carve-out inside a wider blocked band —
+  plausibly related to Chapter 3's already-documented EMS-paged,
+  100-entries-per-page tile-legend mechanism, though the connection
+  isn't fully proven.
+- All 10 existing test suites (`bcd4`, `savegame`, `party`, `item`,
+  `monster`, `effect`, `random`, `worldmap`, `document`, plus the new
+  `movement`) still pass after rebuilding from scratch — no
+  regressions.
+- Deliberately out of scope for this module: `HandleSpecialCellEntry`
+  and `ShowLockStatus` (the door/special-cell reaction handlers
+  themselves), the in-memory dungeon grid as a real data structure (the
+  `+6` door-flag bit is taken as a plain `bool` parameter for now), and
+  everything downstream of a committed move (monster processing,
+  side-trap processing, map-trigger effects, minimap/viewport
+  rendering) — each is its own later module in the dungeon-loop
+  sequence.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

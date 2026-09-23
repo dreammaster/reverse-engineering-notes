@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, in-world text module)
+## Status (last updated 2026-09-23, movement module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -53,8 +53,22 @@ groundwork below is already in place.
   books/notes/plaques, *not* NPC dialogue despite the disassembly's
   "RunConversation" name — see `engine-diffs.md`), tests in
   `tests/test_document.c`. Both halves of the previous "`WORLD.DAT` map/text
-  blocks" item are now done. The core dungeon loop is next, which will need
-  `random.c` for movement/combat rolls and `worldmap.c` for the map itself.
+  blocks" item are now done. Ninth module, `movement.c`/`.h` (the core
+  dungeon loop's first slice: `HandleMovementInput`'s 6-action
+  direction/turn/strafe math, per-game playable bounding boxes, and the
+  full per-cell passability decision — door/lock, special-cell range,
+  force-move override, `ClassifyFloorType`, `IsCellTypeImpassable`, all
+  game-aware since the two games' numeric thresholds differ substantially
+  and non-uniformly), tests in `tests/test_movement.c`. **Correctness
+  note**: an earlier, uncommitted pass at this module got the threshold
+  bands wrong by extrapolating instead of reading the real compare
+  chains — see `engine-diffs.md`'s movement section for the corrected
+  exact bands and the lesson. Still open for the dungeon loop: the
+  in-memory dungeon grid as a real data structure (not just a plain
+  `bool` door-flag parameter), `HandleSpecialCellEntry`/`ShowLockStatus`,
+  and everything downstream of a committed move (monster processing,
+  side-trap processing, map-trigger effects, first-person viewport
+  rendering).
 
 ## Next: continue the C reimplementation
 
@@ -138,11 +152,14 @@ next):
    (`party.c`/`.h`). Still open there: `+0x12`, the five equipment
    ratings `+0x48..+0x50`, and the item catalog fields (in `WORLD.DAT`),
    which the inventory slots' item ids refer to.
-4. **Core dungeon-crawling loop** (movement, 90°-turn rendering) —
-   the gameplay Paul is most interested in eventually, per the
-   Eye-of-the-Beholder-style description in `overview.md`; bigger and
-   more rendering-dependent than the above, probably comes after the
-   data-model pieces it needs are in place.
+4. **Core dungeon-crawling loop** (90°-turn rendering, monster
+   processing on movement, side-trap processing, map-trigger effects,
+   the in-memory dungeon grid as a real data structure,
+   `HandleSpecialCellEntry`/`ShowLockStatus`) — the gameplay Paul is
+   most interested in eventually, per the Eye-of-the-Beholder-style
+   description in `overview.md`. Movement itself (direction/turn math,
+   playable bounds, cell passability) is **done** — see `movement.c`
+   above; the remaining pieces are bigger and more rendering-dependent.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need
