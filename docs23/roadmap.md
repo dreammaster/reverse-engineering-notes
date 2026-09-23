@@ -161,10 +161,29 @@ groundwork below is already in place.
   (the rendering-driven caller) was read enough to understand the
   trigger but not reimplemented — needs the SDL2 layer to mean
   anything. **No Chapter 2 vs. Chapter 3 difference** here either.
-  Still open: `TryActivateMonsterByDistance` (awareness-on-spawn, not
-  traced), `LoadCurgameRecord`'s own format, and everything downstream
-  of a committed move (monster combat processing, side-trap
-  processing, map-trigger effects, first-person viewport rendering).
+  **Side-trap/ambush pipeline investigated, corrected a stale doc, new
+  lead found (2026-09-23)**: `ProcessSideTrapsOnMovement`'s "80-entry
+  wall/cell table" (an existing, pre-this-session doc claim) is
+  actually `g_levelMonsters` itself — same base/stride, confirmed by
+  cross-checking against every other walk of that pool. Its trap flag
+  (`+0xE` bit `0x1000`) turns out to be settable two ways: a wall/door
+  trap (creation path not traced) or a monster ambush, set by
+  `ProcessLevelMonsters` (monster AI/turn processing, not traced at
+  all yet) via a proximity roll against a *second* bit range of
+  `MonsterFieldAwareness` (`0x200`-`0x1000`, distinct from the
+  already-documented `0x20`-`0x100` range). The trap-avoidance roll
+  itself reads pool-record fields (`+0x60`/`+0x62`/`+0x64`/`+0x66`/`+0x70`)
+  that fall within the monster catalog block's own byte range but
+  aren't among `monster.h`'s named fields — suggesting wall traps
+  carry a full catalog block too, reused for trap data instead of
+  monster stats. Genuinely comparable in scope to the monster-pool
+  work just finished, but needs `ProcessLevelMonsters` traced first;
+  full writeup in `file-formats.md`'s "side trap"/ambush section.
+  Deliberately not reimplemented this session — a good candidate for
+  its own dedicated pass. Still open: `TryActivateMonsterByDistance`
+  (awareness-on-spawn, not traced), `LoadCurgameRecord`'s own format,
+  `ProcessLevelMonsters` itself, map-trigger effects, and first-person
+  viewport rendering (needs the SDL2 layer, not yet started).
 
 ## Next: continue the C reimplementation
 

@@ -2266,27 +2266,63 @@ charisma/persuasion field) instead, gated on a flag bit (`[+0xC]`
 general character-stat fields reused across multiple systems
 (locks, conversation, trap resolution), not single-purpose flags.
 
-### The "side trap" pipeline (wall/door-embedded traps)
+### The "side trap"/ambush pipeline (decoded 2026-09-23: it's `g_levelMonsters`, not a separate table)
 
-A second, independent trap system — fully traced end to end this
-session, separate from `SelectTrapEffectVariant` above though both
-ultimately feed `PrepareTrapEffectSlots`. `ProcessSideTrapsOnMovement`
-(was `sub_2278C`, called directly from `start`, likely once per
-movement step) fast-exits unless `g_uiScratchFlags3` bit `0x10` is set,
-otherwise walks an 80-entry wall/cell table (stride `0x9C`) and calls
-`TriggerSideTrapForRandomPartyMember` (was `sub_22989`) for every
-entry flagged with a side trap (`[+0xE]` bit `0x1000`). That function
-picks a random active party member (`PickRandomActivePartyMember`)
-and rolls `RollTrapAvoidanceMagnitude` (was `sub_227F5`) — a
-save-vs-trap avoidance check using the still-mysterious party-record
-field `+0x50` against the trap record's threshold/magnitude-cap
-fields (`[+0x64]`/`[+0x66]`): the higher `+0x50` relative to the
-threshold, the less likely and smaller the resulting effect. The trap
-only actually fires if the party's current facing (the same
-`g_partyFacing` tier-bit convention as `DrawDungeonCellSideFeature`/
-`ShowCompassDirection`) matches one of 4 direction bits on the trap
-record's own flags — i.e. it has to be a wall/door the party is
-currently facing. Up to 4 such results are staged into a scratch
+A second, independent trap/surprise-attack presentation system,
+separate from `SelectTrapEffectVariant` above though both ultimately
+feed `PrepareTrapEffectSlots`. **Correction to an earlier version of
+this section**, which described `ProcessSideTrapsOnMovement` as
+walking "an 80-entry wall/cell table" — that 80-entry, stride-`0x9C`
+array at `si=0xF26` is **the exact same base address and stride as
+`g_levelMonsters`** (`monster.h`'s `MonsterPoolSize`/`MonsterRecordSize`),
+confirmed by cross-checking against every other `0xF26`/`0x9C`/`0x50`
+walk in the codebase (`HandleMovementInput`'s monster-list scan,
+`RefreshDungeonMapWindow`'s scroll relink). This isn't a separate
+"wall/cell" concept — it's the live monster pool itself, and the flag
+this pipeline checks (`[+0xE]` bit `0x1000`) turns out to be settable
+two different ways:
+- **A wall/door trap**, populated into a pool slot by some mechanism
+  not yet traced (plausibly the same map-marker-driven spawn path as
+  an ordinary monster, `worldobjects.c`/`monsterpool.c`'s
+  `monsterPoolSpawn` — not confirmed).
+- **A monster ambush**, set by `ProcessLevelMonsters` itself
+  (`yendor2.asm:33507` on) when the party's approaching position gets
+  within a monster's awareness range: rolls `RandomInRange(100)`
+  against a threshold selected by testing bits `0x200`-`0x1000` of the
+  monster's own `+0x94` field (`MonsterFieldAwareness` in `monster.h`
+  — a *different* sub-range of that field than the already-documented
+  `0x20`-`0x100` "how far it notices the party" bits, so `+0x94` is
+  evidently two independently-meaningful bit ranges in one word, not
+  fully mapped out).
+
+`ProcessSideTrapsOnMovement` (was `sub_2278C`, called directly from
+`start`, likely once per movement step) fast-exits unless
+`g_uiScratchFlags3` bit `0x10` is set, otherwise calls
+`TriggerSideTrapForRandomPartyMember` (was `sub_22989`) for every pool
+slot with that flag bit. That function picks a random active party
+member (`PickRandomActivePartyMember`) and rolls
+`RollTrapAvoidanceMagnitude` (was `sub_227F5`) — a save-vs-trap
+avoidance check using the still-mysterious party-record field `+0x50`
+against threshold/magnitude-cap fields at the pool record's `+0x64`/
+`+0x66` — offsets that fall **within the monster catalog block's own
+byte range** (`monster.h`'s `MonsterBlockOffset` `0x32` through
+`0x9B`), not among its currently-named fields. Same for `+0x60`/`+0x62`/
+`+0x70`, also read here, and `+0x78` (stored as a pointer-like
+reference). **This strongly suggests "trap" pool entries carry a full
+monster catalog block too, with these particular fields reused as
+trap avoidance threshold/magnitude/sound data instead of ordinary
+monster stats** — a genuinely deep unification of the trap and monster
+systems, but not confirmed or reimplemented this pass; would need
+tracing `ProcessLevelMonsters` (monster AI/turn processing, not
+otherwise touched yet) and however wall-trap pool entries actually get
+created. The higher `+0x50` relative to the threshold, the less likely
+and smaller the resulting effect. The trap only actually fires if the
+party's current facing (the same `g_partyFacing` tier-bit convention
+as `DrawDungeonCellSideFeature`/`ShowCompassDirection`) matches one of
+4 direction bits also on `+0xE` — i.e. it has to be a wall/door (or
+ambushing monster) the party is currently facing, using the record's
+own `+2`/`+4` world position (`MonsterFieldWorldX`/`Y`) exactly like
+an ordinary monster's. Up to 4 such results are staged into a scratch
 table (`0xBC28`), then `PresentTriggeredSideTrapEffects` (was
 `sub_2281F`) resolves and presents them: plays the trap's sound cue
 once `WaitForSoundDriverIdle` confirms the driver is free, draws
@@ -2297,7 +2333,11 @@ icon-bar slot table (`0xC50`) via `ApplyEffectAndDrawIconBar`. `+0x50`
 being used here as an avoidance stat is a second, independent data
 point (alongside `ComputeAlchemyRefinementYield`'s use of the
 neighboring `+0x70`) that the still-open "`+0x4C`/`+0x4E`/`+0x50`
-trio" are general character stats reused across systems.
+trio" are general character stats reused across systems. **Not
+reimplemented** — genuinely comparable in scope to the monster-pool
+work already done, but blocked on tracing `ProcessLevelMonsters` and
+the wall-trap creation path first; a good candidate for its own
+dedicated session rather than an extension of `monsterpool.c`.
 
 **Key items reference locks by their own catalog type value**:
 `UseItem`'s `UseKeyItem` branch passes a key item's own type-flags

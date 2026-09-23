@@ -8314,6 +8314,33 @@ before writing any C.
   traced) and, unrelated to spawning, `LoadCurgameRecord`'s own format
   from a few rounds back.
 
+### 2026-09-23 session update (continued): side-trap pipeline investigated, a pre-session doc corrected
+
+Looked for a next well-scoped piece and picked `ProcessSideTrapsOnMovement`
+— already partially documented from a session before this one, but
+never reimplemented. Reading it directly found the existing writeup
+had a real inaccuracy: it described an "80-entry wall/cell table" as
+something separate from `g_levelMonsters`, but the base address and
+stride (`0xF26`, `0x9C`) are identical to every other walk of the live
+monster pool in the codebase — it's the same array. Traced further to
+understand the `0x1000` "side trap" flag bit this pipeline checks, and
+found it's set two different ways: by a not-yet-traced wall/door trap
+creation path, and by `ProcessLevelMonsters` itself as a monster
+ambush (a proximity roll against a second, previously-unmapped bit
+range of `MonsterFieldAwareness`). The trap-avoidance roll also reads
+several pool-record fields that fall inside the monster catalog
+block's own byte range but aren't among `monster.h`'s named fields —
+suggestive of trap entries carrying a full catalog block, reused for
+trap data, though not confirmed.
+- This is a real, valuable architectural finding, but pursuing it
+  further would mean tracing `ProcessLevelMonsters` (monster AI/turn
+  processing) cold, a system on the same scale as the monster-pool
+  work just finished. Corrected the stale doc and recorded the new
+  lead precisely (`file-formats.md`'s "side trap"/ambush section,
+  `roadmap.md`) rather than either leave the inaccuracy standing or
+  rush a reimplementation without the AI system underneath it.
+  No code changes this round.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
