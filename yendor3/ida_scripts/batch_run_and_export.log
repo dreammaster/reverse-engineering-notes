@@ -1537,3 +1537,19 @@ Unused (was _800): offset table @0xb6f5, length table @0xb6f9, 1 entries, 23-byt
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'check_lock_catalog_size.py', 'noexport']
+[*] reading check_lock_catalog_size.py
+[*] executing check_lock_catalog_size.py
+[*] captured stdout from target script:
+----- begin target script output -----
+word_2ECF8: ea=0x2ecf8 value=0x0 (0)
+word_3320E: ea=0x3320e value=0x0 (0)
+----- end target script output -----
+[*] finished executing check_lock_catalog_size.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

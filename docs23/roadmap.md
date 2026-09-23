@@ -116,11 +116,19 @@ groundwork below is already in place.
   content difference here: one-hot vs. genuine bitmask key
   requirements). Still open there: flag bits `0x1`/`0x2`/`0x80`'s exact
   meaning and the remaining 22 undecoded bytes/record.
-  `g_levelMonsters` placement/despawn, `LoadCurgameRecord`'s own
-  `CURGAME`-side format (`worldobjects.c`'s `0x4000` flag), and
-  everything downstream of a committed move (monster processing,
-  side-trap processing, map-trigger effects, first-person viewport
-  rendering) remain open.
+  **`LoadCurgameRecord` investigated further, genuinely unresolved**:
+  it reads from the exact same EMS-backed region as the lock catalog,
+  at a base offset (`_val9`/`word_3320E`) that's `600` in Chapter 2 but
+  **always 0 in Chapter 3** (that global is read but never written
+  anywhere in the whole disassembly) — meaning Chapter 3's
+  curgame-record table would start at offset 0, overlapping lock id
+  1's own record entirely. Not determined whether that's a real quirk,
+  dead code, or simply never exercised in practice; see
+  `file-formats.md`'s "Lock/door definition catalog" section for the
+  full note. `g_levelMonsters` placement/despawn and everything
+  downstream of a committed move (monster processing, side-trap
+  processing, map-trigger effects, first-person viewport rendering)
+  remain open.
 
 ## Next: continue the C reimplementation
 

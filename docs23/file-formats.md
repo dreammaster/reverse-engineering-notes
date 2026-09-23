@@ -3482,6 +3482,29 @@ UI display, not reimplemented) message dispatch:
   `value / 100`, `value % 100`); which currency isn't confirmed.
 - `+4`..`+25` (22 bytes) — not yet traced by any function read so far.
 
+**`LoadCurgameRecord` (`worldobjects.c`'s `0x4000` flag) reads from
+this exact same EMS-backed region, at a per-game-inconsistent base
+offset — investigated, not resolved.** It copies 2 words (4 bytes, not
+26) from `si = (id-1)*4 + 26*_val9` (Chapter 2) — `_val9 = 600`, i.e.
+starting 15,600 bytes into the region, which is `26 * 600`, *before*
+the 608-record boundary this section uses. In Chapter 3 the equivalent
+multiplier (`word_3320E`) is a global that's **read but never written
+anywhere in the whole disassembly — always 0** (confirmed via
+`yendor3/ida_scripts/check_lock_catalog_size.py`), meaning Chapter 3's
+`LoadCurgameRecord` table would start at offset 0, overlapping lock id
+1's own record entirely. Whether this is a real quirk, dead/unused
+code, or a sign the id spaces don't actually collide in practice
+(e.g. `LoadCurgameRecord` might never be called with an id that lands
+in the overlap) isn't determined. Separately, Chapter 2's real lock
+catalog has an 88-record run of all-zero bytes (ids 513-600) right
+before that same `_val9=600` boundary — plausibly reserved/unused
+slots (matches the "engine supports more than this chapter's data
+uses" pattern already seen elsewhere, e.g. Chapter 2's 15 slack
+item-catalog records), but not confirmed. None of this changes
+`lockcatalog.c`'s own correctness (it reads the real bytes faithfully
+either way) — recorded here so a future session picking up
+`LoadCurgameRecord` doesn't have to rediscover it.
+
 Reimplemented in `src23/lockcatalog.c`/`.h`:
 `lockCatalogParse`/`lockCatalogParseWorldDat`, `lockCatalogRecord`,
 `lockRequiredKeyType`/`lockKeyTypeName`, tests in
