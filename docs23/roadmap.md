@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, monster pool scroll relink/despawn module)
+## Status (last updated 2026-09-23, monster spawning module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -148,14 +148,23 @@ groundwork below is already in place.
   branch only ever overwrites wall/floor type, `+0`/`+2`; caught by
   rereading the exact `errorCode`-to-branch mapping, which had 5 and 7
   swapped). Tests in `tests/test_monsterpool.c`; all 14 suites pass.
-  **No Chapter 2 vs.
-  Chapter 3 difference** (see `engine-diffs.md`) — instruction-identical,
-  same as `dungeongrid.c`. Deliberately out of scope, same as before:
-  how a monster first gets spawned (`SpawnMonsterInFacingDirection`,
-  not traced). Still open: `LoadCurgameRecord`'s own format, and
-  everything downstream of a committed move (monster combat processing,
-  side-trap processing, map-trigger effects, first-person viewport
-  rendering).
+  **No Chapter 2 vs. Chapter 3 difference** (see `engine-diffs.md`) —
+  instruction-identical, same as `dungeongrid.c`.
+  **How a monster first gets spawned — done, same module,
+  `SpawnMonsterInFacingDirection` (2026-09-23)**: turned out to be
+  mostly composition of functions an earlier session already wrote
+  (`monster.h`'s `monsterRecordSpawn`/`monsterRecordPlace`/
+  `monsterRecordStartAnimation`), plus one new piece — a
+  facing-dependent spawn-position offset table (4 tables x 51 entries,
+  a perspective-cone shape, extracted directly and confirmed
+  byte-for-byte identical between both games). `TryTriggerMonsterEncounterAtCell`
+  (the rendering-driven caller) was read enough to understand the
+  trigger but not reimplemented — needs the SDL2 layer to mean
+  anything. **No Chapter 2 vs. Chapter 3 difference** here either.
+  Still open: `TryActivateMonsterByDistance` (awareness-on-spawn, not
+  traced), `LoadCurgameRecord`'s own format, and everything downstream
+  of a committed move (monster combat processing, side-trap
+  processing, map-trigger effects, first-person viewport rendering).
 
 ## Next: continue the C reimplementation
 

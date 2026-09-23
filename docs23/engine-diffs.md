@@ -1035,6 +1035,17 @@ noting if a puzzle/quest-design question about Chapter 3 comes up
 later. Magical locks are also proportionally far more common in
 Chapter 3 (214/1008, ~21%) than Chapter 2 (17/608, ~3%).
 
+## Monster spawning: no behavioral difference found
+
+Found while writing the spawn half of `src23/monsterpool.c`
+(2026-09-23), from a full instruction-level trace of both games'
+`SpawnMonsterInFacingDirection`. Same as the scroll relink/despawn
+half below — instruction-identical, including all 4 of its
+facing-dependent position-offset tables (204 signed-byte-pair entries
+total), confirmed byte-for-byte identical between the two games'
+executables via direct extraction, not inferred from structural
+similarity alone.
+
 ## Monster pool scroll relink/despawn: no behavioral difference found
 
 Found while writing `src23/monsterpool.c` (2026-09-23), from a full

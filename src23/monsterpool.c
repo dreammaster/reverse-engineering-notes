@@ -77,3 +77,87 @@ unsigned monsterPoolRefreshWindow(uint8_t *pool, DungeonGrid *grid, SaveGame *sa
 
     return stillOccupied;
 }
+
+/*
+ * yendor2/yendor3's ida_scripts/dump_spawn_offset_tables.py: confirmed
+ * byte-for-byte identical between both games. Grouped by dy (see the
+ * MonsterSpawnOffsetCount doc comment); North is the party's own
+ * forward direction table, South/East/West the other three facings.
+ */
+static const MonsterSpawnOffset kOffsetsNorth[MonsterSpawnOffsetCount] = {
+    {-8, -6}, {-7, -6}, {-6, -6}, {-5, -6}, {-4, -6}, {-3, -6}, {-2, -6}, {-1, -6}, {0, -6},  {1, -6},  {2, -6},
+    {3, -6},  {4, -6},  {5, -6},  {6, -6},  {7, -6},  {8, -6},  {-8, -5}, {-7, -5}, {-6, -5}, {-5, -5}, {-4, -5},
+    {-3, -5}, {-2, -5}, {-1, -5}, {0, -5},  {1, -5},  {2, -5},  {3, -5},  {4, -5},  {5, -5},  {6, -5},  {7, -5},
+    {8, -5},  {-2, -4}, {-1, -4}, {0, -4},  {1, -4},  {2, -4},  {-1, -3}, {0, -3},  {1, -3},  {-1, -2}, {0, -2},
+    {1, -2},  {-1, -1}, {0, -1},  {1, -1},  {-1, 0},  {0, 0},   {1, 0},
+};
+
+static const MonsterSpawnOffset kOffsetsSouth[MonsterSpawnOffsetCount] = {
+    {8, 6},   {7, 6},   {6, 6},   {5, 6},   {4, 6},   {3, 6},   {2, 6},   {1, 6},   {0, 6},  {-1, 6}, {-2, 6},
+    {-3, 6},  {-4, 6},  {-5, 6},  {-6, 6},  {-7, 6},  {-8, 6},  {8, 5},   {7, 5},   {6, 5},  {5, 5},  {4, 5},
+    {3, 5},   {2, 5},   {1, 5},   {0, 5},   {-1, 5},  {-2, 5},  {-3, 5},  {-4, 5},  {-5, 5}, {-6, 5}, {-7, 5},
+    {-8, 5},  {2, 4},   {1, 4},   {0, 4},   {-1, 4},  {-2, 4},  {1, 3},   {0, 3},   {-1, 3}, {1, 2},  {0, 2},
+    {-1, 2},  {1, 1},   {0, 1},   {-1, 1},  {1, 0},   {0, 0},   {-1, 0},
+};
+
+static const MonsterSpawnOffset kOffsetsEast[MonsterSpawnOffsetCount] = {
+    {6, -8}, {6, -7}, {6, -6}, {6, -5}, {6, -4}, {6, -3}, {6, -2}, {6, -1}, {6, 0}, {6, 1}, {6, 2},
+    {6, 3},  {6, 4},  {6, 5},  {6, 6},  {6, 7},  {6, 8},  {5, -8}, {5, -7}, {5, -6}, {5, -5}, {5, -4},
+    {5, -3}, {5, -2}, {5, -1}, {5, 0},  {5, 1},  {5, 2},  {5, 3},  {5, 4},  {5, 5}, {5, 6}, {5, 7},
+    {5, 8},  {4, -2}, {4, -1}, {4, 0},  {4, 1},  {4, 2},  {3, -1}, {3, 0},  {3, 1}, {2, -1}, {2, 0},
+    {2, 1},  {1, -1}, {1, 0},  {1, 1},  {0, -1}, {0, 0},  {0, 1},
+};
+
+static const MonsterSpawnOffset kOffsetsWest[MonsterSpawnOffsetCount] = {
+    {-6, 8},  {-6, 7},  {-6, 6},  {-6, 5},  {-6, 4},  {-6, 3},  {-6, 2},  {-6, 1},  {-6, 0}, {-6, -1}, {-6, -2},
+    {-6, -3}, {-6, -4}, {-6, -5}, {-6, -6}, {-6, -7}, {-6, -8}, {-5, 8},  {-5, 7},  {-5, 6}, {-5, 5},  {-5, 4},
+    {-5, 3},  {-5, 2},  {-5, 1},  {-5, 0},  {-5, -1}, {-5, -2}, {-5, -3}, {-5, -4}, {-5, -5}, {-5, -6}, {-5, -7},
+    {-5, -8}, {-4, 2},  {-4, 1},  {-4, 0},  {-4, -1}, {-4, -2}, {-3, 1},  {-3, 0},  {-3, -1}, {-2, 1},  {-2, 0},
+    {-2, -1}, {-1, 1},  {-1, 0},  {-1, -1}, {0, 1},   {0, 0},   {0, -1},
+};
+
+const MonsterSpawnOffset *monsterSpawnOffsetTable(uint16_t facing) {
+    switch (facing) {
+    case SaveFacingNorth: return kOffsetsNorth;
+    case SaveFacingSouth: return kOffsetsSouth;
+    case SaveFacingEast: return kOffsetsEast;
+    case SaveFacingWest: return kOffsetsWest;
+    default: return NULL;
+    }
+}
+
+int monsterPoolSpawn(uint8_t *pool, const MonsterCatalog *catalog, SaveGame *save, GameKind game, uint16_t facing,
+                      uint16_t partyWorldX, uint16_t partyWorldY, uint16_t gridOriginRow, uint16_t gridOriginCol,
+                      unsigned viewportIndex, unsigned typeId, RandomState *rng) {
+    const MonsterSpawnOffset *offsets = monsterSpawnOffsetTable(facing);
+    if (!offsets || viewportIndex >= MonsterSpawnOffsetCount) {
+        return -1;
+    }
+
+    int slot = -1;
+    for (unsigned i = 0; i < MonsterPoolSize; i++) {
+        if (monsterGetU16(pool + (size_t)i * MonsterRecordSize, MonsterFieldType) == 0) {
+            slot = (int)i;
+            break;
+        }
+    }
+    if (slot < 0) {
+        return -1;
+    }
+
+    uint8_t *record = pool + (size_t)slot * MonsterRecordSize;
+    if (!monsterRecordSpawn(record, catalog, typeId)) {
+        return -1;
+    }
+
+    const MonsterSpawnOffset *offset = &offsets[viewportIndex];
+    uint16_t worldX = (uint16_t)(partyWorldX + offset->dx);
+    uint16_t worldY = (uint16_t)(partyWorldY + offset->dy);
+    monsterRecordPlace(record, worldX, worldY, gridOriginRow, gridOriginCol);
+    monsterRecordStartAnimation(record, randomInRange(rng, 5));
+
+    if (save) {
+        monsterSpawnFlagSet(save, game, typeId);
+    }
+    return slot;
+}

@@ -3570,6 +3570,57 @@ Reimplemented in `src23/monsterpool.c`/`.h`: `monsterSpawnFlagTest`/
 in-window relink path (including the 78-offset edge case), the
 out-of-window despawn path, and spawn-flag clearing on despawn.
 
+### Monster spawning: SpawnMonsterInFacingDirection (decoded 2026-09-23)
+
+How a monster first comes into existence (`yendor2.asm:33008`,
+instruction-identical in Chapter 3, including every data table it
+reads — checked byte-for-byte against both real executables). Its
+catalog-copy, positioning and animation-start steps turned out to
+match `monster.h`'s already-written `monsterRecordSpawn`/
+`monsterRecordPlace`/`monsterRecordStartAnimation` closely enough that
+reimplementing this function is mostly composition of those three,
+plus one genuinely new piece:
+
+- **A facing-dependent spawn-position offset table**, one 51-entry
+  table per facing (`North` at `0x7090`, `South` `0x70F6`, `East`
+  `0x715C`, `West` `0x71C2`), each entry a signed `(dx, dy)` byte pair
+  added to the party's world position. Indexed by a "viewport index"
+  (`g_viewportRowDepth`, 0-50) that identifies one specific rendered
+  cell of the first-person dungeon viewport — the table's shape is a
+  perspective viewing cone, not a literal row/column grid: entries are
+  grouped by `dy`, the farthest/widest group is 17 entries wide
+  (`dx` -8..8), narrowing at each successive `dy` down to a single
+  3-cell-wide strip (`dx` -1..1) right next to the party. Confirmed by
+  direct extraction (`yendor2/ida_scripts/dump_spawn_offset_tables.py`,
+  ported to `yendor3/`), not inferred.
+- Find an empty pool slot (linear scan, same as
+  `monsterPoolRefreshWindow`'s own scan pattern).
+- `SetCellMonsterSpawnedFlag(typeId)` — marks the type as spawned,
+  same bitmap `monsterpool.c` already reimplements.
+- A small in-EXE ascending table (id-sorted, terminated by id `0`)
+  sets the two on-death flags — the exact table `monster.h`'s
+  `monsterDeathFlags` already reimplements.
+
+**`TryTriggerMonsterEncounterAtCell`** (`yendor2.asm:30285`) is the
+caller: fires once per cell during first-person viewport rendering
+(`RenderDungeonViewRow`), gated on `g_viewportRowDepth >= 0x11` (17 —
+excludes only the single farthest/widest row from ever spawning) and
+the cell's own `+6` bit `0x400` (the "monster here" marker — see "In-memory
+dungeon map grid" above), reads `+4` as the type id, skips if
+`FindMonsterTypeInLevelPool` says that type already exists somewhere
+on the level (**not a probability roll**, correcting an earlier,
+casual first read of this function), and calls
+`SpawnMonsterInFacingDirection`. **Not reimplemented**:
+`TryTriggerMonsterEncounterAtCell` itself (it's rendering-loop glue,
+out of scope until the rendering layer exists) and
+`TryActivateMonsterByDistance` (awareness-on-spawn, not traced).
+
+Reimplemented in `src23/monsterpool.c`/`.h`: `monsterSpawnOffsetTable`
+and `monsterPoolSpawn` (the full orchestration — find a slot, spawn,
+place, animate, mark spawned), tests in `tests/test_monsterpool.c`
+covering the offset table against the real extracted data and every
+failure path (full pool, unknown type id, out-of-range viewport index).
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not

@@ -8283,6 +8283,37 @@ code was affected — `monsterpool.c` itself only ever wrote the correct
 and `roadmap.md`'s wording were corrected. Caught before it compounded
 into a wrong model of `TryTriggerMonsterEncounterAtCell` itself.
 
+### 2026-09-23 session update (continued): monster spawning module
+
+Followed through on last round's stated next step and traced
+`SpawnMonsterInFacingDirection` in full. It turned out to be mostly
+composition of functions already written in an earlier session
+(`monster.h`'s `monsterRecordSpawn`/`monsterRecordPlace`/
+`monsterRecordStartAnimation` match its catalog-copy, positioning and
+animation-start steps closely enough that no changes were needed
+there) plus one genuinely new piece: a facing-dependent
+spawn-position offset table, 4 tables of 51 signed-byte-pair entries
+each, shaped like a perspective viewing cone (widest/farthest row 17
+cells across, narrowing to 3 cells right next to the party). Extracted
+directly (`yendor2/ida_scripts/dump_spawn_offset_tables.py`, ported to
+`yendor3/`) and confirmed byte-for-byte identical between both games
+before writing any C.
+- Read `TryTriggerMonsterEncounterAtCell` (the caller, gated on the
+  first-person-rendering-driven `g_viewportRowDepth` and the same
+  `+4`/`0x400` grid-cell marker this session's earlier correction was
+  about) enough to understand the full spawn trigger, but didn't
+  reimplement it — it's rendering-loop glue that needs the
+  not-yet-started SDL2 layer to mean anything.
+- Wrote `monsterSpawnOffsetTable` and `monsterPoolSpawn` in
+  `src23/monsterpool.c`/`.h`, with tests in `tests/test_monsterpool.c`
+  covering the offset table against the real extracted data and every
+  failure path. All 14 suites pass, no regressions.
+- Confirmed instruction-identical between both games — see
+  `engine-diffs.md`.
+- Left open: `TryActivateMonsterByDistance` (awareness-on-spawn, not
+  traced) and, unrelated to spawning, `LoadCurgameRecord`'s own format
+  from a few rounds back.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

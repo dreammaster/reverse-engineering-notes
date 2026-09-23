@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_monsterpool test_monsterpool.c ../monsterpool.c ../dungeongrid.c ../movement.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c && ./test_monsterpool
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_monsterpool test_monsterpool.c ../monsterpool.c ../dungeongrid.c ../movement.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c && ./test_monsterpool
  */
 #include <stdio.h>
 #include <string.h>
@@ -8,6 +8,7 @@
 #include "dungeongrid.h"
 #include "monster.h"
 #include "monsterpool.h"
+#include "random.h"
 #include "savegame.h"
 
 static int g_failureCount = 0;
@@ -131,10 +132,94 @@ static void testPoolRefreshWithoutSave(void) {
     checkU32("the record is zeroed even without a save to update", monsterGetU16(g_pool, MonsterFieldType), 0);
 }
 
+static MonsterCatalog buildTestCatalog(void) {
+    MonsterCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.blockCount = 2; /* 0 = empty, 1 = our one test monster */
+    catalog.lookupCount = 10;
+
+    uint8_t *block1 = catalog.blocks + MonsterBlockSize;
+    /* Block offsets are record offsets minus MonsterBlockOffset. */
+    block1[MonsterFieldSpriteBase - MonsterBlockOffset] = 100;
+    block1[MonsterFieldMaxHealth - MonsterBlockOffset] = 50;
+
+    catalog.lookup[5 * 2] = 1; /* type id 5 -> block 1 */
+    catalog.lookup[5 * 2 + 1] = 0;
+    return catalog;
+}
+
+static void testOffsetTable(void) {
+    check("north table exists", monsterSpawnOffsetTable(SaveFacingNorth) != NULL);
+    check("an invalid facing has no table", monsterSpawnOffsetTable(0) == NULL);
+
+    /* Spot-check against the real extracted data (dump_spawn_offset_tables.py). */
+    const MonsterSpawnOffset *north = monsterSpawnOffsetTable(SaveFacingNorth);
+    check("north[0] is the far-left corner of the widest row", north[0].dx == -8 && north[0].dy == -6);
+    check("north[50] (last entry) is directly ahead, one cell forward", north[50].dx == 1 && north[50].dy == 0);
+
+    const MonsterSpawnOffset *east = monsterSpawnOffsetTable(SaveFacingEast);
+    check("east[0] mirrors north[0] rotated 90 degrees", east[0].dx == 6 && east[0].dy == -8);
+}
+
+static void testPoolSpawn(void) {
+    MonsterCatalog catalog = buildTestCatalog();
+    memset(g_pool, 0, sizeof(g_pool));
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    RandomState rng;
+    randomStart(&rng, 30, 50);
+
+    check("type id 5 starts unspawned", !monsterSpawnFlagTest(&save, GameYendor2, 5));
+
+    int slot = monsterPoolSpawn(g_pool, &catalog, &save, GameYendor2, SaveFacingNorth, 200, 60, 150, 160,
+                                 /*viewportIndex=*/50, /*typeId=*/5, &rng);
+    check("spawn succeeds and returns a valid slot", slot >= 0 && slot < (int)MonsterPoolSize);
+
+    uint8_t *record = g_pool + (size_t)slot * MonsterRecordSize;
+    checkU32("spawned record has the right type", monsterGetU16(record, MonsterFieldType), 5);
+    checkU32("spawned record's catalog fields copied through", monsterGetU16(record, MonsterFieldSpriteBase), 100);
+    checkU32("spawned record's health starts at max", monsterGetU16(record, MonsterFieldHealth), 50);
+    /* viewportIndex 50 is north[50] = (dx=1, dy=0); party at (200,60), facing north. */
+    checkU32("spawned record's world position uses the offset table", monsterGetU16(record, MonsterFieldWorldX),
+             201);
+    checkU32("...and worldY too", monsterGetU16(record, MonsterFieldWorldY), 60);
+    checkU32("spawned record's cell offset is relative to the given grid origin", monsterGetU16(record, MonsterFieldCell),
+             (uint16_t)((60 - 150) * 0x270 + (201 - 160) * 8));
+    check("animation start is within spriteBase + RandomInRange(5)",
+          monsterGetU16(record, MonsterFieldAnim) >= 100 && monsterGetU16(record, MonsterFieldAnim) <= 105);
+
+    check("type id 5 is marked spawned afterward", monsterSpawnFlagTest(&save, GameYendor2, 5));
+
+    uint8_t fullPool[MonsterPoolSize * MonsterRecordSize];
+    memset(fullPool, 0, sizeof(fullPool));
+    for (unsigned i = 0; i < MonsterPoolSize; i++) {
+        monsterSetU16(fullPool + (size_t)i * MonsterRecordSize, MonsterFieldType, 1);
+    }
+    check("spawning into a full pool fails",
+          monsterPoolSpawn(fullPool, &catalog, NULL, GameYendor2, SaveFacingNorth, 200, 60, 150, 160, 0, 5, &rng) ==
+              -1);
+
+    check("an unknown type id fails without touching the pool",
+          monsterPoolSpawn(g_pool, &catalog, NULL, GameYendor2, SaveFacingNorth, 200, 60, 150, 160, 0, 999, &rng) ==
+              -1);
+
+    check("an out-of-range viewport index fails",
+          monsterPoolSpawn(g_pool, &catalog, NULL, GameYendor2, SaveFacingNorth, 200, 60, 150, 160,
+                            MonsterSpawnOffsetCount, 5, &rng) == -1);
+
+    check("a NULL save is safe (spawn flag simply isn't touched)",
+          monsterPoolSpawn(g_pool, &catalog, NULL, GameYendor2, SaveFacingSouth, 200, 60, 150, 160, 0, 5, &rng) >=
+              0);
+}
+
 int main(void) {
     testSpawnFlagBits();
     testPoolRefresh();
     testPoolRefreshWithoutSave();
+    testOffsetTable();
+    testPoolSpawn();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
