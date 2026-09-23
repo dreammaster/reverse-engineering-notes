@@ -161,3 +161,30 @@ int monsterPoolSpawn(uint8_t *pool, const MonsterCatalog *catalog, SaveGame *sav
     }
     return slot;
 }
+
+void monsterGrantRewards(MonsterRewardStaging *staging, const uint8_t *record, uint8_t *globalFlags,
+                          size_t globalFlagsSize) {
+    bcd4Add(staging->gold, monsterLoot(record, MonsterLootGold));
+    bcd4Add(staging->nuore, monsterLoot(record, MonsterLootNuore));
+    bcd4Add(staging->ore, monsterLoot(record, MonsterLootOre));
+    bcd4Add(staging->experience, monsterLoot(record, MonsterLootExperience));
+
+    if (globalFlags) {
+        globalFlagApplySigned(globalFlags, globalFlagsSize, (int16_t)monsterGetU16(record, MonsterFieldFlagOnDeath));
+        globalFlagApplySigned(globalFlags, globalFlagsSize,
+                               (int16_t)monsterGetU16(record, MonsterFieldFlagOnDeath2));
+    }
+}
+
+void monsterPoolRemove(uint8_t *record, DungeonGrid *grid) {
+    if (grid) {
+        int worldX = monsterGetU16(record, MonsterFieldWorldX);
+        int worldY = monsterGetU16(record, MonsterFieldWorldY);
+        DungeonGridCell *cell = dungeonGridCellMutable(grid, worldY - grid->originRow, worldX - grid->originCol);
+        if (cell) {
+            cell->flags &= (uint16_t)~DungeonGridCellFlagOverlay;
+            cell->reserved4 = 0;
+        }
+    }
+    memset(record, 0, MonsterRecordSize);
+}

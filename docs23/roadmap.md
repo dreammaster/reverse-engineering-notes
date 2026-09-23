@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, monster spawning module)
+## Status (last updated 2026-09-23, monster death + global flags modules)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -180,10 +180,29 @@ groundwork below is already in place.
   work just finished, but needs `ProcessLevelMonsters` traced first;
   full writeup in `file-formats.md`'s "side trap"/ambush section.
   Deliberately not reimplemented this session — a good candidate for
-  its own dedicated pass. Still open: `TryActivateMonsterByDistance`
-  (awareness-on-spawn, not traced), `LoadCurgameRecord`'s own format,
-  `ProcessLevelMonsters` itself, map-trigger effects, and first-person
-  viewport rendering (needs the SDL2 layer, not yet started).
+  its own dedicated pass.
+  **`GrantMonsterRewards`/`RemoveMonsterFromMap` — done, same module
+  (2026-09-23)**: `ProcessLevelMonsters`'s two "monster's presence
+  ended" calls turned out much more tractable than the AI/movement
+  logic around them — small, clean, composed almost entirely from
+  functions already in `bcd4.c`/`monster.h`/`dungeongrid.h`. Needed one
+  new mechanism: the "Global quest/world-state flags" system a prior
+  session had already identified (`file-formats.md`) but not
+  reimplemented — traced its exact 1-based, MSB-first bit-packing (a
+  zero-remainder special case that steps back a word) directly rather
+  than assuming it matched this session's other, 0-based conventions,
+  and confirmed it doesn't. New module `src23/globalflags.c`/`.h`
+  (pure bit arithmetic over a caller-supplied buffer, since
+  `g_globalFlags`'s real size/persistence still isn't confirmed);
+  `monsterGrantRewards`/`monsterPoolRemove` added to
+  `src23/monsterpool.c`/`.h`. Tests in `tests/test_globalflags.c` and
+  `tests/test_monsterpool.c`; all 15 suites pass. **No Chapter 2 vs.
+  Chapter 3 difference**, spot-checked directly. Still open:
+  `TryActivateMonsterByDistance` (awareness-on-spawn, not traced),
+  `LoadCurgameRecord`'s own format, `ProcessLevelMonsters`'s own
+  movement/pathfinding AI and the ambush mechanic (the side-trap lead
+  above), map-trigger effects, and first-person viewport rendering
+  (needs the SDL2 layer, not yet started).
 
 ## Next: continue the C reimplementation
 

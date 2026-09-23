@@ -1035,6 +1035,15 @@ noting if a puzzle/quest-design question about Chapter 3 comes up
 later. Magical locks are also proportionally far more common in
 Chapter 3 (214/1008, ~21%) than Chapter 2 (17/608, ~3%).
 
+## Monster death (rewards/removal) and global flags: no behavioral difference found
+
+Found while writing `src23/monsterpool.c`'s reward/removal additions
+and `src23/globalflags.c` (2026-09-23). `GrantMonsterRewards`,
+`RemoveMonsterFromMap`, and `GetGlobalFlagBitAndWord`/`Set`/`Clear`/
+`TestGlobalFlag` are all instruction-identical between the two games
+(spot-checked directly, not assumed from the pattern established by
+the rest of this session's monster-pool work).
+
 ## Monster spawning: no behavioral difference found
 
 Found while writing the spawn half of `src23/monsterpool.c`

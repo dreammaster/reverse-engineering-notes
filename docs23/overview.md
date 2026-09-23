@@ -8341,6 +8341,40 @@ trap data, though not confirmed.
   rush a reimplementation without the AI system underneath it.
   No code changes this round.
 
+### 2026-09-23 session update (continued): monster death and global flags
+
+Reading `ProcessLevelMonsters` (the monster AI system flagged as an
+open lead above) far enough to find its two "monster's presence ended"
+calls, `GrantMonsterRewards` and `RemoveMonsterFromMap`, turned out to
+be much more tractable than the AI/movement logic around them — both
+are small, clean, and compose almost entirely from modules already
+written this session (`bcd4.c`, `monster.h`'s loot/on-death fields,
+`dungeongrid.h`). The one new piece, applying `GrantMonsterRewards`'s
+on-death flag deltas, needed the "Global quest/world-state flags"
+mechanism a prior session had already identified but not reimplemented
+— traced its exact bit-packing arithmetic (1-based, MSB-first, with a
+zero-remainder special case that steps back a word) directly from
+`GetGlobalFlagBitAndWord` rather than assuming it matched this
+session's other, 0-based bit-packing conventions, and confirmed it
+doesn't.
+- Wrote `src23/globalflags.c`/`.h` (`globalFlagTest`/`Set`/`Clear`/
+  `ApplySigned`) as pure bit arithmetic over a caller-supplied buffer,
+  sidestepping the still-open question of `g_globalFlags`'s real size
+  or whether it's `CURGAME`-backed at all.
+- Extended `src23/monsterpool.c`/`.h` with `monsterGrantRewards` and
+  `monsterPoolRemove`.
+- Caught a test-writing mistake immediately via the test run rather
+  than by re-reading the code: assumed a big-endian-style byte layout
+  for `globalflags.c`'s bit-packing test assertions, got 7 failures,
+  and found the real (little-endian, matching the original's actual
+  x86 memory layout) byte positions from the test output itself rather
+  than guessing again.
+- Confirmed instruction-identical between both games — spot-checked
+  directly this time, not assumed from the pattern. All 15 suites pass,
+  no regressions.
+- `ProcessLevelMonsters`'s own movement/pathfinding logic and the
+  ambush-trigger mechanic remain untraced and out of scope.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

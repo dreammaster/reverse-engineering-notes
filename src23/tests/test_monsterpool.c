@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "bcd4.h"
 #include "dungeongrid.h"
+#include "globalflags.h"
 #include "monster.h"
 #include "monsterpool.h"
 #include "random.h"
@@ -214,12 +216,89 @@ static void testPoolSpawn(void) {
               0);
 }
 
+static uint32_t bcdHex(const uint8_t *value) {
+    return (uint32_t)value[0] << 24 | (uint32_t)value[1] << 16 | (uint32_t)value[2] << 8 | value[3];
+}
+
+static void testGrantRewards(void) {
+    uint8_t record[MonsterRecordSize];
+    memset(record, 0, sizeof(record));
+    bcd4FromU16((uint8_t *)(record + MonsterFieldLootGold), 495);
+    bcd4FromU16((uint8_t *)(record + MonsterFieldLootNuore), 10);
+    bcd4FromU16((uint8_t *)(record + MonsterFieldLootOre), 5);
+    bcd4FromU16((uint8_t *)(record + MonsterFieldExperience), 1340);
+    monsterSetU16(record, MonsterFieldFlagOnDeath, (uint16_t)14);   /* positive: set flag 14 */
+    monsterSetU16(record, MonsterFieldFlagOnDeath2, (uint16_t)-3);  /* negative: clear flag 3 */
+
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+    /* Pre-seed staging.gold to check it accumulates (+=), not overwrites. */
+    bcd4FromU16(staging.gold, 5);
+
+    uint8_t flags[4] = {0};
+    globalFlagSet(flags, sizeof(flags), 3); /* start set, so we can observe it being cleared */
+
+    monsterGrantRewards(&staging, record, flags, sizeof(flags));
+
+    checkU32("gold accumulates onto the pre-existing staging value", bcdHex(staging.gold), 0x00000500);
+    checkU32("nuore staged", bcdHex(staging.nuore), 0x00000010);
+    checkU32("ore staged", bcdHex(staging.ore), 0x00000005);
+    checkU32("experience staged", bcdHex(staging.experience), 0x00001340);
+    check("positive on-death flag (14) got set", globalFlagTest(flags, sizeof(flags), 14));
+    check("negative on-death flag (-3) got cleared", !globalFlagTest(flags, sizeof(flags), 3));
+
+    /* A NULL globalFlags buffer must not crash and must still stage loot. */
+    MonsterRewardStaging staging2;
+    memset(&staging2, 0, sizeof(staging2));
+    monsterGrantRewards(&staging2, record, NULL, 0);
+    checkU32("loot still stages with globalFlags == NULL", bcdHex(staging2.gold), 0x00000495);
+}
+
+static void testPoolRemove(void) {
+    memset(&g_grid, 0, sizeof(g_grid));
+    g_grid.game = GameYendor2;
+    g_grid.originCol = 100;
+    g_grid.originRow = 50;
+
+    uint8_t record[MonsterRecordSize];
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldType, 7);
+    monsterSetU16(record, MonsterFieldWorldX, 105);
+    monsterSetU16(record, MonsterFieldWorldY, 55);
+
+    DungeonGridCell *cell = dungeonGridCellMutable(&g_grid, 5, 5);
+    cell->reserved4 = 7;
+    cell->flags |= DungeonGridCellFlagOverlay;
+
+    monsterPoolRemove(record, &g_grid);
+
+    checkU32("removed record's type is zeroed", monsterGetU16(record, MonsterFieldType), 0);
+    checkU32("removed record's world position is zeroed too", monsterGetU16(record, MonsterFieldWorldX), 0);
+    check("the linked grid cell's overlay flag is cleared", (cell->flags & DungeonGridCellFlagOverlay) == 0);
+    checkU32("the linked grid cell's overlay value is cleared", cell->reserved4, 0);
+
+    /* A monster whose world position is no longer within the grid's window: no cell to touch, just despawn. */
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldType, 9);
+    monsterSetU16(record, MonsterFieldWorldX, 5000);
+    monsterSetU16(record, MonsterFieldWorldY, 5000);
+    monsterPoolRemove(record, &g_grid);
+    checkU32("a monster outside the window still despawns cleanly", monsterGetU16(record, MonsterFieldType), 0);
+
+    /* A NULL grid must not crash. */
+    monsterSetU16(record, MonsterFieldType, 3);
+    monsterPoolRemove(record, NULL);
+    checkU32("a NULL grid still despawns the record", monsterGetU16(record, MonsterFieldType), 0);
+}
+
 int main(void) {
     testSpawnFlagBits();
     testPoolRefresh();
     testPoolRefreshWithoutSave();
     testOffsetTable();
     testPoolSpawn();
+    testGrantRewards();
+    testPoolRemove();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

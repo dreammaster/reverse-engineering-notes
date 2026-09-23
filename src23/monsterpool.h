@@ -4,8 +4,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include <stddef.h>
+
+#include "bcd4.h"
 #include "dungeongrid.h"
 #include "game.h"
+#include "globalflags.h"
 #include "monster.h"
 #include "random.h"
 #include "savegame.h"
@@ -112,5 +116,35 @@ const MonsterSpawnOffset *monsterSpawnOffsetTable(uint16_t facing);
 int monsterPoolSpawn(uint8_t *pool, const MonsterCatalog *catalog, SaveGame *save, GameKind game, uint16_t facing,
                       uint16_t partyWorldX, uint16_t partyWorldY, uint16_t gridOriginRow, uint16_t gridOriginCol,
                       unsigned viewportIndex, unsigned typeId, RandomState *rng);
+
+/*
+ * GrantMonsterRewards (yendor2.asm:33151): a dying monster's own loot
+ * fields (monster.h's MonsterLoot) are added into 4 staging BCD4
+ * counters -- not permanent material totals directly; the original
+ * drains these into the real counters later, in ShowLootAndAwardExperience
+ * (a UI-heavy function, not reimplemented) -- plus its two on-death
+ * global-flag deltas (MonsterFieldFlagOnDeath/2) get applied via
+ * globalflags.h. globalFlags/globalFlagsSize may be NULL/0 to skip the
+ * flag step, e.g. if the caller hasn't set up a g_globalFlags buffer
+ * (its real size isn't confirmed -- see globalflags.h).
+ */
+typedef struct {
+    Bcd4 gold;
+    Bcd4 nuore;
+    Bcd4 ore;
+    Bcd4 experience;
+} MonsterRewardStaging;
+
+void monsterGrantRewards(MonsterRewardStaging *staging, const uint8_t *record, uint8_t *globalFlags,
+                          size_t globalFlagsSize);
+
+/*
+ * RemoveMonsterFromMap (yendor2.asm:33784): clears the "monster here"
+ * overlay from the record's linked DungeonGridCell (found from the
+ * record's own world position, not its raw +6 cell offset -- safe even
+ * if the monster is no longer within grid's current window) and zeroes
+ * the whole record. grid may be NULL to skip the overlay-clear step.
+ */
+void monsterPoolRemove(uint8_t *record, DungeonGrid *grid);
 
 #endif

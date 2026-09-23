@@ -3661,6 +3661,61 @@ place, animate, mark spawned), tests in `tests/test_monsterpool.c`
 covering the offset table against the real extracted data and every
 failure path (full pool, unknown type id, out-of-range viewport index).
 
+### Monster death: rewards and removal (decoded 2026-09-23)
+
+Two small, clean functions `ProcessLevelMonsters` (monster AI/turn
+processing — not traced this pass, see the "side trap"/ambush section
+above) calls when a monster's presence ends:
+
+- **`GrantMonsterRewards`** (`yendor2.asm:33151`) stages a dying
+  monster's own loot fields (`monster.h`'s `MonsterLoot`: gold, nuore,
+  magic ore, experience) into 4 **global staging counters** — not the
+  permanent material totals directly; those are only updated later, by
+  `ShowLootAndAwardExperience` (a UI-heavy "treasure found" panel, not
+  reimplemented), which drains the staging counters once per triggering
+  threshold. Also applies the monster's two on-death global-flag deltas
+  (`MonsterFieldFlagOnDeath`/`FlagOnDeath2` — a signed 1-based flag
+  index: positive sets, negative clears, zero does nothing) via the new
+  global-flags mechanism below.
+- **`RemoveMonsterFromMap`** (`yendor2.asm:33784`) clears the "monster
+  here" overlay (`+4`/`+6` bit `0x400`, see "In-memory dungeon map
+  grid" above) from the grid cell the monster's own `+6` field points
+  at, then zeroes the whole 156-byte record.
+
+Reimplemented in `src23/monsterpool.c`/`.h`: `monsterGrantRewards`
+(staging-counter accumulation + flag deltas; the caller drains the
+staging counters into permanent totals itself, not reimplemented here)
+and `monsterPoolRemove` (recomputes the grid cell from the record's
+own world position rather than trusting its raw `+6` offset, so it's
+safe to call even if the monster has scrolled outside the grid's
+current window). Tests in `tests/test_monsterpool.c`.
+
+### Global quest/world-state flags: bit-packing reimplemented (decoded 2026-09-23)
+
+`file-formats.md`'s existing "Global quest/world-state flags" section
+(above) already identified `GetGlobalFlagBitAndWord`/`SetGlobalFlag`/
+`ClearGlobalFlag`/`TestGlobalFlag` and the base address (`g_globalFlags`,
+`0x94D1`) from an earlier session; this pass traced the exact
+bit-packing arithmetic (needed to correctly reimplement
+`GrantMonsterRewards`'s flag-delta step) and confirmed it's **1-based
+and MSB-first**: flag index 1 is bit `0x8000` of word 0, index 16 is
+bit `0x0001` of word 0 (**not** word 1 — the original's division has a
+zero-remainder special case that steps back one word, verified
+directly by tracing `GetGlobalFlagBitAndWord`'s exact `div`/`shr`
+sequence rather than assumed from the 0-based conventions confirmed
+elsewhere this session), index 17 is bit `0x8000` of word 1, and so on.
+
+**Still not confirmed**: how many total flags exist, or whether
+`g_globalFlags` is itself backed by a `CURGAME` section (`0x94D1`
+doesn't match any of `savegame.h`'s known section offsets) or is
+purely in-memory/session state — genuinely unresolved, not just
+unchecked. Reimplemented in `src23/globalflags.c`/`.h` as pure
+bit-packing arithmetic over a caller-supplied buffer (so it stays
+correct regardless of how that's eventually resolved) —
+`globalFlagTest`/`Set`/`Clear` and `globalFlagApplySigned` (the
+signed-index convention `GrantMonsterRewards`/`ApplyItemEffectFlags`
+both use), tests in `tests/test_globalflags.c`.
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not
