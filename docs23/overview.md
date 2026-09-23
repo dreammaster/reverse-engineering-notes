@@ -8225,6 +8225,49 @@ same way.
   bytes/record, and (separately, still unrelated to this catalog)
   `LoadCurgameRecord`'s own format for `worldobjects.c`'s `0x4000` flag.
 
+### 2026-09-23 session update (continued): monster pool scroll relink/despawn module
+
+Investigating `LoadCurgameRecord` (see the `docs: record a genuine
+LoadCurgameRecord/lock-catalog overlap oddity` commit) led into
+`RefreshDungeonMapWindow`'s tail end — the part after the base grid
+build `dungeongrid.c` already covers — which turned out to be a clean,
+fully-decodable 80-slot monster-pool scroll relink/despawn pass, and a
+genuinely useful architectural correction along the way.
+- **Corrected a real misreading from the `worldobjects.c` writeup**:
+  the `0x800` (monster-spawn marker) flag's `value` field was
+  documented as "an index into `SaveSectionMonsterSpawnFlags`" without
+  being specific about what it indexes *by*. Cross-referencing
+  `RefreshDungeonMapWindow`'s despawn path — which clears that exact
+  same bitmap using a live monster's own type id, not any kind of
+  location index — shows the bitmap is indexed by monster **type id**
+  directly. So a `0x800` marker's `value` field literally *is* the
+  type id it spawns, not an abstract spawn-point id as first written
+  up. Fixed in both `worldobjects.h`'s comment and `file-formats.md`.
+- Traced the scroll relink/despawn logic itself
+  (`yendor2.asm:29496` on): per pool slot, an inclusive
+  `[origin, origin+78]` bounds check (a genuine 79-wide tracked range,
+  one wider than the 78-cell grid — not an off-by-one bug, kept
+  faithfully) decides relink (recompute cell offset, bake a "monster
+  here" overlay into the `DungeonGridCell`) vs. despawn (zero the
+  156-byte record, clear its spawn flag by type id).
+- This also resolved dungeongrid.c's own open question about the grid
+  cell's `+4` field from last round: it's not a fixed-role "occupant
+  reference" as speculated, but a shared overlay value written by two
+  different producers (a monster's type id here, or a
+  `worldobjects.c`-`0x4000` curgame-record's value elsewhere) — updated
+  that section's writeup too.
+- Wrote `src23/monsterpool.c`/`.h` (`monsterSpawnFlagTest`/`Set`/`Clear`,
+  `monsterPoolRefreshWindow`) + `tests/test_monsterpool.c`, plus a small
+  `dungeongrid.c` addition (`dungeonGridCellMutable`, a
+  `DungeonGridCellFlagOverlay` constant) needed to let this module bake
+  overlays into an already-built grid. All 14 test suites pass, no
+  regressions.
+- Confirmed instruction-identical between both games (same 78-cell
+  bounds, same `0x400` bit, same formula) — see `engine-diffs.md`.
+- Deliberately out of scope, same as before: how a monster first gets
+  spawned (`SpawnMonsterInFacingDirection`) — this module only tracks
+  already-live pool entries against the scrolling window.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

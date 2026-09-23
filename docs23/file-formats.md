@@ -2854,25 +2854,28 @@ from the world map (the `+0`/`+2` fields above) via a row-buffered
 read, then **a third word previously miscounted as part of the flags
 field — `+4`, zeroed here** (`xor ax,ax` / `stosw` right after the two
 tile-type words) **— making the layout `+0`/`+2`/`+4`/`+6`, still 8
-bytes total, not `+0`/`+2`/`+6` with 2 bytes of padding.** `+4`'s
-write side isn't traced, but `HandleMovementInput`'s monster-despawn
-branch (see "Movement and cell passability" below) explicitly
-re-zeroes the same `+4` word when a monster scrolls out of a cell,
-alongside clearing a bit in `+6` — strong circumstantial evidence
-`+4` is an occupant reference into `g_levelMonsters`, set by
-monster-placement code not yet traced. The explored bit (`+6` bit
-`0x8000`) is filled from `CURGAME`'s `SaveSectionExploredMap` bitmap
-in the same per-cell pass, packed **MSB-first within each byte** (byte
-`col/8`, bit `7 - col%8`) — derived directly from the shift-and-test
-sequence that extracts it, not guessed.
+bytes total, not `+0`/`+2`/`+6` with 2 bytes of padding.** `+4`'s write
+side is now traced (decoded 2026-09-23, see "Monster pool: scroll
+relink and despawn" below): it's an **overlay value, not a fixed-role
+occupant reference** — the same `+4`/`+6` bit `0x400` pair gets written
+by two different producers depending on which kind of marker occupies
+the cell: a live monster's own type id (the scroll-relink pass this
+section originally flagged as unconfirmed), or a
+`worldobjects.c`-`0x4000`-flagged curgame-record marker's `value`
+(`TryInteractAtPosition`'s own per-cell interaction pass, still not
+reimplemented — rendering only past this one bit). The explored bit
+(`+6` bit `0x8000`) is filled from `CURGAME`'s `SaveSectionExploredMap`
+bitmap in the same per-cell pass, packed **MSB-first within each
+byte** (byte `col/8`, bit `7 - col%8`) — derived directly from the
+shift-and-test sequence that extracts it, not guessed.
 
-Explicitly **not** covered by this base-window build, both left for
-later modules: `TryInteractAtPosition`'s per-cell marker baking (which
-is what actually sets the door/lock flag, `+6` bit `0x6000`, and other
-item/trap/trigger markers — this base pass never sets bits below
-`0x8000`), and `g_levelMonsters` placement/despawn as monsters scroll
-into or out of the window. Reimplemented (base window only) in
-`src23/dungeongrid.c`/`.h`.
+Explicitly **not** covered by this base-window build: `TryInteractAtPosition`'s
+per-cell marker baking (which is what actually sets the door/lock flag,
+`+6` bit `0x6000`, and the curgame-record overlay just mentioned — this
+base pass never sets bits below `0x8000`). `g_levelMonsters`
+placement/despawn as monsters scroll into or out of the window **is**
+now covered, in a separate module — see below. Reimplemented (base
+window only) in `src23/dungeongrid.c`/`.h`.
 
 `ProbeFacingTile` computes `g_facingTileCellPtr` — the grid cell
 directly ahead of the party — by offsetting the party's own cell
@@ -3407,7 +3410,7 @@ same record in either game):
 | `0x8000` | 443 | 355 | `LoadLockState(value)` — a lock/door id; always blocks movement. |
 | `0x4000` | 231 | 71 | `LoadCurgameRecord(value)`, an index into `CURGAME`'s event-state section; further outcome depends on `g_lockStatusFlags` bits not reimplemented here — plausibly searchable containers/found-item/document triggers. |
 | `0x1000` | 105 | 139 | Always reports a fixed `errorCode=4`; `value` isn't read for this branch at all. Semantic meaning of `errorCode=4` not confirmed. |
-| `0x800` | 2141 | 1862 | `TestCellMonsterSpawnedFlag(value)`, an index into `CURGAME`'s `SaveSectionMonsterSpawnFlags` bitmap — a scripted/pre-placed monster encounter marker, and the majority flag in both games' real data. |
+| `0x800` | 2141 | 1862 | `TestCellMonsterSpawnedFlag(value)` — `value` is a monster *type id* directly (confirmed 2026-09-23 by cross-referencing `RefreshDungeonMapWindow`'s despawn path, which clears the same bitmap using a live monster's own type id — see "Monster pool" below), not an abstract spawn-point index. The majority flag in both games' real data. |
 | `0x2000` | 187 | 139 | **Not tested by `TryInteractAtPosition` at all** — every flag check above it falls through to "nothing here" for a `0x2000`-only record. `ProbeFacingTile` (`yendor2.asm:30915`) reaches the same underlying record via the same `FindObjectAtPosition`, but its own callers weren't traced far enough this session to confirm whether any of them read this bit. |
 | `0x400` | 1 | 6 | Rare outlier in both games, not chased further. |
 
@@ -3510,6 +3513,54 @@ Reimplemented in `src23/lockcatalog.c`/`.h`:
 `lockRequiredKeyType`/`lockKeyTypeName`, tests in
 `tests/test_lockcatalog.c` including exact per-key-type and
 multi-bit-record counts checked against both real `WORLD.DAT` files.
+
+### Monster pool: scroll relink and despawn (decoded 2026-09-23)
+
+The rest of `RefreshDungeonMapWindow` (`yendor2.asm:29496` on,
+instruction-identical in Chapter 3) after the base grid build (see
+"In-memory dungeon map grid" above): a pass over all 80
+`g_levelMonsters` slots that keeps already-live monsters in sync with
+the freshly rebuilt window, called every time the party moves. This is
+**not** how a monster first comes into existence — that's
+`SpawnMonsterInFacingDirection`, not traced this pass — only how an
+*already-spawned* monster is tracked as the window scrolls around it.
+
+For each non-empty slot (`+0` type id `!= 0`):
+- **In window** — `worldX`/`worldY` (`+2`/`+4`) both fall within
+  `[gridOrigin, gridOrigin + 78]`, **inclusive on the high end**: a
+  genuine 79-wide tracked range, one cell wider than the 78-cell grid
+  itself, not an off-by-one to paper over. The slot's `+6` cell-offset
+  field is recomputed relative to the new origin (same `row*0x270 +
+  col*8` formula as `GetMapCellPtr`), and the corresponding
+  `DungeonGridCell` gets `+4` set to the monster's type id and `+6`
+  bit `0x400` set — a "monster here" overlay marker. **The one edge
+  case where the relative offset is exactly 78** (worldPos exactly at
+  `gridOrigin + 78`) has no cell in the 78-wide grid array to write
+  the overlay into in this reimplementation — the monster still
+  survives the refresh (matching the original's own in-window
+  decision), it just doesn't get an overlay baked in that one case.
+- **Out of window** — the monster's entire 156-byte record is zeroed
+  (despawned) and its spawn flag is cleared via
+  `ClearCellMonsterSpawnedFlag(typeId)`.
+
+**The "already spawned" bitmap (`Test`/`Set`/`ClearCellMonsterSpawnedFlag`,
+CURGAME's `SaveSectionMonsterSpawnFlags`) is indexed by monster *type
+id*, not a per-location spawn-point index** — confirmed by
+cross-referencing both call sites: `TryInteractAtPosition`'s `0x800`
+(monster-spawn marker) branch tests it with a `worldobjects.c` record's
+own `value` field, and this despawn path clears it with the live
+record's own type id (`+0`) — the same number space, meaning **a
+`worldobjects.c` `0x800` marker's `value` field is the type id it
+spawns**, not an abstract spawn-point index as the earlier writeup
+speculated. Packed MSB-first within each byte (byte `typeId/8`, bit
+`7 - typeId%8`), the same convention already confirmed for the
+explored-map and lock "already unlocked" bitmaps.
+
+Reimplemented in `src23/monsterpool.c`/`.h`: `monsterSpawnFlagTest`/
+`Set`/`Clear` and `monsterPoolRefreshWindow`, tests in
+`tests/test_monsterpool.c` covering the bitmap's bit-packing, the
+in-window relink path (including the 78-offset edge case), the
+out-of-window despawn path, and spawn-flag clearing on despawn.
 
 ## Not yet examined
 

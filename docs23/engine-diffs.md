@@ -1035,6 +1035,17 @@ noting if a puzzle/quest-design question about Chapter 3 comes up
 later. Magical locks are also proportionally far more common in
 Chapter 3 (214/1008, ~21%) than Chapter 2 (17/608, ~3%).
 
+## Monster pool scroll relink/despawn: no behavioral difference found
+
+Found while writing `src23/monsterpool.c` (2026-09-23), from a full
+instruction-level trace of both games' `RefreshDungeonMapWindow`
+continuation (the part after the base grid build documented above).
+Like the in-memory dungeon grid itself, this is instruction-identical
+between the two games — same 80-slot pool, same inclusive
+`[origin, origin+78]` bounds check, same cell-offset formula, same
+`0x400` overlay bit, same `ClearCellMonsterSpawnedFlag` call on
+despawn. No game-specific behavior to record.
+
 ## In-memory dungeon grid: no behavioral difference found
 
 Found while writing `src23/dungeongrid.c` (2026-09-23), from a full

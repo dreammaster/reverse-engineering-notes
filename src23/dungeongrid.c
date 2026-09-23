@@ -69,6 +69,13 @@ const DungeonGridCell *dungeonGridCell(const DungeonGrid *grid, int row, int col
     return &grid->cells[row][col];
 }
 
+DungeonGridCell *dungeonGridCellMutable(DungeonGrid *grid, int row, int col) {
+    if (row < 0 || row >= DungeonGridSize || col < 0 || col >= DungeonGridSize) {
+        return NULL;
+    }
+    return &grid->cells[row][col];
+}
+
 const DungeonGridCell *dungeonGridCellAtWorldPos(const DungeonGrid *grid, int worldCol, int worldRow) {
     return dungeonGridCell(grid, worldRow - grid->originRow, worldCol - grid->originCol);
 }

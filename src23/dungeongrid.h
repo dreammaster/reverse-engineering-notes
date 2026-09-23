@@ -82,10 +82,22 @@ void dungeonGridBuild(DungeonGrid *grid, GameKind game, const WorldMap *map, Sav
 
 /* The cell at grid-local (row, col), or NULL if either is outside [0, DungeonGridSize). */
 const DungeonGridCell *dungeonGridCell(const DungeonGrid *grid, int row, int col);
+DungeonGridCell *dungeonGridCellMutable(DungeonGrid *grid, int row, int col);
 
 /* Same, addressed by absolute world coordinates instead of grid-local ones; NULL if outside the current window. */
 const DungeonGridCell *dungeonGridCellAtWorldPos(const DungeonGrid *grid, int worldCol, int worldRow);
 
 bool dungeonGridCellIsExplored(const DungeonGridCell *cell); /* flags bit 0x8000 */
+
+/*
+ * +6 bit 0x400: "there's an overlay icon here", baked in by two different
+ * producers, both outside this module's own build pass -- monsterpool.c's
+ * scroll-relink (+4 = the live monster's type id) and TryInteractAtPosition's
+ * curgame-record branch (+4 = a worldobjects.c 0x4000 record's value; see
+ * file-formats.md's "In-memory dungeon map grid" section for the full
+ * interaction-marker picture, not otherwise modeled here since it's
+ * rendering-only past this one flag bit).
+ */
+enum { DungeonGridCellFlagOverlay = 0x0400 };
 
 #endif

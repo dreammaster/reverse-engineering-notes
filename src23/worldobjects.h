@@ -81,8 +81,10 @@ typedef enum {
     WorldObjectFlagCurgameRecord = 0x4000,
     /* TryInteractAtPosition always reports a fixed errorCode=4 for this bit and never reads value for it. */
     WorldObjectFlagFixedResponse = 0x1000,
-    /* value -> TestCellMonsterSpawnedFlag(value), an index into CURGAME's SaveSectionMonsterSpawnFlags bitmap:
-       a scripted/pre-placed monster-encounter marker. The majority flag bit in both games' real data. */
+    /* value is a monster TYPE ID (see monsterpool.h's monsterSpawnFlagTest/Set/Clear -- confirmed by
+       cross-referencing the despawn path, which clears the same CURGAME bitmap using a live monster's own
+       type id, the same number space) -- a scripted/pre-placed monster-encounter marker. The majority flag
+       bit in both games' real data. */
     WorldObjectFlagMonsterSpawn = 0x800,
     /*
      * A real, common bit in both games' data (187 Chapter 2 records, 139

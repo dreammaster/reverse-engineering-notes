@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, lock/door catalog module)
+## Status (last updated 2026-09-23, monster pool scroll relink/despawn module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -125,10 +125,30 @@ groundwork below is already in place.
   1's own record entirely. Not determined whether that's a real quirk,
   dead code, or simply never exercised in practice; see
   `file-formats.md`'s "Lock/door definition catalog" section for the
-  full note. `g_levelMonsters` placement/despawn and everything
-  downstream of a committed move (monster processing, side-trap
-  processing, map-trigger effects, first-person viewport rendering)
-  remain open.
+  full note. **`g_levelMonsters` placement/despawn — done as the
+  thirteenth module, `monsterpool.c`/`.h` (2026-09-23)**: the rest of
+  `RefreshDungeonMapWindow` past `dungeongrid.c`'s base build — a
+  79-wide (`[origin, origin+78]` inclusive) scroll check per pool slot
+  that relinks a still-visible monster (new cell offset, a "monster
+  here" overlay baked into its `DungeonGridCell`) or despawns one
+  that's scrolled out (zero the record, clear its spawn flag).
+  **Corrected a real misreading from the `worldobjects.c` writeup**
+  along the way: the `0x800` marker's `value` field is a monster
+  **type id** directly (confirmed via the despawn path, which clears
+  the same `SaveSectionMonsterSpawnFlags` bitmap by type id), not an
+  abstract spawn-point index as first documented — fixed in both
+  `worldobjects.h` and `file-formats.md`. Also resolved
+  `dungeongrid.c`'s open `+4` field question: it's a shared overlay
+  value (monster type id here, or a `worldobjects.c` `0x4000` record's
+  value elsewhere), not a fixed-role field. Tests in
+  `tests/test_monsterpool.c`; all 14 suites pass. **No Chapter 2 vs.
+  Chapter 3 difference** (see `engine-diffs.md`) — instruction-identical,
+  same as `dungeongrid.c`. Deliberately out of scope, same as before:
+  how a monster first gets spawned (`SpawnMonsterInFacingDirection`,
+  not traced). Still open: `LoadCurgameRecord`'s own format, and
+  everything downstream of a committed move (monster combat processing,
+  side-trap processing, map-trigger effects, first-person viewport
+  rendering).
 
 ## Next: continue the C reimplementation
 
