@@ -1,0 +1,2001 @@
+line	raw_symbol	demangled
+100401	_init_proc	_init_proc
+100434	sub_521718	sub_521718
+104791	get_ucp	get_ucp
+104919	add_not_list_to_class	add_not_list_to_class
+104995	emit_restore_flags	emit_restore_flags
+105036	emit_save_flags	emit_save_flags
+106297	New_Profile	New_Profile
+106382	End_Profile	End_Profile
+106444	Insert_Y_Turn	Insert_Y_Turn
+106530	Bezier_Up	Bezier_Up
+106702	Bezier_Down	Bezier_Down
+106747	Conic_To	Conic_To
+106916	Cubic_To	Cubic_To
+107102	Sort	Sort
+107169	Line_Up	Line_Up
+107366	Line_To	Line_To
+107568	Render_Single_Pass	Render_Single_Pass
+108621	gray_hline	gray_hline
+108745	gray_convert_glyph_inner	gray_convert_glyph_inner
+108837	gray_convert_glyph	gray_convert_glyph
+109636	t42_is_space	t42_is_space
+109668	_Z4CrapIN8hb_set_t6page_tEERT_v	hb_set_t::page_t& Crap<hb_set_t::page_t>()
+109702	_ZL40arabic_fallback_synthesize_lookup_singlePK18hb_ot_shape_plan_tP9hb_font_tj_isra_51	arabic_fallback_synthesize_lookup_single(hb_ot_shape_plan_t const*, hb_font_t*, unsigned int)
+110772	_ZL42arabic_fallback_synthesize_lookup_ligaturePK18hb_ot_shape_plan_tP9hb_font_t_isra_47	arabic_fallback_synthesize_lookup_ligature(hb_ot_shape_plan_t const*, hb_font_t*)
+111203	_Z4CrapIN8hb_set_t6page_tEERT_v_0	hb_set_t::page_t& Crap<hb_set_t::page_t>()
+111221	_Z4CrapIN8hb_set_t6page_tEERT_v_1	hb_set_t::page_t& Crap<hb_set_t::page_t>()
+111290	_ZL14apply_backwardPN2OT21hb_ot_apply_context_tERK33hb_ot_layout_lookup_accelerator_tRK9hb_auto_tI11hb_vector_tIN26hb_get_subtables_context_t15hb_applicable_tELj8EEE	apply_backward(OT::hb_ot_apply_context_t*, hb_ot_layout_lookup_accelerator_t const&, hb_auto_t<hb_vector_t<hb_get_subtables_context_t::hb_applicable_t, 8u> > const&)
+112304	err_syntax	err_syntax
+112320	err_limit_isra_26	err_limit_isra_26
+112348	strscan_double	strscan_double
+112404	strscan_dec	strscan_dec
+112945	mcode_protfail	mcode_protfail
+112984	cconv_err_initov_isra_6	cconv_err_initov_isra_6
+113008	clib_error_	clib_error_
+113114	expect100	expect100
+113177	setup_range	setup_range
+113239	fix_hostname_isra_4	fix_hostname_isra_4
+113288	IsPipeliningPossible_isra_5	IsPipeliningPossible_isra_5
+113343	start	start
+113365	call_gmon_start	call_gmon_start
+113384	deregister_tm_clones	deregister_tm_clones
+113413	register_tm_clones	register_tm_clones
+113447	__do_global_dtors_aux	__do_global_dtors_aux
+113467	frame_dummy	frame_dummy
+114803	_Z34ix86_override_options_after_changev	ix86_override_options_after_change()
+114906	_Z34ix86_override_options_after_changev_0	ix86_override_options_after_change()
+116049	_Z34ix86_override_options_after_changev_1	ix86_override_options_after_change()
+116572	_Z34ix86_override_options_after_changev_2	ix86_override_options_after_change()
+116593	sendraw	sendraw
+116670	_Z10HashStringIcEmPKT_	unsigned long HashString<char>(char const*)
+117671	recvraw	recvraw
+119586	_Z10SampleTimeR8timespec	SampleTime(timespec&)
+119602	_Z10Difference8timespec	Difference(timespec)
+119631	_Z12LuaDebugNamePKc	LuaDebugName(char const*)
+119647	_Z12SortSubnodesP13CallstackData	SortSubnodes(CallstackData*)
+119981	_Z13AddUpSubnodesP13CallstackData	AddUpSubnodes(CallstackData*)
+120362	_Z12profileCleanv	profileClean()
+120671	_Z14swapEndiannessRi	swapEndianness(int&)
+123638	_Z13PrintSubnodesP13CallstackDataRSs	PrintSubnodes(CallstackData*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&)
+123887	_Z9serializeRSsRSt6vectorIP13ProfileResultSaIS2_EE	serialize(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::vector<ProfileResult*, std::allocator<ProfileResult*> >&)
+124363	_Z9serializeRSsP13CallstackData	serialize(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, CallstackData*)
+124954	_Z14SerizalizeTypeib_constprop_186	SerizalizeType(int, bool)
+125479	_Z14SerizalizeTypeib	SerizalizeType(int, bool)
+126189	_Z18collectProfileDatav	collectProfileData()
+127363	_Z12debugTCPLoopP9lua_DebugPKc	debugTCPLoop(lua_Debug*, char const*)
+130392	_Z15mainloopTCPLoopv	mainloopTCPLoop()
+132226	_Z16serializeThreadsRSsRSt6vectorIP13ProfileResultSaIS2_EE	serializeThreads(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::vector<ProfileResult*, std::allocator<ProfileResult*> >&)
+137868	_GLOBAL__sub_I__Z10SampleTimeR8timespec	_GLOBAL__sub_I__Z10SampleTimeR8timespec
+138513	_Z34ix86_override_options_after_changev_3	ix86_override_options_after_change()
+144139	_Z34ix86_override_options_after_changev_4	ix86_override_options_after_change()
+144387	_Z34ix86_override_options_after_changev_5	ix86_override_options_after_change()
+144410	_Z9getGPUMemv	getGPUMem()
+144468	_Z13getProcessMemv	getProcessMem()
+144484	_Z12GetTickCountv	GetTickCount()
+148744	_GLOBAL__sub_I_lastFrameTime	_GLOBAL__sub_I_lastFrameTime
+149503	_Z6FindIdRSt4listIP11TGAnimationSaIS1_EERK3TId	FindId(std::list<TGAnimation*, std::allocator<TGAnimation*> >&, TId const&)
+149578	_Z9FindIdObjRSt4listIP11TGAnimationSaIS1_EERK3TId	FindIdObj(std::list<TGAnimation*, std::allocator<TGAnimation*> >&, TId const&)
+159161	_GLOBAL__sub_I_defaultShader	_GLOBAL__sub_I_defaultShader
+159333	_Z34ix86_override_options_after_changev_6	ix86_override_options_after_change()
+165534	_GLOBAL__sub_I__ZN10TMSavegame17s_strSaveGamePathE	_GLOBAL__sub_I__ZN10TMSavegame17s_strSaveGamePathE
+166412	_Z34ix86_override_options_after_changev_7	ix86_override_options_after_change()
+175226	_GLOBAL__sub_I__ZN7TGScene19LuaLightmapCallbackE	_GLOBAL__sub_I__ZN7TGScene19LuaLightmapCallbackE
+176320	_Z6mirrori	mirror(int)
+176344	_Z4diffii	diff(int, int)
+186981	_GLOBAL__sub_I_failedPoint	_GLOBAL__sub_I_failedPoint
+187171	_Z34ix86_override_options_after_changev_8	ix86_override_options_after_change()
+190255	_Z34ix86_override_options_after_changev_9	ix86_override_options_after_change()
+194708	_GLOBAL__sub_I__ZN4Geni9LogFilter7_dupmsgE	_GLOBAL__sub_I__ZN4Geni9LogFilter7_dupmsgE
+212468	_GLOBAL__sub_I__ZN8TGAction14RunningActionsE	_GLOBAL__sub_I__ZN8TGAction14RunningActionsE
+217420	_GLOBAL__sub_I__ZN6TGText15s_vRunningTextsE	_GLOBAL__sub_I__ZN6TGText15s_vRunningTextsE
+218861	_Z34ix86_override_options_after_changev_10	ix86_override_options_after_change()
+219205	_Z34ix86_override_options_after_changev_11	ix86_override_options_after_change()
+219856	_Z34ix86_override_options_after_changev_12	ix86_override_options_after_change()
+220082	_Z34ix86_override_options_after_changev_13	ix86_override_options_after_change()
+223394	_Z34ix86_override_options_after_changev_14	ix86_override_options_after_change()
+246877	_GLOBAL__sub_I__ZN4Geni6DBconn11_dbpoollockE	_GLOBAL__sub_I__ZN4Geni6DBconn11_dbpoollockE
+247215	_Z34ix86_override_options_after_changev_15	ix86_override_options_after_change()
+247302	_Z34ix86_override_options_after_changev_16	ix86_override_options_after_change()
+247392	_Z14PointInPolygoniiRSt6vectorI7wxPointSaIS0_EE	PointInPolygon(int, int, std::vector<wxPoint, std::allocator<wxPoint> >&)
+247731	_Z18PointInPolygonListiiR12TPolygonList	PointInPolygonList(int, int, TPolygonList&)
+247863	_Z16LineInPolygonSetddddR12TPolygonList	LineInPolygonSet(double, double, double, double, TPolygonList&)
+248161	_Z8calcDistdddd	calcDist(double, double, double, double)
+248191	_Z3dotRK5pointS1_	dot(point const&, point const&)
+248210	_Z6_pointN3p2t5PointE	_point(p2t::Point)
+248241	_Z21closesPointOnTrianglePN3p2t5PointES1_S1_RK7wxPoint	closesPointOnTriangle(p2t::Point*, p2t::Point*, p2t::Point*, wxPoint const&)
+248616	_Z3LenRN3p2t5PointE	Len(p2t::Point&)
+248646	_Z9NormalizeRN3p2t5PointEd	Normalize(p2t::Point&, double)
+248667	_Z8DistanceRKN3p2t5PointES2_	Distance(p2t::Point const&, p2t::Point const&)
+248703	_Z17LinePointDistanceRKN3p2t5PointES2_S2_	LinePointDistance(p2t::Point const&, p2t::Point const&, p2t::Point const&)
+248830	_Z14LinePointPointRKN3p2t5PointES2_S2_	LinePointPoint(p2t::Point const&, p2t::Point const&, p2t::Point const&)
+248964	_Z23PointInTriangleTolerantRN3p2t8TriangleERK7wxPoint	PointInTriangleTolerant(p2t::Triangle&, wxPoint const&)
+249196	_Z29circleLineSegmentIntersectionRKN3glm5tvec2IfLNS_9precisionE0EEES4_S4_dRS2_S5_	circleLineSegmentIntersection(glm::tvec2<float, (glm::precision)0> const&, glm::tvec2<float, (glm::precision)0> const&, glm::tvec2<float, (glm::precision)0> const&, double, glm::tvec2<float, (glm::precision)0>&, glm::tvec2<float, (glm::precision)0>&)
+249467	_Z6toVec2PN3p2t5PointE	toVec2(p2t::Point*)
+249488	_Z6toVec2RK7wxPoint	toVec2(wxPoint const&)
+249507	_Z9angleDistii	angleDist(int, int)
+251746	_Z12shortestPathddddR12TPolygonListRSt6vectorI7wxPointSaIS2_EE	shortestPath(double, double, double, double, TPolygonList&, std::vector<wxPoint, std::allocator<wxPoint> >&)
+256618	_Z7argsortIN9__gnu_cxx17__normal_iteratorIPiSt6vectorIiSaIiEEEEEvT_S7_RS3_ImSaImEE	void argsort<__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > > >(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, __gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, std::vector<unsigned long, std::allocator<unsigned long> >&)
+256924	_GLOBAL__sub_I__ZN11TGWaySystem17destinationForCmpE	_GLOBAL__sub_I__ZN11TGWaySystem17destinationForCmpE
+258136	_Z34ix86_override_options_after_changev_17	ix86_override_options_after_change()
+259706	_Z34ix86_override_options_after_changev_18	ix86_override_options_after_change()
+260120	_Z34ix86_override_options_after_changev_19	ix86_override_options_after_change()
+260645	_Z34ix86_override_options_after_changev_20	ix86_override_options_after_change()
+261299	_Z34ix86_override_options_after_changev_21	ix86_override_options_after_change()
+261646	_Z34ix86_override_options_after_changev_22	ix86_override_options_after_change()
+261667	Lpcre_version	Lpcre_version
+261687	do_named_subpatterns	do_named_subpatterns
+261799	compile_regex_0	compile_regex_0
+262025	check_subject_part_6	check_subject_part_6
+262116	Lpcre_maketables	Lpcre_maketables
+262154	Lpcre_tostring	Lpcre_tostring
+262225	Lpcre_gc	Lpcre_gc
+262299	algf_new	algf_new
+262515	chartables_tostring	chartables_tostring
+262588	chartables_gc	chartables_gc
+262661	finish_generic_find_isra_11	finish_generic_find_isra_11
+262853	Lpcre_dfa_exec	Lpcre_dfa_exec
+263105	generic_find_method	generic_find_method
+263492	algm_match	algm_match
+263505	algm_find	algm_find
+263518	algm_tfind	algm_tfind
+263531	algm_exec	algm_exec
+263544	gmatch_iter	gmatch_iter
+263760	checkarg_gmatch_split	checkarg_gmatch_split
+264061	algf_split	algf_split
+264125	algf_gmatch	algf_gmatch
+264189	generic_find_func	generic_find_func
+264573	algf_find	algf_find
+264586	algf_match	algf_match
+264599	algf_gsub	algf_gsub
+265691	split_iter	split_iter
+265928	luaopen_rex_pcre	luaopen_rex_pcre
+266104	_Z34ix86_override_options_after_changev_23	ix86_override_options_after_change()
+266125	lcurl_multi_init	lcurl_multi_init
+266164	lcurl_easy_init	lcurl_easy_init
+266212	lcurl_gc	lcurl_gc
+266239	setcurlerrors	setcurlerrors
+266932	lcurl_unescape	lcurl_unescape
+266986	lcurl_escape	lcurl_escape
+267040	get_slist_constprop_24	get_slist_constprop_24
+267127	lcurlm_multi_perform	lcurlm_multi_perform
+267224	lcurl_easy_getinfo	lcurl_easy_getinfo
+267446	lcurlm_gc	lcurlm_gc
+267493	lcurlm_info	lcurlm_info
+267614	lcurl_easy_perform	lcurl_easy_perform
+267696	lcurl_easy_close	lcurl_easy_close
+267996	ioctlCallback	ioctlCallback
+268116	readerCallback	readerCallback
+268284	progressCallback	progressCallback
+268414	headerCallback	headerCallback
+268555	writerCallback	writerCallback
+268696	lcurl_easy_setopt	lcurl_easy_setopt
+270691	luaopen_luacurl	luaopen_luacurl
+272971	lcurlm_multi_add_handle	lcurlm_multi_add_handle
+273154	_Z34ix86_override_options_after_changev_24	ix86_override_options_after_change()
+273177	_Z34ix86_override_options_after_changev_25	ix86_override_options_after_change()
+273199	get_int_field	get_int_field
+273234	set_int_field	set_int_field
+273264	Lmalloc	Lmalloc
+273313	get_flags	get_flags
+273397	get_flag_key	get_flag_key
+273436	freelist_init	freelist_init
+273451	freelist_add	freelist_add
+273469	freelist_free	freelist_free
+273516	buffer_free	buffer_free
+273545	buffer_clear	buffer_clear
+273560	buffer_pushresult	buffer_pushresult
+273578	buffer_addbuffer	buffer_addbuffer
+273698	buffer_addlstring	buffer_addlstring
+273818	buffer_addvalue	buffer_addvalue
+273943	bufferZ_addlstring	bufferZ_addlstring
+274208	bufferZ_addnum	bufferZ_addnum
+274321	bufferZ_putrepstring	bufferZ_putrepstring
+275012	bufferZ_next	bufferZ_next
+275064	_Z34ix86_override_options_after_changev_26	ix86_override_options_after_change()
+275087	_Z34ix86_override_options_after_changev_27	ix86_override_options_after_change()
+275108	push_st_blksize	push_st_blksize
+275121	push_st_blocks	push_st_blocks
+275134	push_st_size	push_st_size
+275147	push_st_ctime	push_st_ctime
+275160	push_st_mtime	push_st_mtime
+275173	push_st_atime	push_st_atime
+275186	push_st_rdev	push_st_rdev
+275199	push_st_gid	push_st_gid
+275212	push_st_uid	push_st_uid
+275225	push_st_nlink	push_st_nlink
+275238	push_st_ino	push_st_ino
+275251	push_st_dev	push_st_dev
+275264	push_st_perm	push_st_perm
+275330	push_st_mode	push_st_mode
+275400	_file_info_	_file_info_
+275541	link_info	link_info
+275554	file_info	file_info
+275567	dir_iter_factory	dir_iter_factory
+275636	dir_iter	dir_iter
+275696	change_dir	change_dir
+275747	dir_close	dir_close
+275777	lfs_unlock_dir	lfs_unlock_dir
+275806	lfs_lock_dir	lfs_lock_dir
+275909	file_utime	file_utime
+275981	remove_dir	remove_dir
+276024	make_dir	make_dir
+276068	get_dir	get_dir
+276110	make_link	make_link
+276181	lfs_f_setmode	lfs_f_setmode
+276225	file_lock	file_lock
+276362	file_unlock	file_unlock
+276453	luaopen_lfs	luaopen_lfs
+276570	_Z34ix86_override_options_after_changev_28	ix86_override_options_after_change()
+276592	luaopen_luasql_mysql	luaopen_luasql_mysql
+276607	_Z34ix86_override_options_after_changev_29	ix86_override_options_after_change()
+276628	luasql_tostring	luasql_tostring
+276683	luasql_faildirect	luasql_faildirect
+276720	luasql_failmsg	luasql_failmsg
+276764	luasql_createmeta	luasql_createmeta
+276840	luasql_setmeta	luasql_setmeta
+276861	luasql_set_info	luasql_set_info
+276909	_Z34ix86_override_options_after_changev_30	ix86_override_options_after_change()
+276931	Lpcre_config	Lpcre_config
+277006	Lpcre_get_flags	Lpcre_get_flags
+277033	_Z34ix86_override_options_after_changev_31	ix86_override_options_after_change()
+277054	Lutf8_gmatch	Lutf8_gmatch
+277087	Lutf8_codes	Lutf8_codes
+277116	utf8_decode_part_0	utf8_decode_part_0
+277245	Lutf8_reverse	Lutf8_reverse
+277334	Lutf8_insert	Lutf8_insert
+277537	Lutf8_codepoint	Lutf8_codepoint
+277696	push_offset	push_offset
+277842	Lutf8_next	Lutf8_next
+277917	Lutf8_charpos	Lutf8_charpos
+278035	Lutf8_offset	Lutf8_offset
+278056	utf8_tolower	utf8_tolower
+278113	Lutf8_ncasecmp	Lutf8_ncasecmp
+278329	utf8_toupper	utf8_toupper
+278386	utf8_totitle	utf8_totitle
+278443	utf8_tofold	utf8_tofold
+278500	classend_isra_5	classend_isra_5
+278626	push_captures	push_captures
+278825	Lutf8_char	Lutf8_char
+278966	Lutf8_escape	Lutf8_escape
+279381	convert_part_7	convert_part_7
+279550	Lutf8_upper	Lutf8_upper
+279648	u_posrange	u_posrange
+279869	Lutf8_byte	Lutf8_byte
+279964	Lutf8_remove	Lutf8_remove
+280046	Lutf8_sub	Lutf8_sub
+280109	match_class	match_class
+280687	matchbracketclass	matchbracketclass
+280827	match	match
+281697	gmatch_aux	gmatch_aux
+281810	Lutf8_title	Lutf8_title
+281908	Lutf8_fold	Lutf8_fold
+282006	Lutf8_lower	Lutf8_lower
+282104	Lutf8_widthindex	Lutf8_widthindex
+282403	Lutf8_width	Lutf8_width
+282858	Lutf8_len	Lutf8_len
+282985	Lutf8_gsub	Lutf8_gsub
+283798	find_aux	find_aux
+284392	Lutf8_match	Lutf8_match
+284405	Lutf8_find	Lutf8_find
+284419	luaopen_utf8	luaopen_utf8
+284460	_Z34ix86_override_options_after_changev_32	ix86_override_options_after_change()
+284483	_Z14steam_newindexP9lua_State	steam_newindex(lua_State*)
+284499	_Z14steam_gamelangP9lua_State	steam_gamelang(lua_State*)
+284539	_Z23steam_activateActionSetP9lua_State	steam_activateActionSet(lua_State*)
+284657	_Z15galaxy_gamelangP9lua_State	galaxy_gamelang(lua_State*)
+284719	_Z19galaxy_dlcInstalledP9lua_State	galaxy_dlcInstalled(lua_State*)
+284819	_Z22steam_showBindingPanelP9lua_State	steam_showBindingPanel(lua_State*)
+284904	_Z26steam_getDigitalActionDataP9lua_State	steam_getDigitalActionData(lua_State*)
+285033	_Z18steam_dlcInstalledP9lua_State	steam_dlcInstalled(lua_State*)
+285110	_Z22steam_hasLicenseForAppP9lua_State	steam_hasLicenseForApp(lua_State*)
+285192	_Z34steam_getGamepadIndexForControllerP9lua_State	steam_getGamepadIndexForController(lua_State*)
+285277	_Z29steam_getDigitalActionOriginsP9lua_State	steam_getDigitalActionOrigins(lua_State*)
+285475	_Z28steam_getAnalogActionOriginsP9lua_State	steam_getAnalogActionOrigins(lua_State*)
+285673	_Z19steam_getMotionDataP9lua_State	steam_getMotionData(lua_State*)
+285788	_Z25steam_getAnalogActionDataP9lua_State	steam_getAnalogActionData(lua_State*)
+285945	_Z30steam_getStringForActionOriginP9lua_State	steam_getStringForActionOrigin(lua_State*)
+285996	_Z29steam_getGlyphForActionOriginP9lua_State	steam_getGlyphForActionOrigin(lua_State*)
+286047	_Z34steam_getControllerForGamepadIndexP9lua_State	steam_getControllerForGamepadIndex(lua_State*)
+286098	_Z15system_newindexP9lua_State	system_newindex(lua_State*)
+286245	_Z22system_resumeAllSoundsP9lua_State	system_resumeAllSounds(lua_State*)
+286288	_Z28system_resumeBackgroundMusicP9lua_State	system_resumeBackgroundMusic(lua_State*)
+286313	_Z21system_pauseAllSoundsP9lua_State	system_pauseAllSounds(lua_State*)
+286356	_Z27system_pauseBackgroundMusicP9lua_State	system_pauseBackgroundMusic(lua_State*)
+286381	_Z26system_resumeAllAnimationsP9lua_State	system_resumeAllAnimations(lua_State*)
+286416	_Z29system_pauseCurrentAnimationsP9lua_State	system_pauseCurrentAnimations(lua_State*)
+286451	_Z23system_resumeAllActionsP9lua_State	system_resumeAllActions(lua_State*)
+286486	_Z26system_pauseCurrentActionsP9lua_State	system_pauseCurrentActions(lua_State*)
+286522	_Z22system_controllercountP9lua_State	system_controllercount(lua_State*)
+286573	_Z21system_controllernameP9lua_State	system_controllername(lua_State*)
+286649	_Z23system_controllerisgameP9lua_State	system_controllerisgame(lua_State*)
+286676	_Z21system_controllerguidP9lua_State	system_controllerguid(lua_State*)
+286753	_Z20system_joystickcountP9lua_State	system_joystickcount(lua_State*)
+286777	_Z17system_systemInfoP9lua_State	system_systemInfo(lua_State*)
+286859	_Z20steam_getControllersP9lua_State	steam_getControllers(lua_State*)
+287051	_Z22system_getDisplayModesP9lua_State	system_getDisplayModes(lua_State*)
+287269	_Z11steam_indexP9lua_State	steam_index(lua_State*)
+287477	_Z25steam_getCurrentActionSetP9lua_State	steam_getCurrentActionSet(lua_State*)
+287677	_Z28steam_getDigitalActionHandleP9lua_State	steam_getDigitalActionHandle(lua_State*)
+287844	_Z27steam_getAnalogActionHandleP9lua_State	steam_getAnalogActionHandle(lua_State*)
+288011	_Z24steam_getActionSetHandleP9lua_State	steam_getActionSetHandle(lua_State*)
+288178	_Z12system_indexP9lua_State	system_index(lua_State*)
+288624	_Z8LuaTracev	LuaTrace()
+288692	_Z11parseUInt64PKc	parseUInt64(char const*)
+289115	_GLOBAL__sub_I__Z8LuaTracev	_GLOBAL__sub_I__Z8LuaTracev
+388720	_Z10luaopen_b2P9lua_State	luaopen_b2(lua_State*)
+388766	_Z34ix86_override_options_after_changev_33	ix86_override_options_after_change()
+398250	_Z24CmdStartAction_GetSyntaxR10TArgSyntax	CmdStartAction_GetSyntax(TArgSyntax&)
+398367	_Z23CmdStopAction_GetSyntaxR10TArgSyntax	CmdStopAction_GetSyntax(TArgSyntax&)
+398480	_Z27CmdStartAnimation_GetSyntaxR10TArgSyntax	CmdStartAnimation_GetSyntax(TArgSyntax&)
+398605	_Z26CmdStopAnimation_GetSyntaxR10TArgSyntax	CmdStopAnimation_GetSyntax(TArgSyntax&)
+398718	_Z22CmdGetVolume_GetSyntaxR10TArgSyntax	CmdGetVolume_GetSyntax(TArgSyntax&)
+398839	_Z22CmdSetVolume_GetSyntaxR10TArgSyntax	CmdSetVolume_GetSyntax(TArgSyntax&)
+398956	_Z25CmdGetCursorPos_GetSyntaxR10TArgSyntax	CmdGetCursorPos_GetSyntax(TArgSyntax&)
+399096	_Z25CmdSetCursorPos_GetSyntaxR10TArgSyntax	CmdSetCursorPos_GetSyntax(TArgSyntax&)
+399244	_Z29CmdCreateScreenshot_GetSyntaxR10TArgSyntax	CmdCreateScreenshot_GetSyntax(TArgSyntax&)
+399908	_Z33CmdRegisterEventHandler_GetSyntaxR10TArgSyntax	CmdRegisterEventHandler_GetSyntax(TArgSyntax&)
+400077	_Z35CmdUnregisterEventHandler_GetSyntaxR10TArgSyntax	CmdUnregisterEventHandler_GetSyntax(TArgSyntax&)
+400229	_Z33CmdRegisterHookFunction_GetSyntaxR10TArgSyntax	CmdRegisterHookFunction_GetSyntax(TArgSyntax&)
+400350	_Z27CmdInitGameClient_GetSyntaxR10TArgSyntax	CmdInitGameClient_GetSyntax(TArgSyntax&)
+400502	_Z30CmdGetGameClientStat_GetSyntaxR10TArgSyntax	CmdGetGameClientStat_GetSyntax(TArgSyntax&)
+400646	_Z30CmdSetGameClientStat_GetSyntaxR10TArgSyntax	CmdSetGameClientStat_GetSyntax(TArgSyntax&)
+400798	_Z33CmdResetGameClientStats_GetSyntaxR10TArgSyntax	CmdResetGameClientStats_GetSyntax(TArgSyntax&)
+400943	_Z37CmdGetGameClientAchievement_GetSyntaxR10TArgSyntax	CmdGetGameClientAchievement_GetSyntax(TArgSyntax&)
+401087	_Z37CmdSetGameClientAchievement_GetSyntaxR10TArgSyntax	CmdSetGameClientAchievement_GetSyntax(TArgSyntax&)
+401329	_Z32CmdStartDefaultBrowser_GetSyntaxR10TArgSyntax	CmdStartDefaultBrowser_GetSyntax(TArgSyntax&)
+401477	_Z24CmdGetProperty_GetSyntaxR10TArgSyntax	CmdGetProperty_GetSyntax(TArgSyntax&)
+401646	_Z23CmdStartSound_GetSyntaxR10TArgSyntax	CmdStartSound_GetSyntax(TArgSyntax&)
+402185	_Z22CmdStopSound_GetSyntaxR10TArgSyntax	CmdStopSound_GetSyntax(TArgSyntax&)
+402333	_Z23CmdGetSoundId_GetSyntaxR10TArgSyntax	CmdGetSoundId_GetSyntax(TArgSyntax&)
+402481	_Z29CmdGetSoundProperty_GetSyntaxR10TArgSyntax	CmdGetSoundProperty_GetSyntax(TArgSyntax&)
+402637	_Z29CmdSetSoundProperty_GetSyntaxR10TArgSyntax	CmdSetSoundProperty_GetSyntax(TArgSyntax&)
+403171	_Z29CmdToggleSoundPause_GetSyntaxR10TArgSyntax	CmdToggleSoundPause_GetSyntax(TArgSyntax&)
+403319	_Z27CmdSetWindowTitle_GetSyntaxR10TArgSyntax	CmdSetWindowTitle_GetSyntax(TArgSyntax&)
+403467	_Z32CmdGetWindowBrightness_GetSyntaxR10TArgSyntax	CmdGetWindowBrightness_GetSyntax(TArgSyntax&)
+403599	_Z32CmdSetWindowBrightness_GetSyntaxR10TArgSyntax	CmdSetWindowBrightness_GetSyntax(TArgSyntax&)
+403743	_Z24CmdReplaceGame_GetSyntaxR10TArgSyntax	CmdReplaceGame_GetSyntax(TArgSyntax&)
+403887	_Z23CmdStartTween_GetSyntaxR10TArgSyntax	CmdStartTween_GetSyntax(TArgSyntax&)
+404087	_Z29CmdStartObjectTween_GetSyntaxR10TArgSyntax	CmdStartObjectTween_GetSyntax(TArgSyntax&)
+404287	_Z26CmdShaderCompile_GetSyntaxR10TArgSyntax	CmdShaderCompile_GetSyntax(TArgSyntax&)
+404439	_Z29CmdShaderSetOptions_GetSyntaxR10TArgSyntax	CmdShaderSetOptions_GetSyntax(TArgSyntax&)
+404595	_Z14CompositeEnumsi	CompositeEnums(int)
+404616	_Z26CmdShaderUniform_GetSyntaxR10TArgSyntax	CmdShaderUniform_GetSyntax(TArgSyntax&)
+404777	_Z33CmdIsPointInsidePolygon_GetSyntaxR10TArgSyntax	CmdIsPointInsidePolygon_GetSyntax(TArgSyntax&)
+404929	_Z29CmdToggleWindowMode_GetSyntaxR10TArgSyntax	CmdToggleWindowMode_GetSyntax(TArgSyntax&)
+405066	_Z26CmdGetWindowMode_GetSyntaxR10TArgSyntax	CmdGetWindowMode_GetSyntax(TArgSyntax&)
+405198	_Z26CmdSetWindowSize_GetSyntaxR10TArgSyntax	CmdSetWindowSize_GetSyntax(TArgSyntax&)
+405342	_Z30CmdStartHapticRumble_GetSyntaxR10TArgSyntax	CmdStartHapticRumble_GetSyntax(TArgSyntax&)
+405498	_Z29CmdStopHapticRumble_GetSyntaxR10TArgSyntax	CmdStopHapticRumble_GetSyntax(TArgSyntax&)
+405638	_Z30CmdStartHapticEffect_GetSyntaxR10TArgSyntax	CmdStartHapticEffect_GetSyntax(TArgSyntax&)
+405786	_Z29CmdStopHapticEffect_GetSyntaxR10TArgSyntax	CmdStopHapticEffect_GetSyntax(TArgSyntax&)
+405934	_Z39CmdCreateHapticEffectConstant_GetSyntaxR10TArgSyntax	CmdCreateHapticEffectConstant_GetSyntax(TArgSyntax&)
+406170	_Z39CmdCreateHapticEffectPeriodic_GetSyntaxR10TArgSyntax	CmdCreateHapticEffectPeriodic_GetSyntax(TArgSyntax&)
+406430	_Z40CmdCreateHapticEffectCondition_GetSyntaxR10TArgSyntax	CmdCreateHapticEffectCondition_GetSyntax(TArgSyntax&)
+406642	_Z35CmdCreateHapticEffectRamp_GetSyntaxR10TArgSyntax	CmdCreateHapticEffectRamp_GetSyntax(TArgSyntax&)
+406887	_Z40CmdCreateHapticEffectLeftRight_GetSyntaxR10TArgSyntax	CmdCreateHapticEffectLeftRight_GetSyntax(TArgSyntax&)
+407059	_Z24CmdCreateEvent_GetSyntaxR10TArgSyntax	CmdCreateEvent_GetSyntax(TArgSyntax&)
+407231	_Z19ClosePlayerCommandsv	ClosePlayerCommands()
+408978	_Z11CmdVisObjToP9lua_State	CmdVisObjTo(lua_State*)
+420914	_Z23Register_CmdCreateEventv	Register_CmdCreateEvent()
+420998	_Z39Register_CmdCreateHapticEffectLeftRightv	Register_CmdCreateHapticEffectLeftRight()
+421083	_Z34Register_CmdCreateHapticEffectRampv	Register_CmdCreateHapticEffectRamp()
+421168	_Z39Register_CmdCreateHapticEffectConditionv	Register_CmdCreateHapticEffectCondition()
+421253	_Z38Register_CmdCreateHapticEffectPeriodicv	Register_CmdCreateHapticEffectPeriodic()
+421338	_Z38Register_CmdCreateHapticEffectConstantv	Register_CmdCreateHapticEffectConstant()
+421423	_Z28Register_CmdStopHapticEffectv	Register_CmdStopHapticEffect()
+421508	_Z29Register_CmdStartHapticEffectv	Register_CmdStartHapticEffect()
+421593	_Z28Register_CmdStopHapticRumblev	Register_CmdStopHapticRumble()
+421678	_Z29Register_CmdStartHapticRumblev	Register_CmdStartHapticRumble()
+421763	_Z25Register_CmdSetWindowSizev	Register_CmdSetWindowSize()
+421848	_Z25Register_CmdGetWindowModev	Register_CmdGetWindowMode()
+421933	_Z28Register_CmdToggleWindowModev	Register_CmdToggleWindowMode()
+422018	_Z32Register_CmdIsPointInsidePolygonv	Register_CmdIsPointInsidePolygon()
+422103	_Z28Register_CmdShaderSetOptionsv	Register_CmdShaderSetOptions()
+422188	_Z25Register_CmdShaderUniformv	Register_CmdShaderUniform()
+422273	_Z25Register_CmdShaderCompilev	Register_CmdShaderCompile()
+422358	_Z28Register_CmdStartObjectTweenv	Register_CmdStartObjectTween()
+422443	_Z22Register_CmdStartTweenv	Register_CmdStartTween()
+422527	_Z23Register_CmdReplaceGamev	Register_CmdReplaceGame()
+422611	_Z31Register_CmdSetWindowBrightnessv	Register_CmdSetWindowBrightness()
+422696	_Z31Register_CmdGetWindowBrightnessv	Register_CmdGetWindowBrightness()
+422781	_Z26Register_CmdSetWindowTitlev	Register_CmdSetWindowTitle()
+422866	_Z28Register_CmdToggleSoundPausev	Register_CmdToggleSoundPause()
+422951	_Z28Register_CmdSetSoundPropertyv	Register_CmdSetSoundProperty()
+423036	_Z28Register_CmdGetSoundPropertyv	Register_CmdGetSoundProperty()
+423121	_Z22Register_CmdGetSoundIdv	Register_CmdGetSoundId()
+423205	_Z21Register_CmdStopSoundv	Register_CmdStopSound()
+423289	_Z22Register_CmdStartSoundv	Register_CmdStartSound()
+423373	_Z23Register_CmdGetPropertyv	Register_CmdGetProperty()
+423457	_Z31Register_CmdStartDefaultBrowserv	Register_CmdStartDefaultBrowser()
+423542	_Z36Register_CmdSetGameClientAchievementv	Register_CmdSetGameClientAchievement()
+423627	_Z36Register_CmdGetGameClientAchievementv	Register_CmdGetGameClientAchievement()
+423712	_Z32Register_CmdResetGameClientStatsv	Register_CmdResetGameClientStats()
+423797	_Z29Register_CmdSetGameClientStatv	Register_CmdSetGameClientStat()
+423882	_Z29Register_CmdGetGameClientStatv	Register_CmdGetGameClientStat()
+423967	_Z26Register_CmdInitGameClientv	Register_CmdInitGameClient()
+424052	_Z32Register_CmdRegisterHookFunctionv	Register_CmdRegisterHookFunction()
+424137	_Z34Register_CmdUnregisterEventHandlerv	Register_CmdUnregisterEventHandler()
+424222	_Z32Register_CmdRegisterEventHandlerv	Register_CmdRegisterEventHandler()
+424307	_Z28Register_CmdCreateScreenshotv	Register_CmdCreateScreenshot()
+424392	_Z24Register_CmdSetCursorPosv	Register_CmdSetCursorPos()
+424476	_Z24Register_CmdGetCursorPosv	Register_CmdGetCursorPos()
+424560	_Z21Register_CmdSetVolumev	Register_CmdSetVolume()
+424644	_Z21Register_CmdGetVolumev	Register_CmdGetVolume()
+424728	_Z25Register_CmdStopAnimationv	Register_CmdStopAnimation()
+424813	_Z26Register_CmdStartAnimationv	Register_CmdStartAnimation()
+424898	_Z22Register_CmdStopActionv	Register_CmdStopAction()
+424982	_Z23Register_CmdStartActionv	Register_CmdStartAction()
+425066	_Z18InitPlayerCommandsP15TVisionaireGameRK8wxStringS3_S3_	InitPlayerCommands(TVisionaireGame*, wxString const&, wxString const&, wxString const&)
+431769	_Z34ix86_override_options_after_changev_34	ix86_override_options_after_change()
+431792	_Z34ix86_override_options_after_changev_35	ix86_override_options_after_change()
+431814	_ZL6writerP9lua_StatePKvmPv	writer(lua_State*, void const*, unsigned long, void*)
+431833	_Z13TraverseTableiR10TVisObjRefR15TVisionaireGame	TraverseTable(int, TVisObjRef&, TVisionaireGame&)
+432803	_Z25SaveGlobalScriptVariablesR15TVisionaireGame	SaveGlobalScriptVariables(TVisionaireGame&)
+432858	_Z12TraverseListRK6TVListiR15TVisionaireGame	TraverseList(TVList const&, int, TVisionaireGame&)
+433397	_Z25LoadGlobalScriptVariablesR15TVisionaireGame	LoadGlobalScriptVariables(TVisionaireGame&)
+434041	_Z34ix86_override_options_after_changev_36	ix86_override_options_after_change()
+438436	_Z34ix86_override_options_after_changev_37	ix86_override_options_after_change()
+438459	_Z11graphics_gcP9lua_State	graphics_gc(lua_State*)
+438474	_ZL11sprite_callP9lua_State	sprite_call(lua_State*)
+438488	_ZL17graphics_newindexP9lua_State	graphics_newindex(lua_State*)
+438684	_ZL14graphics_clearP9lua_State	graphics_clear(lua_State*)
+438739	_ZL29graphics_getMatrix1PropertiesP9lua_State	graphics_getMatrix1Properties(lua_State*)
+438799	_ZL33graphics_getCharacterTextPositionP9lua_State	graphics_getCharacterTextPosition(lua_State*)
+438884	_ZL30graphics_getAnimationInnerSizeP9lua_State	graphics_getAnimationInnerSize(lua_State*)
+439030	_ZL25graphics_getAnimationSizeP9lua_State	graphics_getAnimationSize(lua_State*)
+439155	_ZL29graphics_getCurrentSpritePathP9lua_State	graphics_getCurrentSpritePath(lua_State*)
+439281	_ZL24graphics_bindFramebufferP9lua_State	graphics_bindFramebuffer(lua_State*)
+439301	_ZL21graphics_setupOffsetsP9lua_State	graphics_setupOffsets(lua_State*)
+439363	_ZL20graphics_drawIndexedP9lua_State	graphics_drawIndexed(lua_State*)
+439398	_ZL17graphics_drawLineP9lua_State	graphics_drawLine(lua_State*)
+439476	_ZL16graphics_drawBoxP9lua_State	graphics_drawBox(lua_State*)
+439554	_Z18graphics_shaderUseP9lua_State	graphics_shaderUse(lua_State*)
+439612	_ZL26graphics_createFramebufferP9lua_State	graphics_createFramebuffer(lua_State*)
+439671	_ZL26graphics_createIndexBufferP9lua_State	graphics_createIndexBuffer(lua_State*)
+439727	_ZL26graphics_getScrollPositionP9lua_State	graphics_getScrollPosition(lua_State*)
+439764	_ZL26graphics_setScrollPositionP9lua_State	graphics_setScrollPosition(lua_State*)
+439807	_Z18graphics_getAttribP9lua_State	graphics_getAttrib(lua_State*)
+439878	_ZL18graphics_fontColorP9lua_State	graphics_fontColor(lua_State*)
+439950	_ZL23graphics_fontLineHeightP9lua_State	graphics_fontLineHeight(lua_State*)
+439975	_ZL15graphics_noise2P9lua_State	graphics_noise2(lua_State*)
+440087	_ZL14graphics_noiseP9lua_State	graphics_noise(lua_State*)
+440152	_ZL21graphics_isUpsideDownP9lua_State	graphics_isUpsideDown(lua_State*)
+440172	_ZL10sprite_newP9lua_State	sprite_new(lua_State*)
+440228	_ZL18graphics_clipboardP9lua_State	graphics_clipboard(lua_State*)
+440260	_Z20graphics_box2DoffsetP9lua_State	graphics_box2Doffset(lua_State*)
+440333	_Z24graphics_lockAspectRatioP9lua_State	graphics_lockAspectRatio(lua_State*)
+440360	_ZL11movie_indexP9lua_State	movie_index(lua_State*)
+440499	_ZL12sprite_indexP9lua_State	sprite_index(lua_State*)
+440734	_Z23graphics_shaderCallbackP9lua_State	graphics_shaderCallback(lua_State*)
+440800	_ZL17graphics_box2dnewP9lua_State	graphics_box2dnew(lua_State*)
+440847	_ZL21graphics_openedVideosP9lua_State	graphics_openedVideos(lua_State*)
+441099	_ZL10movie_drawP9lua_State	movie_draw(lua_State*)
+441176	_ZL10movie_seekP9lua_State	movie_seek(lua_State*)
+441226	_ZL14movie_newindexP9lua_State	movie_newindex(lua_State*)
+441406	_ZL17movie_getDurationP9lua_State	movie_getDuration(lua_State*)
+441456	_ZL13movie_getTimeP9lua_State	movie_getTime(lua_State*)
+441505	_ZL11movie_pauseP9lua_State	movie_pause(lua_State*)
+441550	_ZL12movie_resumeP9lua_State	movie_resume(lua_State*)
+441595	_ZL31graphics_drawSpriteWithNineRectP9lua_State	graphics_drawSpriteWithNineRect(lua_State*)
+442254	_ZL15sprite_newindexP9lua_State	sprite_newindex(lua_State*)
+442482	_ZL12sprite_clearP9lua_State	sprite_clear(lua_State*)
+442527	_ZL19graphics_drawSpriteP9lua_State	graphics_drawSprite(lua_State*)
+442644	_ZL11buffer_bindP9lua_State	buffer_bind(lua_State*)
+442690	_ZL9buffer_gcP9lua_State	buffer_gc(lua_State*)
+442740	_ZL9sprite_gcP9lua_State	sprite_gc(lua_State*)
+442790	_ZL16framebuffer_bindP9lua_State	framebuffer_bind(lua_State*)
+442837	_ZL14framebuffer_gcP9lua_State	framebuffer_gc(lua_State*)
+442889	_Z27graphics_shaderDrawCallbackP9lua_State	graphics_shaderDrawCallback(lua_State*)
+442956	_Z25graphics_lightmapCallbackP9lua_State	graphics_lightmapCallback(lua_State*)
+442984	_ZL23graphics_loadMemoryWEBPP9lua_State	graphics_loadMemoryWEBP(lua_State*)
+443087	_ZL23graphics_removeDrawFuncP9lua_State	graphics_removeDrawFunc(lua_State*)
+443383	_ZL13buffer_updateP9lua_State	buffer_update(lua_State*)
+443504	_ZL21graphics_createBufferP9lua_State	graphics_createBuffer(lua_State*)
+443560	_ZL22graphics_loadMemoryJPGP9lua_State	graphics_loadMemoryJPG(lua_State*)
+443741	_ZL22graphics_loadMemoryPNGP9lua_State	graphics_loadMemoryPNG(lua_State*)
+443885	_ZL18graphics_evalTweenP9lua_State	graphics_evalTween(lua_State*)
+445082	_ZL12movie_finishP9lua_State	movie_finish(lua_State*)
+445231	_ZL8movie_gcP9lua_State	movie_gc(lua_State*)
+445380	_ZL22graphics_drawAnimationP9lua_State	graphics_drawAnimation(lua_State*)
+445502	_ZL29graphics_instantiateAnimationP9lua_State	graphics_instantiateAnimation(lua_State*)
+445659	_ZL22graphics_fontDimensionP9lua_State	graphics_fontDimension(lua_State*)
+445742	_ZL17graphics_drawFontP9lua_State	graphics_drawFont(lua_State*)
+445852	_Z22graphics_shaderUniformP9lua_State	graphics_shaderUniform(lua_State*)
+446320	_ZL18graphics_movieOpenP9lua_State	graphics_movieOpen(lua_State*)
+447048	_ZL21graphics_loadFromFileP9lua_State	graphics_loadFromFile(lua_State*)
+447358	_Z18editor_FieldByNameP9lua_State	editor_FieldByName(lua_State*)
+447375	_Z18editor_FieldsForIdP9lua_State	editor_FieldsForId(lua_State*)
+447392	_Z17editor_FieldForIdP9lua_State	editor_FieldForId(lua_State*)
+447409	_Z21editor_FieldsOfVisObjP9lua_State	editor_FieldsOfVisObj(lua_State*)
+447426	_Z9transformff	transform(float, float)
+447452	_Z11InitDrawLuaP9lua_State	InitDrawLua(lua_State*)
+447596	_Z26graphics_unlockAspectRatioP9lua_State	graphics_unlockAspectRatio(lua_State*)
+447695	_Z18ShaderDrawCallbackRKSsPf	ShaderDrawCallback(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, float*)
+448102	_Z14ShaderCallbackiP10TVisObjRef	ShaderCallback(int, TVisObjRef*)
+448282	_ZL26graphics_performLinebreaksP9lua_State	graphics_performLinebreaks(lua_State*)
+448596	_ZL20graphics_addDrawFuncP9lua_State	graphics_addDrawFunc(lua_State*)
+449966	_GLOBAL__sub_I_luaDrawBeforeScene	_GLOBAL__sub_I_luaDrawBeforeScene
+450074	_Z34ix86_override_options_after_changev_38	ix86_override_options_after_change()
+450711	_Z23ConvertHapticEffectType21TControllerEffectType	ConvertHapticEffectType(TControllerEffectType)
+450733	_Z28ConvertHapticEffectDirection26TControllerEffectDirection	ConvertHapticEffectDirection(TControllerEffectDirection)
+453908	_GLOBAL__I_yyleng	global constructors keyed to yyleng
+455648	_Z34ix86_override_options_after_changev_39	ix86_override_options_after_change()
+462404	_Z17FillLoadingScreenR14SLoadingScreenRK10TVisObjRef	FillLoadingScreen(SLoadingScreen&, TVisObjRef const&)
+483143	_GLOBAL__sub_I_MainLoopsPaused	_GLOBAL__sub_I_MainLoopsPaused
+483782	_Z34ix86_override_options_after_changev_40	ix86_override_options_after_change()
+485579	_Z34ix86_override_options_after_changev_41	ix86_override_options_after_change()
+491886	_Z34ix86_override_options_after_changev_42	ix86_override_options_after_change()
+491982	_Z20TerminateApplicationv	TerminateApplication()
+492103	_Z15GetResourcePathRKSs	GetResourcePath(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+492124	_Z7CleanUpb	CleanUp(bool)
+492257	_Z18setProcessDpiAwarev	setProcessDpiAware()
+492271	_Z14CreateWindowGLRK6wxSizeRS_l	CreateWindowGL(wxSize const&, wxSize&, long)
+492894	_Z16ParseCommandLineiPPcR15wxCmdLineParser	ParseCommandLine(int, char**, wxCmdLineParser&)
+493088	_Z4InitRK8wxStringR6wxSizeS3_iPPcR15wxCmdLineParser	Init(wxString const&, wxSize&, wxSize&, int, char**, wxCmdLineParser&)
+497397	_Z14ShowMessageBoxRK8wxStringS1_	ShowMessageBox(wxString const&, wxString const&)
+497495	_Z24StartLoadingScreenThreadv	StartLoadingScreenThread()
+497509	_Z9m_strncmpPKcS0_m	m_strncmp(char const*, char const*, unsigned long)
+497603	_Z14IsMultigesturev	IsMultigesture()
+497640	_Z11ToScreenPosii	ToScreenPos(int, int)
+497745	_Z9ShowFramePv	ShowFrame(void*)
+498899	_Z19LoadingScreenThreadPv	LoadingScreenThread(void*)
+499508	main	main
+500221	_GLOBAL__sub_I_graphics	_GLOBAL__sub_I_graphics
+500424	_Z14LoadConfigFileR8wxStringPS_PbS2_S2_P11eResolutionS2_R6wxSizeP10wxLogLevelPlS1_S9_S9_S9_S9_S9_S9_S2_P18eGraphicsInterfaceS2_S1_	LoadConfigFile(wxString&, wxString*, bool*, bool*, bool*, eResolution*, bool*, wxSize&, wxLogLevel*, long*, wxString*, long*, long*, long*, long*, long*, long*, bool*, eGraphicsInterface*, bool*, wxString*)
+503046	_Z11WriteVolumeiiiii	WriteVolume(int, int, int, int, int)
+504929	_Z34ix86_override_options_after_changev_43	ix86_override_options_after_change()
+504952	_Z34ix86_override_options_after_changev_44	ix86_override_options_after_change()
+505135	_ZL12_PrintStringPwmP11_FormatInfoPKw	_PrintString(wchar_t*, unsigned long, _FormatInfo*, wchar_t const*)
+505305	_ZL18_PrintUnsignedLongPwmP11_FormatInfom	_PrintUnsignedLong(wchar_t*, unsigned long, _FormatInfo*, unsigned long)
+505404	_ZL10_PrintLongPwmP11_FormatInfol	_PrintLong(wchar_t*, unsigned long, _FormatInfo*, long)
+505559	_ZL14_PrintLongLongPwmP11_FormatInfol	_PrintLongLong(wchar_t*, unsigned long, _FormatInfo*, long)
+505714	_ZL22_PrintUnsignedLongLongPwmP11_FormatInfom	_PrintUnsignedLongLong(wchar_t*, unsigned long, _FormatInfo*, unsigned long)
+505813	_ZL18_PrintUnsignedLongPwmP11_FormatInfom_constprop_61	_PrintUnsignedLong(wchar_t*, unsigned long, _FormatInfo*, unsigned long)
+505906	_ZL12_PrintStringR8wxStringP11_FormatInfoPKw	_PrintString(wxString&, _FormatInfo*, wchar_t const*)
+506094	_ZL18_PrintUnsignedLongR8wxStringP11_FormatInfom	_PrintUnsignedLong(wxString&, _FormatInfo*, unsigned long)
+506191	_ZL10_PrintLongR8wxStringP11_FormatInfol	_PrintLong(wxString&, _FormatInfo*, long)
+506345	_ZL14_PrintLongLongR8wxStringP11_FormatInfol	_PrintLongLong(wxString&, _FormatInfo*, long)
+506498	_ZL22_PrintUnsignedLongLongR8wxStringP11_FormatInfom	_PrintUnsignedLongLong(wxString&, _FormatInfo*, unsigned long)
+506594	_ZL18_PrintUnsignedLongR8wxStringP11_FormatInfom_constprop_60	_PrintUnsignedLong(wxString&, _FormatInfo*, unsigned long)
+506686	_Z7wstrchrPKwi	wstrchr(wchar_t const*, int)
+507470	_Z12_wstr_printfR8wxStringPKwP13__va_list_tag	_wstr_printf(wxString&, wchar_t const*, __va_list_tag*)
+508516	_Z11_wvsnprintfPwmPKwP13__va_list_tag	_wvsnprintf(wchar_t*, unsigned long, wchar_t const*, __va_list_tag*)
+509555	_Z18wine_utf8_wcstombsiPKwiPci	wine_utf8_wcstombs(int, wchar_t const*, int, char*, int)
+509843	_Z18utf8_next_char_lenh	utf8_next_char_len(unsigned char)
+509871	_Z16decode_utf8_charhPPKcS0_	decode_utf8_char(unsigned char, char const**, char const*)
+509954	_Z18wine_utf8_mbstowcsiPKciPwi	wine_utf8_mbstowcs(int, char const*, int, wchar_t*, int)
+510608	_Z6t_initRi	t_init(int&)
+510627	_Z7t_stateRiPcPKc	t_state(int&, char*, char const*)
+510721	_Z7t_stateRiPc	t_state(int&, char*)
+512009	_Z7wstrlenPKw	wstrlen(wchar_t const*)
+512040	_Z9m_wstrcmpPKwS0_	m_wstrcmp(wchar_t const*, wchar_t const*)
+512120	_Z10m_wstrcmpiPKwS0_	m_wstrcmpi(wchar_t const*, wchar_t const*)
+512847	_Z14wxConvertMB2WXPKc	wxConvertMB2WX(char const*)
+512950	_Z11SplitStringRSt6vectorISsSaISsEEPKcc	SplitString(std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, char const*, char)
+513201	_Z11SplitStringRSt6vectorI8wxStringSaIS0_EEPKww	SplitString(std::vector<wxString, std::allocator<wxString> >&, wchar_t const*, wchar_t)
+513537	_Z11SplitStringRSt6vectorI8wxStringSaIS0_EEPKcc	SplitString(std::vector<wxString, std::allocator<wxString> >&, char const*, char)
+513866	_Z34ix86_override_options_after_changev_45	ix86_override_options_after_change()
+516880	_GLOBAL__sub_I__ZN4sha110initResultEv	_GLOBAL__sub_I__ZN4sha110initResultEv
+519845	_GLOBAL__sub_I__ZN20TComposedFileManager15s_mainContainerE	_GLOBAL__sub_I__ZN20TComposedFileManager15s_mainContainerE
+522292	_Z34ix86_override_options_after_changev_46	ix86_override_options_after_change()
+525772	_Z34ix86_override_options_after_changev_47	ix86_override_options_after_change()
+525795	_Z9CONVTOSTRRKi	CONVTOSTR(int const&)
+525860	_Z9CONVTOSTRRKj	CONVTOSTR(unsigned int const&)
+525924	_Z9CONVTOSTRRKl	CONVTOSTR(long const&)
+525989	_Z9CONVTOSTRRKm	CONVTOSTR(unsigned long const&)
+526470	_Z8SameListRKSt6vectorI6wxRectSaIS0_EES4_	SameList(std::vector<wxRect, std::allocator<wxRect> > const&, std::vector<wxRect, std::allocator<wxRect> > const&)
+526558	_Z8SameListRKSt6vectorI7wxPointSaIS0_EES4_	SameList(std::vector<wxPoint, std::allocator<wxPoint> > const&, std::vector<wxPoint, std::allocator<wxPoint> > const&)
+526626	_Z8SameListRKSt6vectorI7TSpriteSaIS0_EES4_	SameList(std::vector<TSprite, std::allocator<TSprite> > const&, std::vector<TSprite, std::allocator<TSprite> > const&)
+526697	_Z8SameListRKSt6vectorI11TCharHolderSaIS0_EES4_	SameList(std::vector<TCharHolder, std::allocator<TCharHolder> > const&, std::vector<TCharHolder, std::allocator<TCharHolder> > const&)
+526785	_Z8SameListRKSt6vectorIiSaIiEES3_	SameList(std::vector<int, std::allocator<int> > const&, std::vector<int, std::allocator<int> > const&)
+526850	_Z8SameListRKSt6vectorIfSaIfEES3_	SameList(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)
+526916	_Z8SameListRKSt6vectorI8wxStringSaIS0_EES4_	SameList(std::vector<wxString, std::allocator<wxString> > const&, std::vector<wxString, std::allocator<wxString> > const&)
+527454	_Z12ConvertToIntPKcS0_	ConvertToInt(char const*, char const*)
+527575	_Z14ConvertToFloatPKcS0_	ConvertToFloat(char const*, char const*)
+527701	_Z13ConvertToBoolPKcS0_	ConvertToBool(char const*, char const*)
+527746	_Z15ConvertToStringPKcS0_	ConvertToString(char const*, char const*)
+527885	_Z17ConvertToFileNamePKcS0_	ConvertToFileName(char const*, char const*)
+529792	yasm_value_delete	yasm_value_delete
+529819	yasm_value_delete_0	yasm_value_delete_0
+530023	yasm_value_delete_1	yasm_value_delete_1
+531676	_ZNK11TCharHoldercv10wxFileNameEv	TCharHolder::operator wxFileName() const
+531830	_ZNK11TCharHoldercv8wxStringEv	TCharHolder::operator wxString() const
+535313	_Z11xmlReadFilePKc	xmlReadFile(char const*)
+539784	_GLOBAL__sub_I__Z9CONVTOSTRRKi	_GLOBAL__sub_I__Z9CONVTOSTRRKi
+540055	_Z34ix86_override_options_after_changev_48	ix86_override_options_after_change()
+540078	_Z9strToLongRK8wxString	strToLong(wxString const&)
+540102	_Z10strToFloatRK8wxString	strToFloat(wxString const&)
+540127	_Z8strtointRK8wxString	strtoint(wxString const&)
+540151	_Z19ConvertStringToSizeRK8wxStringR6wxSize	ConvertStringToSize(wxString const&, wxSize&)
+540426	_Z23ConvertHexStringToColorRK8wxStringR8wxColour	ConvertHexStringToColor(wxString const&, wxColour&)
+540655	_Z17ByteStreamToULongPh	ByteStreamToULong(unsigned char*)
+540681	_Z16ByteStreamToLongPh	ByteStreamToLong(unsigned char*)
+540707	_Z23GetLargestFreeHeapBlockv	GetLargestFreeHeapBlock()
+540723	_Z13base64_encodePKhj	base64_encode(unsigned char const*, unsigned int)
+541071	_Z13base64_decodeRKSs	base64_decode(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+541405	_GLOBAL__sub_I__Z9strToLongRK8wxString	_GLOBAL__sub_I__Z9strToLongRK8wxString
+549264	_GLOBAL__sub_I__ZN13TComposedFile7onErrorE	_GLOBAL__sub_I__ZN13TComposedFile7onErrorE
+551846	_Z34ix86_override_options_after_changev_49	ix86_override_options_after_change()
+552164	_Z34ix86_override_options_after_changev_50	ix86_override_options_after_change()
+553402	_GLOBAL__sub_I__ZN14TStandardPaths13s_isEditorAppE	_GLOBAL__sub_I__ZN14TStandardPaths13s_isEditorAppE
+553922	_GLOBAL__sub_I__ZN4Geni6DBconn11_dbpoollockE_0	_GLOBAL__sub_I__ZN4Geni6DBconn11_dbpoollockE_0
+553952	_Z4SaltPc	Salt(char*)
+554001	_Z7ShufflePc	Shuffle(char*)
+554077	_Z7shufflePhm	shuffle(unsigned char*, unsigned long)
+554193	_Z16ManipulateForMD5Pc	ManipulateForMD5(char*)
+554256	_Z8PrintMD5Ph	PrintMD5(unsigned char*)
+555250	_Z10MD4_UpdateP7MD4_CTXPKhj	MD4_Update(MD4_CTX*, unsigned char const*, unsigned int)
+555612	_Z7MD5FilePc	MD5File(char*)
+555941	_Z9MD5StringPKcm	MD5String(char const*, unsigned long)
+556344	_Z34ix86_override_options_after_changev_51	ix86_override_options_after_change()
+556367	_Z14ConvertFromLuaR7wxPointi	ConvertFromLua(wxPoint&, int)
+556442	_Z12ConvertToLuaRK7wxPoint	ConvertToLua(wxPoint const&)
+556481	_Z14ConvertFromLuaR6wxRecti	ConvertFromLua(wxRect&, int)
+556594	_Z12ConvertToLuaRK6wxRect	ConvertToLua(wxRect const&)
+556651	_Z14ConvertFromLuaR7TSpritei	ConvertFromLua(TSprite&, int)
+556849	_Z12ConvertToLuaRK7TSprite	ConvertToLua(TSprite const&)
+557096	_Z14ConvertFromLuaR13TTextLanguagei	ConvertFromLua(TTextLanguage&, int)
+557204	_Z12ConvertToLuaRK13TTextLanguage	ConvertToLua(TTextLanguage const&)
+557263	_Z12ConvertToLuaRKSt6vectorIiSaIiEE	ConvertToLua(std::vector<int, std::allocator<int> > const&)
+557313	_Z12ConvertToLuaRKSt6vectorIfSaIfEE	ConvertToLua(std::vector<float, std::allocator<float> > const&)
+557364	_Z12ConvertToLuaRKSt6vectorI7wxPointSaIS0_EE	ConvertToLua(std::vector<wxPoint, std::allocator<wxPoint> > const&)
+557435	_Z12ConvertToLuaRKSt6vectorI13TTextLanguageSaIS0_EE	ConvertToLua(std::vector<TTextLanguage, std::allocator<TTextLanguage> > const&)
+557487	_Z12ConvertToLuaRKSt6vectorI6wxRectSaIS0_EE	ConvertToLua(std::vector<wxRect, std::allocator<wxRect> > const&)
+557576	_Z12ConvertToLuaRKSt6vectorI11TCharHolderSaIS0_EE	ConvertToLua(std::vector<TCharHolder, std::allocator<TCharHolder> > const&)
+557632	_Z12ConvertToLuaRKSt6vectorI7TSpriteSaIS0_EE	ConvertToLua(std::vector<TSprite, std::allocator<TSprite> > const&)
+557684	_Z14ConvertFromLuaRSt6vectorI7wxPointSaIS0_EEi	ConvertFromLua(std::vector<wxPoint, std::allocator<wxPoint> >&, int)
+557822	_Z14ConvertFromLuaRSt6vectorI6wxRectSaIS0_EEi	ConvertFromLua(std::vector<wxRect, std::allocator<wxRect> >&, int)
+557925	_Z14ConvertFromLuaRSt6vectorI7TSpriteSaIS0_EEi	ConvertFromLua(std::vector<TSprite, std::allocator<TSprite> >&, int)
+558061	_Z14ConvertFromLuaRSt6vectorIiSaIiEEi	ConvertFromLua(std::vector<int, std::allocator<int> >&, int)
+558160	_Z14ConvertFromLuaRSt6vectorIfSaIfEEi	ConvertFromLua(std::vector<float, std::allocator<float> >&, int)
+558329	_Z14ConvertFromLuaRSt6vectorI11TCharHolderSaIS0_EEi	ConvertFromLua(std::vector<TCharHolder, std::allocator<TCharHolder> >&, int)
+558449	_Z14ConvertFromLuaRSt6vectorI13TTextLanguageSaIS0_EEi	ConvertFromLua(std::vector<TTextLanguage, std::allocator<TTextLanguage> >&, int)
+559349	_Z34ix86_override_options_after_changev_52	ix86_override_options_after_change()
+559488	_Z34ix86_override_options_after_changev_53	ix86_override_options_after_change()
+559527	_Z5EnterPv	Enter(void*)
+559546	_Z12DoStringHashIKwEmPT_	unsigned long DoStringHash<wchar_t const>(wchar_t const*)
+559589	_Z12DoStringHashIKcEmPT_	unsigned long DoStringHash<char const>(char const*)
+559793	_Z17file_get_contentsPKc	file_get_contents(char const*)
+559894	_Z20wxGetLocalTimeMillisv	wxGetLocalTimeMillis()
+559911	_Z11timeGetTimev	timeGetTime()
+559925	_Z12wxMilliSleepl	wxMilliSleep(long)
+559982	_Z14wxGetLocalTimev	wxGetLocalTime()
+560181	_ZeqRK7wxPointS1_	operator==(wxPoint const&, wxPoint const&)
+560208	_ZneRK7wxPointS1_	operator!=(wxPoint const&, wxPoint const&)
+560235	_ZpLR7wxPointRKS_	operator+=(wxPoint&, wxPoint const&)
+560255	_ZmIR7wxPointRKS_	operator-=(wxPoint&, wxPoint const&)
+560275	_ZmlRK7wxPointRKf	operator*(wxPoint const&, float const&)
+560299	_ZplRK7wxPointS1_	operator+(wxPoint const&, wxPoint const&)
+560321	_ZmiRK7wxPointS1_	operator-(wxPoint const&, wxPoint const&)
+560343	_ZngRK7wxPoint	operator-(wxPoint const&)
+561236	_Z12wxInitializev	wxInitialize()
+561251	_Z14wxUninitializev	wxUninitialize()
+562200	_Z16CheckIfDirExistsRK8wxString	CheckIfDirExists(wxString const&)
+562321	_Z12fastMatchingR8wxStringS0_	fastMatching(wxString&, wxString&)
+562692	_Z5toUTFP8wxStringPKc	toUTF(wxString*, char const*)
+562756	_Z9GetFolderi	GetFolder(int)
+563470	_Z4toMBPSsPKw	toMB(std::basic_string<char, std::char_traits<char>, std::allocator<char> >*, wchar_t const*)
+567004	_Z8wxStrlenPKw	wxStrlen(wchar_t const*)
+567033	_Z8wxStrlenPKc	wxStrlen(char const*)
+567061	_Z12wxStringHashRKSbIwSt11char_traitsIwESaIwEE	wxStringHash(std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > const&)
+567078	_Z12wxStringHashPKw	wxStringHash(wchar_t const*)
+567093	_Z12wxStringHashRKSs	wxStringHash(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+567109	_Z12wxStringHashPKc	wxStringHash(char const*)
+567124	_Z13wxStringEqualPKcS0_	wxStringEqual(char const*, char const*)
+567143	_Z13wxIntegerHashi	wxIntegerHash(int)
+567158	_Z14wxIntegerEqualii	wxIntegerEqual(int, int)
+567174	_Z12wxRemoveFile8wxString	wxRemoveFile(wxString)
+567318	_Z6wxStatRK10wxFileNameP12wxStructStat	wxStat(wxFileName const&, wxStructStat*)
+567442	_Z22wxFileModificationTimeRK8wxString	wxFileModificationTime(wxString const&)
+567685	_Z13couldBeNumberR8wxString	couldBeNumber(wxString&)
+568091	_Z10wxCopyFileRK8wxStringS1_	wxCopyFile(wxString const&, wxString const&)
+568218	_Z13wxStringEqualRKSbIwSt11char_traitsIwESaIwEES4_	wxStringEqual(std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > const&, std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > const&)
+568252	_Z8x_assertbPKcS0_i	x_assert(bool, char const*, char const*, int)
+569033	_Z22wxLaunchDefaultBrowserRK8wxString	wxLaunchDefaultBrowser(wxString const&)
+569571	_Z12wxRenameFile8wxStringS_	wxRenameFile(wxString, wxString)
+569769	_Z10wxLangInitv	wxLangInit()
+582955	_GLOBAL__sub_I__Z17file_get_contentsPKc	_GLOBAL__sub_I__Z17file_get_contentsPKc
+584523	_Z34ix86_override_options_after_changev_54	ix86_override_options_after_change()
+586456	_Z34ix86_override_options_after_changev_55	ix86_override_options_after_change()
+586479	_Z8cmpOrderPK17TVisionaireObjectS1_	cmpOrder(TVisionaireObject const*, TVisionaireObject const*)
+587114	_Z6PackIdRK3TId	PackId(TId const&)
+587148	_Z8UnpackIdl	UnpackId(long)
+587176	_Z5cmpIdPK17TVisionaireObjectS1_	cmpId(TVisionaireObject const*, TVisionaireObject const*)
+587215	_Z7cmpNamePK17TVisionaireObjectS1_	cmpName(TVisionaireObject const*, TVisionaireObject const*)
+597579	_GLOBAL__sub_I_AnyId	_GLOBAL__sub_I_AnyId
+600366	_Z34ix86_override_options_after_changev_56	ix86_override_options_after_change()
+608330	_Z34ix86_override_options_after_changev_57	ix86_override_options_after_change()
+608353	_Z16ScrambledSortingP6TTableS0_	ScrambledSorting(TTable*, TTable*)
+608543	_Z17CmpLinkReferencesRK8TLinkRefS1_	CmpLinkReferences(TLinkRef const&, TLinkRef const&)
+613407	_Z12CmpMappedIdsRK9TMappedIdS1_	CmpMappedIds(TMappedId const&, TMappedId const&)
+623878	_GLOBAL__sub_I_g_lookupTable	_GLOBAL__sub_I_g_lookupTable
+623914	_Z9GetRefIntPKv	GetRefInt(void const*)
+623989	_Z11GetRefFloatPKv	GetRefFloat(void const*)
+624064	_Z10GetRefBoolPKv	GetRefBool(void const*)
+624139	_Z12GetRefStringPKv	GetRefString(void const*)
+624244	_Z10GetRefPathPKv	GetRefPath(void const*)
+624349	_Z10GetRefRectPKv	GetRefRect(void const*)
+624445	_Z11GetRefPointPKv	GetRefPoint(void const*)
+624539	_Z12GetRefSpritePKv	GetRefSprite(void const*)
+624646	_Z10GetRefLinkPKv	GetRefLink(void const*)
+624753	_Z11GetRefLinksPKv	GetRefLinks(void const*)
+624873	_Z11GetRefVRectPKv	GetRefVRect(void const*)
+624972	_Z12GetRefVPointPKv	GetRefVPoint(void const*)
+625071	_Z11GetRefVPathPKv	GetRefVPath(void const*)
+625191	_Z10GetRefVIntPKv	GetRefVInt(void const*)
+625290	_Z12GetRefVFloatPKv	GetRefVFloat(void const*)
+625389	_Z11GetRefVBoolPKv	GetRefVBool(void const*)
+625491	_Z13GetRefVStringPKv	GetRefVString(void const*)
+625611	_Z13GetRefVSpritePKv	GetRefVSprite(void const*)
+625732	_Z11GetRefVTextPKv	GetRefVText(void const*)
+635565	_Z34ix86_override_options_after_changev_58	ix86_override_options_after_change()
+636116	_Z34ix86_override_options_after_changev_59	ix86_override_options_after_change()
+636139	_Z13normalizepathPc	normalizepath(char*)
+636174	_Z4dtolPKc	dtol(char const*)
+647015	_GLOBAL__sub_I__Z13normalizepathPc	_GLOBAL__sub_I__Z13normalizepathPc
+647056	_Z4loadR11TCharHolderP8_IO_FILE_constprop_176	load(TCharHolder&, _IO_FILE*)
+647165	_Z7_fwritePKvmmP8_IO_FILE	_fwrite(void const*, unsigned long, unsigned long, _IO_FILE*)
+647188	_Z6_freadPKvmmP8_IO_FILE	_fread(void const*, unsigned long, unsigned long, _IO_FILE*)
+647317	_Z14writeStructureR13bin_structureP8_IO_FILE	writeStructure(bin_structure&, _IO_FILE*)
+647720	_Z5savecRK8wxStringP8_IO_FILE	savec(wxString const&, _IO_FILE*)
+647782	_Z4saveiP8_IO_FILE	save(int, _IO_FILE*)
+647807	_Z4savelP8_IO_FILE	save(long, _IO_FILE*)
+647832	_Z4savecP8_IO_FILE	save(char, _IO_FILE*)
+647857	_Z4savebP8_IO_FILE	save(bool, _IO_FILE*)
+647882	_Z4savefP8_IO_FILE	save(float, _IO_FILE*)
+647907	_Z4saveRK8wxStringP8_IO_FILE	save(wxString const&, _IO_FILE*)
+647979	_Z4saveR11TCharHolderP8_IO_FILE	save(TCharHolder&, _IO_FILE*)
+648021	_Z4saveR10wxFileNameP8_IO_FILE	save(wxFileName&, _IO_FILE*)
+648079	_Z4save10wxFileNameP8_IO_FILE	save(wxFileName, _IO_FILE*)
+648136	_Z4saveRK7wxPointP8_IO_FILE	save(wxPoint const&, _IO_FILE*)
+648173	_Z4saveR6wxRectP8_IO_FILE	save(wxRect&, _IO_FILE*)
+648226	_Z4saveR7TSpriteP8_IO_FILE	save(TSprite&, _IO_FILE*)
+648339	_Z4saveR5TLinkP8_IO_FILE	save(TLink&, _IO_FILE*)
+648409	_Z4saveRSt6vectorI5TLinkSaIS0_EEP8_IO_FILE	save(std::vector<TLink, std::allocator<TLink> >&, _IO_FILE*)
+648468	_Z4saveRSt6vectorI6wxRectSaIS0_EEP8_IO_FILE	save(std::vector<wxRect, std::allocator<wxRect> >&, _IO_FILE*)
+648560	_Z4saveRSt6vectorI7wxPointSaIS0_EEP8_IO_FILE	save(std::vector<wxPoint, std::allocator<wxPoint> >&, _IO_FILE*)
+648632	_Z4saveRSt6vectorI7TSpriteSaIS0_EEP8_IO_FILE	save(std::vector<TSprite, std::allocator<TSprite> >&, _IO_FILE*)
+648702	_Z4saveRSt6vectorI11TCharHolderSaIS0_EEP8_IO_FILE	save(std::vector<TCharHolder, std::allocator<TCharHolder> >&, _IO_FILE*)
+648779	_Z4saveRSt6vectorIfSaIfEEP8_IO_FILE	save(std::vector<float, std::allocator<float> >&, _IO_FILE*)
+648840	_Z4saveRSt6vectorIiSaIiEEP8_IO_FILE	save(std::vector<int, std::allocator<int> >&, _IO_FILE*)
+648901	_Z4saveRSt6vectorI8wxStringSaIS0_EEP8_IO_FILE	save(std::vector<wxString, std::allocator<wxString> >&, _IO_FILE*)
+648960	_Z4saveRSt6vectorI13TTextLanguageSaIS0_EEP8_IO_FILE	save(std::vector<TTextLanguage, std::allocator<TTextLanguage> >&, _IO_FILE*)
+649075	_Z10saveObjectP8_IO_FILEPvi_constprop_175	saveObject(_IO_FILE*, void*, int)
+649658	_Z5toStri	toStr(int)
+649751	_Z5toStrf	toStr(float)
+649785	_Z4loadRiP8_IO_FILE	load(int&, _IO_FILE*)
+649811	_Z4loadRlP8_IO_FILE	load(long&, _IO_FILE*)
+649830	_Z4loadRbP8_IO_FILE	load(bool&, _IO_FILE*)
+649855	_Z4loadRcP8_IO_FILE	load(char&, _IO_FILE*)
+649880	_Z4loadRfP8_IO_FILE	load(float&, _IO_FILE*)
+649906	_Z4loadR11TCharHolderP8_IO_FILE	load(TCharHolder&, _IO_FILE*)
+650016	_Z4loadR7wxPointP8_IO_FILE	load(wxPoint&, _IO_FILE*)
+650051	_Z4loadR6wxRectP8_IO_FILE	load(wxRect&, _IO_FILE*)
+650106	_Z4loadR7TSpriteP8_IO_FILE	load(TSprite&, _IO_FILE*)
+650202	_Z4loadR5TLinkiP8_IO_FILE	load(TLink&, int, _IO_FILE*)
+650275	_Z10saveObjectP8_IO_FILEPvi	saveObject(_IO_FILE*, void*, int)
+650879	_Z11threadstartPv	threadstart(void*)
+650894	_Z4loadRSt6vectorI5TLinkSaIS0_EEiP8_IO_FILE	load(std::vector<TLink, std::allocator<TLink> >&, int, _IO_FILE*)
+650996	_Z4loadRSt6vectorI6wxRectSaIS0_EEP8_IO_FILE	load(std::vector<wxRect, std::allocator<wxRect> >&, _IO_FILE*)
+651104	_Z4loadRSt6vectorI7wxPointSaIS0_EEP8_IO_FILE	load(std::vector<wxPoint, std::allocator<wxPoint> >&, _IO_FILE*)
+651194	_Z4loadRSt6vectorI7TSpriteSaIS0_EEP8_IO_FILE	load(std::vector<TSprite, std::allocator<TSprite> >&, _IO_FILE*)
+651293	_Z4loadRSt6vectorI11TCharHolderSaIS0_EEP8_IO_FILE	load(std::vector<TCharHolder, std::allocator<TCharHolder> >&, _IO_FILE*)
+651470	_Z4loadRSt6vectorIfSaIfEEP8_IO_FILE	load(std::vector<float, std::allocator<float> >&, _IO_FILE*)
+651551	_Z4loadRSt6vectorIiSaIiEEP8_IO_FILE	load(std::vector<int, std::allocator<int> >&, _IO_FILE*)
+651632	_Z4loadRSt6vectorI13TTextLanguageSaIS0_EEP8_IO_FILE	load(std::vector<TTextLanguage, std::allocator<TTextLanguage> >&, _IO_FILE*)
+651922	_Z10loadObjectP8_IO_FILEPvii	loadObject(_IO_FILE*, void*, int, int)
+652339	_Z10loadObjectP8_IO_FILEPvii_constprop_174	loadObject(_IO_FILE*, void*, int, int)
+652737	_Z14make_structureR13bin_structureP8_IO_FILE	make_structure(bin_structure&, _IO_FILE*)
+660658	_GLOBAL__sub_I_membuf	_GLOBAL__sub_I_membuf
+668512	_Z34ix86_override_options_after_changev_60	ix86_override_options_after_change()
+668969	_Z34ix86_override_options_after_changev_61	ix86_override_options_after_change()
+671568	_Z8toGLEnum10eBlendMode	toGLEnum(eBlendMode)
+680176	_Z34ix86_override_options_after_changev_62	ix86_override_options_after_change()
+680670	_Z10JsonStringRKN9rapidjson12GenericValueINS_4UTF8IcEENS_19MemoryPoolAllocatorINS_12CrtAllocatorEEEEERKSs	JsonString(rapidjson::GenericValue<rapidjson::UTF8<char>, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+689071	_Z34ix86_override_options_after_changev_63	ix86_override_options_after_change()
+689141	_ZL8HSVToRGBPfS_S_fff_constprop_162	HSVToRGB(float*, float*, float*, float, float, float)
+690100	_Z5RandFf	RandF(float)
+690150	_Z10EaseLinearf4vec2S_	EaseLinear(float, vec2, vec2)
+690312	_Z15EaseLinearColorfjj	EaseLinearColor(float, unsigned int, unsigned int)
+699698	_GLOBAL__sub_I__ZN15RandomGeneratorC2Ev	_GLOBAL__sub_I__ZN15RandomGeneratorC2Ev
+702641	_Z18DecodeBase64ShaderRKSs	DecodeBase64Shader(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+702883	_Z5dtol2PKc	dtol2(char const*)
+702937	_Z9parseNamePKcRi	parseName(char const*, int&)
+703043	_Z9nextTokenPKcRic	nextToken(char const*, int&, char)
+703145	_Z11parseBinaryPKcRii	parseBinary(char const*, int&, int)
+703260	_Z11parseNumberPKcRi	parseNumber(char const*, int&)
+703346	_Z13BuiltinShaderRSsPKc	BuiltinShader(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, char const*)
+704430	_Z10LoadShaderRKSsPKcS2_S2_P10ShaderInfo	LoadShader(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, char const*, char const*, ShaderInfo*)
+707118	_Z34ix86_override_options_after_changev_64	ix86_override_options_after_change()
+710784	_Z13createOrtho2Dffff	createOrtho2D(float, float, float, float)
+713194	_Z8multiplyii	multiply(int, int)
+713255	_Z17MitchellNetravalifff	MitchellNetravali(float, float, float)
+713917	_Z13convertMatrixP8TMatrix4Pf	convertMatrix(TMatrix4*, float*)
+720826	_GLOBAL__sub_I_g_subSys	_GLOBAL__sub_I_g_subSys
+748549	_Z34ix86_override_options_after_changev_65	ix86_override_options_after_change()
+749348	_Z34ix86_override_options_after_changev_66	ix86_override_options_after_change()
+753375	_Z34ix86_override_options_after_changev_67	ix86_override_options_after_change()
+753499	_Z18userReadDataMemoryP14png_struct_defPhm	userReadDataMemory(png_struct_def*, unsigned char*, unsigned long)
+754615	_Z12userReadDataP14png_struct_defPhm	userReadData(png_struct_def*, unsigned char*, unsigned long)
+756800	_Z34ix86_override_options_after_changev_68	ix86_override_options_after_change()
+759328	_Z34ix86_override_options_after_changev_69	ix86_override_options_after_change()
+761669	_Z34ix86_override_options_after_changev_70	ix86_override_options_after_change()
+765995	_GLOBAL__sub_I__ZN4Geni6DBconn11_dbpoollockE_1	_GLOBAL__sub_I__ZN4Geni6DBconn11_dbpoollockE_1
+766213	_Z9Randomizev	Randomize()
+766232	_Z5Rand0v	Rand0()
+766250	_Z4Randj	Rand(unsigned int)
+766285	_Z11BlendColorsiif	BlendColors(int, int, float)
+767787	_ZmlfRK8TMatrix3	operator*(float, TMatrix3 const&)
+769365	_ZmlfRK8TMatrix4	operator*(float, TMatrix4 const&)
+771374	_Z34ix86_override_options_after_changev_71	ix86_override_options_after_change()
+771464	_Z34ix86_override_options_after_changev_72	ix86_override_options_after_change()
+771488	utils_pow2	utils_pow2
+774960	_Z8AdjacentRK6wxRectS1_i	Adjacent(wxRect const&, wxRect const&, int)
+775027	_Z7CombineRK6wxRectS1_ib	Combine(wxRect const&, wxRect const&, int, bool)
+775228	_Z14ExtendJoinableRK6wxRectS1_	ExtendJoinable(wxRect const&, wxRect const&)
+775288	_Z10ExtendJoinRK6wxRectS1_	ExtendJoin(wxRect const&, wxRect const&)
+775387	_Z7fromInti	fromInt(int)
+775412	_Z11file_appendSs	file_append(std::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+779848	_GLOBAL__sub_I__ZN4Geni6DBconn11_dbpoollockE_2	_GLOBAL__sub_I__ZN4Geni6DBconn11_dbpoollockE_2
+785235	_Z34ix86_override_options_after_changev_73	ix86_override_options_after_change()
+785610	_Z13IntersectRectR9FloatRectRK6wxRectRKS_	IntersectRect(FloatRect&, wxRect const&, FloatRect const&)
+791282	_GLOBAL__sub_I__ZN10TPictureIO15s_pPaintControlE	_GLOBAL__sub_I__ZN10TPictureIO15s_pPaintControlE
+791323	_ZL13determine_t_rdRdS_	determine_t_r(double, double&, double&)
+791598	_ZL10make_T_R_CRK5PointS1_PS_S2_S2_dRK12polyline_optPdS6_Pfb_constprop_20	make_T_R_C(Point const&, Point const&, Point*, Point*, Point*, double, polyline_opt const&, double*, double*, float*, bool)
+791747	_ZL10make_T_R_CRK5PointS1_PS_S2_S2_dRK12polyline_optPdS6_Pfb_constprop_21	make_T_R_C(Point const&, Point const&, Point*, Point*, Point*, double, polyline_opt const&, double*, double*, float*, bool)
+791932	_Z9Color_getR5Colori	Color_get(Color&, int)
+791954	_Z17Color_valid_rangef	Color_valid_range(float)
+791979	_Z13Color_betweenRK5ColorS1_f	Color_between(Color const&, Color const&, float)
+792041	_Z12sRGBtolinearR5Colorb	sRGBtolinear(Color&, bool)
+792196	_Z12lineartosRGBR5Colorb	lineartosRGB(Color&, bool)
+792351	_Z8RGBtoHSVfffPfS_S_	RGBtoHSV(float, float, float, float*, float*, float*)
+792480	_Z8HSVtoRGBPfS_S_fff	HSVtoRGB(float*, float*, float*, float, float, float)
+793455	_ZL13vah_knife_cutR19vertex_array_holderRK5PointS3_S3_	vah_knife_cut(vertex_array_holder&, Point const&, Point const&, Point const&)
+794904	_ZL9inner_arcR19vertex_array_holderRK5PointRK5ColorS6_fffffbPS1_	inner_arc(vertex_array_holder&, Point const&, Color const&, Color const&, float, float, float, float, float, bool, Point*)
+797185	_ZL14vectors_to_arcR19vertex_array_holderRK5PointRK5ColorS6_S1_S1_fffbPS1__constprop_16	vectors_to_arc(vertex_array_holder&, Point const&, Color const&, Color const&, Point, Point, float, float, float, bool, Point*)
+797332	_ZL9inner_arcR19vertex_array_holderRK5PointRK5ColorS6_fffffbPS1__constprop_17	inner_arc(vertex_array_holder&, Point const&, Color const&, Color const&, float, float, float, float, float, bool, Point*)
+798958	_ZL14vectors_to_arcR19vertex_array_holderRK5PointRK5ColorS6_S1_S1_fffbPS1__constprop_15	vectors_to_arc(vertex_array_holder&, Point const&, Color const&, Color const&, Point, Point, float, float, float, bool, Point*)
+799100	_ZL9push_quadR19vertex_array_holderRK5PointS3_S3_S3_RK5ColorS6_S6_S6_bbbbb_constprop_14	push_quad(vertex_array_holder&, Point const&, Point const&, Point const&, Point const&, Color const&, Color const&, Color const&, Color const&, bool, bool, bool, bool, bool)
+800120	_ZL12segment_latePK4Vec2PK5ColorP12_st_polylineR19vertex_array_holder5PointS9_	segment_late(Vec2 const*, Color const*, _st_polyline*, vertex_array_holder&, Point, Point)
+804973	_ZL8segment_PK4Vec2PK5ColorPKdPK12polyline_optbbc_part_5	segment_(Vec2 const*, Color const*, double const*, polyline_opt const*, bool, bool, char)
+805466	_ZL6anchorR10_st_anchorPK12polyline_optbb	anchor(_st_anchor&, polyline_opt const*, bool, bool)
+807837	_ZL11anchor_latePK4Vec2PK5ColorP12_st_polylineR19vertex_array_holder5PointS9_	anchor_late(Vec2 const*, Color const*, _st_polyline*, vertex_array_holder&, Point, Point)
+811969	_Z8polylinePK4Vec2PK5ColorPKdiPK12polyline_optb	polyline(Vec2 const*, Color const*, double const*, int, polyline_opt const*, bool)
+812403	_Z8polylinePK4Vec2PK5ColorPKdiPK12polyline_optb_constprop_10	polyline(Vec2 const*, Color const*, double const*, int, polyline_opt const*, bool)
+812441	_Z7segmentRK4Vec2S1_RK5ColorS4_ddPK12polyline_opt	segment(Vec2 const&, Vec2 const&, Color const&, Color const&, double, double, polyline_opt const*)
+812492	_Z8polylinePK4Vec2PK5ColorPKdiPK12polyline_optb_constprop_11	polyline(Vec2 const*, Color const*, double const*, int, polyline_opt const*, bool)
+812927	_Z8polylinePK4Vec2PK5ColorPKdiPK12polyline_opt	polyline(Vec2 const*, Color const*, double const*, int, polyline_opt const*)
+813760	_Z34ix86_override_options_after_changev_74	ix86_override_options_after_change()
+814320	_Z34ix86_override_options_after_changev_75	ix86_override_options_after_change()
+815489	_Z34ix86_override_options_after_changev_76	ix86_override_options_after_change()
+815512	_Z13IntersectRectR5TRectRKS_S2_	IntersectRect(TRect&, TRect const&, TRect const&)
+815577	_Z12SubtractRectR5TRectRKS_S2_	SubtractRect(TRect&, TRect const&, TRect const&)
+815643	_Z13IntersectRectR6wxRectRKS_S2_	IntersectRect(wxRect&, wxRect const&, wxRect const&)
+815679	_Z12SubtractRectR6wxRectRKS_S2_	SubtractRect(wxRect&, wxRect const&, wxRect const&)
+815859	_Z34ix86_override_options_after_changev_77	ix86_override_options_after_change()
+815880	_glewStrSame2	_glewStrSame2
+815965	_glewStrSame3	_glewStrSame3
+816072	_glewSearchExtension	_glewSearchExtension
+835595	glewGetExtension	glewGetExtension
+835642	glxewGetExtension	glxewGetExtension
+835699	glxewContextInit	glxewContextInit
+838030	glewGetErrorString	glewGetErrorString
+838049	glewGetString	glewGetString
+838067	glewInit	glewInit
+855452	glewIsSupported	glewIsSupported
+865006	glxewIsSupported	glxewIsSupported
+869056	_Z34ix86_override_options_after_changev_78	ix86_override_options_after_change()
+927509	ParseHeadersInternal	ParseHeadersInternal
+928222	DecodeInto	DecodeInto
+928438	DecodeIntoRGBABuffer	DecodeIntoRGBABuffer
+928517	Decode_constprop_1	Decode_constprop_1
+929705	ProcessRows	ProcessRows
+930185	DecodeImageData	DecodeImageData
+931465	DecodeImageStream_constprop_14	DecodeImageStream_constprop_14
+931792	ReadTransform	ReadTransform
+932055	ReadHuffmanCodes	ReadHuffmanCodes
+932864	ExtractAlphaRows	ExtractAlphaRows
+933041	DecodeImageStream	DecodeImageStream
+935671	CustomPut	CustomPut
+935729	CustomTeardown	CustomTeardown
+935747	ExportAlpha	ExportAlpha
+935872	ExportAlphaRGBA4444	ExportAlphaRGBA4444
+936795	CustomSetup	CustomSetup
+937562	GetCoeffs	GetCoeffs
+938738	ParseResiduals	ParseResiduals
+942407	ReconstructRow_isra_3	ReconstructRow_isra_3
+943678	FinishRow	FinishRow
+948170	Predictor0	Predictor0
+948184	Predictor1	Predictor1
+948197	Predictor2	Predictor2
+948210	Predictor3	Predictor3
+948223	Predictor4	Predictor4
+948236	Predictor5	Predictor5
+948262	Predictor6	Predictor6
+948281	Predictor7	Predictor7
+948300	Predictor8	Predictor8
+948320	Predictor9	Predictor9
+948340	Predictor10	Predictor10
+948373	Predictor11	Predictor11
+948460	Predictor12	Predictor12
+948539	Predictor13	Predictor13
+949203	MapARGB	MapARGB
+949243	MapAlpha	MapAlpha
+951109	ConvertARGBToY	ConvertARGBToY
+951556	ConvertRGB24ToY	ConvertRGB24ToY
+951591	ConvertBGR24ToY	ConvertBGR24ToY
+951687	YuvToRgbaRow	YuvToRgbaRow
+951930	YuvToBgrRow	YuvToBgrRow
+952171	YuvToRgba4444Row	YuvToRgba4444Row
+952439	YuvToRgb565Row	YuvToRgb565Row
+952731	YuvToArgbRow	YuvToArgbRow
+952975	YuvToBgraRow	YuvToBgraRow
+953215	YuvToRgbRow	YuvToRgbRow
+959232	TransformOne	TransformOne
+959625	TransformAC3	TransformAC3
+959885	TransformUV	TransformUV
+959915	TransformDC	TransformDC
+960098	TransformWHT	TransformWHT
+960264	TM8uv	TM8uv
+960439	VE4	VE4
+960485	HE4	HE4
+960522	RD4	RD4
+960584	LD4	LD4
+960641	VR4	VR4
+960705	VL4	VL4
+960769	HU4	HU4
+960817	HD4	HD4
+960881	DC8uvNoTop	DC8uvNoTop
+960920	HE8uv	HE8uv
+960957	DC16NoTopLeft	DC16NoTopLeft
+961002	HE16	HE16
+961079	DC4	DC4
+961113	VE8uv	VE8uv
+961132	VE16	VE16
+961192	TransformTwo	TransformTwo
+961234	TransformDCUV	TransformDCUV
+961304	SimpleHFilter16	SimpleHFilter16
+962057	SimpleHFilter16i	SimpleHFilter16i
+962946	SimpleVFilter16i	SimpleVFilter16i
+963052	SimpleVFilter16	SimpleVFilter16
+963139	TM4	TM4
+963198	TM16	TM16
+963271	VFilter16	VFilter16
+963491	DC8uvNoTopLeft	DC8uvNoTopLeft
+963512	DC8uv	DC8uv
+963567	DC8uvNoLeft	DC8uvNoLeft
+963604	HFilter16i	HFilter16i
+963786	VFilter16i	VFilter16i
+964012	DC16	DC16
+964123	DC16NoLeft	DC16NoLeft
+964202	DC16NoTop	DC16NoTop
+964281	HFilter8i	HFilter8i
+964583	VFilter8i	VFilter8i
+964945	HFilter16	HFilter16
+965127	HFilter8	HFilter8
+965454	VFilter8	VFilter8
+965924	VE8uv_0	VE8uv_0
+965950	HE8uv_0	HE8uv_0
+966010	DC8uvNoTop_0	DC8uvNoTop_0
+966055	DC8uvNoTopLeft_0	DC8uvNoTopLeft_0
+966076	DC8uv_0	DC8uv_0
+966130	DC8uvNoLeft_0	DC8uvNoLeft_0
+966169	VE16_0	VE16_0
+966198	HE16_0	HE16_0
+966306	DC16NoTop_0	DC16NoTop_0
+966370	DC16NoTopLeft_0	DC16NoTopLeft_0
+966399	DC16_0	DC16_0
+966476	DC16NoLeft_0	DC16NoLeft_0
+966522	VE4_0	VE4_0
+966554	VL4_0	VL4_0
+966600	LD4_0	LD4_0
+966634	VR4_0	VR4_0
+966681	RD4_0	RD4_0
+966726	Transform	Transform
+966892	TrueMotion_part_8	TrueMotion_part_8
+966941	TM8uv_0	TM8uv_0
+967022	TM16_0	TM16_0
+967199	SimpleVFilter16i_0	SimpleVFilter16i_0
+967413	SimpleHFilter16_0	SimpleHFilter16_0
+967618	SimpleHFilter16i_0	SimpleHFilter16i_0
+967655	HFilter16_0	HFilter16_0
+968090	HFilter8i_0	HFilter8i_0
+968408	HFilter16i_0	HFilter16i_0
+968788	VFilter16i_0	VFilter16i_0
+969194	SimpleVFilter16_0	SimpleVFilter16_0
+969275	VFilter8i_0	VFilter8i_0
+969459	TM4_0	TM4_0
+969508	VFilter16_0	VFilter16_0
+969713	VFilter8_0	VFilter8_0
+969954	HFilter8_0	HFilter8_0
+970432	ConvertBGRAToBGR	ConvertBGRAToBGR
+970485	ConvertBGRAToRGB565	ConvertBGRAToRGB565
+970556	ConvertBGRAToRGBA4444	ConvertBGRAToRGBA4444
+970620	ConvertBGRAToRGBA	ConvertBGRAToRGBA
+970681	TransformColorInverse	TransformColorInverse
+970772	AddGreenToBlueAndRed	AddGreenToBlueAndRed
+970818	Predictor12_0	Predictor12_0
+970845	Predictor13_0	Predictor13_0
+970878	Predictor8_0	Predictor8_0
+970903	Predictor5_0	Predictor5_0
+970932	Predictor10_0	Predictor10_0
+970963	Predictor11_0	Predictor11_0
+971006	Predictor9_0	Predictor9_0
+971031	Predictor6_0	Predictor6_0
+971056	Predictor7_0	Predictor7_0
+971110	x86CPUInfo	x86CPUInfo
+972624	RescalerImportRowShrinkSSE2	RescalerImportRowShrinkSSE2
+972732	RescalerImportRowExpandSSE2	RescalerImportRowExpandSSE2
+972864	RescalerExportRowShrinkSSE2	RescalerExportRowShrinkSSE2
+973450	RescalerExportRowExpandSSE2	RescalerExportRowExpandSSE2
+974246	ConvertARGBToY_0	ConvertARGBToY_0
+974618	ConvertARGBToUV	ConvertARGBToUV
+974857	YuvToBgraRow_0	YuvToBgraRow_0
+975029	YuvToArgbRow_0	YuvToArgbRow_0
+975205	ConvertRGBA32ToUV	ConvertRGBA32ToUV
+975372	YuvToRgbaRow_0	YuvToRgbaRow_0
+975546	ConvertBGR24ToY_0	ConvertBGR24ToY_0
+975758	ConvertRGB24ToY_0	ConvertRGB24ToY_0
+975970	YuvToRgbRow_0	YuvToRgbRow_0
+976368	YuvToBgrRow_0	YuvToBgrRow_0
+977955	ApplyAlphaMultiply	ApplyAlphaMultiply
+978026	DispatchAlpha	DispatchAlpha
+978076	DispatchAlphaToGreen	DispatchAlphaToGreen
+978203	ExtractAlpha	ExtractAlpha
+978371	ApplyAlphaMultiply_16b	ApplyAlphaMultiply_16b
+979305	Sync	Sync
+979321	Reset	Reset
+979341	Execute	Execute
+979378	Launch	Launch
+979415	End	End
+979428	Init	Init
+980833	DummyWriter	DummyWriter
+980941	Encode_constprop_0	Encode_constprop_0
+981089	Encode_constprop_1	Encode_constprop_1
+984453	DoSegmentsJob	DoSegmentsJob
+986021	ALPHNew	ALPHNew
+986037	ALPHDelete	ALPHDelete
+986340	Yuv444ToBgr	Yuv444ToBgr
+986422	Yuv444ToRgb	Yuv444ToRgb
+986504	Yuv444ToBgra	Yuv444ToBgra
+986585	Yuv444ToRgba	Yuv444ToRgba
+989283	ExtractAlpha_0	ExtractAlpha_0
+989501	DispatchAlphaToGreen_0	DispatchAlphaToGreen_0
+989692	DispatchAlpha_0	DispatchAlpha_0
+989808	ApplyAlphaMultiply_0	ApplyAlphaMultiply_0
+989971	MultRow	MultRow
+990031	MultARGBRow	MultARGBRow
+990119	CollectHistogram	CollectHistogram
+990374	FTransform	FTransform
+990635	FTransform2	FTransform2
+990668	FTransformWHT	FTransformWHT
+990826	SSE16x16	SSE16x16
+990927	SSE16x8	SSE16x8
+991028	SSE8x8	SSE8x8
+991359	SSE4x4	SSE4x4
+991450	TTransform	TTransform
+991686	Disto4x4	Disto4x4
+991725	QuantizeBlock	QuantizeBlock
+992347	Quantize2Blocks	Quantize2Blocks
+992386	QuantizeBlockWHT	QuantizeBlockWHT
+992975	Copy4x4	Copy4x4
+992995	Disto16x16	Disto16x16
+993249	Copy16x8	Copy16x8
+993293	Intra4Preds	Intra4Preds
+993728	ITransform	ITransform
+994472	Intra16Preds	Intra16Preds
+995183	IntraChromaPreds	IntraChromaPreds
+996257	TTransform_0	TTransform_0
+996373	Disto4x4_0	Disto4x4_0
+996393	SSE8x8_0	SSE8x8_0
+996472	SSE4x4_0	SSE4x4_0
+996514	ITransform_0	ITransform_0
+996680	Fill_part_4	Fill_part_4
+996713	HorizontalPred_part_6	HorizontalPred_part_6
+996774	Intra4Preds_0	Intra4Preds_0
+997095	Disto16x16_0	Disto16x16_0
+997279	SSE16x8_0	SSE16x8_0
+997405	FTransform_0	FTransform_0
+997504	CollectHistogram_0	CollectHistogram_0
+997614	FTransform2_0	FTransform2_0
+997777	FTransformWHT_0	FTransformWHT_0
+997872	SSE16x16_0	SSE16x16_0
+998102	Intra16Preds_0	Intra16Preds_0
+998658	QuantizeBlockWHT_0	QuantizeBlockWHT_0
+998740	IntraChromaPreds_0	IntraChromaPreds_0
+999490	QuantizeBlock_0	QuantizeBlock_0
+999590	Quantize2Blocks_0	Quantize2Blocks_0
+999819	PredictLine_part_0	PredictLine_part_0
+999903	VerticalFilter	VerticalFilter
+1000097	GradientFilter	GradientFilter
+1000238	HorizontalFilter	HorizontalFilter
+1000432	VerticalUnfilter	VerticalUnfilter
+1000611	GradientUnfilter	GradientUnfilter
+1000746	HorizontalUnfilter	HorizontalUnfilter
+1000980	GetResidualCost	GetResidualCost
+1001113	SetResidualCoeffs	SetResidualCoeffs
+1001301	GetResidualCostSSE2	GetResidualCostSSE2
+1001417	SetResidualCoeffsSSE2	SetResidualCoeffsSSE2
+1002102	Flush	Flush
+1005115	FinalizeTokenProbas	FinalizeTokenProbas
+1005948	SetSegmentProbas	SetSegmentProbas
+1006158	StoreSideInfo	StoreSideInfo
+1006347	PutCoeffs	PutCoeffs
+1012557	AccumulateRGB	AccumulateRGB
+1012794	UpdateChroma	UpdateChroma
+1013023	ConvertRowsToUV	ConvertRowsToUV
+1013184	ConvertRowToY	ConvertRowToY
+1013287	PreprocessARGB	PreprocessARGB
+1014723	AccumulateRGBA	AccumulateRGBA
+1015192	ImportYUVAFromRGBA_constprop_5	ImportYUVAFromRGBA_constprop_5
+1018211	PaletteCompareColorsForQsort	PaletteCompareColorsForQsort
+1018227	AnalyzeAndCreatePalette	AnalyzeAndCreatePalette
+1018540	ApplyPalette	ApplyPalette
+1018785	GetHuffBitLengthsAndCodes_isra_15	GetHuffBitLengthsAndCodes_isra_15
+1019005	StoreImageToBitMask	StoreImageToBitMask
+1019509	StoreHuffmanCode	StoreHuffmanCode
+1020316	EncodeImageNoHuffman	EncodeImageNoHuffman
+1020549	EncodePalette	EncodePalette
+1022992	GetMBSSIM	GetMBSSIM
+1027093	EncodeAlphaInternal	EncodeAlphaInternal
+1027333	ApplyFiltersAndEncode	ApplyFiltersAndEncode
+1027672	CompressAlphaJob	CompressAlphaJob
+1028048	UpdateHistogramCost	UpdateHistogramCost
+1028144	GetCombinedHistogramEntropy	GetCombinedHistogramEntropy
+1030351	ReconstructUV	ReconstructUV
+1030488	TrellisQuantizeBlock	TrellisQuantizeBlock
+1031003	ReconstructIntra16	ReconstructIntra16
+1031540	PickBestIntra16	PickBestIntra16
+1031931	ReconstructIntra4	ReconstructIntra4
+1032021	PickBestUV	PickBestUV
+1033080	RefineUsingDistortion	RefineUsingDistortion
+1033504	PickBestIntra4	PickBestIntra4
+1035264	PackARGB	PackARGB
+1035578	PackRGB	PackRGB
+1035660	GradientPredictDirect	GradientPredictDirect
+1035740	GradientPredictInverse	GradientPredictInverse
+1035899	PredictLineC_part_0_constprop_11	PredictLineC_part_0_constprop_11
+1035914	HorizontalUnfilter_0	HorizontalUnfilter_0
+1036086	HorizontalFilter_0	HorizontalFilter_0
+1036383	GradientUnfilter_0	GradientUnfilter_0
+1036514	VerticalUnfilter_0	VerticalUnfilter_0
+1036674	GradientFilter_0	GradientFilter_0
+1036855	VerticalFilter_0	VerticalFilter_0
+1037159	PackARGB_0	PackARGB_0
+1038254	ExtraCost	ExtraCost
+1038289	ExtraCostCombined	ExtraCostCombined
+1038326	HistogramAdd	HistogramAdd
+1038779	HuffmanCostCount	HuffmanCostCount
+1038857	FastSLog2Slow	FastSLog2Slow
+1038912	FastLog2Slow	FastLog2Slow
+1039129	CombinedShannonEntropy	CombinedShannonEntropy
+1042530	QuantizeLevels	QuantizeLevels
+1043379	CompareHuffmanTrees	CompareHuffmanTrees
+1043408	SetBitDepths	SetBitDepths
+1044665	AddSingleLiteralWithCostModel	AddSingleLiteralWithCostModel
+1044762	HashChainFindOffset	HashChainFindOffset
+1044854	HashChainFindCopy	HashChainFindCopy
+1045031	ComputeCacheEntropy_isra_18	ComputeCacheEntropy_isra_18
+1045277	BackwardReferences2DLocality_isra_17	BackwardReferences2DLocality_isra_17
+1045393	ConvertPopulationCountTableToBitEstimates	ConvertPopulationCountTableToBitEstimates
+1045501	BackwardReferencesLz77	BackwardReferencesLz77
+1049271	CollectColorRedTransforms	CollectColorRedTransforms
+1049383	CollectColorBlueTransforms	CollectColorBlueTransforms
+1049521	TransformColor	TransformColor
+1049611	SubtractGreenFromBlueAndRed	SubtractGreenFromBlueAndRed
+1049657	AddVectorEq_constprop_1	AddVectorEq_constprop_1
+1049710	AddVector_constprop_2	AddVector_constprop_2
+1049763	HistogramAdd_0	HistogramAdd_0
+1049988	CombinedShannonEntropy_0	CombinedShannonEntropy_0
+1050505	_ZL10ogg_fclosePN11soundengine15AudioDataSourceE	ogg_fclose(soundengine::AudioDataSource*)
+1050520	_ZL9ogg_ftellPN11soundengine15AudioDataSourceE	ogg_ftell(soundengine::AudioDataSource*)
+1050535	_ZL17ogg__fseek64_wrapPN11soundengine15AudioDataSourceEli	ogg__fseek64_wrap(soundengine::AudioDataSource*, long, int)
+1050585	_Z15ffa_packet_seekPvli	ffa_packet_seek(void*, long, int)
+1050796	_Z15ffa_read_packetPvPhi	ffa_read_packet(void*, unsigned char*, int)
+1050846	_ZL9ogg_freadPvmmPN11soundengine15AudioDataSourceE	ogg_fread(void*, unsigned long, unsigned long, soundengine::AudioDataSource*)
+1053614	_Z25getFormatFromChannelCountji	getFormatFromChannelCount(unsigned int, int)
+1056770	_Z19manual_sound_threadPv	manual_sound_thread(void*)
+1058093	_ZL11read_threadPv	read_thread(void*)
+1058642	_Z17OpenOrCreatePeaks10wxFileNameRSt6vectorIsSaIsEES3_RiS4_	OpenOrCreatePeaks(wxFileName, std::vector<short, std::allocator<short> >&, std::vector<short, std::allocator<short> >&, int&, int&)
+1061052	_GLOBAL__sub_I_effect	_GLOBAL__sub_I_effect
+1061099	_ZL19decode_interrupt_cbPv	decode_interrupt_cb(void*)
+1061113	_ZL7lockmgrPPv8AVLockOp	lockmgr(void**, AVLockOp)
+1061168	_ZL24packet_queue_put_privateP11PacketQueueP8AVPacket	packet_queue_put_private(PacketQueue*, AVPacket*)
+1061268	_ZL13alloc_pictureP10VideoState	alloc_picture(VideoState*)
+1061381	_Z11packet_seekPvli	packet_seek(void*, long, int)
+1061412	_Z11read_packetPvPhi	read_packet(void*, unsigned char*, int)
+1061430	_ZL20decoder_decode_frameP10VideoStateP7DecoderP7AVFrameP10AVSubtitle_isra_10	decoder_decode_frame(VideoState*, Decoder*, AVFrame*, AVSubtitle*)
+1061859	_ZL15subtitle_threadPv	subtitle_thread(void*)
+1062054	_ZL12audio_threadPv	audio_thread(void*)
+1062203	_ZL19stream_toggle_pauseP10VideoState	stream_toggle_pause(VideoState*)
+1062341	_ZL12video_threadPv	video_thread(void*)
+1063090	_ZL16get_master_clockP10VideoState	get_master_clock(VideoState*)
+1063218	_ZL13update_bufferPvPhij_isra_27_constprop_125	update_buffer(void*, unsigned char*, int, unsigned int)
+1064084	_ZL12stream_closeP10VideoState	stream_close(VideoState*)
+1064375	_ZL11stream_openP10VideoStatePKcP13AVInputFormat	stream_open(VideoState*, char const*, AVInputFormat*)
+1064938	_ZL22stream_component_closeP10VideoStateii	stream_component_close(VideoState*, int, int)
+1065216	_Z22check_stream_specifierP15AVFormatContextP8AVStreamPKc	check_stream_specifier(AVFormatContext*, AVStream*, char const*)
+1065332	_Z17filter_codec_optsP12AVDictionary9AVCodecIDP15AVFormatContextP8AVStreamP7AVCodec	filter_codec_opts(AVDictionary*, AVCodecID, AVFormatContext*, AVStream*, AVCodec*)
+1065638	_ZL21stream_component_openP10VideoStateii_constprop_122	stream_component_open(VideoState*, int, int)
+1066519	_Z20VideoQueue_PushEventP10VideoStateP9SDL_Event	VideoQueue_PushEvent(VideoState*, SDL_Event*)
+1066568	_Z19VideoQueue_PopEventP10VideoStateP9SDL_Event	VideoQueue_PopEvent(VideoState*, SDL_Event*)
+1066631	_ZL15audio_thread_alPv	audio_thread_al(void*)
+1066981	_ZL11subs_astextP10VideoStatePK14AVSubtitleRect_isra_45	subs_astext(VideoState*, AVSubtitleRect const*)
+1067569	_ZL19video_image_displayP10VideoState	video_image_display(VideoState*)
+1067803	_ZL13video_refreshPvPd	video_refresh(void*, double*)
+1071989	_ZL11read_threadPv_0	read_thread(void*)
+1075037	_GLOBAL__sub_I_g_bAVIPlaying	_GLOBAL__sub_I_g_bAVIPlaying
+1078423	_Z34ix86_override_options_after_changev_79	ix86_override_options_after_change()
+1078866	_Z10HashStringIcEmPKT__0	unsigned long HashString<char>(char const*)
+1080743	_Z22ALfilterState_processCP13ALfilterStatePfPKfj	ALfilterState_processC(ALfilterState*, float*, float const*, unsigned int)
+1080792	_Z28ALfilterState_processCStereoP13ALfilterStatePfPKfj	ALfilterState_processCStereo(ALfilterState*, float*, float const*, unsigned int)
+1080841	_Z4lerpfff	lerp(float, float, float)
+1080857	_Z17Resample_lerp32_CPK10BsincStatePKfjjPfj	Resample_lerp32_C(BsincState const*, float const*, unsigned int, unsigned int, float*, unsigned int)
+1080899	_Z24Resample_lerp32_C_StereoPK10BsincStatePKfjjPfj	Resample_lerp32_C_Stereo(BsincState const*, float const*, unsigned int, unsigned int, float*, unsigned int)
+1080946	_Z5Mix_CPKfPfP8MixGainsjjj	Mix_C(float const*, float*, MixGains*, unsigned int, unsigned int, unsigned int)
+1081059	_Z12AudioBusInitv	AudioBusInit()
+1098812	_GLOBAL__sub_I__Z22ALfilterState_processCP13ALfilterStatePfPKfj	_GLOBAL__sub_I__Z22ALfilterState_processCP13ALfilterStatePfPKfj
+1101253	_Z34ix86_override_options_after_changev_80	ix86_override_options_after_change()
+1105940	_Z34ix86_override_options_after_changev_81	ix86_override_options_after_change()
+1107280	_Z34ix86_override_options_after_changev_82	ix86_override_options_after_change()
+1112377	opus_granule_sample	opus_granule_sample
+1116715	opus_tags_parse_impl	opus_tags_parse_impl
+1116978	opus_head_parse	opus_head_parse
+1117207	opus_tags_clear	opus_tags_clear
+1117252	opus_tags_parse	opus_tags_parse
+1117345	opus_tags_copy	opus_tags_copy
+1117504	opus_tags_add	opus_tags_add
+1117619	opus_tags_add_comment	opus_tags_add_comment
+1117731	opus_tagcompare	opus_tagcompare
+1117772	opus_tagncompare	opus_tagncompare
+1117807	opus_tags_query	opus_tags_query
+1117894	opus_tags_query_count	opus_tags_query_count
+1117966	opus_tags_get_track_gain	opus_tags_get_track_gain
+1118089	opus_picture_tag_parse	opus_picture_tag_parse
+1119287	opus_picture_tag_init	opus_picture_tag_init
+1119357	opus_picture_tag_clear	opus_picture_tag_clear
+1120232	_ToEntry_create	_ToEntry_create
+1120263	_ToEntry_dispose	_ToEntry_dispose
+1120276	_FromEntry_create	_FromEntry_create
+1120299	_FromEntry_dispose	_FromEntry_dispose
+1120646	_malloc	_malloc
+1120670	_calloc	_calloc
+1120720	_free	_free
+1120735	_setDebugMalloc	_setDebugMalloc
+1120749	_setMalloc	_setMalloc
+1120763	_setFree	_setFree
+1120777	_readFile	_readFile
+1120852	_sortReset	_sortReset
+1121160	_sortBone_part_0	_sortBone_part_0
+1126650	readTuple	readTuple
+1128959	_readVertices_isra_0	_readVertices_isra_0
+1129185	toColor_part_1	toColor_part_1
+1134827	isl_tarjan_graph_free_0	isl_tarjan_graph_free_0
+1139317	_addCurvePosition	_addCurvePosition
+1145373	parse_string_isra_0	parse_string_isra_0
+1145680	parse_value	parse_value
+1146202	Json_getError	Json_getError
+1146217	Json_dispose	Json_dispose
+1146529	Json_create	Json_create
+1146593	Json_getItem	Json_getItem
+1146660	Json_getString	Json_getString
+1146732	Json_getFloat	Json_getFloat
+1146805	Json_getInt	Json_getInt
+1146877	_Entry_create	_Entry_create
+1146929	_Entry_dispose	_Entry_dispose
+1148116	ogg_stream_flush_i	ogg_stream_flush_i
+1148607	ogg_page_version	ogg_page_version
+1148622	ogg_page_continued	ogg_page_continued
+1148639	ogg_page_bos	ogg_page_bos
+1148657	ogg_page_eos	ogg_page_eos
+1148676	ogg_page_granulepos	ogg_page_granulepos
+1148714	ogg_page_serialno	ogg_page_serialno
+1148740	ogg_page_pageno	ogg_page_pageno
+1148766	ogg_page_packets	ogg_page_packets
+1148799	ogg_stream_init	ogg_stream_init
+1149019	ogg_stream_check	ogg_stream_check
+1149044	ogg_stream_clear	ogg_stream_clear
+1149164	ogg_stream_destroy	ogg_stream_destroy
+1149284	ogg_page_checksum_set	ogg_page_checksum_set
+1149367	ogg_stream_iovecin	ogg_stream_iovecin
+1149715	ogg_stream_packetin	ogg_stream_packetin
+1149743	ogg_stream_flush	ogg_stream_flush
+1149758	ogg_stream_flush_fill	ogg_stream_flush_fill
+1149773	ogg_stream_pageout	ogg_stream_pageout
+1149822	ogg_stream_pageout_fill	ogg_stream_pageout_fill
+1149870	ogg_stream_eos	ogg_stream_eos
+1149896	ogg_sync_init	ogg_sync_init
+1149920	ogg_sync_clear	ogg_sync_clear
+1149954	ogg_sync_destroy	ogg_sync_destroy
+1149987	ogg_sync_check	ogg_sync_check
+1150003	ogg_sync_buffer	ogg_sync_buffer
+1150105	ogg_sync_wrote	ogg_sync_wrote
+1150141	ogg_sync_pageseek	ogg_sync_pageseek
+1150376	ogg_sync_pageout	ogg_sync_pageout
+1150431	ogg_stream_pagein	ogg_stream_pagein
+1151062	ogg_sync_reset	ogg_sync_reset
+1151092	ogg_stream_reset	ogg_stream_reset
+1151127	ogg_stream_reset_serialno	ogg_stream_reset_serialno
+1151163	ogg_stream_packetout	ogg_stream_packetout
+1151282	ogg_stream_packetpeek	ogg_stream_packetpeek
+1151383	ogg_packet_clear	ogg_packet_clear
+1151458	_fseek64_wrap	_fseek64_wrap
+1151479	_get_next_page_constprop_17	_get_next_page_constprop_17
+1151584	_initial_pcmoffset	_initial_pcmoffset
+1151736	_get_next_page_constprop_16	_get_next_page_constprop_16
+1151913	_fetch_headers_constprop_15	_fetch_headers_constprop_15
+1152305	_fetch_headers_constprop_14	_fetch_headers_constprop_14
+1152640	_get_prev_page_serial	_get_prev_page_serial
+1152884	_fetch_and_process_packet_constprop_11	_fetch_and_process_packet_constprop_11
+1153271	_fetch_and_process_packet_constprop_12	_fetch_and_process_packet_constprop_12
+1153633	_ov_getlap_isra_4	_ov_getlap_isra_4
+1154732	_bisect_forward_serialno	_bisect_forward_serialno
+1155229	_open_seekable2	_open_seekable2
+1156672	_ov_64_seek_lap	_ov_64_seek_lap
+1157132	_ov_d_seek_lap	_ov_d_seek_lap
+1157780	_ov_open1	_ov_open1
+1160379	_preextrapolate_helper	_preextrapolate_helper
+1160629	_vorbis_block_alloc	_vorbis_block_alloc
+1160694	_vorbis_block_ripcord	_vorbis_block_ripcord
+1161214	_vds_shared_init	_vds_shared_init
+1164099	apsort	apsort
+1164124	seed_chase	seed_chase
+1164349	bark_noise_hybridmp	bark_noise_hybridmp
+1164783	setup_tone_curves	setup_tone_curves
+1166194	noise_normalize_isra_0	noise_normalize_isra_0
+1166595	bark_noise_hybridmp_constprop_1	bark_noise_hybridmp_constprop_1
+1166893	noise_normalize_isra_0_constprop_2	noise_normalize_isra_0_constprop_2
+1167219	_vp_global_look	_vp_global_look
+1167254	_vp_global_free	_vp_global_free
+1167281	_vi_gpsy_free	_vi_gpsy_free
+1167382	_vi_psy_free	_vi_psy_free
+1167483	_vp_psy_init	_vp_psy_init
+1168089	_vp_psy_clear	_vp_psy_clear
+1168276	_vp_noisemask	_vp_noisemask
+1168511	_vp_tonemask	_vp_tonemask
+1168932	_vp_offset_and_mix	_vp_offset_and_mix
+1169137	_vp_ampmax_decay	_vp_ampmax_decay
+1169168	_vp_couple_quantize_normalize	_vp_couple_quantize_normalize
+1169994	_vorbis_window_get	_vorbis_window_get
+1170010	_vorbis_apply_window	_vorbis_apply_window
+1170415	_vorbis_pack_comment	_vorbis_pack_comment
+1172979	_ve_amp	_ve_amp
+1173316	_ve_envelope_init	_ve_envelope_init
+1173463	_ve_envelope_clear	_ve_envelope_clear
+1173560	_ve_envelope_search	_ve_envelope_search
+1173828	_ve_envelope_mark	_ve_envelope_mark
+1173940	_ve_envelope_shift	_ve_envelope_shift
+1173987	mdct_butterflies_isra_0	mdct_butterflies_isra_0
+1176055	mdct_init	mdct_init
+1176287	mdct_clear	mdct_clear
+1176324	mdct_backward	mdct_backward
+1176649	mdct_forward	mdct_forward
+1179173	sort32a	sort32a
+1179224	_float32_pack	_float32_pack
+1179275	_float32_unpack	_float32_unpack
+1179306	_make_words	_make_words
+1179547	_book_maptype1_quantvals	_book_maptype1_quantvals
+1179620	_book_unquantize	_book_unquantize
+1181646	dradf2	dradf2
+1181820	dradf4	dradf4
+1182140	dradb2	dradb2
+1182308	dradb3	dradb3
+1182491	dradb4	dradb4
+1182796	dradbg	dradbg
+1184570	dradfg	dradfg
+1186422	drft_forward	drft_forward
+1186672	drft_backward	drft_backward
+1186971	drft_init	drft_init
+1187217	drft_clear	drft_clear
+1187254	icomp	icomp
+1188420	accumulate_fit_isra_2	accumulate_fit_isra_2
+1188636	fit_line_isra_3	fit_line_isra_3
+1193654	local_book_besterror	local_book_besterror
+1194054	res2_inverse	res2_inverse
+1194289	res2_class	res2_class
+1194474	res1_class	res1_class
+1194677	_encodepart	_encodepart
+1194744	_01inverse	_01inverse
+1195078	res1_inverse	res1_inverse
+1195728	_01forward_constprop_0	_01forward_constprop_0
+1196050	res1_forward	res1_forward
+1196106	res2_forward	res2_forward
+1197189	comp	comp
+1197212	Newton_Raphson	Newton_Raphson
+1197411	Laguerre_With_Deflation	Laguerre_With_Deflation
+1198379	find_fixedlength	find_fixedlength
+1198738	is_counted_repeat_part_0	is_counted_repeat_part_0
+1198808	adjust_recurse_isra_2	adjust_recurse_isra_2
+1198982	is_anchored	is_anchored
+1199154	is_startline	is_startline
+1199393	could_be_empty_branch	could_be_empty_branch
+1199927	get_chr_property_list	get_chr_property_list
+1200503	compare_opcodes	compare_opcodes
+1201739	add_to_class	add_to_class
+1202175	add_list_to_class	add_list_to_class
+1202276	check_posix_syntax	check_posix_syntax
+1202902	find_firstassertedchar	find_firstassertedchar
+1203100	check_escape	check_escape
+1204128	_pcre_find_bracket	_pcre_find_bracket
+1204266	compile_regex	compile_regex
+1213489	internal_dfa_exec	internal_dfa_exec
+1222694	match_ref	match_ref
+1223082	match_0	match_0
+1245254	match_constprop_2	match_constprop_2
+1267304	match_constprop_0	match_constprop_0
+1291683	sljit_free_compiler	sljit_free_compiler
+1291731	do_utf_caselesscmp	do_utf_caselesscmp
+1292054	do_callout	do_callout
+1292146	jit_machine_stack_exec	jit_machine_stack_exec
+1292177	set_jumps	set_jumps
+1292220	sljit_create_compiler	sljit_create_compiler
+1292373	do_search_mark	do_search_mark
+1292423	sljit_stack_resize	sljit_stack_resize
+1292485	next_opcode_isra_19	next_opcode_isra_19
+1292578	get_framesize	get_framesize
+1292857	char_has_othercase_isra_21	char_has_othercase_isra_21
+1293017	char_othercase_isra_22_part_23	char_othercase_isra_22_part_23
+1293049	char_get_othercase_bit_isra_24	char_get_othercase_bit_isra_24
+1293252	sljit_free_exec	sljit_free_exec
+1293371	sljit_generate_code	sljit_generate_code
+1293948	set_then_offsets	set_then_offsets
+1294456	add_jump	add_jump
+1294521	ensure_buf_isra_25	ensure_buf_isra_25
+1294577	sljit_emit_label	sljit_emit_label
+1294709	emit_do_imm32	emit_do_imm32
+1294807	call_with_args	call_with_args
+1294892	sljit_emit_jump	sljit_emit_jump
+1295046	flush_stubs	flush_stubs
+1295160	emit_load_imm64	emit_load_imm64
+1295232	emit_x86_instruction	emit_x86_instruction
+1295846	emit_x86_instruction_constprop_96	emit_x86_instruction_constprop_96
+1296289	emit_mov_part_27	emit_mov_part_27
+1296460	emit_mov_half	emit_mov_half
+1296601	emit_mov_byte	emit_mov_byte
+1296744	emit_test_binary	emit_test_binary
+1296988	emit_cmp_binary	emit_cmp_binary
+1297222	set_private_data_ptrs	set_private_data_ptrs
+1297977	emit_unary	emit_unary
+1298096	sljit_emit_ijump_constprop_69	sljit_emit_ijump_constprop_69
+1298247	sljit_emit_fast_return_constprop_78	sljit_emit_fast_return_constprop_78
+1298313	sljit_emit_fast_return_constprop_79	sljit_emit_fast_return_constprop_79
+1298515	sljit_emit_fast_enter_constprop_77	sljit_emit_fast_enter_constprop_77
+1298657	sljit_emit_fast_enter_constprop_76	sljit_emit_fast_enter_constprop_76
+1298722	scan_prefix	scan_prefix
+1299670	emit_mul	emit_mul
+1300161	emit_mov_int	emit_mov_int
+1300364	sljit_emit_op1	sljit_emit_op1
+1301121	init_frame_isra_37	init_frame_isra_37
+1301562	emit_cum_binary	emit_cum_binary
+1302089	emit_lea_binary_part_28	emit_lea_binary_part_28
+1302245	emit_shift	emit_shift
+1302615	emit_shift_with_flags	emit_shift_with_flags
+1302816	emit_non_cum_binary	emit_non_cum_binary
+1303231	sljit_emit_op2	sljit_emit_op2
+1303803	sljit_emit_op_flags_isra_31_part_32_constprop_75	sljit_emit_op_flags_isra_31_part_32_constprop_75
+1304058	sljit_emit_op2_constprop_85	sljit_emit_op2_constprop_85
+1304628	sljit_emit_cmp	sljit_emit_cmp
+1304770	sljit_emit_cmp_constprop_84	sljit_emit_cmp_constprop_84
+1304839	sljit_emit_cmp_constprop_83	sljit_emit_cmp_constprop_83
+1304908	sljit_emit_cmp_constprop_82	sljit_emit_cmp_constprop_82
+1304977	sljit_emit_cmp_constprop_81	sljit_emit_cmp_constprop_81
+1305038	sljit_emit_cmp_constprop_80	sljit_emit_cmp_constprop_80
+1305099	check_partial	check_partial
+1305215	do_getucd_isra_39	do_getucd_isra_39
+1305304	check_hspace_isra_35	check_hspace_isra_35
+1305518	check_anynewline_isra_34	check_anynewline_isra_34
+1305626	check_vspace_isra_36	check_vspace_isra_36
+1305734	count_match	count_match
+1305815	_byte_sequence_compare	_byte_sequence_compare
+1306357	allocate_stack	allocate_stack
+1306468	compile_then_trap_matchingpath_isra_53	compile_then_trap_matchingpath_isra_53
+1306698	do_casefulcmp_isra_48	do_casefulcmp_isra_48
+1306863	return_with_partial_match	return_with_partial_match
+1307082	match_once_common_isra_38	match_once_common_isra_38
+1307283	compile_assert_backtrackingpath	compile_assert_backtrackingpath
+1307631	skip_char_back_isra_42	skip_char_back_isra_42
+1307724	fast_forward_first_char	fast_forward_first_char
+1308005	search_requested_char	search_requested_char
+1308384	detect_partial_match	detect_partial_match
+1308643	read_char7_type_isra_43	read_char7_type_isra_43
+1308771	check_newlinechar	check_newlinechar
+1309016	read_char_range	read_char_range
+1309623	fast_forward_newline	fast_forward_newline
+1310192	peek_char	peek_char
+1310339	mainloop_entry	mainloop_entry
+1310955	read_char8_type	read_char8_type
+1311211	fast_forward_first_n_chars	fast_forward_first_n_chars
+1312229	do_revertframes_isra_47	do_revertframes_isra_47
+1312421	sljit_get_local_base_constprop_68	sljit_get_local_base_constprop_68
+1312547	copy_ovector	copy_ovector
+1312825	reset_ovector_isra_41	reset_ovector_isra_41
+1312936	sljit_get_local_base_constprop_67	sljit_get_local_base_constprop_67
+1313056	compile_dnref_search	compile_dnref_search
+1313425	do_reset_match	do_reset_match
+1313589	check_str_end	check_str_end
+1313890	check_wordboundary	check_wordboundary
+1314592	compile_ref_matchingpath	compile_ref_matchingpath
+1315521	compile_ref_iterator_matchingpath_isra_55	compile_ref_iterator_matchingpath_isra_55
+1316594	check_class_ranges_isra_40	check_class_ranges_isra_40
+1317266	fast_forward_start_bits	fast_forward_start_bits
+1317606	compile_xclass_matchingpath	compile_xclass_matchingpath
+1320748	compile_char1_matchingpath	compile_char1_matchingpath
+1325444	compile_charn_matchingpath	compile_charn_matchingpath
+1325828	compile_iterator_matchingpath_isra_54	compile_iterator_matchingpath_isra_54
+1327358	compile_matchingpath	compile_matchingpath
+1330948	compile_bracket_backtrackingpath	compile_bracket_backtrackingpath
+1333229	compile_backtrackingpath	compile_backtrackingpath
+1335941	compile_assert_matchingpath	compile_assert_matchingpath
+1337661	compile_bracket_matchingpath	compile_bracket_matchingpath
+1339880	compile_recurse	compile_recurse
+1341821	_pcre_jit_compile	_pcre_jit_compile
+1345807	_pcre_jit_exec	_pcre_jit_exec
+1346141	_pcre_jit_free	_pcre_jit_free
+1346196	_pcre_jit_get_size	_pcre_jit_get_size
+1346213	_pcre_jit_get_target	_pcre_jit_get_target
+1346819	_pcre_is_newline	_pcre_is_newline
+1347032	_pcre_was_newline	_pcre_was_newline
+1347260	_pcre_ord2utf	_pcre_ord2utf
+1347341	find_minlength	find_minlength
+1348037	set_table_bit_isra_1_part_2	set_table_bit_isra_1_part_2
+1348194	set_start_bits	set_start_bits
+1349727	_pcre_valid_utf	_pcre_valid_utf
+1350125	_pcre_xclass	_pcre_xclass
+1353432	_Z34ix86_override_options_after_changev_83	ix86_override_options_after_change()
+1354200	_Z34ix86_override_options_after_changev_84	ix86_override_options_after_change()
+1354222	__tcf_0	__tcf_0
+1366367	_GLOBAL__sub_I_g_vShadowVertices	_GLOBAL__sub_I_g_vShadowVertices
+1373644	_Z34ix86_override_options_after_changev_85	ix86_override_options_after_change()
+1374443	_Z34ix86_override_options_after_changev_86	ix86_override_options_after_change()
+1375192	_Z34ix86_override_options_after_changev_87	ix86_override_options_after_change()
+1375215	_Z18GetAbsolutePointNrRK12TPolygonListii	GetAbsolutePointNr(TPolygonList const&, int, int)
+1375277	_Z19GetPointFromPolygonRK12TPolygonListii	GetPointFromPolygon(TPolygonList const&, int, int)
+1375355	_Z14GetBoundingBoxRK12TPolygonList	GetBoundingBox(TPolygonList const&)
+1375488	_Z14GetBoundingBoxRKSt6vectorI7wxPointSaIS0_EE	GetBoundingBox(std::vector<wxPoint, std::allocator<wxPoint> > const&)
+1375589	_Z10GetPointAtRK7wxPointRK12TPolygonListRiS5_ii	GetPointAt(wxPoint const&, TPolygonList const&, int&, int&, int, int)
+1375714	_Z10GetPointAtRK7wxPointRKSt6vectorIS_SaIS_EEii	GetPointAt(wxPoint const&, std::vector<wxPoint, std::allocator<wxPoint> > const&, int, int)
+1375798	_Z12GetSegmentAtRK7wxPointRKSt6vectorIS_SaIS_EERiRS_	GetSegmentAt(wxPoint const&, std::vector<wxPoint, std::allocator<wxPoint> > const&, int&, wxPoint&)
+1375981	_Z12GetSegmentAtRK7wxPointRK12TPolygonListRiS5_RS_	GetSegmentAt(wxPoint const&, TPolygonList const&, int&, int&, wxPoint&)
+1376052	_Z8GetAngleff	GetAngle(float, float)
+1376135	_Z14MapPointToLineRK7wxPointS1_S1_	MapPointToLine(wxPoint const&, wxPoint const&, wxPoint const&)
+1376190	_Z15PointInTriangleRN3p2t8TriangleERK7wxPoint	PointInTriangle(p2t::Triangle&, wxPoint const&)
+1376292	_Z8LinesCutRK7wxPointS1_S1_S1_	LinesCut(wxPoint const&, wxPoint const&, wxPoint const&, wxPoint const&)
+1376396	_Z8LineCutsRK7wxPointS1_RKSt6vectorIS_SaIS_EE	LineCuts(wxPoint const&, wxPoint const&, std::vector<wxPoint, std::allocator<wxPoint> > const&)
+1376463	_Z10GetNumCutsRK7wxPointS1_RKSt6vectorIS_SaIS_EE	GetNumCuts(wxPoint const&, wxPoint const&, std::vector<wxPoint, std::allocator<wxPoint> > const&)
+1376538	_Z8LineCutsRK7wxPointS1_RK12TPolygonList	LineCuts(wxPoint const&, wxPoint const&, TPolygonList const&)
+1376631	_Z8RotationRK7wxPointS1_S1_	Rotation(wxPoint const&, wxPoint const&, wxPoint const&)
+1376667	_Z11PointOnLineRK7wxPointS1_S1_	PointOnLine(wxPoint const&, wxPoint const&, wxPoint const&)
+1376744	_Z13GetDotProductRK11wxRealPointS1_	GetDotProduct(wxRealPoint const&, wxRealPoint const&)
+1376766	_Z7RectHitRK7wxPointRKSt6vectorI6wxRectSaIS3_EE	RectHit(wxPoint const&, std::vector<wxRect, std::allocator<wxRect> > const&)
+1376827	_Z27CreatePolygonsFromPointListRKSt6vectorI7wxPointSaIS0_EER12TPolygonList	CreatePolygonsFromPointList(std::vector<wxPoint, std::allocator<wxPoint> > const&, TPolygonList&)
+1376954	_Z27CreatePointListFromPolygonsRK12TPolygonListRSt6vectorI7wxPointSaIS3_EE	CreatePointListFromPolygons(TPolygonList const&, std::vector<wxPoint, std::allocator<wxPoint> >&)
+1377180	_Z20IsPointInsidePolygonRK7wxPointRKSt6vectorIS_SaIS_EE	IsPointInsidePolygon(wxPoint const&, std::vector<wxPoint, std::allocator<wxPoint> > const&)
+1377691	_Z20IsPointInsidePolygonRK7wxPointRK12TPolygonList	IsPointInsidePolygon(wxPoint const&, TPolygonList const&)
+1378251	_Z34ix86_override_options_after_changev_88	ix86_override_options_after_change()
+1381151	_Z34ix86_override_options_after_changev_89	ix86_override_options_after_change()
+1384930	_Z34ix86_override_options_after_changev_90	ix86_override_options_after_change()
+1384952	__tcf_0_0	__tcf_0_0
+1385123	__tcf_1	__tcf_1
+1385295	_Z16InitObjectAccessP15TVisionaireGame	InitObjectAccess(TVisionaireGame*)
+1385312	_Z12GetTypeGroup16eVisionaireTable	GetTypeGroup(eVisionaireTable)
+1385586	_Z8IdStrStdRK3TId	IdStrStd(TId const&)
+1385787	_Z5IdStrRK3TId	IdStr(TId const&)
+1385944	_Z5IdStrRK17TVisionaireObject	IdStr(TVisionaireObject const&)
+1385975	_Z5IdStrRK10TVisObjRef	IdStr(TVisObjRef const&)
+1386006	_Z24FindObjectByNameRelativeRK8wxStringR10TVisObjRefb	FindObjectByNameRelative(wxString const&, TVisObjRef&, bool)
+1386989	_Z16FindObjectByNameRK8wxStringR10TVisObjRefb	FindObjectByName(wxString const&, TVisObjRef&, bool)
+1387514	_Z20FindObjectByNameOrIdRK8wxStringR10TVisObjRefb	FindObjectByNameOrId(wxString const&, TVisObjRef&, bool)
+1387666	_Z16CreateObjectPathRK10TVisObjRefb	CreateObjectPath(TVisObjRef const&, bool)
+1388740	_Z10GetFieldIdRK8wxString	GetFieldId(wxString const&)
+1388803	_Z34ix86_override_options_after_changev_91	ix86_override_options_after_change()
+1390417	_Z34ix86_override_options_after_changev_92	ix86_override_options_after_change()
+1390440	_Z11pointsorterRKSt4pairIisES2_	pointsorter(std::pair<int, short> const&, std::pair<int, short> const&)
+1390520	_Z10EaseLinearfff	EaseLinear(float, float, float)
+1391423	_Z34ix86_override_options_after_changev_93	ix86_override_options_after_change()
+1399990	_Z34ix86_override_options_after_changev_94	ix86_override_options_after_change()
+1400013	_Z14ConvertFromLuaR10TVisObjRefi	ConvertFromLua(TVisObjRef&, int)
+1400028	_Z12ConvertToLuaRK10TVisObjRef	ConvertToLua(TVisObjRef const&)
+1400046	_Z14ConvertFromLuaR6TVListi	ConvertFromLua(TVList&, int)
+1400215	_Z12ConvertToLuaRK6TVList	ConvertToLua(TVList const&)
+1400276	_Z34ix86_override_options_after_changev_95	ix86_override_options_after_change()
+1400299	_Z8CloseLuav	CloseLua()
+1400326	_Z10GetLuaGamev	GetLuaGame()
+1400342	_Z9LuaDoFileRK10wxFileName	LuaDoFile(wxFileName const&)
+1400596	_Z9LuaDoFilePKc	LuaDoFile(char const*)
+1400772	_Z6maxlenRK8wxString	maxlen(wxString const&)
+1400972	_Z8LuaDoRefi	LuaDoRef(int)
+1401184	_Z8SetFieldi	SetField(int)
+1401381	_Z9SetFieldsv	SetFields()
+1401407	_Z9SetTablesv	SetTables()
+1401525	_Z8SetEnumsv	SetEnums()
+1405988	_Z17ExportEmptyObjectv	ExportEmptyObject()
+1406026	_Z16ExportGameObjectv	ExportGameObject()
+1406064	_Z19ExportDividingPointv	ExportDividingPoint()
+1406092	_Z10ExportDirsRK8wxStringS1_S1_	ExportDirs(wxString const&, wxString const&, wxString const&)
+1406207	_Z30StoreNamesOfInternalGlobalVarsv	StoreNamesOfInternalGlobalVars()
+1406409	_Z7InitLuaP15TVisionaireGameRK8wxStringS3_S3_	InitLua(TVisionaireGame*, wxString const&, wxString const&, wxString const&)
+1406643	_Z19IsInternalGlobalVarRK8wxString	IsInternalGlobalVar(wxString const&)
+1406740	_Z8LuaPrintP9lua_State	LuaPrint(lua_State*)
+1406949	_Z11LuaDoStringRKSs	LuaDoString(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+1407229	_Z18LuaExecuteFunctionRKSsRSt6vectorIP9TArgumentSaIS3_EES6_	LuaExecuteFunction(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<TArgument*, std::allocator<TArgument*> >&, std::vector<TArgument*, std::allocator<TArgument*> >&)
+1408406	_Z11LuaDoStringRKSsS0_	LuaDoString(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+1409018	_Z22LuaExecuteEventHandlerRKSsRK10TVisObjRef	LuaExecuteEventHandler(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, TVisObjRef const&)
+1409566	_GLOBAL__sub_I_luas	_GLOBAL__sub_I_luas
+1417072	_Z34ix86_override_options_after_changev_96	ix86_override_options_after_change()
+1417094	_ZL11SetPositionP9lua_State	SetPosition(lua_State*)
+1417187	_ZL11GetPositionP9lua_State	GetPosition(lua_State*)
+1417253	_ZL12DeleteSpriteP9lua_State	DeleteSprite(lua_State*)
+1417306	_Z14luaopen_SpriteP9lua_State	luaopen_Sprite(lua_State*)
+1417446	_ZL7GetSizeP9lua_State	GetSize(lua_State*)
+1417750	_ZL7GetPathP9lua_State	GetPath(lua_State*)
+1417893	_ZL7SetPathP9lua_State	SetPath(lua_State*)
+1418155	_ZL11PrintSpriteP9lua_State	PrintSprite(lua_State*)
+1418486	_Z12CreateSpriteP9lua_State	CreateSprite(lua_State*)
+1418688	_Z13CreateTSpriteP9lua_StateRK7TSprite	CreateTSprite(lua_State*, TSprite const&)
+1418748	_Z11CheckSpriteP9lua_Statei	CheckSprite(lua_State*, int)
+1418795	_Z34ix86_override_options_after_changev_97	ix86_override_options_after_change()
+1418818	_Z14luaopen_socketP9lua_State	luaopen_socket(lua_State*)
+1418859	_Z18luaopen_socket_ftpP9lua_State	luaopen_socket_ftp(lua_State*)
+1418901	_Z19luaopen_socket_httpP9lua_State	luaopen_socket_http(lua_State*)
+1418943	_Z19luaopen_socket_smtpP9lua_State	luaopen_socket_smtp(lua_State*)
+1418985	_Z17luaopen_socket_tpP9lua_State	luaopen_socket_tp(lua_State*)
+1419027	_Z18luaopen_socket_urlP9lua_State	luaopen_socket_url(lua_State*)
+1419069	_Z16luaopen_mobdebugP9lua_State	luaopen_mobdebug(lua_State*)
+1419111	_Z20luaopen_socket_ltn12P9lua_State	luaopen_socket_ltn12(lua_State*)
+1419153	_Z19luaopen_socket_mimeP9lua_State	luaopen_socket_mime(lua_State*)
+1419195	_Z34ix86_override_options_after_changev_98	ix86_override_options_after_change()
+1419217	_ZL5new_TP9lua_State	new_T(lua_State*)
+1419247	_ZL6new_TTP9lua_State	new_TT(lua_State*)
+1419275	_ZL8VisObjToP9lua_State	VisObjTo(lua_State*)
+1419290	_ZL7GetBoolP9lua_State	GetBool(lua_State*)
+1419357	_ZL6GetStrP9lua_State	GetStr(lua_State*)
+1419424	_ZL9GetSpriteP9lua_State	GetSprite(lua_State*)
+1419491	_ZL7GetRectP9lua_State	GetRect(lua_State*)
+1419555	_ZL8GetTextsP9lua_State	GetTexts(lua_State*)
+1419624	_ZL10GetTextStrP9lua_State	GetTextStr(lua_State*)
+1419825	_ZL8GetPointP9lua_State	GetPoint(lua_State*)
+1419889	_ZL7GetNameP9lua_State	GetName(lua_State*)
+1419969	_ZL9ClearLinkP9lua_State	ClearLink(lua_State*)
+1420030	_ZL6GetIntP9lua_State	GetInt(lua_State*)
+1420097	_ZL8GetFloatP9lua_State	GetFloat(lua_State*)
+1420165	_ZL7IsEmptyP9lua_State	IsEmpty(lua_State*)
+1420222	_ZL11IsAnyObjectP9lua_State	IsAnyObject(lua_State*)
+1420278	_ZL5GetIdP9lua_State	GetId(lua_State*)
+1420363	_ZL22DeleteVisionaireObjectP9lua_State	DeleteVisionaireObject(lua_State*)
+1420415	_ZL18EqVisionaireObjectP9lua_State	EqVisionaireObject(lua_State*)
+1420506	_ZL7GetIntsP9lua_State	GetInts(lua_State*)
+1420608	_ZL9GetFloatsP9lua_State	GetFloats(lua_State*)
+1420710	_ZL8GetPathsP9lua_State	GetPaths(lua_State*)
+1420844	_ZL7SetNameP9lua_State	SetName(lua_State*)
+1420965	_ZL21PrintVisionaireObjectP9lua_State	PrintVisionaireObject(lua_State*)
+1421263	_Z20luaopen_ExportTablesP9lua_State	luaopen_ExportTables(lua_State*)
+1421405	_Z24luaopen_VisionaireObjectP9lua_State	luaopen_VisionaireObject(lua_State*)
+1421701	_Z22CreateVisionaireObjectP9lua_StateP17TVisionaireObject	CreateVisionaireObject(lua_State*, TVisionaireObject*)
+1421833	_Z22CreateVisionaireObjectP9lua_StateRK10TVisObjRef	CreateVisionaireObject(lua_State*, TVisObjRef const&)
+1421855	_ZL7GetLinkP9lua_State	GetLink(lua_State*)
+1421922	_ZL9GetParentP9lua_State	GetParent(lua_State*)
+1421989	_ZL9GetObjectP9lua_State	GetObject(lua_State*)
+1422150	_Z21CheckVisionaireObjectP9lua_Stateib	CheckVisionaireObject(lua_State*, int, bool)
+1422210	_Z16GetObjectFromLuaR10TVisObjRefi	GetObjectFromLua(TVisObjRef&, int)
+1422290	_ZL7GetPathP9lua_State_0	GetPath(lua_State*)
+1422468	_Z18getFieldFromStringP19LuaVisionaireObjectPKc	getFieldFromString(LuaVisionaireObject*, char const*)
+1422668	_Z19CheckLuaFieldsCacheRK3TIdi	CheckLuaFieldsCache(TId const&, int)
+1422765	_Z19UnrefLuaFieldsCacheRK3TIdi	UnrefLuaFieldsCache(TId const&, int)
+1423337	_ZL9GetPointsP9lua_State	GetPoints(lua_State*)
+1423435	_ZL8GetRectsP9lua_State	GetRects(lua_State*)
+1423533	_ZL10GetSpritesP9lua_State	GetSprites(lua_State*)
+1423650	_ZL13GetTableIndexP9lua_State	GetTableIndex(lua_State*)
+1424152	stackDump	stackDump
+1424434	_Z14LuaObjectUnrefRK3TIdi	LuaObjectUnref(TId const&, int)
+1424710	_Z17AddLuaFieldsCacheRK3TIdii	AddLuaFieldsCache(TId const&, int, int)
+1424906	_ZL8GetLinksP9lua_State	GetLinks(lua_State*)
+1425524	_ZL10VisObjInfoP9lua_State	VisObjInfo(lua_State*)
+1426327	_ZL8GetIndexP9lua_State	GetIndex(lua_State*)
+1426906	_ZL10SetTextStrP9lua_State	SetTextStr(lua_State*)
+1427187	_ZL8SetValueP9lua_State	SetValue(lua_State*)
+1428042	_ZL8SetIndexP9lua_State	SetIndex(lua_State*)
+1428271	_ZL7DoStackP9lua_State	DoStack(lua_State*)
+1429756	_GLOBAL__sub_I_lua_functions	_GLOBAL__sub_I_lua_functions
+1430740	_Z22CmdGetObject_GetSyntaxR10TArgSyntax	CmdGetObject_GetSyntax(TArgSyntax&)
+1430860	_Z20CmdGetTime_GetSyntaxR10TArgSyntax	CmdGetTime_GetSyntax(TArgSyntax&)
+1431096	_Z21Register_CmdGetObjectv	Register_CmdGetObject()
+1431288	_Z19Register_CmdGetTimev	Register_CmdGetTime()
+1431480	_Z18InitCommonCommandsv	InitCommonCommands()
+1432234	_Z34ix86_override_options_after_changev_99	ix86_override_options_after_change()
+1432257	_Z15IsPointArgumenti	IsPointArgument(int)
+1432314	_Z14IsRectArgumenti	IsRectArgument(int)
+1432404	_Z16IsSpriteArgumenti	IsSpriteArgument(int)
+1432444	_Z14IsTextArgumenti	IsTextArgument(int)
+1432485	_Z15GetArgumentTypei	GetArgumentType(int)
+1433399	_Z15IsArgumentFlagsi	IsArgumentFlags(int)
+1433460	_Z22ConvertArgumentFromLuaR9TArgument8TArgTypei	ConvertArgumentFromLua(TArgument&, TArgType, int)
+1435470	_Z34ix86_override_options_after_changev_100	ix86_override_options_after_change()
+1439911	_Z34ix86_override_options_after_changev_101	ix86_override_options_after_change()
+1440087	_Z12InitCommandsP15TVisionaireGameRK8wxStringS1_S1_	InitCommands(TVisionaireGame*, wxString const&, wxString, wxString)
+1440889	_Z15RegisterCommandRK8wxStringP10TArgSyntax	RegisterCommand(wxString const&, TArgSyntax*)
+1441247	_Z18UnregisterCommandsv	UnregisterCommands()
+1441423	_Z13CloseCommandsv	CloseCommands()
+1441506	_Z14ExecuteCommandRK8wxStringPPK9TArgumentN8TCommand15GroupMarkerTypeES1_	ExecuteCommand(wxString const&, TArgument const**, TCommand::GroupMarkerType, wxString const&)
+1441751	_Z19CloseOpenedCmdGroupv	CloseOpenedCmdGroup()
+1442215	_GLOBAL__sub_I__ZN16TCommandPtrArray3AddEP8TCommand	_GLOBAL__sub_I__ZN16TCommandPtrArray3AddEP8TCommand
+1442308	_Z15particles_indexP9lua_State	particles_index(lua_State*)
+1442381	_Z16particles_updateP9lua_State	particles_update(lua_State*)
+1442415	_Z12particles_gcP9lua_State	particles_gc(lua_State*)
+1442455	_Z14particles_drawP9lua_State	particles_draw(lua_State*)
+1442478	_Z20particles_updatedrawP9lua_State	particles_updatedraw(lua_State*)
+1442517	_Z17luaopen_ParticlesP9lua_State	luaopen_Particles(lua_State*)
+1442567	_Z21particles_updateValueP9lua_StateR17ParticleContainerPKci	particles_updateValue(lua_State*, ParticleContainer&, char const*, int)
+1443409	_Z18particles_newindexP9lua_State	particles_newindex(lua_State*)
+1443450	_Z13particles_newP9lua_State	particles_new(lua_State*)
+1445612	_Z34ix86_override_options_after_changev_102	ix86_override_options_after_change()
+1446890	_GLOBAL__sub_I__ZN12TTActionPart7StringsE	_GLOBAL__sub_I__ZN12TTActionPart7StringsE
+1449438	_GLOBAL__sub_I__ZN7TTSceneC2Ev	_GLOBAL__sub_I__ZN7TTSceneC2Ev
+1449646	_GLOBAL__sub_I__ZN14TTTextLanguageC2Ev	_GLOBAL__sub_I__ZN14TTTextLanguageC2Ev
+1451243	_GLOBAL__sub_I__ZN11TTConditionC2Ev	_GLOBAL__sub_I__ZN11TTConditionC2Ev
+1451380	_GLOBAL__sub_I__ZN10TTLanguageC2Ev	_GLOBAL__sub_I__ZN10TTLanguageC2Ev
+1451566	_GLOBAL__sub_I__ZN8TTDialogC2Ev	_GLOBAL__sub_I__ZN8TTDialogC2Ev
+1452246	_GLOBAL__sub_I__ZN6TTFontC2Ev	_GLOBAL__sub_I__ZN6TTFontC2Ev
+1452502	_GLOBAL__sub_I__ZN16TTAnimationFrameC2Ev	_GLOBAL__sub_I__ZN16TTAnimationFrameC2Ev
+1452690	_GLOBAL__sub_I__ZN11TTWaySystemC2Ev	_GLOBAL__sub_I__ZN11TTWaySystemC2Ev
+1452896	_GLOBAL__sub_I__ZN7TTPointC2Ev	_GLOBAL__sub_I__ZN7TTPointC2Ev
+1453141	_GLOBAL__sub_I__ZN10TTAudioBusC2Ev	_GLOBAL__sub_I__ZN10TTAudioBusC2Ev
+1453403	_GLOBAL__sub_I__ZN16TTScriptVariableC2Ev	_GLOBAL__sub_I__ZN16TTScriptVariableC2Ev
+1453616	_GLOBAL__sub_I__ZN8TTSpriteC2Ev	_GLOBAL__sub_I__ZN8TTSpriteC2Ev
+1453801	_GLOBAL__sub_I__ZN7TTModelC2Ev	_GLOBAL__sub_I__ZN7TTModelC2Ev
+1454088	_GLOBAL__sub_I__ZN8TTShaderC2Ev	_GLOBAL__sub_I__ZN8TTShaderC2Ev
+1460932	_GLOBAL__sub_I__ZN6TTText10languageIdE	_GLOBAL__sub_I__ZN6TTText10languageIdE
+1464880	_GLOBAL__sub_I__ZN6TTGameC2Ev	_GLOBAL__sub_I__ZN6TTGameC2Ev
+1465934	_GLOBAL__sub_I__ZN12TTDialogPartC2Ev	_GLOBAL__sub_I__ZN12TTDialogPartC2Ev
+1466069	_GLOBAL__sub_I__ZN7TTEventC2Ev	_GLOBAL__sub_I__ZN7TTEventC2Ev
+1466250	_GLOBAL__sub_I__ZN8TTScriptC2Ev	_GLOBAL__sub_I__ZN8TTScriptC2Ev
+1467451	_GLOBAL__sub_I__ZN11TTInterfaceC2Ev	_GLOBAL__sub_I__ZN11TTInterfaceC2Ev
+1468614	_GLOBAL__sub_I__ZN8TTObjectC2Ev	_GLOBAL__sub_I__ZN8TTObjectC2Ev
+1468791	_GLOBAL__sub_I__ZN16TTInterfaceClassC2Ev	_GLOBAL__sub_I__ZN16TTInterfaceClassC2Ev
+1469066	_GLOBAL__sub_I__ZN12TTAreaActionC2Ev	_GLOBAL__sub_I__ZN12TTAreaActionC2Ev
+1469263	_GLOBAL__sub_I__ZN12TTActionAreaC2Ev	_GLOBAL__sub_I__ZN12TTActionAreaC2Ev
+1469452	_GLOBAL__sub_I__ZN12TTCommentSetC2Ev	_GLOBAL__sub_I__ZN12TTCommentSetC2Ev
+1471391	_GLOBAL__sub_I__ZN11TTParticlesC2Ev	_GLOBAL__sub_I__ZN11TTParticlesC2Ev
+1471622	_GLOBAL__sub_I__ZN17TTCommentSetEntryC2Ev	_GLOBAL__sub_I__ZN17TTCommentSetEntryC2Ev
+1473341	_GLOBAL__sub_I__ZN11TTAnimationC2Ev	_GLOBAL__sub_I__ZN11TTAnimationC2Ev
+1473640	_GLOBAL__sub_I__ZN8TTCursorC2Ev	_GLOBAL__sub_I__ZN8TTCursorC2Ev
+1476463	_GLOBAL__sub_I__ZN11TTCharacterC2Ev	_GLOBAL__sub_I__ZN11TTCharacterC2Ev
+1477361	_GLOBAL__sub_I__ZN7TTValueC2Ev	_GLOBAL__sub_I__ZN7TTValueC2Ev
+1478518	_GLOBAL__sub_I__ZN8TTAction9strActionE	_GLOBAL__sub_I__ZN8TTAction9strActionE
+1480026	_GLOBAL__sub_I__ZN8TTOutfitC2Ev	_GLOBAL__sub_I__ZN8TTOutfitC2Ev
+1480248	_Z16cmpCharacterAnimPK17TVisionaireObjectS1__part_2	cmpCharacterAnim(TVisionaireObject const*, TVisionaireObject const*)
+1480281	_Z16cmpCharacterAnimPK17TVisionaireObjectS1_	cmpCharacterAnim(TVisionaireObject const*, TVisionaireObject const*)
+1480331	_Z11AddNameTextR6TVListRK10TVisObjRef_part_21	AddNameText(TVList&, TVisObjRef const&)
+1504297	_Z7replaceRK8wxStringS1_S1_	replace(wxString const&, wxString const&, wxString const&)
+1504977	_Z14AddActionTextsR6TVListRK10TVisObjRef	AddActionTexts(TVList&, TVisObjRef const&)
+1505070	_Z11AddNameTextR6TVListRK10TVisObjRef	AddNameText(TVList&, TVisObjRef const&)
+1505111	_Z14AddDialogTextsR6TVListRK10TVisObjRef	AddDialogTexts(TVList&, TVisObjRef const&)
+1524965	_Z34ix86_override_options_after_changev_103	ix86_override_options_after_change()
+1526188	_GLOBAL__sub_I__ZN8TTButtonC2Ev	_GLOBAL__sub_I__ZN8TTButtonC2Ev
+1526414	_GLOBAL__sub_I__ZN9TTLoadingC2Ev	_GLOBAL__sub_I__ZN9TTLoadingC2Ev
+1533261	_Z34ix86_override_options_after_changev_104	ix86_override_options_after_change()
+1533414	_GLOBAL__sub_I__ZN17TTClipboardObjectC2Ev	_GLOBAL__sub_I__ZN17TTClipboardObjectC2Ev
+1533445	updatewindow	updatewindow
+1537364	longest_match	longest_match
+1537574	fill_window	fill_window
+1541818	send_tree	send_tree
+1542600	build_tree	build_tree
+1543355	_tr_init	_tr_init
+1543409	_tr_stored_block	_tr_stored_block
+1543535	_tr_align	_tr_align
+1543759	_tr_flush_block	_tr_flush_block
+1544565	_tr_tally	_tr_tally
+1545559	zlibVersion	zlibVersion
+1545573	zlibCompileFlags	zlibCompileFlags
+1545603	zcalloc	zcalloc
+1545618	zcfree	zcfree
+1545828	get_crc_table	get_crc_table
+1551042	_ZltRK7textposS1_	operator<(textpos const&, textpos const&)
+1551057	_ZleRK7textposS1_	operator<=(textpos const&, textpos const&)
+1551089	_ZeqRK7textposS1_	operator==(textpos const&, textpos const&)
+1551162	_ZmiRK5pointS1_	operator-(point const&, point const&)
+1551195	_ZplRK5pointS1_	operator+(point const&, point const&)
+1551641	_Z12SearchParentP9ComponentP13TFreetypeFonti	SearchParent(Component*, TFreetypeFont*, int)
+1570497	_GLOBAL__sub_I_roffsetx	_GLOBAL__sub_I_roffsetx
+1570573	edgedf_part_10	edgedf_part_10
+1570735	_Z21decode_utf8_next_charPPKcS0_	decode_utf8_next_char(char const**, char const*)
+1570765	_Z8isArabicw	isArabic(wchar_t)
+1570786	_Z16isStrongEuropeanw	isStrongEuropean(wchar_t)
+1570901	_Z11RenderSpansRP14FT_LibraryRec_P11FT_Outline_PSt6vectorI4SpanSaIS5_EE	RenderSpans(FT_LibraryRec_*&, FT_Outline_*, std::vector<Span, std::allocator<Span> >*)
+1570933	computegradient	computegradient
+1571113	edgedf	edgedf
+1571276	distaa3	distaa3
+1571421	edtaa3	edtaa3
+1580119	_Z12distance_mapPdjj	distance_map(double*, unsigned int, unsigned int)
+1580463	_Z17MitchellNetravalif	MitchellNetravali(float)
+1580521	_Z11interpolatefffff	interpolate(float, float, float, float, float)
+1580714	_Z6resizePdmmS_mm	resize(double*, unsigned long, unsigned long, double*, unsigned long, unsigned long)
+1585339	_Z12ReleaseEntryP14FontCacheEntry_part_118	ReleaseEntry(FontCacheEntry*)
+1585516	_Z12ReleaseEntryP14FontCacheEntry	ReleaseEntry(FontCacheEntry*)
+1585910	_Z14RasterCallbackiiPK8FT_Span_Pv	RasterCallback(int, int, FT_Span_ const*, void*)
+1585986	_Z7itemizeR8wxString	itemize(wxString&)
+1591922	_GLOBAL__sub_I_curFont	_GLOBAL__sub_I_curFont
+1596225	_Z9Intersect4rectRKS_	Intersect(rect, rect const&)
+1597578	_Z11ParseLayoutP6LayoutP9ContainerP5Sizer	ParseLayout(Layout*, Container*, Sizer*)
+1605049	_GLOBAL__sub_I__ZN13BaseContainer8instanceE	_GLOBAL__sub_I__ZN13BaseContainer8instanceE
+1605296	_Z10HashStringIcEmPKT__1	unsigned long HashString<char>(char const*)
+1605759	_Z9attrValuePN8rapidxml8xml_nodeIcEEPKci	attrValue(rapidxml::xml_node<char>*, char const*, int)
+1605793	_Z8attrTextPN8rapidxml8xml_nodeIcEEPKc	attrText(rapidxml::xml_node<char>*, char const*)
+1608037	_Z8GetColorRKSt6vectorIN9CSSParser10expressionESaIS1_EE	GetColor(std::vector<CSSParser::expression, std::allocator<CSSParser::expression> > const&)
+1608122	_Z11colorMiddleii	colorMiddle(int, int)
+1610453	_Z11SkinFromCssRKSt6vectorIN9CSSParser9attributeESaIS1_EE	SkinFromCss(std::vector<CSSParser::attribute, std::allocator<CSSParser::attribute> > const&)
+1628538	_GLOBAL__sub_I__ZN11SkinManager8instanceE	_GLOBAL__sub_I__ZN11SkinManager8instanceE
+1630445	_Z34ix86_override_options_after_changev_105	ix86_override_options_after_change()
+1630468	_Z12align_sorterPK9AlignMetaS1_	align_sorter(AlignMeta const*, AlignMeta const*)
+1633514	_Z13VerticaleSizev	VerticaleSize()
+1638716	_Z34ix86_override_options_after_changev_106	ix86_override_options_after_change()
+1638739	_Z17editor_SetLevelAtP9lua_State	editor_SetLevelAt(lua_State*)
+1638756	_Z14editor_ForwardP9lua_State	editor_Forward(lua_State*)
+1638773	_Z9editor_gcP9lua_State	editor_gc(lua_State*)
+1638789	_Z22editor_MarkerDeleteAllP9lua_State	editor_MarkerDeleteAll(lua_State*)
+1638806	_Z25editor_AnnotationClearAllP9lua_State	editor_AnnotationClearAll(lua_State*)
+1638952	_Z16editor_MarkerAddP9lua_State	editor_MarkerAdd(lua_State*)
+1638977	_Z21editor_MarkerSetAlphaP9lua_State	editor_MarkerSetAlpha(lua_State*)
+1639002	_Z20editor_MarkerSetBackP9lua_State	editor_MarkerSetBack(lua_State*)
+1639027	_Z19editor_MarkerDefineP9lua_State	editor_MarkerDefine(lua_State*)
+1639052	_Z20editor_MarkerSetForeP9lua_State	editor_MarkerSetFore(lua_State*)
+1639077	_Z18editor_AutoCActiveP9lua_State	editor_AutoCActive(lua_State*)
+1639098	_Z11editor_MoreP9lua_State	editor_More(lua_State*)
+1639400	_Z14editor_ReplaceP9lua_State	editor_Replace(lua_State*)
+1639474	_Z17editor_InsertTextP9lua_State	editor_InsertText(lua_State*)
+1639554	_Z13editor_CharAtP9lua_State	editor_CharAt(lua_State*)
+1639634	_Z14editor_GetTextP9lua_State	editor_GetText(lua_State*)
+1639683	_Z23editor_LineFromPositionP9lua_State	editor_LineFromPosition(lua_State*)
+1639768	_Z23editor_PositionFromLineP9lua_State	editor_PositionFromLine(lua_State*)
+1639827	_Z16editor_textrangeP9lua_State	editor_textrange(lua_State*)
+1639931	_Z19editor_StartStylingP9lua_State	editor_StartStyling(lua_State*)
+1639991	_Z11editor_OpenP9lua_State	editor_Open(lua_State*)
+1640031	_Z24editor_WordStartPositionP9lua_State	editor_WordStartPosition(lua_State*)
+1640120	_Z14editor_CurrentP9lua_State	editor_Current(lua_State*)
+1640210	_Z26editor_IndicatorClearRangeP9lua_State	editor_IndicatorClearRange(lua_State*)
+1640563	_Z12editor_indexP9lua_State	editor_index(lua_State*)
+1641007	_Z16findTextPositionRSt6vectorI4rectSaIS0_EEii	findTextPosition(std::vector<rect, std::allocator<rect> >&, int, int)
+1641071	_Z12utf8_charlenPh	utf8_charlen(unsigned char*)
+1641099	_Z21utf8_charlenbackwardsPhm	utf8_charlenbackwards(unsigned char*, unsigned long)
+1641212	_Z10countcharsPhmm	countchars(unsigned char*, unsigned long, unsigned long)
+1641262	_Z16countToUtf8CharsPhmm	countToUtf8Chars(unsigned char*, unsigned long, unsigned long)
+1641311	_Z11wordforwardPhmb	wordforward(unsigned char*, unsigned long, bool)
+1641392	_Z12wordbackwardPhmb	wordbackward(unsigned char*, unsigned long, bool)
+1642772	_Z13region_sorterRK6regionS1_	region_sorter(region const&, region const&)
+1642790	_Z18indicatorIdToColorP12ScriptEditori	indicatorIdToColor(ScriptEditor*, int)
+1642922	_Z15editor_newindexP9lua_State	editor_newindex(lua_State*)
+1643095	_Z23editor_IndicatorValueAtP9lua_State	editor_IndicatorValueAt(lua_State*)
+1643184	_Z27LuaDoStringEditorRealStringRK8wxString	LuaDoStringEditorRealString(wxString const&)
+1643436	_Z21LuaDoStringEditorRealRK8wxString	LuaDoStringEditorReal(wxString const&)
+1643665	_Z18scripteditorthreadPv	scripteditorthread(void*)
+1647978	_Z12prioritySortRSt6vectorI6regionSaIS0_EE	prioritySort(std::vector<region, std::allocator<region> >&)
+1650447	_Z14editor_GotoPosP9lua_State	editor_GotoPos(lua_State*)
+1650955	_Z15editor_GotoLineP9lua_State	editor_GotoLine(lua_State*)
+1651216	_Z11stateChangeP9LuaEditori_part_261	stateChange(LuaEditor*, int)
+1651435	_Z11stateChangeP9LuaEditori	stateChange(LuaEditor*, int)
+1651457	_Z17editor_EndStylingP9lua_State	editor_EndStyling(lua_State*)
+1651515	_Z15editor_SetStateP9lua_State	editor_SetState(lua_State*)
+1651851	_Z11markRegionsRKSsS0_RSt6vectorI6regionSaIS2_EEi	markRegions(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<region, std::allocator<region> >&, int)
+1652052	_Z13findFunctionsRKSsS0_RSt6vectorISt4pairISsiESaIS3_EEiiiii	findFunctions(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::pair<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int>, std::allocator<std::pair<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int> > >&, int, int, int, int, int)
+1652492	_Z16editor_AutoCShowP9lua_State	editor_AutoCShow(lua_State*)
+1652680	_Z17LuaDoStringEditorRKSs	LuaDoStringEditor(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+1654019	_Z25editor_IndicatorFillRangeP9lua_State	editor_IndicatorFillRange(lua_State*)
+1654246	_Z24editor_AnnotationSetTextP9lua_State	editor_AnnotationSetText(lua_State*)
+1659637	_GLOBAL__sub_I_editorLuaSection	_GLOBAL__sub_I_editorLuaSection
+1661228	_Z34ix86_override_options_after_changev_107	ix86_override_options_after_change()
+1668507	_Z34ix86_override_options_after_changev_108	ix86_override_options_after_change()
+1668529	hash_str_lookup	hash_str_lookup
+1668561	hash_num_lookup	hash_num_lookup
+1668594	hash_num_compare	hash_num_compare
+1668609	destroy_size	destroy_size
+1668664	memory_stream_close	memory_stream_close
+1668813	hash_str_compare	hash_str_compare
+1669214	raccess_make_file_name	raccess_make_file_name
+1669316	raccess_guess_linux_cap	raccess_guess_linux_cap
+1669354	raccess_guess_vfat	raccess_guess_vfat
+1669392	open_face	open_face
+1669731	hash_rehash	hash_rehash
+1669992	raccess_guess_darwin_hfsplus	raccess_guess_darwin_hfsplus
+1670084	raccess_guess_darwin_newvfs	raccess_guess_darwin_newvfs
+1672342	destroy_face	destroy_face
+1672576	Destroy_Module	Destroy_Module
+1686020	raccess_guess_apple_generic_isra_11	raccess_guess_apple_generic_isra_11
+1686351	raccess_guess_apple_single	raccess_guess_apple_single
+1686376	raccess_guess_linux_double	raccess_guess_linux_double
+1686479	raccess_guess_apple_double	raccess_guess_apple_double
+1686504	raccess_guess_linux_netatalk	raccess_guess_linux_netatalk
+1686607	raccess_guess_darwin_ufs_export	raccess_guess_darwin_ufs_export
+1688200	IsMacResource	IsMacResource
+1690452	open_face_from_buffer	open_face_from_buffer
+1690674	open_face_PS_from_sfnt_stream_isra_22	open_face_PS_from_sfnt_stream_isra_22
+1694325	_ft_lcd_filter_fir	_ft_lcd_filter_fir
+1694608	_ft_lcd_filter_legacy	_ft_lcd_filter_legacy
+1699962	_bdf_atol	_bdf_atol
+1700034	_bdf_atos	_bdf_atos
+1700106	by_encoding	by_encoding
+1700314	BDF_Size_Select	BDF_Size_Select
+1700352	BDF_Glyph_Load	BDF_Glyph_Load
+1700681	BDF_Face_Done	BDF_Face_Done
+1700746	_bdf_atoul	_bdf_atoul
+1700798	_bdf_atous	_bdf_atous
+1700937	_bdf_list_split_part_3	_bdf_list_split_part_3
+1701282	_bdf_list_split	_bdf_list_split
+1701333	BDF_Size_Request	BDF_Size_Request
+1701427	_bdf_parse_glyphs	_bdf_parse_glyphs
+1702601	BDF_Face_Init	BDF_Face_Init
+1703926	_bdf_add_property_isra_5	_bdf_add_property_isra_5
+1704585	_bdf_parse_start	_bdf_parse_start
+1705743	_bdf_parse_properties	_bdf_parse_properties
+1730204	parse_expansion_factor	parse_expansion_factor
+1731391	parse_fd_array	parse_fd_array
+1733267	PCF_Size_Select	PCF_Size_Select
+1733305	PCF_Glyph_Load	PCF_Glyph_Load
+1733929	PCF_Face_Done	PCF_Face_Done
+1734234	PCF_Size_Request	PCF_Size_Request
+1736528	PCF_Face_Init	PCF_Face_Init
+1741641	skip_literal_string	skip_literal_string
+1741767	ps_parser_init	ps_parser_init
+1741798	ps_parser_done	ps_parser_done
+1742195	compare_kern_pairs_0	compare_kern_pairs_0
+1742220	PS_Conv_Strtol	PS_Conv_Strtol
+1742444	afm_parser_done	afm_parser_done
+1742463	ps_table_release	ps_table_release
+1742512	ps_table_new	ps_table_new
+1742601	afm_parser_init	afm_parser_init
+1742652	ps_table_done	ps_table_done
+1742927	ps_table_add	ps_table_add
+1743196	skip_string	skip_string
+1743284	skip_procedure	skip_procedure
+1743433	ps_parser_skip_PS_token	ps_parser_skip_PS_token
+1743732	ps_parser_skip_spaces	ps_parser_skip_spaces
+1743797	ps_parser_to_bytes	ps_parser_to_bytes
+1743994	ps_parser_to_int	ps_parser_to_int
+1744357	PS_Conv_ToFixed	PS_Conv_ToFixed
+1744803	ps_tofixedarray	ps_tofixedarray
+1744988	ps_parser_to_fixed_array	ps_parser_to_fixed_array
+1745055	ps_parser_to_coord_array	ps_parser_to_coord_array
+1745287	ps_parser_to_fixed	ps_parser_to_fixed
+1745565	ps_parser_to_token	ps_parser_to_token
+1745883	ps_parser_to_token_array	ps_parser_to_token_array
+1746000	ps_parser_load_field	ps_parser_load_field
+1746577	ps_parser_load_field_table	ps_parser_load_field_table
+1748840	afm_parser_read_vals	afm_parser_read_vals
+1749211	afm_stream_read_one	afm_stream_read_one
+1749328	afm_parser_next_key_isra_1_constprop_8	afm_parser_next_key_isra_1_constprop_8
+1749524	afm_parser_parse	afm_parser_parse
+1750898	t2_hints_open	t2_hints_open
+1750918	pshinter_get_globals_funcs	pshinter_get_globals_funcs
+1750931	pshinter_get_t1_funcs	pshinter_get_t1_funcs
+1750944	pshinter_get_t2_funcs	pshinter_get_t2_funcs
+1750957	psh_globals_destroy	psh_globals_destroy
+1750984	ps_hinter_init	ps_hinter_init
+1751193	psh_blues_set_zones_0_isra_5	psh_blues_set_zones_0_isra_5
+1751351	psh_blues_set_zones	psh_blues_set_zones
+1751540	psh_globals_new	psh_globals_new
+1751740	psh_hint_table_activate_mask_isra_9	psh_hint_table_activate_mask_isra_9
+1751885	psh_hint_table_find_strong_points_isra_12	psh_hint_table_find_strong_points_isra_12
+1752168	psh_hint_align	psh_hint_align
+1752707	psh_globals_set_scale	psh_globals_set_scale
+1753107	psh_hint_table_init_isra_20	psh_hint_table_init_isra_20
+1755241	ps_mask_table_merge_all	ps_mask_table_merge_all
+1755936	t2_hints_stems	t2_hints_stems
+1756031	ps_hinter_done	ps_hinter_done
+1756188	ps_dimension_set_mask_bits	ps_dimension_set_mask_bits
+1757214	compare_uni_maps	compare_uni_maps
+1757255	ps_unicodes_char_index	ps_unicodes_char_index
+1757339	ps_unicodes_char_next	ps_unicodes_char_next
+1757435	ps_get_macintosh_name	ps_get_macintosh_name
+1757451	ps_get_standard_strings	ps_get_standard_strings
+1757474	psnames_get_service	psnames_get_service
+1757635	ps_unicode_value	ps_unicode_value
+1757867	ps_unicodes_init	ps_unicodes_init
+1758377	Split_Conic	Split_Conic
+1758433	Split_Cubic	Split_Cubic
+1758493	Vertical_Sweep_Init	Vertical_Sweep_Init
+1758523	Vertical_Sweep_Span	Vertical_Sweep_Span
+1758688	Vertical_Sweep_Drop	Vertical_Sweep_Drop
+1758873	Vertical_Sweep_Step	Vertical_Sweep_Step
+1758885	Horizontal_Sweep_Init	Horizontal_Sweep_Init
+1758897	Horizontal_Sweep_Span	Horizontal_Sweep_Span
+1758958	Horizontal_Sweep_Drop	Horizontal_Sweep_Drop
+1759167	Horizontal_Sweep_Step	Horizontal_Sweep_Step

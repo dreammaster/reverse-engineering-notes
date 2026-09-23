@@ -1,0 +1,518 @@
+owner	status	method_count	first_line	last_line
+(free function)	todo	4069	100401	2989061
+std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >::_Rep	todo	1	103700	103700
+Supplier<OT::IntType<unsigned short, 2u> >	todo	1	109688	109688
+ExceptionSwallower<aiReturn>	todo	1	111476	111476
+THObject	todo	7	113495	114721
+TGPlaceHolder	todo	3	114826	114867
+TManagedObject	todo	50	114890	194554
+THButton	todo	7	114929	116008
+TMObject	todo	7	116072	116424
+TCPDebuggerServer	todo	9	120400	123408
+TCPDebuggerClient	todo	14	120478	499237
+HashMap<int, std::vector<int, std::allocator<int> >, IntegerHash<int> >	todo	3	127253	134692
+HashMap<int, int, IntegerHash<int> >	todo	4	134244	1621839
+ProfileArea	todo	2	134513	134570
+ProfileResult	todo	1	134537	134537
+Expander<char const*>	todo	1	134622	134622
+Expander<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >	todo	1	134897	134897
+HashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, StringHash<char const*> >	todo	4	135459	1621690
+StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, char const*, StringHash<char const*> >	todo	5	135653	1622051
+hmap_iterator<int, int, IntegerHash<int> >	todo	1	135669	135669
+HashNode<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, StringHash<char const*> >	todo	1	135743	135743
+HashNode<int, std::vector<int, std::allocator<int> >, IntegerHash<int> >	todo	1	136783	136783
+TMCharacter	todo	10	137965	138489
+TGInterface	todo	25	138536	143021
+TPaintControl	todo	27	143284	749311
+HashMap<TId, int, TIdHash>	todo	1	143397	143397
+THText	todo	6	144162	144330
+TDiagnostic	todo	11	144499	148293
+Geni::mslocale_t	todo	2	148405	479251
+TGAnimation	todo	51	148778	158721
+TCAnimation	todo	40	158833	1384914
+TMSavegameArea	todo	6	159199	159295
+TMSavegame	todo	22	159356	164367
+HashMap<wxString, wxString, StringHash<wchar_t const*> >	todo	1	164898	164898
+TMButton	todo	9	165577	166172
+TGScene	todo	39	166435	172880
+HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
+TGCharacter	todo	76	175318	185835
+THAction	todo	5	187010	187127
+TGObjectManager	todo	25	187194	189565
+TTObject	todo	9	190187	1468584
+TTButton	todo	12	190202	1526063
+TGEventInfo	todo	1	190217	190217
+no_check_checker_t	todo	4	191182	1570709
+t_SkipCutsceneInfo	todo	1	194735	194735
+TGAction	todo	33	194786	211541
+TVisObjTween	todo	4	212286	481002
+TGText	todo	31	212567	215356
+TSText	todo	15	216919	1460684
+THCharacter	todo	5	217481	218783
+THItem	todo	5	218884	219148
+THScene	todo	7	219228	219814
+TGScrollButton	todo	5	219879	220036
+TGDialog	todo	14	220105	479462
+TConsole	todo	61	223417	242869
+THInterface	todo	5	246907	247172
+TGActionArea	todo	3	247238	247279
+TGWaySystem	todo	21	247325	253067
+THGameControl	todo	6	256950	258050
+TGObject	todo	13	258159	259458
+THAnimation	todo	5	259729	260077
+TSceneActionArea	todo	4	260143	260601
+TGItem	todo	9	260668	261228
+TGCommand	todo	5	261322	261584
+StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int (*)(lua_State*), char const*, StringHash<char const*> >	todo	1	289025	289025
+CmdGetCursorPos	todo	4	388789	428892
+CmdGetWindowBrightness	todo	4	388806	429255
+CmdShaderSetOptions	todo	4	388824	429212
+CmdShaderUniform	todo	4	388841	429191
+CmdToggleWindowMode	todo	4	388857	429170
+CmdGetWindowMode	todo	4	388896	429149
+CmdSetWindowSize	todo	4	388913	429128
+CmdStopHapticRumble	todo	4	388934	429086
+CmdSetCursorPos	todo	4	389016	428765
+CmdStopHapticEffect	todo	4	389055	429044
+CmdStartHapticEffect	todo	4	389094	429065
+CmdToggleSoundPause	todo	4	389134	429277
+CmdStopSound	todo	4	389173	428786
+CmdCreateHapticEffectLeftRight	todo	4	389212	428934
+CmdShaderCompile	todo	4	389262	428321
+CmdCreateHapticEffectRamp	todo	4	389302	428956
+CmdCreateHapticEffectCondition	todo	4	389394	428978
+CmdCreateHapticEffectPeriodic	todo	4	389470	429000
+CmdCreateHapticEffectConstant	todo	4	389574	429022
+CmdStartHapticRumble	todo	4	389766	429107
+CmdIsPointInsidePolygon	todo	4	389805	429319
+CmdStopAnimation	todo	5	389832	430953
+CmdStopAction	todo	5	389884	431047
+CmdStartAction	todo	5	389936	431094
+CmdResetGameClientStats	todo	4	389988	428828
+CmdStartAnimation	todo	5	390036	431000
+CmdSetSoundProperty	todo	4	390177	429298
+CmdGetSoundProperty	todo	4	390224	429916
+CmdGetSoundId	todo	4	390360	430066
+CmdStartSound	todo	4	390425	429966
+CmdInitGameClient	todo	4	390483	427451
+CmdRegisterEventHandler	todo	4	390525	428641
+CmdSetVolume	todo	4	390745	428850
+CmdGetVolume	todo	4	390855	428871
+CmdUnregisterEventHandler	todo	4	391094	428717
+StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, TArgSyntax*, char const*, StringHash<char const*> >	todo	2	391158	1442000
+CmdSetWindowTitle	todo	4	391250	429664
+CmdGetGameClientStat	todo	4	391290	429816
+CmdGetGameClientAchievement	todo	4	391331	429765
+CmdStartDefaultBrowser	todo	4	391372	429563
+CmdSetGameClientStat	todo	4	391413	429614
+CmdSetWindowBrightness	todo	4	391635	429233
+CmdSetGameClientAchievement	todo	4	391954	429512
+CmdCreateScreenshot	todo	4	392054	430016
+CmdCreateEvent	todo	4	392420	428913
+CmdGetProperty	todo	4	394672	428807
+CmdRegisterHookFunction	todo	4	395028	429714
+CmdReplaceGame	todo	4	397214	429866
+CmdStartTween	todo	4	407247	428151
+CmdStartObjectTween	todo	5	407361	430894
+TCommand	todo	5	425823	427048
+TArgTypeArray	todo	8	425943	1413557
+TArgSyntax	todo	20	425966	1415367
+TGameClientSDK	todo	10	426024	491488
+HashMap<wxString, TArgFlagSyntax*, StringHash<wchar_t const*> >	todo	2	426545	430689
+HashMap<wxString, TArgument*, StringHash<wchar_t const*> >	todo	2	426827	430792
+TArgParser	todo	8	426919	1434417
+SimplexNoise1234	todo	4	434064	434207
+Noise1234	todo	12	434500	437359
+TGameController	stub	20	450097	453534
+TSceneControl	todo	15	453942	455632
+TGameControl	todo	98	455671	478479
+SGameAction	todo	1	456169	456169
+SLoadingScreen	todo	2	479291	479330
+TLoadingControl	todo	7	483185	483735
+TCursorControl	todo	23	483805	485408
+SCursor	todo	1	484984	484984
+TMasterControl	stub	38	485602	491098
+TMovie	todo	21	491536	1071898
+v8::base::OS	todo	3	509497	2863318
+sha1	todo	8	513888	516547
+TComposedFileManager	todo	17	516915	519724
+TXMLWriter	todo	33	519891	522102
+TProjectFileWriter	todo	2	522192	522208
+TFieldValue	todo	9	522229	528588
+TFile	todo	37	522315	525436
+TVedFile	todo	10	522419	525756
+TPolygonList	todo	19	526053	532096
+TXMLNames	todo	10	527002	533265
+TCharHolder	todo	32	529250	531627
+pattern_matcher	todo	2	531875	1441953
+TXMLStringWriter	todo	10	539847	540033
+SEntryInfo	todo	1	541440	541440
+TComposedFile	stub	20	541459	548209
+BuildProgressEvent	todo	3	548597	548703
+TMemoryBuffer	todo	26	549297	551826
+TMemoryFile	todo	7	551869	552091
+TStandardPaths	stub	13	552187	553383
+TTempFile	todo	2	553440	553545
+md5	todo	5	554434	556285
+TTextLanguage	todo	3	558635	1524382
+TTimer	todo	6	559372	559473
+wxFileConfig	todo	1	559663	559663
+ConfigSetting	todo	3	579294	580506
+std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >	todo	1	581350	581350
+TSprite	todo	35	582998	584507
+TTypeGroup	todo	30	584546	585963
+TVList	todo	21	586522	594785
+TId	todo	4	586976	587066
+TVisionaireObject	todo	99	587318	595390
+TVisObjRef	todo	85	597612	600326
+TDataGroup	todo	41	600389	607108
+Geni::authresult_t	todo	3	607243	1656892
+TVisionaire	todo	90	608417	655305
+LoadSaveProgressEvent	todo	4	620683	1523917
+StringHashMap<wxString, int, wchar_t const*, StringHash<wchar_t const*> >	todo	1	620868	620868
+TData	todo	13	625861	634717
+TLink	todo	15	635588	636057
+TXMLProjectReader	todo	6	636222	642078
+UserData	todo	2	643450	645562
+bin_structure	todo	1	659327	659327
+TTable	todo	50	660697	667964
+TTypeData	todo	19	668535	668932
+GLShader	todo	29	668992	677816
+TGraphicsSubSystemGL	todo	39	669758	678420
+TBufferGL	todo	7	669813	672896
+TFramebufferGL	todo	11	669978	675983
+TTextureGL	todo	12	669995	676529
+TFramebuffer	todo	2	678203	678347
+TBuffer	todo	2	678219	678331
+TTexture	todo	2	678235	678315
+TGraphicsSubSystem	todo	2	678251	678299
+TShader	todo	3	678453	702564
+ShaderInfo	todo	1	678583	678583
+SpineContainer	todo	5	680937	687530
+SpineSkeleton	todo	22	680987	684747
+Emitter	todo	8	689094	695129
+ImageEmitter	todo	6	689267	699177
+BoxEmitter	todo	5	689316	699072
+PointEmitter	todo	5	689365	699114
+LineEmitter	todo	5	689414	699093
+SquareEmitter	todo	5	689490	699135
+CircleEmitter	todo	5	689539	699156
+RandomGenerator	todo	3	689978	690073
+FloatCurveEvaluater	todo	3	690199	696150
+ColorCurveEvaluater	todo	3	690363	697440
+PointCurveEvaluater	todo	1	691054	691054
+MinMaxFloatCurveEvaluater	todo	3	691201	696248
+ParticleContainer	todo	6	695485	698425
+TShaderConstantBuffer	todo	24	699721	704218
+TGraphicsOGL	todo	63	707141	719135
+TPictureJPG	todo	6	720924	739561
+jpgd	todo	2	721319	733241
+TPictureFormat	todo	7	739426	771446
+jpgd::Row<2>	todo	1	739851	739851
+jpgd::Row<3>	todo	1	739910	739910
+jpgd::Row<4>	todo	1	739975	739975
+jpgd::Row<5>	todo	1	740064	740064
+jpgd::Row<6>	todo	1	740149	740149
+jpgd::Row<7>	todo	1	740247	740247
+jpgd::Row<8>	todo	1	740349	740349
+jpgd::Col<2>	todo	1	740458	740458
+jpgd::Col<3>	todo	1	740579	740579
+jpgd::Col<4>	todo	1	740710	740710
+jpgd::Col<5>	todo	1	740856	740856
+jpgd::Col<6>	todo	1	741007	741007
+jpgd::Col<7>	todo	1	741163	741163
+jpgd::Col<8>	todo	1	741323	741323
+jpgd::DCT_Upsample::P_Q<1, 1>	todo	1	741489	741489
+jpgd::DCT_Upsample::R_S<1, 1>	todo	1	741538	741538
+jpgd::DCT_Upsample::P_Q<1, 2>	todo	1	741586	741586
+jpgd::DCT_Upsample::R_S<1, 2>	todo	1	741643	741643
+jpgd::DCT_Upsample::P_Q<2, 2>	todo	1	741699	741699
+jpgd::DCT_Upsample::R_S<2, 2>	todo	1	741811	741811
+jpgd::DCT_Upsample::P_Q<3, 2>	todo	1	741905	741905
+jpgd::DCT_Upsample::R_S<3, 2>	todo	1	742029	742029
+jpgd::DCT_Upsample::P_Q<3, 3>	todo	1	742133	742133
+jpgd::DCT_Upsample::R_S<3, 3>	todo	1	742257	742257
+jpgd::DCT_Upsample::P_Q<3, 4>	todo	1	742383	742383
+jpgd::DCT_Upsample::R_S<3, 4>	todo	1	742519	742519
+jpgd::DCT_Upsample::P_Q<4, 4>	todo	1	742656	742656
+jpgd::DCT_Upsample::R_S<4, 4>	todo	1	742842	742842
+jpgd::DCT_Upsample::P_Q<5, 4>	todo	1	743008	743008
+jpgd::DCT_Upsample::R_S<5, 4>	todo	1	743208	743208
+jpgd::DCT_Upsample::P_Q<5, 5>	todo	1	743404	743404
+jpgd::DCT_Upsample::R_S<5, 5>	todo	1	743647	743647
+jpgd::DCT_Upsample::P_Q<5, 6>	todo	1	743843	743843
+jpgd::DCT_Upsample::R_S<5, 6>	todo	1	744130	744130
+jpgd::DCT_Upsample::P_Q<6, 6>	todo	1	744370	744370
+jpgd::DCT_Upsample::R_S<6, 6>	todo	1	744738	744738
+jpgd::DCT_Upsample::P_Q<7, 6>	todo	1	745040	745040
+jpgd::DCT_Upsample::R_S<7, 6>	todo	1	745445	745445
+jpgd::DCT_Upsample::P_Q<7, 7>	todo	1	745785	745785
+jpgd::DCT_Upsample::R_S<7, 7>	todo	1	746190	746190
+jpgd::DCT_Upsample::P_Q<7, 8>	todo	1	746566	746566
+jpgd::DCT_Upsample::R_S<7, 8>	todo	1	747029	747029
+jpgd::DCT_Upsample::P_Q<8, 8>	todo	1	747465	747465
+jpgd::DCT_Upsample::R_S<8, 8>	todo	1	748024	748024
+TSpriteCache	todo	13	749371	751855
+TPicturePNG	todo	10	753445	756750
+TPictureMEM	todo	22	756823	759239
+TPictureWebP	todo	9	759351	761648
+TGraphicsInterface	todo	38	761692	779132
+TParticleEmitter	todo	12	766025	771112
+TParticleSystem	todo	8	766096	771351
+TVector3D	todo	11	766335	767008
+kexVec3	todo	10	766711	1374068
+TMatrix3	todo	13	767045	767700
+idMat3	todo	2	767217	767742
+TMatrix4	todo	21	767828	769325
+TCutRect	todo	7	771519	772531
+TSpriteHandle	todo	7	772635	775729
+MaxRectsBinPack	todo	20	773548	1445275
+TTextureHandle	todo	1	776718	776718
+TPreloadedPicManager	todo	15	779878	781717
+TPictureIO	stub	43	785258	791178
+vertex_array_holder	todo	10	791467	813209
+Point	todo	1	812943	812943
+TPicturePreloader	todo	6	813783	814106
+TPicturePCX	todo	7	814343	815468
+TPictureGIF	todo	8	868003	869035
+soundengine::AudioDataSourceWave	todo	8	1050406	1053847
+soundengine::AudioDataSourceFFMPEG	todo	8	1050626	1057049
+TSoundBase	todo	42	1050713	1105856
+soundengine::AudioDataSourceOggOpus	todo	8	1051132	1053880
+soundengine::AudioDataSourceOggVorbis	todo	8	1051269	1053864
+soundengine::priv::AudioDevice	todo	4	1051511	1053547
+TSoundFFMPEG	todo	13	1053026	1059852
+soundengine::priv	todo	1	1053563	1053563
+soundengine::AudioDataSource	todo	3	1053920	1059870
+soundengine::Stream	todo	24	1054049	1056675
+TFFMPEGSoundItem	todo	16	1054181	1060292
+mysqlpp::Exception	todo	1	1060074	1060074
+TSoundItem	todo	1	1060122	1060122
+TSteamSDK	todo	19	1075092	1077877
+TV_CCallbackImpl<DlcInstalled_t>	todo	3	1077952	1078057
+TV_CCallbackImpl<GetAuthSessionTicketResponse_t>	todo	3	1077987	1078083
+TV_CCallbackImpl<ValidateAuthTicketResponse_t>	todo	3	1078022	1078109
+soundengine::AudioBus	todo	12	1078446	1089418
+soundengine::MixBus	todo	9	1078463	1085833
+soundengine::AudioSourceBus	todo	11	1078495	1088959
+soundengine::RandomBus	todo	11	1078722	1085663
+soundengine::SyncBus	todo	8	1078770	1082251
+soundengine::AudioBusBridge	todo	6	1081079	1081370
+soundengine::Automation	todo	1	1081654	1081654
+soundengine::BlendTrack	todo	1	1081686	1081686
+soundengine::BlendTrackLink	todo	1	1081876	1081876
+soundengine::AudioBufferFactory	todo	2	1084875	1088745
+hmap_iterator<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, StringHash<char const*> >	todo	1	1092049	1092049
+TGalaxySDKOverlayInitListener	todo	4	1098866	1099669
+TGalaxySDKAuthListener	todo	6	1098883	1099686
+TGalaxySDK	todo	16	1098946	1100783
+TGalaxySDKUserStatsAndAchievementsRetrieveListener	todo	6	1099428	1101117
+galaxy::api::IGalaxyListener	todo	2	1100981	1101236
+galaxy::api::GalaxyTypeAwareListener<12u>	todo	2	1100998	1101219
+galaxy::api::IUserStatsAndAchievementsRetrieveListener	todo	2	1101015	1101202
+galaxy::api::GalaxyTypeAwareListener<41u>	todo	2	1101032	1101185
+galaxy::api::IOverlayInitializationStateChangeListener	todo	2	1101049	1101168
+galaxy::api::GalaxyTypeAwareListener<7u>	todo	2	1101066	1101151
+galaxy::api::IAuthListener	todo	2	1101083	1101134
+TSoundInterface	todo	16	1105963	1107204
+vec_info_shared	todo	2	1117192	1170549
+ModelContainer	todo	13	1350921	1352056
+ModelAnimation	todo	31	1353455	1354168
+Model	todo	37	1354235	1365202
+Animator	todo	9	1366399	1370432
+aiNode	todo	3	1370653	2082432
+AnimationNode	todo	1	1371017	1371017
+Light	todo	8	1373667	1373832
+Camera	todo	10	1373848	1374386
+Tools	todo	2	1374466	1374734
+TGParticleSystem	todo	4	1378274	1380801
+TGParticleEmitter	todo	6	1378290	1379800
+TFontManager	todo	16	1388826	1390109
+TPointSize	todo	5	1390459	1390856
+TCFont	todo	16	1391446	1397049
+TSyntaxDocArray	todo	7	1409666	1415006
+TExampleDocArray	todo	7	1410025	1415280
+HashMap<TId, std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >*, TIdHash>	todo	1	1428982	1428982
+HashMap<long long, StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, char const*, StringHash<char const*> >*, IntegerHash<int> >	todo	1	1429054	1429054
+CmdGetTime	todo	4	1429970	1432060
+CmdGetObject	todo	4	1430038	1431692
+TArgument	todo	57	1435493	1439341
+TCommandPtrArray	todo	7	1439934	1442092
+TCommandQueue	todo	10	1440145	1441881
+TTActionPart	todo	13	1445635	1446790
+TTScene	todo	10	1446937	1448630
+TTTextLanguage	todo	6	1449478	1449558
+TTCondition	todo	10	1449686	1450703
+TTLanguage	todo	6	1451276	1451356
+TTDialog	todo	6	1451420	1451498
+TTFont	todo	6	1451606	1451839
+TTAnimationFrame	todo	6	1452285	1452376
+TTWaySystem	todo	6	1452542	1452622
+TTPoint	todo	6	1452730	1452808
+TTAudioBus	todo	6	1452936	1453016
+TTScriptVariable	todo	6	1453174	1453254
+TTSprite	todo	7	1453443	1453570
+TTModel	todo	6	1453656	1453734
+TTShader	todo	6	1453841	1454001
+TTText	todo	19	1454121	1460716
+TTGame	todo	6	1460995	1461750
+TTDialogPart	todo	7	1464912	1465354
+TTEvent	todo	6	1465967	1466045
+TTScript	todo	6	1466102	1466183
+TTInterface	todo	7	1466290	1467119
+TTInterfaceClass	todo	6	1468654	1468734
+TTAreaAction	todo	6	1468831	1468968
+TTActionArea	todo	6	1469106	1469186
+TTCommentSet	todo	6	1469303	1469383
+TTParticles	todo	6	1469492	1470952
+TTParticleContainer	todo	6	1469508	1470801
+TTCommentSetEntry	todo	6	1471442	1471554
+TTAnimation	todo	9	1471662	1472629
+TSAnimation	todo	6	1471678	1472940
+TTCursor	todo	6	1473394	1473515
+TTCharacter	todo	10	1473680	1475646
+TTValue	todo	8	1476496	1476802
+TTAction	todo	11	1477394	1478245
+TSAction	todo	6	1477410	1478347
+TTOutfit	todo	6	1478597	1479233
+TVisionaireGame	todo	14	1480066	1523439
+Event	todo	25	1523865	1602932
+TVisionaireClipboard	todo	14	1524587	1532387
+TTLoading	todo	6	1526228	1526307
+TTClipboardObject	todo	4	1533284	1533332
+Bitmap	todo	19	1547379	1563341
+SwitchableComponent	todo	13	1547421	1553743
+StaticLine	todo	5	1547527	1564819
+Sizer	todo	8	1547559	1554349
+Slider	todo	8	1547575	1564861
+Tooltip	todo	10	1547607	1562690
+RadioButtonCollector	todo	9	1547656	1566944
+Notebook	todo	8	1547672	1560227
+Bar	todo	5	1547769	1564840
+StaticBox	todo	8	1547784	1565326
+EmptySpace	todo	3	1547887	1553201
+TabBar	todo	9	1547903	1559939
+TabButton	todo	8	1547959	1567168
+CheckBox	todo	17	1547993	1567688
+ProgressBar	todo	9	1548132	1565110
+ScrollBar	todo	10	1548213	1567018
+StatusBar	todo	11	1548392	1567403
+ResizerHandle	todo	7	1548506	1564998
+Viewport	todo	7	1548553	1565054
+Spinner	todo	18	1548767	1566928
+Button	todo	14	1549865	1568518
+RadioButton	todo	13	1549919	1568154
+Label	todo	19	1549977	1563679
+TooltipHolder	todo	9	1550435	1564069
+rect	todo	4	1550941	1551115
+Image	todo	7	1551762	1551850
+ImageList	todo	4	1551865	1558284
+GLCharBuffer	todo	2	1554155	1558629
+MessageDialog	todo	6	1554593	1565990
+OptionDialog	todo	6	1554709	1566210
+ItemStyle	todo	5	1555412	1565222
+GuiCursor	todo	2	1555454	1555470
+TreeItem	todo	4	1558108	1559350
+Component	todo	53	1564312	1599649
+TextBox	todo	38	1564361	1651835
+Tween	todo	4	1564395	1628865
+DialogTitle	todo	5	1564453	1660623
+EventRegisterer<int>	todo	2	1566226	1568558
+Dialog	todo	21	1566281	1660920
+EventRegisterer<Bitmap*>	todo	1	1568697	1568697
+EventRegisterer<bool>	todo	1	1568741	1568741
+EventRegisterer<Button*>	todo	1	1568792	1568792
+TSpritePartTexture	todo	8	1582003	1582658
+TFreetypeFont::Character	todo	1	1582280	1582280
+TFreetypeFont	todo	19	1582405	1589320
+BaseTexture	todo	2	1589597	1589630
+FreetypeHolder	todo	1	1589613	1589613
+HashMap<int, int, KeyHash<int> >	todo	2	1589687	1590100
+HashMap<int, TFreetypeFont::Character, KeyHash<int> >	todo	3	1589759	1589996
+Container	todo	25	1592130	1597917
+BaseContainer	todo	28	1592285	1602916
+ScrollPane	todo	14	1592422	1600766
+EventHandler	todo	4	1592869	1599448
+Layout::LayoutUnion	todo	5	1597038	1601045
+Layout	todo	9	1601112	1602720
+SkinFaceSprite	todo	5	1605092	1607305
+SkinFaceGradient	todo	5	1605108	1621054
+SkinFace	todo	2	1605592	1605622
+SkinManager	todo	17	1605823	1618282
+CSSParser	todo	15	1605898	1624960
+CssFace	todo	4	1606128	1608512
+CssSkinnedObject	todo	9	1608083	1620929
+ctdrpc::syssubj_t	todo	1	1621075	1621075
+HashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, TPictureIO*, StringHash<char const*> >	todo	2	1621127	1622291
+StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, TPictureIO*, char const*, StringHash<char const*> >	todo	3	1621220	1622687
+HashMap<int, HashMap<int, int, IntegerHash<int> >*, IntegerHash<int> >	todo	3	1621237	1621778
+HashMap<int, rect, IntegerHash<int> >	todo	3	1621411	1621900
+hmap_iterator<int, HashMap<int, int, IntegerHash<int> >*, IntegerHash<int> >	todo	1	1622393	1622393
+hmap_iterator<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, TPictureIO*, StringHash<char const*> >	todo	1	1622467	1622467
+HashNode<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, TPictureIO*, StringHash<char const*> >	todo	1	1622655	1622655
+CSSParser::attribute	todo	1	1623696	1623696
+CSSParser::expression	todo	2	1623712	1625477
+std::basic_string<char, std::char_traits<char>, std::allocator<char> >	todo	3	1624335	2195609
+CSSParser::rule	todo	1	1624602	1624602
+Easing::Ease	todo	1	1628577	1628577
+Easing	todo	44	1628883	1630422
+FormSizer	todo	10	1630504	1635748
+GridSizer	todo	9	1630535	1634929
+AlignSizer	todo	9	1630596	1636022
+FunctionDataProvider	todo	10	1638823	1654545
+ScriptEditor	todo	24	1638874	1656285
+DataProvider	todo	8	1656680	1656794
+TextChangedEvent	todo	1	1656810	1656810
+mysqlpp::SimpleResult	todo	1	1656851	1656851
+ListBox	todo	30	1661251	1665792
+StringVecDataProvider	todo	10	1661367	1666807
+StringVoidVecDataProvider	todo	11	1661404	1666631
+CheckListBox	todo	38	1661457	1666539
+GSUBProxy	todo	1	1960652	1960652
+GPOSProxy	todo	1	1961356	1961356
+LogToCallbackRedirector	todo	3	2030513	2030839
+aiScene	todo	2	2049815	2049853
+DeadlyImportError	todo	3	2057178	2082505
+aiMaterial	todo	8	2061435	2182025
+lcrDomains	todo	1	2061509	2061509
+aiString	todo	4	2082238	2181718
+aiNodeAnim	todo	1	2082294	2082294
+aiMesh	todo	2	2082332	2137003
+std	todo	1	2082546	2082546
+aiMatrix4x4t<float>	todo	7	2083499	2188659
+irr::io::IFileReadCallBack	todo	2	2105910	2105942
+ctdagt::msgtbl_t	todo	1	2120430	2120430
+RHistoryList	todo	1	2179173	2179173
+aiAnimMesh	todo	1	2181760	2181760
+aiAnimation	todo	1	2182049	2182049
+aiMetadata	todo	1	2182156	2182156
+aiQuaterniont<float>	todo	1	2186025	2186025
+irr::core::string<char>	todo	4	2285990	2306862
+irr::core::string<unsigned short>	todo	4	2286022	2302920
+irr::core::string<unsigned long>	todo	4	2286054	2300351
+irr::io	todo	9	2286086	2287095
+irr::io::CFileReadCallBack	todo	4	2287232	2288158
+irr::io::IIrrXMLReader<char, irr::io::IXMLBase>	todo	2	2287247	2287936
+irr::io::IIrrXMLReader<unsigned short, irr::io::IXMLBase>	todo	2	2287263	2287920
+irr::io::IIrrXMLReader<unsigned long, irr::io::IXMLBase>	todo	2	2287279	2287904
+irr::io::CXMLReaderImpl<unsigned long, irr::io::IXMLBase>	todo	29	2287295	2302876
+irr::io::CXMLReaderImpl<unsigned short, irr::io::IXMLBase>	todo	29	2287498	2306818
+irr::io::CXMLReaderImpl<char, irr::io::IXMLBase>	todo	29	2287701	2309504
+irr::core::array<irr::core::string<char> >	todo	2	2290938	2293132
+irr::io::CXMLReaderImpl<char, irr::io::IXMLBase>::SAttribute	todo	1	2290993	2290993
+irr::core::array<irr::io::CXMLReaderImpl<char, irr::io::IXMLBase>::SAttribute>	todo	1	2291025	2291025
+irr::core::array<irr::core::string<unsigned short> >	todo	2	2291119	2294556
+irr::io::CXMLReaderImpl<unsigned short, irr::io::IXMLBase>::SAttribute	todo	1	2291174	2291174
+irr::core::array<irr::io::CXMLReaderImpl<unsigned short, irr::io::IXMLBase>::SAttribute>	todo	1	2291206	2291206
+irr::core::array<irr::core::string<unsigned long> >	todo	2	2291300	2296805
+irr::io::CXMLReaderImpl<unsigned long, irr::io::IXMLBase>::SAttribute	todo	1	2291355	2291355
+irr::core::array<irr::io::CXMLReaderImpl<unsigned long, irr::io::IXMLBase>::SAttribute>	todo	1	2291387	2291387
+p2t::CDT	todo	7	2309547	2309764
+p2t	todo	3	2309910	2316294
+p2t::Sweep	todo	32	2309992	2313801
+p2t::SweepContext	todo	16	2314142	2316111
+p2t::Triangle	todo	29	2400171	2401611
+p2t::AdvancingFront	todo	5	2401742	2401904
+rda::launch	todo	3	2529804	2530392
+TXMLFileWriter	todo	5	2986850	2987099
+RadixSort	todo	6	2987143	2987454
