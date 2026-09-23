@@ -8097,6 +8097,27 @@ dungeon-grid section.
 - All 11 test suites (10 existing + the new `dungeongrid` one) still
   pass after a full rebuild — no regressions.
 
+**Follow-up investigation, same session**: read `HandleSpecialCellEntry`
+in full (`yendor2.asm:2481`, the function `movement.c` deferred) to see
+if it was worth reimplementing next — it isn't; it's pure door-swing
+animation/rendering (a frame buffer feeding `RefreshDungeonScreen`),
+nothing left once `movementClassifyCell`'s `MovementCellSpecial`
+outcome is accounted for. Followed its sibling, `TryInteractAtPosition`
+(`yendor2.asm:30813`, the real source of the door/lock flag
+`movement.c` takes as a bare `bool`), into `FindObjectAtPosition`
+(`yendor2.asm:30970`) and found a **previously-undecoded `WORLD.DAT`
+block**: a sparse per-cell object index, 720 column-offset entries (one
+per playable X) into sorted-by-Y 6-byte records, loaded as one ~26KB
+blob (`PreloadWorldDataTable`, `yendor2.asm:3661`) from an offset
+that's itself stored at a fixed in-EXE table address (`DS:0xCE5F`) not
+yet extracted. Deliberately didn't push further this session — pinning
+down the real offset and the third record field's exact semantics
+(varies by flag bit: lock id / event-record index / monster-cell index)
+is comparable in scope to the original item/monster/worldmap decodes
+and deserves its own dedicated pass rather than being rushed. Full
+writeup and next steps in `roadmap.md`'s "Picking the next module"
+item 4.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
