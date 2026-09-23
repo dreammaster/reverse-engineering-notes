@@ -88,12 +88,32 @@ groundwork below is already in place.
   `tests/test_worldobjects.c` with exact reachable-record and per-flag
   counts checked against both real `WORLD.DAT` files. See
   `file-formats.md`'s "World object index" section for the full flag-bit
-  table. Still open: `LoadCurgameRecord`/`LoadLockState`'s own
-  `CURGAME`-side formats, flag bits `0x2000`/`0x400`'s consumers (if
-  any — `0x2000` is real and common but untested by any traced caller),
-  `ShowLockStatus`, `g_levelMonsters` placement/despawn, and everything
-  downstream of a committed move (monster processing, side-trap
-  processing, map-trigger effects, first-person viewport rendering).
+  table. Still open: flag bits `0x2000`/`0x400`'s consumers (if any —
+  `0x2000` is real and common but untested by any traced caller).
+  **`LoadLockState`/`ShowLockStatus` investigated (2026-09-23), found
+  an EMS-paging blocker, stopped there rather than guess**: a
+  `worldobjects.c` door record's `value` field (the lock id) indexes
+  two already-known, already-decoded `CURGAME` sections directly
+  (`SaveSectionLockAndShopState[id-1]`, a 1-byte-per-lock state field;
+  `SaveSectionEventState[(id-1)/8]`, an "already unlocked" bitmap,
+  1 bit/lock) — nothing new there. But the actually interesting part,
+  `g_lockStatusFlags` (the 7-tier key-requirement bits `ShowLockStatus`
+  switches on — already correctly identified by an earlier session,
+  see the comment at its data definition) and a price-like value
+  (`word_32DD0`, split by 100 for display), come from a **26-byte-per-lock
+  `WORLD.DAT` catalog loaded through EMS paging** (`MapUnmapPages`),
+  not a flat blob `extract_resource_stubs.py`-style stub can find —
+  the same kind of blocker already on record for Chapter 3's tile-legend
+  table below. Finding this catalog's real `WORLD.DAT` offset needs
+  tracing the EMS page-mapping call (`MapUnmapPages`, already named per
+  `overview.md`'s open-questions section) rather than the resource-stub
+  technique — a new, not-yet-attempted investigation thread for this
+  project. Left for a future session; `ShowLockStatus` itself is UI
+  display logic anyway; the movement/passability decision (blocks
+  movement) is already fully captured by `movement.c`'s `MovementCellDoor`.
+  `g_levelMonsters` placement/despawn and everything downstream of a
+  committed move (monster processing, side-trap processing, map-trigger
+  effects, first-person viewport rendering) remain open too.
 
 ## Next: continue the C reimplementation
 

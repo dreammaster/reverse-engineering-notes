@@ -8155,6 +8155,31 @@ committing to a record layout.
   actually indexes into), and flag bits `0x2000`/`0x400`'s consumers,
   if any.
 
+**Follow-up investigation, same session**: chased the `LoadCurgameRecord`
+open item above by reading `LoadLockState`/`ShowLockStatus` in full.
+The `0x8000` (door/lock) flag's `value` field does resolve cleanly —
+it indexes two already-decoded `CURGAME` sections directly
+(`SaveSectionLockAndShopState[id-1]`, `SaveSectionEventState[(id-1)/8]`
+as an "already unlocked" bitmap) — but the actually interesting part,
+the 7-tier key-requirement flags `ShowLockStatus` switches on
+(`g_lockStatusFlags`) plus a price-like value, turned out to come from
+a **26-byte-per-lock `WORLD.DAT` catalog loaded through EMS paging**
+(confirmed by finding `g_lockStatusFlags`'s data definition already
+correctly identified by an earlier session — no re-derivation needed
+there), not a flat blob the resource-stub technique that found
+`worldobjects.c`'s block can locate. This is the same kind of blocker
+already on record for Chapter 3's tile-legend table
+(`file-formats.md`'s "World map" section) — recognized it early and
+stopped rather than force a fit, consistent with this session's
+earlier lesson about not rushing a decode past what's actually
+confirmed. Recorded as a precise, scoped lead (needs tracing
+`MapUnmapPages`'s EMS page-table setup, not the stub-offset trick) in
+`roadmap.md` rather than guessed at further. No code changes from this
+sub-investigation — `movement.c`'s `MovementCellDoor` outcome already
+fully captures the one fact that matters for the movement/passability
+decision (a door always blocks); `ShowLockStatus` itself is pure UI
+display, out of scope regardless of the EMS question.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
