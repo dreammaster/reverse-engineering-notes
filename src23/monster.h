@@ -46,7 +46,8 @@ typedef enum {
     MonsterFieldAnim = 0x08,      /* u16; starts at MonsterFieldSpriteBase + RandomInRange(5), i.e. 0-5 */
     MonsterFieldAnimSet = 0x0A,   /* u16; 0xA when MonsterFlagAltSprite is set, else 0xD */
     MonsterFieldState = 0x0C,     /* u16, MonsterState bits */
-    MonsterFieldWound = 0x0E,     /* u16 wound severity: 0x8000 light, 0x4000 moderate, 0x2000 severe */
+    MonsterFieldWound = 0x0E,     /* u16, MonsterWound bits -- despite the name, also carries the
+                                      party-relative direction and ambush-pending state (see MonsterWound) */
     MonsterFieldHealth = 0x10,    /* u16 current hit points */
     MonsterFieldTarget = 0x12,    /* runtime pointer to the party member being attacked; meaningless on disk */
     MonsterFieldFlagOnDeath = 0x14, /* i16 global flag index set (>0) or cleared (<0) when it dies */
@@ -82,8 +83,51 @@ typedef enum {
 
 /* MonsterFieldState bits. */
 typedef enum {
-    MonsterStateAware = 0x0001 /* it has noticed the party (TryActivateMonsterByDistance) */
+    MonsterStateAware = 0x0001, /* it has noticed the party (TryActivateMonsterByDistance); gates ProcessLevelMonsters */
+    MonsterStateBusy = 0x0800   /* skips ProcessLevelMonsters' approach/ambush check this tick; exact trigger not confirmed */
 } MonsterState;
+
+/*
+ * MonsterFieldWound bits (yendor2.asm:33367 on, ProcessLevelMonsters/
+ * TriggerSideTrapForRandomPartyMember, instruction-identical in Chapter
+ * 3). Despite the field's name, only 0x8000/0x4000/0x2000 are wound
+ * severity -- the other bits are set by ProcessLevelMonsters' approach
+ * check (see monsterApproachParty in monsterpool.h) and read by both it
+ * and the side-trap/ambush presentation pipeline
+ * (file-formats.md's "side trap"/ambush section).
+ */
+typedef enum {
+    MonsterWoundLight = 0x8000,
+    MonsterWoundModerate = 0x4000,
+    MonsterWoundSevere = 0x2000,
+    /*
+     * Set by ProcessLevelMonsters' approach check to record the monster's
+     * position relative to the party -- which way the party must be
+     * facing to trigger the pending ambush/trap. Exactly one of these 4
+     * is set after a successful alignment check (never combined).
+     */
+    MonsterWoundPartyMustFaceNorth = 0x0800, /* monster is north of the party */
+    MonsterWoundPartyMustFaceSouth = 0x0400, /* monster is south of the party */
+    MonsterWoundPartyMustFaceEast = 0x0200,  /* monster is east of the party */
+    MonsterWoundPartyMustFaceWest = 0x0100,  /* monster is west of the party */
+    /* An ambush/trap is armed and waiting for the party to face the direction above (ProcessSideTrapsOnMovement). */
+    MonsterWoundAmbushPending = 0x1000
+} MonsterWound;
+
+/*
+ * A second, independent bit range within MonsterFieldAwareness (not the
+ * already-documented 0x20-0x100 "how far it notices the party" range):
+ * selects the ambush-roll threshold ProcessLevelMonsters uses once a
+ * monster has a clear line to the party (RandomInRange(100) must be <=
+ * the threshold for the ambush to trigger). Tested highest-bit-first;
+ * none of the 4 set falls back to a threshold of 5 (the lowest chance).
+ */
+typedef enum {
+    MonsterAmbushChanceVeryHigh = 0x1000, /* threshold 90 */
+    MonsterAmbushChanceHigh = 0x0800,     /* threshold 75 */
+    MonsterAmbushChanceMedium = 0x0400,   /* threshold 50 */
+    MonsterAmbushChanceLow = 0x0200       /* threshold 25 */
+} MonsterAmbushChance;
 
 /* MonsterFieldFlags bits (only those the code tests). */
 typedef enum {
@@ -198,5 +242,8 @@ void monsterGetName(const uint8_t *record, char out[MonsterNameBufferSize]);
  * (17 entries in Chapter 2, 23 in Chapter 3). False if the type has none.
  */
 bool monsterDeathFlags(GameKind game, unsigned typeId, int16_t *flagA, int16_t *flagB);
+
+/* The ambush-roll threshold (90/75/50/25/5) for a MonsterFieldAwareness value -- see MonsterAmbushChance. */
+unsigned monsterAmbushThreshold(uint16_t awareness);
 
 #endif

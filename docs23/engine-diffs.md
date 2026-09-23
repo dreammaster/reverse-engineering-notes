@@ -1035,6 +1035,38 @@ noting if a puzzle/quest-design question about Chapter 3 comes up
 later. Magical locks are also proportionally far more common in
 Chapter 3 (214/1008, ~21%) than Chapter 2 (17/608, ~3%).
 
+## Monster approach/ambush check: Chapter 3 fixes a Chapter 2 bug
+
+Found while writing `src23/monsterpool.c`'s `monsterApproachParty`
+(2026-09-23), from direct side-by-side comparison of both games'
+`ProcessLevelMonsters`. The alignment/direction/ambush logic is
+otherwise instruction-identical, but the scan-ahead step limit differs
+in a way that looks like an unintentional bug in Chapter 2, corrected
+in Chapter 3:
+- **Chapter 2** only explicitly bounds the obstacle scan to 5 steps
+  (`mov cx, 5`) when the monster is on the "far" side of the party
+  along the aligned axis (south or east of it). On the "near" side
+  (north or west), the code never (re)initializes `cx` before using it
+  as the scan's loop counter — it inherits whatever value is left in
+  `ProcessLevelMonsters`' own unrelated 80-slot outer-loop counter,
+  meaning the real scan depth on that side depends on which pool slot
+  index the monster currently occupies (anywhere from ~1 to 80), not a
+  deliberate game-design value.
+- **Chapter 3** adds the missing `mov cx, 5` unconditionally, before
+  the near/far branch, so both sides get the same explicit 5-step
+  bound.
+
+`src23/monsterpool.c` always uses the corrected 5-step bound for both
+games (see its own doc comment for the reasoning) rather than
+replicate Chapter 2's pool-slot-index-dependent quirk, which isn't
+meaningful game content to preserve.
+
+Otherwise, the wall/floor obstacle-classification thresholds
+(`monsterClassifyObstacle`) and the ambush-roll thresholds both differ
+between the games in the usual way (see `file-formats.md`'s "Monster
+approach and ambush check" section for the exact bands) — same shape
+of difference already established for the movement/passability system.
+
 ## Monster death (rewards/removal) and global flags: no behavioral difference found
 
 Found while writing `src23/monsterpool.c`'s reward/removal additions

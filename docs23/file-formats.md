@@ -2285,15 +2285,15 @@ two different ways:
   not yet traced (plausibly the same map-marker-driven spawn path as
   an ordinary monster, `worldobjects.c`/`monsterpool.c`'s
   `monsterPoolSpawn` — not confirmed).
-- **A monster ambush**, set by `ProcessLevelMonsters` itself
-  (`yendor2.asm:33507` on) when the party's approaching position gets
-  within a monster's awareness range: rolls `RandomInRange(100)`
-  against a threshold selected by testing bits `0x200`-`0x1000` of the
-  monster's own `+0x94` field (`MonsterFieldAwareness` in `monster.h`
-  — a *different* sub-range of that field than the already-documented
-  `0x20`-`0x100` "how far it notices the party" bits, so `+0x94` is
-  evidently two independently-meaningful bit ranges in one word, not
-  fully mapped out).
+- **A monster ambush** — **fully decoded and reimplemented, 2026-09-23**
+  (see "Monster approach and ambush check" below): set by
+  `ProcessLevelMonsters` when a monster is grid-aligned with the party
+  (same world row or column) with a clear line of cells between them,
+  via a `RandomInRange(100)` roll against a threshold selected by a
+  *second*, independent bit range of `+0x94` (`MonsterFieldAwareness`
+  in `monster.h`) — `0x200`-`0x1000`, distinct from the
+  already-documented `0x20`-`0x100` "how far it notices the party"
+  range.
 
 `ProcessSideTrapsOnMovement` (was `sub_2278C`, called directly from
 `start`, likely once per movement step) fast-exits unless
@@ -3715,6 +3715,76 @@ correct regardless of how that's eventually resolved) —
 `globalFlagTest`/`Set`/`Clear` and `globalFlagApplySigned` (the
 signed-index convention `GrantMonsterRewards`/`ApplyItemEffectFlags`
 both use), tests in `tests/test_globalflags.c`.
+
+### Monster approach and ambush check (decoded 2026-09-23)
+
+`ProcessLevelMonsters`' movement AI (`yendor2.asm:33367` on) turned out
+to not really be movement at all — a monster's world position is never
+changed by this function. It only checks whether the party is
+grid-aligned and reachable, and if so, arms an ambush from wherever
+the monster already stands; actual monster repositioning, if it
+happens at all, must be driven by some other function not traced this
+pass.
+
+**Alignment**: a monster only ever engages if it shares the party's
+exact world row *or* column — no diagonal engagement, no pathfinding
+around corners. If neither matches, nothing happens.
+
+**Direction**: once aligned, `MonsterFieldWound`'s `0x100`-`0x800` bits
+(`monster.h`'s `MonsterWoundPartyMustFace*`) record which side of the
+party the monster is on — confirmed by cross-referencing
+`TriggerSideTrapForRandomPartyMember` (the "side trap"/ambush section
+above), which tests the exact same 4 bits against the party's *current*
+facing to decide whether an armed ambush/trap should actually resolve.
+
+**Reachability**: a cell-by-cell scan from one step away up to
+adjacent-to-the-party, via `ClassifyObstacleAtWorldPosition`
+(`yendor2.asm:1878`, `yendor3.asm:5526`) — a **monster-specific**
+passability check, genuinely different from `movement.h`'s
+player-facing `ClassifyFloorType`/`IsCellTypeImpassable` (confirmed by
+reading both independently, not assumed to match):
+- **Wall-type band** (matches `movement.h`'s own "blocked" band for
+  each game, confirmed the two coincide): Chapter 2 blocks `[2,15]`;
+  Chapter 3 blocks `[2,99]`∪`[200,299]`. Outside that band, the wall
+  type alone never blocks a monster (unlike player movement, which
+  additionally blocks unbounded past-table values in Chapter 2 — a
+  real difference between the two passability systems).
+- **Floor-type check** (only consulted when the wall type doesn't
+  already block) differs sharply between games in a way player
+  movement's floor check doesn't: **Chapter 2** is a 6-band alternation
+  — clear at `0`, blocked (`"feature"`) `[1,16]`, clear `[17,20]`,
+  blocked `[21,62]`, clear `[63,67]`, blocked `68+`; **Chapter 3** is
+  just "zero is clear, nonzero blocks". Both errorCode `1` (wall) and
+  `2` (feature) stop a monster equally — the distinction exists in the
+  original but every known caller treats them the same.
+- Scanning is bounded to **5 steps**. **A confirmed Chapter 2 bug**:
+  Chapter 2's code only explicitly sets this bound (`cx=5`) on the
+  "far" side of the party — the "near" side reuses whatever's left in
+  `ProcessLevelMonsters`' own unrelated 80-slot outer-loop counter,
+  an uninitialized-register reuse that makes the real bound depend on
+  which pool slot index is being processed. **Chapter 3 adds the
+  missing explicit `cx=5` for both sides**, fixing it — confirmed by
+  direct side-by-side comparison of the two games' disassembly, not
+  inferred. This reimplementation always uses the corrected 5-step
+  bound for both games.
+
+**Ambush roll**: once a clear path to adjacency is found,
+`RandomInRange(100)` is rolled against a threshold from
+`MonsterFieldAwareness`'s second bit range (`monster.h`'s
+`MonsterAmbushChance*`: `0x1000`→90, `0x800`→75, `0x400`→50,
+`0x200`→25, none set→5); success sets `MonsterWoundAmbushPending`,
+which is what `ProcessSideTrapsOnMovement` (the "side trap"/ambush
+section above) actually checks. Confirmed identical thresholds and
+bit assignments in both games by direct comparison.
+
+Reimplemented in `src23/monsterpool.c`/`.h`: `monsterClassifyObstacle`
+and `monsterApproachParty`, tests in `tests/test_monsterai.c` covering
+both games' obstacle bands, all 4 approach directions, wall-blocked
+paths, the step limit, and a successful ambush roll. **Not
+reimplemented**: `TryActivateMonsterByDistance`, `TickMonsterTimer`'s
+full state machine, and everything about how a "trap" pool entry
+(as opposed to an ordinary spawned monster) actually gets created —
+see the "side trap"/ambush section above for what's still open there.
 
 ## Not yet examined
 

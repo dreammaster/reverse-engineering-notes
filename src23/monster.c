@@ -111,6 +111,14 @@ bool monsterDeathFlags(GameKind game, unsigned typeId, int16_t *flagA, int16_t *
     return false;
 }
 
+unsigned monsterAmbushThreshold(uint16_t awareness) {
+    if (awareness & MonsterAmbushChanceVeryHigh) return 90;
+    if (awareness & MonsterAmbushChanceHigh) return 75;
+    if (awareness & MonsterAmbushChanceMedium) return 50;
+    if (awareness & MonsterAmbushChanceLow) return 25;
+    return 5;
+}
+
 bool monsterRecordSpawn(uint8_t *record, const MonsterCatalog *catalog, unsigned typeId) {
     unsigned index = monsterCatalogBlockIndex(catalog, typeId);
     if (index == 0) {

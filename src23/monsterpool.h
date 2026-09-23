@@ -13,6 +13,7 @@
 #include "monster.h"
 #include "random.h"
 #include "savegame.h"
+#include "worldmap.h"
 
 /*
  * The 80-slot live monster pool (g_levelMonsters, monster.h's
@@ -146,5 +147,47 @@ void monsterGrantRewards(MonsterRewardStaging *staging, const uint8_t *record, u
  * the whole record. grid may be NULL to skip the overlay-clear step.
  */
 void monsterPoolRemove(uint8_t *record, DungeonGrid *grid);
+
+/*
+ * ClassifyObstacleAtWorldPosition (yendor2.asm:1878, yendor3.asm:5526):
+ * a monster-movement-specific passability check on a world map cell --
+ * genuinely different thresholds from movement.h's own player-facing
+ * ClassifyFloorType/IsCellTypeImpassable, not reusable from there.
+ * Errors 1 (a literal wall) and 2 ("feature", a nonzero floor overlay --
+ * doors, scenery) are both treated as blocking by every known caller;
+ * they're kept distinct here only because the original does.
+ */
+typedef enum { MonsterObstacleClear, MonsterObstacleWall, MonsterObstacleFeature } MonsterObstacle;
+
+MonsterObstacle monsterClassifyObstacle(GameKind game, uint16_t wallType, uint16_t floorType);
+
+/*
+ * ProcessLevelMonsters' approach/ambush check (yendor2.asm:33430 on,
+ * instruction-identical in Chapter 3 including the RandomInRange(100)
+ * thresholds -- confirmed by direct comparison, not assumed). A monster
+ * only ever engages the party head-on, along a grid-aligned line: if
+ * it's not on the exact same world row or column as the party, nothing
+ * happens. Otherwise this scans map cells from one step away up to
+ * adjacent-to-the-party (capped at 5 steps, see below), and if every
+ * cell along the way is MonsterObstacleClear, sets the MonsterWound
+ * direction bit matching the monster's side of the party and rolls
+ * RandomInRange(100) against monsterAmbushThreshold(awareness); success
+ * sets MonsterWoundAmbushPending too (consumed by the "side trap"/ambush
+ * presentation pipeline, not reimplemented here). The monster's own
+ * position is never changed by this check -- it only ever "notices" the
+ * party from where it already stands, never actually steps closer.
+ *
+ * **A confirmed Chapter 2 bug, not replicated here**: Chapter 2's own
+ * code only explicitly bounds this scan to 5 steps when the monster is
+ * on the "far" side of the party (reusing an uninitialized register
+ * otherwise, which in practice inherits whatever's left in
+ * ProcessLevelMonsters' own unrelated 80-slot loop counter); Chapter 3
+ * adds the missing explicit bound for both sides, fixing it. This
+ * reimplementation always uses Chapter 3's corrected 5-step bound for
+ * both games, rather than replicate Chapter 2's incidental,
+ * pool-slot-index-dependent behavior.
+ */
+void monsterApproachParty(uint8_t *record, GameKind game, const WorldMap *map, int partyWorldX, int partyWorldY,
+                           RandomState *rng);
 
 #endif

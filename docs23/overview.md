@@ -8375,6 +8375,51 @@ doesn't.
 - `ProcessLevelMonsters`'s own movement/pathfinding logic and the
   ambush-trigger mechanic remain untraced and out of scope.
 
+### 2026-09-23 session update (continued): the monster "movement" AI turned out not to move monsters at all
+
+Picked up the last open thread and traced `ProcessLevelMonsters`'
+approach/ambush logic in full. The biggest surprise: it's not movement
+AI in the sense of repositioning a monster over time — a monster's
+world position is never touched by this function. It only checks
+whether the party is grid-aligned (same row or column, no diagonals,
+no pathfinding around corners) and reachable through a short scan of
+intervening cells, and if so, arms an ambush from wherever the monster
+already stands. Whether monsters reposition themselves at all, and via
+what function, is still an open question.
+- The obstacle check (`ClassifyObstacleAtWorldPosition`) turned out to
+  use its own, monster-specific passability thresholds — genuinely
+  different from `movement.h`'s player-facing ones, not reusable
+  directly, though the wall-blocked band happens to coincide with
+  `movement.h`'s own for both games (confirmed by reading both
+  independently rather than assuming).
+- **Found a real, confirmed Chapter 2 bug that Chapter 3 fixes**: the
+  5-step scan bound is only explicitly set on one side of the
+  alignment axis in Chapter 2 — the other side silently reuses
+  whatever's left in an unrelated outer-loop counter, making the real
+  scan depth depend on which pool slot index a monster happens to
+  occupy. Chapter 3 adds the missing initialization. Caught by
+  comparing the two games' disassembly side by side rather than
+  assuming they'd match, which is exactly how this was found. Recorded
+  in `engine-diffs.md` and used Chapter 3's corrected behavior for both
+  games in the reimplementation, rather than replicate an incidental
+  bug.
+- Added named constants to `monster.h` for two previously-unlabeled bit
+  ranges this work depended on: `MonsterFieldWound`'s direction/ambush
+  bits (it's not just a wound-severity field, despite the name) and
+  `MonsterFieldAwareness`'s second, independent bit range (ambush
+  chance, distinct from the already-documented "how far it notices"
+  range).
+- Wrote `monsterClassifyObstacle` and `monsterApproachParty` in
+  `src23/monsterpool.c`/`.h`, plus `monsterAmbushThreshold` in
+  `monster.c`/`.h`, with tests in `tests/test_monsterai.c` covering
+  both games' obstacle bands, all 4 directions, a wall-blocked path,
+  the step limit, and a successful ambush roll. All 16 suites pass, no
+  regressions.
+- Still open: `TryActivateMonsterByDistance`, `TickMonsterTimer`'s full
+  state machine, and — unchanged from the "side trap" section — how a
+  wall/door trap pool entry actually gets created, and the trap
+  catalog-block-field overlap.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

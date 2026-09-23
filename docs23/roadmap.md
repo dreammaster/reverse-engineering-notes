@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, monster death + global flags modules)
+## Status (last updated 2026-09-23, monster approach/ambush module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -197,11 +197,27 @@ groundwork below is already in place.
   `monsterGrantRewards`/`monsterPoolRemove` added to
   `src23/monsterpool.c`/`.h`. Tests in `tests/test_globalflags.c` and
   `tests/test_monsterpool.c`; all 15 suites pass. **No Chapter 2 vs.
-  Chapter 3 difference**, spot-checked directly. Still open:
-  `TryActivateMonsterByDistance` (awareness-on-spawn, not traced),
-  `LoadCurgameRecord`'s own format, `ProcessLevelMonsters`'s own
-  movement/pathfinding AI and the ambush mechanic (the side-trap lead
-  above), map-trigger effects, and first-person viewport rendering
+  Chapter 3 difference**, spot-checked directly.
+  **`ProcessLevelMonsters`'s approach/ambush check — done (2026-09-23)**:
+  turned out not to be movement AI at all — a monster's world position
+  is never touched; it only checks grid-alignment (same row/column) and
+  a short obstacle-free path to the party, then arms an ambush in
+  place. Found a **confirmed Chapter 2 bug fixed in Chapter 3**: the
+  5-step scan bound is only explicitly set on one side of the
+  alignment axis in Chapter 2, the other reusing an unrelated
+  outer-loop counter (pool-slot-index-dependent, not deliberate) —
+  Chapter 3 adds the missing initialization; see `engine-diffs.md`.
+  Added `monsterClassifyObstacle`/`monsterApproachParty` to
+  `src23/monsterpool.c`/`.h` and `monsterAmbushThreshold` to
+  `monster.c`/`.h` (plus named constants for two previously-unlabeled
+  bit ranges: `MonsterFieldWound`'s direction/ambush bits and
+  `MonsterFieldAwareness`'s second bit range). Tests in
+  `tests/test_monsterai.c`; all 16 suites pass. Still open:
+  `TryActivateMonsterByDistance`, `TickMonsterTimer`'s full state
+  machine, how a wall/door trap pool entry (as opposed to an ordinary
+  monster) actually gets created, whether monsters ever reposition
+  themselves at all and via what function, `LoadCurgameRecord`'s own
+  format, map-trigger effects, and first-person viewport rendering
   (needs the SDL2 layer, not yet started).
 
 ## Next: continue the C reimplementation

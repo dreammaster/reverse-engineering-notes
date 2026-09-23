@@ -188,3 +188,96 @@ void monsterPoolRemove(uint8_t *record, DungeonGrid *grid) {
     }
     memset(record, 0, MonsterRecordSize);
 }
+
+MonsterObstacle monsterClassifyObstacle(GameKind game, uint16_t wallType, uint16_t floorType) {
+    if (game == GameYendor3) {
+        if ((wallType >= 2 && wallType <= 99) || (wallType >= 200 && wallType <= 299)) {
+            return MonsterObstacleWall;
+        }
+        return floorType == 0 ? MonsterObstacleClear : MonsterObstacleFeature;
+    }
+    if (wallType >= 2 && wallType <= 15) {
+        return MonsterObstacleWall;
+    }
+    if (floorType == 0) return MonsterObstacleClear;
+    if (floorType <= 16) return MonsterObstacleFeature;
+    if (floorType <= 20) return MonsterObstacleClear;
+    if (floorType <= 62) return MonsterObstacleFeature;
+    if (floorType <= 67) return MonsterObstacleClear;
+    return MonsterObstacleFeature;
+}
+
+enum { MonsterApproachStepLimit = 5 };
+
+void monsterApproachParty(uint8_t *record, GameKind game, const WorldMap *map, int partyWorldX, int partyWorldY,
+                           RandomState *rng) {
+    int worldX = monsterGetU16(record, MonsterFieldWorldX);
+    int worldY = monsterGetU16(record, MonsterFieldWorldY);
+
+    bool axisIsX;
+    uint16_t directionBit;
+    int step;
+    int fixedCoord;
+    int scanFrom, scanTo;
+
+    if (worldY == partyWorldY) {
+        axisIsX = true;
+        fixedCoord = worldY;
+        scanFrom = worldX;
+        scanTo = partyWorldX;
+        if (worldX < partyWorldX) {
+            directionBit = MonsterWoundPartyMustFaceWest;
+            step = 1;
+        } else {
+            directionBit = MonsterWoundPartyMustFaceEast;
+            step = -1;
+        }
+    } else if (worldX == partyWorldX) {
+        axisIsX = false;
+        fixedCoord = worldX;
+        scanFrom = worldY;
+        scanTo = partyWorldY;
+        if (worldY < partyWorldY) {
+            directionBit = MonsterWoundPartyMustFaceNorth;
+            step = 1;
+        } else {
+            directionBit = MonsterWoundPartyMustFaceSouth;
+            step = -1;
+        }
+    } else {
+        return; /* not aligned with the party on either axis */
+    }
+
+    uint16_t wound = monsterGetU16(record, MonsterFieldWound);
+    wound &= (uint16_t)~(MonsterWoundPartyMustFaceNorth | MonsterWoundPartyMustFaceSouth |
+                          MonsterWoundPartyMustFaceEast | MonsterWoundPartyMustFaceWest);
+    wound |= directionBit;
+    monsterSetU16(record, MonsterFieldWound, wound);
+
+    int pos = scanFrom;
+    for (int i = 0; i < MonsterApproachStepLimit; i++) {
+        pos += step;
+        if (pos == scanTo) {
+            unsigned roll = randomInRange(rng, 100);
+            unsigned threshold = monsterAmbushThreshold(monsterGetU16(record, MonsterFieldAwareness));
+            if (roll <= threshold) {
+                wound = monsterGetU16(record, MonsterFieldWound);
+                wound |= MonsterWoundAmbushPending;
+                monsterSetU16(record, MonsterFieldWound, wound);
+            }
+            return;
+        }
+
+        uint16_t wallType, floorType;
+        if (axisIsX) {
+            wallType = worldMapTileA(map, (unsigned)fixedCoord, (unsigned)pos);
+            floorType = worldMapTileB(map, (unsigned)fixedCoord, (unsigned)pos);
+        } else {
+            wallType = worldMapTileA(map, (unsigned)pos, (unsigned)fixedCoord);
+            floorType = worldMapTileB(map, (unsigned)pos, (unsigned)fixedCoord);
+        }
+        if (monsterClassifyObstacle(game, wallType, floorType) != MonsterObstacleClear) {
+            return; /* blocked before reaching the party */
+        }
+    }
+}
