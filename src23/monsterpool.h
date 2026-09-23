@@ -32,14 +32,14 @@
  * The spawn half is SpawnMonsterInFacingDirection (yendor2.asm:33008,
  * instruction-identical in Chapter 3, including its facing-offset
  * tables -- checked byte-for-byte against both real executables).
- * Its own catalog-copy, positioning and animation-start steps already
- * matched monster.h's monsterRecordSpawn/monsterRecordPlace/
- * monsterRecordStartAnimation closely enough that this module's own
+ * Its own catalog-copy, positioning, animation-start and
+ * activate-by-distance steps already matched monster.h's
+ * monsterRecordSpawn/monsterRecordPlace/monsterRecordStartAnimation/
+ * monsterTryActivateByDistance closely enough that this module's own
  * spawn function is mostly composition of those, plus the one
  * genuinely new piece: a facing-dependent position-offset table (see
- * monsterSpawnOffsetTable). Not reimplemented: TryActivateMonsterByDistance
- * (awareness-on-spawn, not traced) and the caller-side decision of
- * *which* type id / viewport position to spawn at
+ * monsterSpawnOffsetTable). Not reimplemented: the caller-side decision
+ * of *which* type id / viewport position to spawn at
  * (TryTriggerMonsterEncounterAtCell, driven by first-person viewport
  * rendering -- out of scope until the rendering layer exists).
  */
@@ -109,6 +109,10 @@ const MonsterSpawnOffset *monsterSpawnOffsetTable(uint16_t facing);
  *     placed via monsterRecordPlace against gridOriginRow/gridOriginCol,
  *   - a random animation start via monsterRecordStartAnimation
  *     (rolls RandomInRange(5) using rng, matching the original),
+ *   - monster.h's monsterTryActivateByDistance(record, viewportIndex)
+ *     (may or may not set MonsterStateAware immediately, matching the
+ *     original calling it with the same viewportIndex right after
+ *     placement),
  *   - monsterSpawnFlagSet(typeId) if save is non-NULL.
  * Returns the slot index spawned into, or -1 if the pool has no empty
  * slot or typeId is unknown to catalog (nothing is changed in that case).

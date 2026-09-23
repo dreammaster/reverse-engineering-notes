@@ -155,6 +155,7 @@ int monsterPoolSpawn(uint8_t *pool, const MonsterCatalog *catalog, SaveGame *sav
     uint16_t worldY = (uint16_t)(partyWorldY + offset->dy);
     monsterRecordPlace(record, worldX, worldY, gridOriginRow, gridOriginCol);
     monsterRecordStartAnimation(record, randomInRange(rng, 5));
+    monsterTryActivateByDistance(record, (uint16_t)viewportIndex);
 
     if (save) {
         monsterSpawnFlagSet(save, game, typeId);

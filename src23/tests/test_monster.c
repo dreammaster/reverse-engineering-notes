@@ -462,12 +462,57 @@ static void testTickTimer(void) {
     checkU32("health is clamped to 0", monsterGetU16(record, MonsterFieldHealth), 0);
 }
 
+static void testActivateByDistance(void) {
+    uint8_t record[MonsterRecordSize];
+
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldState, MonsterStateAware);
+    check("an already-aware monster never re-activates, regardless of depth",
+          !monsterTryActivateByDistance(record, 0xFFFF));
+
+    memset(record, 0, sizeof(record));
+    check("below the baseline threshold (<=0x21), never activates even with no tier bits",
+          !monsterTryActivateByDistance(record, 0x21));
+    checkU32("...state untouched", monsterGetU16(record, MonsterFieldState), 0);
+
+    memset(record, 0, sizeof(record));
+    check("just above the baseline, no tier bits set: activates", monsterTryActivateByDistance(record, 0x22));
+    check("...MonsterStateAware is now set", (monsterGetU16(record, MonsterFieldState) & MonsterStateAware) != 0);
+
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldAwareness, MonsterAwarenessNever);
+    check("MonsterAwarenessNever blocks activation even far past the baseline",
+          !monsterTryActivateByDistance(record, 0xFFFF));
+
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldAwareness, MonsterAwarenessFar);
+    check("Far tier: not yet at its own threshold (0x2C)", !monsterTryActivateByDistance(record, 0x2C));
+    check("Far tier: activates just past 0x2C", monsterTryActivateByDistance(record, 0x2D));
+
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldAwareness, MonsterAwarenessMiddle);
+    check("Middle tier: not yet at its own threshold (0x29)", !monsterTryActivateByDistance(record, 0x29));
+    check("Middle tier: activates just past 0x29", monsterTryActivateByDistance(record, 0x2A));
+
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldAwareness, MonsterAwarenessNear);
+    check("Near tier: not yet at its own threshold (0x26)", !monsterTryActivateByDistance(record, 0x26));
+    check("Near tier: activates just past 0x26", monsterTryActivateByDistance(record, 0x27));
+
+    /* Far takes priority over Middle/Near when multiple tier bits are (unusually) set together. */
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldAwareness, (uint16_t)(MonsterAwarenessFar | MonsterAwarenessNear));
+    check("Far's stricter threshold wins when combined with Near",
+          !monsterTryActivateByDistance(record, 0x27)); /* would satisfy Near's threshold but not Far's */
+}
+
 int main(void) {
     testLayouts();
     testParse();
     testRecord();
     testNames();
     testTickTimer();
+    testActivateByDistance();
     testRealYendor2();
     testRealYendor3();
 

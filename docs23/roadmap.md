@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, TickMonsterTimer + full per-slot flow)
+## Status (last updated 2026-09-23, TryActivateMonsterByDistance)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -230,7 +230,18 @@ groundwork below is already in place.
   via unbuffered stdout and fixed. Tests split between
   `tests/test_monster.c` (state machine) and `tests/test_monsterai.c`
   (composed flow); all 17 suites pass. **No Chapter 2 vs. Chapter 3
-  difference**. Still open: `TryActivateMonsterByDistance`, how a
+  difference**.
+  **`TryActivateMonsterByDistance` — done (2026-09-23)**: the actual
+  `MonsterStateAware` setter (everything else this session only reads
+  it). Instruction-identical between both games. Checked a hypothesis
+  about the existing `MonsterAwarenessFar`/`Middle`/`Near` names
+  reading backwards (preferred engagement range vs. detection range)
+  against Chapter 2's real monster catalog — not supported by the
+  data; recorded as still-unresolved rather than forced either way.
+  Wired into `monsterPoolSpawn` at the same point the original calls
+  it. Tests in `tests/test_monster.c`; all 17 suites pass. With this,
+  every fully-confirmed piece of `ProcessLevelMonsters` and
+  `SpawnMonsterInFacingDirection` is reimplemented. Still open: how a
   wall/door trap pool entry (as opposed to an ordinary monster)
   actually gets created, whether monsters ever reposition themselves at
   all and via what function, `LoadCurgameRecord`'s own format,

@@ -8461,6 +8461,36 @@ matching `ProcessLevelMonsters`' exact per-slot order.
   that isn't monster-related (side-trap presentation itself,
   map-trigger effects) or needs rendering.
 
+### 2026-09-23 session update (continued): TryActivateMonsterByDistance, the MonsterStateAware setter
+
+Closed the loop on `MonsterStateAware` — every earlier piece this
+session (the approach check, the tick timer) only ever read it as an
+input; `TryActivateMonsterByDistance` is where it's actually set.
+Fully decoded and instruction-identical between both games.
+- Noticed the threshold ordering reads backwards against the existing
+  `MonsterAwarenessFar`/`Middle`/`Near` names (from an earlier
+  session) — `Far` needs the *closest* approach to activate, `Near`
+  the *farthest*. Rather than guess whether this is a stale naming
+  mistake or intentional, checked a concrete hypothesis (preferred
+  engagement range: ranged types stay dormant, melee types wake early)
+  against Chapter 2's real monster catalog directly. Not supported —
+  no real monster uses `Far` at all, and the handful using
+  `Near`/`Middle` are melee types, not ranged ones. Recorded the
+  finding honestly as still-unresolved rather than force a
+  conclusion either way, and kept the existing names.
+- Wired the new function into `monsterPoolSpawn` at the same point
+  `SpawnMonsterInFacingDirection` calls it, matching the original's
+  order (place → animate → try-activate → mark spawned).
+- Tests in `tests/test_monster.c` covering the baseline gate, all
+  three tiers, `Never`, and tier-priority when bits are combined. All
+  17 suites pass, no regressions.
+- With this, `ProcessLevelMonsters`' and `SpawnMonsterInFacingDirection`'s
+  fully-confirmed pieces are all reimplemented. What's left for the
+  monster system specifically: how a wall/door trap pool entry (as
+  opposed to an ordinary monster) gets created, and whether monsters
+  ever reposition themselves at all — both genuinely open questions,
+  not just unstarted work.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

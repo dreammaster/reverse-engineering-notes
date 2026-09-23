@@ -143,9 +143,31 @@ typedef enum {
 } MonsterFlag;
 
 /*
- * MonsterFieldAwareness: how far away it notices the party. Zero means the
- * default; the other bits select 0x2C (0x40), 0x29 (0x80) or 0x26 (0x100)
- * viewport rows; 0x20 means it never wakes on distance.
+ * MonsterFieldAwareness: gates when TryActivateMonsterByDistance (see
+ * monsterTryActivateByDistance) sets MonsterStateAware. Zero means the
+ * default (baseline threshold only); the other bits select the viewport
+ * depth threshold that must be exceeded: 0x2C/44 (0x40), 0x29/41 (0x80)
+ * or 0x26/38 (0x100); 0x20 means it never activates by distance at all.
+ * Full priority order and the shared baseline gate (>0x21/33, checked
+ * before any of these) are in monsterTryActivateByDistance's own doc
+ * comment (monster.c), instruction-identical in both games.
+ *
+ * **Naming caveat, not resolved**: taken as literal "how close before it
+ * notices you," the threshold ordering reads backwards from the names --
+ * MonsterAwarenessFar requires the *highest* (closest) depth threshold
+ * to activate, MonsterAwarenessNear the *lowest* (farthest). Checked a
+ * hypothesis that this might describe preferred engagement range
+ * instead (ranged/ambush types staying dormant, melee types waking
+ * early) against Chapter 2's real catalog -- not supported: no real
+ * Chapter 2 monster uses MonsterAwarenessFar at all, and the few that
+ * use Near/Middle (CARNIVOROUS, FOREST GIANT, both OGRE entries,
+ * SCAVENGER, SPIDER, GRIZZLY BEAR) are all melee types, not ranged
+ * ones -- every ranged monster (CENTAUR MAGE, DARK MAGE, EVIL WIZARD,
+ * HALFLING, WIZARD, ROGUE, THIEF, NECROMANCER, SEA DRAGON, ...) uses
+ * the *default* tier (no Far/Middle/Near/Never bit) instead. So this
+ * remains genuinely unresolved -- possibly just a backwards name from
+ * whichever session first assigned it, possibly something else
+ * entirely. Kept the existing names rather than guess at a rename.
  */
 typedef enum {
     MonsterAwarenessNever = 0x0020,
@@ -276,5 +298,30 @@ typedef enum {
 } MonsterTickResult;
 
 MonsterTickResult monsterTickTimer(uint8_t *record);
+
+/*
+ * TryActivateMonsterByDistance (yendor2.asm:34123, yendor3.asm:33917,
+ * instruction-identical thresholds included). The setter for
+ * MonsterStateAware -- everywhere else this session treats it as an
+ * input, this is where it actually gets decided. A no-op if already
+ * aware. Otherwise, a shared baseline gate (viewportDepth > 0x21/33)
+ * must pass first; below that, nothing ever activates regardless of
+ * MonsterFieldAwareness. Above it: MonsterAwarenessNever blocks
+ * activation outright; otherwise the highest-priority tier bit that's
+ * set (Far, then Middle, then Near) picks a stricter threshold the
+ * depth must also exceed; with none of the 3 tier bits set, the
+ * baseline alone is enough. Sets MonsterStateAware and returns true on
+ * activation, false otherwise (including the already-aware case).
+ *
+ * viewportDepth is the same "viewport index" concept
+ * monsterpool.h's MonsterSpawnOffsetCount table is indexed by
+ * (SpawnMonsterInFacingDirection calls this right after placing a
+ * monster using that same value) -- higher means closer to the party,
+ * per that table's own confirmed shape, though what exactly it means
+ * at the moment *this* function is called (mid-render-sweep state, not
+ * necessarily "the monster's current distance") isn't fully pinned
+ * down.
+ */
+bool monsterTryActivateByDistance(uint8_t *record, uint16_t viewportDepth);
 
 #endif

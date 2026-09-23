@@ -3851,6 +3851,51 @@ supplied. Fixed by giving that test case a harmless, non-expiring tick
 setup — a useful reminder that these bit ranges genuinely overlap and
 any future caller needs to account for it.
 
+### `TryActivateMonsterByDistance`: the `MonsterStateAware` setter (decoded 2026-09-23)
+
+`TryActivateMonsterByDistance` (`yendor2.asm:34123`, `yendor3.asm:33917`,
+instruction-identical including every threshold) is the actual setter
+for `MonsterStateAware` — every other piece decoded this session
+(`ProcessLevelMonsters`' approach check, `TickMonsterTimer`'s gate)
+only ever *reads* that bit as an input. Called from
+`SpawnMonsterInFacingDirection` (right after placing a freshly-spawned
+monster) and `FindMonsterTypeInLevelPool` (not reimplemented,
+rendering-driven).
+
+A no-op if already aware. Otherwise a shared baseline gate
+(`viewportDepth > 0x21`/33) must pass first — below that, nothing ever
+activates, regardless of `MonsterFieldAwareness`. Above it:
+`MonsterAwarenessNever` blocks activation outright; otherwise the
+highest-priority tier bit that's set (`Far`, then `Middle`, then
+`Near`) requires a stricter threshold be exceeded too (`0x2C`/44,
+`0x29`/41, `0x26`/38 respectively); with none of the three tier bits
+set, the baseline alone suffices.
+
+**A naming tension, checked against real data, still unresolved**:
+read literally as "how close before it notices you," the threshold
+ordering is backwards from the names — `Far` requires the *closest*
+approach to activate, `Near` the *farthest*. Checked whether this
+might instead describe preferred engagement range (ranged/ambush
+types staying dormant vs. melee types waking early) against Chapter
+2's real monster catalog: **not supported**. No real Chapter 2 monster
+uses `MonsterAwarenessFar` at all, and the few that use `Near`/`Middle`
+(CARNIVOROUS, FOREST GIANT, both real OGRE entries, SCAVENGER, SPIDER,
+GRIZZLY BEAR) are all melee types — every ranged monster (CENTAUR
+MAGE, DARK MAGE, EVIL WIZARD, HALFLING, WIZARD, ROGUE, THIEF,
+NECROMANCER, SEA DRAGON, ...) uses the *default* tier instead (no
+Far/Middle/Near/Never bit at all). So the naming remains genuinely
+unresolved — kept the existing names (from an earlier session) rather
+than guess at a rename. The same real-data check surfaced two more
+unnamed `MonsterFieldAwareness` bits in common use (`0x4` on roughly
+two-thirds of real monsters, `0x8` correlating with `MonsterFlagAreaAttack`
+monsters) — not chased further this pass.
+
+Reimplemented as `monsterTryActivateByDistance` in `src23/monster.c`/`.h`,
+wired into `monsterPoolSpawn` at the same point
+`SpawnMonsterInFacingDirection` calls it. Tests in `tests/test_monster.c`
+covering the baseline gate, all three tiers' thresholds, `Never`, and
+priority when multiple tier bits are combined.
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not

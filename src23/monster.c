@@ -162,6 +162,32 @@ MonsterTickResult monsterTickTimer(uint8_t *record) {
     return MonsterTickIdle;
 }
 
+bool monsterTryActivateByDistance(uint8_t *record, uint16_t viewportDepth) {
+    uint16_t state = monsterGetU16(record, MonsterFieldState);
+    if (state & MonsterStateAware) {
+        return false;
+    }
+    if (viewportDepth <= 0x21) {
+        return false;
+    }
+
+    uint16_t awareness = monsterGetU16(record, MonsterFieldAwareness);
+    if (awareness & MonsterAwarenessNever) {
+        return false;
+    }
+    if (awareness & MonsterAwarenessFar) {
+        if (viewportDepth <= 0x2C) return false;
+    } else if (awareness & MonsterAwarenessMiddle) {
+        if (viewportDepth <= 0x29) return false;
+    } else if (awareness & MonsterAwarenessNear) {
+        if (viewportDepth <= 0x26) return false;
+    }
+    /* else: none of the 3 tier bits set, the baseline gate above is already enough */
+
+    monsterSetU16(record, MonsterFieldState, (uint16_t)(state | MonsterStateAware));
+    return true;
+}
+
 bool monsterRecordSpawn(uint8_t *record, const MonsterCatalog *catalog, unsigned typeId) {
     unsigned index = monsterCatalogBlockIndex(catalog, typeId);
     if (index == 0) {
