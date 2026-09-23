@@ -1012,6 +1012,29 @@ Chapter 3, both discovered the same way, via
   since the bounds check runs before the scan); Chapter 3's real data
   has none.
 
+## Lock/door catalog: same format and loading mechanism, very different key-bit usage
+
+Found while writing `src23/lockcatalog.c` (2026-09-23), checked against
+both real `WORLD.DAT` files. The format (26-byte records, same two
+confirmed fields), the loading mechanism (EMS-paged via the identical
+`loadWorldDat2`+`loadWorldDat3` two-chunk pattern), and the message
+dispatch logic (`ShowLockStatus`) are all instruction-identical between
+the games — only the offset (`0x7E5BA` Chapter 2 / `0x8F00A` Chapter 3)
+and the content differ. The content difference here is sharper than
+most: **Chapter 2's 7 key-requirement bits are essentially a one-hot
+selector (0 of 608 records have more than one set) while Chapter 3's
+are a genuine bitmask (123 of 1008 records have more than one)** —
+different enough in kind, not just degree, that reimplementing this
+from Chapter 2's data alone would have produced a wrong model
+(`lockRequiredKeyType`'s "first match wins" resolution only matters at
+all because of Chapter 3's real data). Chapter 3 also uses one specific
+key type, Copper, far more than the others (178/1008, ~18%, vs. its
+next-most-common bit at 16) where Chapter 2's distribution across the
+7 types is comparatively even — not investigated further, but worth
+noting if a puzzle/quest-design question about Chapter 3 comes up
+later. Magical locks are also proportionally far more common in
+Chapter 3 (214/1008, ~21%) than Chapter 2 (17/608, ~3%).
+
 ## In-memory dungeon grid: no behavioral difference found
 
 Found while writing `src23/dungeongrid.c` (2026-09-23), from a full

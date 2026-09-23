@@ -175853,3 +175853,33 @@ Unused (was _800): offset table @0xd19f, length table @0xd1a3, 1 entries, 23-byt
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'check_lock_key_strings.py', 'noexport']
+[*] reading check_lock_key_strings.py
+[*] executing check_lock_key_strings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+aBrassKey: ea=0x3546e
+aBronzeKey: ea=0x35478
+aCopperKey: ea=0x35483
+aIronKey: ea=0x3548e
+aSteelKey: ea=0x35497
+aSilverKey: ea=0x354a1
+aGoldKey: ea=0x354ac
+
+DS_BASE-relative message offsets used by ShowLockStatus's dispatch:
+  bit 0x8000 -> raw offset 0x7c0e
+  bit 0x4000 -> raw offset 0x7c18
+  bit 0x2000 -> raw offset 0x7c23
+  bit 0x1000 -> raw offset 0x7c2e
+  bit 0x0800 -> raw offset 0x7c37
+  bit 0x0400 -> raw offset 0x7c41
+  bit 0x0200 -> raw offset 0x7c4c
+----- end target script output -----
+[*] finished executing check_lock_key_strings.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

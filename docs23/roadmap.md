@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, world object index module)
+## Status (last updated 2026-09-23, lock/door catalog module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -90,30 +90,37 @@ groundwork below is already in place.
   `file-formats.md`'s "World object index" section for the full flag-bit
   table. Still open: flag bits `0x2000`/`0x400`'s consumers (if any —
   `0x2000` is real and common but untested by any traced caller).
-  **`LoadLockState`/`ShowLockStatus` investigated (2026-09-23), found
-  an EMS-paging blocker, stopped there rather than guess**: a
-  `worldobjects.c` door record's `value` field (the lock id) indexes
-  two already-known, already-decoded `CURGAME` sections directly
-  (`SaveSectionLockAndShopState[id-1]`, a 1-byte-per-lock state field;
-  `SaveSectionEventState[(id-1)/8]`, an "already unlocked" bitmap,
-  1 bit/lock) — nothing new there. But the actually interesting part,
-  `g_lockStatusFlags` (the 7-tier key-requirement bits `ShowLockStatus`
-  switches on — already correctly identified by an earlier session,
-  see the comment at its data definition) and a price-like value
-  (`word_32DD0`, split by 100 for display), come from a **26-byte-per-lock
-  `WORLD.DAT` catalog loaded through EMS paging** (`MapUnmapPages`),
-  not a flat blob `extract_resource_stubs.py`-style stub can find —
-  the same kind of blocker already on record for Chapter 3's tile-legend
-  table below. Finding this catalog's real `WORLD.DAT` offset needs
-  tracing the EMS page-mapping call (`MapUnmapPages`, already named per
-  `overview.md`'s open-questions section) rather than the resource-stub
-  technique — a new, not-yet-attempted investigation thread for this
-  project. Left for a future session; `ShowLockStatus` itself is UI
-  display logic anyway; the movement/passability decision (blocks
-  movement) is already fully captured by `movement.c`'s `MovementCellDoor`.
-  `g_levelMonsters` placement/despawn and everything downstream of a
-  committed move (monster processing, side-trap processing, map-trigger
-  effects, first-person viewport rendering) remain open too.
+  **The EMS-paging blocker flagged for `LoadLockState`/`ShowLockStatus`
+  turned out not to be one — decoded as the twelfth module,
+  `lockcatalog.c`/`.h` (2026-09-23)**: per Paul's steer, the EMS
+  paging itself never needed reimplementing, only the flat bytes it
+  was populated from. Traced `LoadLockState`'s EMS mapping-array
+  pointer back to `loadWorldDat2`/`loadWorldDat3` (the loaders that
+  first populate that EMS handle from `WORLD.DAT`) and found their
+  offsets were **already in this session's earlier
+  `extract_resource_stubs.py` dump**, just not yet matched to a
+  consumer — `WORLD.DAT` offset `0x7E5BA` (Chapter 2) / `0x8F00A`
+  (Chapter 3), 26 bytes/record, 608/1008 records (matching
+  `SaveSectionLockAndShopState`'s `recordCount`). Caught two real
+  mistakes before they reached committed code — see `overview.md` for
+  both: a wrong bit-to-key-name mapping from trusting `.asm` label
+  declaration order instead of verifying real addresses (a new script,
+  `check_lock_key_strings.py`, resolved it — `0x8000`=BRASS, not GOLD
+  as it first looked), and a wrong "one-hot selector" assumption from
+  only checking Chapter 2's real data (123/1008 Chapter 3 records
+  actually have more than one key-type bit set). Tests in
+  `tests/test_lockcatalog.c` with exact per-key-type and
+  multi-bit-record counts checked against both real `WORLD.DAT` files.
+  See `file-formats.md`'s "Lock/door definition catalog" section and
+  `engine-diffs.md`'s comparison (a real, sharper-than-usual Ch2/Ch3
+  content difference here: one-hot vs. genuine bitmask key
+  requirements). Still open there: flag bits `0x1`/`0x2`/`0x80`'s exact
+  meaning and the remaining 22 undecoded bytes/record.
+  `g_levelMonsters` placement/despawn, `LoadCurgameRecord`'s own
+  `CURGAME`-side format (`worldobjects.c`'s `0x4000` flag), and
+  everything downstream of a committed move (monster processing,
+  side-trap processing, map-trigger effects, first-person viewport
+  rendering) remain open.
 
 ## Next: continue the C reimplementation
 

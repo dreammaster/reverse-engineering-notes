@@ -3420,14 +3420,73 @@ provably unreachable by the real game too, since `FindObjectAtPosition`
 rejects any out-of-bounds query before the scan even starts.)
 
 **Not yet traced**: the real `WORLD.DAT` offset/format of whatever
-`LoadCurgameRecord` and `LoadLockState` read using a `0x4000`/`0x8000`
-record's `value`, and the `0x2000`/`0x400` bits' consumers, if any.
-Reimplemented (lookup only, not the deeper state resolution those
-flag branches feed into) in `src23/worldobjects.c`/`.h`:
-`worldObjectTableParse`/`worldObjectTableParseWorldDat` and
-`worldObjectFind`, tests in `tests/test_worldobjects.c` including exact
-reachable-record and per-flag counts checked against both real
-`WORLD.DAT` files.
+`LoadCurgameRecord` reads using a `0x4000` record's `value`, and the
+`0x2000`/`0x400` bits' consumers, if any. `LoadLockState`'s own format
+(the `0x8000` door/lock case) is now fully traced — see "Lock/door
+definition catalog" below. Reimplemented (lookup only, not the deeper
+state resolution the `0x4000` branch feeds into) in
+`src23/worldobjects.c`/`.h`: `worldObjectTableParse`/
+`worldObjectTableParseWorldDat` and `worldObjectFind`, tests in
+`tests/test_worldobjects.c` including exact reachable-record and
+per-flag counts checked against both real `WORLD.DAT` files.
+
+### Lock/door definition catalog (decoded 2026-09-23)
+
+A flat, ordinary catalog — one 26-byte record per lock id (the same
+1-based id a `worldobjects.c` door record's `value` field carries) —
+despite the original loading it through EMS paging rather than a
+single flat-block read like every other catalog in this project.
+Found by tracing `LoadLockState`'s (`yendor2.asm:12600`) EMS mapping
+array (`bx=0x55EA`, shared with `loadWorldDat2`/`loadWorldDat3`,
+`yendor2.asm:3553`/`3573`) back to those two loaders' own resource
+stubs — `PrepareWorldDat2BlockRead`'s fixed table (`si=0xCE17`)
+resolves to **`WORLD.DAT` offset `0x7E5BA`** for Chapter 2 (confirmed:
+this offset was already present in this session's earlier
+`extract_resource_stubs.py` dump, just not yet matched to a consumer),
+and `PrepareWorldDat3BlockRead`'s offset (`0x822AA`) is exactly
+`0x7E5BA + 0x3CF0` — `loadWorldDat2`'s own read size — confirming
+`loadWorldDat2` then `loadWorldDat3` read one contiguous region in two
+back-to-back chunks. **Chapter 3: offset `0x8F00A`**, found the same
+way. No EMS behavior needs reimplementing: the whole catalog (608
+records for Chapter 2, 1008 for Chapter 3, matching
+`SaveSectionLockAndShopState`'s `recordCount` in `savegame.h`) is read
+directly as a flat array, exactly like every other catalog — confirmed
+against both real `WORLD.DAT` files.
+
+**Record format** (26 bytes), cross-referenced against `LoadLockState`'s
+own copy (13 words = 26 bytes into scratch starting at
+`g_lockStatusFlags`) and `ShowLockStatus`'s (`yendor2.asm:12719`, pure
+UI display, not reimplemented) message dispatch:
+- `+0` flags (`u16`) — bit `0x20` = "magically locked"; bits
+  `0x200`-`0x8000` mark which of the 7 door-key items
+  (`BRASS`/`BRONZE`/`COPPER`/`IRON`/`STEEL`/`SILVER`/`GOLD KEY`,
+  already cross-confirmed against the Hex Hacking Item Guide's item
+  table — see "Item-slot encoding" above) the lock requires. **The
+  exact bit-to-key mapping needed address-level verification, not
+  just reading the dispatch order** — a script
+  (`yendor2/ida_scripts/check_lock_key_strings.py`) resolved each
+  message string's real address against the `mov bx, <offset>`
+  immediates `ShowLockStatus` uses per bit, giving `0x8000`=BRASS
+  (tested first) down to `0x200`=GOLD (tested last) — the reverse of
+  what the declaration order alone would suggest. **More than one of
+  these 7 bits can be set on the same record** — a genuine bitmask,
+  not a one-hot selector: 0/608 Chapter 2 records have more than one
+  set, but 123/1008 Chapter 3 records do. `ShowLockStatus` (and this
+  module's `lockRequiredKeyType`) resolves a multi-bit record by
+  testing Brass first, Gold last. Bits `0x1`/`0x2`/`0x80` are real and
+  common in both games' data but their exact meaning isn't confirmed —
+  `ShowLockStatus` branches on them, but only to select among a few
+  very similar messages, not a different outcome.
+- `+2` price (`u16`) — a plain binary value (not packed BCD), shown
+  split by 100 into two denominations (`LoadLockState`:
+  `value / 100`, `value % 100`); which currency isn't confirmed.
+- `+4`..`+25` (22 bytes) — not yet traced by any function read so far.
+
+Reimplemented in `src23/lockcatalog.c`/`.h`:
+`lockCatalogParse`/`lockCatalogParseWorldDat`, `lockCatalogRecord`,
+`lockRequiredKeyType`/`lockKeyTypeName`, tests in
+`tests/test_lockcatalog.c` including exact per-key-type and
+multi-bit-record counts checked against both real `WORLD.DAT` files.
 
 ## Not yet examined
 

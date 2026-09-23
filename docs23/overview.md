@@ -8180,6 +8180,51 @@ fully captures the one fact that matters for the movement/passability
 decision (a door always blocks); `ShowLockStatus` itself is pure UI
 display, out of scope regardless of the EMS question.
 
+### 2026-09-23 session update (continued): the EMS blocker turned out not to be one
+
+Picked the "EMS-paging blocker" back up per Paul's steer: for the C
+reimplementation, EMS/expanded-memory paging itself never needs
+reimplementing — only the flat `WORLD.DAT` bytes it was populated
+from matter, and if those aren't easy to find, a simulation is fine.
+Turned out not to need one at all here. Traced `LoadLockState`'s EMS
+mapping-array pointer (`bx=0x55EA`) back to `loadWorldDat2`/
+`loadWorldDat3` — the same two loaders, called once from `InitGame`,
+that populate the shared EMS handle in the first place — and found
+they both use the exact same "resource block setup" stub pattern as
+every other catalog. Their offsets (`PrepareWorldDat2BlockRead`'s
+`si=0xCE17` and `PrepareWorldDat3BlockRead`'s `si=0xCE1B`) were
+**already sitting in this session's earlier `extract_resource_stubs.py`
+dump** (used to find `worldobjects.c`'s block) — I just hadn't matched
+them to a consumer yet. Confirmed the two loaders read one contiguous
+region in two back-to-back chunks by checking the arithmetic directly
+(`0x7E5BA + 0x3CF0 = 0x822AA`, `loadWorldDat3`'s own reported offset)
+rather than assuming it. Chapter 3's equivalent (`0x8F00A`) found the
+same way.
+- **Caught a real mistake before it reached any doc or code**: my
+  first read of `ShowLockStatus`'s bit-to-key-name dispatch, going
+  purely by which string label appeared first in the `.asm` text
+  listing, would have written `0x8000=GOLD`. Wrote a small IDA script
+  (`check_lock_key_strings.py`) to resolve each key-name string's real
+  address and match it against the exact `mov bx, <offset>` immediate
+  used for each bit instead of trusting declaration order — the real
+  mapping is the reverse, `0x8000=BRASS` down to `0x200=GOLD`.
+- **Also caught a second, related overreach mid-write**: assumed from
+  Chapter 2's real data (0 of 608 records with more than one key bit
+  set) that the 7 bits were a one-hot selector, and wrote that into a
+  first draft of the doc comment. Checking Chapter 3's real data before
+  committing anything found 123 of 1008 records with more than one bit
+  set — it's a genuine bitmask, and `ShowLockStatus`'s bit-priority
+  test order (Brass first) actually matters for Chapter 3, not just an
+  arbitrary sequential check. Fixed before writing the module.
+- Wrote `src23/lockcatalog.c`/`.h` + `tests/test_lockcatalog.c`, tests
+  including exact per-key-type and multi-bit-record counts checked
+  against both real `WORLD.DAT` files (all 13 suites pass, no
+  regressions). Full writeup in `file-formats.md`'s new "Lock/door
+  definition catalog" section and `engine-diffs.md`'s comparison.
+- Left open: bits `0x1`/`0x2`/`0x80`'s exact meaning, the remaining 22
+  bytes/record, and (separately, still unrelated to this catalog)
+  `LoadCurgameRecord`'s own format for `worldobjects.c`'s `0x4000` flag.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
