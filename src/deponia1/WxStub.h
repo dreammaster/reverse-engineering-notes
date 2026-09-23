@@ -29,6 +29,18 @@ public:
 
     const std::wstring& ToStdWstring() const { return m_data; }
     const wchar_t* wc_str() const { return m_data.c_str(); }
+    const wchar_t* c_str() const { return m_data.c_str(); }
+
+    bool IsEmpty() const { return m_data.empty(); }
+
+    wxString& operator+=(const wxString& rhs) {
+        m_data += rhs.m_data;
+        return *this;
+    }
+    friend wxString operator+(wxString lhs, const wxString& rhs) {
+        lhs += rhs;
+        return lhs;
+    }
 
     // Stands in for wxString::mb_str(); real wxWidgets returns a
     // wxScopedCharBuffer that is implicitly convertible to const char*.
@@ -57,8 +69,16 @@ public:
 
     wxString GetFullPath() const { return wxString(m_fullPath); }
 
+    static bool Mkdir(const wxString& dir, int permissions = 0777, int flags = 0);
+    static wxString GetCwd();
+
 private:
     std::wstring m_fullPath;
+};
+
+class wxDir {
+public:
+    static bool Exists(const wxString& path);
 };
 
 struct wxSize {
@@ -100,3 +120,22 @@ private:
 
 bool wxInitialize();
 wxString wxConvertMB2WX(const char* s);
+
+// Stand-in for wxWidgets' wxStandardPathsBase, which real TStandardPaths
+// (see TStandardPaths.h) holds a pointer to and forwards most calls to.
+// TODO: replace with the real wxWidgets wxStandardPaths singleton once
+// wxWidgets is vendored as a real dependency (manifest/README.md) - these
+// path rules are placeholders, not reversed from the binary.
+class wxStandardPathsBase {
+public:
+    virtual ~wxStandardPathsBase() = default;
+    virtual wxString GetUserDataDir() const;
+    virtual wxString GetUserLocalDataDir() const;
+    virtual wxString GetTempDir() const;
+    virtual wxString GetExecutablePath() const;
+};
+
+// The real binary initializes TStandardPaths's wxStandardPathsBase pointer
+// from a fixed global (`wxGUIAppTraits::base`) rather than a dynamic lookup;
+// this mirrors that with a single process-wide stub instance.
+wxStandardPathsBase& wxGetAppTraitsStandardPaths();

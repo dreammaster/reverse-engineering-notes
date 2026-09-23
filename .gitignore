@@ -3,3 +3,11 @@
 *.nam
 *.til
 *.asm
+
+# Build output and placeholder runtime dirs created by running the
+# reconstructed executables (WxStub's userdata/tmp stand-ins, etc.)
+*.exe
+*.o
+src/*/userdata*/
+src/*/tmp/
+src/*/messages.log

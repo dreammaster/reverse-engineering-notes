@@ -135,7 +135,7 @@ TMasterControl	stub	38	485602	491098
 TMovie	todo	21	491536	1071898
 v8::base::OS	todo	3	509497	2863318
 sha1	todo	8	513888	516547
-TComposedFileManager	todo	17	516915	519724
+TComposedFileManager	stub	17	516915	519724
 TXMLWriter	todo	33	519891	522102
 TProjectFileWriter	todo	2	522192	522208
 TFieldValue	todo	9	522229	528588
@@ -151,7 +151,7 @@ TComposedFile	stub	20	541459	548209
 BuildProgressEvent	todo	3	548597	548703
 TMemoryBuffer	todo	26	549297	551826
 TMemoryFile	todo	7	551869	552091
-TStandardPaths	stub	13	552187	553383
+TStandardPaths	done	13	552187	553383
 TTempFile	todo	2	553440	553545
 md5	todo	5	554434	556285
 TTextLanguage	todo	3	558635	1524382
