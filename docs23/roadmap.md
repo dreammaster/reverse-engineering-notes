@@ -138,10 +138,17 @@ groundwork below is already in place.
   the same `SaveSectionMonsterSpawnFlags` bitmap by type id), not an
   abstract spawn-point index as first documented — fixed in both
   `worldobjects.h` and `file-formats.md`. Also resolved
-  `dungeongrid.c`'s open `+4` field question: it's a shared overlay
-  value (monster type id here, or a `worldobjects.c` `0x4000` record's
-  value elsewhere), not a fixed-role field. Tests in
-  `tests/test_monsterpool.c`; all 14 suites pass. **No Chapter 2 vs.
+  `dungeongrid.c`'s open `+4` field question: it's a "monster here"
+  marker written at two life-cycle stages — an already-spawned
+  monster's own scroll-relink (this module), or
+  `TryInteractAtPosition`'s not-yet-spawned marker (`errorCode=5` from
+  a `worldobjects.c` `0x800` record, still not reimplemented) — not a
+  fixed-role field, and **not** written by the `0x4000` curgame-record
+  branch as an earlier pass this session mistakenly concluded (that
+  branch only ever overwrites wall/floor type, `+0`/`+2`; caught by
+  rereading the exact `errorCode`-to-branch mapping, which had 5 and 7
+  swapped). Tests in `tests/test_monsterpool.c`; all 14 suites pass.
+  **No Chapter 2 vs.
   Chapter 3 difference** (see `engine-diffs.md`) — instruction-identical,
   same as `dungeongrid.c`. Deliberately out of scope, same as before:
   how a monster first gets spawned (`SpawnMonsterInFacingDirection`,

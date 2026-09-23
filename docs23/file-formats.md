@@ -2856,26 +2856,34 @@ field — `+4`, zeroed here** (`xor ax,ax` / `stosw` right after the two
 tile-type words) **— making the layout `+0`/`+2`/`+4`/`+6`, still 8
 bytes total, not `+0`/`+2`/`+6` with 2 bytes of padding.** `+4`'s write
 side is now traced (decoded 2026-09-23, see "Monster pool: scroll
-relink and despawn" below): it's an **overlay value, not a fixed-role
-occupant reference** — the same `+4`/`+6` bit `0x400` pair gets written
-by two different producers depending on which kind of marker occupies
-the cell: a live monster's own type id (the scroll-relink pass this
-section originally flagged as unconfirmed), or a
-`worldobjects.c`-`0x4000`-flagged curgame-record marker's `value`
-(`TryInteractAtPosition`'s own per-cell interaction pass, still not
-reimplemented — rendering only past this one bit). The explored bit
-(`+6` bit `0x8000`) is filled from `CURGAME`'s `SaveSectionExploredMap`
-bitmap in the same per-cell pass, packed **MSB-first within each
-byte** (byte `col/8`, bit `7 - col%8`) — derived directly from the
-shift-and-test sequence that extracts it, not guessed.
+relink and despawn" below): the `+4`/`+6` bit `0x400` pair is a "monster
+here" marker, written by exactly two producers that represent the same
+underlying fact at different life-cycle stages — the scroll-relink pass
+for an *already-spawned* monster (`+4` = its type id), and
+`TryInteractAtPosition`'s own per-cell scan (still not reimplemented)
+for a *not-yet-spawned* one, `errorCode=5` from a `worldobjects.c`
+`0x800` marker (`+4` = the marker's `value`, which is itself the type
+id to spawn — see `worldobjects.h`). **Correction to an earlier version
+of this note**: `+4` is not written by the `0x4000` curgame-record
+branch at all — that branch's cell-visible outcomes only ever overwrite
+`+0` (wall type) or `+2` (floor type), confirmed by rereading
+`RefreshDungeonMapWindow`'s `errorCode`-to-branch dispatch precisely
+after an earlier pass mismapped `errorCode` 5 and 7 to the wrong
+branches. The explored bit (`+6` bit `0x8000`) is filled from
+`CURGAME`'s `SaveSectionExploredMap` bitmap in the same per-cell pass,
+packed **MSB-first within each byte** (byte `col/8`, bit `7 - col%8`)
+— derived directly from the shift-and-test sequence that extracts it,
+not guessed.
 
 Explicitly **not** covered by this base-window build: `TryInteractAtPosition`'s
 per-cell marker baking (which is what actually sets the door/lock flag,
-`+6` bit `0x6000`, and the curgame-record overlay just mentioned — this
-base pass never sets bits below `0x8000`). `g_levelMonsters`
-placement/despawn as monsters scroll into or out of the window **is**
-now covered, in a separate module — see below. Reimplemented (base
-window only) in `src23/dungeongrid.c`/`.h`.
+`+6` bit `0x6000`, the not-yet-spawned monster-marker overlay just
+mentioned, and separately the `0x4000`-branch's wall/floor-type
+overwrites — this base pass never sets bits below `0x8000` or touches
+`+0`/`+2` after the initial copy). `g_levelMonsters` placement/despawn
+as monsters scroll into or out of the window **is** now covered, in a
+separate module — see below. Reimplemented (base window only) in
+`src23/dungeongrid.c`/`.h`.
 
 `ProbeFacingTile` computes `g_facingTileCellPtr` — the grid cell
 directly ahead of the party — by offsetting the party's own cell

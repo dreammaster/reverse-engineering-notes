@@ -90,13 +90,16 @@ const DungeonGridCell *dungeonGridCellAtWorldPos(const DungeonGrid *grid, int wo
 bool dungeonGridCellIsExplored(const DungeonGridCell *cell); /* flags bit 0x8000 */
 
 /*
- * +6 bit 0x400: "there's an overlay icon here", baked in by two different
- * producers, both outside this module's own build pass -- monsterpool.c's
- * scroll-relink (+4 = the live monster's type id) and TryInteractAtPosition's
- * curgame-record branch (+4 = a worldobjects.c 0x4000 record's value; see
- * file-formats.md's "In-memory dungeon map grid" section for the full
- * interaction-marker picture, not otherwise modeled here since it's
- * rendering-only past this one flag bit).
+ * +6 bit 0x400: "a monster is here" marker, baked in by two different
+ * producers depending on the monster's life-cycle stage, both outside
+ * this module's own build pass -- monsterpool.c's scroll-relink for an
+ * already-spawned one (+4 = its type id) and TryInteractAtPosition's
+ * own per-cell scan for a not-yet-spawned one (errorCode=5, from a
+ * worldobjects.c 0x800 marker; +4 = the marker's value, itself a type
+ * id -- not reimplemented here). See file-formats.md's "In-memory
+ * dungeon map grid" section for the full interaction-marker picture,
+ * including the other errorCode branches that overwrite +0/+2 instead
+ * (wall/floor type, rendering-only, not modeled as struct fields here).
  */
 enum { DungeonGridCellFlagOverlay = 0x0400 };
 

@@ -8268,6 +8268,21 @@ genuinely useful architectural correction along the way.
   spawned (`SpawnMonsterInFacingDirection`) — this module only tracks
   already-live pool entries against the scrolling window.
 
+**Correction (same session, found immediately while starting the next
+piece of work)**: the paragraph above claiming the `+4`/`0x400` overlay
+was written by *both* the monster scroll-relink *and* the `0x4000`
+curgame-record branch was wrong in its second half. Rereading
+`RefreshDungeonMapWindow`'s `errorCode`-to-branch dispatch precisely
+(while tracing `TryTriggerMonsterEncounterAtCell`, which reads that
+same `+4`/`0x400` pair to decide whether to spawn a monster) found an
+earlier pass had `errorCode` 5 and 7 swapped: `errorCode=5` (the
+monster-spawn-marker branch) is what sets `+4`/`0x400`; `errorCode=7`
+(the curgame-record branch) only ever overwrites `+0` (wall type). No
+code was affected — `monsterpool.c` itself only ever wrote the correct
+(monster) side of this pair — but `file-formats.md`, `dungeongrid.h`,
+and `roadmap.md`'s wording were corrected. Caught before it compounded
+into a wrong model of `TryTriggerMonsterEncounterAtCell` itself.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
