@@ -8420,6 +8420,47 @@ what function, is still an open question.
   wall/door trap pool entry actually gets created, and the trap
   catalog-block-field overlap.
 
+### 2026-09-23 session update (continued): TickMonsterTimer and the full per-slot flow
+
+Closed out `ProcessLevelMonsters` as far as it goes without needing
+combat/rendering: traced `TickMonsterTimer` in full (control flow and
+arithmetic fully confirmed, instruction-identical between both games)
+and assembled everything decoded so far — the tick, the approach/ambush
+check, reward granting, and map removal — into `monsterPoolProcessSlot`,
+matching `ProcessLevelMonsters`' exact per-slot order.
+- The honest outcome on *why* this mechanism exists is "genuinely
+  unresolved" — neither of `TickMonsterTimer`'s two callers sets any of
+  the state bits or tick fields it reads, only consumes the result.
+  Reimplemented the confirmed mechanism faithfully rather than invent a
+  narrative (a "bleed out" or "status effect" story would have been
+  easy to write and impossible to justify).
+- Added the missing `MonsterField` names it needed
+  (`TickTarget`/`TickAmount`/`TickCountdown` at `+0x1A`/`+0x1C`/`+0x1E`,
+  `ApproachGate` at `+0x60`), following the project's existing
+  convention (`MonsterFieldUnknown4E`) of naming a confirmed offset
+  honestly even when its exact purpose isn't pinned down.
+- **A real bug caught by the test suite itself, not by re-reading
+  code**: an early `test_monsterai.c` case for `MonsterStateBusy`
+  segfaulted. `0x800` (`MonsterStateBusy`) turns out to also be one of
+  `TickMonsterTimer`'s own gate bits (`0xFC10`), so the test's monster
+  got a real, unintended tick with zeroed health/amount fields,
+  immediately "expired," and reached the reward-granting step with no
+  staging buffer supplied — a NULL dereference. Diagnosed by adding
+  unbuffered stdout to see exactly which check ran last before the
+  crash, then fixed by giving that test case a harmless, non-expiring
+  tick setup. A good concrete example of why these bit ranges need to
+  be checked for overlap rather than assumed independent.
+- Wrote `monsterTickTimer` (`monster.c`/`.h`) and
+  `monsterPoolProcessSlot` (`monsterpool.c`/`.h`), tests split between
+  `tests/test_monster.c` (the state machine in isolation) and
+  `tests/test_monsterai.c` (the composed per-slot flow). All 17 suites
+  pass, no regressions. Confirmed instruction-identical between both
+  games — see `engine-diffs.md`.
+- Still open: `TryActivateMonsterByDistance`, how a wall/door trap pool
+  entry gets created, and everything downstream of a committed move
+  that isn't monster-related (side-trap presentation itself,
+  map-trigger effects) or needs rendering.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

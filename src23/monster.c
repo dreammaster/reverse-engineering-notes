@@ -119,6 +119,49 @@ unsigned monsterAmbushThreshold(uint16_t awareness) {
     return 5;
 }
 
+MonsterTickResult monsterTickTimer(uint8_t *record) {
+    uint16_t state = monsterGetU16(record, MonsterFieldState);
+    if ((state & 0xFC10) == 0) {
+        return MonsterTickIdle;
+    }
+
+    int16_t health = (int16_t)monsterGetU16(record, MonsterFieldHealth);
+    uint16_t amount = monsterGetU16(record, MonsterFieldTickAmount);
+    health = (int16_t)(health - amount);
+
+    MonsterTickResult result;
+    if (health <= 0) {
+        monsterSetU16(record, MonsterFieldHealth, 0);
+        return MonsterTickExpired;
+    }
+    if ((state & 0x3010) == 0) {
+        result = MonsterTickIdle;
+    } else {
+        health = (int16_t)(health - amount);
+        if (health <= 0) {
+            monsterSetU16(record, MonsterFieldHealth, 0);
+            return MonsterTickExpired;
+        }
+        result = MonsterTickOngoing;
+    }
+    monsterSetU16(record, MonsterFieldHealth, (uint16_t)health);
+
+    uint16_t countdown = monsterGetU16(record, MonsterFieldTickCountdown);
+    countdown = (uint16_t)(countdown - 1);
+    if ((int16_t)countdown > 0) {
+        monsterSetU16(record, MonsterFieldTickCountdown, countdown);
+        return result;
+    }
+
+    /* Reset: clears state bits outside mask 0x3ED, zeroes the tick fields, resets the animation. */
+    monsterSetU16(record, MonsterFieldState, (uint16_t)(state & 0x3ED));
+    monsterSetU16(record, MonsterFieldTickTarget, 0);
+    monsterSetU16(record, MonsterFieldTickAmount, 0);
+    monsterSetU16(record, MonsterFieldTickCountdown, 0);
+    monsterSetU16(record, MonsterFieldAnim, monsterGetU16(record, MonsterFieldSpriteBase));
+    return MonsterTickIdle;
+}
+
 bool monsterRecordSpawn(uint8_t *record, const MonsterCatalog *catalog, unsigned typeId) {
     unsigned index = monsterCatalogBlockIndex(catalog, typeId);
     if (index == 0) {

@@ -188,7 +188,105 @@ static void testApproachAmbushRoll(void) {
     check("an adjacent monster with a very-high ambush chance arms at least once across a handful of seeds", armed);
 }
 
+static void testProcessSlotNotAware(void) {
+    buildOpenMap(GameYendor2);
+    setupMonster(60, 60, 0); /* MonsterFieldState defaults to 0 -> MonsterStateAware not set */
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    MonsterTurnOutcome outcome =
+        monsterPoolProcessSlot(g_record, GameYendor2, &g_map, NULL, NULL, 0, NULL, 60, 60, &rng);
+    check("an unaware monster's turn is skipped entirely", outcome == MonsterTurnSkipped);
+    checkU32("its tick fields are untouched", monsterGetU16(g_record, MonsterFieldHealth), 0);
+}
+
+static void testProcessSlotExpiresAndRemoves(void) {
+    buildOpenMap(GameYendor2);
+    DungeonGrid grid;
+    memset(&grid, 0, sizeof(grid));
+    grid.game = GameYendor2;
+    grid.originCol = 55;
+    grid.originRow = 55;
+
+    setupMonster(60, 60, 0);
+    monsterSetU16(g_record, MonsterFieldState, MonsterStateAware | 0x0400); /* aware + a tick gate bit */
+    monsterSetU16(g_record, MonsterFieldHealth, 5);
+    monsterSetU16(g_record, MonsterFieldTickAmount, 10);
+    DungeonGridCell *cell = dungeonGridCellMutable(&grid, 60 - 55, 60 - 55);
+    cell->reserved4 = 1;
+    cell->flags |= DungeonGridCellFlagOverlay;
+
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging)); /* loot fields are already zero from setupMonster's memset */
+
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    MonsterTurnOutcome outcome =
+        monsterPoolProcessSlot(g_record, GameYendor2, &g_map, &grid, NULL, 0, &staging, 60, 60, &rng);
+    check("an expired tick removes the monster", outcome == MonsterTurnRemoved);
+    checkU32("the record is zeroed", monsterGetU16(g_record, MonsterFieldType), 0);
+    check("its grid cell overlay is cleared too", (cell->flags & DungeonGridCellFlagOverlay) == 0);
+}
+
+static void testProcessSlotOngoingIsSkipped(void) {
+    buildOpenMap(GameYendor2);
+    setupMonster(60, 55, 0); /* aligned north of the party -- would approach if given the chance */
+    monsterSetU16(g_record, MonsterFieldState, MonsterStateAware | 0x3010); /* aware + double-decrement gate */
+    monsterSetU16(g_record, MonsterFieldHealth, 100);
+    monsterSetU16(g_record, MonsterFieldTickAmount, 10);
+    monsterSetU16(g_record, MonsterFieldTickCountdown, 5);
+    monsterSetU16(g_record, MonsterFieldApproachGate, 1);
+
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    MonsterTurnOutcome outcome =
+        monsterPoolProcessSlot(g_record, GameYendor2, &g_map, NULL, NULL, 0, NULL, 60, 60, &rng);
+    check("a monster mid-tick (Ongoing) is skipped, never given an approach check", outcome == MonsterTurnSkipped);
+    checkU32("it did not get a direction bit from an approach check", monsterGetU16(g_record, MonsterFieldWound), 0);
+}
+
+static void testProcessSlotApproachGates(void) {
+    buildOpenMap(GameYendor2);
+
+    /* Idle tick, but MonsterFieldApproachGate is 0: skipped, no approach. */
+    setupMonster(60, 55, 0);
+    monsterSetU16(g_record, MonsterFieldState, MonsterStateAware);
+    monsterSetU16(g_record, MonsterFieldApproachGate, 0);
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    MonsterTurnOutcome outcome =
+        monsterPoolProcessSlot(g_record, GameYendor2, &g_map, NULL, NULL, 0, NULL, 60, 60, &rng);
+    check("MonsterFieldApproachGate == 0 skips the approach check", outcome == MonsterTurnSkipped);
+
+    /*
+     * Idle tick, gate open, but MonsterStateBusy set: skipped.
+     * MonsterStateBusy (0x800) happens to also be one of TickMonsterTimer's
+     * own 0xFC10 gate bits, so a real tick runs here too -- give it a
+     * harmless (zero-amount, non-expiring) tick setup so it can't
+     * accidentally expire the monster and reach monsterGrantRewards with
+     * no staging buffer.
+     */
+    setupMonster(60, 55, 0);
+    monsterSetU16(g_record, MonsterFieldState, MonsterStateAware | MonsterStateBusy);
+    monsterSetU16(g_record, MonsterFieldHealth, 100);
+    monsterSetU16(g_record, MonsterFieldTickAmount, 0);
+    monsterSetU16(g_record, MonsterFieldTickCountdown, 100);
+    monsterSetU16(g_record, MonsterFieldApproachGate, 1);
+    randomStart(&rng, 1, 1);
+    outcome = monsterPoolProcessSlot(g_record, GameYendor2, &g_map, NULL, NULL, 0, NULL, 60, 60, &rng);
+    check("MonsterStateBusy skips the approach check", outcome == MonsterTurnSkipped);
+
+    /* Idle tick, gate open, not busy: the approach check runs. */
+    setupMonster(60, 55, 0);
+    monsterSetU16(g_record, MonsterFieldState, MonsterStateAware);
+    monsterSetU16(g_record, MonsterFieldApproachGate, 1);
+    randomStart(&rng, 1, 1);
+    outcome = monsterPoolProcessSlot(g_record, GameYendor2, &g_map, NULL, NULL, 0, NULL, 60, 60, &rng);
+    check("an aware, idle, gated-open, non-busy monster gets an approach check", outcome == MonsterTurnApproached);
+    check("...and it set a direction bit", (monsterGetU16(g_record, MonsterFieldWound) & MonsterWoundPartyMustFaceNorth) != 0);
+}
+
 int main(void) {
+    setvbuf(stdout, NULL, _IONBF, 0);
     testAmbushThreshold();
     testClassifyObstacle();
     testApproachAlignment();
@@ -196,6 +294,10 @@ int main(void) {
     testApproachBlockedByWall();
     testApproachStepLimit();
     testApproachAmbushRoll();
+    testProcessSlotNotAware();
+    testProcessSlotExpiresAndRemoves();
+    testProcessSlotOngoingIsSkipped();
+    testProcessSlotApproachGates();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

@@ -48,10 +48,14 @@ typedef enum {
     MonsterFieldState = 0x0C,     /* u16, MonsterState bits */
     MonsterFieldWound = 0x0E,     /* u16, MonsterWound bits -- despite the name, also carries the
                                       party-relative direction and ambush-pending state (see MonsterWound) */
-    MonsterFieldHealth = 0x10,    /* u16 current hit points */
+    MonsterFieldHealth = 0x10,    /* u16 current hit points; also read/written by monsterTickTimer (see there) */
     MonsterFieldTarget = 0x12,    /* runtime pointer to the party member being attacked; meaningless on disk */
     MonsterFieldFlagOnDeath = 0x14, /* i16 global flag index set (>0) or cleared (<0) when it dies */
     MonsterFieldFlagOnDeath2 = 0x16, /* i16 second such flag */
+    /* +0x18: referenced by nothing traced so far. */
+    MonsterFieldTickTarget = 0x1A,   /* u16; zeroed by monsterTickTimer's reset step, not otherwise traced */
+    MonsterFieldTickAmount = 0x1C,   /* u16 subtracted from MonsterFieldHealth once or twice per monsterTickTimer call */
+    MonsterFieldTickCountdown = 0x1E, /* u16 ticks remaining until monsterTickTimer's state-machine reset fires */
 
     /* Catalog block (0x32-0x9B). */
     MonsterFieldName1 = 0x32,     /* 13-byte text lines, 12 characters + NUL */
@@ -66,6 +70,7 @@ typedef enum {
     MonsterFieldDamage = 0x5A,    /* u16 ("DAMAGE-") */
     MonsterFieldHitSound = 0x5C,  /* u16 sound id when it hits */
     MonsterFieldIdleSound = 0x5E, /* u16 sound id when it has no target */
+    MonsterFieldApproachGate = 0x60, /* u16; ProcessLevelMonsters skips its approach/ambush check entirely when this is 0 -- exact meaning not confirmed */
     MonsterFieldRangedAccuracy = 0x64, /* u16 ("RANGED ACC.-") */
     MonsterFieldRangedDamage = 0x66,   /* u16 ("RANGED DAM.-") */
     MonsterFieldAttackEffect = 0x6C,   /* u16 effect id (effect.h) of its ordinary attack; always an HP-cost effect */
@@ -245,5 +250,31 @@ bool monsterDeathFlags(GameKind game, unsigned typeId, int16_t *flagA, int16_t *
 
 /* The ambush-roll threshold (90/75/50/25/5) for a MonsterFieldAwareness value -- see MonsterAmbushChance. */
 unsigned monsterAmbushThreshold(uint16_t awareness);
+
+/*
+ * TickMonsterTimer (yendor2.asm:33320, yendor3.asm:33098, instruction-
+ * identical). A per-tick state machine gated on MonsterFieldState bits
+ * 0xFC10 -- for a monster with none of those bits set (the common case),
+ * this is a no-op returning MonsterTickIdle. When gated in, it subtracts
+ * MonsterFieldTickAmount from MonsterFieldHealth (twice, if state bits
+ * 0x3010 are also set) and, once MonsterFieldTickCountdown independently
+ * reaches 0, resets the whole mechanism (clears state bits outside mask
+ * 0x3ED, zeroes MonsterFieldTickTarget/Amount/Countdown, and resets
+ * MonsterFieldAnim to MonsterFieldSpriteBase).
+ *
+ * What triggers these state bits in the first place, and therefore what
+ * this mechanism actually represents (a status effect's duration? a
+ * scripted despawn timer? something else), isn't traced -- neither
+ * caller (ProcessLevelMonsters, ProcessMonsterAttackTurn) sets these
+ * bits itself, only reads the result. Reimplemented faithfully as the
+ * confirmed bit/arithmetic operations regardless.
+ */
+typedef enum {
+    MonsterTickIdle = 0,     /* the 0xFC10 gate wasn't set; nothing happened */
+    MonsterTickExpired = 1,  /* MonsterFieldHealth reached <= 0; ProcessLevelMonsters treats this as "remove the monster" */
+    MonsterTickOngoing = 2   /* mid-decrement, still alive; ProcessMonsterAttackTurn skips this monster's attack either way */
+} MonsterTickResult;
+
+MonsterTickResult monsterTickTimer(uint8_t *record);
 
 #endif

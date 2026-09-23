@@ -190,4 +190,31 @@ MonsterObstacle monsterClassifyObstacle(GameKind game, uint16_t wallType, uint16
 void monsterApproachParty(uint8_t *record, GameKind game, const WorldMap *map, int partyWorldX, int partyWorldY,
                            RandomState *rng);
 
+/*
+ * ProcessLevelMonsters' full per-slot flow (yendor2.asm:33379 on),
+ * composing every piece above in the original's exact order:
+ *   1. Skipped entirely unless MonsterStateAware is set.
+ *   2. monsterTickTimer runs. MonsterTickExpired -> grants rewards
+ *      (accumulated into staging, not drained to permanent totals --
+ *      see monsterGrantRewards) and removes the monster
+ *      (MonsterTurnRemoved). MonsterTickOngoing -> skipped this turn,
+ *      same as if it weren't aware at all (MonsterTurnSkipped) --
+ *      *not* given a chance to approach, matching the original exactly.
+ *   3. Otherwise (MonsterTickIdle), skipped if MonsterFieldApproachGate
+ *      is 0 or MonsterStateBusy is set; otherwise monsterApproachParty
+ *      runs (MonsterTurnApproached).
+ * globalFlags/globalFlagsSize/grid may be NULL/0 to skip their
+ * respective steps, same as the functions they're passed through to.
+ * Note RemoveMonsterFromMap never clears the CURGAME spawn flag (only
+ * monsterPoolRefreshWindow's scroll-out despawn does) -- a monster
+ * that dies here can't be re-triggered by the same worldobjects.c
+ * marker, matching the original exactly.
+ */
+typedef enum { MonsterTurnSkipped, MonsterTurnRemoved, MonsterTurnApproached } MonsterTurnOutcome;
+
+MonsterTurnOutcome monsterPoolProcessSlot(uint8_t *record, GameKind game, const WorldMap *map, DungeonGrid *grid,
+                                           uint8_t *globalFlags, size_t globalFlagsSize,
+                                           MonsterRewardStaging *staging, int partyWorldX, int partyWorldY,
+                                           RandomState *rng);
+
 #endif

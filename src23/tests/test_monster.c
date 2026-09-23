@@ -392,11 +392,82 @@ static void testRealYendor3(void) {
     checkInvariants("yendor3", GameYendor3);
 }
 
+static void testTickTimer(void) {
+    /*
+     * 0xFC10 (the gate mask) and 0x3010 (the double-decrement mask)
+     * overlap (both include bit 0x10) and 0x3ED (bits kept across a
+     * reset) is disjoint from both. To test each condition in
+     * isolation: 0x0400 gates the tick without triggering a second
+     * decrement (in 0xFC10, not in 0x3010, not in 0x3ED -- also
+     * conveniently exercises "cleared on reset"); 0x0001 is a state bit
+     * that's in neither mask, to confirm it survives a reset (it's in
+     * 0x3ED); 0x3010 itself exercises the double-decrement path.
+     */
+    uint8_t record[MonsterRecordSize];
+
+    memset(record, 0, sizeof(record));
+    check("no gate bits set is a no-op", monsterTickTimer(record) == MonsterTickIdle);
+
+    /* Gate bit set without the double-decrement bits: single decrement, stays positive, countdown not yet 0. */
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldState, 0x0400 | 0x0001);
+    monsterSetU16(record, MonsterFieldHealth, 100);
+    monsterSetU16(record, MonsterFieldTickAmount, 10);
+    monsterSetU16(record, MonsterFieldTickCountdown, 5);
+    check("single decrement, still positive, countdown not expired -> idle", monsterTickTimer(record) == MonsterTickIdle);
+    checkU32("health decremented once", monsterGetU16(record, MonsterFieldHealth), 90);
+    checkU32("countdown decremented", monsterGetU16(record, MonsterFieldTickCountdown), 4);
+    checkU32("state bits untouched (no reset yet)", monsterGetU16(record, MonsterFieldState), 0x0400 | 0x0001);
+
+    /* Countdown reaching 0 triggers the reset, even though health is still positive. */
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldState, 0x0400 | 0x0001); /* 0x400 is outside mask 0x3ED, 0x1 is inside it */
+    monsterSetU16(record, MonsterFieldHealth, 100);
+    monsterSetU16(record, MonsterFieldTickAmount, 10);
+    monsterSetU16(record, MonsterFieldTickCountdown, 1);
+    monsterSetU16(record, MonsterFieldSpriteBase, 42);
+    monsterSetU16(record, MonsterFieldAnim, 47);
+    check("countdown reaching 0 still reports idle", monsterTickTimer(record) == MonsterTickIdle);
+    checkU32("...clears 0x400 (outside the 0x3ED mask) but keeps 0x1 (inside it)", monsterGetU16(record, MonsterFieldState),
+             0x0001);
+    checkU32("...zeroes the tick target", monsterGetU16(record, MonsterFieldTickTarget), 0);
+    checkU32("...zeroes the tick amount", monsterGetU16(record, MonsterFieldTickAmount), 0);
+    checkU32("...zeroes the countdown", monsterGetU16(record, MonsterFieldTickCountdown), 0);
+    checkU32("...resets the animation to the sprite base", monsterGetU16(record, MonsterFieldAnim), 42);
+
+    /* A single decrement that reaches zero or below expires the monster immediately. */
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldState, 0x0400);
+    monsterSetU16(record, MonsterFieldHealth, 5);
+    monsterSetU16(record, MonsterFieldTickAmount, 10);
+    check("a decrement past zero expires the monster", monsterTickTimer(record) == MonsterTickExpired);
+    checkU32("health is clamped to 0 on expiry", monsterGetU16(record, MonsterFieldHealth), 0);
+
+    /* State bits 0x3010 set: a second decrement is applied; if it survives, result is Ongoing. */
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldState, 0x3010);
+    monsterSetU16(record, MonsterFieldHealth, 100);
+    monsterSetU16(record, MonsterFieldTickAmount, 10);
+    monsterSetU16(record, MonsterFieldTickCountdown, 5);
+    check("double decrement, still positive -> ongoing", monsterTickTimer(record) == MonsterTickOngoing);
+    checkU32("health decremented twice", monsterGetU16(record, MonsterFieldHealth), 80);
+
+    /* Double decrement that crosses zero on the second subtraction still expires. */
+    memset(record, 0, sizeof(record));
+    monsterSetU16(record, MonsterFieldState, 0x3010);
+    monsterSetU16(record, MonsterFieldHealth, 15);
+    monsterSetU16(record, MonsterFieldTickAmount, 10);
+    check("double decrement crossing zero on the second subtraction expires",
+          monsterTickTimer(record) == MonsterTickExpired);
+    checkU32("health is clamped to 0", monsterGetU16(record, MonsterFieldHealth), 0);
+}
+
 int main(void) {
     testLayouts();
     testParse();
     testRecord();
     testNames();
+    testTickTimer();
     testRealYendor2();
     testRealYendor3();
 

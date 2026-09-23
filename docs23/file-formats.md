@@ -3781,10 +3781,75 @@ Reimplemented in `src23/monsterpool.c`/`.h`: `monsterClassifyObstacle`
 and `monsterApproachParty`, tests in `tests/test_monsterai.c` covering
 both games' obstacle bands, all 4 approach directions, wall-blocked
 paths, the step limit, and a successful ambush roll. **Not
-reimplemented**: `TryActivateMonsterByDistance`, `TickMonsterTimer`'s
-full state machine, and everything about how a "trap" pool entry
-(as opposed to an ordinary spawned monster) actually gets created —
-see the "side trap"/ambush section above for what's still open there.
+reimplemented**: `TryActivateMonsterByDistance` and everything about
+how a "trap" pool entry (as opposed to an ordinary spawned monster)
+actually gets created — see the "side trap"/ambush section above for
+what's still open there. `TickMonsterTimer`'s state machine is now
+covered too — see below.
+
+### `TickMonsterTimer`: a per-monster state machine, mechanism confirmed, trigger not (decoded 2026-09-23)
+
+`TickMonsterTimer` (`yendor2.asm:33320`, `yendor3.asm:33098`,
+instruction-identical) is called once per monster per game-loop pass,
+from both `ProcessLevelMonsters` (the approach/ambush check above) and
+`ProcessMonsterAttackTurn` (combat, not otherwise reimplemented). Its
+own control flow and arithmetic are fully confirmed; what triggers it
+in the first place is not.
+
+**Gated on `MonsterFieldState` bits `0xFC10`** — for an ordinary
+monster with none of those bits set (the common case), this is a
+complete no-op. When gated in:
+- Subtracts `MonsterFieldTickAmount` from `MonsterFieldHealth`. If the
+  result is `<= 0`, the monster's tick has **expired**
+  (`MonsterTickExpired`) — health is clamped to 0 and the function
+  returns immediately. `ProcessLevelMonsters` treats this as "this
+  monster's presence has ended": grants its rewards and removes it
+  from the map (see "Monster death" above) — the *same* mechanism a
+  combat death presumably also drives, though the combat-damage path
+  itself isn't traced.
+- If state bits `0x3010` are *also* set, a **second** subtraction of
+  the same amount is applied; crossing zero on this second pass still
+  counts as expired. Surviving both passes is reported as
+  `MonsterTickOngoing` — `ProcessMonsterAttackTurn` skips the
+  monster's attack this round either way (`MonsterTickOngoing` or
+  `MonsterTickExpired`), only letting a fully-idle (`MonsterTickIdle`)
+  monster act.
+- Independently, `MonsterFieldTickCountdown` is decremented by 1 every
+  time the health check doesn't expire the monster; reaching `<= 0`
+  resets the whole mechanism — `MonsterFieldState` is masked down to
+  bits `0x3ED` (clearing the gate bits themselves, among others),
+  `MonsterFieldTickTarget`/`TickAmount`/`TickCountdown` are zeroed, and
+  `MonsterFieldAnim` is reset to `MonsterFieldSpriteBase`.
+
+**Genuinely unresolved**: neither traced caller *sets* any of the
+`0xFC10`/`0x3010` state bits or the three `MonsterFieldTick*` fields —
+both only read the result. So what this mechanism actually represents
+(a status-effect duration? a scripted despawn countdown? something
+else) isn't determined; some form of "temporary condition that also
+drains health over time, then either kills the monster or wears off"
+is the most that can honestly be said. `MonsterFieldTickAmount`
+overlapping in role with ordinary combat damage to the very same
+`MonsterFieldHealth` field is worth keeping in mind if a real combat
+implementation later needs to reconcile the two.
+
+Reimplemented faithfully (the confirmed mechanism, not a guessed
+narrative) as `monsterTickTimer` in `src23/monster.c`/`.h`, and
+composed with the already-existing pieces — the approach/ambush check,
+reward granting, and map removal — as `monsterPoolProcessSlot` in
+`src23/monsterpool.c`/`.h`, matching `ProcessLevelMonsters`' exact
+per-slot flow (skip if not `MonsterStateAware`; tick; expired ⇒
+reward+remove; ongoing ⇒ skip, no approach attempt; idle ⇒ approach
+check, gated on `MonsterFieldApproachGate` and `MonsterStateBusy`).
+Tests in `tests/test_monster.c` (the tick state machine in isolation)
+and `tests/test_monsterai.c` (the composed per-slot flow). **A real
+bug caught by the test run itself**: an early draft of the
+`MonsterStateBusy` test case crashed — `0x800` (`MonsterStateBusy`)
+turns out to also be one of `TickMonsterTimer`'s own `0xFC10` gate
+bits, so a real tick ran unexpectedly with uninitialized health/tick
+fields and reached the reward-granting step with no staging buffer
+supplied. Fixed by giving that test case a harmless, non-expiring tick
+setup — a useful reminder that these bit ranges genuinely overlap and
+any future caller needs to account for it.
 
 ## Not yet examined
 

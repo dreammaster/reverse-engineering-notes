@@ -281,3 +281,32 @@ void monsterApproachParty(uint8_t *record, GameKind game, const WorldMap *map, i
         }
     }
 }
+
+MonsterTurnOutcome monsterPoolProcessSlot(uint8_t *record, GameKind game, const WorldMap *map, DungeonGrid *grid,
+                                           uint8_t *globalFlags, size_t globalFlagsSize,
+                                           MonsterRewardStaging *staging, int partyWorldX, int partyWorldY,
+                                           RandomState *rng) {
+    if ((monsterGetU16(record, MonsterFieldState) & MonsterStateAware) == 0) {
+        return MonsterTurnSkipped;
+    }
+
+    MonsterTickResult tick = monsterTickTimer(record);
+    if (tick == MonsterTickOngoing) {
+        return MonsterTurnSkipped;
+    }
+    if (tick == MonsterTickExpired) {
+        monsterGrantRewards(staging, record, globalFlags, globalFlagsSize);
+        monsterPoolRemove(record, grid);
+        return MonsterTurnRemoved;
+    }
+
+    if (monsterGetU16(record, MonsterFieldApproachGate) == 0) {
+        return MonsterTurnSkipped;
+    }
+    if (monsterGetU16(record, MonsterFieldState) & MonsterStateBusy) {
+        return MonsterTurnSkipped;
+    }
+
+    monsterApproachParty(record, game, map, partyWorldX, partyWorldY, rng);
+    return MonsterTurnApproached;
+}

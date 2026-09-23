@@ -1035,6 +1035,15 @@ noting if a puzzle/quest-design question about Chapter 3 comes up
 later. Magical locks are also proportionally far more common in
 Chapter 3 (214/1008, ~21%) than Chapter 2 (17/608, ~3%).
 
+## Monster tick-timer state machine and per-slot processing: no behavioral difference found
+
+Found while writing `src23/monster.c`'s `monsterTickTimer` and
+`src23/monsterpool.c`'s `monsterPoolProcessSlot` (2026-09-23). Both
+`TickMonsterTimer` and the surrounding per-slot flow in
+`ProcessLevelMonsters` are instruction-identical between the two
+games, confirmed by direct comparison, not assumed from the pattern
+established elsewhere this session.
+
 ## Monster approach/ambush check: Chapter 3 fixes a Chapter 2 bug
 
 Found while writing `src23/monsterpool.c`'s `monsterApproachParty`

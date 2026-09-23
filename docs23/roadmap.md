@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, monster approach/ambush module)
+## Status (last updated 2026-09-23, TickMonsterTimer + full per-slot flow)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -212,13 +212,30 @@ groundwork below is already in place.
   `monster.c`/`.h` (plus named constants for two previously-unlabeled
   bit ranges: `MonsterFieldWound`'s direction/ambush bits and
   `MonsterFieldAwareness`'s second bit range). Tests in
-  `tests/test_monsterai.c`; all 16 suites pass. Still open:
-  `TryActivateMonsterByDistance`, `TickMonsterTimer`'s full state
-  machine, how a wall/door trap pool entry (as opposed to an ordinary
-  monster) actually gets created, whether monsters ever reposition
-  themselves at all and via what function, `LoadCurgameRecord`'s own
-  format, map-trigger effects, and first-person viewport rendering
-  (needs the SDL2 layer, not yet started).
+  `tests/test_monsterai.c`; all 16 suites pass.
+  **`TickMonsterTimer` and the full per-slot flow — done (2026-09-23)**:
+  the mechanism (a gated state machine that decrements
+  `MonsterFieldHealth` by `MonsterFieldTickAmount`, once or twice, with
+  an independent countdown-driven reset) is fully confirmed and
+  reimplemented as `monsterTickTimer`; *why* it exists is genuinely
+  unresolved — neither traced caller ever sets the bits/fields it
+  reads, only consumes the result, so this is reimplemented faithfully
+  without inventing a narrative for it. Composed with the
+  already-done pieces into `monsterPoolProcessSlot`, matching
+  `ProcessLevelMonsters`' exact per-slot order. **A real bug caught by
+  the test suite itself**: `MonsterStateBusy` (`0x800`) turns out to
+  also be one of `TickMonsterTimer`'s own gate bits, so an early test
+  case triggered a real, unintended tick that reached the
+  reward-granting step with no staging buffer — a segfault, diagnosed
+  via unbuffered stdout and fixed. Tests split between
+  `tests/test_monster.c` (state machine) and `tests/test_monsterai.c`
+  (composed flow); all 17 suites pass. **No Chapter 2 vs. Chapter 3
+  difference**. Still open: `TryActivateMonsterByDistance`, how a
+  wall/door trap pool entry (as opposed to an ordinary monster)
+  actually gets created, whether monsters ever reposition themselves at
+  all and via what function, `LoadCurgameRecord`'s own format,
+  map-trigger effects, and first-person viewport rendering (needs the
+  SDL2 layer, not yet started).
 
 ## Next: continue the C reimplementation
 
