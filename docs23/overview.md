@@ -8110,13 +8110,50 @@ block**: a sparse per-cell object index, 720 column-offset entries (one
 per playable X) into sorted-by-Y 6-byte records, loaded as one ~26KB
 blob (`PreloadWorldDataTable`, `yendor2.asm:3661`) from an offset
 that's itself stored at a fixed in-EXE table address (`DS:0xCE5F`) not
-yet extracted. Deliberately didn't push further this session — pinning
-down the real offset and the third record field's exact semantics
-(varies by flag bit: lock id / event-record index / monster-cell index)
-is comparable in scope to the original item/monster/worldmap decodes
-and deserves its own dedicated pass rather than being rushed. Full
-writeup and next steps in `roadmap.md`'s "Picking the next module"
-item 4.
+yet extracted.
+
+### 2026-09-23 session update (continued): C reimplementation, world object index module
+
+Picked the "not yet extracted" offset back up and finished the decode.
+Wrote `yendor2/ida_scripts/extract_resource_stubs.py` (already
+existed) and a new `yendor3/ida_scripts/extract_resource_stubs.py`
+port, ran both headlessly, and cross-referenced the results against
+the seven already-known `CURGAME` section offsets (savegame.c's own
+layout constants) — all matched exactly, confirming the extraction
+method before trusting it for the unknown block. Found **Chapter 2:
+`0x1A1141`; Chapter 3: `0x41090D`**, same `0x6768`-byte (26,472) size
+both games. Extracted and parsed the raw bytes from both real
+`WORLD.DAT` files directly in Python first (before writing any C) to
+validate the structure: 720 columns, every list sorted ascending with
+zero malformed terminators in either game — strong confirmation before
+committing to a record layout.
+- Chased down flag bit `0x2000`'s consumer (asked whether
+  `ProbeFacingTile`'s 7 call sites test it) and confirmed they don't,
+  at least not through the global `FindObjectAtPosition` normally
+  stashes results in (`word_2E556` has exactly one write site and zero
+  reads anywhere in the disassembly) — recorded as a genuinely open,
+  not just unchecked, question rather than assumed-resolved.
+  Deliberately didn't chase it further than that one check.
+- Wrote `src23/worldobjects.c`/`.h` + `tests/test_worldobjects.c`:
+  `worldObjectFind` reuses `movement.h`'s `MovementBounds` directly for
+  its bounds check (the same constants `FindObjectAtPosition` itself
+  checks against). Tests include exact reachable-record and per-flag
+  counts checked against both real `WORLD.DAT` files, computed
+  independently in Python first and cross-checked against the C
+  implementation's own output rather than the other way around.
+  Caught one real mistake this way: a hand-converted hex value in an
+  early note (`1024` misread as `0x1000` instead of `0x400`) that
+  would have baked a wrong flag-bit claim into a test assertion — the
+  cross-check against independently-computed Python output caught it
+  before it reached the committed test.
+- Full writeup in `file-formats.md`'s new "World object index" section
+  and `engine-diffs.md`'s comparison section.
+- All 12 test suites (11 existing + the new one) still pass after a
+  full rebuild — no regressions.
+- Left open, same as before: `LoadCurgameRecord`/`LoadLockState`'s own
+  `CURGAME`-side formats (what a `0x4000`/`0x8000` record's `value`
+  actually indexes into), and flag bits `0x2000`/`0x400`'s consumers,
+  if any.
 
 ## Next steps (not started this session)
 

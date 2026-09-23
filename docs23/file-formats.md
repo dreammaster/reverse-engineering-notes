@@ -3355,6 +3355,80 @@ outcome enum). `HandleSpecialCellEntry` and `ShowLockStatus` themselves
 are out of scope for this module — the caller is expected to invoke
 them based on the returned outcome.
 
+### World object index: a previously-undocumented `WORLD.DAT` block (decoded 2026-09-23)
+
+A sparse per-cell index of doors/locks, searchable/found-item triggers,
+and scripted monster-spawn markers — the actual source of the door/lock
+flag `movement.c`'s `movementClassifyCell` takes as a plain `isDoor`
+bool, and what `TryInteractAtPosition` (`yendor2.asm:30813`,
+instruction-identical in Chapter 3) consults while baking the
+in-memory dungeon grid's per-cell flags (see "In-memory dungeon map
+grid" above). Not referenced anywhere else in this document before now
+— found this session by following `TryInteractAtPosition` into
+`FindObjectAtPosition` (`yendor2.asm:30970`).
+
+**Location, found via the resource-block-setup stub family**
+(`extract_resource_stubs.py` in both games' `ida_scripts/`, matching
+the pattern already used to confirm the master-palette offset):
+`PreloadWorldDataTable` (`yendor2.asm:3661`, `yendor3.asm:27171`)
+allocates a fixed `0x677`-paragraph buffer and reads `0x6768` (26,472)
+bytes from `WORLD.DAT` in one shot via `PrepareWorldDataTableBlockRead`
+— **Chapter 2: offset `0x1A1141`; Chapter 3: offset `0x41090D`**, same
+size both games (identical `0x677`/`0x6768` constants in both games'
+`InitGlobals`). Identified by cross-referencing the dumped stub table
+against the seven already-known `CURGAME` section offsets (all matched
+exactly, confirming the extraction method), then position-matching the
+remaining `WORLD.DAT`-block stubs between the two games' otherwise
+identical stub orderings.
+
+**On-disk/in-memory shape** (traced from `FindObjectAtPosition` and
+confirmed structurally against both real `WORLD.DAT` files — every one
+of 720 columns' lists sorted ascending by row with zero malformed
+terminators in either game): a **720-entry array of 16-bit byte
+offsets**, one per playable world-X column (`0x28` through `0x2F7`,
+indexed by `worldX - 0x28`), each pointing — relative to the block's
+own start, not the file — to that column's list of **6-byte records**,
+terminated by row `0xFFFF`:
+- `+0` row (`u16`) — the list is sorted ascending by this field, and
+  the original scan relies on that, stopping as soon as a list entry's
+  row exceeds the query.
+- `+2` flags (`u16`) — see below.
+- `+4` value (`u16`) — meaning depends on which flag bit is set.
+
+`FindObjectAtPosition`'s own bounds check before the lookup is exactly
+`movement.h`'s `MovementBounds` (same four global constants) — reused
+directly by `src23/worldobjects.c` rather than duplicated.
+
+**Flag bits**, tested by `TryInteractAtPosition` in this priority
+order (real data never showed more than one of these bits set on the
+same record in either game):
+| Flag | Ch2 records | Ch3 records | Behavior |
+|---|---|---|---|
+| `0x8000` | 443 | 355 | `LoadLockState(value)` — a lock/door id; always blocks movement. |
+| `0x4000` | 231 | 71 | `LoadCurgameRecord(value)`, an index into `CURGAME`'s event-state section; further outcome depends on `g_lockStatusFlags` bits not reimplemented here — plausibly searchable containers/found-item/document triggers. |
+| `0x1000` | 105 | 139 | Always reports a fixed `errorCode=4`; `value` isn't read for this branch at all. Semantic meaning of `errorCode=4` not confirmed. |
+| `0x800` | 2141 | 1862 | `TestCellMonsterSpawnedFlag(value)`, an index into `CURGAME`'s `SaveSectionMonsterSpawnFlags` bitmap — a scripted/pre-placed monster encounter marker, and the majority flag in both games' real data. |
+| `0x2000` | 187 | 139 | **Not tested by `TryInteractAtPosition` at all** — every flag check above it falls through to "nothing here" for a `0x2000`-only record. `ProbeFacingTile` (`yendor2.asm:30915`) reaches the same underlying record via the same `FindObjectAtPosition`, but its own callers weren't traced far enough this session to confirm whether any of them read this bit. |
+| `0x400` | 1 | 6 | Rare outlier in both games, not chased further. |
+
+(Counts above are the *reachable* totals — i.e. only records whose row
+also falls within the playable bounding box, which is what
+`worldObjectFind`, mirroring `FindObjectAtPosition`'s own bounds check,
+can ever return. Chapter 2's raw on-disk data has 3 additional dead
+records with rows outside that range, e.g. two around row 998 —
+provably unreachable by the real game too, since `FindObjectAtPosition`
+rejects any out-of-bounds query before the scan even starts.)
+
+**Not yet traced**: the real `WORLD.DAT` offset/format of whatever
+`LoadCurgameRecord` and `LoadLockState` read using a `0x4000`/`0x8000`
+record's `value`, and the `0x2000`/`0x400` bits' consumers, if any.
+Reimplemented (lookup only, not the deeper state resolution those
+flag branches feed into) in `src23/worldobjects.c`/`.h`:
+`worldObjectTableParse`/`worldObjectTableParseWorldDat` and
+`worldObjectFind`, tests in `tests/test_worldobjects.c` including exact
+reachable-record and per-flag counts checked against both real
+`WORLD.DAT` files.
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not

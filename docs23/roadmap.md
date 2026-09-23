@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, in-memory dungeon grid module)
+## Status (last updated 2026-09-23, world object index module)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -78,13 +78,22 @@ groundwork below is already in place.
   it's pure rendering/animation, nothing left to extract once
   `movement.c`'s `MovementCellSpecial` outcome is accounted for.
   Investigating its sibling `TryInteractAtPosition` (the real source
-  of the door/lock flag) surfaced a **previously-undecoded `WORLD.DAT`
-  block** — see the dedicated writeup and "not yet done" list below
-  under "Picking the next module" item 4. Still open for the dungeon
-  loop: that new object-table decode, `ShowLockStatus`,
-  `g_levelMonsters` placement/despawn, and everything downstream of a
-  committed move (monster processing, side-trap processing,
-  map-trigger effects, first-person viewport rendering).
+  of the door/lock flag) surfaced a previously-undecoded `WORLD.DAT`
+  block, since fully decoded as the eleventh module,
+  `worldobjects.c`/`.h`: a sparse per-cell object index (720
+  column-offset entries into sorted-by-row 6-byte records — doors/locks,
+  curgame-record triggers, and scripted monster-spawn markers), found
+  at `WORLD.DAT` offset `0x1A1141` (Chapter 2) / `0x41090D` (Chapter 3)
+  via `extract_resource_stubs.py` (new for `yendor3/`), tests in
+  `tests/test_worldobjects.c` with exact reachable-record and per-flag
+  counts checked against both real `WORLD.DAT` files. See
+  `file-formats.md`'s "World object index" section for the full flag-bit
+  table. Still open: `LoadCurgameRecord`/`LoadLockState`'s own
+  `CURGAME`-side formats, flag bits `0x2000`/`0x400`'s consumers (if
+  any — `0x2000` is real and common but untested by any traced caller),
+  `ShowLockStatus`, `g_levelMonsters` placement/despawn, and everything
+  downstream of a committed move (monster processing, side-trap
+  processing, map-trigger effects, first-person viewport rendering).
 
 ## Next: continue the C reimplementation
 
@@ -187,44 +196,12 @@ next):
    captures — defer it to the eventual rendering layer, don't
    reimplement it standalone.
 
-**New lead, not yet decoded (found 2026-09-23): a previously-unknown
-`WORLD.DAT` block — a sparse per-cell "world object" index.**
-`TryInteractAtPosition` (`yendor2.asm:30813`) — called by
-`RefreshDungeonMapWindow` per cell in the dungeon-grid build, and
-that's how doors/locks actually get their flag baked in, per
-`dungeongrid.c`'s notes above — looks up the cell via
-`FindObjectAtPosition` (`yendor2.asm:30970`), which is a real,
-traced data structure, not yet reimplemented:
-- **In-memory shape** (fully traced): a 720-entry array (one per
-  playable X column, `0x28`-`0x2F7`) of 16-bit offsets, each pointing
-  to a sorted-by-Y list of 6-byte records — `+0` Y (u16), `+2` a flags
-  word (bits seen: `0x8000` lock/door, `0x4000` a `LoadCurgameRecord`
-  case, `0x1000`, `0x800` a monster-spawn-flag case), `+4` a value
-  passed into `LoadLockState`/`LoadCurgameRecord`/
-  `TestCellMonsterSpawnedFlag` (likely a lock id / event-record index
-  / monster-cell index depending on the flag), terminated by `Y=0xFFFF`.
-  This is the actual source of the door/lock flag `movement.c`'s API
-  currently takes as a bare `bool`.
-- **Loaded from `WORLD.DAT` as one ~26KB blob**, not fixed on-disk
-  records: `PreloadWorldDataTable` (`yendor2.asm:3661`) allocates
-  `0x677` paragraphs and reads `_blockSize1` (`0x6768` = 26,472) bytes
-  in one shot via `PrepareWorldDataTableBlockRead`
-  (`yendor2.asm:42649`), whose resource-setup stub reads the 32-bit
-  `WORLD.DAT` offset from a fixed in-EXE table at `DS:0xCE5F` — **the
-  actual offset value isn't extracted yet**, needs an IDA script dump
-  (same pattern as the other `dump_*_tables.py` scripts) the way
-  `LoadMasterPalette`'s offset (`0x8270A`) was confirmed.
-- **Not yet done, in order**: dump the real offset (and Chapter 3's
-  equivalent — check its own resource-stub table, likely a different
-  offset/size per the established per-game-differs-in-size pattern),
-  read the raw bytes from both real `WORLD.DAT` files at that offset,
-  parse the column-offset-array + row-list structure directly against
-  known door/container/trigger cell positions to pin down the `+4`
-  field's exact semantics per flag bit, then reimplement as
-  `src23/worldobjects.c`/`.h` (working name) with real-data tests
-  following the established pattern. Comparable in scope to the
-  original item/monster/`worldmap.c` decodes — budget it as its own
-  session, don't rush it into an existing module.
+~~World object index~~ — **done 2026-09-23** (`worldobjects.c`/`.h`,
+see item 4's status line above and `file-formats.md`'s "World object
+index" section for the full decode). Still open there:
+`LoadCurgameRecord`/`LoadLockState`'s own `CURGAME`-side record formats
+(what a `0x4000`/`0x8000` record's `value` actually indexes into), and
+flag bits `0x2000`/`0x400`'s consumers, if any.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need

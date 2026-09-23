@@ -175810,3 +175810,46 @@ Unused (was _800): offset table @0xd19f, length table @0xd1a3, 1 entries, 23-byt
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'extract_resource_stubs.py', 'noexport']
+[*] reading extract_resource_stubs.py
+[*] executing extract_resource_stubs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+27 resource stubs found
+
+0x27b42 (sz=33): si_raw=0xce47 real_si=0x3a6a7 offset=0x168f11 blocksize_expr=3Ah
+0x27bd6 (sz=33): si_raw=0xce43 real_si=0x3a6a3 offset=0x1677a1 blocksize_expr=28h
+0x27bf7 (sz=33): si_raw=0xce4f real_si=0x3a6af offset=0x1771db blocksize_expr=22h
+0x27c78 (sz=30): si_raw=0xce6f real_si=0x3a6cf offset=0x1acced blocksize_expr=1388h
+0x27c96 (sz=26): si_raw=0xce5f real_si=0x3a6bf offset=0x1a1141 blocksize_expr=ax
+0x27cb0 (sz=25): si_raw=0xce1f real_si=0x3a67f offset=0x8270a blocksize_expr=300h
+0x27cfe (sz=34): si_raw=0xce5b real_si=0x3a6bb offset=0x19c7a5 blocksize_expr=ax
+0x27d8a (sz=30): si_raw=0xcdeb real_si=0x3a64b offset=0xfe05 blocksize_expr=30C0h
+0x27da8 (sz=30): si_raw=0xcdd3 real_si=0x3a633 offset=0x0 blocksize_expr=1388h
+0x27dc6 (sz=31): si_raw=0xcde3 real_si=0x3a643 offset=0xfa6c blocksize_expr=1
+0x27de5 (sz=31): si_raw=0xcddf real_si=0x3a63f offset=0xf7e8 blocksize_expr=1
+0x27e04 (sz=28): si_raw=0xcde7 real_si=0x3a647 offset=0xfccc blocksize_expr=1
+0x27e20 (sz=26): si_raw=0xcdd7 real_si=0x3a637 offset=0x1388 blocksize_expr=ax
+0x27e3a (sz=25): si_raw=0xcddb real_si=0x3a63b offset=0x4bc8 blocksize_expr=22h
+0x27e7c (sz=30): si_raw=0xce07 real_si=0x3a667 offset=0x7bd2e blocksize_expr=10h
+0x27e9a (sz=30): si_raw=0xce0b real_si=0x3a66b offset=0x7c81e blocksize_expr=0Ch
+0x27eb8 (sz=30): si_raw=0xce0f real_si=0x3a66f offset=0x7d502 blocksize_expr=8
+0x27ed6 (sz=30): si_raw=0xce13 real_si=0x3a673 offset=0x7dcd2 blocksize_expr=0Ch
+0x27ef4 (sz=30): si_raw=0xce17 real_si=0x3a677 offset=0x7e5ba blocksize_expr=1Ah
+0x27f12 (sz=30): si_raw=0xce1b real_si=0x3a67b offset=0x822aa blocksize_expr=4
+0x27f30 (sz=30): si_raw=0xcdff real_si=0x3a65f offset=0x71138 blocksize_expr=3Ah
+0x27f4e (sz=30): si_raw=0xce03 real_si=0x3a663 offset=0x7af96 blocksize_expr=3Ah
+0x27f6c (sz=26): si_raw=0xcdf3 real_si=0x3a653 offset=0x70800 blocksize_expr=ax
+0x27f86 (sz=30): si_raw=0xce6b real_si=0x3a6cb offset=0x1aa5dd blocksize_expr=50h
+0x27fe0 (sz=32): si_raw=0xcdef real_si=0x3a64f offset=0x0 blocksize_expr=ax
+0x28000 (sz=26): si_raw=0xcdf7 real_si=0x3a657 offset=0x70ad0 blocksize_expr=ax
+0x2801a (sz=26): si_raw=0xcdfb real_si=0x3a65b offset=0x71048 blocksize_expr=ax
+----- end target script output -----
+[*] finished executing extract_resource_stubs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

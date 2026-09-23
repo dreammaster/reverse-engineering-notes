@@ -987,6 +987,31 @@ check the real disassembly range for each function independently, the
 same way `src23/movement.c`'s two classification functions had to be
 written as explicit per-game band lists rather than one shared formula.
 
+## World object index: same format and offset-finding method, different content mix
+
+Found while writing `src23/worldobjects.c` (2026-09-23), checked
+against both real `WORLD.DAT` files. Same as the in-memory dungeon
+grid immediately below: the format itself (720-column offset array,
+6-byte sorted-by-row records, `0xFFFF` terminator, the flag-bit
+dispatch order) is instruction-identical between the two games — only
+the block's `WORLD.DAT` offset (`0x1A1141` Chapter 2 vs. `0x41090D`
+Chapter 3, both discovered the same way, via
+`extract_resource_stubs.py`) and its content differ:
+- Chapter 2: 3108 reachable records; Chapter 3: 2572 — fewer overall
+  despite Chapter 3's larger map, consistent with the already-documented
+  broader pattern of Chapter 3 redistributing content rather than
+  simply scaling everything up (see "In-world readable text" above).
+- The relative mix shifts too: Chapter 3 has proportionally more
+  monster-spawn markers (flag `0x800`: 72% of its records vs. Chapter
+  2's 69%); door/lock markers (flag `0x8000`) stay close to the same
+  proportion in both (~14%); the bigger shift is curgame-record
+  markers, flag `0x4000`, dropping from 231 records (7.4% of the
+  total) in Chapter 2 to just 71 (2.8%) in Chapter 3.
+- Chapter 2's raw on-disk data has 3 dead records with rows outside
+  the playable bounding box (unreachable via the real lookup code,
+  since the bounds check runs before the scan); Chapter 3's real data
+  has none.
+
 ## In-memory dungeon grid: no behavioral difference found
 
 Found while writing `src23/dungeongrid.c` (2026-09-23), from a full
