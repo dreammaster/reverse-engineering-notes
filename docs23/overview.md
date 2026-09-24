@@ -8491,6 +8491,69 @@ Fully decoded and instruction-identical between both games.
   ever reposition themselves at all — both genuinely open questions,
   not just unstarted work.
 
+### 2026-09-24 session update: TryInteractAtPosition, and a previously-undocumented shared CURGAME bitmap
+
+New module `src23/interact.c`/`.h`: `TryInteractAtPosition`
+(`yendor2.asm:30813`, instruction-identical in Chapter 3) — the
+function that actually consumes a `worldobjects.c` record on every
+movement step, the real source of the per-cell "what's here" decision
+that feeds the `start` main loop's autosave choice and
+`ShowLockStatus`/`HandleSpecialCellEntry`'s message selection (neither
+of those two reimplemented — pure UI/rendering). Picked as the next
+module because it was the clearest remaining gap in the core dungeon
+loop per `roadmap.md`'s item 4, and because it directly consumes three
+modules already done this project (`worldobjects.c`, `lockcatalog.c`,
+`monsterpool.c`).
+
+Traced all 11 `errorCode` branches. Most interesting finding: the
+"already unlocked"/"already triggered" check the door and
+curgame-record branches both make turned out to read from the exact
+same in-memory scratch pair, and following `LoadLockState` and
+`LoadCurgameRecord`'s own CURGAME reads (not just their already-decoded
+EMS-backed lock-catalog reads) showed both populate it from the same
+CURGAME section — cross-confirmed by reading `UnlockDoorCommand`'s
+write-back path, which writes the updated bit to that identical
+section after a successful unlock. That section was already in
+`savegame.h` as `SaveSectionEventState`, but only documented as inert
+"byte-addressed state" — this session found it's actually a **single
+bit-packed bitmap shared between two id spaces**: locks get bits
+`[0, lockCount)`, curgame records get bits offset by a per-game
+constant (`_val10`, confirmed arithmetically to be exactly Chapter 2's
+lock count, 608) so the two spaces don't collide.
+
+Except, checking the Chapter 3 side of that same constant
+(`word_2ECF8`) turned up something that reframes an already-recorded
+open question rather than closing it: that global is read but never
+written anywhere in Chapter 3's disassembly, always 0. That's the
+*second, independent* always-zero global found in `LoadCurgameRecord`
+this project — the first (`word_3320E`/`_val9`, found while decoding
+the lock catalog) governs a completely different mechanism (the
+4-byte EMS record's own offset, still unresolved). Two unrelated
+always-zero offset globals in the same function is more suspicious
+than either alone, but still not proof of a genuine engine bug versus
+intentionally-disabled/dead code — recorded honestly as still open
+rather than forced either way.
+
+Also added `LockFlagUnknown40` to `lockcatalog.h`'s `LockFlag` enum —
+real, previously-unlisted bit (the doc comment already covered
+`0x1`/`0x2`/`0x80` as "real but unconfirmed" and silently missed
+`0x40`) — now confirmed to be what `TryInteractAtPosition` tests to
+select its `errorCode=8` outcome, though the bit's own meaning is
+still not confirmed.
+
+Full writeup in `file-formats.md`'s new "TryInteractAtPosition"
+section, plus updates to the `CURGAME` section-4 table entry and the
+existing "LoadCurgameRecord" note. Tests in `tests/test_interact.c`;
+rebuilt and ran the entire suite (all 18 files) to confirm no
+regressions from the `lockcatalog.h` enum addition — all pass.
+
+Still open, unchanged by this session except as noted above: how a
+wall/door trap pool entry gets created, whether monsters ever
+reposition themselves, `LoadCurgameRecord`'s own 4-byte EMS record
+format (a different question from the bitmap resolved this session),
+map-trigger effects, and first-person viewport rendering (needs the
+not-yet-started SDL2 layer).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

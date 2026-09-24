@@ -46,7 +46,7 @@ buffer far pointer, `+6` byte count, `+8` block index, `+0xA`/`+0xC`
 | 1 | `0x0000` | 5000 | `0x0000` | 5000 | 500-byte game-state block + 9 x 500-byte party records; in-memory `DS:0x93FF` (Ch3 `0xCEDD`) |
 | 2 | `0x1388` | 144 x 100 | `0x1388` | 168 x 100 | fog-of-war bitmap (`PersistExploredCell`, `RevealMapRegion`, `ShowLocalAreaMap`, `RefreshDungeonMapWindow`) |
 | 3 | `0x4BC8` | 1296 x 34 | `0x5528` | 1296 x 34 | item instances: ground slots and container contents (`LoadGroundItemSlotRecord`, `LoadContainerContents`, `SaveAndCloseContainer`, ...) |
-| 4 | `0xF7E8` | 644 | `0x10148` | 1059 | byte-addressed state (`LoadCurgameRecord`, `HandleSearchCommand`, `UnlockDoorCommand`, `UseAbilityCommand`, `ApplyEncodedItemEffect`, `start`'s autosave) |
+| 4 | `0xF7E8` | 644 | `0x10148` | 1059 | shared lock+curgame-record "already unlocked/triggered" bitmap, bit-packed (`LoadCurgameRecord`, `LoadLockState`, `UnlockDoorCommand`, `HandleSearchCommand`, `UseAbilityCommand`, `ApplyEncodedItemEffect`, `start`'s autosave; see `src23/interact.h`) |
 | 5 | `0xFA6C` | 608 | `0x1056B` | 1008 | byte-addressed lock/shop state (`LoadLockState`, `RunShopScreen`, `TriggerShopExitSoundAndPersist`) |
 | 6 | `0xFCCC` | 313 | `0x1095B` | 626 | monster-spawned flag bitmap (`Set`/`Clear`/`TestCellMonsterSpawnedFlag`) |
 | 7 | `0xFE05` | 80 x 156 | `0x10BCD` | 80 x 156 | `g_levelMonsters`; in-memory `DS:0x0F26` (Ch3 `0x122C`) |
@@ -3481,6 +3481,80 @@ state resolution the `0x4000` branch feeds into) in
 `tests/test_worldobjects.c` including exact reachable-record and
 per-flag counts checked against both real `WORLD.DAT` files.
 
+### `TryInteractAtPosition`: the per-cell interaction dispatcher (decoded 2026-09-24)
+
+The function that actually consumes a `worldobjects.c` record —
+`TryInteractAtPosition` (`yendor2.asm:30813`, instruction-identical in
+Chapter 3), called once per movement step (and from `UnlockDoorCommand`,
+the map-editor debug overlay, and click-to-travel). Looks up the cell
+via `FindObjectAtPosition`, branches on the record's flags in exactly
+the priority order `worldobjects.h`'s `WorldObjectFlag` already
+documents (`0x8000` door > `0x4000` curgame record > `0x1000` fixed
+response > `0x800` monster spawn > nothing), and sets a global
+`errorCode` the `start` main loop reads to decide whether to autosave
+`CURGAME` — `ShowLockStatus`/`HandleSpecialCellEntry` (neither
+reimplemented, pure UI/rendering) read it too, to choose what to show.
+
+**`errorCode` values** (kept identical in `src23/interact.h`'s
+`InteractOutcome` so the two can be cross-referenced directly):
+- `0` — nothing here, or the door/curgame-record/monster is already
+  resolved (unlocked, triggered, or spawned).
+- `1`/`2` — curgame-record fallback: none of flags `0x10`/`0x8`/`0x40`
+  are set; `2` if flag `0x20` is also set, `1` otherwise. (Bit meanings
+  unconfirmed — see the "LoadCurgameRecord" note below.)
+- `3` — door, `LockFlagMagical` set ("magically locked").
+- `4` — a `WorldObjectFlagFixedResponse` (`0x1000`) record; `value`
+  isn't even read for this branch. Meaning still not confirmed.
+- `5` — a `WorldObjectFlagMonsterSpawn` (`0x800`) record whose monster
+  hasn't spawned yet (`TestCellMonsterSpawnedFlag` clear) — the
+  "unspawned monster marker" `dungeongrid.c`'s own writeup already
+  anticipated but didn't reimplement.
+- `6`/`7`/`10` — curgame-record, flags `0x10`/`0x8`/`0x40` respectively
+  (tested in that priority order, ahead of the `1`/`2` fallback).
+- `8` — door, `LockFlagUnknown40` (`0x40`) set — meaning unconfirmed,
+  but now known to be what selects this outcome.
+- `9` — door, not magical, `LockFlagUnknown40` clear, and the lock
+  record's own `price` field (`lockcatalog.h`) is nonzero.
+
+**A previously-undocumented finding made while tracing this**: both the
+door branch and the curgame-record branch test "is this already
+resolved?" via the exact same in-memory scratch pair
+(`g_lockUnlockedAccumulator`/`g_lockUnlockedMask`), and `LoadLockState`/
+`LoadCurgameRecord` (`yendor2.asm:12598`/`12660`) both populate it from
+the **same CURGAME section** — section 4 in the byte-layout table above,
+previously documented only as generic "byte-addressed state" without
+knowing it was bit-packed or shared between two id spaces. Confirmed
+end-to-end by reading `UnlockDoorCommand` (`yendor2.asm:45970`), which
+writes the bit back with `FileEntry_Write` to that exact same section
+after a successful unlock:
+- Locks: bit index `lockId - 1` (0-based, matching `lockcatalog.h`'s
+  1-based ids), MSB-first within its byte — the same packing already
+  confirmed for the explored-map and monster-spawn bitmaps.
+- Curgame records: bit index `curgameId - 1 + curgameIdOffset`, same
+  packing, offset so the two id spaces don't collide.
+  `curgameIdOffset` is `_val10` (`yendor2.asm:56832`) — confirmed
+  arithmetically to be exactly Chapter 2's lock count, **608**.
+  **Chapter 3's equivalent global (`word_2ECF8`, `yendor3.asm:58618`)
+  is read but never written anywhere in the disassembly, always 0** —
+  the same always-zero-global quirk already found for
+  `LoadCurgameRecord`'s *other*, unrelated EMS-record multiplier
+  (`word_3320E`/`_val9`, see "LoadCurgameRecord" below) — meaning
+  Chapter 3's curgame-record ids collide with its own lowest lock ids'
+  unlock bits in this bitmap too. Two independently-discovered
+  always-zero offset globals in the same function is suggestive but
+  still not conclusive proof of a genuine bug; not chased further.
+
+Reimplemented in `src23/interact.c`/`.h`: `interactBitmapTest`/`Set`
+(the shared bitmap, addressed via `savegame.h`'s `SaveSectionEventState`
+directly rather than a caller-supplied buffer, since — unlike
+`globalflags.c`'s `g_globalFlags` — this section's exact offset and
+size were already confirmed), `interactSelectBranch`,
+`interactClassifyLock`/`Curgame`/`MonsterSpawn`, and the composed
+`interactClassify`. Tests in `tests/test_interact.c`. Two of the
+original's side effects aren't modeled (both belong to the rendering
+layer, not the data model): `g_uiScratchFlags3` bit `0x80` being
+cleared on entry and set again on the monster-spawn branch.
+
 ### Lock/door definition catalog (decoded 2026-09-23)
 
 A flat, ordinary catalog — one 26-byte record per lock id (the same
@@ -3554,7 +3628,12 @@ uses" pattern already seen elsewhere, e.g. Chapter 2's 15 slack
 item-catalog records), but not confirmed. None of this changes
 `lockcatalog.c`'s own correctness (it reads the real bytes faithfully
 either way) — recorded here so a future session picking up
-`LoadCurgameRecord` doesn't have to rediscover it.
+`LoadCurgameRecord` doesn't have to rediscover it. **This is a
+different offset/multiplier than the shared "already
+unlocked/triggered" bitmap's own `curgameIdOffset`** (`_val10` = 608,
+see `TryInteractAtPosition`'s writeup above) — two separate
+mechanisms, both keyed off a lock-count-ish per-game constant, both
+apparently disabled (always-zero) in Chapter 3.
 
 Reimplemented in `src23/lockcatalog.c`/`.h`:
 `lockCatalogParse`/`lockCatalogParseWorldDat`, `lockCatalogRecord`,

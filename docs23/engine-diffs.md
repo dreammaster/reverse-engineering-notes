@@ -1131,6 +1131,30 @@ against — reused directly rather than duplicated. Recorded here mainly
 so a future session doesn't waste time re-checking a game-diff that
 was already ruled out.
 
+## `TryInteractAtPosition`: identical dispatch logic, but Chapter 3 disables the shared-bitmap id offset
+
+Found while writing `src23/interact.c` (2026-09-24), from a full
+instruction-level trace of both games' `TryInteractAtPosition`
+(`yendor2.asm:30813`, `yendor3.asm`'s equivalent). The dispatch logic
+itself -- all 11 `errorCode` branches, the flag-priority order, the
+door/curgame-record "already resolved" bitmap check -- is
+instruction-identical, same as most of this project's dungeon-loop
+modules.
+
+The one real difference is in the data, not the code: the shared
+"already unlocked/triggered" bitmap's curgame-record id offset
+(`interactCurgameIdOffset` in `interact.h`) is a live, correctly-set
+constant in Chapter 2 (`_val10 = 608`, exactly its lock count) but a
+global that's **read, never written, always 0** in Chapter 3
+(`word_2ECF8`) -- meaning Chapter 3's curgame-record ids share bit
+positions with its own lowest lock ids in this bitmap, while Chapter
+2's two id spaces are kept cleanly separate. This is the *second*
+always-zero offset global found in `LoadCurgameRecord` specifically
+(the first, `word_3320E`/`_val9`, is a separate multiplier for the
+still-undecoded 4-byte EMS record -- see `lockcatalog.h`'s
+"LoadCurgameRecord" note) -- not proof of a genuine bug, but suggestive
+enough to flag rather than dismiss as isolated noise.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

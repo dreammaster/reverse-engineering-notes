@@ -50,7 +50,11 @@
  *      in both games' real data)
  *      but their exact meaning isn't confirmed -- ShowLockStatus
  *      branches on them but the branches only affect which of a few
- *      very similar messages is shown, not the return outcome.
+ *      very similar messages is shown, not the return outcome. Bit
+ *      0x40 (LockFlagUnknown40) is also real and tested by
+ *      TryInteractAtPosition (interact.h) -- confirmed to select its
+ *      errorCode=8 outcome there, but its own meaning is still not
+ *      confirmed either.
  *   +2 price (u16) -- a plain binary value, displayed split by 100 into
  *      two denominations (LoadLockState: `word_32DD0 / 100`,
  *      `word_32DD0 % 100`); which currency isn't confirmed.
@@ -86,6 +90,7 @@ bool lockCatalogParseWorldDat(LockCatalog *catalog, GameKind game, const uint8_t
 
 typedef enum {
     LockFlagMagical = 0x0020,
+    LockFlagUnknown40 = 0x0040,
     LockFlagKeyGold = 0x0200,
     LockFlagKeySilver = 0x0400,
     LockFlagKeySteel = 0x0800,

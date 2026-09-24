@@ -76,8 +76,9 @@ bool worldObjectTableParseWorldDat(WorldObjectTable *table, GameKind game, const
 typedef enum {
     /* value -> LoadLockState(value); a lock/door id. Always blocks movement (see movement.h's isDoor input). */
     WorldObjectFlagDoor = 0x8000,
-    /* value -> LoadCurgameRecord(value), an index into CURGAME's SaveSectionEventState; further outcome depends
-       on g_lockStatusFlags bits not reimplemented here (searchable/found-item/document triggers, plausibly). */
+    /* value -> LoadCurgameRecord(value), an index into CURGAME's SaveSectionEventState (both as the shared
+       "already triggered" bitmap and, separately, an EMS-backed 4-byte record whose own format isn't
+       resolved -- see lockcatalog.h's "LoadCurgameRecord" note). Outcome classified by interact.h. */
     WorldObjectFlagCurgameRecord = 0x4000,
     /* TryInteractAtPosition always reports a fixed errorCode=4 for this bit and never reads value for it. */
     WorldObjectFlagFixedResponse = 0x1000,

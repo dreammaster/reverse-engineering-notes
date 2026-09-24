@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-23, TryActivateMonsterByDistance)
+## Status (last updated 2026-09-24, TryInteractAtPosition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -241,12 +241,37 @@ groundwork below is already in place.
   Wired into `monsterPoolSpawn` at the same point the original calls
   it. Tests in `tests/test_monster.c`; all 17 suites pass. With this,
   every fully-confirmed piece of `ProcessLevelMonsters` and
-  `SpawnMonsterInFacingDirection` is reimplemented. Still open: how a
+  `SpawnMonsterInFacingDirection` is reimplemented.
+  **`TryInteractAtPosition` — done as a new module, `interact.c`/`.h`
+  (2026-09-24)**: the per-cell interaction dispatcher run on every
+  movement step, the actual consumer of `worldobjects.c`'s records —
+  fully traced and reimplemented, all 11 `errorCode` outcomes. Found a
+  previously-undocumented CURGAME structure along the way: the
+  "already unlocked"/"already triggered" check the door and
+  curgame-record branches both make turns out to be the **same shared,
+  bit-packed bitmap** (CURGAME section 4, `SaveSectionEventState` —
+  previously only documented as generic "byte-addressed state"),
+  confirmed end-to-end by reading `UnlockDoorCommand`'s write-back.
+  Locks get bits `[0, lockCount)`; curgame records get bits offset by
+  `_val10` (confirmed to be exactly Chapter 2's lock count, 608) so the
+  two id spaces don't collide — **except in Chapter 3, where the
+  equivalent global (`word_2ECF8`) is read but never written, always
+  0**, the same always-zero-global quirk already found for
+  `LoadCurgameRecord`'s unrelated EMS-record multiplier
+  (`word_3320E`/`_val9`) — two independent always-zero offset globals
+  in the same function, still not conclusively a bug vs. dead code.
+  Added `LockFlagUnknown40` to `lockcatalog.h` (real bit, now known to
+  select `errorCode=8`, meaning still unconfirmed). Full writeup in
+  `file-formats.md`'s new "TryInteractAtPosition" section. Tests in
+  `tests/test_interact.c`; all 18 suites pass. Still open: how a
   wall/door trap pool entry (as opposed to an ordinary monster)
   actually gets created, whether monsters ever reposition themselves at
-  all and via what function, `LoadCurgameRecord`'s own format,
-  map-trigger effects, and first-person viewport rendering (needs the
-  SDL2 layer, not yet started).
+  all and via what function, `LoadCurgameRecord`'s own 4-byte EMS
+  record format (a separate, still-unresolved question from the bitmap
+  above), `ShowLockStatus`/`HandleSpecialCellEntry` (pure UI/rendering,
+  deferred to the eventual SDL2 layer), map-trigger effects, and
+  first-person viewport rendering (needs the SDL2 layer, not yet
+  started).
 
 ## Next: continue the C reimplementation
 
