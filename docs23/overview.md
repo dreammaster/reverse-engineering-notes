@@ -8728,10 +8728,62 @@ surfaced one more pre-existing stale build-command comment
 `saveHeaderBcd4` dependency) — fixed. All 18 suites pass.
 
 Still open, unchanged: the ability/spell-unlock table walk (needs its
-own `DS:0xD22B` data-table extraction), the general derived-stats
-recompute (`RefreshCarryCapacityAndAttributeBonuses`), the wall/door
-trap creation question, whether monsters ever reposition themselves,
-and the not-yet-started SDL2 platform layer.
+own `DS:0xD22B` data-table extraction), the wall/door trap creation
+question, whether monsters ever reposition themselves, and the
+not-yet-started SDL2 platform layer.
+
+### 2026-09-24 session update (continued): UseTrainingItem's tail calls, and a corrected understanding of what training actually does
+
+Started this round looking for the next module (checked the wall/door
+trap creation question again first — found no new lead beyond what
+was already recorded, and looked at the ability-unlock table and
+`RecomputeEquipmentStatBonuses` before deciding both needed more
+upstream decoding than was worth committing to blind — the latter
+turned out to depend on a still-undecoded item-catalog sub-table).
+Landed on the two functions `UseTrainingItem` itself calls at its very
+end, `SyncPartyRecordStagedStats` and
+`RefreshCarryCapacityAndAttributeBonuses`, since both were already
+partially read while scoping the bigger `RecomputeEquipmentStatBonuses`
+question and turned out to be small, clean, and self-contained.
+
+`SyncPartyRecordStagedStats` turned out to be more consequential than
+its size suggested: it's a blind bulk copy setting every stat's
+current value equal to its max, for everything except HP/MP (which
+`UseTrainingItem` already full-heals directly). This means training
+doesn't just raise ceilings — it also **refills already-depleted
+attributes and skills** up to their new max, an effect that isn't
+visible anywhere in the growth-formula tracing from earlier this
+session. Caught this only by reading `UseTrainingItem`'s full tail
+rather than stopping once the growth loops were understood. Confirmed
+the exact field range by working out the copy's byte counts (32 then
+28 bytes) against the record's known field offsets, rather than
+trusting the disassembly's own auto-generated comment at face value.
+
+`RefreshCarryCapacityAndAttributeBonuses` recomputes carry capacity
+(already empirically validated against real character saves earlier
+this project) and two "excess over 72" bonus pairs feeding
+`PartyStatEquipRating4`/`5`'s baseline — new named fields
+`PartyFieldStrengthBonus`/`DexterityBonus` (+ `Max` variants). This
+resolves an old note sitting in `file-formats.md` since long before
+the C reimplementation phase began, which had correctly described the
+mechanism ("+0x38/+0x78... scales 20% of the value above 72") but
+without a name or a reimplementation to attach it to — a nice example
+of old disassembly notes and fresh tracing agreeing exactly.
+
+Deliberately stopped short of `RefreshCarryCapacityAndAttributeBonuses`'s
+own tail call, `RecomputeEquipmentStatBonuses`, once reading it showed
+it needs `LoadItemCatalogRecord` and a "target table" sub-record this
+project's `item.c` hasn't decoded yet — three of its five source
+fields (`+0x32`/`+0x34`/`+0x36`) also remain untraced, set by neither
+of the two functions read this round. Recorded clearly as its own
+still-open, appropriately-scoped next candidate rather than guessed at
+or partially ported.
+
+New `partySyncStagedStats`/`partyRefreshCarryCapacityAndAttributeBonuses`
+in `src23/party.c`/`.h`, both wired into `partyApplyTraining`'s tail in
+the original's exact call order. Tests extended in `tests/test_party.c`
+to cover the current-value sync and the excess-bonus threshold
+directly. All 18 suites pass, no regressions.
 
 ## Next steps (not started this session)
 

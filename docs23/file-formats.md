@@ -3878,6 +3878,34 @@ source, since this project hasn't built the upstream item-use pipeline
   than three coincidences, but that still isn't confirmed either way.
   A genuine, sharp Ch2/Ch3 behavioral difference regardless — see
   `engine-diffs.md`.
+- **Training also refills already-depleted attributes and skills, not
+  just their max** — a real effect easy to miss from the growth
+  formulas alone. `UseTrainingItem`'s tail calls two more functions in
+  sequence, both now reimplemented too:
+  - `SyncPartyRecordStagedStats` (`yendor2.asm:22633`; also called from
+    `UseItemType_400`, a different, not-yet-decoded item handler): a
+    blind bulk copy, current = max, for every `PartyStat` *except*
+    `PartyStatHitPoints`/`MagicPoints` (already full-healed directly,
+    above). Confirmed its exact address range by tracing the copy's own
+    byte counts (32 then 28 bytes) against the record's field offsets,
+    not assumed from the name alone.
+  - `RefreshCarryCapacityAndAttributeBonuses` (`yendor2.asm:18962`):
+    recomputes `PartyStatCarryCapacity` (current/max) as 10× the
+    matching Strength value, and two "excess over 72" bonus pairs —
+    new fields `PartyFieldStrengthBonus`/`DexterityBonus` (+ `Max`
+    variants) at `+0x38`/`+0x3A`/`+0x78`/`+0x7A` — as 20% of however
+    far Strength/Dexterity is past 72 (0 otherwise). This resolves this
+    file's older "6 core attributes" note, which had flagged
+    `+0x38`/`+0x3A`/`+0x78`/`+0x7A` as feeding
+    `RecomputeEquipmentStatBonuses`'s baseline without knowing what
+    computed them.
+  - This function's own tail call, `RecomputeEquipmentStatBonuses`
+    (`yendor2.asm:19907`), is **not** reimplemented — it folds these
+    bonus fields (plus three still-untraced ones, `+0x32`/`+0x34`/
+    `+0x36`) into `PartyStatEquipRating1-5` together with equipped
+    items' own catalog bonuses, which needs a currently-undecoded
+    item-catalog sub-table (`item.c`'s "target table") this project
+    hasn't extracted yet.
 
 **Deliberately not reimplemented**, all pure UI/rendering or
 general-purpose utilities with a much wider blast radius than
@@ -3887,11 +3915,7 @@ training specifically:
 - The ability/spell-unlock table walk (`DS:0xD22B`, a
   class-and-level-indexed table, only consulted on even
   `PartyFieldLevel` values — not yet extracted).
-- `RefreshCarryCapacityAndAttributeBonuses`/`RecomputeEquipmentStatBonuses`
-  (derived-stat recompute — carry capacity, equipment-bonus scaling —
-  called from many unrelated places, not training-specific; this file's
-  older "6 core attributes" note above already partially describes
-  its `+0x38`/`+0x3A`/`+0x78`/`+0x7A` fields).
+- `RecomputeEquipmentStatBonuses` (see above).
 - `RunItemServiceRecipientLoop` (offers the same training item to
   other party members — a whole separate UI flow; the 13%-of-Charisma
   value computed early in `UseTrainingItem`, `word_2E38E`, is a
@@ -3899,12 +3923,16 @@ training specifically:
   older "feeds a separate growth calculation" note in this file to
   "feeds UI flow control, not a stat").
 
-Reimplemented in `src23/party.c`/`.h`: `partyApplyTraining`,
-`partyClassPromotionThresholds`. `cost` is caller-supplied (see above).
-Tests in `tests/test_party.c`, including per-class-base MP-formula
-spot checks (MAGE, DRUID, PALADIN), the untrained-slot skip, both
-stat/HP/MP caps, and promotion at both Chapter 2 thresholds plus their
-absence in Chapter 3.
+Reimplemented in `src23/party.c`/`.h`: `partyApplyTraining` (calls
+`partySyncStagedStats` then `partyRefreshCarryCapacityAndAttributeBonuses`
+at its tail, matching the original's own call order exactly),
+`partyClassPromotionThresholds`, `partySyncStagedStats`,
+`partyRefreshCarryCapacityAndAttributeBonuses`. `cost` is
+caller-supplied (see above). Tests in `tests/test_party.c`, including
+per-class-base MP-formula spot checks (MAGE, DRUID, PALADIN), the
+untrained-slot skip, both stat/HP/MP caps, promotion at both Chapter 2
+thresholds plus their absence in Chapter 3, the current-value sync, and
+the excess-over-72 bonus threshold.
 
 Two things worth flagging for anyone extending this:
 - **A real asymmetry in the threshold comparison**, reproduced exactly

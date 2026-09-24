@@ -420,6 +420,20 @@ static void testTraining(void) {
     checkU32("Survival (nonzero) grows by +2", partyGetStatMax(g_record, PartyStatSurvival), 7);
     checkU32("Chemistry (started at 0) stays untrained", partyGetStatMax(g_record, PartyStatChemistry), 0);
 
+    /* partySyncStagedStats: current values (which all started at 0 in setupTrainee) get pulled up to the new max. */
+    checkU32("SyncPartyRecordStagedStats: current Strength synced to its new max",
+             partyGetStat(g_record, PartyStatStrength), 12);
+    checkU32("current Stamina synced to its new max", partyGetStat(g_record, PartyStatStamina), 52);
+    checkU32("current Survival synced to its new max", partyGetStat(g_record, PartyStatSurvival), 7);
+    checkU32("current Dexterity stays 0 (its max never left 0)", partyGetStat(g_record, PartyStatDexterity), 0);
+
+    /* partyRefreshCarryCapacityAndAttributeBonuses: recomputed from the post-sync current Strength (12). */
+    checkU32("carry capacity (current) is 10x the post-training current Strength",
+             partyGetStat(g_record, PartyStatCarryCapacity), 120);
+    checkU32("carry capacity (max) is 10x max Strength", partyGetStatMax(g_record, PartyStatCarryCapacity), 120);
+    checkU32("Strength bonus is 0 (12 is nowhere near the 72 threshold)",
+             partyGetU16(g_record, PartyFieldStrengthBonus), 0);
+
     /* Physical classes (base 1-3): no MP growth attempted at all, even with nonzero MP max. */
     saveGameInit(&save, GameYendor2);
     bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
@@ -492,6 +506,18 @@ static void testTraining(void) {
     partyApplyTraining(g_record, GameYendor3, &save, cost); /* level 9 -> 10 */
     checkU32("yendor3: reaching level 10 does NOT promote (thresholds always 0)",
              partyGetU16(g_record, PartyFieldClass), 1);
+
+    /* Strength/Dexterity excess-over-72 bonus, exercised directly via the standalone refresh function. */
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatStrength, 82); /* current: 20% of (82-72)=10 -> 2 */
+    partySetStatMax(g_record, PartyStatStrength, 92); /* max: 20% of (92-72)=20 -> 4 */
+    partySetStat(g_record, PartyStatDexterity, 72); /* exactly at the threshold -> 0, not negative */
+    partyRefreshCarryCapacityAndAttributeBonuses(g_record);
+    checkU32("current Strength bonus: 20% of (82-72)", partyGetU16(g_record, PartyFieldStrengthBonus), 2);
+    checkU32("max Strength bonus: 20% of (92-72)", partyGetU16(g_record, PartyFieldStrengthBonusMax), 4);
+    checkU32("Dexterity exactly at 72 gets no bonus", partyGetU16(g_record, PartyFieldDexterityBonus), 0);
+    checkU32("carry capacity (current) is 10x current Strength (82)", partyGetStat(g_record, PartyStatCarryCapacity),
+             820);
 }
 
 int main(void) {

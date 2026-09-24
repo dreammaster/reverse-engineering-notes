@@ -327,21 +327,38 @@ groundwork below is already in place.
   identical between the games *except* the promotion thresholds — a
   **third** always-zero-global quirk found in Chapter 3
   (`word_331F8`/`word_331FA`), disabling secondary-class promotion via
-  training entirely; see `engine-diffs.md`. Deliberately deferred (own
-  future passes, each with a much wider blast radius than training
-  itself): the ability/spell-unlock table walk (`DS:0xD22B`, needs its
-  own data-table extraction), `RefreshCarryCapacityAndAttributeBonuses`
-  (a general derived-stat recompute called from many places), and
+  training entirely; see `engine-diffs.md`.
+  **`UseTrainingItem`'s tail calls — done, same round**:
+  `partySyncStagedStats` (`SyncPartyRecordStagedStats`) and
+  `partyRefreshCarryCapacityAndAttributeBonuses`
+  (`RefreshCarryCapacityAndAttributeBonuses`'s own body, not its tail
+  call — see below), both wired into `partyApplyTraining`'s own tail in
+  the original's exact call order. Found training does more than grow
+  maximums: `SyncPartyRecordStagedStats` pulls every stat's *current*
+  value up to its (possibly just-grown) max too — real, easy to miss
+  from the growth formulas alone, confirmed by tracing the copy's exact
+  byte-range math against the record's field offsets rather than
+  trusting the name. `RefreshCarryCapacityAndAttributeBonuses`
+  recomputes carry capacity (10× Strength) and two new fields,
+  `PartyFieldStrengthBonus`/`DexterityBonus` (+ `Max` variants) — 20%
+  of however far Strength/Dexterity sits past 72 — resolving an old
+  `file-formats.md` note that had flagged those fields without knowing
+  what computed them. Deliberately deferred (own future passes, each
+  with a much wider blast radius than training itself): the
+  ability/spell-unlock table walk (`DS:0xD22B`, needs its own
+  data-table extraction), `RecomputeEquipmentStatBonuses` (needs a
+  currently-undecoded item-catalog sub-table), and
   `RunItemServiceRecipientLoop` (offering the item to other party
   members — resolved an old "feeds a separate growth calculation" note
   to "feeds UI flow control, not a stat"). `cost` is caller-supplied,
   since this project hasn't built the upstream item-use pipeline
   (`UseItem`) that would resolve an item's own price. Tests in
   `tests/test_party.c` (per-class MP-formula spot checks, both caps,
-  untrained-slot skip, promotion at both Ch2 thresholds and its
-  Ch3 absence). Full writeup in `file-formats.md`. All 18 suites pass
-  (rebuilt entirely — surfaced and fixed one more pre-existing stale
-  build-command comment, `test_effect.c`, missing `savegame.c`).
+  untrained-slot skip, promotion at both Ch2 thresholds and its Ch3
+  absence, the current-value sync, the excess-over-72 bonus). Full
+  writeup in `file-formats.md`. All 18 suites pass (rebuilt entirely —
+  surfaced and fixed one more pre-existing stale build-command comment,
+  `test_effect.c`, missing `savegame.c`).
 
 ## Next: continue the C reimplementation
 
@@ -452,14 +469,15 @@ index" section for the full decode). Still open there:
 flag bits `0x2000`/`0x400`'s consumers, if any.
 
 ~~5. `UseTrainingItem`'s core leveling mechanic~~ — **done 2026-09-24**
-   (`partyApplyTraining`/`partyClassPromotionThresholds`, see the
-   status entry above and `file-formats.md`'s "UseTrainingItem"
+   (`partyApplyTraining`/`partyClassPromotionThresholds`/
+   `partySyncStagedStats`/`partyRefreshCarryCapacityAndAttributeBonuses`,
+   see the status entry above and `file-formats.md`'s "UseTrainingItem"
    section). Still open, each a good candidate for its own pass: the
    ability/spell-unlock table walk (`DS:0xD22B`, not yet extracted),
-   `RefreshCarryCapacityAndAttributeBonuses`/`RecomputeEquipmentStatBonuses`
-   (general derived-stat recompute, not training-specific), and
-   `RunItemServiceRecipientLoop` (the "offer to other party members" UI
-   flow). Also still needs: the upstream `UseItem`/`SelectItemUseRecord`
+   `RecomputeEquipmentStatBonuses` (needs a currently-undecoded
+   item-catalog sub-table — see `PartyFieldStrengthBonus`'s comment in
+   `party.h`), and `RunItemServiceRecipientLoop` (the "offer to other
+   party members" UI flow). Also still needs: the upstream `UseItem`/`SelectItemUseRecord`
    item-use pipeline this project hasn't built yet, which is what would
    actually resolve `partyApplyTraining`'s `cost` parameter from a real
    item record instead of a caller-supplied value.

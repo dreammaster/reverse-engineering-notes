@@ -203,7 +203,7 @@ const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game
     return game == GameYendor2 ? &kYendor2 : &kYendor3;
 }
 
-static int trainingScalePercentRounded(int value, int percent) {
+static int partyScalePercentRounded(int value, int percent) {
     return (value * percent + 50) / 100;
 }
 
@@ -237,7 +237,7 @@ PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *s
 
     /* Max HP grows by 30% of max Stamina; current HP is set to the new max (a full heal). */
     trainingAddStatMaxCapped(record, PartyStatHitPoints,
-                              trainingScalePercentRounded(partyGetStatMax(record, PartyStatStamina), 30));
+                              partyScalePercentRounded(partyGetStatMax(record, PartyStatStamina), 30));
     partySetStat(record, PartyStatHitPoints, partyGetStatMax(record, PartyStatHitPoints));
 
     /*
@@ -256,22 +256,22 @@ PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *s
             mpRaw = wisdom;
             break;
         case 5: /* ALCHEMIST */
-            mpRaw = trainingScalePercentRounded(wisdom, 75) + trainingScalePercentRounded(intelligence, 25);
+            mpRaw = partyScalePercentRounded(wisdom, 75) + partyScalePercentRounded(intelligence, 25);
             break;
         case 6: /* PALADIN */
-            mpRaw = trainingScalePercentRounded(wisdom, 50);
+            mpRaw = partyScalePercentRounded(wisdom, 50);
             break;
         case 8: /* DRUID */
-            mpRaw = trainingScalePercentRounded(intelligence, 75) + trainingScalePercentRounded(wisdom, 25);
+            mpRaw = partyScalePercentRounded(intelligence, 75) + partyScalePercentRounded(wisdom, 25);
             break;
         case 9: /* MARKSMAN */
-            mpRaw = trainingScalePercentRounded(intelligence, 50);
+            mpRaw = partyScalePercentRounded(intelligence, 50);
             break;
         default: /* MAGE (7), and any other/unmatched base */
             mpRaw = intelligence;
             break;
         }
-        trainingAddStatMaxCapped(record, PartyStatMagicPoints, trainingScalePercentRounded(mpRaw, 30));
+        trainingAddStatMaxCapped(record, PartyStatMagicPoints, partyScalePercentRounded(mpRaw, 30));
         partySetStat(record, PartyStatMagicPoints, partyGetStatMax(record, PartyStatMagicPoints));
     }
 
@@ -288,7 +288,36 @@ PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *s
         partySetU16(record, PartyFieldClass, (uint16_t)(partyGetU16(record, PartyFieldClass) + 10));
     }
 
+    partySyncStagedStats(record);
+    partyRefreshCarryCapacityAndAttributeBonuses(record);
     return PartyTrainOutcomeApplied;
+}
+
+/* 20% of however far value is past 72, or 0 if it isn't. */
+static uint16_t partyExcessBonus(uint16_t value) {
+    if (value <= 72) {
+        return 0;
+    }
+    return (uint16_t)partyScalePercentRounded(value - 72, 20);
+}
+
+void partyRefreshCarryCapacityAndAttributeBonuses(uint8_t *record) {
+    partySetStat(record, PartyStatCarryCapacity, (uint16_t)(10 * partyGetStat(record, PartyStatStrength)));
+    partySetStatMax(record, PartyStatCarryCapacity, (uint16_t)(10 * partyGetStatMax(record, PartyStatStrength)));
+
+    partySetU16(record, PartyFieldStrengthBonus, partyExcessBonus(partyGetStat(record, PartyStatStrength)));
+    partySetU16(record, PartyFieldDexterityBonus, partyExcessBonus(partyGetStat(record, PartyStatDexterity)));
+    partySetU16(record, PartyFieldStrengthBonusMax, partyExcessBonus(partyGetStatMax(record, PartyStatStrength)));
+    partySetU16(record, PartyFieldDexterityBonusMax, partyExcessBonus(partyGetStatMax(record, PartyStatDexterity)));
+}
+
+void partySyncStagedStats(uint8_t *record) {
+    for (PartyStat stat = PartyStatStrength; stat <= PartyStatEquipRating5; stat++) {
+        partySetStat(record, stat, partyGetStatMax(record, stat));
+    }
+    for (PartyStat stat = PartyStatCarryCapacity; stat <= PartyStatChemistry; stat++) {
+        partySetStat(record, stat, partyGetStatMax(record, stat));
+    }
 }
 
 bool partyClassIsValid(unsigned classId) {

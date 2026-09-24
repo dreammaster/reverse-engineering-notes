@@ -53,7 +53,21 @@ typedef enum {
      */
     PartyFieldPendingLevel = 0x1E,
     PartyFieldProtections = 0x20, /* 9 x u16 resistance values, order of PartyProtection */
+    /*
+     * A 5 x u16 gap between PartyFieldProtections and PartyFieldStats that
+     * RecomputeEquipmentStatBonuses (yendor2.asm:19907, not reimplemented)
+     * copies into PartyStatEquipRating1-5's baseline before adding equipped
+     * items' own bonuses on top. Only the last two slots (+0x38/+0x3A) are
+     * traced -- see PartyFieldStrengthBonus/PartyFieldDexterityBonus below;
+     * +0x32/+0x34/+0x36 (feeding EquipRating1/3/2, in that swapped order)
+     * aren't set by any function read so far.
+     */
+    PartyFieldStrengthBonus = 0x38,  /* u16; 20% of (current Strength - 72), 0 if <= 72 */
+    PartyFieldDexterityBonus = 0x3A, /* u16; 20% of (current Dexterity - 72), 0 if <= 72 */
     PartyFieldStats = 0x3C,       /* 27 x u16 current values, indexed by PartyStat */
+    /* Same 5-slot gap and same two traced fields as above, mirrored for the max-value side. */
+    PartyFieldStrengthBonusMax = 0x78,  /* u16; 20% of (max Strength - 72), 0 if <= 72 */
+    PartyFieldDexterityBonusMax = 0x7A, /* u16; 20% of (max Dexterity - 72), 0 if <= 72 */
     PartyFieldStatsMax = 0x7C,    /* 27 x u16 maximum values, same indexing */
     PartyFieldAbilities = 0xB4,   /* u16 bitmask of learned special abilities (0x8000..0x1000) */
     PartyFieldAbilityCharge = 0xB6, /* 4 x u16 charge counters, one per ability bit, high bit first */
@@ -83,7 +97,7 @@ typedef enum {
     PartyStatEquipRating5,
     PartyStatHitPoints,
     PartyStatMagicPoints,
-    PartyStatCarryCapacity, /* 10 x Strength at creation; unnamed in the table */
+    PartyStatCarryCapacity, /* 10 x Strength (current/max), unnamed in the table -- see partyRefreshCarryCapacityAndAttributeBonuses */
     PartyStatSurvival,
     PartyStatProjectile,
     PartyStatSlashing,
@@ -234,17 +248,56 @@ typedef enum {
  * by a flat +2 (max only), and PartyFieldClass gets +10 at each
  * promotion threshold. Every max-stat growth silently no-ops for a
  * stat that's currently 0 (AddToStatCapped's own "untrained slot"
- * skip, reproduced exactly).
+ * skip, reproduced exactly). Finally calls partySyncStagedStats then
+ * partyRefreshCarryCapacityAndAttributeBonuses, in that order, exactly
+ * matching the original's own tail call sequence -- so besides HP/MP,
+ * every attribute and skill's *current* value also gets pulled up to
+ * its (possibly just-grown) max, and carry capacity/the two excess-stat
+ * bonus pairs get recomputed from the final Strength/Dexterity values.
  *
  * Deliberately NOT reimplemented here -- candidates for their own
  * passes: the ability/spell-unlock table walk (a fixed
  * level-and-class-indexed table at DS:0xD22B, not yet extracted, only
  * consulted on even PartyFieldLevel values) and
- * RefreshCarryCapacityAndAttributeBonuses' derived-stat recompute
- * (carry capacity, equipment-bonus scaling -- a general utility called
- * from many unrelated places, not training-specific).
+ * RecomputeEquipmentStatBonuses (equipment-bonus scaling into
+ * PartyStatEquipRating1-5 -- see PartyFieldStrengthBonus's comment;
+ * needs a currently-undecoded item-catalog sub-table).
  */
 PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *save, const Bcd4 cost);
+
+/*
+ * RefreshCarryCapacityAndAttributeBonuses (yendor2.asm:18962,
+ * instruction-identical in Chapter 3): recomputes PartyStatCarryCapacity
+ * (current and max) as 10x the matching Strength value, and the four
+ * "excess over 72" bonus fields above (PartyFieldStrengthBonus/
+ * DexterityBonus and their Max counterparts) as 20% of however far the
+ * matching Strength/Dexterity value is past 72 (0 if not past it).
+ * Called after any stat change (training, items, equipment) throughout
+ * the original -- UseTrainingItem is one caller among several.
+ *
+ * Only reimplements this function's own body. Its own tail call,
+ * RecomputeEquipmentStatBonuses (yendor2.asm:19907), is NOT
+ * reimplemented -- it folds these bonus fields (and three still-untraced
+ * ones, see PartyFieldStrengthBonus's comment) into PartyStatEquipRating1-5
+ * together with equipped items' own catalog bonuses, which needs a
+ * currently-undecoded item-catalog sub-table (item.c's "target table")
+ * this project hasn't extracted yet.
+ */
+void partyRefreshCarryCapacityAndAttributeBonuses(uint8_t *record);
+
+/*
+ * SyncPartyRecordStagedStats (yendor2.asm:22633; called from UseTrainingItem
+ * and UseItemType_400, a different, not-yet-decoded item handler): sets
+ * every stat's current value to its max, for every PartyStat except
+ * PartyStatHitPoints/PartyStatMagicPoints (both handled by their own
+ * explicit full-heal-to-new-max step elsewhere -- partyApplyTraining's own
+ * HP/MP growth already does this). In particular this is what makes
+ * training also refill an already-partly-depleted attribute or skill
+ * (survival, thievery, ...) up to its current max, not just raise the max
+ * itself -- a real effect of training beyond stat growth, easy to miss
+ * from the growth formulas alone.
+ */
+void partySyncStagedStats(uint8_t *record);
 
 /*
  * Class ids are tier * 10 + base: base 1-9 (FIGHTER..MARKSMAN), tier 0-2.
