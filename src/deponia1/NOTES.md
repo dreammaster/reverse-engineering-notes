@@ -16,6 +16,35 @@ instantiated inline other than `std::wstring`/`std::function`, and the two
 because they're tiny (the lambda body is a single `jmp` to
 `TPictureIO::RetryFailedPicturesLoad`).
 
+## Recovering the original directory layout from x_assert()
+
+The engine's assert macro, `x_assert(bool cond, const char* expr, const
+char* file, int line)`, embeds `__FILE__` as a full build-machine path at
+every call site, e.g. `/home/simon/Documents/jenkins/branchPillars/src/
+vsplayer/control/gameController.cpp`. `tools/extract_source_layout.py` scans
+every one of the 378 `x_assert` call sites in the binary, resolves the
+file/expression string operands, and cross-references the enclosing
+function - giving a confirmed mapping from many classes to their real
+source file, without guessing. Results: `manifest/source_layout.tsv` (raw,
+one row per assert) and `manifest/source_layout_summary.tsv` (grouped by
+recovered file, with sample functions).
+
+This is now the basis for this project's directory layout: `src/deponia1/`
+mirrors the original `src/` root (confirmed via asserts:
+`baselib/composedfile.cpp` for `TComposedFile`, `graphicslib/picture.cpp`
+for `TPictureIO`, `vsplayer/control/gameController.cpp` for
+`TGameController`, `vsplayer/main/mainSDL.cpp` for `main`/`Init`). A class
+only gets moved into that structure once an assert (or other hard evidence)
+actually confirms its file; `TStandardPaths`, `TMasterControl`, and
+`TComposedFileManager` have no assert hits yet, so they stay at the top
+level of `src/deponia1/` rather than being placed on a guess. Each moved
+header/source has a comment recording which assert confirmed its location.
+
+Re-run the extractor (cheap, a few seconds) whenever a new class's methods
+get reversed, in case they resolve to a file not yet seen - some files in
+`source_layout_summary.tsv` only have one or two sampled functions and are
+likely to grow other members as more classes get worked through.
+
 ## Key finding: ICF (identical code folding) is corrupting symbol names
 
 Several call sites in `main` resolve to

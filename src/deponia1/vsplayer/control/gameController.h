@@ -1,5 +1,8 @@
 // Reconstructed from Deponia_Linux.asm, TGameController methods at asm
 // lines 450097-453674 (address range 0x60BA70-0x60E5F8). See NOTES.md.
+//
+// Original path confirmed via the x_assert() call in RemoveGameController():
+// src/vsplayer/control/gameController.cpp - see manifest/source_layout.tsv.
 #pragma once
 
 #include <utility>

@@ -1,4 +1,4 @@
-#include "TGameController.h"
+#include "vsplayer/control/gameController.h"
 
 #include <cmath>
 #include <cstring>

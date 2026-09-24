@@ -3,6 +3,10 @@
 // non-obvious choices below (control flow, g_logfile's real type, the
 // retry-load lambda, string literals).
 //
+// Original path confirmed via an x_assert() call inside Init() (also
+// defined in this file, not yet reconstructed):
+// src/vsplayer/main/mainSDL.cpp - see manifest/source_layout.tsv.
+//
 // Control flow has been restructured from the raw jump graph into ordinary
 // if/return statements; the original's many duplicated
 // wxCmdLineParser::~wxCmdLineParser() calls at every exit path are an
@@ -18,11 +22,11 @@
 #include "AppFunctions.h"
 #include "AppGlobals.h"
 #include "SdlStub.h"
-#include "TComposedFile.h"
-#include "TGameController.h"
 #include "TMasterControl.h"
-#include "TPictureIO.h"
 #include "WxStub.h"
+#include "baselib/composedfile.h"
+#include "graphicslib/picture.h"
+#include "vsplayer/control/gameController.h"
 
 int main(int argc, char** argv, char** /*envp*/) {
     if (VSPlayerWindow != nullptr) {
