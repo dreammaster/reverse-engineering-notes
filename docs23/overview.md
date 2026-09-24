@@ -8998,6 +8998,92 @@ the turn-order-construction piece, `ProcessCombatRound`'s turn
 advancement and attack resolution left as the explicit remaining
 scope — a substantially larger piece not started).
 
+### 2026-09-24 session update (continued): `ProcessCombatRound`, and the mechanism that ties combat into ordinary exploration
+
+Picked up the remaining half of candidate 7: `ProcessCombatRound`
+(`yendor2.asm:11094`), the function that runs once per game-loop tick
+to process monster deaths and advance the turn. Before touching it,
+read `RunDungeonGameLoop` (`yendor2.asm:10150`) directly end to end to
+place it in context, rather than reasoning about it in isolation — a
+good call, since it explained something this project has been fuzzy
+about since the very first monster-AI work several sessions back.
+
+**The mechanism**: `RunDungeonGameLoop` builds a combat turn order
+every "round" (`BuildCombatTurnOrder`), dispatches whichever
+combatant's turn is current (`ProcessMonsterAttackTurn` for a monster,
+`HandleDungeonInput` for the player — neither reimplemented), then
+calls `ProcessCombatRound`, whose result decides what happens next:
+turn advances within the same round, the round is exhausted (rebuild
+the turn order, and — only at this point — run the dungeon-exploration
+monster AI and side-trap checks this project decoded several sessions
+ago), or no monster is left alive at all (combat/tick ends, loot and
+XP are shown). The sharp realization: **with no monster slots
+occupied — ordinary exploration — this reduces to exactly one
+turn-order entry (the player's own action) per game-loop tick**,
+which is *why* `ProcessLevelMonsters`' approach/ambush check has
+always appeared to run "once per movement step" in this project's
+docs — it's not driven by a separate timer, it's the natural
+consequence of every non-combat tick being a one-entry round that
+immediately exhausts. This closes a small but real gap in this
+project's mental model of the main loop that had been sitting
+unexamined since the monster-AI work.
+
+**The function itself**, once that context was in hand, turned out
+straightforward: a death scan over the 3 monster slots (defeat-flag,
+grant rewards via the already-existing `monsterGrantRewards`, zero the
+record), then — gated on "at least one monster slot is still occupied
+and alive", *not* "nothing died this pass", an easy misread caught by
+reading the actual flag-setting instruction rather than trusting an
+earlier summary comment — a forward-only, non-wrapping walk to the
+next non-defeated turn-order entry.
+
+**The one deliberately-skipped piece, and why it's actually a
+non-issue for this port**: the original also calls `CompactMonsterSlots`,
+which physically shifts surviving monster records to keep the 3-slot
+pool front-loaded, then fixes up any `g_combatTurnOrder` entry whose
+raw pointer now points at a moved record's stale address — including a
+neat trick in its helper, `RelocateActiveMonsterPointer`, which
+stashes the active monster's *type id* across the move (dereferencing
+the soon-to-be-stale pointer once beforehand) since a type id survives
+the move even though the pointer doesn't. Traced fully, then set aside
+deliberately: this project's `CombatTurnOrderEntry` was already
+designed last round to reference monsters by stable slot index rather
+than raw pointer (for the target-assignment modernization), which
+means the entire reason `CompactMonsterSlots` exists — stale pointers
+after a record moves — simply doesn't apply here. A dead slot is left
+zeroed in place instead of compacted forward. This is a case where a
+clean, index-based redesign made a whole piece of the original's
+plumbing unnecessary, not merely optional.
+
+Also re-confirmed, while reading `BuildCombatTurnOrder` more closely
+than last round required, that its own dead pre-check branch (found
+last round, gating the random-target roll) has a fully-traced root
+cause: it ORs a flag onto the entry being built based on the monster's
+own status-effect state bits (`MonsterFieldState & 0x3010` — the same
+bits `monsterTickTimer` reads), but then tests that flag through a
+pointer that's already been advanced past the entry it just wrote, so
+the test always reads freshly-zeroed memory. Both the write and the
+read are inert; still not reproduced, now for a fully-understood
+reason rather than an observed-but-unexplained one.
+
+New: `combatProcessRound` in `src23/combat.c`/`.h`. Tests added to
+`tests/test_combat.c` (turn advance with no deaths, death handling
+alongside a still-alive monster, "no monsters left", "round exhausted,
+start a new one" with no wraparound, and skipping an already-defeated
+entry during the forward walk). Full suite rebuilt: 18/18 passing
+(count unchanged from last round — no new test files, only new tests
+within `test_combat.c`), no regressions. `combat.h` also gained a
+documented design decision: the original's `g_activeCombatMonster`
+global is treated here as a pure on-demand query
+(`combatSelectActiveMonster`) rather than cached state threaded through
+every function that might need to re-establish it, since recomputing
+it is cheap and always correct. Documented in `file-formats.md`'s
+expanded "Turn-based combat" section (now includes a loop sketch of
+`RunDungeonGameLoop` itself), `engine-diffs.md` (still
+instruction-identical, no Ch2/Ch3 difference), and `roadmap.md`
+(candidate 7 fully closed; attack resolution is the clearly-scoped
+remainder).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

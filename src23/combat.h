@@ -7,6 +7,7 @@
 
 #include "game.h"
 #include "monster.h"
+#include "monsterpool.h"
 #include "random.h"
 #include "savegame.h"
 
@@ -19,10 +20,27 @@
  * CombatMonsterSlotCount live monster records (full copies, not
  * pointers into g_levelMonsters -- confirmed by DrawMonsterInfoPanels'
  * own read of these addresses as ordinary MonsterRecordSize records),
- * distinct from the 80-slot dungeon pool. Only the turn-order
- * construction (BuildCombatTurnOrder) is reimplemented so far --
- * actual turn advancement/attack resolution (ProcessCombatRound and
- * beyond) is a separate, much larger piece not started.
+ * distinct from the 80-slot dungeon pool. Turn-order construction
+ * (BuildCombatTurnOrder) and per-round death/advancement handling
+ * (ProcessCombatRound) are both reimplemented; attack resolution
+ * itself (ResolveAttack/ResolveAttackerActionOutcome/
+ * ProcessMonsterAttackTurn and the player-input attack path in
+ * HandleDungeonInput) is a separate, much larger piece not started.
+ *
+ * **Design note on the original's "active combat monster" global**
+ * (`g_activeCombatMonster`/`word_32A1E`): the original caches this as
+ * mutable global state and re-establishes it (via SelectActiveMonster)
+ * from two different places whenever it's unset -- once at the end of
+ * BuildCombatTurnOrder, once at the top of ProcessCombatRound's
+ * turn-advance branch. This reimplementation treats it as a pure,
+ * on-demand query instead (combatSelectActiveMonster, taking the
+ * current turnOrder/defeated state and returning the answer fresh):
+ * recomputing it is cheap and always gives the same result the
+ * original's caching was trying to preserve, so there's no cached
+ * state to thread through combatBuildTurnOrder/combatProcessRound's
+ * own signatures. Call combatSelectActiveMonster whenever the current
+ * active monster is actually needed (e.g. for UI highlighting or
+ * attack targeting).
  */
 
 enum {
@@ -88,5 +106,50 @@ unsigned combatBuildTurnOrder(SaveGame *save, const uint8_t *monsterSlots, Rando
  */
 bool combatSelectActiveMonster(const CombatTurnOrderEntry *turnOrder, unsigned count,
                                 const bool defeated[CombatMonsterSlotCount], unsigned *outMonsterSlot);
+
+/*
+ * ProcessCombatRound (yendor2.asm:11094, instruction-identical in
+ * Chapter 3): called once per game-loop tick, right after whichever
+ * combatant's turn was current (turnOrder[*turnCursor]) has acted.
+ * First, scans every occupied monster slot: any with MonsterFieldHealth
+ * <= 0 is flagged defeated[slot] = true, has its rewards granted into
+ * staging (see monsterpool.h's monsterGrantRewards) and its record
+ * zeroed. If that leaves no monster slot both occupied and alive,
+ * returns CombatRoundNoMonstersLeft (errorCode 0 in the original) --
+ * the caller should end combat (show loot/XP, matching
+ * ShowLootAndAwardExperience). Otherwise advances *turnCursor to the
+ * next turnOrder entry that isn't a defeated monster, matching the
+ * original's forward-only scan from word_32BF4 (no wraparound --
+ * reaching the end of turnOrder without finding one returns
+ * CombatRoundNewRound, errorCode 1, meaning the caller should rebuild
+ * the turn order via combatBuildTurnOrder for a fresh round; finding
+ * one returns CombatRoundContinue, errorCode 2, *turnCursor now the
+ * next entry to act).
+ *
+ * **CompactMonsterSlots, deliberately not reproduced**: the original
+ * also physically shifts live g_monsterSlots records to keep them
+ * front-loaded after a death, then rewrites any g_combatTurnOrder
+ * entry that still points at a moved record's old address -- a
+ * technical workaround for its raw-pointer turn-order entries. This
+ * reimplementation's CombatTurnOrderEntry references monsters by
+ * stable slot index rather than by pointer (see the type above), so
+ * there's no address to go stale and nothing to fix up; a defeated
+ * slot is simply left zeroed at its own index rather than compacted
+ * forward. No observable difference in behavior, only in bookkeeping.
+ *
+ * *turnCursor must start at the index whose turn combatBuildTurnOrder
+ * (or the previous round) already caused to be acted on -- i.e. 0
+ * right after combatBuildTurnOrder, matching the original's
+ * word_32BF4 pointing at turnOrder[0] itself, not "before" it.
+ */
+typedef enum {
+    CombatRoundNoMonstersLeft = 0,
+    CombatRoundNewRound = 1,
+    CombatRoundContinue = 2
+} CombatRoundOutcome;
+
+CombatRoundOutcome combatProcessRound(uint8_t *monsterSlots, CombatTurnOrderEntry *turnOrder, unsigned turnOrderCount,
+                                       bool defeated[CombatMonsterSlotCount], unsigned *turnCursor,
+                                       MonsterRewardStaging *staging, uint8_t *globalFlags, size_t globalFlagsSize);
 
 #endif

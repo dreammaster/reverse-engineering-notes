@@ -1,5 +1,7 @@
 #include "combat.h"
 
+#include <string.h>
+
 #include "party.h"
 
 static bool partySlotIsUsable(SaveGame *save, unsigned slot, uint8_t **outRecord) {
@@ -79,4 +81,37 @@ bool combatSelectActiveMonster(const CombatTurnOrderEntry *turnOrder, unsigned c
         }
     }
     return false;
+}
+
+CombatRoundOutcome combatProcessRound(uint8_t *monsterSlots, CombatTurnOrderEntry *turnOrder, unsigned turnOrderCount,
+                                       bool defeated[CombatMonsterSlotCount], unsigned *turnCursor,
+                                       MonsterRewardStaging *staging, uint8_t *globalFlags, size_t globalFlagsSize) {
+    bool anyAlive = false;
+
+    for (unsigned slot = 0; slot < CombatMonsterSlotCount; slot++) {
+        uint8_t *record = monsterSlots + (size_t)slot * MonsterRecordSize;
+        if (monsterGetU16(record, MonsterFieldType) == 0) {
+            continue;
+        }
+        if ((int16_t)monsterGetU16(record, MonsterFieldHealth) > 0) {
+            anyAlive = true;
+            continue;
+        }
+        defeated[slot] = true;
+        monsterGrantRewards(staging, record, globalFlags, globalFlagsSize);
+        memset(record, 0, MonsterRecordSize);
+    }
+
+    if (!anyAlive) {
+        return CombatRoundNoMonstersLeft;
+    }
+
+    for (unsigned i = *turnCursor + 1; i < turnOrderCount; i++) {
+        if (turnOrder[i].isMonster && defeated[turnOrder[i].index]) {
+            continue;
+        }
+        *turnCursor = i;
+        return CombatRoundContinue;
+    }
+    return CombatRoundNewRound;
 }

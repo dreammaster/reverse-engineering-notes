@@ -1228,14 +1228,19 @@ differ between the games (`0xD40B` vs. `0xBA95`), but the *relationship*
 into it) holds identically in both. See `file-formats.md`'s "ability/
 spell-unlock table" section for the full derivation.
 
-## Turn-based combat turn order: no behavioral difference found
+## Turn-based combat turn order and round processing: no behavioral difference found
 
-`BuildCombatTurnOrder` and `SelectActiveMonster` are instruction-identical
-between the two games — checked directly, `yendor2.asm:10952`/`:11340`
-vs. `yendor3.asm:1929-2018`/(`SelectActiveMonster`'s own match). No
-Ch2/Ch3 divergence of any kind: same sort logic, same stable-tie
-behavior, same random-target retry, same dead pre-check branch (not
-reproduced in either game's reimplementation — see `file-formats.md`).
+`BuildCombatTurnOrder`, `SelectActiveMonster`, and `ProcessCombatRound`
+are all instruction-identical between the two games — checked
+directly, `yendor2.asm:10952`/`:11340`/`:11094` vs.
+`yendor3.asm:1929-2018`/(`SelectActiveMonster`'s and
+`ProcessCombatRound`'s own matches). No Ch2/Ch3 divergence of any
+kind: same sort logic, same stable-tie behavior, same random-target
+retry, same dead pre-check branches (not reproduced in either game's
+reimplementation — see `file-formats.md`), same death-scan/turn-advance
+gating, same `CompactMonsterSlots`/`RelocateActiveMonsterPointer`
+pointer-fixup mechanism (also not reproduced — this reimplementation's
+index-based turn-order entries have no stale-pointer problem to fix).
 Reimplemented once in `src23/combat.c`, shared by both games via the
 existing `GameKind` plumbing already threaded through `party.c`/
 `monster.c`/`savegame.c`.

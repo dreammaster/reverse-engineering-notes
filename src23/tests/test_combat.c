@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_combat test_combat.c ../combat.c ../party.c ../monster.c ../monster_stdio.c ../savegame.c ../random.c ../bcd4.c ../item.c && ./test_combat
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_combat test_combat.c ../combat.c ../monsterpool.c ../dungeongrid.c ../movement.c ../party.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c ../bcd4.c ../globalflags.c ../item.c && ./test_combat
  */
 #include <stdio.h>
 #include <string.h>
@@ -152,12 +152,128 @@ static void testSelectActiveMonster(void) {
     check("no monster active once both are defeated", !combatSelectActiveMonster(order, 3, defeated, &slot));
 }
 
+static uint32_t bcdHex(const uint8_t *value) {
+    return (uint32_t)value[0] << 24 | (uint32_t)value[1] << 16 | (uint32_t)value[2] << 8 | value[3];
+}
+
+static void testProcessRoundAdvancesWithNoDeaths(void) {
+    memset(g_monsterSlots, 0, sizeof(g_monsterSlots));
+    setMonsterSlot(0, 100, 10);
+    monsterSetU16(g_monsterSlots + 0 * MonsterRecordSize, MonsterFieldHealth, 5);
+
+    CombatTurnOrderEntry order[CombatTurnOrderCapacity];
+    order[0] = (CombatTurnOrderEntry){false, 0, 30};
+    order[1] = (CombatTurnOrderEntry){true, 0, 10};
+    bool defeated[CombatMonsterSlotCount] = {false, false, false};
+    unsigned cursor = 0;
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+
+    CombatRoundOutcome outcome = combatProcessRound(g_monsterSlots, order, 2, defeated, &cursor, &staging, NULL, 0);
+
+    check("still-alive monster: round continues", outcome == CombatRoundContinue);
+    checkU32("cursor advances to entry 1", cursor, 1);
+    check("no slot flagged defeated", !defeated[0] && !defeated[1] && !defeated[2]);
+    checkU32("no rewards staged", bcdHex(staging.gold), 0);
+}
+
+static void testProcessRoundGrantsRewardsAndSkipsDefeated(void) {
+    memset(g_monsterSlots, 0, sizeof(g_monsterSlots));
+    setMonsterSlot(0, 100, 10); /* dies this round */
+    monsterSetU16(g_monsterSlots + 0 * MonsterRecordSize, MonsterFieldHealth, 0);
+    bcd4FromU16((uint8_t *)(g_monsterSlots + 0 * MonsterRecordSize + MonsterFieldLootGold), 50);
+    setMonsterSlot(1, 101, 20); /* still alive, acts later this round */
+    monsterSetU16(g_monsterSlots + 1 * MonsterRecordSize, MonsterFieldHealth, 40);
+
+    /* Slot 0's own turn-order entry (index 0 here) just acted -- it's the one
+     * that died -- so the scan for the next turn starts looking from entry 1
+     * onward, matching the original's forward-only, no-wraparound walk. */
+    CombatTurnOrderEntry order[CombatTurnOrderCapacity];
+    order[0] = (CombatTurnOrderEntry){true, 0, 10};
+    order[1] = (CombatTurnOrderEntry){true, 1, 20};
+    bool defeated[CombatMonsterSlotCount] = {false, false, false};
+    unsigned cursor = 0;
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+
+    CombatRoundOutcome outcome = combatProcessRound(g_monsterSlots, order, 2, defeated, &cursor, &staging, NULL, 0);
+
+    check("a monster is still alive: round continues", outcome == CombatRoundContinue);
+    check("dead slot 0 flagged defeated", defeated[0]);
+    check("live slot 1 not flagged defeated", !defeated[1]);
+    checkU32("dead monster's gold staged", bcdHex(staging.gold), 0x50);
+    checkU32("dead slot's record zeroed", monsterGetU16(g_monsterSlots + 0 * MonsterRecordSize, MonsterFieldType), 0);
+    checkU32("cursor advances past the dead entry to the still-alive one", cursor, 1);
+}
+
+static void testProcessRoundNoMonstersLeft(void) {
+    memset(g_monsterSlots, 0, sizeof(g_monsterSlots));
+    setMonsterSlot(0, 100, 10);
+    monsterSetU16(g_monsterSlots + 0 * MonsterRecordSize, MonsterFieldHealth, 0);
+
+    CombatTurnOrderEntry order[CombatTurnOrderCapacity];
+    order[0] = (CombatTurnOrderEntry){true, 0, 10};
+    bool defeated[CombatMonsterSlotCount] = {false, false, false};
+    unsigned cursor = 0;
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+
+    CombatRoundOutcome outcome = combatProcessRound(g_monsterSlots, order, 1, defeated, &cursor, &staging, NULL, 0);
+
+    check("last monster died: no monsters left", outcome == CombatRoundNoMonstersLeft);
+    check("it's flagged defeated too", defeated[0]);
+}
+
+static void testProcessRoundEndOfListStartsNewRound(void) {
+    memset(g_monsterSlots, 0, sizeof(g_monsterSlots));
+    setMonsterSlot(0, 100, 10);
+    monsterSetU16(g_monsterSlots + 0 * MonsterRecordSize, MonsterFieldHealth, 40);
+
+    CombatTurnOrderEntry order[CombatTurnOrderCapacity];
+    order[0] = (CombatTurnOrderEntry){true, 0, 10};
+    bool defeated[CombatMonsterSlotCount] = {false, false, false};
+    unsigned cursor = 0; /* already on the last (only) entry */
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+
+    CombatRoundOutcome outcome = combatProcessRound(g_monsterSlots, order, 1, defeated, &cursor, &staging, NULL, 0);
+
+    check("walked off the end of the turn order: caller should rebuild it", outcome == CombatRoundNewRound);
+}
+
+static void testProcessRoundAdvanceSkipsAlreadyDefeatedEntries(void) {
+    memset(g_monsterSlots, 0, sizeof(g_monsterSlots));
+    setMonsterSlot(0, 100, 30);
+    monsterSetU16(g_monsterSlots + 0 * MonsterRecordSize, MonsterFieldHealth, 40);
+    setMonsterSlot(1, 101, 20);
+    monsterSetU16(g_monsterSlots + 1 * MonsterRecordSize, MonsterFieldHealth, 40);
+
+    CombatTurnOrderEntry order[CombatTurnOrderCapacity];
+    order[0] = (CombatTurnOrderEntry){true, 0, 30};
+    order[1] = (CombatTurnOrderEntry){true, 1, 20}; /* already defeated from an earlier round */
+    order[2] = (CombatTurnOrderEntry){false, 0, 10};
+    bool defeated[CombatMonsterSlotCount] = {false, true, false};
+    unsigned cursor = 0;
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+
+    CombatRoundOutcome outcome = combatProcessRound(g_monsterSlots, order, 3, defeated, &cursor, &staging, NULL, 0);
+
+    check("round continues", outcome == CombatRoundContinue);
+    checkU32("already-defeated entry 1 is skipped, lands on entry 2", cursor, 2);
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
     testIncapacitatedPartyMembersExcluded();
     testNoLivingPartyLeavesMonsterUntargeted();
     testSelectActiveMonster();
+    testProcessRoundAdvancesWithNoDeaths();
+    testProcessRoundGrantsRewardsAndSkipsDefeated();
+    testProcessRoundNoMonstersLeft();
+    testProcessRoundEndOfListStartsNewRound();
+    testProcessRoundAdvanceSkipsAlreadyDefeatedEntries();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

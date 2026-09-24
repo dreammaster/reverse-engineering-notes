@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-24, added: combat turn order)
+## Status (last updated 2026-09-24, added: combat round processing)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -428,11 +428,32 @@ groundwork below is already in place.
   random target as a 1-based `SaveHeaderPartySlots` id (this project's
   existing convention) rather than the original's raw pointer.
   **Instruction-identical between the two games**, checked directly.
-  Tests in `tests/test_combat.c`; all 19 suites pass. **Still open,
-  the much larger remaining piece**: `ProcessCombatRound`'s actual
-  turn advancement and attack resolution — this round only covers
-  turn-order *construction*. Full writeup in `file-formats.md`'s
-  "Turn-based combat: turn order" section.
+  Tests in `tests/test_combat.c`; all 18 suites pass (`test_combat.c`
+  is a new suite alongside the 17 pre-existing ones — corrected here,
+  an earlier pass this session miscounted it as 19). Full writeup in
+  `file-formats.md`'s "Turn-based combat: turn order" section.
+  **`ProcessCombatRound` — done, same day (2026-09-24)**: reads
+  `RunDungeonGameLoop` directly to place combat in the bigger picture
+  — it turns out **every ordinary exploration input tick is a
+  degenerate one-entry combat round** (no monsters occupied -> the
+  round ends immediately after the player's own turn), which is also
+  why the dungeon-exploration monster-AI pass
+  (`ProcessLevelMonsters`/`ProcessSideTrapsOnMovement`) only runs once
+  a full round is exhausted, not every tick — a real, previously
+  fuzzy mechanism now fully explained. `combatProcessRound` handles
+  the per-tick death scan (defeat-flagging, reward-granting, record
+  zeroing) and turn-cursor advancement (forward-only, no wraparound).
+  Deliberately not reproduced: `CompactMonsterSlots`'s physical
+  slot-shifting and its `RelocateActiveMonsterPointer` pointer-fixup
+  trick — both exist solely to keep the original's raw-pointer
+  turn-order entries valid after a record moves in memory, a problem
+  this reimplementation's index-based entries don't have. Tests in
+  `tests/test_combat.c`; all 18 suites still pass. **Still open, the
+  much larger remaining piece**: attack resolution itself
+  (`ResolveAttack`/`ResolveAttackerActionOutcome`/
+  `ProcessMonsterAttackTurn`, plus the player-attack path inside
+  `HandleDungeonInput`) — not started. Full writeup in
+  `file-formats.md`'s "Turn-based combat: turn order" section.
 
 ## Next: continue the C reimplementation
 
@@ -562,15 +583,18 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    strengthened the "traps reuse monster catalog fields" hypothesis
    (`RollTrapAvoidanceMagnitude`'s `+0x64`/`+0x66` are literally
    `MonsterFieldRangedAccuracy`/`RangedDamage`) without proving it.
-~~7. **Turn-based combat's turn order**~~ — **done 2026-09-24**
-   (`combatBuildTurnOrder`/`combatSelectActiveMonster` in
-   `src23/combat.c`/`.h`, see the status entry above and
-   `file-formats.md`'s "Turn-based combat: turn order" section).
-   **Still open, a good candidate for its own pass**:
-   `ProcessCombatRound`'s turn advancement and attack resolution —
-   the much larger remaining part of the combat subsystem (damage
-   formulas, spell/ability use in combat, victory/flee conditions),
-   not investigated beyond turn-order construction so far.
+~~7. **Turn-based combat's turn order and round processing**~~ —
+   **done 2026-09-24** (`combatBuildTurnOrder`/`combatSelectActiveMonster`/
+   `combatProcessRound` in `src23/combat.c`/`.h`, see the status entry
+   above and `file-formats.md`'s "Turn-based combat: turn order"
+   section). **Still open, a good candidate for its own pass**: attack
+   resolution itself — `ResolveAttack`/`ResolveAttackerActionOutcome`/
+   `ProcessMonsterAttackTurn` and the player-attack path inside
+   `HandleDungeonInput` (damage formulas, status-effect application on
+   hit, an "equipment corrosion" side effect, spell/ability use in
+   combat) — the much larger remaining part of the combat subsystem,
+   not investigated beyond what `ResolveAttackerActionOutcome`'s own
+   3-way branch structure showed in passing.
 8. **The item-effect "banish" mechanic** (`ApplyEncodedItemEffect`,
    `yendor2.asm:51586`, surfaced the same session) — finds whichever
    monster occupies the party's facing tile, copies its record to a UI

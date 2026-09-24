@@ -4186,10 +4186,46 @@ own small, fixed-size pool — up to `CombatMonsterSlotCount` (3) live
 monster records, full 156-byte copies rather than pointers into
 `g_levelMonsters` (confirmed by `DrawMonsterInfoPanels`' own reads of
 these addresses as ordinary `MonsterRecordSize` records, not indices)
-— distinct from the 80-slot dungeon pool. Only turn-order
-*construction* is reimplemented so far; turn advancement and attack
-resolution (`ProcessCombatRound` and beyond) is a separate, much
-larger piece not started.
+— distinct from the 80-slot dungeon pool. Turn-order *construction*
+(`BuildCombatTurnOrder`) and per-round death/advancement handling
+(`ProcessCombatRound`) are both reimplemented; attack resolution
+itself (`ResolveAttack`/`ResolveAttackerActionOutcome`/
+`ProcessMonsterAttackTurn`, plus the player-input attack path inside
+`HandleDungeonInput`) is a separate, much larger piece not started.
+
+**How the whole thing fits into the main loop**, read directly from
+`RunDungeonGameLoop` (`yendor2.asm:10150`) to place these pieces in
+context — this is also the dungeon-exploration loop, not a
+combat-specific one:
+```
+g_activeCombatMonster = 0
+rebuild_round:
+    BuildCombatTurnOrder()        // resets the turn cursor to entry 0
+    DrawMonsterInfoPanels(); DrawMouseCursor()
+dispatch_turn:
+    entry = turnOrder[turnCursor]
+    if entry is a monster: ProcessMonsterAttackTurn()      // not reimplemented
+    else: HandleDungeonInput()                             // not reimplemented; player's turn
+    ProcessCombatRound()
+    switch (outcome):
+      NoMonstersLeft:  end combat, show loot/XP, return     // one full frame
+      NewRound:        ProcessLevelMonsters(); RedrawDungeonScreen();
+                        ProcessSideTrapsOnMovement(); goto rebuild_round
+      Continue:        redraw panels, goto dispatch_turn    // same frame, next entry
+```
+Two things worth calling out since they explain behavior this project
+had already independently observed in earlier rounds: **every normal
+exploration input tick is a degenerate combat round** — with no
+monster slots occupied, `ProcessCombatRound` finds no live monster at
+all and returns `NoMonstersLeft` after exactly one turn-order entry
+(`HandleDungeonInput`, i.e. the player's own action), which is why a
+single "frame" of `RunDungeonGameLoop` corresponds to one player input
+action. And **`ProcessLevelMonsters`/`ProcessSideTrapsOnMovement`
+(the dungeon-exploration monster-AI pass documented above) only run
+once a full round is exhausted** (`NewRound`), not every input tick —
+consistent with, and now fully explaining, this project's earlier
+finding that monster approach/ambush checks are driven by the
+movement/input loop rather than by any independent timer.
 
 **`BuildCombatTurnOrder`** (`yendor2.asm:10952`, instruction-identical
 in Chapter 3 — checked directly, `yendor3.asm:1929-2018`): builds a
@@ -4203,15 +4239,21 @@ occupied monster slot, it also assigns a random living party target:
 `RandomInRange(3)` re-rolled until it lands on an occupied,
 non-incapacitated party slot.
 
-**A confirmed-dead branch, deliberately not reproduced**: before doing
-the random-target roll, the original also tests each about-to-be-built
-turn-order entry's own flags (a bit this project hasn't otherwise
-named) — but that test reads a slot in the *same* 14-entry buffer the
-function itself is still zeroing/populating on this very call, before
-anything could have set the bit being tested. It can never actually
-be true, so it can never skip the roll; reproducing a check that
-provably never fires would add code with zero observable effect, so
-it's omitted here.
+**A confirmed-dead branch, deliberately not reproduced, root cause now
+fully traced**: before the random-target roll, the original ORs flag
+`0x2000` onto the entry it's about to build if the monster's own
+`MonsterFieldState` has any of bits `0x3010` set (the same bits
+`monsterTickTimer`'s "decrement twice" gate reads — see below,
+still-unconfirmed status-effect state). It then immediately advances
+`di` past that entry (`add di,8`) and tests `[di+6] & 0x2000` on the
+*next*, not-yet-built entry to decide whether to skip the roll — a
+stale-register reuse: that memory was zeroed at function entry and
+nothing has written to it yet, so the test always reads 0 and the
+skip branch can never fire. The `0x2000` write itself is therefore
+equally inert — nothing ever reads it back through this path either.
+Not reproduced, since reproducing a write-then-read pair that
+provably never has any effect would add code with zero observable
+behavior.
 
 **Modernization**: the original stores each monster's chosen target as
 a raw pointer to the party record. This reimplementation stores a
@@ -4230,6 +4272,16 @@ flagged defeated this round — a simple linear scan, capped at 7
 entries (4 party + 3 monster) matching `CombatTurnOrderCapacity`
 exactly, confirming the original's 14-slot buffer is genuinely
 over-allocated (it never populates or scans past index 6).
+`BuildCombatTurnOrder` itself calls `SelectActiveMonster` at its own
+tail, but only if `g_activeCombatMonster` is still unset —
+`ProcessCombatRound` does the identical unset-check before its own
+turn-advance branch. **Not reproduced as cached state**: this
+reimplementation treats "the active monster" as a pure function of
+the current turn order and defeated set (`combatSelectActiveMonster`,
+callable on demand) rather than a mutable global re-established from
+two call sites — recomputing it is cheap and always gives the same
+answer the original's caching was preserving, so `combatBuildTurnOrder`
+doesn't call it automatically; see `combat.h`'s own design note.
 
 Reimplemented in `src23/combat.c`/`.h`: `combatBuildTurnOrder` and
 `combatSelectActiveMonster`, tests in `tests/test_combat.c` covering
@@ -4237,6 +4289,65 @@ descending sort order, stable ties, incapacitated-party exclusion, the
 no-living-party-member edge case (monster left untargeted rather than
 looping forever), and active-monster selection/skipping defeated
 monsters.
+
+**`ProcessCombatRound`** (`yendor2.asm:11094`, instruction-identical in
+Chapter 3): called once per game-loop tick, right after whichever
+turn-order entry was current has acted (see the loop sketch above).
+Two independent things happen, in this order:
+1. **Death scan**: every occupied `g_monsterSlots` entry with
+   `MonsterFieldHealth <= 0` (a signed compare) is processed — its
+   turn-order entry gets flagged `0x4000` ("defeated"), the active
+   monster pointer is cleared if it was pointing at this one,
+   `GrantMonsterRewards` stages its loot (see `monsterGrantRewards`
+   above), and the record is zeroed (`ClearMonsterSlotRecord`, a plain
+   156-byte zero, distinct from but functionally identical to
+   `RemoveMonsterFromMap`'s record-zeroing half — that one also clears
+   a dungeon-grid "monster here" overlay this pool doesn't have).
+2. **Turn advance**, but *only if at least one monster slot is still
+   occupied and alive* — this condition (not "did anyone die this
+   pass") is what the original's `errorCode == 2` check after the
+   death scan actually tests, easy to misread as "if none died". If no
+   monster is alive at all (everything either just died or was already
+   empty), the function returns immediately signaling "combat over" —
+   **this is also why a single `RunDungeonGameLoop` tick during
+   ordinary exploration (no monsters present) always ends after
+   exactly one turn-order entry**, see the loop sketch above. Otherwise
+   it ensures an active monster is set (`SelectActiveMonster` if
+   unset), then walks forward from the current turn-order position
+   (never wrapping) for the next entry that isn't a defeated monster —
+   found: turn advances within the same round; not found (walked off
+   the end): the round is over, signaling the caller to rebuild the
+   turn order via `BuildCombatTurnOrder` for a fresh one.
+
+**`CompactMonsterSlots`, deliberately not reproduced**: between the
+"ensure active monster" step and the turn-advance walk, the original
+also calls `CompactMonsterSlots` (`yendor2.asm:34001`), which
+physically shifts the remaining live `g_monsterSlots` records into a
+front-loaded arrangement among the 3 fixed slot addresses, then
+rewrites any `g_combatTurnOrder` entry that still points at a moved
+record's *old* address (a linear scan matching by pointer value) and
+re-resolves the active-monster pointer the same way
+(`RelocateActiveMonsterPointer`, `yendor2.asm:34226` — a small, clever
+trick worth recording: before compacting, it temporarily stashes the
+active monster's *type id* — dereferencing the soon-to-be-stale
+pointer once, before the move — back into the global, then re-resolves
+a fresh pointer afterward by matching that type id against the 3
+post-compaction slots). All of this exists purely to fix up raw
+pointers after records move in memory. This reimplementation's
+`CombatTurnOrderEntry` never stores a raw record pointer — monster
+entries reference their slot by stable index (0-2) instead (see the
+type above) — so there is no stale address to fix up in the first
+place, and a defeated slot is simply left zeroed at its own index
+rather than physically compacted forward. No difference in observable
+combat behavior, only in how "which slots are occupied" is tracked
+internally.
+
+Reimplemented as `combatProcessRound` in `src23/combat.c`/`.h`; tests
+in `tests/test_combat.c` covering: turn advance with no deaths, reward
+granting + record zeroing + defeat-flagging on death while another
+monster is still alive, the "no monsters left" outcome, the
+"walked off the end, start a new round" outcome (no wraparound), and
+that the forward walk correctly skips an already-defeated entry.
 
 ### `TickMonsterTimer`: a per-monster state machine, mechanism confirmed, trigger not (decoded 2026-09-23)
 
