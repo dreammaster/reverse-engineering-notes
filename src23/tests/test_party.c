@@ -610,6 +610,60 @@ static void testEquipmentBonuses(void) {
     checkU32("no weapon: EquipRating2 stays at its base (0)", partyGetStat(g_record, PartyStatEquipRating2), 0);
 }
 
+static void testAbilityUnlocks(void) {
+    uint16_t ids[PartyAbilityUnlockSlotCount];
+
+    /* Row 0 (base 4, MONK-and-any-tier), level 2 (column 0): a single id, 5. */
+    checkU32("MONK level 2: one ability unlocked", partyAbilityUnlocksAtLevel(4, 2, GameYendor2, ids), 1);
+    checkU32("MONK level 2: ability id 5", ids[0], 5);
+
+    /* Level 4 (column 1): two ids in Chapter 2 (7, 0xb). */
+    checkU32("MONK level 4: two abilities unlocked", partyAbilityUnlocksAtLevel(4, 4, GameYendor2, ids), 2);
+    checkU32("MONK level 4: first id 7", ids[0], 7);
+    checkU32("MONK level 4: second id 0xb", ids[1], 0x0b);
+
+    /* Chapter 3 has different ids at the same (row, level) -- a real per-game content difference. */
+    checkU32("MONK level 4, yendor3: different ids (6, 7)", partyAbilityUnlocksAtLevel(4, 4, GameYendor3, ids), 2);
+    checkU32("yendor3 first id 6", ids[0], 6);
+    checkU32("yendor3 second id 7", ids[1], 7);
+
+    /* Tier doesn't matter for the row -- base 4 at tier 1 (class id 14) or tier 2 (24) gives the same row. */
+    uint16_t idsPromoted[PartyAbilityUnlockSlotCount];
+    checkU32("class id 14 (tier-1 base-4): same count as tier 0", partyAbilityUnlocksAtLevel(14, 2, GameYendor2, idsPromoted), 1);
+    checkU32("class id 14: same ability id 5 as tier 0", idsPromoted[0], 5);
+    partyAbilityUnlocksAtLevel(24, 2, GameYendor2, idsPromoted);
+    checkU32("class id 24 (tier-2 base-4): same ability id 5 too", idsPromoted[0], 5);
+
+    check("odd level: no abilities", partyAbilityUnlocksAtLevel(4, 3, GameYendor2, ids) == 0);
+    check("level 0: no abilities", partyAbilityUnlocksAtLevel(4, 0, GameYendor2, ids) == 0);
+    check("level past the table's 40-level end: no abilities", partyAbilityUnlocksAtLevel(4, 42, GameYendor2, ids) == 0);
+
+    /* Physical classes (base 1-3), at ANY tier, never have a valid row -- the deliberately-not-reproduced OOB case. */
+    check("FIGHTER (base 1, tier 0): no abilities", partyAbilityUnlocksAtLevel(1, 2, GameYendor2, ids) == 0);
+    check("WARRIOR (base 1, tier 1): no abilities", partyAbilityUnlocksAtLevel(11, 2, GameYendor2, ids) == 0);
+    check("CHAMPION (base 1, tier 2): no abilities", partyAbilityUnlocksAtLevel(21, 2, GameYendor2, ids) == 0);
+    check("ROGUE (base 3): no abilities", partyAbilityUnlocksAtLevel(3, 2, GameYendor2, ids) == 0);
+
+    /* Applying: flag bits actually get set. */
+    memset(g_record, 0, PartyRecordSize);
+    unsigned count = partyApplyAbilityUnlocks(g_record, 4, 4, GameYendor2);
+    checkU32("apply: 2 abilities set at MONK level 4", count, 2);
+    check("apply: flag 7 is set", flagBankTest(g_record + PartyFieldFlagBankCA, 16, 7));
+    check("apply: flag 0xb is set", flagBankTest(g_record + PartyFieldFlagBankCA, 16, 0x0b));
+    check("apply: an unrelated flag stays clear", !flagBankTest(g_record + PartyFieldFlagBankCA, 16, 1));
+
+    /* Wired into partyApplyTraining itself, using the pre-promotion class id, at an even level. */
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    Bcd4 cost;
+    bcd4FromU16(cost, 100);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 4 /* MONK */, 1, 10, 10, 10, 10, 10, 10, 100, 30); /* level 1 -> 2 */
+    partyApplyTraining(g_record, GameYendor2, &save, cost);
+    check("partyApplyTraining at level 2 also sets the MONK level-2 ability (id 5)",
+          flagBankTest(g_record + PartyFieldFlagBankCA, 16, 5));
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -619,6 +673,7 @@ int main(void) {
     testLevelUp();
     testTraining();
     testEquipmentBonuses();
+    testAbilityUnlocks();
     testRealCharacters();
 
     if (g_failureCount == 0) {

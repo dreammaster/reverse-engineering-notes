@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-24, UseTrainingItem fully done including equipment-stat bonuses)
+## Status (last updated 2026-09-24, UseTrainingItem fully done including the ability-unlock table)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -360,20 +360,38 @@ groundwork below is already in place.
   (meaning unconfirmed); every other equipped item accumulates into a
   fifth rating. Not called automatically by `partyApplyTraining` (needs
   an `ItemCatalog` it doesn't take) — deliberately kept as a separate,
-  composable function. Deliberately still deferred (own future passes,
-  much wider blast radius than training itself): the ability/spell-unlock
-  table walk (`DS:0xD22B`, needs its own data-table extraction), and
-  `RunItemServiceRecipientLoop` (offering the item to other party
-  members — resolved an old "feeds a separate growth calculation" note
-  to "feeds UI flow control, not a stat"). `cost` is caller-supplied,
-  since this project hasn't built the upstream item-use pipeline
-  (`UseItem`) that would resolve an item's own price. Tests in
-  `tests/test_party.c` (per-class MP-formula spot checks, both caps,
-  untrained-slot skip, promotion at both Ch2 thresholds and its Ch3
-  absence, the current-value sync, the excess-over-72 bonus, and the
-  full equipment-bonus formula against a synthetic item catalog). Full
-  writeup in `file-formats.md`. All 18 suites pass (rebuilt entirely
-  across both rounds — surfaced and fixed several pre-existing stale
+  composable function.
+  **The ability/spell-unlock table walk — done, same round**: dumping
+  `DS:0xD22B` directly (new IDA scripts in both games) at first looked
+  like up to 10 rows, but rows 6-9 turned out to be reads past the real
+  table's end — confirmed architecturally, not just by eyeballing the
+  data: the real table is exactly 6 rows (one per class base 4-9), and
+  `tableBase + 6*0x50` lands *exactly* on `TravelToDestination`'s own
+  destination-table base address in **both** games. This resolves class
+  base 1-3 (FIGHTER/MERCHANT/ROGUE) at *any* tier as a genuine,
+  reachable original-engine quirk: their row-index arithmetic always
+  lands out of the real table's bounds, reading `TravelToDestination`'s
+  unrelated data as if it were ability ids — not reproduced;
+  `partyAbilityUnlocksAtLevel` returns 0 ids for these instead. Ability
+  ids themselves genuinely differ between the games (same per-game
+  id-space pattern as everywhere else); the table shape doesn't. Wired
+  into `partyApplyTraining` automatically (it needs no extra
+  dependency, unlike the equipment-bonus step), using the
+  pre-promotion class id, matching the original's exact call order.
+  Deliberately still deferred (own future pass, wider blast radius than
+  training itself): `RunItemServiceRecipientLoop` (offering the item to
+  other party members — resolved an old "feeds a separate growth
+  calculation" note to "feeds UI flow control, not a stat"). `cost` is
+  caller-supplied, since this project hasn't built the upstream
+  item-use pipeline (`UseItem`) that would resolve an item's own price.
+  Tests in `tests/test_party.c` (per-class MP-formula spot checks, both
+  caps, untrained-slot skip, promotion at both Ch2 thresholds and its
+  Ch3 absence, the current-value sync, the excess-over-72 bonus, the
+  full equipment-bonus formula against a synthetic item catalog, and
+  the ability-unlock table including the Ch2/Ch3 content difference and
+  every class-base-1-3/any-tier "no valid row" case). Full writeup in
+  `file-formats.md`. All 18 suites pass (rebuilt entirely across all
+  three rounds — surfaced and fixed several pre-existing stale
   build-command comments, `test_effect.c`/`test_monsterpool.c`/
   `test_monsterai.c` all missing dependencies `party.c` picked up).
 
@@ -485,18 +503,18 @@ index" section for the full decode). Still open there:
 (what a `0x4000`/`0x8000` record's `value` actually indexes into), and
 flag bits `0x2000`/`0x400`'s consumers, if any.
 
-~~5. `UseTrainingItem`, including equipment-stat bonuses~~ — **done
-   2026-09-24** (`partyApplyTraining`/`partyClassPromotionThresholds`/
+~~5. `UseTrainingItem`, fully~~ — **done 2026-09-24**
+   (`partyApplyTraining`/`partyClassPromotionThresholds`/
    `partySyncStagedStats`/`partyRefreshCarryCapacityAndAttributeBonuses`/
-   `partyRecomputeEquipmentStatBonuses`, see the status entry above and
-   `file-formats.md`'s "UseTrainingItem" section). Still open, each a
-   good candidate for its own pass: the ability/spell-unlock table walk
-   (`DS:0xD22B`, not yet extracted), and `RunItemServiceRecipientLoop`
-   (the "offer to other party members" UI flow). Also still needs: the
-   upstream `UseItem`/`SelectItemUseRecord` item-use pipeline this
-   project hasn't built yet, which is what would actually resolve
-   `partyApplyTraining`'s `cost` parameter from a real item record
-   instead of a caller-supplied value.
+   `partyRecomputeEquipmentStatBonuses`/`partyAbilityUnlocksAtLevel`/
+   `partyApplyAbilityUnlocks`, see the status entry above and
+   `file-formats.md`'s "UseTrainingItem"/"ability/spell-unlock table"
+   sections). Still open, a good candidate for its own pass:
+   `RunItemServiceRecipientLoop` (the "offer to other party members" UI
+   flow). Also still needs: the upstream `UseItem`/`SelectItemUseRecord`
+   item-use pipeline this project hasn't built yet, which is what would
+   actually resolve `partyApplyTraining`'s `cost` parameter from a real
+   item record instead of a caller-supplied value.
 6. **The side-trap/ambush pipeline's wall-trap half** (see
    `file-formats.md`'s "side trap"/ambush section) — still blocked on
    confirming how a wall/door trap pool entry gets created; the

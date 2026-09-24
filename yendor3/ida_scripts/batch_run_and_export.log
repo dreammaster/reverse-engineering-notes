@@ -1675,3 +1675,24 @@ level  89: 99 99 99 99
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'dump_ability_unlock_table.py', 'noexport']
+[*] reading dump_ability_unlock_table.py
+[*] executing dump_ability_unlock_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+table at DS:0xb8b5 (ea 0x39665), 6 rows x 0x50 bytes
+row 0: 0005/0000 0006/0007 000e/0010 0016/0017 001b/001d 0022/0023 0026/0027 002d/002e 0034/0037 003d/003f 0044/0045 0049/004d 0050/004f 0052/0000 0055/0000 005a/0000 0062/0063 0065/0067 006a/0000 0000/0000
+row 1: 0005/0000 0006/0007 000a/000e 0010/0015 000f/0017 0018/0022 001d/0027 0021/002e 0035/0037 002f/003d 0044/0034 0049/004d 003f/004f 0052/0000 0054/0000 005c/0000 0061/0000 005f/0000 0067/0000 0000/0000
+row 2: 0003/0000 0002/0006 0005/0007 000e/0016 0010/0011 0017/001b 002d/0024 0019/0030 0026/002a 0031/0000 0037/0000 003f/004d 0045/004f 0052/0000 0050/0000 0049/0000 0055/0000 0053/0000 005a/0000 0000/0000
+row 3: 0004/0000 0009/000a 000d/000f 0016/0018 001c/001d 0021/0023 0028/0029 002c/002f 0033/0036 003e/0000 0046/0047 004b/0000 004c/004e 0053/0000 0056/0000 0059/005b 005f/0060 0064/0068 0069/006b 0000/0000
+row 4: 0004/0000 0006/000a 000c/000f 000e/0015 0018/001c 0017/001d 0021/0029 0019/002f 0035/0036 002a/0000 0033/0047 004a/004b 004c/004f 0053/0000 0054/0000 0049/0000 0056/0061 005f/0066 006b/0000 0000/0000
+row 5: 0003/0000 0004/0006 000a/0000 0009/0016 000d/001c 0023/0000 0018/0021 002f/0000 002b/0000 0040/0000 0036/0000 0033/0041 003e/0000 0046/0000 004c/0000 004b/0000 0053/0000 004e/0000 0056/0000 0000/0000
+----- end target script output -----
+[*] finished executing dump_ability_unlock_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

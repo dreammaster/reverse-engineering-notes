@@ -3943,13 +3943,68 @@ source, since this project hasn't built the upstream item-use pipeline
     `ItemCatalog` that function doesn't take) — a caller wanting full
     fidelity calls both.
 
+### The ability/spell-unlock table: exactly 6 rows, confirmed architecturally (decoded 2026-09-24)
+
+`UseTrainingItem`'s ability-unlock walk (`yendor2.asm:21764` on, only
+reached on an *even* `PartyFieldLevel`) indexes a table at `DS:0xD22B`
+by a row derived from the character's class id (via the same
+`cmp 9 / -0xA / cmp 9 / -0xA`-style reduction already confirmed
+elsewhere, but landing in a *different* 0-9 range than `partyClassBase`)
+and a column from `(level/2)-1`. Dumping it directly (a new IDA script,
+`dump_ability_unlock_table.py` in both games' `ida_scripts/`) at first
+looked like it had up to 10 rows, but rows 6-9's contents didn't look
+like ability ids at all — small values mixed with `0x8000`/`0x4000`/
+`0x2000`/`0x1000`, exactly the bit values `TravelToDestination` tests
+on its own `+0xE` flags field. Checking the arithmetic confirmed why:
+`0xD22B + 6*0x50` (six rows of the assumed 80-byte stride) equals
+`0xD40B` *exactly* — `TravelToDestination`'s own destination-table base
+address (`yendor2.asm:18176`). Chapter 3 shows the identical pattern at
+its own addresses (`0xB8B5 + 6*0x50 == 0xBA95`, `TravelToDestination`'s
+Chapter 3 destination-table base). **The real table is exactly 6 rows**,
+one per class base 4-9 (MONK/ALCHEMIST/PALADIN/MAGE/DRUID/MARKSMAN,
+matching the `MP`-growth formula's own base range above) — rows 6-9
+were never real, just the tail end of the destination table read
+through the wrong lens.
+
+This resolves the row-index question for class base 1-3
+(FIGHTER/MERCHANT/ROGUE) too: at **any** tier (not just unpromoted),
+their row-index arithmetic lands negative or in the `6-9` range this
+session just proved is out of the real table's bounds — reading
+`TravelToDestination`'s own data as if it were ability ids. This is a
+genuine reachable state in normal play (an ordinary level-2+ FIGHTER,
+at any tier, triggers it on every even level), so it's very likely a
+real, if minor and probably never-noticed, original-engine bug — or at
+minimum, "physical classes have nothing to learn here" implemented via
+an unguarded out-of-bounds read rather than an explicit check, rather
+than a deliberate design choice with a safe fallback. **Not
+reproduced**: `partyAbilityUnlocksAtLevel` returns 0 ids for class
+base 1-3 at any tier, instead of reading `TravelToDestination`'s data.
+
+Each of the 6 rows is 20 columns (levels 2, 4, ..., 40 — the real
+per-level curve stops mattering past 40, same story as the XP curve
+stopping at 39) of 2 `u16` ability-flag-bank ids each (0 = none,
+stopping the column's scan — the original never checks a second slot
+once the first is 0). **A genuine per-game content difference**: the
+ids themselves differ between Chapter 2 and Chapter 3 (e.g. MONK's
+level-4 unlocks are ids 7 and 0xb in Chapter 2, but 6 and 7 in Chapter
+3) — consistent with every other per-game id space in this project,
+but the table *shape* (6 rows, 20 columns, 2 slots) is identical.
+
+Reimplemented in `src23/party.c`/`.h`: `partyAbilityUnlockTable`,
+`partyAbilityUnlocksAtLevel`, `partyApplyAbilityUnlocks` — the last one
+composes the lookup with `flagBankSet` on `PartyFieldFlagBankCA` and is
+now called automatically from `partyApplyTraining`, using the
+character's *pre*-promotion class id (matching the original's exact
+call order — the ability walk runs before the secondary-class
+promotion check). Tests in `tests/test_party.c`, including the
+Chapter 2 vs. Chapter 3 content difference and every class-base-1-3
+"no valid row" case (tier 0, 1 and 2, to be thorough about the "any
+tier" claim).
+
 **Deliberately not reimplemented**, all pure UI/rendering with a much
 wider blast radius than training specifically:
 - `ShowLevelUpMessage`/`DrawItemUseConfirmDialog`/status-panel redraws
   (pure display).
-- The ability/spell-unlock table walk (`DS:0xD22B`, a
-  class-and-level-indexed table, only consulted on even
-  `PartyFieldLevel` values — not yet extracted).
 - `RunItemServiceRecipientLoop` (offers the same training item to
   other party members — a whole separate UI flow; the 13%-of-Charisma
   value computed early in `UseTrainingItem`, `word_2E38E`, is a
@@ -3958,19 +4013,20 @@ wider blast radius than training specifically:
   "feeds UI flow control, not a stat").
 
 Reimplemented in `src23/party.c`/`.h`: `partyApplyTraining` (calls
-`partySyncStagedStats` then `partyRefreshCarryCapacityAndAttributeBonuses`
-at its tail, matching the original's own call order exactly),
-`partyClassPromotionThresholds`, `partySyncStagedStats`,
-`partyRefreshCarryCapacityAndAttributeBonuses`, and
+`partyApplyAbilityUnlocks`, then `partySyncStagedStats`, then
+`partyRefreshCarryCapacityAndAttributeBonuses`, at its tail, matching
+the original's own call order exactly), `partyClassPromotionThresholds`,
+`partySyncStagedStats`, `partyRefreshCarryCapacityAndAttributeBonuses`,
 `partyRecomputeEquipmentStatBonuses` (not auto-called by
-`partyApplyTraining`, see above). `cost` is caller-supplied (see
-above). Tests in `tests/test_party.c`, including per-class-base
-MP-formula spot checks (MAGE, DRUID, PALADIN), the untrained-slot
-skip, both stat/HP/MP caps, promotion at both Chapter 2 thresholds
-plus their absence in Chapter 3, the current-value sync, the
-excess-over-72 bonus threshold, and the equipment-bonus formula for
-the main weapon, off-hand and ring/misc slots (a synthetic item
-catalog, not real `WORLD.DAT` data).
+`partyApplyTraining`, see above), and the ability-unlock table
+functions above. `cost` is caller-supplied (see above). Tests in
+`tests/test_party.c`, including per-class-base MP-formula spot checks
+(MAGE, DRUID, PALADIN), the untrained-slot skip, both stat/HP/MP caps,
+promotion at both Chapter 2 thresholds plus their absence in Chapter 3,
+the current-value sync, the excess-over-72 bonus threshold, the
+equipment-bonus formula for the main weapon, off-hand and ring/misc
+slots (a synthetic item catalog, not real `WORLD.DAT` data), and the
+ability-unlock table.
 
 Two things worth flagging for anyone extending this:
 - **A real asymmetry in the threshold comparison**, reproduced exactly

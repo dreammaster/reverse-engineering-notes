@@ -8835,9 +8835,67 @@ across the test suite (`test_effect.c`, `test_monsterpool.c`,
 suites pass.
 
 With this, `UseTrainingItem` and its entire tail-call chain are fully
-reimplemented — the only remaining pieces are genuinely separate
-systems (the ability-unlock table, the "offer to other members" UI
-loop, and the upstream item-use pipeline this project hasn't started).
+reimplemented except one piece — the only remaining ones are genuinely
+separate systems (the "offer to other members" UI loop and the
+upstream item-use pipeline this project hasn't started).
+
+### 2026-09-24 session update (continued): the ability-unlock table, and a "10 rows" hypothesis that turned out to be wrong
+
+Went after the last piece of `UseTrainingItem`: the ability/spell-unlock
+table walk at `DS:0xD22B`. Wrote a small IDA script
+(`dump_ability_unlock_table.py`) to dump it directly rather than guess
+at its size from the row-index arithmetic alone — the same lesson as
+the XP-threshold table's entry count a few rounds back, where a guess
+(65) was wrong and the real count (89) came from reading the loop's
+own bound.
+
+The first dump, assuming 10 rows (matching every value the row-index
+formula could theoretically produce), immediately looked wrong: rows
+0-5 were clean ascending sequences of small numbers — exactly what
+ability ids should look like — but rows 6-9 were a mix of small values
+and suspicious round hex numbers like `0x8000`/`0x4000`/`0x2000`/
+`0x1000`. Recognized those bit values immediately — they're the exact
+bits `TravelToDestination` (read much earlier this session while
+investigating a different question) tests on its own `+0xE` flags
+field. Checked the arithmetic directly rather than trusting the
+pattern-match alone: `0xD22B + 6*0x50` (six rows at the table's own
+80-byte stride) equals `0xD40B` *exactly* — `TravelToDestination`'s own
+destination-table base address. Confirmed the same relationship holds
+in Chapter 3 at its own addresses. This settles it architecturally, not
+just by eyeballing: the real table is exactly 6 rows, and reading a
+7th walks straight into an unrelated table's data.
+
+That finding immediately explained something that would otherwise have
+been a loose thread: the row-index arithmetic reduces class base 1-3
+(FIGHTER/MERCHANT/ROGUE) to an out-of-range row at *every* tier, not
+just when unpromoted as an initial read might suggest — meaning any
+ordinary physical-class character reads `TravelToDestination`'s data
+as if it were ability ids on every even-level training. A genuine,
+easily-reachable original-engine quirk, most likely never noticed
+since a `SetRecordFlag_CA` call on a garbage-but-usually-out-of-range
+index is silently absorbed by the flag bank's own bounds check.
+Recorded honestly as "very likely a real bug" rather than invented a
+justification for it, and deliberately not reproduced — the C
+reimplementation returns zero ability ids for these classes instead of
+reading adjacent memory.
+
+New `partyAbilityUnlockTable`/`partyAbilityUnlocksAtLevel`/
+`partyApplyAbilityUnlocks` in `src23/party.c`/`.h`, the last one wired
+automatically into `partyApplyTraining`'s tail (using the
+pre-promotion class id, matching the original's exact call order) —
+unlike the equipment-bonus step, this one needed no extra dependency
+`partyApplyTraining` didn't already have, so it could be composed in
+directly rather than left for the caller. Confirmed the ability ids
+themselves differ between the two games (same per-game id-space story
+as everything else in this project) while the table's shape doesn't.
+Tests in `tests/test_party.c` cover the Chapter 2/3 content difference
+and the class-base-1-3 "no valid row" case at all three tiers. All 18
+suites pass.
+
+With the ability-unlock table done, `UseTrainingItem` and its entire
+tail-call chain are now fully reimplemented — what's left in this area
+is genuinely separate: `RunItemServiceRecipientLoop` (a UI flow) and
+the upstream `UseItem` item-use pipeline this project hasn't started.
 
 ## Next steps (not started this session)
 

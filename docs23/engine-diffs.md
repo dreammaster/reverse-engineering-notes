@@ -1208,6 +1208,26 @@ pattern across three independent subsystems is more suggestive of a
 systemic Chapter 3 change (or a shared code-generation/init bug) than
 three isolated coincidences, but that remains unconfirmed.
 
+## Ability/spell-unlock table: identical shape, different ids, same latent physical-class bug
+
+Found while writing `src23/party.c`'s `partyAbilityUnlocksAtLevel`
+(2026-09-24). The table's shape (6 rows, 20 columns, 2 `u16` slots) and
+`UseTrainingItem`'s walk logic are identical between the games, but the
+ability ids themselves genuinely differ — e.g. MONK's level-4 unlocks
+are ids `7`/`0xb` in Chapter 2 but `6`/`7` in Chapter 3 — the usual
+per-game id-space difference this project has found everywhere else
+(monster types, item ids, block indices, ...).
+
+One thing that is *not* a Ch2/Ch3 difference, confirmed by checking
+both: the apparent original-engine bug where class base 1-3
+(FIGHTER/MERCHANT/ROGUE, at any tier) reads out of the ability table's
+bounds into `TravelToDestination`'s own destination-table data — the
+row-index arithmetic and the destination-table base addresses both
+differ between the games (`0xD40B` vs. `0xBA95`), but the *relationship*
+(`abilityTable + 6*0x50 == destinationTable`, so any row beyond 5 reads
+into it) holds identically in both. See `file-formats.md`'s "ability/
+spell-unlock table" section for the full derivation.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

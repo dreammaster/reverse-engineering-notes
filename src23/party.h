@@ -263,20 +263,18 @@ typedef enum {
  * ROGUE and their promoted tiers -- see the .c file for the other 6
  * bases' exact weightings, read directly from the branch structure,
  * not guessed), every one of the 6 core attributes and 13 skills grows
- * by a flat +2 (max only), and PartyFieldClass gets +10 at each
- * promotion threshold. Every max-stat growth silently no-ops for a
- * stat that's currently 0 (AddToStatCapped's own "untrained slot"
- * skip, reproduced exactly). Finally calls partySyncStagedStats then
+ * by a flat +2 (max only), applies partyApplyAbilityUnlocks using the
+ * *pre*-promotion class id (matching the original's own order -- the
+ * ability walk runs before the promotion check below), and
+ * PartyFieldClass gets +10 at each promotion threshold. Every max-stat
+ * growth silently no-ops for a stat that's currently 0
+ * (AddToStatCapped's own "untrained slot" skip, reproduced exactly).
+ * Finally calls partySyncStagedStats then
  * partyRefreshCarryCapacityAndAttributeBonuses, in that order, exactly
  * matching the original's own tail call sequence -- so besides HP/MP,
  * every attribute and skill's *current* value also gets pulled up to
  * its (possibly just-grown) max, and carry capacity/the two excess-stat
  * bonus pairs get recomputed from the final Strength/Dexterity values.
- *
- * Deliberately NOT reimplemented here -- a candidate for its own pass:
- * the ability/spell-unlock table walk (a fixed level-and-class-indexed
- * table at DS:0xD22B, not yet extracted, only consulted on even
- * PartyFieldLevel values).
  *
  * The original's tail call chain also reaches
  * RecomputeEquipmentStatBonuses (via RefreshCarryCapacityAndAttributeBonuses's
@@ -336,6 +334,56 @@ void partyRefreshCarryCapacityAndAttributeBonuses(uint8_t *record);
  * automatically (see that function's own doc comment).
  */
 void partyRecomputeEquipmentStatBonuses(uint8_t *record, const ItemCatalog *catalog, GameKind game);
+
+enum {
+    PartyAbilityUnlockRowCount = 6,     /* one per class base 4-9 (MONK..MARKSMAN); see partyAbilityUnlocksAtLevel */
+    PartyAbilityUnlockColumnCount = 20, /* one per even level, 2..40 */
+    PartyAbilityUnlockSlotCount = 2     /* up to 2 ability ids unlocked per level */
+};
+
+typedef uint16_t PartyAbilityUnlockRow[PartyAbilityUnlockColumnCount * PartyAbilityUnlockSlotCount];
+
+/*
+ * UseTrainingItem's ability/spell-unlock table walk (yendor2.asm:21764
+ * on, DS:0xD22B; yendor3.asm, DS:0xB8B5; same shape, different ids --
+ * a real per-game content difference like the rest of this project's
+ * per-game id spaces). Only ever consulted by the original on an even
+ * PartyFieldLevel, hence 20 columns (levels 2, 4, ..., 40) rather than
+ * PartyXpThresholdCount's 89 -- the real per-level ability curve simply
+ * stops mattering past level 40, same story as the XP curve stopping
+ * at level 39.
+ *
+ * **The table is exactly 6 rows, confirmed architecturally, not just
+ * by row-count counting**: `TABLE_OFFSET + 6*0x50` lands exactly on
+ * `TravelToDestination`'s own destination-table base address in BOTH
+ * games (`0xD40B` in Chapter 2, `0xBA95` in Chapter 3) -- reading a 7th
+ * row would silently read that unrelated table's own data instead.
+ * The original's own row-index arithmetic can produce exactly that:
+ * class base 1-3 (FIGHTER/MERCHANT/ROGUE, at *any* tier -- not just
+ * unpromoted) reduces to a negative or out-of-range row, an apparent
+ * genuine original-engine bug (or at minimum, an intentional "physical
+ * classes have nothing to learn here" case implemented via an
+ * unguarded out-of-bounds read rather than an explicit check) --
+ * confirmed reachable in normal play, since a level-2+ FIGHTER/
+ * MERCHANT/ROGUE at any tier is an entirely ordinary character state.
+ * Not reproduced: partyAbilityUnlocksAtLevel returns 0 ability ids for
+ * these bases instead of reading adjacent unrelated data.
+ */
+const PartyAbilityUnlockRow *partyAbilityUnlockTable(GameKind game);
+
+/*
+ * The 0-2 ability-flag-bank ids (see PartyFieldFlagBankCA, flagBankSet)
+ * a character unlocks at `level`, given their (pre-promotion) class id.
+ * Returns 0 ids for: an odd level, a level outside [2,40], or a class
+ * base outside 4-9 (see partyAbilityUnlockTable's comment). Stops at
+ * the table's own first zero entry per column exactly like the
+ * original -- a nonzero id after a zero one (never observed in either
+ * game's real table, but not assumed impossible) would not be read.
+ */
+unsigned partyAbilityUnlocksAtLevel(unsigned classId, unsigned level, GameKind game, uint16_t out[PartyAbilityUnlockSlotCount]);
+
+/* Composes partyAbilityUnlocksAtLevel with flagBankSet on PartyFieldFlagBankCA. Returns the same count. */
+unsigned partyApplyAbilityUnlocks(uint8_t *record, unsigned classId, unsigned level, GameKind game);
 
 /*
  * SyncPartyRecordStagedStats (yendor2.asm:22633; called from UseTrainingItem
