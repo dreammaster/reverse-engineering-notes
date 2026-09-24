@@ -46,6 +46,10 @@ wxString wxConvertMB2WX(const char* s) {
     return wxString(s);
 }
 
+void toUTF(wxString* out, const char* utf8) {
+    *out = wxString(utf8);
+}
+
 bool wxFile::Exists(const wxString& path) {
     struct stat st;
     return ::stat(static_cast<const char*>(path.mb_str()), &st) == 0;

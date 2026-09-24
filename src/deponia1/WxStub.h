@@ -86,6 +86,11 @@ struct wxSize {
     int height = 0;
 };
 
+struct wxPoint {
+    int x = 0;
+    int y = 0;
+};
+
 class wxCmdLineParser {
 public:
     wxCmdLineParser() = default;
@@ -120,6 +125,11 @@ private:
 
 bool wxInitialize();
 wxString wxConvertMB2WX(const char* s);
+
+// toUTF(wxString*, const char*) - converts a narrow (assumed UTF-8) C string
+// into a wxString, writing into the caller-provided output parameter (this
+// matches the calling convention seen at every reversed call site so far).
+void toUTF(wxString* out, const char* utf8);
 
 // Stand-in for wxWidgets' wxStandardPathsBase, which real TStandardPaths
 // (see TStandardPaths.h) holds a pointer to and forwards most calls to.

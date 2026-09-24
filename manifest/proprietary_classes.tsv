@@ -123,7 +123,7 @@ HashMap<wxString, TArgument*, StringHash<wchar_t const*> >	todo	2	426827	430792
 TArgParser	todo	8	426919	1434417
 SimplexNoise1234	todo	4	434064	434207
 Noise1234	todo	12	434500	437359
-TGameController	stub	20	450097	453534
+TGameController	done	20	450097	453534
 TSceneControl	todo	15	453942	455632
 TGameControl	todo	98	455671	478479
 SGameAction	todo	1	456169	456169

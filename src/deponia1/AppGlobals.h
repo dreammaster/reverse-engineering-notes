@@ -36,3 +36,12 @@ extern unsigned char byte_11F8B01;
 extern unsigned char byte_11F8B02;
 
 extern TMasterControl* g_pGameControl;
+
+// Set by TGameController::ControllerAxisMouseMove/ControllerAxisCharacterMove
+// (TGameController.cpp) for the game loop to consume as per-frame cursor /
+// character movement deltas.
+extern int movex;
+extern int movey;
+extern int charmovex;
+extern int charmovey;
+extern int stopped_char;
