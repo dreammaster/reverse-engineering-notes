@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_party test_party.c ../party.c ../savegame.c ../savegame_stdio.c ../bcd4.c && ./test_party
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_party test_party.c ../party.c ../savegame.c ../savegame_stdio.c ../bcd4.c ../item.c && ./test_party
  *
  * Real-character checks read yendor2/game/CURGAME (gitignored; skipped if
  * absent). Set YENDOR2_GAME_DIR to override where.
@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "bcd4.h"
+#include "item.h"
 #include "party.h"
 #include "savegame.h"
 #include "savegame_stdio.h"
@@ -520,6 +521,95 @@ static void testTraining(void) {
              820);
 }
 
+static void setU16At(uint8_t *base, size_t offset, uint16_t value) {
+    base[offset] = (uint8_t)value;
+    base[offset + 1] = (uint8_t)(value >> 8);
+}
+
+static void setWord(uint8_t *table, size_t offset, unsigned word, uint16_t value) {
+    setU16At(table, offset + word * 2, value);
+}
+
+static void testEquipmentBonuses(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 4;
+    catalog.weaponCount = 2;
+    catalog.wearableCount = 2;
+
+    /* Item 1: main weapon. Weapon target entry 0: bonus (word 0) = 5. */
+    uint8_t *item1 = catalog.items + 0 * ItemRecordSize;
+    setU16At(item1, ItemFieldFlags, ItemFlagEquipCode0A);
+    setU16At(item1, ItemFieldTargetOffset, 0);
+    setWord(catalog.weapons, 0, ItemTargetAbsorption, 5);
+
+    /* Item 2: off-hand (code 0xC), also weapon-kind. Weapon target entry 1: bonus=3, slot flags = Slashing (0x4000) + bit 0. */
+    uint8_t *item2 = catalog.items + 1 * ItemRecordSize;
+    setU16At(item2, ItemFieldFlags, ItemFlagEquipCode0C);
+    setU16At(item2, ItemFieldTargetOffset, ItemWeaponSize);
+    setWord(catalog.weapons, ItemWeaponSize, ItemTargetAbsorption, 3);
+    setWord(catalog.weapons, ItemWeaponSize, ItemTargetSlotFlags, 0x4001);
+
+    /* Item 3: ring slot (code 0xD), wearable-kind. Wearable target entry 0: bonus=2. */
+    uint8_t *item3 = catalog.items + 2 * ItemRecordSize;
+    setU16At(item3, ItemFieldFlags, ItemFlagEquipCode0D);
+    setU16At(item3, ItemFieldTargetOffset, 0);
+    setWord(catalog.wearables, 0, ItemTargetAbsorption, 2);
+
+    /* Item 4: short slot (code 0x10), wearable-kind. Wearable target entry 1: bonus=1. */
+    uint8_t *item4 = catalog.items + 3 * ItemRecordSize;
+    setU16At(item4, ItemFieldFlags, ItemFlagEquipShort);
+    setU16At(item4, ItemFieldTargetOffset, ItemWearableSize);
+    setWord(catalog.wearables, ItemWearableSize, ItemTargetAbsorption, 1);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldEquipRatingBase1, 10);
+    partySetU16(g_record, PartyFieldEquipRatingBase1Max, 10);
+    partySetStat(g_record, PartyStatProjectile, 7);
+    partySetStatMax(g_record, PartyStatProjectile, 8);
+    partySetStat(g_record, PartyStatSlashing, 4);
+    partySetStatMax(g_record, PartyStatSlashing, 6);
+    itemSlotSet(partyEquipmentSlot(g_record, 0x0A, GameYendor2), 1, 0); /* main weapon: item 1 */
+    itemSlotSet(partyEquipmentSlot(g_record, 0x0C, GameYendor2), 2, 0); /* off-hand: item 2 */
+    itemSlotSet(partyEquipmentSlot(g_record, 0x0D, GameYendor2), 3, 0); /* ring: item 3 */
+    partySetU16(partyEquipmentSlot(g_record, 0x10, GameYendor2), 0, 4); /* short slot: item 4 (2-byte, id only) */
+
+    partyRecomputeEquipmentStatBonuses(g_record, &catalog, GameYendor2);
+
+    checkU32("EquipRating1 = base(10) + Projectile skill(7, from the main weapon)",
+             partyGetStat(g_record, PartyStatEquipRating1), 17);
+    checkU32("EquipRating1 max = base(10) + max Projectile(8)", partyGetStatMax(g_record, PartyStatEquipRating1), 18);
+    checkU32("EquipRating2 = main weapon's own bonus (5), base was 0",
+             partyGetStat(g_record, PartyStatEquipRating2), 5);
+    checkU32("EquipRating3 = Slashing skill(4, selected by the off-hand's slot-flags bit 0x4000)",
+             partyGetStat(g_record, PartyStatEquipRating3), 4);
+    checkU32("EquipRating3 max = max Slashing(6)", partyGetStatMax(g_record, PartyStatEquipRating3), 6);
+    checkU32("EquipRating4 = off-hand's own bonus (3), base was 0",
+             partyGetStat(g_record, PartyStatEquipRating4), 3);
+    checkU32("EquipRating5 = ring(2) + short-slot(1) bonuses accumulated", partyGetStat(g_record, PartyStatEquipRating5),
+             3);
+    check("off-hand slot-flags bit 0 set: PartyFieldUiFlags bit 0x20 is set",
+          (partyGetU16(g_record, PartyFieldUiFlags) & 0x20) != 0);
+
+    /* An empty off-hand: no skill/item bonus, and the UI flag stays clear. */
+    memset(g_record, 0, PartyRecordSize);
+    itemSlotSet(partyEquipmentSlot(g_record, 0x0A, GameYendor2), 1, 0);
+    partySetStat(g_record, PartyStatProjectile, 7);
+    partyRecomputeEquipmentStatBonuses(g_record, &catalog, GameYendor2);
+    checkU32("no off-hand: EquipRating3 stays at its base (0)", partyGetStat(g_record, PartyStatEquipRating3), 0);
+    checkU32("no off-hand: EquipRating4 stays at its base (0)", partyGetStat(g_record, PartyStatEquipRating4), 0);
+    check("no off-hand: PartyFieldUiFlags bit 0x20 stays clear", (partyGetU16(g_record, PartyFieldUiFlags) & 0x20) == 0);
+
+    /* No weapon at all: EquipRating1/2 stay at their base values. */
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldEquipRatingBase1, 9);
+    partyRecomputeEquipmentStatBonuses(g_record, &catalog, GameYendor2);
+    checkU32("no weapon: EquipRating1 stays at its base (9), no Projectile added",
+             partyGetStat(g_record, PartyStatEquipRating1), 9);
+    checkU32("no weapon: EquipRating2 stays at its base (0)", partyGetStat(g_record, PartyStatEquipRating2), 0);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -528,6 +618,7 @@ int main(void) {
     testInventory();
     testLevelUp();
     testTraining();
+    testEquipmentBonuses();
     testRealCharacters();
 
     if (g_failureCount == 0) {

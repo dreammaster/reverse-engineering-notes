@@ -7,6 +7,7 @@
 
 #include "bcd4.h"
 #include "game.h"
+#include "item.h"
 #include "savegame.h"
 
 /*
@@ -54,18 +55,27 @@ typedef enum {
     PartyFieldPendingLevel = 0x1E,
     PartyFieldProtections = 0x20, /* 9 x u16 resistance values, order of PartyProtection */
     /*
-     * A 5 x u16 gap between PartyFieldProtections and PartyFieldStats that
-     * RecomputeEquipmentStatBonuses (yendor2.asm:19907, not reimplemented)
-     * copies into PartyStatEquipRating1-5's baseline before adding equipped
-     * items' own bonuses on top. Only the last two slots (+0x38/+0x3A) are
-     * traced -- see PartyFieldStrengthBonus/PartyFieldDexterityBonus below;
-     * +0x32/+0x34/+0x36 (feeding EquipRating1/3/2, in that swapped order)
-     * aren't set by any function read so far.
+     * A 5 x u16 gap between PartyFieldProtections and PartyFieldStats:
+     * PartyStatEquipRating1-5's baseline, reset from these fields by
+     * RecomputeEquipmentStatBonuses (yendor2.asm:19907, see
+     * partyRecomputeEquipmentStatBonuses) before that function adds
+     * equipped items' own bonuses on top. Note the swapped order --
+     * EquipRating2's baseline is this gap's *third* slot, EquipRating3's
+     * is its *second*, matching the original exactly. Nothing read so
+     * far writes EquipRatingBase1/2/3 (they may simply always be 0,
+     * or be set by an unread character-creation/leveling path); the
+     * last two slots are separately traced and named below.
      */
-    PartyFieldStrengthBonus = 0x38,  /* u16; 20% of (current Strength - 72), 0 if <= 72 */
-    PartyFieldDexterityBonus = 0x3A, /* u16; 20% of (current Dexterity - 72), 0 if <= 72 */
+    PartyFieldEquipRatingBase1 = 0x32, /* u16; EquipRating1's baseline */
+    PartyFieldEquipRatingBase3 = 0x34, /* u16; EquipRating3's baseline (note: base *3*, not 2) */
+    PartyFieldEquipRatingBase2 = 0x36, /* u16; EquipRating2's baseline (note: base *2*, not 3) */
+    PartyFieldStrengthBonus = 0x38,    /* u16; 20% of (current Strength - 72), 0 if <= 72; EquipRating4's baseline */
+    PartyFieldDexterityBonus = 0x3A,   /* u16; 20% of (current Dexterity - 72), 0 if <= 72; EquipRating5's baseline */
     PartyFieldStats = 0x3C,       /* 27 x u16 current values, indexed by PartyStat */
-    /* Same 5-slot gap and same two traced fields as above, mirrored for the max-value side. */
+    /* Same 5-slot gap and same fields as above, mirrored for the max-value side. */
+    PartyFieldEquipRatingBase1Max = 0x72,
+    PartyFieldEquipRatingBase3Max = 0x74,
+    PartyFieldEquipRatingBase2Max = 0x76,
     PartyFieldStrengthBonusMax = 0x78,  /* u16; 20% of (max Strength - 72), 0 if <= 72 */
     PartyFieldDexterityBonusMax = 0x7A, /* u16; 20% of (max Dexterity - 72), 0 if <= 72 */
     PartyFieldStatsMax = 0x7C,    /* 27 x u16 maximum values, same indexing */
@@ -90,7 +100,15 @@ typedef enum {
     PartyStatIntelligence,
     PartyStatWisdom,
     PartyStatCharisma,
-    PartyStatEquipRating1, /* five equipment-derived ratings (0x48-0x50); unnamed in the game's table */
+    /*
+     * Five equipment-derived ratings (0x48-0x50); unnamed in the game's
+     * table, but their derivation is fully traced -- see
+     * partyRecomputeEquipmentStatBonuses. Roughly: 1/2 come from the main
+     * weapon (code 0xA) plus your Projectile skill, 3/4 from the second
+     * slot (code 0xC) plus a melee skill selected by its item type, and 5
+     * accumulates every other equipped item's (codes 0xD-0x14) own bonus.
+     */
+    PartyStatEquipRating1,
     PartyStatEquipRating2,
     PartyStatEquipRating3,
     PartyStatEquipRating4,
@@ -255,13 +273,19 @@ typedef enum {
  * its (possibly just-grown) max, and carry capacity/the two excess-stat
  * bonus pairs get recomputed from the final Strength/Dexterity values.
  *
- * Deliberately NOT reimplemented here -- candidates for their own
- * passes: the ability/spell-unlock table walk (a fixed
- * level-and-class-indexed table at DS:0xD22B, not yet extracted, only
- * consulted on even PartyFieldLevel values) and
- * RecomputeEquipmentStatBonuses (equipment-bonus scaling into
- * PartyStatEquipRating1-5 -- see PartyFieldStrengthBonus's comment;
- * needs a currently-undecoded item-catalog sub-table).
+ * Deliberately NOT reimplemented here -- a candidate for its own pass:
+ * the ability/spell-unlock table walk (a fixed level-and-class-indexed
+ * table at DS:0xD22B, not yet extracted, only consulted on even
+ * PartyFieldLevel values).
+ *
+ * The original's tail call chain also reaches
+ * RecomputeEquipmentStatBonuses (via RefreshCarryCapacityAndAttributeBonuses's
+ * own tail call -- training re-evaluates equipped items' bonuses too,
+ * not just base stats). This reimplementation splits that step out as
+ * a separate function, partyRecomputeEquipmentStatBonuses (below),
+ * that partyApplyTraining does NOT call automatically, since it needs
+ * an ItemCatalog this function doesn't take -- a caller wanting full
+ * fidelity should call it too after partyApplyTraining.
  */
 PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *save, const Bcd4 cost);
 
@@ -276,14 +300,42 @@ PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *s
  * the original -- UseTrainingItem is one caller among several.
  *
  * Only reimplements this function's own body. Its own tail call,
- * RecomputeEquipmentStatBonuses (yendor2.asm:19907), is NOT
- * reimplemented -- it folds these bonus fields (and three still-untraced
- * ones, see PartyFieldStrengthBonus's comment) into PartyStatEquipRating1-5
- * together with equipped items' own catalog bonuses, which needs a
- * currently-undecoded item-catalog sub-table (item.c's "target table")
- * this project hasn't extracted yet.
+ * RecomputeEquipmentStatBonuses (yendor2.asm:19907), is a separate
+ * function here -- partyRecomputeEquipmentStatBonuses, below -- since
+ * it needs an ItemCatalog this function doesn't take.
  */
 void partyRefreshCarryCapacityAndAttributeBonuses(uint8_t *record);
+
+/*
+ * RecomputeEquipmentStatBonuses (yendor2.asm:19907, instruction-identical
+ * in Chapter 3): resets PartyStatEquipRating1-5 (current/max) from their
+ * baseline fields (PartyFieldEquipRatingBase1/2/3, PartyFieldStrengthBonus,
+ * PartyFieldDexterityBonus, and their Max counterparts -- note
+ * EquipRating2/3 use the *swapped* base fields, matching the original),
+ * then adds each currently-equipped item's own bonus on top:
+ *   - Main weapon (equipment code 0xA): EquipRating1 += the character's
+ *     own Projectile skill (current/max -- yes, a skill value, not an
+ *     item property); EquipRating2 += the weapon's own target-entry
+ *     bonus (ItemTargetAbsorption -- for a weapon this is a damage/
+ *     accuracy figure, not literally "absorption").
+ *   - Second slot (code 0xC, likely off-hand/shield): EquipRating3 +=
+ *     a melee skill selected by the item's own ItemTargetSlotFlags bit
+ *     (0x4000 -> Slashing, 0x2000 -> Bashing, 0x1000 -> Polearm, none
+ *     of the three -> no skill bonus at all); EquipRating4 += the
+ *     item's own target-entry bonus. If ItemTargetSlotFlags bit 0x1 is
+ *     also set, PartyFieldUiFlags bit 0x20 is set (else cleared) --
+ *     meaning not confirmed, a field already used for other UI
+ *     purposes per its own doc comment.
+ *   - Every other equipped item (codes 0xD-0xF, then 0x10-0x14):
+ *     EquipRating5 += each one's own target-entry bonus, accumulated
+ *     across all of them.
+ * Each item lookup uses itemCatalogRecord/itemTargetEntry; an empty
+ * slot (item id 0) or an item with no target entry contributes nothing.
+ * Called from several places in the original, not just training --
+ * matching that, this project's partyApplyTraining does NOT call it
+ * automatically (see that function's own doc comment).
+ */
+void partyRecomputeEquipmentStatBonuses(uint8_t *record, const ItemCatalog *catalog, GameKind game);
 
 /*
  * SyncPartyRecordStagedStats (yendor2.asm:22633; called from UseTrainingItem

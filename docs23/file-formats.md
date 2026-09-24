@@ -2022,7 +2022,12 @@ bonus (via `LoadItemCatalogRecord`) across all of these into two
 5-word "derived equipment bonus" blocks (`+0x48`-`+0x50`/
 `+0x88`-`+0x90`, reset from base values `+0x32`-`+0x3A`/`+0x72`-`+0x7A`
 first) — the concrete mechanism behind equipped gear's stat
-contribution. A separate function, `DrawPartyMemberStatusPanel`
+contribution. **Fully reimplemented 2026-09-24** as
+`partyRecomputeEquipmentStatBonuses` — see the "UseTrainingItem"
+section below for the complete per-slot formula (which skill feeds
+which rating, the main-weapon/off-hand split, the `PartyFieldUiFlags`
+bit 0x20 side effect) and the corrected understanding that `+0x48`-`+0x50`
+are `PartyStatEquipRating1`-`5`. A separate function, `DrawPartyMemberStatusPanel`
 (called from `RunPartyInventoryScreen`), draws a fuller
 combat-style status panel per party slot: portrait, unconscious/dead
 overlay, three `DrawStatBar` gauges (HP `+0x52`/`+0x92`, MP
@@ -3900,22 +3905,51 @@ source, since this project hasn't built the upstream item-use pipeline
     `RecomputeEquipmentStatBonuses`'s baseline without knowing what
     computed them.
   - This function's own tail call, `RecomputeEquipmentStatBonuses`
-    (`yendor2.asm:19907`), is **not** reimplemented — it folds these
-    bonus fields (plus three still-untraced ones, `+0x32`/`+0x34`/
-    `+0x36`) into `PartyStatEquipRating1-5` together with equipped
-    items' own catalog bonuses, which needs a currently-undecoded
-    item-catalog sub-table (`item.c`'s "target table") this project
-    hasn't extracted yet.
+    (`yendor2.asm:19907`, instruction-identical in Chapter 3) — also
+    now reimplemented, same round, as `partyRecomputeEquipmentStatBonuses`.
+    Resets `PartyStatEquipRating1-5` (current/max) from five baseline
+    fields — the gap's remaining three slots are now named too,
+    `PartyFieldEquipRatingBase1`/`2`/`3` (`+0x32`/`+0x36`/`+0x34` — note
+    the swap: base*2* is the gap's *third* slot, base*3* its *second*,
+    reproduced exactly) plus the two bonus fields above — then adds
+    equipped items' own bonuses on top, resolved via `item.c`'s
+    already-existing `itemCatalogRecord`/`itemTargetEntry`/`itemTargetWord`
+    (this function turned out not to need any new item-catalog
+    decoding at all — `LoadItemCatalogRecord`'s return value in this
+    context is exactly `word_2E548`, the target-entry pointer
+    `itemTargetEntry` already computes, confirmed by reading
+    `LoadItemCatalogRecord` itself rather than assuming):
+    - Main weapon (equipment code `0xA`): `EquipRating1` +=
+      the character's own **Projectile skill** (current/max — a skill
+      value, not an item property); `EquipRating2` += the weapon's own
+      target-entry bonus (`ItemTargetAbsorption`, which for a weapon
+      is really a damage/accuracy figure despite the field's
+      wearable-oriented name).
+    - Second slot (code `0xC`, likely off-hand/shield — both this and
+      the main weapon are `ItemTargetKind::Weapon`, confirmed by
+      `ItemFlagEquipCode0A`/`0C` both mapping there in `itemTargetKind`):
+      `EquipRating3` += a melee skill selected by the item's own
+      `ItemTargetSlotFlags` bit (`0x4000`→Slashing, `0x2000`→Bashing,
+      `0x1000`→Polearm, none of the three → no skill bonus at all);
+      `EquipRating4` += the item's own bonus. If `ItemTargetSlotFlags`
+      bit `0x1` is also set, `PartyFieldUiFlags` bit `0x20` is set
+      (else cleared unconditionally) — meaning still not confirmed, a
+      field already used for other UI purposes per its own comment.
+    - Every other equipped item (codes `0xD`-`0xF`, then `0x10`-`0x14`):
+      `EquipRating5` += each one's own bonus, accumulated across all of
+      them.
+    An empty slot or an item with no target entry contributes nothing.
+    Not called automatically by `partyApplyTraining` (it needs an
+    `ItemCatalog` that function doesn't take) — a caller wanting full
+    fidelity calls both.
 
-**Deliberately not reimplemented**, all pure UI/rendering or
-general-purpose utilities with a much wider blast radius than
-training specifically:
+**Deliberately not reimplemented**, all pure UI/rendering with a much
+wider blast radius than training specifically:
 - `ShowLevelUpMessage`/`DrawItemUseConfirmDialog`/status-panel redraws
   (pure display).
 - The ability/spell-unlock table walk (`DS:0xD22B`, a
   class-and-level-indexed table, only consulted on even
   `PartyFieldLevel` values — not yet extracted).
-- `RecomputeEquipmentStatBonuses` (see above).
 - `RunItemServiceRecipientLoop` (offers the same training item to
   other party members — a whole separate UI flow; the 13%-of-Charisma
   value computed early in `UseTrainingItem`, `word_2E38E`, is a
@@ -3927,12 +3961,16 @@ Reimplemented in `src23/party.c`/`.h`: `partyApplyTraining` (calls
 `partySyncStagedStats` then `partyRefreshCarryCapacityAndAttributeBonuses`
 at its tail, matching the original's own call order exactly),
 `partyClassPromotionThresholds`, `partySyncStagedStats`,
-`partyRefreshCarryCapacityAndAttributeBonuses`. `cost` is
-caller-supplied (see above). Tests in `tests/test_party.c`, including
-per-class-base MP-formula spot checks (MAGE, DRUID, PALADIN), the
-untrained-slot skip, both stat/HP/MP caps, promotion at both Chapter 2
-thresholds plus their absence in Chapter 3, the current-value sync, and
-the excess-over-72 bonus threshold.
+`partyRefreshCarryCapacityAndAttributeBonuses`, and
+`partyRecomputeEquipmentStatBonuses` (not auto-called by
+`partyApplyTraining`, see above). `cost` is caller-supplied (see
+above). Tests in `tests/test_party.c`, including per-class-base
+MP-formula spot checks (MAGE, DRUID, PALADIN), the untrained-slot
+skip, both stat/HP/MP caps, promotion at both Chapter 2 thresholds
+plus their absence in Chapter 3, the current-value sync, the
+excess-over-72 bonus threshold, and the equipment-bonus formula for
+the main weapon, off-hand and ring/misc slots (a synthetic item
+catalog, not real `WORLD.DAT` data).
 
 Two things worth flagging for anyone extending this:
 - **A real asymmetry in the threshold comparison**, reproduced exactly

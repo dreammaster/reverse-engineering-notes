@@ -320,6 +320,86 @@ void partySyncStagedStats(uint8_t *record) {
     }
 }
 
+static const uint8_t *equipTargetEntry(const ItemCatalog *catalog, uint8_t *record, unsigned code, GameKind game) {
+    uint8_t *slot = partyEquipmentSlot(record, code, game);
+    if (!slot) {
+        return NULL;
+    }
+    uint16_t id = itemSlotId(slot);
+    if (id == 0) {
+        return NULL;
+    }
+    const uint8_t *item = itemCatalogRecord(catalog, id);
+    if (!item) {
+        return NULL;
+    }
+    return itemTargetEntry(catalog, item);
+}
+
+static void equipRatingAdd(uint8_t *record, PartyStat stat, uint16_t deltaCurrent, uint16_t deltaMax) {
+    partySetStat(record, stat, (uint16_t)(partyGetStat(record, stat) + deltaCurrent));
+    partySetStatMax(record, stat, (uint16_t)(partyGetStatMax(record, stat) + deltaMax));
+}
+
+void partyRecomputeEquipmentStatBonuses(uint8_t *record, const ItemCatalog *catalog, GameKind game) {
+    partySetStat(record, PartyStatEquipRating1, partyGetU16(record, PartyFieldEquipRatingBase1));
+    partySetStat(record, PartyStatEquipRating2, partyGetU16(record, PartyFieldEquipRatingBase2));
+    partySetStat(record, PartyStatEquipRating3, partyGetU16(record, PartyFieldEquipRatingBase3));
+    partySetStat(record, PartyStatEquipRating4, partyGetU16(record, PartyFieldStrengthBonus));
+    partySetStat(record, PartyStatEquipRating5, partyGetU16(record, PartyFieldDexterityBonus));
+    partySetStatMax(record, PartyStatEquipRating1, partyGetU16(record, PartyFieldEquipRatingBase1Max));
+    partySetStatMax(record, PartyStatEquipRating2, partyGetU16(record, PartyFieldEquipRatingBase2Max));
+    partySetStatMax(record, PartyStatEquipRating3, partyGetU16(record, PartyFieldEquipRatingBase3Max));
+    partySetStatMax(record, PartyStatEquipRating4, partyGetU16(record, PartyFieldStrengthBonusMax));
+    partySetStatMax(record, PartyStatEquipRating5, partyGetU16(record, PartyFieldDexterityBonusMax));
+
+    const uint8_t *weapon = equipTargetEntry(catalog, record, 0x0A, game);
+    if (weapon) {
+        equipRatingAdd(record, PartyStatEquipRating1, partyGetStat(record, PartyStatProjectile),
+                       partyGetStatMax(record, PartyStatProjectile));
+        uint16_t bonus = itemTargetWord(weapon, ItemTargetAbsorption);
+        equipRatingAdd(record, PartyStatEquipRating2, bonus, bonus);
+    }
+
+    /* Unconditional, matching the original -- cleared here, possibly re-set below. */
+    partySetU16(record, PartyFieldUiFlags, (uint16_t)(partyGetU16(record, PartyFieldUiFlags) & 0xFFDF));
+
+    const uint8_t *offHand = equipTargetEntry(catalog, record, 0x0C, game);
+    if (offHand) {
+        uint16_t slotFlags = itemTargetWord(offHand, ItemTargetSlotFlags);
+        PartyStat meleeSkill;
+        bool hasSkill = true;
+        if (slotFlags & 0x4000) {
+            meleeSkill = PartyStatSlashing;
+        } else if (slotFlags & 0x2000) {
+            meleeSkill = PartyStatBashing;
+        } else if (slotFlags & 0x1000) {
+            meleeSkill = PartyStatPolearm;
+        } else {
+            hasSkill = false;
+            meleeSkill = PartyStatSlashing; /* unused; silences an uninitialized-use warning */
+        }
+        if (hasSkill) {
+            equipRatingAdd(record, PartyStatEquipRating3, partyGetStat(record, meleeSkill),
+                           partyGetStatMax(record, meleeSkill));
+        }
+        uint16_t bonus = itemTargetWord(offHand, ItemTargetAbsorption);
+        equipRatingAdd(record, PartyStatEquipRating4, bonus, bonus);
+
+        if (slotFlags & 1) {
+            partySetU16(record, PartyFieldUiFlags, (uint16_t)(partyGetU16(record, PartyFieldUiFlags) | 0x20));
+        }
+    }
+
+    for (unsigned code = 0x0D; code <= 0x14; code++) {
+        const uint8_t *entry = equipTargetEntry(catalog, record, code, game);
+        if (entry) {
+            uint16_t bonus = itemTargetWord(entry, ItemTargetAbsorption);
+            equipRatingAdd(record, PartyStatEquipRating5, bonus, bonus);
+        }
+    }
+}
+
 bool partyClassIsValid(unsigned classId) {
     unsigned base = classId % 10;
     return classId >= 1 && classId <= 29 && base != 0;

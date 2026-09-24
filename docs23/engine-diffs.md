@@ -1189,7 +1189,10 @@ mechanics. `SyncPartyRecordStagedStats` and
 `RefreshCarryCapacityAndAttributeBonuses` (the two functions
 `partyApplyTraining` calls at its tail, added same day) are
 instruction-identical too, same constants (72 threshold, 20% scale)
-and structure, checked directly.
+and structure, checked directly. `RecomputeEquipmentStatBonuses`
+(`partyRecomputeEquipmentStatBonuses`, same round) is likewise
+instruction-identical — same baseline-field layout including the
+EquipRating2/3 swap, same per-slot skill selection.
 
 The secondary-class promotion step is not, though: Chapter 2 promotes
 a character's class (`PartyFieldClass += 10`) at levels 10 and 30

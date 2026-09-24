@@ -8785,6 +8785,60 @@ the original's exact call order. Tests extended in `tests/test_party.c`
 to cover the current-value sync and the excess-bonus threshold
 directly. All 18 suites pass, no regressions.
 
+### 2026-09-24 session update (continued): RecomputeEquipmentStatBonuses turned out already reachable — item.c had everything needed
+
+Came back to the piece deliberately deferred a few paragraphs above:
+`RecomputeEquipmentStatBonuses`, the function that folds equipped
+items' bonuses into `PartyStatEquipRating1-5`. The previous round's
+notes said it needed new item-catalog decoding — re-reading
+`LoadItemCatalogRecord` itself (the function every equipment-bonus
+call site uses to resolve an item id) settled that assumption instead
+of taking it at face value: its return value in this specific calling
+context is exactly `word_2E548`, the "target entry" pointer, populated
+by the *same* logic `item.c`'s already-existing `itemTargetEntry`
+already implements (checked by tracing which item-flag bits select
+the wearable/weapon/consumable table inside `LoadItemCatalogRecord`
+and confirming they're the identical bits `itemTargetKind` already
+tests). So the function needed no new decoding at all — just
+composing primitives this project already had.
+
+Fully traced the per-slot formula: the main weapon (equipment code
+`0xA`) feeds `EquipRating1`/`2` from the character's own Projectile
+skill plus the weapon's own bonus; a second slot (code `0xC`, likely
+off-hand/shield — confirmed both share `ItemTargetKind::Weapon` via
+`itemTargetKind`, not two different kinds as might be assumed) feeds
+`EquipRating3`/`4` from a melee skill selected by the item's own
+Slashing/Bashing/Polearm type flag, plus its own bonus, plus a
+`PartyFieldUiFlags` bit `0x20` side effect whose meaning is still not
+confirmed; every other equipped item (three 4-byte slots, then five
+2-byte slots) accumulates into a fifth rating. Also finally named the
+three baseline fields left unnamed in the previous round
+(`PartyFieldEquipRatingBase1`/`2`/`3`) and confirmed a real, deliberate
+swap in their order — base *2*'s value sits in the gap's *third*
+slot, base *3*'s in its second — reproduced exactly rather than
+"fixed."
+
+New `partyRecomputeEquipmentStatBonuses` in `src23/party.c`/`.h`,
+composed entirely from `item.c`'s existing `itemCatalogRecord`/
+`itemTargetEntry`/`itemTargetWord`. Deliberately not called
+automatically from `partyApplyTraining` (it needs an `ItemCatalog`
+that function doesn't take, and the original calls it from several
+unrelated places too, not just training) — a caller wanting full
+fidelity calls both. Tested against a hand-built synthetic item
+catalog (not real `WORLD.DAT` data, since the goal was exercising each
+branch of the formula precisely) covering the main weapon, off-hand
+skill selection, ring/misc accumulation, and the empty-slot/no-weapon
+fallback cases. `party.h` gained a dependency on `item.h`, which
+required fixing three more pre-existing stale build-command comments
+across the test suite (`test_effect.c`, `test_monsterpool.c`,
+`test_monsterai.c`, all missing the newly-required `item.c`). All 18
+suites pass.
+
+With this, `UseTrainingItem` and its entire tail-call chain are fully
+reimplemented — the only remaining pieces are genuinely separate
+systems (the ability-unlock table, the "offer to other members" UI
+loop, and the upstream item-use pipeline this project hasn't started).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
