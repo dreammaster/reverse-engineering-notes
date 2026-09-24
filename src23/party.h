@@ -40,7 +40,16 @@ typedef enum {
     PartyFieldLevel = 0x16,       /* u16, capped at 90 by training items */
     PartyFieldExperience = 0x18,  /* Bcd4 */
     PartyFieldStatusFlags = 0x1C, /* u16, PartyStatus bits */
-    PartyFieldPendingLevel = 0x1E, /* u16; set by partyCheckForLevelUp, not yet applied to PartyFieldLevel */
+    /*
+     * u16; set by partyCheckForLevelUp. Purely a UI hint (ShowLevelUpMessage's
+     * second line, DrawPartyMemberStatusPanel's training-icon glyph) -- nothing
+     * reads it back to raise PartyFieldLevel. The actual level increase is a
+     * wholly separate mechanic: UseTrainingItem (yendor2.asm:21510, not
+     * reimplemented -- large and UI-heavy) pays a gold cost, increments
+     * PartyFieldLevel by exactly 1 (capped at 90), and grows several stats by
+     * class-dependent percentages, all independent of this field's value.
+     */
+    PartyFieldPendingLevel = 0x1E,
     PartyFieldProtections = 0x20, /* 9 x u16 resistance values, order of PartyProtection */
     PartyFieldStats = 0x3C,       /* 27 x u16 current values, indexed by PartyStat */
     PartyFieldStatsMax = 0x7C,    /* 27 x u16 maximum values, same indexing */
@@ -154,12 +163,12 @@ uint8_t *partyExperience(uint8_t *record); /* Bcd4 */
  * (partyXpThresholdTable) from the character's current PartyFieldLevel,
  * advancing while PartyFieldExperience is >= the next entry. If the
  * result exceeds the current level, stores it into PartyFieldPendingLevel
- * (left at 0 otherwise) -- a level-up is computed here but not applied;
- * no traced caller of CheckForLevelUp applies it either, so whatever
- * reads PartyFieldPendingLevel to actually raise PartyFieldLevel/re-roll
- * stats is still unidentified. PartyStatusIncapacitated characters are
- * always left at PartyFieldPendingLevel = 0, matching the original's own
- * early-out. Returns true if a level-up is now pending.
+ * (left at 0 otherwise) -- purely a UI eligibility hint, per that field's
+ * own doc comment; XP alone never raises PartyFieldLevel (see
+ * PartyFieldPendingLevel for the actual, separate leveling mechanic).
+ * PartyStatusIncapacitated characters are always left at
+ * PartyFieldPendingLevel = 0, matching the original's own early-out.
+ * Returns true if a level-up is now pending.
  */
 bool partyCheckForLevelUp(uint8_t *record, GameKind game);
 

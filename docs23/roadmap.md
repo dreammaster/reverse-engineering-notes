@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-24, ShowLootAndAwardExperience/character leveling)
+## Status (last updated 2026-09-24, UseTrainingItem investigated and scoped, not yet reimplemented)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -298,12 +298,27 @@ groundwork below is already in place.
   guessed, capping at level 90 exactly matching `PartyFieldLevel`'s
   existing "capped at 90 by training items" doc note. Computes a
   pending level into a new field, `PartyFieldPendingLevel`, but — like
-  every traced caller — never applies it; what actually raises
-  `PartyFieldLevel` is still unidentified. Found a real, exactly-
+  every traced caller — never applies it. Found a real, exactly-
   reproduced asymmetry in the threshold comparison (first step `>=`,
   cascade steps `>`) and a genuine Chapter 2 vs. Chapter 3 content
   difference in the XP curve itself, including different "unreachable"
   cap sentinels (90,000,000 vs. 99,999,999) — see `engine-diffs.md`.
+  **What applies `PartyFieldPendingLevel` — resolved, same day: nothing
+  does.** Traced every reader of it (`ShowLevelUpMessage`,
+  `DrawPartyMemberStatusPanel`'s training-icon glyph, `CheckAndAnnounceLevelUp`)
+  and found it's purely a UI eligibility hint. The actual leveling
+  mechanic is `UseTrainingItem` (`yendor2.asm:21510`) — a wholly
+  separate, **gold-gated** system: pay a fixed cost, `PartyFieldLevel`
+  increments by exactly 1 (capped at 90) regardless of
+  `PartyFieldPendingLevel`'s value, max HP grows from a percentage of
+  max Stamina, and a class-dependent MP/skill spread and secondary-class
+  promotion follow. This is precisely why `PartyFieldLevel`'s
+  pre-existing doc says "capped at 90 by training items" — XP alone
+  can't reach past its curve's real end (level 39 in both games); the
+  remaining 51 levels are training-item-only. **Deliberately not
+  reimplemented this session** — large and UI-heavy, a good
+  self-contained candidate for its own pass, comparable in scope to the
+  still-deferred side-trap pipeline. Full writeup in `file-formats.md`.
   Tests in `tests/test_party.c` and `tests/test_monsterpool.c`; all 18
   suites pass (rebuilt entirely — this also surfaced and fixed several
   pre-existing stale build-command comments in test file headers that
@@ -416,6 +431,27 @@ index" section for the full decode). Still open there:
 `LoadCurgameRecord`/`LoadLockState`'s own `CURGAME`-side record formats
 (what a `0x4000`/`0x8000` record's `value` actually indexes into), and
 flag bits `0x2000`/`0x400`'s consumers, if any.
+
+5. **`UseTrainingItem`** (`yendor2.asm:21510`, present and
+   BinDiff-matched in both games, not yet compared) — character
+   leveling's actual mechanic, investigated 2026-09-24 (see the status
+   entry above and `file-formats.md`'s "ShowLootAndAwardExperience"
+   section) but deliberately not reimplemented: pay a gold cost,
+   `PartyFieldLevel += 1` (capped at 90), grow max HP from max Stamina,
+   grow a class-dependent MP/skill spread, promote secondary class tier
+   at two more thresholds (`_val25`/`_val26`, not yet resolved). Large
+   and UI-entangled (status panels, confirmation dialogs, a spell/ability
+   unlock table lookup at `0xD22B`) — comparable in scope to the
+   side-trap pipeline (item 6 below); worth its own dedicated pass
+   rather than a quick extension of `party.c`.
+6. **The side-trap/ambush pipeline's wall-trap half** (see
+   `file-formats.md`'s "side trap"/ambush section) — still blocked on
+   confirming how a wall/door trap pool entry gets created; the
+   monster-ambush half is done (`monsterApproachParty`). The
+   2026-09-24 investigation didn't find a separate creation path but
+   strengthened the "traps reuse monster catalog fields" hypothesis
+   (`RollTrapAvoidanceMagnitude`'s `+0x64`/`+0x66` are literally
+   `MonsterFieldRangedAccuracy`/`RangedDamage`) without proving it.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need

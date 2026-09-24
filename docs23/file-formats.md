@@ -3810,10 +3810,28 @@ level 2, ..., index 88 is level 89 to level 90, matching
 `PartyFieldLevel`'s own "capped at 90 by training items" ceiling: the
 XP curve alone cannot reach past level 90. If the computed level
 exceeds the current one, it's stored into a new field,
-`PartyFieldPendingLevel` (`+0x1E`) — **computed but not applied**; no
-traced caller of `CheckForLevelUp` ever reads `PartyFieldPendingLevel`
-back to actually raise `PartyFieldLevel` or re-roll stats, so whatever
-does that (if anything already-traced does) is still unidentified.
+`PartyFieldPendingLevel` (`+0x1E`) — **computed but not applied.
+Resolved 2026-09-24: nothing ever applies it, because it's purely a UI
+eligibility hint** (`ShowLevelUpMessage`'s second display line,
+`DrawPartyMemberStatusPanel`'s training-icon glyph), not a staged
+value consumed elsewhere. Character leveling in this game is a wholly
+separate, **paid mechanic**: `UseTrainingItem` (`yendor2.asm:21510`,
+present and BinDiff-matched in both games, not yet compared or
+reimplemented — large and heavily UI-entangled) spends a fixed gold
+cost (checked against `SaveHeaderGold` and a threshold), then
+unconditionally increments `PartyFieldLevel` by exactly 1 (capped at
+90) regardless of `PartyFieldPendingLevel`'s value, recalculates max
+HP from a percentage of max Stamina, grows a class-dependent MP/skill
+spread (branching on the character's class id, `PartyFieldClass`), and
+on crossing two further class-level thresholds (`_val25`/`_val26`,
+not yet resolved) promotes the character's secondary class tier. XP
+accumulation past what the real curve can reach (levels 40-90, per the
+"effectively unreachable" sentinel below) is therefore *only* ever
+reachable via training items, not automatic play — this explains
+`PartyFieldLevel`'s pre-existing "capped at 90 by training items" doc
+note precisely. **Not reimplemented this session** — a good,
+self-contained candidate for its own dedicated pass, comparable in
+scope to the still-deferred side-trap pipeline.
 
 Two things worth flagging for anyone extending this:
 - **A real asymmetry in the threshold comparison**, reproduced exactly

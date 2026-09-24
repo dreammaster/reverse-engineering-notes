@@ -8623,6 +8623,47 @@ dependency and then rebuilding the *entire* suite to check, rather
 than only the files touched. Tests in `tests/test_party.c` and
 `tests/test_monsterpool.c`; all 18 suites pass.
 
+### 2026-09-24 session update (continued): who applies PartyFieldPendingLevel — nobody, it's a separate paid mechanic
+
+The leveling work above left one loose end: `partyCheckForLevelUp`
+computes a pending level but nothing traced applies it. Chased this
+down by reading every reader of `+0x1E` across the disassembly rather
+than guessing. Two are pure UI (`ShowLevelUpMessage`'s second display
+line, `DrawPartyMemberStatusPanel`'s training-icon glyph) and one
+(`CheckAndAnnounceLevelUp`) just calls `CheckForLevelUp` and shows the
+message — none of them write `PartyFieldLevel`. The actual mechanism
+that raises a character's level turned out to be `UseTrainingItem`
+(`yendor2.asm:21510`), a large, separate, **gold-gated** function:
+checks the party's gold against a fixed threshold, spends it, then
+unconditionally increments `PartyFieldLevel` by exactly 1 (capped at
+90) — completely independent of whatever `PartyFieldPendingLevel`
+happens to hold. It goes on to recalculate max HP from a percentage of
+max Stamina, grow a class-dependent spread of MP/skill stats (branching
+on the character's class id), and — past two further level thresholds
+whose exact values (`_val25`/`_val26`) aren't resolved yet — promote
+the character's secondary class tier.
+
+This resolves the open question with a genuinely satisfying answer
+rather than a shrug: `PartyFieldLevel`'s pre-existing doc note
+("capped at 90 by training items") wasn't just describing a ceiling —
+training items are the *entire* mechanism past what the natural XP
+curve can reach (both games' real per-level jumps stop meaning
+anything after level 39; the rest of the curve to level 89 is a flat,
+practically-unreachable sentinel). `PartyFieldPendingLevel` exists
+purely to tell the player "you've earned enough XP to be worth
+training," not to drive an automatic level-up.
+
+Deliberately did not reimplement `UseTrainingItem` itself this
+session — it's large (status panels, a spell/ability-unlock table
+lookup, confirmation dialogs, secondary-class-promotion UI all mixed
+into the state changes) and belongs in its own dedicated pass, the
+same call made earlier this project for the side-trap pipeline.
+Documented the finding in `party.h`'s `PartyFieldPendingLevel`/
+`partyCheckForLevelUp` comments, `file-formats.md`, and `roadmap.md`
+(added as candidate 5, alongside the still-open wall-trap pipeline as
+candidate 6). No code changes beyond doc comments this round — a
+documentation/investigation session, not a new module.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
