@@ -8897,6 +8897,53 @@ tail-call chain are now fully reimplemented — what's left in this area
 is genuinely separate: `RunItemServiceRecipientLoop` (a UI flow) and
 the upstream `UseItem` item-use pipeline this project hasn't started.
 
+### 2026-09-24 session update (continued): resolving "do monsters ever reposition themselves" — an exhaustive sweep rather than another guess
+
+This question has sat "genuinely open" in this project's docs since
+the `ProcessLevelMonsters` approach/ambush work several rounds back,
+each time getting re-flagged as still unknown rather than actually
+chased down. With character leveling now fully closed out, took the
+time to actually answer it properly: grepped every occurrence of the
+`g_levelMonsters` base/stride pair (`0xF26`/`0x9C`) across the entire
+disassembly and read each site in turn, rather than searching once and
+giving up when the first couple of hits turned out to be unrelated
+structures that happen to share the same stride by coincidence (a real
+hazard in this codebase, confirmed again this round — several hits
+turned out to belong to `g_monsterSlots`, a completely different
+combat-staging array, or `TravelToDestination`'s destination table in
+an earlier round's investigation).
+
+Every genuine `g_levelMonsters` consumer checked out: spawn places a
+monster once and never again; the scroll-relink/despawn pass, the
+approach/ambush check, `TickMonsterTimer`, and every death-cleanup
+site (combat, area-attack items) either leave a record's world position
+untouched or zero the whole record out. No function anywhere writes a
+new `MonsterFieldWorldX`/`Y` into an already-spawned monster. The
+answer is a clean, confident no — this engine's monsters are
+placed once, then either wait, ambush in place, or disappear.
+
+Two genuinely new things turned up during the sweep, neither chased
+further this round:
+- A whole **separate combat subsystem** — `BuildCombatTurnOrder`/
+  `ProcessCombatRound`, working over a small 3-slot `g_monsterSlots`
+  array (copies of live records staged for a combat encounter) and an
+  8-byte-stride turn-order list sorted by some per-monster priority
+  value. This project has decoded dungeon-exploration monster AI in
+  real depth but never touched actual combat resolution at all — a
+  substantial, clearly-scoped future module.
+- A previously-undocumented **item-effect "banish" mechanic**
+  (`ApplyEncodedItemEffect`, `yendor2.asm:51586`): finds whichever
+  monster occupies the party's facing tile by matching its cell offset,
+  copies the full record into a UI scratch buffer (plausibly for an
+  "examine"/"identify" display), then despawns it in place with no
+  combat rewards — a quiet, non-death removal path distinct from
+  everything else this project has found so far.
+
+No code changes this round — a targeted investigation that closed a
+long-standing open question cleanly, plus two flagged discoveries for
+later. Documented in `file-formats.md`'s "Monster approach and ambush
+check" section and `roadmap.md` (added as candidates 7 and 8).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

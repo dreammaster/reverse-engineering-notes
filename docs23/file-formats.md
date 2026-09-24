@@ -4087,9 +4087,34 @@ both use), tests in `tests/test_globalflags.c`.
 to not really be movement at all — a monster's world position is never
 changed by this function. It only checks whether the party is
 grid-aligned and reachable, and if so, arms an ambush from wherever
-the monster already stands; actual monster repositioning, if it
-happens at all, must be driven by some other function not traced this
-pass.
+the monster already stands.
+
+**Whether monsters ever reposition themselves at all — resolved
+2026-09-24: no.** Swept every reachable loop over `g_levelMonsters`
+in the disassembly (not just `ProcessLevelMonsters`) looking for any
+write to a live record's `MonsterFieldWorldX`/`Y` (`+2`/`+4`) outside
+its one-time placement at spawn (`monsterRecordPlace`,
+`SpawnMonsterInFacingDirection`). Found none. Every other
+`g_levelMonsters` consumer either spawns (once), reads/displays,
+or removes a record wholesale — combat's turn-order setup
+(`BuildCombatTurnOrder`/`ProcessCombatRound`, a separate 3-slot
+`g_monsterSlots` combat-staging array copied from live records, not
+yet reimplemented — a real additional system this sweep surfaced but
+didn't chase further), scroll-out despawn
+(`monsterPoolRefreshWindow`), combat/area-attack death cleanup
+(`GrantMonsterRewards`+`RemoveMonsterFromMap`, both already
+reimplemented), and one previously-undocumented mechanic: an
+item-effect handler (`ApplyEncodedItemEffect`, `yendor2.asm:51586`)
+that finds whichever monster occupies the party's facing tile (by
+matching `MonsterFieldCell`), copies its full 156-byte record into a
+UI scratch buffer (`DS:0x525C` — plausibly for an "identify"/"examine"
+display, not confirmed), zeroes the live record in place (a despawn,
+distinct from combat death — no rewards granted), and clears the
+dungeon grid's "monster here" overlay at that cell. Not reimplemented
+this pass — needs the broader `ApplyEncodedItemEffect`/item-effect-code
+dispatch framework this project hasn't built. In short: `g_levelMonsters`
+records are created once, occasionally copied out or removed, and
+never moved.
 
 **Alignment**: a monster only ever engages if it shares the party's
 exact world row *or* column — no diagonal engagement, no pathfinding

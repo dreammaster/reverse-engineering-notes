@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-24, UseTrainingItem fully done including the ability-unlock table)
+## Status (last updated 2026-09-24, resolved: monsters never reposition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -266,7 +266,8 @@ groundwork below is already in place.
   `tests/test_interact.c`; all 18 suites pass. Still open: how a
   wall/door trap pool entry (as opposed to an ordinary monster)
   actually gets created, whether monsters ever reposition themselves at
-  all and via what function, `LoadCurgameRecord`'s own 4-byte EMS
+  all and via what function (**resolved 2026-09-24: they don't — see
+  the later status entry below**), `LoadCurgameRecord`'s own 4-byte EMS
   record format (a separate, still-unresolved question from the bitmap
   above), `ShowLockStatus`/`HandleSpecialCellEntry` (pure UI/rendering,
   deferred to the eventual SDL2 layer), map-trigger effects, and
@@ -394,6 +395,21 @@ groundwork below is already in place.
   three rounds — surfaced and fixed several pre-existing stale
   build-command comments, `test_effect.c`/`test_monsterpool.c`/
   `test_monsterai.c` all missing dependencies `party.c` picked up).
+  **Whether monsters ever reposition themselves — resolved, same day:
+  no.** Swept every reachable loop over `g_levelMonsters` in the
+  disassembly (not just `ProcessLevelMonsters`), not only searching but
+  actually reading each one, looking for any write to a live record's
+  world position outside its one-time spawn placement. Found none —
+  every consumer spawns, reads, or removes a record wholesale, never
+  moves one. Surfaced two things along the way, neither reimplemented:
+  a genuine separate combat subsystem (`BuildCombatTurnOrder`/
+  `ProcessCombatRound`, a 3-slot `g_monsterSlots` staging array distinct
+  from the 80-slot pool) and a previously-undocumented item-effect
+  "banish the monster on the facing tile" mechanic
+  (`ApplyEncodedItemEffect`, `yendor2.asm:51586`) that copies a
+  record out to a UI scratch buffer before despawning it, no rewards
+  granted. Full writeup in `file-formats.md`'s "Monster approach and
+  ambush check" section.
 
 ## Next: continue the C reimplementation
 
@@ -523,6 +539,22 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    strengthened the "traps reuse monster catalog fields" hypothesis
    (`RollTrapAvoidanceMagnitude`'s `+0x64`/`+0x66` are literally
    `MonsterFieldRangedAccuracy`/`RangedDamage`) without proving it.
+7. **Turn-based combat** (`BuildCombatTurnOrder`/`ProcessCombatRound`,
+   surfaced 2026-09-24 while resolving the monster-repositioning
+   question, not otherwise touched by this project) — a genuinely
+   separate subsystem from the dungeon-exploration monster AI already
+   done: a 3-slot `g_monsterSlots` staging array (distinct from the
+   80-slot `g_levelMonsters` pool) and an `+8`-byte-stride turn-order
+   list (`g_combatTurnOrder`) sorted by some per-monster priority value
+   (`[+4]`, source not yet identified). Not scoped or estimated —
+   genuinely just discovered, not investigated further this session.
+8. **The item-effect "banish" mechanic** (`ApplyEncodedItemEffect`,
+   `yendor2.asm:51586`, surfaced the same session) — finds whichever
+   monster occupies the party's facing tile, copies its record to a UI
+   scratch buffer, and despawns it (no rewards). Needs the broader
+   `ApplyEncodedItemEffect` dispatch framework (this project hasn't
+   started decoding item-effect codes at all) before it's worth
+   reimplementing on its own.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need
