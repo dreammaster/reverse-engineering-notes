@@ -8664,6 +8664,75 @@ Documented the finding in `party.h`'s `PartyFieldPendingLevel`/
 candidate 6). No code changes beyond doc comments this round — a
 documentation/investigation session, not a new module.
 
+### 2026-09-24 session update (continued): UseTrainingItem's core leveling mechanic reimplemented
+
+Picked up candidate 5 from the previous round's investigation. Read
+`UseTrainingItem`'s full bit-0x2 (paid training) branch end to end —
+about 360 lines of disassembly — and separated it cleanly into "real
+state mutation" versus "UI/rendering/general-purpose utility with a
+much wider blast radius than training itself," reimplementing only the
+former, deliberately, the same scoping call made earlier this project
+for the side-trap pipeline and `TryInteractAtPosition`'s UI-adjacent
+pieces.
+
+Traced the class-dependent max-MP growth formula fully: `partyClassBase`
+(already existing in `party.c`) collapses any class id to its 1-9 base,
+and each base 4-9 blends max Wisdom/Intelligence in a different
+proportion (MONK: 100% Wisdom; ALCHEMIST: 75/25 Wisdom-leaning;
+PALADIN: 50% Wisdom; MAGE: 100% Intelligence, the unmatched-base
+default; DRUID: 75/25 Intelligence-leaning; MARKSMAN: 50%
+Intelligence) — bases 1-3 (FIGHTER/MERCHANT/ROGUE, physical classes)
+get no MP growth at all, not even a zero-delta call. Found independent
+corroboration for this exact base-1-3 exclusion already sitting in
+`file-formats.md`, from a much older pre-reimplementation session that
+had noticed `RestCharacter`'s MP-regen branch doing the identical
+`[+0xE]` reduction and skip — good confirmation that a years-old
+disassembly note and a fresh trace agree.
+
+While tracing the secondary-class-promotion step (`PartyFieldClass +=
+10` at two level thresholds), checked Chapter 3's equivalent globals
+out of habit, since this project has now found the same
+"read-but-never-written, always zero" pattern twice before in
+unrelated subsystems — and found it a third time:
+`word_331F8`/`word_331FA` (Chapter 3's `_val25`/`_val26` equivalents)
+are never written anywhere in the whole disassembly, so the comparison
+against a real level (always ≥ 1) can never match. Secondary-class
+promotion via training is therefore silently disabled in Chapter 3.
+Three independent instances of the exact same quirk, each in an
+unrelated subsystem, is a real pattern worth flagging prominently
+rather than treating as one more isolated coincidence — still not
+proven to be a deliberate design change versus a shared bug, but
+recorded clearly in `engine-diffs.md` and cross-referenced from all
+three locations so a future session sees the accumulated evidence
+together.
+
+Also resolved a small loose end from an old note in `file-formats.md`
+that had flagged a `UseTrainingItem`-adjacent field as "feeds a
+separate growth calculation" without knowing what calculation — traced
+it (`word_2E38E`) to `RunItemServiceRecipientLoop`, the "offer this
+training item to other party members" UI flow, confirming it's a loop
+parameter, not a character stat.
+
+New `partyApplyTraining`/`partyClassPromotionThresholds` in
+`src23/party.c`/`.h`. `cost` is a caller-supplied parameter rather than
+resolved from a real item record, since this project hasn't built the
+upstream `UseItem`/`SelectItemUseRecord` item-use pipeline that owns
+it — the same "accept a not-yet-resolved input as a parameter" pattern
+already used for `interact.h`'s curgame flags. Tests in
+`tests/test_party.c`: per-class MP-formula spot checks (MAGE, DRUID,
+PALADIN), the untrained-slot (starts-at-0) skip, HP/MP and
+attribute/skill caps, and class promotion at both Chapter 2 thresholds
+plus its confirmed absence in Chapter 3. Rebuilding the entire suite
+surfaced one more pre-existing stale build-command comment
+(`test_effect.c`, missing `savegame.c` once `party.c` gained a
+`saveHeaderBcd4` dependency) — fixed. All 18 suites pass.
+
+Still open, unchanged: the ability/spell-unlock table walk (needs its
+own `DS:0xD22B` data-table extraction), the general derived-stats
+recompute (`RefreshCarryCapacityAndAttributeBonuses`), the wall/door
+trap creation question, whether monsters ever reposition themselves,
+and the not-yet-started SDL2 platform layer.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

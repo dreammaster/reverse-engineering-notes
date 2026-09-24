@@ -197,6 +197,100 @@ bool partyCheckForLevelUp(uint8_t *record, GameKind game) {
     return true;
 }
 
+const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game) {
+    static const PartyClassPromotionThresholds kYendor2 = {10, 30};
+    static const PartyClassPromotionThresholds kYendor3 = {0, 0};
+    return game == GameYendor2 ? &kYendor2 : &kYendor3;
+}
+
+static int trainingScalePercentRounded(int value, int percent) {
+    return (value * percent + 50) / 100;
+}
+
+/* AddToStatCapped (yendor2.asm:18919): cap 9999 for HP/MP max, 999 for everything else; a stat
+   that's currently 0 (untrained/inapplicable) is left untouched rather than grown from zero. */
+static void trainingAddStatMaxCapped(uint8_t *record, PartyStat stat, int delta) {
+    uint16_t current = partyGetStatMax(record, stat);
+    if (current == 0) {
+        return;
+    }
+    int cap = (stat == PartyStatHitPoints || stat == PartyStatMagicPoints) ? 9999 : 999;
+    int updated = (int)current + delta;
+    if (updated > cap) {
+        updated = cap;
+    }
+    partySetStatMax(record, stat, (uint16_t)updated);
+}
+
+PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *save, const Bcd4 cost) {
+    uint8_t *gold = saveHeaderBcd4(save, SaveHeaderGold);
+    if (bcd4Compare(gold, cost) < 0) {
+        return PartyTrainOutcomeInsufficientGold;
+    }
+    bcd4Sub(gold, cost);
+
+    unsigned level = (unsigned)partyGetU16(record, PartyFieldLevel) + 1;
+    if (level > 90) {
+        level = 90;
+    }
+    partySetU16(record, PartyFieldLevel, (uint16_t)level);
+
+    /* Max HP grows by 30% of max Stamina; current HP is set to the new max (a full heal). */
+    trainingAddStatMaxCapped(record, PartyStatHitPoints,
+                              trainingScalePercentRounded(partyGetStatMax(record, PartyStatStamina), 30));
+    partySetStat(record, PartyStatHitPoints, partyGetStatMax(record, PartyStatHitPoints));
+
+    /*
+     * Max MP grows by a class-base-dependent weighting of max Wisdom/Intelligence, scaled
+     * 30% -- read directly from the real branch structure (yendor2.asm:21597-21679), not
+     * guessed. Bases 1-3 (FIGHTER/MERCHANT/ROGUE, and their tier-1/2 promotions, which share
+     * the same base) get no MP growth at all -- not even a zero-delta call.
+     */
+    unsigned classBase = partyClassBase(partyGetU16(record, PartyFieldClass));
+    if (classBase >= 4) {
+        int wisdom = partyGetStatMax(record, PartyStatWisdom);
+        int intelligence = partyGetStatMax(record, PartyStatIntelligence);
+        int mpRaw;
+        switch (classBase) {
+        case 4: /* MONK */
+            mpRaw = wisdom;
+            break;
+        case 5: /* ALCHEMIST */
+            mpRaw = trainingScalePercentRounded(wisdom, 75) + trainingScalePercentRounded(intelligence, 25);
+            break;
+        case 6: /* PALADIN */
+            mpRaw = trainingScalePercentRounded(wisdom, 50);
+            break;
+        case 8: /* DRUID */
+            mpRaw = trainingScalePercentRounded(intelligence, 75) + trainingScalePercentRounded(wisdom, 25);
+            break;
+        case 9: /* MARKSMAN */
+            mpRaw = trainingScalePercentRounded(intelligence, 50);
+            break;
+        default: /* MAGE (7), and any other/unmatched base */
+            mpRaw = intelligence;
+            break;
+        }
+        trainingAddStatMaxCapped(record, PartyStatMagicPoints, trainingScalePercentRounded(mpRaw, 30));
+        partySetStat(record, PartyStatMagicPoints, partyGetStatMax(record, PartyStatMagicPoints));
+    }
+
+    /* Every core attribute and skill grows by a flat +2 (max only), regardless of class. */
+    for (PartyStat stat = PartyStatStrength; stat <= PartyStatCharisma; stat++) {
+        trainingAddStatMaxCapped(record, stat, 2);
+    }
+    for (PartyStat stat = PartyStatSurvival; stat <= PartyStatChemistry; stat++) {
+        trainingAddStatMaxCapped(record, stat, 2);
+    }
+
+    const PartyClassPromotionThresholds *thresholds = partyClassPromotionThresholds(game);
+    if (level == thresholds->tier1At || level == thresholds->tier2At) {
+        partySetU16(record, PartyFieldClass, (uint16_t)(partyGetU16(record, PartyFieldClass) + 10));
+    }
+
+    return PartyTrainOutcomeApplied;
+}
+
 bool partyClassIsValid(unsigned classId) {
     unsigned base = classId % 10;
     return classId >= 1 && classId <= 29 && base != 0;

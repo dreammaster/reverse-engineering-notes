@@ -363,6 +363,137 @@ static void testLevelUp(void) {
               memcmp(partyXpThresholdTable(GameYendor3)[88], (const uint8_t[4]){0x99, 0x99, 0x99, 0x99}, 4) == 0);
 }
 
+static void setupTrainee(uint8_t *record, unsigned classId, unsigned level, uint16_t str, uint16_t dex,
+                          uint16_t sta, uint16_t intel, uint16_t wis, uint16_t cha, uint16_t hpMax,
+                          uint16_t mpMax) {
+    memset(record, 0, PartyRecordSize);
+    partySetU16(record, PartyFieldClass, (uint16_t)classId);
+    partySetU16(record, PartyFieldLevel, (uint16_t)level);
+    partySetStatMax(record, PartyStatStrength, str);
+    partySetStatMax(record, PartyStatDexterity, dex);
+    partySetStatMax(record, PartyStatStamina, sta);
+    partySetStatMax(record, PartyStatIntelligence, intel);
+    partySetStatMax(record, PartyStatWisdom, wis);
+    partySetStatMax(record, PartyStatCharisma, cha);
+    partySetStatMax(record, PartyStatHitPoints, hpMax);
+    partySetStatMax(record, PartyStatMagicPoints, mpMax);
+    partySetStatMax(record, PartyStatSurvival, 5);
+    /* PartyStatChemistry left at 0 on purpose: an "untrained skill" that must stay 0. */
+}
+
+static uint32_t bcdHex(const uint8_t *value) {
+    return (uint32_t)value[0] << 24 | (uint32_t)value[1] << 16 | (uint32_t)value[2] << 8 | value[3];
+}
+
+static void testTraining(void) {
+    SaveGame save;
+    Bcd4 cost;
+    bcd4FromU16(cost, 100);
+
+    /* Insufficient gold: refused, nothing touched. */
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 50);
+    setupTrainee(g_record, 7 /* MAGE */, 1, 10, 0, 50, 40, 20, 5, 100, 30);
+    check("insufficient gold is refused",
+          partyApplyTraining(g_record, GameYendor2, &save, cost) == PartyTrainOutcomeInsufficientGold);
+    checkU32("gold untouched on refusal", bcdHex(saveHeaderBcd4(&save, SaveHeaderGold)), 0x50);
+    checkU32("level untouched on refusal", partyGetU16(g_record, PartyFieldLevel), 1);
+
+    /* A full apply: MAGE (base 7, default case), sufficient gold. */
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 7, 1, 10, 0, 50, 40, 20, 0, 100, 30);
+    check("sufficient gold: applied",
+          partyApplyTraining(g_record, GameYendor2, &save, cost) == PartyTrainOutcomeApplied);
+    checkU32("gold spent", bcdHex(saveHeaderBcd4(&save, SaveHeaderGold)), 0x0900);
+    checkU32("level incremented", partyGetU16(g_record, PartyFieldLevel), 2);
+    checkU32("max HP grows by 30% of max Stamina (50 -> +15 -> 115)", partyGetStatMax(g_record, PartyStatHitPoints),
+             115);
+    checkU32("current HP is fully healed to the new max", partyGetStat(g_record, PartyStatHitPoints), 115);
+    checkU32("MAGE (base 7): max MP grows by 30% of Intelligence (40 -> +12 -> 42)",
+             partyGetStatMax(g_record, PartyStatMagicPoints), 42);
+    checkU32("current MP synced to the new max", partyGetStat(g_record, PartyStatMagicPoints), 42);
+    checkU32("Strength (nonzero) grows by a flat +2", partyGetStatMax(g_record, PartyStatStrength), 12);
+    checkU32("Dexterity (started at 0) stays untrained", partyGetStatMax(g_record, PartyStatDexterity), 0);
+    checkU32("Stamina also grows by +2, AFTER being read for the HP calc above",
+             partyGetStatMax(g_record, PartyStatStamina), 52);
+    checkU32("Survival (nonzero) grows by +2", partyGetStatMax(g_record, PartyStatSurvival), 7);
+    checkU32("Chemistry (started at 0) stays untrained", partyGetStatMax(g_record, PartyStatChemistry), 0);
+
+    /* Physical classes (base 1-3): no MP growth attempted at all, even with nonzero MP max. */
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 1 /* FIGHTER */, 1, 10, 10, 10, 10, 10, 10, 100, 30);
+    check("FIGHTER: applied", partyApplyTraining(g_record, GameYendor2, &save, cost) == PartyTrainOutcomeApplied);
+    checkU32("FIGHTER (base 1): max MP is left completely untouched",
+             partyGetStatMax(g_record, PartyStatMagicPoints), 30);
+    checkU32("FIGHTER: current MP is untouched too", partyGetStat(g_record, PartyStatMagicPoints), 0);
+
+    /* DRUID (base 8): 30% of (75% Intelligence + 25% Wisdom). */
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 8, 1, 10, 10, 10, 100, 40, 10, 100, 500);
+    partyApplyTraining(g_record, GameYendor2, &save, cost);
+    /* 75%*100=75, 25%*40=10, sum=85, 30%*85=25.5 -> round(85*30/100)=26 (rounds .5 up per (x+50)/100). */
+    checkU32("DRUID (base 8): max MP grows by 30% of (75% Int + 25% Wis)",
+             partyGetStatMax(g_record, PartyStatMagicPoints), 526);
+
+    /* PALADIN (base 6): 30% of (50% Wisdom). */
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 6, 1, 10, 10, 10, 10, 100, 10, 100, 500);
+    partyApplyTraining(g_record, GameYendor2, &save, cost);
+    /* 50%*100=50, 30%*50=15. */
+    checkU32("PALADIN (base 6): max MP grows by 30% of (50% Wisdom)",
+             partyGetStatMax(g_record, PartyStatMagicPoints), 515);
+
+    /* Level cap at 90. */
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 7, 90, 10, 10, 10, 10, 10, 10, 100, 30);
+    partyApplyTraining(g_record, GameYendor2, &save, cost);
+    checkU32("level stays capped at 90", partyGetU16(g_record, PartyFieldLevel), 90);
+
+    /* Max HP/MP cap at 9999; attribute/skill cap at 999. */
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 7, 1, 998, 10, 1000, 10, 10, 10, 9990, 30);
+    partyApplyTraining(g_record, GameYendor2, &save, cost);
+    checkU32("max HP is capped at 9999 (9990 + 300 would overflow)", partyGetStatMax(g_record, PartyStatHitPoints),
+             9999);
+    checkU32("Strength is capped at 999 (998 + 2 would overflow)", partyGetStatMax(g_record, PartyStatStrength),
+             999);
+
+    /* Class promotion at the two Chapter 2 thresholds; Chapter 3's are always-zero (disabled). */
+    checkU32("yendor2 promotion thresholds", partyClassPromotionThresholds(GameYendor2)->tier1At, 10);
+    checkU32("yendor2 second promotion threshold", partyClassPromotionThresholds(GameYendor2)->tier2At, 30);
+    checkU32("yendor3 promotion thresholds are always-zero (disabled)",
+             partyClassPromotionThresholds(GameYendor3)->tier1At, 0);
+
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 1 /* FIGHTER */, 9, 10, 10, 10, 10, 10, 10, 100, 30);
+    partyApplyTraining(g_record, GameYendor2, &save, cost); /* level 9 -> 10 */
+    checkU32("yendor2: reaching level 10 promotes FIGHTER (1) to WARRIOR (11)",
+             partyGetU16(g_record, PartyFieldClass), 11);
+    partyApplyTraining(g_record, GameYendor2, &save, cost); /* level 10 -> 11, no threshold crossed */
+    checkU32("no further promotion at level 11", partyGetU16(g_record, PartyFieldClass), 11);
+
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 11 /* WARRIOR: tier-1 FIGHTER */, 29, 10, 10, 10, 10, 10, 10, 100, 30);
+    partyApplyTraining(g_record, GameYendor2, &save, cost); /* level 29 -> 30 */
+    checkU32("yendor2: reaching level 30 promotes a tier-1 class to tier 2 (WARRIOR 11 -> CHAMPION 21)",
+             partyGetU16(g_record, PartyFieldClass), 21);
+
+    saveGameInit(&save, GameYendor3);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+    setupTrainee(g_record, 1, 9, 10, 10, 10, 10, 10, 10, 100, 30);
+    partyApplyTraining(g_record, GameYendor3, &save, cost); /* level 9 -> 10 */
+    checkU32("yendor3: reaching level 10 does NOT promote (thresholds always 0)",
+             partyGetU16(g_record, PartyFieldClass), 1);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -370,6 +501,7 @@ int main(void) {
     testFlagBanks();
     testInventory();
     testLevelUp();
+    testTraining();
     testRealCharacters();
 
     if (g_failureCount == 0) {

@@ -1178,6 +1178,29 @@ different addresses.
 (`monsterRewardsAward`) is likewise instruction-identical between the
 two games -- checked directly, not assumed.
 
+## Character training/leveling (`UseTrainingItem`): identical growth formulas, Chapter 3 disables secondary-class promotion
+
+Found while writing `src23/party.c`'s `partyApplyTraining` (2026-09-24).
+The cost gate, level increment/cap, HP/MP growth formulas (including
+the full per-class-base MP-growth weighting table), and the two
+flat-`+2` stat-growth loops are all instruction-identical between the
+two games — same pattern as most of this project's character/combat
+mechanics.
+
+The secondary-class promotion step is not, though: Chapter 2 promotes
+a character's class (`PartyFieldClass += 10`) at levels 10 and 30
+(`_val25`/`_val26`, live constants). Chapter 3's equivalent globals
+(`word_331F8`/`word_331FA`) are read but never written anywhere in the
+disassembly — always 0 — so the comparison against a real level
+(always ≥ 1) can never match. **Secondary-class promotion via training
+is therefore effectively disabled in Chapter 3.** This is the third
+always-zero-global quirk found in this project, each in an unrelated
+subsystem (see `lockcatalog.h`'s "LoadCurgameRecord" note and
+`interact.h`'s `curgameIdOffset` note for the other two) — a repeated
+pattern across three independent subsystems is more suggestive of a
+systemic Chapter 3 change (or a shared code-generation/init bug) than
+three isolated coincidences, but that remains unconfirmed.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

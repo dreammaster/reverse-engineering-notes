@@ -414,7 +414,10 @@ above 72 gets into `+0x38`/`+0x78`);
 `+0x42`/`+0x82` (one component of `UseTrainingItem`'s MP-growth blend —
 plausibly **Intelligence**); `+0x44`/`+0x84` (the other MP-growth
 component — plausibly **Wisdom**); `+0x46`/`+0x86` (feeds a separate
-`UseTrainingItem` growth calculation); `+0x40`/`+0x80` (25%-scaled to
+`UseTrainingItem` growth calculation — **correction, 2026-09-24: this
+value, `word_2E38E`, feeds `RunItemServiceRecipientLoop`'s UI flow
+control, not a character stat; see "UseTrainingItem" below**);
+`+0x40`/`+0x80` (25%-scaled to
 set both current and max HP, `+0x52`/`+0x92` — plausibly
 **Stamina/Constitution**). Exact name-to-offset assignment for all 6
 isn't independently confirmed — the roll order doesn't obviously match
@@ -3816,22 +3819,92 @@ eligibility hint** (`ShowLevelUpMessage`'s second display line,
 `DrawPartyMemberStatusPanel`'s training-icon glyph), not a staged
 value consumed elsewhere. Character leveling in this game is a wholly
 separate, **paid mechanic**: `UseTrainingItem` (`yendor2.asm:21510`,
-present and BinDiff-matched in both games, not yet compared or
-reimplemented — large and heavily UI-entangled) spends a fixed gold
-cost (checked against `SaveHeaderGold` and a threshold), then
-unconditionally increments `PartyFieldLevel` by exactly 1 (capped at
-90) regardless of `PartyFieldPendingLevel`'s value, recalculates max
-HP from a percentage of max Stamina, grows a class-dependent MP/skill
-spread (branching on the character's class id, `PartyFieldClass`), and
-on crossing two further class-level thresholds (`_val25`/`_val26`,
-not yet resolved) promotes the character's secondary class tier. XP
-accumulation past what the real curve can reach (levels 40-90, per the
-"effectively unreachable" sentinel below) is therefore *only* ever
-reachable via training items, not automatic play — this explains
-`PartyFieldLevel`'s pre-existing "capped at 90 by training items" doc
-note precisely. **Not reimplemented this session** — a good,
-self-contained candidate for its own dedicated pass, comparable in
-scope to the still-deferred side-trap pipeline.
+present and BinDiff-matched in both games). XP accumulation past what
+the real curve can reach (levels 40-90, per the "effectively
+unreachable" sentinel below) is therefore *only* ever reachable via
+training items, not automatic play — this explains `PartyFieldLevel`'s
+pre-existing "capped at 90 by training items" doc note precisely.
+
+### `UseTrainingItem`: the leveling mechanic itself (decoded 2026-09-24)
+
+Its core state-mutating branch (item-flag bit `0x2`, `yendor2.asm:21550`
+on) spends a fixed gold cost (`SaveHeaderGold` vs. a threshold at a
+fixed scratch address, `0x512A`, shared by several other `Use*Item`
+handlers as "this item's price" — not yet traced back to its own
+source, since this project hasn't built the upstream item-use pipeline
+`UseItem`/`SelectItemUseRecord` belong to), then:
+- `PartyFieldLevel += 1`, capped at 90.
+- **Max HP grows by 30% of max Stamina**, and current HP is set to the
+  new max (a full heal). Uniform across every class.
+- **Max MP grows by a class-base-dependent formula** — confirmed
+  against `RestCharacter`'s independent, matching `[+0xE]` reduction
+  (an existing, older note in this file already flagged the same
+  `cmp 9 / -0xA / cmp 9 / -0xA` pattern there) — using
+  `partyClassBase` (already existing in `party.c`) to read the branch
+  structure directly rather than guess:
+  | Base (1-9) | Class (tier 0) | MP growth (before the final 30% scale) |
+  |---|---|---|
+  | 1-3 | FIGHTER/MERCHANT/ROGUE | none at all — not even a zero-delta call |
+  | 4 | MONK | 100% max Wisdom |
+  | 5 | ALCHEMIST | 75% Wisdom + 25% Intelligence |
+  | 6 | PALADIN | 50% Wisdom |
+  | 7 | MAGE (the unmatched-base default) | 100% max Intelligence |
+  | 8 | DRUID | 75% Intelligence + 25% Wisdom |
+  | 9 | MARKSMAN | 50% Intelligence |
+
+  The blended figure is then scaled by 30% (same as HP) and added to
+  max MP; current MP is set to the new max, same full-heal pattern as
+  HP — but only for bases 4-9; bases 1-3 skip both the growth *and*
+  the current-MP sync entirely.
+- **Every one of the 6 core attributes and 13 skills grows by a flat
+  `+2`** (max only), regardless of class.
+- Every max-stat growth above silently no-ops for a stat that starts
+  at exactly 0 (`AddToStatCapped`'s own "untrained/inapplicable slot"
+  skip — e.g. a class with no magic never gets MP created from
+  nothing), and is capped at 9999 for HP/MP or 999 for everything
+  else.
+- **Secondary-class promotion**: at two level thresholds
+  (`_val25`=10, `_val26`=30 in Chapter 2 — confirmed real constants,
+  `yendor2.asm:3489`), `PartyFieldClass += 10` (promotes tier 0→1 or
+  1→2). **In Chapter 3, the equivalent globals (`word_331F8`/
+  `word_331FA`) are read but never written anywhere in the
+  disassembly — always 0** — so this comparison can never match a
+  real level (always ≥ 1), and secondary-class promotion via training
+  is **effectively disabled in Chapter 3**. This is the *third*
+  independent always-zero-global quirk found in this project (see
+  `interact.h`'s `curgameIdOffset` note and the "LoadCurgameRecord"
+  note below for the other two, both in unrelated subsystems) — three
+  separate instances make a systemic Chapter 3 change more plausible
+  than three coincidences, but that still isn't confirmed either way.
+  A genuine, sharp Ch2/Ch3 behavioral difference regardless — see
+  `engine-diffs.md`.
+
+**Deliberately not reimplemented**, all pure UI/rendering or
+general-purpose utilities with a much wider blast radius than
+training specifically:
+- `ShowLevelUpMessage`/`DrawItemUseConfirmDialog`/status-panel redraws
+  (pure display).
+- The ability/spell-unlock table walk (`DS:0xD22B`, a
+  class-and-level-indexed table, only consulted on even
+  `PartyFieldLevel` values — not yet extracted).
+- `RefreshCarryCapacityAndAttributeBonuses`/`RecomputeEquipmentStatBonuses`
+  (derived-stat recompute — carry capacity, equipment-bonus scaling —
+  called from many unrelated places, not training-specific; this file's
+  older "6 core attributes" note above already partially describes
+  its `+0x38`/`+0x3A`/`+0x78`/`+0x7A` fields).
+- `RunItemServiceRecipientLoop` (offers the same training item to
+  other party members — a whole separate UI flow; the 13%-of-Charisma
+  value computed early in `UseTrainingItem`, `word_2E38E`, is a
+  parameter into *this* loop, not a character stat — resolves an
+  older "feeds a separate growth calculation" note in this file to
+  "feeds UI flow control, not a stat").
+
+Reimplemented in `src23/party.c`/`.h`: `partyApplyTraining`,
+`partyClassPromotionThresholds`. `cost` is caller-supplied (see above).
+Tests in `tests/test_party.c`, including per-class-base MP-formula
+spot checks (MAGE, DRUID, PALADIN), the untrained-slot skip, both
+stat/HP/MP caps, and promotion at both Chapter 2 thresholds plus their
+absence in Chapter 3.
 
 Two things worth flagging for anyone extending this:
 - **A real asymmetry in the threshold comparison**, reproduced exactly

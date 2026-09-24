@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-24, UseTrainingItem investigated and scoped, not yet reimplemented)
+## Status (last updated 2026-09-24, UseTrainingItem's core leveling mechanic done)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -315,14 +315,33 @@ groundwork below is already in place.
   promotion follow. This is precisely why `PartyFieldLevel`'s
   pre-existing doc says "capped at 90 by training items" — XP alone
   can't reach past its curve's real end (level 39 in both games); the
-  remaining 51 levels are training-item-only. **Deliberately not
-  reimplemented this session** — large and UI-heavy, a good
-  self-contained candidate for its own pass, comparable in scope to the
-  still-deferred side-trap pipeline. Full writeup in `file-formats.md`.
-  Tests in `tests/test_party.c` and `tests/test_monsterpool.c`; all 18
-  suites pass (rebuilt entirely — this also surfaced and fixed several
-  pre-existing stale build-command comments in test file headers that
-  were already missing dependencies before this session).
+  remaining 51 levels are training-item-only.
+  **`UseTrainingItem`'s core state-mutating branch — done, same day
+  (2026-09-24)**: `partyApplyTraining`/`partyClassPromotionThresholds`
+  in `src23/party.c`/`.h`. Cost gate, level increment/cap, HP growth
+  (30% of max Stamina), the full 6-case per-class-base MP-growth
+  weighting (cross-checked against an older, independent note in
+  `file-formats.md` about `RestCharacter`'s matching class-id
+  reduction), the two flat-`+2` attribute/skill growth loops, and
+  secondary-class promotion are all reimplemented and instruction-
+  identical between the games *except* the promotion thresholds — a
+  **third** always-zero-global quirk found in Chapter 3
+  (`word_331F8`/`word_331FA`), disabling secondary-class promotion via
+  training entirely; see `engine-diffs.md`. Deliberately deferred (own
+  future passes, each with a much wider blast radius than training
+  itself): the ability/spell-unlock table walk (`DS:0xD22B`, needs its
+  own data-table extraction), `RefreshCarryCapacityAndAttributeBonuses`
+  (a general derived-stat recompute called from many places), and
+  `RunItemServiceRecipientLoop` (offering the item to other party
+  members — resolved an old "feeds a separate growth calculation" note
+  to "feeds UI flow control, not a stat"). `cost` is caller-supplied,
+  since this project hasn't built the upstream item-use pipeline
+  (`UseItem`) that would resolve an item's own price. Tests in
+  `tests/test_party.c` (per-class MP-formula spot checks, both caps,
+  untrained-slot skip, promotion at both Ch2 thresholds and its
+  Ch3 absence). Full writeup in `file-formats.md`. All 18 suites pass
+  (rebuilt entirely — surfaced and fixed one more pre-existing stale
+  build-command comment, `test_effect.c`, missing `savegame.c`).
 
 ## Next: continue the C reimplementation
 
@@ -432,18 +451,18 @@ index" section for the full decode). Still open there:
 (what a `0x4000`/`0x8000` record's `value` actually indexes into), and
 flag bits `0x2000`/`0x400`'s consumers, if any.
 
-5. **`UseTrainingItem`** (`yendor2.asm:21510`, present and
-   BinDiff-matched in both games, not yet compared) — character
-   leveling's actual mechanic, investigated 2026-09-24 (see the status
-   entry above and `file-formats.md`'s "ShowLootAndAwardExperience"
-   section) but deliberately not reimplemented: pay a gold cost,
-   `PartyFieldLevel += 1` (capped at 90), grow max HP from max Stamina,
-   grow a class-dependent MP/skill spread, promote secondary class tier
-   at two more thresholds (`_val25`/`_val26`, not yet resolved). Large
-   and UI-entangled (status panels, confirmation dialogs, a spell/ability
-   unlock table lookup at `0xD22B`) — comparable in scope to the
-   side-trap pipeline (item 6 below); worth its own dedicated pass
-   rather than a quick extension of `party.c`.
+~~5. `UseTrainingItem`'s core leveling mechanic~~ — **done 2026-09-24**
+   (`partyApplyTraining`/`partyClassPromotionThresholds`, see the
+   status entry above and `file-formats.md`'s "UseTrainingItem"
+   section). Still open, each a good candidate for its own pass: the
+   ability/spell-unlock table walk (`DS:0xD22B`, not yet extracted),
+   `RefreshCarryCapacityAndAttributeBonuses`/`RecomputeEquipmentStatBonuses`
+   (general derived-stat recompute, not training-specific), and
+   `RunItemServiceRecipientLoop` (the "offer to other party members" UI
+   flow). Also still needs: the upstream `UseItem`/`SelectItemUseRecord`
+   item-use pipeline this project hasn't built yet, which is what would
+   actually resolve `partyApplyTraining`'s `cost` parameter from a real
+   item record instead of a caller-supplied value.
 6. **The side-trap/ambush pipeline's wall-trap half** (see
    `file-formats.md`'s "side trap"/ambush section) — still blocked on
    confirming how a wall/door trap pool entry gets created; the

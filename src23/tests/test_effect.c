@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_effect test_effect.c ../effect.c ../party.c ../monster.c ../monster_stdio.c ../bcd4.c && ./test_effect
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_effect test_effect.c ../effect.c ../party.c ../monster.c ../monster_stdio.c ../bcd4.c ../savegame.c && ./test_effect
  *
  * The monster cross-checks read WORLD.DAT from yendor2/game and yendor3/game
  * (gitignored; skipped if absent). Set YENDOR2_GAME_DIR / YENDOR3_GAME_DIR

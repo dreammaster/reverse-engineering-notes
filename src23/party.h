@@ -5,7 +5,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "bcd4.h"
 #include "game.h"
+#include "savegame.h"
 
 /*
  * Party-member records: the 500-byte structures at g_partyRecords (nine per
@@ -186,6 +188,63 @@ enum { PartyXpThresholdCount = 89 };
  * addresses not guessed.
  */
 const uint8_t (*partyXpThresholdTable(GameKind game))[4];
+
+typedef struct {
+    uint16_t tier1At; /* PartyFieldClass += 10 (promotes tier 0 -> 1) once PartyFieldLevel reaches this */
+    uint16_t tier2At; /* PartyFieldClass += 10 again (tier 1 -> 2) at this level */
+} PartyClassPromotionThresholds;
+
+/*
+ * Ch2: {10, 30} (`_val25`/`_val26`, yendor2.asm:3489-3490).
+ * **Ch3: {0, 0}** -- the equivalent globals (`word_331F8`/`word_331FA`,
+ * yendor3.asm) are read but never written anywhere in the disassembly,
+ * always 0, so `partyApplyTraining`'s comparison against them can never
+ * match a real level (which is always >= 1) -- promotion is effectively
+ * disabled in Chapter 3. The third always-zero-global quirk found in
+ * this project (see lockcatalog.h's "LoadCurgameRecord" note and
+ * interact.h's `curgameIdOffset`), now in a third, unrelated subsystem
+ * -- three independent instances make a systemic Chapter 3 change more
+ * plausible than three separate coincidences, but that's not confirmed.
+ */
+const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game);
+
+typedef enum {
+    PartyTrainOutcomeInsufficientGold, /* cost > the save's gold; nothing changed */
+    PartyTrainOutcomeApplied
+} PartyTrainOutcome;
+
+/*
+ * UseTrainingItem's bit-0x2 branch (yendor2.asm:21510 on, structurally
+ * identical in Chapter 3 apart from the promotion-threshold quirk
+ * above) -- the game's actual leveling mechanic; see
+ * PartyFieldPendingLevel's own doc comment for why XP alone never
+ * raises PartyFieldLevel. `cost` is the training item's own price --
+ * caller-supplied, since this project hasn't built the upstream
+ * item-use pipeline that would resolve it (UseItem/SelectItemUseRecord,
+ * out of scope here) -- the same kind of "not-yet-resolved input taken
+ * as a parameter" already used for interact.h's curgame flags.
+ *
+ * On success: spends `cost` from the save's gold (SaveHeaderGold),
+ * PartyFieldLevel += 1 (capped at 90), max HP grows by 30% of max
+ * Stamina with current HP set to the new max (a full heal), max MP
+ * grows by a class-base-dependent formula (0 for FIGHTER/MERCHANT/
+ * ROGUE and their promoted tiers -- see the .c file for the other 6
+ * bases' exact weightings, read directly from the branch structure,
+ * not guessed), every one of the 6 core attributes and 13 skills grows
+ * by a flat +2 (max only), and PartyFieldClass gets +10 at each
+ * promotion threshold. Every max-stat growth silently no-ops for a
+ * stat that's currently 0 (AddToStatCapped's own "untrained slot"
+ * skip, reproduced exactly).
+ *
+ * Deliberately NOT reimplemented here -- candidates for their own
+ * passes: the ability/spell-unlock table walk (a fixed
+ * level-and-class-indexed table at DS:0xD22B, not yet extracted, only
+ * consulted on even PartyFieldLevel values) and
+ * RefreshCarryCapacityAndAttributeBonuses' derived-stat recompute
+ * (carry capacity, equipment-bonus scaling -- a general utility called
+ * from many unrelated places, not training-specific).
+ */
+PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *save, const Bcd4 cost);
 
 /*
  * Class ids are tier * 10 + base: base 1-9 (FIGHTER..MARKSMAN), tier 0-2.
