@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_interact test_interact.c ../interact.c ../savegame.c ../lockcatalog.c ../worldobjects.c && ./test_interact
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_interact test_interact.c ../interact.c ../savegame.c ../lockcatalog.c ../worldobjects.c ../movement.c ../worldmap.c ../worldmap_stdio.c && ./test_interact
  */
 #include <stdio.h>
 #include <string.h>

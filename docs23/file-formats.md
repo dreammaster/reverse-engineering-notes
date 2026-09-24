@@ -4177,6 +4177,67 @@ actually gets created — see the "side trap"/ambush section above for
 what's still open there. `TickMonsterTimer`'s state machine is now
 covered too — see below.
 
+### Turn-based combat: turn order (decoded 2026-09-24)
+
+A genuinely separate subsystem from the dungeon-exploration monster AI
+above, surfaced (but not chased down) while resolving "do monsters
+ever reposition themselves" the round before. Combat operates over its
+own small, fixed-size pool — up to `CombatMonsterSlotCount` (3) live
+monster records, full 156-byte copies rather than pointers into
+`g_levelMonsters` (confirmed by `DrawMonsterInfoPanels`' own reads of
+these addresses as ordinary `MonsterRecordSize` records, not indices)
+— distinct from the 80-slot dungeon pool. Only turn-order
+*construction* is reimplemented so far; turn advancement and attack
+resolution (`ProcessCombatRound` and beyond) is a separate, much
+larger piece not started.
+
+**`BuildCombatTurnOrder`** (`yendor2.asm:10952`, instruction-identical
+in Chapter 3 — checked directly, `yendor3.asm:1929-2018`): builds a
+single ordering combining every occupied, non-incapacitated
+(`PartyStatusIncapacitated`) party slot and every occupied
+(`MonsterFieldType != 0`) monster slot, sorted by Dexterity descending.
+The sort is a stable insertion sort — the original only swaps on
+strictly-greater, so equal-Dexterity entries keep their original build
+order (party slots 0-3 first, then monster slots 0-2). For every
+occupied monster slot, it also assigns a random living party target:
+`RandomInRange(3)` re-rolled until it lands on an occupied,
+non-incapacitated party slot.
+
+**A confirmed-dead branch, deliberately not reproduced**: before doing
+the random-target roll, the original also tests each about-to-be-built
+turn-order entry's own flags (a bit this project hasn't otherwise
+named) — but that test reads a slot in the *same* 14-entry buffer the
+function itself is still zeroing/populating on this very call, before
+anything could have set the bit being tested. It can never actually
+be true, so it can never skip the roll; reproducing a check that
+provably never fires would add code with zero observable effect, so
+it's omitted here.
+
+**Modernization**: the original stores each monster's chosen target as
+a raw pointer to the party record. This reimplementation stores a
+1-based `SaveHeaderPartySlots` id instead (0 = no living target found)
+— the same convention `saveGetPartySlot`/`saveGamePartyRecordById`
+already use everywhere else in `src23`, avoiding a raw-pointer field
+that wouldn't survive save/load. Also, the original's target-search
+loop has no bound at all — reachable only because combat can never
+actually be entered with a fully incapacitated party — but that
+invariant lives far outside this function, so a defensive 64-attempt
+cap was added rather than porting a genuine infinite-loop hazard.
+
+**`SelectActiveMonster`** (`yendor2.asm:11340`, instruction-identical
+in Chapter 3): the first turn-order entry that's a monster and not yet
+flagged defeated this round — a simple linear scan, capped at 7
+entries (4 party + 3 monster) matching `CombatTurnOrderCapacity`
+exactly, confirming the original's 14-slot buffer is genuinely
+over-allocated (it never populates or scans past index 6).
+
+Reimplemented in `src23/combat.c`/`.h`: `combatBuildTurnOrder` and
+`combatSelectActiveMonster`, tests in `tests/test_combat.c` covering
+descending sort order, stable ties, incapacitated-party exclusion, the
+no-living-party-member edge case (monster left untargeted rather than
+looping forever), and active-monster selection/skipping defeated
+monsters.
+
 ### `TickMonsterTimer`: a per-monster state machine, mechanism confirmed, trigger not (decoded 2026-09-23)
 
 `TickMonsterTimer` (`yendor2.asm:33320`, `yendor3.asm:33098`,

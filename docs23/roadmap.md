@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-24, resolved: monsters never reposition)
+## Status (last updated 2026-09-24, added: combat turn order)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -410,6 +410,29 @@ groundwork below is already in place.
   record out to a UI scratch buffer before despawning it, no rewards
   granted. Full writeup in `file-formats.md`'s "Monster approach and
   ambush check" section.
+  **Turn-based combat's turn order — started, same day (2026-09-24)**:
+  the combat subsystem surfaced above turns out to be a genuinely
+  separate, fixed-size 3-slot monster pool (`g_monsterSlots`, full
+  156-byte record copies, not pointers into the 80-slot dungeon pool).
+  New module `src23/combat.c`/`.h`: `combatBuildTurnOrder`
+  (`BuildCombatTurnOrder`, `yendor2.asm:10952`) builds a single
+  Dexterity-descending turn order over every living party member and
+  occupied monster slot (a stable insertion sort matching the
+  original's swap-only-on-strictly-greater exactly) and assigns each
+  monster a random living party target; `combatSelectActiveMonster`
+  (`SelectActiveMonster`, `yendor2.asm:11340`) picks the next
+  not-yet-defeated monster in that order. Found and deliberately did
+  not reproduce a dead branch: a pre-check that reads a turn-order
+  slot's flags before that slot has ever been written on the same
+  call, so it can never actually fire. Represents each monster's
+  random target as a 1-based `SaveHeaderPartySlots` id (this project's
+  existing convention) rather than the original's raw pointer.
+  **Instruction-identical between the two games**, checked directly.
+  Tests in `tests/test_combat.c`; all 19 suites pass. **Still open,
+  the much larger remaining piece**: `ProcessCombatRound`'s actual
+  turn advancement and attack resolution — this round only covers
+  turn-order *construction*. Full writeup in `file-formats.md`'s
+  "Turn-based combat: turn order" section.
 
 ## Next: continue the C reimplementation
 
@@ -539,15 +562,15 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    strengthened the "traps reuse monster catalog fields" hypothesis
    (`RollTrapAvoidanceMagnitude`'s `+0x64`/`+0x66` are literally
    `MonsterFieldRangedAccuracy`/`RangedDamage`) without proving it.
-7. **Turn-based combat** (`BuildCombatTurnOrder`/`ProcessCombatRound`,
-   surfaced 2026-09-24 while resolving the monster-repositioning
-   question, not otherwise touched by this project) — a genuinely
-   separate subsystem from the dungeon-exploration monster AI already
-   done: a 3-slot `g_monsterSlots` staging array (distinct from the
-   80-slot `g_levelMonsters` pool) and an `+8`-byte-stride turn-order
-   list (`g_combatTurnOrder`) sorted by some per-monster priority value
-   (`[+4]`, source not yet identified). Not scoped or estimated —
-   genuinely just discovered, not investigated further this session.
+~~7. **Turn-based combat's turn order**~~ — **done 2026-09-24**
+   (`combatBuildTurnOrder`/`combatSelectActiveMonster` in
+   `src23/combat.c`/`.h`, see the status entry above and
+   `file-formats.md`'s "Turn-based combat: turn order" section).
+   **Still open, a good candidate for its own pass**:
+   `ProcessCombatRound`'s turn advancement and attack resolution —
+   the much larger remaining part of the combat subsystem (damage
+   formulas, spell/ability use in combat, victory/flee conditions),
+   not investigated beyond turn-order construction so far.
 8. **The item-effect "banish" mechanic** (`ApplyEncodedItemEffect`,
    `yendor2.asm:51586`, surfaced the same session) — finds whichever
    monster occupies the party's facing tile, copies its record to a UI

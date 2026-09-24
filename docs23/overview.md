@@ -8944,6 +8944,60 @@ long-standing open question cleanly, plus two flagged discoveries for
 later. Documented in `file-formats.md`'s "Monster approach and ambush
 check" section and `roadmap.md` (added as candidates 7 and 8).
 
+### 2026-09-24 session update (continued): turn-based combat's turn order, the first piece of the newly-surfaced combat subsystem
+
+Picked up candidate 7 from the previous round: the combat subsystem
+noticed while sweeping for monster repositioning. Read
+`BuildCombatTurnOrder` (`yendor2.asm:10952`) and `SelectActiveMonster`
+(`yendor2.asm:11340`) directly, plus their Chapter 3 counterparts
+(`yendor3.asm:1929-2018`) to confirm instruction-identity.
+
+Confirmed the combat monster pool really is a separate, small, 3-slot
+staging array (`CombatMonsterSlotCount`) of full 156-byte record
+copies, not pointers or indices into the 80-slot dungeon pool —
+cross-checked against `DrawMonsterInfoPanels`, which reads these
+addresses the same way it reads any other `MonsterRecordSize` record.
+`BuildCombatTurnOrder` merges every living (non-`PartyStatusIncapacitated`)
+party member and every occupied monster slot into one list, sorted by
+Dexterity descending via a stable insertion sort (the original only
+swaps on strictly-greater, so ties keep build order — party slots 0-3,
+then monster slots 0-2). For each occupied monster, it also rolls a
+random living party target (`RandomInRange(3)`, retried until it lands
+on someone alive).
+
+Found one more instance of a pattern this project keeps running into:
+a branch that looks meaningful but is actually dead. Before rolling
+the random target, the original tests a turn-order entry's own flags
+— but that entry is in the *same* buffer the function is still
+zeroing/populating on this very call, so the flag being tested can
+never have been set yet by the time it's read. It's provably
+unreachable, so it's not reproduced in the C port; reproducing a check
+that can never fire would just be extra code with no behavior behind
+it.
+
+One deliberate modernization: the original stores each monster's
+chosen combat target as a raw pointer into the party record. Stored a
+1-based `SaveHeaderPartySlots` id instead — matching how every other
+part of `src23` already references party members, and avoiding a raw
+pointer that has no sensible meaning once save/load is added. Also
+added a defensive 64-attempt cap to the target-search retry loop; the
+original loops unbounded, safe in practice only because combat can
+never be entered with a fully-incapacitated party, an invariant that
+lives well outside this function and isn't worth trusting blindly in a
+from-scratch port.
+
+New module `src23/combat.h`/`.c`: `combatBuildTurnOrder` and
+`combatSelectActiveMonster`, tests in `tests/test_combat.c` (sorted
+order, stable ties, incapacitated-member exclusion, the
+no-living-party-member edge case, and active-monster selection
+skipping already-defeated monsters). Full suite rebuilt: 19/19 passing,
+no regressions. Documented in `file-formats.md`'s new "Turn-based
+combat: turn order" section, `engine-diffs.md` (instruction-identical,
+no Ch2/Ch3 difference), and `roadmap.md` (candidate 7 marked done for
+the turn-order-construction piece, `ProcessCombatRound`'s turn
+advancement and attack resolution left as the explicit remaining
+scope — a substantially larger piece not started).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
