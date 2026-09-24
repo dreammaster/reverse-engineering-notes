@@ -3750,24 +3750,97 @@ above) calls when a monster's presence ends:
   monster's own loot fields (`monster.h`'s `MonsterLoot`: gold, nuore,
   magic ore, experience) into 4 **global staging counters** — not the
   permanent material totals directly; those are only updated later, by
-  `ShowLootAndAwardExperience` (a UI-heavy "treasure found" panel, not
-  reimplemented), which drains the staging counters once per triggering
-  threshold. Also applies the monster's two on-death global-flag deltas
-  (`MonsterFieldFlagOnDeath`/`FlagOnDeath2` — a signed 1-based flag
-  index: positive sets, negative clears, zero does nothing) via the new
-  global-flags mechanism below.
+  `ShowLootAndAwardExperience`. Also applies the monster's two on-death
+  global-flag deltas (`MonsterFieldFlagOnDeath`/`FlagOnDeath2` — a
+  signed 1-based flag index: positive sets, negative clears, zero does
+  nothing) via the global-flags mechanism below.
 - **`RemoveMonsterFromMap`** (`yendor2.asm:33784`) clears the "monster
   here" overlay (`+4`/`+6` bit `0x400`, see "In-memory dungeon map
   grid" above) from the grid cell the monster's own `+6` field points
   at, then zeroes the whole 156-byte record.
 
 Reimplemented in `src23/monsterpool.c`/`.h`: `monsterGrantRewards`
-(staging-counter accumulation + flag deltas; the caller drains the
-staging counters into permanent totals itself, not reimplemented here)
-and `monsterPoolRemove` (recomputes the grid cell from the record's
-own world position rather than trusting its raw `+6` offset, so it's
-safe to call even if the monster has scrolled outside the grid's
-current window). Tests in `tests/test_monsterpool.c`.
+(staging-counter accumulation + flag deltas) and `monsterPoolRemove`
+(recomputes the grid cell from the record's own world position rather
+than trusting its raw `+6` offset, so it's safe to call even if the
+monster has scrolled outside the grid's current window). Tests in
+`tests/test_monsterpool.c`.
+
+### `ShowLootAndAwardExperience`'s staging drain and character leveling (decoded 2026-09-24)
+
+The function `GrantMonsterRewards`'s own doc comment already pointed
+to: `ShowLootAndAwardExperience` (`yendor2.asm:33827`, instruction-
+identical in Chapter 3) is mostly a "treasure found" UI panel, but two
+of its steps are real state mutation, not rendering, and are now
+reimplemented:
+
+- **Draining the 4 staging counters into permanent totals.** Tracing
+  both `GrantMonsterRewards`' stage-in and this function's drain-out
+  against the same four global scratch addresses pins down exactly
+  which staging field maps to which permanent counter — genuinely not
+  obvious from field names alone, since `monster.h`'s `MonsterLootOre`
+  drains into `savegame.h`'s `SaveHeaderOreCounter1` while
+  `MonsterLootNuore` drains into `SaveHeaderOreCounter2` (i.e. the
+  *second* counter is nuore, not the first, despite the declaration
+  order in both structs suggesting otherwise): gold → `SaveHeaderGold`,
+  ore → `SaveHeaderOreCounter1`, nuore → `SaveHeaderOreCounter2`. The
+  original gates the ore/nuore drains on `IsBCDCounterAtLeast` (really
+  just "is this staging counter nonzero," gating the UI line, not the
+  add itself) — reimplemented as an unconditional `bcd4Add`, which is
+  behaviorally identical since adding a zero BCD4 value is a no-op.
+- **Awarding experience and checking for a level-up**, once per
+  occupied `SaveHeaderPartySlots` entry: incapacitated
+  (`PartyStatusIncapacitated`) members don't receive the staged
+  experience, but `CheckForLevelUp` (below) still runs for every
+  occupied slot regardless — it has its own internal incapacitated
+  guard, so this is a no-op for them rather than a special case to
+  replicate at the call site.
+
+Reimplemented in `src23/monsterpool.c`/`.h`: `monsterRewardsAward`.
+Tests in `tests/test_monsterpool.c`. The panel/sound/portrait-redraw
+parts of `ShowLootAndAwardExperience` remain out of scope (rendering).
+
+**`CheckForLevelUp`** (`yendor2.asm:20036`, `yendor3.asm:12025`,
+instruction-identical) is pure computation, no UI: walks a per-game
+**89-entry packed-BCD XP-threshold table** from a character's current
+`PartyFieldLevel`, extracted directly from each EXE via a new IDA
+script (`ida_scripts/dump_xp_threshold_table.py` in both games) rather
+than guessed — index 0 is the XP needed to advance from level 1 to
+level 2, ..., index 88 is level 89 to level 90, matching
+`PartyFieldLevel`'s own "capped at 90 by training items" ceiling: the
+XP curve alone cannot reach past level 90. If the computed level
+exceeds the current one, it's stored into a new field,
+`PartyFieldPendingLevel` (`+0x1E`) — **computed but not applied**; no
+traced caller of `CheckForLevelUp` ever reads `PartyFieldPendingLevel`
+back to actually raise `PartyFieldLevel` or re-roll stats, so whatever
+does that (if anything already-traced does) is still unidentified.
+
+Two things worth flagging for anyone extending this:
+- **A real asymmetry in the threshold comparison**, reproduced exactly
+  rather than smoothed over: the *first* step only requires experience
+  `>=` the current level's threshold to advance once, but every
+  further cascade step (advancing two or more levels from a single
+  award) requires experience to be *strictly greater than* the next
+  threshold. Landing exactly on a later threshold stops the cascade one
+  level short of where a `>=` test would put it — confirmed by direct
+  x86 flag reading (`jb` vs. `ja`), not inferred.
+- **A genuine Chapter 2 vs. Chapter 3 content difference**: the curve
+  itself differs at nearly every entry, and even the "effectively
+  unreachable" sentinel repeated for levels 40-89 (once the real curve
+  ends at level 39's jump) differs — `90,000,000` in Chapter 2 vs.
+  `99,999,999` in Chapter 3. See `engine-diffs.md`.
+- The original's first table access is **unguarded** — a level-90
+  character (already at the max) would index one entry past the
+  table's end, a latent original-engine bug rather than something ever
+  observably exercised. `partyCheckForLevelUp` guards it instead
+  (returns false without touching `PartyFieldPendingLevel`'s already-
+  zeroed value), since reproducing an out-of-bounds read is undefined
+  behavior in C and changes nothing observable for level-90 characters
+  either way.
+
+Reimplemented in `src23/party.c`/`.h`: `partyCheckForLevelUp`,
+`partyXpThresholdTable`. Tests in `tests/test_party.c`, including a
+test that exercises the `>=`-vs-`>` asymmetry directly.
 
 ### Global quest/world-state flags: bit-packing reimplemented (decoded 2026-09-23)
 

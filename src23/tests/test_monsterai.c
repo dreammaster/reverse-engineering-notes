@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_monsterai test_monsterai.c ../monsterpool.c ../monster.c ../monster_stdio.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c ../bcd4.c ../globalflags.c && ./test_monsterai
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_monsterai test_monsterai.c ../monsterpool.c ../monster.c ../monster_stdio.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c ../bcd4.c ../globalflags.c ../party.c && ./test_monsterai
  */
 #include <stdio.h>
 #include <string.h>

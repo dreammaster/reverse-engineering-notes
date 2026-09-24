@@ -309,12 +309,67 @@ static void testRealCharacters(void) {
           itemSlotId(partyEquipmentSlot(yendor, 0x0B, GameYendor2)) == 6 && itemSlotExtra(partyEquipmentSlot(yendor, 0x0B, GameYendor2)) == 4);
 }
 
+static void setExperience(uint8_t *record, const uint8_t bcd[4]) {
+    memcpy(partyExperience(record), bcd, 4);
+}
+
+static void testLevelUp(void) {
+    memset(g_record, 0, sizeof(g_record));
+    partySetU16(g_record, PartyFieldLevel, 1);
+    setExperience(g_record, (const uint8_t[4]){0x00, 0x00, 0x00, 0x00});
+    check("below the first threshold: no level up", !partyCheckForLevelUp(g_record, GameYendor2));
+    checkU32("pending level stays 0", partyGetU16(g_record, PartyFieldPendingLevel), 0);
+
+    partySetU16(g_record, PartyFieldLevel, 1);
+    setExperience(g_record, (const uint8_t[4]){0x00, 0x00, 0x06, 0x80}); /* == table[0], the >= boundary */
+    check("exactly at the first threshold: one level up", partyCheckForLevelUp(g_record, GameYendor2));
+    checkU32("pending level 2", partyGetU16(g_record, PartyFieldPendingLevel), 2);
+
+    partySetU16(g_record, PartyFieldLevel, 1);
+    setExperience(g_record, (const uint8_t[4]){0x00, 0x00, 0x18, 0x50}); /* == table[1] exactly */
+    check("landing exactly on a later threshold: cascade stops one level short",
+          partyCheckForLevelUp(g_record, GameYendor2));
+    checkU32("pending level 2, not 3 (needs strictly > table[1] to cascade further)",
+             partyGetU16(g_record, PartyFieldPendingLevel), 2);
+
+    partySetU16(g_record, PartyFieldLevel, 1);
+    setExperience(g_record, (const uint8_t[4]){0x00, 0x00, 0x20, 0x00}); /* > table[1] (0x1850), < table[2] (0x2600) */
+    check("strictly past a later threshold: cascades one more level",
+          partyCheckForLevelUp(g_record, GameYendor2));
+    checkU32("pending level 3", partyGetU16(g_record, PartyFieldPendingLevel), 3);
+
+    partySetU16(g_record, PartyFieldLevel, 1);
+    partySetU16(g_record, PartyFieldStatusFlags, PartyStatusStoned);
+    setExperience(g_record, (const uint8_t[4]){0x99, 0x99, 0x99, 0x99});
+    check("incapacitated: no level up regardless of experience", !partyCheckForLevelUp(g_record, GameYendor2));
+    partySetU16(g_record, PartyFieldStatusFlags, 0);
+
+    partySetU16(g_record, PartyFieldLevel, 89);
+    setExperience(g_record, (const uint8_t[4]){0x99, 0x99, 0x99, 0x99});
+    check("level 89 with max experience reaches the level-90 cap", partyCheckForLevelUp(g_record, GameYendor2));
+    checkU32("pending level 90", partyGetU16(g_record, PartyFieldPendingLevel), 90);
+
+    partySetU16(g_record, PartyFieldLevel, 90);
+    check("level 90 (already at cap, out of table range): guarded, no level up",
+          !partyCheckForLevelUp(g_record, GameYendor2));
+
+    partySetU16(g_record, PartyFieldLevel, 0);
+    check("level 0: guarded, no level up", !partyCheckForLevelUp(g_record, GameYendor2));
+
+    checkU32("yendor2 and yendor3 tables agree on the first threshold",
+             partyXpThresholdTable(GameYendor2)[0][3], partyXpThresholdTable(GameYendor3)[0][3]);
+    check("yendor2 and yendor3 caps genuinely differ (90,000,000 vs 99,999,999)",
+          memcmp(partyXpThresholdTable(GameYendor2)[88], (const uint8_t[4]){0x90, 0x00, 0x00, 0x00}, 4) == 0 &&
+              memcmp(partyXpThresholdTable(GameYendor3)[88], (const uint8_t[4]){0x99, 0x99, 0x99, 0x99}, 4) == 0);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
     testClasses();
     testFlagBanks();
     testInventory();
+    testLevelUp();
     testRealCharacters();
 
     if (g_failureCount == 0) {

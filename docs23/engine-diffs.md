@@ -1155,6 +1155,29 @@ still-undecoded 4-byte EMS record -- see `lockcatalog.h`'s
 "LoadCurgameRecord" note) -- not proof of a genuine bug, but suggestive
 enough to flag rather than dismiss as isolated noise.
 
+## Character leveling: identical mechanism and cascade logic, a genuinely different XP curve
+
+Found while writing `src23/party.c`'s `partyCheckForLevelUp` (2026-09-24),
+from extracting both games' XP-threshold tables directly via IDA
+(`ida_scripts/dump_xp_threshold_table.py`, both games) rather than
+assuming they matched. `CheckForLevelUp`'s own code — the threshold
+walk, the `>=`-then-`>` comparison asymmetry, the 89-entry/level-90 cap
+shape — is instruction-identical between the two games, same as most
+of this project's non-combat mechanics.
+
+The table contents are not shared, though: nearly every one of the 39
+real per-level jumps differs between the games (both start at 680 XP
+for level 1->2, but diverge immediately afterward), and even the
+"effectively unreachable" sentinel value repeated for the remaining
+50 entries (levels 40-89, past each game's real curve) differs --
+`90,000,000` in Chapter 2 vs. `99,999,999` in Chapter 3. A real
+balance/content difference, not an artifact of a shared table read at
+different addresses.
+
+`ShowLootAndAwardExperience`'s own staging-drain/award logic
+(`monsterRewardsAward`) is likewise instruction-identical between the
+two games -- checked directly, not assumed.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

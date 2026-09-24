@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-24, TryInteractAtPosition)
+## Status (last updated 2026-09-24, ShowLootAndAwardExperience/character leveling)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -272,6 +272,42 @@ groundwork below is already in place.
   deferred to the eventual SDL2 layer), map-trigger effects, and
   first-person viewport rendering (needs the SDL2 layer, not yet
   started).
+  **The wall/door-trap-creation search (2026-09-24) didn't find a
+  separate creation path, but strengthened the existing "traps are
+  reused monster catalog entries" hypothesis**: `RollTrapAvoidanceMagnitude`'s
+  own field offsets (`+0x64`/`+0x66`) turn out to be the *exact same
+  bytes* as `monster.h`'s already-named `MonsterFieldRangedAccuracy`/
+  `RangedDamage` — real fields on an ordinary monster catalog block,
+  not a separate trap-record layout. Still not proven (no confirmed
+  "this type id is scenery, not a monster" marker found), so still
+  listed as open above rather than closed. While chasing it, confirmed
+  `SpawnMonsterInFacingDirection`'s `0xE4E9`/`0xCE51` death-flag-override
+  table lookup was already correctly reimplemented by a prior session
+  (`monster.c`'s `monsterDeathFlags`) — re-discovered, not new.
+  **`ShowLootAndAwardExperience`'s staging drain and character leveling
+  — done as new pieces of `monsterpool.c`/`.h` and `party.c`/`.h`
+  (2026-09-24)**: `GrantMonsterRewards`' own doc comment already
+  pointed at this as the missing piece — draining the 4 staging BCD
+  counters into permanent totals (confirmed the exact,
+  not-obvious-from-names mapping: ore → `SaveHeaderOreCounter1`, nuore
+  → `SaveHeaderOreCounter2`) and awarding experience to the party.
+  Experience awarding triggers `CheckForLevelUp`, decoded as a new
+  `party.c` function, `partyCheckForLevelUp` — walks a **89-entry
+  packed-BCD XP-threshold table**, extracted directly from both EXEs
+  via a new IDA script (`dump_xp_threshold_table.py`) rather than
+  guessed, capping at level 90 exactly matching `PartyFieldLevel`'s
+  existing "capped at 90 by training items" doc note. Computes a
+  pending level into a new field, `PartyFieldPendingLevel`, but — like
+  every traced caller — never applies it; what actually raises
+  `PartyFieldLevel` is still unidentified. Found a real, exactly-
+  reproduced asymmetry in the threshold comparison (first step `>=`,
+  cascade steps `>`) and a genuine Chapter 2 vs. Chapter 3 content
+  difference in the XP curve itself, including different "unreachable"
+  cap sentinels (90,000,000 vs. 99,999,999) — see `engine-diffs.md`.
+  Tests in `tests/test_party.c` and `tests/test_monsterpool.c`; all 18
+  suites pass (rebuilt entirely — this also surfaced and fixed several
+  pre-existing stale build-command comments in test file headers that
+  were already missing dependencies before this session).
 
 ## Next: continue the C reimplementation
 

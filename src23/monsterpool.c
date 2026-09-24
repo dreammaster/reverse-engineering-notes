@@ -177,6 +177,27 @@ void monsterGrantRewards(MonsterRewardStaging *staging, const uint8_t *record, u
     }
 }
 
+void monsterRewardsAward(SaveGame *save, GameKind game, const MonsterRewardStaging *staging) {
+    bcd4Add(saveHeaderBcd4(save, SaveHeaderGold), staging->gold);
+    bcd4Add(saveHeaderBcd4(save, SaveHeaderOreCounter1), staging->ore);
+    bcd4Add(saveHeaderBcd4(save, SaveHeaderOreCounter2), staging->nuore);
+
+    for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
+        uint16_t id = saveGetPartySlot(save, slot);
+        if (id == 0) {
+            continue;
+        }
+        uint8_t *record = saveGamePartyRecordById(save, id);
+        if (!record) {
+            continue;
+        }
+        if (!(partyGetU16(record, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+            bcd4Add(partyExperience(record), staging->experience);
+        }
+        partyCheckForLevelUp(record, game);
+    }
+}
+
 void monsterPoolRemove(uint8_t *record, DungeonGrid *grid) {
     if (grid) {
         int worldX = monsterGetU16(record, MonsterFieldWorldX);

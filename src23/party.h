@@ -40,6 +40,7 @@ typedef enum {
     PartyFieldLevel = 0x16,       /* u16, capped at 90 by training items */
     PartyFieldExperience = 0x18,  /* Bcd4 */
     PartyFieldStatusFlags = 0x1C, /* u16, PartyStatus bits */
+    PartyFieldPendingLevel = 0x1E, /* u16; set by partyCheckForLevelUp, not yet applied to PartyFieldLevel */
     PartyFieldProtections = 0x20, /* 9 x u16 resistance values, order of PartyProtection */
     PartyFieldStats = 0x3C,       /* 27 x u16 current values, indexed by PartyStat */
     PartyFieldStatsMax = 0x7C,    /* 27 x u16 maximum values, same indexing */
@@ -146,6 +147,36 @@ const char *partyStatName(PartyStat stat, GameKind game);
 uint16_t partyGetProtection(const uint8_t *record, PartyProtection protection);
 
 uint8_t *partyExperience(uint8_t *record); /* Bcd4 */
+
+/*
+ * CheckForLevelUp (yendor2.asm:20036, yendor3.asm:12025, instruction-
+ * identical): walks the per-game 89-entry XP-threshold table
+ * (partyXpThresholdTable) from the character's current PartyFieldLevel,
+ * advancing while PartyFieldExperience is >= the next entry. If the
+ * result exceeds the current level, stores it into PartyFieldPendingLevel
+ * (left at 0 otherwise) -- a level-up is computed here but not applied;
+ * no traced caller of CheckForLevelUp applies it either, so whatever
+ * reads PartyFieldPendingLevel to actually raise PartyFieldLevel/re-roll
+ * stats is still unidentified. PartyStatusIncapacitated characters are
+ * always left at PartyFieldPendingLevel = 0, matching the original's own
+ * early-out. Returns true if a level-up is now pending.
+ */
+bool partyCheckForLevelUp(uint8_t *record, GameKind game);
+
+enum { PartyXpThresholdCount = 89 };
+
+/*
+ * 89 x Bcd4 entries, index 0 = the XP needed to advance from level 1 to
+ * level 2, ..., index 88 = level 89 to level 90 (matching
+ * PartyFieldLevel's own "capped at 90 by training items" ceiling -- the
+ * XP curve alone can't reach past it). Entries beyond a game's last real
+ * jump (39 in both games) repeat an effectively-unreachable sentinel --
+ * 90,000,000 in Chapter 2, 99,999,999 in Chapter 3, a genuine content
+ * difference, not just a coincidence of a shared table -- confirmed via
+ * yendor2/yendor3's own dump_xp_threshold_table.py IDA scripts, real
+ * addresses not guessed.
+ */
+const uint8_t (*partyXpThresholdTable(GameKind game))[4];
 
 /*
  * Class ids are tier * 10 + base: base 1-9 (FIGHTER..MARKSMAN), tier 0-2.

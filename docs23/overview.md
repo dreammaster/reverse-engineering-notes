@@ -8554,6 +8554,75 @@ format (a different question from the bitmap resolved this session),
 map-trigger effects, and first-person viewport rendering (needs the
 not-yet-started SDL2 layer).
 
+### 2026-09-24 session update (continued): chasing the wall/door-trap creation lead, then pivoting to a clearer win
+
+Picked up the session's still-open "how does a wall/door trap pool
+entry get created" question, since it had been flagged repeatedly as
+a good next target. Grepped every direct write/test of a
+`g_levelMonsters` record's `+0xE` field (`MonsterFieldWound`, whose
+`0x1000` bit is the trap-armed flag) looking for a second creation
+path alongside the already-reimplemented ambush-arming one in
+`ProcessLevelMonsters`. Found none — every `+0xE`-bit-`0x1000` write
+site traced back to the already-decoded ambush roll. Along the way,
+strengthened (without proving) the existing "traps are reused monster
+catalog entries, not a separate record type" hypothesis:
+`RollTrapAvoidanceMagnitude`'s own field offsets, `+0x64`/`+0x66`,
+turn out to be the *exact same bytes* as `monster.h`'s already-named
+`MonsterFieldRangedAccuracy`/`RangedDamage` — ordinary combat stats
+being dual-purposed as avoidance data for a stationary "monster" that
+never fights. Also re-verified (not a new finding, but worth a session
+note) that `SpawnMonsterInFacingDirection`'s per-type death-flag
+override table (`DS:0xE4E9` in Chapter 2) was already correctly
+reimplemented by a prior session as `monster.c`'s `monsterDeathFlags`
+— initially looked like a possible gap, wasn't one.
+
+Without a clean resolution in sight for the trap-creation question,
+pivoted to a more tractable, clearly-scoped gap `monsterGrantRewards`'
+own doc comment had already flagged: `ShowLootAndAwardExperience`
+(`yendor2.asm:33827`) drains the reward-staging counters
+`monsterGrantRewards` accumulates into, but had never been traced.
+Read the whole function: mostly a "treasure found" UI panel, but two
+pieces are real state mutation —
+- Draining gold/ore/nuore into `savegame.h`'s permanent counters.
+  Cross-referencing `GrantMonsterRewards`' stage-in against this
+  function's drain-out (same four global scratch addresses used by
+  both) pinned down a genuinely non-obvious mapping: `MonsterLootOre`
+  drains into `SaveHeaderOreCounter1`, `MonsterLootNuore` into
+  `SaveHeaderOreCounter2` — the *second* counter is nuore, opposite of
+  what the two structs' declaration order alone would suggest.
+- Awarding staged experience to the party and calling `CheckForLevelUp`
+  per member.
+
+`CheckForLevelUp` (`yendor2.asm:20036`) turned out to be pure
+computation, no UI at all — walks an 89-entry packed-BCD XP-threshold
+table from a character's level, stores a computed level into a new
+field (`PartyFieldPendingLevel`) without ever applying it (no traced
+caller does). Extracted both games' tables directly via a new IDA
+script (`dump_xp_threshold_table.py`) rather than guessing at the
+entry count — an early guess of 65 entries was wrong; the real count
+(89) came from reading the loop's own upper-bound comparison in the
+disassembly. Found a real asymmetry worth calling out: the first
+threshold check is `>=`, but every subsequent cascade step (advancing
+more than one level from a single award) requires strictly `>` —
+verified via the actual x86 `jb`/`ja` flag usage, not assumed, and
+wrote a test that exercises exactly this asymmetry (landing precisely
+on a later threshold stops the cascade one level short of a naive
+`>=` port). The two games' XP curves themselves differ almost
+everywhere, including different "effectively unreachable" cap
+sentinels once the real curve ends (90,000,000 vs. 99,999,999) — a
+genuine Ch2/Ch3 content difference.
+
+New `partyCheckForLevelUp`/`partyXpThresholdTable` in `src23/party.c`/
+`.h`, `monsterRewardsAward` in `src23/monsterpool.c`/`.h`. While
+building this, discovered and fixed several **pre-existing** stale
+build-command comments in test file headers (`test_effect.c`,
+`test_monsterai.c`, and `test_monsterpool.c`'s own header was already
+missing `bcd4.c`/`globalflags.c` before this session) — not caused by
+this session's changes, just surfaced by adding a new `party.c`
+dependency and then rebuilding the *entire* suite to check, rather
+than only the files touched. Tests in `tests/test_party.c` and
+`tests/test_monsterpool.c`; all 18 suites pass.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

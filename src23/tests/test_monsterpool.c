@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_monsterpool test_monsterpool.c ../monsterpool.c ../dungeongrid.c ../movement.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c && ./test_monsterpool
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_monsterpool test_monsterpool.c ../monsterpool.c ../dungeongrid.c ../movement.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c ../bcd4.c ../globalflags.c ../party.c && ./test_monsterpool
  */
 #include <stdio.h>
 #include <string.h>
@@ -254,6 +254,53 @@ static void testGrantRewards(void) {
     checkU32("loot still stages with globalFlags == NULL", bcdHex(staging2.gold), 0x00000495);
 }
 
+static void testRewardsAward(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+
+    /* Slot 0: id 1, plenty of room to level, not incapacitated. */
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *member1 = saveGamePartyRecordById(&save, 1);
+    partySetU16(member1, PartyFieldLevel, 1);
+
+    /* Slot 1: id 2, incapacitated -- must not receive XP, but CheckForLevelUp still runs (a no-op for it). */
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+    uint8_t *member2 = saveGamePartyRecordById(&save, 2);
+    partySetU16(member2, PartyFieldLevel, 1);
+    partySetU16(member2, PartyFieldStatusFlags, PartyStatusStoned);
+
+    /* Slots 2-3: empty. */
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 2 * 2, 0);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 3 * 2, 0);
+
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+    bcd4FromU16(staging.gold, 100);
+    bcd4FromU16(staging.ore, 5);
+    bcd4FromU16(staging.nuore, 3);
+    bcd4FromU16(staging.experience, 700); /* crosses yendor2's 680 first-level threshold */
+
+    monsterRewardsAward(&save, GameYendor2, &staging);
+
+    checkU32("gold drains into SaveHeaderGold", bcdHex(saveHeaderBcd4(&save, SaveHeaderGold)), 0x00000100);
+    checkU32("ore drains into SaveHeaderOreCounter1 (not OreCounter2)",
+             bcdHex(saveHeaderBcd4(&save, SaveHeaderOreCounter1)), 0x00000005);
+    checkU32("nuore drains into SaveHeaderOreCounter2 (not OreCounter1)",
+             bcdHex(saveHeaderBcd4(&save, SaveHeaderOreCounter2)), 0x00000003);
+
+    checkU32("non-incapacitated member gains the staged experience", bcdHex(partyExperience(member1)), 0x00000700);
+    check("non-incapacitated member levels up from the awarded experience",
+          partyGetU16(member1, PartyFieldPendingLevel) == 2);
+
+    checkU32("incapacitated member gains no experience", bcdHex(partyExperience(member2)), 0);
+    check("incapacitated member has no pending level (its own CheckForLevelUp guard)",
+          partyGetU16(member2, PartyFieldPendingLevel) == 0);
+
+    /* A second award accumulates onto the same permanent counters. */
+    monsterRewardsAward(&save, GameYendor2, &staging);
+    checkU32("gold accumulates across two awards", bcdHex(saveHeaderBcd4(&save, SaveHeaderGold)), 0x00000200);
+}
+
 static void testPoolRemove(void) {
     memset(&g_grid, 0, sizeof(g_grid));
     g_grid.game = GameYendor2;
@@ -298,6 +345,7 @@ int main(void) {
     testOffsetTable();
     testPoolSpawn();
     testGrantRewards();
+    testRewardsAward();
     testPoolRemove();
 
     if (g_failureCount == 0) {

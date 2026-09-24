@@ -1571,3 +1571,107 @@ West (0x74f0, ea=0x352a0): [(-6, 8), (-6, 7), (-6, 6), (-6, 5), (-6, 4), (-6, 3)
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'dump_xp_threshold_table.py', 'noexport']
+[*] reading dump_xp_threshold_table.py
+[*] executing dump_xp_threshold_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+table at DS:0xc75f (ea 0x3a50f), 89 entries x 4 bytes
+level   1: 00 00 06 80
+level   2: 00 00 18 00
+level   3: 00 00 32 00
+level   4: 00 00 65 00
+level   5: 00 01 03 00
+level   6: 00 01 50 00
+level   7: 00 02 30 00
+level   8: 00 03 35 00
+level   9: 00 04 20 00
+level  10: 00 05 19 00
+level  11: 00 06 58 00
+level  12: 00 08 55 00
+level  13: 00 09 96 00
+level  14: 00 12 50 00
+level  15: 00 15 16 00
+level  16: 00 18 27 00
+level  17: 00 23 56 00
+level  18: 00 28 23 00
+level  19: 00 37 10 00
+level  20: 00 48 70 00
+level  21: 00 61 10 00
+level  22: 00 73 00 00
+level  23: 00 86 60 00
+level  24: 01 01 00 00
+level  25: 01 18 50 00
+level  26: 01 35 00 00
+level  27: 01 51 00 00
+level  28: 01 67 00 00
+level  29: 01 85 00 00
+level  30: 02 22 50 00
+level  31: 02 60 00 00
+level  32: 03 16 00 00
+level  33: 03 81 00 00
+level  34: 04 78 00 00
+level  35: 05 70 00 00
+level  36: 06 98 00 00
+level  37: 08 17 40 00
+level  38: 09 61 50 00
+level  39: 10 80 00 00
+level  40: 99 99 99 99
+level  41: 99 99 99 99
+level  42: 99 99 99 99
+level  43: 99 99 99 99
+level  44: 99 99 99 99
+level  45: 99 99 99 99
+level  46: 99 99 99 99
+level  47: 99 99 99 99
+level  48: 99 99 99 99
+level  49: 99 99 99 99
+level  50: 99 99 99 99
+level  51: 99 99 99 99
+level  52: 99 99 99 99
+level  53: 99 99 99 99
+level  54: 99 99 99 99
+level  55: 99 99 99 99
+level  56: 99 99 99 99
+level  57: 99 99 99 99
+level  58: 99 99 99 99
+level  59: 99 99 99 99
+level  60: 99 99 99 99
+level  61: 99 99 99 99
+level  62: 99 99 99 99
+level  63: 99 99 99 99
+level  64: 99 99 99 99
+level  65: 99 99 99 99
+level  66: 99 99 99 99
+level  67: 99 99 99 99
+level  68: 99 99 99 99
+level  69: 99 99 99 99
+level  70: 99 99 99 99
+level  71: 99 99 99 99
+level  72: 99 99 99 99
+level  73: 99 99 99 99
+level  74: 99 99 99 99
+level  75: 99 99 99 99
+level  76: 99 99 99 99
+level  77: 99 99 99 99
+level  78: 99 99 99 99
+level  79: 99 99 99 99
+level  80: 99 99 99 99
+level  81: 99 99 99 99
+level  82: 99 99 99 99
+level  83: 99 99 99 99
+level  84: 99 99 99 99
+level  85: 99 99 99 99
+level  86: 99 99 99 99
+level  87: 99 99 99 99
+level  88: 99 99 99 99
+level  89: 99 99 99 99
+----- end target script output -----
+[*] finished executing dump_xp_threshold_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

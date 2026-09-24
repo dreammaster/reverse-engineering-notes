@@ -11,6 +11,7 @@
 #include "game.h"
 #include "globalflags.h"
 #include "monster.h"
+#include "party.h"
 #include "random.h"
 #include "savegame.h"
 #include "worldmap.h"
@@ -142,6 +143,24 @@ typedef struct {
 
 void monsterGrantRewards(MonsterRewardStaging *staging, const uint8_t *record, uint8_t *globalFlags,
                           size_t globalFlagsSize);
+
+/*
+ * The state-mutating half of ShowLootAndAwardExperience (yendor2.asm:33827,
+ * instruction-identical in Chapter 3) -- the "drain the staging counters"
+ * step monsterGrantRewards' own doc comment already points to. Its UI
+ * half (the "treasure found" panel, sound cue, portrait redraw) is not
+ * reimplemented here. Adds staging's gold/ore/nuore into the save's
+ * permanent material counters (SaveHeaderGold/OreCounter1/OreCounter2 --
+ * confirmed this session which staging field maps to which counter by
+ * reading both GrantMonsterRewards' stage-in and this function's own
+ * drain-out against the same four global scratch addresses) and,
+ * for every occupied, non-incapacitated party slot (SaveHeaderPartySlots),
+ * adds staging->experience to that member's PartyFieldExperience and
+ * calls partyCheckForLevelUp -- called unconditionally per slot exactly
+ * like the original (partyCheckForLevelUp has its own internal
+ * incapacitated guard, matching CheckForLevelUp's).
+ */
+void monsterRewardsAward(SaveGame *save, GameKind game, const MonsterRewardStaging *staging);
 
 /*
  * RemoveMonsterFromMap (yendor2.asm:33784): clears the "monster here"
