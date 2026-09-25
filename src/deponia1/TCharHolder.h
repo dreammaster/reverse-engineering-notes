@@ -14,6 +14,8 @@ public:
     TCharHolder& operator=(const TCharHolder&) = default;
 
     operator wxString() const { return m_value; }
+    operator wxFileName() const { return wxFileName(m_value.ToStdWstring()); }
+    wxString GetFullPath() const { return m_value; }
 
 private:
     wxString m_value;

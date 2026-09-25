@@ -5,6 +5,7 @@
 
 #include "Diagnostics.h"
 #include "TSceneControl.h"
+#include "graphicslib/graphics.h"
 #include "vscommon/scripting/argument.h"
 #include "vsplayer/control/gameController.h"
 
@@ -21,20 +22,6 @@ static std::vector<std::string> s_luaDrawAfterInterfaces;
 // loops compile and are structurally faithful.
 static void LuaDoStringStub(const std::string& /*script*/, const std::string& /*chunkName*/) {
 }
-
-// TGraphicsInterface hasn't been reversed; "graphics" is a real global in
-// the original binary (cs:graphics) that TMasterControl calls through a
-// vtable at several fixed offsets. Names here are placeholders for those
-// offsets - see NOTES.md.
-class TGraphicsInterfaceStub {
-public:
-    virtual ~TGraphicsInterfaceStub() = default;
-    virtual void ResetMatrix(bool, bool) {}
-    virtual void SetMatrixMode(bool, bool) {}
-    virtual void Flip() {}
-};
-static TGraphicsInterfaceStub s_graphicsInstance;
-static TGraphicsInterfaceStub* graphics = &s_graphicsInstance;
 
 TMasterControl::TMasterControl() {
     m_cursorControl = new TCursorControl();

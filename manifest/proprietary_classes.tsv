@@ -182,7 +182,7 @@ TGraphicsSubSystemGL	todo	39	669758	678420
 TBufferGL	todo	7	669813	672896
 TFramebufferGL	todo	11	669978	675983
 TTextureGL	todo	12	669995	676529
-TFramebuffer	todo	2	678203	678347
+TFramebuffer	stub	2	678203	678347
 TBuffer	todo	2	678219	678331
 TTexture	todo	2	678235	678315
 TGraphicsSubSystem	todo	2	678251	678299
@@ -205,9 +205,9 @@ MinMaxFloatCurveEvaluater	todo	3	691201	696248
 ParticleContainer	todo	6	695485	698425
 TShaderConstantBuffer	todo	24	699721	704218
 TGraphicsOGL	todo	63	707141	719135
-TPictureJPG	todo	6	720924	739561
+TPictureJPG	stub	6	720924	739561
 jpgd	todo	2	721319	733241
-TPictureFormat	todo	7	739426	771446
+TPictureFormat	stub	7	739426	771446
 jpgd::Row<2>	todo	1	739851	739851
 jpgd::Row<3>	todo	1	739910	739910
 jpgd::Row<4>	todo	1	739975	739975
@@ -253,10 +253,10 @@ jpgd::DCT_Upsample::R_S<7, 8>	todo	1	747029	747029
 jpgd::DCT_Upsample::P_Q<8, 8>	todo	1	747465	747465
 jpgd::DCT_Upsample::R_S<8, 8>	todo	1	748024	748024
 TSpriteCache	todo	13	749371	751855
-TPicturePNG	todo	10	753445	756750
-TPictureMEM	todo	22	756823	759239
-TPictureWebP	todo	9	759351	761648
-TGraphicsInterface	todo	38	761692	779132
+TPicturePNG	stub	10	753445	756750
+TPictureMEM	stub	22	756823	759239
+TPictureWebP	stub	9	759351	761648
+TGraphicsInterface	stub	38	761692	779132
 TParticleEmitter	todo	12	766025	771112
 TParticleSystem	todo	8	766096	771351
 TVector3D	todo	11	766335	767008
@@ -265,16 +265,16 @@ TMatrix3	todo	13	767045	767700
 idMat3	todo	2	767217	767742
 TMatrix4	todo	21	767828	769325
 TCutRect	todo	7	771519	772531
-TSpriteHandle	todo	7	772635	775729
+TSpriteHandle	stub	7	772635	775729
 MaxRectsBinPack	todo	20	773548	1445275
 TTextureHandle	todo	1	776718	776718
-TPreloadedPicManager	todo	15	779878	781717
-TPictureIO	stub	43	785258	791178
+TPreloadedPicManager	stub	15	779878	781717
+TPictureIO	in-progress	43	785258	791178
 vertex_array_holder	todo	10	791467	813209
 Point	todo	1	812943	812943
-TPicturePreloader	todo	6	813783	814106
-TPicturePCX	todo	7	814343	815468
-TPictureGIF	todo	8	868003	869035
+TPicturePreloader	stub	6	813783	814106
+TPicturePCX	stub	7	814343	815468
+TPictureGIF	stub	8	868003	869035
 soundengine::AudioDataSourceWave	todo	8	1050406	1053847
 soundengine::AudioDataSourceFFMPEG	todo	8	1050626	1057049
 TSoundBase	todo	42	1050713	1105856

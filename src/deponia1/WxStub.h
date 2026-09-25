@@ -102,6 +102,19 @@ struct wxRect {
     int GetWidth() const { return width; }
     int GetLeft() const { return x; }
     int GetTop() const { return y; }
+    bool Intersects(const wxRect& other) const {
+        return x < other.x + other.width && other.x < x + width && y < other.y + other.height &&
+               other.y < y + height;
+    }
+};
+
+// A floating-point rectangle, used where sub-pixel precision matters (e.g.
+// TPictureIO::PreparePaint's scroll-adjusted paint area).
+struct FloatRect {
+    float x = 0.0f;
+    float y = 0.0f;
+    float width = 0.0f;
+    float height = 0.0f;
 };
 
 class wxCmdLineParser {
