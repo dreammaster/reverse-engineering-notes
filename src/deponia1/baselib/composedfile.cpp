@@ -5,6 +5,7 @@
 #include "baselib/memfile.h"
 
 std::function<void()> TComposedFile::onRetryLoad;
+std::function<void(TComposedFile*, std::string)> TComposedFile::onError;
 
 namespace {
 // ByteStreamToLong(unsigned char*) - reads a little-endian uint32 from a raw

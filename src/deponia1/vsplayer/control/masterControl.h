@@ -7,18 +7,20 @@
 // TMasterControl is the engine's abstract render/game-loop hub: it
 // multiply-inherits TPaintControl (confirmed from its vtable dump - a
 // secondary vtable section whose slots default to TPaintControl::Prepare/
-// Draw) and declares 8 of its own pure virtual methods that TGameControl
-// (not yet reversed) overrides. It owns essentially every other subsystem
-// controller (scene, cursor, game controller, loading, sound, font,
-// platform SDK) as members.
+// Draw) and declares 8 of its own pure virtual methods, all named directly
+// from `vtable for TGameControl`'s own dump (see vsplayer/control/
+// gameControl.h/.cpp for the concrete overrides): Update, DisplayDialog,
+// DisplayTexts, DisplayConsole, DisplayInSceneConsole, HandleMouseMove,
+// HandleMouseUp, HandleMouseHolding. It owns essentially every other
+// subsystem controller (scene, cursor, game controller, loading, sound,
+// font, platform SDK) as members.
 //
 // This is a partial reconstruction. Depth varies a lot by method:
 //   - Fully traced: all simple accessors/mutators, StartEarthquake/
 //     StopEarthquake, DrawInterfaces, Draw, VideoFrame/IsVideoPlaying,
 //     Register/UnregisterEngineEventHandler, RegisterMouseEventHandler.
 //   - Structurally faithful but with named-but-unconfirmed opaque
-//     TVisObjRef field ids and a couple of unnamed pure virtuals: Draw,
-//     Signal.
+//     TVisObjRef field ids: Draw, Signal.
 //   - Approximated/lighter treatment (real dependency classes - TMovie's
 //     Play API, the video/controller event pump - are far too deep to
 //     responsibly reconstruct without reversing them first): PlayAVI,
@@ -50,6 +52,7 @@ class TGameController;
 
 enum class HandleSoundsEnum { Stop, Pause, Continue };
 enum class TMouseMessageEnum { Move, LeftDown, LeftUp, RightDown, RightUp, Wheel };
+enum class TKeyboardMessageEnum { KeyDown, KeyUp };
 
 // Field order/sizes are recovered from TMasterControl::SetLoadingScreen's
 // memberwise copy; several fields' real meaning is unconfirmed (see
@@ -96,17 +99,18 @@ public:
     virtual void Signal(const TSignalData& signal, TSignalData& result);
 
     // The 8 pure virtuals from the original vtable (offsets 0x18-0x50);
-    // TGameControl (not yet reversed) provides the real overrides. Only
-    // the ones actually called from methods reconstructed so far are
-    // named with a guessed purpose - the rest are placeholders.
-    virtual void OnGameSignal(const TSignalData& signal, TSignalData& result) = 0;  // slot 0x18
-    virtual bool ShouldSkipActionText() const = 0;                                  // slot 0x20 (guessed)
-    virtual bool ShouldSkipNormalDraw() const = 0;                                  // slot 0x28 (guessed)
-    virtual void UnknownVirtualSlot30() = 0;
-    virtual void OnAfterMatrixReset() = 0;  // slot 0x38 (guessed)
-    virtual void UnknownVirtualSlot40() = 0;
-    virtual void UnknownVirtualSlot48() = 0;
-    virtual void UnknownVirtualSlot50() = 0;
+    // TGameControl provides the real overrides (confirmed from
+    // vtable-for-TGameControl's own dump, which names every slot directly -
+    // no guessing needed here, unlike when this was first written against
+    // TMasterControl alone).
+    virtual bool Update() = 0;
+    virtual bool DisplayDialog() = 0;
+    virtual bool DisplayTexts() = 0;
+    virtual bool DisplayConsole() = 0;
+    virtual void DisplayInSceneConsole() = 0;
+    virtual void HandleMouseMove(const wxPoint& pos, bool isHolding) = 0;
+    virtual void HandleMouseUp(const wxPoint& pos, TMouseMessageEnum msg) = 0;
+    virtual void HandleMouseHolding(const wxPoint& pos) = 0;
 
     void QuitGame();
     bool GetQuitGame() const;
@@ -157,6 +161,12 @@ public:
     void StartEarthquake(int amount, int jitterInterval);
     void StopEarthquake();
 
+protected:
+    // TGameControl embeds an actual TSceneControl by value and points this
+    // at it (TMasterControl's own constructor never sets it - see
+    // gameControl.cpp); protected rather than private for that reason.
+    TSceneControl* m_sceneControl = nullptr;
+
 private:
     TMovie m_movie;
     TGObjectManager m_objectManager;
@@ -186,7 +196,6 @@ private:
     TSoundFFMPEG* m_soundManager = nullptr;
     TFontManager* m_fontManager = nullptr;
     TGameClientSDK* m_gameClientSDK = nullptr;
-    TSceneControl* m_sceneControl = nullptr;
 
     void* m_movieEventHandler = nullptr;  // +0xC0 in the original; real type/purpose unconfirmed
     bool m_videoPlaying = false;          // +0xB8

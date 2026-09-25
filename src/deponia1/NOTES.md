@@ -1,5 +1,28 @@
 # main() reconstruction notes
 
+## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
+
+While TMasterControl was being written, no evidence was found for where
+its `m_sceneControl` pointer gets set (its own constructor, as actually
+traced, never touches it) - so it got a `new TSceneControl()` in
+TMasterControl's constructor "to make GetMainControl() work," clearly
+marked as a guess at the time. Once TGameControl was reversed, its
+constructor turned out to embed a *real* `TSceneControl` by value and
+point `m_sceneControl` at that instead - so `~TMasterControl()`'s `delete
+m_sceneControl` ended up calling `delete` on a non-heap address, silently
+corrupting the heap (caught immediately by testing: MinGW's CRT reported
+`STATUS_HEAP_CORRUPTION`, no output at all since the crash happened before
+stdout - fully buffered when not attached to a console - ever flushed).
+
+Fixed by removing the guess entirely: `m_sceneControl` is left null in
+TMasterControl's own constructor, and only the owning subclass (currently
+just TGameControl) is responsible for pointing it at whatever TSceneControl
+it actually owns. The general lesson: a "fill the gap with something
+plausible so it compiles" placeholder is fine short-term, but needs
+revisiting - and re-testing - the moment a later class's real evidence
+contradicts it, rather than assuming the guess was harmless because it
+compiled and ran once.
+
 Source: `Deponia_Linux.asm`, `main` proc, asm lines 499508-500213
 (address range 0x62E450-0x62EC85 roughly; see `endp` before local labels
 resume at 0x62ED2E).

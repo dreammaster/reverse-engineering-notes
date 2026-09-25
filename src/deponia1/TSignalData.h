@@ -7,7 +7,7 @@
 
 // Signal type codes TMasterControl::Signal recognizes (int at offset 0):
 // see NOTES.md for how these were read directly off the switch/cmp chain.
-constexpr int kSignalGameEvent = 0x1011;     // dispatched to a pure-virtual TGameControl override
+constexpr int kSignalGameEvent = 0x1011;     // dispatched to TMasterControl::Update() (pure virtual, TGameControl overrides it)
 constexpr int kSignalDrawInterfaces = 0x2001;
 constexpr int kSignalDraw = 0x2002;
 constexpr int kSignalLoadingProgress = 0x100;

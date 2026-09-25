@@ -153,3 +153,27 @@ int SDL_HapticNewEffect(SDL_Haptic* haptic, SDL_HapticEffect* effect);
 int SDL_HapticRunEffect(SDL_Haptic* haptic, int effect, Uint32 iterations);
 int SDL_HapticStopEffect(SDL_Haptic* haptic, int effect);
 }
+
+// Real SDL2 enum/struct, needed for TGameControl's controller input
+// handlers (ConvertControllerButtonToSymKey, HandleControllerButtonHit,
+// etc.) - not reversed, just declared so those signatures compile.
+enum SDL_GameControllerAxis {
+    SDL_CONTROLLER_AXIS_INVALID = -1,
+    SDL_CONTROLLER_AXIS_LEFTX,
+    SDL_CONTROLLER_AXIS_LEFTY,
+    SDL_CONTROLLER_AXIS_RIGHTX,
+    SDL_CONTROLLER_AXIS_RIGHTY,
+    SDL_CONTROLLER_AXIS_TRIGGERLEFT,
+    SDL_CONTROLLER_AXIS_TRIGGERRIGHT,
+    SDL_CONTROLLER_AXIS_MAX
+};
+
+struct SDL_ControllerButtonEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    Sint32 which;
+    Uint8 button;
+    Uint8 state;
+    Uint8 padding1;
+    Uint8 padding2;
+};

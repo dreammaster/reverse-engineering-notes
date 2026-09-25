@@ -36,7 +36,7 @@ HashMap<wxString, wxString, StringHash<wchar_t const*> >	todo	1	164898	164898
 TMButton	todo	9	165577	166172
 TGScene	todo	39	166435	172880
 HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
-TGCharacter	todo	76	175318	185835
+TGCharacter	stub	76	175318	185835
 THAction	todo	5	187010	187127
 TGObjectManager	stub	25	187194	189565
 TTObject	todo	9	190187	1468584
@@ -52,8 +52,8 @@ THCharacter	todo	5	217481	218783
 THItem	todo	5	218884	219148
 THScene	todo	7	219228	219814
 TGScrollButton	todo	5	219879	220036
-TGDialog	todo	14	220105	479462
-TConsole	todo	61	223417	242869
+TGDialog	stub	14	220105	479462
+TConsole	stub	61	223417	242869
 THInterface	todo	5	246907	247172
 TGActionArea	todo	3	247238	247279
 TGWaySystem	todo	21	247325	253067
@@ -125,7 +125,7 @@ SimplexNoise1234	todo	4	434064	434207
 Noise1234	todo	12	434500	437359
 TGameController	done	20	450097	453534
 TSceneControl	stub	15	453942	455632
-TGameControl	stub	98	455671	478479
+TGameControl	in-progress	98	455671	478479
 SGameAction	todo	1	456169	456169
 SLoadingScreen	todo	2	479291	479330
 TLoadingControl	stub	7	483185	483735
@@ -375,7 +375,7 @@ TTValue	todo	8	1476496	1476802
 TTAction	todo	11	1477394	1478245
 TSAction	todo	6	1477410	1478347
 TTOutfit	todo	6	1478597	1479233
-TVisionaireGame	todo	14	1480066	1523439
+TVisionaireGame	stub	14	1480066	1523439
 Event	todo	25	1523865	1602932
 TVisionaireClipboard	todo	14	1524587	1532387
 TTLoading	todo	6	1526228	1526307

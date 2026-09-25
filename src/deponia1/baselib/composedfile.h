@@ -75,6 +75,12 @@ public:
     ~TComposedFile();
 
     static std::function<void()> onRetryLoad;
+    // Registered by TGameControl's constructor with a handler that logs the
+    // failing archive's exe-filename plus an error string (confirmed from
+    // the lambda's _M_invoke thunk; the handler body itself wasn't traced
+    // in detail). Called from InitEntries()'s open-failure path when a
+    // handler is registered (see the `qword_11F8F10` check there).
+    static std::function<void(TComposedFile*, std::string)> onError;
 
     void InitForWrite(long offset, TContainerTypeEnum containerType, bool flag);
     void InitForWrite(long offset, const wxFileName& exeFile, bool flag, bool useAltContainerType);

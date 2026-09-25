@@ -30,7 +30,14 @@ TMasterControl::TMasterControl() {
     m_soundManager = new TSoundFFMPEG();
     m_fontManager = new TFontManager();
     m_gameClientSDK = new TGameClientSDK();
-    m_sceneControl = new TSceneControl();
+    // m_sceneControl is deliberately left null here: there's no confirmed
+    // evidence TMasterControl's own constructor sets it (see its
+    // declaration in masterControl.h). TGameControl embeds an actual
+    // TSceneControl by value and points this at it - a previous version of
+    // this constructor also heap-allocated one here as a filler guess,
+    // which caused ~TMasterControl() to `delete` TGameControl's non-heap
+    // member and corrupt the heap. Only the owning subclass should manage
+    // this pointer's lifetime.
     m_visionaire = new TVisionaire();
     m_moviesEnabled = true;
 }
@@ -42,7 +49,6 @@ TMasterControl::~TMasterControl() {
     delete m_soundManager;
     delete m_fontManager;
     delete m_gameClientSDK;
-    delete m_sceneControl;
     delete m_visionaire;
 }
 
@@ -174,12 +180,12 @@ bool TMasterControl::Draw(bool showActionText) {
                 graphics->ResetMatrix(false, false);
             }
             TPaintControl* scene = m_sceneControl->GetScene();
-            if (scene->IsActive() && !ShouldSkipNormalDraw()) {
+            if (scene->IsActive() && !DisplayTexts()) {
                 SetCurrent();
                 if (m_cursorControl->IsActive())
                     m_cursorControl->Draw();
             }
-            if (drawMode != 2 && !ShouldSkipActionText()) {
+            if (drawMode != 2 && !DisplayDialog()) {
                 // Action-text overlay: fetch the currently-hovered object's
                 // display text and draw it near the cursor, clamped to the
                 // window bounds. The original also supports a second,
@@ -208,7 +214,7 @@ bool TMasterControl::Draw(bool showActionText) {
             graphics->SetMatrixMode(false, false);
             graphics->ResetMatrix(false, false);
         }
-        OnAfterMatrixReset();
+        DisplayInSceneConsole();
     }
 
     if (showActionText) {
@@ -435,7 +441,7 @@ void TMasterControl::Signal(const TSignalData& signal, TSignalData& result) {
     result = TSignalData{};
     switch (signal.type) {
     case kSignalGameEvent:
-        OnGameSignal(signal, result);
+        Update();
         return;
     case kSignalDrawInterfaces:
         DrawInterfaces();
