@@ -18,6 +18,11 @@
 
 #include "WxStub.h"
 
+// Confirmed to have at least one value, 2, used at every SetValue() call
+// site seen so far (TGameControl::SetOnScrollDestination, Deponia_Linux.asm
+// lines 460720-460821) - real meaning/other values not resolved.
+enum class TSendEventEnum { SendEvent = 2 };
+
 class TVisObjRef {
 public:
     TVisObjRef() = default;
@@ -39,6 +44,14 @@ public:
     // 460932) with a field id and a bool - not reversed beyond that call
     // shape.
     void ClearLink(int fieldId, bool flag);
+    // Confirmed called (TGameControl::StartDialog, asm line 461050) with a
+    // field id, a linked TVisObjRef, and a bool - not reversed beyond that
+    // call shape.
+    void SetLink(int fieldId, const TVisObjRef& value, bool flag);
+    // Confirmed two overloads (TGameControl::SetOnScrollDestination, asm
+    // lines 460720-460821) - not reversed beyond their call shapes.
+    void SetValue(int fieldId, const wxPoint& value, TSendEventEnum event);
+    void SetValue(int fieldId, bool value, TSendEventEnum event);
     const wxPoint* GetPoint(int fieldId) const;
     const wxRect* GetRect(int fieldId) const;
 

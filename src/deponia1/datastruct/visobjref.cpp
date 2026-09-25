@@ -28,6 +28,15 @@ TVisObjRef TVisObjRef::GetLink(int /*fieldId*/) const {
 void TVisObjRef::ClearLink(int /*fieldId*/, bool /*flag*/) {
 }
 
+void TVisObjRef::SetLink(int /*fieldId*/, const TVisObjRef& /*value*/, bool /*flag*/) {
+}
+
+void TVisObjRef::SetValue(int /*fieldId*/, const wxPoint& /*value*/, TSendEventEnum /*event*/) {
+}
+
+void TVisObjRef::SetValue(int /*fieldId*/, bool /*value*/, TSendEventEnum /*event*/) {
+}
+
 const wxPoint* TVisObjRef::GetPoint(int /*fieldId*/) const {
     return &m_point;
 }

@@ -31,6 +31,10 @@ public:
     // SetAllCharactersOnDestination, asm lines 460874-460902).
     void SetOnDestination();
 
+    // Confirmed called per-character in TGameControl::UpdateRandomTimers
+    // (asm lines 463363-463466).
+    void CheckRandomTimer();
+
 private:
     TVisObjRef m_ref;
 };

@@ -167,6 +167,46 @@ branch, a shift-with-rounding-bias for the `<=0` branch), but both are
 verified equivalent to that one expression, so the C++ just writes it
 once.
 
+## TGameControl batch 7: savegames, dialog cursor handling, the text/action queues
+
+Eleven more methods (asm lines 456183-463466), pulling in a handful of new
+pieces:
+
+- **`TMSavegame`**, a per-slot savegame object (`Exists()`, `Delete()`, a
+  static `SavegameExists()`), and `TGScene` gained
+  `GetSelectedSavegame()`/`GetSavegameAt()`/`DeleteSelectedSavegame()` -
+  `SavegameExists`/`DeleteSavegame`'s slot parameter turned out to have 3
+  special negative values (-1: scene's selected save, -2: whatever's at a
+  new `m_savegameClickPos` field, -3: "does any save exist at all", a
+  static query) in addition to real slot numbers.
+- **`StartDialog`/`EndDialog`** turned out to share a byte-packing pattern
+  (a `TVisObjRef::GetId()`'s 3 bytes packed into a signed 32-bit "cursor id"
+  for `TCursorControl::SetCursor()`) also seen in the still-deferred
+  `GetCharacter` hash lookup - factored into a shared `PackVisId()` helper
+  in gameControl.cpp rather than duplicating the bit-twiddling three times.
+  Also surprising: `StartDialog` is a no-op unless a dialog is *already*
+  active (`m_dialog` not empty) - it only switches/redirects an existing
+  conversation, it doesn't open one from cold.
+- **`TSText` gained two more members**: `CalculateCurrentText()` (the
+  per-frame text-timing update `UpdateTexts()` drives) and a second unnamed
+  virtual `OnCleared()` (vtable slot `0x10`, distinct from `Discard()`'s
+  `0x28`) called right before `Discard()` when a text is dropped by direct
+  reference (`ClearText`) or during a full flush (`ClearTexts`) - but
+  *not* when `ClearCurrentText()` drops the current text on its own.
+- **`SGameAction`** (`StartGameAction`'s lookup table entry) got real
+  fields: `(a, msg)` to match against, a `flag` selecting between
+  always-fire and only-fire-when-not-dialog-or-text-blocked behavior, and
+  the `TVisObjRef` action target itself.
+- **`PushEngineEvent`** turned out to be backed by a genuinely global (not
+  per-`TGameControl`) locked queue (`EngineEventLock`/`EngineEvents` in the
+  disassembly) - modeled as file-scope statics in gameControl.cpp since
+  nothing else references them yet.
+
+`InitInterfaces` (asm lines 458124-458250) is deferred: it needs a new
+`THInterface` class, a `TVisionaireObject` type, `TVisObjRef::GetLinks()`,
+and `TVList` growing real `begin()`/`end()` iteration - a bigger unit of
+work better done as its own pass, similar to the earlier `TGText` subsystem.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

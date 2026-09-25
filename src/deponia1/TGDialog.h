@@ -8,8 +8,8 @@
 // active dialog target) - DisplayDialog() calls TVisObjRef::IsEmpty()
 // directly on TGDialog's own address, and later TGDialog::Draw() on that
 // same address, so a dialog is "active" exactly when this field is
-// non-empty. StartDialog()/EndDialog() (not yet reversed) presumably set/
-// clear it.
+// non-empty. SetDialog()/Clear() (TGameControl::StartDialog/EndDialog, asm
+// lines 460983-461192) set/clear it, as their names suggest.
 #pragma once
 
 #include "datastruct/visobjref.h"
@@ -20,6 +20,8 @@ public:
 
     bool IsEmpty() const { return m_target.IsEmpty(); }
     void Draw();
+    void SetDialog(const TVisObjRef& dialog) { m_target = dialog; }
+    void Clear() { m_target = TVisObjRef(); }
 
 private:
     TVisObjRef m_target;

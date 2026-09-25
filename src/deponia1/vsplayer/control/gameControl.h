@@ -47,8 +47,16 @@
 #include "vsplayer/control/masterControl.h"
 #include "vstables/visionaireGame.h"
 
+// Confirmed field layout (TGameControl::StartGameAction, Deponia_Linux.asm
+// lines 457301-457406): matched by (a, msg) pair; `flag` selects between
+// always-firing and only-firing-when-no-blocking-dialog/text behavior.
+// Field names are best-effort ("a"/"msg" match the matching StartGameAction
+// parameters they're compared against) - real names/meaning unconfirmed.
 struct SGameAction {
-    int id = 0;
+    int a = 0;
+    bool flag = false;
+    int msg = 0;
+    TVisObjRef target;
 };
 
 class TGameControl : public TMasterControl {
@@ -231,4 +239,9 @@ private:
     // 461601-462228). Ownership not confirmed - left un-deleted.
     std::list<TGText*> m_activeTexts;
     std::list<TGText*> m_sceneTexts;
+    // Confirmed present (SavegameExists's slot==-2 case looks up whatever
+    // savegame is at this point via TGScene::GetSavegameAt, asm line
+    // 462656) - presumably the last clicked/hovered position in a "load
+    // game" menu.
+    wxPoint m_savegameClickPos;
 };

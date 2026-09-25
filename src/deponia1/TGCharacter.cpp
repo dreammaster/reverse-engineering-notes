@@ -11,3 +11,6 @@ void TGCharacter::UpdateCharacter() {
 
 void TGCharacter::SetOnDestination() {
 }
+
+void TGCharacter::CheckRandomTimer() {
+}
