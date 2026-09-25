@@ -139,7 +139,7 @@ TComposedFileManager	stub	17	516915	519724
 TXMLWriter	todo	33	519891	522102
 TProjectFileWriter	todo	2	522192	522208
 TFieldValue	todo	9	522229	528588
-TFile	todo	37	522315	525436
+TFile	stub	37	522315	525436
 TVedFile	todo	10	522419	525756
 TPolygonList	todo	19	526053	532096
 TXMLNames	todo	10	527002	533265
@@ -147,10 +147,10 @@ TCharHolder	stub	32	529250	531627
 pattern_matcher	todo	2	531875	1441953
 TXMLStringWriter	todo	10	539847	540033
 SEntryInfo	todo	1	541440	541440
-TComposedFile	stub	20	541459	548209
+TComposedFile	in-progress	20	541459	548209
 BuildProgressEvent	todo	3	548597	548703
-TMemoryBuffer	todo	26	549297	551826
-TMemoryFile	todo	7	551869	552091
+TMemoryBuffer	stub	26	549297	551826
+TMemoryFile	stub	7	551869	552091
 TStandardPaths	done	13	552187	553383
 TTempFile	todo	2	553440	553545
 md5	todo	5	554434	556285
@@ -432,7 +432,7 @@ HashMap<int, TFreetypeFont::Character, KeyHash<int> >	todo	3	1589759	1589996
 Container	todo	25	1592130	1597917
 BaseContainer	todo	28	1592285	1602916
 ScrollPane	todo	14	1592422	1600766
-EventHandler	todo	4	1592869	1599448
+EventHandler	stub	4	1592869	1599448
 Layout::LayoutUnion	todo	5	1597038	1601045
 Layout	todo	9	1601112	1602720
 SkinFaceSprite	todo	5	1605092	1607305

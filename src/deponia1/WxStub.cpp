@@ -110,3 +110,9 @@ wxStandardPathsBase& wxGetAppTraitsStandardPaths() {
     static wxStandardPathsBase instance;
     return instance;
 }
+
+void wxCriticalSection::Enter() {
+}
+
+void wxCriticalSection::Leave() {
+}

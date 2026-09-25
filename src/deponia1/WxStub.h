@@ -69,6 +69,7 @@ public:
 
     wxString GetFullPath() const { return wxString(m_fullPath); }
     bool IsOk() const { return !m_fullPath.empty(); }
+    void NormalizePath() {}
 
     static bool Mkdir(const wxString& dir, int permissions = 0777, int flags = 0);
     static wxString GetCwd();
@@ -161,3 +162,20 @@ public:
 // from a fixed global (`wxGUIAppTraits::base`) rather than a dynamic lookup;
 // this mirrors that with a single process-wide stub instance.
 wxStandardPathsBase& wxGetAppTraitsStandardPaths();
+
+// wxCriticalSection is a plain mutex wrapper in real wxWidgets; several
+// classes (e.g. TComposedFile) embed one as an instance member.
+class wxCriticalSection {
+public:
+    void Enter();
+    void Leave();
+};
+
+class wxCriticalSectionLocker {
+public:
+    explicit wxCriticalSectionLocker(wxCriticalSection& cs) : m_cs(cs) { m_cs.Enter(); }
+    ~wxCriticalSectionLocker() { m_cs.Leave(); }
+
+private:
+    wxCriticalSection& m_cs;
+};

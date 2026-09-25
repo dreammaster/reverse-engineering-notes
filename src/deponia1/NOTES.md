@@ -4,6 +4,43 @@ Source: `Deponia_Linux.asm`, `main` proc, asm lines 499508-500213
 (address range 0x62E450-0x62EC85 roughly; see `endp` before local labels
 resume at 0x62ED2E).
 
+## Capstone finding: this binary uses the old COW std::string ABI
+
+Confirmed while reversing `TComposedFile`'s entry-growth loop (which copies
+an `SEntryInfo`'s `std::wstring` field via a **single 8-byte pointer copy**,
+then five more separate qwords): this binary was compiled with
+`-D_GLIBCXX_USE_CXX11_ABI=0`, i.e. libstdc++'s pre-C++11 **copy-on-write**
+string representation, where a `std::string`/`std::wstring` object is
+*literally just one pointer* to a shared, ref-counted buffer (a hidden
+`_Rep` header - refcount, length, capacity - living immediately before the
+visible character data). Modern libstdc++ (the SSO/"short string
+optimization" ABI most of us are used to) makes a `std::wstring` a 32-byte
+object with an inline small-buffer; this binary's strings are 8 bytes.
+
+This single fact retroactively explains several things noted independently,
+class by class, earlier in this project:
+
+- Why `wxString`/`wxFileName`-typed values kept turning out to be
+  reinterpretable as a bare `std::wstring` pointer with no visible
+  wrapper overhead (main.cpp's `main+0x37D`, `TComposedFile`'s entries,
+  `TMasterControl`'s several string members) - they're COW strings, so a
+  "wxString" that wraps one has the exact same 8-byte layout as the
+  wstring itself.
+- Why so many *different* classes' destructors collapsed under the same
+  ICF-folded symbol (`std::pair<std::string const,ulong>::~pair`,
+  `std::list<ctdrpc::earlyrole_ip_t>::_M_clear`, etc., see below): a COW
+  string's destructor is just "decrement the shared refcount, free the
+  `_Rep` if it hit zero" - completely generic machine code that doesn't
+  depend on the character type or the wrapping class at all, so the linker
+  folds huge numbers of unrelated destructors together.
+
+Not relevant to *our* rebuild: we use ordinary modern `std::wstring` inside
+`wxString` (see `WxStub.h`) throughout, since this project targets
+behavioral fidelity on a fresh compiler/ABI, not binary compatibility with
+the original executable. Recorded here purely because it resolves a
+question ("why does this keep looking like just a pointer?") raised
+independently in at least three earlier classes' notes.
+
 ## Feasibility verdict
 
 `main` itself is tractable: it's a straightforward sequence of calls with a
