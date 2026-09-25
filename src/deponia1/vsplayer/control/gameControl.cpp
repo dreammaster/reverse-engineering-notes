@@ -1,6 +1,7 @@
 #include "vsplayer/control/gameControl.h"
 
 #include "AppGlobals.h"
+#include "TGAction.h"
 #include "baselib/composedfile.h"
 
 TGameControl::TGameControl() {
@@ -27,12 +28,12 @@ TGameControl::TGameControl() {
 TGameControl::~TGameControl() {
     // Confirmed (asm lines 474222-474270): sets m_isClearingAnimations
     // before tearing down, then deletes every owned TGCharacter*. The
-    // destructor also calls into several global subsystems not modeled
-    // here at all (TGAnimation::ClearAnimations, ModelContainer::Destroy,
-    // TGAction::ClearActions) and a virtual teardown call through a
-    // pointer at a still-unidentified field - left out rather than
-    // guessing at systems that haven't been reversed yet.
+    // destructor also calls into TGAnimation::ClearAnimations and
+    // ModelContainer::Destroy - not modeled, since neither class has been
+    // reversed at all yet - and a virtual teardown call through a pointer
+    // at a still-unidentified field - left out rather than guessing.
     m_isClearingAnimations = true;
+    TGAction::ClearActions();
     ClearTexts();
     for (TGCharacter* character : m_characters)
         delete character;
@@ -78,6 +79,15 @@ void TGameControl::HandleMouseUp(const wxPoint& /*pos*/, TMouseMessageEnum /*msg
 }
 
 void TGameControl::HandleMouseHolding(const wxPoint& /*pos*/) {
+    // Confirmed (asm lines 455671-455746): `pos` itself is never read - only
+    // whether the cursor is currently active. Field id 0x182 meaning not
+    // resolved.
+    if (!GetCursorControl()->IsActive())
+        return;
+    TVisObjRef game = m_visionaire->GetGame();
+    TVisObjRef link = game.GetLink(0x182);
+    if (!link.IsEmpty())
+        TGAction::AddRunningAction(link);
 }
 
 void TGameControl::UpdateTexts() {
@@ -204,6 +214,14 @@ void TGameControl::SaveEventHandlers() {
 }
 
 void TGameControl::ExecuteStartingAction() {
+    // Confirmed (asm lines 458052-458116): field id 0x170, meaning not
+    // resolved.
+    TVisObjRef game = m_visionaire->GetGame();
+    TVisObjRef link = game.GetLink(0x170);
+    if (!link.IsEmpty()) {
+        TGAction::AddRunningAction(link);
+        TGAction::ContinueRunningActions(false);
+    }
 }
 
 void TGameControl::InitInterfaces() {
@@ -434,10 +452,19 @@ void TGameControl::HandleKeyEvent(TKeyboardMessageEnum /*msg*/, const wxString& 
 void TGameControl::HandleControllerAxis(SDL_GameControllerAxis /*axis*/, int /*value*/, int /*index*/) {
 }
 
-void TGameControl::HandleControllerButtonRelease(SDL_ControllerButtonEvent /*button*/, int /*index*/) {
+void TGameControl::HandleControllerButtonRelease(SDL_ControllerButtonEvent button, int index) {
+    // Confirmed (asm lines 471825-471896): re-dispatches through
+    // HandleKeyEvent with an empty key name, the same symkey lookup as
+    // ConvertControllerButtonToSymKey, and msg=ControllerButtonRelease.
+    HandleKeyEvent(TKeyboardMessageEnum::ControllerButtonRelease, wxString(),
+                   ConvertControllerButtonToSymKey(button), static_cast<unsigned short>(index));
 }
 
-void TGameControl::HandleControllerButtonHit(SDL_ControllerButtonEvent /*button*/, int /*index*/) {
+void TGameControl::HandleControllerButtonHit(SDL_ControllerButtonEvent button, int index) {
+    // Confirmed (asm lines 471904-471975): same as ...Release() above but
+    // msg=ControllerButtonHit.
+    HandleKeyEvent(TKeyboardMessageEnum::ControllerButtonHit, wxString(),
+                   ConvertControllerButtonToSymKey(button), static_cast<unsigned short>(index));
 }
 
 void TGameControl::PushEngineEvent(const std::string& /*name*/, const std::string& /*arg*/) {

@@ -66,6 +66,30 @@ more manifest-signature correction and two new classes:
 - `TVisObjRef::operator==` was added (confirmed used at several of these
   call sites) - it compares the 4-byte id array from `GetId()`.
 
+## TGameControl batch 3: TKeyboardMessageEnum has more values than first guessed
+
+`HandleMouseHolding`, `ExecuteStartingAction`, and the controller-button
+handlers (asm lines 455671-455746, 458052-458116, 471825-471975) all turned
+out to be simple once `TGAction::AddRunningAction`/`ContinueRunningActions`/
+`ClearActions` existed as stubs. One correction: `TKeyboardMessageEnum` was
+guessed as just `{KeyDown, KeyUp}` when `TMasterControl` was first written,
+but `HandleControllerButtonHit`/`HandleControllerButtonRelease` pass the
+literal values 4 and 5 as this same enum type to `HandleKeyEvent` - so it
+has at least 6 members. Extended with explicit values
+(`ControllerButtonHit = 4`, `ControllerButtonRelease = 5`) rather than
+renumbering `KeyDown`/`KeyUp`, since nothing contradicts those two; values 2
+and 3 haven't been observed at any call site yet.
+
+`ClearObjectText`/`IsTalking`/`ClearCurrentText`/`ReattachSceneObjectTexts`
+are deferred together - they all walk one of two confirmed
+`std::list<TGText*>` members (`+0x388` and `+0x398` in the original,
+sentinel-initialized right before `TGDialog` in the constructor) and need a
+real `TGText` class (with a `TVisObjRef` field, a `GetSpeaker()`, and at
+least one still-unnamed virtual method) plus a `TManagedObject` class
+(`TGScene::GetObject`'s real return type, not `void*` as currently stubbed)
+- worth reversing `TGText` properly in one pass rather than guessing at its
+shape piecemeal across four call sites.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where
