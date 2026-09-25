@@ -505,6 +505,24 @@ unsigned partyApplyAbilityUnlocks(uint8_t *record, unsigned classId, unsigned le
     return count;
 }
 
+unsigned partyKnownAbilityIdMax(GameKind game) {
+    return game == GameYendor2 ? 125 : 107;
+}
+
+unsigned partyKnownAbilityIds(const uint8_t *record, GameKind game, unsigned *out, unsigned outCapacity) {
+    unsigned found = 0;
+    unsigned max = partyKnownAbilityIdMax(game);
+    for (unsigned id = 1; id <= max; id++) {
+        if (flagBankTest(record + PartyFieldFlagBankCA, 16, id)) {
+            if (found < outCapacity) {
+                out[found] = id;
+            }
+            found++;
+        }
+    }
+    return found;
+}
+
 bool partyClassIsValid(unsigned classId) {
     unsigned base = classId % 10;
     return classId >= 1 && classId <= 29 && base != 0;

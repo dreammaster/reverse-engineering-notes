@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-25, corrected: the "banish" mechanic misreading)
+## Status (last updated 2026-09-25, added: known-ability-ids query)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -514,6 +514,23 @@ groundwork below is already in place.
   were previously a documented no-op. Tests in `test_bcd4.c`/
   `test_combat.c` (including the gold-theft path against a real
   `SaveGame` and the ore-cost clamp); all 18 suites pass.
+  **Corrected the stale "banish" reading, properly scoped
+  `ApplyEncodedItemEffect`, same day**: see candidate 8 below and
+  `file-formats.md`/project memory for the full correction. No source
+  changes.
+  **Known-ability-ids query added, same day**: while tracing
+  `ApplyEncodedItemEffect`'s callers for candidate 8's scoping, found
+  `BuildAlchemySpellList`'s core test (`TestRecordFlag_CA`) is the
+  exact same `PartyFieldFlagBankCA` bit test `partyApplyAbilityUnlocks`
+  already writes via `flagBankSet`/`SetRecordFlag_CA` — a read-back
+  query for data this project already produces. Added
+  `partyKnownAbilityIdMax`/`partyKnownAbilityIds` in `src23/party.c`/
+  `.h` (instruction-identical between the games; only the max index
+  scanned differs per game — 125 vs. 107, an `InitGlobals` constant).
+  Deliberately not reimplemented: `CheckSpellCastability`'s
+  affordability gate and pagination, both UI concerns layered on top.
+  Tests in `test_party.c`, including a direct round-trip against
+  `partyApplyAbilityUnlocks`; all 18 suites pass.
 
 ## Next: continue the C reimplementation
 
@@ -694,7 +711,18 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    traced -- held-item cursor updates, weather effects, and more)
    weren't traced this round either, given the function's size; a good
    candidate for a dedicated multi-round pass rather than one-off
-   attention.
+   attention. **One piece already peeled off cleanly**: the container
+   branch's own trigger is gated by `ConfirmContainerInteraction`
+   (untraced -- it's what actually sets up `word_3331A`/`word_33300`/
+   `word_332DA` etc. before `ApplyEncodedItemEffect` runs), and a
+   sibling branch in `InteractWithContainer` (not `ApplyEncodedItemEffect`
+   itself) applies a trivial class-gated ability effect (id 3, "costs
+   nothing, inflicts nothing" -- likely just a status icon) directly,
+   without going through the big dispatcher at all -- surfaced while
+   reading this, not the dispatcher: `partyKnownAbilityIdMax`/
+   `partyKnownAbilityIds` (see the status entry above), the read-back
+   half of the same `PartyFieldFlagBankCA` ability system this
+   branch's own gate (`TestRecordFlag_CA`) checks.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need

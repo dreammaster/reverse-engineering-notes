@@ -1228,6 +1228,18 @@ differ between the games (`0xD40B` vs. `0xBA95`), but the *relationship*
 into it) holds identically in both. See `file-formats.md`'s "ability/
 spell-unlock table" section for the full derivation.
 
+## Known-ability scan (`BuildAlchemySpellList`): identical mechanism, different max index
+
+`BuildAlchemySpellList` and `TestRecordFlag_CA`/`SetRecordFlag_CA` are
+instruction-identical between the two games — checked directly,
+`yendor2.asm:25154`/`:42310`/`:42271` vs.
+`yendor3.asm:23659`/`:42657`/(its `SetRecordFlag_CA` match). The one
+real difference is data, not code: the highest ability-flag index the
+scan ever tests is a per-game `InitGlobals` constant, `125` in Chapter
+2 vs. `107` in Chapter 3 — the usual per-game content-size difference,
+not a mechanism change. Reimplemented once in `src23/party.c`, shared
+by both games via `partyKnownAbilityIdMax(game)`.
+
 ## Attack resolution primitives: identical, but Chapter 3 adds a resisted-special-attack fallback
 
 `ResolveAttack` and `FailsSavingThrow` themselves are instruction-

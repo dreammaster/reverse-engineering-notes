@@ -9350,6 +9350,57 @@ large system — `ApplyEncodedItemEffect` as a whole — given an
 accurate, actionable description instead of a two-line guess) rather
 than new C. Full suite unchanged at 18/18 passing (no code touched).
 
+### 2026-09-25 session update (continued): a small, real find while tracing ApplyEncodedItemEffect's callers — and a note on this session's own tooling limits
+
+Also tried, this round, to resolve a much older open question —
+`LoadCurgameRecord`'s exact 4-byte record format — by writing a
+targeted read-only IDA script (`check_curgame_record_buffer.py`,
+following this project's established pattern) to ask the live
+database what reads back the 2 words it copies into a shared scratch
+buffer, since plain-text `.asm` grepping had turned up nothing (no
+other code references that raw address as a literal). Running it
+hit a wall this session doesn't have a way around: `idat.exe` refused
+to launch under this Claude Code session's sandboxing (`Access is
+denied`), and forcing an unsandboxed shell lost the ability to see
+`C:\Program Files` at all. Every `ida_scripts/*.py` file in this repo
+that's actually been *run* appears to have been run from the user's
+own interactive terminal, not from inside a session like this one —
+worth remembering for next time: a script that needs the live `.idb`
+(cross-references, symbol resolution at a computed address) is
+something to hand to Paul to run, not something this session can
+execute itself. The script was removed rather than left as dead
+weight; `LoadCurgameRecord`'s format stays exactly where the last
+thorough pass left it, "investigated, not resolved."
+
+Pivoted to what pure `.asm` reading could still answer: traced
+`InteractWithContainer` (one of `ApplyEncodedItemEffect`'s two
+callers) far enough to find its container-triggering branch is
+actually configured by a still-untraced `ConfirmContainerInteraction`
+(narrowing where a future pass on candidate 8 should start), and
+noticed a sibling branch that doesn't call `ApplyEncodedItemEffect` at
+all — a small, class-gated ability effect applied directly. Its own
+gate, `TestRecordFlag_CA`, turned out to be worth chasing on its own:
+it's the exact same `PartyFieldFlagBankCA` bit test
+`partyApplyAbilityUnlocks` already writes to (confirmed by reading
+`SetRecordFlag_CA`'s own callers, which include `UseTrainingItem` —
+the function this project's own `partyApplyAbilityUnlocks` was built
+from). That thread led to `BuildAlchemySpellList`
+(`yendor2.asm:25154`), the alchemy screen's "which spells can this
+character even attempt" filter — a clean read-back query for data
+this project's own write path already produces, gated only by a
+per-game max-index constant (125 vs. 107, confirmed by direct
+comparison of both `InitGlobals` copies) rather than anything
+UI-shaped.
+
+New: `partyKnownAbilityIdMax`/`partyKnownAbilityIds` in
+`src23/party.c`/`.h`. Tests in `test_party.c`, including a direct
+round-trip against `partyApplyAbilityUnlocks` (what one sets, the
+other finds) and the Chapter 2/3 max-index boundary. Full suite
+rebuilt, 18/18 passing. Documented in `file-formats.md` (a new
+section placed right after the ability-unlock table it reads back),
+`engine-diffs.md`, and `roadmap.md` (both the new status entry and a
+note on candidate 8 pointing at what's now peeled off).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

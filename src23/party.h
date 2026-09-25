@@ -402,6 +402,31 @@ unsigned partyAbilityUnlocksAtLevel(unsigned classId, unsigned level, GameKind g
 unsigned partyApplyAbilityUnlocks(uint8_t *record, unsigned classId, unsigned level, GameKind game);
 
 /*
+ * BuildAlchemySpellList's own known-ability scan (yendor2.asm:25154,
+ * yendor3.asm:23659, instruction-identical): the highest ability-flag
+ * index (`PartyFieldFlagBankCA`) the alchemy/spell-casting screen ever
+ * tests -- an `InitGlobals` constant, 125 in Chapter 2
+ * (`word_3330C`), 107 in Chapter 3 (confirmed via direct comparison of
+ * both `InitGlobals` copies).
+ */
+unsigned partyKnownAbilityIdMax(GameKind game);
+
+/*
+ * The same scan's filtering step: tests flagBankTest(PartyFieldFlagBankCA,
+ * ...) for every index 1..partyKnownAbilityIdMax(game) and returns each
+ * set one, in ascending order -- the same ids partyApplyAbilityUnlocks
+ * sets via partyAbilityUnlockTable. Writes up to outCapacity ids into
+ * out; the return value is the true total found, which may exceed
+ * outCapacity (matching how a caller would detect a too-small buffer).
+ * Not reproduced: `CheckSpellCastability`'s own per-entry "can this be
+ * cast right now" gate (a separate, not-yet-traced UI-affordability
+ * check) and `BuildAlchemySpellList`'s pagination/current-selection
+ * bookkeeping that follows this filtering step -- both belong to the
+ * eventual UI layer, not this data-model query.
+ */
+unsigned partyKnownAbilityIds(const uint8_t *record, GameKind game, unsigned *out, unsigned outCapacity);
+
+/*
  * SyncPartyRecordStagedStats (yendor2.asm:22633; called from UseTrainingItem
  * and UseItemType_400, a different, not-yet-decoded item handler): sets
  * every stat's current value to its max, for every PartyStat except

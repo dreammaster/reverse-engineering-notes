@@ -4001,6 +4001,41 @@ Chapter 2 vs. Chapter 3 content difference and every class-base-1-3
 "no valid row" case (tier 0, 1 and 2, to be thorough about the "any
 tier" claim).
 
+### Reading back which abilities a character knows (decoded 2026-09-25)
+
+Found while chasing `ApplyEncodedItemEffect`'s two callers
+(`RunAlchemyScreen`/`InteractWithContainer`) for context, looking for
+where the effect ids it applies get selected in the first place:
+`BuildAlchemySpellList` (`yendor2.asm:25154`, `yendor3.asm:23659`,
+instruction-identical) is the alchemy/spell-casting screen's "which
+spells can this character even attempt" filter, and its core test —
+`TestRecordFlag_CA` — is confirmed to be the *exact same*
+`PartyFieldFlagBankCA` bit test `flagBankTest` already reimplements
+(`SetRecordFlag_CA`, its write-side counterpart, is the very function
+`UseTrainingItem` calls that this project already ported as
+`partyApplyAbilityUnlocks`'s `flagBankSet` call). In other words: this
+is the read-back query for the exact same data `partyApplyAbilityUnlocks`
+writes.
+
+The scan itself: test flag indices `1..N` in ascending order (`N` is
+an `InitGlobals` constant — `word_3330C` in Chapter 2, confirmed
+`125`; the equivalent Chapter 3 global, `1..107`, confirmed by direct
+comparison of both `InitGlobals` copies), collecting every set index
+into a buffer. `BuildAlchemySpellList` goes on to call
+`CheckSpellCastability` per entry (an "can this actually be cast right
+now" affordability gate, not traced — belongs with the eventual UI
+work) and compute pagination (13 entries/page) — neither reimplemented
+here, both pure UI/list-management concerns layered on top of the
+data-model query this section covers.
+
+Reimplemented as `partyKnownAbilityIdMax`/`partyKnownAbilityIds` in
+`src23/party.c`/`.h`. Tests in `tests/test_party.c`: the two games'
+max-index constants, an empty record finding nothing, ascending-order
+output, the Chapter 2 vs. Chapter 3 max-index boundary (an id valid in
+one game but out of range in the other), the `outCapacity`-vs-true-count
+distinction, and a direct round-trip against `partyApplyAbilityUnlocks`
+(what one sets, the other finds).
+
 **Deliberately not reimplemented**, all pure UI/rendering with a much
 wider blast radius than training specifically:
 - `ShowLevelUpMessage`/`DrawItemUseConfirmDialog`/status-panel redraws

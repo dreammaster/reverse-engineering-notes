@@ -664,6 +664,39 @@ static void testAbilityUnlocks(void) {
           flagBankTest(g_record + PartyFieldFlagBankCA, 16, 5));
 }
 
+static void testKnownAbilityIds(void) {
+    checkU32("yendor2's known-ability scan goes up to 125", partyKnownAbilityIdMax(GameYendor2), 125);
+    checkU32("yendor3's known-ability scan goes up to 107", partyKnownAbilityIdMax(GameYendor3), 107);
+
+    memset(g_record, 0, PartyRecordSize);
+    unsigned ids[8];
+    checkU32("a fresh record knows nothing", partyKnownAbilityIds(g_record, GameYendor2, ids, 8), 0);
+
+    flagBankSet(g_record + PartyFieldFlagBankCA, 16, 5);
+    flagBankSet(g_record + PartyFieldFlagBankCA, 16, 0x0b);
+    flagBankSet(g_record + PartyFieldFlagBankCA, 16, 125); /* the last valid yendor2 index */
+    unsigned count = partyKnownAbilityIds(g_record, GameYendor2, ids, 8);
+    checkU32("3 known abilities found", count, 3);
+    check("returned in ascending order", ids[0] == 5 && ids[1] == 0x0b && ids[2] == 125);
+
+    /* Index 125 is out of range for yendor3 (max 107) -- shouldn't be found through that game's scan. */
+    checkU32("the same record scanned as yendor3 only finds the first two",
+             partyKnownAbilityIds(g_record, GameYendor3, ids, 8), 2);
+
+    /* outCapacity smaller than the true count: the return value still reports the true total. */
+    unsigned small[2];
+    checkU32("outCapacity is a cap on the buffer, not the count returned",
+             partyKnownAbilityIds(g_record, GameYendor2, small, 2), 3);
+    check("only outCapacity entries are actually written", small[0] == 5 && small[1] == 0x0b);
+
+    /* Ties in directly with partyApplyAbilityUnlocks: what that function sets, this one finds. */
+    memset(g_record, 0, PartyRecordSize);
+    partyApplyAbilityUnlocks(g_record, 4, 4, GameYendor2); /* MONK level 4: ids 7 and 0xb */
+    count = partyKnownAbilityIds(g_record, GameYendor2, ids, 8);
+    checkU32("finds exactly what partyApplyAbilityUnlocks set", count, 2);
+    check("ids match", ids[0] == 7 && ids[1] == 0x0b);
+}
+
 static void testDeductStats(void) {
     memset(g_record, 0, PartyRecordSize);
     partySetStat(g_record, PartyStatHitPoints, 30);
@@ -700,6 +733,7 @@ int main(void) {
     testTraining();
     testEquipmentBonuses();
     testAbilityUnlocks();
+    testKnownAbilityIds();
     testDeductStats();
     testRealCharacters();
 
