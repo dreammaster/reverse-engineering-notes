@@ -2,6 +2,7 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 116163	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/objectManaged.cpp	71	m_pAnimationLink == NULL	TMObject::SetActive(bool)
 138037	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/characterManaged.cpp	50	m_pAnimationLink == NULL	TMCharacter::SetAnimation(TGAnimation*)
 138872	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/interfaceGame.cpp	624	false	TGInterface::Draw()
+149704	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/animationGame.cpp	114	false	TGAnimation::DetachOwner(TAnimationOwner*)
 191507	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/managedObject.cpp	369	text != NULL	TManagedObject::SetText(TGText*)
 195100	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/actionGame.cpp	76	false	TGAction::operator=(TVisObjRef&)
 196136	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/actionGame.cpp	2400	RunningActions.size() == ActionIdToRunningAction.size()	TGAction::DeleteFinishedActions()
@@ -10,6 +11,7 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 203333	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/actionGame.cpp	508	false	TGAction::Execute(bool, t_SkipCutsceneInfo*)
 205534	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/actionGame.cpp	773	false	TGAction::Execute(bool, t_SkipCutsceneInfo*)
 207611	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/actionGame.cpp	1092	false	TGAction::Execute(bool, t_SkipCutsceneInfo*)
+212673	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/textGame.cpp	118	false	TGText::DetachOwner(TTextOwner*)
 224094	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/console.cpp	1360	index >= 0 && index < 3	TConsole::ParseObjectName(int)
 432832	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/scripting/scriptingutils.cpp	179	stackSizeBefore == stackSizeAfter	SaveGlobalScriptVariables(TVisionaireGame&)
 433245	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/scripting/scriptingutils.cpp	250	false	TraverseList(TVList const&, int, TVisionaireGame&)
@@ -20,6 +22,7 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 472834	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/control/gameControl.cpp	530	false	TGameControl::HandleMouseUp(wxPoint const&, TMouseMessageEnum)
 483667	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/control/loadingControl.cpp	71	current >= 0 && current <= max	TLoadingControl::UpdateStatus(int, int)
 483864	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/control/cursorControl.cpp	62	anim == m_currentAnimation	TCursorControl::AnimationStopped(TGAnimation*)
+486638	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/control/masterControl.cpp	118	false	TMasterControl::Signal(TSignalData const&, TSignalData&)
 494374	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/main/mainSDL.cpp	872	LogFile == NULL	Init(wxString const&, wxSize&, wxSize&, int, char**, wxCmdLineParser&)
 494875	/home/simon/Documents/jenkins/branchPillars/src/vsplayer/main/mainSDL.cpp	885	LogFile != NULL	Init(wxString const&, wxSize&, wxSize&, int, char**, wxCmdLineParser&)
 520350	/home/simon/Documents/jenkins/branchPillars/src/baselib/xmlWriter.cpp	67	Indent >= 0 && Indent < MAX_INDENTATION_LEVELS	TXMLWriter::StartTagS(char const*)
@@ -31,6 +34,7 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 527714	/home/simon/Documents/jenkins/branchPillars/src/baselib/xmlCommon.cpp	346	false	ConvertToBool(char const*, char const*)
 541870	/home/simon/Documents/jenkins/branchPillars/src/baselib/composedfile.cpp	539	false	TComposedFile::GetComposedFileExtension() const
 551943	/home/simon/Documents/jenkins/branchPillars/src/baselib/memfile.cpp	82	m_pData	TMemoryFile::GetBuffer()
+553989	/home/simon/Documents/jenkins/branchPillars/src/baselib/md5.cpp	37	false	Salt(char*)
 554242	/home/simon/Documents/jenkins/branchPillars/src/baselib/md5.cpp	37	false	ManipulateForMD5(char*)
 554480	/home/simon/Documents/jenkins/branchPillars/src/baselib/md5.cpp	473	nLength % 4 == 0	md5::Transform(unsigned char*)
 555383	/home/simon/Documents/jenkins/branchPillars/src/baselib/md5.cpp	455	nLength % 4 == 0	md5::Finalize()
@@ -48,6 +52,7 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 586618	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	322	RefCount > 0 && RefCount < 3000	TVList::clear()
 586672	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	322	RefCount > 0 && RefCount < 3000	TVList::erase(__gnu_cxx::__normal_iterator<TVisionaireObject**, std::vector<TVisionaireObject*, std::allocator<TVisionaireObject*> > >)
 586904	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	322	RefCount > 0 && RefCount < 3000	TVList::pop_back()
+586928	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	109	false	TVList::pop_back()
 587627	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	322	RefCount > 0 && RefCount < 3000	TVisionaireObject::Release()
 587924	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	552	false	TVisionaireObject::operator=(TVisionaireObject const&)
 587947	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	559	false	TVisionaireObject::operator=(TVisionaireObject const*)
@@ -69,6 +74,7 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 594813	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	322	RefCount > 0 && RefCount < 3000	TVList::copy(TVList const&)
 595441	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	322	RefCount > 0 && RefCount < 3000	TVisionaireObject::GetLinks(int, eTypeOrder, TVList&) const
 595502	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaireobject.cpp	96	obj != NULL	TVisionaireObject::GetLinks(int, eTypeOrder, TVList&) const
+600171	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visobjref.cpp	590	false	TVisObjRef::CopyContent(TVisObjRef const&, bool, std::vector<int, std::allocator<int> >*)
 600344	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visobjref.cpp	636	visionaire != NULL	TVisObjRef::GetVisionaire() const
 600405	/home/simon/Documents/jenkins/branchPillars/src/datastruct/datagrp.cpp	76	m_pTempData == NULL	TDataGroup::CreateTempData()
 600806	/home/simon/Documents/jenkins/branchPillars/src/datastruct/datagrp.cpp	377	false	_ZN10TDataGroup10RemoveLinkEiRK3TIdb_part_134
@@ -89,6 +95,7 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 609686	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaire.cpp	257	false	TVisionaire::CloneObject(TVisObjRef const&, bool)
 609703	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaire.cpp	284	false	TVisionaire::CloneObject(TVisObjRef const&, bool)
 609745	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaire.cpp	308	srcObject != NULL && parent != NULL	TVisionaire::CopyObject(TVisionaireObject const*, TVisionaireObject*, int, bool)
+610067	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaire.cpp	362	false	TVisionaire::ResetActiveData(eVisionaireTable)
 610120	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaire.cpp	389	false	TVisionaire::RemoveObjectWithoutChildren(TVisObjRef&)
 610160	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaire.cpp	427	obj != NULL	TVisionaire::RemoveObjectByParent(TVisionaireObject*)
 610288	/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaire.cpp	456	false	TVisionaire::RemoveObjectByParent(TVisionaireObject*)
@@ -230,6 +237,8 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 643050	/home/simon/Documents/jenkins/branchPillars/src/datastruct/xmlProjectReader.cpp	1368	false	TXMLProjectReader::ReadXMLDoc(TVedFile&, wxString const&, eXMLNamesIntern, TLoadingTypeEnum, int*, TSignalSlot*, EventHandler*, int)
 649119	/home/simon/Documents/jenkins/branchPillars/src/datastruct/binaryProjectReader.cpp	550	false	_Z10saveObjectP8_IO_FILEPvi_constprop_175
 650319	/home/simon/Documents/jenkins/branchPillars/src/datastruct/binaryProjectReader.cpp	550	false	saveObject(_IO_FILE*, void*, int)
+651956	/home/simon/Documents/jenkins/branchPillars/src/datastruct/binaryProjectReader.cpp	591	false	loadObject(_IO_FILE*, void*, int, int)
+652374	/home/simon/Documents/jenkins/branchPillars/src/datastruct/binaryProjectReader.cpp	591	false	_Z10loadObjectP8_IO_FILEPvii_constprop_174
 654418	/home/simon/Documents/jenkins/branchPillars/src/datastruct/binaryProjectReader.cpp	1100	!it->GetId().IsEmpty()	TVisionaire::BinaryLoad(TVedFile&, TLoadingTypeEnum, TSignalSlot*, int*, EventHandler*)
 654914	/home/simon/Documents/jenkins/branchPillars/src/datastruct/binaryProjectReader.cpp	910	!it->GetId().IsEmpty()	TVisionaire::BinaryLoad(TVedFile&, TLoadingTypeEnum, TSignalSlot*, int*, EventHandler*)
 655135	/home/simon/Documents/jenkins/branchPillars/src/datastruct/binaryProjectReader.cpp	1169	false	TVisionaire::BinaryLoad(TVedFile&, TLoadingTypeEnum, TSignalSlot*, int*, EventHandler*)
@@ -267,6 +276,7 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 667224	/home/simon/Documents/jenkins/branchPillars/src/datastruct/table.cpp	864	obj != NULL	TTable::ObjectNameChanged(TVisionaireObject const*, int)
 667333	/home/simon/Documents/jenkins/branchPillars/src/datastruct/table.cpp	910	namedObjRemoved	TTable::ObjectNameChanged(TVisionaireObject const*, int)
 667414	/home/simon/Documents/jenkins/branchPillars/src/datastruct/table.cpp	894	false	TTable::ObjectNameChanged(TVisionaireObject const*, int)
+668613	/home/simon/Documents/jenkins/branchPillars/src/datastruct/type.cpp	34	!(savegame == t_SAVEGAME && (versionIn > 1 || versionOut > -1))	TTypeData::TTypeData(int, eTypeData, eSaveGame, int, int, int, int)
 671126	/home/simon/Documents/jenkins/branchPillars/src/graphicslib/subsystemGL.cpp	999	false	TFramebufferGL::CreateMultisampled(bool, bool, int, int)
 674230	/home/simon/Documents/jenkins/branchPillars/src/graphicslib/subsystemGL.cpp	1097	m_id != -1	TFramebufferGL::BindTexture(int)
 674803	/home/simon/Documents/jenkins/branchPillars/src/graphicslib/subsystemGL.cpp	1105	m_id != -1	TFramebufferGL::BindDepthTexture(int)
@@ -319,8 +329,10 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 789437	/home/simon/Documents/jenkins/branchPillars/src/graphicslib/picture.cpp	542	m_preloadFile != NULL	TPictureIO::PreparePreloaderLoad(wxFileName)
 789593	/home/simon/Documents/jenkins/branchPillars/src/graphicslib/picture.cpp	550	m_preloadFormat != NULL	TPictureIO::PreparePreloaderLoad(wxFileName)
 790501	/home/simon/Documents/jenkins/branchPillars/src/graphicslib/picture.cpp	460	m_pSprite != NULL	TPictureIO::RefreshSprite(bool)
+1061357	/home/simon/Documents/jenkins/branchPillars/src/mmedialib/movie_ffmpeg.cpp	2326	false	alloc_picture(VideoState*)
 1088788	/home/simon/Documents/jenkins/branchPillars/src/mmedialib/audiobusses.cpp	336	false	soundengine::AudioBufferFactory::FreeBuffer(TMemoryFile*)
 1103129	/home/simon/Documents/jenkins/branchPillars/src/mmedialib/soundBase.cpp	475	m_eSoundFade == eFadeNo	TSoundBase::StartSoundFade(TFadeEnum, int, bool)
+1106544	/home/simon/Documents/jenkins/branchPillars/src/mmedialib/sound.cpp	119	false	TSoundInterface::Signal(TSignalData const&, TSignalData&)
 1107225	/home/simon/Documents/jenkins/branchPillars/src/mmedialib/sound.cpp	365	false	TSoundInterface::AdjustToGeneralVolume(int, TSoundTypeEnum) const
 1375315	/home/simon/Documents/jenkins/branchPillars/src/vscommon/geometry.cpp	171	false	GetPointFromPolygon(TPolygonList const&, int, int)
 1375572	/home/simon/Documents/jenkins/branchPillars/src/vscommon/geometry.cpp	273	false	GetBoundingBox(std::vector<wxPoint, std::allocator<wxPoint> > const&)
@@ -339,11 +351,14 @@ assert_line	original_file	original_source_line	expression	enclosing_function
 1413465	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/argumentSyntax.cpp	131	arg != A_NONE	TArgSyntax::AddArg(TArgType, bool)
 1413631	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/argumentSyntax.cpp	96	argType != A_NONE	TArgSyntax::AddFlag(wxString const&, wxString const&, TArgType, bool)
 1421278	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/visionaireobjectLua.cpp	128	lua_gettop(L) == 0	luaopen_ExportTables(lua_State*)
+1421393	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/visionaireobjectLua.cpp	170	lua_gettop(L) == 0	luaopen_ExportTables(lua_State*)
 1422573	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/visionaireobjectLua.cpp	1019	fieldID != -1	getFieldFromString(LuaVisionaireObject*, char const*)
 1432906	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/argumentParser.cpp	212	Syntax != NULL	TArgParser::FindFlagArgument(wxString) const
 1435777	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/argument.cpp	172	false	TArgument::SetType(TArgType)
 1440112	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/command.cpp	47	Game == NULL	InitCommands(TVisionaireGame*, wxString const&, wxString, wxString)
 1441814	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/command.cpp	361	cmd->GroupMarker != TCommand::grpEnd	CloseOpenedCmdGroup()
+1441831	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/command.cpp	364	i >= 0	CloseOpenedCmdGroup()
+1441845	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/command.cpp	368	false	CloseOpenedCmdGroup()
 1441921	/home/simon/Documents/jenkins/branchPillars/src/vscommon/scripting/command.cpp	152	LastDone == Queue.size()-1	TCommandQueue::AddCommand(TCommand*)
 1446121	/home/simon/Documents/jenkins/branchPillars/src/vstables/action_part.cpp	114	obj != NULL	TTActionPart::GetNameInList(TVisionaireObject const*)
 1454575	/home/simon/Documents/jenkins/branchPillars/src/vstables/text.cpp	114	false	TTText::GetTextLanguage() const

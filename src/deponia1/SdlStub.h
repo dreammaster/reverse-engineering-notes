@@ -34,6 +34,7 @@ extern "C" {
 int SDL_Init(Uint32 flags);
 void SDL_Quit(void);
 const char* SDL_GetError(void);
+Uint32 SDL_GetTicks(void);
 
 int SDL_ShowCursor(int toggle);
 Uint8 SDL_EventState(Uint32 type, int state);

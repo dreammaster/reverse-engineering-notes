@@ -68,6 +68,7 @@ public:
     explicit wxFileName(const std::wstring& fullPath) : m_fullPath(fullPath) {}
 
     wxString GetFullPath() const { return wxString(m_fullPath); }
+    bool IsOk() const { return !m_fullPath.empty(); }
 
     static bool Mkdir(const wxString& dir, int permissions = 0777, int flags = 0);
     static wxString GetCwd();
@@ -89,6 +90,17 @@ struct wxSize {
 struct wxPoint {
     int x = 0;
     int y = 0;
+};
+
+struct wxRect {
+    int x = 0;
+    int y = 0;
+    int width = 0;
+    int height = 0;
+
+    int GetWidth() const { return width; }
+    int GetLeft() const { return x; }
+    int GetTop() const { return y; }
 };
 
 class wxCmdLineParser {

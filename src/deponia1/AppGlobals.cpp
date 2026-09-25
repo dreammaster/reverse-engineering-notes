@@ -1,6 +1,6 @@
 #include "AppGlobals.h"
 
-#include "TMasterControl.h"
+#include "vsplayer/control/gameControl.h"
 
 SDL_Window* VSPlayerWindow = nullptr;
 SDL_GLContext VSPlayerContext = nullptr;
@@ -23,7 +23,10 @@ unsigned char byte_11F8B02 = 0;
 
 // The real binary sets this up during earlier static/game initialization;
 // for the stub build we just give main() a live object to call through.
-TMasterControl* g_pGameControl = new TMasterControl();
+// TMasterControl is abstract; TGameControl (98 methods, not yet
+// reconstructed - see vsplayer/control/gameControl.h) is the real concrete
+// class the binary instantiates here.
+TMasterControl* g_pGameControl = new TGameControl();
 
 int movex = 0;
 int movey = 0;

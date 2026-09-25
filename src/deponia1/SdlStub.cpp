@@ -1,5 +1,6 @@
 #include "SdlStub.h"
 
+#include <chrono>
 #include <cstdio>
 
 int SDL_Init(Uint32 /*flags*/) {
@@ -11,6 +12,11 @@ void SDL_Quit(void) {
 
 const char* SDL_GetError(void) {
     return "";
+}
+
+Uint32 SDL_GetTicks(void) {
+    using namespace std::chrono;
+    return static_cast<Uint32>(duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count());
 }
 
 int SDL_ShowCursor(int /*toggle*/) {

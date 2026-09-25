@@ -22,10 +22,10 @@
 #include "AppFunctions.h"
 #include "AppGlobals.h"
 #include "SdlStub.h"
-#include "TMasterControl.h"
 #include "WxStub.h"
 #include "baselib/composedfile.h"
 #include "graphicslib/picture.h"
+#include "vsplayer/control/masterControl.h"
 #include "vsplayer/control/gameController.h"
 
 int main(int argc, char** argv, char** /*envp*/) {

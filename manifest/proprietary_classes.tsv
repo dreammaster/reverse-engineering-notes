@@ -23,7 +23,7 @@ HashNode<std::basic_string<char, std::char_traits<char>, std::allocator<char> >,
 HashNode<int, std::vector<int, std::allocator<int> >, IntegerHash<int> >	todo	1	136783	136783
 TMCharacter	todo	10	137965	138489
 TGInterface	todo	25	138536	143021
-TPaintControl	todo	27	143284	749311
+TPaintControl	stub	27	143284	749311
 HashMap<TId, int, TIdHash>	todo	1	143397	143397
 THText	todo	6	144162	144330
 TDiagnostic	todo	11	144499	148293
@@ -38,7 +38,7 @@ TGScene	todo	39	166435	172880
 HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
 TGCharacter	todo	76	175318	185835
 THAction	todo	5	187010	187127
-TGObjectManager	todo	25	187194	189565
+TGObjectManager	stub	25	187194	189565
 TTObject	todo	9	190187	1468584
 TTButton	todo	12	190202	1526063
 TGEventInfo	todo	1	190217	190217
@@ -117,22 +117,22 @@ CmdStartObjectTween	todo	5	407361	430894
 TCommand	todo	5	425823	427048
 TArgTypeArray	todo	8	425943	1413557
 TArgSyntax	todo	20	425966	1415367
-TGameClientSDK	todo	10	426024	491488
+TGameClientSDK	stub	10	426024	491488
 HashMap<wxString, TArgFlagSyntax*, StringHash<wchar_t const*> >	todo	2	426545	430689
 HashMap<wxString, TArgument*, StringHash<wchar_t const*> >	todo	2	426827	430792
 TArgParser	todo	8	426919	1434417
 SimplexNoise1234	todo	4	434064	434207
 Noise1234	todo	12	434500	437359
 TGameController	done	20	450097	453534
-TSceneControl	todo	15	453942	455632
-TGameControl	todo	98	455671	478479
+TSceneControl	stub	15	453942	455632
+TGameControl	stub	98	455671	478479
 SGameAction	todo	1	456169	456169
 SLoadingScreen	todo	2	479291	479330
-TLoadingControl	todo	7	483185	483735
-TCursorControl	todo	23	483805	485408
+TLoadingControl	stub	7	483185	483735
+TCursorControl	stub	23	483805	485408
 SCursor	todo	1	484984	484984
-TMasterControl	stub	38	485602	491098
-TMovie	todo	21	491536	1071898
+TMasterControl	in-progress	38	485602	491098
+TMovie	stub	21	491536	1071898
 v8::base::OS	todo	3	509497	2863318
 sha1	todo	8	513888	516547
 TComposedFileManager	stub	17	516915	519724
@@ -143,7 +143,7 @@ TFile	todo	37	522315	525436
 TVedFile	todo	10	522419	525756
 TPolygonList	todo	19	526053	532096
 TXMLNames	todo	10	527002	533265
-TCharHolder	todo	32	529250	531627
+TCharHolder	stub	32	529250	531627
 pattern_matcher	todo	2	531875	1441953
 TXMLStringWriter	todo	10	539847	540033
 SEntryInfo	todo	1	541440	541440
@@ -155,19 +155,19 @@ TStandardPaths	done	13	552187	553383
 TTempFile	todo	2	553440	553545
 md5	todo	5	554434	556285
 TTextLanguage	todo	3	558635	1524382
-TTimer	todo	6	559372	559473
+TTimer	stub	6	559372	559473
 wxFileConfig	todo	1	559663	559663
 ConfigSetting	todo	3	579294	580506
 std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >	todo	1	581350	581350
-TSprite	todo	35	582998	584507
+TSprite	stub	35	582998	584507
 TTypeGroup	todo	30	584546	585963
 TVList	todo	21	586522	594785
 TId	todo	4	586976	587066
 TVisionaireObject	todo	99	587318	595390
-TVisObjRef	todo	85	597612	600326
+TVisObjRef	stub	85	597612	600326
 TDataGroup	todo	41	600389	607108
 Geni::authresult_t	todo	3	607243	1656892
-TVisionaire	todo	90	608417	655305
+TVisionaire	stub	90	608417	655305
 LoadSaveProgressEvent	todo	4	620683	1523917
 StringHashMap<wxString, int, wchar_t const*, StringHash<wchar_t const*> >	todo	1	620868	620868
 TData	todo	13	625861	634717
@@ -281,14 +281,14 @@ TSoundBase	todo	42	1050713	1105856
 soundengine::AudioDataSourceOggOpus	todo	8	1051132	1053880
 soundengine::AudioDataSourceOggVorbis	todo	8	1051269	1053864
 soundengine::priv::AudioDevice	todo	4	1051511	1053547
-TSoundFFMPEG	todo	13	1053026	1059852
+TSoundFFMPEG	stub	13	1053026	1059852
 soundengine::priv	todo	1	1053563	1053563
 soundengine::AudioDataSource	todo	3	1053920	1059870
 soundengine::Stream	todo	24	1054049	1056675
 TFFMPEGSoundItem	todo	16	1054181	1060292
 mysqlpp::Exception	todo	1	1060074	1060074
 TSoundItem	todo	1	1060122	1060122
-TSteamSDK	todo	19	1075092	1077877
+TSteamSDK	stub	19	1075092	1077877
 TV_CCallbackImpl<DlcInstalled_t>	todo	3	1077952	1078057
 TV_CCallbackImpl<GetAuthSessionTicketResponse_t>	todo	3	1077987	1078083
 TV_CCallbackImpl<ValidateAuthTicketResponse_t>	todo	3	1078022	1078109
@@ -305,7 +305,7 @@ soundengine::AudioBufferFactory	todo	2	1084875	1088745
 hmap_iterator<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, StringHash<char const*> >	todo	1	1092049	1092049
 TGalaxySDKOverlayInitListener	todo	4	1098866	1099669
 TGalaxySDKAuthListener	todo	6	1098883	1099686
-TGalaxySDK	todo	16	1098946	1100783
+TGalaxySDK	stub	16	1098946	1100783
 TGalaxySDKUserStatsAndAchievementsRetrieveListener	todo	6	1099428	1101117
 galaxy::api::IGalaxyListener	todo	2	1100981	1101236
 galaxy::api::GalaxyTypeAwareListener<12u>	todo	2	1100998	1101219
@@ -327,7 +327,7 @@ Camera	todo	10	1373848	1374386
 Tools	todo	2	1374466	1374734
 TGParticleSystem	todo	4	1378274	1380801
 TGParticleEmitter	todo	6	1378290	1379800
-TFontManager	todo	16	1388826	1390109
+TFontManager	stub	16	1388826	1390109
 TPointSize	todo	5	1390459	1390856
 TCFont	todo	16	1391446	1397049
 TSyntaxDocArray	todo	7	1409666	1415006
@@ -336,7 +336,7 @@ HashMap<TId, std::vector<std::pair<int, int>, std::allocator<std::pair<int, int>
 HashMap<long long, StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, char const*, StringHash<char const*> >*, IntegerHash<int> >	todo	1	1429054	1429054
 CmdGetTime	todo	4	1429970	1432060
 CmdGetObject	todo	4	1430038	1431692
-TArgument	todo	57	1435493	1439341
+TArgument	stub	57	1435493	1439341
 TCommandPtrArray	todo	7	1439934	1442092
 TCommandQueue	todo	10	1440145	1441881
 TTActionPart	todo	13	1445635	1446790

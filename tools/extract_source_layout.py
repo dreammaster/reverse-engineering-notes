@@ -29,7 +29,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-CALL_RE = re.compile(r"^\s*call\s+_Z8x_assertbPKcS0_i\b")
+# `jmp` (not just `call`) too: a tail-call assert (the assert is the last
+# thing the function does) compiles to a plain jmp, e.g.
+# TMasterControl::Signal's default case - missing these undercounted call
+# sites and silently dropped some classes from the recovered layout.
+CALL_RE = re.compile(r"^\s*(?:call|jmp)\s+_Z8x_assertbPKcS0_i\b")
 MOV_REG_OFFSET_RE = re.compile(r"^\s*mov\s+(esi|edx)\s*,\s*offset\s+(\S+)")
 MOV_ECX_IMM_RE = re.compile(r"^\s*mov\s+ecx\s*,\s*([0-9A-Fa-f]+h|\d+)\b")
 PROC_RE = re.compile(r"^(\S+)\s+proc (?:near|far)\b")
