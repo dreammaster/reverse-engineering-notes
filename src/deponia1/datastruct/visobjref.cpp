@@ -37,6 +37,9 @@ void TVisObjRef::SetValue(int /*fieldId*/, const wxPoint& /*value*/, TSendEventE
 void TVisObjRef::SetValue(int /*fieldId*/, bool /*value*/, TSendEventEnum /*event*/) {
 }
 
+void TVisObjRef::SetValue(int /*fieldId*/, int /*value*/, TSendEventEnum /*event*/) {
+}
+
 const wxPoint* TVisObjRef::GetPoint(int /*fieldId*/) const {
     return &m_point;
 }

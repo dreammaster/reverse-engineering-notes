@@ -40,9 +40,16 @@ public:
     const FloatPoint& GetFloatScrollPos() const;
     void AdjustWindowHorizontal(float amount);
     void AdjustWindowVertical(float amount);
+    // Confirmed a reference-returning accessor, not a by-value wxSize
+    // (TGameControl::CenterScene dereferences the returned address as
+    // [ptr]/[ptr+4] rather than reading a register pair, Deponia_Linux.asm
+    // lines 460533-460715) - same "logical const, physical mutable
+    // accessor" shape as GetScrollPos() above.
+    const wxSize& GetVisibleSize() const;
 
 private:
     wxPoint m_scrollPos{};
     FloatPoint m_floatScrollPos{};
+    wxSize m_visibleSize{};
     bool m_active = false;
 };

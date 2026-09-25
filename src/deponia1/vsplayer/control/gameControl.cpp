@@ -79,8 +79,48 @@ bool TGameControl::DisplayDialog() {
     return true;
 }
 
+namespace {
+// Shared by DisplayTexts()'s two identical flag computations: true unless
+// the text has a speaker whose TVisObjRef field id 0x319 reads as 0 - field
+// id meaning unresolved.
+bool ShouldPushMatrices(TGText* text) {
+    TGCharacter* speaker = text->GetSpeaker();
+    return speaker == nullptr || speaker->GetRef().GetInt(0x319) != 0;
+}
+}  // namespace
+
 bool TGameControl::DisplayTexts() {
-    return false;
+    // Confirmed (asm lines 455890-456037). First, drop every active text
+    // whose target no longer reads as "displayed" (field id 0x211, matching
+    // several other text methods); then draw everything that's left, plus
+    // m_currentText if it's still displayed too.
+    for (auto it = m_activeTexts.begin(); it != m_activeTexts.end();) {
+        if (!(*it)->GetTarget().GetBool(0x211)) {
+            (*it)->OnCleared();
+            (*it)->Discard();
+            it = m_activeTexts.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    m_ownedSceneControl.GetScene()->SetCurrent();
+
+    for (TGText* text : m_activeTexts) {
+        bool saved = matricesActive;
+        matricesActive = ShouldPushMatrices(text);
+        text->Draw(1.0f);
+        matricesActive = saved;
+    }
+
+    if (m_currentText == nullptr || !m_currentText->GetTarget().GetBool(0x211))
+        return false;
+
+    bool saved = matricesActive;
+    matricesActive = ShouldPushMatrices(m_currentText);
+    m_currentText->Draw(1.0f);
+    matricesActive = saved;
+    return true;
 }
 
 bool TGameControl::DisplayConsole() {
@@ -359,6 +399,35 @@ void TGameControl::MoveScene() {
 }
 
 void TGameControl::CenterScene() {
+    // Confirmed (asm lines 460533-460715): only proceeds when the current
+    // character's scene-link (field id 0x1F7) matches the current scene's
+    // own identifying TVisObjRef. Field ids 0x1D9/0x1DA/0x1D6 (all
+    // SetValue()d at the end) are unresolved.
+    TVisObjRef game = m_visionaire->GetGame();
+    TGScene* scene = m_ownedSceneControl.GetScene();
+
+    TVisObjRef link = m_currentCharacter->GetRef().GetLink(0x1F7);
+    if (!(link == scene->GetRef()))
+        return;
+
+    const wxSize& visibleSize = scene->GetVisibleSize();
+    wxPoint charPos = m_currentCharacter->GetScreenPosition();
+    wxRect charRect = m_currentCharacter->GetVisibleRect();
+
+    if (!(charPos == wxPoint{-1, -1})) {
+        scene->AdjustWindowHorizontal(static_cast<float>(charPos.x - visibleSize.width / 2));
+
+        int verticalAdjust;
+        if (!charRect.IsEmpty() && charRect.GetHeight() > 0)
+            verticalAdjust = charRect.GetTop() + charRect.GetHeight() / 2 - visibleSize.height / 2;
+        else
+            verticalAdjust = charPos.y - visibleSize.height / 2;
+        scene->AdjustWindowVertical(static_cast<float>(verticalAdjust));
+    }
+
+    game.SetValue(0x1D9, 0, TSendEventEnum::SendEvent);
+    game.SetValue(0x1DA, 0, TSendEventEnum::SendEvent);
+    game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::SendEvent);
 }
 
 void TGameControl::SetOnScrollDestination() {

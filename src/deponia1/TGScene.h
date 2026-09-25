@@ -18,6 +18,12 @@ class TMSavegame;
 
 class TGScene : public TPaintControl {
 public:
+    // Confirmed present at a fixed offset (TGameControl::CenterScene
+    // compares the current character's scene-link against this, asm lines
+    // 460533-460715) - same "TVisObjRef at a known offset" pattern as
+    // TGCharacter/TGDialog/TSText/TGText.
+    const TVisObjRef& GetRef() const { return m_ref; }
+
     bool IsMenu() const;
     // Confirmed TManagedObject* (TGameControl::ReattachSceneObjectTexts
     // calls TManagedObject::SetText() directly on the result, asm lines
@@ -36,4 +42,7 @@ public:
     // UpdateRandomTimers copies it and iterates the copy, asm lines
     // 463363-463466).
     std::vector<TGCharacter*> GetCharacters() const;
+
+private:
+    TVisObjRef m_ref;
 };

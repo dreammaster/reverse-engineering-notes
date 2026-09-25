@@ -207,6 +207,34 @@ pieces:
 and `TVList` growing real `begin()`/`end()` iteration - a bigger unit of
 work better done as its own pass, similar to the earlier `TGText` subsystem.
 
+## TGameControl batch 8: DisplayTexts and CenterScene make TGCharacter polymorphic
+
+Finishes `DisplayTexts` (the last of the 8 pure virtuals to get a real
+body) and `CenterScene` (asm lines 455890-456037, 460533-460715):
+
+- **`TGCharacter` is polymorphic**, with two new virtuals discovered via
+  `CenterScene`'s vtable-indexed calls: `GetScreenPosition()` (returns a
+  `wxPoint`, compared against a `{-1,-1}` "no valid position" sentinel) and
+  `GetVisibleRect()` (returns a `wxRect` - confirmed to be a plain 4-int
+  struct specifically because the disassembly returns it in the RAX:RDX
+  register pair rather than through a hidden pointer, which only happens
+  for all-integer aggregates of 16 bytes or less). Names/real purpose
+  unconfirmed.
+- **`TPaintControl::GetVisibleSize()`** is a reference-returning accessor
+  (same "logical const, physical mutable" shape as `GetScrollPos()`) - the
+  tell was the disassembly dereferencing its return value as `[ptr]`/
+  `[ptr+4]` rather than reading a packed register value.
+- **`TGScene` gained its own identifying `TVisObjRef`** (`GetRef()`) -
+  `CenterScene` only proceeds when the current character's scene-link
+  matches it, following the same "bare `TVisObjRef` field, no original
+  accessor" pattern as `TGCharacter`/`TGDialog`/`TSText`/`TGText`.
+- **`TSText`'s two unnamed virtuals now have a third sibling call pattern**:
+  `DisplayTexts()` removes any active text that's stopped being
+  "displayed" (field id `0x211`) using the same `OnCleared()`+`Discard()`
+  pair as `ClearText`/`ClearTexts`, before drawing what's left.
+- Added `wxPoint::operator==`/`!=` and `wxRect::GetHeight()`/`IsEmpty()` to
+  `WxStub.h` - needed by the above and not previously used anywhere.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

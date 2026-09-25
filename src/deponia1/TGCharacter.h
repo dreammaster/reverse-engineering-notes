@@ -4,11 +4,24 @@
 // ChangeCharacter, etc.) but not itself reversed yet.
 #pragma once
 
+#include "WxStub.h"
 #include "datastruct/visobjref.h"
 
 class TGCharacter {
 public:
     TGCharacter() = default;
+    virtual ~TGCharacter() = default;
+
+    // Confirmed virtual (vtable-indexed call at a fixed slot), returning a
+    // wxPoint compared against a {-1,-1} "no valid position" sentinel
+    // (TGameControl::CenterScene, asm lines 460533-460715) - name/purpose
+    // not resolved.
+    virtual wxPoint GetScreenPosition() const;
+    // Confirmed virtual, returning a plain-int wxRect (confirmed by the
+    // RAX:RDX register-pair return convention rather than a hidden pointer -
+    // only valid for a <=16-byte all-integer struct) used for vertical
+    // scene-centering at the same call site - name/purpose not resolved.
+    virtual wxRect GetVisibleRect() const;
 
     // Confirmed present at a fixed offset (TGameControl::IsTalking compares
     // a TGText's speaker against a TVisObjRef via this field directly,

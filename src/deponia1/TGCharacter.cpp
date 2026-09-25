@@ -1,5 +1,13 @@
 #include "TGCharacter.h"
 
+wxPoint TGCharacter::GetScreenPosition() const {
+    return wxPoint{-1, -1};
+}
+
+wxRect TGCharacter::GetVisibleRect() const {
+    return wxRect();
+}
+
 void TGCharacter::SetInterfaces() {
 }
 

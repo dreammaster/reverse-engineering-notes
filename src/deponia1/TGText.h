@@ -20,4 +20,8 @@ class TGCharacter;
 class TGText : public TSText {
 public:
     TGCharacter* GetSpeaker() const;
+
+    // Confirmed called with a constant 1.0f at every DisplayTexts() call
+    // site (asm lines 455890-456037) - not reversed beyond that call shape.
+    void Draw(float scale);
 };

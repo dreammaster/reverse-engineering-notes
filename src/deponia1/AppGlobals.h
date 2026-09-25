@@ -50,3 +50,9 @@ extern int movey;
 extern int charmovex;
 extern int charmovey;
 extern int stopped_char;
+
+// Confirmed set/restored around each TGText::Draw() call (TGameControl::
+// DisplayTexts, Deponia_Linux.asm lines 455890-456037) - presumably gates
+// whether text rendering pushes its own transform matrix; real meaning not
+// resolved.
+extern bool matricesActive;

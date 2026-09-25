@@ -44,6 +44,10 @@ const FloatPoint& TPaintControl::GetFloatScrollPos() const {
     return m_floatScrollPos;
 }
 
+const wxSize& TPaintControl::GetVisibleSize() const {
+    return m_visibleSize;
+}
+
 void TPaintControl::AdjustWindowHorizontal(float /*amount*/) {
 }
 

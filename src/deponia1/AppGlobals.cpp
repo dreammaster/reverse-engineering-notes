@@ -34,3 +34,5 @@ int movey = 0;
 int charmovex = 0;
 int charmovey = 0;
 int stopped_char = 0;
+
+bool matricesActive = false;

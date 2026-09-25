@@ -230,9 +230,11 @@ private:
     // purpose (what populates it) not identified.
     TVList m_pendingItems;
     // Confirmed (IsTextActive/IsNoTextDisplayed, asm lines 461674-461777):
-    // null when no text is currently displayed. Ownership/lifetime (who
-    // sets this, whether it's heap-owned) not confirmed - left un-deleted.
-    TSText* m_currentText = nullptr;
+    // null when no text is currently displayed. Confirmed TGText*, not just
+    // TSText* (DisplayTexts calls TGText::GetSpeaker() directly on it, asm
+    // lines 455962-455989). Ownership/lifetime (who sets this, whether it's
+    // heap-owned) not confirmed - left un-deleted.
+    TGText* m_currentText = nullptr;
     // Confirmed sentinel-initialized in the constructor right before
     // m_dialog (IsTalking/ClearCurrentText use m_activeTexts;
     // ReattachSceneObjectTexts/ClearObjectText use m_sceneTexts - asm lines

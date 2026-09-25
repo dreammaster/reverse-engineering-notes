@@ -91,6 +91,9 @@ struct wxSize {
 struct wxPoint {
     int x = 0;
     int y = 0;
+
+    bool operator==(const wxPoint& other) const { return x == other.x && y == other.y; }
+    bool operator!=(const wxPoint& other) const { return !(*this == other); }
 };
 
 struct wxRect {
@@ -100,8 +103,10 @@ struct wxRect {
     int height = 0;
 
     int GetWidth() const { return width; }
+    int GetHeight() const { return height; }
     int GetLeft() const { return x; }
     int GetTop() const { return y; }
+    bool IsEmpty() const { return width <= 0 || height <= 0; }
     bool Intersects(const wxRect& other) const {
         return x < other.x + other.width && other.x < x + width && y < other.y + other.height &&
                other.y < y + height;

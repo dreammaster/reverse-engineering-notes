@@ -48,10 +48,12 @@ public:
     // field id, a linked TVisObjRef, and a bool - not reversed beyond that
     // call shape.
     void SetLink(int fieldId, const TVisObjRef& value, bool flag);
-    // Confirmed two overloads (TGameControl::SetOnScrollDestination, asm
-    // lines 460720-460821) - not reversed beyond their call shapes.
+    // Confirmed 3 overloads (TGameControl::SetOnScrollDestination/
+    // CenterScene, asm lines 460533-460821) - not reversed beyond their
+    // call shapes.
     void SetValue(int fieldId, const wxPoint& value, TSendEventEnum event);
     void SetValue(int fieldId, bool value, TSendEventEnum event);
+    void SetValue(int fieldId, int value, TSendEventEnum event);
     const wxPoint* GetPoint(int fieldId) const;
     const wxRect* GetRect(int fieldId) const;
 
