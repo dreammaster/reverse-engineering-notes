@@ -6,8 +6,9 @@
 class TSceneControl {
 public:
     // Confirmed TGScene*, not just TPaintControl* (callers use it as
-    // TGScene::IsMenu()/GetObject() directly - see TGScene.h).
-    TGScene* GetScene();
+    // TGScene::IsMenu()/GetObject() directly - see TGScene.h). Confirmed
+    // const (mangled name _ZNK13TSceneControl8GetSceneEv).
+    TGScene* GetScene() const;
     void Draw();
 
 private:

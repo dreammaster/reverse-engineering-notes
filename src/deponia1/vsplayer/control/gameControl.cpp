@@ -136,11 +136,32 @@ std::vector<TGCharacter*>& TGameControl::GetAllCharacters() {
     return m_characters;
 }
 
-void* TGameControl::GetInterface(const TVisObjRef& /*interfaceObj*/) const {
+TGInterface* TGameControl::GetInterface(const TVisObjRef& interfaceObj) const {
+    // Confirmed (asm lines 456603-456648).
+    for (TGInterface* interface : m_activeInterfaces) {
+        if (interface->GetRef() == interfaceObj)
+            return interface;
+    }
     return nullptr;
 }
 
-void* TGameControl::GetObject(const TVisObjRef& /*object*/) const {
+void* TGameControl::GetObject(const TVisObjRef& object) const {
+    // Confirmed (asm lines 456656-456737): scene lookup first; then, only
+    // when the id's 4th byte is zero (meaning unconfirmed - some kind of
+    // "is a character" type tag), a character lookup; either way, falls
+    // back to searching the active interfaces last.
+    if (void* obj = m_ownedSceneControl.GetScene()->GetObject(object))
+        return obj;
+
+    if (object.GetId()[3] == 0) {
+        if (TGCharacter* character = GetCharacterPointerEx(object))
+            return character;
+    }
+
+    for (TGInterface* interface : m_activeInterfaces) {
+        if (void* obj = interface->GetObject(object))
+            return obj;
+    }
     return nullptr;
 }
 
@@ -415,12 +436,14 @@ void TGameControl::SetCharacterActiveCommand() {
 void TGameControl::ChangeCharacter(const TVisObjRef& /*character*/, bool /*immediate*/, const TVisObjRef& /*scene*/) {
 }
 
-std::vector<void*> TGameControl::GetActiveInterfaces() const {
-    return {};
+std::list<TGInterface*> TGameControl::GetActiveInterfaces() const {
+    // Confirmed (asm lines 466080-466133): a plain copy.
+    return m_activeInterfaces;
 }
 
-std::vector<void*> TGameControl::GetAllInterfaces() const {
-    return {};
+std::list<TGInterface*> TGameControl::GetAllInterfaces() const {
+    // Confirmed (asm lines 466141-466193): a plain copy.
+    return m_allInterfaces;
 }
 
 void TGameControl::InitCharacters() {

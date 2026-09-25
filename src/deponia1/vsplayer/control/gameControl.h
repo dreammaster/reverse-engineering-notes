@@ -30,6 +30,7 @@
 // pass.
 #pragma once
 
+#include <list>
 #include <string>
 #include <vector>
 
@@ -80,7 +81,9 @@ public:
     // this returns the address of the member itself, not a by-value copy -
     // the manifest's inferred by-value signature was wrong.
     std::vector<TGCharacter*>& GetAllCharacters();
-    void* GetInterface(const TVisObjRef& interfaceObj) const;
+    // Confirmed TGInterface* (asm lines 456603-456648: the list holds
+    // TGInterface*, and the found node's payload is returned directly).
+    TGInterface* GetInterface(const TVisObjRef& interfaceObj) const;
     void* GetObject(const TVisObjRef& object) const;
     TGObjectManager* GetObjectManager();
     void SkipCurrentText();
@@ -142,8 +145,11 @@ public:
     void SetInterfaces();
     void SetCharacterActiveCommand();
     void ChangeCharacter(const TVisObjRef& character, bool immediate, const TVisObjRef& scene);
-    std::vector<void*> GetActiveInterfaces() const;
-    std::vector<void*> GetAllInterfaces() const;
+    // Confirmed by-value copies of TMasterControl's two interface lists
+    // (asm lines 466080-466193), not std::vector<void*> as the manifest
+    // inferred.
+    std::list<TGInterface*> GetActiveInterfaces() const;
+    std::list<TGInterface*> GetAllInterfaces() const;
     void InitCharacters();
     void InitGameActions();
     bool Init();

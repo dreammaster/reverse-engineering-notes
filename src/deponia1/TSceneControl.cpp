@@ -1,7 +1,7 @@
 #include "TSceneControl.h"
 
-TGScene* TSceneControl::GetScene() {
-    return &m_scene;
+TGScene* TSceneControl::GetScene() const {
+    return const_cast<TGScene*>(&m_scene);
 }
 
 void TSceneControl::Draw() {

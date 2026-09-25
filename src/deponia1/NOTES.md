@@ -90,6 +90,31 @@ least one still-unnamed virtual method) plus a `TManagedObject` class
 - worth reversing `TGText` properly in one pass rather than guessing at its
 shape piecemeal across four call sites.
 
+## TGameControl batch 4: the two mystery TMasterControl lists are interface lists
+
+`GetInterface`/`GetAllInterfaces`/`GetActiveInterfaces`/`GetObject` (asm
+lines 456603-466193) resolve the two `std::list` members `TMasterControl`
+carried since the very first pass without a confirmed element type or full
+purpose (see the old "Two std::list members confirmed present" note, now
+superseded and removed): they're both `std::list<TGInterface*>` -
+`m_allInterfaces` (every registered interface, formerly `m_unknownList`)
+and `m_activeInterfaces` (the ones currently drawn, formerly `m_interfaces`,
+also used by `DrawInterfaces` - which now actually calls `Draw()` on each
+one instead of a no-op placeholder loop). `TGInterface` was added deriving
+from `TPaintControl` (confirmed: each list element exposes a Draw-like
+virtual at vtable slot 1, the same Prepare@0/Draw@1 pattern as
+TCursorControl/TLoadingControl/TGScene) with a `TVisObjRef` id field and a
+`GetObject()` lookup.
+
+Both list members moved from private to protected on `TMasterControl` for
+the same reason as `m_sceneControl`/`m_visionaire` earlier - TGameControl
+reads them directly with no accessor in between.
+
+Also: `TSceneControl::GetScene()` is const in the original
+(`_ZNK13TSceneControl8GetSceneEv`) despite returning a non-const `TGScene*`
+- a `const_cast` inside it reflects that "logical const, physical mutable
+accessor" shape rather than fighting it.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

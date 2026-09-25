@@ -127,13 +127,8 @@ void TMasterControl::DrawInterfaces() {
     if (!shouldDraw)
         return;
 
-    for (void* node : m_interfaces) {
-        // Each node's payload exposes a Draw-like virtual method at vtable
-        // slot 1 (matching the TPaintControl Prepare@0/Draw@1 pattern seen
-        // elsewhere) - exact element type not resolved (see m_interfaces'
-        // declaration).
-        (void)node;
-    }
+    for (TGInterface* interface : m_activeInterfaces)
+        interface->Draw();
 }
 
 bool TMasterControl::Draw(bool showActionText) {

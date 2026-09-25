@@ -33,6 +33,7 @@
 #include <vector>
 
 #include "TCharHolder.h"
+#include "TGInterface.h"
 #include "TGObjectManager.h"
 #include "TGameClientSDK.h"
 #include "TMovie.h"
@@ -183,6 +184,15 @@ protected:
     // m_sceneControl above.
     TVisionaire* m_visionaire = nullptr;
 
+    // TGameControl reads both directly (GetInterface/GetAllInterfaces/
+    // GetActiveInterfaces/GetObject, asm lines 456603-466193) - same
+    // reasoning as m_sceneControl/m_visionaire above. m_allInterfaces is
+    // every registered interface; m_activeInterfaces (formerly named
+    // m_interfaces, also used by DrawInterfaces above) is the subset
+    // currently being drawn.
+    std::list<TGInterface*> m_allInterfaces;
+    std::list<TGInterface*> m_activeInterfaces;
+
 private:
     TMovie m_movie;
     TGObjectManager m_objectManager;
@@ -192,15 +202,6 @@ private:
     std::vector<TMouseEventHandler> m_mouseEventHandlers;
     std::vector<TKeyboardEventHandler> m_keyboardEventHandlers;
     std::vector<std::string> m_engineEventHandlerNames;
-
-    // Two std::list members confirmed present (self-referential empty-list
-    // sentinel init in the constructor); only the second is used by any
-    // method reconstructed so far (DrawInterfaces). Element type unclear -
-    // the destructor symbol IDA shows for both ("ctdrpc::earlyrole_ip_t",
-    // an unrelated networking type) is almost certainly another
-    // identical-code-folding artifact like the ones in NOTES.md.
-    std::list<void*> m_unknownList;
-    std::list<void*> m_interfaces;
 
     int m_windowWidth = 0;
     int m_windowHeight = 0;
