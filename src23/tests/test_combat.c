@@ -332,7 +332,7 @@ static void testApplyEffectHpCost(void) {
     memset(record, 0, sizeof(record));
     partySetStat(record, PartyStatHitPoints, 30);
 
-    combatApplyEffect(record, EffectSpendHp, 12, 0);
+    combatApplyEffect(record, NULL, EffectSpendHp, 12, NULL, 0);
 
     checkU32("HP cost deducted", partyGetStat(record, PartyStatHitPoints), 18);
     checkU32("no status inflicted", partyGetU16(record, PartyFieldStatusFlags), 0);
@@ -343,7 +343,7 @@ static void testApplyEffectMpCost(void) {
     memset(record, 0, sizeof(record));
     partySetStat(record, PartyStatMagicPoints, 10);
 
-    combatApplyEffect(record, EffectSpendMp, 25, 0);
+    combatApplyEffect(record, NULL, EffectSpendMp, 25, NULL, 0);
 
     checkU32("MP cost clamped at 0", partyGetStat(record, PartyStatMagicPoints), 0);
 }
@@ -354,7 +354,7 @@ static void testApplyEffectHpAndMpCost(void) {
     partySetStat(record, PartyStatHitPoints, 30);
     partySetStat(record, PartyStatMagicPoints, 30);
 
-    combatApplyEffect(record, EffectSpendHpAndMp, 5, 0);
+    combatApplyEffect(record, NULL, EffectSpendHpAndMp, 5, NULL, 0);
 
     checkU32("HP+MP cost deducts the same amount from both", partyGetStat(record, PartyStatHitPoints), 25);
     checkU32("HP+MP cost deducts the same amount from both (MP)", partyGetStat(record, PartyStatMagicPoints), 25);
@@ -366,7 +366,7 @@ static void testApplyEffectInflictsStatus(void) {
     partySetStat(record, PartyStatHitPoints, 30);
     partySetU16(record, PartyFieldStatusFlags, PartyStatusCursed); /* a pre-existing, unrelated flag */
 
-    combatApplyEffect(record, EffectSpendHp, 5, PartyStatusPoisoned);
+    combatApplyEffect(record, NULL, EffectSpendHp, 5, NULL, PartyStatusPoisoned);
 
     checkU32("HP cost still applied alongside a status", partyGetStat(record, PartyStatHitPoints), 25);
     check("the new status is OR'd in, not replacing existing flags",
@@ -374,19 +374,52 @@ static void testApplyEffectInflictsStatus(void) {
               (PartyStatusCursed | PartyStatusPoisoned));
 }
 
-static void testApplyEffectMaterialCostsAreNoOp(void) {
+/* MonsterFieldGoldTheftAmount, effect id 15's own confirmed use: a monster's special attack stealing gold. */
+static void testApplyEffectGoldTheft(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    partySetStat(record, PartyStatHitPoints, 30);
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
+
+    Bcd4 stolen;
+    bcd4FromU16(stolen, 16);
+    combatApplyEffect(record, &save, EffectSpendGold, 0, stolen, 0);
+
+    checkU32("gold stolen from the party's shared counter", bcdHex(saveHeaderBcd4(&save, SaveHeaderGold)), 0x00000984);
+    checkU32("HP untouched by a gold-cost effect", partyGetStat(record, PartyStatHitPoints), 30);
+}
+
+static void testApplyEffectOreCosts(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderOreCounter1), 10);
+    bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderOreCounter2), 10);
+
+    Bcd4 amount;
+    bcd4FromU16(amount, 20); /* more than the counter holds -- exercises the clamp */
+    combatApplyEffect(record, &save, EffectSpendOre1, 0, amount, 0);
+    combatApplyEffect(record, &save, EffectSpendOre2, 0, amount, 0);
+
+    checkU32("ore1 clamped at 0 rather than underflowing", bcdHex(saveHeaderBcd4(&save, SaveHeaderOreCounter1)), 0);
+    checkU32("ore2 clamped at 0 rather than underflowing", bcdHex(saveHeaderBcd4(&save, SaveHeaderOreCounter2)), 0);
+}
+
+static void testApplyEffectNoneIsNoOp(void) {
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
     partySetStat(record, PartyStatHitPoints, 30);
     partySetStat(record, PartyStatMagicPoints, 30);
 
-    combatApplyEffect(record, EffectSpendGold, 999, 0);
-    combatApplyEffect(record, EffectSpendOre1, 999, 0);
-    combatApplyEffect(record, EffectSpendOre2, 999, 0);
-    combatApplyEffect(record, EffectSpendNone, 999, 0);
+    combatApplyEffect(record, NULL, EffectSpendNone, 999, NULL, 0);
 
-    checkU32("no combat call site costs a material counter: HP untouched", partyGetStat(record, PartyStatHitPoints), 30);
-    checkU32("MP untouched too", partyGetStat(record, PartyStatMagicPoints), 30);
+    checkU32("EffectSpendNone touches nothing: HP", partyGetStat(record, PartyStatHitPoints), 30);
+    checkU32("EffectSpendNone touches nothing: MP", partyGetStat(record, PartyStatMagicPoints), 30);
 }
 
 int main(void) {
@@ -410,7 +443,9 @@ int main(void) {
     testApplyEffectMpCost();
     testApplyEffectHpAndMpCost();
     testApplyEffectInflictsStatus();
-    testApplyEffectMaterialCostsAreNoOp();
+    testApplyEffectGoldTheft();
+    testApplyEffectOreCosts();
+    testApplyEffectNoneIsNoOp();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

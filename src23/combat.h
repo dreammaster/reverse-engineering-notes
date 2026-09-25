@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "bcd4.h"
 #include "effect.h"
 #include "game.h"
 #include "monster.h"
@@ -231,22 +232,33 @@ bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bon
  * resolution" section for exactly which fields).
  *
  * Dispatches spend (effect.h's effectSpend(def)) to
- * partyDeductHp/partyDeductMp for EffectSpendHp/Mp/HpAndMp; ORs
+ * partyDeductHp/partyDeductMp for EffectSpendHp/Mp/HpAndMp, or to
+ * bcd4SubClamped against save's SaveHeaderGold/OreCounter1/OreCounter2
+ * for EffectSpendGold/Ore1/Ore2 -- materialAmount is only read in
+ * those 3 cases (pass NULL/save NULL for an HP/MP/HpAndMp/None spend).
+ * The one confirmed combat material-cost call site: a monster whose
+ * special attack lands as branch 2's status-effect application (see
+ * above) with an effect def selecting EffectSpendGold (effect id 15
+ * in both games -- "takes gold, rolls no magnitude") steals
+ * MonsterFieldGoldTheftAmount, the field that made this whole path
+ * worth wiring up (confirmed against real WORLD.DAT: every monster
+ * with a nonzero value there has exactly this effect as its special
+ * attack, in both games -- see monster.h and file-formats.md). ORs
  * inflictedStatus into the defender's PartyFieldStatusFlags if
- * nonzero. EffectSpendGold/Ore1/Ore2/None are a no-op here -- no
- * combat call site this project has traced ever costs a material
- * counter (MonsterFieldAttackEffect is always an HP-cost effect per
- * monster.h).
+ * nonzero, regardless of spend type.
  *
  * Deliberately not reproduced (both UI/scratch-state side effects of
  * the original, not state a from-scratch port needs): clearing a
  * raw-pointer "who's targeting whom" scratch table
  * (ClearPartySlotReferenceOnDamage -- this project already tracks
  * combat targets by SaveHeaderPartySlots id, see
- * combatBuildTurnOrder's own design note) and recomputing 3 UI-only
+ * combatBuildTurnOrder's own design note), recomputing 3 UI-only
  * display-tier globals (UpdatePartyAverageStatTiers -- minimap fog
- * level, a weather overlay tier, and monster-detail reveal tier).
+ * level, a weather overlay tier, and monster-detail reveal tier), and
+ * the "resource depleted" overlay bcd4SubClamped's own return value
+ * would trigger (the original's ShowResourceDepletedOverlay, pure UI).
  */
-void combatApplyEffect(uint8_t *defenderRecord, EffectSpend spend, uint16_t amount, uint16_t inflictedStatus);
+void combatApplyEffect(uint8_t *defenderRecord, SaveGame *save, EffectSpend spend, uint16_t amount,
+                        const Bcd4 materialAmount, uint16_t inflictedStatus);
 
 #endif

@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-25, added: the icon-bar effect-application pipeline)
+## Status (last updated 2026-09-25, added: monster gold-theft mechanic wired up)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -492,6 +492,27 @@ groundwork below is already in place.
   `test_combat.c`; all 18 suites pass. Full writeup in
   `file-formats.md`'s "The staged combat event's consumer, found"
   section.
+  **The monster gold-theft mechanic fully wired up, same day
+  (2026-09-25)**: while documenting branch 2 above, checked real
+  `WORLD.DAT` data for the attacking monster's own field this project
+  had left unnamed (`monster.record + 0x8E`, a 4-byte span) and found
+  it's nonzero for a small, consistent set of monsters in both
+  games (thieves/assassins), always paired with `MonsterFieldSpecialAttack`
+  set to `effect.h`'s id 15 ("takes gold, rolls no magnitude" -- its
+  own magnitude range is 0-0, so the amount has to come from
+  somewhere else). Named `MonsterFieldGoldTheftAmount` in `monster.h`.
+  Also found and corrected a 3rd nested branch-selection test this
+  project had missed on the first pass through `ResolveAttackerActionOutcome`
+  (an exact-zero check on this same field, gating whether branch 2 is
+  actually taken or falls back to branch 1) and a real quirk in
+  `SpendMaterialCounterClamped`'s own gate (strictly-greater, not
+  greater-or-equal -- an exact counter/amount match still takes the
+  "depleted" clamp path). Added `bcd4SubClamped` (`src23/bcd4.c`/`.h`)
+  and extended `combatApplyEffect`'s signature to take a `SaveGame*`
+  and a `const Bcd4 materialAmount`, wiring the gold/ore branches that
+  were previously a documented no-op. Tests in `test_bcd4.c`/
+  `test_combat.c` (including the gold-theft path against a real
+  `SaveGame` and the ore-cost clamp); all 18 suites pass.
 
 ## Next: continue the C reimplementation
 

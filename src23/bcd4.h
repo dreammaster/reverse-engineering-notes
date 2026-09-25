@@ -20,6 +20,22 @@ void bcd4Add(Bcd4 dst, const Bcd4 src);
 /* dst -= src, packed-BCD subtraction (was SubBCD4). */
 void bcd4Sub(Bcd4 dst, const Bcd4 src);
 
+/*
+ * dst -= src, clamped at 0 rather than underflowing if src >= dst
+ * (was SpendMaterialCounterClamped, yendor2.asm:13939, instruction-
+ * identical in Chapter 3): a material-counter (gold/ore) spend that
+ * can't be fully covered zeroes the counter outright instead of going
+ * negative. Returns true if the counter was clamped, false if the
+ * normal subtraction was used. The original's own gate is strictly
+ * dst > src (a `ja`, not `jae`) -- an exact match (dst == src) is
+ * still treated as "can't cover it" and takes the clamp path, even
+ * though a plain subtraction would land on the same all-zero result
+ * either way; reproduced exactly rather than smoothed over, since it
+ * changes which path a real caller's "resource depleted" UI hook
+ * fires on.
+ */
+bool bcd4SubClamped(Bcd4 dst, const Bcd4 src);
+
 /* Returns <0, 0, >0 as a < b, a == b, a > b (was CompareBCD4). */
 int bcd4Compare(const Bcd4 a, const Bcd4 b);
 

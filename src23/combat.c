@@ -141,7 +141,8 @@ bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bon
     return (int32_t)roll > chance;
 }
 
-void combatApplyEffect(uint8_t *defenderRecord, EffectSpend spend, uint16_t amount, uint16_t inflictedStatus) {
+void combatApplyEffect(uint8_t *defenderRecord, SaveGame *save, EffectSpend spend, uint16_t amount,
+                        const Bcd4 materialAmount, uint16_t inflictedStatus) {
     switch (spend) {
     case EffectSpendHp:
         partyDeductHp(defenderRecord, amount);
@@ -153,10 +154,16 @@ void combatApplyEffect(uint8_t *defenderRecord, EffectSpend spend, uint16_t amou
         partyDeductHp(defenderRecord, amount);
         partyDeductMp(defenderRecord, amount);
         break;
-    case EffectSpendNone:
     case EffectSpendGold:
+        bcd4SubClamped(saveHeaderBcd4(save, SaveHeaderGold), materialAmount);
+        break;
     case EffectSpendOre1:
+        bcd4SubClamped(saveHeaderBcd4(save, SaveHeaderOreCounter1), materialAmount);
+        break;
     case EffectSpendOre2:
+        bcd4SubClamped(saveHeaderBcd4(save, SaveHeaderOreCounter2), materialAmount);
+        break;
+    case EffectSpendNone:
         break;
     }
 

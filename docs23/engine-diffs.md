@@ -1267,15 +1267,26 @@ breakdown and what's still open.
 `ProcessMonsterAttackTurn`, `SelectTrapEffectVariant`,
 `PrepareTrapEffectSlots`, `ApplyEffectAndDrawIconBar`,
 `DeductHPClamped`, `DeductMPClamped`, `ApplyEffectCost`,
-`RollEffectResistance`, and `RollEffectMagnitude` are all
-instruction-identical between the two games — checked directly against
-`yendor3.asm` (`:1744`, `:2358`, `:6287`, `:6322`, `:6522`, `:6541`,
-`:6556`, `:6688`, `:6775` respectively). Same field offsets, same mode
-dispatch, same clamp/death-flag behavior. Reimplemented once
-(`effectRollMagnitude`/`effectResolveInflictedStatus` in
-`src23/effect.c`, `combatApplyEffect` in `src23/combat.c`,
-`partyDeductHp`/`partyDeductMp` in `src23/party.c`), shared by both
+`RollEffectResistance`, `RollEffectMagnitude`, and
+`SpendMaterialCounterClamped` are all instruction-identical between
+the two games — checked directly against `yendor3.asm` (`:1744`,
+`:2358`, `:6287`, `:6322`, `:6522`, `:6541`, `:6556`, `:6688`, `:6775`,
+`:6496` respectively). Same field offsets, same mode dispatch, same
+clamp/death-flag behavior, same strictly-greater-not-greater-equal
+gate on `SpendMaterialCounterClamped`'s "can this counter cover the
+cost" check. Reimplemented once (`effectRollMagnitude`/
+`effectResolveInflictedStatus` in `src23/effect.c`, `combatApplyEffect`
+in `src23/combat.c`, `partyDeductHp`/`partyDeductMp` in
+`src23/party.c`, `bcd4SubClamped` in `src23/bcd4.c`), shared by both
 games.
+
+**Content, not code, differs on which monsters have a gold-theft
+special attack** (`MonsterFieldGoldTheftAmount`, `monster.h`) — the
+usual per-game roster/id-space difference this project finds
+everywhere else, not a mechanism difference: Chapter 2 has 6 monsters
+with a nonzero value (Bridge Troll, Harrier, Worker Ant, Rogue,
+Opposition Leader, Thief), Chapter 3 has 3 (Thief, Elf Assassin, Frost
+Dwarf Tower) — confirmed against both real `WORLD.DAT` files.
 
 ## Turn-based combat turn order and round processing: no behavioral difference found
 

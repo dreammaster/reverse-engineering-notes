@@ -9235,6 +9235,69 @@ full suite rebuilt, 18/18 passing, no regressions. Documented in
 layout), `engine-diffs.md`, and `roadmap.md` (candidate 7 now fully
 closed except for the remaining UI-driving orchestration layer).
 
+### 2026-09-25 session update (continued): checking real data closed out the gold-theft mechanic, and caught a missed 3rd branch test
+
+While writing up the previous round's `ResolveAttackerActionOutcome`
+branch 2 for `file-formats.md`, stopped to actually check what the
+attacking monster's own unnamed field (`+0x8E`, a 4-byte span staged
+into the icon slot as a pre-computed "magnitude") holds in real
+`WORLD.DAT` data, rather than leaving it as "unconfirmed" a second
+time. Both games' game files were available locally
+(`yendor2/game/WORLD.DAT`, `yendor3/game/WORLD.DAT`), so this was a
+quick check with a throwaway scratch tool linking the existing
+`monster.c` reader — not a new investigation, just finishing one that
+had stalled on "no real data to check."
+
+The result was clean and immediately legible: a small, consistent set
+of monsters have a nonzero value there (Bridge Troll, Harrier, Worker
+Ant, Rogue, Opposition Leader, and Thief in Chapter 2; Thief, Elf
+Assassin, and Frost Dwarf Tower in Chapter 3), and in Chapter 3 (and
+Chapter 2's own Thief) every one of them has `MonsterFieldSpecialAttack`
+set to effect id 15 — `effect.h`'s "takes gold, rolls no magnitude"
+effect, whose own magnitude range is 0-0 in the table. That's the
+whole story: the effect table genuinely can't supply a steal amount,
+so the monster record supplies one directly. Named
+`MonsterFieldGoldTheftAmount` in `monster.h`.
+
+Re-reading the branch-selection code with this in hand also caught
+something the first pass through missed: it's not a 2-test dispatch
+(`g_uiScratchFlags4` bit `0x200`, then `MonsterFieldFlags` bits
+`0xE00`) but a 3-test one — a third gate on this exact same field,
+comparing it against 0 via `IsBCDCounterAtLeast`'s *exact-equality*
+comparison path (its `jz`, not the `>=` its own doc comment describes
+for its more common caller). A monster whose special effect was
+randomly selected but has no theft amount configured falls back to
+branch 1 (plain damage) rather than taking branch 2 with a zero
+amount. Worth remembering: a "2 nested tests" read of a branch
+dispatch is worth double-checking for a 3rd once the fields involved
+start making sense — the gate had been sitting right there the whole
+time, just not connected to anything meaningful until the data check
+explained what it was gating.
+
+Wiring the mechanic all the way through needed one new primitive:
+`bcd4SubClamped` (`SpendMaterialCounterClamped`'s core logic, now in
+`bcd4.c`), which turned up its own small, real quirk while writing its
+test — the original's "can the counter cover this" check is strictly
+`counter > amount`, not `>=`; an exact match still takes the "can't
+cover it" clamp path (arithmetically identical result, but a real
+behavioral difference in which code path — and therefore which UI
+hook — actually runs). `combatApplyEffect`'s signature grew a
+`SaveGame*` and a `const Bcd4 materialAmount` to carry this through;
+the 3 material spend types, previously a documented no-op, now
+actually move gold/ore.
+
+New: `bcd4SubClamped` in `src23/bcd4.c`/`.h`; `MonsterFieldGoldTheftAmount`
+in `src23/monster.h`; `combatApplyEffect`'s extended signature in
+`src23/combat.c`/`.h`. Tests in `test_bcd4.c` (normal/clamped/exact-match
+cases) and `test_combat.c` (the gold-theft path against a real
+`SaveGame`, and the ore-cost clamp). Full suite rebuilt, 18/18
+passing, no regressions. Documented in `file-formats.md` (the
+corrected 3-test branch dispatch, the full gold-theft story, and
+`ApplyEffectCost`'s material-spend quirk), `engine-diffs.md` (still
+instruction-identical code-wise; the roster of which monsters have
+this mechanic is a real but ordinary per-game content difference), and
+`roadmap.md`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

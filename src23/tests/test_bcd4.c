@@ -88,6 +88,33 @@ static void testSub(void) {
     checkBcd4Equal("0-1 wraps to 99999999", counter, (Bcd4){0x99, 0x99, 0x99, 0x99});
 }
 
+static void testSubClamped(void) {
+    Bcd4 counter, amount;
+
+    bcd4FromU16(counter, 100);
+    bcd4FromU16(amount, 40);
+    checkBool("counter covers the amount: not clamped", bcd4SubClamped(counter, amount), false);
+    checkBcd4Equal("100-40=60", counter, (Bcd4){0x00, 0x00, 0x00, 0x60});
+
+    /* The original's own comparison is strictly-greater (ja), so an exact match is treated as
+     * "can't cover it" too -- a real quirk, not a bug in this port. */
+    bcd4FromU16(counter, 100);
+    bcd4FromU16(amount, 100);
+    checkBool("counter exactly equals the amount: still clamped (strictly-greater check)",
+              bcd4SubClamped(counter, amount), true);
+    checkBcd4Equal("100-100 lands on 0 either way", counter, (Bcd4){0x00, 0x00, 0x00, 0x00});
+
+    bcd4FromU16(counter, 30);
+    bcd4FromU16(amount, 100);
+    checkBool("counter can't cover the amount: clamped", bcd4SubClamped(counter, amount), true);
+    checkBcd4Equal("clamped to 0, not a wraparound underflow", counter, (Bcd4){0x00, 0x00, 0x00, 0x00});
+
+    bcd4FromU16(counter, 0);
+    bcd4FromU16(amount, 1);
+    checkBool("zero counter, any positive amount: clamped", bcd4SubClamped(counter, amount), true);
+    checkBcd4Equal("stays 0", counter, (Bcd4){0x00, 0x00, 0x00, 0x00});
+}
+
 static void testCompareAndThreshold(void) {
     Bcd4 counter;
     bcd4FromU16(counter, 100);
@@ -242,6 +269,7 @@ int main(void) {
     testFromU16();
     testAdd();
     testSub();
+    testSubClamped();
     testCompareAndThreshold();
     testAddSubAgainstBinary();
     testShifts();

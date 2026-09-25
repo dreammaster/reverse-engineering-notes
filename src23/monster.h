@@ -80,6 +80,21 @@ typedef enum {
     MonsterFieldLootNuore = 0x82, /* Bcd4 */
     MonsterFieldLootOre = 0x86,   /* Bcd4, magic ore */
     MonsterFieldExperience = 0x8A, /* Bcd4 */
+    /*
+     * Bcd4, gold stolen per hit when this monster's special attack
+     * fires as a status-effect application rather than a plain damage
+     * roll (ResolveAttackerActionOutcome's branch 2, see combat.h) --
+     * confirmed against real WORLD.DAT data in both games: every
+     * monster with a nonzero value here has MonsterFieldSpecialAttack
+     * set to effect.h's effect id 15 ("takes gold, rolls no
+     * magnitude" -- its own magnitudeMin/Max are both 0, so the game
+     * can't roll a meaningful steal amount from the effect table and
+     * supplies this field directly instead). Always <= 4 digits in
+     * every real record found (the high digit pair is always 0),
+     * matching a "THIEF"/"ELF ASSASSIN"/"OPPOSITION LEADER"-shaped
+     * roster rather than a coincidence.
+     */
+    MonsterFieldGoldTheftAmount = 0x8E,
     MonsterFieldFlags = 0x92,     /* u16, MonsterFlag bits */
     MonsterFieldAwareness = 0x94, /* u16, MonsterAwareness bits */
     MonsterFieldImmunities = 0x96, /* u16, MonsterImmunity bits */

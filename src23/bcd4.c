@@ -47,6 +47,15 @@ void bcd4Sub(Bcd4 dst, const Bcd4 src) {
     }
 }
 
+bool bcd4SubClamped(Bcd4 dst, const Bcd4 src) {
+    if (bcd4Compare(dst, src) > 0) {
+        bcd4Sub(dst, src);
+        return false;
+    }
+    dst[0] = dst[1] = dst[2] = dst[3] = 0;
+    return true;
+}
+
 int bcd4Compare(const Bcd4 a, const Bcd4 b) {
     /*
      * The original compares each byte's high nibble then low nibble

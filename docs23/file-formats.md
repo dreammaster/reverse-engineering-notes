@@ -4408,21 +4408,53 @@ genericity.
 from `sub_16881`, itself called from `ProcessMonsterAttackTurn` —
 confirming this whole path is monster-attacks-party only, never the
 reverse, which is what pins down `FailsSavingThrow`'s defender-side
-field names above): selects one of 3 outcome branches via
-`g_uiScratchFlags4` bit `0x200` and the attacking monster's own
-`MonsterFieldFlags` bits `0xE00`:
-1. **Normal damage roll** (the common case): calls `ResolveAttack`
-   with the defender's `PartyStatEquipRating5` vs. the attacker's
-   `MonsterFieldAccuracy`/`MonsterFieldDamage`; on a hit, stages the
-   result into a 6-field "pending combat event" record.
-2. **Status-effect application**: calls `FailsSavingThrow` (defender's
+field names above): selects one of 3 outcome branches through 3
+nested tests, not 2 as first read last round — the second round's own
+deeper trace (below) turned up a third:
+1. **`g_uiScratchFlags4` bit `0x200`** — set by `SelectTrapEffectVariant`
+   exactly when it randomly picked the monster's *special* effect
+   (`MonsterFieldSpecialAttack`, 25% chance) over its ordinary one.
+   Clear -> straight to branch 1. Set -> continue.
+2. **The attacking monster's own `MonsterFieldFlags` bits `0xE00`** —
+   set -> branch 3 ("equipment corrosion"). Clear -> continue.
+3. **`MonsterFieldGoldTheftAmount` (the attacker's own packed-BCD
+   field, see below) compared exactly against 0** — nonzero -> branch
+   2 (status-effect application, in practice always a gold theft, see
+   below). **Exactly zero -> falls back to branch 1 anyway**, despite
+   the special effect having already been selected — a real, confirmed
+   fallback path (`IsBCDCounterAtLeast`'s comparison here is an exact
+   *equality* test against 0, read from its `jz`, not the `>=` its own
+   doc comment describes for its more common caller convention — this
+   call site uses the flags differently).
+
+1. **Normal damage roll** (the common case, and the fallback for a
+   "special attack selected but has no theft amount configured"
+   monster): calls `ResolveAttack` with the defender's
+   `PartyStatEquipRating5` vs. the attacker's
+   `MonsterFieldAccuracy`/`MonsterFieldDamage` — note this always uses
+   the monster's *ordinary* combat stats for the damage roll itself,
+   regardless of whether the primary or special effect definition was
+   selected for the icon/sound; on a hit, stages the result into a
+   6-field "pending combat event" record.
+2. **Status-effect application, confirmed to be gold theft in every
+   real case found**: calls `FailsSavingThrow` (defender's
    `PartyFieldLevel`/`PartyStatSurvival` vs. the attacker's
    `MonsterFieldSaveDifficulty`); on a failed save, stages the
-   attacker's own fields `+0x8E`/`+0x90` (two `u16`s right after
-   `MonsterFieldExperience`, currently unnamed in `monster.h` — not
-   traced far enough to confirm they're an effect id/magnitude pair,
-   though that's the shape their usage suggests) into the event
-   record instead of a damage number.
+   attacker's own `MonsterFieldGoldTheftAmount` (a 4-byte packed-BCD
+   field, its two halves copied into the event record's magnitude
+   fields) instead of a damage number. **Confirmed against real
+   `WORLD.DAT` data in both games**: every monster with a nonzero
+   value there — Bridge Troll, Harrier, Worker Ant, Rogue, Opposition
+   Leader, and Thief in Chapter 2; Thief, Elf Assassin, and Frost Dwarf
+   Tower in Chapter 3 — either has no special attack of its own or
+   (in every Chapter 3 case and Chapter 2's Thief) has
+   `MonsterFieldSpecialAttack` set to effect id 15, `effect.h`'s
+   "takes gold, rolls no magnitude" effect (its own `magnitudeMin`/
+   `Max` are both 0 in the table, so the game genuinely can't roll a
+   meaningful steal amount from the effect definition and must supply
+   one directly from the monster record instead — precisely explaining
+   why this field exists as a monster-record override rather than
+   table data). Named `MonsterFieldGoldTheftAmount` in `monster.h`.
 3. **"Equipment corrosion"** (gated on a narrower subset of the same
    flag bits, `0x800`/`0x400`): a weaker-DC `FailsSavingThrow` (bonus
    halved) gating a call to `GetClassifiedItemStatField`
@@ -4491,18 +4523,22 @@ field this session traced reading or writing it**:
   below); branch 2 doesn't touch it at all, leaving whatever a *prior*
   call happened to leave there — a genuine loose end, not confirmed to
   matter in practice.
-- `+0x10`: the **magnitude/amount** — `RollEffectMagnitude` computes
-  one here if it's still 0; branch 1 pre-supplies `combatResolveAttack`'s
-  own damage roll instead (bypassing the roll, same "already resolved"
-  pattern), branch 2 pre-supplies the attacking monster's own field
-  `+0x8E` (still unnamed in `monster.h` — not traced far enough to
-  confirm what it represents beyond "a pre-rolled magnitude-shaped
-  value").
-- `+0x12`: only ever written by branch 2, from the attacker's field
-  `+0x90` (also unnamed) — not read by any of `ApplyEffectCost`/
-  `RollEffectMagnitude`/`RollEffectResistance` in the "normal" draw
-  variant this session traced; may only matter to the other 2 draw
-  variants (item expiry / stat delta) or to drawing itself.
+- `+0x10`/`+0x12` together: the **magnitude/amount** — `RollEffectMagnitude`
+  computes a plain `u16` into `+0x10` alone if it's still 0 (bypassed
+  entirely for gold/ore-cost effects, whose own `costFlags` gate the
+  roll off); branch 1 pre-supplies `combatResolveAttack`'s own damage
+  roll into `+0x10` instead (bypassing the roll, same "already
+  resolved" pattern, `+0x12` left untouched); branch 2 pre-supplies
+  the attacking monster's own `MonsterFieldGoldTheftAmount` (a 4-byte
+  packed BCD value) split across both words — `+0x10` its high digit
+  pair (confirmed always 0 in every real record found; no monster
+  steals >= 10000 in one hit), `+0x12` its low digit pair. This is why
+  `ApplyEffectCost`'s material-spend branch treats `+0x10` as a
+  pointer into a 4-byte BCD span rather than a plain word: for a
+  gold/ore effect, `+0x10`/`+0x12` together *are* that Bcd4 amount,
+  read directly rather than rolled — the same field slot doing double
+  duty as "plain `u16` magnitude" or "half of a Bcd4 amount" depending
+  on which kind of effect occupies the slot.
 
 **`ApplyEffectAndDrawIconBar`'s own dispatch**, once a slot is
 occupied, picks one of 3 sub-pipelines by the effect definition's
@@ -4550,35 +4586,47 @@ cost (`effect.h`'s `effectSpend`) to HP/MP/HP+MP deduction
 (`DeductHPClamped`/`DeductMPClamped`, now `partyDeductHp`/
 `partyDeductMp` in `party.c` — clamped at 0, hitting 0 HP also sets
 `PartyStatusDead`) or one of 3 material counters via
-`SpendMaterialCounterClamped` (gold/ore — not reimplemented; no combat
-call site ever costs one, `MonsterFieldAttackEffect` is always an
-HP-cost effect per `monster.h`'s own existing doc). Then ORs the
-resolved inflicted-status bits into the defender's
-`PartyFieldStatusFlags` if nonzero. **Two side effects deliberately
-not reproduced**: `ClearPartySlotReferenceOnDamage` (a raw-pointer
-"who's targeting whom" scratch table this project already avoids —
-targets are tracked by `SaveHeaderPartySlots` id instead, see
-`combatBuildTurnOrder`) and `UpdatePartyAverageStatTiers`
-(`yendor2.asm:19029` — averages 3 party fields into UI-only
-display-tier globals: a minimap fog/torch level, a 4-tier weather
-overlay, and the monster-info-panel detail-reveal tier; pure rendering
-bookkeeping, deferred to the eventual SDL2 layer along with the rest
-of `ApplyEffectAndDrawIconBar`'s drawing).
+`SpendMaterialCounterClamped` (gold/ore — **the confirmed combat use**:
+a monster whose special attack resolves as branch 2, effect id 15,
+steals `MonsterFieldGoldTheftAmount` gold from `SaveHeaderGold`; see
+above and `monster.h`). `SpendMaterialCounterClamped` itself
+(`yendor2.asm:13939`) is a real, easy-to-miss quirk: its own gate is
+strictly `counter > amount` (`ja`, not `jae`) — an exact match between
+counter and amount still takes the "can't cover it" clamp path, even
+though the arithmetic result would be identical either way; reproduced
+exactly as `bcd4SubClamped` in `bcd4.c` rather than smoothed over,
+since it changes which path the original's "resource depleted"
+overlay fires on. Then ORs the resolved inflicted-status bits into the
+defender's `PartyFieldStatusFlags` if nonzero, regardless of spend
+type. **Two side effects deliberately not reproduced**:
+`ClearPartySlotReferenceOnDamage` (a raw-pointer "who's targeting
+whom" scratch table this project already avoids — targets are tracked
+by `SaveHeaderPartySlots` id instead, see `combatBuildTurnOrder`) and
+`UpdatePartyAverageStatTiers` (`yendor2.asm:19029` — averages 3 party
+fields into UI-only display-tier globals: a minimap fog/torch level, a
+4-tier weather overlay, and the monster-info-panel detail-reveal tier;
+pure rendering bookkeeping, deferred to the eventual SDL2 layer along
+with the rest of `ApplyEffectAndDrawIconBar`'s drawing and its own
+"resource depleted" overlay).
 
 Reimplemented as `combatApplyEffect` in `src23/combat.c`/`.h` (the
 `ApplyEffectCost` dispatch + status write, taking an already-resolved
-spend/amount/inflictedStatus rather than reading an icon slot) plus
+spend/amount/inflictedStatus rather than reading an icon slot — a
+`SaveGame*` and a `const Bcd4 materialAmount` parameter feed the
+gold/ore branches specifically) plus
 `effectRollMagnitude`/`effectResolveInflictedStatus` in
-`src23/effect.c`/`.h` and `partyDeductHp`/`partyDeductMp` in
-`src23/party.c`/`.h`. Tests: `test_effect.c` covers
+`src23/effect.c`/`.h`, `partyDeductHp`/`partyDeductMp` in
+`src23/party.c`/`.h`, and `bcd4SubClamped` in `src23/bcd4.c`/`.h`.
+Tests: `test_effect.c` covers
 `effectResolveInflictedStatus`'s 3 cases (no inflict / unconditional
 inflict / rolled) and `effectRollMagnitude`'s fixed/scaled/plain cases
 (the plain case using the same RNG-peek technique as combat's tests);
 `test_party.c` covers HP/MP deduction including the exactly-to-0 edge
-case and the death flag; `test_combat.c` covers `combatApplyEffect`'s
-HP/MP/HP+MP cost dispatch, status-flag OR-in alongside a pre-existing
-flag, and that material spend types are a confirmed no-op. All 18
-suites pass.
+case and the death flag; `test_bcd4.c` covers `bcd4SubClamped`'s
+normal/clamped/exact-match cases; `test_combat.c` covers
+`combatApplyEffect`'s HP/MP/HP+MP cost dispatch, status-flag OR-in
+alongside a pre-existing flag, the confirmed gold-theft path against a
+real `SaveGame`, and the ore-cost clamp. All 18 suites pass.
 
 ### `TickMonsterTimer`: a per-monster state machine, mechanism confirmed, trigger not (decoded 2026-09-23)
 
