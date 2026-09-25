@@ -468,8 +468,10 @@ groundwork below is already in place.
   attack effect -- see `engine-diffs.md`. `ResolveAttackerActionOutcome`
   itself, `ProcessMonsterAttackTurn`, and the player-attack path inside
   `HandleDungeonInput` remain deferred -- branch 3 (equipment
-  corrosion) still needs the undecoded `ClassifyItemServiceTier`
-  item-tier system. Tests in `tests/test_combat.c` (using an
+  corrosion) calls `ClassifyItemServiceTier`, which turned out
+  (2026-09-25 correction, see below) to already be characterized by an
+  earlier session, narrowing but not closing this gap. Tests in
+  `tests/test_combat.c` (using an
   RNG-state-peek technique for exact, non-flaky assertions about
   roll-gated outcomes rather than looping for a lucky seed); all 18
   suites pass. Full writeup in `file-formats.md`'s new "Attack
@@ -672,8 +674,10 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    staged combat event's consumer, found" sections). **Still open, a
    good candidate for its own pass**: composing everything above into
    the full, UI-driving orchestration -- `ResolveAttackerActionOutcome`
-   itself (whose third branch still needs the undecoded
-   `ClassifyItemServiceTier` item-tier system),
+   itself (whose third branch calls `ClassifyItemServiceTier` --
+   already characterized by an earlier session, see the 2026-09-25
+   correction note above; what's left is `word_2E548`'s own
+   population/lifetime specifically in this combat call path),
    `ApplyEffectAndDrawIconBar`'s other 2 dispatch variants (item
    expiry, stat delta -- different mechanisms, own untraced call
    chains: `HandleIconBarItemExpiry`, `ApplyIconBarStatDelta`),

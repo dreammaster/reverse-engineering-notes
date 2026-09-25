@@ -9401,6 +9401,62 @@ section placed right after the ability-unlock table it reads back),
 `engine-diffs.md`, and `roadmap.md` (both the new status entry and a
 note on candidate 8 pointing at what's now peeled off).
 
+### 2026-09-25 session update (continued): a methodology correction — this session had been under-searching file-formats.md before investigating
+
+Kept pulling threads from `ApplyEncodedItemEffect`'s callers: read
+`ConfirmContainerInteraction` (a dead end for the specific question —
+it only handles the confirm-prompt UI, not the effect encoding, which
+must be set up even earlier), then followed `CheckSpellCastability`/
+`LoadClueBookSpellEntry` into what looked like a whole new, previously
+undocumented "spell catalog" system (an 80-byte-record EMS resource at
+page `0x5610`, `WorldDat_setBlock4`'s own resource-stub pattern
+pointing at `WORLD.DAT` offset table entry `0xCE6B`).
+
+Before writing any of that up as a "new candidate," checked whether
+`ida_scripts/` already had work on it — and found `name_cluebook_spell_cluster.py`,
+`name_load_spell_entry.py`, `name_alchemy_spell_list.py`, and three
+more, all already present. Reading `file-formats.md`'s "Global
+material counters and BCD arithmetic" section (a large, already-written
+passage this session hadn't read closely) confirmed why: an earlier
+session had already thoroughly traced this entire cluster —
+`BuildAlchemySpellList`, `CheckSpellCastability`, `LoadClueBookSpellEntry`,
+`DeductAlchemySpellCosts`, and, more consequentially, `ClassifyItemServiceTier`/
+`GetClassifiedItemStatField` (reached via `TickEquippedItemDurability`'s
+equipment-wear path) — all in real depth.
+
+That last pair mattered beyond just avoiding duplicate work: this
+session's own `combat.h`/`file-formats.md`/`roadmap.md` notes from
+three rounds ago had called them "a whole item-compatibility-tier
+system this project hasn't decoded at all" when scoping
+`ResolveAttackerActionOutcome`'s third branch — an overstatement this
+session made without having read far enough into `file-formats.md`
+first. Corrected in all three documents: `ClassifyItemServiceTier`
+returns one of 3 tier codes from an item's own flags,
+`GetClassifiedItemStatField` uses that tier to pick a `word_2E548`
+sub-field — both already understood. The real remaining gap is
+narrower: whether `word_2E548` (a scratch structure neither function
+populates itself) holds something meaningful specifically in the
+combat call path, as opposed to its already-documented item-durability
+role.
+
+**The lesson, worth writing down plainly**: this project's own
+`file-formats.md` is now large enough (9000+ lines) that a session can
+genuinely duplicate or contradict earlier, more careful work by not
+searching it thoroughly enough before starting a fresh investigation.
+Grepping for a function name before reading its disassembly should be
+routine, not optional — this round found that out the expensive way,
+after three separate investigation threads (`ConfirmContainerInteraction`,
+the clue-book spell catalog, and the item-tier system) either dead-ended
+or turned out to already be covered. Also confirmed a genuine
+environmental fact while trying to shortcut this with tooling: `idat.exe`
+cannot be launched from inside this session (see the earlier note and
+`yendor_machine_setup.md`) — a script was written and discarded rather
+than left unrun.
+
+No new reimplementation this round; the value was corrective (removing
+an overstated claim from three documents) and a methodology note for
+future sessions. Full suite unchanged at 18/18 passing.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

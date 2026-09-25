@@ -4506,17 +4506,29 @@ deeper trace (below) turned up a third:
    flag bits, `0x800`/`0x400`): a weaker-DC `FailsSavingThrow` (bonus
    halved) gating a call to `GetClassifiedItemStatField`
    (`yendor2.asm:19410`), which needs `ClassifyItemServiceTier`
-   (`yendor2.asm:19477`) — a whole item-compatibility-tier
-   classification system (also feeding `TickEquippedItemDurability`
-   and other item-service code) this project hasn't decoded at all.
-   On success, targets the defender's *equipped item* rather than HP.
+   (`yendor2.asm:19477`). On success, targets the defender's *equipped
+   item* rather than HP. **Correction, 2026-09-25**: this was
+   described here (and in `combat.h`) for one round as needing "a whole
+   item-compatibility-tier classification system this project hasn't
+   decoded at all" — overstated. An earlier session had already
+   characterized both functions in real depth (see the "Global
+   material counters and BCD arithmetic" section's "equipped-item
+   durability" writeup, reached via `TickEquippedItemDurability`'s
+   ordinary-wear path): `ClassifyItemServiceTier` returns one of 3
+   tier codes from an item's own `[+0xC]`/`[+2]` flags (or a 4th
+   "wrong item type" code), and `GetClassifiedItemStatField` uses that
+   tier to pick one of `word_2E548`'s `+4`/`+8` sub-fields. What's
+   genuinely still unconfirmed, narrower than the old framing: whether/
+   how `word_2E548` — a scratch structure neither function populates
+   itself — holds a value meaningful in *this* combat call path
+   specifically, as opposed to its already-documented role in item
+   durability/breakage.
 
 **Why `ResolveAttackerActionOutcome` itself still isn't fully
-composed**: branch 3 needs `GetClassifiedItemStatField` ->
-`ClassifyItemServiceTier`, an item-compatibility-tier system this
-project hasn't decoded. Branches 1/2's own downstream consumer is now
-confirmed, though (see below) — that part of the original blocker is
-resolved.
+composed**: branch 3's own use of `GetClassifiedItemStatField` in the
+combat path isn't independently verified (see the correction just
+above), and branches 1/2's downstream consumer, while now confirmed
+(see below), still needs composing into the whole outcome function.
 
 Reimplemented as `combatResolveAttack`/`combatFailsSavingThrow` in
 `src23/combat.c`/`.h`; tests in `tests/test_combat.c` covering:

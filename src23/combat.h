@@ -210,10 +210,19 @@ uint16_t combatResolveAttack(uint16_t defense, uint16_t accuracy, uint16_t power
  * state-mutating half is combatApplyEffect below; its drawing half
  * (icon picture, sound, tick wait) is not reimplemented, deferred to
  * the eventual SDL2 layer. ResolveAttackerActionOutcome's third
- * branch still needs GetClassifiedItemStatField ->
- * ClassifyItemServiceTier, a whole item-compatibility-tier system
- * this project hasn't decoded at all (see file-formats.md). The
- * primitives below are confirmed solid on their own; composing all of
+ * branch calls GetClassifiedItemStatField -> ClassifyItemServiceTier
+ * on the defender's own equipped item -- **correction, 2026-09-25**:
+ * an earlier session had already characterized both (see
+ * file-formats.md's "equipped-item durability" writeup, reached via
+ * TickEquippedItemDurability's ordinary-wear path); this project's own
+ * combat work hadn't read that far and briefly overstated this as "a
+ * whole undecoded item-compatibility-tier system" for one round. What's
+ * still genuinely unconfirmed for branch 3 specifically is
+ * word_2E548's own population/lifetime in the combat call path (it's
+ * a scratch structure GetClassifiedItemStatField reads from, not one
+ * ResolveAttackerActionOutcome itself sets) -- that's the real
+ * remaining gap, narrower than previously stated. The primitives below
+ * are confirmed solid on their own; composing all of
  * ResolveAttackerActionOutcome itself is still future work.
  */
 bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bonus, RandomState *rng);
