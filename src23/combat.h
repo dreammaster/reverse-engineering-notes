@@ -22,10 +22,13 @@
  * own read of these addresses as ordinary MonsterRecordSize records),
  * distinct from the 80-slot dungeon pool. Turn-order construction
  * (BuildCombatTurnOrder) and per-round death/advancement handling
- * (ProcessCombatRound) are both reimplemented; attack resolution
- * itself (ResolveAttack/ResolveAttackerActionOutcome/
- * ProcessMonsterAttackTurn and the player-input attack path in
- * HandleDungeonInput) is a separate, much larger piece not started.
+ * (ProcessCombatRound) are both reimplemented, and so are the two
+ * self-contained numeric primitives underneath attack resolution
+ * (ResolveAttack, FailsSavingThrow). Composing those into a full
+ * attack -- ResolveAttackerActionOutcome, ProcessMonsterAttackTurn,
+ * and the player-input attack path inside HandleDungeonInput -- is
+ * not: see combatFailsSavingThrow's own doc comment for why
+ * ResolveAttackerActionOutcome specifically is deferred.
  *
  * **Design note on the original's "active combat monster" global**
  * (`g_activeCombatMonster`/`word_32A1E`): the original caches this as
@@ -151,5 +154,60 @@ typedef enum {
 CombatRoundOutcome combatProcessRound(uint8_t *monsterSlots, CombatTurnOrderEntry *turnOrder, unsigned turnOrderCount,
                                        bool defeated[CombatMonsterSlotCount], unsigned *turnCursor,
                                        MonsterRewardStaging *staging, uint8_t *globalFlags, size_t globalFlagsSize);
+
+/*
+ * ResolveAttack (yendor2.asm:38488, instruction-identical in Chapter
+ * 3 -- checked directly): a single attacker-vs-defender damage roll.
+ * Misses (returns 0) if power is 0, if accuracy < defense, or if
+ * randomInRange(rng, 55) exceeds (accuracy - defense). Otherwise hits:
+ * damage = (power * (accuracy - defense) + 50) / 100, clamped to a
+ * minimum of 1. In ResolveAttackerActionOutcome's own call (the one
+ * confirmed caller this project has traced), accuracy/power come from
+ * the attacking monster's MonsterFieldAccuracy/MonsterFieldDamage;
+ * defense comes from the defending party member's own
+ * PartyStatEquipRating5 -- a genuinely satisfying find, since
+ * party.h's own doc comment already noted EquipRating5 accumulates
+ * every miscellaneous/armor-slot equipped item's bonus without having
+ * a confirmed use for the aggregate; "the party's defense roll against
+ * a monster's physical attack" is exactly that use.
+ */
+uint16_t combatResolveAttack(uint16_t defense, uint16_t accuracy, uint16_t power, RandomState *rng);
+
+/*
+ * FailsSavingThrow (yendor2.asm:41947, instruction-identical in
+ * Chapter 3 -- checked directly): a generic saving-throw roll. Kept
+ * here as a pure function of numbers, matching the original's own
+ * genericity -- FailsSavingThrow itself never assumes a record type,
+ * only its 5 call sites do (this project has only traced 2 of them,
+ * both inside ResolveAttackerActionOutcome; the other 3 -- yendor2.asm
+ * :14197/:44666/:48381 -- are elsewhere in the item-effect/status
+ * system this project hasn't reached yet).
+ *
+ * chance = max(5, 5*(defenderStat - threshold) + bonus); rolls
+ * randomInRange(rng, 100) against it. Returns true (the throw fails,
+ * the effect applies) if the roll exceeds chance, false (resisted)
+ * otherwise. In ResolveAttackerActionOutcome's own two call sites,
+ * defenderStat is the target's PartyFieldLevel, threshold is the
+ * attacking monster's MonsterFieldSaveDifficulty, and bonus is the
+ * target's own PartyStatSurvival -- both plainly-named party.h fields,
+ * once the defender side was confirmed to always be a party member
+ * for this particular caller (ResolveAttackerActionOutcome is only
+ * ever reached from ProcessMonsterAttackTurn, monster-attacks-party,
+ * not the reverse).
+ *
+ * **Why ResolveAttackerActionOutcome itself is deferred, not just its
+ * two leaf calls**: it composes combatResolveAttack/
+ * combatFailsSavingThrow with a not-yet-traced discriminant
+ * (word_328CA bit 0x200 plus the attacker's own flags field) to pick
+ * one of 3 outcome branches, writes the result into a "staged combat
+ * event" structure (word_32906, 6 fields) whose downstream consumer
+ * isn't traced, and its third branch needs GetClassifiedItemStatField
+ * -> ClassifyItemServiceTier, a whole item-compatibility-tier system
+ * this project hasn't decoded at all (see file-formats.md). The two
+ * primitives below are confirmed solid on their own; composing them
+ * into the full outcome function is future work, not a blocker for
+ * using them directly.
+ */
+bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bonus, RandomState *rng);
 
 #endif

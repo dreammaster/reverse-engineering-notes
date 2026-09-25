@@ -9084,6 +9084,80 @@ instruction-identical, no Ch2/Ch3 difference), and `roadmap.md`
 (candidate 7 fully closed; attack resolution is the clearly-scoped
 remainder).
 
+### 2026-09-25 session update: attack resolution's two core primitives, and a real Chapter 3 addition found by reading both games directly
+
+Continued candidate 7's remaining scope from yesterday: attack
+resolution. Read `ResolveAttack` (`yendor2.asm:38488`) and
+`FailsSavingThrow` (`yendor2.asm:41947`) first, since
+`ResolveAttackerActionOutcome`'s own doc comment (written last round)
+already named them as its two leaf calls. Both turned out small,
+self-contained, and already effectively documented by an earlier
+session's inline disassembly comments — very little new tracing
+needed, mostly transcription plus care with the exact
+multiply/divide/clamp semantics (`ResolveAttack`'s damage formula is a
+genuine 32-bit `mul`/`div` pair, not a truncated 16-bit multiply —
+worth checking the register lifetime explicitly rather than assuming,
+since `div`'s dividend is `DX:AX` and `DX` still held the `mul`'s high
+word from three instructions earlier).
+
+Working out `FailsSavingThrow`'s call-site field offsets
+(`ResolveAttackerActionOutcome`'s attacker `+0x52`/defender `+0x58`,
+and the defender's own `+0x16` inside `FailsSavingThrow` itself) paid
+off twice over: `+0x16` on a party record is already `PartyFieldLevel`
+(sensible — a saving throw scales with character level), and `+0x58`
+on a party record turned out to be `PartyStatEquipRating5`... no,
+correction while writing this up: `+0x50` is `PartyStatEquipRating5`
+(used by `ResolveAttack`'s defense parameter) and `+0x58` is
+`PartyStatSurvival` (`FailsSavingThrow`'s bonus parameter) — both
+already-named fields from earlier sessions that had no confirmed use
+for the value they held. `party.h`'s own comment on `EquipRating5` had
+literally flagged it as "unnamed in the game's table" with a traced
+derivation but no confirmed consumer; "the party's defense stat
+against a monster's physical attack" is exactly that consumer. A nice
+example of two previously-separate pieces of this project's own
+documentation clicking together.
+
+**The real find of the round**: reading `ResolveAttackerActionOutcome`
+in *both* games side by side (not just assuming the match from
+`BuildCombatTurnOrder`/`ProcessCombatRound`'s own track record of
+being instruction-identical) turned up a genuine Chapter 3 behavioral
+addition. Both games gate their "status effect" and "equipment
+corrosion" branches on a `FailsSavingThrow` roll; in Chapter 2, a
+resisted throw is simply a miss (immediate return, nothing staged). In
+Chapter 3, a resisted throw instead falls back into the *normal
+damage-roll branch*, loading the attacking monster's own
+`MonsterFieldAttackEffect` through `PrepareTrapEffectSlots` first. So
+a Chapter 3 monster whose special attack gets resisted still deals its
+ordinary damage instead of wasting the turn entirely — reads as a
+deliberate design fix, not noise. This is exactly the kind of thing
+this project's "always check both games directly, never assume a
+match" rule exists to catch, and it would have been trivial to miss
+if the round had stopped at the primitives without also reading the
+composing function in both `.asm` files.
+
+Given that finding, and that `ResolveAttackerActionOutcome`'s own
+"staged combat event" output record still has no traced consumer, and
+its third branch depends on an entirely undecoded
+`ClassifyItemServiceTier` item-compatibility-tier system, the round's
+scope stayed at the two primitives rather than pushing into composing
+the full outcome function. That composition is now a clearly-bounded
+follow-up rather than an open-ended unknown.
+
+New: `combatResolveAttack`/`combatFailsSavingThrow` in
+`src23/combat.c`/`.h`. Tests in `tests/test_combat.c` use a technique
+not needed by earlier combat tests: peeking the next roll on a copied
+`RandomState` (a plain value-copyable struct) to compute the exact
+expected outcome, rather than looping over seeds hoping for a lucky
+hit/miss/save/fail — gives fully deterministic, non-flaky coverage of
+the RNG-gated branches. Full suite rebuilt: 18/18 passing, no
+regressions. Documented in `file-formats.md`'s new "Attack resolution"
+section (covering all 3 of `ResolveAttackerActionOutcome`'s branches,
+even the undone third one, so a future session has the full picture),
+`engine-diffs.md` (the Chapter 3 fallback addition, corrected from an
+initial over-hasty "instruction-identical" note caught before it was
+finalized), and `roadmap.md` (candidate 7 now fully closed for
+everything except composing the full attack outcome).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

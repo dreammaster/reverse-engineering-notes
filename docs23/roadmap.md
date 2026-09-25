@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-24, added: combat round processing)
+## Status (last updated 2026-09-25, added: attack resolution primitives)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -448,12 +448,33 @@ groundwork below is already in place.
   trick — both exist solely to keep the original's raw-pointer
   turn-order entries valid after a record moves in memory, a problem
   this reimplementation's index-based entries don't have. Tests in
-  `tests/test_combat.c`; all 18 suites still pass. **Still open, the
-  much larger remaining piece**: attack resolution itself
-  (`ResolveAttack`/`ResolveAttackerActionOutcome`/
-  `ProcessMonsterAttackTurn`, plus the player-attack path inside
-  `HandleDungeonInput`) — not started. Full writeup in
+  `tests/test_combat.c`; all 18 suites still pass. Full writeup in
   `file-formats.md`'s "Turn-based combat: turn order" section.
+  **Attack resolution's two core primitives -- done, 2026-09-25**:
+  `combatResolveAttack`/`combatFailsSavingThrow` in `src23/combat.c`/
+  `.h` (`ResolveAttack`/`FailsSavingThrow`, both instruction-identical
+  between the games, both small and fully self-contained). Confirmed a
+  genuinely satisfying pair of previously-unnamed-use fields along the
+  way: the defending party member's `PartyStatEquipRating5` is the
+  "defense" stat against a monster's physical attack, and
+  `PartyStatSurvival` is the saving-throw bonus against a monster's
+  special attack. **Found a real, previously-undocumented Chapter 3
+  behavioral addition while reading `ResolveAttackerActionOutcome`
+  (the function that composes these two primitives) directly in both
+  games rather than assuming a match**: in Chapter 2, a resisted
+  special-attack saving throw is a clean miss; in Chapter 3 it instead
+  falls back to a normal damage roll using the monster's ordinary
+  attack effect -- see `engine-diffs.md`. `ResolveAttackerActionOutcome`
+  itself, `ProcessMonsterAttackTurn`, and the player-attack path inside
+  `HandleDungeonInput` remain deferred -- the "staged combat event"
+  record `ResolveAttackerActionOutcome` writes into has no traced
+  consumer yet, and its third branch (equipment corrosion) needs a
+  whole undecoded item-compatibility-tier system
+  (`ClassifyItemServiceTier`). Tests in `tests/test_combat.c` (using
+  an RNG-state-peek technique for exact, non-flaky assertions about
+  roll-gated outcomes rather than looping for a lucky seed); all 18
+  suites pass. Full writeup in `file-formats.md`'s new "Attack
+  resolution" section.
 
 ## Next: continue the C reimplementation
 
@@ -583,18 +604,21 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    strengthened the "traps reuse monster catalog fields" hypothesis
    (`RollTrapAvoidanceMagnitude`'s `+0x64`/`+0x66` are literally
    `MonsterFieldRangedAccuracy`/`RangedDamage`) without proving it.
-~~7. **Turn-based combat's turn order and round processing**~~ —
-   **done 2026-09-24** (`combatBuildTurnOrder`/`combatSelectActiveMonster`/
-   `combatProcessRound` in `src23/combat.c`/`.h`, see the status entry
-   above and `file-formats.md`'s "Turn-based combat: turn order"
-   section). **Still open, a good candidate for its own pass**: attack
-   resolution itself — `ResolveAttack`/`ResolveAttackerActionOutcome`/
-   `ProcessMonsterAttackTurn` and the player-attack path inside
-   `HandleDungeonInput` (damage formulas, status-effect application on
-   hit, an "equipment corrosion" side effect, spell/ability use in
-   combat) — the much larger remaining part of the combat subsystem,
-   not investigated beyond what `ResolveAttackerActionOutcome`'s own
-   3-way branch structure showed in passing.
+~~7. **Turn-based combat's turn order, round processing, and attack
+   primitives**~~ — **done 2026-09-25** (`combatBuildTurnOrder`/
+   `combatSelectActiveMonster`/`combatProcessRound`/`combatResolveAttack`/
+   `combatFailsSavingThrow` in `src23/combat.c`/`.h`, see the status
+   entries above and `file-formats.md`'s "Turn-based combat"/"Attack
+   resolution" sections). **Still open, a good candidate for its own
+   pass**: composing the primitives into a full attack --
+   `ResolveAttackerActionOutcome` (whose "staged combat event" record
+   has no traced consumer yet, and whose third branch needs the
+   undecoded `ClassifyItemServiceTier` item-tier system),
+   `ProcessMonsterAttackTurn`, and the player-attack path inside
+   `HandleDungeonInput` (spell/ability use in combat, the actual HP
+   subtraction and UI feedback for both attacker types) -- the
+   remaining part of the combat subsystem, now clearly scoped rather
+   than an open-ended unknown.
 8. **The item-effect "banish" mechanic** (`ApplyEncodedItemEffect`,
    `yendor2.asm:51586`, surfaced the same session) — finds whichever
    monster occupies the party's facing tile, copies its record to a UI

@@ -1228,6 +1228,40 @@ differ between the games (`0xD40B` vs. `0xBA95`), but the *relationship*
 into it) holds identically in both. See `file-formats.md`'s "ability/
 spell-unlock table" section for the full derivation.
 
+## Attack resolution primitives: identical, but Chapter 3 adds a resisted-special-attack fallback
+
+`ResolveAttack` and `FailsSavingThrow` themselves are instruction-
+identical between the two games — checked directly, `yendor2.asm:
+38488`/`:41947` vs. `yendor3.asm:38492`/`:42293`. Same damage/chance
+formulas, same RNG bounds (55 and 100 respectively), same
+minimum-damage/chance-floor clamps. Reimplemented once in
+`src23/combat.c`, shared by both games.
+
+**`ResolveAttackerActionOutcome` itself is *not* instruction-identical
+— a real, previously-undocumented Chapter 3 behavioral addition**,
+found by reading `yendor3.asm:2150` directly rather than assuming a
+match from the shared branch structure. In both games, branches 2
+("status-effect application") and 3 ("equipment corrosion") each gate
+their effect on a `FailsSavingThrow` roll. **In Chapter 2, a resisted
+saving throw for either branch is a clean miss** — the function
+returns immediately with nothing staged (`locret_16CC0`/`locret_16D4C`).
+**In Chapter 3, a resisted saving throw for either branch instead
+falls back to a normal damage roll**: it clears `g_uiScratchFlags4`
+bit `0x200` (the very flag that selected branch 2/3 over branch 1 in
+the first place), loads the attacker's `MonsterFieldAttackEffect`
+through `PrepareTrapEffectSlots` (`yendor2.asm:13722`, the shared
+effect-table lookup `effect.h` already decomposes into
+`effectGetDef`/`effectMagnitude`/etc., not reimplemented as a single
+function under that name), and jumps back into branch 1's own
+`ResolveAttack` damage-roll code (`loc_11346`) — so a resisted special
+attack in Chapter 3 still deals ordinary damage instead of doing
+nothing. This reads as a deliberate game-feel fix (a resisted special
+attack no longer wastes the monster's whole turn) rather than an
+incidental difference. Not reimplemented yet, since
+`ResolveAttackerActionOutcome` as a whole is deferred — see
+`file-formats.md`'s "Attack resolution" section for the full branch
+breakdown and what's still open.
+
 ## Turn-based combat turn order and round processing: no behavioral difference found
 
 `BuildCombatTurnOrder`, `SelectActiveMonster`, and `ProcessCombatRound`

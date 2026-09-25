@@ -115,3 +115,28 @@ CombatRoundOutcome combatProcessRound(uint8_t *monsterSlots, CombatTurnOrderEntr
     }
     return CombatRoundNewRound;
 }
+
+uint16_t combatResolveAttack(uint16_t defense, uint16_t accuracy, uint16_t power, RandomState *rng) {
+    if (power == 0) {
+        return 0;
+    }
+    int16_t diff = (int16_t)(accuracy - defense);
+    if (diff < 0) {
+        return 0;
+    }
+    uint16_t roll = randomInRange(rng, 55);
+    if (diff < (int16_t)roll) {
+        return 0;
+    }
+    uint32_t damage = ((uint32_t)power * (uint32_t)diff + 50u) / 100u;
+    return damage > 0 ? (uint16_t)damage : 1;
+}
+
+bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bonus, RandomState *rng) {
+    int32_t chance = (int32_t)5 * (defenderStat - threshold) + bonus;
+    if (chance < 5) {
+        chance = 5;
+    }
+    uint16_t roll = randomInRange(rng, 100);
+    return (int32_t)roll > chance;
+}

@@ -263,6 +263,70 @@ static void testProcessRoundAdvanceSkipsAlreadyDefeatedEntries(void) {
     checkU32("already-defeated entry 1 is skipped, lands on entry 2", cursor, 2);
 }
 
+static void testResolveAttackMissesOnZeroPower(void) {
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    checkU32("zero power always misses", combatResolveAttack(10, 100, 0, &rng), 0);
+}
+
+static void testResolveAttackMissesWhenOutclassed(void) {
+    RandomState rng;
+    randomStart(&rng, 2, 2);
+    checkU32("accuracy below defense always misses", combatResolveAttack(50, 10, 20, &rng), 0);
+}
+
+static void testResolveAttackMatchesRollForRollGatedOutcome(void) {
+    /* diff == 1: the roll (0..55) only allows a hit when it comes up 0 or 1.
+     * Peek the same generator's own roll on a copy to compute the expected
+     * outcome directly, rather than looping until a seed happens to hit. */
+    for (uint8_t seed = 0; seed < 10; seed++) {
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        uint16_t roll = randomInRange(&peek, 55);
+
+        uint16_t damage = combatResolveAttack(9, 10, 3, &rng);
+        if (roll <= 1) {
+            /* hit: (3*1+50)/100 = 0, clamped to the minimum of 1 */
+            checkU32("roll allows a hit: damage is the clamped minimum", damage, 1);
+        } else {
+            checkU32("roll exceeds the 1-point diff: miss", damage, 0);
+        }
+    }
+}
+
+static void testResolveAttackDamageFormula(void) {
+    /* diff = 100 guarantees a hit for any roll in 0..55. */
+    RandomState rng;
+    randomStart(&rng, 3, 3);
+    /* (20 * 100 + 50) / 100 = 20 */
+    checkU32("damage = (power*diff+50)/100", combatResolveAttack(0, 100, 20, &rng), 20);
+}
+
+static void testFailsSavingThrowAlwaysResistsWhenChanceIsAtLeast100(void) {
+    /* chance = 5*(50-0) + 0 = 250, clamped nowhere (already >= 5); randomInRange(100)
+     * can never exceed 100, so the throw can never fail. */
+    for (uint8_t seed = 0; seed < 10; seed++) {
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        check("chance far above the roll's max: saving throw always succeeds",
+              !combatFailsSavingThrow(50, 0, 0, &rng));
+    }
+}
+
+static void testFailsSavingThrowMatchesRollAgainstClampedFloor(void) {
+    /* defenderStat == threshold, bonus == 0: chance = 5*0+0 = 0, clamped to the floor of 5. */
+    for (uint8_t seed = 0; seed < 10; seed++) {
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        uint16_t roll = randomInRange(&peek, 100);
+
+        bool fails = combatFailsSavingThrow(20, 20, 0, &rng);
+        check("outcome matches roll against the clamped chance floor of 5", fails == (roll > 5));
+    }
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
@@ -274,6 +338,12 @@ int main(void) {
     testProcessRoundNoMonstersLeft();
     testProcessRoundEndOfListStartsNewRound();
     testProcessRoundAdvanceSkipsAlreadyDefeatedEntries();
+    testResolveAttackMissesOnZeroPower();
+    testResolveAttackMissesWhenOutclassed();
+    testResolveAttackMatchesRollForRollGatedOutcome();
+    testResolveAttackDamageFormula();
+    testFailsSavingThrowAlwaysResistsWhenChanceIsAtLeast100();
+    testFailsSavingThrowMatchesRollAgainstClampedFloor();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

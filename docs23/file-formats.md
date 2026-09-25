@@ -4349,6 +4349,102 @@ monster is still alive, the "no monsters left" outcome, the
 "walked off the end, start a new round" outcome (no wraparound), and
 that the forward walk correctly skips an already-defeated entry.
 
+### Attack resolution: two confirmed primitives, the composing function deferred (decoded 2026-09-25)
+
+Picked up where turn-order/round processing left off: the actual
+combat-damage math. Two small, fully self-contained functions are
+reimplemented; the function that composes them into a full attack
+(`ResolveAttackerActionOutcome`) is documented but deliberately not,
+since its own downstream plumbing isn't traced yet.
+
+**`ResolveAttack`** (`yendor2.asm:38488`, instruction-identical in
+Chapter 3 — checked directly): `ResolveAttack(defense, accuracy,
+power)`. Misses (damage 0) if `power == 0`, if `accuracy < defense`,
+or if `RandomInRange(55)` exceeds `accuracy - defense`. Otherwise
+hits: `damage = (power * (accuracy - defense) + 50) / 100`, clamped
+to a minimum of 1 (the original computes this as a genuine 32-bit
+`mul`/`div` pair — `DX:AX = power * diff`, then `(DX:AX + 50) / 100`
+— not a 16-bit truncated multiply, confirmed by reading the exact
+register lifetime across the `mul`/`add`/`div` sequence). In its one
+confirmed call site (inside `ResolveAttackerActionOutcome`, see
+below), `accuracy`/`power` are the attacking monster's
+`MonsterFieldAccuracy`/`MonsterFieldDamage`, and `defense` is the
+defending party member's own `PartyStatEquipRating5` — a genuinely
+satisfying find, since `party.h`'s own doc comment already flagged
+`EquipRating5` (the sum of every miscellaneous/armor-slot equipped
+item's bonus) as having no confirmed use for the aggregate; "the
+party's defense roll against a monster's physical attack" is exactly
+that use. Also called from `HandleDungeonInput`'s own player-attack
+path (`yendor2.asm:10654`) and 3 other sites (`yendor2.asm:24358`,
+`:52768`, `:52784`) this project hasn't traced yet — presumably other
+spell/item-driven damage rolls reusing the same primitive.
+
+**`FailsSavingThrow`** (`yendor2.asm:41947`, instruction-identical in
+Chapter 3): `FailsSavingThrow(defenderStat, threshold, bonus)`.
+`chance = max(5, 5*(defenderStat - threshold) + bonus)`; rolls
+`RandomInRange(100)` against it; returns true ("fails", the effect
+applies) if the roll exceeds chance, false ("resisted") otherwise. In
+`ResolveAttackerActionOutcome`'s two call sites, `defenderStat` is the
+target's `PartyFieldLevel`, `threshold` is the attacking monster's
+`MonsterFieldSaveDifficulty`, and `bonus` is the target's own
+`PartyStatSurvival` — both plainly-named fields once the defender side
+was confirmed to always be a party member (see below). `FailsSavingThrow`
+has 3 more call sites this project hasn't traced (`yendor2.asm:14197`,
+`:44666`, `:48381`), presumably other status-effect/item-effect
+gates reusing the same primitive; kept here as a pure function of
+numbers, not tied to a record type, matching the original's own
+genericity.
+
+**`ResolveAttackerActionOutcome`** (`yendor2.asm:11173`, called twice
+from `sub_16881`, itself called from `ProcessMonsterAttackTurn` —
+confirming this whole path is monster-attacks-party only, never the
+reverse, which is what pins down `FailsSavingThrow`'s defender-side
+field names above): selects one of 3 outcome branches via
+`g_uiScratchFlags4` bit `0x200` and the attacking monster's own
+`MonsterFieldFlags` bits `0xE00`:
+1. **Normal damage roll** (the common case): calls `ResolveAttack`
+   with the defender's `PartyStatEquipRating5` vs. the attacker's
+   `MonsterFieldAccuracy`/`MonsterFieldDamage`; on a hit, stages the
+   result into a 6-field "pending combat event" record.
+2. **Status-effect application**: calls `FailsSavingThrow` (defender's
+   `PartyFieldLevel`/`PartyStatSurvival` vs. the attacker's
+   `MonsterFieldSaveDifficulty`); on a failed save, stages the
+   attacker's own fields `+0x8E`/`+0x90` (two `u16`s right after
+   `MonsterFieldExperience`, currently unnamed in `monster.h` — not
+   traced far enough to confirm they're an effect id/magnitude pair,
+   though that's the shape their usage suggests) into the event
+   record instead of a damage number.
+3. **"Equipment corrosion"** (gated on a narrower subset of the same
+   flag bits, `0x800`/`0x400`): a weaker-DC `FailsSavingThrow` (bonus
+   halved) gating a call to `GetClassifiedItemStatField`
+   (`yendor2.asm:19410`), which needs `ClassifyItemServiceTier`
+   (`yendor2.asm:19477`) — a whole item-compatibility-tier
+   classification system (also feeding `TickEquippedItemDurability`
+   and other item-service code) this project hasn't decoded at all.
+   On success, targets the defender's *equipped item* rather than HP.
+
+**Why this function is deferred rather than composed from the two
+primitives above**: beyond branch 3's undecoded dependency, the
+"pending combat event" record this function writes into
+(`word_32906`, 6 fields: threshold/bonus/defender-pointer/status-or-
+offset/damage-or-effect-id/extra) is never read back by any function
+this project has traced yet, so its real downstream meaning (a
+combat-log entry? a queued animation event? something read by
+`ProcessMonsterAttackTurn` itself, one level up?) isn't confirmed. The
+two primitives are solid and independently useful now; composing them
+faithfully into this function is future work once the event record's
+consumer is found.
+
+Reimplemented as `combatResolveAttack`/`combatFailsSavingThrow` in
+`src23/combat.c`/`.h`; tests in `tests/test_combat.c` covering:
+`combatResolveAttack`'s zero-power and outclassed-defense misses, an
+exact roll-vs-diff-gated outcome check (peeking the same RNG state to
+compute the expected outcome rather than looping for a lucky seed),
+and the 32-bit damage formula; `combatFailsSavingThrow`'s
+guaranteed-resist case (chance far exceeding the roll's maximum) and
+an exact roll-vs-clamped-floor-chance check using the same peek
+technique.
+
 ### `TickMonsterTimer`: a per-monster state machine, mechanism confirmed, trigger not (decoded 2026-09-23)
 
 `TickMonsterTimer` (`yendor2.asm:33320`, `yendor3.asm:33098`,
