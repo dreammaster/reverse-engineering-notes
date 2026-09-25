@@ -1274,6 +1274,15 @@ incidental difference. Not reimplemented yet, since
 `file-formats.md`'s "Attack resolution" section for the full branch
 breakdown and what's still open.
 
+## Equipment corrosion classification: no behavioral difference found
+
+`ClassifyItemServiceTier` and `GetClassifiedItemStatField` are
+instruction-identical between the two games — checked directly,
+`yendor2.asm:19477`/`:19410` vs. `yendor3.asm:11461`/`:11394`. Same
+category-flag tests, same tier-selecting sub-flags, same
+break-item-field pick. Reimplemented once in `src23/item.c`, shared by
+both games.
+
 ## The icon-bar effect-application pipeline: no behavioral difference found
 
 `ProcessMonsterAttackTurn`, `SelectTrapEffectVariant`,

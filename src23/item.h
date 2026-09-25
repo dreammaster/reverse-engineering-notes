@@ -157,6 +157,45 @@ uint16_t itemTargetWord(const uint8_t *entry, unsigned word);
 /* The record's 16-byte effect entry (4 pairs of party-record field offset and amount), or NULL. */
 const uint8_t *itemEffectEntry(const ItemCatalog *catalog, const uint8_t *record);
 
+/*
+ * ClassifyItemServiceTier (yendor2.asm:19477, yendor3.asm's own match,
+ * instruction-identical): a 3-tier classifier gating item-service code
+ * (confirmed consumers: GetClassifiedItemStatField's corrosion-replacement
+ * pick below, and -- per an earlier session's writeup -- other,
+ * not-individually-traced item-service callers). Category A is
+ * ItemFieldFlags & (ItemFlagEquipCode0A|ItemFlagEquipCode0C) -- the exact
+ * same test itemTargetKind uses for ItemTargetWeapon; category B is
+ * ItemFieldFlags & ItemFlagEquipCode0D alone -- a narrower test than
+ * itemTargetKind's own ItemTargetWearable (which also accepts
+ * ItemFlagEquipShort/EquipRing), so a wearable without ItemFlagEquipCode0D
+ * fails classification even though itemTargetKind would still resolve it.
+ * Within whichever category matched, a second flag pair at raw byte
+ * offset 0x02 (0x100/0x200 for category A, 0x40/0x80 for category B --
+ * not confirmed to be the same bits as ItemFieldEffectOffset's own
+ * documented "byte offset into the effect table" meaning, despite living
+ * at the same address; flagged, not asserted) selects
+ * ItemServiceTier2/ItemServiceTier0/ItemServiceTier1 respectively.
+ * Returns false (the original's errorCode 3) if neither category flag is
+ * set.
+ */
+typedef enum { ItemServiceTier0, ItemServiceTier1, ItemServiceTier2 } ItemServiceTier;
+bool itemClassifyServiceTier(const uint8_t *record, ItemServiceTier *outTier);
+
+/*
+ * GetClassifiedItemStatField (yendor2.asm:19410, yendor3.asm's own match):
+ * if the item classifies (itemClassifyServiceTier), returns
+ * ItemTargetBreakItemA (category A / weapon) or ItemTargetBreakItemB
+ * (category B) from its own target entry -- the same "replaced by this
+ * item on breakage" field TickEquippedItemDurability's ordinary wear
+ * path already uses (see file-formats.md's "equipped-item durability"
+ * writeup). Returns 0 if classification fails or the item has no target
+ * entry. Confirmed as ResolveAttackerActionOutcome's own "equipment
+ * corrosion" branch 3 pick (combat.h) -- the defender's equipped item at
+ * a monster-flag-selected slot gets reclassified into this replacement
+ * id when the attack lands.
+ */
+uint16_t itemCorrosionReplacement(const ItemCatalog *catalog, const uint8_t *record);
+
 /* Pairs before the first zero field offset; the game stops there too. */
 unsigned itemEffectPairs(const uint8_t *effect);
 uint16_t itemEffectField(const uint8_t *effect, unsigned pair); /* offset into a party record */

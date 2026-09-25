@@ -4687,6 +4687,74 @@ normal/clamped/exact-match cases; `test_combat.c` covers
 alongside a pre-existing flag, the confirmed gold-theft path against a
 real `SaveGame`, and the ore-cost clamp. All 18 suites pass.
 
+### Equipment corrosion: `ClassifyItemServiceTier`/`GetClassifiedItemStatField` (decoded 2026-09-25)
+
+Closes out the specific gap left by the previous round's correction
+(see "Global material counters and BCD arithmetic" above for the
+original writeup of both functions via `TickEquippedItemDurability`'s
+ordinary-wear path): `word_2E548`, the scratch value
+`GetClassifiedItemStatField` reads from, turns out to have an entirely
+mundane origin — `LoadItemCatalogRecord`'s own return value, exactly
+as `RecomputeEquipmentStatBonuses` had already confirmed for a
+different caller. `ClassifyItemServiceTier` calls
+`LoadItemCatalogRecord` itself as its very first step, so `word_2E548`
+is simply "the item just classified" by the time
+`GetClassifiedItemStatField` reads it back a few instructions later —
+no external population/lifetime question at all for this specific call
+path, once traced end to end.
+
+**`ClassifyItemServiceTier`** (`yendor2.asm:19477`, `yendor3.asm:11461`,
+instruction-identical): category A is `ItemFieldFlags &
+(ItemFlagEquipCode0A|ItemFlagEquipCode0C)` — the *exact* same test
+`itemTargetKind` uses for `ItemTargetWeapon`. Category B is
+`ItemFieldFlags & ItemFlagEquipCode0D` *alone* — narrower than
+`itemTargetKind`'s own `ItemTargetWearable` (which also accepts
+`ItemFlagEquipShort`/`EquipRing`), so a wearable without
+`ItemFlagEquipCode0D` fails this classification even though
+`itemTargetKind` would still resolve it to a target entry. Within
+whichever category matched, a second flag pair at the item's own raw
+byte offset `0x02` (`0x100`/`0x200` for category A, `0x40`/`0x80` for
+category B) picks tier 2 / tier 0 / tier 1 respectively (tier 1 if
+neither sub-flag is set). **Not asserted**: whether byte `0x02` here
+is the same field `item.h` already documents at that address as
+`ItemFieldEffectOffset` ("byte offset into the effect table") — the
+bits tested here don't obviously fit that meaning, so this is flagged
+as a live tension rather than resolved one way or the other.
+
+**`GetClassifiedItemStatField`** (`yendor2.asm:19410`,
+`yendor3.asm:11394`, instruction-identical): if the item classifies,
+re-tests the *same* category-A flags (not the tier) to pick
+`ItemTargetBreakItemA` (category A) or `ItemTargetBreakItemB`
+(category B) from the item's own target entry — the identical
+"replaced by this item on breakage" field `TickEquippedItemDurability`'s
+ordinary wear-and-tear path already uses. Returns 0 if classification
+fails.
+
+**Confirmed against real data**: SLING (item id `0x21E`, Chapter 2) is
+category A (a weapon) and its own `ItemTargetBreakItemA` is `667` —
+`itemCorrosionReplacement` returns exactly that value for the real
+record. BREAD (a consumable, flags `0x100` only) and BAG (flags
+`0x2004`, no target entry at all) both correctly fail to classify.
+
+This resolves `ResolveAttackerActionOutcome`'s branch 3 ("equipment
+corrosion") down to a fully understood, narrow remaining question: the
+branch selects an equipment slot (`0x13A`/`0x142`/`0x146`) by the
+*attacker's* own `MonsterFieldFlags` bits `0x800`/`0x400` (a more
+specific role for `MonsterFlagSpecialMask`, `monster.h`, than its
+current "modifiers shown next to its special attack" doc comment
+suggests — worth tightening next time that field is touched), reads
+the *defender's* equipped item id at that slot, and stages
+`itemCorrosionReplacement`'s result into the combat event record —
+composing this into `combat.c` itself is still future work (see
+`roadmap.md`), but nothing about the item-classification piece blocks
+it any longer.
+
+Reimplemented as `itemClassifyServiceTier`/`itemCorrosionReplacement`
+in `src23/item.c`/`.h`. Tests in `tests/test_item.c`: all 3 tiers for
+both categories via synthetic records, the category-A/category-B
+boundary (a wearable outside category B correctly failing), and the
+real-data SLING/BREAD/BAG cases above.
+
 ### `TickMonsterTimer`: a per-monster state machine, mechanism confirmed, trigger not (decoded 2026-09-23)
 
 `TickMonsterTimer` (`yendor2.asm:33320`, `yendor3.asm:33098`,

@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-25, added: known-ability-ids query)
+## Status (last updated 2026-09-25, added: equipment corrosion classification)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -533,6 +533,26 @@ groundwork below is already in place.
   affordability gate and pagination, both UI concerns layered on top.
   Tests in `test_party.c`, including a direct round-trip against
   `partyApplyAbilityUnlocks`; all 18 suites pass.
+  **Equipment corrosion classification closed out, same day
+  (2026-09-25)**: the previous round's correction (`ClassifyItemServiceTier`/
+  `GetClassifiedItemStatField` were already characterized, not
+  undecoded) left one narrow open question -- where `word_2E548`
+  (the scratch value `GetClassifiedItemStatField` reads) comes from in
+  this specific call path. Turned out mundane: `ClassifyItemServiceTier`
+  calls `LoadItemCatalogRecord` itself as its first step, so
+  `word_2E548` is just "the item being classified," no external
+  lifetime question at all. Reimplemented as
+  `itemClassifyServiceTier`/`itemCorrosionReplacement` in
+  `src23/item.c`/`.h`, instruction-identical between the games.
+  Confirmed against real data: SLING (Chapter 2 item id `0x21E`)
+  classifies as category A (a weapon) and its own `ItemTargetBreakItemA`
+  is `667`, matching `itemCorrosionReplacement`'s result exactly. This
+  fully resolves `ResolveAttackerActionOutcome` branch 3's item-side
+  down to a narrow, well-understood remainder: composing the
+  attacker-flag equipment-slot selection and defender-item lookup into
+  `combat.c` itself, not yet done. Tests in `tests/test_item.c`
+  (all 3 tiers x both categories synthetically, plus the real SLING/
+  BREAD/BAG cases); all 18 suites pass.
 
 ## Next: continue the C reimplementation
 
@@ -674,10 +694,11 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    staged combat event's consumer, found" sections). **Still open, a
    good candidate for its own pass**: composing everything above into
    the full, UI-driving orchestration -- `ResolveAttackerActionOutcome`
-   itself (whose third branch calls `ClassifyItemServiceTier` --
-   already characterized by an earlier session, see the 2026-09-25
-   correction note above; what's left is `word_2E548`'s own
-   population/lifetime specifically in this combat call path),
+   itself (whose third branch's item-classification side is now fully
+   understood, `itemClassifyServiceTier`/`itemCorrosionReplacement`,
+   see the status entry above -- what's left is composing the
+   attacker-flag equipment-slot selection and defender-item lookup
+   around it),
    `ApplyEffectAndDrawIconBar`'s other 2 dispatch variants (item
    expiry, stat delta -- different mechanisms, own untraced call
    chains: `HandleIconBarItemExpiry`, `ApplyIconBarStatDelta`),

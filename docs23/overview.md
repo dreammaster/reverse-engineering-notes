@@ -9457,6 +9457,57 @@ No new reimplementation this round; the value was corrective (removing
 an overstated claim from three documents) and a methodology note for
 future sessions. Full suite unchanged at 18/18 passing.
 
+### 2026-09-25 session update (continued): equipment corrosion classification, closing the narrowed gap from the last correction
+
+Picked up exactly where the correction left off: `word_2E548`'s own
+population/lifetime in `GetClassifiedItemStatField`'s specific call
+path was the one genuinely open question after removing the
+overstated "whole undecoded system" framing. Answered it by simply
+reading `ClassifyItemServiceTier`'s own first instruction —
+`LoadItemCatalogRecord` — the same function `RecomputeEquipmentStatBonuses`
+had already confirmed populates `word_2E548` with its own return
+value. Since `ClassifyItemServiceTier` is the first thing
+`GetClassifiedItemStatField` calls, `word_2E548` is simply "the item
+that was just classified" by the time it's read back a few
+instructions later. No external lifetime question at all once traced
+end to end — the "gap" was narrower than even the correction round
+had assumed.
+
+With that resolved, both functions became straightforward to
+reimplement using `item.c`'s existing target-entry infrastructure
+(`itemTargetEntry`/`itemTargetWord`, and the already-named
+`ItemTargetBreakItemA`/`B` fields from `TickEquippedItemDurability`'s
+own writeup). One genuinely interesting structural find along the
+way: `ClassifyItemServiceTier`'s "category A" test is the *exact same*
+flag test `itemTargetKind` uses for `ItemTargetWeapon`, but its
+"category B" test is *narrower* than `itemTargetKind`'s own
+`ItemTargetWearable` — only `ItemFlagEquipCode0D` (`0x800`) alone,
+not the full wearable flag set. A wearable item without that specific
+flag would have a valid target entry (via `itemTargetKind`) but still
+fail this classifier — a real, non-obvious distinction between "is
+this a wearable" and "does this qualify for item-service tier code,"
+worth keeping straight rather than assuming they're the same gate.
+
+Confirmed against real data: SLING (Chapter 2 item id `0x21E`, already
+used in `test_item.c`'s existing real-data checks) classifies as
+category A and its own `ItemTargetBreakItemA` field is `667` — exactly
+what `itemCorrosionReplacement` returns for the real record, no
+adjustment needed. BREAD and BAG, already-tested examples of items
+outside both categories, correctly fail to classify.
+
+New: `itemClassifyServiceTier`/`itemCorrosionReplacement` in
+`src23/item.c`/`.h`. Tests in `test_item.c`: all 3 tiers for both
+categories via synthetic records, the category-B boundary case (a
+wearable that fails classification despite having a target entry),
+and the real SLING/BREAD/BAG checks. Full suite rebuilt, 18/18
+passing. Documented in `file-formats.md` (a new dated section,
+explicitly cross-referencing the earlier "equipped-item durability"
+writeup it builds on rather than repeating it), `engine-diffs.md`
+(instruction-identical, confirmed directly), and `roadmap.md`
+(narrows what's left of `ResolveAttackerActionOutcome`'s branch 3 to
+purely a composition task now — the equipment-slot selection and
+defender-item lookup around already-solid primitives).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

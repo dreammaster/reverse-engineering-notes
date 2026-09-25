@@ -186,6 +186,45 @@ const uint8_t *itemEffectEntry(const ItemCatalog *catalog, const uint8_t *record
     return catalog->effects + offset;
 }
 
+bool itemClassifyServiceTier(const uint8_t *record, ItemServiceTier *outTier) {
+    uint16_t flags = itemGetU16(record, ItemFieldFlags);
+    uint16_t sub = itemGetU16(record, 0x02);
+    if (flags & (ItemFlagEquipCode0A | ItemFlagEquipCode0C)) {
+        if (sub & 0x100) {
+            *outTier = ItemServiceTier2;
+        } else if (sub & 0x200) {
+            *outTier = ItemServiceTier0;
+        } else {
+            *outTier = ItemServiceTier1;
+        }
+        return true;
+    }
+    if (flags & ItemFlagEquipCode0D) {
+        if (sub & 0x40) {
+            *outTier = ItemServiceTier2;
+        } else if (sub & 0x80) {
+            *outTier = ItemServiceTier0;
+        } else {
+            *outTier = ItemServiceTier1;
+        }
+        return true;
+    }
+    return false;
+}
+
+uint16_t itemCorrosionReplacement(const ItemCatalog *catalog, const uint8_t *record) {
+    ItemServiceTier tier;
+    if (!itemClassifyServiceTier(record, &tier)) {
+        return 0;
+    }
+    const uint8_t *entry = itemTargetEntry(catalog, record);
+    if (!entry) {
+        return 0;
+    }
+    bool categoryA = (itemGetU16(record, ItemFieldFlags) & (ItemFlagEquipCode0A | ItemFlagEquipCode0C)) != 0;
+    return itemTargetWord(entry, categoryA ? ItemTargetBreakItemA : ItemTargetBreakItemB);
+}
+
 unsigned itemEffectPairs(const uint8_t *effect) {
     unsigned count = 0;
     while (count < ItemEffectPairCount && itemGetU16(effect, count * 4) != 0) {

@@ -210,6 +210,56 @@ static void testTargetKind(void) {
     checkU32("pairs past the end read 0", itemEffectField(effect, 4), 0);
 }
 
+static void testServiceTier(void) {
+    uint8_t record[ItemRecordSize];
+    ItemServiceTier tier;
+
+    /* Category A (weapon flags 0x8000/0x4000): sub-flag at +0x02 picks the tier. */
+    memset(record, 0, sizeof(record));
+    record[ItemFieldFlags + 1] = 0x80; /* 0x8000 */
+    record[0x02] = 0x00;
+    record[0x03] = 0x01; /* 0x0100 */
+    check("category A, sub 0x100: classifies", itemClassifyServiceTier(record, &tier));
+    check("category A, sub 0x100: tier 2", tier == ItemServiceTier2);
+
+    record[0x02] = 0x00;
+    record[0x03] = 0x02; /* 0x0200 */
+    check("category A, sub 0x200: classifies", itemClassifyServiceTier(record, &tier));
+    check("category A, sub 0x200: tier 0", tier == ItemServiceTier0);
+
+    record[0x02] = 0x00;
+    record[0x03] = 0x00; /* neither sub-flag */
+    check("category A, no sub-flag: classifies", itemClassifyServiceTier(record, &tier));
+    check("category A, no sub-flag: tier 1", tier == ItemServiceTier1);
+
+    /* Category B (ItemFlagEquipCode0D, 0x0800 alone) uses a different sub-flag pair, 0x40/0x80. */
+    memset(record, 0, sizeof(record));
+    record[ItemFieldFlags] = 0x00;
+    record[ItemFieldFlags + 1] = 0x08; /* 0x0800 */
+    record[0x02] = 0x40;
+    check("category B, sub 0x40: classifies", itemClassifyServiceTier(record, &tier));
+    check("category B, sub 0x40: tier 2", tier == ItemServiceTier2);
+
+    record[0x02] = 0x80;
+    check("category B, sub 0x80: classifies", itemClassifyServiceTier(record, &tier));
+    check("category B, sub 0x80: tier 0", tier == ItemServiceTier0);
+
+    record[0x02] = 0x00;
+    check("category B, no sub-flag: classifies", itemClassifyServiceTier(record, &tier));
+    check("category B, no sub-flag: tier 1", tier == ItemServiceTier1);
+
+    /* Wearable flags 0x200/0x400 alone (not 0x800) are outside both categories -- a narrower
+     * test than itemTargetKind's own ItemTargetWearable. */
+    memset(record, 0, sizeof(record));
+    record[ItemFieldFlags] = 0x00;
+    record[ItemFieldFlags + 1] = 0x02; /* 0x0200, ItemFlagEquipShort */
+    check("0x200 alone (a wearable by itemTargetKind) doesn't classify for item service",
+          !itemClassifyServiceTier(record, &tier));
+
+    memset(record, 0, sizeof(record));
+    check("no flags at all: doesn't classify", !itemClassifyServiceTier(record, &tier));
+}
+
 static bool loadReal(GameKind game, const char *envName, const char *fallbackDir) {
     char path[512];
     const char *dir = getenv(envName);
@@ -327,6 +377,9 @@ static void testRealYendor2(void) {
           breadTarget && itemTargetWord(breadTarget, 0) == 0 && itemTargetWord(breadTarget, 1) == 0 &&
               itemTargetWord(breadTarget, 2) == 10 && itemTargetWord(breadTarget, 3) == 0);
     check("BREAD has no effect", itemEffectEntry(&g_catalog, bread) == NULL);
+    ItemServiceTier breadTier;
+    check("BREAD (a consumable) doesn't classify for item service", !itemClassifyServiceTier(bread, &breadTier));
+    checkU32("BREAD can't corrode: no replacement", itemCorrosionReplacement(&g_catalog, bread), 0);
 
     const uint8_t *sling = itemCatalogRecord(&g_catalog, 0x21E);
     check("SLING costs 30", bcdIs(sling, 0x00000030));
@@ -338,6 +391,10 @@ static void testRealYendor2(void) {
               itemTargetWord(slingTarget, ItemTargetBreakItemA) == 667 &&
               itemTargetWord(slingTarget, ItemTargetBreakChanceA) == 25 && itemTargetWord(slingTarget, 4) == 0 &&
               itemTargetWord(slingTarget, 5) == 29);
+    ItemServiceTier slingTier;
+    check("SLING (a weapon) classifies -- category A", itemClassifyServiceTier(sling, &slingTier));
+    checkU32("corroding SLING replaces it with its own BreakItemA (667)", itemCorrosionReplacement(&g_catalog, sling),
+             667);
 
     const uint8_t *shield = itemCatalogRecord(&g_catalog, 181);
     check("WOODEN SHIELD is wearable with absorption 3",
@@ -350,6 +407,8 @@ static void testRealYendor2(void) {
     checkU32("BAG flags are 0x2004", itemGetU16(bag, ItemFieldFlags), 0x2004);
     checkU32("BAG weighs 20", itemGetU16(bag, ItemFieldWeight), 20);
     check("BAG has no target entry", itemTargetEntry(&g_catalog, bag) == NULL);
+    checkU32("BAG can't corrode: no target entry to read a replacement from",
+             itemCorrosionReplacement(&g_catalog, bag), 0);
 
     /* The effect pairs address party-record fields: 0x82 INTELLIGENCE max, 0x42 current, 0x30 jinxing, 0x2E hexing. */
     const uint8_t *helm = itemCatalogRecord(&g_catalog, 175);
@@ -406,6 +465,7 @@ int main(void) {
     testParse();
     testNames();
     testTargetKind();
+    testServiceTier();
     testRealYendor2();
     testRealYendor3();
 
