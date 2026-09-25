@@ -144,6 +144,29 @@ text) and one type-tag check (`id[3] == 6`) remain unresolved, same as the
 several other opaque `TVisObjRef` field ids already catalogued elsewhere in
 this file.
 
+## TGameControl batch 6: ConvertControllerAxisToUnicode returns wxString, not int
+
+`ConvertControllerAxisToUnicode` (asm lines 457066-457125) turned out to
+write through a hidden return-value pointer at the very start of the
+function - a dead giveaway that its real return type is a non-trivial
+by-value type, not the `int` the manifest inferred. It's a 6-case switch
+over `SDL_GameControllerAxis` returning the axis's name as a `wxString`
+("LEFTX"/"LEFTY"/"TRIGGERLEFT"/"TRIGGERRIGHT" confirmed byte-for-byte from
+the binary's string data; "RIGHTX"/"RIGHTY" inferred from the same naming
+pattern but not individually checked), empty for anything else.
+`HandleControllerAxis` (asm lines 471722-471817) uses that name as the
+`HandleKeyEvent` key, skipping the call entirely when the axis is
+unrecognized - the same "empty name -> skip" shape as the controller-button
+handlers' literal `dword_D75F5C` empty string, just non-empty here. This is
+`TKeyboardMessageEnum`'s 7th confirmed value (`AxisMove = 6`).
+
+The scaled axis value itself is `value * 100 / 32768` (SDL's +-32768 raw
+range down to roughly +-100) - the disassembly computes this two different
+ways depending on the sign of `value` (a magic-multiply for the `>0`
+branch, a shift-with-rounding-bias for the `<=0` branch), but both are
+verified equivalent to that one expression, so the C++ just writes it
+once.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

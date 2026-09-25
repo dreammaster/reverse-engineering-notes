@@ -93,7 +93,11 @@ public:
     TConsole* GetConsole();
 
     int ConvertControllerButtonToSymKey(SDL_ControllerButtonEvent button);
-    int ConvertControllerAxisToUnicode(SDL_GameControllerAxis axis);
+    // Confirmed wxString (asm lines 457066-457125: the function writes
+    // through a hidden return pointer, not int as the manifest inferred),
+    // one of the 6 SDL_GameControllerAxis names uppercased, or empty for an
+    // unrecognized axis.
+    wxString ConvertControllerAxisToUnicode(SDL_GameControllerAxis axis);
     void StartGameAction(TKeyboardMessageEnum msg, const wxString& name, int a, unsigned short b);
     void UpdateAspectRatio();
     void InitAfterLoadingScreen();

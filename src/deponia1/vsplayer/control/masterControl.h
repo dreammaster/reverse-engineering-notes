@@ -53,15 +53,16 @@ class TGameController;
 
 enum class HandleSoundsEnum { Stop, Pause, Continue };
 enum class TMouseMessageEnum { Move, LeftDown, LeftUp, RightDown, RightUp, Wheel };
-// Confirmed to have at least 6 distinct values (TGameControl::
-// HandleControllerButtonHit/Release pass literal 4/5 as this same enum's
-// type, Deponia_Linux.asm lines 471825-471975) - values 2 and 3 haven't
-// been observed at any call site yet.
+// Confirmed to have at least 7 distinct values (TGameControl::
+// HandleControllerButtonHit/Release pass literal 4/5, and HandleControllerAxis
+// passes literal 6, as this same enum's type - Deponia_Linux.asm lines
+// 471722-471975) - values 2 and 3 haven't been observed at any call site yet.
 enum class TKeyboardMessageEnum {
     KeyDown = 0,
     KeyUp = 1,
     ControllerButtonHit = 4,
     ControllerButtonRelease = 5,
+    AxisMove = 6,
 };
 
 // Field order/sizes are recovered from TMasterControl::SetLoadingScreen's

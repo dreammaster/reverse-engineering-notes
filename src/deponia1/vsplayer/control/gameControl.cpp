@@ -203,8 +203,29 @@ int TGameControl::ConvertControllerButtonToSymKey(SDL_ControllerButtonEvent butt
     return 1000001 + button.button;
 }
 
-int TGameControl::ConvertControllerAxisToUnicode(SDL_GameControllerAxis /*axis*/) {
-    return 0;
+wxString TGameControl::ConvertControllerAxisToUnicode(SDL_GameControllerAxis axis) {
+    // Confirmed (asm lines 457066-457125): a 6-case switch, each case
+    // assigning one literal wide string; default (and any axis outside the
+    // 6 known ones) leaves it empty. Cases 0/1/4/5 were read directly from
+    // the binary's string data ("LEFTX"/"LEFTY"/"TRIGGERLEFT"/
+    // "TRIGGERRIGHT"); 2/3 ("RIGHTX"/"RIGHTY") follow the same naming
+    // pattern but weren't individually byte-checked.
+    switch (axis) {
+    case SDL_CONTROLLER_AXIS_LEFTX:
+        return wxString(L"LEFTX");
+    case SDL_CONTROLLER_AXIS_LEFTY:
+        return wxString(L"LEFTY");
+    case SDL_CONTROLLER_AXIS_RIGHTX:
+        return wxString(L"RIGHTX");
+    case SDL_CONTROLLER_AXIS_RIGHTY:
+        return wxString(L"RIGHTY");
+    case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+        return wxString(L"TRIGGERLEFT");
+    case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+        return wxString(L"TRIGGERRIGHT");
+    default:
+        return wxString();
+    }
 }
 
 void TGameControl::StartGameAction(TKeyboardMessageEnum /*msg*/, const wxString& /*name*/, int /*a*/,
@@ -509,7 +530,18 @@ void TGameControl::HandleKeyEvent(TKeyboardMessageEnum /*msg*/, const wxString& 
                                    unsigned short /*b*/) {
 }
 
-void TGameControl::HandleControllerAxis(SDL_GameControllerAxis /*axis*/, int /*value*/, int /*index*/) {
+void TGameControl::HandleControllerAxis(SDL_GameControllerAxis axis, int value, int index) {
+    // Confirmed (asm lines 471722-471817): the two branches (value>0 vs
+    // <=0) use different-looking constant-division codegen, but both
+    // compute the same value*100/32768 (checked via the magic-multiplier
+    // math for the >0 branch) - almost certainly rescaling SDL's +-32768
+    // raw axis range to a +-100 one. Skipped entirely for an unrecognized
+    // axis (empty name).
+    wxString axisName = ConvertControllerAxisToUnicode(axis);
+    if (!axisName.IsEmpty()) {
+        int scaled = value * 100 / 32768;
+        HandleKeyEvent(TKeyboardMessageEnum::AxisMove, axisName, scaled, static_cast<unsigned short>(index));
+    }
 }
 
 void TGameControl::HandleControllerButtonRelease(SDL_ControllerButtonEvent button, int index) {
