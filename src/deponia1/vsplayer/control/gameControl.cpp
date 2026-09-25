@@ -24,7 +24,20 @@ TGameControl::TGameControl() {
     TComposedFile::onError = [](TComposedFile* /*file*/, std::string /*message*/) {};
 }
 
-TGameControl::~TGameControl() = default;
+TGameControl::~TGameControl() {
+    // Confirmed (asm lines 474222-474270): sets m_isClearingAnimations
+    // before tearing down, then deletes every owned TGCharacter*. The
+    // destructor also calls into several global subsystems not modeled
+    // here at all (TGAnimation::ClearAnimations, ModelContainer::Destroy,
+    // TGAction::ClearActions) and a virtual teardown call through a
+    // pointer at a still-unidentified field - left out rather than
+    // guessing at systems that haven't been reversed yet.
+    m_isClearingAnimations = true;
+    ClearTexts();
+    for (TGCharacter* character : m_characters)
+        delete character;
+    m_characters.clear();
+}
 
 bool TGameControl::Update() {
     // The entire per-frame game-logic dispatcher - almost certainly
@@ -33,7 +46,14 @@ bool TGameControl::Update() {
 }
 
 bool TGameControl::DisplayDialog() {
-    return false;
+    // Confirmed (asm lines 455780-455803): only draws/activates the cursor
+    // when a dialog is actually active (m_dialog's TVisObjRef target is
+    // non-empty).
+    if (m_dialog.IsEmpty())
+        return false;
+    GetCursorControl()->SetActive(true);
+    m_dialog.Draw();
+    return true;
 }
 
 bool TGameControl::DisplayTexts() {
@@ -41,10 +61,14 @@ bool TGameControl::DisplayTexts() {
 }
 
 bool TGameControl::DisplayConsole() {
-    return false;
+    // Confirmed tail-call (asm lines 455750-455756): DisplayConsole() is
+    // exactly TConsole::Draw() on the embedded console.
+    return m_console.Draw();
 }
 
 void TGameControl::DisplayInSceneConsole() {
+    // Confirmed tail-call (asm lines 455758-455764).
+    m_console.DrawInScene();
 }
 
 void TGameControl::HandleMouseMove(const wxPoint& /*pos*/, bool /*isHolding*/) {
@@ -68,26 +92,37 @@ TPaintControl* TGameControl::GetScene() {
 }
 
 TGCharacter* TGameControl::GetCurrentCharacter() {
-    return nullptr;
+    // Confirmed (asm line 456332): plain field access, not always-nullptr.
+    return m_currentCharacter;
 }
 
 TGCharacter* TGameControl::GetCurrentCharacterPointer() const {
-    return nullptr;
+    // Confirmed (asm line 456349): same field as GetCurrentCharacter().
+    return m_currentCharacter;
 }
 
-TGCharacter* TGameControl::GetCharacter(const TVisObjRef& /*character*/) {
-    return nullptr;
+// GetCharacter/GetCharacterPointer/GetCharacterPointerEx (asm lines
+// 456362-456578): all three share one pattern - if the TVisObjRef arg
+// IsEmpty(), return m_currentCharacter; otherwise pack TVisObjRef::GetId()'s
+// first 3 bytes into a 32-bit hash, look it up in a custom open-hashing
+// table (buckets, bucket count, and a parallel index into m_characters -
+// not yet reversed fields), and return m_characters[index] on a match (or
+// m_currentCharacter/nullptr on a miss, matching each method's slightly
+// different fallback). Left as stubs rather than guessing at TVisObjRef's
+// real id encoding or the hash table's field layout.
+TGCharacter* TGameControl::GetCharacter(const TVisObjRef& character) {
+    return character.IsEmpty() ? m_currentCharacter : nullptr;
 }
 
-TGCharacter* TGameControl::GetCharacterPointer(const TVisObjRef& /*character*/) const {
-    return nullptr;
+TGCharacter* TGameControl::GetCharacterPointer(const TVisObjRef& character) const {
+    return character.IsEmpty() ? m_currentCharacter : nullptr;
 }
 
 TGCharacter* TGameControl::GetCharacterPointerEx(const TVisObjRef& /*character*/) const {
     return nullptr;
 }
 
-std::vector<TGCharacter*> TGameControl::GetAllCharacters() {
+std::vector<TGCharacter*>& TGameControl::GetAllCharacters() {
     return m_characters;
 }
 
@@ -100,7 +135,9 @@ void* TGameControl::GetObject(const TVisObjRef& /*object*/) const {
 }
 
 TGObjectManager* TGameControl::GetObjectManager() {
-    return nullptr;  // TMasterControl's m_objectManager is private; not exposed yet.
+    // Confirmed (asm line 456751): embedded by value in TGameControl itself,
+    // not TMasterControl as first guessed.
+    return &m_objectManager;
 }
 
 void TGameControl::SkipCurrentText() {
@@ -109,15 +146,24 @@ void TGameControl::SkipCurrentText() {
 void TGameControl::UpdateCurrentObject() {
 }
 
-void TGameControl::RegisterHookFunctionSceneMousePosition(const wxString& /*name*/) {
+void TGameControl::RegisterHookFunctionSceneMousePosition(const wxString& name) {
+    // Confirmed (asm line 457015): a tail-call to std::wstring::assign on a
+    // single field - not a map as first guessed.
+    m_sceneMousePositionHookName = name.ToStdWstring();
 }
 
 TConsole* TGameControl::GetConsole() {
     return &m_console;
 }
 
-int TGameControl::ConvertControllerButtonToSymKey(SDL_ControllerButtonEvent /*button*/) {
-    return 0;
+int TGameControl::ConvertControllerButtonToSymKey(SDL_ControllerButtonEvent button) {
+    // Confirmed (asm lines 457044-457058, table CSWTCH_876 at 3147444):
+    // buttons 0-14 map to a custom keysym space starting at 1000001
+    // (presumably reserved above the Unicode range used for regular
+    // keyboard keys); anything else yields -1.
+    if (button.button > 0x0E)
+        return -1;
+    return 1000001 + button.button;
 }
 
 int TGameControl::ConvertControllerAxisToUnicode(SDL_GameControllerAxis /*axis*/) {
@@ -232,12 +278,15 @@ void TGameControl::StartObjectText(const TVisObjRef& /*object*/, const TVisObjRe
                                     const wxPoint& /*pos*/) {
 }
 
-wxString TGameControl::GetGamePath() const {
-    return wxString();
+const wxString& TGameControl::GetGamePath() const {
+    // Confirmed (asm line 462534): returns the member by reference.
+    return m_gamePath;
 }
 
 bool TGameControl::IsClearingAnimations() const {
-    return false;
+    // Confirmed (asm line 462551): plain field access, set true by the
+    // destructor before it tears anything down (see ~TGameControl below).
+    return m_isClearingAnimations;
 }
 
 bool TGameControl::SavegameExists(int /*slot*/) {

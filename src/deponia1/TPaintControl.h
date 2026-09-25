@@ -25,6 +25,7 @@ public:
 
     void SetCurrent();
     bool IsActive() const;
+    void SetActive(bool active);
     const wxPoint& GetScrollPos() const;
     void SetScrollPos(const wxPoint& pos);
     bool IsScrollable() const;
@@ -37,4 +38,5 @@ public:
 private:
     wxPoint m_scrollPos{};
     FloatPoint m_floatScrollPos{};
+    bool m_active = false;
 };

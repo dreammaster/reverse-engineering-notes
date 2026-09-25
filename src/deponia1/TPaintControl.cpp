@@ -10,7 +10,11 @@ void TPaintControl::SetCurrent() {
 }
 
 bool TPaintControl::IsActive() const {
-    return false;
+    return m_active;
+}
+
+void TPaintControl::SetActive(bool active) {
+    m_active = active;
 }
 
 const wxPoint& TPaintControl::GetScrollPos() const {

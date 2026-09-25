@@ -1,5 +1,40 @@
 # main() reconstruction notes
 
+## TGameControl batch: reference-return accessors, and a custom character hash table
+
+While reconstructing TGameControl's shortest methods (address-gap analysis,
+asm lines ~455750-462554), two patterns worth flagging for future passes:
+
+- **Several "getter" methods return a reference/pointer to a member, not a
+  copy**, even though `manifest/proprietary_functions.tsv` had them
+  classified with by-value return types (`std::vector<TGCharacter*>`,
+  `wxString`). The tell: the function body is a bare `lea rax,[rdi+OFFSET];
+  retn` with no second hidden-pointer parameter - a real by-value return of
+  a non-trivial type would need the Itanium ABI's RVO calling convention
+  (caller-supplied destination pointer in rdi, `this` moved to rsi).
+  `GetAllCharacters()` and `GetGamePath()` were both fixed from by-value to
+  by-reference for this reason; worth checking any other accessor whose
+  manifest signature returns a non-trivial type before assuming it's a copy.
+- **TGameControl has a hand-rolled hash table mapping character IDs to
+  `m_characters` indices** (`GetCharacter`/`GetCharacterPointer`/
+  `GetCharacterPointerEx`, asm lines 456360-456578): `TVisObjRef::GetId()`
+  returns a 3-byte identifier that gets packed into a 32-bit hash (byte 0 |
+  byte1<<8 | sign-extended byte2<<16-24), divided by a bucket count at
+  `+0x378`, and walked as a singly-linked chain (`node+0`: stored hash for
+  comparison, `node+4`: a 32-bit index into `m_characters` at `+0x340`,
+  `node+8`: next). Left as stubs (falling back to `m_currentCharacter` on an
+  empty ref, `nullptr` otherwise) rather than guessing at the node struct
+  layout or how entries get inserted - a real implementation would probably
+  just use `std::unordered_map<int, TGCharacter*>` for equivalent behavior
+  without reproducing the exact bucket mechanics, per the project's
+  behavioral-fidelity-over-binary-fidelity stance (see the COW-string-ABI
+  note below).
+- **Controller buttons map into a custom keysym space starting at
+  1000001**: `ConvertControllerButtonToSymKey` (asm lines 457042-457058)
+  looks up a 15-entry table (`CSWTCH_876`) that's just `1000001 + button`
+  for buttons 0-14, -1 otherwise - presumably reserved above the Unicode
+  range used for regular keyboard key codes elsewhere in the engine.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

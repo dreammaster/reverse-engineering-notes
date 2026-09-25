@@ -31,7 +31,6 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "SdlStub.h"
@@ -72,7 +71,10 @@ public:
     TGCharacter* GetCharacter(const TVisObjRef& character);
     TGCharacter* GetCharacterPointer(const TVisObjRef& character) const;
     TGCharacter* GetCharacterPointerEx(const TVisObjRef& character) const;
-    std::vector<TGCharacter*> GetAllCharacters();
+    // Confirmed (Deponia_Linux.asm line 456592, `lea rax,[rdi+340h]; retn`):
+    // this returns the address of the member itself, not a by-value copy -
+    // the manifest's inferred by-value signature was wrong.
+    std::vector<TGCharacter*>& GetAllCharacters();
     void* GetInterface(const TVisObjRef& interfaceObj) const;
     void* GetObject(const TVisObjRef& object) const;
     TGObjectManager* GetObjectManager();
@@ -118,7 +120,10 @@ public:
     void ClearObjectText(const TVisObjRef& object);
     void StartObjectText(const TVisObjRef& object, const TVisObjRef& text, TextAlignmentEnum alignment,
                           const TVisObjRef& target, const wxPoint& pos);
-    wxString GetGamePath() const;
+    // Confirmed (asm line 462534, `lea rax,[rdi+0A80h]; retn`): returns the
+    // member itself, not a by-value copy - the manifest's inferred by-value
+    // signature was wrong (same pattern as GetAllCharacters above).
+    const wxString& GetGamePath() const;
     bool IsClearingAnimations() const;
     bool SavegameExists(int slot);
     bool DeleteSavegame(int slot);
@@ -167,11 +172,27 @@ private:
     std::vector<std::string> m_walkingSoundEventHandlers;
     std::vector<std::pair<double, std::string>> m_delaysByName;
     std::vector<std::pair<double, int>> m_delaysById;
+    // Owning: ~TGameControl deletes every element (confirmed, asm lines
+    // 474252-474270).
     std::vector<TGCharacter*> m_characters;
-    std::unordered_map<int, int> m_sceneMousePositionHooks;
+    // Confirmed (asm line 457015): RegisterHookFunctionSceneMousePosition
+    // just assigns into a single wstring field via std::wstring::assign - a
+    // plain "last registered hook name," not a map as first guessed.
+    std::wstring m_sceneMousePositionHookName;
     TGDialog m_dialog;
     TConsole m_console;
     TVisionaireGame* m_visionaireGame = nullptr;
     std::vector<SGameAction> m_gameActions;
     std::vector<std::string> m_engineEventHandlerNamesMainLoop;
+    // Confirmed embedded by value (asm line 456751, GetObjectManager():
+    // `lea rax,[rdi+0D0h]; retn`) - not owned by TMasterControl as first
+    // guessed.
+    TGObjectManager m_objectManager;
+    // Confirmed field accesses, not always-nullptr/false stubs (asm lines
+    // 456332/456551/462534/462551): GetCurrentCharacter[Pointer] just reads
+    // this back, GetGamePath returns m_gamePath by reference, and the
+    // destructor sets m_isClearingAnimations = true before tearing down.
+    TGCharacter* m_currentCharacter = nullptr;
+    wxString m_gamePath;
+    bool m_isClearingAnimations = false;
 };
