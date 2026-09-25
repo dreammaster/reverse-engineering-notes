@@ -90,6 +90,21 @@ uint8_t *partyExperience(uint8_t *record) {
     return record + PartyFieldExperience;
 }
 
+void partyDeductHp(uint8_t *record, uint16_t amount) {
+    int16_t hp = (int16_t)(partyGetStat(record, PartyStatHitPoints) - amount);
+    if (hp <= 0) {
+        partySetStat(record, PartyStatHitPoints, 0);
+        partySetU16(record, PartyFieldStatusFlags, (uint16_t)(partyGetU16(record, PartyFieldStatusFlags) | PartyStatusDead));
+        return;
+    }
+    partySetStat(record, PartyStatHitPoints, (uint16_t)hp);
+}
+
+void partyDeductMp(uint8_t *record, uint16_t amount) {
+    int16_t mp = (int16_t)(partyGetStat(record, PartyStatMagicPoints) - amount);
+    partySetStat(record, PartyStatMagicPoints, mp > 0 ? (uint16_t)mp : 0);
+}
+
 /* DS:0x9277 (yendor2.asm:20049), extracted via ida_scripts/dump_xp_threshold_table.py. */
 static const uint8_t g_xpThresholdsYendor2[PartyXpThresholdCount][4] = {
     {0x00, 0x00, 0x06, 0x80}, {0x00, 0x00, 0x18, 0x50}, {0x00, 0x00, 0x26, 0x00}, {0x00, 0x00, 0x55, 0x00},

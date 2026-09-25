@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_effect test_effect.c ../effect.c ../party.c ../monster.c ../monster_stdio.c ../bcd4.c ../savegame.c ../item.c && ./test_effect
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_effect test_effect.c ../effect.c ../party.c ../monster.c ../monster_stdio.c ../bcd4.c ../savegame.c ../item.c ../random.c && ./test_effect
  *
  * The monster cross-checks read WORLD.DAT from yendor2/game and yendor3/game
  * (gitignored; skipped if absent). Set YENDOR2_GAME_DIR / YENDOR3_GAME_DIR
@@ -14,6 +14,7 @@
 #include "monster.h"
 #include "monster_stdio.h"
 #include "party.h"
+#include "random.h"
 
 static int g_failureCount = 0;
 static int g_skipCount = 0;
@@ -155,6 +156,48 @@ static void testResistance(void) {
     checkU32("hexing and cursing map to their own protections", effectResistanceBonus(&hexCurse, record), 5);
 }
 
+static void testResolveInflictedStatus(void) {
+    EffectDef none = {0, 0, 0, 0, 0, 0};
+    checkU32("no inflict bits: always 0 regardless of the saving throw", effectResolveInflictedStatus(&none, true), 0);
+    checkU32("no inflict bits: still 0 on a resisted throw", effectResolveInflictedStatus(&none, false), 0);
+
+    EffectDef unconditional = {0, 0, 0, 0, PartyStatusPoisoned, 0}; /* inflict bits set, EffectModeRollResistance NOT set */
+    checkU32("no roll-resistance mode: inflicts unconditionally even on a \"resisted\" input",
+             effectResolveInflictedStatus(&unconditional, false), PartyStatusPoisoned);
+    checkU32("no roll-resistance mode: still inflicts when the input says failed",
+             effectResolveInflictedStatus(&unconditional, true), PartyStatusPoisoned);
+
+    EffectDef rolled = {0, 0, 0, 0, PartyStatusDiseased, EffectModeRollResistance};
+    checkU32("rolls resistance: a failed save inflicts the status", effectResolveInflictedStatus(&rolled, true),
+             PartyStatusDiseased);
+    checkU32("rolls resistance: a successful save resists it", effectResolveInflictedStatus(&rolled, false), 0);
+}
+
+static void testRollMagnitude(void) {
+    RandomState rng;
+
+    EffectDef fixedDef = {0, 0, 7, 20, EffectCostHp, EffectModeMagnitudeFixed};
+    randomStart(&rng, 1, 1);
+    checkU32("fixed: no RNG consumed, magnitudeMin regardless of level", effectRollMagnitude(&fixedDef, 50, &rng), 7);
+
+    EffectDef scaledDef = {0, 0, 4, 20, EffectCostHp, EffectModeMagnitudeScaled};
+    randomStart(&rng, 2, 2);
+    checkU32("scaled: no RNG consumed, magnitudeMin * level", effectRollMagnitude(&scaledDef, 3, &rng), 12);
+
+    /* Plain (random) case: peek the same generator's own roll to compute the expected result,
+     * rather than asserting a value that depends on incidental RNG internals. */
+    EffectDef plainDef = {0, 0, 1, 10, EffectCostHp, 0};
+    for (uint8_t seed = 0; seed < 5; seed++) {
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        uint16_t roll = randomInRange(&peek, effectRandomBound(&plainDef));
+        uint16_t expected = (uint16_t)((roll + plainDef.magnitudeMin) * 2);
+
+        checkU32("plain: rolls RandomInRange(bound) and scales (roll+min)*level", effectRollMagnitude(&plainDef, 2, &rng),
+                 expected);
+    }
+}
+
 static void checkTableInvariants(GameKind game, const char *name) {
     char label[96];
     bool resistOk = true;
@@ -235,6 +278,8 @@ int main(void) {
     testDecoding();
     testMagnitude();
     testResistance();
+    testResolveInflictedStatus();
+    testRollMagnitude();
     checkTableInvariants(GameYendor2, "yendor2");
     checkTableInvariants(GameYendor3, "yendor3");
     checkMonsters(GameYendor2, "yendor2", "YENDOR2_GAME_DIR", "../../yendor2/game");

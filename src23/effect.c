@@ -190,6 +190,25 @@ uint16_t effectMagnitude(const EffectDef *def, uint16_t level, uint16_t randomVa
     return (uint16_t)(base * level);
 }
 
+uint16_t effectResolveInflictedStatus(const EffectDef *def, bool savingThrowFailed) {
+    uint16_t inflict = effectInflictedStatus(def);
+    if (inflict == 0) {
+        return 0;
+    }
+    if (!(def->modeFlags & EffectModeRollResistance)) {
+        return inflict;
+    }
+    return savingThrowFailed ? inflict : 0;
+}
+
+uint16_t effectRollMagnitude(const EffectDef *def, uint16_t level, RandomState *rng) {
+    uint16_t randomValue = 0;
+    if (!(def->modeFlags & (EffectModeMagnitudeFixed | EffectModeMagnitudeScaled))) {
+        randomValue = randomInRange(rng, effectRandomBound(def));
+    }
+    return effectMagnitude(def, level, randomValue);
+}
+
 uint16_t effectResistanceBonus(const EffectDef *def, const uint8_t *partyRecord) {
     static const struct {
         uint16_t status;

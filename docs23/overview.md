@@ -9158,6 +9158,83 @@ initial over-hasty "instruction-identical" note caught before it was
 finalized), and `roadmap.md` (candidate 7 now fully closed for
 everything except composing the full attack outcome).
 
+### 2026-09-25 session update (continued): found the staged combat event's consumer, and reimplemented the effect-application pipeline underneath it
+
+The previous round's own writeup had left one explicit loose end:
+`ResolveAttackerActionOutcome`'s "staged combat event" record had no
+traced consumer. Rather than starting a new area, picked that thread
+back up by reading its actual caller, `ProcessMonsterAttackTurn`
+(`yendor2.asm:10768`), in full — something the earlier round hadn't
+done, having stopped at `ResolveAttackerActionOutcome` itself. That
+one function read closed the loop completely.
+
+The staged record turns out to be one of 4 `g_partyEffectIconSlots`
+entries (`0xC50 + slotIndex*0x14`) — the same icon-bar mechanism this
+project had already partially named in earlier sessions
+(`PrepareTrapEffectSlots`, `ApplyItemEffectIconSlot`) without ever
+connecting it to combat. `ProcessMonsterAttackTurn` sets the slot
+address before calling `ResolveAttackerActionOutcome`, then calls
+`ApplyEffectAndDrawIconBar` right after — the actual consumer.
+Reconstructing the full 20-byte slot layout took reading every
+function that touches it (`SelectTrapEffectVariant`,
+`ResolveAttackerActionOutcome`'s 3 branches, `ApplyEffectCost`,
+`RollEffectMagnitude`, `RollEffectResistance`) and cross-referencing
+their reads against their writes — a genuinely satisfying piece of
+reverse-engineering, since several fields only made sense once a
+LATER function's read pattern explained an EARLIER function's
+seemingly arbitrary write (e.g. branch 2 of `ResolveAttackerActionOutcome`
+saves and restores `word_3293E`/`word_32940` around its own
+`FailsSavingThrow` call specifically so the effect-definition pointer
+`SelectTrapEffectVariant` had stashed there survives to reach the
+icon slot unchanged).
+
+One real "easy to misread" catch along the way: `RollEffectResistance`
+treats "no `EffectModeRollResistance` bit" as "inflict the status
+unconditionally, no saving throw at all" — not "never inflicted", the
+more natural first guess. Confirmed by tracing the exact branch that
+skips straight past the `FailsSavingThrow` call while still carrying
+the inflict-bits value in `ax`.
+
+`ApplyEffectAndDrawIconBar` itself dispatches to one of 3 sub-pipelines
+by the effect definition's mode flags: item expiry, a stat delta, or
+— the one reimplemented this round — the "normal" trap/attack-effect
+path (magnitude roll, resistance roll, cost application). The other
+two are genuinely different mechanisms with their own call chains
+(`HandleIconBarItemExpiry`, `ApplyIconBarStatDelta`) not traced this
+round.
+
+New: `effectRollMagnitude`/`effectResolveInflictedStatus` in
+`src23/effect.c`/`.h` (the pure magnitude/resistance-decision logic,
+already 90% covered by an earlier session's `effectMagnitude`/
+`effectResistanceBonus` — this round added the RNG-call gating and the
+resistance-mode 3-way branch on top), `combatApplyEffect` in
+`src23/combat.c`/`.h` (the `ApplyEffectCost` dispatch + status
+write-back), and `partyDeductHp`/`partyDeductMp` in `src23/party.c`/
+`.h` (the clamped HP/MP deduction primitives, including the death-flag
+side effect on HP reaching 0). A deliberate architecture choice:
+`effectResolveInflictedStatus` takes the saving throw's own outcome as
+a boolean parameter rather than rolling it internally, keeping
+`effect.c` free of a `combat.h` dependency (and the heavier
+`monsterpool.c`/`dungeongrid.c`/`movement.c`/`worldmap.c` chain that
+drags in) — callers that need the roll use `combat.h`'s
+`combatFailsSavingThrow` themselves and pass the result in. Both
+UI-only side effects of the original (`ClearPartySlotReferenceOnDamage`'s
+raw-pointer targeting scratch table, `UpdatePartyAverageStatTiers`'s
+3 display-tier globals) are deliberately not reproduced, matching this
+project's established pattern of deferring pure UI bookkeeping to the
+eventual SDL2 layer.
+
+Verified instruction-identical in Chapter 3 by reading every touched
+function directly in `yendor3.asm` rather than assuming, given last
+round's reminder that assuming isn't safe even after several
+consecutive identical matches — this time everything held. Tests
+spread across `test_effect.c`, `test_party.c`, and `test_combat.c`;
+full suite rebuilt, 18/18 passing, no regressions. Documented in
+`file-formats.md`'s expanded "Attack resolution" area (a full new
+"staged combat event's consumer" section with the complete slot
+layout), `engine-diffs.md`, and `roadmap.md` (candidate 7 now fully
+closed except for the remaining UI-driving orchestration layer).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

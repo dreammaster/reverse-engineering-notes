@@ -664,6 +664,32 @@ static void testAbilityUnlocks(void) {
           flagBankTest(g_record + PartyFieldFlagBankCA, 16, 5));
 }
 
+static void testDeductStats(void) {
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatHitPoints, 30);
+    partyDeductHp(g_record, 10);
+    checkU32("HP deducted normally", partyGetStat(g_record, PartyStatHitPoints), 20);
+    check("not dead yet", !(partyGetU16(g_record, PartyFieldStatusFlags) & PartyStatusDead));
+
+    partyDeductHp(g_record, 20);
+    checkU32("HP clamped at 0, not negative", partyGetStat(g_record, PartyStatHitPoints), 0);
+    check("hitting 0 HP sets PartyStatusDead", partyGetU16(g_record, PartyFieldStatusFlags) & PartyStatusDead);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatHitPoints, 15);
+    partyDeductHp(g_record, 15);
+    checkU32("deducting exactly to 0 also clamps to 0", partyGetStat(g_record, PartyStatHitPoints), 0);
+    check("deducting exactly to 0 also sets PartyStatusDead", partyGetU16(g_record, PartyFieldStatusFlags) & PartyStatusDead);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatMagicPoints, 8);
+    partyDeductMp(g_record, 3);
+    checkU32("MP deducted normally", partyGetStat(g_record, PartyStatMagicPoints), 5);
+    partyDeductMp(g_record, 50);
+    checkU32("MP clamped at 0, not negative", partyGetStat(g_record, PartyStatMagicPoints), 0);
+    check("MP hitting 0 does not set PartyStatusDead", !(partyGetU16(g_record, PartyFieldStatusFlags) & PartyStatusDead));
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -674,6 +700,7 @@ int main(void) {
     testTraining();
     testEquipmentBonuses();
     testAbilityUnlocks();
+    testDeductStats();
     testRealCharacters();
 
     if (g_failureCount == 0) {

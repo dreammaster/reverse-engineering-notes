@@ -140,3 +140,28 @@ bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bon
     uint16_t roll = randomInRange(rng, 100);
     return (int32_t)roll > chance;
 }
+
+void combatApplyEffect(uint8_t *defenderRecord, EffectSpend spend, uint16_t amount, uint16_t inflictedStatus) {
+    switch (spend) {
+    case EffectSpendHp:
+        partyDeductHp(defenderRecord, amount);
+        break;
+    case EffectSpendMp:
+        partyDeductMp(defenderRecord, amount);
+        break;
+    case EffectSpendHpAndMp:
+        partyDeductHp(defenderRecord, amount);
+        partyDeductMp(defenderRecord, amount);
+        break;
+    case EffectSpendNone:
+    case EffectSpendGold:
+    case EffectSpendOre1:
+    case EffectSpendOre2:
+        break;
+    }
+
+    if (inflictedStatus != 0) {
+        partySetU16(defenderRecord, PartyFieldStatusFlags,
+                    (uint16_t)(partyGetU16(defenderRecord, PartyFieldStatusFlags) | inflictedStatus));
+    }
+}

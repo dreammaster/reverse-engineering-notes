@@ -4349,13 +4349,22 @@ monster is still alive, the "no monsters left" outcome, the
 "walked off the end, start a new round" outcome (no wraparound), and
 that the forward walk correctly skips an already-defeated entry.
 
-### Attack resolution: two confirmed primitives, the composing function deferred (decoded 2026-09-25)
+### Attack resolution: the primitives, plus the effect-application pipeline they feed (decoded 2026-09-25)
 
 Picked up where turn-order/round processing left off: the actual
-combat-damage math. Two small, fully self-contained functions are
-reimplemented; the function that composes them into a full attack
-(`ResolveAttackerActionOutcome`) is documented but deliberately not,
-since its own downstream plumbing isn't traced yet.
+combat-damage math, and — a second pass the same day — the pipeline
+that consumes it. `ResolveAttack`/`FailsSavingThrow` are small,
+fully self-contained functions, reimplemented directly. The function
+that composes them into a full attack (`ResolveAttackerActionOutcome`)
+is documented in detail below but still deliberately not reimplemented
+as a whole, since one of its 3 branches needs an entirely undecoded
+item system — but its downstream consumer, previously an open
+question, **is now found and traced**: `ApplyEffectAndDrawIconBar`
+and the effect-table primitives underneath it
+(`RollEffectMagnitude`/`RollEffectResistance`/`ApplyEffectCost`),
+whose state-mutating halves are now reimplemented as
+`effectRollMagnitude`/`effectResolveInflictedStatus` (`effect.c`) and
+`combatApplyEffect` (`combat.c`).
 
 **`ResolveAttack`** (`yendor2.asm:38488`, instruction-identical in
 Chapter 3 — checked directly): `ResolveAttack(defense, accuracy,
@@ -4423,17 +4432,12 @@ field names above): selects one of 3 outcome branches via
    and other item-service code) this project hasn't decoded at all.
    On success, targets the defender's *equipped item* rather than HP.
 
-**Why this function is deferred rather than composed from the two
-primitives above**: beyond branch 3's undecoded dependency, the
-"pending combat event" record this function writes into
-(`word_32906`, 6 fields: threshold/bonus/defender-pointer/status-or-
-offset/damage-or-effect-id/extra) is never read back by any function
-this project has traced yet, so its real downstream meaning (a
-combat-log entry? a queued animation event? something read by
-`ProcessMonsterAttackTurn` itself, one level up?) isn't confirmed. The
-two primitives are solid and independently useful now; composing them
-faithfully into this function is future work once the event record's
-consumer is found.
+**Why `ResolveAttackerActionOutcome` itself still isn't fully
+composed**: branch 3 needs `GetClassifiedItemStatField` ->
+`ClassifyItemServiceTier`, an item-compatibility-tier system this
+project hasn't decoded. Branches 1/2's own downstream consumer is now
+confirmed, though (see below) — that part of the original blocker is
+resolved.
 
 Reimplemented as `combatResolveAttack`/`combatFailsSavingThrow` in
 `src23/combat.c`/`.h`; tests in `tests/test_combat.c` covering:
@@ -4444,6 +4448,137 @@ and the 32-bit damage formula; `combatFailsSavingThrow`'s
 guaranteed-resist case (chance far exceeding the roll's maximum) and
 an exact roll-vs-clamped-floor-chance check using the same peek
 technique.
+
+### The staged combat event's consumer, found: `ApplyEffectAndDrawIconBar` and the icon-bar effect pipeline (decoded 2026-09-25, same day)
+
+Reading `ProcessMonsterAttackTurn` (`yendor2.asm:10768`) in full —
+the actual caller of `ResolveAttackerActionOutcome`, not chased down
+the previous round — answered the "who reads the staged event"
+question directly. `word_32906`, the base address
+`ResolveAttackerActionOutcome` writes its 6-field record into, is set
+by `ProcessMonsterAttackTurn` itself to `0xC50 + slotIndex*0x14`: one
+of 4 entries in `g_partyEffectIconSlots`, the same icon-bar mechanism
+`PrepareTrapEffectSlots`/`ApplyItemEffectIconSlot` (both named in
+earlier sessions) already reference but that this project had not
+yet connected to combat. Right after `ResolveAttackerActionOutcome`
+returns, if `g_stagedAttackDamage` is nonzero,
+`ProcessMonsterAttackTurn` calls `ApplyEffectAndDrawIconBar`
+(`yendor2.asm:13789`), which is what actually reads that slot.
+
+**The full icon slot record (20 bytes), reverse-engineered from every
+field this session traced reading or writing it**:
+- `+0`/`+2`, `+4`/`+6`: two X/Y draw-position pairs (one per draw
+  variant — pure UI, not modeled).
+- `+0xA`: the **occupancy flag and effect-definition pointer** —
+  `ApplyEffectAndDrawIconBar`'s own scan treats a slot as occupied
+  exactly when this is nonzero, then dereferences it directly as
+  `g_trapEffectDefs`'s per-effect record. Traced back to
+  `SelectTrapEffectVariant` (`yendor2.asm:11373`, called right before
+  `ResolveAttackerActionOutcome`): it resolves the attacking monster's
+  chosen effect id (`MonsterFieldAttackEffect`, or 25% of the time
+  `MonsterFieldSpecialAttack` when the monster has one and isn't
+  flagged single-effect-only) via `PrepareTrapEffectSlots`, then
+  stashes the definition pointer in `word_32940` — which
+  `ResolveAttackerActionOutcome`'s branch 1 copies straight into
+  `+0xA` unchanged, and branch 2 explicitly saves/restores around its
+  own `FailsSavingThrow` call so it survives to be copied too.
+- `+0xC`: the defender's party-record pointer (`word_32908`).
+- `+0xE`: the **resolved inflicted-status bits** — `0` if none/
+  resisted, or the effect's `EffectInflictMask` bits if a status
+  applies. Branch 1 pre-supplies this directly from
+  `g_stagedAttackStatusFlags` (bypassing a fresh roll, matching
+  `RollEffectResistance`'s own "already resolved" skip case, see
+  below); branch 2 doesn't touch it at all, leaving whatever a *prior*
+  call happened to leave there — a genuine loose end, not confirmed to
+  matter in practice.
+- `+0x10`: the **magnitude/amount** — `RollEffectMagnitude` computes
+  one here if it's still 0; branch 1 pre-supplies `combatResolveAttack`'s
+  own damage roll instead (bypassing the roll, same "already resolved"
+  pattern), branch 2 pre-supplies the attacking monster's own field
+  `+0x8E` (still unnamed in `monster.h` — not traced far enough to
+  confirm what it represents beyond "a pre-rolled magnitude-shaped
+  value").
+- `+0x12`: only ever written by branch 2, from the attacker's field
+  `+0x90` (also unnamed) — not read by any of `ApplyEffectCost`/
+  `RollEffectMagnitude`/`RollEffectResistance` in the "normal" draw
+  variant this session traced; may only matter to the other 2 draw
+  variants (item expiry / stat delta) or to drawing itself.
+
+**`ApplyEffectAndDrawIconBar`'s own dispatch**, once a slot is
+occupied, picks one of 3 sub-pipelines by the effect definition's
+`modeFlags`: item expiry (`0x600` — destroys or replaces an equipped
+item, via `HandleIconBarItemExpiry`), a capped/floored stat delta
+(`0x180`, via `ApplyIconBarStatDelta`), or — the one this session
+reimplements — the "normal" trap/attack-effect path:
+`RollEffectMagnitude` -> `RollEffectResistance` -> `ApplyEffectCost`,
+then draws the effect's icon. **Both other variants are deliberately
+not reimplemented this round** — genuinely different mechanisms (item
+transformation, direct stat manipulation) with their own call chains
+(`RemoveMultiStatEffect`, `ApplyMultiStatEffectForItem`,
+`RefreshCarryCapacityAndAttributeBonuses`, `CheckForLevelUp`) not yet
+traced.
+
+**`RollEffectMagnitude`** (`yendor2.asm:14214`): if the effect doesn't
+already have a magnitude staged (`+0x10 == 0`) and isn't a
+gold/ore-cost effect (`costFlags` bits 0-2), computes one — fixed
+(`magnitudeMin`, no level scaling) if `EffectModeMagnitudeFixed`;
+`magnitudeMin * level` (no random roll) if `EffectModeMagnitudeScaled`;
+otherwise `(RandomInRange(magnitudeMax - magnitudeMin) + magnitudeMin)
+* level`. `level` is the defender's own `PartyFieldLevel`. Already
+fully captured by `effect.h`'s existing `effectMagnitude` (from an
+earlier session) except for the RNG call itself and the "should I
+even roll" gate, both now added as `effectRollMagnitude`.
+
+**`RollEffectResistance`** (`yendor2.asm:14127`): if the effect
+inflicts nothing (`effectInflictedStatus(def) == 0`), no status. If it
+inflicts but doesn't roll a resistance (`EffectModeRollResistance`
+unset), the status applies **unconditionally, with no saving throw at
+all** — a real, easy-to-miss branch (the natural assumption is "no
+roll mode set" means "never inflicted"; it's the opposite). Otherwise
+rolls `FailsSavingThrow(defenderLevel, threshold, effectResistanceBonus(def,
+defenderRecord))` — `threshold` here is `word_32DC0`, set by
+`ProcessMonsterAttackTurn` from the attacker's own
+`MonsterFieldSaveDifficulty` right before calling
+`ApplyEffectAndDrawIconBar`, *not* read from the icon slot at all.
+Captured as `effect.h`'s new `effectResolveInflictedStatus`, taking
+the saving-throw's own boolean outcome as a parameter rather than
+rolling it internally — keeps `effect.c` free of an RNG/combat.h
+dependency; the roll itself is the caller's `combatFailsSavingThrow`.
+
+**`ApplyEffectCost`** (`yendor2.asm:14000`): dispatches the effect's
+cost (`effect.h`'s `effectSpend`) to HP/MP/HP+MP deduction
+(`DeductHPClamped`/`DeductMPClamped`, now `partyDeductHp`/
+`partyDeductMp` in `party.c` — clamped at 0, hitting 0 HP also sets
+`PartyStatusDead`) or one of 3 material counters via
+`SpendMaterialCounterClamped` (gold/ore — not reimplemented; no combat
+call site ever costs one, `MonsterFieldAttackEffect` is always an
+HP-cost effect per `monster.h`'s own existing doc). Then ORs the
+resolved inflicted-status bits into the defender's
+`PartyFieldStatusFlags` if nonzero. **Two side effects deliberately
+not reproduced**: `ClearPartySlotReferenceOnDamage` (a raw-pointer
+"who's targeting whom" scratch table this project already avoids —
+targets are tracked by `SaveHeaderPartySlots` id instead, see
+`combatBuildTurnOrder`) and `UpdatePartyAverageStatTiers`
+(`yendor2.asm:19029` — averages 3 party fields into UI-only
+display-tier globals: a minimap fog/torch level, a 4-tier weather
+overlay, and the monster-info-panel detail-reveal tier; pure rendering
+bookkeeping, deferred to the eventual SDL2 layer along with the rest
+of `ApplyEffectAndDrawIconBar`'s drawing).
+
+Reimplemented as `combatApplyEffect` in `src23/combat.c`/`.h` (the
+`ApplyEffectCost` dispatch + status write, taking an already-resolved
+spend/amount/inflictedStatus rather than reading an icon slot) plus
+`effectRollMagnitude`/`effectResolveInflictedStatus` in
+`src23/effect.c`/`.h` and `partyDeductHp`/`partyDeductMp` in
+`src23/party.c`/`.h`. Tests: `test_effect.c` covers
+`effectResolveInflictedStatus`'s 3 cases (no inflict / unconditional
+inflict / rolled) and `effectRollMagnitude`'s fixed/scaled/plain cases
+(the plain case using the same RNG-peek technique as combat's tests);
+`test_party.c` covers HP/MP deduction including the exactly-to-0 edge
+case and the death flag; `test_combat.c` covers `combatApplyEffect`'s
+HP/MP/HP+MP cost dispatch, status-flag OR-in alongside a pre-existing
+flag, and that material spend types are a confirmed no-op. All 18
+suites pass.
 
 ### `TickMonsterTimer`: a per-monster state machine, mechanism confirmed, trigger not (decoded 2026-09-23)
 

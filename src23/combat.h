@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "effect.h"
 #include "game.h"
 #include "monster.h"
 #include "monsterpool.h"
@@ -200,14 +201,52 @@ uint16_t combatResolveAttack(uint16_t defense, uint16_t accuracy, uint16_t power
  * combatFailsSavingThrow with a not-yet-traced discriminant
  * (word_328CA bit 0x200 plus the attacker's own flags field) to pick
  * one of 3 outcome branches, writes the result into a "staged combat
- * event" structure (word_32906, 6 fields) whose downstream consumer
- * isn't traced, and its third branch needs GetClassifiedItemStatField
- * -> ClassifyItemServiceTier, a whole item-compatibility-tier system
- * this project hasn't decoded at all (see file-formats.md). The two
- * primitives below are confirmed solid on their own; composing them
- * into the full outcome function is future work, not a blocker for
- * using them directly.
+ * event" structure (word_32906, one of 4 g_partyEffectIconSlots
+ * entries, 0xC50 + slotIndex*0x14 -- the same icon-bar slot mechanism
+ * PrepareTrapEffectSlots/ApplyItemEffectIconSlot already reference).
+ * That consumer IS now traced (ApplyEffectAndDrawIconBar,
+ * yendor2.asm:13789, reads it via ProcessMonsterAttackTurn) -- its
+ * state-mutating half is combatApplyEffect below; its drawing half
+ * (icon picture, sound, tick wait) is not reimplemented, deferred to
+ * the eventual SDL2 layer. ResolveAttackerActionOutcome's third
+ * branch still needs GetClassifiedItemStatField ->
+ * ClassifyItemServiceTier, a whole item-compatibility-tier system
+ * this project hasn't decoded at all (see file-formats.md). The
+ * primitives below are confirmed solid on their own; composing all of
+ * ResolveAttackerActionOutcome itself is still future work.
  */
 bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bonus, RandomState *rng);
+
+/*
+ * ApplyEffectCost's state-mutating half (yendor2.asm:14000,
+ * instruction-identical in Chapter 3), the confirmed consumer of
+ * ResolveAttackerActionOutcome's staged event once its magnitude and
+ * inflicted-status fields are resolved (combat's own callers resolve
+ * those two fields differently per branch -- a normal hit uses
+ * combatResolveAttack's own damage as the magnitude and skips
+ * resistance entirely; a status-effect hit uses effect.h's
+ * effectResolveInflictedStatus after a combatFailsSavingThrow roll,
+ * and a magnitude drawn directly from the attacking monster's own
+ * record rather than rolled -- see file-formats.md's "Attack
+ * resolution" section for exactly which fields).
+ *
+ * Dispatches spend (effect.h's effectSpend(def)) to
+ * partyDeductHp/partyDeductMp for EffectSpendHp/Mp/HpAndMp; ORs
+ * inflictedStatus into the defender's PartyFieldStatusFlags if
+ * nonzero. EffectSpendGold/Ore1/Ore2/None are a no-op here -- no
+ * combat call site this project has traced ever costs a material
+ * counter (MonsterFieldAttackEffect is always an HP-cost effect per
+ * monster.h).
+ *
+ * Deliberately not reproduced (both UI/scratch-state side effects of
+ * the original, not state a from-scratch port needs): clearing a
+ * raw-pointer "who's targeting whom" scratch table
+ * (ClearPartySlotReferenceOnDamage -- this project already tracks
+ * combat targets by SaveHeaderPartySlots id, see
+ * combatBuildTurnOrder's own design note) and recomputing 3 UI-only
+ * display-tier globals (UpdatePartyAverageStatTiers -- minimap fog
+ * level, a weather overlay tier, and monster-detail reveal tier).
+ */
+void combatApplyEffect(uint8_t *defenderRecord, EffectSpend spend, uint16_t amount, uint16_t inflictedStatus);
 
 #endif

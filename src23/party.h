@@ -192,6 +192,22 @@ uint16_t partyGetProtection(const uint8_t *record, PartyProtection protection);
 uint8_t *partyExperience(uint8_t *record); /* Bcd4 */
 
 /*
+ * DeductHPClamped (yendor2.asm:13965, instruction-identical in Chapter
+ * 3): subtracts amount from PartyStatHitPoints' current value, clamped
+ * at 0; reaching 0 also sets PartyStatusDead. The original also calls
+ * ClearPartySlotReferenceOnDamage (clears a raw-pointer "who's
+ * targeting whom" scratch table this project doesn't model -- targets
+ * are tracked by SaveHeaderPartySlots id instead, see combat.h) and
+ * UpdatePartyAverageStatTiers (recomputes 3 UI-only display-tier
+ * globals) as side effects here; neither is reproduced.
+ */
+void partyDeductHp(uint8_t *record, uint16_t amount);
+
+/* DeductMPClamped (yendor2.asm:13985, instruction-identical in Chapter 3): subtracts amount from
+ * PartyStatMagicPoints' current value, clamped at 0. */
+void partyDeductMp(uint8_t *record, uint16_t amount);
+
+/*
  * CheckForLevelUp (yendor2.asm:20036, yendor3.asm:12025, instruction-
  * identical): walks the per-game 89-entry XP-threshold table
  * (partyXpThresholdTable) from the character's current PartyFieldLevel,

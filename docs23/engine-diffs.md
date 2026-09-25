@@ -1262,6 +1262,21 @@ incidental difference. Not reimplemented yet, since
 `file-formats.md`'s "Attack resolution" section for the full branch
 breakdown and what's still open.
 
+## The icon-bar effect-application pipeline: no behavioral difference found
+
+`ProcessMonsterAttackTurn`, `SelectTrapEffectVariant`,
+`PrepareTrapEffectSlots`, `ApplyEffectAndDrawIconBar`,
+`DeductHPClamped`, `DeductMPClamped`, `ApplyEffectCost`,
+`RollEffectResistance`, and `RollEffectMagnitude` are all
+instruction-identical between the two games — checked directly against
+`yendor3.asm` (`:1744`, `:2358`, `:6287`, `:6322`, `:6522`, `:6541`,
+`:6556`, `:6688`, `:6775` respectively). Same field offsets, same mode
+dispatch, same clamp/death-flag behavior. Reimplemented once
+(`effectRollMagnitude`/`effectResolveInflictedStatus` in
+`src23/effect.c`, `combatApplyEffect` in `src23/combat.c`,
+`partyDeductHp`/`partyDeductMp` in `src23/party.c`), shared by both
+games.
+
 ## Turn-based combat turn order and round processing: no behavioral difference found
 
 `BuildCombatTurnOrder`, `SelectActiveMonster`, and `ProcessCombatRound`

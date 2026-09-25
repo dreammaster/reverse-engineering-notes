@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "game.h"
+#include "random.h"
 
 /*
  * Trap and status effect definitions: the 12-byte records at g_trapEffectDefs
@@ -116,5 +117,36 @@ uint16_t effectMagnitude(const EffectDef *def, uint16_t level, uint16_t randomVa
  * Zero if the effect doesn't roll a resistance.
  */
 uint16_t effectResistanceBonus(const EffectDef *def, const uint8_t *partyRecord);
+
+/*
+ * RollEffectResistance's status-inflicted decision (yendor2.asm:14127,
+ * instruction-identical in Chapter 3), given the saving throw's own
+ * outcome rather than rolling it here -- keeps this function free of
+ * an RNG dependency; a caller that needs the roll itself uses
+ * combat.h's combatFailsSavingThrow with effectResistanceBonus(def,
+ * defenderRecord) as its bonus parameter. Returns 0 if the effect
+ * inflicts nothing at all (effectInflictedStatus(def) == 0);
+ * effectInflictedStatus(def) outright if the effect doesn't roll a
+ * resistance at all (EffectModeRollResistance unset -- the original
+ * applies the status unconditionally, with no saving throw in this
+ * case); otherwise effectInflictedStatus(def) if savingThrowFailed is
+ * true, 0 (resisted) if false.
+ */
+uint16_t effectResolveInflictedStatus(const EffectDef *def, bool savingThrowFailed);
+
+/*
+ * RollEffectMagnitude's own roll-and-compute (yendor2.asm:14214,
+ * instruction-identical in Chapter 3): rolls randomInRange(rng,
+ * effectRandomBound(def)) only when the effect is neither fixed nor
+ * level-scaled (matching the original's exact conditional RNG call --
+ * a Fixed or Scaled effect never consumes a random draw), then
+ * returns effectMagnitude(def, level, thatRoll). Effects that don't
+ * roll a magnitude at all (effectRollsMagnitude(def) == false -- the
+ * gold/ore-cost effects) aren't meaningfully covered by this function;
+ * no combat call site this project has traced needs it (a monster's
+ * ordinary attack effect is always HP-cost), so where a gold/ore
+ * effect's spent amount actually comes from is still unconfirmed.
+ */
+uint16_t effectRollMagnitude(const EffectDef *def, uint16_t level, RandomState *rng);
 
 #endif

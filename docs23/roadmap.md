@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-25, added: attack resolution primitives)
+## Status (last updated 2026-09-25, added: the icon-bar effect-application pipeline)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -466,15 +466,32 @@ groundwork below is already in place.
   falls back to a normal damage roll using the monster's ordinary
   attack effect -- see `engine-diffs.md`. `ResolveAttackerActionOutcome`
   itself, `ProcessMonsterAttackTurn`, and the player-attack path inside
-  `HandleDungeonInput` remain deferred -- the "staged combat event"
-  record `ResolveAttackerActionOutcome` writes into has no traced
-  consumer yet, and its third branch (equipment corrosion) needs a
-  whole undecoded item-compatibility-tier system
-  (`ClassifyItemServiceTier`). Tests in `tests/test_combat.c` (using
-  an RNG-state-peek technique for exact, non-flaky assertions about
+  `HandleDungeonInput` remain deferred -- branch 3 (equipment
+  corrosion) still needs the undecoded `ClassifyItemServiceTier`
+  item-tier system. Tests in `tests/test_combat.c` (using an
+  RNG-state-peek technique for exact, non-flaky assertions about
   roll-gated outcomes rather than looping for a lucky seed); all 18
   suites pass. Full writeup in `file-formats.md`'s new "Attack
   resolution" section.
+  **The staged combat event's consumer -- found and reimplemented,
+  same day (2026-09-25)**: reading `ProcessMonsterAttackTurn` in full
+  (the actual caller of `ResolveAttackerActionOutcome`, not chased
+  down the previous round) resolved last round's open blocker --
+  `word_32906` is one of 4 `g_partyEffectIconSlots` entries, read by
+  `ApplyEffectAndDrawIconBar`. Reimplemented its state-mutating half
+  (`RollEffectMagnitude`/`RollEffectResistance`/`ApplyEffectCost`, not
+  its drawing) as `effectRollMagnitude`/`effectResolveInflictedStatus`
+  (`src23/effect.c`/`.h`), `combatApplyEffect`
+  (`src23/combat.c`/`.h`), and `partyDeductHp`/`partyDeductMp`
+  (`src23/party.c`/`.h`). Instruction-identical between the games (see
+  `engine-diffs.md`). Deliberately not reimplemented: the other 2 of
+  `ApplyEffectAndDrawIconBar`'s 3 dispatch variants (item expiry, stat
+  delta -- different mechanisms with their own untraced call chains)
+  and its own drawing/sound/UI-tier-refresh side effects (deferred to
+  the SDL2 layer). Tests across `test_effect.c`/`test_party.c`/
+  `test_combat.c`; all 18 suites pass. Full writeup in
+  `file-formats.md`'s "The staged combat event's consumer, found"
+  section.
 
 ## Next: continue the C reimplementation
 
@@ -604,19 +621,27 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    strengthened the "traps reuse monster catalog fields" hypothesis
    (`RollTrapAvoidanceMagnitude`'s `+0x64`/`+0x66` are literally
    `MonsterFieldRangedAccuracy`/`RangedDamage`) without proving it.
-~~7. **Turn-based combat's turn order, round processing, and attack
-   primitives**~~ — **done 2026-09-25** (`combatBuildTurnOrder`/
+~~7. **Turn-based combat's turn order, round processing, attack
+   primitives, and the icon-bar effect-application pipeline they
+   feed**~~ — **done 2026-09-25** (`combatBuildTurnOrder`/
    `combatSelectActiveMonster`/`combatProcessRound`/`combatResolveAttack`/
-   `combatFailsSavingThrow` in `src23/combat.c`/`.h`, see the status
-   entries above and `file-formats.md`'s "Turn-based combat"/"Attack
-   resolution" sections). **Still open, a good candidate for its own
-   pass**: composing the primitives into a full attack --
-   `ResolveAttackerActionOutcome` (whose "staged combat event" record
-   has no traced consumer yet, and whose third branch needs the
-   undecoded `ClassifyItemServiceTier` item-tier system),
+   `combatFailsSavingThrow`/`combatApplyEffect` in `src23/combat.c`/`.h`,
+   `effectRollMagnitude`/`effectResolveInflictedStatus` in
+   `src23/effect.c`/`.h`, `partyDeductHp`/`partyDeductMp` in
+   `src23/party.c`/`.h` -- see the status entries above and
+   `file-formats.md`'s "Turn-based combat"/"Attack resolution"/"The
+   staged combat event's consumer, found" sections). **Still open, a
+   good candidate for its own pass**: composing everything above into
+   the full, UI-driving orchestration -- `ResolveAttackerActionOutcome`
+   itself (whose third branch still needs the undecoded
+   `ClassifyItemServiceTier` item-tier system),
+   `ApplyEffectAndDrawIconBar`'s other 2 dispatch variants (item
+   expiry, stat delta -- different mechanisms, own untraced call
+   chains: `HandleIconBarItemExpiry`, `ApplyIconBarStatDelta`),
    `ProcessMonsterAttackTurn`, and the player-attack path inside
-   `HandleDungeonInput` (spell/ability use in combat, the actual HP
-   subtraction and UI feedback for both attacker types) -- the
+   `HandleDungeonInput` (spell/ability use in combat, area-attack
+   handling, and all the drawing/sound/UI-tier-refresh work this
+   session deliberately deferred to the eventual SDL2 layer) -- the
    remaining part of the combat subsystem, now clearly scoped rather
    than an open-ended unknown.
 8. **The item-effect "banish" mechanic** (`ApplyEncodedItemEffect`,

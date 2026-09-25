@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_combat test_combat.c ../combat.c ../monsterpool.c ../dungeongrid.c ../movement.c ../party.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c ../bcd4.c ../globalflags.c ../item.c && ./test_combat
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_combat test_combat.c ../combat.c ../effect.c ../monsterpool.c ../dungeongrid.c ../movement.c ../party.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c ../bcd4.c ../globalflags.c ../item.c && ./test_combat
  */
 #include <stdio.h>
 #include <string.h>
@@ -327,6 +327,68 @@ static void testFailsSavingThrowMatchesRollAgainstClampedFloor(void) {
     }
 }
 
+static void testApplyEffectHpCost(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    partySetStat(record, PartyStatHitPoints, 30);
+
+    combatApplyEffect(record, EffectSpendHp, 12, 0);
+
+    checkU32("HP cost deducted", partyGetStat(record, PartyStatHitPoints), 18);
+    checkU32("no status inflicted", partyGetU16(record, PartyFieldStatusFlags), 0);
+}
+
+static void testApplyEffectMpCost(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    partySetStat(record, PartyStatMagicPoints, 10);
+
+    combatApplyEffect(record, EffectSpendMp, 25, 0);
+
+    checkU32("MP cost clamped at 0", partyGetStat(record, PartyStatMagicPoints), 0);
+}
+
+static void testApplyEffectHpAndMpCost(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    partySetStat(record, PartyStatHitPoints, 30);
+    partySetStat(record, PartyStatMagicPoints, 30);
+
+    combatApplyEffect(record, EffectSpendHpAndMp, 5, 0);
+
+    checkU32("HP+MP cost deducts the same amount from both", partyGetStat(record, PartyStatHitPoints), 25);
+    checkU32("HP+MP cost deducts the same amount from both (MP)", partyGetStat(record, PartyStatMagicPoints), 25);
+}
+
+static void testApplyEffectInflictsStatus(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    partySetStat(record, PartyStatHitPoints, 30);
+    partySetU16(record, PartyFieldStatusFlags, PartyStatusCursed); /* a pre-existing, unrelated flag */
+
+    combatApplyEffect(record, EffectSpendHp, 5, PartyStatusPoisoned);
+
+    checkU32("HP cost still applied alongside a status", partyGetStat(record, PartyStatHitPoints), 25);
+    check("the new status is OR'd in, not replacing existing flags",
+          (partyGetU16(record, PartyFieldStatusFlags) & (PartyStatusCursed | PartyStatusPoisoned)) ==
+              (PartyStatusCursed | PartyStatusPoisoned));
+}
+
+static void testApplyEffectMaterialCostsAreNoOp(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    partySetStat(record, PartyStatHitPoints, 30);
+    partySetStat(record, PartyStatMagicPoints, 30);
+
+    combatApplyEffect(record, EffectSpendGold, 999, 0);
+    combatApplyEffect(record, EffectSpendOre1, 999, 0);
+    combatApplyEffect(record, EffectSpendOre2, 999, 0);
+    combatApplyEffect(record, EffectSpendNone, 999, 0);
+
+    checkU32("no combat call site costs a material counter: HP untouched", partyGetStat(record, PartyStatHitPoints), 30);
+    checkU32("MP untouched too", partyGetStat(record, PartyStatMagicPoints), 30);
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
@@ -344,6 +406,11 @@ int main(void) {
     testResolveAttackDamageFormula();
     testFailsSavingThrowAlwaysResistsWhenChanceIsAtLeast100();
     testFailsSavingThrowMatchesRollAgainstClampedFloor();
+    testApplyEffectHpCost();
+    testApplyEffectMpCost();
+    testApplyEffectHpAndMpCost();
+    testApplyEffectInflictsStatus();
+    testApplyEffectMaterialCostsAreNoOp();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
