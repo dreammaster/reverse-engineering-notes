@@ -1,5 +1,8 @@
 #include "vscommon/fontManager.h"
 
+void TFontManager::Initialize(TVList& /*fonts*/) {
+}
+
 void TFontManager::SetCurrentFont(const TVisObjRef& /*font*/) {
 }
 

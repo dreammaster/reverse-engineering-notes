@@ -20,6 +20,11 @@ extern wxString strAppName;
 extern wxSize surfaceSize;
 extern wxSize renderSize;
 
+// Confirmed referenced by TGameControl::UpdateAspectRatio (Deponia_Linux.asm
+// line 457430): when set, the aspect ratio is forced to renderSize instead
+// of the game data's configured aspect point. Not yet seen written anywhere.
+extern bool g_unlockAspect;
+
 extern TStandardPaths standardPaths;
 
 // wxFileName, not wxString: main() calls GetFullPath() on it, which is a

@@ -35,6 +35,37 @@ asm lines ~455750-462554), two patterns worth flagging for future passes:
   for buttons 0-14, -1 otherwise - presumably reserved above the Unicode
   range used for regular keyboard key codes elsewhere in the engine.
 
+## TGameControl batch 2: TSceneControl::GetScene() really returns TGScene*
+
+Continuing the short-method sweep (asm lines ~456960-461870) turned up one
+more manifest-signature correction and two new classes:
+
+- **`TSceneControl::GetScene()` (and therefore `TGameControl::GetScene()`,
+  which tail-calls it) returns `TGScene*`, not `TPaintControl*`** - every
+  caller immediately uses the result as `TGScene::IsMenu()` or
+  `TGScene::GetObject()`, which only compile/make sense if the real type is
+  the more specific one. `TGScene` was added (deriving from `TPaintControl`,
+  matching `TCursorControl`/`TLoadingControl`'s pattern) with just the two
+  confirmed methods.
+- **`TMasterControl::m_visionaire` needed to move from private to
+  protected**, same reasoning as `m_sceneControl`
+  (`SkipCurrentText`/`UpdateAspectRatio`/`ResetState` all call
+  `m_visionaire->GetGame()` directly from TGameControl, with no
+  TMasterControl accessor in between).
+- **A small `TSText` class** was added for the "currently displayed text"
+  pointer (`IsTextActive`/`IsNoTextDisplayed`, asm lines 461674-461777):
+  null when no text is showing, otherwise exposes `GetDataObject()` and a
+  target `TVisObjRef` field at a fixed offset (same "first member is a bare
+  TVisObjRef" pattern as `TGDialog` - see below).
+- **Deferred**: `IsTalking`/`ClearCurrentText` both walk a `std::list<TGText*>
+  m_activeTexts` (confirmed present at asm offset +0x388, right before the
+  already-known +0x398 list and +0x3A8 `TGDialog` - all three were
+  sentinel-initialized together in the constructor). Left unstubbed for a
+  future pass since it needs a `TGText` class (`GetSpeaker()` at minimum)
+  that hasn't been reversed at all yet, rather than guessing at its shape.
+- `TVisObjRef::operator==` was added (confirmed used at several of these
+  call sites) - it compares the 4-byte id array from `GetId()`.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

@@ -39,6 +39,8 @@
 #include "TGDialog.h"
 #include "Tween.h"
 #include "TSceneControl.h"
+#include "TSText.h"
+#include "datastruct/vlist.h"
 #include "vscommon/fontManager.h"
 #include "vsplayer/control/masterControl.h"
 #include "vstables/visionaireGame.h"
@@ -65,7 +67,10 @@ public:
 
     void UpdateTexts();
     TSceneControl* GetSceneControl();
-    TPaintControl* GetScene();
+    // Confirmed TGScene* (asm line 456314 tail-calls TSceneControl::
+    // GetScene(), whose own return type was corrected the same way - see
+    // TSceneControl.h).
+    TGScene* GetScene();
     TGCharacter* GetCurrentCharacter();
     TGCharacter* GetCurrentCharacterPointer() const;
     TGCharacter* GetCharacter(const TVisObjRef& character);
@@ -195,4 +200,18 @@ private:
     TGCharacter* m_currentCharacter = nullptr;
     wxString m_gamePath;
     bool m_isClearingAnimations = false;
+    // Confirmed via UpdateAspectRatio (asm lines 457414-457458): the last
+    // resolved aspect width/height, and (via UpdateCurrentObject, asm lines
+    // 456964-456999) the last mouse position re-dispatched through
+    // HandleMouseMove, defaulting to a {-1,-1} "no position yet" sentinel.
+    int m_aspectWidth = 0;
+    int m_aspectHeight = 0;
+    wxPoint m_lastMousePos{-1, -1};
+    // Confirmed present and cleared by ResetState() (asm line 460940); real
+    // purpose (what populates it) not identified.
+    TVList m_pendingItems;
+    // Confirmed (IsTextActive/IsNoTextDisplayed, asm lines 461674-461777):
+    // null when no text is currently displayed. Ownership/lifetime (who
+    // sets this, whether it's heap-owned) not confirmed - left un-deleted.
+    TSText* m_currentText = nullptr;
 };

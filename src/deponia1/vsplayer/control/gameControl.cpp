@@ -87,7 +87,7 @@ TSceneControl* TGameControl::GetSceneControl() {
     return &m_ownedSceneControl;
 }
 
-TPaintControl* TGameControl::GetScene() {
+TGScene* TGameControl::GetScene() {
     return m_ownedSceneControl.GetScene();
 }
 
@@ -144,6 +144,11 @@ void TGameControl::SkipCurrentText() {
 }
 
 void TGameControl::UpdateCurrentObject() {
+    // Confirmed (asm lines 456964-456999): re-dispatches the last known
+    // mouse position through HandleMouseMove(pos, false) unless it's still
+    // at the {-1,-1} "no position yet" sentinel.
+    if (m_lastMousePos.x != -1 || m_lastMousePos.y != -1)
+        HandleMouseMove(m_lastMousePos, false);
 }
 
 void TGameControl::RegisterHookFunctionSceneMousePosition(const wxString& name) {
@@ -175,6 +180,21 @@ void TGameControl::StartGameAction(TKeyboardMessageEnum /*msg*/, const wxString&
 }
 
 void TGameControl::UpdateAspectRatio() {
+    // Confirmed (asm lines 457414-457458): picks width/height from either
+    // renderSize (if g_unlockAspect) or the game data's aspect point (field
+    // id 0x7E, meaning unconfirmed), stores them, then reconfigures the
+    // inherited TPaintControl surface. TVisObjRef::GetPoint()'s field-id
+    // meaning is not resolved - see visobjref.h.
+    TVisObjRef game = m_visionaire->GetGame();
+    const wxPoint* aspectPoint = game.GetPoint(0x7E);
+    if (g_unlockAspect) {
+        m_aspectWidth = renderSize.width;
+        m_aspectHeight = renderSize.height;
+    } else {
+        m_aspectWidth = aspectPoint->x;
+        m_aspectHeight = aspectPoint->y;
+    }
+    InitControl(m_aspectWidth, m_aspectHeight);
 }
 
 void TGameControl::InitAfterLoadingScreen() {
@@ -190,9 +210,17 @@ void TGameControl::InitInterfaces() {
 }
 
 void TGameControl::SetCharacterInterfaces() {
+    // Confirmed (asm lines 458260-458285).
+    for (TGCharacter* character : m_characters)
+        character->SetInterfaces();
 }
 
 void TGameControl::InitFonts() {
+    // Confirmed (asm lines 458293-458322): field id 3, flag true - meaning
+    // of either not resolved.
+    TVList fonts;
+    m_visionaire->GetList(3, fonts, true);
+    GetFontManager()->Initialize(fonts);
 }
 
 void TGameControl::InitScripts() {
@@ -219,12 +247,31 @@ void TGameControl::SetOnScrollDestination() {
 }
 
 void TGameControl::HandleCharacters() {
+    // Confirmed (asm lines 460829-460866): skipped entirely while the scene
+    // is a menu.
+    if (GetScene()->IsMenu())
+        return;
+    for (TGCharacter* character : m_characters) {
+        character->WalkWay();
+        character->UpdateCharacter();
+    }
 }
 
 void TGameControl::SetAllCharactersOnDestination() {
+    // Confirmed (asm lines 460874-460902).
+    for (TGCharacter* character : m_characters)
+        character->SetOnDestination();
 }
 
 void TGameControl::ResetState() {
+    // Confirmed (asm lines 460910-460953): field id 0x1E6 on the game's
+    // TVisObjRef, meaning unconfirmed.
+    m_objectManager.ResetCurrentObject();
+    m_objectManager.ResetEventInfo();
+    TVisObjRef game = m_visionaire->GetGame();
+    game.ClearLink(0x1E6, false);
+    m_objectManager.RemoveItem(true);
+    m_pendingItems.clear();
 }
 
 const TGDialog* TGameControl::GetDialog() const {
@@ -249,12 +296,22 @@ void TGameControl::StartBackgroundText(const TVisObjRef& /*text*/, TGCharacter* 
 void TGameControl::ReattachSceneObjectTexts() {
 }
 
-bool TGameControl::IsTextActive(const TVisObjRef& /*text*/) const {
-    return false;
+bool TGameControl::IsTextActive(const TVisObjRef& text) const {
+    // Confirmed (asm lines 461674-461739).
+    if (m_currentText == nullptr)
+        return false;
+    if (!(m_currentText->GetDataObject() == text))
+        return false;
+    return m_currentText->GetTarget().GetBool(0x211);
 }
 
 bool TGameControl::IsNoTextDisplayed() const {
-    return true;
+    // Confirmed (asm lines 461747-461777): a text counts as "displayed"
+    // when its target's GetBool(0x211) is set; otherwise fall back to
+    // whether a dialog is active.
+    if (m_currentText != nullptr && m_currentText->GetTarget().GetBool(0x211))
+        return false;
+    return m_dialog.IsEmpty();
 }
 
 bool TGameControl::IsTalking(const TVisObjRef& /*character*/) const {

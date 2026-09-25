@@ -23,6 +23,12 @@ public:
     virtual void Prepare();
     virtual void Draw();
 
+    // Confirmed called (Deponia_Linux.asm line 457443, from
+    // TGameControl::UpdateAspectRatio) with the resolved width/height as
+    // plain ints - presumably (re)configures the render surface, but its
+    // internal behavior wasn't traced further.
+    void InitControl(int width, int height);
+
     void SetCurrent();
     bool IsActive() const;
     void SetActive(bool active);

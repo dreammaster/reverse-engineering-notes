@@ -8,6 +8,7 @@ SDL_GLContext VSPlayerContext = nullptr;
 wxString strAppName;
 wxSize surfaceSize;
 wxSize renderSize;
+bool g_unlockAspect = false;
 
 TStandardPaths standardPaths;
 

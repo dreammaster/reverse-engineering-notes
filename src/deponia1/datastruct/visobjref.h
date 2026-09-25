@@ -26,12 +26,19 @@ public:
     ~TVisObjRef() = default;
 
     bool IsEmpty() const { return true; }
+    // Confirmed (TGameControl::GetInterface/IsTextActive/IsTalking): compares
+    // the 3-4 byte id, per GetId()'s comment above.
+    bool operator==(const TVisObjRef& other) const;
 
     bool GetBool(int fieldId) const;
     int GetInt(int fieldId) const;
     wxString GetStr(int fieldId) const;
     std::wstring GetPath(int fieldId) const;
     TVisObjRef GetLink(int fieldId) const;
+    // Confirmed called (TGameControl::ResetState, Deponia_Linux.asm line
+    // 460932) with a field id and a bool - not reversed beyond that call
+    // shape.
+    void ClearLink(int fieldId, bool flag);
     const wxPoint* GetPoint(int fieldId) const;
     const wxRect* GetRect(int fieldId) const;
 

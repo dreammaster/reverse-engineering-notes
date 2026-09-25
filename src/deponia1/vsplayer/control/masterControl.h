@@ -167,6 +167,13 @@ protected:
     // gameControl.cpp); protected rather than private for that reason.
     TSceneControl* m_sceneControl = nullptr;
 
+    // TGameControl reads this directly (confirmed: SkipCurrentText() and
+    // UpdateAspectRatio() both do `m_visionaire->GetGame()` on it) - a
+    // TMasterControl-only accessor was never called at those sites, so this
+    // is protected rather than private for the same reason as
+    // m_sceneControl above.
+    TVisionaire* m_visionaire = nullptr;
+
 private:
     TMovie m_movie;
     TGObjectManager m_objectManager;
@@ -188,7 +195,6 @@ private:
 
     int m_windowWidth = 0;
     int m_windowHeight = 0;
-    TVisionaire* m_visionaire = nullptr;
     SLoadingScreen m_loadingScreen;
     TCursorControl* m_cursorControl = nullptr;
     TGameController* m_gameController = nullptr;

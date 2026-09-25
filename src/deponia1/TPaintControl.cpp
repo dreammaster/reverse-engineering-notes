@@ -6,6 +6,9 @@ void TPaintControl::Prepare() {
 void TPaintControl::Draw() {
 }
 
+void TPaintControl::InitControl(int /*width*/, int /*height*/) {
+}
+
 void TPaintControl::SetCurrent() {
 }
 

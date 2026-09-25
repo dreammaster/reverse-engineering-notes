@@ -1,5 +1,10 @@
 #include "datastruct/visobjref.h"
 
+bool TVisObjRef::operator==(const TVisObjRef& other) const {
+    return m_id[0] == other.m_id[0] && m_id[1] == other.m_id[1] && m_id[2] == other.m_id[2] &&
+           m_id[3] == other.m_id[3];
+}
+
 bool TVisObjRef::GetBool(int /*fieldId*/) const {
     return false;
 }
@@ -18,6 +23,9 @@ std::wstring TVisObjRef::GetPath(int /*fieldId*/) const {
 
 TVisObjRef TVisObjRef::GetLink(int /*fieldId*/) const {
     return TVisObjRef();
+}
+
+void TVisObjRef::ClearLink(int /*fieldId*/, bool /*flag*/) {
 }
 
 const wxPoint* TVisObjRef::GetPoint(int /*fieldId*/) const {

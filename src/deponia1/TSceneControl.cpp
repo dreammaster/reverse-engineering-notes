@@ -1,8 +1,7 @@
 #include "TSceneControl.h"
 
-TPaintControl* TSceneControl::GetScene() {
-    static TPaintControl scene;
-    return &scene;
+TGScene* TSceneControl::GetScene() {
+    return &m_scene;
 }
 
 void TSceneControl::Draw() {
