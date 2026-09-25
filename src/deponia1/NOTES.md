@@ -115,6 +115,35 @@ Also: `TSceneControl::GetScene()` is const in the original
 - a `const_cast` inside it reflects that "logical const, physical mutable
 accessor" shape rather than fighting it.
 
+## TGameControl batch 5: finishing the text subsystem (TGText/TSText/TManagedObject)
+
+Closes out the deferred quartet from batch 3 (`IsTalking`, `ClearCurrentText`,
+`ReattachSceneObjectTexts`, `ClearObjectText`, asm lines 461785-462228) by
+giving `TGText` a real shape instead of leaving it unmodeled:
+
+- **`TGText` derives from `TSText`.** Both classes exhibited the exact same
+  two clues independently - a `TVisObjRef` target field accessed at a fixed
+  offset with no accessor in the original, and a shared mystery virtual
+  method at vtable slot `0x28` that `ClearCurrentText` (on a `TSText*`) and
+  `ClearObjectText` (on a `TGText*`) both call right before dropping a text.
+  Rather than duplicating that field+virtual in two unrelated classes, the
+  simpler and better-supported model is a common base - `TSText` now owns
+  `GetTarget()`/the speculative `Discard()` virtual, and `TGText` just adds
+  `GetSpeaker()`.
+- **`TGCharacter` gained a `TVisObjRef` id field** (`GetRef()`), needed
+  because `TGText::GetSpeaker()`'s return value is compared against a
+  character reference the same "TVisObjRef at a fixed offset" way.
+- **`TManagedObject`** was added as `TGScene::GetObject()`'s real return
+  type (confirmed: `ReattachSceneObjectTexts` calls
+  `TManagedObject::SetText(TGText*)` directly on it) - the earlier `void*`
+  in both `TGScene::GetObject` and `TGameControl::GetObject` was a
+  placeholder guess.
+
+Two field ids (`0x2AC` on the scene-text target, `0x1DD` on the current
+text) and one type-tag check (`id[3] == 6`) remain unresolved, same as the
+several other opaque `TVisObjRef` field ids already catalogued elsewhere in
+this file.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

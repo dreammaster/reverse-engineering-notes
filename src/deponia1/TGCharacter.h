@@ -4,9 +4,17 @@
 // ChangeCharacter, etc.) but not itself reversed yet.
 #pragma once
 
+#include "datastruct/visobjref.h"
+
 class TGCharacter {
 public:
     TGCharacter() = default;
+
+    // Confirmed present at a fixed offset (TGameControl::IsTalking compares
+    // a TGText's speaker against a TVisObjRef via this field directly,
+    // Deponia_Linux.asm lines 461785-461846) - same "TVisObjRef at a known
+    // offset, no accessor in the original" pattern as TGDialog/TSText/TGText.
+    const TVisObjRef& GetRef() const { return m_ref; }
 
     // Confirmed called for every character (TGameControl::
     // SetCharacterInterfaces, Deponia_Linux.asm lines 458260-458285) - not
@@ -22,4 +30,7 @@ public:
     // Confirmed called for every character (TGameControl::
     // SetAllCharactersOnDestination, asm lines 460874-460902).
     void SetOnDestination();
+
+private:
+    TVisObjRef m_ref;
 };

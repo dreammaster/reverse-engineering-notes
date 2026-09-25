@@ -2,6 +2,7 @@
 
 #include "AppGlobals.h"
 #include "TGAction.h"
+#include "TManagedObject.h"
 #include "baselib/composedfile.h"
 
 TGameControl::TGameControl() {
@@ -333,6 +334,15 @@ void TGameControl::StartBackgroundText(const TVisObjRef& /*text*/, TGCharacter* 
 }
 
 void TGameControl::ReattachSceneObjectTexts() {
+    // Confirmed (asm lines 461599-461666): field id 0x2AC, and the id-byte-3
+    // check ("== 6") meaning are both unresolved.
+    for (TGText* text : m_sceneTexts) {
+        TVisObjRef linked = text->GetTarget().GetLink(0x2AC);
+        if (linked.GetId()[3] != 6)
+            continue;
+        if (TManagedObject* object = m_ownedSceneControl.GetScene()->GetObject(linked))
+            object->SetText(text);
+    }
 }
 
 bool TGameControl::IsTextActive(const TVisObjRef& text) const {
@@ -353,7 +363,15 @@ bool TGameControl::IsNoTextDisplayed() const {
     return m_dialog.IsEmpty();
 }
 
-bool TGameControl::IsTalking(const TVisObjRef& /*character*/) const {
+bool TGameControl::IsTalking(const TVisObjRef& character) const {
+    // Confirmed (asm lines 461785-461846): a text with no speaker
+    // (GetSpeaker() == nullptr) never counts as this character talking,
+    // regardless of its target.
+    for (TGText* text : m_activeTexts) {
+        TGCharacter* speaker = text->GetSpeaker();
+        if (speaker != nullptr && speaker->GetRef() == character)
+            return true;
+    }
     return false;
 }
 
@@ -361,12 +379,31 @@ void TGameControl::ClearTexts() {
 }
 
 void TGameControl::ClearCurrentText() {
+    // Confirmed (asm lines 462001-462040): field id 0x1DD, meaning not
+    // resolved.
+    if (m_currentText != nullptr) {
+        m_currentText->Discard();
+        m_currentText = nullptr;
+        TVisObjRef game = m_visionaire->GetGame();
+        game.ClearLink(0x1DD, true);
+    }
 }
 
 void TGameControl::ClearText(const TVisObjRef& /*text*/) {
 }
 
-void TGameControl::ClearObjectText(const TVisObjRef& /*object*/) {
+void TGameControl::ClearObjectText(const TVisObjRef& object) {
+    // Confirmed (asm lines 462158-462228): find the one scene text whose
+    // target's GetLink(0x2AC) matches `object`, discard and remove it, then
+    // stop (only ever removes at most one entry).
+    for (auto it = m_sceneTexts.begin(); it != m_sceneTexts.end(); ++it) {
+        TGText* text = *it;
+        if (text->GetTarget().GetLink(0x2AC) == object) {
+            text->Discard();
+            m_sceneTexts.erase(it);
+            return;
+        }
+    }
 }
 
 void TGameControl::StartObjectText(const TVisObjRef& /*object*/, const TVisObjRef& /*text*/,

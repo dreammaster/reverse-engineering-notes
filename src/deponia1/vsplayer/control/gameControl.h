@@ -38,6 +38,7 @@
 #include "TConsole.h"
 #include "TGCharacter.h"
 #include "TGDialog.h"
+#include "TGText.h"
 #include "Tween.h"
 #include "TSceneControl.h"
 #include "TSText.h"
@@ -220,4 +221,10 @@ private:
     // null when no text is currently displayed. Ownership/lifetime (who
     // sets this, whether it's heap-owned) not confirmed - left un-deleted.
     TSText* m_currentText = nullptr;
+    // Confirmed sentinel-initialized in the constructor right before
+    // m_dialog (IsTalking/ClearCurrentText use m_activeTexts;
+    // ReattachSceneObjectTexts/ClearObjectText use m_sceneTexts - asm lines
+    // 461601-462228). Ownership not confirmed - left un-deleted.
+    std::list<TGText*> m_activeTexts;
+    std::list<TGText*> m_sceneTexts;
 };

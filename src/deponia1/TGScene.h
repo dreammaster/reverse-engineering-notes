@@ -9,8 +9,13 @@
 #include "TPaintControl.h"
 #include "datastruct/visobjref.h"
 
+class TManagedObject;
+
 class TGScene : public TPaintControl {
 public:
     bool IsMenu() const;
-    void* GetObject(const TVisObjRef& object) const;
+    // Confirmed TManagedObject* (TGameControl::ReattachSceneObjectTexts
+    // calls TManagedObject::SetText() directly on the result, asm lines
+    // 461599-461666) - the manifest's void* was a placeholder guess.
+    TManagedObject* GetObject(const TVisObjRef& object) const;
 };
