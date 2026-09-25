@@ -9298,6 +9298,58 @@ instruction-identical code-wise; the roster of which monsters have
 this mechanic is a real but ordinary per-game content difference), and
 `roadmap.md`.
 
+### 2026-09-25 session update (continued): a stale "banish" reading corrected, and ApplyEncodedItemEffect properly scoped for its own future pass
+
+With combat's attack-resolution and effect-application pipeline
+closed out for the round, looked at what candidate 8 on the roadmap
+actually needed — the item-effect mechanic this project's own docs
+had been calling a "banish the monster on the facing tile" trick
+since 2026-09-24. Reading `ApplyEncodedItemEffect` (the function it
+lives in) turned out to be more interesting than expected: an earlier
+session had already named it, sized it (4,210 bytes, the largest
+function in the binary), characterized it as a ~19-branch bitmask
+effect dispatcher, and — this was the useful part — already
+identified that its first two branches apply a single-target or
+whole-party icon-bar status effect via `ApplyEffectAndDrawIconBar`.
+That's exactly the mechanism this session spent the last two rounds
+reimplementing for combat (`combatApplyEffect`/`effectRollMagnitude`
+etc.), so those two branches are now genuinely tractable reuse of
+already-shipped code, not a fresh investigation.
+
+The "banish" branch itself (`yendor2.asm:51586`) turned out to be
+misread. Re-reading it with this session's now-solid understanding of
+`g_monsterSlots`' three fixed addresses (from the combat turn-order
+work several rounds back) showed the record doesn't get copied to a
+generic "UI scratch buffer" at all — `0x525C` is combat slot 1, one of
+the exact addresses `combat.c` already works with. The actual
+mechanic: relocate the party to a new world position (following a
+destination-search loop this session didn't trace), then if a monster
+happens to occupy the destination cell, copy it into that combat slot
+to engage it in turn-based combat — a teleport-and-possibly-ambush
+effect, not a banishment. The original guess wasn't unreasonable at
+the time it was written (nothing had named `0x525C` as anything yet),
+but it should have been revisited once the combat work gave it a real
+identity instead of staying pinned as fact through two more rounds of
+"still not reimplemented" notes. Corrected in `file-formats.md`,
+`roadmap.md` (both the older status entry and candidate 8, rewritten
+with the accurate mechanic and a properly current scope for
+`ApplyEncodedItemEffect` as a whole), and project memory.
+
+Also surfaced, while reading around the corrected branch: a third
+combat mode this project hadn't named as such — `ApplyDamageToMapMonster`,
+reached from elsewhere in `ApplyEncodedItemEffect`'s dispatch, applies
+ranged/corridor damage to a `g_levelMonsters` monster *before* it's
+been pulled into turn-based combat, resolving its death with the same
+already-reimplemented `GrantMonsterRewards`/`RemoveMonsterFromMap`
+pair combat's own death handling uses. Named and scoped, not
+reimplemented — it depends on an untraced `ApplyAttackToTarget`.
+
+No new production code this round; the value was corrective (a wrong
+assumption removed from three documents) and scoping (a genuinely
+large system — `ApplyEncodedItemEffect` as a whole — given an
+accurate, actionable description instead of a two-line guess) rather
+than new C. Full suite unchanged at 18/18 passing (no code touched).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

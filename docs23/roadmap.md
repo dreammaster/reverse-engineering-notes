@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-25, added: monster gold-theft mechanic wired up)
+## Status (last updated 2026-09-25, corrected: the "banish" mechanic misreading)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -401,14 +401,15 @@ groundwork below is already in place.
   actually reading each one, looking for any write to a live record's
   world position outside its one-time spawn placement. Found none —
   every consumer spawns, reads, or removes a record wholesale, never
-  moves one. Surfaced two things along the way, neither reimplemented:
-  a genuine separate combat subsystem (`BuildCombatTurnOrder`/
+  moves one. Surfaced two things along the way, neither reimplemented
+  at the time: a genuine separate combat subsystem (`BuildCombatTurnOrder`/
   `ProcessCombatRound`, a 3-slot `g_monsterSlots` staging array distinct
-  from the 80-slot pool) and a previously-undocumented item-effect
-  "banish the monster on the facing tile" mechanic
-  (`ApplyEncodedItemEffect`, `yendor2.asm:51586`) that copies a
-  record out to a UI scratch buffer before despawning it, no rewards
-  granted. Full writeup in `file-formats.md`'s "Monster approach and
+  from the 80-slot pool -- now fully reimplemented, see below) and an
+  `ApplyEncodedItemEffect` mechanic first guessed here to "banish the
+  monster on the facing tile" — **corrected 2026-09-25: it doesn't
+  despawn the monster at all, it copies it into a combat slot to
+  engage it, as part of a teleportation effect** (see candidate 8
+  below and `file-formats.md`). Full writeup in `file-formats.md`'s "Monster approach and
   ambush check" section.
   **Turn-based combat's turn order — started, same day (2026-09-24)**:
   the combat subsystem surfaced above turns out to be a genuinely
@@ -665,13 +666,35 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    session deliberately deferred to the eventual SDL2 layer) -- the
    remaining part of the combat subsystem, now clearly scoped rather
    than an open-ended unknown.
-8. **The item-effect "banish" mechanic** (`ApplyEncodedItemEffect`,
-   `yendor2.asm:51586`, surfaced the same session) — finds whichever
-   monster occupies the party's facing tile, copies its record to a UI
-   scratch buffer, and despawns it (no rewards). Needs the broader
-   `ApplyEncodedItemEffect` dispatch framework (this project hasn't
-   started decoding item-effect codes at all) before it's worth
-   reimplementing on its own.
+8. **`ApplyEncodedItemEffect`** (was `sub_2C0FE`, the largest function
+   in the binary at 4,210 bytes -- named and scoped by an earlier
+   session, revisited 2026-09-25) -- a flat ~19-branch bitmask switch
+   (`word_33302`/`word_33306`) applying an item's or container's coded
+   magical effect, called from `RunAlchemyScreen` and
+   `InteractWithContainer` right before `ConsumeItemChargeResource`
+   spends the charge. Two branches are now well-understood and
+   directly reuse this session's icon-bar effect-application work
+   (`combatApplyEffect`/`effectRollMagnitude` etc.): a single-target
+   and a whole-party status-effect application, both populating a
+   `g_partyEffectIconSlots` entry and calling `ApplyEffectAndDrawIconBar`
+   exactly like combat does. **Corrected 2026-09-25**: one branch
+   (`yendor2.asm:51586`) previously described in this project's own
+   docs and memory as a "banish the monster on the facing tile"
+   mechanic is actually a teleportation-style effect that relocates
+   the party (`g_wipeEffectX/Y` -> `g_partyWorldX/Y`, via a
+   destination-search loop not yet traced) and then, if a monster
+   occupies the destination cell, copies it into `g_monsterSlots` slot
+   1 to engage it in turn-based combat (the same record-relocation
+   idea `CompactMonsterSlots` uses, now that this project understands
+   that struct) rather than despawning it — see `file-formats.md`'s
+   corrected note. The remaining ~17 branches (world-state timers, a
+   corridor/ranged-attack path via `ApplyDamageToMapMonster` --
+   already named and reusable with `monsterGrantRewards`/
+   `monsterPoolRemove` once its own `ApplyAttackToTarget` dependency is
+   traced -- held-item cursor updates, weather effects, and more)
+   weren't traced this round either, given the function's size; a good
+   candidate for a dedicated multi-round pass rather than one-off
+   attention.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need

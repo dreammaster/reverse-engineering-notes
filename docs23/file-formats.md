@@ -4098,23 +4098,35 @@ its one-time placement at spawn (`monsterRecordPlace`,
 `g_levelMonsters` consumer either spawns (once), reads/displays,
 or removes a record wholesale — combat's turn-order setup
 (`BuildCombatTurnOrder`/`ProcessCombatRound`, a separate 3-slot
-`g_monsterSlots` combat-staging array copied from live records, not
-yet reimplemented — a real additional system this sweep surfaced but
-didn't chase further), scroll-out despawn
-(`monsterPoolRefreshWindow`), combat/area-attack death cleanup
+`g_monsterSlots` combat-staging array copied from live records, now
+fully reimplemented — see "Turn-based combat" below), scroll-out
+despawn (`monsterPoolRefreshWindow`), combat/area-attack death cleanup
 (`GrantMonsterRewards`+`RemoveMonsterFromMap`, both already
-reimplemented), and one previously-undocumented mechanic: an
-item-effect handler (`ApplyEncodedItemEffect`, `yendor2.asm:51586`)
-that finds whichever monster occupies the party's facing tile (by
-matching `MonsterFieldCell`), copies its full 156-byte record into a
-UI scratch buffer (`DS:0x525C` — plausibly for an "identify"/"examine"
-display, not confirmed), zeroes the live record in place (a despawn,
-distinct from combat death — no rewards granted), and clears the
-dungeon grid's "monster here" overlay at that cell. Not reimplemented
-this pass — needs the broader `ApplyEncodedItemEffect`/item-effect-code
-dispatch framework this project hasn't built. In short: `g_levelMonsters`
-records are created once, occasionally copied out or removed, and
-never moved.
+reimplemented), and one mechanic first misread in this same paragraph
+a round ago — corrected 2026-09-25, still not reimplemented: an
+`ApplyEncodedItemEffect` branch (`yendor2.asm:51586`) reached after
+relocating the party to a new world position (`g_wipeEffectX/Y` ->
+`g_partyWorldX/Y`, following a destination-search loop earlier in the
+same branch this project hasn't fully traced — a teleportation-style
+effect, not confirmed which item/spell triggers it). Once there, it
+scans `g_levelMonsters` for a record whose `MonsterFieldCell` matches
+the destination cell and, if found, copies its full 156-byte record
+into `g_monsterSlots` slot 1 (`DS:0x525C`) — **not** a UI scratch
+buffer as this paragraph previously (and wrongly) described it, but
+one of the very same 3 turn-based-combat slots `combat.c` already
+reimplements — then zeroes the original `g_levelMonsters` record and
+clears the dungeon grid's "monster here" overlay at that cell (the
+same record-move pattern `CompactMonsterSlots` uses elsewhere, see
+"Turn-based combat" below). In short, this is a teleport effect that
+also immediately engages any monster waiting at the destination in
+turn-based combat — not a "banish" mechanic as this project's own
+docs and memory previously called it; there is no removal-without-
+combat case found here after all. Not reimplemented — the preceding
+destination-search loop and the still-unnamed `word_328FC`/`word_328D2`
+fields it uses need their own pass first. Aside from this one
+case-still-being-chased-down mechanism: `g_levelMonsters` records are
+created once, occasionally copied out (to a combat slot, not removed
+from existence) or removed entirely, and never moved in place.
 
 **Alignment**: a monster only ever engages if it shares the party's
 exact world row *or* column — no diagonal engagement, no pathfinding
