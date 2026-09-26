@@ -1295,6 +1295,26 @@ instruction-identical as well, so the whole mechanic (decode, trigger
 roll, and per-recipient application) shares one implementation across
 both games with no behavioral difference anywhere in the chain.
 
+## `ApplyEncodedItemEffect`'s status-effect branches: Chapter 3 adds a cursed-member skip
+
+The single-target branch (`word_33302` bit `0x8000`) is instruction-
+identical between the games — checked directly, `yendor2.asm:51106`
+vs. `yendor3.asm:51993`. The whole-party branch (bit `0x4000`) is
+instruction-identical too, **except** Chapter 3's own per-recipient
+loop (`yendor3.asm:52163`) tests `[bx+1Ch] & 0x40` (`PartyStatusCursed`)
+right after resolving each occupied slot's party record and skips that
+recipient entirely — not even populating the icon slot — if the bit is
+set; Chapter 2's loop (`yendor2.asm:51276`) has no such test at all,
+applying the effect to every occupied slot up to the first empty one
+regardless of curse status. This is unrelated to the *acting*
+character's own curse gate both games share
+(`ResetOrCopyTargetPositionFields` zeroing the applied value entirely
+when the acting character is cursed) — Chapter 3 layers an additional,
+independent per-recipient check on top. Reimplemented as
+`combatApplyEncodedItemEffectParty`'s own `game == GameYendor3` branch
+in `src23/combat.c`, tested directly against both games in
+`tests/test_combat.c`.
+
 ## Equipment corrosion classification: no behavioral difference found
 
 `ClassifyItemServiceTier` and `GetClassifiedItemStatField` are

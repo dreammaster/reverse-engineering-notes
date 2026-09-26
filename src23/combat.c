@@ -321,3 +321,49 @@ CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, ui
     }
     return CombatSavingThrowTrapParty;
 }
+
+CombatEncodedItemEffectValue combatResolveEncodedItemEffectValue(bool curseGateActive, const uint8_t *actingRecord,
+                                                                   uint16_t inflictedStatus, uint16_t magnitude) {
+    CombatEncodedItemEffectValue value;
+    if (curseGateActive && (partyGetU16(actingRecord, PartyFieldStatusFlags) & PartyStatusCursed)) {
+        value.inflictedStatus = 0;
+        value.magnitude = 0;
+        return value;
+    }
+    value.inflictedStatus = inflictedStatus;
+    value.magnitude = magnitude;
+    return value;
+}
+
+void combatApplyEncodedItemEffectSingle(uint8_t *actingRecord, SaveGame *save, unsigned effectId, GameKind game,
+                                          CombatEncodedItemEffectValue value) {
+    EffectDef def;
+    if (!effectGetDef(game, effectId, &def)) {
+        return;
+    }
+    static const Bcd4 zeroMaterial = {0, 0, 0, 0};
+    combatApplyEffect(actingRecord, save, effectSpend(&def), value.magnitude, zeroMaterial, value.inflictedStatus);
+}
+
+void combatApplyEncodedItemEffectParty(SaveGame *save, unsigned effectId, GameKind game,
+                                        CombatEncodedItemEffectValue value) {
+    EffectDef def;
+    if (!effectGetDef(game, effectId, &def)) {
+        return;
+    }
+    static const Bcd4 zeroMaterial = {0, 0, 0, 0};
+    for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
+        uint16_t id = saveGetPartySlot(save, slot);
+        if (id == 0) {
+            break;
+        }
+        uint8_t *record = saveGamePartyRecordById(save, id);
+        if (!record) {
+            continue;
+        }
+        if (game == GameYendor3 && (partyGetU16(record, PartyFieldStatusFlags) & PartyStatusCursed)) {
+            continue;
+        }
+        combatApplyEffect(record, save, effectSpend(&def), value.magnitude, zeroMaterial, value.inflictedStatus);
+    }
+}

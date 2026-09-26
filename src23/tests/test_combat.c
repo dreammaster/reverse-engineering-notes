@@ -779,6 +779,108 @@ static void testSavingThrowTrapInvalidEffectIdIsNoEffect(void) {
     check("found at least one seed where the trigger roll fires", exercisedTrigger);
 }
 
+static void testResolveEncodedItemEffectValue(void) {
+    uint8_t acting[PartyRecordSize];
+    memset(acting, 0, sizeof(acting));
+    partySetU16(acting, PartyFieldStatusFlags, PartyStatusCursed);
+
+    CombatEncodedItemEffectValue value = combatResolveEncodedItemEffectValue(true, acting, 0x4000, 7);
+    checkU32("curse gate active + acting record cursed: inflictedStatus zeroed", value.inflictedStatus, 0);
+    checkU32("curse gate active + acting record cursed: magnitude zeroed", value.magnitude, 0);
+
+    memset(acting, 0, sizeof(acting)); /* not cursed */
+    value = combatResolveEncodedItemEffectValue(true, acting, 0x4000, 7);
+    checkU32("curse gate active but not cursed: value passes through (status)", value.inflictedStatus, 0x4000);
+    checkU32("curse gate active but not cursed: value passes through (magnitude)", value.magnitude, 7);
+
+    partySetU16(acting, PartyFieldStatusFlags, PartyStatusCursed);
+    value = combatResolveEncodedItemEffectValue(false, acting, 0x4000, 7);
+    checkU32("curse gate inactive: value passes through even if cursed (status)", value.inflictedStatus, 0x4000);
+    checkU32("curse gate inactive: value passes through even if cursed (magnitude)", value.magnitude, 7);
+}
+
+/* Effect id 4 (both games): HP cost -- see testSavingThrowTrapSingleTargetAppliesEffect's own note. */
+static void testApplyEncodedItemEffectSingleTargetsActingRecord(void) {
+    uint8_t acting[PartyRecordSize];
+    memset(acting, 0, sizeof(acting));
+    partySetStat(acting, PartyStatHitPoints, 30);
+
+    CombatEncodedItemEffectValue value = {0, 7};
+    combatApplyEncodedItemEffectSingle(acting, NULL, 4, GameYendor2, value);
+
+    checkU32("single-target HP cost applied to the acting record", partyGetStat(acting, PartyStatHitPoints), 23);
+}
+
+static void testApplyEncodedItemEffectSingleInvalidEffectIdIsNoOp(void) {
+    uint8_t acting[PartyRecordSize];
+    memset(acting, 0, sizeof(acting));
+    partySetStat(acting, PartyStatHitPoints, 30);
+
+    CombatEncodedItemEffectValue value = {0, 7};
+    combatApplyEncodedItemEffectSingle(acting, NULL, 200, GameYendor2, value);
+
+    checkU32("out-of-range effect id: no-op", partyGetStat(acting, PartyStatHitPoints), 30);
+}
+
+static void testApplyEncodedItemEffectPartyStopsAtEmptySlot(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *slot0 = saveGamePartyRecordById(&save, 1);
+    partySetStat(slot0, PartyStatHitPoints, 999);
+
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 0); /* unoccupied: stops dead here */
+
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 2 * 2, 2);
+    uint8_t *slot2 = saveGamePartyRecordById(&save, 2);
+    partySetStat(slot2, PartyStatHitPoints, 999);
+
+    CombatEncodedItemEffectValue value = {0, 7};
+    combatApplyEncodedItemEffectParty(&save, 4, GameYendor2, value);
+
+    checkU32("slot 0 got the effect", partyGetStat(slot0, PartyStatHitPoints), 992);
+    checkU32("slot 2 never reached: the scan stops dead at slot 1's empty id",
+             partyGetStat(slot2, PartyStatHitPoints), 999);
+}
+
+static void testApplyEncodedItemEffectPartyChapter2DoesNotSkipCursed(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *slot0 = saveGamePartyRecordById(&save, 1);
+    partySetStat(slot0, PartyStatHitPoints, 999);
+    partySetU16(slot0, PartyFieldStatusFlags, PartyStatusCursed);
+
+    CombatEncodedItemEffectValue value = {0, 7};
+    combatApplyEncodedItemEffectParty(&save, 4, GameYendor2, value);
+
+    checkU32("Chapter 2: a cursed party member still gets the whole-party effect",
+             partyGetStat(slot0, PartyStatHitPoints), 992);
+}
+
+static void testApplyEncodedItemEffectPartyChapter3SkipsCursed(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor3);
+
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *slot0 = saveGamePartyRecordById(&save, 1);
+    partySetStat(slot0, PartyStatHitPoints, 999);
+    partySetU16(slot0, PartyFieldStatusFlags, PartyStatusCursed);
+
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+    uint8_t *slot1 = saveGamePartyRecordById(&save, 2);
+    partySetStat(slot1, PartyStatHitPoints, 999);
+
+    CombatEncodedItemEffectValue value = {0, 7};
+    combatApplyEncodedItemEffectParty(&save, 4, GameYendor3, value);
+
+    checkU32("Chapter 3: a cursed party member is skipped entirely", partyGetStat(slot0, PartyStatHitPoints), 999);
+    checkU32("Chapter 3: the next (uncursed) member still gets the effect",
+             partyGetStat(slot1, PartyStatHitPoints), 992);
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
@@ -816,6 +918,12 @@ int main(void) {
     testSavingThrowTrapSingleTargetAppliesEffect();
     testSavingThrowTrapWholeParty();
     testSavingThrowTrapInvalidEffectIdIsNoEffect();
+    testResolveEncodedItemEffectValue();
+    testApplyEncodedItemEffectSingleTargetsActingRecord();
+    testApplyEncodedItemEffectSingleInvalidEffectIdIsNoOp();
+    testApplyEncodedItemEffectPartyStopsAtEmptySlot();
+    testApplyEncodedItemEffectPartyChapter2DoesNotSkipCursed();
+    testApplyEncodedItemEffectPartyChapter3SkipsCursed();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

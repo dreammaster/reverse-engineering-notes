@@ -398,4 +398,72 @@ typedef enum {
 CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, uint8_t *actingRecord,
                                                           SaveGame *save, GameKind game, RandomState *rng);
 
+/*
+ * ApplyEncodedItemEffect's single-target and whole-party status-effect
+ * branches (yendor2.asm:51106 bits 0x8000/0x4000 of word_33302,
+ * yendor3.asm:51993 same bits) -- the two branches roadmap.md already
+ * flagged as reusing this project's icon-bar effect machinery, out of
+ * that function's ~19-branch bitmask dispatch. Unlike
+ * combatApplySavingThrowTrap, there's no roll here at all: the caller
+ * supplies an already-resolved inflictedStatus/magnitude pair
+ * (word_332DC/word_332DE in the original) -- confirmed by reading
+ * RollEffectResistance/RollEffectMagnitude's own "already resolved"/
+ * "already set" early-outs directly against this exact call path: this
+ * is the concrete case those two functions' own doc comments were
+ * describing generically, without a concrete example. Presumably
+ * RunAlchemyScreen's own ingredient-mixing preview computes those two
+ * words; that computation isn't traced.
+ *
+ * A gate confirmed via ResetOrCopyTargetPositionFields
+ * (yendor2.asm:53238, instruction-identical in Chapter 3): if a global
+ * flag is set AND the *acting* character (g_currentPartyRecord, not
+ * the recipient) is Cursed, both values are zeroed instead of applied
+ * -- narrative unconfirmed (a cursed character's alchemy/container use
+ * fizzling?), but the mechanism is exact. combatResolveEncodedItemEffectValue
+ * is this gate, standalone so a caller computes it once and reuses it
+ * for every recipient -- the original recomputes it per icon slot, but
+ * it only ever depends on the acting record, so the result can't
+ * change within one call.
+ *
+ * combatApplyEncodedItemEffectSingle: despite searching the 4 existing
+ * icon-bar slots for a reusable one, the record actually affected is
+ * unconditionally the acting character -- the slot search only picks
+ * a UI icon-slot index, never the target. Not modeled here (no
+ * icon-bar UI to reuse a slot index for).
+ *
+ * combatApplyEncodedItemEffectParty: loops SaveHeaderPartySlots and
+ * reproduces the same "stops dead at the first unoccupied slot" quirk
+ * already found in combatApplySavingThrowTrap's own whole-party
+ * branch -- but, confirmed by reading both games directly, does NOT
+ * skip incapacitated members the way that other mechanism does.
+ * **A real Chapter 2 vs. Chapter 3 difference found here**: Chapter 3
+ * adds a per-recipient skip for a Cursed party member (left untouched,
+ * not even icon-slot-populated) that Chapter 2 lacks entirely --
+ * gated on `game` here. This is independent of the acting-character
+ * curse gate above: a whole-party application can be entirely zeroed
+ * (acting character cursed) while also skipping specific cursed
+ * recipients (Chapter 3 only) -- two unrelated checks that happen to
+ * both key off PartyStatusCursed.
+ *
+ * Both functions are the confirmed, reusable core; the surrounding
+ * dispatch decision (which of word_33302's ~19 bits fires, and
+ * whether word_33300's own 0x800/0x1000 bits -- read from an untraced
+ * caller context -- select this path at all, versus skipping the
+ * icon-bar entirely) is not reimplemented. See roadmap.md candidate 8
+ * for the rest of ApplyEncodedItemEffect.
+ */
+typedef struct {
+    uint16_t inflictedStatus;
+    uint16_t magnitude;
+} CombatEncodedItemEffectValue;
+
+CombatEncodedItemEffectValue combatResolveEncodedItemEffectValue(bool curseGateActive, const uint8_t *actingRecord,
+                                                                   uint16_t inflictedStatus, uint16_t magnitude);
+
+void combatApplyEncodedItemEffectSingle(uint8_t *actingRecord, SaveGame *save, unsigned effectId, GameKind game,
+                                          CombatEncodedItemEffectValue value);
+
+void combatApplyEncodedItemEffectParty(SaveGame *save, unsigned effectId, GameKind game,
+                                        CombatEncodedItemEffectValue value);
+
 #endif

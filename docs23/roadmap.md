@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-26, resolved: the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-26, resolved: two of ApplyEncodedItemEffect's ~19 branches, plus the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -786,12 +786,25 @@ consumers, if any.
    (`word_33302`/`word_33306`) applying an item's or container's coded
    magical effect, called from `RunAlchemyScreen` and
    `InteractWithContainer` right before `ConsumeItemChargeResource`
-   spends the charge. Two branches are now well-understood and
-   directly reuse this session's icon-bar effect-application work
-   (`combatApplyEffect`/`effectRollMagnitude` etc.): a single-target
-   and a whole-party status-effect application, both populating a
+   spends the charge. **Two branches reimplemented, 2026-09-26**: a
+   single-target and a whole-party status-effect application
+   (`word_33302` bits `0x8000`/`0x4000`), both populating a
    `g_partyEffectIconSlots` entry and calling `ApplyEffectAndDrawIconBar`
-   exactly like combat does. **Corrected 2026-09-25**: one branch
+   exactly like combat does -- except here the caller supplies an
+   already-resolved inflicted-status/magnitude pair rather than rolling
+   one (the concrete case `RollEffectMagnitude`/`RollEffectResistance`'s
+   own "already resolved" early-outs exist for). A shared gate zeroes
+   both values if the *acting* character is Cursed. **A real Chapter 2
+   vs. Chapter 3 difference found**: Chapter 3 additionally skips any
+   *recipient* who is Cursed in the whole-party branch, a check Chapter
+   2 altogether lacks -- see `engine-diffs.md`. Reimplemented as
+   `combatResolveEncodedItemEffectValue`/`combatApplyEncodedItemEffectSingle`/
+   `combatApplyEncodedItemEffectParty` in `src23/combat.c`/`.h`, tested
+   in `test_combat.c`; all 18 suites pass. Still open: the surrounding
+   dispatch decision itself (which of `word_33302`'s ~19 bits fires at
+   all; whether `word_33300`'s own `0x800`/`0x1000` bits -- read from an
+   untraced caller context -- select this path versus skipping the
+   icon-bar entirely). **Corrected 2026-09-25**: one branch
    (`yendor2.asm:51586`) previously described in this project's own
    docs and memory as a "banish the monster on the facing tile"
    mechanic is actually a teleportation-style effect that relocates

@@ -661,6 +661,43 @@ single-target or whole-party icon-bar status effect
 (`ApplyEffectAndDrawIconBar`); the rest (world-state timers, etc.)
 weren't individually traced given the function's size.
 
+**Both status-effect branches reimplemented, 2026-09-26**: unlike the
+search/lockpicking trap's own `ApplySavingThrowEffect`, neither branch
+here rolls anything — the caller supplies an already-resolved
+inflictedStatus/magnitude pair that `RollEffectMagnitude`/
+`RollEffectResistance`'s own "already set"/"already resolved"
+early-outs (see the "Turn-based combat" section's effect-pipeline
+writeup) exist to accommodate; this is the concrete call site those
+early-outs were built for. A shared gate
+(`ResetOrCopyTargetPositionFields`, `yendor2.asm:53238`, instruction-
+identical in Chapter 3) zeroes both values instead of applying them
+when a global flag is set and the *acting* character
+(`g_currentPartyRecord`) is Cursed. The single-target branch's own
+icon-slot-reuse search turned out to be pure UI bookkeeping — the
+record it actually affects is unconditionally the acting character,
+regardless of which slot the search finds. **A real Chapter 2 vs.
+Chapter 3 difference found while confirming the whole-party branch is
+instruction-identical**: Chapter 3 adds a per-recipient skip for any
+Cursed party member (not even icon-slot-populated) that Chapter 2
+altogether lacks — see `engine-diffs.md`. The whole-party branch also
+reproduces the same "stops dead at the first unoccupied
+`SaveHeaderPartySlots` slot" quirk `ApplySavingThrowEffect`'s own
+whole-party branch has, but — confirmed by reading both directly, not
+assumed from that similarity — does *not* skip incapacitated members
+the way that other mechanism does. Reimplemented as
+`combatResolveEncodedItemEffectValue`/`combatApplyEncodedItemEffectSingle`/
+`combatApplyEncodedItemEffectParty` in `src23/combat.c`/`.h`. Tests in
+`tests/test_combat.c` cover the curse-gate zeroing (active+cursed,
+active+not-cursed, inactive+cursed), single-target application, an
+out-of-range effect id, the whole-party stop-at-empty-slot quirk, and
+the Chapter 2/Chapter 3 cursed-skip difference directly. Still open:
+the surrounding dispatch itself (which of `word_33302`'s ~19 bits
+fires; whether `word_33300`'s own `0x800`/`0x1000` bits — read from an
+untraced caller context — select this path at all versus skipping the
+icon-bar entirely) and the other ~17 branches (world-state timers, a
+corridor/ranged-attack path, held-item cursor updates, weather
+effects).
+
 **Flagged, not renamed**: `word_33302`/`word_33304`/`word_33306` (3
 consecutive words) are exhaustively bit-tested — every bit from `1`
 through `0x8000` is checked against at least one of them somewhere —

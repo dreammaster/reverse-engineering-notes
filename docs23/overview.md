@@ -9675,6 +9675,70 @@ mechanic; `UseAbilityCommand`/`HandleSearchCommand` themselves are the
 only remaining pieces, and both are UI-heavy top-level commands
 waiting on the SDL2 layer rather than further decision logic.
 
+### Session update (continued): two of `ApplyEncodedItemEffect`'s ~19 branches reimplemented
+
+With the search/lockpicking trap fully closed out, the next candidate
+was `ApplyEncodedItemEffect` itself — the largest function in the
+binary, scoped by an earlier session but never traced branch-by-branch
+given its size. Read the full top-level dispatch (a bitmask switch
+over `word_33302`/`word_33306`, `yendor2.asm:51106`) and traced its two
+already-flagged "well understood" branches (bits `0x8000`/`0x4000`, a
+single-target and whole-party status-effect application) all the way
+through, rather than trusting the earlier summary at face value.
+
+That closer read paid off in a few ways. First, the icon-slot search in
+the single-target branch — which walks the 4 existing
+`g_partyEffectIconSlots` entries looking for one to reuse — turned out
+to be pure UI bookkeeping: the party record it actually applies to is
+unconditionally the *acting* character (`g_currentPartyRecord`)
+regardless of which slot the search lands on. Second, reading
+`RollEffectMagnitude`/`RollEffectResistance` again with this specific
+call path in mind (rather than combat's own, which never exercises it)
+resolved something those two functions' doc comments had flagged
+generically without a concrete example: their "already resolved"/
+"already set" early-outs exist specifically for this caller, which
+pre-populates the icon slot's inflicted-status/magnitude fields with
+already-known values (`word_332DC`/`word_332DE`) instead of rolling
+anything, via a shared helper (`ResetOrCopyTargetPositionFields`) that
+also zeroes both values if the *acting* character is Cursed.
+
+Reading the whole-party branch in both `.asm` files side by side
+(rather than assuming it matches the single-target branch's own
+instruction-identical status) turned up a genuine, previously-unknown
+Chapter 2 vs. Chapter 3 difference: Chapter 3's loop tests each
+*recipient's* own Cursed status and skips them outright — not even
+populating their icon slot — while Chapter 2 has no such check at all,
+applying the effect to every occupied party slot up to the first empty
+one unconditionally. This is a different mechanism from the shared
+acting-character curse gate above; the two can compound (an
+all-zeroed whole-party effect that also skips one member for an
+unrelated reason) but neither implies the other.
+
+Reimplemented as `combatResolveEncodedItemEffectValue`/
+`combatApplyEncodedItemEffectSingle`/`combatApplyEncodedItemEffectParty`
+in `src23/combat.c`/`.h`. Tests in `test_combat.c` cover the curse-gate
+zeroing in all three relevant states, a plain single-target
+application, an out-of-range effect id, the whole-party
+stop-dead-at-empty-slot quirk (shared with `ApplySavingThrowEffect`'s
+own whole-party branch, but confirmed *not* to share its incapacitated
+skip — a different original function, a different rule), and the
+Chapter 2/Chapter 3 cursed-recipient difference directly against both
+games. Full suite rebuilt, 18/18 passing.
+
+Deliberately left open, matching the function's existing scoping in
+`roadmap.md`: the surrounding dispatch decision itself (which of
+`word_33302`'s ~19 bits fires at all, and whether a separate pair of
+bits on `word_33300` — read from an untraced `RunAlchemyScreen`/
+`InteractWithContainer` caller context — even selects this code path
+versus skipping the icon-bar update entirely), and the remaining ~17
+branches (world-state timers, a corridor/ranged-attack path, held-item
+cursor updates, weather effects). Genuinely a case where the
+"well-understood" label from an earlier round's summary was correct
+about the outcome but hid real subtlety in the *mechanism* that only
+surfaced from reading both games' disassembly directly rather than
+inferring from a description — worth remembering as a variant of this
+project's recurring "check both games directly" lesson.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
