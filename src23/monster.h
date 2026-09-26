@@ -104,6 +104,7 @@ typedef enum {
 /* MonsterFieldState bits. */
 typedef enum {
     MonsterStateAware = 0x0001, /* it has noticed the party (TryActivateMonsterByDistance); gates ProcessLevelMonsters */
+    MonsterStateSpecialAttackDisabled = 0x0400, /* SelectTrapEffectVariant (combat.h) always uses the ordinary attack effect, never rolls for the special one, while this is set */
     MonsterStateBusy = 0x0800   /* skips ProcessLevelMonsters' approach/ambush check this tick; exact trigger not confirmed */
 } MonsterState;
 
@@ -149,12 +150,26 @@ typedef enum {
     MonsterAmbushChanceLow = 0x0200       /* threshold 25 */
 } MonsterAmbushChance;
 
-/* MonsterFieldFlags bits (only those the code tests). */
+/*
+ * MonsterFieldFlags bits (only those the code tests). MonsterFlagSpecialMask's
+ * own role, confirmed 2026-09-26 (combat.h): when a monster's special attack
+ * is the one selected for an attack (not its ordinary one -- see combat.h's
+ * design note on this), any of these 3 bits being set routes the whole
+ * attack into ResolveAttackerActionOutcome's "equipment corrosion" branch
+ * instead of a status-effect application, and CorrodeWeaponSlot/SecondSlot
+ * additionally pick which of the defender's equipment slots gets targeted
+ * (neither bit set -- just MonsterFlagSpecialCorrodeMask's low bit alone --
+ * targets a third, 3-entry slot array whose own per-entry selection isn't
+ * traced further).
+ */
 typedef enum {
     MonsterFlagAltSprite = 0x0001,    /* alternate sprite layout: anim set 0xA (else 0xD), clue-book category 0x30 (else 0x20) */
     MonsterFlagRemapPalette = 0x0004, /* apply MonsterFieldPalette */
     MonsterFlagAreaAttack = 0x1000,   /* hits the whole party, not one target */
-    MonsterFlagSpecialMask = 0x0E00   /* modifiers shown next to its special attack */
+    MonsterFlagCorrodeWeaponSlot = 0x0800,   /* targets PartyFieldEquipment's main weapon slot (+0x13A) */
+    MonsterFlagCorrodeSecondSlot = 0x0400,   /* targets the second equipment slot (+0x142) */
+    MonsterFlagSpecialCorrodeMask = 0x0200,  /* set alongside a monster's special attack selection; see MonsterFlagSpecialMask */
+    MonsterFlagSpecialMask = 0x0E00   /* MonsterFlagCorrodeWeaponSlot|CorrodeSecondSlot|SpecialCorrodeMask */
 } MonsterFlag;
 
 /*

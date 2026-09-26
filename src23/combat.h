@@ -8,6 +8,7 @@
 #include "bcd4.h"
 #include "effect.h"
 #include "game.h"
+#include "item.h"
 #include "monster.h"
 #include "monsterpool.h"
 #include "random.h"
@@ -197,33 +198,21 @@ uint16_t combatResolveAttack(uint16_t defense, uint16_t accuracy, uint16_t power
  * ever reached from ProcessMonsterAttackTurn, monster-attacks-party,
  * not the reverse).
  *
- * **Why ResolveAttackerActionOutcome itself is deferred, not just its
- * two leaf calls**: it composes combatResolveAttack/
- * combatFailsSavingThrow with a not-yet-traced discriminant
- * (word_328CA bit 0x200 plus the attacker's own flags field) to pick
- * one of 3 outcome branches, writes the result into a "staged combat
- * event" structure (word_32906, one of 4 g_partyEffectIconSlots
+ * ResolveAttackerActionOutcome (below, as combatResolveAttackerAction)
+ * composes combatResolveAttack/combatFailsSavingThrow to decide which
+ * of 3 outcomes an attack has -- what it does NOT do (matching the
+ * original exactly) is apply that outcome: it only decides and
+ * describes it. The original stages its decision into a "pending
+ * combat event" structure (word_32906, one of 4 g_partyEffectIconSlots
  * entries, 0xC50 + slotIndex*0x14 -- the same icon-bar slot mechanism
- * PrepareTrapEffectSlots/ApplyItemEffectIconSlot already reference).
- * That consumer IS now traced (ApplyEffectAndDrawIconBar,
- * yendor2.asm:13789, reads it via ProcessMonsterAttackTurn) -- its
- * state-mutating half is combatApplyEffect below; its drawing half
- * (icon picture, sound, tick wait) is not reimplemented, deferred to
- * the eventual SDL2 layer. ResolveAttackerActionOutcome's third
- * branch calls GetClassifiedItemStatField -> ClassifyItemServiceTier
- * on the defender's own equipped item -- **correction, 2026-09-25**:
- * an earlier session had already characterized both (see
- * file-formats.md's "equipped-item durability" writeup, reached via
- * TickEquippedItemDurability's ordinary-wear path); this project's own
- * combat work hadn't read that far and briefly overstated this as "a
- * whole undecoded item-compatibility-tier system" for one round. What's
- * still genuinely unconfirmed for branch 3 specifically is
- * word_2E548's own population/lifetime in the combat call path (it's
- * a scratch structure GetClassifiedItemStatField reads from, not one
- * ResolveAttackerActionOutcome itself sets) -- that's the real
- * remaining gap, narrower than previously stated. The primitives below
- * are confirmed solid on their own; composing all of
- * ResolveAttackerActionOutcome itself is still future work.
+ * PrepareTrapEffectSlots/ApplyItemEffectIconSlot already reference)
+ * for `ApplyEffectAndDrawIconBar` (yendor2.asm:13789) to read back and
+ * apply; this reimplementation instead returns a plain
+ * CombatAttackerAction value, leaving the caller to invoke
+ * combatApplyEffect (for CombatAttackDamage/StatusEffect) or apply the
+ * item replacement directly (for CombatAttackCorrosion -- see its own
+ * doc comment for why that specific application isn't reimplemented
+ * yet).
  */
 bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bonus, RandomState *rng);
 
@@ -269,5 +258,88 @@ bool combatFailsSavingThrow(int16_t defenderStat, int16_t threshold, int16_t bon
  */
 void combatApplyEffect(uint8_t *defenderRecord, SaveGame *save, EffectSpend spend, uint16_t amount,
                         const Bcd4 materialAmount, uint16_t inflictedStatus);
+
+/*
+ * SelectTrapEffectVariant (yendor2.asm:11373, instruction-identical in
+ * Chapter 3): picks which of the attacking monster's two effects
+ * applies this attack -- its ordinary one (MonsterFieldAttackEffect)
+ * or, 25% of the time, its special one (MonsterFieldSpecialAttack) --
+ * always the ordinary one if MonsterStateSpecialAttackDisabled is set
+ * or there's no special attack at all (id 0). isSpecial mirrors the
+ * original's g_uiScratchFlags4 bit 0x200, the same flag
+ * combatResolveAttackerAction's own outer dispatch reads below.
+ */
+typedef struct {
+    unsigned effectId;
+    bool isSpecial;
+} CombatEffectSelection;
+
+CombatEffectSelection combatSelectTrapEffectVariant(const uint8_t *attackerRecord, RandomState *rng);
+
+/*
+ * ResolveAttackerActionOutcome (yendor2.asm:11173, yendor3.asm:2150):
+ * decides one attacker-vs-defender action's outcome, given
+ * combatSelectTrapEffectVariant's own isSpecial result. Doesn't apply
+ * anything itself -- see this header's own design note above.
+ *
+ * isSpecial == false, or true but the attacker's MonsterFieldFlags has
+ * none of MonsterFlagSpecialMask's bits set and its
+ * MonsterFieldGoldTheftAmount is exactly 0 (a monster whose special
+ * effect got selected but has no theft amount configured -- a
+ * defensive fallback in the original, confirmed unreachable in every
+ * real record found so far): CombatAttackDamage via
+ * combatResolveAttack(defender's PartyStatEquipRating5, attacker's
+ * MonsterFieldAccuracy/MonsterFieldDamage), or CombatAttackMiss if
+ * that misses.
+ *
+ * isSpecial == true, attacker's MonsterFieldGoldTheftAmount != 0, and
+ * none of MonsterFlagSpecialMask's bits are set:
+ * CombatAttackStatusEffect if combatFailsSavingThrow(defender's
+ * PartyFieldLevel, attacker's MonsterFieldSaveDifficulty, defender's
+ * PartyStatSurvival) fails (goldAmount is a copy of the attacker's
+ * MonsterFieldGoldTheftAmount for the caller to spend via
+ * combatApplyEffect(EffectSpendGold, ...) once effectId's own
+ * definition confirms that's its spend type -- see file-formats.md),
+ * else CombatAttackMiss.
+ *
+ * isSpecial == true and MonsterFlagSpecialMask has a bit set:
+ * CombatAttackCorrosion if a *half-bonus* combatFailsSavingThrow
+ * (defender's PartyStatSurvival >> 1, matching the original's weaker
+ * DC exactly) fails and the defender's equipped item at the selected
+ * slot (MonsterFlagCorrodeWeaponSlot -> 0x13A, CorrodeSecondSlot ->
+ * 0x142, neither -> 0x146, monster.h) both exists and classifies via
+ * itemCorrosionReplacement (item.h); CombatAttackMiss if the save
+ * succeeds, the slot is empty, or classification fails.
+ *
+ * **The actual item replacement isn't reimplemented**: the original
+ * routes a corrosion outcome through the same icon-bar machinery as
+ * every other effect, and its item-replacing consumer
+ * (HandleIconBarItemExpiry) is defined for *item-expiry-on-use/wear*
+ * semantics (TickEquippedItemDurability, item charges running out) --
+ * this project hasn't confirmed that combat's own corrosion staging
+ * feeds it with matching field semantics rather than superficially
+ * reusing the same byte offsets. CombatAttackCorrosion gives the
+ * caller equipSlotOffset/equippedItemId/corrosionReplacementId to
+ * apply directly once that's confirmed, rather than guessing at the
+ * write-back here.
+ */
+typedef enum {
+    CombatAttackMiss,
+    CombatAttackDamage,
+    CombatAttackStatusEffect,
+    CombatAttackCorrosion
+} CombatAttackOutcome;
+
+typedef struct {
+    CombatAttackOutcome outcome;
+    uint16_t damage;                 /* CombatAttackDamage */
+    Bcd4 goldAmount;                  /* CombatAttackStatusEffect */
+    unsigned equipSlotOffset;        /* CombatAttackCorrosion: 0x13A/0x142/0x146 */
+    uint16_t equippedItemId;         /* CombatAttackCorrosion */
+    uint16_t corrosionReplacementId; /* CombatAttackCorrosion */
+} CombatAttackerAction;
+
+CombatAttackerAction combatResolveAttackerAction(const uint8_t *attackerRecord, const uint8_t *defenderRecord,
+                                                  const ItemCatalog *catalog, bool isSpecial, RandomState *rng);
 
 #endif

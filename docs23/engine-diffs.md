@@ -1269,10 +1269,14 @@ function under that name), and jumps back into branch 1's own
 attack in Chapter 3 still deals ordinary damage instead of doing
 nothing. This reads as a deliberate game-feel fix (a resisted special
 attack no longer wastes the monster's whole turn) rather than an
-incidental difference. Not reimplemented yet, since
-`ResolveAttackerActionOutcome` as a whole is deferred — see
-`file-formats.md`'s "Attack resolution" section for the full branch
-breakdown and what's still open.
+incidental difference. **Update, 2026-09-26**: `ResolveAttackerActionOutcome`'s
+outer 3-way dispatch and `SelectTrapEffectVariant` (both now
+reimplemented, `combatResolveAttackerAction`/`combatSelectTrapEffectVariant`
+in `src23/combat.c`) are otherwise instruction-identical between the
+games — the Chapter 3 fallback above is the *only* difference in this
+whole area, not reproduced (see `file-formats.md`'s "Attack
+resolution" section for what's covered and the one remaining gap,
+the corrosion write-back itself).
 
 ## Equipment corrosion classification: no behavioral difference found
 

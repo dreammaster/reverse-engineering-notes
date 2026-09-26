@@ -4739,21 +4739,79 @@ record. BREAD (a consumable, flags `0x100` only) and BAG (flags
 This resolves `ResolveAttackerActionOutcome`'s branch 3 ("equipment
 corrosion") down to a fully understood, narrow remaining question: the
 branch selects an equipment slot (`0x13A`/`0x142`/`0x146`) by the
-*attacker's* own `MonsterFieldFlags` bits `0x800`/`0x400` (a more
-specific role for `MonsterFlagSpecialMask`, `monster.h`, than its
-current "modifiers shown next to its special attack" doc comment
-suggests — worth tightening next time that field is touched), reads
-the *defender's* equipped item id at that slot, and stages
-`itemCorrosionReplacement`'s result into the combat event record —
-composing this into `combat.c` itself is still future work (see
-`roadmap.md`), but nothing about the item-classification piece blocks
-it any longer.
+*attacker's* own `MonsterFieldFlags` bits `0x800`/`0x400` (named
+`MonsterFlagCorrodeWeaponSlot`/`CorrodeSecondSlot` in `monster.h` as of
+the next section below — tightening `MonsterFlagSpecialMask`'s old
+"modifiers shown next to its special attack" doc comment), reads the
+*defender's* equipped item id at that slot, and stages
+`itemCorrosionReplacement`'s result into the combat event record.
 
 Reimplemented as `itemClassifyServiceTier`/`itemCorrosionReplacement`
 in `src23/item.c`/`.h`. Tests in `tests/test_item.c`: all 3 tiers for
 both categories via synthetic records, the category-A/category-B
 boundary (a wearable outside category B correctly failing), and the
 real-data SLING/BREAD/BAG cases above.
+
+### `ResolveAttackerActionOutcome`, fully composed: `combatSelectTrapEffectVariant`/`combatResolveAttackerAction` (decoded 2026-09-26)
+
+With every underlying primitive now solid (`combatResolveAttack`,
+`combatFailsSavingThrow`, `effect.h`'s magnitude/resistance helpers,
+and this session's own `itemClassifyServiceTier`/`itemCorrosionReplacement`),
+this round composed the full 3-way outcome decision the earlier
+rounds had been building toward — the actual disassembly reading was
+already done; what remained was assembling it correctly.
+
+**`SelectTrapEffectVariant`** (`yendor2.asm:11373`, `yendor3.asm:2358`,
+instruction-identical): picks the attacking monster's ordinary effect
+(`MonsterFieldAttackEffect`) or, 25% of the time, its special one
+(`MonsterFieldSpecialAttack`) — always ordinary if a newly-named
+`MonsterFieldState` bit, `MonsterStateSpecialAttackDisabled` (`0x400`),
+is set, or if there's no special attack configured at all (id 0).
+Reimplemented as `combatSelectTrapEffectVariant`, returning the chosen
+effect id plus whether it was the special one (`isSpecial` — mirrors
+the original's own `g_uiScratchFlags4` bit `0x200`, which
+`ResolveAttackerActionOutcome`'s own outer dispatch reads next).
+
+**`ResolveAttackerActionOutcome`'s outer dispatch**, reconstructed
+precisely (a 3-nested-test structure first written up two rounds ago,
+now implemented exactly as documented then): `isSpecial == false` (or
+`true` but the attacker has none of `MonsterFlagSpecialMask`'s bits
+*and* a zero `MonsterFieldGoldTheftAmount` — the defensive fallback
+case, confirmed unreachable in every real monster found so far) goes
+to the ordinary `combatResolveAttack` damage roll. `isSpecial == true`
+with `MonsterFlagSpecialMask` clear but a nonzero
+`MonsterFieldGoldTheftAmount` goes to the status-effect/gold-theft
+branch. `isSpecial == true` with any `MonsterFlagSpecialMask` bit set
+goes to equipment corrosion. Reimplemented as
+`combatResolveAttackerAction`, returning a `CombatAttackerAction`
+(a `CombatAttackOutcome` tag plus whichever of damage/gold-amount/
+equip-slot-and-item-ids applies) rather than staging into an icon
+slot — the caller applies a `CombatAttackDamage`/`StatusEffect`
+outcome via `combatApplyEffect` directly.
+
+**The one deliberately-unfinished piece**: `CombatAttackCorrosion`
+gives the caller `equipSlotOffset`/`equippedItemId`/`corrosionReplacementId`
+but doesn't write the replacement back itself. The original's own
+write-back path is `HandleIconBarItemExpiry` — but that function's
+field semantics are defined for *item-expiry-on-use/wear*
+(`TickEquippedItemDurability`, an item's charges running out), and
+this project hasn't confirmed combat's own corrosion staging feeds it
+correctly rather than just reusing the same byte offsets for a
+different meaning (the same "dual-purpose slot" pattern found
+elsewhere in this icon-bar system). Left as an explicit gap rather
+than guessed at.
+
+Reimplemented in `src23/combat.c`/`.h`. Tests in `tests/test_combat.c`
+cover: `combatSelectTrapEffectVariant`'s disabled-state and
+no-special-attack cases plus an RNG-peek check of the 25% roll itself;
+`combatResolveAttackerAction`'s plain-damage path (guaranteed hit and
+guaranteed miss), the gold-theft path (peeked saving-throw outcome,
+both fail and resist), the "special selected but nothing configured"
+fallback to plain damage, the corrosion path against a synthetic item
+catalog (peeked saving throw, both outcomes, plus the exact slot/item/
+replacement-id values), all 3 equipment-slot selections, an empty
+target slot, and an equipped item that fails classification. All 18
+suites pass.
 
 ### `TickMonsterTimer`: a per-monster state machine, mechanism confirmed, trigger not (decoded 2026-09-23)
 

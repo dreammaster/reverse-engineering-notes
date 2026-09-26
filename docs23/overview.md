@@ -9508,6 +9508,66 @@ writeup it builds on rather than repeating it), `engine-diffs.md`
 purely a composition task now — the equipment-slot selection and
 defender-item lookup around already-solid primitives).
 
+## 2026-09-26 session: `ResolveAttackerActionOutcome` fully composed
+
+Picked up exactly where the previous day left off: every primitive
+`ResolveAttackerActionOutcome` needs was now solid
+(`combatResolveAttack`, `combatFailsSavingThrow`,
+`itemClassifyServiceTier`/`itemCorrosionReplacement`), and the
+disassembly reading for the function's own 3-way dispatch had already
+been done across the last several rounds — what remained was
+assembling it correctly into working, tested code rather than more
+investigation.
+
+Two new functions in `src23/combat.c`/`.h`:
+`combatSelectTrapEffectVariant` (`SelectTrapEffectVariant`, the
+ordinary-vs-special effect roll every attack starts with) and
+`combatResolveAttackerAction` (`ResolveAttackerActionOutcome`'s own
+outer dispatch, deciding between plain damage, a status-effect/gold-theft
+application, and equipment corrosion). Both instruction-identical
+between the games — checked directly — aside from the
+already-documented Chapter 3 resisted-special-attack fallback from two
+rounds back.
+
+Design choice, consistent with every other combat function this
+project has ported: return a plain `CombatAttackerAction` value
+(a tagged outcome plus whatever data that outcome needs) rather than
+staging fields into a raw icon-bar slot the way the original does.
+The caller applies a damage or status-effect outcome via the
+already-existing `combatApplyEffect`; a corrosion outcome reports the
+slot/item/replacement-id for the caller to act on.
+
+**Deliberately left as an open gap, not guessed at**: actually writing
+a corrosion outcome's replacement item back to the defender's
+equipment. The original's own write-back path
+(`HandleIconBarItemExpiry`) is defined for a *different* mechanism —
+an item's charges running out on use or wear — and this project
+hasn't confirmed that combat's corrosion staging feeds it with
+matching field semantics rather than coincidentally reusing the same
+byte offsets for something else (a pattern already found more than
+once in this exact icon-bar system). Reporting the decision without
+guessing at the write-back keeps the boundary honest.
+
+Tests in `test_combat.c` exercise every branch: the plain-damage path
+(guaranteed hit and guaranteed miss), the gold-theft path (an
+RNG-peeked saving throw, both outcomes, checked against a synthetic
+attacker's `MonsterFieldGoldTheftAmount`), the "special effect
+selected but nothing configured" fallback to plain damage (the
+original's own defensive case), the corrosion path against a
+synthetic item catalog (peeked saving throw, both outcomes, plus the
+exact slot/item-id/replacement-id values), all 3 equipment-slot
+selections, an empty target slot, and an equipped item that fails
+classification. Full suite rebuilt, 18/18 passing.
+
+This closes out candidate 7 entirely as a decision-logic module — what
+remains of combat is pure UI-driving orchestration (drawing, the
+corrosion write-back once confirmed, `ApplyEffectAndDrawIconBar`'s
+other 2 dispatch variants, `ProcessMonsterAttackTurn`,
+`HandleDungeonInput`'s player-attack path), all explicitly deferred to
+the eventual SDL2 layer rather than open questions. Documented in
+`file-formats.md` (a new section), `engine-diffs.md`, and `roadmap.md`
+(candidate 7's status line updated to reflect the closed scope).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

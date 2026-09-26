@@ -422,6 +422,215 @@ static void testApplyEffectNoneIsNoOp(void) {
     checkU32("EffectSpendNone touches nothing: MP", partyGetStat(record, PartyStatMagicPoints), 30);
 }
 
+static uint8_t g_attacker[MonsterRecordSize];
+
+static void setupAttacker(uint16_t attackEffect, uint16_t specialEffect, uint16_t state) {
+    memset(g_attacker, 0, sizeof(g_attacker));
+    monsterSetU16(g_attacker, MonsterFieldAttackEffect, attackEffect);
+    monsterSetU16(g_attacker, MonsterFieldSpecialAttack, specialEffect);
+    monsterSetU16(g_attacker, MonsterFieldState, state);
+}
+
+static void testSelectTrapEffectVariantDisabledOrNoSpecial(void) {
+    RandomState rng;
+
+    setupAttacker(10, 20, MonsterStateSpecialAttackDisabled);
+    randomStart(&rng, 1, 1);
+    CombatEffectSelection selection = combatSelectTrapEffectVariant(g_attacker, &rng);
+    check("MonsterStateSpecialAttackDisabled: always the ordinary effect",
+          selection.effectId == 10 && !selection.isSpecial);
+
+    setupAttacker(10, 0, 0);
+    randomStart(&rng, 2, 2);
+    selection = combatSelectTrapEffectVariant(g_attacker, &rng);
+    check("no special attack configured: always the ordinary effect", selection.effectId == 10 && !selection.isSpecial);
+}
+
+static void testSelectTrapEffectVariantRoll(void) {
+    setupAttacker(10, 20, 0);
+    for (uint8_t seed = 0; seed < 10; seed++) {
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        uint16_t roll = randomInRange(&peek, 100);
+
+        CombatEffectSelection selection = combatSelectTrapEffectVariant(g_attacker, &rng);
+        if (roll < 25) {
+            check("roll < 25: special effect selected", selection.effectId == 20 && selection.isSpecial);
+        } else {
+            check("roll >= 25: ordinary effect selected", selection.effectId == 10 && !selection.isSpecial);
+        }
+    }
+}
+
+static void testResolveAttackerActionDamagePath(void) {
+    uint8_t defender[PartyRecordSize];
+    memset(defender, 0, sizeof(defender));
+
+    setupAttacker(0, 0, 0);
+    monsterSetU16(g_attacker, MonsterFieldAccuracy, 100);
+    monsterSetU16(g_attacker, MonsterFieldDamage, 20);
+    partySetStat(defender, PartyStatEquipRating5, 0);
+
+    RandomState rng;
+    randomStart(&rng, 5, 5);
+    CombatAttackerAction action = combatResolveAttackerAction(g_attacker, defender, NULL, false, &rng);
+    check("isSpecial=false, guaranteed hit: CombatAttackDamage", action.outcome == CombatAttackDamage);
+    checkU32("damage matches (power*diff+50)/100", action.damage, 20);
+
+    monsterSetU16(g_attacker, MonsterFieldAccuracy, 0);
+    partySetStat(defender, PartyStatEquipRating5, 9999);
+    randomStart(&rng, 5, 5);
+    action = combatResolveAttackerAction(g_attacker, defender, NULL, false, &rng);
+    check("isSpecial=false, defense far exceeds accuracy: CombatAttackMiss", action.outcome == CombatAttackMiss);
+}
+
+static void testResolveAttackerActionGoldTheft(void) {
+    uint8_t defender[PartyRecordSize];
+
+    for (uint8_t seed = 0; seed < 10; seed++) {
+        memset(defender, 0, sizeof(defender));
+        partySetU16(defender, PartyFieldLevel, 10);
+        partySetStat(defender, PartyStatSurvival, 5);
+
+        setupAttacker(0, 15, 0); /* MonsterFlagSpecialMask left clear */
+        monsterSetU16(g_attacker, MonsterFieldSaveDifficulty, 8);
+        bcd4FromU16(g_attacker + MonsterFieldGoldTheftAmount, 16);
+
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        bool failed = combatFailsSavingThrow(10, 8, (int16_t)5, &peek);
+
+        CombatAttackerAction action = combatResolveAttackerAction(g_attacker, defender, NULL, true, &rng);
+        if (failed) {
+            check("saving throw failed: CombatAttackStatusEffect", action.outcome == CombatAttackStatusEffect);
+            checkU32("goldAmount matches the attacker's MonsterFieldGoldTheftAmount",
+                     (uint32_t)action.goldAmount[0] << 24 | (uint32_t)action.goldAmount[1] << 16 |
+                         (uint32_t)action.goldAmount[2] << 8 | action.goldAmount[3],
+                     0x16);
+        } else {
+            check("saving throw resisted: CombatAttackMiss", action.outcome == CombatAttackMiss);
+        }
+    }
+}
+
+static void testResolveAttackerActionNoGoldAmountFallsBackToDamage(void) {
+    uint8_t defender[PartyRecordSize];
+    memset(defender, 0, sizeof(defender));
+    partySetStat(defender, PartyStatEquipRating5, 0);
+
+    setupAttacker(0, 15, 0);
+    monsterSetU16(g_attacker, MonsterFieldAccuracy, 100);
+    monsterSetU16(g_attacker, MonsterFieldDamage, 5);
+    /* MonsterFieldGoldTheftAmount left at 0 (memset) and MonsterFlagSpecialMask clear:
+     * a monster whose special effect was selected but has nothing configured for it. */
+
+    RandomState rng;
+    randomStart(&rng, 3, 3);
+    CombatAttackerAction action = combatResolveAttackerAction(g_attacker, defender, NULL, true, &rng);
+    check("special selected but no gold amount and no corrode flags: falls back to a normal damage roll",
+          action.outcome == CombatAttackDamage);
+}
+
+static ItemCatalog g_actionCatalog;
+
+static void setupWeaponWithReplacement(uint16_t itemId, uint16_t replacementId) {
+    memset(&g_actionCatalog, 0, sizeof(g_actionCatalog));
+    g_actionCatalog.game = GameYendor2;
+    g_actionCatalog.itemCount = itemId;
+    g_actionCatalog.weaponCount = 1;
+    uint8_t *item = g_actionCatalog.items + (size_t)(itemId - 1) * ItemRecordSize;
+    item[ItemFieldFlags] = 0x00;
+    item[ItemFieldFlags + 1] = 0x80; /* ItemFlagEquipCode0A -- category A */
+    item[ItemFieldTargetOffset] = 0;
+    item[ItemFieldTargetOffset + 1] = 0;
+    uint8_t *weapon = g_actionCatalog.weapons;
+    weapon[ItemTargetBreakItemA * 2] = (uint8_t)replacementId;
+    weapon[ItemTargetBreakItemA * 2 + 1] = (uint8_t)(replacementId >> 8);
+}
+
+static void testResolveAttackerActionCorrosion(void) {
+    uint8_t defender[PartyRecordSize];
+
+    for (uint8_t seed = 0; seed < 10; seed++) {
+        memset(defender, 0, sizeof(defender));
+        partySetU16(defender, PartyFieldLevel, 10);
+        partySetStat(defender, PartyStatSurvival, 10);
+        itemSlotSet(partyEquipmentSlot(defender, 0x0A, GameYendor2), 5, 0); /* main weapon: item id 5 */
+        setupWeaponWithReplacement(5, 999);
+
+        setupAttacker(0, 15, 0);
+        monsterSetU16(g_attacker, MonsterFieldFlags, MonsterFlagCorrodeWeaponSlot);
+        monsterSetU16(g_attacker, MonsterFieldSaveDifficulty, 6);
+
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        bool failed = combatFailsSavingThrow(10, 6, (int16_t)(10 / 2), &peek);
+
+        CombatAttackerAction action = combatResolveAttackerAction(g_attacker, defender, &g_actionCatalog, true, &rng);
+        if (failed) {
+            check("corrosion save failed: CombatAttackCorrosion", action.outcome == CombatAttackCorrosion);
+            checkU32("targets the main weapon slot (0x13A)", action.equipSlotOffset, 0x13A);
+            checkU32("finds the equipped item id", action.equippedItemId, 5);
+            checkU32("replacement id matches the item's own ItemTargetBreakItemA", action.corrosionReplacementId, 999);
+        } else {
+            check("corrosion save resisted: CombatAttackMiss", action.outcome == CombatAttackMiss);
+        }
+    }
+}
+
+static void testResolveAttackerActionCorrosionSlotSelection(void) {
+    uint8_t defender[PartyRecordSize];
+    memset(defender, 0, sizeof(defender));
+    partySetU16(defender, PartyFieldLevel, 1);
+    partySetStat(defender, PartyStatSurvival, 0);
+
+    setupAttacker(0, 15, 0);
+    monsterSetU16(g_attacker, MonsterFieldFlags, MonsterFlagCorrodeSecondSlot);
+    monsterSetU16(g_attacker, MonsterFieldSaveDifficulty, 0);
+
+    RandomState rng;
+    randomStart(&rng, 9, 9);
+    CombatAttackerAction action = combatResolveAttackerAction(g_attacker, defender, &g_actionCatalog, true, &rng);
+    checkU32("MonsterFlagCorrodeSecondSlot targets 0x142", action.equipSlotOffset, 0x142);
+
+    memset(defender, 0, sizeof(defender));
+    partySetU16(defender, PartyFieldLevel, 1);
+    partySetStat(defender, PartyStatSurvival, 0);
+    monsterSetU16(g_attacker, MonsterFieldFlags, MonsterFlagSpecialCorrodeMask);
+    randomStart(&rng, 9, 9);
+    action = combatResolveAttackerAction(g_attacker, defender, &g_actionCatalog, true, &rng);
+    checkU32("neither corrode-slot bit (just the special mask): targets 0x146", action.equipSlotOffset, 0x146);
+}
+
+static void testResolveAttackerActionCorrosionEmptySlotOrUnclassifiable(void) {
+    uint8_t defender[PartyRecordSize];
+
+    memset(defender, 0, sizeof(defender));
+    partySetU16(defender, PartyFieldLevel, 1);
+    partySetStat(defender, PartyStatSurvival, 0); /* very low chance to resist, but empty slot short-circuits first */
+    setupAttacker(0, 15, 0);
+    monsterSetU16(g_attacker, MonsterFieldFlags, MonsterFlagCorrodeWeaponSlot);
+    monsterSetU16(g_attacker, MonsterFieldSaveDifficulty, 0);
+
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    CombatAttackerAction action = combatResolveAttackerAction(g_attacker, defender, &g_actionCatalog, true, &rng);
+    check("no item equipped at the targeted slot: CombatAttackMiss regardless of the save",
+          action.outcome == CombatAttackMiss);
+
+    /* An item that doesn't classify (no relevant flags) can't corrode even if equipped. */
+    memset(&g_actionCatalog, 0, sizeof(g_actionCatalog));
+    g_actionCatalog.game = GameYendor2;
+    g_actionCatalog.itemCount = 5;
+    itemSlotSet(partyEquipmentSlot(defender, 0x0A, GameYendor2), 5, 0);
+    randomStart(&rng, 1, 1);
+    action = combatResolveAttackerAction(g_attacker, defender, &g_actionCatalog, true, &rng);
+    check("equipped item doesn't classify for item service: CombatAttackMiss", action.outcome == CombatAttackMiss);
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
@@ -446,6 +655,14 @@ int main(void) {
     testApplyEffectGoldTheft();
     testApplyEffectOreCosts();
     testApplyEffectNoneIsNoOp();
+    testSelectTrapEffectVariantDisabledOrNoSpecial();
+    testSelectTrapEffectVariantRoll();
+    testResolveAttackerActionDamagePath();
+    testResolveAttackerActionGoldTheft();
+    testResolveAttackerActionNoGoldAmountFallsBackToDamage();
+    testResolveAttackerActionCorrosion();
+    testResolveAttackerActionCorrosionSlotSelection();
+    testResolveAttackerActionCorrosionEmptySlotOrUnclassifiable();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

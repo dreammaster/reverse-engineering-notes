@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-25, added: equipment corrosion classification)
+## Status (last updated 2026-09-26, added: ResolveAttackerActionOutcome fully composed)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -553,6 +553,31 @@ groundwork below is already in place.
   `combat.c` itself, not yet done. Tests in `tests/test_item.c`
   (all 3 tiers x both categories synthetically, plus the real SLING/
   BREAD/BAG cases); all 18 suites pass.
+  **`ResolveAttackerActionOutcome` fully composed, 2026-09-26**: with
+  every primitive solid, assembled `combatSelectTrapEffectVariant`
+  (`SelectTrapEffectVariant`) and `combatResolveAttackerAction`
+  (`ResolveAttackerActionOutcome`'s own 3-way dispatch) in
+  `src23/combat.c`/`.h`. Both instruction-identical between the games
+  except for the already-documented Chapter 3 resisted-special-attack
+  fallback. Returns a plain `CombatAttackerAction` value rather than
+  staging into an icon slot -- the caller applies
+  `CombatAttackDamage`/`StatusEffect` via `combatApplyEffect` directly.
+  **One piece deliberately left undone**: `CombatAttackCorrosion`
+  reports the equipment slot/item/replacement-id but doesn't write the
+  replacement back -- the original's own write-back
+  (`HandleIconBarItemExpiry`) is defined for item-expiry-on-use/wear,
+  and this project hasn't confirmed combat's corrosion staging feeds
+  it with matching semantics rather than just reusing the same byte
+  offsets for something else. Tests in `tests/test_combat.c` cover
+  every branch (plain damage hit/miss, gold-theft fail/resist via
+  RNG-peek, the "special selected but nothing configured" fallback,
+  corrosion fail/resist, all 3 equipment-slot selections, an empty
+  slot, and an unclassifiable equipped item); all 18 suites pass.
+  This closes out candidate 7's decision-logic scope entirely --
+  what's left is purely the UI-driving orchestration (drawing,
+  the corrosion write-back, `ApplyEffectAndDrawIconBar`'s other 2
+  dispatch variants, `ProcessMonsterAttackTurn`,
+  `HandleDungeonInput`'s player-attack path).
 
 ## Next: continue the C reimplementation
 
@@ -683,31 +708,29 @@ flag bits `0x2000`/`0x400`'s consumers, if any.
    (`RollTrapAvoidanceMagnitude`'s `+0x64`/`+0x66` are literally
    `MonsterFieldRangedAccuracy`/`RangedDamage`) without proving it.
 ~~7. **Turn-based combat's turn order, round processing, attack
-   primitives, and the icon-bar effect-application pipeline they
-   feed**~~ — **done 2026-09-25** (`combatBuildTurnOrder`/
+   resolution (fully composed), and the icon-bar effect-application
+   pipeline they feed**~~ — **done 2026-09-26** (`combatBuildTurnOrder`/
    `combatSelectActiveMonster`/`combatProcessRound`/`combatResolveAttack`/
-   `combatFailsSavingThrow`/`combatApplyEffect` in `src23/combat.c`/`.h`,
+   `combatFailsSavingThrow`/`combatApplyEffect`/`combatSelectTrapEffectVariant`/
+   `combatResolveAttackerAction` in `src23/combat.c`/`.h`,
    `effectRollMagnitude`/`effectResolveInflictedStatus` in
    `src23/effect.c`/`.h`, `partyDeductHp`/`partyDeductMp` in
-   `src23/party.c`/`.h` -- see the status entries above and
+   `src23/party.c`/`.h`, `itemClassifyServiceTier`/`itemCorrosionReplacement`
+   in `src23/item.c`/`.h` -- see the status entries above and
    `file-formats.md`'s "Turn-based combat"/"Attack resolution"/"The
-   staged combat event's consumer, found" sections). **Still open, a
-   good candidate for its own pass**: composing everything above into
-   the full, UI-driving orchestration -- `ResolveAttackerActionOutcome`
-   itself (whose third branch's item-classification side is now fully
-   understood, `itemClassifyServiceTier`/`itemCorrosionReplacement`,
-   see the status entry above -- what's left is composing the
-   attacker-flag equipment-slot selection and defender-item lookup
-   around it),
+   staged combat event's consumer, found"/"`ResolveAttackerActionOutcome`,
+   fully composed" sections). **Still open, a good candidate for its
+   own pass**: the remaining UI-driving orchestration --
    `ApplyEffectAndDrawIconBar`'s other 2 dispatch variants (item
    expiry, stat delta -- different mechanisms, own untraced call
    chains: `HandleIconBarItemExpiry`, `ApplyIconBarStatDelta`),
-   `ProcessMonsterAttackTurn`, and the player-attack path inside
-   `HandleDungeonInput` (spell/ability use in combat, area-attack
+   the equipment-corrosion write-back specifically (needs confirming
+   `HandleIconBarItemExpiry`'s field semantics actually match combat's
+   own staging), `ProcessMonsterAttackTurn`, and the player-attack path
+   inside `HandleDungeonInput` (spell/ability use in combat, area-attack
    handling, and all the drawing/sound/UI-tier-refresh work this
-   session deliberately deferred to the eventual SDL2 layer) -- the
-   remaining part of the combat subsystem, now clearly scoped rather
-   than an open-ended unknown.
+   project has deliberately deferred to the eventual SDL2 layer) -- all
+   pure orchestration/UI now, no remaining decision-logic gaps.
 8. **`ApplyEncodedItemEffect`** (was `sub_2C0FE`, the largest function
    in the binary at 4,210 bytes -- named and scoped by an earlier
    session, revisited 2026-09-25) -- a flat ~19-branch bitmask switch

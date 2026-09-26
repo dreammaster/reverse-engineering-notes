@@ -172,3 +172,89 @@ void combatApplyEffect(uint8_t *defenderRecord, SaveGame *save, EffectSpend spen
                     (uint16_t)(partyGetU16(defenderRecord, PartyFieldStatusFlags) | inflictedStatus));
     }
 }
+
+CombatEffectSelection combatSelectTrapEffectVariant(const uint8_t *attackerRecord, RandomState *rng) {
+    CombatEffectSelection selection;
+    selection.effectId = monsterGetU16(attackerRecord, MonsterFieldAttackEffect);
+    selection.isSpecial = false;
+
+    if (monsterGetU16(attackerRecord, MonsterFieldState) & MonsterStateSpecialAttackDisabled) {
+        return selection;
+    }
+    unsigned special = monsterGetU16(attackerRecord, MonsterFieldSpecialAttack);
+    if (special == 0) {
+        return selection;
+    }
+    if (randomInRange(rng, 100) < 25) {
+        selection.effectId = special;
+        selection.isSpecial = true;
+    }
+    return selection;
+}
+
+static bool bcd4IsZero(const uint8_t *value) {
+    return value[0] == 0 && value[1] == 0 && value[2] == 0 && value[3] == 0;
+}
+
+CombatAttackerAction combatResolveAttackerAction(const uint8_t *attackerRecord, const uint8_t *defenderRecord,
+                                                  const ItemCatalog *catalog, bool isSpecial, RandomState *rng) {
+    CombatAttackerAction action;
+    memset(&action, 0, sizeof(action));
+
+    uint16_t attackerFlags = monsterGetU16(attackerRecord, MonsterFieldFlags);
+    const uint8_t *goldTheftAmount = attackerRecord + MonsterFieldGoldTheftAmount;
+
+    if (isSpecial && (attackerFlags & MonsterFlagSpecialMask)) {
+        if (attackerFlags & MonsterFlagCorrodeWeaponSlot) {
+            action.equipSlotOffset = 0x13A;
+        } else if (attackerFlags & MonsterFlagCorrodeSecondSlot) {
+            action.equipSlotOffset = 0x142;
+        } else {
+            action.equipSlotOffset = 0x146;
+        }
+
+        int16_t bonus = (int16_t)(partyGetStat(defenderRecord, PartyStatSurvival) / 2);
+        bool failed = combatFailsSavingThrow((int16_t)partyGetU16(defenderRecord, PartyFieldLevel),
+                                              (int16_t)monsterGetU16(attackerRecord, MonsterFieldSaveDifficulty),
+                                              bonus, rng);
+        if (!failed) {
+            return action;
+        }
+
+        action.equippedItemId = partyGetU16(defenderRecord, action.equipSlotOffset);
+        if (action.equippedItemId == 0) {
+            return action;
+        }
+        const uint8_t *itemRecord = itemCatalogRecord(catalog, action.equippedItemId);
+        if (!itemRecord) {
+            return action;
+        }
+        action.corrosionReplacementId = itemCorrosionReplacement(catalog, itemRecord);
+        if (action.corrosionReplacementId == 0) {
+            return action;
+        }
+        action.outcome = CombatAttackCorrosion;
+        return action;
+    }
+
+    if (isSpecial && !bcd4IsZero(goldTheftAmount)) {
+        bool failed = combatFailsSavingThrow((int16_t)partyGetU16(defenderRecord, PartyFieldLevel),
+                                              (int16_t)monsterGetU16(attackerRecord, MonsterFieldSaveDifficulty),
+                                              (int16_t)partyGetStat(defenderRecord, PartyStatSurvival), rng);
+        if (!failed) {
+            return action;
+        }
+        memcpy(action.goldAmount, goldTheftAmount, sizeof(Bcd4));
+        action.outcome = CombatAttackStatusEffect;
+        return action;
+    }
+
+    uint16_t damage = combatResolveAttack(partyGetStat(defenderRecord, PartyStatEquipRating5),
+                                           monsterGetU16(attackerRecord, MonsterFieldAccuracy),
+                                           monsterGetU16(attackerRecord, MonsterFieldDamage), rng);
+    if (damage != 0) {
+        action.outcome = CombatAttackDamage;
+        action.damage = damage;
+    }
+    return action;
+}
