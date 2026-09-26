@@ -176110,3 +176110,99 @@ row 9: 0170/0036 1000/0000 0000/0000 0000/8000 006a/0038 2000/0000 0000/000c 001
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'check_curgame_record_buffer.py', 'noexport']
+[*] reading check_curgame_record_buffer.py
+[*] executing check_curgame_record_buffer.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+=== DS:0x556c (ea 0x32dcc) name='byte_32DCC' ===
+  4 xrefs:
+    [CODE] HandleShopCatalogSlotClick @ 0x170a3 type=2
+    [CODE] HandleShopCatalogSlotClick @ 0x17100 type=2
+    [CODE] HandleShopCatalogSlotClick @ 0x17247 type=2
+    [CODE] BuildShopCategoryTabList @ 0x179c5 type=3
+
+=== DS:0x556d (ea 0x32dcd) name='g_lockUnlockedAccumulator' ===
+  14 xrefs:
+    [CODE] start @ 0x101bb type=2
+    [CODE] start @ 0x1024b type=2
+    [CODE] UseAbilityCommand @ 0x17937 type=3
+    [CODE] UseAbilityCommand @ 0x1794b type=3
+    [CODE] UseAbilityCommand @ 0x17954 type=2
+    [CODE] TryInteractAtPosition @ 0x2173e type=3
+    [CODE] TryInteractAtPosition @ 0x21786 type=3
+    [CODE] UnlockDoorCommand @ 0x297ab type=3
+    [CODE] UnlockDoorCommand @ 0x29831 type=2
+    [CODE] HandleSearchCommand @ 0x2a832 type=3
+    [CODE] HandleSearchCommand @ 0x2a8ab type=2
+    [CODE] ApplyEncodedItemEffect @ 0x2c6c8 type=2
+    [CODE] ApplyEncodedItemEffect @ 0x2c782 type=2
+    [CODE] ApplyEncodedItemEffect @ 0x2c844 type=2
+
+=== DS:0x556e (ea 0x32dce) name='g_lockStatusFlags' ===
+  cmt0: Currently-examined lock/door status flags, loaded by LoadLockState. Confirmed via ShowLockStatus's own switch: bit 0x20='magically locked', bits 0x200/0x400/0x800/0x1000/0x2000/0x4000/0x8000=the 7-tier key hierarchy (BRASS/BRONZE/COPPER/IRON/STEEL/SILVER/GOLD). Bits 0x1/0x2 are also tested at several UseAbilityCommand/RunShopScreen/RunMapEditorScreen call sites whose exact relationship to lock state isn't confirmed.
+  29 xrefs:
+    [CODE] RunShopScreen @ 0x17577 type=3
+    [CODE] ShowLockStatus @ 0x177cd type=3
+    [CODE] ShowLockStatus @ 0x177de type=3
+    [CODE] ShowLockStatus @ 0x17821 type=3
+    [CODE] ShowLockStatus @ 0x17849 type=3
+    [CODE] ShowLockStatus @ 0x17854 type=3
+    [CODE] ShowLockStatus @ 0x1785f type=3
+    [CODE] ShowLockStatus @ 0x1786a type=3
+    [CODE] ShowLockStatus @ 0x17875 type=3
+    [CODE] ShowLockStatus @ 0x17880 type=3
+    [CODE] ShowLockStatus @ 0x1788b type=3
+    [CODE] UseAbilityCommand @ 0x178e5 type=3
+    [CODE] UseAbilityCommand @ 0x1792c type=3
+    [CODE] TriggerShopExitSoundAndPersist @ 0x17a32 type=3
+    [CODE] ConsumeAbilityChargeAndRefresh @ 0x17a6a type=3
+    [CODE] DrawMapEditorInteractionTypeOverlay @ 0x207b8 type=2
+    [CODE] DrawMapEditorInteractionTypeOverlay @ 0x207ce type=3
+    [CODE] DrawMapEditorInteractionTypeOverlay @ 0x207d6 type=3
+    [CODE] TryInteractAtPosition @ 0x2174a type=3
+    [CODE] TryInteractAtPosition @ 0x2175b type=3
+    [CODE] TryInteractAtPosition @ 0x21792 type=3
+    [CODE] TryInteractAtPosition @ 0x217a0 type=3
+    [CODE] TryInteractAtPosition @ 0x217ae type=3
+    [CODE] TryInteractAtPosition @ 0x217bc type=3
+    [CODE] UnlockDoorCommand @ 0x297e3 type=3
+    [CODE] UnlockDoorCommand @ 0x29817 type=3
+    [CODE] HandleSearchCommand @ 0x2a845 type=3
+    [CODE] HandleSearchCommand @ 0x2a8cf type=3
+    [CODE] ApplyEncodedItemEffect @ 0x2c826 type=3
+
+=== DS:0x5570 (ea 0x32dd0) name='word_32DD0' ===
+  11 xrefs:
+    [CODE] LoadLockState @ 0x176f7 type=3
+    [CODE] LoadCurgameRecord @ 0x17780 type=3
+    [CODE] ShowLockStatus @ 0x177ef type=3
+    [CODE] ShowLockStatus @ 0x1780e type=3
+    [CODE] UseAbilityCommand @ 0x17980 type=3
+    [CODE] RefreshDungeonMapWindow @ 0x20b80 type=3
+    [CODE] RefreshDungeonMapWindow @ 0x20b89 type=3
+    [CODE] TryInteractAtPosition @ 0x2176c type=3
+    [CODE] DrawLocalMapCell @ 0x221fb type=3
+    [CODE] DrawLocalMapCell @ 0x22208 type=3
+    [CODE] ApplySavingThrowEffect @ 0x28bd2 type=3
+
+=== DS:0x5572 (ea 0x32dd2) name='' ===
+  0 xrefs:
+
+=== word_32DCE / word_32DD0 declared addresses ===
+word_32DCE: NOT FOUND
+word_32DD0: ea=0x32dd0  DS-relative=0x5570
+word_32DC0: ea=0x32dc0  DS-relative=0x5560
+word_32DC2: ea=0x32dc2  DS-relative=0x5562
+g_lockStatusFlags: ea=0x32dce  DS-relative=0x556e
+g_lockUnlockedMask: ea=0x32dc8  DS-relative=0x5568
+----- end target script output -----
+[*] finished executing check_curgame_record_buffer.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

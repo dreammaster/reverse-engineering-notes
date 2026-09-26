@@ -9568,6 +9568,63 @@ the eventual SDL2 layer rather than open questions. Documented in
 `file-formats.md` (a new section), `engine-diffs.md`, and `roadmap.md`
 (candidate 7's status line updated to reflect the closed scope).
 
+### Session update (continued): `LoadCurgameRecord`'s long-open record format, finally resolved — and a wrong "IDA is blocked" conclusion corrected
+
+With combat's decision logic closed out, the next thread pulled on was
+a genuinely old open question: `LoadCurgameRecord`'s own 4-byte record
+format, flagged in this project's docs as "investigated, not
+resolved" for a while and, as of yesterday's session, additionally
+marked "blocked, `idat.exe` can't launch from inside a Claude Code
+session." Paul pushed back on that directly — correctly. Retrying
+`run_ida_script.ps1` this session worked cleanly: `idat.exe` launched,
+and a real analysis script ran against `yendor2.idb` and returned real
+output. Yesterday's single failed attempt had been read as a hard
+sandboxing block without a second try; it wasn't one. Corrected in
+both `yendor_machine_setup.md` and `project_yendor_status.md` — the
+lesson recorded plainly: one failure isn't confirmation of a block,
+especially for a tool this project depends on.
+
+With IDA actually available, a single small, targeted, read-only
+script (`check_curgame_record_buffer.py`, committed alongside its
+finding rather than discarded) answered the question immediately:
+the 2 words `LoadCurgameRecord` copies aren't some separate,
+undecoded format at all — they land in `g_lockStatusFlags` and a
+packed second word, the *exact same two globals* `LoadLockState`
+already populates for an ordinary lock. A CURGAME "trigger" record
+and a lock record are the same physical shape, just reached through
+two different loaders. This had been sitting as an open question
+specifically because a plain-text `.asm` grep for the raw hex offset
+turns up nothing — IDA renders a named symbol at the *read* site, not
+at the register-load `mov di, <hex>` that only shows as a bare
+immediate; the live cross-reference database was the only way to see
+past that.
+
+Chasing the consumer side closed the story completely:
+`UseAbilityCommand` feeds either loader's result straight into
+`ApplySavingThrowEffect` — a search/lockpicking-triggered magical
+trap, not a "searchable container" guess as file-formats.md's own
+older note had hedged. The packed second word splits into a
+saving-throw threshold and an effect id (`>= 50` meaning "apply to
+the whole party instead of just the character who triggered it"), and
+the whole mechanism reuses the *same* effect-application pipeline
+this project already built for combat (`effectRollMagnitude`/
+`effectResolveInflictedStatus`/`combatApplyEffect`) — a third
+confirmed real-world consumer of that pipeline, after combat itself
+and (partially) `ApplyEncodedItemEffect`.
+
+New: `partyDecodeSavingThrowEffect` in `src23/party.c`/`.h` (just the
+packed-value decode; the actual roll-and-apply composition is left
+for whoever reimplements `UseAbilityCommand`/`HandleSearchCommand`
+next, both UI-heavy top-level commands not started). Tests in
+`test_party.c` cover the zero/no-trap case, both target-scope
+branches, and the exact id-49/id-50 boundary between them. Full suite
+rebuilt, 18/18 passing. Documented in `file-formats.md` (extending the
+existing `LoadCurgameRecord` note rather than replacing it),
+`engine-diffs.md`, `roadmap.md`, `interact.h` (updating its own
+`curgameFlags` doc comment now that the field's identity is known),
+and project memory (both the IDA-access correction and the finding
+itself).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -1278,6 +1278,15 @@ whole area, not reproduced (see `file-formats.md`'s "Attack
 resolution" section for what's covered and the one remaining gap,
 the corrosion write-back itself).
 
+## Search/lockpicking-triggered trap (`ApplySavingThrowEffect`): no behavioral difference found
+
+`ApplySavingThrowEffect` and `UseAbilityCommand` are instruction-
+identical between the two games — checked directly,
+`yendor2.asm:44646`/`:12821` vs. `yendor3.asm:45061`/`:4637`. Same
+packed-value split, same trigger-roll/per-recipient-roll structure,
+same 50-id single-vs-whole-party boundary. Reimplemented (the decode
+step only) once in `src23/party.c`, shared by both games.
+
 ## Equipment corrosion classification: no behavioral difference found
 
 `ClassifyItemServiceTier` and `GetClassifiedItemStatField` are

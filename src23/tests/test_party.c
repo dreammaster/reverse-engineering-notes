@@ -723,6 +723,35 @@ static void testDeductStats(void) {
     check("MP hitting 0 does not set PartyStatusDead", !(partyGetU16(g_record, PartyFieldStatusFlags) & PartyStatusDead));
 }
 
+static void testDecodeSavingThrowEffect(void) {
+    PartySavingThrowEffect effect;
+
+    check("packedValue == 0: no trap at all", !partyDecodeSavingThrowEffect(0, &effect));
+
+    /* threshold 12, effect id 7 (< 50: single target). */
+    check("decodes threshold and single-target effect id", partyDecodeSavingThrowEffect(1207, &effect));
+    checkU32("threshold = value / 100", effect.threshold, 12);
+    checkU32("effect id = value % 100 when < 50", effect.effectId, 7);
+    check("single target (id < 50)", !effect.wholeParty);
+
+    /* threshold 5, effect id 50 + 3 = 53 (>= 50: whole party, real id 3). */
+    check("decodes a whole-party effect", partyDecodeSavingThrowEffect(553, &effect));
+    checkU32("threshold = value / 100", effect.threshold, 5);
+    checkU32("whole-party effect id has 50 subtracted back off", effect.effectId, 3);
+    check("whole party (id >= 50)", effect.wholeParty);
+
+    /* Boundary: effect id exactly 50 is whole-party id 0, not single-target id 50. */
+    check("decodes the id-50 boundary", partyDecodeSavingThrowEffect(150, &effect));
+    checkU32("threshold", effect.threshold, 1);
+    checkU32("id 50 maps to whole-party id 0", effect.effectId, 0);
+    check("id 50 is whole-party, not single-target", effect.wholeParty);
+
+    /* Boundary: effect id 49 is the last single-target id. */
+    check("decodes the id-49 boundary", partyDecodeSavingThrowEffect(149, &effect));
+    checkU32("id 49 stays single-target", effect.effectId, 49);
+    check("id 49 is single-target", !effect.wholeParty);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -735,6 +764,7 @@ int main(void) {
     testAbilityUnlocks();
     testKnownAbilityIds();
     testDeductStats();
+    testDecodeSavingThrowEffect();
     testRealCharacters();
 
     if (g_failureCount == 0) {

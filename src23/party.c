@@ -671,3 +671,14 @@ uint8_t *partyEquipmentSlot(uint8_t *record, unsigned code, GameKind game) {
     }
     return record + 0x152 + (code - PartyEquipmentFirstShort) * 2;
 }
+
+bool partyDecodeSavingThrowEffect(uint16_t packedValue, PartySavingThrowEffect *out) {
+    if (packedValue == 0) {
+        return false;
+    }
+    out->threshold = packedValue / 100;
+    unsigned effectId = packedValue % 100;
+    out->wholeParty = effectId >= 50;
+    out->effectId = out->wholeParty ? effectId - 50 : effectId;
+    return true;
+}

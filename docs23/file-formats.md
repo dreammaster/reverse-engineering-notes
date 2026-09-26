@@ -3617,10 +3617,14 @@ UI display, not reimplemented) message dispatch:
 
 **`LoadCurgameRecord` (`worldobjects.c`'s `0x4000` flag) reads from
 this exact same EMS-backed region, at a per-game-inconsistent base
-offset — investigated, not resolved.** It copies 2 words (4 bytes, not
-26) from `si = (id-1)*4 + 26*_val9` (Chapter 2) — `_val9 = 600`, i.e.
-starting 15,600 bytes into the region, which is `26 * 600`, *before*
-the 608-record boundary this section uses. In Chapter 3 the equivalent
+offset — the base-offset side of this is still open, but what the 2
+copied words *mean* once loaded is now fully resolved (2026-09-26, via
+a live IDA cross-reference check — see
+`yendor2/ida_scripts/check_curgame_record_buffer.py`).** It copies 2
+words (4 bytes, not 26) from `si = (id-1)*4 + 26*_val9` (Chapter 2) —
+`_val9 = 600`, i.e. starting 15,600 bytes into the region, which is
+`26 * 600`, *before* the 608-record boundary this section uses. In
+Chapter 3 the equivalent
 multiplier (`word_3320E`) is a global that's **read but never written
 anywhere in the whole disassembly — always 0** (confirmed via
 `yendor3/ida_scripts/check_lock_catalog_size.py`), meaning Chapter 3's
@@ -3642,6 +3646,60 @@ unlocked/triggered" bitmap's own `curgameIdOffset`** (`_val10` = 608,
 see `TryInteractAtPosition`'s writeup above) — two separate
 mechanisms, both keyed off a lock-count-ish per-game constant, both
 apparently disabled (always-zero) in Chapter 3.
+
+**What the 2 copied words mean, resolved 2026-09-26**: they land in
+the *exact same two globals* `LoadLockState` populates for an
+ordinary lock — `g_lockStatusFlags` (the first word) and a packed
+second word (`word_32DD0`) — confirmed by checking `yendor2.idb`
+directly (both addresses already carried those names; a plain-text
+`.asm` grep for the raw hex offset had missed this, since IDA renders
+a named symbol at a read site, not the write site's own `mov di,
+<hex>` immediate). A CURGAME "trigger" record and a lock record are
+therefore the *same physical shape* read through two different
+loaders into the same scratch pair — not a separate format needing
+its own decode, just a different source for data every consumer
+already expects in lock-shaped form.
+
+The consumer that makes this legible: `UseAbilityCommand`
+(`yendor2.asm:12821`) and `HandleSearchCommand` both call whichever
+loader matches the target (`LoadLockState` for a lock, `LoadCurgameRecord`
+otherwise) and then feed the result straight to `ApplySavingThrowEffect`
+(`yendor2.asm:44646`, instruction-identical in Chapter 3) — a
+search/lockpicking-triggered magical trap. The packed second word is
+`threshold*100 + effectId`: `word_32DD0 / 100` is a saving-throw DC,
+`word_32DD0 % 100` is an `effect.h` effect id — `< 50` targets the
+character attempting the lock/search alone, `>= 50` (subtract 50 for
+the real id) targets every occupied, non-incapacitated party member
+instead. A value of exactly 0 means no trap is configured at all.
+
+The original's own two-tier roll structure: one *trigger* roll first
+(`FailsSavingThrow`, the attempting character's own `PartyFieldLevel`
+against the threshold, with their own field `+0x6C` — `PartyStatThievery`,
+confirmed by its enum position — as the resistance bonus: their own
+lockpicking/search skill helping them avoid setting the trap off at
+all). A failed trigger roll (the "fails" naming is the usual inverted
+one — failing means the trap *does* activate) then runs the ordinary
+effect pipeline (`RollEffectMagnitude`/`RollEffectResistance`/
+`ApplyEffectCost`, i.e. `effectRollMagnitude`/`effectResolveInflictedStatus`/
+`combatApplyEffect`) once per recipient — the single target, or each
+of up to 4 party members for the whole-party case — each with their
+*own* independent resistance roll via `ApplyEffectAndDrawIconBar`'s
+usual per-slot processing (the same `threshold` reused for every
+recipient, only the resistance *bonus* differing since it's each
+recipient's own protections).
+
+This closes out the `interact.h`/`lockcatalog.h` "still-undecoded EMS
+record format" framing for `LoadCurgameRecord` specifically — the base
+EMS offset per id is still open (a smaller, separate question, see
+above), but the record's own on-load *meaning* no longer is.
+Reimplemented the packed-value decode as `partyDecodeSavingThrowEffect`
+in `src23/party.c`/`.h` (the trigger/per-recipient rolls and the
+actual `ApplyEffectAndDrawIconBar`-equivalent application aren't
+composed into one function yet — that's `UseAbilityCommand`/
+`HandleSearchCommand`'s own eventual reimplementation, a UI-heavy
+top-level command this project hasn't started). Tests in
+`tests/test_party.c` cover the zero case, both target-scope cases, and
+the exact 49/50 id boundary between them.
 
 Reimplemented in `src23/lockcatalog.c`/`.h`:
 `lockCatalogParse`/`lockCatalogParseWorldDat`, `lockCatalogRecord`,

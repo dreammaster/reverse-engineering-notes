@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-26, added: ResolveAttackerActionOutcome fully composed)
+## Status (last updated 2026-09-26, resolved: LoadCurgameRecord's record format)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -578,6 +578,32 @@ groundwork below is already in place.
   the corrosion write-back, `ApplyEffectAndDrawIconBar`'s other 2
   dispatch variants, `ProcessMonsterAttackTurn`,
   `HandleDungeonInput`'s player-attack path).
+  **`LoadCurgameRecord`'s long-open record format resolved,
+  2026-09-26**: re-tried `run_ida_script.ps1` from inside this session
+  after a false "blocked" conclusion the day before (see project
+  memory) -- it works fine, and a single targeted read-only script
+  (`yendor2/ida_scripts/check_curgame_record_buffer.py`, committed)
+  immediately answered the question pure `.asm` text-grepping
+  couldn't: the 2 words `LoadCurgameRecord` copies land in
+  `g_lockStatusFlags` and a packed `threshold*100 + effectId` word --
+  the *exact same* two globals `LoadLockState` populates for an
+  ordinary lock. A CURGAME "trigger" record and a lock record are the
+  same physical shape read through two different loaders. Traced the
+  consumer (`UseAbilityCommand` -> `ApplySavingThrowEffect`,
+  instruction-identical in both games) to confirm: it's a
+  search/lockpicking-triggered magical trap, with a two-tier roll
+  structure (one shared trigger roll using the attempting character's
+  own `PartyStatThievery`, then the ordinary effect pipeline applied to
+  either the triggering character alone or the whole party, id
+  `>= 50` selecting the latter). Reimplemented the packed-value decode
+  as `partyDecodeSavingThrowEffect` in `src23/party.c`/`.h`; the
+  trigger/per-recipient rolls and the actual application aren't
+  composed into one function yet (that's `UseAbilityCommand`/
+  `HandleSearchCommand`'s own eventual reimplementation). Tests in
+  `test_party.c` cover the zero case, both target scopes, and the
+  49/50 id boundary. All 18 suites pass. Full writeup in
+  `file-formats.md`'s "Lock/door definition catalog" section (the
+  `LoadCurgameRecord` sub-note).
 
 ## Next: continue the C reimplementation
 
@@ -682,10 +708,12 @@ next):
 
 ~~World object index~~ — **done 2026-09-23** (`worldobjects.c`/`.h`,
 see item 4's status line above and `file-formats.md`'s "World object
-index" section for the full decode). Still open there:
-`LoadCurgameRecord`/`LoadLockState`'s own `CURGAME`-side record formats
-(what a `0x4000`/`0x8000` record's `value` actually indexes into), and
-flag bits `0x2000`/`0x400`'s consumers, if any.
+index" section for the full decode). Still open there: exactly which
+EMS byte offset a `0x4000`/`0x8000` record's `value` indexes into
+(`LoadCurgameRecord`'s own base-offset mystery, distinct from what the
+loaded record *means* once read — that part is resolved 2026-09-26,
+see the status entry above), and flag bits `0x2000`/`0x400`'s
+consumers, if any.
 
 ~~5. `UseTrainingItem`, fully~~ — **done 2026-09-24**
    (`partyApplyTraining`/`partyClassPromotionThresholds`/

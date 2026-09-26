@@ -104,11 +104,19 @@ typedef enum {
 InteractOutcome interactClassifyLock(const LockRecord *lock, bool alreadyUnlocked);
 
 /*
- * curgameFlags is the first word of the still-undecoded 4-byte EMS
- * record LoadCurgameRecord reads (see lockcatalog.h's "LoadCurgameRecord"
- * note) -- its bits' own meaning isn't resolved, only the priority order
- * TryInteractAtPosition tests them in (0x10, then 0x8, then 0x40, then
- * 0x20 as a tiebreaker between the two fallback outcomes).
+ * curgameFlags is the first word of the 4-byte EMS record
+ * LoadCurgameRecord reads (see lockcatalog.h's "LoadCurgameRecord"
+ * note) -- confirmed 2026-09-26 to be nothing more exotic than
+ * g_lockStatusFlags, the same global LoadLockState populates for an
+ * ordinary lock (a CURGAME "trigger" record and a lock record are the
+ * same physical shape, just read through two different loaders). Its
+ * bits' own meaning in *this* dispatch context still isn't resolved
+ * beyond the priority order TryInteractAtPosition tests them in
+ * (0x10, then 0x8, then 0x40, then 0x20 as a tiebreaker between the
+ * two fallback outcomes) -- see party.h's partyDecodeSavingThrowEffect
+ * for the *second* word's own, now fully-resolved meaning (a packed
+ * saving-throw threshold + effect id, consumed by a wholly different
+ * caller, UseAbilityCommand/ApplySavingThrowEffect, not this one).
  */
 InteractOutcome interactClassifyCurgame(uint16_t curgameFlags, bool alreadyTriggered);
 

@@ -528,4 +528,54 @@ uint8_t *partyEquipmentSlot(uint8_t *record, unsigned code, GameKind game);
 enum { PartyBagMarkerSize = 0x26 };
 uint8_t *partyBagMarker(uint8_t *record, unsigned bag);
 
+/*
+ * ApplySavingThrowEffect's packed value (yendor2.asm:44646,
+ * instruction-identical in Chapter 3), decoded -- this closes out a
+ * long-open question: it's the exact 4-byte record LoadCurgameRecord
+ * (lockcatalog.h) reads via EMS paging, confirmed live against
+ * yendor2.idb (2026-09-26) to be nothing more exotic than
+ * `g_lockStatusFlags` (the record's first word) plus this packed
+ * second word -- the *same two globals* `LoadLockState` populates for
+ * an ordinary lock. That's why `interact.h`'s `curgameFlags` and this
+ * packed value slot cleanly into the existing lock-status machinery:
+ * a CURGAME "trigger" record and a lock record are the same physical
+ * shape, just read through two different loaders into the same
+ * scratch globals.
+ *
+ * `UseAbilityCommand` (`yendor2.asm:12821`) and `HandleSearchCommand`
+ * both feed this packed value straight to `ApplySavingThrowEffect`
+ * after loading either kind of record: it's a search/lockpicking-
+ * triggered magical trap. `packedValue / 100` is a saving-throw DC
+ * (the same DC used twice -- see below); `packedValue % 100` is an
+ * `effect.h` effect id, `< 50` targeting the triggering character
+ * alone or `>= 50` (subtract 50 for the real id) targeting every
+ * occupied, non-incapacitated party member instead. `packedValue == 0`
+ * means no trap at all.
+ *
+ * The original's own two-tier roll structure, for whoever composes
+ * this next (not reimplemented past this decode step): one *trigger*
+ * roll first, using the character attempting the lock/search
+ * (`combatFailsSavingThrow`, `defenderStat` = their own
+ * `PartyFieldLevel`, `threshold` = this decode's own `threshold`,
+ * `bonus` = their own `PartyStatThievery` -- their lockpicking/search
+ * skill helping them avoid triggering it at all); a failed trigger
+ * roll (the common case name is misleading again -- *failing* means
+ * the trap *does* go off) then runs effect.h's own
+ * magnitude/resistance/cost pipeline
+ * (`effectRollMagnitude`/`effectResolveInflictedStatus` via another,
+ * independent `combatFailsSavingThrow` call per recipient using the
+ * *same* `threshold`/`effectResistanceBonus`/`combatApplyEffect`) once
+ * per recipient -- one call for the single-target case, once per
+ * eligible party member for the whole-party case, matching
+ * `ApplyEffectAndDrawIconBar`'s own per-slot processing exactly.
+ */
+typedef struct {
+    unsigned threshold;
+    unsigned effectId;
+    bool wholeParty;
+} PartySavingThrowEffect;
+
+/* False (out left untouched) if packedValue == 0 -- no trap configured at all. */
+bool partyDecodeSavingThrowEffect(uint16_t packedValue, PartySavingThrowEffect *out);
+
 #endif
