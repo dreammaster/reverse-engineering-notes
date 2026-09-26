@@ -9625,6 +9625,56 @@ existing `LoadCurgameRecord` note rather than replacing it),
 and project memory (both the IDA-access correction and the finding
 itself).
 
+### Session update (continued): the search/lockpicking trap's roll-and-apply composition
+
+With the decode in place, the next natural step was the piece its own
+doc comment explicitly deferred: the actual roll-and-apply composition
+`UseAbilityCommand`/`HandleSearchCommand` would eventually need.
+Reading `ApplySavingThrowEffect` (`yendor2.asm:44646`) fully resolved
+exactly how its one saving-throw roll and the per-recipient
+application fit together, closing a small but real gap in the earlier
+summary: the "two-tier roll structure" described then is really one
+roll (a trigger check against the *acting* character's own
+`PartyFieldLevel`/`PartyStatThievery`) followed by `ApplyEffectAndDrawIconBar`'s
+already-familiar per-slot processing — which itself rolls a
+*second*, independent saving throw per recipient, but only when the
+effect definition both inflicts something and gates on a save
+(`RollEffectResistance`'s own double early-out, confirmed by reading
+it directly rather than assuming it always rolls).
+
+Reimplemented as `combatApplySavingThrowTrap` in `src23/combat.c`/`.h`
+— deliberately not `party.c`/`effect.c`, since `party.h` can't include
+`combat.h` (the same circular-dependency constraint that shaped
+`partyDecodeSavingThrowEffect`/`effectResolveInflictedStatus`
+themselves). Confirmed `ApplySavingThrowEffect`, `RollEffectResistance`,
+and `RollEffectMagnitude` are all instruction-identical in Chapter 3 by
+reading `yendor3.asm` directly (matching relative offsets and opcodes
+throughout). Two real quirks worth remembering, both reproduced
+exactly rather than smoothed over: `RollEffectResistance`'s early-out
+means this composition's own RNG-draw count matches the original
+exactly, not just its outcome; and the whole-party scan
+(`ApplySavingThrowEffect`'s own loop over `SaveHeaderPartySlots`) stops
+dead at the first unoccupied slot instead of skipping past it to check
+the rest — real party layouts are always front-packed, so this is
+presumed never observed in practice, but it's what the disassembly
+does. Also confirmed a related, quieter fact: the original never
+populates a gold/ore effect's material amount for this call path at
+all (`RollEffectMagnitude`'s own low-bit early-out leaves it at the
+icon slot's cleared 0), so a search/lock trap configured with a
+gold-cost effect id would always steal exactly 0 in the original —
+reproduced by always passing a zeroed `Bcd4` here rather than
+inventing a source that was never really there.
+
+Tests in `test_combat.c` cover the zero-value and avoided-trigger
+cases, a single-target application verified against an exact
+peeked-RNG magnitude, the whole-party incapacitated-skip and
+stop-dead-at-empty-slot quirks together in one test, and an
+out-of-range effect id. Full suite rebuilt, 18/18 passing. This closes
+out the entire decision-and-apply side of the search/lockpicking trap
+mechanic; `UseAbilityCommand`/`HandleSearchCommand` themselves are the
+only remaining pieces, and both are UI-heavy top-level commands
+waiting on the SDL2 layer rather than further decision logic.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

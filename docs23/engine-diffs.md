@@ -1287,6 +1287,14 @@ packed-value split, same trigger-roll/per-recipient-roll structure,
 same 50-id single-vs-whole-party boundary. Reimplemented (the decode
 step only) once in `src23/party.c`, shared by both games.
 
+**Extended 2026-09-26**: the roll-and-apply composition itself is now
+reimplemented too (`combatApplySavingThrowTrap`, `src23/combat.c`).
+Also checked `RollEffectResistance`/`RollEffectMagnitude` directly
+(`yendor2.asm:14127`/`:14214` vs. `yendor3.asm:6688`/`:6775`) — both
+instruction-identical as well, so the whole mechanic (decode, trigger
+roll, and per-recipient application) shares one implementation across
+both games with no behavioral difference anywhere in the chain.
+
 ## Equipment corrosion classification: no behavioral difference found
 
 `ClassifyItemServiceTier` and `GetClassifiedItemStatField` are

@@ -342,4 +342,60 @@ typedef struct {
 CombatAttackerAction combatResolveAttackerAction(const uint8_t *attackerRecord, const uint8_t *defenderRecord,
                                                   const ItemCatalog *catalog, bool isSpecial, RandomState *rng);
 
+/*
+ * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
+ * Chapter 3): the search/lockpicking trap composition party.h's
+ * partyDecodeSavingThrowEffect leaves for "whoever composes this
+ * next". actingRecord is the character attempting the lock/search
+ * (g_currentPartyRecord in the original -- the one whose own skill can
+ * avoid triggering the trap at all).
+ *
+ * Two independent combatFailsSavingThrow rolls against the *same*
+ * decoded threshold, never re-derived per recipient:
+ *   1. A trigger roll: defenderStat = actingRecord's own
+ *      PartyFieldLevel, bonus = their own PartyStatThievery. Resisting
+ *      this one avoids the trap outright -- returns
+ *      CombatSavingThrowTrapNone (packedValue == 0 short-circuits to
+ *      the same outcome, matching partyDecodeSavingThrowEffect's own
+ *      false return, without spending a roll).
+ *   2. If the trigger roll fails (the trap goes off), the effect
+ *      applies once per recipient via effect.h's own per-recipient
+ *      pipeline (effectRollMagnitude when effectRollsMagnitude(def),
+ *      then -- only when the effect actually inflicts something and
+ *      gates on a save (RollEffectResistance's own double early-out,
+ *      yendor2.asm:14127) -- a second, independent
+ *      combatFailsSavingThrow roll: same threshold, bonus =
+ *      effectResistanceBonus(def, recipient) this time, not
+ *      PartyStatThievery -- then combatApplyEffect).
+ *      effectId < 50 (partyDecodeSavingThrowEffect's wholeParty ==
+ *      false): actingRecord alone. >= 50: every occupied,
+ *      non-incapacitated SaveHeaderPartySlots member.
+ *
+ * **Two quirks reproduced exactly, not "fixed"**: (1) the original
+ * never populates a gold/ore effect's material amount for this call
+ * path at all (RollEffectMagnitude's own bits-0-2 early-out leaves it
+ * at the icon slot's cleared 0) -- passing a zeroed Bcd4 here matches
+ * that rather than inventing a nonzero source. (2) the whole-party
+ * scan stops dead at the first *unoccupied* slot instead of skipping
+ * past it (ApplySavingThrowEffect's own di-indexed loop tests
+ * `[di] == 0` with a jump straight past the remaining iterations, not
+ * a per-slot skip) -- real party layouts are always front-packed in
+ * practice, so this is presumed unobserved, but it's what the
+ * disassembly does.
+ *
+ * effectGetDef failing (an out-of-range effectId) isn't a case the
+ * original guards against -- its own PrepareTrapEffectSlots indexes
+ * g_trapEffectDefs unconditionally. Treated here as
+ * CombatSavingThrowTrapNone rather than reading past the table, since
+ * real CURGAME/lock data is expected to always encode a valid id.
+ */
+typedef enum {
+    CombatSavingThrowTrapNone,   /* packedValue == 0, the trigger roll was avoided, or an invalid effect id */
+    CombatSavingThrowTrapSingle, /* applied to actingRecord alone */
+    CombatSavingThrowTrapParty   /* applied to some subset of the party */
+} CombatSavingThrowTrapOutcome;
+
+CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, uint8_t *actingRecord,
+                                                          SaveGame *save, GameKind game, RandomState *rng);
+
 #endif

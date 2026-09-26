@@ -631,6 +631,154 @@ static void testResolveAttackerActionCorrosionEmptySlotOrUnclassifiable(void) {
     check("equipped item doesn't classify for item service: CombatAttackMiss", action.outcome == CombatAttackMiss);
 }
 
+static void testSavingThrowTrapNoneWhenPackedValueZero(void) {
+    uint8_t acting[PartyRecordSize];
+    memset(acting, 0, sizeof(acting));
+    partySetStat(acting, PartyStatHitPoints, 999);
+
+    RandomState rng;
+    randomStart(&rng, 0, 0);
+    CombatSavingThrowTrapOutcome outcome = combatApplySavingThrowTrap(0, acting, NULL, GameYendor2, &rng);
+
+    check("packedValue == 0: CombatSavingThrowTrapNone, matching partyDecodeSavingThrowEffect's own false return",
+          outcome == CombatSavingThrowTrapNone);
+    checkU32("nothing applied", partyGetStat(acting, PartyStatHitPoints), 999);
+}
+
+static void testSavingThrowTrapAvoidedByHighSkill(void) {
+    uint8_t acting[PartyRecordSize];
+    memset(acting, 0, sizeof(acting));
+    partySetU16(acting, PartyFieldLevel, 50);
+    partySetStat(acting, PartyStatThievery, 0);
+    partySetStat(acting, PartyStatHitPoints, 999);
+    /* threshold=0, effectId=4 -> packedValue=4; chance = max(5, 5*(50-0)+0) = 250,
+     * far above any possible randomInRange(100) roll -- the trigger can never fire. */
+
+    for (uint8_t seed = 0; seed < 5; seed++) {
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        CombatSavingThrowTrapOutcome outcome = combatApplySavingThrowTrap(4, acting, NULL, GameYendor2, &rng);
+        check("trigger chance saturates at a value randomInRange(100) can never exceed: always avoided",
+              outcome == CombatSavingThrowTrapNone);
+    }
+    checkU32("nothing applied", partyGetStat(acting, PartyStatHitPoints), 999);
+}
+
+/* Effect id 4 (both games): HP cost, no fixed/scaled magnitude, no inflicted status --
+ * exercises the magnitude roll without a resistance roll muddying the RNG sequence. */
+static void testSavingThrowTrapSingleTargetAppliesEffect(void) {
+    bool exercisedTrigger = false;
+    for (uint8_t seed = 0; seed < 15; seed++) {
+        uint8_t acting[PartyRecordSize];
+        memset(acting, 0, sizeof(acting));
+        partySetU16(acting, PartyFieldLevel, 10);
+        partySetStat(acting, PartyStatThievery, 5);
+        partySetStat(acting, PartyStatHitPoints, 999);
+
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        bool triggerFails = combatFailsSavingThrow(10, 8, 5, &peek);
+
+        /* packedValue = threshold(8)*100 + effectId(4) = 804; wholeParty is false (4 < 50). */
+        CombatSavingThrowTrapOutcome outcome = combatApplySavingThrowTrap(804, acting, NULL, GameYendor2, &rng);
+
+        if (!triggerFails) {
+            check("trigger roll resisted: CombatSavingThrowTrapNone", outcome == CombatSavingThrowTrapNone);
+            checkU32("HP untouched when the trap doesn't trigger", partyGetStat(acting, PartyStatHitPoints), 999);
+            continue;
+        }
+
+        exercisedTrigger = true;
+        check("trigger roll failed: CombatSavingThrowTrapSingle", outcome == CombatSavingThrowTrapSingle);
+
+        EffectDef def;
+        effectGetDef(GameYendor2, 4, &def);
+        uint16_t randomValue = randomInRange(&peek, effectRandomBound(&def));
+        uint16_t expectedMagnitude = effectMagnitude(&def, 10, randomValue);
+        checkU32("HP reduced by exactly the rolled magnitude", partyGetStat(acting, PartyStatHitPoints),
+                 (uint32_t)(999 - expectedMagnitude));
+    }
+    check("found at least one seed where the trigger roll fires", exercisedTrigger);
+}
+
+/* effectId 54 (54 - 50 = 4, the same simple HP-cost effect above) applied whole-party:
+ * checks the incapacitated-skip and the stop-dead-at-the-first-empty-slot quirk together. */
+static void testSavingThrowTrapWholeParty(void) {
+    bool exercisedTrigger = false;
+    for (uint8_t seed = 0; seed < 15; seed++) {
+        SaveGame save;
+        saveGameInit(&save, GameYendor2);
+
+        uint8_t acting[PartyRecordSize];
+        memset(acting, 0, sizeof(acting));
+        /* The acting/triggering character's record is passed directly and is
+         * deliberately not one of save's own party slots -- the whole-party
+         * scan below walks SaveHeaderPartySlots independently of it. */
+
+        saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+        uint8_t *slot0 = saveGamePartyRecordById(&save, 1);
+        partySetStat(slot0, PartyStatHitPoints, 999);
+        partySetU16(slot0, PartyFieldStatusFlags, PartyStatusStoned); /* incapacitated: skipped, loop continues */
+
+        saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+        uint8_t *slot1 = saveGamePartyRecordById(&save, 2);
+        partySetU16(slot1, PartyFieldLevel, 10);
+        partySetStat(slot1, PartyStatHitPoints, 999);
+
+        saveHeaderSetU16(&save, SaveHeaderPartySlots + 2 * 2, 0); /* unoccupied: the scan stops dead here */
+
+        saveHeaderSetU16(&save, SaveHeaderPartySlots + 3 * 2, 3);
+        uint8_t *slot3 = saveGamePartyRecordById(&save, 3);
+        partySetStat(slot3, PartyStatHitPoints, 999); /* never reached, thanks to the quirk above */
+
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        bool triggerFails = combatFailsSavingThrow(0, 100, 0, &peek);
+
+        /* packedValue = threshold(100)*100 + effectId(54) = 10054 -> threshold=100, effectId=4, wholeParty=true. */
+        CombatSavingThrowTrapOutcome outcome = combatApplySavingThrowTrap(10054, acting, &save, GameYendor2, &rng);
+
+        if (!triggerFails) {
+            check("trigger roll resisted: CombatSavingThrowTrapNone", outcome == CombatSavingThrowTrapNone);
+            checkU32("no slot touched when the trap doesn't trigger", partyGetStat(slot1, PartyStatHitPoints), 999);
+            continue;
+        }
+
+        exercisedTrigger = true;
+        check("trigger roll failed: CombatSavingThrowTrapParty", outcome == CombatSavingThrowTrapParty);
+        checkU32("incapacitated slot 0 skipped, untouched", partyGetStat(slot0, PartyStatHitPoints), 999);
+        check("occupied slot 1 got the effect", partyGetStat(slot1, PartyStatHitPoints) < 999);
+        checkU32("slot 3 never reached: the scan stops dead at slot 2's empty id",
+                 partyGetStat(slot3, PartyStatHitPoints), 999);
+    }
+    check("found at least one seed where the trigger roll fires", exercisedTrigger);
+}
+
+static void testSavingThrowTrapInvalidEffectIdIsNoEffect(void) {
+    bool exercisedTrigger = false;
+    for (uint8_t seed = 0; seed < 20; seed++) {
+        uint8_t acting[PartyRecordSize];
+        memset(acting, 0, sizeof(acting));
+
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        bool triggerFails = combatFailsSavingThrow(0, 100, 0, &peek);
+        if (!triggerFails) {
+            continue;
+        }
+        exercisedTrigger = true;
+
+        /* packedValue = threshold(100)*100 + effectId(99) = 10099; 99 is past EffectCountYendor2 (45). */
+        CombatSavingThrowTrapOutcome outcome = combatApplySavingThrowTrap(10099, acting, NULL, GameYendor2, &rng);
+        check("out-of-range effect id treated as no effect rather than reading past the table",
+              outcome == CombatSavingThrowTrapNone);
+    }
+    check("found at least one seed where the trigger roll fires", exercisedTrigger);
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
@@ -663,6 +811,11 @@ int main(void) {
     testResolveAttackerActionCorrosion();
     testResolveAttackerActionCorrosionSlotSelection();
     testResolveAttackerActionCorrosionEmptySlotOrUnclassifiable();
+    testSavingThrowTrapNoneWhenPackedValueZero();
+    testSavingThrowTrapAvoidedByHighSkill();
+    testSavingThrowTrapSingleTargetAppliesEffect();
+    testSavingThrowTrapWholeParty();
+    testSavingThrowTrapInvalidEffectIdIsNoEffect();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

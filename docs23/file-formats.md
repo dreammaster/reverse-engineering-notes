@@ -3693,13 +3693,53 @@ record format" framing for `LoadCurgameRecord` specifically — the base
 EMS offset per id is still open (a smaller, separate question, see
 above), but the record's own on-load *meaning* no longer is.
 Reimplemented the packed-value decode as `partyDecodeSavingThrowEffect`
-in `src23/party.c`/`.h` (the trigger/per-recipient rolls and the
-actual `ApplyEffectAndDrawIconBar`-equivalent application aren't
-composed into one function yet — that's `UseAbilityCommand`/
-`HandleSearchCommand`'s own eventual reimplementation, a UI-heavy
-top-level command this project hasn't started). Tests in
-`tests/test_party.c` cover the zero case, both target-scope cases, and
-the exact 49/50 id boundary between them.
+in `src23/party.c`/`.h`. Tests in `tests/test_party.c` cover the zero
+case, both target-scope cases, and the exact 49/50 id boundary between
+them.
+
+**The roll-and-apply composition itself — done, same day
+(2026-09-26)**: confirmed `ApplySavingThrowEffect`/`RollEffectResistance`/
+`RollEffectMagnitude` are all instruction-identical in Chapter 3
+(matching relative offsets and opcodes throughout, `yendor3.asm:45061`/
+`6688`/`6775`, only the DS-relative addresses differ, as usual).
+`ApplySavingThrowEffect`'s own trigger roll, plus the
+per-recipient application `ApplyEffectAndDrawIconBar` performs for
+either target scope, reimplemented as `combatApplySavingThrowTrap` in
+`src23/combat.c`/`.h` (kept there rather than `party.c`/`effect.c`
+since `party.h` can't include `combat.h` — the same circular-dependency
+constraint noted for `effectResolveInflictedStatus`/
+`partyDecodeSavingThrowEffect` themselves). Reads `RollEffectResistance`
+(`yendor2.asm:14127`) and `RollEffectMagnitude` (`yendor2.asm:14214`)
+directly to confirm the per-recipient party record is each recipient's
+*own* (`[si+0xC]`, the icon slot's own stored pointer) for both the
+magnitude roll's level and the resistance roll's defenderStat/bonus —
+not the triggering character's. Two quirks confirmed and reproduced
+exactly rather than "fixed": (1) `RollEffectResistance` only rolls a
+second saving throw at all when the effect both inflicts something
+(`effectInflictedStatus(def) != 0`) and gates on one
+(`EffectModeRollResistance` set) — otherwise it's skipped entirely, not
+just discounted, so this composition's own RNG-draw count matches the
+original exactly rather than merely its outcome; (2) the whole-party
+loop (`ApplySavingThrowEffect`'s own `di`-indexed scan over
+`SaveHeaderPartySlots`) stops dead at the first unoccupied slot instead
+of skipping past it to check the rest — real party layouts are always
+front-packed in practice, so this is presumed never observed, but the
+disassembly does it and this reproduces it. Also confirmed (and
+reproduced by omission): the original never populates a gold/ore
+effect's material amount for this call path at all — `RollEffectMagnitude`'s
+own low-bit early-out (`test word ptr [di+8], 7`) leaves it at the icon
+slot's cleared 0 — so `combatApplySavingThrowTrap` always passes a
+zeroed `Bcd4` rather than inventing a nonzero source; a search/lock trap
+configured with a gold-cost effect id would, in the original, always
+"steal" exactly 0. Tests in `tests/test_combat.c` cover the zero-value
+and avoided-trigger cases, a single-target application with an exact
+peeked-RNG magnitude check, the whole-party case (incapacitated skip +
+stop-dead-at-empty-slot together), and an out-of-range effect id.
+`UseAbilityCommand`/`HandleSearchCommand` themselves — the UI-heavy
+top-level commands that load a record and feed it here — remain
+unreimplemented (both still need the SDL2 UI layer for their
+prompt/confirm/message-box scaffolding), but the entire decision-and-
+apply logic beneath them is now done.
 
 Reimplemented in `src23/lockcatalog.c`/`.h`:
 `lockCatalogParse`/`lockCatalogParseWorldDat`, `lockCatalogRecord`,

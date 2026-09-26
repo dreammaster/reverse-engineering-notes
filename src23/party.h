@@ -552,8 +552,9 @@ uint8_t *partyBagMarker(uint8_t *record, unsigned bag);
  * occupied, non-incapacitated party member instead. `packedValue == 0`
  * means no trap at all.
  *
- * The original's own two-tier roll structure, for whoever composes
- * this next (not reimplemented past this decode step): one *trigger*
+ * The original's own two-tier roll structure -- composed in full as
+ * `combatApplySavingThrowTrap` (`combat.h`, kept there rather than
+ * here since this header can't include `combat.h`): one *trigger*
  * roll first, using the character attempting the lock/search
  * (`combatFailsSavingThrow`, `defenderStat` = their own
  * `PartyFieldLevel`, `threshold` = this decode's own `threshold`,

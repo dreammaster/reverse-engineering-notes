@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-26, resolved: LoadCurgameRecord's record format)
+## Status (last updated 2026-09-26, resolved: the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -596,14 +596,35 @@ groundwork below is already in place.
   own `PartyStatThievery`, then the ordinary effect pipeline applied to
   either the triggering character alone or the whole party, id
   `>= 50` selecting the latter). Reimplemented the packed-value decode
-  as `partyDecodeSavingThrowEffect` in `src23/party.c`/`.h`; the
-  trigger/per-recipient rolls and the actual application aren't
-  composed into one function yet (that's `UseAbilityCommand`/
-  `HandleSearchCommand`'s own eventual reimplementation). Tests in
+  as `partyDecodeSavingThrowEffect` in `src23/party.c`/`.h`. Tests in
   `test_party.c` cover the zero case, both target scopes, and the
-  49/50 id boundary. All 18 suites pass. Full writeup in
-  `file-formats.md`'s "Lock/door definition catalog" section (the
-  `LoadCurgameRecord` sub-note).
+  49/50 id boundary. Full writeup in `file-formats.md`'s "Lock/door
+  definition catalog" section (the `LoadCurgameRecord` sub-note).
+  **The roll-and-apply composition itself -- done, same day**:
+  `combatApplySavingThrowTrap` in `src23/combat.c`/`.h` (kept there, not
+  `party.c`/`effect.c`, since `party.h` can't include `combat.h`).
+  Confirmed `ApplySavingThrowEffect`/`RollEffectResistance`/
+  `RollEffectMagnitude` instruction-identical in Chapter 3. Two quirks
+  confirmed and reproduced exactly: `RollEffectResistance` skips its
+  second saving-throw roll entirely (not just its effect) unless the
+  effect both inflicts something and gates on a save, so this
+  composition's RNG-draw count matches the original exactly; and the
+  whole-party scan stops dead at the first unoccupied
+  `SaveHeaderPartySlots` slot instead of skipping past it. Also
+  confirmed the original never populates a gold/ore effect's material
+  amount for this call path at all (`RollEffectMagnitude`'s own
+  early-out for cost-flag bits 0-2 leaves it at the icon slot's cleared
+  0), so a search/lock trap configured with a gold-cost effect id would
+  always steal exactly 0 -- reproduced by always passing a zeroed
+  `Bcd4` rather than inventing a source. Tests in `test_combat.c` cover
+  the zero-value and avoided-trigger cases, a single-target application
+  with an exact peeked-RNG magnitude check, the whole-party
+  incapacitated-skip + stop-dead-at-empty-slot quirk together, and an
+  out-of-range effect id. All 18 suites pass. `UseAbilityCommand`/
+  `HandleSearchCommand` themselves remain unreimplemented (UI-heavy
+  top-level commands needing the SDL2 layer for prompts/confirms/
+  message boxes), but the entire decision-and-apply logic beneath them
+  is done.
 
 ## Next: continue the C reimplementation
 

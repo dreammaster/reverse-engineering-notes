@@ -258,3 +258,66 @@ CombatAttackerAction combatResolveAttackerAction(const uint8_t *attackerRecord, 
     }
     return action;
 }
+
+static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
+                                              unsigned threshold, RandomState *rng) {
+    uint16_t level = partyGetU16(recipientRecord, PartyFieldLevel);
+    uint16_t magnitude = effectRollsMagnitude(def) ? effectRollMagnitude(def, level, rng) : 0;
+
+    /*
+     * Matches RollEffectResistance's own double early-out exactly
+     * (yendor2.asm:14127): no roll at all -- not just "the roll
+     * wouldn't change the outcome" -- when the effect inflicts nothing
+     * (effectInflictedStatus == 0) or doesn't gate on one
+     * (EffectModeRollResistance unset). Skipping the roll here rather
+     * than always calling combatFailsSavingThrow keeps this
+     * composition's RNG draw count identical to the original's for
+     * every effect definition, not just outcome-identical.
+     */
+    bool failed = false;
+    if (effectInflictedStatus(def) != 0 && (def->modeFlags & EffectModeRollResistance)) {
+        failed = combatFailsSavingThrow((int16_t)level, (int16_t)threshold,
+                                         (int16_t)effectResistanceBonus(def, recipientRecord), rng);
+    }
+    uint16_t inflicted = effectResolveInflictedStatus(def, failed);
+    static const Bcd4 zeroMaterial = {0, 0, 0, 0};
+    combatApplyEffect(recipientRecord, save, effectSpend(def), magnitude, zeroMaterial, inflicted);
+}
+
+CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, uint8_t *actingRecord,
+                                                          SaveGame *save, GameKind game, RandomState *rng) {
+    PartySavingThrowEffect decoded;
+    if (!partyDecodeSavingThrowEffect(packedValue, &decoded)) {
+        return CombatSavingThrowTrapNone;
+    }
+
+    bool triggered = combatFailsSavingThrow((int16_t)partyGetU16(actingRecord, PartyFieldLevel),
+                                             (int16_t)decoded.threshold,
+                                             (int16_t)partyGetStat(actingRecord, PartyStatThievery), rng);
+    if (!triggered) {
+        return CombatSavingThrowTrapNone;
+    }
+
+    EffectDef def;
+    if (!effectGetDef(game, decoded.effectId, &def)) {
+        return CombatSavingThrowTrapNone;
+    }
+
+    if (!decoded.wholeParty) {
+        combatApplyTrapEffectToRecipient(actingRecord, save, &def, decoded.threshold, rng);
+        return CombatSavingThrowTrapSingle;
+    }
+
+    for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
+        uint16_t id = saveGetPartySlot(save, slot);
+        if (id == 0) {
+            break;
+        }
+        uint8_t *record = saveGamePartyRecordById(save, id);
+        if (!record || (partyGetU16(record, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+            continue;
+        }
+        combatApplyTrapEffectToRecipient(record, save, &def, decoded.threshold, rng);
+    }
+    return CombatSavingThrowTrapParty;
+}
