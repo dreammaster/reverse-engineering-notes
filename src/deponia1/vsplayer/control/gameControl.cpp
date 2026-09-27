@@ -4,6 +4,7 @@
 #include "TGAction.h"
 #include "TGAnimation.h"
 #include "TGInterface.h"
+#include "THCharacter.h"
 #include "THInterface.h"
 #include "THText.h"
 #include "TMSavegame.h"
@@ -196,23 +197,30 @@ TGCharacter* TGameControl::GetCurrentCharacterPointer() const {
 
 // GetCharacter/GetCharacterPointer/GetCharacterPointerEx (asm lines
 // 456362-456578): all three share one pattern - if the TVisObjRef arg
-// IsEmpty(), return m_currentCharacter; otherwise pack TVisObjRef::GetId()'s
-// first 3 bytes into a 32-bit hash, look it up in a custom open-hashing
-// table (buckets, bucket count, and a parallel index into m_characters -
-// not yet reversed fields), and return m_characters[index] on a match (or
-// m_currentCharacter/nullptr on a miss, matching each method's slightly
-// different fallback). Left as stubs rather than guessing at TVisObjRef's
-// real id encoding or the hash table's field layout.
+// IsEmpty(), return a fallback (m_currentCharacter for the first two,
+// nullptr for GetCharacterPointerEx); otherwise pack TVisObjRef::GetId()
+// via PackVisId() and look it up in m_charactersByHash (see its
+// declaration - InitCharacters populates it with the very same formula),
+// falling back the same way on a miss.
 TGCharacter* TGameControl::GetCharacter(const TVisObjRef& character) {
-    return character.IsEmpty() ? m_currentCharacter : nullptr;
+    if (character.IsEmpty())
+        return m_currentCharacter;
+    auto it = m_charactersByHash.find(PackVisId(character.GetId()));
+    return it != m_charactersByHash.end() ? it->second : m_currentCharacter;
 }
 
 TGCharacter* TGameControl::GetCharacterPointer(const TVisObjRef& character) const {
-    return character.IsEmpty() ? m_currentCharacter : nullptr;
+    if (character.IsEmpty())
+        return m_currentCharacter;
+    auto it = m_charactersByHash.find(PackVisId(character.GetId()));
+    return it != m_charactersByHash.end() ? it->second : m_currentCharacter;
 }
 
-TGCharacter* TGameControl::GetCharacterPointerEx(const TVisObjRef& /*character*/) const {
-    return nullptr;
+TGCharacter* TGameControl::GetCharacterPointerEx(const TVisObjRef& character) const {
+    if (character.IsEmpty())
+        return nullptr;
+    auto it = m_charactersByHash.find(PackVisId(character.GetId()));
+    return it != m_charactersByHash.end() ? it->second : nullptr;
 }
 
 std::vector<TGCharacter*>& TGameControl::GetAllCharacters() {
@@ -974,7 +982,64 @@ std::list<TGInterface*> TGameControl::GetAllInterfaces() const {
     return m_allInterfaces;
 }
 
-void TGameControl::InitCharacters() {
+bool TGameControl::InitCharacters() {
+    // Confirmed (asm lines 466201-466735). Field id 0x137 (a character's
+    // scene link), 0xDE (walk speed, default 0x10E when unset), 0x153 (a
+    // start position), 0x12F (the game's starting-character link), 0x1D4/
+    // 0x263/0x205/0x262 (matching ChangeCharacter/SetCharacterActiveCommand's
+    // field ids) are all unresolved.
+    TVList characterList;
+    m_visionaire->GetList(0, characterList, false);
+    if (characterList.empty()) {
+        if (wxLog::loglevel >= 0)
+            wxLog::logexpanded(L"There must be at least one character for a valid game.");
+        return false;
+    }
+
+    for (TVisionaireObject* object : characterList) {
+        TVisObjRef ref(object);
+        TVisObjRef parent = ref.GetLink(0x137).GetParent();
+        THCharacter* character = new THCharacter(ref, parent);
+
+        wxPoint pos = *ref.GetPoint(0x153);
+        int walkSpeed = ref.GetInt(0xDE);
+        if (walkSpeed == -1)
+            walkSpeed = 0x10E;
+
+        character->Init();
+        character->AssignToScene(parent, pos, walkSpeed);
+
+        m_characters.push_back(character);
+        m_charactersByHash[PackVisId(character->GetRef().GetId())] = character;
+    }
+
+    TVisObjRef startingLink = m_visionaire->GetGame().GetLink(0x12F);
+    TGCharacter* starting = nullptr;
+    for (TGCharacter* candidate : m_characters) {
+        if (candidate->GetRef() == startingLink) {
+            starting = candidate;
+            break;
+        }
+    }
+
+    if (starting != nullptr) {
+        m_currentCharacter = starting;
+        m_previousCharacter = starting;
+
+        m_visionaire->GetGame().SetLink(0x1D4, starting->GetRef(), false);
+        m_visionaire->GetGame().SetLink(0x263, starting->GetRef(), false);
+        m_visionaire->GetGame().SetLink(0x262, starting->GetRef().GetLink(0x205), false);
+    }
+
+    if (m_currentCharacter == nullptr) {
+        if (wxLog::loglevel >= 0)
+            wxLog::logexpanded(L"An active character must be defined for a valid game.");
+        return false;
+    }
+
+    m_startingCharacter = m_currentCharacter;
+    UpdateCurrentObject();
+    return true;
 }
 
 void TGameControl::InitGameActions() {

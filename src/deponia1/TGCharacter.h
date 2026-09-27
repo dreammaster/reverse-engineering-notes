@@ -75,6 +75,12 @@ public:
     // 465533-465671).
     std::list<TGInterface*> GetInterfaces() const;
 
+    // Confirmed call shapes only (TGameControl::InitCharacters, asm lines
+    // 466201-466735) - called once per newly-constructed character, in
+    // this order, right after construction.
+    void Init();
+    void AssignToScene(const TVisObjRef& scene, const wxPoint& pos, int walkSpeed);
+
 private:
     TVisObjRef m_ref;
 };

@@ -32,6 +32,7 @@
 
 #include <list>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "SdlStub.h"
@@ -168,7 +169,11 @@ public:
     // inferred.
     std::list<TGInterface*> GetActiveInterfaces() const;
     std::list<TGInterface*> GetAllInterfaces() const;
-    void InitCharacters();
+    // Confirmed bool, not void (asm lines 466201-466735: returns false if
+    // the game data has no characters, or none can be found again as the
+    // starting character; true otherwise) - the manifest's void was a
+    // placeholder guess.
+    bool InitCharacters();
     void InitGameActions();
     bool Init();
     bool LoadAndInitGame(wxString& error, const wxString& file, wxString warning, bool isEditor);
@@ -249,10 +254,24 @@ private:
     TVList m_pendingItems;
     // Confirmed present, set to the same value as m_currentCharacter right
     // when it changes (TGameControl::ChangeCharacter, asm lines
-    // 465849-466072) - not read anywhere else in what's been reversed so
+    // 465849-466072; also set - but never read - by InitCharacters, asm
+    // lines 466201-466735) - not read anywhere in what's been reversed so
     // far; may just be a second cached copy rather than a distinct
     // "previous character" as the name suggests.
     TGCharacter* m_previousCharacter = nullptr;
+    // Confirmed present, set to m_currentCharacter's value once a starting
+    // character is found (TGameControl::InitCharacters, asm lines
+    // 466201-466735) - not read anywhere in what's been reversed so far;
+    // purpose unclear (possibly another cached copy, like
+    // m_previousCharacter above).
+    TGCharacter* m_startingCharacter = nullptr;
+    // Confirmed a custom hash table keyed by TVisObjRef::GetId()'s packed
+    // id (GetCharacter/GetCharacterPointer/GetCharacterPointerEx do the
+    // lookup, InitCharacters does the insert - asm lines 456362-456578,
+    // 466201-466735): modeled as a plain hash map rather than replicating
+    // the original's open-hashing bucket/node layout, since nothing
+    // depends on its internal shape.
+    std::unordered_map<int, TGCharacter*> m_charactersByHash;
     // Confirmed (IsTextActive/IsNoTextDisplayed, asm lines 461674-461777):
     // null when no text is currently displayed. Confirmed TGText*, not just
     // TSText* (DisplayTexts calls TGText::GetSpeaker() directly on it, asm

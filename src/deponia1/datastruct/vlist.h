@@ -21,6 +21,7 @@ class TVisionaireObject;
 class TVList {
 public:
     void clear() { items.clear(); }
+    bool empty() const { return items.empty(); }
     std::vector<TVisionaireObject*>::iterator begin() { return items.begin(); }
     std::vector<TVisionaireObject*>::iterator end() { return items.end(); }
 

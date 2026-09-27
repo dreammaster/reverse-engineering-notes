@@ -32,3 +32,9 @@ void TGCharacter::SetRandomTime() {
 std::list<TGInterface*> TGCharacter::GetInterfaces() const {
     return {};
 }
+
+void TGCharacter::Init() {
+}
+
+void TGCharacter::AssignToScene(const TVisObjRef& /*scene*/, const wxPoint& /*pos*/, int /*walkSpeed*/) {
+}

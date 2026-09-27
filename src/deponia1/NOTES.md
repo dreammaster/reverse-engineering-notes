@@ -388,6 +388,38 @@ each into a new heap-allocated `THInterface`, appended to
 at too but left stubbed - it also decodes a literal 12-entry key-action
 lookup table that would need its own careful pass.
 
+## Subsystem pass: InitCharacters resolves the deferred character hash table
+
+`InitCharacters` (Deponia_Linux.asm lines 466201-466735) is the method that
+actually populates `m_characters` - and, as a bonus, its insertion logic
+finally closes out the `GetCharacter`/`GetCharacterPointer`/
+`GetCharacterPointerEx` hash lookup left stubbed all the way back in the
+first `TGameControl` batch:
+
+- The insertion side confirms the exact same id-packing formula
+  (`PackVisId`, already factored out earlier) used as the hash key, with
+  last-write-wins semantics on a collision (a new character's index
+  overwrites an existing entry with the same hash). This is modeled as a
+  plain `std::unordered_map<int, TGCharacter*> m_charactersByHash` rather
+  than replicating the original's open-hashing bucket/node/index layout -
+  nothing outside this one insert+lookup pair depends on that internal
+  shape, so the simpler container is fully behaviorally equivalent.
+- `GetCharacter`/`GetCharacterPointer`/`GetCharacterPointerEx` were
+  rewritten against the real map instead of being permanently-empty stubs.
+- Confirms `THCharacter : TGCharacter` (built from a self + parent
+  `TVisObjRef` pair) and `TGCharacter::Init()`/`AssignToScene()`.
+- Two real diagnostic strings were recovered byte-for-byte and wired up
+  through the same `wxLog::logexpanded` pattern already established in
+  `TStandardPaths.cpp`: "There must be at least one character for a valid
+  game." and "An active character must be defined for a valid game."
+- Fixed two more manifest placeholders now contradicted by real evidence:
+  `InitCharacters` returns `bool` (whether a valid starting character was
+  found), not `void`.
+- Two fields are set but never read anywhere reversed so far -
+  `m_previousCharacter` (also touched here, not just `ChangeCharacter`) and
+  a new `m_startingCharacter` - both kept for fidelity with an honest
+  "purpose unclear" comment rather than dropped or guessed at.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

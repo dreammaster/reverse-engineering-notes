@@ -42,6 +42,10 @@ public:
     // use - so TVisObjRef is a lightweight handle onto the heavier
     // TVisionaireObject data record.
     explicit TVisObjRef(const TVisionaireObject& object);
+    // A second, pointer-taking overload (TGameControl::InitCharacters, asm
+    // line 466302) - functionally the same conversion, just dereferencing
+    // first.
+    explicit TVisObjRef(const TVisionaireObject* object);
 
     bool IsEmpty() const { return true; }
     // Confirmed (TGameControl::GetInterface/IsTextActive/IsTalking): compares
@@ -53,6 +57,9 @@ public:
     wxString GetStr(int fieldId) const;
     std::wstring GetPath(int fieldId) const;
     TVisObjRef GetLink(int fieldId) const;
+    // Confirmed call shape only (TGameControl::InitCharacters, asm line
+    // 466313) - not reversed beyond that.
+    TVisObjRef GetParent() const;
     // Confirmed called (TGameControl::ResetState, Deponia_Linux.asm line
     // 460932) with a field id and a bool - not reversed beyond that call
     // shape.
