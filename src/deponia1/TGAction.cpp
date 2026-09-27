@@ -8,3 +8,6 @@ void TGAction::ContinueRunningActions(bool /*flag*/) {
 
 void TGAction::ClearActions() {
 }
+
+void TGAction::SaveActions() {
+}

@@ -47,6 +47,8 @@
 #include "vsplayer/control/masterControl.h"
 #include "vstables/visionaireGame.h"
 
+class TMSavegame;
+
 // Confirmed field layout (TGameControl::StartGameAction, Deponia_Linux.asm
 // lines 457301-457406): matched by (a, msg) pair; `flag` selects between
 // always-firing and only-firing-when-no-blocking-dialog/text behavior.
@@ -148,7 +150,10 @@ public:
     bool IsClearingAnimations() const;
     bool SavegameExists(int slot);
     bool DeleteSavegame(int slot);
-    bool Save();
+    // Confirmed void, not bool (TGameControl::SaveGame discards its return
+    // value entirely, asm line 463041) - the manifest's bool was a
+    // placeholder guess.
+    void Save();
     bool SaveGame(int slot);
     bool UnregisterEventHandlerMainLoop(const wxString& name);
     void UpdateRandomTimers();
@@ -181,7 +186,11 @@ public:
     void StartTween(const TVisObjTween& tween);
     void LoadEventHandlers();
     bool Load();
-    bool LoadGame(void* savegame);
+    // Confirmed TMSavegame* (TGameControl::LoadGame(int) calls it directly
+    // with one, asm lines 478385-478469) - the manifest's void* was a
+    // placeholder guess. The real load logic (asm lines 477404-478377,
+    // ~970 lines) is not reversed - left as a stub.
+    bool LoadGame(TMSavegame* savegame);
     bool LoadGame(int slot);
     void StartTween(const Tween& tween, const std::string& name);
 

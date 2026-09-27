@@ -15,4 +15,7 @@ public:
     static void AddRunningAction(const TVisObjRef& action);
     static void ContinueRunningActions(bool flag);
     static void ClearActions();
+    // Confirmed static (TGameControl::Save, asm line 462895) - not
+    // reversed beyond that call shape.
+    static void SaveActions();
 };

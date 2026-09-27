@@ -54,6 +54,7 @@ public:
     void SetValue(int fieldId, const wxPoint& value, TSendEventEnum event);
     void SetValue(int fieldId, bool value, TSendEventEnum event);
     void SetValue(int fieldId, int value, TSendEventEnum event);
+    void SetValue(int fieldId, const wxString& value, TSendEventEnum event);
     const wxPoint* GetPoint(int fieldId) const;
     const wxRect* GetRect(int fieldId) const;
 

@@ -9,3 +9,6 @@ void TSceneControl::Draw() {
 
 void TSceneControl::ShowScene(TVisObjRef& /*scene*/, bool /*immediate*/, bool /*flag*/) {
 }
+
+void TSceneControl::GetLastPlayableSceneParams(TVisObjRef& /*outScene*/, wxPoint& /*outPos*/) const {
+}

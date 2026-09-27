@@ -14,3 +14,14 @@ bool TMSavegame::Delete() {
 bool TMSavegame::SavegameExists() {
     return false;
 }
+
+void TMSavegame::CheckVisPaths() {
+}
+
+wxString TMSavegame::MakeSaveGameName(const TVisObjRef& /*scene*/) {
+    return wxString();
+}
+
+int TMSavegame::GetSavegameNr() const {
+    return 0;
+}

@@ -32,6 +32,10 @@ public:
     // only valid for a <=16-byte all-integer struct) used for vertical
     // scene-centering at the same call site - name/purpose not resolved.
     virtual wxRect GetVisibleRect() const;
+    // Confirmed virtual (vtable-indexed call), called on every character
+    // during a save (TGameControl::Save, asm lines 462896-462905) - not
+    // reversed beyond that call shape.
+    virtual void Save();
 
     // Confirmed present at a fixed offset (TGameControl::IsTalking compares
     // a TGText's speaker against a TVisObjRef via this field directly,

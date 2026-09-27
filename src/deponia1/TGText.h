@@ -24,4 +24,9 @@ public:
     // Confirmed called with a constant 1.0f at every DisplayTexts() call
     // site (asm lines 455890-456037) - not reversed beyond that call shape.
     void Draw(float scale);
+
+    // Confirmed non-virtual (a direct call, not through the vtable) on
+    // TGText specifically, not inherited from TSText (TGameControl::Save,
+    // asm lines 462781-462971) - not reversed beyond that call shape.
+    void Save();
 };

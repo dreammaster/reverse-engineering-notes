@@ -15,6 +15,10 @@ public:
     // 465849-466072) - not reversed beyond that.
     void ShowScene(TVisObjRef& scene, bool immediate, bool flag);
 
+    // Confirmed call shape only (TGameControl::Save, asm lines
+    // 462781-462971) - out-params, not reversed beyond that.
+    void GetLastPlayableSceneParams(TVisObjRef& outScene, wxPoint& outPos) const;
+
 private:
     TGScene m_scene;
 };

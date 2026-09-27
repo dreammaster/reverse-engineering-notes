@@ -6,3 +6,6 @@ TGCharacter* TGText::GetSpeaker() const {
 
 void TGText::Draw(float /*scale*/) {
 }
+
+void TGText::Save() {
+}

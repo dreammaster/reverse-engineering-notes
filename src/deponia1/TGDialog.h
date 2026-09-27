@@ -19,6 +19,10 @@ public:
     TGDialog() = default;
 
     bool IsEmpty() const { return m_target.IsEmpty(); }
+    // Confirmed used directly (TGameControl::Save passes &m_dialog itself
+    // as a TVisObjRef* to SetLink(), asm line 462856 - the same "TVisObjRef
+    // at a known offset" pattern as TGCharacter/TGScene/TSText/TGText).
+    const TVisObjRef& GetTarget() const { return m_target; }
     void Draw();
     void SetDialog(const TVisObjRef& dialog) { m_target = dialog; }
     void Clear() { m_target = TVisObjRef(); }

@@ -2,6 +2,7 @@
 
 #include "AppGlobals.h"
 #include "TGAction.h"
+#include "TGAnimation.h"
 #include "TGInterface.h"
 #include "THText.h"
 #include "TMSavegame.h"
@@ -52,12 +53,13 @@ TGameControl::TGameControl() {
 TGameControl::~TGameControl() {
     // Confirmed (asm lines 474222-474270): sets m_isClearingAnimations
     // before tearing down, then deletes every owned TGCharacter*. The
-    // destructor also calls into TGAnimation::ClearAnimations and
-    // ModelContainer::Destroy - not modeled, since neither class has been
-    // reversed at all yet - and a virtual teardown call through a pointer
-    // at a still-unidentified field - left out rather than guessing.
+    // destructor also calls into ModelContainer::Destroy - not modeled,
+    // since that class hasn't been reversed at all yet - and a virtual
+    // teardown call through a pointer at a still-unidentified field - left
+    // out rather than guessing.
     m_isClearingAnimations = true;
     TGAction::ClearActions();
+    TGAnimation::ClearAnimations();
     ClearTexts();
     for (TGCharacter* character : m_characters)
         delete character;
@@ -759,8 +761,38 @@ bool TGameControl::DeleteSavegame(int slot) {
     return save.Delete();
 }
 
-bool TGameControl::Save() {
-    return false;
+void TGameControl::Save() {
+    // Confirmed (asm lines 462781-462971): field ids 0x219 (the save name),
+    // 0x1D5/0x1D6 (last playable scene + position), and 0x1DC (matches
+    // StartDialog/EndDialog's active-dialog link) are all unresolved.
+    TVisObjRef game = m_visionaire->GetGame();
+
+    TVisObjRef sceneLink = m_currentCharacter->GetRef().GetLink(0x1F7);
+    wxString saveName = TMSavegame::MakeSaveGameName(sceneLink);
+    game.SetValue(0x219, saveName, TSendEventEnum::SendEvent);
+
+    TVisObjRef lastScene;
+    wxPoint lastPos{};
+    m_ownedSceneControl.GetLastPlayableSceneParams(lastScene, lastPos);
+    game.SetLink(0x1D5, lastScene, false);
+    game.SetValue(0x1D6, lastPos, TSendEventEnum::SendEvent);
+    game.SetLink(0x1DC, m_dialog.GetTarget(), false);
+
+    if (m_currentText != nullptr)
+        m_currentText->Save();
+    for (TGText* text : m_activeTexts)
+        text->Save();
+    for (TGText* text : m_sceneTexts)
+        text->Save();
+
+    TGAction::SaveActions();
+    TGAnimation::SaveAnimations();
+
+    for (TGCharacter* character : m_characters)
+        character->Save();
+
+    SaveEventHandlers();
+    SaveGlobalScriptVariables(*m_visionaireGame);
 }
 
 bool TGameControl::SaveGame(int /*slot*/) {
@@ -990,12 +1022,34 @@ bool TGameControl::Load() {
     return false;
 }
 
-bool TGameControl::LoadGame(void* /*savegame*/) {
+bool TGameControl::LoadGame(TMSavegame* /*savegame*/) {
+    // The real load logic (asm lines 477404-478377, ~970 lines) is not
+    // reversed - left as a stub.
     return false;
 }
 
-bool TGameControl::LoadGame(int /*slot*/) {
-    return false;
+bool TGameControl::LoadGame(int slot) {
+    // Confirmed (asm lines 478385-478469): slot==-1 loads the scene's
+    // currently-selected savegame; any other slot constructs a numbered
+    // TMSavegame first. m_isClearingAnimations is toggled around the
+    // actual load in both cases (same field used elsewhere - see
+    // ~TGameControl/IsClearingAnimations).
+    if (slot == -1) {
+        TMSavegame* selected = m_ownedSceneControl.GetScene()->GetSelectedSavegame(false);
+        if (selected == nullptr)
+            return false;
+        m_isClearingAnimations = true;
+        bool result = LoadGame(selected);
+        m_isClearingAnimations = false;
+        return result;
+    }
+
+    TMSavegame save(true, slot, 0, 0, m_visionaireGame);
+    save.CheckVisPaths();
+    m_isClearingAnimations = true;
+    bool result = LoadGame(&save);
+    m_isClearingAnimations = false;
+    return result;
 }
 
 void TGameControl::StartTween(const Tween& /*tween*/, const std::string& /*name*/) {

@@ -311,6 +311,31 @@ Only two small new pieces were needed: `TGCharacter::SetRandomTime()` and
 same value as `m_currentCharacter` right when it changes, but never read
 again in anything reversed so far - may just be a second cached copy).
 
+## TGameControl batch 13: Save() and LoadGame(int) - the tractable ends of a big family
+
+The savegame methods span a huge size range: `Save()` (189 lines) and
+`LoadGame(int)` (83 lines) were tractable, but the real workhorses they
+delegate to - `LoadGame(TMSavegame*)` (~970 lines) and `SaveGame(int)`
+(also several hundred) - are not, and stay stubbed.
+
+- **`Save()` is `void`, not `bool`**: its one caller (`SaveGame`) discards
+  the return value entirely (no `mov`/`test` after the `call`) - another
+  instance of the by-value-return tell, just for a scalar this time instead
+  of a struct/reference. It composes almost entirely out of existing
+  pieces (`m_activeTexts`/`m_sceneTexts`/`m_currentText`'s `Save()`,
+  `m_characters`' new virtual `Save()`) plus three new static/free
+  entry points modeled the same way as `TGAction`'s: `TGAnimation::
+  SaveActions`/`ClearActions` (the latter now actually wired into
+  `~TGameControl`, previously just a comment) and the free function
+  `SaveGlobalScriptVariables(TVisionaireGame&)`.
+- **`TGText::Save()` is a plain (non-virtual) method on `TGText` itself**,
+  not inherited from `TSText` - unlike `Discard`/`OnCleared`/
+  `CalculateCurrentText`, its call site is a direct `call`, not a
+  vtable-indexed one.
+- **`LoadGame(TMSavegame*)`** (was declared as `LoadGame(void*)`) confirms
+  yet another `void*` manifest placeholder that should have been a real
+  type.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

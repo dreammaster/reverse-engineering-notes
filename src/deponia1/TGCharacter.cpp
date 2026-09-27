@@ -8,6 +8,9 @@ wxRect TGCharacter::GetVisibleRect() const {
     return wxRect();
 }
 
+void TGCharacter::Save() {
+}
+
 void TGCharacter::SetInterfaces() {
 }
 
