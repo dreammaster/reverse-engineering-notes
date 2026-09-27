@@ -1009,7 +1009,22 @@ void TGameControl::RegisterEventHandlerMainLoop(const wxString& name) {
     m_engineEventHandlerNamesMainLoop.push_back(std::string(static_cast<const char*>(name.mb_str())));
 }
 
-void TGameControl::GetWalkingSounds(std::vector<wxFileName>& /*outSounds*/) {
+void TGameControl::GetWalkingSounds(std::vector<wxFileName>& outSounds) {
+    // Confirmed (asm lines 474770-474985): field ids 0x1F7 (scene link,
+    // matches CenterScene's usage) and 0x110 (a filesystem path) are both
+    // unresolved.
+    TGScene* scene = m_ownedSceneControl.GetScene();
+    for (TGCharacter* character : m_characters) {
+        if (!(character->GetRef().GetLink(0x1F7) == scene->GetRef()))
+            continue;
+
+        wxFileName fileName(character->GetRef().GetPath(0x110));
+        if (!fileName.IsOk())
+            continue;
+
+        fileName.NormalizePath();
+        outSounds.push_back(fileName);
+    }
 }
 
 void TGameControl::StartTween(const TVisObjTween& /*tween*/) {

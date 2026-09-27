@@ -336,6 +336,15 @@ delegate to - `LoadGame(TMSavegame*)` (~970 lines) and `SaveGame(int)`
   yet another `void*` manifest placeholder that should have been a real
   type.
 
+## TGameControl batch 14: GetWalkingSounds
+
+A straightforward filter-and-collect (asm lines 474770-474985): for every
+character whose scene-link (field id 0x1F7, matching `CenterScene`) points
+at the current scene, resolve their walking-sound path (field id 0x110)
+and append it if `wxFileName::IsOk()` after normalizing. No new classes
+needed - the first entirely self-contained method in a while, safely
+smoke-testable without a live `m_currentCharacter`.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where
