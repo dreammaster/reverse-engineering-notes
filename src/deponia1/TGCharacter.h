@@ -4,10 +4,16 @@
 // ChangeCharacter, etc.) but not itself reversed yet.
 #pragma once
 
+#include "TManagedObject.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
 
-class TGCharacter {
+// Confirmed to derive from TManagedObject (TGameControl::StartObjectText,
+// asm lines 462233-462396): when no scene/interface object is found for the
+// target, the code falls back to GetCharacterPointerEx() and calls
+// TManagedObject::SetText() directly on the resulting TGCharacter* - only
+// possible if TGCharacter IS-A TManagedObject.
+class TGCharacter : public TManagedObject {
 public:
     TGCharacter() = default;
     virtual ~TGCharacter() = default;

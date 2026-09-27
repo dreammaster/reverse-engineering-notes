@@ -2,6 +2,8 @@
 
 #include "AppGlobals.h"
 #include "TGAction.h"
+#include "TGInterface.h"
+#include "THText.h"
 #include "TMSavegame.h"
 #include "TManagedObject.h"
 #include "baselib/composedfile.h"
@@ -543,9 +545,28 @@ void TGameControl::StartText(const TVisObjRef& /*text*/, TGCharacter* /*characte
                               const TVisObjRef& /*target*/, const wxPoint& /*pos*/) {
 }
 
-void TGameControl::StartBackgroundText(const TVisObjRef& /*text*/, TGCharacter* /*character*/,
-                                        TextAlignmentEnum /*alignment*/, const TVisObjRef& /*target*/,
-                                        const wxPoint& /*pos*/) {
+void TGameControl::StartBackgroundText(const TVisObjRef& text, TGCharacter* character, TextAlignmentEnum alignment,
+                                        const TVisObjRef& target, const wxPoint& pos) {
+    // Confirmed (asm lines 461420-461589): skips creating a duplicate when
+    // `character` is already speaking - either as m_currentText, or as one
+    // of the active texts - matched by TGText::GetSpeaker() pointer
+    // equality. Type id 0x18 (matches StartObjectText's CreateActiveObject
+    // call) and the two trailing THText constructor bools are unresolved.
+    if (character != nullptr) {
+        if (m_currentText != nullptr && m_currentText->GetTarget().GetBool(0x211) &&
+            m_currentText->GetSpeaker() == character)
+            return;
+
+        for (TGText* activeText : m_activeTexts) {
+            if (activeText->GetSpeaker() == character)
+                return;
+        }
+    }
+
+    TVisObjRef activeObject = m_visionaire->CreateActiveObject(0x18, text);
+    TVisObjRef emptyObject = m_visionaire->GetEmptyObject();
+    THText* newText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, true, true);
+    m_activeTexts.push_back(newText);
 }
 
 void TGameControl::ReattachSceneObjectTexts() {
@@ -658,9 +679,34 @@ void TGameControl::ClearObjectText(const TVisObjRef& object) {
     }
 }
 
-void TGameControl::StartObjectText(const TVisObjRef& /*object*/, const TVisObjRef& /*text*/,
-                                    TextAlignmentEnum /*alignment*/, const TVisObjRef& /*target*/,
-                                    const wxPoint& /*pos*/) {
+void TGameControl::StartObjectText(const TVisObjRef& object, const TVisObjRef& text, TextAlignmentEnum alignment,
+                                    const TVisObjRef& target, const wxPoint& pos) {
+    // Confirmed (asm lines 462233-462396): clears any existing scene text
+    // targeting `text`, creates a new THText and adds it to m_sceneTexts,
+    // then attaches it to whichever managed object claims `text` - the
+    // scene itself, the current character (only tried when the object id's
+    // 4th byte is 0 - meaning unconfirmed), or failing that, whichever
+    // active interface recognizes it. Type id 0x18 (passed to
+    // CreateActiveObject) and the two trailing THText constructor bools
+    // are unresolved.
+    ClearObjectText(text);
+
+    TVisObjRef activeObject = m_visionaire->CreateActiveObject(0x18, object);
+    THText* newText = new THText(activeObject, object, nullptr, text, alignment, target, pos, true, false);
+    m_sceneTexts.push_back(newText);
+
+    TManagedObject* managed = m_ownedSceneControl.GetScene()->GetObject(text);
+    if (managed == nullptr && object.GetId()[3] == 0)
+        managed = GetCharacterPointerEx(text);
+    if (managed == nullptr) {
+        for (TGInterface* interface : m_activeInterfaces) {
+            managed = interface->GetObject(text);
+            if (managed != nullptr)
+                break;
+        }
+    }
+    if (managed != nullptr)
+        managed->SetText(newText);
 }
 
 const wxString& TGameControl::GetGamePath() const {

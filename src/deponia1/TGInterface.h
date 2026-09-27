@@ -12,10 +12,16 @@
 #include "TPaintControl.h"
 #include "datastruct/visobjref.h"
 
+class TManagedObject;
+
 class TGInterface : public TPaintControl {
 public:
     const TVisObjRef& GetRef() const { return m_ref; }
-    void* GetObject(const TVisObjRef& object) const;
+    // Confirmed TManagedObject* (TGameControl::StartObjectText calls
+    // TManagedObject::SetText() directly on the result, same as
+    // TGScene::GetObject() - asm lines 462233-462396) - the earlier void*
+    // was a placeholder guess.
+    TManagedObject* GetObject(const TVisObjRef& object) const;
 
 private:
     TVisObjRef m_ref;

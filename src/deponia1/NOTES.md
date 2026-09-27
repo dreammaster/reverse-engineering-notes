@@ -261,6 +261,25 @@ have an honest gap than a plausible-looking wrong answer. `m_pendingTweens`
 stays declared as-is (its exact type doesn't affect anything else) until a
 dedicated pass reverses both vectors' real element layouts.
 
+## TGameControl batch 10: StartObjectText/StartBackgroundText reveal TManagedObject is a base of TGCharacter
+
+Both text-starting methods (asm lines 461420-461589, 462233-462396) create
+a new `THText` (a concrete `TGText` added for this - constructor parameter
+roles are confirmed by call shape only) and need to attach it somewhere:
+
+- **`TGCharacter` derives from `TManagedObject`.** `StartObjectText`'s
+  fallback path calls `GetCharacterPointerEx()` and then calls
+  `TManagedObject::SetText()` directly on the resulting `TGCharacter*` -
+  only possible if `TGCharacter` IS-A `TManagedObject`. This also fixes
+  `TGInterface::GetObject()`'s return type the same way `TGScene::
+  GetObject()` was fixed earlier (confirmed `TManagedObject*`, not `void*`).
+- `StartBackgroundText` dedupes against a character already speaking (via
+  `TGText::GetSpeaker()` pointer equality against both `m_currentText` and
+  every entry in `m_activeTexts`) before creating a new text - skipping
+  entirely if a match is found.
+- `TVisionaire` gained `CreateActiveObject(int, const TVisObjRef&)` and
+  `GetEmptyObject()`, both confirmed by call shape only.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where
