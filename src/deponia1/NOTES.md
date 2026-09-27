@@ -235,6 +235,32 @@ body) and `CenterScene` (asm lines 455890-456037, 460533-460715):
 - Added `wxPoint::operator==`/`!=` and `wxRect::GetHeight()`/`IsEmpty()` to
   `WxStub.h` - needed by the above and not previously used anywhere.
 
+## TGameControl batch 9: SkipCurrentText, and a caught wrong guess (StartTween)
+
+`SkipCurrentText` (asm lines 456762-456956) turned out to be a clean
+composition of pieces already built for `ClearCurrentText`: a field id
+(0x1E0) normally blocks skipping unless another field id (0x235) overrides
+it, then it delegates to `TSText::SkipCurrentText()` and only clears the
+text (same 0x1DD field-clear + `Discard()` as `ClearCurrentText`) if the
+text actually finished as a result.
+
+While looking at `StartTween(const TVisObjTween&)` next (asm lines
+474993-475136), its real body turned out to search a `std::vector` of
+176-byte elements for a matching id+target, then erase-or-replace-or-append
+- clearly not the vector of `std::pair<Tween, std::string>` guessed for
+`m_pendingTweens` early in the project. Worse, checking the *other*
+overload, `StartTween(const Tween&, const std::string&)` (asm lines
+478477-478598+), showed it operates on a **completely different** vector of
+88-byte elements at a different offset, keyed by a string comparison with a
+non-trivial erase on a match - meaning the early guess that both overloads
+shared one simple `m_pendingTweens.push_back()`-style vector was wrong on
+both counts. Reverted `StartTween(const Tween&, const std::string&)`'s body
+to a stub rather than keep a confidently wrong `push_back` masquerading as
+correct - **a live example of the lesson below**: this project would rather
+have an honest gap than a plausible-looking wrong answer. `m_pendingTweens`
+stays declared as-is (its exact type doesn't affect anything else) until a
+dedicated pass reverses both vectors' real element layouts.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

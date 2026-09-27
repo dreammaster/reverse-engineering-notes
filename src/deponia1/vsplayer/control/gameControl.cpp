@@ -249,6 +249,29 @@ TGObjectManager* TGameControl::GetObjectManager() {
 }
 
 void TGameControl::SkipCurrentText() {
+    // Confirmed (asm lines 456762-456956): field id 0x1E0 normally blocks
+    // skipping outright, unless field id 0x235 overrides that (both
+    // unresolved). Otherwise identical to letting the text handle its own
+    // skip, then - if it finished as a result - clearing it exactly like
+    // ClearCurrentText() does (same field id 0x1DD).
+    TVisObjRef game = m_visionaire->GetGame();
+    if (game.GetBool(0x1E0)) {
+        TVisObjRef allowOverride = m_visionaire->GetGame();
+        if (!allowOverride.GetBool(0x235))
+            return;
+    }
+
+    if (m_currentText == nullptr || !m_currentText->GetTarget().GetBool(0x211))
+        return;
+
+    m_currentText->SkipCurrentText();
+    if (m_currentText->GetTarget().GetBool(0x211))
+        return;
+
+    TVisObjRef game2 = m_visionaire->GetGame();
+    game2.ClearLink(0x1DD, true);
+    m_currentText->Discard();
+    m_currentText = nullptr;
 }
 
 void TGameControl::UpdateCurrentObject() {
@@ -849,6 +872,12 @@ bool TGameControl::LoadGame(int /*slot*/) {
     return false;
 }
 
-void TGameControl::StartTween(const Tween& tween, const std::string& name) {
-    m_pendingTweens.push_back({tween, name});
+void TGameControl::StartTween(const Tween& /*tween*/, const std::string& /*name*/) {
+    // Was a guessed `m_pendingTweens.push_back({tween, name})` - checking
+    // the real asm (lines 478477-478598+) shows this operates on an
+    // 88-byte-element vector at a DIFFERENT offset than StartTween(const
+    // TVisObjTween&)'s 176-byte-element one, keyed by a string comparison
+    // against `name` with a non-trivial erase/replace on a match - not a
+    // plain append. Reverted to a stub rather than keep a confidently wrong
+    // implementation; see NOTES.md.
 }

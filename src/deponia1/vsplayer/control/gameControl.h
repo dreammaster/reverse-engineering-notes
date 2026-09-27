@@ -190,8 +190,17 @@ private:
     // Several vectors confirmed present in the constructor whose element
     // types could be inferred from the ICF-vulnerable destructor symbols
     // (see NOTES.md) - taken at face value here since nothing contradicts
-    // them: pending tweens, walking-sound filenames, per-character
-    // scroll-timing pairs, and registered scene-mouse-position hooks.
+    // them: walking-sound filenames, per-character scroll-timing pairs, and
+    // registered scene-mouse-position hooks.
+    //
+    // m_pendingTweens's element type below is now KNOWN WRONG (see
+    // StartTween's two overloads, asm lines 474993-475136 and
+    // 478477-478598+): there are two distinct tween-related vectors with
+    // 176-byte and 88-byte elements respectively, neither matching
+    // pair<Tween,string>, and StartTween(Tween,string) was reverted to a
+    // stub rather than keep a confidently wrong push_back. Left as-is until
+    // a dedicated pass reverses TVisObjTween's and the other vector's real
+    // layouts.
     std::vector<std::pair<Tween, std::string>> m_pendingTweens;
     std::vector<std::string> m_walkingSoundEventHandlers;
     std::vector<std::pair<double, std::string>> m_delaysByName;

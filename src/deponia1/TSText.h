@@ -37,6 +37,10 @@ public:
     // the text later needs clearing - not reversed beyond that call shape.
     void CalculateCurrentText();
 
+    // Confirmed called on m_currentText (TGameControl::SkipCurrentText, asm
+    // lines 456762-456956) - not reversed beyond that call shape.
+    void SkipCurrentText();
+
 private:
     TVisObjRef m_target;
 };

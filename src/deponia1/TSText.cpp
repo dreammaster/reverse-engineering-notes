@@ -9,6 +9,9 @@ void TSText::OnCleared() {
 void TSText::CalculateCurrentText() {
 }
 
+void TSText::SkipCurrentText() {
+}
+
 TVisObjRef TSText::GetDataObject() const {
     return TVisObjRef();
 }
