@@ -280,6 +280,23 @@ roles are confirmed by call shape only) and need to attach it somewhere:
 - `TVisionaire` gained `CreateActiveObject(int, const TVisObjRef&)` and
   `GetEmptyObject()`, both confirmed by call shape only.
 
+## TGameControl batch 11: SetInterfaces and SetCharacterActiveCommand
+
+Two more interface/character-command methods (asm lines 465533-465671,
+465679-465841):
+
+- `SetInterfaces()` rebuilds `m_activeInterfaces` wholesale from the
+  current character's own interface list (`TGCharacter::GetInterfaces()`,
+  new), calling `TGInterface::RemoveSpritesAndAnimations()` on any
+  interface that's leaving the active set first.
+- `SetCharacterActiveCommand()` walks the same per-character interface
+  list looking for the first one with a non-empty field-id-`0x25F` link,
+  then either records it as the character's active command (field id
+  `0x205`) or, if it already matches, pushes it into the game's own
+  field-id-`0x262` link instead. Needed a non-const `TGCharacter::GetRef()`
+  overload alongside the existing const one, since the original mutates
+  that field in place via `TVisObjRef::SetLink()`.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

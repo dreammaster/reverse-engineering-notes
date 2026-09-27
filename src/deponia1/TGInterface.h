@@ -23,6 +23,12 @@ public:
     // was a placeholder guess.
     TManagedObject* GetObject(const TVisObjRef& object) const;
 
+    // Confirmed call shapes only (TGameControl::SetInterfaces, asm lines
+    // 465533-465671): called on an interface leaving the active set before
+    // it's dropped, and on every interface entering it, respectively.
+    void RemoveSpritesAndAnimations();
+    void SetObjectsActive(bool active);
+
 private:
     TVisObjRef m_ref;
 };

@@ -22,3 +22,7 @@ void TGCharacter::SetOnDestination() {
 
 void TGCharacter::CheckRandomTimer() {
 }
+
+std::list<TGInterface*> TGCharacter::GetInterfaces() const {
+    return {};
+}

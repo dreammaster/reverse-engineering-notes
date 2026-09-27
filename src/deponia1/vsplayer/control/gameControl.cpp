@@ -801,9 +801,53 @@ void TGameControl::AdjustInterfacesOnScreen(bool /*force*/, TPaintControl* /*sce
 }
 
 void TGameControl::SetInterfaces() {
+    // Confirmed (asm lines 465533-465671): rebuilds m_activeInterfaces from
+    // the current character's own interface list, calling
+    // RemoveSpritesAndAnimations() on any interface that's leaving the
+    // active set (not present in the new list) before replacing the list
+    // wholesale.
+    std::list<TGInterface*> newInterfaces = m_currentCharacter->GetInterfaces();
+
+    for (TGInterface* active : m_activeInterfaces) {
+        bool stillActive = false;
+        for (TGInterface* candidate : newInterfaces) {
+            if (candidate->GetRef() == active->GetRef()) {
+                stillActive = true;
+                break;
+            }
+        }
+        if (!stillActive)
+            active->RemoveSpritesAndAnimations();
+    }
+
+    m_activeInterfaces.clear();
+    for (TGInterface* interface : newInterfaces) {
+        interface->SetObjectsActive(false);
+        m_activeInterfaces.push_back(interface);
+    }
 }
 
 void TGameControl::SetCharacterActiveCommand() {
+    // Confirmed (asm lines 465679-465841): field ids 0x25F, 0x205, and 0x262
+    // are all unresolved. Stops at the first interface with a non-empty
+    // 0x25F link, whether or not it matches the character's own 0x205 link.
+    if (m_currentCharacter == nullptr)
+        return;
+
+    for (TGInterface* interface : m_currentCharacter->GetInterfaces()) {
+        TVisObjRef link = interface->GetRef().GetLink(0x25F);
+        if (link.IsEmpty())
+            continue;
+
+        TVisObjRef commandLink = m_currentCharacter->GetRef().GetLink(0x205);
+        if (commandLink == link) {
+            TVisObjRef game = m_visionaire->GetGame();
+            game.SetLink(0x262, link, true);
+        } else {
+            m_currentCharacter->GetRef().SetLink(0x205, link, true);
+        }
+        return;
+    }
 }
 
 void TGameControl::ChangeCharacter(const TVisObjRef& /*character*/, bool /*immediate*/, const TVisObjRef& /*scene*/) {

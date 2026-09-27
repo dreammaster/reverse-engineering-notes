@@ -4,9 +4,13 @@
 // ChangeCharacter, etc.) but not itself reversed yet.
 #pragma once
 
+#include <list>
+
 #include "TManagedObject.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
+
+class TGInterface;
 
 // Confirmed to derive from TManagedObject (TGameControl::StartObjectText,
 // asm lines 462233-462396): when no scene/interface object is found for the
@@ -34,6 +38,10 @@ public:
     // Deponia_Linux.asm lines 461785-461846) - same "TVisObjRef at a known
     // offset, no accessor in the original" pattern as TGDialog/TSText/TGText.
     const TVisObjRef& GetRef() const { return m_ref; }
+    // Confirmed mutated directly (TGameControl::SetCharacterActiveCommand
+    // calls TVisObjRef::SetLink() on this field in place, asm lines
+    // 465679-465841).
+    TVisObjRef& GetRef() { return m_ref; }
 
     // Confirmed called for every character (TGameControl::
     // SetCharacterInterfaces, Deponia_Linux.asm lines 458260-458285) - not
@@ -53,6 +61,11 @@ public:
     // Confirmed called per-character in TGameControl::UpdateRandomTimers
     // (asm lines 463363-463466).
     void CheckRandomTimer();
+
+    // Confirmed a by-value std::list<TGInterface*> (TGameControl::
+    // SetInterfaces copies it and iterates the copy, asm lines
+    // 465533-465671).
+    std::list<TGInterface*> GetInterfaces() const;
 
 private:
     TVisObjRef m_ref;
