@@ -6,3 +6,6 @@ TGScene* TSceneControl::GetScene() const {
 
 void TSceneControl::Draw() {
 }
+
+void TSceneControl::ShowScene(TVisObjRef& /*scene*/, bool /*immediate*/, bool /*flag*/) {
+}

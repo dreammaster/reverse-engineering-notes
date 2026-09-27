@@ -850,7 +850,43 @@ void TGameControl::SetCharacterActiveCommand() {
     }
 }
 
-void TGameControl::ChangeCharacter(const TVisObjRef& /*character*/, bool /*immediate*/, const TVisObjRef& /*scene*/) {
+void TGameControl::ChangeCharacter(const TVisObjRef& character, bool immediate, const TVisObjRef& scene) {
+    // Confirmed (asm lines 465849-466072). Field ids 0x1D4/0x263 and the
+    // meaning of m_previousCharacter are unresolved.
+    if (!(m_currentCharacter->GetRef() == character)) {
+        TGCharacter* newChar = GetCharacter(character);
+        for (TGCharacter* candidate : m_characters) {
+            if (candidate->GetRef() == newChar->GetRef()) {
+                m_currentCharacter->SetRandomTime();
+                m_currentCharacter = candidate;
+                m_previousCharacter = candidate;
+
+                TVisObjRef game = m_visionaire->GetGame();
+                game.SetLink(0x1D4, candidate->GetRef(), false);
+                TVisObjRef game2 = m_visionaire->GetGame();
+                game2.SetLink(0x263, candidate->GetRef(), false);
+
+                m_currentCharacter->SetRandomTime();
+                ResetState();
+                SetInterfaces();
+                SetCharacterActiveCommand();
+                break;
+            }
+        }
+    }
+
+    TVisObjRef targetScene = scene.IsEmpty() ? m_currentCharacter->GetRef().GetLink(0x1F7) : scene;
+
+    TGScene* currentScene = m_ownedSceneControl.GetScene();
+    if (targetScene == currentScene->GetRef()) {
+        AdjustInterfacesOnScreen(false, nullptr);
+        ScrollToCharacterIfNeeded(character);
+    } else {
+        m_ownedSceneControl.ShowScene(targetScene, immediate, false);
+    }
+
+    if (m_lastMousePos.x != -1 || m_lastMousePos.y != -1)
+        HandleMouseMove(m_lastMousePos, false);
 }
 
 std::list<TGInterface*> TGameControl::GetActiveInterfaces() const {

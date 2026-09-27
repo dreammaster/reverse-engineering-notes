@@ -62,6 +62,10 @@ public:
     // (asm lines 463363-463466).
     void CheckRandomTimer();
 
+    // Confirmed called on both the outgoing and incoming character when
+    // switching (TGameControl::ChangeCharacter, asm lines 465849-466072).
+    void SetRandomTime();
+
     // Confirmed a by-value std::list<TGInterface*> (TGameControl::
     // SetInterfaces copies it and iterates the copy, asm lines
     // 465533-465671).

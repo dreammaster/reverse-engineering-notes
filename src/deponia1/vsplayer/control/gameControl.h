@@ -238,6 +238,12 @@ private:
     // Confirmed present and cleared by ResetState() (asm line 460940); real
     // purpose (what populates it) not identified.
     TVList m_pendingItems;
+    // Confirmed present, set to the same value as m_currentCharacter right
+    // when it changes (TGameControl::ChangeCharacter, asm lines
+    // 465849-466072) - not read anywhere else in what's been reversed so
+    // far; may just be a second cached copy rather than a distinct
+    // "previous character" as the name suggests.
+    TGCharacter* m_previousCharacter = nullptr;
     // Confirmed (IsTextActive/IsNoTextDisplayed, asm lines 461674-461777):
     // null when no text is currently displayed. Confirmed TGText*, not just
     // TSText* (DisplayTexts calls TGText::GetSpeaker() directly on it, asm

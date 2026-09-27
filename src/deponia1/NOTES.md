@@ -297,6 +297,20 @@ Two more interface/character-command methods (asm lines 465533-465671,
   overload alongside the existing const one, since the original mutates
   that field in place via `TVisObjRef::SetLink()`.
 
+## TGameControl batch 12: ChangeCharacter ties several earlier pieces together
+
+`ChangeCharacter` (asm lines 465849-466072) is a good example of how much
+of a payoff the earlier small methods give once enough of them exist: its
+body is almost entirely calls to `GetCharacter`, `ResetState`,
+`SetInterfaces`, `SetCharacterActiveCommand`, `ScrollToCharacterIfNeeded`,
+`AdjustInterfacesOnScreen`, and the same `HandleMouseMove` mouse-replay
+tail as `UpdateCurrentObject`/`ChangeCharacter` share - all already built.
+Only two small new pieces were needed: `TGCharacter::SetRandomTime()` and
+`TSceneControl::ShowScene()` (both call-shape-only stubs), plus a
+`m_previousCharacter` field whose exact purpose is unclear (it's set to the
+same value as `m_currentCharacter` right when it changes, but never read
+again in anything reversed so far - may just be a second cached copy).
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where
