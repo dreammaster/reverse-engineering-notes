@@ -6,3 +6,6 @@ bool TConsole::Draw() {
 
 void TConsole::DrawInScene() {
 }
+
+void TConsole::Init() {
+}

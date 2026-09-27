@@ -25,3 +25,6 @@ void TGScene::DeleteSelectedSavegame() {
 std::vector<TGCharacter*> TGScene::GetCharacters() const {
     return {};
 }
+
+void TGScene::InitActionAreas() {
+}

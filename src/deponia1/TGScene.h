@@ -43,6 +43,11 @@ public:
     // 463363-463466).
     std::vector<TGCharacter*> GetCharacters() const;
 
+    // Confirmed called without any object of this type constructed at its
+    // one call site (TGameControl::Init, asm lines 467226-467624) - modeled
+    // as static, same pattern as TGAction/TGAnimation's entry points.
+    static void InitActionAreas();
+
 private:
     TVisObjRef m_ref;
 };

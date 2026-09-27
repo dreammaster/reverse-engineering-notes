@@ -1046,6 +1046,56 @@ void TGameControl::InitGameActions() {
 }
 
 bool TGameControl::Init() {
+    // Confirmed (asm lines 467226-467624). Field ids 0x79 (starting scene
+    // link) and 0x231/0x1D8/0x1D6/0x1D9/0x1DA (matching CenterScene/
+    // SetOnScrollDestination's fields) are all unresolved.
+    TVisObjRef startScene = m_visionaire->GetGame().GetLink(0x79);
+    m_ownedSceneControl.Set(startScene);
+
+    m_visionaire->GetGame().SetLink(0x1D5, startScene, false);
+    m_visionaire->GetGame().SetValue(0x231, true, TSendEventEnum::SendEvent);
+    m_visionaire->GetGame().SetValue(0x1D8, false, TSendEventEnum::SendEvent);
+    m_visionaire->GetGame().SetValue(0x1D6, wxPoint{}, TSendEventEnum::SendEvent);
+    m_visionaire->GetGame().SetValue(0x1D9, 0, TSendEventEnum::SendEvent);
+    m_visionaire->GetGame().SetValue(0x1DA, 0, TSendEventEnum::SendEvent);
+
+    m_sceneControl = &m_ownedSceneControl;
+    m_currentCharacter = nullptr;
+    m_savegameClickPos = wxPoint{-1, -1};
+    m_lastMousePos = wxPoint{-1, -1};
+
+    TGScene::InitActionAreas();
+
+    TTimer timer;
+    timer.SetTime();
+
+    if (!InitCharacters())
+        return false;
+
+    InitInterfaces();
+    for (TGCharacter* character : m_characters)
+        character->SetInterfaces();
+
+    SetInterfaces();
+    SetCharacterActiveCommand();
+
+    if (wxLog::loglevel > 1)
+        wxLog::logexpanded(L"Interfaces loaded. Needed time: %ld ms", timer.GetTime());
+
+    timer.SetTime();
+    TVList fontList;
+    m_visionaire->GetList(3, fontList, true);
+    GetFontManager()->Initialize(fontList);
+
+    InitGameActions();
+    InitScripts();
+
+    if (wxLog::loglevel > 1)
+        wxLog::logexpanded(L"Scripts loaded. Needed time: %ld ms", timer.GetTime());
+
+    timer.SetTime();
+    m_console.Init();
+
     return true;
 }
 

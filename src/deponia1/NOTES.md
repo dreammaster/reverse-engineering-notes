@@ -420,6 +420,27 @@ first `TGameControl` batch:
   a new `m_startingCharacter` - both kept for fidelity with an honest
   "purpose unclear" comment rather than dropped or guessed at.
 
+## InitCharacters subsystem, continued: Init() itself was the payoff
+
+With `InitCharacters`/`InitInterfaces`/`SetCharacterActiveCommand` all
+reversed, `TGameControl::Init()` (Deponia_Linux.asm lines 467226-467624) -
+the master bootstrap the whole engine calls once at startup - turned out to
+be almost entirely orchestration over methods already built: set the
+starting scene, reset several scroll/centering game-data fields (matching
+`CenterScene`/`SetOnScrollDestination`'s field ids exactly), call
+`InitCharacters()` and bail if it fails, then `InitInterfaces()` +
+per-character `SetInterfaces()` + the instance-level `SetInterfaces()` +
+`SetCharacterActiveCommand()`, load fonts (the same `GetList(3, ...)` +
+`TFontManager::Initialize()` pair `InitFonts()` already uses), then
+`InitGameActions()`/`InitScripts()`/`TConsole::Init()`. Only three small
+new pieces were needed: `TSceneControl::Set()`, `TGScene::InitActionAreas()`
+(static, matching the `TGAction`/`TGAnimation` pattern), and
+`TConsole::Init()`.
+
+Recovered two more diagnostic strings byte-for-byte confirming `TTimer::
+GetTime()` is milliseconds: "Interfaces loaded. Needed time: %ld ms" and
+"Scripts loaded. Needed time: %ld ms".
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

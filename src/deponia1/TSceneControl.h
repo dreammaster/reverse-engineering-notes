@@ -10,6 +10,10 @@ public:
     // const (mangled name _ZNK13TSceneControl8GetSceneEv).
     TGScene* GetScene() const;
     void Draw();
+    // Confirmed call shape only (TGameControl::Init, asm lines 467226-
+    // 467624) - sets the initial scene from a TVisObjRef link; not
+    // reversed beyond that.
+    void Set(const TVisObjRef& scene);
 
     // Confirmed call shape only (TGameControl::ChangeCharacter, asm lines
     // 465849-466072) - not reversed beyond that.
