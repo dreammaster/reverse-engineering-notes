@@ -365,6 +365,29 @@ would mean inventing a plausible-looking shape for that callback interface
 with no real evidence for its argument meanings - exactly the kind of guess
 this project avoids per the lesson below.
 
+## TGameControl batch 16: InitInterfaces - TVList's element type was wrong too
+
+Finally revisiting the `InitInterfaces` deferral from batch 3: re-reading
+its full body (Deponia_Linux.asm lines 458124-458250) alongside
+`InitGameActions`'s opening (which also calls `TVisObjRef::GetLinks()`)
+showed `TVList` actually holds `TVisionaireObject*` elements, not
+`TVisObjRef` as first modeled for `TGameControl::InitFonts` - each element
+is converted through a new `TVisObjRef(const TVisionaireObject&)`
+constructor before use. Architecturally this makes sense in hindsight:
+`TVisionaireObject` is the heavier underlying data record, and `TVisObjRef`
+is the lightweight handle onto one that the rest of the engine passes
+around everywhere. `InitFonts` never actually inspected `TVList`'s elements
+(just passed the container through opaquely), so this correction doesn't
+change its behavior - but it was still built on a wrong assumption, caught
+before it could mislead a later method the way `StartTween`'s did.
+
+With that resolved, `InitInterfaces` itself is simple: fetch the game's
+links (field id `0x296`, `eTypeOrder::Value1` - both unresolved) and wrap
+each into a new heap-allocated `THInterface`, appended to
+`m_allInterfaces`. `InitGameActions` (asm lines 466739-467222+) was looked
+at too but left stubbed - it also decodes a literal 12-entry key-action
+lookup table that would need its own careful pass.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

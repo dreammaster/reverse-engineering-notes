@@ -23,12 +23,25 @@
 // lines 460720-460821) - real meaning/other values not resolved.
 enum class TSendEventEnum { SendEvent = 2 };
 
+// Confirmed 2 values, 0 and 1 (TGameControl::InitGameActions/
+// InitInterfaces, asm lines 458124-458250, 466739-467222+) - real
+// meaning/names not resolved.
+enum class eTypeOrder { Value0 = 0, Value1 = 1 };
+
+class TVisionaireObject;
+class TVList;
+
 class TVisObjRef {
 public:
     TVisObjRef() = default;
     TVisObjRef(const TVisObjRef&) = default;
     TVisObjRef& operator=(const TVisObjRef&) = default;
     ~TVisObjRef() = default;
+    // Confirmed (TGameControl::InitInterfaces, asm line 458174): TVList
+    // elements are TVisionaireObject*, each converted through this before
+    // use - so TVisObjRef is a lightweight handle onto the heavier
+    // TVisionaireObject data record.
+    explicit TVisObjRef(const TVisionaireObject& object);
 
     bool IsEmpty() const { return true; }
     // Confirmed (TGameControl::GetInterface/IsTextActive/IsTalking): compares
@@ -57,6 +70,10 @@ public:
     void SetValue(int fieldId, const wxString& value, TSendEventEnum event);
     const wxPoint* GetPoint(int fieldId) const;
     const wxRect* GetRect(int fieldId) const;
+    // Confirmed call shape only (TGameControl::InitInterfaces/
+    // InitGameActions, asm lines 458124-458250, 466739-467222+) - fills
+    // outLinks with TVisionaireObject* elements; not reversed beyond that.
+    void GetLinks(int fieldId, eTypeOrder order, TVList& outLinks) const;
 
     // Real GetId() returns a small (likely 4-byte) identifier the caller
     // treats as 3-4 individual bytes (see TMasterControl::PlayAVI packing

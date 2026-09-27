@@ -1,5 +1,10 @@
 #include "datastruct/visobjref.h"
 
+#include "datastruct/vlist.h"
+
+TVisObjRef::TVisObjRef(const TVisionaireObject& /*object*/) {
+}
+
 bool TVisObjRef::operator==(const TVisObjRef& other) const {
     return m_id[0] == other.m_id[0] && m_id[1] == other.m_id[1] && m_id[2] == other.m_id[2] &&
            m_id[3] == other.m_id[3];
@@ -49,6 +54,9 @@ const wxPoint* TVisObjRef::GetPoint(int /*fieldId*/) const {
 
 const wxRect* TVisObjRef::GetRect(int /*fieldId*/) const {
     return &m_rect;
+}
+
+void TVisObjRef::GetLinks(int /*fieldId*/, eTypeOrder /*order*/, TVList& /*outLinks*/) const {
 }
 
 const std::uint8_t* TVisObjRef::GetId() const {

@@ -4,10 +4,12 @@
 #include "TGAction.h"
 #include "TGAnimation.h"
 #include "TGInterface.h"
+#include "THInterface.h"
 #include "THText.h"
 #include "TMSavegame.h"
 #include "TManagedObject.h"
 #include "baselib/composedfile.h"
+#include "datastruct/visionaireobject.h"
 
 namespace {
 // Packs a TVisObjRef::GetId() 3-byte id into a 32-bit value the same way
@@ -392,6 +394,14 @@ void TGameControl::ExecuteStartingAction() {
 }
 
 void TGameControl::InitInterfaces() {
+    // Confirmed (asm lines 458124-458250): field id 0x296 and eTypeOrder
+    // value 1 are both unresolved.
+    TVisObjRef game = m_visionaire->GetGame();
+    TVList links;
+    game.GetLinks(0x296, eTypeOrder::Value1, links);
+
+    for (TVisionaireObject* object : links)
+        m_allInterfaces.push_back(new THInterface(TVisObjRef(*object)));
 }
 
 void TGameControl::SetCharacterInterfaces() {
