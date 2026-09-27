@@ -543,8 +543,41 @@ void TGameControl::EndDialog() {
         GetCursorControl()->SetCursor(false, PackVisId(link.GetId()), false);
 }
 
-void TGameControl::StartText(const TVisObjRef& /*text*/, TGCharacter* /*character*/, TextAlignmentEnum /*alignment*/,
-                              const TVisObjRef& /*target*/, const wxPoint& /*pos*/) {
+void TGameControl::StartText(const TVisObjRef& text, TGCharacter* character, TextAlignmentEnum alignment,
+                              const TVisObjRef& target, const wxPoint& pos) {
+    // Confirmed (asm lines 461200-461415): dedupes against an existing
+    // active text with the same speaker, drops any current text, creates
+    // the new one, and keeps it as m_currentText only if its target reads
+    // as "displayed" (field id 0x211) - otherwise discards it immediately.
+    if (character != nullptr) {
+        for (auto it = m_activeTexts.begin(); it != m_activeTexts.end(); ++it) {
+            if ((*it)->GetSpeaker() == character) {
+                (*it)->OnCleared();
+                (*it)->Discard();
+                m_activeTexts.erase(it);
+                break;
+            }
+        }
+    }
+
+    if (m_currentText != nullptr) {
+        m_currentText->Discard();
+        TVisObjRef game = m_visionaire->GetGame();
+        game.ClearLink(0x1DD, true);
+        m_currentText = nullptr;
+    }
+
+    TVisObjRef activeObject = m_visionaire->CreateActiveObject(0x18, text);
+    TVisObjRef emptyObject = m_visionaire->GetEmptyObject();
+    m_currentText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, true, false);
+
+    if (m_currentText->GetTarget().GetBool(0x211)) {
+        TVisObjRef game = m_visionaire->GetGame();
+        game.SetLink(0x1DD, m_currentText->GetTarget(), true);
+    } else {
+        m_currentText->Discard();
+        m_currentText = nullptr;
+    }
 }
 
 void TGameControl::StartBackgroundText(const TVisObjRef& text, TGCharacter* character, TextAlignmentEnum alignment,

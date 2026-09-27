@@ -345,6 +345,26 @@ and append it if `wxFileName::IsOk()` after normalizing. No new classes
 needed - the first entirely self-contained method in a while, safely
 smoke-testable without a live `m_currentCharacter`.
 
+## TGameControl batch 15: StartText, and one deliberately left alone
+
+`StartText` (asm lines 461200-461415) is the third and last of the
+`StartXText` family, reusing everything the other two already needed
+(`THText`, `CreateActiveObject`/`GetEmptyObject`, `GetSpeaker()` dedup):
+dedupes against an existing active text from the same speaker, drops any
+current text first, creates the new one as `m_currentText`, and keeps it
+only if its target reads as "displayed" - otherwise discards it right back.
+
+Looked at `UpdateWalkingSounds` (asm lines 463474-463684) next and decided
+to leave it stubbed: underneath a rate-limiting static `TTimer`, it calls
+through a raw function pointer read from an unidentified interface
+object's vtable (a field this project hasn't seen before, at a `+0x178`
+offset) with 7 arguments built from character screen-position, scroll and
+viewport math, plus two new `TVisObjRef`/`TGCharacter` accessors
+(`GetFloat`, `GetWalkingSound`/`IsWalkingSoundPlaying`). Implementing it
+would mean inventing a plausible-looking shape for that callback interface
+with no real evidence for its argument meanings - exactly the kind of guess
+this project avoids per the lesson below.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where
