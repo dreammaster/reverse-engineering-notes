@@ -6,5 +6,5 @@
 
 class TLoadingControl : public TPaintControl {
 public:
-    void UpdateStatus(int current, int total);
+	void UpdateStatus(int current, int total);
 };

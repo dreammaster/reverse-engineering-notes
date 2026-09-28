@@ -2,19 +2,19 @@
 
 #include "graphicslib/preloadedPicManager.h"
 
-TGraphicsInterface* graphics = new TGraphicsInterface();
+TGraphicsInterface *graphics = new TGraphicsInterface();
 
-TPreloadedPicManager* TGraphicsInterface::GetPreloadedPicManager() {
-    if (!m_preloadedPicManager)
-        m_preloadedPicManager = new TPreloadedPicManager();
-    return m_preloadedPicManager;
+TPreloadedPicManager *TGraphicsInterface::GetPreloadedPicManager() {
+	if (!_preloadedPicManager)
+		_preloadedPicManager = new TPreloadedPicManager();
+	return _preloadedPicManager;
 }
 
-TSpriteHandle* TGraphicsInterface::GetSpriteFromCache(const wxString& /*name*/) {
-    return nullptr;
+TSpriteHandle *TGraphicsInterface::GetSpriteFromCache(const wxString &/*name*/) {
+	return nullptr;
 }
 
-void TGraphicsInterface::OnSpriteHandleReleased(TSpriteHandle* /*handle*/) {
+void TGraphicsInterface::OnSpriteHandleReleased(TSpriteHandle */*handle*/) {
 }
 
 void TGraphicsInterface::SetMatrixMode(bool /*a*/, bool /*b*/) {

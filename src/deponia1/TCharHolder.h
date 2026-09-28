@@ -9,14 +9,20 @@
 
 class TCharHolder {
 public:
-    TCharHolder() = default;
-    TCharHolder(const TCharHolder&) = default;
-    TCharHolder& operator=(const TCharHolder&) = default;
+	TCharHolder() = default;
+	TCharHolder(const TCharHolder &) = default;
+	TCharHolder &operator=(const TCharHolder &) = default;
 
-    operator wxString() const { return m_value; }
-    operator wxFileName() const { return wxFileName(m_value.ToStdWstring()); }
-    wxString GetFullPath() const { return m_value; }
+	operator wxString() const {
+		return _value;
+	}
+	operator wxFileName() const {
+		return wxFileName(_value.ToStdWstring());
+	}
+	wxString GetFullPath() const {
+		return _value;
+	}
 
 private:
-    wxString m_value;
+	wxString _value;
 };

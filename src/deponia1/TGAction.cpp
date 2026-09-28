@@ -1,6 +1,6 @@
 #include "TGAction.h"
 
-void TGAction::AddRunningAction(const TVisObjRef& /*action*/) {
+void TGAction::AddRunningAction(const TVisObjRef &/*action*/) {
 }
 
 void TGAction::ContinueRunningActions(bool /*flag*/) {

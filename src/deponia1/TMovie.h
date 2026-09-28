@@ -3,6 +3,6 @@
 
 class TMovie {
 public:
-    void Initialize(bool enable);
-    bool OneFrame();
+	void Initialize(bool enable);
+	bool OneFrame();
 };

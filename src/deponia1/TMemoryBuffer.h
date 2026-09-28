@@ -10,12 +10,12 @@
 
 class TMemoryBuffer {
 public:
-    void Init(unsigned long size);
-    unsigned char* GetData();
-    const unsigned char* GetData() const;
-    unsigned long GetSize() const;
-    bool Decrypt(const wxString& key, unsigned long* outValue, unsigned long flags);
+	void Init(unsigned long size);
+	unsigned char *GetData();
+	const unsigned char *GetData() const;
+	unsigned long GetSize() const;
+	bool Decrypt(const wxString &key, unsigned long *outValue, unsigned long flags);
 
 private:
-    std::vector<unsigned char> m_data;
+	std::vector<unsigned char> _data;
 };

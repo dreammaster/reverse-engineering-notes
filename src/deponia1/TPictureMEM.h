@@ -13,12 +13,12 @@
 
 class TPictureMEM : public TSprite {
 public:
-    TPictureMEM() = default;
-    virtual ~TPictureMEM() = default;
+	TPictureMEM() = default;
+	virtual ~TPictureMEM() = default;
 
-    void ClearMemData();
+	void ClearMemData();
 
 protected:
-    int m_width = 0;
-    int m_height = 0;
+	int _width = 0;
+	int _height = 0;
 };

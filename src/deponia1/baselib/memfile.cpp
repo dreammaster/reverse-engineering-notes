@@ -1,5 +1,5 @@
 #include "baselib/memfile.h"
 
-TMemoryBuffer& TMemoryFile::GetBuffer() {
-    return m_buffer;
+TMemoryBuffer &TMemoryFile::GetBuffer() {
+	return _buffer;
 }

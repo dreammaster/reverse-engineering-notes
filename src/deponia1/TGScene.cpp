@@ -4,26 +4,26 @@
 #include "TMSavegame.h"
 
 bool TGScene::IsMenu() const {
-    return false;
+	return false;
 }
 
-TManagedObject* TGScene::GetObject(const TVisObjRef& /*object*/) const {
-    return nullptr;
+TManagedObject *TGScene::GetObject(const TVisObjRef &/*object*/) const {
+	return nullptr;
 }
 
-TMSavegame* TGScene::GetSelectedSavegame(bool /*flag*/) {
-    return nullptr;
+TMSavegame *TGScene::GetSelectedSavegame(bool /*flag*/) {
+	return nullptr;
 }
 
-TMSavegame* TGScene::GetSavegameAt(const wxPoint& /*pos*/) const {
-    return nullptr;
+TMSavegame *TGScene::GetSavegameAt(const wxPoint &/*pos*/) const {
+	return nullptr;
 }
 
 void TGScene::DeleteSelectedSavegame() {
 }
 
-std::vector<TGCharacter*> TGScene::GetCharacters() const {
-    return {};
+std::vector<TGCharacter *> TGScene::GetCharacters() const {
+	return {};
 }
 
 void TGScene::InitActionAreas() {

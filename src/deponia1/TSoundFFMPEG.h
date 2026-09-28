@@ -8,6 +8,6 @@
 
 class TSoundFFMPEG {
 public:
-    virtual ~TSoundFFMPEG() = default;
-    virtual void OnVideoFrameFinished();
+	virtual ~TSoundFFMPEG() = default;
+	virtual void OnVideoFrameFinished();
 };

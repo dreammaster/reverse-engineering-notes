@@ -1,0 +1,20 @@
+# Artistic Style options approximating ScummVM's Code Formatting
+# Conventions (https://wiki.scummvm.org/index.php?title=Code_Formatting_Conventions).
+# See CLAUDE.md for the full convention reference, including naming rules
+# astyle can't apply and the supplementary pass needed for pointer/reference
+# spacing in function parameters (an astyle limitation).
+#
+# Deliberately omits the wiki's own suggested "convert-tabs" option: in this
+# astyle version it overrides tab indentation back to spaces, contradicting
+# the wiki's explicit "use tabs for indentation" instruction.
+indent=tab=4
+style=attach
+pad-oper
+pad-header
+align-pointer=name
+align-reference=name
+unpad-paren
+indent-preproc-block
+indent-preproc-define
+indent-preproc-cond
+suffix=none

@@ -16,19 +16,21 @@ class TManagedObject;
 
 class TGInterface : public TPaintControl {
 public:
-    const TVisObjRef& GetRef() const { return m_ref; }
-    // Confirmed TManagedObject* (TGameControl::StartObjectText calls
-    // TManagedObject::SetText() directly on the result, same as
-    // TGScene::GetObject() - asm lines 462233-462396) - the earlier void*
-    // was a placeholder guess.
-    TManagedObject* GetObject(const TVisObjRef& object) const;
+	const TVisObjRef &GetRef() const {
+		return _ref;
+	}
+	// Confirmed TManagedObject* (TGameControl::StartObjectText calls
+	// TManagedObject::SetText() directly on the result, same as
+	// TGScene::GetObject() - asm lines 462233-462396) - the earlier void*
+	// was a placeholder guess.
+	TManagedObject *GetObject(const TVisObjRef &object) const;
 
-    // Confirmed call shapes only (TGameControl::SetInterfaces, asm lines
-    // 465533-465671): called on an interface leaving the active set before
-    // it's dropped, and on every interface entering it, respectively.
-    void RemoveSpritesAndAnimations();
-    void SetObjectsActive(bool active);
+	// Confirmed call shapes only (TGameControl::SetInterfaces, asm lines
+	// 465533-465671): called on an interface leaving the active set before
+	// it's dropped, and on every interface entering it, respectively.
+	void RemoveSpritesAndAnimations();
+	void SetObjectsActive(bool active);
 
 private:
-    TVisObjRef m_ref;
+	TVisObjRef _ref;
 };

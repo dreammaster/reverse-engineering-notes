@@ -6,5 +6,5 @@ class TPictureIO;
 
 class TPreloadedPicManager {
 public:
-    void StopPreloading(TPictureIO* picture);
+	void StopPreloading(TPictureIO *picture);
 };

@@ -1,7 +1,7 @@
 #include "TGObjectManager.h"
 
 wxString TGObjectManager::GetActionText() const {
-    return wxString();
+	return wxString();
 }
 
 void TGObjectManager::ResetCurrentObject() {

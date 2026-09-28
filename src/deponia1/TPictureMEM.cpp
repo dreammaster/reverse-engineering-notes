@@ -1,6 +1,6 @@
 #include "TPictureMEM.h"
 
 void TPictureMEM::ClearMemData() {
-    m_width = 0;
-    m_height = 0;
+	_width = 0;
+	_height = 0;
 }

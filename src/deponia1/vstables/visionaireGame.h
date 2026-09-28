@@ -6,9 +6,9 @@
 
 class TVisionaireGame {
 public:
-    TVisionaireGame() = default;
+	TVisionaireGame() = default;
 };
 
 // Confirmed a free function, not a member (TGameControl::Save, asm line
 // 462914) - not reversed beyond that call shape.
-void SaveGlobalScriptVariables(TVisionaireGame& game);
+void SaveGlobalScriptVariables(TVisionaireGame &game);

@@ -10,6 +10,6 @@
 
 class TGAnimation {
 public:
-    static void ClearAnimations();
-    static void SaveAnimations();
+	static void ClearAnimations();
+	static void SaveAnimations();
 };

@@ -9,5 +9,5 @@ class TGText;
 
 class TManagedObject {
 public:
-    void SetText(TGText* text);
+	void SetText(TGText *text);
 };

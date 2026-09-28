@@ -1,9 +1,9 @@
 #include "TGameClientSDK.h"
 
-TGameClientSDK::TGameClientSDK() : m_steam(new TSteamSDK()), m_galaxy(new TGalaxySDK()) {
+TGameClientSDK::TGameClientSDK() : _steam(new TSteamSDK()), _galaxy(new TGalaxySDK()) {
 }
 
 TGameClientSDK::~TGameClientSDK() {
-    delete m_steam;
-    delete m_galaxy;
+	delete _steam;
+	delete _galaxy;
 }

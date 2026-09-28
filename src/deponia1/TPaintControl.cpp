@@ -13,39 +13,39 @@ void TPaintControl::SetCurrent() {
 }
 
 bool TPaintControl::IsActive() const {
-    return m_active;
+	return _active;
 }
 
 void TPaintControl::SetActive(bool active) {
-    m_active = active;
+	_active = active;
 }
 
-const wxPoint& TPaintControl::GetScrollPos() const {
-    return m_scrollPos;
+const wxPoint &TPaintControl::GetScrollPos() const {
+	return _scrollPos;
 }
 
-void TPaintControl::SetScrollPos(const wxPoint& pos) {
-    m_scrollPos = pos;
+void TPaintControl::SetScrollPos(const wxPoint &pos) {
+	_scrollPos = pos;
 }
 
 bool TPaintControl::IsScrollable() const {
-    return false;
+	return false;
 }
 
 int TPaintControl::GetWorktopWidth() const {
-    return 0;
+	return 0;
 }
 
 int TPaintControl::GetWorktopHeight() const {
-    return 0;
+	return 0;
 }
 
-const FloatPoint& TPaintControl::GetFloatScrollPos() const {
-    return m_floatScrollPos;
+const FloatPoint &TPaintControl::GetFloatScrollPos() const {
+	return _floatScrollPos;
 }
 
-const wxSize& TPaintControl::GetVisibleSize() const {
-    return m_visibleSize;
+const wxSize &TPaintControl::GetVisibleSize() const {
+	return _visibleSize;
 }
 
 void TPaintControl::AdjustWindowHorizontal(float /*amount*/) {

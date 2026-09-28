@@ -2,7 +2,7 @@
 
 #include "vsplayer/control/gameControl.h"
 
-SDL_Window* VSPlayerWindow = nullptr;
+SDL_Window *VSPlayerWindow = nullptr;
 SDL_GLContext VSPlayerContext = nullptr;
 
 wxString strAppName;
@@ -14,7 +14,7 @@ TStandardPaths standardPaths;
 
 wxFileName g_logfile;
 
-std::FILE* LogFile = nullptr;
+std::FILE *LogFile = nullptr;
 
 int AppStatus = 0;
 int isProgramLooping = 0;
@@ -27,7 +27,7 @@ unsigned char byte_11F8B02 = 0;
 // TMasterControl is abstract; TGameControl (98 methods, not yet
 // reconstructed - see vsplayer/control/gameControl.h) is the real concrete
 // class the binary instantiates here.
-TMasterControl* g_pGameControl = new TGameControl();
+TMasterControl *g_pGameControl = new TGameControl();
 
 int movex = 0;
 int movey = 0;

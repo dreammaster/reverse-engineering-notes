@@ -21,74 +21,76 @@
 // Confirmed to have at least one value, 2, used at every SetValue() call
 // site seen so far (TGameControl::SetOnScrollDestination, Deponia_Linux.asm
 // lines 460720-460821) - real meaning/other values not resolved.
-enum class TSendEventEnum { SendEvent = 2 };
+enum class TSendEventEnum { kSendEvent = 2 };
 
 // Confirmed 2 values, 0 and 1 (TGameControl::InitGameActions/
 // InitInterfaces, asm lines 458124-458250, 466739-467222+) - real
 // meaning/names not resolved.
-enum class eTypeOrder { Value0 = 0, Value1 = 1 };
+enum class TypeOrder { kValue0 = 0, kValue1 = 1 };
 
 class TVisionaireObject;
 class TVList;
 
 class TVisObjRef {
 public:
-    TVisObjRef() = default;
-    TVisObjRef(const TVisObjRef&) = default;
-    TVisObjRef& operator=(const TVisObjRef&) = default;
-    ~TVisObjRef() = default;
-    // Confirmed (TGameControl::InitInterfaces, asm line 458174): TVList
-    // elements are TVisionaireObject*, each converted through this before
-    // use - so TVisObjRef is a lightweight handle onto the heavier
-    // TVisionaireObject data record.
-    explicit TVisObjRef(const TVisionaireObject& object);
-    // A second, pointer-taking overload (TGameControl::InitCharacters, asm
-    // line 466302) - functionally the same conversion, just dereferencing
-    // first.
-    explicit TVisObjRef(const TVisionaireObject* object);
+	TVisObjRef() = default;
+	TVisObjRef(const TVisObjRef &) = default;
+	TVisObjRef &operator=(const TVisObjRef &) = default;
+	~TVisObjRef() = default;
+	// Confirmed (TGameControl::InitInterfaces, asm line 458174): TVList
+	// elements are TVisionaireObject*, each converted through this before
+	// use - so TVisObjRef is a lightweight handle onto the heavier
+	// TVisionaireObject data record.
+	explicit TVisObjRef(const TVisionaireObject &object);
+	// A second, pointer-taking overload (TGameControl::InitCharacters, asm
+	// line 466302) - functionally the same conversion, just dereferencing
+	// first.
+	explicit TVisObjRef(const TVisionaireObject *object);
 
-    bool IsEmpty() const { return true; }
-    // Confirmed (TGameControl::GetInterface/IsTextActive/IsTalking): compares
-    // the 3-4 byte id, per GetId()'s comment above.
-    bool operator==(const TVisObjRef& other) const;
+	bool IsEmpty() const {
+		return true;
+	}
+	// Confirmed (TGameControl::GetInterface/IsTextActive/IsTalking): compares
+	// the 3-4 byte id, per GetId()'s comment above.
+	bool operator==(const TVisObjRef &other) const;
 
-    bool GetBool(int fieldId) const;
-    int GetInt(int fieldId) const;
-    wxString GetStr(int fieldId) const;
-    std::wstring GetPath(int fieldId) const;
-    TVisObjRef GetLink(int fieldId) const;
-    // Confirmed call shape only (TGameControl::InitCharacters, asm line
-    // 466313) - not reversed beyond that.
-    TVisObjRef GetParent() const;
-    // Confirmed called (TGameControl::ResetState, Deponia_Linux.asm line
-    // 460932) with a field id and a bool - not reversed beyond that call
-    // shape.
-    void ClearLink(int fieldId, bool flag);
-    // Confirmed called (TGameControl::StartDialog, asm line 461050) with a
-    // field id, a linked TVisObjRef, and a bool - not reversed beyond that
-    // call shape.
-    void SetLink(int fieldId, const TVisObjRef& value, bool flag);
-    // Confirmed 3 overloads (TGameControl::SetOnScrollDestination/
-    // CenterScene, asm lines 460533-460821) - not reversed beyond their
-    // call shapes.
-    void SetValue(int fieldId, const wxPoint& value, TSendEventEnum event);
-    void SetValue(int fieldId, bool value, TSendEventEnum event);
-    void SetValue(int fieldId, int value, TSendEventEnum event);
-    void SetValue(int fieldId, const wxString& value, TSendEventEnum event);
-    const wxPoint* GetPoint(int fieldId) const;
-    const wxRect* GetRect(int fieldId) const;
-    // Confirmed call shape only (TGameControl::InitInterfaces/
-    // InitGameActions, asm lines 458124-458250, 466739-467222+) - fills
-    // outLinks with TVisionaireObject* elements; not reversed beyond that.
-    void GetLinks(int fieldId, eTypeOrder order, TVList& outLinks) const;
+	bool GetBool(int fieldId) const;
+	int GetInt(int fieldId) const;
+	wxString GetStr(int fieldId) const;
+	std::wstring GetPath(int fieldId) const;
+	TVisObjRef GetLink(int fieldId) const;
+	// Confirmed call shape only (TGameControl::InitCharacters, asm line
+	// 466313) - not reversed beyond that.
+	TVisObjRef GetParent() const;
+	// Confirmed called (TGameControl::ResetState, Deponia_Linux.asm line
+	// 460932) with a field id and a bool - not reversed beyond that call
+	// shape.
+	void ClearLink(int fieldId, bool flag);
+	// Confirmed called (TGameControl::StartDialog, asm line 461050) with a
+	// field id, a linked TVisObjRef, and a bool - not reversed beyond that
+	// call shape.
+	void SetLink(int fieldId, const TVisObjRef &value, bool flag);
+	// Confirmed 3 overloads (TGameControl::SetOnScrollDestination/
+	// CenterScene, asm lines 460533-460821) - not reversed beyond their
+	// call shapes.
+	void SetValue(int fieldId, const wxPoint &value, TSendEventEnum event);
+	void SetValue(int fieldId, bool value, TSendEventEnum event);
+	void SetValue(int fieldId, int value, TSendEventEnum event);
+	void SetValue(int fieldId, const wxString &value, TSendEventEnum event);
+	const wxPoint *GetPoint(int fieldId) const;
+	const wxRect *GetRect(int fieldId) const;
+	// Confirmed call shape only (TGameControl::InitInterfaces/
+	// InitGameActions, asm lines 458124-458250, 466739-467222+) - fills
+	// outLinks with TVisionaireObject* elements; not reversed beyond that.
+	void GetLinks(int fieldId, TypeOrder order, TVList &outLinks) const;
 
-    // Real GetId() returns a small (likely 4-byte) identifier the caller
-    // treats as 3-4 individual bytes (see TMasterControl::PlayAVI packing
-    // it into a 32-bit value) - exact meaning not resolved.
-    const std::uint8_t* GetId() const;
+	// Real GetId() returns a small (likely 4-byte) identifier the caller
+	// treats as 3-4 individual bytes (see TMasterControl::PlayAVI packing
+	// it into a 32-bit value) - exact meaning not resolved.
+	const std::uint8_t *GetId() const;
 
 private:
-    wxPoint m_point{};
-    wxRect m_rect{};
-    std::uint8_t m_id[4]{};
+	wxPoint _point{};
+	wxRect _rect{};
+	std::uint8_t _id[4] {};
 };

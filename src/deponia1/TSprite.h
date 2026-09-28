@@ -13,15 +13,15 @@
 
 class TSprite {
 public:
-    TSprite() = default;
+	TSprite() = default;
 
-    bool operator==(const TSprite& other) const;
-    void Set(const TSprite& other);
-    void SetImageSize(int width, int height);
+	bool operator==(const TSprite &other) const;
+	void Set(const TSprite &other);
+	void SetImageSize(int width, int height);
 
-    TCharHolder m_path;
-    int m_id = 0;
-    int m_type = 0;
-    int m_imageWidth = 0;
-    int m_imageHeight = 0;
+	TCharHolder _path;
+	int _id = 0;
+	int _type = 0;
+	int _imageWidth = 0;
+	int _imageHeight = 0;
 };

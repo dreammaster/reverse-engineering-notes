@@ -2,8 +2,8 @@
 
 #include "TManagedObject.h"
 
-TManagedObject* TGInterface::GetObject(const TVisObjRef& /*object*/) const {
-    return nullptr;
+TManagedObject *TGInterface::GetObject(const TVisObjRef &/*object*/) const {
+	return nullptr;
 }
 
 void TGInterface::RemoveSpritesAndAnimations() {

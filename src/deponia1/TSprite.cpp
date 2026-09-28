@@ -1,17 +1,17 @@
 #include "TSprite.h"
 
-bool TSprite::operator==(const TSprite& other) const {
-    return m_path.GetFullPath().ToStdWstring() == other.m_path.GetFullPath().ToStdWstring() && m_id == other.m_id &&
-           m_type == other.m_type;
+bool TSprite::operator==(const TSprite &other) const {
+	return _path.GetFullPath().ToStdWstring() == other._path.GetFullPath().ToStdWstring() && _id == other._id &&
+	       _type == other._type;
 }
 
-void TSprite::Set(const TSprite& other) {
-    m_path = other.m_path;
-    m_id = other.m_id;
-    m_type = other.m_type;
+void TSprite::Set(const TSprite &other) {
+	_path = other._path;
+	_id = other._id;
+	_type = other._type;
 }
 
 void TSprite::SetImageSize(int width, int height) {
-    m_imageWidth = width;
-    m_imageHeight = height;
+	_imageWidth = width;
+	_imageHeight = height;
 }

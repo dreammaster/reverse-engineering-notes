@@ -12,11 +12,11 @@
 
 class TConsole {
 public:
-    TConsole() = default;
+	TConsole() = default;
 
-    bool Draw();
-    void DrawInScene();
-    // Confirmed call shape only (TGameControl::Init, asm lines 467226-
-    // 467624) - not reversed beyond that.
-    void Init();
+	bool Draw();
+	void DrawInScene();
+	// Confirmed call shape only (TGameControl::Init, asm lines 467226-
+	// 467624) - not reversed beyond that.
+	void Init();
 };

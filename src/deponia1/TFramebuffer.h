@@ -3,5 +3,5 @@
 
 class TFramebuffer {
 public:
-    TFramebuffer() = default;
+	TFramebuffer() = default;
 };

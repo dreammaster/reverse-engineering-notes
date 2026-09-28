@@ -2,48 +2,48 @@
 
 #include "datastruct/vlist.h"
 
-TVisObjRef::TVisObjRef(const TVisionaireObject& /*object*/) {
+TVisObjRef::TVisObjRef(const TVisionaireObject &/*object*/) {
 }
 
-TVisObjRef::TVisObjRef(const TVisionaireObject* /*object*/) {
+TVisObjRef::TVisObjRef(const TVisionaireObject */*object*/) {
 }
 
-bool TVisObjRef::operator==(const TVisObjRef& other) const {
-    return m_id[0] == other.m_id[0] && m_id[1] == other.m_id[1] && m_id[2] == other.m_id[2] &&
-           m_id[3] == other.m_id[3];
+bool TVisObjRef::operator==(const TVisObjRef &other) const {
+	return _id[0] == other._id[0] && _id[1] == other._id[1] && _id[2] == other._id[2] &&
+	       _id[3] == other._id[3];
 }
 
 bool TVisObjRef::GetBool(int /*fieldId*/) const {
-    return false;
+	return false;
 }
 
 int TVisObjRef::GetInt(int /*fieldId*/) const {
-    return 0;
+	return 0;
 }
 
 wxString TVisObjRef::GetStr(int /*fieldId*/) const {
-    return wxString();
+	return wxString();
 }
 
 std::wstring TVisObjRef::GetPath(int /*fieldId*/) const {
-    return std::wstring();
+	return std::wstring();
 }
 
 TVisObjRef TVisObjRef::GetLink(int /*fieldId*/) const {
-    return TVisObjRef();
+	return TVisObjRef();
 }
 
 TVisObjRef TVisObjRef::GetParent() const {
-    return TVisObjRef();
+	return TVisObjRef();
 }
 
 void TVisObjRef::ClearLink(int /*fieldId*/, bool /*flag*/) {
 }
 
-void TVisObjRef::SetLink(int /*fieldId*/, const TVisObjRef& /*value*/, bool /*flag*/) {
+void TVisObjRef::SetLink(int /*fieldId*/, const TVisObjRef &/*value*/, bool /*flag*/) {
 }
 
-void TVisObjRef::SetValue(int /*fieldId*/, const wxPoint& /*value*/, TSendEventEnum /*event*/) {
+void TVisObjRef::SetValue(int /*fieldId*/, const wxPoint &/*value*/, TSendEventEnum /*event*/) {
 }
 
 void TVisObjRef::SetValue(int /*fieldId*/, bool /*value*/, TSendEventEnum /*event*/) {
@@ -52,20 +52,20 @@ void TVisObjRef::SetValue(int /*fieldId*/, bool /*value*/, TSendEventEnum /*even
 void TVisObjRef::SetValue(int /*fieldId*/, int /*value*/, TSendEventEnum /*event*/) {
 }
 
-void TVisObjRef::SetValue(int /*fieldId*/, const wxString& /*value*/, TSendEventEnum /*event*/) {
+void TVisObjRef::SetValue(int /*fieldId*/, const wxString &/*value*/, TSendEventEnum /*event*/) {
 }
 
-const wxPoint* TVisObjRef::GetPoint(int /*fieldId*/) const {
-    return &m_point;
+const wxPoint *TVisObjRef::GetPoint(int /*fieldId*/) const {
+	return &_point;
 }
 
-const wxRect* TVisObjRef::GetRect(int /*fieldId*/) const {
-    return &m_rect;
+const wxRect *TVisObjRef::GetRect(int /*fieldId*/) const {
+	return &_rect;
 }
 
-void TVisObjRef::GetLinks(int /*fieldId*/, eTypeOrder /*order*/, TVList& /*outLinks*/) const {
+void TVisObjRef::GetLinks(int /*fieldId*/, TypeOrder /*order*/, TVList &/*outLinks*/) const {
 }
 
-const std::uint8_t* TVisObjRef::GetId() const {
-    return m_id;
+const std::uint8_t *TVisObjRef::GetId() const {
+	return _id;
 }

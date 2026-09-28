@@ -13,5 +13,5 @@ void TSText::SkipCurrentText() {
 }
 
 TVisObjRef TSText::GetDataObject() const {
-    return TVisObjRef();
+	return TVisObjRef();
 }

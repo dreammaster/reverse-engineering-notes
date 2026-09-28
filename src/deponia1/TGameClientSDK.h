@@ -6,20 +6,20 @@
 
 class TSteamSDK {
 public:
-    TSteamSDK() = default;
+	TSteamSDK() = default;
 };
 
 class TGalaxySDK {
 public:
-    TGalaxySDK() = default;
+	TGalaxySDK() = default;
 };
 
 class TGameClientSDK {
 public:
-    TGameClientSDK();
-    virtual ~TGameClientSDK();
+	TGameClientSDK();
+	virtual ~TGameClientSDK();
 
 private:
-    TSteamSDK* m_steam;
-    TGalaxySDK* m_galaxy;
+	TSteamSDK *_steam;
+	TGalaxySDK *_galaxy;
 };

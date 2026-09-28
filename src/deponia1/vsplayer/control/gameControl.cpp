@@ -18,8 +18,8 @@ namespace {
 // (byte1<<8) | (sign-extended byte2<<16) - the sign extension of the third
 // byte is confirmed (an `and 0xFF000000` masking a `sar 0x1F`-derived sign
 // mask in the disassembly), its purpose is not.
-int PackVisId(const std::uint8_t* id) {
-    return id[0] | (id[1] << 8) | (static_cast<int>(static_cast<std::int8_t>(id[2])) << 16);
+int PackVisId(const std::uint8_t *id) {
+	return id[0] | (id[1] << 8) | (static_cast<int>(static_cast<std::int8_t>(id[2])) << 16);
 }
 
 // Confirmed global (not per-instance) engine-event queue guarded by a
@@ -33,355 +33,355 @@ std::vector<std::pair<std::string, std::string>> EngineEvents;
 }  // namespace
 
 TGameControl::TGameControl() {
-    // TMasterControl's own base subobject is constructed automatically.
-    // TGameControl embeds a real TSceneControl and points TMasterControl's
-    // (protected) m_sceneControl at it - TMasterControl's own constructor
-    // never sets that pointer, so this is presumed to be TGameControl's
-    // job (not otherwise confirmed - see masterControl.h).
-    m_sceneControl = &m_ownedSceneControl;
+	// TMasterControl's own base subobject is constructed automatically.
+	// TGameControl embeds a real TSceneControl and points TMasterControl's
+	// (protected) _sceneControl at it - TMasterControl's own constructor
+	// never sets that pointer, so this is presumed to be TGameControl's
+	// job (not otherwise confirmed - see masterControl.h).
+	_sceneControl = &_ownedSceneControl;
 
-    m_visionaireGame = new TVisionaireGame();
+	_visionaireGame = new TVisionaireGame();
 
-    // Confirmed: the constructor makes *this* the global game-controller
-    // singleton itself, rather than leaving that to the caller.
-    g_pGameControl = this;
+	// Confirmed: the constructor makes *this* the global game-controller
+	// singleton itself, rather than leaving that to the caller.
+	g_pGameControl = this;
 
-    // Confirmed: registers a TComposedFile::onError handler (logs the
-    // failing archive's exe-filename + the error string) - the handler
-    // body itself wasn't traced in detail (see TComposedFile::onError's
-    // declaration).
-    TComposedFile::onError = [](TComposedFile* /*file*/, std::string /*message*/) {};
+	// Confirmed: registers a TComposedFile::onError handler (logs the
+	// failing archive's exe-filename + the error string) - the handler
+	// body itself wasn't traced in detail (see TComposedFile::onError's
+	// declaration).
+	TComposedFile::onError = [](TComposedFile */*file*/, std::string /*message*/) {};
 }
 
 TGameControl::~TGameControl() {
-    // Confirmed (asm lines 474222-474270): sets m_isClearingAnimations
-    // before tearing down, then deletes every owned TGCharacter*. The
-    // destructor also calls into ModelContainer::Destroy - not modeled,
-    // since that class hasn't been reversed at all yet - and a virtual
-    // teardown call through a pointer at a still-unidentified field - left
-    // out rather than guessing.
-    m_isClearingAnimations = true;
-    TGAction::ClearActions();
-    TGAnimation::ClearAnimations();
-    ClearTexts();
-    for (TGCharacter* character : m_characters)
-        delete character;
-    m_characters.clear();
+	// Confirmed (asm lines 474222-474270): sets _isClearingAnimations
+	// before tearing down, then deletes every owned TGCharacter*. The
+	// destructor also calls into ModelContainer::Destroy - not modeled,
+	// since that class hasn't been reversed at all yet - and a virtual
+	// teardown call through a pointer at a still-unidentified field - left
+	// out rather than guessing.
+	_isClearingAnimations = true;
+	TGAction::ClearActions();
+	TGAnimation::ClearAnimations();
+	ClearTexts();
+	for (TGCharacter * character : _characters)
+		delete character;
+	_characters.clear();
 }
 
 bool TGameControl::Update() {
-    // The entire per-frame game-logic dispatcher - almost certainly
-    // thousands of lines given the class's overall size. Not reversed.
-    return true;
+	// The entire per-frame game-logic dispatcher - almost certainly
+	// thousands of lines given the class's overall size. Not reversed.
+	return true;
 }
 
 bool TGameControl::DisplayDialog() {
-    // Confirmed (asm lines 455780-455803): only draws/activates the cursor
-    // when a dialog is actually active (m_dialog's TVisObjRef target is
-    // non-empty).
-    if (m_dialog.IsEmpty())
-        return false;
-    GetCursorControl()->SetActive(true);
-    m_dialog.Draw();
-    return true;
+	// Confirmed (asm lines 455780-455803): only draws/activates the cursor
+	// when a dialog is actually active (_dialog's TVisObjRef target is
+	// non-empty).
+	if (_dialog.IsEmpty())
+		return false;
+	GetCursorControl()->SetActive(true);
+	_dialog.Draw();
+	return true;
 }
 
 namespace {
 // Shared by DisplayTexts()'s two identical flag computations: true unless
 // the text has a speaker whose TVisObjRef field id 0x319 reads as 0 - field
 // id meaning unresolved.
-bool ShouldPushMatrices(TGText* text) {
-    TGCharacter* speaker = text->GetSpeaker();
-    return speaker == nullptr || speaker->GetRef().GetInt(0x319) != 0;
+bool ShouldPushMatrices(TGText *text) {
+	TGCharacter *speaker = text->GetSpeaker();
+	return speaker == nullptr || speaker->GetRef().GetInt(0x319) != 0;
 }
 }  // namespace
 
 bool TGameControl::DisplayTexts() {
-    // Confirmed (asm lines 455890-456037). First, drop every active text
-    // whose target no longer reads as "displayed" (field id 0x211, matching
-    // several other text methods); then draw everything that's left, plus
-    // m_currentText if it's still displayed too.
-    for (auto it = m_activeTexts.begin(); it != m_activeTexts.end();) {
-        if (!(*it)->GetTarget().GetBool(0x211)) {
-            (*it)->OnCleared();
-            (*it)->Discard();
-            it = m_activeTexts.erase(it);
-        } else {
-            ++it;
-        }
-    }
+	// Confirmed (asm lines 455890-456037). First, drop every active text
+	// whose target no longer reads as "displayed" (field id 0x211, matching
+	// several other text methods); then draw everything that's left, plus
+	// _currentText if it's still displayed too.
+	for (auto it = _activeTexts.begin(); it != _activeTexts.end();) {
+		if (!(*it)->GetTarget().GetBool(0x211)) {
+			(*it)->OnCleared();
+			(*it)->Discard();
+			it = _activeTexts.erase(it);
+		} else {
+			++it;
+		}
+	}
 
-    m_ownedSceneControl.GetScene()->SetCurrent();
+	_ownedSceneControl.GetScene()->SetCurrent();
 
-    for (TGText* text : m_activeTexts) {
-        bool saved = matricesActive;
-        matricesActive = ShouldPushMatrices(text);
-        text->Draw(1.0f);
-        matricesActive = saved;
-    }
+	for (TGText * text : _activeTexts) {
+		bool saved = matricesActive;
+		matricesActive = ShouldPushMatrices(text);
+		text->Draw(1.0f);
+		matricesActive = saved;
+	}
 
-    if (m_currentText == nullptr || !m_currentText->GetTarget().GetBool(0x211))
-        return false;
+	if (_currentText == nullptr || !_currentText->GetTarget().GetBool(0x211))
+		return false;
 
-    bool saved = matricesActive;
-    matricesActive = ShouldPushMatrices(m_currentText);
-    m_currentText->Draw(1.0f);
-    matricesActive = saved;
-    return true;
+	bool saved = matricesActive;
+	matricesActive = ShouldPushMatrices(_currentText);
+	_currentText->Draw(1.0f);
+	matricesActive = saved;
+	return true;
 }
 
 bool TGameControl::DisplayConsole() {
-    // Confirmed tail-call (asm lines 455750-455756): DisplayConsole() is
-    // exactly TConsole::Draw() on the embedded console.
-    return m_console.Draw();
+	// Confirmed tail-call (asm lines 455750-455756): DisplayConsole() is
+	// exactly TConsole::Draw() on the embedded console.
+	return _console.Draw();
 }
 
 void TGameControl::DisplayInSceneConsole() {
-    // Confirmed tail-call (asm lines 455758-455764).
-    m_console.DrawInScene();
+	// Confirmed tail-call (asm lines 455758-455764).
+	_console.DrawInScene();
 }
 
-void TGameControl::HandleMouseMove(const wxPoint& /*pos*/, bool /*isHolding*/) {
+void TGameControl::HandleMouseMove(const wxPoint &/*pos*/, bool /*isHolding*/) {
 }
 
-void TGameControl::HandleMouseUp(const wxPoint& /*pos*/, TMouseMessageEnum /*msg*/) {
+void TGameControl::HandleMouseUp(const wxPoint &/*pos*/, TMouseMessageEnum /*msg*/) {
 }
 
-void TGameControl::HandleMouseHolding(const wxPoint& /*pos*/) {
-    // Confirmed (asm lines 455671-455746): `pos` itself is never read - only
-    // whether the cursor is currently active. Field id 0x182 meaning not
-    // resolved.
-    if (!GetCursorControl()->IsActive())
-        return;
-    TVisObjRef game = m_visionaire->GetGame();
-    TVisObjRef link = game.GetLink(0x182);
-    if (!link.IsEmpty())
-        TGAction::AddRunningAction(link);
+void TGameControl::HandleMouseHolding(const wxPoint &/*pos*/) {
+	// Confirmed (asm lines 455671-455746): `pos` itself is never read - only
+	// whether the cursor is currently active. Field id 0x182 meaning not
+	// resolved.
+	if (!GetCursorControl()->IsActive())
+		return;
+	TVisObjRef game = _visionaire->GetGame();
+	TVisObjRef link = game.GetLink(0x182);
+	if (!link.IsEmpty())
+		TGAction::AddRunningAction(link);
 }
 
 void TGameControl::UpdateTexts() {
-    // Confirmed (asm lines 456183-456282): field id 0x211 (matches
-    // IsTextActive/IsNoTextDisplayed's usage) gates whether each text needs
-    // recalculating. If m_currentText still reads as "displayed" after
-    // recalculating, its tail is exactly ClearCurrentText()'s body
-    // (matching field id 0x1DD).
-    for (TGText* text : m_activeTexts) {
-        if (text->GetTarget().GetBool(0x211))
-            text->CalculateCurrentText();
-    }
+	// Confirmed (asm lines 456183-456282): field id 0x211 (matches
+	// IsTextActive/IsNoTextDisplayed's usage) gates whether each text needs
+	// recalculating. If _currentText still reads as "displayed" after
+	// recalculating, its tail is exactly ClearCurrentText()'s body
+	// (matching field id 0x1DD).
+	for (TGText * text : _activeTexts) {
+		if (text->GetTarget().GetBool(0x211))
+			text->CalculateCurrentText();
+	}
 
-    if (m_currentText != nullptr && m_currentText->GetTarget().GetBool(0x211)) {
-        m_currentText->CalculateCurrentText();
-        if (m_currentText->GetTarget().GetBool(0x211))
-            ClearCurrentText();
-    }
+	if (_currentText != nullptr && _currentText->GetTarget().GetBool(0x211)) {
+		_currentText->CalculateCurrentText();
+		if (_currentText->GetTarget().GetBool(0x211))
+			ClearCurrentText();
+	}
 }
 
-TSceneControl* TGameControl::GetSceneControl() {
-    return &m_ownedSceneControl;
+TSceneControl *TGameControl::GetSceneControl() {
+	return &_ownedSceneControl;
 }
 
-TGScene* TGameControl::GetScene() {
-    return m_ownedSceneControl.GetScene();
+TGScene *TGameControl::GetScene() {
+	return _ownedSceneControl.GetScene();
 }
 
-TGCharacter* TGameControl::GetCurrentCharacter() {
-    // Confirmed (asm line 456332): plain field access, not always-nullptr.
-    return m_currentCharacter;
+TGCharacter *TGameControl::GetCurrentCharacter() {
+	// Confirmed (asm line 456332): plain field access, not always-nullptr.
+	return _currentCharacter;
 }
 
-TGCharacter* TGameControl::GetCurrentCharacterPointer() const {
-    // Confirmed (asm line 456349): same field as GetCurrentCharacter().
-    return m_currentCharacter;
+TGCharacter *TGameControl::GetCurrentCharacterPointer() const {
+	// Confirmed (asm line 456349): same field as GetCurrentCharacter().
+	return _currentCharacter;
 }
 
 // GetCharacter/GetCharacterPointer/GetCharacterPointerEx (asm lines
 // 456362-456578): all three share one pattern - if the TVisObjRef arg
-// IsEmpty(), return a fallback (m_currentCharacter for the first two,
+// IsEmpty(), return a fallback (_currentCharacter for the first two,
 // nullptr for GetCharacterPointerEx); otherwise pack TVisObjRef::GetId()
-// via PackVisId() and look it up in m_charactersByHash (see its
+// via PackVisId() and look it up in _charactersByHash (see its
 // declaration - InitCharacters populates it with the very same formula),
 // falling back the same way on a miss.
-TGCharacter* TGameControl::GetCharacter(const TVisObjRef& character) {
-    if (character.IsEmpty())
-        return m_currentCharacter;
-    auto it = m_charactersByHash.find(PackVisId(character.GetId()));
-    return it != m_charactersByHash.end() ? it->second : m_currentCharacter;
+TGCharacter *TGameControl::GetCharacter(const TVisObjRef &character) {
+	if (character.IsEmpty())
+		return _currentCharacter;
+	auto it = _charactersByHash.find(PackVisId(character.GetId()));
+	return it != _charactersByHash.end() ? it->second : _currentCharacter;
 }
 
-TGCharacter* TGameControl::GetCharacterPointer(const TVisObjRef& character) const {
-    if (character.IsEmpty())
-        return m_currentCharacter;
-    auto it = m_charactersByHash.find(PackVisId(character.GetId()));
-    return it != m_charactersByHash.end() ? it->second : m_currentCharacter;
+TGCharacter *TGameControl::GetCharacterPointer(const TVisObjRef &character) const {
+	if (character.IsEmpty())
+		return _currentCharacter;
+	auto it = _charactersByHash.find(PackVisId(character.GetId()));
+	return it != _charactersByHash.end() ? it->second : _currentCharacter;
 }
 
-TGCharacter* TGameControl::GetCharacterPointerEx(const TVisObjRef& character) const {
-    if (character.IsEmpty())
-        return nullptr;
-    auto it = m_charactersByHash.find(PackVisId(character.GetId()));
-    return it != m_charactersByHash.end() ? it->second : nullptr;
+TGCharacter *TGameControl::GetCharacterPointerEx(const TVisObjRef &character) const {
+	if (character.IsEmpty())
+		return nullptr;
+	auto it = _charactersByHash.find(PackVisId(character.GetId()));
+	return it != _charactersByHash.end() ? it->second : nullptr;
 }
 
-std::vector<TGCharacter*>& TGameControl::GetAllCharacters() {
-    return m_characters;
+std::vector<TGCharacter *> &TGameControl::GetAllCharacters() {
+	return _characters;
 }
 
-TGInterface* TGameControl::GetInterface(const TVisObjRef& interfaceObj) const {
-    // Confirmed (asm lines 456603-456648).
-    for (TGInterface* interface : m_activeInterfaces) {
-        if (interface->GetRef() == interfaceObj)
-            return interface;
-    }
-    return nullptr;
+TGInterface *TGameControl::GetInterface(const TVisObjRef &interfaceObj) const {
+	// Confirmed (asm lines 456603-456648).
+	for (TGInterface * interface : _activeInterfaces) {
+		if (interface->GetRef() == interfaceObj)
+			return interface;
+	}
+	return nullptr;
 }
 
-void* TGameControl::GetObject(const TVisObjRef& object) const {
-    // Confirmed (asm lines 456656-456737): scene lookup first; then, only
-    // when the id's 4th byte is zero (meaning unconfirmed - some kind of
-    // "is a character" type tag), a character lookup; either way, falls
-    // back to searching the active interfaces last.
-    if (void* obj = m_ownedSceneControl.GetScene()->GetObject(object))
-        return obj;
+void *TGameControl::GetObject(const TVisObjRef &object) const {
+	// Confirmed (asm lines 456656-456737): scene lookup first; then, only
+	// when the id's 4th byte is zero (meaning unconfirmed - some kind of
+	// "is a character" type tag), a character lookup; either way, falls
+	// back to searching the active interfaces last.
+	if (void * obj = _ownedSceneControl.GetScene()->GetObject(object))
+		return obj;
 
-    if (object.GetId()[3] == 0) {
-        if (TGCharacter* character = GetCharacterPointerEx(object))
-            return character;
-    }
+	if (object.GetId()[3] == 0) {
+		if (TGCharacter * character = GetCharacterPointerEx(object))
+			return character;
+	}
 
-    for (TGInterface* interface : m_activeInterfaces) {
-        if (void* obj = interface->GetObject(object))
-            return obj;
-    }
-    return nullptr;
+	for (TGInterface * interface : _activeInterfaces) {
+		if (void * obj = interface->GetObject(object))
+			return obj;
+	}
+	return nullptr;
 }
 
-TGObjectManager* TGameControl::GetObjectManager() {
-    // Confirmed (asm line 456751): embedded by value in TGameControl itself,
-    // not TMasterControl as first guessed.
-    return &m_objectManager;
+TGObjectManager *TGameControl::GetObjectManager() {
+	// Confirmed (asm line 456751): embedded by value in TGameControl itself,
+	// not TMasterControl as first guessed.
+	return &_objectManager;
 }
 
 void TGameControl::SkipCurrentText() {
-    // Confirmed (asm lines 456762-456956): field id 0x1E0 normally blocks
-    // skipping outright, unless field id 0x235 overrides that (both
-    // unresolved). Otherwise identical to letting the text handle its own
-    // skip, then - if it finished as a result - clearing it exactly like
-    // ClearCurrentText() does (same field id 0x1DD).
-    TVisObjRef game = m_visionaire->GetGame();
-    if (game.GetBool(0x1E0)) {
-        TVisObjRef allowOverride = m_visionaire->GetGame();
-        if (!allowOverride.GetBool(0x235))
-            return;
-    }
+	// Confirmed (asm lines 456762-456956): field id 0x1E0 normally blocks
+	// skipping outright, unless field id 0x235 overrides that (both
+	// unresolved). Otherwise identical to letting the text handle its own
+	// skip, then - if it finished as a result - clearing it exactly like
+	// ClearCurrentText() does (same field id 0x1DD).
+	TVisObjRef game = _visionaire->GetGame();
+	if (game.GetBool(0x1E0)) {
+		TVisObjRef allowOverride = _visionaire->GetGame();
+		if (!allowOverride.GetBool(0x235))
+			return;
+	}
 
-    if (m_currentText == nullptr || !m_currentText->GetTarget().GetBool(0x211))
-        return;
+	if (_currentText == nullptr || !_currentText->GetTarget().GetBool(0x211))
+		return;
 
-    m_currentText->SkipCurrentText();
-    if (m_currentText->GetTarget().GetBool(0x211))
-        return;
+	_currentText->SkipCurrentText();
+	if (_currentText->GetTarget().GetBool(0x211))
+		return;
 
-    TVisObjRef game2 = m_visionaire->GetGame();
-    game2.ClearLink(0x1DD, true);
-    m_currentText->Discard();
-    m_currentText = nullptr;
+	TVisObjRef game2 = _visionaire->GetGame();
+	game2.ClearLink(0x1DD, true);
+	_currentText->Discard();
+	_currentText = nullptr;
 }
 
 void TGameControl::UpdateCurrentObject() {
-    // Confirmed (asm lines 456964-456999): re-dispatches the last known
-    // mouse position through HandleMouseMove(pos, false) unless it's still
-    // at the {-1,-1} "no position yet" sentinel.
-    if (m_lastMousePos.x != -1 || m_lastMousePos.y != -1)
-        HandleMouseMove(m_lastMousePos, false);
+	// Confirmed (asm lines 456964-456999): re-dispatches the last known
+	// mouse position through HandleMouseMove(pos, false) unless it's still
+	// at the {-1,-1} "no position yet" sentinel.
+	if (_lastMousePos.x != -1 || _lastMousePos.y != -1)
+		HandleMouseMove(_lastMousePos, false);
 }
 
-void TGameControl::RegisterHookFunctionSceneMousePosition(const wxString& name) {
-    // Confirmed (asm line 457015): a tail-call to std::wstring::assign on a
-    // single field - not a map as first guessed.
-    m_sceneMousePositionHookName = name.ToStdWstring();
+void TGameControl::RegisterHookFunctionSceneMousePosition(const wxString &name) {
+	// Confirmed (asm line 457015): a tail-call to std::wstring::assign on a
+	// single field - not a map as first guessed.
+	_sceneMousePositionHookName = name.ToStdWstring();
 }
 
-TConsole* TGameControl::GetConsole() {
-    return &m_console;
+TConsole *TGameControl::GetConsole() {
+	return &_console;
 }
 
 int TGameControl::ConvertControllerButtonToSymKey(SDL_ControllerButtonEvent button) {
-    // Confirmed (asm lines 457044-457058, table CSWTCH_876 at 3147444):
-    // buttons 0-14 map to a custom keysym space starting at 1000001
-    // (presumably reserved above the Unicode range used for regular
-    // keyboard keys); anything else yields -1.
-    if (button.button > 0x0E)
-        return -1;
-    return 1000001 + button.button;
+	// Confirmed (asm lines 457044-457058, table CSWTCH_876 at 3147444):
+	// buttons 0-14 map to a custom keysym space starting at 1000001
+	// (presumably reserved above the Unicode range used for regular
+	// keyboard keys); anything else yields -1.
+	if (button.button > 0x0E)
+		return -1;
+	return 1000001 + button.button;
 }
 
 wxString TGameControl::ConvertControllerAxisToUnicode(SDL_GameControllerAxis axis) {
-    // Confirmed (asm lines 457066-457125): a 6-case switch, each case
-    // assigning one literal wide string; default (and any axis outside the
-    // 6 known ones) leaves it empty. Cases 0/1/4/5 were read directly from
-    // the binary's string data ("LEFTX"/"LEFTY"/"TRIGGERLEFT"/
-    // "TRIGGERRIGHT"); 2/3 ("RIGHTX"/"RIGHTY") follow the same naming
-    // pattern but weren't individually byte-checked.
-    switch (axis) {
-    case SDL_CONTROLLER_AXIS_LEFTX:
-        return wxString(L"LEFTX");
-    case SDL_CONTROLLER_AXIS_LEFTY:
-        return wxString(L"LEFTY");
-    case SDL_CONTROLLER_AXIS_RIGHTX:
-        return wxString(L"RIGHTX");
-    case SDL_CONTROLLER_AXIS_RIGHTY:
-        return wxString(L"RIGHTY");
-    case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
-        return wxString(L"TRIGGERLEFT");
-    case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
-        return wxString(L"TRIGGERRIGHT");
-    default:
-        return wxString();
-    }
+	// Confirmed (asm lines 457066-457125): a 6-case switch, each case
+	// assigning one literal wide string; default (and any axis outside the
+	// 6 known ones) leaves it empty. Cases 0/1/4/5 were read directly from
+	// the binary's string data ("LEFTX"/"LEFTY"/"TRIGGERLEFT"/
+	// "TRIGGERRIGHT"); 2/3 ("RIGHTX"/"RIGHTY") follow the same naming
+	// pattern but weren't individually byte-checked.
+	switch (axis) {
+	case SDL_CONTROLLER_AXIS_LEFTX:
+		return wxString(L"LEFTX");
+	case SDL_CONTROLLER_AXIS_LEFTY:
+		return wxString(L"LEFTY");
+	case SDL_CONTROLLER_AXIS_RIGHTX:
+		return wxString(L"RIGHTX");
+	case SDL_CONTROLLER_AXIS_RIGHTY:
+		return wxString(L"RIGHTY");
+	case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+		return wxString(L"TRIGGERLEFT");
+	case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+		return wxString(L"TRIGGERRIGHT");
+	default:
+		return wxString();
+	}
 }
 
-void TGameControl::StartGameAction(TKeyboardMessageEnum msg, const wxString& /*name*/, int a,
-                                    unsigned short /*b*/) {
-    // Confirmed (asm lines 457301-457406): `name`/`b` are never read in this
-    // function (only used by its caller, HandleKeyEvent, to build up the
-    // wxString and passed through for a different purpose). Field id 0x242
-    // is unresolved. Stops at the first (a, msg)-matching action, whether
-    // or not it actually fires.
-    TVisObjRef game = m_visionaire->GetGame();
-    bool overrideBlock = game.GetBool(0x242);
+void TGameControl::StartGameAction(TKeyboardMessageEnum msg, const wxString &/*name*/, int a,
+                                   unsigned short /*b*/) {
+	// Confirmed (asm lines 457301-457406): `name`/`b` are never read in this
+	// function (only used by its caller, HandleKeyEvent, to build up the
+	// wxString and passed through for a different purpose). Field id 0x242
+	// is unresolved. Stops at the first (a, msg)-matching action, whether
+	// or not it actually fires.
+	TVisObjRef game = _visionaire->GetGame();
+	bool overrideBlock = game.GetBool(0x242);
 
-    for (const SGameAction& action : m_gameActions) {
-        if (action.a != a || action.msg != static_cast<int>(msg))
-            continue;
+	for (const SGameAction &action : _gameActions) {
+		if (action.a != a || action.msg != static_cast<int>(msg))
+			continue;
 
-        if (action.flag) {
-            TGAction::AddRunningAction(action.target);
-        } else if (m_dialog.IsEmpty() || overrideBlock) {
-            bool textBlocking = m_currentText != nullptr && m_currentText->GetTarget().GetBool(0x211);
-            if (!textBlocking)
-                TGAction::AddRunningAction(action.target);
-        }
-        return;
-    }
+		if (action.flag) {
+			TGAction::AddRunningAction(action.target);
+		} else if (_dialog.IsEmpty() || overrideBlock) {
+			bool textBlocking = _currentText != nullptr && _currentText->GetTarget().GetBool(0x211);
+			if (!textBlocking)
+				TGAction::AddRunningAction(action.target);
+		}
+		return;
+	}
 }
 
 void TGameControl::UpdateAspectRatio() {
-    // Confirmed (asm lines 457414-457458): picks width/height from either
-    // renderSize (if g_unlockAspect) or the game data's aspect point (field
-    // id 0x7E, meaning unconfirmed), stores them, then reconfigures the
-    // inherited TPaintControl surface. TVisObjRef::GetPoint()'s field-id
-    // meaning is not resolved - see visobjref.h.
-    TVisObjRef game = m_visionaire->GetGame();
-    const wxPoint* aspectPoint = game.GetPoint(0x7E);
-    if (g_unlockAspect) {
-        m_aspectWidth = renderSize.width;
-        m_aspectHeight = renderSize.height;
-    } else {
-        m_aspectWidth = aspectPoint->x;
-        m_aspectHeight = aspectPoint->y;
-    }
-    InitControl(m_aspectWidth, m_aspectHeight);
+	// Confirmed (asm lines 457414-457458): picks width/height from either
+	// renderSize (if g_unlockAspect) or the game data's aspect point (field
+	// id 0x7E, meaning unconfirmed), stores them, then reconfigures the
+	// inherited TPaintControl surface. TVisObjRef::GetPoint()'s field-id
+	// meaning is not resolved - see visobjref.h.
+	TVisObjRef game = _visionaire->GetGame();
+	const wxPoint *aspectPoint = game.GetPoint(0x7E);
+	if (g_unlockAspect) {
+		_aspectWidth = renderSize.width;
+		_aspectHeight = renderSize.height;
+	} else {
+		_aspectWidth = aspectPoint->x;
+		_aspectHeight = aspectPoint->y;
+	}
+	InitControl(_aspectWidth, _aspectHeight);
 }
 
 void TGameControl::InitAfterLoadingScreen() {
@@ -391,846 +391,846 @@ void TGameControl::SaveEventHandlers() {
 }
 
 void TGameControl::ExecuteStartingAction() {
-    // Confirmed (asm lines 458052-458116): field id 0x170, meaning not
-    // resolved.
-    TVisObjRef game = m_visionaire->GetGame();
-    TVisObjRef link = game.GetLink(0x170);
-    if (!link.IsEmpty()) {
-        TGAction::AddRunningAction(link);
-        TGAction::ContinueRunningActions(false);
-    }
+	// Confirmed (asm lines 458052-458116): field id 0x170, meaning not
+	// resolved.
+	TVisObjRef game = _visionaire->GetGame();
+	TVisObjRef link = game.GetLink(0x170);
+	if (!link.IsEmpty()) {
+		TGAction::AddRunningAction(link);
+		TGAction::ContinueRunningActions(false);
+	}
 }
 
 void TGameControl::InitInterfaces() {
-    // Confirmed (asm lines 458124-458250): field id 0x296 and eTypeOrder
-    // value 1 are both unresolved.
-    TVisObjRef game = m_visionaire->GetGame();
-    TVList links;
-    game.GetLinks(0x296, eTypeOrder::Value1, links);
+	// Confirmed (asm lines 458124-458250): field id 0x296 and TypeOrder
+	// value 1 are both unresolved.
+	TVisObjRef game = _visionaire->GetGame();
+	TVList links;
+	game.GetLinks(0x296, TypeOrder::kValue1, links);
 
-    for (TVisionaireObject* object : links)
-        m_allInterfaces.push_back(new THInterface(TVisObjRef(*object)));
+	for (TVisionaireObject * object : links)
+		_allInterfaces.push_back(new THInterface(TVisObjRef(*object)));
 }
 
 void TGameControl::SetCharacterInterfaces() {
-    // Confirmed (asm lines 458260-458285).
-    for (TGCharacter* character : m_characters)
-        character->SetInterfaces();
+	// Confirmed (asm lines 458260-458285).
+	for (TGCharacter * character : _characters)
+		character->SetInterfaces();
 }
 
 void TGameControl::InitFonts() {
-    // Confirmed (asm lines 458293-458322): field id 3, flag true - meaning
-    // of either not resolved.
-    TVList fonts;
-    m_visionaire->GetList(3, fonts, true);
-    GetFontManager()->Initialize(fonts);
+	// Confirmed (asm lines 458293-458322): field id 3, flag true - meaning
+	// of either not resolved.
+	TVList fonts;
+	_visionaire->GetList(3, fonts, true);
+	GetFontManager()->Initialize(fonts);
 }
 
 void TGameControl::InitScripts() {
 }
 
-TVisionaireGame* TGameControl::GetGameSystem() {
-    return m_visionaireGame;
+TVisionaireGame *TGameControl::GetGameSystem() {
+	return _visionaireGame;
 }
 
-TVisionaireGame* TGameControl::GetVisionaire() {
-    return m_visionaireGame;
+TVisionaireGame *TGameControl::GetVisionaire() {
+	return _visionaireGame;
 }
 
-void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef& /*character*/) {
+void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &/*character*/) {
 }
 
 void TGameControl::MoveScene() {
 }
 
 void TGameControl::CenterScene() {
-    // Confirmed (asm lines 460533-460715): only proceeds when the current
-    // character's scene-link (field id 0x1F7) matches the current scene's
-    // own identifying TVisObjRef. Field ids 0x1D9/0x1DA/0x1D6 (all
-    // SetValue()d at the end) are unresolved.
-    TVisObjRef game = m_visionaire->GetGame();
-    TGScene* scene = m_ownedSceneControl.GetScene();
+	// Confirmed (asm lines 460533-460715): only proceeds when the current
+	// character's scene-link (field id 0x1F7) matches the current scene's
+	// own identifying TVisObjRef. Field ids 0x1D9/0x1DA/0x1D6 (all
+	// SetValue()d at the end) are unresolved.
+	TVisObjRef game = _visionaire->GetGame();
+	TGScene *scene = _ownedSceneControl.GetScene();
 
-    TVisObjRef link = m_currentCharacter->GetRef().GetLink(0x1F7);
-    if (!(link == scene->GetRef()))
-        return;
+	TVisObjRef link = _currentCharacter->GetRef().GetLink(0x1F7);
+	if (!(link == scene->GetRef()))
+		return;
 
-    const wxSize& visibleSize = scene->GetVisibleSize();
-    wxPoint charPos = m_currentCharacter->GetScreenPosition();
-    wxRect charRect = m_currentCharacter->GetVisibleRect();
+	const wxSize &visibleSize = scene->GetVisibleSize();
+	wxPoint charPos = _currentCharacter->GetScreenPosition();
+	wxRect charRect = _currentCharacter->GetVisibleRect();
 
-    if (!(charPos == wxPoint{-1, -1})) {
-        scene->AdjustWindowHorizontal(static_cast<float>(charPos.x - visibleSize.width / 2));
+	if (!(charPos == wxPoint{-1, -1})) {
+		scene->AdjustWindowHorizontal(static_cast<float>(charPos.x - visibleSize.width / 2));
 
-        int verticalAdjust;
-        if (!charRect.IsEmpty() && charRect.GetHeight() > 0)
-            verticalAdjust = charRect.GetTop() + charRect.GetHeight() / 2 - visibleSize.height / 2;
-        else
-            verticalAdjust = charPos.y - visibleSize.height / 2;
-        scene->AdjustWindowVertical(static_cast<float>(verticalAdjust));
-    }
+		int verticalAdjust;
+		if (!charRect.IsEmpty() && charRect.GetHeight() > 0)
+			verticalAdjust = charRect.GetTop() + charRect.GetHeight() / 2 - visibleSize.height / 2;
+		else
+			verticalAdjust = charPos.y - visibleSize.height / 2;
+		scene->AdjustWindowVertical(static_cast<float>(verticalAdjust));
+	}
 
-    game.SetValue(0x1D9, 0, TSendEventEnum::SendEvent);
-    game.SetValue(0x1DA, 0, TSendEventEnum::SendEvent);
-    game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::SendEvent);
+	game.SetValue(0x1D9, 0, TSendEventEnum::kSendEvent);
+	game.SetValue(0x1DA, 0, TSendEventEnum::kSendEvent);
+	game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
 }
 
 void TGameControl::SetOnScrollDestination() {
-    // Confirmed (asm lines 460720-460821): field ids 0x1D7 (a scroll
-    // adjustment point), 0x1D6 (write-back of the resulting scroll pos),
-    // 0x231 (whether to re-center), and 0x1D8 (cleared afterward) are all
-    // unresolved. GetPoint() is called twice (once per axis) in the
-    // original - matched here rather than caching, since our TVisObjRef
-    // stub always returns the same value anyway.
-    TVisObjRef game = m_visionaire->GetGame();
-    TGScene* scene = m_ownedSceneControl.GetScene();
+	// Confirmed (asm lines 460720-460821): field ids 0x1D7 (a scroll
+	// adjustment point), 0x1D6 (write-back of the resulting scroll pos),
+	// 0x231 (whether to re-center), and 0x1D8 (cleared afterward) are all
+	// unresolved. GetPoint() is called twice (once per axis) in the
+	// original - matched here rather than caching, since our TVisObjRef
+	// stub always returns the same value anyway.
+	TVisObjRef game = _visionaire->GetGame();
+	TGScene *scene = _ownedSceneControl.GetScene();
 
-    scene->AdjustWindowHorizontal(static_cast<float>(game.GetPoint(0x1D7)->x));
-    scene->AdjustWindowVertical(static_cast<float>(game.GetPoint(0x1D7)->y));
+	scene->AdjustWindowHorizontal(static_cast<float>(game.GetPoint(0x1D7)->x));
+	scene->AdjustWindowVertical(static_cast<float>(game.GetPoint(0x1D7)->y));
 
-    game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::SendEvent);
-    if (game.GetBool(0x231))
-        CenterScene();
+	game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
+	if (game.GetBool(0x231))
+		CenterScene();
 
-    TVisObjRef game2 = m_visionaire->GetGame();
-    game2.SetValue(0x1D8, false, TSendEventEnum::SendEvent);
+	TVisObjRef game2 = _visionaire->GetGame();
+	game2.SetValue(0x1D8, false, TSendEventEnum::kSendEvent);
 }
 
 void TGameControl::HandleCharacters() {
-    // Confirmed (asm lines 460829-460866): skipped entirely while the scene
-    // is a menu.
-    if (GetScene()->IsMenu())
-        return;
-    for (TGCharacter* character : m_characters) {
-        character->WalkWay();
-        character->UpdateCharacter();
-    }
+	// Confirmed (asm lines 460829-460866): skipped entirely while the scene
+	// is a menu.
+	if (GetScene()->IsMenu())
+		return;
+	for (TGCharacter * character : _characters) {
+		character->WalkWay();
+		character->UpdateCharacter();
+	}
 }
 
 void TGameControl::SetAllCharactersOnDestination() {
-    // Confirmed (asm lines 460874-460902).
-    for (TGCharacter* character : m_characters)
-        character->SetOnDestination();
+	// Confirmed (asm lines 460874-460902).
+	for (TGCharacter * character : _characters)
+		character->SetOnDestination();
 }
 
 void TGameControl::ResetState() {
-    // Confirmed (asm lines 460910-460953): field id 0x1E6 on the game's
-    // TVisObjRef, meaning unconfirmed.
-    m_objectManager.ResetCurrentObject();
-    m_objectManager.ResetEventInfo();
-    TVisObjRef game = m_visionaire->GetGame();
-    game.ClearLink(0x1E6, false);
-    m_objectManager.RemoveItem(true);
-    m_pendingItems.clear();
+	// Confirmed (asm lines 460910-460953): field id 0x1E6 on the game's
+	// TVisObjRef, meaning unconfirmed.
+	_objectManager.ResetCurrentObject();
+	_objectManager.ResetEventInfo();
+	TVisObjRef game = _visionaire->GetGame();
+	game.ClearLink(0x1E6, false);
+	_objectManager.RemoveItem(true);
+	_pendingItems.clear();
 }
 
-const TGDialog* TGameControl::GetDialog() const {
-    return &m_dialog;
+const TGDialog *TGameControl::GetDialog() const {
+	return &_dialog;
 }
 
-void TGameControl::StartDialog(const TVisObjRef& dialog) {
-    // Confirmed (asm lines 460983-461073): surprisingly, only takes effect
-    // when a dialog is ALREADY active (m_dialog not empty) - a no-op
-    // otherwise. Field ids 0x11B (the current character's cursor link) and
-    // 0x1DC (the game's active-dialog link) are unresolved.
-    if (m_dialog.IsEmpty())
-        return;
+void TGameControl::StartDialog(const TVisObjRef &dialog) {
+	// Confirmed (asm lines 460983-461073): surprisingly, only takes effect
+	// when a dialog is ALREADY active (_dialog not empty) - a no-op
+	// otherwise. Field ids 0x11B (the current character's cursor link) and
+	// 0x1DC (the game's active-dialog link) are unresolved.
+	if (_dialog.IsEmpty())
+		return;
 
-    TVisObjRef cursorLink = m_currentCharacter->GetRef().GetLink(0x11B);
-    GetCursorControl()->SetCursor(PackVisId(cursorLink.GetId()), true);
+	TVisObjRef cursorLink = _currentCharacter->GetRef().GetLink(0x11B);
+	GetCursorControl()->SetCursor(PackVisId(cursorLink.GetId()), true);
 
-    TVisObjRef game = m_visionaire->GetGame();
-    game.SetLink(0x1DC, dialog, true);
+	TVisObjRef game = _visionaire->GetGame();
+	game.SetLink(0x1DC, dialog, true);
 
-    m_dialog.SetDialog(dialog);
+	_dialog.SetDialog(dialog);
 }
 
 void TGameControl::EndDialog() {
-    // Confirmed (asm lines 461079-461192): field ids 0x1DC (matches
-    // StartDialog's) and 0x262, both unresolved.
-    if (m_dialog.IsEmpty())
-        return;
+	// Confirmed (asm lines 461079-461192): field ids 0x1DC (matches
+	// StartDialog's) and 0x262, both unresolved.
+	if (_dialog.IsEmpty())
+		return;
 
-    m_dialog.Clear();
+	_dialog.Clear();
 
-    TVisObjRef game = m_visionaire->GetGame();
-    game.ClearLink(0x1DC, true);
+	TVisObjRef game = _visionaire->GetGame();
+	game.ClearLink(0x1DC, true);
 
-    TVisObjRef link = m_visionaire->GetGame().GetLink(0x262);
-    if (!link.IsEmpty())
-        GetCursorControl()->SetCursor(false, PackVisId(link.GetId()), false);
+	TVisObjRef link = _visionaire->GetGame().GetLink(0x262);
+	if (!link.IsEmpty())
+		GetCursorControl()->SetCursor(false, PackVisId(link.GetId()), false);
 }
 
-void TGameControl::StartText(const TVisObjRef& text, TGCharacter* character, TextAlignmentEnum alignment,
-                              const TVisObjRef& target, const wxPoint& pos) {
-    // Confirmed (asm lines 461200-461415): dedupes against an existing
-    // active text with the same speaker, drops any current text, creates
-    // the new one, and keeps it as m_currentText only if its target reads
-    // as "displayed" (field id 0x211) - otherwise discards it immediately.
-    if (character != nullptr) {
-        for (auto it = m_activeTexts.begin(); it != m_activeTexts.end(); ++it) {
-            if ((*it)->GetSpeaker() == character) {
-                (*it)->OnCleared();
-                (*it)->Discard();
-                m_activeTexts.erase(it);
-                break;
-            }
-        }
-    }
+void TGameControl::StartText(const TVisObjRef &text, TGCharacter *character, TextAlignmentEnum alignment,
+                             const TVisObjRef &target, const wxPoint &pos) {
+	// Confirmed (asm lines 461200-461415): dedupes against an existing
+	// active text with the same speaker, drops any current text, creates
+	// the new one, and keeps it as _currentText only if its target reads
+	// as "displayed" (field id 0x211) - otherwise discards it immediately.
+	if (character != nullptr) {
+		for (auto it = _activeTexts.begin(); it != _activeTexts.end(); ++it) {
+			if ((*it)->GetSpeaker() == character) {
+				(*it)->OnCleared();
+				(*it)->Discard();
+				_activeTexts.erase(it);
+				break;
+			}
+		}
+	}
 
-    if (m_currentText != nullptr) {
-        m_currentText->Discard();
-        TVisObjRef game = m_visionaire->GetGame();
-        game.ClearLink(0x1DD, true);
-        m_currentText = nullptr;
-    }
+	if (_currentText != nullptr) {
+		_currentText->Discard();
+		TVisObjRef game = _visionaire->GetGame();
+		game.ClearLink(0x1DD, true);
+		_currentText = nullptr;
+	}
 
-    TVisObjRef activeObject = m_visionaire->CreateActiveObject(0x18, text);
-    TVisObjRef emptyObject = m_visionaire->GetEmptyObject();
-    m_currentText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, true, false);
+	TVisObjRef activeObject = _visionaire->CreateActiveObject(0x18, text);
+	TVisObjRef emptyObject = _visionaire->GetEmptyObject();
+	_currentText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, true, false);
 
-    if (m_currentText->GetTarget().GetBool(0x211)) {
-        TVisObjRef game = m_visionaire->GetGame();
-        game.SetLink(0x1DD, m_currentText->GetTarget(), true);
-    } else {
-        m_currentText->Discard();
-        m_currentText = nullptr;
-    }
+	if (_currentText->GetTarget().GetBool(0x211)) {
+		TVisObjRef game = _visionaire->GetGame();
+		game.SetLink(0x1DD, _currentText->GetTarget(), true);
+	} else {
+		_currentText->Discard();
+		_currentText = nullptr;
+	}
 }
 
-void TGameControl::StartBackgroundText(const TVisObjRef& text, TGCharacter* character, TextAlignmentEnum alignment,
-                                        const TVisObjRef& target, const wxPoint& pos) {
-    // Confirmed (asm lines 461420-461589): skips creating a duplicate when
-    // `character` is already speaking - either as m_currentText, or as one
-    // of the active texts - matched by TGText::GetSpeaker() pointer
-    // equality. Type id 0x18 (matches StartObjectText's CreateActiveObject
-    // call) and the two trailing THText constructor bools are unresolved.
-    if (character != nullptr) {
-        if (m_currentText != nullptr && m_currentText->GetTarget().GetBool(0x211) &&
-            m_currentText->GetSpeaker() == character)
-            return;
+void TGameControl::StartBackgroundText(const TVisObjRef &text, TGCharacter *character, TextAlignmentEnum alignment,
+                                       const TVisObjRef &target, const wxPoint &pos) {
+	// Confirmed (asm lines 461420-461589): skips creating a duplicate when
+	// `character` is already speaking - either as _currentText, or as one
+	// of the active texts - matched by TGText::GetSpeaker() pointer
+	// equality. Type id 0x18 (matches StartObjectText's CreateActiveObject
+	// call) and the two trailing THText constructor bools are unresolved.
+	if (character != nullptr) {
+		if (_currentText != nullptr && _currentText->GetTarget().GetBool(0x211) &&
+		        _currentText->GetSpeaker() == character)
+			return;
 
-        for (TGText* activeText : m_activeTexts) {
-            if (activeText->GetSpeaker() == character)
-                return;
-        }
-    }
+		for (TGText * activeText : _activeTexts) {
+			if (activeText->GetSpeaker() == character)
+				return;
+		}
+	}
 
-    TVisObjRef activeObject = m_visionaire->CreateActiveObject(0x18, text);
-    TVisObjRef emptyObject = m_visionaire->GetEmptyObject();
-    THText* newText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, true, true);
-    m_activeTexts.push_back(newText);
+	TVisObjRef activeObject = _visionaire->CreateActiveObject(0x18, text);
+	TVisObjRef emptyObject = _visionaire->GetEmptyObject();
+	THText *newText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, true, true);
+	_activeTexts.push_back(newText);
 }
 
 void TGameControl::ReattachSceneObjectTexts() {
-    // Confirmed (asm lines 461599-461666): field id 0x2AC, and the id-byte-3
-    // check ("== 6") meaning are both unresolved.
-    for (TGText* text : m_sceneTexts) {
-        TVisObjRef linked = text->GetTarget().GetLink(0x2AC);
-        if (linked.GetId()[3] != 6)
-            continue;
-        if (TManagedObject* object = m_ownedSceneControl.GetScene()->GetObject(linked))
-            object->SetText(text);
-    }
+	// Confirmed (asm lines 461599-461666): field id 0x2AC, and the id-byte-3
+	// check ("== 6") meaning are both unresolved.
+	for (TGText * text : _sceneTexts) {
+		TVisObjRef linked = text->GetTarget().GetLink(0x2AC);
+		if (linked.GetId()[3] != 6)
+			continue;
+		if (TManagedObject * object = _ownedSceneControl.GetScene()->GetObject(linked))
+			object->SetText(text);
+	}
 }
 
-bool TGameControl::IsTextActive(const TVisObjRef& text) const {
-    // Confirmed (asm lines 461674-461739).
-    if (m_currentText == nullptr)
-        return false;
-    if (!(m_currentText->GetDataObject() == text))
-        return false;
-    return m_currentText->GetTarget().GetBool(0x211);
+bool TGameControl::IsTextActive(const TVisObjRef &text) const {
+	// Confirmed (asm lines 461674-461739).
+	if (_currentText == nullptr)
+		return false;
+	if (!(_currentText->GetDataObject() == text))
+		return false;
+	return _currentText->GetTarget().GetBool(0x211);
 }
 
 bool TGameControl::IsNoTextDisplayed() const {
-    // Confirmed (asm lines 461747-461777): a text counts as "displayed"
-    // when its target's GetBool(0x211) is set; otherwise fall back to
-    // whether a dialog is active.
-    if (m_currentText != nullptr && m_currentText->GetTarget().GetBool(0x211))
-        return false;
-    return m_dialog.IsEmpty();
+	// Confirmed (asm lines 461747-461777): a text counts as "displayed"
+	// when its target's GetBool(0x211) is set; otherwise fall back to
+	// whether a dialog is active.
+	if (_currentText != nullptr && _currentText->GetTarget().GetBool(0x211))
+		return false;
+	return _dialog.IsEmpty();
 }
 
-bool TGameControl::IsTalking(const TVisObjRef& character) const {
-    // Confirmed (asm lines 461785-461846): a text with no speaker
-    // (GetSpeaker() == nullptr) never counts as this character talking,
-    // regardless of its target.
-    for (TGText* text : m_activeTexts) {
-        TGCharacter* speaker = text->GetSpeaker();
-        if (speaker != nullptr && speaker->GetRef() == character)
-            return true;
-    }
-    return false;
+bool TGameControl::IsTalking(const TVisObjRef &character) const {
+	// Confirmed (asm lines 461785-461846): a text with no speaker
+	// (GetSpeaker() == nullptr) never counts as this character talking,
+	// regardless of its target.
+	for (TGText * text : _activeTexts) {
+		TGCharacter *speaker = text->GetSpeaker();
+		if (speaker != nullptr && speaker->GetRef() == character)
+			return true;
+	}
+	return false;
 }
 
 void TGameControl::ClearTexts() {
-    // Confirmed (asm lines 461872-461993): drains m_activeTexts and
-    // m_sceneTexts (OnCleared() then Discard() on each), then separately
-    // discards m_currentText (Discard() only, no OnCleared()) and clears
-    // its game-data link (field id 0x1DD, matching ClearCurrentText).
-    for (TGText* text : m_activeTexts) {
-        text->OnCleared();
-        text->Discard();
-    }
-    m_activeTexts.clear();
+	// Confirmed (asm lines 461872-461993): drains _activeTexts and
+	// _sceneTexts (OnCleared() then Discard() on each), then separately
+	// discards _currentText (Discard() only, no OnCleared()) and clears
+	// its game-data link (field id 0x1DD, matching ClearCurrentText).
+	for (TGText * text : _activeTexts) {
+		text->OnCleared();
+		text->Discard();
+	}
+	_activeTexts.clear();
 
-    for (TGText* text : m_sceneTexts) {
-        text->OnCleared();
-        text->Discard();
-    }
-    m_sceneTexts.clear();
+	for (TGText * text : _sceneTexts) {
+		text->OnCleared();
+		text->Discard();
+	}
+	_sceneTexts.clear();
 
-    if (m_currentText != nullptr) {
-        m_currentText->Discard();
-        m_currentText = nullptr;
-        TVisObjRef game = m_visionaire->GetGame();
-        game.ClearLink(0x1DD, true);
-    }
+	if (_currentText != nullptr) {
+		_currentText->Discard();
+		_currentText = nullptr;
+		TVisObjRef game = _visionaire->GetGame();
+		game.ClearLink(0x1DD, true);
+	}
 }
 
 void TGameControl::ClearCurrentText() {
-    // Confirmed (asm lines 462001-462040): field id 0x1DD, meaning not
-    // resolved.
-    if (m_currentText != nullptr) {
-        m_currentText->Discard();
-        m_currentText = nullptr;
-        TVisObjRef game = m_visionaire->GetGame();
-        game.ClearLink(0x1DD, true);
-    }
+	// Confirmed (asm lines 462001-462040): field id 0x1DD, meaning not
+	// resolved.
+	if (_currentText != nullptr) {
+		_currentText->Discard();
+		_currentText = nullptr;
+		TVisObjRef game = _visionaire->GetGame();
+		game.ClearLink(0x1DD, true);
+	}
 }
 
-void TGameControl::ClearText(const TVisObjRef& text) {
-    // Confirmed (asm lines 462048-462150): removes at most one matching
-    // entry from m_activeTexts (by GetDataObject() equality), then
-    // separately clears m_currentText too if it also matches.
-    for (auto it = m_activeTexts.begin(); it != m_activeTexts.end(); ++it) {
-        TGText* activeText = *it;
-        if (activeText->GetDataObject() == text) {
-            activeText->OnCleared();
-            activeText->Discard();
-            m_activeTexts.erase(it);
-            break;
-        }
-    }
+void TGameControl::ClearText(const TVisObjRef &text) {
+	// Confirmed (asm lines 462048-462150): removes at most one matching
+	// entry from _activeTexts (by GetDataObject() equality), then
+	// separately clears _currentText too if it also matches.
+	for (auto it = _activeTexts.begin(); it != _activeTexts.end(); ++it) {
+		TGText *activeText = *it;
+		if (activeText->GetDataObject() == text) {
+			activeText->OnCleared();
+			activeText->Discard();
+			_activeTexts.erase(it);
+			break;
+		}
+	}
 
-    if (m_currentText != nullptr && m_currentText->GetDataObject() == text)
-        ClearCurrentText();
+	if (_currentText != nullptr && _currentText->GetDataObject() == text)
+		ClearCurrentText();
 }
 
-void TGameControl::ClearObjectText(const TVisObjRef& object) {
-    // Confirmed (asm lines 462158-462228): find the one scene text whose
-    // target's GetLink(0x2AC) matches `object`, discard and remove it, then
-    // stop (only ever removes at most one entry).
-    for (auto it = m_sceneTexts.begin(); it != m_sceneTexts.end(); ++it) {
-        TGText* text = *it;
-        if (text->GetTarget().GetLink(0x2AC) == object) {
-            text->Discard();
-            m_sceneTexts.erase(it);
-            return;
-        }
-    }
+void TGameControl::ClearObjectText(const TVisObjRef &object) {
+	// Confirmed (asm lines 462158-462228): find the one scene text whose
+	// target's GetLink(0x2AC) matches `object`, discard and remove it, then
+	// stop (only ever removes at most one entry).
+	for (auto it = _sceneTexts.begin(); it != _sceneTexts.end(); ++it) {
+		TGText *text = *it;
+		if (text->GetTarget().GetLink(0x2AC) == object) {
+			text->Discard();
+			_sceneTexts.erase(it);
+			return;
+		}
+	}
 }
 
-void TGameControl::StartObjectText(const TVisObjRef& object, const TVisObjRef& text, TextAlignmentEnum alignment,
-                                    const TVisObjRef& target, const wxPoint& pos) {
-    // Confirmed (asm lines 462233-462396): clears any existing scene text
-    // targeting `text`, creates a new THText and adds it to m_sceneTexts,
-    // then attaches it to whichever managed object claims `text` - the
-    // scene itself, the current character (only tried when the object id's
-    // 4th byte is 0 - meaning unconfirmed), or failing that, whichever
-    // active interface recognizes it. Type id 0x18 (passed to
-    // CreateActiveObject) and the two trailing THText constructor bools
-    // are unresolved.
-    ClearObjectText(text);
+void TGameControl::StartObjectText(const TVisObjRef &object, const TVisObjRef &text, TextAlignmentEnum alignment,
+                                   const TVisObjRef &target, const wxPoint &pos) {
+	// Confirmed (asm lines 462233-462396): clears any existing scene text
+	// targeting `text`, creates a new THText and adds it to _sceneTexts,
+	// then attaches it to whichever managed object claims `text` - the
+	// scene itself, the current character (only tried when the object id's
+	// 4th byte is 0 - meaning unconfirmed), or failing that, whichever
+	// active interface recognizes it. Type id 0x18 (passed to
+	// CreateActiveObject) and the two trailing THText constructor bools
+	// are unresolved.
+	ClearObjectText(text);
 
-    TVisObjRef activeObject = m_visionaire->CreateActiveObject(0x18, object);
-    THText* newText = new THText(activeObject, object, nullptr, text, alignment, target, pos, true, false);
-    m_sceneTexts.push_back(newText);
+	TVisObjRef activeObject = _visionaire->CreateActiveObject(0x18, object);
+	THText *newText = new THText(activeObject, object, nullptr, text, alignment, target, pos, true, false);
+	_sceneTexts.push_back(newText);
 
-    TManagedObject* managed = m_ownedSceneControl.GetScene()->GetObject(text);
-    if (managed == nullptr && object.GetId()[3] == 0)
-        managed = GetCharacterPointerEx(text);
-    if (managed == nullptr) {
-        for (TGInterface* interface : m_activeInterfaces) {
-            managed = interface->GetObject(text);
-            if (managed != nullptr)
-                break;
-        }
-    }
-    if (managed != nullptr)
-        managed->SetText(newText);
+	TManagedObject *managed = _ownedSceneControl.GetScene()->GetObject(text);
+	if (managed == nullptr && object.GetId()[3] == 0)
+		managed = GetCharacterPointerEx(text);
+	if (managed == nullptr) {
+		for (TGInterface * interface : _activeInterfaces) {
+			managed = interface->GetObject(text);
+			if (managed != nullptr)
+				break;
+		}
+	}
+	if (managed != nullptr)
+		managed->SetText(newText);
 }
 
-const wxString& TGameControl::GetGamePath() const {
-    // Confirmed (asm line 462534): returns the member by reference.
-    return m_gamePath;
+const wxString &TGameControl::GetGamePath() const {
+	// Confirmed (asm line 462534): returns the member by reference.
+	return _gamePath;
 }
 
 bool TGameControl::IsClearingAnimations() const {
-    // Confirmed (asm line 462551): plain field access, set true by the
-    // destructor before it tears anything down (see ~TGameControl below).
-    return m_isClearingAnimations;
+	// Confirmed (asm line 462551): plain field access, set true by the
+	// destructor before it tears anything down (see ~TGameControl below).
+	return _isClearingAnimations;
 }
 
 bool TGameControl::SavegameExists(int slot) {
-    // Confirmed (asm lines 462562-462679): slot has 3 special negative
-    // values in addition to real (>=0) slot numbers - -1 asks the current
-    // scene which savegame is selected, -2 asks which one is at
-    // m_savegameClickPos, -3 asks whether any savegame exists at all
-    // (a static query, no specific slot). Any other negative value is a
-    // logic error (x_assert(false) in the original).
-    if (slot == -1) {
-        TMSavegame* selected = m_ownedSceneControl.GetScene()->GetSelectedSavegame(false);
-        return selected != nullptr && selected->Exists();
-    }
-    if (slot == -2) {
-        TMSavegame* found = m_ownedSceneControl.GetScene()->GetSavegameAt(m_savegameClickPos);
-        return found != nullptr && found->Exists();
-    }
-    if (slot == -3)
-        return TMSavegame::SavegameExists();
+	// Confirmed (asm lines 462562-462679): slot has 3 special negative
+	// values in addition to real (>=0) slot numbers - -1 asks the current
+	// scene which savegame is selected, -2 asks which one is at
+	// _savegameClickPos, -3 asks whether any savegame exists at all
+	// (a static query, no specific slot). Any other negative value is a
+	// logic error (x_assert(false) in the original).
+	if (slot == -1) {
+		TMSavegame *selected = _ownedSceneControl.GetScene()->GetSelectedSavegame(false);
+		return selected != nullptr && selected->Exists();
+	}
+	if (slot == -2) {
+		TMSavegame *found = _ownedSceneControl.GetScene()->GetSavegameAt(_savegameClickPos);
+		return found != nullptr && found->Exists();
+	}
+	if (slot == -3)
+		return TMSavegame::SavegameExists();
 
-    TMSavegame save(true, slot, 0, 0, m_visionaireGame);
-    return save.Exists();
+	TMSavegame save(true, slot, 0, 0, _visionaireGame);
+	return save.Exists();
 }
 
 bool TGameControl::DeleteSavegame(int slot) {
-    // Confirmed (asm lines 462687-462773): slot==-1 deletes the scene's
-    // currently-selected savegame; any other slot deletes that numbered
-    // save directly.
-    if (slot == -1) {
-        TGScene* scene = m_ownedSceneControl.GetScene();
-        TMSavegame* selected = scene->GetSelectedSavegame(false);
-        if (selected == nullptr || !selected->Delete())
-            return false;
-        scene->DeleteSelectedSavegame();
-        return true;
-    }
+	// Confirmed (asm lines 462687-462773): slot==-1 deletes the scene's
+	// currently-selected savegame; any other slot deletes that numbered
+	// save directly.
+	if (slot == -1) {
+		TGScene *scene = _ownedSceneControl.GetScene();
+		TMSavegame *selected = scene->GetSelectedSavegame(false);
+		if (selected == nullptr || !selected->Delete())
+			return false;
+		scene->DeleteSelectedSavegame();
+		return true;
+	}
 
-    TMSavegame save(true, slot, 0, 0, m_visionaireGame);
-    return save.Delete();
+	TMSavegame save(true, slot, 0, 0, _visionaireGame);
+	return save.Delete();
 }
 
 void TGameControl::Save() {
-    // Confirmed (asm lines 462781-462971): field ids 0x219 (the save name),
-    // 0x1D5/0x1D6 (last playable scene + position), and 0x1DC (matches
-    // StartDialog/EndDialog's active-dialog link) are all unresolved.
-    TVisObjRef game = m_visionaire->GetGame();
+	// Confirmed (asm lines 462781-462971): field ids 0x219 (the save name),
+	// 0x1D5/0x1D6 (last playable scene + position), and 0x1DC (matches
+	// StartDialog/EndDialog's active-dialog link) are all unresolved.
+	TVisObjRef game = _visionaire->GetGame();
 
-    TVisObjRef sceneLink = m_currentCharacter->GetRef().GetLink(0x1F7);
-    wxString saveName = TMSavegame::MakeSaveGameName(sceneLink);
-    game.SetValue(0x219, saveName, TSendEventEnum::SendEvent);
+	TVisObjRef sceneLink = _currentCharacter->GetRef().GetLink(0x1F7);
+	wxString saveName = TMSavegame::MakeSaveGameName(sceneLink);
+	game.SetValue(0x219, saveName, TSendEventEnum::kSendEvent);
 
-    TVisObjRef lastScene;
-    wxPoint lastPos{};
-    m_ownedSceneControl.GetLastPlayableSceneParams(lastScene, lastPos);
-    game.SetLink(0x1D5, lastScene, false);
-    game.SetValue(0x1D6, lastPos, TSendEventEnum::SendEvent);
-    game.SetLink(0x1DC, m_dialog.GetTarget(), false);
+	TVisObjRef lastScene;
+	wxPoint lastPos{};
+	_ownedSceneControl.GetLastPlayableSceneParams(lastScene, lastPos);
+	game.SetLink(0x1D5, lastScene, false);
+	game.SetValue(0x1D6, lastPos, TSendEventEnum::kSendEvent);
+	game.SetLink(0x1DC, _dialog.GetTarget(), false);
 
-    if (m_currentText != nullptr)
-        m_currentText->Save();
-    for (TGText* text : m_activeTexts)
-        text->Save();
-    for (TGText* text : m_sceneTexts)
-        text->Save();
+	if (_currentText != nullptr)
+		_currentText->Save();
+	for (TGText * text : _activeTexts)
+		text->Save();
+	for (TGText * text : _sceneTexts)
+		text->Save();
 
-    TGAction::SaveActions();
-    TGAnimation::SaveAnimations();
+	TGAction::SaveActions();
+	TGAnimation::SaveAnimations();
 
-    for (TGCharacter* character : m_characters)
-        character->Save();
+	for (TGCharacter * character : _characters)
+		character->Save();
 
-    SaveEventHandlers();
-    SaveGlobalScriptVariables(*m_visionaireGame);
+	SaveEventHandlers();
+	SaveGlobalScriptVariables(*_visionaireGame);
 }
 
 bool TGameControl::SaveGame(int /*slot*/) {
-    return false;
+	return false;
 }
 
-bool TGameControl::UnregisterEventHandlerMainLoop(const wxString& name) {
-    for (size_t i = 0; i < m_engineEventHandlerNamesMainLoop.size(); ++i) {
-        wxString converted;
-        toUTF(&converted, m_engineEventHandlerNamesMainLoop[i].c_str());
-        if (converted.ToStdWstring() == name.ToStdWstring()) {
-            m_engineEventHandlerNamesMainLoop.erase(m_engineEventHandlerNamesMainLoop.begin() +
-                                                     static_cast<long>(i));
-            return true;
-        }
-    }
-    return false;
+bool TGameControl::UnregisterEventHandlerMainLoop(const wxString &name) {
+	for (size_t i = 0; i < _engineEventHandlerNamesMainLoop.size(); ++i) {
+		wxString converted;
+		toUTF(&converted, _engineEventHandlerNamesMainLoop[i].c_str());
+		if (converted.ToStdWstring() == name.ToStdWstring()) {
+			_engineEventHandlerNamesMainLoop.erase(_engineEventHandlerNamesMainLoop.begin() +
+			                                        static_cast<long>(i));
+			return true;
+		}
+	}
+	return false;
 }
 
 void TGameControl::UpdateRandomTimers() {
-    // Confirmed (asm lines 463363-463466): iterates a COPY of the scene's
-    // character list (matching a std::vector<TGCharacter*> destructor call
-    // in the exception-cleanup path), not the live one - presumably so a
-    // timer callback can safely add/remove characters mid-iteration.
-    std::vector<TGCharacter*> characters = m_ownedSceneControl.GetScene()->GetCharacters();
-    for (TGCharacter* character : characters)
-        character->CheckRandomTimer();
+	// Confirmed (asm lines 463363-463466): iterates a COPY of the scene's
+	// character list (matching a std::vector<TGCharacter*> destructor call
+	// in the exception-cleanup path), not the live one - presumably so a
+	// timer callback can safely add/remove characters mid-iteration.
+	std::vector<TGCharacter *> characters = _ownedSceneControl.GetScene()->GetCharacters();
+	for (TGCharacter * character : characters)
+		character->CheckRandomTimer();
 }
 
 void TGameControl::UpdateWalkingSounds() {
 }
 
-bool TGameControl::PreLoad(wxString& /*error*/, wxString& /*warning*/, bool /*isEditor*/) {
-    return false;
+bool TGameControl::PreLoad(wxString &/*error*/, wxString &/*warning*/, bool /*isEditor*/) {
+	return false;
 }
 
-void TGameControl::AdjustInterfacesOnScreen(bool /*force*/, TPaintControl* /*scene*/) {
+void TGameControl::AdjustInterfacesOnScreen(bool /*force*/, TPaintControl */*scene*/) {
 }
 
 void TGameControl::SetInterfaces() {
-    // Confirmed (asm lines 465533-465671): rebuilds m_activeInterfaces from
-    // the current character's own interface list, calling
-    // RemoveSpritesAndAnimations() on any interface that's leaving the
-    // active set (not present in the new list) before replacing the list
-    // wholesale.
-    std::list<TGInterface*> newInterfaces = m_currentCharacter->GetInterfaces();
+	// Confirmed (asm lines 465533-465671): rebuilds _activeInterfaces from
+	// the current character's own interface list, calling
+	// RemoveSpritesAndAnimations() on any interface that's leaving the
+	// active set (not present in the new list) before replacing the list
+	// wholesale.
+	std::list<TGInterface *> newInterfaces = _currentCharacter->GetInterfaces();
 
-    for (TGInterface* active : m_activeInterfaces) {
-        bool stillActive = false;
-        for (TGInterface* candidate : newInterfaces) {
-            if (candidate->GetRef() == active->GetRef()) {
-                stillActive = true;
-                break;
-            }
-        }
-        if (!stillActive)
-            active->RemoveSpritesAndAnimations();
-    }
+	for (TGInterface * active : _activeInterfaces) {
+		bool stillActive = false;
+		for (TGInterface * candidate : newInterfaces) {
+			if (candidate->GetRef() == active->GetRef()) {
+				stillActive = true;
+				break;
+			}
+		}
+		if (!stillActive)
+			active->RemoveSpritesAndAnimations();
+	}
 
-    m_activeInterfaces.clear();
-    for (TGInterface* interface : newInterfaces) {
-        interface->SetObjectsActive(false);
-        m_activeInterfaces.push_back(interface);
-    }
+	_activeInterfaces.clear();
+	for (TGInterface * interface : newInterfaces) {
+		interface->SetObjectsActive(false);
+		_activeInterfaces.push_back(interface);
+	}
 }
 
 void TGameControl::SetCharacterActiveCommand() {
-    // Confirmed (asm lines 465679-465841): field ids 0x25F, 0x205, and 0x262
-    // are all unresolved. Stops at the first interface with a non-empty
-    // 0x25F link, whether or not it matches the character's own 0x205 link.
-    if (m_currentCharacter == nullptr)
-        return;
+	// Confirmed (asm lines 465679-465841): field ids 0x25F, 0x205, and 0x262
+	// are all unresolved. Stops at the first interface with a non-empty
+	// 0x25F link, whether or not it matches the character's own 0x205 link.
+	if (_currentCharacter == nullptr)
+		return;
 
-    for (TGInterface* interface : m_currentCharacter->GetInterfaces()) {
-        TVisObjRef link = interface->GetRef().GetLink(0x25F);
-        if (link.IsEmpty())
-            continue;
+	for (TGInterface * interface : _currentCharacter->GetInterfaces()) {
+		TVisObjRef link = interface->GetRef().GetLink(0x25F);
+		if (link.IsEmpty())
+			continue;
 
-        TVisObjRef commandLink = m_currentCharacter->GetRef().GetLink(0x205);
-        if (commandLink == link) {
-            TVisObjRef game = m_visionaire->GetGame();
-            game.SetLink(0x262, link, true);
-        } else {
-            m_currentCharacter->GetRef().SetLink(0x205, link, true);
-        }
-        return;
-    }
+		TVisObjRef commandLink = _currentCharacter->GetRef().GetLink(0x205);
+		if (commandLink == link) {
+			TVisObjRef game = _visionaire->GetGame();
+			game.SetLink(0x262, link, true);
+		} else {
+			_currentCharacter->GetRef().SetLink(0x205, link, true);
+		}
+		return;
+	}
 }
 
-void TGameControl::ChangeCharacter(const TVisObjRef& character, bool immediate, const TVisObjRef& scene) {
-    // Confirmed (asm lines 465849-466072). Field ids 0x1D4/0x263 and the
-    // meaning of m_previousCharacter are unresolved.
-    if (!(m_currentCharacter->GetRef() == character)) {
-        TGCharacter* newChar = GetCharacter(character);
-        for (TGCharacter* candidate : m_characters) {
-            if (candidate->GetRef() == newChar->GetRef()) {
-                m_currentCharacter->SetRandomTime();
-                m_currentCharacter = candidate;
-                m_previousCharacter = candidate;
+void TGameControl::ChangeCharacter(const TVisObjRef &character, bool immediate, const TVisObjRef &scene) {
+	// Confirmed (asm lines 465849-466072). Field ids 0x1D4/0x263 and the
+	// meaning of _previousCharacter are unresolved.
+	if (!(_currentCharacter->GetRef() == character)) {
+		TGCharacter *newChar = GetCharacter(character);
+		for (TGCharacter * candidate : _characters) {
+			if (candidate->GetRef() == newChar->GetRef()) {
+				_currentCharacter->SetRandomTime();
+				_currentCharacter = candidate;
+				_previousCharacter = candidate;
 
-                TVisObjRef game = m_visionaire->GetGame();
-                game.SetLink(0x1D4, candidate->GetRef(), false);
-                TVisObjRef game2 = m_visionaire->GetGame();
-                game2.SetLink(0x263, candidate->GetRef(), false);
+				TVisObjRef game = _visionaire->GetGame();
+				game.SetLink(0x1D4, candidate->GetRef(), false);
+				TVisObjRef game2 = _visionaire->GetGame();
+				game2.SetLink(0x263, candidate->GetRef(), false);
 
-                m_currentCharacter->SetRandomTime();
-                ResetState();
-                SetInterfaces();
-                SetCharacterActiveCommand();
-                break;
-            }
-        }
-    }
+				_currentCharacter->SetRandomTime();
+				ResetState();
+				SetInterfaces();
+				SetCharacterActiveCommand();
+				break;
+			}
+		}
+	}
 
-    TVisObjRef targetScene = scene.IsEmpty() ? m_currentCharacter->GetRef().GetLink(0x1F7) : scene;
+	TVisObjRef targetScene = scene.IsEmpty() ? _currentCharacter->GetRef().GetLink(0x1F7) : scene;
 
-    TGScene* currentScene = m_ownedSceneControl.GetScene();
-    if (targetScene == currentScene->GetRef()) {
-        AdjustInterfacesOnScreen(false, nullptr);
-        ScrollToCharacterIfNeeded(character);
-    } else {
-        m_ownedSceneControl.ShowScene(targetScene, immediate, false);
-    }
+	TGScene *currentScene = _ownedSceneControl.GetScene();
+	if (targetScene == currentScene->GetRef()) {
+		AdjustInterfacesOnScreen(false, nullptr);
+		ScrollToCharacterIfNeeded(character);
+	} else {
+		_ownedSceneControl.ShowScene(targetScene, immediate, false);
+	}
 
-    if (m_lastMousePos.x != -1 || m_lastMousePos.y != -1)
-        HandleMouseMove(m_lastMousePos, false);
+	if (_lastMousePos.x != -1 || _lastMousePos.y != -1)
+		HandleMouseMove(_lastMousePos, false);
 }
 
-std::list<TGInterface*> TGameControl::GetActiveInterfaces() const {
-    // Confirmed (asm lines 466080-466133): a plain copy.
-    return m_activeInterfaces;
+std::list<TGInterface *> TGameControl::GetActiveInterfaces() const {
+	// Confirmed (asm lines 466080-466133): a plain copy.
+	return _activeInterfaces;
 }
 
-std::list<TGInterface*> TGameControl::GetAllInterfaces() const {
-    // Confirmed (asm lines 466141-466193): a plain copy.
-    return m_allInterfaces;
+std::list<TGInterface *> TGameControl::GetAllInterfaces() const {
+	// Confirmed (asm lines 466141-466193): a plain copy.
+	return _allInterfaces;
 }
 
 bool TGameControl::InitCharacters() {
-    // Confirmed (asm lines 466201-466735). Field id 0x137 (a character's
-    // scene link), 0xDE (walk speed, default 0x10E when unset), 0x153 (a
-    // start position), 0x12F (the game's starting-character link), 0x1D4/
-    // 0x263/0x205/0x262 (matching ChangeCharacter/SetCharacterActiveCommand's
-    // field ids) are all unresolved.
-    TVList characterList;
-    m_visionaire->GetList(0, characterList, false);
-    if (characterList.empty()) {
-        if (wxLog::loglevel >= 0)
-            wxLog::logexpanded(L"There must be at least one character for a valid game.");
-        return false;
-    }
+	// Confirmed (asm lines 466201-466735). Field id 0x137 (a character's
+	// scene link), 0xDE (walk speed, default 0x10E when unset), 0x153 (a
+	// start position), 0x12F (the game's starting-character link), 0x1D4/
+	// 0x263/0x205/0x262 (matching ChangeCharacter/SetCharacterActiveCommand's
+	// field ids) are all unresolved.
+	TVList characterList;
+	_visionaire->GetList(0, characterList, false);
+	if (characterList.empty()) {
+		if (wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"There must be at least one character for a valid game.");
+		return false;
+	}
 
-    for (TVisionaireObject* object : characterList) {
-        TVisObjRef ref(object);
-        TVisObjRef parent = ref.GetLink(0x137).GetParent();
-        THCharacter* character = new THCharacter(ref, parent);
+	for (TVisionaireObject * object : characterList) {
+		TVisObjRef ref(object);
+		TVisObjRef parent = ref.GetLink(0x137).GetParent();
+		THCharacter *character = new THCharacter(ref, parent);
 
-        wxPoint pos = *ref.GetPoint(0x153);
-        int walkSpeed = ref.GetInt(0xDE);
-        if (walkSpeed == -1)
-            walkSpeed = 0x10E;
+		wxPoint pos = *ref.GetPoint(0x153);
+		int walkSpeed = ref.GetInt(0xDE);
+		if (walkSpeed == -1)
+			walkSpeed = 0x10E;
 
-        character->Init();
-        character->AssignToScene(parent, pos, walkSpeed);
+		character->Init();
+		character->AssignToScene(parent, pos, walkSpeed);
 
-        m_characters.push_back(character);
-        m_charactersByHash[PackVisId(character->GetRef().GetId())] = character;
-    }
+		_characters.push_back(character);
+		_charactersByHash[PackVisId(character->GetRef().GetId())] = character;
+	}
 
-    TVisObjRef startingLink = m_visionaire->GetGame().GetLink(0x12F);
-    TGCharacter* starting = nullptr;
-    for (TGCharacter* candidate : m_characters) {
-        if (candidate->GetRef() == startingLink) {
-            starting = candidate;
-            break;
-        }
-    }
+	TVisObjRef startingLink = _visionaire->GetGame().GetLink(0x12F);
+	TGCharacter *starting = nullptr;
+	for (TGCharacter * candidate : _characters) {
+		if (candidate->GetRef() == startingLink) {
+			starting = candidate;
+			break;
+		}
+	}
 
-    if (starting != nullptr) {
-        m_currentCharacter = starting;
-        m_previousCharacter = starting;
+	if (starting != nullptr) {
+		_currentCharacter = starting;
+		_previousCharacter = starting;
 
-        m_visionaire->GetGame().SetLink(0x1D4, starting->GetRef(), false);
-        m_visionaire->GetGame().SetLink(0x263, starting->GetRef(), false);
-        m_visionaire->GetGame().SetLink(0x262, starting->GetRef().GetLink(0x205), false);
-    }
+		_visionaire->GetGame().SetLink(0x1D4, starting->GetRef(), false);
+		_visionaire->GetGame().SetLink(0x263, starting->GetRef(), false);
+		_visionaire->GetGame().SetLink(0x262, starting->GetRef().GetLink(0x205), false);
+	}
 
-    if (m_currentCharacter == nullptr) {
-        if (wxLog::loglevel >= 0)
-            wxLog::logexpanded(L"An active character must be defined for a valid game.");
-        return false;
-    }
+	if (_currentCharacter == nullptr) {
+		if (wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"An active character must be defined for a valid game.");
+		return false;
+	}
 
-    m_startingCharacter = m_currentCharacter;
-    UpdateCurrentObject();
-    return true;
+	_startingCharacter = _currentCharacter;
+	UpdateCurrentObject();
+	return true;
 }
 
 void TGameControl::InitGameActions() {
 }
 
 bool TGameControl::Init() {
-    // Confirmed (asm lines 467226-467624). Field ids 0x79 (starting scene
-    // link) and 0x231/0x1D8/0x1D6/0x1D9/0x1DA (matching CenterScene/
-    // SetOnScrollDestination's fields) are all unresolved.
-    TVisObjRef startScene = m_visionaire->GetGame().GetLink(0x79);
-    m_ownedSceneControl.Set(startScene);
+	// Confirmed (asm lines 467226-467624). Field ids 0x79 (starting scene
+	// link) and 0x231/0x1D8/0x1D6/0x1D9/0x1DA (matching CenterScene/
+	// SetOnScrollDestination's fields) are all unresolved.
+	TVisObjRef startScene = _visionaire->GetGame().GetLink(0x79);
+	_ownedSceneControl.Set(startScene);
 
-    m_visionaire->GetGame().SetLink(0x1D5, startScene, false);
-    m_visionaire->GetGame().SetValue(0x231, true, TSendEventEnum::SendEvent);
-    m_visionaire->GetGame().SetValue(0x1D8, false, TSendEventEnum::SendEvent);
-    m_visionaire->GetGame().SetValue(0x1D6, wxPoint{}, TSendEventEnum::SendEvent);
-    m_visionaire->GetGame().SetValue(0x1D9, 0, TSendEventEnum::SendEvent);
-    m_visionaire->GetGame().SetValue(0x1DA, 0, TSendEventEnum::SendEvent);
+	_visionaire->GetGame().SetLink(0x1D5, startScene, false);
+	_visionaire->GetGame().SetValue(0x231, true, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(0x1D8, false, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(0x1D6, wxPoint{}, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(0x1D9, 0, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(0x1DA, 0, TSendEventEnum::kSendEvent);
 
-    m_sceneControl = &m_ownedSceneControl;
-    m_currentCharacter = nullptr;
-    m_savegameClickPos = wxPoint{-1, -1};
-    m_lastMousePos = wxPoint{-1, -1};
+	_sceneControl = &_ownedSceneControl;
+	_currentCharacter = nullptr;
+	_savegameClickPos = wxPoint{-1, -1};
+	_lastMousePos = wxPoint{-1, -1};
 
-    TGScene::InitActionAreas();
+	TGScene::InitActionAreas();
 
-    TTimer timer;
-    timer.SetTime();
+	TTimer timer;
+	timer.SetTime();
 
-    if (!InitCharacters())
-        return false;
+	if (!InitCharacters())
+		return false;
 
-    InitInterfaces();
-    for (TGCharacter* character : m_characters)
-        character->SetInterfaces();
+	InitInterfaces();
+	for (TGCharacter * character : _characters)
+		character->SetInterfaces();
 
-    SetInterfaces();
-    SetCharacterActiveCommand();
+	SetInterfaces();
+	SetCharacterActiveCommand();
 
-    if (wxLog::loglevel > 1)
-        wxLog::logexpanded(L"Interfaces loaded. Needed time: %ld ms", timer.GetTime());
+	if (wxLog::loglevel > 1)
+		wxLog::logexpanded(L"Interfaces loaded. Needed time: %ld ms", timer.GetTime());
 
-    timer.SetTime();
-    TVList fontList;
-    m_visionaire->GetList(3, fontList, true);
-    GetFontManager()->Initialize(fontList);
+	timer.SetTime();
+	TVList fontList;
+	_visionaire->GetList(3, fontList, true);
+	GetFontManager()->Initialize(fontList);
 
-    InitGameActions();
-    InitScripts();
+	InitGameActions();
+	InitScripts();
 
-    if (wxLog::loglevel > 1)
-        wxLog::logexpanded(L"Scripts loaded. Needed time: %ld ms", timer.GetTime());
+	if (wxLog::loglevel > 1)
+		wxLog::logexpanded(L"Scripts loaded. Needed time: %ld ms", timer.GetTime());
 
-    timer.SetTime();
-    m_console.Init();
+	timer.SetTime();
+	_console.Init();
 
-    return true;
+	return true;
 }
 
-bool TGameControl::LoadAndInitGame(wxString& /*error*/, const wxString& /*file*/, wxString /*warning*/,
-                                    bool /*isEditor*/) {
-    return false;
+bool TGameControl::LoadAndInitGame(wxString &/*error*/, const wxString &/*file*/, wxString /*warning*/,
+                                   bool /*isEditor*/) {
+	return false;
 }
 
 bool TGameControl::ReplaceGame(wxFileName /*file*/, bool /*isEditor*/) {
-    return false;
+	return false;
 }
 
-void TGameControl::HandleEngineEvent(const std::string& /*name*/, const std::string& /*arg*/) {
+void TGameControl::HandleEngineEvent(const std::string &/*name*/, const std::string &/*arg*/) {
 }
 
-void TGameControl::HandleKeyEvent(TKeyboardMessageEnum /*msg*/, const wxString& /*key*/, int /*a*/,
-                                   unsigned short /*b*/) {
+void TGameControl::HandleKeyEvent(TKeyboardMessageEnum /*msg*/, const wxString &/*key*/, int /*a*/,
+                                  unsigned short /*b*/) {
 }
 
 void TGameControl::HandleControllerAxis(SDL_GameControllerAxis axis, int value, int index) {
-    // Confirmed (asm lines 471722-471817): the two branches (value>0 vs
-    // <=0) use different-looking constant-division codegen, but both
-    // compute the same value*100/32768 (checked via the magic-multiplier
-    // math for the >0 branch) - almost certainly rescaling SDL's +-32768
-    // raw axis range to a +-100 one. Skipped entirely for an unrecognized
-    // axis (empty name).
-    wxString axisName = ConvertControllerAxisToUnicode(axis);
-    if (!axisName.IsEmpty()) {
-        int scaled = value * 100 / 32768;
-        HandleKeyEvent(TKeyboardMessageEnum::AxisMove, axisName, scaled, static_cast<unsigned short>(index));
-    }
+	// Confirmed (asm lines 471722-471817): the two branches (value>0 vs
+	// <=0) use different-looking constant-division codegen, but both
+	// compute the same value*100/32768 (checked via the magic-multiplier
+	// math for the >0 branch) - almost certainly rescaling SDL's +-32768
+	// raw axis range to a +-100 one. Skipped entirely for an unrecognized
+	// axis (empty name).
+	wxString axisName = ConvertControllerAxisToUnicode(axis);
+	if (!axisName.IsEmpty()) {
+		int scaled = value * 100 / 32768;
+		HandleKeyEvent(TKeyboardMessageEnum::kAxisMove, axisName, scaled, static_cast<unsigned short>(index));
+	}
 }
 
 void TGameControl::HandleControllerButtonRelease(SDL_ControllerButtonEvent button, int index) {
-    // Confirmed (asm lines 471825-471896): re-dispatches through
-    // HandleKeyEvent with an empty key name, the same symkey lookup as
-    // ConvertControllerButtonToSymKey, and msg=ControllerButtonRelease.
-    HandleKeyEvent(TKeyboardMessageEnum::ControllerButtonRelease, wxString(),
-                   ConvertControllerButtonToSymKey(button), static_cast<unsigned short>(index));
+	// Confirmed (asm lines 471825-471896): re-dispatches through
+	// HandleKeyEvent with an empty key name, the same symkey lookup as
+	// ConvertControllerButtonToSymKey, and msg=ControllerButtonRelease.
+	HandleKeyEvent(TKeyboardMessageEnum::kControllerButtonRelease, wxString(),
+	               ConvertControllerButtonToSymKey(button), static_cast<unsigned short>(index));
 }
 
 void TGameControl::HandleControllerButtonHit(SDL_ControllerButtonEvent button, int index) {
-    // Confirmed (asm lines 471904-471975): same as ...Release() above but
-    // msg=ControllerButtonHit.
-    HandleKeyEvent(TKeyboardMessageEnum::ControllerButtonHit, wxString(),
-                   ConvertControllerButtonToSymKey(button), static_cast<unsigned short>(index));
+	// Confirmed (asm lines 471904-471975): same as ...Release() above but
+	// msg=ControllerButtonHit.
+	HandleKeyEvent(TKeyboardMessageEnum::kControllerButtonHit, wxString(),
+	               ConvertControllerButtonToSymKey(button), static_cast<unsigned short>(index));
 }
 
-void TGameControl::PushEngineEvent(const std::string& name, const std::string& arg) {
-    wxCriticalSectionLocker locker(EngineEventLock);
-    EngineEvents.push_back({name, arg});
+void TGameControl::PushEngineEvent(const std::string &name, const std::string &arg) {
+	wxCriticalSectionLocker locker(EngineEventLock);
+	EngineEvents.push_back({name, arg});
 }
 
-void TGameControl::SetDelay(double seconds, const std::string& name) {
-    m_delaysByName.push_back({seconds, name});
+void TGameControl::SetDelay(double seconds, const std::string &name) {
+	_delaysByName.push_back({seconds, name});
 }
 
 void TGameControl::SetDelay(double seconds, int id) {
-    m_delaysById.push_back({seconds, id});
+	_delaysById.push_back({seconds, id});
 }
 
-void TGameControl::RegisterEventHandlerMainLoop(const wxString& name) {
-    for (const std::string& existing : m_engineEventHandlerNamesMainLoop) {
-        wxString converted;
-        toUTF(&converted, existing.c_str());
-        if (converted.ToStdWstring() == name.ToStdWstring())
-            return;
-    }
-    m_engineEventHandlerNamesMainLoop.push_back(std::string(static_cast<const char*>(name.mb_str())));
+void TGameControl::RegisterEventHandlerMainLoop(const wxString &name) {
+	for (const std::string &existing : _engineEventHandlerNamesMainLoop) {
+		wxString converted;
+		toUTF(&converted, existing.c_str());
+		if (converted.ToStdWstring() == name.ToStdWstring())
+			return;
+	}
+	_engineEventHandlerNamesMainLoop.push_back(std::string(static_cast<const char *>(name.mb_str())));
 }
 
-void TGameControl::GetWalkingSounds(std::vector<wxFileName>& outSounds) {
-    // Confirmed (asm lines 474770-474985): field ids 0x1F7 (scene link,
-    // matches CenterScene's usage) and 0x110 (a filesystem path) are both
-    // unresolved.
-    TGScene* scene = m_ownedSceneControl.GetScene();
-    for (TGCharacter* character : m_characters) {
-        if (!(character->GetRef().GetLink(0x1F7) == scene->GetRef()))
-            continue;
+void TGameControl::GetWalkingSounds(std::vector<wxFileName> &outSounds) {
+	// Confirmed (asm lines 474770-474985): field ids 0x1F7 (scene link,
+	// matches CenterScene's usage) and 0x110 (a filesystem path) are both
+	// unresolved.
+	TGScene *scene = _ownedSceneControl.GetScene();
+	for (TGCharacter * character : _characters) {
+		if (!(character->GetRef().GetLink(0x1F7) == scene->GetRef()))
+			continue;
 
-        wxFileName fileName(character->GetRef().GetPath(0x110));
-        if (!fileName.IsOk())
-            continue;
+		wxFileName fileName(character->GetRef().GetPath(0x110));
+		if (!fileName.IsOk())
+			continue;
 
-        fileName.NormalizePath();
-        outSounds.push_back(fileName);
-    }
+		fileName.NormalizePath();
+		outSounds.push_back(fileName);
+	}
 }
 
-void TGameControl::StartTween(const TVisObjTween& /*tween*/) {
+void TGameControl::StartTween(const TVisObjTween &/*tween*/) {
 }
 
 void TGameControl::LoadEventHandlers() {
 }
 
 bool TGameControl::Load() {
-    return false;
+	return false;
 }
 
-bool TGameControl::LoadGame(TMSavegame* /*savegame*/) {
-    // The real load logic (asm lines 477404-478377, ~970 lines) is not
-    // reversed - left as a stub.
-    return false;
+bool TGameControl::LoadGame(TMSavegame */*savegame*/) {
+	// The real load logic (asm lines 477404-478377, ~970 lines) is not
+	// reversed - left as a stub.
+	return false;
 }
 
 bool TGameControl::LoadGame(int slot) {
-    // Confirmed (asm lines 478385-478469): slot==-1 loads the scene's
-    // currently-selected savegame; any other slot constructs a numbered
-    // TMSavegame first. m_isClearingAnimations is toggled around the
-    // actual load in both cases (same field used elsewhere - see
-    // ~TGameControl/IsClearingAnimations).
-    if (slot == -1) {
-        TMSavegame* selected = m_ownedSceneControl.GetScene()->GetSelectedSavegame(false);
-        if (selected == nullptr)
-            return false;
-        m_isClearingAnimations = true;
-        bool result = LoadGame(selected);
-        m_isClearingAnimations = false;
-        return result;
-    }
+	// Confirmed (asm lines 478385-478469): slot==-1 loads the scene's
+	// currently-selected savegame; any other slot constructs a numbered
+	// TMSavegame first. _isClearingAnimations is toggled around the
+	// actual load in both cases (same field used elsewhere - see
+	// ~TGameControl/IsClearingAnimations).
+	if (slot == -1) {
+		TMSavegame *selected = _ownedSceneControl.GetScene()->GetSelectedSavegame(false);
+		if (selected == nullptr)
+			return false;
+		_isClearingAnimations = true;
+		bool result = LoadGame(selected);
+		_isClearingAnimations = false;
+		return result;
+	}
 
-    TMSavegame save(true, slot, 0, 0, m_visionaireGame);
-    save.CheckVisPaths();
-    m_isClearingAnimations = true;
-    bool result = LoadGame(&save);
-    m_isClearingAnimations = false;
-    return result;
+	TMSavegame save(true, slot, 0, 0, _visionaireGame);
+	save.CheckVisPaths();
+	_isClearingAnimations = true;
+	bool result = LoadGame(&save);
+	_isClearingAnimations = false;
+	return result;
 }
 
-void TGameControl::StartTween(const Tween& /*tween*/, const std::string& /*name*/) {
-    // Was a guessed `m_pendingTweens.push_back({tween, name})` - checking
-    // the real asm (lines 478477-478598+) shows this operates on an
-    // 88-byte-element vector at a DIFFERENT offset than StartTween(const
-    // TVisObjTween&)'s 176-byte-element one, keyed by a string comparison
-    // against `name` with a non-trivial erase/replace on a match - not a
-    // plain append. Reverted to a stub rather than keep a confidently wrong
-    // implementation; see NOTES.md.
+void TGameControl::StartTween(const Tween &/*tween*/, const std::string &/*name*/) {
+	// Was a guessed `_pendingTweens.push_back({tween, name})` - checking
+	// the real asm (lines 478477-478598+) shows this operates on an
+	// 88-byte-element vector at a DIFFERENT offset than StartTween(const
+	// TVisObjTween&)'s 176-byte-element one, keyed by a string comparison
+	// against `name` with a non-trivial erase/replace on a match - not a
+	// plain append. Reverted to a stub rather than keep a confidently wrong
+	// implementation; see NOTES.md.
 }

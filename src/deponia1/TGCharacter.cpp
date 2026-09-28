@@ -1,11 +1,11 @@
 #include "TGCharacter.h"
 
 wxPoint TGCharacter::GetScreenPosition() const {
-    return wxPoint{-1, -1};
+	return wxPoint{-1, -1};
 }
 
 wxRect TGCharacter::GetVisibleRect() const {
-    return wxRect();
+	return wxRect();
 }
 
 void TGCharacter::Save() {
@@ -29,12 +29,12 @@ void TGCharacter::CheckRandomTimer() {
 void TGCharacter::SetRandomTime() {
 }
 
-std::list<TGInterface*> TGCharacter::GetInterfaces() const {
-    return {};
+std::list<TGInterface *> TGCharacter::GetInterfaces() const {
+	return {};
 }
 
 void TGCharacter::Init() {
 }
 
-void TGCharacter::AssignToScene(const TVisObjRef& /*scene*/, const wxPoint& /*pos*/, int /*walkSpeed*/) {
+void TGCharacter::AssignToScene(const TVisObjRef &/*scene*/, const wxPoint &/*pos*/, int /*walkSpeed*/) {
 }

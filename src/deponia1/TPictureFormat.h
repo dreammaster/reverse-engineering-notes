@@ -12,7 +12,7 @@
 
 class TPictureFormat {
 public:
-    virtual ~TPictureFormat() = default;
+	virtual ~TPictureFormat() = default;
 };
 
 class TPicturePNG : public TPictureFormat {};

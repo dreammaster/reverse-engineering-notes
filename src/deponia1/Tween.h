@@ -11,6 +11,6 @@ struct Tween {};
 #include "datastruct/visobjref.h"
 
 struct TVisObjTween {
-    TVisObjRef target;
-    Tween tween;
+	TVisObjRef target;
+	Tween tween;
 };

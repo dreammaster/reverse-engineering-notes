@@ -51,18 +51,18 @@
 class TSceneControl;
 class TGameController;
 
-enum class HandleSoundsEnum { Stop, Pause, Continue };
-enum class TMouseMessageEnum { Move, LeftDown, LeftUp, RightDown, RightUp, Wheel };
+enum class HandleSoundsEnum { kStop, kPause, kContinue };
+enum class TMouseMessageEnum { kMove, kLeftDown, kLeftUp, kRightDown, kRightUp, kWheel };
 // Confirmed to have at least 7 distinct values (TGameControl::
 // HandleControllerButtonHit/Release pass literal 4/5, and HandleControllerAxis
 // passes literal 6, as this same enum's type - Deponia_Linux.asm lines
 // 471722-471975) - values 2 and 3 haven't been observed at any call site yet.
 enum class TKeyboardMessageEnum {
-    KeyDown = 0,
-    KeyUp = 1,
-    ControllerButtonHit = 4,
-    ControllerButtonRelease = 5,
-    AxisMove = 6,
+	kKeyDown = 0,
+	kKeyUp = 1,
+	kControllerButtonHit = 4,
+	kControllerButtonRelease = 5,
+	kAxisMove = 6,
 };
 
 // Field order/sizes are recovered from TMasterControl::SetLoadingScreen's
@@ -70,179 +70,179 @@ enum class TKeyboardMessageEnum {
 // NOTES.md) - names are best-effort guesses at "a loading screen needs
 // this."
 struct SLoadingScreen {
-    TCharHolder backgroundImage;
-    long long field18 = 0;
-    long long field20 = 0;
-    int field28 = 0;
-    TCharHolder progressBarImage;
-    bool field40 = false;
-    int field44 = 0;
-    float field48 = 0.0f;
-    TCharHolder soundOrOverlayImage;
-    long long field68 = 0;
-    long long field70 = 0;
-    int field78 = 0;
-    TCharHolder anotherImage;
-    bool field90 = false;
-    int field94 = 0;
-    unsigned short field9C = 0;
-    unsigned char fieldA0 = 0;
-    std::wstring text;
-    long long fieldB0 = 0;
-    int fieldB8 = 0;
-    int fieldBC = 0;
+	TCharHolder backgroundImage;
+	long long field18 = 0;
+	long long field20 = 0;
+	int field28 = 0;
+	TCharHolder progressBarImage;
+	bool field40 = false;
+	int field44 = 0;
+	float field48 = 0.0f;
+	TCharHolder soundOrOverlayImage;
+	long long field68 = 0;
+	long long field70 = 0;
+	int field78 = 0;
+	TCharHolder anotherImage;
+	bool field90 = false;
+	int field94 = 0;
+	unsigned short field9C = 0;
+	unsigned char fieldA0 = 0;
+	std::wstring text;
+	long long fieldB0 = 0;
+	int fieldB8 = 0;
+	int fieldBC = 0;
 };
 
 struct TMouseEventHandler {
-    wxString name;
-    std::vector<unsigned int> mouseButtonFilter;  // empty = matches any message
+	wxString name;
+	std::vector<unsigned int> mouseButtonFilter;  // empty = matches any message
 };
 
 struct TKeyboardEventHandler {
-    wxString name;
+	wxString name;
 };
 
 class TMasterControl : public TPaintControl {
 public:
-    TMasterControl();
-    virtual ~TMasterControl();
+	TMasterControl();
+	virtual ~TMasterControl();
 
-    virtual void Signal(const TSignalData& signal, TSignalData& result);
+	virtual void Signal(const TSignalData &signal, TSignalData &result);
 
-    // The 8 pure virtuals from the original vtable (offsets 0x18-0x50);
-    // TGameControl provides the real overrides (confirmed from
-    // vtable-for-TGameControl's own dump, which names every slot directly -
-    // no guessing needed here, unlike when this was first written against
-    // TMasterControl alone).
-    virtual bool Update() = 0;
-    virtual bool DisplayDialog() = 0;
-    virtual bool DisplayTexts() = 0;
-    virtual bool DisplayConsole() = 0;
-    virtual void DisplayInSceneConsole() = 0;
-    virtual void HandleMouseMove(const wxPoint& pos, bool isHolding) = 0;
-    virtual void HandleMouseUp(const wxPoint& pos, TMouseMessageEnum msg) = 0;
-    virtual void HandleMouseHolding(const wxPoint& pos) = 0;
+	// The 8 pure virtuals from the original vtable (offsets 0x18-0x50);
+	// TGameControl provides the real overrides (confirmed from
+	// vtable-for-TGameControl's own dump, which names every slot directly -
+	// no guessing needed here, unlike when this was first written against
+	// TMasterControl alone).
+	virtual bool Update() = 0;
+	virtual bool DisplayDialog() = 0;
+	virtual bool DisplayTexts() = 0;
+	virtual bool DisplayConsole() = 0;
+	virtual void DisplayInSceneConsole() = 0;
+	virtual void HandleMouseMove(const wxPoint &pos, bool isHolding) = 0;
+	virtual void HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) = 0;
+	virtual void HandleMouseHolding(const wxPoint &pos) = 0;
 
-    void QuitGame();
-    bool GetQuitGame() const;
-    void SetClearMessage();
-    bool GetClearMessage();
+	void QuitGame();
+	bool GetQuitGame() const;
+	void SetClearMessage();
+	bool GetClearMessage();
 
-    TPaintControl* GetMainControl();
-    TCursorControl* GetCursorControl();
-    TGameController* GetGameController();
-    TSoundFFMPEG* GetSoundManager() const;
-    TFontManager* GetFontManager();
-    TGameClientSDK* GetGameClientSDK() const;
+	TPaintControl *GetMainControl();
+	TCursorControl *GetCursorControl();
+	TGameController *GetGameController();
+	TSoundFFMPEG *GetSoundManager() const;
+	TFontManager *GetFontManager();
+	TGameClientSDK *GetGameClientSDK() const;
 
-    void SetLoadingScreen(SLoadingScreen& screen);
-    void ShowLoadingScreen();
+	void SetLoadingScreen(SLoadingScreen &screen);
+	void ShowLoadingScreen();
 
-    void CleanUp();
-    void EnableMovies(bool enable);
+	void CleanUp();
+	void EnableMovies(bool enable);
 
-    // Hides (doesn't override) TPaintControl::Draw() - the original really
-    // does have two distinct Draw entry points (this one and the inherited
-    // TPaintControl::Draw() reached via the secondary vtable) - so making
-    // that explicit rather than suppressing the compiler's warning.
-    using TPaintControl::Draw;
-    bool Draw(bool showActionText);
-    void DrawInterfaces();
-    void ScrollUpdate();
+	// Hides (doesn't override) TPaintControl::Draw() - the original really
+	// does have two distinct Draw entry points (this one and the inherited
+	// TPaintControl::Draw() reached via the secondary vtable) - so making
+	// that explicit rather than suppressing the compiler's warning.
+	using TPaintControl::Draw;
+	bool Draw(bool showActionText);
+	void DrawInterfaces();
+	void ScrollUpdate();
 
-    int PlayAVI(const wxFileName& file, bool skippable, HandleSoundsEnum handleSounds);
-    bool IsVideoPlaying() const;
-    bool VideoFrame();
-    void MovieEvent(void* sdlEvent);
+	int PlayAVI(const wxFileName &file, bool skippable, HandleSoundsEnum handleSounds);
+	bool IsVideoPlaying() const;
+	bool VideoFrame();
+	void MovieEvent(void *sdlEvent);
 
-    bool UnregisterEngineEventHandler(const wxString& name);
-    bool UnregisterKeyboardEventHandler(const wxString& name);
-    bool UnregisterMouseEventHandler(const wxString& name);
-    void RegisterEngineEventHandler(const wxString& name);
-    void RegisterMouseEventHandler(const wxString& name, const std::vector<int>& filter);
-    void RegisterKeyboardEventHandler(const wxString& name);
+	bool UnregisterEngineEventHandler(const wxString &name);
+	bool UnregisterKeyboardEventHandler(const wxString &name);
+	bool UnregisterMouseEventHandler(const wxString &name);
+	void RegisterEngineEventHandler(const wxString &name);
+	void RegisterMouseEventHandler(const wxString &name, const std::vector<int> &filter);
+	void RegisterKeyboardEventHandler(const wxString &name);
 
-    void ProcessMessage(TMouseMessageEnum msg, const wxPoint& pos);
-    void ProcessMessage(TMouseMessageEnum msg, const wxPoint& pos, float a, float b, int c);
+	void ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos);
+	void ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos, float a, float b, int c);
 
-    void GetWindowSize(int* width, int* height) const;
-    const wxPoint& GetMousePos() const;
-    bool IsScrolling() const;
+	void GetWindowSize(int *width, int *height) const;
+	const wxPoint &GetMousePos() const;
+	bool IsScrolling() const;
 
-    void StartEarthquake(int amount, int jitterInterval);
-    void StopEarthquake();
+	void StartEarthquake(int amount, int jitterInterval);
+	void StopEarthquake();
 
 protected:
-    // TGameControl embeds an actual TSceneControl by value and points this
-    // at it (TMasterControl's own constructor never sets it - see
-    // gameControl.cpp); protected rather than private for that reason.
-    TSceneControl* m_sceneControl = nullptr;
+	// TGameControl embeds an actual TSceneControl by value and points this
+	// at it (TMasterControl's own constructor never sets it - see
+	// gameControl.cpp); protected rather than private for that reason.
+	TSceneControl *_sceneControl = nullptr;
 
-    // TGameControl reads this directly (confirmed: SkipCurrentText() and
-    // UpdateAspectRatio() both do `m_visionaire->GetGame()` on it) - a
-    // TMasterControl-only accessor was never called at those sites, so this
-    // is protected rather than private for the same reason as
-    // m_sceneControl above.
-    TVisionaire* m_visionaire = nullptr;
+	// TGameControl reads this directly (confirmed: SkipCurrentText() and
+	// UpdateAspectRatio() both do `_visionaire->GetGame()` on it) - a
+	// TMasterControl-only accessor was never called at those sites, so this
+	// is protected rather than private for the same reason as
+	// _sceneControl above.
+	TVisionaire *_visionaire = nullptr;
 
-    // TGameControl reads both directly (GetInterface/GetAllInterfaces/
-    // GetActiveInterfaces/GetObject, asm lines 456603-466193) - same
-    // reasoning as m_sceneControl/m_visionaire above. m_allInterfaces is
-    // every registered interface; m_activeInterfaces (formerly named
-    // m_interfaces, also used by DrawInterfaces above) is the subset
-    // currently being drawn.
-    std::list<TGInterface*> m_allInterfaces;
-    std::list<TGInterface*> m_activeInterfaces;
+	// TGameControl reads both directly (GetInterface/GetAllInterfaces/
+	// GetActiveInterfaces/GetObject, asm lines 456603-466193) - same
+	// reasoning as _sceneControl/_visionaire above. _allInterfaces is
+	// every registered interface; _activeInterfaces (formerly named
+	// _interfaces, also used by DrawInterfaces above) is the subset
+	// currently being drawn.
+	std::list<TGInterface *> _allInterfaces;
+	std::list<TGInterface *> _activeInterfaces;
 
 private:
-    TMovie m_movie;
-    TGObjectManager m_objectManager;
-    TSprite m_sprite1;
-    TSprite m_sprite2;
+	TMovie _movie;
+	TGObjectManager _objectManager;
+	TSprite _sprite1;
+	TSprite _sprite2;
 
-    std::vector<TMouseEventHandler> m_mouseEventHandlers;
-    std::vector<TKeyboardEventHandler> m_keyboardEventHandlers;
-    std::vector<std::string> m_engineEventHandlerNames;
+	std::vector<TMouseEventHandler> _mouseEventHandlers;
+	std::vector<TKeyboardEventHandler> _keyboardEventHandlers;
+	std::vector<std::string> _engineEventHandlerNames;
 
-    int m_windowWidth = 0;
-    int m_windowHeight = 0;
-    SLoadingScreen m_loadingScreen;
-    TCursorControl* m_cursorControl = nullptr;
-    TGameController* m_gameController = nullptr;
-    TLoadingControl* m_loadingControl = nullptr;
-    TSoundFFMPEG* m_soundManager = nullptr;
-    TFontManager* m_fontManager = nullptr;
-    TGameClientSDK* m_gameClientSDK = nullptr;
+	int _windowWidth = 0;
+	int _windowHeight = 0;
+	SLoadingScreen _loadingScreen;
+	TCursorControl *_cursorControl = nullptr;
+	TGameController *_gameController = nullptr;
+	TLoadingControl *_loadingControl = nullptr;
+	TSoundFFMPEG *_soundManager = nullptr;
+	TFontManager *_fontManager = nullptr;
+	TGameClientSDK *_gameClientSDK = nullptr;
 
-    void* m_movieEventHandler = nullptr;  // +0xC0 in the original; real type/purpose unconfirmed
-    bool m_videoPlaying = false;          // +0xB8
-    int m_loadingScreenCachedWidth = 0;   // +0x248
-    int m_loadingScreenCachedHeight = 0;  // +0x24C
-    wxPoint m_mousePos;                   // +0x258
-    bool m_isScrolling = false;           // +0x260
-    bool m_quitGame = false;              // +0x255
-    bool m_clearMessage = false;          // +0x256
-    bool m_earthquakeActive = false;      // +0x261
-    int m_earthquakeAmount = 0;           // +0x264
-    int m_earthquakeJitterInterval = 0;   // +0x268
-    int m_earthquakeOffsetX = 0;          // +0x26C
-    int m_earthquakeOffsetY = 0;          // +0x270
-    TTimer m_earthquakeTimer;             // +0x278
-    bool m_moviesEnabled = true;          // +0x288
-    // Set from a TVisObjRef::GetBool(0x33A) field at the top of every
-    // ScrollUpdate() call, then read back inside its easing formula to pick
-    // which of two target speeds to ease toward - real meaning (some kind
-    // of "scrolling direction/mode" flag) not resolved. +0x254 in the
-    // original; unrelated to m_moviesEnabled (+0x288) despite both being a
-    // lone bool set near the start of a method.
-    bool m_easeDirectionFlag = false;
+	void *_movieEventHandler = nullptr;  // +0xC0 in the original; real type/purpose unconfirmed
+	bool _videoPlaying = false;          // +0xB8
+	int _loadingScreenCachedWidth = 0;   // +0x248
+	int _loadingScreenCachedHeight = 0;  // +0x24C
+	wxPoint _mousePos;                   // +0x258
+	bool _isScrolling = false;           // +0x260
+	bool _quitGame = false;              // +0x255
+	bool _clearMessage = false;          // +0x256
+	bool _earthquakeActive = false;      // +0x261
+	int _earthquakeAmount = 0;           // +0x264
+	int _earthquakeJitterInterval = 0;   // +0x268
+	int _earthquakeOffsetX = 0;          // +0x26C
+	int _earthquakeOffsetY = 0;          // +0x270
+	TTimer _earthquakeTimer;             // +0x278
+	bool _moviesEnabled = true;          // +0x288
+	// Set from a TVisObjRef::GetBool(0x33A) field at the top of every
+	// ScrollUpdate() call, then read back inside its easing formula to pick
+	// which of two target speeds to ease toward - real meaning (some kind
+	// of "scrolling direction/mode" flag) not resolved. +0x254 in the
+	// original; unrelated to _moviesEnabled (+0x288) despite both being a
+	// lone bool set near the start of a method.
+	bool _easeDirectionFlag = false;
 
-    // ScrollUpdate's eased scroll speed; a plain global (`xspeed`) in the
-    // original, made an instance member here since nothing needs it shared.
-    float m_xspeed = 0.0f;
-    // A function-local static TTimer in the original
-    // (ScrollUpdate(void)::scrollTimer, magic-statics-initialized on first
-    // call) - a plain member here since TMasterControl is effectively a
-    // singleton anyway.
-    TTimer m_scrollTimer;
+	// ScrollUpdate's eased scroll speed; a plain global (`xspeed`) in the
+	// original, made an instance member here since nothing needs it shared.
+	float _xspeed = 0.0f;
+	// A function-local static TTimer in the original
+	// (ScrollUpdate(void)::scrollTimer, magic-statics-initialized on first
+	// call) - a plain member here since TMasterControl is effectively a
+	// singleton anyway.
+	TTimer _scrollTimer;
 };

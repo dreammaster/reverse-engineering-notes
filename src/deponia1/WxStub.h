@@ -22,145 +22,175 @@
 
 class wxString {
 public:
-    wxString() = default;
-    wxString(const wchar_t* s) : m_data(s) {}
-    wxString(const char* s) : m_data(s, s + std::char_traits<char>::length(s)) {}
-    wxString(const std::wstring& s) : m_data(s) {}
+	wxString() = default;
+	wxString(const wchar_t *s) : _data(s) {}
+	wxString(const char *s) : _data(s, s + std::char_traits<char>::length(s)) {}
+	wxString(const std::wstring &s) : _data(s) {}
 
-    const std::wstring& ToStdWstring() const { return m_data; }
-    const wchar_t* wc_str() const { return m_data.c_str(); }
-    const wchar_t* c_str() const { return m_data.c_str(); }
+	const std::wstring &ToStdWstring() const {
+		return _data;
+	}
+	const wchar_t *wc_str() const {
+		return _data.c_str();
+	}
+	const wchar_t *c_str() const {
+		return _data.c_str();
+	}
 
-    bool IsEmpty() const { return m_data.empty(); }
+	bool IsEmpty() const {
+		return _data.empty();
+	}
 
-    wxString& operator+=(const wxString& rhs) {
-        m_data += rhs.m_data;
-        return *this;
-    }
-    friend wxString operator+(wxString lhs, const wxString& rhs) {
-        lhs += rhs;
-        return lhs;
-    }
+	wxString &operator+=(const wxString &rhs) {
+		_data += rhs._data;
+		return *this;
+	}
+	friend wxString operator+(wxString lhs, const wxString &rhs) {
+		lhs += rhs;
+		return lhs;
+	}
 
-    // Stands in for wxString::mb_str(); real wxWidgets returns a
-    // wxScopedCharBuffer that is implicitly convertible to const char*.
-    class CharBuffer {
-    public:
-        explicit CharBuffer(std::string s) : m_narrow(std::move(s)) {}
-        operator const char*() const { return m_narrow.c_str(); }
+	// Stands in for wxString::mb_str(); real wxWidgets returns a
+	// wxScopedCharBuffer that is implicitly convertible to const char*.
+	class CharBuffer {
+	public:
+		explicit CharBuffer(std::string s) : _narrow(std::move(s)) {}
+		operator const char*() const {
+			return _narrow.c_str();
+		}
 
-    private:
-        std::string m_narrow;
-    };
+	private:
+		std::string _narrow;
+	};
 
-    CharBuffer mb_str() const {
-        std::string narrow(m_data.begin(), m_data.end());
-        return CharBuffer(std::move(narrow));
-    }
+	CharBuffer mb_str() const {
+		std::string narrow(_data.begin(), _data.end());
+		return CharBuffer(std::move(narrow));
+	}
 
 private:
-    std::wstring m_data;
+	std::wstring _data;
 };
 
 class wxFileName {
 public:
-    wxFileName() = default;
-    explicit wxFileName(const std::wstring& fullPath) : m_fullPath(fullPath) {}
+	wxFileName() = default;
+	explicit wxFileName(const std::wstring &fullPath) : _fullPath(fullPath) {}
 
-    wxString GetFullPath() const { return wxString(m_fullPath); }
-    bool IsOk() const { return !m_fullPath.empty(); }
-    void NormalizePath() {}
+	wxString GetFullPath() const {
+		return wxString(_fullPath);
+	}
+	bool IsOk() const {
+		return !_fullPath.empty();
+	}
+	void NormalizePath() {}
 
-    static bool Mkdir(const wxString& dir, int permissions = 0777, int flags = 0);
-    static wxString GetCwd();
+	static bool Mkdir(const wxString &dir, int permissions = 0777, int flags = 0);
+	static wxString GetCwd();
 
 private:
-    std::wstring m_fullPath;
+	std::wstring _fullPath;
 };
 
 class wxDir {
 public:
-    static bool Exists(const wxString& path);
+	static bool Exists(const wxString &path);
 };
 
 struct wxSize {
-    int width = 0;
-    int height = 0;
+	int width = 0;
+	int height = 0;
 };
 
 struct wxPoint {
-    int x = 0;
-    int y = 0;
+	int x = 0;
+	int y = 0;
 
-    bool operator==(const wxPoint& other) const { return x == other.x && y == other.y; }
-    bool operator!=(const wxPoint& other) const { return !(*this == other); }
+	bool operator==(const wxPoint &other) const {
+		return x == other.x && y == other.y;
+	}
+	bool operator!=(const wxPoint &other) const {
+		return !(*this == other);
+	}
 };
 
 struct wxRect {
-    int x = 0;
-    int y = 0;
-    int width = 0;
-    int height = 0;
+	int x = 0;
+	int y = 0;
+	int width = 0;
+	int height = 0;
 
-    int GetWidth() const { return width; }
-    int GetHeight() const { return height; }
-    int GetLeft() const { return x; }
-    int GetTop() const { return y; }
-    bool IsEmpty() const { return width <= 0 || height <= 0; }
-    bool Intersects(const wxRect& other) const {
-        return x < other.x + other.width && other.x < x + width && y < other.y + other.height &&
-               other.y < y + height;
-    }
+	int GetWidth() const {
+		return width;
+	}
+	int GetHeight() const {
+		return height;
+	}
+	int GetLeft() const {
+		return x;
+	}
+	int GetTop() const {
+		return y;
+	}
+	bool IsEmpty() const {
+		return width <= 0 || height <= 0;
+	}
+	bool Intersects(const wxRect &other) const {
+		return x < other.x + other.width && other.x < x + width && y < other.y + other.height &&
+		       other.y < y + height;
+	}
 };
 
 // A floating-point rectangle, used where sub-pixel precision matters (e.g.
 // TPictureIO::PreparePaint's scroll-adjusted paint area).
 struct FloatRect {
-    float x = 0.0f;
-    float y = 0.0f;
-    float width = 0.0f;
-    float height = 0.0f;
+	float x = 0.0f;
+	float y = 0.0f;
+	float width = 0.0f;
+	float height = 0.0f;
 };
 
 class wxCmdLineParser {
 public:
-    wxCmdLineParser() = default;
-    ~wxCmdLineParser() = default;
+	wxCmdLineParser() = default;
+	~wxCmdLineParser() = default;
 
-    // Stub always reports the option as not present.
-    bool Found(const wxString& /*name*/, wxString* /*value*/) const { return false; }
+	// Stub always reports the option as not present.
+	bool Found(const wxString &/*name*/, wxString */*value*/) const {
+		return false;
+	}
 };
 
 class wxFile {
 public:
-    static bool Exists(const wxString& path);
+	static bool Exists(const wxString &path);
 };
 
 class wxLog {
 public:
-    // Signed so `js` (jump-if-negative) checks against it stay meaningful.
-    static int loglevel;
+	// Signed so `js` (jump-if-negative) checks against it stay meaningful.
+	static int loglevel;
 
-    static void SetVerbose(bool verbose);
-    static void SetActiveTarget(class wxLogStderr* target);
-    static void logexpanded(const wchar_t* fmt, ...);
+	static void SetVerbose(bool verbose);
+	static void SetActiveTarget(class wxLogStderr *target);
+	static void logexpanded(const wchar_t *fmt, ...);
 };
 
 class wxLogStderr {
 public:
-    explicit wxLogStderr(std::FILE* fp) : m_fp(fp) {}
+	explicit wxLogStderr(std::FILE *fp) : _fp(fp) {}
 
 private:
-    std::FILE* m_fp;
+	std::FILE *_fp;
 };
 
 bool wxInitialize();
-wxString wxConvertMB2WX(const char* s);
+wxString wxConvertMB2WX(const char *s);
 
 // toUTF(wxString*, const char*) - converts a narrow (assumed UTF-8) C string
 // into a wxString, writing into the caller-provided output parameter (this
 // matches the calling convention seen at every reversed call site so far).
-void toUTF(wxString* out, const char* utf8);
+void toUTF(wxString *out, const char *utf8);
 
 // Stand-in for wxWidgets' wxStandardPathsBase, which real TStandardPaths
 // (see TStandardPaths.h) holds a pointer to and forwards most calls to.
@@ -169,31 +199,35 @@ void toUTF(wxString* out, const char* utf8);
 // path rules are placeholders, not reversed from the binary.
 class wxStandardPathsBase {
 public:
-    virtual ~wxStandardPathsBase() = default;
-    virtual wxString GetUserDataDir() const;
-    virtual wxString GetUserLocalDataDir() const;
-    virtual wxString GetTempDir() const;
-    virtual wxString GetExecutablePath() const;
+	virtual ~wxStandardPathsBase() = default;
+	virtual wxString GetUserDataDir() const;
+	virtual wxString GetUserLocalDataDir() const;
+	virtual wxString GetTempDir() const;
+	virtual wxString GetExecutablePath() const;
 };
 
 // The real binary initializes TStandardPaths's wxStandardPathsBase pointer
 // from a fixed global (`wxGUIAppTraits::base`) rather than a dynamic lookup;
 // this mirrors that with a single process-wide stub instance.
-wxStandardPathsBase& wxGetAppTraitsStandardPaths();
+wxStandardPathsBase &wxGetAppTraitsStandardPaths();
 
 // wxCriticalSection is a plain mutex wrapper in real wxWidgets; several
 // classes (e.g. TComposedFile) embed one as an instance member.
 class wxCriticalSection {
 public:
-    void Enter();
-    void Leave();
+	void Enter();
+	void Leave();
 };
 
 class wxCriticalSectionLocker {
 public:
-    explicit wxCriticalSectionLocker(wxCriticalSection& cs) : m_cs(cs) { m_cs.Enter(); }
-    ~wxCriticalSectionLocker() { m_cs.Leave(); }
+	explicit wxCriticalSectionLocker(wxCriticalSection &cs) : _cs(cs) {
+		_cs.Enter();
+	}
+	~wxCriticalSectionLocker() {
+		_cs.Leave();
+	}
 
 private:
-    wxCriticalSection& m_cs;
+	wxCriticalSection &_cs;
 };

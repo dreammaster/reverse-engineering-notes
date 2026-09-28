@@ -5,9 +5,9 @@
 
 class TTimer {
 public:
-    void SetTime();
-    std::int64_t GetTime() const;
+	void SetTime();
+	std::int64_t GetTime() const;
 
 private:
-    std::int64_t m_setAt = 0;
+	std::int64_t _setAt = 0;
 };

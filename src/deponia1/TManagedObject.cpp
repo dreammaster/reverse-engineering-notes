@@ -1,4 +1,4 @@
 #include "TManagedObject.h"
 
-void TManagedObject::SetText(TGText* /*text*/) {
+void TManagedObject::SetText(TGText */*text*/) {
 }

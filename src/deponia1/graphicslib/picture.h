@@ -48,90 +48,90 @@ class TFramebuffer;
 
 class TPictureIO : public TPictureMEM {
 public:
-    enum class ePreloadingStatus { NotPreloading, Preloading, Preloaded };
-    enum class eLoadSetting { Normal, ForceReload };
+	enum class ePreloadingStatus { NotPreloading, Preloading, Preloaded };
+	enum class eLoadSetting { Normal, ForceReload };
 
-    TPictureIO();
-    TPictureIO(const TSprite& sprite, bool ownsSprite);
-    virtual ~TPictureIO();
+	TPictureIO();
+	TPictureIO(const TSprite &sprite, bool ownsSprite);
+	virtual ~TPictureIO();
 
-    TPictureIO(const TPictureIO&) = delete;
-    TPictureIO& operator=(const TPictureIO& other);
+	TPictureIO(const TPictureIO &) = delete;
+	TPictureIO &operator=(const TPictureIO &other);
 
-    static void RetryFailedPicturesLoad();
-    static void TestCacheFileTime(bool enable);
+	static void RetryFailedPicturesLoad();
+	static void TestCacheFileTime(bool enable);
 
-    void Set(const TSprite& sprite);
-    void Clear();
-    void RemoveSprite();
+	void Set(const TSprite &sprite);
+	void Clear();
+	void RemoveSprite();
 
-    wxString GetSpriteName() const;
-    void SetParallax(int x, int y);
-    bool LoadSpriteFromCache();
+	wxString GetSpriteName() const;
+	void SetParallax(int x, int y);
+	bool LoadSpriteFromCache();
 
-    bool GetFormat(TFile& file, TPictureFormat** outFormat, const wxString& formatHint) const;
-    bool LoadHeader(TFile& file, TPictureFormat** outFormat);
-    bool ReadPictureFile();
-    void EnsureSizeValid();
-    bool LoadRect(TSprite& sprite);
+	bool GetFormat(TFile &file, TPictureFormat **outFormat, const wxString &formatHint) const;
+	bool LoadHeader(TFile &file, TPictureFormat **outFormat);
+	bool ReadPictureFile();
+	void EnsureSizeValid();
+	bool LoadRect(TSprite &sprite);
 
-    bool CreateFromFramebuffer(TFramebuffer* framebuffer);
-    bool CreateSprite(bool preload);
-    bool CreateSprite(void* pixels, int width, int height, int bpp);
-    bool CreateEmptySprite(int width, int height, int bpp, bool preload);
-    bool CreateSpriteTexture(const wxFileName& file);
+	bool CreateFromFramebuffer(TFramebuffer *framebuffer);
+	bool CreateSprite(bool preload);
+	bool CreateSprite(void *pixels, int width, int height, int bpp);
+	bool CreateEmptySprite(int width, int height, int bpp, bool preload);
+	bool CreateSpriteTexture(const wxFileName &file);
 
-    bool FinishPreloaderRead(int result);
-    void CleanupPreloader();
-    void PreparePreloaderLoad(wxFileName file);
-    bool LoadPicture(wxFileName file, eLoadSetting loadSetting);
-    bool RefreshSprite(bool force);
+	bool FinishPreloaderRead(int result);
+	void CleanupPreloader();
+	void PreparePreloaderLoad(wxFileName file);
+	bool LoadPicture(wxFileName file, eLoadSetting loadSetting);
+	bool RefreshSprite(bool force);
 
-    bool IsTransparent(const wxPoint& point) const;
-    bool SavePicture(const wxFileName& file, bool overwrite) const;
-    bool WritePicture(TPictureFormat& format, const wxFileName& file) const;
+	bool IsTransparent(const wxPoint &point) const;
+	bool SavePicture(const wxFileName &file, bool overwrite) const;
+	bool WritePicture(TPictureFormat &format, const wxFileName &file) const;
 
-    wxRect GetDestRect() const;
-    void PreparePaint(wxRect& destRect, FloatRect& srcRect);
-    unsigned long GetSpriteMemSize() const;
-    TSpriteHandle* GetSpriteHandle() const;
+	wxRect GetDestRect() const;
+	void PreparePaint(wxRect &destRect, FloatRect &srcRect);
+	unsigned long GetSpriteMemSize() const;
+	TSpriteHandle *GetSpriteHandle() const;
 
-    void SetPreloadingStatus(ePreloadingStatus status);
-    ePreloadingStatus GetPreloadingStatus();
-    void SetPreloader(TPicturePreloader* preloader);
-    TPicturePreloader* GetPreloader();
+	void SetPreloadingStatus(ePreloadingStatus status);
+	ePreloadingStatus GetPreloadingStatus();
+	void SetPreloader(TPicturePreloader *preloader);
+	TPicturePreloader *GetPreloader();
 
-    void DrawWithDestRect(const wxRect& destRect, float alpha, unsigned int color);
-    void DrawWithSrcRect(const wxRect& srcRect, float alpha, unsigned int color);
-    void DrawWithLightMap(float alpha, unsigned int color, void* lightMap);
-    void Draw(float alpha, unsigned int color);
+	void DrawWithDestRect(const wxRect &destRect, float alpha, unsigned int color);
+	void DrawWithSrcRect(const wxRect &srcRect, float alpha, unsigned int color);
+	void DrawWithLightMap(float alpha, unsigned int color, void *lightMap);
+	void Draw(float alpha, unsigned int color);
 
 private:
-    // Common "release current sprite handle, tell the graphics backend,
-    // reset the transient flags" sequence shared (near-verbatim in the
-    // original) by the destructor, both constructors, Set(), and Clear().
-    void ReleaseSpriteHandle();
+	// Common "release current sprite handle, tell the graphics backend,
+	// reset the transient flags" sequence shared (near-verbatim in the
+	// original) by the destructor, both constructors, Set(), and Clear().
+	void ReleaseSpriteHandle();
 
-    static std::vector<TPictureIO*> m_loadFailedPics;
-    static wxCriticalSection RetryFailedPicturesSection;
-    static wxCriticalSection m_mutexStatus;
-    static bool s_bTestCacheFileTime;
+	static std::vector<TPictureIO *> _loadFailedPics;
+	static wxCriticalSection RetryFailedPicturesSection;
+	static wxCriticalSection _mutexStatus;
+	static bool s_bTestCacheFileTime;
 
-    TSpriteHandle* m_spriteHandle = nullptr;
-    bool m_flag90 = false;
-    wxRect m_destRect;      // +0x94-0xA0 in the original - guessed from GetDestRect()
-    bool m_ownsSprite = false;  // +0xA4, set from the (TSprite,bool) ctor's bool param
-    int m_parallaxX = 0;
-    int m_parallaxY = 0;
-    int m_field78 = 0;      // reset (only) when Set() is called with an unchanged sprite
-    ePreloadingStatus m_preloadingStatus = ePreloadingStatus::NotPreloading;  // +0xB4, guarded by m_mutexStatus
-    TPicturePreloader* m_preloader = nullptr;  // +0xB8
-    bool m_flagC0 = false;
-    int m_loadRectX = -1;   // +0xC8/+0xCC/+0xD0 - guessed to relate to LoadRect()
-    int m_loadRectY = -1;
-    int m_loadRectW = -1;
-    int m_fieldD4 = 1;
-    float m_scaleX = 1.0f;  // +0xD8
-    float m_scaleY = 1.0f;  // +0xDC
-    bool m_flagE0 = false;
+	TSpriteHandle *_spriteHandle = nullptr;
+	bool _flag90 = false;
+	wxRect _destRect;      // +0x94-0xA0 in the original - guessed from GetDestRect()
+	bool _ownsSprite = false;  // +0xA4, set from the (TSprite,bool) ctor's bool param
+	int _parallaxX = 0;
+	int _parallaxY = 0;
+	int _field78 = 0;      // reset (only) when Set() is called with an unchanged sprite
+	ePreloadingStatus _preloadingStatus = ePreloadingStatus::NotPreloading;  // +0xB4, guarded by _mutexStatus
+	TPicturePreloader *_preloader = nullptr;  // +0xB8
+	bool _flagC0 = false;
+	int _loadRectX = -1;   // +0xC8/+0xCC/+0xD0 - guessed to relate to LoadRect()
+	int _loadRectY = -1;
+	int _loadRectW = -1;
+	int _fieldD4 = 1;
+	float _scaleX = 1.0f;  // +0xD8
+	float _scaleY = 1.0f;  // +0xDC
+	bool _flagE0 = false;
 };

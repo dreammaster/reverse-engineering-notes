@@ -1,4 +1,4 @@
 #include "THInterface.h"
 
-THInterface::THInterface(const TVisObjRef& /*object*/) {
+THInterface::THInterface(const TVisObjRef &/*object*/) {
 }

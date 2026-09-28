@@ -1,14 +1,14 @@
 #include "TSpriteHandle.h"
 
 void TSpriteHandle::AddRef() {
-    ++m_refCount;
+	++_refCount;
 }
 
 void TSpriteHandle::Release() {
-    if (m_refCount > 0)
-        --m_refCount;
+	if (_refCount > 0)
+		--_refCount;
 }
 
 int TSpriteHandle::GetRefCount() const {
-    return m_refCount;
+	return _refCount;
 }

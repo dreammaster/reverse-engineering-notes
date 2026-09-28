@@ -10,5 +10,5 @@
 
 class TVisionaireObject {
 public:
-    TVisionaireObject() = default;
+	TVisionaireObject() = default;
 };

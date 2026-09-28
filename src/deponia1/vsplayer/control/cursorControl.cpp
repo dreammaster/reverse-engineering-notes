@@ -1,7 +1,7 @@
 #include "vsplayer/control/cursorControl.h"
 
 wxPoint TCursorControl::GetPositionNextToCursor() const {
-    return wxPoint();
+	return wxPoint();
 }
 
 void TCursorControl::SetCursor(int /*cursorId*/, bool /*flag*/) {

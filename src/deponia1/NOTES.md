@@ -441,6 +441,38 @@ Recovered two more diagnostic strings byte-for-byte confirming `TTimer::
 GetTime()` is milliseconds: "Interfaces loaded. Needed time: %ld ms" and
 "Scripts loaded. Needed time: %ld ms".
 
+## Reformatted to ScummVM's code conventions
+
+Since this engine's eventual destination is a ScummVM engine module, the
+entire tree was reformatted to match ScummVM's own
+[Code Formatting Conventions](https://wiki.scummvm.org/index.php?title=Code_Formatting_Conventions):
+see `CLAUDE.md` at the repo root for the full rule reference and the
+project's one deliberate exception (recovered class/method identifiers are
+NOT renamed to ScummVM's camelCase - they're evidence, not style; see that
+file for the full reasoning).
+
+Mechanically: an `astyle` pass (`.astylerc` at the repo root) handled
+indentation/braces/most spacing, followed by two supplementary scripted
+passes: one fixing pointer/reference spacing in function parameters (an
+astyle limitation - it only fixes declarations/return types) that had to be
+written comment-aware after an early version corrupted prose mentioning
+pointer types (e.g. "the manifest's `void*` was..." or markdown-style
+`*emphasis*` in a comment got mangled into "`void *was`"/"`*this *the`" the
+first time through - caught by diffing against the pre-format commit and
+fixed by making the regex skip `//` and `/* */` text entirely), and one
+renaming every invented member variable from `m_foo` to ScummVM's `_foo`.
+Enum values with no recovered evidence for their real names (e.g.
+`TextAlignmentEnum::Left` -> `::kLeft`) were also renamed to the `kCamelCase`
+convention, using their scope-qualified form to avoid collisions with
+ordinary English words in comments (`Left`/`Right`/`Center` are common
+prose, but `TextAlignmentEnum::Left` is unambiguous).
+
+Left alone deliberately: `TControllerEffectType`/`TControllerEffectDirection`
+in `vsplayer/control/gameController.h` still use their own `TCET_`/`TCED_`
+prefix convention rather than `kCamelCase` - they're plain (unscoped) enums
+with values used throughout `gameController.cpp`, so renaming needs more
+call-site verification than this pass covered. Worth revisiting.
+
 ## Lesson: don't fill an unconfirmed gap with a plausible-looking guess
 
 While TMasterControl was being written, no evidence was found for where

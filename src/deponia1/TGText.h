@@ -2,8 +2,8 @@
 // An on-screen text instance. TGameControl holds these in two
 // std::list<TGText*> members (confirmed via sentinel-initialization in the
 // constructor and traversal in IsTalking/ReattachSceneObjectTexts/
-// ClearObjectText, Deponia_Linux.asm lines 461601-462228): m_activeTexts
-// (every currently-displayed text) and m_sceneTexts (texts attached to a
+// ClearObjectText, Deponia_Linux.asm lines 461601-462228): _activeTexts
+// (every currently-displayed text) and _sceneTexts (texts attached to a
 // scene object, reattached when the scene reloads).
 //
 // Derives from TSText (see its header): both expose a TVisObjRef target
@@ -19,14 +19,14 @@ class TGCharacter;
 
 class TGText : public TSText {
 public:
-    TGCharacter* GetSpeaker() const;
+	TGCharacter *GetSpeaker() const;
 
-    // Confirmed called with a constant 1.0f at every DisplayTexts() call
-    // site (asm lines 455890-456037) - not reversed beyond that call shape.
-    void Draw(float scale);
+	// Confirmed called with a constant 1.0f at every DisplayTexts() call
+	// site (asm lines 455890-456037) - not reversed beyond that call shape.
+	void Draw(float scale);
 
-    // Confirmed non-virtual (a direct call, not through the vtable) on
-    // TGText specifically, not inherited from TSText (TGameControl::Save,
-    // asm lines 462781-462971) - not reversed beyond that call shape.
-    void Save();
+	// Confirmed non-virtual (a direct call, not through the vtable) on
+	// TGText specifically, not inherited from TSText (TGameControl::Save,
+	// asm lines 462781-462971) - not reversed beyond that call shape.
+	void Save();
 };

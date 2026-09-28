@@ -5,5 +5,5 @@
 // method list when this class gets its own pass).
 class TComposedFileManager {
 public:
-    static bool IsGameCompiled();
+	static bool IsGameCompiled();
 };

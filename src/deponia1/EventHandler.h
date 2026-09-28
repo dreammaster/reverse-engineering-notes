@@ -3,5 +3,5 @@
 
 class EventHandler {
 public:
-    virtual ~EventHandler() = default;
+	virtual ~EventHandler() = default;
 };

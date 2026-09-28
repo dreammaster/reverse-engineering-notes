@@ -13,7 +13,7 @@
 
 class TMasterControl;
 
-extern SDL_Window* VSPlayerWindow;
+extern SDL_Window *VSPlayerWindow;
 extern SDL_GLContext VSPlayerContext;
 
 extern wxString strAppName;
@@ -32,7 +32,7 @@ extern TStandardPaths standardPaths;
 // obscured this).
 extern wxFileName g_logfile;
 
-extern std::FILE* LogFile;
+extern std::FILE *LogFile;
 
 extern int AppStatus;
 extern int isProgramLooping;
@@ -40,7 +40,7 @@ extern int eMouseMessage;
 extern unsigned char byte_11F8B01;
 extern unsigned char byte_11F8B02;
 
-extern TMasterControl* g_pGameControl;
+extern TMasterControl *g_pGameControl;
 
 // Set by TGameController::ControllerAxisMouseMove/ControllerAxisCharacterMove
 // (TGameController.cpp) for the game loop to consume as per-frame cursor /

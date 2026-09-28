@@ -7,13 +7,13 @@
 
 class TSpriteHandle {
 public:
-    void AddRef();
-    void Release();
-    int GetRefCount() const;
+	void AddRef();
+	void Release();
+	int GetRefCount() const;
 
-    int width = 0;
-    int height = 0;
+	int width = 0;
+	int height = 0;
 
 private:
-    int m_refCount = 0;
+	int _refCount = 0;
 };

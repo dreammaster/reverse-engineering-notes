@@ -19,68 +19,72 @@ class TGInterface;
 // possible if TGCharacter IS-A TManagedObject.
 class TGCharacter : public TManagedObject {
 public:
-    TGCharacter() = default;
-    virtual ~TGCharacter() = default;
+	TGCharacter() = default;
+	virtual ~TGCharacter() = default;
 
-    // Confirmed virtual (vtable-indexed call at a fixed slot), returning a
-    // wxPoint compared against a {-1,-1} "no valid position" sentinel
-    // (TGameControl::CenterScene, asm lines 460533-460715) - name/purpose
-    // not resolved.
-    virtual wxPoint GetScreenPosition() const;
-    // Confirmed virtual, returning a plain-int wxRect (confirmed by the
-    // RAX:RDX register-pair return convention rather than a hidden pointer -
-    // only valid for a <=16-byte all-integer struct) used for vertical
-    // scene-centering at the same call site - name/purpose not resolved.
-    virtual wxRect GetVisibleRect() const;
-    // Confirmed virtual (vtable-indexed call), called on every character
-    // during a save (TGameControl::Save, asm lines 462896-462905) - not
-    // reversed beyond that call shape.
-    virtual void Save();
+	// Confirmed virtual (vtable-indexed call at a fixed slot), returning a
+	// wxPoint compared against a {-1,-1} "no valid position" sentinel
+	// (TGameControl::CenterScene, asm lines 460533-460715) - name/purpose
+	// not resolved.
+	virtual wxPoint GetScreenPosition() const;
+	// Confirmed virtual, returning a plain-int wxRect (confirmed by the
+	// RAX:RDX register-pair return convention rather than a hidden pointer -
+	// only valid for a <=16-byte all-integer struct) used for vertical
+	// scene-centering at the same call site - name/purpose not resolved.
+	virtual wxRect GetVisibleRect() const;
+	// Confirmed virtual (vtable-indexed call), called on every character
+	// during a save (TGameControl::Save, asm lines 462896-462905) - not
+	// reversed beyond that call shape.
+	virtual void Save();
 
-    // Confirmed present at a fixed offset (TGameControl::IsTalking compares
-    // a TGText's speaker against a TVisObjRef via this field directly,
-    // Deponia_Linux.asm lines 461785-461846) - same "TVisObjRef at a known
-    // offset, no accessor in the original" pattern as TGDialog/TSText/TGText.
-    const TVisObjRef& GetRef() const { return m_ref; }
-    // Confirmed mutated directly (TGameControl::SetCharacterActiveCommand
-    // calls TVisObjRef::SetLink() on this field in place, asm lines
-    // 465679-465841).
-    TVisObjRef& GetRef() { return m_ref; }
+	// Confirmed present at a fixed offset (TGameControl::IsTalking compares
+	// a TGText's speaker against a TVisObjRef via this field directly,
+	// Deponia_Linux.asm lines 461785-461846) - same "TVisObjRef at a known
+	// offset, no accessor in the original" pattern as TGDialog/TSText/TGText.
+	const TVisObjRef &GetRef() const {
+		return _ref;
+	}
+	// Confirmed mutated directly (TGameControl::SetCharacterActiveCommand
+	// calls TVisObjRef::SetLink() on this field in place, asm lines
+	// 465679-465841).
+	TVisObjRef &GetRef() {
+		return _ref;
+	}
 
-    // Confirmed called for every character (TGameControl::
-    // SetCharacterInterfaces, Deponia_Linux.asm lines 458260-458285) - not
-    // reversed beyond that call shape.
-    void SetInterfaces();
+	// Confirmed called for every character (TGameControl::
+	// SetCharacterInterfaces, Deponia_Linux.asm lines 458260-458285) - not
+	// reversed beyond that call shape.
+	void SetInterfaces();
 
-    // Confirmed called per-character in TGameControl::HandleCharacters
-    // (asm lines 460829-460866), in this order, every frame the scene isn't
-    // a menu.
-    void WalkWay();
-    void UpdateCharacter();
+	// Confirmed called per-character in TGameControl::HandleCharacters
+	// (asm lines 460829-460866), in this order, every frame the scene isn't
+	// a menu.
+	void WalkWay();
+	void UpdateCharacter();
 
-    // Confirmed called for every character (TGameControl::
-    // SetAllCharactersOnDestination, asm lines 460874-460902).
-    void SetOnDestination();
+	// Confirmed called for every character (TGameControl::
+	// SetAllCharactersOnDestination, asm lines 460874-460902).
+	void SetOnDestination();
 
-    // Confirmed called per-character in TGameControl::UpdateRandomTimers
-    // (asm lines 463363-463466).
-    void CheckRandomTimer();
+	// Confirmed called per-character in TGameControl::UpdateRandomTimers
+	// (asm lines 463363-463466).
+	void CheckRandomTimer();
 
-    // Confirmed called on both the outgoing and incoming character when
-    // switching (TGameControl::ChangeCharacter, asm lines 465849-466072).
-    void SetRandomTime();
+	// Confirmed called on both the outgoing and incoming character when
+	// switching (TGameControl::ChangeCharacter, asm lines 465849-466072).
+	void SetRandomTime();
 
-    // Confirmed a by-value std::list<TGInterface*> (TGameControl::
-    // SetInterfaces copies it and iterates the copy, asm lines
-    // 465533-465671).
-    std::list<TGInterface*> GetInterfaces() const;
+	// Confirmed a by-value std::list<TGInterface*> (TGameControl::
+	// SetInterfaces copies it and iterates the copy, asm lines
+	// 465533-465671).
+	std::list<TGInterface *> GetInterfaces() const;
 
-    // Confirmed call shapes only (TGameControl::InitCharacters, asm lines
-    // 466201-466735) - called once per newly-constructed character, in
-    // this order, right after construction.
-    void Init();
-    void AssignToScene(const TVisObjRef& scene, const wxPoint& pos, int walkSpeed);
+	// Confirmed call shapes only (TGameControl::InitCharacters, asm lines
+	// 466201-466735) - called once per newly-constructed character, in
+	// this order, right after construction.
+	void Init();
+	void AssignToScene(const TVisObjRef &scene, const wxPoint &pos, int walkSpeed);
 
 private:
-    TVisObjRef m_ref;
+	TVisObjRef _ref;
 };

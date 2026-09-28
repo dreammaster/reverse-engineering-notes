@@ -1,7 +1,7 @@
 #include "TConsole.h"
 
 bool TConsole::Draw() {
-    return false;
+	return false;
 }
 
 void TConsole::DrawInScene() {

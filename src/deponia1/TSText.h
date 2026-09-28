@@ -17,30 +17,32 @@
 
 class TSText {
 public:
-    virtual ~TSText() = default;
+	virtual ~TSText() = default;
 
-    // Unconfirmed name/purpose - called right before a text is dropped
-    // (ClearCurrentText/ClearObjectText).
-    virtual void Discard();
+	// Unconfirmed name/purpose - called right before a text is dropped
+	// (ClearCurrentText/ClearObjectText).
+	virtual void Discard();
 
-    // A second, distinct unnamed virtual (vtable slot 0x10, vs. Discard's
-    // 0x28) called unconditionally just before Discard() when a text is
-    // removed by direct reference (TGameControl::ClearText, asm lines
-    // 462048-462150) - name/purpose not resolved.
-    virtual void OnCleared();
+	// A second, distinct unnamed virtual (vtable slot 0x10, vs. Discard's
+	// 0x28) called unconditionally just before Discard() when a text is
+	// removed by direct reference (TGameControl::ClearText, asm lines
+	// 462048-462150) - name/purpose not resolved.
+	virtual void OnCleared();
 
-    TVisObjRef GetDataObject() const;
-    const TVisObjRef& GetTarget() const { return m_target; }
+	TVisObjRef GetDataObject() const;
+	const TVisObjRef &GetTarget() const {
+		return _target;
+	}
 
-    // Confirmed called on both a TSText* and list elements of type TGText*
-    // (TGameControl::UpdateTexts, asm lines 456183-456282), gating whether
-    // the text later needs clearing - not reversed beyond that call shape.
-    void CalculateCurrentText();
+	// Confirmed called on both a TSText* and list elements of type TGText*
+	// (TGameControl::UpdateTexts, asm lines 456183-456282), gating whether
+	// the text later needs clearing - not reversed beyond that call shape.
+	void CalculateCurrentText();
 
-    // Confirmed called on m_currentText (TGameControl::SkipCurrentText, asm
-    // lines 456762-456956) - not reversed beyond that call shape.
-    void SkipCurrentText();
+	// Confirmed called on _currentText (TGameControl::SkipCurrentText, asm
+	// lines 456762-456956) - not reversed beyond that call shape.
+	void SkipCurrentText();
 
 private:
-    TVisObjRef m_target;
+	TVisObjRef _target;
 };

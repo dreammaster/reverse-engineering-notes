@@ -15,21 +15,21 @@ class TVisionaireGame;
 
 class TMSavegame {
 public:
-    TMSavegame(bool isNumberedSlot, int slot, int b, int c, TVisionaireGame* game);
-    virtual ~TMSavegame() = default;
+	TMSavegame(bool isNumberedSlot, int slot, int b, int c, TVisionaireGame *game);
+	virtual ~TMSavegame() = default;
 
-    bool Exists() const;
-    bool Delete();
-    static bool SavegameExists();
+	bool Exists() const;
+	bool Delete();
+	static bool SavegameExists();
 
-    // Confirmed call shape only (TGameControl::LoadGame(int), asm lines
-    // 478385-478469) - not reversed beyond that.
-    void CheckVisPaths();
+	// Confirmed call shape only (TGameControl::LoadGame(int), asm lines
+	// 478385-478469) - not reversed beyond that.
+	void CheckVisPaths();
 
-    // Confirmed static (TGameControl::Save, asm lines 462781-462971) -
-    // builds a save name from a scene reference; not reversed beyond that
-    // call shape.
-    static wxString MakeSaveGameName(const TVisObjRef& scene);
-    // Confirmed call shape only (TGameControl::SaveGame, asm line 463047).
-    int GetSavegameNr() const;
+	// Confirmed static (TGameControl::Save, asm lines 462781-462971) -
+	// builds a save name from a scene reference; not reversed beyond that
+	// call shape.
+	static wxString MakeSaveGameName(const TVisObjRef &scene);
+	// Confirmed call shape only (TGameControl::SaveGame, asm line 463047).
+	int GetSavegameNr() const;
 };

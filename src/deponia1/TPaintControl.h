@@ -13,43 +13,43 @@
 #include "WxStub.h"
 
 struct FloatPoint {
-    float x = 0.0f;
-    float y = 0.0f;
+	float x = 0.0f;
+	float y = 0.0f;
 };
 
 class TPaintControl {
 public:
-    virtual ~TPaintControl() = default;
-    virtual void Prepare();
-    virtual void Draw();
+	virtual ~TPaintControl() = default;
+	virtual void Prepare();
+	virtual void Draw();
 
-    // Confirmed called (Deponia_Linux.asm line 457443, from
-    // TGameControl::UpdateAspectRatio) with the resolved width/height as
-    // plain ints - presumably (re)configures the render surface, but its
-    // internal behavior wasn't traced further.
-    void InitControl(int width, int height);
+	// Confirmed called (Deponia_Linux.asm line 457443, from
+	// TGameControl::UpdateAspectRatio) with the resolved width/height as
+	// plain ints - presumably (re)configures the render surface, but its
+	// internal behavior wasn't traced further.
+	void InitControl(int width, int height);
 
-    void SetCurrent();
-    bool IsActive() const;
-    void SetActive(bool active);
-    const wxPoint& GetScrollPos() const;
-    void SetScrollPos(const wxPoint& pos);
-    bool IsScrollable() const;
-    int GetWorktopWidth() const;
-    int GetWorktopHeight() const;
-    const FloatPoint& GetFloatScrollPos() const;
-    void AdjustWindowHorizontal(float amount);
-    void AdjustWindowVertical(float amount);
-    // Confirmed a reference-returning accessor, not a by-value wxSize
-    // (TGameControl::CenterScene dereferences the returned address as
-    // [ptr]/[ptr+4] rather than reading a register pair, Deponia_Linux.asm
-    // lines 460533-460715) - same "logical const, physical mutable
-    // accessor" shape as GetScrollPos() above.
-    const wxSize& GetVisibleSize() const;
+	void SetCurrent();
+	bool IsActive() const;
+	void SetActive(bool active);
+	const wxPoint &GetScrollPos() const;
+	void SetScrollPos(const wxPoint &pos);
+	bool IsScrollable() const;
+	int GetWorktopWidth() const;
+	int GetWorktopHeight() const;
+	const FloatPoint &GetFloatScrollPos() const;
+	void AdjustWindowHorizontal(float amount);
+	void AdjustWindowVertical(float amount);
+	// Confirmed a reference-returning accessor, not a by-value wxSize
+	// (TGameControl::CenterScene dereferences the returned address as
+	// [ptr]/[ptr+4] rather than reading a register pair, Deponia_Linux.asm
+	// lines 460533-460715) - same "logical const, physical mutable
+	// accessor" shape as GetScrollPos() above.
+	const wxSize &GetVisibleSize() const;
 
 private:
-    wxPoint m_scrollPos{};
-    FloatPoint m_floatScrollPos{};
-    wxSize m_visibleSize{};
-    bool m_active = false;
+	wxPoint _scrollPos{};
+	FloatPoint _floatScrollPos{};
+	wxSize _visibleSize{};
+	bool _active = false;
 };

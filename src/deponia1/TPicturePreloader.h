@@ -3,5 +3,5 @@
 
 class TPicturePreloader {
 public:
-    TPicturePreloader() = default;
+	TPicturePreloader() = default;
 };

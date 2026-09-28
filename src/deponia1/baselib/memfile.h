@@ -6,8 +6,8 @@
 
 class TMemoryFile {
 public:
-    TMemoryBuffer& GetBuffer();
+	TMemoryBuffer &GetBuffer();
 
 private:
-    TMemoryBuffer m_buffer;
+	TMemoryBuffer _buffer;
 };

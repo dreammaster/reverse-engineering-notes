@@ -7,9 +7,9 @@
 // implements; SDL_GetTicks (already stubbed for main()) is a reasonable
 // backing clock.
 void TTimer::SetTime() {
-    m_setAt = SDL_GetTicks();
+	_setAt = SDL_GetTicks();
 }
 
 std::int64_t TTimer::GetTime() const {
-    return static_cast<std::int64_t>(SDL_GetTicks()) - m_setAt;
+	return static_cast<std::int64_t>(SDL_GetTicks()) - _setAt;
 }

@@ -11,6 +11,6 @@
 
 class TArgument {
 public:
-    void Set(int value);
-    void Set(const wxPoint& value);
+	void Set(int value);
+	void Set(const wxPoint &value);
 };

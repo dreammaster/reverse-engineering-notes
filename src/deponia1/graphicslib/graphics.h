@@ -16,23 +16,23 @@ class TPreloadedPicManager;
 
 class TGraphicsInterface {
 public:
-    virtual ~TGraphicsInterface() = default;
+	virtual ~TGraphicsInterface() = default;
 
-    TPreloadedPicManager* GetPreloadedPicManager();
-    TSpriteHandle* GetSpriteFromCache(const wxString& name);
+	TPreloadedPicManager *GetPreloadedPicManager();
+	TSpriteHandle *GetSpriteFromCache(const wxString &name);
 
-    // vtable slot 0x90 in the original; called with a TSpriteHandle* whose
-    // refcount just reached zero.
-    virtual void OnSpriteHandleReleased(TSpriteHandle* handle);
+	// vtable slot 0x90 in the original; called with a TSpriteHandle* whose
+	// refcount just reached zero.
+	virtual void OnSpriteHandleReleased(TSpriteHandle *handle);
 
-    // Called from TMasterControl::Draw/Signal/PlayAVI (vtable slots
-    // 0x30/0x38/0x178 there); real parameter meaning not recovered.
-    virtual void SetMatrixMode(bool a, bool b);
-    virtual void ResetMatrix(bool a, bool b);
-    virtual void Flip();
+	// Called from TMasterControl::Draw/Signal/PlayAVI (vtable slots
+	// 0x30/0x38/0x178 there); real parameter meaning not recovered.
+	virtual void SetMatrixMode(bool a, bool b);
+	virtual void ResetMatrix(bool a, bool b);
+	virtual void Flip();
 
 private:
-    TPreloadedPicManager* m_preloadedPicManager = nullptr;
+	TPreloadedPicManager *_preloadedPicManager = nullptr;
 };
 
-extern TGraphicsInterface* graphics;
+extern TGraphicsInterface *graphics;
