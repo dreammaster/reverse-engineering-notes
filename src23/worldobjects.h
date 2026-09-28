@@ -113,4 +113,38 @@ typedef struct {
  */
 bool worldObjectFind(const WorldObjectTable *table, GameKind game, int worldCol, int worldRow, WorldObjectRecord *out);
 
+/*
+ * ProbeFacingTile (yendor2.asm:30915, instruction-identical in
+ * Chapter 3): checks the party's own cell first via worldObjectFind,
+ * then -- only if nothing is there -- the cell one step ahead in the
+ * party's current facing (movementApply(MovementForward, facing)'s
+ * own delta, reused directly here rather than re-deriving the same
+ * North/South/East/West table a second time). Two confirmed callers
+ * share this exact probe (`ApplyEncodedItemEffect`'s `word_33302` bits
+ * `0x1`/`0x40` -- see `interact.h`'s `interactKnock`).
+ *
+ * Unlike the original, which only returns a hit/miss flag plus an
+ * opaque cell pointer (`g_facingTileCellPtr`) neither confirmed caller
+ * ever dereferences, this returns the actual `(worldCol, worldRow)`
+ * and the found `WorldObjectRecord` directly -- both original callers
+ * immediately *re-derive* those same coordinates themselves right
+ * after calling `ProbeFacingTile` (an artifact of its limited
+ * register-based return channel), which this reimplementation has no
+ * reason to reproduce.
+ */
+typedef enum {
+    WorldObjectProbeNone,    /* errorCode 0: nothing at either candidate cell */
+    WorldObjectProbeCurrent, /* errorCode 1: found at the party's own cell */
+    WorldObjectProbeAdjacent /* errorCode 2: found one step ahead in the party's facing */
+} WorldObjectProbeOutcome;
+
+typedef struct {
+    WorldObjectProbeOutcome outcome;
+    int worldCol, worldRow;   /* the cell outcome refers to; == the party's own cell if outcome != Adjacent */
+    WorldObjectRecord object; /* valid only when outcome != WorldObjectProbeNone */
+} WorldObjectProbeResult;
+
+WorldObjectProbeResult worldObjectProbeFacingTile(const WorldObjectTable *table, GameKind game, int partyWorldCol,
+                                                    int partyWorldRow, uint16_t facing);
+
 #endif

@@ -158,6 +158,60 @@ static void testFullDispatch(void) {
     check("full dispatch: no record -> None", interactClassify(NULL, NULL, false, 0, false, false) == InteractOutcomeNone);
 }
 
+static void testWorldObjectBitIndex(void) {
+    WorldObjectRecord door;
+    door.flags = WorldObjectFlagDoor;
+    door.value = 5;
+    checkU32("a door's bit index is its own lock id's", interactWorldObjectBitIndex(GameYendor2, &door),
+             interactLockBitIndex(5));
+
+    WorldObjectRecord curgame;
+    curgame.flags = WorldObjectFlagCurgameRecord;
+    curgame.value = 3;
+    checkU32("a curgame record's bit index is its own curgame id's", interactWorldObjectBitIndex(GameYendor2, &curgame),
+             interactCurgameBitIndex(GameYendor2, 3));
+}
+
+static void testKnock(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+
+    WorldObjectRecord door;
+    door.flags = WorldObjectFlagDoor;
+    door.value = 12;
+    LockRecord lock;
+    memset(&lock, 0, sizeof(lock));
+    lock.flags = LockFlagMagical;
+
+    check("a magical, not-yet-unlocked door: knock succeeds",
+          interactKnock(&save, GameYendor2, &door, &lock, false, 0, false, false));
+    check("...and marks that lock's own bit", interactBitmapTest(&save, interactLockBitIndex(12)));
+
+    saveGameInit(&save, GameYendor2);
+    check("an already-unlocked door: knock fails (nothing to do)",
+          !interactKnock(&save, GameYendor2, &door, &lock, true, 0, false, false));
+    check("...and leaves the bit clear", !interactBitmapTest(&save, interactLockBitIndex(12)));
+
+    saveGameInit(&save, GameYendor2);
+    lock.flags = LockFlagUnknown40;
+    check("a non-magical door (flag 0x40 instead): knock fails",
+          !interactKnock(&save, GameYendor2, &door, &lock, false, 0, false, false));
+
+    saveGameInit(&save, GameYendor2);
+    WorldObjectRecord curgame;
+    curgame.flags = WorldObjectFlagCurgameRecord;
+    curgame.value = 4;
+    check("a curgame record with flag 0x20 (fallback B), not yet triggered: knock succeeds",
+          interactKnock(&save, GameYendor2, &curgame, NULL, false, 0x20, false, false));
+    check("...and marks that curgame id's own bit", interactBitmapTest(&save, interactCurgameBitIndex(GameYendor2, 4)));
+
+    saveGameInit(&save, GameYendor2);
+    check("a curgame record with flag 0x10 (a different outcome): knock fails",
+          !interactKnock(&save, GameYendor2, &curgame, NULL, false, 0x10, false, false));
+
+    check("no object at all: knock fails", !interactKnock(&save, GameYendor2, NULL, NULL, false, 0, false, false));
+}
+
 int main(void) {
     testBitmap();
     testSelectBranch();
@@ -165,6 +219,8 @@ int main(void) {
     testClassifyCurgame();
     testClassifyMonsterSpawn();
     testFullDispatch();
+    testWorldObjectBitIndex();
+    testKnock();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

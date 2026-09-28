@@ -698,6 +698,74 @@ icon-bar entirely) and the other ~17 branches (world-state timers, a
 corridor/ranged-attack path, held-item cursor updates, weather
 effects).
 
+**Surveyed several more branches, 2026-09-29, and found one more
+tractable one**: the remaining branches split cleanly into "genuinely
+entangled with a separate, not-yet-touched subsystem" and one clean
+win.
+- **Bit `0x80`** (world-state timers): sets one of 6 duration counters
+  (`word_36C93`..`word_36C9D`) and a matching bit in `word_36C79` —
+  confirmed as the same 6 counters `TickWorldAilments` sums for
+  ambient-lighting darkening, and the same overloaded bitfield the
+  timed-status-ailment system (Diseased/Poisoned/etc.) and the
+  day/night ambient-lighting table builder both also read/write for
+  unrelated purposes. Genuinely tangled with a whole not-yet-scoped
+  "world ailments / weather / lighting" subsystem
+  (`TickWorldAilments`, the ambient-lighting table builder, the
+  day/night cycle) — not a good target in isolation. **A real hazard
+  found while reading it**: the index dispatch (`bx` = `word_332E4`,
+  compared against `1`..`6`) has no `else` arm — an index outside
+  `1..6` falls through into an infinite loop (`cmp bx,6 / jnz
+  loc_2C2B0`, which re-enters the `cmp bx,3` test with `bx` unchanged).
+  Presumably unreachable in practice (real item/spell data always
+  encodes a valid index), not reproduced.
+- **Bit `0x10`** (create/conjure an item onto the cursor): touches
+  `g_heldItemType`/`word_31948`/`word_3194A`/`word_3194C`, the "item
+  currently held on the mouse cursor" state — a pervasive UI
+  drag-and-drop system read/written by ~40 other functions across
+  inventory, container and shop screens. Not a self-contained piece;
+  needs that whole system as a prerequisite, not a good target either.
+- **Bit `0x4`** (a corridor/ranged-attack path): confirmed to match
+  `roadmap.md`'s existing scoping exactly — a 4-direction dispatch on
+  `g_partyFacing` feeding `ApplyDamageToMapMonster`, which still needs
+  `ApplyAttackToTarget` traced first.
+- **Bit `0x2`** ("rest here"): just calls the already-named, not-yet-
+  reimplemented `RestPartyAndAdvanceClock` (a whole separate UI-heavy
+  top-level command) with a couple of flag/wait wrappers around it —
+  nothing to add here ahead of that function's own pass.
+- **Bit `0x1`, reimplemented**: a "Knock"-style effect. Probes the
+  party's own cell, then the cell one step ahead in their facing, via
+  a new shared primitive, `ProbeFacingTile` (`yendor2.asm:30915`,
+  instruction-identical in Chapter 3) — reimplemented as
+  `worldObjectProbeFacingTile` in `src23/worldobjects.c`/`.h`, reusing
+  `worldObjectFind` for the lookup itself and `movementApply`'s own
+  forward-direction delta rather than re-deriving the same
+  North/South/East/West table a third time. Whichever cell has a world
+  object there gets classified via the already-existing
+  `interactClassify`, and if the outcome is `InteractOutcomeLockMagical`
+  or `InteractOutcomeCurgameFallbackB`, the matching bit in the shared
+  "already unlocked/triggered" bitmap is set — the exact same write
+  `UnlockDoorCommand` performs on an ordinary key-based unlock.
+  Resolving this also cleared up a small worry from tracing it: the
+  original's own `g_lockUnlockedMask`/`g_lockUnlockedAccumulator`
+  scratch globals (seen throughout `UseAbilityCommand` and elsewhere)
+  turned out to be nothing more than a *cached single byte* of the
+  same `SaveSectionEventState` bitmap `interactBitmapTest`/`Set`
+  already model — set by `LoadLockState`/`LoadCurgameRecord` themselves
+  as part of loading a record — not a separate mechanism, so no new
+  bitmap semantics were needed. Reimplemented as `interactKnock` (plus
+  a small reusable `interactWorldObjectBitIndex` helper) in
+  `src23/interact.c`/`.h`. A sibling branch, bit `0x40`
+  (`yendor2.asm:51852`), shares this exact probe-then-classify-then-mark
+  shape but targets a different outcome set
+  (`LockFlag40`/`LockPriced`/`CurgameFlag40`) and adds a UI text-column
+  choice on top — left for a future pass, since the decision-logic
+  difference is just the qualifying-outcome set. Tests in
+  `tests/test_worldobjects.c` (all 4 probe outcomes, including that the
+  returned coordinates are the *facing* cell's, not the party's own,
+  when the first probe misses) and `tests/test_interact.c` (both door
+  and curgame-record cases, both the qualifying and non-qualifying
+  outcome, the already-resolved case, and no object at all).
+
 **Flagged, not renamed**: `word_33302`/`word_33304`/`word_33306` (3
 consecutive words) are exhaustively bit-tested — every bit from `1`
 through `0x8000` is checked against at least one of them somewhere —

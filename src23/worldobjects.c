@@ -65,3 +65,26 @@ bool worldObjectFind(const WorldObjectTable *table, GameKind game, int worldCol,
     }
     return false;
 }
+
+WorldObjectProbeResult worldObjectProbeFacingTile(const WorldObjectTable *table, GameKind game, int partyWorldCol,
+                                                    int partyWorldRow, uint16_t facing) {
+    WorldObjectProbeResult result;
+    result.outcome = WorldObjectProbeNone;
+    result.worldCol = partyWorldCol;
+    result.worldRow = partyWorldRow;
+
+    if (worldObjectFind(table, game, partyWorldCol, partyWorldRow, &result.object)) {
+        result.outcome = WorldObjectProbeCurrent;
+        return result;
+    }
+
+    MovementResult forward = movementApply(MovementForward, facing);
+    int col = partyWorldCol + forward.deltaCol;
+    int row = partyWorldRow + forward.deltaRow;
+    if (worldObjectFind(table, game, col, row, &result.object)) {
+        result.outcome = WorldObjectProbeAdjacent;
+        result.worldCol = col;
+        result.worldRow = row;
+    }
+    return result;
+}

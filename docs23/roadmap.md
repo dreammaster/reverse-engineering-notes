@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-26, resolved: two of ApplyEncodedItemEffect's ~19 branches, plus the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-29, resolved: 3 of ApplyEncodedItemEffect's ~19 branches, plus the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -804,7 +804,36 @@ consumers, if any.
    dispatch decision itself (which of `word_33302`'s ~19 bits fires at
    all; whether `word_33300`'s own `0x800`/`0x1000` bits -- read from an
    untraced caller context -- select this path versus skipping the
-   icon-bar entirely). **Corrected 2026-09-25**: one branch
+   icon-bar entirely).
+   **A third branch reimplemented, 2026-09-29**: bit `0x1`, a
+   "Knock"-style auto-unlock. Probes the party's own cell then the cell
+   one step ahead in facing via a new shared primitive,
+   `worldObjectProbeFacingTile` (`src23/worldobjects.c`/`.h`, `ProbeFacingTile`
+   in the original), reusing `worldObjectFind` and `movementApply`'s own
+   forward delta rather than re-deriving the direction table a third
+   time; classifies whatever's found via the already-existing
+   `interactClassify` and, for `InteractOutcomeLockMagical`/
+   `InteractOutcomeCurgameFallbackB`, marks it unlocked/triggered via
+   `interactBitmapSet` -- reimplemented as `interactKnock` in
+   `src23/interact.c`/`.h`. Tests in `test_worldobjects.c`/`test_interact.c`;
+   all 18 suites pass. **Surveyed the rest of the function's branches
+   this round too, and found the remaining ones genuinely need
+   prerequisite subsystems this project hasn't started, not just more
+   reading**: bit `0x80` (world-state timers) is tangled into a whole
+   not-yet-scoped "world ailments/weather/lighting" system
+   (`TickWorldAilments`, day/night ambient lighting) -- also found a
+   real infinite-loop hazard there for an out-of-range index, presumably
+   unreachable with real data, not reproduced. Bit `0x10` (conjure an
+   item onto the held-item cursor) needs the pervasive
+   `g_heldItemType`/held-item UI system (~40 other call sites) as a
+   prerequisite. Bit `0x2` ("rest here") is a thin wrapper around the
+   still-unimplemented `RestPartyAndAdvanceClock`. Bit `0x4` (a
+   corridor/ranged-attack path) confirmed to match this candidate's
+   existing scoping exactly -- still needs `ApplyAttackToTarget` traced.
+   A sibling of the newly-reimplemented bit `0x1`, bit `0x40`, shares
+   its exact probe-then-classify-then-mark shape but targets a
+   different outcome set plus a UI text-column choice -- left for a
+   future pass, only the outcome set differs. **Corrected 2026-09-25**: one branch
    (`yendor2.asm:51586`) previously described in this project's own
    docs and memory as a "banish the monster on the facing tile"
    mechanic is actually a teleportation-style effect that relocates

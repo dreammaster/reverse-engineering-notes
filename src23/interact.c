@@ -101,3 +101,22 @@ InteractOutcome interactClassify(const WorldObjectRecord *object, const LockReco
         return InteractOutcomeNone;
     }
 }
+
+unsigned interactWorldObjectBitIndex(GameKind game, const WorldObjectRecord *object) {
+    if (object->flags & WorldObjectFlagDoor) {
+        return interactLockBitIndex(object->value);
+    }
+    return interactCurgameBitIndex(game, object->value);
+}
+
+bool interactKnock(SaveGame *save, GameKind game, const WorldObjectRecord *object, const LockRecord *lock,
+                    bool lockAlreadyUnlocked, uint16_t curgameFlags, bool curgameAlreadyTriggered,
+                    bool monsterAlreadySpawned) {
+    InteractOutcome outcome = interactClassify(object, lock, lockAlreadyUnlocked, curgameFlags,
+                                                curgameAlreadyTriggered, monsterAlreadySpawned);
+    if (outcome != InteractOutcomeLockMagical && outcome != InteractOutcomeCurgameFallbackB) {
+        return false;
+    }
+    interactBitmapSet(save, interactWorldObjectBitIndex(game, object));
+    return true;
+}

@@ -1315,6 +1315,17 @@ independent per-recipient check on top. Reimplemented as
 in `src23/combat.c`, tested directly against both games in
 `tests/test_combat.c`.
 
+## `ApplyEncodedItemEffect`'s "Knock" branch (`ProbeFacingTile`): no behavioral difference found
+
+`ProbeFacingTile` and the bit `0x1` branch that consumes it are both
+instruction-identical between the games — checked directly,
+`yendor2.asm:30915`/`:51797` vs. `yendor3.asm:30067`/`:52713`. Same
+two-probe structure (party's own cell, then one step ahead in facing),
+same `InteractOutcomeLockMagical`/`InteractOutcomeCurgameFallbackB`
+qualifying-outcome pair, same unlocked-bitmap write. Reimplemented once
+as `worldObjectProbeFacingTile` (`src23/worldobjects.c`) and
+`interactKnock` (`src23/interact.c`), shared by both games.
+
 ## Equipment corrosion classification: no behavioral difference found
 
 `ClassifyItemServiceTier` and `GetClassifiedItemStatField` are

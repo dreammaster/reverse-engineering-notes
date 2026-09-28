@@ -9739,6 +9739,82 @@ surfaced from reading both games' disassembly directly rather than
 inferring from a description — worth remembering as a variant of this
 project's recurring "check both games directly" lesson.
 
+## 2026-09-29 session: surveying `ApplyEncodedItemEffect`'s remaining branches, and one more clean win
+
+Picked up right where the last session left off: `ApplyEncodedItemEffect`
+still has ~17 unreimplemented branches out of its ~19-way dispatch.
+Rather than pick one at random, this session read the opening of each
+remaining branch far enough to judge whether it was self-contained
+before committing to a full trace — a more efficient way to scope a
+function this size than fully tracing branches one at a time and
+discovering entanglement only after the fact.
+
+That survey found most of what's left is genuinely blocked on
+prerequisite subsystems this project hasn't touched yet, not just
+unread code:
+
+- **World-state timers** (bit `0x80`): sets 6 duration counters that
+  turn out to feed `TickWorldAilments`' ambient-lighting darkening —
+  the same overloaded bitfield (`word_36C79`) is *also* used by a
+  separate timed-status-ailment system (Diseased/Poisoned/etc.) and the
+  day/night lighting table builder. A whole "world ailments/weather"
+  module's worth of prerequisite work, not a one-branch add. Found a
+  genuine hazard while reading it, worth remembering even without
+  reimplementing the branch: the effect-index dispatch has no `else`
+  arm, so an out-of-range index would infinite-loop in the original —
+  presumably never reached with real data, not reproduced.
+- **Held-item creation** (bit `0x10`): touches `g_heldItemType` and its
+  3 companion globals, the "item on the mouse cursor" state — a system
+  with roughly 40 other call sites across inventory/container/shop
+  screens. Reimplementing just this branch's use of it in isolation
+  would be pointless; nothing else in `src23` could exercise it yet.
+- **"Rest here"** (bit `0x2`): a thin wrapper around
+  `RestPartyAndAdvanceClock`, a whole separate UI-heavy top-level
+  command not started.
+- **Corridor/ranged attack** (bit `0x4`): read closely enough to
+  confirm it matches `roadmap.md`'s existing scoping exactly — still
+  blocked on `ApplyAttackToTarget`.
+
+One branch broke the pattern, though: bit `0x1` turned out to be a
+clean, self-contained "Knock"-style auto-unlock, and — unusually for
+this function — almost everything it needs already exists. It probes
+the party's own cell and then the cell one step ahead in their facing
+via `ProbeFacingTile`, which itself turned out to be nothing more than
+two calls to `FindObjectAtPosition` (already `worldobjects.c`'s
+`worldObjectFind`) at two candidate positions — the second position
+computed via the exact same North/South/East/West delta table
+`movement.c`'s own `movementApply(MovementForward, ...)` already
+encodes, reused directly rather than re-derived a third time.
+Whichever cell has a world object gets classified via the
+already-existing `interactClassify`, and for two specific outcomes
+(a magically-locked door, or a curgame record's fallback-B state) the
+matching bit in the shared "already unlocked/triggered" bitmap gets
+set — the same write `UnlockDoorCommand` already performs for an
+ordinary key-based unlock.
+
+Tracing this also resolved a small, previously-unexamined worry from
+reading `UseAbilityCommand` weeks ago: a pair of scratch globals,
+`g_lockUnlockedMask`/`g_lockUnlockedAccumulator`, that show up
+throughout the lock/curgame code. Reading their producer
+(`LoadLockState`/`LoadCurgameRecord`) confirmed they're just a
+*cached single byte* of the same `SaveSectionEventState` bitmap this
+project's own `interactBitmapTest`/`Set` already model — not a second,
+parallel bookkeeping mechanism that would need its own reimplementation.
+One less loose end than it looked like at first glance.
+
+New: `worldObjectProbeFacingTile` in `src23/worldobjects.c`/`.h`,
+`interactKnock` (plus a small `interactWorldObjectBitIndex` helper) in
+`src23/interact.c`/`.h`. Confirmed both `ProbeFacingTile` and this
+branch are instruction-identical in Chapter 3 by reading `yendor3.asm`
+directly. A sibling branch (bit `0x40`) shares the exact same
+probe-then-classify-then-mark shape but targets a different outcome
+set and adds a UI text-column choice on top — noted for a future pass
+rather than implemented, since the only *decision-logic* difference is
+which outcomes qualify. Tests in `test_worldobjects.c` (all 4 probe
+outcomes) and `test_interact.c` (both record kinds, qualifying and
+non-qualifying outcomes, already-resolved, and no object at all). Full
+suite rebuilt, 18/18 passing.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -114,6 +114,33 @@ static void testSyntheticFind(void) {
     check("a row just outside rowMax is out of bounds", !worldObjectFind(&g_table, GameYendor2, 40, 0x78, &rec));
 }
 
+static void testProbeFacingTile(void) {
+    WorldObjectProbeResult result;
+
+    /* Party standing directly on the door at (40, 30): hits immediately, any facing. */
+    result = worldObjectProbeFacingTile(&g_table, GameYendor2, 40, 30, SaveFacingNorth);
+    check("standing on an occupied cell: outcome Current", result.outcome == WorldObjectProbeCurrent);
+    check("...same coordinates", result.worldCol == 40 && result.worldRow == 30);
+    check("...the record found there", result.object.flags == WorldObjectFlagDoor && result.object.value == 5);
+
+    /* Party at (41, 30) (empty), facing West -> one step ahead is (40, 30), the door. */
+    result = worldObjectProbeFacingTile(&g_table, GameYendor2, 41, 30, SaveFacingWest);
+    check("empty cell, facing toward an occupied one: outcome Adjacent", result.outcome == WorldObjectProbeAdjacent);
+    check("...coordinates are the facing-adjacent cell, not the party's own",
+          result.worldCol == 40 && result.worldRow == 30);
+    check("...the record found there", result.object.flags == WorldObjectFlagDoor && result.object.value == 5);
+
+    /* Party at (42, 24) (empty), facing West -> one step ahead is (41, 24), the 0x2000-flagged record. */
+    result = worldObjectProbeFacingTile(&g_table, GameYendor2, 42, 24, SaveFacingWest);
+    check("adjacent probe reaches column 1's own record too", result.outcome == WorldObjectProbeAdjacent &&
+                                                                    result.object.flags == WorldObjectFlagUnknown2000 &&
+                                                                    result.object.value == 7);
+
+    /* Party at (42, 30) (empty), facing North -> one step ahead is (42, 29), also empty: nothing at all. */
+    result = worldObjectProbeFacingTile(&g_table, GameYendor2, 42, 30, SaveFacingNorth);
+    check("nothing at the party's own cell or one step ahead: outcome None", result.outcome == WorldObjectProbeNone);
+}
+
 static bool loadReal(GameKind game, const char *envName, const char *fallbackDir, WorldObjectTable *outTable) {
     char path[512];
     const char *dir = getenv(envName);
@@ -217,6 +244,7 @@ static void testRealYendor3(void) {
 int main(void) {
     buildSyntheticTable();
     testSyntheticFind();
+    testProbeFacingTile();
     testRealYendor2();
     testRealYendor3();
 

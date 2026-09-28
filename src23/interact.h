@@ -133,4 +133,46 @@ InteractOutcome interactClassifyMonsterSpawn(bool alreadySpawned);
 InteractOutcome interactClassify(const WorldObjectRecord *object, const LockRecord *lock, bool lockAlreadyUnlocked,
                                   uint16_t curgameFlags, bool curgameAlreadyTriggered, bool monsterAlreadySpawned);
 
+/*
+ * The bitIndex interactBitmapTest/Set need for a world object: its own
+ * lock id (interactLockBitIndex) if it's a door, its curgame id
+ * (interactCurgameBitIndex) otherwise -- the exact same shared
+ * "already unlocked/triggered" bitmap either kind of record uses (see
+ * this header's own top-of-file note). object must select
+ * InteractBranchLock or InteractBranchCurgame; other branches have no
+ * bit to compute.
+ */
+unsigned interactWorldObjectBitIndex(GameKind game, const WorldObjectRecord *object);
+
+/*
+ * ApplyEncodedItemEffect's word_33302 bit 0x1 branch (yendor2.asm:51797,
+ * instruction-identical in Chapter 3) -- a "Knock"-style effect that
+ * auto-unlocks a magically-locked door or resolves a curgame record's
+ * fallback-B state at the world cell worldobjects.h's
+ * worldObjectProbeFacingTile finds (the party's own cell, or the cell
+ * one step ahead in their facing). Classifies via interactClassify
+ * (given lock/curgame state the caller already loaded, matching that
+ * function's own contract -- loading either kind of record isn't
+ * wired up end-to-end yet, see lockcatalog.h's "LoadCurgameRecord"
+ * note) and, only for InteractOutcomeLockMagical or
+ * InteractOutcomeCurgameFallbackB, marks the matching bit via
+ * interactBitmapSet -- the same write UnlockDoorCommand performs on an
+ * ordinary key-based unlock. Returns false (no bitmap write) for every
+ * other outcome, including object == NULL (interactClassify's own
+ * InteractBranchNone case).
+ *
+ * **A sibling not reimplemented here**: word_33302 bit 0x40
+ * (yendor2.asm:51852) shares this exact probe-then-classify-then-mark
+ * shape but targets a different outcome set
+ * (InteractOutcomeLockFlag40/LockPriced/CurgameFlag40) and additionally
+ * branches on `g_lockStatusFlags` bit 0x80 to choose between 2 UI text
+ * columns (`ShowAbilityDescriptionColumn`) -- likely a related but
+ * distinct spell/item effect (e.g. "Remove Curse" alongside this one's
+ * "Knock"). Left for a future pass; the qualifying-outcome set is the
+ * only real difference in the decision logic.
+ */
+bool interactKnock(SaveGame *save, GameKind game, const WorldObjectRecord *object, const LockRecord *lock,
+                    bool lockAlreadyUnlocked, uint16_t curgameFlags, bool curgameAlreadyTriggered,
+                    bool monsterAlreadySpawned);
+
 #endif
