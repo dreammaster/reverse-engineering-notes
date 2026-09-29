@@ -109,14 +109,28 @@ unsigned interactWorldObjectBitIndex(GameKind game, const WorldObjectRecord *obj
     return interactCurgameBitIndex(game, object->value);
 }
 
+bool interactResolveIfOutcome(SaveGame *save, GameKind game, const WorldObjectRecord *object, const LockRecord *lock,
+                               bool lockAlreadyUnlocked, uint16_t curgameFlags, bool curgameAlreadyTriggered,
+                               bool monsterAlreadySpawned, const InteractOutcome *qualifying,
+                               unsigned qualifyingCount) {
+    InteractOutcome outcome = interactClassify(object, lock, lockAlreadyUnlocked, curgameFlags,
+                                                curgameAlreadyTriggered, monsterAlreadySpawned);
+    if (outcome == InteractOutcomeNone) {
+        return false;
+    }
+    for (unsigned i = 0; i < qualifyingCount; i++) {
+        if (outcome == qualifying[i]) {
+            interactBitmapSet(save, interactWorldObjectBitIndex(game, object));
+            return true;
+        }
+    }
+    return false;
+}
+
 bool interactKnock(SaveGame *save, GameKind game, const WorldObjectRecord *object, const LockRecord *lock,
                     bool lockAlreadyUnlocked, uint16_t curgameFlags, bool curgameAlreadyTriggered,
                     bool monsterAlreadySpawned) {
-    InteractOutcome outcome = interactClassify(object, lock, lockAlreadyUnlocked, curgameFlags,
-                                                curgameAlreadyTriggered, monsterAlreadySpawned);
-    if (outcome != InteractOutcomeLockMagical && outcome != InteractOutcomeCurgameFallbackB) {
-        return false;
-    }
-    interactBitmapSet(save, interactWorldObjectBitIndex(game, object));
-    return true;
+    static const InteractOutcome qualifying[] = {InteractOutcomeLockMagical, InteractOutcomeCurgameFallbackB};
+    return interactResolveIfOutcome(save, game, object, lock, lockAlreadyUnlocked, curgameFlags,
+                                     curgameAlreadyTriggered, monsterAlreadySpawned, qualifying, 2);
 }

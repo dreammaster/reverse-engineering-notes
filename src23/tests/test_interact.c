@@ -212,6 +212,52 @@ static void testKnock(void) {
     check("no object at all: knock fails", !interactKnock(&save, GameYendor2, NULL, NULL, false, 0, false, false));
 }
 
+/* ApplyEncodedItemEffect's word_33302 bit 0x40 sibling's own qualifying set, exercised via
+ * interactResolveIfOutcome directly rather than a dedicated wrapper (see interact.h). */
+static void testResolveIfOutcomeBit0x40QualifyingSet(void) {
+    static const InteractOutcome qualifying[] = {InteractOutcomeLockFlag40, InteractOutcomeLockPriced,
+                                                  InteractOutcomeCurgameFlag40};
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+
+    WorldObjectRecord door;
+    door.flags = WorldObjectFlagDoor;
+    door.value = 7;
+    LockRecord lock;
+    memset(&lock, 0, sizeof(lock));
+    lock.flags = LockFlagUnknown40;
+
+    check("a flag-0x40 door: resolves", interactResolveIfOutcome(&save, GameYendor2, &door, &lock, false, 0, false,
+                                                                   false, qualifying, 3));
+    check("...and marks that lock's own bit", interactBitmapTest(&save, interactLockBitIndex(7)));
+
+    saveGameInit(&save, GameYendor2);
+    lock.flags = 0;
+    lock.price = 50;
+    check("a priced door (no magic/0x40): resolves too", interactResolveIfOutcome(&save, GameYendor2, &door, &lock,
+                                                                                   false, 0, false, false, qualifying,
+                                                                                   3));
+
+    saveGameInit(&save, GameYendor2);
+    lock.flags = LockFlagMagical;
+    lock.price = 0;
+    check("a magical door: doesn't qualify for this set (that's Knock's set instead)",
+          !interactResolveIfOutcome(&save, GameYendor2, &door, &lock, false, 0, false, false, qualifying, 3));
+
+    saveGameInit(&save, GameYendor2);
+    WorldObjectRecord curgame;
+    curgame.flags = WorldObjectFlagCurgameRecord;
+    curgame.value = 9;
+    check("a curgame record with flag 0x40: resolves",
+          interactResolveIfOutcome(&save, GameYendor2, &curgame, NULL, false, 0x40, false, false, qualifying, 3));
+    check("...and marks that curgame id's own bit", interactBitmapTest(&save, interactCurgameBitIndex(GameYendor2, 9)));
+
+    saveGameInit(&save, GameYendor2);
+    check("a curgame record with flag 0x20 (Knock's own fallback-B): doesn't qualify for this set",
+          !interactResolveIfOutcome(&save, GameYendor2, &curgame, NULL, false, 0x20, false, false, qualifying, 3));
+}
+
 int main(void) {
     testBitmap();
     testSelectBranch();
@@ -221,6 +267,7 @@ int main(void) {
     testFullDispatch();
     testWorldObjectBitIndex();
     testKnock();
+    testResolveIfOutcomeBit0x40QualifyingSet();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

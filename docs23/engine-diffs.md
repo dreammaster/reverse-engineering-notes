@@ -1326,6 +1326,14 @@ qualifying-outcome pair, same unlocked-bitmap write. Reimplemented once
 as `worldObjectProbeFacingTile` (`src23/worldobjects.c`) and
 `interactKnock` (`src23/interact.c`), shared by both games.
 
+**Extended, same round**: the sibling bit `0x40` branch is
+instruction-identical too — checked directly, `yendor2.asm:51852`
+vs. `yendor3.asm:52768`. Same probe, same 3-outcome qualifying set
+(`InteractOutcomeLockFlag40`/`LockPriced`/`CurgameFlag40`), same
+unlocked-bitmap write, only its own UI text-column choice differs by
+address (not behavior). Both branches now share one implementation,
+`interactResolveIfOutcome`, parameterized by qualifying outcome set.
+
 ## Equipment corrosion classification: no behavioral difference found
 
 `ClassifyItemServiceTier` and `GetClassifiedItemStatField` are

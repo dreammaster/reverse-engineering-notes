@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-29, resolved: 3 of ApplyEncodedItemEffect's ~19 branches, plus the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-29, resolved: 4 of ApplyEncodedItemEffect's ~19 branches, plus the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -830,10 +830,20 @@ consumers, if any.
    still-unimplemented `RestPartyAndAdvanceClock`. Bit `0x4` (a
    corridor/ranged-attack path) confirmed to match this candidate's
    existing scoping exactly -- still needs `ApplyAttackToTarget` traced.
-   A sibling of the newly-reimplemented bit `0x1`, bit `0x40`, shares
-   its exact probe-then-classify-then-mark shape but targets a
-   different outcome set plus a UI text-column choice -- left for a
-   future pass, only the outcome set differs. **Corrected 2026-09-25**: one branch
+   **A fourth branch reimplemented, same round**: bit `0x40`, the
+   sibling of bit `0x1` flagged above -- confirmed instruction-identical
+   in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark
+   shape, differing only in its qualifying outcome set
+   (`LockFlag40`/`LockPriced`/`CurgameFlag40` instead of
+   `LockMagical`/`CurgameFallbackB`) and a UI-only text-column choice
+   (not modeled). Rather than a second named wrapper, `interactKnock`
+   was refactored onto a shared, outcome-set-parameterized primitive,
+   `interactResolveIfOutcome` (`src23/interact.c`/`.h`), that bit
+   `0x40` uses directly -- deliberately left unwrapped since this
+   project doesn't have a confident narrative for what unifies its 3
+   qualifying outcomes into one spell/item effect. Tests in
+   `test_interact.c`/`test_worldobjects.c`; all 18 suites pass.
+   **Corrected 2026-09-25**: one branch
    (`yendor2.asm:51586`) previously described in this project's own
    docs and memory as a "banish the monster on the facing tile"
    mechanic is actually a teleportation-style effect that relocates

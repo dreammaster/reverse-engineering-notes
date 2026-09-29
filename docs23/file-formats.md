@@ -758,13 +758,23 @@ win.
   (`yendor2.asm:51852`), shares this exact probe-then-classify-then-mark
   shape but targets a different outcome set
   (`LockFlag40`/`LockPriced`/`CurgameFlag40`) and adds a UI text-column
-  choice on top — left for a future pass, since the decision-logic
-  difference is just the qualifying-outcome set. Tests in
-  `tests/test_worldobjects.c` (all 4 probe outcomes, including that the
-  returned coordinates are the *facing* cell's, not the party's own,
-  when the first probe misses) and `tests/test_interact.c` (both door
-  and curgame-record cases, both the qualifying and non-qualifying
-  outcome, the already-resolved case, and no object at all).
+  choice on top (`g_lockStatusFlags` bit 0x80 selecting between 2 text
+  IDs via `ShowAbilityDescriptionColumn`, pure UI, not modeled). Since
+  the only *decision-logic* difference between the two branches is
+  which outcomes qualify, `interactKnock` was refactored onto a shared
+  primitive, `interactResolveIfOutcome(save, game, object, lock,
+  lockAlreadyUnlocked, curgameFlags, curgameAlreadyTriggered,
+  monsterAlreadySpawned, qualifying, qualifyingCount)`, that bit 0x40
+  can call directly with its own outcome set — deliberately not given
+  its own named wrapper the way bit 0x1 got `interactKnock`, since this
+  project doesn't have a confident read on what narratively unifies an
+  unconfirmed lock flag, a priced lock, and an unrelated curgame flag
+  into one spell/item effect (unlike "Knock," which reads cleanly).
+  Tests in `tests/test_worldobjects.c` (all 4 probe outcomes, including
+  that the returned coordinates are the *facing* cell's, not the
+  party's own, when the first probe misses) and `tests/test_interact.c`
+  (both door and curgame-record cases for both outcome sets, the
+  already-resolved case, and no object at all).
 
 **Flagged, not renamed**: `word_33302`/`word_33304`/`word_33306` (3
 consecutive words) are exhaustively bit-tested — every bit from `1`

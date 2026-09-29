@@ -9815,6 +9815,31 @@ outcomes) and `test_interact.c` (both record kinds, qualifying and
 non-qualifying outcomes, already-resolved, and no object at all). Full
 suite rebuilt, 18/18 passing.
 
+### Session update (continued): the bit `0x40` sibling picked up too, generalizing `interactKnock`
+
+Since the previous section left bit `0x40` noted but unimplemented
+purely because it "shares the exact same shape" as bit `0x1`, the
+obvious next step was to actually confirm that claim by reading
+`yendor3.asm`'s own copy directly rather than assuming — instruction-
+identical, same as bit `0x1`. With that confirmed, implementing it was
+mechanical: refactored `interactKnock` onto a new shared primitive,
+`interactResolveIfOutcome`, parameterized by the qualifying outcome
+set, and had bit `0x40` call it directly with its own 3-outcome set
+rather than writing a second near-duplicate function. Deliberately
+didn't give bit `0x40` its own named wrapper the way `interactKnock`
+got one — unlike "Knock," which reads as an obviously coherent spell
+effect, this project doesn't have a confident story for what
+narratively unifies an unconfirmed lock flag, a priced lock, and an
+unrelated curgame flag into one spell/item effect, and inventing a
+name to fit would be guessing dressed up as documentation.
+
+Existing `interactKnock` tests needed no changes (the refactor
+preserves its exact public behavior); added a new test exercising
+`interactResolveIfOutcome` directly with bit `0x40`'s own outcome set,
+including that a `Knock`-qualifying outcome (a magical door) correctly
+does *not* qualify for this different set. Full suite rebuilt, 18/18
+passing.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

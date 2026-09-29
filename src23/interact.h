@@ -145,31 +145,41 @@ InteractOutcome interactClassify(const WorldObjectRecord *object, const LockReco
 unsigned interactWorldObjectBitIndex(GameKind game, const WorldObjectRecord *object);
 
 /*
+ * The shared "classify, and if the outcome is one of a caller-supplied
+ * set, mark the matching bit" shape both of ApplyEncodedItemEffect's
+ * word_33302 bit 0x1 and bit 0x40 branches reduce to (see
+ * interactKnock below for bit 0x1's own fixed outcome set; bit 0x40,
+ * yendor2.asm:51852, instruction-identical in Chapter 3, is this same
+ * shape with qualifying = {InteractOutcomeLockFlag40,
+ * InteractOutcomeLockPriced, InteractOutcomeCurgameFlag40} -- not
+ * given its own named wrapper here since, unlike "Knock", this
+ * project doesn't have a confident read on what unifies an unconfirmed
+ * lock flag, a priced lock, and an unrelated curgame flag into one
+ * spell/item effect; bit 0x40's own UI-only addition, a text-column
+ * choice via ShowAbilityDescriptionColumn, isn't modeled either way).
+ * Classifies via interactClassify (given lock/curgame state the
+ * caller already loaded, matching that function's own contract --
+ * loading either kind of record isn't wired up end-to-end yet, see
+ * lockcatalog.h's "LoadCurgameRecord" note) and, only when the result
+ * is in qualifying, marks the matching bit via interactBitmapSet --
+ * the same write UnlockDoorCommand performs on an ordinary key-based
+ * unlock. Returns false (no bitmap write) for InteractOutcomeNone or
+ * any non-qualifying outcome, including object == NULL
+ * (interactClassify's own InteractBranchNone case).
+ */
+bool interactResolveIfOutcome(SaveGame *save, GameKind game, const WorldObjectRecord *object, const LockRecord *lock,
+                               bool lockAlreadyUnlocked, uint16_t curgameFlags, bool curgameAlreadyTriggered,
+                               bool monsterAlreadySpawned, const InteractOutcome *qualifying,
+                               unsigned qualifyingCount);
+
+/*
  * ApplyEncodedItemEffect's word_33302 bit 0x1 branch (yendor2.asm:51797,
  * instruction-identical in Chapter 3) -- a "Knock"-style effect that
  * auto-unlocks a magically-locked door or resolves a curgame record's
  * fallback-B state at the world cell worldobjects.h's
  * worldObjectProbeFacingTile finds (the party's own cell, or the cell
- * one step ahead in their facing). Classifies via interactClassify
- * (given lock/curgame state the caller already loaded, matching that
- * function's own contract -- loading either kind of record isn't
- * wired up end-to-end yet, see lockcatalog.h's "LoadCurgameRecord"
- * note) and, only for InteractOutcomeLockMagical or
- * InteractOutcomeCurgameFallbackB, marks the matching bit via
- * interactBitmapSet -- the same write UnlockDoorCommand performs on an
- * ordinary key-based unlock. Returns false (no bitmap write) for every
- * other outcome, including object == NULL (interactClassify's own
- * InteractBranchNone case).
- *
- * **A sibling not reimplemented here**: word_33302 bit 0x40
- * (yendor2.asm:51852) shares this exact probe-then-classify-then-mark
- * shape but targets a different outcome set
- * (InteractOutcomeLockFlag40/LockPriced/CurgameFlag40) and additionally
- * branches on `g_lockStatusFlags` bit 0x80 to choose between 2 UI text
- * columns (`ShowAbilityDescriptionColumn`) -- likely a related but
- * distinct spell/item effect (e.g. "Remove Curse" alongside this one's
- * "Knock"). Left for a future pass; the qualifying-outcome set is the
- * only real difference in the decision logic.
+ * one step ahead in their facing). interactResolveIfOutcome with
+ * qualifying = {InteractOutcomeLockMagical, InteractOutcomeCurgameFallbackB}.
  */
 bool interactKnock(SaveGame *save, GameKind game, const WorldObjectRecord *object, const LockRecord *lock,
                     bool lockAlreadyUnlocked, uint16_t curgameFlags, bool curgameAlreadyTriggered,
