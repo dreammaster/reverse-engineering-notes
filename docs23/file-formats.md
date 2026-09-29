@@ -3749,7 +3749,7 @@ Reimplemented (lookup only, not the deeper state resolution the
 exact reachable-record and per-flag counts checked against both real
 `WORLD.DAT` files.
 
-### Party teleport/fast-travel destinations (mechanism resolved 2026-09-30, data not yet extracted)
+### Party teleport/fast-travel destinations, including a literal typed PASSWORD system (mechanism fully resolved 2026-09-30, data extracted for both games, not yet reimplemented)
 
 `WorldObjectFlagUnknown2000` (`0x2000` — real, common in both games'
 data, previously untested by any traced caller) turned out to be a
@@ -3760,55 +3760,151 @@ reached the same way `interactKnock`'s own probe is (`ProbeFacingTile`,
 `yendor2.asm:30915`), tests this bit directly against `[si+2]` (the
 `WorldObjectRecord`'s own flags field) and, on a match, calls
 `TravelToDestination(ax = [si+4]`, the record's own `value` field`).
+The "region/town password" name turns out to be completely literal:
+unlocking a locked destination can mean **typing an actual English
+word or phrase** at a prompt, character-compared against a fixed
+string embedded in the data — not a metaphor for a flag check.
 
-`TravelToDestination` (`yendor2.asm:18170`) looks up a destination
-table by 1-based id (`DS:0xD40B`, 16-byte stride in Chapter 2:
-`+0`/`+2` world X/Y, `+4` facing, `+6` a sound id, `+0xA`/`+0xC` two
-more fields not yet identified, `+0xE` a flags word selecting one of 3
-travel-mode bits — `0x8000`/`0x4000`/`0x1000`, the last of which also
-triggers `TickTravelResourceAilments` and a `0x2000` "needs an unlock
-check" gate), sets `g_partyWorldX`/`Y`/`g_partyFacing` directly from
-the matched entry, applies one hardcoded landing-spot override for a
-single specific destination (arriving at a fixed cell during a
-specific game-clock window redirects elsewhere — a narrative special
-case, not a general mechanism), and redraws. **Chapter 3 has the same
-mechanism at a different address with a genuinely different record
-shape** (`DS:0xBA95`, 18-byte stride — 2 bytes wider than Chapter 2 —
-and a 2-bit lock test, `[+0xE] & 0xC000`, instead of Chapter 2's
-single `0x2000` bit): a real per-game difference, not just a relocated
-table, so this isn't a candidate for one shared C table the way most
-of this project's other embedded tables have been.
+**`TravelToDestination`** (`yendor2.asm:18170`, `yendor3.asm:10081`)
+looks up a destination table by 1-based id:
 
-The lock check itself, `IsDestinationUnlocked` (`yendor2.asm:18260`),
-is a small, cleanly-bounded, fully-extracted table (`DS:0xDFBB`,
-22-byte stride, exactly 20 real entries before a clean `0xFFFF`
-terminator) of `(destinationId, flagWordAddress, bitMask, optional
-rejection message id)` — and every one of those 20 entries' flag
-addresses (`0x94D1`, `0x94D3`, `0x94D7`, `0x94DF`, `0x94E5`, `0x94E7`)
-falls inside the already-reimplemented `g_globalFlags` region
-(`globalflags.c`, base `0x94D1`)! So unlocking a specific destination
-is the *same* global quest/world-state flag system this project
-already ported — just addressed here by a raw word offset + bitmask
-pair instead of `globalFlagTest`'s own 1-based bit-index convention
-`GrantMonsterRewards`/`ApplyItemEffectFlags` use elsewhere. No new
-flag mechanism needed to model this table once extracted, only a
+| | Chapter 2 | Chapter 3 |
+|---|---|---|
+| table address | `DS:0xD40B` | `DS:0xBA95` |
+| stride | 16 bytes | 18 bytes |
+| entry count | **exactly 187** | **exactly 139** |
+| `+0`/`+2` | world X/Y (i16) | world X/Y (i16) |
+| `+4` | facing (one of the 4 `SaveFacing` bits) | facing (same) |
+| `+6` | arrival sound id (0 = silent) | arrival sound id |
+| `+8` | unused — never read by `TravelToDestination` | → `ds:0xCF2F` (read after the map redraw; meaning not traced) |
+| `+0xA` | day-track music id → `word_36CB1` | → `ds:0xCF31` (same position as Ch2's `+8`/`+0xA` pair, shifted) |
+| `+0xC` | night-track music id → `word_36CB3` | plain "travel mode" value (1-7 observed) → `ds:0xCF33`, copied verbatim, not bit-tested |
+| `+0xE` | flags: `0x2000` = needs-unlock gate; `0x8000`/`0x4000`/`0x1000` mutually-exclusive travel-mode bits; `0x800` = hardcoded landing-spot override | flags: `0xC000` (`0x8000\|0x4000` together) = needs-unlock gate, reused again *inside* `IsDestinationUnlocked` itself (see below) |
+| `+0x10` | (doesn't exist, 16-byte stride) | bit `0x1` conditionally zeroes `ds:0xCF3F`; whole word also copied to `ds:0xCEF9` |
+
+Both games' entry counts are **structurally exact, not estimated**:
+Chapter 2's table base (`0xD40B`) plus `187 * 16` lands exactly on
+`IsDestinationUnlocked`'s own gate-table base (`0xDFBB`); Chapter 3's
+(`0xBA95` plus `139 * 18`) lands exactly on its own gate table
+(`0xC45B`) — the destination table runs right up against the next
+table with zero gap or terminator, so the entry counts are provable by
+address arithmetic, not just "where the data looks like it degrades."
+Both match `WorldObjectFlagUnknown2000`'s own reachable-record counts
+(187 Chapter 2, 139 Chapter 3) exactly — one destination-table entry
+per `0x2000`-flagged world marker, confirmed 1:1 both games.
+
+The `word_36CB1`/`word_36CB3` identification (day/night music track
+id) comes from an existing IDC comment on a separate function
+(`yendor2.asm:0x28320`, the periodic day/night ambient-music switcher):
+it picks `word_36CB1` for daytime or `word_36CB3` for nighttime based
+on whether `g_gameClockMinutes` falls in `[0x1A4, 0x474]` (7:00 AM –
+7:00 PM) — the *exact same* two boundary constants
+`TravelToDestination`'s own hardcoded landing-spot override compares
+against, which is presumably not a coincidence (both are "is it
+daytime" checks, just for different purposes). Chapter 2's own
+landing-spot override is a genuine one-off special case: arriving at
+world coordinates `(0x62, 0x53)` during that same night window
+redirects to a different hardcoded cell (`0x17A, 0xE3`) — likely a
+flooded/blocked-at-night location. **Chapter 3 has no equivalent
+override anywhere in `TravelToDestination`**, and Chapter 3's version
+additionally calls `ApplyMapTriggerEffect` at the very end, which
+Chapter 2's version never calls at all — two more confirmed, real
+per-game differences, not just the record-shape/stride change. None of
+`ds:0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`/`0xCEF9` (Chapter 3) or
+`word_36C79`/`word_36CBF` (Chapter 2's travel-mode/ailment-timer
+globals, already known from the icon-bar/ailment work but not
+connected to this table before now) have been traced far enough to
+reimplement the music/mode side effects — left open, see below.
+
+**`IsDestinationUnlocked`** (`yendor2.asm:18260`, `yendor3.asm:10142`)
+is the unlock gate, a small, cleanly `0xFFFF`-terminated table (22-byte
+stride both games: Chapter 2 exactly 20 entries at `DS:0xDFBB`,
+Chapter 3 exactly 35 at `DS:0xC45B`) of:
+
+```
++0  destinationId (u16, matched against the id TravelToDestination looked up)
++2  flagWordAddress (u16, a direct DS-relative address, not an offset)
++4  bitMask (u16)
++6  promptId (u16, passed to ShowConfirmPrompt when the password path is taken)
++8  hasMsg (u16) -- nonzero selects a silent generic-rejection path with a canned message
++0xA..+0x15 (12 bytes) -- password text (only meaningful when hasMsg == 0)
+```
+
+Every single flag address in both games' gate tables (`0x94D1`-family
+in Chapter 2, `0xCFB1`-family in Chapter 3) lands inside the
+already-reimplemented `g_globalFlags` region (`globalflags.c`) — so
+unlocking a destination is the *same* global quest/world-state flag
+system this project already ported, just addressed by a raw word
+offset + bitmask pair instead of `globalFlagTest`'s own 1-based
+bit-index convention. No new flag mechanism needed, only a
 `(wordOffset, mask)` → `globalFlagTest`-equivalent translation.
 
-Chapter 2's destination table runs to roughly 187 real-looking entries
-(plausible world coordinates, `facing` always one of the 4 `SaveFacing`
-bits) before the bytes stop looking like table data at all — and
-`WorldObjectFlagUnknown2000` itself has exactly 187 reachable Chapter 2
-`WORLD.DAT` records (see the world-object flag table above), which is
-presumably not a coincidence: one destination-table entry per
-`0x2000`-flagged world marker. The exact table boundary isn't pinned
-down precisely yet (no length constant or terminator sentinel found,
-just where the data visibly degrades into what looks like following
-string data), and Chapter 3's own 18-byte-stride table hasn't been
-dumped at all. **Not reimplemented** — a genuinely new module's worth
-of work once both tables are fully extracted and bounded; see
-`roadmap.md` candidate 9. `yendor2/ida_scripts/dump_travel_destination_table.py`
-(committed) has the Chapter 2 raw dump, including the already-clean
-20-entry `IsDestinationUnlocked` gate table.
+The real logic, traced fully in both games:
+1. Scan the gate table for a matching `destinationId`; no match (or
+   list exhausted) → **unlocked** (returns 1) — a destination with no
+   gate-table entry at all needs no unlocking.
+2. Match found: test `*flagWordAddress & bitMask`. Set → **already
+   unlocked** (returns 1, no prompt at all — this is the persistent
+   "solved once, stays solved" case, backed by the exact same
+   `g_globalFlags` bits other quest-flag systems already set).
+3. Not set, and `hasMsg != 0` → **denied**, shows a fixed rejection
+   string via `writeString` (Chapter 2: message id `0x7BCE`; Chapter 3
+   additionally sets several UI/text-position globals first) and
+   returns 0. No password prompt for these rows at all — 4 of Chapter
+   2's 20 rows and 1 of Chapter 3's 35 are this kind.
+4. Not set, `hasMsg == 0`: **the password path.** Calls
+   `ShowConfirmPrompt(ax = promptId)`; if the player confirms, compares
+   up to 12 typed characters against the embedded password text
+   byte-for-byte (a space in the stored text ends the comparison early
+   — the wildcard/terminator, not a literal space to type), and on a
+   full match sets the same `*flagWordAddress |= bitMask` the "already
+   unlocked" check reads, returning 2 (a distinct "just unlocked, not
+   already-unlocked" code) — any mismatch returns 0 (denied, no
+   message). **Chapter 3 adds a third sub-case here that Chapter 2
+   doesn't have**: past the gate-table's own `hasMsg`, it re-reads the
+   *destination record's own* `+0xE` flags a second time (recovering
+   the original destination-table pointer off the stack, since `si`
+   itself was repurposed to scan the gate table) — bit `0x4000` means
+   silent-deny-with-a-3-line-message (`DrawStringColumn`, `bx=0x9606`)
+   instead of a prompt at all, bit `0x8000` means the password prompt
+   described above. Chapter 2 always goes straight to the password
+   prompt for this case, no such secondary bit test.
+
+**Real extracted passwords** (from
+`ida_scripts/dump_travel_destination_table.py`'s output, both games —
+confirms the mechanism is exactly what the name always implied):
+Chapter 2 — `ALEXANDER`, `DOMAIN`, `OPPOSITION`, `HORSEMAN`, `ANATOLAY`
+(shared by 2 different destination ids), `IMPRISONED`, `WHITE`,
+`TREES`, `NORTH`, `EAST`, `SOUTH`, `WEST`, `MYSELF`, `SAFARI`, and one
+genuinely unreachable row (destination id 125) whose stored "password"
+is 8 literal null bytes — can never match typed text, a dead entry in
+the same family of "provably unreachable but present in the data"
+quirks this project keeps finding elsewhere. Chapter 3 —
+`NOBLEMAN`, `GAUNTLET`, `COMPASSION`, `RUSE`, `GEMSTONE`, `CALANTHA`,
+`ALLIANCE`, `TIMBER`, `SOLITAIRE`, `DELIA`, `DRAGONSKIN`, and several
+rows with an empty password field (`hasMsg == 0` but no text — these
+are presumably the ones Chapter 3's extra `+0xE`-bit dispatch above
+routes to the silent 3-line-message path instead of ever reaching the
+character-compare loop, though the exact bit is per-destination-record
+and wasn't cross-checked entry-by-entry against the destination
+table).
+
+**Not reimplemented** — the lookup/gate logic itself (steps 1-4 above)
+is fully understood and a clean candidate for direct reimplementation
+against the already-existing `globalflags.c` API; what's genuinely
+still open is the music-track/travel-mode side effects
+(`word_36CB1`/`word_36CB3`/`word_36C79`/`word_36CBF` in Chapter 2,
+`ds:0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`/`0xCEF9` in Chapter 3), none of
+which this project has traced to a confirmed consumer yet — reimplementing
+just the position/facing/unlock-gate slice without them would be
+composing against unconfirmed inputs, the same reason several other
+candidates in `roadmap.md` have been deliberately left for their own
+pass rather than rushed. See `roadmap.md` candidate 9.
+`ida_scripts/dump_travel_destination_table.py` exists in **both**
+`yendor2/ida_scripts/` and `yendor3/ida_scripts/` now (siblings, not
+shared — the record shapes differ too much to share one script), each
+asserting its own table's exact boundary programmatically rather than
+just printing a guessed range.
 
 ### `TryInteractAtPosition`: the per-cell interaction dispatcher (decoded 2026-09-24)
 

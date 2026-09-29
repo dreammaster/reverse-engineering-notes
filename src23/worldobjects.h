@@ -95,17 +95,30 @@ typedef enum {
      * ProbeFacingTile, yendor2.asm:30915/:1058E) tests this bit directly
      * and, on a match, calls TravelToDestination(ax = the record's own
      * `value` field) -- value is a 1-based index into a party
-     * teleport/fast-travel destination table (DS:0xD40B, 16-byte stride
-     * in Chapter 2; a genuinely different, wider record at DS:0xBA95 in
-     * Chapter 3, 18-byte stride). The Chapter 2 record count (187) is
-     * presumably not a coincidence -- the destination table's own real
-     * length looks to match exactly. Not reimplemented yet; see
-     * roadmap.md's "Open questions" section (the former "region/town
-     * password" mystery) for the full writeup and
-     * yendor2/ida_scripts/dump_travel_destination_table.py for the raw
-     * extraction. `IsDestinationUnlocked`, the gate a locked destination
-     * checks, turned out to be a small, fully-bounded table (20 entries)
-     * over the already-reimplemented `globalflags.c` system.
+     * teleport/fast-travel destination table (DS:0xD40B, exactly 187
+     * entries, Chapter 2; DS:0xBA95, exactly 139, Chapter 3 -- a
+     * genuinely different, wider record shape, not just relocated data).
+     * Both counts are proven exact by address arithmetic (each table
+     * ends precisely where its own IsDestinationUnlocked gate table
+     * begins) and match this flag's own reachable-record count 1:1 in
+     * each game -- one destination-table entry per 0x2000-flagged world
+     * marker. `IsDestinationUnlocked` -- the gate a locked destination
+     * checks -- turned out to be the literal "region/town password"
+     * this project's own docs had named from manual/UI text years ago:
+     * most of its rows are a real typed-password prompt, 12 characters
+     * compared against embedded text (real extracted words include
+     * NORTH/EAST/SOUTH/WEST, ALEXANDER, and Chapter 3's RUSE -- the
+     * exact word from an in-world "THE PASSWORD IS RUSE" note this
+     * project had already cataloged separately), success setting a bit
+     * in the already-reimplemented `g_globalFlags` system. See
+     * roadmap.md's "Open questions" section and file-formats.md's
+     * "Party teleport/fast-travel destinations" for the full writeup,
+     * and yendor2/yendor3's own ida_scripts/dump_travel_destination_table.py
+     * for the raw extraction (including the real password text). Not
+     * reimplemented yet -- the lookup/gate logic is fully understood,
+     * but the music-track/travel-mode side effects on arrival aren't
+     * traced to a confirmed consumer, so composing just the position
+     * slice would be building against unconfirmed inputs.
      */
     WorldObjectFlagUnknown2000 = 0x2000
 } WorldObjectFlag;

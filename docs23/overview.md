@@ -10188,6 +10188,80 @@ terminator, just visible data degradation. Documented in
 section, and `roadmap.md`'s "Open questions" (now marked resolved)
 and candidate list.
 
+### Session update (continued, same day): the "password" turned out to be a literal typed password, both tables fully bounded
+
+Picking the thread back up immediately raised the bar on what "picked
+up" the last entry: this project's own open-questions note already
+called this the "region/town password" mystery, but the previous
+entry's writeup only described a flag check, with no actual typed
+password anywhere. Reading `IsDestinationUnlocked` in full in *both*
+games (not just enough to name it, as the prior pass had) found the
+real mechanism it had missed: most of the gate table's rows are a
+literal `ShowConfirmPrompt` + 12-character text compare against a
+password embedded right in the table row, success setting the exact
+same global flag bit the "already unlocked" branch reads. Wrote
+sibling dump scripts for both games (`ida_scripts/dump_travel_destination_table.py`,
+now living in both `yendor2/` and `yendor3/`, not shared — the record
+shapes diverge too much) and extracted the real words: Chapter 2 has
+`ALEXANDER`, `DOMAIN`, `OPPOSITION`, `HORSEMAN`, `WHITE`, `TREES`,
+`NORTH`/`EAST`/`SOUTH`/`WEST`, `MYSELF`, `SAFARI` (plus one genuinely
+dead row — a password of 8 literal null bytes that typed text can
+never match, in the same family of "present but provably unreachable"
+quirks this project keeps finding); Chapter 3 has `NOBLEMAN`,
+`GAUNTLET`, `COMPASSION`, `RUSE`, `GEMSTONE`, `CALANTHA`, `ALLIANCE`,
+`TIMBER`, `SOLITAIRE`, `DELIA`, `DRAGONSKIN`. **`RUSE` closed a loop
+this project didn't even know was open**: an in-world "Note" signed
+`THE PASSWORD IS RUSE` had already been cataloged under
+`file-formats.md`'s "In-world readable text" section by a much earlier,
+unrelated session — nobody had connected it to this mechanism until
+the extracted password list made the match obvious.
+
+Also pinned down both tables' exact lengths *structurally* rather than
+by eyeballing where the data degrades: Chapter 2's destination table
+base (`0xD40B`) plus `187 * 16` lands exactly on `IsDestinationUnlocked`'s
+own gate-table base (`0xDFBB`) with zero gap; Chapter 3's (`0xBA95`
+plus `139 * 18`) lands exactly on its own gate table (`0xC45B`). Both
+scripts now `assert` this rather than just printing a plausible range
+— a cleaner confirmation technique worth reusing for any future
+"where does this table actually end" question, when the answer turns
+out to be "exactly where the next known table starts," not a fixed
+length constant.
+
+Tracing Chapter 3's version in full also surfaced two more genuine,
+newly-confirmed Chapter 2 vs. Chapter 3 differences beyond the
+already-known record-width change: Chapter 3's gate re-tests the
+*destination record's* own flags a second time (recovered off the
+stack, since `si` gets repurposed to scan the gate table) to add a
+silent deny-with-a-different-message sub-case Chapter 2 doesn't have
+at all; and in `TravelToDestination` itself, Chapter 2 has a one-off
+hardcoded landing-spot override (one destination, one night-time
+window) that Chapter 3 lacks, while Chapter 3 calls
+`ApplyMapTriggerEffect` on arrival and Chapter 2 never does. Also
+identified `word_36CB1`/`word_36CB3` (the destination record's own
+`+0xA`/`+0xC` fields in Chapter 2) as day/night music-track ids, via
+an existing IDC comment on an unrelated function (the periodic
+day/night ambient-music switcher) that happens to name them — and
+noticed that switcher's own day/night boundary constants
+(`0x1A4`/`0x474`) are the *exact same* two values Chapter 2's
+hardcoded landing override compares the game clock against, presumably
+not a coincidence (both are "is it currently night" checks).
+
+**Still not reimplemented, same reason as before, now more precisely
+scoped**: the lookup/gate logic (position, facing, unlock check) is
+fully understood and ready to compose directly against `globalflags.c`;
+what's left is genuinely unconfirmed, not just unwritten — the
+music-track/travel-mode side effects on both games' sides
+(`word_36CB1`/`word_36CB3`/`word_36C79`/`word_36CBF` Chapter 2,
+`ds:0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`/`0xCEF9` Chapter 3) haven't been
+traced to a confirmed consumer, so reimplementing only the position
+slice would mean composing against inputs this project hasn't actually
+verified yet — the same discipline `ResolveAttackerActionOutcome` and
+several other candidates have followed throughout this project rather
+than rushing a partial port. Fully documented in `file-formats.md`,
+`roadmap.md` (both the candidate-9 entry and the "Open questions" note,
+now genuinely closed rather than "mechanism resolved, data pending"),
+and `worldobjects.h`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
