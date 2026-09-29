@@ -562,6 +562,27 @@ read) that survived because the compiler couldn't prove those calls have no
 side effects. Reproduced faithfully rather than dropped, with a comment
 flagging the oddity.
 
+## TGameControl batch 20: HandleEngineEvent dispatches by count, not by name
+
+`HandleEngineEvent(const std::string&, const std::string&)` (asm lines
+469160-469504) turned out simpler than its size suggested once the Lua-
+dispatch boilerplate (five stack-allocated `TArgument` locals, only two ever
+`Set()`, matching the same pattern already noted in `TMasterControl::
+ProcessMessage`) was recognized rather than transliterated. The loop walks
+`TMasterControl::_engineEventHandlerNames` via raw `begin()`/`end()`
+pointers but never dereferences an element - only the vector's *size* is
+read, and every iteration dispatches to the same fixed Lua function name,
+`"EngineEventHandler"`. So a handler's registered name (see
+`RegisterEngineEventHandler`) is apparently just a de-dup key controlling
+*whether* a registration is added, not *which* Lua function gets called -
+`HandleEngineEvent` just fires the one shared handler once per distinct
+registration, passing the same (name, arg) event payload each time. Moved
+`_engineEventHandlerNames` from private to protected in `TMasterControl`
+(same reasoning already given for `_sceneControl`/`_visionaire`/
+`_allInterfaces` there - `TGameControl` reads it directly, not through a
+`TMasterControl`-only accessor). Added `TArgument::Set(const wxString&)`,
+the one overload that wasn't stubbed yet.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

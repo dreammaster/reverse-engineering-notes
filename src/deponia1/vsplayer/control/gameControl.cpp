@@ -12,6 +12,7 @@
 #include "TTempFile.h"
 #include "baselib/composedfile.h"
 #include "datastruct/visionaireobject.h"
+#include "vscommon/scripting/argument.h"
 
 namespace {
 // Packs a TVisObjRef::GetId() 3-byte id into a 32-bit value the same way
@@ -1227,7 +1228,31 @@ bool TGameControl::ReplaceGame(wxFileName /*file*/, bool /*isEditor*/) {
 	return false;
 }
 
-void TGameControl::HandleEngineEvent(const std::string &/*name*/, const std::string &/*arg*/) {
+void TGameControl::HandleEngineEvent(const std::string &name, const std::string &arg) {
+	// Confirmed (asm lines 469160-469504): fires once per registered engine-
+	// event handler (TMasterControl::_engineEventHandlerNames, populated by
+	// RegisterEngineEventHandler), but only that vector's *size* is read -
+	// never any element's own name - and every firing dispatches to the same
+	// fixed Lua function name, "EngineEventHandler", not to each handler's
+	// own registered name. That registered name is apparently just a de-dup
+	// key (matching RegisterEngineEventHandler's own dedup-by-name check),
+	// not a per-handler Lua entry point.
+	for (size_t i = 0; i < _engineEventHandlerNames.size(); i++) {
+		wxString convertedName;
+		toUTF(&convertedName, name.c_str());
+		TArgument nameArg;
+		nameArg.Set(convertedName);
+
+		wxString convertedArg;
+		toUTF(&convertedArg, arg.c_str());
+		TArgument argArg;
+		argArg.Set(convertedArg);
+
+		// Real dispatch calls LuaExecuteFunction("EngineEventHandler",
+		// {&nameArg, &argArg}, results) - LuaExecuteFunction/TArgument's full
+		// contract isn't reversed yet (same gap noted in
+		// TMasterControl::ProcessMessage).
+	}
 }
 
 void TGameControl::HandleKeyEvent(TKeyboardMessageEnum /*msg*/, const wxString &/*key*/, int /*a*/,

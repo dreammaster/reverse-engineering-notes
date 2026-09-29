@@ -194,6 +194,13 @@ protected:
 	std::list<TGInterface *> _allInterfaces;
 	std::list<TGInterface *> _activeInterfaces;
 
+	// TGameControl reads this directly (HandleEngineEvent, Deponia_Linux.asm
+	// lines 469160-469504: iterates it via raw begin()/end() pointers, not a
+	// TMasterControl-only accessor) - same reasoning as _sceneControl/
+	// _visionaire above. Only its size is read there, not any element's
+	// content - see HandleEngineEvent's own comment.
+	std::vector<std::string> _engineEventHandlerNames;
+
 private:
 	TMovie _movie;
 	TGObjectManager _objectManager;
@@ -202,7 +209,6 @@ private:
 
 	std::vector<TMouseEventHandler> _mouseEventHandlers;
 	std::vector<TKeyboardEventHandler> _keyboardEventHandlers;
-	std::vector<std::string> _engineEventHandlerNames;
 
 	int _windowWidth = 0;
 	int _windowHeight = 0;
