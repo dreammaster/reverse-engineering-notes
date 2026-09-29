@@ -23,6 +23,10 @@ public:
 	// 462781-462971) - out-params, not reversed beyond that.
 	void GetLastPlayableSceneParams(TVisObjRef &outScene, wxPoint &outPos) const;
 
+	// Confirmed call shape only (TGameControl::HandleKeyEvent,
+	// Deponia_Linux.asm line 471018) - not reversed beyond that.
+	bool FadingToNewScene() const;
+
 private:
 	TGScene _scene;
 };

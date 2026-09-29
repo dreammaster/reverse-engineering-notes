@@ -751,6 +751,37 @@ operator==(const wxString&)`, `TTText::SetLanguage()` (static), and
 `TCursorControl::LoadCursor()/LinkButtonCursor()`. Also added
 `TVList::size()`/`front()`, matching call shapes already needed here.
 
+## TGameControl batch 25: HandleKeyEvent, and a cross-confirmation of batch 17's guess
+
+`HandleKeyEvent(TKeyboardMessageEnum, const wxString&, int, unsigned short)`
+(asm lines 470963-471714) turned out simpler than its size suggested once
+the Lua-dispatch boilerplate (per-handler `TArgument`/`LuaExecuteFunction`
+construction, same unreversed-contract gap already noted in
+`ProcessMessage`/`HandleEngineEvent`) was set aside as boilerplate rather
+than transliterated. The real logic: bail if the scene is mid-transition or
+the console consumes the event; then, after the (currently inert) handler
+dispatch loop, check field 0x279 for an override action link and dispatch
+straight to `StartGameAction` if present (subject to a 0x1E0 block-override
+flag); otherwise ESC (`a==27`) with `msg==2` skips the current cutscene; and
+finally, if field 0x235 (a "game actions enabled" toggle) is set, scans
+`_gameActions` with almost exactly `StartGameAction`'s own matching logic
+inlined directly rather than calling it.
+
+That `msg==2` comparison is a genuine cross-confirmation of batch 17's
+speculative finding: `InitGameActions`' "+10000 = modified variant"
+encoding scheme was guessed to be where `TKeyboardMessageEnum`'s otherwise-
+unobserved value 2 might come from, and here it is, actually compared
+against in real control flow (`TKeyboardMessageEnum` value 3 also appears,
+gating whether the Lua dispatch's name argument comes from
+`SDL_GetKeyName(a)` instead of the passed-in key name - still not otherwise
+observed at any call site).
+
+New stub surface: `TSceneControl::FadingToNewScene()`,
+`TConsole::HandleKeyEvent()`, `SDL_GetKeyName()`, and
+`TGAction::SkipCutscene()`. Moved `_keyboardEventHandlers` from private to
+protected in `TMasterControl` (same reasoning as
+`_engineEventHandlerNames`/`_loadingControl` there).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

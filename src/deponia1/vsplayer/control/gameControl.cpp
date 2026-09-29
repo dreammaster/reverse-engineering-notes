@@ -1626,8 +1626,76 @@ void TGameControl::HandleEngineEvent(const std::string &name, const std::string 
 	}
 }
 
-void TGameControl::HandleKeyEvent(TKeyboardMessageEnum /*msg*/, const wxString &/*key*/, int /*a*/,
-                                  unsigned short /*b*/) {
+void TGameControl::HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key, int a, unsigned short b) {
+	// Confirmed (asm lines 470963-471714). Field ids 0x279 ("an override
+	// action link" - if non-empty, dispatches straight to StartGameAction
+	// subject to a 0x1E0 override-block flag, skipping the ESC/cutscene and
+	// _gameActions checks below entirely) and 0x235 (a "game actions
+	// enabled" toggle, same role as ScrollToCharacterIfNeeded's 0x231) are
+	// unresolved. The a==27(ESC)/msg==2 cutscene-skip is a nice
+	// cross-confirmation of batch 17's guess that InitGameActions'
+	// "shifted key code" category 2 is a real, used TKeyboardMessageEnum
+	// value, not just an artifact.
+	if (_ownedSceneControl.FadingToNewScene())
+		return;
+	if (_console.HandleKeyEvent(msg, key, a, b))
+		return;
+
+	// Real dispatch calls LuaExecuteFunction("KeyEventHandler", {&msgArg,
+	// &nameArg, &aArg, &bArg}, results) once per registered keyboard
+	// handler, returning immediately if a handler's result reports it
+	// consumed the event - LuaExecuteFunction/TArgument's full contract
+	// isn't reversed yet (same gap noted in TMasterControl::ProcessMessage/
+	// TGameControl::HandleEngineEvent). `nameArg` comes from
+	// SDL_GetKeyName(a) instead of `key` for axis-move/msg==3 messages (the
+	// latter another of TKeyboardMessageEnum's unconfirmed values).
+	bool useSdlKeyName = msg == TKeyboardMessageEnum::kAxisMove || static_cast<int>(msg) == 3;
+	for (std::size_t i = 0; i < _keyboardEventHandlers.size(); i++) {
+		TArgument msgArg;
+		msgArg.Set(static_cast<int>(msg));
+
+		TArgument nameArg;
+		if (useSdlKeyName) {
+			wxString converted;
+			toUTF(&converted, SDL_GetKeyName(a));
+			nameArg.Set(converted);
+		} else {
+			nameArg.Set(key);
+		}
+
+		TArgument aArg;
+		aArg.Set(a);
+		TArgument bArg;
+		bArg.Set(static_cast<int>(b));
+	}
+
+	TVisObjRef game = _visionaire->GetGame();
+	if (!game.GetLink(0x279).IsEmpty()) {
+		TVisObjRef game2 = _visionaire->GetGame();
+		if (!game2.GetBool(0x1E0))
+			StartGameAction(msg, key, a, b);
+		return;
+	}
+
+	if (a == 0x1B && static_cast<int>(msg) == 2) {
+		TGAction::SkipCutscene();
+		return;
+	}
+
+	TVisObjRef game3 = _visionaire->GetGame();
+	if (!game3.GetBool(0x235))
+		return;
+
+	for (const SGameAction &action : _gameActions) {
+		if (action.a != a || action.msg != static_cast<int>(msg))
+			continue;
+		if (!action.flag)
+			return;
+		if (_currentText != nullptr && _currentText->GetTarget().GetBool(0x211))
+			return;
+		TGAction::AddRunningAction(action.target);
+		return;
+	}
 }
 
 void TGameControl::HandleControllerAxis(SDL_GameControllerAxis axis, int value, int index) {

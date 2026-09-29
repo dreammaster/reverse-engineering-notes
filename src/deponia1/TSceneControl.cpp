@@ -15,3 +15,7 @@ void TSceneControl::Set(const TVisObjRef &/*scene*/) {
 
 void TSceneControl::GetLastPlayableSceneParams(TVisObjRef &/*outScene*/, wxPoint &/*outPos*/) const {
 }
+
+bool TSceneControl::FadingToNewScene() const {
+	return false;
+}

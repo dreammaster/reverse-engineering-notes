@@ -221,6 +221,13 @@ protected:
 	TLoadingControl *_loadingControl = nullptr;
 	TSoundFFMPEG *_soundManager = nullptr;
 
+	// TGameControl reads this directly (HandleKeyEvent, Deponia_Linux.asm
+	// lines 471062-471068: iterates it via raw begin()/end() pointers, not a
+	// TMasterControl-only accessor) - same reasoning as
+	// _engineEventHandlerNames above. Only its size is read there, not any
+	// element's content.
+	std::vector<TKeyboardEventHandler> _keyboardEventHandlers;
+
 private:
 	TMovie _movie;
 	TGObjectManager _objectManager;
@@ -228,7 +235,6 @@ private:
 	TSprite _sprite2;
 
 	std::vector<TMouseEventHandler> _mouseEventHandlers;
-	std::vector<TKeyboardEventHandler> _keyboardEventHandlers;
 
 	int _windowWidth = 0;
 	int _windowHeight = 0;

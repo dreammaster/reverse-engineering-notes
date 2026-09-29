@@ -11,3 +11,6 @@ void TGAction::ClearActions() {
 
 void TGAction::SaveActions() {
 }
+
+void TGAction::SkipCutscene() {
+}

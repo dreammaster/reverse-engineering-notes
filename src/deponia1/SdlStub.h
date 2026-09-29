@@ -35,6 +35,9 @@ extern "C" {
 	void SDL_Quit(void);
 	const char *SDL_GetError(void);
 	Uint32 SDL_GetTicks(void);
+	// Confirmed call shape only (TGameControl::HandleKeyEvent,
+	// Deponia_Linux.asm line 471295) - not reversed beyond that.
+	const char *SDL_GetKeyName(int key);
 
 	int SDL_ShowCursor(int toggle);
 	Uint8 SDL_EventState(Uint32 type, int state);

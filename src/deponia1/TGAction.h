@@ -18,4 +18,7 @@ public:
 	// Confirmed static (TGameControl::Save, asm line 462895) - not
 	// reversed beyond that call shape.
 	static void SaveActions();
+	// Confirmed static (TGameControl::HandleKeyEvent, Deponia_Linux.asm line
+	// 471550) - not reversed beyond that call shape.
+	static void SkipCutscene();
 };

@@ -19,6 +19,10 @@ Uint32 SDL_GetTicks(void) {
 	return static_cast<Uint32>(duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count());
 }
 
+const char *SDL_GetKeyName(int /*key*/) {
+	return "";
+}
+
 int SDL_ShowCursor(int /*toggle*/) {
 	return 0;
 }
