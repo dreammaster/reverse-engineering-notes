@@ -16,6 +16,8 @@
 
 #include <vector>
 
+#include "datastruct/visobjref.h"
+
 class TVisionaireObject;
 
 class TVList {
@@ -40,6 +42,20 @@ public:
 	}
 	std::vector<TVisionaireObject *>::iterator end() {
 		return items.end();
+	}
+	// Confirmed call shape only (TGameControl::HandleMouseMove,
+	// Deponia_Linux.asm line 472191) - a plain copy-assignment-style snapshot
+	// of another list's elements.
+	void copy(const TVList &other) {
+		items = other.items;
+	}
+	// Confirmed call shape only (TGameControl::HandleMouseMove, Deponia_Linux.
+	// asm line 472341) - passed a TGInterface's own TVisObjRef field there.
+	// TVisObjRef doesn't carry a real backing TVisionaireObject* pointer in
+	// this reconstruction (see visobjref.h's own header comment: it's a
+	// field-value stub, not a real handle), so there is nothing genuine to
+	// append to items - left as a no-op rather than fabricating a pointer.
+	void push_back(const TVisObjRef &/*ref*/) {
 	}
 
 	std::vector<TVisionaireObject *> items;

@@ -284,6 +284,9 @@ private:
 	// resolved aspect width/height, and (via UpdateCurrentObject, asm lines
 	// 456964-456999) the last mouse position re-dispatched through
 	// HandleMouseMove, defaulting to a {-1,-1} "no position yet" sentinel.
+	// Confirmed written by HandleMouseMove itself (asm line 472189) from the
+	// raw, un-overridden position argument - see _lastHookMousePos below for
+	// the distinct hook-adjusted field written right alongside it.
 	int _aspectWidth = 0;
 	int _aspectHeight = 0;
 	wxPoint _lastMousePos{-1, -1};
@@ -339,4 +342,18 @@ private:
 	// 462656) - presumably the last clicked/hovered position in a "load
 	// game" menu.
 	wxPoint _savegameClickPos;
+	// Confirmed present (TGameControl::HandleMouseMove, Deponia_Linux.asm
+	// line 472181): the previous call's set of hovered-interface objects,
+	// compared against the freshly rebuilt set each call so anything no
+	// longer hovered can fire a "mouse left" action (field 0x184).
+	TVList _hoveredInterfaceObjects;
+	// Confirmed present (TGameControl::HandleMouseMove, asm line 472187):
+	// written with the mouse position as possibly overridden by the
+	// (unimplemented) SceneMousePositionHook Lua dispatch - write-only in
+	// what's been reversed so far; not the same field as _lastMousePos
+	// above, which is written from the raw, un-overridden position
+	// (confirmed: SetCursorPosition() a few lines earlier in the same
+	// function always reads the raw argument, never this hook-adjusted
+	// value). Purpose beyond that isn't resolved.
+	wxPoint _lastHookMousePos{-1, -1};
 };

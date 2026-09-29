@@ -46,6 +46,14 @@ public:
 	// TGScene::GetObject() - asm lines 462233-462396) - the earlier void*
 	// was a placeholder guess.
 	TManagedObject *GetObject(const TVisObjRef &object) const;
+	// A second, spatial-lookup overload - confirmed call shape only
+	// (TGameControl::HandleMouseMove, Deponia_Linux.asm line 472353); not
+	// reversed beyond that.
+	TManagedObject *GetObject(const wxPoint &pos) const;
+	// Confirmed call shape only (TGameControl::HandleMouseMove, asm line
+	// 472335) - a hit-test, matching TMSavegame-area-style IsInside()
+	// methods elsewhere; not reversed beyond that.
+	bool IsInside(const wxPoint &pos) const;
 
 	// Confirmed call shapes only (TGameControl::SetInterfaces, asm lines
 	// 465533-465671): called on an interface leaving the active set before

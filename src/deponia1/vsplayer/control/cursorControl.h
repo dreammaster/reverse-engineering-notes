@@ -26,4 +26,7 @@ public:
 	// own. Neither reversed beyond that call shape.
 	void LoadCursor(const TVisObjRef &cursor);
 	void LinkButtonCursor(int linkedId, int objectId);
+	// Confirmed call shape only (TGameControl::HandleMouseMove, Deponia_Linux.
+	// asm line 472146) - not reversed beyond that.
+	void SetCursorPosition(int x, int y);
 };

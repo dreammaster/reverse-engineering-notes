@@ -11,6 +11,10 @@ TManagedObject *TGScene::GetObject(const TVisObjRef &/*object*/) const {
 	return nullptr;
 }
 
+TManagedObject *TGScene::GetObject(const wxPoint &/*pos*/) const {
+	return nullptr;
+}
+
 TMSavegame *TGScene::GetSelectedSavegame(bool /*flag*/) {
 	return nullptr;
 }

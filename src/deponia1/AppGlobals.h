@@ -76,3 +76,9 @@ extern bool matricesActive;
 // reversed so far; presumably set during earlier static/game
 // initialization, like g_pGameControl itself.
 extern wxString passw;
+
+// Confirmed a real, named global (TGameControl::HandleMouseMove,
+// Deponia_Linux.asm line 472208) - gates whether the hovered-interface-object
+// set is rebuilt every call when it's already empty. Never seen written
+// anywhere reversed so far.
+extern bool EngineUpdatePaused;

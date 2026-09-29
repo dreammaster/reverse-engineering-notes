@@ -12,3 +12,6 @@ void TGObjectManager::ResetEventInfo() {
 
 void TGObjectManager::RemoveItem(bool /*flag*/) {
 }
+
+void TGObjectManager::MouseMove(TManagedObject */*object*/) {
+}

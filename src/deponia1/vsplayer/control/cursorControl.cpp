@@ -18,3 +18,6 @@ void TCursorControl::LoadCursor(const TVisObjRef &/*cursor*/) {
 
 void TCursorControl::LinkButtonCursor(int /*linkedId*/, int /*objectId*/) {
 }
+
+void TCursorControl::SetCursorPosition(int /*x*/, int /*y*/) {
+}

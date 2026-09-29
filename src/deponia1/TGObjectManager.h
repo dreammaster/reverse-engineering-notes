@@ -3,6 +3,8 @@
 
 #include "WxStub.h"
 
+class TManagedObject;
+
 class TGObjectManager {
 public:
 	wxString GetActionText() const;
@@ -13,4 +15,8 @@ public:
 	void ResetCurrentObject();
 	void ResetEventInfo();
 	void RemoveItem(bool flag);
+	// Confirmed call shape only (TGameControl::HandleMouseMove,
+	// Deponia_Linux.asm lines 472298, 472356) - called with whatever object
+	// (if any) is under the cursor; not reversed beyond that.
+	void MouseMove(TManagedObject *object);
 };

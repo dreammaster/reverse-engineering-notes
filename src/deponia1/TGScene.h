@@ -31,6 +31,10 @@ public:
 	// calls TManagedObject::SetText() directly on the result, asm lines
 	// 461599-461666) - the manifest's void* was a placeholder guess.
 	TManagedObject *GetObject(const TVisObjRef &object) const;
+	// A second, spatial-lookup overload - confirmed call shape only
+	// (TGameControl::HandleMouseMove, Deponia_Linux.asm line 472295); not
+	// reversed beyond that.
+	TManagedObject *GetObject(const wxPoint &pos) const;
 
 	// Confirmed call shapes only (TGameControl::SavegameExists/
 	// DeleteSavegame, asm lines 462562-462773) - a savegame-slot-picker

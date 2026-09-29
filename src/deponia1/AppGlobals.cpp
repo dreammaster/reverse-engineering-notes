@@ -44,3 +44,5 @@ float startspeed = 0.1f;
 bool matricesActive = false;
 
 wxString passw;
+
+bool EngineUpdatePaused = false;

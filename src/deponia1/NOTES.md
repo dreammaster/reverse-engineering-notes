@@ -976,6 +976,70 @@ New stub/real surface: a real (not stubbed) `wxFile` (`Length()`/`Read()`/
 `TVisionaireObject::GetStr()`, and `LuaDoString()`/`IdStrStd()` (new, in
 `vscommon/scripting/lua.h` alongside `argument.h`/`id.h`).
 
+## TGameControl batch 32: implement HandleMouseMove
+
+Reversed `TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding)`
+(Deponia_Linux.asm lines 471985-472461, ~480 lines) - the per-frame mouse
+move handler. Confirmed control flow:
+
+- If a scene-mouse-position hook is registered (`_sceneMousePositionHookName`
+  non-empty) and the call isn't a holding/drag move, the engine dispatches a
+  `"SceneMousePositionHook"` Lua call that may override the position used for
+  one of the two position fields written later (see below) - left as an
+  unimplemented comment, matching the standing `LuaExecuteFunction`/
+  `TArgument` dispatch gap already noted in `ProcessMessage`/
+  `HandleEngineEvent`/`HandleKeyEvent`.
+- `TCursorControl::SetCursorPosition(x, y)` (new) is always called with the
+  **raw** `pos` argument, confirmed never the hook-overridden value (the asm
+  reads straight from the original argument register at this point, not the
+  local the hook could have rewritten). Returns early if the cursor isn't
+  active.
+- If a dialog is active (`!_dialog.IsEmpty()`), dispatches to a new
+  `TGDialog::HandleMouseMove(pos)` stub and returns.
+- Otherwise: snapshots the previous call's hovered-interface-object set
+  (`_hoveredInterfaceObjects`, new `TVList` member) into a local, clears the
+  member, and writes two position fields - confirmed distinct from each
+  other: `_lastMousePos` (already existed; now confirmed written here from
+  the raw position) and `_lastHookMousePos` (new; written from the
+  possibly-hook-overridden position, write-only in what's reversed so far).
+- Rebuild gating (asm lines 472198-472447): while holding, or if the game's
+  field 0x1DF is set, the hover set is simply left empty rather than
+  rebuilt. If field 0x274 is set instead, gating defers to the current
+  scene's own field 0x124. All three flags' real meaning is unresolved.
+- When rebuilding: iterates `_activeInterfaces` (already a `TMasterControl`
+  member), and for each interface whose new `IsInside(pos)` (stub) is true,
+  pushes its `GetRef()` onto the hover set and - for the *first* match only
+  - dispatches `TGObjectManager::MouseMove()` (new stub) with that
+    interface's `GetObject(pos)` (new stub) result.
+- If the (possibly just-rebuilt) hover set ends up empty and the new
+  `EngineUpdatePaused` global isn't set, falls back to
+  `TGObjectManager::MouseMove()` with the current scene's own `GetObject(pos)`
+  (new stub overload).
+- Finally, compares the previous hover set against the new one: anything
+  present before but absent now fires a "mouse left" action via
+  `TGAction::AddRunningAction()` on its field-0x184 link (confirmed called
+  through `TVisionaireObject::GetLink()` directly on the raw list element,
+  not through a `TVisObjRef` wrapper).
+
+One real behavioral gap worth flagging plainly: `TVList::push_back(const
+TVisObjRef&)` (new) is a no-op, because `TVisObjRef` in this reconstruction
+doesn't carry a real backing `TVisionaireObject*` (it's a field-value stub,
+per `visobjref.h`'s own header comment) - there is nothing genuine to append
+to `TVList::items` (a `vector<TVisionaireObject*>`). Practical effect: the
+rebuilt hover set is always empty, so the "still hovered" comparison never
+finds a match and the scene-level `MouseMove()` fallback always fires when
+not paused. This is a data-layer gap, not a control-flow one - the shape
+above is faithful to the asm; only the field-schema/object-identity layer
+underneath it isn't reversed yet. `TVList::copy(const TVList&)` (new,
+alongside `push_back`) is a real, meaningful implementation (a plain vector
+copy) since it doesn't depend on that gap.
+
+New stub/real surface: `TGDialog::HandleMouseMove()`, `TGScene::GetObject(
+const wxPoint&)`, `TGInterface::GetObject(const wxPoint&)`/`IsInside()`,
+`TGObjectManager::MouseMove()`, `TCursorControl::SetCursorPosition()` (all
+stubs), `TVList::copy()` (real) and `push_back()` (no-op, see above), and
+the `EngineUpdatePaused` global.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

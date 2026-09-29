@@ -12,11 +12,16 @@
 // lines 460983-461192) set/clear it, as their names suggest.
 #pragma once
 
+#include "WxStub.h"
 #include "datastruct/visobjref.h"
 
 class TGDialog {
 public:
 	TGDialog() = default;
+
+	// Confirmed call shape only (TGameControl::HandleMouseMove,
+	// Deponia_Linux.asm line 472265) - not reversed beyond that.
+	void HandleMouseMove(const wxPoint &pos);
 
 	bool IsEmpty() const {
 		return _target.IsEmpty();

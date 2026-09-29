@@ -153,7 +153,76 @@ void TGameControl::DisplayInSceneConsole() {
 	_console.DrawInScene();
 }
 
-void TGameControl::HandleMouseMove(const wxPoint &/*pos*/, bool /*isHolding*/) {
+void TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding) {
+	// Confirmed (Deponia_Linux.asm lines 471985-472461).
+	wxPoint hookPos = pos;
+	if (!_sceneMousePositionHookName.empty() && !isHolding) {
+		// Real dispatch calls LuaExecuteFunction("SceneMousePositionHook",
+		// {&posArg}, results), which may override hookPos via the first
+		// result's TArgument::GetPoint() - LuaExecuteFunction/TArgument's
+		// full contract isn't reversed yet (same gap noted in
+		// TMasterControl::ProcessMessage/HandleEngineEvent/HandleKeyEvent).
+	}
+
+	// Confirmed: this always uses the raw, un-overridden pos, never hookPos
+	// (asm lines 472143-472146 read straight from the original argument).
+	GetCursorControl()->SetCursorPosition(pos.x, pos.y);
+	if (!GetCursorControl()->IsActive())
+		return;
+
+	if (!_dialog.IsEmpty()) {
+		_dialog.HandleMouseMove(pos);
+		return;
+	}
+
+	TVList previousHovered;
+	previousHovered.copy(_hoveredInterfaceObjects);
+	_hoveredInterfaceObjects.clear();
+	_lastHookMousePos = hookPos;
+	_lastMousePos = pos;
+
+	TVisObjRef game = _visionaire->GetGame();
+
+	// Confirmed (asm lines 472198-472447): while holding (dragging), or when
+	// field 0x1DF is set, the hover set is simply left empty rather than
+	// rebuilt. Field 0x274, if set, defers to the current scene's own field
+	// 0x124 instead. Real meaning of all three flags is unresolved.
+	bool rebuild = !isHolding;
+	if (rebuild && game.GetBool(0x1DF))
+		rebuild = false;
+	else if (rebuild && game.GetBool(0x274))
+		rebuild = !_ownedSceneControl.GetScene()->GetRef().GetBool(0x124);
+
+	if (rebuild) {
+		bool firstMatch = true;
+		for (TGInterface *interface : _activeInterfaces) {
+			if (!interface->IsInside(pos))
+				continue;
+			_hoveredInterfaceObjects.push_back(interface->GetRef());
+			if (firstMatch) {
+				_objectManager.MouseMove(interface->GetObject(pos));
+				firstMatch = false;
+			}
+		}
+	}
+
+	if (_hoveredInterfaceObjects.empty() && !EngineUpdatePaused)
+		_objectManager.MouseMove(_ownedSceneControl.GetScene()->GetObject(pos));
+
+	// Confirmed (asm lines 472218-472259): anything in the previous hover
+	// set no longer present in the new one fires a "mouse left" action via
+	// its field 0x184 link.
+	for (TVisionaireObject *object : previousHovered) {
+		bool stillHovered = false;
+		for (TVisionaireObject *current : _hoveredInterfaceObjects) {
+			if (current == object) {
+				stillHovered = true;
+				break;
+			}
+		}
+		if (!stillHovered)
+			TGAction::AddRunningAction(TVisObjRef(object->GetLink(0x184)));
+	}
 }
 
 void TGameControl::HandleMouseUp(const wxPoint &/*pos*/, TMouseMessageEnum /*msg*/) {
