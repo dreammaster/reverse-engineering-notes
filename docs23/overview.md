@@ -10084,6 +10084,53 @@ rather than composed against unconfirmed inputs; a clean pickup point
 for whoever returns to `ApplyEncodedItemEffect` next. Full suite
 rebuilt, 18/18 passing.
 
+### Session update (continued): `TickEquippedItemDurability`, the last piece of the equipped-item wear system
+
+With `partyHandleIconBarItemExpiry` already done, the equipped-item
+durability/breakage tracker (`TickEquippedItemDurability`, flagged in
+this project's own docs for a while as "the game's full equipped-item
+durability and random-breakage system" but never reimplemented)
+turned out to compose cleanly from pieces already on hand.
+`ApplyItemEffectIconSlot`, its own "item broke" consumer, is simply
+effect id 0's own definition (embedded in `effect.c`'s tables:
+`modeFlags` = `EffectModeItemReplace` in both games) feeding
+`partyHandleIconBarItemExpiry` directly — no new mechanism needed. The
+"`word_2E548`'s fields" an older section of `file-formats.md` had left
+vague turned out to already be named: `item.h`'s
+`ItemTargetBreakChanceA`/`ItemTargetBreakItemA` (and their `B`
+siblings), selected by the exact same category-A/C flag test
+`itemCorrosionReplacement` already uses.
+
+One genuine quirk surfaced while composing it: after an item breaks,
+which of the 3 wear counters gets reset to 0 is decided by the
+*replacement* item's own equip-category flags, not the original slot
+that broke. Tracing why meant finally pinning down what the original's
+own `g_currentItemRecord` actually is — a fixed alias for
+`LoadItemCatalogRecord`'s `0xB50` scratch buffer, last overwritten by
+the replacement item's own load inside `partyHandleIconBarItemExpiry`
+itself, not a separately-tracked pointer at all. A small, satisfying
+example of a name that already exists in the disassembly ("current
+item record") being more literal than it sounds — it just means
+"whatever `LoadItemCatalogRecord` most recently touched," which
+happens to be the replacement by the time this code runs.
+
+Reimplemented as `partyTickEquippedItemDurability` in
+`src23/party.c`/`.h`, deliberately dropping the original's own
+redundant second `ClassifyItemServiceTier` call — an artifact of its
+scratch-buffer-based item lookup possibly going stale between calls,
+a risk `item.h`'s own lookups don't share, so the second call would be
+a pure no-op repeat rather than a real safeguard. Tests in
+`test_party.c` cover the empty-slot/non-classifying no-op, the
+exactly-at-threshold boundary (a genuine off-by-one worth getting
+right: the counter must land *strictly past* the threshold to roll,
+not merely reach it), and both roll outcomes including the
+wear-counter-reset-follows-the-replacement quirk. `party.c` picked up
+a new dependency on `effect.c`/`random.c` for `effectGetDef`/
+`randomInRange`; every other test file linking `party.c` directly
+needed its own build-comment updated to link `effect.c` too — caught
+by rebuilding the full 18-suite set rather than just the one file
+touched. Full suite passing.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
