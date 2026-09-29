@@ -1369,6 +1369,44 @@ with a nonzero value (Bridge Troll, Harrier, Worker Ant, Rogue,
 Opposition Leader, Thief), Chapter 3 has 3 (Thief, Elf Assassin, Frost
 Dwarf Tower) — confirmed against both real `WORLD.DAT` files.
 
+## `ApplyIconBarStatDelta` (the icon-bar's stat-delta dispatch variant): Chapter 3 fixes two real Chapter 2 bugs
+
+Checked directly, `yendor2.asm:14068` vs. `yendor3.asm:6623` — same
+capped/floored dispatch, same field-offset-driven design, but **two**
+genuine behavioral differences, not the "no difference" pattern the
+rest of this pipeline shows:
+
+1. **A zero `maxFieldOffset` ("uncapped") guard.** Chapter 2's capped
+   branch always reads `[bx+di]` (`di` = the icon slot's own `+0x12`
+   field) as the cap, even when that field is `0` — meaning a caller
+   that means "no cap" by leaving it zeroed instead gets the party
+   record's own first 2 bytes (`PartyFieldName`'s start) read as the
+   cap. Chapter 3 adds `cmp di, 0 / jz ...` to skip the cap comparison
+   entirely when `di` is 0.
+2. **A stale `g_currentPartyRecord` for the tail's 3 calls.**
+   `RefreshCarryCapacityAndAttributeBonuses`/`CheckForLevelUp` both
+   read `g_currentPartyRecord` internally rather than taking a record
+   parameter (confirmed by reading `RefreshCarryCapacityAndAttributeBonuses`'s
+   own entry: `mov si, g_currentPartyRecord` is its first real
+   instruction). Chapter 2's `ApplyIconBarStatDelta` never updates
+   that global before calling them, so for a whole-party effect
+   (multiple icon slots, each with a different recipient) they'd
+   silently operate on whatever record was left over from an earlier,
+   unrelated call — not necessarily the recipient the delta was just
+   applied to. Chapter 3 adds `push g_currentPartyRecord / mov
+   g_currentPartyRecord, bx` (bx = the recipient) around the same 3
+   calls, then pops it back afterward.
+
+Reimplemented once as `partyApplyIconBarStatDelta`
+(`src23/party.c`/`.h`), adopting Chapter 3's corrected behavior for
+both games rather than replicating either bug — the same "reimplement
+the fix, not the incidental bug" convention already used for the
+monster-approach-scan-bounds and item-service-classification
+differences elsewhere in this file. `partyRefreshCarryCapacityAndAttributeBonuses`/
+`partyCheckForLevelUp` already take an explicit `record` parameter in
+this project's own port (not a global), so bug (2) never had a chance
+to reproduce here regardless.
+
 ## Turn-based combat turn order and round processing: no behavioral difference found
 
 `BuildCombatTurnOrder`, `SelectActiveMonster`, and `ProcessCombatRound`

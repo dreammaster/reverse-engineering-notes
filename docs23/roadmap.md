@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-29, resolved: 4 of ApplyEncodedItemEffect's ~19 branches, plus the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-29, resolved: ApplyIconBarStatDelta, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -768,18 +768,36 @@ consumers, if any.
    in `src23/item.c`/`.h` -- see the status entries above and
    `file-formats.md`'s "Turn-based combat"/"Attack resolution"/"The
    staged combat event's consumer, found"/"`ResolveAttackerActionOutcome`,
-   fully composed" sections). **Still open, a good candidate for its
-   own pass**: the remaining UI-driving orchestration --
-   `ApplyEffectAndDrawIconBar`'s other 2 dispatch variants (item
-   expiry, stat delta -- different mechanisms, own untraced call
-   chains: `HandleIconBarItemExpiry`, `ApplyIconBarStatDelta`),
-   the equipment-corrosion write-back specifically (needs confirming
-   `HandleIconBarItemExpiry`'s field semantics actually match combat's
-   own staging), `ProcessMonsterAttackTurn`, and the player-attack path
-   inside `HandleDungeonInput` (spell/ability use in combat, area-attack
-   handling, and all the drawing/sound/UI-tier-refresh work this
-   project has deliberately deferred to the eventual SDL2 layer) -- all
-   pure orchestration/UI now, no remaining decision-logic gaps.
+   fully composed" sections). **`ApplyIconBarStatDelta` reimplemented,
+   2026-09-29**: the icon-bar's capped/floored stat-delta dispatch
+   variant, as `partyApplyIconBarStatDelta` (`src23/party.c`/`.h`) --
+   data-driven (the field offsets it operates on come from the icon
+   slot itself, populated by an untraced caller, so the specific stat
+   this applies to in practice is still unconfirmed). Found **two real
+   Chapter 2 bugs, both fixed in Chapter 3**: a zero `maxFieldOffset`
+   ("uncapped") gets misread as a real field offset in Chapter 2, and
+   `RefreshCarryCapacityAndAttributeBonuses`/`CheckForLevelUp`'s own
+   internal `g_currentPartyRecord` read goes stale for a whole-party
+   effect in Chapter 2 since nothing updates it per-recipient -- see
+   `engine-diffs.md`. Reimplemented matching Chapter 3's corrected
+   behavior for both games. Tests in `test_party.c`; all 18 suites
+   pass. **Still open, a good candidate for its own pass**: the
+   remaining UI-driving orchestration -- `ApplyEffectAndDrawIconBar`'s
+   last dispatch variant, item expiry (`HandleIconBarItemExpiry`),
+   which needs a genuinely new prerequisite this project hasn't
+   extracted yet: `g_itemStatEffectTable`, a per-item table of up to 4
+   `(type id, amount)` pairs inside each item's own catalog record that
+   `RemoveMultiStatEffect`/`ApplyMultiStatEffectForItem` walk to
+   apply/reverse an equipped item's stat bonuses (located via
+   `ShowArmorDetailRow`'s own readers, but not yet extracted byte-for-
+   byte) -- plus the equipment-corrosion write-back specifically (needs
+   confirming `HandleIconBarItemExpiry`'s field semantics actually
+   match combat's own staging), `ProcessMonsterAttackTurn`, and the
+   player-attack path inside `HandleDungeonInput` (spell/ability use in
+   combat, area-attack handling, and all the drawing/sound/UI-tier-
+   refresh work this project has deliberately deferred to the eventual
+   SDL2 layer) -- all pure orchestration/UI now, no remaining
+   decision-logic gaps outside item expiry.
 8. **`ApplyEncodedItemEffect`** (was `sub_2C0FE`, the largest function
    in the binary at 4,210 bytes -- named and scoped by an earlier
    session, revisited 2026-09-25) -- a flat ~19-branch bitmask switch

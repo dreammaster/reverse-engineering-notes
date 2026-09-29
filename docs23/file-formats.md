@@ -2641,6 +2641,34 @@ status-bit range, then finishes with `UpdatePartyAverageStatTiers` and
 gradual/staged XP-granting effect (the specific field isn't hardcoded
 here, so not confirmed).
 
+**Reimplemented 2026-09-29** as `partyApplyIconBarStatDelta` in
+`src23/party.c`/`.h`, taking the icon slot's own field-offset pair
+(`currentFieldOffset`/`maxFieldOffset`) and the effect's `modeFlags`
+directly, since no caller populating those offsets has been traced yet
+— same "mechanism confirmed, specific field/caller not" situation as
+this paragraph already flagged, now reproduced faithfully rather than
+guessed at. Reading both games side by side while confirming
+instruction-identity turned up **two genuine Chapter 2 bugs, both
+fixed in Chapter 3**: (1) a zero `maxFieldOffset` (meant as "uncapped")
+gets read as a real field offset in Chapter 2, treating the party
+record's own first 2 bytes (`PartyFieldName`'s start) as the cap;
+Chapter 3 adds a guard. (2) `RefreshCarryCapacityAndAttributeBonuses`/
+`CheckForLevelUp` read `g_currentPartyRecord` internally rather than
+taking a record parameter, and Chapter 2's own
+`ApplyIconBarStatDelta` never updates that global before calling them
+— for a whole-party effect they'd silently operate on whatever record
+was left over from an unrelated earlier call; Chapter 3 saves/sets/
+restores `g_currentPartyRecord` around the same 3 calls. Both fixes
+adopted uniformly for both games (this reimplementation always takes
+the record as an explicit parameter, sidestepping bug (2) entirely,
+and treats `maxFieldOffset == 0` as uncapped per bug (1)'s fix) —
+matching this project's established practice of reproducing a
+*corrected* behavior rather than replicating an incidental original
+bug. See `engine-diffs.md`. Tests in `tests/test_party.c` cover both
+mode bits, the uncapped case, the neither-bit-set no-op, the
+status-mask clear, and that the tail's carry-capacity refresh and
+level-up check both actually run.
+
 `ApplyEffectAndDrawIconBar` itself calls `HandleIconBarItemExpiry` (was
 `sub_1819B`) — a significant find: when an icon-bar item's timed effect
 expires, it strips the item's stat bonuses via `RemoveMultiStatEffect`,
@@ -2651,6 +2679,21 @@ gated on a flag on the icon-bar entry. This is the mechanism behind
 consumable magic items that transform or are used up (a wand running
 out, ice melting, etc.), though the specific items involved aren't
 identified yet.
+
+**Not yet reimplemented (2026-09-29): this is `ApplyEffectAndDrawIconBar`'s
+last unported dispatch variant**, and genuinely needs more groundwork
+than `ApplyIconBarStatDelta` did — `RemoveMultiStatEffect`/
+`ApplyMultiStatEffectForItem` (this section's earlier "Multi-stat item
+effects" note) walk `g_itemStatEffectTable`, a per-item table of up to
+4 `(type id, amount)` pairs inside each item's own catalog record —
+this project has located the table (via `ShowArmorDetailRow`'s own
+readers, `ShowArmorProtectionsList`/`ShowArmorAttributeBonusList`, see
+this file's "Major reference find" note above) and its type-id ranges
+(`<= 0x30` → 9 protections, `>= 0x7C` → the 27-entry attribute/skill
+table) but hasn't extracted its exact byte offset/stride within an
+item record, nor reimplemented the add/remove walk itself. A good
+target for a dedicated pass alongside this branch, rather than a quick
+follow-on to `ApplyIconBarStatDelta`'s own composition.
 
 `ApplyEffectAndDrawIconBar` and `RunDungeonGameLoop` both also call
 `CheckPartyWipeAndReinitLevel` (was `sub_25AAC`) — a **total party

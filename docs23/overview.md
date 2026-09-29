@@ -9840,6 +9840,69 @@ including that a `Knock`-qualifying outcome (a magical door) correctly
 does *not* qualify for this different set. Full suite rebuilt, 18/18
 passing.
 
+### Session update (continued): `ApplyIconBarStatDelta`, and two more Chapter 2 bugs Chapter 3 quietly fixes
+
+With `ApplyEncodedItemEffect`'s remaining branches mostly blocked on
+prerequisite subsystems, the next candidate came from a different
+corner of the same pipeline: `ApplyEffectAndDrawIconBar`'s third
+dispatch variant, `ApplyIconBarStatDelta` — flagged in `roadmap.md` as
+"a good candidate for its own pass," and already partially read in an
+earlier round while investigating `ApplySavingThrowEffect`.
+
+The mechanism itself was already understood well enough from that
+earlier reading: a data-driven stat delta (add-and-cap or
+subtract-and-floor) applied to whichever party-record field offsets
+the icon slot's own `+0x10`/`+0x12` fields happen to hold — genuinely
+generic, not hardcoded to one stat, which is also why the *specific*
+stat it's used for in practice is still unconfirmed (no traced caller
+populates those offsets with real field values yet, only with resolved
+magnitude/status values for the *other* dispatch variant). Reading
+Chapter 3's copy side by side to confirm instruction-identity — this
+project's standing habit, followed here even though the function
+looked simple enough to skip it — turned up two real, independent bugs
+Chapter 2 has that Chapter 3 quietly fixes:
+
+1. A zero `maxFieldOffset`, meant by a caller as "no cap," gets read
+   literally in Chapter 2 — the party record's own first 2 bytes
+   (`PartyFieldName`'s start) end up treated as the cap. Chapter 3
+   adds a zero check.
+2. Two of the tail's three calls read a global
+   (`g_currentPartyRecord`) internally instead of taking a record
+   parameter — confirmed by reading `RefreshCarryCapacityAndAttributeBonuses`'s
+   own first instruction (`mov si, g_currentPartyRecord`). Chapter 2's
+   `ApplyIconBarStatDelta` never updates that global before calling
+   them, so a whole-party effect (several icon slots, each with a
+   different recipient) would have them silently act on a stale
+   record left over from elsewhere. Chapter 3 saves, sets, and
+   restores the global around the same 3 calls.
+
+Neither bug is exotic or hard to reproduce faithfully — the interesting
+part is that both were invisible from reading only the mechanism
+description; they only showed up by actually diffing the two games'
+opcodes side by side, the same lesson this project keeps re-learning
+in different shapes. Reimplemented as `partyApplyIconBarStatDelta`
+(`src23/party.c`/`.h`), adopting Chapter 3's corrected behavior for
+both games — consistent with this project's standing rule of
+reproducing the fix rather than an incidental original bug, and made
+easy here since the existing C port of the two tail calls
+(`partyRefreshCarryCapacityAndAttributeBonuses`/`partyCheckForLevelUp`)
+already takes an explicit record parameter rather than a global,
+sidestepping bug (2) by construction.
+
+`HandleIconBarItemExpiry`, the icon bar's last unported dispatch
+variant, turned out to need real new groundwork rather than a quick
+follow-on: its two helpers (`RemoveMultiStatEffect`/
+`ApplyMultiStatEffectForItem`) walk `g_itemStatEffectTable`, a
+per-item table of stat bonuses inside each item's own catalog record
+that an earlier session located (via `ShowArmorDetailRow`'s clue-book
+readers) but never extracted byte-for-byte. Left open, documented as a
+good target for its own pass rather than rushed.
+
+Tests in `test_party.c` cover both mode bits, the uncapped-when-zero
+case, the neither-bit-set no-op, the status-mask clear, and that the
+tail's carry-capacity refresh and level-up check both actually fire.
+Full suite rebuilt, 18/18 passing.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -752,6 +752,55 @@ static void testDecodeSavingThrowEffect(void) {
     check("id 49 is single-target", !effect.wholeParty);
 }
 
+static void testApplyIconBarStatDelta(void) {
+    enum { EffectModeStatFloorBit = 0x0080, EffectModeStatCappedBit = 0x0100 };
+    unsigned strengthCurrent = PartyFieldStats + PartyStatStrength * 2;
+    unsigned strengthMax = PartyFieldStatsMax + PartyStatStrength * 2;
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatStrength, 70);
+    partySetStatMax(g_record, PartyStatStrength, 75);
+    partyApplyIconBarStatDelta(g_record, GameYendor2, EffectModeStatCappedBit, 10, strengthCurrent, strengthMax,
+                                0xFFFF);
+    checkU32("capped: current + delta clamped at max", partyGetStat(g_record, PartyStatStrength), 75);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatStrength, 70);
+    partyApplyIconBarStatDelta(g_record, GameYendor2, EffectModeStatCappedBit, 10, strengthCurrent, 0, 0xFFFF);
+    checkU32("capped with maxFieldOffset == 0: uncapped (matches Chapter 3's fix)",
+             partyGetStat(g_record, PartyStatStrength), 80);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatStrength, 5);
+    partyApplyIconBarStatDelta(g_record, GameYendor2, EffectModeStatFloorBit, 10, strengthCurrent, strengthMax,
+                                0xFFFF);
+    checkU32("floor: current - delta clamped at 0, not negative", partyGetStat(g_record, PartyStatStrength), 0);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatStrength, 42);
+    partyApplyIconBarStatDelta(g_record, GameYendor2, 0, 10, strengthCurrent, strengthMax, 0xFFFF);
+    checkU32("neither mode bit set: stat left untouched", partyGetStat(g_record, PartyStatStrength), 42);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldStatusFlags, PartyStatusCursed | PartyStatusPoisoned);
+    partyApplyIconBarStatDelta(g_record, GameYendor2, 0, 0, strengthCurrent, strengthMax, (uint16_t)~PartyStatusCursed);
+    check("statusFlagsClearMask clears the matching bit",
+          !(partyGetU16(g_record, PartyFieldStatusFlags) & PartyStatusCursed));
+    check("...but leaves other bits alone", partyGetU16(g_record, PartyFieldStatusFlags) & PartyStatusPoisoned);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetStat(g_record, PartyStatStrength, 80); /* > 72: exercises the carry-capacity/bonus refresh */
+    partyApplyIconBarStatDelta(g_record, GameYendor2, 0, 0, strengthCurrent, strengthMax, 0xFFFF);
+    checkU32("the tail's carry-capacity refresh actually ran (10x current Strength)",
+             partyGetStat(g_record, PartyStatCarryCapacity), 800);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldLevel, 1);
+    setExperience(g_record, (const uint8_t[4]){0x00, 0x00, 0x06, 0x80}); /* == table[0], the >= boundary */
+    partyApplyIconBarStatDelta(g_record, GameYendor2, 0, 0, strengthCurrent, strengthMax, 0xFFFF);
+    check("the tail's level-up check actually ran", partyGetU16(g_record, PartyFieldPendingLevel) != 0);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -765,6 +814,7 @@ int main(void) {
     testKnownAbilityIds();
     testDeductStats();
     testDecodeSavingThrowEffect();
+    testApplyIconBarStatDelta();
     testRealCharacters();
 
     if (g_failureCount == 0) {

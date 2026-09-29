@@ -222,6 +222,50 @@ void partyDeductMp(uint8_t *record, uint16_t amount);
  */
 bool partyCheckForLevelUp(uint8_t *record, GameKind game);
 
+/*
+ * ApplyIconBarStatDelta (yendor2.asm:14068 vs. yendor3.asm:6623) --
+ * ApplyEffectAndDrawIconBar's third dispatch variant (effect.h's
+ * EffectModeStatCapped = 0x100 / EffectModeStatFloor = 0x80 mode
+ * bits, passed here as modeFlags), for a caller this project hasn't
+ * traced yet: unlike the "plain damage/status" dispatch's confirmed
+ * callers, this one needs the icon slot's own +0x10/+0x12 fields
+ * populated with raw *field offsets* into the recipient's own record
+ * rather than resolved values, and no traced caller does that -- so
+ * the specific stat this applies to in practice is still unconfirmed.
+ *
+ * EffectModeStatCapped set (checked first -- wins if both happen to
+ * be set): adds delta to the value at currentFieldOffset, capped at
+ * the value at maxFieldOffset -- genuinely data-driven, not hardcoded
+ * to one stat. Pass maxFieldOffset == 0 for "uncapped" (**Chapter 3
+ * fixes a real Chapter 2 bug here**: Chapter 2 has no zero guard and
+ * would read the party record's own first 2 bytes -- PartyFieldName's
+ * start -- as the cap whenever maxFieldOffset is 0; Chapter 3 adds
+ * the check. Reimplemented once, matching Chapter 3's corrected
+ * behavior for both games -- see engine-diffs.md). Else, if
+ * EffectModeStatFloor is set: subtracts delta from the value at
+ * currentFieldOffset instead, floored at 0 (maxFieldOffset unused).
+ * Neither bit set: no stat change at all, but the tail below still
+ * runs (matches the original's own unconditional fallthrough).
+ *
+ * Both paths finish by ANDing statusFlagsClearMask into
+ * PartyFieldStatusFlags (pass 0xFFFF for a no-op -- the original's
+ * own caller-context suppression, word_33306 bits 0x40/0x80, an
+ * untraced source), then partyRefreshCarryCapacityAndAttributeBonuses
+ * + partyCheckForLevelUp (UpdatePartyAverageStatTiers, pure UI, is
+ * not). **A second Chapter 2 bug, also fixed in Chapter 3**: the
+ * original RefreshCarryCapacityAndAttributeBonuses/CheckForLevelUp
+ * read g_currentPartyRecord internally rather than taking a record
+ * parameter, and Chapter 2's own ApplyIconBarStatDelta never updates
+ * that global before calling them -- for a whole-party effect they'd
+ * silently operate on whatever record was left over from an earlier,
+ * unrelated call. Chapter 3 saves/sets/restores g_currentPartyRecord
+ * around the same 3 calls so each recipient gets its own correct
+ * refresh. This reimplementation always takes record as an explicit
+ * parameter, matching Chapter 3's corrected behavior for both games.
+ */
+void partyApplyIconBarStatDelta(uint8_t *record, GameKind game, uint16_t modeFlags, uint16_t delta,
+                                 unsigned currentFieldOffset, unsigned maxFieldOffset, uint16_t statusFlagsClearMask);
+
 enum { PartyXpThresholdCount = 89 };
 
 /*

@@ -212,6 +212,34 @@ bool partyCheckForLevelUp(uint8_t *record, GameKind game) {
     return true;
 }
 
+void partyApplyIconBarStatDelta(uint8_t *record, GameKind game, uint16_t modeFlags, uint16_t delta,
+                                 unsigned currentFieldOffset, unsigned maxFieldOffset,
+                                 uint16_t statusFlagsClearMask) {
+    enum { EffectModeStatFloorBit = 0x0080, EffectModeStatCappedBit = 0x0100 };
+
+    if (modeFlags & EffectModeStatCappedBit) {
+        uint16_t value = (uint16_t)(partyGetU16(record, currentFieldOffset) + delta);
+        if (maxFieldOffset != 0) {
+            uint16_t max = partyGetU16(record, maxFieldOffset);
+            if (value > max) {
+                value = max;
+            }
+        }
+        partySetU16(record, currentFieldOffset, value);
+    } else if (modeFlags & EffectModeStatFloorBit) {
+        int32_t value = (int32_t)partyGetU16(record, currentFieldOffset) - (int32_t)delta;
+        if (value < 0) {
+            value = 0;
+        }
+        partySetU16(record, currentFieldOffset, (uint16_t)value);
+    }
+
+    partySetU16(record, PartyFieldStatusFlags,
+                (uint16_t)(partyGetU16(record, PartyFieldStatusFlags) & statusFlagsClearMask));
+    partyRefreshCarryCapacityAndAttributeBonuses(record);
+    partyCheckForLevelUp(record, game);
+}
+
 const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game) {
     static const PartyClassPromotionThresholds kYendor2 = {10, 30};
     static const PartyClassPromotionThresholds kYendor3 = {0, 0};
