@@ -801,6 +801,112 @@ static void testApplyIconBarStatDelta(void) {
     check("the tail's level-up check actually ran", partyGetU16(g_record, PartyFieldPendingLevel) != 0);
 }
 
+static void testMultiStatEffect(void) {
+    /* Protection field (PartyFieldProtections, 0x20): applies unconditionally, even from 0. */
+    uint8_t effectProtection[ItemEffectSize] = {0x20, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    memset(g_record, 0, PartyRecordSize);
+    partyApplyMultiStatEffect(g_record, effectProtection);
+    checkU32("protection field applies from 0", partyGetU16(g_record, PartyFieldProtections), 5);
+
+    /* Stat field (PartyFieldStats, 0x3C): skipped when currently 0 (untrained). */
+    uint8_t effectStat[ItemEffectSize] = {0x3C, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    memset(g_record, 0, PartyRecordSize);
+    partyApplyMultiStatEffect(g_record, effectStat);
+    checkU32("stat field skipped when untrained (currently 0)", partyGetU16(g_record, PartyFieldStats), 0);
+
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldStats, 10); /* trained */
+    partyApplyMultiStatEffect(g_record, effectStat);
+    checkU32("stat field applies when trained (nonzero)", partyGetU16(g_record, PartyFieldStats), 15);
+
+    /* Add side caps at 999 (0x3E7), both ranges. */
+    uint8_t effectBigAmount[ItemEffectSize] = {0x20, 0, 0xE8, 0x03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; /* +1000 */
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldProtections, 500);
+    partyApplyMultiStatEffect(g_record, effectBigAmount);
+    checkU32("add side caps at 999", partyGetU16(g_record, PartyFieldProtections), 999);
+
+    /* Remove: protection field (< 0x32) is NOT floor-clamped -- wraps on underflow. */
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldProtections, 3);
+    partyRemoveMultiStatEffect(g_record, effectProtection); /* subtracts 5 */
+    checkU32("removing a protection bonus underflows (wraps), not floored",
+             partyGetU16(g_record, PartyFieldProtections), (uint16_t)(3 - 5));
+
+    /* Remove: stat field (>= 0x32) IS floor-clamped at 0. */
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldStats, 3);
+    partyRemoveMultiStatEffect(g_record, effectStat); /* subtracts 5, would go negative */
+    checkU32("removing a stat bonus floors at 0", partyGetU16(g_record, PartyFieldStats), 0);
+
+    /* Remove: stat field also skipped when currently 0. */
+    memset(g_record, 0, PartyRecordSize);
+    partyRemoveMultiStatEffect(g_record, effectStat);
+    checkU32("removing from an untrained (0) stat is a no-op", partyGetU16(g_record, PartyFieldStats), 0);
+
+    /* Two pairs, both applied (the entry only stops early at a zero *field*, not after 2). */
+    uint8_t effectTwoPairs[ItemEffectSize] = {0x20, 0, 5, 0, 0x22, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    memset(g_record, 0, PartyRecordSize);
+    partyApplyMultiStatEffect(g_record, effectTwoPairs);
+    checkU32("first pair applied", partyGetU16(g_record, PartyFieldProtections), 5);
+    checkU32("second pair applied too", partyGetU16(g_record, PartyFieldProtections + 2), 3);
+
+    /* NULL effect: no-op, doesn't crash. */
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldProtections, 7);
+    partyApplyMultiStatEffect(g_record, NULL);
+    partyRemoveMultiStatEffect(g_record, NULL);
+    checkU32("NULL effect is a no-op for both apply and remove", partyGetU16(g_record, PartyFieldProtections), 7);
+}
+
+static void testHandleIconBarItemExpiry(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 2;
+    catalog.effectCount = 3; /* offset 0 in the effects table is the "no effect" sentinel, unused below */
+
+    uint8_t *item1 = catalog.items + 0 * ItemRecordSize;    /* id 1: the equipped/expiring item */
+    setU16At(item1, ItemFieldEffectOffset, ItemEffectSize); /* -> effects[16] */
+    setU16At(item1, ItemFieldWeight, 5);
+
+    uint8_t *item2 = catalog.items + 1 * ItemRecordSize;        /* id 2: the replacement item */
+    setU16At(item2, ItemFieldEffectOffset, ItemEffectSize * 2); /* -> effects[32] */
+    setU16At(item2, ItemFieldWeight, 3);
+
+    setU16At(catalog.effects + ItemEffectSize, 0, 0x20); /* item 1's own bonus: PartyFieldProtections, +10 */
+    setU16At(catalog.effects + ItemEffectSize, 2, 10);
+    setU16At(catalog.effects + ItemEffectSize * 2, 0, 0x22); /* item 2's own bonus: PartyFieldProtections+2, +7 */
+    setU16At(catalog.effects + ItemEffectSize * 2, 2, 7);
+
+    /* Destroy branch (EffectModeItemDestroy, 0x200). */
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldProtections, 10); /* item 1's own bonus, already applied */
+    partySetU16(g_record, PartyFieldInventory, 50);   /* running weight total */
+    itemSlotSet(g_record + 0x13A, 1, 0);              /* item 1 equipped at the main-weapon slot */
+
+    partyHandleIconBarItemExpiry(g_record, &catalog, 0x0200, 1, 0, 0x13A);
+
+    checkU32("destroy: removes the expiring item's own stat bonus", partyGetU16(g_record, PartyFieldProtections), 0);
+    checkU32("destroy: clears the slot's id field", itemSlotId(g_record + 0x13A), 0);
+    checkU32("destroy: subtracts the item's own weight from the inventory total",
+             partyGetU16(g_record, PartyFieldInventory), 45);
+
+    /* Replace branch (EffectModeItemReplace: EffectModeItemDestroy clear). */
+    memset(g_record, 0, PartyRecordSize);
+    partySetU16(g_record, PartyFieldProtections, 10);
+    itemSlotSet(g_record + 0x13A, 1, 0);
+
+    partyHandleIconBarItemExpiry(g_record, &catalog, 0, 1, 2, 0x13A);
+
+    checkU32("replace: removes the expiring item's own bonus", partyGetU16(g_record, PartyFieldProtections), 0);
+    checkU32("replace: applies the replacement item's own bonus (a different field)",
+             partyGetU16(g_record, PartyFieldProtections + 2), 7);
+    checkU32("replace: slot id becomes the replacement item", itemSlotId(g_record + 0x13A), 2);
+    checkU32("replace: slot extra becomes the expiring item's own id (the original's own quirk)",
+             itemSlotExtra(g_record + 0x13A), 1);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -815,6 +921,8 @@ int main(void) {
     testDeductStats();
     testDecodeSavingThrowEffect();
     testApplyIconBarStatDelta();
+    testMultiStatEffect();
+    testHandleIconBarItemExpiry();
     testRealCharacters();
 
     if (g_failureCount == 0) {

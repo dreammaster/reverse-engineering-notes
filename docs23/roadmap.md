@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-29, resolved: ApplyIconBarStatDelta, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-29, resolved: ApplyEffectAndDrawIconBar's full 3-way dispatch, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -781,23 +781,30 @@ consumers, if any.
    effect in Chapter 2 since nothing updates it per-recipient -- see
    `engine-diffs.md`. Reimplemented matching Chapter 3's corrected
    behavior for both games. Tests in `test_party.c`; all 18 suites
-   pass. **Still open, a good candidate for its own pass**: the
-   remaining UI-driving orchestration -- `ApplyEffectAndDrawIconBar`'s
-   last dispatch variant, item expiry (`HandleIconBarItemExpiry`),
-   which needs a genuinely new prerequisite this project hasn't
-   extracted yet: `g_itemStatEffectTable`, a per-item table of up to 4
-   `(type id, amount)` pairs inside each item's own catalog record that
-   `RemoveMultiStatEffect`/`ApplyMultiStatEffectForItem` walk to
-   apply/reverse an equipped item's stat bonuses (located via
-   `ShowArmorDetailRow`'s own readers, but not yet extracted byte-for-
-   byte) -- plus the equipment-corrosion write-back specifically (needs
-   confirming `HandleIconBarItemExpiry`'s field semantics actually
-   match combat's own staging), `ProcessMonsterAttackTurn`, and the
-   player-attack path inside `HandleDungeonInput` (spell/ability use in
-   combat, area-attack handling, and all the drawing/sound/UI-tier-
-   refresh work this project has deliberately deferred to the eventual
-   SDL2 layer) -- all pure orchestration/UI now, no remaining
-   decision-logic gaps outside item expiry.
+   pass. **`HandleIconBarItemExpiry` reimplemented too, same round --
+   ApplyEffectAndDrawIconBar's full 3-way dispatch is now done**: the
+   "`g_itemStatEffectTable`" prerequisite flagged as unextracted turned
+   out to already exist under a different name --
+   `item.h`'s own `itemEffectEntry`/`itemEffectPairs`/`itemEffectField`/
+   `itemEffectAmount`, decoded by an earlier round but never connected
+   to `RemoveMultiStatEffect`/`ApplyMultiStatEffectForItem`. Reading
+   those two functions directly confirmed a pair's field is a *raw
+   byte offset* straight into the party record (this project's own
+   `isPartyEffectField` test helper had already validated the
+   hypothesis against real data without the connection being made).
+   Reimplemented as `partyApplyMultiStatEffect`/
+   `partyRemoveMultiStatEffect`/`partyHandleIconBarItemExpiry`
+   (`src23/party.c`/`.h`), all instruction-identical in Chapter 3 --
+   see `engine-diffs.md`. Tests in `test_party.c` cover both the
+   destroy and replace branches; all 18 suites pass. **Still open, a
+   good candidate for its own pass**: the equipment-corrosion
+   write-back specifically (needs confirming `HandleIconBarItemExpiry`'s
+   field semantics actually match combat's own staging), `ProcessMonsterAttackTurn`,
+   and the player-attack path inside `HandleDungeonInput` (spell/ability
+   use in combat, area-attack handling, and all the drawing/sound/
+   UI-tier-refresh work this project has deliberately deferred to the
+   eventual SDL2 layer) -- all pure orchestration/UI now, no remaining
+   decision-logic gaps anywhere in this candidate.
 8. **`ApplyEncodedItemEffect`** (was `sub_2C0FE`, the largest function
    in the binary at 4,210 bytes -- named and scoped by an earlier
    session, revisited 2026-09-25) -- a flat ~19-branch bitmask switch

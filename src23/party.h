@@ -266,6 +266,73 @@ bool partyCheckForLevelUp(uint8_t *record, GameKind game);
 void partyApplyIconBarStatDelta(uint8_t *record, GameKind game, uint16_t modeFlags, uint16_t delta,
                                  unsigned currentFieldOffset, unsigned maxFieldOffset, uint16_t statusFlagsClearMask);
 
+/*
+ * ApplyMultiStatEffectForItem / RemoveMultiStatEffect (yendor2.asm:18864/
+ * :19135, instruction-identical in Chapter 3): the add/remove halves of
+ * applying an item's own multi-stat bonus table -- item.h's
+ * itemEffectEntry, already fully decoded (up to 4 (field, amount)
+ * pairs, each field confirmed to be a *raw byte offset* directly into
+ * the party record, not an index into any name table -- the earlier
+ * "type id" framing in this project's own docs undersold how literal
+ * it is). effect is an itemEffectEntry result; NULL is a no-op
+ * (matching the original's own "no effect table for this item" gate).
+ *
+ * Two real asymmetries reproduced exactly, not smoothed over, both
+ * turning on whether a pair's field is below or at/above 0x32 (50) --
+ * matching PartyFieldProtections' own 9-field range (0x20-0x30) below
+ * that split and PartyFieldStats/StatsMax's ranges (0x3C+/0x7C+) at or
+ * above it:
+ *   - field >= 0x32 additionally skips the pair entirely when the
+ *     target field currently reads 0 -- the same "an untrained stat
+ *     isn't grown from zero" convention already used by
+ *     partyApplyTraining's own trainingAddStatMaxCapped. field < 0x32
+ *     (protections) always applies.
+ *   - On removal, field >= 0x32 is floor-clamped at 0; field < 0x32 is
+ *     NOT -- subtracting past 0 wraps the u16 field, an original quirk
+ *     this reimplementation reproduces via ordinary unsigned
+ *     wraparound rather than "fixing" it with an unwritten floor.
+ * On addition (both ranges), the result is capped at 999.
+ */
+void partyApplyMultiStatEffect(uint8_t *record, const uint8_t *effect);
+void partyRemoveMultiStatEffect(uint8_t *record, const uint8_t *effect);
+
+/*
+ * HandleIconBarItemExpiry (yendor2.asm:13896 vs. yendor3.asm:6429,
+ * instruction-identical) -- ApplyEffectAndDrawIconBar's last dispatch
+ * variant (effect.h's EffectModeItemDestroy = 0x200 / EffectModeItemReplace
+ * = 0x400 mode bits, passed as modeFlags): an equipped item's timed
+ * effect expiring, either transforming it into a different item or
+ * destroying it outright. This is the piece that closes out
+ * `ApplyEffectAndDrawIconBar`'s full 3-way dispatch (the other two,
+ * plain damage/status and stat-delta, were already done).
+ *
+ * Always removes equippedItemId's own stat bonuses first (via
+ * partyRemoveMultiStatEffect + itemEffectEntry/itemCatalogRecord).
+ * modeFlags & EffectModeItemDestroy (0x200) selects what happens at
+ * record + slotOffset next:
+ *   - set (destroy): clears the slot's id field only (record +
+ *     slotOffset -- the slot's own "extra" field at +2 is
+ *     deliberately left untouched, matching the original exactly),
+ *     and subtracts equippedItemId's own ItemFieldWeight from
+ *     PartyFieldInventory's running total (+0x118 -- still not fully
+ *     confirmed what unit that field tracks, see this header's own
+ *     PartyFieldInventory note; manipulated the same way
+ *     PlaceItemInSlot/PickUpItemFromSlot already do elsewhere).
+ *   - clear (replace): writes replacementItemId as the slot's id and
+ *     equippedItemId as its own extra field (itemSlotSet's own
+ *     argument order -- the *expiring* item's id ends up parked in
+ *     "extra," an original quirk reproduced as found, not
+ *     reinterpreted), then applies replacementItemId's own stat
+ *     bonuses via partyApplyMultiStatEffect.
+ * Finishes with partyRefreshCarryCapacityAndAttributeBonuses
+ * (UpdatePartyAverageStatTiers, pure UI, is not modeled).
+ * g_currentPartyRecord isn't modeled either -- like
+ * partyApplyIconBarStatDelta, this reimplementation always takes
+ * record as an explicit parameter instead.
+ */
+void partyHandleIconBarItemExpiry(uint8_t *record, const ItemCatalog *catalog, uint16_t modeFlags,
+                                   uint16_t equippedItemId, uint16_t replacementItemId, unsigned slotOffset);
+
 enum { PartyXpThresholdCount = 89 };
 
 /*

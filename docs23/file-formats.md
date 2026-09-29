@@ -866,6 +866,13 @@ distinct, lower-level primitive from the higher-level command handler
 `ApplyMultiStatEffect` — same table-walking core, capped at `0x3E7`
 instead of floored at `0`, but without that command's target
 confirmation, incapacitation check, or full redraw sequence.
+**`g_itemStatEffectTable` reimplemented, 2026-09-29**: turned out to
+already be `item.h`'s own `itemEffectEntry` (this project just hadn't
+connected the two) — see the `HandleIconBarItemExpiry` note further
+below for the full writeup, including the "type id is a raw
+party-record byte offset" confirmation and both add/remove
+asymmetries. Reimplemented as `partyApplyMultiStatEffect`/
+`partyRemoveMultiStatEffect` in `src23/party.c`/`.h`.
 `SwapItemMultiStatEffect` (was `sub_276C5`, called 3 times from
 `ConsumeItemChargeResource`) ties the whole cluster together: if the current item's
 category matches a `word_2E548` sub-flag, it removes the current
@@ -2680,20 +2687,43 @@ consumable magic items that transform or are used up (a wand running
 out, ice melting, etc.), though the specific items involved aren't
 identified yet.
 
-**Not yet reimplemented (2026-09-29): this is `ApplyEffectAndDrawIconBar`'s
-last unported dispatch variant**, and genuinely needs more groundwork
-than `ApplyIconBarStatDelta` did — `RemoveMultiStatEffect`/
-`ApplyMultiStatEffectForItem` (this section's earlier "Multi-stat item
-effects" note) walk `g_itemStatEffectTable`, a per-item table of up to
-4 `(type id, amount)` pairs inside each item's own catalog record —
-this project has located the table (via `ShowArmorDetailRow`'s own
-readers, `ShowArmorProtectionsList`/`ShowArmorAttributeBonusList`, see
-this file's "Major reference find" note above) and its type-id ranges
-(`<= 0x30` → 9 protections, `>= 0x7C` → the 27-entry attribute/skill
-table) but hasn't extracted its exact byte offset/stride within an
-item record, nor reimplemented the add/remove walk itself. A good
-target for a dedicated pass alongside this branch, rather than a quick
-follow-on to `ApplyIconBarStatDelta`'s own composition.
+**Fully reimplemented, 2026-09-29 — turned out to need much less new
+groundwork than expected**: the "`g_itemStatEffectTable`" this section
+worried was still unextracted was, it turns out, already fully decoded
+by an earlier round of this project under a different name —
+`src23/item.h`'s `itemEffectEntry`/`itemEffectPairs`/`itemEffectField`/
+`itemEffectAmount` (an item's own `ItemFieldEffectOffset` field, `+2`,
+already documented as "byte offset into the effect table") are exactly
+this table, just connected to `item.c`'s own module before anyone
+traced `RemoveMultiStatEffect`/`ApplyMultiStatEffectForItem` far enough
+to recognize it. Reading those two functions directly resolved the
+last open question — that a pair's "type id" is used as a **raw byte
+offset straight into the party record**, not an index into any name
+table (this project's own `isPartyEffectField` test helper in
+`tests/test_item.c`, already checking real `WORLD.DAT` data against
+exactly the `PartyFieldProtections`/`PartyFieldStats`/`PartyFieldStatsMax`
+ranges this implies, had already validated the hypothesis without
+anyone connecting it to these two functions specifically).
+
+Two real asymmetries confirmed and reproduced exactly: fields `< 0x32`
+(protections) apply/remove unconditionally, while fields `>= 0x32`
+(stats/stat maxes) additionally skip the pair entirely when the target
+field currently reads 0 (the same "don't grow an untrained stat from
+zero" rule `partyApplyTraining` already uses) — and, going the other
+direction, removing a `< 0x32` field is **not** floor-clamped at 0 (an
+original quirk: the u16 field can wrap on underflow) while `>= 0x32`
+fields are. Reimplemented as `partyApplyMultiStatEffect`/
+`partyRemoveMultiStatEffect`/`partyHandleIconBarItemExpiry` in
+`src23/party.c`/`.h`, all instruction-identical in Chapter 3. One more
+original quirk reproduced rather than reinterpreted: the replace
+branch parks the *expiring* item's own id in the equipment slot's
+"extra" field (`itemSlotSet`'s second argument) while the *replacement*
+item's id becomes the slot's primary id — backwards from what the
+field names alone might suggest. This closes out
+`ApplyEffectAndDrawIconBar`'s full 3-way dispatch entirely — all three
+variants (plain damage/status, stat delta, item expiry) are now
+reimplemented. Tests in `tests/test_party.c` cover both the destroy and
+replace branches, the weight subtraction, and the stat-bonus swap.
 
 `ApplyEffectAndDrawIconBar` and `RunDungeonGameLoop` both also call
 `CheckPartyWipeAndReinitLevel` (was `sub_25AAC`) — a **total party

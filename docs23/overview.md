@@ -9903,6 +9903,61 @@ case, the neither-bit-set no-op, the status-mask clear, and that the
 tail's carry-capacity refresh and level-up check both actually fire.
 Full suite rebuilt, 18/18 passing.
 
+### Session update (continued): `HandleIconBarItemExpiry`, closing out `ApplyEffectAndDrawIconBar` entirely
+
+The previous section left `HandleIconBarItemExpiry` open specifically
+because its own prerequisite, `g_itemStatEffectTable`, looked like real
+new groundwork — a per-item table of stat bonuses this project had
+located (via clue-book UI readers) but never byte-extracted. Tracing
+`RemoveMultiStatEffect`/`ApplyMultiStatEffectForItem` directly to
+finally pin that table down turned into a pleasant surprise: it wasn't
+new groundwork at all. `item.h`'s own `itemEffectEntry`/`itemEffectPairs`/
+`itemEffectField`/`itemEffectAmount` — decoded during an earlier
+round's work on the item catalog, under the name `ItemFieldEffectOffset`'s
+"effect table" rather than "multi-stat effect table" — turned out to be
+the *exact same structure*, just never connected to these two
+functions because nobody had traced them far enough to recognize it.
+Even better: this project's own `isPartyEffectField` helper in
+`tests/test_item.c` had *already validated* the resulting hypothesis
+(that a pair's "type id" is a raw byte offset straight into the party
+record, landing in either the protections range or one of the two stat
+ranges) against real `WORLD.DAT` data, without anyone realizing that
+validation was answering this exact open question.
+
+With the table identified, the two functions themselves were
+straightforward: reading them side by side found two real, deliberate
+asymmetries (not bugs this time, both present identically in both
+games) turning on whether a pair's field is below or at/above `0x32`
+— protections apply/remove unconditionally, stats/stat-maxes
+additionally skip when the target field is currently 0 (the same
+"don't grow an untrained stat from zero" convention this project
+already uses elsewhere) and get floor-clamped at 0 on removal, while
+protections don't (an original quirk: removing a protection bonus can
+underflow and wrap the field, reproduced via ordinary C unsigned
+arithmetic rather than "fixed" with an unwritten floor). Composing
+`HandleIconBarItemExpiry` itself around these two pieces surfaced one
+more genuine original quirk worth remembering, not obvious from the
+field names alone: on the "replace" branch, the *expiring* item's own
+id ends up parked in the equipment slot's "extra" field while the
+*replacement* item's id becomes the slot's primary id — backwards from
+what a first guess at the two fields' roles would suggest.
+
+This closes `ApplyEffectAndDrawIconBar`'s entire 3-way dispatch: all
+three variants (plain damage/status, stat delta, item expiry) are
+now reimplemented, with no remaining decision-logic gaps anywhere in
+the icon-bar effect-application pipeline. New:
+`partyApplyMultiStatEffect`/`partyRemoveMultiStatEffect`/
+`partyHandleIconBarItemExpiry` in `src23/party.c`/`.h`, all confirmed
+instruction-identical in Chapter 3. Tests in `test_party.c` cover the
+destroy branch (bonus removal, slot clear, weight subtraction) and the
+replace branch (bonus swap, the id/extra-field quirk). Full suite
+rebuilt, 18/18 passing. Worth remembering as its own lesson: an
+"unextracted table" flagged as a blocker is worth a search through
+this project's own existing modules before assuming it needs fresh
+IDA work — the same kind of check `file-formats.md`'s own methodology
+correction from a few rounds back was about, just aimed at `item.h`
+instead of `file-formats.md` itself this time.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

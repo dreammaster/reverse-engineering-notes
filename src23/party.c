@@ -240,6 +240,69 @@ void partyApplyIconBarStatDelta(uint8_t *record, GameKind game, uint16_t modeFla
     partyCheckForLevelUp(record, game);
 }
 
+enum { PartyMultiStatEffectSplit = 0x32 };
+
+void partyApplyMultiStatEffect(uint8_t *record, const uint8_t *effect) {
+    if (!effect) {
+        return;
+    }
+    unsigned pairs = itemEffectPairs(effect);
+    for (unsigned i = 0; i < pairs; i++) {
+        unsigned field = itemEffectField(effect, i);
+        uint16_t amount = itemEffectAmount(effect, i);
+        if (field >= PartyMultiStatEffectSplit && partyGetU16(record, field) == 0) {
+            continue;
+        }
+        uint16_t value = (uint16_t)(partyGetU16(record, field) + amount);
+        if (value > 999) {
+            value = 999;
+        }
+        partySetU16(record, field, value);
+    }
+}
+
+void partyRemoveMultiStatEffect(uint8_t *record, const uint8_t *effect) {
+    if (!effect) {
+        return;
+    }
+    unsigned pairs = itemEffectPairs(effect);
+    for (unsigned i = 0; i < pairs; i++) {
+        unsigned field = itemEffectField(effect, i);
+        uint16_t amount = itemEffectAmount(effect, i);
+        if (field >= PartyMultiStatEffectSplit && partyGetU16(record, field) == 0) {
+            continue;
+        }
+        uint16_t value = (uint16_t)(partyGetU16(record, field) - amount);
+        if (field >= PartyMultiStatEffectSplit && (int16_t)value < 0) {
+            value = 0;
+        }
+        partySetU16(record, field, value);
+    }
+}
+
+void partyHandleIconBarItemExpiry(uint8_t *record, const ItemCatalog *catalog, uint16_t modeFlags,
+                                   uint16_t equippedItemId, uint16_t replacementItemId, unsigned slotOffset) {
+    enum { EffectModeItemDestroyBit = 0x0200 };
+
+    const uint8_t *equippedRecord = itemCatalogRecord(catalog, equippedItemId);
+    partyRemoveMultiStatEffect(record, equippedRecord ? itemEffectEntry(catalog, equippedRecord) : NULL);
+
+    uint8_t *slot = record + slotOffset;
+    if (modeFlags & EffectModeItemDestroyBit) {
+        partySetU16(slot, 0, 0);
+        if (equippedRecord) {
+            uint16_t weight = itemGetU16(equippedRecord, ItemFieldWeight);
+            partySetU16(record, PartyFieldInventory, (uint16_t)(partyGetU16(record, PartyFieldInventory) - weight));
+        }
+    } else {
+        itemSlotSet(slot, replacementItemId, equippedItemId);
+        const uint8_t *replacementRecord = itemCatalogRecord(catalog, replacementItemId);
+        partyApplyMultiStatEffect(record, replacementRecord ? itemEffectEntry(catalog, replacementRecord) : NULL);
+    }
+
+    partyRefreshCarryCapacityAndAttributeBonuses(record);
+}
+
 const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game) {
     static const PartyClassPromotionThresholds kYendor2 = {10, 30};
     static const PartyClassPromotionThresholds kYendor3 = {0, 0};

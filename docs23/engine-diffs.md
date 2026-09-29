@@ -1407,6 +1407,20 @@ differences elsewhere in this file. `partyRefreshCarryCapacityAndAttributeBonuse
 this project's own port (not a global), so bug (2) never had a chance
 to reproduce here regardless.
 
+## `RemoveMultiStatEffect`/`ApplyMultiStatEffectForItem`/`HandleIconBarItemExpiry`: no behavioral difference found
+
+Checked directly, `yendor2.asm:19135`/`:18864`/`:13896` vs.
+`yendor3.asm:11115`/`:10840`/`:6429` — all three instruction-identical.
+Same `< 0x32`/`>= 0x32` field-range asymmetry (unconditional-and-
+unfloored vs. zero-gated-and-floored) on both the add and remove side,
+same 999 add-side cap, same "expiring item's id ends up in the
+equipment slot's extra field" quirk on the replace branch. Reimplemented
+once as `partyApplyMultiStatEffect`/`partyRemoveMultiStatEffect`/
+`partyHandleIconBarItemExpiry` (`src23/party.c`/`.h`), shared by both
+games. This closes out `ApplyEffectAndDrawIconBar`'s full 3-way
+dispatch — no behavioral difference found anywhere across any of its
+three variants.
+
 ## Turn-based combat turn order and round processing: no behavioral difference found
 
 `BuildCombatTurnOrder`, `SelectActiveMonster`, and `ProcessCombatRound`
