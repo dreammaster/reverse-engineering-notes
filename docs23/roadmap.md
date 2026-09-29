@@ -934,8 +934,8 @@ consumers, if any.
    half of the same `PartyFieldFlagBankCA` ability system this
    branch's own gate (`TestRecordFlag_CA`) checks.
 
-9. **Party teleport/fast-travel destinations** (`TravelToDestination`/
-   `IsDestinationUnlocked`) -- found 2026-09-30 while finally tracing
+~~9. **Party teleport/fast-travel destinations**~~ -- **lookup/gate
+   logic done 2026-09-30**; found the same day while finally tracing
    `WorldObjectFlagUnknown2000` (`worldobjects.h`), a real, common
    world-object flag this project had left untested for a while; fully
    traced and both games' data extracted the same day. Resolves the
@@ -973,17 +973,28 @@ consumers, if any.
    destination, one night-time window) and Chapter 3 doesn't, while
    Chapter 3 calls `ApplyMapTriggerEffect` on arrival and Chapter 2
    never does. See `file-formats.md`'s "Party teleport/fast-travel
-   destinations" section for the full field-by-field writeup. **Not
-   reimplemented** -- the lookup/gate logic itself is fully understood
-   and ready to compose against `globalflags.c`, but the music-track/
+   destinations" section for the full field-by-field writeup.
+   **Reimplemented same day**: `travelDestinationLookup`/
+   `travelCheckUnlock`/`travelResolvePassword` in `src23/travel.c`/`.h`,
+   both games' full tables embedded as literal C data, following
+   `combat.c`'s "decide, don't apply" split (`travelCheckUnlock` is a
+   pure decision function; `travelResolvePassword` mutates the
+   `globalflags.c` buffer only once the caller's UI has collected
+   actual typed text). Exhaustively cross-checking every Chapter 3 gate
+   row against its own destination record's flags confirmed the
+   "neither bit set" sub-case is provably unreachable in real data
+   (21/21 empty-password rows have destination bit `0x4000`; 13/13 real
+   passwords have bit `0x8000`) -- reproduced anyway for fidelity.
+   Tests in `test_travel.c` (19th suite) exercise `RUSE` end to end.
+   **Still not reimplemented, deliberately**: the music-track/
    travel-mode side effects (`word_36CB1`/`word_36CB3`/`word_36C79`/
    `word_36CBF` Chapter 2, `ds:0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`/
-   `0xCEF9` Chapter 3) aren't traced to a confirmed consumer yet --
-   deliberately left rather than composing the position/unlock slice
-   alone against unconfirmed inputs. `dump_travel_destination_table.py`
-   now exists as a sibling pair in both games'
-   `ida_scripts/`, each asserting its own table's exact boundary
-   programmatically.
+   `0xCEF9` Chapter 3) aren't traced to a confirmed consumer yet, so
+   `TravelDestination` carries them as raw undecoded fields rather than
+   composing behavior against unconfirmed inputs; `TravelToDestination`
+   itself (the UI-driving orchestration around these two functions) is
+   deferred to the eventual SDL2 layer, same as this project's other
+   top-level input handlers.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need

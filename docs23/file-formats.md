@@ -3889,22 +3889,52 @@ character-compare loop, though the exact bit is per-destination-record
 and wasn't cross-checked entry-by-entry against the destination
 table).
 
-**Not reimplemented** — the lookup/gate logic itself (steps 1-4 above)
-is fully understood and a clean candidate for direct reimplementation
-against the already-existing `globalflags.c` API; what's genuinely
-still open is the music-track/travel-mode side effects
-(`word_36CB1`/`word_36CB3`/`word_36C79`/`word_36CBF` in Chapter 2,
-`ds:0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`/`0xCEF9` in Chapter 3), none of
-which this project has traced to a confirmed consumer yet — reimplementing
-just the position/facing/unlock-gate slice without them would be
-composing against unconfirmed inputs, the same reason several other
-candidates in `roadmap.md` have been deliberately left for their own
-pass rather than rushed. See `roadmap.md` candidate 9.
-`ida_scripts/dump_travel_destination_table.py` exists in **both**
-`yendor2/ida_scripts/` and `yendor3/ida_scripts/` now (siblings, not
-shared — the record shapes differ too much to share one script), each
-asserting its own table's exact boundary programmatically rather than
-just printing a guessed range.
+**Reimplemented 2026-09-30** (same day, continued): the lookup/gate
+logic (steps 1-4 above) as `travelDestinationLookup`/`travelCheckUnlock`/
+`travelResolvePassword` in `src23/travel.c`/`.h`, both games' full
+destination and gate tables embedded as literal C data (extracted by
+the two `dump_travel_destination_table.py` scripts). `travelCheckUnlock`
+is a pure decision function (no UI) returning one of
+`TravelUnlockAlreadyUnlocked`/`DeniedWithMessage`/`DeniedFixedMessage`
+(Chapter 3 only)/`DeniedSilent`/`NeedsPassword`; `travelResolvePassword`
+is the separate "apply" half, called once the caller's UI layer has
+shown the prompt and collected typed text, mutating the caller's
+`g_globalFlags`-equivalent buffer on a match via the already-existing
+`globalflags.c` API — the same "decide, don't apply" split this
+project uses throughout `combat.c`. Each gate row's `(flagPtrRaw, mask)`
+pair was precomputed into a 1-based `globalFlagTest` index at
+table-authoring time (Chapter 2's `g_globalFlags` base is `DS:0x94D1`,
+already documented; Chapter 3's, confirmed by reading
+`GetGlobalFlagBitAndWord` directly, is `DS:0xCFAF` — not previously
+written down anywhere in this project). Cross-checking every Chapter 3
+gate row against its own destination record's `+0xE` flags (a
+mechanical, exhaustive check, not a sample) confirmed the "empty
+password" rows are **exactly** the ones whose destination has bit
+`0x4000` set (21/21) and every real password row's destination has bit
+`0x8000` set instead (13/13) — so `TravelUnlockDeniedSilent` (neither
+bit set) is provably unreachable with real data, reproduced anyway for
+fidelity and covered by a synthetic test. `travelResolvePassword` also
+preserves a real, easy-to-miss original quirk: the stored password
+comparison stops at the stored text's own space terminator without
+ever checking whether the *typed* input has extra trailing characters
+past that point, so e.g. typing `NORTHEAST` still satisfies a `NORTH`
+password — reproduced exactly rather than tightened into an exact-match
+comparison. Tests in `tests/test_travel.c` (19th suite) cover
+destination-table boundaries, all unlock outcomes in both games
+(including the real `RUSE` destination end to end: needs password →
+wrong/short guesses rejected → correct guess sets the flag →
+subsequent check reports already-unlocked), and the prefix-match quirk.
+**Deliberately still not covered**: the music-track/travel-mode side
+effects (`word_36CB1`/`word_36CB3`/`word_36C79`/`word_36CBF` in
+Chapter 2, `ds:0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`/`0xCEF9` in Chapter
+3) — none of these are traced to a confirmed consumer, so
+`TravelDestination` carries them as raw, documented-but-undecoded
+fields (`rawA`/`rawB`/`rawC`/`rawD`) rather than composing behavior
+against unconfirmed inputs. `TravelToDestination` itself (the
+orchestration that would call these two functions, apply position/
+facing, trigger sound, and redraw) is UI-driving composition, deferred
+to the eventual SDL2 layer like the rest of this project's top-level
+input handlers.
 
 ### `TryInteractAtPosition`: the per-cell interaction dispatcher (decoded 2026-09-24)
 

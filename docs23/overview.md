@@ -10262,6 +10262,62 @@ than rushing a partial port. Fully documented in `file-formats.md`,
 now genuinely closed rather than "mechanism resolved, data pending"),
 and `worldobjects.h`.
 
+### Session update (continued, same day): `travel.c` -- the lookup/gate logic reimplemented, closing candidate 9's decision-logic half
+
+With the mechanism fully understood, composed the actual C module:
+`travelDestinationLookup`/`travelCheckUnlock`/`travelResolvePassword`
+in `src23/travel.c`/`.h`, both games' full destination and gate tables
+embedded as literal data (187 + 139 destination rows, 20 + 35 gate
+rows). Followed `combat.c`'s established "decide, don't apply" split —
+`travelCheckUnlock` is a pure decision function with no UI, returning
+one of five outcomes; `travelResolvePassword` is the separate "apply"
+half, called only once a UI layer has actually shown a prompt and
+collected typed text, mutating the caller's `globalflags.c` buffer on
+a match. Each gate row's `(flagPtrRaw, mask)` pair — raw DS-relative
+addresses from the IDA dump — had to be converted to `globalFlagTest`'s
+1-based bit-index convention at table-authoring time; doing that
+required Chapter 3's own `g_globalFlags` base address, which turned
+out to not be written down anywhere in this project yet. Found it by
+reading `GetGlobalFlagBitAndWord` directly in `yendor3.asm`: `DS:0xCFAF`
+(Chapter 2's, already documented, is `DS:0x94D1`).
+
+**A satisfying, exhaustive confirmation of last entry's "presumed
+unreachable" claim**: cross-checked every one of Chapter 3's 21
+empty-password gate rows against its own destination record's `+0xE`
+flags programmatically (not spot-checked) — all 21 have bit `0x4000`
+set, and separately all 13 real-password rows have bit `0x8000` set,
+with zero exceptions either direction. So the `TravelUnlockDeniedSilent`
+outcome (neither bit set) genuinely never fires with real data — the
+disassembly still contains the branch, so `travel.c` still reproduces
+it, covered only by a synthetic test.
+
+**Also preserved a real, easy-to-miss original quirk** rather than
+"fixing" it into a cleaner comparison: the password check stops at the
+*stored* word's own space terminator without ever verifying the
+*typed* input doesn't have extra trailing characters past that point —
+so typing `NORTHEAST` still satisfies a `NORTH` password. Wrote a test
+that exercises exactly this rather than assuming clean input.
+
+Tests in `tests/test_travel.c` (the 19th suite) cover destination-table
+boundaries in both games, every unlock outcome (including Chapter 3's
+extra dispatch, both the real `0x4000`/`0x8000` cases and the synthetic
+neither-bit one), and `RUSE` end to end: needs a password, wrong and
+too-short guesses rejected, the correct guess sets the flag, and a
+follow-up check reports already-unlocked. All 19 suites pass.
+
+**Deliberately still not covered, same reasoning as the mechanism
+writeup**: the music-track/travel-mode side effects
+(`word_36CB1`/`word_36CB3`/`word_36C79`/`word_36CBF` Chapter 2,
+`ds:0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`/`0xCEF9` Chapter 3) — none
+traced to a confirmed consumer, so `TravelDestination` carries them as
+raw, explicitly-undecoded fields (`rawA`/`rawB`/`rawC`/`rawD`) instead
+of composing behavior against unconfirmed inputs. `TravelToDestination`
+itself — the orchestration that would call these two functions, apply
+position/facing, trigger sound, and redraw — is UI-driving composition,
+deferred to the eventual SDL2 layer like this project's other
+top-level input handlers. `roadmap.md` candidate 9 marked done for its
+decision-logic half.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
