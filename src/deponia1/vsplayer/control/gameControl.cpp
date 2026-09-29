@@ -2397,10 +2397,66 @@ bool TGameControl::Load() {
 	return false;
 }
 
-bool TGameControl::LoadGame(TMSavegame */*savegame*/) {
-	// The real load logic (asm lines 477404-478377, ~970 lines) is not
-	// reversed - left as a stub.
-	return false;
+bool TGameControl::LoadGame(TMSavegame *savegame) {
+	// Confirmed (Deponia_Linux.asm lines 477405-478377, ~970 lines).
+	TVisObjRef game = _visionaire->GetGame();
+	wxString fileName = wxFileName(game.GetPath(0x268)).GetFullName();
+
+	// Confirmed re-fetched from `savegame` up to 3 separate times in the
+	// original (once to check emptiness/compare, once more inside the
+	// "names differ" branch below) - collapsed to one call here since our
+	// TVisObjRef/TMSavegame stubs always return the same value anyway (same
+	// reasoning as ScrollToCharacterIfNeeded's own GetPoint() comment).
+	wxString composedFile = savegame->GetSavegameComposedFile();
+	bool namesDiffer = !composedFile.IsEmpty() && fileName.Cmp(composedFile) != 0;
+
+	// Both declared/destroyed but never otherwise touched (confirmed -
+	// neither is read between construction and destruction) - kept for
+	// fidelity, matching this project's established "timer/object never
+	// read" precedent (e.g. SaveGame's fileName).
+	TTimer unusedTimer1;
+	unusedTimer1.SetTime();
+	TComposedFile unusedComposedFile;
+
+	wxString containerId(L"SAVEGAMEPWD30");
+	wxFileName normalizedName(savegame->GetFileName().ToStdWstring());
+	normalizedName.NormalizePath();
+
+	if (!TComposedFileManager::SetSavegameFile(normalizedName, containerId)) {
+		HandleEngineEvent("LoadingSavegameFailed",
+		                  std::string(static_cast<const char *>(savegame->GetFileName().mb_str())));
+		return false;
+	}
+
+	wxFileName saveDataFile;
+	if (namesDiffer) {
+		saveDataFile = wxFileName(composedFile.ToStdWstring());
+		ReplaceGame(saveDataFile, false);
+	}
+	// Confirmed fixed literal, recovered byte-for-byte from the binary
+	// ("vtp_savedata.xml#g#-01#00000#") - the '#'-delimited placeholders
+	// (game id? slot number? a counter?) aren't substituted anywhere in this
+	// function, so presumably get resolved inside the still-unreversed
+	// TComposedFileManager::SetSavegameFile/TVisionaire::LoadSaveGame -
+	// passed through here verbatim rather than guessed at.
+	saveDataFile.SetFullName(L"vtp_savedata.xml#g#-01#00000#");
+
+	TTimer unusedTimer2;
+	unusedTimer2.SetTime();
+	if (!_visionaire->LoadSaveGame(saveDataFile, containerId)) {
+		HandleEngineEvent("LoadingSavegameFailed",
+		                  std::string(static_cast<const char *>(savegame->GetFileName().mb_str())));
+		return false;
+	}
+
+	// Confirmed (asm lines 477645-477651): Load()'s own return value is
+	// discarded - success is reported unconditionally once LoadSaveGame()
+	// itself succeeds.
+	Load();
+
+	HandleEngineEvent("LoadingSavegameSuccess",
+	                  std::string(static_cast<const char *>(savegame->GetFileName().mb_str())));
+	return true;
 }
 
 bool TGameControl::LoadGame(int slot) {

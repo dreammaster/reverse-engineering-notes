@@ -1154,6 +1154,59 @@ it:
 The assembled string is written back via `TVisObjRef::SetValue(0x2F7, ...,
 TSendEventEnum::kSendEvent)` - the same field `LoadEventHandlers` reads.
 
+## TGameControl batch 35: implement LoadGame(TMSavegame*)
+
+Reversed `TGameControl::LoadGame(TMSavegame *savegame)` (Deponia_Linux.asm
+lines 477405-478377, ~970 lines) - loads a savegame slot's data file.
+Confirmed control flow:
+
+- Computes the currently-loaded game's own file name (`_visionaire->
+  GetGame().GetPath(0x268)`, then `wxFileName::GetFullName()` - new stub) and
+  compares it against the savegame's own composed/container file
+  (`TMSavegame::GetSavegameComposedFile()`, new stub) - if the savegame names
+  a non-empty container that differs, the two "belong to different base
+  games/episodes."
+- Registers a fixed container id, the literal `"SAVEGAMEPWD30"` (recovered
+  byte-for-byte, also referenced by `TMSavegame::Draw()`/`SaveGame()`), as
+  the savegame container via a new `TComposedFileManager::SetSavegameFile()`
+  stub, keyed by the savegame's own (normalized) file name
+  (`TMSavegame::GetFileName()`, new stub). Failure here fires a
+  `"LoadingSavegameFailed"` engine event (with the savegame's file name as
+  the event argument) and returns false.
+- If the container names differed (see above), first calls `ReplaceGame()`
+  with the savegame's own composed-file path - swapping the active game/
+  container before loading the actual save data, presumably for savegames
+  belonging to a different base game.
+- Builds a fixed-literal target file name inside that container,
+  `"vtp_savedata.xml#g#-01#00000#"` (also recovered byte-for-byte) - the
+  `#`-delimited segments look like unsubstituted template placeholders
+  (game id? slot number? a counter?), but nothing in this function
+  substitutes them, so they're passed through verbatim; presumably resolved
+  inside the still-unreversed `SetSavegameFile`/`TVisionaire::LoadSaveGame`
+  itself.
+- Calls `TVisionaire::LoadSaveGame()` (new - see the note below on why it's
+  placed on `TVisionaire` rather than `TVisionaireGame`) with that target
+  file and the same container id. Failure fires the same
+  `"LoadingSavegameFailed"` event and returns false.
+- On success, calls `Load()` (unconditionally discarding its own return
+  value - confirmed, no check follows it), then unconditionally fires a
+  `"LoadingSavegameSuccess"` engine event and returns true.
+
+Another `TVisionaireGame`/`TVisionaire` mismatch, same shape as
+`LoadDataGame`'s already-documented gap (batch 24-ish): IDA resolves
+`LoadSaveGame`'s symbol as `TVisionaireGame::LoadSaveGame`, but the
+confirmed `this` pointer at the call site is `_visionaire` (`TVisionaire*`),
+not `_visionaireGame` - placed on `TVisionaire` to match the confirmed
+pointer rather than the resolved symbol's own class name.
+
+New stub/real surface: `TMSavegame::GetSavegameComposedFile()`/
+`GetFileName()`, `TComposedFileManager::SetSavegameFile()`,
+`TVisionaire::LoadSaveGame()` (all stubs, `false`/empty by default - so the
+success path is currently unreachable in this stub build, matching this
+project's usual "faithful control flow around not-yet-reversed
+dependencies" pattern), plus real `wxString::Cmp()` and
+`wxFileName::GetFullName()` in `WxStub.h`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

@@ -28,3 +28,11 @@ int TMSavegame::GetSavegameNr() const {
 
 void TMSavegame::SaveGame(const TBufferedProjectFileWriter &/*writer*/) {
 }
+
+wxString TMSavegame::GetSavegameComposedFile() const {
+	return wxString();
+}
+
+wxString TMSavegame::GetFileName() const {
+	return wxString();
+}

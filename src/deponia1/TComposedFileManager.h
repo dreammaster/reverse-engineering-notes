@@ -31,4 +31,9 @@ public:
 	static void Init(const wxFileName &file, const wxString &password, int size1, const wxFileName &path1, int size2,
 	                 const wxFileName &path2, int size3, const wxFileName &path3, int size4, const wxFileName &path4,
 	                 int size5, const wxFileName &path5);
+	// Confirmed static call shape only (TGameControl::LoadGame(TMSavegame*),
+	// Deponia_Linux.asm lines 477585, 477591) - registers the container file
+	// a savegame's own data will be read from/written to; not reversed
+	// beyond that call shape.
+	static bool SetSavegameFile(const wxFileName &file, const wxString &name);
 };

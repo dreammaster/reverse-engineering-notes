@@ -31,3 +31,7 @@ bool TVisionaire::Load(const wxFileName &/*file*/, const wxString &/*extra*/, eS
                        EventHandler */*handler*/) {
 	return false;
 }
+
+bool TVisionaire::LoadSaveGame(const wxFileName &/*file*/, const wxString &/*extra*/) {
+	return false;
+}

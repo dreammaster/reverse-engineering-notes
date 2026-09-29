@@ -36,4 +36,11 @@ public:
 	// Confirmed call shape only (TGameControl::SaveGame, asm line 463092) -
 	// writes this slot's data out via writer; not reversed beyond that.
 	void SaveGame(const TBufferedProjectFileWriter &writer);
+	// Confirmed call shape only (TGameControl::LoadGame(TMSavegame*),
+	// Deponia_Linux.asm lines 477503-477522, 477754, 477864 and elsewhere) -
+	// the composed/container file this savegame lives in (possibly empty for
+	// a loose-file savegame) and its own on-disk file name, respectively; not
+	// reversed beyond that.
+	wxString GetSavegameComposedFile() const;
+	wxString GetFileName() const;
 };

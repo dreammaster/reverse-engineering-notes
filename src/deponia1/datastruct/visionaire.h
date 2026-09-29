@@ -51,6 +51,14 @@ public:
 	// parameter, and an extra int* out-param); not reversed beyond that.
 	bool Load(const wxFileName &file, const wxString &extra, eSaveGame saveGame, TLoadingTypeEnum type,
 	          int *outFlag, TSignalSlot *slot, EventHandler *handler);
+	// Confirmed call shape only (TGameControl::LoadGame(TMSavegame*),
+	// Deponia_Linux.asm line 477643) - IDA resolves the real symbol as
+	// `TVisionaireGame::LoadSaveGame`, but the confirmed `this` pointer at
+	// this call site is `_visionaire` (TVisionaire*), not `_visionaireGame` -
+	// the same not-yet-integrated-class gap as LoadDataGame above; placed
+	// here, matching the confirmed pointer, rather than guessed onto
+	// TVisionaireGame.
+	bool LoadSaveGame(const wxFileName &file, const wxString &extra);
 
 	// Confirmed called with a field id, an out-param list, and a bool flag
 	// (TGameControl::InitFonts, asm lines 458293-458322) - not reversed

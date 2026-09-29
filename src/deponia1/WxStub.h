@@ -57,6 +57,16 @@ public:
 			return 1;
 		return 0;
 	}
+	// Confirmed call shape only (TGameControl::LoadGame(TMSavegame*),
+	// Deponia_Linux.asm line 477527) - real wxString::Cmp() is a case-
+	// sensitive three-way compare (unlike CmpNoCase() above).
+	int Cmp(const wxString &other) const {
+		if (_data < other._data)
+			return -1;
+		if (_data > other._data)
+			return 1;
+		return 0;
+	}
 
 	wxString &operator+=(const wxString &rhs) {
 		_data += rhs._data;
@@ -173,6 +183,13 @@ public:
 	// this file's own directory.
 	void SetCwd() const;
 	void NormalizePath() {}
+	// Confirmed call shape only (TGameControl::LoadGame(TMSavegame*),
+	// Deponia_Linux.asm line 477491) - real wxFileName::GetFullName()
+	// returns just the name+extension portion, without the directory.
+	wxString GetFullName() const {
+		std::size_t pos = _fullPath.find_last_of(L"/\\");
+		return wxString(pos == std::wstring::npos ? _fullPath : _fullPath.substr(pos + 1));
+	}
 	// Confirmed call shape only (TGameControl::SaveGame, asm line 463066) -
 	// replaces the name+extension portion, keeping any existing directory,
 	// matching real wxFileName::SetFullName's documented behavior.

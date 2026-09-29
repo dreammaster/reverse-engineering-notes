@@ -24,3 +24,7 @@ void TComposedFileManager::Init(const wxFileName &/*file*/, const wxString &/*pa
                                 int /*size3*/, const wxFileName &/*path3*/, int /*size4*/,
                                 const wxFileName &/*path4*/, int /*size5*/, const wxFileName &/*path5*/) {
 }
+
+bool TComposedFileManager::SetSavegameFile(const wxFileName &/*file*/, const wxString &/*name*/) {
+	return false;
+}
