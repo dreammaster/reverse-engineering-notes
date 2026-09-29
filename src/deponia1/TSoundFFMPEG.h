@@ -12,4 +12,11 @@ class TSoundFFMPEG : public TSoundInterface {
 public:
 	virtual ~TSoundFFMPEG() = default;
 	virtual void OnVideoFrameFinished();
+	// Confirmed virtual (vtable slot 8, TGameControl::InitAfterLoadingScreen,
+	// Deponia_Linux.asm lines 457475-457479) - called once, right after a
+	// loading screen finishes and before the scene is shown. Real name/
+	// purpose not recovered; "Resume" is a guess from context (a sound
+	// engine lifecycle hook makes sense at that point), not a recovered
+	// identifier.
+	virtual void Resume();
 };

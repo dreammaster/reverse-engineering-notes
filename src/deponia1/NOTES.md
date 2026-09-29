@@ -912,6 +912,22 @@ This closes out the batch of very large `TGameControl` methods
 `LoadEventHandlers`) tackled in this session - what's left of the class's
 stub surface is smaller, more self-contained methods.
 
+## TGameControl batch 29: InitAfterLoadingScreen
+
+A small one: `InitAfterLoadingScreen()` (asm lines 457468-457503) resumes
+the sound manager (a confirmed virtual call, vtable slot 8 - added as
+`TSoundFFMPEG::Resume()`, a plausible-from-context guess rather than a
+recovered name, clearly flagged as such), then shows the current scene
+again if it doesn't already have one set. Attempted `SaveEventHandlers`
+next (the natural inverse of batch 28's `LoadEventHandlers`, serializing
+the same four handler categories back into the `"type:names;..."` string
+format) but stopped partway through: the field-offset-to-container mapping
+has more ambiguity than the reversed pass so far resolves with confidence
+(narrow vs. wide string element types at a couple of the offsets don't
+obviously reconcile with the already-confirmed member types), and this
+project's own standard is an honest gap over a confidently wrong
+transcription - left as a stub for a future pass with fresher eyes.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

@@ -396,6 +396,16 @@ void TGameControl::UpdateAspectRatio() {
 }
 
 void TGameControl::InitAfterLoadingScreen() {
+	// Confirmed (asm lines 457468-457503).
+	if (_soundManager != nullptr)
+		_soundManager->Resume();
+
+	TGScene *scene = _ownedSceneControl.GetScene();
+	if (!scene->GetRef().IsEmpty())
+		return;
+
+	TVisObjRef sceneRef = scene->GetRef();
+	_ownedSceneControl.ShowScene(sceneRef, false, false);
 }
 
 void TGameControl::SaveEventHandlers() {

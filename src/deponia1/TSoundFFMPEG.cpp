@@ -2,3 +2,6 @@
 
 void TSoundFFMPEG::OnVideoFrameFinished() {
 }
+
+void TSoundFFMPEG::Resume() {
+}
