@@ -2387,6 +2387,13 @@ void TGameControl::LoadEventHandlers() {
 }
 
 bool TGameControl::Load() {
+	// Confirmed called only from LoadGame(TMSavegame*) (asm line 477944) -
+	// the real savegame-state restoration logic (asm lines 476661-477395,
+	// ~735 lines: restores the dialog, per-character/scene links, several
+	// TVList-based field groups, and s_stopTime, all keyed by further
+	// unresolved field ids in the 0x1D0-0x1E0 range) is not reversed - left
+	// as a stub alongside LoadGame(TMSavegame*) below, which is itself the
+	// only caller.
 	return false;
 }
 
