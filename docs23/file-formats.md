@@ -5075,17 +5075,53 @@ equip-slot-and-item-ids applies) rather than staging into an icon
 slot — the caller applies a `CombatAttackDamage`/`StatusEffect`
 outcome via `combatApplyEffect` directly.
 
-**The one deliberately-unfinished piece**: `CombatAttackCorrosion`
-gives the caller `equipSlotOffset`/`equippedItemId`/`corrosionReplacementId`
-but doesn't write the replacement back itself. The original's own
-write-back path is `HandleIconBarItemExpiry` — but that function's
-field semantics are defined for *item-expiry-on-use/wear*
-(`TickEquippedItemDurability`, an item's charges running out), and
-this project hasn't confirmed combat's own corrosion staging feeds it
-correctly rather than just reusing the same byte offsets for a
-different meaning (the same "dual-purpose slot" pattern found
-elsewhere in this icon-bar system). Left as an explicit gap rather
-than guessed at.
+**The corrosion write-back, resolved 2026-09-29 — a long-open question
+finally closed**: `CombatAttackCorrosion` gives the caller
+`equipSlotOffset`/`equippedItemId`/`corrosionReplacementId` but,
+historically, didn't write the replacement back itself, leaving open
+whether the original's own write-back path (`HandleIconBarItemExpiry`)
+genuinely matches combat's own staging or just superficially reuses
+the same byte offsets for a different meaning. Now that
+`HandleIconBarItemExpiry` itself is fully reimplemented (see the
+"icon-bar effect-application pipeline" note above), tracing
+`ResolveAttackerActionOutcome`'s corrosion branch and
+`GetClassifiedItemStatField` (`yendor2.asm:19410`, instruction-identical
+in Chapter 3) directly confirmed they match *exactly*:
+`GetClassifiedItemStatField(ax=equipped item id)` leaves `ax`
+unchanged and returns `bx = itemCorrosionReplacement`'s own result
+(0 on failure) — precisely the `(equippedItemId, corrosionReplacementId)`
+pair `partyHandleIconBarItemExpiry` expects — and the icon slot's own
+`+0x8`/`+0xA` fields hold the *attacker's own selected trap-effect*
+id/definition (from `combatSelectTrapEffectVariant`'s own
+`PrepareTrapEffectSlots` call), whose `modeFlags` is exactly what the
+real `ApplyEffectAndDrawIconBar` dispatch tests to route a slot to
+`HandleIconBarItemExpiry` in the first place — no reinterpretation
+needed, no coincidence, a clean match end to end.
+
+**How rare this mechanic actually is, confirmed against real data**:
+scanning every monster block in both real `WORLD.DAT` files for a
+legitimate `MonsterFlagSpecialMask` flag combination paired with an
+*in-range* special-attack effect id found exactly **one** hit in
+either game — Chapter 3's **CROCODILE** (catalog block 70), whose
+special-attack effect (id 22) has `modeFlags` `EffectModeItemReplace`.
+Chapter 2 has no such monster at all; its own sole flag-matching block
+(index 60) turned out to be an unnamed placeholder with wildly
+out-of-range effect ids (21060, against a 45-entry table) and garbage-
+looking numeric fields, reachable only via unused/reserved type-id
+lookup slots — not a real monster, the same "engine supports more
+slots than a chapter's data uses" pattern already seen elsewhere in
+this project. So equipment corrosion is a genuinely rare, single-
+creature mechanic in practice — but now fully composable and correct
+whenever it does trigger.
+
+Reimplemented as `combatApplyCorrosion` (`src23/combat.c`/`.h`),
+composing a `CombatAttackCorrosion` outcome with the attacker's own
+`CombatEffectSelection` (for its effect definition's `modeFlags`) into
+a `partyHandleIconBarItemExpiry` call. Tests in `tests/test_combat.c`
+cover the write-back itself (slot replaced, corroded item parked as
+the slot's extra field, matching `HandleIconBarItemExpiry`'s own
+quirk), a non-corrosion outcome (no-op), and an out-of-range effect id
+(no-op, doesn't read past the effect table).
 
 Reimplemented in `src23/combat.c`/`.h`. Tests in `tests/test_combat.c`
 cover: `combatSelectTrapEffectVariant`'s disabled-state and

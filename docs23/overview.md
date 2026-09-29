@@ -9958,6 +9958,71 @@ IDA work — the same kind of check `file-formats.md`'s own methodology
 correction from a few rounds back was about, just aimed at `item.h`
 instead of `file-formats.md` itself this time.
 
+### Session update (continued): the equipment-corrosion write-back, finally closed — and a real monster it's for
+
+With `HandleIconBarItemExpiry` now fully understood, one of this
+project's oldest open questions became answerable for the first time:
+whether combat's own equipment-corrosion staging (`CombatAttackCorrosion`,
+left deliberately unfinished several rounds ago) actually feeds
+`HandleIconBarItemExpiry` with matching field semantics, or just
+happens to reuse the same byte offsets for something unrelated.
+
+Tracing `ResolveAttackerActionOutcome`'s corrosion branch fully — past
+where earlier rounds had stopped — turned up the missing piece:
+`combatSelectTrapEffectVariant`'s own original, `SelectTrapEffectVariant`,
+doesn't just pick an effect id; it also calls `PrepareTrapEffectSlots`
+and stashes the resulting effect id *and definition pointer* into two
+globals the corrosion branch later reads back and writes into the icon
+slot's own `+0x8`/`+0xA` fields — meaning the corrosion outcome shares
+the *same* effect-definition-pointer convention every other icon-bar
+consumer uses, not something bespoke. From there, reading
+`GetClassifiedItemStatField` line by line settled the rest: its `ax`
+return is the equipped item id, unchanged from its input, and its `bx`
+return is exactly `itemCorrosionReplacement`'s own result — together
+landing in the icon slot's `+0x10`/`+0x12` fields as precisely the
+`(equippedItemId, corrosionReplacementId)` pair
+`partyHandleIconBarItemExpiry` already expects. No reinterpretation,
+no coincidence — a clean, exact match end to end, confirmed by reading
+rather than assumed from the byte-offset similarity alone.
+
+Wanting to know how much this mechanic actually matters in practice
+led to a real-data scan (using this project's own `monster.c`/`effect.c`
+directly, via a throwaway program) across every monster block in both
+real `WORLD.DAT` files for a legitimate `MonsterFlagSpecialMask`
+combination paired with an *in-range* special-attack effect id. The
+first pass of that scan produced obvious garbage — blank monster names
+and nonsensical field values across every single block — which turned
+out to be a scripting mistake, not a data problem: catalog blocks
+(106 bytes) sit at a fixed offset (`MonsterBlockOffset`, `0x32`) within
+a full live monster record (156 bytes), and reading catalog-block
+pointers directly with live-record field offsets (as the script first
+did) reads 0x32 bytes into the wrong place for everything. Fixing the
+script to copy each block into a properly-offset buffer first (matching
+`tests/test_monster.c`'s own established convention) immediately
+produced sane, recognizable monster names — and exactly one legitimate
+hit in either game: Chapter 3's **CROCODILE** (catalog block 70), whose
+special-attack effect (id 22) has `modeFlags` `EffectModeItemReplace`,
+matching the corrosion path's own requirements precisely. Chapter 2 has
+zero such monsters; its own sole flag-matching block turned out to be
+an unnamed placeholder with an out-of-range effect id, reachable only
+through unused type-id lookup slots — not a real monster, the same
+"engine supports more slots than a chapter's data uses" pattern this
+project has run into several times before. So equipment corrosion is
+a real but vanishingly rare mechanic — a single Chapter 3 creature —
+but now fully correct and composable whenever it triggers.
+
+Reimplemented as `combatApplyCorrosion` in `src23/combat.c`/`.h`,
+composing a `CombatAttackCorrosion` outcome with the attacker's own
+selected effect definition into a `partyHandleIconBarItemExpiry` call.
+Tests in `test_combat.c` cover the write-back itself, a non-corrosion
+outcome (no-op), and an out-of-range effect id (no-op, no out-of-bounds
+read). Full suite rebuilt, 18/18 passing. Worth remembering alongside
+this round's earlier lesson: a debugging dead-end (a scratch script
+producing nonsense output) is sometimes not a wrong hypothesis but a
+wrong assumption about a data layout this project had already
+documented correctly elsewhere — worth re-checking the accessor
+conventions already established before doubting the underlying theory.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

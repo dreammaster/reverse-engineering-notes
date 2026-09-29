@@ -1421,6 +1421,19 @@ games. This closes out `ApplyEffectAndDrawIconBar`'s full 3-way
 dispatch — no behavioral difference found anywhere across any of its
 three variants.
 
+## Equipment corrosion write-back (`GetClassifiedItemStatField`): no behavioral difference found
+
+Checked directly, `yendor2.asm:19410` vs. `yendor3.asm:11394` —
+instruction-identical, same `ax` (item id) passthrough, same `bx`
+(`word_2E548+4`/`+8`) selection. Confirmed against real monster data
+too: Chapter 3's CROCODILE (the sole monster in either game with a
+legitimate corrosion flag combination and an in-range effect id) has
+its `MonsterFlagCorrodeWeaponSlot`/`MonsterFieldSpecialAttack`/effect-id
+chain all reachable identically in both games' shared code paths — this
+is a content difference (Chapter 2 has no monster like it at all), not
+a mechanism difference. Reimplemented once as `combatApplyCorrosion`
+(`src23/combat.c`/`.h`), shared by both games.
+
 ## Turn-based combat turn order and round processing: no behavioral difference found
 
 `BuildCombatTurnOrder`, `SelectActiveMonster`, and `ProcessCombatRound`

@@ -311,17 +311,35 @@ CombatEffectSelection combatSelectTrapEffectVariant(const uint8_t *attackerRecor
  * itemCorrosionReplacement (item.h); CombatAttackMiss if the save
  * succeeds, the slot is empty, or classification fails.
  *
- * **The actual item replacement isn't reimplemented**: the original
- * routes a corrosion outcome through the same icon-bar machinery as
- * every other effect, and its item-replacing consumer
- * (HandleIconBarItemExpiry) is defined for *item-expiry-on-use/wear*
- * semantics (TickEquippedItemDurability, item charges running out) --
- * this project hasn't confirmed that combat's own corrosion staging
- * feeds it with matching field semantics rather than superficially
- * reusing the same byte offsets. CombatAttackCorrosion gives the
- * caller equipSlotOffset/equippedItemId/corrosionReplacementId to
- * apply directly once that's confirmed, rather than guessing at the
- * write-back here.
+ * **The actual item replacement -- confirmed and composable, see
+ * combatApplyCorrosion below.** Earlier rounds left this open,
+ * unsure whether combat's own corrosion staging feeds
+ * HandleIconBarItemExpiry (defined for *item-expiry-on-use/wear*
+ * semantics) with matching field semantics or just superficially
+ * reuses the same byte offsets. Tracing ResolveAttackerActionOutcome's
+ * corrosion branch and GetClassifiedItemStatField (yendor2.asm:19410,
+ * instruction-identical in Chapter 3) directly resolved it: they
+ * match exactly. GetClassifiedItemStatField(ax=equipped item id)
+ * leaves ax unchanged and returns bx = itemCorrosionReplacement's own
+ * result (0 on failure) -- the *exact* (equippedItemId,
+ * corrosionReplacementId) pair partyHandleIconBarItemExpiry
+ * (party.h) expects, and the icon slot's own +0x8/+0xA fields hold
+ * the attacker's own selected trap-effect id/definition (from
+ * combatSelectTrapEffectVariant's PrepareTrapEffectSlots call) --
+ * whose modeFlags is exactly what ApplyEffectAndDrawIconBar's real
+ * dispatch tests to route a slot to HandleIconBarItemExpiry in the
+ * first place.
+ *
+ * Confirmed against real data: of both games' full monster rosters,
+ * only one has a legitimate MonsterFlagSpecialMask flag combination
+ * paired with an in-range special-attack effect id -- Chapter 3's
+ * CROCODILE (catalog block 70), whose special-attack effect (id 22)
+ * has modeFlags EffectModeItemReplace. Chapter 2 has no such monster
+ * at all; its own sole flag-matching block (index 60) is an unnamed
+ * placeholder with out-of-range effect ids, reached only by unused
+ * type-id lookup slots -- not a real monster. So this whole mechanic
+ * is vanishingly rare in practice (a single Chapter 3 creature), but
+ * now fully composable and correct when it does trigger.
  */
 typedef enum {
     CombatAttackMiss,
@@ -341,6 +359,22 @@ typedef struct {
 
 CombatAttackerAction combatResolveAttackerAction(const uint8_t *attackerRecord, const uint8_t *defenderRecord,
                                                   const ItemCatalog *catalog, bool isSpecial, RandomState *rng);
+
+/*
+ * The equipment-corrosion write-back CombatAttackerAction's own doc
+ * comment above describes: applies action's CombatAttackCorrosion
+ * fields to defenderRecord via partyHandleIconBarItemExpiry (party.h),
+ * using the attacking monster's own selected trap-effect definition
+ * (selection, the same value combatSelectTrapEffectVariant already
+ * returned for this attack -- its effectId's own modeFlags is what
+ * the original's real dispatch keys off of) as the mode-bit source.
+ * A no-op if action->outcome isn't CombatAttackCorrosion, or if
+ * selection->effectId doesn't resolve to a valid definition (shouldn't
+ * happen for an action combatResolveAttackerAction itself produced,
+ * but guarded rather than assumed).
+ */
+void combatApplyCorrosion(uint8_t *defenderRecord, const ItemCatalog *catalog, GameKind game,
+                           const CombatEffectSelection *selection, const CombatAttackerAction *action);
 
 /*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in

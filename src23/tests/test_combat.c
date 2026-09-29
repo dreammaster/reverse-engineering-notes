@@ -881,6 +881,49 @@ static void testApplyEncodedItemEffectPartyChapter3SkipsCursed(void) {
              partyGetStat(slot1, PartyStatHitPoints), 992);
 }
 
+/* effect id 22 (both games): one of the two "item replace" expiry-sound placeholder
+ * effects (modeFlags EffectModeItemReplace, 0x400) -- the exact mode bit
+ * ApplyEffectAndDrawIconBar's real dispatch keys off of to route a corrosion outcome
+ * into HandleIconBarItemExpiry's replace branch (see combat.h's own doc comment). */
+static void testApplyCorrosion(void) {
+    ItemCatalog emptyCatalog;
+    memset(&emptyCatalog, 0, sizeof(emptyCatalog));
+
+    uint8_t defender[PartyRecordSize];
+    memset(defender, 0, sizeof(defender));
+    itemSlotSet(partyEquipmentSlot(defender, 0x0A, GameYendor2), 5, 0); /* main weapon: item id 5 */
+
+    CombatEffectSelection selection = {22, true};
+    CombatAttackerAction action;
+    memset(&action, 0, sizeof(action));
+    action.outcome = CombatAttackCorrosion;
+    action.equipSlotOffset = 0x13A;
+    action.equippedItemId = 5;
+    action.corrosionReplacementId = 999;
+
+    combatApplyCorrosion(defender, &emptyCatalog, GameYendor2, &selection, &action);
+
+    checkU32("corrosion write-back replaces the equipped item",
+             itemSlotId(partyEquipmentSlot(defender, 0x0A, GameYendor2)), 999);
+    checkU32("...and parks the corroded item's own id as the slot's extra field",
+             itemSlotExtra(partyEquipmentSlot(defender, 0x0A, GameYendor2)), 5);
+
+    memset(defender, 0, sizeof(defender));
+    itemSlotSet(partyEquipmentSlot(defender, 0x0A, GameYendor2), 5, 0);
+    action.outcome = CombatAttackMiss;
+    combatApplyCorrosion(defender, &emptyCatalog, GameYendor2, &selection, &action);
+    checkU32("non-corrosion outcome: no-op, slot untouched",
+             itemSlotId(partyEquipmentSlot(defender, 0x0A, GameYendor2)), 5);
+
+    memset(defender, 0, sizeof(defender));
+    itemSlotSet(partyEquipmentSlot(defender, 0x0A, GameYendor2), 5, 0);
+    action.outcome = CombatAttackCorrosion;
+    CombatEffectSelection badSelection = {9999, true}; /* out-of-range effect id */
+    combatApplyCorrosion(defender, &emptyCatalog, GameYendor2, &badSelection, &action);
+    checkU32("out-of-range effect id: no-op, slot untouched",
+             itemSlotId(partyEquipmentSlot(defender, 0x0A, GameYendor2)), 5);
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
@@ -913,6 +956,7 @@ int main(void) {
     testResolveAttackerActionCorrosion();
     testResolveAttackerActionCorrosionSlotSelection();
     testResolveAttackerActionCorrosionEmptySlotOrUnclassifiable();
+    testApplyCorrosion();
     testSavingThrowTrapNoneWhenPackedValueZero();
     testSavingThrowTrapAvoidedByHighSkill();
     testSavingThrowTrapSingleTargetAppliesEffect();

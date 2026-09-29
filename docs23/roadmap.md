@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-29, resolved: ApplyEffectAndDrawIconBar's full 3-way dispatch, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-29, resolved: the equipment-corrosion write-back and ApplyEffectAndDrawIconBar's full 3-way dispatch, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -796,15 +796,29 @@ consumers, if any.
    `partyRemoveMultiStatEffect`/`partyHandleIconBarItemExpiry`
    (`src23/party.c`/`.h`), all instruction-identical in Chapter 3 --
    see `engine-diffs.md`. Tests in `test_party.c` cover both the
-   destroy and replace branches; all 18 suites pass. **Still open, a
-   good candidate for its own pass**: the equipment-corrosion
-   write-back specifically (needs confirming `HandleIconBarItemExpiry`'s
-   field semantics actually match combat's own staging), `ProcessMonsterAttackTurn`,
-   and the player-attack path inside `HandleDungeonInput` (spell/ability
-   use in combat, area-attack handling, and all the drawing/sound/
-   UI-tier-refresh work this project has deliberately deferred to the
-   eventual SDL2 layer) -- all pure orchestration/UI now, no remaining
-   decision-logic gaps anywhere in this candidate.
+   destroy and replace branches; all 18 suites pass. **The
+   equipment-corrosion write-back resolved too, same round -- a
+   long-open question finally closed**: tracing `ResolveAttackerActionOutcome`'s
+   corrosion branch and `GetClassifiedItemStatField` directly (both
+   instruction-identical in Chapter 3) confirmed combat's own staged
+   fields map *exactly* onto `partyHandleIconBarItemExpiry`'s
+   parameters -- no reinterpretation needed. Confirmed against real
+   data just how rare this mechanic actually is: of both games' full
+   monster rosters, only Chapter 3's CROCODILE (catalog block 70) has a
+   legitimate corrosion-flag-plus-valid-effect-id combination; Chapter
+   2 has none at all (its one flag-matching block is an unnamed
+   placeholder with out-of-range effect ids, not a real monster).
+   Reimplemented as `combatApplyCorrosion` (`src23/combat.c`/`.h`);
+   tests in `test_combat.c`; all 18 suites pass. **Still open, a good
+   candidate for its own pass**: `ProcessMonsterAttackTurn` itself (the
+   caller that would actually wire `combatSelectTrapEffectVariant`/
+   `combatResolveAttackerAction`/`combatApplyEffect`/`combatApplyCorrosion`
+   together end to end) and the player-attack path inside
+   `HandleDungeonInput` (spell/ability use in combat, area-attack
+   handling, and all the drawing/sound/UI-tier-refresh work this
+   project has deliberately deferred to the eventual SDL2 layer) --
+   both pure orchestration/composition now, no remaining decision-logic
+   gaps anywhere in this candidate.
 8. **`ApplyEncodedItemEffect`** (was `sub_2C0FE`, the largest function
    in the binary at 4,210 bytes -- named and scoped by an earlier
    session, revisited 2026-09-25) -- a flat ~19-branch bitmask switch

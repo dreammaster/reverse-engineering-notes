@@ -259,6 +259,19 @@ CombatAttackerAction combatResolveAttackerAction(const uint8_t *attackerRecord, 
     return action;
 }
 
+void combatApplyCorrosion(uint8_t *defenderRecord, const ItemCatalog *catalog, GameKind game,
+                           const CombatEffectSelection *selection, const CombatAttackerAction *action) {
+    if (action->outcome != CombatAttackCorrosion) {
+        return;
+    }
+    EffectDef def;
+    if (!effectGetDef(game, selection->effectId, &def)) {
+        return;
+    }
+    partyHandleIconBarItemExpiry(defenderRecord, catalog, def.modeFlags, action->equippedItemId,
+                                  action->corrosionReplacementId, action->equipSlotOffset);
+}
+
 static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
                                               unsigned threshold, RandomState *rng) {
     uint16_t level = partyGetU16(recipientRecord, PartyFieldLevel);
