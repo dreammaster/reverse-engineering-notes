@@ -493,6 +493,31 @@ it's a user-defined type name (`TGCharacter *x`/`TManagedObject *x` didn't) -
 fixed the two remaining instances by hand. Documented all of this in
 CLAUDE.md so the next reformatting pass doesn't have to rediscover it.
 
+## TGameControl batch 18: StartTween(const TVisObjTween&), and why erase()+push_back() beats transliteration
+
+Revisited `StartTween(const TVisObjTween&)` (asm lines 474993-475136),
+previously only characterized in passing (batch 9 above) as "searches a
+vector of 176-byte elements for a matching id+target, then
+erase-or-replace-or-append." Tracing it in full: it scans `_visObjTweens`
+(the new, correctly-typed member replacing the wrong-guess `_pendingTweens`
+for this overload - see that member's own comment) for an entry whose
+`target` matches the new tween's, and if found, erases it (with the
+disassembly manually destroying what look like two `std::function`-style
+members via a stored manager-function-pointer call, `_M_manager(dest, src,
+3)` - the "destroy" tag in libstdc++'s `std::function` ABI); it then falls
+back into the same scan loop again (supporting multiple matches, though in
+practice there should only ever be one) before finally appending the new
+tween, either by placement-new at `end()` (spare capacity) or by falling
+through to the vector's own growth-path emplace helper (at capacity) - i.e.
+exactly `std::vector<TVisObjTween>::erase()` then `push_back()`, inlined and
+unrolled by -O2. Writing it directly as an erase-loop + push_back reproduces
+this without hand-transliterating the placement-new/growth-path branches or
+needing to know `Tween`'s real fields (still an empty stub struct) - the
+compiler's generated copy/destroy logic for whatever `Tween` turns out to
+contain will do the equivalent cleanup on its own. `StartTween(const Tween&,
+const std::string&)`'s own 88-byte-element vector (batch 9) is left alone
+for a future pass.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

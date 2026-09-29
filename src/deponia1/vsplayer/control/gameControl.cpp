@@ -1265,7 +1265,20 @@ void TGameControl::GetWalkingSounds(std::vector<wxFileName> &outSounds) {
 	}
 }
 
-void TGameControl::StartTween(const TVisObjTween &/*tween*/) {
+void TGameControl::StartTween(const TVisObjTween &tween) {
+	// Confirmed (asm lines 474993-475136): removes any existing tween
+	// targeting the same object, then appends the new one. The disassembly's
+	// hand-rolled shift/placement-new/growth-path branches are just -O2's
+	// inlined std::vector<TVisObjTween>::erase()/push_back() - writing it
+	// that way directly reproduces the same behavior without transliterating
+	// the vector internals by hand.
+	for (auto it = _visObjTweens.begin(); it != _visObjTweens.end();) {
+		if (it->target == tween.target)
+			it = _visObjTweens.erase(it);
+		else
+			++it;
+	}
+	_visObjTweens.push_back(tween);
 }
 
 void TGameControl::LoadEventHandlers() {

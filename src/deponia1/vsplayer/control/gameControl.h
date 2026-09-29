@@ -216,6 +216,11 @@ private:
 	// a dedicated pass reverses TVisObjTween's and the other vector's real
 	// layouts.
 	std::vector<std::pair<Tween, std::string>> _pendingTweens;
+	// The real vector StartTween(const TVisObjTween&) operates on (176-byte
+	// elements, confirmed distinct from _pendingTweens above - see its own
+	// comment). Named for its confirmed element type rather than guessing
+	// which of the two "pending tween" roles is the real one.
+	std::vector<TVisObjTween> _visObjTweens;
 	std::vector<std::string> _walkingSoundEventHandlers;
 	std::vector<std::pair<double, std::string>> _delaysByName;
 	std::vector<std::pair<double, int>> _delaysById;
