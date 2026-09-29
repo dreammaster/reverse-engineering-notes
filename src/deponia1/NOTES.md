@@ -583,22 +583,23 @@ registration, passing the same (name, arg) event payload each time. Moved
 `TMasterControl`-only accessor). Added `TArgument::Set(const wxString&)`,
 the one overload that wasn't stubbed yet.
 
-## TGameControl batch 21: ScrollToCharacterIfNeeded, and [this+0x290] turns out to just be _currentCharacter again
+## TGameControl batch 21: ScrollToCharacterIfNeeded reads _previousCharacter, not _currentCharacter
 
-`ScrollToCharacterIfNeeded(const TVisObjRef&)` (asm lines 458931-459278)
-reads a member at offset 0x290 through a couple of virtual calls - at first
-glance a new, unidentified field. But both places that ever *write* to it
-(`ChangeCharacter`, asm line 466005, and `InitCharacters`'s starting-
-character resolution, asm line 466501) set it to the exact same raw pointer
-value as `_currentCharacter` (offset 0x338) in the same breath, with no
-pointer adjustment between the two stores - strong evidence they're the same
-logical value kept in two separate fields in the original, not two different
-things. Modeled as just `_currentCharacter` rather than adding a redundant
-synchronized-copy member. The two virtual calls through it turned out to be
-methods already confirmed elsewhere: `TGCharacter::GetScreenPosition()` and
-`GetVisibleRect()` (both from `CenterScene`, batch 8) - nice independent
-cross-confirmation that offset 0x290 really is a `TGCharacter*` alias for
-`_currentCharacter`, not some other polymorphic type.
+**Correction to this batch's own first pass**: `ScrollToCharacterIfNeeded`
+reads a member at offset 0x290 through a couple of virtual calls. Comparing
+that offset against the asm lines already cited in `_previousCharacter`'s
+own header comment (`ChangeCharacter` asm line 466005, `InitCharacters`'
+starting-character resolution asm line 466501 - both inside the exact ranges
+`_previousCharacter`'s comment names) showed offset 0x290 **is**
+`_previousCharacter`, an existing member - not a new field needing its own
+model. The first pass here reasoned from the offset alone, concluded it was
+"the same logical value as `_currentCharacter`" (true - they're always set
+identically), and modeled it as `_currentCharacter` directly rather than
+checking whether an existing member already covered that exact offset. Fixed
+throughout, and updated `_previousCharacter`'s own comment: it's no longer
+"never read anywhere" - this function reads it via `GetScreenPosition()`/
+`GetVisibleRect()`, both methods already confirmed elsewhere (`CenterScene`,
+batch 8).
 
 The real logic: bails out unless `character` is the game's currently-active
 one (field 0x263, matching `_currentCharacter`'s own 0x1D4/0x263-tracking

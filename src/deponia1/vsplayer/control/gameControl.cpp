@@ -440,22 +440,25 @@ TVisionaireGame *TGameControl::GetVisionaire() {
 }
 
 void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
-	// Confirmed (asm lines 458931-459278). Field ids are best-effort names
+	// Confirmed (asm lines 458931-459278). The character read throughout is
+	// _previousCharacter (offset 0x290), not _currentCharacter - see that
+	// field's own comment for why they're modeled as separate members
+	// despite always holding the same value. Field ids are best-effort names
 	// from context, not confirmed beyond their raw ids: 0x263 ("the active
 	// character" link - ChangeCharacter/InitCharacters keep it in sync with
-	// _currentCharacter, same value set at the same time in both), 0x231 (a
-	// "scrolling enabled" toggle), 0x29B/0x29C (an x/y offset added before
-	// the visible-area comparisons below), and 0x1D9/0x1DA (horizontal/
-	// vertical scroll-direction codes - CenterScene resets both to 0; here,
-	// 1=left, 2=right, 3=up, 4=down).
+	// _currentCharacter/_previousCharacter, same value set at the same time
+	// in all three), 0x231 (a "scrolling enabled" toggle), 0x29B/0x29C (an
+	// x/y offset added before the visible-area comparisons below), and
+	// 0x1D9/0x1DA (horizontal/vertical scroll-direction codes - CenterScene
+	// resets both to 0; here, 1=left, 2=right, 3=up, 4=down).
 	TVisObjRef game = _visionaire->GetGame();
 	TGScene *scene = _ownedSceneControl.GetScene();
-	if (scene->IsMenu() || _currentCharacter == nullptr)
+	if (scene->IsMenu() || _previousCharacter == nullptr)
 		return;
 
 	bool shouldScroll = false;
 	if (game.GetLink(0x263) == character && game.GetBool(0x231)) {
-		TVisObjRef charSceneLink = _currentCharacter->GetRef().GetLink(0x1F7);
+		TVisObjRef charSceneLink = _previousCharacter->GetRef().GetLink(0x1F7);
 		shouldScroll = (charSceneLink == scene->GetRef());
 	}
 	if (!shouldScroll)
@@ -466,8 +469,8 @@ void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
 	int worktopHeight = scene->GetWorktopHeight();
 	const wxSize &visibleSize = scene->GetVisibleSize();
 
-	wxPoint charPos = _currentCharacter->GetScreenPosition();
-	wxRect charRect = _currentCharacter->GetVisibleRect();
+	wxPoint charPos = _previousCharacter->GetScreenPosition();
+	wxRect charRect = _previousCharacter->GetVisibleRect();
 	if (charRect.IsEmpty()) {
 		charRect.SetLeft(charPos.x);
 		charRect.SetWidth(0);

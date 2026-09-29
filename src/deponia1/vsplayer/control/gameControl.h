@@ -263,10 +263,12 @@ private:
 	TVList _pendingItems;
 	// Confirmed present, set to the same value as _currentCharacter right
 	// when it changes (TGameControl::ChangeCharacter, asm lines
-	// 465849-466072; also set - but never read - by InitCharacters, asm
-	// lines 466201-466735) - not read anywhere in what's been reversed so
-	// far; may just be a second cached copy rather than a distinct
-	// "previous character" as the name suggests.
+	// 465849-466072; also set by InitCharacters, asm lines 466201-466735) -
+	// despite the name, it's never observed differing from _currentCharacter
+	// at any write site, and it IS read: ScrollToCharacterIfNeeded (asm lines
+	// 458931-459278) calls GetScreenPosition()/GetVisibleRect() through it,
+	// not through _currentCharacter directly. May just be a second cached
+	// copy rather than a distinct "previous character" as the name suggests.
 	TGCharacter *_previousCharacter = nullptr;
 	// Confirmed present, set to _currentCharacter's value once a starting
 	// character is found (TGameControl::InitCharacters, asm lines
