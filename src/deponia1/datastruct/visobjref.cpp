@@ -21,6 +21,10 @@ int TVisObjRef::GetInt(int /*fieldId*/) const {
 	return 0;
 }
 
+float TVisObjRef::GetFloat(int /*fieldId*/) const {
+	return 0.0f;
+}
+
 wxString TVisObjRef::GetStr(int /*fieldId*/) const {
 	return wxString();
 }

@@ -1094,6 +1094,53 @@ void TGameControl::UpdateRandomTimers() {
 }
 
 void TGameControl::UpdateWalkingSounds() {
+	// Confirmed (asm lines 463474-463680) - previously deliberately deferred
+	// (see NOTES.md) pending identification of the unresolved virtual call
+	// this makes on _soundManager (now TSoundFFMPEG::PlaySound(), added this
+	// pass - see its own comment). Rate-limited to run at most once every
+	// 500ms via a function-local static timer. Field id 0x2ED (a character's
+	// walking-sound volume, clamped to [0,100]) is unresolved beyond that.
+	// The pan calculation (a character's on-screen x position relative to
+	// the viewport, mapped to [-100,100]) is confirmed exactly via its
+	// derivation, not approximated.
+	static TTimer updateTimer;
+
+	if (updateTimer.GetTime() <= 499)
+		return;
+	if (_soundManager == nullptr) {
+		updateTimer.SetTime();
+		return;
+	}
+
+	TGScene *scene = _ownedSceneControl.GetScene();
+	std::vector<TGCharacter *> characters = scene->GetCharacters();
+	int scrollX = scene->GetScrollPos().x;
+	int visibleWidth = scene->GetVisibleSize().width;
+	float panDivisor = static_cast<float>(visibleWidth) / 200.0f;
+
+	for (TGCharacter *character : characters) {
+		if (!character->IsWalkingSoundPlaying())
+			continue;
+
+		wxPoint charPos = character->GetScreenPosition();
+		int dx = charPos.x - scrollX;
+		float distFactor = (dx < 0) ? 0.0f : static_cast<float>(std::min(dx, visibleWidth));
+		int pan = static_cast<int>(distFactor / panDivisor - 100.0f);
+
+		float rawVolume = character->GetRef().GetFloat(0x2ED);
+		int volume;
+		if (rawVolume > 100.0f)
+			volume = 100;
+		else if (rawVolume < 0.0f)
+			volume = 0;
+		else
+			volume = static_cast<int>(rawVolume);
+
+		wxFileName walkSound = character->GetWalkingSound();
+		_soundManager->PlaySound(walkSound, volume, pan, 3, 0);
+	}
+
+	updateTimer.SetTime();
 }
 
 bool TGameControl::PreLoad(wxString &filePath, wxString &warning, bool isEditor) {

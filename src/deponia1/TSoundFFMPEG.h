@@ -6,6 +6,7 @@
 // declare them - just the one method actually exercised) is stubbed.
 #pragma once
 
+#include "WxStub.h"
 #include "TSoundInterface.h"
 
 class TSoundFFMPEG : public TSoundInterface {
@@ -19,4 +20,12 @@ public:
 	// engine lifecycle hook makes sense at that point), not a recovered
 	// identifier.
 	virtual void Resume();
+	// Confirmed virtual (vtable slot 14, TGameControl::UpdateWalkingSounds,
+	// Deponia_Linux.asm lines 463592-463607) - called with a sound file, a
+	// volume clamped to [0,100], and a stereo pan in [-100,100] (both
+	// confirmed by their derivation, not just guessed ranges), plus two
+	// further int args (confirmed 3 and 0 at this one call site, meaning
+	// unresolved). "PlaySound" is a guess from the call shape, not a
+	// recovered identifier.
+	virtual void PlaySound(const wxFileName &file, int volume, int pan, int a, int b);
 };

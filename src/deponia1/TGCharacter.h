@@ -74,6 +74,15 @@ public:
 	// lines 459941, 460022) - not reversed beyond that.
 	bool IsWalking() const;
 
+	// Confirmed call shapes only (TGameControl::UpdateWalkingSounds, asm
+	// lines 463555, 463597) - not reversed beyond that. A sibling method,
+	// TGCharacter::CheckWalkingSound() (not itself called from
+	// UpdateWalkingSounds - xref'd only via two shared float constants),
+	// presumably updates whatever IsWalkingSoundPlaying() reads; not
+	// reversed.
+	bool IsWalkingSoundPlaying() const;
+	wxFileName GetWalkingSound() const;
+
 	// Confirmed called on both the outgoing and incoming character when
 	// switching (TGameControl::ChangeCharacter, asm lines 465849-466072).
 	void SetRandomTime();

@@ -58,6 +58,9 @@ public:
 
 	bool GetBool(int fieldId) const;
 	int GetInt(int fieldId) const;
+	// Confirmed call shape only (TGameControl::UpdateWalkingSounds,
+	// Deponia_Linux.asm line 463580) - not reversed beyond that.
+	float GetFloat(int fieldId) const;
 	wxString GetStr(int fieldId) const;
 	// Confirmed call shape only (TGameControl::PreLoad, Deponia_Linux.asm
 	// line 464274) - fills outStrings with TCharHolder elements (16 bytes

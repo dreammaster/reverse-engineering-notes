@@ -928,6 +928,27 @@ obviously reconcile with the already-confirmed member types), and this
 project's own standard is an honest gap over a confidently wrong
 transcription - left as a stub for a future pass with fresher eyes.
 
+## TGameControl batch 30: UpdateWalkingSounds, closing the gap its own comment flagged
+
+`UpdateWalkingSounds()` (asm lines 463474-463680) was explicitly called out
+in an earlier pass as "deliberately deferred due to an unidentified callback
+interface" - the unresolved interface was a virtual call on `_soundManager`
+that this pass identifies well enough to implement: added as
+`TSoundFFMPEG::PlaySound(const wxFileName&, int volume, int pan, int, int)`
+(vtable slot 14, a plausible name from the call shape, not a recovered
+identifier). Rate-limited via a function-local static timer (500ms, same
+pattern as `MoveScene`'s own `scrollTimer`), it walks the current scene's
+characters and, for each one with a walking sound already playing, computes
+a stereo pan from the character's on-screen x position relative to the
+viewport - confirmed exactly via its derivation (clamped screen-relative
+distance divided by `visibleWidth/200`, then shifted to a `[-100,100]`
+range - not approximated, the arithmetic reduces cleanly to that) - and a
+volume clamped to `[0,100]` from field 0x2ED, then calls `PlaySound`. A
+sibling method, `TGCharacter::CheckWalkingSound()`, shares two of the same
+float constants (per their own data xrefs) but is never itself called from
+here and presumably maintains whatever `IsWalkingSoundPlaying()` reads -
+not reversed.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

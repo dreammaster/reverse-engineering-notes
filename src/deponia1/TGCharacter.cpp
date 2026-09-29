@@ -30,6 +30,14 @@ bool TGCharacter::IsWalking() const {
 	return false;
 }
 
+bool TGCharacter::IsWalkingSoundPlaying() const {
+	return false;
+}
+
+wxFileName TGCharacter::GetWalkingSound() const {
+	return wxFileName();
+}
+
 void TGCharacter::SetRandomTime() {
 }
 
