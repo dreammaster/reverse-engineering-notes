@@ -86,7 +86,10 @@ condition (`if (Foo *x = ...)`) when the type is a user-defined name rather
 than a built-in keyword (`if (void *x = ...)` DOES get fixed; `if (Foo *x =
 ...)` does not) - and it misses the loop variable in a range-based `for`
 (`for (Foo *x : list)`). Both need the same manual/regex double-check as
-parameters.
+parameters. A plain `for` loop's own init-declaration (`for (Foo *x =
+...; ...)`) can also survive a single astyle pass uncorrected even for a
+built-in type - astyle isn't fully idempotent here, so a second pass (or a
+manual check) can catch what the first one missed.
 
 For an unnamed/unused parameter kept as a commented-out placeholder, the
 operator attaches directly to the comment with no space, exactly as it

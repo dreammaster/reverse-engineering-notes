@@ -13,6 +13,7 @@
 #include "baselib/composedfile.h"
 #include "datastruct/visionaireobject.h"
 #include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/id.h"
 
 namespace {
 // Packs a TVisObjRef::GetId() 3-byte id into a 32-bit value the same way
@@ -1441,8 +1442,64 @@ bool TGameControl::LoadAndInitGame(wxString &/*error*/, const wxString &/*file*/
 	return false;
 }
 
-bool TGameControl::ReplaceGame(wxFileName /*file*/, bool /*isEditor*/) {
-	return false;
+bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
+	// Confirmed (asm lines 468504-468965). The "prepend the game's own
+	// directory, then normalize" string-concatenation step here is a
+	// COW-string capacity-check optimization in the disassembly (choosing
+	// between append-in-place and insert-at-front based on which operand
+	// has spare capacity) - not meaningful control flow, so reproduced as a
+	// plain concatenation (same reasoning as StartTween's erase()+
+	// push_back(), batch 18). Field id 0x132 (linked from the game, whose
+	// GetName() feeds LoadAndInitGame's third argument) and 0x170 (an action
+	// run only in editor mode) are unresolved. Calls LoadAndInitGame/
+	// RegisterEventHandler/GetCursorControl via the g_pGameControl global
+	// rather than `this` - distinct from the `this->_visionaire` used for
+	// the editor-mode branch below - reproduced as observed rather than
+	// simplified to `this->`. The member read via wxFileName::GetPath() at
+	// asm line 468573 is modeled as _gamePath (the closest existing
+	// candidate - "the game's own directory"), though its real identity at
+	// that exact offset isn't independently confirmed.
+	TStandardPaths standardPaths;
+
+	wxFileName gameDir(_gamePath.ToStdWstring());
+	std::wstring prefix = gameDir.GetPath() + L"/";
+	wxFileName resolved(prefix + file.GetFullPath().ToStdWstring());
+	resolved.NormalizePath();
+	file = resolved;
+
+	if (!file.Exists()) {
+		if (wxLog::loglevel >= 0) {
+			wxString fmt;
+			toUTF(&fmt, "game file does not exists %s");
+			wxString fullPath = file.GetFullPath();
+			wxLog::logexpanded(fmt.wc_str(), fullPath.wc_str());
+		}
+		return false;
+	}
+
+	wxString fullPath = file.GetFullPath();
+	TVisObjRef game = _visionaire->GetGame();
+	TVisObjRef link = game.GetLink(0x132);
+	wxString warning = wxString(link.GetName());
+	wxString emptyFile;
+
+	auto *gameControl = static_cast<TGameControl *>(g_pGameControl);
+	gameControl->GetCursorControl()->Clear();
+	TId id(-1, -1);
+	UnrefLuaFieldsCache(id, -1);
+
+	if (!gameControl->LoadAndInitGame(fullPath, emptyFile, warning, false))
+		return false;
+
+	gameControl->RegisterEventHandler();
+	if (!isEditor)
+		return true;
+
+	gameControl->InitAfterLoadingScreen();
+	TVisObjRef game2 = _visionaire->GetGame();
+	TVisObjRef target = game2.GetLink(0x170);
+	TGAction::AddRunningAction(target);
+	return true;
 }
 
 void TGameControl::HandleEngineEvent(const std::string &name, const std::string &arg) {

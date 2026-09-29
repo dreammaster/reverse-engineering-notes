@@ -664,6 +664,44 @@ mutable `GetRef()` overload (matching `TGCharacter`'s existing dual-overload
 pattern - `AdjustInterfacesOnScreen` mutates an interface's own field 0x2B0
 in place), and `TInterfacePositionEnum` itself.
 
+## TGameControl batch 23: ReplaceGame, and a new not-yet-integrated THGameControl question
+
+`ReplaceGame(wxFileName file, bool isEditor)` (asm lines 468504-468965)
+resolves `file` to an absolute path under the game's own directory,
+confirms it exists (logging and bailing if not), then hands off to
+`LoadAndInitGame`/`InitAfterLoadingScreen` (neither reversed yet - this
+pass only needed their existing call shapes) plus some cache-invalidation
+bookkeeping. The path-concatenation step's disassembly is another instance
+of batch 18's lesson: a COW-string capacity check deciding between
+append-in-place and insert-at-front is a compiler optimization, not
+meaningful logic - reproduced as a plain concatenation.
+
+One new, unresolved architectural question surfaced: `LoadAndInitGame`,
+`RegisterEventHandler`, and `GetCursorControl` are all called through the
+`g_pGameControl` global rather than `this` (unlike the editor-mode branch's
+`this->_visionaire`) - reproduced as observed. Worse, IDA resolves the
+`RegisterEventHandler` symbol as `THGameControl::RegisterEventHandler()`,
+not any method on `TGameControl`/`TMasterControl`. `THGameControl` has only
+been seen before as a *caller* (`THGameControl::OnEvent`, xref'd from
+`ScrollToCharacterIfNeeded`/`AdjustInterfacesOnScreen`) - its relationship to
+`TGameControl`/`TMasterControl` (a base class? a wrapper?) isn't established.
+Rather than guess at that relationship, `RegisterEventHandler()` was added
+directly to `TMasterControl` (so `g_pGameControl->RegisterEventHandler()`
+compiles) with a comment flagging the gap - a dedicated pass on
+`THGameControl` itself would be worth doing before this comes up again.
+
+Also unresolved: the member read via `wxFileName::GetPath()` at asm line
+468573 (some stored "game directory") is modeled as `_gamePath` for lack of
+a better candidate, though its real identity at that exact offset isn't
+independently confirmed - `_gamePath` was previously only ever used as a
+`wxString`, never as something `wxFileName`-flavored.
+
+New stub surface: `TVisObjRef::GetName()` (returns `TCharHolder`, unlike
+`GetStr`/`GetInt`/etc. it takes no field id), `TCursorControl::Clear()`,
+`TId`/`UnrefLuaFieldsCache()` (new, in `vscommon/scripting/id.h`), and real
+`wxFileName::GetPath()`/`Exists()` (the latter delegating to the already-real
+`wxFile::Exists()`).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

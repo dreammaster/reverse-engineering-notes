@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <string>
 
+#include "TCharHolder.h"
 #include "WxStub.h"
 
 // Confirmed to have at least one value, 2, used at every SetValue() call
@@ -57,6 +58,10 @@ public:
 	bool GetBool(int fieldId) const;
 	int GetInt(int fieldId) const;
 	wxString GetStr(int fieldId) const;
+	// Confirmed call shape only (TGameControl::ReplaceGame, Deponia_Linux.asm
+	// line 468762): unlike GetStr/GetInt/etc., takes no field id - "the
+	// name" is a property of the object itself, not a per-field lookup.
+	TCharHolder GetName() const;
 	std::wstring GetPath(int fieldId) const;
 	TVisObjRef GetLink(int fieldId) const;
 	// Confirmed call shape only (TGameControl::InitCharacters, asm line

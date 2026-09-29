@@ -25,6 +25,10 @@ wxString TVisObjRef::GetStr(int /*fieldId*/) const {
 	return wxString();
 }
 
+TCharHolder TVisObjRef::GetName() const {
+	return TCharHolder();
+}
+
 std::wstring TVisObjRef::GetPath(int /*fieldId*/) const {
 	return std::wstring();
 }

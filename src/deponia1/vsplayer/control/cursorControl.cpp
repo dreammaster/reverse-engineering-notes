@@ -9,3 +9,6 @@ void TCursorControl::SetCursor(int /*cursorId*/, bool /*flag*/) {
 
 void TCursorControl::SetCursor(bool /*flag1*/, int /*cursorId*/, bool /*flag2*/) {
 }
+
+void TCursorControl::Clear() {
+}

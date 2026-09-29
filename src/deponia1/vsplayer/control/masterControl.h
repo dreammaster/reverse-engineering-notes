@@ -161,6 +161,19 @@ public:
 	void RegisterEngineEventHandler(const wxString &name);
 	void RegisterMouseEventHandler(const wxString &name, const std::vector<int> &filter);
 	void RegisterKeyboardEventHandler(const wxString &name);
+	// Confirmed called on g_pGameControl (TMasterControl*) after a successful
+	// TGameControl::ReplaceGame, Deponia_Linux.asm line 468845 - but IDA
+	// resolves the real symbol as `THGameControl::RegisterEventHandler()`,
+	// a distinct, not-yet-integrated class only otherwise seen as a caller
+	// elsewhere (e.g. `THGameControl::OnEvent`, xref'd from
+	// ScrollToCharacterIfNeeded/AdjustInterfacesOnScreen). For a direct,
+	// non-virtual call through a TMasterControl* to resolve to a
+	// THGameControl method, THGameControl would need to be a base of the
+	// concrete TGameControl - unconfirmed and not modeled as such yet;
+	// placed here (rather than guessed onto that relationship) purely so
+	// ReplaceGame compiles and calls *something* at this point. Revisit once
+	// THGameControl itself gets a dedicated pass.
+	void RegisterEventHandler();
 
 	void ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos);
 	void ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos, float a, float b, int c);

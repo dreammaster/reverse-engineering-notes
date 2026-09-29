@@ -24,7 +24,7 @@ void wxLog::logexpanded(const wchar_t *fmt, ...) {
 	// argument and truncates output to one character. Normalize %s -> %ls
 	// so the reversed format strings behave the same on this platform.
 	std::wstring portableFmt;
-	for (const wchar_t * p = fmt; *p; ++p) {
+	for (const wchar_t *p = fmt; *p; ++p) {
 		portableFmt += *p;
 		if (*p == L'%' && p[1] == L's') {
 			portableFmt += L'l';
@@ -58,6 +58,10 @@ bool wxFile::Exists(const wxString &path) {
 bool wxDir::Exists(const wxString &path) {
 	struct stat st;
 	return ::stat(static_cast<const char *>(path.mb_str()), &st) == 0 && (st.st_mode & _S_IFDIR);
+}
+
+bool wxFileName::Exists() const {
+	return wxFile::Exists(GetFullPath());
 }
 
 bool wxFileName::Mkdir(const wxString &dir, int /*permissions*/, int /*flags*/) {

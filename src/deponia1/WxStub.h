@@ -80,9 +80,18 @@ public:
 	wxString GetFullPath() const {
 		return wxString(_fullPath);
 	}
+	// Real wxFileName::GetPath() default behavior: the directory portion,
+	// without a trailing separator (empty if there isn't one).
+	std::wstring GetPath() const {
+		std::size_t pos = _fullPath.find_last_of(L"/\\");
+		return (pos == std::wstring::npos) ? std::wstring() : _fullPath.substr(0, pos);
+	}
 	bool IsOk() const {
 		return !_fullPath.empty();
 	}
+	// Confirmed call shape only (TGameControl::ReplaceGame, Deponia_Linux.asm
+	// line 468671).
+	bool Exists() const;
 	void NormalizePath() {}
 	// Confirmed call shape only (TGameControl::SaveGame, asm line 463066) -
 	// replaces the name+extension portion, keeping any existing directory,

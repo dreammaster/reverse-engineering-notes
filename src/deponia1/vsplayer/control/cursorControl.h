@@ -14,4 +14,7 @@ public:
 	// params not resolved.
 	void SetCursor(int cursorId, bool flag);
 	void SetCursor(bool flag1, int cursorId, bool flag2);
+	// Confirmed call shape only (TGameControl::ReplaceGame, Deponia_Linux.asm
+	// line 468779) - not reversed beyond that.
+	void Clear();
 };
