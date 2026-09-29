@@ -66,6 +66,9 @@ const wxRect *TVisObjRef::GetRect(int /*fieldId*/) const {
 void TVisObjRef::GetLinks(int /*fieldId*/, TypeOrder /*order*/, TVList &/*outLinks*/) const {
 }
 
+void TVisObjRef::GetList(int /*fieldId*/, TVList &/*outList*/) const {
+}
+
 const std::uint8_t *TVisObjRef::GetId() const {
 	return _id;
 }

@@ -127,7 +127,7 @@ void TMasterControl::DrawInterfaces() {
 	if (!shouldDraw)
 		return;
 
-	for (TGInterface * interface : _activeInterfaces)
+	for (TGInterface *interface : _activeInterfaces)
 		interface->Draw();
 }
 

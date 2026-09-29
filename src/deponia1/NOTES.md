@@ -441,6 +441,58 @@ Recovered two more diagnostic strings byte-for-byte confirming `TTimer::
 GetTime()` is milliseconds: "Interfaces loaded. Needed time: %ld ms" and
 "Scripts loaded. Needed time: %ld ms".
 
+## TGameControl batch 17: InitGameActions, and a wx/SDL "unified keysym" table
+
+`InitGameActions` (Deponia_Linux.asm lines 466743-467222) builds
+`_gameActions` from the game's action-definition list (field 0x13E), and
+turned out to hide a nice confirmation of how the engine's custom key-action
+binding scheme works. Its local `arrKeyActionCodes` table
+(Deponia_Linux.asm data at address 0xD6D220) decodes byte-for-byte to: `' '`,
+`'\r'`, `WXK_ESCAPE`(27), `WXK_BACK`(8), `','`, `'.'`, `'+'`, `'-'`, then the
+real SDL2 keycodes `SDLK_F1`-`SDLK_F12` and `SDLK_LEFT/RIGHT/UP/DOWN` (each
+is `SDL_SCANCODE_x | (1<<30)`, confirmed against SDL2's own scancode
+numbering) - i.e. this engine's "key code" space for action bindings is a
+mix of plain ASCII (digits/letters/punctuation), a couple of named wx
+constants, and real SDL2 keycodes for non-printable keys, plus
+`ConvertControllerButtonToSymKey`'s already-known 1000001-1000015 range for
+controller buttons. Added `WXK_ESCAPE`/`WXK_BACK` to `WxStub.h` and
+`SDLK_F1`-`SDLK_F12`/`SDLK_LEFT`/`SDLK_RIGHT`/`SDLK_UP`/`SDLK_DOWN` (plus
+`SDLK_SCANCODE_MASK`) to `SdlStub.h` to name these - both real, exact API
+constants, not invented ones.
+
+Also confirmed: a bound key's code gets classified into `SGameAction::msg`
+by checking (a) whether it falls in the controller-button range
+(-> `TKeyboardMessageEnum::kControllerButtonHit`), and (b) whether
+`code - 10000` names another valid code in the table above (-> `kKeyUp`+1 or
+`kControllerButtonRelease`, i.e. a "+10000 = modified variant" encoding).
+This is likely where masterControl.h's long-unresolved `TKeyboardMessageEnum`
+values 2/3 come from (2 is produced here; 3 never is, in this function at
+least). `SGameAction::flag` comes from scanning a second per-action list
+(field 0xA2) for a condition of type 0x6B, or type 0x99 with its own field
+0xF2 equal to 1 - both cases make the action bypass dialog/text blocking in
+`StartGameAction`. The 0xA2/0xB3/0xF2 field ids and the 0x6B/0x99 type
+constants are confirmed call/comparison shapes only; what they represent in
+Visionaire's data schema is not resolved. Needed two new stub methods to
+compile against: `TVisObjRef::GetList(int, TVList&)` (distinct from
+`TVisionaire::GetList`, which takes an extra bool) and
+`TVisionaireObject::GetInt(int)` (the list elements here are read directly
+as raw `TVisionaireObject*`, not converted through a `TVisObjRef` handle
+first, unlike everywhere else in this survey).
+
+While tracking down a range-based `for` loop's pointer spacing
+(`TGCharacter * character : _characters` - wrong per CLAUDE.md/ScummVM
+convention), found that the ScummVM-reformatting pass had missed this
+pattern across the whole tree (astyle's `align-pointer`/`align-reference`
+don't reach a range-`for` loop variable, just like they already don't reach
+function parameters). A supplementary regex pass fixed all 29 instances
+(`gameControl.cpp`, `masterControl.cpp`). Re-running astyle afterward turned
+up one more related gap it hadn't caught the first time: a pointer/reference
+declared inside an `if`/`while` condition (`if (Foo *x = ...)`) is fixed by
+astyle when the type is a built-in keyword (`void *x` got fixed) but not when
+it's a user-defined type name (`TGCharacter *x`/`TManagedObject *x` didn't) -
+fixed the two remaining instances by hand. Documented all of this in
+CLAUDE.md so the next reformatting pass doesn't have to rediscover it.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

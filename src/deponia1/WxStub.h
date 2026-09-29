@@ -97,6 +97,13 @@ public:
 	static bool Exists(const wxString &path);
 };
 
+// Real wxWidgets key-code constants (used alongside plain ASCII by
+// TGameControl::InitGameActions' fixed action-key table, Deponia_Linux.asm
+// data at address 0xD6D220 - the ',' '.' '+' '-' digits/letters in that same
+// table are plain ASCII and need no named constant).
+constexpr int WXK_BACK = 8;
+constexpr int WXK_ESCAPE = 27;
+
 struct wxSize {
 	int width = 0;
 	int height = 0;

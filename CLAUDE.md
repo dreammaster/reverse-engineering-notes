@@ -78,10 +78,15 @@ const char *ptr = (const char *)foobar;
 int &ref = i;
 ```
 This applies in variable declarations, return types, AND function
-parameters. **Known astyle limitation**: astyle's `align-pointer`/
+parameters. **Known astyle limitations**: astyle's `align-pointer`/
 `align-reference` only fixes declarations and return types, not parameters
 - always double check (or re-run the supplementary regex, see below) after
-an astyle pass.
+an astyle pass. It also misses a variable declared inside an `if`/`while`
+condition (`if (Foo *x = ...)`) when the type is a user-defined name rather
+than a built-in keyword (`if (void *x = ...)` DOES get fixed; `if (Foo *x =
+...)` does not) - and it misses the loop variable in a range-based `for`
+(`for (Foo *x : list)`). Both need the same manual/regex double-check as
+parameters.
 
 For an unnamed/unused parameter kept as a commented-out placeholder, the
 operator attaches directly to the comment with no space, exactly as it

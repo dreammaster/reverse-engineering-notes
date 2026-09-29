@@ -83,6 +83,10 @@ public:
 	// InitGameActions, asm lines 458124-458250, 466739-467222+) - fills
 	// outLinks with TVisionaireObject* elements; not reversed beyond that.
 	void GetLinks(int fieldId, TypeOrder order, TVList &outLinks) const;
+	// A second, order-less list accessor - distinct from TVisionaire::GetList
+	// (datastruct/visionaire.h), which takes an extra bool. Confirmed call
+	// shape only (TGameControl::InitGameActions, asm line 467032).
+	void GetList(int fieldId, TVList &outList) const;
 
 	// Real GetId() returns a small (likely 4-byte) identifier the caller
 	// treats as 3-4 individual bytes (see TMasterControl::PlayAVI packing

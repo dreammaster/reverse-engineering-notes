@@ -177,3 +177,26 @@ struct SDL_ControllerButtonEvent {
 	Uint8 padding1;
 	Uint8 padding2;
 };
+
+// Real SDL2 keycode values, needed for TGameControl::InitGameActions' fixed
+// action-key table (Deponia_Linux.asm data at address 0xD6D240 onward): a
+// non-printable key's SDL_Keycode is its SDL_Scancode OR'd with
+// SDLK_SCANCODE_MASK - see SDL2's SDL_keycode.h/SDL_scancode.h. Only the
+// scancodes actually seen in that table are given names here.
+constexpr Sint32 SDLK_SCANCODE_MASK = 1 << 30;
+constexpr Sint32 SDLK_F1 = 58 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F2 = 59 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F3 = 60 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F4 = 61 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F5 = 62 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F6 = 63 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F7 = 64 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F8 = 65 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F9 = 66 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F10 = 67 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F11 = 68 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_F12 = 69 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_RIGHT = 79 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_LEFT = 80 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_DOWN = 81 | SDLK_SCANCODE_MASK;
+constexpr Sint32 SDLK_UP = 82 | SDLK_SCANCODE_MASK;

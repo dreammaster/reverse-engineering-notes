@@ -11,4 +11,10 @@
 class TVisionaireObject {
 public:
 	TVisionaireObject() = default;
+
+	// Confirmed call shape only (TGameControl::InitGameActions, asm lines
+	// 467044-467065): called directly on a raw TVisionaireObject* pulled from
+	// a TVList, unlike the rest of this survey's field access which goes
+	// through a TVisObjRef handle - not reversed beyond that.
+	int GetInt(int fieldId) const;
 };
