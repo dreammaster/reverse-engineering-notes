@@ -15,6 +15,8 @@
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
 
+enum class TMouseMessageEnum;
+
 class TGDialog {
 public:
 	TGDialog() = default;
@@ -22,6 +24,15 @@ public:
 	// Confirmed call shape only (TGameControl::HandleMouseMove,
 	// Deponia_Linux.asm line 472265) - not reversed beyond that.
 	void HandleMouseMove(const wxPoint &pos);
+	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
+	// asm line 472603) - fired for msg values 2/4 (left/right button
+	// released) while a dialog is active; not reversed beyond that.
+	void HandleMouseClick();
+	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
+	// asm line 472595) - fired for msg values 12/13 (the two confirmed
+	// wheel-direction messages, see TMouseMessageEnum) while a dialog is
+	// active; not reversed beyond that.
+	void HandleMouseWheel(TMouseMessageEnum msg);
 
 	bool IsEmpty() const {
 		return _target.IsEmpty();

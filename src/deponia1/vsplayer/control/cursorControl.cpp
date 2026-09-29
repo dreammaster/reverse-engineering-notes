@@ -21,3 +21,7 @@ void TCursorControl::LinkButtonCursor(int /*linkedId*/, int /*objectId*/) {
 
 void TCursorControl::SetCursorPosition(int /*x*/, int /*y*/) {
 }
+
+bool TCursorControl::IsActiveMoveObject() const {
+	return false;
+}

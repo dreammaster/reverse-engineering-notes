@@ -63,6 +63,11 @@ public:
 	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
 	// asm line 465179).
 	void SetOrigin(int x, int y);
+	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
+	// asm lines 473029-473037, 473083-473091) - converts a screen-space
+	// click position to one relative to this surface (presumably subtracting
+	// _origin/_scrollPos); not reversed beyond that call shape.
+	wxPoint GetRelativePoint(const wxPoint &pos) const;
 
 private:
 	wxPoint _scrollPos{};

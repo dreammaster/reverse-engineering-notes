@@ -15,3 +15,14 @@ void TGObjectManager::RemoveItem(bool /*flag*/) {
 
 void TGObjectManager::MouseMove(TManagedObject */*object*/) {
 }
+
+void TGObjectManager::HandleEvent(TMouseEventEnum /*event*/) {
+}
+
+bool TGObjectManager::IsCurrentObjectEmpty() const {
+	return true;
+}
+
+bool TGObjectManager::IsCurrentObjectWalkable() const {
+	return false;
+}

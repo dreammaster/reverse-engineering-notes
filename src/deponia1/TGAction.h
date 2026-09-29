@@ -10,6 +10,15 @@
 
 #include "datastruct/visobjref.h"
 
+enum class TMouseMessageEnum;
+
+// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.asm
+// lines 472809-472810 and elsewhere in the same function) - the opaque event
+// type TGObjectManager::HandleEvent() takes; no individual value has been
+// observed/reversed, only that ConvertToEvent() produces one from a
+// TMouseMessageEnum.
+enum class TMouseEventEnum {};
+
 class TGAction {
 public:
 	static void AddRunningAction(const TVisObjRef &action);
@@ -21,4 +30,7 @@ public:
 	// Confirmed static (TGameControl::HandleKeyEvent, Deponia_Linux.asm line
 	// 471550) - not reversed beyond that call shape.
 	static void SkipCutscene();
+	// Confirmed static call shape only (TGameControl::HandleMouseUp,
+	// Deponia_Linux.asm line 472810 and others) - not reversed beyond that.
+	static TMouseEventEnum ConvertToEvent(TMouseMessageEnum msg);
 };

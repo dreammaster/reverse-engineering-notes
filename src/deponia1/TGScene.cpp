@@ -26,6 +26,9 @@ TMSavegame *TGScene::GetSavegameAt(const wxPoint &/*pos*/) const {
 void TGScene::DeleteSelectedSavegame() {
 }
 
+void TGScene::SelectSavegame(const wxPoint &/*pos*/) {
+}
+
 std::vector<TGCharacter *> TGScene::GetCharacters() const {
 	return {};
 }

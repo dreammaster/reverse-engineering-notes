@@ -29,4 +29,7 @@ public:
 	// Confirmed call shape only (TGameControl::HandleMouseMove, Deponia_Linux.
 	// asm line 472146) - not reversed beyond that.
 	void SetCursorPosition(int x, int y);
+	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
+	// asm line 472904) - not reversed beyond that.
+	bool IsActiveMoveObject() const;
 };

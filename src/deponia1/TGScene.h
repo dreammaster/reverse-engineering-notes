@@ -43,6 +43,10 @@ public:
 	TMSavegame *GetSelectedSavegame(bool flag);
 	TMSavegame *GetSavegameAt(const wxPoint &pos) const;
 	void DeleteSelectedSavegame();
+	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
+	// asm line 473046) - called on a menu scene with the (possibly hook-
+	// overridden) click position; not reversed beyond that.
+	void SelectSavegame(const wxPoint &pos);
 
 	// Confirmed a by-value std::vector<TGCharacter*> (TGameControl::
 	// UpdateRandomTimers copies it and iterates the copy, asm lines

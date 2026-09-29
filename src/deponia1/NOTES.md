@@ -1040,6 +1040,79 @@ const wxPoint&)`, `TGInterface::GetObject(const wxPoint&)`/`IsInside()`,
 stubs), `TVList::copy()` (real) and `push_back()` (no-op, see above), and
 the `EngineUpdatePaused` global.
 
+## TGameControl batch 33: implement HandleMouseUp
+
+Reversed `TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum
+msg)` (Deponia_Linux.asm lines 472489-473301, ~810 lines) - the mouse
+button-release/wheel handler.
+
+A significant side finding: `TMouseMessageEnum` (declared in
+`masterControl.h`) previously carried an unconfirmed `kWheel = 5` guess with
+no supporting evidence. This function's jump table (`jpt_61B832`, 14 entries)
+proves the enum has at least 14 values (0-13), and that the two wheel
+messages are actually **12 and 13**, not 5 - the dialog-active branch (below)
+dispatches both straight to a new `TGDialog::HandleMouseWheel()`. 5 is a
+real, distinctly-handled value with no resolved name. The enum was corrected
+accordingly (`kWheel` removed; 5-11 are `kValueN` placeholders, 12/13 keep
+their `kValueN` names too since which is "up" vs "down" isn't resolved,
+just that both are wheel-related).
+
+Confirmed control flow:
+
+- If the cursor isn't active: `kLeftUp`(2)/`kRightUp`(4) call
+  `SkipCurrentText()`; anything else is a no-op.
+- If a dialog is active (`!_dialog.IsEmpty()`): `kLeftUp`/`kRightUp` call a
+  new `TGDialog::HandleMouseClick()` stub; the two wheel values (12/13) call
+  the new `TGDialog::HandleMouseWheel(msg)` stub; anything else is a no-op.
+  Both return without reaching any of the logic below.
+- Otherwise (dialog empty): two game-data int fields (0x283, and 0x1FC read
+  through `_previousCharacter->GetRef()` - the same "reads _previousCharacter,
+  not _currentCharacter" field-access pattern already confirmed for
+  `ScrollToCharacterIfNeeded`, batch 21) gate an early return for two specific
+  flag combinations; real meaning of both fields/values unresolved.
+- A switch on `msg` (the jump table): `kLeftUp`(0x17B)/`kRightUp`(0x233) fire
+  a linked action if present and set a `handled` flag; `kValue5`(0x17D)/
+  `kValue9`(0x151, plus an `IsActiveMoveObject()`/`RemoveItem()` branch)/
+  `kValue11`(0x2FE) additionally dispatch through the object manager
+  (`TGAction::ConvertToEvent()` -> `TGObjectManager::HandleEvent()`, both new,
+  the latter opaque - `TMouseEventEnum` carries no known values) and derive
+  `handled` from a second game-data int field each (0x30C/0x30E/0x30D); the
+  wheel values 12/13 (fields 0x2FF/0x300) do the same action+dispatch but
+  **return immediately**, skipping everything below. Unhandled values (0, 1,
+  3, 6, 7, 8, 10) fall through with `handled = false`.
+- The scene-mouse-position Lua hook (same "SceneMousePositionHook" name and
+  unimplemented-dispatch-contract gap as `HandleMouseMove`/`ProcessMessage`/
+  `HandleEngineEvent`/`HandleKeyEvent`) may override the click position.
+- If the current scene `IsMenu()`, calls a new `TGScene::SelectSavegame()`
+  stub with that position first, then continues into the same logic below
+  regardless.
+- One real gap flagged rather than guessed: when a 3x3 transform matrix is
+  active on a global matrix stack (gated by two globals, `invMatrix1` and
+  `qword_1209B08`, checking whether exactly 9 floats are currently pushed),
+  the click position gets transformed through it via `idMat3::operator*
+  (idVec3 const&)` before use - none of `invMatrix1`/`idMat3`/`idVec3` are
+  reversed or declared anywhere in this codebase (likely a rotatable/
+  zoomable scene camera feature, orthogonal to mouse handling itself). The
+  untransformed position is used unconditionally instead.
+- Finally: if the hover-interface-object set (`_hoveredInterfaceObjects`,
+  the same member `HandleMouseMove` maintains) is non-empty, dispatches
+  through the object manager and returns. Otherwise, if the current object
+  was already empty (`TGObjectManager::IsCurrentObjectEmpty()`, new) and
+  the earlier `handled` flag is set and the engine isn't paused, or -
+  separately - if the current object is walkable
+  (`IsCurrentObjectWalkable()`, new) and the engine isn't paused: checks
+  whether `_previousCharacter`'s field-0x1F7 link matches the current
+  scene, and if so records the click position (via a new
+  `TPaintControl::GetRelativePoint()` stub) into the character's field
+  0x201. Otherwise dispatches through the object manager one more time.
+
+New stub/real surface: `TGDialog::HandleMouseClick()`/`HandleMouseWheel()`,
+`TGObjectManager::HandleEvent()`/`IsCurrentObjectEmpty()`/
+`IsCurrentObjectWalkable()`, `TCursorControl::IsActiveMoveObject()`,
+`TGScene::SelectSavegame()`, `TPaintControl::GetRelativePoint()` (all
+stubs), `TGAction::ConvertToEvent()` (stub, returns a value-initialized
+`TMouseEventEnum`), and the new opaque `TMouseEventEnum` type.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

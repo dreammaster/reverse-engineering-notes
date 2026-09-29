@@ -71,6 +71,10 @@ void TPaintControl::SetOrigin(int x, int y) {
 	_origin.y = y;
 }
 
+wxPoint TPaintControl::GetRelativePoint(const wxPoint &pos) const {
+	return pos;
+}
+
 void TPaintControl::AdjustWindowHorizontal(float /*amount*/) {
 }
 

@@ -225,7 +225,144 @@ void TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding) {
 	}
 }
 
-void TGameControl::HandleMouseUp(const wxPoint &/*pos*/, TMouseMessageEnum /*msg*/) {
+void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
+	// Confirmed (Deponia_Linux.asm lines 472489-473301, ~810 lines).
+	if (!GetCursorControl()->IsActive()) {
+		if (msg == TMouseMessageEnum::kLeftUp || msg == TMouseMessageEnum::kRightUp)
+			SkipCurrentText();
+		return;
+	}
+
+	if (!_dialog.IsEmpty()) {
+		if (msg == TMouseMessageEnum::kLeftUp || msg == TMouseMessageEnum::kRightUp)
+			_dialog.HandleMouseClick();
+		else if (msg == TMouseMessageEnum::kValue12 || msg == TMouseMessageEnum::kValue13)
+			_dialog.HandleMouseWheel(msg);
+		return;
+	}
+
+	TVisObjRef game = _visionaire->GetGame();
+	// Field ids 0x283/0x1FC gate two "ignore this mouse-up entirely" states;
+	// real meaning of both flags/values is unresolved.
+	int stateFlag = game.GetInt(0x283);
+	int charFlag = _previousCharacter->GetRef().GetInt(0x1FC);
+	if ((stateFlag == 2 && (charFlag == 4 || charFlag == 5)) || (stateFlag == 1 && charFlag == 4))
+		return;
+
+	// Confirmed (jpt_61B832, asm lines 472818-473039): each handled case
+	// optionally fires a game-data-linked action, then (except 12/13, which
+	// return immediately) converts msg to a TMouseEventEnum for the object
+	// manager; `handled` feeds the click-position bookkeeping further below.
+	// Unhandled values (0, 1, 3, 6, 7, 8, 10) fall straight through to the
+	// scene-hook/hover dispatch with handled left false.
+	bool handled = false;
+	switch (msg) {
+	case TMouseMessageEnum::kLeftUp: {
+		TVisObjRef link = game.GetLink(0x17B);
+		if (!link.IsEmpty())
+			TGAction::AddRunningAction(link);
+		handled = true;
+		break;
+	}
+	case TMouseMessageEnum::kRightUp: {
+		TVisObjRef link = game.GetLink(0x233);
+		if (!link.IsEmpty())
+			TGAction::AddRunningAction(link);
+		handled = true;
+		break;
+	}
+	case TMouseMessageEnum::kValue5: {
+		TVisObjRef link = game.GetLink(0x17D);
+		if (!link.IsEmpty())
+			TGAction::AddRunningAction(link);
+		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
+		handled = game.GetInt(0x30C) == 1;
+		break;
+	}
+	case TMouseMessageEnum::kValue9: {
+		if (GetCursorControl()->IsActiveMoveObject()) {
+			_objectManager.RemoveItem(true);
+		} else {
+			TVisObjRef link = game.GetLink(0x151);
+			if (!link.IsEmpty())
+				TGAction::AddRunningAction(link);
+		}
+		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
+		handled = game.GetInt(0x30E) == 1;
+		break;
+	}
+	case TMouseMessageEnum::kValue11: {
+		TVisObjRef link = game.GetLink(0x2FE);
+		if (!link.IsEmpty())
+			TGAction::AddRunningAction(link);
+		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
+		handled = game.GetInt(0x30D) == 1;
+		break;
+	}
+	case TMouseMessageEnum::kValue12:
+	case TMouseMessageEnum::kValue13: {
+		TVisObjRef link = game.GetLink(msg == TMouseMessageEnum::kValue12 ? 0x2FF : 0x300);
+		if (!link.IsEmpty())
+			TGAction::AddRunningAction(link);
+		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
+		return;
+	}
+	default:
+		break;
+	}
+
+	wxPoint hookPos = pos;
+	if (!_sceneMousePositionHookName.empty()) {
+		// Real dispatch calls LuaExecuteFunction("SceneMousePositionHook",
+		// {&posArg}, results), which may override hookPos via the first
+		// result's TArgument::GetPoint() - LuaExecuteFunction/TArgument's
+		// full contract isn't reversed yet (same gap noted in
+		// HandleMouseMove/ProcessMessage/HandleEngineEvent/HandleKeyEvent).
+	}
+
+	TGScene *scene = _ownedSceneControl.GetScene();
+	if (scene->IsMenu())
+		scene->SelectSavegame(hookPos);
+
+	// Confirmed (asm lines 472782-473133): when a 3x3 transform matrix is
+	// active on a global matrix stack (gated by two globals, invMatrix1 and
+	// qword_1209B08, neither reversed), hookPos is transformed through it
+	// (idMat3::operator*(idVec3 const&), also not reversed) before use below
+	// - presumably a rotatable/zoomable scene camera feature. Left as a
+	// flagged gap rather than guessed; the untransformed hookPos is used
+	// unconditionally.
+	wxPoint clickPos = hookPos;
+
+	bool objEmpty = _objectManager.IsCurrentObjectEmpty();
+
+	if (!_hoveredInterfaceObjects.empty()) {
+		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
+		return;
+	}
+
+	// Confirmed (asm lines 473059-473091): only reached when the current
+	// object was already empty on entry, distinct from the identical-looking
+	// block below it's paired with a different gate (paused/handled here,
+	// walkability below).
+	if (objEmpty && !EngineUpdatePaused && handled) {
+		if (_previousCharacter->GetRef().GetLink(0x1F7) == scene->GetRef()) {
+			wxPoint relPos = scene->GetRelativePoint(clickPos);
+			_previousCharacter->GetRef().SetValue(0x201, relPos, TSendEventEnum::kSendEvent);
+		}
+	}
+
+	// Confirmed (asm lines 472995-473038): reached whenever the hover set is
+	// empty, whether or not the block above ran.
+	if (!_objectManager.IsCurrentObjectWalkable()) {
+		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
+		return;
+	}
+	if (EngineUpdatePaused)
+		return;
+	if (_previousCharacter->GetRef().GetLink(0x1F7) == scene->GetRef()) {
+		wxPoint relPos = scene->GetRelativePoint(clickPos);
+		_previousCharacter->GetRef().SetValue(0x201, relPos, TSendEventEnum::kSendEvent);
+	}
 }
 
 void TGameControl::HandleMouseHolding(const wxPoint &/*pos*/) {

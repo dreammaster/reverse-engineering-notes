@@ -52,7 +52,35 @@ class TSceneControl;
 class TGameController;
 
 enum class HandleSoundsEnum { kStop, kPause, kContinue };
-enum class TMouseMessageEnum { kMove, kLeftDown, kLeftUp, kRightDown, kRightUp, kWheel };
+// Confirmed to have at least 14 values, 0-13 (TGameControl::HandleMouseUp's
+// switch dispatches on 2, 4, 5, 9, 11, 12, 13 distinctly and treats 0, 1, 3,
+// 6, 7, 8, 10 identically as "no special handling," Deponia_Linux.asm lines
+// 472554-472834 and the jpt_61B832 jump table) - kLeftUp=2/kRightUp=4 are
+// confirmed (both HandleMouseUp's dialog-active and dialog-empty paths key
+// off exactly these two values for "button released"/"click"). 12 and 13
+// are confirmed to be the two mouse-wheel-direction messages instead (the
+// dialog-active path dispatches both straight to TGDialog::HandleMouseWheel,
+// asm lines 472590-472595) - the previous "kWheel=5" placeholder this enum
+// carried had no supporting evidence and is removed; 5 is a real, distinct
+// HandleMouseUp case with no confirmed name. Values 6-11 (besides 9 and 11,
+// which HandleMouseUp also handles distinctly but without a resolved name)
+// are placeholders only.
+enum class TMouseMessageEnum {
+	kMove = 0,
+	kLeftDown = 1,
+	kLeftUp = 2,
+	kRightDown = 3,
+	kRightUp = 4,
+	kValue5 = 5,
+	kValue6 = 6,
+	kValue7 = 7,
+	kValue8 = 8,
+	kValue9 = 9,
+	kValue10 = 10,
+	kValue11 = 11,
+	kValue12 = 12, // confirmed wheel-related, direction unresolved
+	kValue13 = 13, // confirmed wheel-related, direction unresolved
+};
 // Confirmed to have at least 7 distinct values (TGameControl::
 // HandleControllerButtonHit/Release pass literal 4/5, and HandleControllerAxis
 // passes literal 6, as this same enum's type - Deponia_Linux.asm lines
