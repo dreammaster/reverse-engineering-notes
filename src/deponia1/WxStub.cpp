@@ -50,6 +50,10 @@ void toUTF(wxString *out, const char *utf8) {
 	*out = wxString(utf8);
 }
 
+wxString CONVTOSTR(const int &value) {
+	return wxString(std::to_wstring(value));
+}
+
 bool wxFile::Exists(const wxString &path) {
 	struct stat st;
 	return ::stat(static_cast<const char *>(path.mb_str()), &st) == 0;

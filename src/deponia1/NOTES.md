@@ -1113,6 +1113,47 @@ New stub/real surface: `TGDialog::HandleMouseClick()`/`HandleMouseWheel()`,
 stubs), `TGAction::ConvertToEvent()` (stub, returns a value-initialized
 `TMouseEventEnum`), and the new opaque `TMouseEventEnum` type.
 
+## TGameControl batch 34: SaveEventHandlers, resolved with fresher eyes
+
+Revisited `SaveEventHandlers()` (Deponia_Linux.asm lines 457514-458044,
+~530 lines), left as an explicit stub in batch 29 over a "narrow vs. wide
+string element type" ambiguity. Separating the function's four handler
+loops by their distinct append-call signatures (rather than by stride
+alone - a plain 8-byte pointer stride is equally consistent with either a
+narrow or wide COW string under this project's old-ABI assumption) resolved
+it:
+
+- The `mainLoop:`-prefixed loop appends each element via
+  `std::wstring::append(std::wstring const&)` directly - only type-checks
+  against wide-string elements. This means `_engineEventHandlerNamesMainLoop`
+  (added in an earlier batch as `vector<std::string>`, purely from ICF-
+  destructor-symbol inference with no direct type evidence) was **wrong**;
+  corrected to `vector<std::wstring>`, with `RegisterEventHandlerMainLoop`/
+  `UnregisterEventHandlerMainLoop` updated to match (no more UTF-8 round-
+  trip through `toUTF`/`mb_str`, just `wxString::ToStdWstring()`).
+- The `engineEvent:`-prefixed loop instead converts each element through
+  `toUTF(wxString*, const char*)` - confirms `_engineEventHandlerNames`
+  (TMasterControl's member) really is narrow, as already modeled.
+- The `keyEvent:` loop appends `_keyboardEventHandlers` elements directly as
+  wstrings, consistent with `TKeyboardEventHandler{wxString name}` already
+  being a bare 8-byte wrapper.
+- The `mouseEvent:` loop (over `_mouseEventHandlers`, moved from private to
+  protected - same reasoning as the other TMasterControl containers
+  TGameControl reads directly) confirmed the real per-name filter-list
+  format `LoadEventHandlers` could only guess at: each entry renders as
+  `name|filter1|filter2|...` (pipe-joined, including between the name and
+  its first filter), with entries themselves comma-joined - via a new
+  `CONVTOSTR(const int&)` free function (recovered name, `WxStub.h`,
+  rendering plain decimal).
+- Two further single-value categories, `animationStarted`/`animationStopped`/
+  `textStarted`/`textStopped`, turned out to be stored on `TGAnimation`/
+  `TGText` themselves (four new static getters, all stubs) rather than in
+  any `TGameControl` container - explaining why `LoadEventHandlers`' own
+  comment couldn't place them among its four regular categories.
+
+The assembled string is written back via `TVisObjRef::SetValue(0x2F7, ...,
+TSendEventEnum::kSendEvent)` - the same field `LoadEventHandlers` reads.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

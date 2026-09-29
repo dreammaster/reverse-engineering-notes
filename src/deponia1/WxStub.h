@@ -365,6 +365,13 @@ wxString wxConvertMB2WX(const char *s);
 // matches the calling convention seen at every reversed call site so far).
 void toUTF(wxString *out, const char *utf8);
 
+// Confirmed a free function returning a wide string by value (TGameControl::
+// SaveEventHandlers, Deponia_Linux.asm line 457636, `_Z9CONVTOSTRRKi` -
+// CONVTOSTR(int const&)) - not itself reversed, but its result is
+// immediately appended to a std::wstring at that call site, so a plain
+// decimal rendering (matching its name) is the obvious behavior.
+wxString CONVTOSTR(const int &value);
+
 // Stand-in for wxWidgets' wxStandardPathsBase, which real TStandardPaths
 // (see TStandardPaths.h) holds a pointer to and forwards most calls to.
 // TODO: replace with the real wxWidgets wxStandardPaths singleton once

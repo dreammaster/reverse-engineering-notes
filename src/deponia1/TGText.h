@@ -14,6 +14,7 @@
 #pragma once
 
 #include "TSText.h"
+#include "WxStub.h"
 
 class TGCharacter;
 
@@ -29,4 +30,12 @@ public:
 	// TGText specifically, not inherited from TSText (TGameControl::Save,
 	// asm lines 462781-462971) - not reversed beyond that call shape.
 	void Save();
+
+	// Confirmed static call shapes only (TGameControl::SaveEventHandlers,
+	// Deponia_Linux.asm lines 457805-457833) - same "registered handler name
+	// stored on the class itself, not in TGameControl's containers" pattern
+	// as TGAnimation::GetEventHandlerAnimStarted/Stopped above; not reversed
+	// beyond that call shape.
+	static wxString GetEventHandlerTextStarted();
+	static wxString GetEventHandlerTextStopped();
 };

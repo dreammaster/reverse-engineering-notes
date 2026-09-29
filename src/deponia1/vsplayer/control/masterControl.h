@@ -275,13 +275,17 @@ protected:
 	// TGameControl-reads-directly fields above.
 	bool _easeDirectionFlag = false;
 
+	// TGameControl reads this directly (SaveEventHandlers, Deponia_Linux.asm
+	// lines 457678-457702: iterates it via raw begin()/end() pointers to
+	// rebuild the "mouseEvent:name|filter..." section) - same reasoning as
+	// _engineEventHandlerNames/_keyboardEventHandlers above.
+	std::vector<TMouseEventHandler> _mouseEventHandlers;
+
 private:
 	TMovie _movie;
 	TGObjectManager _objectManager;
 	TSprite _sprite1;
 	TSprite _sprite2;
-
-	std::vector<TMouseEventHandler> _mouseEventHandlers;
 
 	int _windowWidth = 0;
 	int _windowHeight = 0;

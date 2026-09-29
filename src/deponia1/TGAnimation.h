@@ -8,8 +8,18 @@
 // TGAction's entry points).
 #pragma once
 
+#include "WxStub.h"
+
 class TGAnimation {
 public:
 	static void ClearAnimations();
 	static void SaveAnimations();
+	// Confirmed static call shapes only (TGameControl::SaveEventHandlers,
+	// Deponia_Linux.asm lines 457761-457789) - registered handler names for
+	// an animation-started/animation-stopped event, stored somewhere in this
+	// class rather than in TGameControl's own handler containers (unlike
+	// LoadEventHandlers' four regular categories); not reversed beyond that
+	// call shape.
+	static wxString GetEventHandlerAnimStarted();
+	static wxString GetEventHandlerAnimStopped();
 };

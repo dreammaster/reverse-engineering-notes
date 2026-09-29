@@ -258,7 +258,15 @@ private:
 	TConsole _console;
 	TVisionaireGame *_visionaireGame = nullptr;
 	std::vector<SGameAction> _gameActions;
-	std::vector<std::string> _engineEventHandlerNamesMainLoop;
+	// Confirmed std::wstring elements, not std::string (SaveEventHandlers,
+	// Deponia_Linux.asm lines 457549-457574: each element is appended via
+	// std::wstring::append(std::wstring const&) directly, which only type-
+	// checks against wide-string elements) - corrects this session's earlier
+	// (batch-17-era) narrow-string guess, which had no direct evidence
+	// beyond the vector's 8-byte-pointer stride (equally consistent with
+	// either narrow or wide COW strings under this project's old-ABI
+	// assumption).
+	std::vector<std::wstring> _engineEventHandlerNamesMainLoop;
 	// Confirmed embedded by value (asm line 456751, GetObjectManager():
 	// `lea rax,[rdi+0D0h]; retn`) - not owned by TMasterControl as first
 	// guessed.

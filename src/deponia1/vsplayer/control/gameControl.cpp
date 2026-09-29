@@ -616,6 +616,60 @@ void TGameControl::InitAfterLoadingScreen() {
 }
 
 void TGameControl::SaveEventHandlers() {
+	// Confirmed (Deponia_Linux.asm lines 457514-458044) - the inverse of
+	// LoadEventHandlers, rebuilding the "type:names;..." specification
+	// string (field 0x2F7) from the live handler containers. Per-name mouse
+	// filters are pipe-joined after the name itself ("name|f1|f2"), distinct
+	// from the comma used between entries - confirmed via the literal
+	// separator constants at each append site. Two further single-value
+	// categories (animation/text started/stopped) are stored on TGAnimation/
+	// TGText themselves, not in any TGameControl container.
+	wxString result = L"mainLoop:";
+	for (std::size_t i = 0; i < _engineEventHandlerNamesMainLoop.size(); i++) {
+		if (i != 0)
+			result += L",";
+		result += wxString(_engineEventHandlerNamesMainLoop[i]);
+	}
+
+	result += L";mouseEvent:";
+	for (std::size_t i = 0; i < _mouseEventHandlers.size(); i++) {
+		if (i != 0)
+			result += L",";
+		const TMouseEventHandler &handler = _mouseEventHandlers[i];
+		result += handler.name;
+		for (unsigned int filterVal : handler.mouseButtonFilter) {
+			result += L"|";
+			result += CONVTOSTR(static_cast<int>(filterVal));
+		}
+	}
+
+	result += L";keyEvent:";
+	for (std::size_t i = 0; i < _keyboardEventHandlers.size(); i++) {
+		if (i != 0)
+			result += L",";
+		result += _keyboardEventHandlers[i].name;
+	}
+
+	result += L";engineEvent:";
+	for (std::size_t i = 0; i < _engineEventHandlerNames.size(); i++) {
+		if (i != 0)
+			result += L",";
+		wxString converted;
+		toUTF(&converted, _engineEventHandlerNames[i].c_str());
+		result += converted;
+	}
+
+	result += L";animationStarted:";
+	result += TGAnimation::GetEventHandlerAnimStarted();
+	result += L";animationStopped:";
+	result += TGAnimation::GetEventHandlerAnimStopped();
+	result += L";textStarted:";
+	result += TGText::GetEventHandlerTextStarted();
+	result += L";textStopped:";
+	result += TGText::GetEventHandlerTextStopped();
+
+	TVisObjRef game = _visionaire->GetGame();
+	game.SetValue(0x2F7, result, TSendEventEnum::kSendEvent);
 }
 
 void TGameControl::ExecuteStartingAction() {
@@ -1316,9 +1370,7 @@ void TGameControl::SaveGame(int slot) {
 
 bool TGameControl::UnregisterEventHandlerMainLoop(const wxString &name) {
 	for (size_t i = 0; i < _engineEventHandlerNamesMainLoop.size(); ++i) {
-		wxString converted;
-		toUTF(&converted, _engineEventHandlerNamesMainLoop[i].c_str());
-		if (converted.ToStdWstring() == name.ToStdWstring()) {
+		if (_engineEventHandlerNamesMainLoop[i] == name.ToStdWstring()) {
 			_engineEventHandlerNamesMainLoop.erase(_engineEventHandlerNamesMainLoop.begin() +
 			                                       static_cast<long>(i));
 			return true;
@@ -2243,13 +2295,11 @@ void TGameControl::SetDelay(double seconds, int id) {
 }
 
 void TGameControl::RegisterEventHandlerMainLoop(const wxString &name) {
-	for (const std::string &existing : _engineEventHandlerNamesMainLoop) {
-		wxString converted;
-		toUTF(&converted, existing.c_str());
-		if (converted.ToStdWstring() == name.ToStdWstring())
+	for (const std::wstring &existing : _engineEventHandlerNamesMainLoop) {
+		if (existing == name.ToStdWstring())
 			return;
 	}
-	_engineEventHandlerNamesMainLoop.push_back(std::string(static_cast<const char *>(name.mb_str())));
+	_engineEventHandlerNamesMainLoop.push_back(name.ToStdWstring());
 }
 
 void TGameControl::GetWalkingSounds(std::vector<wxFileName> &outSounds) {
