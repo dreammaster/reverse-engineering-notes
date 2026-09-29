@@ -932,7 +932,7 @@ void TGameControl::StartObjectText(const TVisObjRef &object, const TVisObjRef &t
 		managed->SetText(newText);
 }
 
-const wxString &TGameControl::GetGamePath() const {
+const wxFileName &TGameControl::GetGamePath() const {
 	// Confirmed (asm line 462534): returns the member by reference.
 	return _gamePath;
 }
@@ -1576,7 +1576,7 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 		if (wxLog::loglevel >= 0) {
 			wxString fmt;
 			toUTF(&fmt, "Error loading game data from file '%s'");
-			wxString gameDirPath = wxFileName(_gamePath.ToStdWstring()).GetFullPath();
+			wxString gameDirPath = _gamePath.GetFullPath();
 			wxLog::logexpanded(fmt.wc_str(), gameDirPath.wc_str());
 		}
 		return false;
@@ -1652,13 +1652,11 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 	// rather than `this` - distinct from the `this->_visionaire` used for
 	// the editor-mode branch below - reproduced as observed rather than
 	// simplified to `this->`. The member read via wxFileName::GetPath() at
-	// asm line 468573 is modeled as _gamePath (the closest existing
-	// candidate - "the game's own directory"), though its real identity at
-	// that exact offset isn't independently confirmed.
+	// asm line 468573 is _gamePath (confirmed independently by PreLoad,
+	// batch 27 - see that member's own comment).
 	TStandardPaths standardPaths;
 
-	wxFileName gameDir(_gamePath.ToStdWstring());
-	std::wstring prefix = gameDir.GetPath() + L"/";
+	std::wstring prefix = _gamePath.GetPath() + L"/";
 	wxFileName resolved(prefix + file.GetFullPath().ToStdWstring());
 	resolved.NormalizePath();
 	file = resolved;

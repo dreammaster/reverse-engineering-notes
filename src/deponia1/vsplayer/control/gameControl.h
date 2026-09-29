@@ -147,7 +147,7 @@ public:
 	// Confirmed (asm line 462534, `lea rax,[rdi+0A80h]; retn`): returns the
 	// member itself, not a by-value copy - the manifest's inferred by-value
 	// signature was wrong (same pattern as GetAllCharacters above).
-	const wxString &GetGamePath() const;
+	const wxFileName &GetGamePath() const;
 	bool IsClearingAnimations() const;
 	bool SavegameExists(int slot);
 	bool DeleteSavegame(int slot);
@@ -259,8 +259,18 @@ private:
 	// 456332/456551/462534/462551): GetCurrentCharacter[Pointer] just reads
 	// this back, GetGamePath returns _gamePath by reference, and the
 	// destructor sets _isClearingAnimations = true before tearing down.
+	// _gamePath's type was corrected from wxString to wxFileName once
+	// PreLoad (Deponia_Linux.asm line 463799) turned up hard evidence: it's
+	// assigned via wxFileName::Assign(), and later read via GetPath()/
+	// GetFullPath() (ReplaceGame/LoadAndInitGame) - a wxString could not
+	// have supported the Assign() call. GetGamePath()'s own asm (just
+	// `lea rax,[rdi+0xA80]; retn`) confirms it's the immediately-preceding
+	// field to _isClearingAnimations at +0xA88, with nothing but a bare
+	// address-of in between - consistent with a single 8-byte handle, the
+	// same COW-string-based representation already established for
+	// wxString elsewhere in this project.
 	TGCharacter *_currentCharacter = nullptr;
-	wxString _gamePath;
+	wxFileName _gamePath;
 	bool _isClearingAnimations = false;
 	// Confirmed via UpdateAspectRatio (asm lines 457414-457458): the last
 	// resolved aspect width/height, and (via UpdateCurrentObject, asm lines
