@@ -518,6 +518,50 @@ contain will do the equivalent cleanup on its own. `StartTween(const Tween&,
 const std::string&)`'s own 88-byte-element vector (batch 9) is left alone
 for a future pass.
 
+## TGameControl batch 19: SaveGame(int) is void, not bool, and a new writer-class stub hierarchy
+
+`SaveGame(int slot)` (asm lines 462981-463264) turned out to be another
+manifest return-type error like `Save()` (batch 13): no path through the
+function ever sets `eax` before its one `retn`, and every call site
+discards the result immediately (`xor eax,eax` right after the `call`,
+never reading it) - changed the declared return type from `bool` to `void`.
+
+The real logic: `slot==-1` saves over the scene's currently-selected
+savegame (bailing out if there isn't one); any other slot constructs and
+owns a new numbered `TMSavegame`, `delete`d again at the end (a plain
+`delete savegame` reproduces the disassembly's virtual-dispatch cleanup call
+without needing to identify which exact vtable slot it hits). Field id
+0x1D5 is the same "last playable scene" field `Save()` itself already sets
+(confirmed by that method's own comment) - `SaveGame` overwrites it a second
+time with the definitive current-scene reference right before persisting,
+via `TGScene::GetRef()`.
+
+Needed a handful of new stub types to compile against, none reversed beyond
+their call shapes: a `TXMLWriter`/`TBufferedProjectFileWriter`/
+`TProjectFileWriter`/`TXMLStringWriter` chain (`TVisionaire::SaveSaveGame`
+takes the first, `TMSavegame::SaveGame` the second, and the one concrete
+object constructed here is the last - modeled as a single inheritance chain
+since that's the simplest hierarchy satisfying both call shapes),
+`TTempFile::DeleteTempFiles()` (a static cleanup entry point, anticipated by
+an existing comment in `TCharHolder.h`), `eVisionaireTable`/
+`TVisionaire::ResetActiveData` (one confirmed enum value, 0x22), and
+`wxFileName::SetFullName` (real wxWidgets semantics: replaces the name+
+extension, keeps any existing directory).
+
+Also recovered the exact save-data filename format string byte-for-byte
+from the binary's own data (address 0xD6CB90): `L"vtp_saveddata%d.xml"` -
+straightforward enough (one `%d`) to translate directly to
+`L"vtp_saveddata" + std::to_wstring(nr) + L".xml"` rather than needing a
+real `wxString::privFormat`/`vswprintf` implementation.
+
+One loose end left honest rather than papered over: the constructed
+`wxFileName` is given a name via `SetFullName` but never read again
+anywhere in the function - likely vestigial debug/profiling instrumentation
+(two local `TTimer`s are stamped via `SetTime()` in the same way, also never
+read) that survived because the compiler couldn't prove those calls have no
+side effects. Reproduced faithfully rather than dropped, with a comment
+flagging the oddity.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

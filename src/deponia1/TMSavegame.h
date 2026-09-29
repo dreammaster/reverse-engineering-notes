@@ -8,6 +8,7 @@
 // TGAction::AddRunningAction/ClearActions pattern elsewhere).
 #pragma once
 
+#include "TXMLWriter.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
 
@@ -32,4 +33,7 @@ public:
 	static wxString MakeSaveGameName(const TVisObjRef &scene);
 	// Confirmed call shape only (TGameControl::SaveGame, asm line 463047).
 	int GetSavegameNr() const;
+	// Confirmed call shape only (TGameControl::SaveGame, asm line 463092) -
+	// writes this slot's data out via writer; not reversed beyond that.
+	void SaveGame(const TBufferedProjectFileWriter &writer);
 };

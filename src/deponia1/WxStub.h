@@ -84,6 +84,13 @@ public:
 		return !_fullPath.empty();
 	}
 	void NormalizePath() {}
+	// Confirmed call shape only (TGameControl::SaveGame, asm line 463066) -
+	// replaces the name+extension portion, keeping any existing directory,
+	// matching real wxFileName::SetFullName's documented behavior.
+	void SetFullName(const wxString &name) {
+		std::size_t pos = _fullPath.find_last_of(L"/\\");
+		_fullPath = (pos == std::wstring::npos) ? name.ToStdWstring() : _fullPath.substr(0, pos + 1) + name.ToStdWstring();
+	}
 
 	static bool Mkdir(const wxString &dir, int permissions = 0777, int flags = 0);
 	static wxString GetCwd();

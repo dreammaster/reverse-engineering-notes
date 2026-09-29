@@ -155,7 +155,11 @@ public:
 	// value entirely, asm line 463041) - the manifest's bool was a
 	// placeholder guess.
 	void Save();
-	bool SaveGame(int slot);
+	// Confirmed void, not bool (every call site discards the return value,
+	// and the function itself never sets eax before any of its return
+	// points, asm lines 462981-463264) - the manifest's bool was a
+	// placeholder guess, same pattern as Save() above.
+	void SaveGame(int slot);
 	bool UnregisterEventHandlerMainLoop(const wxString &name);
 	void UpdateRandomTimers();
 	void UpdateWalkingSounds();

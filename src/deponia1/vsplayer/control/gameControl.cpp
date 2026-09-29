@@ -9,6 +9,7 @@
 #include "THText.h"
 #include "TMSavegame.h"
 #include "TManagedObject.h"
+#include "TTempFile.h"
 #include "baselib/composedfile.h"
 #include "datastruct/visionaireobject.h"
 
@@ -846,8 +847,46 @@ void TGameControl::Save() {
 	SaveGlobalScriptVariables(*_visionaireGame);
 }
 
-bool TGameControl::SaveGame(int /*slot*/) {
-	return false;
+void TGameControl::SaveGame(int slot) {
+	// Confirmed (asm lines 462981-463264). slot==-1 saves over the scene's
+	// currently-selected savegame (bails out if there isn't one); any other
+	// slot creates and owns a new numbered TMSavegame, deleted again at the
+	// end of this function. Field id 0x1D5 matches Save()'s own "last
+	// playable scene" field, overwritten here with the definitive scene
+	// reference right before persisting.
+	TMSavegame *savegame;
+	if (slot != -1) {
+		savegame = new TMSavegame(true, slot, 0, 0, _visionaireGame);
+	} else {
+		savegame = _ownedSceneControl.GetScene()->GetSelectedSavegame(true);
+		if (savegame == nullptr)
+			return;
+	}
+
+	TTimer timer1;
+	TTimer timer2;
+	timer1.SetTime();
+	timer2.SetTime();
+	Save();
+
+	// fileName is populated but never read again afterward - kept for
+	// fidelity even though its purpose here is unclear (possibly vestigial
+	// debug/profiling instrumentation, like the two unused timers above).
+	wxFileName fileName;
+	int nr = savegame->GetSavegameNr();
+	fileName.SetFullName(wxString(L"vtp_saveddata" + std::to_wstring(nr) + L".xml"));
+
+	TXMLStringWriter xmlWriter;
+	_visionaire->SaveSaveGame(xmlWriter);
+	savegame->SaveGame(xmlWriter);
+	TTempFile::DeleteTempFiles();
+	_visionaire->ResetActiveData(eVisionaireTable::kValue34);
+
+	if (slot != -1)
+		delete savegame;
+
+	TVisObjRef gameRef = _visionaire->GetGame();
+	gameRef.SetLink(0x1D5, _ownedSceneControl.GetScene()->GetRef(), false);
 }
 
 bool TGameControl::UnregisterEventHandlerMainLoop(const wxString &name) {

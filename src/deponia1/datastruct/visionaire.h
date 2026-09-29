@@ -5,12 +5,24 @@
 // TMasterControl needs is stubbed here.
 #pragma once
 
+#include "TXMLWriter.h"
 #include "datastruct/vlist.h"
 #include "datastruct/visobjref.h"
+
+// Confirmed one value, 0x22 (TGameControl::SaveGame, asm line 463095) - real
+// meaning/other values not resolved (named for its raw value like TypeOrder,
+// rather than guessing a table name).
+enum class eVisionaireTable { kValue34 = 0x22 };
 
 class TVisionaire {
 public:
 	TVisObjRef GetGame() const;
+
+	// Confirmed call shape only (TGameControl::SaveGame, asm line 463089) -
+	// writes the game's current state out; not reversed beyond that.
+	void SaveSaveGame(TProjectFileWriter &writer);
+	// Confirmed call shape only (TGameControl::SaveGame, asm line 463096).
+	void ResetActiveData(eVisionaireTable table);
 
 	// Confirmed called with a field id, an out-param list, and a bool flag
 	// (TGameControl::InitFonts, asm lines 458293-458322) - not reversed

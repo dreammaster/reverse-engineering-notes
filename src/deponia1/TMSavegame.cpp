@@ -25,3 +25,6 @@ wxString TMSavegame::MakeSaveGameName(const TVisObjRef &/*scene*/) {
 int TMSavegame::GetSavegameNr() const {
 	return 0;
 }
+
+void TMSavegame::SaveGame(const TBufferedProjectFileWriter &/*writer*/) {
+}

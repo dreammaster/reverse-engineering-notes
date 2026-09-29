@@ -14,3 +14,9 @@ TVisObjRef TVisionaire::CreateActiveObject(int /*typeId*/, const TVisObjRef &/*s
 TVisObjRef TVisionaire::GetEmptyObject() const {
 	return TVisObjRef();
 }
+
+void TVisionaire::SaveSaveGame(TProjectFileWriter &/*writer*/) {
+}
+
+void TVisionaire::ResetActiveData(eVisionaireTable /*table*/) {
+}
