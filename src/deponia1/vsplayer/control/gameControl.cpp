@@ -439,7 +439,69 @@ TVisionaireGame *TGameControl::GetVisionaire() {
 	return _visionaireGame;
 }
 
-void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &/*character*/) {
+void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
+	// Confirmed (asm lines 458931-459278). Field ids are best-effort names
+	// from context, not confirmed beyond their raw ids: 0x263 ("the active
+	// character" link - ChangeCharacter/InitCharacters keep it in sync with
+	// _currentCharacter, same value set at the same time in both), 0x231 (a
+	// "scrolling enabled" toggle), 0x29B/0x29C (an x/y offset added before
+	// the visible-area comparisons below), and 0x1D9/0x1DA (horizontal/
+	// vertical scroll-direction codes - CenterScene resets both to 0; here,
+	// 1=left, 2=right, 3=up, 4=down).
+	TVisObjRef game = _visionaire->GetGame();
+	TGScene *scene = _ownedSceneControl.GetScene();
+	if (scene->IsMenu() || _currentCharacter == nullptr)
+		return;
+
+	bool shouldScroll = false;
+	if (game.GetLink(0x263) == character && game.GetBool(0x231)) {
+		TVisObjRef charSceneLink = _currentCharacter->GetRef().GetLink(0x1F7);
+		shouldScroll = (charSceneLink == scene->GetRef());
+	}
+	if (!shouldScroll)
+		return;
+
+	const FloatPoint &scrollPos = scene->GetFloatScrollPos();
+	int worktopWidth = scene->GetWorktopWidth();
+	int worktopHeight = scene->GetWorktopHeight();
+	const wxSize &visibleSize = scene->GetVisibleSize();
+
+	wxPoint charPos = _currentCharacter->GetScreenPosition();
+	wxRect charRect = _currentCharacter->GetVisibleRect();
+	if (charRect.IsEmpty()) {
+		charRect.SetLeft(charPos.x);
+		charRect.SetWidth(0);
+		charRect.SetTop(charPos.y);
+		charRect.SetHeight(0);
+	}
+
+	int offsetX = game.GetInt(0x29B);
+	int offsetY = game.GetInt(0x29C);
+
+	// Horizontal: right-scroll and left-scroll are checked independently (not
+	// mutually exclusive in the disassembly - a right-scroll match doesn't
+	// skip the left-scroll check below it).
+	if (static_cast<float>(worktopWidth) > visibleSize.width + scrollPos.x) {
+		if (static_cast<float>(charRect.GetRight() + offsetX) - scrollPos.x > visibleSize.width)
+			game.SetValue(0x1D9, 2, TSendEventEnum::kSendEvent);
+	}
+	if (scrollPos.x > 0.0f) {
+		if (static_cast<float>(charRect.GetLeft() - offsetX) - scrollPos.x < 0.0f)
+			game.SetValue(0x1D9, 1, TSendEventEnum::kSendEvent);
+	}
+
+	// Vertical: scroll-up returns immediately on a match, so scroll-down is
+	// only ever checked when scroll-up didn't fire.
+	if (scrollPos.y > 0.0f) {
+		if (static_cast<float>(charRect.GetTop() - offsetY) - scrollPos.y < 0.0f) {
+			game.SetValue(0x1DA, 3, TSendEventEnum::kSendEvent);
+			return;
+		}
+	}
+	if (static_cast<float>(worktopHeight) > visibleSize.height + scrollPos.y) {
+		if (static_cast<float>(charRect.GetBottom() + offsetY) - scrollPos.y > visibleSize.height)
+			game.SetValue(0x1DA, 4, TSendEventEnum::kSendEvent);
+	}
 }
 
 void TGameControl::MoveScene() {

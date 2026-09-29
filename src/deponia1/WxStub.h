@@ -146,6 +146,24 @@ struct wxRect {
 	int GetTop() const {
 		return y;
 	}
+	int GetRight() const {
+		return x + width - 1;
+	}
+	int GetBottom() const {
+		return y + height - 1;
+	}
+	void SetLeft(int left) {
+		x = left;
+	}
+	void SetTop(int top) {
+		y = top;
+	}
+	void SetWidth(int w) {
+		width = w;
+	}
+	void SetHeight(int h) {
+		height = h;
+	}
 	bool IsEmpty() const {
 		return width <= 0 || height <= 0;
 	}
