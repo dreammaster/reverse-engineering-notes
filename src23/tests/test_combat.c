@@ -924,6 +924,82 @@ static void testApplyCorrosion(void) {
              itemSlotId(partyEquipmentSlot(defender, 0x0A, GameYendor2)), 5);
 }
 
+static void testApplyTargetResistances(void) {
+    uint8_t target[MonsterRecordSize];
+
+    /* Status filtering: an immune bit is dropped, a non-immune bit survives. */
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldImmunities, 0x8000); /* immune to Poison */
+    CombatTargetAttackResult result = combatApplyTargetResistances(target, 10, 0x8000 | 0x4000, 0, 0);
+    checkU32("poison filtered out (target is immune)", result.statusFlags, 0x4000);
+    checkU32("damage untouched by status filtering", result.damage, 10);
+
+    /* Full negation: a matching low bit zeroes damage outright, even alongside a surviving status bit. */
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldImmunities, 0x0002); /* immune to Electric */
+    result = combatApplyTargetResistances(target, 10, 0x4000 | 0x0002, 0, 0);
+    checkU32("a low-bit immunity match zeroes damage entirely", result.damage, 0);
+    checkU32("...but the already-computed status flag from the high-bit pass survives",
+             result.statusFlags, 0x4000);
+
+    /* No immunity match at all: damage and (empty) status flags pass through untouched. */
+    memset(target, 0, sizeof(target));
+    result = combatApplyTargetResistances(target, 10, 0x0002, 0, 0);
+    checkU32("no immunity match: damage untouched", result.damage, 10);
+    checkU32("no immunity match: no status inflicted", result.statusFlags, 0);
+
+    /* Resistance halving: first matching bit halves and returns immediately. */
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldResistances, 0x8000);
+    result = combatApplyTargetResistances(target, 11, 0, 0x8000, 999);
+    checkU32("matching resistance halves damage", result.damage, 5);
+
+    /* Bit 0x200 requested but not matched: returns without halving or draining. */
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldDamage, 50);
+    result = combatApplyTargetResistances(target, 10, 0x0020 /* would select MonsterFieldDamage if reached */,
+                                           0x0200, 5);
+    checkU32("bit 0x200 requested, not matched: damage untouched (no halving)", result.damage, 10);
+    checkU32("...and the drain never runs either", monsterGetU16(target, MonsterFieldDamage), 50);
+
+    /* Drain effect: only reached when resistanceFlags doesn't request bit 0x200 at all. */
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldDamage, 50);
+    result = combatApplyTargetResistances(target, 10, 0x0020, 0, 5);
+    checkU32("drain: bit 0x20 selects MonsterFieldDamage", monsterGetU16(target, MonsterFieldDamage), 45);
+    checkU32("drain doesn't touch the returned damage value", result.damage, 10);
+
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldHealth, 50);
+    result = combatApplyTargetResistances(target, 10, 0x0200, 0, 999);
+    checkU32("drain: bit 0x200 selects MonsterFieldHealth (not MaxHealth)",
+             monsterGetU16(target, MonsterFieldHealth), 0);
+
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldAccuracy, 30);
+    result = combatApplyTargetResistances(target, 10, 0x0100, 0, 999);
+    checkU32("drain: bit 0x100 selects MonsterFieldAccuracy, floored at 0",
+             monsterGetU16(target, MonsterFieldAccuracy), 0);
+
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldDexterity, 30);
+    result = combatApplyTargetResistances(target, 10, 0x0080, 0, 12);
+    checkU32("drain: bit 0x80 selects MonsterFieldDexterity", monsterGetU16(target, MonsterFieldDexterity), 18);
+
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldAbsorption, 30);
+    result = combatApplyTargetResistances(target, 10, 0x0040, 0, 12);
+    checkU32("drain: bit 0x40 selects MonsterFieldAbsorption", monsterGetU16(target, MonsterFieldAbsorption), 18);
+
+    /* Priority: bit 0x200 wins over the others when several drain bits are set at once. */
+    memset(target, 0, sizeof(target));
+    monsterSetU16(target, MonsterFieldHealth, 40);
+    monsterSetU16(target, MonsterFieldDamage, 40);
+    result = combatApplyTargetResistances(target, 10, 0x0200 | 0x0020, 0, 5);
+    checkU32("drain priority: 0x200 (Health) wins over 0x20 (Damage)", monsterGetU16(target, MonsterFieldHealth), 35);
+    checkU32("...the lower-priority field is untouched", monsterGetU16(target, MonsterFieldDamage), 40);
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
@@ -957,6 +1033,7 @@ int main(void) {
     testResolveAttackerActionCorrosionSlotSelection();
     testResolveAttackerActionCorrosionEmptySlotOrUnclassifiable();
     testApplyCorrosion();
+    testApplyTargetResistances();
     testSavingThrowTrapNoneWhenPackedValueZero();
     testSavingThrowTrapAvoidedByHighSkill();
     testSavingThrowTrapSingleTargetAppliesEffect();

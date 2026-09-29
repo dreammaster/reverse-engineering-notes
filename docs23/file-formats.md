@@ -776,20 +776,57 @@ win.
   (both door and curgame-record cases for both outcome sets, the
   already-resolved case, and no object at all).
 
-**Flagged, not renamed**: `word_33302`/`word_33304`/`word_33306` (3
-consecutive words) are exhaustively bit-tested — every bit from `1`
-through `0x8000` is checked against at least one of them somewhere —
-confirming they're a genuine encoded-effect bitmask, not scratch. But
-the exact word-pairing differs by consumer: `ApplyEncodedItemEffect`
-reads `word_33302`+`word_33306` as the effect-type switch, while
-`ApplyTargetResistancesToAttack` reads `word_33304`+`word_33306`
-(filtering by target immunity into `g_stagedAttackStatusFlags`, and
-comparing `word_33306` against resistance-category bits to halve
-`g_stagedAttackDamage`). `word_33306` being shared between both readers
-suggests one underlying "encoded effect" descriptor consumed from two
-angles (item/spell effect application vs. attack resistance
-filtering), but the precise field boundaries aren't confirmed enough
-to name individually yet — a good target for a future dedicated trace.
+**`ApplyTargetResistancesToAttack` fully decoded and reimplemented,
+2026-09-29** (while resolving the equipment-corrosion write-back —
+see the "Attack resolution" section for the full context of how this
+surfaced): filters a pending player-triggered item/spell attack
+against a map monster (`g_levelMonsters`) before
+`ApplyAttackToTarget`/`ApplyDamageToMapMonster` commit it. Confirmed,
+by cross-referencing every field offset this function touches against
+`monster.h`'s own already-decoded fields (from an earlier session's
+clue-book UI work), that `di` is a full `MonsterRecordSize` record —
+resolving the original's own "di's record type here is unknown"
+uncertainty (its own contemporaneous IDA comment). `word_33304`'s high
+bits (`0x400`-`0x8000`) are candidate inflicted-status bits, filtered
+by `MonsterFieldImmunities`; its low bits (`0x1`-`0x10`, same enum)
+instead zero the attack's damage entirely on a match — a clean resist,
+not a partial filter. `word_33306` (`0x200`-`0x8000`,
+`MonsterFieldResistances`' own `MonsterResistMagicMask`/`PhysicalMask`)
+halves damage on the first matching bit, checked in a fixed priority
+order — with a genuine asymmetry reproduced exactly: requesting bit
+`0x200` specifically returns immediately even on a *miss*, since it's
+the last bit checked and the original simply falls out of the chain
+rather than continuing, unlike the other 6 bits which keep checking on
+a miss. Only when `word_33306` didn't request bit `0x200` at all does
+a **drain effect** get a chance to run: `word_33304` bits `0x20`-`0x200`
+(checked in priority order `0x200 > 0x100 > 0x80 > 0x40 > 0x20`) select
+one of the target's own combat-stat fields —
+`MonsterFieldHealth`/`Accuracy`/`Dexterity`/`Absorption`/`Damage`
+respectively — and subtract a caller-supplied amount from it, floored
+at 0. A genuine "permanently weaken this monster's own stats" effect
+category, distinct from (and reached via a completely different code
+path than) ordinary HP damage. Reimplemented as
+`combatApplyTargetResistances` in `src23/combat.c`/`.h`, instruction-
+identical in Chapter 3. Tests in `tests/test_combat.c` cover every
+branch: status filtering, full negation (and that an already-filtered
+status bit survives it), resistance halving, the bit-`0x200`-miss
+asymmetry, and all 5 drain fields including their priority order.
+
+**Still not composed with its own callers**: `ApplyAttackToTarget`
+(base damage via `combatResolveAttack`, using the target's own
+`MonsterFieldAbsorption` as defense and the acting party member's own
+`PartyStatCasting` as accuracy — confirmed directly from
+`TryResolveAttackAgainstTarget`'s own register sourcing, `[di+0x58]`/
+`[si+0x62]`) and `ApplyDamageToMapMonster` (adds death/reward handling,
+already fully reimplemented elsewhere as
+`monsterGrantRewards`/`monsterPoolRemove`) both still depend on more
+untraced caller-context globals (`word_33300`, the tick-timer
+amount/countdown sources that arm `monsterTickTimer` on a successful
+status hit, etc.) that `ApplyEncodedItemEffect`'s own bits
+`0x4`/`0x2000` — the two branches that reach this whole family, per
+the "Attack resolution" section — haven't been traced far enough to
+supply. Left for a future pass rather than composed against
+unconfirmed inputs; see `roadmap.md` candidate 8.
 
 `SyncItemChargeFieldToCurgame`
 (was `sub_2778D`, called 3 times from `ConsumeItemChargeResource`)

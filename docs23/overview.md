@@ -10023,6 +10023,67 @@ wrong assumption about a data layout this project had already
 documented correctly elsewhere — worth re-checking the accessor
 conventions already established before doubting the underlying theory.
 
+### Session update (continued): following the corrosion trail into a whole separate attack-resolution family
+
+Resolving the corrosion write-back meant reading `ApplyEncodedItemEffect`'s
+bit `0x2000` branch closely enough to see what it does once triggered —
+and it turned out to call a function this project had noted in passing
+several times but never actually opened: `ApplyAttackToTarget`. Reading
+it led straight to two more small functions,
+`TryResolveAttackAgainstTarget` and `ApplyTargetResistancesToAttack` —
+a genuinely separate attack-resolution path from everything else this
+session has touched, aimed at *map* monsters (`g_levelMonsters`, the
+80-slot dungeon pool) rather than the 3-slot turn-based combat pool
+`combat.c` already covers. `roadmap.md` had flagged this family before,
+under the name `ApplyDamageToMapMonster`, as blocked on tracing
+`ApplyAttackToTarget` — worth picking up now that the corrosion
+investigation had already built momentum in the same neighborhood.
+
+The most satisfying part: the original's own IDA comment on both
+`TryResolveAttackAgainstTarget` and `ApplyTargetResistancesToAttack`
+flags "di's record type here is unknown" — a genuine unresolved
+question even in this project's own earlier analysis passes. Cross-
+referencing every field offset either function touches
+(`[di+0x96]`, `[di+0x98]`, `[di+0x54]` through `[di+0x5A]`, `[di+0x10]`)
+against `monster.h`'s own already-named fields — decoded by a much
+earlier session from clue-book UI strings, long before this project's
+combat work began — settled it immediately: `di` is a full
+`MonsterRecordSize` record, and every field `ApplyTargetResistancesToAttack`
+touches already has a name (`MonsterFieldImmunities`, `MonsterFieldResistances`,
+`MonsterFieldAccuracy`/`Dexterity`/`Absorption`/`Damage`/`Health`). A
+clean example of two independently-decoded pieces of this project's own
+work — one from UI-string reading, one from opcode tracing — turning
+out to describe the exact same data, confirming each other the moment
+someone actually laid them side by side.
+
+`ApplyTargetResistancesToAttack` itself decoded into three genuinely
+distinct behaviors sharing one function: immunity-based status
+filtering (partial — individual bits get dropped), immunity-based full
+negation (a different bit range — any match zeroes the whole attack),
+and resistance-based halving, with a **drain effect** as a fourth,
+separate category reached only when the halving check's own last bit
+wasn't requested at all. That last part had a real, easy-to-miss
+asymmetry: of the 7 resistance bits checked in sequence, the final one
+(`0x200`) returns immediately whether it matches or not, while the
+other 6 fall through to the next check on a miss — not a design choice
+so much as a straightforward consequence of it being the last bit in
+the chain, but exactly the kind of detail that's invisible without
+reading the actual jump targets rather than assuming a uniform loop.
+Reproduced precisely rather than smoothed into a cleaner-looking
+abstraction.
+
+Reimplemented as `combatApplyTargetResistances` in
+`src23/combat.c`/`.h`, confirmed instruction-identical in Chapter 3.
+Tests in `test_combat.c` cover every branch, including the bit-`0x200`
+asymmetry and all 5 drain-field priority cases. `ApplyAttackToTarget`
+and `ApplyDamageToMapMonster` themselves remain unreimplemented — they
+still lean on more caller-context globals this project hasn't traced
+back to a source, since that source is `ApplyEncodedItemEffect`'s own
+bits `0x4`/`0x2000`, not yet picked up in full. Left there deliberately
+rather than composed against unconfirmed inputs; a clean pickup point
+for whoever returns to `ApplyEncodedItemEffect` next. Full suite
+rebuilt, 18/18 passing.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

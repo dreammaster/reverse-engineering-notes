@@ -1434,6 +1434,23 @@ is a content difference (Chapter 2 has no monster like it at all), not
 a mechanism difference. Reimplemented once as `combatApplyCorrosion`
 (`src23/combat.c`/`.h`), shared by both games.
 
+## `ApplyTargetResistancesToAttack` (map-monster attack resolution): no behavioral difference found
+
+Checked directly, `yendor2.asm:52799` vs. `yendor3.asm:53735` —
+instruction-identical: same status-filter/full-negation/resistance-
+halving/drain structure, same field offsets throughout (`[di+0x96]`/
+`[di+0x98]`/`[di+0x54..0x5A]`, all matching `monster.h`'s own
+`MonsterFieldImmunities`/`Resistances`/`Accuracy`/`Dexterity`/
+`Absorption`/`Damage`/`Health`), same bit-`0x200` early-return
+asymmetry. `TryResolveAttackAgainstTarget` is instruction-identical too
+(`yendor2.asm:52756` vs. `yendor3.asm:53692`), same `[di+0x58]`/
+`[si+0x62]` register sourcing for `ResolveAttack`'s own defense/accuracy
+parameters. Reimplemented once as `combatApplyTargetResistances`
+(`src23/combat.c`/`.h`), shared by both games; `ApplyAttackToTarget`/
+`ApplyDamageToMapMonster` themselves remain unreimplemented pending
+their own untraced caller-context globals — see `file-formats.md`'s
+"Attack resolution" section.
+
 ## Turn-based combat turn order and round processing: no behavioral difference found
 
 `BuildCombatTurnOrder`, `SelectActiveMonster`, and `ProcessCombatRound`

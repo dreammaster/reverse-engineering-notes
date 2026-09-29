@@ -377,6 +377,77 @@ void combatApplyCorrosion(uint8_t *defenderRecord, const ItemCatalog *catalog, G
                            const CombatEffectSelection *selection, const CombatAttackerAction *action);
 
 /*
+ * ApplyTargetResistancesToAttack (yendor2.asm:52799, instruction-
+ * identical in Chapter 3): filters a pending player-triggered
+ * item/spell attack against a map monster (`g_levelMonsters`,
+ * monsterpool.h) before it's committed -- one piece of a small,
+ * genuinely separate attack-resolution family
+ * (`ApplyAttackToTarget`/`ApplyDamageToMapMonster`, the "corridor/
+ * ranged-attack path" `ApplyEncodedItemEffect`'s bits `0x4`/`0x2000`
+ * both reach) this project surfaced while resolving the equipment-
+ * corrosion write-back. Confirmed, cross-referencing every field
+ * offset the whole family touches against monster.h's own already-
+ * named fields, that the record these functions operate on is a full
+ * `MonsterRecordSize` record -- resolving the original's own "di's
+ * record type here is unknown" uncertainty (its own contemporaneous
+ * comment).
+ *
+ * attackFlags is the caller's own `word_33304` (an untraced caller
+ * context, same status as `ApplyEncodedItemEffect`'s other
+ * caller-supplied globals -- not yet connected to a specific effect
+ * definition or call site). Bits `0x400`-`0x8000` (monster.h's own
+ * `MonsterImmunity` high bits) are candidate inflicted-status bits,
+ * tested only when at least one of them is set: each survives into
+ * the returned `statusFlags` only if the target lacks the matching
+ * `MonsterFieldImmunities` bit. Bits `0x1`/`0x2`/`0x4`/`0x8`/`0x10`
+ * (the same enum's low bits) are checked unconditionally instead: any
+ * match against the target's own immunities zeroes `damage` entirely
+ * and returns immediately -- a clean resist, not a partial filter.
+ *
+ * resistanceFlags is `word_33306` (bits `0x200`-`0x8000`, monster.h's
+ * own `MonsterResistMagicMask`/`PhysicalMask`, tested in that exact
+ * order): the first bit that's both requested and matches the
+ * target's own `MonsterFieldResistances` halves `damage` and returns
+ * immediately. Requesting bit `0x200` specifically also returns
+ * immediately even on a *miss* (a genuine asymmetry -- it's the last
+ * bit checked, so the original simply falls out of the chain rather
+ * than continuing) -- reproduced exactly, not smoothed into matching
+ * the other 6 bits' "keep checking" behavior.
+ *
+ * Only when resistanceFlags didn't request bit `0x200` at all does a
+ * drain effect get a chance to run: if attackFlags has any of bits
+ * `0x20`-`0x200` set, `drainAmount` is subtracted (floored at 0) from
+ * one of the target's own combat-stat fields, selected by priority --
+ * `0x200`->`MonsterFieldHealth`, `0x100`->`MonsterFieldAccuracy`,
+ * `0x80`->`MonsterFieldDexterity`, `0x40`->`MonsterFieldAbsorption`,
+ * `0x20`->`MonsterFieldDamage` -- a genuine "drain the monster's own
+ * stat" effect category, distinct from (and reached via a completely
+ * different code path than) ordinary HP damage; mutates targetRecord
+ * directly rather than being reflected in the returned result.
+ *
+ * **Not yet composed with its own callers**: `ApplyAttackToTarget`
+ * (base damage via `combatResolveAttack`, using the target's own
+ * `MonsterFieldAbsorption` as defense and the acting party member's
+ * own `PartyStatCasting` as accuracy -- confirmed directly from
+ * `TryResolveAttackAgainstTarget`'s own register sourcing) and
+ * `ApplyDamageToMapMonster` (adds death/reward handling, already fully
+ * reimplemented elsewhere as `monsterGrantRewards`/`monsterPoolRemove`)
+ * both still depend on more of these same untraced caller-context
+ * globals (`word_33300`, tick-timer amount/countdown sources, etc.)
+ * that `ApplyEncodedItemEffect`'s own bits `0x4`/`0x2000` haven't been
+ * traced far enough to supply -- left for a future pass once those
+ * branches are picked up, rather than composed against unconfirmed
+ * inputs.
+ */
+typedef struct {
+    uint16_t damage;
+    uint16_t statusFlags;
+} CombatTargetAttackResult;
+
+CombatTargetAttackResult combatApplyTargetResistances(uint8_t *targetRecord, uint16_t damage, uint16_t attackFlags,
+                                                        uint16_t resistanceFlags, uint16_t drainAmount);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this

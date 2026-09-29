@@ -272,6 +272,68 @@ void combatApplyCorrosion(uint8_t *defenderRecord, const ItemCatalog *catalog, G
                                   action->corrosionReplacementId, action->equipSlotOffset);
 }
 
+CombatTargetAttackResult combatApplyTargetResistances(uint8_t *targetRecord, uint16_t damage, uint16_t attackFlags,
+                                                        uint16_t resistanceFlags, uint16_t drainAmount) {
+    CombatTargetAttackResult result;
+    result.damage = damage;
+    result.statusFlags = 0;
+
+    uint16_t immunities = monsterGetU16(targetRecord, MonsterFieldImmunities);
+
+    if (attackFlags & 0xFC00u) {
+        static const uint16_t statusBits[] = {0x8000, 0x4000, 0x2000, 0x1000, 0x0800, 0x0400};
+        for (size_t i = 0; i < sizeof(statusBits) / sizeof(statusBits[0]); i++) {
+            if ((attackFlags & statusBits[i]) && !(immunities & statusBits[i])) {
+                result.statusFlags = (uint16_t)(result.statusFlags | statusBits[i]);
+            }
+        }
+    }
+
+    static const uint16_t negateBits[] = {0x0008, 0x0004, 0x0002, 0x0001, 0x0010};
+    for (size_t i = 0; i < sizeof(negateBits) / sizeof(negateBits[0]); i++) {
+        if ((attackFlags & negateBits[i]) && (immunities & negateBits[i])) {
+            result.damage = 0;
+            return result;
+        }
+    }
+
+    uint16_t resistances = monsterGetU16(targetRecord, MonsterFieldResistances);
+    static const uint16_t resistBits[] = {0x8000, 0x4000, 0x2000, 0x1000, 0x0800, 0x0400};
+    for (size_t i = 0; i < sizeof(resistBits) / sizeof(resistBits[0]); i++) {
+        if ((resistanceFlags & resistBits[i]) && (resistances & resistBits[i])) {
+            result.damage = (uint16_t)(result.damage >> 1);
+            return result;
+        }
+    }
+    if (resistanceFlags & 0x0200u) {
+        if (resistances & 0x0200u) {
+            result.damage = (uint16_t)(result.damage >> 1);
+        }
+        return result;
+    }
+
+    if (attackFlags & 0x03E0u) {
+        unsigned fieldOffset;
+        if (attackFlags & 0x0200u) {
+            fieldOffset = MonsterFieldHealth;
+        } else if (attackFlags & 0x0100u) {
+            fieldOffset = MonsterFieldAccuracy;
+        } else if (attackFlags & 0x0080u) {
+            fieldOffset = MonsterFieldDexterity;
+        } else if (attackFlags & 0x0040u) {
+            fieldOffset = MonsterFieldAbsorption;
+        } else {
+            fieldOffset = MonsterFieldDamage;
+        }
+        int32_t value = (int32_t)monsterGetU16(targetRecord, fieldOffset) - (int32_t)drainAmount;
+        if (value < 0) {
+            value = 0;
+        }
+        monsterSetU16(targetRecord, fieldOffset, (uint16_t)value);
+    }
+    return result;
+}
+
 static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
                                               unsigned threshold, RandomState *rng) {
     uint16_t level = partyGetU16(recipientRecord, PartyFieldLevel);

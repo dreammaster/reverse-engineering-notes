@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-29, resolved: the equipment-corrosion write-back and ApplyEffectAndDrawIconBar's full 3-way dispatch, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-29, resolved: ApplyTargetResistancesToAttack, the equipment-corrosion write-back, and ApplyEffectAndDrawIconBar's full 3-way dispatch, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -809,16 +809,33 @@ consumers, if any.
    2 has none at all (its one flag-matching block is an unnamed
    placeholder with out-of-range effect ids, not a real monster).
    Reimplemented as `combatApplyCorrosion` (`src23/combat.c`/`.h`);
-   tests in `test_combat.c`; all 18 suites pass. **Still open, a good
-   candidate for its own pass**: `ProcessMonsterAttackTurn` itself (the
-   caller that would actually wire `combatSelectTrapEffectVariant`/
-   `combatResolveAttackerAction`/`combatApplyEffect`/`combatApplyCorrosion`
-   together end to end) and the player-attack path inside
-   `HandleDungeonInput` (spell/ability use in combat, area-attack
-   handling, and all the drawing/sound/UI-tier-refresh work this
-   project has deliberately deferred to the eventual SDL2 layer) --
-   both pure orchestration/composition now, no remaining decision-logic
-   gaps anywhere in this candidate.
+   tests in `test_combat.c`; all 18 suites pass.
+   **A related discovery, same investigation**: `ApplyEncodedItemEffect`'s
+   own corridor/ranged-attack branches (bits `0x4`/`0x2000`, already
+   flagged in candidate 8 below) reach a small, genuinely separate
+   attack-resolution family against *map* monsters (`g_levelMonsters`)
+   -- `ApplyAttackToTarget`/`TryResolveAttackAgainstTarget`/
+   `ApplyTargetResistancesToAttack`/`ApplyDamageToMapMonster`. Traced
+   `ApplyTargetResistancesToAttack` fully and reimplemented it as
+   `combatApplyTargetResistances` (`src23/combat.c`/`.h`) -- resolving
+   the original's own "di's record type here is unknown" uncertainty
+   along the way (it's a full `MonsterRecordSize` record, confirmed by
+   cross-referencing every field offset against `monster.h`'s own
+   already-decoded fields). Tests in `test_combat.c`; all 18 suites
+   pass. The rest of the family (`ApplyAttackToTarget`/
+   `ApplyDamageToMapMonster` themselves) still depends on more untraced
+   caller-context globals that bits `0x4`/`0x2000` haven't been traced
+   far enough to supply -- left for whoever picks up those branches
+   next, see candidate 8.
+   **Still open, a good candidate for its own pass**: `ProcessMonsterAttackTurn`
+   itself (the caller that would actually wire
+   `combatSelectTrapEffectVariant`/`combatResolveAttackerAction`/
+   `combatApplyEffect`/`combatApplyCorrosion` together end to end) and
+   the player-attack path inside `HandleDungeonInput` (spell/ability
+   use in combat, area-attack handling, and all the drawing/sound/
+   UI-tier-refresh work this project has deliberately deferred to the
+   eventual SDL2 layer) -- both pure orchestration/composition now, no
+   remaining decision-logic gaps anywhere in this candidate.
 8. **`ApplyEncodedItemEffect`** (was `sub_2C0FE`, the largest function
    in the binary at 4,210 bytes -- named and scoped by an earlier
    session, revisited 2026-09-25) -- a flat ~19-branch bitmask switch
@@ -867,8 +884,13 @@ consumers, if any.
    `g_heldItemType`/held-item UI system (~40 other call sites) as a
    prerequisite. Bit `0x2` ("rest here") is a thin wrapper around the
    still-unimplemented `RestPartyAndAdvanceClock`. Bit `0x4` (a
-   corridor/ranged-attack path) confirmed to match this candidate's
-   existing scoping exactly -- still needs `ApplyAttackToTarget` traced.
+   corridor/ranged-attack path, along with bit `0x2000` further down)
+   confirmed to match this candidate's existing scoping exactly --
+   `ApplyAttackToTarget`'s own resistance-filtering half is now traced
+   and reimplemented (`combatApplyTargetResistances`, see candidate 6
+   above for the full writeup), but the rest of that attack-resolution
+   family, and these two branches' own caller-context field sourcing,
+   still isn't.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark
