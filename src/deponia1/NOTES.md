@@ -874,6 +874,44 @@ container's numbered temp-extraction filename (data at address 0xD6CC20)
 wasn't fully decoded - approximated with a functionally-equivalent
 extension+index concatenation instead.
 
+## TGameControl batch 28: LoadEventHandlers, the last of the giants
+
+`LoadEventHandlers()` (asm lines 475143-476661+) is TGameControl's largest
+method by asm line count, but the bulk of that size is manual
+`wxStringTokenizer`/`std::vector`/COW-string plumbing around a genuinely
+simple idea: parse a `;`-separated `"type:names"` specification string
+(field 0x2F7) and register each comma-separated name via whichever
+`Register*EventHandler` method matches the entry's type prefix - all four
+prefix strings recovered byte-for-byte from the binary's own data:
+`"mainLoop"` -> `RegisterEventHandlerMainLoop`, `"mouseEvent"` ->
+`RegisterMouseEventHandler`, `"keyEvent"` -> `RegisterKeyboardEventHandler`,
+`"engineEvent"` -> `RegisterEngineEventHandler`. Written directly against
+those already-implemented, already-deduping `Register*` methods rather than
+transcribing the disassembly's own manual vector-append/dedup-scan logic
+for each of the four destination containers - the same "trust the
+higher-level operation, not the compiler's inlined mechanics" reasoning
+used throughout this project for STL-heavy code (`StartTween`, the
+character hash table, etc.), just applied one layer up since the higher-
+level operation here is this project's own code rather than the STL's.
+
+Two things approximated rather than traced to the end, both flagged in the
+method's own comment: the mouse case's real per-name filter-list syntax
+(a `TMouseEventHandler` needs one, and building it involves an extra
+`std::vector<int>` construction not present for the other three types) -
+registered here with an empty filter, a strict superset of whatever the
+real filter would have restricted it to; and four further fixed strings
+compared against individual names (`"animationStarted"`/
+`"animationStopped"`/`"textStarted"`/`"textEnded"`, data at addresses
+0xD686F0-0xD687B0) for a special case not traced - every name is
+registered identically instead. Added a genuinely real (not stubbed)
+`wxStringTokenizer`, matching real `wxWidgets`' default `wxTOKEN_STRTOK`
+behavior (skips empty tokens between consecutive delimiters).
+
+This closes out the batch of very large `TGameControl` methods
+(`AdjustInterfacesOnScreen`, `LoadAndInitGame`, `MoveScene`, `PreLoad`,
+`LoadEventHandlers`) tackled in this session - what's left of the class's
+stub surface is smaller, more self-contained methods.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

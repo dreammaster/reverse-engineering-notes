@@ -20,6 +20,7 @@
 #include <cstdio>
 #include <cwctype>
 #include <string>
+#include <vector>
 
 class wxString {
 public:
@@ -168,6 +169,43 @@ private:
 class wxDir {
 public:
 	static bool Exists(const wxString &path);
+};
+
+// Confirmed call shapes only (TGameControl::LoadEventHandlers,
+// Deponia_Linux.asm e.g. lines 475212, 475254) - real wxStringTokenizer
+// splits a string on a single delimiter character, skipping empty tokens
+// between consecutive delimiters (its default wxTOKEN_STRTOK mode).
+class wxStringTokenizer {
+public:
+	wxStringTokenizer(const wxString &str, wchar_t delimiter) {
+		std::wstring s = str.ToStdWstring();
+		std::size_t pos = 0;
+		while (pos < s.size()) {
+			std::size_t next = s.find(delimiter, pos);
+			if (next == std::wstring::npos) {
+				if (pos < s.size())
+					_tokens.push_back(s.substr(pos));
+				break;
+			}
+			if (next > pos)
+				_tokens.push_back(s.substr(pos, next - pos));
+			pos = next + 1;
+		}
+	}
+
+	bool HasMoreTokens() const {
+		return _index < _tokens.size();
+	}
+	wxString GetNextToken() {
+		return wxString(_tokens[_index++]);
+	}
+	int CountTokens() const {
+		return static_cast<int>(_tokens.size() - _index);
+	}
+
+private:
+	std::vector<std::wstring> _tokens;
+	std::size_t _index = 0;
 };
 
 // Real wxWidgets key-code constants (used alongside plain ASCII by

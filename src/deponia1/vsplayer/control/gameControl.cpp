@@ -1986,6 +1986,53 @@ void TGameControl::StartTween(const TVisObjTween &tween) {
 }
 
 void TGameControl::LoadEventHandlers() {
+	// Confirmed (asm lines 475143-476661+, TGameControl's largest method):
+	// parses a ';'-separated "type:names" specification string (field
+	// 0x2F7) - each entry's comma-separated names get registered via the
+	// matching confirmed Register* method, by the entry's type prefix:
+	// "mainLoop" -> RegisterEventHandlerMainLoop, "mouseEvent" ->
+	// RegisterMouseEventHandler, "keyEvent" -> RegisterKeyboardEventHandler,
+	// "engineEvent" -> RegisterEngineEventHandler (all four strings
+	// recovered byte-for-byte from the binary's own data). An entry whose
+	// ':'-split token count isn't exactly 2, or whose type matches none of
+	// the four, is skipped. The mouse case's real per-name filter-list
+	// syntax (TMouseEventHandler needs one) wasn't fully traced - registered
+	// here with an empty filter (matches every mouse message), which is a
+	// strict superset of whatever the real filter would have restricted it
+	// to, not a made-up specific one. Likewise, a handful of comma-separated
+	// names get compared against four further fixed strings
+	// ("animationStarted"/"animationStopped"/"textStarted"/"textEnded" -
+	// data at addresses 0xD686F0-0xD687B0) for a special case not traced
+	// here - every name is registered identically instead.
+	TVisObjRef game = _visionaire->GetGame();
+	wxString handlersStr = game.GetStr(0x2F7);
+
+	wxStringTokenizer entries(handlersStr, L';');
+	while (entries.HasMoreTokens()) {
+		wxString entry = entries.GetNextToken();
+		wxStringTokenizer parts(entry, L':');
+		if (parts.CountTokens() != 2)
+			continue;
+
+		wxString type = parts.GetNextToken();
+		wxString namesStr = parts.GetNextToken();
+		wxStringTokenizer names(namesStr, L',');
+
+		if (type.ToStdWstring() == L"mainLoop") {
+			while (names.HasMoreTokens())
+				RegisterEventHandlerMainLoop(names.GetNextToken());
+		} else if (type.ToStdWstring() == L"mouseEvent") {
+			std::vector<int> filter;
+			while (names.HasMoreTokens())
+				RegisterMouseEventHandler(names.GetNextToken(), filter);
+		} else if (type.ToStdWstring() == L"keyEvent") {
+			while (names.HasMoreTokens())
+				RegisterKeyboardEventHandler(names.GetNextToken());
+		} else if (type.ToStdWstring() == L"engineEvent") {
+			while (names.HasMoreTokens())
+				RegisterEngineEventHandler(names.GetNextToken());
+		}
+	}
 }
 
 bool TGameControl::Load() {
