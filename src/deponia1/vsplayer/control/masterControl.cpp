@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstdlib>
 
+#include "AppGlobals.h"
 #include "Diagnostics.h"
 #include "TSceneControl.h"
 #include "graphicslib/graphics.h"
@@ -243,8 +244,7 @@ void TMasterControl::ScrollUpdate() {
 	int targetX = game.GetInt(0x2B1);   // field id not resolved - a scroll target x position
 	int edgeMargin = game.GetInt(0x2B2);  // field id not resolved - an edge-scroll trigger margin
 
-	constexpr float kEaseFactor = 0.1f;
-	constexpr float kStartSpeed = 1.0f;
+	constexpr float kMaxSpeed = 1.0f;
 
 	if (targetX >= _mousePos.x || worktopWidth - targetX <= _mousePos.x) {
 		_isScrolling = true;
@@ -255,9 +255,12 @@ void TMasterControl::ScrollUpdate() {
 		if (_scrollTimer.GetTime() > 500) {
 			_scrollTimer.SetTime();
 		}
-		float targetSpeed = _easeDirectionFlag ? -kStartSpeed : kStartSpeed;
-		_xspeed = targetSpeed + (_xspeed - targetSpeed) * kEaseFactor;
-		scene->AdjustWindowHorizontal(_xspeed * 0.001f);
+		// xspeed is a real shared global (not a TMasterControl-only value) -
+		// TGameControl::MoveScene eases the exact same variable for its own,
+		// unrelated destination-scroll movement (see its own comment).
+		float targetSpeed = _easeDirectionFlag ? -kMaxSpeed : kMaxSpeed;
+		xspeed = targetSpeed + (xspeed - targetSpeed) * startspeed;
+		scene->AdjustWindowHorizontal(xspeed * 0.001f);
 	}
 }
 

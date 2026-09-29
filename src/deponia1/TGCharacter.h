@@ -70,6 +70,10 @@ public:
 	// (asm lines 463363-463466).
 	void CheckRandomTimer();
 
+	// Confirmed call shape only (TGameControl::MoveScene, Deponia_Linux.asm
+	// lines 459941, 460022) - not reversed beyond that.
+	bool IsWalking() const;
+
 	// Confirmed called on both the outgoing and incoming character when
 	// switching (TGameControl::ChangeCharacter, asm lines 465849-466072).
 	void SetRandomTime();

@@ -29,7 +29,11 @@ void TPaintControl::SetScrollPos(const wxPoint &pos) {
 }
 
 bool TPaintControl::IsScrollable() const {
-	return false;
+	return _scrollable;
+}
+
+void TPaintControl::SetIsScrollable(bool scrollable) {
+	_scrollable = scrollable;
 }
 
 int TPaintControl::GetWorktopWidth() const {

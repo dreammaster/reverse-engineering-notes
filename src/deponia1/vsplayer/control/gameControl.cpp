@@ -1,5 +1,8 @@
 #include "vsplayer/control/gameControl.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "AppGlobals.h"
 #include "Diagnostics.h"
 #include "TGAction.h"
@@ -512,6 +515,102 @@ void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
 }
 
 void TGameControl::MoveScene() {
+	// Confirmed (asm lines 459288-460538+): a large scroll-to-target easing
+	// function, structurally similar to TMasterControl::ScrollUpdate (and
+	// sharing its xspeed/yspeed/startspeed globals and _easeDirectionFlag)
+	// but driving the scene toward a stored target point (field 0x1D7)
+	// instead of the mouse cursor. Approximated the same way ScrollUpdate
+	// already is: the gating logic, target point, and the confirmed
+	// formulas (exponential ease toward +-1 or a distance-clamped
+	// speedDownX/Y, using a delta time derived from _timingValueSeconds)
+	// are faithful, but the exact decision tree for which side to approach
+	// from per axis - keyed on fields 0x1D9/0x1DA (0=auto, 1/2=forced
+	// left/right, 3/4=forced up/down, matching ScrollToCharacterIfNeeded's
+	// own codes) and a two-tier "is there room to scroll, and if so which
+	// side" structure - is simplified into one merged condition per axis
+	// rather than transcribed branch-by-branch, since it's gameplay-feel-
+	// specific and can't be verified without running the original. Field
+	// ids 0x1D8 ("unconditional movement" override) and 0x257 (a character
+	// facing-angle check gating one sub-case, skipped here) are as
+	// confirmed but not further pursued.
+	static TTimer scrollTimer;
+
+	TVisObjRef game = _visionaire->GetGame();
+	bool overrideGate = game.GetBool(0x1D8);
+
+	if (!overrideGate) {
+		if (IsScrolling()) {
+			scrollTimer.SetTime();
+			return;
+		}
+		if (_currentCharacter == nullptr)
+			return;
+		TVisObjRef charSceneLink = _currentCharacter->GetRef().GetLink(0x1F7);
+		if (!(charSceneLink == _ownedSceneControl.GetScene()->GetRef()))
+			return;
+	}
+
+	TGScene *scene = _ownedSceneControl.GetScene();
+	if (scene->IsMenu())
+		return;
+	if (_previousCharacter == nullptr || _ownedSceneControl.FadingToNewScene())
+		return;
+
+	const FloatPoint &scrollPos = scene->GetFloatScrollPos();
+	int worktopWidth = scene->GetWorktopWidth();
+	int worktopHeight = scene->GetWorktopHeight();
+	const wxSize &visibleSize = scene->GetVisibleSize();
+	const wxPoint *target = game.GetPoint(0x1D7);
+
+	wxPoint charPos = _previousCharacter->GetScreenPosition();
+	wxRect charRect = _previousCharacter->GetVisibleRect();
+	if (charRect.IsEmpty()) {
+		charRect.SetLeft(charPos.x);
+		charRect.SetWidth(0);
+		charRect.SetTop(charPos.y);
+		charRect.SetHeight(0);
+	}
+
+	double elapsedMs = static_cast<double>(scrollTimer.GetTime());
+	float dt = (elapsedMs > 500.0) ? 1.0f : static_cast<float>(elapsedMs) * _timingValueSeconds;
+
+	int horizState = game.GetInt(0x1D9);
+	float targetLeft = static_cast<float>(target->x) - static_cast<float>(visibleSize.width) / 2.0f;
+	if (horizState != 0 || static_cast<float>(worktopWidth) > scrollPos.x + static_cast<float>(visibleSize.width)) {
+		float distance = targetLeft - scrollPos.x;
+		if (std::fabs(distance) > 1.0f && dt > 0.0f) {
+			float maxSpeed = std::min(1.0f, std::fabs(distance) / dt * 0.025f);
+			speedDownX = maxSpeed;
+			float targetSpeed = _easeDirectionFlag ? -1.0f : (distance < 0.0f ? -maxSpeed : maxSpeed);
+			xspeed = targetSpeed + (xspeed - targetSpeed) * startspeed;
+			scene->AdjustWindowHorizontal(xspeed * dt);
+		} else {
+			xspeed = 0.0f;
+			if (horizState != 0 && _previousCharacter->IsWalking())
+				game.SetValue(0x1D9, 2, TSendEventEnum::kSendEvent);
+		}
+	}
+
+	int vertState = game.GetInt(0x1DA);
+	float targetTop = static_cast<float>(target->y) - static_cast<float>(visibleSize.height) / 2.0f;
+	if (vertState == 3 || vertState == 4 ||
+	        static_cast<float>(worktopHeight) > scrollPos.y + static_cast<float>(visibleSize.height)) {
+		float distance = targetTop - scrollPos.y;
+		if (std::fabs(distance) > 1.0f && dt > 0.0f) {
+			float maxSpeed = std::min(1.0f, std::fabs(distance) / dt * 0.025f);
+			speedDownY = maxSpeed;
+			float targetSpeed = _easeDirectionFlag ? -1.0f : (distance < 0.0f ? -maxSpeed : maxSpeed);
+			yspeed = targetSpeed + (yspeed - targetSpeed) * startspeed;
+			scene->AdjustWindowVertical(yspeed * dt);
+		} else {
+			yspeed = 0.0f;
+			if ((vertState == 3 || vertState == 4) && _previousCharacter->IsWalking())
+				game.SetValue(0x1DA, vertState, TSendEventEnum::kSendEvent);
+		}
+	}
+
+	game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
+	scrollTimer.SetTime();
 }
 
 void TGameControl::CenterScene() {

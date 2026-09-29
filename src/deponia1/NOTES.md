@@ -782,6 +782,50 @@ New stub surface: `TSceneControl::FadingToNewScene()`,
 protected in `TMasterControl` (same reasoning as
 `_engineEventHandlerNames`/`_loadingControl` there).
 
+## TGameControl batch 26: MoveScene, approximated like ScrollUpdate, and a latent xspeed bug fixed along the way
+
+`MoveScene()` (asm lines 459288-460538+, TGameControl's largest method by a
+wide margin) is a scroll-to-target easing function structurally similar to
+`TMasterControl::ScrollUpdate` (already approximated rather than
+byte-for-byte transcribed, per that method's own comment) - and, it turns
+out, not just similar but sharing the exact same global state:
+`ScrollUpdate` eases a global named `xspeed` toward the mouse cursor,
+`MoveScene` eases that *same* global toward a stored destination point
+(field 0x1D7). The confirmed formulas match exactly: exponential ease
+`speed += (target - speed) * startspeed` (algebraically the same as
+`ScrollUpdate`'s `target + (speed - target) * kEaseFactor`, just
+rearranged) with `startspeed` a real named global (confirmed 0.1, matching
+`kEaseFactor`'s already-approximated value), and a max-approach-speed
+clamped to `min(1, |distance| / dt * 0.025)` stored in another real global,
+`speedDownX`/`speedDownY`.
+
+**Fixed along the way**: `xspeed` had previously been modeled as
+`TMasterControl::_xspeed`, a private instance member, reasoned at the time
+as "nothing needs it shared." That was wrong even before this batch - it's
+a real shared global in the original, and `MoveScene` easing it too (a
+method on a *different* class, `TGameControl`) is direct proof two
+unrelated call sites read and write the exact same value. Removed
+`_xspeed`, added `xspeed`/`yspeed`/`speedDownX`/`speedDownY`/`startspeed` as
+real globals in `AppGlobals.h` (matching `movex`/`movey`/`stopped_char`'s
+existing pattern of confirmed named-not-anonymous symbols), and updated
+`ScrollUpdate` to use the global. Also moved `_easeDirectionFlag` from
+private to protected in `TMasterControl`: `MoveScene` reads the exact same
+field (0x254) `ScrollUpdate` already uses, as the same "eased value vs.
+fixed snap-to value" gate.
+
+As with `ScrollUpdate`, the exact decision tree for which side to approach
+from per axis - keyed on fields 0x1D9/0x1DA (0=auto, 1/2=forced left/right,
+3/4=forced up/down, matching `ScrollToCharacterIfNeeded`'s own codes,
+batch 21) plus a two-tier "is there room to scroll, and if so which side"
+structure - is simplified into one merged condition per axis rather than
+transcribed branch-by-branch; it's gameplay-feel-specific and can't be
+verified without running the original. Field ids 0x1D8 ("unconditional
+movement" override) and 0x257 (a character facing-angle check gating one
+sub-case) are confirmed but not pursued further. New stub surface:
+`TGCharacter::IsWalking()` and `TPaintControl::SetIsScrollable()` (now
+wired to a real backing field, same as `GetWorktopWidth/Height` once their
+setter existed).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

@@ -228,6 +228,19 @@ protected:
 	// element's content.
 	std::vector<TKeyboardEventHandler> _keyboardEventHandlers;
 
+	// Set from a TVisObjRef::GetBool(0x33A) field at the top of every
+	// ScrollUpdate() call, then read back inside its easing formula to pick
+	// which of two target speeds to ease toward - real meaning (some kind
+	// of "scrolling direction/mode" flag) not resolved. +0x254 in the
+	// original; unrelated to _moviesEnabled (+0x288) despite both being a
+	// lone bool set near the start of a method. TGameControl also reads it
+	// directly at the same offset (MoveScene, Deponia_Linux.asm line 459500
+	// and others) as a gate between its own eased xspeed/yspeed value and a
+	// fixed snap-to value - same field, same role, different caller, so
+	// protected rather than private for the same reason as the other
+	// TGameControl-reads-directly fields above.
+	bool _easeDirectionFlag = false;
+
 private:
 	TMovie _movie;
 	TGObjectManager _objectManager;
@@ -259,17 +272,6 @@ private:
 	int _earthquakeOffsetY = 0;          // +0x270
 	TTimer _earthquakeTimer;             // +0x278
 	bool _moviesEnabled = true;          // +0x288
-	// Set from a TVisObjRef::GetBool(0x33A) field at the top of every
-	// ScrollUpdate() call, then read back inside its easing formula to pick
-	// which of two target speeds to ease toward - real meaning (some kind
-	// of "scrolling direction/mode" flag) not resolved. +0x254 in the
-	// original; unrelated to _moviesEnabled (+0x288) despite both being a
-	// lone bool set near the start of a method.
-	bool _easeDirectionFlag = false;
-
-	// ScrollUpdate's eased scroll speed; a plain global (`xspeed`) in the
-	// original, made an instance member here since nothing needs it shared.
-	float _xspeed = 0.0f;
 	// A function-local static TTimer in the original
 	// (ScrollUpdate(void)::scrollTimer, magic-statics-initialized on first
 	// call) - a plain member here since TMasterControl is effectively a

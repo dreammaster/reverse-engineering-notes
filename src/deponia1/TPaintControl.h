@@ -35,6 +35,9 @@ public:
 	const wxPoint &GetScrollPos() const;
 	void SetScrollPos(const wxPoint &pos);
 	bool IsScrollable() const;
+	// Confirmed call shape only (TGameControl::MoveScene, Deponia_Linux.asm
+	// line 459715) - not reversed beyond that.
+	void SetIsScrollable(bool scrollable);
 	int GetWorktopWidth() const;
 	int GetWorktopHeight() const;
 	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
@@ -68,4 +71,5 @@ private:
 	wxSize _worktopSize{};
 	wxPoint _origin{};
 	bool _active = false;
+	bool _scrollable = false;
 };

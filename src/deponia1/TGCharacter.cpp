@@ -26,6 +26,10 @@ void TGCharacter::SetOnDestination() {
 void TGCharacter::CheckRandomTimer() {
 }
 
+bool TGCharacter::IsWalking() const {
+	return false;
+}
+
 void TGCharacter::SetRandomTime() {
 }
 

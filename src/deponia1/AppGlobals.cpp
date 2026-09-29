@@ -35,4 +35,10 @@ int charmovex = 0;
 int charmovey = 0;
 int stopped_char = 0;
 
+float xspeed = 0.0f;
+float yspeed = 0.0f;
+float speedDownX = 0.0f;
+float speedDownY = 0.0f;
+float startspeed = 0.1f;
+
 bool matricesActive = false;
