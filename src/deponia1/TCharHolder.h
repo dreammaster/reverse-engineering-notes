@@ -22,6 +22,11 @@ public:
 	wxString GetFullPath() const {
 		return _value;
 	}
+	// Confirmed call shape only (TGameControl::LoadAndInitGame,
+	// Deponia_Linux.asm lines 468170-468174).
+	bool operator==(const wxString &other) const {
+		return _value.ToStdWstring() == other.ToStdWstring();
+	}
 
 private:
 	wxString _value;

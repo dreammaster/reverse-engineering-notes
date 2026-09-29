@@ -180,7 +180,18 @@ public:
 	bool InitCharacters();
 	void InitGameActions();
 	bool Init();
-	bool LoadAndInitGame(wxString &error, const wxString &file, wxString warning, bool isEditor);
+	// Confirmed (asm lines 467635-468496): the manifest's parameter names
+	// were guesses and the first is wrong - `filePath` is read-only in the
+	// traced path (wrapped in a wxFileName and handed to
+	// TVisionaire::LoadDataGame) despite its non-const reference type,
+	// never written as an actual error message. `extra` is passed through
+	// to LoadDataGame's own second argument, untouched otherwise - its role
+	// isn't resolved (LoadDataGame itself isn't reversed). `gameName`
+	// doubles as a fallback value (populated from field 0x132 if passed
+	// empty) and, confusingly, as a language name to search for later in
+	// the same function - reproduced as observed rather than split into two
+	// parameters.
+	bool LoadAndInitGame(wxString &filePath, const wxString &extra, wxString gameName, bool isEditor);
 	bool ReplaceGame(wxFileName file, bool isEditor);
 	void HandleEngineEvent(const std::string &name, const std::string &arg);
 	void HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key, int a, unsigned short b);
@@ -261,6 +272,11 @@ private:
 	// Confirmed present and cleared by ResetState() (asm line 460940); real
 	// purpose (what populates it) not identified.
 	TVList _pendingItems;
+	// Confirmed present (TGameControl::LoadAndInitGame, asm lines 468092-
+	// 468100): a game-data int (field 0xF6) divided by 1000.0, matching the
+	// project's established milliseconds-to-seconds pattern (TTimer::
+	// GetTime() is milliseconds) - real purpose not identified.
+	float _timingValueSeconds = 0.0f;
 	// Confirmed present, set to the same value as _currentCharacter right
 	// when it changes (TGameControl::ChangeCharacter, asm lines
 	// 465849-466072; also set by InitCharacters, asm lines 466201-466735) -

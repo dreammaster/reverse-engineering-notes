@@ -8,6 +8,10 @@
 // Nothing about this class's own fields/methods has been reversed.
 #pragma once
 
+#include <cstdint>
+
+#include "TCharHolder.h"
+
 class TVisionaireObject {
 public:
 	TVisionaireObject() = default;
@@ -17,4 +21,17 @@ public:
 	// a TVList, unlike the rest of this survey's field access which goes
 	// through a TVisObjRef handle - not reversed beyond that.
 	int GetInt(int fieldId) const;
+	// Confirmed call shapes only (TGameControl::LoadAndInitGame,
+	// Deponia_Linux.asm lines 468017-468037) - same "no field id, a property
+	// of the object itself" shape as TVisObjRef::GetName(); GetLink() takes a
+	// field id like TVisObjRef::GetLink() but returns a raw
+	// TVisionaireObject* rather than a TVisObjRef by value.
+	TCharHolder GetName() const;
+	TVisionaireObject *GetLink(int fieldId) const;
+	// Confirmed call shape only (asm line 468037) - same 3-4 byte packed id
+	// shape as TVisObjRef::GetId(), see that method's own comment.
+	const std::uint8_t *GetId() const;
+
+private:
+	std::uint8_t _id[4] {};
 };

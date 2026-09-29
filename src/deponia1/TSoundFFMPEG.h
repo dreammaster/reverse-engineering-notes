@@ -6,7 +6,9 @@
 // declare them - just the one method actually exercised) is stubbed.
 #pragma once
 
-class TSoundFFMPEG {
+#include "TSoundInterface.h"
+
+class TSoundFFMPEG : public TSoundInterface {
 public:
 	virtual ~TSoundFFMPEG() = default;
 	virtual void OnVideoFrameFinished();

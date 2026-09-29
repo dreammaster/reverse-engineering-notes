@@ -7,3 +7,9 @@ void x_assert(bool condition, const char *expression, const char *file, int line
 		std::fprintf(stderr, "assertion failed: %s (%s:%d)\n", expression, file, line);
 	}
 }
+
+void TDiagnostic::BeginFixedRegion(wxString /*name*/) {
+}
+
+void TDiagnostic::EndFixedRegion() {
+}

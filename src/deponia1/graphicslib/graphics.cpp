@@ -25,3 +25,12 @@ void TGraphicsInterface::ResetMatrix(bool /*a*/, bool /*b*/) {
 
 void TGraphicsInterface::Flip() {
 }
+
+void TGraphicsInterface::SetFilters(TInterpolationEnum /*a*/, TInterpolationEnum /*b*/) {
+}
+
+void TGraphicsInterface::PreallocateTextures(int /*count*/) {
+}
+
+void TGraphicsInterface::SetCacheSize(int /*size*/) {
+}

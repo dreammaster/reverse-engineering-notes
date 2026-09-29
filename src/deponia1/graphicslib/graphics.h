@@ -14,12 +14,23 @@
 
 class TPreloadedPicManager;
 
+// Confirmed 2 raw-int parameters read straight from game data (field ids
+// 0x224/0x225), never a named constant - real values/meaning not resolved
+// (TGameControl::LoadAndInitGame, Deponia_Linux.asm lines 467710-467720).
+enum class TInterpolationEnum : int {};
+
 class TGraphicsInterface {
 public:
 	virtual ~TGraphicsInterface() = default;
 
 	TPreloadedPicManager *GetPreloadedPicManager();
 	TSpriteHandle *GetSpriteFromCache(const wxString &name);
+
+	// Confirmed call shapes only (TGameControl::LoadAndInitGame, asm lines
+	// 467717-467726, 467884-467886) - not reversed beyond that.
+	void SetFilters(TInterpolationEnum a, TInterpolationEnum b);
+	void PreallocateTextures(int count);
+	void SetCacheSize(int size);
 
 	// vtable slot 0x90 in the original; called with a TSpriteHandle* whose
 	// refcount just reached zero.

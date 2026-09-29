@@ -4,6 +4,7 @@
 
 #include "TPaintControl.h"
 #include "WxStub.h"
+#include "datastruct/visobjref.h"
 
 class TCursorControl : public TPaintControl {
 public:
@@ -17,4 +18,12 @@ public:
 	// Confirmed call shape only (TGameControl::ReplaceGame, Deponia_Linux.asm
 	// line 468779) - not reversed beyond that.
 	void Clear();
+	// Confirmed call shapes only (TGameControl::LoadAndInitGame,
+	// Deponia_Linux.asm lines 467983-467985, 468050-468065): LoadCursor is
+	// called once per non-empty element of a field-0xF list; LinkButtonCursor
+	// takes two packed 3-byte ids (the same packing PackVisId() in
+	// gameControl.cpp uses) - first the linked object's, then the object's
+	// own. Neither reversed beyond that call shape.
+	void LoadCursor(const TVisObjRef &cursor);
+	void LinkButtonCursor(int linkedId, int objectId);
 };

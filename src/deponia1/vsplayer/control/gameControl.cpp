@@ -1,6 +1,7 @@
 #include "vsplayer/control/gameControl.h"
 
 #include "AppGlobals.h"
+#include "Diagnostics.h"
 #include "TGAction.h"
 #include "TGAnimation.h"
 #include "TGInterface.h"
@@ -9,9 +10,11 @@
 #include "THText.h"
 #include "TMSavegame.h"
 #include "TManagedObject.h"
+#include "TTText.h"
 #include "TTempFile.h"
 #include "baselib/composedfile.h"
 #include "datastruct/visionaireobject.h"
+#include "graphicslib/graphics.h"
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/id.h"
 
@@ -1437,9 +1440,103 @@ bool TGameControl::Init() {
 	return true;
 }
 
-bool TGameControl::LoadAndInitGame(wxString &/*error*/, const wxString &/*file*/, wxString /*warning*/,
-                                   bool /*isEditor*/) {
-	return false;
+bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wxString gameName, bool isEditor) {
+	// Confirmed (asm lines 467635-468496) - see the header declaration's own
+	// comment for the parameter-naming corrections this pass made. Field ids
+	// 0x224/0x225 (graphics filter modes), 0x2E7/0x29D (texture cache
+	// sizes), 0xE5 (a button's linked cursor object), and 0xF6 (feeds
+	// _timingValueSeconds) are unresolved. `TSignalSlot`, the not-yet-
+	// integrated `TVisionaire::LoadDataGame`, and the fact that `this` gets
+	// passed as a TSignalSlot* when isEditor is true are all flagged in
+	// their own declarations' comments rather than guessed at further here.
+	TVisObjRef game = _visionaire->GetGame();
+	graphics->SetFilters(static_cast<TInterpolationEnum>(game.GetInt(0x224)),
+	                     static_cast<TInterpolationEnum>(game.GetInt(0x225)));
+	graphics->PreallocateTextures(game.GetInt(0x2E7));
+
+	const wxPoint *aspectPoint = game.GetPoint(0x7E);
+	if (g_unlockAspect) {
+		_aspectWidth = renderSize.width;
+		_aspectHeight = renderSize.height;
+	} else {
+		_aspectWidth = aspectPoint->x;
+		_aspectHeight = aspectPoint->y;
+	}
+	InitControl(_aspectWidth, _aspectHeight);
+	_loadingControl->InitControl(_aspectWidth, _aspectHeight);
+	if (isEditor)
+		ShowLoadingScreen();
+
+	TDiagnostic::BeginFixedRegion(wxString(L"Struktur"));
+	wxFileName resolvedFile(filePath.ToStdWstring());
+	resolvedFile.NormalizePath();
+	TSignalSlot *slot = isEditor ? reinterpret_cast<TSignalSlot *>(this) : nullptr;
+	bool loaded = _visionaire->LoadDataGame(resolvedFile, extra, TLoadingTypeEnum::kValue1, true, slot, nullptr);
+
+	if (!loaded) {
+		if (wxLog::loglevel >= 0) {
+			wxString fmt;
+			toUTF(&fmt, "Error loading game data from file '%s'");
+			wxString gameDirPath = wxFileName(_gamePath.ToStdWstring()).GetFullPath();
+			wxLog::logexpanded(fmt.wc_str(), gameDirPath.wc_str());
+		}
+		return false;
+	}
+
+	TDiagnostic::EndFixedRegion();
+	graphics->SetCacheSize(game.GetInt(0x29D));
+
+	if (gameName.ToStdWstring().empty()) {
+		TVisObjRef link = game.GetLink(0x132);
+		gameName = wxString(link.GetName());
+	}
+
+	TVList languageList;
+	_visionaire->GetList(0x12, languageList, false);
+	if (!languageList.empty()) {
+		TVisionaireObject *match = nullptr;
+		for (TVisionaireObject *obj : languageList) {
+			if (obj->GetName() == gameName) {
+				match = obj;
+				break;
+			}
+		}
+		TVisObjRef languageRef(match != nullptr ? match : languageList.front());
+		TTText::SetLanguage(languageRef);
+	}
+
+	TVList cursorDefs;
+	_visionaire->GetList(0xF, cursorDefs, false);
+	for (TVisionaireObject *obj : cursorDefs) {
+		TVisObjRef ref(obj);
+		if (!ref.IsEmpty())
+			GetCursorControl()->LoadCursor(ref);
+	}
+
+	TVList buttonList;
+	_visionaire->GetList(2, buttonList, false);
+	for (TVisionaireObject *obj : buttonList) {
+		TVisObjRef linkedRef(obj->GetLink(0xE5));
+		if (!linkedRef.IsEmpty())
+			GetCursorControl()->LinkButtonCursor(PackVisId(linkedRef.GetId()), PackVisId(obj->GetId()));
+	}
+
+	TVisObjRef game2 = _visionaire->GetGame();
+	_timingValueSeconds = static_cast<float>(game2.GetInt(0xF6)) / 1000.0f;
+
+	if (!Init()) {
+		if (wxLog::loglevel >= 0) {
+			wxString fmt;
+			toUTF(&fmt, "Failed to initialize game.");
+			wxLog::logexpanded(fmt.wc_str());
+		}
+		return false;
+	}
+
+	_sceneControl = &_ownedSceneControl;
+	if (isEditor)
+		_loadingControl->EndLoading(_soundManager);
+	return true;
 }
 
 bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {

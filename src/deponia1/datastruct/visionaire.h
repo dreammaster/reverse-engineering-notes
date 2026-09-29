@@ -5,14 +5,21 @@
 // TMasterControl needs is stubbed here.
 #pragma once
 
+#include "TSignalSlot.h"
 #include "TXMLWriter.h"
 #include "datastruct/vlist.h"
 #include "datastruct/visobjref.h"
+
+class EventHandler;
 
 // Confirmed one value, 0x22 (TGameControl::SaveGame, asm line 463095) - real
 // meaning/other values not resolved (named for its raw value like TypeOrder,
 // rather than guessing a table name).
 enum class eVisionaireTable { kValue34 = 0x22 };
+
+// Confirmed one value, 1 (TGameControl::LoadAndInitGame, asm line 467804) -
+// real meaning/other values not resolved.
+enum class TLoadingTypeEnum { kValue1 = 1 };
 
 class TVisionaire {
 public:
@@ -23,6 +30,18 @@ public:
 	void SaveSaveGame(TProjectFileWriter &writer);
 	// Confirmed call shape only (TGameControl::SaveGame, asm line 463096).
 	void ResetActiveData(eVisionaireTable table);
+
+	// Confirmed call shape only (TGameControl::LoadAndInitGame, asm lines
+	// 467799-467810) - returns a success bool (tested with a plain bool
+	// check, not compared against a specific value). IDA resolves the real
+	// symbol as `TVisionaireGame::LoadDataGame`, but the confirmed `this`
+	// pointer at that call site is _visionaire (TVisionaire*), not
+	// _visionaireGame (TVisionaireGame*) - the same kind of not-yet-
+	// integrated-class gap as THGameControl (see NOTES.md); placed on
+	// TVisionaire, matching the confirmed pointer, rather than guessed onto
+	// TVisionaireGame.
+	bool LoadDataGame(const wxFileName &file, const wxString &extra, TLoadingTypeEnum type, bool flag,
+	                  TSignalSlot *slot, EventHandler *handler);
 
 	// Confirmed called with a field id, an out-param list, and a bool flag
 	// (TGameControl::InitFonts, asm lines 458293-458322) - not reversed

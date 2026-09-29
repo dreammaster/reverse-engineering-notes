@@ -26,6 +26,15 @@ public:
 	bool empty() const {
 		return items.empty();
 	}
+	// Confirmed call shape only (TGameControl::LoadAndInitGame,
+	// Deponia_Linux.asm line 467937).
+	std::size_t size() const {
+		return items.size();
+	}
+	// Confirmed call shape only (asm line 468190).
+	TVisionaireObject *front() const {
+		return items.front();
+	}
 	std::vector<TVisionaireObject *>::iterator begin() {
 		return items.begin();
 	}

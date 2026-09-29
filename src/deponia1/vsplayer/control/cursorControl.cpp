@@ -12,3 +12,9 @@ void TCursorControl::SetCursor(bool /*flag1*/, int /*cursorId*/, bool /*flag2*/)
 
 void TCursorControl::Clear() {
 }
+
+void TCursorControl::LoadCursor(const TVisObjRef &/*cursor*/) {
+}
+
+void TCursorControl::LinkButtonCursor(int /*linkedId*/, int /*objectId*/) {
+}

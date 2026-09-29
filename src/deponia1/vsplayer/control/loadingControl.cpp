@@ -2,3 +2,6 @@
 
 void TLoadingControl::UpdateStatus(int /*current*/, int /*total*/) {
 }
+
+void TLoadingControl::EndLoading(TSoundInterface */*soundManager*/) {
+}

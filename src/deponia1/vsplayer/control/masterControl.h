@@ -214,6 +214,13 @@ protected:
 	// content - see HandleEngineEvent's own comment.
 	std::vector<std::string> _engineEventHandlerNames;
 
+	// TGameControl reads both directly (LoadAndInitGame, Deponia_Linux.asm
+	// lines 467746-467747, 468227-468230: InitControl()/EndLoading() called
+	// straight on these, not through TMasterControl's own accessors) - same
+	// reasoning as _sceneControl/_visionaire above.
+	TLoadingControl *_loadingControl = nullptr;
+	TSoundFFMPEG *_soundManager = nullptr;
+
 private:
 	TMovie _movie;
 	TGObjectManager _objectManager;
@@ -228,8 +235,6 @@ private:
 	SLoadingScreen _loadingScreen;
 	TCursorControl *_cursorControl = nullptr;
 	TGameController *_gameController = nullptr;
-	TLoadingControl *_loadingControl = nullptr;
-	TSoundFFMPEG *_soundManager = nullptr;
 	TFontManager *_fontManager = nullptr;
 	TGameClientSDK *_gameClientSDK = nullptr;
 

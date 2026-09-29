@@ -702,6 +702,55 @@ New stub surface: `TVisObjRef::GetName()` (returns `TCharHolder`, unlike
 `wxFileName::GetPath()`/`Exists()` (the latter delegating to the already-real
 `wxFile::Exists()`).
 
+## TGameControl batch 24: LoadAndInitGame - the manifest's parameter names were wrong, and a second TVisionaire/TVisionaireGame gap
+
+`LoadAndInitGame(wxString&, const wxString&, wxString, bool)` (asm lines
+467635-468496) is the largest method reversed so far. Its manifest-derived
+parameter names turned out actively misleading, not just approximate: the
+first parameter (named `error`) is read-only throughout the traced path -
+wrapped in a `wxFileName` and handed to `TVisionaire::LoadDataGame` as the
+file to load, never written as an error message - renamed to `filePath`.
+The third (`warning`) does double duty: if passed empty, it's populated
+from the game's own field-0x132 name as a fallback, and later in the same
+function it's compared against a list of language objects' own names to
+pick which one to activate via `TTText::SetLanguage` (falling back to the
+list's first entry on no match) - genuinely overloaded, not split into two
+parameters, since that's what the disassembly does.
+
+A second instance of batch 23's `THGameControl` gap turned up:
+`TVisionaireGame::LoadDataGame` is called with `this` confirmed as
+`_visionaire` (`TVisionaire*`), not `_visionaireGame` (`TVisionaireGame*`) -
+added to `TVisionaire` instead, flagged the same way. A third,
+smaller one: `this` gets passed as a `TSignalSlot*` parameter when
+`isEditor` is true, implying `TGameControl` derives from (or converts to)
+`TSignalSlot` in the original - modeled as an empty placeholder class and a
+`reinterpret_cast`, not a real inheritance relationship.
+
+Otherwise a fairly mechanical translation once each piece was identified:
+graphics filter/cache setup (`TGraphicsInterface`, new `SetFilters`/
+`PreallocateTextures`/`SetCacheSize`), the same aspect-ratio field-0x7E/
+`g_unlockAspect` logic `UpdateAspectRatio` already has (duplicated inline
+here, not shared), a `TDiagnostic::BeginFixedRegion`/`EndFixedRegion` pair
+bracketing the load (asymmetric - `EndFixedRegion` is only called on
+success, never on failure, reproduced as observed), then three
+`TVisionaire::GetList` calls (0x12 = languages, 0xF = cursor definitions to
+load, 2 = buttons whose field-0xE5 link needs `TCursorControl::
+LinkButtonCursor` using the same id-packing `PackVisId()` already
+implements), a `TGameControl::Init()` call (already implemented), and
+finally pointing `TMasterControl::_sceneControl` at `_ownedSceneControl` -
+redundant with what the constructor and `ResetState()` already do, kept for
+fidelity anyway.
+
+Moved `_loadingControl`/`_soundManager` from private to protected in
+`TMasterControl` (same reasoning as the other TGameControl-reads-directly
+fields there). New stub surface: `TSoundInterface` (the interface
+`TSoundFFMPEG` implements, confirmed distinct from it),
+`TLoadingControl::EndLoading()`, `TDiagnostic`, `TLoadingTypeEnum`,
+`TVisionaireObject::GetName()/GetLink()/GetId()`, `TCharHolder::
+operator==(const wxString&)`, `TTText::SetLanguage()` (static), and
+`TCursorControl::LoadCursor()/LinkButtonCursor()`. Also added
+`TVList::size()`/`front()`, matching call shapes already needed here.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

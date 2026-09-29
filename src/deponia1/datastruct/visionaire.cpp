@@ -20,3 +20,8 @@ void TVisionaire::SaveSaveGame(TProjectFileWriter &/*writer*/) {
 
 void TVisionaire::ResetActiveData(eVisionaireTable /*table*/) {
 }
+
+bool TVisionaire::LoadDataGame(const wxFileName &/*file*/, const wxString &/*extra*/, TLoadingTypeEnum /*type*/,
+                               bool /*flag*/, TSignalSlot */*slot*/, EventHandler */*handler*/) {
+	return false;
+}
