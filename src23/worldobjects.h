@@ -91,10 +91,21 @@ typedef enum {
      * A real, common bit in both games' data (187 Chapter 2 records, 139
      * Chapter 3) that TryInteractAtPosition never tests -- every check
      * above it falls through to "nothing here" for a 0x2000-only record.
-     * ProbeFacingTile (yendor2.asm:30915) reaches the same underlying
-     * FindObjectAtPosition record, but its callers weren't traced far
-     * enough to confirm whether any of them read this bit. Not
-     * interpreted by this module beyond exposing the raw flags word.
+     * Resolved 2026-09-30: `start`'s own per-cell dispatcher (reached via
+     * ProbeFacingTile, yendor2.asm:30915/:1058E) tests this bit directly
+     * and, on a match, calls TravelToDestination(ax = the record's own
+     * `value` field) -- value is a 1-based index into a party
+     * teleport/fast-travel destination table (DS:0xD40B, 16-byte stride
+     * in Chapter 2; a genuinely different, wider record at DS:0xBA95 in
+     * Chapter 3, 18-byte stride). The Chapter 2 record count (187) is
+     * presumably not a coincidence -- the destination table's own real
+     * length looks to match exactly. Not reimplemented yet; see
+     * roadmap.md's "Open questions" section (the former "region/town
+     * password" mystery) for the full writeup and
+     * yendor2/ida_scripts/dump_travel_destination_table.py for the raw
+     * extraction. `IsDestinationUnlocked`, the gate a locked destination
+     * checks, turned out to be a small, fully-bounded table (20 entries)
+     * over the already-reimplemented `globalflags.c` system.
      */
     WorldObjectFlagUnknown2000 = 0x2000
 } WorldObjectFlag;

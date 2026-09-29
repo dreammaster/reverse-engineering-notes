@@ -176206,3 +176206,163 @@ g_lockUnlockedMask: ea=0x32dc8  DS-relative=0x5568
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_travel_destination_table.py', 'noexport']
+[*] reading dump_travel_destination_table.py
+[*] executing dump_travel_destination_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== Destination table (0xD40B) ===
+  [  1] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [  2] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0xa000
+  [  3] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [  4] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [  5] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [  6] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [  7] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [  8] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [  9] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x2000
+  [ 10] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x3000
+  [ 11] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 12] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 13] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 14] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0xa000
+  [ 15] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 16] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 17] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x2000
+  [ 18] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 19] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x2000
+  [ 20] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 21] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 22] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 23] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 24] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 25] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 26] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 27] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 28] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 29] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x2000
+  [ 30] x=    -1 y=    -1 facing=0x1000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 31] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 32] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 33] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 34] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 35] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 36] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 37] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 38] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 39] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 40] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 41] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 42] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 43] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 44] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 45] x=    -1 y=    -1 facing=0x8000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 46] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 47] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 48] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 49] x=    -1 y=    -1 facing=0x4000 sound=0x000a +8=0x0000 +A=0x000c +C=0x0013 flags=0x2000
+  [ 50] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 51] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 52] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 53] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 54] x=    -1 y=    -1 facing=0x4000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 55] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 56] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 57] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 58] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 59] x=    -1 y=    -1 facing=0x4000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 60] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 61] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 62] x=    -1 y=    -1 facing=0x1000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 63] x=    -1 y=    -1 facing=0x2000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 64] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 65] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 66] x=    -1 y=    -1 facing=0x4000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 67] x=    -1 y=    -1 facing=0x4000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0xa000
+  [ 68] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x000c +C=0x0013 flags=0x0000
+  [ 69] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 70] x=    -1 y=    -1 facing=0x2000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 71] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 72] x=    -1 y=    -1 facing=0x1000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x3000
+  [ 73] x=    -1 y=    -1 facing=0x2000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x3000
+  [ 74] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x8000
+  [ 75] x=    -1 y=    -1 facing=0x2000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x3000
+  [ 76] x=    -1 y=    -1 facing=0x4000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x3000
+  [ 77] x=    -1 y=    -1 facing=0x2000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 78] x=    -1 y=    -1 facing=0x1000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 79] x=    -1 y=    -1 facing=0x8000 sound=0x0000 +8=0x0000 +A=0x0000 +C=0x0000 flags=0x1000
+  [ 80] x=    -1 y=    -1 facing=0x1000 sound=0x000a +8=0x0000 +A=0x0000 +C=0x0000 flags=0xa000
+
+scanned 80 entries (fixed count -- real table length not yet bounded)
+TravelToDestination: ea=0x1a3f0
+IsDestinationUnlocked: ea=0x1a4c5
+ExamineTarget: ea=0x2d60a
+----- end target script output -----
+[*] finished executing dump_travel_destination_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_travel_destination_table.py', 'noexport']
+[*] reading dump_travel_destination_table.py
+[*] executing dump_travel_destination_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+wrote C:\dev\yendor\yendor2\ida_scripts\travel_destination_dump.txt
+----- end target script output -----
+[*] finished executing dump_travel_destination_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_travel_destination_table.py', 'noexport']
+[*] reading dump_travel_destination_table.py
+[*] executing dump_travel_destination_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+wrote C:\dev\yendor\yendor2\ida_scripts\travel_destination_dump.txt
+----- end target script output -----
+[*] finished executing dump_travel_destination_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_travel_destination_table2.py', 'noexport']
+[*] reading dump_travel_destination_table2.py
+[*] executing dump_travel_destination_table2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+wrote C:\dev\yendor\yendor2\ida_scripts\travel_destination_dump2.txt
+----- end target script output -----
+[*] finished executing dump_travel_destination_table2.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_travel_destination_table.py', 'noexport']
+[*] reading dump_travel_destination_table.py
+[*] executing dump_travel_destination_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+wrote C:\dev\yendor\yendor2\ida_scripts\travel_destination_dump.txt
+----- end target script output -----
+[*] finished executing dump_travel_destination_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

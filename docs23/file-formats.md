@@ -3738,14 +3738,77 @@ rejects any out-of-bounds query before the scan even starts.)
 
 **Not yet traced**: the real `WORLD.DAT` offset/format of whatever
 `LoadCurgameRecord` reads using a `0x4000` record's `value`, and the
-`0x2000`/`0x400` bits' consumers, if any. `LoadLockState`'s own format
-(the `0x8000` door/lock case) is now fully traced — see "Lock/door
-definition catalog" below. Reimplemented (lookup only, not the deeper
-state resolution the `0x4000` branch feeds into) in
-`src23/worldobjects.c`/`.h`: `worldObjectTableParse`/
-`worldObjectTableParseWorldDat` and `worldObjectFind`, tests in
-`tests/test_worldobjects.c` including exact reachable-record and
-per-flag counts checked against both real `WORLD.DAT` files.
+`0x400` bit's consumer, if any. `LoadLockState`'s own format (the
+`0x8000` door/lock case) is now fully traced — see "Lock/door
+definition catalog" below. The `0x2000` bit's own consumer is now
+found — see "Party teleport/fast-travel destinations" below.
+Reimplemented (lookup only, not the deeper state resolution the
+`0x4000` branch feeds into) in `src23/worldobjects.c`/`.h`:
+`worldObjectTableParse`/`worldObjectTableParseWorldDat` and
+`worldObjectFind`, tests in `tests/test_worldobjects.c` including
+exact reachable-record and per-flag counts checked against both real
+`WORLD.DAT` files.
+
+### Party teleport/fast-travel destinations (mechanism resolved 2026-09-30, data not yet extracted)
+
+`WorldObjectFlagUnknown2000` (`0x2000` — real, common in both games'
+data, previously untested by any traced caller) turned out to be a
+teleport/fast-travel waypoint marker — the long-open "region/town
+password" mystery this project has carried since an early session (see
+`roadmap.md`'s "Open questions"). `start`'s own per-cell dispatcher,
+reached the same way `interactKnock`'s own probe is (`ProbeFacingTile`,
+`yendor2.asm:30915`), tests this bit directly against `[si+2]` (the
+`WorldObjectRecord`'s own flags field) and, on a match, calls
+`TravelToDestination(ax = [si+4]`, the record's own `value` field`).
+
+`TravelToDestination` (`yendor2.asm:18170`) looks up a destination
+table by 1-based id (`DS:0xD40B`, 16-byte stride in Chapter 2:
+`+0`/`+2` world X/Y, `+4` facing, `+6` a sound id, `+0xA`/`+0xC` two
+more fields not yet identified, `+0xE` a flags word selecting one of 3
+travel-mode bits — `0x8000`/`0x4000`/`0x1000`, the last of which also
+triggers `TickTravelResourceAilments` and a `0x2000` "needs an unlock
+check" gate), sets `g_partyWorldX`/`Y`/`g_partyFacing` directly from
+the matched entry, applies one hardcoded landing-spot override for a
+single specific destination (arriving at a fixed cell during a
+specific game-clock window redirects elsewhere — a narrative special
+case, not a general mechanism), and redraws. **Chapter 3 has the same
+mechanism at a different address with a genuinely different record
+shape** (`DS:0xBA95`, 18-byte stride — 2 bytes wider than Chapter 2 —
+and a 2-bit lock test, `[+0xE] & 0xC000`, instead of Chapter 2's
+single `0x2000` bit): a real per-game difference, not just a relocated
+table, so this isn't a candidate for one shared C table the way most
+of this project's other embedded tables have been.
+
+The lock check itself, `IsDestinationUnlocked` (`yendor2.asm:18260`),
+is a small, cleanly-bounded, fully-extracted table (`DS:0xDFBB`,
+22-byte stride, exactly 20 real entries before a clean `0xFFFF`
+terminator) of `(destinationId, flagWordAddress, bitMask, optional
+rejection message id)` — and every one of those 20 entries' flag
+addresses (`0x94D1`, `0x94D3`, `0x94D7`, `0x94DF`, `0x94E5`, `0x94E7`)
+falls inside the already-reimplemented `g_globalFlags` region
+(`globalflags.c`, base `0x94D1`)! So unlocking a specific destination
+is the *same* global quest/world-state flag system this project
+already ported — just addressed here by a raw word offset + bitmask
+pair instead of `globalFlagTest`'s own 1-based bit-index convention
+`GrantMonsterRewards`/`ApplyItemEffectFlags` use elsewhere. No new
+flag mechanism needed to model this table once extracted, only a
+`(wordOffset, mask)` → `globalFlagTest`-equivalent translation.
+
+Chapter 2's destination table runs to roughly 187 real-looking entries
+(plausible world coordinates, `facing` always one of the 4 `SaveFacing`
+bits) before the bytes stop looking like table data at all — and
+`WorldObjectFlagUnknown2000` itself has exactly 187 reachable Chapter 2
+`WORLD.DAT` records (see the world-object flag table above), which is
+presumably not a coincidence: one destination-table entry per
+`0x2000`-flagged world marker. The exact table boundary isn't pinned
+down precisely yet (no length constant or terminator sentinel found,
+just where the data visibly degrades into what looks like following
+string data), and Chapter 3's own 18-byte-stride table hasn't been
+dumped at all. **Not reimplemented** — a genuinely new module's worth
+of work once both tables are fully extracted and bounded; see
+`roadmap.md` candidate 9. `yendor2/ida_scripts/dump_travel_destination_table.py`
+(committed) has the Chapter 2 raw dump, including the already-clean
+20-entry `IsDestinationUnlocked` gate table.
 
 ### `TryInteractAtPosition`: the per-cell interaction dispatcher (decoded 2026-09-24)
 

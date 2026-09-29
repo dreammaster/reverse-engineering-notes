@@ -10131,6 +10131,63 @@ needed its own build-comment updated to link `effect.c` too — caught
 by rebuilding the full 18-suite set rather than just the one file
 touched. Full suite passing.
 
+### Session update (continued, 2026-09-30): the "region/town password" mystery resolved — party teleport/fast-travel destinations
+
+This project has carried an open question since an early world-map
+session: what are the "region" and "town" passwords the game refers to
+in its manuals/error text, and how do they relate to the seamless
+world map? Picking up `WorldObjectFlagUnknown2000` — a real, common
+`worldobjects.h` flag bit (187 Chapter 2 records, 139 Chapter 3) whose
+consumer had never been traced — answered it. `start`'s own per-cell
+dispatcher (reached via the same `ProbeFacingTile` probe
+`interactKnock` already uses) tests this bit directly and calls
+`TravelToDestination(ax = the record's own value field)`: a party
+teleport/fast-travel handler that looks up a destination table by
+1-based id and sets the party's world position/facing directly from
+it. The "passwords" are just named entries in this table.
+
+Wrote and ran a read-only IDA dump script
+(`yendor2/ida_scripts/dump_travel_destination_table.py`) against
+Chapter 2's table (`DS:0xD40B`, 16-byte stride), confirming roughly
+187 real-looking entries — plausible world coordinates, facing always
+one of the 4 real `SaveFacing` bits — before the bytes clearly
+degrade into unrelated data. That count lining up with
+`WorldObjectFlagUnknown2000`'s own 187 reachable Chapter 2 records is
+presumably not a coincidence: one destination-table entry per
+`0x2000`-flagged world marker. Chapter 3 has the same mechanism but a
+genuinely different record shape (18-byte stride at a different
+address, a 2-bit lock test instead of Chapter 2's 1 bit) — a real
+per-game difference, not a relocated copy of the same table.
+
+The same script also dumped `IsDestinationUnlocked`'s own gate table
+(`DS:0xDFBB`, 22-byte stride) — small and cleanly bounded, exactly 20
+Chapter 2 entries ending in a clean `0xFFFF` terminator. Every entry's
+flag-word address landed inside the already-reimplemented
+`g_globalFlags` region (`globalflags.c`): locking a destination reuses
+the same global quest/world-state flag system this project ported
+weeks ago, just addressed by raw word offset + bitmask instead of
+`globalFlagTest`'s 1-based bit index. No new flag mechanism needed
+once this table is extracted, only a small translation layer.
+
+One early bug worth noting for future IDA scripts reading signed
+16-bit fields: the first version of the dump script applied the
+sign-conversion helper to an already-read value instead of an address
+(`i16(u16(ea))` instead of `i16(ea)`), which silently read unmapped
+memory and made every entry show `x=-1, y=-1`. Caught immediately
+since -1 coordinates are obviously wrong, not a subtle error, but a
+reminder to sanity-check a script's first real output before trusting
+a larger dump.
+
+**Not reimplemented yet** — deliberately scoped as its own future
+module (`roadmap.md` candidate 9) rather than rushed this round:
+Chapter 3's table hasn't been dumped at all, and Chapter 2's exact
+boundary past ~187 isn't pinned to a real length constant or
+terminator, just visible data degradation. Documented in
+`worldobjects.h`'s `WorldObjectFlagUnknown2000` comment,
+`file-formats.md`'s new "Party teleport/fast-travel destinations"
+section, and `roadmap.md`'s "Open questions" (now marked resolved)
+and candidate list.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

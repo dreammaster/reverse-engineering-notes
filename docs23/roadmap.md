@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-29, resolved: TickEquippedItemDurability, ApplyTargetResistancesToAttack, the equipment-corrosion write-back, and ApplyEffectAndDrawIconBar's full 3-way dispatch, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-30, resolved: the "region/town password" mechanism -- party teleport/fast-travel destinations, a new WorldObjectFlagUnknown2000 consumer -- plus TickEquippedItemDurability, ApplyTargetResistancesToAttack, the equipment-corrosion write-back, and ApplyEffectAndDrawIconBar's full 3-way dispatch from prior rounds)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -934,6 +934,35 @@ consumers, if any.
    half of the same `PartyFieldFlagBankCA` ability system this
    branch's own gate (`TestRecordFlag_CA`) checks.
 
+9. **Party teleport/fast-travel destinations** (`TravelToDestination`/
+   `IsDestinationUnlocked`) -- a new candidate found 2026-09-30 while
+   finally tracing `WorldObjectFlagUnknown2000` (`worldobjects.h`), a
+   real, common world-object flag this project had left untested for a
+   while. Resolves the long-open "region/town password" question (see
+   "Open questions" below): a `0x2000`-flagged world object's own
+   `value` is a 1-based index into a destination table (`DS:0xD40B`,
+   16-byte stride, Chapter 2; `DS:0xBA95`, 18-byte stride, Chapter 3 --
+   a genuine per-game record-size difference, not just a relocated
+   table) giving the party's new world position/facing plus a
+   travel-mode flag and an optional lock check. That lock check,
+   `IsDestinationUnlocked`, is a small, cleanly-bounded 20-entry table
+   (`DS:0xDFBB`, 22-byte stride, `0xFFFF`-terminated) of
+   `(destinationId, flagWordAddress, bitMask)` triples -- and every
+   flag address lands inside the already-reimplemented `g_globalFlags`
+   region, so unlocking a destination is the *same* global quest/
+   world-state flag system `globalflags.c` already covers, just
+   addressed by raw word offset instead of `globalFlagTest`'s 1-based
+   bit-index convention. Chapter 2's own destination table runs to
+   roughly 187 real-looking entries (matching `WorldObjectFlagUnknown2000`'s
+   own 187-record count in Chapter 2's `WORLD.DAT` -- presumably not a
+   coincidence) before the bytes stop looking like table data; not yet
+   pinned to an exact boundary, and Chapter 3's own table hasn't been
+   dumped at all yet. Not reimplemented -- a genuinely new module's
+   worth of work (extract both tables in full, compose the two
+   functions as data-driven lookups). `yendor2/ida_scripts/dump_travel_destination_table.py`
+   (committed) has the Chapter 2 extraction; needs a Chapter 3 sibling
+   before this can be picked up properly.
+
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need
 their own dedicated module ahead of that.
@@ -958,22 +987,51 @@ if reimplementing the specific function that touches them:
   `engine-diffs.md` documents that Chapter 3 appears to remove/replace
   the NUORE mechanic with a new 5-artifact quest system, which may
   make this moot for Chapter 3 but still matters for Chapter 2.
-- Relationship between the "region" passwords (`YENDORIAN`,
-  `BARIAGIAN`, `OBVERSIAN`, `MONTESERIAN`, `SLATORIAN`, `HEARDONIAN`)
-  and the "town" passwords (`PORT HOPE`, `THIEF'S DEN`, etc.) — two
-  separate systems, or one list split across two string clusters.
-  **Sharper hypothesis as of the world-map decode (2026-09-22)**: since
-  the whole game is one seamless coordinate space with no per-level
-  files (`file-formats.md`'s "World map"), these are plausibly just
-  named teleport coordinates into that single map rather than separate
-  loadable areas — worth checking against whatever function actually
-  consumes a matched password next time this is picked up. **New lead
-  (2026-09-23)**: the in-world text decode found a Chapter 3 "Note"
-  entry that is literally `THE PASSWORD IS` `` `RUSE~ `` (`file-formats.md`'s
-  "In-world readable text"), signed by an NPC — real evidence that at
-  least some passwords in this game are narrative/spoken, discovered and
-  entered by the player, which may or may not be the same mechanism as
-  the region/town password list; worth cross-checking directly.
+- ~~Relationship between the "region" passwords and "town" passwords~~
+  — **mechanism resolved 2026-09-30, data not yet extracted**: the
+  "just named teleport coordinates" hypothesis from the world-map
+  decode is confirmed. Found the actual consumer while tracing
+  `WorldObjectFlagUnknown2000` (`worldobjects.h`) for the first time —
+  a real, common world-object flag this project had flagged as
+  untested by any traced caller. `start`'s own per-cell dispatcher
+  (reached via `ProbeFacingTile`, the same probe `interactKnock` uses)
+  tests it directly and, on a match, calls `TravelToDestination(ax =
+  [si+4]`, the object's own `value` field`) — a party teleport/
+  fast-travel handler that looks up a destination-id table (`DS:0xD40B`,
+  16-byte stride in Chapter 2 — `worldX`/`worldY`/`facing`/`soundId`/
+  2 more fields/a flags word selecting a travel-mode bit and an
+  optional lock check), sets the party's position/facing directly, and
+  redraws. Chapter 3 has the *same* mechanism at a different address
+  (`DS:0xBA95`) with a genuinely different, wider record (18-byte
+  stride, a 2-bit lock test instead of 1 bit) — a real per-game
+  difference, not just a relocated table. The lock check itself,
+  `IsDestinationUnlocked`, turned out to be a clean, small, *fully
+  bounded* table (`DS:0xDFBB`, 22-byte stride, 20 real entries,
+  properly `0xFFFF`-terminated) of `(destinationId, flagWordAddress,
+  bitMask)` triples — and the flag addresses are all inside the
+  already-reimplemented `g_globalFlags` region (`globalflags.c`,
+  `0x94D1` onward)! So unlocking specific destinations is the *same*
+  global quest/world-state flag system this project already ported,
+  just addressed by raw word offset here instead of the 1-based
+  bit-index convention `globalFlagTest` uses elsewhere. The
+  destination table itself is much bigger than "just the named
+  passwords" — real data runs to roughly 187 sensible-looking entries
+  in Chapter 2 (world coordinates in-range, facing always a real
+  `SaveFacing` bit) before the bytes stop looking like the table at
+  all; not yet extracted/bounded exactly, and Chapter 3's own table
+  (different stride) hasn't been dumped yet either. A genuinely new,
+  well-scoped candidate module (`travel.c`/`.h`?) for a dedicated pass:
+  extract both games' destination tables in full (a straightforward
+  IDA dump, `yendor2/ida_scripts/dump_travel_destination_table.py`
+  already does Chapter 2's; needs a Chapter 3 sibling and a precise
+  boundary), then compose `TravelToDestination`/`IsDestinationUnlocked`
+  as data-driven functions over `globalflags.c`'s existing API. The
+  Chapter 3 "Note" signed `THE PASSWORD IS` `` `RUSE~ `` (`file-formats.md`'s
+  "In-world readable text") is presumably how the player *learns* a
+  destination id/password in-fiction — not yet cross-checked against
+  how a typed password resolves to a numeric destination id, since
+  that lookup (presumably a name-to-id string table) hasn't been
+  traced.
 - What `sg0977`/`sg0ffc`/`sg1486`/`sg195C`/`sg1ABC` (the 5 segments
   with IDA hex-address names instead of sequential `segNNN`) actually
   are — likely harmless IDA bookkeeping, not investigated further
