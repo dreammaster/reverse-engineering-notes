@@ -11,6 +11,9 @@ wxRect TGCharacter::GetVisibleRect() const {
 void TGCharacter::Save() {
 }
 
+void TGCharacter::Load() {
+}
+
 void TGCharacter::SetInterfaces() {
 }
 

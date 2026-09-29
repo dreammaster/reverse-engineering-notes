@@ -36,6 +36,11 @@ public:
 	// during a save (TGameControl::Save, asm lines 462896-462905) - not
 	// reversed beyond that call shape.
 	virtual void Save();
+	// Confirmed virtual (vtable slot 0xC0, TGameControl::Load, Deponia_Linux.
+	// asm lines 476981-476990) - called on every character while loading a
+	// save; placed symmetrically with Save() above (name not itself
+	// recovered) - not reversed beyond that call shape.
+	virtual void Load();
 
 	// Confirmed present at a fixed offset (TGameControl::IsTalking compares
 	// a TGText's speaker against a TVisObjRef via this field directly,

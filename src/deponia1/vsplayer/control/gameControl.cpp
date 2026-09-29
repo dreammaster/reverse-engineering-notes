@@ -44,6 +44,8 @@ wxCriticalSection EngineEventLock;
 std::vector<std::pair<std::string, std::string>> EngineEvents;
 }  // namespace
 
+TTimer TGameControl::s_stopTime;
+
 TGameControl::TGameControl() {
 	// TMasterControl's own base subobject is constructed automatically.
 	// TGameControl embeds a real TSceneControl and points TMasterControl's
@@ -2387,14 +2389,132 @@ void TGameControl::LoadEventHandlers() {
 }
 
 bool TGameControl::Load() {
-	// Confirmed called only from LoadGame(TMSavegame*) (asm line 477944) -
-	// the real savegame-state restoration logic (asm lines 476661-477395,
-	// ~735 lines: restores the dialog, per-character/scene links, several
-	// TVList-based field groups, and s_stopTime, all keyed by further
-	// unresolved field ids in the 0x1D0-0x1E0 range) is not reversed - left
-	// as a stub alongside LoadGame(TMSavegame*) below, which is itself the
-	// only caller.
-	return false;
+	// Confirmed (Deponia_Linux.asm lines 476661-477395, ~735 lines) -
+	// restores per-session state after TVisionaire::LoadSaveGame()/Load()
+	// populate the underlying game data. Called only from LoadGame
+	// (TMSavegame*) (asm line 477944), which discards this method's own
+	// return value.
+	TVisObjRef game = _visionaire->GetGame();
+	s_stopTime.SetTime();
+	_timingValueSeconds = game.GetInt(0xF6) / 1000.0f;
+	ClearTexts();
+
+	TVisObjRef game2 = _visionaire->GetGame();
+
+	// Confirmed (asm lines 476724-476747): both branches of this field's
+	// IsEmpty() check perform the identical hash-lookup-by-id that
+	// GetCharacterPointer() itself implements (falling back to the current
+	// _currentCharacter on a miss or an empty link) - collapsed to a single
+	// call rather than reproducing the redundant inlined branch.
+	_currentCharacter = GetCharacterPointer(game2.GetLink(0x1D4));
+
+	TVisObjRef sceneRef = game2.GetLink(0x1D5);
+	_dialog.SetDialog(game2.GetLink(0x1DC));
+
+	// Confirmed (asm lines 476776-476908): rebuilds every text linked from
+	// field 0x18's list, sorting each into _currentText (the one matching
+	// field 0x1DD - the same field ClearTexts() clears), a plain "active"
+	// text (_activeTexts), or a scene-attached one (_sceneTexts, which also
+	// tries to reattach it to whatever managed object sits at its own field-
+	// 0x2AC target).
+	TVisObjRef currentTextTarget = game2.GetLink(0x1DD);
+	TVList textTargets;
+	_visionaire->GetList(0x18, textTargets, false);
+	for (TVisionaireObject *obj : textTargets) {
+		TVisObjRef textLink(obj->GetLink(0x270));
+		if (textLink.IsEmpty())
+			continue;
+
+		TVisObjRef objRef(obj);
+		THText *newText = new THText(textLink, objRef);
+		newText->Load();
+
+		TVisObjRef sceneTarget = newText->GetTarget().GetLink(0x2AC);
+		if (sceneTarget.IsEmpty()) {
+			if (currentTextTarget == *obj)
+				_currentText = newText;
+			else
+				_activeTexts.push_back(newText);
+			continue;
+		}
+
+		_sceneTexts.push_back(newText);
+		TManagedObject *managedObj = _ownedSceneControl.GetScene()->GetObject(sceneTarget);
+		if (managedObj == nullptr) {
+			// Confirmed (asm lines 476931-476960): the target id's own
+			// byte[3] picks which fallback subsystem to search next - a
+			// character (byte[3]==0) or an interface (otherwise, or if the
+			// character lookup itself misses).
+			if (sceneTarget.GetId()[3] == 0)
+				managedObj = GetCharacterPointerEx(sceneTarget);
+			if (managedObj == nullptr) {
+				for (TGInterface *interface : _activeInterfaces) {
+					managedObj = interface->GetObject(sceneTarget);
+					if (managedObj != nullptr)
+						break;
+				}
+			}
+		}
+		if (managedObj != nullptr)
+			managedObj->SetText(newText);
+	}
+
+	for (TGInterface *interface : _allInterfaces)
+		interface->RemoveAllItems();
+
+	TGAction::LoadActions();
+
+	for (TGCharacter *character : _characters)
+		character->Load();
+
+	for (TGInterface *interface : _allInterfaces)
+		interface->Load();
+
+	_objectManager.SavedObjectChanged();
+	SetInterfaces();
+	TGAnimation::LoadAnimations();
+	LoadEventHandlers();
+	LoadGlobalScriptVariables(*_visionaireGame);
+
+	_isClearingAnimations = false;
+	// Confirmed a further qword field reset to 0 here (asm line 477018) -
+	// not confidently identified with any currently-modeled member; left
+	// unimplemented rather than guessed.
+
+	_ownedSceneControl.SetNextStartScrollPos(*game2.GetPoint(0x1D6));
+	_ownedSceneControl.ShowScene(sceneRef, true, true);
+
+	if (game2.GetBool(0x1D8)) {
+		GetMainControl()->SetIsScrollable(false);
+	} else {
+		TGScene *scene = _ownedSceneControl.GetScene();
+		GetMainControl()->SetIsScrollable(scene->GetRef().GetBool(0xE8));
+	}
+
+	// Confirmed (asm lines 477042-477247): same "either branch performs the
+	// identical hash lookup" shape as _currentCharacter's own update above.
+	_previousCharacter = GetCharacterPointer(game2.GetLink(0x263));
+
+	// Confirmed (asm lines 477063-477077): re-fetches field 0x132, clears
+	// it, then sets it right back to the same value - presumably to force a
+	// change notification without actually changing it (ClearLink/SetLink
+	// are called with different bool flags: false then true).
+	TVisObjRef gameNameLink = game2.GetLink(0x132);
+	game2.ClearLink(0x132, false);
+	game2.SetLink(0x132, gameNameLink, true);
+
+	if (game2.GetBool(0x275))
+		StartEarthquake(game2.GetInt(0x276), game2.GetInt(0x277));
+	else
+		StopEarthquake();
+
+	// Confirmed (asm lines 477095-477149): the same "_lastMousePos != {-1,-1}
+	// -> HandleMouseMove(_lastMousePos, false)" logic UpdateCurrentObject()
+	// already implements, inlined here as a direct vtable-slot-0x40 call
+	// rather than a call to UpdateCurrentObject() itself.
+	UpdateCurrentObject();
+
+	return true;
 }
 
 bool TGameControl::LoadGame(TMSavegame *savegame) {

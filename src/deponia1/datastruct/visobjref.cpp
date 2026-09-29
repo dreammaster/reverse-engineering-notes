@@ -1,5 +1,6 @@
 #include "datastruct/visobjref.h"
 
+#include "datastruct/visionaireobject.h"
 #include "datastruct/vlist.h"
 
 TVisObjRef::TVisObjRef(const TVisionaireObject &/*object*/) {
@@ -11,6 +12,11 @@ TVisObjRef::TVisObjRef(const TVisionaireObject */*object*/) {
 bool TVisObjRef::operator==(const TVisObjRef &other) const {
 	return _id[0] == other._id[0] && _id[1] == other._id[1] && _id[2] == other._id[2] &&
 	       _id[3] == other._id[3];
+}
+
+bool TVisObjRef::operator==(const TVisionaireObject &other) const {
+	const std::uint8_t *otherId = other.GetId();
+	return _id[0] == otherId[0] && _id[1] == otherId[1] && _id[2] == otherId[2] && _id[3] == otherId[3];
 }
 
 bool TVisObjRef::GetBool(int /*fieldId*/) const {

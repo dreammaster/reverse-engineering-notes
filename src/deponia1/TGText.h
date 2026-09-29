@@ -30,6 +30,10 @@ public:
 	// TGText specifically, not inherited from TSText (TGameControl::Save,
 	// asm lines 462781-462971) - not reversed beyond that call shape.
 	void Save();
+	// Confirmed non-virtual, same shape as Save() above (TGameControl::Load,
+	// Deponia_Linux.asm line 476852, called on a freshly-constructed THText*)
+	// - not reversed beyond that call shape.
+	void Load();
 
 	// Confirmed static call shapes only (TGameControl::SaveEventHandlers,
 	// Deponia_Linux.asm lines 457805-457833) - same "registered handler name

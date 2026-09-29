@@ -22,4 +22,8 @@ public:
 	// call shape.
 	static wxString GetEventHandlerAnimStarted();
 	static wxString GetEventHandlerAnimStopped();
+	// Confirmed static (TGameControl::Load, Deponia_Linux.asm line 477011) -
+	// the load-side counterpart to SaveAnimations() above; not reversed
+	// beyond that call shape.
+	static void LoadAnimations();
 };

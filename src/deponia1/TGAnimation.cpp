@@ -13,3 +13,6 @@ wxString TGAnimation::GetEventHandlerAnimStarted() {
 wxString TGAnimation::GetEventHandlerAnimStopped() {
 	return wxString();
 }
+
+void TGAnimation::LoadAnimations() {
+}

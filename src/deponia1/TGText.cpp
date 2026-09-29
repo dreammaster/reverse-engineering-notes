@@ -10,6 +10,9 @@ void TGText::Draw(float /*scale*/) {
 void TGText::Save() {
 }
 
+void TGText::Load() {
+}
+
 wxString TGText::GetEventHandlerTextStarted() {
 	return wxString();
 }

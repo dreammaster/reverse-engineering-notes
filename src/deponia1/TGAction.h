@@ -30,6 +30,10 @@ public:
 	// Confirmed static (TGameControl::HandleKeyEvent, Deponia_Linux.asm line
 	// 471550) - not reversed beyond that call shape.
 	static void SkipCutscene();
+	// Confirmed static (TGameControl::Load, Deponia_Linux.asm line 476980) -
+	// the load-side counterpart to SaveActions() above; not reversed beyond
+	// that call shape.
+	static void LoadActions();
 	// Confirmed static call shape only (TGameControl::HandleMouseUp,
 	// Deponia_Linux.asm line 472810 and others) - not reversed beyond that.
 	static TMouseEventEnum ConvertToEvent(TMouseMessageEnum msg);

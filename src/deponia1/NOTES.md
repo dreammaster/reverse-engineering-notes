@@ -1207,6 +1207,88 @@ project's usual "faithful control flow around not-yet-reversed
 dependencies" pattern), plus real `wxString::Cmp()` and
 `wxFileName::GetFullName()` in `WxStub.h`.
 
+## TGameControl batch 36: implement Load
+
+Reversed `TGameControl::Load()` (Deponia_Linux.asm lines 476661-477395,
+~735 lines) - the savegame-state restoration counterpart to `Save()`,
+called only from `LoadGame(TMSavegame*)`.
+
+A useful side effect of this pass: double-checking `GetCurrentCharacterPointer()`'s
+own disassembly against Load()'s hash-lookup code (both read the same field)
+confirmed it's a plain `mov rax,[rdi+338h]; retn` - a field read, matching
+the already-correct existing implementation (`return _currentCharacter;`).
+This also gave a clean, independently-confirmed offset map for a cluster of
+members this pass depends on:
+`_currentCharacter` (0x338), `_characters` (0x340, begin/end pair),
+`_currentText`/`_activeTexts`/`_sceneTexts` (0x380/0x388/0x398, matching
+`ClearTexts()`'s own asm exactly), `_dialog` (0x3A8), `_allInterfaces`/
+`_activeInterfaces` (0x140/0x150), and `_previousCharacter` (0x290,
+reconfirming batch 21's fix).
+
+Confirmed control flow:
+
+- Resets `_timingValueSeconds` from field 0xF6 (same derivation as
+  `LoadAndInitGame`'s own use of it) and calls `ClearTexts()`.
+- Updates `_currentCharacter` from field 0x1D4 - both of the asm's IsEmpty()
+  branches turned out to perform the identical hash-lookup-by-id that
+  `GetCharacterPointer()` itself already implements (falling back to the
+  unchanged `_currentCharacter` on a miss), so this collapses to a single
+  `GetCharacterPointer()` call rather than a duplicated inline branch. The
+  same collapse applies later to `_previousCharacter`'s own update from
+  field 0x263.
+- Sets the dialog from field 0x1DC (`TGDialog::SetDialog()` - already
+  existed) and remembers field 0x1D5 for a `ShowScene()` call later.
+- Rebuilds every text object linked from field 0x18's list (a fresh
+  `THText` per entry, via a new 2-argument constructor overload distinct
+  from the existing 9-argument one - confirmed by its own mangled
+  signature), sorting each into `_currentText` (the one matching field
+  0x1DD, which `ClearTexts()` independently confirms is the same field that
+  identifies "the current text's target"), a plain `_activeTexts` entry, or
+  a `_sceneTexts` entry that also tries to reattach to whatever managed
+  object sits at its own field-0x2AC target - falling back, in order, to a
+  character lookup (`GetCharacterPointerEx()`, gated by the target id's own
+  byte[3]) and then a scan of `_activeInterfaces`.
+- Calls `RemoveAllItems()` then (after `TGAction::LoadActions()`, new) each
+  character's new `Load()` virtual (vtable slot 0xC0, placed symmetrically
+  with the existing `Save()`), then each interface's new `Load()`, then
+  `TGObjectManager::SavedObjectChanged()` (new), `SetInterfaces()` (existing),
+  `TGAnimation::LoadAnimations()` (new), `LoadEventHandlers()` (existing),
+  and a new `LoadGlobalScriptVariables()` free function.
+- Clears `_isClearingAnimations`; one further qword field reset (asm line
+  477018) wasn't confidently identified with any modeled member and is left
+  unimplemented rather than guessed.
+- Restores the scroll position (new `TSceneControl::SetNextStartScrollPos()`)
+  and shows the remembered scene (`ShowScene()`, existing), then sets
+  scrollability either to `false` (field 0x1D8) or from the current scene's
+  own field 0xE8.
+- Re-touches field 0x132 (fetch, `ClearLink(false)`, then `SetLink(true)`
+  with the same value) - presumably to force a change notification without
+  an actual value change, given the differing bool flags on the two calls.
+- Restores earthquake state from fields 0x275-0x277 (`StartEarthquake()`/
+  `StopEarthquake()`, both existing), then finishes with the exact same
+  "`_lastMousePos != {-1,-1}` -> re-dispatch `HandleMouseMove`" logic
+  `UpdateCurrentObject()` already implements - called directly rather than
+  reproducing the inlined vtable dispatch.
+
+Another `TVisionaire`/`TVisionaireGame` data point (see `LoadDataGame`/
+`LoadSaveGame`'s own comments for the established gap): the new
+`LoadGlobalScriptVariables()` free function's confirmed `TVisionaireGame&`
+parameter is passed the SAME field offset (TGameControl+0xC8) that every
+other call in this function reads as `_visionaire` (TVisionaire*) - matched
+here against the already-shipped `Save()`'s own `SaveGlobalScriptVariables(
+*_visionaireGame)` call instead, rather than resolved into one member.
+
+New stub/real surface: `TGCharacter::Load()` (virtual), `TGInterface::
+RemoveAllItems()`/`Load()`, `TGObjectManager::SavedObjectChanged()`,
+`TGAction::LoadActions()`, `TGAnimation::LoadAnimations()`, `TGText::Load()`,
+a second `THText` constructor overload, `TSceneControl::
+SetNextStartScrollPos()`, `LoadGlobalScriptVariables()`, and a second
+`TVisObjRef::operator==(const TVisionaireObject&)` overload (all stubs
+except the real, evidence-backed control-flow logic above). Also adds
+`TGameControl::s_stopTime` - a genuinely recovered static member name (its
+own linker symbol, unlike a plain instance field), kept as-is per CLAUDE.md's
+recovered-global exception.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

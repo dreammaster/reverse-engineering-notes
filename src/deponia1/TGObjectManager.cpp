@@ -26,3 +26,6 @@ bool TGObjectManager::IsCurrentObjectEmpty() const {
 bool TGObjectManager::IsCurrentObjectWalkable() const {
 	return false;
 }
+
+void TGObjectManager::SavedObjectChanged() {
+}

@@ -22,3 +22,9 @@ void TGInterface::SetObjectsActive(bool /*active*/) {
 
 void TGInterface::UpdateItems(const TVList &/*items*/) {
 }
+
+void TGInterface::RemoveAllItems() {
+}
+
+void TGInterface::Load() {
+}

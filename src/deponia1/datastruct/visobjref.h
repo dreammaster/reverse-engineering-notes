@@ -55,6 +55,12 @@ public:
 	// Confirmed (TGameControl::GetInterface/IsTextActive/IsTalking): compares
 	// the 3-4 byte id, per GetId()'s comment above.
 	bool operator==(const TVisObjRef &other) const;
+	// A second overload comparing directly against a raw TVisionaireObject
+	// (TGameControl::Load, Deponia_Linux.asm line 476802) - presumably the
+	// same id-based comparison as above, just against the other side's own
+	// id instead of another TVisObjRef's; not reversed beyond that call
+	// shape.
+	bool operator==(const TVisionaireObject &other) const;
 
 	bool GetBool(int fieldId) const;
 	int GetInt(int fieldId) const;

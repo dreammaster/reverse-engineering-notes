@@ -216,8 +216,7 @@ public:
 	bool Load();
 	// Confirmed TMSavegame* (TGameControl::LoadGame(int) calls it directly
 	// with one, asm lines 478385-478469) - the manifest's void* was a
-	// placeholder guess. The real load logic (asm lines 477404-478377,
-	// ~970 lines) is not reversed - left as a stub.
+	// placeholder guess.
 	bool LoadGame(TMSavegame *savegame);
 	bool LoadGame(int slot);
 	void StartTween(const Tween &tween, const std::string &name);
@@ -364,4 +363,14 @@ private:
 	// function always reads the raw argument, never this hook-adjusted
 	// value). Purpose beyond that isn't resolved.
 	wxPoint _lastHookMousePos{-1, -1};
+	// Confirmed a static member, not instance data (recovered byte-for-byte
+	// from its own mangled symbol, `_ZN12TGameControl10s_stopTimeE` - a
+	// static member has its own linker symbol, unlike a plain instance
+	// field, so the name is genuine recovered evidence rather than invented;
+	// same exception CLAUDE.md already carves out for a recovered global).
+	// Set once in Load() (Deponia_Linux.asm line 476706) and never read
+	// anywhere reversed so far - purpose beyond "loading resets a stop-time"
+	// not resolved. A distinct, separately-declared `TGText::s_stopTime`
+	// exists too; unrelated to this one.
+	static TTimer s_stopTime;
 };

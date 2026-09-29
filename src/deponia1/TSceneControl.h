@@ -27,6 +27,10 @@ public:
 	// Deponia_Linux.asm line 471018) - not reversed beyond that.
 	bool FadingToNewScene() const;
 
+	// Confirmed call shape only (TGameControl::Load, Deponia_Linux.asm line
+	// 477024) - not reversed beyond that.
+	void SetNextStartScrollPos(const wxPoint &pos);
+
 private:
 	TGScene _scene;
 };

@@ -65,6 +65,13 @@ public:
 	// belonging to the current character, with the character's own field-
 	// 0x297 links; not reversed beyond that.
 	void UpdateItems(const TVList &items);
+	// Confirmed call shapes only (TGameControl::Load, Deponia_Linux.asm
+	// lines 476972-477004) - called on every registered interface (via
+	// TMasterControl::_allInterfaces) while loading a save, RemoveAllItems()
+	// first for all of them, then Load() for all of them; not reversed
+	// beyond that call shape.
+	void RemoveAllItems();
+	void Load();
 
 private:
 	TVisObjRef _ref;

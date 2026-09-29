@@ -4,3 +4,6 @@ THText::THText(const TVisObjRef &/*activeObject*/, const TVisObjRef &/*object*/,
                const TVisObjRef &/*text*/, TextAlignmentEnum /*alignment*/, const TVisObjRef &/*target*/,
                const wxPoint &/*pos*/, bool /*flag1*/, bool /*flag2*/) {
 }
+
+THText::THText(const TVisObjRef &/*text*/, const TVisObjRef &/*object*/) {
+}

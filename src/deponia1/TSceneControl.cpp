@@ -19,3 +19,6 @@ void TSceneControl::GetLastPlayableSceneParams(TVisObjRef &/*outScene*/, wxPoint
 bool TSceneControl::FadingToNewScene() const {
 	return false;
 }
+
+void TSceneControl::SetNextStartScrollPos(const wxPoint &/*pos*/) {
+}

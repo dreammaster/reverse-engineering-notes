@@ -31,4 +31,8 @@ public:
 	// Confirmed call shape only (TGameControl::HandleMouseUp, asm line
 	// 472998) - not reversed beyond that.
 	bool IsCurrentObjectWalkable() const;
+	// Confirmed call shape only (TGameControl::Load, Deponia_Linux.asm line
+	// 477008) - called once after loading a save's interfaces/characters;
+	// not reversed beyond that call shape.
+	void SavedObjectChanged();
 };

@@ -20,3 +20,6 @@ void TGAction::SkipCutscene() {
 TMouseEventEnum TGAction::ConvertToEvent(TMouseMessageEnum /*msg*/) {
 	return TMouseEventEnum{};
 }
+
+void TGAction::LoadActions() {
+}
