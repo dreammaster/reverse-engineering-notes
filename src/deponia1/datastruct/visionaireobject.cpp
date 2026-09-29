@@ -15,3 +15,7 @@ TVisionaireObject *TVisionaireObject::GetLink(int /*fieldId*/) const {
 const std::uint8_t *TVisionaireObject::GetId() const {
 	return _id;
 }
+
+wxString TVisionaireObject::GetStr(int /*fieldId*/) const {
+	return wxString();
+}

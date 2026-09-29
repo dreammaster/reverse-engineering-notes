@@ -66,6 +66,28 @@ public:
 		lhs += rhs;
 		return lhs;
 	}
+	// Confirmed call shape only (TGameControl::InitScripts, Deponia_Linux.asm
+	// line 458539) - real wxString::Contains() is a case-sensitive substring
+	// search.
+	bool Contains(const wxString &other) const {
+		return _data.find(other._data) != std::wstring::npos;
+	}
+	// Confirmed call shape only (asm line 458581) - real wxString::Replace()
+	// replaces every occurrence of strOld with strNew when replaceAll is
+	// true (the one call site reversed so far always passes true; a
+	// first-occurrence-only mode isn't implemented here).
+	int Replace(const wxString &strOld, const wxString &strNew, bool replaceAll = true) {
+		int count = 0;
+		std::size_t pos = 0;
+		while ((pos = _data.find(strOld._data, pos)) != std::wstring::npos) {
+			_data.replace(pos, strOld._data.size(), strNew._data);
+			pos += strNew._data.size();
+			count++;
+			if (!replaceAll)
+				break;
+		}
+		return count;
+	}
 
 	// Stands in for wxString::mb_str(); real wxWidgets returns a
 	// wxScopedCharBuffer that is implicitly convertible to const char*.
@@ -299,7 +321,22 @@ public:
 
 class wxFile {
 public:
+	wxFile() = default;
+	// Confirmed call shape only (TGameControl::InitScripts, Deponia_Linux.asm
+	// line 458410) - not reversed beyond that.
+	explicit wxFile(const wxString &path);
+	~wxFile();
+
 	static bool Exists(const wxString &path);
+	// Confirmed call shapes only (TGameControl::InitScripts, asm lines
+	// 458421-458435) - not reversed beyond that; implemented for real
+	// against the same std::FILE* pattern already used for TFile.
+	long Length() const;
+	unsigned long Read(char *buffer, unsigned long size);
+	void Close();
+
+private:
+	std::FILE *_handle = nullptr;
 };
 
 class wxLog {

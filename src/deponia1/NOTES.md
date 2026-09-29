@@ -949,6 +949,33 @@ float constants (per their own data xrefs) but is never itself called from
 here and presumably maintains whatever `IsWalkingSoundPlaying()` reads -
 not reversed.
 
+## TGameControl batch 31: InitScripts, and an "IdStrStd(TId const&) vs. GetId()'s uint8_t*" gap
+
+`InitScripts()` (asm lines 458341-458620+) runs `controller.lua` from disk
+if present, then executes every type-1 script object linked from the game
+(field 0x28B), skipping any whose name contains `"sha1"` (presumably
+signature/checksum files riding along in the same link list, not
+executable scripts) - each script's source (field 0x28C) has its `"<"`
+placeholder characters replaced with real newlines before being handed to
+`LuaDoString()`, using an id-derived string as the Lua chunk name for error
+reporting.
+
+That last step surfaced a small type mismatch worth flagging rather than
+silently resolving: the real `IdStrStd()` takes a `TId const&`, but it's
+called directly on `TVisionaireObject::GetId()`'s result, which is a
+confirmed `const std::uint8_t*` (used elsewhere, e.g. `PackVisId()`'s
+callers). Since `TId` is still an empty placeholder class (added in batch
+23 purely so a different call site would compile) with no known
+relationship to that packed-byte representation, `IdStrStd()` is declared
+here against the confirmed pointer type instead of guessing at how `TId`
+and `GetId()` actually relate.
+
+New stub/real surface: a real (not stubbed) `wxFile` (`Length()`/`Read()`/
+`Close()` against a genuine `std::FILE*`, same pattern as `TFile`), real
+`wxString::Contains()`/`Replace()`, `TCharHolder::c_str()`,
+`TVisionaireObject::GetStr()`, and `LuaDoString()`/`IdStrStd()` (new, in
+`vscommon/scripting/lua.h` alongside `argument.h`/`id.h`).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

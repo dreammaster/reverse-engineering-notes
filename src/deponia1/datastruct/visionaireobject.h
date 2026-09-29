@@ -28,6 +28,9 @@ public:
 	// TVisionaireObject* rather than a TVisObjRef by value.
 	TCharHolder GetName() const;
 	TVisionaireObject *GetLink(int fieldId) const;
+	// Confirmed call shape only (TGameControl::InitScripts, Deponia_Linux.asm
+	// line 458562) - not reversed beyond that.
+	wxString GetStr(int fieldId) const;
 	// Confirmed call shape only (asm line 468037) - same 3-4 byte packed id
 	// shape as TVisObjRef::GetId(), see that method's own comment.
 	const std::uint8_t *GetId() const;

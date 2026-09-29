@@ -27,6 +27,11 @@ public:
 	bool operator==(const wxString &other) const {
 		return _value.ToStdWstring() == other.ToStdWstring();
 	}
+	// Confirmed call shape only (TGameControl::InitScripts, Deponia_Linux.asm
+	// line 458534).
+	const wchar_t *c_str() const {
+		return _value.c_str();
+	}
 
 private:
 	wxString _value;

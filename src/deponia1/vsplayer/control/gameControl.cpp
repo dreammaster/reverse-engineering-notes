@@ -22,6 +22,7 @@
 #include "graphicslib/graphics.h"
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/id.h"
+#include "vscommon/scripting/lua.h"
 
 namespace {
 // Packs a TVisObjRef::GetId() 3-byte id into a 32-bit value the same way
@@ -448,6 +449,43 @@ void TGameControl::InitFonts() {
 }
 
 void TGameControl::InitScripts() {
+	// Confirmed (asm lines 458341-458620+). Field ids 0x28B (the game's
+	// script-object links, TypeOrder::kValue1), 0x28D (a script "type" flag -
+	// only type 1 is executed), and 0x28C (the script's own Lua source text)
+	// are unresolved beyond their raw ids. Scripts whose name contains
+	// "sha1" are skipped entirely (presumably signature/checksum files, not
+	// executable scripts, that happen to live in the same link list).
+	wxString luaPath;
+	toUTF(&luaPath, "controller.lua");
+	if (wxFile::Exists(luaPath)) {
+		wxFile file(luaPath);
+		long len = file.Length();
+		std::string buf;
+		buf.resize(static_cast<std::size_t>(len));
+		file.Read(buf.empty() ? nullptr : &buf[0], static_cast<unsigned long>(len));
+		file.Close();
+		LuaDoString(buf, "controller");
+	}
+
+	TVList scriptLinks;
+	_visionaire->GetGame().GetLinks(0x28B, TypeOrder::kValue1, scriptLinks);
+	for (TVisionaireObject *object : scriptLinks) {
+		if (object->GetInt(0x28D) != 1)
+			continue;
+
+		wxString sha1Str;
+		toUTF(&sha1Str, "sha1");
+		wxString nameStr(object->GetName().c_str());
+		if (nameStr.Contains(sha1Str))
+			continue;
+
+		wxString script = object->GetStr(0x28C);
+		script.Replace(wxString(L"<"), wxString(L"\n"), true);
+
+		std::string scriptNarrow(static_cast<const char *>(script.mb_str()));
+		std::string chunkName = IdStrStd(object->GetId());
+		LuaDoString(scriptNarrow, chunkName);
+	}
 }
 
 TVisionaireGame *TGameControl::GetGameSystem() {

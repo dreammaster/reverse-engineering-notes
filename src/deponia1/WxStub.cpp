@@ -55,6 +55,37 @@ bool wxFile::Exists(const wxString &path) {
 	return ::stat(static_cast<const char *>(path.mb_str()), &st) == 0;
 }
 
+wxFile::wxFile(const wxString &path) {
+	_handle = std::fopen(static_cast<const char *>(path.mb_str()), "rb");
+}
+
+wxFile::~wxFile() {
+	Close();
+}
+
+long wxFile::Length() const {
+	if (!_handle)
+		return 0;
+	long pos = std::ftell(_handle);
+	std::fseek(_handle, 0, SEEK_END);
+	long len = std::ftell(_handle);
+	std::fseek(_handle, pos, SEEK_SET);
+	return len;
+}
+
+unsigned long wxFile::Read(char *buffer, unsigned long size) {
+	if (!_handle)
+		return 0;
+	return static_cast<unsigned long>(std::fread(buffer, 1, size, _handle));
+}
+
+void wxFile::Close() {
+	if (_handle) {
+		std::fclose(_handle);
+		_handle = nullptr;
+	}
+}
+
 bool wxDir::Exists(const wxString &path) {
 	struct stat st;
 	return ::stat(static_cast<const char *>(path.mb_str()), &st) == 0 && (st.st_mode & _S_IFDIR);
