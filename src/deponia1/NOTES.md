@@ -617,6 +617,53 @@ both run regardless of the other's outcome. Added `wxRect::GetRight()`/
 `GetBottom()`/`SetLeft()`/`SetTop()`/`SetWidth()`/`SetHeight()`, real
 wxWidgets API surface that was missing.
 
+## TGameControl batch 22: AdjustInterfacesOnScreen and a 6-mode interface layout algorithm
+
+`AdjustInterfacesOnScreen(bool force, TPaintControl *scene)` (asm lines
+464975-465524) is TGameControl's largest method reversed so far by a good
+margin, but decomposes cleanly into two independent pieces once traced in
+full.
+
+First, a cache check: if `_currentCharacter` has changed since the last call
+(tracked by the new `_lastInterfaceCharacter` member), refresh every one of
+that character's own interfaces with fresh item lists pulled from field
+0x297.
+
+Second - unless a specific `scene` was requested and it isn't one of
+`_activeInterfaces` (in which case the whole function is a no-op) - lays out
+every active interface not overridden by field 0x1DF ("manual positioning
+override," checked once for the whole call, not per interface) according to
+a 6-mode position enum read from each interface's own field 0x13A
+(`TInterfacePositionEnum`, in `TGInterface.h`), consuming a per-interface
+margin (field 0x144) as it goes:
+- Modes 0/1 (`kDockTopStacked`/`kDockBottomStacked`) stack interfaces
+  vertically from the top or bottom edge, each one consuming `margin` (or
+  its own full worktop height, if `margin<=0`) from a shared running
+  "remaining height" budget.
+- Mode 2 (`kDockTopRow`) does the same horizontally along the top edge.
+- Modes 3/4 (`kFixedReserveWidth`/`kFixed`) both just place the interface at
+  its own stored point (field 0x12E); mode 3 additionally reserves width
+  from the shared budget the same way mode 2 does, mode 4 doesn't touch the
+  budget at all.
+- Mode 5 (`kDraggableClamped`) is a movable/draggable panel: while being
+  dragged (`force` is true and this interface IS the `scene` parameter),
+  its position follows the mouse offset from its stored point; otherwise it
+  keeps its current origin. Either way the result is clamped to stay fully
+  within the window bounds - the only mode that reads `force`/`scene` at
+  all, or clamps.
+
+Whatever width/height budget is left over after all active interfaces have
+claimed their share becomes the current scene's own origin and visible
+size - i.e. this is a "give edge-docked interface panels first claim on
+screen space, then let the scene fill whatever's left" layout algorithm,
+the same shape as a classic dock-panel UI layout. Added
+`TPaintControl::SetWorktopSize/SetVisibleSize/SetOrigin/GetOrigin` (and wired
+`GetWorktopWidth/Height` to a real backing field instead of a hardcoded 0,
+now that a setter exists), `TGInterface::UpdateItems()` and a second,
+mutable `GetRef()` overload (matching `TGCharacter`'s existing dual-overload
+pattern - `AdjustInterfacesOnScreen` mutates an interface's own field 0x2B0
+in place), and `TInterfacePositionEnum` itself.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

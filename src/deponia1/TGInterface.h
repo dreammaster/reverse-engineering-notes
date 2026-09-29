@@ -10,13 +10,35 @@
 #pragma once
 
 #include "TPaintControl.h"
+#include "datastruct/vlist.h"
 #include "datastruct/visobjref.h"
 
 class TManagedObject;
 
+// Confirmed 6 values, 0-5, from a jump table keyed on an interface's field
+// id 0x13A (TGameControl::AdjustInterfacesOnScreen, Deponia_Linux.asm lines
+// 465157-465494) - names are a best-effort read of each case's own
+// behavior (see AdjustInterfacesOnScreen's comment), not recovered
+// identifiers.
+enum class TInterfacePositionEnum {
+	kDockTopStacked = 0,    // y = accumulated top offset, x = 0; reserves height
+	kDockBottomStacked = 1, // y flush against the current bottom edge; reserves height
+	kDockTopRow = 2,        // x = accumulated left offset, y = 0; reserves width
+	kFixedReserveWidth = 3, // a stored point, but also reserves width like case 2
+	kFixed = 4,             // a stored point, no space reserved
+	kDraggableClamped = 5,  // follows the mouse while being dragged; always clamped on-screen
+};
+
 class TGInterface : public TPaintControl {
 public:
 	const TVisObjRef &GetRef() const {
+		return _ref;
+	}
+	// Confirmed mutated directly (TGameControl::AdjustInterfacesOnScreen
+	// calls TVisObjRef::SetValue() on this field in place, Deponia_Linux.asm
+	// line 465175) - same "TVisObjRef at a known offset, no accessor in the
+	// original" pattern as TGCharacter's own dual GetRef() overloads.
+	TVisObjRef &GetRef() {
 		return _ref;
 	}
 	// Confirmed TManagedObject* (TGameControl::StartObjectText calls
@@ -30,6 +52,11 @@ public:
 	// it's dropped, and on every interface entering it, respectively.
 	void RemoveSpritesAndAnimations();
 	void SetObjectsActive(bool active);
+	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
+	// Deponia_Linux.asm lines 465036-465040) - called once per interface
+	// belonging to the current character, with the character's own field-
+	// 0x297 links; not reversed beyond that.
+	void UpdateItems(const TVList &items);
 
 private:
 	TVisObjRef _ref;

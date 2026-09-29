@@ -37,6 +37,9 @@ public:
 	bool IsScrollable() const;
 	int GetWorktopWidth() const;
 	int GetWorktopHeight() const;
+	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
+	// Deponia_Linux.asm lines 465184-465210) - not reversed beyond that.
+	void SetWorktopSize(int width, int height);
 	const FloatPoint &GetFloatScrollPos() const;
 	void AdjustWindowHorizontal(float amount);
 	void AdjustWindowVertical(float amount);
@@ -46,10 +49,23 @@ public:
 	// lines 460533-460715) - same "logical const, physical mutable
 	// accessor" shape as GetScrollPos() above.
 	const wxSize &GetVisibleSize() const;
+	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
+	// asm line 465210) - not reversed beyond that.
+	void SetVisibleSize(int width, int height);
+	// Confirmed a reference-returning accessor, same shape as
+	// GetScrollPos()/GetVisibleSize() above (TGameControl::
+	// AdjustInterfacesOnScreen, asm lines 465220-465223: dereferences the
+	// returned address as [ptr]/[ptr+4]).
+	const wxPoint &GetOrigin() const;
+	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
+	// asm line 465179).
+	void SetOrigin(int x, int y);
 
 private:
 	wxPoint _scrollPos{};
 	FloatPoint _floatScrollPos{};
 	wxSize _visibleSize{};
+	wxSize _worktopSize{};
+	wxPoint _origin{};
 	bool _active = false;
 };

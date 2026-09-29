@@ -33,11 +33,16 @@ bool TPaintControl::IsScrollable() const {
 }
 
 int TPaintControl::GetWorktopWidth() const {
-	return 0;
+	return _worktopSize.width;
 }
 
 int TPaintControl::GetWorktopHeight() const {
-	return 0;
+	return _worktopSize.height;
+}
+
+void TPaintControl::SetWorktopSize(int width, int height) {
+	_worktopSize.width = width;
+	_worktopSize.height = height;
 }
 
 const FloatPoint &TPaintControl::GetFloatScrollPos() const {
@@ -46,6 +51,20 @@ const FloatPoint &TPaintControl::GetFloatScrollPos() const {
 
 const wxSize &TPaintControl::GetVisibleSize() const {
 	return _visibleSize;
+}
+
+void TPaintControl::SetVisibleSize(int width, int height) {
+	_visibleSize.width = width;
+	_visibleSize.height = height;
+}
+
+const wxPoint &TPaintControl::GetOrigin() const {
+	return _origin;
+}
+
+void TPaintControl::SetOrigin(int x, int y) {
+	_origin.x = x;
+	_origin.y = y;
 }
 
 void TPaintControl::AdjustWindowHorizontal(float /*amount*/) {

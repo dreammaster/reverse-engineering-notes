@@ -276,6 +276,11 @@ private:
 	// purpose unclear (possibly another cached copy, like
 	// _previousCharacter above).
 	TGCharacter *_startingCharacter = nullptr;
+	// Confirmed present (TGameControl::AdjustInterfacesOnScreen, asm line
+	// 465015): the character _currentCharacter's interfaces' item lists
+	// (field 0x297) were last refreshed for - refreshed again only when
+	// _currentCharacter changes.
+	TGCharacter *_lastInterfaceCharacter = nullptr;
 	// Confirmed a custom hash table keyed by TVisObjRef::GetId()'s packed
 	// id (GetCharacter/GetCharacterPointer/GetCharacterPointerEx do the
 	// lookup, InitCharacters does the insert - asm lines 456362-456578,

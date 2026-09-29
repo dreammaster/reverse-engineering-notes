@@ -11,3 +11,6 @@ void TGInterface::RemoveSpritesAndAnimations() {
 
 void TGInterface::SetObjectsActive(bool /*active*/) {
 }
+
+void TGInterface::UpdateItems(const TVList &/*items*/) {
+}

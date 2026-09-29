@@ -985,7 +985,159 @@ bool TGameControl::PreLoad(wxString &/*error*/, wxString &/*warning*/, bool /*is
 	return false;
 }
 
-void TGameControl::AdjustInterfacesOnScreen(bool /*force*/, TPaintControl */*scene*/) {
+void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
+	// Confirmed (asm lines 464975-465524). Refreshes the current character's
+	// own interfaces' item lists (field 0x297) when the character has
+	// changed since the last call, then - unless a specific `scene` was
+	// requested and isn't currently active - repositions every active
+	// interface according to its own field 0x13A (position mode, see
+	// TInterfacePositionEnum) and field 0x144 (a margin/reserved-space
+	// amount for the docking modes), before giving whatever screen space is
+	// left over to the current scene. Field id 0x1DF (an "always centered"/
+	// manual-positioning-override toggle checked once per call, not per
+	// interface) is unresolved beyond its call shape.
+	if (_lastInterfaceCharacter != _currentCharacter) {
+		_lastInterfaceCharacter = _currentCharacter;
+		TVList items;
+		_currentCharacter->GetRef().GetLinks(0x297, TypeOrder::kValue0, items);
+		for (TGInterface *interface : _currentCharacter->GetInterfaces())
+			interface->UpdateItems(items);
+	}
+
+	if (scene != nullptr) {
+		bool found = false;
+		for (TGInterface *interface : _activeInterfaces) {
+			if (interface == scene) {
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			return;
+	}
+
+	int windowWidth = 0;
+	int windowHeight = 0;
+	GetWindowSize(&windowWidth, &windowHeight);
+	TGScene *ownedScene = _ownedSceneControl.GetScene();
+	bool isMenu = ownedScene->IsMenu();
+
+	bool overrideAll = false;
+	if (!isMenu) {
+		TVisObjRef game = _visionaire->GetGame();
+		overrideAll = game.GetBool(0x1DF);
+	}
+
+	int remainingWidth = windowWidth;
+	int remainingHeight = windowHeight;
+	int accumX = 0;
+	int accumY = 0;
+
+	if (!isMenu && !_activeInterfaces.empty()) {
+		for (TGInterface *interface : _activeInterfaces) {
+			if (interface->GetRef().IsEmpty() || !interface->IsActive() || overrideAll)
+				continue;
+
+			int margin = interface->GetRef().GetInt(0x144);
+			auto posMode = static_cast<TInterfacePositionEnum>(interface->GetRef().GetInt(0x13A));
+
+			int x = 0;
+			int y = 0;
+			switch (posMode) {
+			case TInterfacePositionEnum::kDockTopStacked:
+				if (margin > 0) {
+					y = accumY;
+					remainingHeight -= margin;
+					accumY += margin;
+				} else {
+					int h = interface->GetWorktopHeight();
+					y = accumY;
+					remainingHeight -= h;
+					accumY += h;
+				}
+				break;
+			case TInterfacePositionEnum::kDockBottomStacked:
+				if (margin > 0) {
+					y = (accumY + remainingHeight) - interface->GetWorktopHeight();
+					remainingHeight -= margin;
+				} else {
+					int h = interface->GetWorktopHeight();
+					remainingHeight -= h;
+					y = remainingHeight + accumY;
+				}
+				break;
+			case TInterfacePositionEnum::kDockTopRow:
+				if (margin > 0) {
+					x = accumX;
+					remainingWidth -= margin;
+					accumX += margin;
+				} else {
+					int w = interface->GetWorktopWidth();
+					x = accumX;
+					remainingWidth -= w;
+					accumX += w;
+				}
+				break;
+			case TInterfacePositionEnum::kFixedReserveWidth: {
+				remainingWidth -= (margin > 0) ? margin : interface->GetWorktopWidth();
+				const wxPoint *pt = interface->GetRef().GetPoint(0x12E);
+				x = pt->x;
+				y = pt->y;
+				break;
+			}
+			case TInterfacePositionEnum::kFixed: {
+				const wxPoint *pt = interface->GetRef().GetPoint(0x12E);
+				x = pt->x;
+				y = pt->y;
+				break;
+			}
+			case TInterfacePositionEnum::kDraggableClamped: {
+				const wxPoint *pt = interface->GetRef().GetPoint(0x12E);
+				if (force && interface == scene) {
+					const wxPoint &mousePos = GetMousePos();
+					x = mousePos.x - pt->x;
+					y = mousePos.y - pt->y;
+				} else {
+					const wxPoint &origin = interface->GetOrigin();
+					x = origin.x;
+					y = origin.y;
+				}
+				if (x < 0)
+					x = 0;
+				else if (windowWidth < interface->GetWorktopWidth() + x)
+					x = windowWidth - interface->GetWorktopWidth();
+				if (y < 0)
+					y = 0;
+				else if (windowHeight < interface->GetWorktopHeight() + y)
+					y = windowHeight - interface->GetWorktopHeight();
+				break;
+			}
+			}
+
+			wxPoint pos{x, y};
+			interface->GetRef().SetValue(0x2B0, pos, TSendEventEnum::kSendEvent);
+			interface->SetOrigin(x, y);
+
+			int worktopHeight = interface->GetWorktopHeight();
+			int worktopWidth = interface->GetWorktopWidth();
+			interface->SetWorktopSize(worktopWidth, worktopHeight);
+
+			int visibleWidth = (windowWidth < worktopWidth + x) ? (windowWidth - x) : worktopWidth;
+			int visibleHeight = (windowHeight < worktopHeight + y) ? (windowHeight - y) : worktopHeight;
+			interface->SetVisibleSize(visibleWidth, visibleHeight);
+		}
+	}
+
+	ownedScene->SetOrigin(accumX, accumY);
+	ownedScene->SetVisibleSize(remainingWidth, remainingHeight);
+
+	const FloatPoint &scrollPos = ownedScene->GetFloatScrollPos();
+	ownedScene->AdjustWindowHorizontal(scrollPos.x);
+	ownedScene->AdjustWindowVertical(scrollPos.y);
+
+	TVisObjRef game = _visionaire->GetGame();
+	game.SetValue(0x1D6, wxPoint{static_cast<int>(scrollPos.x), static_cast<int>(scrollPos.y)},
+	              TSendEventEnum::kSendEvent);
 }
 
 void TGameControl::SetInterfaces() {
