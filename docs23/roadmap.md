@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-29, resolved: ApplyTargetResistancesToAttack, the equipment-corrosion write-back, and ApplyEffectAndDrawIconBar's full 3-way dispatch, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
+## Status (last updated 2026-09-29, resolved: TickEquippedItemDurability, ApplyTargetResistancesToAttack, the equipment-corrosion write-back, and ApplyEffectAndDrawIconBar's full 3-way dispatch, plus 4 of ApplyEncodedItemEffect's ~19 branches and the search/lockpicking trap's roll-and-apply composition)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you

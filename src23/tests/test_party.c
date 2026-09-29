@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_party test_party.c ../party.c ../savegame.c ../savegame_stdio.c ../bcd4.c ../item.c && ./test_party
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_party test_party.c ../party.c ../savegame.c ../savegame_stdio.c ../bcd4.c ../item.c ../effect.c ../random.c && ./test_party
  *
  * Real-character checks read yendor2/game/CURGAME (gitignored; skipped if
  * absent). Set YENDOR2_GAME_DIR to override where.
@@ -907,6 +907,69 @@ static void testHandleIconBarItemExpiry(void) {
              itemSlotExtra(g_record + 0x13A), 1);
 }
 
+static void testTickEquippedItemDurability(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 2;
+    catalog.weaponCount = 1;
+
+    /* Item 1: category A weapon (main-weapon-eligible), break chance 500/1000, replacement item 2. */
+    uint8_t *item1 = catalog.items + 0 * ItemRecordSize;
+    setU16At(item1, ItemFieldFlags, ItemFlagEquipCode0A);
+    setU16At(item1, ItemFieldTargetOffset, 0);
+    setWord(catalog.weapons, 0, ItemTargetBreakChanceA, 500);
+    setWord(catalog.weapons, 0, ItemTargetBreakItemA, 2);
+
+    /* Item 2: the replacement -- deliberately category C (off-hand), not A, to prove the
+     * wear-counter reset follows the REPLACEMENT's own category, not the original slot. */
+    uint8_t *item2 = catalog.items + 1 * ItemRecordSize;
+    setU16At(item2, ItemFieldFlags, ItemFlagEquipCode0C);
+
+    /* Empty slot / non-classifying item: no-op, no counter touched. */
+    memset(g_record, 0, PartyRecordSize);
+    RandomState rngNoop;
+    randomStart(&rngNoop, 1, 1);
+    check("empty slot: unchanged",
+          partyTickEquippedItemDurability(g_record, &catalog, GameYendor2, 0x13A, &rngNoop) ==
+              PartyItemDurabilityUnchanged);
+    checkU32("...and the wear counter stays untouched", partyGetU16(g_record, PartyFieldWearMain), 0);
+
+    memset(g_record, 0, PartyRecordSize);
+    itemSlotSet(partyEquipmentSlot(g_record, 0x0A, GameYendor2), 1, 0);
+    partySetU16(g_record, PartyFieldWearMain, 0x77); /* one below threshold: incrementing lands exactly ON it, not past */
+
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    PartyItemDurabilityOutcome outcome = partyTickEquippedItemDurability(g_record, &catalog, GameYendor2, 0x13A, &rng);
+    check("landing exactly on the threshold (not strictly past it): no roll, unchanged",
+          outcome == PartyItemDurabilityUnchanged);
+    checkU32("...but the wear counter still incremented", partyGetU16(g_record, PartyFieldWearMain), 0x78);
+
+    /* Now past threshold: a roll happens. Peek it to know the expected outcome deterministically. */
+    partySetU16(g_record, PartyFieldWearSecond, 999); /* nonzero, so a reset is observable */
+    RandomState rng2;
+    randomStart(&rng2, 3, 3);
+    RandomState peek = rng2;
+    uint16_t roll = randomInRange(&peek, 1000);
+    outcome = partyTickEquippedItemDurability(g_record, &catalog, GameYendor2, 0x13A, &rng2);
+    if (roll > 500) {
+        check("roll exceeds chance: item survives", outcome == PartyItemDurabilityUnchanged);
+        checkU32("slot still holds the original item", itemSlotId(partyEquipmentSlot(g_record, 0x0A, GameYendor2)),
+                 1);
+    } else {
+        check("roll within chance: item breaks", outcome == PartyItemDurabilityBroke);
+        checkU32("slot now holds the replacement item", itemSlotId(partyEquipmentSlot(g_record, 0x0A, GameYendor2)),
+                 2);
+        checkU32("the broken item's own id is parked as the slot's extra field",
+                 itemSlotExtra(partyEquipmentSlot(g_record, 0x0A, GameYendor2)), 1);
+        checkU32("wear-counter reset follows the replacement's own category (0xC -> Second, not Main)",
+                 partyGetU16(g_record, PartyFieldWearSecond), 0);
+        checkU32("...Main's own counter is NOT reset (the replacement wasn't category A)",
+                 partyGetU16(g_record, PartyFieldWearMain), 0x79);
+    }
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -923,6 +986,7 @@ int main(void) {
     testApplyIconBarStatDelta();
     testMultiStatEffect();
     testHandleIconBarItemExpiry();
+    testTickEquippedItemDurability();
     testRealCharacters();
 
     if (g_failureCount == 0) {

@@ -2112,7 +2112,40 @@ status-effect application, or (a weaker-DC save) an "equipment
 corrosion" effect that targets the *defender's* equipped item via
 `GetClassifiedItemStatField` instead of dealing HP damage — a
 monster special attack that damages gear directly, distinct from
-`TickEquippedItemDurability`'s ordinary wear-and-tear. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
+`TickEquippedItemDurability`'s ordinary wear-and-tear.
+
+**`TickEquippedItemDurability`/`ApplyItemEffectIconSlot` reimplemented,
+2026-09-29** (instruction-identical in Chapter 3): with
+`partyHandleIconBarItemExpiry` already done, this composed cleanly —
+`ApplyItemEffectIconSlot` is exactly effect id 0's own definition
+(embedded in `effect.c`'s tables: `modeFlags` = `EffectModeItemReplace`
+for both games) feeding `partyHandleIconBarItemExpiry` directly, and
+the "`word_2E548`'s fields" this section's own older note left vague
+turned out to already be named: `item.h`'s `ItemTargetBreakChanceA`/
+`ItemTargetBreakItemA` (and their `B` siblings for the non-weapon
+category) are exactly the roll chance and replacement id, selected by
+the *same* category-A/C flag test `itemCorrosionReplacement` already
+uses. Confirmed one more original quirk while composing it: after a
+break, which of the 3 wear counters gets reset to 0 is decided by the
+*replacement* item's own equip-category flags, not the original slot
+that broke — traced by resolving what the original's own
+`g_currentItemRecord` actually is at that point (a fixed alias for
+`LoadItemCatalogRecord`'s `0xB50` scratch buffer, last overwritten by
+the replacement item's own load inside `partyHandleIconBarItemExpiry`
+itself — not a separately-tracked pointer). Reimplemented as
+`partyTickEquippedItemDurability` in `src23/party.c`/`.h`, deliberately
+omitting the original's own redundant second `ClassifyItemServiceTier`
+call (an artifact of its scratch-buffer-based item lookup possibly
+going stale between calls — `item.h`'s own lookups don't share that
+risk, so the second call would be a pure no-op repeat). Tests in
+`tests/test_party.c` cover the empty-slot/non-classifying no-op, the
+exactly-at-threshold boundary, and both roll outcomes including the
+wear-counter-reset-follows-the-replacement quirk. All 18 suites pass
+(`party.c` gained a new dependency on `effect.c`/`random.c` for
+`effectGetDef`/`randomInRange`; every test file linking `party.c`
+directly was updated to link `effect.c` too).
+
+The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
 `ShowInsufficientGoldMessage`. The whole sell-item screen is entered
 via `RunSellItemScreen` (from `UseItem`, when the used item's `[+0xE]`
 flags have bit `0x4000` set). A sibling branch, gated on the item's

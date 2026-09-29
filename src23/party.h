@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "bcd4.h"
+#include "effect.h"
 #include "game.h"
 #include "item.h"
 #include "savegame.h"
@@ -332,6 +333,61 @@ void partyRemoveMultiStatEffect(uint8_t *record, const uint8_t *effect);
  */
 void partyHandleIconBarItemExpiry(uint8_t *record, const ItemCatalog *catalog, uint16_t modeFlags,
                                    uint16_t equippedItemId, uint16_t replacementItemId, unsigned slotOffset);
+
+/*
+ * TickEquippedItemDurability (yendor2.asm:19242 vs. yendor3.asm:11226,
+ * instruction-identical): the equipped-item wear/breakage tracker for
+ * one equipment slot (slotOffset: 0x13A/0x142/0x146). Reuses
+ * item.h's already-decoded classification/break-target fields
+ * (itemClassifyServiceTier, itemTargetEntry/itemTargetWord with
+ * ItemTargetBreakChanceA/B and ItemTargetBreakItemA/B) rather than
+ * re-deriving them.
+ *
+ * An empty slot, or an item itemClassifyServiceTier doesn't recognize
+ * (not wearable/weapon-like), is left untouched:
+ * PartyItemDurabilityUnchanged, no counter incremented. Otherwise the
+ * slot's own wear counter (PartyFieldWearMain/Second/Third, at
+ * 0xBE/0xC0/0xC2) increments by 1; while it's still at or below the
+ * slot's own threshold (0x78/0x50/0x14 -- deliberately different per
+ * slot, not reproduced as one shared constant), nothing else happens
+ * this call. Once the counter exceeds the threshold, rolls
+ * randomInRange(rng, 1000) against the item's own break chance
+ * (ItemTargetBreakChanceA for a category-A/C item -- ItemFlagEquipCode0A
+ * or 0C set -- ItemTargetBreakChanceB otherwise, the same category
+ * split itemCorrosionReplacement already uses). A roll within chance
+ * "breaks" the item: the slot is replaced via
+ * partyHandleIconBarItemExpiry (matching effect id 0's own definition
+ * -- always EffectModeItemReplace, fetched via effectGetDef rather
+ * than hardcoding the bit, matching combatApplyCorrosion's own
+ * convention) with ItemTargetBreakItemA/B as the replacement, and the
+ * *replacement* item's own equip-category flags (not necessarily the
+ * same category the broken item had) select which of the 3 wear
+ * counters gets reset to 0 -- confirmed by tracing what the original's
+ * own `g_currentItemRecord` actually is at that point (a fixed alias
+ * for LoadItemCatalogRecord's 0xB50 scratch buffer, last overwritten
+ * by partyHandleIconBarItemExpiry's own internal load of the
+ * replacement item -- not a separately-tracked pointer, and not
+ * modeled as one here since this reimplementation's item lookups
+ * don't share that scratch-buffer aliasing). Returns
+ * PartyItemDurabilityBroke. A roll outside chance (the item survives)
+ * returns PartyItemDurabilityUnchanged, same as the not-yet-due case
+ * -- the original's own errorCode conflates both under "1" too.
+ *
+ * Deliberately simplified from the original by one step: the original
+ * re-runs ClassifyItemServiceTier a second time right before the roll
+ * (its own EMS-scratch-buffer item record could have been clobbered
+ * by intervening calls since the first classification); this
+ * reimplementation's item.h lookups aren't scratch-buffer-based, so
+ * there's nothing to go stale and the second call would be a pure
+ * no-op repeat -- omitted rather than translated literally.
+ */
+typedef enum {
+    PartyItemDurabilityUnchanged,
+    PartyItemDurabilityBroke
+} PartyItemDurabilityOutcome;
+
+PartyItemDurabilityOutcome partyTickEquippedItemDurability(uint8_t *record, const ItemCatalog *catalog,
+                                                             GameKind game, unsigned slotOffset, RandomState *rng);
 
 enum { PartyXpThresholdCount = 89 };
 

@@ -1451,6 +1451,15 @@ parameters. Reimplemented once as `combatApplyTargetResistances`
 their own untraced caller-context globals — see `file-formats.md`'s
 "Attack resolution" section.
 
+## `TickEquippedItemDurability`/`ApplyItemEffectIconSlot`: no behavioral difference found
+
+Checked directly, `yendor2.asm:19242`/`:19441` vs. `yendor3.asm:11226`/
+`:11425` — instruction-identical: same per-slot thresholds (`0x78`/
+`0x50`/`0x14`), same category-A/C break-chance/replacement selection,
+same wear-counter-reset-follows-the-replacement-item quirk. Reimplemented
+once as `partyTickEquippedItemDurability` (`src23/party.c`/`.h`), shared
+by both games.
+
 ## Turn-based combat turn order and round processing: no behavioral difference found
 
 `BuildCombatTurnOrder`, `SelectActiveMonster`, and `ProcessCombatRound`

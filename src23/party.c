@@ -303,6 +303,71 @@ void partyHandleIconBarItemExpiry(uint8_t *record, const ItemCatalog *catalog, u
     partyRefreshCarryCapacityAndAttributeBonuses(record);
 }
 
+PartyItemDurabilityOutcome partyTickEquippedItemDurability(uint8_t *record, const ItemCatalog *catalog,
+                                                             GameKind game, unsigned slotOffset, RandomState *rng) {
+    uint16_t itemId = partyGetU16(record, slotOffset);
+    if (itemId == 0) {
+        return PartyItemDurabilityUnchanged;
+    }
+
+    const uint8_t *itemRecord = itemCatalogRecord(catalog, itemId);
+    ItemServiceTier tier;
+    if (!itemRecord || !itemClassifyServiceTier(itemRecord, &tier)) {
+        return PartyItemDurabilityUnchanged;
+    }
+
+    unsigned wearFieldOffset;
+    uint16_t threshold;
+    if (slotOffset == 0x13A) {
+        wearFieldOffset = PartyFieldWearMain;
+        threshold = 0x78;
+    } else if (slotOffset == 0x142) {
+        wearFieldOffset = PartyFieldWearSecond;
+        threshold = 0x50;
+    } else {
+        wearFieldOffset = PartyFieldWearThird;
+        threshold = 0x14;
+    }
+
+    uint16_t wear = (uint16_t)(partyGetU16(record, wearFieldOffset) + 1);
+    partySetU16(record, wearFieldOffset, wear);
+    if (wear <= threshold) {
+        return PartyItemDurabilityUnchanged;
+    }
+
+    const uint8_t *targetEntry = itemTargetEntry(catalog, itemRecord);
+    if (!targetEntry) {
+        return PartyItemDurabilityUnchanged;
+    }
+    bool categoryA = (itemGetU16(itemRecord, ItemFieldFlags) & (ItemFlagEquipCode0A | ItemFlagEquipCode0C)) != 0;
+    uint16_t chance = itemTargetWord(targetEntry, categoryA ? ItemTargetBreakChanceA : ItemTargetBreakChanceB);
+    uint16_t roll = randomInRange(rng, 1000);
+    if (roll > chance) {
+        return PartyItemDurabilityUnchanged;
+    }
+
+    uint16_t replacementId = itemTargetWord(targetEntry, categoryA ? ItemTargetBreakItemA : ItemTargetBreakItemB);
+
+    EffectDef def;
+    uint16_t modeFlags = effectGetDef(game, 0, &def) ? def.modeFlags : 0;
+    partyHandleIconBarItemExpiry(record, catalog, modeFlags, itemId, replacementId, slotOffset);
+
+    unsigned resetOffset = PartyFieldWearMain;
+    const uint8_t *replacementRecord = itemCatalogRecord(catalog, replacementId);
+    if (replacementRecord) {
+        uint16_t replacementFlags = itemGetU16(replacementRecord, ItemFieldFlags);
+        if (replacementFlags & ItemFlagEquipCode0A) {
+            resetOffset = PartyFieldWearMain;
+        } else if (replacementFlags & ItemFlagEquipCode0C) {
+            resetOffset = PartyFieldWearSecond;
+        } else {
+            resetOffset = PartyFieldWearThird;
+        }
+    }
+    partySetU16(record, resetOffset, 0);
+    return PartyItemDurabilityBroke;
+}
+
 const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game) {
     static const PartyClassPromotionThresholds kYendor2 = {10, 30};
     static const PartyClassPromotionThresholds kYendor3 = {0, 0};
