@@ -5,6 +5,7 @@
 
 #include "AppGlobals.h"
 #include "Diagnostics.h"
+#include "TComposedFileManager.h"
 #include "TGAction.h"
 #include "TGAnimation.h"
 #include "TGInterface.h"
@@ -16,6 +17,7 @@
 #include "TTText.h"
 #include "TTempFile.h"
 #include "baselib/composedfile.h"
+#include "baselib/file.h"
 #include "datastruct/visionaireobject.h"
 #include "graphicslib/graphics.h"
 #include "vscommon/scripting/argument.h"
@@ -1084,8 +1086,104 @@ void TGameControl::UpdateRandomTimers() {
 void TGameControl::UpdateWalkingSounds() {
 }
 
-bool TGameControl::PreLoad(wxString &/*error*/, wxString &/*warning*/, bool /*isEditor*/) {
-	return false;
+bool TGameControl::PreLoad(wxString &filePath, wxString &warning, bool isEditor) {
+	// Confirmed (asm lines 463692-464965) - see the header declaration's own
+	// comment for the parameter-naming notes. Resolves filePath to an
+	// absolute path under the resources directory if it wasn't one already,
+	// sniffs the file to decide whether it's a password-protected container
+	// (extension "vis"/"exe"/"ved", or a "VIS3" magic header) or a plain
+	// data file, then loads it either via TComposedFileManager or directly
+	// via TVisionaire::Load. The "extension + entry index" temp filename
+	// built for the container case approximates a custom (non-printf)
+	// wxString::privFormat pattern (data at address 0xD6CC20) that wasn't
+	// fully decoded - functionally equivalent, not byte-for-byte the same
+	// string. The rare sub-case where field 0x323's string list comes back
+	// empty (a 5-pair TComposedFileManager::Init overload, asm lines
+	// 464411-464478) is implemented from its confirmed field ids alone,
+	// without independently verifying how those 5 (path, int) pairs are
+	// actually used downstream.
+	_gamePath.Assign(filePath);
+	if (!_gamePath.IsAbsolute()) {
+		TStandardPaths paths;
+		wxString resourcesDir = paths.GetResourcesDir(false);
+		_gamePath = wxFileName((resourcesDir + wxString(L"/")).ToStdWstring(), filePath.ToStdWstring());
+	}
+
+	if (!_gamePath.IsOk())
+		return false;
+
+	TFile file;
+	file.OpenRead(_gamePath);
+	char magic[5] = "EOF_";
+	file.ReadByte(magic[0]);
+	file.ReadByte(magic[1]);
+	file.ReadByte(magic[2]);
+	file.ReadByte(magic[3]);
+	magic[4] = 0;
+	file.Close();
+
+	warning = wxString();
+
+	wxString ext = _gamePath.GetExt();
+	bool isContainer = ext.CmpNoCase(wxString(L"vis")) == 0 || ext.CmpNoCase(wxString(L"exe")) == 0 ||
+	                   ext.CmpNoCase(wxString(L"ved")) == 0 ||
+	                   (magic[0] == 'V' && magic[1] == 'I' && magic[2] == 'S' && magic[3] == '3');
+
+	if (isContainer) {
+		warning = passw;
+		if (!TComposedFileManager::InitMainContainer(_gamePath, warning))
+			return false;
+
+		TComposedFile *container = TComposedFileManager::GetMainContainer();
+		int numEntries = container->GetNumberOfEntries();
+		int entryIndex = (numEntries == 0) ? 0 : (numEntries - 1);
+
+		wxFileName altFile(filePath.ToStdWstring());
+		wxString newExt = altFile.GetExt() + wxString(std::to_wstring(entryIndex));
+		altFile.SetExt(newExt);
+		filePath = altFile.GetFullPath();
+	} else {
+		filePath = _gamePath.GetFullPath();
+	}
+
+	if (!_gamePath.FileExists())
+		return false;
+
+	_gamePath.SetCwd();
+	SLoadingScreen loadingScreen;
+	TVisObjRef currentRef;
+	wxFileName loadFile(filePath.ToStdWstring());
+	int unusedFlag = 0;
+	bool loadOk = _visionaire->Load(loadFile, warning, eSaveGame::kValue0, TLoadingTypeEnum::kValue0, &unusedFlag,
+	                                nullptr, nullptr);
+	if (!loadOk)
+		return false;
+
+	currentRef = _visionaire->GetGame();
+	if (currentRef.IsEmpty()) {
+		if (isEditor)
+			SetLoadingScreen(loadingScreen);
+	} else {
+		TVList list15;
+		_visionaire->GetList(0x15, list15, false);
+		TVisObjRef pickedRef = list15.empty() ? currentRef : TVisObjRef(list15.front());
+		if (isEditor)
+			FillLoadingScreen(loadingScreen, pickedRef);
+	}
+
+	std::vector<TCharHolder> strings;
+	currentRef.GetStrings(0x323, strings);
+	if (!strings.empty()) {
+		TComposedFileManager::Init(_gamePath, passw, strings);
+	} else {
+		TComposedFileManager::Init(_gamePath, passw, currentRef.GetInt(0x26D), wxFileName(currentRef.GetPath(0x26E)),
+		                           currentRef.GetInt(0x29E), wxFileName(currentRef.GetPath(0x29F)),
+		                           currentRef.GetInt(0x26B), wxFileName(currentRef.GetPath(0x26C)),
+		                           currentRef.GetInt(0x269), wxFileName(currentRef.GetPath(0x26A)),
+		                           currentRef.GetInt(0x2AA), wxFileName(currentRef.GetPath(0x2AB)));
+	}
+
+	return true;
 }
 
 void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
@@ -1653,7 +1751,10 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 	// the editor-mode branch below - reproduced as observed rather than
 	// simplified to `this->`. The member read via wxFileName::GetPath() at
 	// asm line 468573 is _gamePath (confirmed independently by PreLoad,
-	// batch 27 - see that member's own comment).
+	// batch 27 - see that member's own comment). Calls PreLoad (asm line
+	// 468791, added in batch 27 - this call was missed in the original pass
+	// here since PreLoad was still a stub at the time) before
+	// LoadAndInitGame, threading its by-ref outputs through unchanged.
 	TStandardPaths standardPaths;
 
 	std::wstring prefix = _gamePath.GetPath() + L"/";
@@ -1681,6 +1782,9 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 	gameControl->GetCursorControl()->Clear();
 	TId id(-1, -1);
 	UnrefLuaFieldsCache(id, -1);
+
+	if (!gameControl->PreLoad(fullPath, emptyFile, false))
+		return false;
 
 	if (!gameControl->LoadAndInitGame(fullPath, emptyFile, warning, false))
 		return false;

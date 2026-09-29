@@ -163,7 +163,15 @@ public:
 	bool UnregisterEventHandlerMainLoop(const wxString &name);
 	void UpdateRandomTimers();
 	void UpdateWalkingSounds();
-	bool PreLoad(wxString &error, wxString &warning, bool isEditor);
+	// Confirmed (asm lines 463692-464965): the first parameter is read-write
+	// throughout (resolved to an absolute path, then possibly rewritten to
+	// point at a numbered temp-extraction name for container formats) -
+	// same "manifest called it error, it's really a file path" pattern
+	// already found in LoadAndInitGame (batch 24), renamed accordingly. The
+	// second is used as a password/extra-data out-param, not literally a
+	// warning message, but kept as "warning" since that's plausible enough
+	// (a password prompt's context text) and not independently contradicted.
+	bool PreLoad(wxString &filePath, wxString &warning, bool isEditor);
 	void AdjustInterfacesOnScreen(bool force, TPaintControl *scene);
 	void SetInterfaces();
 	void SetCharacterActiveCommand();

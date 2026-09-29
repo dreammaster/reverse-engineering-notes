@@ -17,9 +17,13 @@ class EventHandler;
 // rather than guessing a table name).
 enum class eVisionaireTable { kValue34 = 0x22 };
 
-// Confirmed one value, 1 (TGameControl::LoadAndInitGame, asm line 467804) -
-// real meaning/other values not resolved.
-enum class TLoadingTypeEnum { kValue1 = 1 };
+// Confirmed 2 values, 0 and 1 (TGameControl::PreLoad/LoadAndInitGame, asm
+// lines 464227, 467804) - real meaning/other values not resolved.
+enum class TLoadingTypeEnum { kValue0 = 0, kValue1 = 1 };
+
+// Confirmed one value, 0 (TGameControl::PreLoad, Deponia_Linux.asm line
+// 464228) - real meaning/other values not resolved.
+enum class eSaveGame { kValue0 = 0 };
 
 class TVisionaire {
 public:
@@ -42,6 +46,11 @@ public:
 	// TVisionaireGame.
 	bool LoadDataGame(const wxFileName &file, const wxString &extra, TLoadingTypeEnum type, bool flag,
 	                  TSignalSlot *slot, EventHandler *handler);
+	// Confirmed call shape only (TGameControl::PreLoad, Deponia_Linux.asm
+	// lines 464222-464231) - distinct from LoadDataGame (an extra eSaveGame
+	// parameter, and an extra int* out-param); not reversed beyond that.
+	bool Load(const wxFileName &file, const wxString &extra, eSaveGame saveGame, TLoadingTypeEnum type,
+	          int *outFlag, TSignalSlot *slot, EventHandler *handler);
 
 	// Confirmed called with a field id, an out-param list, and a bool flag
 	// (TGameControl::InitFonts, asm lines 458293-458322) - not reversed

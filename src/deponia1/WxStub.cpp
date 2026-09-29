@@ -77,6 +77,12 @@ wxString wxFileName::GetCwd() {
 	return wxString(_wgetcwd(buf, 1024) ? buf : L".");
 }
 
+void wxFileName::SetCwd() const {
+	std::wstring dir = GetPath();
+	if (!dir.empty())
+		_wchdir(dir.c_str());
+}
+
 // TStandardPaths::BuildDir (TStandardPaths.cpp) concatenates these directly
 // with "CompanyName/" et al and no separator in between - reversed straight
 // from the disassembly - so real wxStandardPathsBase::GetUserDataDir() must

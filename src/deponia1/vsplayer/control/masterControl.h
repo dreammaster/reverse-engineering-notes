@@ -93,6 +93,12 @@ struct SLoadingScreen {
 	int fieldBC = 0;
 };
 
+// Confirmed a free function, not a member (TGameControl::PreLoad,
+// Deponia_Linux.asm line 464520) - populates an SLoadingScreen from a
+// TVisObjRef's own fields (presumably the same ones SetLoadingScreen's own
+// confirmed layout above lists); not reversed beyond that call shape.
+void FillLoadingScreen(SLoadingScreen &screen, const TVisObjRef &source);
+
 struct TMouseEventHandler {
 	wxString name;
 	std::vector<unsigned int> mouseButtonFilter;  // empty = matches any message

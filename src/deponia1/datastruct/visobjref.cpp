@@ -29,6 +29,9 @@ TCharHolder TVisObjRef::GetName() const {
 	return TCharHolder();
 }
 
+void TVisObjRef::GetStrings(int /*fieldId*/, std::vector<TCharHolder> &/*outStrings*/) const {
+}
+
 std::wstring TVisObjRef::GetPath(int /*fieldId*/) const {
 	return std::wstring();
 }

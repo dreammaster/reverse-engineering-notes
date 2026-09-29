@@ -42,3 +42,5 @@ float speedDownY = 0.0f;
 float startspeed = 0.1f;
 
 bool matricesActive = false;
+
+wxString passw;

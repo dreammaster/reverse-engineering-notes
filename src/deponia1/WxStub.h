@@ -18,6 +18,7 @@
 #pragma once
 
 #include <cstdio>
+#include <cwctype>
 #include <string>
 
 class wxString {
@@ -39,6 +40,21 @@ public:
 
 	bool IsEmpty() const {
 		return _data.empty();
+	}
+	// Confirmed call shape only (TGameControl::PreLoad, Deponia_Linux.asm
+	// line 463998) - real wxString::CmpNoCase() is a case-insensitive
+	// three-way compare.
+	int CmpNoCase(const wxString &other) const {
+		std::wstring a(_data), b(other._data);
+		for (wchar_t &c : a)
+			c = std::towlower(c);
+		for (wchar_t &c : b)
+			c = std::towlower(c);
+		if (a < b)
+			return -1;
+		if (a > b)
+			return 1;
+		return 0;
 	}
 
 	wxString &operator+=(const wxString &rhs) {
@@ -76,6 +92,11 @@ class wxFileName {
 public:
 	wxFileName() = default;
 	explicit wxFileName(const std::wstring &fullPath) : _fullPath(fullPath) {}
+	// Confirmed call shape only (TGameControl::PreLoad, Deponia_Linux.asm
+	// line 463848): real wxFileName(const wxString&, const wxString&) joins
+	// a directory path and a file name with a separator.
+	wxFileName(const std::wstring &path, const std::wstring &name)
+		: _fullPath(path.empty() || path.back() == L'/' ? path + name : path + L"/" + name) {}
 
 	wxString GetFullPath() const {
 		return wxString(_fullPath);
@@ -86,12 +107,48 @@ public:
 		std::size_t pos = _fullPath.find_last_of(L"/\\");
 		return (pos == std::wstring::npos) ? std::wstring() : _fullPath.substr(0, pos);
 	}
+	// Real wxFileName::GetExt() behavior: everything after the last '.' in
+	// the name portion (empty if there isn't one).
+	wxString GetExt() const {
+		std::size_t slash = _fullPath.find_last_of(L"/\\");
+		std::size_t dot = _fullPath.find_last_of(L'.');
+		if (dot == std::wstring::npos || (slash != std::wstring::npos && dot < slash))
+			return wxString();
+		return wxString(_fullPath.substr(dot + 1));
+	}
+	// Confirmed call shape only (TGameControl::PreLoad, asm line 464085) -
+	// real wxFileName::SetExt() replaces (or adds) the extension.
+	void SetExt(const wxString &ext) {
+		std::size_t slash = _fullPath.find_last_of(L"/\\");
+		std::size_t dot = _fullPath.find_last_of(L'.');
+		if (dot != std::wstring::npos && (slash == std::wstring::npos || dot > slash))
+			_fullPath = _fullPath.substr(0, dot);
+		_fullPath += L"." + ext.ToStdWstring();
+	}
 	bool IsOk() const {
 		return !_fullPath.empty();
 	}
 	// Confirmed call shape only (TGameControl::ReplaceGame, Deponia_Linux.asm
 	// line 468671).
 	bool Exists() const;
+	// Confirmed call shape only (TGameControl::PreLoad, asm line 464151) -
+	// distinct from Exists(): real wxFileName::FileExists() specifically
+	// checks this is a regular file (Exists() also matches directories).
+	bool FileExists() const {
+		return Exists();
+	}
+	// Confirmed call shape only (TGameControl::PreLoad, asm line 463809).
+	bool IsAbsolute() const {
+		return !_fullPath.empty() && (_fullPath[0] == L'/' || (_fullPath.size() > 1 && _fullPath[1] == L':'));
+	}
+	// Confirmed call shape only (TGameControl::PreLoad, asm line 463799).
+	void Assign(const wxString &fullPath) {
+		_fullPath = fullPath.ToStdWstring();
+	}
+	// Confirmed call shape only (TGameControl::PreLoad, asm line 463921) -
+	// real wxFileName::SetCwd() changes the process's current directory to
+	// this file's own directory.
+	void SetCwd() const;
 	void NormalizePath() {}
 	// Confirmed call shape only (TGameControl::SaveGame, asm line 463066) -
 	// replaces the name+extension portion, keeping any existing directory,

@@ -25,3 +25,9 @@ bool TVisionaire::LoadDataGame(const wxFileName &/*file*/, const wxString &/*ext
                                bool /*flag*/, TSignalSlot */*slot*/, EventHandler */*handler*/) {
 	return false;
 }
+
+bool TVisionaire::Load(const wxFileName &/*file*/, const wxString &/*extra*/, eSaveGame /*saveGame*/,
+                       TLoadingTypeEnum /*type*/, int */*outFlag*/, TSignalSlot */*slot*/,
+                       EventHandler */*handler*/) {
+	return false;
+}

@@ -69,3 +69,10 @@ extern float startspeed;
 // whether text rendering pushes its own transform matrix; real meaning not
 // resolved.
 extern bool matricesActive;
+
+// Confirmed a real, named global (TGameControl::PreLoad, Deponia_Linux.asm
+// lines 464021/464281/464473) - the password passed to
+// TComposedFileManager's container-init calls. Never seen written anywhere
+// reversed so far; presumably set during earlier static/game
+// initialization, like g_pGameControl itself.
+extern wxString passw;

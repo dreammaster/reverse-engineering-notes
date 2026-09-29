@@ -826,6 +826,54 @@ sub-case) are confirmed but not pursued further. New stub surface:
 wired to a real backing field, same as `GetWorktopWidth/Height` once their
 setter existed).
 
+## TGameControl batch 27: PreLoad, a real _gamePath type fix, and a missed call in ReplaceGame caught along the way
+
+`PreLoad(wxString &filePath, wxString &warning, bool isEditor)` (asm lines
+463692-464965) resolves a game file to an absolute path, sniffs whether
+it's a password-protected container (extension "vis"/"exe"/"ved", or a
+"VIS3" magic header read from the first 4 bytes) or a plain data file, then
+loads it via `TComposedFileManager` or `TVisionaire::Load` accordingly. Same
+manifest-naming correction as `LoadAndInitGame` (batch 24): the first
+parameter is read-write throughout, not an error message.
+
+**Fixed a real, independently-confirmable type error along the way**:
+`_gamePath` (added in batch 24 as a best-effort `wxString` model for an
+offset three different methods touch) is actually a `wxFileName`. The proof
+is unambiguous here: `PreLoad` assigns it via `wxFileName::Assign()`, which
+a `wxString` cannot support, and `GetGamePath()`'s own asm (a bare
+`lea rax,[rdi+0xA80]; retn`) confirms it sits immediately before
+`_isClearingAnimations` at +0xA88 with nothing in between - consistent with
+an 8-byte handle, the same COW-string-based representation already
+established for `wxString`. Changed `_gamePath`'s type and
+`GetGamePath()`'s return type, and simplified the two call sites
+(`LoadAndInitGame`, `ReplaceGame`) that had been wrapping it in a fresh
+`wxFileName` on every use to work around the wrong type.
+
+**Also caught while implementing this**: `ReplaceGame` (batch 23) never
+actually called `PreLoad` - the real disassembly calls it right before
+`LoadAndInitGame`, threading its by-ref outputs (the resolved file path and
+a password string) straight through, but `PreLoad` was still a stub
+returning `false` unconditionally at the time `ReplaceGame` was written, so
+the call was skipped entirely rather than left in and immediately failing.
+Added it back now that `PreLoad` does something real.
+
+New stub surface: `TComposedFileManager::InitMainContainer/
+GetMainContainer/Init` (two overloads - one taking a `vector<TCharHolder>`
+of extra strings, a second, rarer one taking up to 5 `(path, int)` pairs
+whose own field ids are confirmed but not independently verified beyond
+that), `TVisObjRef::GetStrings()`, `TVisionaire::Load()` (distinct from
+batch 24's `LoadDataGame` - an extra `eSaveGame` parameter and an `int*`
+out-param), `TFile::ReadByte()/Close()` (implemented for real against the
+already-real `std::FILE*` handle), `FillLoadingScreen()`, real
+`wxFileName::GetExt()/SetExt()/IsAbsolute()/Assign()/FileExists()/SetCwd()`
+and a `(path, name)`-joining constructor, real `wxString::CmpNoCase()`, and
+a new real global, `passw` (a password, matching `xspeed`/`movex`'s own
+"confirmed real, not anonymous" pattern - never seen written anywhere
+reversed so far). The custom (non-printf) format string used to build a
+container's numbered temp-extraction filename (data at address 0xD6CC20)
+wasn't fully decoded - approximated with a functionally-equivalent
+extension+index concatenation instead.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

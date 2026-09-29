@@ -15,6 +15,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include "TCharHolder.h"
 #include "WxStub.h"
@@ -58,6 +59,11 @@ public:
 	bool GetBool(int fieldId) const;
 	int GetInt(int fieldId) const;
 	wxString GetStr(int fieldId) const;
+	// Confirmed call shape only (TGameControl::PreLoad, Deponia_Linux.asm
+	// line 464274) - fills outStrings with TCharHolder elements (16 bytes
+	// each, per the iterator-distance-based size check there); not
+	// reversed beyond that.
+	void GetStrings(int fieldId, std::vector<TCharHolder> &outStrings) const;
 	// Confirmed call shape only (TGameControl::ReplaceGame, Deponia_Linux.asm
 	// line 468762): unlike GetStr/GetInt/etc., takes no field id - "the
 	// name" is a property of the object itself, not a per-field lookup.

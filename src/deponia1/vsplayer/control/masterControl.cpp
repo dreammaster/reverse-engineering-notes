@@ -95,6 +95,9 @@ TGameClientSDK *TMasterControl::GetGameClientSDK() const {
 	return _gameClientSDK;
 }
 
+void FillLoadingScreen(SLoadingScreen &/*screen*/, const TVisObjRef &/*source*/) {
+}
+
 void TMasterControl::SetLoadingScreen(SLoadingScreen &screen) {
 	_loadingScreen = screen;
 }
