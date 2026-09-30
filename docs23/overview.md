@@ -10602,6 +10602,39 @@ start of a session than the tail of one that's already covered five
 major pieces today. `roadmap.md` candidate 10 now has the complete,
 narrow scope for whoever (or whichever future round) picks it up next.
 
+### Session update (continued, same day): wrote the module after all — and caught a real counting mistake from three paragraphs up
+
+Decided the scope really was as narrow as just described, so picked it
+straight back up: `mapTriggerFind`/`mapTriggerDecide`/
+`mapTriggerApplyEffect`/`mapTriggerApplyCorrosion` in a new
+`src23/maptrigger.c`/`.h`, composing almost entirely from pieces
+already reimplemented earlier today and in prior sessions.
+
+Writing the embedded table data by hand from the dump output caught a
+real mistake from the "still dormant" claim two paragraphs above: a
+Chapter 3 entry with `flags=0x8001` had been read as "no dispatch bits
+set, so Chapter-2-equivalent" — missing that bit `0x8000` in this
+table is the axis selector (x vs. y match), not one of the branches
+`ApplyMapTriggerEffect` dispatches on, so `0x8001` really is a
+default-branch entry *with* the exclusion bit set. Re-checking the
+full table properly found 4 such entries, not zero — the item-exclusion
+mechanic isn't dormant in Chapter 3 at all, it's genuinely exercised by
+about a fifth of the game's real trigger data. Worth remembering: a
+flag value that looks like "nothing special" needs checking against
+*every* bit the dispatch actually reads, not just the ones that jump
+out on a first pass — an axis-selector bit sitting in the same word as
+dispatch-selector bits is exactly the kind of thing a quick read
+glosses over.
+
+The Bcd4 construction for the gold/ore-theft branches has no real data
+to verify against in either game (confirmed again while building the
+table), so that piece is tested with synthetic input, clearly labeled
+as such rather than presented as if real data had confirmed it.
+Everything else — the lookup, the dispatch decision, the corrosion
+apply chain — is tested against the real, now fully catalogued
+contents of both games' tables. Tests in a new `test_maptrigger.c` (the
+21st suite). All 21 suites pass. `roadmap.md` candidate 10 marked done.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

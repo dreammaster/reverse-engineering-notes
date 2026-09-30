@@ -1021,74 +1021,63 @@ consumers, if any.
    deferred to the eventual SDL2 layer, same as this project's other
    top-level input handlers.
 
-10. **`ApplyMapTriggerEffect`/`IsPositionInTriggerList`** -- found
-    2026-09-30 while chasing `IsPositionInTriggerList` for
-    `gameClockRestAllowed`'s own dependency; both games' tables
+~~10. **`ApplyMapTriggerEffect`/`IsPositionInTriggerList`**~~ -- found
+    and reimplemented 2026-09-30 while chasing `IsPositionInTriggerList`
+    for `gameClockRestAllowed`'s own dependency; both games' tables
     extracted the same day
     (`ida_scripts/dump_trigger_list_table.py`, one script per game).
-    Dispatch structure fully traced for Chapter 2: a 6-way switch on a
+    Dispatch structure fully traced for both games: a 6-way switch on a
     matched trigger-table entry's own flags (teleport / ailment-tick /
-    3 fixed icon-bar effect ids reusing the teleport branch's own X/Y
-    fields as "extra" data / a data-driven equipment-corrosion event /
-    a fully data-driven default effect id) -- and essentially all of it
-    is *already reimplemented* elsewhere: `PrepareTrapEffectSlots` is
-    `effectGetDef`; the icon-bar population matches
-    `ApplyEffectAndDrawIconBar`'s existing dispatch; and the
-    corrosion branch's own per-member eligibility field, once resolved
-    against real data (a trigger entry's `+4` value, `0x142`), turned
-    out to be an already-named equipment-slot offset
-    (`party.h`'s `PartyFieldWearSecond`-family slot addresses,
-    already consumed by `partyTickEquippedItemDurability`/
-    `partyHandleIconBarItemExpiry`) -- so this branch needs no new
-    mechanism, just `partyHandleIconBarItemExpiry` called with a
-    trigger-record-supplied `slotOffset` instead of a fixed one, and
-    `equippedItemId`/`replacementItemId` resolved exactly like
-    `combatApplyCorrosion` already does. Real Chapter 2 data (9
-    entries total) exercises only 3 of the 6 branches (default,
-    teleport, one corrosion entry) -- confirmed by reading every
-    entry's own flags directly, not assumed.
+    3 fixed icon-bar effect ids / a data-driven equipment-corrosion
+    event / a fully data-driven default effect id). Most of it composes
+    from pieces already reimplemented elsewhere: `PrepareTrapEffectSlots`
+    is `effectGetDef`; the icon-bar population matches
+    `ApplyEffectAndDrawIconBar`'s existing dispatch; and the corrosion
+    branch's own per-member eligibility field, resolved against real
+    data (a trigger entry's `+4` value, `0x142`), turned out to be an
+    already-named equipment-slot offset already consumed by
+    `partyTickEquippedItemDurability`. The 3 fixed-effect-id branches
+    turned out to be **gold/ore-theft traps, not HP/MP damage** --
+    confirmed via the already-embedded effect table (ids
+    `0xF`/`0x10`/`0x11`'s own `costFlags` are
+    `EffectCostGold`/`Ore1`/`Ore2`), explaining why those branches alone
+    populate *both* of the icon slot's value-field words (a Bcd4
+    amount) while the data-driven default branch only populates one.
 
-    **The Chapter 3 divergence is confirmed, not just suspected**:
-    its own teleport branch populates the *exact same globals*
-    `TravelToDestination` does (`ds:0xCF75`/`0xCF77`/`0xCF73`/`0xCF2F`/
-    `0xCF31`/`0xCF33`/`0xCF3F`) and calls the same
-    `TickTravelResourceAilments` helper -- explaining why Chapter 3's
-    `TravelToDestination` calls `ApplyMapTriggerEffect` on arrival (see
-    candidate 9). The two tables are **not** byte-for-byte the same
-    shape (20-byte vs. 18-byte records, different field offsets) but
-    share every field's own *semantic* target, confirmed by direct
-    value cross-reference against real data (e.g. a facing value of
-    `0x4000` landing exactly on `SaveFacingSouth`). Chapter 3's real
-    table (19 entries) is overwhelmingly teleports (16/19), with 2
-    default-case entries and none exercising the fixed-id or
-    ailment-tick branches.
+    **A real, confirmed Chapter 2 vs. Chapter 3 difference in the
+    default branch, genuinely exercised by real data (corrected from an
+    earlier miscount this same round)**: Chapter 3 adds a per-member
+    exclusion (skip if item `0x275` is equipped in equipment code
+    `0x13`'s slot) that Chapter 2 doesn't have at all -- 4 of Chapter
+    3's 19 real trigger entries actually set the gating bit, not zero
+    as an earlier pass this round mistakenly concluded (a flag value of
+    `0x8001` was misread as "no dispatch bits set, therefore
+    Chapter-2-equivalent," missing that bit `0x8000` is just the axis
+    selector, not a dispatch bit at all).
 
-    **Chapter 3's dispatch confirmed instruction-identical too** for
-    the ailment-tick/fixed-id/corrosion branches, with **one genuine,
-    confirmed per-game difference found in the default branch**:
-    Chapter 3 adds a per-member exclusion (skip if item `0x275` is
-    equipped in equipment code `0x13`'s slot, when the trigger's own
-    flags bit `0x1` is set) that Chapter 2 doesn't have at all --
-    dormant in both games' real data today (no entry sets that bit),
-    reproduced as a real if currently-unexercised difference.
+    **The Chapter 3 teleport-branch convergence with `TravelToDestination`
+    is confirmed, not just suspected**: its own teleport branch
+    populates the *exact same globals* `TravelToDestination` does and
+    calls the same `TickTravelResourceAilments` helper -- explaining why
+    Chapter 3's `TravelToDestination` calls `ApplyMapTriggerEffect` on
+    arrival (see candidate 9). The two tables are **not** byte-for-byte
+    the same shape (20-byte vs. 18-byte records, different field
+    offsets) but share every field's own *semantic* target. Teleport
+    itself stays unreimplemented here -- pure UI-driving orchestration,
+    the same scope boundary `TravelToDestination` itself has.
 
-    **The 3 fixed-effect-id branches turned out to be gold/ore-theft
-    traps, not HP/MP damage** -- confirmed via the already-embedded
-    effect table (ids `0xF`/`0x10`/`0x11`'s own `costFlags` are
-    `EffectCostGold`/`Ore1`/`Ore2`), explaining why those branches
-    populate *both* of the icon slot's `+0x10`/`+0x12` fields (a Bcd4
-    amount, matching `ResolveAttackerActionOutcome`'s own gold-theft
-    convention) while the default branch only ever populates one.
-
-    **Still not reimplemented** -- the remaining gap is narrow and now
-    precisely scoped: a `mapTriggerFind(game, worldX, worldY)` lookup
-    over the two embedded tables, plus composing the dispatch from
-    already-existing pieces (`effectGetDef`, `partyHandleIconBarItemExpiry`,
-    `itemClassifyServiceTier`/`itemCorrosionReplacement`,
-    `combatApplyEffect` -- constructing a `Bcd4` from two raw words for
-    the gold/ore-theft branches). Deliberately left for a fresh pass
-    rather than rushed at the tail of an already very long session. See
-    `file-formats.md`'s own dedicated section for the complete writeup.
+    Reimplemented as `mapTriggerFind`/`mapTriggerDecide`/
+    `mapTriggerApplyEffect`/`mapTriggerApplyCorrosion` in a new
+    `src23/maptrigger.c`/`.h`. Tests in `test_maptrigger.c` (21st suite)
+    cover the lookup against real table entries from both games, every
+    dispatch branch including Chapter 3's real (not synthetic)
+    item-exclusion case, the gold-theft Bcd4 construction (necessarily
+    synthetic -- no real trigger entry exercises it in either game),
+    and the corrosion apply path's full eligibility chain. All 21
+    suites pass. Still not reimplemented: the teleport and ailment-tick
+    branches themselves (pure orchestration / a not-yet-built
+    prerequisite system). See `file-formats.md`'s own dedicated section
+    for the complete writeup.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need

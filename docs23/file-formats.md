@@ -2912,11 +2912,15 @@ when the matched trigger record's own flags bit `0x1` is set, a party
 member is skipped if they have item `0x275` equipped in equipment code
 `0x13`'s slot (`party.h`'s `+0x158`, one of the "id-only" short
 equipment slots) — plausibly a protective item immune to this specific
-trigger, narrative not confirmed. Not exercised by either game's real
-data today (Chapter 3's own two real default-branch entries both have
-`flags=0x0000`, bit `0x1` clear), so reproduced faithfully as a real,
-if currently dormant, per-game difference rather than dropped as dead
-weight the way Chapter 2's `IsRestingAllowedHere` map-id branch was.
+trigger, narrative not confirmed. **Correction**: an earlier pass this
+round undercounted Chapter 3's real default-branch entries as only 2
+(missing that flag value `0x8001` — bit `0x8000`, the axis selector,
+plus bit `0x1` — is *also* a default-branch entry, since neither bit is
+one of the dispatch-selecting ones). Re-checking the full real table
+finds **6** real Chapter 3 default-branch entries, and **4 of them**
+(coordinates 332/333/336/337, all `flags=0x8001`) genuinely exercise
+this exclusion — it is not dormant, it's a real, active mechanic in
+Chapter 3's own data today.
 
 **The fixed-effect-id branches (`0xF`/`0x10`/`0x11`) are gold/ore-theft
 traps, not HP/MP damage** — resolved by checking their own entries in
@@ -2946,16 +2950,41 @@ same already-documented, already-accepted "reads whatever a prior
 unrelated call left in the shared scratch slot" quirk
 `ResolveAttackerActionOutcome`'s own branch 2 has, not a new mystery.
 
-**Not reimplemented yet** — the remaining gap is narrow and precisely
-scoped now: a small `mapTriggerFind(game, worldX, worldY)` lookup over
-the two now-extracted embedded tables, plus composing the dispatch from
-pieces that already exist (`effectGetDef`, `partyHandleIconBarItemExpiry`,
-`itemClassifyServiceTier`/`itemCorrosionReplacement`,
-`combatApplyEffect` for the gold/ore-theft and plain-magnitude cases,
-constructing a `Bcd4` from the two raw words for the former). Left for
-a fresh pass rather than rushed at the end of an already very long
-session — see `roadmap.md` candidate 10 for the updated, now
-fully-scoped remaining work.
+**Reimplemented 2026-09-30** (same day, continued): `mapTriggerFind`/
+`mapTriggerDecide`/`mapTriggerApplyEffect`/`mapTriggerApplyCorrosion`
+in `src23/maptrigger.c`/`.h` (a new module), both games' full tables
+embedded as literal data. `mapTriggerFind` is a pure lookup (linear
+scan, first-match-wins, matching the original exactly); `mapTriggerDecide`
+is the pure decision function (which of `MapTriggerNone`/
+`ApplyEffect`/`ApplyCorrosion` applies, plus the resolved effect
+id/slot offset/corrosion mode flags/Chapter-3 exclusion requirement) —
+teleport and the ailment-tick branch stay `MapTriggerNone`, deliberately
+not decided further (pure UI orchestration and a not-yet-built
+prerequisite system, respectively, matching this project's established
+scope boundaries elsewhere). `mapTriggerApplyEffect` builds the correct
+`Bcd4` from `rawA`/`rawB` for the gold/ore-theft branches (each raw
+word's own two bytes become one BCD digit pair, high word first,
+matching `ResolveAttackerActionOutcome`'s own established convention)
+and passes a plain magnitude straight through otherwise, applying the
+Chapter 3 item-exclusion check first when required.
+`mapTriggerApplyCorrosion` reproduces
+`combatResolveAttackerAction`'s own equipment-corrosion eligibility
+chain exactly (empty slot / unknown item / no valid replacement all
+no-op) before calling the already-existing
+`partyHandleIconBarItemExpiry`.
+
+Tests in a new `test_maptrigger.c` (21st suite) cover the lookup
+against real entries from both games' extracted tables, every dispatch
+branch (including Chapter 3's real, exercised item-exclusion case, not
+a synthetic one), the Bcd4 construction for gold theft (necessarily
+synthetic — no real trigger entry in either game exercises this
+branch), and the corrosion apply path's full no-op chain plus a
+successful replace. All 21 suites pass.
+
+**Still not reimplemented**: the teleport and ailment-tick branches
+themselves (pure orchestration/prerequisite-system gaps, as above);
+Chapter 3's own richer teleport record fields remain fully undecoded
+here too, same as `TravelDestination`'s own `rawA`-`rawD` convention.
 
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`g_gameClockMinutes`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
