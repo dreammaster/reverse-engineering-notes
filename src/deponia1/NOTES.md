@@ -1638,9 +1638,24 @@ Notable findings:
 Two existing call sites in `gameControl.cpp` (`TGameControl::
 LoadAndInitGame`/`ReplaceGame`, both doing `wxString(link.GetName())`) and
 one in `TArgument::ConvertToObjectList()` relied on an implicit `operator
-wxString()` conversion the old stub provided but which isn't a confirmed
-original method; switched to explicit `.GetFullPath()` calls instead of
-resurrecting an invented implicit conversion.
+wxString()` conversion the old stub provided; at the time this class was
+reversed, that conversion had no confirmed call site among TCharHolder's
+32 manifest-listed methods, so those 3 sites were switched to explicit
+`.GetFullPath()` calls rather than resurrecting an apparently-invented
+implicit conversion.
+
+**Correction, found while later reversing TSprite (see that section
+below):** `operator wxString() const` and `operator wxFileName() const`
+ARE real, confirmed methods (Deponia_Linux.asm lines 531676-531864,
+`TSprite::GetName()`/`GetPath()` call them directly) - they just weren't
+in that "32" count because the function-level manifest's automated "owner"
+extraction couldn't handle their `operator cv...` mangling and miscounted
+them as free functions. Both are now implemented (`operator wxString()`
+byte-for-byte identical to `GetFullPath()`; `operator wxFileName()`
+likewise but through an actual `wxFileName` plus a `NormalizePath()` call).
+The 3 explicit-`.GetFullPath()` call sites above were left as-is rather
+than reverted, since both spellings are equivalent now that the operator
+is real.
 
 ## TMemoryBuffer
 
@@ -1683,6 +1698,62 @@ decision left for later rather than made unilaterally here.
 `GetSize()` in the pre-existing stub is renamed to `GetLen()`, the actual
 recovered name (`GetSize()` had no real call sites anywhere in this
 codebase).
+
+## TSprite
+
+Confirmed 35 of 35 manifest-listed methods except ToLuaString()/
+SetFromLuaString() (Deponia_Linux.asm lines 582998-584513) - a
+considerably larger and differently-shaped class than the earlier 5-field
+placeholder model (`_path` as the first field) that `TLoadingControl.h`'s
+own header had already flagged as contradicted by `TSprite::GetPath()`'s
+real offset. The real, confirmed layout: a vtable pointer @0x00 (TSprite is
+genuinely polymorphic - the classic deleting/non-deleting virtual-
+destructor pair - modeled here with just `virtual ~TSprite() = default`,
+matching `TPictureMEM` which already declared its own destructor virtual
+in anticipation), `_name` (TCharHolder) @0x08, `_imageWidth`/`_imageHeight`
+@0x18/0x1C, `_position` (wxPoint) @0x20/0x24, `_transparentColor` @0x28,
+`_path` (TCharHolder) @0x30, a flags byte @0x40 (bit 1 = mirrored; other
+bits exist - `SetMirrored()` preserves them - but aren't referenced by any
+of TSprite's own methods), `_transparencyMode` @0x44, `_scale` @0x48 (a
+float PERCENTAGE, default 100.0 - not the 0-1 fraction range an earlier
+guess had assumed), `_pause` @0x4C (a short).
+
+This resolves the exact contradiction `TLoadingControl.h` had flagged:
+`GetPath()`/`GetWidth()`/`GetHeight()` really do live at +0x30/+0x18/+0x1C,
+confirmed independently from TSprite's own accessors now. What's still
+open is `SLoadingScreen`'s own structure (are its image fields full
+`TSprite`s? `TMasterControl::SetLoadingScreen`'s 16-byte-per-field
+memberwise copy doesn't match `sizeof(TSprite)` either) - that needs its
+own dedicated pass, `TLoadingControl.h` updated to describe the remaining
+gap precisely.
+
+Two independently-confirmed surprises, found the same way twice (so not a
+one-off compiler quirk): `Set()` and the copy constructor both deliberately
+skip `_imageWidth`/`_imageHeight` - copying a `TSprite` always zeroes those
+two fields regardless of the source, presumably because they're meant to
+be recomputed once a copy's image is (re)loaded rather than treated as
+part of a sprite's copyable identity. `IsTransparencyEqual()` is also
+asymmetric in a way `operator==` isn't: it only inspects the *other*
+sprite's transparency mode (a `kAny` sentinel value of -1 always matches;
+`kColorKey` compares only the colors; anything else compares modes
+directly) - genuinely different logic from `operator==`'s own symmetric
+mode-then-color comparison, not an inconsistency introduced here.
+
+`ToLuaString()`/`SetFromLuaString()` are left as call-shape-confirmed
+stubs - the same "Lua bridge contract not reversed" gap used throughout
+this project (`SetFromLuaString()`'s own disassembly literally calls
+`LuaDoString()` + a not-reversed `ConvertFromLua(TSprite&, int)`).
+`ToLuaString()`'s per-transparency-mode format strings weren't decoded
+byte-for-byte.
+
+Fixed `graphicslib/picture.cpp`'s `TPictureIO::GetSpriteName()`, which had
+been written against the old (wrong) TSprite model and referenced fields
+(`_id`, `_type`) that never actually existed - its own real disassembly
+(asm lines 785997-786106) shows it uses `_path`, `GetTransparency()`, and
+`TPictureIO`'s own `_flagC0`, plus a third value that's 0 unless
+`s_bTestCacheFileTime` is set (then a file-modification-time value, not
+modeled). The exact `wxString::privFormat()` output shape remains an
+approximation, as it already was before this fix.
 
 ## Reformatted to ScummVM's code conventions
 

@@ -97,14 +97,17 @@ void TPictureIO::RemoveSprite() {
 }
 
 wxString TPictureIO::GetSpriteName() const {
-	// Builds a diagnostic name from the sprite's path plus a few numeric
-	// fields (id, type, and - if s_bTestCacheFileTime - a file
-	// modification timestamp via TFile::GetFileTime). The exact wx
+	// Builds a diagnostic name from the sprite's path plus GetTransparency(),
+	// _flagC0, and a third value that's always 0 unless s_bTestCacheFileTime
+	// is enabled, in which case it's the path's file modification time (via
+	// TFile::GetFileTime()+wxDateTime::GetTicks()) instead. The exact wx
 	// formatting call (wxString::privFormat with a bare "%" format string)
 	// couldn't be pinned down at the byte level (see NOTES.md); this
-	// reproduces the observable inputs.
-	wxString path = _path.GetFullPath();
-	return wxString(path.ToStdWstring() + L" (" + std::to_wstring(_id) + L"," + std::to_wstring(_type) + L")");
+	// reproduces the observable inputs, not the exact original string shape.
+	wxString path = GetPath().GetFullPath();
+	long thirdValue = 0;  // TFile::GetFileTime()-based value when s_bTestCacheFileTime - not modeled
+	return wxString(path.ToStdWstring() + L" (" + std::to_wstring(static_cast<int>(GetTransparency())) + L"," +
+	                std::to_wstring(_flagC0) + L"," + std::to_wstring(thirdValue) + L")");
 }
 
 void TPictureIO::SetParallax(int x, int y) {

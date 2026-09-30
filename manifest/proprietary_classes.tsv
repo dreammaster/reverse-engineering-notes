@@ -143,7 +143,7 @@ TFile	stub	37	522315	525436
 TVedFile	todo	10	522419	525756
 TPolygonList	todo	19	526053	532096
 TXMLNames	todo	10	527002	533265
-TCharHolder	done	32	529250	531627
+TCharHolder	done	34	529250	531864
 pattern_matcher	todo	2	531875	1441953
 TXMLStringWriter	todo	10	539847	540033
 SEntryInfo	todo	1	541440	541440
@@ -159,7 +159,7 @@ TTimer	stub	6	559372	559473
 wxFileConfig	todo	1	559663	559663
 ConfigSetting	todo	3	579294	580506
 std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >	todo	1	581350	581350
-TSprite	stub	35	582998	584507
+TSprite	in-progress	35	582998	584507
 TTypeGroup	todo	30	584546	585963
 TVList	todo	21	586522	594785
 TId	todo	4	586976	587066

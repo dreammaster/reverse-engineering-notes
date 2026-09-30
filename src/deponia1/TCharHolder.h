@@ -127,6 +127,20 @@ public:
 	// same case-sensitive comparison.
 	bool SameAs(const TCharHolder &other) const;
 
+	// These two conversion operators are genuinely confirmed methods (asm
+	// lines 531676-531866) that the function-level manifest miscategorized
+	// as free functions (a `cv...` conversion-operator mangling its
+	// automated "owner" extraction didn't handle) rather than omitted -
+	// this is why they weren't part of the "32 confirmed methods" figure
+	// tracked elsewhere for this class.
+	// Confirmed (asm lines 531828-531866): byte-for-byte identical to
+	// GetFullPath()/c_str() above.
+	operator wxString() const;
+	// Confirmed (asm lines 531676-531820): like GetFullPath(), but through
+	// an actual wxFileName, additionally calling wxFileName::NormalizePath()
+	// on the result (a no-op in this stub's NormalizePath()).
+	operator wxFileName() const;
+
 private:
 	// Shared by every "copy a null-terminated narrow C string" mutator
 	// (copy(const char*), operator=(const char*)/(const wxFileName&),

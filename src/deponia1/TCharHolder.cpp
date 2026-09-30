@@ -215,3 +215,15 @@ bool TCharHolder::operator!=(const TCharHolder &other) const {
 bool TCharHolder::SameAs(const TCharHolder &other) const {
 	return *this == other;
 }
+
+TCharHolder::operator wxString() const {
+	return GetFullPath();
+}
+
+TCharHolder::operator wxFileName() const {
+	if (!_data)
+		return wxFileName();
+	wxFileName result(GetFullPath().ToStdWstring());
+	result.NormalizePath();
+	return result;
+}

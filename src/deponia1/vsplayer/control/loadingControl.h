@@ -10,19 +10,20 @@
 // active), and a wxFileName (a loading-sound path, played once in
 // EndLoading() if never played during loading).
 //
-// Init() itself is NOT reversed: its disassembly calls TSprite::GetPath()/
-// GetWidth()/GetHeight()/SetPosition() directly on its SLoadingScreen&
-// parameter's image fields, but TSprite::GetPath() independently resolves
-// to offset +0x30 within its object (confirmed from TSprite::GetPath()'s
-// own disassembly, `add rsi, 0x30`) and GetWidth()/GetHeight() to +0x18/
-// +0x1C - contradicting this project's current TSprite model (_path as the
-// first field) and SLoadingScreen's current model (bare TCharHolder image
-// fields, no width/height/id at all). TMasterControl::SetLoadingScreen's own
-// memberwise copy further suggests each SLoadingScreen image field is 16
-// bytes wide, not the 8 a bare TCharHolder would be. Untangling this needs
-// a dedicated pass across TSprite (currently a stub, 35 methods, mostly
-// unreversed) and SLoadingScreen together - left as an honest gap rather
-// than guessed at.
+// Init() itself is still NOT reversed: its disassembly calls TSprite::
+// GetPath()/GetWidth()/GetHeight()/SetPosition() directly on its
+// SLoadingScreen& parameter's image fields. TSprite has since been fully
+// reversed (see TSprite.h) and its real offsets (_path @0x30, _imageWidth/
+// _imageHeight @0x18/0x1C) now match what Init()'s disassembly showed all
+// along - the earlier-suspected "contradiction" with this project's TSprite
+// model is resolved, TSprite's model was simply wrong before. What's still
+// unresolved is SLoadingScreen's own structure: TMasterControl::
+// SetLoadingScreen's memberwise copy suggests each SLoadingScreen image
+// field is 16 bytes wide, and Init() calling TSprite's own methods directly
+// on them suggests they may be full TSprite objects (or at least
+// TSprite-compatible) rather than bare TCharHolder fields - but SLoadingScreen
+// and Init() haven't had their own dedicated pass yet, so this stays an
+// honest gap rather than guessed at.
 #pragma once
 
 #include "TPaintControl.h"

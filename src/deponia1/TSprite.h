@@ -1,55 +1,215 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
 //
-// TPictureMEM's base class (inferred: TPictureIO's ctor/dtor call
-// TPictureMEM::TPictureMEM()/~TPictureMEM() on `this` with no offset
-// adjustment, and TPictureIO also calls TSprite::Set/operator==/
-// SetImageSize on `this` with no offset adjustment - only explained by
-// TPictureMEM : public TSprite, chaining through to TPictureIO). Fields
-// below are inferred from TPictureIO::GetSpriteName's usage (a path, an id,
-// and a "type" checked against 1) - real names/full field set unconfirmed.
+// Confirmed in full except ToLuaString()/SetFromLuaString() (Deponia_Linux.
+// asm lines 582998-584513, all 35 manifest-listed methods): describes a
+// displayable image reference - a path plus a separate display name, image
+// dimensions, a display position, a percentage scale, transparency
+// settings, a mirror flag and a pause value. TSprite is genuinely
+// polymorphic (its ctor writes a vtable pointer, and it has the classic
+// deleting/non-deleting virtual-destructor pair) - modeled here with just a
+// virtual destructor, matching TPictureMEM (TPictureIO's base, itself
+// derived from TSprite - confirmed by TPictureIO's ctor/dtor and its calls
+// to TSprite::Set()/operator==()/SetImageSize() with no `this` offset
+// adjustment) already declaring its own destructor virtual.
+//
+// This corrects a considerably-simplified earlier model: real member
+// offsets (confirmed directly from each accessor's own disassembly, not
+// inferred): vtable ptr @0x00, _name @0x08 (TCharHolder), _imageWidth
+// @0x18, _imageHeight @0x1C, _position @0x20/0x24, _transparentColor @0x28,
+// _path @0x30 (TCharHolder), _flags @0x40 (bit 1 = mirrored; other bits
+// exist - SetMirrored() only ever touches bit 1, preserving the rest - but
+// aren't referenced by any of TSprite's own confirmed methods),
+// _transparencyMode @0x44, _scale @0x48 (a float PERCENTAGE, default
+// 100.0 - not a 0-1 fraction as an earlier pass had guessed), _pause @0x4C
+// (a short, sign-extended back to int by GetPause()).
+//
+// A genuinely surprising, twice-independently-confirmed find: Set() and
+// the copy constructor both deliberately do NOT copy _imageWidth/
+// _imageHeight - a copy always starts with width/height at 0, regardless
+// of the source's values. Presumably these are meant to be recomputed once
+// a copy's image is (re)loaded rather than treated as part of a sprite's
+// copyable "identity" - reproduced faithfully here rather than "fixed",
+// since two independent methods agree on it.
 #pragma once
+
+#include <cstdint>
 
 #include "TCharHolder.h"
 #include "WxStub.h"
 
-// This class's real field layout is now known to be considerably larger and
-// differently-ordered than what's modeled below: TSprite::GetPath()'s own
-// disassembly reads its path field at offset +0x30 (not +0), GetWidth()/
-// GetHeight() at +0x18/+0x1C, and SetPosition()/GetSize() touch a position
-// at +0x20 and a scale float at +0x48 - none of which line up with the
-// simple 5-field struct here. Untangling the real layout is its own
-// dedicated pass (TSprite is otherwise a stub, ~35 methods); only
-// SetPosition() below is added against confirmed behavior (used by
-// TLoadingControl::UpdateStatus()) rather than the real offset, using this
-// project's own invented _position/_scale fields instead.
+// Confirmed 3 distinct values (0, 1, 2) read off ToLuaString()'s mode
+// dispatch and SetTransparency()/SetTransparentColor()'s own logic; real
+// enumerator names aren't recoverable (no debug info), so these are a
+// reasonable guess from behavior, not recovered identifiers. Only kColorKey
+// (1) is confirmed to have a specific meaning (SetTransparentColor() always
+// sets this mode); 0 and 2 (the default) are both used as ToLuaString()
+// dispatch targets but nothing in TSprite's own methods distinguishes their
+// meaning further.
+enum class eTransparencyMode {
+	kNone = 0,
+	kColorKey = 1,
+	kAlpha = 2,
+	// Confirmed (TSprite::IsTransparencyEqual, Deponia_Linux.asm line
+	// 584266): used as an "any mode matches" wildcard by that one method.
+	kAny = -1,
+};
+
 class TSprite {
 public:
 	TSprite() = default;
+	TSprite(const TSprite &other);
+	explicit TSprite(const wxFileName &path);
+	virtual ~TSprite() = default;
+
+	TSprite &operator=(const TSprite &other) {
+		Set(other);
+		return *this;
+	}
+
+	// Confirmed (asm lines 582998-583029): copies everything except
+	// _imageWidth/_imageHeight - see the class comment above.
+	void Set(const TSprite &other);
 
 	bool operator==(const TSprite &other) const;
-	void Set(const TSprite &other);
-	void SetImageSize(int width, int height);
-	// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm
-	// line 469789) - a non-const accessor for _path, distinct from any
-	// (unconfirmed) const counterpart; not reversed beyond that call shape.
-	TCharHolder &GetPathNonConst() {
-		return _path;
+	// Confirmed (asm lines 583444-583625): true if the path differs, or the
+	// transparency mode differs, or (kColorKey mode only) the transparent
+	// color differs - position/mirrored/pause/name never trigger a reload.
+	bool CmpReloadNeeded(const TSprite &other) const;
+	// Confirmed (asm lines 583633-583654): resets everything Clear()
+	// conceptually "owns" back to default - notably NOT _imageWidth/
+	// _imageHeight or _name, matching Set()'s/the copy ctor's own omission
+	// of the former and this method's own omission of the latter (_name is
+	// reassigned "", but TCharHolder's own empty-string-is-a-no-op rule
+	// means that's observably unchanged either way).
+	void Clear();
+
+	// Confirmed call shape only (asm lines 583662-584050): builds/parses a
+	// Lua constructor-call string for this sprite - the same "Lua bridge
+	// contract not reversed" gap used throughout this project
+	// (LuaExecuteFunction, TArgument::ToLua(), etc.). The mode-dependent
+	// format strings ToLuaString() selects between weren't decoded
+	// byte-for-byte; SetFromLuaString() just runs the string through
+	// LuaDoString() + a not-reversed ConvertFromLua(TSprite&, int).
+	wxString ToLuaString() const;
+	bool SetFromLuaString(const wxString &value);
+
+	// Confirmed (asm lines 584058-584086): _name's own wxString conversion/
+	// assignment - a separate display name from _path.
+	wxString GetName() const {
+		return _name;
 	}
-	// Confirmed (TSprite::SetPosition's own disassembly, Deponia_Linux.asm
-	// lines 584452-584465): always sets the position; only updates the
-	// scale when it's above some unresolved threshold constant - simplified
-	// here to "any positive scale," since the real threshold isn't known.
+	void SetName(const TCharHolder &value) {
+		_name = value;
+	}
+	TCharHolder &GetNameNonConst() {
+		return _name;
+	}
+
+	void SetImageSize(int width, int height) {
+		_imageWidth = width;
+		_imageHeight = height;
+	}
+	int GetWidth() const {
+		return _imageWidth;
+	}
+	int GetHeight() const {
+		return _imageHeight;
+	}
+	// Confirmed (asm lines 584413-584442): the actual displayed size, i.e.
+	// the raw image dimension scaled by GetSize()'s percentage.
+	float GetSizedWidth() const {
+		return static_cast<float>(_imageWidth) * _scale / 100.0f;
+	}
+	float GetSizedHeight() const {
+		return static_cast<float>(_imageHeight) * _scale / 100.0f;
+	}
+
+	bool IsEmpty() const {
+		return !_path.IsOk();
+	}
+	wxPoint GetPosition() const {
+		return _position;
+	}
+	// Confirmed (asm lines 584450-584465): always updates the position;
+	// only updates the scale when it's above exactly 0.0 (a literal float
+	// constant in the disassembly, not a guessed threshold).
 	void SetPosition(const wxPoint &pos, float scale) {
 		_position = pos;
 		if (scale > 0.0f)
 			_scale = scale;
 	}
+	// Confirmed (asm lines 584473-584481): despite the name, this returns
+	// the scale PERCENTAGE (a float), not a wxSize.
+	float GetSize() const {
+		return _scale;
+	}
 
-	TCharHolder _path;
-	int _id = 0;
-	int _type = 0;
-	int _imageWidth = 0;
-	int _imageHeight = 0;
-	wxPoint _position;
-	float _scale = 1.0f;
+	void SetTransparency(eTransparencyMode mode, unsigned int color) {
+		_transparencyMode = mode;
+		if (mode == eTransparencyMode::kColorKey)
+			_transparentColor = color;
+	}
+	eTransparencyMode GetTransparency() const {
+		return _transparencyMode;
+	}
+	// Confirmed (asm lines 584225-584235): always switches to kColorKey
+	// mode as a side effect.
+	void SetTransparentColor(const unsigned int &color) {
+		_transparencyMode = eTransparencyMode::kColorKey;
+		_transparentColor = color;
+	}
+	unsigned int GetTransparentColor() const {
+		return _transparentColor;
+	}
+	// Confirmed (asm lines 584260-584288): asymmetric - only `other`'s mode
+	// is inspected. other.GetTransparency()==kAny always matches;
+	// other.GetTransparency()==kColorKey compares only the transparent
+	// colors (regardless of this sprite's own mode); any other mode compares
+	// this->GetTransparency() == other.GetTransparency() directly.
+	bool IsTransparencyEqual(const TSprite &other) const;
+
+	wxFileName GetPath() const {
+		return _path;
+	}
+	TCharHolder &GetPathNonConst() {
+		return _path;
+	}
+	void SetPath(const TCharHolder &value) {
+		_path = value;
+	}
+
+	// Confirmed (asm lines 584368-584404): bit 1 (0x02) of an otherwise-
+	// unconfirmed flags byte - SetMirrored() preserves the other bits.
+	bool IsMirrored() const {
+		return (_flags & kMirroredFlag) != 0;
+	}
+	void SetMirrored(bool mirrored) {
+		if (mirrored)
+			_flags |= kMirroredFlag;
+		else
+			_flags &= static_cast<std::uint8_t>(~kMirroredFlag);
+	}
+
+	// Confirmed (asm lines 584489-584513): stored as a 16-bit value,
+	// sign-extended back to int by GetPause().
+	void SetPause(int value) {
+		_pause = static_cast<short>(value);
+	}
+	int GetPause() const {
+		return _pause;
+	}
+
+private:
+	static constexpr std::uint8_t kMirroredFlag = 0x02;
+
+	TCharHolder _name;                   // +0x08
+	int _imageWidth = 0;                 // +0x18
+	int _imageHeight = 0;                // +0x1C
+	wxPoint _position;                   // +0x20/+0x24
+	unsigned int _transparentColor = 0;  // +0x28
+	TCharHolder _path;                   // +0x30
+	std::uint8_t _flags = 0;             // +0x40
+	eTransparencyMode _transparencyMode = eTransparencyMode::kAlpha;  // +0x44
+	float _scale = 100.0f;               // +0x48
+	short _pause = -1;                   // +0x4C
 };

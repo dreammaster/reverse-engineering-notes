@@ -1874,8 +1874,8 @@ line	raw_symbol	status	owner	member	demangled
 531518	_ZNK11TCharHoldereqEPKc	todo	TCharHolder	operator==	TCharHolder::operator==(char const*) const
 531579	_ZNK11TCharHolderneERKS_	todo	TCharHolder	operator!=	TCharHolder::operator!=(TCharHolder const&) const
 531627	_ZNK11TCharHolder6SameAsERKS_	todo	TCharHolder	SameAs	TCharHolder::SameAs(TCharHolder const&) const
-531676	_ZNK11TCharHoldercv10wxFileNameEv	todo	(free function)	wxFileName	TCharHolder::operator wxFileName() const
-531830	_ZNK11TCharHoldercv8wxStringEv	todo	(free function)	wxString	TCharHolder::operator wxString() const
+531676	_ZNK11TCharHoldercv10wxFileNameEv	done	TCharHolder	operator wxFileName	TCharHolder::operator wxFileName() const
+531830	_ZNK11TCharHoldercv8wxStringEv	done	TCharHolder	operator wxString	TCharHolder::operator wxString() const
 531875	_ZN15pattern_matcher8AddGroupEP13pattern_group	todo	pattern_matcher	AddGroup	pattern_matcher::AddGroup(pattern_group*)
 531923	_ZN12TPolygonListaSERKS_	todo	TPolygonList	operator=	TPolygonList::operator=(TPolygonList const&)
 532096	_ZN12TPolygonList9push_backERKSt6vectorI7wxPointSaIS1_EE	todo	TPolygonList	push_back	TPolygonList::push_back(std::vector<wxPoint, std::allocator<wxPoint> > const&)
