@@ -10,7 +10,18 @@
 #pragma once
 
 #include "TCharHolder.h"
+#include "WxStub.h"
 
+// This class's real field layout is now known to be considerably larger and
+// differently-ordered than what's modeled below: TSprite::GetPath()'s own
+// disassembly reads its path field at offset +0x30 (not +0), GetWidth()/
+// GetHeight() at +0x18/+0x1C, and SetPosition()/GetSize() touch a position
+// at +0x20 and a scale float at +0x48 - none of which line up with the
+// simple 5-field struct here. Untangling the real layout is its own
+// dedicated pass (TSprite is otherwise a stub, ~35 methods); only
+// SetPosition() below is added against confirmed behavior (used by
+// TLoadingControl::UpdateStatus()) rather than the real offset, using this
+// project's own invented _position/_scale fields instead.
 class TSprite {
 public:
 	TSprite() = default;
@@ -24,10 +35,21 @@ public:
 	TCharHolder &GetPathNonConst() {
 		return _path;
 	}
+	// Confirmed (TSprite::SetPosition's own disassembly, Deponia_Linux.asm
+	// lines 584452-584465): always sets the position; only updates the
+	// scale when it's above some unresolved threshold constant - simplified
+	// here to "any positive scale," since the real threshold isn't known.
+	void SetPosition(const wxPoint &pos, float scale) {
+		_position = pos;
+		if (scale > 0.0f)
+			_scale = scale;
+	}
 
 	TCharHolder _path;
 	int _id = 0;
 	int _type = 0;
 	int _imageWidth = 0;
 	int _imageHeight = 0;
+	wxPoint _position;
+	float _scale = 1.0f;
 };

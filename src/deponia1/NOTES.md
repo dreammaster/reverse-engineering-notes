@@ -1368,6 +1368,56 @@ The function's own return value isn't confirmed (the epilogue never sets
 method) - kept as an unconditional `true`, matching this method's
 pre-existing stub behavior rather than guessing at real semantics.
 
+## TLoadingControl: implement Draw/UpdateStatus/EndLoading; Init left as a flagged gap
+
+With `TGameControl` fully covered, moved to `TLoadingControl` (manifest:
+stub, 7 methods) - small and directly adjacent (`TMasterControl::
+ShowLoadingScreen`/`Signal` already call into it). Reversed the
+constructor/destructor's field layout, `Draw()`, `UpdateStatus(int,int)`,
+and `EndLoading(TSoundInterface*)` in full; `Init(SLoadingScreen&,
+TSoundInterface*)` itself is left as an explicit stub over a genuine, newly-
+discovered layout ambiguity (see below) rather than guessed at.
+
+Confirmed fields (from the ctor's zeroing pattern and every other method's
+own offsets): two embedded `TPictureIO` objects (`_progressBarPic`,
+`_backgroundPic` - `Draw()` draws the background full-surface and the
+progress bar through a moving/resizing source rect), a pair of `wxRect`s
+(`_totalRect`/`_fillRect` - the bar's full bounds and its filled portion),
+a `wxPoint` (`_fillOrigin`, a base position for one of two progress-fill
+visual modes), a `bool` (`_progressFillsForward`, which mode is active),
+and a `wxFileName` (`_soundPath`, a loading sound EndLoading() plays once if
+Init() never managed to). `UpdateStatus()`'s two modes: one grows a filled
+rect proportionally from nothing; the other shrinks a "remaining" rect while
+also sliding the progress-bar picture's own position via a new `TSprite::
+SetPosition()` - both confirmed via careful reading of the float/int math,
+not approximated.
+
+The `Init()` gap: its disassembly calls `TSprite::GetPath()`/`GetWidth()`/
+`GetHeight()`/`SetPosition()` directly on its `SLoadingScreen&` parameter's
+image fields. Cross-checking `TSprite::GetPath()`'s own disassembly (not
+previously read) shows it actually reads its path field at offset **+0x30**
+within `TSprite` - not +0, contradicting this project's current `TSprite`
+model, which has `_path` as the very first field. `GetWidth()`/`GetHeight()`
+read +0x18/+0x1C, and (from `TSprite::SetPosition()`/`GetSize()`, also
+freshly read) a position lives at +0x20 and a scale float at +0x48 - none of
+which reconcile with the current 5-field struct. `TMasterControl::
+SetLoadingScreen()`'s own memberwise copy additionally shows each
+`SLoadingScreen` image field is 16 bytes wide (the gap between consecutive
+copied sub-fields), not the 8 a bare `TCharHolder` occupies. All of this
+points at `SLoadingScreen`'s image fields actually being full `TSprite`
+objects, not `TCharHolder`s - but fully resolving it means reversing much
+more of `TSprite` itself (a stub, ~35 methods, otherwise untouched) and
+re-deriving `SLoadingScreen`'s whole layout from `SetLoadingScreen`'s own
+copy, which is its own dedicated pass. `TSprite::SetPosition()` was still
+added (against its own directly-confirmed, offset-independent behavior) so
+`UpdateStatus()` could be implemented for real; `TSprite.h` now carries a
+class-level comment flagging the rest of this gap explicitly for whoever
+picks it up next.
+
+Also added: `TSoundInterface::Play(const wxFileName&)` - a new virtual,
+confirmed distinct from `TSoundFFMPEG::PlaySound`'s own vtable slot,
+exercised by `EndLoading()`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
