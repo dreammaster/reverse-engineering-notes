@@ -10513,6 +10513,57 @@ all day. `roadmap.md` candidate 10 records the full scope for next
 time. See `file-formats.md`'s own new "`ApplyMapTriggerEffect`" section
 for the complete technical writeup.
 
+### Session update (continued, same day): extracted both trigger-list tables — the record-shape question is settled, corrosion eligibility resolved
+
+Picked candidate 10 back up immediately rather than letting the
+question sit unanswered: wrote sibling dump scripts for
+`IsPositionInTriggerList`'s own table (same pattern as today's earlier
+destination-table ones) and ran them against both games.
+
+The tables turned out tiny. Chapter 2 has exactly **9 entries** total —
+a small enough dataset to read every single one directly rather than
+sample. Cross-referencing each entry's own flags against
+`ApplyMapTriggerEffect`'s dispatch confirmed real data only ever
+exercises 3 of its 6 possible branches (the fully data-driven default,
+teleport, and exactly one equipment-corrosion entry) — the fixed-id and
+ailment-tick branches, while real code paths, aren't backed by any real
+Chapter 2 trigger today.
+
+That one corrosion entry closed the last open piece from this
+morning's writeup: its own `+4` field reads `0x142` — and `0x142` is
+already a named, confirmed equipment-slot offset in this project's own
+`party.h` (`PartyFieldWearSecond`'s own item-slot address, already
+consumed by `partyTickEquippedItemDurability`). The "which party-record
+offset does this map trigger corrode" mystery wasn't a new mechanism
+at all — it's a data-driven pointer into a slot layout this project
+already fully understands. Combined with confirming (via the
+already-embedded effect table) that the two candidate effect ids this
+branch picks between are `EffectModeItemReplace`/`ItemDestroy` — the
+exact two modes `ApplyEffectAndDrawIconBar`'s existing dispatch already
+handles — this branch turns out to need no new mechanism whatsoever,
+just `partyHandleIconBarItemExpiry` called with a trigger-supplied slot
+offset instead of a fixed one.
+
+Chapter 3's table (19 entries, also small) settled the record-shape
+question directly rather than leaving it as a "maybe": the two tables
+are **not** the same physical layout (20-byte records here vs. Chapter
+3's 18-byte destination records, different field offsets), but every
+field the two share was confirmed, by direct value inspection, to feed
+the *identical* global variables — a facing value of `0x4000` in the
+trigger table lands on exactly the same global `TravelToDestination`'s
+own facing field would, for instance. Genuine semantic convergence,
+genuinely different physical shape — the honest answer, not the
+convenient one either extreme (fully identical, or dismissively
+different) would have been.
+
+**Still not written as code** — the remaining gap is now narrow enough
+to describe precisely rather than hand-wave: a small embedded-table
+lookup plus composing the dispatch from pieces that already exist
+almost entirely. Left for a fresh pass rather than pushed through at
+the tail of what's already been a very long, dense session. Updated
+`roadmap.md` candidate 10 and `file-formats.md`'s own section with the
+full resolved picture, including the real extracted table contents.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -1021,35 +1021,54 @@ consumers, if any.
    deferred to the eventual SDL2 layer, same as this project's other
    top-level input handlers.
 
-10. **`ApplyMapTriggerEffect`/`IsPositionInTriggerList`** -- a new
-    candidate found 2026-09-30 while chasing `IsPositionInTriggerList`
-    for `gameClockRestAllowed`'s own dependency. Its dispatch structure
-    is now fully traced for Chapter 2: a 6-way switch on a matched
-    trigger-table entry's own flags (teleport / ailment-tick / 3 fixed
-    icon-bar effect ids reusing the teleport branch's own X/Y fields as
-    "extra" data / a data-driven equipment-corrosion event via the
-    already-known `ApplyTriggerEffectIconSlot` mechanism / a fully
-    data-driven default effect id) -- and most of what it would need is
-    *already reimplemented* (`PrepareTrapEffectSlots` is `effectGetDef`;
-    the icon-bar population matches `ApplyEffectAndDrawIconBar`'s
-    existing dispatch; the corrosion path is
-    `partyHandleIconBarItemExpiry`'s own mechanism). **A genuinely
-    substantial Chapter 3 divergence found, not reconciled yet**:
-    Chapter 3's own teleport branch populates the *exact same globals*
+10. **`ApplyMapTriggerEffect`/`IsPositionInTriggerList`** -- found
+    2026-09-30 while chasing `IsPositionInTriggerList` for
+    `gameClockRestAllowed`'s own dependency; both games' tables
+    extracted the same day
+    (`ida_scripts/dump_trigger_list_table.py`, one script per game).
+    Dispatch structure fully traced for Chapter 2: a 6-way switch on a
+    matched trigger-table entry's own flags (teleport / ailment-tick /
+    3 fixed icon-bar effect ids reusing the teleport branch's own X/Y
+    fields as "extra" data / a data-driven equipment-corrosion event /
+    a fully data-driven default effect id) -- and essentially all of it
+    is *already reimplemented* elsewhere: `PrepareTrapEffectSlots` is
+    `effectGetDef`; the icon-bar population matches
+    `ApplyEffectAndDrawIconBar`'s existing dispatch; and the
+    corrosion branch's own per-member eligibility field, once resolved
+    against real data (a trigger entry's `+4` value, `0x142`), turned
+    out to be an already-named equipment-slot offset
+    (`party.h`'s `PartyFieldWearSecond`-family slot addresses,
+    already consumed by `partyTickEquippedItemDurability`/
+    `partyHandleIconBarItemExpiry`) -- so this branch needs no new
+    mechanism, just `partyHandleIconBarItemExpiry` called with a
+    trigger-record-supplied `slotOffset` instead of a fixed one, and
+    `equippedItemId`/`replacementItemId` resolved exactly like
+    `combatApplyCorrosion` already does. Real Chapter 2 data (9
+    entries total) exercises only 3 of the 6 branches (default,
+    teleport, one corrosion entry) -- confirmed by reading every
+    entry's own flags directly, not assumed.
+
+    **The Chapter 3 divergence is confirmed, not just suspected**:
+    its own teleport branch populates the *exact same globals*
     `TravelToDestination` does (`ds:0xCF75`/`0xCF77`/`0xCF73`/`0xCF2F`/
     `0xCF31`/`0xCF33`/`0xCF3F`) and calls the same
     `TickTravelResourceAilments` helper -- explaining why Chapter 3's
-    `TravelToDestination` calls `ApplyMapTriggerEffect` on arrival (a
-    previously-unexplained addition, see candidate 9) but raising a real
-    open question: is Chapter 3's trigger-table record the *same* shape
-    as its destination table, or merely similar? Not yet compared
-    carefully. Genuinely blocked on: extracting
-    `IsPositionInTriggerList`'s own table for both games (not dumped at
-    all yet -- a new IDA script, same pattern as the destination-table
-    ones); pinning down the equipment-corrosion branch's own per-member
-    eligibility field; and the Chapter 3 record-shape comparison above.
-    See `file-formats.md`'s own dedicated section for the full writeup.
-    A good candidate for its own dedicated pass, not a quick add-on.
+    `TravelToDestination` calls `ApplyMapTriggerEffect` on arrival (see
+    candidate 9). The two tables are **not** byte-for-byte the same
+    shape (20-byte vs. 18-byte records, different field offsets) but
+    share every field's own *semantic* target, confirmed by direct
+    value cross-reference against real data (e.g. a facing value of
+    `0x4000` landing exactly on `SaveFacingSouth`). Chapter 3's real
+    table (19 entries) is overwhelmingly teleports (16/19), with 2
+    default-case entries and none exercising the fixed-id or
+    ailment-tick branches.
+
+    **Still not reimplemented** -- the remaining gap is now narrow: a
+    `mapTriggerFind(game, worldX, worldY)` lookup over the two embedded
+    tables, plus composing the dispatch from already-existing pieces.
+    Deliberately left for a fresh pass rather than rushed at the tail
+    of an already long session. See `file-formats.md`'s own dedicated
+    section for the complete writeup.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need

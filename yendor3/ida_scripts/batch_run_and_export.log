@@ -1711,3 +1711,18 @@ wrote C:\dev\yendor\yendor3\ida_scripts\travel_destination_dump.txt
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'dump_trigger_list_table.py', 'noexport']
+[*] reading dump_trigger_list_table.py
+[*] executing dump_trigger_list_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+wrote C:\dev\yendor\yendor3\ida_scripts\trigger_list_dump.txt
+----- end target script output -----
+[*] finished executing dump_trigger_list_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

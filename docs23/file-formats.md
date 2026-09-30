@@ -2773,7 +2773,7 @@ over an already-decided per-record function
 (`monsterApproachParty`/`combatResolveSideTrap`), deferred the same way
 combat's own top-level loop is.
 
-### `ApplyMapTriggerEffect`: dispatch structure traced, real per-game divergence found, not yet reimplemented (2026-09-30)
+### `ApplyMapTriggerEffect`: dispatch structure and real table data resolved, C reimplementation still pending (2026-09-30)
 
 Read `ApplyMapTriggerEffect` (yendor2.asm:17458, yendor3.asm:19629;
 called once per movement step from `HandleMovementInput`, and — new
@@ -2834,37 +2834,83 @@ matches `ApplyEffectAndDrawIconBar`'s existing 3-way dispatch this
 project completed weeks ago), so *most* of the pieces this function
 would need are already sitting in `src23/effect.c`/`party.c`/`combat.c`.
 
-**A genuine, substantial Chapter 3 divergence, not just a wider
-record**: Chapter 3's teleport branch (`0x4000`) is dramatically
-richer than Chapter 2's simple direct assignment — it populates
-`ds:0xCF75`/`0xCF77`/`0xCF73`/`0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`, the
-**exact same globals** `TravelToDestination` populates from its own
-destination-table records (see "Party teleport/fast-travel
-destinations" above), and even calls `TickTravelResourceAilments` —
-the same helper `TravelToDestination` calls. This is presumably why
-Chapter 3's `TravelToDestination` calls `ApplyMapTriggerEffect` at its
-own tail end (already noted as a Chapter-3-only addition earlier in
-this document, previously unexplained) — arriving at a fast-travel
-destination in Chapter 3 also re-checks the *new* cell for its own map
-trigger (you might teleport onto a trap or an ailment zone), and the
-two systems apparently share enough of their underlying record shape
-that `ApplyMapTriggerEffect`'s own teleport branch looks like a second,
-map-cell-triggered entry point into the *same* mechanism
-`TravelToDestination` drives — a real architectural convergence
-between "step on this tile" and "use a named fast-travel destination"
-in Chapter 3 that Chapter 2 doesn't share at all.
+**A genuine, substantial Chapter 3 divergence, now confirmed against
+real data, not just a wider record**: Chapter 3's teleport branch
+(`0x4000`) is dramatically richer than Chapter 2's simple direct
+assignment — it populates `ds:0xCF75`/`0xCF77`/`0xCF73`/`0xCF2F`/
+`0xCF31`/`0xCF33`/`0xCF3F`, the **exact same globals**
+`TravelToDestination` populates from its own destination-table records
+(see "Party teleport/fast-travel destinations" above), and even calls
+`TickTravelResourceAilments` — the same helper `TravelToDestination`
+calls. This is presumably why Chapter 3's `TravelToDestination` calls
+`ApplyMapTriggerEffect` at its own tail end (already noted as a
+Chapter-3-only addition earlier in this document, previously
+unexplained) — arriving at a fast-travel destination in Chapter 3 also
+re-checks the *new* cell for its own map trigger (you might teleport
+onto a trap or an ailment zone).
 
-**Not reimplemented** — deliberately, given how much is still
-genuinely open: `IsPositionInTriggerList`'s own table hasn't been
-extracted for either game (a new IDA dump, same pattern as the
-destination-table scripts); the per-member equipment-corrosion
-eligibility field (`ApplyTriggerEffectIconSlot`'s own gate) isn't
-pinned to a specific party-record offset yet; and Chapter 3's
-apparent convergence with the travel-destination system needs its own
-careful comparison against that system's already-confirmed record
-layout before assuming they're the *same* shape rather than merely
-similar. A good candidate for its own dedicated pass — see `roadmap.md`
-candidate 10.
+**Both tables extracted** (`ida_scripts/dump_trigger_list_table.py`,
+one script per game, mirroring the destination-table scripts' own
+style). Real data settles the record-shape question above: the two
+systems are **not** byte-for-byte the same shape (Chapter 3's trigger
+record is 20 bytes vs. the destination record's 18; fields land at
+different relative offsets — worldX/Y/facing sit at `+4`/`+6`/`+8`
+here vs. `+0`/`+2`/`+4` there), but every field the two share is
+confirmed, by direct value cross-reference, to feed the *identical*
+global variables: e.g. entry `[5]`'s `+8` value `16384` (`0x4000`)
+matches `SaveFacingSouth` exactly, and its `+0xA` value `-32768`
+(`0x8000` unsigned) is copied straight to `ds:0xCEF9` — the exact
+global `TravelToDestination`'s own `+0x10` field feeds. So this is a
+genuine semantic convergence (same underlying "teleport record"
+concept, same consuming globals) with a genuinely different physical
+layout — not a coincidence, but not literally one shared table either.
+Chapter 3's real table has only 19 entries, overwhelmingly teleports
+(`flags=0x4000`, 16 of 19) with a fixed arrival sound (`+0xE`
+consistently `43`/`0x2B` across every teleport row) — plus 2 entries
+with `flags=0x0000` (the same "fully data-driven default" case Chapter
+2 has) and none at all exercising the fixed-effect-id or
+ailment-tick branches with real data.
+
+**Chapter 2's real table is tiny — 9 entries** — and, cross-referenced
+against the dispatch above, exercises exactly 3 of its 6 possible
+branches: entries with `flags=0x0000` (6 of 9, the fully data-driven
+default, `+4` read directly as an effect id), `flags=0x4000` (2 of 9,
+teleport), and one `flags=0x0200` entry (the equipment-corrosion
+branch). **The corrosion branch's own per-member eligibility field is
+now resolved, not just plausible**: that one entry's own `+4` value is
+`322` (`0x142`) — and `0x142` is **already a named, confirmed
+equipment-slot offset** in this project's own `party.h`
+(`PartyFieldWearMain`/`Second`/`Third`'s own item-slot addresses,
+`0x13A`/`0x142`/`0x146`, already used by
+`partyTickEquippedItemDurability`/`partyHandleIconBarItemExpiry`) — so
+the trigger record's `+4` field is exactly what it looks like: a raw
+party-record byte offset naming which equipment slot this particular
+map trigger corrodes, here the "Second" slot. Tracing which effect id
+gets selected (`0x2B`/43 if flag bit `0x200` is set, else `1`) against
+the already-embedded `g_effectsYendor2` table confirms the exact
+mechanism: id 43's `modeFlags` is `0x0400`
+(`EffectModeItemReplace`, effect.h) and id 1's is `0x0200`
+(`EffectModeItemDestroy`) — the map-trigger corrosion branch is
+choosing between destroying or replacing whatever's equipped in a
+*data-driven, per-trigger-record* slot, using the *exact same*
+`modeFlags` dispatch `ApplyEffectAndDrawIconBar`'s existing 3-way
+switch (already fully reimplemented) already handles. In other words:
+`ApplyTriggerEffectIconSlot` needs no new mechanism at all here — it's
+`partyHandleIconBarItemExpiry` called with `slotOffset` sourced from
+the trigger record's own `+4` field instead of a fixed constant, and
+`equippedItemId`/`replacementItemId` resolved exactly the way
+`combatApplyCorrosion` already does (`itemClassifyServiceTier`/
+`itemCorrosionReplacement` against whatever's at that slot).
+
+**Not reimplemented yet** — the remaining gap is narrow now: a small
+`mapTriggerFind(game, worldX, worldY)` lookup over the two now-extracted
+embedded tables, plus composing the dispatch from pieces that already
+exist (`effectGetDef`, `partyHandleIconBarItemExpiry`,
+`itemClassifyServiceTier`/`itemCorrosionReplacement`, and — for the
+generic icon-bar branches — the same primitives
+`combatApplyEncodedItemEffectSingle`/`Party` already use). Left for a
+fresh pass rather than rushed at the end of an already long session —
+see `roadmap.md` candidate 10 for the updated, much narrower scope.
 
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`g_gameClockMinutes`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
