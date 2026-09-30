@@ -3053,3 +3053,380 @@ Done. Re-export the .asm/.idc and check the new names took, then update docs/roa
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_map_offsets.py']
+[*] reading _tmp_map_offsets.py
+[*] executing _tmp_map_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2: no EA mapping
+0x306: ea=0x10106  in start_+0x6
+0x312: ea=0x10112  in start_+0x12
+0x40F: ea=0x1020F  in start_+0x10F
+0x420: ea=0x10220  in start_+0x120
+0x451: ea=0x10251  in start_+0x151
+0x468: ea=0x10268  in start_+0x168
+0x4EE: ea=0x102EE  in start_+0x1EE
+0x595: ea=0x10395  in start_+0x295
+0x5B8: ea=0x103B8  in start_+0x2B8
+0x5C9: ea=0x103C9  in start_+0x2C9
+0x632: ea=0x10432  name='' func=''
+0x643: ea=0x10443  name='' func=''
+0x6A6: ea=0x104A6  name='' func=''
+0x6C0: ea=0x104C0  name='' func=''
+0x71F: ea=0x1051F  name='' func=''
+0x730: ea=0x10530  name='' func=''
+0x79C: ea=0x1059C  name='' func=''
+0x7AD: ea=0x105AD  name='' func=''
+0x81A: ea=0x1061A  name='' func=''
+0x82B: ea=0x1062B  name='' func=''
+0x889: ea=0x10689  in pauseScreen+0x1
+0x8B3: ea=0x106B3  name='' func=''
+0x976: ea=0x10776  in play_game+0x12
+0x9A0: ea=0x107A0  in play_game+0x3C
+0x9D3: ea=0x107D3  in play_game+0x6F
+0x9FC: ea=0x107FC  in play_game+0x98
+0xA08: ea=0x10808  in play_game+0xA4
+0xA15: ea=0x10815  in play_game+0xB1
+0xA39: ea=0x10839  in play_game+0xD5
+0xAE8: ea=0x108E8  in play_game+0x184
+0xE31: ea=0x10C31  name='' func=''
+0xE87: ea=0x10C87  in minax_curse_trap+0x-307
+0x14CE: ea=0x112CE  in end_of_turn+0x89E
+0x1C20: ea=0x11A20  name='' func=''
+0x22C9: ea=0x120C9  in compute_item_price+0x1E
+0x24FD: ea=0x122FD  name='save_game' func='save_game'
+0x2531: ea=0x12331  in save_game+0x34
+0x2543: ea=0x12343  in save_game+0x46
+0x2552: ea=0x12352  name='loc_12352' func='save_game'
+0x257A: ea=0x1237A  in read_direction_keypress+0x18
+0x2651: ea=0x12451  in canMoveToTile+0x2E
+0x2674: ea=0x12474  name='loc_12474' func='canMoveToTile'
+0x28B5: ea=0x126B5  in normal_movement+0x140
+0x28CA: ea=0x126CA  in normal_movement+0x155
+0x2A0B: ea=0x1280B  name='' func=''
+0x2C05: ea=0x12A05  in draw_world_map_overview+0x33
+0x2D65: ea=0x12B65  name='plot_map_icon_point' func='plot_map_icon_point'
+0x31F4: ea=0x12FF4  in board+0x85
+0x3257: ea=0x13057  in board+0xE8
+0x32A7: ea=0x130A7  in board+0x138
+0x3309: ea=0x13109  in board+0x19A
+0x35A6: ea=0x133A6  name='loc_133A6' func='enter'
+0x3628: ea=0x13428  in enter+0x9F
+0x365D: ea=0x1345D  in enter+0xD4
+0x3693: ea=0x13493  in enter+0x10A
+0x36CD: ea=0x134CD  in enter+0x144
+0x3705: ea=0x13505  in enter+0x17C
+0x3A6A: ea=0x1386A  in klimb+0x79
+0x3A7F: ea=0x1387F  in klimb+0x8E
+0x3A99: ea=0x13899  name='loc_13899' func='klimb'
+0x3B03: ea=0x13903  in launch+0x53
+0x3B3B: ea=0x1393B  in launch+0x8B
+0x3B5B: ea=0x1395B  in launch+0xAB
+0x3BAF: ea=0x139AF  in launch+0xFF
+0x3CD7: ea=0x13AD7  in launch+0x227
+0x3F7E: ea=0x13D7E  name='loc_13D7E' func='offer'
+0x3FFA: ea=0x13DFA  name='loc_13DFA' func='quit'
+0x4017: ea=0x13E17  name='loc_13E17' func='quit'
+0x404B: ea=0x13E4B  in quit+0x84
+0x4740: ea=0x14540  in x_it+0x6C
+0x4752: ea=0x14552  in yell+0x10
+0x477E: ea=0x1457E  in zstats+0x16
+0x47C5: ea=0x145C5  in zstats+0x5D
+0x47D8: ea=0x145D8  in zstats+0x70
+0x47EA: ea=0x145EA  in zstats+0x82
+0x47F9: ea=0x145F9  in zstats+0x91
+0x480B: ea=0x1460B  in zstats+0xA3
+0x481E: ea=0x1461E  in zstats+0xB6
+0x4830: ea=0x14630  in zstats+0xC8
+0x483C: ea=0x1463C  in zstats+0xD4
+0x484E: ea=0x1464E  in zstats+0xE6
+0x485E: ea=0x1465E  in zstats+0xF6
+0x4870: ea=0x14670  in zstats+0x108
+0x487D: ea=0x1467D  in zstats+0x115
+0x4891: ea=0x14691  in zstats+0x129
+0x489C: ea=0x1469C  in zstats+0x134
+0x48B0: ea=0x146B0  in zstats+0x148
+0x48BB: ea=0x146BB  in zstats+0x153
+0x48CF: ea=0x146CF  in zstats+0x167
+0x48DA: ea=0x146DA  in zstats+0x172
+0x48EE: ea=0x146EE  in zstats+0x186
+0x48F9: ea=0x146F9  in zstats+0x191
+0x490D: ea=0x1470D  in zstats+0x1A5
+0x4918: ea=0x14718  in zstats+0x1B0
+0x492C: ea=0x1472C  in zstats+0x1C4
+0x4937: ea=0x14737  in zstats+0x1CF
+0x4949: ea=0x14749  in zstats+0x1E1
+0x496F: ea=0x1476F  in zstats+0x207
+0x4984: ea=0x14784  in zstats+0x21C
+0x49A3: ea=0x147A3  in zstats+0x23B
+0x49C8: ea=0x147C8  in zstats+0x260
+0x49DC: ea=0x147DC  in zstats+0x274
+0x49FB: ea=0x147FB  in zstats+0x293
+0x4A20: ea=0x14820  in zstats+0x2B8
+0x4A35: ea=0x14835  in zstats+0x2CD
+0x4A54: ea=0x14854  in zstats+0x2EC
+0x4A78: ea=0x14878  in zstats+0x310
+0x4A98: ea=0x14898  in zstats+0x330
+0x4ACD: ea=0x148CD  name='' func=''
+0x4C42: ea=0x14A42  in setPalette+0x4
+0x4C74: ea=0x14A74  name='draw_tile' func='draw_tile'
+0x4CC2: ea=0x14AC2  in draw_map_content+0x15
+0x4D26: ea=0x14B26  name='flash_screen' func='flash_screen'
+0x4D4E: ea=0x14B4E  name='clear_screen' func='clear_screen'
+0x4DB0: ea=0x14BB0  in erase_point+0x6
+0x4DF0: ea=0x14BF0  in draw_sprite_row+0x10
+0x4E1E: ea=0x14C1E  name='xorSpriteDraw' func='xorSpriteDraw'
+0x5156: ea=0x14F56  in keypress_check+0x9
+0x5232: ea=0x15032  in write_character+0x2F
+0x5246: ea=0x15046  in write_character+0x43
+0x53C1: ea=0x151C1  name='' func=''
+0x53E1: ea=0x151E1  name='' func=''
+0x540C: ea=0x1520C  in set_cursor_position+0xF
+0x547F: ea=0x1527F  name='xorDrawCircleAt' func='xorDrawCircleAt'
+0x54CF: ea=0x152CF  in access_file+0x5
+0x55DD: ea=0x153DD  in set_normal_text_color+0x4
+0x55EA: ea=0x153EA  in set_reverse_text_color+0xB
+0x5645: ea=0x15445  name='' func=''
+0x565C: ea=0x1545C  name='' func=''
+0x566B: ea=0x1546B  name='aNotABlank' func=''
+0x56BD: ea=0x154BD  name='' func=''
+0x5959: ea=0x15759  name='' func=''
+0x597C: ea=0x1577C  name='' func=''
+0x5986: ea=0x15786  name='' func=''
+0x59AB: ea=0x157AB  name='' func=''
+0x59C7: ea=0x157C7  name='' func=''
+0x59EB: ea=0x157EB  name='' func=''
+0x59F5: ea=0x157F5  name='' func=''
+0x5A17: ea=0x15817  name='' func=''
+0x5A21: ea=0x15821  name='' func=''
+0x5A45: ea=0x15845  name='' func=''
+0x5A52: ea=0x15852  name='' func=''
+0x5A77: ea=0x15877  name='' func=''
+0x5A9C: ea=0x1589C  name='' func=''
+0x5AC2: ea=0x158C2  name='' func=''
+0x5ACC: ea=0x158CC  name='' func=''
+0x5AF1: ea=0x158F1  name='' func=''
+0x5AFB: ea=0x158FB  name='' func=''
+0x5B20: ea=0x15920  name='' func=''
+0x5B2D: ea=0x1592D  name='' func=''
+0x5B51: ea=0x15951  name='' func=''
+0x5B6C: ea=0x1596C  name='' func=''
+0x5BA3: ea=0x159A3  name='' func=''
+0x5BCF: ea=0x159CF  name='' func=''
+0x5C00: ea=0x15A00  name='' func=''
+0x5C0B: ea=0x15A0B  name='' func=''
+0x6B0A: ea=0x1690A  in draw_dungeon_monster+0x1D
+0x6C5A: ea=0x16A5A  name='' func=''
+0x6C77: ea=0x16A77  name='loc_16A77' func='check_hyperwarp_sun_collision'
+0x6CEF: ea=0x16AEF  in space_travel_command_loop+0x76
+0x6D08: ea=0x16B08  in space_travel_command_loop+0x8F
+0x6D22: ea=0x16B22  in space_travel_command_loop+0xA9
+0x6D3B: ea=0x16B3B  name='' func=''
+0x6E32: ea=0x16C32  in animate_starfield+0xF5
+0x6F83: ea=0x16D83  name='draw_ship_marker' func='draw_ship_marker'
+0x7073: ea=0x16E73  name='loc_16E73' func='hyperwarp'
+0x70DA: ea=0x16EDA  in hyperwarp+0xDD
+0x714E: ea=0x16F4E  name='loc_16F4E' func='hyperwarp'
+0x7163: ea=0x16F63  in hyperwarp+0x166
+0x717D: ea=0x16F7D  in hyperwarp+0x180
+0x73C8: ea=0x171C8  name='' func=''
+0x73F1: ea=0x171F1  name='' func=''
+0x740B: ea=0x1720B  name='patch_map_filename' func='patch_map_filename'
+0x742B: ea=0x1722B  name='' func=''
+0x7509: ea=0x17309  in minax_death_sequence+0x69
+0x7601: ea=0x17401  name='' func=''
+0x7BC0: ea=0x179C0  name='TILE_OFFSETS' func=''
+0x4CCA: ea=0x14ACA  in draw_map_content+0x1D
+----- end target script output -----
+[*] finished executing _tmp_map_offsets.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15269
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_get_addrs.py']
+[*] reading _tmp_get_addrs.py
+[*] executing _tmp_get_addrs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+normal_movement: 0x12575
+canMoveToTile: 0x12423
+save_game: 0x122FD
+load_map: 0x12290
+draw_world_map_overview: 0x129D2
+plot_map_icon_point: 0x12B65
+setPalette: 0x14A3E
+draw_tile: 0x14A74
+draw_map_content: 0x14AAD
+flash_screen: 0x14B26
+clear_screen: 0x14B4E
+erase_point: 0x14BAA
+draw_sprite_row: 0x14BE0
+xorSpriteDraw: 0x14C1E
+TILE_OFFSETS: 0x179C0
+compute_item_price: 0x120AB
+access_file: 0x152CA
+patch_map_filename: 0x1720B
+TILE_OFFSETS: 0x179C0
+----- end target script output -----
+[*] finished executing _tmp_get_addrs.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15269
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_file_offsets.py']
+[*] reading _tmp_file_offsets.py
+[*] executing _tmp_file_offsets.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima2/ida_scripts/batch_run_and_export.py", line 80, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "_tmp_file_offsets.py", line 8, in <module>
+    print(f"EA 0x{ea:X}: file_offset=0x{off:X} seg_start=0x{seg.start_ea:X}")
+AttributeError: 'NoneType' object has no attribute 'start_ea'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_file_offsets.py']
+[*] reading _tmp_file_offsets.py
+[*] executing _tmp_file_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+EA 0x126690: file_offset=0x-1 seg_start=NONE
+EA 0x1266B4: file_offset=0x-1 seg_start=NONE
+EA 0x1266B7: file_offset=0x-1 seg_start=NONE
+EA 0x1266C9: file_offset=0x-1 seg_start=NONE
+EA 0x1266CC: file_offset=0x-1 seg_start=NONE
+EA 0x12672E: file_offset=0x-1 seg_start=NONE
+----- end target script output -----
+[*] finished executing _tmp_file_offsets.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15269
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_file_offsets2.py']
+[*] reading _tmp_file_offsets2.py
+[*] executing _tmp_file_offsets2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+EA 0x126690: file_offset=0x-1 seg_start=NONE
+EA 0x126730: file_offset=0x-1 seg_start=NONE
+----- end target script output -----
+[*] finished executing _tmp_file_offsets2.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15269
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_off3.py']
+[*] reading _tmp_off3.py
+[*] executing _tmp_off3.py
+[*] captured stdout from target script:
+----- begin target script output -----
+EA 0x17B00 -> file_offset 0x7D00
+EA 0x17BC0 -> file_offset 0x7DC0
+----- end target script output -----
+[*] finished executing _tmp_off3.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15269
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_charcreate.py']
+[*] reading _tmp_charcreate.py
+[*] executing _tmp_charcreate.py
+[*] captured stdout from target script:
+----- begin target script output -----
+aMale: ea=0x1575B file_off=0x595B
+aFemale: ea=0x15788 file_off=0x5988
+----- end target script output -----
+[*] finished executing _tmp_charcreate.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15269
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_getnum.py']
+[*] reading _tmp_getnum.py
+[*] executing _tmp_getnum.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima2/ida_scripts/batch_run_and_export.py", line 80, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "_tmp_getnum.py", line 9, in <module>
+    print("end_ea:", hex(pfn.end_ea))
+AttributeError: 'NoneType' object has no attribute 'end_ea'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_getnum2.py']
+[*] reading _tmp_getnum2.py
+[*] executing _tmp_getnum2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+get_number ea: 0x151b0
+file offset: 0x53B0
+----- end target script output -----
+[*] finished executing _tmp_getnum2.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15269
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', '_tmp_upr.py']
+[*] reading _tmp_upr.py
+[*] executing _tmp_upr.py
+[*] captured stdout from target script:
+----- begin target script output -----
+update_points_remaining: ea=0x15A66 file_off=0x5C66
+----- end target script output -----
+[*] finished executing _tmp_upr.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15269
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0

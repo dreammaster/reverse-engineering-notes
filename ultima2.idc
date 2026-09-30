@@ -1097,6 +1097,10 @@ static Bytes_0(void) {
 	create_insn	(0X11573);
 	create_insn	(0X11580);
 	create_insn	(0X11590);
+	create_insn	(x=0X11594);
+	op_dec		(x,	1);
+	create_insn	(x=0X1159B);
+	op_dec		(x,	1);
 	create_insn	(0X115A2);
 	create_insn	(0X115AC);
 	create_insn	(0X115B7);
@@ -1730,13 +1734,56 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X129FD);
 	op_hex		(x,	1);
-	create_insn	(0X12A0A);
+	create_insn	(x=0X12A0A);
+	op_dec		(x,	1);
+	create_insn	(x=0X12A0E);
+	op_dec		(x,	1);
+	create_insn	(x=0X12A12);
+	op_dec		(x,	1);
+	create_insn	(x=0X12A1A);
+	op_dec		(x,	1);
 	create_insn	(0X12A29);
 	create_insn	(0X12A2C);
 	create_insn	(0X12A2F);
+	set_cmt	(0X12A33,	"x",	0);
+	set_cmt	(0X12A39,	"y",	0);
+	set_cmt	(0X12A42,	"x",	0);
+	set_cmt	(0X12A48,	"y",	0);
+	set_cmt	(0X12A51,	"x",	0);
+	set_cmt	(0X12A57,	"y",	0);
+	set_cmt	(0X12A60,	"x",	0);
+	set_cmt	(0X12A66,	"y",	0);
+	set_cmt	(0X12A6F,	"x",	0);
+	set_cmt	(0X12A75,	"y",	0);
+	set_cmt	(0X12A7E,	"x",	0);
+	set_cmt	(0X12A84,	"y",	0);
+	set_cmt	(0X12A8D,	"x",	0);
+	set_cmt	(0X12A93,	"y",	0);
+	set_cmt	(0X12A9C,	"x",	0);
+	set_cmt	(0X12AA2,	"y",	0);
 	create_insn	(0X12AAA);
+	set_cmt	(0X12AAE,	"x",	0);
+	set_cmt	(0X12AB4,	"y",	0);
+	set_cmt	(0X12ABD,	"x",	0);
+	set_cmt	(0X12AC3,	"y",	0);
 	create_insn	(0X12ACB);
+	set_cmt	(0X12ACF,	"x",	0);
+	set_cmt	(0X12AD5,	"y",	0);
+	set_cmt	(0X12ADE,	"x",	0);
+	set_cmt	(0X12AE4,	"y",	0);
+	set_cmt	(0X12AED,	"x",	0);
+	set_cmt	(0X12AF3,	"y",	0);
+	set_cmt	(0X12AFC,	"x",	0);
+	set_cmt	(0X12B02,	"y",	0);
 	create_insn	(0X12B0A);
+	set_cmt	(0X12B0E,	"x",	0);
+	set_cmt	(0X12B14,	"y",	0);
+	set_cmt	(0X12B1D,	"x",	0);
+	set_cmt	(0X12B23,	"y",	0);
+	set_cmt	(0X12B2C,	"x",	0);
+	set_cmt	(0X12B32,	"y",	0);
+	set_cmt	(0X12B3B,	"x",	0);
+	set_cmt	(0X12B41,	"y",	0);
 	create_insn	(x=0X12B4D);
 	op_hex		(x,	1);
 	create_insn	(0X12B59);
@@ -2577,6 +2624,10 @@ static Bytes_0(void) {
 	create_strlit	(0X14053,	0XA);
 	set_name	(0X14053,	"aTransact");
 	create_insn	(0X1405D);
+	create_insn	(x=0X14081);
+	op_dec		(x,	1);
+	create_insn	(x=0X1409F);
+	op_dec		(x,	1);
 	set_cmt	(0X140A6,	"FUNNY, NO RESPONSE!",	0);
 	create_insn	(0X140A6);
 	create_strlit	(0X140A9,	0X14);
@@ -2821,6 +2872,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14893);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
+	create_byte	(0X148D0);
 	create_word	(0X148DC);
 	make_array	(0X148DC,	0XA0);
 	set_name	(0X148DC,	"screen_rows");
@@ -2910,6 +2962,12 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X14B97);
 	op_hex		(x,	1);
+	create_insn	(x=0X14B99);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
+	create_insn	(x=0X14BA0);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X14BAA);
 	set_name	(0X14BAA,	"erase_point");
 	create_insn	(x=0X14BC3);
@@ -4184,7 +4242,9 @@ static Bytes_0(void) {
 	create_word	(0X16992);
 	create_word	(0X16994);
 	create_byte	(0X16996);
+	set_name	(0X16996,	"_seedA");
 	create_byte	(0X16997);
+	set_name	(0X16997,	"_seedB");
 	create_byte	(0X16998);
 	create_insn	(0X16999);
 	set_name	(0X16999,	"setup_rocket_launch_display");
@@ -4408,10 +4468,13 @@ static Bytes_0(void) {
 	set_cmt	(0X1700C,	"y",	0);
 	create_byte	(0X17012);
 	make_array	(0X17012,	0XA);
+	set_name	(0X17012,	"PLANET_COORDS");
 	create_byte	(0X1701C);
 	make_array	(0X1701C,	0XA);
+	set_name	(0X1701C,	"PLANET_COORDS_1");
 	create_byte	(0X17026);
 	make_array	(0X17026,	0XA);
+	set_name	(0X17026,	"PLANET_COORDS_2");
 	create_insn	(0X17030);
 	set_name	(0X17030,	"check_hyperwarp_sun_collision");
 	set_cmt	(0X17046,	"\xC2\x8D\xC2\x8DYOU HIT THE SUN!\xC2\x8D",	0);
@@ -4428,6 +4491,15 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X1708E,	"YOU ARE IN DEEP SPACE.",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X17091,	0X18);
 	set_name	(0X17091,	"aYouAreInDeepSp");
 	create_insn	(0X170A9);
@@ -4480,15 +4552,6 @@ static Bytes_0(void) {
 	create_insn	(0X1716C);
 	create_strlit	(0X1716F,	0X8);
 	set_name	(0X1716F,	"aPluto");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X17177);
 	set_cmt	(0X1717A,	"X.",	0);
 	create_insn	(0X1717A);
@@ -4683,8 +4746,11 @@ static Bytes_1(void) {
 	create_byte	(0X17888);
 	set_name	(0X17888,	"text_mode?");
 	create_byte	(0X17889);
+	set_name	(0X17889,	"plotX");
 	create_byte	(0X1788A);
+	set_name	(0X1788A,	"plotY");
 	create_byte	(0X1788B);
+	set_name	(0X1788B,	"_shipX");
 	create_byte	(0X1788C);
 	create_byte	(0X1788D);
 	create_byte	(0X1788E);
@@ -4705,17 +4771,23 @@ static Bytes_1(void) {
 	create_word	(0X178CF);
 	create_word	(0X178D1);
 	create_byte	(0X178D3);
+	set_name	(0X178D3,	"sx");
 	create_byte	(0X178D4);
 	create_byte	(0X178D5);
+	set_name	(0X178D5,	"nx_");
 	create_byte	(0X178D6);
+	set_name	(0X178D6,	"ny_");
 	create_byte	(0X178D7);
+	set_name	(0X178D7,	"speed");
 	create_byte	(0X178D8);
 	create_byte	(0X178D9);
 	create_byte	(0X178DA);
-	create_byte	(0X178DB);
-	create_byte	(0X178DC);
+	make_array	(0X178DA,	0X3);
+	set_name	(0X178DA,	"logic_coords");
 	create_byte	(0X178DD);
+	set_name	(0X178DD,	"_starX");
 	create_byte	(0X1791D);
+	set_name	(0X1791D,	"_starY");
 	create_byte	(0X1795D);
 	create_byte	(0X1795E);
 	set_name	(0X1795E,	"map_freezeAnimation");
@@ -5123,6 +5195,7 @@ static Functions_0(void) {
 	set_frame_size(0X129D2, 0, 0, 0);
 	add_func    (0X12B65,0X12B8F);
 	set_func_flags(0X12B65,0x5400);
+	SetType(0X12B65, "void __usercall plot_map_icon_point(int x@<di>, int y@<si>);");
 	set_frame_size(0X12B65, 0, 0, 0);
 	add_func    (0X12B8F,0X12F6F);
 	set_func_flags(0X12B8F,0x1401);
