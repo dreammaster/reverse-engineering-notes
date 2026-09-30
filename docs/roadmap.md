@@ -770,3 +770,25 @@ sessions, unlike a one-off todo list.
       that are really parallel per-type arrays and should get the same
       enum-indexed treatment in the C++ struct rather than keeping
       their disassembly-era per-field names.
+
+## "Ultima II Upgrade" fan patch (new, 2026-09-30)
+
+- [x] Identify the 3 named bugfixes (vendor price reset, time-gate
+      terrain corruption, attribute rollover past 99) and the tileset
+      read/render code, from `c:\games\ultima2\ultima2.com`/
+      `ULTIMAII.EXE` — **done**, full writeup in
+      [enhanced-patch.md](enhanced-patch.md). No IDA database exists
+      for the patched `ULTIMAII.EXE` (only for `ultima2.com`, the
+      tiny driver-loading stub, as `ultima2_enhanced.asm/idb/idc`) —
+      all `ULTIMAII.EXE` findings came from a byte diff against the
+      original plus manual/`ndisasm` disassembly of changed regions,
+      cross-referenced against this project's existing full
+      disassembly of the unmodified EXE (same file size, same `EA =
+      file_offset + 0xFE00` addressing).
+- [ ] Disassemble `cga.drv`/`cgacomp.drv`/`ega.drv` (2-4KB each) —
+      confirmed these now contain essentially all the tile/pixel
+      rendering code for the 3 new video modes, reached from
+      `ULTIMAII.EXE` via a new `int 65h` driver ABI (8 sub-functions,
+      4 of which return far-call entry points). Needed to go from
+      "where the tileset code lives" (done) to "what pixel format it
+      actually reads" (not done). See enhanced-patch.md §3/§4.
