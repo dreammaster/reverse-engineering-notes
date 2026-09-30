@@ -1771,6 +1771,30 @@ state. The constructor confirms a second qword right after the timestamp,
 always zeroed and never read by any of these 6 methods - not modeled,
 since nothing depends on it.
 
+## TSpriteHandle (partial - scope turned out bigger than expected)
+
+Confirmed AddRef()/Release()/GetRefCount() operate on a refcount at +0x78
+(Deponia_Linux.asm lines 772739-772780) - Release() decrements
+UNCONDITIONALLY, with no zero-guard (the pre-existing stub had added a
+defensive `if (_refCount > 0)` guard not present in the original; removed
+to match). Added GetMemorySize() (asm lines 772788-772797), a plain int
+read at +0x00, previously undeclared.
+
+Went looking at the destructor (asm lines 772635-772731) expecting a quick
+finish for the remaining ctor/AddSpritePart methods, and found this class
+is considerably bigger than its "7 methods" count suggested: the destructor
+removes itself from a static global registry (`s_all`, vector-like, paired
+with a global end-pointer), frees a dynamically-sized collection of
+individually-owned pointers at +0x08 (presumably populated by
+`AddSpritePart(TSpritePartHandle const&)` - manifest-listed but not
+reversed this pass), a separate owned buffer at +0x20, and a separate owned
+object at +0x60. `TSpritePartHandle` itself is an entirely separate,
+not-yet-touched type. Given the scope (a new companion type plus non-
+trivial ownership/registry bookkeeping), left the ctor/AddSpritePart/dtor
+as an honest gap for a dedicated future pass rather than guessed at -
+this is a case where "keep going" surfaced more work than it resolved, and
+that's fine to record plainly.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

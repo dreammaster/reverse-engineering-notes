@@ -5,8 +5,7 @@ void TSpriteHandle::AddRef() {
 }
 
 void TSpriteHandle::Release() {
-	if (_refCount > 0)
-		--_refCount;
+	--_refCount;
 }
 
 int TSpriteHandle::GetRefCount() const {

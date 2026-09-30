@@ -265,7 +265,7 @@ TMatrix3	todo	13	767045	767700
 idMat3	todo	2	767217	767742
 TMatrix4	todo	21	767828	769325
 TCutRect	todo	7	771519	772531
-TSpriteHandle	stub	7	772635	775729
+TSpriteHandle	in-progress	7	772635	775729
 MaxRectsBinPack	todo	20	773548	1445275
 TTextureHandle	todo	1	776718	776718
 TPreloadedPicManager	stub	15	779878	781717
