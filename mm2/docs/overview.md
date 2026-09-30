@@ -46,7 +46,7 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 3. Combat is documented ([combat.md](combat.md)); still to verify: to-hit formula details `(check)`, the
    remaining monster record fields' exact meaning, touch-effect implementation (`1AFE2`), spell effects (2CAST1/2).
 4. `ITEMS.DAT` fields (20 bytes: 12-byte name, class/type flags, three words), `SPELLS.DAT`, `ATTRIB.DAT`.
-5. Save format: `ROSTER.DAT` (8292 bytes = 48 characters + 2052 bytes of state).
+5. Save format done ([save-format.md](save-format.md)); open: where the current map/position are stored.
 6. Disassemble the `.DRV` modules (video, timer/sound) — jump table at offset `fn*3`.
 7. Shops (2SMITH/2TEMPLE/2BRAIN), inn (1RETINN), caves specials (2CAVES): read and name internals.
 8. `import_names.py` to refresh names of *existing* overlay databases without a rebuild.

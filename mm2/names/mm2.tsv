@@ -183,3 +183,16 @@
 156C6	monster_anim_step	animation sequencer (was mislabelled as music)
 15772	monster_anim_next_frame
 157C4	monster_anim_wait
+16932	state_save	writes the 805h-byte game state block of ROSTER.DAT (table at DGROUP:5309)
+168B6	state_load	reads it back
+1DBF2	g_era_day	10 words: day of year per era
+1DC06	g_era_year	10 words: year per era
+26EDC	g_map_visited	60 x 32 bytes, bit per cell
+1DC46	g_event_vars	24 event variables
+1DC25	g_fx_light	Light
+1DC26	g_fx_magic	Magic protection
+1DC27	g_fx_forces	Forces protection
+1DC28	g_fx_levitate	Levitate
+1DC29	g_fx_walk_on_water	Walk on Water
+1DC2A	g_fx_guard_dog	Guard Dog
+1DC60	g_battle_count	Nth battle

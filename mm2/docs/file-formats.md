@@ -29,7 +29,7 @@ free code reaches `1 << width` (up to 12 bits).  Python: `tools/mm2_lzw.py`.
 | `MM2.CH` | 1024 | 128 characters × 8 bytes: the 8×8 text font (loaded by `load_resource_cached`) |
 | `ITEMS.DAT` | 5120 | not compressed; 256 items x 20 bytes at `DGROUP:6960` (`g_items`); see *Items* below |
 | `SPELLS.DAT` | 192 | not compressed; loaded to `DGROUP:7D60` (`g_spells`); layout not traced |
-| `ATTRIB.DAT` | 3840 | LZW; not traced (used by character creation, 1MENU2) |
+| `ATTRIB.DAT` | 3840 | LZW; **60 x 64-byte map attribute blocks** (`map_attr_load` `16171` copies block *map id* to `DGROUP:5986`); see *Map attributes* below |
 | `MONSTERS.DAT` | 6656 | LZW; 416 records × 16 bytes, see below |
 | `STR.DAT` | 7707 | LZW; then every byte `+ 1Ch` (mod 256) gives ASCII; `1Dh` = newline. Tavern jokes/rumours |
 | `MAP.DAT` | 18748 | 60 × `u16` file offsets (index 0 = 120), each a LZW chunk that decompresses to **512 bytes** = one 16×16 map, two layers (256 B walls + 256 B flags, see below) |
@@ -200,3 +200,22 @@ Equipping checks, in order: free equipped slot (error 2), class mask (error 4), 
 (instance flag top 2 bits mapped through `DGROUP:3404` = {0,2,0,1} must equal the character's alignment,
 error 5), `F0h` (error 0Eh); a flag byte of `FFh` marks a cursed item that sticks (`char_equip_item`
 sets the character's condition bit 1 and reports error 3).
+
+## Map attributes (`ATTRIB.DAT`, 64 bytes per map, copied to `DGROUP:5986`)
+
+Fields identified from their users (offsets from the start of the block; linear address of the copy =
+`231D6 + off`); values checked against the file:
+
+| Off | Meaning |
+|---|---|
+| 00 | the map's own number |
+| 04 | low nibble = graphics/terrain style used for the sky/background picture (`view_load_sky` `1B1D4`) |
+| 05-08 | neighbouring map ids used when the party walks off the 16x16 grid (`map_edge_transition` `1B75E`): `05` for y = 16, `06` for x = 16, `07` for y = -1, `08` for x = -1 (towns/dungeons point to themselves) |
+| 09 | random-encounter chance: a roll `rand(1, value)` equal to 1 starts a fight on each step (`game_main_loop`) |
+| 0A | minimum monster count for generated encounters (`combat_encounter_ok`) |
+| 0B, 0C | maximum / minimum monster tier for generated encounters (`combat_generate_encounter`) |
+| 0D | percent chance that "Run" succeeds (`byte_231E3`) |
+| 0E | safe cell (`y<<4|x`) the party is moved to when it flees or is teleported (`byte_231E4`) |
+| 0F | era number of the map: event triggers only run when it equals the current era (`evt_run_script`) |
+| 11 | read by `combat_encounter` (`byte_231E7`; stealth/hide difficulty?) |
+| 12.. | not traced (contains cell coordinates and bit patterns) |
