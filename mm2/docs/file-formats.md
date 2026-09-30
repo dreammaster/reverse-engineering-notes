@@ -37,7 +37,7 @@ free code reaches `1 << width` (up to 12 bits).  Python: `tools/mm2_lzw.py`.
 | `ROSTER.DAT` | 8292 | first `1860h` bytes = 48 character records (24 characters + 24 hirelings, `82h` bytes each) loaded to `g_characters` (`load_roster` `1276C`); remaining 2052 bytes not traced (presumably game state) |
 | `DEFAULT.DAT` | 780 | new-game default roster template (loaded by 1MENU2 `19660`); not traced |
 | `*.DRV` | 3-5 KB | video driver code modules (`TCGA/EGA/TGA/HGA/MCGA.DRV`) and `TIMER.DRV`; loaded whole into memory and called through a jump table at offset `fn*3` (`driver_call` `11CDA`) |
-| `*.16`, `*.4` | | 16-colour (EGA/VGA) and 4-colour (CGA) graphics for each map style / monsters / screens (names at `DGROUP:1DD…`); not traced yet |
+| `*.16`, `*.4` | | 16-colour (EGA/VGA) and 4-colour (CGA) graphics; **image banks, see below** (`MONSTERS.16/.4` differ) |
 
 ### Map styles / graphics sets
 
@@ -114,3 +114,32 @@ From the display code (`show_character_sheet` `12A6A`, `show_party_roster_screen
 | 79 | 1 | ≥ 80h marks a special character (a `+` is shown after the name) |
 
 Party: `g_party_ids` = 8 words (roster ids, FFFFh = empty); ids ≥ 18h are hirelings.
+
+## Image banks (`*.16` = 4 bpp, `*.4` = 2 bpp)
+
+Decoded from the EGA driver's draw routine (`EGA.DRV` fn 13h at `0BCA`, called from the resident
+`gfx_draw_op13` `114FE`) and verified by rendering every `.16` file (`tools/mm2_gfx.py`):
+
+```
+u32   decompressed size
+LZW   (see above)  ->  bank:
+  u16 count
+  count x { u16 image_offset, u16 mask_offset }        ; mask_offset 0 = no mask
+image (at image_offset):  u16 width, u16 height, then height rows of
+      ceil(width/2) bytes (16 colours; ceil(width/4) for 2 bpp), each row padded to a multiple of 4 bytes,
+      left pixel in the high bits; palette = default IBM EGA colours
+mask  (at mask_offset):   no header, 1 bit per pixel, ceil(width/8) bytes per row
+```
+
+Contents seen: `town/cave/castle.16` = 32 wall/door pieces of the first-person maze view (full
+walls, side walls at 3 depths, doors), `*b/*t/*f.16` = 36/36/1 images (ceiling/floor/background/tops),
+`outdoor1-3.16` = 8 terrain pieces, `desert/ocean/swamp/tundra.16` = 20, `sky.16` = 208x60 sky bands,
+`master.16` = title screen (`Might and Magic Book Two`, 320x200) and UI pieces, `globe/endgame/
+book/throw/xfer/disk/nwcp.16` = special screens.  Some `.4` banks do not decode with the 2 bpp
+rule above yet (`TOWN.4`, `CASTLE.4`, `CAVE.4`, `GLOBE.4`, `DISK.4`, `XFER.4`): row padding differs.
+
+### `MONSTERS.16` / `MONSTERS.4`
+
+`MONSTERS.16`: 75 x `u32` offsets (0 = unused) to LZW banks, one per monster picture set.  Each
+decompressed bank starts `u16 count, u16 offsets[count]`, then animation scripts and pictures in a
+*driver-specific compressed* format (the EGA driver expands them in fn 16h at `1233`); not decoded yet.
