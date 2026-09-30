@@ -176396,3 +176396,36 @@ wrote C:\dev\yendor\yendor2\ida_scripts\trigger_list_dump.txt
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'investigate_encoded_effect_cluster.py', 'noexport']
+[*] reading investigate_encoded_effect_cluster.py
+[*] executing investigate_encoded_effect_cluster.py
+[*] captured stdout from target script:
+----- begin target script output -----
+wrote C:\dev\yendor\yendor2\ida_scripts\encoded_effect_cluster_investigation.txt
+----- end target script output -----
+[*] finished executing investigate_encoded_effect_cluster.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_worlddat_block4_offset.py', 'noexport']
+[*] reading dump_worlddat_block4_offset.py
+[*] executing dump_worlddat_block4_offset.py
+[*] captured stdout from target script:
+----- begin target script output -----
+block5 (WorldDat_setBlock5): DS:0xce63 (ea 0x3a6c3) -> WORLD.DAT file offset 0x1a78a9 (1734825)
+block6 (WorldDat_setBlock6): DS:0xce67 (ea 0x3a6c7) -> WORLD.DAT file offset 0x1a9255 (1741397)
+block4 (WorldDat_setBlock4, LoadClueBookSpellEntry's own table): DS:0xce6b (ea 0x3a6cb) -> WORLD.DAT file offset 0x1aa5dd (1746397)
+wrote C:\dev\yendor\yendor2\ida_scripts\worlddat_block4_offset.txt
+----- end target script output -----
+[*] finished executing dump_worlddat_block4_offset.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

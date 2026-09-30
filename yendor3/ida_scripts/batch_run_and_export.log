@@ -1726,3 +1726,19 @@ wrote C:\dev\yendor\yendor3\ida_scripts\trigger_list_dump.txt
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor3\yendor3.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor3\\ida_scripts\\batch_run_and_export.py', 'dump_worlddat_block4_offset.py', 'noexport']
+[*] reading dump_worlddat_block4_offset.py
+[*] executing dump_worlddat_block4_offset.py
+[*] captured stdout from target script:
+----- begin target script output -----
+block4 (WorldDat_setBlock4): DS:0xb203 (ea 0x38fb3) -> WORLD.DAT file offset 0x41b5bf (4306367)
+wrote C:\dev\yendor\yendor3\ida_scripts\worlddat_block4_offset.txt
+----- end target script output -----
+[*] finished executing dump_worlddat_block4_offset.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

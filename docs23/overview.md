@@ -10635,6 +10635,54 @@ apply chain — is tested against the real, now fully catalogued
 contents of both games' tables. Tests in a new `test_maptrigger.c` (the
 21st suite). All 21 suites pass. `roadmap.md` candidate 10 marked done.
 
+### Session update (continued, same day): the multi-session "word_332D8 cluster" mystery, finally resolved
+
+Asked directly whether to re-attempt this specific, previously-"genuinely
+unresolved" mystery rather than pick a fresh thread, and went back at
+it with fresh eyes rather than repeating the same search. The earlier
+investigation had already found the key clue without quite closing the
+loop: it noted `LoadClueBookSpellEntry` copies an 80-byte record to
+`es:0x5A5A`, compared that against the cluster's own addresses
+(`0x332D8` and neighbors), and concluded they were "a different address
+range" — because `0x5A5A` and `0x332D8` really do look unrelated as
+plain numbers. The missing step was real-mode address arithmetic:
+`es:offset` isn't directly comparable to a linear address without
+resolving `segment*16 + offset` first, and once that's done (`es` here
+turns out to be loaded from a global that's set, once, at the very top
+of `start`, to the game's own main data segment) `es:0x5A5A` lands at
+the *exact* linear address `word_332D0` — the cluster's own first
+field — sits at. Every field this project has ever referenced from
+this cluster falls cleanly inside that same 80-byte window. There was
+never a missing write at all — the cluster *is* the spell record,
+addressed two different ways that nothing in the disassembly visually
+connects.
+
+Chased the record's own real backing data the rest of the way:
+`LoadClueBookSpellEntry`'s EMS page maps to a genuine `WORLD.DAT` block
+(`WorldDat_setBlock4`, already a named function, just never connected
+to this mystery before), whose file offset a tiny IDA script could read
+directly. Both games' real `WORLD.DAT` files were on hand locally, so
+rather than stop at "the offset is X," read the actual bytes — and got
+an unambiguous, satisfying confirmation: `HEAL`, `MAGIC ATTACK`, `SLING
+SHOT`, `COLD SLASH`, `MINOR WOUNDS`, `MINER'S LIGHT I`, byte-identical
+in both games. This project's own UI-tracing had *already* described
+what several of this record's fields mean (MP/NUORE/MAGIC ORE costs,
+"AFFECTS:"/"WHEN:"/"EFFECT:" description sections) months of narrative
+distance from the numbered-globals mystery, without anyone connecting
+the two until this pass put them side by side.
+
+This closes the specific "who writes this" question that had blocked
+`ApplyAttackToTarget` and two of `ApplyEncodedItemEffect`'s remaining
+branches since a much earlier session. What's left — decoding the rest
+of the 80-byte record's own field layout beyond the handful of offsets
+now confirmed — is ordinary, bounded work, not an open mystery.
+Documented in both `file-formats.md` (a new dedicated section) and
+`roadmap.md`'s candidate 8. No code changes this round — this was a
+pure investigation, and a genuinely significant one: multi-session
+mysteries don't resolve often, and this one did because re-reading an
+old, carefully-reasoned "unresolved" conclusion with slightly different
+arithmetic turned out to be enough.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

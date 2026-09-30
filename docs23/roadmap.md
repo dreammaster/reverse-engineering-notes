@@ -913,9 +913,27 @@ consumers, if any.
    confirmed to match this candidate's existing scoping exactly --
    `ApplyAttackToTarget`'s own resistance-filtering half is now traced
    and reimplemented (`combatApplyTargetResistances`, see candidate 6
-   above for the full writeup), but the rest of that attack-resolution
-   family, and these two branches' own caller-context field sourcing,
-   still isn't.
+   above for the full writeup). **The rest of that family's own
+   caller-context mystery -- the "word_332D8-33306 encoded effect
+   descriptor cluster" this project had marked "genuinely unresolved"
+   after a dedicated earlier investigation -- is resolved for good,
+   2026-09-30**: the fields aren't a separate, unwritten scratch region
+   at all, they're named offsets *into* the same 80-byte
+   `LoadClueBookSpellEntry` buffer the alchemy/spell-casting UI already
+   reads, confirmed by real-mode segment arithmetic (`es:0x5A5A` with
+   `es` loaded from `seg seg129` resolves to the exact same linear
+   address as `word_332D0`) and cross-checked against real bytes in
+   both games' actual `WORLD.DAT` files (`ida_scripts/dump_worlddat_block4_offset.py`,
+   one script per game) -- the first 6 records read HEAL/MAGIC
+   ATTACK/SLING SHOT/COLD SLASH/MINOR WOUNDS/MINER'S LIGHT I,
+   byte-identical in both games. See `file-formats.md`'s own dedicated
+   section for the complete writeup. This closes the "which caller
+   populates this" side of the mystery; what's left is the more
+   ordinary task of decoding the rest of the record's own field layout
+   (only name/MP-cost/NUORE-cost/ore-cost are confirmed so far) and
+   wiring `ApplyAttackToTarget`/`TryResolveAttackAgainstTarget`/these
+   two dispatch branches against it -- a good candidate for its own
+   pass, no longer blocked on an unknown write site.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark

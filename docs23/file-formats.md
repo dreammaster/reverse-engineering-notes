@@ -2773,6 +2773,105 @@ over an already-decided per-record function
 (`monsterApproachParty`/`combatResolveSideTrap`), deferred the same way
 combat's own top-level loop is.
 
+### The "word_332D8-33306 encoded effect descriptor cluster" mystery, resolved for good (2026-09-30)
+
+A multi-session-old open question, closed. This project had long known
+that `ApplyEncodedItemEffect`'s corridor/ranged-attack branches (and
+the map-monster attack family they reach — `ApplyAttackToTarget`,
+`TryResolveAttackAgainstTarget`) read a cluster of roughly 14 globals
+(`word_332D8` through `word_33306`) that no traced code ever appeared
+to *write* — an earlier session's dedicated investigation confirmed via
+live IDA cross-reference that none of them are written by a plain `mov`
+anywhere in `yendor2.asm`, traced `LoadClueBookSpellEntry` as a
+plausible lead, and concluded the mystery was "genuinely unresolved,
+not just unstarted."
+
+**The earlier investigation's own conclusion held the answer without
+quite reaching it**: `LoadClueBookSpellEntry` really is the write
+site — the prior pass just compared its copy destination (`es:0x5A5A`)
+against the cluster's own addresses (`0x332D8` etc.) as if they were
+directly comparable numbers, when `es:0x5A5A` is a segment:offset pair
+that needs real-mode address arithmetic (`segment*16 + offset`) to
+resolve to a linear address before it can be compared at all. Doing
+that arithmetic: `es` here is loaded from `word_2E4AA`, which is set
+*once*, at the very top of `start` (`yendor2.asm:51`), to
+`seg seg129` — the game's own main data segment, the exact same
+segment every `word_332Dx` symbol lives in. `seg129`'s selector is
+`0x2D86`, so `es:0x5A5A` resolves to linear `0x2D86*16 + 0x5A5A =
+0x332BA` — and `word_332D0`, the cluster's own first field, sits at
+linear `0x332D0`, exactly `0x16` (22) bytes into that same 80-byte
+buffer. Checking every field this project has ever referenced from
+this cluster (`word_332D0` through `word_33306`) confirms all of them
+fall cleanly within `[0x332BA, 0x332BA+80)` — the *entire* cluster is
+simply a set of named offsets into the same 80-byte record
+`LoadClueBookSpellEntry` copies, addressed two different ways by two
+different pieces of code (`es:0x5A5A`-relative during the copy itself,
+`seg129`-absolute afterward) that nothing in the disassembly visually
+connects. There is no separate, unwritten scratch region at all — the
+mystery was a segment-arithmetic illusion, not a missing write.
+
+**The record itself, resolved down to real file bytes**: `LoadClueBookSpellEntry`
+(`yendor2.asm:23355`, confirmed instruction-identical in Chapter 3) maps
+in EMS page `0x5610` and copies one 80-byte record, by 1-based index in
+`ax`, into that buffer — already correctly described elsewhere in this
+document as "the spell-data equivalent of `LoadClueBookMonsterEntry`'s
+`WORLD.DAT` read," but never connected to the descriptor cluster until
+now. The EMS page's own backing data turns out to be a genuine,
+already-partially-cataloged `WORLD.DAT` block: `WorldDat_setBlock4`
+(`yendor2.asm:43128`, Chapter 3 instruction-identical at
+`yendor3.asm:43517`) reads its file offset from a small fixed dword
+table (`DS:0xCE6B` Chapter 2, `DS:0xB203` Chapter 3) and its record
+size (`0x50` = 80 bytes) as a literal constant. Reading that dword
+directly via IDA and then the real bytes at that `WORLD.DAT` offset in
+**both** games' real files confirms it beyond any doubt — the first 6
+records, byte-identical in both games:
+
+```
+[1] HEAL
+[2] MAGIC ATTACK
+[3] SLING SHOT
+[4] COLD SLASH
+[5] MINOR WOUNDS
+[6] MINER'S LIGHT I
+```
+
+This is exactly the game's own spell/ability list — Chapter 2 at
+`WORLD.DAT` offset `0x1AA5DD`, Chapter 3 at `0x41B5BF` (both extracted
+via `ida_scripts/dump_worlddat_block4_offset.py`, one script per game).
+Each 80-byte record: a null/space-terminated name string in the first
+22 bytes (confirmed independently — `DrawAlchemySpellList` literally
+calls `writeString(bx=0x5A5A)` right after loading a record, printing
+straight out of this same buffer), followed by the numeric cost/effect
+fields this project's own UI-tracing had *already* identified the
+meaning of without realizing they were reading this exact table:
+`CheckSpellCastability` reads MP cost (`+0x54` on the caster's own
+record, compared against `word_332D2` at buffer offset `0x18`),
+`NUORE`/`MAGIC ORE` cost (`word_332D4`/`word_332D6`, offsets `0x1A`/`0x1C`,
+each checked via `IsBCDCounterAtLeast`), and `ShowClueBookSpellDetail`
+draws "CLASS:"/"LEVEL:"/"MP:"/"NUORE:"/"ORE:"/"AFFECTS:"/"WHEN:"/"EFFECT:"
+sections from further fields in the same record (see this document's
+"`ShowClueBook`'s full F-key dispatch" section above for the full
+label list, written up before this connection was made).
+
+**What this unblocks**: `ApplyAttackToTarget`'s own "di's record type
+here is unknown" mystery is resolved for its *inputs* the same way its
+*output side* (`combatApplyTargetResistances`) already was — the
+attack's own damage/status parameters (`word_332E8` magnitude,
+`word_33300`/`word_33302`/`word_33306` flag words) are simply fields of
+whichever spell/ability record was most recently loaded by index, the
+same "already-resolved value, not rolled" pattern this project has
+found repeatedly elsewhere (`combatApplyEncodedItemEffectSingle`'s own
+inflicted-status/magnitude parameters, for instance). The remaining
+work is no longer "find the write site" — it's the more ordinary,
+bounded task of decoding the rest of the 80-byte record's own field
+layout (only a handful of offsets are confirmed so far: name at `+0`,
+MP/NUORE/MAGIC ORE cost at `+0x18`/`+0x1A`/`+0x1C`) and cross-referencing
+each remaining consumer (`ApplyEncodedItemEffect`'s corridor-attack
+branches, `ApplyAttackToTarget`, `TryResolveAttackAgainstTarget`,
+`ShowClueBookSpellDetail`'s own further display fields) against it. A
+good candidate for its own dedicated pass — see `roadmap.md` candidate
+8's updated status.
+
 ### `ApplyMapTriggerEffect`: dispatch structure and real table data resolved, C reimplementation still pending (2026-09-30)
 
 Read `ApplyMapTriggerEffect` (yendor2.asm:17458, yendor3.asm:19629;
