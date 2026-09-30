@@ -6603,6 +6603,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X168A2);
 	op_hex		(x,	0);
 	create_insn	(0X168B6);
+	set_name	(0X168B6,	"state_load");
 	create_insn	(x=0X168C8);
 	op_hex		(x,	1);
 	set_cmt	(0X168CA,	"DOS - 2+ - ALLOCATE MEMORY\nBX = number of 16-byte paragraphs desired",	0);
@@ -6644,6 +6645,7 @@ static Bytes_1(void) {
 	op_hex		(x,	0);
 	create_insn	(0X1692E);
 	create_insn	(0X16932);
+	set_name	(0X16932,	"state_save");
 	create_insn	(x=0X16935);
 	op_plain_offset	(x,	1,	0X1D850);
 	op_plain_offset	(x,	129,	0X1D850);
@@ -8548,6 +8550,10 @@ static Bytes_1(void) {
 	set_name	(0X1DBED,	"g_outdoors");
 	create_byte	(0X1DBEE);
 	create_word	(0X1DBF0);
+	set_cmt	(0X1DBF2,	"10 words: day of year per era",	0);
+	set_name	(0X1DBF2,	"g_era_day");
+	set_cmt	(0X1DC06,	"10 words: year per era",	0);
+	set_name	(0X1DC06,	"g_era_year");
 	set_cmt	(0X1DC1A,	"current era index (time periods); day/year arrays at DGROUP:03A2 / 03B6",	0);
 	create_word	(0X1DC1A);
 	set_name	(0X1DC1A,	"g_era");
@@ -8562,12 +8568,24 @@ static Bytes_1(void) {
 	set_name	(0X1DC1F,	"g_facing");
 	create_byte	(0X1DC20);
 	create_byte	(0X1DC21);
+	set_cmt	(0X1DC25,	"Light",	0);
 	create_byte	(0X1DC25);
+	set_name	(0X1DC25,	"g_fx_light");
+	set_cmt	(0X1DC26,	"Magic protection",	0);
 	create_byte	(0X1DC26);
+	set_name	(0X1DC26,	"g_fx_magic");
+	set_cmt	(0X1DC27,	"Forces protection",	0);
 	create_byte	(0X1DC27);
+	set_name	(0X1DC27,	"g_fx_forces");
+	set_cmt	(0X1DC28,	"Levitate",	0);
 	create_byte	(0X1DC28);
+	set_name	(0X1DC28,	"g_fx_levitate");
+	set_cmt	(0X1DC29,	"Walk on Water",	0);
 	create_byte	(0X1DC29);
+	set_name	(0X1DC29,	"g_fx_walk_on_water");
+	set_cmt	(0X1DC2A,	"Guard Dog",	0);
 	create_byte	(0X1DC2A);
+	set_name	(0X1DC2A,	"g_fx_guard_dog");
 	create_byte	(0X1DC33);
 	create_byte	(0X1DC34);
 	create_byte	(0X1DC35);
@@ -8576,6 +8594,10 @@ static Bytes_1(void) {
 	create_byte	(0X1DC3A);
 	create_byte	(0X1DC44);
 	create_byte	(0X1DC45);
+	set_cmt	(0X1DC46,	"24 event variables",	0);
+	set_name	(0X1DC46,	"g_event_vars");
+	set_cmt	(0X1DC60,	"Nth battle",	0);
+	set_name	(0X1DC60,	"g_battle_count");
 	set_cmt	(0X1DC66,	"8 words: roster ids of party members, FFFFh = empty; ids >= 18h are hirelings",	0);
 	create_word	(0X1DC66);
 	set_name	(0X1DC66,	"g_party_ids");
@@ -9403,6 +9425,15 @@ static Bytes_1(void) {
 	set_name	(0X200D3,	"aAndCutTheParty");
 	create_strlit	(0X201A0,	0XB);
 	set_name	(0X201A0,	"aExplosion");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X201AB,	0X10);
 	set_name	(0X201AB,	"aBackpacksFull");
 	create_strlit	(0X201BB,	0X8);
@@ -9433,15 +9464,6 @@ static Bytes_1(void) {
 	set_name	(0X2025A,	"aSearch");
 	create_strlit	(0X20264,	0XE);
 	set_name	(0X20264,	"aThePartyHas");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X20272,	0X9);
 	set_name	(0X20272,	"aFoundA");
 	create_strlit	(0X2027B,	0XA);
@@ -10343,6 +10365,8 @@ static Bytes_2(void) {
 	set_name	(0X255B0,	"g_spells");
 	set_cmt	(0X25670,	"roster: 48 slots x 82h bytes (24 characters + 24 hirelings)",	0);
 	set_name	(0X25670,	"g_characters");
+	set_cmt	(0X26EDC,	"60 x 32 bytes, bit per cell",	0);
+	set_name	(0X26EDC,	"g_map_visited");
 	create_word	(0X2765C);
 	create_byte	(0X2766E);
 	create_byte	(0X2766F);
@@ -11213,9 +11237,11 @@ static Functions_0(void) {
 	set_frame_size(0X16818, 0X4, 2, 0);
 	add_func    (0X168B6,0X16932);
 	set_func_flags(0X168B6,0x5400);
+	set_func_cmt(0X168B6,	"reads it back", 0);
 	set_frame_size(0X168B6, 0X4, 0, 0);
 	add_func    (0X16932,0X16997);
 	set_func_flags(0X16932,0x5400);
+	set_func_cmt(0X16932,	"writes the 805h-byte game state block of ROSTER.DAT (table at DGROUP:5309)", 0);
 	set_frame_size(0X16932, 0X4, 0, 0);
 	add_func    (0X16998,0X1699B);
 	set_func_flags(0X16998,0x5400);

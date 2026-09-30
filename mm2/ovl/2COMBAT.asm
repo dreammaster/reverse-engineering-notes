@@ -3801,8 +3801,8 @@ combat_battle_number_text:              ; CODE XREF: combat_party_turn+98C↓p
                 push    bp
                 mov     bp, sp
                 sub     sp, 2
-                inc     word_1DC60
-                mov     ax, word_1DC60
+                inc     g_battle_count
+                mov     ax, g_battle_count
                 cwd
                 mov     cx, 0Ah
                 idiv    cx
@@ -3811,12 +3811,12 @@ combat_battle_number_text:              ; CODE XREF: combat_party_turn+98C↓p
                 push    ax
                 mov     ax, 1
                 push    ax
-                push    word_1DC60
+                push    g_battle_count
                 call    thk_text_put_number_pad
                 add     sp, 6
                 cmp     [bp+var_2], 1
                 jnz     short loc_19A02
-                cmp     word_1DC60, 0Bh
+                cmp     g_battle_count, 0Bh
                 jz      short loc_19A02
                 mov     ax, 1220h
                 jmp     short loc_19A29
@@ -3826,7 +3826,7 @@ loc_19A02:                              ; CODE XREF: combat_party_turn+642↑j
                                         ; combat_party_turn+649↑j
                 cmp     [bp+var_2], 2
                 jnz     short loc_19A14
-                cmp     word_1DC60, 0Ch
+                cmp     g_battle_count, 0Ch
                 jz      short loc_19A14
                 mov     ax, 1223h
                 jmp     short loc_19A29
@@ -3836,7 +3836,7 @@ loc_19A14:                              ; CODE XREF: combat_party_turn+654↑j
                                         ; combat_party_turn+65B↑j
                 cmp     [bp+var_2], 3
                 jnz     short loc_19A26
-                cmp     word_1DC60, 0Dh
+                cmp     g_battle_count, 0Dh
                 jz      short loc_19A26
                 mov     ax, 1226h
                 jmp     short loc_19A29
@@ -5230,7 +5230,7 @@ loc_1A4D9:                              ; CODE XREF: combat_encounter+199↑j
 
 loc_1A512:                              ; CODE XREF: combat_encounter+25B↑j
                                         ; combat_encounter+263↑j
-                cmp     byte_1DC2A, 0
+                cmp     g_fx_guard_dog, 0
                 jnz     short loc_1A524
                 cmp     [bp+var_8], 5Ah ; 'Z'
                 jb      short loc_1A524
@@ -5797,7 +5797,7 @@ loc_1A905:                              ; CODE XREF: combat_show_protection+49�
                 push    ax
                 mov     ax, 1
                 push    ax
-                mov     al, byte_1DC26
+                mov     al, g_fx_magic
                 sub     ah, ah
                 push    ax
                 call    thk_text_put_number_pad
@@ -5822,7 +5822,7 @@ loc_1A905:                              ; CODE XREF: combat_show_protection+49�
                 push    ax
                 mov     ax, 1
                 push    ax
-                mov     al, byte_1DC27
+                mov     al, g_fx_forces
                 sub     ah, ah
                 push    ax
                 call    thk_text_put_number_pad
@@ -7470,7 +7470,7 @@ arg_0           = word ptr  4
                 jz      short loc_1B312
                 mov     bx, [bp+arg_0]
                 mov     al, [bx+16h]
-                add     al, byte_1DC26
+                add     al, g_fx_magic
                 mov     [bp+var_2], al
                 mov     al, [bp+var_4]
                 cmp     [bp+var_2], al
@@ -7496,7 +7496,7 @@ loc_1B32E:                              ; CODE XREF: sub_1B2DE+3E↑j
                 and     si, 0FFh
                 mov     al, [bx+si]
                 mov     [bp+var_2], al
-                mov     al, byte_1DC27
+                mov     al, g_fx_forces
                 add     [bp+var_2], al
                 mov     al, [bp+var_4]
                 cmp     [bp+var_2], al

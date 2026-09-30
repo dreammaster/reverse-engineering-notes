@@ -2979,7 +2979,7 @@ loc_1D6C7:                              ; CODE XREF: ovl_2SMITH:D6E4↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                push    word_1DC60
+                push    g_battle_count
                 call    thk_text_put_number_pad
                 add     sp, 6
                 mov     ax, 0Dh

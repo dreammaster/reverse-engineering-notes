@@ -1762,12 +1762,12 @@ loc_1CD8A:                              ; CODE XREF: party_rest+7F↓p
                 push    di
                 push    si
                 sub     al, al
-                mov     byte_1DC2A, al
-                mov     byte_1DC29, al
-                mov     byte_1DC28, al
-                mov     byte_1DC27, al
-                mov     byte_1DC26, al
-                mov     byte_1DC25, al
+                mov     g_fx_guard_dog, al
+                mov     g_fx_walk_on_water, al
+                mov     g_fx_levitate, al
+                mov     g_fx_forces, al
+                mov     g_fx_magic, al
+                mov     g_fx_light, al
                 mov     byte_1DC31, al
                 mov     byte_1DC30, al
                 mov     byte_1DC2B, al
@@ -1955,7 +1955,7 @@ var_2           = word ptr -2
                 mov     byte_1DC64, ah
                 cmp     byte_23218, 80h
                 jnb     short loc_1CF7A
-                cmp     byte_1DC2A, ah
+                cmp     g_fx_guard_dog, ah
                 jnz     short loc_1CF7A
                 or      ax, ax
                 jnz     short loc_1CF7A

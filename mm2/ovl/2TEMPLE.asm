@@ -197,12 +197,12 @@ loc_1C24F:                              ; CODE XREF: sub_1C1EA+54↑j
                 push    ax
                 call    temple_common_helper
                 add     sp, 2
-                mov     byte_1DC25, 0C8h
-                mov     byte_1DC26, 3Ch ; '<'
-                mov     byte_1DC27, 3Ch ; '<'
-                mov     byte_1DC28, 1
-                mov     byte_1DC29, 1
-                mov     byte_1DC2A, 1
+                mov     g_fx_light, 0C8h
+                mov     g_fx_magic, 3Ch ; '<'
+                mov     g_fx_forces, 3Ch ; '<'
+                mov     g_fx_levitate, 1
+                mov     g_fx_walk_on_water, 1
+                mov     g_fx_guard_dog, 1
                 mov     byte_1DC2B, 0
                 mov     al, 1
                 mov     byte_1DC2F, al

@@ -91,9 +91,9 @@ spell_nc_Light  proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C1D1
-                cmp     byte_1DC25, 0FEh
+                cmp     g_fx_light, 0FEh
                 jnb     short loc_1C1C6
-                inc     byte_1DC25
+                inc     g_fx_light
 
 loc_1C1C6:                              ; CODE XREF: spell_nc_Light+C↑j
                 mov     al, 1
@@ -311,9 +311,9 @@ cast1_effect_b  proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C33F
-                cmp     byte_1DC28, 0FFh
+                cmp     g_fx_levitate, 0FFh
                 jnb     short loc_1C332
-                inc     byte_1DC28
+                inc     g_fx_levitate
 
 loc_1C332:                              ; CODE XREF: cast1_effect_b+C↑j
                 mov     byte ptr g_party_y+1, 1
@@ -645,9 +645,9 @@ spell_nc_Guard_Dog proc near            ; CODE XREF: cast_noncombat_spell:loc_1D
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C56F
-                cmp     byte_1DC2A, 0FFh
+                cmp     g_fx_guard_dog, 0FFh
                 jnb     short loc_1C562
-                inc     byte_1DC2A
+                inc     g_fx_guard_dog
 
 loc_1C562:                              ; CODE XREF: spell_nc_Guard_Dog+C↑j
                 mov     byte ptr g_party_y+1, 1
@@ -1188,15 +1188,15 @@ spell_nc_Lasting_Light proc near        ; CODE XREF: cast_noncombat_spell:loc_1D
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C8C6
-                cmp     byte_1DC25, 0EBh
+                cmp     g_fx_light, 0EBh
                 jbe     short loc_1C8B6
-                mov     byte_1DC25, 0FFh
+                mov     g_fx_light, 0FFh
                 jmp     short loc_1C8BB
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1C8B6:                              ; CODE XREF: spell_nc_Lasting_Light+C↑j
-                add     byte_1DC25, 14h
+                add     g_fx_light, 14h
 
 loc_1C8BB:                              ; CODE XREF: spell_nc_Lasting_Light+13↑j
                 mov     al, 1
@@ -1220,7 +1220,7 @@ spell_nc_Walk_on_Water proc near        ; CODE XREF: cast_noncombat_spell:loc_1D
                 or      ax, ax
                 jz      short locret_1C8DF
                 mov     al, 1
-                mov     byte_1DC29, al
+                mov     g_fx_walk_on_water, al
                 mov     byte ptr g_party_y+1, al
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
@@ -1833,7 +1833,7 @@ spell_nc_Protection_from_Magic proc near
                 mov     bx, word_23626
                 mov     al, [bx+71h]
                 add     al, 0Ah
-                mov     byte_1DC26, al
+                mov     g_fx_magic, al
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
@@ -1936,7 +1936,7 @@ spell_nc_Protection_From_Elements proc near
                 mov     bx, word_23626
                 mov     al, [bx+71h]
                 add     al, 14h
-                mov     byte_1DC27, al
+                mov     g_fx_forces, al
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E

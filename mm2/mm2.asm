@@ -6886,7 +6886,7 @@ load_roster     proc near               ; CODE XREF: save_roster+E↓p
                 push    ax
                 call    read_file_to_buffer
                 add     sp, 8
-                call    sub_168B6
+                call    state_load
                 mov     g_disk_needed, 2
                 retn
 load_roster     endp
@@ -6937,7 +6937,7 @@ loc_127BA:                              ; CODE XREF: save_roster+3E↓j
                 or      si, si
                 jz      short loc_127BA
                 mov     [bp+var_2], si
-                call    sub_16932
+                call    state_save
                 mov     g_disk_needed, 2
 
 loc_127DE:                              ; CODE XREF: save_roster+11↑j
@@ -9275,9 +9275,9 @@ var_2           = byte ptr -2
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
-                mov     al, byte_1DC29
-                or      al, byte_1DC28
-                or      al, byte_1DC2A
+                mov     al, g_fx_walk_on_water
+                or      al, g_fx_levitate
+                or      al, g_fx_guard_dog
                 mov     [bp+var_2], al
                 cmp     g_outdoors, 0
                 jnz     short loc_13722
@@ -9675,7 +9675,7 @@ loc_1393F:                              ; CODE XREF: char_apply_damage+12↑j
                 jz      short loc_1396D
                 mov     bx, [bp+arg_0]
                 mov     al, [bx+16h]
-                add     al, byte_1DC26
+                add     al, g_fx_magic
                 mov     [bp+var_4], al
                 mov     ax, 64h ; 'd'
                 push    ax
@@ -9719,7 +9719,7 @@ loc_13993:                              ; CODE XREF: char_apply_damage+51↑j
                 jz      short loc_13A14
                 cmp     al, 0FFh
                 jz      short loc_13A14
-                mov     al, byte_1DC27
+                mov     al, g_fx_forces
                 mov     [bp+var_4], al
                 cmp     [bp+var_8], 1
                 jnz     short loc_139BC
@@ -10654,7 +10654,7 @@ sub_13FFC       proc near               ; CODE XREF: start_combat+AE↑p
 
 loc_14017:                              ; CODE XREF: sub_13FFC+16↑j
                 mov     byte_1DBEE, 0
-                cmp     byte_1DC25, 0
+                cmp     g_fx_light, 0
                 jnz     short loc_14035
                 cmp     byte_231F0, 80h
                 jnb     short loc_14031
@@ -11799,12 +11799,12 @@ var_2           = word ptr -2
                 call    text_puts
                 add     sp, 2
                 mov     [bp+var_2], 24h ; '$'
-                cmp     byte_1DC25, 0Ah
+                cmp     g_fx_light, 0Ah
                 jb      short loc_14875
                 dec     [bp+var_2]
 
 loc_14875:                              ; CODE XREF: sub_147D8+98↑j
-                cmp     byte_1DC25, 64h ; 'd'
+                cmp     g_fx_light, 64h ; 'd'
                 jb      short loc_1487F
                 dec     [bp+var_2]
 
@@ -11822,18 +11822,18 @@ loc_1487F:                              ; CODE XREF: sub_147D8+A2↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                mov     al, byte_1DC25
+                mov     al, g_fx_light
                 sub     ah, ah
                 push    ax
                 call    text_put_number_pad
                 add     sp, 6
                 mov     [bp+var_2], 25h ; '%'
-                cmp     byte_1DC26, 0Ah
+                cmp     g_fx_magic, 0Ah
                 jb      short loc_148B9
                 dec     [bp+var_2]
 
 loc_148B9:                              ; CODE XREF: sub_147D8+DC↑j
-                cmp     byte_1DC26, 64h ; 'd'
+                cmp     g_fx_magic, 64h ; 'd'
                 jb      short loc_148C3
                 dec     [bp+var_2]
 
@@ -11847,18 +11847,18 @@ loc_148C3:                              ; CODE XREF: sub_147D8+E6↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                mov     al, byte_1DC26
+                mov     al, g_fx_magic
                 sub     ah, ah
                 push    ax
                 call    text_put_number_pad
                 add     sp, 6
                 mov     [bp+var_2], 25h ; '%'
-                cmp     byte_1DC27, 0Ah
+                cmp     g_fx_forces, 0Ah
                 jb      short loc_148F3
                 dec     [bp+var_2]
 
 loc_148F3:                              ; CODE XREF: sub_147D8+116↑j
-                cmp     byte_1DC27, 64h ; 'd'
+                cmp     g_fx_forces, 64h ; 'd'
                 jb      short loc_148FD
                 dec     [bp+var_2]
 
@@ -11872,12 +11872,12 @@ loc_148FD:                              ; CODE XREF: sub_147D8+120↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                mov     al, byte_1DC27
+                mov     al, g_fx_forces
                 sub     ah, ah
                 push    ax
                 call    text_put_number_pad
                 add     sp, 6
-                cmp     byte_1DC28, 0
+                cmp     g_fx_levitate, 0
                 jz      short loc_1493D
                 mov     ax, 0Dh
                 push    ax
@@ -11891,7 +11891,7 @@ loc_148FD:                              ; CODE XREF: sub_147D8+120↑j
                 add     sp, 2
 
 loc_1493D:                              ; CODE XREF: sub_147D8+14B↑j
-                cmp     byte_1DC29, 0
+                cmp     g_fx_walk_on_water, 0
                 jz      short loc_1495C
                 mov     ax, 0Eh
                 push    ax
@@ -11905,7 +11905,7 @@ loc_1493D:                              ; CODE XREF: sub_147D8+14B↑j
                 add     sp, 2
 
 loc_1495C:                              ; CODE XREF: sub_147D8+16A↑j
-                cmp     byte_1DC2A, 0
+                cmp     g_fx_guard_dog, 0
                 jz      short loc_1497B
                 mov     ax, 0Fh
                 push    ax
@@ -13076,9 +13076,9 @@ arg_0           = word ptr  4
                 jnz     short loc_150F9
                 test    byte_23218, 20h
                 jz      short loc_150F9
-                cmp     byte_1DC25, 0
+                cmp     g_fx_light, 0
                 jz      short loc_150F9
-                dec     byte_1DC25
+                dec     g_fx_light
                 sub     ax, ax
                 push    ax
                 call    gfx_select_page
@@ -14832,17 +14832,17 @@ loc_15CBA:                              ; CODE XREF: party_status_loop+129↑j
                 mov     bx, [bp+var_6]
                 cmp     byte ptr [bx], 0
                 jnz     short loc_15CEC
-                cmp     byte_1DC2A, 0
+                cmp     g_fx_guard_dog, 0
                 jnz     short loc_15CEC
-                cmp     byte_1DC28, 0
+                cmp     g_fx_levitate, 0
                 jnz     short loc_15CEC
-                cmp     byte_1DC29, 0
+                cmp     g_fx_walk_on_water, 0
                 jnz     short loc_15CEC
-                cmp     byte_1DC25, 0
+                cmp     g_fx_light, 0
                 jnz     short loc_15CEC
-                cmp     byte_1DC26, 0
+                cmp     g_fx_magic, 0
                 jnz     short loc_15CEC
-                cmp     byte_1DC27, 0
+                cmp     g_fx_forces, 0
                 jz      short loc_15CF4
 
 loc_15CEC:                              ; CODE XREF: party_status_loop+136↑j
@@ -15141,7 +15141,7 @@ loc_15F10:                              ; CODE XREF: check_move_blocked+9A↑j
                 cmp     byte_1EF2A, 0Ah
                 jnz     short loc_15F2B
                 mov     [bp+var_8], 0
-                cmp     byte_1DC29, 0
+                cmp     g_fx_walk_on_water, 0
                 jnz     short loc_15F2B
                 mov     di, 6
 
@@ -16649,13 +16649,14 @@ monster_load_picture_bank endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; reads it back
 
-sub_168B6       proc near               ; CODE XREF: load_roster+1B↑p
+state_load      proc near               ; CODE XREF: load_roster+1B↑p
                 push    si
                 push    di
                 push    ds
 
-loc_168B9:                              ; CODE XREF: sub_168B6+76↓j
+loc_168B9:                              ; CODE XREF: state_load+76↓j
                 mov     ax, 805h
                 mov     bx, ax
                 or      ax, ax
@@ -16665,7 +16666,7 @@ loc_168B9:                              ; CODE XREF: sub_168B6+76↓j
                 shr     bx, cl
                 inc     bx
 
-loc_168C8:                              ; CODE XREF: sub_168B6+A↑j
+loc_168C8:                              ; CODE XREF: state_load+A↑j
                 mov     ah, 48h
                 int     21h             ; DOS - 2+ - ALLOCATE MEMORY
                                         ; BX = number of 16-byte paragraphs desired
@@ -16702,7 +16703,7 @@ loc_168C8:                              ; CODE XREF: sub_168B6+A↑j
                 xor     si, si
                 xor     bx, bx
 
-loc_168FB:                              ; CODE XREF: sub_168B6+59↓j
+loc_168FB:                              ; CODE XREF: state_load+59↓j
                 mov     di, ss:[bx+5309h]
                 mov     cx, ss:[bx+530Bh]
                 cmp     cx, 0FFFFh
@@ -16711,7 +16712,7 @@ loc_168FB:                              ; CODE XREF: sub_168B6+59↓j
                 rep movsb
                 jcxz    short loc_168FB
 
-loc_16911:                              ; CODE XREF: sub_168B6+52↑j
+loc_16911:                              ; CODE XREF: state_load+52↑j
                 push    es
                 mov     bx, ds
                 mov     es, bx
@@ -16723,7 +16724,7 @@ loc_16911:                              ; CODE XREF: sub_168B6+52↑j
                 jmp     short loc_1692E
 ; ---------------------------------------------------------------------------
 
-loc_1691D:                              ; CODE XREF: sub_168B6+22↑j
+loc_1691D:                              ; CODE XREF: state_load+22↑j
                 pop     ax
                 push    es
                 mov     bx, ax
@@ -16736,23 +16737,24 @@ loc_1691D:                              ; CODE XREF: sub_168B6+22↑j
                 jmp     short loc_168B9
 ; ---------------------------------------------------------------------------
 
-loc_1692E:                              ; CODE XREF: sub_168B6+65↑j
+loc_1692E:                              ; CODE XREF: state_load+65↑j
                 pop     ds
                 pop     di
                 pop     si
                 retn
-sub_168B6       endp
+state_load      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; writes the 805h-byte game state block of ROSTER.DAT (table at DGROUP:5309)
 
-sub_16932       proc near               ; CODE XREF: save_roster+43↑p
+state_save      proc near               ; CODE XREF: save_roster+43↑p
                 push    si
                 push    di
                 push    ds
 
-loc_16935:                              ; CODE XREF: sub_16932+5F↓j
+loc_16935:                              ; CODE XREF: state_save+5F↓j
                 mov     dx, offset aRosterDat_1 ; "ROSTER.DAT"
                 mov     al, 2
                 mov     ah, 3Dh
@@ -16778,7 +16780,7 @@ loc_16935:                              ; CODE XREF: sub_16932+5F↓j
                 shr     bx, cl
                 inc     bx
 
-loc_1695D:                              ; CODE XREF: sub_16932+23↑j
+loc_1695D:                              ; CODE XREF: state_save+23↑j
                 mov     ah, 48h
                 int     21h             ; DOS - 2+ - ALLOCATE MEMORY
                                         ; BX = number of 16-byte paragraphs desired
@@ -16786,7 +16788,7 @@ loc_1695D:                              ; CODE XREF: sub_16932+23↑j
                 xor     di, di
                 mov     bx, di
 
-loc_16967:                              ; CODE XREF: sub_16932+47↓j
+loc_16967:                              ; CODE XREF: state_save+47↓j
                 mov     si, [bx+5309h]
                 mov     cx, [bx+530Bh]
                 cmp     cx, 0FFFFh
@@ -16795,7 +16797,7 @@ loc_16967:                              ; CODE XREF: sub_16932+47↓j
                 rep movsb
                 jcxz    short loc_16967
 
-loc_1697B:                              ; CODE XREF: sub_16932+40↑j
+loc_1697B:                              ; CODE XREF: state_save+40↑j
                 mov     cx, 805h
                 pop     bx
                 xor     dx, dx
@@ -16810,17 +16812,17 @@ loc_1697B:                              ; CODE XREF: sub_16932+40↑j
                 jmp     short loc_16993
 ; ---------------------------------------------------------------------------
 
-loc_1698D:                              ; CODE XREF: sub_16932+E↑j
+loc_1698D:                              ; CODE XREF: state_save+E↑j
                 call    dword_223B6
                 jmp     short loc_16935
 ; ---------------------------------------------------------------------------
 
-loc_16993:                              ; CODE XREF: sub_16932+59↑j
+loc_16993:                              ; CODE XREF: state_save+59↑j
                 pop     ds
                 pop     di
                 pop     si
                 retn
-sub_16932       endp
+state_save      endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -20863,7 +20865,7 @@ byte_1DBEE      db 0                    ; DATA XREF: monster_gfx_load+D↑r
                                         ; sub_13FFC:loc_14017↑w ...
                 db    0
 word_1DBF0      dw 0FFFFh               ; DATA XREF: sub_13FFC+62↑w
-                db    1
+g_era_day       db    1                 ; 10 words: day of year per era
                 db    0
                 db    1
                 db    0
@@ -20883,7 +20885,7 @@ word_1DBF0      dw 0FFFFh               ; DATA XREF: sub_13FFC+62↑w
                 db    0
                 db    1
                 db    0
-                db    0
+g_era_year      db    0                 ; 10 words: year per era
                 db    0
                 db  64h ; d
                 db    0
@@ -20920,18 +20922,24 @@ byte_1DC21      db 1                    ; DATA XREF: play_sound_effect+26↑r
                 db    1
                 db    4
                 db    0
-byte_1DC25      db 1                    ; DATA XREF: sub_13FFC+20↑r
+g_fx_light      db 1                    ; DATA XREF: sub_13FFC+20↑r
                                         ; sub_147D8+93↑r ...
-byte_1DC26      db 1                    ; DATA XREF: char_apply_damage+25↑r
+                                        ; Light
+g_fx_magic      db 1                    ; DATA XREF: char_apply_damage+25↑r
                                         ; sub_147D8+D7↑r ...
-byte_1DC27      db 1                    ; DATA XREF: char_apply_damage+7F↑r
+                                        ; Magic protection
+g_fx_forces     db 1                    ; DATA XREF: char_apply_damage+7F↑r
                                         ; sub_147D8+111↑r ...
-byte_1DC28      db 1                    ; DATA XREF: sub_13700+9↑r
+                                        ; Forces protection
+g_fx_levitate   db 1                    ; DATA XREF: sub_13700+9↑r
                                         ; sub_147D8+146↑r ...
-byte_1DC29      db 0                    ; DATA XREF: sub_13700+6↑r
+                                        ; Levitate
+g_fx_walk_on_water db 0                 ; DATA XREF: sub_13700+6↑r
                                         ; sub_147D8:loc_1493D↑r ...
-byte_1DC2A      db 1                    ; DATA XREF: sub_13700+D↑r
+                                        ; Walk on Water
+g_fx_guard_dog  db 1                    ; DATA XREF: sub_13700+D↑r
                                         ; sub_147D8:loc_1495C↑r ...
+                                        ; Guard Dog
                 db    0
                 db    0
                 db    0
@@ -20959,6 +20967,7 @@ byte_1DC3A      db 0                    ; DATA XREF: advance_time:loc_15164↑w
                 db    0
 byte_1DC44      db 0                    ; DATA XREF: advance_time+73↑w
 byte_1DC45      db 0                    ; DATA XREF: advance_time+70↑w
+g_event_vars    db    0                 ; 24 event variables
                 db    0
                 db    0
                 db    0
@@ -20984,8 +20993,7 @@ byte_1DC45      db 0                    ; DATA XREF: advance_time+70↑w
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+g_battle_count  db    0                 ; Nth battle
                 db    0
                 db    0
                 db    0
@@ -27565,8 +27573,8 @@ word_22B42      dw 0                    ; DATA XREF: sub_1670A:loc_167A4↑w
                 db  12h
                 db  44h ; D
                 db  18h
-aRosterDat_1    db 'ROSTER.DAT',0       ; DATA XREF: sub_168B6+17↑o
-                                        ; sub_16932:loc_16935↑o
+aRosterDat_1    db 'ROSTER.DAT',0       ; DATA XREF: state_load+17↑o
+                                        ; state_save:loc_16935↑o
                 db 0A2h
                 db    3
                 db  14h
@@ -44697,7 +44705,7 @@ g_characters    db    0                 ; roster: 48 slots x 82h bytes (24 chara
                 db    0
                 db    0
                 db    0
-                db    0
+g_map_visited   db    0                 ; 60 x 32 bytes, bit per cell
                 db    0
                 db    0
                 db    0
