@@ -197,3 +197,22 @@
 1DC2A	g_fx_guard_dog	Guard Dog
 1DC60	g_battle_count	Nth battle
 16A88	pc_speaker_tone	(freq Hz, ticks, on): programs PIT channel 2 via port 42h/61h then waits `ticks` timer ticks (word_22261 is decremented by TIMER.DRV)
+100E8	toupper
+13FA0	clear_text_preset	clears text-area preset n (rectangles at DGROUP:4DD4..4DF2)
+135A8	text_clear_prompt_line	fills the prompt line (row 23) with frame char 5
+135F0	byte_sub_clamp	*p = max(0, *p - n)
+13608	byte_add_clamp	*p = min(255, *p + n)
+167BC	str_next	returns the next NUL-terminated string of the loaded STR.DAT block
+15440	print_gold_label
+15426	print_gems_label
+1410A	print_message_line	message in the bottom frame
+13E76	print_monster_name
+13E40	print_trimmed_string
+14C2E	in_range	(lo, hi, v)
+134BA	draw_screen_rows
+1421E	draw_status_line
+13766	char_backpack_remove	(char, slot): shifts the backpack arrays
+16532	party_gather_gold	(char): moves all party gold to the character
+1670A	load_building_text	(building): reads the block of STR.DAT strings for the building
+14F3A	party_recalc_ac
+13FC4	quit_to_dos	restores text mode, timer driver and vectors, exits

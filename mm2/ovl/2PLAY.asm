@@ -245,7 +245,7 @@ loc_17FA4:                              ; CODE XREF: game_main_loop+18F↑j
                 jge     short loc_1802B
                 mov     ax, offset aYouReLost ; "You're lost!"
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
 
 loc_17FF8:                              ; CODE XREF: game_main_loop+1ED↓j
@@ -317,7 +317,7 @@ loc_18079:                              ; CODE XREF: game_main_loop+264↑j
                 jz      short loc_18061
                 mov     [bp+var_C], si
                 push    si
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_C], ax
                 cmp     byte_1DC80, 0
@@ -381,10 +381,10 @@ loc_180E0:                              ; CODE XREF: game_main_loop+2A3↑j
                 push    ax
                 call    thk_gfx_select_page
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     ax, offset aQuitToDosWitho ; "Quit to DOS without game save (y/n)?"
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
 
 loc_180F6:                              ; CODE XREF: game_main_loop+311↓j
@@ -396,7 +396,7 @@ loc_180F6:                              ; CODE XREF: game_main_loop+311↓j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     si, 1Bh
@@ -414,11 +414,11 @@ loc_18123:                              ; CODE XREF: game_main_loop+30C↑j
                 mov     [bp+var_C], si
                 cmp     si, 59h ; 'Y'
                 jnz     short loc_1812E
-                call    thk_res_3FC4
+                call    thk_quit_to_dos
 
 loc_1812E:                              ; CODE XREF: game_main_loop+319↑j
-                call    thk_res_35A8
-                call    thk_res_421E
+                call    thk_text_clear_prompt_line
+                call    thk_draw_status_line
                 mov     byte_1DBEA, 0
                 jmp     loc_1825C
 ; ---------------------------------------------------------------------------
@@ -2744,7 +2744,7 @@ evt_op01_message proc near              ; CODE XREF: evt_run_script:loc_1A67C↓
                 call    evt_decode_message
                 mov     ax, 54D0h
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 retn
 evt_op01_message endp
@@ -2834,10 +2834,10 @@ evt_message_at_row endp
 
 evt_op03_message_window proc near       ; CODE XREF: evt_run_script:loc_1A690↓p
                 or      byte_1DC80, 3
-                call    thk_res_34BA
+                call    thk_draw_screen_rows
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 11h
                 push    ax
@@ -3198,7 +3198,7 @@ arg_0           = byte ptr  4
                 mov     bp, sp
                 sub     sp, 2
                 push    si
-                call    thk_res_5426
+                call    thk_print_gems_label
                 mov     si, [bp+var_2]
 
 loc_193C5:                              ; CODE XREF: evt_wait_key+2B↓j
@@ -3235,7 +3235,7 @@ loc_193DF:                              ; CODE XREF: evt_wait_key+16↑j
                 cmp     si, 0F3h
                 jz      short loc_193C5
                 mov     [bp+var_2], si
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 pop     si
                 mov     sp, bp
                 pop     bp
@@ -3296,7 +3296,7 @@ loc_19447:                              ; CODE XREF: evt_ask_yes_no+18↑j
                                         ; evt_ask_yes_no+24↑j
                 mov     si, ax
                 push    si
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 59h ; 'Y'
@@ -3496,7 +3496,7 @@ arg_0           = byte ptr  4
                 push    ax
                 mov     ax, 9
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_19598
@@ -3514,7 +3514,7 @@ loc_19598:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 11h
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_195BC
@@ -3532,7 +3532,7 @@ loc_195BC:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 38h ; '8'
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_195E0
@@ -3550,7 +3550,7 @@ loc_195E0:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 4Ch ; 'L'
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_19604
@@ -3568,7 +3568,7 @@ loc_19604:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 56h ; 'V'
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_19628
@@ -3586,7 +3586,7 @@ loc_19628:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 5Ch ; '\'
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_1964C
@@ -3604,7 +3604,7 @@ loc_1964C:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 65h ; 'e'
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_19670
@@ -3622,7 +3622,7 @@ loc_19670:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 6Ah ; 'j'
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_19692
@@ -3639,7 +3639,7 @@ loc_19692:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 97h
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_196B4
@@ -3656,7 +3656,7 @@ loc_196B4:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 0E3h
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_196D6
@@ -3673,7 +3673,7 @@ loc_196D6:                              ; CODE XREF: evt_map_group_for_entrance+
                 push    ax
                 mov     ax, 0F4h
                 push    ax
-                call    thk_res_4C2E
+                call    thk_in_range
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_196F6
@@ -5472,7 +5472,7 @@ loc_1A170:                              ; CODE XREF: evt_op40_take_item+26↑j
                 inc     byte_1DC7F
                 push    si
                 push    di
-                call    thk_res_3766
+                call    thk_char_backpack_remove
                 add     sp, 4
 
 loc_1A188:                              ; CODE XREF: evt_op40_take_item+54↑j
@@ -5960,7 +5960,7 @@ loc_1A475:                              ; CODE XREF: evt_op45_check_char_class+2
                 mov     al, [si+54C4h]
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_10], ax
                 mov     al, byte ptr [bp+si+var_C]
@@ -6143,7 +6143,7 @@ evt_finish      proc near               ; CODE XREF: seg002:06ED↑J
 loc_1A5C8:                              ; CODE XREF: evt_finish+1D↑j
                 test    byte_1DC80, 1
                 jz      short loc_1A5D2
-                call    thk_res_421E
+                call    thk_draw_status_line
 
 loc_1A5D2:                              ; CODE XREF: evt_finish+4D↑j
                 test    byte_1DC80, 2
@@ -8741,7 +8741,7 @@ loc_1B64F:                              ; CODE XREF: enter_map+60↑j
                 jz      short loc_1B67C
                 mov     ax, offset aPleaseWait ; "Please wait..."
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
 
 loc_1B67C:                              ; CODE XREF: enter_map+86↑j
@@ -8807,10 +8807,10 @@ loc_1B6FF:                              ; CODE XREF: enter_map+109↑j
                 add     sp, 2
                 mov     ax, 4
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 call    thk_res_49E2
-                call    thk_res_421E
+                call    thk_draw_status_line
                 call    thk_draw_party_list
                 call    view_prepare_visible_cells
                 call    thk_res_3FFC
@@ -9454,7 +9454,7 @@ var_100         = byte ptr -100h
 loc_1BB6D:                              ; CODE XREF: sub_1BB4E+13↑j
                 mov     ax, 4
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     al, byte_1DB8E
                 sub     ah, ah
@@ -9503,7 +9503,7 @@ loc_1BB6D:                              ; CODE XREF: sub_1BB4E+13↑j
                 push    ax
                 call    thk_text_putc
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     al, byte_1DB96
                 sub     ah, ah
                 push    ax

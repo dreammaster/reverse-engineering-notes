@@ -26,13 +26,13 @@ var_2           = word ptr -2
                 push    ax
                 call    thk_gfx_select_page
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     bx, word ptr unk_20304
                 mov     al, byte ptr g_party_size
                 add     al, 30h ; '0'
                 mov     [bx+10h], al
                 push    bx
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 mov     byte_1DC80, 1
 
@@ -79,7 +79,7 @@ loc_1C1A6:                              ; CODE XREF: dismiss_hireling+52↑j
                 jz      short loc_1C15C
                 mov     [bp+var_2], di
                 mov     [bp+var_4], si
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 call    thk_2PLAY_A580
                 pop     si
                 pop     di
@@ -983,7 +983,7 @@ loc_1C841:                              ; CODE XREF: ovl_2MISC2:C83B↑j
                 mov     word ptr [bp-2], 0
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 push    word ptr [bp+4]
                 call    thk_char_ptr
@@ -1291,7 +1291,7 @@ loc_1CB09:                              ; CODE XREF: ovl_2MISC2:C8F0↑j
                 push    bp              ; CODE XREF: training_hall+20A↓p
                 mov     bp, sp
                 push    word ptr [bp+4]
-                call    thk_res_6532
+                call    thk_party_gather_gold
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -1697,7 +1697,7 @@ var_2           = word ptr -2
                 or      byte_1DC80, 6
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 sub     di, di
@@ -1729,11 +1729,11 @@ loc_1CE59:                              ; CODE XREF: training_hall+52↓j
 
 loc_1CE94:                              ; CODE XREF: training_hall+5F↑j
                 or      byte_1DC80, 1
-                call    thk_res_34BA
-                call    thk_res_5440
+                call    thk_draw_screen_rows
+                call    thk_print_gold_label
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -1776,7 +1776,7 @@ loc_1CEEF:                              ; CODE XREF: training_hall+25F↓j
 loc_1CEF8:                              ; CODE XREF: training_hall+C3↑j
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     [bp+var_18], 0
                 push    [bp+var_8]
@@ -1918,7 +1918,7 @@ loc_1D013:                              ; CODE XREF: training_hall+18D↑j
 loc_1D01A:                              ; CODE XREF: training_hall+C5↑j
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 47h ; 'G'
@@ -1976,7 +1976,7 @@ loc_1D08A:                              ; CODE XREF: training_hall+210↑j
 loc_1D092:                              ; CODE XREF: training_hall+25D↑j
                 mov     [bp+var_6], di
                 mov     [bp+var_10], si
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
 
 loc_1D09B:                              ; CODE XREF: training_hall+61↑j
                 call    thk_2PLAY_A580

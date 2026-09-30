@@ -26,7 +26,7 @@ var_2           = byte ptr -2
                 or      byte_1DC80, 6
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, offset a44a4u4magicalS ; "\"4@4A4U4Magical slide trap!"
@@ -222,7 +222,7 @@ loc_1C26E:                              ; CODE XREF: caves_teleport_trap+2D↑j
                 or      byte_1DC80, 5
                 mov     ax, 3472h
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
 
 loc_1C2B2:                              ; CODE XREF: caves_teleport_trap+7B↓j
@@ -364,7 +364,7 @@ loc_1C37A:                              ; CODE XREF: caves_found_item+43↑j
                 or      byte_1DC80, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -418,7 +418,7 @@ loc_1C3F6:                              ; CODE XREF: seg002:047D↑J
                 jl      short loc_1C45A
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 2
                 push    ax
@@ -484,7 +484,7 @@ var_2           = word ptr -2
                 or      byte_1DC80, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -667,7 +667,7 @@ var_2           = word ptr -2
                 push    ax
 
 loc_1C5C0:                              ; CODE XREF: seg002:029D↑J
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -773,7 +773,7 @@ var_2           = word ptr -2
                 or      byte_1DC80, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -884,7 +884,7 @@ arg_0           = word ptr  4
                 or      byte_1DC80, 3
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 jmp     short loc_1C757
@@ -924,7 +924,7 @@ loc_1C775:                              ; CODE XREF: caves_time_travel+21↑j
                 push    ax
                 call    thk_text_puts
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     ax, 38h ; '8'
                 push    ax
                 mov     ax, 31h ; '1'
@@ -933,7 +933,7 @@ loc_1C775:                              ; CODE XREF: caves_time_travel+21↑j
                 add     sp, 4
                 sub     ah, ah
                 mov     [bp+var_8], ax
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 cmp     [bp+var_8], 1Bh
                 jz      short loc_1C804
                 sub     [bp+var_8], 30h ; '0'
@@ -990,7 +990,7 @@ loc_1C80A:                              ; CODE XREF: caves_time_travel+1B7↓p
                 mov     bp, sp
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -1248,7 +1248,7 @@ arg_2           = word ptr  6
                 or      byte_1DC80, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 3A04h
@@ -1278,9 +1278,9 @@ loc_1C9B9:                              ; CODE XREF: caves_quest_prompt+3C↓j
 ; ---------------------------------------------------------------------------
 
 loc_1C9EE:                              ; CODE XREF: caves_quest_prompt+4F↑j
-                call    thk_res_5440
+                call    thk_print_gold_label
                 or      byte_1DC80, 1
-                call    thk_res_34BA
+                call    thk_draw_screen_rows
 
 loc_1C9F9:                              ; CODE XREF: caves_quest_prompt+F7↓j
                 sub     si, si
@@ -1310,7 +1310,7 @@ loc_1CA1E:                              ; CODE XREF: caves_quest_prompt+69↑j
                 mov     [bp+var_4], si
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 3A0Ch
@@ -1367,7 +1367,7 @@ loc_1CA8B:                              ; CODE XREF: caves_quest_prompt+CE↑j
 ; ---------------------------------------------------------------------------
 
 loc_1CA94:                              ; CODE XREF: caves_quest_prompt+F5↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
 
 loc_1CA97:                              ; CODE XREF: caves_quest_prompt+51↑j
                 call    thk_2PLAY_A580
@@ -1476,7 +1476,8 @@ loc_1CB1C:                              ; CODE XREF: sub_1CBCA+72↓p
                 jz      short loc_1CB45
                 push    [bp+var_4]
                 push    ax
-                call    thk_res_3766    ; CODE XREF: seg002:0A65↑J
+                call    thk_char_backpack_remove
+                                        ; CODE XREF: seg002:0A65↑J
 caves_quest_prompt endp
 
                 add     sp, 4
@@ -1935,7 +1936,7 @@ loc_1CE02:                              ; CODE XREF: sub_1CDB0+35↑j
                 mov     [bp+var_6], si
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 cmp     byte_22E14, 1
                 jnz     short loc_1CE36
@@ -2076,7 +2077,7 @@ loc_1CF25:                              ; CODE XREF: sub_1CEB2+2C↑j
                 jz      short loc_1CF67
                 mov     ax, 2           ; CODE XREF: seg002:050D↑J
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 sub     di, di
@@ -2697,7 +2698,7 @@ loc_1D398:                              ; CODE XREF: sub_1D38E+1E↓j
 loc_1D39D:                              ; CODE XREF: sub_1D38E+7↑j
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 59h ; 'Y'
@@ -2759,10 +2760,10 @@ loc_1D3D1:                              ; CODE XREF: sub_1D3C4+24↓j
                 jz      short loc_1D3D1
                 mov     byte_2294F, 0FDh
                 mov     byte_1DC80, 7
-                call    thk_res_34BA
+                call    thk_draw_screen_rows
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     al, byte ptr [bp+arg_0]
                 mov     byte_22E14, al
@@ -2816,9 +2817,9 @@ loc_1D42D:                              ; CODE XREF: sub_1D3C4+86↓j
 loc_1D460:                              ; CODE XREF: sub_1D3C4+93↑j
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 sub     si, si
                 mov     di, 3DFAh
 
@@ -2889,7 +2890,7 @@ loc_1D4F5:                              ; CODE XREF: sub_1D3C4+168↓j
                                         ; sub_1D3C4+196↓j
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     di, ax
                 cmp     di, 1Bh
@@ -2962,7 +2963,7 @@ loc_1D55F:                              ; CODE XREF: sub_1D3C4+4A↑j
                 jz      short loc_1D5B6
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -2992,8 +2993,8 @@ loc_1D5AC:                              ; CODE XREF: sub_1D3C4+1DC↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D5B6:                              ; CODE XREF: sub_1D3C4+19F↑j
-                call    thk_res_35A8
-                call    thk_res_5426
+                call    thk_text_clear_prompt_line
+                call    thk_print_gems_label
 
 loc_1D5BC:                              ; CODE XREF: sub_1D3C4+1FE↓j
                 call    thk_monster_anim_step
@@ -3005,7 +3006,7 @@ loc_1D5C4:                              ; CODE XREF: sub_1D3C4+1F0↑j
                 push    word ptr dword_1DD54
                 call    thk_free_far_block
                 add     sp, 4
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 call    thk_2PLAY_A580
                 pop     si
                 pop     di
@@ -3062,7 +3063,7 @@ var_2           = word ptr -2
                 push    si
                 sub     ax, ax
                 push    ax
-                call    thk_res_670A
+                call    thk_load_building_text
                 add     sp, 2
                 mov     [bp+var_2], 16h
                 mov     [bp+var_4], 4
@@ -3074,7 +3075,7 @@ loc_1D614:                              ; CODE XREF: caves_town_crier+3E↓j
                 mov     di, 4
 
 loc_1D61E:                              ; CODE XREF: caves_town_crier+33↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -3092,7 +3093,7 @@ loc_1D61E:                              ; CODE XREF: caves_town_crier+33↓j
                 mov     [bp+var_2], dx
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     ax, [bp+var_2]
@@ -3117,13 +3118,13 @@ loc_1D667:                              ; CODE XREF: caves_town_crier+90↓j
                 cmp     si, 4
                 jl      short loc_1D667
                 mov     [bp+var_4], si
-                call    thk_res_5426
+                call    thk_print_gems_label
 
 loc_1D68C:                              ; CODE XREF: caves_town_crier+9E↓j
                 call    thk_monster_anim_step
                 cmp     ax, 20h ; ' '
                 jnz     short loc_1D68C
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 call    thk_2PLAY_A580
                 pop     si
                 pop     di

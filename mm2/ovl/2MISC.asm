@@ -223,7 +223,7 @@ loc_1C2A0:                              ; CODE XREF: unlock_door+56↑j
                 mov     [bp+var_6], ax
                 cmp     ax, 1Bh
                 jnz     short loc_1C2B2
-                call    thk_res_421E
+                call    thk_draw_status_line
                 jmp     loc_1C333
 ; ---------------------------------------------------------------------------
                 align 2
@@ -461,11 +461,11 @@ loc_1C41E:                              ; CODE XREF: bash_door+EF↑p
                 push    si
                 mov     ax, offset aExplosion ; "Explosion!"
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 64h ; 'd'
                 push    ax
@@ -715,7 +715,7 @@ loc_1C5F3:                              ; CODE XREF: treasure_give_item+AF↑j
 
 loc_1C5FE:                              ; CODE XREF: treasure_give_item+A8↑j
                 push    [bp+var_4]
-                call    thk_res_3E40
+                call    thk_print_trimmed_string
                 add     sp, 2
                 mov     ax, offset aFound ; " found "
                 push    ax
@@ -813,7 +813,7 @@ loc_1C680:                              ; CODE XREF: treasure_share+17↑j
                 mov     word_241AA, ax
                 mov     byte_22E10, 0
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -951,9 +951,9 @@ var_2           = word ptr -2
                 mov     al, byte ptr g_party_size
                 add     al, 30h ; '0'
                 mov     [bx+12h], al
-                call    thk_res_5440
+                call    thk_print_gold_label
                 push    word ptr unk_201F8
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
 
 loc_1C7CB:                              ; CODE XREF: sub_1C7AA+67↓j
@@ -1002,7 +1002,7 @@ loc_1C80F:                              ; CODE XREF: sub_1C7AA+44↑j
                 jz      short loc_1C7CB
                 mov     [bp+var_2], di
                 mov     [bp+var_4], si
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 mov     ax, si
                 pop     si
                 pop     di
@@ -1034,7 +1034,7 @@ arg_0           = byte ptr  4
                 mov     [bp+var_4], ax
                 cmp     ax, 1Bh
                 jnz     short loc_1C848
-                call    thk_res_421E
+                call    thk_draw_status_line
                 sub     ax, ax
                 jmp     short loc_1C8AA
 ; ---------------------------------------------------------------------------
@@ -1077,7 +1077,7 @@ loc_1C88B:                              ; CODE XREF: sub_1C824+F↑j
                 jz      short loc_1C8A7
                 mov     ax, 29AAh
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 call    treasure_share
                 mov     byte_2294F, 0FDh
@@ -1100,7 +1100,7 @@ sub_1C824       endp
                 mov     [bp-4], ax
                 cmp     ax, 1Bh
                 jnz     short loc_1C8C6
-                call    thk_res_421E
+                call    thk_draw_status_line
                 sub     ax, ax
                 jmp     short loc_1C916
 ; ---------------------------------------------------------------------------
@@ -1172,7 +1172,7 @@ loc_1C934:                              ; CODE XREF: ovl_2MISC:C931↑j
                 mov     [bp-2], cx
                 mov     ax, 29B4h
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 mov     ax, 11h
                 push    ax
@@ -1486,7 +1486,7 @@ loc_1CB28:                              ; CODE XREF: party_search+B6↑j
                 push    ax
                 call    thk_monster_gfx_load
                 add     sp, 2
-                call    thk_res_421E
+                call    thk_draw_status_line
                 push    [bp+var_12]
                 call    thk_text_window_open
                 add     sp, 2
@@ -1678,7 +1678,7 @@ loc_1CCBE:                              ; CODE XREF: party_search+240↑j
 loc_1CCEA:                              ; CODE XREF: party_search+24↑j
                 mov     ax, offset aTreasure ; "Treasure!"
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 cmp     byte_1DC84, 0FFh
                 jz      short loc_1CD0B
@@ -1690,13 +1690,13 @@ loc_1CCEA:                              ; CODE XREF: party_search+24↑j
 loc_1CD0B:                              ; CODE XREF: party_search+2A7↑j
                 mov     byte_1DC84, 0
                 call    treasure_share
-                call    thk_res_5426
+                call    thk_print_gems_label
                 mov     ax, 20h ; ' '
                 push    ax
                 call    thk_wait_for_key
                 add     sp, 2
                 mov     byte_1DC80, 3
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
 
 loc_1CD28:                              ; CODE XREF: party_search+296↑j
                 call    thk_2PLAY_A580
@@ -1891,7 +1891,7 @@ loc_1CE8A:                              ; CODE XREF: party_search+433↑j
 loc_1CE90:                              ; CODE XREF: party_search+3F2↑j
                 mov     [bp+var_6], di
                 mov     [bp+var_4], si
-                call    thk_res_4F3A
+                call    thk_party_recalc_ac
                 mov     ax, 55h ; 'U'
                 push    ax
                 call    thk_advance_time
@@ -1924,7 +1924,7 @@ loc_1CEDB:                              ; CODE XREF: party_search+456↑j
                 call    thk_draw_party_list
                 mov     ax, 2A3Eh
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 pop     si
                 pop     di
@@ -2043,7 +2043,7 @@ var_2           = word ptr -2
 
 loc_1CFA3:                              ; CODE XREF: party_rest+76↓j
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 jmp     short loc_1D006
 ; ---------------------------------------------------------------------------
@@ -2051,7 +2051,7 @@ loc_1CFA3:                              ; CODE XREF: party_rest+76↓j
 loc_1CFAC:                              ; CODE XREF: party_rest+1A↑j
                 mov     ax, offset aRestHereYN ; "Rest here? (Y/N)"
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 mov     si, [bp+var_2]
 
@@ -2069,7 +2069,7 @@ loc_1CFC6:                              ; CODE XREF: party_rest+3A↑j
 loc_1CFC9:                              ; CODE XREF: party_rest+3F↑j
                 mov     si, ax
                 push    si
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 59h ; 'Y'
@@ -2081,7 +2081,7 @@ loc_1CFDE:                              ; CODE XREF: party_rest+53↑j
                 mov     [bp+var_2], si
                 cmp     si, 4Eh ; 'N'
                 jnz     short loc_1CFF0
-                call    thk_res_421E
+                call    thk_draw_status_line
                 mov     byte_1DC80, 0
                 jmp     short loc_1D006
 ; ---------------------------------------------------------------------------

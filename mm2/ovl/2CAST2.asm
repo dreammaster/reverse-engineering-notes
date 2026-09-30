@@ -230,7 +230,7 @@ loc_1C242:                              ; CODE XREF: seg002:0639↑J
                 push    ax
                 call    thk_text_putc
                 add     sp, 2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 mov     ax, 3Ah ; ':'
                 push    ax
                 call    thk_text_putc
@@ -1466,7 +1466,7 @@ loc_1C9DB:                              ; CODE XREF: sub_1C96A+61↑j
                 push    ax
                 call    thk_2COMBAT_8D7A
                 add     sp, 2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 mov     ax, offset aIsEradicated_0 ; " is eradicated!"
                 push    ax
                 call    thk_text_puts
@@ -2851,7 +2851,7 @@ loc_1D1CE:                              ; CODE XREF: cast2_return_prompt+10↑j
 
 loc_1D20B:                              ; CODE XREF: cast2_return_prompt+1E↑j
                                         ; cast2_return_prompt+25↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 cmp     [bp+var_2], 1Bh
                 jz      short loc_1D21D
                 sub     [bp+var_2], 31h ; '1'
@@ -2927,7 +2927,7 @@ loc_1D286:                              ; CODE XREF: cast2_prompt_return+48↑j
                 mov     [bp+var_2], ax
 
 loc_1D28E:                              ; CODE XREF: cast2_prompt_return+12↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 cmp     [bp+var_2], 0
                 jz      short loc_1D2A6
                 test    byte_23218, 2
@@ -3003,7 +3003,7 @@ loc_1D2E6:                              ; CODE XREF: cast2_show_text+32↑j
 loc_1D30C:                              ; CODE XREF: cast2_show_text+98↓j
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_6], al
                 cmp     al, 1Bh
@@ -3045,7 +3045,7 @@ loc_1D344:                              ; CODE XREF: cast2_show_text+7C↑j
 
 loc_1D34B:                              ; CODE XREF: cast2_show_text+1E↑j
                                         ; cast2_show_text+26↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 cmp     [bp+var_6], 1Bh
                 jz      short loc_1D35D
                 sub     [bp+var_6], 41h ; 'A'

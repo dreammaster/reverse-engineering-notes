@@ -82,7 +82,7 @@ arg_0           = word ptr  4
 loc_1C197:                              ; CODE XREF: sub_1C180+10↑j
                 mov     ax, 1
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -416,7 +416,7 @@ loc_1C3D5:                              ; CODE XREF: sub_1C3A6+68↓j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     di, ax
                 cmp     di, 1Bh
@@ -493,7 +493,7 @@ loc_1C44A:                              ; CODE XREF: sub_1C3A6+8D↑j
                 mov     byte ptr [si+46h], 0
                 push    [bp+var_A]
                 push    [bp+var_C]
-                call    thk_res_3766
+                call    thk_char_backpack_remove
                 add     sp, 4
 
 loc_1C484:                              ; CODE XREF: sub_1C3A6+73↑j
@@ -899,7 +899,7 @@ loc_1C712:                              ; CODE XREF: char_use_item+78↓j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     si, 1Bh
@@ -1357,7 +1357,7 @@ loc_1CA0B:                              ; CODE XREF: char_equip_item+58↓j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     si, 1Bh
@@ -1531,9 +1531,9 @@ loc_1CB40:                              ; CODE XREF: seg002:0A65↑J
                 add     sp, 4
                 push    [bp+var_A]
                 push    [bp+arg_0]
-                call    thk_res_3766
+                call    thk_char_backpack_remove
                 add     sp, 4
-                call    thk_res_4F3A
+                call    thk_party_recalc_ac
 
 loc_1CB83:                              ; CODE XREF: char_equip_item+65↑j
                                         ; char_equip_item+FB↑j ...
@@ -1596,7 +1596,7 @@ loc_1CBAF:                              ; CODE XREF: char_drop_item+46↓j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     si, 1Bh
@@ -1636,7 +1636,7 @@ loc_1CBF0:                              ; CODE XREF: char_drop_item+58↑j
                 sub     ax, 41h ; 'A'
                 push    ax
                 push    [bp+arg_0]
-                call    thk_res_3766
+                call    thk_char_backpack_remove
                 add     sp, 4
 
 loc_1CC0E:                              ; CODE XREF: char_drop_item+73↑j
@@ -1734,7 +1734,7 @@ char_drop_item  endp
 
 loc_1CCCC:                              ; CODE XREF: char_drop_item+103↑j
                                         ; ovl_2CMDS:CCC0↑j
-                call    thk_res_4F3A
+                call    thk_party_recalc_ac
                 pop     si
                 mov     sp, bp
                 pop     bp
@@ -1806,7 +1806,7 @@ arg_2           = word ptr  6
 
 loc_1CD4C:                              ; CODE XREF: cmds_helper_b+39↑j
                                         ; cmds_helper_b+6C↑j
-                call    thk_res_4F3A
+                call    thk_party_recalc_ac
                 pop     si
                 mov     sp, bp
                 pop     bp

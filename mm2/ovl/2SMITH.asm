@@ -153,7 +153,7 @@ loc_1C1E4:                              ; CODE XREF: sub_1C1B0+2C↑j
 loc_1C200:                              ; CODE XREF: sub_1C1B0+48↑j
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 44C6h
@@ -616,7 +616,7 @@ loc_1C5D8:                              ; CODE XREF: seg002:01A1↑J
                 add     sp, 2
                 push    word ptr [bp+4]
                 push    word_2308E
-                call    thk_res_3766
+                call    thk_char_backpack_remove
                 add     sp, 4
 
 loc_1C5F4:                              ; CODE XREF: ovl_2SMITH:C5B9↑j
@@ -640,7 +640,7 @@ var_2           = byte ptr -2
                 push    si
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 5802h
@@ -1334,7 +1334,7 @@ loc_1CAC5:                              ; CODE XREF: smith_action_prompt+2C↑j
                 add     sp, 2
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 call    sub_1C8E0
                 call    sub_1C5F6
@@ -1343,7 +1343,7 @@ loc_1CADC:                              ; CODE XREF: smith_action_prompt+13↑j
                 mov     di, 1
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 41h ; 'A'
@@ -1383,7 +1383,7 @@ loc_1CB1C:                              ; CODE XREF: smith_action_prompt+66↑j
                 cmp     ax, 47h ; 'G'
                 jnz     short loc_1CB3A
                 push    word_23028
-                call    thk_res_6532
+                call    thk_party_gather_gold
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -1509,7 +1509,7 @@ loc_1CBE8:                              ; CODE XREF: sub_1C1B0+1B↑p
                 mov     bp, sp
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -1544,9 +1544,9 @@ loc_1CC38:                              ; CODE XREF: sub_1C1B0+3E6↑p
                                         ; blacksmith_menu+EF↓p
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     ax, 1
                 push    ax
                 call    thk_text_set_flag_8
@@ -1621,14 +1621,14 @@ var_2           = word ptr -2
                 mov     [bp+var_2], 1
                 mov     ax, 2
                 push    ax
-                call    thk_res_670A
+                call    thk_load_building_text
                 add     sp, 2
                 mov     [bp+var_6], 0Ah
                 mov     si, 5814h
                 mov     di, 0Ah
 
 loc_1CCDC:                              ; CODE XREF: blacksmith_menu+2B↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -1643,7 +1643,7 @@ loc_1CCF6:                              ; CODE XREF: blacksmith_menu+59↓j
                 mov     di, 4
 
 loc_1CD00:                              ; CODE XREF: blacksmith_menu+4F↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -1656,7 +1656,7 @@ loc_1CD00:                              ; CODE XREF: blacksmith_menu+4F↓j
                 mov     di, 6
 
 loc_1CD20:                              ; CODE XREF: blacksmith_menu+6F↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -1683,7 +1683,7 @@ loc_1CD55:                              ; CODE XREF: blacksmith_menu+96↑j
 loc_1CD59:                              ; CODE XREF: blacksmith_menu+86↑j
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 sub     di, di
@@ -1715,7 +1715,7 @@ loc_1CD66:                              ; CODE XREF: blacksmith_menu+D5↓j
 
 loc_1CDA1:                              ; CODE XREF: blacksmith_menu+E2↑j
                 or      byte_1DC80, 1
-                call    thk_res_34BA
+                call    thk_draw_screen_rows
                 call    loc_1CC38
                 mov     word_23078, 1
 
@@ -1730,7 +1730,7 @@ loc_1CDC2:                              ; CODE XREF: blacksmith_menu+103↑j
                 jz      short loc_1CE11
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 16h
                 push    ax
@@ -1765,7 +1765,7 @@ loc_1CE11:                              ; CODE XREF: blacksmith_menu+10C↑j
                 mov     [bp+var_2], 1
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_4], ax
                 sub     ax, 41h ; 'A'   ; switch 7 cases
@@ -1840,7 +1840,7 @@ loc_1CE66:                              ; CODE XREF: blacksmith_menu+174↑j
 loc_1CE6C:                              ; CODE XREF: blacksmith_menu+174↑j
                                         ; DATA XREF: blacksmith_menu+1F6↓o
                 push    word_23028      ; jumptable 0001CE2E case 71
-                call    thk_res_6532
+                call    thk_party_gather_gold
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -1885,7 +1885,7 @@ loc_1CEB2:                              ; CODE XREF: blacksmith_menu+192↑j
 ; ---------------------------------------------------------------------------
 
 loc_1CEBB:                              ; CODE XREF: blacksmith_menu+1FC↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
 
 loc_1CEBE:                              ; CODE XREF: blacksmith_menu+E4↑j
                 call    thk_2PLAY_A580
@@ -1915,7 +1915,7 @@ var_2           = word ptr -2
                 mov     byte_2294F, 0FDh
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     [bp+var_2], 0
                 sub     ax, ax
@@ -2488,14 +2488,14 @@ loc_1D2A4:                              ; CODE XREF: sub_1CEC8+9F↑p
                 add     sp, 2
                 mov     ax, 3
                 push    ax
-                call    thk_res_670A
+                call    thk_load_building_text
                 add     sp, 2
                 mov     word ptr [bp-18h], 4
                 mov     si, 58B8h
                 mov     di, 4
 
 loc_1D2DB:                              ; CODE XREF: ovl_2SMITH:D2E4↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2505,7 +2505,7 @@ loc_1D2DB:                              ; CODE XREF: ovl_2SMITH:D2E4↓j
                 mov     di, 4
 
 loc_1D2F1:                              ; CODE XREF: ovl_2SMITH:D2FA↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2515,7 +2515,7 @@ loc_1D2F1:                              ; CODE XREF: ovl_2SMITH:D2FA↓j
                 mov     di, 0Eh
 
 loc_1D307:                              ; CODE XREF: ovl_2SMITH:D310↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2525,7 +2525,7 @@ loc_1D307:                              ; CODE XREF: ovl_2SMITH:D310↓j
                 mov     di, 4
 
 loc_1D31D:                              ; CODE XREF: ovl_2SMITH:D326↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2535,7 +2535,7 @@ loc_1D31D:                              ; CODE XREF: ovl_2SMITH:D326↓j
                 mov     di, 0Bh
 
 loc_1D333:                              ; CODE XREF: ovl_2SMITH:D33C↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2545,7 +2545,7 @@ loc_1D333:                              ; CODE XREF: ovl_2SMITH:D33C↓j
                 mov     di, 0Ah
 
 loc_1D349:                              ; CODE XREF: ovl_2SMITH:D352↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2573,7 +2573,7 @@ loc_1D35A:                              ; CODE XREF: ovl_2SMITH:D36C↓j
                 add     sp, 0Ah
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -2599,10 +2599,10 @@ loc_1D35A:                              ; CODE XREF: ovl_2SMITH:D36C↓j
                 push    ax
                 call    thk_wait_key_timeout
                 add     sp, 2
-                call    thk_res_34BA
+                call    thk_draw_screen_rows
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 58C0h
@@ -2704,7 +2704,7 @@ loc_1D487:                              ; CODE XREF: ovl_2SMITH:D482↑j
 loc_1D48E:                              ; CODE XREF: ovl_2SMITH:D489↑j
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 12h
                 push    ax
@@ -2756,7 +2756,7 @@ loc_1D48E:                              ; CODE XREF: ovl_2SMITH:D489↑j
                 add     sp, 2
                 mov     ax, 4
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     al, byte_1DB95
                 sub     ah, ah
@@ -2932,7 +2932,7 @@ loc_1D66A:                              ; CODE XREF: ovl_2SMITH:D63B↑j
                 add     sp, 2
                 mov     ax, 3
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 5868h

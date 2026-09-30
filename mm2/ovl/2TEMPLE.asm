@@ -24,7 +24,7 @@ arg_0           = word ptr  4
                 push    si
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, [bp+arg_0]
@@ -880,7 +880,7 @@ char_heal_full  endp
 loc_1C6F8:                              ; CODE XREF: ovl_2TEMPLE:C6F1↑j
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 11h
                 push    ax
@@ -925,7 +925,7 @@ loc_1C754:                              ; CODE XREF: ovl_2TEMPLE:C6E6↑j
                                         ; ovl_2TEMPLE:C6F6↑j
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 58D2h
@@ -1051,7 +1051,7 @@ loc_1C84C:                              ; CODE XREF: ovl_2TEMPLE:C83B↑j
 loc_1C873:                              ; CODE XREF: ovl_2TEMPLE:C8E9↓j
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp-0Ah], ax
                 sub     si, si
@@ -1147,7 +1147,7 @@ loc_1C8F6:                              ; CODE XREF: ovl_2TEMPLE:C929↓j
 
 loc_1C900:                              ; CODE XREF: ovl_2TEMPLE:C92E↓j
                 push    word ptr [bp+4]
-                call    thk_res_6532
+                call    thk_party_gather_gold
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -1222,7 +1222,7 @@ loc_1C95F:                              ; CODE XREF: ovl_2TEMPLE:C954↑j
                 mov     [bp-4], ax
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 12h
                 push    ax
@@ -1389,7 +1389,7 @@ var_2           = word ptr -2
                 mov     word_23130, 0
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 sub     di, di
@@ -1435,8 +1435,8 @@ loc_1CB3E:                              ; CODE XREF: temple_menu+DA↓j
                 mov     [bp+var_2], cx
 
 loc_1CB41:                              ; CODE XREF: temple_menu+A5↑j
-                call    thk_res_34BA
-                call    thk_res_5440
+                call    thk_draw_screen_rows
+                call    thk_print_gold_label
                 mov     si, [bp+var_2]
 
 loc_1CB4A:                              ; CODE XREF: temple_menu+EA↓j
@@ -1468,7 +1468,7 @@ loc_1CB6A:                              ; CODE XREF: temple_menu+D1↑j
                 cmp     si, 1Bh
                 jnz     short loc_1CB4A
                 mov     [bp+var_2], si
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
 
 loc_1CB7A:                              ; CODE XREF: temple_menu+94↑j
                 call    thk_2PLAY_A580
@@ -1573,7 +1573,7 @@ loc_1CBE1:                              ; CODE XREF: mage_guild_menu+1D↑j
                 or      byte_1DC80, 6
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 sub     di, di
@@ -1637,11 +1637,11 @@ loc_1CC9E:                              ; CODE XREF: mage_guild_menu+FD↑j
                 mov     [bp+var_8], cx
 
 loc_1CCA1:                              ; CODE XREF: mage_guild_menu+EE↑j
-                call    thk_res_34BA
-                call    thk_res_5440
+                call    thk_draw_screen_rows
+                call    thk_print_gold_label
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 11h
                 push    ax
@@ -1707,7 +1707,7 @@ loc_1CD36:                              ; CODE XREF: mage_guild_menu+195↑j
                 mov     [bp+var_12], 0
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 cmp     [bp+var_A], 0
                 jnz     short loc_1CD4E
@@ -1857,7 +1857,7 @@ loc_1CE1D:                              ; CODE XREF: mage_guild_menu+197↑j
 loc_1CE66:                              ; CODE XREF: mage_guild_menu+287↑j
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_C], ax
                 cmp     ax, 41h ; 'A'
@@ -1937,7 +1937,7 @@ loc_1CED4:                              ; CODE XREF: mage_guild_menu+2E9↑j
 
 loc_1CEF0:                              ; CODE XREF: mage_guild_menu+2EE↑j
                 push    [bp+var_8]
-                call    thk_res_6532
+                call    thk_party_gather_gold
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -1980,7 +1980,7 @@ loc_1CF3C:                              ; CODE XREF: mage_guild_menu+2F8↑j
 ; ---------------------------------------------------------------------------
 
 loc_1CF45:                              ; CODE XREF: mage_guild_menu+3A4↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
 
 loc_1CF48:                              ; CODE XREF: mage_guild_menu+CA↑j
                 call    thk_2PLAY_A580
@@ -2003,7 +2003,7 @@ loc_1CF52:                              ; CODE XREF: temple_menu+8↑p
 mage_guild_menu endp
 
                 push    ax
-                call    thk_res_670A
+                call    thk_load_building_text
                 add     sp, 2
                 mov     word ptr [bp-2], 5
                 mov     word ptr [bp-4], 3
@@ -2015,7 +2015,7 @@ loc_1CF73:                              ; CODE XREF: ovl_2TEMPLE:CF90↓j
                 mov     di, 3
 
 loc_1CF7D:                              ; CODE XREF: ovl_2TEMPLE:CF86↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2           ; CODE XREF: seg002:062D↑J
                 dec     di
@@ -2033,7 +2033,7 @@ loc_1CFA1:                              ; CODE XREF: ovl_2TEMPLE:CFBE↓j
                 mov     di, 3
 
 loc_1CFAB:                              ; CODE XREF: ovl_2TEMPLE:CFB4↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2046,7 +2046,7 @@ loc_1CFAB:                              ; CODE XREF: ovl_2TEMPLE:CFB4↓j
                 mov     di, 4
 
 loc_1CFCB:                              ; CODE XREF: ovl_2TEMPLE:CFD4↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2056,7 +2056,7 @@ loc_1CFCB:                              ; CODE XREF: ovl_2TEMPLE:CFD4↓j
                 mov     di, 7
 
 loc_1CFE1:                              ; CODE XREF: ovl_2TEMPLE:CFEA↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2066,7 +2066,7 @@ loc_1CFE1:                              ; CODE XREF: ovl_2TEMPLE:CFEA↓j
                 mov     di, 3
 
 loc_1CFF7:                              ; CODE XREF: ovl_2TEMPLE:D000↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2076,7 +2076,7 @@ loc_1CFF7:                              ; CODE XREF: ovl_2TEMPLE:D000↓j
                 mov     di, 1Ch
 
 loc_1D00D:                              ; CODE XREF: ovl_2TEMPLE:D016↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di

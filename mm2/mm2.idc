@@ -204,6 +204,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X100CA);
 	op_seg		(x,	1);
 	create_insn	(0X100E8);
+	set_name	(0X100E8,	"toupper");
 	create_insn	(x=0X100EB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X100EE);
@@ -3581,6 +3582,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X134B5);
 	op_hex		(x,	1);
 	create_insn	(0X134BA);
+	set_name	(0X134BA,	"draw_screen_rows");
 	create_insn	(x=0X134C3);
 	op_hex		(x,	1);
 	create_insn	(x=0X134D0);
@@ -3620,6 +3622,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13576);
 	op_stkvar	(x,	1);
 	create_insn	(0X135A8);
+	set_name	(0X135A8,	"text_clear_prompt_line");
 	create_insn	(x=0X135AB);
 	op_hex		(x,	1);
 	create_insn	(x=0X135B8);
@@ -3751,6 +3754,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1375F);
 	op_hex		(x,	1);
 	create_insn	(0X13766);
+	set_name	(0X13766,	"char_backpack_remove");
 	create_insn	(x=0X13769);
 	op_hex		(x,	1);
 	create_insn	(x=0X1376E);
@@ -4244,6 +4248,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13E2F);
 	op_hex		(x,	1);
 	create_insn	(0X13E40);
+	set_name	(0X13E40,	"print_trimmed_string");
 	create_insn	(x=0X13E43);
 	op_hex		(x,	1);
 	create_insn	(x=0X13E48);
@@ -4259,6 +4264,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13E6D);
 	op_stkvar	(x,	0);
 	create_insn	(0X13E76);
+	set_name	(0X13E76,	"print_monster_name");
 	create_insn	(x=0X13E7D);
 	op_hex		(x,	1);
 	create_insn	(0X13E82);
@@ -4300,11 +4306,13 @@ static Bytes_0(void) {
 	create_insn	(x=0X13F86);
 	op_hex		(x,	1);
 	create_insn	(0X13FA0);
+	set_name	(0X13FA0,	"clear_text_preset");
 	create_insn	(x=0X13FA3);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X13FBF);
 	op_hex		(x,	1);
 	create_insn	(0X13FC4);
+	set_name	(0X13FC4,	"quit_to_dos");
 	create_insn	(x=0X13FD4);
 	op_hex		(x,	1);
 	create_insn	(0X13FD8);
@@ -4349,6 +4357,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X140FF);
 	op_hex		(x,	1);
 	create_insn	(0X1410A);
+	set_name	(0X1410A,	"print_message_line");
 	create_insn	(x=0X14116);
 	op_hex		(x,	1);
 	create_insn	(x=0X14127);
@@ -4395,6 +4404,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14218);
 	op_hex		(x,	1);
 	create_insn	(0X1421E);
+	set_name	(0X1421E,	"draw_status_line");
 	create_insn	(x=0X14227);
 	op_hex		(x,	1);
 	create_insn	(x=0X14236);
@@ -4897,6 +4907,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14C24);
 	op_hex		(x,	1);
 	create_insn	(0X14C2E);
+	set_name	(0X14C2E,	"in_range");
 	create_insn	(x=0X14C31);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X14C34);
@@ -5084,6 +5095,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14F2E);
 	op_stkvar	(x,	0);
 	create_insn	(0X14F3A);
+	set_name	(0X14F3A,	"party_recalc_ac");
 	create_insn	(x=0X14F3D);
 	op_hex		(x,	1);
 	create_insn	(x=0X14F42);
@@ -5385,11 +5397,13 @@ static Bytes_0(void) {
 	create_insn	(x=0X1541F);
 	op_hex		(x,	1);
 	create_insn	(0X15426);
+	set_name	(0X15426,	"print_gems_label");
 	create_insn	(x=0X15431);
 	op_hex		(x,	1);
 	create_insn	(x=0X1543B);
 	op_hex		(x,	1);
 	create_insn	(0X15440);
+	set_name	(0X15440,	"print_gold_label");
 	create_insn	(x=0X1544B);
 	op_hex		(x,	1);
 	create_insn	(x=0X15455);
@@ -5900,6 +5914,15 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15DBC);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X15DC2);
 	op_hex		(x,	1);
 	create_insn	(x=0X15DDA);
@@ -5941,15 +5964,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15EAC);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X15EB4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15EB8);
@@ -6370,6 +6384,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16528);
 	op_hex		(x,	1);
 	create_insn	(0X16532);
+	set_name	(0X16532,	"party_gather_gold");
 	create_insn	(x=0X16535);
 	op_hex		(x,	1);
 	create_insn	(x=0X1653C);
@@ -6475,6 +6490,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16701);
 	op_hex		(x,	1);
 	create_insn	(0X1670A);
+	set_name	(0X1670A,	"load_building_text");
 	create_insn	(x=0X1670D);
 	op_hex		(x,	1);
 	create_insn	(x=0X16712);
@@ -6534,6 +6550,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X167B3);
 	op_hex		(x,	1);
 	create_insn	(0X167BC);
+	set_name	(0X167BC,	"str_next");
 	create_insn	(x=0X167BF);
 	op_hex		(x,	1);
 	create_insn	(x=0X167C9);
@@ -6948,12 +6965,12 @@ static Bytes_1(void) {
 	create_word	(0X16DEF);
 	create_insn	(0X16DF1);
 	create_insn	(0X16DF6);
-	set_name	(0X16DF6,	"thk_res_3FA0");
+	set_name	(0X16DF6,	"thk_clear_text_preset");
 	set_cmt	(0X16DFB,	"thunk index 0x8000: resident",	0);
 	create_word	(0X16DFB);
 	create_insn	(0X16DFD);
 	create_insn	(0X16E02);
-	set_name	(0X16E02,	"thk_res_3FC4");
+	set_name	(0X16E02,	"thk_quit_to_dos");
 	set_cmt	(0X16E07,	"thunk index 0x8000: resident",	0);
 	create_word	(0X16E07);
 	create_insn	(0X16E09);
@@ -7003,7 +7020,7 @@ static Bytes_1(void) {
 	create_word	(0X16E73);
 	create_insn	(0X16E75);
 	create_insn	(0X16E7A);
-	set_name	(0X16E7A,	"thk_res_410A");
+	set_name	(0X16E7A,	"thk_print_message_line");
 	set_cmt	(0X16E7F,	"thunk index 0x8000: resident",	0);
 	create_word	(0X16E7F);
 	create_insn	(0X16E81);
@@ -7073,7 +7090,7 @@ static Bytes_1(void) {
 	create_word	(0X16F1B);
 	create_insn	(0X16F1D);
 	create_insn	(0X16F22);
-	set_name	(0X16F22,	"thk_res_00E8");
+	set_name	(0X16F22,	"thk_toupper");
 	set_cmt	(0X16F27,	"thunk index 0x8000: resident",	0);
 	create_word	(0X16F27);
 	create_insn	(0X16F29);
@@ -7088,7 +7105,7 @@ static Bytes_1(void) {
 	create_word	(0X16F3F);
 	create_insn	(0X16F41);
 	create_insn	(0X16F46);
-	set_name	(0X16F46,	"thk_res_5440");
+	set_name	(0X16F46,	"thk_print_gold_label");
 	set_cmt	(0X16F4B,	"thunk index 0x8000: resident",	0);
 	create_word	(0X16F4B);
 	create_insn	(0X16F4D);
@@ -7098,7 +7115,7 @@ static Bytes_1(void) {
 	create_word	(0X16F57);
 	create_insn	(0X16F59);
 	create_insn	(0X16F5E);
-	set_name	(0X16F5E,	"thk_res_35A8");
+	set_name	(0X16F5E,	"thk_text_clear_prompt_line");
 	set_cmt	(0X16F63,	"thunk index 0x8000: resident",	0);
 	create_word	(0X16F63);
 	create_insn	(0X16F65);
@@ -7178,12 +7195,12 @@ static Bytes_1(void) {
 	create_word	(0X17017);
 	create_insn	(0X17019);
 	create_insn	(0X1701E);
-	set_name	(0X1701E,	"thk_res_3E40");
+	set_name	(0X1701E,	"thk_print_trimmed_string");
 	set_cmt	(0X17023,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17023);
 	create_insn	(0X17025);
 	create_insn	(0X1702A);
-	set_name	(0X1702A,	"thk_res_3E76");
+	set_name	(0X1702A,	"thk_print_monster_name");
 	set_cmt	(0X1702F,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1702F);
 	create_insn	(0X17031);
@@ -7348,7 +7365,7 @@ static Bytes_1(void) {
 	create_word	(0X171AF);
 	create_insn	(0X171B1);
 	create_insn	(0X171B6);
-	set_name	(0X171B6,	"thk_res_3766");
+	set_name	(0X171B6,	"thk_char_backpack_remove");
 	set_cmt	(0X171BB,	"thunk index 0x8000: resident",	0);
 	create_word	(0X171BB);
 	create_insn	(0X171BD);
@@ -7438,7 +7455,7 @@ static Bytes_1(void) {
 	create_word	(0X17287);
 	create_insn	(0X17289);
 	create_insn	(0X1728E);
-	set_name	(0X1728E,	"thk_res_421E");
+	set_name	(0X1728E,	"thk_draw_status_line");
 	set_cmt	(0X17293,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17293);
 	create_insn	(0X17295);
@@ -7608,7 +7625,7 @@ static Bytes_1(void) {
 	create_byte	(0X17420);
 	create_insn	(0X17421);
 	create_insn	(0X17426);
-	set_name	(0X17426,	"thk_res_4C2E");
+	set_name	(0X17426,	"thk_in_range");
 	set_cmt	(0X1742B,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1742B);
 	create_insn	(0X1742D);
@@ -7653,7 +7670,7 @@ static Bytes_1(void) {
 	create_word	(0X1748B);
 	create_insn	(0X1748D);
 	create_insn	(0X17492);
-	set_name	(0X17492,	"thk_res_34BA");
+	set_name	(0X17492,	"thk_draw_screen_rows");
 	set_cmt	(0X17497,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17497);
 	create_insn	(0X17499);
@@ -7673,7 +7690,7 @@ static Bytes_1(void) {
 	create_word	(0X174BB);
 	create_insn	(0X174BD);
 	create_insn	(0X174C2);
-	set_name	(0X174C2,	"thk_res_5426");
+	set_name	(0X174C2,	"thk_print_gems_label");
 	set_cmt	(0X174C7,	"thunk index 0x8000: resident",	0);
 	create_word	(0X174C7);
 	create_insn	(0X174C9);
@@ -7863,7 +7880,7 @@ static Bytes_1(void) {
 	create_word	(0X17683);
 	create_insn	(0X17685);
 	create_insn	(0X1768A);
-	set_name	(0X1768A,	"thk_res_4F3A");
+	set_name	(0X1768A,	"thk_party_recalc_ac");
 	set_cmt	(0X1768F,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1768F);
 	create_insn	(0X17691);
@@ -7873,7 +7890,7 @@ static Bytes_1(void) {
 	create_word	(0X1769B);
 	create_insn	(0X1769D);
 	create_insn	(0X176A2);
-	set_name	(0X176A2,	"thk_res_6532");
+	set_name	(0X176A2,	"thk_party_gather_gold");
 	set_cmt	(0X176A7,	"thunk index 0x8000: resident",	0);
 	create_word	(0X176A7);
 	create_insn	(0X176A9);
@@ -7933,12 +7950,12 @@ static Bytes_1(void) {
 	create_word	(0X1772B);
 	create_insn	(0X1772D);
 	create_insn	(0X17732);
-	set_name	(0X17732,	"thk_res_670A");
+	set_name	(0X17732,	"thk_load_building_text");
 	set_cmt	(0X17737,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17737);
 	create_insn	(0X17739);
 	create_insn	(0X1773E);
-	set_name	(0X1773E,	"thk_res_67BC");
+	set_name	(0X1773E,	"thk_str_next");
 	set_cmt	(0X17743,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17743);
 	create_insn	(0X17745);
@@ -9398,6 +9415,15 @@ static Bytes_1(void) {
 	set_name	(0X1FF4B,	"aForksOfLightni");
 	create_strlit	(0X1FF6C,	0X15);
 	set_name	(0X1FF6C,	"aTrapIntoThePar");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X1FF81,	0X22);
 	set_name	(0X1FF81,	"aABallOfFlameRo");
 	create_strlit	(0X1FFA4,	0X23);
@@ -9426,15 +9452,6 @@ static Bytes_1(void) {
 	set_name	(0X200D3,	"aAndCutTheParty");
 	create_strlit	(0X201A0,	0XB);
 	set_name	(0X201A0,	"aExplosion");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X201AB,	0X10);
 	set_name	(0X201AB,	"aBackpacksFull");
 	create_strlit	(0X201BB,	0X8);
@@ -10917,12 +10934,15 @@ static Functions_0(void) {
 	set_frame_size(0X13572, 0X2, 2, 0);
 	add_func    (0X135A8,0X135EF);
 	set_func_flags(0X135A8,0x5410);
+	set_func_cmt(0X135A8,	"fills the prompt line (row 23) with frame char 5", 0);
 	set_frame_size(0X135A8, 0X6, 2, 0);
 	add_func    (0X135F0,0X13607);
 	set_func_flags(0X135F0,0x5410);
+	set_func_cmt(0X135F0,	"*p = max(0, *p - n)", 0);
 	set_frame_size(0X135F0, 0, 2, 0);
 	add_func    (0X13608,0X1362B);
 	set_func_flags(0X13608,0x5410);
+	set_func_cmt(0X13608,	"*p = min(255, *p + n)", 0);
 	set_frame_size(0X13608, 0X2, 2, 0);
 	add_func    (0X1362C,0X13663);
 	set_func_flags(0X1362C,0x5410);
@@ -10938,6 +10958,7 @@ static Functions_0(void) {
 	set_frame_size(0X13700, 0X4, 2, 0);
 	add_func    (0X13766,0X137B6);
 	set_func_flags(0X13766,0x5410);
+	set_func_cmt(0X13766,	"(char, slot): shifts the backpack arrays", 0);
 	set_frame_size(0X13766, 0X6, 2, 0);
 	add_func    (0X137B6,0X137CA);
 	set_func_flags(0X137B6,0x5410);
@@ -10991,9 +11012,11 @@ static Functions_0(void) {
 	set_frame_size(0X13EB2, 0XE, 2, 0);
 	add_func    (0X13FA0,0X13FC4);
 	set_func_flags(0X13FA0,0x5410);
+	set_func_cmt(0X13FA0,	"clears text-area preset n (rectangles at DGROUP:4DD4..4DF2)", 0);
 	set_frame_size(0X13FA0, 0, 2, 0);
 	add_func    (0X13FC4,0X13FD4);
 	set_func_flags(0X13FC4,0x1401);
+	set_func_cmt(0X13FC4,	"restores text mode, timer driver and vectors, exits", 0);
 	add_func    (0X13FD8,0X13FE2);
 	set_func_flags(0X13FD8,0x5400);
 	set_frame_size(0X13FD8, 0, 0, 0);
@@ -11014,6 +11037,7 @@ static Functions_0(void) {
 	set_frame_size(0X140F4, 0, 0, 0);
 	add_func    (0X1410A,0X1421D);
 	set_func_flags(0X1410A,0x5410);
+	set_func_cmt(0X1410A,	"message in the bottom frame", 0);
 	set_frame_size(0X1410A, 0, 2, 0);
 	add_func    (0X1421E,0X1423D);
 	set_func_flags(0X1421E,0x5400);
@@ -11066,6 +11090,7 @@ static Functions_0(void) {
 	set_frame_size(0X14B6E, 0, 0, 0);
 	add_func    (0X14C2E,0X14C4A);
 	set_func_flags(0X14C2E,0x5410);
+	set_func_cmt(0X14C2E,	"(lo, hi, v)", 0);
 	set_frame_size(0X14C2E, 0, 2, 0);
 	add_func    (0X14C4A,0X14C7A);
 	set_func_flags(0X14C4A,0x5410);
@@ -11215,6 +11240,7 @@ static Functions_0(void) {
 	set_frame_size(0X163B4, 0XA, 2, 0);
 	add_func    (0X16532,0X165C7);
 	set_func_flags(0X16532,0x5410);
+	set_func_cmt(0X16532,	"(char): moves all party gold to the character", 0);
 	set_frame_size(0X16532, 0XE, 2, 0);
 	add_func    (0X165C8,0X16616);
 	set_func_flags(0X165C8,0x5410);
@@ -11224,9 +11250,11 @@ static Functions_0(void) {
 	set_frame_size(0X16616, 0XA, 2, 0);
 	add_func    (0X1670A,0X167BC);
 	set_func_flags(0X1670A,0x5410);
+	set_func_cmt(0X1670A,	"(building): reads the block of STR.DAT strings for the building", 0);
 	set_frame_size(0X1670A, 0X14, 2, 0);
 	add_func    (0X167BC,0X167E8);
 	set_func_flags(0X167BC,0x5410);
+	set_func_cmt(0X167BC,	"returns the next NUL-terminated string of the loaded STR.DAT block", 0);
 	set_frame_size(0X167BC, 0X6, 2, 0);
 	add_func    (0X167E8,0X16818);
 	set_func_flags(0X167E8,0x5410);

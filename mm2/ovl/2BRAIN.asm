@@ -86,7 +86,7 @@ loc_1C18A:                              ; CODE XREF: tavern_common_helper+25↑j
                 jnz     short loc_1C1C6
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -114,13 +114,13 @@ loc_1C1C6:                              ; CODE XREF: tavern_common_helper+5F↑j
                 mov     byte_1DC7F, al
                 push    [bp+var_10]
                 push    [bp+var_4]
-                call    thk_res_3766
+                call    thk_char_backpack_remove
                 add     sp, 4
 
 loc_1C1DA:                              ; CODE XREF: seg002:08CD↑J
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -283,7 +283,7 @@ loc_1C329:                              ; CODE XREF: tavern_common_helper+1E3↑
 loc_1C34D:                              ; CODE XREF: tavern_common_helper+1A6↑j
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -368,11 +368,11 @@ arg_2           = byte ptr  6
                 mov     al, byte ptr g_party_size
                 add     al, 30h ; '0'
                 mov     [bx+1Eh], al
-                call    thk_res_5440
+                call    thk_print_gold_label
 
 loc_1C3F6:                              ; CODE XREF: seg002:047D↑J
                 push    word ptr asc_2194D+3 ; ">@"
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 mov     bx, word ptr asc_2194D+3 ; ">@"
                 mov     al, [bx+1Eh]
@@ -401,7 +401,7 @@ loc_1C421:                              ; CODE XREF: sub_1C3DC+40↑j
                 or      byte_1DC80, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -576,7 +576,7 @@ loc_1C5C0:                              ; CODE XREF: seg002:029D↑J
                 jz      short loc_1C5BB
 
 loc_1C5C2:                              ; CODE XREF: sub_1C3DC+42↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 mov     sp, bp
                 pop     bp
                 retn
@@ -899,7 +899,7 @@ loc_1C7FC:                              ; CODE XREF: tavern_retrain_skills+12↑
                 or      byte_1DC80, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 40F8h
@@ -930,7 +930,7 @@ loc_1C834:                              ; CODE XREF: tavern_retrain_skills+66↓
 loc_1C839:                              ; CODE XREF: tavern_retrain_skills+4F↑j
                 call    thk_2PLAY_8282
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 59h ; 'Y'
@@ -950,7 +950,7 @@ loc_1C855:                              ; CODE XREF: tavern_retrain_skills+6E↑
                 mov     [bx+18h], al
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -1207,7 +1207,7 @@ arg_0           = word ptr  4
                 push    si
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -1461,7 +1461,7 @@ loc_1CBB1:                              ; CODE XREF: ovl_2BRAIN:CD46↓j
                 jz      short loc_1CC04
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 56C6h
@@ -1496,7 +1496,7 @@ loc_1CC04:                              ; CODE XREF: ovl_2BRAIN:CBB5↑j
                 mov     word ptr [bp-4], 1
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp-0Ah], ax
                 cmp     ax, 41h ; 'A'
@@ -1604,7 +1604,7 @@ loc_1CCD8:                              ; CODE XREF: ovl_2BRAIN:CC1B↑j
                 cmp     word ptr [bp-0Ah], 47h ; 'G'
                 jnz     short loc_1CCFC
                 push    word ptr [bp-6]
-                call    thk_res_6532
+                call    thk_party_gather_gold
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -1695,7 +1695,7 @@ loc_1CD95:                              ; CODE XREF: ovl_2BRAIN:CF5B↓j
 loc_1CD9E:                              ; CODE XREF: ovl_2BRAIN:CD99↑j
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 sub     di, di
@@ -1772,7 +1772,7 @@ loc_1CE47:                              ; CODE XREF: ovl_2BRAIN:CD9B↑j
                 mov     word ptr [bp-2], 1
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp-0Ah], ax
                 cmp     ax, 41h ; 'A'
@@ -1865,7 +1865,7 @@ loc_1CEF2:                              ; CODE XREF: ovl_2BRAIN:CE5E↑j
                 cmp     word ptr [bp-0Ah], 47h ; 'G'
                 jnz     short loc_1CF16
                 push    word ptr [bp-6]
-                call    thk_res_6532
+                call    thk_party_gather_gold
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -1984,7 +1984,7 @@ loc_1CFD2:                              ; CODE XREF: ovl_2BRAIN:CFCC↑j
                 mov     [bp-2], ax
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -2044,7 +2044,7 @@ loc_1D054:                              ; CODE XREF: ovl_2BRAIN:D046↑j
                 mov     [bp-2], ax
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 13h
                 push    ax
@@ -2190,7 +2190,7 @@ var_2           = word ptr -2
                 mov     [bp+var_2], 1
                 mov     ax, 1
                 push    ax
-                call    thk_res_670A
+                call    thk_load_building_text
                 add     sp, 2
                 mov     [bp+var_C], 5
                 mov     [bp+var_E], 4
@@ -2202,7 +2202,7 @@ loc_1D185:                              ; CODE XREF: tavern_menu+48↓j
                 mov     di, 4
 
 loc_1D18F:                              ; CODE XREF: tavern_menu+3E↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2215,7 +2215,7 @@ loc_1D18F:                              ; CODE XREF: tavern_menu+3E↓j
                 mov     di, 6
 
 loc_1D1AF:                              ; CODE XREF: tavern_menu+5E↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2225,7 +2225,7 @@ loc_1D1AF:                              ; CODE XREF: tavern_menu+5E↓j
                 mov     di, 0Eh
 
 loc_1D1C5:                              ; CODE XREF: tavern_menu+74↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2240,7 +2240,7 @@ loc_1D1DF:                              ; CODE XREF: tavern_menu+A2↓j
                 mov     di, 8
 
 loc_1D1E9:                              ; CODE XREF: tavern_menu+98↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2258,7 +2258,7 @@ loc_1D20D:                              ; CODE XREF: tavern_menu+D0↓j
                 mov     di, 8
 
 loc_1D217:                              ; CODE XREF: tavern_menu+C6↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2271,7 +2271,7 @@ loc_1D217:                              ; CODE XREF: tavern_menu+C6↓j
                 mov     di, 6
 
 loc_1D237:                              ; CODE XREF: tavern_menu+E6↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2286,7 +2286,7 @@ loc_1D251:                              ; CODE XREF: tavern_menu+114↓j
                 mov     di, 6
 
 loc_1D25B:                              ; CODE XREF: tavern_menu+10A↓j
-                call    thk_res_67BC
+                call    thk_str_next
                 mov     [si], ax
                 add     si, 2
                 dec     di
@@ -2302,7 +2302,7 @@ loc_1D25B:                              ; CODE XREF: tavern_menu+10A↓j
                 add     sp, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     [bp+var_6], 0
                 cmp     g_party_size, 0
@@ -2370,11 +2370,11 @@ loc_1D306:                              ; CODE XREF: tavern_menu+188↑j
 
 loc_1D318:                              ; CODE XREF: tavern_menu+1B9↑j
                 or      byte_1DC80, 1
-                call    thk_res_34BA
-                call    thk_res_5440
+                call    thk_draw_screen_rows
+                call    thk_print_gold_label
                 mov     ax, 2
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -2439,7 +2439,7 @@ loc_1D39F:                              ; CODE XREF: tavern_menu+232↑j
                 add     sp, 2
                 mov     ax, 7
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     di, 5766h
@@ -2484,7 +2484,7 @@ loc_1D420:                              ; CODE XREF: tavern_menu+249↑j
                 mov     [bp+var_2], 1
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_A], ax
                 cmp     ax, 41h ; 'A'
@@ -2607,7 +2607,7 @@ loc_1D4E6:                              ; CODE XREF: tavern_menu+2FA↑j
 
 loc_1D4EE:                              ; CODE XREF: tavern_menu+302↑j
                 push    [bp+var_6]
-                call    thk_res_6532
+                call    thk_party_gather_gold
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -2621,7 +2621,7 @@ loc_1D4EE:                              ; CODE XREF: tavern_menu+302↑j
                 align 2
 
 loc_1D50C:                              ; CODE XREF: tavern_menu+361↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
 
 loc_1D50F:                              ; CODE XREF: tavern_menu+1BB↑j
                 call    thk_2PLAY_A580

@@ -242,7 +242,7 @@ loc_1C301:                              ; CODE XREF: sub_1C298+64↑j
                 add     sp, 4
                 mov     ax, 4
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     ax, ax
                 mov     word_1F11E, ax
@@ -593,7 +593,7 @@ arg_0           = byte ptr  4
                 mov     al, [bp+arg_0]
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+arg_0], al
                 call    thk_detect_hardware
@@ -807,11 +807,11 @@ loc_1C77C:                              ; CODE XREF: title_screen:loc_1CD96↓p
                 add     sp, 4
                 mov     ax, 6
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 5
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     al, byte_1DB92
                 sub     ah, ah
@@ -883,7 +883,7 @@ loc_1C815:                              ; CODE XREF: ovl_1MENU1:C831↓j
                 push    ax
                 call    thk_text_set_align
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     ax, 1Bh
                 push    ax
                 call    thk_wait_for_key
@@ -923,7 +923,7 @@ var_2           = word ptr -2
                 add     sp, 2
                 mov     ax, 4
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     al, byte_1DB95
                 sub     ah, ah
@@ -936,7 +936,7 @@ var_2           = word ptr -2
                 push    ax
                 call    thk_text_set_fg
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     ax, 2
                 push    ax
                 call    thk_text_set_align
@@ -1291,7 +1291,7 @@ loc_1CB74:                              ; CODE XREF: ovl_1MENU1:CB6D↑j
                 call    init_helper_c
                 add     sp, 4
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
 
 loc_1CB8A:                              ; CODE XREF: seg002:0AF5↑J
                 add     sp, 2
@@ -1403,7 +1403,7 @@ loc_1CBFD:                              ; CODE XREF: title_screen+34↓j
                 call    loc_1CBBA
                 mov     ax, 5
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 15h
                 push    ax
@@ -1526,7 +1526,7 @@ loc_1CD45:                              ; CODE XREF: title_screen+174↓j
 loc_1CD68:                              ; CODE XREF: title_screen+1B8↓j
                 call    loc_1C9B2
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 1Bh
@@ -1574,7 +1574,7 @@ loc_1CD9C:                              ; CODE XREF: title_screen+1AA↑j
 ; ---------------------------------------------------------------------------
 
 loc_1CDBC:                              ; CODE XREF: title_screen+19B↑j
-                call    thk_res_3FC4
+                call    thk_quit_to_dos
                 jmp     short loc_1CD8D
 ; ---------------------------------------------------------------------------
                 align 2

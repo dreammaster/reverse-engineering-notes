@@ -165,7 +165,7 @@ loc_17F1C:                              ; CODE XREF: prompt_confirm_yn+68↓j
 loc_17F21:                              ; CODE XREF: prompt_confirm_yn+51↑j
                 call    thk_kbd_poll
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 4Eh ; 'N'
@@ -240,7 +240,7 @@ var_2           = word ptr -2
                 mov     [bp+var_2], 0
                 mov     ax, 3
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     al, byte_1DB8E
                 sub     ah, ah
@@ -263,7 +263,7 @@ var_2           = word ptr -2
                 push    ax
                 call    thk_text_puts
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 sub     ax, ax
                 push    ax
                 push    ax
@@ -307,7 +307,7 @@ loc_1801F:                              ; CODE XREF: roster_view_all+25C↓j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_4], ax
                 mov     [bp+var_6], 0
@@ -675,7 +675,7 @@ loc_18317:                              ; CODE XREF: main_options_menu+2C8↓j
                 add     sp, 2
                 mov     ax, 6
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -769,12 +769,12 @@ loc_183F0:                              ; CODE XREF: main_options_menu+1FA↑j
                 add     sp, 2
                 call    thk_kbd_poll
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     si, 1Bh
                 jnz     short loc_1840E
-                call    thk_res_3FC4
+                call    thk_quit_to_dos
 
 loc_1840E:                              ; CODE XREF: main_options_menu+217↑j
                 mov     ax, si
@@ -977,7 +977,7 @@ loc_18576:                              ; CODE XREF: main_options_menu+376↑j
                 call    thk_res_49E2
                 mov     ax, 6ACh
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -1739,7 +1739,7 @@ loc_18AA9:                              ; CODE XREF: create_character+42↑j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     si, 1Bh
@@ -2295,7 +2295,7 @@ loc_18F5C:                              ; CODE XREF: create_character_finish+23�
                                         ; create_character_finish+94↓j
                 call    thk_kbd_poll
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_12], al
                 or      al, al
@@ -2368,7 +2368,7 @@ create_character_finish endp
                 align 2
 
 loc_18FE4:                              ; CODE XREF: main_options_menu+257↑p
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     ax, 16h
                 push    ax
                 mov     ax, 26h ; '&'
@@ -2392,7 +2392,7 @@ loc_18FE4:                              ; CODE XREF: main_options_menu+257↑p
                 call    create_char_pick_class
                 call    create_helper_e
                 call    create_character_finish
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2574,7 +2574,7 @@ loc_19162:                              ; CODE XREF: ovl_1MENU2:919F↓j
                 jnz     short loc_19185
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp-0Ch], al
 
@@ -3241,11 +3241,11 @@ var_2           = word ptr -2
 loc_19727:                              ; CODE XREF: transfer_characters+25↑j
                 mov     ax, 6
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 5
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -3257,7 +3257,7 @@ loc_19727:                              ; CODE XREF: transfer_characters+25↑j
                 push    ax
                 call    thk_text_puts
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
                 sub     si, si
                 mov     di, 0A5Ah
 
@@ -3472,7 +3472,7 @@ loc_1990B:                              ; CODE XREF: transfer_characters+232↓j
 loc_19932:                              ; CODE XREF: transfer_characters+375↓j
                 mov     ax, 1
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
@@ -3512,7 +3512,7 @@ loc_19975:                              ; CODE XREF: transfer_characters+27A↑j
                 mov     di, ax
                 mov     ax, 1
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 or      di, di
                 jz      short loc_199BC
@@ -3559,7 +3559,7 @@ loc_199E0:                              ; CODE XREF: transfer_characters+2FE↓j
 loc_199E5:                              ; CODE XREF: transfer_characters+2E8↑j
                 call    thk_wait_key
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 59h ; 'Y'

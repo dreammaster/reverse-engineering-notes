@@ -82,7 +82,7 @@ var_2           = byte ptr -2
                 cmp     byte ptr [bx+26h], 40h ; '@'
                 jb      short loc_17EBD
                 push    ax
-                call    thk_res_3E40
+                call    thk_print_trimmed_string
                 add     sp, 2
                 mov     bx, [bp+var_4]
                 cmp     byte ptr [bx+26h], 80h
@@ -195,7 +195,7 @@ loc_17F52:                              ; CODE XREF: combat_after_hit+ED↑j
                 cmp     [bp+var_2], 0
                 jnz     short loc_17F9A
                 push    [bp+var_4]
-                call    thk_res_3E40
+                call    thk_print_trimmed_string
                 add     sp, 2
                 mov     ax, 20h ; ' '
                 push    ax
@@ -260,7 +260,7 @@ var_2           = byte ptr -2
                 push    ax
                 call    combat_text_reset
                 add     sp, 2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 mov     ax, 20h ; ' '
                 push    ax
                 call    thk_text_putc
@@ -341,7 +341,7 @@ var_2           = byte ptr -2
                 push    ax
                 call    combat_text_reset
                 add     sp, 2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 cmp     [bp+var_2], 0Fh
                 jb      short loc_1808B
                 cmp     [bp+var_2], 1Eh
@@ -429,7 +429,7 @@ var_2           = byte ptr -2
 
 loc_18128:                              ; CODE XREF: combat_monster_waits+2C↑j
                                         ; combat_monster_waits+33↑j ...
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 mov     bl, [bp+var_2]
                 sub     bh, bh
                 shl     bx, 1
@@ -583,7 +583,7 @@ loc_181A1:                              ; CODE XREF: combat_monster_advances+52�
                 push    ax
                 call    thk_monster_decode_stats
                 add     sp, 2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 mov     ax, offset aAdvances ; " advances!"
                 push    ax
                 call    thk_text_puts
@@ -1179,7 +1179,7 @@ loc_186BA:                              ; CODE XREF: combat_party_spell_hits+1F�
                 call    combat_text_reset
                 add     sp, 2
                 push    word_23626
-                call    thk_res_3E40
+                call    thk_print_trimmed_string
                 add     sp, 2
                 mov     ax, offset aCastsASpell ; " casts a spell:"
                 push    ax
@@ -1305,7 +1305,7 @@ loc_187CA:                              ; CODE XREF: combat_party_spell_hits+119
 
 loc_187E1:                              ; CODE XREF: combat_party_spell_hits+138↑j
                                         ; combat_party_spell_hits+13F↑j ...
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 cmp     [bp+var_4], 0
                 jz      short loc_187F8
                 mov     ax, offset aIsNotAffected ; " is not affected!"
@@ -1689,7 +1689,7 @@ combat_monster_gone_text proc near      ; CODE XREF: ovl_2COMBAT:85C6↑p
                 add     sp, 4
                 cmp     byte_2781C, 0
                 jnz     short locret_18AF2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 cmp     byte_22CF6, 0
                 jz      short loc_18AE8
                 mov     ax, offset aRunsAway ; " runs away!"
@@ -1952,7 +1952,7 @@ var_2           = word ptr -2
                 call    combat_text_reset
                 add     sp, 2
                 push    [bp+var_2]
-                call    thk_res_3E40
+                call    thk_print_trimmed_string
                 add     sp, 2
                 cmp     byte_22CF4, 1
                 jnz     short loc_18CB4
@@ -2004,7 +2004,7 @@ loc_18CE3:                              ; CODE XREF: combat_party_attack_result+
 
 loc_18CFA:                              ; CODE XREF: combat_party_attack_result+39↑j
                 add     sp, 2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 mov     al, byte_27680
                 mov     [bp+var_4], al
                 or      al, al
@@ -2047,7 +2047,7 @@ loc_18D43:                              ; CODE XREF: combat_party_attack_result+
                 push    ax
                 call    thk_text_goto_xy
                 add     sp, 4
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 mov     ax, offset aIsNotAffected_0 ; " is not affected!"
                 push    ax
                 call    thk_text_puts
@@ -2190,12 +2190,12 @@ loc_18E0D:                              ; CODE XREF: combat_party_attack+5D↑j
                 push    word_1E860
                 call    thk_text_puts
                 add     sp, 2
-                call    thk_res_5440
+                call    thk_print_gold_label
 
 loc_18E21:                              ; CODE XREF: combat_party_attack+B5↓j
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_14], ax
                 cmp     ax, 1Bh
@@ -2231,7 +2231,7 @@ loc_18E58:                              ; CODE XREF: combat_party_attack+AA↑j
 loc_18E5B:                              ; CODE XREF: combat_party_attack+95↑j
                 cmp     [bp+var_A], 0
                 jz      short loc_18E21
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 cmp     [bp+var_14], 1Bh
                 jnz     short loc_18E70
                 dec     [bp+var_E]
@@ -2707,7 +2707,7 @@ loc_191D7:                              ; CODE XREF: combat_wait_command_key+93�
                 mov     [bp+var_2], 0
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_4], ax
                 cmp     ax, 42h ; 'B'
@@ -3062,7 +3062,7 @@ loc_19442:                              ; CODE XREF: combat_party_turn+5D↑j
 ; ---------------------------------------------------------------------------
 
 loc_19448:                              ; CODE XREF: combat_party_turn+62↑j
-                call    thk_res_5440
+                call    thk_print_gold_label
                 sub     ax, ax
                 push    ax
                 call    combat_text_reset
@@ -3085,7 +3085,7 @@ loc_1946F:                              ; CODE XREF: combat_party_turn+117↓j
 loc_19474:                              ; CODE XREF: combat_party_turn+11F↓j
                 mov     byte_1DBE6, 0
                 inc     [bp+var_6]
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 jmp     def_19573       ; jumptable 00019573 default case, cases 71-79,84
 ; ---------------------------------------------------------------------------
 
@@ -4346,7 +4346,7 @@ loc_19DEF:                              ; CODE XREF: combat_party_turn+A38↑j
                 call    thk_monster_decode_stats
                 add     sp, 2
                 mov     [bp+arg_0], 0
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 cmp     byte ptr [bp+var_4], 1
                 jz      short loc_19E6F
                 mov     ax, 9E0Eh
@@ -4422,7 +4422,7 @@ loc_19E8B:                              ; CODE XREF: combat_party_turn+AD3↑j
                 align 2
 
 loc_19ED6:                              ; CODE XREF: combat_party_turn+B11↑j
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 mov     ax, 9E0Eh
                 push    ax
                 call    thk_strlen_trimmed
@@ -5131,7 +5131,7 @@ loc_1A40E:                              ; CODE XREF: combat_encounter+190↓j
                 push    si
                 call    thk_monster_decode_stats
                 add     sp, 2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 inc     [bp+var_8]
 
 loc_1A430:                              ; CODE XREF: combat_encounter+165↑j
@@ -5180,7 +5180,7 @@ loc_1A442:                              ; CODE XREF: combat_encounter+197↑j
                 push    ax
                 call    thk_monster_decode_stats
                 add     sp, 2
-                call    thk_res_3E76
+                call    thk_print_monster_name
                 cmp     [bp+var_2], 1
                 jz      short loc_1A4D9
                 mov     ax, 9E0Eh
@@ -5193,7 +5193,7 @@ loc_1A442:                              ; CODE XREF: combat_encounter+197↑j
                 mov     al, [bx-61F2h]
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 cmp     ax, 53h ; 'S'
                 jz      short loc_1A4D9
@@ -5254,7 +5254,7 @@ loc_1A538:                              ; CODE XREF: combat_encounter+28A↑j
 
 loc_1A542:                              ; CODE XREF: combat_encounter+28F↑j
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
 
 loc_1A549:                              ; CODE XREF: combat_encounter+297↑j
@@ -5279,11 +5279,11 @@ loc_1A569:                              ; CODE XREF: combat_encounter+2BE↑j
                                         ; combat_encounter+488↓j
                 mov     ax, offset aOptionsAAttack ; "Options: A-Attack B-Bribe H-Hide R-Run"
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 call    thk_monster_anim_step
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_C], ax
 
@@ -5306,10 +5306,10 @@ loc_1A59C:                              ; CODE XREF: combat_encounter+2EF↑j
 ; ---------------------------------------------------------------------------
 
 loc_1A5A5:                              ; CODE XREF: combat_encounter+2FA↑j
-                call    thk_res_5440
+                call    thk_print_gold_label
                 mov     ax, offset aBribeWith1Food ; "Bribe with:  1-Food  2-Gold  3-Gems"
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
 
 loc_1A5B2:                              ; CODE XREF: combat_encounter+324↓j
@@ -5330,7 +5330,7 @@ loc_1A5CC:                              ; CODE XREF: combat_encounter+315↑j
                 jz      short loc_1A5E9
                 mov     ax, offset aHowMuch ; "How much? "
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 mov     ax, 4
                 push    ax
@@ -5339,7 +5339,7 @@ loc_1A5CC:                              ; CODE XREF: combat_encounter+315↑j
                 mov     [bp+var_4], ax
 
 loc_1A5E9:                              ; CODE XREF: combat_encounter+32A↑j
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 cmp     [bp+var_C], 1Bh
                 jnz     short loc_1A5F5
                 jmp     loc_1A6B8
@@ -5498,7 +5498,7 @@ loc_1A737:                              ; CODE XREF: combat_encounter+46E↑j
                 jnz     short loc_1A751
                 mov     ax, offset aSuccess ; "Success!"
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 mov     ax, 19h
                 push    ax
@@ -5860,13 +5860,13 @@ loc_1A905:                              ; CODE XREF: combat_show_protection+49�
                 add     sp, 2
 
 loc_1A9CD:                              ; CODE XREF: combat_show_protection+10E↑j
-                call    thk_res_5440
+                call    thk_print_gold_label
 
 loc_1A9D0:                              ; CODE XREF: combat_show_protection+154↓j
                 call    thk_monster_anim_step
                 cmp     ax, 1Bh
                 jnz     short loc_1A9D0
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 pop     si
                 pop     di
                 mov     sp, bp
@@ -6520,7 +6520,7 @@ loc_1AD5A:                              ; CODE XREF: effect_lose_item+27↑j
                 mov     byte ptr [si+40h], 0
                 push    [bp+var_2]
                 push    word_22CFD+1
-                call    thk_res_3766
+                call    thk_char_backpack_remove
                 add     sp, 4
 
 loc_1AD80:                              ; CODE XREF: effect_lose_item+16↑j
@@ -7408,7 +7408,7 @@ var_2           = word ptr -2
                 call    combat_text_reset
                 add     sp, 2
                 push    [bp+var_4]
-                call    thk_res_3E40
+                call    thk_print_trimmed_string
                 add     sp, 2
                 cmp     byte_22CF8, 0
                 jz      short loc_1B272
@@ -7659,7 +7659,7 @@ loc_1B43D:                              ; CODE XREF: combat_spell_effect+23↑j
                 call    thk_text_goto_xy
                 add     sp, 4
                 push    [bp+var_2]
-                call    thk_res_3E40
+                call    thk_print_trimmed_string
                 add     sp, 2
                 cmp     byte_22CF8, 0
                 jz      short loc_1B468

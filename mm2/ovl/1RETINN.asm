@@ -25,7 +25,7 @@ var_2           = word ptr -2
                 mov     byte_1DC80, 6
                 sub     ax, ax
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 sub     si, si
                 mov     [bp+var_6], si
@@ -138,12 +138,12 @@ var_2           = byte ptr -2
                 add     sp, 2
                 mov     ax, 4
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 call    thk_res_49E2
                 mov     ax, 20E2h
                 push    ax
-                call    thk_res_410A
+                call    thk_print_message_line
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -699,7 +699,7 @@ var_2           = word ptr -2
                 add     sp, 2
                 mov     ax, 3
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 12h
                 push    ax
@@ -959,7 +959,7 @@ loc_1C7E8:                              ; CODE XREF: seg002:0B0D↑J
                 add     sp, 4
                 cmp     g_outdoors, 2
                 jnz     short loc_1C828
-                call    thk_res_5440
+                call    thk_print_gold_label
                 jmp     short loc_1C82B
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1003,7 +1003,7 @@ loc_1C861:                              ; CODE XREF: inn_menu+1DC↑j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     [bp+var_8], ax
                 cmp     ax, 41h ; 'A'
@@ -1089,7 +1089,7 @@ loc_1C8FA:                              ; CODE XREF: inn_menu+390↓j
                 add     sp, 4
                 sub     ah, ah
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 56h ; 'V'
@@ -1230,7 +1230,7 @@ loc_1CA47:                              ; CODE XREF: inn_menu+482↑j
 
 loc_1CA51:                              ; CODE XREF: inn_menu+48C↑j
                                         ; seg002:0A89↑J
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 mov     ax, 17h
                 push    ax
                 mov     ax, 9
@@ -1287,7 +1287,7 @@ loc_1CAC0:                              ; CODE XREF: inn_menu+514↓j
 loc_1CAC5:                              ; CODE XREF: inn_menu+4FE↑j
                 call    thk_wait_key
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     si, ax
                 cmp     ax, 59h ; 'Y'
@@ -1297,7 +1297,7 @@ loc_1CAD6:                              ; CODE XREF: inn_menu+503↑j
                 mov     [bp+var_8], si
                 cmp     si, 4Eh ; 'N'
                 jnz     short loc_1CAEC
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
                 call    inn_esc_prompt
                 mov     [bp+var_8], 0
                 jmp     short loc_1CAEF
@@ -1305,7 +1305,7 @@ loc_1CAD6:                              ; CODE XREF: inn_menu+503↑j
                 align 2
 
 loc_1CAEC:                              ; CODE XREF: inn_menu+51C↑j
-                call    thk_res_3FC4
+                call    thk_quit_to_dos
 
 loc_1CAEF:                              ; CODE XREF: inn_menu+484↑j
                                         ; inn_menu+48E↑j ...

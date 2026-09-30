@@ -358,7 +358,7 @@ loc_1C35C:                              ; CODE XREF: spell_beacon+5A↓j
 loc_1C362:                              ; CODE XREF: spell_beacon+1A↑j
                 mov     ax, 1
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 15h
                 push    ax
@@ -462,7 +462,7 @@ loc_1C411:                              ; CODE XREF: ovl_2CAST1:C47B↓j
 loc_1C418:                              ; CODE XREF: ovl_2CAST1:C40F↑j
                 mov     ax, 1
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 15h
                 push    ax
@@ -478,7 +478,7 @@ loc_1C418:                              ; CODE XREF: ovl_2CAST1:C40F↑j
 loc_1C43A:                              ; CODE XREF: ovl_2CAST1:C470↓j
                 call    thk_kbd_poll
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     di, ax
                 cmp     di, 1Bh
@@ -717,7 +717,7 @@ loc_1C5AD:                              ; CODE XREF: spell_nc_Teleport+5C↓j
 loc_1C5B4:                              ; CODE XREF: spell_nc_Teleport+1B↑j
                 mov     ax, 1
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 15h         ; CODE XREF: seg002:029D↑J
                 push    ax
@@ -1492,7 +1492,7 @@ loc_1CA39:                              ; CODE XREF: spell_nc_Town_Portal+56↓j
 loc_1CA3E:                              ; CODE XREF: spell_nc_Town_Portal+17↑j
                 mov     ax, 1
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
                 mov     ax, 15h
                 push    ax
@@ -1686,7 +1686,7 @@ var_2           = word ptr -2
 loc_1CB6B:                              ; CODE XREF: sub_1CB48+6B↓j
                 call    thk_kbd_poll
                 push    ax
-                call    thk_res_00E8
+                call    thk_toupper
                 add     sp, 2
                 mov     di, ax
                 cmp     di, 1Bh
@@ -2404,7 +2404,7 @@ cast1_return_prompt proc near           ; CODE XREF: seg002:0AE9↑J
 
 loc_1CF84:                              ; CODE XREF: seg002:062D↑J
                 push    ax
-                call    thk_res_3FA0
+                call    thk_clear_text_preset
                 add     sp, 2
 
 locret_1CF8B:                           ; CODE XREF: cast1_return_prompt+5↑j
@@ -2469,7 +2469,7 @@ loc_1D004:                              ; CODE XREF: cast1_return_prompt+5F↑j
                                         ; cast1_return_prompt+67↑j
                 cmp     g_view_mode, 2
                 jnz     short loc_1D00E
-                call    thk_res_35A8
+                call    thk_text_clear_prompt_line
 
 loc_1D00E:                              ; CODE XREF: cast1_return_prompt+AD↑j
                 cmp     word ptr [bp-4], 1Bh
