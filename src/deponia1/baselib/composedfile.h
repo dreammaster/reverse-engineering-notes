@@ -11,8 +11,9 @@
 //   bytes 0-3:    magic "VIS3"
 //   bytes 4-7:    entry count (uint32 LE, via ByteStreamToLong)
 //   bytes 8-...:  entryCount*16 + 6 bytes, ENCRYPTED with TMemoryBuffer::
-//                 Decrypt(key, ...) where key is _encryptionKey (the real
-//                 cipher isn't reversed - TMemoryBuffer::Decrypt is a stub).
+//                 Decrypt(key, ...) where key is _encryptionKey - a real,
+//                 confirmed cipher (see TMemoryBuffer.h): a repeating
+//                 16-byte XOR keystream of MD5(key).
 //                 Decrypted layout: byte 0 must be 'H' (else "corrupt/wrong
 //                 key" error), bytes 1-2 unidentified (version/flags?),
 //                 then the actual 16-byte-per-entry directory table.

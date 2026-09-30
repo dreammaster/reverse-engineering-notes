@@ -1642,6 +1642,48 @@ wxString()` conversion the old stub provided but which isn't a confirmed
 original method; switched to explicit `.GetFullPath()` calls instead of
 resurrecting an invented implicit conversion.
 
+## TMemoryBuffer
+
+Confirmed 23 of 26 manifest-listed methods in full (Deponia_Linux.asm lines
+549297-551866) - a growable owned byte buffer (`unsigned char *` + used
+length + allocated capacity), used both as a scratch read buffer
+(`TFile::ReadToBuf`) and as a byte-stream builder (the `operator<<` family
+and `AppendStringWithLen`, used by `TXMLWriter` and others). `Reserve()`/
+`Init()`/`EnsureBufferSize()` are three subtly different flavors of "ensure
+capacity" - only `EnsureBufferSize()` preserves existing content across a
+grow (a real memcpy), and only `Init()` unconditionally resets the used
+length to 0 even when no reallocation happens. The append family
+(`AppendData`/`AppendByte`/every `operator<<`/`AppendStringWithLen`) all
+share one growth strategy: growing by `newLength + 0x400000` (4 MiB of
+headroom) whenever the current capacity is insufficient - confirmed from a
+literal `+0x400000` immediate in the disassembly, not a guess.
+
+The genuinely exciting find: `Decrypt()`/`Encrypt()` are a REAL, fully
+confirmed cipher, not a no-op stub as the pre-existing code had it -
+`Encrypt()` is just `Decrypt()` (XOR is its own inverse), and `Decrypt()`
+XORs the buffer against a repeating 16-byte keystream that is
+`MD5(narrow-converted key)`. This directly resolves the encryption gap
+`TComposedFile::InitEntries()` and `baselib/composedfile.h`'s header
+comment had flagged as unreversed for the archive format's header-table
+decryption. A real RFC 1321 MD5 was added (`MD5.h`/`MD5.cpp` - MD5 is a
+public algorithm, not proprietary engine logic, so this is a faithful
+implementation rather than a recovered one) and self-tested against the
+three standard test vectors (`""`, `"abc"`, the pangram) before wiring it
+in.
+
+`Compress()` and both `Uncompress()` overloads call the real zlib C API
+directly (confirmed by their exact `compress`/`uncompress` symbol names,
+plus zlib's own well-known `len*1.001+12` worst-case-output-size formula
+appearing literally in `Compress()`'s disassembly) - this project doesn't
+currently link zlib, so these 3 methods stay call-shape stubs, the same
+"genuine third-party API boundary" treatment already given to the Lua C
+API and the Steam/Galaxy SDKs. Adding a zlib dependency is a build-system
+decision left for later rather than made unilaterally here.
+
+`GetSize()` in the pre-existing stub is renamed to `GetLen()`, the actual
+recovered name (`GetSize()` had no real call sites anywhere in this
+codebase).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
