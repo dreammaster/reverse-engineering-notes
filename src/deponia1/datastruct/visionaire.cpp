@@ -15,6 +15,10 @@ TVisObjRef TVisionaire::GetEmptyObject() const {
 	return TVisObjRef();
 }
 
+TVisObjRef TVisionaire::GetAnyObject() const {
+	return TVisObjRef();
+}
+
 void TVisionaire::SaveSaveGame(TProjectFileWriter &/*writer*/) {
 }
 

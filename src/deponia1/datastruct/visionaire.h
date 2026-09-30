@@ -76,4 +76,8 @@ public:
 	// sentinel object (TGameControl::StartBackgroundText, asm lines
 	// 461420-461589) - not reversed beyond that call shape.
 	TVisObjRef GetEmptyObject() const;
+	// Confirmed call shape only (TArgument::ConvertToObject, Deponia_Linux.
+	// asm lines 1437558-1437577) - resolves a Lua "any object" sentinel id
+	// to a real object; not reversed beyond that.
+	TVisObjRef GetAnyObject() const;
 };

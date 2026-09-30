@@ -1499,6 +1499,45 @@ virtual) - hinting at a shared, not-yet-identified signal-handler base
 class. Not modeled (`TFontManager` stays non-polymorphic here), since
 nothing currently depends on dispatching through it virtually.
 
+## TArgument: implement the whole 57-method tagged union with std::variant
+
+Reversed all of `TArgument` (manifest: stub, 57 methods, Deponia_Linux.asm
+lines 1435493-1439510+) - a tagged-union style value passed to/from Lua
+script calls. This was the largest single-class undertaking so far after
+`TGameControl`/`TFontManager`: 20 distinct type tags (0-19, read directly off
+`Clear()`'s/`SetType()`'s/`ToLua()`'s/`CopyTo()`'s own raw switch/cmp chains),
+each carrying a different C++ type, with matching `Set`/`Get`/`Add` overloads
+and a handful of `Convert*` coercions.
+
+The whole class is modeled with a single `std::variant` instead of the
+original's manual per-type `new`/`delete` and reuse-existing-allocation
+switch dance (visible in nearly every `Set()`/`Add()` method) - collapsing
+~40 methods' worth of heap-management boilerplate into one-line `_value = x;
+_type = kY;` assignments, since nothing depends on the original's exact
+memory layout (same "behavioral over binary fidelity" reasoning as
+`_charactersByHash`/`TFontManager`'s own font table elsewhere in this
+project). `kString`/`kPath` share one `wxString` variant alternative (they
+differ only in `SetPath()`/`AddPath()`/`GetPath()`'s "vispath:"-prefix
+handling, recovered byte-for-byte, not in storage), and `kStringList`/
+`kPathList` likewise share one `vector<TCharHolder>` alternative.
+
+Added a new `TTextLanguage` struct (two `TCharHolder` fields plus an int,
+confirmed field count/order from `Set(const TTextLanguage&)`'s own copy
+logic; field names are a guess from the class name). `ConvertToObject()`/
+`ConvertToObjectList()` needed three new dependencies - `TVisionaire::
+GetAnyObject()`, `GetLuaGame()`, `FindObjectByNameOrId()` - all call-shape
+stubs, plus a real `TId::operator==()` (stubbed false, since `TId`'s own
+fields are still unknown) and an `AnyId` sentinel global. `ToLua()` itself
+is left as a call-shape stub: its disassembly pushes values straight onto
+the Lua stack via the raw C API (`lua_pushstring`/`lua_pushboolean`/etc.) or
+a separate `ConvertToLua()` free-function family - the same standing
+"Lua bridge contract not reversed" gap already noted throughout this
+project (`LuaExecuteFunction`, `LuaDoString`, and others).
+
+Also added two real `wxString` methods needed for the path-prefix handling
+(`StartsWith()`, `Mid()`) and a `TCharHolder(const wxString&)` constructor
+(confirmed call shape, previously missing).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

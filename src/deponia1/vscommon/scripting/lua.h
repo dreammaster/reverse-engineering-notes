@@ -5,6 +5,11 @@
 #include <cstdint>
 #include <string>
 
+#include "WxStub.h"
+
+class TVisionaire;
+class TVisObjRef;
+
 // Confirmed call shape only (TGameControl::InitScripts, Deponia_Linux.asm
 // lines 458450, 458610) - runs a Lua chunk; the second argument is a
 // "chunk name" used in error messages (confirmed from the two call sites:
@@ -33,3 +38,14 @@ void LuaDoRef(int ref);
 // against the confirmed pointer type instead of guessing at that
 // relationship.
 std::string IdStrStd(const std::uint8_t *id);
+
+// Confirmed call shape only (TArgument::ConvertToObject, Deponia_Linux.asm
+// line 1437560) - the game-data root associated with the current Lua state;
+// not reversed beyond that call shape.
+TVisionaire *GetLuaGame();
+
+// Confirmed call shape only (TArgument::ConvertToObject/ConvertToObjectList,
+// Deponia_Linux.asm lines 1437531, 1437790) - resolves a Lua-provided name
+// or id string to a game-data object reference, writing it into outObject
+// and returning whether it was found; not reversed beyond that call shape.
+bool FindObjectByNameOrId(const wxString &nameOrId, TVisObjRef &outObject, bool flag);

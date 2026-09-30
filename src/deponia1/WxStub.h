@@ -99,6 +99,24 @@ public:
 		return count;
 	}
 
+	// Confirmed call shape only (TArgument::SetPath/AddPath, Deponia_Linux.
+	// asm lines 1436084, 1439115) - real wxString::StartsWith() is a
+	// case-sensitive prefix check.
+	bool StartsWith(const wxString &prefix) const {
+		return _data.compare(0, prefix._data.size(), prefix._data) == 0;
+	}
+	// Confirmed call shape only (TArgument::SetPath/AddPath, asm lines
+	// 1436104, 1439132) - real wxString::Mid(first, count) returns the
+	// substring starting at `first`, `count` characters long (or to the end
+	// if `count` is negative, matching wxWidgets' own npos-as-"-1" idiom).
+	wxString Mid(int first, int count) const {
+		if (first < 0 || static_cast<std::size_t>(first) > _data.size())
+			return wxString();
+		if (count < 0)
+			return wxString(_data.substr(first));
+		return wxString(_data.substr(first, static_cast<std::size_t>(count)));
+	}
+
 	// Stands in for wxString::mb_str(); real wxWidgets returns a
 	// wxScopedCharBuffer that is implicitly convertible to const char*.
 	class CharBuffer {

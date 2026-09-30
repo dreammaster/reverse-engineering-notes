@@ -12,6 +12,9 @@ public:
 	TCharHolder() = default;
 	TCharHolder(const TCharHolder &) = default;
 	TCharHolder &operator=(const TCharHolder &) = default;
+	// Confirmed call shape only (TArgument::AddPath, Deponia_Linux.asm line
+	// 1439136) - not reversed beyond that call shape.
+	explicit TCharHolder(const wxString &value) : _value(value) {}
 
 	operator wxString() const {
 		return _value;
