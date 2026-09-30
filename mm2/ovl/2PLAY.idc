@@ -2052,7 +2052,7 @@ static Bytes_0(void) {
 	create_insn	(0X1A19A);
 	set_name	(0X1A19A,	"evt_op41_stop");
 	create_insn	(0X1A1A0);
-	set_name	(0X1A1A0,	"evt_op42_set_party_effects");
+	set_name	(0X1A1A0,	"evt_op42_place_treasure");
 	create_insn	(x=0X1A1A3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A1D4);

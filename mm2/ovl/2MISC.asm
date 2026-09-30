@@ -1708,8 +1708,8 @@ loc_1CD28:                              ; CODE XREF: party_search+296↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CD32:                              ; CODE XREF: party_rest:loc_1CFF0↓p
-                push    bp
+party_pay_hireling_upkeep:              ; CODE XREF: party_rest:loc_1CFF0↓p
+                push    bp              ; sum of the hirelings' gold fields (their daily fee) paid through party_pay_gold
                 mov     bp, sp
                 sub     sp, 8
                 push    di
@@ -1755,8 +1755,8 @@ loc_1CD77:                              ; CODE XREF: party_search+2F7↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CD8A:                              ; CODE XREF: party_rest+7F↓p
-                push    bp
+party_do_rest:                          ; CODE XREF: party_rest+7F↓p
+                push    bp              ; clear all effects; heal HP (needs food, not if diseased), restore SP, clear conditions (keeps cursed/diseased/poisoned), age>=80 50% die; advance 85 time units; 1/6 chance to jump to era 9 when not already there
                 mov     bp, sp
                 sub     sp, 6
                 push    di
@@ -1935,9 +1935,10 @@ loc_1CEDB:                              ; CODE XREF: party_search+456↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; 1/50 chance (no Guard Dog): whole party asleep + monsters surprise the party
 ; Attributes: bp-based frame
 
-sub_1CEEE       proc near               ; CODE XREF: party_rest:loc_1CFFC↓p
+party_rest_ambush proc near             ; CODE XREF: party_rest:loc_1CFFC↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -1972,7 +1973,7 @@ var_2           = word ptr -2
                 jmp     short loc_1CF46
 ; ---------------------------------------------------------------------------
 
-loc_1CF32:                              ; CODE XREF: sub_1CEEE+5C↓j
+loc_1CF32:                              ; CODE XREF: party_rest_ambush+5C↓j
                 push    si
                 call    thk_char_ptr
                 add     sp, 2
@@ -1981,10 +1982,10 @@ loc_1CF32:                              ; CODE XREF: sub_1CEEE+5C↓j
                 jnb     short loc_1CF45
                 or      byte ptr [di+26h], 10h
 
-loc_1CF45:                              ; CODE XREF: sub_1CEEE+51↑j
+loc_1CF45:                              ; CODE XREF: party_rest_ambush+51↑j
                 inc     si
 
-loc_1CF46:                              ; CODE XREF: sub_1CEEE+42↑j
+loc_1CF46:                              ; CODE XREF: party_rest_ambush+42↑j
                 cmp     si, g_party_size
                 jl      short loc_1CF32
                 mov     [bp+var_2], di
@@ -2006,15 +2007,15 @@ loc_1CF5C:                              ; CODE XREF: seg002:0AE9↑J
                 call    thk_start_combat
                 mov     [bp+var_6], 1
 
-loc_1CF7A:                              ; CODE XREF: sub_1CEEE+1E↑j
-                                        ; sub_1CEEE+24↑j ...
+loc_1CF7A:                              ; CODE XREF: party_rest_ambush+1E↑j
+                                        ; party_rest_ambush+24↑j ...
                 mov     ax, [bp+var_6]
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CEEE       endp
+party_rest_ambush endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2087,7 +2088,7 @@ loc_1CFDE:                              ; CODE XREF: party_rest+53↑j
 ; ---------------------------------------------------------------------------
 
 loc_1CFF0:                              ; CODE XREF: party_rest+60↑j
-                call    loc_1CD32
+                call    party_pay_hireling_upkeep
                 or      ax, ax
                 jnz     short loc_1CFFC
                 mov     ax, offset aNotEnoughGoldD ; "Not enough gold - Dismiss hirelings"
@@ -2095,10 +2096,10 @@ loc_1CFF0:                              ; CODE XREF: party_rest+60↑j
 ; ---------------------------------------------------------------------------
 
 loc_1CFFC:                              ; CODE XREF: party_rest+71↑j
-                call    sub_1CEEE
+                call    party_rest_ambush
                 or      ax, ax
                 jnz     short loc_1D006
-                call    loc_1CD8A
+                call    party_do_rest
 
 loc_1D006:                              ; CODE XREF: party_rest+26↑j
                                         ; party_rest+6A↑j ...

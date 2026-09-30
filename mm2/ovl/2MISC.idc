@@ -751,7 +751,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1CD1D);
 	op_hex		(x,	1);
+	set_cmt	(0X1CD32,	"sum of the hirelings' gold fields (their daily fee) paid through party_pay_gold",	0);
 	create_insn	(0X1CD32);
+	set_name	(0X1CD32,	"party_pay_hireling_upkeep");
 	create_insn	(x=0X1CD35);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CD3C);
@@ -774,7 +776,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1CD80);
 	op_hex		(x,	1);
+	set_cmt	(0X1CD8A,	"clear all effects; heal HP (needs food, not if diseased), restore SP, clear conditions (keeps cursed/diseased/poisoned), age>=80 50% die; advance 85 time units; 1/6 chance to jump to era 9 when not already there",	0);
 	create_insn	(0X1CD8A);
+	set_name	(0X1CD8A,	"party_do_rest");
 	create_insn	(x=0X1CD8D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CDBD);
@@ -821,6 +825,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CEE5);
 	op_hex		(x,	1);
 	create_insn	(0X1CEEE);
+	set_name	(0X1CEEE,	"party_rest_ambush");
 	create_insn	(x=0X1CEF1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CEF6);
@@ -920,6 +925,7 @@ static Functions_0(void) {
 	set_frame_size(0X1CA52, 0X1C, 2, 0);
 	add_func    (0X1CEEE,0X1CF83);
 	set_func_flags(0X1CEEE,0x5410);
+	set_func_cmt(0X1CEEE,	"1/50 chance (no Guard Dog): whole party asleep + monsters surprise the party", 0);
 	set_frame_size(0X1CEEE, 0XC, 2, 0);
 	add_func    (0X1CF84,0X1D00B);
 	set_func_flags(0X1CF84,0x5410);

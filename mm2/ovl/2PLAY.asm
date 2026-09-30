@@ -2291,7 +2291,7 @@ evt_read_word   endp
 ; Attributes: bp-based frame
 
 evt_read_dword24 proc near              ; CODE XREF: evt_op31_modify_char+6B↓p
-                                        ; evt_op42_set_party_effects+7↓p
+                                        ; evt_op42_place_treasure+7↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -5507,7 +5507,7 @@ evt_op41_stop   endp
 
 ; Attributes: bp-based frame
 
-evt_op42_set_party_effects proc near    ; CODE XREF: evt_run_script:loc_1A78A↓p
+evt_op42_place_treasure proc near       ; CODE XREF: evt_run_script:loc_1A78A↓p
 
 var_2           = word ptr -2
 
@@ -5522,7 +5522,7 @@ var_2           = word ptr -2
                 mov     word_241AA, ax
                 sub     si, si
 
-loc_1A1B9:                              ; CODE XREF: evt_op42_set_party_effects+32↓j
+loc_1A1B9:                              ; CODE XREF: evt_op42_place_treasure+32↓j
                 call    evt_read_byte
                 mov     [si+6950h], al
                 call    evt_read_byte
@@ -5538,7 +5538,7 @@ loc_1A1B9:                              ; CODE XREF: evt_op42_set_party_effects+
                 mov     sp, bp
                 pop     bp
                 retn
-evt_op42_set_party_effects endp
+evt_op42_place_treasure endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -6492,7 +6492,7 @@ loc_1A784:                              ; DATA XREF: evt_run_script+212↓o
 ; ---------------------------------------------------------------------------
 
 loc_1A78A:                              ; DATA XREF: evt_run_script+214↓o
-                call    evt_op42_set_party_effects
+                call    evt_op42_place_treasure
                 jmp     loc_1A82C
 ; ---------------------------------------------------------------------------
 

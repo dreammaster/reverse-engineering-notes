@@ -61,7 +61,7 @@ Semantics are from reading the handlers; names in the IDA databases: `evt_opNN_*
 | 38, 39 | 1 | `1A082` | choose a party member (1-8) |
 | 40 | 3 | `1A126` | remove item from the party |
 | 41 | 1 | `1A19A` | stop |
-| 42 | 15 | `1A1A0` | set party spell-effect timers (`DGROUP:6950/6953/6956`, `241AA..`) |
+| 42 | 15 | `1A1A0` | **place treasure** on this spot: gold (3 bytes -> `dword_241AC`), gems (word -> `word_241AA`), three items (item id / flags / quality bytes -> `DGROUP:6950/6953/6956`) and sets `byte_1DC84` = FFh; the 'S' Search command (`13814`) then opens `2MISC:party_search` |
 | 43 | 2 | `1A1E2` | skip *n* if night |
 | 44 | 2 | `1A202` | add value to `word_1DC18` |
 | 45 | 3 | `1A21E` | check character class / race / alignment |

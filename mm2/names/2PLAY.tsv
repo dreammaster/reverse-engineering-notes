@@ -63,7 +63,7 @@
 1A082	evt_select_char
 1A126	evt_op40_take_item
 1A19A	evt_op41_stop
-1A1A0	evt_op42_set_party_effects
+1A1A0	evt_op42_place_treasure
 1A1E2	evt_op43_skip_if_night
 1A202	evt_op44_add_value
 1A21E	evt_op45_check_char_class

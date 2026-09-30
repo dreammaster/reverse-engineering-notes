@@ -9,3 +9,6 @@
 1C242	unlock_door	'U' Unlock
 
 1CF84	party_rest	'R' Rest
+1CD32	party_pay_hireling_upkeep	sum of the hirelings' gold fields (their daily fee) paid through party_pay_gold
+1CD8A	party_do_rest	clear all effects; heal HP (needs food, not if diseased), restore SP, clear conditions (keeps cursed/diseased/poisoned), age>=80 50% die; advance 85 time units; 1/6 chance to jump to era 9 when not already there
+1CEEE	party_rest_ambush	1/50 chance (no Guard Dog): whole party asleep + monsters surprise the party
