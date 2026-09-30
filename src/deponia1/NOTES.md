@@ -1588,6 +1588,60 @@ by any real archive - consistent with this project's pattern of
 implementing a caller fully while leaving a still-unreversed callee flagged
 separately (e.g. `TFontManager`/`TCFont` earlier).
 
+## TCharHolder
+
+Confirmed in full (Deponia_Linux.asm lines 529250-531666, all 32
+manifest-listed methods) - a genuinely recovered class name (demangled
+byte-for-byte from `_ZN11TCharHolder...` symbols), not a guessed one. This
+corrects a significant earlier misunderstanding: `TCharHolder` had been
+modeled as a thin `wxString` wrapper, but the real class is its own owned
+`char *` + byte-count pair (`new[]`/`delete[]`), always storing narrow
+bytes - exactly the same "raw owned buffer" shape as `TMemoryFile`
+elsewhere in this project, not a wxString at all. Wide input (wchar_t*,
+wxString, wxFileName) is always narrow-converted via `wxString::mb_str()`
+before being copied in.
+
+Notable findings:
+
+- `_data == nullptr` iff `_size == 0` is a strict invariant every mutator
+  maintains. `Cmp()`/`CmpNoCase()`/the `operator==` family/`SameAs()` all
+  treat this "null" state as distinct from - and never equal to - any
+  non-null value, even an empty one (confirmed directly from the
+  disassembly's branch structure, not inferred).
+- `c_str()` was a complete misattribution in the pre-existing stub: an
+  earlier pass's "confirmed call shape only" note for it actually pointed
+  at a plain `std::string::c_str()` call on an unrelated `std::vector<
+  std::string>` field, not at `TCharHolder::c_str()` at all. The REAL
+  `TCharHolder::c_str()` (traced directly from its own disassembly this
+  time) returns a `wxString` by hidden-pointer value - built via `toUTF()`
+  from the raw bytes - not a `const wchar_t*` as the old stub assumed.
+  Despite the name, it's behaviorally identical to `GetFullPath()`.
+- `mb_str()`, conversely, returns the raw stored `const char*` directly (or
+  `""` when unset) - no conversion needed, since the internal storage is
+  already narrow. This replaces an earlier placeholder that (reasonably,
+  before this class was traced) assumed a `wxString::CharBuffer` return to
+  match `wxString::mb_str()`'s own shape.
+- `resize()` is a raw reservation, not a content-preserving resize: it
+  always discards any existing buffer and allocates a fresh, uninitialized
+  one of exactly the requested size (or frees outright when the requested
+  size is 0).
+- `exchange()` is a move-assign despite its name (frees this's own buffer
+  first, steals `other`'s, clears `other`) rather than a symmetric swap.
+- `GetFullPath(wxPathFormat)`'s non-`wxPATH_UNIX` branch attempts a
+  `wxString::Replace()` of an empty search string for a path separator -
+  which real `wxString::Replace()` documents as a no-op (searching for ""
+  is guarded against) - so every format observably returns the same value
+  as plain `GetFullPath()`.
+- Two real `wxString` methods needed adding: `MakeLower()` and
+  `ToDouble(double*)`.
+
+Two existing call sites in `gameControl.cpp` (`TGameControl::
+LoadAndInitGame`/`ReplaceGame`, both doing `wxString(link.GetName())`) and
+one in `TArgument::ConvertToObjectList()` relied on an implicit `operator
+wxString()` conversion the old stub provided but which isn't a confirmed
+original method; switched to explicit `.GetFullPath()` calls instead of
+resurrecting an invented implicit conversion.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

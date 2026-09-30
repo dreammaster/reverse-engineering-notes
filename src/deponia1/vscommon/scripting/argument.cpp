@@ -385,7 +385,7 @@ bool TArgument::ConvertToObjectList() {
 	TVList result;
 	for (const TCharHolder &name : std::get<std::vector<TCharHolder>>(_value)) {
 		TVisObjRef found;
-		if (!FindObjectByNameOrId(name, found, true))
+		if (!FindObjectByNameOrId(name.GetFullPath(), found, true))
 			return false;
 		result.push_back(found);
 	}

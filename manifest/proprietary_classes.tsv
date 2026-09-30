@@ -143,7 +143,7 @@ TFile	stub	37	522315	525436
 TVedFile	todo	10	522419	525756
 TPolygonList	todo	19	526053	532096
 TXMLNames	todo	10	527002	533265
-TCharHolder	stub	32	529250	531627
+TCharHolder	done	32	529250	531627
 pattern_matcher	todo	2	531875	1441953
 TXMLStringWriter	todo	10	539847	540033
 SEntryInfo	todo	1	541440	541440

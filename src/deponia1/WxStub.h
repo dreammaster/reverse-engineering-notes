@@ -18,9 +18,23 @@
 #pragma once
 
 #include <cstdio>
+#include <cstdlib>
 #include <cwctype>
 #include <string>
 #include <vector>
+
+// Real wxWidgets enumerator values (wx/filefn.h) - used by
+// TCharHolder::GetFullPath(wxPathFormat), the only confirmed call site so
+// far only ever compares against wxPATH_UNIX.
+enum wxPathFormat {
+	wxPATH_NATIVE = 0,
+	wxPATH_UNIX = 1,
+	wxPATH_MAC = 2,
+	wxPATH_DOS = 3,
+	wxPATH_BEOS = 4,
+	wxPATH_WIN = 5,
+	wxPATH_VMS = 6,
+};
 
 class wxString {
 public:
@@ -133,6 +147,30 @@ public:
 	CharBuffer mb_str() const {
 		std::string narrow(_data.begin(), _data.end());
 		return CharBuffer(std::move(narrow));
+	}
+
+	// Confirmed call shape only (TCharHolder::Lower, Deponia_Linux.asm line
+	// 642619) - real wxString::MakeLower() lowercases in place.
+	void MakeLower() {
+		for (wchar_t &c : _data)
+			c = std::towlower(c);
+	}
+	// Confirmed call shape only (TCharHolder::ToDouble, Deponia_Linux.asm
+	// line 6426FC) - real wxString::ToDouble() parses the whole string as a
+	// double, failing (false, *out left unmodified real wx doesn't touch it
+	// on failure either) if any trailing non-whitespace remains.
+	bool ToDouble(double *out) const {
+		std::string narrow(_data.begin(), _data.end());
+		char *end = nullptr;
+		double value = std::strtod(narrow.c_str(), &end);
+		if (end == narrow.c_str())
+			return false;
+		while (*end == ' ' || *end == '\t')
+			++end;
+		if (*end != '\0')
+			return false;
+		*out = value;
+		return true;
 	}
 
 private:

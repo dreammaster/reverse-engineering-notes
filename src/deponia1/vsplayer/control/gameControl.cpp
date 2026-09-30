@@ -2166,7 +2166,7 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 
 	if (gameName.ToStdWstring().empty()) {
 		TVisObjRef link = game.GetLink(0x132);
-		gameName = wxString(link.GetName());
+		gameName = link.GetName().GetFullPath();
 	}
 
 	TVList languageList;
@@ -2256,7 +2256,7 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 	wxString fullPath = file.GetFullPath();
 	TVisObjRef game = _visionaire->GetGame();
 	TVisObjRef link = game.GetLink(0x132);
-	wxString warning = wxString(link.GetName());
+	wxString warning = link.GetName().GetFullPath();
 	wxString emptyFile;
 
 	auto *gameControl = static_cast<TGameControl *>(g_pGameControl);
