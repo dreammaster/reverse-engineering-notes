@@ -101,7 +101,9 @@ From the display code (`show_character_sheet` `12A6A`, `show_party_roster_screen
 | Off | Size | Field |
 |---|---|---|
 | 00 | ≤11 | name (NUL terminated) |
+| 0B | 1 | location: town number + 1 where the character is stored (inn) |
 | 0C | 1 | sex (0 = male) |
+| 0D | 1 | original alignment (restored by the temple; current alignment is `+6A`) |
 | 0E | 1 | race (index into `DGROUP:0456` names: Human, Elf, Dwarf, Gnome, H-Orc) |
 | 0F | 1 | class (index into `DGROUP:0446`: Knight, Paladin, Archer, Cleric, Sorcerer, Robber, Ninja, Barbarian) |
 | 10-15 | 6 | base Might, Intellect, Personality, Speed, Accuracy, Luck |

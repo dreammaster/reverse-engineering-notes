@@ -29,3 +29,24 @@ name comes from a table at `DGROUP:28A2`, the difficulty from the number of trea
 quality bytes: `>= 4` needs a d100 roll >= 30 to find anything).  After opening: "Treasure!",
 `treasure_share` (`1C64A`: "Each share = N Gold / N Gems", split among conscious members) and
 `treasure_give_item` (`1C538`: " found <item>", "Backpacks full!").
+
+## Inn (1RETINN `inn_menu` `1C5C0`, entry `inn_common_helper` `1C130`)
+
+The inn assembles the party.  Every roster character stores the town where it "lives" at character `+0B`
+(town number + 1; creation sets 1; entering an inn stamps the whole party with the current town when
+leaving).  The screen lists the characters (A-X) whose location equals the current town and the hirelings
+(the `Ctrl` list); `A`-`X` view, `Ctrl`+letter adds/removes from the party, `1`-`5` move a character to
+another town, `Z` exits.  The party is limited to 8 members: at most 6 characters + 2 hirelings
+(`byte_22E0E` counts characters, `byte_22E0F` hirelings; "*** Party is Full ***").  A hireling (ids 18h-2Fh)
+is only offered if the matching event variable (`DGROUP:3F6 + index`, see events.md op 26) is set.
+Leaving the inn saves the roster (`save_roster`), re-enters the map (`enter_map`) and recomputes the party size.
+
+## Tavern (2BRAIN `tavern_menu` `1D15A`)
+
+Menu (texts from `STR.DAT`): **A** Feeding frenzy (buy all the food you can carry), **B** Have a drink,
+**C** Specialties (three-course menus per town, e.g. "Puree of Gnome", "Devils Food Brownie"; eating sets
+per-town flag bits in the character's word at `+76`, table `DGROUP:04A4`), **D** Tip the bartender, **E**
+Listen for rumors (the jokes/rumours at the start of `STR.DAT`); **G** gathers gold, `1`-`8` choose the
+character, `Esc` leaves.  Prices come from `DGROUP:4226` (per town) and the per-item tables.  The tavern
+overlay also contains `tavern_retrain_skills` (`1C7E2`: "you must have 100 gold" / "Their secondary skills are
+gone") reached through event sub-ids 7/8.
