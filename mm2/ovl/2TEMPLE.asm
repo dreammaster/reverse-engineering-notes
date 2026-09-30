@@ -12,31 +12,130 @@ ovl_2TEMPLE     segment byte public 'CODE' use16
 
 temple_common_helper proc near          ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
-                push    bp
-; ---------------------------------------------------------------------------
-                db  8Bh
-byte_1C132      db 0ECh, 83h, 0ECh, 2, 57h, 56h, 0B8h, 7, 0, 50h, 0E8h
-                                        ; DATA XREF: seg002:0038↑o
-                db 0B7h, 0ACh, 83h, 0C4h, 2, 2Bh, 0F6h, 8Bh, 7Eh, 4, 8Dh
-                db 44h, 12h, 50h, 0B8h, 10h, 0, 50h, 0E8h, 0DCh, 0ADh
-                db 83h, 0C4h, 4, 8Bh, 0DFh, 3, 0DEh, 0D1h, 0E3h, 0FFh
-                db 0B7h, 1Eh, 59h, 0E8h, 0F0h, 0ADh, 83h, 0C4h, 2, 46h
-                db 83h, 0FEh, 4, 7Ch, 0DCh, 89h, 76h, 0FEh, 0E8h, 0D1h
-                db 0AEh, 5Eh, 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 90h, 55h, 8Bh
-                db 0ECh, 0FFh, 36h, 0E4h, 58h, 0FFh, 36h, 0E2h, 58h, 0FFh
-                db 76h, 4, 0E8h, 9Dh, 1, 83h, 0C4h, 6, 0Bh, 0C0h, 74h
-                db 16h, 0FFh, 76h, 4, 0E8h, 2, 5, 83h, 0C4h, 2, 8Bh, 5Eh
-                db 4, 0C6h, 47h, 26h, 0, 0B8h, 10h, 0, 0EBh, 4, 90h, 0B8h
-                db 0Ch, 0, 50h, 0E8h, 83h, 0FFh, 83h, 0C4h, 2, 5Dh, 0C3h
-                db 55h, 8Bh, 0ECh, 56h, 0FFh, 36h, 0E8h, 58h, 0FFh, 36h
-                db 0E6h, 58h, 0FFh, 76h, 4, 0E8h, 62h, 1, 83h, 0C4h, 6
-                db 0Bh, 0C0h, 74h, 11h, 8Bh, 5Eh, 4, 8Bh, 0F3h, 8Ah, 44h
-                db 0Dh, 88h, 47h, 6Ah, 0B8h, 14h, 0, 0EBh
-temple_common_helper endp ; sp-analysis failed
 
-byte_1C1DA      db 4, 90h, 0B8h, 0Ch, 0, 50h, 0E8h, 4Dh, 0FFh, 83h, 0C4h
-                                        ; CODE XREF: seg002:08CD↑J
-                db 2, 5Eh, 5Dh, 0C3h, 90h
+var_2           = word ptr -2
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp          ; DATA XREF: seg002:0038↑o
+                sub     sp, 2
+                push    di
+                push    si
+                mov     ax, 7
+                push    ax
+                call    thk_res_3FA0
+                add     sp, 2
+                sub     si, si
+                mov     di, [bp+arg_0]
+
+loc_1C147:                              ; CODE XREF: temple_common_helper+39↓j
+                lea     ax, [si+12h]
+                push    ax
+                mov     ax, 10h
+                push    ax
+                call    thk_text_goto_xy
+                add     sp, 4
+                mov     bx, di
+                add     bx, si
+                shl     bx, 1
+                push    word ptr [bx+591Eh]
+                call    thk_text_puts
+                add     sp, 2
+                inc     si
+                cmp     si, 4
+                jl      short loc_1C147
+                mov     [bp+var_2], si
+                call    thk_monster_anim_step
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+temple_common_helper endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C178       proc near               ; CODE XREF: ovl_2TEMPLE:C8A8↓p
+
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                push    word_23134
+                push    word_23132
+                push    [bp+arg_0]
+                call    sub_1C326
+                add     sp, 6
+                or      ax, ax
+                jz      short loc_1C1A6
+                push    [bp+arg_0]
+                call    sub_1C698
+                add     sp, 2
+                mov     bx, [bp+arg_0]
+                mov     byte ptr [bx+26h], 0
+                mov     ax, 10h
+                jmp     short loc_1C1A9
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C1A6:                              ; CODE XREF: sub_1C178+16↑j
+                mov     ax, 0Ch
+
+loc_1C1A9:                              ; CODE XREF: sub_1C178+2B↑j
+                push    ax
+                call    temple_common_helper
+                add     sp, 2
+                pop     bp
+                retn
+sub_1C178       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C1B2       proc near               ; CODE XREF: ovl_2TEMPLE:C8BA↓p
+
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                push    si
+                push    word_23138
+                push    word_23136
+                push    [bp+arg_0]
+                call    sub_1C326
+                add     sp, 6
+                or      ax, ax
+                jz      short loc_1C1DC
+                mov     bx, [bp+arg_0]
+                mov     si, bx
+                mov     al, [si+0Dh]
+                mov     [bx+6Ah], al
+                mov     ax, 14h
+                jmp     short loc_1C1DF ; CODE XREF: seg002:08CD↑J
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C1DC:                              ; CODE XREF: sub_1C1B2+17↑j
+                mov     ax, 0Ch
+
+loc_1C1DF:                              ; CODE XREF: sub_1C1B2+27↑j
+                push    ax
+                call    temple_common_helper
+                add     sp, 2
+                pop     si
+                pop     bp
+                retn
+sub_1C1B2       endp
+
+; ---------------------------------------------------------------------------
+                align 2
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -55,7 +154,7 @@ arg_0           = word ptr  4
                 push    word_2313C
                 push    word_2313A
                 push    [bp+arg_0]
-                call    loc_1C326
+                call    sub_1C326
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_1C20D
@@ -145,12 +244,9 @@ sub_1C1EA       endp
 sub_1C2B4       proc near               ; CODE XREF: ovl_2TEMPLE:C8D8↓p
                                         ; mage_guild_menu+307↓p ...
 
-var_2           = word ptr -2
 arg_0           = word ptr  4
 arg_2           = word ptr  6
 arg_4           = word ptr  8
-
-; FUNCTION CHUNK AT C399 SIZE 00000007 BYTES
 
                 push    bp
                 mov     bp, sp
@@ -180,7 +276,7 @@ loc_1C2DC:                              ; CODE XREF: sub_1C2B4+21↑j
                 push    word ptr [bx+58E4h]
                 push    word ptr [bx+58E2h]
                 push    [bp+arg_0]
-                call    loc_1C326
+                call    sub_1C326
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_1C2FE
@@ -213,10 +309,21 @@ loc_1C31C:                              ; CODE XREF: sub_1C2B4+18↑j
                 pop     si
                 pop     bp
                 retn
-; ---------------------------------------------------------------------------
+sub_1C2B4       endp
 
-loc_1C326:                              ; CODE XREF: sub_1C1EA+16↑p
-                                        ; sub_1C2B4+3A↑p ...
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C326       proc near               ; CODE XREF: sub_1C178+E↑p
+                                        ; sub_1C1B2+F↑p ...
+
+var_2           = word ptr -2
+arg_0           = word ptr  4
+arg_2           = word ptr  6
+arg_4           = word ptr  8
+
                 push    bp
                 mov     bp, sp
                 sub     sp, 2
@@ -229,16 +336,16 @@ loc_1C326:                              ; CODE XREF: sub_1C1EA+16↑p
                 cmp     [bx+66h], ax
                 jb      short loc_1C346
 
-loc_1C341:                              ; CODE XREF: sub_1C2B4+86↑j
+loc_1C341:                              ; CODE XREF: sub_1C326+14↑j
                 mov     ax, 1
                 jmp     short loc_1C348
 ; ---------------------------------------------------------------------------
 
-loc_1C346:                              ; CODE XREF: sub_1C2B4+84↑j
-                                        ; sub_1C2B4+8B↑j
+loc_1C346:                              ; CODE XREF: sub_1C326+12↑j
+                                        ; sub_1C326+19↑j
                 sub     ax, ax
 
-loc_1C348:                              ; CODE XREF: sub_1C2B4+90↑j
+loc_1C348:                              ; CODE XREF: sub_1C326+1E↑j
                 mov     [bp+var_2], ax
                 or      ax, ax
                 jz      short loc_1C399
@@ -256,8 +363,6 @@ loc_1C348:                              ; CODE XREF: sub_1C2B4+90↑j
                 mov     ax, 7
                 push    ax
                 call    thk_clear_text_rect ; CODE XREF: seg002:0471↑J
-sub_1C2B4       endp
-
                 add     sp, 8
                 mov     ax, 13h
                 push    ax
@@ -269,19 +374,19 @@ sub_1C2B4       endp
                 push    ax
                 mov     ax, 1
                 push    ax
-                mov     bx, [bp+4]
+                mov     bx, [bp+arg_0]
                 push    word ptr [bx+68h]
                 push    word ptr [bx+66h]
                 call    thk_text_put_number
                 add     sp, 8
-; START OF FUNCTION CHUNK FOR sub_1C2B4
 
-loc_1C399:                              ; CODE XREF: sub_1C2B4+99↑j
+loc_1C399:                              ; CODE XREF: sub_1C326+27↑j
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
                 retn
-; END OF FUNCTION CHUNK FOR sub_1C2B4
+sub_1C326       endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -419,24 +524,9 @@ loc_1C497:                              ; CODE XREF: sub_1C3A0+8F↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C3A0       endp
+; ---------------------------------------------------------------------------
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: bp-based frame
-
-sub_1C4A2       proc near               ; CODE XREF: ovl_2TEMPLE:C7FD↓p
-
-var_A           = byte ptr -0Ah
-var_8           = word ptr -8
-var_6           = word ptr -6
-var_4           = byte ptr -4
-var_2           = byte ptr -2
-arg_0           = word ptr  4
-arg_2           = word ptr  6
-arg_4           = word ptr  8
-
+loc_1C4A2:                              ; CODE XREF: ovl_2TEMPLE:C7FD↓p
                 push    bp
                 mov     bp, sp
                 sub     sp, 0Ah
@@ -492,71 +582,71 @@ arg_4           = word ptr  8
                 add     sp, 2
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+0Fh], 3 ; CODE XREF: seg002:0879↑J
+sub_1C3A0       endp
+
                 jz      short loc_1C535
                 cmp     byte ptr [bx+0Fh], 1
                 jnz     short loc_1C59B
 
-loc_1C535:                              ; CODE XREF: sub_1C4A2+8B↑j
-                mov     al, [bp+var_A]
+loc_1C535:                              ; CODE XREF: ovl_2TEMPLE:C52D↑j
+                mov     al, [bp-0Ah]
                 cmp     [bx+23h], al
                 jb      short loc_1C59B
-                mov     bx, [bp+arg_2]
+                mov     bx, [bp+6]
                 mov     al, [bx]
                 sub     ah, ah
                 push    ax
-                push    [bp+arg_0]
+                push    word ptr [bp+4]
                 call    thk_res_362C
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_1C59B
-                mov     al, [bp+var_4]
+                mov     al, [bp-4]
                 sub     ah, ah
                 sub     dx, dx
                 and     ax, 1Fh
-                mov     [bp+var_8], ax
-                mov     [bp+var_6], dx
-                test    [bp+var_4], 20h
+                mov     [bp-8], ax
+                mov     [bp-6], dx
+                test    byte ptr [bp-4], 20h
                 jz      short loc_1C575
                 mov     ax, 0Ah
                 cwd
                 push    dx
                 push    ax
-                lea     ax, [bp+var_8]
+                lea     ax, [bp-8]
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C575:                              ; CODE XREF: sub_1C4A2+C4↑j
-                test    [bp+var_4], 40h
+loc_1C575:                              ; CODE XREF: ovl_2TEMPLE:C566↑j
+                test    byte ptr [bp-4], 40h
                 jz      short loc_1C588
                 mov     ax, 64h ; 'd'
                 cwd
                 push    dx
                 push    ax
-                lea     ax, [bp+var_8]
+                lea     ax, [bp-8]
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C588:                              ; CODE XREF: sub_1C4A2+D7↑j
-                test    [bp+var_4], 80h
+loc_1C588:                              ; CODE XREF: ovl_2TEMPLE:C579↑j
+                test    byte ptr [bp-4], 80h
                 jz      short loc_1C59B
                 mov     ax, 3E8h
                 cwd
                 push    dx
                 push    ax
-                lea     ax, [bp+var_8]
+                lea     ax, [bp-8]
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C59B:                              ; CODE XREF: sub_1C4A2+91↑j
-                                        ; sub_1C4A2+99↑j ...
-                mov     ax, [bp+var_8]
-                mov     dx, [bp+var_6]
+loc_1C59B:                              ; CODE XREF: ovl_2TEMPLE:C533↑j
+                                        ; ovl_2TEMPLE:C53B↑j ...
+                mov     ax, [bp-8]
+                mov     dx, [bp-6]
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C4A2       endp
-
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -718,7 +808,8 @@ sub_1C616       endp
 
 ; Attributes: bp-based frame
 
-sub_1C698       proc near               ; CODE XREF: ovl_2TEMPLE:C9DD↓p
+sub_1C698       proc near               ; CODE XREF: sub_1C178+1B↑p
+                                        ; ovl_2TEMPLE:C9DD↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -868,7 +959,7 @@ loc_1C763:                              ; CODE XREF: ovl_2TEMPLE:C780↓j
                 push    ax
                 push    ax
                 push    word ptr [bp-8]
-                call    loc_1C326
+                call    sub_1C326
                 add     sp, 6
                 push    word ptr [bp-8]
                 call    sub_1C616
@@ -893,7 +984,7 @@ loc_1C7F5:                              ; CODE XREF: ovl_2TEMPLE:C80F↓j
                 lea     ax, [bp+si-4]
                 push    ax
                 push    word ptr [bp-8]
-                call    sub_1C4A2
+                call    loc_1C4A2
                 add     sp, 6
                 mov     [di], ax
                 mov     [di+2], dx
@@ -975,7 +1066,7 @@ loc_1C89E:                              ; CODE XREF: ovl_2TEMPLE:C894↑j
                 or      ax, word_23134
                 jz      short loc_1C8E5
                 push    di
-                call    near ptr byte_1C132+46h
+                call    sub_1C178
 
 loc_1C8AB:                              ; CODE XREF: ovl_2TEMPLE:C8BD↓j
                                         ; ovl_2TEMPLE:C8CD↓j
@@ -988,7 +1079,7 @@ loc_1C8B0:                              ; CODE XREF: ovl_2TEMPLE:C899↑j
                 or      ax, word_23138
                 jz      short loc_1C8E5
                 push    di
-                call    near ptr byte_1C132+80h
+                call    sub_1C1B2
                 jmp     short loc_1C8AB
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1052,7 +1143,7 @@ loc_1C900:                              ; CODE XREF: ovl_2TEMPLE:C92E↓j
                 push    ax
                 push    ax
                 push    di
-                call    loc_1C326
+                call    sub_1C326
                 add     sp, 6
                 jmp     short loc_1C8E5
 ; ---------------------------------------------------------------------------
@@ -1749,7 +1840,7 @@ loc_1CE1D:                              ; CODE XREF: mage_guild_menu+197↑j
                 push    ax
                 push    ax
                 push    [bp+var_6]
-                call    loc_1C326
+                call    sub_1C326
                 add     sp, 6
 
 loc_1CE66:                              ; CODE XREF: mage_guild_menu+287↑j
@@ -1841,7 +1932,7 @@ loc_1CEF0:                              ; CODE XREF: mage_guild_menu+2EE↑j
                 push    ax
                 push    ax
                 push    [bp+var_6]
-                call    loc_1C326
+                call    sub_1C326
                 add     sp, 6
                 jmp     short loc_1CF3C
 ; ---------------------------------------------------------------------------

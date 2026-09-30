@@ -29,10 +29,35 @@ static Bytes_0(void) {
 
 	create_insn	(0X1C130);
 	set_name	(0X1C130,	"inn_common_helper");
-	create_byte	(0X1C132);
-	make_array	(0X1C132,	0XA8);
-	create_byte	(0X1C1DA);
-	make_array	(0X1C1DA,	0X10);
+	create_insn	(x=0X1C133);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C143);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C148);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C155);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1C16B);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C172);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C175);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C17F);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C182);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C19A);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C19D);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C1AE);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C1BA);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C1C4);
+	op_stkvar	(x,	1);
+	create_insn	(0X1C1E0);
 	create_insn	(0X1C1EA);
 	set_name	(0X1C1EA,	"inn_leave");
 	create_insn	(x=0X1C1ED);
@@ -568,8 +593,8 @@ static Bytes_0(void) {
 
 static Functions_0(void) {
 
-	add_func    (0X1C130,0X1C1EA);
-	set_func_flags(0X1C130,0x1410);
+	add_func    (0X1C130,0X1C1E9);
+	set_func_flags(0X1C130,0x5410);
 	set_frame_size(0X1C130, 0XE, 2, 0);
 	add_func    (0X1C1EA,0X1C2A6);
 	set_func_flags(0X1C1EA,0x5410);

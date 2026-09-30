@@ -12,38 +12,110 @@ ovl_1RETINN     segment byte public 'CODE' use16
 
 inn_common_helper proc near             ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
-                push    bp
-; ---------------------------------------------------------------------------
-                db  8Bh
-byte_1C132      db 0ECh, 83h, 0ECh, 0Ah, 57h, 56h, 0C6h, 6, 30h, 4, 6
-                                        ; DATA XREF: seg002:0038↑o
-                db 2Bh, 0C0h, 50h, 0E8h, 0B3h, 0ACh, 83h, 0C4h, 2, 2Bh
-                db 0F6h, 89h, 76h, 0FAh, 8Ah, 1Eh, 92h, 3, 2Ah, 0FFh, 0B1h
-                db 3, 0D3h, 0E3h, 3, 5Eh, 0FAh, 8Bh, 0BFh, 0BAh, 20h, 0Bh
-                db 0FFh, 74h, 15h, 8Dh, 44h, 13h, 50h, 0B8h, 1, 0, 50h
-                db 0E8h, 0C3h, 0ADh, 83h, 0C4h, 4, 57h, 0E8h, 0E0h, 0ADh
-                db 83h, 0C4h, 2, 83h, 46h, 0FAh, 2, 46h, 83h, 0FEh, 4
-                db 7Ch, 0CCh, 89h, 7Eh, 0FEh, 89h, 76h, 0FCh, 0E8h, 26h
-                db 0B2h, 80h, 3Eh, 2Fh, 4, 0, 74h, 51h, 2Bh, 0C0h, 2 dup(50h)
-                db 0B8h, 2 dup(0FFh), 50h, 0E8h, 0B4h, 0AEh, 83h, 0C4h
-                db 6, 0C7h, 46h, 0FCh, 2 dup(0), 83h, 3Eh, 26h, 4, 0, 7Eh
-                db 27h, 0A0h, 92h, 3, 0FEh, 0C0h, 88h, 46h, 0FAh, 0BEh
-                db 16h, 4, 8Bh, 0Eh, 26h, 4, 8Bh, 0C1h, 1, 46h, 0FCh, 0B8h
-                db 82h, 0, 0F7h, 2Ch, 8Bh, 0D8h, 8Ah, 46h, 0FAh, 88h, 87h
-                db 2Bh, 7Eh, 83h, 0C6h, 2, 0E2h, 0EDh, 0A0h, 92h, 3, 0A2h
-                db 0D4h, 3, 0E8h, 65h, 0ACh, 0E8h
-byte_1C1DA      db 0Eh, 0, 0EBh, 5, 2 dup(90h), 0E8h, 0F3h, 0B0h, 5Eh
-                                        ; CODE XREF: seg002:08CD↑J
-                db 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 90h
-inn_common_helper endp ; sp-analysis failed
 
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+
+                push    bp
+                mov     bp, sp          ; DATA XREF: seg002:0038↑o
+                sub     sp, 0Ah
+                push    di
+                push    si
+                mov     byte_1DC80, 6
+                sub     ax, ax
+                push    ax
+                call    thk_res_3FA0
+                add     sp, 2
+                sub     si, si
+                mov     [bp+var_6], si
+
+loc_1C14B:                              ; CODE XREF: inn_common_helper+4D↓j
+                mov     bl, g_map_id
+                sub     bh, bh
+                mov     cl, 3
+                shl     bx, cl
+                add     bx, [bp+var_6]
+                mov     di, [bx+20BAh]
+                or      di, di
+                jz      short loc_1C175
+                lea     ax, [si+13h]
+                push    ax
+                mov     ax, 1
+                push    ax
+                call    thk_text_goto_xy
+                add     sp, 4
+                push    di
+                call    thk_text_puts
+                add     sp, 2
+
+loc_1C175:                              ; CODE XREF: inn_common_helper+2E↑j
+                add     [bp+var_6], 2
+                inc     si
+                cmp     si, 4
+                jl      short loc_1C14B
+                mov     [bp+var_2], di
+                mov     [bp+var_4], si
+                call    thk_2PLAY_946E
+                cmp     byte_1DC7F, 0
+                jz      short loc_1C1E0
+                sub     ax, ax
+                push    ax
+                push    ax
+                mov     ax, 0FFFFh
+                push    ax
+                call    thk_monster_gfx_draw
+                add     sp, 6
+                mov     [bp+var_4], 0
+                cmp     g_party_size, 0
+                jle     short loc_1C1D0
+                mov     al, g_map_id
+                inc     al
+                mov     byte ptr [bp+var_6], al
+                mov     si, 416h
+                mov     cx, g_party_size
+                mov     ax, cx
+                add     [bp+var_4], ax
+
+loc_1C1BD:                              ; CODE XREF: inn_common_helper+9E↓j
+                mov     ax, 82h
+                imul    word ptr [si]
+                mov     bx, ax
+                mov     al, byte ptr [bp+var_6]
+                mov     [bx+7E2Bh], al
+                add     si, 2
+                loop    loc_1C1BD
+
+loc_1C1D0:                              ; CODE XREF: inn_common_helper+77↑j
+                mov     al, g_map_id
+                mov     byte_1DC24, al
+                call    thk_save_roster
+                call    inn_leave       ; CODE XREF: seg002:08CD↑J
+                jmp     short loc_1C1E3
+; ---------------------------------------------------------------------------
+                db  90h
+                align 2
+
+loc_1C1E0:                              ; CODE XREF: inn_common_helper+5D↑j
+                call    thk_2PLAY_A580
+
+loc_1C1E3:                              ; CODE XREF: inn_common_helper+AC↑j
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+inn_common_helper endp
+
+; ---------------------------------------------------------------------------
+                align 2
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
 inn_leave       proc near               ; CODE XREF: seg002:07F5↑J
-                                        ; inn_run+B9↓p
+                                        ; inn_common_helper+A9↑p ...
 
 var_4           = byte ptr -4
 var_2           = byte ptr -2

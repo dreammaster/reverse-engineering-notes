@@ -12,31 +12,126 @@ ovl_2CAST2      segment byte public 'CODE' use16
 
 cast2_common_helper proc near           ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
-                push    bp
-; ---------------------------------------------------------------------------
-                db  8Bh
-byte_1C132      db 0ECh, 83h, 0ECh, 2, 0E8h, 75h, 11h, 88h, 46h, 0FEh
-                                        ; DATA XREF: seg002:0038↑o
-                db 3Ch, 1Bh, 74h, 26h, 0B8h, 1, 0, 50h, 0B8h, 5, 0, 50h
-                db 0E8h, 5Fh, 0B0h, 83h, 0C4h, 4, 2Bh, 0C0h, 50h, 8Ah
-                db 46h, 0FEh, 2Ah, 0E4h, 50h, 0B8h, 1, 0, 50h, 0E8h, 0ECh
-                db 0AFh, 83h, 0C4h, 6, 0C6h, 6, 28h, 4, 1, 8Bh, 0E5h, 5Dh
-                db 0C3h, 55h, 8Bh, 0ECh, 83h, 0ECh, 2, 0E8h, 3Bh, 11h
-                db 88h, 46h, 0FEh, 3Ch, 1Bh, 74h, 2Dh, 0B8h, 5, 0, 50h
-                db 0B8h, 1, 0, 50h, 0E8h, 0F1h, 0ADh, 83h, 0C4h, 4, 5
-                db 3, 0, 0A3h, 0C6h, 9Fh, 0B8h, 1, 0, 50h, 8Ah, 46h, 0FEh
-                db 2Ah, 0E4h, 50h, 0B8h, 1, 0, 50h, 0E8h, 0ABh, 0AFh, 83h
-                db 0C4h, 6, 0C6h, 6, 28h, 4, 1, 8Bh, 0E5h, 5Dh, 0C3h, 90h
-                db 55h, 8Bh, 0ECh, 83h, 0ECh, 4, 0E8h, 0F9h, 10h, 88h
-                db 46h, 0FCh, 3Ch, 1Bh, 74h, 29h, 0E8h, 0DFh, 0AFh, 88h
-                db 46h, 0FEh, 0C6h, 6, 0C2h, 9Fh, 4, 0C6h, 6, 0C3h, 9Fh
-                db 1, 0B8h, 5, 0, 50h, 8Ah, 46h, 0FCh, 2Ah, 0E4h, 50h
-                db 8Ah, 46h, 0FEh, 50h
-cast2_common_helper endp ; sp-analysis failed
 
-byte_1C1DA      db 0E8h, 6Dh, 0AFh, 83h, 0C4h, 6, 0C6h, 6, 28h, 4, 1, 8Bh
-                                        ; CODE XREF: seg002:08CD↑J
-                db 0E5h, 5Dh, 0C3h, 90h
+var_2           = byte ptr -2
+
+                push    bp
+                mov     bp, sp          ; DATA XREF: seg002:0038↑o
+                sub     sp, 2
+                call    cast2_show_text
+                mov     [bp+var_2], al
+                cmp     al, 1Bh
+                jz      short loc_1C166
+                mov     ax, 1
+                push    ax
+                mov     ax, 5
+                push    ax
+                call    thk_2COMBAT_A82C
+                add     sp, 4
+                sub     ax, ax
+                push    ax
+                mov     al, [bp+var_2]
+                sub     ah, ah
+                push    ax
+                mov     ax, 1
+                push    ax
+                call    thk_2COMBAT_8696
+                add     sp, 6
+                mov     byte_1DC78, 1
+
+loc_1C166:                              ; CODE XREF: cast2_common_helper+E↑j
+                mov     sp, bp
+                pop     bp
+                retn
+cast2_common_helper endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Flame Arrow
+; Attributes: bp-based frame
+
+spell_cb_Flame_Arrow proc near          ; CODE XREF: cast_spell_dispatch:loc_1CF4C↓p
+
+var_2           = byte ptr -2
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                call    cast2_show_text
+                mov     [bp+var_2], al
+                cmp     al, 1Bh
+                jz      short loc_1C1A7
+                mov     ax, 5
+                push    ax
+                mov     ax, 1
+                push    ax
+                call    thk_rand_range
+                add     sp, 4
+                add     ax, 3
+                mov     word_27816, ax
+                mov     ax, 1
+                push    ax
+                mov     al, [bp+var_2]
+                sub     ah, ah
+                push    ax
+                mov     ax, 1
+                push    ax
+                call    thk_2COMBAT_8696
+                add     sp, 6
+                mov     byte_1DC78, 1
+
+loc_1C1A7:                              ; CODE XREF: spell_cb_Flame_Arrow+E↑j
+                mov     sp, bp
+                pop     bp
+                retn
+spell_cb_Flame_Arrow endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Sleep
+; Attributes: bp-based frame
+
+spell_cb_Sleep  proc near               ; CODE XREF: cast_spell_dispatch:loc_1CF52↓p
+
+var_4           = byte ptr -4
+var_2           = byte ptr -2
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                call    cast2_show_text
+                mov     [bp+var_4], al
+                cmp     al, 1Bh
+                jz      short loc_1C1E5
+                call    thk_2COMBAT_A7EA
+                mov     [bp+var_2], al
+                mov     byte_27812, 4
+                mov     byte_27813, 1
+                mov     ax, 5
+                push    ax
+                mov     al, [bp+var_4]
+                sub     ah, ah
+                push    ax
+                mov     al, [bp+var_2]
+                push    ax
+
+loc_1C1DA:                              ; CODE XREF: seg002:08CD↑J
+                call    thk_2COMBAT_8696
+                add     sp, 6
+                mov     byte_1DC78, 1
+
+loc_1C1E5:                              ; CODE XREF: spell_cb_Sleep+E↑j
+                mov     sp, bp
+                pop     bp
+                retn
+spell_cb_Sleep  endp
+
+; ---------------------------------------------------------------------------
+                align 2
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -2267,13 +2362,13 @@ loc_1CF46:                              ; CODE XREF: cast_spell_dispatch+14↑j
 
 loc_1CF4C:                              ; CODE XREF: cast_spell_dispatch+14↑j
                                         ; DATA XREF: cast_spell_dispatch:jpt_1CF40↓o
-                call    near ptr byte_1C132+38h ; jumptable 0001CF40 case 3
+                call    spell_cb_Flame_Arrow ; jumptable 0001CF40 case 3
                 jmp     def_1CF40       ; jumptable 0001CF40 default case, cases 4,5,7,10-13,15,19,23,29,30
 ; ---------------------------------------------------------------------------
 
 loc_1CF52:                              ; CODE XREF: cast_spell_dispatch+14↑j
                                         ; DATA XREF: cast_spell_dispatch:jpt_1CF40↓o
-                call    near ptr byte_1C132+7Ah ; jumptable 0001CF40 case 6
+                call    spell_cb_Sleep  ; jumptable 0001CF40 case 6
                 jmp     def_1CF40       ; jumptable 0001CF40 default case, cases 4,5,7,10-13,15,19,23,29,30
 ; ---------------------------------------------------------------------------
 
@@ -2855,8 +2950,8 @@ cast2_prompt_return endp
 
 ; Attributes: bp-based frame
 
-cast2_show_text proc near               ; CODE XREF: spell_cb_Electric_Arrow+6↑p
-                                        ; spell_view_monster+7↑p ...
+cast2_show_text proc near               ; CODE XREF: cast2_common_helper+6↑p
+                                        ; spell_cb_Flame_Arrow+6↑p ...
 
 var_6           = byte ptr -6
 var_4           = byte ptr -4

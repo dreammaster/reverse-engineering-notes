@@ -1,8 +1,11 @@
 # 2MISC.OVL: search / treasure / rest / bash
-1C130	misc_common_helper
-1C242	party_use_command	'U'
 1C4A6	trap_or_explosion
 1C538	treasure_give_item	"Backpacks full!", " found "
 1C64A	treasure_share	"Each share = ", " Gold", " Gems"
 1CA52	party_search	"Search...", "The Party Has", "found a:", "Treasure!"
-1CF84	party_rest	"Too dangerous!", "Rest here? (Y/N)", "Not enough gold - Dismiss hirelings"
+
+1C130	bash_door	'B' Bash Door
+
+1C242	unlock_door	'U' Unlock
+
+1CF84	party_rest	'R' Rest

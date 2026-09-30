@@ -29,10 +29,42 @@ static Bytes_0(void) {
 
 	create_insn	(0X1C130);
 	set_name	(0X1C130,	"cast2_common_helper");
-	create_byte	(0X1C132);
-	make_array	(0X1C132,	0XA8);
-	create_byte	(0X1C1DA);
-	make_array	(0X1C1DA,	0X10);
+	create_insn	(x=0X1C133);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C139);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C14B);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C151);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1C15E);
+	op_hex		(x,	1);
+	create_insn	(0X1C16A);
+	set_name	(0X1C16A,	"spell_cb_Flame_Arrow");
+	create_insn	(x=0X1C16D);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C173);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C185);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C192);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1C19F);
+	op_hex		(x,	1);
+	create_insn	(0X1C1AC);
+	set_name	(0X1C1AC,	"spell_cb_Sleep");
+	create_insn	(x=0X1C1AF);
+	op_hex		(x,	1);
+	create_insn	(x=0X1C1B5);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C1BF);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C1D0);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1C1D6);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1C1DD);
+	op_hex		(x,	1);
 	create_insn	(0X1C1EA);
 	set_name	(0X1C1EA,	"spell_cb_Electric_Arrow");
 	create_insn	(x=0X1C1ED);
@@ -1060,9 +1092,17 @@ static Bytes_0(void) {
 
 static Functions_0(void) {
 
-	add_func    (0X1C130,0X1C1DA);
-	set_func_flags(0X1C130,0x1410);
+	add_func    (0X1C130,0X1C16A);
+	set_func_flags(0X1C130,0x5410);
 	set_frame_size(0X1C130, 0X2, 2, 0);
+	add_func    (0X1C16A,0X1C1AB);
+	set_func_flags(0X1C16A,0x5410);
+	set_func_cmt(0X1C16A,	"Flame Arrow", 0);
+	set_frame_size(0X1C16A, 0X2, 2, 0);
+	add_func    (0X1C1AC,0X1C1E9);
+	set_func_flags(0X1C1AC,0x5410);
+	set_func_cmt(0X1C1AC,	"Sleep", 0);
+	set_frame_size(0X1C1AC, 0X4, 2, 0);
 	add_func    (0X1C1EA,0X1C22B);
 	set_func_flags(0X1C1EA,0x5410);
 	set_func_cmt(0X1C1EA,	"Electric Arrow", 0);

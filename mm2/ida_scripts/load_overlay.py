@@ -37,6 +37,10 @@ ida_segment.set_segm_end(win[0], end, ida_segment.SEGMOD_KEEP)   # shrink to the
 idc.set_segm_name(win[0], seg_name)
 idc.set_default_sreg_value(win[0], "ds", DGROUP_SEL)
 
+# 1b. IDA's initial pass can leave stray data items over code at the very start of the overlay
+#     (e.g. a bogus byte_1C132 label); wipe the first paragraphs so seeds can re-create instructions.
+idc.del_items(start, idc.DELIT_EXPAND, 0x200)
+
 # 2. code seeds ------------------------------------------------------------
 seeds = set()
 for off, idx, toff in lay.thunks():
@@ -95,6 +99,20 @@ for _ in range(8):
     ida_auto.auto_wait()
     if not changed: break
 print("bytes still undefined:", sum(n for _, n in undefined_runs()))
+
+# 2b. near-call targets inside the overlay that are not code yet (helpers only called by E8 rel16)
+for _ in range(4):
+    added = 0
+    for i in range(len(body) - 2):
+        if body[i] == 0xE8 and ida_bytes.is_code(ida_bytes.get_flags(start + i)):
+            tgt = (start + i + 3 + (body[i + 1] | (body[i + 2] << 8))) & 0xFFFF | 0x10000
+            if start <= tgt < end and not ida_bytes.is_code(ida_bytes.get_flags(tgt)):
+                if idc.create_insn(tgt):
+                    ida_funcs.add_func(tgt)
+                    added += 1
+    ida_auto.auto_wait()
+    if not added:
+        break
 
 print('string offsets resolved:', resolve_string_offsets(start, end))
 

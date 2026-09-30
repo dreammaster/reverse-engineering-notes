@@ -5,145 +5,578 @@ ovl_1MENU1      segment byte public 'CODE' use16
                 assume cs:ovl_1MENU1
                 ;org 0C130h
                 assume es:nothing, ss:nothing, ds:DGROUP, fs:nothing, gs:nothing
-byte_1C130      db 0FFh, 36h            ; CODE XREF: seg002:0615↑J
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1C130       proc near               ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
-byte_1C132      db 0D6h, 18h, 0E8h, 0DBh, 0B4h, 83h, 0C4h, 2, 0FFh, 36h
-                                        ; DATA XREF: seg002:0038↑o
-                db 0D0h, 18h, 0E8h, 0D1h, 0B4h, 83h, 0C4h, 2, 0B8h, 0E8h
-                db 17h, 50h, 0E8h, 0C7h, 0B4h, 83h, 0C4h, 2, 0FFh, 36h
-                db 3Ch, 3, 0E8h, 0BDh, 0B4h, 83h, 0C4h, 2, 0FFh, 36h, 0D6h
-                db 18h, 0E8h, 0B3h, 0B4h, 83h, 0C4h, 2, 0B8h, 0EBh, 17h
-                db 50h, 0E8h, 0A9h, 0B4h, 83h, 0C4h, 2, 0B8h, 1Ah, 18h
-                db 50h, 0E8h, 9Fh, 0B4h, 83h, 0C4h, 2, 0B8h, 45h, 18h
-                db 50h, 0E8h, 95h, 0B4h, 83h, 0C4h, 2, 0B8h, 59h, 18h
-                db 50h, 0E8h, 8Bh, 0B4h, 83h, 0C4h, 2, 0FFh, 36h, 0CAh
-                db 18h, 0E8h, 81h, 0B4h, 83h, 0C4h, 2, 0B8h, 63h, 18h
-                db 50h, 0E8h, 77h, 0B4h, 83h, 0C4h, 2, 0FFh, 36h, 0CAh
-                db 18h, 0E8h, 6Dh, 0B4h, 83h, 0C4h, 2, 0B8h, 7Dh, 18h
-                db 50h, 0E8h, 63h, 0B4h, 83h, 0C4h, 2, 0FFh, 36h, 0CAh
-                db 18h, 0E8h, 59h, 0B4h, 83h, 0C4h, 2, 0B8h, 8Ch, 18h
-                db 50h, 0E8h, 4Fh, 0B4h, 83h, 0C4h, 2, 0FFh, 36h, 0CAh
-                db 18h, 0E8h, 45h, 0B4h, 83h, 0C4h, 2, 0B8h, 96h, 18h
-                db 50h, 0E8h, 3Bh, 0B4h, 83h, 0C4h, 2
-byte_1C1DA      db 0FFh, 36h, 0CAh, 18h, 0E8h, 31h, 0B4h, 83h, 0C4h, 2
-                                        ; CODE XREF: seg002:08CD↑J
-                db 0B8h, 0AAh, 18h, 50h, 0E8h, 27h
-byte_1C1EA      db 0B4h, 83h, 0C4h, 2, 0B8h, 1, 0, 50h, 0E8h, 0EDh, 0B3h
-                                        ; CODE XREF: seg002:07F5↑J
-                db 83h, 0C4h, 2, 0C3h, 90h, 55h, 8Bh, 0ECh, 83h, 0ECh
-                db 8, 57h, 56h, 2Bh, 0F6h, 0B8h, 1, 0, 50h, 0E8h, 57h
-                db 0ACh, 83h, 0C4h, 2, 2Bh, 0FFh, 0C7h, 46h, 0FAh, 0D8h
-                db 18h, 8Bh, 5Eh, 0FAh, 8Bh, 37h, 8Bh, 0C6h, 0D1h, 0E0h
-                db 89h, 46h, 0F8h, 8Bh, 0D8h, 0FFh, 0B7h, 54h, 19h, 0FFh
-                db 0B7h, 36h, 19h, 56h, 0FFh, 36h, 0CEh, 18h, 0FFh, 36h
-                db 0CCh, 18h, 0E8h, 0BBh, 0ACh, 83h, 0C4h, 0Ah, 0Bh, 0FFh
-byte_1C23C      db 75h, 20h, 0C7h, 6, 16h, 4Ah
-                                        ; CODE XREF: seg002:08E5↑J
-byte_1C242      db 2 dup(0FFh), 2Bh, 0F6h, 2Bh, 0C0h, 50h, 0B8h, 1, 0
-                                        ; CODE XREF: seg002:0639↑J
-                db 50h, 0E8h, 42h, 0ACh, 83h, 0C4h, 4, 2Bh, 0C0h, 50h
-                db 0E8h, 9, 0ACh, 83h, 0C4h, 2, 0EBh, 0Ch, 0B8h, 46h, 0
-                db 50h, 0E8h, 9Dh, 0AEh, 83h, 0C4h, 2, 8Bh, 0F0h, 0Bh
-                db 0F6h, 74h, 8, 89h, 7Eh, 0FCh, 89h, 76h, 0FEh, 0EBh
-                db 0Ch, 83h, 46h, 0FAh, 2, 47h, 83h, 0FFh, 2Fh, 7Dh, 0EEh
-                db 0EBh, 93h, 0C7h, 6, 16h, 4Ah, 0FEh, 0FFh, 0B8h, 1, 0
-                db 50h, 0E8h, 0D3h, 0ABh, 83h, 0C4h, 2, 5Eh, 5Fh, 8Bh
-                db 0E5h, 5Dh, 0C3h, 0FFh, 36h, 0D2h, 4, 0E8h, 0Bh, 0ACh
-                db 83h, 0C4h, 2, 0A3h, 0CCh, 18h, 89h, 16h, 0CEh, 18h
-                db 0Bh, 0C2h, 74h, 0EBh, 0B8h, 3Ch, 0, 50h, 2Bh, 0C0h
-                db 2 dup(50h), 52h, 0FFh, 36h, 0CCh, 18h, 0E8h, 35h, 0ACh
-                db 83h, 0C4h, 0Ah
-byte_1C2C0      db 0FFh, 36h, 0CEh, 18h, 0FFh, 36h, 0CCh, 18h, 0E8h, 3
-                                        ; CODE XREF: seg002:026D↑J
-                db 0ACh, 83h, 0C4h, 4, 0FFh, 36h, 0D4h, 4, 0E8h, 0D5h
-                db 0ABh, 83h, 0C4h, 2, 0A3h, 0CCh, 18h, 89h, 16h, 0CEh
-                db 18h, 0Bh, 0C2h, 74h, 0EBh, 0B8h, 0F4h, 1, 50h, 0E8h
-                db 0DCh, 0AAh, 83h, 0C4h, 2, 0B8h, 1, 0, 50h, 0E8h, 6Eh
-                db 0ABh, 83h, 0C4h, 2, 0E8h
-byte_1C2F8      db 0C0h, 0AAh, 0Bh, 0C0h, 75h, 3, 0E8h, 0F9h, 0FEh, 0FFh
-                                        ; CODE XREF: seg002:0651↑J
-                db 36h, 0CEh, 18h, 0FFh, 36h, 0CCh
-byte_1C308      db 18h, 0E8h, 0C2h, 0ABh, 83h, 0C4h, 4, 0B8h, 4, 0, 50h
-                                        ; CODE XREF: seg002:08F1↑J
-                db 0E8h, 0E0h, 0AAh, 83h, 0C4h, 2, 2Bh, 0C0h, 0A3h, 0CEh
-                db 18h, 0A3h, 0CCh, 18h, 0C3h, 55h, 8Bh, 0ECh, 83h, 0ECh
-                db 0Ah, 57h, 56h, 0C7h, 46h, 0FCh, 23h, 0, 0C7h, 46h, 0F8h
-                db 20h, 5, 0C7h, 46h, 0F6h, 1Fh, 0, 8Bh, 5Eh, 0F8h, 8Bh
-                db 3Fh, 57h, 8Ch, 0D8h, 8Eh, 0C0h, 0B9h, 2 dup(0FFh), 33h
-                db 0C0h, 0F2h, 0AEh, 0F7h, 0D1h, 49h, 5Fh, 8Bh, 0F1h, 4Eh
-                db 8Bh, 0DEh, 3, 0DFh, 0C6h, 7, 0, 4Eh, 8Bh, 0DEh, 3, 0DFh
-                db 0C6h, 7, 34h, 83h, 46h, 0F8h, 2, 0FFh, 4Eh, 0F6h, 75h
-                db 0D0h, 89h, 7Eh, 0FEh, 89h, 76h, 0FAh, 5Eh
-byte_1C370      db 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 90h, 0A1h, 0C2h, 4, 0A3h
-                                        ; CODE XREF: seg002:0471↑J
-                                        ; game_init+51↓p
-                db 20h, 5, 0A1h, 0C4h, 4, 0A3h, 22h, 5, 0A1h, 0C6h, 4
-                db 0A3h, 24h, 5, 0A1h, 0C8h, 4, 0A3h, 26h, 5, 0A1h, 0CAh
-                db 4, 0A3h, 28h, 5, 0A1h, 0CCh, 4, 0A3h, 2Ah, 5, 0A1h
-                db 0CEh, 4, 0A3h, 2Ch, 5, 0A1h, 0D2h, 4, 0A3h, 2Eh, 5
-                db 0A1h, 0D4h, 4, 0A3h, 30h, 5, 0A1h, 0D6h, 4, 0A3h, 32h
-                db 5, 0A1h, 0D8h, 4, 0A3h, 34h, 5, 0A1h, 0DAh, 4, 0A3h
-                db 36h, 5, 0A1h, 0DCh, 4, 0A3h, 38h, 5, 0A1h, 0DEh, 4
-                db 0A3h, 3Ah, 5, 0A1h, 0E0h, 4, 0A3h, 3Ch, 5, 0A1h, 0E2h
-                db 4, 0A3h, 3Eh, 5, 0A1h, 0E4h, 4, 0A3h, 40h, 5, 0A1h
-                db 0E6h, 4, 0A3h, 42h, 5, 0A1h, 0E8h, 4, 0A3h, 44h, 5
-                db 0A1h, 0EAh, 4, 0A3h, 46h, 5, 0A1h, 0ECh, 4, 0A3h, 48h
-                db 5, 0A1h, 0F8h
-byte_1C3F6      db 4, 0A3h, 4Ah, 5, 0A1h, 0FAh, 4, 0A3h, 4Ch, 5, 0A1h
-                                        ; CODE XREF: seg002:047D↑J
-                db 0FCh, 4, 0A3h, 4Eh, 5, 0A1h, 0FEh, 4, 0A3h, 50h, 5
-                db 0A1h, 0, 5, 0A3h, 52h, 5, 0A1h, 0EEh, 4, 0A3h, 54h
-                db 5, 0A1h, 0F0h, 4, 0A3h, 56h, 5, 0A1h, 0F2h, 4, 0A3h
-                db 58h, 5, 0A1h, 0F4h, 4, 0A3h, 5Ah, 5, 0A1h, 0F6h, 4
-                db 0A3h, 5Ch, 5, 0C3h, 90h, 55h, 8Bh, 0ECh, 83h, 0ECh
-                db 2, 56h, 0C7h, 6, 32h, 4, 1, 0, 2Bh, 0F6h, 83h, 3Eh
-                db 32h, 4, 0, 75h, 0Ah, 56h, 0E8h, 9Ah, 9, 83h, 0C4h, 2
-                db 0A3h, 32h, 4, 46h, 83h, 0FEh, 2, 7Ch, 0E9h, 89h, 76h
-                db 0FEh, 83h, 3Eh, 32h, 4, 0, 75h, 76h
-byte_1C462      db 0FFh, 36h, 0D6h, 18h, 0E8h, 0A9h, 0B1h, 83h, 0C4h, 2
-                                        ; CODE XREF: seg002:086D↑J
-                db 0FFh, 36h, 0D6h, 18h, 0E8h, 9Fh, 0B1h, 83h, 0C4h, 2
-                db 0B8h, 72h, 19h, 50h, 0E8h, 95h, 0B1h, 83h, 0C4h, 2
-                db 0FFh, 36h, 0D0h, 18h, 0E8h, 8Bh, 0B1h, 83h, 0C4h, 2
-                db 0FFh, 36h, 0D2h, 18h
-byte_1C48E      db 0E8h, 81h, 0B1h, 83h, 0C4h, 2, 0FFh, 36h, 0D6h, 18h
-                                        ; CODE XREF: seg002:0B31↑J
-                db 0E8h, 77h, 0B1h, 83h, 0C4h, 2, 0B8h, 7Ah, 19h, 50h
-                db 0E8h, 6Dh, 0B1h, 83h, 0C4h, 2, 0FFh, 36h, 0D4h, 18h
-                db 0E8h, 63h, 0B1h, 83h, 0C4h, 2, 0B8h, 0Dh, 0, 50h, 0E8h
-                db 0FDh, 0A9h, 83h, 0C4h, 2, 2Bh, 0F6h, 83h, 3Eh, 32h
-                db 4, 0, 75h, 0Ah, 56h, 0E8h, 1Dh, 9, 83h, 0C4h, 2, 0A3h
-                db 32h, 4, 46h, 83h, 0FEh, 2, 7Ch, 0E9h, 89h, 76h, 0FEh
-                db 0FFh, 36h, 0D6h, 18h, 0E8h, 33h, 0B1h, 83h, 0C4h, 2
-                db 83h, 3Eh, 32h, 4, 0, 75h, 25h, 0FFh, 36h, 0D6h, 18h
-                db 0E8h, 22h, 0B1h, 83h, 0C4h, 2, 0FFh, 36h, 0D0h, 18h
-                db 0E8h, 18h, 0B1h, 83h, 0C4h, 2, 0B8h, 8Ch, 19h, 50h
-                db 0E8h, 0Eh, 0B1h, 83h, 0C4h, 2, 0B8h, 0ABh, 19h, 50h
-                db 0EBh, 49h, 90h, 0E8h, 0DDh, 0B0h, 3Dh, 2, 0, 7Fh, 50h
-                db 0FFh, 36h, 0D6h, 18h, 0E8h, 0F5h, 0B0h, 83h, 0C4h, 2
-                db 0B8h, 0E1h, 19h, 50h, 0E8h, 0EBh, 0B0h, 83h, 0C4h, 2
-                db 0FFh, 36h
-byte_1C52C      db 0D0h, 18h, 0E8h, 0E1h, 0B0h, 83h, 0C4h, 2, 0FFh, 36h
-                                        ; CODE XREF: seg002:0879↑J
-                db 0D2h, 18h, 0E8h, 0D7h, 0B0h, 83h, 0C4h, 2, 0FFh, 36h
-                db 0D6h, 18h, 0E8h, 0CDh, 0B0h, 83h, 0C4h, 2, 0B8h, 0F7h
-                db 19h, 50h, 0E8h, 0C3h, 0B0h, 83h, 0C4h, 2, 0FFh, 36h
-                db 0D4h, 18h, 0E8h, 0B9h, 0B0h, 83h, 0C4h, 2, 0B8h, 0Dh
-                db 0, 50h, 0E8h, 53h, 0A9h, 83h, 0C4h, 2, 5Eh, 8Bh, 0E5h
-                db 5Dh, 0C3h, 90h, 55h, 8Bh, 0ECh, 83h, 0ECh, 2, 0C7h
-                db 46h, 0FEh, 2 dup(0), 0E8h, 2Ch, 0B0h, 80h, 3Eh, 46h
-                db 2 dup(3), 75h, 0Ch, 83h, 3Eh, 5Ch, 49h, 62h, 7Dh, 5
-                db 0C7h, 46h, 0FEh, 1, 0, 80h, 3Eh, 46h, 3, 0Fh, 75h, 0Dh
-                db 81h, 3Eh, 5Ch, 49h, 0C8h, 0, 7Dh, 5, 0C7h, 46h, 0FEh
-                db 2, 0, 83h, 7Eh, 0FEh, 0, 74h, 2Dh, 0FFh, 36h, 5Ch, 1Ah
-                db 0E8h
-byte_1C5AC      db 64h, 0B0h, 83h, 0C4h, 2, 8Bh, 5Eh, 0FEh, 0D1h, 0E3h
-                                        ; CODE XREF: seg002:0885↑J
-                db 0FFh, 0B7h, 5Eh, 1Ah, 0E8h, 55h, 0B0h, 83h, 0C4h, 2
-byte_1C5C0      db 0FFh, 36h, 5Eh, 1Ah, 0E8h, 4Bh, 0B0h, 83h, 0C4h, 2
-                                        ; CODE XREF: seg002:029D↑J
-                db 0B8h, 1, 0, 50h, 0E8h, 11h, 0B0h, 83h, 0C4h, 2, 8Bh
-                db 0E5h, 5Dh, 0C3h
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F120
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, 17E8h
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1DB8C
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aCopyrightC1989 ; "Copyright (C) 1989 New World Computing,"...
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aIbmVersionByIn ; "IBM Version by Inside Out Software, Inc"...
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aValidArguement ; "Valid arguements:\r\n"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aEEga ; "  E - EGA"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F11A
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aTTandy100016Co ; "  T - Tandy 1000 16 color"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F11A
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aMMcgaVga ; "  M - MCGA/VGA"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F11A
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aCCga ; "  C - CGA"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F11A
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aHHerculesMono ; "  H - Hercules mono"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+
+loc_1C1DA:                              ; CODE XREF: seg002:08CD↑J
+                push    word_1F11A
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aNoteMcgaVgaReq ; "NOTE: MCGA/VGA requires 448K\n\r"
+                push    ax
+                call    thk_res_02F2    ; CODE XREF: seg002:07F5↑J
+                add     sp, 2
+                mov     ax, 1
+                push    ax
+                call    thk_exit
+                add     sp, 2
+                retn
+sub_1C130       endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C1FA       proc near               ; CODE XREF: sub_1C298+66↓p
+
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 8
+                push    di
+                push    si
+                sub     si, si
+                mov     ax, 1
+                push    ax
+                call    thk_gfx_select_page
+                add     sp, 2
+                sub     di, di
+                mov     [bp+var_6], 18D8h
+
+loc_1C215:                              ; CODE XREF: sub_1C1FA+86↓j
+                mov     bx, [bp+var_6]
+                mov     si, [bx]
+                mov     ax, si
+                shl     ax, 1
+                mov     [bp+var_8], ax
+                mov     bx, ax
+                push    word ptr [bx+1954h]
+                push    word ptr [bx+1936h]
+                push    si
+                push    word_1F11E
+                push    word_1F11C
+                call    thk_gfx_draw_op13
+                add     sp, 0Ah
+                or      di, di
+
+loc_1C23C:                              ; CODE XREF: seg002:08E5↑J
+                jnz     short loc_1C25E
+                mov     word_22266, 0FFFFh ; CODE XREF: seg002:0639↑J
+                sub     si, si
+                sub     ax, ax
+                push    ax
+                mov     ax, 1
+                push    ax
+                call    thk_gfx_copy_page
+                add     sp, 4
+                sub     ax, ax
+                push    ax
+                call    thk_gfx_select_page
+                add     sp, 2
+                jmp     short loc_1C26A
+; ---------------------------------------------------------------------------
+
+loc_1C25E:                              ; CODE XREF: sub_1C1FA:loc_1C23C↑j
+                mov     ax, 46h ; 'F'
+                push    ax
+                call    thk_wait_key_timeout
+                add     sp, 2
+                mov     si, ax
+
+loc_1C26A:                              ; CODE XREF: sub_1C1FA+62↑j
+                or      si, si
+                jz      short loc_1C276
+
+loc_1C26E:                              ; CODE XREF: sub_1C1FA+84↓j
+                mov     [bp+var_4], di
+                mov     [bp+var_2], si
+                jmp     short loc_1C282
+; ---------------------------------------------------------------------------
+
+loc_1C276:                              ; CODE XREF: sub_1C1FA+72↑j
+                add     [bp+var_6], 2
+                inc     di
+                cmp     di, 2Fh ; '/'
+                jge     short loc_1C26E
+                jmp     short loc_1C215
+; ---------------------------------------------------------------------------
+
+loc_1C282:                              ; CODE XREF: sub_1C1FA+7A↑j
+                mov     word_22266, 0FFFEh
+                mov     ax, 1
+                push    ax
+                call    thk_gfx_select_page
+                add     sp, 2
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1C1FA       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1C298       proc near               ; CODE XREF: sub_1C298+13↓j
+                                        ; game_init+16C↓p
+                push    word_1DD22
+                call    thk_gfx_load_image
+                add     sp, 2
+                mov     word_1F11C, ax
+                mov     word_1F11E, dx
+                or      ax, dx
+                jz      short sub_1C298
+                mov     ax, 3Ch ; '<'
+                push    ax
+                sub     ax, ax
+                push    ax
+                push    ax
+                push    dx
+                push    word_1F11C
+                call    thk_gfx_draw_op13
+                add     sp, 0Ah
+
+loc_1C2C0:                              ; CODE XREF: seg002:026D↑J
+                push    word_1F11E
+                push    word_1F11C
+                call    thk_free_far_block
+                add     sp, 4
+
+loc_1C2CE:                              ; CODE XREF: sub_1C298+49↓j
+                push    word_1DD24
+                call    thk_gfx_load_image
+                add     sp, 2
+                mov     word_1F11C, ax
+                mov     word_1F11E, dx
+                or      ax, dx
+                jz      short loc_1C2CE
+                mov     ax, 1F4h
+                push    ax
+                call    thk_delay_ticks
+                add     sp, 2
+                mov     ax, 1
+                push    ax
+                call    thk_gfx_select_page
+                add     sp, 2
+                call    thk_kbd_poll    ; CODE XREF: seg002:0651↑J
+                or      ax, ax
+                jnz     short loc_1C301
+                call    sub_1C1FA
+
+loc_1C301:                              ; CODE XREF: sub_1C298+64↑j
+                push    word_1F11E
+                push    word_1F11C      ; CODE XREF: seg002:08F1↑J
+                call    thk_free_far_block
+                add     sp, 4
+                mov     ax, 4
+                push    ax
+                call    thk_res_3FA0
+                add     sp, 2
+                sub     ax, ax
+                mov     word_1F11E, ax
+                mov     word_1F11C, ax
+                retn
+sub_1C298       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C322       proc near               ; CODE XREF: game_init+8F↓p
+
+var_A           = word ptr -0Ah
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+
+; FUNCTION CHUNK AT C4D8 SIZE 00000035 BYTES
+; FUNCTION CHUNK AT C50E SIZE 0000005D BYTES
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Ah
+                push    di
+                push    si
+                mov     [bp+var_4], 23h ; '#'
+                mov     [bp+var_8], 520h
+                mov     [bp+var_A], 1Fh
+
+loc_1C339:                              ; CODE XREF: sub_1C322+45↓j
+                mov     bx, [bp+var_8]
+                mov     di, [bx]
+                push    di
+                mov     ax, ds
+                mov     es, ax
+                assume es:DGROUP
+                mov     cx, 0FFFFh
+                xor     ax, ax
+                repne scasb
+                not     cx
+                dec     cx
+                pop     di
+                mov     si, cx
+                dec     si
+                mov     bx, si
+                add     bx, di
+                mov     byte ptr [bx], 0
+                dec     si
+                mov     bx, si
+                add     bx, di
+                mov     byte ptr [bx], 34h ; '4'
+                add     [bp+var_8], 2
+                dec     [bp+var_A]
+                jnz     short loc_1C339
+                mov     [bp+var_2], di
+                mov     [bp+var_6], si
+                pop     si
+
+loc_1C370:                              ; CODE XREF: seg002:0471↑J
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C376:                              ; CODE XREF: game_init+51↓p
+                mov     ax, word_1DD12
+                mov     word_1DD70, ax
+                mov     ax, word_1DD14
+                mov     word_1DD72, ax
+                mov     ax, word_1DD16
+                mov     word_1DD74, ax
+                mov     ax, word_1DD18
+                mov     word_1DD76, ax
+                mov     ax, word_1DD1A
+                mov     word_1DD78, ax
+                mov     ax, word_1DD1C
+                mov     word_1DD7A, ax
+                mov     ax, word_1DD1E
+                mov     word_1DD7C, ax
+                mov     ax, word_1DD22
+                mov     word_1DD7E, ax
+                mov     ax, word_1DD24
+                mov     word_1DD80, ax
+                mov     ax, word_1DD26
+                mov     word_1DD82, ax
+                mov     ax, word_1DD28
+                mov     word_1DD84, ax
+                mov     ax, word_1DD2A
+                mov     word_1DD86, ax
+                mov     ax, word_1DD2C
+                mov     word_1DD88, ax
+                mov     ax, word_1DD2E
+                mov     word_1DD8A, ax
+                mov     ax, word_1DD30
+                mov     word_1DD8C, ax
+                mov     ax, word_1DD32
+                mov     word_1DD8E, ax
+                mov     ax, word_1DD34
+                mov     word_1DD90, ax
+                mov     ax, word_1DD36
+                mov     word_1DD92, ax
+                mov     ax, word_1DD38
+                mov     word_1DD94, ax
+                mov     ax, word_1DD3A
+                mov     word_1DD96, ax
+                mov     ax, word_1DD3C
+                mov     word_1DD98, ax
+                mov     ax, word_1DD48  ; CODE XREF: seg002:047D↑J
+                mov     word_1DD9A, ax
+                mov     ax, word_1DD4A
+                mov     word_1DD9C, ax
+                mov     ax, word_1DD4C
+                mov     word_1DD9E, ax
+                mov     ax, word_1DD4E
+                mov     word_1DDA0, ax
+                mov     ax, word_1DD50
+                mov     word_1DDA2, ax
+                mov     ax, word_1DD3E
+                mov     word_1DDA4, ax
+                mov     ax, word_1DD40
+                mov     word_1DDA6, ax
+                mov     ax, word_1DD42
+                mov     word_1DDA8, ax
+                mov     ax, word_1DD44
+                mov     word_1DDAA, ax
+                mov     ax, word_1DD46
+                mov     word_1DDAC, ax
+                retn
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C432:                              ; CODE XREF: game_init:loc_1C626↓p
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                push    si
+                mov     word_1DC82, 1
+                sub     si, si
+
+loc_1C441:                              ; CODE XREF: sub_1C322+134↓j
+                cmp     word_1DC82, 0
+                jnz     short loc_1C452
+                push    si
+                call    disk_copy_routine
+                add     sp, 2
+                mov     word_1DC82, ax
+
+loc_1C452:                              ; CODE XREF: sub_1C322+124↑j
+                inc     si
+                cmp     si, 2
+                jl      short loc_1C441
+                mov     [bp+var_2], si
+                cmp     word_1DC82, 0
+                jnz     short loc_1C4D8
+sub_1C322       endp ; sp-analysis failed
+
+
+loc_1C462:                              ; CODE XREF: seg002:086D↑J
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aInsert ; "Insert "
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F120
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F122
+
+loc_1C48E:                              ; CODE XREF: seg002:0B31↑J
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aInAFloppyDrive ; "in a floppy drive"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F124
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, 0Dh
+                push    ax
+                call    thk_wait_for_key
+                add     sp, 2
+                sub     si, si
+
+loc_1C4BE:                              ; CODE XREF: ovl_1MENU1:C4D3↓j
+                cmp     word_1DC82, 0
+                jnz     short loc_1C4CF
+                push    si
+                call    disk_copy_routine
+                add     sp, 2
+                mov     word_1DC82, ax
+
+loc_1C4CF:                              ; CODE XREF: ovl_1MENU1:C4C3↑j
+                inc     si
+                cmp     si, 2
+                jl      short loc_1C4BE
+                mov     [bp-2], si
+; START OF FUNCTION CHUNK FOR sub_1C322
+
+loc_1C4D8:                              ; CODE XREF: sub_1C322+13E↑j
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                cmp     word_1DC82, 0
+                jnz     short loc_1C50E
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F120
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aOriginalDisk1N ; "Original Disk 1 not found - \n\r"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aRosterWillNotB ; "Roster will not be saved during game pl"...
+                push    ax
+                jmp     short loc_1C556
+; END OF FUNCTION CHUNK FOR sub_1C322
+; ---------------------------------------------------------------------------
+                align 2
+; START OF FUNCTION CHUNK FOR sub_1C322
+
+loc_1C50E:                              ; CODE XREF: sub_1C322+1C5↑j
+                call    thk_get_drive
+                cmp     ax, 2
+                jg      short loc_1C566
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aReplaceTheOrig ; "Replace the original "
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F120      ; CODE XREF: seg002:0879↑J
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F122
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F126
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, offset aWithYourBackup ; "with your backup copy"
+                push    ax
+                call    thk_res_02F2
+                add     sp, 2
+                push    word_1F124
+
+loc_1C556:                              ; CODE XREF: sub_1C322+1E9↑j
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, 0Dh
+                push    ax
+                call    thk_wait_for_key
+                add     sp, 2
+
+loc_1C566:                              ; CODE XREF: sub_1C322+1F2↑j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+; END OF FUNCTION CHUNK FOR sub_1C322
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C56C       proc near               ; CODE XREF: game_init:loc_1C66A↓p
+
+var_2           = word ptr -2
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                mov     [bp+var_2], 0
+                call    thk_res_40F4
+                cmp     byte_1DB96, 3
+                jnz     short loc_1C58D
+                cmp     word_221AC, 62h ; 'b'
+                jge     short loc_1C58D
+                mov     [bp+var_2], 1
+
+loc_1C58D:                              ; CODE XREF: sub_1C56C+13↑j
+                                        ; sub_1C56C+1A↑j
+                cmp     byte_1DB96, 0Fh
+                jnz     short loc_1C5A1
+                cmp     word_221AC, 0C8h
+                jge     short loc_1C5A1
+                mov     [bp+var_2], 2
+
+loc_1C5A1:                              ; CODE XREF: sub_1C56C+26↑j
+                                        ; sub_1C56C+2E↑j
+                cmp     [bp+var_2], 0
+                jz      short loc_1C5D4
+                push    word_1F2AC
+                call    thk_res_02F2    ; CODE XREF: seg002:0885↑J
+                add     sp, 2
+                mov     bx, [bp+var_2]
+                shl     bx, 1
+                push    word ptr [bx+1A5Eh]
+                call    thk_res_02F2
+                add     sp, 2
+
+loc_1C5C0:                              ; CODE XREF: seg002:029D↑J
+                push    word_1F2AE
+                call    thk_res_02F2
+                add     sp, 2
+                mov     ax, 1
+                push    ax
+                call    thk_exit
+                add     sp, 2
+
+loc_1C5D4:                              ; CODE XREF: sub_1C56C+39↑j
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1C56C       endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -194,7 +627,7 @@ loc_1C60F:                              ; CODE XREF: game_init+32↑j
 loc_1C617:                              ; CODE XREF: game_init+3A↑j
                 cmp     al, 20h ; ' '
                 jz      short loc_1C626
-                call    near ptr byte_1C130
+                call    sub_1C130
                 jmp     short loc_1C626
 ; ---------------------------------------------------------------------------
 
@@ -203,8 +636,8 @@ loc_1C620:                              ; CODE XREF: game_init+1D↑j
 
 loc_1C626:                              ; CODE XREF: game_init+41↑j
                                         ; game_init+46↑j ...
-                call    near ptr byte_1C3F6+3Ch
-                call    near ptr byte_1C370+6
+                call    loc_1C432
+                call    loc_1C376
                 cmp     word_221BA, 0
                 jz      short loc_1C63A
                 cmp     word_221BA, 3
@@ -220,10 +653,10 @@ loc_1C63A:                              ; CODE XREF: game_init+59↑j
                 mov     byte_1DB94, 0
                 mov     byte_1DB95, 3
                 mov     byte_1DB96, 3
-                call    near ptr byte_1C308+1Ah
+                call    sub_1C322
 
 loc_1C66A:                              ; CODE XREF: game_init+60↑j
-                call    near ptr byte_1C52C+40h
+                call    sub_1C56C
                 call    thk_res_1DFA    ; CODE XREF: seg002:0891↑J
                 mov     ax, 75BEh
                 mov     dx, 1000h
@@ -326,7 +759,7 @@ loc_1C6F2:                              ; CODE XREF: seg002:0B19↑J
                 mov     word_277D2, ax  ; CODE XREF: seg002:089D↑J
                 mov     word_277D0, ax
                 mov     g_disk_needed, 1
-                call    near ptr byte_1C242+56h
+                call    sub_1C298
 
 loc_1C747:                              ; CODE XREF: game_init+186↓j
                 mov     ax, 1400h
@@ -1168,7 +1601,8 @@ title_screen    endp
 ; int 13h based; unreferenced
 ; Attributes: bp-based frame
 
-disk_copy_routine proc near
+disk_copy_routine proc near             ; CODE XREF: sub_1C322+127↑p
+                                        ; ovl_1MENU1:C4C6↑p
 
 arg_0           = word ptr  4
 
@@ -1197,6 +1631,7 @@ arg_0           = word ptr  4
                 push    ax
                 push    es
                 mov     es, bx
+                assume es:nothing
                 mov     ah, 49h
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed

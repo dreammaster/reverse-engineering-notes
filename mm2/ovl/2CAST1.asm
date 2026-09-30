@@ -12,30 +12,116 @@ ovl_2CAST1      segment byte public 'CODE' use16
 
 cast1_common_helper proc near           ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
+
+var_2           = word ptr -2
+
                 push    bp
+                mov     bp, sp          ; DATA XREF: seg002:0038↑o
+                sub     sp, 2
+                push    si
+                call    loc_1D046
+                or      ax, ax
+                jz      short loc_1C1AE
+                call    cast1_return_prompt
+                mov     ax, 14h
+                push    ax
+                mov     ax, 1
+                push    ax
+                call    thk_text_goto_xy
+                add     sp, 4
+                mov     ax, offset aCharges_0 ; "Charges:"
+                push    ax
+                call    thk_text_puts
+                add     sp, 2
+                sub     si, si
+
+loc_1C15B:                              ; CODE XREF: cast1_common_helper+6F↓j
+                mov     al, [si+307Ah]
+                sub     ah, ah
+                push    ax
+                mov     al, [si+3074h]
+                push    ax
+                call    thk_text_goto_xy
+                add     sp, 4
+                mov     ax, si
+                add     ax, 41h ; 'A'
+                push    ax
+                call    thk_text_putc
+                add     sp, 2
+                mov     ax, 2Dh ; '-'
+                push    ax
+                call    thk_text_putc
+                add     sp, 2
+                mov     ax, 20h ; ' '
+                push    ax
+                mov     ax, 1
+                push    ax
+                mov     bx, word_23626
+                mov     al, [bx+si+40h]
+                sub     ah, ah
+                push    ax
+                call    thk_text_put_number_pad
+                add     sp, 6
+                inc     si
+                cmp     si, 6
+                jl      short loc_1C15B
+                mov     [bp+var_2], si
+
+loc_1C1A4:                              ; CODE XREF: cast1_common_helper+79↓j
+                call    thk_kbd_poll
+                or      ax, ax
+                jz      short loc_1C1A4
+                call    sub_1CE9E
+
+loc_1C1AE:                              ; CODE XREF: cast1_common_helper+C↑j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+cast1_common_helper endp
+
 ; ---------------------------------------------------------------------------
-                db  8Bh
-byte_1C132      db 0ECh, 83h, 0ECh, 2, 56h, 0E8h, 0Ch, 0Fh, 0Bh, 0C0h
-                                        ; DATA XREF: seg002:0038↑o
-                db 74h, 70h, 0E8h, 1Bh, 0Eh, 0B8h, 14h, 0, 50h, 0B8h, 1
-                db 0, 50h, 0E8h, 0E2h, 0ADh, 83h, 0C4h, 4, 0B8h, 6Ah, 30h
-                db 50h, 0E8h, 0FCh, 0ADh, 83h, 0C4h, 2, 2Bh, 0F6h, 8Ah
-                db 84h, 7Ah, 30h, 2Ah, 0E4h, 50h, 8Ah, 84h, 74h, 30h, 50h
-                db 0E8h, 0C4h, 0ADh, 83h, 0C4h, 4, 8Bh, 0C6h, 5, 41h, 0
-                db 50h, 0E8h, 0C4h, 0ADh, 83h, 0C4h, 2, 0B8h, 2Dh, 0, 50h
-                db 0E8h, 0BAh, 0ADh, 83h, 0C4h, 2, 0B8h, 20h, 0, 50h, 0B8h
-                db 1, 0, 50h, 8Bh, 1Eh, 0D6h, 5Dh, 8Ah, 2 dup(40h), 2Ah
-                db 0E4h, 50h, 0E8h, 0EAh, 0ADh, 83h, 0C4h, 6, 46h, 83h
-                db 0FEh, 6, 7Ch, 0BAh, 89h, 76h, 0FEh, 0E8h, 13h, 0ACh
-                db 0Bh, 0C0h, 74h, 0F9h, 0E8h, 0F0h, 0Ch, 5Eh, 8Bh, 0E5h
-                db 5Dh, 0C3h, 90h, 0E8h, 8Fh, 0Eh, 0Bh, 0C0h, 74h, 16h
-                db 80h, 3Eh, 0D5h, 3, 0FEh, 73h, 4, 0FEh, 6, 0D5h, 3, 0B0h
-                db 1, 0A2h, 9Bh, 3, 0A2h, 95h, 3, 0E8h, 0CDh, 0Ch, 0C3h
-                db 0E8h, 71h, 0Eh, 0Bh, 0C0h, 74h, 10h, 0E8h
-byte_1C1DA      db 80h, 0Dh, 0E8h, 0D3h, 0B0h, 0C6h, 6, 95h, 3, 1, 0C6h
-                                        ; CODE XREF: seg002:08CD↑J
-                db 6, 9Bh, 3, 0, 0C3h
-cast1_common_helper endp ; sp-analysis failed
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Light / Light
+
+spell_nc_Light  proc near               ; CODE XREF: cast_noncombat_spell:loc_1D144↓p
+                call    loc_1D046
+                or      ax, ax
+                jz      short locret_1C1D1
+                cmp     byte_1DC25, 0FEh
+                jnb     short loc_1C1C6
+                inc     byte_1DC25
+
+loc_1C1C6:                              ; CODE XREF: spell_nc_Light+C↑j
+                mov     al, 1
+                mov     byte_1DBEB, al
+                mov     byte ptr g_party_y+1, al
+                call    sub_1CE9E
+
+locret_1C1D1:                           ; CODE XREF: spell_nc_Light+5↑j
+                retn
+spell_nc_Light  endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Location
+
+spell_nc_Location proc near             ; CODE XREF: cast_noncombat_spell:loc_1D0DE↓p
+                call    loc_1D046
+                or      ax, ax
+                jz      short locret_1C1E9
+                call    cast1_return_prompt ; CODE XREF: seg002:08CD↑J
+                call    thk_2PLAY_BB4E
+                mov     byte ptr g_party_y+1, 1
+                mov     byte_1DBEB, 0
+
+locret_1C1E9:                           ; CODE XREF: spell_nc_Location+5↑j
+                retn
+spell_nc_Location endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -89,23 +175,34 @@ loc_1C23A:                              ; CODE XREF: cast1_effect_a+B↑j
 loc_1C23C:                              ; CODE XREF: seg002:08E5↑J
                 pop     bp
                 retn
-; ---------------------------------------------------------------------------
-
-spell_nc_Jump:                          ; CODE XREF: cast_noncombat_spell:loc_1D0EA↓p
-                push    bp              ; Jump
-                mov     bp, sp
-                sub     sp, 0Ah         ; CODE XREF: seg002:0639↑J
 cast1_effect_a  endp
 
+
+; =============== S U B R O U T I N E =======================================
+
+; Jump
+; Attributes: bp-based frame
+
+spell_nc_Jump   proc near               ; CODE XREF: cast_noncombat_spell:loc_1D0EA↓p
+
+var_A           = word ptr -0Ah
+var_8           = word ptr -8
+var_6           = byte ptr -6
+var_4           = byte ptr -4
+var_2           = byte ptr -2
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Ah         ; CODE XREF: seg002:0639↑J
                 push    si
-                mov     word ptr [bp-8], 0
+                mov     [bp+var_8], 0
                 call    loc_1D046
                 or      ax, ax
                 jnz     short loc_1C254
                 jmp     loc_1C31B
 ; ---------------------------------------------------------------------------
 
-loc_1C254:                              ; CODE XREF: ovl_2CAST1:C24F↑j
+loc_1C254:                              ; CODE XREF: spell_nc_Jump+11↑j
                 cmp     g_outdoors, 1
                 jz      short loc_1C286
                 mov     si, g_party_y
@@ -125,34 +222,34 @@ loc_1C254:                              ; CODE XREF: ovl_2CAST1:C24F↑j
                 test    al, 55h
                 jz      short loc_1C289
 
-loc_1C286:                              ; CODE XREF: ovl_2CAST1:C259↑j
-                                        ; ovl_2CAST1:C27B↑j
-                inc     word ptr [bp-8]
+loc_1C286:                              ; CODE XREF: spell_nc_Jump+1B↑j
+                                        ; spell_nc_Jump+3D↑j
+                inc     [bp+var_8]
 
-loc_1C289:                              ; CODE XREF: ovl_2CAST1:C284↑j
-                cmp     word ptr [bp-8], 0
+loc_1C289:                              ; CODE XREF: spell_nc_Jump+46↑j
+                cmp     [bp+var_8], 0
                 jnz     short loc_1C2EF
-                lea     ax, [bp-4]
+                lea     ax, [bp+var_4]
                 push    ax
-                lea     ax, [bp-2]
+                lea     ax, [bp+var_2]
                 push    ax
                 call    thk_facing_delta
                 add     sp, 4
-                mov     al, [bp-2]
+                mov     al, [bp+var_2]
                 add     al, g_party_x
                 and     al, 0Fh
-                mov     [bp-6], al
-                mov     al, [bp-4]
+                mov     [bp+var_6], al
+                mov     al, [bp+var_4]
                 add     al, byte ptr g_party_y
                 and     al, 0Fh
-                mov     [bp-0Ah], al
-                mov     si, [bp-0Ah]
+                mov     byte ptr [bp+var_A], al
+                mov     si, [bp+var_A]
                 and     si, 0FFh
                 mov     cl, 4
                 shl     si, cl
 
 loc_1C2C0:                              ; CODE XREF: seg002:026D↑J
-                mov     bl, [bp-6]
+                mov     bl, [bp+var_6]
                 sub     bh, bh
                 mov     al, [bx+si+59D6h]
                 sub     ah, ah
@@ -160,7 +257,7 @@ loc_1C2C0:                              ; CODE XREF: seg002:026D↑J
                 sub     ch, ch
                 test    ax, cx
                 jnz     short loc_1C2EC
-                mov     si, [bp-0Ah]
+                mov     si, [bp+var_A]
                 and     si, 0FFh
                 mov     cl, 4
                 shl     si, cl
@@ -169,12 +266,12 @@ loc_1C2C0:                              ; CODE XREF: seg002:026D↑J
                 test    al, 55h
                 jz      short loc_1C2EF
 
-loc_1C2EC:                              ; CODE XREF: ovl_2CAST1:C2D3↑j
-                inc     word ptr [bp-8]
+loc_1C2EC:                              ; CODE XREF: spell_nc_Jump+95↑j
+                inc     [bp+var_8]
 
-loc_1C2EF:                              ; CODE XREF: ovl_2CAST1:C28D↑j
-                                        ; ovl_2CAST1:C2EA↑j
-                cmp     word ptr [bp-8], 0
+loc_1C2EF:                              ; CODE XREF: spell_nc_Jump+4F↑j
+                                        ; spell_nc_Jump+AC↑j
+                cmp     [bp+var_8], 0
                 jz      short loc_1C2FA
                 call    sub_1CEFA
 
@@ -182,28 +279,30 @@ loc_1C2F8:                              ; CODE XREF: seg002:0651↑J
                 jmp     short loc_1C31B
 ; ---------------------------------------------------------------------------
 
-loc_1C2FA:                              ; CODE XREF: ovl_2CAST1:C2F3↑j
+loc_1C2FA:                              ; CODE XREF: spell_nc_Jump+B5↑j
                 mov     al, 1
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
                 call    sub_1CE9E
-                mov     al, [bp-6]
+                mov     al, [bp+var_6]
 
 loc_1C308:                              ; CODE XREF: seg002:08F1↑J
-                add     al, [bp-2]
+                add     al, [bp+var_2]
                 and     al, 0Fh
                 mov     g_party_x, al
-                mov     al, [bp-0Ah]
-                add     al, [bp-4]
+                mov     al, byte ptr [bp+var_A]
+                add     al, [bp+var_4]
                 and     al, 0Fh
                 mov     byte ptr g_party_y, al
 
-loc_1C31B:                              ; CODE XREF: ovl_2CAST1:C251↑j
-                                        ; ovl_2CAST1:loc_1C2F8↑j
+loc_1C31B:                              ; CODE XREF: spell_nc_Jump+13↑j
+                                        ; spell_nc_Jump:loc_1C2F8↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
+spell_nc_Jump   endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -328,50 +427,39 @@ loc_1C3E9:                              ; CODE XREF: spell_beacon+12↑j
                 mov     sp, bp
                 pop     bp
                 retn
-spell_beacon    endp
-
 ; ---------------------------------------------------------------------------
                 align 2
 
-; =============== S U B R O U T I N E =======================================
-
-; "Fly to (A-E)?"
-; Attributes: bp-based frame
-
-spell_fly       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D102↓p
-
-var_8           = word ptr -8
-var_6           = word ptr -6
-var_4           = word ptr -4
-var_2           = word ptr -2
-
-                push    bp
+spell_fly:                              ; CODE XREF: cast_noncombat_spell:loc_1D102↓p
+                push    bp              ; "Fly to (A-E)?"
                 mov     bp, sp
                 sub     sp, 8
                 push    di
                 push    si
+spell_beacon    endp
+
 
 loc_1C3F6:                              ; CODE XREF: seg002:047D↑J
-                mov     [bp+var_2], 0
-                mov     [bp+var_8], 0
+                mov     word ptr [bp-2], 0
+                mov     word ptr [bp-8], 0
                 call    loc_1D046
                 or      ax, ax
                 jnz     short loc_1C40A
                 jmp     loc_1C4F5
 ; ---------------------------------------------------------------------------
 
-loc_1C40A:                              ; CODE XREF: spell_fly+17↑j
+loc_1C40A:                              ; CODE XREF: ovl_2CAST1:C405↑j
                 test    byte_231F0, 40h
                 jz      short loc_1C418
 
-loc_1C411:                              ; CODE XREF: spell_fly+8D↓j
-                                        ; spell_fly+C6↓j
-                inc     [bp+var_2]
+loc_1C411:                              ; CODE XREF: ovl_2CAST1:C47B↓j
+                                        ; ovl_2CAST1:C4B4↓j
+                inc     word ptr [bp-2]
                 jmp     loc_1C4E7
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C418:                              ; CODE XREF: spell_fly+21↑j
+loc_1C418:                              ; CODE XREF: ovl_2CAST1:C40F↑j
                 mov     ax, 1
                 push    ax
                 call    thk_res_3FA0
@@ -387,7 +475,7 @@ loc_1C418:                              ; CODE XREF: spell_fly+21↑j
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C43A:                              ; CODE XREF: spell_fly+82↓j
+loc_1C43A:                              ; CODE XREF: ovl_2CAST1:C470↓j
                 call    thk_kbd_poll
                 push    ax
                 call    thk_res_00E8
@@ -399,10 +487,10 @@ loc_1C43A:                              ; CODE XREF: spell_fly+82↓j
                 jmp     short loc_1C452
 ; ---------------------------------------------------------------------------
 
-loc_1C450:                              ; CODE XREF: spell_fly+5B↑j
+loc_1C450:                              ; CODE XREF: ovl_2CAST1:C449↑j
                 sub     ax, ax
 
-loc_1C452:                              ; CODE XREF: spell_fly+60↑j
+loc_1C452:                              ; CODE XREF: ovl_2CAST1:C44E↑j
                 mov     si, ax
                 or      si, si
                 jnz     short loc_1C46E
@@ -418,18 +506,18 @@ loc_1C462:                              ; CODE XREF: seg002:086D↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C46A:                              ; CODE XREF: spell_fly+6F↑j
-                                        ; spell_fly:loc_1C462↑j
+loc_1C46A:                              ; CODE XREF: ovl_2CAST1:C45D↑j
+                                        ; ovl_2CAST1:loc_1C462↑j
                 sub     ax, ax
 
-loc_1C46C:                              ; CODE XREF: spell_fly+79↑j
+loc_1C46C:                              ; CODE XREF: ovl_2CAST1:C467↑j
                 mov     si, ax
 
-loc_1C46E:                              ; CODE XREF: spell_fly+68↑j
+loc_1C46E:                              ; CODE XREF: ovl_2CAST1:C456↑j
                 or      si, si
                 jz      short loc_1C43A
-                mov     [bp+var_6], di
-                mov     [bp+var_8], si
+                mov     [bp-6], di
+                mov     [bp-8], si
                 cmp     di, 1Bh
                 jz      short loc_1C411
                 push    di
@@ -452,50 +540,48 @@ loc_1C46E:                              ; CODE XREF: spell_fly+68↑j
                 call    thk_get_key_in_range_nowait
                 add     sp, 4
                 sub     ah, ah
-                mov     [bp+var_4], ax
+                mov     [bp-4], ax
                 cmp     ax, 1Bh
                 jnz     short loc_1C4B7
                 jmp     loc_1C411
 ; ---------------------------------------------------------------------------
 
-loc_1C4B7:                              ; CODE XREF: spell_fly+C4↑j
+loc_1C4B7:                              ; CODE XREF: ovl_2CAST1:C4B2↑j
                 push    ax
                 call    thk_text_putc
                 add     sp, 2
-                sub     [bp+var_4], 31h ; '1'
-                sub     [bp+var_6], 41h ; 'A'
+                sub     word ptr [bp-4], 31h ; '1'
+                sub     word ptr [bp-6], 41h ; 'A'
                 mov     al, 0FFh
                 mov     byte ptr g_party_y, al
                 mov     g_party_x, al
-                mov     si, [bp+var_6]
+                mov     si, [bp-6]
                 shl     si, 1
                 shl     si, 1
-                mov     bx, [bp+var_4]
+                mov     bx, [bp-4]
                 mov     al, [bx+si+30BCh]
                 mov     g_map_id, al
                 mov     al, 1
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
 
-loc_1C4E7:                              ; CODE XREF: spell_fly+26↑j
-                cmp     [bp+var_2], 0
+loc_1C4E7:                              ; CODE XREF: ovl_2CAST1:C414↑j
+                cmp     word ptr [bp-2], 0
                 jz      short loc_1C4F2
                 call    sub_1CEFA
                 jmp     short loc_1C4F5
 ; ---------------------------------------------------------------------------
 
-loc_1C4F2:                              ; CODE XREF: spell_fly+FD↑j
+loc_1C4F2:                              ; CODE XREF: ovl_2CAST1:C4EB↑j
                 call    sub_1CE9E
 
-loc_1C4F5:                              ; CODE XREF: spell_fly+19↑j
-                                        ; spell_fly+102↑j
+loc_1C4F5:                              ; CODE XREF: ovl_2CAST1:C407↑j
+                                        ; ovl_2CAST1:C4F0↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-spell_fly       endp
-
 ; ---------------------------------------------------------------------------
                 align 2
 
@@ -2187,8 +2273,8 @@ sub_1CE46       endp
 
 ; Attributes: bp-based frame
 
-sub_1CE9E       proc near               ; CODE XREF: cast1_effect_a+4D↑p
-                                        ; ovl_2CAST1:C302↑p ...
+sub_1CE9E       proc near               ; CODE XREF: cast1_common_helper+7B↑p
+                                        ; spell_nc_Light+1A↑p ...
 
 var_2           = byte ptr -2
 
@@ -2242,7 +2328,7 @@ sub_1CE9E       endp
 
 ; Attributes: bp-based frame
 
-sub_1CEFA       proc near               ; CODE XREF: ovl_2CAST1:C2F5↑p
+sub_1CEFA       proc near               ; CODE XREF: spell_nc_Jump+B7↑p
                                         ; spell_beacon+A0↑p ...
 
 var_2           = byte ptr -2
@@ -2301,7 +2387,7 @@ sub_1CEFA       endp
 ; "'Return' to cast"
 
 cast1_return_prompt proc near           ; CODE XREF: seg002:0AE9↑J
-                                        ; sub_1CB48+8↑p
+                                        ; cast1_common_helper+E↑p ...
                 cmp     word_1DB9A, 0
                 jz      short locret_1CF8B
                 mov     ax, word_1DB9A
@@ -2416,8 +2502,8 @@ loc_1D03E:                              ; CODE XREF: cast1_return_prompt+D1↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D046:                              ; CODE XREF: cast1_effect_a+6↑p
-                                        ; ovl_2CAST1:C24A↑p ...
+loc_1D046:                              ; CODE XREF: cast1_common_helper+7↑p
+                                        ; spell_nc_Light↑p ...
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
@@ -2513,7 +2599,7 @@ loc_1D0D8:                              ; CODE XREF: cast_noncombat_spell+11↑j
 
 loc_1D0DE:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+116↓o
-                call    near ptr byte_1C132+0A0h ; jumptable 0001D0D3 case 5
+                call    spell_nc_Location ; jumptable 0001D0D3 case 5
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
@@ -2615,7 +2701,7 @@ loc_1D13E:                              ; CODE XREF: cast_noncombat_spell+11↑j
 
 loc_1D144:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+114↓o ...
-                call    near ptr byte_1C132+82h ; jumptable 0001D0D3 cases 4,52
+                call    spell_nc_Light  ; jumptable 0001D0D3 cases 4,52
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
