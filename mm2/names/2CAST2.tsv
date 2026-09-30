@@ -5,3 +5,55 @@
 1D1A6	cast2_return_prompt
 1D23A	cast2_prompt_return	"'Return' to cast"
 1D2AE	cast2_show_text
+# spell implementations (targets of the jump table indexed by SPELLS.DAT index)
+1C16A	spell_cb_Flame_Arrow	Flame Arrow
+1C1AC	spell_cb_Sleep	Sleep
+1C1EA	spell_cb_Electric_Arrow	Electric Arrow
+1C3D6	spell_cb_Acid_Stream	Acid Stream
+1C412	spell_cb_Invisibility	Invisibility
+1C42E	spell_cb_Lightning_Bolt	Lightning Bolt
+1C46A	spell_cb_Web	Web
+1C4B4	spell_cb_Cold_Beam	Cold Beam
+1C4EE	spell_cb_Feeble_Mind	Feeble Mind
+1C524	spell_cb_Fire_Ball	Fire Ball
+1C56C	spell_cb_Shield	Shield
+1C588	spell_cb_Time_Distortion	Time Distortion
+1C5A8	spell_cb_Disrupt	Disrupt
+1C5E8	spell_cb_Fingers_of_Death	Fingers of Death
+1C620	spell_cb_Sand_Storm	Sand Storm
+1C65A	spell_cb_Disintegration	Disintegration
+1C690	spell_cb_Entrapment	Entrapment
+1C6B0	spell_cb_Fantastic_Freeze	Fantastic Freeze
+1C6F8	spell_cb_Super_Shock	Super Shock
+1C732	spell_cb_Dancing_Sword	Dancing Sword
+1C75C	spell_cb_Prismatic_Light	Prismatic Light
+1C7B2	spell_cb_Incinerate	Incinerate
+1C7EE	spell_cb_Mega_Volts	Mega Volts
+1C81A	spell_cb_Meteor_Shower	Meteor Shower
+1C850	spell_cb_Power_Shield	Power Shield
+1C86C	spell_cb_Implosion	Implosion
+1C89E	spell_cb_Inferno	Inferno
+1C8CA	spell_cb_Star_Burst	Star Burst
+1C900	spell_cb_Apparition	Apparition
+1C928	spell_cb_Bless	Bless
+1C944	spell_cb_Turn_Undead	Turn Undead
+1CA40	spell_cb_Heroism	Heroism
+1CA6E	spell_cb_Pain	Pain
+1CAAE	spell_cb_Silence	Silence
+1CAEC	spell_cb_Weaken	Weaken
+1CB12	spell_cb_Cold_Ray	Cold Ray
+1CB52	spell_cb_Immobilize	Immobilize
+1CB8A	spell_cb_Acid_Spray	Acid Spray
+1CBD8	spell_cb_Holy_Bonus	Holy Bonus
+1CBF8	spell_cb_Air_Encasement	Air Encasement
+1CC34	spell_cb_Deadly_Swarm	Deadly Swarm
+1CC64	spell_cb_Frenzy	Frenzy
+1CCDC	spell_cb_Paralyze	Paralyze
+1CD04	spell_cb_Water_Encasement	Water Encasement
+1CD40	spell_cb_Earth_Encasement	Earth Encasement
+1CD7C	spell_cb_Fiery_Flail	Fiery Flail
+1CDBA	spell_cb_Moon_Ray	Moon Ray
+1CE40	spell_cb_Fire_Encasement	Fire Encasement
+1CE7C	spell_cb_Mass_Distortion	Mass Distortion
+1CEB6	spell_cb_Divine_intervention	Divine intervention
+1CF1C	spell_cb_Holy_Word	Holy Word

@@ -91,8 +91,8 @@ loc_1C23C:                              ; CODE XREF: seg002:08E5↑J
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1C23E:                              ; CODE XREF: cast_noncombat_spell:loc_1D0EA↓p
-                push    bp
+spell_nc_Jump:                          ; CODE XREF: cast_noncombat_spell:loc_1D0EA↓p
+                push    bp              ; Jump
                 mov     bp, sp
                 sub     sp, 0Ah         ; CODE XREF: seg002:0639↑J
 cast1_effect_a  endp
@@ -501,9 +501,10 @@ spell_fly       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Wizard Eye
 ; Attributes: bp-based frame
 
-sub_1C4FC       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D108↓p
+spell_nc_Wizard_Eye proc near           ; CODE XREF: cast_noncombat_spell:loc_1D108↓p
 
 var_2           = byte ptr -2
 
@@ -520,19 +521,19 @@ var_2           = byte ptr -2
                 jbe     short loc_1C51F
                 mov     byte_1DC31, 0FFh
 
-loc_1C51F:                              ; CODE XREF: sub_1C4FC+1C↑j
+loc_1C51F:                              ; CODE XREF: spell_nc_Wizard_Eye+1C↑j
                 mov     dl, [bp+var_2]
                 mov     cl, byte_1DC31
                 jmp     short loc_1C530
 ; ---------------------------------------------------------------------------
 
-loc_1C528:                              ; CODE XREF: sub_1C4FC+3A↓j
+loc_1C528:                              ; CODE XREF: spell_nc_Wizard_Eye+3A↓j
                 cmp     cl, 0FAh
                 jnb     short loc_1C530 ; CODE XREF: seg002:0879↑J
                 add     cl, 5
 
-loc_1C530:                              ; CODE XREF: sub_1C4FC+2A↑j
-                                        ; sub_1C4FC+2F↑j
+loc_1C530:                              ; CODE XREF: spell_nc_Wizard_Eye+2A↑j
+                                        ; spell_nc_Wizard_Eye+2F↑j
                 mov     al, dl
                 dec     dl
                 or      al, al
@@ -543,17 +544,18 @@ loc_1C530:                              ; CODE XREF: sub_1C4FC+2A↑j
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-loc_1C54C:                              ; CODE XREF: sub_1C4FC+B↑j
+loc_1C54C:                              ; CODE XREF: spell_nc_Wizard_Eye+B↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C4FC       endp
+spell_nc_Wizard_Eye endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Guard Dog
 
-sub_1C550       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D10E↓p
+spell_nc_Guard_Dog proc near            ; CODE XREF: cast_noncombat_spell:loc_1D10E↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C56F
@@ -561,20 +563,21 @@ sub_1C550       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
                 jnb     short loc_1C562
                 inc     byte_1DC2A
 
-loc_1C562:                              ; CODE XREF: sub_1C550+C↑j
+loc_1C562:                              ; CODE XREF: spell_nc_Guard_Dog+C↑j
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-locret_1C56F:                           ; CODE XREF: sub_1C550+5↑j
+locret_1C56F:                           ; CODE XREF: spell_nc_Guard_Dog+5↑j
                 retn
-sub_1C550       endp
+spell_nc_Guard_Dog endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Shelter
 
-sub_1C570       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D114↓p
+spell_nc_Shelter proc near              ; CODE XREF: cast_noncombat_spell:loc_1D114↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C58F
@@ -582,21 +585,22 @@ sub_1C570       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
                 jnb     short loc_1C582
                 inc     byte_1DC64
 
-loc_1C582:                              ; CODE XREF: sub_1C570+C↑j
+loc_1C582:                              ; CODE XREF: spell_nc_Shelter+C↑j
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-locret_1C58F:                           ; CODE XREF: sub_1C570+5↑j
+locret_1C58F:                           ; CODE XREF: spell_nc_Shelter+5↑j
                 retn
-sub_1C570       endp
+spell_nc_Shelter endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Teleport
 ; Attributes: bp-based frame
 
-sub_1C590       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D11A↓p
+spell_nc_Teleport proc near             ; CODE XREF: cast_noncombat_spell:loc_1D11A↓p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -614,17 +618,17 @@ var_2           = byte ptr -2
                 jmp     loc_1C643
 ; ---------------------------------------------------------------------------
 
-loc_1C5A6:                              ; CODE XREF: sub_1C590+11↑j
+loc_1C5A6:                              ; CODE XREF: spell_nc_Teleport+11↑j
                 test    byte_231F0, 10h
                 jz      short loc_1C5B4 ; CODE XREF: seg002:0885↑J
 
-loc_1C5AD:                              ; CODE XREF: sub_1C590+5C↓j
+loc_1C5AD:                              ; CODE XREF: spell_nc_Teleport+5C↓j
                 inc     [bp+var_6]
                 jmp     loc_1C634
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C5B4:                              ; CODE XREF: sub_1C590+1B↑j
+loc_1C5B4:                              ; CODE XREF: spell_nc_Teleport+1B↑j
                 mov     ax, 1
                 push    ax
                 call    thk_res_3FA0
@@ -663,13 +667,13 @@ loc_1C5B4:                              ; CODE XREF: sub_1C590+1B↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C60E:                              ; CODE XREF: sub_1C590+8F↓j
+loc_1C60E:                              ; CODE XREF: spell_nc_Teleport+8F↓j
                 add     dl, [bp+var_2]
                 add     cl, [bp+var_4]
                 and     dl, 0Fh
                 and     cl, 0Fh
 
-loc_1C61A:                              ; CODE XREF: sub_1C590+7B↑j
+loc_1C61A:                              ; CODE XREF: spell_nc_Teleport+7B↑j
                 mov     ax, si
                 dec     si
                 or      ax, ax
@@ -681,7 +685,7 @@ loc_1C61A:                              ; CODE XREF: sub_1C590+7B↑j
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
 
-loc_1C634:                              ; CODE XREF: sub_1C590+20↑j
+loc_1C634:                              ; CODE XREF: spell_nc_Teleport+20↑j
                 cmp     [bp+var_6], 0
                 jnz     short loc_1C640
                 call    sub_1CE9E
@@ -689,23 +693,24 @@ loc_1C634:                              ; CODE XREF: sub_1C590+20↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C640:                              ; CODE XREF: sub_1C590+A8↑j
+loc_1C640:                              ; CODE XREF: spell_nc_Teleport+A8↑j
                 call    sub_1CEFA
 
-loc_1C643:                              ; CODE XREF: sub_1C590+13↑j
-                                        ; sub_1C590+AD↑j
+loc_1C643:                              ; CODE XREF: spell_nc_Teleport+13↑j
+                                        ; spell_nc_Teleport+AD↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C590       endp
+spell_nc_Teleport endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Recharge Item
 ; Attributes: bp-based frame
 
-sub_1C648       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D120↓p
+spell_nc_Recharge_Item proc near        ; CODE XREF: cast_noncombat_spell:loc_1D120↓p
 
 var_2           = word ptr -2
 
@@ -726,7 +731,7 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C66C:                              ; CODE XREF: sub_1C648+1C↑j
+loc_1C66C:                              ; CODE XREF: spell_nc_Recharge_Item+1C↑j
                                         ; seg002:0891↑J
                 mov     ax, 6
                 push    ax
@@ -739,20 +744,21 @@ loc_1C66C:                              ; CODE XREF: sub_1C648+1C↑j
                 add     [bx+si+40h], al
                 call    sub_1CE9E
 
-loc_1C687:                              ; CODE XREF: sub_1C648+10↑j
-                                        ; sub_1C648+21↑j
+loc_1C687:                              ; CODE XREF: spell_nc_Recharge_Item+10↑j
+                                        ; spell_nc_Recharge_Item+21↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C648       endp
+spell_nc_Recharge_Item endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Duplication
 ; Attributes: bp-based frame
 
-sub_1C68C       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D126↓p
+spell_nc_Duplication proc near          ; CODE XREF: cast_noncombat_spell:loc_1D126↓p
 
 var_8           = byte ptr -8
 var_6           = word ptr -6
@@ -774,38 +780,38 @@ var_2           = word ptr -2
                 cmp     byte ptr [bx+si+3Ah], 0
                 jnz     short loc_1C6B6
 
-loc_1C6B0:                              ; CODE XREF: sub_1C68C+42↓j
-                                        ; sub_1C68C+5B↓j
+loc_1C6B0:                              ; CODE XREF: spell_nc_Duplication+42↓j
+                                        ; spell_nc_Duplication+5B↓j
                 inc     [bp+var_2]
                 jmp     short loc_1C702
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C6B6:                              ; CODE XREF: sub_1C68C+22↑j
+loc_1C6B6:                              ; CODE XREF: spell_nc_Duplication+22↑j
                 sub     cx, cx
                 mov     dx, word_23626
 
-loc_1C6BC:                              ; CODE XREF: sub_1C68C+4A↓j
+loc_1C6BC:                              ; CODE XREF: spell_nc_Duplication+4A↓j
                 mov     si, cx
                 mov     bx, dx
                 cmp     byte ptr [bx+si+3Ah], 0
                 jnz     short loc_1C6D0
 
-loc_1C6C6:                              ; CODE XREF: sub_1C68C+48↓j
+loc_1C6C6:                              ; CODE XREF: spell_nc_Duplication+48↓j
                 mov     [bp+var_4], cx
                 cmp     cx, 6
                 jnz     short loc_1C6D8
                 jmp     short loc_1C6B0
 ; ---------------------------------------------------------------------------
 
-loc_1C6D0:                              ; CODE XREF: sub_1C68C+38↑j
+loc_1C6D0:                              ; CODE XREF: spell_nc_Duplication+38↑j
                 inc     cx
                 cmp     cx, 6
                 jge     short loc_1C6C6
                 jmp     short loc_1C6BC
 ; ---------------------------------------------------------------------------
 
-loc_1C6D8:                              ; CODE XREF: sub_1C68C+40↑j
+loc_1C6D8:                              ; CODE XREF: spell_nc_Duplication+40↑j
                 mov     si, [bp+var_6]
                 mov     bx, word_23626
                 mov     al, [bx+si+3Ah]
@@ -822,8 +828,8 @@ loc_1C6D8:                              ; CODE XREF: sub_1C68C+40↑j
                 mov     al, [di+46h]
                 mov     [si+46h], al
 
-loc_1C702:                              ; CODE XREF: sub_1C68C+16↑j
-                                        ; sub_1C68C+27↑j
+loc_1C702:                              ; CODE XREF: spell_nc_Duplication+16↑j
+                                        ; spell_nc_Duplication+27↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C70E
                 call    sub_1CEFA
@@ -831,27 +837,28 @@ loc_1C702:                              ; CODE XREF: sub_1C68C+16↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C70E:                              ; CODE XREF: sub_1C68C+7A↑j
+loc_1C70E:                              ; CODE XREF: spell_nc_Duplication+7A↑j
                 cmp     [bp+var_6], 1Bh
                 jz      short loc_1C71C
                 call    sub_1CE9E
                 mov     byte_1DBE7, 1
 
-loc_1C71C:                              ; CODE XREF: sub_1C68C+7F↑j
-                                        ; sub_1C68C+86↑j
+loc_1C71C:                              ; CODE XREF: spell_nc_Duplication+7F↑j
+                                        ; spell_nc_Duplication+86↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C68C       endp
+spell_nc_Duplication endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Etherealize
 ; Attributes: bp-based frame
 
-sub_1C722       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D12C↓p
+spell_nc_Etherealize proc near          ; CODE XREF: cast_noncombat_spell:loc_1D12C↓p
 
 var_4           = byte ptr -4
 var_2           = byte ptr -2
@@ -869,7 +876,7 @@ var_2           = byte ptr -2
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C73C:                              ; CODE XREF: sub_1C722+12↑j
+loc_1C73C:                              ; CODE XREF: spell_nc_Etherealize+12↑j
                 lea     ax, [bp+var_4]
                 push    ax
                 lea     ax, [bp+var_2]
@@ -886,21 +893,22 @@ loc_1C73C:                              ; CODE XREF: sub_1C722+12↑j
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-loc_1C76F:                              ; CODE XREF: sub_1C722+B↑j
-                                        ; sub_1C722+17↑j
+loc_1C76F:                              ; CODE XREF: spell_nc_Etherealize+B↑j
+                                        ; spell_nc_Etherealize+17↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C722       endp
+spell_nc_Etherealize endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Enchant Item
 ; Attributes: bp-based frame
 
-sub_1C774       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D132↓p
+spell_nc_Enchant_Item proc near         ; CODE XREF: cast_noncombat_spell:loc_1D132↓p
 
 var_A           = byte ptr -0Ah
 var_8           = word ptr -8
@@ -935,12 +943,12 @@ var_2           = byte ptr -2
                 jmp     short loc_1C7D5
 ; ---------------------------------------------------------------------------
 
-loc_1C7B6:                              ; CODE XREF: sub_1C774+3B↑j
+loc_1C7B6:                              ; CODE XREF: spell_nc_Enchant_Item+3B↑j
                 cmp     [bp+var_2], 3Fh ; '?'
                 ja      short loc_1C7BF
                 inc     [bp+var_2]
 
-loc_1C7BF:                              ; CODE XREF: sub_1C774+46↑j
+loc_1C7BF:                              ; CODE XREF: spell_nc_Enchant_Item+46↑j
                 mov     al, [bp+var_6]
                 or      [bp+var_2], al
                 mov     si, [bp+var_8]
@@ -949,20 +957,21 @@ loc_1C7BF:                              ; CODE XREF: sub_1C774+46↑j
                 mov     [bx+si+46h], al
                 call    sub_1CE9E
 
-loc_1C7D5:                              ; CODE XREF: sub_1C774+15↑j
-                                        ; sub_1C774+40↑j
+loc_1C7D5:                              ; CODE XREF: spell_nc_Enchant_Item+15↑j
+                                        ; spell_nc_Enchant_Item+40↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C774       endp
+spell_nc_Enchant_Item endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Nature's Gate
 ; Attributes: bp-based frame
 
-sub_1C7DA       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D156↓p
+spell_nc_Nature_s_Gate proc near        ; CODE XREF: cast_noncombat_spell:loc_1D156↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -980,17 +989,17 @@ var_2           = word ptr -2
                 jmp     loc_1C877
 ; ---------------------------------------------------------------------------
 
-loc_1C7F5:                              ; CODE XREF: sub_1C7DA+16↑j
+loc_1C7F5:                              ; CODE XREF: spell_nc_Nature_s_Gate+16↑j
                 test    byte_231F0, 40h
                 jz      short loc_1C802
 
-loc_1C7FC:                              ; CODE XREF: sub_1C7DA+2D↓j
+loc_1C7FC:                              ; CODE XREF: spell_nc_Nature_s_Gate+2D↓j
                 inc     [bp+var_4]
                 jmp     short loc_1C85D
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C802:                              ; CODE XREF: sub_1C7DA+20↑j
+loc_1C802:                              ; CODE XREF: spell_nc_Nature_s_Gate+20↑j
                 cmp     g_era, 9
                 jnz     short loc_1C7FC
                 mov     ax, word_1DC04
@@ -1001,20 +1010,20 @@ loc_1C802:                              ; CODE XREF: sub_1C7DA+20↑j
                 mov     si, 30E0h
                 mov     dx, ax
 
-loc_1C81C:                              ; CODE XREF: sub_1C7DA+97↓j
+loc_1C81C:                              ; CODE XREF: spell_nc_Nature_s_Gate+97↓j
                 cmp     [si], dx
                 jle     short loc_1C868
 
-loc_1C820:                              ; CODE XREF: sub_1C7DA+95↓j
+loc_1C820:                              ; CODE XREF: spell_nc_Nature_s_Gate+95↓j
                 mov     [bp+var_6], cx
 
-loc_1C823:                              ; CODE XREF: sub_1C7DA+39↑j
+loc_1C823:                              ; CODE XREF: spell_nc_Nature_s_Gate+39↑j
                 cmp     [bp+var_2], 96h
                 jl      short loc_1C835
                 mov     g_era, 8
                 mov     [bp+var_6], 0Bh
 
-loc_1C835:                              ; CODE XREF: sub_1C7DA+4E↑j
+loc_1C835:                              ; CODE XREF: spell_nc_Nature_s_Gate+4E↑j
                 mov     bx, [bp+var_6]
                 mov     al, [bx+30FAh]
                 mov     g_map_id, al
@@ -1030,14 +1039,14 @@ loc_1C835:                              ; CODE XREF: sub_1C7DA+4E↑j
                 mov     byte_1DC80, al
                 mov     byte ptr g_party_y+1, al
 
-loc_1C85D:                              ; CODE XREF: sub_1C7DA+25↑j
+loc_1C85D:                              ; CODE XREF: spell_nc_Nature_s_Gate+25↑j
                 cmp     [bp+var_4], 0
                 jz      short loc_1C874
                 call    sub_1CEFA
                 jmp     short loc_1C877
 ; ---------------------------------------------------------------------------
 
-loc_1C868:                              ; CODE XREF: sub_1C7DA+44↑j
+loc_1C868:                              ; CODE XREF: spell_nc_Nature_s_Gate+44↑j
                 add     si, 2
                 inc     cx
                 cmp     cx, 0Dh
@@ -1046,22 +1055,23 @@ loc_1C868:                              ; CODE XREF: sub_1C7DA+44↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C874:                              ; CODE XREF: sub_1C7DA+87↑j
+loc_1C874:                              ; CODE XREF: spell_nc_Nature_s_Gate+87↑j
                 call    sub_1CE9E
 
-loc_1C877:                              ; CODE XREF: sub_1C7DA+18↑j
-                                        ; sub_1C7DA+8C↑j
+loc_1C877:                              ; CODE XREF: spell_nc_Nature_s_Gate+18↑j
+                                        ; spell_nc_Nature_s_Gate+8C↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C7DA       endp
+spell_nc_Nature_s_Gate endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Create Food
 
-sub_1C87C       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D162↓p
+spell_nc_Create_Food proc near          ; CODE XREF: cast_noncombat_spell:loc_1D162↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C89F
@@ -1075,19 +1085,20 @@ sub_1C87C       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C89C:                              ; CODE XREF: sub_1C87C+F↑j
+loc_1C89C:                              ; CODE XREF: spell_nc_Create_Food+F↑j
                 call    sub_1CEFA
 
-locret_1C89F:                           ; CODE XREF: sub_1C87C+5↑j
-                                        ; sub_1C87C+1D↑j
+locret_1C89F:                           ; CODE XREF: spell_nc_Create_Food+5↑j
+                                        ; spell_nc_Create_Food+1D↑j
                 retn
-sub_1C87C       endp
+spell_nc_Create_Food endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Lasting Light
 
-sub_1C8A0       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D16E↓p
+spell_nc_Lasting_Light proc near        ; CODE XREF: cast_noncombat_spell:loc_1D16E↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C8C6
@@ -1098,26 +1109,27 @@ sub_1C8A0       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C8B6:                              ; CODE XREF: sub_1C8A0+C↑j
+loc_1C8B6:                              ; CODE XREF: spell_nc_Lasting_Light+C↑j
                 add     byte_1DC25, 14h
 
-loc_1C8BB:                              ; CODE XREF: sub_1C8A0+13↑j
+loc_1C8BB:                              ; CODE XREF: spell_nc_Lasting_Light+13↑j
                 mov     al, 1
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
                 call    sub_1CE9E
 
-locret_1C8C6:                           ; CODE XREF: sub_1C8A0+5↑j
+locret_1C8C6:                           ; CODE XREF: spell_nc_Lasting_Light+5↑j
                 retn
-sub_1C8A0       endp
+spell_nc_Lasting_Light endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Walk on Water
 
-sub_1C8C8       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D174↓p
+spell_nc_Walk_on_Water proc near        ; CODE XREF: cast_noncombat_spell:loc_1D174↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C8DF
@@ -1127,31 +1139,33 @@ sub_1C8C8       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-locret_1C8DF:                           ; CODE XREF: sub_1C8C8+5↑j
+locret_1C8DF:                           ; CODE XREF: spell_nc_Walk_on_Water+5↑j
                 retn
-sub_1C8C8       endp
+spell_nc_Walk_on_Water endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Air Transmutation
 
-sub_1C8E0       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D17A↓p
+spell_nc_Air_Transmutation proc near    ; CODE XREF: cast_noncombat_spell:loc_1D17A↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C8EF
                 mov     byte_1DC2D, 1
                 call    sub_1CE9E
 
-locret_1C8EF:                           ; CODE XREF: sub_1C8E0+5↑j
+locret_1C8EF:                           ; CODE XREF: spell_nc_Air_Transmutation+5↑j
                 retn
-sub_1C8E0       endp
+spell_nc_Air_Transmutation endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Restore Alignment
 ; Attributes: bp-based frame
 
-sub_1C8F0       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D186↓p
+spell_nc_Restore_Alignment proc near    ; CODE XREF: cast_noncombat_spell:loc_1D186↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1178,20 +1192,21 @@ var_2           = word ptr -2
                 jnz     short loc_1C925
                 mov     byte_1DBE7, 1
 
-loc_1C925:                              ; CODE XREF: sub_1C8F0+10↑j
-                                        ; sub_1C8F0+2E↑j
+loc_1C925:                              ; CODE XREF: spell_nc_Restore_Alignment+10↑j
+                                        ; spell_nc_Restore_Alignment+2E↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C8F0       endp
+spell_nc_Restore_Alignment endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Surface
 ; Attributes: bp-based frame
 
-sub_1C92A       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D18C↓p
+spell_nc_Surface proc near              ; CODE XREF: cast_noncombat_spell:loc_1D18C↓p
 
 var_2           = word ptr -2
 
@@ -1205,12 +1220,12 @@ var_2           = word ptr -2
                 test    byte_231F0, 40h
                 jz      short loc_1C948
 
-loc_1C943:                              ; CODE XREF: sub_1C92A+23↓j
+loc_1C943:                              ; CODE XREF: spell_nc_Surface+23↓j
                 inc     [bp+var_2]
                 jmp     short loc_1C971
 ; ---------------------------------------------------------------------------
 
-loc_1C948:                              ; CODE XREF: sub_1C92A+17↑j
+loc_1C948:                              ; CODE XREF: spell_nc_Surface+17↑j
                 cmp     byte_231EC, 0
                 jz      short loc_1C943
                 mov     al, byte_231EC
@@ -1227,46 +1242,48 @@ loc_1C948:                              ; CODE XREF: sub_1C92A+17↑j
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
 
-loc_1C971:                              ; CODE XREF: sub_1C92A+1C↑j
+loc_1C971:                              ; CODE XREF: spell_nc_Surface+1C↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C97C
                 call    sub_1CEFA
                 jmp     short loc_1C97F
 ; ---------------------------------------------------------------------------
 
-loc_1C97C:                              ; CODE XREF: sub_1C92A+4B↑j
+loc_1C97C:                              ; CODE XREF: spell_nc_Surface+4B↑j
                 call    sub_1CE9E
 
-loc_1C97F:                              ; CODE XREF: sub_1C92A+10↑j
-                                        ; sub_1C92A+50↑j
+loc_1C97F:                              ; CODE XREF: spell_nc_Surface+10↑j
+                                        ; spell_nc_Surface+50↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C92A       endp
+spell_nc_Surface endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Earth Transmutation
 
-sub_1C984       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D198↓p
+spell_nc_Earth_Transmutation proc near  ; CODE XREF: cast_noncombat_spell:loc_1D198↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C993
                 mov     byte_1DC2F, 1
                 call    sub_1CE9E
 
-locret_1C993:                           ; CODE XREF: sub_1C984+5↑j
+locret_1C993:                           ; CODE XREF: spell_nc_Earth_Transmutation+5↑j
                 retn
-sub_1C984       endp
+spell_nc_Earth_Transmutation endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Rejuvenate
 ; Attributes: bp-based frame
 
-sub_1C994       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D19E↓p
+spell_nc_Rejuvenate proc near           ; CODE XREF: cast_noncombat_spell:loc_1D19E↓p
 
 var_6           = word ptr -6
 var_4           = byte ptr -4
@@ -1304,7 +1321,7 @@ loc_1C99A:                              ; CODE XREF: seg002:07DD↑J
                 cmp     byte ptr [bx+21h], 12h
                 jnb     short loc_1C9F0
 
-loc_1C9DC:                              ; CODE XREF: sub_1C994+3D↑j
+loc_1C9DC:                              ; CODE XREF: spell_nc_Rejuvenate+3D↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 push    ax
@@ -1315,55 +1332,58 @@ loc_1C9DC:                              ; CODE XREF: sub_1C994+3D↑j
                 jmp     short loc_1C9FC
 ; ---------------------------------------------------------------------------
 
-loc_1C9F0:                              ; CODE XREF: sub_1C994+46↑j
+loc_1C9F0:                              ; CODE XREF: spell_nc_Rejuvenate+46↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bp+var_4]
                 sub     [bx+21h], al
                 call    sub_1CE9E
 
-loc_1C9FC:                              ; CODE XREF: sub_1C994+F↑j
-                                        ; sub_1C994+5A↑j
+loc_1C9FC:                              ; CODE XREF: spell_nc_Rejuvenate+F↑j
+                                        ; spell_nc_Rejuvenate+5A↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C994       endp
+spell_nc_Rejuvenate endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Water Transmutation
 
-sub_1CA00       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1AA↓p
+spell_nc_Water_Transmutation proc near  ; CODE XREF: cast_noncombat_spell:loc_1D1AA↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1CA0F
                 mov     byte_1DC2C, 1
                 call    sub_1CE9E
 
-locret_1CA0F:                           ; CODE XREF: sub_1CA00+5↑j
+locret_1CA0F:                           ; CODE XREF: spell_nc_Water_Transmutation+5↑j
                 retn
-sub_1CA00       endp
+spell_nc_Water_Transmutation endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Fire Transmutation
 
-sub_1CA10       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1B6↓p
+spell_nc_Fire_Transmutation proc near   ; CODE XREF: cast_noncombat_spell:loc_1D1B6↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1CA1F
                 mov     byte_1DC2E, 1
                 call    sub_1CE9E
 
-locret_1CA1F:                           ; CODE XREF: sub_1CA10+5↑j
+locret_1CA1F:                           ; CODE XREF: spell_nc_Fire_Transmutation+5↑j
                 retn
-sub_1CA10       endp
+spell_nc_Fire_Transmutation endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Town Portal
 ; Attributes: bp-based frame
 
-sub_1CA20       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1BC↓p
+spell_nc_Town_Portal proc near          ; CODE XREF: cast_noncombat_spell:loc_1D1BC↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1378,12 +1398,12 @@ var_2           = word ptr -2
                 test    byte_231F0, 40h
                 jz      short loc_1CA3E
 
-loc_1CA39:                              ; CODE XREF: sub_1CA20+56↓j
+loc_1CA39:                              ; CODE XREF: spell_nc_Town_Portal+56↓j
                 inc     [bp+var_2]
                 jmp     short loc_1CA90
 ; ---------------------------------------------------------------------------
 
-loc_1CA3E:                              ; CODE XREF: sub_1CA20+17↑j
+loc_1CA3E:                              ; CODE XREF: spell_nc_Town_Portal+17↑j
                 mov     ax, 1
                 push    ax
                 call    thk_res_3FA0
@@ -1420,7 +1440,7 @@ loc_1CA88:                              ; CODE XREF: seg002:0801↑J
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
 
-loc_1CA90:                              ; CODE XREF: sub_1CA20+1C↑j
+loc_1CA90:                              ; CODE XREF: spell_nc_Town_Portal+1C↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1CA9C
                 call    sub_1CEFA
@@ -1428,24 +1448,25 @@ loc_1CA90:                              ; CODE XREF: sub_1CA20+1C↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CA9C:                              ; CODE XREF: sub_1CA20+74↑j
+loc_1CA9C:                              ; CODE XREF: spell_nc_Town_Portal+74↑j
                 call    sub_1CE9E
 
-loc_1CA9F:                              ; CODE XREF: sub_1CA20+10↑j
-                                        ; sub_1CA20+79↑j
+loc_1CA9F:                              ; CODE XREF: spell_nc_Town_Portal+10↑j
+                                        ; spell_nc_Town_Portal+79↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CA20       endp
+spell_nc_Town_Portal endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Resurrection
 ; Attributes: bp-based frame
 
-sub_1CAA4       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1C2↓p
+spell_nc_Resurrection proc near         ; CODE XREF: cast_noncombat_spell:loc_1D1C2↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -1467,13 +1488,13 @@ var_2           = byte ptr -2
                 cmp     byte ptr [bx+26h], 80h
                 jnb     short loc_1CACE
 
-loc_1CAC8:                              ; CODE XREF: sub_1CAA4+50↓j
+loc_1CAC8:                              ; CODE XREF: spell_nc_Resurrection+50↓j
                 call    sub_1CEFA
                 jmp     short loc_1CB0B
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CACE:                              ; CODE XREF: sub_1CAA4+22↑j
+loc_1CACE:                              ; CODE XREF: spell_nc_Resurrection+22↑j
                 mov     ax, 1
                 push    ax
                 push    word_23626
@@ -1497,20 +1518,21 @@ loc_1CACE:                              ; CODE XREF: sub_1CAA4+22↑j
                 mov     byte ptr [bx+26h], 0
                 call    sub_1CE9E
 
-loc_1CB0B:                              ; CODE XREF: sub_1CAA4+10↑j
-                                        ; sub_1CAA4+27↑j
+loc_1CB0B:                              ; CODE XREF: spell_nc_Resurrection+10↑j
+                                        ; spell_nc_Resurrection+27↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CAA4       endp
+spell_nc_Resurrection endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Uncurse Item
 ; Attributes: bp-based frame
 
-sub_1CB10       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1C8↓p
+spell_nc_Uncurse_Item proc near         ; CODE XREF: cast_noncombat_spell:loc_1D1C8↓p
 
 var_2           = word ptr -2
 
@@ -1531,19 +1553,19 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CB34:                              ; CODE XREF: sub_1CB10+1C↑j
+loc_1CB34:                              ; CODE XREF: spell_nc_Uncurse_Item+1C↑j
                 mov     si, [bp+var_2]
                 mov     bx, word_23626
                 mov     byte ptr [bx+si+40h], 1
                 call    sub_1CE9E       ; CODE XREF: seg002:0A65↑J
 
-loc_1CB42:                              ; CODE XREF: sub_1CB10+10↑j
-                                        ; sub_1CB10+21↑j
+loc_1CB42:                              ; CODE XREF: spell_nc_Uncurse_Item+10↑j
+                                        ; spell_nc_Uncurse_Item+21↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CB10       endp
+spell_nc_Uncurse_Item endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1552,8 +1574,8 @@ sub_1CB10       endp
 
 ; Attributes: bp-based frame
 
-sub_1CB48       proc near               ; CODE XREF: sub_1C648+7↑p
-                                        ; sub_1C68C+D↑p ...
+sub_1CB48       proc near               ; CODE XREF: spell_nc_Recharge_Item+7↑p
+                                        ; spell_nc_Duplication+D↑p ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1658,9 +1680,10 @@ sub_1CB48       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Awaken / Awaken
 ; Attributes: bp-based frame
 
-sub_1CBEC       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D138↓p
+spell_nc_Awaken proc near               ; CODE XREF: cast_noncombat_spell:loc_1D138↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -1679,7 +1702,7 @@ var_2           = byte ptr -2
                 jmp     short loc_1CC20
 ; ---------------------------------------------------------------------------
 
-loc_1CC02:                              ; CODE XREF: sub_1CBEC+38↓j
+loc_1CC02:                              ; CODE XREF: spell_nc_Awaken+38↓j
                 push    si
                 call    thk_char_ptr
                 add     sp, 2
@@ -1690,12 +1713,12 @@ loc_1CC02:                              ; CODE XREF: sub_1CBEC+38↓j
                 jnb     short loc_1CC19
                 and     [bp+var_2], 6Fh
 
-loc_1CC19:                              ; CODE XREF: sub_1CBEC+27↑j
+loc_1CC19:                              ; CODE XREF: spell_nc_Awaken+27↑j
                 mov     al, [bp+var_2]
                 mov     [di+26h], al
                 inc     si
 
-loc_1CC20:                              ; CODE XREF: sub_1CBEC+14↑j
+loc_1CC20:                              ; CODE XREF: spell_nc_Awaken+14↑j
                 cmp     si, g_party_size
                 jl      short loc_1CC02
                 mov     [bp+var_4], di
@@ -1703,19 +1726,21 @@ loc_1CC20:                              ; CODE XREF: sub_1CBEC+14↑j
                 mov     byte_1DBE7, 1
                 call    sub_1CE9E
 
-loc_1CC34:                              ; CODE XREF: sub_1CBEC+D↑j
+loc_1CC34:                              ; CODE XREF: spell_nc_Awaken+D↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CBEC       endp
+spell_nc_Awaken endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Protection from Magic
 
-sub_1CC3A       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D0FC↓p
+spell_nc_Protection_from_Magic proc near
+                                        ; CODE XREF: cast_noncombat_spell:loc_1D0FC↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1CC5A
@@ -1727,32 +1752,34 @@ sub_1CC3A       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-locret_1CC5A:                           ; CODE XREF: sub_1CC3A+5↑j
+locret_1CC5A:                           ; CODE XREF: spell_nc_Protection_from_Magic+5↑j
                 retn
-sub_1CC3A       endp
+spell_nc_Protection_from_Magic endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; First Aid
 
-sub_1CC5C       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D13E↓p
+spell_nc_First_Aid proc near            ; CODE XREF: cast_noncombat_spell:loc_1D13E↓p
                 mov     ax, 8
                 push    ax
                 call    sub_1CE46
                 add     sp, 2
                 retn
-sub_1CC5C       endp
+spell_nc_First_Aid endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Power Cure
 ; Attributes: bp-based frame
 
-sub_1CC68       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D14A↓p
+spell_nc_Power_Cure proc near           ; CODE XREF: cast_noncombat_spell:loc_1D14A↓p
 
 var_4           = word ptr -4
 var_2           = byte ptr -2
@@ -1769,7 +1796,7 @@ var_2           = byte ptr -2
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CC7E:                              ; CODE XREF: sub_1CC68+2E↓j
+loc_1CC7E:                              ; CODE XREF: spell_nc_Power_Cure+2E↓j
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 1
@@ -1778,7 +1805,7 @@ loc_1CC7E:                              ; CODE XREF: sub_1CC68+2E↓j
                 add     sp, 4
                 add     si, ax
 
-loc_1CC8E:                              ; CODE XREF: sub_1CC68+13↑j
+loc_1CC8E:                              ; CODE XREF: spell_nc_Power_Cure+13↑j
                 mov     al, [bp+var_2]
                 dec     [bp+var_2]
                 or      al, al
@@ -1791,29 +1818,32 @@ loc_1CC8E:                              ; CODE XREF: sub_1CC68+13↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CC68       endp
+spell_nc_Power_Cure endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Cure Wounds
 
-sub_1CCA8       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D150↓p
+spell_nc_Cure_Wounds proc near          ; CODE XREF: cast_noncombat_spell:loc_1D150↓p
                 mov     ax, 0Fh
                 push    ax
                 call    sub_1CE46
                 add     sp, 2
                 retn
-sub_1CCA8       endp
+spell_nc_Cure_Wounds endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Protection From Elements
 
-sub_1CCB4       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D15C↓p
+spell_nc_Protection_From_Elements proc near
+                                        ; CODE XREF: cast_noncombat_spell:loc_1D15C↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1CCD4 ; CODE XREF: seg002:08FD↑J
@@ -1825,18 +1855,19 @@ sub_1CCB4       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-locret_1CCD4:                           ; CODE XREF: sub_1CCB4+5↑j
+locret_1CCD4:                           ; CODE XREF: spell_nc_Protection_From_Elements+5↑j
                 retn
-sub_1CCB4       endp
+spell_nc_Protection_From_Elements endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Cure Poison
 ; Attributes: bp-based frame
 
-sub_1CCD6       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D168↓p
+spell_nc_Cure_Poison proc near          ; CODE XREF: cast_noncombat_spell:loc_1D168↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1861,29 +1892,30 @@ var_2           = word ptr -2
                 jnz     short loc_1CD09
                 mov     byte_1DBE7, 1
 
-loc_1CD09:                              ; CODE XREF: sub_1CCD6+2C↑j
+loc_1CD09:                              ; CODE XREF: spell_nc_Cure_Poison+2C↑j
                 call    sub_1CE9E
                 jmp     short loc_1CD11
 ; ---------------------------------------------------------------------------
 
-loc_1CD0E:                              ; CODE XREF: sub_1CCD6+21↑j
+loc_1CD0E:                              ; CODE XREF: spell_nc_Cure_Poison+21↑j
                 call    sub_1CEFA
 
-loc_1CD11:                              ; CODE XREF: sub_1CCD6+F↑j
-                                        ; sub_1CCD6+36↑j
+loc_1CD11:                              ; CODE XREF: spell_nc_Cure_Poison+F↑j
+                                        ; spell_nc_Cure_Poison+36↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CCD6       endp
+spell_nc_Cure_Poison endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Cure Disease
 ; Attributes: bp-based frame
 
-sub_1CD16       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D180↓p
+spell_nc_Cure_Disease proc near         ; CODE XREF: cast_noncombat_spell:loc_1D180↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1908,29 +1940,30 @@ var_2           = word ptr -2
                 jnz     short loc_1CD49
                 mov     byte_1DBE7, 1
 
-loc_1CD49:                              ; CODE XREF: sub_1CD16+2C↑j
+loc_1CD49:                              ; CODE XREF: spell_nc_Cure_Disease+2C↑j
                 call    sub_1CE9E
                 jmp     short loc_1CD51
 ; ---------------------------------------------------------------------------
 
-loc_1CD4E:                              ; CODE XREF: sub_1CD16+21↑j
+loc_1CD4E:                              ; CODE XREF: spell_nc_Cure_Disease+21↑j
                 call    sub_1CEFA
 
-loc_1CD51:                              ; CODE XREF: sub_1CD16+F↑j
-                                        ; sub_1CD16+36↑j
+loc_1CD51:                              ; CODE XREF: spell_nc_Cure_Disease+F↑j
+                                        ; spell_nc_Cure_Disease+36↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CD16       endp
+spell_nc_Cure_Disease endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Remove Condition
 ; Attributes: bp-based frame
 
-sub_1CD56       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D192↓p
+spell_nc_Remove_Condition proc near     ; CODE XREF: cast_noncombat_spell:loc_1D192↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1955,29 +1988,30 @@ var_2           = word ptr -2
                 jnz     short loc_1CD89
                 mov     byte_1DBE7, 1
 
-loc_1CD89:                              ; CODE XREF: sub_1CD56+2C↑j
+loc_1CD89:                              ; CODE XREF: spell_nc_Remove_Condition+2C↑j
                 call    sub_1CE9E
                 jmp     short loc_1CD91
 ; ---------------------------------------------------------------------------
 
-loc_1CD8E:                              ; CODE XREF: sub_1CD56+21↑j
+loc_1CD8E:                              ; CODE XREF: spell_nc_Remove_Condition+21↑j
                 call    sub_1CEFA
 
-loc_1CD91:                              ; CODE XREF: sub_1CD56+F↑j
-                                        ; sub_1CD56+36↑j
+loc_1CD91:                              ; CODE XREF: spell_nc_Remove_Condition+F↑j
+                                        ; spell_nc_Remove_Condition+36↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CD56       endp
+spell_nc_Remove_Condition endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Stone to Flesh
 ; Attributes: bp-based frame
 
-sub_1CD96       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1A4↓p
+spell_nc_Stone_to_Flesh proc near       ; CODE XREF: cast_noncombat_spell:loc_1D1A4↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2001,24 +2035,25 @@ var_2           = word ptr -2
                 jmp     short loc_1CDC5
 ; ---------------------------------------------------------------------------
 
-loc_1CDC2:                              ; CODE XREF: sub_1CD96+21↑j
+loc_1CDC2:                              ; CODE XREF: spell_nc_Stone_to_Flesh+21↑j
                 call    sub_1CEFA
 
-loc_1CDC5:                              ; CODE XREF: sub_1CD96+F↑j
-                                        ; sub_1CD96+2A↑j
+loc_1CDC5:                              ; CODE XREF: spell_nc_Stone_to_Flesh+F↑j
+                                        ; spell_nc_Stone_to_Flesh+2A↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CD96       endp
+spell_nc_Stone_to_Flesh endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; Raise Dead
 ; Attributes: bp-based frame
 
-sub_1CDCA       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1B0↓p
+spell_nc_Raise_Dead proc near           ; CODE XREF: cast_noncombat_spell:loc_1D1B0↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2038,13 +2073,13 @@ var_2           = word ptr -2
                 cmp     byte ptr [bx+26h], 81h
                 jz      short loc_1CDF2
 
-loc_1CDED:                              ; CODE XREF: sub_1CDCA+5C↓j
-                                        ; sub_1CDCA+65↓j
+loc_1CDED:                              ; CODE XREF: spell_nc_Raise_Dead+5C↓j
+                                        ; spell_nc_Raise_Dead+65↓j
                 call    sub_1CEFA
                 jmp     short loc_1CE41
 ; ---------------------------------------------------------------------------
 
-loc_1CDF2:                              ; CODE XREF: sub_1CDCA+21↑j
+loc_1CDF2:                              ; CODE XREF: spell_nc_Raise_Dead+21↑j
                 mov     ax, 1
                 push    ax
                 push    word_23626
@@ -2072,18 +2107,18 @@ loc_1CDF2:                              ; CODE XREF: sub_1CDCA+21↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CE32:                              ; CODE XREF: sub_1CDCA+57↑j
+loc_1CE32:                              ; CODE XREF: spell_nc_Raise_Dead+57↑j
                 mov     bx, [bp+var_2]
                 mov     byte ptr [bx+26h], 0
                 mov     word ptr [bx+5Eh], 1
                 call    sub_1CE9E
 
-loc_1CE41:                              ; CODE XREF: sub_1CDCA+F↑j
-                                        ; sub_1CDCA+26↑j
+loc_1CE41:                              ; CODE XREF: spell_nc_Raise_Dead+F↑j
+                                        ; spell_nc_Raise_Dead+26↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CDCA       endp
+spell_nc_Raise_Dead endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2092,8 +2127,8 @@ sub_1CDCA       endp
 
 ; Attributes: bp-based frame
 
-sub_1CE46       proc near               ; CODE XREF: sub_1CC5C+4↑p
-                                        ; sub_1CC68+34↑p ...
+sub_1CE46       proc near               ; CODE XREF: spell_nc_First_Aid+4↑p
+                                        ; spell_nc_Power_Cure+34↑p ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2290,8 +2325,8 @@ locret_1CF8B:                           ; CODE XREF: cast1_return_prompt+5↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CF8C:                              ; CODE XREF: sub_1C8F0+7↑p
-                                        ; sub_1C994:loc_1C99A↑p ...
+loc_1CF8C:                              ; CODE XREF: spell_nc_Restore_Alignment+7↑p
+                                        ; spell_nc_Rejuvenate:loc_1C99A↑p ...
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
@@ -2490,7 +2525,7 @@ loc_1D0E4:                              ; CODE XREF: cast_noncombat_spell+11↑j
 
 loc_1D0EA:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+120↓o
-                call    loc_1C23E       ; jumptable 0001D0D3 case 10
+                call    spell_nc_Jump   ; jumptable 0001D0D3 case 10
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
@@ -2508,7 +2543,7 @@ loc_1D0F6:                              ; CODE XREF: cast_noncombat_spell+11↑j
 
 loc_1D0FC:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+126↓o
-                call    sub_1CC3A       ; jumptable 0001D0D3 case 13
+                call    spell_nc_Protection_from_Magic ; jumptable 0001D0D3 case 13
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
@@ -2520,61 +2555,61 @@ loc_1D102:                              ; CODE XREF: cast_noncombat_spell+11↑j
 
 loc_1D108:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+132↓o
-                call    sub_1C4FC       ; jumptable 0001D0D3 case 19
+                call    spell_nc_Wizard_Eye ; jumptable 0001D0D3 case 19
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D10E:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+13A↓o
-                call    sub_1C550       ; jumptable 0001D0D3 case 23
+                call    spell_nc_Guard_Dog ; jumptable 0001D0D3 case 23
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D114:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+146↓o
-                call    sub_1C570       ; jumptable 0001D0D3 case 29
+                call    spell_nc_Shelter ; jumptable 0001D0D3 case 29
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D11A:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+148↓o
-                call    sub_1C590       ; jumptable 0001D0D3 case 30
+                call    spell_nc_Teleport ; jumptable 0001D0D3 case 30
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D120:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+150↓o
-                call    sub_1C648       ; jumptable 0001D0D3 case 34
+                call    spell_nc_Recharge_Item ; jumptable 0001D0D3 case 34
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D126:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+156↓o
-                call    sub_1C68C       ; jumptable 0001D0D3 case 37
+                call    spell_nc_Duplication ; jumptable 0001D0D3 case 37
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D12C:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+158↓o
-                call    sub_1C722       ; jumptable 0001D0D3 case 38
+                call    spell_nc_Etherealize ; jumptable 0001D0D3 case 38
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D132:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+16A↓o
-                call    sub_1C774       ; jumptable 0001D0D3 case 47
+                call    spell_nc_Enchant_Item ; jumptable 0001D0D3 case 47
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D138:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell:jpt_1D0D3↓o ...
-                call    sub_1CBEC       ; jumptable 0001D0D3 cases 0,49
+                call    spell_nc_Awaken ; jumptable 0001D0D3 cases 0,49
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D13E:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+172↓o
-                call    sub_1CC5C       ; jumptable 0001D0D3 case 51
+                call    spell_nc_First_Aid ; jumptable 0001D0D3 case 51
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
@@ -2586,134 +2621,134 @@ loc_1D144:                              ; CODE XREF: cast_noncombat_spell+11↑j
 
 loc_1D14A:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+176↓o
-                call    sub_1CC68       ; jumptable 0001D0D3 case 53
+                call    spell_nc_Power_Cure ; jumptable 0001D0D3 case 53
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D150:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+17A↓o
-                call    sub_1CCA8       ; jumptable 0001D0D3 case 55
+                call    spell_nc_Cure_Wounds ; jumptable 0001D0D3 case 55
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D156:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+17E↓o
-                call    sub_1C7DA       ; jumptable 0001D0D3 case 57
+                call    spell_nc_Nature_s_Gate ; jumptable 0001D0D3 case 57
                 jmp     def_1D0D3       ; CODE XREF: seg002:0825↑J
                                         ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D15C:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+182↓o
-                call    sub_1CCB4       ; jumptable 0001D0D3 case 59
+                call    spell_nc_Protection_From_Elements ; jumptable 0001D0D3 case 59
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D162:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+18A↓o
-                call    sub_1C87C       ; jumptable 0001D0D3 case 63
+                call    spell_nc_Create_Food ; jumptable 0001D0D3 case 63
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D168:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+18C↓o
-                call    sub_1CCD6       ; jumptable 0001D0D3 case 64
+                call    spell_nc_Cure_Poison ; jumptable 0001D0D3 case 64
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D16E:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+190↓o
-                call    sub_1C8A0       ; jumptable 0001D0D3 case 66
+                call    spell_nc_Lasting_Light ; jumptable 0001D0D3 case 66
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D174:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+192↓o
-                call    sub_1C8C8       ; jumptable 0001D0D3 case 67
+                call    spell_nc_Walk_on_Water ; jumptable 0001D0D3 case 67
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D17A:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+196↓o
-                call    sub_1C8E0       ; jumptable 0001D0D3 case 69
+                call    spell_nc_Air_Transmutation ; jumptable 0001D0D3 case 69
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D180:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+198↓o
-                call    sub_1CD16       ; jumptable 0001D0D3 case 70
+                call    spell_nc_Cure_Disease ; jumptable 0001D0D3 case 70
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D186:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+19A↓o
-                call    sub_1C8F0       ; jumptable 0001D0D3 case 71
+                call    spell_nc_Restore_Alignment ; jumptable 0001D0D3 case 71
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D18C:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+19C↓o
-                call    sub_1C92A       ; jumptable 0001D0D3 case 72
+                call    spell_nc_Surface ; jumptable 0001D0D3 case 72
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D192:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1A8↓o
-                call    sub_1CD56       ; jumptable 0001D0D3 case 78
+                call    spell_nc_Remove_Condition ; jumptable 0001D0D3 case 78
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D198:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1AA↓o
-                call    sub_1C984       ; jumptable 0001D0D3 case 79
+                call    spell_nc_Earth_Transmutation ; jumptable 0001D0D3 case 79
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D19E:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1AC↓o
-                call    sub_1C994       ; jumptable 0001D0D3 case 80
+                call    spell_nc_Rejuvenate ; jumptable 0001D0D3 case 80
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D1A4:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1AE↓o
-                call    sub_1CD96       ; jumptable 0001D0D3 case 81
+                call    spell_nc_Stone_to_Flesh ; jumptable 0001D0D3 case 81
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D1AA:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1B2↓o
-                call    sub_1CA00       ; jumptable 0001D0D3 case 83
+                call    spell_nc_Water_Transmutation ; jumptable 0001D0D3 case 83
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D1B0:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1BA↓o
-                call    sub_1CDCA       ; jumptable 0001D0D3 case 87
+                call    spell_nc_Raise_Dead ; jumptable 0001D0D3 case 87
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D1B6:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1BE↓o
-                call    sub_1CA10       ; jumptable 0001D0D3 case 89
+                call    spell_nc_Fire_Transmutation ; jumptable 0001D0D3 case 89
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D1BC:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1C2↓o
-                call    sub_1CA20       ; jumptable 0001D0D3 case 91
+                call    spell_nc_Town_Portal ; jumptable 0001D0D3 case 91
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D1C2:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1C8↓o
-                call    sub_1CAA4       ; jumptable 0001D0D3 case 94
+                call    spell_nc_Resurrection ; jumptable 0001D0D3 case 94
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
 loc_1D1C8:                              ; CODE XREF: cast_noncombat_spell+11↑j
                                         ; DATA XREF: cast_noncombat_spell+1CA↓o
-                call    sub_1CB10       ; jumptable 0001D0D3 case 95
+                call    spell_nc_Uncurse_Item ; jumptable 0001D0D3 case 95
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 jpt_1D0D3       dw offset loc_1D138     ; DATA XREF: cast_noncombat_spell+11↑r

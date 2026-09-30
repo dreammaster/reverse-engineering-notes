@@ -6,3 +6,40 @@
 1C3EE	spell_fly	"Fly to (A-E)?"
 1CF5C	cast1_return_prompt	"'Return' to cast"
 1D0C2	cast_noncombat_spell	(spell index) dispatch
+# spell implementations (targets of the jump table indexed by SPELLS.DAT index)
+1C1B4	spell_nc_Light	Light / Light
+1C1D2	spell_nc_Location	Location
+1C23E	spell_nc_Jump	Jump
+1C4FC	spell_nc_Wizard_Eye	Wizard Eye
+1C550	spell_nc_Guard_Dog	Guard Dog
+1C570	spell_nc_Shelter	Shelter
+1C590	spell_nc_Teleport	Teleport
+1C648	spell_nc_Recharge_Item	Recharge Item
+1C68C	spell_nc_Duplication	Duplication
+1C722	spell_nc_Etherealize	Etherealize
+1C774	spell_nc_Enchant_Item	Enchant Item
+1C7DA	spell_nc_Nature_s_Gate	Nature's Gate
+1C87C	spell_nc_Create_Food	Create Food
+1C8A0	spell_nc_Lasting_Light	Lasting Light
+1C8C8	spell_nc_Walk_on_Water	Walk on Water
+1C8E0	spell_nc_Air_Transmutation	Air Transmutation
+1C8F0	spell_nc_Restore_Alignment	Restore Alignment
+1C92A	spell_nc_Surface	Surface
+1C984	spell_nc_Earth_Transmutation	Earth Transmutation
+1C994	spell_nc_Rejuvenate	Rejuvenate
+1CA00	spell_nc_Water_Transmutation	Water Transmutation
+1CA10	spell_nc_Fire_Transmutation	Fire Transmutation
+1CA20	spell_nc_Town_Portal	Town Portal
+1CAA4	spell_nc_Resurrection	Resurrection
+1CB10	spell_nc_Uncurse_Item	Uncurse Item
+1CBEC	spell_nc_Awaken	Awaken / Awaken
+1CC3A	spell_nc_Protection_from_Magic	Protection from Magic
+1CC5C	spell_nc_First_Aid	First Aid
+1CC68	spell_nc_Power_Cure	Power Cure
+1CCA8	spell_nc_Cure_Wounds	Cure Wounds
+1CCB4	spell_nc_Protection_From_Elements	Protection From Elements
+1CCD6	spell_nc_Cure_Poison	Cure Poison
+1CD16	spell_nc_Cure_Disease	Cure Disease
+1CD56	spell_nc_Remove_Condition	Remove Condition
+1CD96	spell_nc_Stone_to_Flesh	Stone to Flesh
+1CDCA	spell_nc_Raise_Dead	Raise Dead
