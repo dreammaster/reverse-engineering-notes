@@ -1,10 +1,12 @@
 #include "WxStub.h"
 
 #include <cerrno>
+#include <chrono>
 #include <cstdarg>
 #include <cstdio>
 #include <direct.h>
 #include <sys/stat.h>
+#include <thread>
 
 int wxLog::loglevel = 0;
 
@@ -44,6 +46,15 @@ bool wxInitialize() {
 
 wxString wxConvertMB2WX(const char *s) {
 	return wxString(s);
+}
+
+long long wxGetLocalTimeMillis() {
+	using namespace std::chrono;
+	return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
+
+void wxMilliSleep(long ms) {
+	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 void toUTF(wxString *out, const char *utf8) {

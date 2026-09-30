@@ -155,7 +155,7 @@ TStandardPaths	done	13	552187	553383
 TTempFile	todo	2	553440	553545
 md5	todo	5	554434	556285
 TTextLanguage	todo	3	558635	1524382
-TTimer	stub	6	559372	559473
+TTimer	done	6	559372	559473
 wxFileConfig	todo	1	559663	559663
 ConfigSetting	todo	3	579294	580506
 std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >	todo	1	581350	581350

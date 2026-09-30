@@ -442,6 +442,16 @@ private:
 bool wxInitialize();
 wxString wxConvertMB2WX(const char *s);
 
+// Confirmed call shape only (TTimer::TTimer/SetTime/GetTime, Deponia_Linux.
+// asm lines 559379, 559418, 559442) - real wxGetLocalTimeMillis() returns
+// milliseconds since the Unix epoch as a wxLongLong; backed by
+// system_clock since only elapsed-time differences are ever taken from it.
+long long wxGetLocalTimeMillis();
+// Confirmed call shape only (TTimer::WaitUntil, Deponia_Linux.asm line
+// 559476) - real wxMilliSleep() blocks the calling thread for `ms`
+// milliseconds.
+void wxMilliSleep(long ms);
+
 // toUTF(wxString*, const char*) - converts a narrow (assumed UTF-8) C string
 // into a wxString, writing into the caller-provided output parameter (this
 // matches the calling convention seen at every reversed call site so far).

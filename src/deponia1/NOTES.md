@@ -1755,6 +1755,22 @@ been written against the old (wrong) TSprite model and referenced fields
 modeled). The exact `wxString::privFormat()` output shape remains an
 approximation, as it already was before this fix.
 
+## TTimer
+
+Confirmed in full (Deponia_Linux.asm lines 559372-559478, all 6
+manifest-listed methods): a millisecond stopwatch backed by real
+wxGetLocalTimeMillis()/wxMilliSleep() (both newly added to WxStub, backed
+by `std::chrono::system_clock`/`std::this_thread::sleep_for`) rather than
+the pre-existing stub's SDL_GetTicks()-based approximation - functionally
+equivalent for elapsed-time purposes, just matching the real backing call
+now. `GetTime()`'s real return type is `long` (confirmed via a
+`wxLongLong::ToLong()` call), not the `std::int64_t` the earlier stub used.
+`WaitUntil(ms)` is a pure tail call to `wxMilliSleep(ms)` that ignores
+`this` entirely, despite its name suggesting it references the timer's own
+state. The constructor confirms a second qword right after the timestamp,
+always zeroed and never read by any of these 6 methods - not modeled,
+since nothing depends on it.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

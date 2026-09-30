@@ -1,15 +1,23 @@
 #include "TTimer.h"
 
-#include "SdlStub.h"
+#include "WxStub.h"
 
-// GetTime()'s callers (TMasterControl::Draw/ScrollUpdate) all treat it as
-// "milliseconds elapsed since the last SetTime()", so that's what this
-// implements; SDL_GetTicks (already stubbed for main()) is a reasonable
-// backing clock.
-void TTimer::SetTime() {
-	_setAt = SDL_GetTicks();
+TTimer::TTimer() {
+	_setAt = wxGetLocalTimeMillis();
 }
 
-std::int64_t TTimer::GetTime() const {
-	return static_cast<std::int64_t>(SDL_GetTicks()) - _setAt;
+long TTimer::GetTime() const {
+	return static_cast<long>(wxGetLocalTimeMillis() - _setAt);
+}
+
+void TTimer::SetTime() {
+	_setAt = wxGetLocalTimeMillis();
+}
+
+void TTimer::AdjustTimer(long delta) {
+	_setAt += delta;
+}
+
+void TTimer::WaitUntil(long ms) {
+	wxMilliSleep(ms);
 }
