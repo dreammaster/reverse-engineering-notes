@@ -3205,7 +3205,7 @@ loc_193C5:                              ; CODE XREF: evt_wait_key+2B↓j
                                         ; evt_wait_key+30↓j ...
                 cmp     [bp+arg_0], 0
                 jz      short loc_193D0
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 jmp     short loc_193DF
 ; ---------------------------------------------------------------------------
 
@@ -3278,7 +3278,7 @@ arg_0           = byte ptr  4
 loc_1942D:                              ; CODE XREF: evt_ask_yes_no+3C↓j
                 cmp     [bp+arg_0], 0
                 jz      short loc_19438
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 jmp     short loc_19447
 ; ---------------------------------------------------------------------------
 
@@ -5344,7 +5344,7 @@ loc_1A0AC:                              ; CODE XREF: evt_select_char+22↑j
                 align 2
 
 loc_1A0B2:                              ; CODE XREF: evt_select_char+1B↑j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
 
 loc_1A0B5:                              ; CODE XREF: evt_select_char+27↑j
                                         ; evt_select_char+2D↑j

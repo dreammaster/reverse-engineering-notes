@@ -290,7 +290,7 @@ loc_1C3B7:                              ; CODE XREF: spell_view_monster+186↑j
                 push    ax
                 call    thk_text_putc
                 add     sp, 2
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 mov     byte_1DC78, 1
 
 loc_1C3D0:                              ; CODE XREF: spell_view_monster+11↑j
@@ -2858,7 +2858,7 @@ loc_1D2E6:                              ; CODE XREF: cast2_show_text+32↑j
                 add     sp, 2
 
 loc_1D30C:                              ; CODE XREF: cast2_show_text+98↓j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2

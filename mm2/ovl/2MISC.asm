@@ -970,7 +970,7 @@ loc_1C88B:                              ; CODE XREF: sub_1C824+F↑j
                 add     sp, 2
                 call    treasure_share
                 mov     byte_2294F, 0FDh
-                call    thk_play_music_step
+                call    thk_monster_anim_step
 
 loc_1C8A7:                              ; CODE XREF: sub_1C824+6C↑j
                 mov     ax, 1

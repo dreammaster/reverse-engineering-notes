@@ -189,7 +189,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X180BE);
 	op_hex		(x,	1);
 	create_insn	(0X180C6);
-	set_name	(0X180C6,	"combat_monster_idle");
+	set_name	(0X180C6,	"combat_monster_waits");
 	create_insn	(x=0X180C9);
 	op_hex		(x,	1);
 	create_insn	(x=0X180CC);
@@ -288,7 +288,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1827E);
 	op_stkvar	(x,	0);
+	set_cmt	(0X18290,	"random living character",	0);
 	create_insn	(0X18290);
+	set_name	(0X18290,	"combat_pick_random_target");
 	create_insn	(x=0X18293);
 	op_hex		(x,	1);
 	create_insn	(x=0X182A1);
@@ -320,6 +322,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X182F7);
 	op_stkvar	(x,	1);
 	create_insn	(0X18302);
+	set_name	(0X18302,	"combat_next_front_rank_target");
 	create_insn	(x=0X18305);
 	op_hex		(x,	1);
 	create_insn	(x=0X18308);
@@ -335,7 +338,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1835E);
 	op_hex		(x,	1);
+	set_cmt	(0X18368,	"\"*** Spell Failed ***\"",	0);
 	create_insn	(0X18368);
+	set_name	(0X18368,	"combat_spell_failed");
 	create_insn	(x=0X1836E);
 	op_hex		(x,	1);
 	create_insn	(x=0X1837C);
@@ -347,7 +352,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18390);
 	op_hex		(x,	1);
+	set_cmt	(0X18398,	"monster attacks with record[14]+1 blows",	0);
 	create_insn	(0X18398);
+	set_name	(0X18398,	"combat_monster_melee");
 	create_insn	(x=0X1839B);
 	op_hex		(x,	1);
 	create_insn	(x=0X183A7);
@@ -389,8 +396,12 @@ static Bytes_0(void) {
 	create_insn	(x=0X1844E);
 	op_hex		(x,	1);
 	create_insn	(0X1845A);
+	set_name	(0X1845A,	"combat_monster_ranged_attack");
 	create_insn	(0X1846C);
+	set_name	(0X1846C,	"combat_monster_melee_attack");
+	set_cmt	(0X1847E,	"uses left, silenced flag, cast chance",	0);
 	create_insn	(0X1847E);
+	set_name	(0X1847E,	"combat_monster_spell_roll");
 	create_insn	(x=0X18481);
 	op_hex		(x,	1);
 	create_insn	(x=0X18485);
@@ -410,6 +421,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X184C9);
 	op_stkvar	(x,	1);
 	create_insn	(0X184D4);
+	set_name	(0X184D4,	"combat_monster_show_line");
 	create_insn	(x=0X184DE);
 	op_hex		(x,	1);
 	create_insn	(x=0X184E1);
@@ -418,7 +430,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X184F3);
 	op_hex		(x,	1);
+	set_cmt	(0X184FE,	"one monster's action",	0);
 	create_insn	(0X184FE);
+	set_name	(0X184FE,	"combat_monster_turn");
 	create_insn	(x=0X18501);
 	op_hex		(x,	1);
 	create_insn	(x=0X18505);
@@ -455,6 +469,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18666);
 	op_hex		(x,	1);
 	create_insn	(0X18674);
+	set_name	(0X18674,	"combat_target_flag");
 	create_insn	(x=0X18677);
 	op_hex		(x,	1);
 	create_insn	(x=0X1867A);
@@ -463,7 +478,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X18690);
 	create_insn	(0X18696);
-	set_name	(0X18696,	"combat_cast_at_target");
+	set_name	(0X18696,	"combat_party_spell_hits");
 	create_insn	(x=0X18699);
 	op_hex		(x,	1);
 	create_insn	(x=0X1869D);
@@ -604,6 +619,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X188EF);
 	create_insn	(0X188FC);
+	set_name	(0X188FC,	"combat_monster_rewards");
 	create_insn	(x=0X188FF);
 	op_hex		(x,	1);
 	create_insn	(x=0X18902);
@@ -634,6 +650,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18988);
 	op_stkvar	(x,	1);
 	create_insn	(0X189D2);
+	set_name	(0X189D2,	"combat_hireling_flags");
 	create_insn	(x=0X189D5);
 	op_hex		(x,	1);
 	create_insn	(x=0X189E2);
@@ -657,6 +674,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18A18);
 	op_stkvar	(x,	0);
 	create_insn	(0X18A22);
+	set_name	(0X18A22,	"combat_remove_monster");
 	create_insn	(x=0X18A25);
 	op_hex		(x,	1);
 	create_insn	(x=0X18A44);
@@ -678,6 +696,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18AAE);
 	op_hex		(x,	1);
 	create_insn	(0X18AB8);
+	set_name	(0X18AB8,	"combat_monster_gone_text");
 	create_insn	(x=0X18AC1);
 	op_hex		(x,	1);
 	create_insn	(x=0X18ACF);
@@ -691,6 +710,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18AEF);
 	op_hex		(x,	1);
 	create_insn	(0X18AF4);
+	set_name	(0X18AF4,	"combat_kill_monster");
 	create_insn	(x=0X18AF7);
 	op_hex		(x,	1);
 	create_insn	(x=0X18B12);
@@ -705,6 +725,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18B35);
 	op_stkvar	(x,	0);
 	create_insn	(0X18B3E);
+	set_name	(0X18B3E,	"combat_damage_monster");
 	create_insn	(x=0X18B41);
 	op_hex		(x,	1);
 	create_insn	(x=0X18B48);
@@ -727,6 +748,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18B9C);
 	op_hex		(x,	1);
 	create_insn	(0X18BAE);
+	set_name	(0X18BAE,	"combat_attack_summary_text");
 	create_insn	(x=0X18BB9);
 	op_hex		(x,	1);
 	create_insn	(x=0X18BCD);
@@ -772,6 +794,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18C73);
 	op_hex		(x,	1);
 	create_insn	(0X18C78);
+	set_name	(0X18C78,	"combat_party_attack_result");
 	create_insn	(x=0X18C7B);
 	op_hex		(x,	1);
 	create_insn	(x=0X18C7E);
@@ -849,7 +872,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18DA3);
 	op_hex		(x,	1);
 	create_insn	(0X18DAA);
-	set_name	(0X18DAA,	"combat_party_fight_or_shoot");
+	set_name	(0X18DAA,	"combat_party_attack");
 	create_insn	(x=0X18DAD);
 	op_hex		(x,	1);
 	create_insn	(x=0X18DB2);
@@ -1020,16 +1043,19 @@ static Bytes_0(void) {
 	create_insn	(x=0X190B6);
 	op_stkvar	(x,	1);
 	create_insn	(0X190C0);
+	set_name	(0X190C0,	"combat_party_shoot");
 	create_insn	(x=0X190C8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X190D1);
 	op_hex		(x,	1);
 	create_insn	(0X190D6);
+	set_name	(0X190D6,	"combat_party_fight");
 	create_insn	(x=0X190DE);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X190E7);
 	op_hex		(x,	1);
 	create_insn	(0X190EC);
+	set_name	(0X190EC,	"combat_party_flees");
 	create_insn	(x=0X190EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X190F5);
@@ -1047,6 +1073,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X19140);
 	op_stkvar	(x,	0);
 	create_insn	(0X1914A);
+	set_name	(0X1914A,	"combat_char_runs");
 	create_insn	(x=0X1914D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1915C);
@@ -1068,6 +1095,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X191A2);
 	op_stkvar	(x,	1);
 	create_insn	(0X191CC);
+	set_name	(0X191CC,	"combat_wait_command_key");
 	create_insn	(x=0X191CF);
 	op_hex		(x,	1);
 	create_insn	(x=0X191D7);
@@ -1099,6 +1127,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X19262);
 	op_stkvar	(x,	1);
 	create_insn	(0X1926A);
+	set_name	(0X1926A,	"combat_menu_item");
 	create_insn	(x=0X1926E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X19282);
@@ -1175,7 +1204,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X193A7);
 	op_stkvar	(x,	0);
 	create_insn	(0X193B2);
-	set_name	(0X193B2,	"combat_round");
+	set_name	(0X193B2,	"combat_party_turn");
 	create_insn	(x=0X193B5);
 	op_hex		(x,	1);
 	create_insn	(x=0X193B9);
@@ -1330,6 +1359,7 @@ static Bytes_0(void) {
 	set_name	(0X1959A,	"def_19573");
 	create_insn	(0X195A3);
 	create_insn	(0X195A8);
+	set_name	(0X195A8,	"combat_init_monster");
 	create_insn	(x=0X195AC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X195B7);
@@ -1337,6 +1367,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X195C1);
 	op_hex		(x,	1);
 	create_insn	(0X195DC);
+	set_name	(0X195DC,	"combat_init_monsters");
 	create_insn	(x=0X195DF);
 	op_hex		(x,	1);
 	create_insn	(x=0X195E3);
@@ -1366,6 +1397,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X19636);
 	op_stkvar	(x,	0);
 	create_insn	(0X19640);
+	set_name	(0X19640,	"combat_init_ranks");
 	create_insn	(x=0X19643);
 	op_hex		(x,	1);
 	create_insn	(x=0X1965F);
@@ -1397,6 +1429,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1971E);
 	op_hex		(x,	1);
 	create_insn	(0X1974C);
+	set_name	(0X1974C,	"combat_party_strength");
 	create_insn	(x=0X1974F);
 	op_hex		(x,	1);
 	create_insn	(x=0X19752);
@@ -1436,6 +1469,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X197DB);
 	op_stkvar	(x,	1);
 	create_insn	(0X197E6);
+	set_name	(0X197E6,	"combat_generate_encounter");
 	create_insn	(x=0X197E9);
 	op_hex		(x,	1);
 	create_insn	(x=0X197FC);
@@ -1511,6 +1545,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X198F0);
 	op_stkvar	(x,	0);
 	create_insn	(0X198FE);
+	set_name	(0X198FE,	"combat_encounter_ok");
 	create_insn	(x=0X19901);
 	op_hex		(x,	1);
 	create_insn	(x=0X19906);
@@ -1558,8 +1593,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X19992);
 	op_stkvar	(x,	0);
 	create_insn	(0X199B8);
+	set_name	(0X199B8,	"combat_build_encounter");
 	create_insn	(0X199BA);
 	create_insn	(0X199C8);
+	set_name	(0X199C8,	"combat_battle_number_text");
 	create_insn	(x=0X199CB);
 	op_hex		(x,	1);
 	create_insn	(x=0X199DB);
@@ -1579,6 +1616,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X1D850);
 	op_plain_offset	(x,	129,	0X1D850);
 	create_insn	(0X19A3C);
+	set_name	(0X19A3C,	"combat_drop_treasure_item");
 	create_insn	(x=0X19A3F);
 	op_hex		(x,	1);
 	create_insn	(x=0X19A43);
@@ -1658,6 +1696,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X19B7C);
 	op_stkvar	(x,	1);
 	create_insn	(0X19B88);
+	set_name	(0X19B88,	"combat_treasure_roll");
 	create_insn	(x=0X19B8B);
 	op_hex		(x,	1);
 	create_insn	(x=0X19B99);
@@ -1691,7 +1730,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X19BEF);
 	op_stkvar	(x,	0);
+	set_cmt	(0X19BF8,	"\"Victory!\", experience, treasure",	0);
 	create_insn	(0X19BF8);
+	set_name	(0X19BF8,	"combat_victory");
 	create_insn	(x=0X19BFB);
 	op_hex		(x,	1);
 	create_insn	(x=0X19BFE);
@@ -1788,6 +1829,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X19DAF);
 	op_hex		(x,	1);
 	create_insn	(0X19DBE);
+	set_name	(0X19DBE,	"combat_draw_monster_line");
 	create_insn	(x=0X19DC1);
 	op_hex		(x,	1);
 	create_insn	(x=0X19DC5);
@@ -1886,6 +1928,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X19F3C);
 	op_hex		(x,	1);
 	create_insn	(0X19F44);
+	set_name	(0X19F44,	"combat_draw_party_hp");
 	create_insn	(x=0X19F47);
 	op_hex		(x,	1);
 	create_insn	(x=0X19F4C);
@@ -1971,6 +2014,7 @@ static Bytes_0(void) {
 	create_insn	(0X1A07A);
 	create_insn	(0X1A080);
 	create_insn	(0X1A086);
+	set_name	(0X1A086,	"combat_draw_monster_list");
 	create_insn	(x=0X1A089);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A08D);
@@ -1990,7 +2034,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A0C8);
 	op_hex		(x,	1);
 	create_insn	(0X1A0CE);
+	set_cmt	(0X1A0D4,	"speed-ordered actions until victory/defeat/flight",	0);
 	create_insn	(0X1A0D4);
+	set_name	(0X1A0D4,	"combat_battle_loop");
 	create_insn	(x=0X1A0D7);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A0DB);
@@ -2100,7 +2146,7 @@ static Bytes_0(void) {
 	create_insn	(0X1A283);
 	create_insn	(0X1A290);
 	create_insn	(0X1A2A6);
-	set_name	(0X1A2A6,	"combat_start");
+	set_name	(0X1A2A6,	"combat_encounter");
 	create_insn	(x=0X1A2A9);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A2AD);
@@ -2371,6 +2417,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A770);
 	op_hex		(x,	1);
 	create_insn	(0X1A77E);
+	set_name	(0X1A77E,	"combat_over_check");
 	create_insn	(x=0X1A781);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A784);
@@ -2442,7 +2489,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A878);
 	op_stkvar	(x,	0);
 	create_insn	(0X1A882);
-	set_name	(0X1A882,	"combat_show_effects");
+	set_name	(0X1A882,	"combat_show_protection");
 	create_insn	(x=0X1A885);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A88A);
@@ -2523,7 +2570,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A9CA);
 	op_hex		(x,	1);
 	create_insn	(0X1A9E2);
-	set_name	(0X1A9E2,	"combat_delay_prot_quick");
+	set_name	(0X1A9E2,	"combat_delay_prompt");
 	create_insn	(x=0X1A9E5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A9F8);
@@ -2809,7 +2856,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AFDC);
 	op_hex		(x,	1);
 	create_insn	(0X1AFE2);
-	set_name	(0X1AFE2,	"combat_apply_monster_status");
+	set_name	(0X1AFE2,	"combat_apply_touch_effect");
 	create_insn	(x=0X1AFE5);
 	op_stkvar	(x,	1);
 	set_cmt	(0X1AFF6,	"switch 17 cases",	0);
@@ -3254,7 +3301,7 @@ static Functions_0(void) {
 	set_frame_size(0X17E10, 0, 2, 0);
 	add_func    (0X17E52,0X17FB1);
 	set_func_flags(0X17E52,0x5410);
-	set_func_cmt(0X17E52,	"\" goes down!\", possible special attack effect of the monster", 0);
+	set_func_cmt(0X17E52,	"\" goes down!\", possible touch effect of the monster", 0);
 	set_frame_size(0X17E52, 0X6, 2, 0);
 	add_func    (0X17FB2,0X18055);
 	set_func_flags(0X17FB2,0x5410);
@@ -3266,48 +3313,55 @@ static Functions_0(void) {
 	set_frame_size(0X18056, 0X4, 2, 0);
 	add_func    (0X180C6,0X18149);
 	set_func_flags(0X180C6,0x5410);
+	set_func_cmt(0X180C6,	"\" waits for opening!\" / \" adds friends!\"", 0);
 	set_frame_size(0X180C6, 0X4, 2, 0);
 	add_func    (0X1814A,0X18510);
 	set_func_flags(0X1814A,0x5410);
-	set_func_cmt(0X1814A,	"\" advances!\" (swap with front rank)", 0);
+	set_func_cmt(0X1814A,	"\" advances!\" (swap with the front rank)", 0);
 	set_frame_size(0X1814A, 0X18, 2, 0);
 	add_func    (0X18674,0X18696);
 	set_func_flags(0X18674,0x5410);
 	set_frame_size(0X18674, 0X2, 2, 0);
 	add_func    (0X18696,0X188FC);
 	set_func_flags(0X18696,0x5410);
-	set_func_cmt(0X18696,	"\" casts a spell:\", \" is not affected!\", \" takes \"", 0);
+	set_func_cmt(0X18696,	"\" casts a spell:\", \" is not affected!\", \" takes \", \" is <status>!\"", 0);
 	set_frame_size(0X18696, 0XE, 2, 0);
 	add_func    (0X188FC,0X189D1);
 	set_func_flags(0X188FC,0x5410);
+	set_func_cmt(0X188FC,	"exp/gold/gems for a kill", 0);
 	set_frame_size(0X188FC, 0X4, 2, 0);
 	add_func    (0X189D2,0X18A21);
 	set_func_flags(0X189D2,0x5410);
 	set_frame_size(0X189D2, 0X6, 2, 0);
 	add_func    (0X18A22,0X18AB7);
 	set_func_flags(0X18A22,0x5410);
+	set_func_cmt(0X18A22,	"shift monster arrays down", 0);
 	set_frame_size(0X18A22, 0X8, 2, 0);
 	add_func    (0X18AB8,0X18AF3);
 	set_func_flags(0X18AB8,0x5400);
+	set_func_cmt(0X18AB8,	"\" runs away!\" / \" goes down!\"", 0);
 	set_frame_size(0X18AB8, 0, 0, 0);
 	add_func    (0X18AF4,0X18B3E);
 	set_func_flags(0X18AF4,0x5410);
 	set_frame_size(0X18AF4, 0X4, 2, 0);
 	add_func    (0X18B3E,0X18BAD);
 	set_func_flags(0X18B3E,0x5410);
+	set_func_cmt(0X18B3E,	"word_27824 damage to monster byte_2781E", 0);
 	set_frame_size(0X18B3E, 0X6, 2, 0);
 	add_func    (0X18BAE,0X18C77);
 	set_func_flags(0X18BAE,0x5400);
+	set_func_cmt(0X18BAE,	"\"N time(s) and hit M time(s) for X point(s)\"", 0);
 	set_frame_size(0X18BAE, 0, 0, 0);
 	add_func    (0X18C78,0X18D7A);
 	set_func_flags(0X18C78,0x5410);
+	set_func_cmt(0X18C78,	"\" shoots \", \" attacks \", \" back stabs\", \" criticals\"", 0);
 	set_frame_size(0X18C78, 0X6, 2, 0);
 	add_func    (0X18D7A,0X18DA9);
 	set_func_flags(0X18D7A,0x5410);
 	set_frame_size(0X18D7A, 0X2, 2, 0);
 	add_func    (0X18DAA,0X190BF);
 	set_func_flags(0X18DAA,0x5410);
-	set_func_cmt(0X18DAA,	"\"Fight\", \"Shoot\"", 0);
+	set_func_cmt(0X18DAA,	"fight/shoot: attacks per round, to-hit rolls, damage", 0);
 	set_frame_size(0X18DAA, 0X1C, 2, 0);
 	add_func    (0X190C0,0X190D6);
 	set_func_flags(0X190C0,0x5410);
@@ -3317,6 +3371,7 @@ static Functions_0(void) {
 	set_frame_size(0X190D6, 0, 2, 0);
 	add_func    (0X190EC,0X19149);
 	set_func_flags(0X190EC,0x5410);
+	set_func_cmt(0X190EC,	"back to last safe cell; status >= 10h becomes 81h (dead) unless byte_27818", 0);
 	set_frame_size(0X190EC, 0X4, 2, 0);
 	add_func    (0X1914A,0X191CC);
 	set_func_flags(0X1914A,0x5410);
@@ -3333,11 +3388,11 @@ static Functions_0(void) {
 	set_frame_size(0X1929A, 0X6, 2, 0);
 	add_func    (0X193B2,0X1A2A6);
 	set_func_flags(0X193B2,0x5410);
-	set_func_cmt(0X193B2,	"party command entry / round resolution", 0);
+	set_func_cmt(0X193B2,	"one character's command loop", 0);
 	set_frame_size(0X193B2, 0XC, 2, 0);
 	add_func    (0X1A2A6,0X1A7D8);
 	set_func_flags(0X1A2A6,0x5410);
-	set_func_cmt(0X1A2A6,	"loads MONSTERS.DAT, surprise messages, A-Attack B-Bribe H-Hide R-Run, bribe with food/gold/gems", 0);
+	set_func_cmt(0X1A2A6,	"load monsters.dat, surprise, A-Attack B-Bribe H-Hide R-Run", 0);
 	set_frame_size(0X1A2A6, 0X10, 2, 0);
 	add_func    (0X1A7D8,0X1A7EA);
 	set_func_flags(0X1A7D8,0x5400);
@@ -3439,7 +3494,7 @@ static Functions_0(void) {
 	set_frame_size(0X1AFBC, 0, 0, 0);
 	add_func    (0X1AFE2,0X1B1D6);
 	set_func_flags(0X1AFE2,0x5410);
-	set_func_cmt(0X1AFE2,	"(char) apply a monster special ability / status to a character", 0);
+	set_func_cmt(0X1AFE2,	"(char) apply the monster's touch effect", 0);
 	set_frame_size(0X1AFE2, 0X12, 2, 0);
 	add_func    (0X1B226,0X1B2C2);
 	set_func_flags(0X1B226,0x5410);

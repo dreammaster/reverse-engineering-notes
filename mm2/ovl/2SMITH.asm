@@ -337,7 +337,7 @@ loc_1CAC5:                              ; CODE XREF: smith_action_prompt+2C↑j
 
 loc_1CADC:                              ; CODE XREF: smith_action_prompt+13↑j
                 mov     di, 1
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2
@@ -528,7 +528,7 @@ loc_1CB9A:                              ; CODE XREF: smith_action_prompt+C5↑p
                 push    word ptr [bx+5814h]
                 call    thk_text_puts
                 add     sp, 2
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
@@ -756,7 +756,7 @@ loc_1CDEF:                              ; CODE XREF: blacksmith_menu+152↓j
 
 loc_1CE11:                              ; CODE XREF: blacksmith_menu+10C↑j
                 mov     [bp+var_2], 1
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2
@@ -938,7 +938,7 @@ loc_1CEF9:                              ; CODE XREF: sub_1CEC8+4E↓j
                 cmp     si, 4
                 jl      short loc_1CEF9
                 mov     [bp+var_2], si
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 mov     byte_26ED0, 0FFh
                 mov     byte_26ED1, 0E1h
                 mov     byte_26ED2, 0C2h ; CODE XREF: seg002:050D↑J

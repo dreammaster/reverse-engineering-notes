@@ -948,7 +948,7 @@ loc_1C84C:                              ; CODE XREF: ovl_2TEMPLE:C83B↑j
                 mov     di, [bp-8]
 
 loc_1C873:                              ; CODE XREF: ovl_2TEMPLE:C8E9↓j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2
@@ -1209,7 +1209,7 @@ loc_1CA21:                              ; CODE XREF: ovl_2TEMPLE:CA1C↑j
                 add     sp, 2
 
 loc_1CA4A:                              ; CODE XREF: ovl_2TEMPLE:CA78↓j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 mov     si, ax
                 cmp     si, 1Bh
 
@@ -1753,7 +1753,7 @@ loc_1CE1D:                              ; CODE XREF: mage_guild_menu+197↑j
                 add     sp, 6
 
 loc_1CE66:                              ; CODE XREF: mage_guild_menu+287↑j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2

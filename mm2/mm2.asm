@@ -6787,7 +6787,7 @@ loc_126CE:                              ; CODE XREF: monster_gfx_load+5F↑j
 loc_126D6:                              ; CODE XREF: monster_gfx_load+82↑j
                                         ; monster_gfx_load+9C↓j
                 push    si
-                call    sub_16818
+                call    monster_load_picture_bank
                 add     sp, 2
                 mov     word_1DBD6, ax
                 mov     word_1DBD8, dx
@@ -6833,7 +6833,7 @@ monster_gfx_load endp
 
 ; Attributes: bp-based frame
 
-monster_gfx_draw proc near              ; CODE XREF: sub_15772+2F↓p
+monster_gfx_draw proc near              ; CODE XREF: monster_anim_next_frame+2F↓p
                                         ; seg002:0465↓J
 
 arg_0           = word ptr  4
@@ -10059,7 +10059,7 @@ arg_0           = byte ptr  4
                 mov     al, [bx-6980h]
                 sub     ah, ah
                 push    ax
-                call    sub_167E8
+                call    monster_get_record
                 add     sp, 4
                 mov     cx, 38h ; '8'
                 mov     di, 9E0Eh
@@ -12762,7 +12762,7 @@ sub_14EA6       endp
 ; Attributes: bp-based frame
 
 wait_key_timeout proc near              ; CODE XREF: sub_14CD0+80↑p
-                                        ; sub_157C4+11↓p ...
+                                        ; monster_anim_wait+11↓p ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -13959,8 +13959,9 @@ cast_spell_menu endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; animation sequencer (was mislabelled as music)
 
-play_music_step proc near               ; CODE XREF: seg002:0459↓J
+monster_anim_step proc near             ; CODE XREF: seg002:0459↓J
                 push    si
                 push    di
                 push    ds
@@ -13971,25 +13972,25 @@ play_music_step proc near               ; CODE XREF: seg002:0459↓J
                 mov     word_22949, 10h
                 mov     word_2294B, 0Ch
 
-loc_156E8:                              ; CODE XREF: play_music_step+14↑j
+loc_156E8:                              ; CODE XREF: monster_anim_step+14↑j
                 cmp     word_277CC, 0FFFFh
                 jnz     short loc_15700
                 mov     byte_22948, 0
                 mov     word_2294D, 0FFFFh
                 mov     word_277CC, 0
 
-loc_15700:                              ; CODE XREF: play_music_step+27↑j
+loc_15700:                              ; CODE XREF: monster_anim_step+27↑j
                 cmp     byte_22948, 0
                 jz      short loc_1570E
-                call    sub_157C4
+                call    monster_anim_wait
                 or      ax, ax
                 jnz     short loc_1576E
 
-loc_1570E:                              ; CODE XREF: play_music_step+3F↑j
+loc_1570E:                              ; CODE XREF: monster_anim_step+3F↑j
                 cmp     word_2294D, 0FFFFh
                 jnz     short loc_15743
 
-loc_15715:                              ; CODE XREF: play_music_step+A6↓j
+loc_15715:                              ; CODE XREF: monster_anim_step+A6↓j
                 mov     bx, word_277CC
                 mov     al, [bx-61B8h]
                 cmp     al, 0FFh
@@ -13999,7 +14000,7 @@ loc_15715:                              ; CODE XREF: play_music_step+A6↓j
                 mov     word_277CC, 0
                 mov     al, byte ptr word_27698
 
-loc_15731:                              ; CODE XREF: play_music_step+59↑j
+loc_15731:                              ; CODE XREF: monster_anim_step+59↑j
                 or      al, al
                 jns     short loc_15743
                 and     ax, 7Fh
@@ -14009,9 +14010,9 @@ loc_15731:                              ; CODE XREF: play_music_step+59↑j
                 call    rand_range
                 add     sp, 4
 
-loc_15743:                              ; CODE XREF: play_music_step+4D↑j
-                                        ; play_music_step+6D↑j
-                call    sub_15772
+loc_15743:                              ; CODE XREF: monster_anim_step+4D↑j
+                                        ; monster_anim_step+6D↑j
+                call    monster_anim_next_frame
                 cmp     byte_2294F, 0FDh
                 jnz     short loc_1576E
                 push    ax
@@ -14023,23 +14024,23 @@ loc_15743:                              ; CODE XREF: play_music_step+4D↑j
                 or      ax, ax
                 jnz     short loc_1576E
                 mov     byte_22948, cl
-                call    sub_157C4
+                call    monster_anim_wait
                 or      ax, ax
                 jz      short loc_15715
 
-loc_1576E:                              ; CODE XREF: play_music_step+46↑j
-                                        ; play_music_step+60↑j ...
+loc_1576E:                              ; CODE XREF: monster_anim_step+46↑j
+                                        ; monster_anim_step+60↑j ...
                 pop     ds
                 pop     di
                 pop     si
                 retn
-play_music_step endp
+monster_anim_step endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15772       proc near               ; CODE XREF: play_music_step:loc_15743↑p
+monster_anim_next_frame proc near       ; CODE XREF: monster_anim_step:loc_15743↑p
                 mov     si, word_2294D
                 cmp     si, 0FFFFh
                 jnz     short loc_15789
@@ -14047,15 +14048,15 @@ sub_15772       proc near               ; CODE XREF: play_music_step:loc_15743�
                 xor     ch, ch
                 mov     si, 9E48h
 
-loc_15782:                              ; CODE XREF: sub_15772+13↓j
-                                        ; sub_15772+15↓j
+loc_15782:                              ; CODE XREF: monster_anim_next_frame+13↓j
+                                        ; monster_anim_next_frame+15↓j
                 lodsb
                 cmp     al, 0FFh
                 jnz     short loc_15782
                 loop    loc_15782
 
-loc_15789:                              ; CODE XREF: sub_15772+7↑j
-                                        ; sub_15772+45↓j
+loc_15789:                              ; CODE XREF: monster_anim_next_frame+7↑j
+                                        ; monster_anim_next_frame+45↓j
                 lodsb
                 cmp     al, 0FFh
                 jz      short loc_157BB
@@ -14063,7 +14064,7 @@ loc_15789:                              ; CODE XREF: sub_15772+7↑j
                 jl      short loc_15796
                 xor     al, al
 
-loc_15796:                              ; CODE XREF: sub_15772+20↑j
+loc_15796:                              ; CODE XREF: monster_anim_next_frame+20↑j
                 xor     ah, ah
                 push    word_2294B
                 push    word_22949
@@ -14072,28 +14073,28 @@ loc_15796:                              ; CODE XREF: sub_15772+20↑j
                 add     sp, 6
                 lodsb
                 mov     byte_22948, al
-                call    sub_157C4
+                call    monster_anim_wait
                 cmp     byte_2294F, 0FFh
                 jz      short locret_157C3
                 or      ax, ax
                 jz      short loc_15789
                 jnz     short locret_157C3
 
-loc_157BB:                              ; CODE XREF: sub_15772+1A↑j
+loc_157BB:                              ; CODE XREF: monster_anim_next_frame+1A↑j
                 xor     ax, ax
                 mov     word_2294D, 0FFFFh
 
-locret_157C3:                           ; CODE XREF: sub_15772+41↑j
-                                        ; sub_15772+47↑j
+locret_157C3:                           ; CODE XREF: monster_anim_next_frame+41↑j
+                                        ; monster_anim_next_frame+47↑j
                 retn
-sub_15772       endp
+monster_anim_next_frame endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_157C4       proc near               ; CODE XREF: play_music_step+41↑p
-                                        ; play_music_step+A1↑p ...
+monster_anim_wait proc near             ; CODE XREF: monster_anim_step+41↑p
+                                        ; monster_anim_step+A1↑p ...
                 xor     ax, ax
                 cmp     byte_22948, 0
                 jz      short locret_157DF
@@ -14103,11 +14104,11 @@ sub_157C4       proc near               ; CODE XREF: play_music_step+41↑p
                 call    wait_key_timeout
                 add     sp, 2
                 or      ax, ax
-                jz      short sub_157C4
+                jz      short monster_anim_wait
 
-locret_157DF:                           ; CODE XREF: sub_157C4+7↑j
+locret_157DF:                           ; CODE XREF: monster_anim_wait+7↑j
                 retn
-sub_157C4       endp
+monster_anim_wait endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16491,9 +16492,10 @@ sub_167BC       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; (id, out) copies a 26-byte MONSTERS.DAT record
 ; Attributes: bp-based frame
 
-sub_167E8       proc near               ; CODE XREF: monster_decode_stats+18↑p
+monster_get_record proc near            ; CODE XREF: monster_decode_stats+18↑p
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -16524,14 +16526,15 @@ arg_2           = word ptr  6
                 pop     si
                 pop     bp
                 retn
-sub_167E8       endp
+monster_get_record endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; opens MONSTERS.16/.4, finds picture id (skips unused), LZW-decodes
 ; Attributes: bp-based frame
 
-sub_16818       proc near               ; CODE XREF: monster_gfx_load+8D↑p
+monster_load_picture_bank proc near     ; CODE XREF: monster_gfx_load+8D↑p
 
 arg_0           = word ptr  4
 
@@ -16560,8 +16563,8 @@ arg_0           = word ptr  4
                 shl     si, 1
                 shl     si, 1
 
-loc_1683F:                              ; CODE XREF: sub_16818+41↓j
-                                        ; sub_16818+4A↓j
+loc_1683F:                              ; CODE XREF: monster_load_picture_bank+41↓j
+                                        ; monster_load_picture_bank+4A↓j
                 mov     dx, [si-61B8h]
                 mov     cx, [si-61B6h]
                 or      dx, dx
@@ -16577,8 +16580,8 @@ loc_1683F:                              ; CODE XREF: sub_16818+41↓j
                 jmp     short loc_1683F
 ; ---------------------------------------------------------------------------
 
-loc_16864:                              ; CODE XREF: sub_16818+31↑j
-                                        ; sub_16818+35↑j
+loc_16864:                              ; CODE XREF: monster_load_picture_bank+31↑j
+                                        ; monster_load_picture_bank+35↑j
                 push    si
                 xor     al, al
                 mov     ah, 42h
@@ -16603,7 +16606,7 @@ loc_16864:                              ; CODE XREF: sub_16818+31↑j
                 shr     bx, cl
                 inc     bx
 
-loc_1688A:                              ; CODE XREF: sub_16818+6A↑j
+loc_1688A:                              ; CODE XREF: monster_load_picture_bank+6A↑j
                 mov     ah, 48h
                 int     21h             ; DOS - 2+ - ALLOCATE MEMORY
                                         ; BX = number of 16-byte paragraphs desired
@@ -16619,27 +16622,27 @@ loc_1688A:                              ; CODE XREF: sub_16818+6A↑j
                 jmp     short loc_168B0
 ; ---------------------------------------------------------------------------
 
-loc_1689F:                              ; CODE XREF: sub_16818+1E↑j
-                                        ; sub_16818+54↑j ...
+loc_1689F:                              ; CODE XREF: monster_load_picture_bank+1E↑j
+                                        ; monster_load_picture_bank+54↑j ...
                 push    ax
                 mov     ah, 3Eh
                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
                                         ; BX = file handle
                 pop     ax
 
-loc_168A5:                              ; CODE XREF: sub_16818+12↑j
+loc_168A5:                              ; CODE XREF: monster_load_picture_bank+12↑j
                 mov     word_223B2, ax
                 call    dword_223B6
                 xor     ax, ax
                 mov     dx, ax
 
-loc_168B0:                              ; CODE XREF: sub_16818+85↑j
+loc_168B0:                              ; CODE XREF: monster_load_picture_bank+85↑j
                 pop     ds
                 pop     di
                 pop     si
                 pop     bp
                 retn
-sub_16818       endp
+monster_load_picture_bank endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -18003,12 +18006,12 @@ thk_monster_gfx_load:
                 jmp     far ptr monster_gfx_load
 ; ---------------------------------------------------------------------------
 
-thk_play_music_step:
+thk_monster_anim_step:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr play_music_step
+                jmp     far ptr monster_anim_step
 ; ---------------------------------------------------------------------------
 
 thk_monster_gfx_draw:
@@ -21159,7 +21162,7 @@ word_1DCF2      dw 1C7h                 ; DATA XREF: sub_15426+E↑r
                 db    0
                 db  20h
                 db    0
-word_1DD12      dw 1DDh                 ; DATA XREF: sub_16818+6↑r
+word_1DD12      dw 1DDh                 ; DATA XREF: monster_load_picture_bank+6↑r
                 db 0E9h
                 db    1
                 db 0F2h
@@ -21224,8 +21227,8 @@ word_1DD20      dw 21Ah                 ; DATA XREF: load_map_events+15↑r
                 db    3
 word_1DD52      dw 30Eh                 ; DATA XREF: sub_1670A:loc_16723↑r
                                         ; sub_1670A+2E↑r
-dword_1DD54     dd 0                    ; DATA XREF: sub_167E8+1B↑w
-                                        ; sub_167E8+22↑r
+dword_1DD54     dd 0                    ; DATA XREF: monster_get_record+1B↑w
+                                        ; monster_get_record+22↑r
 byte_1DD58      db 0                    ; DATA XREF: spell_calc_cost+1B↑r
                                         ; spell_calc_cost:loc_13B1F↑r
 byte_1DD59      db 0                    ; DATA XREF: party_step_forward+45↑w
@@ -27196,16 +27199,16 @@ aLvl1234567     db 'Lvl 1 2 3 4 5 6 7',0
 aCastSpellLevel db 'Cast Spell Level: ',0
                                         ; DATA XREF: cast_spell_menu+38↑o
 aNumber         db 'Number: ',0         ; DATA XREF: cast_spell_menu+82↑o
-byte_22948      db 0                    ; DATA XREF: play_music_step+29↑w
-                                        ; play_music_step:loc_15700↑r ...
-word_22949      dw 40h                  ; DATA XREF: play_music_step+3↑w
-                                        ; play_music_step+16↑w ...
-word_2294B      dw 20h                  ; DATA XREF: play_music_step+9↑w
-                                        ; play_music_step+1C↑w ...
-word_2294D      dw 0FFFFh               ; DATA XREF: play_music_step+2E↑w
-                                        ; play_music_step:loc_1570E↑r ...
-byte_2294F      db 0FDh                 ; DATA XREF: play_music_step+5B↑r
-                                        ; play_music_step+80↑r ...
+byte_22948      db 0                    ; DATA XREF: monster_anim_step+29↑w
+                                        ; monster_anim_step:loc_15700↑r ...
+word_22949      dw 40h                  ; DATA XREF: monster_anim_step+3↑w
+                                        ; monster_anim_step+16↑w ...
+word_2294B      dw 20h                  ; DATA XREF: monster_anim_step+9↑w
+                                        ; monster_anim_step+1C↑w ...
+word_2294D      dw 0FFFFh               ; DATA XREF: monster_anim_step+2E↑w
+                                        ; monster_anim_step:loc_1570E↑r ...
+byte_2294F      db 0FDh                 ; DATA XREF: monster_anim_step+5B↑r
+                                        ; monster_anim_step+80↑r ...
                 db  28h ; (
                 db    7
                 db 0FFh
@@ -46677,8 +46680,8 @@ word_27692      dw 0                    ; DATA XREF: monster_decode_stats+BC↑w
 word_27694      dw 0                    ; DATA XREF: monster_decode_stats+BF↑w
 word_27696      dw 0                    ; DATA XREF: sub_154EE+D↑w
                                         ; sub_154EE+15↑w ...
-word_27698      dw 0                    ; DATA XREF: play_music_step+68↑r
-                                        ; sub_16818+63↑r
+word_27698      dw 0                    ; DATA XREF: monster_anim_step+68↑r
+                                        ; monster_load_picture_bank+63↑r
                 db    0
                 db    0
                 db    0
@@ -46979,14 +46982,14 @@ word_27698      dw 0                    ; DATA XREF: play_music_step+68↑r
                 db    0
 byte_277C4      db 0                    ; DATA XREF: monster_gfx_load+C2↑w
                 db    0
-byte_277C6      db 0                    ; DATA XREF: sub_15772+1C↑r
+byte_277C6      db 0                    ; DATA XREF: monster_anim_next_frame+1C↑r
                 db    0
                 db    0
                 db    0
                 db    0
                 db    0
 word_277CC      dw 0                    ; DATA XREF: monster_gfx_load+BC↑w
-                                        ; play_music_step:loc_156E8↑r ...
+                                        ; monster_anim_step:loc_156E8↑r ...
 word_277CE      dw 0                    ; DATA XREF: monster_gfx_load+51↑w
                                         ; monster_gfx_load+69↑w ...
 word_277D0      dw 0                    ; DATA XREF: prompt_insert_disk:loc_13378↑r

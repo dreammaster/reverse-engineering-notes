@@ -1102,7 +1102,7 @@ loc_1CACE:                              ; CODE XREF: ovl_2MISC2:CAB4↑j
 
 loc_1CB09:                              ; CODE XREF: ovl_2MISC2:C8F0↑j
                                         ; ovl_2MISC2:C966↑j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 pop     si
                 mov     sp, bp
                 pop     bp
@@ -1737,7 +1737,7 @@ loc_1D013:                              ; CODE XREF: training_hall+18D↑j
                 add     sp, 2
 
 loc_1D01A:                              ; CODE XREF: training_hall+C5↑j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2

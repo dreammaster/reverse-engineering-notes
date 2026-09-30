@@ -2555,7 +2555,7 @@ loc_1D398:                              ; CODE XREF: ovl_2CAVES:D3AC↓j
                 jz      short loc_1D3AE
 
 loc_1D39D:                              ; CODE XREF: ovl_2CAVES:D395↑j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2
@@ -3225,7 +3225,7 @@ loc_1D667:                              ; CODE XREF: caves_event_g+90↓j
                 call    thk_res_5426
 
 loc_1D68C:                              ; CODE XREF: caves_event_g+9E↓j
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 cmp     ax, 20h ; ' '
                 jnz     short loc_1D68C
                 call    thk_res_35A8

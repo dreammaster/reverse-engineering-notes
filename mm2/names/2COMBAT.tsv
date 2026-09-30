@@ -1,18 +1,58 @@
 # 2COMBAT.OVL: combat
 17E10	combat_damage_character	halves damage for protection effects, then char_apply_damage
-17E52	combat_after_hit	" goes down!", possible special attack effect of the monster
+17E52	combat_after_hit	" goes down!", possible touch effect of the monster
 17FB2	combat_monster_hits	"<monster> shoots/attacks <character>"
 18056	combat_monster_casts	" casts"
-180C6	combat_monster_idle
-1814A	combat_monster_advances	" advances!" (swap with front rank)
-18696	combat_cast_at_target	" casts a spell:", " is not affected!", " takes "
+180C6	combat_monster_waits	" waits for opening!" / " adds friends!"
+1814A	combat_monster_advances	" advances!" (swap with the front rank)
+18290	combat_pick_random_target	random living character
+18302	combat_next_front_rank_target
+18368	combat_spell_failed	"*** Spell Failed ***"
+18398	combat_monster_melee	monster attacks with record[14]+1 blows
+184D4	combat_monster_show_line
+184FE	combat_monster_turn	one monster's action
+1845A	combat_monster_ranged_attack
+1846C	combat_monster_melee_attack
+1847E	combat_monster_spell_roll	uses left, silenced flag, cast chance
+18674	combat_target_flag
+18696	combat_party_spell_hits	" casts a spell:", " is not affected!", " takes ", " is <status>!"
+188FC	combat_monster_rewards	exp/gold/gems for a kill
+189D2	combat_hireling_flags
+18A22	combat_remove_monster	shift monster arrays down
+18AB8	combat_monster_gone_text	" runs away!" / " goes down!"
+18AF4	combat_kill_monster
+18B3E	combat_damage_monster	word_27824 damage to monster byte_2781E
+18BAE	combat_attack_summary_text	"N time(s) and hit M time(s) for X point(s)"
+18C78	combat_party_attack_result	" shoots ", " attacks ", " back stabs", " criticals"
 18D7A	combat_text_reset
-18DAA	combat_party_fight_or_shoot	"Fight", "Shoot"
+18DAA	combat_party_attack	fight/shoot: attacks per round, to-hit rolls, damage
+190C0	combat_party_shoot
+190D6	combat_party_fight
+190EC	combat_party_flees	back to last safe cell; status >= 10h becomes 81h (dead) unless byte_27818
+1914A	combat_char_runs
+191CC	combat_wait_command_key
+1926A	combat_menu_item
 1929A	combat_options_menu	" Options for:"
-193B2	combat_round	party command entry / round resolution
-1A2A6	combat_start	loads MONSTERS.DAT, surprise messages, A-Attack B-Bribe H-Hide R-Run, bribe with food/gold/gems
-1A882	combat_show_effects	"Protection Spells", "Magic", "Forces", "Cursed -"
-1A9E2	combat_delay_prot_quick	"D-Delay P-Prot Q-Quick"
-1AFE2	combat_apply_monster_status	(char) apply a monster special ability / status to a character
+193B2	combat_party_turn	one character's command loop
+195A8	combat_init_monster
+195DC	combat_init_monsters
+19640	combat_init_ranks
+1974C	combat_party_strength
+197E6	combat_generate_encounter
+198FE	combat_encounter_ok
+199B8	combat_build_encounter
+199C8	combat_battle_number_text
+19A3C	combat_drop_treasure_item
+19B88	combat_treasure_roll
+19BF8	combat_victory	"Victory!", experience, treasure
+19DBE	combat_draw_monster_line
+19F44	combat_draw_party_hp
+1A086	combat_draw_monster_list
+1A0D4	combat_battle_loop	speed-ordered actions until victory/defeat/flight
+1A2A6	combat_encounter	load monsters.dat, surprise, A-Attack B-Bribe H-Hide R-Run
+1A77E	combat_over_check
+1A882	combat_show_protection	"Protection Spells", "Magic", "Forces", "Cursed -"
+1A9E2	combat_delay_prompt	"D-Delay P-Prot Q-Quick"
+1AFE2	combat_apply_touch_effect	(char) apply the monster's touch effect
 1B226	combat_spell_damage	" resisted and", " takes ", " pts"
 1B410	combat_spell_effect	" is not affected!", " resisted!"

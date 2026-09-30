@@ -63,14 +63,35 @@ free code reaches `1 << width` (up to 12 bits).  Python: `tools/mm2_lzw.py`.
 * Outdoor maps wrap into neighbouring maps: the four neighbour ids are in `byte_231DB..231DE`
   (N, S, E, W order not yet verified) and their cells are staged at `5BD6/5CD6/5DD8/5ED8`.
 
-### `MONSTERS.DAT` record (16 bytes) — `monster_decode_stats` (`13B80`)
+### `MONSTERS.DAT` record (26 bytes x 256) — `monster_decode_stats` (`13B80`), loader `sub_167E8`
 
-| Off | Meaning |
+`record = base + id*26` (`monster_get_record` `167E8` copies 13 words).  Bytes:
+
+| Off | Meaning (decoded into DGROUP globals `7650..7695`) |
 |---|---|
-| 0-13 | name, each byte `& 7Fh`, space padded |
-| 14 | bits 0-5: dice count − 1; bits 6-7: index into word table `DGROUP:4DB8` (dice size) → HP |
-| 15 | bits 0-4 + 1: multiplier; bits 5-6: index into `4DB8`; bit 7: ×1000 → experience reward |
-| 16.. | further fields decoded into flags/values `DGROUP:7660..7695` (attack dice, speed, accuracy, resistances, special powers); layout partly traced — see the function |
+| 0-13 | name, each byte `& 7Fh` (high bit set in the file), space padded |
+| 0E | bits 0-5: dice count - 1; bits 6-7: die index into `DGROUP:4DB8` = {1, 10, 100, 1000}; hit points = count x die |
+| 0F | bits 0-4: multiplier - 1; bits 5-6: index into `4DB8`; bit 7: x1000; experience reward = multiplier x that |
+| 10 | flag bits: 7, 6, 5, 2 -> flags (`27670`, `2766F`, `2766E`, `27672`); bits 0-1 -> `27673`; bits 3-4 -> `27671` |
+| 11 | bits 0-4: monster spell / breath id -> `27674` (see table below); bits 5-7: index into percent table `4DC0` = {0,10,20,35,50,75,90,100} -> `27675` (cast chance) |
+| 12 | bits 7,6,5: flags `27683/27682/27678`; bits 0-4: touch effect id -> `27677` (table `106C`) |
+| 13 | bit 7 flag `2768F`; bits 0-3 + 1 (x10 if bit 4): `27679` (attack damage dice count); bits 5-6: `2767A` (damage kind/attack verb) |
+| 14 | low nibble + 1 -> `2767E` (number of attacks); high nibble + 1 -> `27676` |
+| 15 | bits 0-6 -> `2767B` (speed?); bit 7 unused |
+| 16 | bits 7,6 flags `27684/27685`; bits 0-4 + 1 (x10 if bit 5) -> `2767C` (damage dice size / resistance?) |
+| 17 | bits 7,6 flags `27687/27686`; bits 0-4 + 1 (x10 if bit 5, capped 250) -> `2767D` |
+| 18 | bits 7,6 flags `27689/27688`; bits 0-4 + 1 (x10 if bit 5, capped 250) -> `2767F` |
+| 19 | bits 0,1,2 -> flags `2768B/2768A/2768C`; bits 3-5 -> `27680`; bits 5-7 -> percent table `4DC0` -> `27681` |
+
+Monster spell / breath names (`DGROUP:10AA`, id 0-31): sprays poison, sprays acid, casts a curse,
+breathes fire/lightning/cold/energy/gas/acid, explodes, gazes, drains magic, drains spell level,
+vaporizes valuables, juggles party, energy blast, sleep, lightning bolts, fireballs, fingers of
+death, disintegrate, super shock, dancing sword, incinerate, and invokes power, implosion, inferno,
+pain, silence, frenzies, paralyze, swarms.  Touch effects (`DGROUP:106C`, id 0-31): adds friends,
+lost gold/gems, poisoned, diseased, asleep, cursed, silenced, paralyzed, collapses, dies, turns to
+stone, eradicated, lost item/backpack/food/all food/all gold/all gems/valuables, aged (x2), lost
+statistics (x3), lost level (x2), lost experience, items scrambled, lost spell points, assassinated,
+sprays poison.  (Names of individual record bits will be refined while reading combat.)
 
 ## Character record (`82h` = 130 bytes, `g_characters + roster_id*82h`)
 
@@ -139,21 +160,23 @@ walls, side walls at 3 depths, doors), `*b/*t/*f.16` = 36/36/1 images (ceiling/f
 book/throw/xfer/disk/nwcp.16` = special screens.  Some `.4` banks do not decode with the 2 bpp
 rule above yet (`TOWN.4`, `CASTLE.4`, `CAVE.4`, `GLOBE.4`, `DISK.4`, `XFER.4`): row padding differs.
 
-### `MONSTERS.16` / `MONSTERS.4`
+### `MONSTERS.16` / `MONSTERS.4` — monster pictures (`tools/mm2_monsters.py`)
 
-`MONSTERS.16`: 75 x `u32` offsets (0 = unused) to LZW banks, one per monster picture set.  Each
-decompressed bank starts `u16 count, u16 offsets[count]`, then animation scripts and pictures in a
-*driver-specific compressed* format (the EGA driver expands them in fn 16h at `1233`); not decoded yet.
+Derived from `EGA.DRV` fn 16h (`1233`) and its piece decoder (`1422`); verified by rendering all 60
+banks.  `MONSTERS.16` = 75 x `u32` offsets (0 = unused picture id) to LZW banks (`u32` size + LZW);
+the loader `sub_16818` skips forward over unused ids.
 
-## Character creation (1MENU2, `create_character` `18A60` / `18624`)
+```
+bank:  u16 count (12 in the shipped files), u16 piece_offset[count],
+       animation table (bytes up to piece 0), pieces
+frame: 96x96 pixels, 4 bpp (48 bytes/row).  frame 0 = piece 0 painted over the screen background,
+       frame k = frame 0 with piece k painted over it.
+piece: u8 x, u8 y, u8 width, u8 height, then runs (u8): high nibble = length-1, low nibble = colour code;
+       drawn at (x+4, y+6); runs wrap at `width`.  code 5 = transparent (leave the pixel),
+       otherwise EGA colour = {0,1,2,9,6,8,10,3,4,5,7,11,12,13,14,15}[code]
+```
 
-* `roll_stats` (`189EE`): seven stats (Might, Intellect, Personality, Endurance, Speed, Accuracy,
-  Luck) start from random values; the player can swap two (A-G) or re-roll (Enter).
-* `class_allowed` (`18952`): per class minimum stats (the table of tests in the function: e.g.
-  Knight needs Might >= 15, Paladin Might/Intellect/... >= 13, Sorcerer Intellect >= 15 ...).
-* Race stat adjustments: 5 races x 7 bytes at `DGROUP:093C`.
-* New character (`18624`): level 1, age 18, food 10; hit points = per-class base (`DGROUP:06E6`) +
-  endurance-derived word table (`DGROUP:06F2`); spell points for Cleric (Personality-based) and Sorcerer
-  (Intellect-based) from `DGROUP:071E`; casters start at spell level 1 with initial spell bits
-  (`+51 = 5Ch` cleric, `3Ah` sorcerer); AC from speed table `DGROUP:074D`; starting items from
-  `DGROUP:075C` (class x 8 per race-group); condition 0.  The record is saved with `save_roster`.
+Animation table (copied to `DGROUP:9E48` by the driver, played by `monster_anim_*`): sequences of
+`(frame, delay)` byte pairs ending in `FFh`, the table ends with a second `FFh`; sequence 0 is the
+idle animation (bit 7 of an entry = random delay).  The CGA `.4` pictures use the CGA driver's own
+piece decoder (not decoded).

@@ -564,7 +564,7 @@ arg_0           = word ptr  4
                 push    word ptr [si+5724h]
                 call    thk_text_puts
                 add     sp, 2
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 pop     si
                 pop     bp
                 retn
@@ -860,7 +860,7 @@ loc_1CBCB:                              ; CODE XREF: sub_1CB7C+83↓j
 
 loc_1CC04:                              ; CODE XREF: sub_1CB7C+39↑j
                 mov     [bp+var_4], 1
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2
@@ -1154,7 +1154,7 @@ loc_1CE30:                              ; CODE XREF: seg002:0831↑J
 
 loc_1CE47:                              ; CODE XREF: sub_1CD60+3B↑j
                 mov     [bp+var_2], 1
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2
@@ -1410,7 +1410,7 @@ loc_1CFD2:                              ; CODE XREF: sub_1CF74+58↑j
                 push    word ptr [bx+si+5678h]
                 call    thk_text_puts
                 add     sp, 2
-                call    thk_play_music_step
+                call    thk_monster_anim_step
 
 loc_1D032:                              ; CODE XREF: sub_1CF74+1A↑j
                 pop     si
@@ -1482,7 +1482,7 @@ loc_1D054:                              ; CODE XREF: sub_1D038+E↑j
                 push    word ptr [bx+si+56D4h]
                 call    thk_text_puts
                 add     sp, 2
-                call    thk_play_music_step
+                call    thk_monster_anim_step
 
 loc_1D0B4:                              ; CODE XREF: sub_1D038+1A↑j
                 pop     si
@@ -1911,7 +1911,7 @@ loc_1D3CC:                              ; CODE XREF: tavern_menu+28F↓j
 
 loc_1D420:                              ; CODE XREF: tavern_menu+249↑j
                 mov     [bp+var_2], 1
-                call    thk_play_music_step
+                call    thk_monster_anim_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2

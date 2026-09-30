@@ -149,7 +149,6 @@
 15262	party_pay_gems
 1531A	party_pay_food
 1554A	cast_spell_menu	(char) -> spell index or FFFF
-156C6	play_music_step
 157E0	play_sound_effect
 1587E	strlen_trimmed	length without trailing spaces (max 16)
 158B0	character_actions_menu	single character: C cast D drop E equip R remove S T trade U use V view
@@ -179,3 +178,8 @@
 1DB9C	g_main_gfx_win
 1DC1A	g_era	current era index (time periods); day/year arrays at DGROUP:03A2 / 03B6
 1DC1C	g_day_fraction	0..FFh; rolls over into a new day
+167E8	monster_get_record	(id, out) copies a 26-byte MONSTERS.DAT record
+16818	monster_load_picture_bank	opens MONSTERS.16/.4, finds picture id (skips unused), LZW-decodes
+156C6	monster_anim_step	animation sequencer (was mislabelled as music)
+15772	monster_anim_next_frame
+157C4	monster_anim_wait

@@ -5560,15 +5560,17 @@ static Bytes_0(void) {
 	create_insn	(x=0X156BC);
 	op_stkvar	(x,	1);
 	create_insn	(0X156C6);
-	set_name	(0X156C6,	"play_music_step");
+	set_name	(0X156C6,	"monster_anim_step");
 	create_insn	(x=0X15735);
 	op_hex		(x,	1);
 	create_insn	(x=0X15740);
 	op_hex		(x,	1);
 	create_insn	(0X15772);
+	set_name	(0X15772,	"monster_anim_next_frame");
 	create_insn	(x=0X157A4);
 	op_hex		(x,	1);
 	create_insn	(0X157C4);
+	set_name	(0X157C4,	"monster_anim_wait");
 	create_insn	(x=0X157D8);
 	op_hex		(x,	1);
 	create_insn	(0X157E0);
@@ -5939,14 +5941,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15EAC);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X15EB4);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X15EB8);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X15EBB);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X15EBE);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -5956,6 +5950,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X15EB4);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X15EB8);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X15EBB);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X15EBE);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X15EC1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15ED0);
@@ -6541,6 +6543,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X167E0);
 	op_stkvar	(x,	1);
 	create_insn	(0X167E8);
+	set_name	(0X167E8,	"monster_get_record");
 	create_insn	(x=0X167F2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X167F5);
@@ -6554,6 +6557,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16807);
 	op_stkvar	(x,	1);
 	create_insn	(0X16818);
+	set_name	(0X16818,	"monster_load_picture_bank");
 	create_insn	(x=0X16824);
 	op_hex		(x,	1);
 	set_cmt	(0X16826,	"DOS - 2+ - OPEN DISK FILE WITH HANDLE\nDS:DX -> ASCIZ filename\nAL = access mode\n2 - read & write",	0);
@@ -7186,7 +7190,7 @@ static Bytes_1(void) {
 	create_word	(0X1703B);
 	create_insn	(0X1703D);
 	create_insn	(0X17042);
-	set_name	(0X17042,	"thk_play_music_step");
+	set_name	(0X17042,	"thk_monster_anim_step");
 	set_cmt	(0X17047,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17047);
 	create_insn	(0X17049);
@@ -9429,14 +9433,6 @@ static Bytes_1(void) {
 	set_name	(0X2025A,	"aSearch");
 	create_strlit	(0X20264,	0XE);
 	set_name	(0X20264,	"aThePartyHas");
-	create_strlit	(0X20272,	0X9);
-	set_name	(0X20272,	"aFoundA");
-	create_strlit	(0X2027B,	0XA);
-	set_name	(0X2027B,	"aTreasure");
-	create_strlit	(0X2028D,	0X1F);
-	set_name	(0X2028D,	"aRestCompleteNo");
-	create_strlit	(0X202AC,	0XF);
-	set_name	(0X202AC,	"aTooDangerous");
 }
 
 //------------------------------------------------------------------------
@@ -9446,6 +9442,14 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X20272,	0X9);
+	set_name	(0X20272,	"aFoundA");
+	create_strlit	(0X2027B,	0XA);
+	set_name	(0X2027B,	"aTreasure");
+	create_strlit	(0X2028D,	0X1F);
+	set_name	(0X2028D,	"aRestCompleteNo");
+	create_strlit	(0X202AC,	0XF);
+	set_name	(0X202AC,	"aTooDangerous");
 	create_strlit	(0X202BB,	0X11);
 	set_name	(0X202BB,	"aRestHereYN");
 	create_strlit	(0X202CC,	0X24);
@@ -11114,6 +11118,7 @@ static Functions_0(void) {
 	set_frame_size(0X1554A, 0X40, 2, 0);
 	add_func    (0X156C6,0X15772);
 	set_func_flags(0X156C6,0x5400);
+	set_func_cmt(0X156C6,	"animation sequencer (was mislabelled as music)", 0);
 	set_frame_size(0X156C6, 0X4, 0, 0);
 	add_func    (0X15772,0X157C4);
 	set_func_flags(0X15772,0x5400);
@@ -11200,9 +11205,11 @@ static Functions_0(void) {
 	set_frame_size(0X167BC, 0X6, 2, 0);
 	add_func    (0X167E8,0X16818);
 	set_func_flags(0X167E8,0x5410);
+	set_func_cmt(0X167E8,	"(id, out) copies a 26-byte MONSTERS.DAT record", 0);
 	set_frame_size(0X167E8, 0X4, 2, 0);
 	add_func    (0X16818,0X168B5);
 	set_func_flags(0X16818,0x5410);
+	set_func_cmt(0X16818,	"opens MONSTERS.16/.4, finds picture id (skips unused), LZW-decodes", 0);
 	set_frame_size(0X16818, 0X4, 2, 0);
 	add_func    (0X168B6,0X16932);
 	set_func_flags(0X168B6,0x5400);

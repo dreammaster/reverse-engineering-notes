@@ -35,15 +35,16 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 * Documented: [exe-layout.md](exe-layout.md), [file-formats.md](file-formats.md) (LZW, MAP/EVENTS/STR/
   MONSTERS, character record, image banks), [events.md](events.md) (50-opcode script VM),
   [game-library.md](game-library.md) (windows, video-driver ABI, state globals).
+* [combat.md](combat.md): combat flow, party/monster turns, tables.  Monster pictures decoded (`mm2_monsters.py`).
 * Tools: `mm2_lzw.py`, `mm2_data.py` (maps/events/strings/monsters), `mm2_gfx.py` (renders `*.16`
   image banks to PNG), `plink_info.py`.
 
 ## Open / next
 
-1. **Monster pictures** (`MONSTERS.16/.4`): driver-specific compressed sprites (EGA.DRV fn 16h at 1233).
+1. CGA monster pictures (`MONSTERS.4`, CGA driver's own piece decoder) -- the EGA `MONSTERS.16` format is done.
 2. `.4` (CGA) banks that don't decode with the 2 bpp rule; palette mapping per video mode.
-3. Combat (2COMBAT: `combat_round` 193B2, `combat_start` 1A2A6, monster AI 184FE): read and name the
-   internals; monster record fields (`monster_decode_stats` 13B80); spell effects (2CAST1/2).
+3. Combat is documented ([combat.md](combat.md)); still to verify: to-hit formula details `(check)`, the
+   remaining monster record fields' exact meaning, touch-effect implementation (`1AFE2`), spell effects (2CAST1/2).
 4. `ITEMS.DAT` fields (20 bytes: 12-byte name, class/type flags, three words), `SPELLS.DAT`, `ATTRIB.DAT`.
 5. Save format: `ROSTER.DAT` (8292 bytes = 48 characters + 2052 bytes of state).
 6. Disassemble the `.DRV` modules (video, timer/sound) — jump table at offset `fn*3`.
