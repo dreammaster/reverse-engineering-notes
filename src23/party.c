@@ -838,3 +838,55 @@ bool partyDecodeSavingThrowEffect(uint16_t packedValue, PartySavingThrowEffect *
     out->effectId = out->wholeParty ? effectId - 50 : effectId;
     return true;
 }
+
+void partyResetDailyAbilityCharges(uint8_t *record) {
+    for (unsigned i = 0; i < 4; i++) {
+        partySetU16(record, PartyFieldAbilityCharge + i * 2, 0);
+    }
+}
+
+PartyRestOutcome partyApplyRestEffects(uint8_t *record, uint16_t regenPercent) {
+    PartyRestOutcome outcome = {false, false};
+    uint16_t status = partyGetU16(record, PartyFieldStatusFlags);
+    if (status & PartyStatusIncapacitated) {
+        outcome.wasSkipped = true;
+        return outcome;
+    }
+
+    enum {
+        PartyRestAbnormalMask = PartyStatusSick | PartyStatusPoisoned | PartyStatusDiseased | PartyStatusHexed |
+                                 PartyStatusJinxed | PartyStatusCursed
+    };
+    if (status & PartyRestAbnormalMask) {
+        if (status & PartyStatusSick) {
+            status = (uint16_t)(status & ~(uint16_t)PartyStatusSick);
+        }
+        if (status & PartyStatusJinxed) {
+            status = (uint16_t)(status & ~(uint16_t)PartyStatusJinxed);
+        }
+        partySetU16(record, PartyFieldStatusFlags, status);
+
+        if (status & PartyStatusDiseased) {
+            partyDeductHp(record, 36);
+            if (partyGetU16(record, PartyFieldStatusFlags) & PartyStatusDead) {
+                outcome.died = true;
+                return outcome;
+            }
+        }
+        if (status & PartyStatusCursed) {
+            partyDeductMp(record, 48);
+        }
+        return outcome;
+    }
+
+    uint16_t maxHp = partyGetStatMax(record, PartyStatHitPoints);
+    uint32_t hp = ((uint32_t)maxHp * regenPercent + 50) / 100 + partyGetStat(record, PartyStatHitPoints);
+    partySetStat(record, PartyStatHitPoints, hp > maxHp ? maxHp : (uint16_t)hp);
+
+    uint16_t maxMp = partyGetStatMax(record, PartyStatMagicPoints);
+    if (maxMp != 0) {
+        uint32_t mp = ((uint32_t)maxMp * regenPercent + 50) / 100 + partyGetStat(record, PartyStatMagicPoints);
+        partySetStat(record, PartyStatMagicPoints, mp > maxMp ? maxMp : (uint16_t)mp);
+    }
+    return outcome;
+}

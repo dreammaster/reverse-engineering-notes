@@ -2660,6 +2660,119 @@ count, alongside the already-known `word_32DC0`/`word_32DC2`
 effect-id/threshold parameters feeding `ApplySavingThrowEffect`), and
 refreshes the dungeon screen.
 
+**Fully decoded and reimplemented 2026-09-30** (as
+`src23/gameclock.c`/`.h` and two new `party.c` functions), reading the
+rest command's own logic in full rather than the summary above — which
+turned out to have skipped over a real, previously-undiscovered
+regen-rate mechanic and two genuine shared bugs.
+
+`IsRestingAllowedHere` (yendor2.asm:26030, yendor3.asm:24610): **not
+instruction-identical between games**, despite both being small. Chapter
+2's own copy carries a whole extra branch testing a "forbidden map id"
+global (`word_34748`) with elaborate range logic (specific ids
+`0x45`/`0x46`/`0x93`/`0x94`, plus ranges `[0x3D,0x3E]` and `>0x46`) —
+but `word_34748` has **no confirmed write site anywhere in Chapter 2's
+disassembly** (a single XREF total, the read here), so it always reads
+0 in practice, making the whole branch structurally unreachable.
+**Chapter 3 confirms this**: its own copy of the function doesn't have
+this branch at all — just the global flag test and the trigger-list
+call, nothing else. Reimplemented as `gameClockRestAllowed` without the
+dead branch, matching Chapter 3's simpler (and, with real data,
+behaviorally identical) shape for both games.
+
+`RestPartyAndAdvanceClock`'s own day-rollover math (inlined, not a call
+to `AdvanceGameClock`) contains **two real, previously-undocumented
+bugs, both confirmed byte-for-byte identical in Chapter 2 and Chapter
+3** — genuinely shared, not one game's mistake the other fixes:
+1. The rollover check fires at `minutes >= 0x59F` (1439), one minute
+   short of the actual day length (`0x5A0` = 1440). Subtracting 1440
+   from a value that's merely `>= 1439` underflows to `65535` whenever
+   the pre-subtraction total lands exactly on 1439 — reachable with
+   entirely ordinary inputs (e.g. resting for exactly one hour starting
+   from minute 1379, a perfectly normal clock reading). The clock stays
+   corrupted until the next *natural* per-minute `AdvanceGameClock`
+   rollover eventually fixes it (~24 in-game hours later, since that
+   function's own rollover only fires at exactly `0x5A1`).
+2. When a month rollover (day wraps past 30) also triggers a year
+   rollover (month wraps past 12), `month` is left at **13** instead of
+   being reset to 1 — unlike `AdvanceGameClock`'s own per-minute tick,
+   which does reset it correctly in the same situation. A rare but
+   real date-display glitch (`ShowGameClockCommand` would show month
+   13) until the next natural rollover corrects it.
+
+Reimplemented as `gameClockAdvance` (`src23/gameclock.c`/`.h`),
+reproducing both bugs faithfully rather than correcting them — this
+project's standing practice for confirmed original bugs. Tests in
+`test_gameclock.c` cover both edge cases explicitly (not just the
+ordinary rollover path), plus `gameClockRestAllowed`'s simplified gate.
+
+`ApplyRestEffectsToCharacter`'s regen-rate mechanic goes deeper than
+"normal percentage-based HP/MP regeneration" — that phrase was true but
+incomplete. The percentage itself (`word_328C2`) is computed once per
+`RestPartyAndAdvanceClock` call, *before* the hourly loop: count active
+(non-incapacitated) party members, then try to consume one
+"camping supply"-range item (via `IsItemRangeAvailable`/
+`ConsumeItemChargeResource`) per active member — each successfully
+consumed item contributes `100 / activeMemberCount` percent, so
+resting is a *resource-consumed* mechanic, not a free action: fully
+supplying every active member with a camping item yields a full 100%
+regen tick, partially supplying them yields a proportionally smaller
+one, and having none at all yields 0% (no regen, though the status-
+effect-gated degen paths below still apply regardless). **This
+specific derivation is not reimplemented** — it needs
+`IsItemRangeAvailable`'s own inventory/container-search subsystem
+(`FindItemInInventoryRange`/`FindItemInsideContainer`{,`Level2`,`Level3`},
+see "Quest-item and party-inventory range checks" above), which this
+project hasn't built yet. `partyApplyRestEffects` (`party.c`/`.h`)
+takes the resulting percentage as an already-resolved parameter
+instead, matching this project's established "decide, don't apply
+against unconfirmed inputs" discipline (the same pattern
+`combatApplyEncodedItemEffectSingle` already uses for its own resolved
+value).
+
+The status-effect-gated part of `ApplyRestEffectsToCharacter` — fully
+decoded — is genuinely richer than a simple "diseased/cursed drain
+instead of regen": the gate tests 6 bits at once
+(`Sick`/`Poisoned`/`Diseased`/`Hexed`/`Jinxed`/`Cursed`), but only 4 of
+them have their own explicit handling inside it. Sick and Jinxed are
+silently *cured* (cleared, no cost at all) every time this runs while
+they're set. Diseased drains a flat 36 HP (clamped at 0, setting
+`PartyStatusDead` there exactly like `partyDeductHp` already does) —
+and if that kills the character, the Cursed check below is skipped
+entirely (an early return in the original). Cursed drains a flat 48 MP
+(floored at 0, no death). **Poisoned and Hexed have no explicit case
+of their own at all** — a character with only one of those two set
+still enters this branch (since they're part of the 6-bit gate) but
+matches none of the 4 specific sub-checks, so nothing happens: no
+regen, no drain, no cure. The practical effect is that Poisoned/Hexed
+alone simply *block* normal regeneration for that tick without adding
+any explicit penalty of their own here (their own periodic damage, if
+any, presumably comes from the separate ailment-tick system,
+`TickStatusEffects`, not from this function). Reimplemented as
+`partyApplyRestEffects`, reusing the already-existing
+`partyDeductHp`/`partyDeductMp` directly rather than re-deriving their
+clamp/death-flag logic. Tests in `test_party.c` cover every one of
+these cases individually, including the Diseased-kills-so-Cursed-
+never-runs sequencing and the Poisoned/Hexed "blocks but doesn't
+drain" quirk.
+
+`ResetDailyAbilityCharges`'s own per-record step (zeroing the 4
+`PartyFieldAbilityCharge` entries) is trivially reimplemented as
+`partyResetDailyAbilityCharges`; `gameClockAdvance`'s own return value
+(did a day roll over) tells the caller when to call it for every party
+member, matching the original's own call site exactly.
+
+**Still not reimplemented**: the regen-percentage derivation (needs the
+item-range-availability subsystem, above); `IsPositionInTriggerList`
+itself (a genuinely separate, general-purpose map-trigger table also
+feeding `ApplyMapTriggerEffect`, bigger in scope than just this one
+caller — not extracted yet); and the hourly loop's own orchestration
+(calling `ProcessLevelMonsters` across the full monster pool once per
+simulated hour, stopping early if combat starts) — pure orchestration
+over an already-decided per-record function
+(`monsterApproachParty`/`combatResolveSideTrap`), deferred the same way
+combat's own top-level loop is.
+
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`g_gameClockMinutes`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
 — a genuine ambient-lighting system: a gradual 113-step palette fade

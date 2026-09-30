@@ -10379,6 +10379,77 @@ drawing, a scaled projectile animation) — pure presentation, deferred
 to the eventual SDL2 layer like this project's other UI-heavy code.
 `roadmap.md` candidate 6 marked done.
 
+### Session update (continued, same day): the "R rest" command's decision logic, a new gameclock.c module, and two real shared bugs
+
+With candidates 6 and 9 both wrapped up, picked the next dependency
+candidate 8 lists directly: bit `0x2` of `ApplyEncodedItemEffect`'s
+dispatch is "rest here," a thin wrapper around
+`RestPartyAndAdvanceClock` — a function this project's own docs had
+already partly traced (`file-formats.md`'s "The 'R rest' command"
+section) but summarized in a sentence ("applies normal percentage-based
+HP/MP regeneration") that turned out to skip over real depth once read
+in full.
+
+Traced `IsRestingAllowedHere`, `AdvanceGameClock`'s calendar math (and
+`RestPartyAndAdvanceClock`'s own separately-inlined copy of it),
+`ResetDailyAbilityCharges`, and `ApplyRestEffectsToCharacter` end to
+end in both games. Two findings stood out:
+
+**A real, previously-undocumented regen-rate mechanic.** The
+percentage of max HP/MP restored per rest tick isn't a fixed constant —
+it's computed once per rest, before the hourly loop, from how many
+"camping supply"-range items the party has and can consume (one item
+per active party member, each contributing `100/activeMemberCount`
+percent). Resting is a consumed-resource mechanic, not a free action.
+This derivation needs `IsItemRangeAvailable`'s own inventory/
+container-search subsystem, which this project hasn't built — so
+`partyApplyRestEffects` takes the resulting percentage as an
+already-resolved parameter, the same "decide, don't apply against
+unconfirmed inputs" pattern used throughout combat.c.
+
+**Two real, shared original bugs, confirmed byte-for-byte identical in
+both games** — not a Chapter 2 mistake Chapter 3 fixes, genuinely
+present in both:
+1. The day-rollover check fires at `minutes >= 1439`, one short of the
+   real day length (1440) — subtracting 1440 underflows to 65535
+   whenever the pre-subtraction total lands exactly on 1439, reachable
+   from entirely ordinary inputs (resting one hour from minute 1379).
+   The clock stays corrupted until the next natural per-minute tick
+   eventually fixes it, roughly a full in-game day later.
+2. When a month rollover also triggers a year rollover, `month` is
+   left at 13 instead of being reset to 1 — unlike the separate
+   per-minute `AdvanceGameClock` tick, which does reset it correctly in
+   the same situation.
+
+Also found and corrected a real Chapter 2 vs. Chapter 3 difference in
+`IsRestingAllowedHere` itself: Chapter 2 carries a whole extra
+"forbidden map id" branch that Chapter 3 doesn't have at all — and
+Chapter 2's own backing global for it has no confirmed write site
+anywhere in its disassembly, confirming (rather than just suggesting)
+that it's genuinely dead code, not a per-game feature Chapter 3
+happens to lack.
+
+Added a new module, `src23/gameclock.c`/`.h`
+(`gameClockAdvance`/`gameClockRestAllowed`), plus two new `party.c`
+functions (`partyResetDailyAbilityCharges`/`partyApplyRestEffects`,
+the latter reusing the already-existing `partyDeductHp`/`partyDeductMp`
+directly rather than re-deriving their clamp/death-flag logic).
+Reproduced both bugs faithfully rather than correcting them. Tests in
+a new `test_gameclock.c` (the 20th suite) exercise both edge cases
+explicitly with concrete inputs, not just the ordinary rollover path;
+`test_party.c` gained coverage for every status-effect branch
+individually, including the "Diseased kills the character so Cursed's
+own drain never runs" sequencing and the "Poisoned/Hexed alone block
+regen but have no explicit drain of their own" quirk. All 20 suites
+pass.
+
+**Still not reimplemented**: the regen-percentage derivation itself
+(needs the item-availability subsystem); `IsPositionInTriggerList`
+(a separate, more general map-trigger table also feeding
+`ApplyMapTriggerEffect`, bigger in scope than just this caller); and
+the hourly loop's own monster-pool orchestration, deferred like
+combat's own top-level loop.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

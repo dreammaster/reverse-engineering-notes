@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-30, resolved: the "region/town password" mechanism -- party teleport/fast-travel destinations, a new WorldObjectFlagUnknown2000 consumer -- plus TickEquippedItemDurability, ApplyTargetResistancesToAttack, the equipment-corrosion write-back, and ApplyEffectAndDrawIconBar's full 3-way dispatch from prior rounds)
+## Status (last updated 2026-09-30, resolved: the "region/town password" mechanism -- party teleport/fast-travel destinations, a new WorldObjectFlagUnknown2000 consumer -- the wall/door trap creation mystery (no separate mechanism; it's monsterApproachParty), and the "R rest" command's own decision logic (gameclock.c, new, including two real shared original bugs) -- plus TickEquippedItemDurability, ApplyTargetResistancesToAttack, the equipment-corrosion write-back, and ApplyEffectAndDrawIconBar's full 3-way dispatch from prior rounds)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -901,8 +901,14 @@ consumers, if any.
    unreachable with real data, not reproduced. Bit `0x10` (conjure an
    item onto the held-item cursor) needs the pervasive
    `g_heldItemType`/held-item UI system (~40 other call sites) as a
-   prerequisite. Bit `0x2` ("rest here") is a thin wrapper around the
-   still-unimplemented `RestPartyAndAdvanceClock`. Bit `0x4` (a
+   prerequisite. Bit `0x2` ("rest here") is a thin wrapper around
+   `RestPartyAndAdvanceClock`, whose own decision logic is now done
+   (2026-09-30, see the status entry above) except for the
+   item-availability-based regen-rate derivation, which still needs the
+   not-yet-built inventory-search subsystem -- this bit itself is still
+   unimplemented (it's UI-toolbar dispatch calling the whole command),
+   but no longer blocked on *undecoded* logic the way the others here
+   are. Bit `0x4` (a
    corridor/ranged-attack path, along with bit `0x2000` further down)
    confirmed to match this candidate's existing scoping exactly --
    `ApplyAttackToTarget`'s own resistance-filtering half is now traced

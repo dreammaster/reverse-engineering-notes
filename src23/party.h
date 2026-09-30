@@ -746,4 +746,48 @@ typedef struct {
 /* False (out left untouched) if packedValue == 0 -- no trap configured at all. */
 bool partyDecodeSavingThrowEffect(uint16_t packedValue, PartySavingThrowEffect *out);
 
+/*
+ * ResetDailyAbilityCharges' own per-record step (yendor2.asm:45069,
+ * yendor3.asm:45484, instruction-identical): zeroes all 4
+ * PartyFieldAbilityCharge entries. Special abilities recharge once per
+ * in-game day -- see gameclock.h's gameClockAdvance, whose return
+ * value tells the caller when to call this for every party member.
+ */
+void partyResetDailyAbilityCharges(uint8_t *record);
+
+/*
+ * ApplyRestEffectsToCharacter (yendor2.asm:25926, yendor3.asm:24437,
+ * instruction-identical). The "R rest" command's own per-character
+ * tick: skips incapacitated characters entirely. Otherwise, if any of
+ * Sick/Poisoned/Diseased/Hexed/Jinxed/Cursed is set, this is a
+ * degrade tick instead of a regen one: Sick and Jinxed are silently
+ * cured (cleared, no cost); Diseased drains 36 HP via partyDeductHp
+ * (which itself sets PartyStatusDead at 0, matching the original's
+ * own inline clamp+flag logic exactly) -- if that kills the character,
+ * the Cursed check below is skipped entirely, matching the original's
+ * own early return; Cursed (if the character is still alive) drains
+ * 48 MP via partyDeductMp. Poisoned/Hexed alone (with none of the
+ * other 4 bits also set) fall into this branch but have no explicit
+ * case of their own here -- they simply block normal regen for the
+ * tick, with no separate degrade of their own (their own periodic
+ * damage, if any, comes from elsewhere -- the ailment-tick system).
+ *
+ * With none of those 6 bits set: normal regen, `round(max * regenPercent
+ * / 100)` added to current HP (always) and MP (only if the character
+ * has a nonzero max MP at all), each clamped at its own max.
+ * `regenPercent` is the original's own `word_328C2` -- derived from how
+ * many camping-supply items (item catalog range, consumed via
+ * ConsumeItemChargeResource) the party had on hand relative to its
+ * active member count; that derivation needs the not-yet-reimplemented
+ * IsItemRangeAvailable/container-recursion item-search system, so it's
+ * supplied here as an already-resolved input rather than composed
+ * against an unconfirmed subsystem.
+ */
+typedef struct {
+    bool wasSkipped; /* incapacitated -- no change made at all */
+    bool died;       /* the Diseased HP drain reached 0 and set PartyStatusDead this call */
+} PartyRestOutcome;
+
+PartyRestOutcome partyApplyRestEffects(uint8_t *record, uint16_t regenPercent);
+
 #endif
