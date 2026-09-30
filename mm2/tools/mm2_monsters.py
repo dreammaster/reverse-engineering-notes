@@ -27,7 +27,7 @@ TRANSPARENT = 5
 W = H = 96
 
 
-def banks(game_dir=DEFAULT_GAME_DIR, name="MONSTERS.16"):
+def banks(game_dir=DEFAULT_GAME_DIR, name="MONSTERS.16"):   # name="MONSTERS.4" for the CGA set
     d = open(os.path.join(game_dir, name), "rb").read()
     offs = struct.unpack_from("<75I", d, 0)
     nz = sorted(o for o in offs if o) + [len(d)]
@@ -37,7 +37,7 @@ def banks(game_dir=DEFAULT_GAME_DIR, name="MONSTERS.16"):
             yield idx, bank(d[o:nxt])
 
 
-def paint(frame, b, off):
+def paint(frame, b, off, cga=False):
     x, y, w, h = b[off], b[off + 1], b[off + 2], b[off + 3]
     px, py = x + 4, y + 6
     p = off + 4
@@ -49,7 +49,11 @@ def paint(frame, b, off):
         for _ in range(n):
             if row >= h:
                 break
-            if code != TRANSPARENT and 0 <= px + col < W and 0 <= py + row < H:
+            if cga:
+                # MONSTERS.4: codes 0-3 = CGA colours, 8 = transparent (pieces are authored separately from the EGA ones)
+                if code != 8 and 0 <= px + col < W and 0 <= py + row < H:
+                    frame[py + row][px + col] = code & 3
+            elif code != TRANSPARENT and 0 <= px + col < W and 0 <= py + row < H:
                 frame[py + row][px + col] = CODE_TO_COLOUR[code]
             col += 1
             if col == w:
@@ -57,15 +61,15 @@ def paint(frame, b, off):
     return p
 
 
-def frames(b, background=0):
+def frames(b, background=0, cga=False):
     n = struct.unpack_from("<H", b, 0)[0]
     offs = struct.unpack_from("<%dH" % n, b, 2)
     base = [[background] * W for _ in range(H)]
-    paint(base, b, offs[0])
+    paint(base, b, offs[0], cga)
     out = [base]
     for k in range(1, n):
         f = [row[:] for row in base]
-        paint(f, b, offs[k])
+        paint(f, b, offs[k], cga)
         out.append(f)
     return out
 

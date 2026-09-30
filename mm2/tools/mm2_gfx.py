@@ -5,7 +5,7 @@ MM2 image banks (*.16 = 4 bits/pixel, *.4 = 2 bits/pixel).  Format derived from 
     u32 decompressed size, then LZW (mm2_lzw) ->
     bank:  u16 count, then count * { u16 image_offset, u16 mask_offset (0 = none) }
     image: u16 width, u16 height, then rows of ceil(width/2) bytes (16 colours) or ceil(width/4)
-           (4 colours), each row padded up to a multiple of 4 bytes; leftmost pixel in the high bits.
+           (4 colours), byte aligned; leftmost pixel in the high bits.
     mask:  no header; 1 bit per pixel, rows of ceil(width/8) bytes, same size as its image.
 
 MONSTERS.16/.4 is different: a table of u32 offsets to separately LZW-compressed banks
@@ -46,7 +46,7 @@ def image(b, off, bpp):
     """-> (width, height, rows of palette indices)"""
     w, h = struct.unpack_from("<HH", b, off)
     per = 8 // bpp
-    rowb = ((w + per - 1) // per + 3) & ~3
+    rowb = (w + per - 1) // per          # rows are byte aligned (no 4-byte padding: matches all .4 banks)
     pix = []
     p = off + 4
     for _y in range(h):

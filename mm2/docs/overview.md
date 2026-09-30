@@ -42,8 +42,7 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 
 ## Open / next
 
-1. CGA monster pictures (`MONSTERS.4`, CGA driver's own piece decoder) -- the EGA `MONSTERS.16` format is done.
-2. `.4` (CGA) banks that don't decode with the 2 bpp rule; palette mapping per video mode.
+1. Graphics: all EGA/CGA banks and monster pictures decode; still to check: the exact CGA/Tandy/Hercules palettes and the 3-4 unused monster animation entries.
 3. Combat is documented ([combat.md](combat.md)); still to verify: to-hit formula details `(check)`, the
    remaining monster record fields' exact meaning, touch-effect implementation (`1AFE2`), spell effects (2CAST1/2).
 4. `ITEMS.DAT` fields (20 bytes: 12-byte name, class/type flags, three words), `SPELLS.DAT`, `ATTRIB.DAT`.

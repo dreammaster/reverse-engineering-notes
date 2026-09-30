@@ -150,8 +150,8 @@ LZW   (see above)  ->  bank:
   u16 count
   count x { u16 image_offset, u16 mask_offset }        ; mask_offset 0 = no mask
 image (at image_offset):  u16 width, u16 height, then height rows of
-      ceil(width/2) bytes (16 colours; ceil(width/4) for 2 bpp), each row padded to a multiple of 4 bytes,
-      left pixel in the high bits; palette = default IBM EGA colours
+      ceil(width/2) bytes (16 colours; ceil(width/4) for 2 bpp), rows byte aligned (every shipped image has a
+      row length that is a multiple of 4 anyway), left pixel in the high bits; palette = default IBM EGA colours
 mask  (at mask_offset):   no header, 1 bit per pixel, ceil(width/8) bytes per row
 ```
 
@@ -159,8 +159,7 @@ Contents seen: `town/cave/castle.16` = 32 wall/door pieces of the first-person m
 walls, side walls at 3 depths, doors), `*b/*t/*f.16` = 36/36/1 images (ceiling/floor/background/tops),
 `outdoor1-3.16` = 8 terrain pieces, `desert/ocean/swamp/tundra.16` = 20, `sky.16` = 208x60 sky bands,
 `master.16` = title screen (`Might and Magic Book Two`, 320x200) and UI pieces, `globe/endgame/
-book/throw/xfer/disk/nwcp.16` = special screens.  Some `.4` banks do not decode with the 2 bpp
-rule above yet (`TOWN.4`, `CASTLE.4`, `CAVE.4`, `GLOBE.4`, `DISK.4`, `XFER.4`): row padding differs.
+book/throw/xfer/disk/nwcp.16` = special screens.  Some `.4` banks did not decode with a 4-byte row padding (now fixed: `.4` rows are byte aligned; all 60 image banks decode).
 
 ### `MONSTERS.16` / `MONSTERS.4` — monster pictures (`tools/mm2_monsters.py`)
 
@@ -180,8 +179,9 @@ piece: u8 x, u8 y, u8 width, u8 height, then runs (u8): high nibble = length-1, 
 
 Animation table (copied to `DGROUP:9E48` by the driver, played by `monster_anim_*`): sequences of
 `(frame, delay)` byte pairs ending in `FFh`, the table ends with a second `FFh`; sequence 0 is the
-idle animation (bit 7 of an entry = random delay).  The CGA `.4` pictures use the CGA driver's own
-piece decoder (not decoded).
+idle animation (bit 7 of an entry = random delay).  `MONSTERS.4` (CGA, 53 banks) has the same bank/piece/run structure, but the low nibble codes are 0-3 = CGA colours
+and 8 = transparent (pieces are authored separately from the EGA ones, there is no fixed code mapping);
+`mm2_monsters.py` renders it with `frames(bank, cga=True)`.
 
 ## Items (`ITEMS.DAT`, 20-byte records, id 0 = "BLANK")
 
