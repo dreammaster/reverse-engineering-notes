@@ -35,7 +35,7 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 * Documented: [exe-layout.md](exe-layout.md), [file-formats.md](file-formats.md) (LZW, MAP/EVENTS/STR/
   MONSTERS, character record, image banks), [events.md](events.md) (50-opcode script VM),
   [game-library.md](game-library.md) (windows, video-driver ABI, state globals).
-* [shops.md](shops.md) (temple, guilds, blacksmith outline), [view.md](view.md) (3D maze view), [spells.md](spells.md), [save-format.md](save-format.md).
+* [classes.md](classes.md) (creation, levelling, experience), [shops.md](shops.md) (temple, guilds, blacksmith outline), [view.md](view.md) (3D maze view), [spells.md](spells.md), [save-format.md](save-format.md).
 * [combat.md](combat.md): combat flow, party/monster turns, tables.  Monster pictures decoded (`mm2_monsters.py`).
 * Tools: `mm2_lzw.py`, `mm2_data.py` (maps/events/strings/monsters), `mm2_gfx.py` (renders `*.16`
   image banks to PNG), `plink_info.py`.
