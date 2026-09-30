@@ -1,0 +1,10 @@
+# 2CMDS.OVL: character item commands
+1C130	cmds_common_helper
+1C48E	char_trade	"Trade: With (1-"
+1C6A0	cmds_helper_a
+1C6F2	char_use_item	"Use Which (A-F)/(1-6)?"
+1C7E8	char_remove_item	"Remove Which (1-6)?"
+1C8AA	item_effect_dispatch
+1C9E6	char_equip_item	"Equip Which (A-F)?"
+1CB8A	char_drop_item	"Drop Which (A-F)?"
+1CCD4	cmds_helper_b

@@ -10,7 +10,7 @@ ovl_2SMITH      segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1C130       proc near               ; CODE XREF: seg002:0615↑J
+smith_common_helper proc near           ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
                 push    bp
 ; ---------------------------------------------------------------------------
@@ -32,7 +32,7 @@ byte_1C132      db 0ECh, 8Bh, 1Eh, 3Eh, 58h, 8Bh, 46h, 4, 8Bh, 56h, 6
                 db 3Eh, 58h, 80h, 7Fh, 26h, 0, 74h, 0Dh, 0B8h, 8, 0, 50h
                 db 0E8h, 1Ah, 0Ah, 83h, 0C4h, 2, 0E9h, 0C8h, 3, 8Bh, 5Eh
                 db 4, 80h, 0BFh, 0BAh
-sub_1C130       endp ; sp-analysis failed
+smith_common_helper endp ; sp-analysis failed
 
 byte_1C1DA      db 57h, 0, 75h, 6, 0B8h, 6, 0, 0EBh, 0E7h, 90h, 0D1h, 0E3h
                                         ; CODE XREF: seg002:08CD↑J
@@ -180,7 +180,7 @@ byte_1C66E      db 0E8h, 0C9h, 0A8h, 83h, 0C4h, 2, 80h, 0BCh, 0BAh, 57h
                 db 3, 0E9h, 20h, 0FFh
 byte_1C6F2      db 89h, 76h, 0FCh, 5Eh, 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 90h
                                         ; CODE XREF: seg002:0B19↑J
-                                        ; sub_1CA88+A9↓p ...
+                                        ; smith_action_prompt+A9↓p ...
                 db 55h, 8Bh, 0ECh, 83h, 0ECh, 2, 8Bh, 1Eh, 3Eh, 58h, 8Bh
                 db 46h, 4, 8Bh, 56h, 6, 39h, 57h, 68h, 72h, 0Dh, 77h, 5
                 db 39h, 47h, 66h, 72h, 6, 0B8h, 1, 0, 0EBh, 3, 90h, 2Bh
@@ -278,10 +278,11 @@ byte_1CA52      db 0BFh, 0C0h, 57h, 0C7h, 46h, 0EEh, 2, 58h, 56h, 0E8h
 
 ; =============== S U B R O U T I N E =======================================
 
+; Identify / Sell / Buy (A-F)
 ; Attributes: bp-based frame
 
-sub_1CA88       proc near               ; CODE XREF: seg002:0801↑J
-                                        ; sub_1CCBA+18C↓p
+smith_action_prompt proc near           ; CODE XREF: seg002:0801↑J
+                                        ; blacksmith_menu+18C↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -296,7 +297,7 @@ arg_0           = word ptr  4
                 mov     ax, [bp+arg_0]
                 mov     word_2307A, ax
 
-loc_1CA99:                              ; CODE XREF: sub_1CA88+D1↓j
+loc_1CA99:                              ; CODE XREF: smith_action_prompt+D1↓j
                 or      di, di
                 jz      short loc_1CADC
                 mov     ax, 16h
@@ -311,7 +312,7 @@ loc_1CA99:                              ; CODE XREF: sub_1CA88+D1↓j
                 jmp     short loc_1CAC5
 ; ---------------------------------------------------------------------------
 
-loc_1CAB6:                              ; CODE XREF: sub_1CA88+27↑j
+loc_1CAB6:                              ; CODE XREF: smith_action_prompt+27↑j
                 cmp     [bp+arg_0], 5
                 jnz     short loc_1CAC2
                 mov     ax, offset aSellAF ; "Sell (A-F)   "
@@ -319,11 +320,11 @@ loc_1CAB6:                              ; CODE XREF: sub_1CA88+27↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CAC2:                              ; CODE XREF: sub_1CA88+32↑j
+loc_1CAC2:                              ; CODE XREF: smith_action_prompt+32↑j
                 mov     ax, offset aBuyAF ; "Buy (A-F)    "
 
-loc_1CAC5:                              ; CODE XREF: sub_1CA88+2C↑j
-                                        ; sub_1CA88+37↑j
+loc_1CAC5:                              ; CODE XREF: smith_action_prompt+2C↑j
+                                        ; smith_action_prompt+37↑j
                 push    ax
                 call    thk_text_puts
                 add     sp, 2
@@ -334,7 +335,7 @@ loc_1CAC5:                              ; CODE XREF: sub_1CA88+2C↑j
                 call    near ptr byte_1C7E8+0F8h
                 call    near ptr byte_1C5D8+1Eh
 
-loc_1CADC:                              ; CODE XREF: sub_1CA88+13↑j
+loc_1CADC:                              ; CODE XREF: smith_action_prompt+13↑j
                 mov     di, 1
                 call    thk_play_music_step
                 push    ax
@@ -351,13 +352,13 @@ loc_1CADC:                              ; CODE XREF: sub_1CA88+13↑j
                 push    si
                 call    near ptr byte_1C52C+76h
 
-loc_1CB03:                              ; CODE XREF: sub_1CA88+8B↓j
-                                        ; sub_1CA88+92↓j
+loc_1CB03:                              ; CODE XREF: smith_action_prompt+8B↓j
+                                        ; smith_action_prompt+92↓j
                 add     sp, 2
                 jmp     short loc_1CB54
 ; ---------------------------------------------------------------------------
 
-loc_1CB08:                              ; CODE XREF: sub_1CA88+75↑j
+loc_1CB08:                              ; CODE XREF: smith_action_prompt+75↑j
                 cmp     word_2307A, 6
                 jnz     short loc_1CB16
                 push    si
@@ -366,14 +367,14 @@ loc_1CB08:                              ; CODE XREF: sub_1CA88+75↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CB16:                              ; CODE XREF: sub_1CA88+85↑j
+loc_1CB16:                              ; CODE XREF: smith_action_prompt+85↑j
                 push    si
                 call    near ptr byte_1C73A+3Ch
                 jmp     short loc_1CB03
 ; ---------------------------------------------------------------------------
 
-loc_1CB1C:                              ; CODE XREF: sub_1CA88+66↑j
-                                        ; sub_1CA88+6B↑j
+loc_1CB1C:                              ; CODE XREF: smith_action_prompt+66↑j
+                                        ; smith_action_prompt+6B↑j
                 mov     ax, si
                 cmp     ax, 47h ; 'G'
                 jnz     short loc_1CB3A
@@ -389,9 +390,9 @@ loc_1CB1C:                              ; CODE XREF: sub_1CA88+66↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CB3A:                              ; CODE XREF: sub_1CA88+99↑j
+loc_1CB3A:                              ; CODE XREF: smith_action_prompt+99↑j
                 push    si
-                call    sub_1CB68
+                call    smith_draw
                 add     sp, 2           ; CODE XREF: seg002:0A65↑J
                 or      ax, ax
                 jz      short loc_1CB52
@@ -402,18 +403,18 @@ loc_1CB3A:                              ; CODE XREF: sub_1CA88+99↑j
                 jmp     short loc_1CB54
 ; ---------------------------------------------------------------------------
 
-loc_1CB52:                              ; CODE XREF: sub_1CA88+AF↑j
-                                        ; sub_1CA88+BB↑j
+loc_1CB52:                              ; CODE XREF: smith_action_prompt+AF↑j
+                                        ; smith_action_prompt+BB↑j
                 sub     di, di
 
-loc_1CB54:                              ; CODE XREF: sub_1CA88+7E↑j
-                                        ; sub_1CA88+C8↑j
+loc_1CB54:                              ; CODE XREF: smith_action_prompt+7E↑j
+                                        ; smith_action_prompt+C8↑j
                 cmp     si, 1Bh
                 jz      short loc_1CB5C
                 jmp     loc_1CA99
 ; ---------------------------------------------------------------------------
 
-loc_1CB5C:                              ; CODE XREF: sub_1CA88+CF↑j
+loc_1CB5C:                              ; CODE XREF: smith_action_prompt+CF↑j
                 mov     [bp+var_2], di
                 mov     [bp+var_4], si
                 pop     si
@@ -421,15 +422,16 @@ loc_1CB5C:                              ; CODE XREF: sub_1CA88+CF↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CA88       endp
+smith_action_prompt endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; " Blacksmith ", "Gold=", G-Gather Gold, #-Other Char
 ; Attributes: bp-based frame
 
-sub_1CB68       proc near               ; CODE XREF: sub_1CA88+B3↑p
-                                        ; sub_1CCBA+1D1↓p
+smith_draw      proc near               ; CODE XREF: smith_action_prompt+B3↑p
+                                        ; blacksmith_menu+1D1↓p
 
 arg_0           = word ptr  4
 
@@ -454,17 +456,17 @@ loc_1CB8A:                              ; CODE XREF: seg002:0AF5↑J
                 jmp     short loc_1CB98
 ; ---------------------------------------------------------------------------
 
-loc_1CB96:                              ; CODE XREF: sub_1CB68+D↑j
-                                        ; sub_1CB68+13↑j ...
+loc_1CB96:                              ; CODE XREF: smith_draw+D↑j
+                                        ; smith_draw+13↑j ...
                 sub     ax, ax
 
-loc_1CB98:                              ; CODE XREF: sub_1CB68+2C↑j
+loc_1CB98:                              ; CODE XREF: smith_draw+2C↑j
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CB9A:                              ; CODE XREF: sub_1CA88+C5↑p
-                                        ; sub_1CCBA+105↓p ...
+loc_1CB9A:                              ; CODE XREF: smith_action_prompt+C5↑p
+                                        ; blacksmith_menu+105↓p ...
                 push    word_23028
                 call    thk_char_ptr
                 add     sp, 2
@@ -532,7 +534,7 @@ loc_1CB9A:                              ; CODE XREF: sub_1CA88+C5↑p
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CC38:                              ; CODE XREF: sub_1CCBA+EF↓p
+loc_1CC38:                              ; CODE XREF: blacksmith_menu+EF↓p
                 mov     ax, 2
                 push    ax
                 call    thk_res_3FA0
@@ -589,14 +591,14 @@ loc_1CC38:                              ; CODE XREF: sub_1CCBA+EF↓p
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
-sub_1CB68       endp
+smith_draw      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1CCBA       proc near               ; CODE XREF: seg002:08FD↑J
+blacksmith_menu proc near               ; CODE XREF: seg002:08FD↑J
 
 var_C           = word ptr -0Ch
 var_8           = word ptr -8
@@ -618,7 +620,7 @@ var_2           = word ptr -2
                 mov     si, 5814h
                 mov     di, 0Ah
 
-loc_1CCDC:                              ; CODE XREF: sub_1CCBA+2B↓j
+loc_1CCDC:                              ; CODE XREF: blacksmith_menu+2B↓j
                 call    thk_res_67BC
                 mov     [si], ax
                 add     si, 2
@@ -628,12 +630,12 @@ loc_1CCDC:                              ; CODE XREF: sub_1CCBA+2B↓j
                 mov     [bp+var_8], 4
                 mov     [bp+var_C], 0
 
-loc_1CCF6:                              ; CODE XREF: sub_1CCBA+59↓j
+loc_1CCF6:                              ; CODE XREF: blacksmith_menu+59↓j
                 mov     si, [bp+var_C]
                 add     si, 57DAh
                 mov     di, 4
 
-loc_1CD00:                              ; CODE XREF: sub_1CCBA+4F↓j
+loc_1CD00:                              ; CODE XREF: blacksmith_menu+4F↓j
                 call    thk_res_67BC
                 mov     [si], ax
                 add     si, 2
@@ -646,7 +648,7 @@ loc_1CD00:                              ; CODE XREF: sub_1CCBA+4F↓j
                 mov     si, 582Ch
                 mov     di, 6
 
-loc_1CD20:                              ; CODE XREF: sub_1CCBA+6F↓j
+loc_1CD20:                              ; CODE XREF: blacksmith_menu+6F↓j
                 call    thk_res_67BC
                 mov     [si], ax
                 add     si, 2
@@ -661,17 +663,17 @@ loc_1CD20:                              ; CODE XREF: sub_1CCBA+6F↓j
                 mov     dx, g_party_size
                 mov     cx, word_23028
 
-loc_1CD4D:                              ; CODE XREF: sub_1CCBA:loc_1CE3F↓j
+loc_1CD4D:                              ; CODE XREF: blacksmith_menu:loc_1CE3F↓j
                 cmp     word ptr [si], 18h
                 jl      short loc_1CD55
                 jmp     loc_1CE34
 ; ---------------------------------------------------------------------------
 
-loc_1CD55:                              ; CODE XREF: sub_1CCBA+96↑j
-                                        ; sub_1CCBA+182↓j
+loc_1CD55:                              ; CODE XREF: blacksmith_menu+96↑j
+                                        ; blacksmith_menu+182↓j
                 mov     word_23028, cx
 
-loc_1CD59:                              ; CODE XREF: sub_1CCBA+86↑j
+loc_1CD59:                              ; CODE XREF: blacksmith_menu+86↑j
                 sub     ax, ax
                 push    ax
                 call    thk_res_3FA0
@@ -679,7 +681,7 @@ loc_1CD59:                              ; CODE XREF: sub_1CCBA+86↑j
                 sub     si, si
                 sub     di, di
 
-loc_1CD66:                              ; CODE XREF: sub_1CCBA+D5↓j
+loc_1CD66:                              ; CODE XREF: blacksmith_menu+D5↓j
                 lea     ax, [si+13h]
                 push    ax
                 mov     ax, 1
@@ -704,19 +706,19 @@ loc_1CD66:                              ; CODE XREF: sub_1CCBA+D5↓j
                 jmp     loc_1CEBE
 ; ---------------------------------------------------------------------------
 
-loc_1CDA1:                              ; CODE XREF: sub_1CCBA+E2↑j
+loc_1CDA1:                              ; CODE XREF: blacksmith_menu+E2↑j
                 or      byte_1DC80, 1
                 call    thk_res_34BA
                 call    loc_1CC38
                 mov     word_23078, 1
 
-loc_1CDB2:                              ; CODE XREF: sub_1CCBA+1FE↓j
+loc_1CDB2:                              ; CODE XREF: blacksmith_menu+1FE↓j
                 mov     word_2307A, 0
                 cmp     word_23078, 0
                 jz      short loc_1CDC2
                 call    loc_1CB9A
 
-loc_1CDC2:                              ; CODE XREF: sub_1CCBA+103↑j
+loc_1CDC2:                              ; CODE XREF: blacksmith_menu+103↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1CE11
                 mov     ax, 7
@@ -736,7 +738,7 @@ loc_1CDC2:                              ; CODE XREF: sub_1CCBA+103↑j
                 sub     si, si
                 mov     di, 582Ch
 
-loc_1CDEF:                              ; CODE XREF: sub_1CCBA+152↓j
+loc_1CDEF:                              ; CODE XREF: blacksmith_menu+152↓j
                 lea     ax, [si+11h]
                 push    ax
                 mov     ax, 10h
@@ -752,7 +754,7 @@ loc_1CDEF:                              ; CODE XREF: sub_1CCBA+152↓j
                 jl      short loc_1CDEF
                 mov     [bp+var_6], si
 
-loc_1CE11:                              ; CODE XREF: sub_1CCBA+10C↑j
+loc_1CE11:                              ; CODE XREF: blacksmith_menu+10C↑j
                 mov     [bp+var_2], 1
                 call    thk_play_music_step
                 push    ax
@@ -769,7 +771,7 @@ loc_1CE11:                              ; CODE XREF: sub_1CCBA+10C↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CE34:                              ; CODE XREF: sub_1CCBA+98↑j
+loc_1CE34:                              ; CODE XREF: blacksmith_menu+98↑j
                 add     si, 2
                 inc     cx
                 cmp     cx, dx
@@ -777,59 +779,59 @@ loc_1CE34:                              ; CODE XREF: sub_1CCBA+98↑j
                 jmp     loc_1CD55
 ; ---------------------------------------------------------------------------
 
-loc_1CE3F:                              ; CODE XREF: sub_1CCBA+180↑j
+loc_1CE3F:                              ; CODE XREF: blacksmith_menu+180↑j
                 jmp     loc_1CD4D
 ; ---------------------------------------------------------------------------
 
-loc_1CE42:                              ; CODE XREF: sub_1CCBA+174↑j
-                                        ; DATA XREF: sub_1CCBA:jpt_1CE2E↓o
+loc_1CE42:                              ; CODE XREF: blacksmith_menu+174↑j
+                                        ; DATA XREF: blacksmith_menu:jpt_1CE2E↓o
                 mov     ax, 1           ; jumptable 0001CE2E case 65
 
-loc_1CE45:                              ; CODE XREF: sub_1CCBA+197↓j
-                                        ; sub_1CCBA+19D↓j ...
+loc_1CE45:                              ; CODE XREF: blacksmith_menu+197↓j
+                                        ; blacksmith_menu+19D↓j ...
                 push    ax
-                call    sub_1CA88
+                call    smith_action_prompt
                 add     sp, 2
                 jmp     short loc_1CEB2
 ; ---------------------------------------------------------------------------
 
-loc_1CE4E:                              ; CODE XREF: sub_1CCBA+174↑j
-                                        ; DATA XREF: sub_1CCBA+1EC↓o
+loc_1CE4E:                              ; CODE XREF: blacksmith_menu+174↑j
+                                        ; DATA XREF: blacksmith_menu+1EC↓o
                 mov     ax, 2           ; jumptable 0001CE2E case 66
                 jmp     short loc_1CE45
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CE54:                              ; CODE XREF: sub_1CCBA+174↑j
-                                        ; DATA XREF: sub_1CCBA+1EE↓o
+loc_1CE54:                              ; CODE XREF: blacksmith_menu+174↑j
+                                        ; DATA XREF: blacksmith_menu+1EE↓o
                 mov     ax, 3           ; jumptable 0001CE2E case 67
                 jmp     short loc_1CE45
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CE5A:                              ; CODE XREF: sub_1CCBA+174↑j
-                                        ; DATA XREF: sub_1CCBA+1F0↓o
+loc_1CE5A:                              ; CODE XREF: blacksmith_menu+174↑j
+                                        ; DATA XREF: blacksmith_menu+1F0↓o
                 mov     ax, 4           ; jumptable 0001CE2E case 68
                 jmp     short loc_1CE45
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CE60:                              ; CODE XREF: sub_1CCBA+174↑j
-                                        ; DATA XREF: sub_1CCBA+1F2↓o
+loc_1CE60:                              ; CODE XREF: blacksmith_menu+174↑j
+                                        ; DATA XREF: blacksmith_menu+1F2↓o
                 mov     ax, 5           ; jumptable 0001CE2E case 69
                 jmp     short loc_1CE45
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CE66:                              ; CODE XREF: sub_1CCBA+174↑j
-                                        ; DATA XREF: sub_1CCBA+1F4↓o
+loc_1CE66:                              ; CODE XREF: blacksmith_menu+174↑j
+                                        ; DATA XREF: blacksmith_menu+1F4↓o
                 mov     ax, 6           ; jumptable 0001CE2E case 70
                 jmp     short loc_1CE45
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CE6C:                              ; CODE XREF: sub_1CCBA+174↑j
-                                        ; DATA XREF: sub_1CCBA+1F6↓o
+loc_1CE6C:                              ; CODE XREF: blacksmith_menu+174↑j
+                                        ; DATA XREF: blacksmith_menu+1F6↓o
                 push    word_23028      ; jumptable 0001CE2E case 71
                 call    thk_res_6532
                 add     sp, 2
@@ -839,15 +841,15 @@ loc_1CE6C:                              ; CODE XREF: sub_1CCBA+174↑j
                 call    near ptr byte_1C6F2+0Ah
                 add     sp, 4
 
-loc_1CE80:                              ; CODE XREF: sub_1CCBA+1DC↓j
+loc_1CE80:                              ; CODE XREF: blacksmith_menu+1DC↓j
                 mov     [bp+var_2], 0
                 jmp     short loc_1CEB2
 ; ---------------------------------------------------------------------------
                 align 2
 
-def_1CE2E:                              ; CODE XREF: sub_1CCBA+16F↑j
+def_1CE2E:                              ; CODE XREF: blacksmith_menu+16F↑j
                 push    [bp+var_4]      ; jumptable 0001CE2E default case
-                call    sub_1CB68
+                call    smith_draw
                 add     sp, 2
                 mov     word_23078, ax
                 or      ax, ax
@@ -858,7 +860,7 @@ def_1CE2E:                              ; CODE XREF: sub_1CCBA+16F↑j
                 jmp     short loc_1CEB2
 ; ---------------------------------------------------------------------------
                 align 2
-jpt_1CE2E       dw offset loc_1CE42     ; DATA XREF: sub_1CCBA+174↑r
+jpt_1CE2E       dw offset loc_1CE42     ; DATA XREF: blacksmith_menu+174↑r
                                         ; jump table for switch statement
                 dw offset loc_1CE4E     ; jumptable 0001CE2E case 66
                 dw offset loc_1CE54     ; jumptable 0001CE2E case 67
@@ -868,24 +870,24 @@ jpt_1CE2E       dw offset loc_1CE42     ; DATA XREF: sub_1CCBA+174↑r
                 dw offset loc_1CE6C     ; jumptable 0001CE2E case 71
 ; ---------------------------------------------------------------------------
 
-loc_1CEB2:                              ; CODE XREF: sub_1CCBA+192↑j
-                                        ; sub_1CCBA+1CB↑j ...
+loc_1CEB2:                              ; CODE XREF: blacksmith_menu+192↑j
+                                        ; blacksmith_menu+1CB↑j ...
                 cmp     [bp+var_4], 1Bh
                 jz      short loc_1CEBB
                 jmp     loc_1CDB2
 ; ---------------------------------------------------------------------------
 
-loc_1CEBB:                              ; CODE XREF: sub_1CCBA+1FC↑j
+loc_1CEBB:                              ; CODE XREF: blacksmith_menu+1FC↑j
                 call    thk_res_35A8
 
-loc_1CEBE:                              ; CODE XREF: sub_1CCBA+E4↑j
+loc_1CEBE:                              ; CODE XREF: blacksmith_menu+E4↑j
                 call    thk_2PLAY_A580
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CCBA       endp
+blacksmith_menu endp
 
 ; ---------------------------------------------------------------------------
                 align 2

@@ -10,7 +10,7 @@ ovl_2TEMPLE     segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1C130       proc near               ; CODE XREF: seg002:0615↑J
+temple_common_helper proc near          ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
                 push    bp
 ; ---------------------------------------------------------------------------
@@ -32,7 +32,7 @@ byte_1C132      db 0ECh, 83h, 0ECh, 2, 57h, 56h, 0B8h, 7, 0, 50h, 0E8h
                 db 0E6h, 58h, 0FFh, 76h, 4, 0E8h, 62h, 1, 83h, 0C4h, 6
                 db 0Bh, 0C0h, 74h, 11h, 8Bh, 5Eh, 4, 8Bh, 0F3h, 8Ah, 44h
                 db 0Dh, 88h, 47h, 6Ah, 0B8h, 14h, 0, 0EBh
-sub_1C130       endp ; sp-analysis failed
+temple_common_helper endp ; sp-analysis failed
 
 byte_1C1DA      db 4, 90h, 0B8h, 0Ch, 0, 50h, 0E8h, 4Dh, 0FFh, 83h, 0C4h
                                         ; CODE XREF: seg002:08CD↑J
@@ -96,7 +96,7 @@ loc_1C24F:                              ; CODE XREF: sub_1C1EA+54↑j
                 jz      short loc_1C2A0
                 sub     ax, ax
                 push    ax
-                call    sub_1C130
+                call    temple_common_helper
                 add     sp, 2
                 mov     byte_1DC25, 0C8h
                 mov     byte_1DC26, 3Ch ; '<'
@@ -128,7 +128,7 @@ loc_1C2A6:                              ; CODE XREF: sub_1C1EA+20↑j
 
 loc_1C2A9:                              ; CODE XREF: sub_1C1EA+B9↑j
                 push    ax
-                call    sub_1C130
+                call    temple_common_helper
                 add     sp, 2
 
 loc_1C2B0:                              ; CODE XREF: sub_1C1EA+B3↑j
@@ -143,7 +143,7 @@ sub_1C1EA       endp
 ; Attributes: bp-based frame
 
 sub_1C2B4       proc near               ; CODE XREF: ovl_2TEMPLE:C8D8↓p
-                                        ; sub_1CB9C+307↓p ...
+                                        ; mage_guild_menu+307↓p ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -208,7 +208,7 @@ loc_1C308:                              ; CODE XREF: seg002:08F1↑J
 loc_1C31C:                              ; CODE XREF: sub_1C2B4+18↑j
                                         ; sub_1C2B4+26↑j ...
                 push    ax
-                call    sub_1C130
+                call    temple_common_helper
                 add     sp, 2
                 pop     si
                 pop     bp
@@ -287,7 +287,7 @@ loc_1C399:                              ; CODE XREF: sub_1C2B4+99↑j
 
 ; Attributes: bp-based frame
 
-sub_1C3A0       proc near               ; CODE XREF: sub_1CB9C+1ED↓p
+sub_1C3A0       proc near               ; CODE XREF: mage_guild_menu+1ED↓p
 
 var_A           = byte ptr -0Ah
 var_8           = word ptr -8
@@ -757,7 +757,7 @@ sub_1C698       endp
 
 ; ---------------------------------------------------------------------------
                 align 2
-                push    bp              ; CODE XREF: sub_1CA88+DF↓p
+                push    bp              ; CODE XREF: temple_menu+DF↓p
                 mov     bp, sp
                 sub     sp, 12h
                 push    di
@@ -1106,7 +1106,7 @@ loc_1C95F:                              ; CODE XREF: ovl_2TEMPLE:C954↑j
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
-                push    bp              ; CODE XREF: sub_1CA88+CE↓p
+                push    bp              ; CODE XREF: temple_menu+CE↓p
                 mov     bp, sp
                 sub     sp, 0Ch
                 push    di
@@ -1258,7 +1258,7 @@ loc_1CA76:                              ; CODE XREF: ovl_2TEMPLE:CA60↑j
 
 ; Attributes: bp-based frame
 
-sub_1CA88       proc near               ; CODE XREF: seg002:0801↑J
+temple_menu     proc near               ; CODE XREF: seg002:0801↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1292,7 +1292,7 @@ var_2           = word ptr -2
                 sub     si, si
                 sub     di, di
 
-loc_1CAE3:                              ; CODE XREF: sub_1CA88+87↓j
+loc_1CAE3:                              ; CODE XREF: temple_menu+87↓j
                 lea     ax, [si+13h]
                 push    ax
                 mov     ax, 1
@@ -1324,20 +1324,20 @@ loc_1CAE3:                              ; CODE XREF: sub_1CA88+87↓j
                 mov     dx, g_party_size
                 mov     cx, [bp+var_2]
 
-loc_1CB39:                              ; CODE XREF: sub_1CA88+DC↓j
+loc_1CB39:                              ; CODE XREF: temple_menu+DC↓j
                 cmp     word ptr [si], 18h
                 jge     short loc_1CB5C
 
-loc_1CB3E:                              ; CODE XREF: sub_1CA88+DA↓j
+loc_1CB3E:                              ; CODE XREF: temple_menu+DA↓j
                                         ; seg002:0A65↑J
                 mov     [bp+var_2], cx
 
-loc_1CB41:                              ; CODE XREF: sub_1CA88+A5↑j
+loc_1CB41:                              ; CODE XREF: temple_menu+A5↑j
                 call    thk_res_34BA
                 call    thk_res_5440
                 mov     si, [bp+var_2]
 
-loc_1CB4A:                              ; CODE XREF: sub_1CA88+EA↓j
+loc_1CB4A:                              ; CODE XREF: temple_menu+EA↓j
                 mov     bx, si
                 shl     bx, 1
                 cmp     word ptr [bx+416h], 18h
@@ -1348,7 +1348,7 @@ loc_1CB4A:                              ; CODE XREF: sub_1CA88+EA↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CB5C:                              ; CODE XREF: sub_1CA88+B4↑j
+loc_1CB5C:                              ; CODE XREF: temple_menu+B4↑j
                 add     si, 2
                 inc     cx
                 cmp     cx, dx
@@ -1356,11 +1356,11 @@ loc_1CB5C:                              ; CODE XREF: sub_1CA88+B4↑j
                 jmp     short loc_1CB39
 ; ---------------------------------------------------------------------------
 
-loc_1CB66:                              ; CODE XREF: sub_1CA88+CB↑j
+loc_1CB66:                              ; CODE XREF: temple_menu+CB↑j
                 push    si
                 call    loc_1C6CC
 
-loc_1CB6A:                              ; CODE XREF: sub_1CA88+D1↑j
+loc_1CB6A:                              ; CODE XREF: temple_menu+D1↑j
                 add     sp, 2
                 mov     si, ax
                 cmp     si, 1Bh
@@ -1368,7 +1368,7 @@ loc_1CB6A:                              ; CODE XREF: sub_1CA88+D1↑j
                 mov     [bp+var_2], si
                 call    thk_res_35A8
 
-loc_1CB7A:                              ; CODE XREF: sub_1CA88+94↑j
+loc_1CB7A:                              ; CODE XREF: temple_menu+94↑j
                 call    thk_2PLAY_A580
                 cmp     word_23130, 0
                 jz      short loc_1CB95
@@ -1381,7 +1381,7 @@ loc_1CB8A:                              ; CODE XREF: seg002:0AF5↑J
                 mov     g_view_mode, 0
                 call    thk_res_47D8
 
-loc_1CB95:                              ; CODE XREF: sub_1CA88+FA↑j
+loc_1CB95:                              ; CODE XREF: temple_menu+FA↑j
                 pop     si
                 pop     di
                 mov     sp, bp
@@ -1389,14 +1389,15 @@ loc_1CB95:                              ; CODE XREF: sub_1CA88+FA↑j
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
-sub_1CA88       endp
+temple_menu     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; " Mage Guild ", "Learn (A-D)"
 ; Attributes: bp-based frame
 
-sub_1CB9C       proc near               ; CODE XREF: seg002:080D↑J
+mage_guild_menu proc near               ; CODE XREF: seg002:080D↑J
 
 var_18          = word ptr -18h
 var_12          = word ptr -12h
@@ -1424,10 +1425,10 @@ var_1           = byte ptr -1
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CBB4:                              ; CODE XREF: sub_1CB9C+43↓j
+loc_1CBB4:                              ; CODE XREF: mage_guild_menu+43↓j
                 inc     si
 
-loc_1CBB5:                              ; CODE XREF: sub_1CB9C+15↑j
+loc_1CBB5:                              ; CODE XREF: mage_guild_menu+15↑j
                 cmp     si, g_party_size
                 jge     short loc_1CBE1
                 push    si
@@ -1447,11 +1448,11 @@ loc_1CBB5:                              ; CODE XREF: sub_1CB9C+15↑j
 loc_1CBDC:                              ; CODE XREF: seg002:01AD↑J
                 inc     di
 
-loc_1CBDD:                              ; CODE XREF: sub_1CB9C+3E↑j
+loc_1CBDD:                              ; CODE XREF: mage_guild_menu+3E↑j
                 or      di, di
                 jz      short loc_1CBB4
 
-loc_1CBE1:                              ; CODE XREF: sub_1CB9C+1D↑j
+loc_1CBE1:                              ; CODE XREF: mage_guild_menu+1D↑j
                 mov     [bp+var_A], di
                 mov     [bp+var_10], si
                 mov     bx, word_23128
@@ -1475,7 +1476,7 @@ loc_1CBE1:                              ; CODE XREF: sub_1CB9C+1D↑j
                 sub     si, si
                 sub     di, di
 
-loc_1CC2B:                              ; CODE XREF: sub_1CB9C+BB↓j
+loc_1CC2B:                              ; CODE XREF: mage_guild_menu+BB↓j
                 lea     ax, [si+13h]
                 push    ax
                 mov     ax, 1
@@ -1502,7 +1503,7 @@ loc_1CC2B:                              ; CODE XREF: sub_1CB9C+BB↓j
                 jmp     loc_1CF48
 ; ---------------------------------------------------------------------------
 
-loc_1CC69:                              ; CODE XREF: sub_1CB9C+C8↑j
+loc_1CC69:                              ; CODE XREF: mage_guild_menu+C8↑j
                 cmp     word_23118, 0FFFFh
                 jnz     short loc_1CC76
                 mov     ax, 1
@@ -1510,10 +1511,10 @@ loc_1CC69:                              ; CODE XREF: sub_1CB9C+C8↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CC76:                              ; CODE XREF: sub_1CB9C+D2↑j
+loc_1CC76:                              ; CODE XREF: mage_guild_menu+D2↑j
                 sub     ax, ax
 
-loc_1CC78:                              ; CODE XREF: sub_1CB9C+D7↑j
+loc_1CC78:                              ; CODE XREF: mage_guild_menu+D7↑j
                 mov     [bp+var_12], ax
                 or      byte_1DC80, 1
                 mov     [bp+var_8], 0
@@ -1523,17 +1524,17 @@ loc_1CC78:                              ; CODE XREF: sub_1CB9C+D7↑j
                 mov     dx, g_party_size
                 mov     cx, [bp+var_8]
 
-loc_1CC96:                              ; CODE XREF: sub_1CB9C:loc_1CDD5↓j
+loc_1CC96:                              ; CODE XREF: mage_guild_menu:loc_1CDD5↓j
                 cmp     word ptr [si], 18h
                 jl      short loc_1CC9E
                 jmp     loc_1CDCA
 ; ---------------------------------------------------------------------------
 
-loc_1CC9E:                              ; CODE XREF: sub_1CB9C+FD↑j
-                                        ; sub_1CB9C+236↓j
+loc_1CC9E:                              ; CODE XREF: mage_guild_menu+FD↑j
+                                        ; mage_guild_menu+236↓j
                 mov     [bp+var_8], cx
 
-loc_1CCA1:                              ; CODE XREF: sub_1CB9C+EE↑j
+loc_1CCA1:                              ; CODE XREF: mage_guild_menu+EE↑j
                 call    thk_res_34BA
                 call    thk_res_5440
                 mov     ax, 2
@@ -1561,7 +1562,7 @@ loc_1CCA1:                              ; CODE XREF: sub_1CB9C+EE↑j
                 sub     si, si
                 mov     di, 58CAh
 
-loc_1CCE1:                              ; CODE XREF: sub_1CB9C+162↓j
+loc_1CCE1:                              ; CODE XREF: mage_guild_menu+162↓j
                 lea     ax, [si+13h]
                 push    ax
                 mov     ax, 2
@@ -1589,8 +1590,8 @@ loc_1CCE1:                              ; CODE XREF: sub_1CB9C+162↓j
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1CD21:                              ; CODE XREF: sub_1CB9C+16B↑j
-                                        ; sub_1CB9C+3A6↓j
+loc_1CD21:                              ; CODE XREF: mage_guild_menu+16B↑j
+                                        ; mage_guild_menu+3A6↓j
                 push    [bp+var_8]
                 call    thk_char_ptr
                 add     sp, 2
@@ -1600,7 +1601,7 @@ loc_1CD21:                              ; CODE XREF: sub_1CB9C+16B↑j
                 jmp     loc_1CE1D
 ; ---------------------------------------------------------------------------
 
-loc_1CD36:                              ; CODE XREF: sub_1CB9C+195↑j
+loc_1CD36:                              ; CODE XREF: mage_guild_menu+195↑j
                 mov     [bp+var_12], 0
                 mov     ax, 7
                 push    ax
@@ -1611,10 +1612,10 @@ loc_1CD36:                              ; CODE XREF: sub_1CB9C+195↑j
                 jmp     loc_1CDF6
 ; ---------------------------------------------------------------------------
 
-loc_1CD4E:                              ; CODE XREF: sub_1CB9C+1AD↑j
+loc_1CD4E:                              ; CODE XREF: mage_guild_menu+1AD↑j
                 mov     [bp+var_10], 3
 
-loc_1CD53:                              ; CODE XREF: sub_1CB9C+1DE↓j
+loc_1CD53:                              ; CODE XREF: mage_guild_menu+1DE↓j
                 mov     ax, [bp+var_10]
                 add     ax, 0Fh
                 push    ax
@@ -1633,7 +1634,7 @@ loc_1CD53:                              ; CODE XREF: sub_1CB9C+1DE↓j
                 sub     si, si
                 mov     di, 58E2h
 
-loc_1CD81:                              ; CODE XREF: sub_1CB9C+1FF↓j
+loc_1CD81:                              ; CODE XREF: mage_guild_menu+1FF↓j
                 push    si
                 lea     ax, [bp+si+var_4]
                 push    ax
@@ -1651,7 +1652,7 @@ loc_1CD81:                              ; CODE XREF: sub_1CB9C+1FF↓j
                 mov     di, 58E2h
                 mov     [bp+var_18], di
 
-loc_1CDA8:                              ; CODE XREF: sub_1CB9C+255↓j
+loc_1CDA8:                              ; CODE XREF: mage_guild_menu+255↓j
                 lea     ax, [si+12h]
                 push    ax
                 mov     ax, 23h ; '#'
@@ -1669,7 +1670,7 @@ loc_1CDA8:                              ; CODE XREF: sub_1CB9C+255↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CDCA:                              ; CODE XREF: sub_1CB9C+FF↑j
+loc_1CDCA:                              ; CODE XREF: mage_guild_menu+FF↑j
                 add     si, 2
                 inc     cx
                 cmp     cx, dx
@@ -1677,18 +1678,18 @@ loc_1CDCA:                              ; CODE XREF: sub_1CB9C+FF↑j
                 jmp     loc_1CC9E
 ; ---------------------------------------------------------------------------
 
-loc_1CDD5:                              ; CODE XREF: sub_1CB9C+234↑j
+loc_1CDD5:                              ; CODE XREF: mage_guild_menu+234↑j
                 jmp     loc_1CC96
 ; ---------------------------------------------------------------------------
 
-loc_1CDD8:                              ; CODE XREF: sub_1CB9C+21F↑j
+loc_1CDD8:                              ; CODE XREF: mage_guild_menu+21F↑j
                 mov     bx, [bp+var_18]
                 push    word ptr [bx+2]
                 push    word ptr [bx]
                 call    thk_res_53D0
                 add     sp, 4
 
-loc_1CDE6:                              ; CODE XREF: sub_1CB9C+22B↑j
+loc_1CDE6:                              ; CODE XREF: mage_guild_menu+22B↑j
                 add     di, 4
                 add     [bp+var_18], 4
                 inc     si
@@ -1698,11 +1699,11 @@ loc_1CDE6:                              ; CODE XREF: sub_1CB9C+22B↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CDF6:                              ; CODE XREF: sub_1CB9C+1AF↑j
+loc_1CDF6:                              ; CODE XREF: mage_guild_menu+1AF↑j
                 sub     si, si
                 mov     di, 5918h
 
-loc_1CDFB:                              ; CODE XREF: sub_1CB9C+27C↓j
+loc_1CDFB:                              ; CODE XREF: mage_guild_menu+27C↓j
                 lea     ax, [si+12h]
                 push    ax
                 mov     ax, 11h
@@ -1717,10 +1718,10 @@ loc_1CDFB:                              ; CODE XREF: sub_1CB9C+27C↓j
                 cmp     si, 3
                 jl      short loc_1CDFB
 
-loc_1CE1A:                              ; CODE XREF: sub_1CB9C+257↑j
+loc_1CE1A:                              ; CODE XREF: mage_guild_menu+257↑j
                 mov     [bp+var_10], si
 
-loc_1CE1D:                              ; CODE XREF: sub_1CB9C+197↑j
+loc_1CE1D:                              ; CODE XREF: mage_guild_menu+197↑j
                 mov     ax, word_23118
                 cmp     [bp+var_8], ax
                 jz      short loc_1CE66
@@ -1751,7 +1752,7 @@ loc_1CE1D:                              ; CODE XREF: sub_1CB9C+197↑j
                 call    loc_1C326
                 add     sp, 6
 
-loc_1CE66:                              ; CODE XREF: sub_1CB9C+287↑j
+loc_1CE66:                              ; CODE XREF: mage_guild_menu+287↑j
                 call    thk_play_music_step
                 push    ax
                 call    thk_res_00E8
@@ -1770,19 +1771,19 @@ loc_1CE66:                              ; CODE XREF: sub_1CB9C+287↑j
                 jmp     short loc_1CF08
 ; ---------------------------------------------------------------------------
 
-loc_1CE8E:                              ; CODE XREF: sub_1CB9C+2DA↑j
+loc_1CE8E:                              ; CODE XREF: mage_guild_menu+2DA↑j
                 cmp     [bp+var_A], 0
                 jnz     short loc_1CE97
                 jmp     loc_1CF3C
 ; ---------------------------------------------------------------------------
 
-loc_1CE97:                              ; CODE XREF: sub_1CB9C+2F6↑j
+loc_1CE97:                              ; CODE XREF: mage_guild_menu+2F6↑j
                 sub     ax, ax
                 push    ax
                 mov     al, [bp+var_4]
 
-loc_1CE9D:                              ; CODE XREF: sub_1CB9C+326↓j
-                                        ; sub_1CB9C+335↓j
+loc_1CE9D:                              ; CODE XREF: mage_guild_menu+326↓j
+                                        ; mage_guild_menu+335↓j
                 sub     ah, ah
                 push    ax
                 push    [bp+var_6]
@@ -1792,20 +1793,20 @@ loc_1CE9D:                              ; CODE XREF: sub_1CB9C+326↓j
                 jmp     loc_1CF37
 ; ---------------------------------------------------------------------------
 
-loc_1CEB2:                              ; CODE XREF: sub_1CB9C+2DF↑j
+loc_1CEB2:                              ; CODE XREF: mage_guild_menu+2DF↑j
                 cmp     [bp+var_A], 0
                 jnz     short loc_1CEBB
                 jmp     loc_1CF3C
 ; ---------------------------------------------------------------------------
 
-loc_1CEBB:                              ; CODE XREF: sub_1CB9C+31A↑j
+loc_1CEBB:                              ; CODE XREF: mage_guild_menu+31A↑j
                 mov     ax, 1
                 push    ax
                 mov     al, [bp+var_3]
                 jmp     short loc_1CE9D
 ; ---------------------------------------------------------------------------
 
-loc_1CEC4:                              ; CODE XREF: sub_1CB9C+2E4↑j
+loc_1CEC4:                              ; CODE XREF: mage_guild_menu+2E4↑j
                 cmp     [bp+var_A], 0
 
 loc_1CEC8:                              ; CODE XREF: seg002:07AD↑J
@@ -1817,7 +1818,7 @@ loc_1CEC8:                              ; CODE XREF: seg002:07AD↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CED4:                              ; CODE XREF: sub_1CB9C+2E9↑j
+loc_1CED4:                              ; CODE XREF: mage_guild_menu+2E9↑j
                 cmp     [bp+var_A], 0
                 jz      short loc_1CF3C
                 mov     ax, 3
@@ -1832,7 +1833,7 @@ loc_1CED4:                              ; CODE XREF: sub_1CB9C+2E9↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CEF0:                              ; CODE XREF: sub_1CB9C+2EE↑j
+loc_1CEF0:                              ; CODE XREF: mage_guild_menu+2EE↑j
                 push    [bp+var_8]
                 call    thk_res_6532
                 add     sp, 2
@@ -1845,7 +1846,7 @@ loc_1CEF0:                              ; CODE XREF: sub_1CB9C+2EE↑j
                 jmp     short loc_1CF3C
 ; ---------------------------------------------------------------------------
 
-loc_1CF08:                              ; CODE XREF: sub_1CB9C+2F0↑j
+loc_1CF08:                              ; CODE XREF: mage_guild_menu+2F0↑j
                 mov     ax, [bp+var_C]
                 sub     ax, 31h ; '1'
                 mov     [bp+var_E], ax
@@ -1865,21 +1866,21 @@ loc_1CF08:                              ; CODE XREF: sub_1CB9C+2F0↑j
                 mov     ax, [bp+var_E]
                 mov     [bp+var_8], ax
 
-loc_1CF37:                              ; CODE XREF: sub_1CB9C+313↑j
-                                        ; sub_1CB9C+351↑j
+loc_1CF37:                              ; CODE XREF: mage_guild_menu+313↑j
+                                        ; mage_guild_menu+351↑j
                 mov     [bp+var_12], 1
 
-loc_1CF3C:                              ; CODE XREF: sub_1CB9C+2F8↑j
-                                        ; sub_1CB9C+31C↑j ...
+loc_1CF3C:                              ; CODE XREF: mage_guild_menu+2F8↑j
+                                        ; mage_guild_menu+31C↑j ...
                 cmp     [bp+var_C], 1Bh
                 jz      short loc_1CF45
                 jmp     loc_1CD21
 ; ---------------------------------------------------------------------------
 
-loc_1CF45:                              ; CODE XREF: sub_1CB9C+3A4↑j
+loc_1CF45:                              ; CODE XREF: mage_guild_menu+3A4↑j
                 call    thk_res_35A8
 
-loc_1CF48:                              ; CODE XREF: sub_1CB9C+CA↑j
+loc_1CF48:                              ; CODE XREF: mage_guild_menu+CA↑j
                 call    thk_2PLAY_A580
                 pop     si
                 pop     di
@@ -1889,15 +1890,15 @@ loc_1CF48:                              ; CODE XREF: sub_1CB9C+CA↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CF52:                              ; CODE XREF: sub_1CA88+8↑p
-                                        ; sub_1CB9C+A↑p
+loc_1CF52:                              ; CODE XREF: temple_menu+8↑p
+                                        ; mage_guild_menu+A↑p
                 push    bp
                 mov     bp, sp
                 sub     sp, 0Ah
                 push    di
                 push    si
                 mov     ax, 4           ; CODE XREF: seg002:0AE9↑J
-sub_1CB9C       endp
+mage_guild_menu endp
 
                 push    ax
                 call    thk_res_670A

@@ -1,0 +1,5 @@
+# 2SMITH.OVL: Blacksmith
+1C130	smith_common_helper
+1CA88	smith_action_prompt	Identify / Sell / Buy (A-F)
+1CB68	smith_draw	" Blacksmith ", "Gold=", G-Gather Gold, #-Other Char
+1CCBA	blacksmith_menu

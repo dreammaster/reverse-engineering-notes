@@ -28,9 +28,11 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"caves_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_insn	(0X1C1DA);
+	set_name	(0X1C1DA,	"caves_event_a");
 	create_insn	(x=0X1C1DD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C1E2);
@@ -50,6 +52,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C230);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C23C);
+	set_name	(0X1C23C,	"caves_event_b");
 	create_insn	(x=0X1C23F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C260);
@@ -102,6 +105,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C2FC);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C308);
+	set_name	(0X1C308,	"caves_found_item");
 	create_insn	(x=0X1C30B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C310);
@@ -183,6 +187,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C450);
 	op_hex		(x,	1);
 	create_insn	(0X1C462);
+	set_name	(0X1C462,	"caves_donate_experience");
 	create_insn	(x=0X1C465);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C469);
@@ -233,6 +238,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C523);
 	op_hex		(x,	1);
 	create_insn	(0X1C52C);
+	set_name	(0X1C52C,	"caves_event_c");
 	create_insn	(x=0X1C52F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C534);
@@ -268,6 +274,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C5A2);
 	op_hex		(x,	1);
 	create_insn	(0X1C5AC);
+	set_name	(0X1C5AC,	"caves_donate_gems");
 	create_insn	(x=0X1C5AF);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C5B3);
@@ -324,6 +331,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C665);
 	op_hex		(x,	1);
 	create_insn	(0X1C66E);
+	set_name	(0X1C66E,	"caves_pick_character");
 	create_insn	(x=0X1C671);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C675);
@@ -380,6 +388,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C72C);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C73A);
+	set_name	(0X1C73A,	"caves_time_travel");
 	create_insn	(x=0X1C73D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C744);
@@ -522,6 +531,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C990);
 	op_hex		(x,	1);
 	create_insn	(0X1C99A);
+	set_name	(0X1C99A,	"caves_event_d");
 	create_insn	(x=0X1C99D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C9A2);
@@ -1026,12 +1036,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1D3BC);
 	create_insn	(0X1D5DE);
+	set_name	(0X1D5DE,	"caves_event_e");
 	create_insn	(x=0X1D5E4);
 	op_hex		(x,	1);
 	create_insn	(0X1D5E8);
+	set_name	(0X1D5E8,	"caves_event_f");
 	create_insn	(x=0X1D5EF);
 	op_hex		(x,	1);
 	create_insn	(0X1D5F4);
+	set_name	(0X1D5F4,	"caves_event_g");
 	create_insn	(x=0X1D5F7);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D602);
@@ -1081,21 +1094,26 @@ static Functions_0(void) {
 	set_frame_size(0X1C23C, 0XC, 2, 0);
 	add_func    (0X1C308,0X1C3F6);
 	set_func_flags(0X1C308,0x5410);
+	set_func_cmt(0X1C308,	"\"You have found a\"", 0);
 	set_frame_size(0X1C308, 0XE, 2, 0);
 	add_func    (0X1C462,0X1C52C);
 	set_func_flags(0X1C462,0x5410);
+	set_func_cmt(0X1C462,	"\"for experience (1-8) ?\"", 0);
 	set_frame_size(0X1C462, 0X8, 2, 0);
 	add_func    (0X1C52C,0X1C5AB);
 	set_func_flags(0X1C52C,0x5410);
 	set_frame_size(0X1C52C, 0XE, 2, 0);
 	add_func    (0X1C5AC,0X1C66E);
 	set_func_flags(0X1C5AC,0x5410);
+	set_func_cmt(0X1C5AC,	"\"Which character shall donate all his or her gems (1-8) ?\"", 0);
 	set_frame_size(0X1C5AC, 0XC, 2, 0);
 	add_func    (0X1C66E,0X1C73A);
 	set_func_flags(0X1C66E,0x5410);
+	set_func_cmt(0X1C66E,	"\"Which character (1-8) ?\"", 0);
 	set_frame_size(0X1C66E, 0XC, 2, 0);
 	add_func    (0X1C73A,0X1C99A);
 	set_func_flags(0X1C73A,0x5410);
+	set_func_cmt(0X1C73A,	"\"What era do you desire (1-8)?\"", 0);
 	set_frame_size(0X1C73A, 0XC, 2, 0);
 	add_func    (0X1C99A,0X1CB42);
 	set_func_flags(0X1C99A,0x5410);

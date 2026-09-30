@@ -28,6 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"smith_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
@@ -77,6 +78,7 @@ static Bytes_0(void) {
 	create_byte	(0X1CA52);
 	make_array	(0X1CA52,	0X36);
 	create_insn	(0X1CA88);
+	set_name	(0X1CA88,	"smith_action_prompt");
 	create_insn	(x=0X1CA8B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA93);
@@ -120,6 +122,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CB5F);
 	op_stkvar	(x,	0);
 	create_insn	(0X1CB68);
+	set_name	(0X1CB68,	"smith_draw");
 	create_insn	(x=0X1CB6B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1CB72);
@@ -203,6 +206,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CCB5);
 	op_hex		(x,	1);
 	create_insn	(0X1CCBA);
+	set_name	(0X1CCBA,	"blacksmith_menu");
 	create_insn	(x=0X1CCBD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CCC2);
@@ -720,9 +724,11 @@ static Functions_0(void) {
 	set_frame_size(0X1C130, 0, 2, 0);
 	add_func    (0X1CA88,0X1CB68);
 	set_func_flags(0X1CA88,0x5410);
+	set_func_cmt(0X1CA88,	"Identify / Sell / Buy (A-F)", 0);
 	set_frame_size(0X1CA88, 0X8, 2, 0);
 	add_func    (0X1CB68,0X1CCBA);
 	set_func_flags(0X1CB68,0x5410);
+	set_func_cmt(0X1CB68,	"\" Blacksmith \", \"Gold=\", G-Gather Gold, #-Other Char", 0);
 	set_frame_size(0X1CB68, 0, 2, 0);
 	add_func    (0X1CCBA,0X1CEC7);
 	set_func_flags(0X1CCBA,0x5410);

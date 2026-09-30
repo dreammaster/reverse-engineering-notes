@@ -1,0 +1,14 @@
+# 2CAVES.OVL: special map locations
+1C130	caves_common_helper
+1C1DA	caves_event_a
+1C23C	caves_event_b
+1C308	caves_found_item	"You have found a"
+1C462	caves_donate_experience	"for experience (1-8) ?"
+1C52C	caves_event_c
+1C5AC	caves_donate_gems	"Which character shall donate all his or her gems (1-8) ?"
+1C66E	caves_pick_character	"Which character (1-8) ?"
+1C73A	caves_time_travel	"What era do you desire (1-8)?"
+1C99A	caves_event_d
+1D5DE	caves_event_e
+1D5E8	caves_event_f
+1D5F4	caves_event_g

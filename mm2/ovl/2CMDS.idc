@@ -28,6 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"cmds_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
@@ -51,6 +52,7 @@ static Bytes_0(void) {
 	create_byte	(0X1C462);
 	make_array	(0X1C462,	0X2C);
 	create_insn	(0X1C48E);
+	set_name	(0X1C48E,	"char_trade");
 	create_insn	(x=0X1C491);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C496);
@@ -170,6 +172,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C69A);
 	op_hex		(x,	1);
 	create_insn	(0X1C6A0);
+	set_name	(0X1C6A0,	"cmds_helper_a");
 	create_insn	(x=0X1C6A4);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1C6A7);
@@ -191,6 +194,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C6EC);
 	op_hex		(x,	1);
 	create_insn	(0X1C6F2);
+	set_name	(0X1C6F2,	"char_use_item");
 	create_insn	(x=0X1C6F5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C705);
@@ -245,6 +249,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C7DE);
 	op_hex		(x,	1);
 	create_insn	(0X1C7E8);
+	set_name	(0X1C7E8,	"char_remove_item");
 	create_insn	(x=0X1C7EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C7FB);
@@ -293,6 +298,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C8A1);
 	op_hex		(x,	1);
 	create_insn	(0X1C8AA);
+	set_name	(0X1C8AA,	"item_effect_dispatch");
 	create_insn	(x=0X1C8AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C8B1);
@@ -381,6 +387,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C9D8);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C9E6);
+	set_name	(0X1C9E6,	"char_equip_item");
 	create_insn	(x=0X1C9E9);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C9EE);
@@ -481,6 +488,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CB7D);
 	op_hex		(x,	1);
 	create_insn	(0X1CB8A);
+	set_name	(0X1CB8A,	"char_drop_item");
 	create_insn	(x=0X1CB8D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CB9F);
@@ -579,6 +587,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CCC9);
 	op_hex		(x,	1);
 	create_insn	(0X1CCD4);
+	set_name	(0X1CCD4,	"cmds_helper_b");
 	create_insn	(x=0X1CCD7);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CCDB);
@@ -865,24 +874,29 @@ static Functions_0(void) {
 	set_frame_size(0X1C130, 0X6, 2, 0);
 	add_func    (0X1C48E,0X1C66E);
 	set_func_flags(0X1C48E,0x5410);
+	set_func_cmt(0X1C48E,	"\"Trade: With (1-\"", 0);
 	set_frame_size(0X1C48E, 0X12, 2, 0);
 	add_func    (0X1C6A0,0X1C6F2);
 	set_func_flags(0X1C6A0,0x5410);
 	set_frame_size(0X1C6A0, 0X2, 2, 0);
 	add_func    (0X1C6F2,0X1C7E8);
 	set_func_flags(0X1C6F2,0x5410);
+	set_func_cmt(0X1C6F2,	"\"Use Which (A-F)/(1-6)?\"", 0);
 	set_frame_size(0X1C6F2, 0XC, 2, 0);
 	add_func    (0X1C7E8,0X1C8AA);
 	set_func_flags(0X1C7E8,0x5410);
+	set_func_cmt(0X1C7E8,	"\"Remove Which (1-6)?\"", 0);
 	set_frame_size(0X1C7E8, 0XA, 2, 0);
 	add_func    (0X1C8AA,0X1C9E5);
 	set_func_flags(0X1C8AA,0x5410);
 	set_frame_size(0X1C8AA, 0X6, 2, 0);
 	add_func    (0X1C9E6,0X1CB8A);
 	set_func_flags(0X1C9E6,0x5410);
+	set_func_cmt(0X1C9E6,	"\"Equip Which (A-F)?\"", 0);
 	set_frame_size(0X1C9E6, 0X10, 2, 0);
 	add_func    (0X1CB8A,0X1CCBC);
 	set_func_flags(0X1CB8A,0x5410);
+	set_func_cmt(0X1CB8A,	"\"Drop Which (A-F)?\"", 0);
 	set_frame_size(0X1CB8A, 0XC, 2, 0);
 	add_func    (0X1CCD4,0X1CD54);
 	set_func_flags(0X1CCD4,0x5410);

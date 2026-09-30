@@ -28,11 +28,13 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"inn_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
 	make_array	(0X1C1DA,	0X10);
 	create_insn	(0X1C1EA);
+	set_name	(0X1C1EA,	"inn_leave");
 	create_insn	(x=0X1C1ED);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C1FC);
@@ -56,6 +58,7 @@ static Bytes_0(void) {
 	create_insn	(0X1C286);
 	create_insn	(0X1C292);
 	create_insn	(0X1C2A6);
+	set_name	(0X1C2A6,	"inn_esc_prompt");
 	create_insn	(x=0X1C2B1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C2B4);
@@ -64,6 +67,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C2BB);
 	op_hex		(x,	1);
 	create_insn	(0X1C2C0);
+	set_name	(0X1C2C0,	"inn_draw_lists");
 	create_insn	(x=0X1C2C3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C2CF);
@@ -229,6 +233,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C5B8);
 	op_hex		(x,	1);
 	create_insn	(0X1C5C0);
+	set_name	(0X1C5C0,	"inn_menu");
 	create_insn	(x=0X1C5C3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C5C8);
@@ -525,6 +530,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CB37);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CB40);
+	set_name	(0X1CB40,	"inn_run");
 	create_insn	(x=0X1CB43);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CB4E);
@@ -570,12 +576,15 @@ static Functions_0(void) {
 	set_frame_size(0X1C1EA, 0X8, 2, 0);
 	add_func    (0X1C2A6,0X1C2BF);
 	set_func_flags(0X1C2A6,0x5400);
+	set_func_cmt(0X1C2A6,	"\"('ESC' to exit to DOS)\"", 0);
 	set_frame_size(0X1C2A6, 0, 0, 0);
 	add_func    (0X1C2C0,0X1C52C);
 	set_func_flags(0X1C2C0,0x5410);
+	set_func_cmt(0X1C2C0,	"\"Characters\" / \"Hirelings\"", 0);
 	set_frame_size(0X1C2C0, 0X10, 2, 0);
 	add_func    (0X1C5C0,0X1CB40);
 	set_func_flags(0X1C5C0,0x5410);
+	set_func_cmt(0X1C5C0,	"A-X view, Ctrl A-X add/remove, 1-5 other towns; \"PARTY\"", 0);
 	set_frame_size(0X1C5C0, 0X16, 2, 0);
 	add_func    (0X1CB40,0X1CC10);
 	set_func_flags(0X1CB40,0x5410);

@@ -28,6 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"cast2_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
@@ -44,6 +45,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C21F);
 	op_hex		(x,	1);
 	create_insn	(0X1C22C);
+	set_name	(0X1C22C,	"spell_view_monster");
 	create_insn	(x=0X1C22F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C236);
@@ -602,6 +604,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CF27);
 	op_hex		(x,	1);
 	create_insn	(0X1CF2C);
+	set_name	(0X1CF2C,	"cast_spell_dispatch");
 	create_insn	(x=0X1CF2F);
 	op_stkvar	(x,	1);
 	set_cmt	(0X1CF32,	"switch 31 cases",	0);
@@ -900,6 +903,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D1A2);
 	op_hex		(x,	1);
 	create_insn	(0X1D1A6);
+	set_name	(0X1D1A6,	"cast2_return_prompt");
 	create_insn	(x=0X1D1A9);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D1BF);
@@ -926,6 +930,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D233);
 	op_stkvar	(x,	1);
 	create_insn	(0X1D23A);
+	set_name	(0X1D23A,	"cast2_prompt_return");
 	create_insn	(x=0X1D23D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D247);
@@ -954,6 +959,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D2A6);
 	op_stkvar	(x,	1);
 	create_insn	(0X1D2AE);
+	set_name	(0X1D2AE,	"cast2_show_text");
 	create_insn	(x=0X1D2B1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D2C8);
@@ -1012,6 +1018,7 @@ static Functions_0(void) {
 	set_frame_size(0X1C1EA, 0X2, 2, 0);
 	add_func    (0X1C22C,0X1C3F7);
 	set_func_flags(0X1C22C,0x5410);
+	set_func_cmt(0X1C22C,	"\"HP =\", \"AC =\", \"Undead (\", \"Special Power (\", \"Bonus on Touch (\", \"Magic Resistance (\"", 0);
 	set_frame_size(0X1C22C, 0X4, 2, 0);
 	add_func    (0X1C412,0X1C42D);
 	set_func_flags(0X1C412,0x5400);
@@ -1159,12 +1166,14 @@ static Functions_0(void) {
 	set_frame_size(0X1CF1C, 0, 0, 0);
 	add_func    (0X1CF2C,0X1D1A6);
 	set_func_flags(0X1CF2C,0x1410);
+	set_func_cmt(0X1CF2C,	"(spell index) jump to the per-spell handler", 0);
 	set_frame_size(0X1CF2C, 0, 2, 0);
 	add_func    (0X1D1A6,0X1D23A);
 	set_func_flags(0X1D1A6,0x5410);
 	set_frame_size(0X1D1A6, 0X2, 2, 0);
 	add_func    (0X1D23A,0X1D2AD);
 	set_func_flags(0X1D23A,0x5410);
+	set_func_cmt(0X1D23A,	"\"'Return' to cast\"", 0);
 	set_frame_size(0X1D23A, 0X2, 2, 0);
 	add_func    (0X1D2AE,0X1D37C);
 	set_func_flags(0X1D2AE,0x5410);

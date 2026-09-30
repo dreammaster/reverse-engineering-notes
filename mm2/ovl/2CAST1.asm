@@ -10,7 +10,7 @@ ovl_2CAST1      segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1C130       proc near               ; CODE XREF: seg002:0615↑J
+cast1_common_helper proc near           ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
                 push    bp
 ; ---------------------------------------------------------------------------
@@ -35,15 +35,15 @@ byte_1C132      db 0ECh, 83h, 0ECh, 2, 56h, 0E8h, 0Ch, 0Fh, 0Bh, 0C0h
 byte_1C1DA      db 80h, 0Dh, 0E8h, 0D3h, 0B0h, 0C6h, 6, 95h, 3, 1, 0C6h
                                         ; CODE XREF: seg002:08CD↑J
                 db 6, 9Bh, 3, 0, 0C3h
-sub_1C130       endp ; sp-analysis failed
+cast1_common_helper endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1C1EA       proc near               ; CODE XREF: seg002:07F5↑J
-                                        ; sub_1D0C2:loc_1D0E4↓p
+cast1_effect_a  proc near               ; CODE XREF: seg002:07F5↑J
+                                        ; cast_noncombat_spell:loc_1D0E4↓p
 
 var_2           = byte ptr -2
 
@@ -60,19 +60,19 @@ var_2           = byte ptr -2
                 jbe     short loc_1C20D
                 mov     byte_1DC30, 0FFh
 
-loc_1C20D:                              ; CODE XREF: sub_1C1EA+1C↑j
+loc_1C20D:                              ; CODE XREF: cast1_effect_a+1C↑j
                 mov     dl, [bp+var_2]
                 mov     cl, byte_1DC30
                 jmp     short loc_1C21E
 ; ---------------------------------------------------------------------------
 
-loc_1C216:                              ; CODE XREF: sub_1C1EA+3A↓j
+loc_1C216:                              ; CODE XREF: cast1_effect_a+3A↓j
                 cmp     cl, 0FAh
                 jnb     short loc_1C21E
                 add     cl, 5
 
-loc_1C21E:                              ; CODE XREF: sub_1C1EA+2A↑j
-                                        ; sub_1C1EA+2F↑j
+loc_1C21E:                              ; CODE XREF: cast1_effect_a+2A↑j
+                                        ; cast1_effect_a+2F↑j
                 mov     al, dl
                 dec     dl
                 or      al, al
@@ -83,7 +83,7 @@ loc_1C21E:                              ; CODE XREF: sub_1C1EA+2A↑j
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-loc_1C23A:                              ; CODE XREF: sub_1C1EA+B↑j
+loc_1C23A:                              ; CODE XREF: cast1_effect_a+B↑j
                 mov     sp, bp
 
 loc_1C23C:                              ; CODE XREF: seg002:08E5↑J
@@ -91,11 +91,11 @@ loc_1C23C:                              ; CODE XREF: seg002:08E5↑J
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1C23E:                              ; CODE XREF: sub_1D0C2:loc_1D0EA↓p
+loc_1C23E:                              ; CODE XREF: cast_noncombat_spell:loc_1D0EA↓p
                 push    bp
                 mov     bp, sp
                 sub     sp, 0Ah         ; CODE XREF: seg002:0639↑J
-sub_1C1EA       endp
+cast1_effect_a  endp
 
                 push    si
                 mov     word ptr [bp-8], 0
@@ -208,7 +208,7 @@ loc_1C31B:                              ; CODE XREF: ovl_2CAST1:C251↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C320       proc near               ; CODE XREF: sub_1D0C2:loc_1D0F0↓p
+cast1_effect_b  proc near               ; CODE XREF: cast_noncombat_spell:loc_1D0F0↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C33F
@@ -216,21 +216,22 @@ sub_1C320       proc near               ; CODE XREF: sub_1D0C2:loc_1D0F0↓p
                 jnb     short loc_1C332
                 inc     byte_1DC28
 
-loc_1C332:                              ; CODE XREF: sub_1C320+C↑j
+loc_1C332:                              ; CODE XREF: cast1_effect_b+C↑j
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
                 call    sub_1CE9E
 
-locret_1C33F:                           ; CODE XREF: sub_1C320+5↑j
+locret_1C33F:                           ; CODE XREF: cast1_effect_b+5↑j
                 retn
-sub_1C320       endp
+cast1_effect_b  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Beacon: 1) Set new 2) Teleport to last"
 ; Attributes: bp-based frame
 
-sub_1C340       proc near               ; CODE XREF: sub_1D0C2:loc_1D0F6↓p
+spell_beacon    proc near               ; CODE XREF: cast_noncombat_spell:loc_1D0F6↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -245,17 +246,17 @@ var_2           = word ptr -2
                 jmp     loc_1C3E9
 ; ---------------------------------------------------------------------------
 
-loc_1C355:                              ; CODE XREF: sub_1C340+10↑j
+loc_1C355:                              ; CODE XREF: spell_beacon+10↑j
                 test    byte_231F0, 40h
                 jz      short loc_1C362
 
-loc_1C35C:                              ; CODE XREF: sub_1C340+5A↓j
+loc_1C35C:                              ; CODE XREF: spell_beacon+5A↓j
                 inc     [bp+var_2]
                 jmp     short loc_1C3DA
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C362:                              ; CODE XREF: sub_1C340+1A↑j
+loc_1C362:                              ; CODE XREF: spell_beacon+1A↑j
                 mov     ax, 1
                 push    ax
                 call    thk_res_3FA0
@@ -295,7 +296,7 @@ loc_1C370:                              ; CODE XREF: seg002:0471↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C3B8:                              ; CODE XREF: sub_1C340+5F↑j
+loc_1C3B8:                              ; CODE XREF: spell_beacon+5F↑j
                 mov     al, byte_1DC38
                 mov     g_map_id, al
                 mov     al, byte_1DC39
@@ -310,8 +311,8 @@ loc_1C3B8:                              ; CODE XREF: sub_1C340+5F↑j
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
 
-loc_1C3DA:                              ; CODE XREF: sub_1C340+1F↑j
-                                        ; sub_1C340+75↑j
+loc_1C3DA:                              ; CODE XREF: spell_beacon+1F↑j
+                                        ; spell_beacon+75↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C3E6
                 call    sub_1CEFA
@@ -319,24 +320,25 @@ loc_1C3DA:                              ; CODE XREF: sub_1C340+1F↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C3E6:                              ; CODE XREF: sub_1C340+9E↑j
+loc_1C3E6:                              ; CODE XREF: spell_beacon+9E↑j
                 call    sub_1CE9E
 
-loc_1C3E9:                              ; CODE XREF: sub_1C340+12↑j
-                                        ; sub_1C340+A3↑j
+loc_1C3E9:                              ; CODE XREF: spell_beacon+12↑j
+                                        ; spell_beacon+A3↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C340       endp
+spell_beacon    endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Fly to (A-E)?"
 ; Attributes: bp-based frame
 
-sub_1C3EE       proc near               ; CODE XREF: sub_1D0C2:loc_1D102↓p
+spell_fly       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D102↓p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -358,18 +360,18 @@ loc_1C3F6:                              ; CODE XREF: seg002:047D↑J
                 jmp     loc_1C4F5
 ; ---------------------------------------------------------------------------
 
-loc_1C40A:                              ; CODE XREF: sub_1C3EE+17↑j
+loc_1C40A:                              ; CODE XREF: spell_fly+17↑j
                 test    byte_231F0, 40h
                 jz      short loc_1C418
 
-loc_1C411:                              ; CODE XREF: sub_1C3EE+8D↓j
-                                        ; sub_1C3EE+C6↓j
+loc_1C411:                              ; CODE XREF: spell_fly+8D↓j
+                                        ; spell_fly+C6↓j
                 inc     [bp+var_2]
                 jmp     loc_1C4E7
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C418:                              ; CODE XREF: sub_1C3EE+21↑j
+loc_1C418:                              ; CODE XREF: spell_fly+21↑j
                 mov     ax, 1
                 push    ax
                 call    thk_res_3FA0
@@ -385,7 +387,7 @@ loc_1C418:                              ; CODE XREF: sub_1C3EE+21↑j
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C43A:                              ; CODE XREF: sub_1C3EE+82↓j
+loc_1C43A:                              ; CODE XREF: spell_fly+82↓j
                 call    thk_kbd_poll
                 push    ax
                 call    thk_res_00E8
@@ -397,10 +399,10 @@ loc_1C43A:                              ; CODE XREF: sub_1C3EE+82↓j
                 jmp     short loc_1C452
 ; ---------------------------------------------------------------------------
 
-loc_1C450:                              ; CODE XREF: sub_1C3EE+5B↑j
+loc_1C450:                              ; CODE XREF: spell_fly+5B↑j
                 sub     ax, ax
 
-loc_1C452:                              ; CODE XREF: sub_1C3EE+60↑j
+loc_1C452:                              ; CODE XREF: spell_fly+60↑j
                 mov     si, ax
                 or      si, si
                 jnz     short loc_1C46E
@@ -416,14 +418,14 @@ loc_1C462:                              ; CODE XREF: seg002:086D↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C46A:                              ; CODE XREF: sub_1C3EE+6F↑j
-                                        ; sub_1C3EE:loc_1C462↑j
+loc_1C46A:                              ; CODE XREF: spell_fly+6F↑j
+                                        ; spell_fly:loc_1C462↑j
                 sub     ax, ax
 
-loc_1C46C:                              ; CODE XREF: sub_1C3EE+79↑j
+loc_1C46C:                              ; CODE XREF: spell_fly+79↑j
                 mov     si, ax
 
-loc_1C46E:                              ; CODE XREF: sub_1C3EE+68↑j
+loc_1C46E:                              ; CODE XREF: spell_fly+68↑j
                 or      si, si
                 jz      short loc_1C43A
                 mov     [bp+var_6], di
@@ -456,7 +458,7 @@ loc_1C46E:                              ; CODE XREF: sub_1C3EE+68↑j
                 jmp     loc_1C411
 ; ---------------------------------------------------------------------------
 
-loc_1C4B7:                              ; CODE XREF: sub_1C3EE+C4↑j
+loc_1C4B7:                              ; CODE XREF: spell_fly+C4↑j
                 push    ax
                 call    thk_text_putc
                 add     sp, 2
@@ -475,24 +477,24 @@ loc_1C4B7:                              ; CODE XREF: sub_1C3EE+C4↑j
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
 
-loc_1C4E7:                              ; CODE XREF: sub_1C3EE+26↑j
+loc_1C4E7:                              ; CODE XREF: spell_fly+26↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C4F2
                 call    sub_1CEFA
                 jmp     short loc_1C4F5
 ; ---------------------------------------------------------------------------
 
-loc_1C4F2:                              ; CODE XREF: sub_1C3EE+FD↑j
+loc_1C4F2:                              ; CODE XREF: spell_fly+FD↑j
                 call    sub_1CE9E
 
-loc_1C4F5:                              ; CODE XREF: sub_1C3EE+19↑j
-                                        ; sub_1C3EE+102↑j
+loc_1C4F5:                              ; CODE XREF: spell_fly+19↑j
+                                        ; spell_fly+102↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C3EE       endp
+spell_fly       endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -501,7 +503,7 @@ sub_1C3EE       endp
 
 ; Attributes: bp-based frame
 
-sub_1C4FC       proc near               ; CODE XREF: sub_1D0C2:loc_1D108↓p
+sub_1C4FC       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D108↓p
 
 var_2           = byte ptr -2
 
@@ -551,7 +553,7 @@ sub_1C4FC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C550       proc near               ; CODE XREF: sub_1D0C2:loc_1D10E↓p
+sub_1C550       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D10E↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C56F
@@ -572,7 +574,7 @@ sub_1C550       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C570       proc near               ; CODE XREF: sub_1D0C2:loc_1D114↓p
+sub_1C570       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D114↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C58F
@@ -594,7 +596,7 @@ sub_1C570       endp
 
 ; Attributes: bp-based frame
 
-sub_1C590       proc near               ; CODE XREF: sub_1D0C2:loc_1D11A↓p
+sub_1C590       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D11A↓p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -703,7 +705,7 @@ sub_1C590       endp
 
 ; Attributes: bp-based frame
 
-sub_1C648       proc near               ; CODE XREF: sub_1D0C2:loc_1D120↓p
+sub_1C648       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D120↓p
 
 var_2           = word ptr -2
 
@@ -750,7 +752,7 @@ sub_1C648       endp
 
 ; Attributes: bp-based frame
 
-sub_1C68C       proc near               ; CODE XREF: sub_1D0C2:loc_1D126↓p
+sub_1C68C       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D126↓p
 
 var_8           = byte ptr -8
 var_6           = word ptr -6
@@ -849,7 +851,7 @@ sub_1C68C       endp
 
 ; Attributes: bp-based frame
 
-sub_1C722       proc near               ; CODE XREF: sub_1D0C2:loc_1D12C↓p
+sub_1C722       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D12C↓p
 
 var_4           = byte ptr -4
 var_2           = byte ptr -2
@@ -898,7 +900,7 @@ sub_1C722       endp
 
 ; Attributes: bp-based frame
 
-sub_1C774       proc near               ; CODE XREF: sub_1D0C2:loc_1D132↓p
+sub_1C774       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D132↓p
 
 var_A           = byte ptr -0Ah
 var_8           = word ptr -8
@@ -960,7 +962,7 @@ sub_1C774       endp
 
 ; Attributes: bp-based frame
 
-sub_1C7DA       proc near               ; CODE XREF: sub_1D0C2:loc_1D156↓p
+sub_1C7DA       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D156↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -1059,7 +1061,7 @@ sub_1C7DA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C87C       proc near               ; CODE XREF: sub_1D0C2:loc_1D162↓p
+sub_1C87C       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D162↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C89F
@@ -1085,7 +1087,7 @@ sub_1C87C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C8A0       proc near               ; CODE XREF: sub_1D0C2:loc_1D16E↓p
+sub_1C8A0       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D16E↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C8C6
@@ -1115,7 +1117,7 @@ sub_1C8A0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C8C8       proc near               ; CODE XREF: sub_1D0C2:loc_1D174↓p
+sub_1C8C8       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D174↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C8DF
@@ -1133,7 +1135,7 @@ sub_1C8C8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C8E0       proc near               ; CODE XREF: sub_1D0C2:loc_1D17A↓p
+sub_1C8E0       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D17A↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C8EF
@@ -1149,7 +1151,7 @@ sub_1C8E0       endp
 
 ; Attributes: bp-based frame
 
-sub_1C8F0       proc near               ; CODE XREF: sub_1D0C2:loc_1D186↓p
+sub_1C8F0       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D186↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1189,7 +1191,7 @@ sub_1C8F0       endp
 
 ; Attributes: bp-based frame
 
-sub_1C92A       proc near               ; CODE XREF: sub_1D0C2:loc_1D18C↓p
+sub_1C92A       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D18C↓p
 
 var_2           = word ptr -2
 
@@ -1248,7 +1250,7 @@ sub_1C92A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C984       proc near               ; CODE XREF: sub_1D0C2:loc_1D198↓p
+sub_1C984       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D198↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1C993
@@ -1264,7 +1266,7 @@ sub_1C984       endp
 
 ; Attributes: bp-based frame
 
-sub_1C994       proc near               ; CODE XREF: sub_1D0C2:loc_1D19E↓p
+sub_1C994       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D19E↓p
 
 var_6           = word ptr -6
 var_4           = byte ptr -4
@@ -1330,7 +1332,7 @@ sub_1C994       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CA00       proc near               ; CODE XREF: sub_1D0C2:loc_1D1AA↓p
+sub_1CA00       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1AA↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1CA0F
@@ -1345,7 +1347,7 @@ sub_1CA00       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CA10       proc near               ; CODE XREF: sub_1D0C2:loc_1D1B6↓p
+sub_1CA10       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1B6↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1CA1F
@@ -1361,7 +1363,7 @@ sub_1CA10       endp
 
 ; Attributes: bp-based frame
 
-sub_1CA20       proc near               ; CODE XREF: sub_1D0C2:loc_1D1BC↓p
+sub_1CA20       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1BC↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1443,7 +1445,7 @@ sub_1CA20       endp
 
 ; Attributes: bp-based frame
 
-sub_1CAA4       proc near               ; CODE XREF: sub_1D0C2:loc_1D1C2↓p
+sub_1CAA4       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1C2↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -1508,7 +1510,7 @@ sub_1CAA4       endp
 
 ; Attributes: bp-based frame
 
-sub_1CB10       proc near               ; CODE XREF: sub_1D0C2:loc_1D1C8↓p
+sub_1CB10       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1C8↓p
 
 var_2           = word ptr -2
 
@@ -1561,7 +1563,7 @@ var_2           = word ptr -2
                 sub     sp, 4
                 push    di
                 push    si
-                call    sub_1CF5C
+                call    cast1_return_prompt
                 mov     ax, 15h
                 push    ax
                 mov     ax, 18h
@@ -1658,7 +1660,7 @@ sub_1CB48       endp
 
 ; Attributes: bp-based frame
 
-sub_1CBEC       proc near               ; CODE XREF: sub_1D0C2:loc_1D138↓p
+sub_1CBEC       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D138↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -1713,7 +1715,7 @@ sub_1CBEC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CC3A       proc near               ; CODE XREF: sub_1D0C2:loc_1D0FC↓p
+sub_1CC3A       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D0FC↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1CC5A
@@ -1735,7 +1737,7 @@ sub_1CC3A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CC5C       proc near               ; CODE XREF: sub_1D0C2:loc_1D13E↓p
+sub_1CC5C       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D13E↓p
                 mov     ax, 8
                 push    ax
                 call    sub_1CE46
@@ -1750,7 +1752,7 @@ sub_1CC5C       endp
 
 ; Attributes: bp-based frame
 
-sub_1CC68       proc near               ; CODE XREF: sub_1D0C2:loc_1D14A↓p
+sub_1CC68       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D14A↓p
 
 var_4           = word ptr -4
 var_2           = byte ptr -2
@@ -1797,7 +1799,7 @@ sub_1CC68       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CCA8       proc near               ; CODE XREF: sub_1D0C2:loc_1D150↓p
+sub_1CCA8       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D150↓p
                 mov     ax, 0Fh
                 push    ax
                 call    sub_1CE46
@@ -1811,7 +1813,7 @@ sub_1CCA8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CCB4       proc near               ; CODE XREF: sub_1D0C2:loc_1D15C↓p
+sub_1CCB4       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D15C↓p
                 call    loc_1D046
                 or      ax, ax
                 jz      short locret_1CCD4 ; CODE XREF: seg002:08FD↑J
@@ -1834,7 +1836,7 @@ sub_1CCB4       endp
 
 ; Attributes: bp-based frame
 
-sub_1CCD6       proc near               ; CODE XREF: sub_1D0C2:loc_1D168↓p
+sub_1CCD6       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D168↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1881,7 +1883,7 @@ sub_1CCD6       endp
 
 ; Attributes: bp-based frame
 
-sub_1CD16       proc near               ; CODE XREF: sub_1D0C2:loc_1D180↓p
+sub_1CD16       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D180↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1928,7 +1930,7 @@ sub_1CD16       endp
 
 ; Attributes: bp-based frame
 
-sub_1CD56       proc near               ; CODE XREF: sub_1D0C2:loc_1D192↓p
+sub_1CD56       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D192↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1975,7 +1977,7 @@ sub_1CD56       endp
 
 ; Attributes: bp-based frame
 
-sub_1CD96       proc near               ; CODE XREF: sub_1D0C2:loc_1D1A4↓p
+sub_1CD96       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1A4↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2016,7 +2018,7 @@ sub_1CD96       endp
 
 ; Attributes: bp-based frame
 
-sub_1CDCA       proc near               ; CODE XREF: sub_1D0C2:loc_1D1B0↓p
+sub_1CDCA       proc near               ; CODE XREF: cast_noncombat_spell:loc_1D1B0↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2150,7 +2152,7 @@ sub_1CE46       endp
 
 ; Attributes: bp-based frame
 
-sub_1CE9E       proc near               ; CODE XREF: sub_1C1EA+4D↑p
+sub_1CE9E       proc near               ; CODE XREF: cast1_effect_a+4D↑p
                                         ; ovl_2CAST1:C302↑p ...
 
 var_2           = byte ptr -2
@@ -2206,7 +2208,7 @@ sub_1CE9E       endp
 ; Attributes: bp-based frame
 
 sub_1CEFA       proc near               ; CODE XREF: ovl_2CAST1:C2F5↑p
-                                        ; sub_1C340+A0↑p ...
+                                        ; spell_beacon+A0↑p ...
 
 var_2           = byte ptr -2
 
@@ -2261,8 +2263,9 @@ sub_1CEFA       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; "'Return' to cast"
 
-sub_1CF5C       proc near               ; CODE XREF: seg002:0AE9↑J
+cast1_return_prompt proc near           ; CODE XREF: seg002:0AE9↑J
                                         ; sub_1CB48+8↑p
                 cmp     word_1DB9A, 0
                 jz      short locret_1CF8B
@@ -2283,7 +2286,7 @@ loc_1CF84:                              ; CODE XREF: seg002:062D↑J
                 call    thk_res_3FA0
                 add     sp, 2
 
-locret_1CF8B:                           ; CODE XREF: sub_1CF5C+5↑j
+locret_1CF8B:                           ; CODE XREF: cast1_return_prompt+5↑j
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -2298,7 +2301,7 @@ loc_1CF8C:                              ; CODE XREF: sub_1C8F0+7↑p
                 jnz     short loc_1CFA8
                 mov     word ptr [bp-2], 0Fh
 
-loc_1CFA8:                              ; CODE XREF: sub_1CF5C+45↑j
+loc_1CFA8:                              ; CODE XREF: cast1_return_prompt+45↑j
                 cmp     g_party_size, 1
                 jnz     short loc_1CFC6
                 call    loc_1D046
@@ -2309,13 +2312,13 @@ loc_1CFA8:                              ; CODE XREF: sub_1CF5C+45↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CFBE:                              ; CODE XREF: sub_1CF5C+58↑j
+loc_1CFBE:                              ; CODE XREF: cast1_return_prompt+58↑j
                 mov     word ptr [bp-4], 1Bh
                 jmp     short loc_1D004
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CFC6:                              ; CODE XREF: sub_1CF5C+51↑j
+loc_1CFC6:                              ; CODE XREF: cast1_return_prompt+51↑j
                 mov     bx, word ptr aL1ReturnToCast ; "L1'Return' to cast"
                 mov     al, byte ptr g_party_size
                 add     al, 30h ; '0'
@@ -2341,13 +2344,13 @@ loc_1CFC6:                              ; CODE XREF: sub_1CF5C+51↑j
                 sub     ah, ah
                 mov     [bp-4], ax
 
-loc_1D004:                              ; CODE XREF: sub_1CF5C+5F↑j
-                                        ; sub_1CF5C+67↑j
+loc_1D004:                              ; CODE XREF: cast1_return_prompt+5F↑j
+                                        ; cast1_return_prompt+67↑j
                 cmp     g_view_mode, 2
                 jnz     short loc_1D00E
                 call    thk_res_35A8
 
-loc_1D00E:                              ; CODE XREF: sub_1CF5C+AD↑j
+loc_1D00E:                              ; CODE XREF: cast1_return_prompt+AD↑j
                 cmp     word ptr [bp-4], 1Bh
                 jz      short loc_1D020
                 sub     word ptr [bp-4], 31h ; '1'
@@ -2356,12 +2359,12 @@ loc_1D00E:                              ; CODE XREF: sub_1CF5C+AD↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D020:                              ; CODE XREF: sub_1CF5C+B6↑j
+loc_1D020:                              ; CODE XREF: cast1_return_prompt+B6↑j
                 sub     ax, ax
                 mov     word_2765C, ax
                 mov     word_27696, ax
 
-loc_1D028:                              ; CODE XREF: sub_1CF5C+C1↑j
+loc_1D028:                              ; CODE XREF: cast1_return_prompt+C1↑j
                 cmp     byte_1DC78, 0
                 jz      short loc_1D03E
                 test    byte_23218, 2
@@ -2369,8 +2372,8 @@ loc_1D028:                              ; CODE XREF: sub_1CF5C+C1↑j
                 mov     word ptr [bp-4], 1Bh
                 call    sub_1CEFA
 
-loc_1D03E:                              ; CODE XREF: sub_1CF5C+D1↑j
-                                        ; sub_1CF5C+D8↑j
+loc_1D03E:                              ; CODE XREF: cast1_return_prompt+D1↑j
+                                        ; cast1_return_prompt+D8↑j
                 mov     ax, [bp-4]
                 mov     sp, bp
                 pop     bp
@@ -2378,7 +2381,7 @@ loc_1D03E:                              ; CODE XREF: sub_1CF5C+D1↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D046:                              ; CODE XREF: sub_1C1EA+6↑p
+loc_1D046:                              ; CODE XREF: cast1_effect_a+6↑p
                                         ; ovl_2CAST1:C24A↑p ...
                 push    bp
                 mov     bp, sp
@@ -2391,12 +2394,12 @@ loc_1D046:                              ; CODE XREF: sub_1C1EA+6↑p
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D060:                              ; CODE XREF: sub_1CF5C+FA↑j
+loc_1D060:                              ; CODE XREF: cast1_return_prompt+FA↑j
                 cmp     g_view_mode, 2
                 jnz     short loc_1D06C
                 mov     word ptr [bp-2], 0Fh
 
-loc_1D06C:                              ; CODE XREF: sub_1CF5C+109↑j
+loc_1D06C:                              ; CODE XREF: cast1_return_prompt+109↑j
                 push    word ptr [bp-2]
                 mov     ax, 16h
                 push    ax
@@ -2419,15 +2422,15 @@ loc_1D06C:                              ; CODE XREF: sub_1CF5C+109↑j
                 jmp     short loc_1D09E
 ; ---------------------------------------------------------------------------
 
-loc_1D09C:                              ; CODE XREF: sub_1CF5C+13A↑j
+loc_1D09C:                              ; CODE XREF: cast1_return_prompt+13A↑j
                 sub     al, al
 
-loc_1D09E:                              ; CODE XREF: sub_1CF5C+13E↑j
+loc_1D09E:                              ; CODE XREF: cast1_return_prompt+13E↑j
                 mov     byte_1DC78, al
                 sub     ah, ah
                 mov     [bp-4], ax
 
-loc_1D0A6:                              ; CODE XREF: sub_1CF5C+101↑j
+loc_1D0A6:                              ; CODE XREF: cast1_return_prompt+101↑j
                 cmp     word ptr [bp-4], 0
                 jz      short loc_1D0BB
                 test    byte_23218, 2
@@ -2435,20 +2438,21 @@ loc_1D0A6:                              ; CODE XREF: sub_1CF5C+101↑j
                 mov     word ptr [bp-4], 0
                 call    sub_1CEFA
 
-loc_1D0BB:                              ; CODE XREF: sub_1CF5C+14E↑j
-                                        ; sub_1CF5C+155↑j
+loc_1D0BB:                              ; CODE XREF: cast1_return_prompt+14E↑j
+                                        ; cast1_return_prompt+155↑j
                 mov     ax, [bp-4]
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CF5C       endp
+cast1_return_prompt endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (spell index) dispatch
 ; Attributes: bp-based frame
 
-sub_1D0C2       proc near               ; CODE XREF: seg002:04DD↑J
+cast_noncombat_spell proc near          ; CODE XREF: seg002:04DD↑J
 
 arg_0           = word ptr  4
 
@@ -2460,259 +2464,259 @@ arg_0           = word ptr  4
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D0D0:                              ; CODE XREF: sub_1D0C2+9↑j
+loc_1D0D0:                              ; CODE XREF: cast_noncombat_spell+9↑j
                 add     ax, ax
                 xchg    ax, bx
                 jmp     cs:jpt_1D0D3[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D0D8:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+10E↓o
-                call    sub_1C130       ; jumptable 0001D0D3 case 1
+loc_1D0D8:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+10E↓o
+                call    cast1_common_helper ; jumptable 0001D0D3 case 1
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D0DE:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+116↓o
+loc_1D0DE:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+116↓o
                 call    near ptr byte_1C132+0A0h ; jumptable 0001D0D3 case 5
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D0E4:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+11A↓o
-                call    sub_1C1EA       ; jumptable 0001D0D3 case 7
+loc_1D0E4:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+11A↓o
+                call    cast1_effect_a  ; jumptable 0001D0D3 case 7
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D0EA:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+120↓o
+loc_1D0EA:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+120↓o
                 call    loc_1C23E       ; jumptable 0001D0D3 case 10
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D0F0:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+122↓o
-                call    sub_1C320       ; jumptable 0001D0D3 case 11
+loc_1D0F0:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+122↓o
+                call    cast1_effect_b  ; jumptable 0001D0D3 case 11
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D0F6:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+124↓o
-                call    sub_1C340       ; jumptable 0001D0D3 case 12
+loc_1D0F6:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+124↓o
+                call    spell_beacon    ; jumptable 0001D0D3 case 12
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D0FC:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+126↓o
+loc_1D0FC:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+126↓o
                 call    sub_1CC3A       ; jumptable 0001D0D3 case 13
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D102:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+12A↓o
-                call    sub_1C3EE       ; jumptable 0001D0D3 case 15
+loc_1D102:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+12A↓o
+                call    spell_fly       ; jumptable 0001D0D3 case 15
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D108:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+132↓o
+loc_1D108:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+132↓o
                 call    sub_1C4FC       ; jumptable 0001D0D3 case 19
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D10E:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+13A↓o
+loc_1D10E:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+13A↓o
                 call    sub_1C550       ; jumptable 0001D0D3 case 23
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D114:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+146↓o
+loc_1D114:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+146↓o
                 call    sub_1C570       ; jumptable 0001D0D3 case 29
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D11A:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+148↓o
+loc_1D11A:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+148↓o
                 call    sub_1C590       ; jumptable 0001D0D3 case 30
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D120:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+150↓o
+loc_1D120:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+150↓o
                 call    sub_1C648       ; jumptable 0001D0D3 case 34
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D126:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+156↓o
+loc_1D126:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+156↓o
                 call    sub_1C68C       ; jumptable 0001D0D3 case 37
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D12C:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+158↓o
+loc_1D12C:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+158↓o
                 call    sub_1C722       ; jumptable 0001D0D3 case 38
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D132:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+16A↓o
+loc_1D132:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+16A↓o
                 call    sub_1C774       ; jumptable 0001D0D3 case 47
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D138:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2:jpt_1D0D3↓o ...
+loc_1D138:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell:jpt_1D0D3↓o ...
                 call    sub_1CBEC       ; jumptable 0001D0D3 cases 0,49
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D13E:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+172↓o
+loc_1D13E:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+172↓o
                 call    sub_1CC5C       ; jumptable 0001D0D3 case 51
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D144:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+114↓o ...
+loc_1D144:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+114↓o ...
                 call    near ptr byte_1C132+82h ; jumptable 0001D0D3 cases 4,52
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D14A:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+176↓o
+loc_1D14A:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+176↓o
                 call    sub_1CC68       ; jumptable 0001D0D3 case 53
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D150:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+17A↓o
+loc_1D150:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+17A↓o
                 call    sub_1CCA8       ; jumptable 0001D0D3 case 55
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D156:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+17E↓o
+loc_1D156:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+17E↓o
                 call    sub_1C7DA       ; jumptable 0001D0D3 case 57
                 jmp     def_1D0D3       ; CODE XREF: seg002:0825↑J
                                         ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D15C:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+182↓o
+loc_1D15C:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+182↓o
                 call    sub_1CCB4       ; jumptable 0001D0D3 case 59
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D162:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+18A↓o
+loc_1D162:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+18A↓o
                 call    sub_1C87C       ; jumptable 0001D0D3 case 63
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D168:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+18C↓o
+loc_1D168:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+18C↓o
                 call    sub_1CCD6       ; jumptable 0001D0D3 case 64
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D16E:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+190↓o
+loc_1D16E:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+190↓o
                 call    sub_1C8A0       ; jumptable 0001D0D3 case 66
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D174:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+192↓o
+loc_1D174:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+192↓o
                 call    sub_1C8C8       ; jumptable 0001D0D3 case 67
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D17A:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+196↓o
+loc_1D17A:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+196↓o
                 call    sub_1C8E0       ; jumptable 0001D0D3 case 69
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D180:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+198↓o
+loc_1D180:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+198↓o
                 call    sub_1CD16       ; jumptable 0001D0D3 case 70
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D186:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+19A↓o
+loc_1D186:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+19A↓o
                 call    sub_1C8F0       ; jumptable 0001D0D3 case 71
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D18C:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+19C↓o
+loc_1D18C:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+19C↓o
                 call    sub_1C92A       ; jumptable 0001D0D3 case 72
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D192:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1A8↓o
+loc_1D192:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1A8↓o
                 call    sub_1CD56       ; jumptable 0001D0D3 case 78
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D198:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1AA↓o
+loc_1D198:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1AA↓o
                 call    sub_1C984       ; jumptable 0001D0D3 case 79
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D19E:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1AC↓o
+loc_1D19E:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1AC↓o
                 call    sub_1C994       ; jumptable 0001D0D3 case 80
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D1A4:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1AE↓o
+loc_1D1A4:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1AE↓o
                 call    sub_1CD96       ; jumptable 0001D0D3 case 81
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D1AA:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1B2↓o
+loc_1D1AA:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1B2↓o
                 call    sub_1CA00       ; jumptable 0001D0D3 case 83
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D1B0:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1BA↓o
+loc_1D1B0:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1BA↓o
                 call    sub_1CDCA       ; jumptable 0001D0D3 case 87
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D1B6:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1BE↓o
+loc_1D1B6:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1BE↓o
                 call    sub_1CA10       ; jumptable 0001D0D3 case 89
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D1BC:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1C2↓o
+loc_1D1BC:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1C2↓o
                 call    sub_1CA20       ; jumptable 0001D0D3 case 91
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D1C2:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1C8↓o
+loc_1D1C2:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1C8↓o
                 call    sub_1CAA4       ; jumptable 0001D0D3 case 94
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
 
-loc_1D1C8:                              ; CODE XREF: sub_1D0C2+11↑j
-                                        ; DATA XREF: sub_1D0C2+1CA↓o
+loc_1D1C8:                              ; CODE XREF: cast_noncombat_spell+11↑j
+                                        ; DATA XREF: cast_noncombat_spell+1CA↓o
                 call    sub_1CB10       ; jumptable 0001D0D3 case 95
                 jmp     def_1D0D3       ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
 ; ---------------------------------------------------------------------------
-jpt_1D0D3       dw offset loc_1D138     ; DATA XREF: sub_1D0C2+11↑r
+jpt_1D0D3       dw offset loc_1D138     ; DATA XREF: cast_noncombat_spell+11↑r
                                         ; jump table for switch statement
                 dw offset loc_1D0D8     ; jumptable 0001D0D3 case 1
                 dw offset def_1D0D3     ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
@@ -2811,11 +2815,11 @@ jpt_1D0D3       dw offset loc_1D138     ; DATA XREF: sub_1D0C2+11↑r
                 dw offset loc_1D1C8     ; jumptable 0001D0D3 case 95
 ; ---------------------------------------------------------------------------
 
-def_1D0D3:                              ; CODE XREF: sub_1D0C2+B↑j
-                                        ; sub_1D0C2+11↑j ...
+def_1D0D3:                              ; CODE XREF: cast_noncombat_spell+B↑j
+                                        ; cast_noncombat_spell+11↑j ...
                 pop     bp              ; jumptable 0001D0D3 default case, cases 2,3,6,8,9,14,16-18,20-22,24-28,31-33,35,36,39-46,48,50,54,56,58,60-62,65,68,73-77,82,84-86,88,90,92,93
                 retn
-sub_1D0C2       endp
+cast_noncombat_spell endp
 
 ovl_2CAST1      ends
 

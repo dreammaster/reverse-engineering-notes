@@ -1,0 +1,5 @@
+# 2MISC2.OVL: controls and training
+1C130	misc2_common_helper
+1C2F8	party_command_e	'E'
+1C3F6	game_controls	"Controls": 1) Sounds 2) Walk Beep 3) Disposition 4) Delay
+1CE30	training_hall	"Training", "Train for level ", "You need ... more experience", "Cost in gold ="

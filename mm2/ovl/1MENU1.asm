@@ -76,7 +76,7 @@ byte_1C308      db 18h, 0E8h, 0C2h, 0ABh, 83h, 0C4h, 4, 0B8h, 4, 0, 50h
                 db 0D0h, 89h, 7Eh, 0FEh, 89h, 76h, 0FAh, 5Eh
 byte_1C370      db 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 90h, 0A1h, 0C2h, 4, 0A3h
                                         ; CODE XREF: seg002:0471↑J
-                                        ; sub_1C5D8+51↓p
+                                        ; game_init+51↓p
                 db 20h, 5, 0A1h, 0C4h, 4, 0A3h, 22h, 5, 0A1h, 0C6h, 4
                 db 0A3h, 24h, 5, 0A1h, 0C8h, 4, 0A3h, 26h, 5, 0A1h, 0CAh
                 db 4, 0A3h, 28h, 5, 0A1h, 0CCh, 4, 0A3h, 2Ah, 5, 0A1h
@@ -147,9 +147,10 @@ byte_1C5C0      db 0FFh, 36h, 5Eh, 1Ah, 0E8h, 4Bh, 0B0h, 83h, 0C4h, 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; video/driver setup, opens main windows, loads MM2.CH font, ITEMS.DAT and SPELLS.DAT
 ; Attributes: bp-based frame
 
-sub_1C5D8       proc near               ; CODE XREF: seg002:01A1↑J
+game_init       proc near               ; CODE XREF: seg002:01A1↑J
 
 var_2           = word ptr -2
 arg_0           = byte ptr  4
@@ -172,36 +173,36 @@ arg_0           = byte ptr  4
                 jmp     loc_1C6AA
 ; ---------------------------------------------------------------------------
 
-loc_1C5FF:                              ; CODE XREF: sub_1C5D8+22↑j
+loc_1C5FF:                              ; CODE XREF: game_init+22↑j
                 cmp     ax, 48h ; 'H'
                 jnz     short loc_1C607
                 jmp     loc_1C6BE
 ; ---------------------------------------------------------------------------
 
-loc_1C607:                              ; CODE XREF: sub_1C5D8+2A↑j
+loc_1C607:                              ; CODE XREF: game_init+2A↑j
                 cmp     ax, 4Dh ; 'M'
                 jnz     short loc_1C60F
                 jmp     loc_1C6C8
 ; ---------------------------------------------------------------------------
 
-loc_1C60F:                              ; CODE XREF: sub_1C5D8+32↑j
+loc_1C60F:                              ; CODE XREF: game_init+32↑j
                 cmp     ax, 54h ; 'T'
                 jnz     short loc_1C617
                 jmp     loc_1C6B4
 ; ---------------------------------------------------------------------------
 
-loc_1C617:                              ; CODE XREF: sub_1C5D8+3A↑j
+loc_1C617:                              ; CODE XREF: game_init+3A↑j
                 cmp     al, 20h ; ' '
                 jz      short loc_1C626
                 call    near ptr byte_1C130
                 jmp     short loc_1C626
 ; ---------------------------------------------------------------------------
 
-loc_1C620:                              ; CODE XREF: sub_1C5D8+1D↑j
+loc_1C620:                              ; CODE XREF: game_init+1D↑j
                 mov     word_221BA, 0
 
-loc_1C626:                              ; CODE XREF: sub_1C5D8+41↑j
-                                        ; sub_1C5D8+46↑j ...
+loc_1C626:                              ; CODE XREF: game_init+41↑j
+                                        ; game_init+46↑j ...
                 call    near ptr byte_1C3F6+3Ch
                 call    near ptr byte_1C370+6
                 cmp     word_221BA, 0
@@ -209,7 +210,7 @@ loc_1C626:                              ; CODE XREF: sub_1C5D8+41↑j
                 cmp     word_221BA, 3
                 jnz     short loc_1C66A
 
-loc_1C63A:                              ; CODE XREF: sub_1C5D8+59↑j
+loc_1C63A:                              ; CODE XREF: game_init+59↑j
                 mov     byte_1DB8E, 2
                 mov     byte_1DB8F, 2
                 mov     byte_1DB90, 1
@@ -221,7 +222,7 @@ loc_1C63A:                              ; CODE XREF: sub_1C5D8+59↑j
                 mov     byte_1DB96, 3
                 call    near ptr byte_1C308+1Ah
 
-loc_1C66A:                              ; CODE XREF: sub_1C5D8+60↑j
+loc_1C66A:                              ; CODE XREF: game_init+60↑j
                 call    near ptr byte_1C52C+40h
                 call    thk_res_1DFA    ; CODE XREF: seg002:0891↑J
                 mov     ax, 75BEh
@@ -240,8 +241,8 @@ loc_1C66A:                              ; CODE XREF: sub_1C5D8+60↑j
                 jz      short loc_1C69E
                 mov     word_221BA, 1
 
-loc_1C69E:                              ; CODE XREF: sub_1C5D8+B1↑j
-                                        ; sub_1C5D8+B8↑j ...
+loc_1C69E:                              ; CODE XREF: game_init+B1↑j
+                                        ; game_init+B8↑j ...
                 call    thk_load_video_driver
                 or      dx, ax
                 jz      short loc_1C69E
@@ -249,32 +250,32 @@ loc_1C69E:                              ; CODE XREF: sub_1C5D8+B1↑j
                 jmp     short loc_1C6D2
 ; ---------------------------------------------------------------------------
 
-loc_1C6AA:                              ; CODE XREF: sub_1C5D8+24↑j
+loc_1C6AA:                              ; CODE XREF: game_init+24↑j
                 mov     word_221BA, 1
                 jmp     loc_1C626
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C6B4:                              ; CODE XREF: sub_1C5D8+3C↑j
+loc_1C6B4:                              ; CODE XREF: game_init+3C↑j
                 mov     word_221BA, 2
                 jmp     loc_1C626
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C6BE:                              ; CODE XREF: sub_1C5D8+2C↑j
+loc_1C6BE:                              ; CODE XREF: game_init+2C↑j
                 mov     word_221BA, 3
                 jmp     loc_1C626
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C6C8:                              ; CODE XREF: sub_1C5D8+34↑j
+loc_1C6C8:                              ; CODE XREF: game_init+34↑j
                 mov     word_221BA, 4
                 jmp     loc_1C626
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C6D2:                              ; CODE XREF: sub_1C5D8+D0↑j
-                                        ; sub_1C5D8+109↓j
+loc_1C6D2:                              ; CODE XREF: game_init+D0↑j
+                                        ; game_init+109↓j
                 sub     ax, ax
                 push    ax
                 mov     ax, offset aMm2Ch ; "mm2.ch"
@@ -327,7 +328,7 @@ loc_1C6F2:                              ; CODE XREF: seg002:0B19↑J
                 mov     g_disk_needed, 1
                 call    near ptr byte_1C242+56h
 
-loc_1C747:                              ; CODE XREF: sub_1C5D8+186↓j
+loc_1C747:                              ; CODE XREF: game_init+186↓j
                 mov     ax, 1400h
                 push    ax
                 sub     ax, ax
@@ -341,7 +342,7 @@ loc_1C747:                              ; CODE XREF: sub_1C5D8+186↓j
                 or      ax, ax
                 jz      short loc_1C747
 
-loc_1C760:                              ; CODE XREF: sub_1C5D8+19F↓j
+loc_1C760:                              ; CODE XREF: game_init+19F↓j
                 mov     ax, 0C0h
                 push    ax
                 sub     ax, ax
@@ -359,7 +360,7 @@ loc_1C760:                              ; CODE XREF: sub_1C5D8+19F↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C77C:                              ; CODE XREF: sub_1CBDC:loc_1CD96↓p
+loc_1C77C:                              ; CODE XREF: title_screen:loc_1CD96↓p
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
@@ -386,7 +387,7 @@ loc_1C77C:                              ; CODE XREF: sub_1CBDC:loc_1CD96↓p
                 jnz     short loc_1C7B9
                 mov     [bp+var_2], 2
 
-loc_1C7B9:                              ; CODE XREF: sub_1C5D8+1DA↑j
+loc_1C7B9:                              ; CODE XREF: game_init+1DA↑j
                 push    [bp+var_2]
                 call    thk_gfx_set_color
                 add     sp, 2
@@ -406,7 +407,7 @@ loc_1C7DD:                              ; CODE XREF: ovl_1MENU1:C804↓j
                 mov     ax, 0Ah
                 push    ax
                 push    si
-sub_1C5D8       endp
+game_init       endp
 
 
 loc_1C7E2:                              ; CODE XREF: seg002:0849↑J
@@ -474,7 +475,7 @@ loc_1C815:                              ; CODE XREF: ovl_1MENU1:C831↓j
 
 ; Attributes: bp-based frame
 
-sub_1C868       proc near               ; CODE XREF: sub_1CBDC:loc_1CD8A↓p
+init_helper_a   proc near               ; CODE XREF: title_screen:loc_1CD8A↓p
 
 var_2           = word ptr -2
 
@@ -510,7 +511,7 @@ var_2           = word ptr -2
                 sub     si, si
                 mov     di, 1CFEh
 
-loc_1C8B1:                              ; CODE XREF: sub_1C868+62↓j
+loc_1C8B1:                              ; CODE XREF: init_helper_a+62↓j
                 push    si
                 sub     ax, ax
                 push    ax
@@ -558,7 +559,7 @@ loc_1C8B1:                              ; CODE XREF: sub_1C868+62↓j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C868       endp
+init_helper_a   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -566,8 +567,8 @@ sub_1C868       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C91A       proc near               ; CODE XREF: ovl_1MENU1:loc_1C9B9↓p
-                                        ; sub_1C9CE:loc_1C9E5↓p
+init_helper_b   proc near               ; CODE XREF: ovl_1MENU1:loc_1C9B9↓p
+                                        ; init_helper_c:loc_1C9E5↓p
                 mov     ax, 1
                 push    ax
                 call    thk_gfx_select_page
@@ -621,19 +622,19 @@ sub_1C91A       proc near               ; CODE XREF: ovl_1MENU1:loc_1C9B9↓p
                 jnz     short locret_1C9B0
                 mov     word_1F576, 0
 
-locret_1C9B0:                           ; CODE XREF: sub_1C91A+8E↑j
+locret_1C9B0:                           ; CODE XREF: init_helper_b+8E↑j
                 retn
-sub_1C91A       endp
+init_helper_b   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
-                push    bp              ; CODE XREF: sub_1CBDC:loc_1CD68↓p
+                push    bp              ; CODE XREF: title_screen:loc_1CD68↓p
                 mov     bp, sp
                 sub     sp, 2
                 push    si
 
 loc_1C9B9:                              ; CODE XREF: ovl_1MENU1:C9C3↓j
-                call    sub_1C91A
+                call    init_helper_b
                 call    thk_kbd_poll
                 mov     si, ax
                 or      si, si
@@ -650,7 +651,7 @@ loc_1C9B9:                              ; CODE XREF: ovl_1MENU1:C9C3↓j
 
 ; Attributes: bp-based frame
 
-sub_1C9CE       proc near               ; CODE XREF: ovl_1MENU1:CB80↓p
+init_helper_c   proc near               ; CODE XREF: ovl_1MENU1:CB80↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -667,9 +668,9 @@ arg_2           = word ptr  6
                 mov     word_221B4, 0
                 mov     di, [bp+arg_2]
 
-loc_1C9E5:                              ; CODE XREF: sub_1C9CE+51↓j
+loc_1C9E5:                              ; CODE XREF: init_helper_c+51↓j
                                         ; seg002:0B01↑J
-                call    sub_1C91A
+                call    init_helper_b
                 call    thk_kbd_poll
                 mov     si, ax
                 or      si, si
@@ -685,18 +686,18 @@ loc_1C9E5:                              ; CODE XREF: sub_1C9CE+51↓j
                 jnz     short loc_1CA13
                 mov     word_1DD62, 0
 
-loc_1CA13:                              ; CODE XREF: sub_1C9CE+21↑j
-                                        ; sub_1C9CE+3D↑j
+loc_1CA13:                              ; CODE XREF: init_helper_c+21↑j
+                                        ; init_helper_c+3D↑j
                 cmp     si, [bp+arg_0]
                 jl      short loc_1CA1C
                 cmp     si, di
                 jle     short loc_1CA21
 
-loc_1CA1C:                              ; CODE XREF: sub_1C9CE+48↑j
+loc_1CA1C:                              ; CODE XREF: init_helper_c+48↑j
                 cmp     si, 1Bh
                 jnz     short loc_1C9E5
 
-loc_1CA21:                              ; CODE XREF: sub_1C9CE+4C↑j
+loc_1CA21:                              ; CODE XREF: init_helper_c+4C↑j
                 mov     [bp+var_4], si
                 mov     ax, 20h ; ' '
                 push    ax
@@ -710,10 +711,10 @@ loc_1CA21:                              ; CODE XREF: sub_1C9CE+4C↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C9CE       endp
+init_helper_c   endp
 
 ; ---------------------------------------------------------------------------
-                push    bp              ; CODE XREF: sub_1CBDC:loc_1CD9C↓p
+                push    bp              ; CODE XREF: title_screen:loc_1CD9C↓p
                 mov     bp, sp
                 sub     sp, 6
                 push    di
@@ -854,7 +855,7 @@ loc_1CB74:                              ; CODE XREF: ovl_1MENU1:CB6D↑j
                 push    ax
                 mov     ax, 41h ; 'A'
                 push    ax
-                call    sub_1C9CE
+                call    init_helper_c
                 add     sp, 4
                 push    ax
                 call    thk_res_00E8
@@ -890,7 +891,7 @@ loc_1CBB4:                              ; CODE XREF: ovl_1MENU1:CA5D↑j
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
-                mov     ax, 1           ; CODE XREF: sub_1CBDC+76↓p
+                mov     ax, 1           ; CODE XREF: title_screen+76↓p
                 push    ax
                 sub     ax, ax
                 push    ax
@@ -908,9 +909,10 @@ loc_1CBB4:                              ; CODE XREF: ovl_1MENU1:CA5D↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Copyright 1989 New World Computing" + OPTIONS (S start game, C copy player disk, A about Book Two)
 ; Attributes: bp-based frame
 
-sub_1CBDC       proc near               ; CODE XREF: seg002:01AD↑J
+title_screen    proc near               ; CODE XREF: seg002:01AD↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -921,7 +923,7 @@ var_2           = word ptr -2
                 push    si
                 mov     [bp+var_2], 0
 
-loc_1CBE8:                              ; CODE XREF: sub_1CBDC+1F↓j
+loc_1CBE8:                              ; CODE XREF: title_screen+1F↓j
                 push    word_1DD14
                 call    thk_gfx_load_image
                 add     sp, 2
@@ -930,7 +932,7 @@ loc_1CBE8:                              ; CODE XREF: sub_1CBDC+1F↓j
                 or      dx, ax
                 jz      short loc_1CBE8
 
-loc_1CBFD:                              ; CODE XREF: sub_1CBDC+34↓j
+loc_1CBFD:                              ; CODE XREF: title_screen+34↓j
                 push    word_1DD16
                 call    thk_gfx_load_image
                 add     sp, 2
@@ -1045,10 +1047,10 @@ loc_1CBFD:                              ; CODE XREF: sub_1CBDC+34↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CD0E:                              ; CODE XREF: sub_1CBDC+12A↑j
+loc_1CD0E:                              ; CODE XREF: title_screen+12A↑j
                 mov     ax, 32h ; '2'
 
-loc_1CD11:                              ; CODE XREF: sub_1CBDC+12F↑j
+loc_1CD11:                              ; CODE XREF: title_screen+12F↑j
                 push    ax
                 call    thk_text_putc
                 add     sp, 2
@@ -1070,7 +1072,7 @@ loc_1CD11:                              ; CODE XREF: sub_1CBDC+12F↑j
                 mov     [bp+var_4], 7
                 mov     si, 7
 
-loc_1CD45:                              ; CODE XREF: sub_1CBDC+174↓j
+loc_1CD45:                              ; CODE XREF: title_screen+174↓j
                 mov     ax, 5
                 push    ax
                 call    thk_text_putc
@@ -1088,7 +1090,7 @@ loc_1CD45:                              ; CODE XREF: sub_1CBDC+174↓j
                 call    thk_gfx_copy_page
                 add     sp, 4
 
-loc_1CD68:                              ; CODE XREF: sub_1CBDC+1B8↓j
+loc_1CD68:                              ; CODE XREF: title_screen+1B8↓j
                 call    loc_1C9B2
                 push    ax
                 call    thk_res_00E8
@@ -1105,24 +1107,24 @@ loc_1CD68:                              ; CODE XREF: sub_1CBDC+1B8↓j
                 jmp     short loc_1CD8D
 ; ---------------------------------------------------------------------------
 
-loc_1CD8A:                              ; CODE XREF: sub_1CBDC+1A0↑j
-                call    sub_1C868
+loc_1CD8A:                              ; CODE XREF: title_screen+1A0↑j
+                call    init_helper_a
 
-loc_1CD8D:                              ; CODE XREF: sub_1CBDC+1AC↑j
-                                        ; sub_1CBDC+1BD↓j ...
+loc_1CD8D:                              ; CODE XREF: title_screen+1AC↑j
+                                        ; title_screen+1BD↓j ...
                 mov     ax, si
                 cmp     ax, 53h ; 'S'
                 jz      short loc_1CDC2
                 jmp     short loc_1CD68
 ; ---------------------------------------------------------------------------
 
-loc_1CD96:                              ; CODE XREF: sub_1CBDC+1A5↑j
+loc_1CD96:                              ; CODE XREF: title_screen+1A5↑j
                 call    loc_1C77C
                 jmp     short loc_1CD8D
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CD9C:                              ; CODE XREF: sub_1CBDC+1AA↑j
+loc_1CD9C:                              ; CODE XREF: title_screen+1AA↑j
                 call    loc_1CA3C
                 mov     ax, 13h
                 push    ax
@@ -1138,13 +1140,13 @@ loc_1CD9C:                              ; CODE XREF: sub_1CBDC+1AA↑j
                 jmp     short loc_1CD8D
 ; ---------------------------------------------------------------------------
 
-loc_1CDBC:                              ; CODE XREF: sub_1CBDC+19B↑j
+loc_1CDBC:                              ; CODE XREF: title_screen+19B↑j
                 call    thk_res_3FC4
                 jmp     short loc_1CD8D
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CDC2:                              ; CODE XREF: sub_1CBDC+1B6↑j
+loc_1CDC2:                              ; CODE XREF: title_screen+1B6↑j
                 mov     [bp+var_4], si
                 push    word_1DBA4
                 push    word_1DBA2
@@ -1158,14 +1160,15 @@ loc_1CDC2:                              ; CODE XREF: sub_1CBDC+1B6↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CBDC       endp
+title_screen    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; int 13h based; unreferenced
 ; Attributes: bp-based frame
 
-sub_1CDE6       proc near
+disk_copy_routine proc near
 
 arg_0           = word ptr  4
 
@@ -1200,11 +1203,11 @@ arg_0           = word ptr  4
                 pop     es
                 pop     bx
 
-loc_1CE18:                              ; CODE XREF: sub_1CDE6+1D↑j
+loc_1CE18:                              ; CODE XREF: disk_copy_routine+1D↑j
                 mov     di, 3
                 push    bx
 
-loc_1CE1C:                              ; CODE XREF: sub_1CDE6+54↓j
+loc_1CE1C:                              ; CODE XREF: disk_copy_routine+54↓j
                 xor     ah, ah
                 push    di
                 int     13h             ; DISK - RESET DISK SYSTEM
@@ -1233,7 +1236,7 @@ loc_1CE30:                              ; CODE XREF: seg002:0831↑J
                 jmp     short loc_1CEB6
 ; ---------------------------------------------------------------------------
 
-loc_1CE40:                              ; CODE XREF: sub_1CDE6+51↑j
+loc_1CE40:                              ; CODE XREF: disk_copy_routine+51↑j
                 mov     al, 1Eh
                 mov     ah, 35h
                 int     21h             ; DOS - 2+ - GET INTERRUPT VECTOR
@@ -1249,8 +1252,8 @@ loc_1CE40:                              ; CODE XREF: sub_1CDE6+51↑j
                                         ; DS:DX = new vector to be used for specified interrupt
                 mov     di, 3
 
-loc_1CE5A:                              ; CODE XREF: sub_1CDE6+8F↓j
-                                        ; sub_1CDE6+9B↓j ...
+loc_1CE5A:                              ; CODE XREF: disk_copy_routine+8F↓j
+                                        ; disk_copy_routine+9B↓j ...
                 mov     ax, 201h
                 pop     es
                 push    es
@@ -1273,7 +1276,7 @@ loc_1CE5A:                              ; CODE XREF: sub_1CDE6+8F↓j
                 jmp     short loc_1CEA6
 ; ---------------------------------------------------------------------------
 
-loc_1CE7B:                              ; CODE XREF: sub_1CDE6+8C↑j
+loc_1CE7B:                              ; CODE XREF: disk_copy_routine+8C↑j
                 cmp     byte ptr es:[bx+240h], 3Ch ; '<'
                 jnz     short loc_1CE5A
                 cmp     byte ptr es:[bx+270h], 3Ch ; '<'
@@ -1286,7 +1289,7 @@ loc_1CE7B:                              ; CODE XREF: sub_1CDE6+8C↑j
                 jnz     short loc_1CE5A
                 mov     ax, 1
 
-loc_1CEA6:                              ; CODE XREF: sub_1CDE6+93↑j
+loc_1CEA6:                              ; CODE XREF: disk_copy_routine+93↑j
                 push    ax
                 mov     dx, word_1F6D3
                 mov     ds, word_1F6D5
@@ -1297,7 +1300,7 @@ loc_1CEA6:                              ; CODE XREF: sub_1CDE6+93↑j
                                         ; DS:DX = new vector to be used for specified interrupt
                 pop     ax
 
-loc_1CEB6:                              ; CODE XREF: sub_1CDE6+58↑j
+loc_1CEB6:                              ; CODE XREF: disk_copy_routine+58↑j
                 pop     bx
                 push    ax
                 push    es
@@ -1316,7 +1319,7 @@ loc_1CEB6:                              ; CODE XREF: sub_1CDE6+58↑j
                 db    0
                 db    0
 byte_1CEC8      db 8 dup(0)             ; CODE XREF: seg002:07AD↑J
-sub_1CDE6       endp
+disk_copy_routine endp
 
 ovl_1MENU1      ends
 

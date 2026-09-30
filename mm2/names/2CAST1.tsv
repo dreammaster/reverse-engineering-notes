@@ -1,0 +1,8 @@
+# 2CAST1.OVL: casting spells outside combat
+1C130	cast1_common_helper
+1C1EA	cast1_effect_a
+1C320	cast1_effect_b
+1C340	spell_beacon	"Beacon: 1) Set new 2) Teleport to last"
+1C3EE	spell_fly	"Fly to (A-E)?"
+1CF5C	cast1_return_prompt	"'Return' to cast"
+1D0C2	cast_noncombat_spell	(spell index) dispatch

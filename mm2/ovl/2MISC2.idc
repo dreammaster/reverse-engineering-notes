@@ -28,6 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"misc2_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
@@ -41,6 +42,7 @@ static Bytes_0(void) {
 	create_byte	(0X1C2C0);
 	make_array	(0X1C2C0,	0X38);
 	create_insn	(0X1C2F8);
+	set_name	(0X1C2F8,	"party_command_e");
 	create_insn	(x=0X1C2FB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C305);
@@ -129,6 +131,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C3EC);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C3F6);
+	set_name	(0X1C3F6,	"game_controls");
 	create_insn	(x=0X1C3F9);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C3FE);
@@ -472,6 +475,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CCE2);
 	op_hex		(x,	1);
 	create_insn	(0X1CE30);
+	set_name	(0X1CE30,	"training_hall");
 	create_insn	(x=0X1CE33);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CE38);
@@ -654,15 +658,18 @@ static Functions_0(void) {
 	set_frame_size(0X1C130, 0X8, 2, 0);
 	add_func    (0X1C2F8,0X1C370);
 	set_func_flags(0X1C2F8,0x5410);
+	set_func_cmt(0X1C2F8,	"'E'", 0);
 	set_frame_size(0X1C2F8, 0XC, 2, 0);
 	add_func    (0X1C370,0X1C3F5);
 	set_func_flags(0X1C370,0x5410);
 	set_frame_size(0X1C370, 0X12, 2, 0);
 	add_func    (0X1C3F6,0X1C6F3);
 	set_func_flags(0X1C3F6,0x5410);
+	set_func_cmt(0X1C3F6,	"\"Controls\": 1) Sounds 2) Walk Beep 3) Disposition 4) Delay", 0);
 	set_frame_size(0X1C3F6, 0X14, 2, 0);
 	add_func    (0X1CE30,0X1D0B0);
 	set_func_flags(0X1CE30,0x5410);
+	set_func_cmt(0X1CE30,	"\"Training\", \"Train for level \", \"You need ... more experience\", \"Cost in gold =\"", 0);
 	set_frame_size(0X1CE30, 0X1E, 2, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);

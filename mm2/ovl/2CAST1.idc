@@ -28,11 +28,13 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"cast1_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
 	make_array	(0X1C1DA,	0X10);
 	create_insn	(0X1C1EA);
+	set_name	(0X1C1EA,	"cast1_effect_a");
 	create_insn	(x=0X1C1ED);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C1FE);
@@ -68,7 +70,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C316);
 	op_hex		(x,	1);
 	create_insn	(0X1C320);
+	set_name	(0X1C320,	"cast1_effect_b");
 	create_insn	(0X1C340);
+	set_name	(0X1C340,	"spell_beacon");
 	create_insn	(x=0X1C343);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C346);
@@ -98,6 +102,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1C3E6);
 	create_insn	(0X1C3EE);
+	set_name	(0X1C3EE,	"spell_fly");
 	create_insn	(x=0X1C3F1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C3F6);
@@ -645,6 +650,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CF53);
 	op_hex		(x,	1);
 	create_insn	(0X1CF5C);
+	set_name	(0X1CF5C,	"cast1_return_prompt");
 	create_insn	(x=0X1CF6D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CF88);
@@ -677,6 +683,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D0AC);
 	op_hex		(x,	1);
 	create_insn	(0X1D0C2);
+	set_name	(0X1D0C2,	"cast_noncombat_spell");
 	create_insn	(x=0X1D0C5);
 	op_stkvar	(x,	1);
 	set_cmt	(0X1D0C8,	"switch 96 cases",	0);
@@ -1075,9 +1082,11 @@ static Functions_0(void) {
 	set_frame_size(0X1C320, 0, 0, 0);
 	add_func    (0X1C340,0X1C3ED);
 	set_func_flags(0X1C340,0x5410);
+	set_func_cmt(0X1C340,	"\"Beacon: 1) Set new 2) Teleport to last\"", 0);
 	set_frame_size(0X1C340, 0X4, 2, 0);
 	add_func    (0X1C3EE,0X1C4FB);
 	set_func_flags(0X1C3EE,0x5410);
+	set_func_cmt(0X1C3EE,	"\"Fly to (A-E)?\"", 0);
 	set_frame_size(0X1C3EE, 0XC, 2, 0);
 	add_func    (0X1C4FC,0X1C550);
 	set_func_flags(0X1C4FC,0x5410);
@@ -1192,9 +1201,11 @@ static Functions_0(void) {
 	set_frame_size(0X1CEFA, 0X4, 2, 0);
 	add_func    (0X1CF5C,0X1D0C2);
 	set_func_flags(0X1CF5C,0x5400);
+	set_func_cmt(0X1CF5C,	"\"'Return' to cast\"", 0);
 	set_frame_size(0X1CF5C, 0, 0, 0);
 	add_func    (0X1D0C2,0X1D290);
 	set_func_flags(0X1D0C2,0x5410);
+	set_func_cmt(0X1D0C2,	"(spell index) dispatch", 0);
 	set_frame_size(0X1D0C2, 0, 2, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);

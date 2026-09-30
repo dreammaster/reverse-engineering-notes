@@ -10,7 +10,7 @@ ovl_2MISC2      segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1C130       proc near               ; CODE XREF: seg002:0615↑J
+misc2_common_helper proc near           ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
                 push    bp
 ; ---------------------------------------------------------------------------
@@ -32,7 +32,7 @@ byte_1C132      db 0ECh, 83h, 0ECh, 4, 57h, 56h, 2Bh, 0C0h, 50h, 0E8h
                 db 0ECh, 83h, 0ECh, 6, 0C6h, 46h, 0FCh, 1Bh, 8Bh, 1Eh
                 db 0D4h, 2Ah, 8Ah, 46h, 4, 88h, 47h, 0Eh, 8Bh, 1Eh, 0D6h
                 db 2Ah, 88h, 47h, 0Ah, 2Bh, 0C0h, 50h
-sub_1C130       endp ; sp-analysis failed
+misc2_common_helper endp ; sp-analysis failed
 
 byte_1C1DA      db 0E8h, 85h, 0ACh, 83h, 0C4h, 2, 0B8h, 0Dh, 0, 50h, 0B8h
                                         ; CODE XREF: seg002:08CD↑J
@@ -70,9 +70,10 @@ byte_1C2C0      db 0D8h, 0AFh, 83h, 0C4h, 4, 88h, 46h, 0FCh, 3Ch, 1Bh
 
 ; =============== S U B R O U T I N E =======================================
 
+; 'E'
 ; Attributes: bp-based frame
 
-sub_1C2F8       proc near               ; CODE XREF: seg002:0651↑J
+party_command_e proc near               ; CODE XREF: seg002:0651↑J
 
 var_8           = byte ptr -8
 var_6           = word ptr -6
@@ -125,8 +126,8 @@ loc_1C308:                              ; CODE XREF: seg002:08F1↑J
                 jz      short loc_1C35F
                 call    thk_draw_party_list
 
-loc_1C35F:                              ; CODE XREF: sub_1C2F8+2C↑j
-                                        ; sub_1C2F8+32↑j ...
+loc_1C35F:                              ; CODE XREF: party_command_e+2C↑j
+                                        ; party_command_e+32↑j ...
                 mov     ax, 1
                 push    ax
                 call    thk_gfx_select_page
@@ -138,7 +139,7 @@ loc_1C35F:                              ; CODE XREF: sub_1C2F8+2C↑j
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
-sub_1C2F8       endp
+party_command_e endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -226,9 +227,10 @@ sub_1C370       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Controls": 1) Sounds 2) Walk Beep 3) Disposition 4) Delay
 ; Attributes: bp-based frame
 
-sub_1C3F6       proc near               ; CODE XREF: seg002:047D↑J
+game_controls   proc near               ; CODE XREF: seg002:047D↑J
 
 var_14          = word ptr -14h
 var_C           = word ptr -0Ch
@@ -352,7 +354,7 @@ loc_1C462:                              ; CODE XREF: seg002:086D↑J
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C507:                              ; CODE XREF: sub_1C3F6+2B9↓j
+loc_1C507:                              ; CODE XREF: game_controls+2B9↓j
                 cmp     [bp+var_8], 0
                 jz      short loc_1C557
                 mov     ax, 3
@@ -387,7 +389,7 @@ loc_1C507:                              ; CODE XREF: sub_1C3F6+2B9↓j
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C557:                              ; CODE XREF: sub_1C3F6+115↑j
+loc_1C557:                              ; CODE XREF: game_controls+115↑j
                 cmp     [bp+var_A], 0
                 jz      short loc_1C5A7
                 mov     ax, 4
@@ -422,13 +424,13 @@ loc_1C557:                              ; CODE XREF: sub_1C3F6+115↑j
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C5A7:                              ; CODE XREF: sub_1C3F6+165↑j
+loc_1C5A7:                              ; CODE XREF: game_controls+165↑j
                 cmp     [bp+var_C], 0
                 jz      short loc_1C5EF ; CODE XREF: seg002:0885↑J
                 sub     si, si
                 mov     di, 2B78h
 
-loc_1C5B2:                              ; CODE XREF: sub_1C3F6+1F4↓j
+loc_1C5B2:                              ; CODE XREF: game_controls+1F4↓j
                 lea     ax, [si+7]
                 push    ax
                 mov     ax, 6
@@ -447,10 +449,10 @@ loc_1C5C0:                              ; CODE XREF: seg002:029D↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C5D2:                              ; CODE XREF: sub_1C3F6+1D4↑j
+loc_1C5D2:                              ; CODE XREF: game_controls+1D4↑j
                 sub     ax, ax
 
-loc_1C5D4:                              ; CODE XREF: sub_1C3F6+1D9↑j
+loc_1C5D4:                              ; CODE XREF: game_controls+1D9↑j
                 push    ax
                 call    thk_text_set_flag_8
 
@@ -465,7 +467,7 @@ loc_1C5D8:                              ; CODE XREF: seg002:01A1↑J
                 jle     short loc_1C5B2
                 mov     [bp+var_6], si
 
-loc_1C5EF:                              ; CODE XREF: sub_1C3F6+1B5↑j
+loc_1C5EF:                              ; CODE XREF: game_controls+1B5↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C634
                 mov     ax, 0Ch
@@ -476,7 +478,7 @@ loc_1C5EF:                              ; CODE XREF: sub_1C3F6+1B5↑j
                 add     sp, 4
                 sub     si, si
 
-loc_1C605:                              ; CODE XREF: sub_1C3F6+239↓j
+loc_1C605:                              ; CODE XREF: game_controls+239↓j
                 mov     ax, si
                 mov     cl, byte_1DC23
                 sub     ch, ch
@@ -486,10 +488,10 @@ loc_1C605:                              ; CODE XREF: sub_1C3F6+239↓j
                 jmp     short loc_1C618
 ; ---------------------------------------------------------------------------
 
-loc_1C616:                              ; CODE XREF: sub_1C3F6+219↑j
+loc_1C616:                              ; CODE XREF: game_controls+219↑j
                 sub     ax, ax
 
-loc_1C618:                              ; CODE XREF: sub_1C3F6+21E↑j
+loc_1C618:                              ; CODE XREF: game_controls+21E↑j
                 push    ax
                 call    thk_text_set_flag_8
                 add     sp, 2
@@ -503,7 +505,7 @@ loc_1C618:                              ; CODE XREF: sub_1C3F6+21E↑j
                 jl      short loc_1C605
                 mov     [bp+var_6], si
 
-loc_1C634:                              ; CODE XREF: sub_1C3F6+1FD↑j
+loc_1C634:                              ; CODE XREF: game_controls+1FD↑j
                 sub     ax, ax
                 mov     [bp+var_2], ax
                 mov     [bp+var_C], ax
@@ -529,48 +531,48 @@ loc_1C634:                              ; CODE XREF: sub_1C3F6+1FD↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C66C:                              ; CODE XREF: sub_1C3F6+262↑j
+loc_1C66C:                              ; CODE XREF: game_controls+262↑j
                                         ; seg002:0891↑J
                 xor     byte_1DC20, 1
                 inc     [bp+var_8]
                 jmp     short loc_1C6A9
 ; ---------------------------------------------------------------------------
 
-loc_1C676:                              ; CODE XREF: sub_1C3F6+267↑j
+loc_1C676:                              ; CODE XREF: game_controls+267↑j
                 xor     byte_1DC21, 1
                 inc     [bp+var_A]
                 jmp     short loc_1C6A9
 ; ---------------------------------------------------------------------------
 
-loc_1C680:                              ; CODE XREF: sub_1C3F6+26C↑j
+loc_1C680:                              ; CODE XREF: game_controls+26C↑j
                 inc     byte_1DC22
                 cmp     byte_1DC22, 3
                 jbe     short loc_1C690
                 mov     byte_1DC22, 0
 
-loc_1C690:                              ; CODE XREF: sub_1C3F6+293↑j
+loc_1C690:                              ; CODE XREF: game_controls+293↑j
                 inc     [bp+var_C]
                 jmp     short loc_1C6A9
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C696:                              ; CODE XREF: sub_1C3F6+271↑j
+loc_1C696:                              ; CODE XREF: game_controls+271↑j
                 inc     byte_1DC23
                 cmp     byte_1DC23, 9
                 jbe     short loc_1C6A6
                 mov     byte_1DC23, 0
 
-loc_1C6A6:                              ; CODE XREF: sub_1C3F6+2A9↑j
+loc_1C6A6:                              ; CODE XREF: game_controls+2A9↑j
                 inc     [bp+var_2]
 
-loc_1C6A9:                              ; CODE XREF: sub_1C3F6+273↑j
-                                        ; sub_1C3F6+27E↑j ...
+loc_1C6A9:                              ; CODE XREF: game_controls+273↑j
+                                        ; game_controls+27E↑j ...
                 cmp     [bp+var_6], 1Bh
                 jz      short loc_1C6B2
                 jmp     loc_1C507
 ; ---------------------------------------------------------------------------
 
-loc_1C6B2:                              ; CODE XREF: sub_1C3F6+2B7↑j
+loc_1C6B2:                              ; CODE XREF: game_controls+2B7↑j
                 push    [bp+var_4]
                 call    thk_text_window_close
                 add     sp, 2
@@ -601,7 +603,7 @@ loc_1C6CC:                              ; CODE XREF: ovl_2MISC2:CA69↓p
                 mov     [bp+var_6], ax
                 mov     bx, ax
                 mov     al, [bx+23h]    ; CODE XREF: seg002:0B19↑J
-sub_1C3F6       endp
+game_controls   endp
 
                 mov     [bp-12h], al
                 mov     al, [bx+20h]
@@ -795,7 +797,7 @@ loc_1C841:                              ; CODE XREF: ovl_2MISC2:C83B↑j
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
-                push    bp              ; CODE XREF: sub_1CE30+228↓p
+                push    bp              ; CODE XREF: training_hall+228↓p
                 mov     bp, sp
                 sub     sp, 10h
                 push    si
@@ -1107,7 +1109,7 @@ loc_1CB09:                              ; CODE XREF: ovl_2MISC2:C8F0↑j
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
-                push    bp              ; CODE XREF: sub_1CE30+20A↓p
+                push    bp              ; CODE XREF: training_hall+20A↓p
                 mov     bp, sp
                 push    word ptr [bp+4]
                 call    thk_res_6532
@@ -1136,7 +1138,7 @@ loc_1CB40:                              ; CODE XREF: seg002:0A65↑J
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
-                push    bp              ; CODE XREF: sub_1CE30+DA↓p
+                push    bp              ; CODE XREF: training_hall+DA↓p
                 mov     bp, sp
                 sub     sp, 2
                 push    si
@@ -1243,7 +1245,7 @@ loc_1CC36:                              ; CODE XREF: ovl_2MISC2:CBFE↑j
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
-                push    bp              ; CODE XREF: sub_1CE30+194↓p
+                push    bp              ; CODE XREF: training_hall+194↓p
                 mov     bp, sp
                 sub     sp, 4
                 mov     bx, [bp+6]
@@ -1281,7 +1283,7 @@ loc_1CC88:                              ; CODE XREF: ovl_2MISC2:CC59↑j
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
-                push    bp              ; CODE XREF: sub_1CE30+F0↓p
+                push    bp              ; CODE XREF: training_hall+F0↓p
                 mov     bp, sp
                 sub     sp, 0Ah
                 push    si
@@ -1487,9 +1489,10 @@ loc_1CE24:                              ; CODE XREF: ovl_2MISC2:CE00↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Training", "Train for level ", "You need ... more experience", "Cost in gold ="
 ; Attributes: bp-based frame
 
-sub_1CE30       proc near               ; CODE XREF: seg002:0831↑J
+training_hall   proc near               ; CODE XREF: seg002:0831↑J
 
 var_18          = word ptr -18h
 var_16          = word ptr -16h
@@ -1520,7 +1523,7 @@ var_2           = word ptr -2
                 sub     si, si
                 sub     di, di
 
-loc_1CE59:                              ; CODE XREF: sub_1CE30+52↓j
+loc_1CE59:                              ; CODE XREF: training_hall+52↓j
                 lea     ax, [si+13h]
                 push    ax
                 mov     ax, 1
@@ -1545,7 +1548,7 @@ loc_1CE59:                              ; CODE XREF: sub_1CE30+52↓j
                 jmp     loc_1D09B
 ; ---------------------------------------------------------------------------
 
-loc_1CE94:                              ; CODE XREF: sub_1CE30+5F↑j
+loc_1CE94:                              ; CODE XREF: training_hall+5F↑j
                 or      byte_1DC80, 1
                 call    thk_res_34BA
                 call    thk_res_5440
@@ -1585,13 +1588,13 @@ loc_1CEC8:                              ; CODE XREF: seg002:07AD↑J
                 add     sp, 2
                 mov     di, [bp+var_6]
 
-loc_1CEEF:                              ; CODE XREF: sub_1CE30+25F↓j
+loc_1CEEF:                              ; CODE XREF: training_hall+25F↓j
                 cmp     [bp+var_18], 0
                 jnz     short loc_1CEF8
                 jmp     loc_1D01A
 ; ---------------------------------------------------------------------------
 
-loc_1CEF8:                              ; CODE XREF: sub_1CE30+C3↑j
+loc_1CEF8:                              ; CODE XREF: training_hall+C3↑j
                 mov     ax, 7
                 push    ax
                 call    thk_res_3FA0
@@ -1607,7 +1610,7 @@ loc_1CEF8:                              ; CODE XREF: sub_1CE30+C3↑j
                 jz      short loc_1CF1F
                 inc     [bp+var_A]
 
-loc_1CF1F:                              ; CODE XREF: sub_1CE30+EA↑j
+loc_1CF1F:                              ; CODE XREF: training_hall+EA↑j
                 push    di
                 call    loc_1CC8C
                 add     sp, 2
@@ -1642,17 +1645,17 @@ loc_1CF2C:                              ; CODE XREF: seg002:050D↑J
                 cmp     [di+62h], ax
                 jb      short loc_1CF70
 
-loc_1CF6A:                              ; CODE XREF: sub_1CE30+133↑j
+loc_1CF6A:                              ; CODE XREF: training_hall+133↑j
                 mov     ax, 1
                 jmp     short loc_1CF72
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CF70:                              ; CODE XREF: sub_1CE30+131↑j
-                                        ; sub_1CE30+138↑j
+loc_1CF70:                              ; CODE XREF: training_hall+131↑j
+                                        ; training_hall+138↑j
                 sub     ax, ax
 
-loc_1CF72:                              ; CODE XREF: sub_1CE30+13D↑j
+loc_1CF72:                              ; CODE XREF: training_hall+13D↑j
                 mov     [bp+var_16], ax
                 mov     ax, 14h
                 push    ax
@@ -1688,7 +1691,7 @@ loc_1CF72:                              ; CODE XREF: sub_1CE30+13D↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CFC0:                              ; CODE XREF: sub_1CE30+157↑j
+loc_1CFC0:                              ; CODE XREF: training_hall+157↑j
                 push    [bp+var_8]
                 push    di
                 call    loc_1CC44
@@ -1713,13 +1716,13 @@ loc_1CFC0:                              ; CODE XREF: sub_1CE30+157↑j
                 jmp     short loc_1D002
 ; ---------------------------------------------------------------------------
 
-loc_1CFF8:                              ; CODE XREF: sub_1CE30+1B0↑j
+loc_1CFF8:                              ; CODE XREF: training_hall+1B0↑j
                 mov     ax, offset aFree ; "free"
                 push    ax
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1D002:                              ; CODE XREF: sub_1CE30+1C6↑j
+loc_1D002:                              ; CODE XREF: training_hall+1C6↑j
                 mov     ax, 15h
                 push    ax
                 mov     ax, 11h
@@ -1728,12 +1731,12 @@ loc_1D002:                              ; CODE XREF: sub_1CE30+1C6↑j
                 add     sp, 4
                 mov     ax, offset aPressTToTrain ; "Press 'T' to train"
 
-loc_1D013:                              ; CODE XREF: sub_1CE30+18D↑j
+loc_1D013:                              ; CODE XREF: training_hall+18D↑j
                 push    ax
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1D01A:                              ; CODE XREF: sub_1CE30+C5↑j
+loc_1D01A:                              ; CODE XREF: training_hall+C5↑j
                 call    thk_play_music_step
                 push    ax
                 call    thk_res_00E8
@@ -1751,8 +1754,8 @@ loc_1D01A:                              ; CODE XREF: sub_1CE30+C5↑j
                 jmp     short loc_1D08A
 ; ---------------------------------------------------------------------------
 
-loc_1D042:                              ; CODE XREF: sub_1CE30+1F9↑j
-                                        ; sub_1CE30+205↑j
+loc_1D042:                              ; CODE XREF: training_hall+1F9↑j
+                                        ; training_hall+205↑j
                 mov     ax, si
                 cmp     ax, 54h ; 'T'
                 jnz     short loc_1D066
@@ -1768,8 +1771,8 @@ loc_1D042:                              ; CODE XREF: sub_1CE30+1F9↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D066:                              ; CODE XREF: sub_1CE30+217↑j
-                                        ; sub_1CE30+21D↑j
+loc_1D066:                              ; CODE XREF: training_hall+217↑j
+                                        ; training_hall+21D↑j
                 cmp     si, 1Bh
                 jz      short loc_1D08A
                 mov     ax, si
@@ -1784,19 +1787,19 @@ loc_1D066:                              ; CODE XREF: sub_1CE30+217↑j
                 mov     ax, [bp+var_12]
                 mov     [bp+var_8], ax
 
-loc_1D08A:                              ; CODE XREF: sub_1CE30+210↑j
-                                        ; sub_1CE30+233↑j ...
+loc_1D08A:                              ; CODE XREF: training_hall+210↑j
+                                        ; training_hall+233↑j ...
                 cmp     si, 1Bh
                 jz      short loc_1D092
                 jmp     loc_1CEEF
 ; ---------------------------------------------------------------------------
 
-loc_1D092:                              ; CODE XREF: sub_1CE30+25D↑j
+loc_1D092:                              ; CODE XREF: training_hall+25D↑j
                 mov     [bp+var_6], di
                 mov     [bp+var_10], si
                 call    thk_res_35A8
 
-loc_1D09B:                              ; CODE XREF: sub_1CE30+61↑j
+loc_1D09B:                              ; CODE XREF: training_hall+61↑j
                 call    thk_2PLAY_A580
                 pop     si
                 pop     di
@@ -1805,7 +1808,7 @@ loc_1D09B:                              ; CODE XREF: sub_1CE30+61↑j
                 retn
 ; ---------------------------------------------------------------------------
                 align 10h
-sub_1CE30       endp
+training_hall   endp
 
 ovl_2MISC2      ends
 

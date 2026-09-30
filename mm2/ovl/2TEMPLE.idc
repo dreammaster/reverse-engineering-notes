@@ -28,6 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"temple_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
@@ -453,6 +454,7 @@ static Bytes_0(void) {
 	create_insn	(0X1CA5A);
 	create_insn	(0X1CA72);
 	create_insn	(0X1CA88);
+	set_name	(0X1CA88,	"temple_menu");
 	create_insn	(x=0X1CA8B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CACB);
@@ -490,6 +492,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CB8A);
 	op_hex		(x,	1);
 	create_insn	(0X1CB9C);
+	set_name	(0X1CB9C,	"mage_guild_menu");
 	create_insn	(x=0X1CB9F);
 	op_hex		(x,	1);
 	create_insn	(0X1CBB4);
@@ -737,6 +740,7 @@ static Functions_0(void) {
 	set_frame_size(0X1CA88, 0XA, 2, 0);
 	add_func    (0X1CB9C,0X1CF5D);
 	set_func_flags(0X1CB9C,0x5410);
+	set_func_cmt(0X1CB9C,	"\" Mage Guild \", \"Learn (A-D)\"", 0);
 	set_frame_size(0X1CB9C, 0X1E, 2, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);

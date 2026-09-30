@@ -1,0 +1,7 @@
+# 1MENU1.OVL: startup / title screen (loaded first)
+1C5D8	game_init	video/driver setup, opens main windows, loads MM2.CH font, ITEMS.DAT and SPELLS.DAT
+1C868	init_helper_a
+1C91A	init_helper_b
+1C9CE	init_helper_c
+1CBDC	title_screen	"Copyright 1989 New World Computing" + OPTIONS (S start game, C copy player disk, A about Book Two)
+1CDE6	disk_copy_routine	int 13h based; unreferenced

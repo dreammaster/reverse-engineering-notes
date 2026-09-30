@@ -28,6 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"tavern_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
@@ -67,6 +68,7 @@ static Bytes_0(void) {
 	create_byte	(0X1C73A);
 	make_array	(0X1C73A,	0XA8);
 	create_insn	(0X1C7E2);
+	set_name	(0X1C7E2,	"tavern_retrain_skills");
 	create_insn	(x=0X1C7E5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C7EA);
@@ -211,6 +213,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C9CF);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C9D8);
+	set_name	(0X1C9D8,	"tavern_helper_a");
 	create_insn	(x=0X1C9E3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C9E7);
@@ -222,6 +225,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C9F2);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C9FC);
+	set_name	(0X1C9FC,	"tavern_helper_b");
 	create_insn	(x=0X1CA07);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA15);
@@ -260,6 +264,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CA87);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CA8E);
+	set_name	(0X1CA8E,	"tavern_helper_c");
 	create_insn	(x=0X1CA91);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA94);
@@ -690,6 +695,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D143);
 	op_stkvar	(x,	0);
 	create_insn	(0X1D15A);
+	set_name	(0X1D15A,	"tavern_menu");
 	create_insn	(x=0X1D15D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D162);
@@ -911,6 +917,7 @@ static Functions_0(void) {
 	set_frame_size(0X1C130, 0X1E, 2, 0);
 	add_func    (0X1C7E2,0X1C99B);
 	set_func_flags(0X1C7E2,0x5410);
+	set_func_cmt(0X1C7E2,	"\"you must have 100 gold\", \"Their secondary skills are gone\"", 0);
 	set_frame_size(0X1C7E2, 0XC, 2, 0);
 	add_func    (0X1C9D8,0X1C9FB);
 	set_func_flags(0X1C9D8,0x5410);
@@ -947,6 +954,7 @@ static Functions_0(void) {
 	set_frame_size(0X1D13C, 0X8, 2, 0);
 	add_func    (0X1D15A,0X1D518);
 	set_func_flags(0X1D15A,0x5410);
+	set_func_cmt(0X1D15A,	"\"Tavern\", G-Gather Gold, #-Other Char, Select (A-E)", 0);
 	set_frame_size(0X1D15A, 0X1A, 2, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);

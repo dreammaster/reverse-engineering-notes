@@ -71,6 +71,7 @@ static Bytes_0(void) {
 	create_byte	(0X1C5C0);
 	make_array	(0X1C5C0,	0X18);
 	create_insn	(0X1C5D8);
+	set_name	(0X1C5D8,	"game_init");
 	create_insn	(x=0X1C5DB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1C5E4);
@@ -160,6 +161,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C85F);
 	op_hex		(x,	1);
 	create_insn	(0X1C868);
+	set_name	(0X1C868,	"init_helper_a");
 	create_insn	(x=0X1C86B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C877);
@@ -191,6 +193,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C910);
 	op_hex		(x,	1);
 	create_insn	(0X1C91A);
+	set_name	(0X1C91A,	"init_helper_b");
 	create_insn	(x=0X1C921);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C93B);
@@ -209,6 +212,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C9B5);
 	op_hex		(x,	1);
 	create_insn	(0X1C9CE);
+	set_name	(0X1C9CE,	"init_helper_c");
 	create_insn	(x=0X1C9D1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C9D9);
@@ -306,6 +310,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CBD8);
 	op_hex		(x,	1);
 	create_insn	(0X1CBDC);
+	set_name	(0X1CBDC,	"title_screen");
 	create_insn	(x=0X1CBDF);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CBE3);
@@ -412,6 +417,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CDDE);
 	op_hex		(x,	1);
 	create_insn	(0X1CDE6);
+	set_name	(0X1CDE6,	"disk_copy_routine");
 	create_insn	(x=0X1CDEC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1CDEF);
@@ -472,6 +478,7 @@ static Functions_0(void) {
 
 	add_func    (0X1C5D8,0X1C7E2);
 	set_func_flags(0X1C5D8,0x5410);
+	set_func_cmt(0X1C5D8,	"video/driver setup, opens main windows, loads MM2.CH font, ITEMS.DAT and SPELLS.DAT", 0);
 	set_frame_size(0X1C5D8, 0X2, 2, 0);
 	add_func    (0X1C868,0X1C919);
 	set_func_flags(0X1C868,0x5410);
@@ -484,9 +491,11 @@ static Functions_0(void) {
 	set_frame_size(0X1C9CE, 0X8, 2, 0);
 	add_func    (0X1CBDC,0X1CDE6);
 	set_func_flags(0X1CBDC,0x5410);
+	set_func_cmt(0X1CBDC,	"\"Copyright 1989 New World Computing\" + OPTIONS (S start game, C copy player disk, A about Book Two)", 0);
 	set_frame_size(0X1CBDC, 0X8, 2, 0);
 	add_func    (0X1CDE6,0X1CED0);
 	set_func_flags(0X1CDE6,0x5410);
+	set_func_cmt(0X1CDE6,	"int 13h based; unreferenced", 0);
 	set_frame_size(0X1CDE6, 0X4, 2, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);

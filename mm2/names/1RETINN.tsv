@@ -1,0 +1,7 @@
+# 1RETINN.OVL: Inn (assemble the party)
+1C130	inn_common_helper
+1C1EA	inn_leave
+1C2A6	inn_esc_prompt	"('ESC' to exit to DOS)"
+1C2C0	inn_draw_lists	"Characters" / "Hirelings"
+1C5C0	inn_menu	A-X view, Ctrl A-X add/remove, 1-5 other towns; "PARTY"
+1CB40	inn_run

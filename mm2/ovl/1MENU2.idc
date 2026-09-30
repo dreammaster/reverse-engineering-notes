@@ -28,6 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X17E10);
+	set_name	(0X17E10,	"prompt_name");
 	create_insn	(x=0X17E13);
 	op_hex		(x,	1);
 	create_insn	(x=0X17E2B);
@@ -78,6 +79,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X17EBF);
 	op_hex		(x,	1);
 	create_insn	(0X17EC8);
+	set_name	(0X17EC8,	"prompt_confirm_yn");
 	create_insn	(x=0X17ECB);
 	op_hex		(x,	1);
 	create_insn	(x=0X17EE3);
@@ -106,6 +108,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X17F7B);
 	op_hex		(x,	1);
 	create_insn	(0X17F84);
+	set_name	(0X17F84,	"roster_view_all");
 	create_insn	(x=0X17F87);
 	op_hex		(x,	1);
 	create_insn	(x=0X17F8C);
@@ -270,6 +273,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X181E9);
 	op_hex		(x,	1);
 	create_insn	(0X181F2);
+	set_name	(0X181F2,	"main_options_menu");
 	create_insn	(x=0X181F5);
 	op_hex		(x,	1);
 	create_insn	(x=0X181FA);
@@ -446,6 +450,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X185D5);
 	op_hex		(x,	1);
 	create_insn	(0X185EE);
+	set_name	(0X185EE,	"create_helper_a");
 	create_insn	(x=0X185F1);
 	op_hex		(x,	1);
 	create_insn	(x=0X185FF);
@@ -458,6 +463,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1861B);
 	op_stkvar	(x,	1);
 	create_insn	(0X18624);
+	set_name	(0X18624,	"create_char_roll_stats");
 	create_insn	(x=0X18627);
 	op_hex		(x,	1);
 	create_insn	(x=0X1862F);
@@ -533,6 +539,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X187DF);
 	op_stkvar	(x,	1);
 	create_insn	(0X187F2);
+	set_name	(0X187F2,	"create_char_pick_class");
 	create_insn	(x=0X187F5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1880A);
@@ -583,6 +590,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X188AA);
 	op_hex		(x,	1);
 	create_insn	(0X188B2);
+	set_name	(0X188B2,	"create_helper_b");
 	create_insn	(x=0X188B5);
 	op_hex		(x,	1);
 	create_insn	(x=0X188BA);
@@ -621,6 +629,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18945);
 	op_stkvar	(x,	0);
 	create_insn	(0X18952);
+	set_name	(0X18952,	"create_helper_c");
 	create_insn	(x=0X18955);
 	op_hex		(x,	1);
 	create_insn	(x=0X1895C);
@@ -683,6 +692,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X189E5);
 	op_stkvar	(x,	0);
 	create_insn	(0X189EE);
+	set_name	(0X189EE,	"create_helper_d");
 	create_insn	(x=0X189F1);
 	op_hex		(x,	1);
 	create_insn	(x=0X189F6);
@@ -702,6 +712,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18A2F);
 	op_stkvar	(x,	1);
 	create_insn	(0X18A60);
+	set_name	(0X18A60,	"create_character");
 	create_insn	(x=0X18A63);
 	op_hex		(x,	1);
 	create_insn	(x=0X18A6C);
@@ -998,6 +1009,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18F3F);
 	op_hex		(x,	1);
 	create_insn	(0X18F48);
+	set_name	(0X18F48,	"create_character_finish");
 	create_insn	(x=0X18F4B);
 	op_hex		(x,	1);
 	create_insn	(x=0X18F4E);
@@ -1056,6 +1068,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X19011);
 	op_hex		(x,	1);
 	create_insn	(0X19022);
+	set_name	(0X19022,	"create_helper_e");
 	create_insn	(x=0X19025);
 	op_hex		(x,	1);
 	create_insn	(x=0X1902F);
@@ -1128,6 +1141,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1961C);
 	create_insn	(0X19660);
+	set_name	(0X19660,	"load_default_roster");
 	create_insn	(x=0X19663);
 	op_hex		(x,	1);
 	create_insn	(x=0X19673);
@@ -1156,6 +1170,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X196ED);
 	op_stkvar	(x,	0);
 	create_insn	(0X196F6);
+	set_name	(0X196F6,	"transfer_characters");
 	create_insn	(x=0X196F9);
 	op_hex		(x,	1);
 	create_insn	(x=0X196FE);
@@ -1349,15 +1364,19 @@ static Functions_0(void) {
 
 	add_func    (0X17E10,0X17EC8);
 	set_func_flags(0X17E10,0x5410);
+	set_func_cmt(0X17E10,	"\"Name:\" line editor", 0);
 	set_frame_size(0X17E10, 0X16, 2, 0);
 	add_func    (0X17EC8,0X17F84);
 	set_func_flags(0X17EC8,0x5410);
+	set_func_cmt(0X17EC8,	"\"Are You Sure (Y/N)?\"", 0);
 	set_frame_size(0X17EC8, 0XA, 2, 0);
 	add_func    (0X17F84,0X181F2);
 	set_func_flags(0X17F84,0x5410);
+	set_func_cmt(0X17F84,	"view / rename (Ctrl-N) / delete (Ctrl-D) characters", 0);
 	set_frame_size(0X17F84, 0X16, 2, 0);
 	add_func    (0X181F2,0X185EE);
 	set_func_flags(0X181F2,0x5410);
+	set_func_cmt(0X181F2,	"C create, V view all, T transfer, G go to town", 0);
 	set_frame_size(0X181F2, 0XE, 2, 0);
 	add_func    (0X185EE,0X18623);
 	set_func_flags(0X185EE,0x5410);
@@ -1367,6 +1386,7 @@ static Functions_0(void) {
 	set_frame_size(0X18624, 0XA, 2, 0);
 	add_func    (0X187F2,0X188B2);
 	set_func_flags(0X187F2,0x5410);
+	set_func_cmt(0X187F2,	"\"Select Class (1-8)\", \"Exchange Stat (A-G) (ENT) to Reroll\", \"Roster is Full\"", 0);
 	set_frame_size(0X187F2, 0X6, 2, 0);
 	add_func    (0X188B2,0X18951);
 	set_func_flags(0X188B2,0x5410);
@@ -1379,6 +1399,7 @@ static Functions_0(void) {
 	set_frame_size(0X189EE, 0XA, 2, 0);
 	add_func    (0X18A60,0X18D6E);
 	set_func_flags(0X18A60,0x5410);
+	set_func_cmt(0X18A60,	"class / race (1-5) / alignment (1-3) screens", 0);
 	set_frame_size(0X18A60, 0X20, 2, 0);
 	add_func    (0X18F48,0X18FE3);
 	set_func_flags(0X18F48,0x5410);
@@ -1388,9 +1409,11 @@ static Functions_0(void) {
 	set_frame_size(0X19022, 0XC, 2, 0);
 	add_func    (0X19660,0X196F6);
 	set_func_flags(0X19660,0x5410);
+	set_func_cmt(0X19660,	"DEFAULT.DAT", 0);
 	set_frame_size(0X19660, 0X8, 2, 0);
 	add_func    (0X196F6,0X19A80);
 	set_func_flags(0X196F6,0x5410);
+	set_func_cmt(0X196F6,	"from another MM game roster (\"Path:\", \"File not found...\", \"Save new roster (y/n)?\")", 0);
 	set_frame_size(0X196F6, 0X72, 2, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);

@@ -1,0 +1,16 @@
+# 1MENU2.OVL: main options, roster, character creation, transfer
+17E10	prompt_name	"Name:" line editor
+17EC8	prompt_confirm_yn	"Are You Sure (Y/N)?"
+17F84	roster_view_all	view / rename (Ctrl-N) / delete (Ctrl-D) characters
+181F2	main_options_menu	C create, V view all, T transfer, G go to town
+185EE	create_helper_a
+18624	create_char_roll_stats
+187F2	create_char_pick_class	"Select Class (1-8)", "Exchange Stat (A-G) (ENT) to Reroll", "Roster is Full"
+188B2	create_helper_b
+18952	create_helper_c
+189EE	create_helper_d
+18A60	create_character	class / race (1-5) / alignment (1-3) screens
+18F48	create_character_finish
+19022	create_helper_e
+19660	load_default_roster	DEFAULT.DAT
+196F6	transfer_characters	from another MM game roster ("Path:", "File not found...", "Save new roster (y/n)?")

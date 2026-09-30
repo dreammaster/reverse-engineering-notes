@@ -28,6 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"misc_common_helper");
 	create_byte	(0X1C132);
 	make_array	(0X1C132,	0XA8);
 	create_byte	(0X1C1DA);
@@ -37,6 +38,7 @@ static Bytes_0(void) {
 	create_byte	(0X1C23C);
 	make_array	(0X1C23C,	0X6);
 	create_insn	(0X1C242);
+	set_name	(0X1C242,	"party_use_command");
 	create_insn	(x=0X1C245);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C24F);
@@ -181,6 +183,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C497);
 	op_hex		(x,	1);
 	create_insn	(0X1C4A6);
+	set_name	(0X1C4A6,	"trap_or_explosion");
 	create_insn	(x=0X1C4A9);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C4B1);
@@ -218,6 +221,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C52F);
 	op_hex		(x,	1);
 	create_insn	(0X1C538);
+	set_name	(0X1C538,	"treasure_give_item");
 	create_insn	(x=0X1C53B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C540);
@@ -295,6 +299,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C641);
 	op_hex		(x,	1);
 	create_insn	(0X1C64A);
+	set_name	(0X1C64A,	"treasure_share");
 	create_insn	(x=0X1C64D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C652);
@@ -503,6 +508,7 @@ static Bytes_0(void) {
 	create_insn	(0X1CA30);
 	create_insn	(0X1CA46);
 	create_insn	(0X1CA52);
+	set_name	(0X1CA52,	"party_search");
 	create_insn	(x=0X1CA55);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA5A);
@@ -777,6 +783,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CF7A);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CF84);
+	set_name	(0X1CF84,	"party_rest");
 	create_insn	(x=0X1CF87);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CF96);
@@ -815,6 +822,7 @@ static Functions_0(void) {
 	set_frame_size(0X1C130, 0X8, 2, 0);
 	add_func    (0X1C242,0X1C372);
 	set_func_flags(0X1C242,0x5410);
+	set_func_cmt(0X1C242,	"'U'", 0);
 	set_frame_size(0X1C242, 0X8, 2, 0);
 	add_func    (0X1C390,0X1C3FF);
 	set_func_flags(0X1C390,0x5410);
@@ -830,9 +838,11 @@ static Functions_0(void) {
 	set_frame_size(0X1C4A6, 0X10, 2, 0);
 	add_func    (0X1C538,0X1C64A);
 	set_func_flags(0X1C538,0x5410);
+	set_func_cmt(0X1C538,	"\"Backpacks full!\", \" found \"", 0);
 	set_frame_size(0X1C538, 0X14, 2, 0);
 	add_func    (0X1C64A,0X1C7AA);
 	set_func_flags(0X1C64A,0x5410);
+	set_func_cmt(0X1C64A,	"\"Each share = \", \" Gold\", \" Gems\"", 0);
 	set_frame_size(0X1C64A, 0X14, 2, 0);
 	add_func    (0X1C7AA,0X1C824);
 	set_func_flags(0X1C7AA,0x5410);
@@ -842,12 +852,14 @@ static Functions_0(void) {
 	set_frame_size(0X1C824, 0X6, 2, 0);
 	add_func    (0X1CA52,0X1CE30);
 	set_func_flags(0X1CA52,0x5410);
+	set_func_cmt(0X1CA52,	"\"Search...\", \"The Party Has\", \"found a:\", \"Treasure!\"", 0);
 	set_frame_size(0X1CA52, 0X1C, 2, 0);
 	add_func    (0X1CEEE,0X1CF83);
 	set_func_flags(0X1CEEE,0x5410);
 	set_frame_size(0X1CEEE, 0XC, 2, 0);
 	add_func    (0X1CF84,0X1D00B);
 	set_func_flags(0X1CF84,0x5410);
+	set_func_cmt(0X1CF84,	"\"Too dangerous!\", \"Rest here? (Y/N)\", \"Not enough gold - Dismiss hirelings\"", 0);
 	set_frame_size(0X1CF84, 0X4, 2, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);

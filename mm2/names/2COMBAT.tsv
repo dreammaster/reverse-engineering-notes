@@ -1,0 +1,18 @@
+# 2COMBAT.OVL: combat
+17E10	combat_damage_character	halves damage for protection effects, then char_apply_damage
+17E52	combat_after_hit	" goes down!", possible special attack effect of the monster
+17FB2	combat_monster_hits	"<monster> shoots/attacks <character>"
+18056	combat_monster_casts	" casts"
+180C6	combat_monster_idle
+1814A	combat_monster_advances	" advances!" (swap with front rank)
+18696	combat_cast_at_target	" casts a spell:", " is not affected!", " takes "
+18D7A	combat_text_reset
+18DAA	combat_party_fight_or_shoot	"Fight", "Shoot"
+1929A	combat_options_menu	" Options for:"
+193B2	combat_round	party command entry / round resolution
+1A2A6	combat_start	loads MONSTERS.DAT, surprise messages, A-Attack B-Bribe H-Hide R-Run, bribe with food/gold/gems
+1A882	combat_show_effects	"Protection Spells", "Magic", "Forces", "Cursed -"
+1A9E2	combat_delay_prot_quick	"D-Delay P-Prot Q-Quick"
+1AFE2	combat_apply_monster_status	(char) apply a monster special ability / status to a character
+1B226	combat_spell_damage	" resisted and", " takes ", " pts"
+1B410	combat_spell_effect	" is not affected!", " resisted!"

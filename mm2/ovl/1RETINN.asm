@@ -10,7 +10,7 @@ ovl_1RETINN     segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1C130       proc near               ; CODE XREF: seg002:0615↑J
+inn_common_helper proc near             ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
                 push    bp
 ; ---------------------------------------------------------------------------
@@ -35,15 +35,15 @@ byte_1C132      db 0ECh, 83h, 0ECh, 0Ah, 57h, 56h, 0C6h, 6, 30h, 4, 6
 byte_1C1DA      db 0Eh, 0, 0EBh, 5, 2 dup(90h), 0E8h, 0F3h, 0B0h, 5Eh
                                         ; CODE XREF: seg002:08CD↑J
                 db 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 90h
-sub_1C130       endp ; sp-analysis failed
+inn_common_helper endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1C1EA       proc near               ; CODE XREF: seg002:07F5↑J
-                                        ; sub_1CB40+B9↓p
+inn_leave       proc near               ; CODE XREF: seg002:07F5↑J
+                                        ; inn_run+B9↓p
 
 var_4           = byte ptr -4
 var_2           = byte ptr -2
@@ -56,7 +56,7 @@ var_2           = byte ptr -2
                 mov     byte_1DBE8, 0
                 mov     al, g_view_mode
                 mov     [bp+var_2], al
-                call    sub_1C5C0
+                call    inn_menu
                 mov     al, g_map_id
                 mov     [bp+var_4], al
                 mov     g_map_id, 0FFh
@@ -101,17 +101,17 @@ var_2           = byte ptr -2
                 mov     si, 416h
                 mov     cx, g_party_size
 
-loc_1C27A:                              ; CODE XREF: sub_1C1EA+A5↓j
+loc_1C27A:                              ; CODE XREF: inn_leave+A5↓j
                 cmp     word ptr [si], 0FFFFh
                 jnz     short loc_1C286
 
-loc_1C27F:                              ; CODE XREF: sub_1C1EA+A3↓j
+loc_1C27F:                              ; CODE XREF: inn_leave+A3↓j
                 mov     g_party_size, cx
                 jmp     short loc_1C292
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C286:                              ; CODE XREF: sub_1C1EA+93↑j
+loc_1C286:                              ; CODE XREF: inn_leave+93↑j
                 add     si, 2
                 inc     cx
                 cmp     cx, 8
@@ -120,7 +120,7 @@ loc_1C286:                              ; CODE XREF: sub_1C1EA+93↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C292:                              ; CODE XREF: sub_1C1EA+99↑j
+loc_1C292:                              ; CODE XREF: inn_leave+99↑j
                 mov     byte_1DC7E, 1
                 mov     byte_1DBEB, 0
                 mov     byte_1DC80, 0
@@ -128,14 +128,15 @@ loc_1C292:                              ; CODE XREF: sub_1C1EA+99↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C1EA       endp
+inn_leave       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; "('ESC' to exit to DOS)"
 
-sub_1C2A6       proc near               ; CODE XREF: sub_1C5C0:loc_1C828↓p
-                                        ; sub_1C5C0+521↓p
+inn_esc_prompt  proc near               ; CODE XREF: inn_menu:loc_1C828↓p
+                                        ; inn_menu+521↓p
                 mov     ax, 17h
                 push    ax
                 mov     ax, 9
@@ -147,17 +148,18 @@ sub_1C2A6       proc near               ; CODE XREF: sub_1C5C0:loc_1C828↓p
                 call    thk_text_puts
                 add     sp, 2
                 retn
-sub_1C2A6       endp
+inn_esc_prompt  endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Characters" / "Hirelings"
 ; Attributes: bp-based frame
 
-sub_1C2C0       proc near               ; CODE XREF: seg002:026D↑J
-                                        ; sub_1C5C0+255↓p
+inn_draw_lists  proc near               ; CODE XREF: seg002:026D↑J
+                                        ; inn_menu+255↓p
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -196,7 +198,7 @@ arg_2           = word ptr  6
                 jmp     short loc_1C301
 ; ---------------------------------------------------------------------------
 
-loc_1C2F4:                              ; CODE XREF: sub_1C2C0+23↑j
+loc_1C2F4:                              ; CODE XREF: inn_draw_lists+23↑j
                 mov     ax, offset aHirelings_0 ; "Hirelings \n"
                 push    ax
 
@@ -205,7 +207,7 @@ loc_1C2F8:                              ; CODE XREF: seg002:0651↑J
                 add     sp, 2
                 mov     ax, 211Eh
 
-loc_1C301:                              ; CODE XREF: sub_1C2C0+32↑j
+loc_1C301:                              ; CODE XREF: inn_draw_lists+32↑j
                 push    ax
                 call    thk_text_puts
                 add     sp, 2
@@ -218,7 +220,7 @@ loc_1C308:                              ; CODE XREF: seg002:08F1↑J
                 sub     si, si
                 mov     di, [bp+arg_0]
 
-loc_1C316:                              ; CODE XREF: sub_1C2C0+1E4↓j
+loc_1C316:                              ; CODE XREF: inn_draw_lists+1E4↓j
                 mov     ax, si
                 add     ax, di
                 mov     cx, 82h
@@ -241,10 +243,10 @@ loc_1C316:                              ; CODE XREF: sub_1C2C0+1E4↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C344:                              ; CODE XREF: sub_1C2C0+7C↑j
+loc_1C344:                              ; CODE XREF: inn_draw_lists+7C↑j
                 sub     ax, ax
 
-loc_1C346:                              ; CODE XREF: sub_1C2C0+81↑j
+loc_1C346:                              ; CODE XREF: inn_draw_lists+81↑j
                 mov     cx, 14h
                 imul    cx
                 inc     ax
@@ -266,8 +268,8 @@ loc_1C346:                              ; CODE XREF: sub_1C2C0+81↑j
                 jnz     short loc_1C378
                 mov     [bp+var_8], 17h
 
-loc_1C378:                              ; CODE XREF: sub_1C2C0+9B↑j
-                                        ; sub_1C2C0+AA↑j ...
+loc_1C378:                              ; CODE XREF: inn_draw_lists+9B↑j
+                                        ; inn_draw_lists+AA↑j ...
                 mov     al, [bp+var_8]
                 sub     ah, ah
                 push    ax
@@ -296,18 +298,18 @@ loc_1C378:                              ; CODE XREF: sub_1C2C0+9B↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C3B8:                              ; CODE XREF: sub_1C2C0+F0↑j
+loc_1C3B8:                              ; CODE XREF: inn_draw_lists+F0↑j
                 sub     ax, ax
                 jmp     short loc_1C3C3
 ; ---------------------------------------------------------------------------
 
-loc_1C3BC:                              ; CODE XREF: sub_1C2C0+E8↑j
+loc_1C3BC:                              ; CODE XREF: inn_draw_lists+E8↑j
                 cmp     [bp+var_2], 1
                 sbb     ax, ax
                 inc     ax
 
-loc_1C3C3:                              ; CODE XREF: sub_1C2C0+F5↑j
-                                        ; sub_1C2C0+FA↑j
+loc_1C3C3:                              ; CODE XREF: inn_draw_lists+F5↑j
+                                        ; inn_draw_lists+FA↑j
                 mov     [bp+var_6], ax
                 cmp     di, 18h
                 jnz     short loc_1C3DB
@@ -317,14 +319,14 @@ loc_1C3C3:                              ; CODE XREF: sub_1C2C0+F5↑j
                 jnz     short loc_1C3DB
                 mov     [bp+var_6], 0
 
-loc_1C3DB:                              ; CODE XREF: sub_1C2C0+109↑j
-                                        ; sub_1C2C0+10D↑j ...
+loc_1C3DB:                              ; CODE XREF: inn_draw_lists+109↑j
+                                        ; inn_draw_lists+10D↑j ...
                 cmp     [bp+var_6], 0
                 jnz     short loc_1C3E4
                 jmp     loc_1C494
 ; ---------------------------------------------------------------------------
 
-loc_1C3E4:                              ; CODE XREF: sub_1C2C0+11F↑j
+loc_1C3E4:                              ; CODE XREF: inn_draw_lists+11F↑j
                 mov     ax, si
                 add     ax, di
                 mov     cx, 82h
@@ -373,7 +375,7 @@ loc_1C3E4:                              ; CODE XREF: sub_1C2C0+11F↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C454:                              ; CODE XREF: sub_1C2C0+162↑j
+loc_1C454:                              ; CODE XREF: inn_draw_lists+162↑j
                 mov     ax, si
                 add     ax, di
                 mov     cx, 82h
@@ -405,22 +407,22 @@ loc_1C48E:                              ; CODE XREF: seg002:0B31↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C494:                              ; CODE XREF: sub_1C2C0+121↑j
+loc_1C494:                              ; CODE XREF: inn_draw_lists+121↑j
                 mov     ax, offset asc_1F979 ; "              "
                 push    ax
                 call    thk_text_puts
 
-loc_1C49B:                              ; CODE XREF: sub_1C2C0+1D1↑j
+loc_1C49B:                              ; CODE XREF: inn_draw_lists+1D1↑j
                 add     sp, 2
 
-loc_1C49E:                              ; CODE XREF: sub_1C2C0+191↑j
+loc_1C49E:                              ; CODE XREF: inn_draw_lists+191↑j
                 inc     si
                 cmp     si, 18h
                 jge     short loc_1C4A7
                 jmp     loc_1C316
 ; ---------------------------------------------------------------------------
 
-loc_1C4A7:                              ; CODE XREF: sub_1C2C0+1E2↑j
+loc_1C4A7:                              ; CODE XREF: inn_draw_lists+1E2↑j
                 mov     [bp+var_4], si
                 pop     si
                 pop     di
@@ -429,7 +431,7 @@ loc_1C4A7:                              ; CODE XREF: sub_1C2C0+1E2↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1C4B0:                              ; CODE XREF: sub_1C5C0+473↓p
+loc_1C4B0:                              ; CODE XREF: inn_menu+473↓p
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
@@ -440,7 +442,7 @@ loc_1C4B0:                              ; CODE XREF: sub_1C5C0+473↓p
                 mov     [bp+var_4], 18h
                 sub     [bp+arg_0], 18h
 
-loc_1C4CB:                              ; CODE XREF: sub_1C2C0+200↑j
+loc_1C4CB:                              ; CODE XREF: inn_draw_lists+200↑j
                 mov     si, [bp+arg_0]
                 add     si, [bp+var_4]
                 push    si
@@ -464,10 +466,10 @@ loc_1C4CB:                              ; CODE XREF: sub_1C2C0+200↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C4FC:                              ; CODE XREF: sub_1C2C0+234↑j
+loc_1C4FC:                              ; CODE XREF: inn_draw_lists+234↑j
                 sub     ax, ax
 
-loc_1C4FE:                              ; CODE XREF: sub_1C2C0+239↑j
+loc_1C4FE:                              ; CODE XREF: inn_draw_lists+239↑j
                 mov     cx, 14h
                 imul    cx
                 inc     ax
@@ -479,7 +481,7 @@ loc_1C4FE:                              ; CODE XREF: sub_1C2C0+239↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C512:                              ; CODE XREF: sub_1C2C0+21A↑j
+loc_1C512:                              ; CODE XREF: inn_draw_lists+21A↑j
                 cmp     [bp+var_4], 0
                 jnz     short loc_1C53B
                 cmp     byte_22E0E, 6
@@ -489,7 +491,7 @@ loc_1C512:                              ; CODE XREF: sub_1C2C0+21A↑j
                 mov     cl, byte_22E0F
                 sub     ch, ch
                 add     ax, cx
-sub_1C2C0       endp
+inn_draw_lists  endp
 
 
 loc_1C52C:                              ; CODE XREF: seg002:0879↑J
@@ -498,16 +500,16 @@ loc_1C52C:                              ; CODE XREF: seg002:0879↑J
                 mov     ax, 1
                 jmp     short loc_1C538
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_1C2C0
+; START OF FUNCTION CHUNK FOR inn_draw_lists
 
-loc_1C536:                              ; CODE XREF: sub_1C2C0+25D↑j
+loc_1C536:                              ; CODE XREF: inn_draw_lists+25D↑j
                                         ; ovl_1RETINN:C52F↑j
                 sub     ax, ax
 
 loc_1C538:                              ; CODE XREF: ovl_1RETINN:C534↑j
                 mov     [bp+var_2], ax
 
-loc_1C53B:                              ; CODE XREF: sub_1C2C0+256↑j
+loc_1C53B:                              ; CODE XREF: inn_draw_lists+256↑j
                 cmp     [bp+var_4], 18h
                 jnz     short loc_1C56F
                 mov     al, byte_22E0E
@@ -521,10 +523,10 @@ loc_1C53B:                              ; CODE XREF: sub_1C2C0+256↑j
                 jmp     short loc_1C55A
 ; ---------------------------------------------------------------------------
 
-loc_1C558:                              ; CODE XREF: sub_1C2C0+291↑j
+loc_1C558:                              ; CODE XREF: inn_draw_lists+291↑j
                 sub     ax, ax
 
-loc_1C55A:                              ; CODE XREF: sub_1C2C0+296↑j
+loc_1C55A:                              ; CODE XREF: inn_draw_lists+296↑j
                 mov     [bp+var_2], ax
                 or      ax, ax
                 jz      short loc_1C56F
@@ -534,8 +536,8 @@ loc_1C55A:                              ; CODE XREF: sub_1C2C0+296↑j
                 inc     ax
                 mov     [bp+var_2], ax
 
-loc_1C56F:                              ; CODE XREF: sub_1C2C0+27F↑j
-                                        ; sub_1C2C0+29F↑j
+loc_1C56F:                              ; CODE XREF: inn_draw_lists+27F↑j
+                                        ; inn_draw_lists+29F↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C5BB
                 mov     bx, g_party_size
@@ -554,15 +556,15 @@ loc_1C56F:                              ; CODE XREF: sub_1C2C0+27F↑j
                 jle     short loc_1C5A2
                 mov     ax, 1
                 jmp     short loc_1C5A4
-; END OF FUNCTION CHUNK FOR sub_1C2C0
+; END OF FUNCTION CHUNK FOR inn_draw_lists
 ; ---------------------------------------------------------------------------
                 align 2
-; START OF FUNCTION CHUNK FOR sub_1C2C0
+; START OF FUNCTION CHUNK FOR inn_draw_lists
 
-loc_1C5A2:                              ; CODE XREF: sub_1C2C0+2DA↑j
+loc_1C5A2:                              ; CODE XREF: inn_draw_lists+2DA↑j
                 sub     ax, ax
 
-loc_1C5A4:                              ; CODE XREF: sub_1C2C0+2DF↑j
+loc_1C5A4:                              ; CODE XREF: inn_draw_lists+2DF↑j
                 mov     cx, 14h
                 imul    cx
                 inc     ax
@@ -571,24 +573,25 @@ loc_1C5A4:                              ; CODE XREF: sub_1C2C0+2DF↑j
                 add     sp, 4
                 mov     ax, 17h
 
-loc_1C5B4:                              ; CODE XREF: sub_1C2C0+24E↑j
+loc_1C5B4:                              ; CODE XREF: inn_draw_lists+24E↑j
                 push    ax
                 call    thk_text_putc
                 add     sp, 2
 
-loc_1C5BB:                              ; CODE XREF: sub_1C2C0+2B3↑j
+loc_1C5BB:                              ; CODE XREF: inn_draw_lists+2B3↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-; END OF FUNCTION CHUNK FOR sub_1C2C0
+; END OF FUNCTION CHUNK FOR inn_draw_lists
 
 ; =============== S U B R O U T I N E =======================================
 
+; A-X view, Ctrl A-X add/remove, 1-5 other towns; "PARTY"
 ; Attributes: bp-based frame
 
-sub_1C5C0       proc near               ; CODE XREF: seg002:029D↑J
-                                        ; sub_1C1EA+15↑p
+inn_menu        proc near               ; CODE XREF: seg002:029D↑J
+                                        ; inn_leave+15↑p
 
 var_12          = word ptr -12h
 var_E           = word ptr -0Eh
@@ -686,7 +689,7 @@ var_2           = word ptr -2
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C692:                              ; CODE XREF: sub_1C5C0+552↓j
+loc_1C692:                              ; CODE XREF: inn_menu+552↓j
                 sub     al, al
                 mov     byte_22E0F, al
                 mov     byte_22E0E, al
@@ -695,15 +698,15 @@ loc_1C692:                              ; CODE XREF: sub_1C5C0+552↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C6A2:                              ; CODE XREF: sub_1C5C0+101↓j
-                                        ; sub_1C5C0+106↓j
+loc_1C6A2:                              ; CODE XREF: inn_menu+101↓j
+                                        ; inn_menu+106↓j
                 inc     byte_22E0F
 
-loc_1C6A6:                              ; CODE XREF: sub_1C5C0+FD↓j
-                                        ; sub_1C5C0+10C↓j
+loc_1C6A6:                              ; CODE XREF: inn_menu+FD↓j
+                                        ; inn_menu+10C↓j
                 inc     [bp+var_4]
 
-loc_1C6A9:                              ; CODE XREF: sub_1C5C0+DF↑j
+loc_1C6A9:                              ; CODE XREF: inn_menu+DF↑j
                 mov     ax, g_party_size
                 cmp     [bp+var_4], ax
                 jge     short loc_1C6CE
@@ -720,7 +723,7 @@ loc_1C6A9:                              ; CODE XREF: sub_1C5C0+DF↑j
                 jmp     short loc_1C6A6
 ; ---------------------------------------------------------------------------
 
-loc_1C6CE:                              ; CODE XREF: sub_1C5C0+EF↑j
+loc_1C6CE:                              ; CODE XREF: inn_menu+EF↑j
                 mov     ax, 2
                 push    ax
                 mov     ax, 1Fh
@@ -763,7 +766,7 @@ loc_1C6F2:                              ; CODE XREF: seg002:0B19↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C72A:                              ; CODE XREF: sub_1C5C0+14D↑j
+loc_1C72A:                              ; CODE XREF: inn_menu+14D↑j
                 mov     ax, 15h
                 push    ax
                 mov     ax, 26h ; '&'
@@ -777,7 +780,7 @@ loc_1C73A:                              ; CODE XREF: seg002:089D↑J
                 call    thk_clear_text_rect
                 add     sp, 8
 
-loc_1C740:                              ; CODE XREF: sub_1C5C0+167↑j
+loc_1C740:                              ; CODE XREF: inn_menu+167↑j
                 mov     ax, 4
                 push    ax
                 mov     ax, 0Ah
@@ -807,7 +810,7 @@ loc_1C740:                              ; CODE XREF: sub_1C5C0+167↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C780:                              ; CODE XREF: sub_1C5C0+19E↑j
+loc_1C780:                              ; CODE XREF: inn_menu+19E↑j
                 mov     ax, 4
                 push    ax
                 mov     ax, 1Eh
@@ -819,13 +822,13 @@ loc_1C780:                              ; CODE XREF: sub_1C5C0+19E↑j
                 call    thk_clear_text_rect
                 add     sp, 8
 
-loc_1C796:                              ; CODE XREF: sub_1C5C0+1BD↑j
+loc_1C796:                              ; CODE XREF: inn_menu+1BD↑j
                 cmp     [bp+var_E], 0
                 jnz     short loc_1C79F
                 jmp     loc_1C861
 ; ---------------------------------------------------------------------------
 
-loc_1C79F:                              ; CODE XREF: sub_1C5C0+1DA↑j
+loc_1C79F:                              ; CODE XREF: inn_menu+1DA↑j
                 sub     ax, ax
                 push    ax
                 mov     bl, g_map_id
@@ -880,7 +883,7 @@ loc_1C7E8:                              ; CODE XREF: seg002:0B0D↑J
                 inc     ax
                 push    ax
                 push    [bp+var_A]
-                call    sub_1C2C0
+                call    inn_draw_lists
                 add     sp, 4
                 cmp     g_outdoors, 2
                 jnz     short loc_1C828
@@ -889,10 +892,10 @@ loc_1C7E8:                              ; CODE XREF: seg002:0B0D↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C828:                              ; CODE XREF: sub_1C5C0+260↑j
-                call    sub_1C2A6
+loc_1C828:                              ; CODE XREF: inn_menu+260↑j
+                call    inn_esc_prompt
 
-loc_1C82B:                              ; CODE XREF: sub_1C5C0+265↑j
+loc_1C82B:                              ; CODE XREF: inn_menu+265↑j
                 mov     ax, 15h
                 push    ax
                 mov     ax, 2
@@ -909,17 +912,17 @@ loc_1C82B:                              ; CODE XREF: sub_1C5C0+265↑j
                 jmp     short loc_1C850
 ; ---------------------------------------------------------------------------
 
-loc_1C84E:                              ; CODE XREF: sub_1C5C0+287↑j
+loc_1C84E:                              ; CODE XREF: inn_menu+287↑j
                 sub     bx, bx
 
-loc_1C850:                              ; CODE XREF: sub_1C5C0+28C↑j
+loc_1C850:                              ; CODE XREF: inn_menu+28C↑j
                 shl     bx, 1
                 push    word ptr [bx+5F4h]
                 call    thk_text_puts
                 add     sp, 2
                 mov     [bp+var_E], 0
 
-loc_1C861:                              ; CODE XREF: sub_1C5C0+1DC↑j
+loc_1C861:                              ; CODE XREF: inn_menu+1DC↑j
                 mov     ax, 7Ah ; 'z'
                 push    ax
                 mov     ax, 1
@@ -936,13 +939,13 @@ loc_1C861:                              ; CODE XREF: sub_1C5C0+1DC↑j
                 jmp     loc_1C962
 ; ---------------------------------------------------------------------------
 
-loc_1C883:                              ; CODE XREF: sub_1C5C0+2BE↑j
+loc_1C883:                              ; CODE XREF: inn_menu+2BE↑j
                 cmp     ax, 58h ; 'X'
                 jbe     short loc_1C88B
                 jmp     loc_1C962
 ; ---------------------------------------------------------------------------
 
-loc_1C88B:                              ; CODE XREF: sub_1C5C0+2C6↑j
+loc_1C88B:                              ; CODE XREF: inn_menu+2C6↑j
                 add     ax, [bp+var_A]
                 mov     cx, 82h
                 mul     cx
@@ -957,21 +960,21 @@ loc_1C88B:                              ; CODE XREF: sub_1C5C0+2C6↑j
                 jmp     loc_1C962
 ; ---------------------------------------------------------------------------
 
-loc_1C8A9:                              ; CODE XREF: sub_1C5C0+2E4↑j
+loc_1C8A9:                              ; CODE XREF: inn_menu+2E4↑j
                 cmp     [bp+var_A], 18h
                 jnz     short loc_1C8B8
                 mov     bx, [bp+var_8]
                 cmp     [bx+3B5h], ah
                 jnz     short loc_1C8C1
 
-loc_1C8B8:                              ; CODE XREF: sub_1C5C0+2ED↑j
+loc_1C8B8:                              ; CODE XREF: inn_menu+2ED↑j
                 cmp     [bp+var_A], 0
                 jz      short loc_1C8C1
                 jmp     loc_1C962
 ; ---------------------------------------------------------------------------
 
-loc_1C8C1:                              ; CODE XREF: sub_1C5C0+2F6↑j
-                                        ; sub_1C5C0+2FC↑j
+loc_1C8C1:                              ; CODE XREF: inn_menu+2F6↑j
+                                        ; inn_menu+2FC↑j
                 mov     ax, 1
                 push    ax
                 sub     ax, ax
@@ -995,7 +998,7 @@ loc_1C8C1:                              ; CODE XREF: sub_1C5C0+2F6↑j
                 mov     di, ax
                 add     di, 5D1Eh
 
-loc_1C8FA:                              ; CODE XREF: sub_1C5C0+390↓j
+loc_1C8FA:                              ; CODE XREF: inn_menu+390↓j
                 mov     ax, 15h
                 push    ax
                 mov     ax, 0Ah
@@ -1033,7 +1036,7 @@ loc_1C8FA:                              ; CODE XREF: sub_1C5C0+390↓j
                 call    thk_res_4EA6
                 add     sp, 2
 
-loc_1C94D:                              ; CODE XREF: sub_1C5C0+36E↑j
+loc_1C94D:                              ; CODE XREF: inn_menu+36E↑j
                 cmp     si, 1Bh
                 jnz     short loc_1C8FA
                 mov     [bp+var_C], si
@@ -1044,8 +1047,8 @@ loc_1C94D:                              ; CODE XREF: sub_1C5C0+36E↑j
                 call    thk_gfx_copy_page
                 add     sp, 4
 
-loc_1C962:                              ; CODE XREF: sub_1C5C0+2C0↑j
-                                        ; sub_1C5C0+2C8↑j ...
+loc_1C962:                              ; CODE XREF: inn_menu+2C0↑j
+                                        ; inn_menu+2C8↑j ...
                 cmp     [bp+var_8], 20h ; ' '
                 jnz     short loc_1C97C
                 add     [bp+var_A], 18h
@@ -1053,10 +1056,10 @@ loc_1C962:                              ; CODE XREF: sub_1C5C0+2C0↑j
                 jle     short loc_1C977
                 mov     [bp+var_A], 0
 
-loc_1C977:                              ; CODE XREF: sub_1C5C0+3B0↑j
+loc_1C977:                              ; CODE XREF: inn_menu+3B0↑j
                 mov     [bp+var_E], 1
 
-loc_1C97C:                              ; CODE XREF: sub_1C5C0+3A6↑j
+loc_1C97C:                              ; CODE XREF: inn_menu+3A6↑j
                 cmp     [bp+var_8], 31h ; '1'
                 jb      short loc_1C9EC
                 cmp     [bp+var_8], 35h ; '5'
@@ -1088,7 +1091,7 @@ loc_1C99A:                              ; CODE XREF: seg002:07DD↑J
                 mov     [bp+var_6], 14h
                 mov     si, 14h
 
-loc_1C9C8:                              ; CODE XREF: sub_1C5C0+413↓j
+loc_1C9C8:                              ; CODE XREF: inn_menu+413↓j
                 mov     ax, 5
                 push    ax
                 call    thk_text_putc
@@ -1103,8 +1106,8 @@ loc_1C9C8:                              ; CODE XREF: sub_1C5C0+413↓j
                 mov     g_party_size, 0 ; CODE XREF: seg002:0B01↑J
                 mov     [bp+var_A], 0
 
-loc_1C9EC:                              ; CODE XREF: sub_1C5C0+3C0↑j
-                                        ; sub_1C5C0+3C6↑j
+loc_1C9EC:                              ; CODE XREF: inn_menu+3C0↑j
+                                        ; inn_menu+3C6↑j
                 cmp     [bp+var_8], 1
                 jl      short loc_1CA3E
                 cmp     [bp+var_8], 18h
@@ -1127,11 +1130,11 @@ loc_1C9EC:                              ; CODE XREF: sub_1C5C0+3C0↑j
                 cmp     [bx+3F5h], ah
                 jnz     short loc_1CA2B
 
-loc_1CA25:                              ; CODE XREF: sub_1C5C0+45A↑j
+loc_1CA25:                              ; CODE XREF: inn_menu+45A↑j
                 cmp     [bp+var_A], 0
                 jnz     short loc_1CA3E
 
-loc_1CA2B:                              ; CODE XREF: sub_1C5C0+463↑j
+loc_1CA2B:                              ; CODE XREF: inn_menu+463↑j
                 mov     ax, [bp+var_8]
                 add     ax, [bp+var_A]
                 dec     ax
@@ -1140,20 +1143,20 @@ loc_1CA2B:                              ; CODE XREF: sub_1C5C0+463↑j
                 add     sp, 2
                 mov     [bp+var_E], 0
 
-loc_1CA3E:                              ; CODE XREF: sub_1C5C0+430↑j
-                                        ; sub_1C5C0+436↑j ...
+loc_1CA3E:                              ; CODE XREF: inn_menu+430↑j
+                                        ; inn_menu+436↑j ...
                 cmp     [bp+var_8], 1Bh
                 jz      short loc_1CA47
                 jmp     loc_1CAEF
 ; ---------------------------------------------------------------------------
 
-loc_1CA47:                              ; CODE XREF: sub_1C5C0+482↑j
+loc_1CA47:                              ; CODE XREF: inn_menu+482↑j
                 cmp     g_outdoors, 2
                 jnz     short loc_1CA51
                 jmp     loc_1CAEF
 ; ---------------------------------------------------------------------------
 
-loc_1CA51:                              ; CODE XREF: sub_1C5C0+48C↑j
+loc_1CA51:                              ; CODE XREF: inn_menu+48C↑j
                                         ; seg002:0A89↑J
                 call    thk_res_35A8
                 mov     ax, 17h
@@ -1205,11 +1208,11 @@ loc_1CA88:                              ; CODE XREF: seg002:0801↑J
                 jmp     short loc_1CAC5
 ; ---------------------------------------------------------------------------
 
-loc_1CAC0:                              ; CODE XREF: sub_1C5C0+514↓j
+loc_1CAC0:                              ; CODE XREF: inn_menu+514↓j
                 cmp     ax, 4Eh ; 'N'
                 jz      short loc_1CAD6
 
-loc_1CAC5:                              ; CODE XREF: sub_1C5C0+4FE↑j
+loc_1CAC5:                              ; CODE XREF: inn_menu+4FE↑j
                 call    thk_wait_key
                 push    ax
                 call    thk_res_00E8
@@ -1218,22 +1221,22 @@ loc_1CAC5:                              ; CODE XREF: sub_1C5C0+4FE↑j
                 cmp     ax, 59h ; 'Y'
                 jnz     short loc_1CAC0
 
-loc_1CAD6:                              ; CODE XREF: sub_1C5C0+503↑j
+loc_1CAD6:                              ; CODE XREF: inn_menu+503↑j
                 mov     [bp+var_8], si
                 cmp     si, 4Eh ; 'N'
                 jnz     short loc_1CAEC
                 call    thk_res_35A8
-                call    sub_1C2A6
+                call    inn_esc_prompt
                 mov     [bp+var_8], 0
                 jmp     short loc_1CAEF
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CAEC:                              ; CODE XREF: sub_1C5C0+51C↑j
+loc_1CAEC:                              ; CODE XREF: inn_menu+51C↑j
                 call    thk_res_3FC4
 
-loc_1CAEF:                              ; CODE XREF: sub_1C5C0+484↑j
-                                        ; sub_1C5C0+48E↑j ...
+loc_1CAEF:                              ; CODE XREF: inn_menu+484↑j
+                                        ; inn_menu+48E↑j ...
                 cmp     [bp+var_8], 5Ah ; 'Z'
                 jnz     short loc_1CB0C
                 mov     al, byte_22E0E
@@ -1245,14 +1248,14 @@ loc_1CAEF:                              ; CODE XREF: sub_1C5C0+484↑j
                 inc     [bp+var_2]
                 mov     [bp+var_8], 1Bh
 
-loc_1CB0C:                              ; CODE XREF: sub_1C5C0+533↑j
-                                        ; sub_1C5C0+542↑j
+loc_1CB0C:                              ; CODE XREF: inn_menu+533↑j
+                                        ; inn_menu+542↑j
                 cmp     [bp+var_8], 1Bh
                 jz      short loc_1CB15
                 jmp     loc_1C692
 ; ---------------------------------------------------------------------------
 
-loc_1CB15:                              ; CODE XREF: sub_1C5C0+550↑j
+loc_1CB15:                              ; CODE XREF: inn_menu+550↑j
                 mov     al, g_map_id
                 mov     byte_1DC24, al
                 sub     ah, ah
@@ -1270,14 +1273,14 @@ loc_1CB15:                              ; CODE XREF: sub_1C5C0+550↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C5C0       endp
+inn_menu        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1CB40       proc near               ; CODE XREF: seg002:0A65↑J
+inn_run         proc near               ; CODE XREF: seg002:0A65↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1325,7 +1328,7 @@ loc_1CB8A:                              ; CODE XREF: seg002:0AF5↑J
                 call    thk_text_set_fg
                 add     sp, 2           ; CODE XREF: seg002:080D↑J
 
-loc_1CB9D:                              ; CODE XREF: sub_1CB40+4F↑j
+loc_1CB9D:                              ; CODE XREF: inn_run+4F↑j
                 call    thk_draw_frame_alt
                 mov     al, byte_1DB96
                 sub     ah, ah
@@ -1335,7 +1338,7 @@ loc_1CB9D:                              ; CODE XREF: sub_1CB40+4F↑j
                 sub     si, si
                 mov     di, 22A6h
 
-loc_1CBB1:                              ; CODE XREF: sub_1CB40+8E↓j
+loc_1CBB1:                              ; CODE XREF: inn_run+8E↓j
                 lea     ax, [si+1]
                 push    ax
                 mov     ax, 2
@@ -1366,7 +1369,7 @@ loc_1CBDC:                              ; CODE XREF: seg002:01AD↑J
                 mov     al, byte_1DC24
                 mov     g_map_id, al
                 call    thk_load_roster
-                call    sub_1C1EA
+                call    inn_leave
                 pop     si
                 pop     di
                 mov     sp, bp
@@ -1374,7 +1377,7 @@ loc_1CBDC:                              ; CODE XREF: seg002:01AD↑J
                 retn
 ; ---------------------------------------------------------------------------
                 align 10h
-sub_1CB40       endp
+inn_run         endp
 
 ovl_1RETINN     ends
 

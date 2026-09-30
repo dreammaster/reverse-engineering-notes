@@ -1,0 +1,7 @@
+# 2BRAIN.OVL: Tavern (and skill retraining)
+1C130	tavern_common_helper
+1C7E2	tavern_retrain_skills	"you must have 100 gold", "Their secondary skills are gone"
+1C9D8	tavern_helper_a
+1C9FC	tavern_helper_b
+1CA8E	tavern_helper_c
+1D15A	tavern_menu	"Tavern", G-Gather Gold, #-Other Char, Select (A-E)
