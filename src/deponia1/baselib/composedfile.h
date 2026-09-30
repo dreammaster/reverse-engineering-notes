@@ -57,14 +57,23 @@ enum class TContainerTypeEnum {
 	kEmbeddedInExecutableAlt = 8,
 };
 
-// 48 bytes in the original (a single-pointer COW std::wstring handle - see
-// NOTES.md on this binary's pre-C++11 string ABI - plus 5 more qwords);
-// reproduced here with a modern std::wstring plus the same 3 trailing
-// fields (their individual meaning, beyond "copied verbatim when the
-// entries vector grows", wasn't determined).
+// 48 bytes in the original: a single-pointer COW std::wstring handle at
+// +0x00 (see NOTES.md on this binary's pre-C++11 string ABI), an unnamed
+// qword at +0x08 whose purpose wasn't determined, then 4 more qwords
+// (+0x10, +0x18=field18, +0x20=field20, +0x28=field28 - names record their
+// original offset, per this project's usual placeholder convention).
+// GetMemoryFile() (Deponia_Linux.asm lines 545892-545893) confirms the
+// meaning of two of these: the qword at +0x10 (not separately modeled here
+// yet - GetMemoryFile() reads it straight off a raw `_entries.data() +
+// index*48` pointer rather than through this struct) is the entry's byte
+// offset within the container file (passed to wxFile::Seek()), and field18
+// is the entry's byte size (passed to TMemoryFile::Reserve() and used as
+// the read-loop's target length). field20/field28's meaning is still
+// unknown.
 struct SEntryInfo {
 	std::wstring filename;
-	long long field18 = 0;
+	long long containerOffset = 0;  // +0x10 in the original; confirmed by GetMemoryFile()
+	long long byteSize = 0;         // +0x18 in the original (was field18); confirmed by GetMemoryFile()
 	long long field20 = 0;
 	long long field28 = 0;
 };

@@ -367,7 +367,16 @@ public:
 	// 458421-458435) - not reversed beyond that; implemented for real
 	// against the same std::FILE* pattern already used for TFile.
 	long Length() const;
+	// Confirmed call shape only (TComposedFile::GetMemoryFile, Deponia_Linux.
+	// asm line 545901, mode=1) - the real wxWidgets wxFile::OpenMode ordinal
+	// for the mode value seen there wasn't independently confirmed, and the
+	// only call site reversed so far only ever reads the file afterward, so
+	// this always opens for reading regardless of `mode`.
+	bool Open(const wxString &path, int mode);
 	unsigned long Read(char *buffer, unsigned long size);
+	// Confirmed call shape only (TComposedFile::GetMemoryFile, Deponia_Linux.
+	// asm line 545987, mode=0 i.e. SEEK_SET at that call site).
+	bool Seek(unsigned long offset, int mode);
 	void Close();
 
 private:

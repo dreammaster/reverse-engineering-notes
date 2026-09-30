@@ -32,7 +32,7 @@ void TComposedFile::InitForWrite(long offset, const wxFileName &exeFile, bool fl
 	_offset = offset;
 	_flag34 = flag;
 	_containerType = useAltContainerType ? TContainerTypeEnum::kEmbeddedInExecutableAlt
-	                  : TContainerTypeEnum::kEmbeddedInExecutable;
+	                 : TContainerTypeEnum::kEmbeddedInExecutable;
 }
 
 void TComposedFile::ClearEntries() {
@@ -143,8 +143,8 @@ bool TComposedFile::InitEntries() {
 
 void TComposedFile::LoadEntriesFromDisk(const unsigned char */*data*/, unsigned long /*entryCount*/) {
 	// Not reversed - see the class header comment. Real implementation
-	// would populate _entries[i].filename/field18/field20/field28 from
-	// each 16-byte on-disk record.
+	// would populate _entries[i].filename/containerOffset/byteSize/field20/
+	// field28 from each 16-byte on-disk record.
 }
 
 bool TComposedFile::Init(const wxFileName &composedFilePath, const wxString &encryptionKey, long offset) {
@@ -166,18 +166,55 @@ bool TComposedFile::Open(TFile &/*outFile*/, const wxFileName &/*composedFilePat
 	wxFileName entryPath(entry.filename);
 	entryPath.NormalizePath();
 	// Real implementation opens `outFile` at the byte offset within the
-	// composed file recorded for this entry (field18/field20/field28) -
+	// composed file recorded for this entry (containerOffset/byteSize) -
 	// not reversed (see LoadEntriesFromDisk).
 	return true;
 }
 
-bool TComposedFile::GetMemoryFile(TMemoryFile &/*outFile*/, const wxFileName &/*composedFilePath*/, long index) {
-	if (!InitEntries())
-		return false;
+bool TComposedFile::GetMemoryFile(TMemoryFile &outFile, const wxFileName &/*composedFilePath*/, long index) {
+	// Confirmed (Deponia_Linux.asm lines 545837-546088). Unlike Open() above,
+	// the original ignores InitEntries()'s own return value here and always
+	// falls through to the bounds check below, which fails closed on its own
+	// if entries weren't actually (re)loaded.
+	if (_needsInit || _hadOpenError)
+		InitEntries();
 	if (index < 0 || index >= GetNumberOfEntries())
 		return false;
-	// Real implementation reads the entry's bytes into outFile's buffer -
-	// not reversed.
+
+	const SEntryInfo &entry = _entries[static_cast<size_t>(index)];
+	wxFile file;
+	if (!file.Open(wxFileName(_composedFilePath).GetFullPath(), 1))
+		return false;
+
+	if (!outFile.Reserve(static_cast<long>(entry.byteSize))) {
+		if (wxLog::loglevel >= 0) {
+			wxString fmt;
+			toUTF(&fmt, "Memory for memory file %s with length %d could not be reserved");
+			wxLog::logexpanded(fmt.wc_str(), wxFileName(_composedFilePath).GetFullPath().wc_str(),
+			                   static_cast<int>(entry.byteSize));
+		}
+		return false;
+	}
+
+	unsigned char *buffer = outFile.GetBuffer();
+	file.Seek(static_cast<unsigned long>(entry.containerOffset), 0);
+
+	// The original's read loop re-issues wxFile::Read() for the *full*
+	// byteSize into the *same* buffer start on every iteration rather than
+	// resuming from the current position/remaining count - almost certainly
+	// harmless in practice since a local-file Read() satisfies the whole
+	// request in one call, but not something worth reproducing literally
+	// (see this project's "behavioral over binary fidelity" convention).
+	// This reads once and treats any short read as failure, matching the
+	// original's success/failure outcome either way.
+	long totalRead = static_cast<long>(
+	                     file.Read(reinterpret_cast<char *>(buffer), static_cast<unsigned long>(entry.byteSize)));
+	file.Close();
+
+	if (totalRead != entry.byteSize) {
+		outFile.ReleaseMemory();
+		return false;
+	}
 	return true;
 }
 

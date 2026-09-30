@@ -1538,6 +1538,56 @@ Also added two real `wxString` methods needed for the path-prefix handling
 (`StartsWith()`, `Mid()`) and a `TCharHolder(const wxString&)` constructor
 (confirmed call shape, previously missing).
 
+## TComposedFile::GetMemoryFile
+
+Confirmed in full (Deponia_Linux.asm lines 545837-546088): reads one
+archived entry's raw bytes into a caller-supplied `TMemoryFile`. Notable
+findings:
+
+- Unlike `Open()` (same class), this method calls `InitEntries()` when
+  `_needsInit`/`_hadOpenError` is set but **ignores its return value**,
+  always falling through into the main logic - which then fails closed on
+  its own via the bounds check if entries genuinely weren't loaded. This is
+  a real, confirmed difference between the two methods, not an
+  approximation.
+- The in-memory `_entries` record stride is confirmed as exactly 48 bytes
+  (`(end-begin)>>4` then a reciprocal-multiply `/3`, i.e. `48 = 16*3`) - this
+  independently corroborates `SEntryInfo`'s own header comment, which had
+  already flagged "48 bytes... plus 5 more qwords" as an open question.
+  This method reads two qwords directly off a raw
+  `_entries.data() + index*48` pointer at relative offsets +0x10 and +0x18:
+  the first (`+0x10`, previously entirely unmodeled) is the entry's **byte
+  offset within the container file** (passed to `wxFile::Seek()`); the
+  second (`+0x18`, previously the placeholder `field18`) is the entry's
+  **byte size** (passed to `TMemoryFile::Reserve()` and used as the
+  read-loop's target length). `SEntryInfo` was updated accordingly
+  (`field18` renamed to `byteSize`; a new `containerOffset` field added for
+  +0x10). `field20`/`field28`'s meaning is still unknown.
+- The failing-`Reserve()` path logs via `wxLog::logexpanded()` with a
+  message decoded byte-for-byte from the binary's own wide-string constant
+  (`unk_D75408`): "Memory for memory file %s with length %d could not be
+  reserved".
+- The original's own read loop calls `wxFile::Read()` with the *full*
+  `byteSize` into the *same* buffer start on every iteration (not resuming
+  from the current position/remaining count) - almost certainly harmless in
+  practice since a local-file `Read()` satisfies the whole request in one
+  call, but not literally reproduced here (see "behavioral over binary
+  fidelity"); this implementation reads once and treats any short read as
+  failure, matching the original's success/failure outcome either way.
+- `wxFile` gained real `Open(const wxString&, int)` and
+  `Seek(unsigned long, int)` methods (previously missing) to support this;
+  the real wxWidgets `OpenMode` ordinal for the `mode=1` value seen at this
+  call site wasn't independently confirmed, so `Open()` always opens for
+  reading regardless of `mode` (the only call site reversed so far never
+  writes).
+
+`TComposedFile::LoadEntriesFromDisk()` (the on-disk-record unpacking step
+that actually populates `_entries`) remains an unreversed placeholder, so
+`GetMemoryFile()` is structurally complete but not yet exercised end-to-end
+by any real archive - consistent with this project's pattern of
+implementing a caller fully while leaving a still-unreversed callee flagged
+separately (e.g. `TFontManager`/`TCFont` earlier).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

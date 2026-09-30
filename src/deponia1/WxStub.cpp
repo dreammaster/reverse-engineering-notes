@@ -77,10 +77,22 @@ long wxFile::Length() const {
 	return len;
 }
 
+bool wxFile::Open(const wxString &path, int /*mode*/) {
+	Close();
+	_handle = std::fopen(static_cast<const char *>(path.mb_str()), "rb");
+	return _handle != nullptr;
+}
+
 unsigned long wxFile::Read(char *buffer, unsigned long size) {
 	if (!_handle)
 		return 0;
 	return static_cast<unsigned long>(std::fread(buffer, 1, size, _handle));
+}
+
+bool wxFile::Seek(unsigned long offset, int mode) {
+	if (!_handle)
+		return false;
+	return std::fseek(_handle, static_cast<long>(offset), mode == 0 ? SEEK_SET : mode) == 0;
 }
 
 void wxFile::Close() {
