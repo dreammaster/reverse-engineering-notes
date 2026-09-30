@@ -2773,6 +2773,99 @@ over an already-decided per-record function
 (`monsterApproachParty`/`combatResolveSideTrap`), deferred the same way
 combat's own top-level loop is.
 
+### `ApplyMapTriggerEffect`: dispatch structure traced, real per-game divergence found, not yet reimplemented (2026-09-30)
+
+Read `ApplyMapTriggerEffect` (yendor2.asm:17458, yendor3.asm:19629;
+called once per movement step from `HandleMovementInput`, and — new
+finding today — also called by Chapter 3's own `TravelToDestination`
+on arrival, see below) in full while chasing `IsPositionInTriggerList`'s
+real record shape for `gameClockRestAllowed`. This closes several
+loose threads at once, but opens a genuinely bigger one.
+
+**`IsPositionInTriggerList`'s real record shape, resolved**: its own
+disassembly (`yendor2.asm:17681`) only ever reads/compares `[di]`/
+`[di+2]` (the x-or-y coordinate and the match-selector flag), and its
+`di` register is left pointing at the *matched table entry* on success
+(it's never restored before `retn`) — an implicit output the function
+doesn't document as such, but its only real caller,
+`ApplyMapTriggerEffect`, immediately reads further fields off that same
+`di` (`+4` through `+0x12` depending on the game and branch). So the
+table's true per-entry record is wider than the 4 bytes
+`IsPositionInTriggerList` itself touches — Chapter 2's own 8-byte
+stride (`DS:0xD1C9`) carries 2 more data words (`+4`/`+6`) beyond the
+coordinate/flags pair; Chapter 3's 20-byte stride (`DS:0xB71F`) carries
+considerably more.
+
+**`ApplyMapTriggerEffect`'s Chapter 2 dispatch** (on the matched
+entry's own `[+2]` flags field, tested high-bit-first): `0x4000` =
+teleport (`[+4]`/`[+6]` → `g_partyWorldX`/`Y` directly, full redraw,
+no unlock gate at all — a *simpler*, unconditional teleport, distinct
+from the `WorldObjectFlagUnknown2000`/`TravelToDestination` fast-travel
+system); `0x2000` = an "ailment tick" effect
+(`MaybeForceTickWorldAilments` + redraw — ties into the same
+not-yet-scoped world-ailments system candidate 8's bit `0x80` needs);
+`0x1000`/`0x800`/`0x400` = a **fixed** effect id (`0xF`/`0x10`/`0x11`
+respectively) applied via the icon-bar pipeline to every eligible
+(non-incapacitated) party member, sourcing the icon slot's own
+`+0x10`/`+0x12` fields from the *same* `[+4]`/`[+6]` words the teleport
+branch uses for X/Y (a real field reuse, not a coincidence — confirmed
+by reading both branches directly); `0x100`/`0x200` (tested together,
+`"0x300-pair"`) = a **data-driven** effect id (fixed `0x2B` if `0x200`
+is set, else `1`) applied via `ApplyTriggerEffectIconSlot` instead of
+the ordinary icon-bar path — and `ApplyTriggerEffectIconSlot` turns out
+to already be documented elsewhere in this file as the exact same
+mechanism behind `ApplyItemEffectIconSlot`/`partyHandleIconBarItemExpiry`
+(the equipped-item wear/corrosion write-back, effect id `0`'s own
+`EffectModeItemReplace` dispatch) — so this branch is a **map-triggered
+equipment-corrosion event**, gated per party member by testing
+`[recordBase + matchedEntry's own +4 field]` nonzero (the trigger
+record's `+4` field doubles as a configurable party-record byte offset
+to check eligibility — presumably "is a corrodible item equipped in
+this slot", though the exact field identity isn't pinned down); no
+bits set at all falls through to a **fully data-driven** default,
+reading the effect id directly out of the matched entry's own `[+4]`
+field rather than a fixed constant.
+
+Every branch that doesn't fall into the ailment-tick or teleport cases
+funnels into the same already-reimplemented icon-bar pipeline
+(`PrepareTrapEffectSlots` is already known to be `effectGetDef`'s
+original name — see `effect.h` — and the icon-bar population itself
+matches `ApplyEffectAndDrawIconBar`'s existing 3-way dispatch this
+project completed weeks ago), so *most* of the pieces this function
+would need are already sitting in `src23/effect.c`/`party.c`/`combat.c`.
+
+**A genuine, substantial Chapter 3 divergence, not just a wider
+record**: Chapter 3's teleport branch (`0x4000`) is dramatically
+richer than Chapter 2's simple direct assignment — it populates
+`ds:0xCF75`/`0xCF77`/`0xCF73`/`0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`, the
+**exact same globals** `TravelToDestination` populates from its own
+destination-table records (see "Party teleport/fast-travel
+destinations" above), and even calls `TickTravelResourceAilments` —
+the same helper `TravelToDestination` calls. This is presumably why
+Chapter 3's `TravelToDestination` calls `ApplyMapTriggerEffect` at its
+own tail end (already noted as a Chapter-3-only addition earlier in
+this document, previously unexplained) — arriving at a fast-travel
+destination in Chapter 3 also re-checks the *new* cell for its own map
+trigger (you might teleport onto a trap or an ailment zone), and the
+two systems apparently share enough of their underlying record shape
+that `ApplyMapTriggerEffect`'s own teleport branch looks like a second,
+map-cell-triggered entry point into the *same* mechanism
+`TravelToDestination` drives — a real architectural convergence
+between "step on this tile" and "use a named fast-travel destination"
+in Chapter 3 that Chapter 2 doesn't share at all.
+
+**Not reimplemented** — deliberately, given how much is still
+genuinely open: `IsPositionInTriggerList`'s own table hasn't been
+extracted for either game (a new IDA dump, same pattern as the
+destination-table scripts); the per-member equipment-corrosion
+eligibility field (`ApplyTriggerEffectIconSlot`'s own gate) isn't
+pinned to a specific party-record offset yet; and Chapter 3's
+apparent convergence with the travel-destination system needs its own
+careful comparison against that system's already-confirmed record
+layout before assuming they're the *same* shape rather than merely
+similar. A good candidate for its own dedicated pass — see `roadmap.md`
+candidate 10.
+
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`g_gameClockMinutes`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
 — a genuine ambient-lighting system: a gradual 113-step palette fade

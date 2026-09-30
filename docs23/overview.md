@@ -10450,6 +10450,69 @@ pass.
 the hourly loop's own monster-pool orchestration, deferred like
 combat's own top-level loop.
 
+### Session update (continued, same day): chasing IsPositionInTriggerList opened a bigger, genuinely interesting door — documented, not yet coded
+
+Went to close the last loose end from the rest-command work —
+`IsPositionInTriggerList`, left as "a separate, more general map-trigger
+table, not extracted yet" — by reading its only real caller,
+`ApplyMapTriggerEffect`, in full for the first time. It resolved more
+than expected and opened something bigger than a quick add-on.
+
+First, a small but satisfying mechanical discovery: `IsPositionInTriggerList`
+itself only ever touches the first 4 bytes of each table entry (the
+coordinate and a match-selector flag), but leaves its own `di` register
+pointing at the matched entry when it finds one — an *implicit* extra
+return value, never restored before the function returns. Its caller
+immediately reads further fields off that same `di`, meaning the real
+per-entry record is wider than what the function itself appears to
+need — an easy detail to miss by reading `IsPositionInTriggerList`
+alone, only found by reading its caller too.
+
+`ApplyMapTriggerEffect`'s own dispatch turned out to be a genuine
+6-way switch (teleport / ailment-tick / three fixed icon-bar effects /
+a data-driven equipment-corrosion event / a fully data-driven default)
+— and *most of the pieces it needs already exist* in this project:
+`PrepareTrapEffectSlots` is `effectGetDef`'s own original name (already
+known from `effect.h`'s own doc comment, cross-referenced now rather
+than re-derived); the icon-bar population matches the already-completed
+`ApplyEffectAndDrawIconBar` dispatch; and the corrosion branch turned
+out to be exactly `ApplyItemEffectIconSlot`/`partyHandleIconBarItemExpiry`'s
+own mechanism, triggered by a map cell instead of item use. Three
+previously separate-seeming threads in this project's own notes turned
+out to be the same underlying machinery, seen from three different
+trigger points.
+
+**The real surprise was Chapter 3.** Its own teleport branch doesn't
+just do a wider version of Chapter 2's simple position assignment — it
+populates the *exact same globals* `TravelToDestination` populates
+(`ds:0xCF75`/`0xCF77`/`0xCF73`/`0xCF2F`/`0xCF31`/`0xCF33`/`0xCF3F`) and
+calls the same `TickTravelResourceAilments` helper. This retroactively
+explains something noted as an unexplained Chapter-3-only addition
+earlier today (candidate 9's writeup): why Chapter 3's own
+`TravelToDestination` calls `ApplyMapTriggerEffect` at its own tail
+end. Arriving at a named fast-travel destination in Chapter 3
+apparently also re-checks the *new* cell for its own map trigger — you
+might teleport onto a trap. Whether the two systems' trigger-table and
+destination-table records are the *literal same shape*, or merely
+similar enough to reuse the same globals, isn't settled yet — a real,
+concrete question for whoever picks this candidate up next, not
+resolved by pattern-matching the field names alone.
+
+Deliberately **not reimplemented this round**: extracting
+`IsPositionInTriggerList`'s own table (a new IDA dump, same pattern as
+today's earlier destination-table scripts, just not yet written);
+pinning down the equipment-corrosion branch's own per-member
+eligibility field to a specific party-record offset; and settling the
+Chapter 3 record-shape question above. All three are concrete,
+well-scoped follow-ups rather than open-ended mystery, which is exactly
+why this round stopped at documentation instead of pushing straight to
+code — writing C against a record shape that might turn out to differ
+from the destination table's own would be composing against an
+unconfirmed assumption, the same discipline this project has followed
+all day. `roadmap.md` candidate 10 records the full scope for next
+time. See `file-formats.md`'s own new "`ApplyMapTriggerEffect`" section
+for the complete technical writeup.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

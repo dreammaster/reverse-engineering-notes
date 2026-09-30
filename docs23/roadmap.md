@@ -1021,6 +1021,36 @@ consumers, if any.
    deferred to the eventual SDL2 layer, same as this project's other
    top-level input handlers.
 
+10. **`ApplyMapTriggerEffect`/`IsPositionInTriggerList`** -- a new
+    candidate found 2026-09-30 while chasing `IsPositionInTriggerList`
+    for `gameClockRestAllowed`'s own dependency. Its dispatch structure
+    is now fully traced for Chapter 2: a 6-way switch on a matched
+    trigger-table entry's own flags (teleport / ailment-tick / 3 fixed
+    icon-bar effect ids reusing the teleport branch's own X/Y fields as
+    "extra" data / a data-driven equipment-corrosion event via the
+    already-known `ApplyTriggerEffectIconSlot` mechanism / a fully
+    data-driven default effect id) -- and most of what it would need is
+    *already reimplemented* (`PrepareTrapEffectSlots` is `effectGetDef`;
+    the icon-bar population matches `ApplyEffectAndDrawIconBar`'s
+    existing dispatch; the corrosion path is
+    `partyHandleIconBarItemExpiry`'s own mechanism). **A genuinely
+    substantial Chapter 3 divergence found, not reconciled yet**:
+    Chapter 3's own teleport branch populates the *exact same globals*
+    `TravelToDestination` does (`ds:0xCF75`/`0xCF77`/`0xCF73`/`0xCF2F`/
+    `0xCF31`/`0xCF33`/`0xCF3F`) and calls the same
+    `TickTravelResourceAilments` helper -- explaining why Chapter 3's
+    `TravelToDestination` calls `ApplyMapTriggerEffect` on arrival (a
+    previously-unexplained addition, see candidate 9) but raising a real
+    open question: is Chapter 3's trigger-table record the *same* shape
+    as its destination table, or merely similar? Not yet compared
+    carefully. Genuinely blocked on: extracting
+    `IsPositionInTriggerList`'s own table for both games (not dumped at
+    all yet -- a new IDA script, same pattern as the destination-table
+    ones); pinning down the equipment-corrosion branch's own per-member
+    eligibility field; and the Chapter 3 record-shape comparison above.
+    See `file-formats.md`'s own dedicated section for the full writeup.
+    A good candidate for its own dedicated pass, not a quick add-on.
+
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need
 their own dedicated module ahead of that.
