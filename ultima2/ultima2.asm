@@ -2747,10 +2747,10 @@ print_indexed_shop_string endp
 loc_11590:                              ; CODE XREF: transact+53↓j
                 nop
                 mov     al, _mapX
-                cmp     al, 20h ; ' '
+                cmp     al, 32
                 jb      short loc_115A2
                 mov     al, _mapY
-                cmp     al, 20h ; ' '
+                cmp     al, 32
                 jb      short loc_115AC
                 jmp     short loc_115C8
 ; END OF FUNCTION CHUNK FOR transact
@@ -4952,17 +4952,17 @@ loc_129E6:                              ; CODE XREF: draw_world_map_overview:loc
 ; ---------------------------------------------------------------------------
 
 loc_12A0A:                              ; CODE XREF: draw_world_map_overview+33↑j
-                cmp     al, 10h
+                cmp     al, 16
                 jz      short loc_12A2F
-                cmp     al, 78h ; 'x'
+                cmp     al, 120
                 jb      short loc_12A16
-                cmp     al, 0F0h
+                cmp     al, 240
                 jb      short loc_12A2F
 
 loc_12A16:                              ; CODE XREF: draw_world_map_overview+3E↑j
                 cmp     al, 8
                 jz      short loc_12A89
-                cmp     al, 0Ch
+                cmp     al, 12
                 jz      short loc_12A6B
                 cmp     al, 4
                 jz      short loc_12A29
@@ -4985,63 +4985,63 @@ loc_12A2F:                              ; CODE XREF: draw_world_map_overview+3A�
                                         ; draw_world_map_overview+42↑j
                 mov     bh, 0
                 mov     bl, 0
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 0
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 1
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 2
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 1
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 2
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
 
 loc_12A6B:                              ; CODE XREF: draw_world_map_overview+4A↑j
                 mov     bh, 0
                 mov     bl, 1
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 1
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 3
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
 
 loc_12A89:                              ; CODE XREF: draw_world_map_overview+46↑j
                 mov     bh, 0
                 mov     bl, 1
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 3
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 1
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 jmp     loc_12B46
 ; ---------------------------------------------------------------------------
@@ -5049,17 +5049,17 @@ loc_12A89:                              ; CODE XREF: draw_world_map_overview+46�
 loc_12AAA:                              ; CODE XREF: draw_world_map_overview:loc_12A29↑j
                 mov     bh, 0
                 mov     bl, 1
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 3
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 jmp     short loc_12B46
 ; ---------------------------------------------------------------------------
@@ -5069,31 +5069,31 @@ loc_12AAA:                              ; CODE XREF: draw_world_map_overview:loc
 loc_12ACB:                              ; CODE XREF: draw_world_map_overview:loc_12A2C↑j
                 mov     bh, 0
                 mov     bl, 0
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 0
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 1
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 2
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 2
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 1
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 jmp     short loc_12B46
 ; ---------------------------------------------------------------------------
@@ -5103,31 +5103,31 @@ loc_12ACB:                              ; CODE XREF: draw_world_map_overview:loc
 loc_12B0A:                              ; CODE XREF: draw_world_map_overview+54↑j
                 mov     bh, 0
                 mov     bl, 1
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 2
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 0
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 2
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 1
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
                 mov     bh, 0
                 mov     bl, 1
-                mov     di, bx
+                mov     di, bx          ; x
                 mov     bh, 0
                 mov     bl, 1
-                mov     si, bx
+                mov     si, bx          ; y
                 call    plot_map_icon_point
 
 loc_12B46:                              ; CODE XREF: draw_world_map_overview+35↑j
@@ -5155,21 +5155,22 @@ draw_world_map_overview endp
 ; =============== S U B R O U T I N E =======================================
 
 
+; void __usercall plot_map_icon_point(int x@<di>, int y@<si>)
 plot_map_icon_point proc near           ; CODE XREF: draw_world_map_overview+69↑p
                                         ; draw_world_map_overview+78↑p ...
                 mov     bx, di
-                mov     byte_17889, bl
+                mov     plotX, bl
                 mov     bx, si
-                mov     byte_1788A, bl
+                mov     plotY, bl
                 mov     al, _circleDeltaX
                 add     al, al
                 add     al, al
-                adc     al, byte_17889
-                mov     byte_17889, al
+                adc     al, plotX
+                mov     plotX, al
                 mov     al, _circleDeltaY
                 add     al, al
-                adc     al, byte_1788A
-                mov     byte_1788A, al
+                adc     al, plotY
+                mov     plotY, al
                 call    plot_point
                 retn
 plot_map_icon_point endp
@@ -7749,7 +7750,7 @@ aTransact       db 'TRANSACT-',0
                 jnz     short loc_140C0
                 call    get_player_tile
                 js      short loc_14085
-                cmp     al, 7Ch ; '|'
+                cmp     al, 124
                 jnz     short loc_140A6
 
 loc_14085:                              ; CODE XREF: transact+2F↑j
@@ -7763,7 +7764,7 @@ loc_14085:                              ; CODE XREF: transact+2F↑j
                 adc     al, _circleDeltaY
                 mov     _playerY, al
                 call    get_player_tile
-                cmp     al, 68h ; 'h'
+                cmp     al, 104
                 jnz     short loc_140A6
                 jmp     loc_11590
 ; ---------------------------------------------------------------------------
@@ -8622,7 +8623,7 @@ zstats          endp
                 db    0
                 db    0
                 db    0
-                db 0C0h
+byte_148D0      db 0C0h                 ; DATA XREF: plot_point+2A↓r
                 db  30h ; 0
                 db  0Ch
                 db    3
@@ -8636,7 +8637,7 @@ zstats          endp
                 db    0
 screen_rows     dw 0B800h,0BA00h,0B805h,0BA05h,0B80Ah,0BA0Ah,0B80Fh,0BA0Fh
                                         ; DATA XREF: draw_tile:loc_14A89↓r
-                                        ; xorSpriteDraw:loc_14C31↓r
+                                        ; plot_point+23↓r ...
                 dw 0B814h,0BA14h,0B819h,0BA19h,0B81Eh,0BA1Eh,0B823h,0BA23h
                 dw 0B828h,0BA28h,0B82Dh,0BA2Dh,0B832h,0BA32h,0B837h,0BA37h
                 dw 0B83Ch,0BA3Ch,0B841h,0BA41h,0B846h,0BA46h,0B84Bh,0BA4Bh
@@ -8934,11 +8935,11 @@ plot_point      proc near               ; CODE XREF: plot_map_icon_point+26↑p
                                         ; draw_line+A3↓p ...
                 push    es
                 mov     ah, 0
-                mov     al, byte_17889
+                mov     al, plotX
                 add     ax, word_178CF
                 mov     di, ax
                 mov     ah, 0
-                mov     al, byte_1788A
+                mov     al, plotY
                 add     ax, word_178D1
                 mov     si, ax
                 mov     bx, di
@@ -8946,9 +8947,9 @@ plot_point      proc near               ; CODE XREF: plot_map_icon_point+26↑p
                 shr     di, 1
                 shr     di, 1
                 shl     si, 1
-                mov     ax, cs:[si+48DCh]
+                mov     ax, cs:screen_rows[si]
                 mov     es, ax
-                mov     al, cs:[bx+48D0h]
+                mov     al, cs:byte_148D0[bx]
                 or      es:[di], al
                 pop     es
                 retn
@@ -8962,11 +8963,11 @@ erase_point     proc near               ; CODE XREF: animate_starfield+D4↓p
                                         ; erase_ship_marker+11↓p ...
                 push    es
                 mov     ah, 0
-                mov     al, byte_17889
+                mov     al, plotX
                 add     ax, word_178CF
                 mov     di, ax
                 mov     ah, 0
-                mov     al, byte_1788A
+                mov     al, plotY
                 add     ax, word_178D1
                 mov     si, ax
                 mov     bx, di
@@ -11809,16 +11810,16 @@ render_dungeon_view endp
 precompute_dungeon_corridor proc near   ; CODE XREF: render_dungeon_view+14↑p
                 clc
                 mov     al, _mapX
-                mov     byte_1788B, al
+                mov     _shipX, al
                 adc     al, byte_17894
-                mov     byte_17889, al
+                mov     plotX, al
                 stc
                 mov     al, _mapY
                 mov     byte_1788C, al
                 cmc
                 sbb     al, byte_17893
                 cmc
-                mov     byte_1788A, al
+                mov     plotY, al
                 stc
                 mov     al, _mapX
                 cmc
@@ -11834,27 +11835,27 @@ precompute_dungeon_corridor proc near   ; CODE XREF: render_dungeon_view+14↑p
                 mov     di, bx
 
 loc_160B4:                              ; CODE XREF: CODE:6140↓j
-                mov     al, byte_17889
+                mov     al, plotX
                 and     al, 3Fh
                 mov     _playerX, al
                 clc
                 adc     al, byte_17893
-                mov     byte_17889, al
-                mov     al, byte_1788A
+                mov     plotX, al
+                mov     al, plotY
                 and     al, 3Fh
                 mov     _playerY, al
                 clc
                 adc     al, byte_17894
-                mov     byte_1788A, al
+                mov     plotY, al
                 call    get_dungeon_tile_at_player
                 and     al, 0F0h
                 mov     [di+48Fh], al
-                mov     al, byte_1788B
+                mov     al, _shipX
                 and     al, 3Fh
                 mov     _playerX, al
                 clc
                 adc     al, byte_17893
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, byte_1788C
                 and     al, 3Fh
                 mov     _playerY, al
@@ -12182,10 +12183,10 @@ draw_left_open  proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1620D[di]
-                mov     byte_17889, al
-                mov     byte_1788B, al
+                mov     plotX, al
+                mov     _shipX, al
                 mov     al, cs:byte_16221[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16229[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12193,10 +12194,10 @@ draw_left_open  proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16222[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     byte_1788C, al
                 mov     al, cs:byte_1620E[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12208,7 +12209,7 @@ draw_left_open  proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1620D[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12225,10 +12226,10 @@ draw_ahead_open proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16217[di]
-                mov     byte_17889, al
-                mov     byte_1788B, al
+                mov     plotX, al
+                mov     _shipX, al
                 mov     al, cs:byte_16221[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16229[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12236,10 +12237,10 @@ draw_ahead_open proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16222[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     byte_1788C, al
                 mov     al, cs:byte_16218[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12251,7 +12252,7 @@ draw_ahead_open proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16217[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12268,11 +12269,11 @@ draw_left_wall_segment proc near        ; CODE XREF: draw_dungeon_corridor+7A↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1620D[di]
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, cs:byte_1620E[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16221[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16222[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12280,11 +12281,11 @@ draw_left_wall_segment proc near        ; CODE XREF: draw_dungeon_corridor+7A↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1620D[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16229[di]
                 mov     byte_1788C, al
                 mov     al, cs:byte_1622A[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12301,11 +12302,11 @@ draw_ahead_wall_segment proc near       ; CODE XREF: draw_dungeon_corridor+9E↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16217[di]
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, cs:byte_16218[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16221[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16222[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12313,11 +12314,11 @@ draw_ahead_wall_segment proc near       ; CODE XREF: draw_dungeon_corridor+9E↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16217[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16229[di]
                 mov     byte_1788C, al
                 mov     al, cs:byte_1622A[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12335,12 +12336,12 @@ draw_corridor_wall_segment proc near    ; CODE XREF: draw_dungeon_corridor+8↑p
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1620D[di]
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, cs:byte_16221[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     byte_1788C, al
                 mov     al, cs:byte_16217[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12352,7 +12353,7 @@ draw_corridor_wall_segment proc near    ; CODE XREF: draw_dungeon_corridor+8↑p
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1620D[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12375,10 +12376,10 @@ draw_dungeon_door proc near             ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1620E[di]
-                mov     byte_17889, al
-                mov     byte_1788B, al
+                mov     plotX, al
+                mov     _shipX, al
                 mov     al, cs:byte_16229[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16222[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12386,7 +12387,7 @@ draw_dungeon_door proc near             ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16218[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12409,10 +12410,10 @@ draw_left_door  proc near               ; CODE XREF: draw_dungeon_corridor+8D↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16231[di]
-                mov     byte_17889, al
-                mov     byte_1788B, al
+                mov     plotX, al
+                mov     _shipX, al
                 mov     al, cs:byte_16251[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16222[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12420,7 +12421,7 @@ draw_left_door  proc near               ; CODE XREF: draw_dungeon_corridor+8D↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16239[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16261[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12445,10 +12446,10 @@ draw_ahead_door proc near               ; CODE XREF: draw_dungeon_corridor+B1↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16241[di]
-                mov     byte_17889, al
-                mov     byte_1788B, al
+                mov     plotX, al
+                mov     _shipX, al
                 mov     al, cs:byte_16251[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16222[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12456,7 +12457,7 @@ draw_ahead_door proc near               ; CODE XREF: draw_dungeon_corridor+B1↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16249[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16261[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12478,11 +12479,11 @@ draw_ladder_down proc near              ; CODE XREF: draw_dungeon_corridor+56↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16232[di]
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, cs:byte_1623A[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16279[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16281[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12490,13 +12491,13 @@ draw_ladder_down proc near              ; CODE XREF: draw_dungeon_corridor+56↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1624A[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16242[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16279[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12504,7 +12505,7 @@ draw_ladder_down proc near              ; CODE XREF: draw_dungeon_corridor+56↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16232[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 call    draw_ladder_rail
                 mov     bh, 0
@@ -12522,11 +12523,11 @@ draw_ladder_up  proc near               ; CODE XREF: draw_dungeon_corridor+61↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16232[di]
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, cs:byte_1623A[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16269[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16271[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12534,13 +12535,13 @@ draw_ladder_up  proc near               ; CODE XREF: draw_dungeon_corridor+61↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1624A[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16242[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16269[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12548,7 +12549,7 @@ draw_ladder_up  proc near               ; CODE XREF: draw_dungeon_corridor+61↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16232[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 call    draw_ladder_rail
                 mov     bh, 0
@@ -12567,10 +12568,10 @@ draw_ladder_rail proc near              ; CODE XREF: draw_ladder_down+6C↑p
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, 7Fh
-                mov     byte_17889, al
-                mov     byte_1788B, al
+                mov     plotX, al
+                mov     _shipX, al
                 mov     al, cs:byte_16269[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16279[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12578,10 +12579,10 @@ draw_ladder_rail proc near              ; CODE XREF: draw_ladder_down+6C↑p
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, 80h
-                mov     byte_17889, al
-                mov     byte_1788B, al
+                mov     plotX, al
+                mov     _shipX, al
                 mov     al, cs:byte_16269[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16279[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12595,12 +12596,12 @@ draw_ladder_rail endp
 draw_chest_icon proc near               ; CODE XREF: draw_dungeon_corridor+6F↑p
                 nop
                 mov     al, cs:byte_1620F[di]
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, cs:byte_16289[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     byte_1788C, al
                 mov     al, cs:byte_1621A[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12612,7 +12613,7 @@ draw_chest_icon proc near               ; CODE XREF: draw_dungeon_corridor+6F↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1620F[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12624,7 +12625,7 @@ draw_chest_icon proc near               ; CODE XREF: draw_dungeon_corridor+6F↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16210[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16259[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12632,7 +12633,7 @@ draw_chest_icon proc near               ; CODE XREF: draw_dungeon_corridor+6F↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_16219[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 call    draw_line
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12644,7 +12645,7 @@ draw_chest_icon proc near               ; CODE XREF: draw_dungeon_corridor+6F↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1621A[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16251[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12652,11 +12653,11 @@ draw_chest_icon proc near               ; CODE XREF: draw_dungeon_corridor+6F↑
                 mov     bl, byte_17892
                 mov     di, bx
                 mov     al, cs:byte_1621A[di]
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, cs:byte_16289[di]
-                mov     byte_1788A, al
+                mov     plotY, al
                 mov     al, cs:byte_16219[di]
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, cs:byte_16259[di]
                 mov     byte_1788C, al
                 call    draw_line
@@ -12673,11 +12674,11 @@ draw_chest_icon endp
 draw_line       proc near               ; CODE XREF: draw_left_open+23↑p
                                         ; draw_left_open+41↑p ...
                 nop
-                mov     al, byte_1788B
-                cmp     al, byte_17889
+                mov     al, _shipX
+                cmp     al, plotX
                 jnz     short loc_167C7
                 mov     al, byte_1788C
-                cmp     al, byte_1788A
+                cmp     al, plotY
                 jnz     short loc_167C7
                 retn
 ; ---------------------------------------------------------------------------
@@ -12685,9 +12686,9 @@ draw_line       proc near               ; CODE XREF: draw_left_open+23↑p
 loc_167C7:                              ; CODE XREF: draw_line+8↑j
                                         ; draw_line+11↑j
                 stc
-                mov     al, byte_1788B
+                mov     al, _shipX
                 cmc
-                sbb     al, byte_17889
+                sbb     al, plotX
                 cmc
                 mov     byte_17893, al
                 jb      short loc_167E7
@@ -12709,7 +12710,7 @@ loc_167EC:                              ; CODE XREF: draw_line+31↑j
                 stc
                 mov     al, byte_1788C
                 cmc
-                sbb     al, byte_1788A
+                sbb     al, plotY
                 cmc
                 mov     byte_17894, al
                 jb      short loc_1680C
@@ -12755,15 +12756,15 @@ loc_16829:                              ; CODE XREF: draw_line+AA↓j
                 jnb     short loc_1684B
                 mov     byte_17891, al
                 clc
-                mov     al, byte_1788A
+                mov     al, plotY
                 adc     al, byte_1788E
-                mov     byte_1788A, al
+                mov     plotY, al
 
 loc_1684B:                              ; CODE XREF: draw_line+88↑j
                 clc
-                mov     al, byte_17889
+                mov     al, plotX
                 adc     al, byte_1788D
-                mov     byte_17889, al
+                mov     plotX, al
                 call    plot_point
                 dec     byte_17890
                 jnz     short loc_16829
@@ -12789,15 +12790,15 @@ loc_1686C:                              ; CODE XREF: draw_line+ED↓j
                 jnb     short loc_1688E
                 mov     byte_17891, al
                 clc
-                mov     al, byte_17889
+                mov     al, plotX
                 adc     al, byte_1788D
-                mov     byte_17889, al
+                mov     plotX, al
 
 loc_1688E:                              ; CODE XREF: draw_line+CB↑j
                 clc
-                mov     al, byte_1788A
+                mov     al, plotY
                 adc     al, byte_1788E
-                mov     byte_1788A, al
+                mov     plotY, al
                 call    plot_point
                 dec     byte_17890
                 jnz     short loc_1686C
@@ -12955,9 +12956,9 @@ word_16992      dw 0                    ; DATA XREF: animate_starfield+102↓r
                                         ; hyperwarp+2C↓w ...
 word_16994      dw 0                    ; DATA XREF: animate_starfield:loc_16C52↓w
                                         ; hyperwarp+6F↓w ...
-byte_16996      db 0                    ; DATA XREF: seed_star_prng↓w
+_seedA          db 0                    ; DATA XREF: seed_star_prng↓w
                                         ; next_star_coord+1↓r ...
-byte_16997      db 0                    ; DATA XREF: seed_star_prng+6↓w
+_seedB          db 0                    ; DATA XREF: seed_star_prng+6↓w
                                         ; next_star_coord+7↓r ...
 byte_16998      db 0                    ; DATA XREF: setup_rocket_launch_display+4↓w
                                         ; play_star_twinkle_sound+1↓r ...
@@ -12970,18 +12971,18 @@ setup_rocket_launch_display proc near   ; CODE XREF: launch+AE↑p
                 call    setPalette
                 mov     cs:byte_16998, 0FFh
                 mov     al, 80h
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
                 mov     bh, 0
                 mov     bl, player._disableSave
                 mov     di, bx
-                mov     al, cs:byte_17012[di]
-                mov     byte_178DA, al
-                mov     al, cs:byte_1701C[di]
-                mov     byte_178DB, al
-                mov     al, cs:byte_17026[di]
-                mov     byte_178DC, al
+                mov     al, cs:PLANET_COORDS[di]
+                mov     logic_coords, al
+                mov     al, cs:PLANET_COORDS_1[di]
+                mov     logic_coords+1, al
+                mov     al, cs:PLANET_COORDS_2[di]
+                mov     logic_coords+2, al
                 mov     al, player._triLithium
                 stc
                 cmc
@@ -13128,7 +13129,7 @@ loc_16AC2:                              ; CODE XREF: space_travel_command_loop+4
 loc_16AC9:                              ; CODE XREF: space_travel_command_loop+4B↑j
                 call    erase_ship_marker
                 mov     al, 80h
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
                 jmp     short loc_16A86
@@ -13141,7 +13142,7 @@ aLeft           db 'LEFT',8Dh,0
 ; ---------------------------------------------------------------------------
                 call    erase_ship_marker
                 mov     al, 20h ; ' '
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
                 jmp     short space_travel_command_loop
@@ -13154,7 +13155,7 @@ aRight          db 'RIGHT',8Dh,0
 ; ---------------------------------------------------------------------------
                 call    erase_ship_marker
                 mov     al, 0DFh
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
                 jmp     space_travel_command_loop
@@ -13169,7 +13170,7 @@ aClimb          db 'CLIMB',8Dh,0
                 mov     al, 10h
                 mov     byte_1788C, al
                 mov     al, 80h
-                mov     byte_1788B, al
+                mov     _shipX, al
                 jmp     space_travel_command_loop
 ; ---------------------------------------------------------------------------
 
@@ -13184,7 +13185,7 @@ space_travel_command_loop endp
                 mov     al, 6Fh ; 'o'
                 mov     byte_1788C, al
                 mov     al, 80h
-                mov     byte_1788B, al
+                mov     _shipX, al
                 jmp     space_travel_command_loop
 
 ; =============== S U B R O U T I N E =======================================
@@ -13199,11 +13200,11 @@ animate_starfield proc near             ; CODE XREF: space_travel_command_loop:l
                 mov     si, bx
 
 loc_16B47:                              ; CODE XREF: animate_starfield:loc_16C73↓j
-                mov     al, byte_178DD[si]
-                mov     byte_178D3, al
+                mov     al, _starX[si]
+                mov     sx, al
                 stc
                 cmc
-                sbb     al, byte_1788B
+                sbb     al, _shipX
                 cmc
                 jb      short loc_16B7F
                 xor     al, 0FFh
@@ -13217,7 +13218,7 @@ loc_16B47:                              ; CODE XREF: animate_starfield:loc_16C73
                 rcr     al, 1
                 mov     ah, 0
                 mov     di, ax
-                mov     al, byte_178D3
+                mov     al, sx
                 stc
                 cmc
                 sbb     al, cs:byte_16CAC[di]
@@ -13227,7 +13228,7 @@ loc_16B47:                              ; CODE XREF: animate_starfield:loc_16C73
 ; ---------------------------------------------------------------------------
 
 loc_16B79:                              ; CODE XREF: animate_starfield+37↑j
-                mov     byte_178D5, al
+                mov     nx_, al
                 jmp     short loc_16BA0
 ; ---------------------------------------------------------------------------
                 db  90h
@@ -13244,10 +13245,10 @@ loc_16B7F:                              ; CODE XREF: animate_starfield+18↑j
                 rcr     al, 1
                 mov     ah, 0
                 mov     di, ax
-                mov     al, byte_178D3
+                mov     al, sx
                 clc
                 adc     al, cs:byte_16CAC[di]
-                mov     byte_178D5, al
+                mov     nx_, al
                 jnb     short loc_16BA0
                 jmp     loc_16C8C
 ; ---------------------------------------------------------------------------
@@ -13277,7 +13278,7 @@ loc_16BA0:                              ; CODE XREF: animate_starfield+3F↑j
                 cmc
                 sbb     al, cs:byte_16CBC[di]
                 cmc
-                mov     byte_178D6, al
+                mov     ny_, al
                 jns     short loc_16BF6
                 jmp     loc_16C8C
 ; ---------------------------------------------------------------------------
@@ -13301,33 +13302,33 @@ loc_16BD5:                              ; CODE XREF: animate_starfield+71↑j
 ; ---------------------------------------------------------------------------
 
 loc_16BF3:                              ; CODE XREF: animate_starfield+B1↑j
-                mov     byte_178D6, al
+                mov     ny_, al
 
 loc_16BF6:                              ; CODE XREF: animate_starfield+93↑j
                                         ; animate_starfield+16C↓j
                 mov     bx, si
                 mov     byte_178D9, bl
-                mov     al, byte_178D7
+                mov     al, speed
                 or      al, al
                 jz      short loc_16C14
-                mov     al, byte_178DD[si]
-                mov     byte_17889, al
-                mov     al, byte_1791D[si]
-                mov     byte_1788A, al
+                mov     al, _starX[si]
+                mov     plotX, al
+                mov     al, _starY[si]
+                mov     plotY, al
                 call    erase_point
 
 loc_16C14:                              ; CODE XREF: animate_starfield+C4↑j
                 mov     bh, 0
                 mov     bl, byte_178D9
                 mov     si, bx
-                mov     al, byte_178D5
-                mov     byte_17889, al
-                mov     byte_178DD[si], al
-                mov     al, byte_178D6
-                mov     byte_1788A, al
-                mov     byte_1791D[si], al
+                mov     al, nx_
+                mov     plotX, al
+                mov     _starX[si], al
+                mov     al, ny_
+                mov     plotY, al
+                mov     _starY[si], al
                 call    plot_point
-                cmp     byte_178D7, 2
+                cmp     speed, 2
                 jnb     short loc_16C52
                 mov     bx, cs:word_16990
                 add     bx, cs:word_16992
@@ -13353,7 +13354,7 @@ loc_16C5C:                              ; CODE XREF: animate_starfield+112↑j
                 mov     bx, si
                 cmp     bl, 40h ; '@'
                 jz      short loc_16C76
-                mov     al, byte_178D7
+                mov     al, speed
                 cmp     al, 2
                 jnb     short $+2
 
@@ -13363,7 +13364,7 @@ loc_16C73:                              ; CODE XREF: animate_starfield+134↑j
 
 loc_16C76:                              ; CODE XREF: animate_starfield+12D↑j
                 nop
-                mov     al, byte_178D7
+                mov     al, speed
                 or      al, al
                 jz      short locret_16C8B
                 mov     ah, 0
@@ -13385,15 +13386,15 @@ locret_16C8B:                           ; CODE XREF: animate_starfield+13F↑j
 loc_16C8C:                              ; CODE XREF: animate_starfield+39↑j
                                         ; animate_starfield+60↑j ...
                 nop
-                mov     al, byte_178DD[si]
-                mov     byte_178D3, al
-                mov     al, byte_1791D[si]
+                mov     al, _starX[si]
+                mov     sx, al
+                mov     al, _starY[si]
                 mov     byte_178D4, al
                 call    next_star_coord
-                mov     byte_178D5, al
+                mov     nx_, al
                 call    next_star_coord
                 and     al, 7Fh
-                mov     byte_178D6, al
+                mov     ny_, al
                 jmp     loc_16BF6
 animate_starfield endp
 
@@ -13430,46 +13431,46 @@ byte_16CBC      db 1                    ; DATA XREF: animate_starfield+8A↑r
 
 erase_ship_marker proc near             ; CODE XREF: space_travel_command_loop:loc_16AC9↑p
                                         ; space_travel_command_loop+68↑p ...
-                mov     al, byte_1788B
-                mov     byte_17889, al
+                mov     al, _shipX
+                mov     plotX, al
                 mov     al, byte_1788C
                 stc
                 cmc
                 sbb     al, 3
                 cmc
-                mov     byte_1788A, al
+                mov     plotY, al
                 call    erase_point
-                inc     byte_1788A
+                inc     plotY
                 call    erase_point
-                inc     byte_1788A
+                inc     plotY
                 call    erase_point
-                inc     byte_1788A
+                inc     plotY
                 call    erase_point
-                inc     byte_1788A
+                inc     plotY
                 call    erase_point
-                inc     byte_1788A
+                inc     plotY
                 call    erase_point
-                inc     byte_1788A
+                inc     plotY
                 call    erase_point
-                mov     al, byte_1788B
+                mov     al, _shipX
                 stc
                 cmc
                 sbb     al, 3
                 cmc
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, byte_1788C
-                mov     byte_1788A, al
+                mov     plotY, al
                 call    erase_point
-                inc     byte_17889
+                inc     plotX
                 call    erase_point
-                inc     byte_17889
+                inc     plotX
                 call    erase_point
-                inc     byte_17889
-                inc     byte_17889
+                inc     plotX
+                inc     plotX
                 call    erase_point
-                inc     byte_17889
+                inc     plotX
                 call    erase_point
-                inc     byte_17889
+                inc     plotX
                 call    erase_point
                 retn
 erase_ship_marker endp
@@ -13486,10 +13487,10 @@ init_starfield  proc near               ; CODE XREF: CODE:6A4E↑p
 
 loc_16D47:                              ; CODE XREF: init_starfield+1A↓j
                 call    next_star_coord
-                mov     byte_178DD[si], al
+                mov     _starX[si], al
                 call    next_star_coord
                 and     al, 7Fh
-                mov     byte_1791D[si], al
+                mov     _starY[si], al
                 dec     si
                 jns     short loc_16D47
                 retn
@@ -13501,8 +13502,8 @@ init_starfield  endp
 
 seed_star_prng  proc near               ; CODE XREF: init_starfield↑p
                                         ; hyperwarp+21↓p ...
-                mov     cs:byte_16996, 3Bh ; ';'
-                mov     cs:byte_16997, 67h ; 'g'
+                mov     cs:_seedA, 3Bh ; ';'
+                mov     cs:_seedB, 67h ; 'g'
                 retn
 seed_star_prng  endp
 
@@ -13513,12 +13514,12 @@ seed_star_prng  endp
 next_star_coord proc near               ; CODE XREF: animate_starfield+15E↑p
                                         ; animate_starfield+164↑p ...
                 clc
-                mov     al, cs:byte_16996
+                mov     al, cs:_seedA
                 adc     al, 9
-                adc     al, cs:byte_16997
-                mov     ah, cs:byte_16996
-                mov     cs:byte_16996, al
-                mov     cs:byte_16997, ah
+                adc     al, cs:_seedB
+                mov     ah, cs:_seedA
+                mov     cs:_seedA, al
+                mov     cs:_seedB, ah
                 retn
 next_star_coord endp
 
@@ -13527,46 +13528,46 @@ next_star_coord endp
 
 
 draw_ship_marker proc near              ; CODE XREF: animate_starfield+1↑p
-                mov     al, byte_1788B
-                mov     byte_17889, al
+                mov     al, _shipX
+                mov     plotX, al
                 mov     al, byte_1788C
                 stc
                 cmc
                 sbb     al, 3
                 cmc
-                mov     byte_1788A, al
+                mov     plotY, al
                 call    plot_point
-                inc     byte_1788A
+                inc     plotY
                 call    plot_point
-                inc     byte_1788A
+                inc     plotY
                 call    plot_point
-                inc     byte_1788A
+                inc     plotY
                 call    plot_point
-                inc     byte_1788A
+                inc     plotY
                 call    plot_point
-                inc     byte_1788A
+                inc     plotY
                 call    plot_point
-                inc     byte_1788A
+                inc     plotY
                 call    plot_point
-                mov     al, byte_1788B
+                mov     al, _shipX
                 stc
                 cmc
                 sbb     al, 3
                 cmc
-                mov     byte_17889, al
+                mov     plotX, al
                 mov     al, byte_1788C
-                mov     byte_1788A, al
+                mov     plotY, al
                 call    plot_point
-                inc     byte_17889
+                inc     plotX
                 call    plot_point
-                inc     byte_17889
+                inc     plotX
                 call    plot_point
-                inc     byte_17889
-                inc     byte_17889
+                inc     plotX
+                inc     plotX
                 call    plot_point
-                inc     byte_17889
+                inc     plotX
                 call    plot_point
-                inc     byte_17889
+                inc     plotX
                 call    plot_point
                 retn
 draw_ship_marker endp
@@ -13587,7 +13588,7 @@ loc_16E14:                              ; CODE XREF: hyperwarp↑j
                 mov     al, 80h
                 mov     byte_178D8, al
                 mov     al, 0
-                mov     byte_178D7, al
+                mov     speed, al
                 call    seed_star_prng
                 mov     bx, 2200h
                 mov     cs:word_16990, bx
@@ -13603,7 +13604,7 @@ loc_16E33:                              ; CODE XREF: hyperwarp+43↓j
                 mov     al, 80h
                 mov     byte_178D8, al
                 mov     al, 1
-                mov     byte_178D7, al
+                mov     speed, al
                 call    draw_hyperwarp_hud
                 call    seed_star_prng
                 mov     cs:word_16992, 1
@@ -13614,15 +13615,15 @@ loc_16E59:                              ; CODE XREF: hyperwarp+69↓j
                 call    delayFrames
                 dec     byte_178D8
                 jnz     short loc_16E59
-                inc     byte_178D7
+                inc     speed
                 mov     cs:word_16994, 1
 
 loc_16E73:                              ; CODE XREF: hyperwarp+87↓j
                 call    animate_starfield
                 mov     bx, 18h
                 call    delayFrames
-                inc     byte_178D7
-                inc     byte_178D7
+                inc     speed
+                inc     speed
                 jns     short loc_16E73
                 mov     al, player._triLithium
                 clc
@@ -13639,13 +13640,13 @@ aShipOffCourse  db 'SHIP OFF COURSE!',8Dh,0
 loc_16EA8:                              ; CODE XREF: hyperwarp+96↑j
                 call    next_star_coord
                 and     al, 7
-                mov     byte_178DA, al
+                mov     logic_coords, al
                 call    next_star_coord
                 and     al, 7
-                mov     byte_178DB, al
+                mov     logic_coords+1, al
                 call    next_star_coord
                 and     al, 7
-                mov     byte_178DC, al
+                mov     logic_coords+2, al
 
 loc_16EC0:                              ; CODE XREF: hyperwarp+8F↑j
                                         ; hyperwarp+94↑j
@@ -13676,7 +13677,7 @@ loc_16EDC:                              ; CODE XREF: hyperwarp+CD↑j
                 mov     player._triLithium, al
                 call    erase_ship_marker
                 mov     al, 80h
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
                 call    write_string    ; HYPERWARP TO:
@@ -13684,19 +13685,19 @@ loc_16EDC:                              ; CODE XREF: hyperwarp+CD↑j
 aHyperwarpTo    db 'HYPERWARP TO:',8Dh,'XENO=',0
 ; ---------------------------------------------------------------------------
                 call    read_animated_digit_keypress
-                mov     byte_178DA, al
+                mov     logic_coords, al
                 call    write_string    ;  YAKO=
 ; ---------------------------------------------------------------------------
 aYako_0         db ' YAKO=',0
 ; ---------------------------------------------------------------------------
                 call    read_animated_digit_keypress
-                mov     byte_178DB, al
+                mov     logic_coords+1, al
                 call    write_string    ;  ZABO=
 ; ---------------------------------------------------------------------------
 aZabo_0         db ' ZABO=',0
 ; ---------------------------------------------------------------------------
                 call    read_animated_digit_keypress
-                mov     byte_178DC, al
+                mov     logic_coords+2, al
                 call    write_string    ; PREPARE FOR HYPERWARP!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'PREPARE FOR HYPERWARP!',8Dh,0
@@ -13707,8 +13708,8 @@ loc_16F4E:                              ; CODE XREF: hyperwarp+163↓j
                 call    animate_starfield
                 mov     bx, 1Ah
                 call    delayFrames
-                dec     byte_178D7
-                mov     al, byte_178D7
+                dec     speed
+                mov     al, speed
                 cmp     al, 2
                 jnz     short loc_16F4E
                 mov     al, 40h ; '@'
@@ -13776,7 +13777,7 @@ draw_hyperwarp_hud proc near            ; CODE XREF: CODE:6A4B↑p
                 mov     bl, 15h
                 mov     si, bx          ; y
                 call    set_text_pos
-                mov     al, byte_178DA
+                mov     al, logic_coords
                 call    write_number
                 mov     bh, 0
                 mov     bl, 25h ; '%'
@@ -13785,7 +13786,7 @@ draw_hyperwarp_hud proc near            ; CODE XREF: CODE:6A4B↑p
                 mov     bl, 16h
                 mov     si, bx          ; y
                 call    set_text_pos
-                mov     al, byte_178DB
+                mov     al, logic_coords+1
                 call    write_number
                 mov     bh, 0
                 mov     bl, 25h ; '%'
@@ -13794,7 +13795,7 @@ draw_hyperwarp_hud proc near            ; CODE XREF: CODE:6A4B↑p
                 mov     bl, 17h
                 mov     si, bx          ; y
                 call    set_text_pos
-                mov     al, byte_178DC
+                mov     al, logic_coords+2
                 call    write_number
                 mov     al, 1Fh
                 mov     text_width?, al
@@ -13809,13 +13810,13 @@ draw_hyperwarp_hud proc near            ; CODE XREF: CODE:6A4B↑p
 draw_hyperwarp_hud endp
 
 ; ---------------------------------------------------------------------------
-byte_17012      db 6, 5, 3, 6, 1, 2, 9, 4, 0, 9
+PLANET_COORDS   db 6, 5, 3, 6, 1, 2, 9, 4, 0, 9
                                         ; DATA XREF: setup_rocket_launch_display+1C↑r
                                         ; check_hyperwarp_sun_collision:loc_1706A↓r
-byte_1701C      db 6, 4, 3, 2, 3, 8, 4, 0, 1, 9
+PLANET_COORDS_1 db 6, 4, 3, 2, 3, 8, 4, 0, 1, 9
                                         ; DATA XREF: setup_rocket_launch_display+24↑r
                                         ; check_hyperwarp_sun_collision+45↓r
-byte_17026      db 6, 5, 4, 3, 4, 5, 6, 5, 4, 9
+PLANET_COORDS_2 db 6, 5, 4, 3, 4, 5, 6, 5, 4, 9
                                         ; DATA XREF: setup_rocket_launch_display+2C↑r
                                         ; check_hyperwarp_sun_collision+50↓r
 
@@ -13828,13 +13829,13 @@ check_hyperwarp_sun_collision proc near ; CODE XREF: hyperwarp+C4↑p
 ; FUNCTION CHUNK AT 6A74 SIZE 00000005 BYTES
 
                 nop
-                mov     al, byte_178DA
+                mov     al, logic_coords
                 cmp     al, 4
                 jnz     short loc_17063
-                mov     al, byte_178DB
+                mov     al, logic_coords+1
                 cmp     al, 4
                 jnz     short loc_17063
-                mov     al, byte_178DC
+                mov     al, logic_coords+2
                 cmp     al, 4
                 jnz     short loc_17063
                 call    write_string    ; YOU HIT THE SUN!
@@ -13853,14 +13854,14 @@ loc_17063:                              ; CODE XREF: check_hyperwarp_sun_collisi
                 mov     di, bx
 
 loc_1706A:                              ; CODE XREF: check_hyperwarp_sun_collision+5C↓j
-                mov     al, cs:byte_17012[di]
-                cmp     al, byte_178DA
+                mov     al, cs:PLANET_COORDS[di]
+                cmp     al, logic_coords
                 jnz     short loc_1708B
-                mov     al, cs:byte_1701C[di]
-                cmp     al, byte_178DB
+                mov     al, cs:PLANET_COORDS_1[di]
+                cmp     al, logic_coords+1
                 jnz     short loc_1708B
-                mov     al, cs:byte_17026[di]
-                cmp     al, byte_178DC
+                mov     al, cs:PLANET_COORDS_2[di]
+                cmp     al, logic_coords+2
                 jz      short loc_170B1
 
 loc_1708B:                              ; CODE XREF: check_hyperwarp_sun_collision+43↑j
@@ -14036,7 +14037,7 @@ check_hyperwarp_sun_collision endp
 loc_17185:                              ; CODE XREF: space_travel_command_loop+4D↑j
                 call    erase_ship_marker
                 mov     al, 80h
-                mov     byte_1788B, al
+                mov     _shipX, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
                 call    write_string    ; LANDING REQUESTED!
@@ -14465,11 +14466,11 @@ word_17886      dw 2800h                ; DATA XREF: print_indexed_shop_string+6
                                         ; load_talk_file+18↑r
 text_mode?      db 0                    ; DATA XREF: set_cga_mode+18↑w
                                         ; setPalette+18↑w ...
-byte_17889      db 0                    ; DATA XREF: plot_map_icon_point+2↑w
+plotX           db 0                    ; DATA XREF: plot_map_icon_point+2↑w
                                         ; plot_map_icon_point+13↑r ...
-byte_1788A      db 0                    ; DATA XREF: plot_map_icon_point+8↑w
+plotY           db 0                    ; DATA XREF: plot_map_icon_point+8↑w
                                         ; plot_map_icon_point+1F↑r ...
-byte_1788B      db 0                    ; DATA XREF: precompute_dungeon_corridor+4↑w
+_shipX          db 0                    ; DATA XREF: precompute_dungeon_corridor+4↑w
                                         ; precompute_dungeon_corridor+65↑r ...
 byte_1788C      db 0                    ; DATA XREF: precompute_dungeon_corridor+12↑w
                                         ; precompute_dungeon_corridor+75↑r ...
@@ -14546,27 +14547,23 @@ word_178CF      dw 10h                  ; DATA XREF: plot_point+6↑r
                                         ; erase_point+6↑r ...
 word_178D1      dw 10h                  ; DATA XREF: plot_point+11↑r
                                         ; erase_point+11↑r ...
-byte_178D3      db 0                    ; DATA XREF: animate_starfield+E↑w
+sx              db 0                    ; DATA XREF: animate_starfield+E↑w
                                         ; animate_starfield+2C↑r ...
 byte_178D4      db 0                    ; DATA XREF: animate_starfield+67↑w
                                         ; animate_starfield+85↑r ...
-byte_178D5      db 0                    ; DATA XREF: animate_starfield:loc_16B79↑w
+nx_             db 0                    ; DATA XREF: animate_starfield:loc_16B79↑w
                                         ; animate_starfield+5B↑w ...
-byte_178D6      db 0                    ; DATA XREF: animate_starfield+90↑w
+ny_             db 0                    ; DATA XREF: animate_starfield+90↑w
                                         ; animate_starfield:loc_16BF3↑w ...
-byte_178D7      db 0                    ; DATA XREF: animate_starfield+BF↑r
+speed           db 0                    ; DATA XREF: animate_starfield+BF↑r
                                         ; animate_starfield+F6↑r ...
 byte_178D8      db 0                    ; DATA XREF: hyperwarp+19↑w
                                         ; hyperwarp+3F↑w ...
 byte_178D9      db 0                    ; DATA XREF: animate_starfield+BB↑w
                                         ; animate_starfield+D9↑r ...
-byte_178DA      db 0                    ; DATA XREF: setup_rocket_launch_display+21↑w
+logic_coords    db 0, 0, 0              ; DATA XREF: setup_rocket_launch_display+21↑w
                                         ; hyperwarp+B0↑w ...
-byte_178DB      db 0                    ; DATA XREF: setup_rocket_launch_display+29↑w
-                                        ; hyperwarp+B8↑w ...
-byte_178DC      db 0                    ; DATA XREF: setup_rocket_launch_display+31↑w
-                                        ; hyperwarp+C0↑w ...
-byte_178DD      db 0                    ; DATA XREF: animate_starfield:loc_16B47↑r
+_starX          db 0                    ; DATA XREF: animate_starfield:loc_16B47↑r
                                         ; animate_starfield+C6↑r ...
                 db    0
                 db    0
@@ -14631,7 +14628,7 @@ byte_178DD      db 0                    ; DATA XREF: animate_starfield:loc_16B47
                 db    0
                 db    0
                 db    0
-byte_1791D      db 0                    ; DATA XREF: animate_starfield+CD↑r
+_starY          db 0                    ; DATA XREF: animate_starfield+CD↑r
                                         ; animate_starfield+EF↑w ...
                 db    0
                 db    0
