@@ -1,0 +1,85 @@
+# 2PLAY.OVL: main game loop, 3D view, map loading, event script VM
+17E10	game_main_loop	main exploration loop: input keys B,C,D,E,M,O,P,Q,R,S,U,V, arrows F0-F3, 1-8 = character screens; runs random encounters, cell triggers
+18282	view_idle_step	animate + poll key
+182B2	view_draw_sprite_list	draws queued view sprites (arrays DGROUP:6014/6028/603C)
+1830E	view_queue_sprite_a
+1837A	view_queue_sprite_b
+183E0	view_queue_sprite_c
+1843E	view_queue_sprite_d
+184A8	view_queue_sprite_e
+18510	view_indoor_daylight	facing-dependent test on map bytes at DGROUP:59A6
+18558	view_draw_wall_a
+185B4	view_draw_wall_b
+1867C	view_draw_wall_c
+18744	draw_view_indoors	3D maze view for towns/dungeons (g_outdoors == 0)
+18D6C	draw_view_outdoors	3D view for outdoor maps
+18DC8	evt_read_byte	next byte of the event chunk at DGROUP:6052 (pointer word_1DC7A)
+18DD8	evt_read_word
+18DF8	evt_read_dword24
+18E22	evt_var_addr	event variable index -> DGROUP address (flags/counters at 3F6.., 3D8, 3E0/3E1, 3EA, 3F1..)
+18EE6	random_monster_for_terrain	terrain type (byte_1DBEC) picks monster id table at DGROUP:164C..
+18F64	evt_skip_commands	skip n commands using length table at DGROUP:15E6
+18F90	evt_count_message_lines
+18FD0	evt_seek_message	find nth 0FFh-terminated message after the scripts
+19016	evt_decode_message	message bytes & 7Fh (40h = newline) -> DGROUP:54D0
+1905E	evt_op01_message
+19074	evt_message_at_row
+19110	evt_op04_title_centered
+19160	evt_op05_message_box
+191EC	evt_op06_message_framed
+190F2	evt_op03_message_window
+193B8	evt_wait_key
+1940E	evt_op08_wait_key_music
+1941E	evt_ask_yes_no
+1946E	evt_op10_ask_yes_no_music
+1947E	evt_op11_show_monster_pic
+194D4	evt_op12_teleport	byte map id (bit7 = random location), byte x|y<<4
+19560	evt_op13_play_sound
+1956E	evt_map_group_for_entrance	maps entrance ids to a destination map
+19716	evt_op14_enter_location	sub-id: 1 inn, 2 training, 3 tavern, 4/5 temple, 6 blacksmith, 100.. caves-overlay events, else map entrance
+198C8	evt_op15_end
+198D2	evt_op16_skip_if_cond
+198F2	evt_op17_skip_if_not_cond
+19912	evt_fight	10 monster ids + parameters -> start_combat
+19984	evt_op19_fight_noflags
+19990	evt_op20_clear_trigger	clears one-shot flag (bit 7) of the current cell
+19A02	evt_op21_check_char
+19ABC	evt_op22_has_item
+19B20	evt_op23_get_var
+19B38	evt_op24_check_char_alt
+19B44	evt_op25_give_item
+19C1A	evt_op26_set_var
+19C40	evt_op27_cond_limit
+19C5E	evt_op28_random
+19C72	evt_op29_wait
+19C8A	evt_op30_delay
+19E40	evt_op31_modify_char
+19F38	evt_op32_modify_all_chars
+19F44	evt_op33_set_map_cell	pos, wall byte, flag byte -> DGROUP:59D6/5AD6
+19F90	evt_op34_check_hour
+19FC6	evt_op35_check_date
+1A01E	evt_op36_pay_gold
+1A04C	evt_op37_pay_gems
+1A082	evt_select_char
+1A126	evt_op40_take_item
+1A19A	evt_op41_stop
+1A1A0	evt_op42_set_party_effects
+1A1E2	evt_op43_skip_if_night
+1A202	evt_op44_add_value
+1A21E	evt_op45_check_char_class
+1A580	evt_finish	redraw according to byte_1DC80 bits (1 message area, 2 party list, 4 view)
+1A606	evt_run_script	(script number) executes commands until 0FFh; opcode byte 1..50 dispatches through jump table
+1A85C	evt_load_triggers	parse 3-byte trigger table (cell, script, facing mask), terminated by 0,0,0
+1A8C4	evt_check_cell_triggers
+1B0F6	view_free_resources
+1B1B0	load_image_retry
+1B1D4	view_load_sky
+1B288	view_load_style_graphics	per map style
+1B410	map_style_for_id	DGROUP:16E0/16E8/16F0 range tables
+1B44E	view_sample_row	samples 4 map bytes (with edge wrap into neighbouring outdoor maps 5BD6/5CD6/5DD8/5ED8)
+1B4E0	view_prepare_visible_cells
+1B5EA	enter_map	(map id, x, y)
+1B75E	map_edge_transition	leaving the 16x16 map -> neighbour map ids at byte_231DB..DE
+1B7C8	map_cell_at_offset
+1B862	draw_minimap
+1BE24	view_load_current_map

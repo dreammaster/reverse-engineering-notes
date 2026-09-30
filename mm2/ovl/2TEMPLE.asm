@@ -63,7 +63,7 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
 
 loc_1C20D:                              ; CODE XREF: sub_1C1EA+1E↑j
-                mov     bl, byte_1DBE2
+                mov     bl, g_map_id
                 sub     bh, bh
                 mov     al, [bx+470Ch]
                 or      byte_1DC32, al
@@ -71,7 +71,7 @@ loc_1C20D:                              ; CODE XREF: sub_1C1EA+1E↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    thk_res_1C88
+                call    thk_rand_range
                 add     sp, 4
                 cmp     ax, 5Ah ; 'Z'
                 jle     short loc_1C234
@@ -255,7 +255,7 @@ loc_1C348:                              ; CODE XREF: sub_1C2B4+90↑j
                 push    ax
                 mov     ax, 7
                 push    ax
-                call    thk_res_3292    ; CODE XREF: seg002:0471↑J
+                call    thk_clear_text_rect ; CODE XREF: seg002:0471↑J
 sub_1C2B4       endp
 
                 add     sp, 8
@@ -263,7 +263,7 @@ sub_1C2B4       endp
                 push    ax
                 mov     ax, 7
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     ax, 20h ; ' '
                 push    ax
@@ -272,7 +272,7 @@ sub_1C2B4       endp
                 mov     bx, [bp+4]
                 push    word ptr [bx+68h]
                 push    word ptr [bx+66h]
-                call    thk_res_1958
+                call    thk_text_put_number
                 add     sp, 8
 ; START OF FUNCTION CHUNK FOR sub_1C2B4
 
@@ -305,7 +305,7 @@ arg_4           = word ptr  8
                 sub     ax, ax
                 mov     [bp+var_6], ax
                 mov     [bp+var_8], ax
-                mov     al, byte_1DBE2
+                mov     al, g_map_id
                 sub     ah, ah
                 mov     si, ax
                 mov     cl, 2
@@ -332,23 +332,23 @@ arg_4           = word ptr  8
                 push    ax
                 mov     ax, 1Fh
                 push    ax
-                call    thk_res_1676    ; CODE XREF: seg002:047D↑J
+                call    thk_text_goto_xy ; CODE XREF: seg002:047D↑J
                 add     sp, 4
                 mov     al, [bp+var_A]
                 sub     ah, ah
                 add     ax, 30h ; '0'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     ax, 2Dh ; '-'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 add     ax, 30h ; '0'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+0Fh], 4
@@ -385,7 +385,7 @@ loc_1C462:                              ; CODE XREF: seg002:086D↑J
                 push    ax
                 lea     ax, [bp+var_8]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C471:                              ; CODE XREF: sub_1C3A0:loc_1C462↑j
                 test    [bp+var_4], 40h
@@ -396,7 +396,7 @@ loc_1C471:                              ; CODE XREF: sub_1C3A0:loc_1C462↑j
                 push    ax
                 lea     ax, [bp+var_8]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C484:                              ; CODE XREF: sub_1C3A0+D5↑j
                 test    [bp+var_4], 80h
@@ -409,7 +409,7 @@ loc_1C48E:                              ; CODE XREF: seg002:0B31↑J
                 push    ax
                 lea     ax, [bp+var_8]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C497:                              ; CODE XREF: sub_1C3A0+8F↑j
                                         ; sub_1C3A0+97↑j ...
@@ -444,7 +444,7 @@ arg_4           = word ptr  8
                 sub     ax, ax
                 mov     [bp+var_6], ax
                 mov     [bp+var_8], ax
-                mov     al, byte_1DBE2
+                mov     al, g_map_id
                 sub     ah, ah
                 mov     si, ax
                 mov     cl, 2
@@ -472,23 +472,23 @@ arg_4           = word ptr  8
                 push    ax
                 mov     ax, 1Fh
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     al, [bp+var_A]
                 sub     ah, ah
                 add     ax, 30h ; '0'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     ax, 2Dh ; '-'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 add     ax, 30h ; '0'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+0Fh], 3 ; CODE XREF: seg002:0879↑J
@@ -523,7 +523,7 @@ loc_1C535:                              ; CODE XREF: sub_1C4A2+8B↑j
                 push    ax
                 lea     ax, [bp+var_8]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C575:                              ; CODE XREF: sub_1C4A2+C4↑j
                 test    [bp+var_4], 40h
@@ -534,7 +534,7 @@ loc_1C575:                              ; CODE XREF: sub_1C4A2+C4↑j
                 push    ax
                 lea     ax, [bp+var_8]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C588:                              ; CODE XREF: sub_1C4A2+D7↑j
                 test    [bp+var_4], 80h
@@ -545,7 +545,7 @@ loc_1C588:                              ; CODE XREF: sub_1C4A2+D7↑j
                 push    ax
                 lea     ax, [bp+var_8]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C59B:                              ; CODE XREF: sub_1C4A2+91↑j
                                         ; sub_1C4A2+99↑j ...
@@ -562,7 +562,7 @@ sub_1C4A2       endp
 
 
 sub_1C5A6       proc near               ; CODE XREF: ovl_2TEMPLE:C7E6↓p
-                mov     bl, byte_1DBE2
+                mov     bl, g_map_id
                 sub     bh, bh
 
 loc_1C5AC:                              ; CODE XREF: seg002:0885↑J
@@ -607,10 +607,10 @@ arg_0           = word ptr  4
                 push    ax
                 lea     ax, [bp+var_4]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C5F4:                              ; CODE XREF: sub_1C5B8+2A↑j
-                mov     bl, byte_1DBE2
+                mov     bl, g_map_id
                 sub     bh, bh
                 shl     bx, 1
                 sub     ax, ax
@@ -618,7 +618,7 @@ loc_1C5F4:                              ; CODE XREF: sub_1C5B8+2A↑j
                 push    word ptr [bx+46A8h]
                 lea     ax, [bp+var_4]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C60A:                              ; CODE XREF: sub_1C5B8+1A↑j
                 mov     ax, [bp+var_4]
@@ -693,10 +693,10 @@ loc_1C66E:                              ; CODE XREF: seg002:0891↑J
                 push    ax
                 lea     ax, [bp+var_4]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
 
 loc_1C677:                              ; CODE XREF: sub_1C616+4F↑j
-                mov     bl, byte_1DBE2
+                mov     bl, g_map_id
                 sub     bh, bh
                 shl     bx, 1
                 sub     ax, ax
@@ -704,7 +704,7 @@ loc_1C677:                              ; CODE XREF: sub_1C616+4F↑j
                 push    word ptr [bx+46A8h]
                 lea     ax, [bp+var_4]
                 push    ax
-                call    thk_res_03EC
+                call    thk__aFulmul_assign
                 mov     ax, [bp+var_4]
                 mov     dx, [bp+var_2]
                 pop     si
@@ -763,7 +763,7 @@ sub_1C698       endp
                 push    di
                 push    si
                 push    word ptr [bp+4]
-                call    thk_res_37B6
+                call    thk_char_ptr
                 add     sp, 2
                 mov     [bp-8], ax
                 mov     ax, word_23118
@@ -785,19 +785,19 @@ loc_1C6F8:                              ; CODE XREF: ovl_2TEMPLE:C6F1↑j
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     ax, 1
                 push    ax
-                call    thk_res_163E
+                call    thk_text_set_flag_8
                 add     sp, 2
-                mov     ax, 4714h
+                mov     ax, offset aTemple ; "  Temple  "
                 push    ax
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_163E
+                call    thk_text_set_flag_8
                 add     sp, 2
                 sub     si, si
                 mov     di, 58CAh
@@ -809,10 +809,10 @@ loc_1C732:                              ; CODE XREF: ovl_2TEMPLE:C74F↓j
                 push    ax
 
 loc_1C73A:                              ; CODE XREF: seg002:089D↑J
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 push    word ptr [di]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 add     di, 2
                 inc     si
@@ -834,10 +834,10 @@ loc_1C763:                              ; CODE XREF: ovl_2TEMPLE:C780↓j
                 push    ax
                 mov     ax, 13h
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 push    word ptr [di]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 add     di, 2
                 inc     si
@@ -850,19 +850,19 @@ loc_1C763:                              ; CODE XREF: ovl_2TEMPLE:C780↓j
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     ax, [bp+4]
                 add     ax, 31h ; '1'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     ax, 29h ; ')'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 push    word ptr [bp-8]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -911,14 +911,14 @@ loc_1C81C:                              ; CODE XREF: ovl_2TEMPLE:C857↓j
                 push    ax
                 mov     ax, 23h ; '#'
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     ax, [di]
                 or      ax, [di+2]
                 jnz     short loc_1C83E
                 mov     ax, 471Fh
                 push    ax
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 jmp     short loc_1C84C
 ; ---------------------------------------------------------------------------
@@ -948,7 +948,7 @@ loc_1C84C:                              ; CODE XREF: ovl_2TEMPLE:C83B↑j
                 mov     di, [bp-8]
 
 loc_1C873:                              ; CODE XREF: ovl_2TEMPLE:C8E9↓j
-                call    thk_res_56C6
+                call    thk_play_music_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2
@@ -1079,7 +1079,7 @@ loc_1C91C:                              ; CODE XREF: ovl_2TEMPLE:C889↑j
 loc_1C930:                              ; CODE XREF: ovl_2TEMPLE:C89B↑j
                 sub     word ptr [bp-0Ah], 31h ; '1'
                 js      short loc_1C916
-                mov     ax, word_1DC76
+                mov     ax, g_party_size
                 cmp     [bp-0Ah], ax
                 jge     short loc_1C916
                 mov     ax, [bp+4]
@@ -1116,7 +1116,7 @@ loc_1C95F:                              ; CODE XREF: ovl_2TEMPLE:C954↑j
                 mov     ax, [bp+4]
                 mov     word_23118, ax
                 push    ax
-                call    thk_res_37B6
+                call    thk_char_ptr
                 add     sp, 2
                 mov     [bp-4], ax
                 mov     ax, 2
@@ -1127,23 +1127,23 @@ loc_1C95F:                              ; CODE XREF: ovl_2TEMPLE:C954↑j
                 push    ax
                 mov     ax, 0Dh         ; CODE XREF: seg002:07DD↑J
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     ax, [bp+4]
                 add     ax, 31h ; '1'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     ax, 29h ; ')'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     ax, 20h ; ' '
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 push    word ptr [bp-4]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 mov     bx, [bp-4]
                 cmp     byte ptr [bx+26h], 0
@@ -1171,7 +1171,7 @@ loc_1C9F9:                              ; CODE XREF: ovl_2TEMPLE:C9F1↑j
                 push    ax
                 mov     ax, 5
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 cmp     word ptr [bp-6], 0
                 jnz     short loc_1CA19
@@ -1182,34 +1182,34 @@ loc_1C9F9:                              ; CODE XREF: ovl_2TEMPLE:C9F1↑j
 
 loc_1CA19:                              ; CODE XREF: ovl_2TEMPLE:CA0B↑j
                                         ; ovl_2TEMPLE:CA11↑j
-                mov     ax, 4723h
+                mov     ax, offset aHasBeenHealed ; "has been healed."
                 jmp     short loc_1CA21
 ; ---------------------------------------------------------------------------
 
 loc_1CA1E:                              ; CODE XREF: ovl_2TEMPLE:CA17↑j
-                mov     ax, 4734h
+                mov     ax, offset aIsHealthy ; "  is healthy."
 
 loc_1CA21:                              ; CODE XREF: ovl_2TEMPLE:CA1C↑j
                 push    ax
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
-                mov     ax, 4742h
+                mov     ax, offset aSelectAnother ; "  Select another"
                 push    ax
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
                 mov     ax, 11h
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
-                mov     ax, 4753h
+                mov     ax, offset aCharacter ; "character."
                 push    ax
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
 
 loc_1CA4A:                              ; CODE XREF: ovl_2TEMPLE:CA78↓j
-                call    thk_res_56C6
+                call    thk_play_music_step
                 mov     si, ax
                 cmp     si, 1Bh
 
@@ -1229,7 +1229,7 @@ loc_1CA5C:                              ; CODE XREF: ovl_2TEMPLE:CA57↑j
                 jnz     short loc_1CA76
                 sub     si, 31h ; '1'
                 js      short loc_1CA72
-                cmp     si, word_1DC76
+                cmp     si, g_party_size
                 jge     short loc_1CA72
                 mov     ax, 1
                 jmp     short loc_1CA74
@@ -1297,16 +1297,16 @@ loc_1CAE3:                              ; CODE XREF: sub_1CA88+87↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
-                mov     al, byte_1DBE2
+                mov     al, g_map_id
                 sub     ah, ah
                 mov     bx, ax
                 shl     bx, 1
                 add     bx, ax
                 shl     bx, 1
                 push    word ptr [bx+di+58FAh]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 add     di, 2
                 inc     si
@@ -1318,10 +1318,10 @@ loc_1CAE3:                              ; CODE XREF: sub_1CA88+87↓j
                 jz      short loc_1CB7A
                 or      byte_1DC80, 1
                 mov     [bp+var_2], 0
-                cmp     word_1DC76, 0
+                cmp     g_party_size, 0
                 jle     short loc_1CB41
                 mov     si, 416h
-                mov     dx, word_1DC76
+                mov     dx, g_party_size
                 mov     cx, [bp+var_2]
 
 loc_1CB39:                              ; CODE XREF: sub_1CA88+DC↓j
@@ -1374,11 +1374,11 @@ loc_1CB7A:                              ; CODE XREF: sub_1CA88+94↑j
                 jz      short loc_1CB95
                 sub     ax, ax
                 push    ax
-                call    thk_res_1392
+                call    thk_gfx_select_page
 
 loc_1CB8A:                              ; CODE XREF: seg002:0AF5↑J
                 add     sp, 2
-                mov     byte_1DC1E, 0
+                mov     g_view_mode, 0
                 call    thk_res_47D8
 
 loc_1CB95:                              ; CODE XREF: sub_1CA88+FA↑j
@@ -1428,16 +1428,16 @@ loc_1CBB4:                              ; CODE XREF: sub_1CB9C+43↓j
                 inc     si
 
 loc_1CBB5:                              ; CODE XREF: sub_1CB9C+15↑j
-                cmp     si, word_1DC76
+                cmp     si, g_party_size
                 jge     short loc_1CBE1
                 push    si
-                call    thk_res_37B6
+                call    thk_char_ptr
                 add     sp, 2
                 mov     [bp+var_6], ax
                 mov     bx, ax
                 mov     al, [bx+79h]
                 sub     ah, ah
-                mov     bl, byte_1DBE2
+                mov     bl, g_map_id
                 sub     bh, bh
                 mov     cl, [bx+477Ch]
                 sub     ch, ch
@@ -1480,16 +1480,16 @@ loc_1CC2B:                              ; CODE XREF: sub_1CB9C+BB↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
-                mov     al, byte_1DBE2
+                mov     al, g_map_id
                 sub     ah, ah
                 mov     bx, ax
                 shl     bx, 1
                 add     bx, ax
                 shl     bx, 1
                 push    word ptr [bx+di+5956h]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 add     di, 2
                 inc     si
@@ -1517,10 +1517,10 @@ loc_1CC78:                              ; CODE XREF: sub_1CB9C+D7↑j
                 mov     [bp+var_12], ax
                 or      byte_1DC80, 1
                 mov     [bp+var_8], 0
-                cmp     word_1DC76, 0
+                cmp     g_party_size, 0
                 jle     short loc_1CCA1
                 mov     si, 416h
-                mov     dx, word_1DC76
+                mov     dx, g_party_size
                 mov     cx, [bp+var_8]
 
 loc_1CC96:                              ; CODE XREF: sub_1CB9C:loc_1CDD5↓j
@@ -1544,19 +1544,19 @@ loc_1CCA1:                              ; CODE XREF: sub_1CB9C+EE↑j
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    thk_res_1676    ; CODE XREF: seg002:08FD↑J
+                call    thk_text_goto_xy ; CODE XREF: seg002:08FD↑J
                 add     sp, 4
                 mov     ax, 1
                 push    ax
-                call    thk_res_163E
+                call    thk_text_set_flag_8
                 add     sp, 2
-                mov     ax, 475Eh
+                mov     ax, offset aMageGuild ; " Mage Guild "
                 push    ax
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 sub     ax, ax
                 push    ax
-                call    thk_res_163E
+                call    thk_text_set_flag_8
                 add     sp, 2
                 sub     si, si
                 mov     di, 58CAh
@@ -1566,10 +1566,10 @@ loc_1CCE1:                              ; CODE XREF: sub_1CB9C+162↓j
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 push    word ptr [di]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 add     di, 2
                 inc     si
@@ -1582,17 +1582,17 @@ loc_1CCE1:                              ; CODE XREF: sub_1CB9C+162↓j
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
-                mov     ax, 476Bh
+                mov     ax, offset aLearnAD ; "Learn (A-D)"
                 push    ax
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
 
 loc_1CD21:                              ; CODE XREF: sub_1CB9C+16B↑j
                                         ; sub_1CB9C+3A6↓j
                 push    [bp+var_8]
-                call    thk_res_37B6
+                call    thk_char_ptr
                 add     sp, 2
                 mov     [bp+var_6], ax
                 cmp     [bp+var_12], 0
@@ -1620,12 +1620,12 @@ loc_1CD53:                              ; CODE XREF: sub_1CB9C+1DE↓j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     bx, [bp+var_10]
                 shl     bx, 1
                 push    word ptr [bx+58D2h]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 inc     [bp+var_10]
                 cmp     [bp+var_10], 7
@@ -1656,14 +1656,14 @@ loc_1CDA8:                              ; CODE XREF: sub_1CB9C+255↓j
                 push    ax
                 mov     ax, 23h ; '#'
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     ax, [di]
                 or      ax, [di+2]
                 jnz     short loc_1CDD8
                 mov     ax, 4777h
                 push    ax
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 jmp     short loc_1CDE6
 ; ---------------------------------------------------------------------------
@@ -1707,10 +1707,10 @@ loc_1CDFB:                              ; CODE XREF: sub_1CB9C+27C↓j
                 push    ax
                 mov     ax, 11h
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 push    word ptr [di]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 add     di, 2
                 inc     si
@@ -1730,19 +1730,19 @@ loc_1CE1D:                              ; CODE XREF: sub_1CB9C+197↑j
                 push    ax
                 mov     ax, 2           ; CODE XREF: seg002:0831↑J
                 push    ax
-                call    thk_res_1676
+                call    thk_text_goto_xy
                 add     sp, 4
                 mov     ax, [bp+var_8]
                 add     ax, 31h ; '1'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 mov     ax, 29h ; ')'
                 push    ax
-                call    thk_res_0D22
+                call    thk_text_putc
                 add     sp, 2
                 push    [bp+var_6]
-                call    thk_res_1726
+                call    thk_text_puts
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -1752,7 +1752,7 @@ loc_1CE1D:                              ; CODE XREF: sub_1CB9C+197↑j
                 add     sp, 6
 
 loc_1CE66:                              ; CODE XREF: sub_1CB9C+287↑j
-                call    thk_res_56C6
+                call    thk_play_music_step
                 push    ax
                 call    thk_res_00E8
                 add     sp, 2
@@ -1851,7 +1851,7 @@ loc_1CF08:                              ; CODE XREF: sub_1CB9C+2F0↑j
                 mov     [bp+var_E], ax
                 or      ax, ax
                 jl      short loc_1CF3C
-                mov     ax, word_1DC76
+                mov     ax, g_party_size
                 cmp     [bp+var_E], ax
                 jge     short loc_1CF3C
                 mov     ax, [bp+var_8]

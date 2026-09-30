@@ -35,3 +35,70 @@ def apply_relocs(rec_relocs, body_ea, load_para_base):
         idc.patch_word(ea, (idc.get_wide_word(ea) + mm2_layout.IDA_BASE_PARA) & 0xFFFF)
         n += 1
     return n
+
+
+def resolve_string_offsets(start, end):
+    """Turn `mov r16, imm` / `push imm` / `mov [mem], imm` whose immediate is the offset of a
+    defined string in DGROUP into a proper offset operand (creates the xref, shows `offset aFoo`).
+    Returns the number of operands converted."""
+    import idautils, ida_offset
+    n = 0
+    for ea in idautils.Heads(start, end):
+        if not ida_bytes.is_code(ida_bytes.get_flags(ea)):
+            continue
+        mnem = idc.print_insn_mnem(ea)
+        if mnem not in ("mov", "push"):
+            continue
+        for op in (0, 1):
+            if idc.get_operand_type(ea, op) != idc.o_imm:
+                continue
+            v = idc.get_operand_value(ea, op)
+            if not 0x100 <= v < DGROUP[1] - DGROUP[0]:
+                continue
+            tgt = DGROUP[0] + v
+            if ida_bytes.is_strlit(ida_bytes.get_flags(tgt)):
+                if ida_offset.op_plain_offset(ea, op, DGROUP[0]):
+                    n += 1
+    return n
+
+
+def fix_jump_tables(start, end):
+    """IDA sometimes truncates `jmp cs:table[bx]` switch tables (it stopped at 8 of 50 cases in
+    2PLAY).  Re-derive the case count from the bounds check (`cmp reg, N` + ja/jbe/jnb) that
+    precedes the jump, define the table as offset words and make every target code."""
+    import idautils, ida_offset, ida_ua, ida_funcs, ida_auto
+    fixed = 0
+    for ea in idautils.Heads(start, end):
+        if idc.print_insn_mnem(ea) != "jmp" or "cs:" not in idc.generate_disasm_line(ea, 0):
+            continue
+        if idc.get_operand_type(ea, 0) not in (idc.o_mem, idc.o_displ, idc.o_phrase):
+            continue
+        table = idc.get_operand_value(ea, 0)
+        if not table:
+            continue
+        # look back for `cmp r, N`
+        n = None
+        p = ea
+        for _ in range(8):
+            p = idc.prev_head(p)
+            if p == idc.BADADDR:
+                break
+            if idc.print_insn_mnem(p) == "cmp" and idc.get_operand_type(p, 1) == idc.o_imm:
+                n = idc.get_operand_value(p, 1) + 1
+                break
+        if not n or n > 256:
+            continue
+        base = 0x10000
+        tea = base + table
+        for i in range(n):
+            a = tea + 2 * i
+            idc.del_items(a, idc.DELIT_SIMPLE, 2)
+            idc.create_word(a)
+            ida_offset.op_plain_offset(a, 0, base)
+            tgt = base + idc.get_wide_word(a)
+            if start <= tgt < end:
+                idc.create_insn(tgt)
+        idc.set_name(tea, "jpt_%X" % tea, idc.SN_NOCHECK | idc.SN_NOWARN | idc.SN_AUTO) if not idc.get_name(tea) else None
+        fixed += 1
+    ida_auto.auto_wait()
+    return fixed

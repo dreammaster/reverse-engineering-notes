@@ -84,7 +84,19 @@ for _ in range(8):
     ida_auto.auto_wait()
     if not changed:
         break
+print('jump tables fixed:', fix_jump_tables(start, end))
+for _ in range(8):
+    changed = False
+    for st, n in list(undefined_runs()):
+        ea, stop = st, st + n
+        while ea < stop and ida_bytes.get_byte(ea) == 0x90 and ea + 1 < end:
+            ida_bytes.create_align(ea, 1, 0); ea += 1; changed = True
+        if ea < stop and idc.create_insn(ea): changed = True
+    ida_auto.auto_wait()
+    if not changed: break
 print("bytes still undefined:", sum(n for _, n in undefined_runs()))
+
+print('string offsets resolved:', resolve_string_offsets(start, end))
 
 # 3. names from the main database ------------------------------------------
 sn = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "build", "shared_names.json")
@@ -97,6 +109,8 @@ if os.path.exists(sn):
         if r: idc.set_cmt(int(ea), r, 1)
     print(f"imported {len(d['names'])} names from {sn}")
 ida_auto.auto_wait()
+
+exec(compile(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'apply_names.py')).read(), 'apply_names.py', 'exec'))
 
 EXPORT_RANGE = (start, end)
 print("functions in overlay:", sum(1 for ea in range(start, end) if (f := ida_funcs.get_func(ea)) and f.start_ea == ea))

@@ -1,0 +1,181 @@
+# Resident image names (mm2.idb).  <hex ea> <TAB> <name> <TAB> <comment>
+# --- MS-C runtime ---
+10002	main	argv[1][0] = video mode letter (default ' ') passed to init; then init/title/menu/game loop overlays
+10182	_cinit	runs the C initialiser tables
+10246	exit
+1025D	_exit
+102CF	_initterm	run near-pointer table
+102DE	_initterm_far	run far-pointer table
+10314	_aFuldiv	unsigned 32-bit divide (pascal, 4 word args)
+10376	_aFulmul	32-bit multiply (pascal)
+103EC	_aFulmul_assign	*p = *p * x  (32-bit)
+1040E	_NMSG_TEXT
+10439	_NMSG_WRITE
+10482	_setargv
+# --- hardware / video driver layer ---
+1073A	detect_hardware	machine type (int15/C0, F000:FFFE) -> word_2219C; adapter probe -> flags 221C0..221CA; picks video driver index word_221BA
+108AE	gfx_reset	driver fn0 (init), clears window slots, seeds RNG
+108F2	load_video_driver	loads TCGA/EGA/TGA/HGA/MCGA.DRV named by table at DGROUP:49E4[word_221BA]
+10914	gfx_clamp_point	clamp (x,y) to screen
+1094A	gfx_order_rect	sort two corners
+109AA	gfx_window_create	graphics window (20-byte slots at DGROUP:9FF6, 3 slots): returns ptr or 0
+10A3A	text_clamp_point	clamp char-cell (x,y) to screen
+10A96	text_order_rect
+10B0E	text_window_create	text window (20-byte slots at DGROUP:A032, 3 slots): x1,y1,x2,y2 in char cells; returns ptr or 0
+10BAA	gfx_set_color	current gfx window colour + driver fn2
+10BC6	gfx_clip_point	clip (x,y) to current gfx window
+10C16	gfx_fill_rect	x1,y1,x2,y2 via driver hline
+10C78	text_scroll_up	scroll current text window up one text row
+10D22	text_putc	print char in current text window (0Dh/0Ah = newline, 100h = clear window, handles wrap/scroll)
+10E0C	gfx_window_save_bg	driver fn0Bh
+10E4A	text_window_save_bg
+10EA4	gfx_window_open
+10F1B	gfx_window_close
+10F8A	text_window_open
+10FF2	text_window_close
+11084	gfx_set_pen
+1109A	gfx_plot_point	driver fn3
+110CA	gfx_hline	driver fn4
+11126	gfx_vline	driver fn5
+11182	gfx_line	picks point/hline/vline/general line
+1127E	gfx_scroll_rect	driver fn0Eh + clear exposed strip
+11392	gfx_select_page	driver fn1: 0/1 -> word_221A8
+113B6	gfx_copy_rect_pages	driver fn8
+1142A	gfx_copy_page	driver fn9 (from page, to page)
+11492	gfx_load_image	load image file, hand to driver fn10h
+114CA	free_far_block
+114FE	gfx_draw_op13	driver fn13h
+1154C	load_resource_cached	(name, slot 0/1): cached in table DGROUP:497C
+115CA	text_window_set_font	current text window font far ptr <- cache slot
+11600	text_set_fg
+11610	text_set_bg
+1163E	text_set_flag_8
+1165C	text_set_align	0=left 1=right 2=centre
+11676	text_goto_xy	clamped, sets cursor of current text window
+1169A	text_get_x
+116A4	text_get_y
+116AE	text_erase_chars	step cursor back N chars printing spaces
+11726	text_puts	string, word-wrapped/aligned within current text window
+11940	text_put_number_pad	(value, width, padchar) wrapper
+11958	text_put_number	(lo,hi,pad,width,padchar): decimal
+# --- input / timing / misc ---
+11A30	kbd_poll	non-blocking key; translates BIOS scancodes, F-keys, numpad, shift/ctrl flags
+11B00	kbd_poll2
+11B44	kbd_flush
+11B5E	set_text_mode3
+11B8E	get_machine_id
+11BA6	detect_video_adapter
+11C20	video_flag_from_type
+11C4C	crtc_probe
+11C66	delay_ticks	waits until timer driver zeroes word_22261
+11C78	dos_free_block
+11C88	rand_range	(lo,hi) inclusive; PRNG state word_22264
+11CCC	rand_seed_from_clock
+11CDA	driver_call	(fn, args...) -> far call into video driver at fn*3, args per descriptor table DGROUP:4A28...
+11DA3	driver_setup_args
+11DDA	driver_dispatch
+11D7D	unload_timer_driver
+11E12	load_timer_driver	TIMER.DRV
+11E36	file_check	open+close test; sets word_223B2 error, calls error handler
+11E64	load_file_alloc	(name, &size) -> far ptr; LZW/xor/plain per name lists
+11ED2	name_in_list	(list, name) case-insensitive
+11F4A	read_file_to_buffer	(name, dest, ?, size)
+11FC4	write_file_from_buffer	(name, src, size)
+120DC	get_drive
+120F0	select_drive	loops until requested drive is current (calls disk error handler)
+1214E	install_int_handlers	int 24h/23h/1Bh
+12190	restore_int1B
+121A5	set_error_handler	far ptr -> dword_223B6
+121B6	load_lzw_file	(name, &size, xorflag) -> far ptr
+12242	lzw_decompress	9..12-bit LSB-first LZW; 100h clear, 101h end; optional xor decrypt
+124B0	load_plain_file
+124F5	dos_alloc_paras
+12546	read_whole_file	(.DRV files get special alloc)
+12605	fatal_out_of_memory
+12616	xor_decrypt	key string at DGROUP:0514
+1264A	monster_gfx_load
+12734	monster_gfx_draw
+1276C	load_roster	ROSTER.DAT -> DGROUP:7E20 (48 char slots of 82h bytes)
+12792	save_roster
+127E4	party_contains	(roster id)
+12852	party_remove	(roster id)
+128B6	print_condition	highest set bit of status byte -> string table DGROUP:048A
+12918	print_item_list	6 item names of a char (equipped 17h / backpack)
+129BA	print_backpack
+129CC	print_equipped
+129DE	print_stat_field	(field index, lo, hi)
+12A6A	show_character_sheet	(slot)
+12DFE	wait_key	blocking, animated cursor
+12E6E	get_key_in_range	(lo,hi) ESC allowed
+12E98	read_string	(buf, maxlen) editable with backspace
+12F1A	read_number	(maxdigits)
+13026	draw_frame_hline
+1307C	draw_frame_vline
+130F6	draw_frame_box
+13204	draw_main_frame
+13226	draw_frame_alt
+1324E	wait_for_key	(key)
+13268	get_key_in_range_nowait
+13292	clear_text_rect	(x,y,w,h) relative to current text window
+1333E	prompt_insert_disk	far
+1347C	fatal_error
+13572	char_reset_current_stats	current stats +6B..73 <- base stats +10..15,+20,+23,+27
+137B6	char_ptr	(party index) -> DGROUP:7E20 + roster_id*0x82
+137CA	party_count_able	count of party members with status&E0 == 0
+13804	party_all_disabled
+13928	char_apply_damage	(char, dmg, ...)
+13A64	map_cell_update	map byte [y*16+x] at DGROUP:59D6 / 5AD6
+13AEA	spell_calc_cost
+13B68	char_add_age
+13B80	monster_decode_stats	record (16 bytes) -> monster globals DGROUP:7650..
+13E82	end_monster_gfx
+13EB2	start_combat
+142DE	party_step_forward
+14336	party_step_backward
+143D6	party_move_key	F2 forward, F3 backward
+143F2	party_turn_key	F0 left, F1 right
+1423E	set_facing_masks	from facing letter N/E/S/W (byte_1DC1F)
+1428C	facing_delta	(&dx,&dy)
+144AE	show_party_roster_screen
+14A34	draw_party_list
+14B6E	draw_time_info
+14C4A	clear_spell_effects
+14D5C	expand_spell_bitmap	(char, out[48])
+14DAA	draw_spell_list
+14EFE	wait_key_timeout	(ticks)
+15092	age_party_one_day
+150CE	advance_time	(minutes)
+15188	party_pay_gold	(lo,hi)
+15262	party_pay_gems
+1531A	party_pay_food
+1554A	cast_spell_menu	(char) -> spell index or FFFF
+156C6	play_music_step
+157E0	play_sound_effect
+1587E	strlen_trimmed	length without trailing spaces (max 16)
+158B0	character_actions_menu	single character: C cast D drop E equip R remove S T trade U use V view
+15B8A	party_status_loop
+15D44	cast_from_menu
+15E68	check_move_blocked	returns direction blocked/special or FFFF
+16008	load_map_events	EVENTSI/EVENTSO.DAT chunk for current map -> DGROUP:6052
+160B4	load_map_a
+160D0	load_map_b
+160ED	load_map_chunk	MAP.DAT chunk (512 bytes)
+# --- game state (DGROUP) ---
+22194	g_cur_gfx_win	pointer to current graphics window slot
+22196	g_cur_text_win	pointer to current text window slot
+1DBE2	g_map_id	current map number
+1DBE3	g_party_x	map x (0..15)
+1DBE4	g_party_y	map y (0..15)
+1DBED	g_outdoors	0 = EVENTSI.DAT ("indoor" maps), 1 = EVENTSO.DAT
+1DC1E	g_view_mode	0/1/2 = which bottom-panel layout is showing
+1DC1F	g_facing	'N','E','S','W'
+1DC66	g_party_ids	8 words: roster ids of party members, FFFFh = empty; ids >= 18h are hirelings
+1DC76	g_party_size
+1DC8A	g_disk_needed	1 = disk 1, 2 = disk 2 (insert-disk prompt)
+25670	g_characters	roster: 48 slots x 82h bytes (24 characters + 24 hirelings)
+241B0	g_items	ITEMS.DAT (256 x 20 bytes, item names first)
+255B0	g_spells	SPELLS.DAT (192 bytes)
+1DB98	g_main_text_win
+1DB9C	g_main_gfx_win
+1DC1A	g_era	current era index (time periods); day/year arrays at DGROUP:03A2 / 03B6
+1DC1C	g_day_fraction	0..FFh; rolls over into a new day
