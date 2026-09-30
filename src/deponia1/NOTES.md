@@ -1439,6 +1439,23 @@ Added a new `Event` class (previously nonexistent) with just the one
 confirmed virtual. Both `Clone()`/`HandleEvent()` names are guesses from
 their call shapes, not recovered identifiers.
 
+## TMemoryFile: corrected from a TMemoryBuffer wrapper to its own raw buffer
+
+`TMemoryFile` (manifest: stub, 7 methods) turned out to be a real type
+correction, not just a fill-in: it was previously modeled as wrapping a
+`TMemoryBuffer`, but its own ctor/dtor/GetBuffer/GetSize/ReleaseMemory/
+Reserve/DetachBuffer (Deponia_Linux.asm lines 551869-552136) show it's
+actually just a plain owned `new[]`-allocated byte buffer plus a size -
+unrelated to `TMemoryBuffer`. Nothing else in this codebase depended on the
+old modeling (`TMemoryFile` was only ever an untouched stub out-parameter in
+`TComposedFile::GetMemoryFile()`), so this was a zero-risk correction rather
+than a breaking one.
+
+The original member name, `m_pData`, is recovered byte-for-byte from
+`GetBuffer()`'s own `x_assert()` string, along with the confirmed original
+path `src/baselib/memfile.cpp` (both now recorded in the header, resolving
+its earlier "not yet reconstructed" note).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
