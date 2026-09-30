@@ -30,18 +30,22 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 
 ## State (2026-09-30)
 
-* Layout fully understood; all 14 overlays load and analyse (85 functions in 2PLAY, 5–59 in the
-  others, a few hundred bytes of jump-table/unreached code left as `db`).
-* Main db: 900 strings defined, DGROUP referenced from code, 219 thunks defined.
-* Almost nothing named yet beyond the Plink86 runtime and thunks.
+* Layout fully understood; all 14 overlays load and analyse.  Resident library and 2PLAY (event VM,
+  map loading, 3D view) named; every overlay's top-level functions named from their strings.
+* Documented: [exe-layout.md](exe-layout.md), [file-formats.md](file-formats.md) (LZW, MAP/EVENTS/STR/
+  MONSTERS, character record, image banks), [events.md](events.md) (50-opcode script VM),
+  [game-library.md](game-library.md) (windows, video-driver ABI, state globals).
+* Tools: `mm2_lzw.py`, `mm2_data.py` (maps/events/strings/monsters), `mm2_gfx.py` (renders `*.16`
+  image banks to PNG), `plink_info.py`.
 
-## Next steps
+## Open / next
 
-1. Identify the C runtime (`__FF_MSGBANNER`, `_nheapinit`, `printf`, `int86`, …) — compare with
-   `../ultima1` (same MS-C startup shape) and MM1.
-2. Name overlay entry points (thunk targets) and the resident functions the thunks reach; write
-   `import_names.py`.
-3. Decode the data files (`MAP.DAT`, `EVENTS*.DAT`, `MONSTERS.DAT`, `ITEMS.DAT`, `ROSTER.DAT`,
-   `*.16`/`*.4` graphics, `*.DRV` video drivers) starting from the loader functions; record in
-   `docs/file-formats.md`.
-4. Compare with the MM1 disassembly for shared structures (character record, spell tables).
+1. **Monster pictures** (`MONSTERS.16/.4`): driver-specific compressed sprites (EGA.DRV fn 16h at 1233).
+2. `.4` (CGA) banks that don't decode with the 2 bpp rule; palette mapping per video mode.
+3. Combat (2COMBAT: `combat_round` 193B2, `combat_start` 1A2A6, monster AI 184FE): read and name the
+   internals; monster record fields (`monster_decode_stats` 13B80); spell effects (2CAST1/2).
+4. `ITEMS.DAT` fields (20 bytes: 12-byte name, class/type flags, three words), `SPELLS.DAT`, `ATTRIB.DAT`.
+5. Save format: `ROSTER.DAT` (8292 bytes = 48 characters + 2052 bytes of state).
+6. Disassemble the `.DRV` modules (video, timer/sound) — jump table at offset `fn*3`.
+7. Shops (2SMITH/2TEMPLE/2BRAIN), inn (1RETINN), caves specials (2CAVES): read and name internals.
+8. `import_names.py` to refresh names of *existing* overlay databases without a rebuild.

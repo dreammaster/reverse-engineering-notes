@@ -450,7 +450,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X185D5);
 	op_hex		(x,	1);
 	create_insn	(0X185EE);
-	set_name	(0X185EE,	"create_helper_a");
+	set_name	(0X185EE,	"roster_find_free_slot");
 	create_insn	(x=0X185F1);
 	op_hex		(x,	1);
 	create_insn	(x=0X185FF);
@@ -463,7 +463,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1861B);
 	op_stkvar	(x,	1);
 	create_insn	(0X18624);
-	set_name	(0X18624,	"create_char_roll_stats");
+	set_name	(0X18624,	"create_character_record");
 	create_insn	(x=0X18627);
 	op_hex		(x,	1);
 	create_insn	(x=0X1862F);
@@ -590,7 +590,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X188AA);
 	op_hex		(x,	1);
 	create_insn	(0X188B2);
-	set_name	(0X188B2,	"create_helper_b");
+	set_name	(0X188B2,	"show_stats_and_allowed_classes");
 	create_insn	(x=0X188B5);
 	op_hex		(x,	1);
 	create_insn	(x=0X188BA);
@@ -629,7 +629,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18945);
 	op_stkvar	(x,	0);
 	create_insn	(0X18952);
-	set_name	(0X18952,	"create_helper_c");
+	set_name	(0X18952,	"class_allowed");
 	create_insn	(x=0X18955);
 	op_hex		(x,	1);
 	create_insn	(x=0X1895C);
@@ -692,7 +692,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X189E5);
 	op_stkvar	(x,	0);
 	create_insn	(0X189EE);
-	set_name	(0X189EE,	"create_helper_d");
+	set_name	(0X189EE,	"roll_stats");
 	create_insn	(x=0X189F1);
 	op_hex		(x,	1);
 	create_insn	(x=0X189F6);
@@ -760,7 +760,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X18B0E);
 	op_hex		(x,	1);
+	set_cmt	(0X18B1A,	"class -> race -> alignment -> sex -> name",	0);
 	create_insn	(0X18B1A);
+	set_name	(0X18B1A,	"create_character_screen");
 	create_insn	(x=0X18B1D);
 	op_hex		(x,	1);
 	create_insn	(x=0X18B22);
@@ -1380,9 +1382,11 @@ static Functions_0(void) {
 	set_frame_size(0X181F2, 0XE, 2, 0);
 	add_func    (0X185EE,0X18623);
 	set_func_flags(0X185EE,0x5410);
+	set_func_cmt(0X185EE,	"first empty of the 24 character slots or -1", 0);
 	set_frame_size(0X185EE, 0X6, 2, 0);
 	add_func    (0X18624,0X187F2);
 	set_func_flags(0X18624,0x5410);
+	set_func_cmt(0X18624,	"(class, race, alignment, sex, name, stats) fills g_characters[free], saves roster", 0);
 	set_frame_size(0X18624, 0XA, 2, 0);
 	add_func    (0X187F2,0X188B2);
 	set_func_flags(0X187F2,0x5410);
@@ -1393,9 +1397,11 @@ static Functions_0(void) {
 	set_frame_size(0X188B2, 0X8, 2, 0);
 	add_func    (0X18952,0X189EE);
 	set_func_flags(0X18952,0x5410);
+	set_func_cmt(0X18952,	"per-class minimum-stat tests (8 classes)", 0);
 	set_frame_size(0X18952, 0X8, 2, 0);
 	add_func    (0X189EE,0X18A60);
 	set_func_flags(0X189EE,0x1410);
+	set_func_cmt(0X189EE,	"random stats (7)", 0);
 	set_frame_size(0X189EE, 0XA, 2, 0);
 	add_func    (0X18A60,0X18D6E);
 	set_func_flags(0X18A60,0x5410);

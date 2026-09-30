@@ -14,3 +14,9 @@
 19022	create_helper_e
 19660	load_default_roster	DEFAULT.DAT
 196F6	transfer_characters	from another MM game roster ("Path:", "File not found...", "Save new roster (y/n)?")
+185EE	roster_find_free_slot	first empty of the 24 character slots or -1
+18624	create_character_record	(class, race, alignment, sex, name, stats) fills g_characters[free], saves roster
+189EE	roll_stats	random stats (7)
+18952	class_allowed	per-class minimum-stat tests (8 classes)
+188B2	show_stats_and_allowed_classes
+18B1A	create_character_screen	class -> race -> alignment -> sex -> name

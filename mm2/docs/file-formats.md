@@ -84,7 +84,8 @@ From the display code (`show_character_sheet` `12A6A`, `show_party_roster_screen
 | 0E | 1 | race (index into `DGROUP:0456` names: Human, Elf, Dwarf, Gnome, H-Orc) |
 | 0F | 1 | class (index into `DGROUP:0446`: Knight, Paladin, Archer, Cleric, Sorcerer, Robber, Ninja, Barbarian) |
 | 10-15 | 6 | base Might, Intellect, Personality, Speed, Accuracy, Luck |
-| 1E | 1 | thievery |
+| 16-1D | 8 | resistances (copied from per-race tables `DGROUP:06AE + 6*race`... at character creation) |
+| 1E | 1 | thievery (from per-class table `DGROUP:06DE`) |
 | 20 | 1 | base level |
 | 21 | 1 | age (years; capped at 200) |
 | 22 | 1 | day counter (rolls at 181 → age+1) |
@@ -143,3 +144,16 @@ rule above yet (`TOWN.4`, `CASTLE.4`, `CAVE.4`, `GLOBE.4`, `DISK.4`, `XFER.4`): 
 `MONSTERS.16`: 75 x `u32` offsets (0 = unused) to LZW banks, one per monster picture set.  Each
 decompressed bank starts `u16 count, u16 offsets[count]`, then animation scripts and pictures in a
 *driver-specific compressed* format (the EGA driver expands them in fn 16h at `1233`); not decoded yet.
+
+## Character creation (1MENU2, `create_character` `18A60` / `18624`)
+
+* `roll_stats` (`189EE`): seven stats (Might, Intellect, Personality, Endurance, Speed, Accuracy,
+  Luck) start from random values; the player can swap two (A-G) or re-roll (Enter).
+* `class_allowed` (`18952`): per class minimum stats (the table of tests in the function: e.g.
+  Knight needs Might >= 15, Paladin Might/Intellect/... >= 13, Sorcerer Intellect >= 15 ...).
+* Race stat adjustments: 5 races x 7 bytes at `DGROUP:093C`.
+* New character (`18624`): level 1, age 18, food 10; hit points = per-class base (`DGROUP:06E6`) +
+  endurance-derived word table (`DGROUP:06F2`); spell points for Cleric (Personality-based) and Sorcerer
+  (Intellect-based) from `DGROUP:071E`; casters start at spell level 1 with initial spell bits
+  (`+51 = 5Ch` cleric, `3Ah` sorcerer); AC from speed table `DGROUP:074D`; starting items from
+  `DGROUP:075C` (class x 8 per race-group); condition 0.  The record is saved with `save_roster`.
