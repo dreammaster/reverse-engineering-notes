@@ -125,10 +125,10 @@ SimplexNoise1234	todo	4	434064	434207
 Noise1234	todo	12	434500	437359
 TGameController	done	20	450097	453534
 TSceneControl	stub	15	453942	455632
-TGameControl	in-progress	98	455671	478479
+TGameControl	done	98	455671	478479
 SGameAction	todo	1	456169	456169
 SLoadingScreen	todo	2	479291	479330
-TLoadingControl	stub	7	483185	483735
+TLoadingControl	in-progress	7	483185	483735
 TCursorControl	stub	23	483805	485408
 SCursor	todo	1	484984	484984
 TMasterControl	in-progress	38	485602	491098
@@ -150,7 +150,7 @@ SEntryInfo	todo	1	541440	541440
 TComposedFile	in-progress	20	541459	548209
 BuildProgressEvent	todo	3	548597	548703
 TMemoryBuffer	stub	26	549297	551826
-TMemoryFile	stub	7	551869	552091
+TMemoryFile	done	7	551869	552091
 TStandardPaths	done	13	552187	553383
 TTempFile	todo	2	553440	553545
 md5	todo	5	554434	556285
@@ -327,7 +327,7 @@ Camera	todo	10	1373848	1374386
 Tools	todo	2	1374466	1374734
 TGParticleSystem	todo	4	1378274	1380801
 TGParticleEmitter	todo	6	1378290	1379800
-TFontManager	stub	16	1388826	1390109
+TFontManager	done	16	1388826	1390109
 TPointSize	todo	5	1390459	1390856
 TCFont	todo	16	1391446	1397049
 TSyntaxDocArray	todo	7	1409666	1415006
@@ -336,7 +336,7 @@ HashMap<TId, std::vector<std::pair<int, int>, std::allocator<std::pair<int, int>
 HashMap<long long, StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, char const*, StringHash<char const*> >*, IntegerHash<int> >	todo	1	1429054	1429054
 CmdGetTime	todo	4	1429970	1432060
 CmdGetObject	todo	4	1430038	1431692
-TArgument	stub	57	1435493	1439341
+TArgument	done	57	1435493	1439341
 TCommandPtrArray	todo	7	1439934	1442092
 TCommandQueue	todo	10	1440145	1441881
 TTActionPart	todo	13	1445635	1446790
@@ -432,7 +432,7 @@ HashMap<int, TFreetypeFont::Character, KeyHash<int> >	todo	3	1589759	1589996
 Container	todo	25	1592130	1597917
 BaseContainer	todo	28	1592285	1602916
 ScrollPane	todo	14	1592422	1600766
-EventHandler	stub	4	1592869	1599448
+EventHandler	done	4	1592869	1599448
 Layout::LayoutUnion	todo	5	1597038	1601045
 Layout	todo	9	1601112	1602720
 SkinFaceSprite	todo	5	1605092	1607305
