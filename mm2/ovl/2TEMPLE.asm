@@ -8,9 +8,10 @@ ovl_2TEMPLE     segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; (msg index 0-4) prints the 4 lines of a temple message from DGROUP:591E (STR.DAT) and animates
 ; Attributes: bp-based frame
 
-temple_common_helper proc near          ; CODE XREF: seg002:0615↑J
+temple_show_message proc near           ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
 
 var_2           = word ptr -2
@@ -28,7 +29,7 @@ arg_0           = word ptr  4
                 sub     si, si
                 mov     di, [bp+arg_0]
 
-loc_1C147:                              ; CODE XREF: temple_common_helper+39↓j
+loc_1C147:                              ; CODE XREF: temple_show_message+39↓j
                 lea     ax, [si+12h]
                 push    ax
                 mov     ax, 10h
@@ -51,16 +52,17 @@ loc_1C147:                              ; CODE XREF: temple_common_helper+39↓j
                 mov     sp, bp
                 pop     bp
                 retn
-temple_common_helper endp
+temple_show_message endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; pay heal cost, condition := 0, full HP
 ; Attributes: bp-based frame
 
-sub_1C178       proc near               ; CODE XREF: ovl_2TEMPLE:C8A8↓p
+temple_restore_condition proc near      ; CODE XREF: ovl_2TEMPLE:C8A8↓p
 
 arg_0           = word ptr  4
 
@@ -69,12 +71,12 @@ arg_0           = word ptr  4
                 push    word_23134
                 push    word_23132
                 push    [bp+arg_0]
-                call    sub_1C326
+                call    char_pay_gold
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_1C1A6
                 push    [bp+arg_0]
-                call    sub_1C698
+                call    char_heal_full
                 add     sp, 2
                 mov     bx, [bp+arg_0]
                 mov     byte ptr [bx+26h], 0
@@ -83,23 +85,24 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C1A6:                              ; CODE XREF: sub_1C178+16↑j
+loc_1C1A6:                              ; CODE XREF: temple_restore_condition+16↑j
                 mov     ax, 0Ch
 
-loc_1C1A9:                              ; CODE XREF: sub_1C178+2B↑j
+loc_1C1A9:                              ; CODE XREF: temple_restore_condition+2B↑j
                 push    ax
-                call    temple_common_helper
+                call    temple_show_message
                 add     sp, 2
                 pop     bp
                 retn
-sub_1C178       endp
+temple_restore_condition endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; pay, alignment (+6A) := original (+0D)
 ; Attributes: bp-based frame
 
-sub_1C1B2       proc near               ; CODE XREF: ovl_2TEMPLE:C8BA↓p
+temple_restore_alignment proc near      ; CODE XREF: ovl_2TEMPLE:C8BA↓p
 
 arg_0           = word ptr  4
 
@@ -109,7 +112,7 @@ arg_0           = word ptr  4
                 push    word_23138
                 push    word_23136
                 push    [bp+arg_0]
-                call    sub_1C326
+                call    char_pay_gold
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_1C1DC
@@ -122,26 +125,27 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C1DC:                              ; CODE XREF: sub_1C1B2+17↑j
+loc_1C1DC:                              ; CODE XREF: temple_restore_alignment+17↑j
                 mov     ax, 0Ch
 
-loc_1C1DF:                              ; CODE XREF: sub_1C1B2+27↑j
+loc_1C1DF:                              ; CODE XREF: temple_restore_alignment+27↑j
                 push    ax
-                call    temple_common_helper
+                call    temple_show_message
                 add     sp, 2
                 pop     si
                 pop     bp
                 retn
-sub_1C1B2       endp
+temple_restore_alignment endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; pay; 90% chance of blessing: Light 200, Magic 60, Forces 60, Levitate/Walk/Guard 1...; sets temple bit (DGROUP:470C) in byte_1DC32, all 5 -> special event
 ; Attributes: bp-based frame
 
-sub_1C1EA       proc near               ; CODE XREF: seg002:07F5↑J
+temple_donate   proc near               ; CODE XREF: seg002:07F5↑J
                                         ; ovl_2TEMPLE:C8CA↓p
 
 var_2           = word ptr -2
@@ -154,14 +158,14 @@ arg_0           = word ptr  4
                 push    word_2313C
                 push    word_2313A
                 push    [bp+arg_0]
-                call    sub_1C326
+                call    char_pay_gold
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_1C20D
                 jmp     loc_1C2A6
 ; ---------------------------------------------------------------------------
 
-loc_1C20D:                              ; CODE XREF: sub_1C1EA+1E↑j
+loc_1C20D:                              ; CODE XREF: temple_donate+1E↑j
                 mov     bl, g_map_id
                 sub     bh, bh
                 mov     al, [bx+470Ch]
@@ -179,10 +183,10 @@ loc_1C20D:                              ; CODE XREF: sub_1C1EA+1E↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C234:                              ; CODE XREF: sub_1C1EA+42↑j
+loc_1C234:                              ; CODE XREF: temple_donate+42↑j
                 sub     ax, ax
 
-loc_1C236:                              ; CODE XREF: sub_1C1EA+47↑j
+loc_1C236:                              ; CODE XREF: temple_donate+47↑j
                 mov     [bp+var_2], ax
                 cmp     byte_1DC32, 1Fh ; CODE XREF: seg002:08E5↑J
                 jnz     short loc_1C24F
@@ -190,12 +194,12 @@ loc_1C236:                              ; CODE XREF: sub_1C1EA+47↑j
                 mov     byte_241A0, 0D4h
                 mov     byte_1DC32, 0
 
-loc_1C24F:                              ; CODE XREF: sub_1C1EA+54↑j
+loc_1C24F:                              ; CODE XREF: temple_donate+54↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C2A0
                 sub     ax, ax
                 push    ax
-                call    temple_common_helper
+                call    temple_show_message
                 add     sp, 2
                 mov     g_fx_light, 0C8h
                 mov     g_fx_magic, 3Ch ; '<'
@@ -216,32 +220,33 @@ loc_1C24F:                              ; CODE XREF: sub_1C1EA+54↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C2A0:                              ; CODE XREF: sub_1C1EA+69↑j
+loc_1C2A0:                              ; CODE XREF: temple_donate+69↑j
                 mov     ax, 4
                 jmp     short loc_1C2A9
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C2A6:                              ; CODE XREF: sub_1C1EA+20↑j
+loc_1C2A6:                              ; CODE XREF: temple_donate+20↑j
                 mov     ax, 0Ch
 
-loc_1C2A9:                              ; CODE XREF: sub_1C1EA+B9↑j
+loc_1C2A9:                              ; CODE XREF: temple_donate+B9↑j
                 push    ax
-                call    temple_common_helper
+                call    temple_show_message
                 add     sp, 2
 
-loc_1C2B0:                              ; CODE XREF: sub_1C1EA+B3↑j
+loc_1C2B0:                              ; CODE XREF: temple_donate+B3↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C1EA       endp
+temple_donate   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (char, spell code, slot): checks price, charges, sets the spell bit in char[+51..56]
 ; Attributes: bp-based frame
 
-sub_1C2B4       proc near               ; CODE XREF: ovl_2TEMPLE:C8D8↓p
+guild_buy_spell proc near               ; CODE XREF: ovl_2TEMPLE:C8D8↓p
                                         ; mage_guild_menu+307↓p ...
 
 arg_0           = word ptr  4
@@ -261,7 +266,7 @@ arg_4           = word ptr  8
                 jmp     short loc_1C31C
 ; ---------------------------------------------------------------------------
 
-loc_1C2CE:                              ; CODE XREF: sub_1C2B4+13↑j
+loc_1C2CE:                              ; CODE XREF: guild_buy_spell+13↑j
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+26h], 0
                 jz      short loc_1C2DC
@@ -269,14 +274,14 @@ loc_1C2CE:                              ; CODE XREF: sub_1C2B4+13↑j
                 jmp     short loc_1C31C
 ; ---------------------------------------------------------------------------
 
-loc_1C2DC:                              ; CODE XREF: sub_1C2B4+21↑j
+loc_1C2DC:                              ; CODE XREF: guild_buy_spell+21↑j
                 mov     bx, [bp+arg_4]
                 shl     bx, 1
                 shl     bx, 1
                 push    word ptr [bx+58E4h]
                 push    word ptr [bx+58E2h]
                 push    [bp+arg_0]
-                call    sub_1C326
+                call    char_pay_gold
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_1C2FE
@@ -287,7 +292,7 @@ loc_1C2F8:                              ; CODE XREF: seg002:0651↑J
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C2FE:                              ; CODE XREF: sub_1C2B4+42↑j
+loc_1C2FE:                              ; CODE XREF: guild_buy_spell+42↑j
                 mov     bl, byte ptr [bp+arg_2]
                 and     bx, 7
                 mov     al, [bx+470Ch]
@@ -301,23 +306,24 @@ loc_1C308:                              ; CODE XREF: seg002:08F1↑J
                 or      [bx+si+51h], al
                 mov     ax, 4
 
-loc_1C31C:                              ; CODE XREF: sub_1C2B4+18↑j
-                                        ; sub_1C2B4+26↑j ...
+loc_1C31C:                              ; CODE XREF: guild_buy_spell+18↑j
+                                        ; guild_buy_spell+26↑j ...
                 push    ax
-                call    temple_common_helper
+                call    temple_show_message
                 add     sp, 2
                 pop     si
                 pop     bp
                 retn
-sub_1C2B4       endp
+guild_buy_spell endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (char, lo, hi) -> 1 if paid; redraws gold
 ; Attributes: bp-based frame
 
-sub_1C326       proc near               ; CODE XREF: sub_1C178+E↑p
-                                        ; sub_1C1B2+F↑p ...
+char_pay_gold   proc near               ; CODE XREF: temple_restore_condition+E↑p
+                                        ; temple_restore_alignment+F↑p ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -336,16 +342,16 @@ arg_4           = word ptr  8
                 cmp     [bx+66h], ax
                 jb      short loc_1C346
 
-loc_1C341:                              ; CODE XREF: sub_1C326+14↑j
+loc_1C341:                              ; CODE XREF: char_pay_gold+14↑j
                 mov     ax, 1
                 jmp     short loc_1C348
 ; ---------------------------------------------------------------------------
 
-loc_1C346:                              ; CODE XREF: sub_1C326+12↑j
-                                        ; sub_1C326+19↑j
+loc_1C346:                              ; CODE XREF: char_pay_gold+12↑j
+                                        ; char_pay_gold+19↑j
                 sub     ax, ax
 
-loc_1C348:                              ; CODE XREF: sub_1C326+1E↑j
+loc_1C348:                              ; CODE XREF: char_pay_gold+1E↑j
                 mov     [bp+var_2], ax
                 or      ax, ax
                 jz      short loc_1C399
@@ -380,19 +386,20 @@ loc_1C348:                              ; CODE XREF: sub_1C326+1E↑j
                 call    thk_text_put_number
                 add     sp, 8
 
-loc_1C399:                              ; CODE XREF: sub_1C326+27↑j
+loc_1C399:                              ; CODE XREF: char_pay_gold+27↑j
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C326       endp
+char_pay_gold   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (char, &spell, slot) -> price; spell list DGROUP:46DA, prices 46EE (4 per town)
 ; Attributes: bp-based frame
 
-sub_1C3A0       proc near               ; CODE XREF: mage_guild_menu+1ED↓p
+guild_offer_sorcerer_spell proc near    ; CODE XREF: mage_guild_menu+1ED↓p
 
 var_A           = byte ptr -0Ah
 var_8           = word ptr -8
@@ -461,7 +468,7 @@ arg_4           = word ptr  8
                 cmp     byte ptr [bx+0Fh], 2
                 jnz     short loc_1C497
 
-loc_1C431:                              ; CODE XREF: sub_1C3A0+89↑j
+loc_1C431:                              ; CODE XREF: guild_offer_sorcerer_spell+89↑j
                 mov     al, [bp+var_A]
                 cmp     [bx+23h], al
                 jb      short loc_1C497
@@ -492,7 +499,7 @@ loc_1C462:                              ; CODE XREF: seg002:086D↑J
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C471:                              ; CODE XREF: sub_1C3A0:loc_1C462↑j
+loc_1C471:                              ; CODE XREF: guild_offer_sorcerer_spell:loc_1C462↑j
                 test    [bp+var_4], 40h
                 jz      short loc_1C484
                 mov     ax, 64h ; 'd'
@@ -503,7 +510,7 @@ loc_1C471:                              ; CODE XREF: sub_1C3A0:loc_1C462↑j
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C484:                              ; CODE XREF: sub_1C3A0+D5↑j
+loc_1C484:                              ; CODE XREF: guild_offer_sorcerer_spell+D5↑j
                 test    [bp+var_4], 80h
                 jz      short loc_1C497
                 mov     ax, 3E8h
@@ -516,8 +523,8 @@ loc_1C48E:                              ; CODE XREF: seg002:0B31↑J
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C497:                              ; CODE XREF: sub_1C3A0+8F↑j
-                                        ; sub_1C3A0+97↑j ...
+loc_1C497:                              ; CODE XREF: guild_offer_sorcerer_spell+8F↑j
+                                        ; guild_offer_sorcerer_spell+97↑j ...
                 mov     ax, [bp+var_8]
                 mov     dx, [bp+var_6]
                 pop     si
@@ -526,8 +533,8 @@ loc_1C497:                              ; CODE XREF: sub_1C3A0+8F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1C4A2:                              ; CODE XREF: ovl_2TEMPLE:C7FD↓p
-                push    bp
+guild_offer_cleric_spell:               ; CODE XREF: ovl_2TEMPLE:C7FD↓p
+                push    bp              ; (char, &spell, slot) -> price; lists 46B2/46C6 (3 per town)
                 mov     bp, sp
                 sub     sp, 0Ah
                 push    si
@@ -582,7 +589,7 @@ loc_1C4A2:                              ; CODE XREF: ovl_2TEMPLE:C7FD↓p
                 add     sp, 2
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+0Fh], 3 ; CODE XREF: seg002:0879↑J
-sub_1C3A0       endp
+guild_offer_sorcerer_spell endp
 
                 jz      short loc_1C535
                 cmp     byte ptr [bx+0Fh], 1
@@ -650,8 +657,9 @@ loc_1C59B:                              ; CODE XREF: ovl_2TEMPLE:C533↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; 100 x town multiplier (DGROUP:46A8)
 
-sub_1C5A6       proc near               ; CODE XREF: ovl_2TEMPLE:C7E6↓p
+temple_donation_cost proc near          ; CODE XREF: ovl_2TEMPLE:C7E6↓p
                 mov     bl, g_map_id
                 sub     bh, bh
 
@@ -661,14 +669,15 @@ loc_1C5AC:                              ; CODE XREF: seg002:0885↑J
                 mul     word ptr [bx+46A8h]
                 sub     dx, dx
                 retn
-sub_1C5A6       endp
+temple_donation_cost endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; 100 x level x town multiplier if alignment changed
 ; Attributes: bp-based frame
 
-sub_1C5B8       proc near               ; CODE XREF: ovl_2TEMPLE:C7D9↓p
+temple_alignment_cost proc near         ; CODE XREF: ovl_2TEMPLE:C7D9↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -699,7 +708,7 @@ arg_0           = word ptr  4
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C5F4:                              ; CODE XREF: sub_1C5B8+2A↑j
+loc_1C5F4:                              ; CODE XREF: temple_alignment_cost+2A↑j
                 mov     bl, g_map_id
                 sub     bh, bh
                 shl     bx, 1
@@ -710,23 +719,24 @@ loc_1C5F4:                              ; CODE XREF: sub_1C5B8+2A↑j
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C60A:                              ; CODE XREF: sub_1C5B8+1A↑j
+loc_1C60A:                              ; CODE XREF: temple_alignment_cost+1A↑j
                 mov     ax, [bp+var_4]
                 mov     dx, [bp+var_2]
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C5B8       endp
+temple_alignment_cost endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; FFh (eradicated) 1000, dead(>=80h) 100, else 10, x level x multiplier
 ; Attributes: bp-based frame
 
-sub_1C616       proc near               ; CODE XREF: ovl_2TEMPLE:C7C9↓p
+temple_heal_cost proc near              ; CODE XREF: ovl_2TEMPLE:C7C9↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -747,7 +757,7 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C636:                              ; CODE XREF: sub_1C616+16↑j
+loc_1C636:                              ; CODE XREF: temple_heal_cost+16↑j
                 cmp     byte ptr [bx+26h], 80h
                 jb      short loc_1C644
                 mov     [bp+var_4], 64h ; 'd'
@@ -755,7 +765,7 @@ loc_1C636:                              ; CODE XREF: sub_1C616+16↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C644:                              ; CODE XREF: sub_1C616+24↑j
+loc_1C644:                              ; CODE XREF: temple_heal_cost+24↑j
                 cmp     byte ptr [bx+26h], 0
                 jnz     short loc_1C654
                 mov     si, bx
@@ -763,14 +773,14 @@ loc_1C644:                              ; CODE XREF: sub_1C616+24↑j
                 cmp     [bx+60h], ax
                 jz      short loc_1C65E
 
-loc_1C654:                              ; CODE XREF: sub_1C616+32↑j
+loc_1C654:                              ; CODE XREF: temple_heal_cost+32↑j
                 mov     [bp+var_4], 0Ah
 
-loc_1C659:                              ; CODE XREF: sub_1C616+2B↑j
+loc_1C659:                              ; CODE XREF: temple_heal_cost+2B↑j
                 mov     [bp+var_2], 0
 
-loc_1C65E:                              ; CODE XREF: sub_1C616+1D↑j
-                                        ; sub_1C616+3C↑j
+loc_1C65E:                              ; CODE XREF: temple_heal_cost+1D↑j
+                                        ; temple_heal_cost+3C↑j
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+71h], 0
                 jz      short loc_1C677
@@ -785,7 +795,7 @@ loc_1C66E:                              ; CODE XREF: seg002:0891↑J
                 push    ax
                 call    thk__aFulmul_assign
 
-loc_1C677:                              ; CODE XREF: sub_1C616+4F↑j
+loc_1C677:                              ; CODE XREF: temple_heal_cost+4F↑j
                 mov     bl, g_map_id
                 sub     bh, bh
                 shl     bx, 1
@@ -801,14 +811,14 @@ loc_1C677:                              ; CODE XREF: sub_1C616+4F↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C616       endp
+temple_heal_cost endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1C698       proc near               ; CODE XREF: sub_1C178+1B↑p
+char_heal_full  proc near               ; CODE XREF: temple_restore_condition+1B↑p
                                         ; ovl_2TEMPLE:C9DD↓p
 
 var_4           = word ptr -4
@@ -828,10 +838,10 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C6B2:                              ; CODE XREF: sub_1C698+12↑j
+loc_1C6B2:                              ; CODE XREF: char_heal_full+12↑j
                 sub     ax, ax
 
-loc_1C6B4:                              ; CODE XREF: sub_1C698+17↑j
+loc_1C6B4:                              ; CODE XREF: char_heal_full+17↑j
                 mov     [bp+var_4], ax
                 or      ax, ax
                 jz      short loc_1C6C4
@@ -839,12 +849,12 @@ loc_1C6B4:                              ; CODE XREF: sub_1C698+17↑j
                 mov     [bx+5Eh], ax
                 mov     [bx+74h], ax
 
-loc_1C6C4:                              ; CODE XREF: sub_1C698+21↑j
+loc_1C6C4:                              ; CODE XREF: char_heal_full+21↑j
                 mov     ax, [bp+var_4]
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C698       endp
+char_heal_full  endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -959,21 +969,21 @@ loc_1C763:                              ; CODE XREF: ovl_2TEMPLE:C780↓j
                 push    ax
                 push    ax
                 push    word ptr [bp-8]
-                call    sub_1C326
+                call    char_pay_gold
                 add     sp, 6
                 push    word ptr [bp-8]
-                call    sub_1C616
+                call    temple_heal_cost
                 add     sp, 2
                 mov     word_23132, ax
                 mov     word_23134, dx
                 push    word ptr [bp-8]
-                call    sub_1C5B8
+                call    temple_alignment_cost
                 add     sp, 2
                 mov     word_23136, ax
 
 loc_1C7E2:                              ; CODE XREF: seg002:0849↑J
                 mov     word_23138, dx
-                call    sub_1C5A6       ; CODE XREF: seg002:0B0D↑J
+                call    temple_donation_cost ; CODE XREF: seg002:0B0D↑J
                 mov     word_2313A, ax
                 mov     word_2313C, dx
                 sub     si, si
@@ -984,7 +994,7 @@ loc_1C7F5:                              ; CODE XREF: ovl_2TEMPLE:C80F↓j
                 lea     ax, [bp+si-4]
                 push    ax
                 push    word ptr [bp-8]
-                call    loc_1C4A2
+                call    guild_offer_cleric_spell
                 add     sp, 6
                 mov     [di], ax
                 mov     [di+2], dx
@@ -1066,7 +1076,7 @@ loc_1C89E:                              ; CODE XREF: ovl_2TEMPLE:C894↑j
                 or      ax, word_23134
                 jz      short loc_1C8E5
                 push    di
-                call    sub_1C178
+                call    temple_restore_condition
 
 loc_1C8AB:                              ; CODE XREF: ovl_2TEMPLE:C8BD↓j
                                         ; ovl_2TEMPLE:C8CD↓j
@@ -1079,7 +1089,7 @@ loc_1C8B0:                              ; CODE XREF: ovl_2TEMPLE:C899↑j
                 or      ax, word_23138
                 jz      short loc_1C8E5
                 push    di
-                call    sub_1C1B2
+                call    temple_restore_alignment
                 jmp     short loc_1C8AB
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1089,7 +1099,7 @@ loc_1C8C0:                              ; CODE XREF: ovl_2TEMPLE:C885↑j
                 or      ax, word_2313C
                 jz      short loc_1C8E5
                 push    di
-                call    sub_1C1EA
+                call    temple_donate
                 jmp     short loc_1C8AB
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1102,7 +1112,7 @@ loc_1C8D0:                              ; CODE XREF: ovl_2TEMPLE:C91F↓j
 loc_1C8D7:                              ; CODE XREF: ovl_2TEMPLE:C8F3↓j
                                         ; ovl_2TEMPLE:C8FD↓j
                 push    di
-                call    sub_1C2B4
+                call    guild_buy_spell
                 add     sp, 6
 
 loc_1C8DE:                              ; CODE XREF: ovl_2TEMPLE:C8AE↑j
@@ -1143,7 +1153,7 @@ loc_1C900:                              ; CODE XREF: ovl_2TEMPLE:C92E↓j
                 push    ax
                 push    ax
                 push    di
-                call    sub_1C326
+                call    char_pay_gold
                 add     sp, 6
                 jmp     short loc_1C8E5
 ; ---------------------------------------------------------------------------
@@ -1244,7 +1254,7 @@ loc_1C95F:                              ; CODE XREF: ovl_2TEMPLE:C954↑j
 
 loc_1C9DC:                              ; CODE XREF: ovl_2TEMPLE:C9D3↑j
                 push    bx
-                call    sub_1C698
+                call    char_heal_full
                 add     sp, 2
                 mov     [bp-0Ch], ax
 
@@ -1347,6 +1357,7 @@ loc_1CA76:                              ; CODE XREF: ovl_2TEMPLE:CA60↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; Restore cond/algn, donations, spell shops
 ; Attributes: bp-based frame
 
 temple_menu     proc near               ; CODE XREF: seg002:0801↑J
@@ -1730,7 +1741,7 @@ loc_1CD81:                              ; CODE XREF: mage_guild_menu+1FF↓j
                 lea     ax, [bp+si+var_4]
                 push    ax
                 push    [bp+var_6]
-                call    sub_1C3A0
+                call    guild_offer_sorcerer_spell
                 add     sp, 6
                 mov     [di], ax
                 mov     [di+2], dx
@@ -1840,7 +1851,7 @@ loc_1CE1D:                              ; CODE XREF: mage_guild_menu+197↑j
                 push    ax
                 push    ax
                 push    [bp+var_6]
-                call    sub_1C326
+                call    char_pay_gold
                 add     sp, 6
 
 loc_1CE66:                              ; CODE XREF: mage_guild_menu+287↑j
@@ -1878,7 +1889,7 @@ loc_1CE9D:                              ; CODE XREF: mage_guild_menu+326↓j
                 sub     ah, ah
                 push    ax
                 push    [bp+var_6]
-                call    sub_1C2B4
+                call    guild_buy_spell
                 add     sp, 6
                 mov     word_23118, 0FFFFh
                 jmp     loc_1CF37
@@ -1918,7 +1929,7 @@ loc_1CED4:                              ; CODE XREF: mage_guild_menu+2E9↑j
                 sub     ah, ah
                 push    ax
                 push    [bp+var_6]
-                call    sub_1C2B4
+                call    guild_buy_spell
                 add     sp, 6
                 jmp     short loc_1CF37
 ; ---------------------------------------------------------------------------
@@ -1932,7 +1943,7 @@ loc_1CEF0:                              ; CODE XREF: mage_guild_menu+2EE↑j
                 push    ax
                 push    ax
                 push    [bp+var_6]
-                call    sub_1C326
+                call    char_pay_gold
                 add     sp, 6
                 jmp     short loc_1CF3C
 ; ---------------------------------------------------------------------------

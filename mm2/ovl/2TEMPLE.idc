@@ -28,7 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
-	set_name	(0X1C130,	"temple_common_helper");
+	set_name	(0X1C130,	"temple_show_message");
 	create_insn	(x=0X1C133);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C13F);
@@ -44,6 +44,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C16B);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C178);
+	set_name	(0X1C178,	"temple_restore_condition");
 	create_insn	(x=0X1C183);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1C189);
@@ -58,6 +59,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C1AD);
 	op_hex		(x,	1);
 	create_insn	(0X1C1B2);
+	set_name	(0X1C1B2,	"temple_restore_alignment");
 	create_insn	(x=0X1C1BE);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1C1C4);
@@ -68,6 +70,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C1E3);
 	op_hex		(x,	1);
 	create_insn	(0X1C1EA);
+	set_name	(0X1C1EA,	"temple_donate");
 	create_insn	(x=0X1C1ED);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C1F0);
@@ -91,6 +94,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C2AD);
 	op_hex		(x,	1);
 	create_insn	(0X1C2B4);
+	set_name	(0X1C2B4,	"guild_buy_spell");
 	create_insn	(x=0X1C2B8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1C2BB);
@@ -122,6 +126,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C320);
 	op_hex		(x,	1);
 	create_insn	(0X1C326);
+	set_name	(0X1C326,	"char_pay_gold");
 	create_insn	(x=0X1C329);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C32C);
@@ -150,6 +155,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C399);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C3A0);
+	set_name	(0X1C3A0,	"guild_offer_sorcerer_spell");
 	create_insn	(x=0X1C3A3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C3A9);
@@ -225,7 +231,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1C49A);
 	op_stkvar	(x,	1);
+	set_cmt	(0X1C4A2,	"(char, &spell, slot) -> price; lists 46B2/46C6 (3 per town)",	0);
 	create_insn	(0X1C4A2);
+	set_name	(0X1C4A2,	"guild_offer_cleric_spell");
 	create_insn	(x=0X1C4A5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C4AB);
@@ -277,9 +285,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C588);
 	op_hex		(x,	1);
 	create_insn	(0X1C5A6);
+	set_name	(0X1C5A6,	"temple_donation_cost");
 	create_insn	(x=0X1C5AC);
 	op_hex		(x,	1);
 	create_insn	(0X1C5B8);
+	set_name	(0X1C5B8,	"temple_alignment_cost");
 	create_insn	(x=0X1C5BB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C5C1);
@@ -303,6 +313,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C60D);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C616);
+	set_name	(0X1C616,	"temple_heal_cost");
 	create_insn	(x=0X1C619);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C61F);
@@ -334,6 +345,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C690);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C698);
+	set_name	(0X1C698,	"char_heal_full");
 	create_insn	(x=0X1C69B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C69E);
@@ -721,39 +733,50 @@ static Functions_0(void) {
 
 	add_func    (0X1C130,0X1C177);
 	set_func_flags(0X1C130,0x5410);
+	set_func_cmt(0X1C130,	"(msg index 0-4) prints the 4 lines of a temple message from DGROUP:591E (STR.DAT) and animates", 0);
 	set_frame_size(0X1C130, 0X6, 2, 0);
 	add_func    (0X1C178,0X1C1B2);
 	set_func_flags(0X1C178,0x5410);
+	set_func_cmt(0X1C178,	"pay heal cost, condition := 0, full HP", 0);
 	set_frame_size(0X1C178, 0, 2, 0);
 	add_func    (0X1C1B2,0X1C1E9);
 	set_func_flags(0X1C1B2,0x5410);
+	set_func_cmt(0X1C1B2,	"pay, alignment (+6A) := original (+0D)", 0);
 	set_frame_size(0X1C1B2, 0X2, 2, 0);
 	add_func    (0X1C1EA,0X1C2B4);
 	set_func_flags(0X1C1EA,0x5410);
+	set_func_cmt(0X1C1EA,	"pay; 90% chance of blessing: Light 200, Magic 60, Forces 60, Levitate/Walk/Guard 1...; sets temple bit (DGROUP:470C) in byte_1DC32, all 5 -> special event", 0);
 	set_frame_size(0X1C1EA, 0X2, 2, 0);
 	add_func    (0X1C2B4,0X1C326);
 	set_func_flags(0X1C2B4,0x5410);
+	set_func_cmt(0X1C2B4,	"(char, spell code, slot): checks price, charges, sets the spell bit in char[+51..56]", 0);
 	set_frame_size(0X1C2B4, 0X2, 2, 0);
 	add_func    (0X1C326,0X1C3A0);
 	set_func_flags(0X1C326,0x5410);
+	set_func_cmt(0X1C326,	"(char, lo, hi) -> 1 if paid; redraws gold", 0);
 	set_frame_size(0X1C326, 0X2, 2, 0);
 	add_func    (0X1C3A0,0X1C52D);
 	set_func_flags(0X1C3A0,0x5410);
+	set_func_cmt(0X1C3A0,	"(char, &spell, slot) -> price; spell list DGROUP:46DA, prices 46EE (4 per town)", 0);
 	set_frame_size(0X1C3A0, 0XC, 2, 0);
 	add_func    (0X1C5A6,0X1C5B8);
 	set_func_flags(0X1C5A6,0x5400);
+	set_func_cmt(0X1C5A6,	"100 x town multiplier (DGROUP:46A8)", 0);
 	set_frame_size(0X1C5A6, 0, 0, 0);
 	add_func    (0X1C5B8,0X1C615);
 	set_func_flags(0X1C5B8,0x5410);
+	set_func_cmt(0X1C5B8,	"100 x level x town multiplier if alignment changed", 0);
 	set_frame_size(0X1C5B8, 0X6, 2, 0);
 	add_func    (0X1C616,0X1C698);
 	set_func_flags(0X1C616,0x5410);
+	set_func_cmt(0X1C616,	"FFh (eradicated) 1000, dead(>=80h) 100, else 10, x level x multiplier", 0);
 	set_frame_size(0X1C616, 0X6, 2, 0);
 	add_func    (0X1C698,0X1C6CB);
 	set_func_flags(0X1C698,0x5410);
 	set_frame_size(0X1C698, 0X4, 2, 0);
 	add_func    (0X1CA88,0X1CB9C);
 	set_func_flags(0X1CA88,0x5410);
+	set_func_cmt(0X1CA88,	"Restore cond/algn, donations, spell shops", 0);
 	set_frame_size(0X1CA88, 0XA, 2, 0);
 	add_func    (0X1CB9C,0X1CF5D);
 	set_func_flags(0X1CB9C,0x5410);

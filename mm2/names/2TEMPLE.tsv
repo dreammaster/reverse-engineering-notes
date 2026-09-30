@@ -1,4 +1,15 @@
-# 2TEMPLE.OVL: Temple and Mage Guild
-1C130	temple_common_helper
-1CA88	temple_menu
+# 2TEMPLE.OVL: Temple (A restore condition, B restore alignment, C donate, D-F buy cleric spells, G gather gold) and Mage Guild
+1C130	temple_show_message	(msg index 0-4) prints the 4 lines of a temple message from DGROUP:591E (STR.DAT) and animates
+1C178	temple_restore_condition	pay heal cost, condition := 0, full HP
+1C1B2	temple_restore_alignment	pay, alignment (+6A) := original (+0D)
+1C1EA	temple_donate	pay; 90% chance of blessing: Light 200, Magic 60, Forces 60, Levitate/Walk/Guard 1...; sets temple bit (DGROUP:470C) in byte_1DC32, all 5 -> special event
+1C2B4	guild_buy_spell	(char, spell code, slot): checks price, charges, sets the spell bit in char[+51..56]
+1C326	char_pay_gold	(char, lo, hi) -> 1 if paid; redraws gold
+1C3A0	guild_offer_sorcerer_spell	(char, &spell, slot) -> price; spell list DGROUP:46DA, prices 46EE (4 per town)
+1C4A2	guild_offer_cleric_spell	(char, &spell, slot) -> price; lists 46B2/46C6 (3 per town)
+1C5A6	temple_donation_cost	100 x town multiplier (DGROUP:46A8)
+1C5B8	temple_alignment_cost	100 x level x town multiplier if alignment changed
+1C616	temple_heal_cost	FFh (eradicated) 1000, dead(>=80h) 100, else 10, x level x multiplier
+1C698	char_heal_full
+1CA88	temple_menu	Restore cond/algn, donations, spell shops
 1CB9C	mage_guild_menu	" Mage Guild ", "Learn (A-D)"
