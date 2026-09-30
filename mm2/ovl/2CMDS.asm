@@ -1,0 +1,2246 @@
+; ===========================================================================
+
+; Segment type: Pure code
+ovl_2CMDS       segment byte public 'CODE' use16
+                assume cs:ovl_2CMDS
+                ;org 0C130h
+                assume es:nothing, ss:nothing, ds:DGROUP, fs:nothing, gs:nothing
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C130       proc near               ; CODE XREF: seg002:0615↑J
+                                        ; seg002:0645↑J ...
+                push    bp
+; ---------------------------------------------------------------------------
+                db  8Bh
+byte_1C132      db 0ECh, 83h, 0ECh, 2, 57h, 56h, 8Bh, 76h, 4, 8Bh, 56h
+                                        ; DATA XREF: seg002:0038↑o
+                db 6, 8Bh, 4Eh, 0FEh, 0EBh, 20h, 90h, 8Bh, 0CAh, 3, 0CEh
+                db 8Bh, 0D9h, 8Bh, 0F9h, 8Ah, 45h, 29h, 88h, 47h, 28h
+                db 8Ah, 45h, 2Fh, 88h, 47h, 2Eh, 42h, 8Bh, 0DAh, 8Ah, 40h
+                db 34h, 8Bh, 0D9h, 88h, 47h, 34h, 83h, 0FAh, 5, 75h, 0DCh
+                db 89h, 56h, 6, 8Bh, 5Eh, 4, 0C6h, 47h, 2Dh, 0, 0C6h, 47h
+                db 33h, 0, 0C6h, 47h, 39h, 0, 5Eh, 5Fh, 8Bh, 0E5h, 5Dh
+                db 0C3h, 55h, 8Bh, 0ECh, 83h, 0ECh, 2, 57h, 0C7h, 46h
+                db 0FEh, 4, 0, 83h, 7Eh, 4, 13h, 7Ch, 5, 0C7h, 46h, 0FEh
+                db 2 dup(0), 0B8h, 1, 0, 50h, 0E8h, 58h, 0ACh, 83h, 0C4h
+                db 2, 0B8h, 14h, 0, 50h, 8Bh, 46h, 0FEh, 8Bh, 5Eh, 4, 0D1h
+                db 0E3h, 8Bh, 9Fh, 78h, 33h, 8Bh, 0D0h, 8Bh, 0FBh, 8Ch
+                db 0D8h, 8Eh, 0C0h, 0B9h, 2 dup(0FFh), 33h, 0C0h, 0F2h
+                db 0AEh, 0F7h, 0D1h, 49h, 3, 0D1h, 83h, 0EAh, 28h, 0F7h
+                db 0DAh, 0D1h, 0EAh, 52h, 0E8h, 5Eh, 0ADh, 83h, 0C4h, 4
+                db 83h, 7Eh, 0FEh, 0, 74h, 0Ah, 0FFh
+sub_1C130       endp ; sp-analysis failed
+
+byte_1C1DA      db 36h, 78h, 33h, 0E8h, 72h, 0ADh, 83h, 0C4h, 2, 8Bh, 5Eh
+                                        ; CODE XREF: seg002:08CD↑J
+                db 4, 0D1h, 0E3h, 0FFh, 0B7h
+byte_1C1EA      db 78h, 33h, 0E8h, 63h, 0ADh, 83h, 0C4h, 2, 83h, 7Eh, 0FEh
+                                        ; CODE XREF: seg002:07F5↑J
+                db 0, 74h, 0Ah, 0FFh, 36h, 7Ah, 33h, 0E8h, 53h, 0ADh, 83h
+                db 0C4h, 2, 0B8h, 32h, 0, 50h, 0E8h, 0F9h, 0AEh, 83h, 0C4h
+                db 2, 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 90h, 55h, 8Bh, 0ECh, 83h
+                db 0ECh, 4, 0FFh, 36h, 40h, 32h, 0E8h, 33h, 0ADh, 83h
+                db 0C4h, 2, 0B8h, 4, 0, 50h, 0E8h, 0B5h, 0AEh, 83h, 0C4h
+                db 2, 89h, 46h, 0FCh, 0C7h, 46h, 0FEh, 2 dup(0), 0B8h
+                db 82h, 0, 0F7h, 6Eh, 4, 8Bh, 0D8h
+byte_1C23C      db 8Bh, 46h, 0FCh, 8Bh, 56h, 0FEh
+                                        ; CODE XREF: seg002:08E5↑J
+byte_1C242      db 39h, 97h, 88h, 7Eh, 77h, 14h, 72h, 6, 39h, 87h, 86h
+                                        ; CODE XREF: seg002:0639↑J
+                db 7Eh, 73h, 0Ch, 0B8h, 14h, 0, 50h, 0E8h, 29h, 0FFh, 83h
+                db 0C4h, 2, 0EBh, 40h, 8Bh, 46h, 0FCh, 0Bh, 46h, 0FEh
+                db 74h, 38h, 0B8h, 82h, 0, 0F7h, 6Eh, 4, 8Bh, 0D8h, 8Bh
+                db 46h, 0FCh, 8Bh, 56h, 0FEh, 29h, 87h, 86h, 7Eh, 19h
+                db 97h, 88h, 7Eh, 83h, 7Eh, 6, 17h, 7Eh, 6, 0B8h, 13h
+                db 0, 0EBh, 0CEh, 90h, 0B8h, 82h, 0, 0F7h, 6Eh, 6, 8Bh
+                db 0D8h, 8Bh, 46h, 0FCh, 8Bh, 56h, 0FEh, 1, 87h, 86h, 7Eh
+                db 11h, 97h, 88h, 7Eh, 0B8h, 1, 0, 8Bh, 0E5h, 5Dh, 0C3h
+                db 90h, 55h, 8Bh, 0ECh, 83h, 0ECh, 2, 0FFh, 36h, 40h, 32h
+                db 0E8h, 0A1h, 0ACh, 83h, 0C4h, 2, 0B8h, 4, 0, 50h, 0E8h
+                db 23h, 0AEh, 83h, 0C4h, 2, 89h, 46h
+byte_1C2C0      db 0FEh, 0B8h, 82h, 0, 0F7h, 6Eh, 4, 8Bh, 0D8h, 8Bh, 46h
+                                        ; CODE XREF: seg002:026D↑J
+                db 0FEh, 39h, 87h, 7Ch, 7Eh, 73h, 0Ch, 0B8h, 14h, 0, 50h
+                db 0E8h, 0A7h, 0FEh, 83h, 0C4h, 2, 0EBh, 1Eh, 0B8h, 82h
+                db 0, 0F7h, 6Eh, 4, 8Bh, 0D8h, 8Bh, 46h, 0FEh, 29h, 87h
+                db 7Ch, 7Eh, 0B8h, 82h, 0, 0F7h, 6Eh, 6, 8Bh, 0D8h, 8Bh
+                db 46h, 0FEh
+byte_1C2F8      db 1, 87h, 7Ch, 7Eh, 0B8h, 1, 0, 8Bh, 0E5h, 5Dh, 0C3h
+                                        ; CODE XREF: seg002:0651↑J
+                                        ; sub_1C48E+175↓p
+                db 90h, 55h, 8Bh, 0ECh, 83h
+byte_1C308      db 0ECh, 0Ah, 0C7h, 46h, 0FAh, 2 dup(0), 0FFh, 36h, 40h
+                                        ; CODE XREF: seg002:08F1↑J
+                db 32h, 0E8h, 3Ch, 0ACh, 83h, 0C4h, 2, 0B8h, 2, 0, 50h
+                db 0E8h, 0BEh, 0ADh, 83h, 0C4h, 2, 89h, 46h, 0FEh, 3Dh
+                db 28h, 0, 76h, 5, 0C7h, 46h, 0FAh, 14h, 0, 8Ah, 46h, 0FEh
+                db 88h, 46h, 0FCh, 0B8h, 82h, 0, 0F7h, 6Eh, 4, 8Bh, 0D8h
+                db 8Ah, 46h, 0FCh, 38h, 87h, 45h, 7Eh, 73h, 5, 0C7h, 46h
+                db 0FAh, 14h, 0, 0B8h, 82h, 0, 0F7h, 6Eh, 6, 8Bh, 0D8h
+                db 8Ah, 87h, 45h, 7Eh, 88h, 46h, 0F6h, 2, 46h, 0FCh, 88h
+                db 46h, 0F8h, 38h, 46h, 0F6h, 77h, 4, 3Ch, 28h, 76h, 5
+                db 0C7h, 46h, 0FAh, 14h, 0, 83h
+byte_1C370      db 7Eh, 0FAh, 0, 74h, 0Bh, 0FFh, 76h, 0FAh, 0E8h, 5, 0FEh
+                                        ; CODE XREF: seg002:0471↑J
+                db 83h, 0C4h, 2, 0EBh, 1Eh, 0B8h, 82h, 0, 0F7h, 6Eh, 4
+                db 8Bh, 0D8h, 8Ah, 46h, 0FCh, 28h, 87h, 45h, 7Eh, 0B8h
+                db 82h, 0, 0F7h, 6Eh, 6, 8Bh, 0D8h, 8Ah, 46h, 0FCh, 0
+                db 87h, 45h, 7Eh, 0B8h, 1, 0, 8Bh, 0E5h, 5Dh, 0C3h, 90h
+                db 55h, 8Bh, 0ECh, 83h, 0ECh, 0Ch, 57h, 56h, 0C7h, 46h
+                db 0FEh, 2 dup(0), 0B8h, 82h, 0, 0F7h, 6Eh, 4, 5, 20h
+                db 7Eh, 89h, 46h, 0F4h, 0B8h, 82h, 0, 0F7h, 6Eh, 6, 5
+                db 20h, 7Eh, 89h, 46h, 0FCh, 0B8h, 0A2h, 33h, 50h, 0E8h
+                db 80h, 0ABh, 83h, 0C4h, 2, 0B8h, 66h, 0, 50h, 0B8h, 41h
+                db 0, 50h, 0E8h, 0E2h, 0AAh, 83h, 0C4h, 4, 2Ah, 0E4h, 50h
+                db 0E8h, 39h, 0ABh, 83h, 0C4h, 2, 8Bh, 0F8h, 83h, 0FFh
+                db 1Bh, 75h, 5, 0B8h, 1, 0
+byte_1C3F6      db 0EBh, 2, 2Bh, 0C0h, 8Bh, 0F0h, 0Bh, 0F6h, 75h, 0Ch
+                                        ; CODE XREF: seg002:047D↑J
+                db 8Bh, 5Eh, 0F4h, 80h, 79h, 0F9h, 1, 1Bh, 0C0h, 40h, 8Bh
+                db 0F0h, 0Bh, 0F6h, 74h, 0C5h, 89h, 7Eh, 0F6h, 89h, 76h
+                db 0FAh, 83h, 0FFh, 1Bh, 74h, 69h, 0FFh, 46h, 0FEh, 2Bh
+                db 0C9h, 8Bh, 56h, 0FCh, 8Bh, 0F1h, 8Bh, 0DAh, 80h, 78h
+                db 3Ah, 0, 75h, 15h, 89h, 4Eh, 0F8h, 83h, 0F9h, 6, 75h
+                db 15h, 0B8h, 2, 0, 50h, 0E8h, 44h, 0FDh, 83h, 0C4h, 2
+                db 0EBh, 43h, 90h, 41h, 83h, 0F9h, 6, 7Dh, 0E5h, 0EBh
+                db 0D9h, 83h, 6Eh, 0F6h, 41h, 8Bh, 76h, 0F6h, 3, 76h, 0F4h
+                db 8Bh, 7Eh, 0F8h, 3, 7Eh, 0FCh, 8Ah, 44h, 3Ah, 88h, 45h
+                db 3Ah, 8Ah, 44h
+byte_1C462      db 40h, 88h, 45h, 40h, 8Ah, 44h, 46h, 88h, 45h, 46h, 0C6h
+                                        ; CODE XREF: seg002:086D↑J
+                db 44h, 3Ah, 0, 0C6h, 44h, 40h, 0, 0C6h, 44h, 46h, 0, 0FFh
+                db 76h, 0F6h, 0FFh, 76h, 0F4h, 0E8h, 35h, 0ADh, 83h, 0C4h
+                db 4, 8Bh, 46h, 0FEh, 5Eh, 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 90h
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C48E       proc near               ; CODE XREF: seg002:0B31↑J
+
+var_E           = word ptr -0Eh
+var_C           = word ptr -0Ch
+var_A           = word ptr -0Ah
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+arg_2           = word ptr  6
+arg_4           = word ptr  8
+
+; FUNCTION CHUNK AT C67A SIZE 00000026 BYTES
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Eh
+                push    di
+                push    si
+                mov     [bp+var_2], 0
+                mov     ax, [bp+arg_0]
+                shl     ax, 1
+                add     ax, 416h
+                mov     [bp+var_C], ax
+                mov     [bp+var_E], ax
+
+loc_1C4A9:                              ; CODE XREF: sub_1C48E+19B↓j
+                mov     ax, 14h
+                push    ax
+                mov     ax, 8
+                push    ax
+                call    thk_res_1676
+                add     sp, 4
+                mov     ax, 33AFh
+                push    ax
+                call    thk_res_1726
+                add     sp, 2
+                push    word_20A88
+                call    thk_res_1726
+                add     sp, 2
+                push    word_20A8C
+                call    thk_res_1726
+                add     sp, 2
+                mov     ax, 15h
+                push    ax
+                mov     ax, 11h
+                push    ax
+                call    thk_res_1676
+                add     sp, 4
+                push    word_20A8A
+                call    thk_res_1726
+                add     sp, 2
+                push    word_20A8E
+                call    thk_res_1726
+                add     sp, 2
+                mov     ax, [bp+var_E]
+                mov     [bp+var_A], ax
+
+loc_1C4FD:                              ; CODE XREF: sub_1C48E+95↓j
+                mov     si, 1
+                mov     ax, 34h ; '4'
+                push    ax
+                mov     ax, 31h ; '1'
+                push    ax
+                call    thk_res_3268
+                add     sp, 4
+                sub     ah, ah
+                mov     di, ax
+                cmp     ax, 31h ; '1'
+                jnz     short loc_1C521
+                mov     bx, [bp+var_A]
+                cmp     word ptr [bx], 18h
+                jl      short loc_1C521
+                sub     si, si
+
+loc_1C521:                              ; CODE XREF: sub_1C48E+87↑j
+                                        ; sub_1C48E+8F↑j
+                or      si, si
+                jz      short loc_1C4FD
+                sub     si, si
+                cmp     di, 1Bh
+                jnz     short loc_1C531
+
+loc_1C52C:                              ; CODE XREF: seg002:0879↑J
+                mov     [bp+var_2], 1Bh
+
+loc_1C531:                              ; CODE XREF: sub_1C48E+9C↑j
+                cmp     di, 1Bh
+                jz      short loc_1C5A9
+                mov     ax, 15h
+                push    ax
+                mov     ax, 26h ; '&'
+                push    ax
+                mov     ax, 14h
+                push    ax
+                mov     ax, 1
+                push    ax
+                call    thk_res_3292
+                add     sp, 8
+                mov     ax, 14h
+                push    ax
+                mov     ax, 0Fh
+                push    ax
+                call    thk_res_1676
+                add     sp, 4
+                mov     ax, 33B9h
+                push    ax
+                call    thk_res_1726
+                add     sp, 2
+                mov     ax, word_1DC76
+                add     ax, 30h ; '0'
+                push    ax
+                call    thk_res_0D22
+                add     sp, 2
+                mov     ax, 33C2h
+                push    ax
+                call    thk_res_1726
+                add     sp, 2
+                mov     al, byte ptr word_1DC76
+                sub     ah, ah
+                add     ax, 30h ; '0'
+                push    ax
+                mov     ax, 31h ; '1'
+                push    ax
+                call    thk_res_3268
+                add     sp, 4
+                sub     ah, ah
+                mov     [bp+var_2], ax
+                mov     ax, 14h
+                push    ax
+                mov     ax, 19h
+                push    ax
+                mov     ax, 14h
+                push    ax
+                mov     ax, 0Fh
+                push    ax
+                call    thk_res_3292
+                add     sp, 8
+
+loc_1C5A9:                              ; CODE XREF: sub_1C48E+A6↑j
+                                        ; seg002:0885↑J
+                cmp     [bp+var_2], 1Bh
+                jz      short loc_1C61D
+                mov     bx, [bp+var_2]
+                shl     bx, 1
+                mov     ax, [bx+3B4h]
+                mov     [bp+var_2], ax
+                mov     bx, [bp+var_C]
+                mov     ax, [bx]
+
+loc_1C5C0:                              ; CODE XREF: seg002:029D↑J
+                mov     [bp+var_6], ax
+                mov     ax, 14h
+                push    ax
+                mov     ax, 0Fh
+                push    ax
+                call    thk_res_1676
+                add     sp, 4
+                mov     ax, di
+                cmp     ax, 31h ; '1'
+                jnz     short loc_1C5E4
+
+loc_1C5D8:                              ; CODE XREF: seg002:01A1↑J
+                push    [bp+var_2]
+                push    [bp+var_6]
+                call    near ptr byte_1C1EA+28h
+                jmp     short loc_1C618
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C5E4:                              ; CODE XREF: sub_1C48E+148↑j
+                mov     ax, di
+                cmp     ax, 32h ; '2'
+                jnz     short loc_1C5F6
+                push    [bp+var_2]
+                push    [bp+var_6]
+                call    near ptr byte_1C242+62h
+                jmp     short loc_1C618
+; ---------------------------------------------------------------------------
+
+loc_1C5F6:                              ; CODE XREF: sub_1C48E+15B↑j
+                mov     ax, di
+                cmp     ax, 33h ; '3'
+                jnz     short loc_1C608
+                push    [bp+var_2]
+                push    [bp+var_6]
+                call    near ptr byte_1C2F8+0Ch
+                jmp     short loc_1C618
+; ---------------------------------------------------------------------------
+
+loc_1C608:                              ; CODE XREF: sub_1C48E+16D↑j
+                mov     ax, di
+                cmp     ax, 34h ; '4'
+                jnz     short loc_1C61D
+                push    [bp+var_2]
+                push    [bp+var_6]
+                call    near ptr byte_1C370+36h
+
+loc_1C618:                              ; CODE XREF: sub_1C48E+153↑j
+                                        ; sub_1C48E+166↑j ...
+                add     sp, 4
+                mov     si, ax
+
+loc_1C61D:                              ; CODE XREF: sub_1C48E+11F↑j
+                                        ; sub_1C48E+17F↑j
+                or      si, si
+                jz      short loc_1C624
+                mov     di, 1Bh
+
+loc_1C624:                              ; CODE XREF: sub_1C48E+191↑j
+                cmp     di, 1Bh
+                jz      short loc_1C62C
+                jmp     loc_1C4A9
+; ---------------------------------------------------------------------------
+
+loc_1C62C:                              ; CODE XREF: sub_1C48E+199↑j
+                mov     [bp+var_8], di
+                mov     [bp+var_4], si
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1C638:                              ; CODE XREF: sub_1C6F2+D7↓p
+                push    bp
+                mov     bp, sp
+                push    si
+                mov     si, [bp+arg_4]
+                mov     bx, [bp+arg_0]
+                cmp     byte ptr [bx+si+40h], 0
+                jnz     short loc_1C64E
+                mov     ax, 10h
+                jmp     short loc_1C696
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C64E:                              ; CODE XREF: sub_1C48E+1B8↑j
+                mov     si, [bp+arg_4]
+                add     si, bx
+                dec     byte ptr [si+40h]
+                jnz     short loc_1C660
+                mov     byte ptr [si+3Ah], 0FFh
+                mov     byte ptr [si+46h], 0
+
+loc_1C660:                              ; CODE XREF: sub_1C48E+1C8↑j
+                mov     bx, [bp+arg_2]
+                cmp     byte ptr [bx+0Fh], 80h
+                jb      short loc_1C67A
+                mov     al, [bx+0Fh]
+                sub     ah, ah
+sub_1C48E       endp
+
+
+loc_1C66E:                              ; CODE XREF: seg002:0891↑J
+                push    ax
+                push    word ptr [bp+4]
+                call    loc_1CED8
+                add     sp, 4
+                jmp     short loc_1C69D
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_1C48E
+
+loc_1C67A:                              ; CODE XREF: sub_1C48E+1D9↑j
+                mov     ax, [bp+arg_4]
+                add     ax, 6
+                push    ax
+                mov     bx, [bp+arg_2]
+                mov     al, [bx+0Fh]
+                sub     ah, ah
+                push    ax
+                push    [bp+arg_0]
+                call    loc_1CF34
+                add     sp, 6
+                mov     ax, 11h
+
+loc_1C696:                              ; CODE XREF: sub_1C48E+1BD↑j
+                push    ax
+                call    near ptr byte_1C132+4Eh
+                add     sp, 2
+
+loc_1C69D:                              ; CODE XREF: ovl_2CMDS:C678↑j
+                pop     si
+                pop     bp
+                retn
+; END OF FUNCTION CHUNK FOR sub_1C48E
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C6A0       proc near               ; CODE XREF: sub_1C6F2+E9↓p
+
+arg_0           = word ptr  4
+arg_2           = word ptr  6
+arg_4           = word ptr  8
+
+                push    bp
+                mov     bp, sp
+                push    si
+                mov     si, [bp+arg_4]
+                mov     bx, [bp+arg_0]
+                cmp     byte ptr [bx+si+2Eh], 0
+                jnz     short loc_1C6B6
+                mov     ax, 10h
+                jmp     short loc_1C6E8
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C6B6:                              ; CODE XREF: sub_1C6A0+E↑j
+                mov     bx, [bp+arg_2]
+                cmp     byte ptr [bx+0Fh], 80h
+                jb      short loc_1C6D0
+                mov     al, [bx+0Fh]
+                sub     ah, ah
+                push    ax
+                push    [bp+arg_0]
+                call    loc_1CED8
+                add     sp, 4
+                jmp     short loc_1C6EF
+; ---------------------------------------------------------------------------
+
+loc_1C6D0:                              ; CODE XREF: sub_1C6A0+1D↑j
+                push    [bp+arg_4]
+                mov     bx, [bp+arg_2]
+                mov     al, [bx+0Fh]
+                sub     ah, ah
+                push    ax
+                push    [bp+arg_0]
+                call    loc_1CF34
+                add     sp, 6
+                mov     ax, 11h
+
+loc_1C6E8:                              ; CODE XREF: sub_1C6A0+13↑j
+                push    ax
+                call    near ptr byte_1C132+4Eh
+                add     sp, 2
+
+loc_1C6EF:                              ; CODE XREF: sub_1C6A0+2E↑j
+                pop     si
+                pop     bp
+                retn
+sub_1C6A0       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C6F2       proc near               ; CODE XREF: seg002:0B19↑J
+
+var_8           = word ptr -8
+var_6           = byte ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 8
+                push    di
+                push    si
+                mov     ax, 14h
+                push    ax
+                mov     ax, 9
+                push    ax
+                call    thk_res_1676
+                add     sp, 4
+                mov     ax, 33C5h
+                push    ax
+                call    thk_res_1726
+                add     sp, 2
+
+loc_1C712:                              ; CODE XREF: sub_1C6F2+78↓j
+                mov     ax, 66h ; 'f'
+                push    ax
+                mov     ax, 31h ; '1'
+                push    ax
+                call    thk_res_3268
+                add     sp, 4
+                sub     ah, ah
+                push    ax
+                call    thk_res_00E8
+                add     sp, 2
+                mov     si, ax
+                cmp     si, 1Bh
+                jnz     short loc_1C736
+                mov     ax, 1
+                jmp     short loc_1C738
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C736:                              ; CODE XREF: sub_1C6F2+3C↑j
+                sub     ax, ax
+
+loc_1C738:                              ; CODE XREF: sub_1C6F2+41↑j
+                mov     di, ax
+
+loc_1C73A:                              ; CODE XREF: seg002:089D↑J
+                mov     ax, si
+                cmp     ax, 31h ; '1'
+                jb      short loc_1C750
+                cmp     ax, 36h ; '6'
+                ja      short loc_1C750
+                mov     bx, [bp+arg_0]
+                cmp     byte ptr [bx+si-9], 1
+                jmp     short loc_1C763
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C750:                              ; CODE XREF: sub_1C6F2+4D↑j
+                                        ; sub_1C6F2+52↑j
+                mov     ax, si
+                cmp     ax, 41h ; 'A'
+                jb      short loc_1C768
+                cmp     ax, 46h ; 'F'
+                ja      short loc_1C768
+                mov     bx, [bp+arg_0]
+                cmp     byte ptr [bx+si-7], 1
+
+loc_1C763:                              ; CODE XREF: sub_1C6F2+5B↑j
+                sbb     ax, ax
+                inc     ax
+                mov     di, ax
+
+loc_1C768:                              ; CODE XREF: sub_1C6F2+63↑j
+                                        ; sub_1C6F2+68↑j
+                or      di, di
+                jz      short loc_1C712
+                mov     [bp+var_2], di
+                mov     [bp+var_4], si
+                cmp     si, 1Bh
+                jz      short loc_1C7E1
+                cmp     si, 41h ; 'A'
+                jb      short loc_1C78A
+                cmp     si, 46h ; 'F'
+                ja      short loc_1C78A
+                mov     bx, [bp+arg_0]
+                mov     al, [bx+si-7]
+                jmp     short loc_1C793
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C78A:                              ; CODE XREF: sub_1C6F2+88↑j
+                                        ; sub_1C6F2+8D↑j
+                mov     si, [bp+var_4]
+                mov     bx, [bp+arg_0]
+                mov     al, [bx+si-9]
+
+loc_1C793:                              ; CODE XREF: sub_1C6F2+95↑j
+                mov     [bp+var_6], al
+                mov     al, 14h
+                mul     [bp+var_6]
+                add     ax, 6960h
+                mov     [bp+var_8], ax
+                mov     bx, ax
+                cmp     byte ptr [bx+0Fh], 0
+                jnz     short loc_1C7B6
+                mov     ax, 0Fh
+                push    ax
+                call    near ptr byte_1C132+4Eh
+                add     sp, 2
+                jmp     short loc_1C7E1
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C7B6:                              ; CODE XREF: sub_1C6F2+B5↑j
+                cmp     [bp+var_4], 41h ; 'A'
+                jb      short loc_1C7CE
+                mov     ax, [bp+var_4]
+                sub     ax, 41h ; 'A'
+                push    ax
+                push    [bp+var_8]
+                push    [bp+arg_0]
+                call    loc_1C638
+                jmp     short loc_1C7DE
+; ---------------------------------------------------------------------------
+
+loc_1C7CE:                              ; CODE XREF: sub_1C6F2+C8↑j
+                mov     ax, [bp+var_4]
+                sub     ax, 31h ; '1'
+                push    ax
+                push    [bp+var_8]
+                push    [bp+arg_0]
+                call    sub_1C6A0
+
+loc_1C7DE:                              ; CODE XREF: sub_1C6F2+DA↑j
+                add     sp, 6
+
+loc_1C7E1:                              ; CODE XREF: sub_1C6F2+83↑j
+                                        ; sub_1C6F2+C1↑j
+                pop     si
+
+loc_1C7E2:                              ; CODE XREF: seg002:0849↑J
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+                align 2
+sub_1C6F2       endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C7E8       proc near               ; CODE XREF: seg002:0B0D↑J
+
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 6
+                push    di
+                push    si
+                mov     ax, 14h
+                push    ax
+                mov     ax, 0Bh
+                push    ax
+                call    thk_res_1676
+                add     sp, 4
+                mov     ax, 33DCh
+                push    ax
+                call    thk_res_1726
+                add     sp, 2
+
+loc_1C808:                              ; CODE XREF: sub_1C7E8+4A↓j
+                mov     ax, 36h ; '6'
+                push    ax
+                mov     ax, 31h ; '1'
+                push    ax
+                call    thk_res_3268
+                add     sp, 4
+                sub     ah, ah
+                mov     si, ax
+                cmp     si, 1Bh
+                jz      short loc_1C827
+                mov     bx, [bp+arg_0]
+                cmp     [bx+si-9], ah
+                jz      short loc_1C82C
+
+loc_1C827:                              ; CODE XREF: sub_1C7E8+35↑j
+                mov     ax, 1
+                jmp     short loc_1C82E
+; ---------------------------------------------------------------------------
+
+loc_1C82C:                              ; CODE XREF: sub_1C7E8+3D↑j
+                sub     ax, ax
+
+loc_1C82E:                              ; CODE XREF: sub_1C7E8+42↑j
+                mov     di, ax
+                or      di, di
+                jz      short loc_1C808
+                mov     [bp+var_4], di
+                mov     [bp+var_6], si
+                cmp     si, 1Bh
+                jz      short loc_1C8A4
+                sub     cx, cx
+                mov     dx, [bp+arg_0]
+
+loc_1C844:                              ; CODE XREF: sub_1C7E8+80↓j
+                mov     si, cx
+                mov     bx, dx
+                cmp     byte ptr [bx+si+3Ah], 0
+                jnz     short loc_1C862
+
+loc_1C84E:                              ; CODE XREF: sub_1C7E8+7E↓j
+                mov     [bp+var_2], cx
+                cmp     cx, 6
+                jnz     short loc_1C86A
+                mov     ax, 2
+                push    ax
+                call    near ptr byte_1C132+4Eh
+                add     sp, 2
+                jmp     short loc_1C8A4
+; ---------------------------------------------------------------------------
+
+loc_1C862:                              ; CODE XREF: sub_1C7E8+64↑j
+                inc     cx
+                cmp     cx, 6
+                jge     short loc_1C84E
+                jmp     short loc_1C844
+; ---------------------------------------------------------------------------
+
+loc_1C86A:                              ; CODE XREF: sub_1C7E8+6C↑j
+                sub     [bp+var_6], 31h ; '1'
+                push    [bp+var_6]
+                push    [bp+arg_0]
+                call    loc_1CD54
+                add     sp, 4
+                mov     si, [bp+var_6]
+                add     si, [bp+arg_0]
+                mov     di, [bp+var_2]
+                add     di, [bp+arg_0]
+                mov     al, [si+28h]
+                mov     [di+3Ah], al
+                mov     al, [si+34h]
+                mov     [di+46h], al
+                mov     al, [si+2Eh]
+                mov     [di+40h], al
+                push    [bp+var_6]
+                push    [bp+arg_0]
+                call    sub_1C130
+                add     sp, 4
+
+loc_1C8A4:                              ; CODE XREF: sub_1C7E8+55↑j
+                                        ; sub_1C7E8+78↑j
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1C7E8       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C8AA       proc near               ; CODE XREF: sub_1C9E6:loc_1CB40↓p
+
+var_4           = byte ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+arg_2           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    si
+                mov     [bp+var_2], 0
+                mov     si, [bp+arg_2]
+                mov     bx, [bp+arg_0]
+                mov     al, [bx+si+3Ah]
+                mov     [bp+var_4], al
+                sub     ah, ah
+                push    ax
+                call    loc_1CFDE
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1C8E8
+                push    [bp+arg_0]
+                call    sub_1D234
+                add     sp, 2
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jnz     short loc_1C8E2
+                jmp     loc_1C9D8
+; ---------------------------------------------------------------------------
+
+loc_1C8E2:                              ; CODE XREF: sub_1C8AA+33↑j
+                                        ; sub_1C8AA+5C↓j
+                mov     ax, 6
+                jmp     loc_1C9D1
+; ---------------------------------------------------------------------------
+
+loc_1C8E8:                              ; CODE XREF: sub_1C8AA+23↑j
+                mov     al, [bp+var_4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1CFF6
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1C922
+                push    [bp+arg_0]
+                call    sub_1D234
+                add     sp, 2
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jnz     short loc_1C8E2
+                push    [bp+arg_0]
+                call    near ptr byte_1D0C2+5Ah
+                add     sp, 2
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jnz     short loc_1C91B
+                jmp     loc_1C9D8
+; ---------------------------------------------------------------------------
+
+loc_1C91B:                              ; CODE XREF: sub_1C8AA+6C↑j
+                mov     ax, 0Ch
+                jmp     loc_1C9D1
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C922:                              ; CODE XREF: sub_1C8AA+4C↑j
+                mov     al, [bp+var_4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D00E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1C94C
+                push    [bp+arg_0]
+                call    sub_1D162
+                add     sp, 2
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jnz     short loc_1C945
+                jmp     loc_1C9D8
+; ---------------------------------------------------------------------------
+
+loc_1C945:                              ; CODE XREF: sub_1C8AA+96↑j
+                mov     ax, 7
+                jmp     loc_1C9D1
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C94C:                              ; CODE XREF: sub_1C8AA+86↑j
+                mov     al, [bp+var_4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D026
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1C988
+                push    [bp+arg_0]
+                call    near ptr byte_1D0C2+5Ah
+                add     sp, 2
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jz      short loc_1C972
+                mov     ax, 8
+                jmp     short loc_1C9D1
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C972:                              ; CODE XREF: sub_1C8AA+C0↑j
+                push    [bp+arg_0]
+                call    near ptr byte_1D0C2+14h
+                add     sp, 2
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jz      short loc_1C9D8
+                mov     ax, 0Dh
+                jmp     short loc_1C9D1
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C988:                              ; CODE XREF: sub_1C8AA+B0↑j
+                mov     al, [bp+var_4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D03E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1C9AE
+                push    [bp+arg_0]      ; CODE XREF: seg002:07DD↑J
+                call    sub_1D1A8
+                add     sp, 2
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jz      short loc_1C9D8
+                mov     ax, 9
+                jmp     short loc_1C9D1
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1C9AE:                              ; CODE XREF: sub_1C8AA+EC↑j
+                mov     al, [bp+var_4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D056
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1C9D8
+                push    [bp+arg_0]
+                call    sub_1D1EE
+                add     sp, 2
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jz      short loc_1C9D8
+                mov     ax, 0Ah
+
+loc_1C9D1:                              ; CODE XREF: sub_1C8AA+3B↑j
+                                        ; sub_1C8AA+74↑j ...
+                push    ax
+                call    near ptr byte_1C132+4Eh
+                add     sp, 2
+
+loc_1C9D8:                              ; CODE XREF: sub_1C8AA+35↑j
+                                        ; sub_1C8AA+6E↑j ...
+                cmp     [bp+var_2], 1
+                sbb     ax, ax
+                neg     ax
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1C8AA       endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1C9E6       proc near               ; CODE XREF: seg002:0B01↑J
+
+var_C           = word ptr -0Ch
+var_A           = word ptr -0Ah
+var_8           = byte ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Ch
+                push    di
+                push    si
+                mov     [bp+var_4], 0
+                mov     ax, 14h
+                push    ax
+                mov     ax, 0Bh
+                push    ax
+                call    thk_res_1676
+                add     sp, 4
+                mov     ax, 33F0h
+                push    ax
+                call    thk_res_1726
+                add     sp, 2
+
+loc_1CA0B:                              ; CODE XREF: sub_1C9E6+58↓j
+                mov     ax, 66h ; 'f'
+                push    ax
+                mov     ax, 41h ; 'A'
+                push    ax
+                call    thk_res_3268
+                add     sp, 4
+                sub     ah, ah
+                push    ax
+                call    thk_res_00E8
+                add     sp, 2
+                mov     si, ax
+                cmp     si, 1Bh
+                jz      short loc_1CA32
+                mov     bx, [bp+arg_0]
+                cmp     byte ptr [bx+si-7], 0
+                jz      short loc_1CA38
+
+loc_1CA32:                              ; CODE XREF: sub_1C9E6+41↑j
+                mov     ax, 1
+                jmp     short loc_1CA3A
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1CA38:                              ; CODE XREF: sub_1C9E6+4A↑j
+                sub     ax, ax
+
+loc_1CA3A:                              ; CODE XREF: sub_1C9E6+4F↑j
+                mov     di, ax
+                or      di, di
+                jz      short loc_1CA0B
+                mov     [bp+var_6], di
+                mov     [bp+var_A], si
+                cmp     si, 1Bh
+                jnz     short loc_1CA4E
+                jmp     loc_1CB83
+; ---------------------------------------------------------------------------
+
+loc_1CA4E:                              ; CODE XREF: sub_1C9E6+63↑j
+                sub     [bp+var_A], 41h ; 'A'
+
+loc_1CA52:                              ; CODE XREF: seg002:0A89↑J
+                sub     cx, cx
+                mov     dx, [bp+arg_0]
+
+loc_1CA57:                              ; CODE XREF: sub_1C9E6+92↓j
+                mov     si, cx
+                mov     bx, dx
+                cmp     byte ptr [bx+si+28h], 0
+                jnz     short loc_1CA72
+
+loc_1CA61:                              ; CODE XREF: sub_1C9E6+90↓j
+                mov     [bp+var_2], cx
+                cmp     cx, 6
+                jnz     short loc_1CA7A
+                mov     ax, 2
+                push    ax
+
+loc_1CA6D:                              ; CODE XREF: sub_1C9E6+150↓j
+                call    near ptr byte_1C132+4Eh
+                jmp     short loc_1CADE
+; ---------------------------------------------------------------------------
+
+loc_1CA72:                              ; CODE XREF: sub_1C9E6+79↑j
+                inc     cx
+                cmp     cx, 6
+                jge     short loc_1CA61
+                jmp     short loc_1CA57
+; ---------------------------------------------------------------------------
+
+loc_1CA7A:                              ; CODE XREF: sub_1C9E6+81↑j
+                mov     si, [bp+var_A]
+                add     si, [bp+arg_0]
+                mov     al, 14h
+                mul     byte ptr [si+3Ah]
+                add     ax, 6960h
+
+loc_1CA88:                              ; CODE XREF: seg002:0801↑J
+                mov     [bp+var_C], ax
+                mov     al, [si+46h]
+                sub     ah, ah
+                mov     cl, 6
+                shr     ax, cl
+                mov     [bp+var_8], al
+                cmp     byte ptr [si+46h], 0FFh
+                jnz     short loc_1CAE4
+                mov     bx, [bp+arg_0]
+                or      byte ptr [bx+26h], 1
+                mov     ax, 3
+                push    ax
+                call    near ptr byte_1C132+4Eh
+                add     sp, 2
+                mov     ax, 0Ah
+                push    ax
+                mov     ax, 26h ; '&'
+                push    ax
+                mov     ax, 0Ah
+                push    ax
+                mov     ax, 1Ch
+                push    ax
+                call    thk_res_3292
+                add     sp, 8
+                mov     ax, 0Ah
+                push    ax
+                mov     ax, 1Ch
+                push    ax
+                call    thk_res_1676
+                add     sp, 4
+                mov     bx, [bp+arg_0]
+                mov     al, [bx+26h]
+                sub     ah, ah
+                push    ax
+                call    thk_res_28B6
+
+loc_1CADE:                              ; CODE XREF: sub_1C9E6+8A↑j
+                add     sp, 2
+                jmp     loc_1CB83
+; ---------------------------------------------------------------------------
+
+loc_1CAE4:                              ; CODE XREF: sub_1C9E6+B5↑j
+                mov     bx, [bp+arg_0]
+                mov     bl, [bx+0Fh]
+                sub     bh, bh
+                mov     al, [bx+3408h]
+                sub     ah, ah
+                mov     bx, [bp+var_C]
+                mov     cl, [bx+0Dh]
+                sub     ch, ch
+                test    ax, cx
+                jz      short loc_1CB03
+                mov     [bp+var_4], 4
+
+loc_1CB03:                              ; CODE XREF: sub_1C9E6+116↑j
+                cmp     [bp+var_8], 0
+                jz      short loc_1CB1F
+                mov     bl, [bp+var_8]
+                sub     bh, bh
+                mov     si, [bp+arg_0]
+                mov     al, [si+6Ah]
+                cmp     [bx+3404h], al
+                jz      short loc_1CB1F
+                mov     [bp+var_4], 5
+
+loc_1CB1F:                              ; CODE XREF: sub_1C9E6+121↑j
+                                        ; sub_1C9E6+132↑j
+                mov     bx, [bp+var_C]
+                cmp     byte ptr [bx+0Eh], 0F0h
+                jnz     short loc_1CB2D
+                mov     [bp+var_4], 0Eh
+
+loc_1CB2D:                              ; CODE XREF: sub_1C9E6+140↑j
+                cmp     [bp+var_4], 0
+                jz      short loc_1CB3A
+                push    [bp+var_4]
+                jmp     loc_1CA6D
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1CB3A:                              ; CODE XREF: sub_1C9E6+14B↑j
+                push    [bp+var_A]
+                push    [bp+arg_0]
+
+loc_1CB40:                              ; CODE XREF: seg002:0A65↑J
+                call    sub_1C8AA
+                add     sp, 4
+                or      ax, ax
+                jz      short loc_1CB83
+                mov     si, [bp+var_A]
+                add     si, [bp+arg_0]
+                mov     di, [bp+var_2]
+                add     di, [bp+arg_0]
+                mov     al, [si+3Ah]
+                mov     [di+28h], al
+                mov     al, [si+40h]
+                mov     [di+2Eh], al
+                mov     al, [si+46h]
+                mov     [di+34h], al
+                push    [bp+var_2]
+                push    [bp+arg_0]
+                call    loc_1CE12
+                add     sp, 4
+                push    [bp+var_A]
+                push    [bp+arg_0]
+                call    thk_res_3766
+                add     sp, 4
+                call    thk_res_4F3A
+
+loc_1CB83:                              ; CODE XREF: sub_1C9E6+65↑j
+                                        ; sub_1C9E6+FB↑j ...
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+                align 2
+sub_1C9E6       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1CB8A       proc near               ; CODE XREF: seg002:0AF5↑J
+
+var_C           = byte ptr -0Ch
+var_A           = byte ptr -0Ah
+var_8           = word ptr -8
+var_6           = byte ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+arg_2           = word ptr  6
+arg_4           = word ptr  8
+
+; FUNCTION CHUNK AT CCCC SIZE 00000008 BYTES
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    di
+                push    si
+                sub     di, di
+                mov     ax, 14h
+                push    ax
+                mov     ax, 0Ch
+                push    ax
+
+loc_1CB9C:                              ; CODE XREF: seg002:080D↑J
+                call    thk_res_1676
+                add     sp, 4
+                mov     ax, 3410h
+                push    ax
+                call    thk_res_1726
+                add     sp, 2
+                mov     si, [bp+var_4]
+
+loc_1CBAF:                              ; CODE XREF: sub_1CB8A+46↓j
+                                        ; sub_1CB8A+68↓j
+                mov     ax, 66h ; 'f'
+                push    ax
+                mov     ax, 41h ; 'A'
+                push    ax
+                call    thk_res_3268
+                add     sp, 4
+                sub     ah, ah
+                push    ax
+                call    thk_res_00E8
+                add     sp, 2
+                mov     si, ax
+                cmp     si, 1Bh
+                jz      short loc_1CBD2
+                cmp     ax, 46h ; 'F'
+                ja      short loc_1CBAF
+
+loc_1CBD2:                              ; CODE XREF: sub_1CB8A+41↑j
+                cmp     si, 1Bh
+                jnz     short loc_1CBDC
+                mov     ax, 1
+                jmp     short loc_1CBDE
+; ---------------------------------------------------------------------------
+
+loc_1CBDC:                              ; CODE XREF: seg002:01AD↑J
+                                        ; sub_1CB8A+4B↑j
+                sub     ax, ax
+
+loc_1CBDE:                              ; CODE XREF: sub_1CB8A+50↑j
+                mov     di, ax
+                or      di, di
+                jnz     short loc_1CBF0
+                mov     bx, [bp+arg_0]
+                cmp     byte ptr [bx+si-7], 1
+                sbb     ax, ax
+                inc     ax
+                mov     di, ax
+
+loc_1CBF0:                              ; CODE XREF: sub_1CB8A+58↑j
+                or      di, di
+                jz      short loc_1CBAF
+                mov     [bp+var_2], di
+                mov     [bp+var_4], si
+                cmp     si, 1Bh
+                jz      short loc_1CC0E
+                mov     ax, si
+                sub     ax, 41h ; 'A'
+                push    ax
+                push    [bp+arg_0]
+                call    thk_res_3766
+                add     sp, 4
+
+loc_1CC0E:                              ; CODE XREF: sub_1CB8A+73↑j
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1CC14:                              ; CODE XREF: sub_1CB8A+118↓p
+                                        ; sub_1CCD4+4E↓p
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    si
+                mov     ax, [bp+arg_0]
+                add     ax, 10h
+                mov     [bp+var_2], ax
+                mov     al, byte ptr [bp+arg_2]
+                sub     ah, ah
+                mov     si, ax
+                add     [bp+var_2], si
+                mov     [bp+var_4], 0
+                cmp     al, 5
+                ja      short loc_1CC43
+                mov     ax, [bp+arg_0]
+                add     ax, 6Bh ; 'k'
+                mov     [bp+var_4], ax
+                add     [bp+var_4], si
+
+loc_1CC43:                              ; CODE XREF: sub_1CB8A+AB↑j
+                mov     bx, [bp+arg_4]
+                mov     ax, [bp+var_4]
+                mov     [bx], ax
+                mov     ax, [bp+var_2]
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1CC54:                              ; CODE XREF: ovl_2CMDS:CE07↓p
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Ch
+                push    si
+                mov     si, [bp+arg_2]
+                add     si, [bp+arg_0]
+                mov     al, [si+28h]
+                mov     [bp+var_C], al
+                mov     al, 14h
+                mul     [bp+var_C]
+                mov     bx, ax
+                mov     al, [bx+696Eh]
+                mov     byte ptr [bp+var_2], al
+                mov     al, [si+34h]
+                and     al, 3Fh
+                mov     [bp+var_6], al
+                mov     al, byte ptr [bp+var_2]
+                sub     ah, ah
+                mov     cl, 4
+                shr     ax, cl
+                mov     byte ptr [bp+var_4], al
+                and     byte ptr [bp+var_2], 0Fh
+                jz      short loc_1CCCC
+                mov     al, byte ptr [bp+var_2]
+                add     [bp+var_6], al
+                lea     ax, [bp+var_A]
+                push    ax
+                mov     al, byte ptr [bp+var_4]
+                sub     ah, ah
+                push    ax
+                push    [bp+arg_0]
+                call    loc_1CC14
+                add     sp, 6
+                mov     [bp+var_8], ax
+                mov     al, [bp+var_6]
+                sub     ah, ah
+                mov     si, ax
+                push    si
+                push    [bp+var_8]
+                call    thk_res_35F0
+                add     sp, 4           ; CODE XREF: seg002:08FD↑J
+sub_1CB8A       endp
+
+                cmp     word ptr [bp-0Ah], 0
+                jz      short loc_1CCCC
+                push    si
+                push    word ptr [bp-0Ah]
+                call    thk_res_35F0
+                add     sp, 4
+; START OF FUNCTION CHUNK FOR sub_1CB8A
+
+loc_1CCCC:                              ; CODE XREF: sub_1CB8A+103↑j
+                                        ; ovl_2CMDS:CCC0↑j
+                call    thk_res_4F3A
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+; END OF FUNCTION CHUNK FOR sub_1CB8A
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1CCD4       proc near               ; CODE XREF: ovl_2CMDS:CECD↓p
+
+var_C           = byte ptr -0Ch
+var_A           = word ptr -0Ah
+var_8           = word ptr -8
+var_6           = byte ptr -6
+var_4           = byte ptr -4
+var_2           = byte ptr -2
+arg_0           = word ptr  4
+arg_2           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Ch
+                push    si
+                mov     si, [bp+arg_2]
+                add     si, [bp+arg_0]
+                mov     al, [si+28h]
+                mov     [bp+var_C], al
+                mov     al, 14h
+                mul     [bp+var_C]
+                mov     bx, ax
+                mov     al, [bx+696Eh]
+                mov     [bp+var_2], al
+                mov     al, [si+34h]
+                and     al, 3Fh
+                mov     [bp+var_6], al
+                mov     al, [bp+var_2]
+                sub     ah, ah
+                mov     cl, 4
+                shr     ax, cl
+                mov     [bp+var_4], al
+                and     [bp+var_2], 0Fh
+                jz      short loc_1CD4C
+                mov     al, [bp+var_2]
+                add     [bp+var_6], al
+                lea     ax, [bp+var_A]
+                push    ax
+                mov     al, [bp+var_4]
+                sub     ah, ah
+                push    ax
+                push    [bp+arg_0]
+                call    loc_1CC14
+                add     sp, 6
+                mov     [bp+var_8], ax
+                mov     al, [bp+var_6]
+                sub     ah, ah
+                mov     si, ax
+                push    si
+                push    [bp+var_8]
+                call    thk_res_3608
+                add     sp, 4
+                cmp     [bp+var_A], 0
+                jz      short loc_1CD4C
+                push    si
+                push    [bp+var_A]
+                call    thk_res_3608
+                add     sp, 4
+
+loc_1CD4C:                              ; CODE XREF: sub_1CCD4+39↑j
+                                        ; sub_1CCD4+6C↑j
+                call    thk_res_4F3A
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1CCD4       endp
+
+; ---------------------------------------------------------------------------
+
+loc_1CD54:                              ; CODE XREF: sub_1C7E8+8C↑p
+                push    bp
+                mov     bp, sp
+                sub     sp, 6
+                push    si
+                mov     si, [bp+6]
+                add     si, [bp+4]
+                mov     al, [si+28h]
+                mov     [bp-4], al
+                mov     al, [si+34h]
+                and     al, 3Fh
+                mov     [bp-2], al
+                mov     al, 14h
+                mul     byte ptr [bp-4]
+                mov     bx, ax
+                mov     al, [bx+6970h]
+                mov     [bp-6], al
+                mov     al, [bp-4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D06E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1CD98
+                mov     bx, [bp+4]
+                mov     byte ptr [bx+4Ch], 0
+                mov     byte ptr [bx+4Dh], 0
+
+loc_1CD98:                              ; CODE XREF: ovl_2CMDS:CD8B↑j
+                mov     al, [bp-4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D00E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1CDB3
+                mov     bx, [bp+4]
+                mov     byte ptr [bx+4Eh], 0
+                mov     byte ptr [bx+4Fh], 0
+
+loc_1CDB3:                              ; CODE XREF: ovl_2CMDS:CDA6↑j
+                mov     al, [bp-4]
+                sub     ah, ah
+                mov     si, ax
+                push    si
+                call    near ptr unk_1D026
+                add     sp, 2
+                or      ax, ax
+                jnz     short loc_1CDDB
+                push    si
+                call    near ptr unk_1D03E
+                add     sp, 2
+                or      ax, ax
+                jnz     short loc_1CDDB
+                push    si
+                call    near ptr unk_1D056
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1CE01
+
+loc_1CDDB:                              ; CODE XREF: ovl_2CMDS:CDC3↑j
+                                        ; ovl_2CMDS:CDCE↑j
+                mov     al, [bp-2]
+                sub     ah, ah
+                push    ax
+                mov     ax, [bp+4]
+                add     ax, 1Fh
+                push    ax
+                call    thk_res_35F0
+                add     sp, 4
+                mov     al, [bp-6]
+                sub     ah, ah
+                push    ax
+                mov     ax, [bp+4]
+                add     ax, 1Fh
+                push    ax
+                call    thk_res_35F0
+                add     sp, 4
+
+loc_1CE01:                              ; CODE XREF: ovl_2CMDS:CDD9↑j
+                push    word ptr [bp+6]
+                push    word ptr [bp+4]
+                call    loc_1CC54
+                add     sp, 4
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1CE12:                              ; CODE XREF: sub_1C9E6+188↑p
+                push    bp
+                mov     bp, sp
+                sub     sp, 6
+                push    si
+                mov     si, [bp+6]
+                add     si, [bp+4]
+                mov     al, [si+28h]
+                mov     [bp-4], al
+                mov     al, [si+34h]
+                and     al, 3Fh
+                mov     [bp-2], al
+                mov     al, 14h
+                mul     byte ptr [bp-4] ; CODE XREF: seg002:0831↑J
+                mov     bx, ax
+                mov     al, [bx+6970h]
+                mov     [bp-6], al
+                mov     al, [bp-4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D06E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1CE5A
+                mov     bx, [bp+4]
+                mov     al, [bp-6]
+                mov     [bx+4Ch], al
+                mov     al, [bp-2]
+                mov     [bx+4Dh], al
+
+loc_1CE5A:                              ; CODE XREF: ovl_2CMDS:CE49↑j
+                mov     al, [bp-4]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D00E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1CE79
+                mov     bx, [bp+4]
+                mov     al, [bp-6]
+                mov     [bx+4Eh], al
+                mov     al, [bp-2]
+                mov     [bx+4Fh], al
+
+loc_1CE79:                              ; CODE XREF: ovl_2CMDS:CE68↑j
+                mov     al, [bp-4]
+                sub     ah, ah
+                mov     si, ax
+                push    si
+                call    near ptr unk_1D026
+                add     sp, 2
+                or      ax, ax
+                jnz     short loc_1CEA1
+                push    si
+                call    near ptr unk_1D03E
+                add     sp, 2
+                or      ax, ax
+                jnz     short loc_1CEA1
+                push    si
+                call    near ptr unk_1D056
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1CEC7
+
+loc_1CEA1:                              ; CODE XREF: ovl_2CMDS:CE89↑j
+                                        ; ovl_2CMDS:CE94↑j
+                mov     al, [bp-2]
+                sub     ah, ah
+                push    ax
+                mov     ax, [bp+4]
+                add     ax, 1Fh
+                push    ax
+                call    thk_res_3608
+                add     sp, 4
+                mov     al, [bp-6]
+                sub     ah, ah
+                push    ax
+                mov     ax, [bp+4]
+                add     ax, 1Fh
+                push    ax
+                call    thk_res_3608
+                add     sp, 4
+
+loc_1CEC7:                              ; CODE XREF: ovl_2CMDS:CE9F↑j
+                                        ; seg002:07AD↑J
+                push    word ptr [bp+6]
+                push    word ptr [bp+4]
+                call    sub_1CCD4
+                add     sp, 4
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1CED8:                              ; CODE XREF: ovl_2CMDS:C672↑p
+                                        ; sub_1C6A0+28↑p
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                push    si
+                mov     al, [bp+6]
+                and     al, 7Fh
+                dec     al
+                mov     [bp+6], al
+                sub     ah, ah
+                mov     si, ax
+                shl     ax, 1
+                add     ax, 7D60h
+                mov     [bp-2], ax
+                push    ax
+                call    thk_res_545A
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1CF2E
+                push    word ptr [bp-2]
+                call    thk_res_54AE
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1CF2E
+                mov     ax, [bp+4]
+                mov     word_23626, ax
+                mov     byte_2419E, 1
+                mov     byte_1DBE6, 1
+                push    si
+                call    thk_2CAST1_D0C2
+                add     sp, 2
+                mov     byte_2419E, 0
+                mov     byte_1DBE6, 0   ; CODE XREF: seg002:050D↑J
+
+loc_1CF2E:                              ; CODE XREF: ovl_2CMDS:CEFE↑j
+                                        ; ovl_2CMDS:CF0B↑j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1CF34:                              ; CODE XREF: sub_1C48E+1FF↑p
+                                        ; sub_1C6A0+3F↑p
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    si
+                mov     si, [bp+8]
+                add     si, [bp+4]
+                mov     al, [si+34h]
+                mov     [bp-2], al
+                cmp     word ptr [bp+8], 6
+                jl      short loc_1CF53
+                mov     al, [si+40h]
+                mov     [bp-2], al
+
+loc_1CF53:                              ; CODE XREF: ovl_2CMDS:CF4B↑j
+                mov     al, [bp+6]
+                and     al, 0Fh
+                add     [bp-2], al
+                mov     cl, 4           ; CODE XREF: seg002:0AE9↑J
+                shr     byte ptr [bp+6], cl
+                and     byte ptr [bp+6], 7
+                mov     al, [bp+6]
+                sub     ah, ah
+                cmp     ax, 7           ; switch 8 cases
+                ja      short def_1CF71 ; jumptable 0001CF71 default case
+                add     ax, ax
+                xchg    ax, bx
+                jmp     cs:jpt_1CF71[bx] ; switch jump
+; ---------------------------------------------------------------------------
+
+loc_1CF76:                              ; CODE XREF: ovl_2CMDS:CF71↑j
+                                        ; DATA XREF: ovl_2CMDS:jpt_1CF71↓o
+                mov     ax, [bp+4]      ; jumptable 0001CF71 case 0
+                add     ax, 75h ; 'u'
+
+loc_1CF7C:                              ; CODE XREF: ovl_2CMDS:CF88↓j
+                                        ; ovl_2CMDS:CF90↓j ...
+                mov     [bp-4], ax
+                jmp     short def_1CF71 ; jumptable 0001CF71 default case
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1CF82:                              ; CODE XREF: ovl_2CMDS:CF71↑j
+                                        ; seg002:062D↑J
+                                        ; DATA XREF: ...
+                mov     ax, [bp+4]      ; jumptable 0001CF71 case 1
+                add     ax, 6Bh ; 'k'
+                jmp     short loc_1CF7C
+; ---------------------------------------------------------------------------
+
+loc_1CF8A:                              ; CODE XREF: ovl_2CMDS:CF71↑j
+                                        ; DATA XREF: ovl_2CMDS:jpt_1CF71↓o
+                mov     ax, [bp+4]      ; jumptable 0001CF71 case 2
+                add     ax, 6Eh ; 'n'
+                jmp     short loc_1CF7C
+; ---------------------------------------------------------------------------
+
+loc_1CF92:                              ; CODE XREF: ovl_2CMDS:CF71↑j
+                                        ; DATA XREF: ovl_2CMDS:jpt_1CF71↓o
+                mov     ax, [bp+4]      ; jumptable 0001CF71 case 3
+                add     ax, 6Fh ; 'o'
+                jmp     short loc_1CF7C
+; ---------------------------------------------------------------------------
+
+loc_1CF9A:                              ; CODE XREF: ovl_2CMDS:CF71↑j
+                                        ; DATA XREF: ovl_2CMDS:jpt_1CF71↓o
+                mov     ax, [bp+4]      ; jumptable 0001CF71 case 4
+                add     ax, 6Ah ; 'j'
+                jmp     short loc_1CF7C
+; ---------------------------------------------------------------------------
+
+loc_1CFA2:                              ; CODE XREF: ovl_2CMDS:CF71↑j
+                                        ; DATA XREF: ovl_2CMDS:jpt_1CF71↓o
+                mov     ax, [bp+4]      ; jumptable 0001CF71 case 5
+                add     ax, 71h ; 'q'
+                jmp     short loc_1CF7C
+; ---------------------------------------------------------------------------
+
+loc_1CFAA:                              ; CODE XREF: ovl_2CMDS:CF71↑j
+                                        ; DATA XREF: ovl_2CMDS:jpt_1CF71↓o
+                mov     ax, [bp+4]      ; jumptable 0001CF71 case 6
+                add     ax, 72h ; 'r'
+                jmp     short loc_1CF7C
+; ---------------------------------------------------------------------------
+
+loc_1CFB2:                              ; CODE XREF: ovl_2CMDS:CF71↑j
+                                        ; DATA XREF: ovl_2CMDS:jpt_1CF71↓o
+                mov     ax, [bp+4]      ; jumptable 0001CF71 case 7
+                add     ax, 58h ; 'X'
+                jmp     short loc_1CF7C
+; ---------------------------------------------------------------------------
+jpt_1CF71       dw offset loc_1CF76     ; DATA XREF: ovl_2CMDS:CF71↑r
+                dw offset loc_1CF82     ; jump table for switch statement
+                dw offset loc_1CF8A
+                dw offset loc_1CF92
+                dw offset loc_1CF9A
+                dw offset loc_1CFA2
+                dw offset loc_1CFAA
+                dw offset loc_1CFB2
+; ---------------------------------------------------------------------------
+
+def_1CF71:                              ; CODE XREF: ovl_2CMDS:CF6C↑j
+                                        ; ovl_2CMDS:CF7F↑j
+                mov     al, [bp-2]      ; jumptable 0001CF71 default case
+                sub     ah, ah
+                push    ax
+                push    word ptr [bp-4]
+                call    thk_res_3608
+                add     sp, 4
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1CFDE:                              ; CODE XREF: sub_1C8AA+1B↑p
+                push    bp
+                mov     bp, sp
+                cmp     byte ptr [bp+4], 1
+                jb      short loc_1CFF2
+                cmp     byte ptr [bp+4], 41h ; 'A'
+                ja      short loc_1CFF2
+                mov     ax, 1
+                jmp     short loc_1CFF4
+; ---------------------------------------------------------------------------
+
+loc_1CFF2:                              ; CODE XREF: ovl_2CMDS:CFE5↑j
+                                        ; ovl_2CMDS:CFEB↑j
+                sub     ax, ax
+
+loc_1CFF4:                              ; CODE XREF: ovl_2CMDS:CFF0↑j
+                pop     bp
+                retn
+; ---------------------------------------------------------------------------
+unk_1CFF6       db  55h ; U             ; CODE XREF: sub_1C8AA+44↑p
+                db  8Bh
+                db 0ECh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  42h ; B
+                db  72h ; r
+                db  0Bh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  5Bh ; [
+                db  77h ; w
+                db    5
+                db 0B8h
+                db    1
+                db    0
+                db 0EBh
+                db    2
+                db  2Bh ; +
+                db 0C0h
+                db  5Dh ; ]
+                db 0C3h
+unk_1D00E       db  55h ; U             ; CODE XREF: sub_1C8AA+7E↑p
+                                        ; ovl_2CMDS:CD9E↑p ...
+                db  8Bh
+                db 0ECh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  5Ch ; \
+                db  72h ; r
+                db  0Bh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  72h ; r
+                db  77h ; w
+                db    5
+                db 0B8h
+                db    1
+                db    0
+                db 0EBh
+                db    2
+                db  2Bh ; +
+                db 0C0h
+                db  5Dh ; ]
+                db 0C3h
+unk_1D026       db  55h ; U             ; CODE XREF: sub_1C8AA+A8↑p
+                                        ; ovl_2CMDS:CDBB↑p ...
+                db  8Bh
+                db 0ECh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  73h ; s
+                db  72h ; r
+                db  0Bh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  7Eh ; ~
+                db  77h ; w
+                db    5
+                db 0B8h
+                db    1
+                db    0
+                db 0EBh
+                db    2
+                db  2Bh ; +
+                db 0C0h
+                db  5Dh ; ]
+                db 0C3h
+unk_1D03E       db  55h ; U             ; CODE XREF: sub_1C8AA+E4↑p
+                                        ; ovl_2CMDS:CDC6↑p ...
+                db  8Bh
+                db 0ECh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  7Fh ; 
+                db  72h ; r
+                db  0Bh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  9Ah
+                db  77h ; w
+                db    5
+                db 0B8h
+                db    1
+                db    0
+                db 0EBh
+                db    2
+                db  2Bh ; +
+                db 0C0h
+                db  5Dh ; ]
+                db 0C3h
+unk_1D056       db  55h ; U             ; CODE XREF: sub_1C8AA+10A↑p
+                                        ; ovl_2CMDS:CDD1↑p ...
+                db  8Bh
+                db 0ECh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  9Bh
+                db  72h ; r
+                db  0Bh
+                db  80h
+                db  7Eh ; ~
+                db    4
+                db  9Fh
+                db  77h ; w
+                db    5
+                db 0B8h
+                db    1
+                db    0
+                db 0EBh
+                db    2
+                db  2Bh ; +
+                db 0C0h
+                db  5Dh ; ]
+                db 0C3h
+unk_1D06E       db  55h ; U             ; CODE XREF: ovl_2CMDS:CD83↑p
+                                        ; ovl_2CMDS:CE41↑p ...
+                db  8Bh
+                db 0ECh
+                db  57h ; W
+                db  56h ; V
+                db  8Ah
+                db  46h ; F
+                db    4
+                db  2Ah ; *
+                db 0E4h
+                db  8Bh
+                db 0F0h
+                db  56h ; V
+                db 0E8h
+                db  78h ; x
+                db 0FFh
+                db  83h
+                db 0C4h
+                db    2
+                db  56h ; V
+                db  8Bh
+                db 0F8h
+                db 0E8h
+                db  57h ; W
+                db 0FFh
+                db  83h
+                db 0C4h
+                db    2
+                db    3
+                db 0C7h
+                db  5Eh ; ^
+                db  5Fh ; _
+                db  5Dh ; ]
+                db 0C3h
+                db  55h ; U
+                db  8Bh
+                db 0ECh
+                db  83h
+                db 0ECh
+                db    4
+                db  57h ; W
+                db  56h ; V
+                db 0C7h
+                db  46h ; F
+                db 0FEh
+                db    0
+                db    0
+                db  2Bh ; +
+                db 0F6h
+                db  8Bh
+                db  7Eh ; ~
+                db    4
+                db  8Bh
+                db 0DEh
+                db    3
+                db 0DFh
+                db  8Ah
+                db  47h ; G
+                db  28h ; (
+                db  2Ah ; *
+                db 0E4h
+                db  50h ; P
+                db 0E8h
+                db  2Fh ; /
+                db 0FFh
+                db  83h
+                db 0C4h
+                db    2
+                db  0Bh
+                db 0C0h
+                db  74h ; t
+                db    6
+                db  89h
+                db  76h ; v
+                db 0FCh
+                db 0EBh
+                db    9
+                db  90h
+                db  46h ; F
+                db  83h
+                db 0FEh
+                db    6
+                db  7Dh ; }
+                db 0F4h
+byte_1D0C2      db 0EBh, 0DEh, 83h, 7Eh, 0FCh, 6, 74h, 3, 0FFh, 46h, 0FEh
+                                        ; CODE XREF: seg002:04DD↑J
+                db 8Bh, 46h, 0FEh, 5Eh, 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 55h
+                db 8Bh, 0ECh, 83h, 0ECh, 4, 57h, 56h, 0C7h, 46h, 0FEh
+                db 2 dup(0), 2Bh, 0F6h, 8Bh, 7Eh, 4, 8Bh, 0DEh, 3, 0DFh
+                db 8Ah, 47h, 28h, 2Ah, 0E4h, 50h, 0E8h, 1, 0FFh, 83h, 0C4h
+                db 2, 0Bh, 0C0h, 74h, 6, 89h, 76h, 0FCh, 0EBh, 9, 90h
+                db 46h, 83h, 0FEh, 6, 7Dh, 0F4h, 0EBh, 0DEh, 83h, 7Eh
+                db 0FCh, 6, 74h, 3, 0FFh, 46h, 0FEh, 8Bh, 46h, 0FEh, 5Eh
+                db 5Fh, 8Bh, 0E5h, 5Dh, 0C3h, 55h, 8Bh, 0ECh, 83h, 0ECh
+                db 4, 57h, 56h, 0C7h, 46h, 0FEh, 2 dup(0), 2Bh, 0F6h, 8Bh
+                db 7Eh, 4, 8Bh, 0DEh, 3, 0DFh, 8Ah, 47h, 28h, 2Ah, 0E4h
+                db 50h, 0E8h, 0EBh, 0FEh, 83h, 0C4h, 2, 0Bh, 0C0h, 74h
+                db 6, 89h, 76h, 0FCh, 0EBh, 9, 90h, 46h, 83h, 0FEh, 6
+                db 7Dh, 0F4h, 0EBh, 0DEh, 83h, 7Eh, 0FCh, 6, 74h, 3, 0FFh
+                db 46h, 0FEh, 8Bh
+byte_1D15A      db 46h, 0FEh, 5Eh, 5Fh, 8Bh, 0E5h, 5Dh, 0C3h
+                                        ; CODE XREF: seg002:0825↑J
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1D162       proc near               ; CODE XREF: sub_1C8AA+8B↑p
+
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    di
+                push    si
+                mov     [bp+var_2], 0
+                sub     si, si
+                mov     di, [bp+arg_0]
+
+loc_1D174:                              ; CODE XREF: sub_1D162+32↓j
+                mov     bx, si
+                add     bx, di
+                mov     al, [bx+28h]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D00E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1D18E
+
+loc_1D188:                              ; CODE XREF: sub_1D162+30↓j
+                mov     [bp+var_4], si
+                jmp     short loc_1D196
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1D18E:                              ; CODE XREF: sub_1D162+24↑j
+                inc     si
+                cmp     si, 6
+                jge     short loc_1D188
+                jmp     short loc_1D174
+; ---------------------------------------------------------------------------
+
+loc_1D196:                              ; CODE XREF: sub_1D162+29↑j
+                cmp     [bp+var_4], 6
+                jz      short loc_1D19F
+                inc     [bp+var_2]
+
+loc_1D19F:                              ; CODE XREF: sub_1D162+38↑j
+                mov     ax, [bp+var_2]
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1D162       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1D1A8       proc near               ; CODE XREF: sub_1C8AA+F1↑p
+
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    di
+                push    si
+                mov     [bp+var_2], 0
+                sub     si, si
+                mov     di, [bp+arg_0]
+
+loc_1D1BA:                              ; CODE XREF: sub_1D1A8+32↓j
+                mov     bx, si
+                add     bx, di
+                mov     al, [bx+28h]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D03E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1D1D4
+
+loc_1D1CE:                              ; CODE XREF: sub_1D1A8+30↓j
+                mov     [bp+var_4], si
+                jmp     short loc_1D1DC
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1D1D4:                              ; CODE XREF: sub_1D1A8+24↑j
+                inc     si
+                cmp     si, 6
+                jge     short loc_1D1CE
+                jmp     short loc_1D1BA
+; ---------------------------------------------------------------------------
+
+loc_1D1DC:                              ; CODE XREF: sub_1D1A8+29↑j
+                cmp     [bp+var_4], 6
+                jz      short loc_1D1E5
+                inc     [bp+var_2]
+
+loc_1D1E5:                              ; CODE XREF: sub_1D1A8+38↑j
+                mov     ax, [bp+var_2]
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1D1A8       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1D1EE       proc near               ; CODE XREF: sub_1C8AA+117↑p
+
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    di
+                push    si
+                mov     [bp+var_2], 0
+                sub     si, si
+                mov     di, [bp+arg_0]
+
+loc_1D200:                              ; CODE XREF: sub_1D1EE+32↓j
+                mov     bx, si
+                add     bx, di
+                mov     al, [bx+28h]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D056
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1D21A
+
+loc_1D214:                              ; CODE XREF: sub_1D1EE+30↓j
+                mov     [bp+var_4], si
+                jmp     short loc_1D222
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1D21A:                              ; CODE XREF: sub_1D1EE+24↑j
+                inc     si
+                cmp     si, 6
+                jge     short loc_1D214
+                jmp     short loc_1D200
+; ---------------------------------------------------------------------------
+
+loc_1D222:                              ; CODE XREF: sub_1D1EE+29↑j
+                cmp     [bp+var_4], 6
+                jz      short loc_1D22B
+                inc     [bp+var_2]
+
+loc_1D22B:                              ; CODE XREF: sub_1D1EE+38↑j
+                mov     ax, [bp+var_2]
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1D1EE       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+sub_1D234       proc near               ; CODE XREF: sub_1C8AA+28↑p
+                                        ; sub_1C8AA+51↑p
+
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    di
+                push    si
+                mov     [bp+var_2], 0
+                sub     si, si
+                mov     di, [bp+arg_0]
+
+loc_1D246:                              ; CODE XREF: sub_1D234+32↓j
+                mov     bx, si
+                add     bx, di
+                mov     al, [bx+28h]
+                sub     ah, ah
+                push    ax
+                call    near ptr unk_1D06E
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_1D260
+
+loc_1D25A:                              ; CODE XREF: sub_1D234+30↓j
+                mov     [bp+var_4], si
+                jmp     short loc_1D268
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1D260:                              ; CODE XREF: sub_1D234+24↑j
+                inc     si
+                cmp     si, 6
+                jge     short loc_1D25A
+                jmp     short loc_1D246
+; ---------------------------------------------------------------------------
+
+loc_1D268:                              ; CODE XREF: sub_1D234+29↑j
+                cmp     [bp+var_4], 6
+                jz      short loc_1D271
+                inc     [bp+var_2]
+
+loc_1D271:                              ; CODE XREF: sub_1D234+38↑j
+                mov     ax, [bp+var_2]
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retn
+sub_1D234       endp
+
+; ---------------------------------------------------------------------------
+                align 8
+ovl_2CMDS       ends
+
