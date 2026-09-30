@@ -5,12 +5,24 @@
 // is almost certainly a tagged union with many more type-specific fields.
 #pragma once
 
+#include "WxStub.h"
+
 // Signal type codes TMasterControl::Signal recognizes (int at offset 0):
 // see NOTES.md for how these were read directly off the switch/cmp chain.
 constexpr int kSignalGameEvent = 0x1011;     // dispatched to TMasterControl::Update() (pure virtual, TGameControl overrides it)
 constexpr int kSignalDrawInterfaces = 0x2001;
 constexpr int kSignalDraw = 0x2002;
 constexpr int kSignalLoadingProgress = 0x100;
+// TFontManager::Signal's two recognized types (Deponia_Linux.asm lines
+// 1389694-1389697) - print a single line of `text` at `point`, or split
+// `text` on '\n' and print each resulting line via PrintTextLines(),
+// respectively. Both also read a font id at a THIRD offset that overlaps
+// kSignalLoadingProgress's own loadingCurrent/loadingTotal fields in the
+// real binary (a tagged union, per this struct's own top comment) - given
+// separate, independently-named fields here instead, since nothing needs
+// the two interpretations to share the same bytes in this reconstruction.
+constexpr int kSignalPrintText = 0x2003;
+constexpr int kSignalPrintTextLines = 0x2004;
 
 struct TSignalData {
 	int type = 0;
@@ -24,4 +36,12 @@ struct TSignalData {
 	// occupies bytes 0x04-0x18).
 	int loadingCurrent = 0;
 	int loadingTotal = 0;
+	// kSignalPrintText/kSignalPrintTextLines fields (asm lines 1389717-
+	// 1389742, 1389871-1389872): the text to print (single-line for
+	// kSignalPrintText, '\n'-delimited for kSignalPrintTextLines), the
+	// screen position to print it at, and (kSignalPrintTextLines only) a
+	// raw packed font id (see PackVisId()) to select the font by first.
+	wxString text;
+	wxPoint point;
+	int fontId = 0;
 };

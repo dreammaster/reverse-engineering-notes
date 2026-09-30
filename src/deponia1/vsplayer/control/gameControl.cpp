@@ -27,15 +27,6 @@
 #include "vscommon/scripting/lua.h"
 
 namespace {
-// Packs a TVisObjRef::GetId() 3-byte id into a 32-bit value the same way
-// StartDialog/EndDialog/GetCharacter's hash lookup all do it: byte0 |
-// (byte1<<8) | (sign-extended byte2<<16) - the sign extension of the third
-// byte is confirmed (an `and 0xFF000000` masking a `sar 0x1F`-derived sign
-// mask in the disassembly), its purpose is not.
-int PackVisId(const std::uint8_t *id) {
-	return id[0] | (id[1] << 8) | (static_cast<int>(static_cast<std::int8_t>(id[2])) << 16);
-}
-
 // Confirmed global (not per-instance) engine-event queue guarded by a
 // global critical section (TGameControl::PushEngineEvent, Deponia_Linux.asm
 // lines 473304-473417: uses the global symbols EngineEvents/

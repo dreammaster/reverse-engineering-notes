@@ -1456,6 +1456,49 @@ The original member name, `m_pData`, is recovered byte-for-byte from
 path `src/baselib/memfile.cpp` (both now recorded in the header, resolving
 its earlier "not yet reconstructed" note).
 
+## TFontManager: implement the whole class; add TCFont as a signature-only stub
+
+Reversed all of `TFontManager` (manifest: stub, 16 methods, Deponia_Linux.asm
+lines 1388826-1390289) for real, following the exact same "own state fully
+reversed, deep leaf dependency left as a call-shape stub" split already used
+for `TGameControl::Update()`'s picture/sprite section: `TFontManager` itself
+now has a complete, faithful implementation, while the actual font
+rendering/layout it delegates to (`TCFont`, manifest: todo, 16 methods, not
+reversed at all) is a brand-new class with only the method signatures
+`TFontManager` needs, all stubbed.
+
+Confirmed structure: `TFontManager` owns every loaded `TCFont` in a
+positionally-indexable vector (needed by the new `SetCurrentFont(int&)`
+overload, which cycles through fonts by wrapping/clamping an index) plus a
+hash table keyed by the same packed-id scheme as `TGameControl`'s own
+`_charactersByHash` (same simplification: a plain `std::unordered_map`
+instead of the original's open-hashing bucket/node layout). Every accessor
+(`PrintText`, `PrintTextLines`, `GetTextDimension` x2, `GetLineHeight`,
+`PerformAutoLineBreak`) is a thin guard-then-delegate wrapper around a
+tracked "current font," which behaves identically to the original's own
+pointer-into-the-values-array/sentinel trick as a plain nullable `TCFont*`.
+`SplitTexts()` re-splits list entries that don't fit a max width (the
+disassembly's manual list-node splicing is just inlined `std::list`
+splice/erase codegen, reproduced with the equivalent standard calls) and
+`Signal()` handles two new signal types (`kSignalPrintText`/
+`kSignalPrintTextLines`, added to `TSignalData.h` along with a `text`/
+`point`/`fontId` field set - `TSignalData`'s own header already flags it as
+"almost certainly a tagged union," so these are modeled as independently-
+named fields rather than reusing `kSignalLoadingProgress`'s overlapping
+byte range).
+
+Also extracted `PackVisId()` from `gameControl.cpp`'s anonymous namespace
+into `datastruct/visionaireobject.h` as a shared inline free function, since
+`TFontManager` now needs the exact same packing scheme in a different
+translation unit.
+
+One architectural note left unresolved: `TFontManager`'s constructor writes
+a vtable pointer, so it's genuinely polymorphic in the original, and its
+`Signal()` signature exactly matches `TMasterControl::Signal()`'s (also
+virtual) - hinting at a shared, not-yet-identified signal-handler base
+class. Not modeled (`TFontManager` stays non-polymorphic here), since
+nothing currently depends on dispatching through it virtually.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

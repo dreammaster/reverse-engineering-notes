@@ -38,3 +38,14 @@ public:
 private:
 	std::uint8_t _id[4] {};
 };
+
+// Packs a TVisObjRef::GetId()/TVisionaireObject::GetId() 3-byte id into a
+// 32-bit value the same way every confirmed hash-lookup site does it
+// (TGameControl::StartDialog/EndDialog/GetCharacter, TFontManager::
+// GetFont/SetCurrentFont/Initialize, and others): byte0 | (byte1<<8) |
+// (sign-extended byte2<<16) - the sign extension of the third byte is
+// confirmed (an `and 0xFF000000` masking a `sar 0x1F`-derived sign mask in
+// the disassembly), its purpose is not.
+inline int PackVisId(const std::uint8_t *id) {
+	return id[0] | (id[1] << 8) | (static_cast<int>(static_cast<std::int8_t>(id[2])) << 16);
+}
