@@ -6074,8 +6074,8 @@ sub_1AB02       endp
 
 ; Attributes: bp-based frame
 
-sub_1AB3E       proc near               ; CODE XREF: sub_1AE50+26↓p
-                                        ; sub_1AE50+67↓p ...
+sub_1AB3E       proc near               ; CODE XREF: effect_lose_stat+26↓p
+                                        ; effect_lose_stat+67↓p ...
 
 arg_0           = word ptr  4
 arg_2           = byte ptr  6
@@ -6110,10 +6110,11 @@ sub_1AB3E       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; (resist byte index) -> word_22CFA = 1 if the effect lands: d100 >= the character resistance byte at char[+idx]; idx 0 = always
 ; Attributes: bp-based frame
 
-sub_1AB6A       proc near               ; CODE XREF: sub_1ABB4+9↓p
-                                        ; sub_1ABDC+16↓p ...
+effect_saving_throw proc near           ; CODE XREF: effect_set_condition+9↓p
+                                        ; effect_lose_gold+16↓p ...
 
 var_4           = byte ptr -4
 var_2           = word ptr -2
@@ -6128,7 +6129,7 @@ arg_0           = word ptr  4
                 jmp     short loc_1ABAF
 ; ---------------------------------------------------------------------------
 
-loc_1AB7C:                              ; CODE XREF: sub_1AB6A+A↑j
+loc_1AB7C:                              ; CODE XREF: effect_saving_throw+A↑j
                 sub     [bp+arg_0], 16h
                 mov     ax, [bp+arg_0]
                 add     ax, word_22CFD+1
@@ -6148,27 +6149,28 @@ loc_1AB7C:                              ; CODE XREF: sub_1AB6A+A↑j
                 jmp     short loc_1ABAC
 ; ---------------------------------------------------------------------------
 
-loc_1ABAA:                              ; CODE XREF: sub_1AB6A+39↑j
+loc_1ABAA:                              ; CODE XREF: effect_saving_throw+39↑j
                 sub     ax, ax
 
-loc_1ABAC:                              ; CODE XREF: sub_1AB6A+3E↑j
+loc_1ABAC:                              ; CODE XREF: effect_saving_throw+3E↑j
                 mov     word_22CFA, ax
 
-loc_1ABAF:                              ; CODE XREF: sub_1AB6A+10↑j
+loc_1ABAF:                              ; CODE XREF: effect_saving_throw+10↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1AB6A       endp
+effect_saving_throw endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; (condition bit, resist idx): saving throw then cond |= bit unless already out of action
 ; Attributes: bp-based frame
 
-sub_1ABB4       proc near               ; CODE XREF: sub_1AC96+8↓p
-                                        ; sub_1ACA6+8↓p ...
+effect_set_condition proc near          ; CODE XREF: effect_poison+8↓p
+                                        ; effect_disease+8↓p ...
 
 arg_0           = byte ptr  4
 arg_2           = byte ptr  6
@@ -6178,7 +6180,7 @@ arg_2           = byte ptr  6
                 mov     al, [bp+arg_2]
                 sub     ah, ah
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short loc_1ABDA
@@ -6188,18 +6190,19 @@ arg_2           = byte ptr  6
                 mov     al, [bp+arg_0]
                 or      [bx+26h], al
 
-loc_1ABDA:                              ; CODE XREF: sub_1ABB4+14↑j
-                                        ; sub_1ABB4+1E↑j
+loc_1ABDA:                              ; CODE XREF: effect_set_condition+14↑j
+                                        ; effect_set_condition+1E↑j
                 pop     bp
                 retn
-sub_1ABB4       endp
+effect_set_condition endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; ids 1 (partial) / 17 (all): "lost gold" / "lost all gold"; resist +1E
 ; Attributes: bp-based frame
 
-sub_1ABDC       proc near               ; CODE XREF: sub_1ADF2+2A↓p
+effect_lose_gold proc near              ; CODE XREF: effect_lose_valuables+2A↓p
                                         ; combat_apply_touch_effect+2B↓p
 
 arg_0           = word ptr  4
@@ -6213,7 +6216,7 @@ arg_0           = word ptr  4
                 jge     short loc_1AC50
                 mov     ax, 1Eh
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short loc_1AC50
@@ -6227,7 +6230,7 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1AC14:                              ; CODE XREF: sub_1ABDC+27↑j
+loc_1AC14:                              ; CODE XREF: effect_lose_gold+27↑j
                 mov     bx, word_22CFD+1
                 cmp     word ptr [bx+68h], 1
                 jb      short loc_1AC28
@@ -6236,41 +6239,42 @@ loc_1AC14:                              ; CODE XREF: sub_1ABDC+27↑j
                 jmp     short loc_1AC50
 ; ---------------------------------------------------------------------------
 
-loc_1AC28:                              ; CODE XREF: sub_1ABDC+40↑j
+loc_1AC28:                              ; CODE XREF: effect_lose_gold+40↑j
                 cmp     word ptr [bx+68h], 0
                 jnz     short loc_1AC35
                 cmp     word ptr [bx+66h], 100h
                 jb      short loc_1AC3C
 
-loc_1AC35:                              ; CODE XREF: sub_1ABDC+50↑j
+loc_1AC35:                              ; CODE XREF: effect_lose_gold+50↑j
                 sub     word ptr [bx+66h], 100h
                 jmp     short loc_1AC4C
 ; ---------------------------------------------------------------------------
 
-loc_1AC3C:                              ; CODE XREF: sub_1ABDC+57↑j
+loc_1AC3C:                              ; CODE XREF: effect_lose_gold+57↑j
                 cmp     word ptr [bx+68h], 0
                 jnz     short loc_1AC48
                 cmp     word ptr [bx+66h], 0
                 jz      short loc_1AC50
 
-loc_1AC48:                              ; CODE XREF: sub_1ABDC+64↑j
+loc_1AC48:                              ; CODE XREF: effect_lose_gold+64↑j
                 sub     word ptr [bx+66h], 1
 
-loc_1AC4C:                              ; CODE XREF: sub_1ABDC+5E↑j
+loc_1AC4C:                              ; CODE XREF: effect_lose_gold+5E↑j
                 sbb     word ptr [bx+68h], 0
 
-loc_1AC50:                              ; CODE XREF: sub_1ABDC+10↑j
-                                        ; sub_1ABDC+21↑j ...
+loc_1AC50:                              ; CODE XREF: effect_lose_gold+10↑j
+                                        ; effect_lose_gold+21↑j ...
                 pop     bp
                 retn
-sub_1ABDC       endp
+effect_lose_gold endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; ids 2 / 18
 ; Attributes: bp-based frame
 
-sub_1AC52       proc near               ; CODE XREF: sub_1ADF2+1A↓p
+effect_lose_gems proc near              ; CODE XREF: effect_lose_valuables+1A↓p
                                         ; combat_apply_touch_effect+37↓p
 
 arg_0           = word ptr  4
@@ -6279,7 +6283,7 @@ arg_0           = word ptr  4
                 mov     bp, sp
                 mov     ax, 1Eh
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short loc_1AC93
@@ -6291,7 +6295,7 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1AC78:                              ; CODE XREF: sub_1AC52+18↑j
+loc_1AC78:                              ; CODE XREF: effect_lose_gems+18↑j
                 mov     bx, word_22CFD+1
                 cmp     word ptr [bx+5Ch], 100h
                 jb      short loc_1AC8A
@@ -6299,173 +6303,184 @@ loc_1AC78:                              ; CODE XREF: sub_1AC52+18↑j
                 jmp     short loc_1AC93
 ; ---------------------------------------------------------------------------
 
-loc_1AC8A:                              ; CODE XREF: sub_1AC52+2F↑j
+loc_1AC8A:                              ; CODE XREF: effect_lose_gems+2F↑j
                 cmp     word ptr [bx+5Ch], 0
                 jz      short loc_1AC93
                 dec     word ptr [bx+5Ch]
 
-loc_1AC93:                              ; CODE XREF: sub_1AC52+12↑j
-                                        ; sub_1AC52+23↑j ...
+loc_1AC93:                              ; CODE XREF: effect_lose_gems+12↑j
+                                        ; effect_lose_gems+23↑j ...
                 pop     bp
                 retn
-sub_1AC52       endp
+effect_lose_gems endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; cond |= 08h, resist +1C
 
-sub_1AC96       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B01E↓p
+effect_poison   proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B01E↓p
                 mov     ax, 1Ch
                 push    ax
                 mov     ax, 8
                 push    ax
-                call    sub_1ABB4
+                call    effect_set_condition
                 add     sp, 4
                 retn
-sub_1AC96       endp
+effect_poison   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; cond |= 04h, resist +1C
 
-sub_1ACA6       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B024↓p
+effect_disease  proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B024↓p
                 mov     ax, 1Ch
                 push    ax
                 mov     ax, 4
                 push    ax
-                call    sub_1ABB4
+                call    effect_set_condition
                 add     sp, 4
                 retn
-sub_1ACA6       endp
+effect_disease  endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; cond |= 10h, resist +1B
 
-sub_1ACB6       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B02A↓p
+effect_sleep    proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B02A↓p
                 mov     ax, 1Bh
                 push    ax
                 mov     ax, 10h
                 push    ax
-                call    sub_1ABB4
+                call    effect_set_condition
                 add     sp, 4
                 retn
-sub_1ACB6       endp
+effect_sleep    endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; cond |= 01h, resist +16
 
-sub_1ACC6       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B030↓p
+effect_curse    proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B030↓p
                 mov     ax, 16h
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_1ABB4
+                call    effect_set_condition
                 add     sp, 4
                 retn
-sub_1ACC6       endp
+effect_curse    endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; cond |= 02h, resist +16
 
-sub_1ACD6       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B036↓p
+effect_silence  proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B036↓p
                 mov     ax, 16h
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    sub_1ABB4
+                call    effect_set_condition
                 add     sp, 4
                 retn
-sub_1ACD6       endp
+effect_silence  endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; cond |= 20h, resist +1C
 
-sub_1ACE6       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B03C↓p
+effect_paralyze proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B03C↓p
                 mov     ax, 1Ch
                 push    ax
                 mov     ax, 20h ; ' '
                 push    ax
-                call    sub_1ABB4
+                call    effect_set_condition
                 add     sp, 4
                 retn
-sub_1ACE6       endp
+effect_paralyze endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; cond |= 40h (unconscious), resist +1C
 
-sub_1ACF6       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B042↓p
+effect_collapse proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B042↓p
                 mov     ax, 1Ch
                 push    ax
                 mov     ax, 40h ; '@'
                 push    ax
-                call    sub_1ABB4
+                call    effect_set_condition
                 add     sp, 4
                 retn
-sub_1ACF6       endp
+effect_collapse endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; cond = 81h
 
-sub_1AD06       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B048↓p
+effect_die      proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B048↓p
                 mov     bx, word_22CFD+1
                 mov     byte ptr [bx+26h], 81h
                 retn
-sub_1AD06       endp
+effect_die      endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; turns to stone
 
-sub_1AD10       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B04E↓p
+effect_stone    proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B04E↓p
                 mov     bx, word_22CFD+1
                 mov     byte ptr [bx+26h], 82h
                 retn
-sub_1AD10       endp
+effect_stone    endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; eradicated
 
-sub_1AD1A       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B054↓p
+effect_eradicate proc near              ; CODE XREF: combat_apply_touch_effect:loc_1B054↓p
                 mov     bx, word_22CFD+1
                 mov     byte ptr [bx+26h], 0FFh
                 retn
-sub_1AD1A       endp
+effect_eradicate endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; drop one item
 ; Attributes: bp-based frame
 
-sub_1AD24       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B05A↓p
+effect_lose_item proc near              ; CODE XREF: combat_apply_touch_effect:loc_1B05A↓p
 
 var_2           = word ptr -2
 
@@ -6475,7 +6490,7 @@ var_2           = word ptr -2
                 push    si
                 mov     ax, 1Eh
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short loc_1AD80
@@ -6484,10 +6499,10 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1AD44:                              ; CODE XREF: sub_1AD24+34↓j
+loc_1AD44:                              ; CODE XREF: effect_lose_item+34↓j
                 inc     [bp+var_2]
 
-loc_1AD47:                              ; CODE XREF: sub_1AD24+1D↑j
+loc_1AD47:                              ; CODE XREF: effect_lose_item+1D↑j
                 cmp     [bp+var_2], 6
                 jge     short loc_1AD5A
                 mov     si, [bp+var_2]
@@ -6495,7 +6510,7 @@ loc_1AD47:                              ; CODE XREF: sub_1AD24+1D↑j
                 cmp     byte ptr [bx+si+3Ah], 0
                 jz      short loc_1AD44
 
-loc_1AD5A:                              ; CODE XREF: sub_1AD24+27↑j
+loc_1AD5A:                              ; CODE XREF: effect_lose_item+27↑j
                 cmp     [bp+var_2], 6
                 jz      short loc_1AD80
                 mov     si, [bp+var_2]
@@ -6508,13 +6523,13 @@ loc_1AD5A:                              ; CODE XREF: sub_1AD24+27↑j
                 call    thk_res_3766
                 add     sp, 4
 
-loc_1AD80:                              ; CODE XREF: sub_1AD24+16↑j
-                                        ; sub_1AD24+3A↑j
+loc_1AD80:                              ; CODE XREF: effect_lose_item+16↑j
+                                        ; effect_lose_item+3A↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1AD24       endp
+effect_lose_item endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -6523,7 +6538,7 @@ sub_1AD24       endp
 
 ; Attributes: bp-based frame
 
-sub_1AD86       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B060↓p
+effect_lose_backpack proc near          ; CODE XREF: combat_apply_touch_effect:loc_1B060↓p
 
 var_2           = word ptr -2
 
@@ -6533,13 +6548,13 @@ var_2           = word ptr -2
                 push    si
                 mov     ax, 1Eh
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short loc_1ADBF
                 mov     [bp+var_2], 0
 
-loc_1ADA3:                              ; CODE XREF: sub_1AD86+37↓j
+loc_1ADA3:                              ; CODE XREF: effect_lose_backpack+37↓j
                 mov     si, [bp+var_2]
                 add     si, word_22CFD+1
                 mov     byte ptr [si+3Ah], 0
@@ -6549,19 +6564,20 @@ loc_1ADA3:                              ; CODE XREF: sub_1AD86+37↓j
                 cmp     [bp+var_2], 6
                 jl      short loc_1ADA3
 
-loc_1ADBF:                              ; CODE XREF: sub_1AD86+16↑j
+loc_1ADBF:                              ; CODE XREF: effect_lose_backpack+16↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1AD86       endp
+effect_lose_backpack endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; ids 15 / 16
 ; Attributes: bp-based frame
 
-sub_1ADC4       proc near               ; CODE XREF: sub_1ADF2+A↓p
+effect_lose_food proc near              ; CODE XREF: effect_lose_valuables+A↓p
                                         ; combat_apply_touch_effect+87↓p
 
 arg_0           = word ptr  4
@@ -6570,7 +6586,7 @@ arg_0           = word ptr  4
                 mov     bp, sp
                 mov     ax, 1Eh
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short loc_1ADEF
@@ -6581,24 +6597,25 @@ arg_0           = word ptr  4
                 jmp     short loc_1ADEF
 ; ---------------------------------------------------------------------------
 
-loc_1ADE8:                              ; CODE XREF: sub_1ADC4+18↑j
+loc_1ADE8:                              ; CODE XREF: effect_lose_food+18↑j
                 mov     bx, word_22CFD+1
                 shr     byte ptr [bx+25h], 1
 
-loc_1ADEF:                              ; CODE XREF: sub_1ADC4+12↑j
-                                        ; sub_1ADC4+22↑j
+loc_1ADEF:                              ; CODE XREF: effect_lose_food+12↑j
+                                        ; effect_lose_food+22↑j
                 pop     bp
                 retn
-sub_1ADC4       endp
+effect_lose_food endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; gold+gems+...
 ; Attributes: bp-based frame
 
-sub_1ADF2       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B080↓p
+effect_lose_valuables proc near         ; CODE XREF: combat_apply_touch_effect:loc_1B080↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -6608,19 +6625,19 @@ var_2           = word ptr -2
                 sub     sp, 4
                 mov     ax, 1
                 push    ax
-                call    sub_1ADC4
+                call    effect_lose_food
                 add     sp, 2
                 mov     ax, word_22CFA
                 mov     [bp+var_2], ax
                 mov     ax, 1
                 push    ax
-                call    sub_1AC52
+                call    effect_lose_gems
                 add     sp, 2
                 mov     ax, word_22CFA
                 mov     [bp+var_4], ax
                 mov     ax, 1
                 push    ax
-                call    sub_1ABDC
+                call    effect_lose_gold
                 mov     ax, [bp+var_2]
                 or      word_22CFA, ax
                 mov     ax, [bp+var_4]
@@ -6628,16 +6645,17 @@ var_2           = word ptr -2
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1ADF2       endp
+effect_lose_valuables endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; ids 20/21
 ; Attributes: bp-based frame
 
-sub_1AE32       proc near               ; CODE XREF: combat_apply_touch_effect+A8↓p
+effect_age      proc near               ; CODE XREF: combat_apply_touch_effect+A8↓p
 
 arg_0           = byte ptr  4
 
@@ -6650,20 +6668,21 @@ arg_0           = byte ptr  4
                 jbe     short loc_1AE49
                 mov     byte ptr [bx+21h], 0C8h
 
-loc_1AE49:                              ; CODE XREF: sub_1AE32+11↑j
+loc_1AE49:                              ; CODE XREF: effect_age+11↑j
                 inc     word_22CFA
                 pop     bp
                 retn
-sub_1AE32       endp
+effect_age      endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; ids 22-24
 ; Attributes: bp-based frame
 
-sub_1AE50       proc near               ; CODE XREF: combat_apply_touch_effect+B7↓p
+effect_lose_stat proc near              ; CODE XREF: combat_apply_touch_effect+B7↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -6691,10 +6710,10 @@ arg_0           = word ptr  4
                 jmp     short loc_1AEC6
 ; ---------------------------------------------------------------------------
 
-loc_1AE7E:                              ; CODE XREF: sub_1AE50+A↑j
+loc_1AE7E:                              ; CODE XREF: effect_lose_stat+A↑j
                 mov     [bp+var_6], 0
 
-loc_1AE83:                              ; CODE XREF: sub_1AE50+74↓j
+loc_1AE83:                              ; CODE XREF: effect_lose_stat+74↓j
                 mov     [bp+var_2], 2
                 mov     bx, [bp+var_6]
                 shl     bx, 1
@@ -6711,8 +6730,8 @@ loc_1AE83:                              ; CODE XREF: sub_1AE50+74↓j
                 jb      short loc_1AEAE
                 shr     [bp+var_2], 1
 
-loc_1AEAE:                              ; CODE XREF: sub_1AE50+4E↑j
-                                        ; sub_1AE50+59↑j
+loc_1AEAE:                              ; CODE XREF: effect_lose_stat+4E↑j
+                                        ; effect_lose_stat+59↑j
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 push    ax
@@ -6723,18 +6742,19 @@ loc_1AEAE:                              ; CODE XREF: sub_1AE50+4E↑j
                 cmp     [bp+var_6], 7
                 jl      short loc_1AE83
 
-loc_1AEC6:                              ; CODE XREF: sub_1AE50+2C↑j
+loc_1AEC6:                              ; CODE XREF: effect_lose_stat+2C↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1AE50       endp
+effect_lose_stat endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; ids 25/26
 ; Attributes: bp-based frame
 
-sub_1AECA       proc near               ; CODE XREF: combat_apply_touch_effect+CD↓p
+effect_lose_level proc near             ; CODE XREF: combat_apply_touch_effect+CD↓p
 
 var_2           = byte ptr -2
 arg_0           = byte ptr  4
@@ -6754,8 +6774,8 @@ arg_0           = byte ptr  4
                 jnz     short loc_1AEEF
                 inc     [bp+var_2]
 
-loc_1AEEF:                              ; CODE XREF: sub_1AECA+E↑j
-                                        ; sub_1AECA+20↑j
+loc_1AEEF:                              ; CODE XREF: effect_lose_level+E↑j
+                                        ; effect_lose_level+20↑j
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 push    ax
@@ -6766,16 +6786,17 @@ loc_1AEEF:                              ; CODE XREF: sub_1AECA+E↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1AECA       endp
+effect_lose_level endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; id 27
 ; Attributes: bp-based frame
 
-sub_1AF04       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B0BC↓p
+effect_lose_experience proc near        ; CODE XREF: combat_apply_touch_effect:loc_1B0BC↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -6800,33 +6821,34 @@ var_2           = word ptr -2
                 cmp     [bx+62h], ax
                 ja      short loc_1AF3C
 
-loc_1AF32:                              ; CODE XREF: sub_1AF04+27↑j
+loc_1AF32:                              ; CODE XREF: effect_lose_experience+27↑j
                 sub     ax, ax
                 mov     [bx+64h], ax
                 mov     [bx+62h], ax
                 jmp     short loc_1AF48
 ; ---------------------------------------------------------------------------
 
-loc_1AF3C:                              ; CODE XREF: sub_1AF04+25↑j
-                                        ; sub_1AF04+2C↑j
+loc_1AF3C:                              ; CODE XREF: effect_lose_experience+25↑j
+                                        ; effect_lose_experience+2C↑j
                 mov     ax, [bp+var_4]
                 mov     dx, [bp+var_2]
                 sub     [bx+62h], ax
                 sbb     [bx+64h], dx
 
-loc_1AF48:                              ; CODE XREF: sub_1AF04+36↑j
+loc_1AF48:                              ; CODE XREF: effect_lose_experience+36↑j
                 inc     word_22CFA
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1AF04       endp
+effect_lose_experience endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; id 28
 ; Attributes: bp-based frame
 
-sub_1AF50       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B0C2↓p
+effect_scramble_items proc near         ; CODE XREF: combat_apply_touch_effect:loc_1B0C2↓p
 
 var_2           = word ptr -2
 
@@ -6836,13 +6858,13 @@ var_2           = word ptr -2
                 push    si
                 mov     ax, 1Eh
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short loc_1AF9A
                 mov     [bp+var_2], 0
 
-loc_1AF6D:                              ; CODE XREF: sub_1AF50+48↓j
+loc_1AF6D:                              ; CODE XREF: effect_scramble_items+48↓j
                 mov     si, [bp+var_2]
                 add     si, word_22CFD+1
                 add     si, 3Ah ; ':'
@@ -6858,49 +6880,51 @@ loc_1AF6D:                              ; CODE XREF: sub_1AF50+48↓j
                 add     sp, 4
                 mov     [si], al
 
-loc_1AF91:                              ; CODE XREF: sub_1AF50+2A↑j
-                                        ; sub_1AF50+2F↑j
+loc_1AF91:                              ; CODE XREF: effect_scramble_items+2A↑j
+                                        ; effect_scramble_items+2F↑j
                 inc     [bp+var_2]
                 cmp     [bp+var_2], 6
                 jl      short loc_1AF6D
 
-loc_1AF9A:                              ; CODE XREF: sub_1AF50+16↑j
+loc_1AF9A:                              ; CODE XREF: effect_scramble_items+16↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1AF50       endp
+effect_scramble_items endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; id 29
 
-sub_1AFA0       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B0C8↓p
+effect_lose_spell_points proc near      ; CODE XREF: combat_apply_touch_effect:loc_1B0C8↓p
                 mov     ax, 1Ah
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short locret_1AFBA
                 mov     bx, word_22CFD+1
                 mov     word ptr [bx+58h], 0
 
-locret_1AFBA:                           ; CODE XREF: sub_1AFA0+F↑j
+locret_1AFBA:                           ; CODE XREF: effect_lose_spell_points+F↑j
                 retn
-sub_1AFA0       endp
+effect_lose_spell_points endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; id 30
 
-sub_1AFBC       proc near               ; CODE XREF: combat_apply_touch_effect:loc_1B0CE↓p
+effect_assassinate proc near            ; CODE XREF: combat_apply_touch_effect:loc_1B0CE↓p
                 mov     ax, 1Eh
                 push    ax
-                call    sub_1AB6A
+                call    effect_saving_throw
                 add     sp, 2
                 cmp     word_22CFA, 0
                 jz      short locret_1AFE0
@@ -6910,10 +6934,10 @@ sub_1AFBC       proc near               ; CODE XREF: combat_apply_touch_effect:l
                 jnb     short locret_1AFE0
                 or      byte ptr [bx+26h], 40h
 
-locret_1AFE0:                           ; CODE XREF: sub_1AFBC+F↑j
-                                        ; sub_1AFBC+1E↑j
+locret_1AFE0:                           ; CODE XREF: effect_assassinate+F↑j
+                                        ; effect_assassinate+1E↑j
                 retn
-sub_1AFBC       endp
+effect_assassinate endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -6965,7 +6989,7 @@ loc_1B00A:                              ; CODE XREF: combat_apply_touch_effect+2
 
 loc_1B00C:                              ; CODE XREF: combat_apply_touch_effect+95↓j
                 push    ax
-                call    sub_1ABDC
+                call    effect_lose_gold
 
 loc_1B010:                              ; CODE XREF: combat_apply_touch_effect+3A↓j
                                         ; combat_apply_touch_effect+8A↓j ...
@@ -6979,79 +7003,79 @@ loc_1B016:                              ; CODE XREF: combat_apply_touch_effect+2
 
 loc_1B018:                              ; CODE XREF: combat_apply_touch_effect+9B↓j
                 push    ax
-                call    sub_1AC52
+                call    effect_lose_gems
                 jmp     short loc_1B010
 ; ---------------------------------------------------------------------------
 
 loc_1B01E:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1AC96       ; jumptable 0001B004 case 3
+                call    effect_poison   ; jumptable 0001B004 case 3
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B024:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1ACA6       ; jumptable 0001B004 case 4
+                call    effect_disease  ; jumptable 0001B004 case 4
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B02A:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1ACB6       ; jumptable 0001B004 case 5
+                call    effect_sleep    ; jumptable 0001B004 case 5
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B030:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1ACC6       ; jumptable 0001B004 case 6
+                call    effect_curse    ; jumptable 0001B004 case 6
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B036:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1ACD6       ; jumptable 0001B004 case 7
+                call    effect_silence  ; jumptable 0001B004 case 7
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B03C:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1ACE6       ; jumptable 0001B004 case 8
+                call    effect_paralyze ; jumptable 0001B004 case 8
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B042:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1ACF6       ; jumptable 0001B004 case 9
+                call    effect_collapse ; jumptable 0001B004 case 9
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B048:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1AD06       ; jumptable 0001B004 case 10
+                call    effect_die      ; jumptable 0001B004 case 10
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B04E:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1AD10       ; jumptable 0001B004 case 11
+                call    effect_stone    ; jumptable 0001B004 case 11
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B054:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1AD1A       ; jumptable 0001B004 case 12
+                call    effect_eradicate ; jumptable 0001B004 case 12
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B05A:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1AD24       ; jumptable 0001B004 case 13
+                call    effect_lose_item ; jumptable 0001B004 case 13
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
 loc_1B060:                              ; CODE XREF: combat_apply_touch_effect+22↑j
                                         ; DATA XREF: combat_apply_touch_effect:jpt_1B004↓o
-                call    sub_1AD86       ; jumptable 0001B004 case 14
+                call    effect_lose_backpack ; jumptable 0001B004 case 14
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
@@ -7061,7 +7085,7 @@ loc_1B066:                              ; CODE XREF: combat_apply_touch_effect+2
 
 loc_1B068:                              ; CODE XREF: combat_apply_touch_effect+8F↓j
                 push    ax
-                call    sub_1ADC4
+                call    effect_lose_food
                 jmp     short loc_1B010
 ; ---------------------------------------------------------------------------
 
@@ -7086,7 +7110,7 @@ loc_1B07A:                              ; DATA XREF: combat_apply_touch_effect:o
                 align 2
 
 loc_1B080:                              ; DATA XREF: combat_apply_touch_effect+116↓o
-                call    sub_1ADF2
+                call    effect_lose_valuables
                 jmp     def_1B004       ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
 
@@ -7095,7 +7119,7 @@ loc_1B086:                              ; DATA XREF: combat_apply_touch_effect+1
 
 loc_1B089:                              ; CODE XREF: combat_apply_touch_effect+B1↓j
                 push    ax
-                call    sub_1AE32
+                call    effect_age
                 jmp     short loc_1B010
 ; ---------------------------------------------------------------------------
                 align 2
@@ -7112,7 +7136,7 @@ loc_1B096:                              ; DATA XREF: combat_apply_touch_effect+1
 loc_1B098:                              ; CODE XREF: combat_apply_touch_effect+C1↓j
                                         ; combat_apply_touch_effect+C7↓j
                 push    ax
-                call    sub_1AE50
+                call    effect_lose_stat
                 jmp     loc_1B010
 ; ---------------------------------------------------------------------------
                 align 2
@@ -7134,7 +7158,7 @@ loc_1B0AC:                              ; DATA XREF: combat_apply_touch_effect+1
 
 loc_1B0AE:                              ; CODE XREF: combat_apply_touch_effect+D7↓j
                 push    ax
-                call    sub_1AECA
+                call    effect_lose_level
                 jmp     loc_1B010
 ; ---------------------------------------------------------------------------
                 align 2
@@ -7146,25 +7170,25 @@ loc_1B0B6:                              ; DATA XREF: combat_apply_touch_effect+1
                 align 2
 
 loc_1B0BC:                              ; DATA XREF: combat_apply_touch_effect+126↓o
-                call    sub_1AF04
+                call    effect_lose_experience
                 jmp     short def_1B004 ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1B0C2:                              ; DATA XREF: combat_apply_touch_effect+128↓o
-                call    sub_1AF50
+                call    effect_scramble_items
                 jmp     short def_1B004 ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1B0C8:                              ; DATA XREF: combat_apply_touch_effect+12A↓o
-                call    sub_1AFA0
+                call    effect_lose_spell_points
                 jmp     short def_1B004 ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1B0CE:                              ; DATA XREF: combat_apply_touch_effect+12C↓o
-                call    sub_1AFBC
+                call    effect_assassinate
                 jmp     short def_1B004 ; jumptable 0001B004 default case
 ; ---------------------------------------------------------------------------
                 align 2

@@ -74,7 +74,7 @@ HP word `9FAA[i]`.  Status bits (`DGROUP:1022`, names at `0FEA`): 1 hurt/awake, 
    the others advance (`combat_monster_advances` `1814A`, " advances!").
 5. Hit effects (`combat_after_hit` `17E52`): HP <= 0 -> unconscious (`40h`), more negative -> dead
    (`81h`); " goes down!"; then possibly the **touch effect** (`record[12].low5`, table `DGROUP:106C`)
-   through `combat_apply_touch_effect` (`1AFE2`), gated by a percentage test *(check)*.
+   through `combat_apply_touch_effect` (`1AFE2`), gated by a saving throw (below).
 
 ## Spell hits (`combat_party_spell_hits` `18696`, `1B226`, `1B410`)
 
@@ -97,3 +97,25 @@ row of the item tables at `DGROUP:10F6` (base item id + rand(1, range for the qu
 | `DGROUP:0FC8` | status abbreviations in the monster list: Enca Mdls Held Aslp Afrd Weak Siln Hurt |
 | `DGROUP:1058` | melee verbs: attacks, fights, charges, battles, thrusts at, slashes at, strikes at |
 | `DGROUP:10AA` / `106C` | monster spell / touch-effect names (see file-formats.md) |
+
+## Touch effects and saving throws (`combat_apply_touch_effect` `1AFE2`)
+
+The effect id (`byte_27677`, 1-30, names in file-formats.md) selects one `effect_*` function through a jump table.
+Condition effects use `effect_set_condition(bit, resist)`: `effect_saving_throw` (`1AB6A`) rolls d100 and the
+effect lands only if the roll is >= the character's resistance byte `char[+resist]` (0 = never resists).
+Resistance bytes `+16..+1D` (racial, from the creation tables) and `+1E` (Thievery vs. theft) are used:
+
+| Effect | Condition bit set | Resistance byte |
+|---|---|---|
+| curse | 01h | +16 |
+| silence | 02h | +16 |
+| disease | 04h | +1C |
+| poison | 08h | +1C |
+| sleep | 10h | +1B |
+| paralysis | 20h | +1C |
+| collapse (unconscious) | 40h | +1C |
+| die / stone / eradicate | direct: 81h etc. | -- |
+| lost gold / gems | -- | +1E (Thievery); "lost all" variants take everything |
+
+Condition bits (character `+26`, names `DGROUP:048A`): 01 cursed, 02 silenced, 04 diseased, 08 poisoned,
+10 asleep, 20 paralyzed, 40 unconscious, 80 dead, plus stone/eradicated as higher codes (FFh).

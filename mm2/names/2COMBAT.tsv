@@ -56,3 +56,28 @@
 1AFE2	combat_apply_touch_effect	(char) apply the monster's touch effect
 1B226	combat_spell_damage	" resisted and", " takes ", " pts"
 1B410	combat_spell_effect	" is not affected!", " resisted!"
+1ABDC	effect_lose_gold	ids 1 (partial) / 17 (all): "lost gold" / "lost all gold"; resist +1E
+1AC52	effect_lose_gems	ids 2 / 18
+1AC96	effect_poison	cond |= 08h, resist +1C
+1ACA6	effect_disease	cond |= 04h, resist +1C
+1ACB6	effect_sleep	cond |= 10h, resist +1B
+1ACC6	effect_curse	cond |= 01h, resist +16
+1ACD6	effect_silence	cond |= 02h, resist +16
+1ACE6	effect_paralyze	cond |= 20h, resist +1C
+1ACF6	effect_collapse	cond |= 40h (unconscious), resist +1C
+1AD06	effect_die	cond = 81h
+1AD10	effect_stone	turns to stone
+1AD1A	effect_eradicate	eradicated
+1AD24	effect_lose_item	drop one item
+1AD86	effect_lose_backpack	
+1ADC4	effect_lose_food	ids 15 / 16
+1ADF2	effect_lose_valuables	gold+gems+...
+1AE32	effect_age	ids 20/21
+1AE50	effect_lose_stat	ids 22-24
+1AECA	effect_lose_level	ids 25/26
+1AF04	effect_lose_experience	id 27
+1AF50	effect_scramble_items	id 28
+1AFA0	effect_lose_spell_points	id 29
+1AFBC	effect_assassinate	id 30
+1AB6A	effect_saving_throw	(resist byte index) -> word_22CFA = 1 if the effect lands: d100 >= the character resistance byte at char[+idx]; idx 0 = always
+1ABB4	effect_set_condition	(condition bit, resist idx): saving throw then cond |= bit unless already out of action
