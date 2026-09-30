@@ -14174,7 +14174,7 @@ loc_15822:                              ; CODE XREF: play_sound_effect+8F↓j
                 push    [bp+var_A]
                 push    di
                 push    ax
-                call    sub_16A88
+                call    pc_speaker_tone
                 add     sp, 6
                 mov     ax, 1
                 push    ax
@@ -17105,9 +17105,10 @@ sub_16A6B       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; (freq Hz, ticks, on): programs PIT channel 2 via port 42h/61h then waits `ticks` timer ticks (word_22261 is decremented by TIMER.DRV)
 ; Attributes: bp-based frame
 
-sub_16A88       proc near               ; CODE XREF: play_sound_effect+65↑p
+pc_speaker_tone proc near               ; CODE XREF: play_sound_effect+65↑p
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -17144,11 +17145,11 @@ arg_4           = word ptr  8
                                         ; 6: 0=hold keyboard clock low
                                         ; 7: 0=enable kbrd
 
-loc_16AAA:                              ; CODE XREF: sub_16A88+9↑j
+loc_16AAA:                              ; CODE XREF: pc_speaker_tone+9↑j
                 mov     ax, [bp+arg_2]
                 mov     word_22261, ax
 
-loc_16AB0:                              ; CODE XREF: sub_16A88+2D↓j
+loc_16AB0:                              ; CODE XREF: pc_speaker_tone+2D↓j
                 cmp     word_22261, 0
                 jnz     short loc_16AB0
                 in      al, 61h         ; PC/XT PPI port B bits:
@@ -17172,7 +17173,7 @@ loc_16AB0:                              ; CODE XREF: sub_16A88+2D↓j
                 pop     si
                 pop     bp
                 retn
-sub_16A88       endp
+pc_speaker_tone endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
@@ -24698,7 +24699,7 @@ aYouHaveFoundA  db 'You have found a ',0
 aComeBackRealSo db 'Come back real soon.',0
                 db    0
 aThisFountainDo db 'This fountain does not recognize',0
-                                        ; DATA XREF: sub_16A88+11↑o
+                                        ; DATA XREF: pc_speaker_tone+11↑o
 aHirelings_1    db 'hirelings.',0
 aYouHaveNoGold  db 'You have no gold',0
                 db    0

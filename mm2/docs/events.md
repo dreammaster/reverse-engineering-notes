@@ -39,7 +39,7 @@ Semantics are from reading the handlers; names in the IDA databases: `evt_opNN_*
 | 11 | 3 | `1947E` | show monster picture (id, position) |
 | 12 | 3 | `194D4` | teleport (map id, `y<<4|x`); bit 7 of the map id = random cell |
 | 13 | 2 | `19560` | play sound effect |
-| 14 | 2 | `19716` | enter location: 1 inn, 2 training hall, 3 tavern, 4/5 temple, 6 blacksmith, 7/8 tavern variants, 64h/7E-83h/C9-CFh/E2h caves-overlay specials, FDh, else map entrance (`1956E`) |
+| 14 | 2 | `19716` | enter location: 1 inn, 2 training hall, 3 tavern, 4/5 temple / mage guild, 6 blacksmith, 7/8 tavern variants; 64h quest prompt; 7Eh slide (enter X,Y and teleport), 7Fh ambush, 80h teleport trap that halves stats, 81h-83h found item, C9h/CAh/CBh/CCh/CDh/CEh/CFh special caves events (donate experience/gems, pick character, time travel to an era), E2h town crier (message of the day), FDh blacksmith robbery (guards); anything else = map entrance (`1956E`) |
 | 15 | 1 | `198C8` | end script |
 | 16, 17 | 2 | `198D2`, `198F2` | skip *n* commands if `cond` / if not `cond` |
 | 18 | 13 | `19912` | fight: 10 monster ids + 2 parameters (`start_combat`) |

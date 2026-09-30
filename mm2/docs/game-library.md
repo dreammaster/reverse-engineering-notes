@@ -57,3 +57,13 @@ Time: `advance_time(minutes)` (`150CE`) adds to `word_1DC1C`; each 100h units is
 day counter of the current era (`DGROUP:03A2[era]`) increments, every character gets one day older
 (`age_party_one_day`), special days (3Ch/78h/B4h) reset monthly flags (`byte_1DC44/45`); after day
 180 the day resets to 1 and the era's year (`DGROUP:03B6[era]`, max 999) increments.
+
+## Sound
+
+Only the PC speaker is used.  `play_sound_effect(n)` (`157E0`, n = 0-9) walks a `FFh`-terminated list of
+`(note, duration)` byte pairs from the pointer table at `DGROUP:5214` (data at `5100..5190`); `note` is a
+semitone number (60 = C4) turned into a frequency by the table at `DGROUP:5144` (65 Hz = C2 at index 40 ...
+988 Hz at index 87) and `duration` indexes `DGROUP:51F4` ({2000,1000,500,250,125,62,31,15,...} timer
+units); `pc_speaker_tone` (`16A88`) programs the 8253 (divisor `1193180/f`) and waits for the timer driver
+(`TIMER.DRV`) to count `word_22261` down to zero.  There is no background music; the "anim" waits
+(`monster_anim_step`) double as the idle loops while a message is shown.

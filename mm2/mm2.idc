@@ -6761,6 +6761,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16A7F);
 	op_stkvar	(x,	1);
 	create_insn	(0X16A88);
+	set_name	(0X16A88,	"pc_speaker_tone");
 	create_insn	(x=0X16A8D);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X16A93);
@@ -11278,6 +11279,7 @@ static Functions_0(void) {
 	set_frame_size(0X16A6B, 0, 2, 0);
 	add_func    (0X16A88,0X16AC1);
 	set_func_flags(0X16A88,0x5410);
+	set_func_cmt(0X16A88,	"(freq Hz, ticks, on): programs PIT channel 2 via port 42h/61h then waits `ticks` timer ticks (word_22261 is decremented by TIMER.DRV)", 0);
 	set_frame_size(0X16A88, 0X4, 2, 0);
 	add_func    (0X177D0,0X177D5);
 	set_func_flags(0X177D0,0x5400);

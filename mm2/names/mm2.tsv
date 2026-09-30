@@ -196,3 +196,4 @@
 1DC29	g_fx_walk_on_water	Walk on Water
 1DC2A	g_fx_guard_dog	Guard Dog
 1DC60	g_battle_count	Nth battle
+16A88	pc_speaker_tone	(freq Hz, ticks, on): programs PIT channel 2 via port 42h/61h then waits `ticks` timer ticks (word_22261 is decremented by TIMER.DRV)
