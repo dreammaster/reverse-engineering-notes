@@ -1418,6 +1418,27 @@ Also added: `TSoundInterface::Play(const wxFileName&)` - a new virtual,
 confirmed distinct from `TSoundFFMPEG::PlaySound`'s own vtable slot,
 exercised by `EndLoading()`.
 
+## EventHandler: implement the pending-event queue, add Event
+
+`EventHandler` (manifest: stub, 4 methods) turned out small and
+self-contained once its own asm range was isolated from the unrelated
+classes interleaved around it in the manifest's line span. Implemented
+`ProcessPendingEvents()` (asm lines 1594325-1594376) and
+`AddPendingEvent(Event*)` (asm lines 1599448-1599510) for real: both
+confirmed to operate on genuinely global state (a `wxCriticalSection` plus a
+`std::vector<std::pair<Event*, EventHandler*>>`, mangled type confirmed
+directly from `AddPendingEvent`'s own `_M_emplace_back_aux` call) rather
+than anything per-instance - the same "global, not per-instance" shape
+already established for `TGameControl`'s own `EngineEvents` queue.
+`AddPendingEvent` clones the incoming event (a new virtual, `Event::Clone()`)
+before queuing it; `ProcessPendingEvents` dispatches each queued event to
+its paired handler (a new virtual, `EventHandler::HandleEvent()`) and then
+deletes it.
+
+Added a new `Event` class (previously nonexistent) with just the one
+confirmed virtual. Both `Clone()`/`HandleEvent()` names are guesses from
+their call shapes, not recovered identifiers.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
