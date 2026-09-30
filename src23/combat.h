@@ -571,4 +571,65 @@ void combatApplyEncodedItemEffectSingle(uint8_t *actingRecord, SaveGame *save, u
 void combatApplyEncodedItemEffectParty(SaveGame *save, unsigned effectId, GameKind game,
                                         CombatEncodedItemEffectValue value);
 
+/*
+ * The "wall/door trap" side of the side-trap/ambush pipeline
+ * (`file-formats.md`'s "side trap"/ambush section; `roadmap.md`
+ * candidate 6). Resolved 2026-09-30: there is no separate creation
+ * mechanism for a wall/door trap pool entry -- an exhaustive
+ * whole-binary search (both games) for any write to `MonsterFieldWound`
+ * (`monster.h`, `+0xE`) bit `0x1000` (`MonsterWoundAmbushPending`)
+ * found exactly one site in each game, and it's `monsterApproachParty`'s
+ * own ambush-arming write (`monsterpool.c`), already reimplemented. A
+ * "wall/door trap" pool entry is simply an ordinary monster record in
+ * the ambush-pending state, presented differently depending on which
+ * direction the party is currently facing relative to it.
+ *
+ * `RollTrapAvoidanceMagnitude` (yendor2.asm:32706) is the roll:
+ * `survivalStat` is the acting party member's own `PartyStatEquipRating5`
+ * (`party.h`, confirmed by offset: `PartyFieldStats + 10*2` == `0x50`,
+ * the same physical-defense stat `combatResolveAttack` already uses),
+ * `threshold`/`magnitudeCap` are a trap pool entry's own
+ * `MonsterFieldRangedAccuracy`/`MonsterFieldRangedDamage` fields
+ * (`monster.h`, `+0x64`/`+0x66`) -- confirming "trap" pool entries
+ * really do carry a full monster catalog block, reusing its ordinary
+ * ranged-attack fields as trap avoidance threshold/magnitude data
+ * rather than needing a separate trap-specific record shape.
+ * Higher `survivalStat` means both less likely to trigger and a
+ * smaller magnitude when it does. Called unconditionally (rolls -- and
+ * consumes RNG -- every movement step for every armed trap slot,
+ * regardless of the party's current facing; fidelity matters here for
+ * RNG-draw-count parity with the original). **A real Chapter 2 vs.
+ * Chapter 3 difference, easy to miss**: Chapter 2 rolls
+ * `RandomInRange(100)`; Chapter 3 rolls `RandomInRange(55)` instead --
+ * the final `magnitudeCap * margin / 100` formula is unchanged in both
+ * games, only the roll's own upper bound shrinks, so Chapter 3 traps
+ * trigger noticeably more often for the same margin (any margin >= 55
+ * always triggers in Chapter 3, vs. needing a margin of 100 to always
+ * trigger in Chapter 2). Confirmed by reading both games' disassembly
+ * side by side, not assumed from the otherwise instruction-identical
+ * surrounding code.
+ *
+ * The facing gate (`TriggerSideTrapForRandomPartyMember`,
+ * yendor2.asm:32889, instruction-identical in Chapter 3) is a separate,
+ * unconditional-after-the-roll check: exactly one of the 4
+ * `MonsterWoundPartyMustFace*` bits is tested, selected by the party's
+ * *current* `SaveFacing` (not the monster's position -- that's a
+ * different check `monsterApproachParty` already does when arming the
+ * trap). Only when it matches does the original go on to stage
+ * icon-bar/sound presentation; that presentation step (a 4-slot
+ * scratch table, `PresentTriggeredSideTrapEffects`'s own drawing/sound
+ * sequencing) is UI-heavy and not reimplemented here.
+ */
+uint16_t combatRollTrapAvoidanceMagnitude(GameKind game, uint16_t survivalStat, uint16_t threshold,
+                                            uint16_t magnitudeCap, RandomState *rng);
+
+typedef struct {
+    uint16_t magnitude; /* combatRollTrapAvoidanceMagnitude's result -- 0 means avoided */
+    bool facingReady;   /* true if the party's current facing matches the trap's own armed direction */
+} CombatSideTrapOutcome;
+
+CombatSideTrapOutcome combatResolveSideTrap(GameKind game, uint16_t partyFacing, uint16_t monsterWoundFlags,
+                                              uint16_t survivalStat, uint16_t threshold, uint16_t magnitudeCap,
+                                              RandomState *rng);
+
 #endif

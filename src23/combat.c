@@ -442,3 +442,44 @@ void combatApplyEncodedItemEffectParty(SaveGame *save, unsigned effectId, GameKi
         combatApplyEffect(record, save, effectSpend(&def), value.magnitude, zeroMaterial, value.inflictedStatus);
     }
 }
+
+uint16_t combatRollTrapAvoidanceMagnitude(GameKind game, uint16_t survivalStat, uint16_t threshold,
+                                            uint16_t magnitudeCap, RandomState *rng) {
+    int margin = (int)threshold - (int)survivalStat;
+    if (margin < 0) {
+        return 0;
+    }
+    /* Chapter 2 rolls out of 100; Chapter 3 rolls out of 55 instead (a real, easy-to-miss difference --
+       the final magnitude formula below still divides by 100 unchanged in both games, only the roll's own
+       upper bound differs, making Chapter 3 traps meaningfully more likely to trigger for the same margin). */
+    int roll = randomInRange(rng, game == GameYendor2 ? 100 : 55);
+    if (margin < roll) {
+        return 0;
+    }
+    return (uint16_t)((magnitudeCap * (unsigned)margin + 50) / 100);
+}
+
+CombatSideTrapOutcome combatResolveSideTrap(GameKind game, uint16_t partyFacing, uint16_t monsterWoundFlags,
+                                              uint16_t survivalStat, uint16_t threshold, uint16_t magnitudeCap,
+                                              RandomState *rng) {
+    CombatSideTrapOutcome result;
+    result.magnitude = combatRollTrapAvoidanceMagnitude(game, survivalStat, threshold, magnitudeCap, rng);
+
+    uint16_t requiredBit;
+    switch (partyFacing) {
+        case SaveFacingNorth:
+            requiredBit = MonsterWoundPartyMustFaceNorth;
+            break;
+        case SaveFacingSouth:
+            requiredBit = MonsterWoundPartyMustFaceSouth;
+            break;
+        case SaveFacingEast:
+            requiredBit = MonsterWoundPartyMustFaceEast;
+            break;
+        default: /* SaveFacingWest, and matches the original's own unconditional else */
+            requiredBit = MonsterWoundPartyMustFaceWest;
+            break;
+    }
+    result.facingReady = (monsterWoundFlags & requiredBit) != 0;
+    return result;
+}

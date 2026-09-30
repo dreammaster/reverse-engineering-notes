@@ -1000,6 +1000,106 @@ static void testApplyTargetResistances(void) {
     checkU32("...the lower-priority field is untouched", monsterGetU16(target, MonsterFieldDamage), 40);
 }
 
+static void testRollTrapAvoidanceMagnitudeNegativeMarginAvoidsWithoutRolling(void) {
+    RandomState rng;
+    randomStart(&rng, 3, 7);
+    RandomState before = rng;
+    /* threshold (20) < survivalStat (25) -> margin is negative -> avoided, and no RandomInRange call at all
+       (fidelity check: the original's own early-out skips the roll entirely, so rng must be untouched). */
+    uint16_t magnitude = combatRollTrapAvoidanceMagnitude(GameYendor2, 25, 20, 999, &rng);
+    checkU32("negative margin avoids the trap", magnitude, 0);
+    check("...and consumes no RNG state at all", memcmp(&rng, &before, sizeof(rng)) == 0);
+}
+
+static void testRollTrapAvoidanceMagnitudeChapter2UsesBound100(void) {
+    for (uint8_t seed = 0; seed < 12; seed++) {
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        uint16_t roll = randomInRange(&peek, 100);
+
+        uint16_t magnitude = combatRollTrapAvoidanceMagnitude(GameYendor2, 10, 60, 40, &rng);
+        uint16_t margin = 50; /* threshold(60) - stat(10) */
+        uint16_t expected = (roll > margin) ? 0 : (uint16_t)((40u * margin + 50) / 100);
+        checkU32("Chapter 2 magnitude matches RandomInRange(100)-based formula", magnitude, expected);
+    }
+}
+
+static void testRollTrapAvoidanceMagnitudeChapter3UsesBound55(void) {
+    for (uint8_t seed = 0; seed < 12; seed++) {
+        RandomState rng;
+        randomStart(&rng, seed, seed);
+        RandomState peek = rng;
+        uint16_t roll = randomInRange(&peek, 55); /* the real, easy-to-miss Chapter 3 difference */
+
+        uint16_t magnitude = combatRollTrapAvoidanceMagnitude(GameYendor3, 10, 60, 40, &rng);
+        uint16_t margin = 50;
+        uint16_t expected = (roll > margin) ? 0 : (uint16_t)((40u * margin + 50) / 100);
+        checkU32("Chapter 3 magnitude matches RandomInRange(55)-based formula", magnitude, expected);
+    }
+}
+
+static void testRollTrapAvoidanceMagnitudeSameSeedCanDifferBetweenGames(void) {
+    /* A margin of 55-99 always triggers in Chapter 3 (roll in [0,55) never exceeds it) but only
+       sometimes in Chapter 2 (roll in [0,100) can exceed it) -- the concrete, observable consequence
+       of the differing roll bound, not just a formula difference on paper. */
+    bool sawTriggerOnlyInChapter3 = false;
+    for (uint8_t seed = 0; seed < 40; seed++) {
+        RandomState rng2;
+        randomStart(&rng2, seed, seed);
+        uint16_t m2 = combatRollTrapAvoidanceMagnitude(GameYendor2, 0, 70, 100, &rng2);
+
+        RandomState rng3;
+        randomStart(&rng3, seed, seed);
+        uint16_t m3 = combatRollTrapAvoidanceMagnitude(GameYendor3, 0, 70, 100, &rng3);
+
+        if (m2 == 0 && m3 != 0) {
+            sawTriggerOnlyInChapter3 = true;
+        }
+        /* Chapter 3 should never be strictly less likely to trigger than Chapter 2 for the same margin/seed. */
+        checkU32("Chapter 3 triggers whenever Chapter 2 does, for the same seed/margin", (m2 != 0 && m3 == 0) ? 1 : 0,
+                 0);
+    }
+    check("at least one seed demonstrates Chapter 3 triggering where Chapter 2 doesn't", sawTriggerOnlyInChapter3);
+}
+
+static void testResolveSideTrapFacingMatchesEachDirection(void) {
+    RandomState rng;
+    randomStart(&rng, 0, 0);
+
+    CombatSideTrapOutcome r;
+    r = combatResolveSideTrap(GameYendor2, SaveFacingNorth, MonsterWoundPartyMustFaceNorth, 100, 0, 0, &rng);
+    check("facing North matches a North-armed trap", r.facingReady);
+    r = combatResolveSideTrap(GameYendor2, SaveFacingNorth, MonsterWoundPartyMustFaceSouth, 100, 0, 0, &rng);
+    check("facing North does not match a South-armed trap", !r.facingReady);
+
+    r = combatResolveSideTrap(GameYendor2, SaveFacingSouth, MonsterWoundPartyMustFaceSouth, 100, 0, 0, &rng);
+    check("facing South matches a South-armed trap", r.facingReady);
+
+    r = combatResolveSideTrap(GameYendor2, SaveFacingEast, MonsterWoundPartyMustFaceEast, 100, 0, 0, &rng);
+    check("facing East matches an East-armed trap", r.facingReady);
+
+    /* SaveFacingWest is the original's own unconditional "else" branch -- no explicit cmp against it. */
+    r = combatResolveSideTrap(GameYendor2, SaveFacingWest, MonsterWoundPartyMustFaceWest, 100, 0, 0, &rng);
+    check("facing West (the implicit else) matches a West-armed trap", r.facingReady);
+    r = combatResolveSideTrap(GameYendor2, SaveFacingWest, MonsterWoundPartyMustFaceEast, 100, 0, 0, &rng);
+    check("facing West does not match an East-armed trap", !r.facingReady);
+}
+
+static void testResolveSideTrapRollsRegardlessOfFacing(void) {
+    /* The roll always happens, even when the facing check will fail -- fidelity with the original's own
+       RNG-draw-count, which rolls unconditionally before the facing branch. */
+    RandomState rng;
+    randomStart(&rng, 5, 5);
+    RandomState peekRng = rng;
+    uint16_t expectedMagnitude = combatRollTrapAvoidanceMagnitude(GameYendor2, 10, 60, 40, &peekRng);
+
+    CombatSideTrapOutcome r =
+        combatResolveSideTrap(GameYendor2, SaveFacingNorth, MonsterWoundPartyMustFaceSouth, 10, 60, 40, &rng);
+    checkU32("the roll still happens (and matches) even though facing won't match", r.magnitude, expectedMagnitude);
+    check("...and facingReady correctly reports false", !r.facingReady);
+}
+
 int main(void) {
     testTurnOrderSortedDescending();
     testStableTiesKeepBuildOrder();
@@ -1045,6 +1145,12 @@ int main(void) {
     testApplyEncodedItemEffectPartyStopsAtEmptySlot();
     testApplyEncodedItemEffectPartyChapter2DoesNotSkipCursed();
     testApplyEncodedItemEffectPartyChapter3SkipsCursed();
+    testRollTrapAvoidanceMagnitudeNegativeMarginAvoidsWithoutRolling();
+    testRollTrapAvoidanceMagnitudeChapter2UsesBound100();
+    testRollTrapAvoidanceMagnitudeChapter3UsesBound55();
+    testRollTrapAvoidanceMagnitudeSameSeedCanDifferBetweenGames();
+    testResolveSideTrapFacingMatchesEachDirection();
+    testResolveSideTrapRollsRegardlessOfFacing();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

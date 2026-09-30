@@ -2479,21 +2479,28 @@ confirmed by cross-checking against every other `0xF26`/`0x9C`/`0x50`
 walk in the codebase (`HandleMovementInput`'s monster-list scan,
 `RefreshDungeonMapWindow`'s scroll relink). This isn't a separate
 "wall/cell" concept — it's the live monster pool itself, and the flag
-this pipeline checks (`[+0xE]` bit `0x1000`) turns out to be settable
-two different ways:
-- **A wall/door trap**, populated into a pool slot by some mechanism
-  not yet traced (plausibly the same map-marker-driven spawn path as
-  an ordinary monster, `worldobjects.c`/`monsterpool.c`'s
-  `monsterPoolSpawn` — not confirmed).
-- **A monster ambush** — **fully decoded and reimplemented, 2026-09-23**
-  (see "Monster approach and ambush check" below): set by
-  `ProcessLevelMonsters` when a monster is grid-aligned with the party
-  (same world row or column) with a clear line of cells between them,
-  via a `RandomInRange(100)` roll against a threshold selected by a
-  *second*, independent bit range of `+0x94` (`MonsterFieldAwareness`
-  in `monster.h`) — `0x200`-`0x1000`, distinct from the
-  already-documented `0x20`-`0x100` "how far it notices the party"
-  range.
+this pipeline checks (`[+0xE]` bit `0x1000`) was long described here as
+settable two different ways — **resolved 2026-09-30: there is only
+one way.** An exhaustive whole-binary search (both games) for every
+site that writes `0x1000` into a pool record's `+0xE` field
+(`MonsterFieldWound`/`monster.h`) found exactly one write site in each
+game, and it's `ProcessLevelMonsters`' own ambush-arming write (already
+fully decoded and reimplemented as `monsterApproachParty`, see "Monster
+approach and ambush check" below) — a `RandomInRange(100)` roll against
+a threshold selected by a *second*, independent bit range of `+0x94`
+(`MonsterFieldAwareness` in `monster.h`) — `0x200`-`0x1000`, distinct
+from the already-documented `0x20`-`0x100` "how far it notices the
+party" range. **There is no separate wall/door trap creation
+mechanism.** A "wall/door trap" pool entry is simply an ordinary
+monster record in the ambush-pending state (`MonsterWoundAmbushPending`,
+`0x1000`) — the "wall/door" framing describes how it's *experienced*,
+not how it's *created*: whether the party ends up seeing a monster
+sprite (ordinary combat engagement) or a wall/door-embedded trap
+(the mechanism below) depends only on which direction the party
+happens to be facing relative to where the ambush was armed, not on
+any distinct record type. `monster.h`'s own `MonsterWound` doc comment
+had already suspected this connection without confirming it as
+definitively as this exhaustive search now does.
 
 `ProcessSideTrapsOnMovement` (was `sub_2278C`, called directly from
 `start`, likely once per movement step) fast-exits unless
@@ -2502,42 +2509,65 @@ two different ways:
 slot with that flag bit. That function picks a random active party
 member (`PickRandomActivePartyMember`) and rolls
 `RollTrapAvoidanceMagnitude` (was `sub_227F5`) — a save-vs-trap
-avoidance check using the still-mysterious party-record field `+0x50`
-against threshold/magnitude-cap fields at the pool record's `+0x64`/
-`+0x66` — offsets that fall **within the monster catalog block's own
-byte range** (`monster.h`'s `MonsterBlockOffset` `0x32` through
-`0x9B`), not among its currently-named fields. Same for `+0x60`/`+0x62`/
-`+0x70`, also read here, and `+0x78` (stored as a pointer-like
-reference). **This strongly suggests "trap" pool entries carry a full
-monster catalog block too, with these particular fields reused as
-trap avoidance threshold/magnitude/sound data instead of ordinary
-monster stats** — a genuinely deep unification of the trap and monster
-systems, but not confirmed or reimplemented this pass; would need
-tracing `ProcessLevelMonsters` (monster AI/turn processing, not
-otherwise touched yet) and however wall-trap pool entries actually get
-created. The higher `+0x50` relative to the threshold, the less likely
-and smaller the resulting effect. The trap only actually fires if the
-party's current facing (the same `g_partyFacing` tier-bit convention
-as `DrawDungeonCellSideFeature`/`ShowCompassDirection`) matches one of
-4 direction bits also on `+0xE` — i.e. it has to be a wall/door (or
-ambushing monster) the party is currently facing, using the record's
-own `+2`/`+4` world position (`MonsterFieldWorldX`/`Y`) exactly like
-an ordinary monster's. Up to 4 such results are staged into a scratch
-table (`0xBC28`), then `PresentTriggeredSideTrapEffects` (was
-`sub_2281F`) resolves and presents them: plays the trap's sound cue
-once `WaitForSoundDriverIdle` confirms the driver is free, draws
-weapon-style icons and does a full dungeon-screen refresh, picks the
-highest-severity result to drive a scaled `AnimateProjectileStep`
-animation, and finally transfers the results into the confirmed
-icon-bar slot table (`0xC50`) via `ApplyEffectAndDrawIconBar`. `+0x50`
-being used here as an avoidance stat is a second, independent data
-point (alongside `ComputeAlchemyRefinementYield`'s use of the
-neighboring `+0x70`) that the still-open "`+0x4C`/`+0x4E`/`+0x50`
-trio" are general character stats reused across systems. **Not
-reimplemented** — genuinely comparable in scope to the monster-pool
-work already done, but blocked on tracing `ProcessLevelMonsters` and
-the wall-trap creation path first; a good candidate for its own
-dedicated session rather than an extension of `monsterpool.c`.
+avoidance check using the party record's own `PartyStatEquipRating5`
+(`+0x50`, confirmed by offset arithmetic: `PartyFieldStats + 10*2`;
+the same physical-defense stat `combatResolveAttack` already uses)
+against the pool record's own `MonsterFieldRangedAccuracy`/
+`MonsterFieldRangedDamage` fields (`monster.h`, `+0x64`/`+0x66`) as
+threshold/magnitude-cap — already-named ordinary monster fields, not a
+separate trap-specific pair. `MonsterFieldApproachGate` (`+0x60`) is
+also read here (its own meaning still not confirmed); `+0x62`/`+0x70`/
+`+0x78` remain unnamed (the last stored as a pointer-like reference).
+**Confirms "trap" pool entries carry a full monster catalog block
+too**, with `RangedAccuracy`/`RangedDamage` reused as trap avoidance
+threshold/magnitude data instead of an actual ranged attack — a
+genuinely deep unification of the trap and monster systems, now fully
+confirmed rather than merely suggested. The higher the stat relative to
+the threshold, the less likely and smaller the resulting effect.
+**Reimplemented 2026-09-30** as `combatRollTrapAvoidanceMagnitude`
+(`src23/combat.c`/`.h`) — and reading Chapter 3's copy directly (not
+assumed instruction-identical just because the surrounding code is)
+found a real, easy-to-miss difference: **Chapter 2 rolls
+`RandomInRange(100)`; Chapter 3 rolls `RandomInRange(55)` instead**,
+while the final `magnitudeCap * margin / 100` formula stays unchanged
+in both — so Chapter 3 traps trigger noticeably more often for the
+same margin (any margin ≥ 55 always triggers in Chapter 3, vs. needing
+a margin of 100 to always trigger in Chapter 2). The roll happens
+*unconditionally* once a slot is flagged, regardless of the party's
+current facing — reproduced exactly for RNG-draw-count parity, not
+just outcome parity.
+
+The trap only actually *presents* if the party's current facing (the
+same `SaveFacing` bit convention as `ShowCompassDirection`) matches one
+of 4 direction bits also on `+0xE` (`monster.h`'s
+`MonsterWoundPartyMustFace*`, the same bits `monsterApproachParty`
+already arms) — i.e. it has to be a wall/door (or ambushing monster)
+the party is currently facing, using the record's own `+2`/`+4` world
+position (`MonsterFieldWorldX`/`Y`) exactly like an ordinary monster's.
+**Reimplemented as `combatResolveSideTrap`** (`src23/combat.c`/`.h`),
+combining the roll above with this facing gate as a single decision
+function — confirmed instruction-identical to Chapter 2 (aside from
+the roll-bound difference already noted). Up to 4 such results are
+staged into a scratch table (`0xBC28`), then
+`PresentTriggeredSideTrapEffects` (was `sub_2281F`) resolves and
+presents them: plays the trap's sound cue once `WaitForSoundDriverIdle`
+confirms the driver is free, draws weapon-style icons and does a full
+dungeon-screen refresh, picks the highest-severity result to drive a
+scaled `AnimateProjectileStep` animation, and finally transfers the
+results into the confirmed icon-bar slot table (`0xC50`) via
+`ApplyEffectAndDrawIconBar`. `+0x50` being used here as an avoidance
+stat is a second, independent data point (alongside
+`ComputeAlchemyRefinementYield`'s use of the neighboring `+0x70`) that
+the still-open "`+0x4C`/`+0x4E`/`+0x50` trio" are general character
+stats reused across systems. **Not reimplemented**: the 4-slot scratch
+staging table and `PresentTriggeredSideTrapEffects` itself — purely
+UI/drawing/sound sequencing, deferred to the eventual SDL2 layer like
+this project's other presentation-only code. Tests in
+`tests/test_combat.c` cover the roll's negative-margin early-out (and
+that it consumes no RNG in that case), both games' differing roll
+bounds via the RNG-peek technique, a concrete same-seed
+Chapter-2-vs-Chapter-3 divergence, and all 4 facing-match cases
+including the implicit "West" else-branch.
 
 **Key items reference locks by their own catalog type value**:
 `UseItem`'s `UseKeyItem` branch passes a key item's own type-flags

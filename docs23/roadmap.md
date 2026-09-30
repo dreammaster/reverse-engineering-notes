@@ -748,14 +748,33 @@ consumers, if any.
    item-use pipeline this project hasn't built yet, which is what would
    actually resolve `partyApplyTraining`'s `cost` parameter from a real
    item record instead of a caller-supplied value.
-6. **The side-trap/ambush pipeline's wall-trap half** (see
-   `file-formats.md`'s "side trap"/ambush section) — still blocked on
-   confirming how a wall/door trap pool entry gets created; the
-   monster-ambush half is done (`monsterApproachParty`). The
-   2026-09-24 investigation didn't find a separate creation path but
-   strengthened the "traps reuse monster catalog fields" hypothesis
-   (`RollTrapAvoidanceMagnitude`'s `+0x64`/`+0x66` are literally
-   `MonsterFieldRangedAccuracy`/`RangedDamage`) without proving it.
+~~6. **The side-trap/ambush pipeline's wall-trap half**~~ — **fully
+   resolved and reimplemented 2026-09-30**: the "how does a wall/door
+   trap pool entry get created" mystery is closed for good. An
+   exhaustive whole-binary search (both games) for every write to
+   `MonsterFieldWound` bit `0x1000` (`MonsterWoundAmbushPending`) found
+   exactly one site per game, and it's `monsterApproachParty`'s own
+   ambush-arming write, already reimplemented — **there is no separate
+   wall/door trap creation mechanism at all.** A "wall/door trap" is
+   simply an ordinary monster record in the ambush-pending state,
+   presented as a wall/door effect or an ordinary encounter depending
+   only on which direction the party happens to be facing relative to
+   it. With that settled, reimplemented the roll/gate decision logic
+   itself: `combatRollTrapAvoidanceMagnitude`/`combatResolveSideTrap`
+   in `src23/combat.c`/`.h`, using the party's `PartyStatEquipRating5`
+   against the trap pool entry's own (already-named, ordinary)
+   `MonsterFieldRangedAccuracy`/`RangedDamage` fields. **A real Chapter
+   2 vs. Chapter 3 difference found**: Chapter 2 rolls
+   `RandomInRange(100)`, Chapter 3 rolls `RandomInRange(55)` instead,
+   with the same final percentage formula — Chapter 3 traps trigger
+   noticeably more often for the same margin. Tests in
+   `test_combat.c` cover both bounds via the RNG-peek technique, a
+   concrete same-seed divergence between the games, and all 4
+   facing-match cases. See `file-formats.md`'s "side trap"/ambush
+   section for the full writeup. **Still not reimplemented**: the
+   4-slot scratch staging table and `PresentTriggeredSideTrapEffects`
+   itself, both pure UI/drawing/sound sequencing deferred to the
+   eventual SDL2 layer.
 ~~7. **Turn-based combat's turn order, round processing, attack
    resolution (fully composed), and the icon-bar effect-application
    pipeline they feed**~~ — **done 2026-09-26** (`combatBuildTurnOrder`/
@@ -1015,11 +1034,26 @@ if reimplementing the specific function that touches them:
 
 ## Open questions (yendor2, from earlier sessions, still unresolved)
 
-- Is `NUORE` a currency, a resource, or both? Appears alongside "MAGIC
-  ORE" in several UI strings — looks like a 3-resource economy. Note:
-  `engine-diffs.md` documents that Chapter 3 appears to remove/replace
-  the NUORE mechanic with a new 5-artifact quest system, which may
-  make this moot for Chapter 3 but still matters for Chapter 2.
+- ~~Is `NUORE` a currency, a resource, or both?~~ — **already resolved,
+  just never marked closed here**: `file-formats.md`'s "Global material
+  counters and BCD arithmetic" section has had the full answer since an
+  earlier session. `NUORE` is a resource, not a currency — gold
+  (`g_partyGold`, `0x94B3`, labeled `"$"`/"GOLD COINS:") is the actual
+  currency. `NUORE` (`0x94BB`) and `MAGIC ORE` (`0x94B7`) are a pair of
+  BCD counters confirmed exactly consecutive with gold (by
+  `ShowResourceDepletedOverlay`'s own scan of all three), both spent on
+  alchemy/spell costs (`CastSpell`'s `0x1C` ability converts 10 units of
+  one into the other) — so it's genuinely a 3-resource economy, just
+  with only one of the three being spendable currency. `src23/`'s own
+  `party.h`/`effect.h`/`savegame.h` already model this generically
+  (`SaveHeaderGold`/`OreCounter1`/`OreCounter2`,
+  `EffectCostGold`/`Ore1`/`Ore2`) without committing to which raw
+  counter is `MAGIC ORE` vs `NUORE` in the C naming, since the two
+  behave identically wherever this project's own logic touches them —
+  reimplementing the alchemy screen itself is what would need the more
+  specific labels, not blocked on anything today. `engine-diffs.md`
+  still documents that Chapter 3 replaces this mechanic with a
+  5-artifact quest system, so the above is Chapter 2-only.
 - ~~Relationship between the "region" passwords and "town" passwords~~
   — **fully resolved 2026-09-30, both games' data extracted, mechanism
   confirmed down to real in-game password words**: not a metaphor —

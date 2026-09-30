@@ -10318,6 +10318,67 @@ deferred to the eventual SDL2 layer like this project's other
 top-level input handlers. `roadmap.md` candidate 9 marked done for its
 decision-logic half.
 
+### Session update (continued, same day): the "wall/door trap" creation mystery, closed for good — candidate 6 done
+
+With candidate 9 wrapped up, picked candidate 6 next: this project has
+carried an open question since 2026-09-24 about how a "wall/door trap"
+pool entry (distinct, the docs assumed, from an ordinary monster
+ambush) actually gets created — blocked, per the old notes, on tracing
+`ProcessLevelMonsters` first. That framing turned out to be stale:
+`ProcessLevelMonsters`' own approach/ambush check had already been
+fully traced and reimplemented back on 2026-09-23 as
+`monsterApproachParty` — nobody had gone back to update candidate 6's
+"still blocked" note once that landed.
+
+Rather than assume the mechanism must be somewhere else, ran an
+exhaustive whole-binary grep (both games) for every instruction that
+writes bit `0x1000` into a pool record's `MonsterFieldWound` field —
+the exact bit `TriggerSideTrapForRandomPartyMember` checks to decide
+whether a slot has an armed trap. Found exactly one write site in each
+game, and it's `monsterApproachParty`'s own ambush-arming write,
+already done. **There is no separate wall/door trap creation
+mechanism at all** — a "wall/door trap" is simply an ordinary monster
+record in the ambush-pending state; whether the party experiences it
+as a wall/door effect or an ordinary monster encounter depends only on
+which direction they're currently facing relative to where the ambush
+armed, not on any distinct record type. `monster.h`'s own
+`MonsterWound` doc comment had already half-suspected this ("read by
+both it and the side-trap/ambush presentation pipeline") without ever
+stating it this definitively — this round's exhaustive search is what
+turns a plausible guess into a proven fact.
+
+With the creation question closed, the remaining decision logic
+(`RollTrapAvoidanceMagnitude`'s roll and `TriggerSideTrapForRandomPartyMember`'s
+facing gate) turned out to be fully tractable and worth reimplementing
+immediately. Reading Chapter 3's copy of `RollTrapAvoidanceMagnitude`
+directly — not assumed instruction-identical just because everything
+around it is — found a real, easy-to-miss difference: **Chapter 2
+rolls `RandomInRange(100)`; Chapter 3 rolls `RandomInRange(55)`
+instead**, while the final `magnitudeCap * margin / 100` formula is
+unchanged in both games. A smaller roll ceiling means the same margin
+triggers far more reliably in Chapter 3 — a genuine gameplay-balance
+difference between the two games' side-trap difficulty, not just a
+cosmetic formula tweak. Also corrected a small transcription error
+from an earlier round while writing this up: `RollTrapAvoidanceMagnitude`'s
+own threshold/cap fields (`+0x64`/`+0x66`) aren't unnamed as an older
+note claimed — they're `MonsterFieldRangedAccuracy`/`RangedDamage`,
+already-named ordinary monster fields, just reused here for trap
+avoidance data instead of an actual ranged attack.
+
+Added `combatRollTrapAvoidanceMagnitude`/`combatResolveSideTrap` in
+`src23/combat.c`/`.h`. Tests in `test_combat.c` use the RNG-peek
+technique to verify both games' differing roll bounds precisely
+(rather than statistical sampling), construct a concrete same-seed
+scenario where Chapter 3 triggers and Chapter 2 doesn't, confirm the
+roll happens even when the facing check will fail (RNG-draw-count
+parity), and cover all 4 facing-match cases including the original's
+implicit "West" else-branch. All 19 suites pass. **Still not
+reimplemented, deliberately**: the 4-slot scratch staging table and
+`PresentTriggeredSideTrapEffects` itself (sound sequencing, icon
+drawing, a scaled projectile animation) — pure presentation, deferred
+to the eventual SDL2 layer like this project's other UI-heavy code.
+`roadmap.md` candidate 6 marked done.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

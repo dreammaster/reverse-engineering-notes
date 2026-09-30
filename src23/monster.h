@@ -111,11 +111,19 @@ typedef enum {
 /*
  * MonsterFieldWound bits (yendor2.asm:33367 on, ProcessLevelMonsters/
  * TriggerSideTrapForRandomPartyMember, instruction-identical in Chapter
- * 3). Despite the field's name, only 0x8000/0x4000/0x2000 are wound
- * severity -- the other bits are set by ProcessLevelMonsters' approach
- * check (see monsterApproachParty in monsterpool.h) and read by both it
- * and the side-trap/ambush presentation pipeline
- * (file-formats.md's "side trap"/ambush section).
+ * 3 except one roll-bound constant inside RollTrapAvoidanceMagnitude
+ * itself -- see combat.h's combatRollTrapAvoidanceMagnitude). Despite
+ * the field's name, only 0x8000/0x4000/0x2000 are wound severity -- the
+ * other bits are set by ProcessLevelMonsters' approach check (see
+ * monsterApproachParty in monsterpool.h) and read by both it and the
+ * side-trap/ambush presentation pipeline (file-formats.md's "side
+ * trap"/ambush section). Confirmed 2026-09-30 (an exhaustive
+ * whole-binary search for every write to bit 0x1000, both games, found
+ * only monsterApproachParty's own write): a "wall/door trap" is not a
+ * separate creation mechanism at all, just this same ambush-pending
+ * state experienced differently depending on the party's facing --
+ * see combat.h's combatResolveSideTrap for the reimplemented decision
+ * logic.
  */
 typedef enum {
     MonsterWoundLight = 0x8000,
