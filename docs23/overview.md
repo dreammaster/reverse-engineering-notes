@@ -10564,6 +10564,44 @@ the tail of what's already been a very long, dense session. Updated
 `roadmap.md` candidate 10 and `file-formats.md`'s own section with the
 full resolved picture, including the real extracted table contents.
 
+### Session update (continued, same day): finished tracing Chapter 3's dispatch — one real per-game difference, and a genuinely fun discovery
+
+Went one layer deeper before actually stopping: Chapter 3's own
+`ApplyMapTriggerEffect` hadn't been read past its teleport branch, so
+its ailment-tick/fixed-id/corrosion/default branches were still an
+open question rather than a confirmed instruction-identical claim.
+Reading the rest confirmed they *are* identical to Chapter 2 — except
+the default branch, where Chapter 3 adds a real exclusion Chapter 2
+doesn't have: a party member wearing a specific item (id `0x275`) in a
+specific equipment slot gets skipped, when the matched trigger's own
+flags say to check. Neither game's real data exercises this today, but
+it's a genuine, confirmed difference, not a dead branch the way
+Chapter 2's map-id rest-restriction turned out to be this morning —
+worth keeping that distinction sharp rather than treating every unused
+branch the same way.
+
+The more satisfying find: cross-referencing the 3 fixed-effect-id
+branches (ids `0xF`/`0x10`/`0x11`) against the already-embedded effect
+table showed they're not HP/MP damage traps at all — they're
+**gold/ore-theft traps**, each one's `costFlags` naming gold, the
+first ore counter, or the second. That explains a detail that looked
+odd in isolation: these branches populate *two* words of the icon
+slot's own value field from the trigger record, while the fully
+data-driven default branch only ever populates one — because a
+gold/ore effect's "amount" is a 4-byte packed BCD value spanning both
+words, while an HP/MP effect's magnitude fits in one. The record format
+itself was quietly telling us what kind of effect it holds, once the
+right cross-reference was made.
+
+Stopped here rather than writing the actual `mapTriggerFind` module —
+the gap left is small, well-understood, and precisely described now,
+but implementing it correctly means constructing a `Bcd4` from two raw
+words for the theft branches and getting the icon-slot field mapping
+exactly right, the kind of precision-sensitive work better done at the
+start of a session than the tail of one that's already covered five
+major pieces today. `roadmap.md` candidate 10 now has the complete,
+narrow scope for whoever (or whichever future round) picks it up next.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

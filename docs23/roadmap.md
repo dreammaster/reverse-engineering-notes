@@ -1063,12 +1063,32 @@ consumers, if any.
     default-case entries and none exercising the fixed-id or
     ailment-tick branches.
 
-    **Still not reimplemented** -- the remaining gap is now narrow: a
-    `mapTriggerFind(game, worldX, worldY)` lookup over the two embedded
-    tables, plus composing the dispatch from already-existing pieces.
-    Deliberately left for a fresh pass rather than rushed at the tail
-    of an already long session. See `file-formats.md`'s own dedicated
-    section for the complete writeup.
+    **Chapter 3's dispatch confirmed instruction-identical too** for
+    the ailment-tick/fixed-id/corrosion branches, with **one genuine,
+    confirmed per-game difference found in the default branch**:
+    Chapter 3 adds a per-member exclusion (skip if item `0x275` is
+    equipped in equipment code `0x13`'s slot, when the trigger's own
+    flags bit `0x1` is set) that Chapter 2 doesn't have at all --
+    dormant in both games' real data today (no entry sets that bit),
+    reproduced as a real if currently-unexercised difference.
+
+    **The 3 fixed-effect-id branches turned out to be gold/ore-theft
+    traps, not HP/MP damage** -- confirmed via the already-embedded
+    effect table (ids `0xF`/`0x10`/`0x11`'s own `costFlags` are
+    `EffectCostGold`/`Ore1`/`Ore2`), explaining why those branches
+    populate *both* of the icon slot's `+0x10`/`+0x12` fields (a Bcd4
+    amount, matching `ResolveAttackerActionOutcome`'s own gold-theft
+    convention) while the default branch only ever populates one.
+
+    **Still not reimplemented** -- the remaining gap is narrow and now
+    precisely scoped: a `mapTriggerFind(game, worldX, worldY)` lookup
+    over the two embedded tables, plus composing the dispatch from
+    already-existing pieces (`effectGetDef`, `partyHandleIconBarItemExpiry`,
+    `itemClassifyServiceTier`/`itemCorrosionReplacement`,
+    `combatApplyEffect` -- constructing a `Bcd4` from two raw words for
+    the gold/ore-theft branches). Deliberately left for a fresh pass
+    rather than rushed at the tail of an already very long session. See
+    `file-formats.md`'s own dedicated section for the complete writeup.
 
 `WORLD.DAT` and `PICTURES.VGA` (both decoded, see `file-formats.md`)
 will be needed once map/graphics loading is in scope, but don't need

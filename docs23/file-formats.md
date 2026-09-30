@@ -2902,15 +2902,60 @@ the trigger record's own `+4` field instead of a fixed constant, and
 `combatApplyCorrosion` already does (`itemClassifyServiceTier`/
 `itemCorrosionReplacement` against whatever's at that slot).
 
-**Not reimplemented yet** — the remaining gap is narrow now: a small
-`mapTriggerFind(game, worldX, worldY)` lookup over the two now-extracted
-embedded tables, plus composing the dispatch from pieces that already
-exist (`effectGetDef`, `partyHandleIconBarItemExpiry`,
-`itemClassifyServiceTier`/`itemCorrosionReplacement`, and — for the
-generic icon-bar branches — the same primitives
-`combatApplyEncodedItemEffectSingle`/`Party` already use). Left for a
-fresh pass rather than rushed at the end of an already long session —
-see `roadmap.md` candidate 10 for the updated, much narrower scope.
+**Chapter 3's dispatch fully traced too, same round**: instruction-
+identical to Chapter 2 for the ailment-tick, fixed-id, and corrosion
+branches (same offsets, same `[bp+4]`-as-party-offset eligibility gate
+for corrosion). **One genuine, confirmed Chapter 2 vs. Chapter 3
+difference found in the default (fully data-driven) branch**: Chapter
+3 adds an extra per-member exclusion Chapter 2 doesn't have at all —
+when the matched trigger record's own flags bit `0x1` is set, a party
+member is skipped if they have item `0x275` equipped in equipment code
+`0x13`'s slot (`party.h`'s `+0x158`, one of the "id-only" short
+equipment slots) — plausibly a protective item immune to this specific
+trigger, narrative not confirmed. Not exercised by either game's real
+data today (Chapter 3's own two real default-branch entries both have
+`flags=0x0000`, bit `0x1` clear), so reproduced faithfully as a real,
+if currently dormant, per-game difference rather than dropped as dead
+weight the way Chapter 2's `IsRestingAllowedHere` map-id branch was.
+
+**The fixed-effect-id branches (`0xF`/`0x10`/`0x11`) are gold/ore-theft
+traps, not HP/MP damage** — resolved by checking their own entries in
+the already-embedded effect table (`effect.c`'s `g_effectsYendor2`):
+id `0xF`'s `costFlags` is `EffectCostGold`, `0x10`'s is `EffectCostOre1`,
+`0x11`'s is `EffectCostOre2`. This matters because the icon slot's own
+`+0x10`/`+0x12` fields (already documented in "The staged combat
+event's consumer" section above) mean different things depending on
+the occupying effect's cost type: for an HP/MP-cost effect they're
+"plain `u16` magnitude, `+0x12` unused"; for a gold/ore-cost effect
+they're *together* a 4-byte packed BCD amount (`+0x10` the high digit
+pair, `+0x12` the low pair) — exactly matching how these 3 branches
+populate *both* words from `[+4]`/`[+6]` (the same physical bytes the
+teleport branch uses for X/Y) rather than just one. So these branches
+are literally "step on this row and lose gold/ore," reusing the exact
+same Bcd4-as-two-words convention `ResolveAttackerActionOutcome`'s own
+gold-theft branch already established. The default branch, by
+contrast, only ever populates `+0x10` (leaving `+0x12` untouched) — a
+real structural difference confirming it's restricted to plain
+HP/MP-cost effects, never gold/ore ones, by construction (a data-driven
+effect id could in principle name a gold/ore effect here too, but the
+record format only supplies one word for it, so such an entry would
+silently steal `Bcd4{0,0,0,rawLowDigits}}`-style garbage — not observed
+in either game's real, tiny dataset, so not a practical concern).
+`+0xE` (inflicted status) is never written by any branch here — the
+same already-documented, already-accepted "reads whatever a prior
+unrelated call left in the shared scratch slot" quirk
+`ResolveAttackerActionOutcome`'s own branch 2 has, not a new mystery.
+
+**Not reimplemented yet** — the remaining gap is narrow and precisely
+scoped now: a small `mapTriggerFind(game, worldX, worldY)` lookup over
+the two now-extracted embedded tables, plus composing the dispatch from
+pieces that already exist (`effectGetDef`, `partyHandleIconBarItemExpiry`,
+`itemClassifyServiceTier`/`itemCorrosionReplacement`,
+`combatApplyEffect` for the gold/ore-theft and plain-magnitude cases,
+constructing a `Bcd4` from the two raw words for the former). Left for
+a fresh pass rather than rushed at the end of an already very long
+session — see `roadmap.md` candidate 10 for the updated, now
+fully-scoped remaining work.
 
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`g_gameClockMinutes`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
