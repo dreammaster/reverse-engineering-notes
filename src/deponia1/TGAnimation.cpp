@@ -16,3 +16,6 @@ wxString TGAnimation::GetEventHandlerAnimStopped() {
 
 void TGAnimation::LoadAnimations() {
 }
+
+void TGAnimation::ContinueAnimations() {
+}

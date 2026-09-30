@@ -82,3 +82,9 @@ extern wxString passw;
 // set is rebuilt every call when it's already empty. Never seen written
 // anywhere reversed so far.
 extern bool EngineUpdatePaused;
+
+// Confirmed a real, named global, distinct from EngineUpdatePaused above
+// (TGameControl::Update, Deponia_Linux.asm line 470381) - specifically gates
+// the per-frame "mainLoop" Lua handler dispatch; never seen written anywhere
+// reversed so far.
+extern bool MainLoopsPaused;

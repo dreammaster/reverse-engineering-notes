@@ -13,3 +13,11 @@ void TDiagnostic::BeginFixedRegion(wxString /*name*/) {
 
 void TDiagnostic::EndFixedRegion() {
 }
+
+void TCPDebuggerClient::BeginArea(ProfileArea /*area*/, const std::string &/*name*/, int /*frame*/) {
+}
+
+void TCPDebuggerClient::EndArea(ProfileArea /*area*/, int /*frame*/) {
+}
+
+TCPDebuggerClient debugger;

@@ -32,4 +32,9 @@ public:
 	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
 	// asm line 472904) - not reversed beyond that.
 	bool IsActiveMoveObject() const;
+	// Confirmed call shapes only (TGameControl::Update, Deponia_Linux.asm
+	// lines 469674, 470075) - switches the cursor's appearance depending on
+	// whether something detectable is under it; not reversed beyond that.
+	void SetInactiveCursor();
+	void SetActiveCursor();
 };

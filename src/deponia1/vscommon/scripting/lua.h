@@ -12,6 +12,17 @@
 // via IdStrStd() for game-data scripts). Not reversed beyond that call
 // shape.
 void LuaDoString(const std::string &code, const std::string &chunkName);
+// A second, one-argument overload, confirmed distinct by its own mangled
+// signature (TGameControl::Update, Deponia_Linux.asm lines 469957, 470027) -
+// used for the per-frame tween/delay "name = value" and delay-by-name
+// script dispatches, which don't carry a separate chunk-name argument. Not
+// reversed beyond that call shape.
+void LuaDoString(const std::string &code);
+// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm line
+// 470535) - runs a Lua callback previously registered in the registry via a
+// numeric reference (the delay-by-id counterpart to LuaDoString's delay-by-
+// name path); not reversed beyond that call shape.
+void LuaDoRef(int ref);
 
 // Confirmed call shape only (TGameControl::InitScripts, asm lines
 // 458599-458601): called directly on a TVisionaireObject::GetId() result.

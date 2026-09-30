@@ -32,6 +32,11 @@ public:
 	const wchar_t *c_str() const {
 		return _value.c_str();
 	}
+	// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm line
+	// 469791).
+	wxString::CharBuffer mb_str() const {
+		return _value.mb_str();
+	}
 
 private:
 	wxString _value;

@@ -229,15 +229,17 @@ private:
 	// them: walking-sound filenames, per-character scroll-timing pairs, and
 	// registered scene-mouse-position hooks.
 	//
-	// _pendingTweens's element type below is now KNOWN WRONG (see
-	// StartTween's two overloads, asm lines 474993-475136 and
-	// 478477-478598+): there are two distinct tween-related vectors with
-	// 176-byte and 88-byte elements respectively, neither matching
-	// pair<Tween,string>, and StartTween(Tween,string) was reverted to a
-	// stub rather than keep a confidently wrong push_back. Left as-is until
-	// a dedicated pass reverses TVisObjTween's and the other vector's real
-	// layouts.
-	std::vector<std::pair<Tween, std::string>> _pendingTweens;
+	// _pendingTweens's element type was originally guessed as
+	// pair<Tween,string> and found wrong (see StartTween's two overloads,
+	// asm lines 474993-475136 and 478477-478598+): there are two distinct
+	// tween-related vectors, 176-byte and 88-byte elements respectively,
+	// neither matching that pair. TGameControl::Update (Deponia_Linux.asm
+	// lines 469883-470176, processing this exact 88-byte vector each frame)
+	// confirms the element is just a Tween by value - Tween itself carries
+	// its own name field (see Tween.h) rather than needing a paired string.
+	// StartTween(Tween,string) itself is still a stub (its own erase/replace-
+	// by-name logic, asm lines 478477-478598+, wasn't re-examined this pass).
+	std::vector<Tween> _pendingTweens;
 	// The real vector StartTween(const TVisObjTween&) operates on (176-byte
 	// elements, confirmed distinct from _pendingTweens above - see its own
 	// comment). Named for its confirmed element type rather than guessing
@@ -287,6 +289,12 @@ private:
 	TGCharacter *_currentCharacter = nullptr;
 	wxFileName _gamePath;
 	bool _isClearingAnimations = false;
+	// Confirmed present immediately after _isClearingAnimations (TGameControl
+	// ::Update, Deponia_Linux.asm lines 469850-469853, offset +0xA8C vs.
+	// _isClearingAnimations's own confirmed +0xA88) - a cached baseline
+	// compared against TGraphicsInterface::GetCacheSpriteCount() each frame
+	// to detect when the sprite cache needs refreshing.
+	int _spriteCacheCount = 0;
 	// Confirmed via UpdateAspectRatio (asm lines 457414-457458): the last
 	// resolved aspect width/height, and (via UpdateCurrentObject, asm lines
 	// 456964-456999) the last mouse position re-dispatched through
@@ -373,4 +381,9 @@ private:
 	// not resolved. A distinct, separately-declared `TGText::s_stopTime`
 	// exists too; unrelated to this one.
 	static TTimer s_stopTime;
+	// Confirmed present (TGameControl::Update, Deponia_Linux.asm lines
+	// 469881-469883, 470370-470371): the SDL_GetTicks() value as of the end
+	// of the previous frame's tween/delay processing, used to derive this
+	// frame's elapsed-milliseconds delta.
+	unsigned int _lastUpdateTicks = 0;
 };

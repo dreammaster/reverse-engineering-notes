@@ -34,6 +34,10 @@ public:
 	// the load-side counterpart to SaveActions() above; not reversed beyond
 	// that call shape.
 	static void LoadActions();
+	// Confirmed static (TGameControl::Update, Deponia_Linux.asm line 469725)
+	// - called once per frame, right after TMasterControl::
+	// ContinueRunningActions(); not reversed beyond that call shape.
+	static void DeleteFinishedActions();
 	// Confirmed static call shape only (TGameControl::HandleMouseUp,
 	// Deponia_Linux.asm line 472810 and others) - not reversed beyond that.
 	static TMouseEventEnum ConvertToEvent(TMouseMessageEnum msg);

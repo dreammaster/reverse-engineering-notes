@@ -2,3 +2,7 @@
 
 void TPreloadedPicManager::StopPreloading(TPictureIO */*picture*/) {
 }
+
+std::vector<TPictureIO *> TPreloadedPicManager::GetPreloadedPictures() {
+	return {};
+}

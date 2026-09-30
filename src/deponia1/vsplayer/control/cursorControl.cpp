@@ -25,3 +25,9 @@ void TCursorControl::SetCursorPosition(int /*x*/, int /*y*/) {
 bool TCursorControl::IsActiveMoveObject() const {
 	return false;
 }
+
+void TCursorControl::SetInactiveCursor() {
+}
+
+void TCursorControl::SetActiveCursor() {
+}

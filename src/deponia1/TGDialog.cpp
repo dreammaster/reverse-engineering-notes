@@ -9,5 +9,9 @@ void TGDialog::HandleMouseClick() {
 void TGDialog::HandleMouseWheel(TMouseMessageEnum /*msg*/) {
 }
 
+bool TGDialog::IsActiveDialogPart() const {
+	return false;
+}
+
 void TGDialog::Draw() {
 }

@@ -18,6 +18,12 @@ public:
 	bool operator==(const TSprite &other) const;
 	void Set(const TSprite &other);
 	void SetImageSize(int width, int height);
+	// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm
+	// line 469789) - a non-const accessor for _path, distinct from any
+	// (unconfirmed) const counterpart; not reversed beyond that call shape.
+	TCharHolder &GetPathNonConst() {
+		return _path;
+	}
 
 	TCharHolder _path;
 	int _id = 0;

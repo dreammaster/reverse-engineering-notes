@@ -34,3 +34,10 @@ void TGraphicsInterface::PreallocateTextures(int /*count*/) {
 
 void TGraphicsInterface::SetCacheSize(int /*size*/) {
 }
+
+int TGraphicsInterface::GetCacheSpriteCount() const {
+	return 0;
+}
+
+void TGraphicsInterface::UpdateCache() {
+}

@@ -35,3 +35,9 @@ std::vector<TGCharacter *> TGScene::GetCharacters() const {
 
 void TGScene::InitActionAreas() {
 }
+
+void TGScene::SortAllObjects() {
+}
+
+void TGScene::UpdateSnoopAnimAlpha() {
+}

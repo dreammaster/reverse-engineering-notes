@@ -20,6 +20,8 @@
 #include "baselib/file.h"
 #include "datastruct/visionaireobject.h"
 #include "graphicslib/graphics.h"
+#include "graphicslib/picture.h"
+#include "graphicslib/preloadedPicManager.h"
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/id.h"
 #include "vscommon/scripting/lua.h"
@@ -84,8 +86,141 @@ TGameControl::~TGameControl() {
 }
 
 bool TGameControl::Update() {
-	// The entire per-frame game-logic dispatcher - almost certainly
-	// thousands of lines given the class's overall size. Not reversed.
+	// Confirmed (Deponia_Linux.asm lines 469514-470955, ~1440 lines,
+	// TGameControl's largest method) - the per-frame dispatcher. Bracketed
+	// throughout by TCPDebuggerClient::BeginArea()/EndArea() calls (a
+	// network profiler with no gameplay effect - kept as no-op stubs purely
+	// to mark the same section boundaries the original has). The real
+	// return value isn't confirmed (the epilogue never sets eax explicitly,
+	// unlike a normal bool return) - kept as `true` unconditionally, matching
+	// this method's pre-existing stub behavior.
+	{
+		wxCriticalSectionLocker locker(EngineEventLock);
+		for (auto &event : EngineEvents)
+			HandleEngineEvent(event.first, event.second);
+		EngineEvents.clear();
+	}
+
+	if (!EngineUpdatePaused) {
+		MoveScene();
+		UpdateWalkingSounds();
+		UpdateRandomTimers();
+	}
+
+	debugger.BeginArea(ProfileArea::kValue4, "Animations", -1);
+	TGAnimation::ContinueAnimations();
+	if (!EngineUpdatePaused)
+		HandleCharacters();
+
+	if (!_dialog.IsEmpty()) {
+		if (_dialog.IsActiveDialogPart())
+			GetCursorControl()->SetActiveCursor();
+		else
+			GetCursorControl()->SetInactiveCursor();
+	} else {
+		if (_objectManager.IsCurrentObjectDetectable())
+			GetCursorControl()->SetActiveCursor();
+		else
+			GetCursorControl()->SetInactiveCursor();
+	}
+	debugger.EndArea(ProfileArea::kValue4, -1);
+
+	debugger.BeginArea(ProfileArea::kValue4, "Texts", -1);
+	UpdateTexts();
+	debugger.EndArea(ProfileArea::kValue4, -1);
+
+	TGAction::ContinueRunningActions(false);
+
+	debugger.BeginArea(ProfileArea::kValue4, "DeleteActions", -1);
+	TGAction::DeleteFinishedActions();
+	debugger.EndArea(ProfileArea::kValue4, -1);
+
+	if (!EngineUpdatePaused)
+		ScrollUpdate();
+	_ownedSceneControl.GetScene()->SortAllObjects();
+	if (!EngineUpdatePaused)
+		_ownedSceneControl.GetScene()->UpdateSnoopAnimAlpha();
+
+	// Confirmed (asm lines 469761-469767): two virtual calls (vtable slots
+	// 0x100, then 0xE8 with a literal `false` argument) through a pointer
+	// field not confidently identified with any currently-modeled member -
+	// TGameController itself has no vtable (fully reversed already, see
+	// gameController.h), so this isn't it despite the field's proximity to
+	// other TMasterControl pointer members; left unimplemented rather than
+	// guessed at.
+
+	debugger.BeginArea(ProfileArea::kValue1, "create <sprite path>", -1);
+	for (TPictureIO *picture : graphics->GetPreloadedPicManager()->GetPreloadedPictures())
+		picture->CreateSprite(false);
+	debugger.EndArea(ProfileArea::kValue1, -1);
+
+	if (graphics->GetCacheSpriteCount() != _spriteCacheCount) {
+		_spriteCacheCount = graphics->GetCacheSpriteCount();
+		graphics->UpdateCache();
+	}
+
+	debugger.BeginArea(ProfileArea::kValue4, "Tweens", -1);
+	if (!EngineUpdatePaused) {
+		double deltaMs = static_cast<double>(SDL_GetTicks() - _lastUpdateTicks);
+
+		for (TVisObjTween &tween : _visObjTweens) {
+			if (!tween.update(deltaMs))
+				break;
+		}
+
+		// Confirmed (asm lines 469910-470176): also syncs each tween's
+		// current interpolated value into Lua (a dotted name does a
+		// "table.field = value" script eval; a plain name sets a global
+		// directly) before checking IsFinished() - not reproduced since
+		// Tween's own interpolated-value field isn't modeled (see Tween.h).
+		for (auto it = _pendingTweens.begin(); it != _pendingTweens.end();) {
+			it->Update(static_cast<float>(deltaMs));
+			if (it->IsFinished()) {
+				// Real code invokes a 3-argument completion callback stored
+				// on the tween before erasing it - not modeled.
+				it = _pendingTweens.erase(it);
+			} else {
+				++it;
+			}
+		}
+
+		for (auto it = _delaysByName.begin(); it != _delaysByName.end();) {
+			it->first -= deltaMs;
+			if (it->first > 0.0) {
+				++it;
+				continue;
+			}
+			LuaDoString(it->second);
+			it = _delaysByName.erase(it);
+		}
+
+		for (auto it = _delaysById.begin(); it != _delaysById.end();) {
+			it->first -= deltaMs;
+			if (it->first > 0.0) {
+				++it;
+				continue;
+			}
+			LuaDoRef(it->second);
+			it = _delaysById.erase(it);
+		}
+	}
+	_lastUpdateTicks = SDL_GetTicks();
+	debugger.EndArea(ProfileArea::kValue4, -1);
+
+	if (!_engineEventHandlerNamesMainLoop.empty() && !MainLoopsPaused) {
+		// Real dispatch calls LuaExecuteFunction(name, {}, results) once per
+		// registered "mainLoop" handler name - LuaExecuteFunction/TArgument's
+		// full contract isn't reversed yet (same gap noted throughout this
+		// project, e.g. HandleMouseMove/HandleKeyEvent/HandleEngineEvent).
+	}
+
+	TSteamSDK *steam = GetGameClientSDK()->GetSteam();
+	if (steam->GetStatus())
+		steam->Update();
+	TGalaxySDK *galaxy = GetGameClientSDK()->GetGalaxy();
+	if (galaxy->IsActive())
+		galaxy->Update();
+
 	return true;
 }
 

@@ -26,4 +26,7 @@ public:
 	// the load-side counterpart to SaveAnimations() above; not reversed
 	// beyond that call shape.
 	static void LoadAnimations();
+	// Confirmed static (TGameControl::Update, Deponia_Linux.asm line 469657)
+	// - called once per frame; not reversed beyond that call shape.
+	static void ContinueAnimations();
 };

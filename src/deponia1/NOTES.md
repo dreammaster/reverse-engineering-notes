@@ -1289,6 +1289,85 @@ except the real, evidence-backed control-flow logic above). Also adds
 own linker symbol, unlike a plain instance field), kept as-is per CLAUDE.md's
 recovered-global exception.
 
+## TGameControl batch 37: implement Update, the last unreversed method
+
+Reversed `TGameControl::Update()` (Deponia_Linux.asm lines 469514-470955,
+~1440 lines) - the per-frame dispatcher, and the single largest method in
+the class. With this, every one of `TGameControl`'s ~98 methods has a real
+implementation or an explicitly-documented, evidence-backed stub; none are
+bare unexamined placeholders anymore.
+
+Confirmed control flow, roughly in order:
+
+- Drains the global `EngineEvents` queue (already-known infrastructure from
+  `PushEngineEvent`) under `EngineEventLock`, firing `HandleEngineEvent()`
+  for each queued pair, then clears it.
+- If not `EngineUpdatePaused`: `MoveScene()`, `UpdateWalkingSounds()`,
+  `UpdateRandomTimers()` (all pre-existing).
+- `TGAnimation::ContinueAnimations()` (new), then (if not paused)
+  `HandleCharacters()` (pre-existing), then updates the cursor's active/
+  inactive appearance based on whether a dialog is showing (`TGDialog::
+  IsActiveDialogPart()`, new) or, if not, whether the current object is
+  detectable (`TGObjectManager::IsCurrentObjectDetectable()`, new) -
+  discovered these three unrelated-looking things are all bracketed by one
+  `"Animations"` profiler region in the original.
+- `UpdateTexts()` (pre-existing), then unconditionally `TGAction::
+  ContinueRunningActions(false)` (pre-existing) and `TGAction::
+  DeleteFinishedActions()` (new).
+- If not paused: `TMasterControl::ScrollUpdate()` (pre-existing); always:
+  `TGScene::SortAllObjects()` (new); if not paused: `TGScene::
+  UpdateSnoopAnimAlpha()` (new).
+- One unresolved pair of virtual calls (vtable slots 0x100/0xE8 on a pointer
+  field not confidently matched to any modeled member - `TGameController`
+  itself has no vtable, ruling out the obvious guess) - left unimplemented
+  and flagged rather than guessed at.
+- Iterates every picture the preloader has queued (`TPreloadedPicManager::
+  GetPreloadedPictures()`, new - the original's nested bucket/array
+  structure is flattened to a plain `vector<TPictureIO*>` here, since
+  nothing depends on its exact shape) and calls `TPictureIO::CreateSprite()`
+  (already existed) on each - resolving, along the way, that the vector
+  holds `TPictureIO*` specifically (confirmed by `TSprite::GetPathNonConst()`,
+  new, and `CreateSprite()` both being called on the same pointer, and
+  `TPictureIO`'s already-documented `: TPictureMEM : TSprite` chain).
+  Refreshes the sprite cache (`TGraphicsInterface::GetCacheSpriteCount()`/
+  `UpdateCache()`, both new) when the count has changed.
+- A `"Tweens"` region (skipped entirely when paused, but always refreshing
+  `_lastUpdateTicks` from `SDL_GetTicks()` at the end) that: updates
+  `_visObjTweens` via a new `TVisObjTween::update(double)`; updates
+  `_pendingTweens` (see the type-correction below) via new `Tween::Update()`/
+  `IsFinished()`; and counts down `_delaysByName`/`_delaysById`, firing
+  `LuaDoString()` (a new one-argument overload) or a new `LuaDoRef(int)`
+  free function respectively when a delay expires. The original also syncs
+  each tween's live interpolated value into Lua globals/tables every frame -
+  not reproduced, since `Tween`'s own interpolated-value fields are still
+  unknown (see `Tween.h`'s own updated header comment).
+- A real, evidence-backed type correction: `_pendingTweens`'s element type
+  was a guessed `pair<Tween,string>`, already known wrong. This function's
+  own processing of that exact vector confirms the element is just `Tween`
+  by value (`Tween` itself now carries a `name` field, used for the Lua
+  sync above) - `StartTween(Tween,string)` itself remains a stub (its own
+  erase/replace-by-name logic wasn't re-examined this pass).
+- The registered "mainLoop" event handlers (`_engineEventHandlerNamesMainLoop`,
+  already fixed to `vector<wstring>` in batch 34) get dispatched through Lua
+  once per frame when not `MainLoopsPaused` (new global) - left as an
+  unimplemented-dispatch comment, the same `LuaExecuteFunction`/`TArgument`
+  gap already noted throughout this project.
+- Finally checks Steam/Galaxy SDK status and calls their own `Update()` when
+  active (four new methods on `TSteamSDK`/`TGalaxySDK`, plus two new
+  `TGameClientSDK` accessors for the previously-private pointers).
+
+Also new: `TCPDebuggerClient` (`Diagnostics.h`) - a second, distinct
+per-frame profiler from the existing `TDiagnostic`, bracketing every named
+section above via a global `debugger` instance; stubbed as pure no-ops since
+it's a network-facing dev tool with no gameplay effect, kept only so the
+call sites (and their section-boundary information) stay faithful to the
+original.
+
+The function's own return value isn't confirmed (the epilogue never sets
+`eax` explicitly before returning, unlike a typical `bool`-returning
+method) - kept as an unconditional `true`, matching this method's
+pre-existing stub behavior rather than guessing at real semantics.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

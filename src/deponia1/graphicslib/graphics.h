@@ -32,6 +32,13 @@ public:
 	void PreallocateTextures(int count);
 	void SetCacheSize(int size);
 
+	// Confirmed call shapes only (TGameControl::Update, Deponia_Linux.asm
+	// lines 469849, 469854) - checked once per frame; when the count has
+	// changed, UpdateCache() is called to react to it. Not reversed beyond
+	// that call shape.
+	int GetCacheSpriteCount() const;
+	void UpdateCache();
+
 	// vtable slot 0x90 in the original; called with a TSpriteHandle* whose
 	// refcount just reached zero.
 	virtual void OnSpriteHandleReleased(TSpriteHandle *handle);

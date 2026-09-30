@@ -29,3 +29,7 @@ bool TGObjectManager::IsCurrentObjectWalkable() const {
 
 void TGObjectManager::SavedObjectChanged() {
 }
+
+bool TGObjectManager::IsCurrentObjectDetectable() const {
+	return false;
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "WxStub.h"
 
 // x_assert(condition, expressionText, fileText, line) - used throughout the
@@ -18,3 +20,24 @@ public:
 	static void BeginFixedRegion(wxString name);
 	static void EndFixedRegion();
 };
+
+// A second, distinct network-facing profiler (TGameControl::Update,
+// Deponia_Linux.asm - used throughout to bracket named per-frame sections:
+// "Animations", "Texts", "DeleteActions", a sprite-creation area, "Tweens").
+// Unlike TDiagnostic above, this one is a real instance (the global
+// `debugger` below), takes a ProfileArea enum plus a name and a frame
+// number, and - going by the name - streams timing data to an external
+// debugger/profiler over the network; no gameplay-visible effect, so
+// stubbed as a pure no-op rather than reversed further.
+enum class ProfileArea {
+	kValue1 = 1, // used once, bracketing sprite/picture creation
+	kValue4 = 4, // used for every other observed section
+};
+
+class TCPDebuggerClient {
+public:
+	void BeginArea(ProfileArea area, const std::string &name, int frame);
+	void EndArea(ProfileArea area, int frame);
+};
+
+extern TCPDebuggerClient debugger;

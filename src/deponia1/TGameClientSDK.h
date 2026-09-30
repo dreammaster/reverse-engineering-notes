@@ -7,17 +7,39 @@
 class TSteamSDK {
 public:
 	TSteamSDK() = default;
+
+	// Confirmed call shapes only (TGameControl::Update, Deponia_Linux.asm
+	// lines 470456, 470579) - checked once per frame; Update() only runs
+	// when GetStatus() reports active. Not reversed beyond that call shape.
+	bool GetStatus() const;
+	void Update();
 };
 
 class TGalaxySDK {
 public:
 	TGalaxySDK() = default;
+
+	// Confirmed call shapes only (TGameControl::Update, Deponia_Linux.asm
+	// lines 470462, 470573) - same "checked, then updated if active" shape
+	// as TSteamSDK above; not reversed beyond that call shape.
+	bool IsActive() const;
+	void Update();
 };
 
 class TGameClientSDK {
 public:
 	TGameClientSDK();
 	virtual ~TGameClientSDK();
+
+	// Confirmed direct field reads at fixed offsets (TGameControl::Update,
+	// Deponia_Linux.asm lines 470454, 470461) - no accessor in the original;
+	// added since TGameControl needs one.
+	TSteamSDK *GetSteam() const {
+		return _steam;
+	}
+	TGalaxySDK *GetGalaxy() const {
+		return _galaxy;
+	}
 
 private:
 	TSteamSDK *_steam;

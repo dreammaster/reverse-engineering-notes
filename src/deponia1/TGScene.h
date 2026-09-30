@@ -58,6 +58,12 @@ public:
 	// as static, same pattern as TGAction/TGAnimation's entry points.
 	static void InitActionAreas();
 
+	// Confirmed call shapes only (TGameControl::Update, Deponia_Linux.asm
+	// lines 469738, 470595) - called once per frame (the second gated by
+	// EngineUpdatePaused); not reversed beyond that call shape.
+	void SortAllObjects();
+	void UpdateSnoopAnimAlpha();
+
 private:
 	TVisObjRef _ref;
 };

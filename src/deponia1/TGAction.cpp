@@ -23,3 +23,6 @@ TMouseEventEnum TGAction::ConvertToEvent(TMouseMessageEnum /*msg*/) {
 
 void TGAction::LoadActions() {
 }
+
+void TGAction::DeleteFinishedActions() {
+}

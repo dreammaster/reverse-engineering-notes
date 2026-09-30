@@ -46,3 +46,5 @@ bool matricesActive = false;
 wxString passw;
 
 bool EngineUpdatePaused = false;
+
+bool MainLoopsPaused = false;

@@ -35,4 +35,8 @@ public:
 	// 477008) - called once after loading a save's interfaces/characters;
 	// not reversed beyond that call shape.
 	void SavedObjectChanged();
+	// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm line
+	// 470069) - gates whether the cursor shows its active or inactive state
+	// each frame; not reversed beyond that call shape.
+	bool IsCurrentObjectDetectable() const;
 };

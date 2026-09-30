@@ -33,6 +33,11 @@ public:
 	// wheel-direction messages, see TMouseMessageEnum) while a dialog is
 	// active; not reversed beyond that.
 	void HandleMouseWheel(TMouseMessageEnum msg);
+	// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm line
+	// 469668) - checked (once a dialog is active) to decide whether the
+	// cursor should show its active or inactive state; not reversed beyond
+	// that call shape.
+	bool IsActiveDialogPart() const;
 
 	bool IsEmpty() const {
 		return _target.IsEmpty();
