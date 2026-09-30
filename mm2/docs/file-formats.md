@@ -27,7 +27,7 @@ free code reaches `1 << width` (up to 12 bits).  Python: `tools/mm2_lzw.py`.
 |---|---|---|
 | `MM2.EXE`, `*.OVL` | | see [exe-layout.md](exe-layout.md) |
 | `MM2.CH` | 1024 | 128 characters × 8 bytes: the 8×8 text font (loaded by `load_resource_cached`) |
-| `ITEMS.DAT` | 5120 | not compressed; 256 items × 20 bytes, loaded to `DGROUP:6960` (`g_items`). Item name is the first bytes (`print_item_list` prints `20*id + 6960h`); other fields not traced |
+| `ITEMS.DAT` | 5120 | not compressed; 256 items x 20 bytes at `DGROUP:6960` (`g_items`); see *Items* below |
 | `SPELLS.DAT` | 192 | not compressed; loaded to `DGROUP:7D60` (`g_spells`); layout not traced |
 | `ATTRIB.DAT` | 3840 | LZW; not traced (used by character creation, 1MENU2) |
 | `MONSTERS.DAT` | 6656 | LZW; 416 records × 16 bytes, see below |
@@ -115,11 +115,11 @@ From the display code (`show_character_sheet` `12A6A`, `show_party_roster_screen
 | 25 | 1 | food |
 | 26 | 1 | condition bits (`print_condition`: good, cursed, silenced, diseased, poisoned, asleep, paralyzed, unconscious, dead, stone, eradicated); ≥ 80h = out of action, `E0h` mask = unable to act |
 | 27 | 1 | base endurance |
-| 28-2D | 6 | item slots list A (`print_equipped`, left column) — item ids |
-| 34-39 | 6 | list A: per-item charges/bonus (`& 3Fh`) |
-| 3A-3F | 6 | item slots list B (`print_backpack`) |
-| 46-4B | 6 | list B charges |
-| 40-45 | 6 | list B extra byte (set by `evt_op25_give_item`; meaning not traced) |
+| 28-2D | 6 | **equipped** item ids (`print_equipped`; `char_equip_item` `1CA0B` fills these) |
+| 34-39 | 6 | equipped items: flag byte (low 6 bits = charges/bonus, top 2 bits = alignment restriction of the item instance, FFh = cursed) |
+| 3A-3F | 6 | **backpack** item ids (`print_backpack`) |
+| 46-4B | 6 | backpack flag bytes (same layout as 34-39) |
+| 2E-33, 40-45 | 6+6 | extra byte per equipped / backpack item (moved together with the id; meaning not traced) |
 | 50 | 1 | two 4-bit skills (low/high nibble → titles `DGROUP:046A`: Arms Master, Athlete, Cartographer, …) |
 | 51-56 | 6 | 48-bit known-spell bitmap (`expand_spell_bitmap` `14D5C`) |
 | 58 / 5A | 2 / 2 | spell points current / max |
@@ -180,3 +180,23 @@ Animation table (copied to `DGROUP:9E48` by the driver, played by `monster_anim_
 `(frame, delay)` byte pairs ending in `FFh`, the table ends with a second `FFh`; sequence 0 is the
 idle animation (bit 7 of an entry = random delay).  The CGA `.4` pictures use the CGA driver's own
 piece decoder (not decoded).
+
+## Items (`ITEMS.DAT`, 20-byte records, id 0 = "BLANK")
+
+Derived from `char_equip_item` (`2CMDS:1CA0B`), `char_use_item`, `item_effect_dispatch` and the shops;
+the numbers were checked against the data (256 records, names are plain ASCII).
+
+| Off | Size | Meaning |
+|---|---|---|
+| 00 | 12 | name, space padded |
+| 0C | 1 | always 0 |
+| 0D | 1 | **class restriction mask**: the item cannot be used by class *c* if `bit (7-c)` is set (`DGROUP:3408` = 80h,40h,...,01h for Knight ... Barbarian); 0 = everybody |
+| 0E | 1 | magic bonus: high nibble = attribute (0-5 = Might, Intellect, Personality, Speed, Accuracy, Luck; `F0h` exactly = **not equippable**, e.g. tickets/keys/BLANK), low nibble = bonus amount (`2CMDS:1CC54` adds it to the current stat while equipped) |
+| 0F | 1 | effect id used by "Use" (0 = the item cannot be used, error 0Fh); dispatched by `item_effect_dispatch` through range tests (`1CFDE`, `1CFF6`, `1D00E`, `1D026`, `1D03E`, `1D056`) |
+| 10 | 2 | main value: weapon damage / armour class bonus |
+| 12 | 2 | price in gold (`Sun Crown` 10000) |
+
+Equipping checks, in order: free equipped slot (error 2), class mask (error 4), alignment
+(instance flag top 2 bits mapped through `DGROUP:3404` = {0,2,0,1} must equal the character's alignment,
+error 5), `F0h` (error 0Eh); a flag byte of `FFh` marks a cursed item that sticks (`char_equip_item`
+sets the character's condition bit 1 and reports error 3).
