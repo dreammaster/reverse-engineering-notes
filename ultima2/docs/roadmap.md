@@ -798,9 +798,18 @@ sessions, unlike a one-off todo list.
       `CGATILES`/`MONSTERS` file loader and the CGA pixel-address math
       (16×16 tiles, 80 bytes/scanline, single-segment+0x2000-offset
       interlacing instead of the original's two-segment convention).
-      Full writeup in [enhanced-patch.md](enhanced-patch.md) §3.4-3.6.
-- [ ] `cgacomp.drv`/`ega.drv` — only their header/string tables were
-      checked (confirmed identical 20-entry-jump-table layout to
-      `cga.drv`); their actual mode-specific drawing code (CGA
-      Composite 16-color emulation, EGA tile format/size) hasn't been
-      traced. See enhanced-patch.md's "Next steps".
+      Full writeup in [enhanced-patch.md](enhanced-patch.md) §3.4-3.5.
+- [x] `cgacomp.drv`/`ega.drv` traced (2026-10-02) — **done**. Both
+      turn out to run under **VGA mode 13h** (320×200, 256-color
+      chunky), not real EGA/composite hardware. `ega.drv` loads a new
+      `EGACOLOR` palette-remap file (32 bytes) and gives the
+      `draw_world_map_overview` glyph icons a genuine EGA-specific
+      upgrade (11 colored categories vs. the original's ~7 monochrome
+      ones). `cgacomp.drv` implements real NTSC CGA-composite
+      artifact-color emulation: a 256-entry lookup table built from
+      comparing adjacent 2-bit CGA pixel values (with cross-byte
+      continuity via reading one byte behind the current position),
+      plus a dedicated `CGACOMP.PAL` 256-color palette file. Full
+      writeup in [enhanced-patch.md](enhanced-patch.md) §3.6-3.8. The
+      Ultima II Upgrade patch's tileset investigation is now complete —
+      nothing left blocking on this thread.
