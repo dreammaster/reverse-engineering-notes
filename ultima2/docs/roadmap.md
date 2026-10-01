@@ -785,10 +785,22 @@ sessions, unlike a one-off todo list.
       cross-referenced against this project's existing full
       disassembly of the unmodified EXE (same file size, same `EA =
       file_offset + 0xFE00` addressing).
-- [ ] Disassemble `cga.drv`/`cgacomp.drv`/`ega.drv` (2-4KB each) —
-      confirmed these now contain essentially all the tile/pixel
-      rendering code for the 3 new video modes, reached from
-      `ULTIMAII.EXE` via a new `int 65h` driver ABI (8 sub-functions,
-      4 of which return far-call entry points). Needed to go from
-      "where the tileset code lives" (done) to "what pixel format it
-      actually reads" (not done). See enhanced-patch.md §3/§4.
+- [x] Disassemble `cga.drv` (2026-10-01) — **done**, no IDA needed
+      (flat headerless file, plain `ndisasm -b 16 -o 0`). Confirmed:
+      a 20-entry jump table at offset 0 is the exact target of
+      `ULTIMAII.EXE`'s `int 65h`-driver dispatch (`bp` = byte offset
+      into this table); every drawing primitive
+      (`clear_screen`/`flash_screen`/`setPalette`/`plot_point`/
+      `erase_point`/`draw_sprite_row`/`draw_ship_marker`) and even two
+      higher-level routines (`draw_world_map_overview`'s glyph
+      dispatch, `draw_dungeon_monster`'s monster-marker rendering) have
+      been reimplemented inside the driver; found the real
+      `CGATILES`/`MONSTERS` file loader and the CGA pixel-address math
+      (16×16 tiles, 80 bytes/scanline, single-segment+0x2000-offset
+      interlacing instead of the original's two-segment convention).
+      Full writeup in [enhanced-patch.md](enhanced-patch.md) §3.4-3.6.
+- [ ] `cgacomp.drv`/`ega.drv` — only their header/string tables were
+      checked (confirmed identical 20-entry-jump-table layout to
+      `cga.drv`); their actual mode-specific drawing code (CGA
+      Composite 16-color emulation, EGA tile format/size) hasn't been
+      traced. See enhanced-patch.md's "Next steps".

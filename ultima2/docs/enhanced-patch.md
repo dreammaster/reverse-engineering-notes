@@ -310,36 +310,140 @@ after a CALL" convention already used throughout the original game —
 see `docs/overview.md`) at old `draw_map_content+0x1D`
 (`ULTIMAII.EXE` offset `0x981`), loaded via `mov dx, 0x2000` then a
 call into new code. `CGATILES` does **not** appear as a literal string
-anywhere in `ULTIMAII.EXE` — CGA mode most likely gets its tile data
-from `cga.drv`/`cgacomp.drv` directly (or from the still-present
-embedded CGA graphics, now reached only via the driver) rather than a
-same-named external file the way EGA does. Not fully resolved — see
-"Next steps."
+anywhere in `ULTIMAII.EXE` — confirmed below (§3.5) that it's loaded
+*from inside* `cga.drv`/`cgacomp.drv` instead, not by the EXE.
 
-### 3.4 What this means for the ScummVM port
+### 3.4 `cga.drv`, `cgacomp.drv`, `ega.drv` — disassembled (2026-10-01)
 
-You do **not** need to reverse-engineer `ULTIMAII.EXE`'s (now mostly
-vestigial) drawing code to support the 3 new video modes — you need
-the **`.drv` files themselves**, which is where the real per-mode tile
-decode/render logic now lives, plus the `CGATILES`/`EGATILES` data
-files (and presumably the still-embedded original CGA graphics for
-the base CGA driver). None of `cga.drv`/`cgacomp.drv`/`ega.drv` have
-been disassembled yet — see "Next steps."
+No IDA database — these are small enough that direct `ndisasm` plus
+manual tracing was practical. Each is a flat, headerless binary file
+(no MZ header — loaded verbatim into an allocated memory block by
+`ultima2.com`, as described in §1) with an **identical structure**
+across all three files, confirmed by checking all three:
+
+- **A 20-entry jump table at offset 0**, each entry exactly 3 bytes
+  (`jmp near rel16`). This **is** the ABI target of `ULTIMAII.EXE`'s
+  `mov bp, N` / `call far [dispatch_slot]` thunks from §3.2 — `bp`'s
+  value is *literally the byte offset into this table*
+  (`0, 3, 6, 9, ...`), and the far pointer `ULTIMAII.EXE` got from
+  `int 65h AH=2/3/5/8` points at this driver's segment:0 — the dispatch
+  stub only overwrites the low word (the offset half) of that far
+  pointer with `bp` before calling it. Confirmed every `bp` value
+  observed in `ULTIMAII.EXE` (`6, 9, 12, 15, 18, 21, 24, 27, 30, 36,
+  39, 42, 45, 48, 51, 54, 57`) lines up exactly with one of this
+  table's 20 three-byte-aligned slots.
+- Each jump-table entry lands on a tiny trampoline (`push
+  ds`/`push es`/swap `ds`↔`cs`/`call <real function>`/`pop es`/`pop
+  ds`/`retf`) — the `ds`↔`cs` swap is what lets the driver address its
+  own data tables normally while still being able to reach the
+  caller's segment via `es`. `retf` confirms these are genuinely
+  far-called, matching `ultima2.com`'s own `call dword ptr [bp]`
+  convention from §1.
+- **Right after the jump table**: a table of word offsets into a block
+  of literal, null-terminated filenames — in `cga.drv`/`cgacomp.drv`:
+  the 7 original `PICDRA`/`PICOUT`/`PICTWN`/`PICCAS`/`PICDNG`/
+  `PICSPA`/`PICMIN` title-slideshow picture names (unchanged from the
+  original game); in `ega.drv`: `PICDRA.EGA`/`PICDNG.EGA`/`PICSPA.EGA`
+  (3 of the 7 got full EGA remakes, matching the 64,000-byte `.EGA`
+  files in the install dir) but `PICOUT.IDX`/`PICTWN.IDX`/
+  `PICCAS.IDX`/`PICMIN.IDX` for the other 4 (200-byte files — these
+  look like a palette/remap index applied to the *original* 16,384-byte
+  CGA picture data rather than full redraws).
+- Then (confirmed fully in `cga.drv` only — not re-verified byte-for-
+  byte in the other two, though the same overall layout is present):
+  `CGATILES`/`MONSTERS`/`CGATHEME.` filenames, a tile-size word pair
+  (`0x10, 0x10` = 16×16, matching the original tile dimensions), and a
+  **copy of the dungeon-monster "band offset" table** (`0x80, 0xC0,
+  0xE0, 0xF0, 0xF8, 0xFC`) — the exact same 6 values this project
+  already decoded as `_dungeonMonsterBandOffsets` in the original EXE
+  (see `docs/file-formats.md`'s `MONSTERS` section). The driver has its
+  own copy because it has taken over dungeon-monster-marker rendering
+  too, not just tile blitting (see below).
+
+### 3.5 What the driver's real code does (traced in `cga.drv`)
+
+Found and matched up against this project's existing documentation of
+the *original* game's drawing routines — every one of these is a
+reimplementation of an original-game function, now living in the
+driver instead:
+
+| Driver function | Matches original | Evidence |
+|---|---|---|
+| one entry point | `clear_screen` | zero-fills video memory via `rep stosw`, called twice (two interleaved CGA banks) |
+| another entry point | `flash_screen` | identical shape but XORs `0xFFFF` instead of zeroing — the invert-flash effect |
+| another entry point | `setPalette` | `int 10h AH=0,AL=4` (set CGA mode 4) + two `AH=0Bh` palette-select calls, byte-for-byte the same BIOS call shape as the original |
+| another entry point | `plot_point`/`erase_point` | computes a CGA byte address + 2-bit pixel mask from (x,y), then `and`s/`or`s a single pixel in |
+| another entry point | `draw_sprite_row` | writes one full byte (4 pixels) across the interlaced-bank pair, 4 rows at a time |
+| another entry point | `draw_ship_marker` | draws a 6+6-point `+` crosshair around a center point |
+| another entry point | `draw_world_map_overview`'s glyph dispatch | **identical bit-pattern thresholds** (`0x10`, `0x78`/`0xF0`, `8`/`0xC`/`4`/`0x70`) to the original's tile-type dispatch for the "VIEW WITH MAGICAL HELM" simplified map, each branch calling a `plot_map_icon_point`-equivalent with the same sub-cell offset convention |
+| another entry point | **`draw_dungeon_monster`** | reads a lookup-table-selected record from an `es:si`-addressed buffer (the loaded `MONSTERS` data), decodes a byte as **low 5 bits = Y position, top 3 bits (`>>5`) = facing/type** — the *exact* packed-record format this project already decoded for `_dungeonMonsterRecordPtr`/`_dungeonMonsterFacing` in the original EXE (see `docs/file-formats.md`) — then calls the sprite-row writer with the position scaled `×4`, matching the original's scaling exactly |
+| another entry point | title-slideshow picture display | copies 16,384 bytes (`rep movsb`, `cx=0x4000`) from a loaded picture buffer into video memory — matches the original `PIC???` format's confirmed size exactly |
+| 3 more entry points | BIOS text helpers | `int 10h AH=6` (scroll), `AH=2` (cursor position), `AH=9` (write char) — used for the driver's own on-screen text/status, not tile rendering |
+
+**The pixel-address math** (the function every drawing primitive
+ultimately calls through): given a byte-column `bx` and a row `dl`,
+
+```
+cl = (bl & 3) ^ 3; cl <<= 1          ; which 2-bit pixel slot within the byte
+di = (dl is odd) ? 0x2000 : 0        ; interlaced-scanline bank selector
+di += 80 * (dl >> 1)                  ; 80 bytes/scanline, CGA-standard
+di += bx >> 2                         ; byte-column
+```
+
+This is the same interlaced-CGA-scanline math the original game uses
+(`screen_rows`-style addressing, 80 bytes/row, odd/even scanlines in
+separate banks) — but with one real architectural difference: the
+original keeps the two banks as **two different real-mode segments**
+(`0xB800`/`0xBA00`) and switches `es` between them; this driver instead
+keeps **one segment and adds `0x2000` to the offset** for odd
+scanlines. Didn't chase why (could be an off-screen/shadow buffer this
+driver renders into before a real blit, relevant for CGA Composite
+emulation in particular — not confirmed).
+
+Also found: the actual **`CGATILES`/`MONSTERS` file loader** (`cga.drv`
+calls it with the string address of each filename as an argument) and
+a **once-loaded cache check** (skips the reload if a cached segment
+pointer is already non-null) — so the driver, not the EXE, now owns
+reading `CGATILES`.
+
+**Not done**: `cgacomp.drv` (CGA Composite 16-color emulation) and
+`ega.drv` weren't traced to this same depth — only their header/string
+tables were confirmed to match `cga.drv`'s layout. `cgacomp.drv` in
+particular (almost 2× the size of `cga.drv`) almost certainly has
+additional logic for the composite-color emulation that `cga.drv`
+doesn't need, and `ega.drv`'s tile format/size wasn't independently
+re-verified (EGA tiles are presumably larger per `EGATILES`' file size
+of 8,320 bytes vs. `CGATILES`' 4,160 — both roughly double the
+original DOS CGA tile data's 4,224 bytes, consistent with a similar
+tile count at larger per-tile size, but not confirmed byte-for-byte).
+
+### 3.6 What this means for the ScummVM port
+
+The pixel format and addressing scheme for CGA mode's tiles is now
+fully understood (§3.5's address-math table, 16×16 tiles, `CGATILES`
+loaded by the driver). For `cgacomp.drv`'s 16-color emulation and
+`ega.drv`'s EGA tile format specifically, the *architecture* (same
+jump-table ABI, same `MONSTERS`/picture-loading patterns) is confirmed
+shared with `cga.drv`, but the mode-specific pixel/tile decode in each
+has not been traced to the same depth — see "Next steps."
 
 ## 4. Next steps (need Paul / IDA, not done here)
 
-1. **Disassemble `cga.drv`, `cgacomp.drv`, `ega.drv`** — these are
-   small (2–4 KB each) and are where the actual tileset read/render
-   code lives per §3. This is the natural next piece of work for
-   "identify the tileset read/render code" to go from *architecture*
-   (done, above) to *pixel format* (not done).
-2. If useful: a full IDA database for `ULTIMAII.EXE` (patched) would
+1. Trace `cgacomp.drv`'s composite-color-specific logic and confirm
+   `ega.drv`'s EGA tile pixel format/size — both only had their
+   header/string tables checked against `cga.drv`'s confirmed layout
+   (§3.4), not their actual drawing code (§3.5 is `cga.drv`-only).
+2. Figure out why the driver's pixel-address math uses a single
+   segment + `0x2000` offset for the interlaced scanline banks instead
+   of the original's two-segment convention (§3.5) — may matter for
+   getting CGA Composite emulation pixel-exact.
+3. If useful: a full IDA database for `ULTIMAII.EXE` (patched) would
    let the remaining ~170 diff clusters (mostly small, UI-context or
    address-relocation noise per the sampling done here) be swept
    properly instead of by manual `ndisasm` spot-checks. Not needed for
    the 3 bugfixes or the tileset architecture above, which are already
    fully traced.
-3. `player.full`, `u2-*.pat`, `u2up*.exe/ini` and the `u2cfg*.exe`
+4. `player.full`, `u2-*.pat`, `u2up*.exe/ini` and the `u2cfg*.exe`
    tools in the install directory weren't examined at all — out of
    scope here (installer/config tooling, not runtime game code).
 
@@ -370,3 +474,15 @@ been disassembled yet — see "Next steps."
   uppercase letter) and were filtered out up front — worth doing this
   filter first in any future diff of these two files, since it removes
   more than half the noise immediately.
+- The `.drv` files (§3.4-3.5) are a different, much simpler case: flat
+  headerless binaries with no shared addressing convention to anything
+  else, so `ndisasm -b 16 -o 0 <file>` directly (file offset == address
+  offset) is all that's needed — no `+0xFE00`-style constant, no
+  cross-referencing against `ultima2.idb`. The main hazard is the usual
+  one with linear disassembly of a file that mixes code and data (the
+  jump table, filename strings, and small lookup tables at the start of
+  each file all disassemble as plausible-looking garbage if you don't
+  recognize them as data first) — `python3`-side slicing + manual
+  decoding of the data regions (word-table-of-offsets-into-a-string-
+  blob, in this case) before trusting `ndisasm`'s output caught this
+  quickly.
