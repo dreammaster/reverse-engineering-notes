@@ -1216,6 +1216,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1131A);
 	op_hex		(x,	1);
 	create_insn	(0X11320);
+	set_name	(0X11320,	"gfx_fill_rect_clipped");
 	create_insn	(x=0X11323);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X11327);
@@ -1874,6 +1875,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11B61);
 	op_hex		(x,	0);
 	create_insn	(0X11B64);
+	set_name	(0X11B64,	"detect_tandy");
 	create_insn	(x=0X11B78);
 	op_plain_offset	(x,	1,	0X1D850);
 	op_plain_offset	(x,	129,	0X1D850);
@@ -3797,6 +3799,7 @@ static Bytes_0(void) {
 	set_name	(0X13804,	"party_all_disabled");
 	create_insn	(0X13810);
 	create_insn	(0X13814);
+	set_name	(0X13814,	"party_search_command");
 	create_insn	(x=0X13817);
 	op_hex		(x,	1);
 	create_insn	(x=0X13821);
@@ -4326,6 +4329,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13FEF);
 	op_hex		(x,	1);
 	create_insn	(0X13FFC);
+	set_name	(0X13FFC,	"view_draw_dispatch");
 	create_insn	(x=0X14003);
 	op_hex		(x,	1);
 	create_insn	(x=0X1400D);
@@ -4344,6 +4348,7 @@ static Bytes_0(void) {
 	create_insn	(0X14066);
 	create_insn	(0X14072);
 	create_insn	(0X14076);
+	set_name	(0X14076,	"redraw_main_screen");
 	create_insn	(x=0X1407D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1408E);
@@ -4643,6 +4648,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14712);
 	op_stkvar	(x,	0);
 	create_insn	(0X1471E);
+	set_name	(0X1471E,	"draw_protect_hint");
 	create_insn	(x=0X14721);
 	op_hex		(x,	1);
 	create_insn	(x=0X14739);
@@ -4673,6 +4679,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X147CA);
 	op_hex		(x,	1);
 	create_insn	(0X147D8);
+	set_name	(0X147D8,	"draw_effects_panel");
 	create_insn	(x=0X147DB);
 	op_hex		(x,	1);
 	create_insn	(x=0X147F1);
@@ -4775,6 +4782,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X149DD);
 	op_hex		(x,	1);
 	create_insn	(0X149E2);
+	set_name	(0X149E2,	"draw_main_frame_parts");
 	create_insn	(x=0X149EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X149FF);
@@ -5072,6 +5080,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14E9A);
 	op_stkvar	(x,	0);
 	create_insn	(0X14EA6);
+	set_name	(0X14EA6,	"show_spell_list_window");
 	create_insn	(x=0X14EBC);
 	op_hex		(x,	1);
 	create_insn	(x=0X14ED2);
@@ -5135,6 +5144,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14FA9);
 	op_stkvar	(x,	0);
 	create_insn	(0X14FB2);
+	set_name	(0X14FB2,	"draw_night_stars");
 	create_insn	(x=0X14FB5);
 	op_hex		(x,	1);
 	create_insn	(x=0X14FBA);
@@ -5853,6 +5863,15 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15BB5);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X15BBE);
 	op_hex		(x,	1);
 	create_insn	(x=0X15BC1);
@@ -5889,15 +5908,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X15CA9);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X15CB5);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15CBA);
@@ -6328,6 +6338,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X163A4);
 	op_stkvar	(x,	1);
 	create_insn	(0X163B4);
+	set_name	(0X163B4,	"party_share_menu");
 	create_insn	(x=0X163B7);
 	op_hex		(x,	1);
 	create_insn	(x=0X163BC);
@@ -6455,6 +6466,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16603);
 	op_hex		(x,	1);
 	create_insn	(0X16616);
+	set_name	(0X16616,	"party_gather_menu");
 	create_insn	(x=0X16619);
 	op_hex		(x,	1);
 	create_insn	(x=0X1661E);
@@ -6991,7 +7003,7 @@ static Bytes_1(void) {
 	create_word	(0X16E07);
 	create_insn	(0X16E09);
 	create_insn	(0X16E0E);
-	set_name	(0X16E0E,	"thk_res_49E2");
+	set_name	(0X16E0E,	"thk_draw_main_frame_parts");
 	set_cmt	(0X16E13,	"thunk index 0x8000: resident",	0);
 	create_word	(0X16E13);
 	create_insn	(0X16E15);
@@ -7446,12 +7458,12 @@ static Bytes_1(void) {
 	create_word	(0X1724B);
 	create_insn	(0X1724D);
 	create_insn	(0X17252);
-	set_name	(0X17252,	"thk_res_471E");
+	set_name	(0X17252,	"thk_draw_protect_hint");
 	set_cmt	(0X17257,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17257);
 	create_insn	(0X17259);
 	create_insn	(0X1725E);
-	set_name	(0X1725E,	"thk_res_47D8");
+	set_name	(0X1725E,	"thk_draw_effects_panel");
 	set_cmt	(0X17263,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17263);
 	create_insn	(0X17265);
@@ -7506,7 +7518,7 @@ static Bytes_1(void) {
 	create_word	(0X172DB);
 	create_insn	(0X172DD);
 	create_insn	(0X172E2);
-	set_name	(0X172E2,	"thk_res_4076");
+	set_name	(0X172E2,	"thk_redraw_main_screen");
 	set_cmt	(0X172E7,	"thunk index 0x8000: resident",	0);
 	create_word	(0X172E7);
 	create_insn	(0X172E9);
@@ -7521,7 +7533,7 @@ static Bytes_1(void) {
 	create_word	(0X172FF);
 	create_insn	(0X17301);
 	create_insn	(0X17306);
-	set_name	(0X17306,	"thk_res_3FFC");
+	set_name	(0X17306,	"thk_view_draw_dispatch");
 	set_cmt	(0X1730B,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1730B);
 	create_insn	(0X1730D);
@@ -7541,12 +7553,12 @@ static Bytes_1(void) {
 	create_word	(0X1732F);
 	create_insn	(0X17331);
 	create_insn	(0X17336);
-	set_name	(0X17336,	"thk_res_3814");
+	set_name	(0X17336,	"thk_party_search_command");
 	set_cmt	(0X1733B,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1733B);
 	create_insn	(0X1733D);
 	create_insn	(0X17342);
-	set_name	(0X17342,	"thk_res_4FB2");
+	set_name	(0X17342,	"thk_draw_night_stars");
 	set_cmt	(0X17347,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17347);
 	create_insn	(0X17349);
@@ -7861,7 +7873,7 @@ static Bytes_1(void) {
 	create_word	(0X1762F);
 	create_insn	(0X17631);
 	create_insn	(0X17636);
-	set_name	(0X17636,	"thk_res_4EA6");
+	set_name	(0X17636,	"thk_show_spell_list_window");
 	set_cmt	(0X1763B,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1763B);
 	create_insn	(0X1763D);
@@ -9381,6 +9393,15 @@ static Bytes_1(void) {
 	set_name	(0X1FCC8,	"aCeramicCase");
 	create_strlit	(0X1FCD7,	0XE);
 	set_name	(0X1FCD7,	"aLacquerBox");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X1FCE5,	0XF);
 	set_name	(0X1FCE5,	"aJewelledBox");
 	create_strlit	(0X1FCF4,	0XF);
@@ -9403,15 +9424,6 @@ static Bytes_1(void) {
 	set_name	(0X1FD95,	"aTheParty");
 	create_strlit	(0X1FDA0,	0X23);
 	set_name	(0X1FDA0,	"aNoxiousGasAsph");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X1FDC4,	0X25);
 	set_name	(0X1FDC4,	"aABarrageOfSpik");
 	create_strlit	(0X1FDE9,	0X7);
@@ -10642,6 +10654,7 @@ static Functions_0(void) {
 	set_frame_size(0X1127E, 0, 2, 0);
 	add_func    (0X11320,0X11373);
 	set_func_flags(0X11320,0x5410);
+	set_func_cmt(0X11320,	"clips the rectangle (gfx_clip_point, gfx_order_rect) then draws via the driver", 0);
 	set_frame_size(0X11320, 0, 2, 0);
 	add_func    (0X11392,0X113B6);
 	set_func_flags(0X11392,0x5410);
@@ -10731,6 +10744,7 @@ static Functions_0(void) {
 	set_frame_size(0X11B5E, 0, 0, 0);
 	add_func    (0X11B64,0X11B8E);
 	set_func_flags(0X11B64,0x5400);
+	set_func_cmt(0X11B64,	"Tandy/PCjr detection (\"Tandy\" string)", 0);
 	set_frame_size(0X11B64, 0X2, 0, 0);
 	add_func    (0X11B8E,0X11BA6);
 	set_func_flags(0X11B8E,0x5400);
@@ -10995,6 +11009,7 @@ static Functions_0(void) {
 	set_frame_size(0X13804, 0, 0, 0);
 	add_func    (0X13814,0X138A8);
 	set_func_flags(0X13814,0x5410);
+	set_func_cmt(0X13814,	"'S': \"Search\", \"Nothing Here\" or opens the treasure chest screen", 0);
 	set_frame_size(0X13814, 0X4, 2, 0);
 	add_func    (0X138A8,0X13928);
 	set_func_flags(0X138A8,0x5410);
@@ -11049,9 +11064,11 @@ static Functions_0(void) {
 	set_frame_size(0X13FE2, 0, 0, 0);
 	add_func    (0X13FFC,0X14076);
 	set_func_flags(0X13FFC,0x5400);
+	set_func_cmt(0X13FFC,	"draws the maze view for the party's cell: \"Darkness\" if dark and no light, else indoor/outdoor view", 0);
 	set_frame_size(0X13FFC, 0, 0, 0);
 	add_func    (0X14076,0X140E5);
 	set_func_flags(0X14076,0x5400);
+	set_func_cmt(0X14076,	"clears text, draws the frame (sub_149E2) and the party list", 0);
 	set_frame_size(0X14076, 0, 0, 0);
 	add_func    (0X140E6,0X140F4);
 	set_func_flags(0X140E6,0x5400);
@@ -11097,15 +11114,18 @@ static Functions_0(void) {
 	set_frame_size(0X144AE, 0X10, 2, 0);
 	add_func    (0X1471E,0X147D8);
 	set_func_flags(0X1471E,0x5410);
+	set_func_cmt(0X1471E,	"\"P-Protect\" line of the party panel", 0);
 	set_frame_size(0X1471E, 0X8, 2, 0);
 	add_func    (0X147D8,0X149A9);
 	set_func_flags(0X147D8,0x5410);
+	set_func_cmt(0X147D8,	"Magic/Forces/Levitate/... active party effects with their counters", 0);
 	set_frame_size(0X147D8, 0X2, 2, 0);
 	add_func    (0X149AA,0X149E1);
 	set_func_flags(0X149AA,0x5400);
 	set_frame_size(0X149AA, 0, 0, 0);
 	add_func    (0X149E2,0X14A34);
 	set_func_flags(0X149E2,0x5400);
+	set_func_cmt(0X149E2,	"main screen frame lines", 0);
 	set_frame_size(0X149E2, 0, 0, 0);
 	add_func    (0X14A34,0X14B6D);
 	set_func_flags(0X14A34,0x5410);
@@ -11139,6 +11159,7 @@ static Functions_0(void) {
 	set_frame_size(0X14DAA, 0X44, 2, 0);
 	add_func    (0X14EA6,0X14EFD);
 	set_func_flags(0X14EA6,0x5410);
+	set_func_cmt(0X14EA6,	"window with the spell list of the selected level", 0);
 	set_frame_size(0X14EA6, 0, 2, 0);
 	add_func    (0X14EFE,0X14F39);
 	set_func_flags(0X14EFE,0x5410);
@@ -11149,6 +11170,7 @@ static Functions_0(void) {
 	set_frame_size(0X14F3A, 0XC, 2, 0);
 	add_func    (0X14FB2,0X15092);
 	set_func_flags(0X14FB2,0x5410);
+	set_func_cmt(0X14FB2,	"plots random stars into the sky (night, outdoor/indoor sky)", 0);
 	set_frame_size(0X14FB2, 0X10, 2, 0);
 	add_func    (0X15092,0X150CE);
 	set_func_flags(0X15092,0x5410);
@@ -11270,6 +11292,7 @@ static Functions_0(void) {
 	set_frame_size(0X16330, 0XC, 2, 0);
 	add_func    (0X163B4,0X16531);
 	set_func_flags(0X163B4,0x5410);
+	set_func_cmt(0X163B4,	"\"Share\" gold/gems/food menu, calls party_share_*", 0);
 	set_frame_size(0X163B4, 0XA, 2, 0);
 	add_func    (0X16532,0X165C7);
 	set_func_flags(0X16532,0x5410);
@@ -11281,6 +11304,7 @@ static Functions_0(void) {
 	set_frame_size(0X165C8, 0X8, 2, 0);
 	add_func    (0X16616,0X1670A);
 	set_func_flags(0X16616,0x5410);
+	set_func_cmt(0X16616,	"\"Gather\" gold/gems/food menu", 0);
 	set_frame_size(0X16616, 0XA, 2, 0);
 	add_func    (0X1670A,0X167BC);
 	set_func_flags(0X1670A,0x5410);

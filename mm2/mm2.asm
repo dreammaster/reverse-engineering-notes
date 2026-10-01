@@ -1606,7 +1606,7 @@ loc_107F4:                              ; CODE XREF: detect_hardware+A9↑j
                                         ; detect_hardware+AF↑j
                 cmp     word_2219C, 0
                 jnz     short loc_10808
-                call    sub_11B64
+                call    detect_tandy
                 or      ax, ax
                 jz      short loc_10808
                 mov     word_2219C, 9
@@ -2098,7 +2098,7 @@ text_order_rect endp
 ; Attributes: bp-based frame
 
 text_window_create proc near            ; CODE XREF: prompt_insert_disk+7E↓p
-                                        ; sub_14EA6+13↓p ...
+                                        ; show_spell_list_window+13↓p ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2190,8 +2190,8 @@ text_window_create endp
 ; current gfx window colour + driver fn2
 ; Attributes: bp-based frame
 
-gfx_set_color   proc near               ; CODE XREF: sub_14FB2+15↓p
-                                        ; sub_14FB2+8D↓p ...
+gfx_set_color   proc near               ; CODE XREF: draw_night_stars+15↓p
+                                        ; draw_night_stars+8D↓p ...
 
 arg_0           = byte ptr  4
 
@@ -2785,7 +2785,7 @@ loc_10F67:                              ; CODE XREF: seg000:0F61↑j
 ; Attributes: bp-based frame
 
 text_window_open proc near              ; CODE XREF: prompt_insert_disk+94↓p
-                                        ; sub_14EA6+29↓p ...
+                                        ; show_spell_list_window+29↓p ...
 
 var_4           = byte ptr -4
 var_2           = word ptr -2
@@ -2850,7 +2850,7 @@ text_window_open endp
 ; Attributes: bp-based frame
 
 text_window_close proc near             ; CODE XREF: prompt_insert_disk+129↓p
-                                        ; sub_14EA6+4F↓p ...
+                                        ; show_spell_list_window+4F↓p ...
 
 var_6           = word ptr -6
 var_4           = byte ptr -4
@@ -2958,7 +2958,7 @@ gfx_set_pen     endp
 ; driver fn3
 ; Attributes: bp-based frame
 
-gfx_plot_point  proc near               ; CODE XREF: sub_14FB2+A1↓p
+gfx_plot_point  proc near               ; CODE XREF: draw_night_stars+A1↓p
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -3333,9 +3333,10 @@ gfx_scroll_rect endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; clips the rectangle (gfx_clip_point, gfx_order_rect) then draws via the driver
 ; Attributes: bp-based frame
 
-sub_11320       proc near               ; CODE XREF: seg000:1389↓p
+gfx_fill_rect_clipped proc near         ; CODE XREF: seg000:1389↓p
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -3380,7 +3381,7 @@ arg_8           = word ptr  0Ch
                 add     sp, 0Ch
                 pop     bp
                 retn
-sub_11320       endp
+gfx_fill_rect_clipped endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -3393,7 +3394,7 @@ sub_11320       endp
                 push    word ptr [bp+8]
                 push    word ptr [bp+6]
                 push    word ptr [bp+4]
-                call    sub_11320
+                call    gfx_fill_rect_clipped
                 add     sp, 0Ah
                 pop     bp
                 retn
@@ -3506,7 +3507,7 @@ gfx_copy_rect_pages endp
 ; Attributes: bp-based frame
 
 gfx_copy_page   proc near               ; CODE XREF: start_combat+C8↓p
-                                        ; sub_14076+27↓p ...
+                                        ; redraw_main_screen+27↓p ...
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -3796,7 +3797,7 @@ loc_115C5:                              ; CODE XREF: seg000:15A0↑j
 ; Attributes: bp-based frame
 
 text_window_set_font proc near          ; CODE XREF: prompt_insert_disk+A9↓p
-                                        ; sub_14EA6+32↓p ...
+                                        ; show_spell_list_window+32↓p ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -4749,8 +4750,9 @@ set_text_mode3  endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Tandy/PCjr detection ("Tandy" string)
 
-sub_11B64       proc near               ; CODE XREF: detect_hardware+C1↑p
+detect_tandy    proc near               ; CODE XREF: detect_hardware+C1↑p
                 push    di
                 mov     ax, 0F000h
                 mov     es, ax
@@ -4758,7 +4760,7 @@ sub_11B64       proc near               ; CODE XREF: detect_hardware+C1↑p
                 mov     di, 0A000h
                 mov     cx, 5FFFh
 
-loc_11B70:                              ; CODE XREF: sub_11B64+1F↓j
+loc_11B70:                              ; CODE XREF: detect_tandy+1F↓j
                 mov     al, 54h ; 'T'
                 repne scasb
                 jnz     short loc_11B8A
@@ -4774,13 +4776,13 @@ loc_11B70:                              ; CODE XREF: sub_11B64+1F↓j
                 mov     ax, 1
                 jz      short loc_11B8C
 
-loc_11B8A:                              ; CODE XREF: sub_11B64+10↑j
+loc_11B8A:                              ; CODE XREF: detect_tandy+10↑j
                 xor     ax, ax
 
-loc_11B8C:                              ; CODE XREF: sub_11B64+24↑j
+loc_11B8C:                              ; CODE XREF: detect_tandy+24↑j
                 pop     di
                 retn
-sub_11B64       endp
+detect_tandy    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8510,7 +8512,7 @@ draw_frame_alt  endp
 ; Attributes: bp-based frame
 
 wait_for_key    proc near               ; CODE XREF: prompt_insert_disk+120↓p
-                                        ; sub_14EA6+45↓p ...
+                                        ; show_spell_list_window+45↓p ...
 
 arg_0           = word ptr  4
 
@@ -9211,7 +9213,7 @@ char_skill_count endp
 ; (skill) sum of char_skill_count over living party members
 ; Attributes: bp-based frame
 
-party_skill_count proc near             ; CODE XREF: sub_13FFC+E↓p
+party_skill_count proc near             ; CODE XREF: view_draw_dispatch+E↓p
                                         ; check_move_blocked+76↓p ...
 
 var_A           = word ptr -0Ah
@@ -9317,7 +9319,7 @@ loc_1373F:                              ; CODE XREF: tick_effect_timers+3B↑j
                 push    ax
                 call    gfx_select_page
                 add     sp, 2
-                call    sub_147D8
+                call    draw_effects_panel
                 mov     ax, 1
                 push    ax
                 call    gfx_select_page
@@ -9482,9 +9484,10 @@ party_all_disabled endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; 'S': "Search", "Nothing Here" or opens the treasure chest screen
 ; Attributes: bp-based frame
 
-sub_13814       proc near               ; CODE XREF: seg002:074D↓J
+party_search_command proc near          ; CODE XREF: seg002:074D↓J
 
 var_2           = word ptr -2
 
@@ -9512,11 +9515,11 @@ var_2           = word ptr -2
                 add     sp, 2
                 sub     si, si
 
-loc_13848:                              ; CODE XREF: sub_13814+8A↓j
+loc_13848:                              ; CODE XREF: party_search_command+8A↓j
                 cmp     byte ptr [si+6950h], 0
                 jz      short loc_13898
 
-loc_1384F:                              ; CODE XREF: sub_13814+88↓j
+loc_1384F:                              ; CODE XREF: party_search_command+88↓j
                 mov     [bp+var_2], si
                 cmp     si, 3
                 jnz     short loc_13863
@@ -9525,16 +9528,16 @@ loc_1384F:                              ; CODE XREF: sub_13814+88↓j
                 jz      short loc_13863
                 dec     [bp+var_2]
 
-loc_13863:                              ; CODE XREF: sub_13814+41↑j
-                                        ; sub_13814+4A↑j
+loc_13863:                              ; CODE XREF: party_search_command+41↑j
+                                        ; party_search_command+4A↑j
                 cmp     [bp+var_2], 3
                 jnz     short loc_13873
                 cmp     word_241AA, 0
                 jz      short loc_13873
                 dec     [bp+var_2]
 
-loc_13873:                              ; CODE XREF: sub_13814+53↑j
-                                        ; sub_13814+5A↑j
+loc_13873:                              ; CODE XREF: party_search_command+53↑j
+                                        ; party_search_command+5A↑j
                 cmp     [bp+var_2], 3
                 jnz     short loc_138A0
                 mov     ax, 11h
@@ -9551,22 +9554,22 @@ loc_13873:                              ; CODE XREF: sub_13814+53↑j
                 jmp     short loc_138A3
 ; ---------------------------------------------------------------------------
 
-loc_13898:                              ; CODE XREF: sub_13814+39↑j
+loc_13898:                              ; CODE XREF: party_search_command+39↑j
                 inc     si
                 cmp     si, 3
                 jge     short loc_1384F
                 jmp     short loc_13848
 ; ---------------------------------------------------------------------------
 
-loc_138A0:                              ; CODE XREF: sub_13814+63↑j
+loc_138A0:                              ; CODE XREF: party_search_command+63↑j
                 call    thk_2MISC_CA52
 
-loc_138A3:                              ; CODE XREF: sub_13814+82↑j
+loc_138A3:                              ; CODE XREF: party_search_command+82↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_13814       endp
+party_search_command endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10531,19 +10534,19 @@ loc_13F19:                              ; CODE XREF: start_combat+48↑j
                 push    ax
                 call    clear_text_preset
                 add     sp, 2
-                call    sub_149E2
+                call    draw_main_frame_parts
                 call    draw_party_list
                 call    draw_status_line
-                call    sub_13FFC
+                call    view_draw_dispatch
                 cmp     g_view_mode, 1
                 jnz     short loc_13F70
-                call    sub_147D8
+                call    draw_effects_panel
                 jmp     short loc_13F73
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_13F70:                              ; CODE XREF: start_combat+B6↑j
-                call    sub_1471E
+                call    draw_protect_hint
 
 loc_13F73:                              ; CODE XREF: start_combat+BB↑j
                 sub     ax, ax
@@ -10649,9 +10652,10 @@ sub_13FE2       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; draws the maze view for the party's cell: "Darkness" if dark and no light, else indoor/outdoor view
 
-sub_13FFC       proc near               ; CODE XREF: start_combat+AE↑p
-                                        ; sub_14076:loc_140BA↓p ...
+view_draw_dispatch proc near            ; CODE XREF: start_combat+AE↑p
+                                        ; redraw_main_screen:loc_140BA↓p ...
                 mov     ax, 1
                 push    ax
                 call    gfx_select_page
@@ -10664,7 +10668,7 @@ sub_13FFC       proc near               ; CODE XREF: start_combat+AE↑p
                 jz      short loc_14017
                 call    thk_2PLAY_BE92
 
-loc_14017:                              ; CODE XREF: sub_13FFC+16↑j
+loc_14017:                              ; CODE XREF: view_draw_dispatch+16↑j
                 mov     byte_1DBEE, 0
                 cmp     g_fx_light, 0
                 jnz     short loc_14035
@@ -10673,11 +10677,11 @@ loc_14017:                              ; CODE XREF: sub_13FFC+16↑j
                 test    byte_23218, 20h
                 jz      short loc_14035
 
-loc_14031:                              ; CODE XREF: sub_13FFC+2C↑j
+loc_14031:                              ; CODE XREF: view_draw_dispatch+2C↑j
                 inc     byte_1DBEE
 
-loc_14035:                              ; CODE XREF: sub_13FFC+25↑j
-                                        ; sub_13FFC+33↑j
+loc_14035:                              ; CODE XREF: view_draw_dispatch+25↑j
+                                        ; view_draw_dispatch+33↑j
                 cmp     byte_1DBEE, 0
                 jz      short loc_14066
                 mov     ax, 8
@@ -10698,26 +10702,27 @@ loc_14035:                              ; CODE XREF: sub_13FFC+25↑j
                 jmp     short locret_14075
 ; ---------------------------------------------------------------------------
 
-loc_14066:                              ; CODE XREF: sub_13FFC+3E↑j
+loc_14066:                              ; CODE XREF: view_draw_dispatch+3E↑j
                 cmp     g_outdoors, 0
                 jnz     short loc_14072
                 call    thk_2PLAY_8744
                 jmp     short locret_14075
 ; ---------------------------------------------------------------------------
 
-loc_14072:                              ; CODE XREF: sub_13FFC+6F↑j
+loc_14072:                              ; CODE XREF: view_draw_dispatch+6F↑j
                 call    thk_2PLAY_8D6C
 
-locret_14075:                           ; CODE XREF: sub_13FFC+68↑j
-                                        ; sub_13FFC+74↑j
+locret_14075:                           ; CODE XREF: view_draw_dispatch+68↑j
+                                        ; view_draw_dispatch+74↑j
                 retn
-sub_13FFC       endp
+view_draw_dispatch endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; clears text, draws the frame (sub_149E2) and the party list
 
-sub_14076       proc near               ; CODE XREF: sub_140E6+6↓p
+redraw_main_screen proc near            ; CODE XREF: sub_140E6+6↓p
                                         ; seg002:06F9↓J
                 mov     ax, 1
                 push    ax
@@ -10729,11 +10734,11 @@ sub_14076       proc near               ; CODE XREF: sub_140E6+6↓p
                 push    ax
                 call    clear_text_preset
                 add     sp, 2
-                call    sub_149E2
+                call    draw_main_frame_parts
                 jmp     short loc_140AD
 ; ---------------------------------------------------------------------------
 
-loc_14096:                              ; CODE XREF: sub_14076+F↑j
+loc_14096:                              ; CODE XREF: redraw_main_screen+F↑j
                 mov     ax, 1
                 push    ax
                 sub     ax, ax
@@ -10745,25 +10750,25 @@ loc_14096:                              ; CODE XREF: sub_14076+F↑j
                 call    clear_text_preset
                 add     sp, 2
 
-loc_140AD:                              ; CODE XREF: sub_14076+1E↑j
+loc_140AD:                              ; CODE XREF: redraw_main_screen+1E↑j
                 call    draw_party_list
                 cmp     word_22654, 0
                 jz      short loc_140BA
                 call    draw_status_line
 
-loc_140BA:                              ; CODE XREF: sub_14076+3F↑j
-                call    sub_13FFC
+loc_140BA:                              ; CODE XREF: redraw_main_screen+3F↑j
+                call    view_draw_dispatch
                 cmp     g_view_mode, 1
                 jnz     short loc_140CA
-                call    sub_147D8
+                call    draw_effects_panel
                 jmp     short loc_140CD
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_140CA:                              ; CODE XREF: sub_14076+4C↑j
-                call    sub_1471E
+loc_140CA:                              ; CODE XREF: redraw_main_screen+4C↑j
+                call    draw_protect_hint
 
-loc_140CD:                              ; CODE XREF: sub_14076+51↑j
+loc_140CD:                              ; CODE XREF: redraw_main_screen+51↑j
                 sub     ax, ax
                 push    ax
                 mov     ax, 1
@@ -10775,7 +10780,7 @@ loc_140CD:                              ; CODE XREF: sub_14076+51↑j
                 call    gfx_select_page
                 add     sp, 2
                 retn
-sub_14076       endp
+redraw_main_screen endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -10785,7 +10790,7 @@ sub_14076       endp
 
 sub_140E6       proc near               ; CODE XREF: seg002:0705↓J
                 mov     word_22654, 0
-                call    sub_14076
+                call    redraw_main_screen
                 inc     word_22654
                 retn
 sub_140E6       endp
@@ -10815,7 +10820,7 @@ sub_140F4       endp
 ; message in the bottom frame
 ; Attributes: bp-based frame
 
-print_message_line proc near            ; CODE XREF: sub_13814+14↑p
+print_message_line proc near            ; CODE XREF: party_search_command+14↑p
                                         ; start_combat+15↑p ...
 
 arg_0           = word ptr  4
@@ -11648,10 +11653,11 @@ show_party_roster_screen endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; "P-Protect" line of the party panel
 ; Attributes: bp-based frame
 
-sub_1471E       proc near               ; CODE XREF: start_combat:loc_13F70↑p
-                                        ; sub_14076:loc_140CA↑p ...
+draw_protect_hint proc near             ; CODE XREF: start_combat:loc_13F70↑p
+                                        ; redraw_main_screen:loc_140CA↑p ...
 
 var_2           = word ptr -2
 
@@ -11703,7 +11709,7 @@ var_2           = word ptr -2
                 sub     si, si
                 mov     di, 4F68h
 
-loc_14789:                              ; CODE XREF: sub_1471E+88↓j
+loc_14789:                              ; CODE XREF: draw_protect_hint+88↓j
                 lea     ax, [si+1]
                 push    ax
                 mov     ax, 1Ch
@@ -11733,20 +11739,21 @@ loc_14789:                              ; CODE XREF: sub_1471E+88↓j
                 add     sp, 2
                 mov     g_view_mode, 0
 
-loc_147D2:                              ; CODE XREF: sub_1471E+92↑j
+loc_147D2:                              ; CODE XREF: draw_protect_hint+92↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1471E       endp
+draw_protect_hint endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Magic/Forces/Levitate/... active party effects with their counters
 ; Attributes: bp-based frame
 
-sub_147D8       proc near               ; CODE XREF: tick_effect_timers+55↑p
+draw_effects_panel proc near            ; CODE XREF: tick_effect_timers+55↑p
                                         ; start_combat+B8↑p ...
 
 var_2           = word ptr -2
@@ -11817,12 +11824,12 @@ var_2           = word ptr -2
                 jb      short loc_14875
                 dec     [bp+var_2]
 
-loc_14875:                              ; CODE XREF: sub_147D8+98↑j
+loc_14875:                              ; CODE XREF: draw_effects_panel+98↑j
                 cmp     g_fx_light, 64h ; 'd'
                 jb      short loc_1487F
                 dec     [bp+var_2]
 
-loc_1487F:                              ; CODE XREF: sub_147D8+A2↑j
+loc_1487F:                              ; CODE XREF: draw_effects_panel+A2↑j
                 mov     ax, 0Ah
                 push    ax
                 push    [bp+var_2]
@@ -11846,12 +11853,12 @@ loc_1487F:                              ; CODE XREF: sub_147D8+A2↑j
                 jb      short loc_148B9
                 dec     [bp+var_2]
 
-loc_148B9:                              ; CODE XREF: sub_147D8+DC↑j
+loc_148B9:                              ; CODE XREF: draw_effects_panel+DC↑j
                 cmp     g_fx_magic, 64h ; 'd'
                 jb      short loc_148C3
                 dec     [bp+var_2]
 
-loc_148C3:                              ; CODE XREF: sub_147D8+E6↑j
+loc_148C3:                              ; CODE XREF: draw_effects_panel+E6↑j
                 mov     ax, 0Bh
                 push    ax
                 push    [bp+var_2]
@@ -11871,12 +11878,12 @@ loc_148C3:                              ; CODE XREF: sub_147D8+E6↑j
                 jb      short loc_148F3
                 dec     [bp+var_2]
 
-loc_148F3:                              ; CODE XREF: sub_147D8+116↑j
+loc_148F3:                              ; CODE XREF: draw_effects_panel+116↑j
                 cmp     g_fx_forces, 64h ; 'd'
                 jb      short loc_148FD
                 dec     [bp+var_2]
 
-loc_148FD:                              ; CODE XREF: sub_147D8+120↑j
+loc_148FD:                              ; CODE XREF: draw_effects_panel+120↑j
                 mov     ax, 0Ch
                 push    ax
                 push    [bp+var_2]
@@ -11904,7 +11911,7 @@ loc_148FD:                              ; CODE XREF: sub_147D8+120↑j
                 call    text_puts
                 add     sp, 2
 
-loc_1493D:                              ; CODE XREF: sub_147D8+14B↑j
+loc_1493D:                              ; CODE XREF: draw_effects_panel+14B↑j
                 cmp     g_fx_walk_on_water, 0
                 jz      short loc_1495C
                 mov     ax, 0Eh
@@ -11918,7 +11925,7 @@ loc_1493D:                              ; CODE XREF: sub_147D8+14B↑j
                 call    text_puts
                 add     sp, 2
 
-loc_1495C:                              ; CODE XREF: sub_147D8+16A↑j
+loc_1495C:                              ; CODE XREF: draw_effects_panel+16A↑j
                 cmp     g_fx_guard_dog, 0
                 jz      short loc_1497B
                 mov     ax, 0Fh
@@ -11932,7 +11939,7 @@ loc_1495C:                              ; CODE XREF: sub_147D8+16A↑j
                 call    text_puts
                 add     sp, 2
 
-loc_1497B:                              ; CODE XREF: sub_147D8+189↑j
+loc_1497B:                              ; CODE XREF: draw_effects_panel+189↑j
                 call    thk_2PLAY_B862
                 cmp     g_view_mode, 1
                 jz      short loc_149A5
@@ -11949,11 +11956,11 @@ loc_1497B:                              ; CODE XREF: sub_147D8+189↑j
                 call    text_puts
                 add     sp, 2
 
-loc_149A5:                              ; CODE XREF: sub_147D8+1AB↑j
+loc_149A5:                              ; CODE XREF: draw_effects_panel+1AB↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_147D8       endp
+draw_effects_panel endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -11962,7 +11969,7 @@ sub_147D8       endp
 
 
 sub_149AA       proc near               ; CODE XREF: draw_status_line+C↑p
-                                        ; sub_149E2+42↓p
+                                        ; draw_main_frame_parts+42↓p
                 mov     ax, 0Ch
                 push    ax
                 mov     ax, 12h
@@ -11995,9 +12002,10 @@ sub_149AA       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; main screen frame lines
 
-sub_149E2       proc near               ; CODE XREF: start_combat+A5↑p
-                                        ; sub_14076+1B↑p ...
+draw_main_frame_parts proc near         ; CODE XREF: start_combat+A5↑p
+                                        ; redraw_main_screen+1B↑p ...
                 mov     al, byte_1DB8E
                 sub     ah, ah
                 push    ax
@@ -12035,7 +12043,7 @@ sub_149E2       proc near               ; CODE XREF: start_combat+A5↑p
                 call    text_set_fg
                 add     sp, 2
                 retn
-sub_149E2       endp
+draw_main_frame_parts endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12043,7 +12051,7 @@ sub_149E2       endp
 ; Attributes: bp-based frame
 
 draw_party_list proc near               ; CODE XREF: start_combat+A8↑p
-                                        ; sub_14076:loc_140AD↑p ...
+                                        ; redraw_main_screen:loc_140AD↑p ...
 
 var_E           = word ptr -0Eh
 var_C           = word ptr -0Ch
@@ -12595,7 +12603,7 @@ expand_spell_bitmap endp
 
 ; Attributes: bp-based frame
 
-draw_spell_list proc near               ; CODE XREF: sub_14EA6+3B↓p
+draw_spell_list proc near               ; CODE XREF: show_spell_list_window+3B↓p
                                         ; cast_from_menu+50↓p
 
 var_40          = word ptr -40h
@@ -12724,9 +12732,10 @@ draw_spell_list endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; window with the spell list of the selected level
 ; Attributes: bp-based frame
 
-sub_14EA6       proc near               ; CODE XREF: character_actions_menu+2B4↓p
+show_spell_list_window proc near        ; CODE XREF: character_actions_menu+2B4↓p
                                         ; seg002:0A4D↓J
 
 arg_0           = word ptr  4
@@ -12767,7 +12776,7 @@ arg_0           = word ptr  4
                 add     sp, 2
                 pop     bp
                 retn
-sub_14EA6       endp
+show_spell_list_window endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -12907,9 +12916,10 @@ party_recalc_ac endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; plots random stars into the sky (night, outdoor/indoor sky)
 ; Attributes: bp-based frame
 
-sub_14FB2       proc near               ; CODE XREF: seg002:0759↓J
+draw_night_stars proc near              ; CODE XREF: seg002:0759↓J
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -12947,26 +12957,26 @@ var_2           = word ptr -2
                 jmp     short loc_15010
 ; ---------------------------------------------------------------------------
 
-loc_14FF6:                              ; CODE XREF: sub_14FB2+3B↑j
+loc_14FF6:                              ; CODE XREF: draw_night_stars+3B↑j
                 cmp     g_facing, 57h ; 'W'
                 jnz     short loc_15004
                 mov     [bp+var_8], 1
                 jmp     short loc_15010
 ; ---------------------------------------------------------------------------
 
-loc_15004:                              ; CODE XREF: sub_14FB2+49↑j
+loc_15004:                              ; CODE XREF: draw_night_stars+49↑j
                 cmp     g_facing, 53h ; 'S'
                 jnz     short loc_15010
                 mov     [bp+var_8], 2
 
-loc_15010:                              ; CODE XREF: sub_14FB2+42↑j
-                                        ; sub_14FB2+50↑j ...
+loc_15010:                              ; CODE XREF: draw_night_stars+42↑j
+                                        ; draw_night_stars+50↑j ...
                 mov     cl, 2
                 shl     [bp+var_8], cl
                 mov     di, [bp+var_2]
                 mov     si, [bp+var_A]
 
-loc_1501B:                              ; CODE XREF: sub_14FB2+D2↓j
+loc_1501B:                              ; CODE XREF: draw_night_stars+D2↓j
                 mov     ax, [bp+var_8]
                 add     ax, si
                 shl     ax, 1
@@ -12980,7 +12990,7 @@ loc_1501B:                              ; CODE XREF: sub_14FB2+D2↓j
                 jl      short loc_1503E
                 add     [bp+var_4], 0Ch
 
-loc_1503E:                              ; CODE XREF: sub_14FB2+86↑j
+loc_1503E:                              ; CODE XREF: draw_night_stars+86↑j
                 push    di
                 call    gfx_set_color
                 add     sp, 2
@@ -12999,7 +13009,7 @@ loc_1503E:                              ; CODE XREF: sub_14FB2+86↑j
                 jl      short loc_15069
                 mov     [bp+var_8], 0
 
-loc_15069:                              ; CODE XREF: sub_14FB2+B0↑j
+loc_15069:                              ; CODE XREF: draw_night_stars+B0↑j
                 mov     ax, di
                 mov     cl, byte_1DB91
                 sub     ch, ch
@@ -13009,10 +13019,10 @@ loc_15069:                              ; CODE XREF: sub_14FB2+B0↑j
                 jmp     short loc_1507D
 ; ---------------------------------------------------------------------------
 
-loc_1507A:                              ; CODE XREF: sub_14FB2+C1↑j
+loc_1507A:                              ; CODE XREF: draw_night_stars+C1↑j
                 mov     al, byte_1DB91
 
-loc_1507D:                              ; CODE XREF: sub_14FB2+C6↑j
+loc_1507D:                              ; CODE XREF: draw_night_stars+C6↑j
                 sub     ah, ah
                 mov     di, ax
                 cmp     si, 7
@@ -13024,7 +13034,7 @@ loc_1507D:                              ; CODE XREF: sub_14FB2+C6↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_14FB2       endp
+draw_night_stars endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13099,7 +13109,7 @@ arg_0           = word ptr  4
                 push    ax
                 call    gfx_select_page
                 add     sp, 2
-                call    sub_147D8
+                call    draw_effects_panel
 
 loc_150F9:                              ; CODE XREF: advance_time+B↑j
                                         ; advance_time+12↑j ...
@@ -14485,7 +14495,7 @@ loc_15A32:                              ; CODE XREF: character_actions_menu+130�
 loc_15A3A:                              ; CODE XREF: character_actions_menu+130↑j
                                         ; DATA XREF: character_actions_menu:jpt_159E0↓o
                 push    [bp+arg_0]      ; jumptable 000159E0 case 71
-                call    sub_16616
+                call    party_gather_menu
 
 loc_15A40:                              ; CODE XREF: character_actions_menu+1A4↓j
                 add     sp, 2
@@ -14503,7 +14513,7 @@ loc_15A46:                              ; CODE XREF: character_actions_menu+130�
 loc_15A4E:                              ; CODE XREF: character_actions_menu+130↑j
                                         ; DATA XREF: character_actions_menu:jpt_159E0↓o
                 push    [bp+arg_0]      ; jumptable 000159E0 case 83
-                call    sub_163B4
+                call    party_share_menu
                 jmp     short loc_15A40
 ; ---------------------------------------------------------------------------
 
@@ -14664,7 +14674,7 @@ loc_15B44:                              ; CODE XREF: character_actions_menu+276�
                 call    clear_text_rect
                 add     sp, 8
                 push    [bp+var_6]
-                call    sub_14EA6
+                call    show_spell_list_window
                 add     sp, 2
 
 loc_15B6A:                              ; CODE XREF: character_actions_menu+299↑j
@@ -14868,7 +14878,7 @@ loc_15CBA:                              ; CODE XREF: party_status_loop+129↑j
 loc_15CEC:                              ; CODE XREF: party_status_loop+136↑j
                                         ; party_status_loop+13D↑j ...
                 mov     g_view_mode, 0
-                call    sub_147D8
+                call    draw_effects_panel
 
 loc_15CF4:                              ; CODE XREF: party_status_loop+160↑j
                 cmp     byte_1DBEB, 0
@@ -15605,7 +15615,7 @@ sub_16171       endp
 ; Attributes: bp-based frame
 
 party_share_gold proc near              ; CODE XREF: party_pay_gold+BF↑p
-                                        ; sub_163B4+82↓p
+                                        ; party_share_menu+82↓p
 
 var_22          = word ptr -22h
 var_1E          = word ptr -1Eh
@@ -15753,7 +15763,7 @@ party_share_gold endp
 ; Attributes: bp-based frame
 
 party_share_gems proc near              ; CODE XREF: party_pay_gems+9E↑p
-                                        ; sub_163B4+94↓p
+                                        ; party_share_menu+94↓p
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -15845,7 +15855,7 @@ party_share_gems endp
 ; Attributes: bp-based frame
 
 party_share_food proc near              ; CODE XREF: party_pay_food+9C↑p
-                                        ; sub_163B4+A6↓p
+                                        ; party_share_menu+A6↓p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -15923,9 +15933,10 @@ party_share_food endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Share" gold/gems/food menu, calls party_share_*
 ; Attributes: bp-based frame
 
-sub_163B4       proc near               ; CODE XREF: character_actions_menu+1A1↑p
+party_share_menu proc near              ; CODE XREF: character_actions_menu+1A1↑p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -15967,7 +15978,7 @@ arg_0           = word ptr  4
                 call    text_puts
                 add     sp, 2
 
-loc_1640C:                              ; CODE XREF: sub_163B4+B0↓j
+loc_1640C:                              ; CODE XREF: party_share_menu+B0↓j
                 mov     ax, 33h ; '3'
                 push    ax
                 mov     ax, 31h ; '1'
@@ -15982,10 +15993,10 @@ loc_1640C:                              ; CODE XREF: sub_163B4+B0↓j
                 jmp     short loc_1642A
 ; ---------------------------------------------------------------------------
 
-loc_16428:                              ; CODE XREF: sub_163B4+6D↑j
+loc_16428:                              ; CODE XREF: party_share_menu+6D↑j
                 sub     ax, ax
 
-loc_1642A:                              ; CODE XREF: sub_163B4+72↑j
+loc_1642A:                              ; CODE XREF: party_share_menu+72↑j
                 mov     si, ax
                 mov     ax, di
                 cmp     ax, 31h ; '1'
@@ -15995,7 +16006,7 @@ loc_1642A:                              ; CODE XREF: sub_163B4+72↑j
                 add     sp, 2
                 mov     si, ax
 
-loc_1643E:                              ; CODE XREF: sub_163B4+7D↑j
+loc_1643E:                              ; CODE XREF: party_share_menu+7D↑j
                 mov     ax, di
                 cmp     ax, 32h ; '2'
                 jnz     short loc_16450
@@ -16004,7 +16015,7 @@ loc_1643E:                              ; CODE XREF: sub_163B4+7D↑j
                 add     sp, 2
                 mov     si, ax
 
-loc_16450:                              ; CODE XREF: sub_163B4+8F↑j
+loc_16450:                              ; CODE XREF: party_share_menu+8F↑j
                 mov     ax, di
                 cmp     ax, 33h ; '3'
                 jnz     short loc_16462
@@ -16013,7 +16024,7 @@ loc_16450:                              ; CODE XREF: sub_163B4+8F↑j
                 add     sp, 2
                 mov     si, ax
 
-loc_16462:                              ; CODE XREF: sub_163B4+A1↑j
+loc_16462:                              ; CODE XREF: party_share_menu+A1↑j
                 or      si, si
                 jz      short loc_1640C
                 mov     [bp+var_6], di
@@ -16046,7 +16057,7 @@ loc_16462:                              ; CODE XREF: sub_163B4+A1↑j
                 call    text_put_number
                 add     sp, 8
 
-loc_164AC:                              ; CODE XREF: sub_163B4+BB↑j
+loc_164AC:                              ; CODE XREF: party_share_menu+BB↑j
                 cmp     [bp+var_6], 32h ; '2'
                 jnz     short loc_164EA
                 mov     ax, 7
@@ -16074,7 +16085,7 @@ loc_164AC:                              ; CODE XREF: sub_163B4+BB↑j
                 call    text_put_number_pad
                 add     sp, 6
 
-loc_164EA:                              ; CODE XREF: sub_163B4+FC↑j
+loc_164EA:                              ; CODE XREF: party_share_menu+FC↑j
                 cmp     [bp+var_6], 33h ; '3'
                 jnz     short loc_1652B
                 mov     ax, 8
@@ -16104,13 +16115,13 @@ loc_164EA:                              ; CODE XREF: sub_163B4+FC↑j
                 call    text_put_number_pad
                 add     sp, 6
 
-loc_1652B:                              ; CODE XREF: sub_163B4+13A↑j
+loc_1652B:                              ; CODE XREF: party_share_menu+13A↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_163B4       endp
+party_share_menu endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -16120,7 +16131,7 @@ sub_163B4       endp
 ; (char): moves all party gold to the character
 ; Attributes: bp-based frame
 
-party_gather_gold proc near             ; CODE XREF: sub_16616+78↓p
+party_gather_gold proc near             ; CODE XREF: party_gather_menu+78↓p
                                         ; seg002:0AB9↓J
 
 var_8           = word ptr -8
@@ -16212,7 +16223,7 @@ party_gather_gold endp
 ; (char) all gems to char
 ; Attributes: bp-based frame
 
-party_gather_gems proc near             ; CODE XREF: sub_16616+8A↓p
+party_gather_gems proc near             ; CODE XREF: party_gather_menu+8A↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -16263,9 +16274,10 @@ party_gather_gems endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Gather" gold/gems/food menu
 ; Attributes: bp-based frame
 
-sub_16616       proc near               ; CODE XREF: character_actions_menu+18D↑p
+party_gather_menu proc near             ; CODE XREF: character_actions_menu+18D↑p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -16304,7 +16316,7 @@ arg_0           = word ptr  4
                 call    text_puts
                 add     sp, 2
 
-loc_16664:                              ; CODE XREF: sub_16616+94↓j
+loc_16664:                              ; CODE XREF: party_gather_menu+94↓j
                 mov     ax, 32h ; '2'
                 push    ax
                 mov     ax, 31h ; '1'
@@ -16319,10 +16331,10 @@ loc_16664:                              ; CODE XREF: sub_16616+94↓j
                 jmp     short loc_16682
 ; ---------------------------------------------------------------------------
 
-loc_16680:                              ; CODE XREF: sub_16616+63↑j
+loc_16680:                              ; CODE XREF: party_gather_menu+63↑j
                 sub     ax, ax
 
-loc_16682:                              ; CODE XREF: sub_16616+68↑j
+loc_16682:                              ; CODE XREF: party_gather_menu+68↑j
                 mov     si, ax
                 mov     ax, di
                 cmp     ax, 31h ; '1'
@@ -16332,7 +16344,7 @@ loc_16682:                              ; CODE XREF: sub_16616+68↑j
                 add     sp, 2
                 mov     si, ax
 
-loc_16696:                              ; CODE XREF: sub_16616+73↑j
+loc_16696:                              ; CODE XREF: party_gather_menu+73↑j
                 mov     ax, di
                 cmp     ax, 32h ; '2'
                 jnz     short loc_166A8
@@ -16341,7 +16353,7 @@ loc_16696:                              ; CODE XREF: sub_16616+73↑j
                 add     sp, 2
                 mov     si, ax
 
-loc_166A8:                              ; CODE XREF: sub_16616+85↑j
+loc_166A8:                              ; CODE XREF: party_gather_menu+85↑j
                 or      si, si
                 jz      short loc_16664
                 mov     [bp+var_6], di
@@ -16364,7 +16376,7 @@ loc_166A8:                              ; CODE XREF: sub_16616+85↑j
                 call    text_put_number
                 add     sp, 8
 
-loc_166DC:                              ; CODE XREF: sub_16616+9F↑j
+loc_166DC:                              ; CODE XREF: party_gather_menu+9F↑j
                 cmp     [bp+var_6], 32h ; '2'
                 jnz     short loc_16704
                 mov     ax, 7
@@ -16382,13 +16394,13 @@ loc_166DC:                              ; CODE XREF: sub_16616+9F↑j
                 call    text_put_number_pad
                 add     sp, 6
 
-loc_16704:                              ; CODE XREF: sub_16616+CA↑j
+loc_16704:                              ; CODE XREF: party_gather_menu+CA↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_16616       endp
+party_gather_menu endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17660,12 +17672,12 @@ thk_quit_to_dos:
                 jmp     far ptr quit_to_dos
 ; ---------------------------------------------------------------------------
 
-thk_res_49E2:
+thk_draw_main_frame_parts:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr sub_149E2
+                jmp     far ptr draw_main_frame_parts
 ; ---------------------------------------------------------------------------
 
 thk_gfx_fill_rect:
@@ -18395,20 +18407,20 @@ thk_2PLAY_B862:
                 jmp     far ptr byte_1B862
 ; ---------------------------------------------------------------------------
 
-thk_res_471E:
+thk_draw_protect_hint:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr sub_1471E
+                jmp     far ptr draw_protect_hint
 ; ---------------------------------------------------------------------------
 
-thk_res_47D8:
+thk_draw_effects_panel:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr sub_147D8
+                jmp     far ptr draw_effects_panel
 ; ---------------------------------------------------------------------------
 
 thk_draw_party_list:
@@ -18491,12 +18503,12 @@ thk_2PLAY_A580:
                 jmp     far ptr byte_1A580
 ; ---------------------------------------------------------------------------
 
-thk_res_4076:
+thk_redraw_main_screen:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr sub_14076
+                jmp     far ptr redraw_main_screen
 ; ---------------------------------------------------------------------------
 
 thk_res_40E6:
@@ -18515,12 +18527,12 @@ thk_party_skill_count:
                 jmp     far ptr party_skill_count
 ; ---------------------------------------------------------------------------
 
-thk_res_3FFC:
+thk_view_draw_dispatch:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr sub_13FFC
+                jmp     far ptr view_draw_dispatch
 ; ---------------------------------------------------------------------------
 
 thk_res_5F40:
@@ -18547,20 +18559,20 @@ thk_party_all_disabled:
                 jmp     far ptr party_all_disabled
 ; ---------------------------------------------------------------------------
 
-thk_res_3814:
+thk_party_search_command:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr sub_13814
+                jmp     far ptr party_search_command
 ; ---------------------------------------------------------------------------
 
-thk_res_4FB2:
+thk_draw_night_stars:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr sub_14FB2
+                jmp     far ptr draw_night_stars
 ; ---------------------------------------------------------------------------
 
 thk_2PLAY_8744:
@@ -19056,12 +19068,12 @@ thk_party_contains:
                 jmp     far ptr party_contains
 ; ---------------------------------------------------------------------------
 
-thk_res_4EA6:
+thk_show_spell_list_window:
                 call    plink_thunk_entry
 ; ---------------------------------------------------------------------------
                 dw 8000h                ; thunk index 0x8000: resident
 ; ---------------------------------------------------------------------------
-                jmp     far ptr sub_14EA6
+                jmp     far ptr show_spell_list_window
 ; ---------------------------------------------------------------------------
 
 thk_party_remove:
@@ -20784,10 +20796,10 @@ byte_1DB8E      db 4                    ; DATA XREF: show_character_sheet+14↑r
                                         ; draw_screen_rows↑r ...
                 db  0Ah
                 db    2
-byte_1DB91      db 9                    ; DATA XREF: sub_14FB2+2E↑r
-                                        ; sub_14FB2+B9↑r ...
+byte_1DB91      db 9                    ; DATA XREF: draw_night_stars+2E↑r
+                                        ; draw_night_stars+B9↑r ...
 byte_1DB92      db 1                    ; DATA XREF: prompt_insert_disk+8D↑r
-                                        ; sub_14EA6+22↑r ...
+                                        ; show_spell_list_window+22↑r ...
                 db  0Bh
                 db    8
 byte_1DB95      db 0Eh                  ; DATA XREF: prompt_insert_disk+9A↑r
@@ -20796,8 +20808,8 @@ byte_1DB96      db 0Fh                  ; DATA XREF: monster_gfx_load+24↑r
                                         ; show_character_sheet+23↑r ...
                 db    0
 g_main_text_win dw 0                    ; DATA XREF: cast_from_menu+56↑r
-word_1DB9A      dw 0                    ; DATA XREF: sub_14EA6+19↑w
-                                        ; sub_14EA6+4B↑r ...
+word_1DB9A      dw 0                    ; DATA XREF: show_spell_list_window+19↑w
+                                        ; show_spell_list_window+4B↑r ...
 g_main_gfx_win  dw 0                    ; DATA XREF: clear_text_rect+16↑r
                 db    0
                 db    0
@@ -20881,7 +20893,7 @@ byte_1DBE7      db 0                    ; DATA XREF: character_actions_menu+12�
 byte_1DBE8      db 0                    ; DATA XREF: monster_gfx_load:loc_1267A↑w
                                         ; monster_gfx_load+43↑w ...
                 db 0FFh
-byte_1DBEA      db 0                    ; DATA XREF: sub_13814+7D↑w
+byte_1DBEA      db 0                    ; DATA XREF: party_search_command+7D↑w
                                         ; sub_13FE2↑r ...
 byte_1DBEB      db 1                    ; DATA XREF: party_step_forward+3A↑w
                                         ; party_step_backward+79↑w ...
@@ -20890,9 +20902,9 @@ g_outdoors      db 2                    ; DATA XREF: tick_effect_timers+14↑r
                                         ; end_monster_gfx+19↑r ...
                                         ; 0 = EVENTSI.DAT ("indoor" maps), 1 = EVENTSO.DAT
 byte_1DBEE      db 0                    ; DATA XREF: monster_gfx_load+D↑r
-                                        ; sub_13FFC:loc_14017↑w ...
+                                        ; view_draw_dispatch:loc_14017↑w ...
                 db    0
-word_1DBF0      dw 0FFFFh               ; DATA XREF: sub_13FFC+62↑w
+word_1DBF0      dw 0FFFFh               ; DATA XREF: view_draw_dispatch+62↑w
 g_era_day       db    1                 ; 10 words: day of year per era
                 db    0
                 db    1
@@ -20950,23 +20962,23 @@ byte_1DC21      db 1                    ; DATA XREF: play_sound_effect+26↑r
                 db    1
                 db    4
 g_inn_town      db    0                 ; town map id of the inn that last saved (restored on load)
-g_fx_light      db 1                    ; DATA XREF: sub_13FFC+20↑r
-                                        ; sub_147D8+93↑r ...
+g_fx_light      db 1                    ; DATA XREF: view_draw_dispatch+20↑r
+                                        ; draw_effects_panel+93↑r ...
                                         ; Light
 g_fx_magic      db 1                    ; DATA XREF: char_apply_damage+25↑r
-                                        ; sub_147D8+D7↑r ...
+                                        ; draw_effects_panel+D7↑r ...
                                         ; Magic protection
 g_fx_forces     db 1                    ; DATA XREF: char_apply_damage+7F↑r
-                                        ; sub_147D8+111↑r ...
+                                        ; draw_effects_panel+111↑r ...
                                         ; Forces protection
 g_fx_levitate   db 1                    ; DATA XREF: tick_effect_timers+9↑r
-                                        ; sub_147D8+146↑r ...
+                                        ; draw_effects_panel+146↑r ...
                                         ; Levitate
 g_fx_walk_on_water db 0                 ; DATA XREF: tick_effect_timers+6↑r
-                                        ; sub_147D8:loc_1493D↑r ...
+                                        ; draw_effects_panel:loc_1493D↑r ...
                                         ; Walk on Water
 g_fx_guard_dog  db 1                    ; DATA XREF: tick_effect_timers+D↑r
-                                        ; sub_147D8:loc_1495C↑r ...
+                                        ; draw_effects_panel:loc_1495C↑r ...
                                         ; Guard Dog
                 db    0
                 db    0
@@ -24581,11 +24593,11 @@ a3Food          db '  3) Food',0
 a4Item          db '  4) Item',0
 aHowMuch_0      db 'How Much? ',0
                 db    0
-word_20A88      dw 3208h                ; DATA XREF: sub_163B4+2C↑r
-                                        ; sub_16616+2C↑r
-word_20A8A      dw 3210h                ; DATA XREF: sub_163B4+4E↑r
-                                        ; sub_16616+44↑r
-word_20A8C      dw 3218h                ; DATA XREF: sub_163B4+36↑r
+word_20A88      dw 3208h                ; DATA XREF: party_share_menu+2C↑r
+                                        ; party_gather_menu+2C↑r
+word_20A8A      dw 3210h                ; DATA XREF: party_share_menu+4E↑r
+                                        ; party_gather_menu+44↑r
+word_20A8C      dw 3218h                ; DATA XREF: party_share_menu+36↑r
                 db  22h ; "
                 db  32h ; 2
                 db  2Ch ; ,
@@ -26388,7 +26400,7 @@ aMcgaDrv        db 'MCGA.DRV',0
                 db    0
                 db    0
                 db    0
-aTandy          db 'Tandy',0            ; DATA XREF: sub_11B64+14↑o
+aTandy          db 'Tandy',0            ; DATA XREF: detect_tandy+14↑o
                 db    0
                 db    0
                 db    0
@@ -26976,8 +26988,8 @@ word_225D2      dw 4D7Ah                ; DATA XREF: fatal_error↑r
                 db 0FAh
                 db 0FFh
                 db    0
-aSearch_0       db 'Search...',0        ; DATA XREF: sub_13814+28↑o
-aNothingHere    db 'Nothing Here!',0    ; DATA XREF: sub_13814+73↑o
+aSearch_0       db 'Search...',0        ; DATA XREF: party_search_command+28↑o
+aNothingHere    db 'Nothing Here!',0    ; DATA XREF: party_search_command+73↑o
                 db    1
                 db  0Ah
                 db  64h ; d
@@ -27034,9 +27046,9 @@ a2kzdencounter  db '#2KZdEncounter!',0
                 db    9
                 db  16h
                 db  0Fh
-aDarkness       db 'Darkness',0         ; DATA XREF: sub_13FFC+58↑o
-word_22654      dw 1                    ; DATA XREF: sub_14076+A↑r
-                                        ; sub_14076+3A↑r ...
+aDarkness       db 'Darkness',0         ; DATA XREF: view_draw_dispatch+58↑o
+word_22654      dw 1                    ; DATA XREF: redraw_main_screen+A↑r
+                                        ; redraw_main_screen+3A↑r ...
 aBarrier        db 'Barrier!',0
 aSolid          db 'Solid!',0
 aLocked         db 'Locked!',0
@@ -27085,7 +27097,8 @@ aRRest          db 'R Rest     ',0
 aSSearch        db 'S Search   ',0
 aUUnlock        db 'U Unlock   ',0
 aViewChar       db '# View Char',0
-aPProtect       db 27h,'P',27h,' Protect',0 ; DATA XREF: sub_1471E+A5↑o
+aPProtect       db 27h,'P',27h,' Protect',0
+                                        ; DATA XREF: draw_protect_hint+A5↑o
                 db 0A8h
                 db  4Eh ; N
                 db 0B4h
@@ -27106,12 +27119,13 @@ aPProtect       db 27h,'P',27h,' Protect',0 ; DATA XREF: sub_1471E+A5↑o
                 db  4Fh ; O
                 db  14h
 aOOO8odopolight db 'O O,O8ODOPOLight     )',0
-aMagic_3        db 'Magic     %',0      ; DATA XREF: sub_147D8+6C↑o
-aForces_0       db 'Forces    %',0      ; DATA XREF: sub_147D8+84↑o
-aLevitate       db 'Levitate',0         ; DATA XREF: sub_147D8+15B↑o
-aWalkWater      db 'Walk/Water',0       ; DATA XREF: sub_147D8+17A↑o
-aGuardDog       db 'Guard Dog',0        ; DATA XREF: sub_147D8+199↑o
-aOOptions       db 27h,'O',27h,' Options',0 ; DATA XREF: sub_147D8+1C3↑o
+aMagic_3        db 'Magic     %',0      ; DATA XREF: draw_effects_panel+6C↑o
+aForces_0       db 'Forces    %',0      ; DATA XREF: draw_effects_panel+84↑o
+aLevitate       db 'Levitate',0         ; DATA XREF: draw_effects_panel+15B↑o
+aWalkWater      db 'Walk/Water',0       ; DATA XREF: draw_effects_panel+17A↑o
+aGuardDog       db 'Guard Dog',0        ; DATA XREF: draw_effects_panel+199↑o
+aOOptions       db 27h,'O',27h,' Options',0
+                                        ; DATA XREF: draw_effects_panel+1C3↑o
                 db  2Bh ; +
                 db  2Bh ; +
                 db  2Bh ; +
@@ -27587,8 +27601,8 @@ aMapDat_0       db 'map.dat',0          ; DATA XREF: load_map_chunk+5↑o
 word_22B2A      dw 0                    ; DATA XREF: load_map_chunk+2A↑r
                 db    0
                 db    0
-aShare          db ' Share:  ',0        ; DATA XREF: sub_163B4+22↑o
-aGather         db 'Gather:  ',0        ; DATA XREF: sub_16616+22↑o
+aShare          db ' Share:  ',0        ; DATA XREF: party_share_menu+22↑o
+aGather         db 'Gather:  ',0        ; DATA XREF: party_gather_menu+22↑o
 word_22B42      dw 0                    ; DATA XREF: load_building_text:loc_167A4↑w
                                         ; str_next+7↑r ...
                 db    0
@@ -29134,7 +29148,7 @@ byte_231E4      db 0                    ; DATA XREF: party_status_loop+E7↑r
                 db    0
                 db    0
                 db    0
-byte_231F0      db 0                    ; DATA XREF: sub_13FFC+27↑r
+byte_231F0      db 0                    ; DATA XREF: view_draw_dispatch+27↑r
                 db    0
                 db    0
                 db    0
@@ -33163,11 +33177,11 @@ word_238A2      dw 0                    ; DATA XREF: load_map_events+5B↑r
                 db    0
                 db    0
                 db    0
-word_241AA      dw 0                    ; DATA XREF: sub_13814+55↑r
+word_241AA      dw 0                    ; DATA XREF: party_search_command+55↑r
                                         ; clear_spell_effects+F↑w
-word_241AC      dw 0                    ; DATA XREF: sub_13814+43↑r
+word_241AC      dw 0                    ; DATA XREF: party_search_command+43↑r
                                         ; clear_spell_effects+C↑w
-word_241AE      dw 0                    ; DATA XREF: sub_13814+46↑r
+word_241AE      dw 0                    ; DATA XREF: party_search_command+46↑r
                                         ; clear_spell_effects+9↑w
 g_items         db    0                 ; ITEMS.DAT (256 x 20 bytes, item names first)
                 db    0

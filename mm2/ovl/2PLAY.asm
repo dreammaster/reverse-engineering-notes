@@ -42,7 +42,7 @@ loc_17E30:                              ; CODE XREF: game_main_loop+1B↑j
                 jz      short loc_17EAF
                 cmp     byte_1DC80, 0
                 jnz     short loc_17EAF
-                call    thk_res_3FFC
+                call    thk_view_draw_dispatch
                 mov     ax, 7Fh
                 push    ax
                 mov     ax, 0D7h
@@ -261,7 +261,7 @@ loc_17FF8:                              ; CODE XREF: game_main_loop+1ED↓j
                 shr     ax, cl
                 mov     byte ptr g_party_y, al
                 call    map_edge_transition
-                call    thk_res_4076
+                call    thk_redraw_main_screen
                 jmp     short loc_1802B
 ; ---------------------------------------------------------------------------
                 align 2
@@ -281,7 +281,7 @@ loc_18032:                              ; CODE XREF: game_main_loop+211↑j
                 cmp     byte_1DC84, 0FEh
                 jnz     short loc_18040
                 inc     byte_1DC84
-                call    thk_res_3814
+                call    thk_party_search_command
 
 loc_18040:                              ; CODE XREF: game_main_loop+227↑j
                 mov     [bp+var_2], 0
@@ -488,7 +488,7 @@ loc_1819A:                              ; CODE XREF: game_main_loop+385↑j
                 push    ax
                 call    thk_gfx_select_page
                 add     sp, 2
-                call    thk_res_471E
+                call    thk_draw_protect_hint
 
 loc_181A6:                              ; CODE XREF: game_main_loop+3B6↓j
                                         ; game_main_loop+41E↓j
@@ -510,7 +510,7 @@ loc_181BA:                              ; CODE XREF: game_main_loop+3A5↑j
                 push    ax
                 call    thk_gfx_select_page
                 add     sp, 2
-                call    thk_res_47D8
+                call    thk_draw_effects_panel
                 jmp     short loc_181A6
 ; ---------------------------------------------------------------------------
 
@@ -533,7 +533,7 @@ loc_181D4:                              ; CODE XREF: game_main_loop+3E7↓j
                 align 2
 
 loc_181E8:                              ; CODE XREF: game_main_loop+42C↓j
-                call    thk_res_3814
+                call    thk_party_search_command
                 jmp     short loc_1825C
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1394,7 +1394,7 @@ var_2           = word ptr -2
                 jl      short loc_187A0
                 cmp     [bp+var_2], 0
                 jnz     short loc_187A0
-                call    thk_res_4FB2
+                call    thk_draw_night_stars
 
 loc_187A0:                              ; CODE XREF: draw_view_indoors+51↑j
                                         ; draw_view_indoors+57↑j
@@ -2213,7 +2213,7 @@ draw_view_outdoors proc near            ; CODE XREF: seg002:0789↑J
                 add     sp, 0Ah
                 cmp     g_day_fraction, 80h
                 jl      short loc_18DA0
-                call    thk_res_4FB2
+                call    thk_draw_night_stars
                 jmp     short loc_18DB6
 ; ---------------------------------------------------------------------------
                 align 2
@@ -6153,7 +6153,7 @@ loc_1A5D2:                              ; CODE XREF: evt_finish+4D↑j
 loc_1A5DC:                              ; CODE XREF: evt_finish+57↑j
                 test    byte_1DC80, 4
                 jz      short loc_1A600
-                call    thk_res_3FFC
+                call    thk_view_draw_dispatch
                 mov     ax, 7Fh
                 push    ax
                 mov     ax, 0D7h
@@ -8809,20 +8809,20 @@ loc_1B6FF:                              ; CODE XREF: enter_map+109↑j
                 push    ax
                 call    thk_clear_text_preset
                 add     sp, 2
-                call    thk_res_49E2
+                call    thk_draw_main_frame_parts
                 call    thk_draw_status_line
                 call    thk_draw_party_list
                 call    view_prepare_visible_cells
-                call    thk_res_3FFC
+                call    thk_view_draw_dispatch
                 cmp     g_view_mode, 1
                 jnz     short loc_1B732
-                call    thk_res_47D8
+                call    thk_draw_effects_panel
                 jmp     short loc_1B735
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1B732:                              ; CODE XREF: enter_map+140↑j
-                call    thk_res_471E
+                call    thk_draw_protect_hint
 
 loc_1B735:                              ; CODE XREF: enter_map+145↑j
                 sub     ax, ax

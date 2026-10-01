@@ -1481,7 +1481,7 @@ loc_1CB7A:                              ; CODE XREF: temple_menu+94↑j
 loc_1CB8A:                              ; CODE XREF: seg002:0AF5↑J
                 add     sp, 2
                 mov     g_view_mode, 0
-                call    thk_res_47D8
+                call    thk_draw_effects_panel
 
 loc_1CB95:                              ; CODE XREF: temple_menu+FA↑j
                 pop     si

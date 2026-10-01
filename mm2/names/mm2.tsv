@@ -233,3 +233,15 @@
 16296	party_share_gems	(char) average gems (+5C)
 16330	party_share_food	(char) average food (+25)
 165C8	party_gather_gems	(char) all gems to char
+11B64	detect_tandy	Tandy/PCjr detection ("Tandy" string)
+11320	gfx_fill_rect_clipped	clips the rectangle (gfx_clip_point, gfx_order_rect) then draws via the driver
+13814	party_search_command	'S': "Search", "Nothing Here" or opens the treasure chest screen
+13FFC	view_draw_dispatch	draws the maze view for the party's cell: "Darkness" if dark and no light, else indoor/outdoor view
+14076	redraw_main_screen	clears text, draws the frame (sub_149E2) and the party list
+1471E	draw_protect_hint	"P-Protect" line of the party panel
+147D8	draw_effects_panel	Magic/Forces/Levitate/... active party effects with their counters
+14EA6	show_spell_list_window	window with the spell list of the selected level
+14FB2	draw_night_stars	plots random stars into the sky (night, outdoor/indoor sky)
+149E2	draw_main_frame_parts	main screen frame lines
+163B4	party_share_menu	"Share" gold/gems/food menu, calls party_share_*
+16616	party_gather_menu	"Gather" gold/gems/food menu

@@ -974,7 +974,7 @@ loc_18576:                              ; CODE XREF: main_options_menu+376↑j
                 push    ax
                 call    thk_gfx_fill_rect
                 add     sp, 8
-                call    thk_res_49E2
+                call    thk_draw_main_frame_parts
                 mov     ax, 6ACh
                 push    ax
                 call    thk_print_message_line

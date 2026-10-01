@@ -140,7 +140,7 @@ var_2           = byte ptr -2
                 push    ax
                 call    thk_clear_text_preset
                 add     sp, 2
-                call    thk_res_49E2
+                call    thk_draw_main_frame_parts
                 mov     ax, 20E2h
                 push    ax
                 call    thk_print_message_line
@@ -1105,7 +1105,7 @@ loc_1C8FA:                              ; CODE XREF: inn_menu+390↓j
                 call    thk_clear_text_rect
                 add     sp, 8
                 push    di
-                call    thk_res_4EA6
+                call    thk_show_spell_list_window
                 add     sp, 2
 
 loc_1C94D:                              ; CODE XREF: inn_menu+36E↑j
