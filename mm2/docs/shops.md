@@ -90,7 +90,7 @@ Slayer reward already taken, top 3 bits = number of completed rewards.
    (`DGROUP:3E0C` start ids per level, `3E1E` weights; level A = clubs/staffs/blowpipes/shields/armour/helms of the plain
    kind, B = the magical kind, C = the best kind); Slayer picks monster id `rand(1, 3E36[level]) + 3E3A[level]`, i.e. ids
    32-79, 80-143, 144-191.  **D** is the final quest: the three swords (items E2h-E4h: Valor, Honor and Noble Sword) or the
-   three beasts *(level D not traced beyond `caves_lords_quest`)*.
+   three beasts `caves_lords_quest` just marks every character who has not yet taken that lord's final reward as on the quest (`+7C` bit 2 set, no random target); the party must then bring the three swords (`caves_three_swords_check` removes all three) / kill the three beasts.
 3. **Rewards**: handing in a Hoardall item (`1CBCA`, the item is removed from the backpack) gives **8 x the item's price** in experience.
    A Slayer target kill (`1CB4A`) gives experience by monster id band: ids below 48/64/80/96/112/128/144/160/176/192 pay
    2000 / 4000 / 5000 / 7000 / 10000 / 15000 / 25000 / 50000 / 100000 / 250000 (`DGROUP:3E3E`, `3E48`).  Finishing the final
