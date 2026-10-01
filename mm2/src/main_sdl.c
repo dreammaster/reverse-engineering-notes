@@ -1,6 +1,8 @@
-/* SDL2 maze viewer: walk through any map.
- *   arrows: move / turn   PgUp/PgDn: previous/next map   Esc: quit
+/* SDL2 explorer: walk through the maps and run their event scripts.
+ *   arrows: move / turn   PgUp/PgDn: previous/next map   Y / N: answer for yes/no prompts   Esc: quit
+ * Messages from event scripts are shown under the view; teleports change the map.
  * Usage: mm2 [game dir]   (default: $MM2_DIR or the GOG install path) */
+#include "mm2_game.h"
 #include "mm2_map.h"
 #include "mm2_text.h"
 #include "mm2_view.h"
@@ -12,42 +14,65 @@
 #define SCALE 3
 
 typedef struct {
-	int map, x, y;
-	char facing;
-	uint8_t data[512];
+	Mm2GameSession s;
 	Mm2View view;
-	int viewLoaded, outdoors;
-} State;
+	int viewMap, viewLoaded, outdoors;
+} App;
 
-static char turn(char f, int dir) {
-	const char order[] = "NESW";
-	const char *p = strchr(order, f);
-	int i = p ? (int)(p - order) : 0;
-	return order[(i + (dir > 0 ? 1 : 3)) & 3];
-}
-
-static int load_map(State *s, const Mm2Game *g, int map) {
+/* (Re)loads the view graphics when the map changed. */
+static int sync_view(App *a, const Mm2Game *g) {
 	uint8_t attr[64];
-	int style = mm2_map_style(map);
-	if (!mm2_load_map(g, map, s->data)) return 0;
-	if (s->viewLoaded) mm2_view_free(&s->view);
-	s->viewLoaded = 0;
-	s->outdoors = mm2_style_is_outdoor(style);
-	if (s->outdoors) {
+	int style;
+	if (a->viewLoaded && a->viewMap == a->s.map) return 1;
+	style = mm2_map_style(a->s.map);
+	if (a->viewLoaded) mm2_view_free(&a->view);
+	a->viewLoaded = 0;
+	a->outdoors = mm2_style_is_outdoor(style);
+	if (a->outdoors) {
 		const char *special = "OCEAN";
-		if (mm2_load_attrib(g, map, attr)) special = mm2_special_bank(attr[4]);
-		if (!mm2_view_load_outdoor(&s->view, g, special)) return 0;
-	} else if (!mm2_view_load_indoor(&s->view, g, mm2_style_name(style))) {
+		if (mm2_load_attrib(g, a->s.map, attr)) special = mm2_special_bank(attr[4]);
+		if (!mm2_view_load_outdoor(&a->view, g, special)) return 0;
+	} else if (!mm2_view_load_indoor(&a->view, g, mm2_style_name(style))) {
 		return 0;
 	}
-	s->viewLoaded = 1;
-	s->map = map;
+	a->viewLoaded = 1;
+	a->viewMap = a->s.map;
 	return 1;
+}
+
+static int start_map(App *a, const Mm2Game *g, int map, int x, int y, char facing) {
+	int yes = a->s.yesNo ? a->s.yesNo : 1;
+	if (a->s.files) mm2_session_end(&a->s);
+	if (!mm2_session_start(&a->s, g, map, x, y, facing)) return 0;
+	a->s.yesNo = yes;
+	return sync_view(a, g);
+}
+
+static void draw_messages(uint8_t *canvas, const Mm2Font *font, const Mm2GameSession *s) {
+	int row = 19, i;
+	for (i = 0; i < s->nMessages && row < 25; i++) {
+		const char *p = s->messages[i].text;
+		char line[41];
+		while (*p && row < 25) {
+			int n = 0;
+			while (*p && *p != '\n' && n < 40)
+				line[n++] = *p++;
+			line[n] = 0;
+			if (*p == '\n') p++;
+			mm2_draw_text(canvas, font, 0, row++, line, 14, -1);
+		}
+	}
+	for (i = 0; i < s->nLocations && row < 25; i++) {
+		char line[41];
+		snprintf(line, sizeof(line), "[location %d]", s->locations[i]);
+		mm2_draw_text(canvas, font, 0, row++, line, 11, -1);
+	}
+	if (s->fightRequested && row < 25) mm2_draw_text(canvas, font, 0, row, "[a fight starts here]", 12, -1);
 }
 
 int main(int argc, char **argv) {
 	Mm2Game g;
-	State s;
+	App a;
 	Mm2Font font;
 	SDL_Window *win;
 	SDL_Renderer *ren;
@@ -61,11 +86,8 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "cannot load MM2.CH\n");
 		return 1;
 	}
-	memset(&s, 0, sizeof(s));
-	s.x = 8;
-	s.y = 8;
-	s.facing = 'N';
-	if (!load_map(&s, &g, 0)) {
+	memset(&a, 0, sizeof(a));
+	if (!start_map(&a, &g, 0, 8, 8, 'N')) {
 		fprintf(stderr, "cannot load game data from %s\n", g.dir);
 		return 1;
 	}
@@ -83,57 +105,54 @@ int main(int argc, char **argv) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) running = 0;
 			if (e.type != SDL_KEYDOWN) continue;
+			a.s.nMessages = a.s.nLocations = 0;
+			a.s.fightRequested = 0;
 			switch (e.key.keysym.sym) {
 			case SDLK_ESCAPE: running = 0; break;
-			case SDLK_LEFT: s.facing = turn(s.facing, -1); dirty = 1; break;
-			case SDLK_RIGHT: s.facing = turn(s.facing, 1); dirty = 1; break;
+			case SDLK_LEFT: mm2_session_turn(&a.s, -1); dirty = 1; break;
+			case SDLK_RIGHT: mm2_session_turn(&a.s, 1); dirty = 1; break;
 			case SDLK_UP:
-			case SDLK_DOWN: {
-				int dx, dy;
-				char dir = e.key.keysym.sym == SDLK_UP ? s.facing : turn(turn(s.facing, 1), 1);
-				if (mm2_can_step(s.data, s.x, s.y, dir)) {
-					mm2_facing_delta(dir, &dx, &dy);
-					s.x = (s.x + dx) & 15;
-					s.y = (s.y + dy) & 15;
+			case SDLK_DOWN:
+				if (mm2_session_step(&a.s, e.key.keysym.sym == SDLK_DOWN)) {
+					sync_view(&a, &g);   /* a teleport may have changed the map */
 					dirty = 1;
 				}
 				break;
-			}
+			case SDLK_y: a.s.yesNo = 1; dirty = 1; break;
+			case SDLK_n: a.s.yesNo = 0; dirty = 1; break;
 			case SDLK_PAGEUP:
 			case SDLK_PAGEDOWN: {
-				int m = (s.map + (e.key.keysym.sym == SDLK_PAGEUP ? MM2_MAPS - 1 : 1)) % MM2_MAPS;
-				if (load_map(&s, &g, m)) dirty = 1;
+				int m = (a.s.map + (e.key.keysym.sym == SDLK_PAGEUP ? MM2_MAPS - 1 : 1)) % MM2_MAPS;
+				if (start_map(&a, &g, m, 8, 8, 'N')) dirty = 1;
 				break;
 			}
 			default: break;
 			}
 		}
 		if (dirty) {
-			if (s.outdoors)
-				mm2_view_render_outdoor(&s.view, canvas, s.data, s.x, s.y, s.facing);
+			char line[48];
+			if (a.outdoors)
+				mm2_view_render_outdoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
 			else
-				mm2_view_render_indoor(&s.view, canvas, s.data, s.x, s.y, s.facing);
-			{
-				char line[48];
-				snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c", s.map, s.x, s.y, s.facing);
-				mm2_draw_text(canvas, &font, 1, 17, line, 15, -1);
-			}
+				mm2_view_render_indoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
+			snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c  answer:%c", a.s.map, a.s.x, a.s.y, a.s.facing,
+					 a.s.yesNo ? 'Y' : 'N');
+			mm2_draw_text(canvas, &font, 0, 17, line, 15, -1);
+			draw_messages(canvas, &font, &a.s);
 			for (i = 0; i < MM2_SCREEN_W * MM2_SCREEN_H; i++)
 				pixels[i] = 0xFF000000u | MM2_EGA_PALETTE[canvas[i] & 15];
 			SDL_UpdateTexture(tex, NULL, pixels, MM2_SCREEN_W * 4);
 			SDL_RenderClear(ren);
 			SDL_RenderCopy(ren, tex, NULL, NULL);
 			SDL_RenderPresent(ren);
-			{
-				char title[96];
-				snprintf(title, sizeof(title), "Might and Magic II - map %d (%d,%d) %c", s.map, s.x, s.y, s.facing);
-				SDL_SetWindowTitle(win, title);
-			}
+			snprintf(line, sizeof(line), "Might and Magic II - map %d (%d,%d) %c", a.s.map, a.s.x, a.s.y, a.s.facing);
+			SDL_SetWindowTitle(win, line);
 			dirty = 0;
 		}
 		SDL_Delay(15);
 	}
-	if (s.viewLoaded) mm2_view_free(&s.view);
+	if (a.viewLoaded) mm2_view_free(&a.view);
+	mm2_session_end(&a.s);
 	SDL_DestroyTexture(tex);
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(win);

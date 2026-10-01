@@ -1,6 +1,6 @@
-# Build with MinGW:  C:\mingw32\bin\mingw32-make   (or any make + gcc)
+# Build with MinGW:  mingw32-make from C:/mingw32/bin   (or any make + gcc)
 #   make test        build and run the data/render tests (no SDL needed)
-#   make mm2         build the SDL2 viewer (needs SDL2 headers/libs: set SDL_CFLAGS / SDL_LIBS)
+#   make mm2         build the SDL2 explorer (SDL_PREFIX points at the SDL2 MinGW package)
 CC       = gcc
 CFLAGS  ?= -std=c99 -O2 -Wall -Wextra -pedantic
 BUILD   := build

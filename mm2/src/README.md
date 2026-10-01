@@ -18,7 +18,7 @@ Plain C99 ports of the verified Python tools, built with MinGW (`C:\mingw32\bin`
 | `mm2_battle.c`, `mm2_reward.c` | battle state (ranks, initiative, status wear-off), monster loot and victory treasure |
 | `mm2_smith.c`, `mm2_town.c`, `mm2_spells.c` | blacksmith stock/prices, temple and guild costs, spell names/costs/damage/healing |
 | `mm2_monpic.c` | monster pictures (EGA/CGA) |
-| `main_sdl.c` | SDL2 viewer: arrows move/turn, PgUp/PgDn change map |
+| `main_sdl.c` | SDL2 explorer: arrows move/turn, PgUp/PgDn change map, Y/N answer prompts; runs the event scripts (messages, teleports) |
 | `tests/test_main.c` | data + render regression tests; render hashes come from the Python renderer |
 
 ```
