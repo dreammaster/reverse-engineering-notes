@@ -1,0 +1,41 @@
+/* Renders one first-person view (with a status line) to a PNG without SDL.
+ *   mm2_shot MAP X Y N|E|S|W out.png [game dir]            */
+#include "mm2_map.h"
+#include "mm2_png.h"
+#include "mm2_text.h"
+#include "mm2_view.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char **argv) {
+	Mm2Game g;
+	Mm2View v;
+	Mm2Font font;
+	uint8_t map[512], attr[64], canvas[MM2_SCREEN_W * MM2_SCREEN_H];
+	char line[48];
+	int m, x, y, style;
+	if (argc < 6) {
+		fprintf(stderr, "usage: %s MAP X Y N|E|S|W out.png [game dir]\n", argv[0]);
+		return 2;
+	}
+	m = atoi(argv[1]); x = atoi(argv[2]); y = atoi(argv[3]);
+	mm2_game_init(&g, argc > 6 ? argv[6] : NULL);
+	if (!mm2_load_map(&g, m, map) || !mm2_font_load(&g, &font)) {
+		fprintf(stderr, "cannot load map/font\n");
+		return 1;
+	}
+	style = mm2_map_style(m);
+	if (mm2_style_is_outdoor(style)) {
+		const char *sp = mm2_load_attrib(&g, m, attr) ? mm2_special_bank(attr[4]) : "OCEAN";
+		if (!mm2_view_load_outdoor(&v, &g, sp)) return 1;
+		mm2_view_render_outdoor(&v, canvas, map, x, y, argv[4][0]);
+	} else {
+		if (!mm2_view_load_indoor(&v, &g, mm2_style_name(style))) return 1;
+		mm2_view_render_indoor(&v, canvas, map, x, y, argv[4][0]);
+	}
+	snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c", m, x, y, argv[4][0]);
+	mm2_draw_text(canvas, &font, 1, 17, line, 15, -1);
+	mm2_view_free(&v);
+	return mm2_write_png(argv[5], canvas, MM2_SCREEN_W, MM2_SCREEN_H, MM2_EGA_PALETTE, 16) ? 0 : 1;
+}

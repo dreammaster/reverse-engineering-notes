@@ -9,6 +9,11 @@ Plain C99 ports of the verified Python tools, built with MinGW (`C:\mingw32\bin`
 | `mm2_gfx.c` | `tools/mm2_gfx.py` (image banks, masks, EGA palette) |
 | `mm2_view.c` | `tools/mm2_view.py` (indoor and outdoor first-person views) |
 | `mm2_map.c` | map styles, movement blocking (docs/file-formats.md, docs/view.md) |
+| `mm2_data.c`, `mm2_tables_gen.c`, `mm2_rules.c` | items/monsters/spells/roster, numeric tables from the EXE (`tools/gen_c_tables.py`), experience/training rules |
+| `mm2_state.c`, `mm2_events.c` | saved-state addressing by DGROUP offset; event script interpreter with a host callback |
+| `mm2_combat.c`, `mm2_party.c` | party/monster attack formulas, spell damage roll, character creation (checked against the shipped characters) |
+| `mm2_text.c`, `mm2_png.c` | 8x8 font (MM2.CH) and a stored-deflate PNG writer |
+| `main_shot.c` | `mm2_shot MAP X Y N|E|S|W out.png`: renders a view without SDL (`mingw32-make shot`) |
 | `main_sdl.c` | SDL2 viewer: arrows move/turn, PgUp/PgDn change map |
 | `tests/test_main.c` | data + render regression tests; render hashes come from the Python renderer |
 

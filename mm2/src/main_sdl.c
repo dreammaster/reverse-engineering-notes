@@ -2,6 +2,7 @@
  *   arrows: move / turn   PgUp/PgDn: previous/next map   Esc: quit
  * Usage: mm2 [game dir]   (default: $MM2_DIR or the GOG install path) */
 #include "mm2_map.h"
+#include "mm2_text.h"
 #include "mm2_view.h"
 
 #include <SDL.h>
@@ -47,6 +48,7 @@ static int load_map(State *s, const Mm2Game *g, int map) {
 int main(int argc, char **argv) {
 	Mm2Game g;
 	State s;
+	Mm2Font font;
 	SDL_Window *win;
 	SDL_Renderer *ren;
 	SDL_Texture *tex;
@@ -55,6 +57,11 @@ int main(int argc, char **argv) {
 	int running = 1, dirty = 1, i;
 
 	mm2_game_init(&g, argc > 1 ? argv[1] : NULL);
+	if (!mm2_font_load(&g, &font)) {
+		fprintf(stderr, "cannot load MM2.CH
+");
+		return 1;
+	}
 	memset(&s, 0, sizeof(s));
 	s.x = 8;
 	s.y = 8;
@@ -107,6 +114,11 @@ int main(int argc, char **argv) {
 				mm2_view_render_outdoor(&s.view, canvas, s.data, s.x, s.y, s.facing);
 			else
 				mm2_view_render_indoor(&s.view, canvas, s.data, s.x, s.y, s.facing);
+			{
+				char line[48];
+				snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c", s.map, s.x, s.y, s.facing);
+				mm2_draw_text(canvas, &font, 1, 17, line, 15, -1);
+			}
 			for (i = 0; i < MM2_SCREEN_W * MM2_SCREEN_H; i++)
 				pixels[i] = 0xFF000000u | MM2_EGA_PALETTE[canvas[i] & 15];
 			SDL_UpdateTexture(tex, NULL, pixels, MM2_SCREEN_W * 4);

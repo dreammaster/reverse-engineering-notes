@@ -5,6 +5,7 @@
 #include "../mm2_gfx.h"
 #include "../mm2_map.h"
 #include "../mm2_party.h"
+#include "../mm2_text.h"
 #include "../mm2_combat.h"
 #include "../mm2_data.h"
 #include "../mm2_events.h"
@@ -317,6 +318,19 @@ static void test_combat(void) {
 	CHECK(mm2_spell_damage_roll(5, 5, 1, &lo) == 10 && mm2_spell_damage_roll(5, 0, 6, &lo) == 30 && mm2_spell_damage_roll(5, 5, 1, &hi) == 30);
 }
 
+static void test_text(const Mm2Game *g) {
+	static Mm2Font font;
+	static uint8_t canvas[MM2_SCREEN_W * MM2_SCREEN_H];
+	int i, on = 0;
+	CHECK(mm2_font_load(g, &font));
+	mm2_draw_text(canvas, &font, 2, 3, "A", 15, -1);
+	for (i = 0; i < MM2_SCREEN_W * MM2_SCREEN_H; i++)
+		on += canvas[i] == 15;
+	CHECK(on == 31);                                        /* the 'A' glyph has 31 pixels */
+	CHECK(canvas[(3 * 8) * MM2_SCREEN_W + 2 * 8 + 2] == 15); /* row 0 of 'A' is ..###... */
+	CHECK(canvas[(3 * 8) * MM2_SCREEN_W + 2 * 8 + 0] == 0);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -326,6 +340,7 @@ int main(void) {
 	test_tables_and_rules(&g);
 	test_event_vm(&g);
 	test_combat();
+	test_text(&g);
 	test_banks(&g);
 	test_indoor_render(&g);
 	test_outdoor_render(&g);

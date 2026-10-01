@@ -4,7 +4,7 @@
 CC       = gcc
 CFLAGS  ?= -std=c99 -O2 -Wall -Wextra -pedantic
 BUILD   := build
-CORE    := mm2_lzw.c mm2_files.c mm2_gfx.c mm2_map.c mm2_view.c mm2_data.c mm2_state.c mm2_events.c mm2_combat.c mm2_party.c mm2_rules.c mm2_tables_gen.c
+CORE    := mm2_lzw.c mm2_files.c mm2_gfx.c mm2_map.c mm2_png.c mm2_text.c mm2_view.c mm2_data.c mm2_state.c mm2_events.c mm2_combat.c mm2_party.c mm2_rules.c mm2_tables_gen.c
 CORE_O  := $(CORE:%.c=$(BUILD)/%.o)
 
 SDL_CFLAGS ?= -IC:/dev/scummvm_libs_2015/include/SDL2 -Dmain=SDL_main
@@ -24,6 +24,11 @@ $(BUILD)/test_main.exe: tests/test_main.c $(CORE_O)
 test: $(BUILD)/test_main.exe
 	./$(BUILD)/test_main.exe
 
+$(BUILD)/mm2_shot.exe: main_shot.c $(CORE_O)
+	$(CC) $(CFLAGS) $^ -o $@
+
+shot: $(BUILD)/mm2_shot.exe
+
 # SDL2 viewer (compile check only without the SDL2 runtime libraries)
 $(BUILD)/main_sdl.o: main_sdl.c | $(BUILD)
 	$(CC) $(CFLAGS) $(SDL_CFLAGS) -c $< -o $@
@@ -37,4 +42,4 @@ check-sdl: main_sdl.c
 clean:
 	rm -rf $(BUILD)
 
-.PHONY: all test mm2 check-sdl clean
+.PHONY: all test shot mm2 check-sdl clean
