@@ -10927,6 +10927,30 @@ a scoping pass, same shape as the side-trap/ambush investigation and
 reimplemented. A good, well-bounded next module whenever someone picks
 it up.
 
+### Session update (continued, same day): went back to a "done" branch from earlier today and found it wasn't
+
+Picked bit `0x100` back up looking for one more bounded piece to close
+out. An earlier pass this same day had called it pure UI after reading
+its first ~45 lines — a weapon-select icon redraw — and moved on. Reading
+the rest of it showed that was wrong: those lines are setup before a
+real mechanic, not the whole thing. It's actually a piercing projectile
+that can punch through multiple monsters, and on a hit it arms something
+this project has been wondering about since `monster.h`'s own
+`TickMonsterTimer` was first written up — what actually sets its gate
+bits. Turns out it's this, a fairly specific attack variant, not some
+general monster-AI mechanism the way this project had been quietly
+assuming while writing "not traced" into the docs.
+
+Corrected the earlier mistake rather than let it stand, same as every
+other self-caught error today. This one stings a little more than the
+others, since it was a classification I made myself just a few hours
+ago and didn't verify carefully enough the first time — a useful
+reminder that "I already read that branch" isn't the same as "I read
+the *whole* branch," especially on a long day covering a lot of ground.
+Not reimplementing the piercing-projectile mechanic itself yet — it has
+its own real unknowns — but the `TickMonsterTimer` question is now
+answered, which is the part that mattered most.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

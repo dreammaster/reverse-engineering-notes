@@ -1078,18 +1078,29 @@ consumers, if any.
    dedicated multi-round pass, same as the side-trap/ambush pipeline
    and `ApplyMapTriggerEffect` each got before being reimplemented.
 
-   **Still open**: `word_33302` bit `0x10` (held-item cursor, blocked
-   on its own prerequisite system) and bit `0x80` (the world-ailments
-   system just scoped above, not yet reimplemented); `loc_2CF51` (the
-   bit `0x2000` diversion) is still deferred to its own pass; bit
-   `0x200`/`word_33306`'s own surrounding scan-loop *shape* (which of
-   the two targeting modes fires, and the viewport-depth bookkeeping
-   around it) is orchestration, not yet composed, even though the
-   per-target attack itself is done; a dozen bytes in the record's own
-   middle (offsets `0x36`-`0x3F`) have no confirmed consumer; and
-   `TickMonsterTimer`'s own gate bits still have no confirmed setter
-   even though an earlier round this same day found its tick-amount/
-   countdown *value* source.
+   **Bit `0x100` corrected and `TickMonsterTimer`'s gate-bit setter
+   found, same day**: an earlier pass this same day misclassified
+   `loc_2C92A` as pure UI after reading only its setup lines; it's
+   actually a multi-row piercing projectile (optionally continuing past
+   the first hit, per `word_33302` bit `0x800`) that, on a landed hit,
+   arms `TickMonsterTimer`'s own gate -- the first confirmed setter this
+   project has found for it, see `file-formats.md`'s dedicated section
+   and `monster.h`'s updated `monsterTickTimer` doc comment. Not
+   reimplemented itself (a genuinely separate mechanic from the attack
+   family already done, with its own unresolved details -- what
+   `MonsterFieldAnimSet` selects between, what the fixed immunity-bit
+   mark means) -- corrected rather than left standing.
+
+   **Still open**: `word_33302` bits `0x10`/`0x100` (held-item cursor
+   and the piercing-projectile mechanic just corrected above,
+   respectively) and bit `0x80` (the world-ailments system just scoped
+   above, not yet reimplemented); `loc_2CF51` (the bit `0x2000`
+   diversion) is still deferred to its own pass; bit `0x200`/
+   `word_33306`'s own surrounding scan-loop *shape* (which of the two
+   targeting modes fires, and the viewport-depth bookkeeping around it)
+   is orchestration, not yet composed, even though the per-target
+   attack itself is done; a dozen bytes in the record's own middle
+   (offsets `0x36`-`0x3F`) have no confirmed consumer.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark

@@ -2982,26 +2982,29 @@ also already reimplemented), `0x2000` (`loc_2C87F` — confirmed by
 direct read this round to call `ApplyAttackToTarget` against
 `g_activeCombatMonster`, now reimplemented, see below), `0x1000`
 (`loc_2C8CC` — the same attack looped over all 3 `g_monsterSlots`
-entries, also reimplemented), `0x100` (`loc_2C92A` — pure UI/rendering,
-a weapon-select icon redraw, not a gameplay mechanic), `0x200`
-(`loc_2CEE7` — the real "straight-line multi-target attack," per-target
-primitive reimplemented as `combatApplyDamageToMapMonster`, see below);
-falling through all of `word_33302` drops to 4 more `word_33306` bits —
-`0x8` (`loc_2CCEE` — a projectile-animation variant of the exact same
-attack, see below), `0x2` (`loc_2CE62` — a screen-shake animation that
-falls straight into bit `0x200`'s own scan tail), `0x4` (`loc_2D04D` —
-pure UI/rendering), `0x1` (`loc_2D137` — a fade animation that also
-falls into bit `0x200`'s scan tail) — and finally a true no-op
-(`loc_2C1C9`, just clears `g_lastKeyChar`). 19 branches plus the no-op,
-matching the "~19" estimate exactly, and every one of them now
-accounted for: only `0x80`/`0x10` of `word_33302` and `word_33306`'s
-own `0x4` are genuinely unimplemented gameplay logic (`0x10` is the
-held-item cursor, blocked on its own not-yet-built prerequisite system,
-confirmed by this round's own direct read; `0x80` is the world-ailments
-system's own timer-arming branch — see the dedicated section below,
-which resolves the "day/night music vs. world-state timers" discrepancy
-this same document flagged a few hours ago in favor of "world-state
-timers," now fully confirmed); everything else is either reimplemented or
+entries, also reimplemented), `0x100` (`loc_2C92A` — **corrected, see
+below**: not pure UI after all, a multi-row piercing-projectile attack
+that arms `TickMonsterTimer`'s own gate on a hit, not reimplemented),
+`0x200` (`loc_2CEE7` — the real "straight-line multi-target attack,"
+per-target primitive reimplemented as `combatApplyDamageToMapMonster`,
+see below); falling through all of `word_33302` drops to 4 more
+`word_33306` bits — `0x8` (`loc_2CCEE` — a projectile-animation variant
+of the exact same attack, see below), `0x2` (`loc_2CE62` — a
+screen-shake animation that falls straight into bit `0x200`'s own scan
+tail), `0x4` (`loc_2D04D` — pure UI/rendering), `0x1` (`loc_2D137` — a
+fade animation that also falls into bit `0x200`'s scan tail) — and
+finally a true no-op (`loc_2C1C9`, just clears `g_lastKeyChar`). 19
+branches plus the no-op, matching the "~19" estimate exactly, and every
+one of them now accounted for: only `0x80`/`0x10`/`0x100` of
+`word_33302` and `word_33306`'s own `0x4` are genuinely unimplemented
+gameplay logic (`0x10` is the held-item cursor, blocked on its own
+not-yet-built prerequisite system, confirmed by this round's own direct
+read; `0x80` is the world-ailments system's own timer-arming branch —
+see the dedicated section below, which resolves the "day/night music
+vs. world-state timers" discrepancy this same document flagged a few
+hours ago in favor of "world-state timers," now fully confirmed; `0x100`
+is the piercing-projectile mechanic just corrected above, see its own
+section below); everything else is either reimplemented or
 confirmed to be UI/rendering layered on an
 already-reimplemented primitive. See below for the full picture on
 `0x200`/`word_33306`'s `0x8`/`0x2`/`0x1`.
@@ -3281,6 +3284,49 @@ unconfirmed data model risks baking in a wrong structure. A genuinely
 good candidate for its own dedicated multi-round pass, the same way
 the side-trap/ambush pipeline and `ApplyMapTriggerEffect` each got one
 before being reimplemented.
+
+### A self-correction, and `TickMonsterTimer`'s gate-bit setter found (2026-10-01, same day)
+
+Picked bit `0x100` (`loc_2C92A`) back up while looking for a quick,
+bounded piece to close out, since an earlier pass this same day had
+classified it as "pure UI/rendering, a weapon-select icon redraw" after
+reading only its first ~45 lines. Reading the rest of it found that
+conclusion was wrong — those first lines are setup before a real
+mechanic, not the whole branch. **Corrected rather than left standing**,
+per this project's own practice.
+
+The real branch: a multi-row piercing projectile (`AnimateProjectileStep`/
+`ClassifyObstacleAtViewportRow` across up to 5 viewport rows, same shape
+as `word_33306` bit `0x8`'s own single-shot projectile), except on a
+hit it checks `word_33302` bit `0x800` — set, it keeps scanning past
+the hit monster for more targets (a piercing arrow); clear, it stops
+after the first. Both cases call `ApplyAttackToTarget` per target hit,
+same as every other branch in this family. **The genuinely new piece**:
+on a landed hit, this branch also arms a mechanism no previously-traced
+caller ever set — `monster.h`'s own `TickMonsterTimer` gate (state bits
+within mask `0xFC10`). It sets state bit `0x10` (inside that mask),
+writes `MonsterFieldTickAmount`/`TickCountdown` from the attacking
+spell record's own fields (the same two fields the ordinary attack
+family already reuses), and writes `MonsterFieldTickTarget` from one of
+two spell-record fields selected by the target's own
+`MonsterFieldAnimSet` value — plus, gated on a separate flag, marks a
+*fixed* bit `0x10` into `MonsterFieldImmunities` (not the attack's own
+filtered status flags the way `combatApplySpellAttack` does it). This
+answers, for the first time, "what sets `TickMonsterTimer`'s own gate
+bits" — a specific, fairly narrow player-triggered attack variant
+(apparently a burning/piercing arrow effect), not a general monster-AI
+mechanism as this project had speculated might be the case. See
+`monster.h`'s own updated doc comment on `monsterTickTimer`.
+
+**Not reimplemented**: the piercing-projectile mechanic itself (the
+scan/pierce logic, the `MonsterFieldAnimSet`-based field selection, and
+the fixed-bit-`0x10` immunity mark) is genuinely its own thing, distinct
+enough from the already-reimplemented attack family that forcing it
+into `combatApplySpellAttack`'s existing shape would misrepresent it —
+a good candidate for a future, narrowly-scoped pass once more of its
+remaining unknowns (what `MonsterFieldAnimSet`'s value actually
+selects between, what the fixed immunity-bit mark represents
+narratively) are worth chasing.
 
 **Two real caller-context questions this project had flagged as
 "untraced" are resolved by this same read**:

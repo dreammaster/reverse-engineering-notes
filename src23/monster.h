@@ -376,12 +376,28 @@ unsigned monsterAmbushThreshold(uint16_t awareness);
  * 0x3ED, zeroes MonsterFieldTickTarget/Amount/Countdown, and resets
  * MonsterFieldAnim to MonsterFieldSpriteBase).
  *
- * What triggers these state bits in the first place, and therefore what
- * this mechanism actually represents (a status effect's duration? a
- * scripted despawn timer? something else), isn't traced -- neither
- * caller (ProcessLevelMonsters, ProcessMonsterAttackTurn) sets these
- * bits itself, only reads the result. Reimplemented faithfully as the
- * confirmed bit/arithmetic operations regardless.
+ * A setter found 2026-10-01: `ApplyEncodedItemEffect`'s own `word_33302`
+ * bit `0x100` branch (`yendor2.asm:52145` on, a multi-row piercing
+ * projectile attack this project hasn't reimplemented -- see
+ * file-formats.md's own "world ailments" session for the broader
+ * context this was found alongside) arms exactly this gate on a landed
+ * hit: sets state bit `0x10` (inside the `0xFC10` mask), writes
+ * `MonsterFieldTickAmount`/`TickCountdown` from the attacking spell
+ * record's own fields (the same `SpellFieldTickAmount`/`TickCountdown`
+ * the ordinary attack family already uses), writes
+ * `MonsterFieldTickTarget` from one of two spell-record fields selected
+ * by the target's own `MonsterFieldAnimSet` value, and -- gated on a
+ * separate flag -- also marks bit `0x10` into `MonsterFieldImmunities`
+ * (a fixed bit, not the attack's own filtered status flags, unlike
+ * `combatApplySpellAttack`'s generic mechanism). This is a genuinely
+ * different, narrower mechanic than the attack family already
+ * reimplemented (a piercing/burning-arrow-style effect, not a filtered
+ * status application) and isn't reimplemented itself yet, but it does
+ * answer "what sets the gate bits" for the first time: a specific,
+ * fairly rare player-triggered attack variant, not a general monster-AI
+ * mechanism. `ProcessLevelMonsters`/`ProcessMonsterAttackTurn` (this
+ * function's own two readers) still never set these bits themselves --
+ * only this third, unrelated caller does.
  */
 typedef enum {
     MonsterTickIdle = 0,     /* the 0xFC10 gate wasn't set; nothing happened */
