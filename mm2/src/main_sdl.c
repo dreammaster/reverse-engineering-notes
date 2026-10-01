@@ -58,8 +58,7 @@ int main(int argc, char **argv) {
 
 	mm2_game_init(&g, argc > 1 ? argv[1] : NULL);
 	if (!mm2_font_load(&g, &font)) {
-		fprintf(stderr, "cannot load MM2.CH
-");
+		fprintf(stderr, "cannot load MM2.CH\n");
 		return 1;
 	}
 	memset(&s, 0, sizeof(s));
