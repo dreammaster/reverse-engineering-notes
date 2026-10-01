@@ -3871,7 +3871,7 @@ loc_197F0:                              ; CODE XREF: evt_op14_enter_location+1A9
                 call    thk_2SMITH_CEC8
                 cmp     byte ptr g_party_y+1, 2
                 jnz     short loc_1980C
-                mov     al, byte_1DC24
+                mov     al, g_inn_town
                 mov     g_map_id, al
                 mov     g_disk_needed, 1
                 call    thk_1RETINN_C1EA

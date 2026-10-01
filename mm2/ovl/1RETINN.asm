@@ -88,7 +88,7 @@ loc_1C1BD:                              ; CODE XREF: inn_common_helper+9E↓j
 
 loc_1C1D0:                              ; CODE XREF: inn_common_helper+77↑j
                 mov     al, g_map_id
-                mov     byte_1DC24, al
+                mov     g_inn_town, al
                 call    thk_save_roster
                 call    inn_leave       ; CODE XREF: seg002:08CD↑J
                 jmp     short loc_1C1E3
@@ -165,7 +165,7 @@ var_2           = byte ptr -2
                 push    ax
                 mov     al, g_party_x
                 push    ax
-                mov     al, byte_1DC24
+                mov     al, g_inn_town
                 push    ax
                 call    thk_2PLAY_B5EA
                 add     sp, 6
@@ -1329,7 +1329,7 @@ loc_1CB0C:                              ; CODE XREF: inn_menu+533↑j
 
 loc_1CB15:                              ; CODE XREF: inn_menu+550↑j
                 mov     al, g_map_id
-                mov     byte_1DC24, al
+                mov     g_inn_town, al
                 sub     ah, ah
                 mov     si, ax
                 mov     al, [si+21E8h]
@@ -1438,7 +1438,7 @@ loc_1CBDC:                              ; CODE XREF: seg002:01AD↑J
                 push    ax
                 call    thk_wait_for_key
                 add     sp, 2
-                mov     al, byte_1DC24
+                mov     al, g_inn_town
                 mov     g_map_id, al
                 call    thk_load_roster
                 call    inn_leave

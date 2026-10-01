@@ -8586,6 +8586,8 @@ static Bytes_1(void) {
 	set_name	(0X1DC1F,	"g_facing");
 	create_byte	(0X1DC20);
 	create_byte	(0X1DC21);
+	set_cmt	(0X1DC24,	"town map id of the inn that last saved (restored on load)",	0);
+	set_name	(0X1DC24,	"g_inn_town");
 	set_cmt	(0X1DC25,	"Light",	0);
 	create_byte	(0X1DC25);
 	set_name	(0X1DC25,	"g_fx_light");
@@ -9411,10 +9413,6 @@ static Bytes_1(void) {
 	set_name	(0X1FF12,	"aTheTrapSendsRa");
 	create_strlit	(0X1FF33,	0X18);
 	set_name	(0X1FF33,	"aSliversIntoThe");
-	create_strlit	(0X1FF4B,	0X21);
-	set_name	(0X1FF4B,	"aForksOfLightni");
-	create_strlit	(0X1FF6C,	0X15);
-	set_name	(0X1FF6C,	"aTrapIntoThePar");
 }
 
 //------------------------------------------------------------------------
@@ -9424,6 +9422,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X1FF4B,	0X21);
+	set_name	(0X1FF4B,	"aForksOfLightni");
+	create_strlit	(0X1FF6C,	0X15);
+	set_name	(0X1FF6C,	"aTrapIntoThePar");
 	create_strlit	(0X1FF81,	0X22);
 	set_name	(0X1FF81,	"aABallOfFlameRo");
 	create_strlit	(0X1FFA4,	0X23);

@@ -588,7 +588,7 @@ loc_1822D:                              ; CODE XREF: main_options_menu+4E↓j
                 mov     [bp+var_8], ax
                 mov     bx, ax
                 mov     byte ptr [bx+8], 81h
-                mov     al, byte_1DC24
+                mov     al, g_inn_town
                 mov     g_map_id, al
                 mov     ax, 14h
                 push    ax
@@ -991,7 +991,7 @@ loc_18576:                              ; CODE XREF: main_options_menu+376↑j
                 push    ax
                 mov     al, g_party_x
                 push    ax
-                mov     al, byte_1DC24
+                mov     al, g_inn_town
                 push    ax
                 call    thk_2PLAY_B5EA
                 add     sp, 6
@@ -3601,7 +3601,7 @@ loc_19A06:                              ; CODE XREF: transfer_characters+30C↑j
                 mov     di, 18h
                 sub     al, al
                 mov     g_map_id, al
-                mov     byte_1DC24, al
+                mov     g_inn_town, al
                 mov     [bp+var_60], 3Ch ; '<'
                 mov     [bp+var_62], 10h
                 sub     si, si

@@ -20933,7 +20933,7 @@ byte_1DC20      db 1                    ; DATA XREF: play_sound_effect+18↑r
 byte_1DC21      db 1                    ; DATA XREF: play_sound_effect+26↑r
                 db    1
                 db    4
-                db    0
+g_inn_town      db    0                 ; town map id of the inn that last saved (restored on load)
 g_fx_light      db 1                    ; DATA XREF: sub_13FFC+20↑r
                                         ; sub_147D8+93↑r ...
                                         ; Light

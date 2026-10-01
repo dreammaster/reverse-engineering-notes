@@ -216,3 +216,4 @@
 1670A	load_building_text	(building): reads the block of STR.DAT strings for the building
 14F3A	party_recalc_ac
 13FC4	quit_to_dos	restores text mode, timer driver and vectors, exits
+1DC24	g_inn_town	town map id of the inn that last saved (restored on load)

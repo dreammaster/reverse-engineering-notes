@@ -25,14 +25,17 @@ The table (state offset = position within the 2052-byte payload; the 2053rd byte
 | `07CE` | 24 | `03F6` | **event variables** 0-23 (`evt_var_addr`, event opcodes 23/26) |
 | `07E6` | 4 | `03DC` | four state bytes (`1DC2C..2F`) |
 | `07EA` | 1 | `03CE` | `g_view_mode` |
-| `07EB..07F6` | 1 each | `03D0..03DB` | party status effects, one byte each: `1DC20`, `1DC21`, `1DC22`..`1DC2B`. `1DC25` = **Light**, `1DC26` = **Magic** protection, `1DC27` = **Forces** protection, `1DC28` = **Levitate**, `1DC29` = **Walk on Water**, `1DC2A` = **Guard Dog** (the panel in `147D8` prints these labels with the value) |
+| `07EB..07F6` | 1 each | `03D0..03DB` | party status effects, one byte each: `1DC20`, `1DC21`, `1DC22`..`1DC2B` (`1DC24` is the inn town, not an effect). `1DC25` = **Light**, `1DC26` = **Magic** protection, `1DC27` = **Forces** protection, `1DC28` = **Levitate**, `1DC29` = **Walk on Water**, `1DC2A` = **Guard Dog** (the panel in `147D8` prints these labels with the value) |
 | `07F7..0801` | 1 each | `03E0..03EA` | `1DC30..1DC3A`: more effect/flag bytes (`1DC33`..`1DC37` are the to-hit/damage/protection bonuses used in combat: `1DC33` accuracy bonus, `1DC36` damage-halving protection, `1DC37` flat damage bonus) *(partly checked)* |
 | `0802` | 1 | `0414` | `byte_1DC64` |
 | `0803` | 1 | `0415` | `byte_1DC65` (surprise state carried into combat) |
 
-Not saved here: the current map id and party position (`g_map_id`, `g_party_x/y`, `g_facing`).  They
-are written elsewhere -- not found in this table; presumably they are restored from the roster/`byte_231E4`
-data or the game always saves in a town.  *(open question)*
+**Current map and position are not saved**; the game can only be saved at an inn.  `byte_1DC24`
+(`g_inn_town`, DGROUP `03D4`, the 5th of the status bytes `03D0..03DB`) holds the id (0-4) of the town whose inn
+last saved: `inn_common_helper` and `inn_menu` (1RETINN) set it from `g_map_id` before `save_roster`, and
+loading (`1MENU2`, "continue") copies it back into `g_map_id` and re-enters that town
+(`2PLAY:B5EA`, with the party x/y left by the town entry *(position source not checked)*).  The same byte is the map the party returns to from event
+`FDh` in the blacksmith trap and in `inn_leave`.  So the save only ever records which town you were in.
 
 The original game also keeps a copy of `ROSTER.DAT` on the player disk / in `DEFAULT.DAT` (new-game
 template, 780 bytes).
