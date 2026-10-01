@@ -16,6 +16,9 @@ public:
 	void ResetCurrentObject();
 	void ResetEventInfo();
 	void RemoveItem(bool flag);
+	// Confirmed call shape only (TManagedObject::ClickedWithoutReach,
+	// Deponia_Linux.asm line 190851) - not reversed beyond that call shape.
+	void SaveEventInfo(TMouseEventEnum event);
 	// Confirmed call shape only (TGameControl::HandleMouseMove,
 	// Deponia_Linux.asm lines 472298, 472356) - called with whatever object
 	// (if any) is under the cursor; not reversed beyond that.

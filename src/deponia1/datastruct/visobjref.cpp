@@ -54,6 +54,10 @@ TVisObjRef TVisObjRef::GetParent() const {
 	return TVisObjRef();
 }
 
+wxString TVisObjRef::GetNameWithParents(int /*levels*/) const {
+	return wxString();
+}
+
 void TVisObjRef::ClearLink(int /*fieldId*/, bool /*flag*/) {
 }
 

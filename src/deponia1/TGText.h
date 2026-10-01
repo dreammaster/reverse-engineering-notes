@@ -17,10 +17,18 @@
 #include "WxStub.h"
 
 class TGCharacter;
+class TManagedObject;
 
 class TGText : public TSText {
 public:
 	TGCharacter *GetSpeaker() const;
+
+	// Confirmed call shape only (TManagedObject::SetText, Deponia_Linux.asm
+	// line 191517) - takes a TManagedObject* directly rather than modeling
+	// the original's separate TTextOwner mixin interface, since nothing
+	// here needs to dispatch through that narrower type; not reversed
+	// beyond that call shape.
+	void SetOwner(TManagedObject *owner);
 
 	// Confirmed called with a constant 1.0f at every DisplayTexts() call
 	// site (asm lines 455890-456037) - not reversed beyond that call shape.

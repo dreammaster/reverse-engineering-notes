@@ -387,6 +387,12 @@ struct wxRect {
 		return x < other.x + other.width && other.x < x + width && y < other.y + other.height &&
 		       other.y < y + height;
 	}
+	// Confirmed call shape only (TManagedObject::IsInside, Deponia_Linux.asm
+	// line 191161) - real wxRect::Contains(wxPoint) is a half-open range
+	// test, matching real wxWidgets' own documented behavior.
+	bool Contains(const wxPoint &pt) const {
+		return pt.x >= x && pt.x < x + width && pt.y >= y && pt.y < y + height;
+	}
 };
 
 // A floating-point rectangle, used where sub-pixel precision matters (e.g.

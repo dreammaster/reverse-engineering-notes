@@ -82,6 +82,11 @@ public:
 	// Confirmed call shape only (TGameControl::InitCharacters, asm line
 	// 466313) - not reversed beyond that.
 	TVisObjRef GetParent() const;
+	// Confirmed call shape only (TManagedObject::SetPolygon, Deponia_Linux.
+	// asm line 191690) - a name including parent-object context (depth
+	// given by `levels`), distinct from the plain GetName() above; not
+	// reversed beyond that call shape.
+	wxString GetNameWithParents(int levels) const;
 	// Confirmed called (TGameControl::ResetState, Deponia_Linux.asm line
 	// 460932) with a field id and a bool - not reversed beyond that call
 	// shape.

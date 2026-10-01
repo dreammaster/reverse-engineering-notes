@@ -17,6 +17,14 @@ class TGInterface;
 // target, the code falls back to GetCharacterPointerEx() and calls
 // TManagedObject::SetText() directly on the resulting TGCharacter* - only
 // possible if TGCharacter IS-A TManagedObject.
+//
+// GetRef() below was originally modeled against its own separate _ref
+// field at "a known offset" (TGameControl::IsTalking/
+// SetCharacterActiveCommand) - now that TManagedObject's own layout is
+// confirmed (see TManagedObject.h), that offset is almost certainly
+// TManagedObject's own inherited _objRef (TGCharacter has no other bases
+// ahead of it), so GetRef() delegates to the inherited field instead of
+// keeping a second, redundant one.
 class TGCharacter : public TManagedObject {
 public:
 	TGCharacter() = default;
@@ -47,13 +55,13 @@ public:
 	// Deponia_Linux.asm lines 461785-461846) - same "TVisObjRef at a known
 	// offset, no accessor in the original" pattern as TGDialog/TSText/TGText.
 	const TVisObjRef &GetRef() const {
-		return _ref;
+		return _objRef;
 	}
 	// Confirmed mutated directly (TGameControl::SetCharacterActiveCommand
 	// calls TVisObjRef::SetLink() on this field in place, asm lines
 	// 465679-465841).
 	TVisObjRef &GetRef() {
-		return _ref;
+		return _objRef;
 	}
 
 	// Confirmed called for every character (TGameControl::
@@ -102,7 +110,4 @@ public:
 	// this order, right after construction.
 	void Init();
 	void AssignToScene(const TVisObjRef &scene, const wxPoint &pos, int walkSpeed);
-
-private:
-	TVisObjRef _ref;
 };

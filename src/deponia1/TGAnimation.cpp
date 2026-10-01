@@ -19,3 +19,6 @@ void TGAnimation::LoadAnimations() {
 
 void TGAnimation::ContinueAnimations() {
 }
+
+void TGAnimation::HideAnimation(TGAnimation */*animation*/, TManagedObject */*owner*/) {
+}

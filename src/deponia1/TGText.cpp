@@ -4,6 +4,9 @@ TGCharacter *TGText::GetSpeaker() const {
 	return nullptr;
 }
 
+void TGText::SetOwner(TManagedObject */*owner*/) {
+}
+
 void TGText::Draw(float /*scale*/) {
 }
 

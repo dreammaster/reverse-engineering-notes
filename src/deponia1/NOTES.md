@@ -1870,6 +1870,105 @@ now backed by the right fopen mode for each.
 `TComposedFile` gained a `GetComposedFilePath()` accessor (`GetComposedMovieFileName()`
 reads this field directly off a manual container in the original).
 
+## TManagedObject
+
+Confirmed 46 of 50 manifest-listed methods (Deponia_Linux.asm lines
+114890-194554) - the shared base for every interactive scene object
+(`TGCharacter` already derives from it; other call sites confirm `TGObject`/
+`TGItem` do too, but those aren't modeled in this codebase yet). This was
+a user-directed, dedicated pass (previously flagged as too large to start
+casually - comparable in scope to `TGameControl` itself).
+
+Confirmed real field layout: a `TVisObjRef` game-data reference, a
+position/bounding-rect/polygon hit-test area, a primary animation plus a
+`std::vector<TGAnimation*>` of secondary overlay animations, an optional
+`TPictureIO*` and `TGText*`, a fade-alpha system (`_alpha`/`_alphaFrom`/
+`_alphaTarget`/`_alphaDurationMs` driven by an embedded `TTimer`), and an
+active flag plus a lifetime counter. The class is genuinely polymorphic
+through **two** separate vtables (the constructor writes a second vtable
+pointer at +0x10, immediately after the primary one at +0x00, with the
+`TVisObjRef` data member sandwiched between the end of the primary vtable
+and this second one) - almost certainly two small mixin interfaces the
+original multiply inherits from: one `AnimationStopped()`/`GetOwnerId()`/
+`GetOwnerName()` are reached through via a `_ZThn72_`-style this-adjusting
+thunk from `TCursorControl` (consistent with a primary-base interface),
+and a second, informally named `TTextOwner` (after `TGText::SetOwner()`'s
+parameter) that `TextFinished()` is reached through via a smaller, outer-
+class-independent `_ZThn16_` adjustment (consistent with TManagedObject's
+own secondary mixin). Modeled here as one ordinary class with virtual
+methods instead of replicating the two-vtable ABI trick, since nothing in
+this codebase casts a `TManagedObject*` through a narrower
+`TAnimationOwner*`/`TTextOwner*` pointer obtained some other way.
+
+A real, independently-discovered bug in the EXISTING `TGCharacter` model:
+its own `_ref` field (previously modeled as TGCharacter's own, "at a known
+offset") is almost certainly `TManagedObject`'s own inherited `_objRef` at
+that exact same offset - TGCharacter has no other bases ahead of it. Fixed
+`TGCharacter::GetRef()` to delegate to the inherited field (now `protected`
+on `TManagedObject`) instead of keeping a second, redundant, never-actually-
+synchronized one.
+
+Several genuinely non-obvious behaviors, each independently confirmed
+rather than assumed:
+- `Set()`/the copy constructor pattern seen elsewhere does NOT apply here,
+  but a different quirk does: `SetAnimation()` routes an animation to
+  either the single "primary" slot or the secondary list based on whether
+  its data object matches a specific link (field id 0xAB) on this object's
+  own `_objRef` - not based on anything about the animation's own identity.
+- `AnimationStopped()` clears the primary slot (if it matches) AND removes
+  from the secondary list (if present) - uniformly, regardless of which
+  one actually held the stopped animation.
+- `RemoveAnimations()` hides the primary animation with `this` as owner,
+  but hides every secondary animation with a NULL owner - a confirmed
+  asymmetry, not an oversight.
+- `Prepare()`'s real disassembly re-derives the same "is the primary
+  animation a bones animation" outcome through three different branches
+  (checking `IsSpriteIndexValid()`/`IsModelAnimation()` first in two of
+  them) that all funnel into one final `IsBonesAnimation()`-based decision -
+  simplified here to that one check directly, since the intermediate
+  queries are pure and don't change the outcome.
+- `SetDestAlpha()`'s `duration == 0` branch computes a full elapsed-time
+  interpolation that - since elapsed time from a freshly-reset timer is
+  never negative - always resolves to "snap straight to the target",
+  simplified accordingly; `UpdateAlpha()` (the real per-frame fade step,
+  called from `Draw()` every frame) keeps the genuine lerp.
+- `IsInside(pt, TGDetectInfo)` (2-arg) is implemented by tail-calling back
+  into the SAME object's own `IsInside(pt)` (1-arg) virtual slot - the base
+  simply ignores the detect-info argument; reproduced as a direct call to
+  the 1-arg virtual so a subclass override of either still takes effect
+  through normal dispatch.
+
+New, deliberately shallow leaf dependencies added to support this (real
+`TManagedObject` logic calling into them, but their OWN bodies are
+confirmed-call-shape-only stubs for a future pass): `TCAnimation` (a
+genuinely distinct recovered class name that `TGAnimation` derives from),
+`TGAnimation::HideAnimation()`/`Prepare()`/`Draw()`/`DrawMixed()`,
+`TGText::SetOwner()`, `TGObjectManager::SaveEventInfo()`, a real
+`wxRect::Contains(wxPoint)`, and `TVisObjRef::GetNameWithParents()`.
+`TPolygonList` (modeled as a plain `std::vector<wxPoint>`) and three small
+free functions (`CreatePolygonsFromPointList`/`GetBoundingBox`/
+`IsPointInsidePolygon`) back the hit-test polygon - the first is a
+confirmed-shape stub (always succeeds), but `GetBoundingBox()` and
+`IsPointInsidePolygon()` (a standard even-odd ray-casting test) are
+implemented for real, since both have well-defined, unambiguous semantics
+regardless of how the original's own multi-polygon representation worked.
+
+**What's left as an honest, flagged gap:** `ExecuteMatchingAction()`,
+`HandlePostExecution()`, `GetActionsToTest()`, and `ExecuteEvent()` are
+Visionaire's actual condition/action-matching engine behind scripted
+events. Each branches extensively on opaque byte-offset boolean flags
+inside not-yet-modeled `TGEventInfo`/`TGActionInfo` structs and a 26-value
+`TypeActionExecution` switch (confirmed to exist via its jump table, but
+none of its values are named). Transcribing these byte-for-byte without
+knowing what the flags mean would just be moving bytes around under
+invented names, violating this project's "honest gap over confidently
+wrong transcription" rule - so all four stay confirmed-signature stubs.
+This is a large, mostly self-contained subsystem (confirmed call sites
+show `TGItem`/`TGObject` also override at least `HandlePostExecution()`/
+`AnimationStopped()`, so other subclasses participate in it too) that
+needs its own dedicated future pass, starting from naming `TGEventInfo`'s
+and `TGActionInfo`'s own fields.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
