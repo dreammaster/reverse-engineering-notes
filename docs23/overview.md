@@ -10951,6 +10951,35 @@ Not reimplementing the piercing-projectile mechanic itself yet — it has
 its own real unknowns — but the `TickMonsterTimer` question is now
 answered, which is the part that mattered most.
 
+### Session update (continued, same day): the "world ailments" system turned out to have a candle in it
+
+Went back to the "world ailments" scoping note from earlier today —
+specifically the pair of unidentified ability-id families this project
+had tentatively guessed were "plausibly food/water/light-source
+tracking." Rather than leave it a guess, checked it against real
+`WORLD.DAT` item data directly, the same way every other real finding
+today got checked. It wasn't food or water: item 8 is CANDLE, item 9 is
+LIT CANDLE, item 0xE is TORCH, item 0xF is LIT TORCH, item 0xB is LIGHT
+SOURCE, item 0xC is LIT LIGHT — the game's own light-source items,
+unlit and lit pairs, confirmed beyond any doubt once the actual bytes
+were in hand instead of a plausible-sounding guess.
+
+That one clean confirmation was enough to de-risk a genuinely
+self-contained slice of the "tangled" system from this morning: the
+3-counter burn-down mechanic (light it, it counts down, it goes out)
+doesn't touch any of the murkier parts (the 6-slot item table, the
+inventory sweep, the second overlapping timer array) at all — it's
+just 3 scalars and 3 flag bits. Reimplemented it as a new module,
+`lightsource.c`. The rest of the system — the actual item advancing
+from CANDLE to LIT CANDLE to USED CANDLE, and `IsItemRangeAvailable`
+(which turned out, nicely, to be the exact missing piece the "R rest"
+command's own regen-rate derivation has been waiting on since a much
+earlier round) — stays open, still real unknowns worth their own pass.
+
+A good shape for today in general: when a "too tangled to touch" system
+turns out to have one clean, checkable thread running through it,
+pulling that thread doesn't require solving the whole tangle first.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -3192,7 +3192,7 @@ the dispatch chain this file documents is now completely accounted
 for, branch by branch, even where a given branch's full UI
 orchestration isn't reimplemented.
 
-### The "world ailments" system: scoped, not yet reimplemented (2026-10-01, same day)
+### The "world ailments" system: the light-source burn-down mechanic reimplemented, the rest scoped (2026-10-01, same day)
 
 Followed `word_33302` bit `0x80` (`loc_2C287`) the rest of the way,
 since it was the one dispatch branch left with a genuine semantic
@@ -3254,15 +3254,25 @@ all 12 really do belong to one "is anything world-ailment-related still
 active" accounting, even though they're written by at least 3
 unrelated-looking code paths:
 
-- `word_36C85`/`89`/`8B`: 3 timed per-ability-effect counters, set by
-  `ApplyStatusEffect` (`yendor2.asm:29214`, a `HandleGameCommand`
-  top-level handler -- `g_currentActionId`/`word_32974` `== 8`/`0xE`/`0xB`
-  arms the matching counter, icon-bar slot, and `word_36C79` bit
-  `0x2000`/`0x800`/`0x400`) and decremented by `TickStatusEffects`
-  (`yendor2.asm:29153`, same action-id family shifted by 1:
-  `9`/`0xF`/`0xC` -- the exact codes `TickAilmentDuration`'s own
-  6-entry table tests, suggesting these 3 scalars and 3 of that table's
-  6 slots may be the same concept represented two ways, not confirmed).
+- `word_36C85`/`89`/`8B`: 3 timed light-source duration counters -- **the
+  `8`/`9`, `0xE`/`0xF`, `0xB`/`0xC` ability-id pairs are confirmed, not
+  guessed**: they're literal item ids, checked directly against real
+  `WORLD.DAT` item records in both games: `8`=CANDLE, `9`=LIT CANDLE,
+  `0xB`=LIGHT SOURCE, `0xC`=LIT LIGHT, `0xE`=TORCH, `0xF`=LIT TORCH (a
+  third id per family also exists in the catalog -- `10`/`0xD`/`0x10`,
+  USED CANDLE/LIGHT/TORCH -- but neither function here writes it; see
+  below). `ApplyStatusEffect` (`yendor2.asm:29214`, a `HandleGameCommand`
+  top-level handler -- lighting one of the 3) arms the matching counter
+  and `word_36C79` bit (`0x2000`/`0x800`/`0x400`); `TickStatusEffects`
+  (`yendor2.asm:29153`, called once per `TickWorldAilments` 5-minute
+  sweep) decrements the matching counter by exactly 1 per call (no
+  elapsed-time parameter -- duration is counted in 5-minute ticks, not
+  raw minutes) and, at 0, clears the flag (the light goes out).
+  Reimplemented as `lightSourceApply`/`lightSourceTick` (new
+  `src23/lightsource.c`/`.h`); tests in `test_lightsource.c` (23rd
+  suite) cover every light source, the "relighting extends rather than
+  resets" behavior, expiry, and that ticking one never touches the
+  others. All 23 suites pass.
 - `word_36C83`/`87`/`8D`: unconditionally zeroed by both of the
   functions just above whenever their own selector doesn't match --
   no write setting them to anything *else* found yet, so either dead
@@ -3270,16 +3280,25 @@ unrelated-looking code paths:
 - `word_36C93`/`95`/`97`/`99`/`9B`/`9D`: bit `0x80`'s own 6 slots,
   above.
 
-**Deliberately not reimplemented.** This is a real, tangled subsystem
-exactly matching an earlier round's own "not-yet-scoped" flag on it --
-three counter families with overlapping bit ranges and an unconfirmed
-relationship between them, two unidentified ability-id pairs (`8`/`9`,
-`0xE`/`0xF`, `0xB`/`0xC` -- plausibly food/water/light-source resource
-depletion, matching an existing comment on the unrelated-but-similarly-
-shaped `TickTravelResourceAilments`, but not confirmed), and an
-inventory-slot-reuse detail not cross-checked against `item.h`. Recording
-the full confirmed address/field map here is the honest, useful
-contribution for this round; implementing a C module on top of an
+**What's still deliberately not reimplemented**: the item-slot-level
+transition (an actual CANDLE/TORCH/LIGHT SOURCE item in the 6-entry
+table or a party member's inventory advancing from unlit to lit to
+used, `TickAilmentDuration`'s own job, items 1 and 2 above) is a
+*separate* mechanic from the 3 standalone counters just reimplemented
+-- confirmed by direct read that neither `ApplyStatusEffect` nor
+`TickStatusEffects` touches an item slot at all, only these 3 scalars
+and `word_36C79`. `IsItemRangeAvailable` (`yendor2.asm:22764`, already
+correctly named and partially commented by an earlier session) checks
+this same 6-entry table first, falling back to scanning every party
+member's own inventory via `FindItemInInventoryRange` -- this is the
+exact "item-availability" dependency `RestPartyAndAdvanceClock`'s own
+regen-rate derivation has been waiting on since a much earlier round.
+Both of these remain open: the item-slot tick/transition logic and
+`IsItemRangeAvailable` itself, plus `word_36C93`-`9D`'s own relationship
+(if any) to the separate `0x9433` timer array `TickWorldAilmentTimers`
+manages. Recording the full confirmed address/field map here is the
+honest contribution for the parts not yet done; implementing a C module
+on top of an
 unconfirmed data model risks baking in a wrong structure. A genuinely
 good candidate for its own dedicated multi-round pass, the same way
 the side-trap/ambush pipeline and `ApplyMapTriggerEffect` each got one

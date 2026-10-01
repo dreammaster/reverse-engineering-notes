@@ -1058,25 +1058,34 @@ consumers, if any.
    four branches' gameplay logic; what remains for each is animation/
    orchestration only.
 
-   **Bit `0x80` scoped (not reimplemented), same day, resolving the
-   discrepancy above**: it's the arming write for `word_3295A` bit
-   `0x800`, the gate `MaybeForceTickWorldAilments` tests before calling
+   **Bit `0x80` traced, resolving the discrepancy above, and its own
+   light-source mechanic reimplemented, same day**: it's the arming
+   write for `word_3295A` bit `0x800`, the gate
+   `MaybeForceTickWorldAilments` tests before calling
    `TickWorldAilments` -- the older round's "world-state timers"
    description was right; this round's own first guess (day/night
-   music) was wrong, now corrected rather than left standing. Tracing
-   `TickWorldAilments` found a genuinely tangled subsystem: a 6-entry
-   ailment table shared between a global slot array and every party
-   member's own inventory slots, a second 6-counter timer array with
-   overlapping bit ranges, and a third 12-field family whose sum gates
-   the whole thing -- three counter families, confirmed individually by
-   direct read but not yet reconciled into one data model. See
-   `file-formats.md`'s own dedicated "world ailments" section for the
-   full confirmed address/field map. **Deliberately not reimplemented**
-   -- exactly the "not-yet-scoped... world ailments/weather/lighting
-   system" this candidate already flagged a round ago, now properly
-   scoped rather than guessed at; a good candidate for its own
-   dedicated multi-round pass, same as the side-trap/ambush pipeline
-   and `ApplyMapTriggerEffect` each got before being reimplemented.
+   music) was wrong, now corrected. Tracing `TickWorldAilments` found a
+   genuinely tangled subsystem of 3 counter families -- but one of them
+   turned out to be fully, concretely resolvable: `word_36C85`/`89`/`8B`
+   are 3 light-source burn-down counters, confirmed against real
+   `WORLD.DAT` item data (the dispatch ids are literally CANDLE/TORCH/
+   LIGHT SOURCE and their own lit variants). Reimplemented as
+   `lightSourceApply`/`lightSourceTick` (new `src23/lightsource.c`/`.h`);
+   tests in `test_lightsource.c` (23rd suite); all 23 suites pass.
+
+   **Still deliberately not reimplemented**: the item-slot-level
+   transition this same mechanic's items go through (unlit -> lit ->
+   used, a separate job belonging to `TickAilmentDuration`, confirmed
+   distinct from the 3 counters above) and `IsItemRangeAvailable`
+   (`yendor2.asm:22764`) -- which turns out to be exactly the
+   "item-availability" dependency `RestPartyAndAdvanceClock`'s own
+   regen-rate derivation has been waiting on since a much earlier round;
+   a second 6-counter timer array (`TickWorldAilmentTimers`) with bit
+   ranges that overlap bit `0x80`'s own 6 fields in a way not yet
+   reconciled. See `file-formats.md`'s own dedicated "world ailments"
+   section for the full confirmed address/field map of what's left --
+   still a reasonable candidate for a future pass, just smaller than it
+   was this morning.
 
    **Bit `0x100` corrected and `TickMonsterTimer`'s gate-bit setter
    found, same day**: an earlier pass this same day misclassified
@@ -1093,14 +1102,16 @@ consumers, if any.
 
    **Still open**: `word_33302` bits `0x10`/`0x100` (held-item cursor
    and the piercing-projectile mechanic just corrected above,
-   respectively) and bit `0x80` (the world-ailments system just scoped
-   above, not yet reimplemented); `loc_2CF51` (the bit `0x2000`
-   diversion) is still deferred to its own pass; bit `0x200`/
-   `word_33306`'s own surrounding scan-loop *shape* (which of the two
-   targeting modes fires, and the viewport-depth bookkeeping around it)
-   is orchestration, not yet composed, even though the per-target
-   attack itself is done; a dozen bytes in the record's own middle
-   (offsets `0x36`-`0x3F`) have no confirmed consumer.
+   respectively) and bit `0x80`'s own surrounding dispatch (its
+   per-target light-source counters are reimplemented, but the branch's
+   own 6-slot arming write and `IsItemRangeAvailable`'s item-slot
+   transition logic aren't); `loc_2CF51` (the bit `0x2000` diversion) is
+   still deferred to its own pass; bit `0x200`/`word_33306`'s own
+   surrounding scan-loop *shape* (which of the two targeting modes
+   fires, and the viewport-depth bookkeeping around it) is
+   orchestration, not yet composed, even though the per-target attack
+   itself is done; a dozen bytes in the record's own middle (offsets
+   `0x36`-`0x3F`) have no confirmed consumer.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark
