@@ -1812,6 +1812,64 @@ reversed, since that wraps the real vendored libpng/libwebp/jpgd libraries
 by hand; linking those directly is a separate build-system decision, the
 same kind as the zlib one flagged for `TMemoryBuffer::Compress()`.
 
+## TComposedFileManager (also: TFile::DecryptHeader, the real archive-header cipher wired end-to-end)
+
+Confirmed in full except `GetComposedFileInfo()`'s own filename-suffix
+grammar and `Export()` (Deponia_Linux.asm lines 516915-519803, all 17
+manifest-listed methods reached) - a pure static manager coordinating
+several global `TComposedFile` instances built directly on today's earlier
+`TComposedFile`/`TMemoryBuffer` work. Confirmed global state: a "main"
+container, a "savegame" container, a "game" container, three resizable
+arrays (scene/character/interface containers - each either one shared
+instance or one per numbered volume), a set of "manual" containers built
+from a caller-supplied path list, and a plain movie-container path string
+(not a `TComposedFile` at all). The original manages the three
+array-backed container sets via raw `operator new[]` + placement-new (an
+80-byte-per-`TComposedFile` manual array, stepped by pointer arithmetic) -
+modeled here as plain `std::vector<TComposedFile>` instead, and the
+original's separately-tracked `s_numXxxContainers` counters are dropped in
+favor of each vector's own `.size()`, since they're always equal.
+
+`GetComposedFile(const TComposedFileInfo&)` is a clean 9-case switch on
+`TContainerTypeEnum` dispatching to the matching global container(s) -
+confirmed in full, including a size-dependent `index == -1` special case
+for the array-backed types (falls back to the array's own base address
+only when there's exactly one container in it) and manual containers being
+1-indexed (`index == 1` is the first one) unlike every other case.
+
+`GetComposedFileInfo()` itself - which parses a trailing "#..." suffix off
+a filename's extension to decide which container a given path refers to -
+is the one piece NOT reversed to the byte level: it's a genuinely intricate
+multi-branch parser (checking suffix length and specific character
+positions for '#', distinguishing at least a bare "#NNN#vvv" shape from a
+longer "#NNNmSS#vvv" one with an embedded container-type letter) that would
+need its own dedicated pass. Stubbed to always return false here, which
+means every caller (`GetMemoryFile`/`Open`/`Export`/`DecryptComposedFile`/
+`GetComposedMovieFileName`) currently always takes its "plain file, not a
+composed-file reference" fallback path - each of those fallback paths is
+itself fully confirmed and implemented for real (plain `wxFile`/`TFile`
+reads), so this is a real, working, honest subset of the class's behavior
+rather than a dead stub.
+
+The exciting part: `TFile::DecryptHeader()` (confirmed in full, asm lines
+523658-523820) is a complete, working implementation of the real archive-
+header cipher, built directly on today's earlier `TMemoryBuffer::Decrypt()`
+work - reads the first 0x12C (300) bytes of a file, decrypts them via the
+confirmed MD5-keystream XOR cipher, and writes them straight back.
+`EncryptHeader()` is confirmed to be a pure tail call to `DecryptHeader()`
+(same cipher, same operation either way). This needed three small, fully
+real `wxFile` additions: `Write()`, `Flush()`, and `IsOpened()`, plus a
+`TFile::SetOriginalPath()` setter (stores the path; nothing reads it back
+yet) and a new `wxString::Find()`/`wxFileName::GetName()` pair for
+`FileExists()`/`Export()`. `wxFile::Open()`'s mode parameter is now
+confirmed for two distinct values: 1 (read-only, from `TComposedFile::
+GetMemoryFile()`) and 2 (read-write, from `DecryptHeader()`'s own
+read-then-write-back use) - real wxWidgets ordinals still unconfirmed, but
+now backed by the right fopen mode for each.
+
+`TComposedFile` gained a `GetComposedFilePath()` accessor (`GetComposedMovieFileName()`
+reads this field directly off a manual container in the original).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

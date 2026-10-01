@@ -99,6 +99,12 @@ public:
 
 	int GetNumberOfEntries() const;
 	SEntryInfo *GetEntry(int index);
+	// Confirmed direct field read (TComposedFileManager::GetComposedMovieFileName,
+	// Deponia_Linux.asm line 519672, `+0x18` - matching _composedFilePath's
+	// own documented original offset).
+	const std::wstring &GetComposedFilePath() const {
+		return _composedFilePath;
+	}
 	wxString GetComposedFileExtension() const;
 	wxString GetContainerFileExtension(wxString base, long index) const;
 

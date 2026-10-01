@@ -33,3 +33,27 @@ void TFile::Close() {
 		_handle = nullptr;
 	}
 }
+
+bool TFile::DecryptHeader(const wxFileName &path, const wxString &key) {
+	wxFile file;
+	if (!file.Open(path.GetFullPath(), 2))
+		return false;
+
+	unsigned char buffer[0x12C];
+	unsigned long bytesRead = file.Read(reinterpret_cast<char *>(buffer), sizeof(buffer));
+	if (bytesRead == 0) {
+		file.Close();
+		return false;
+	}
+
+	TMemoryBuffer mem;
+	mem.Reserve(bytesRead);
+	mem.AppendData(buffer, bytesRead);
+	mem.Decrypt(key, nullptr, 0);
+
+	file.Seek(0, 0);
+	file.Write(mem.GetData(), bytesRead);
+	file.Flush();
+	file.Close();
+	return true;
+}

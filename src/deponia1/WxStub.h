@@ -96,6 +96,13 @@ public:
 	bool Contains(const wxString &other) const {
 		return _data.find(other._data) != std::wstring::npos;
 	}
+	// Confirmed call shape only (TComposedFileManager::FileExists,
+	// Deponia_Linux.asm line 519756) - real wxString::Find() returns the
+	// index of the first match, or wxNOT_FOUND (-1) if absent.
+	int Find(const wxString &sub) const {
+		std::size_t pos = _data.find(sub._data);
+		return pos == std::wstring::npos ? -1 : static_cast<int>(pos);
+	}
 	// Confirmed call shape only (asm line 458581) - real wxString::Replace()
 	// replaces every occurrence of strOld with strNew when replaceAll is
 	// true (the one call site reversed so far always passes true; a
@@ -245,6 +252,16 @@ public:
 	wxString GetFullName() const {
 		std::size_t pos = _fullPath.find_last_of(L"/\\");
 		return wxString(pos == std::wstring::npos ? _fullPath : _fullPath.substr(pos + 1));
+	}
+	// Confirmed call shape only (TComposedFileManager::Export,
+	// Deponia_Linux.asm line 519299) - real wxFileName::GetName() returns
+	// just the name portion (no directory, no extension).
+	wxString GetName() const {
+		wxString ext = GetExt();
+		std::wstring fullName = GetFullName().ToStdWstring();
+		if (ext.ToStdWstring().empty())
+			return wxString(fullName);
+		return wxString(fullName.substr(0, fullName.size() - ext.ToStdWstring().size() - 1));
 	}
 	// Confirmed call shape only (TGameControl::SaveGame, asm line 463066) -
 	// replaces the name+extension portion, keeping any existing directory,
@@ -405,13 +422,21 @@ public:
 	// 458421-458435) - not reversed beyond that; implemented for real
 	// against the same std::FILE* pattern already used for TFile.
 	long Length() const;
-	// Confirmed call shape only (TComposedFile::GetMemoryFile, Deponia_Linux.
-	// asm line 545901, mode=1) - the real wxWidgets wxFile::OpenMode ordinal
-	// for the mode value seen there wasn't independently confirmed, and the
-	// only call site reversed so far only ever reads the file afterward, so
-	// this always opens for reading regardless of `mode`.
+	// Confirmed call shapes (TComposedFile::GetMemoryFile, Deponia_Linux.asm
+	// line 545901, mode=1; TFile::DecryptHeader, asm line 523692, mode=2) -
+	// mode 1 opens read-only, mode 2 read-write (matching DecryptHeader's own
+	// subsequent Write() call); the real wxWidgets wxFile::OpenMode ordinals
+	// for these two values weren't independently confirmed.
 	bool Open(const wxString &path, int mode);
+	bool IsOpened() const {
+		return _handle != nullptr;
+	}
 	unsigned long Read(char *buffer, unsigned long size);
+	// Confirmed call shape only (TFile::DecryptHeader, Deponia_Linux.asm line
+	// 523762).
+	unsigned long Write(const void *buffer, unsigned long size);
+	// Confirmed call shape only (TFile::DecryptHeader, asm line 523764).
+	void Flush();
 	// Confirmed call shape only (TComposedFile::GetMemoryFile, Deponia_Linux.
 	// asm line 545987, mode=0 i.e. SEEK_SET at that call site).
 	bool Seek(unsigned long offset, int mode);
