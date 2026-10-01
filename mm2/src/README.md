@@ -32,3 +32,12 @@ mingw32-make mm2         # links build/mm2.exe against SDL2 (SDL_PREFIX, default
 
 The game directory is `$MM2_DIR` or `D:/GOG Games/Might and Magic 2`.  SDL2 2.32.10 (MinGW development package from libsdl.org) is unpacked in `C:\dev\SDL2`; `mm2.exe` links and runs
 (smoke-tested with `SDL_VIDEODRIVER=dummy`).
+
+## Review markers
+
+Everything I was unsure about in the original is marked `TODO(review)` in the source with the original routine and its IDA
+address (the overlay `.asm` files are in `../ovl/`, the resident code is `../mm2.asm`).  List them with:
+
+```
+grep -n "TODO(review)" *.c
+```

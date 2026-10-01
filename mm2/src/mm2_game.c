@@ -51,6 +51,9 @@ const char *mm2_location_name(int c) {
 	}
 }
 
+/* TODO(review): simplified host for the events: ask_yn (ops 9/10, ovl/2PLAY.asm 0x1941E/0x1946E) just returns the preset
+ * answer, teleports end the script, fights only record the monster ids (op 18 args read as 10 ids + 2 parameters, 0x19912);
+ * message ops ignore their different window styles. */
 static int host_exec(void *ud, Mm2Vm *vm, int op, const uint8_t *args) {
 	Mm2GameSession *s = (Mm2GameSession *)ud;
 	switch (op) {
@@ -145,6 +148,10 @@ int mm2_session_run_trigger(Mm2GameSession *s) {
 	return 1;
 }
 
+/* TODO(review): movement/trigger timing is simplified.  The original (resident party_step_forward, mm2.asm IDA 0x142AA, and
+ * game_main_loop) also ticks effect timers, may start a random encounter (chance from attribute byte 09), clears spell
+ * effects and redraws; the trigger is run with the party's current facing, which I assumed matches evt_check_cell_triggers
+ * (ovl/2PLAY.asm 0x1A8C4, facing table DGROUP:16D2). */
 int mm2_session_step(Mm2GameSession *s, int backwards) {
 	char dir = s->facing;
 	int dx, dy;

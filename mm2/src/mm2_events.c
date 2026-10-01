@@ -37,6 +37,11 @@ static void skip_commands(Mm2Vm *vm, int n) {
 	}
 }
 
+/* TODO(review): control-flow ops follow ovl/2PLAY.asm evt_op15/16/17/23/26/27/28/43/44 (IDA 0x198C8..0x1A202).  Unverified:
+ *  - opcode 43 tests byte_1DD59, which I labelled "night" earlier; elsewhere that byte is set to 0 when the party moves and
+ *    tested after fights, so it may mean "a fight happened"; the VM exposes it as vm->night;
+ *  - opcode 44 adds to word_1DC18 (not part of the saved state table; kept in vm->counter);
+ *  - whether a host-handled op such as teleport really ends the script in the original (evt_op12_teleport, 0x194D4). */
 int mm2_vm_run(Mm2Vm *vm, const uint8_t *scripts, size_t len, int script) {
 	size_t start = find_script(scripts, len, script);
 	if (start == (size_t)-1) return -1;

@@ -9,6 +9,9 @@ uint32_t mm2_price_decode(int code) {
 	return v;
 }
 
+/* TODO(review): costs from docs/shops.md (read from ovl/2TEMPLE.asm temple_menu, IDA 0x1CA88).  I did not re-read the code
+ * for this port: the base amounts (10/100/1000), the use of the current level (+71h; could be the base level +20h) and the
+ * town multiplier DGROUP:46A8 are taken from my earlier notes. */
 uint32_t mm2_temple_restore_cost(const Mm2Char *c, int town) {
 	unsigned cond = mm2_c8(c, MC_CONDITION);
 	uint32_t base;

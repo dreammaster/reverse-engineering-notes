@@ -1,5 +1,8 @@
 #include "mm2_map.h"
 
+/* TODO(review): ranges from resident map_style_for_id (ovl/2PLAY.asm IDA 0x1B410, tables DGROUP:16E0/16E8/16F0) and enter_map
+ * (0x1B5EA); which style number loads which file set (0 town, 1 cave, 2/5 castle, 3/4/6 outdoor) is inferred from
+ * view_load_style_graphics (0x1B288) and the file name list at DGROUP:04CE, not traced pointer by pointer. */
 int mm2_map_style(int map) {
 	if (map <= 4) return 0;
 	if (map <= 16) return 3;

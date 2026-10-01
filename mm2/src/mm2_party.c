@@ -20,6 +20,13 @@ int mm2_roster_find_free(const Mm2Roster *r) {
 	return -1;
 }
 
+/* TODO(review): port of ovl/1MENU2.asm create_character_record (IDA 0x18624..0x187F4).  Verified against the six shipped
+ * level-1 characters, but note:
+ *  - the disassembly I read lost a few lines (inline XREF comments): the load of stats[2] for +6D/+12 and the class test
+ *    (Cleric or Sorcerer get spells) were reconstructed from context and from the shipped data;
+ *  - the starting backpack item uses the word table at DGROUP:06F2 indexed by LUCK and the byte table at 075C
+ *    (MM2_ENDURANCE_HP / MM2_START_ITEM).  The same 06F2 table is also indexed by Endurance for the starting HP.  This is
+ *    what the code does (0x187A5..0x187E5) but it looks odd: please confirm the second use is really Luck. */
 void mm2_create_character(Mm2Char *c, const Mm2NewChar *n) {
 	uint8_t *r = c->raw;
 	int k, endurance = n->stats[3], luck = n->stats[6];
@@ -96,6 +103,16 @@ static int bracket_or_zero(int stat) {
 	return (uint8_t)b >= 0xF0 ? 0 : b;   /* negative brackets count as 0 (cmp al, F0h) */
 }
 
+/* TODO(review): assumptions here, compare with ovl/2MISC2.asm, the routine at loc_1C6CC (IDA 0x1C6CC..0x1C85C, called from
+ * the training hall's level-up code at ~0x1CA66):
+ *  - casting stat: the original reads char +12h (Personality) by default and +11h (Intellect) when var_14 is set, which
+ *    it sets for classes 1 and 2 only (Paladin, Archer).  Taken literally that gives Sorcerers Personality, contradicting
+ *    character creation (Intellect) and the shipped Sorcerers.  I used Cleric/Paladin = Personality, Sorcerer/Archer =
+ *    Intellect instead; the original's choice is unverified.
+ *  - maximum SP = spellLevel * (bracket(stat) + 3) as in the multiply at ~0x1C85C.  The premade characters in ROSTER.DAT
+ *    do NOT follow this (they look like baseLevel * (bracket + 3)), so the formula is unconfirmed.
+ *  - the "cap reached" branch at loc_1C7F4 sets the spell level used for SP to the character level (+20); copied as is, odd.
+ *  - hybrids (Paladin/Archer) use level-6 and stop advancing at spell level 8: from the compares at 0x1C6F4..0x1C767. */
 int mm2_update_spell_level(Mm2Char *c) {
 	int cls = (int)mm2_c8(c, MC_CLASS);
 	int hybrid = cls == MM2_PALADIN || cls == MM2_ARCHER;
@@ -139,6 +156,10 @@ int mm2_update_spell_level(Mm2Char *c) {
 	return advance;
 }
 
+/* TODO(review): ovl/2MISC2.asm, the code after the "Sorry - you need more gold" check (IDA ~0x1C960..0x1CA72).  The hit point
+ * gain (HPperLevel * townMult / townDiv, rounded up unless Cleric/Ninja/Robber, plus the endurance bracket, negative
+ * brackets treated as 0) was read from the code; the "free training" special case (cost 0: gold += gold/2, max 50000,
+ * at ~0x1C8F4) is copied but I did not work out when the cost can be 0. */
 Mm2LevelUp mm2_level_up(Mm2Char *c, int town) {
 	Mm2LevelUp r = {0, 0};
 	int cls = (int)mm2_c8(c, MC_CLASS);

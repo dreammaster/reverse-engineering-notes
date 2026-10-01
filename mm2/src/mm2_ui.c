@@ -1,3 +1,7 @@
+/* TODO(review): these screens are my own simplified layouts, NOT the original ones.  The original texts (building titles,
+ * "Sorry - you need more gold.", prices, menus) come from STR.DAT through the per-building string tables, e.g. 2SMITH
+ * blacksmith_menu (IDA 0x1CCBA), 1RETINN inn_menu (0x1C5C0), 2MISC2 training_hall (0x1CE30); the original draws them in
+ * windows with the 8x8 font from fixed text cells that I did not copy. */
 #include "mm2_ui.h"
 #include "mm2_gfx.h"
 

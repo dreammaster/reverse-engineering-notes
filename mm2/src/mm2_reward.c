@@ -5,6 +5,9 @@ static int rnd(const Mm2Rng *r, int lo, int hi) {
 	return r->range(r->ud, lo, hi);
 }
 
+/* TODO(review): port of ovl/2COMBAT.asm combat_monster_rewards (IDA 0x188FC..0x189D2).  The gold class arithmetic (shifts of
+ * the monster id, rand adds, result << 8) was read from the code; the meaning of record bits "gold class" and "item class"
+ * (docs/file-formats.md, record byte 10h) is inferred from this function only. */
 void mm2_monster_reward(Mm2Loot *loot, const Mm2Monster *m, int id, const Mm2Rng *rng) {
 	if (m->dropsGems) loot->gems += rnd(rng, 1, 10);
 	if (m->goldClass) {

@@ -24,6 +24,9 @@ static void set_size(Mm2Roster *r, int n) {
 	p[1] = 0;
 }
 
+/* TODO(review): ovl/1RETINN.asm inn_menu (IDA 0x1C5C0..0x1CB3F).  The rule "a hireling is offered only when event variable
+ * (id - 24) is set" comes from my reading of the code that tests DGROUP:3F6 + index; the exact index mapping of hireling
+ * ids to variables was not verified for all 24 hirelings. */
 static int hireling_unlocked(const Mm2Roster *r, int id) {
 	unsigned dg = mm2_event_var_dgroup(id - MM2_FIRST_HIRELING);
 	uint8_t *p = dg ? mm2_state_ptr((Mm2State *)cst(r), dg) : 0;
@@ -80,6 +83,8 @@ Mm2InnResult mm2_inn_move(Mm2Roster *r, int id, int town) {
 	return MM2_INN_OK;
 }
 
+/* TODO(review): ovl/1RETINN.asm inn_menu exit path (IDA ~0x1CB15) also stamps g_inn_town and saves the roster; the party
+ * members' town byte update (+0Bh) is from docs/party-commands.md, not re-checked. */
 void mm2_inn_leave(Mm2Roster *r, int town) {
 	int i;
 	for (i = 0; i < mm2_party_size(r); i++)

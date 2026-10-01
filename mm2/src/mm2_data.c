@@ -45,6 +45,9 @@ static int sized(int b) {
 	return v > 250 ? 250 : v;
 }
 
+/* TODO(review): the record layout is from resident monster_decode_stats (mm2.asm IDA 0x13B80).  Fields marked "inferred" in
+ * docs/file-formats.md: group size, summoner, noSteal, ranged/undead flags and the element immunity bits were assigned by
+ * looking at where 2COMBAT/2CAST2 use the decoded globals, not from names in the original. */
 int mm2_load_monsters(const Mm2Game *g, Mm2Monster mons[MM2_MONSTERS]) {
 	Mm2Blob b = mm2_load_lzw_file(g, "MONSTERS.DAT");
 	int i, k;

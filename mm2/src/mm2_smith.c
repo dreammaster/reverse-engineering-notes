@@ -1,6 +1,10 @@
 #include "mm2_smith.h"
 #include "mm2_tables.h"
 
+/* TODO(review): ovl/2SMITH.asm sub_1C8E0 / smith_load_stock (IDA 0x1C8E0..0x1CA52).  The category-to-table mapping (1 = 43C8,
+ * 2 = 447C with day bonus, 3 = 4404, 4 = 4440 with charges) was read from the code; the day bonus uses the day-of-year of the
+ * current era (DGROUP:03A2[era]) which the caller must supply.  Side effects for map 1 / category 4 (byte_23060/23062,
+ * 0x1CA3F) are not ported. */
 void mm2_smith_stock(int town, int category, int dayOfYear, Mm2SmithSlot out[6]) {
 	int i, o = town * 6;
 	for (i = 0; i < 6; i++) {

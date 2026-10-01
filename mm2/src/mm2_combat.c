@@ -7,6 +7,15 @@ static int rnd(const Mm2Rng *r, int lo, int hi) {
 	return r->range(r->ud, lo, hi);
 }
 
+/* TODO(review): port of ovl/2COMBAT.asm combat_party_attack (IDA 0x18DAA..0x190B6).  Uncertain points:
+ *  - Mm2AttackMods.hitFloor is byte_1DC2B in the original ("mov cl, byte_1DC2B; sub ax, cx; cmp ax, 80h; jnb miss" at
+ *    ~0x18FB0); I do not know what that party byte is (it is one of the saved effect bytes 1DC20..1DC2B), so it is
+ *    exposed as a parameter and the condition (0 <= roll - floor < 128) is copied literally;
+ *  - the Robber/Ninja crit roll uses character byte +72h, which character creation fills with the *spell level*
+ *    (see docs/combat.md); that is most likely an original quirk, kept (~0x19056..0x190B3);
+ *  - 8-bit wraparound of the weapon/Might/Accuracy bonuses is emulated with uint8_t; the original keeps them in byte
+ *    variables (byte_22CF1/22CF3) but I did not verify every overflow case;
+ *  - damage above 250 becomes 1 (~0x18FF0), as read. */
 Mm2AttackResult mm2_party_attack(const Mm2Char *c, int monsterAc, int shooting, const Mm2AttackMods *mods, const Mm2Rng *rng) {
 	Mm2AttackResult res = {0, 0, 0, MM2_HIT_NORMAL};
 	int cls = (int)mm2_c8(c, MC_CLASS), level = (int)mm2_c8(c, MC_LEVEL);
@@ -74,6 +83,9 @@ int mm2_monster_hit_chance(int tier, int charAc) {
 	return charAc > t ? 5 : t - charAc;
 }
 
+/* TODO(review): port of ovl/2COMBAT.asm combat_monster_melee (IDA 0x18398..0x18452).  The hit chance and frightened/weakened
+ * halving were read from the code, but which status bits map to "frightened" (8) and "weakened" (4) comes from the status
+ * names table at DGROUP:0FEA, not from the melee code itself. */
 Mm2MonsterAttackResult mm2_monster_melee(const Mm2Monster *m, int tier, int charAc, int frightened, int weakened, const Mm2Rng *rng) {
 	Mm2MonsterAttackResult res = {m->blows, 0, 0};
 	int p = mm2_monster_hit_chance(tier, charAc), i;

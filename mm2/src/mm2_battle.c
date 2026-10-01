@@ -18,6 +18,11 @@ static void init_slot(Mm2Battle *b, int slot) {
 	b->usesLeft[slot] = (uint8_t)m->specialUses;
 }
 
+/* TODO(review): ranks come from ovl/2COMBAT.asm combat_init_ranks (IDA 0x19640..0x19748) and the slots from
+ * combat_init_monster(s) (0x195A8..0x1963F).  I could not map byte_1DC65's values to surprise with certainty from this
+ * code alone: I took 2 = monsters surprised (their front rank halves), 3 = party surprised, matching the "You surprised
+ * the monsters!" texts in combat_encounter (0x1A2A6).  Also unverified: the outdoor party rank branch for parties of 6+
+ * (0x196EC..0x19714) was read from partially truncated disassembly. */
 void mm2_battle_init(Mm2Battle *b, const Mm2Monster *table, const uint8_t *ids, int n, Mm2Char **party, int partySize,
 					 int outdoors, Mm2Surprise surprise, const Mm2Rng *rng) {
 	int i, slots;
@@ -62,6 +67,9 @@ void mm2_battle_init(Mm2Battle *b, const Mm2Monster *table, const uint8_t *ids, 
 		init_slot(b, i);
 }
 
+/* TODO(review): status wear-off at the start of a round (ovl/2COMBAT.asm combat_battle_loop IDA 0x1A15E..0x1A199): each
+ * status bit is kept when the matching bit of rand(1, monsterId) is clear.  rand(1, id) with id 0 (monster 0) was not
+ * checked against the original's rand_range for hi < lo. */
 void mm2_battle_start_round(Mm2Battle *b) {
 	int i, vis = mm2_battle_visible(b);
 	memset(b->actedM, 0, sizeof(b->actedM));
@@ -126,6 +134,14 @@ void mm2_battle_remove_monster(Mm2Battle *b, int slot) {
 
 static const uint8_t FLEE_TIER[4] = {3, 9, 24, 255};   /* DGROUP:1036, indexed by the record's verb field */
 
+/* TODO(review): decision part of ovl/2COMBAT.asm combat_monster_turn (IDA 0x184FE..0x1866E) plus combat_monster_spell_roll
+ * (0x1847E).  Assumptions:
+ *  - the "outclassed monster flees" test uses DGROUP:1036[verb index] < byte_1E812 (party strength, set by
+ *    combat_party_strength at 0x1974C) and byte_27814 (set near 0x1982x, meaning unknown; I call it "summoned");
+ *    the text shown is " runs away!" from combat_monster_gone_text, but the exact meaning of those bytes is unverified;
+ *  - the status >= 80h case (an "encased" monster casting a damage spell from tables at DGROUP:102A/1032, 0x18529) is not
+ *    ported;
+ *  - the spell-failed condition (spell id 15h..1Eh except 1Dh, and silenced or no-magic cell) was read at 0x18622..0x18648. */
 Mm2MonsterAction mm2_monster_decide(const Mm2Battle *b, int slot, int partyStrength, int cellNoMagic, int summonedFlag) {
 	const Mm2Monster *m = &b->table[b->id[slot]];
 	int st = b->status[slot];

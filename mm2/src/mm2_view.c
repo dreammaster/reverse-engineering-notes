@@ -136,6 +136,9 @@ static int door(int value) {
 	return value == 2 ? 0x10 : 0;
 }
 
+/* TODO(review): sky image: view_indoor_daylight (ovl/2PLAY.asm IDA 0x18510) decides between SKY images 0 and 1 from a bit
+ * table at DGROUP:59A6 and the party position; I always draw image 1.  Night stars (sub_14FB2) and the queued wall sprites for
+ * wall value 3 (view_queue_sprite_a..e, 0x1830E..0x18510, TOWNT/TOWNB banks) are not drawn. */
 void mm2_view_render_indoor(Mm2View *v, uint8_t *canvas, const uint8_t *walls, int x, int y, char facing) {
 	Walls w;
 	int n;
@@ -168,6 +171,9 @@ static int terrain(const uint8_t *w, int x, int y) {
 	return TERRAIN[cell(w, x, y) & 0x1F];
 }
 
+/* TODO(review): transcribed from ovl/2PLAY.asm sub_189B8 (horizon strips, 0x189B8), sub_18AD0/18B0C/18BEC (tiles) and sub_18CC6
+ * (0x18CC6); the two x overrides keyed on byte_22D04 / byte_22D08 (0x18B90, 0x18C8F) are not ported, the sky image is always 0
+ * and the terrain bank is chosen by the caller. */
 void mm2_view_render_outdoor(Mm2View *v, uint8_t *canvas, const uint8_t *walls, int x, int y, char facing) {
 	Face f;
 	int cen[4], lef[4], rig[4], d, n, nearest, side;

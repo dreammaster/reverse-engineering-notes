@@ -1,5 +1,9 @@
 #include "mm2_spells.h"
 
+/* TODO(review): resident mm2.asm spell_calc_cost (IDA 0x13AEA..0x13B64).  The original tests bit 6 of the spell's second
+ * byte (40h) to add 10 instead of 8; Mm2Spell does not carry that bit, so I special-cased spell 46 (Star Burst) and used
+ * "full monster count" for spells 42 and 46 (it compares the table address against 7DB4h/7DBCh).  Verify against the
+ * data bytes of SPELLS.DAT. */
 int mm2_spell_sp_cost(const Mm2Spell *table, int spell, int level, int monsterCount) {
 	const Mm2Spell *sp = &table[spell];
 	int mons = monsterCount > 10 ? 10 : monsterCount;
@@ -38,6 +42,10 @@ static const struct {
 	{62, {5, 0, 0, 25, 0, 3}},  /* Cold Ray */
 };
 
+/* TODO(review): values transcribed from the 2CAST2 handlers (ovl/2CAST2.asm, jump table in cast_spell_dispatch IDA 0x1CF2C,
+ * handlers 0x1C130..0x1D100) by a condensed read of the push sequences to combat_party_spell_hits (ovl/2COMBAT.asm 0x18696)
+ * and sub_1A82C (0x1A82C).  Argument order (targets, element) and which handler belongs to which spell were inferred;
+ * Acid Stream/Acid Spray and several status spells were not decoded.  The element numbers are guesses beyond 1-4. */
 int mm2_combat_spell(int spell, Mm2CombatSpell *out) {
 	unsigned i;
 	for (i = 0; i < sizeof(COMBAT) / sizeof(COMBAT[0]); i++)
