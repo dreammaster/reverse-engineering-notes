@@ -76,5 +76,9 @@ typedef struct {
 } Mm2Roster;
 
 int mm2_load_roster(const Mm2Game *g, Mm2Roster *r);
+/* Serialises to the ROSTER.DAT layout (0x1860 + 2052 bytes = 8292).  Returns the size. */
+size_t mm2_roster_to_bytes(const Mm2Roster *r, uint8_t *out, size_t cap);
+/* Writes ROSTER.DAT into the game directory. */
+int mm2_save_roster(const Mm2Game *g, const Mm2Roster *r);
 
 #endif

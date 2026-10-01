@@ -1,5 +1,6 @@
 #include "mm2_data.h"
 
+#include <stdio.h>
 #include <string.h>
 
 static const int DIE[4] = {1, 10, 100, 1000};
@@ -126,4 +127,25 @@ int mm2_load_roster(const Mm2Game *g, Mm2Roster *r) {
 	memcpy(r->state, b.data + 0x1860, 2052);
 	mm2_blob_free(&b);
 	return 1;
+}
+
+size_t mm2_roster_to_bytes(const Mm2Roster *r, uint8_t *out, size_t cap) {
+	if (cap < 0x1860 + 2052) return 0;
+	memcpy(out, r->chars, 0x1860);
+	memcpy(out + 0x1860, r->state, 2052);
+	return 0x1860 + 2052;
+}
+
+int mm2_save_roster(const Mm2Game *g, const Mm2Roster *r) {
+	uint8_t buf[0x1860 + 2052];
+	char path[1024];
+	FILE *f;
+	size_t n = mm2_roster_to_bytes(r, buf, sizeof(buf));
+	int ok;
+	snprintf(path, sizeof(path), "%s/ROSTER.DAT", g->dir);
+	f = fopen(path, "wb");
+	if (!f) return 0;
+	ok = fwrite(buf, 1, n, f) == n;
+	fclose(f);
+	return ok;
 }

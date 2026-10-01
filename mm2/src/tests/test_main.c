@@ -4,6 +4,7 @@
 #include "../mm2_files.h"
 #include "../mm2_gfx.h"
 #include "../mm2_map.h"
+#include "../mm2_combat.h"
 #include "../mm2_data.h"
 #include "../mm2_events.h"
 #include "../mm2_tables.h"
@@ -173,6 +174,15 @@ static void test_tables_and_rules(const Mm2Game *g) {
 			CHECK(mm2_c8(&roster.chars[i], MC_CLASS) < 8 && mm2_c8(&roster.chars[i], MC_RACE) < 5);
 			CHECK(mm2_c16(&roster.chars[i], MC_HP_MAX) >= mm2_c16(&roster.chars[i], MC_HP) || mm2_c8(&roster.chars[i], MC_CONDITION) != 0);
 		}
+	{
+		/* save/load round trip: the serialised roster equals the shipped file */
+		uint8_t out[0x1860 + 2052];
+		Mm2Blob orig = mm2_read_file(g, "ROSTER.DAT");
+		CHECK(orig.data && orig.size >= sizeof(out));
+		CHECK(mm2_roster_to_bytes(&roster, out, sizeof(out)) == sizeof(out));
+		CHECK(memcmp(out, orig.data, sizeof(out)) == 0);
+		mm2_blob_free(&orig);
+	}
 	/* rules: values from tools/mm2_rules.py */
 	CHECK(mm2_exp_for_level(0, 2) == 1500 && mm2_exp_for_level(0, 5) == 12000 && mm2_exp_for_level(0, 10) == 384000);
 	CHECK(mm2_exp_for_level(0, 11) == 576000 && mm2_exp_for_level(0, 25) == 13248000 && mm2_exp_for_level(0, 80) == 154048000u);
@@ -236,6 +246,54 @@ static void test_event_vm(const Mm2Game *g) {
 	}
 }
 
+static int rng_lo(void *ud, int lo, int hi) { (void)ud; (void)hi; return lo; }
+static int rng_hi(void *ud, int lo, int hi) { (void)ud; (void)lo; return hi; }
+
+static void test_combat(void) {
+	Mm2Rng lo = {rng_lo, 0}, hi = {rng_hi, 0};
+	Mm2AttackMods mods = {0, 0, 0};
+	Mm2Char c;
+	Mm2AttackResult r;
+	Mm2Monster mon;
+	Mm2MonsterAttackResult mr;
+	memset(&c, 0, sizeof(c));
+	memset(&mon, 0, sizeof(mon));
+	c.raw[MC_CLASS] = MM2_KNIGHT;
+	c.raw[MC_LEVEL] = 10;
+	c.raw[MC_CUR_STATS] = 15;        /* Might: bracket 1 */
+	c.raw[MC_CUR_STATS + 4] = 15;    /* Accuracy: bracket 1 */
+	c.raw[0x4C] = 8;                 /* weapon dice */
+	c.raw[0x4D] = 2;                 /* weapon bonus */
+	r = mm2_party_attack(&c, 30, 0, &mods, &lo);          /* d100 = 1 always hits */
+	CHECK(r.swings == 3 && r.hits == 3 && r.damage == 12 && r.kind == MM2_HIT_NORMAL);
+	r = mm2_party_attack(&c, 30, 0, &mods, &hi);          /* d100 = 100, to-hit 35 + 3 >= AC 30 */
+	CHECK(r.hits == 3 && r.damage == 33);
+	r = mm2_party_attack(&c, 40, 0, &mods, &hi);          /* AC 40 > 38: all miss */
+	CHECK(r.hits == 0 && r.damage == 0);
+	mods.damageBonus = 5;
+	r = mm2_party_attack(&c, 30, 0, &mods, &hi);
+	CHECK(r.damage == 38);
+	mods.hitFloor = 60;                                    /* roll 38 is below the floor */
+	r = mm2_party_attack(&c, 30, 0, &mods, &hi);
+	CHECK(r.hits == 0);
+	mods.hitFloor = 0;
+	c.raw[MC_CLASS] = MM2_ROBBER;                          /* swings = 10/5+1 = 2, back stab on roll 100 */
+	r = mm2_party_attack(&c, 30, 0, &mods, &hi);
+	CHECK(r.swings == 3);
+	CHECK(r.kind == MM2_HIT_BACKSTAB);
+	/* monsters */
+	mon.blows = 2;
+	mon.damageDie = 6;
+	CHECK(mm2_monster_hit_chance(0, 10) == 30 && mm2_monster_hit_chance(0, 99) == 5 && mm2_monster_hit_chance(13, 0) == 250);
+	mr = mm2_monster_melee(&mon, 0, 10, 0, 0, &lo);
+	CHECK(mr.blows == 2 && mr.hits == 2 && mr.damage == 2);
+	mr = mm2_monster_melee(&mon, 0, 10, 0, 0, &hi);        /* roll 100 > 30: miss */
+	CHECK(mr.hits == 0);
+	mr = mm2_monster_melee(&mon, 0, 10, 0, 1, &lo);
+	CHECK(mr.damage == 1);
+	CHECK(mm2_spell_damage_roll(5, 5, 1, &lo) == 10 && mm2_spell_damage_roll(5, 0, 6, &lo) == 30 && mm2_spell_damage_roll(5, 5, 1, &hi) == 30);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -244,6 +302,7 @@ int main(void) {
 	test_map_rules(&g);
 	test_tables_and_rules(&g);
 	test_event_vm(&g);
+	test_combat();
 	test_banks(&g);
 	test_indoor_render(&g);
 	test_outdoor_render(&g);
