@@ -8,3 +8,20 @@
 1C9E6	char_equip_item	"Equip Which (A-F)?"
 1CB8A	char_drop_item	"Drop Which (A-F)?"
 1CCD4	cmds_helper_b
+1C180	cmds_show_error	(n) error/message text for the item commands
+1C212	trade_gold	read amount, move gold between characters
+1C2A4	trade_gems	read amount, move gems
+1C304	trade_food	read amount, move food
+1C3A6	trade_item	pick backpack item and give it
+1CFDE	item_is_onehand_weapon	id 1-65
+1CFF6	item_is_twohand_weapon	id 66-91
+1D00E	item_is_missile_weapon	id 92-114
+1D026	item_is_shield	id 115-126
+1D03E	item_is_armour	id 127-154
+1D056	item_is_helm	id 155-159
+1D06E	item_is_weapon	one- or two-handed
+1D11C	equipped_has_shield	any of the 6 equipped slots is a shield
+1D162	equipped_has_missile	
+1D1A8	equipped_has_armour	
+1D1EE	equipped_has_helm	
+1D234	equipped_has_weapon	

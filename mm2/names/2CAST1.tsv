@@ -43,3 +43,7 @@
 1CD56	spell_nc_Remove_Condition	Remove Condition
 1CD96	spell_nc_Stone_to_Flesh	Stone to Flesh
 1CDCA	spell_nc_Raise_Dead	Raise Dead
+1CB48	cast1_pick_item	"On which (A-F)?" prompt for item spells
+1CE46	spell_heal_character	(amount) picks a character, clears asleep/unconscious, adds HP
+1CE9E	cast1_show_done	"Done" message
+1CEFA	cast1_show_failed	"Spell Failed" with sound

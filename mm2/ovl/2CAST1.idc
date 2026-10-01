@@ -512,6 +512,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CB34);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CB48);
+	set_name	(0X1CB48,	"cast1_pick_item");
 	create_insn	(x=0X1CB4B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CB5E);
@@ -661,6 +662,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CE32);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CE46);
+	set_name	(0X1CE46,	"spell_heal_character");
 	create_insn	(x=0X1CE49);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CE50);
@@ -676,6 +678,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CE77);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CE9E);
+	set_name	(0X1CE9E,	"cast1_show_done");
 	create_insn	(x=0X1CEA1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CEA5);
@@ -696,6 +699,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CEED);
 	op_hex		(x,	1);
 	create_insn	(0X1CEFA);
+	set_name	(0X1CEFA,	"cast1_show_failed");
 	create_insn	(x=0X1CEFD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CF01);
@@ -1254,6 +1258,7 @@ static Functions_0(void) {
 	set_frame_size(0X1CB10, 0X4, 2, 0);
 	add_func    (0X1CB48,0X1CBEC);
 	set_func_flags(0X1CB48,0x5410);
+	set_func_cmt(0X1CB48,	"\"On which (A-F)?\" prompt for item spells", 0);
 	set_frame_size(0X1CB48, 0X8, 2, 0);
 	add_func    (0X1CBEC,0X1CC3A);
 	set_func_flags(0X1CBEC,0x5410);
@@ -1301,12 +1306,15 @@ static Functions_0(void) {
 	set_frame_size(0X1CDCA, 0X4, 2, 0);
 	add_func    (0X1CE46,0X1CE9E);
 	set_func_flags(0X1CE46,0x5410);
+	set_func_cmt(0X1CE46,	"(amount) picks a character, clears asleep/unconscious, adds HP", 0);
 	set_frame_size(0X1CE46, 0X6, 2, 0);
 	add_func    (0X1CE9E,0X1CEFA);
 	set_func_flags(0X1CE9E,0x5410);
+	set_func_cmt(0X1CE9E,	"\"Done\" message", 0);
 	set_frame_size(0X1CE9E, 0X4, 2, 0);
 	add_func    (0X1CEFA,0X1CF5B);
 	set_func_flags(0X1CEFA,0x5410);
+	set_func_cmt(0X1CEFA,	"\"Spell Failed\" with sound", 0);
 	set_frame_size(0X1CEFA, 0X4, 2, 0);
 	add_func    (0X1CF5C,0X1D0C2);
 	set_func_flags(0X1CF5C,0x5400);

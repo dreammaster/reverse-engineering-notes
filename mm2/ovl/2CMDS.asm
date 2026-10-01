@@ -62,10 +62,11 @@ cmds_common_helper endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; (n) error/message text for the item commands
 ; Attributes: bp-based frame
 
-sub_1C180       proc near               ; CODE XREF: sub_1C212+42↓p
-                                        ; sub_1C2A4+32↓p ...
+cmds_show_error proc near               ; CODE XREF: trade_gold+42↓p
+                                        ; trade_gems+32↓p ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -79,7 +80,7 @@ arg_0           = word ptr  4
                 jl      short loc_1C197
                 mov     [bp+var_2], 0
 
-loc_1C197:                              ; CODE XREF: sub_1C180+10↑j
+loc_1C197:                              ; CODE XREF: cmds_show_error+10↑j
                 mov     ax, 1
                 push    ax
                 call    thk_clear_text_preset
@@ -113,7 +114,7 @@ loc_1C197:                              ; CODE XREF: sub_1C180+10↑j
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C1E3:                              ; CODE XREF: sub_1C180+57↑j
+loc_1C1E3:                              ; CODE XREF: cmds_show_error+57↑j
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 push    word ptr [bx+3378h] ; CODE XREF: seg002:07F5↑J
@@ -125,7 +126,7 @@ loc_1C1E3:                              ; CODE XREF: sub_1C180+57↑j
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C202:                              ; CODE XREF: sub_1C180+76↑j
+loc_1C202:                              ; CODE XREF: cmds_show_error+76↑j
                 mov     ax, 32h ; '2'
                 push    ax
                 call    thk_wait_key_timeout
@@ -134,16 +135,17 @@ loc_1C202:                              ; CODE XREF: sub_1C180+76↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C180       endp
+cmds_show_error endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; read amount, move gold between characters
 ; Attributes: bp-based frame
 
-sub_1C212       proc near               ; CODE XREF: char_trade+150↓p
+trade_gold      proc near               ; CODE XREF: char_trade+150↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -177,18 +179,18 @@ loc_1C242:                              ; CODE XREF: seg002:0639↑J
                 cmp     [bx+7E86h], ax
                 jnb     short loc_1C25C
 
-loc_1C250:                              ; CODE XREF: sub_1C212+36↑j
+loc_1C250:                              ; CODE XREF: trade_gold+36↑j
                 mov     ax, 14h
 
-loc_1C253:                              ; CODE XREF: sub_1C212+71↓j
+loc_1C253:                              ; CODE XREF: trade_gold+71↓j
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
                 jmp     short loc_1C29C
 ; ---------------------------------------------------------------------------
 
-loc_1C25C:                              ; CODE XREF: sub_1C212+34↑j
-                                        ; sub_1C212+3C↑j
+loc_1C25C:                              ; CODE XREF: trade_gold+34↑j
+                                        ; trade_gold+3C↑j
                 mov     ax, [bp+var_4]
                 or      ax, [bp+var_2]
                 jz      short loc_1C29C
@@ -206,7 +208,7 @@ loc_1C25C:                              ; CODE XREF: sub_1C212+34↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C286:                              ; CODE XREF: sub_1C212+6C↑j
+loc_1C286:                              ; CODE XREF: trade_gold+6C↑j
                 mov     ax, 82h
                 imul    [bp+arg_2]
                 mov     bx, ax
@@ -215,22 +217,23 @@ loc_1C286:                              ; CODE XREF: sub_1C212+6C↑j
                 add     [bx+7E86h], ax
                 adc     [bx+7E88h], dx
 
-loc_1C29C:                              ; CODE XREF: sub_1C212+48↑j
-                                        ; sub_1C212+50↑j
+loc_1C29C:                              ; CODE XREF: trade_gold+48↑j
+                                        ; trade_gold+50↑j
                 mov     ax, 1
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C212       endp
+trade_gold      endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; read amount, move gems
 ; Attributes: bp-based frame
 
-sub_1C2A4       proc near               ; CODE XREF: char_trade+163↓p
+trade_gems      proc near               ; CODE XREF: char_trade+163↓p
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -255,12 +258,12 @@ arg_2           = word ptr  6
                 jnb     short loc_1C2DE
                 mov     ax, 14h
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
                 jmp     short loc_1C2FC
 ; ---------------------------------------------------------------------------
 
-loc_1C2DE:                              ; CODE XREF: sub_1C2A4+2C↑j
+loc_1C2DE:                              ; CODE XREF: trade_gems+2C↑j
                 mov     ax, 82h
                 imul    [bp+arg_0]
                 mov     bx, ax
@@ -274,21 +277,22 @@ loc_1C2DE:                              ; CODE XREF: sub_1C2A4+2C↑j
 loc_1C2F8:                              ; CODE XREF: seg002:0651↑J
                 add     [bx+7E7Ch], ax
 
-loc_1C2FC:                              ; CODE XREF: sub_1C2A4+38↑j
+loc_1C2FC:                              ; CODE XREF: trade_gems+38↑j
                 mov     ax, 1
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C2A4       endp
+trade_gems      endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; read amount, move food
 ; Attributes: bp-based frame
 
-sub_1C304       proc near               ; CODE XREF: char_trade+175↓p
+trade_food      proc near               ; CODE XREF: char_trade+175↓p
 
 var_A           = byte ptr -0Ah
 var_8           = byte ptr -8
@@ -314,7 +318,7 @@ arg_2           = word ptr  6
                 jbe     short loc_1C330
                 mov     [bp+var_6], 14h
 
-loc_1C330:                              ; CODE XREF: sub_1C304+25↑j
+loc_1C330:                              ; CODE XREF: trade_food+25↑j
                 mov     al, byte ptr [bp+var_2]
                 mov     [bp+var_4], al
                 mov     ax, 82h
@@ -325,7 +329,7 @@ loc_1C330:                              ; CODE XREF: sub_1C304+25↑j
                 jnb     short loc_1C34C
                 mov     [bp+var_6], 14h
 
-loc_1C34C:                              ; CODE XREF: sub_1C304+41↑j
+loc_1C34C:                              ; CODE XREF: trade_food+41↑j
                 mov     ax, 82h
                 imul    [bp+arg_2]
                 mov     bx, ax
@@ -338,20 +342,20 @@ loc_1C34C:                              ; CODE XREF: sub_1C304+41↑j
                 cmp     al, 28h ; '('
                 jbe     short loc_1C36F
 
-loc_1C36A:                              ; CODE XREF: sub_1C304+60↑j
+loc_1C36A:                              ; CODE XREF: trade_food+60↑j
                 mov     [bp+var_6], 14h
 
-loc_1C36F:                              ; CODE XREF: sub_1C304+64↑j
+loc_1C36F:                              ; CODE XREF: trade_food+64↑j
                                         ; seg002:0471↑J
                 cmp     [bp+var_6], 0
                 jz      short loc_1C380
                 push    [bp+var_6]
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
                 jmp     short loc_1C39E
 ; ---------------------------------------------------------------------------
 
-loc_1C380:                              ; CODE XREF: sub_1C304+6F↑j
+loc_1C380:                              ; CODE XREF: trade_food+6F↑j
                 mov     ax, 82h
                 imul    [bp+arg_0]
                 mov     bx, ax
@@ -363,21 +367,22 @@ loc_1C380:                              ; CODE XREF: sub_1C304+6F↑j
                 mov     al, [bp+var_4]
                 add     [bx+7E45h], al
 
-loc_1C39E:                              ; CODE XREF: sub_1C304+7A↑j
+loc_1C39E:                              ; CODE XREF: trade_food+7A↑j
                 mov     ax, 1
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C304       endp
+trade_food      endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; pick backpack item and give it
 ; Attributes: bp-based frame
 
-sub_1C3A6       proc near               ; CODE XREF: char_trade+187↓p
+trade_item      proc near               ; CODE XREF: char_trade+187↓p
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -407,7 +412,7 @@ arg_2           = word ptr  6
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C3D5:                              ; CODE XREF: sub_1C3A6+68↓j
+loc_1C3D5:                              ; CODE XREF: trade_item+68↓j
                 mov     ax, 66h ; 'f'
                 push    ax
                 mov     ax, 41h ; 'A'
@@ -427,10 +432,10 @@ loc_1C3F6:                              ; CODE XREF: seg002:047D↑J
                 jmp     short loc_1C3FA
 ; ---------------------------------------------------------------------------
 
-loc_1C3F8:                              ; CODE XREF: sub_1C3A6+4B↑j
+loc_1C3F8:                              ; CODE XREF: trade_item+4B↑j
                 sub     ax, ax
 
-loc_1C3FA:                              ; CODE XREF: sub_1C3A6:loc_1C3F6↑j
+loc_1C3FA:                              ; CODE XREF: trade_item:loc_1C3F6↑j
                 mov     si, ax
                 or      si, si
                 jnz     short loc_1C40C
@@ -440,7 +445,7 @@ loc_1C3FA:                              ; CODE XREF: sub_1C3A6:loc_1C3F6↑j
                 inc     ax
                 mov     si, ax
 
-loc_1C40C:                              ; CODE XREF: sub_1C3A6+58↑j
+loc_1C40C:                              ; CODE XREF: trade_item+58↑j
                 or      si, si
                 jz      short loc_1C3D5
                 mov     [bp+var_A], di
@@ -451,32 +456,32 @@ loc_1C40C:                              ; CODE XREF: sub_1C3A6+58↑j
                 sub     cx, cx
                 mov     dx, [bp+var_4]
 
-loc_1C423:                              ; CODE XREF: sub_1C3A6+A2↓j
+loc_1C423:                              ; CODE XREF: trade_item+A2↓j
                 mov     si, cx
                 mov     bx, dx
                 cmp     byte ptr [bx+si+3Ah], 0
                 jnz     short loc_1C442
 
-loc_1C42D:                              ; CODE XREF: sub_1C3A6+A0↓j
+loc_1C42D:                              ; CODE XREF: trade_item+A0↓j
                 mov     [bp+var_8], cx
                 cmp     cx, 6
                 jnz     short loc_1C44A
                 mov     ax, 2
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
                 jmp     short loc_1C484
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C442:                              ; CODE XREF: sub_1C3A6+85↑j
+loc_1C442:                              ; CODE XREF: trade_item+85↑j
                 inc     cx
                 cmp     cx, 6
                 jge     short loc_1C42D
                 jmp     short loc_1C423
 ; ---------------------------------------------------------------------------
 
-loc_1C44A:                              ; CODE XREF: sub_1C3A6+8D↑j
+loc_1C44A:                              ; CODE XREF: trade_item+8D↑j
                 sub     [bp+var_A], 41h ; 'A'
                 mov     si, [bp+var_A]
                 add     si, [bp+var_C]
@@ -496,8 +501,8 @@ loc_1C44A:                              ; CODE XREF: sub_1C3A6+8D↑j
                 call    thk_char_backpack_remove
                 add     sp, 4
 
-loc_1C484:                              ; CODE XREF: sub_1C3A6+73↑j
-                                        ; sub_1C3A6+99↑j
+loc_1C484:                              ; CODE XREF: trade_item+73↑j
+                                        ; trade_item+99↑j
                 mov     ax, [bp+var_2]
                 pop     si
                 pop     di
@@ -506,7 +511,7 @@ loc_1C484:                              ; CODE XREF: sub_1C3A6+73↑j
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
-sub_1C3A6       endp
+trade_item      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -680,7 +685,7 @@ loc_1C5C0:                              ; CODE XREF: seg002:029D↑J
 loc_1C5D8:                              ; CODE XREF: seg002:01A1↑J
                 push    [bp+var_2]
                 push    [bp+var_6]
-                call    sub_1C212
+                call    trade_gold
                 jmp     short loc_1C618
 ; ---------------------------------------------------------------------------
                 align 2
@@ -691,7 +696,7 @@ loc_1C5E4:                              ; CODE XREF: char_trade+148↑j
                 jnz     short loc_1C5F6
                 push    [bp+var_2]
                 push    [bp+var_6]
-                call    sub_1C2A4
+                call    trade_gems
                 jmp     short loc_1C618
 ; ---------------------------------------------------------------------------
 
@@ -701,7 +706,7 @@ loc_1C5F6:                              ; CODE XREF: char_trade+15B↑j
                 jnz     short loc_1C608
                 push    [bp+var_2]
                 push    [bp+var_6]
-                call    sub_1C304
+                call    trade_food
                 jmp     short loc_1C618
 ; ---------------------------------------------------------------------------
 
@@ -711,7 +716,7 @@ loc_1C608:                              ; CODE XREF: char_trade+16D↑j
                 jnz     short loc_1C61D
                 push    [bp+var_2]
                 push    [bp+var_6]
-                call    sub_1C3A6
+                call    trade_item
 
 loc_1C618:                              ; CODE XREF: char_trade+153↑j
                                         ; char_trade+166↑j ...
@@ -794,7 +799,7 @@ loc_1C67A:                              ; CODE XREF: char_trade+1D9↑j
 
 loc_1C696:                              ; CODE XREF: char_trade+1BD↑j
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
 
 loc_1C69D:                              ; CODE XREF: ovl_2CMDS:C678↑j
@@ -851,7 +856,7 @@ loc_1C6D0:                              ; CODE XREF: cmds_helper_a+1D↑j
 
 loc_1C6E8:                              ; CODE XREF: cmds_helper_a+13↑j
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
 
 loc_1C6EF:                              ; CODE XREF: cmds_helper_a+2E↑j
@@ -977,7 +982,7 @@ loc_1C793:                              ; CODE XREF: char_use_item+95↑j
                 jnz     short loc_1C7B6
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
                 jmp     short loc_1C7E1
 ; ---------------------------------------------------------------------------
@@ -1094,7 +1099,7 @@ loc_1C84E:                              ; CODE XREF: char_remove_item+7E↓j
                 jnz     short loc_1C86A
                 mov     ax, 2
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
                 jmp     short loc_1C8A4
 ; ---------------------------------------------------------------------------
@@ -1159,12 +1164,12 @@ arg_2           = word ptr  6
                 mov     [bp+var_4], al
                 sub     ah, ah
                 push    ax
-                call    sub_1CFDE
+                call    item_is_onehand_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1C8E8
                 push    [bp+arg_0]
-                call    sub_1D234
+                call    equipped_has_weapon
                 add     sp, 2
                 mov     [bp+var_2], ax
                 or      ax, ax
@@ -1182,18 +1187,18 @@ loc_1C8E8:                              ; CODE XREF: item_effect_dispatch+23↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 push    ax
-                call    sub_1CFF6
+                call    item_is_twohand_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1C922
                 push    [bp+arg_0]
-                call    sub_1D234
+                call    equipped_has_weapon
                 add     sp, 2
                 mov     [bp+var_2], ax
                 or      ax, ax
                 jnz     short loc_1C8E2
                 push    [bp+arg_0]
-                call    sub_1D11C
+                call    equipped_has_shield
                 add     sp, 2
                 mov     [bp+var_2], ax
                 or      ax, ax
@@ -1211,12 +1216,12 @@ loc_1C922:                              ; CODE XREF: item_effect_dispatch+4C↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 push    ax
-                call    loc_1D00E
+                call    item_is_missile_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1C94C
                 push    [bp+arg_0]
-                call    sub_1D162
+                call    equipped_has_missile
                 add     sp, 2
                 mov     [bp+var_2], ax
                 or      ax, ax
@@ -1234,12 +1239,12 @@ loc_1C94C:                              ; CODE XREF: item_effect_dispatch+86↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 push    ax
-                call    sub_1D026
+                call    item_is_shield
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1C988
                 push    [bp+arg_0]
-                call    sub_1D11C
+                call    equipped_has_shield
                 add     sp, 2
                 mov     [bp+var_2], ax
                 or      ax, ax
@@ -1265,12 +1270,12 @@ loc_1C988:                              ; CODE XREF: item_effect_dispatch+B0↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 push    ax
-                call    loc_1D03E
+                call    item_is_armour
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1C9AE
                 push    [bp+arg_0]      ; CODE XREF: seg002:07DD↑J
-                call    sub_1D1A8
+                call    equipped_has_armour
                 add     sp, 2
                 mov     [bp+var_2], ax
                 or      ax, ax
@@ -1284,12 +1289,12 @@ loc_1C9AE:                              ; CODE XREF: item_effect_dispatch+EC↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 push    ax
-                call    loc_1D056
+                call    item_is_helm
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1C9D8
                 push    [bp+arg_0]
-                call    sub_1D1EE
+                call    equipped_has_helm
                 add     sp, 2
                 mov     [bp+var_2], ax
                 or      ax, ax
@@ -1299,7 +1304,7 @@ loc_1C9AE:                              ; CODE XREF: item_effect_dispatch+EC↑j
 loc_1C9D1:                              ; CODE XREF: item_effect_dispatch+3B↑j
                                         ; item_effect_dispatch+74↑j ...
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
 
 loc_1C9D8:                              ; CODE XREF: item_effect_dispatch+35↑j
@@ -1407,7 +1412,7 @@ loc_1CA61:                              ; CODE XREF: char_equip_item+90↓j
                 push    ax
 
 loc_1CA6D:                              ; CODE XREF: char_equip_item+150↓j
-                call    sub_1C180
+                call    cmds_show_error
                 jmp     short loc_1CADE
 ; ---------------------------------------------------------------------------
 
@@ -1438,7 +1443,7 @@ loc_1CA88:                              ; CODE XREF: seg002:0801↑J
                 or      byte ptr [bx+26h], 1
                 mov     ax, 3
                 push    ax
-                call    sub_1C180
+                call    cmds_show_error
                 add     sp, 2
                 mov     ax, 0Ah
                 push    ax
@@ -1835,7 +1840,7 @@ loc_1CD54:                              ; CODE XREF: char_remove_item+8C↑p
                 mov     al, [bp-4]
                 sub     ah, ah
                 push    ax
-                call    loc_1D06E
+                call    item_is_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1CD98
@@ -1847,7 +1852,7 @@ loc_1CD98:                              ; CODE XREF: ovl_2CMDS:CD8B↑j
                 mov     al, [bp-4]
                 sub     ah, ah
                 push    ax
-                call    loc_1D00E
+                call    item_is_missile_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1CDB3
@@ -1860,17 +1865,17 @@ loc_1CDB3:                              ; CODE XREF: ovl_2CMDS:CDA6↑j
                 sub     ah, ah
                 mov     si, ax
                 push    si
-                call    sub_1D026
+                call    item_is_shield
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_1CDDB
                 push    si
-                call    loc_1D03E
+                call    item_is_armour
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_1CDDB
                 push    si
-                call    loc_1D056
+                call    item_is_helm
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1CE01
@@ -1925,7 +1930,7 @@ loc_1CE12:                              ; CODE XREF: char_equip_item+188↑p
                 mov     al, [bp-4]
                 sub     ah, ah
                 push    ax
-                call    loc_1D06E
+                call    item_is_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1CE5A
@@ -1939,7 +1944,7 @@ loc_1CE5A:                              ; CODE XREF: ovl_2CMDS:CE49↑j
                 mov     al, [bp-4]
                 sub     ah, ah
                 push    ax
-                call    loc_1D00E
+                call    item_is_missile_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1CE79
@@ -1954,17 +1959,17 @@ loc_1CE79:                              ; CODE XREF: ovl_2CMDS:CE68↑j
                 sub     ah, ah
                 mov     si, ax
                 push    si
-                call    sub_1D026
+                call    item_is_shield
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_1CEA1
                 push    si
-                call    loc_1D03E
+                call    item_is_armour
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_1CEA1
                 push    si
-                call    loc_1D056
+                call    item_is_helm
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1CEC7
@@ -2162,10 +2167,11 @@ def_1CF71:                              ; CODE XREF: ovl_2CMDS:CF6C↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; id 1-65
 ; Attributes: bp-based frame
 
-sub_1CFDE       proc near               ; CODE XREF: item_effect_dispatch+1B↑p
-                                        ; ovl_2CMDS:D084↓p ...
+item_is_onehand_weapon proc near        ; CODE XREF: item_effect_dispatch+1B↑p
+                                        ; item_is_weapon+16↓p ...
 
 arg_0           = byte ptr  4
 
@@ -2179,22 +2185,23 @@ arg_0           = byte ptr  4
                 jmp     short loc_1CFF4
 ; ---------------------------------------------------------------------------
 
-loc_1CFF2:                              ; CODE XREF: sub_1CFDE+7↑j
-                                        ; sub_1CFDE+D↑j
+loc_1CFF2:                              ; CODE XREF: item_is_onehand_weapon+7↑j
+                                        ; item_is_onehand_weapon+D↑j
                 sub     ax, ax
 
-loc_1CFF4:                              ; CODE XREF: sub_1CFDE+12↑j
+loc_1CFF4:                              ; CODE XREF: item_is_onehand_weapon+12↑j
                 pop     bp
                 retn
-sub_1CFDE       endp
+item_is_onehand_weapon endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; id 66-91
 ; Attributes: bp-based frame
 
-sub_1CFF6       proc near               ; CODE XREF: item_effect_dispatch+44↑p
-                                        ; ovl_2CMDS:D07B↓p ...
+item_is_twohand_weapon proc near        ; CODE XREF: item_effect_dispatch+44↑p
+                                        ; item_is_weapon+D↓p ...
 
 arg_0           = byte ptr  4
 
@@ -2208,42 +2215,52 @@ arg_0           = byte ptr  4
                 jmp     short loc_1D00C
 ; ---------------------------------------------------------------------------
 
-loc_1D00A:                              ; CODE XREF: sub_1CFF6+7↑j
-                                        ; sub_1CFF6+D↑j
+loc_1D00A:                              ; CODE XREF: item_is_twohand_weapon+7↑j
+                                        ; item_is_twohand_weapon+D↑j
                 sub     ax, ax
 
-loc_1D00C:                              ; CODE XREF: sub_1CFF6+12↑j
+loc_1D00C:                              ; CODE XREF: item_is_twohand_weapon+12↑j
                 pop     bp
                 retn
-sub_1CFF6       endp
+item_is_twohand_weapon endp
 
-; ---------------------------------------------------------------------------
 
-loc_1D00E:                              ; CODE XREF: item_effect_dispatch+7E↑p
+; =============== S U B R O U T I N E =======================================
+
+; id 92-114
+; Attributes: bp-based frame
+
+item_is_missile_weapon proc near        ; CODE XREF: item_effect_dispatch+7E↑p
                                         ; ovl_2CMDS:CD9E↑p ...
+
+arg_0           = byte ptr  4
+
                 push    bp
                 mov     bp, sp
-                cmp     byte ptr [bp+4], 5Ch ; '\'
+                cmp     [bp+arg_0], 5Ch ; '\'
                 jb      short loc_1D022
-                cmp     byte ptr [bp+4], 72h ; 'r'
+                cmp     [bp+arg_0], 72h ; 'r'
                 ja      short loc_1D022
                 mov     ax, 1
                 jmp     short loc_1D024
 ; ---------------------------------------------------------------------------
 
-loc_1D022:                              ; CODE XREF: ovl_2CMDS:D015↑j
-                                        ; ovl_2CMDS:D01B↑j
+loc_1D022:                              ; CODE XREF: item_is_missile_weapon+7↑j
+                                        ; item_is_missile_weapon+D↑j
                 sub     ax, ax
 
-loc_1D024:                              ; CODE XREF: ovl_2CMDS:D020↑j
+loc_1D024:                              ; CODE XREF: item_is_missile_weapon+12↑j
                 pop     bp
                 retn
+item_is_missile_weapon endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
+; id 115-126
 ; Attributes: bp-based frame
 
-sub_1D026       proc near               ; CODE XREF: item_effect_dispatch+A8↑p
+item_is_shield  proc near               ; CODE XREF: item_effect_dispatch+A8↑p
                                         ; ovl_2CMDS:CDBB↑p ...
 
 arg_0           = byte ptr  4
@@ -2258,80 +2275,107 @@ arg_0           = byte ptr  4
                 jmp     short loc_1D03C
 ; ---------------------------------------------------------------------------
 
-loc_1D03A:                              ; CODE XREF: sub_1D026+7↑j
-                                        ; sub_1D026+D↑j
+loc_1D03A:                              ; CODE XREF: item_is_shield+7↑j
+                                        ; item_is_shield+D↑j
                 sub     ax, ax
 
-loc_1D03C:                              ; CODE XREF: sub_1D026+12↑j
+loc_1D03C:                              ; CODE XREF: item_is_shield+12↑j
                 pop     bp
                 retn
-sub_1D026       endp
+item_is_shield  endp
 
-; ---------------------------------------------------------------------------
 
-loc_1D03E:                              ; CODE XREF: item_effect_dispatch+E4↑p
+; =============== S U B R O U T I N E =======================================
+
+; id 127-154
+; Attributes: bp-based frame
+
+item_is_armour  proc near               ; CODE XREF: item_effect_dispatch+E4↑p
                                         ; ovl_2CMDS:CDC6↑p ...
+
+arg_0           = byte ptr  4
+
                 push    bp
                 mov     bp, sp
-                cmp     byte ptr [bp+4], 7Fh
+                cmp     [bp+arg_0], 7Fh
                 jb      short loc_1D052
-                cmp     byte ptr [bp+4], 9Ah
+                cmp     [bp+arg_0], 9Ah
                 ja      short loc_1D052
                 mov     ax, 1
                 jmp     short loc_1D054
 ; ---------------------------------------------------------------------------
 
-loc_1D052:                              ; CODE XREF: ovl_2CMDS:D045↑j
-                                        ; ovl_2CMDS:D04B↑j
+loc_1D052:                              ; CODE XREF: item_is_armour+7↑j
+                                        ; item_is_armour+D↑j
                 sub     ax, ax
 
-loc_1D054:                              ; CODE XREF: ovl_2CMDS:D050↑j
+loc_1D054:                              ; CODE XREF: item_is_armour+12↑j
                 pop     bp
                 retn
-; ---------------------------------------------------------------------------
+item_is_armour  endp
 
-loc_1D056:                              ; CODE XREF: item_effect_dispatch+10A↑p
+
+; =============== S U B R O U T I N E =======================================
+
+; id 155-159
+; Attributes: bp-based frame
+
+item_is_helm    proc near               ; CODE XREF: item_effect_dispatch+10A↑p
                                         ; ovl_2CMDS:CDD1↑p ...
+
+arg_0           = byte ptr  4
+
                 push    bp
                 mov     bp, sp
-                cmp     byte ptr [bp+4], 9Bh
+                cmp     [bp+arg_0], 9Bh
                 jb      short loc_1D06A
-                cmp     byte ptr [bp+4], 9Fh
+                cmp     [bp+arg_0], 9Fh
                 ja      short loc_1D06A
                 mov     ax, 1
                 jmp     short loc_1D06C
 ; ---------------------------------------------------------------------------
 
-loc_1D06A:                              ; CODE XREF: ovl_2CMDS:D05D↑j
-                                        ; ovl_2CMDS:D063↑j
+loc_1D06A:                              ; CODE XREF: item_is_helm+7↑j
+                                        ; item_is_helm+D↑j
                 sub     ax, ax
 
-loc_1D06C:                              ; CODE XREF: ovl_2CMDS:D068↑j
+loc_1D06C:                              ; CODE XREF: item_is_helm+12↑j
                 pop     bp
                 retn
-; ---------------------------------------------------------------------------
+item_is_helm    endp
 
-loc_1D06E:                              ; CODE XREF: ovl_2CMDS:CD83↑p
+
+; =============== S U B R O U T I N E =======================================
+
+; one- or two-handed
+; Attributes: bp-based frame
+
+item_is_weapon  proc near               ; CODE XREF: ovl_2CMDS:CD83↑p
                                         ; ovl_2CMDS:CE41↑p ...
+
+arg_0           = byte ptr  4
+
                 push    bp
                 mov     bp, sp
                 push    di
                 push    si
-                mov     al, [bp+4]
+                mov     al, [bp+arg_0]
                 sub     ah, ah
                 mov     si, ax
                 push    si
-                call    sub_1CFF6
+                call    item_is_twohand_weapon
                 add     sp, 2
                 push    si
                 mov     di, ax
-                call    sub_1CFDE
+                call    item_is_onehand_weapon
                 add     sp, 2
                 add     ax, di
                 pop     si
                 pop     di
                 pop     bp
                 retn
+item_is_weapon  endp
+
 ; ---------------------------------------------------------------------------
                 push    bp
                 mov     bp, sp
@@ -2348,7 +2392,7 @@ loc_1D0A2:                              ; CODE XREF: ovl_2CMDS:loc_1D0C2↓j
                 mov     al, [bx+28h]
                 sub     ah, ah
                 push    ax
-                call    sub_1CFDE
+                call    item_is_onehand_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1D0BC
@@ -2398,7 +2442,7 @@ loc_1D0E8:                              ; CODE XREF: ovl_2CMDS:D108↓j
                 mov     al, [bx+28h]
                 sub     ah, ah
                 push    ax
-                call    sub_1CFF6
+                call    item_is_twohand_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1D102
@@ -2432,9 +2476,10 @@ loc_1D113:                              ; CODE XREF: ovl_2CMDS:D10E↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; any of the 6 equipped slots is a shield
 ; Attributes: bp-based frame
 
-sub_1D11C       proc near               ; CODE XREF: item_effect_dispatch+61↑p
+equipped_has_shield proc near           ; CODE XREF: item_effect_dispatch+61↑p
                                         ; item_effect_dispatch+B5↑p
 
 var_4           = word ptr -4
@@ -2450,37 +2495,37 @@ arg_0           = word ptr  4
                 sub     si, si
                 mov     di, [bp+arg_0]
 
-loc_1D12E:                              ; CODE XREF: sub_1D11C+32↓j
+loc_1D12E:                              ; CODE XREF: equipped_has_shield+32↓j
                 mov     bx, si
                 add     bx, di
                 mov     al, [bx+28h]
                 sub     ah, ah
                 push    ax
-                call    sub_1D026
+                call    item_is_shield
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1D148
 
-loc_1D142:                              ; CODE XREF: sub_1D11C+30↓j
+loc_1D142:                              ; CODE XREF: equipped_has_shield+30↓j
                 mov     [bp+var_4], si
                 jmp     short loc_1D150
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1D148:                              ; CODE XREF: sub_1D11C+24↑j
+loc_1D148:                              ; CODE XREF: equipped_has_shield+24↑j
                 inc     si
                 cmp     si, 6
                 jge     short loc_1D142
                 jmp     short loc_1D12E
 ; ---------------------------------------------------------------------------
 
-loc_1D150:                              ; CODE XREF: sub_1D11C+29↑j
+loc_1D150:                              ; CODE XREF: equipped_has_shield+29↑j
                 cmp     [bp+var_4], 6
                 jz      short loc_1D159
                 inc     [bp+var_2]
 
-loc_1D159:                              ; CODE XREF: sub_1D11C+38↑j
+loc_1D159:                              ; CODE XREF: equipped_has_shield+38↑j
                                         ; seg002:0825↑J
                 mov     ax, [bp+var_2]
                 pop     si
@@ -2488,14 +2533,14 @@ loc_1D159:                              ; CODE XREF: sub_1D11C+38↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1D11C       endp
+equipped_has_shield endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1D162       proc near               ; CODE XREF: item_effect_dispatch+8B↑p
+equipped_has_missile proc near          ; CODE XREF: item_effect_dispatch+8B↑p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2510,50 +2555,50 @@ arg_0           = word ptr  4
                 sub     si, si
                 mov     di, [bp+arg_0]
 
-loc_1D174:                              ; CODE XREF: sub_1D162+32↓j
+loc_1D174:                              ; CODE XREF: equipped_has_missile+32↓j
                 mov     bx, si
                 add     bx, di
                 mov     al, [bx+28h]
                 sub     ah, ah
                 push    ax
-                call    loc_1D00E
+                call    item_is_missile_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1D18E
 
-loc_1D188:                              ; CODE XREF: sub_1D162+30↓j
+loc_1D188:                              ; CODE XREF: equipped_has_missile+30↓j
                 mov     [bp+var_4], si
                 jmp     short loc_1D196
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D18E:                              ; CODE XREF: sub_1D162+24↑j
+loc_1D18E:                              ; CODE XREF: equipped_has_missile+24↑j
                 inc     si
                 cmp     si, 6
                 jge     short loc_1D188
                 jmp     short loc_1D174
 ; ---------------------------------------------------------------------------
 
-loc_1D196:                              ; CODE XREF: sub_1D162+29↑j
+loc_1D196:                              ; CODE XREF: equipped_has_missile+29↑j
                 cmp     [bp+var_4], 6
                 jz      short loc_1D19F
                 inc     [bp+var_2]
 
-loc_1D19F:                              ; CODE XREF: sub_1D162+38↑j
+loc_1D19F:                              ; CODE XREF: equipped_has_missile+38↑j
                 mov     ax, [bp+var_2]
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1D162       endp
+equipped_has_missile endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1D1A8       proc near               ; CODE XREF: item_effect_dispatch+F1↑p
+equipped_has_armour proc near           ; CODE XREF: item_effect_dispatch+F1↑p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2568,50 +2613,50 @@ arg_0           = word ptr  4
                 sub     si, si
                 mov     di, [bp+arg_0]
 
-loc_1D1BA:                              ; CODE XREF: sub_1D1A8+32↓j
+loc_1D1BA:                              ; CODE XREF: equipped_has_armour+32↓j
                 mov     bx, si
                 add     bx, di
                 mov     al, [bx+28h]
                 sub     ah, ah
                 push    ax
-                call    loc_1D03E
+                call    item_is_armour
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1D1D4
 
-loc_1D1CE:                              ; CODE XREF: sub_1D1A8+30↓j
+loc_1D1CE:                              ; CODE XREF: equipped_has_armour+30↓j
                 mov     [bp+var_4], si
                 jmp     short loc_1D1DC
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D1D4:                              ; CODE XREF: sub_1D1A8+24↑j
+loc_1D1D4:                              ; CODE XREF: equipped_has_armour+24↑j
                 inc     si
                 cmp     si, 6
                 jge     short loc_1D1CE
                 jmp     short loc_1D1BA
 ; ---------------------------------------------------------------------------
 
-loc_1D1DC:                              ; CODE XREF: sub_1D1A8+29↑j
+loc_1D1DC:                              ; CODE XREF: equipped_has_armour+29↑j
                 cmp     [bp+var_4], 6
                 jz      short loc_1D1E5
                 inc     [bp+var_2]
 
-loc_1D1E5:                              ; CODE XREF: sub_1D1A8+38↑j
+loc_1D1E5:                              ; CODE XREF: equipped_has_armour+38↑j
                 mov     ax, [bp+var_2]
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1D1A8       endp
+equipped_has_armour endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1D1EE       proc near               ; CODE XREF: item_effect_dispatch+117↑p
+equipped_has_helm proc near             ; CODE XREF: item_effect_dispatch+117↑p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2626,50 +2671,50 @@ arg_0           = word ptr  4
                 sub     si, si
                 mov     di, [bp+arg_0]
 
-loc_1D200:                              ; CODE XREF: sub_1D1EE+32↓j
+loc_1D200:                              ; CODE XREF: equipped_has_helm+32↓j
                 mov     bx, si
                 add     bx, di
                 mov     al, [bx+28h]
                 sub     ah, ah
                 push    ax
-                call    loc_1D056
+                call    item_is_helm
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1D21A
 
-loc_1D214:                              ; CODE XREF: sub_1D1EE+30↓j
+loc_1D214:                              ; CODE XREF: equipped_has_helm+30↓j
                 mov     [bp+var_4], si
                 jmp     short loc_1D222
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D21A:                              ; CODE XREF: sub_1D1EE+24↑j
+loc_1D21A:                              ; CODE XREF: equipped_has_helm+24↑j
                 inc     si
                 cmp     si, 6
                 jge     short loc_1D214
                 jmp     short loc_1D200
 ; ---------------------------------------------------------------------------
 
-loc_1D222:                              ; CODE XREF: sub_1D1EE+29↑j
+loc_1D222:                              ; CODE XREF: equipped_has_helm+29↑j
                 cmp     [bp+var_4], 6
                 jz      short loc_1D22B
                 inc     [bp+var_2]
 
-loc_1D22B:                              ; CODE XREF: sub_1D1EE+38↑j
+loc_1D22B:                              ; CODE XREF: equipped_has_helm+38↑j
                 mov     ax, [bp+var_2]
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1D1EE       endp
+equipped_has_helm endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1D234       proc near               ; CODE XREF: item_effect_dispatch+28↑p
+equipped_has_weapon proc near           ; CODE XREF: item_effect_dispatch+28↑p
                                         ; item_effect_dispatch+51↑p
 
 var_4           = word ptr -4
@@ -2685,43 +2730,43 @@ arg_0           = word ptr  4
                 sub     si, si
                 mov     di, [bp+arg_0]
 
-loc_1D246:                              ; CODE XREF: sub_1D234+32↓j
+loc_1D246:                              ; CODE XREF: equipped_has_weapon+32↓j
                 mov     bx, si
                 add     bx, di
                 mov     al, [bx+28h]
                 sub     ah, ah
                 push    ax
-                call    loc_1D06E
+                call    item_is_weapon
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1D260
 
-loc_1D25A:                              ; CODE XREF: sub_1D234+30↓j
+loc_1D25A:                              ; CODE XREF: equipped_has_weapon+30↓j
                 mov     [bp+var_4], si
                 jmp     short loc_1D268
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D260:                              ; CODE XREF: sub_1D234+24↑j
+loc_1D260:                              ; CODE XREF: equipped_has_weapon+24↑j
                 inc     si
                 cmp     si, 6
                 jge     short loc_1D25A
                 jmp     short loc_1D246
 ; ---------------------------------------------------------------------------
 
-loc_1D268:                              ; CODE XREF: sub_1D234+29↑j
+loc_1D268:                              ; CODE XREF: equipped_has_weapon+29↑j
                 cmp     [bp+var_4], 6
                 jz      short loc_1D271
                 inc     [bp+var_2]
 
-loc_1D271:                              ; CODE XREF: sub_1D234+38↑j
+loc_1D271:                              ; CODE XREF: equipped_has_weapon+38↑j
                 mov     ax, [bp+var_2]
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1D234       endp
+equipped_has_weapon endp
 
 ; ---------------------------------------------------------------------------
                 align 8

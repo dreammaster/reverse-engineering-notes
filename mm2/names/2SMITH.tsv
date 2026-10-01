@@ -15,3 +15,4 @@
 1CBE8	smith_show_message	(index) one of the 10 texts at 5814
 1CC38	smith_draw_frame	" Blacksmith ", Gold=, G-Gather Gold, #-Other Char
 1CEC8	smith_robbery_fight	guard fight after a failed theft
+1D262	smith_compare_password	case-insensitive compare of the typed string

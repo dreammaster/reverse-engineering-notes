@@ -414,6 +414,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C95D);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C96A);
+	set_name	(0X1C96A,	"spell_turn_undead_effect");
 	create_insn	(x=0X1C96D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C971);
@@ -1222,6 +1223,7 @@ static Functions_0(void) {
 	set_frame_size(0X1C944, 0X2, 2, 0);
 	add_func    (0X1C96A,0X1CA40);
 	set_func_flags(0X1C96A,0x5410);
+	set_func_cmt(0X1C96A,	"(level) undead monsters are eradicated / flee", 0);
 	set_frame_size(0X1C96A, 0XE, 2, 0);
 	add_func    (0X1CA40,0X1CA6D);
 	set_func_flags(0X1CA40,0x5410);

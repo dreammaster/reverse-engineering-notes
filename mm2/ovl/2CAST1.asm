@@ -71,7 +71,7 @@ loc_1C1A4:                              ; CODE XREF: cast1_common_helper+79↓j
                 call    thk_kbd_poll
                 or      ax, ax
                 jz      short loc_1C1A4
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C1AE:                              ; CODE XREF: cast1_common_helper+C↑j
                 pop     si
@@ -99,7 +99,7 @@ loc_1C1C6:                              ; CODE XREF: spell_nc_Light+C↑j
                 mov     al, 1
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1C1D1:                           ; CODE XREF: spell_nc_Light+5↑j
                 retn
@@ -167,7 +167,7 @@ loc_1C21E:                              ; CODE XREF: cast1_effect_a+2A↑j
                 mov     byte_1DC30, cl
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C23A:                              ; CODE XREF: cast1_effect_a+B↑j
                 mov     sp, bp
@@ -273,7 +273,7 @@ loc_1C2EF:                              ; CODE XREF: spell_nc_Jump+4F↑j
                                         ; spell_nc_Jump+AC↑j
                 cmp     [bp+var_8], 0
                 jz      short loc_1C2FA
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 loc_1C2F8:                              ; CODE XREF: seg002:0651↑J
                 jmp     short loc_1C31B
@@ -283,7 +283,7 @@ loc_1C2FA:                              ; CODE XREF: spell_nc_Jump+B5↑j
                 mov     al, 1
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
-                call    sub_1CE9E
+                call    cast1_show_done
                 mov     al, [bp+var_6]
 
 loc_1C308:                              ; CODE XREF: seg002:08F1↑J
@@ -318,7 +318,7 @@ cast1_effect_b  proc near               ; CODE XREF: cast_noncombat_spell:loc_1D
 loc_1C332:                              ; CODE XREF: cast1_effect_b+C↑j
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1C33F:                           ; CODE XREF: cast1_effect_b+5↑j
                 retn
@@ -414,13 +414,13 @@ loc_1C3DA:                              ; CODE XREF: spell_beacon+1F↑j
                                         ; spell_beacon+75↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C3E6
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C3E9
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1C3E6:                              ; CODE XREF: spell_beacon+9E↑j
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C3E9:                              ; CODE XREF: spell_beacon+12↑j
                                         ; spell_beacon+A3↑j
@@ -568,12 +568,12 @@ loc_1C4B7:                              ; CODE XREF: ovl_2CAST1:C4B2↑j
 loc_1C4E7:                              ; CODE XREF: ovl_2CAST1:C414↑j
                 cmp     word ptr [bp-2], 0
                 jz      short loc_1C4F2
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C4F5
 ; ---------------------------------------------------------------------------
 
 loc_1C4F2:                              ; CODE XREF: ovl_2CAST1:C4EB↑j
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C4F5:                              ; CODE XREF: ovl_2CAST1:C407↑j
                                         ; ovl_2CAST1:C4F0↑j
@@ -628,7 +628,7 @@ loc_1C530:                              ; CODE XREF: spell_nc_Wizard_Eye+2A↑j
                 mov     byte_1DC31, cl
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C54C:                              ; CODE XREF: spell_nc_Wizard_Eye+B↑j
                 mov     sp, bp
@@ -652,7 +652,7 @@ spell_nc_Guard_Dog proc near            ; CODE XREF: cast_noncombat_spell:loc_1D
 loc_1C562:                              ; CODE XREF: spell_nc_Guard_Dog+C↑j
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1C56F:                           ; CODE XREF: spell_nc_Guard_Dog+5↑j
                 retn
@@ -674,7 +674,7 @@ spell_nc_Shelter proc near              ; CODE XREF: cast_noncombat_spell:loc_1D
 loc_1C582:                              ; CODE XREF: spell_nc_Shelter+C↑j
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1C58F:                           ; CODE XREF: spell_nc_Shelter+5↑j
                 retn
@@ -774,13 +774,13 @@ loc_1C61A:                              ; CODE XREF: spell_nc_Teleport+7B↑j
 loc_1C634:                              ; CODE XREF: spell_nc_Teleport+20↑j
                 cmp     [bp+var_6], 0
                 jnz     short loc_1C640
-                call    sub_1CE9E
+                call    cast1_show_done
                 jmp     short loc_1C643
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1C640:                              ; CODE XREF: spell_nc_Teleport+A8↑j
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 loc_1C643:                              ; CODE XREF: spell_nc_Teleport+13↑j
                                         ; spell_nc_Teleport+AD↑j
@@ -804,7 +804,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 2
                 push    si
-                call    sub_1CB48
+                call    cast1_pick_item
                 mov     [bp+var_2], ax
                 cmp     ax, 1Bh
                 jz      short loc_1C687
@@ -812,7 +812,7 @@ var_2           = word ptr -2
                 mov     bx, word_23626
                 cmp     byte ptr [bx+si+40h], 0
                 jnz     short loc_1C66C
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C687
 ; ---------------------------------------------------------------------------
                 align 2
@@ -828,7 +828,7 @@ loc_1C66C:                              ; CODE XREF: spell_nc_Recharge_Item+1C�
                 mov     si, [bp+var_2]
                 mov     bx, word_23626
                 add     [bx+si+40h], al
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C687:                              ; CODE XREF: spell_nc_Recharge_Item+10↑j
                                         ; spell_nc_Recharge_Item+21↑j
@@ -857,7 +857,7 @@ var_2           = word ptr -2
                 push    di
                 push    si
                 mov     [bp+var_2], 0
-                call    sub_1CB48
+                call    cast1_pick_item
                 mov     [bp+var_6], ax
                 cmp     ax, 1Bh
                 jz      short loc_1C702
@@ -918,7 +918,7 @@ loc_1C702:                              ; CODE XREF: spell_nc_Duplication+16↑j
                                         ; spell_nc_Duplication+27↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C70E
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C71C
 ; ---------------------------------------------------------------------------
                 align 2
@@ -926,7 +926,7 @@ loc_1C702:                              ; CODE XREF: spell_nc_Duplication+16↑j
 loc_1C70E:                              ; CODE XREF: spell_nc_Duplication+7A↑j
                 cmp     [bp+var_6], 1Bh
                 jz      short loc_1C71C
-                call    sub_1CE9E
+                call    cast1_show_done
                 mov     byte_1DBE7, 1
 
 loc_1C71C:                              ; CODE XREF: spell_nc_Duplication+7F↑j
@@ -957,7 +957,7 @@ var_2           = byte ptr -2
                 jz      short loc_1C76F
                 test    byte_231F0, 20h
                 jz      short loc_1C73C
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C76F ; CODE XREF: seg002:089D↑J
 ; ---------------------------------------------------------------------------
                 align 2
@@ -977,7 +977,7 @@ loc_1C73C:                              ; CODE XREF: spell_nc_Etherealize+12↑j
                 and     byte ptr g_party_y, 0Fh
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C76F:                              ; CODE XREF: spell_nc_Etherealize+B↑j
                                         ; spell_nc_Etherealize+17↑j
@@ -1007,7 +1007,7 @@ var_2           = byte ptr -2
                 sub     sp, 0Ah
                 push    si
                 mov     [bp+var_4], 0
-                call    sub_1CB48
+                call    cast1_pick_item
                 mov     [bp+var_8], ax
                 cmp     ax, 1Bh
                 jz      short loc_1C7D5
@@ -1025,7 +1025,7 @@ var_2           = byte ptr -2
                 mov     word_2765C, ax
                 cmp     [bx+58h], ax
                 jnb     short loc_1C7B6
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C7D5
 ; ---------------------------------------------------------------------------
 
@@ -1041,7 +1041,7 @@ loc_1C7BF:                              ; CODE XREF: spell_nc_Enchant_Item+46↑
                 mov     bx, word_23626
                 mov     al, [bp+var_2]
                 mov     [bx+si+46h], al
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C7D5:                              ; CODE XREF: spell_nc_Enchant_Item+15↑j
                                         ; spell_nc_Enchant_Item+40↑j
@@ -1128,7 +1128,7 @@ loc_1C835:                              ; CODE XREF: spell_nc_Nature_s_Gate+4E�
 loc_1C85D:                              ; CODE XREF: spell_nc_Nature_s_Gate+25↑j
                 cmp     [bp+var_4], 0
                 jz      short loc_1C874
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C877
 ; ---------------------------------------------------------------------------
 
@@ -1142,7 +1142,7 @@ loc_1C868:                              ; CODE XREF: spell_nc_Nature_s_Gate+44�
                 align 2
 
 loc_1C874:                              ; CODE XREF: spell_nc_Nature_s_Gate+87↑j
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C877:                              ; CODE XREF: spell_nc_Nature_s_Gate+18↑j
                                         ; spell_nc_Nature_s_Gate+8C↑j
@@ -1165,14 +1165,14 @@ spell_nc_Create_Food proc near          ; CODE XREF: cast_noncombat_spell:loc_1D
                 cmp     byte ptr [bx+25h], 28h ; '('
                 jnb     short loc_1C89C
                 add     byte ptr [bx+25h], 8
-                call    sub_1CE9E
+                call    cast1_show_done
                 mov     byte_1DBE7, 1
                 jmp     short locret_1C89F
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1C89C:                              ; CODE XREF: spell_nc_Create_Food+F↑j
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 locret_1C89F:                           ; CODE XREF: spell_nc_Create_Food+5↑j
                                         ; spell_nc_Create_Food+1D↑j
@@ -1202,7 +1202,7 @@ loc_1C8BB:                              ; CODE XREF: spell_nc_Lasting_Light+13�
                 mov     al, 1
                 mov     byte_1DBEB, al
                 mov     byte ptr g_party_y+1, al
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1C8C6:                           ; CODE XREF: spell_nc_Lasting_Light+5↑j
                 retn
@@ -1223,7 +1223,7 @@ spell_nc_Walk_on_Water proc near        ; CODE XREF: cast_noncombat_spell:loc_1D
                 mov     g_fx_walk_on_water, al
                 mov     byte ptr g_party_y+1, al
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1C8DF:                           ; CODE XREF: spell_nc_Walk_on_Water+5↑j
                 retn
@@ -1239,7 +1239,7 @@ spell_nc_Air_Transmutation proc near    ; CODE XREF: cast_noncombat_spell:loc_1D
                 or      ax, ax
                 jz      short locret_1C8EF
                 mov     byte_1DC2D, 1
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1C8EF:                           ; CODE XREF: spell_nc_Air_Transmutation+5↑j
                 retn
@@ -1272,7 +1272,7 @@ var_2           = word ptr -2
                 mov     si, ax
                 mov     al, [si+0Dh]
                 mov     [bx+6Ah], al
-                call    sub_1CE9E
+                call    cast1_show_done
                 mov     ax, word_23626
                 cmp     si, ax
                 jnz     short loc_1C925
@@ -1331,12 +1331,12 @@ loc_1C948:                              ; CODE XREF: spell_nc_Surface+17↑j
 loc_1C971:                              ; CODE XREF: spell_nc_Surface+1C↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C97C
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C97F
 ; ---------------------------------------------------------------------------
 
 loc_1C97C:                              ; CODE XREF: spell_nc_Surface+4B↑j
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C97F:                              ; CODE XREF: spell_nc_Surface+10↑j
                                         ; spell_nc_Surface+50↑j
@@ -1357,7 +1357,7 @@ spell_nc_Earth_Transmutation proc near  ; CODE XREF: cast_noncombat_spell:loc_1D
                 or      ax, ax
                 jz      short locret_1C993
                 mov     byte_1DC2F, 1
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1C993:                           ; CODE XREF: spell_nc_Earth_Transmutation+5↑j
                 retn
@@ -1414,7 +1414,7 @@ loc_1C9DC:                              ; CODE XREF: spell_nc_Rejuvenate+3D↑j
                 push    [bp+var_2]
                 call    thk_char_add_age ; CODE XREF: seg002:0B01↑J
                 add     sp, 4
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1C9FC
 ; ---------------------------------------------------------------------------
 
@@ -1422,7 +1422,7 @@ loc_1C9F0:                              ; CODE XREF: spell_nc_Rejuvenate+46↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bp+var_4]
                 sub     [bx+21h], al
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1C9FC:                              ; CODE XREF: spell_nc_Rejuvenate+F↑j
                                         ; spell_nc_Rejuvenate+5A↑j
@@ -1441,7 +1441,7 @@ spell_nc_Water_Transmutation proc near  ; CODE XREF: cast_noncombat_spell:loc_1D
                 or      ax, ax
                 jz      short locret_1CA0F
                 mov     byte_1DC2C, 1
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1CA0F:                           ; CODE XREF: spell_nc_Water_Transmutation+5↑j
                 retn
@@ -1457,7 +1457,7 @@ spell_nc_Fire_Transmutation proc near   ; CODE XREF: cast_noncombat_spell:loc_1D
                 or      ax, ax
                 jz      short locret_1CA1F
                 mov     byte_1DC2E, 1
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1CA1F:                           ; CODE XREF: spell_nc_Fire_Transmutation+5↑j
                 retn
@@ -1529,13 +1529,13 @@ loc_1CA88:                              ; CODE XREF: seg002:0801↑J
 loc_1CA90:                              ; CODE XREF: spell_nc_Town_Portal+1C↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1CA9C
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1CA9F
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1CA9C:                              ; CODE XREF: spell_nc_Town_Portal+74↑j
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1CA9F:                              ; CODE XREF: spell_nc_Town_Portal+10↑j
                                         ; spell_nc_Town_Portal+79↑j
@@ -1575,7 +1575,7 @@ var_2           = byte ptr -2
                 jnb     short loc_1CACE
 
 loc_1CAC8:                              ; CODE XREF: spell_nc_Resurrection+50↓j
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1CB0B
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1602,7 +1602,7 @@ loc_1CACE:                              ; CODE XREF: spell_nc_Resurrection+22↑
                 mov     [si+73h], al
                 mov     [bx+27h], al
                 mov     byte ptr [bx+26h], 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1CB0B:                              ; CODE XREF: spell_nc_Resurrection+10↑j
                                         ; spell_nc_Resurrection+27↑j
@@ -1626,7 +1626,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 2
                 push    si
-                call    sub_1CB48
+                call    cast1_pick_item
                 mov     [bp+var_2], ax
                 cmp     ax, 1Bh
                 jz      short loc_1CB42
@@ -1634,7 +1634,7 @@ var_2           = word ptr -2
                 mov     bx, word_23626
                 cmp     byte ptr [bx+si+40h], 0FFh
                 jnz     short loc_1CB34
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1CB42
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1643,7 +1643,7 @@ loc_1CB34:                              ; CODE XREF: spell_nc_Uncurse_Item+1C↑
                 mov     si, [bp+var_2]
                 mov     bx, word_23626
                 mov     byte ptr [bx+si+40h], 1
-                call    sub_1CE9E       ; CODE XREF: seg002:0A65↑J
+                call    cast1_show_done ; CODE XREF: seg002:0A65↑J
 
 loc_1CB42:                              ; CODE XREF: spell_nc_Uncurse_Item+10↑j
                                         ; spell_nc_Uncurse_Item+21↑j
@@ -1658,9 +1658,10 @@ spell_nc_Uncurse_Item endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; "On which (A-F)?" prompt for item spells
 ; Attributes: bp-based frame
 
-sub_1CB48       proc near               ; CODE XREF: spell_nc_Recharge_Item+7↑p
+cast1_pick_item proc near               ; CODE XREF: spell_nc_Recharge_Item+7↑p
                                         ; spell_nc_Duplication+D↑p ...
 
 var_4           = word ptr -4
@@ -1683,7 +1684,7 @@ var_2           = word ptr -2
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1CB6B:                              ; CODE XREF: sub_1CB48+6B↓j
+loc_1CB6B:                              ; CODE XREF: cast1_pick_item+6B↓j
                 call    thk_kbd_poll
                 push    ax
                 call    thk_toupper
@@ -1696,10 +1697,10 @@ loc_1CB6B:                              ; CODE XREF: sub_1CB48+6B↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CB82:                              ; CODE XREF: sub_1CB48+32↑j
+loc_1CB82:                              ; CODE XREF: cast1_pick_item+32↑j
                 sub     ax, ax
 
-loc_1CB84:                              ; CODE XREF: sub_1CB48+37↑j
+loc_1CB84:                              ; CODE XREF: cast1_pick_item+37↑j
                 mov     si, ax
                 or      si, si
                 jnz     short loc_1CBB1
@@ -1716,10 +1717,10 @@ loc_1CB8A:                              ; CODE XREF: seg002:0AF5↑J
                 align 2
 
 loc_1CB9C:                              ; CODE XREF: seg002:080D↑J
-                                        ; sub_1CB48+47↑j ...
+                                        ; cast1_pick_item+47↑j ...
                 sub     ax, ax
 
-loc_1CB9E:                              ; CODE XREF: sub_1CB48+51↑j
+loc_1CB9E:                              ; CODE XREF: cast1_pick_item+51↑j
                 mov     si, ax
                 or      si, si
                 jz      short loc_1CBB1
@@ -1729,8 +1730,8 @@ loc_1CB9E:                              ; CODE XREF: sub_1CB48+51↑j
                 inc     ax
                 mov     si, ax
 
-loc_1CBB1:                              ; CODE XREF: sub_1CB48+40↑j
-                                        ; sub_1CB48+5A↑j
+loc_1CBB1:                              ; CODE XREF: cast1_pick_item+40↑j
+                                        ; cast1_pick_item+5A↑j
                 or      si, si
                 jz      short loc_1CB6B
                 mov     [bp+var_4], di
@@ -1743,25 +1744,25 @@ loc_1CBB1:                              ; CODE XREF: sub_1CB48+40↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CBCC:                              ; CODE XREF: sub_1CB48+76↑j
+loc_1CBCC:                              ; CODE XREF: cast1_pick_item+76↑j
                 sub     ax, ax
                 mov     word_2765C, ax
                 mov     word_27696, ax
 
-loc_1CBD4:                              ; CODE XREF: sub_1CB48+81↑j
+loc_1CBD4:                              ; CODE XREF: cast1_pick_item+81↑j
                 test    byte_23218, 2
                 jz      short loc_1CBE3
                 mov     [bp+var_4], 1Bh ; CODE XREF: seg002:01AD↑J
-                call    sub_1CEFA
+                call    cast1_show_failed
 
-loc_1CBE3:                              ; CODE XREF: sub_1CB48+91↑j
+loc_1CBE3:                              ; CODE XREF: cast1_pick_item+91↑j
                 mov     ax, [bp+var_4]
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CB48       endp
+cast1_pick_item endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1810,7 +1811,7 @@ loc_1CC20:                              ; CODE XREF: spell_nc_Awaken+14↑j
                 mov     [bp+var_4], di
                 mov     [bp+var_6], si
                 mov     byte_1DBE7, 1
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1CC34:                              ; CODE XREF: spell_nc_Awaken+D↑j
                 pop     si
@@ -1836,7 +1837,7 @@ spell_nc_Protection_from_Magic proc near
                 mov     g_fx_magic, al
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1CC5A:                           ; CODE XREF: spell_nc_Protection_from_Magic+5↑j
                 retn
@@ -1852,7 +1853,7 @@ spell_nc_Protection_from_Magic endp
 spell_nc_First_Aid proc near            ; CODE XREF: cast_noncombat_spell:loc_1D13E↓p
                 mov     ax, 8
                 push    ax
-                call    sub_1CE46
+                call    spell_heal_character
                 add     sp, 2
                 retn
 spell_nc_First_Aid endp
@@ -1898,7 +1899,7 @@ loc_1CC8E:                              ; CODE XREF: spell_nc_Power_Cure+13↑j
                 jnz     short loc_1CC7E
                 mov     [bp+var_4], si
                 push    si
-                call    sub_1CE46
+                call    spell_heal_character
                 add     sp, 2
                 pop     si
                 mov     sp, bp
@@ -1916,7 +1917,7 @@ spell_nc_Power_Cure endp
 spell_nc_Cure_Wounds proc near          ; CODE XREF: cast_noncombat_spell:loc_1D150↓p
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1CE46
+                call    spell_heal_character
                 add     sp, 2
                 retn
 spell_nc_Cure_Wounds endp
@@ -1939,7 +1940,7 @@ spell_nc_Protection_From_Elements proc near
                 mov     g_fx_forces, al
                 mov     byte ptr g_party_y+1, 1
                 mov     byte_1DBEB, 0
-                call    sub_1CE9E
+                call    cast1_show_done
 
 locret_1CCD4:                           ; CODE XREF: spell_nc_Protection_From_Elements+5↑j
                 retn
@@ -1979,12 +1980,12 @@ var_2           = word ptr -2
                 mov     byte_1DBE7, 1
 
 loc_1CD09:                              ; CODE XREF: spell_nc_Cure_Poison+2C↑j
-                call    sub_1CE9E
+                call    cast1_show_done
                 jmp     short loc_1CD11
 ; ---------------------------------------------------------------------------
 
 loc_1CD0E:                              ; CODE XREF: spell_nc_Cure_Poison+21↑j
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 loc_1CD11:                              ; CODE XREF: spell_nc_Cure_Poison+F↑j
                                         ; spell_nc_Cure_Poison+36↑j
@@ -2027,12 +2028,12 @@ var_2           = word ptr -2
                 mov     byte_1DBE7, 1
 
 loc_1CD49:                              ; CODE XREF: spell_nc_Cure_Disease+2C↑j
-                call    sub_1CE9E
+                call    cast1_show_done
                 jmp     short loc_1CD51
 ; ---------------------------------------------------------------------------
 
 loc_1CD4E:                              ; CODE XREF: spell_nc_Cure_Disease+21↑j
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 loc_1CD51:                              ; CODE XREF: spell_nc_Cure_Disease+F↑j
                                         ; spell_nc_Cure_Disease+36↑j
@@ -2075,12 +2076,12 @@ var_2           = word ptr -2
                 mov     byte_1DBE7, 1
 
 loc_1CD89:                              ; CODE XREF: spell_nc_Remove_Condition+2C↑j
-                call    sub_1CE9E
+                call    cast1_show_done
                 jmp     short loc_1CD91
 ; ---------------------------------------------------------------------------
 
 loc_1CD8E:                              ; CODE XREF: spell_nc_Remove_Condition+21↑j
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 loc_1CD91:                              ; CODE XREF: spell_nc_Remove_Condition+F↑j
                                         ; spell_nc_Remove_Condition+36↑j
@@ -2117,12 +2118,12 @@ var_2           = word ptr -2
                 cmp     byte ptr [bx+26h], 82h
                 jnz     short loc_1CDC2
                 mov     byte ptr [bx+26h], 0
-                call    sub_1CE9E
+                call    cast1_show_done
                 jmp     short loc_1CDC5
 ; ---------------------------------------------------------------------------
 
 loc_1CDC2:                              ; CODE XREF: spell_nc_Stone_to_Flesh+21↑j
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 loc_1CDC5:                              ; CODE XREF: spell_nc_Stone_to_Flesh+F↑j
                                         ; spell_nc_Stone_to_Flesh+2A↑j
@@ -2161,7 +2162,7 @@ var_2           = word ptr -2
 
 loc_1CDED:                              ; CODE XREF: spell_nc_Raise_Dead+5C↓j
                                         ; spell_nc_Raise_Dead+65↓j
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1CE41
 ; ---------------------------------------------------------------------------
 
@@ -2197,7 +2198,7 @@ loc_1CE32:                              ; CODE XREF: spell_nc_Raise_Dead+57↑j
                 mov     bx, [bp+var_2]
                 mov     byte ptr [bx+26h], 0
                 mov     word ptr [bx+5Eh], 1
-                call    sub_1CE9E
+                call    cast1_show_done
 
 loc_1CE41:                              ; CODE XREF: spell_nc_Raise_Dead+F↑j
                                         ; spell_nc_Raise_Dead+26↑j
@@ -2211,9 +2212,10 @@ spell_nc_Raise_Dead endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; (amount) picks a character, clears asleep/unconscious, adds HP
 ; Attributes: bp-based frame
 
-sub_1CE46       proc near               ; CODE XREF: spell_nc_First_Aid+4↑p
+spell_heal_character proc near          ; CODE XREF: spell_nc_First_Aid+4↑p
                                         ; spell_nc_Power_Cure+34↑p ...
 
 var_4           = word ptr -4
@@ -2235,12 +2237,12 @@ arg_0           = word ptr  4
                 mov     bx, ax
                 cmp     byte ptr [bx+26h], 80h
                 jb      short loc_1CE70
-                call    sub_1CEFA
+                call    cast1_show_failed
                 jmp     short loc_1CE99
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CE70:                              ; CODE XREF: sub_1CE46+22↑j
+loc_1CE70:                              ; CODE XREF: spell_heal_character+22↑j
                 mov     bx, [bp+var_2]
                 and     byte ptr [bx+26h], 2Fh
                 mov     ax, [bp+arg_0]
@@ -2251,29 +2253,30 @@ loc_1CE70:                              ; CODE XREF: sub_1CE46+22↑j
                 jbe     short loc_1CE8A
                 mov     [bx+5Eh], ax
 
-loc_1CE8A:                              ; CODE XREF: sub_1CE46+3F↑j
+loc_1CE8A:                              ; CODE XREF: spell_heal_character+3F↑j
                 mov     ax, word_23626
                 cmp     bx, ax
                 jnz     short loc_1CE96
                 mov     byte_1DBE7, 1
 
-loc_1CE96:                              ; CODE XREF: sub_1CE46+49↑j
-                call    sub_1CE9E
+loc_1CE96:                              ; CODE XREF: spell_heal_character+49↑j
+                call    cast1_show_done
 
-loc_1CE99:                              ; CODE XREF: sub_1CE46+10↑j
-                                        ; sub_1CE46+27↑j
+loc_1CE99:                              ; CODE XREF: spell_heal_character+10↑j
+                                        ; spell_heal_character+27↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CE46       endp
+spell_heal_character endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Done" message
 ; Attributes: bp-based frame
 
-sub_1CE9E       proc near               ; CODE XREF: cast1_common_helper+7B↑p
+cast1_show_done proc near               ; CODE XREF: cast1_common_helper+7B↑p
                                         ; spell_nc_Light+1A↑p ...
 
 var_2           = byte ptr -2
@@ -2287,7 +2290,7 @@ var_2           = byte ptr -2
                 jnz     short loc_1CEB4
                 mov     [bp+var_2], 0Fh
 
-loc_1CEB4:                              ; CODE XREF: sub_1CE9E+10↑j
+loc_1CEB4:                              ; CODE XREF: cast1_show_done+10↑j
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 mov     si, ax
@@ -2321,14 +2324,15 @@ loc_1CEC8:                              ; CODE XREF: seg002:07AD↑J
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CE9E       endp
+cast1_show_done endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Spell Failed" with sound
 ; Attributes: bp-based frame
 
-sub_1CEFA       proc near               ; CODE XREF: spell_nc_Jump+B7↑p
+cast1_show_failed proc near             ; CODE XREF: spell_nc_Jump+B7↑p
                                         ; spell_beacon+A0↑p ...
 
 var_2           = byte ptr -2
@@ -2342,7 +2346,7 @@ var_2           = byte ptr -2
                 jnz     short loc_1CF10
                 mov     [bp+var_2], 0Fh
 
-loc_1CF10:                              ; CODE XREF: sub_1CEFA+10↑j
+loc_1CF10:                              ; CODE XREF: cast1_show_failed+10↑j
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 mov     si, ax
@@ -2377,7 +2381,7 @@ loc_1CF10:                              ; CODE XREF: sub_1CEFA+10↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CEFA       endp
+cast1_show_failed endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2491,7 +2495,7 @@ loc_1D028:                              ; CODE XREF: cast1_return_prompt+C1↑j
                 test    byte_23218, 2
                 jz      short loc_1D03E
                 mov     word ptr [bp-4], 1Bh
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 loc_1D03E:                              ; CODE XREF: cast1_return_prompt+D1↑j
                                         ; cast1_return_prompt+D8↑j
@@ -2557,7 +2561,7 @@ loc_1D0A6:                              ; CODE XREF: cast1_return_prompt+101↑j
                 test    byte_23218, 2
                 jz      short loc_1D0BB
                 mov     word ptr [bp-4], 0
-                call    sub_1CEFA
+                call    cast1_show_failed
 
 loc_1D0BB:                              ; CODE XREF: cast1_return_prompt+14E↑j
                                         ; cast1_return_prompt+155↑j

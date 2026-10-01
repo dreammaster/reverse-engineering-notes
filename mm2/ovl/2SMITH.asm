@@ -2426,9 +2426,10 @@ sub_1D236       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; case-insensitive compare of the typed string
 ; Attributes: bp-based frame
 
-sub_1D262       proc near               ; CODE XREF: ovl_2SMITH:D60F↓p
+smith_compare_password proc near        ; CODE XREF: ovl_2SMITH:D60F↓p
 
 arg_0           = word ptr  4
 
@@ -2442,7 +2443,7 @@ arg_0           = word ptr  4
                 jmp     short loc_1D2A0
 ; ---------------------------------------------------------------------------
 
-loc_1D274:                              ; CODE XREF: sub_1D262+B↑j
+loc_1D274:                              ; CODE XREF: smith_compare_password+B↑j
                 push    ds
                 pop     es
                 assume es:DGROUP
@@ -2455,12 +2456,12 @@ loc_1D274:                              ; CODE XREF: sub_1D262+B↑j
                 cmp     cx, 8
                 jz      short loc_1D28C
 
-loc_1D288:                              ; CODE XREF: sub_1D262+39↓j
+loc_1D288:                              ; CODE XREF: smith_compare_password+39↓j
                 sub     ax, ax
                 jmp     short loc_1D2A0
 ; ---------------------------------------------------------------------------
 
-loc_1D28C:                              ; CODE XREF: sub_1D262+24↑j
+loc_1D28C:                              ; CODE XREF: smith_compare_password+24↑j
                 mov     ax, 58AEh
                 push    ax
                 push    [bp+arg_0]
@@ -2470,12 +2471,12 @@ loc_1D28C:                              ; CODE XREF: sub_1D262+24↑j
                 jnz     short loc_1D288
                 mov     ax, 1
 
-loc_1D2A0:                              ; CODE XREF: sub_1D262+10↑j
-                                        ; sub_1D262+28↑j
+loc_1D2A0:                              ; CODE XREF: smith_compare_password+10↑j
+                                        ; smith_compare_password+28↑j
                 pop     di
                 pop     bp
                 retn
-sub_1D262       endp
+smith_compare_password endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2881,7 +2882,7 @@ loc_1D607:                              ; CODE XREF: ovl_2SMITH:D5FB↑j
                 jz      short loc_1D5C9
                 lea     ax, [bp-0Ch]
                 push    ax
-                call    sub_1D262
+                call    smith_compare_password
                 add     sp, 2
                 mov     si, ax
                 or      si, si

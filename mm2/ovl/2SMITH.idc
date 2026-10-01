@@ -1035,6 +1035,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D25B);
 	op_stkvar	(x,	0);
 	create_insn	(0X1D262);
+	set_name	(0X1D262,	"smith_compare_password");
 	create_insn	(0X1D274);
 	create_insn	(x=0X1D276);
 	op_stkvar	(x,	1);
@@ -1292,6 +1293,7 @@ static Functions_0(void) {
 	set_frame_size(0X1D236, 0X2, 2, 0);
 	add_func    (0X1D262,0X1D2A3);
 	set_func_flags(0X1D262,0x5410);
+	set_func_cmt(0X1D262,	"case-insensitive compare of the typed string", 0);
 	set_frame_size(0X1D262, 0X2, 2, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);

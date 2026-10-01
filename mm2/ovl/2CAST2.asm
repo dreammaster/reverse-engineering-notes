@@ -1382,7 +1382,7 @@ loc_1C95D:                              ; CODE XREF: spell_cb_Turn_Undead+12↑j
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 push    ax
-                call    sub_1C96A
+                call    spell_turn_undead_effect
                 mov     sp, bp
                 pop     bp
                 retn
@@ -1391,9 +1391,10 @@ spell_cb_Turn_Undead endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; (level) undead monsters are eradicated / flee
 ; Attributes: bp-based frame
 
-sub_1C96A       proc near               ; CODE XREF: spell_cb_Turn_Undead+1F↑p
+spell_turn_undead_effect proc near      ; CODE XREF: spell_cb_Turn_Undead+1F↑p
                                         ; spell_cb_Holy_Word+8↓p
 
 var_A           = byte ptr -0Ah
@@ -1416,13 +1417,13 @@ arg_0           = byte ptr  4
                 jmp     loc_1CA36
 ; ---------------------------------------------------------------------------
 
-loc_1C987:                              ; CODE XREF: sub_1C96A+18↑j
+loc_1C987:                              ; CODE XREF: spell_turn_undead_effect+18↑j
                 cmp     byte_2781B, 0
                 jz      short loc_1C991
                 jmp     loc_1CA33
 ; ---------------------------------------------------------------------------
 
-loc_1C991:                              ; CODE XREF: sub_1C96A+22↑j
+loc_1C991:                              ; CODE XREF: spell_turn_undead_effect+22↑j
                 inc     byte_2781B
                 mov     al, byte_1DD58
                 mov     [bp+var_4], al  ; CODE XREF: seg002:07DD↑J
@@ -1432,13 +1433,13 @@ loc_1C991:                              ; CODE XREF: sub_1C96A+22↑j
                 jbe     short loc_1C9A9
                 mov     [bp+var_4], 0Ah
 
-loc_1C9A9:                              ; CODE XREF: sub_1C96A+35↑j
-                                        ; sub_1C96A+39↑j
+loc_1C9A9:                              ; CODE XREF: spell_turn_undead_effect+35↑j
+                                        ; spell_turn_undead_effect+39↑j
                 mov     al, [bp+arg_0]
                 sub     ah, ah
                 mov     si, ax
 
-loc_1C9B0:                              ; CODE XREF: sub_1C96A+C1↓j
+loc_1C9B0:                              ; CODE XREF: spell_turn_undead_effect+C1↓j
                 mov     al, [bp+var_8]
                 sub     ah, ah
                 push    ax
@@ -1456,7 +1457,7 @@ loc_1C9B0:                              ; CODE XREF: sub_1C96A+C1↓j
                 add     sp, 4
                 mov     [bp+var_6], al
 
-loc_1C9DB:                              ; CODE XREF: sub_1C96A+61↑j
+loc_1C9DB:                              ; CODE XREF: spell_turn_undead_effect+61↑j
                 mov     bl, [bp+var_8]
                 sub     bh, bh
                 mov     al, [bp+var_6]
@@ -1480,30 +1481,30 @@ loc_1C9DB:                              ; CODE XREF: sub_1C96A+61↑j
                 dec     [bp+var_8]
                 call    thk_2COMBAT_A7D8
 
-loc_1CA1B:                              ; CODE XREF: sub_1C96A+57↑j
-                                        ; sub_1C96A+7D↑j
+loc_1CA1B:                              ; CODE XREF: spell_turn_undead_effect+57↑j
+                                        ; spell_turn_undead_effect+7D↑j
                 inc     [bp+var_8]
                 cmp     [bp+var_8], 0Bh
                 jnz     short loc_1CA28
                 mov     [bp+var_4], 1
 
-loc_1CA28:                              ; CODE XREF: sub_1C96A+B8↑j
+loc_1CA28:                              ; CODE XREF: spell_turn_undead_effect+B8↑j
                 dec     [bp+var_4]
                 jnz     short loc_1C9B0
                 cmp     [bp+var_2], 0
                 jnz     short loc_1CA36
 
-loc_1CA33:                              ; CODE XREF: sub_1C96A+24↑j
+loc_1CA33:                              ; CODE XREF: spell_turn_undead_effect+24↑j
                 call    loc_1D170
 
-loc_1CA36:                              ; CODE XREF: sub_1C96A+1A↑j
-                                        ; sub_1C96A+C7↑j
+loc_1CA36:                              ; CODE XREF: spell_turn_undead_effect+1A↑j
+                                        ; spell_turn_undead_effect+C7↑j
                 mov     byte_2781A, 0
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C96A       endp
+spell_turn_undead_effect endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2322,7 +2323,7 @@ spell_cb_Holy_Word proc near            ; CODE XREF: cast_spell_dispatch:loc_1D0
                 mov     byte_2781A, 1
                 sub     ax, ax
                 push    ax
-                call    sub_1C96A
+                call    spell_turn_undead_effect
                 add     sp, 2
                 retn
 spell_cb_Holy_Word endp
