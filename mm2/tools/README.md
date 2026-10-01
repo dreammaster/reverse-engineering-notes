@@ -17,3 +17,4 @@ Game directory defaults to `D:\GOG Games\Might and Magic 2` (`mm2_layout.DEFAULT
 - `mm2_maps.py` — top-down map renderer (walls, doors, event cells): `python mm2_maps.py MAP out.png [scale]`
 - `mm2_events.py` — event script disassembler with message texts: `python mm2_events.py MAP...`
 - `mm2_dump.py` — text tables of ITEMS.DAT / MONSTERS.DAT: `python mm2_dump.py items|monsters`
+- `selftest.py` — smoke test of all readers/renderers against the installed game
