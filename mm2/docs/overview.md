@@ -44,7 +44,7 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 1. Graphics: exact CGA/Tandy/Hercules palettes; the 3-4 unused monster animation entries; outdoor view
    needs a renderer to confirm the tile tables.
 2. Remaining monster record fields' exact meaning; spell effect internals (2CAST1/2) beyond the summaries.
-3. Driver code itself (`*.DRV`) is not disassembled in IDA (ABI is documented).
+3. Driver code (`drv/*.asm`) is disassembled but its internal helpers are unnamed.
 4. Remaining unnamed functions (about 60 resident, about 50 in overlays) are small helpers.
 5. `import_names.py` to refresh names of *existing* overlay databases without a rebuild.
 6. Where the party position is restored from after loading (only `g_inn_town` is saved).
