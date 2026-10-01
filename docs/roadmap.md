@@ -796,20 +796,28 @@ sessions, unlike a one-off todo list.
       dispatch, `draw_dungeon_monster`'s monster-marker rendering) have
       been reimplemented inside the driver; found the real
       `CGATILES`/`MONSTERS` file loader and the CGA pixel-address math
-      (16×16 tiles, 80 bytes/scanline, single-segment+0x2000-offset
-      interlacing instead of the original's two-segment convention).
-      Full writeup in [enhanced-patch.md](enhanced-patch.md) §3.4-3.5.
+      (16×16 tiles, 80 bytes/scanline). Full writeup in
+      [enhanced-patch.md](enhanced-patch.md) §3.4-3.5.
 - [x] `cgacomp.drv`/`ega.drv` traced (2026-10-02) — **done**. Both
       turn out to run under **VGA mode 13h** (320×200, 256-color
       chunky), not real EGA/composite hardware. `ega.drv` loads a new
-      `EGACOLOR` palette-remap file (32 bytes) and gives the
-      `draw_world_map_overview` glyph icons a genuine EGA-specific
+      `EGACOLOR` file (32 bytes — confirmed as per-monster-facing and
+      per-overview-icon color tables, not a tileset palette) and gives
+      the `draw_world_map_overview` glyph icons a genuine EGA-specific
       upgrade (11 colored categories vs. the original's ~7 monochrome
       ones). `cgacomp.drv` implements real NTSC CGA-composite
-      artifact-color emulation: a 256-entry lookup table built from
-      comparing adjacent 2-bit CGA pixel values (with cross-byte
-      continuity via reading one byte behind the current position),
-      plus a dedicated `CGACOMP.PAL` 256-color palette file. Full
-      writeup in [enhanced-patch.md](enhanced-patch.md) §3.6-3.8. The
-      Ultima II Upgrade patch's tileset investigation is now complete —
+      artifact-color emulation on top of a software CGA-format staging
+      buffer: a 256-entry lookup table built from comparing adjacent
+      2-bit CGA pixel values (with cross-byte continuity via reading
+      one byte behind the current position), plus a dedicated
+      `CGACOMP.PAL` 256-color palette genuinely loaded into the VGA DAC
+      via `out 0x3C8`/`0x3C9`. Full writeup in
+      [enhanced-patch.md](enhanced-patch.md) §3.6-3.8. **Follow-up
+      (2026-10-02): both loose ends flagged here were fully resolved**
+      — `cgacomp.drv`'s exact decode algorithm and palette values are
+      now pinned down precisely (not just the algorithm's shape), and
+      `cga.drv`'s addressing "curiosity" turned out not to be one (the
+      two conventions produce the identical real-mode address; see
+      enhanced-patch.md §3.5/§3.7). The Ultima II Upgrade patch's
+      tileset investigation is now complete —
       nothing left blocking on this thread.

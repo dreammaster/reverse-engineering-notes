@@ -392,13 +392,23 @@ di += bx >> 2                         ; byte-column
 
 This is the same interlaced-CGA-scanline math the original game uses
 (`screen_rows`-style addressing, 80 bytes/row, odd/even scanlines in
-separate banks) — but with one real architectural difference: the
-original keeps the two banks as **two different real-mode segments**
-(`0xB800`/`0xBA00`) and switches `es` between them; this driver instead
-keeps **one segment and adds `0x2000` to the offset** for odd
-scanlines. Didn't chase why (could be an off-screen/shadow buffer this
-driver renders into before a real blit, relevant for CGA Composite
-emulation in particular — not confirmed).
+separate banks). It first looked like a real difference from the
+original — this driver's per-pixel code adds `0x2000` to the *offset*
+for odd scanlines, where the original switches `es` between
+`0xB800`/`0xBA00` for the two banks — **but it isn't actually one**:
+`[0x97]` (the segment this driver's offset math is relative to) is
+confirmed to literally be the word `0xB800`, and `(0xB800+0x200
+paragraphs):offset` and `0xB800:(offset+0x2000)` resolve to the exact
+same real-mode linear address (`0x200` paragraphs = `0x200×16 =
+0x2000` bytes — the two conventions are mathematically identical).
+This driver's `clear_screen`/`flash_screen` (bulk, whole-bank
+operations) use the switch-the-segment style, matching the original
+exactly; its per-pixel plotting code uses the add-to-offset style
+instead, most likely just so it can load `es` once outside the
+per-pixel hot loop rather than reloading it for every plotted pixel.
+Not an architectural difference or an open question — just two
+equivalent ways to write the same CGA address, confirmed by checking
+the actual segment constant in the file.
 
 Also found: the actual **`CGATILES`/`MONSTERS` file loader** (`cga.drv`
 calls it with the string address of each filename as an argument) and
@@ -436,80 +446,143 @@ differences:
   masking at all (impossible for real EGA 4-plane writes without
   Graphics Controller register programming, trivial for a chunky
   framebuffer).
-- The tile-drawing primitive reads a tile pixel value and runs it
-  through a conversion call (not just a raw copy like `cga.drv`'s XOR)
-  before writing it — almost certainly using the `EGACOLOR`-loaded
-  table to map a stored pixel index to the actual VGA palette slot.
-  This, plus the separate `EGATHEME.10`/`EGATHEME.ALT`/`EGATHEME.C64`
-  directories already present in the install (see `docs/overview.md`'s
-  file inventory), is very likely how the "Commodore 64 tileset" and
-  "Wiltshire Dragon's tileset" alternate-art options from the release
-  notes work: alternate `EGATILES`/`EGACOLOR`-equivalent files, not
-  alternate code.
+- **`EGACOLOR`'s real job, now fully traced (resolving the earlier
+  guess)**: it is *not* a general tile-pixel remap. The tile-drawing
+  primitive itself (`0x234`) just splits a packed tile byte into two
+  4-bit nibbles (`and ah,0xF` / `shr al,4` — EGA's 2-pixels-per-byte
+  format) and writes each nibble value **directly** as a VGA mode-13h
+  color index, no `EGACOLOR` involved at all. `EGACOLOR`'s 32 loaded
+  bytes are two small adjacent color tables used elsewhere in the same
+  32-byte block: offset `+0x00` (8 entries) is read as `[bp+0xF1]` by
+  the monster-marker drawer, indexed by the monster's packed
+  facing/type value (0-7) — i.e. **each dungeon-monster facing/type now
+  gets its own distinct marker color** in EGA mode, instead of
+  `cga.drv`'s single fixed XOR color. Offset `+0x14` (`0x105` =
+  `0xF1+0x14`, 11 entries) is the `draw_world_map_overview` glyph-icon
+  color table described below. So `EGACOLOR` is best described as "the
+  EGA-mode color table for monster markers and overview icons," not a
+  tileset palette.
 - `draw_world_map_overview`'s glyph-icon dispatch got genuinely
   expanded for this mode — 11 distinct icon categories (vs. the
-  original/`cga.drv`'s ~7), each now filled with a **looked-up VGA
-  color** per category rather than a monochrome point pattern — a real
+  original/`cga.drv`'s ~7), each filled with a color from `EGACOLOR`
+  (see above) rather than drawn as a monochrome point pattern — a real
   (minor) visual upgrade specific to the higher color-depth mode, not
   just an architecture port.
+- **Confirmed what the `EGATHEME.*` directories actually contain**:
+  `EGATHEME.10` and `EGATHEME.C64` (presumably the "Wiltshire Dragon"
+  and "Commodore 64" tilesets from the release notes, matching by
+  elimination — `.ALT` is the 3rd, unnamed option) each hold their own
+  `EGATILES` (8,320 bytes, confirmed byte-different from the base
+  file), `EGACOLOR` (32 bytes), and `PICDNG.EGA`/`PICSPA.EGA` (64,000
+  bytes each — confirmed `EGATHEME.C64`'s differ from the base
+  pictures; `EGATHEME.10`'s `PICDNG.EGA` happens to be byte-identical
+  to the base one, so that theme apparently only re-themes some
+  pictures). `EGATHEME.ALT` supplies only an alternate `EGATILES`. This
+  **confirms themes are pure data swaps** — same filenames, loaded from
+  a different directory — not alternate code, exactly as suspected.
 - `draw_dungeon_monster`'s monster-marker logic is structurally
   identical to `cga.drv`'s (same packed-byte record format: low 5 bits
   = Y, top 3 bits = facing), just reading from different table offsets
   due to the larger EGA-specific header tables preceding it in the
   file.
 
-### 3.7 `cgacomp.drv` — real NTSC composite artifact-color emulation (traced 2026-10-02)
+### 3.7 `cgacomp.drv` — real NTSC composite artifact-color emulation, fully decoded (2026-10-01, precision pass 2026-10-02)
 
 Also VGA mode 13h under the hood (`mov ax, 0x13` / `int 10h`, same as
 `ega.drv`) — confirmed both "enhanced" video modes are a software
 palette trick on top of VGA, while only the base `cga.drv` uses actual
-CGA hardware (mode 4). Loads a new **`CGACOMP.PAL`** file (768 bytes —
-sized exactly like a 256-entry VGA DAC palette, 3 bytes per entry) in
-place of `EGACOLOR`.
+CGA hardware (mode 4).
 
-Through roughly the same code size as `cga.drv` (same dispatch
-thresholds for the map-overview glyphs, same raw-XOR tile-data copy),
-**this driver then does something `cga.drv` and `ega.drv` don't: an
-extra post-processing pass over every drawn tile/sprite row**, calling
-into a genuine NTSC CGA-composite artifact-color decoder. Specifically
-(all confirmed by direct disassembly, not inferred):
+**Two separate buffers, confirmed by reading the actual segment
+constants out of the file**: `[0x527] = 0xB800` (a software-only "CGA
+format" staging buffer — real CGA hardware isn't involved, this is
+just RAM at an address chosen to reuse `cga.drv`'s exact addressing
+code unmodified) and `[0x529] = 0xA000` (the real VGA mode-13h
+on-screen framebuffer). Every tile/sprite draw call first writes
+ordinary 2-bits-per-pixel CGA-format data into the `0xB800` staging
+buffer — using **the exact same interlaced-bank addressing code as
+`cga.drv`** (confirmed line-for-line identical: same dispatch
+thresholds for the map-overview glyphs, same raw-XOR tile copy) — then
+a second pass decodes that staging buffer into real colors in the
+`0xA000` VGA buffer. This fully explains the file's size (roughly
+double `cga.drv`'s) despite an almost line-for-line identical dispatch
+structure: it's `cga.drv`'s code plus this whole second decode stage.
 
-- A **256-entry lookup table** is built once at init by iterating
-  every possible byte value and splitting it into four 2-bit fields
-  (the four CGA pixels that byte represents) plus a shifted 4-bit
-  middle slice, then **comparing adjacent pixel-pair values** and
-  special-casing runs of matching pixels (avoiding visible color
-  "fringing" at solid-color boundaries) — this is the standard shape
-  of a composite-artifact color table: the *output* color for a given
-  pixel depends on its neighbors, not just its own 2 bits, because
-  that's genuinely how an NTSC composite signal's color burst
-  interacts with pixel transitions on real hardware.
-- The **decode loop reads one byte behind the current position**
-  (`mov dl, [si-2]`) to get the previous byte's trailing pixel value
-  when crossing a byte boundary — i.e. it maintains continuity across
-  the sliding window rather than decoding each byte in isolation,
-  which is exactly what a faithful composite decoder needs to do.
-- Two more **200-entry tables** (`0x72B`, `0x8BB` — 200 = the mode 13h
-  screen height) are precomputed row-address tables, one for the
-  source CGA-format buffer and one for the destination VGA framebuffer
-  — a standard "avoid a multiply per pixel row" optimization, separate
-  from the color-decode table above.
-- Net effect: every tile/sprite draw call first writes the raw CGA
-  2-bits-per-pixel data (same as `cga.drv`), then this extra pass reads
-  it back and rewrites it through the artifact-color table into the
-  final VGA framebuffer — explaining why this file is roughly double
-  `cga.drv`'s size for what's otherwise an almost line-for-line
-  identical dispatch structure.
+**The artifact-color palette is genuinely loaded into VGA hardware**,
+not just computed in software: a loop (`cx=0x100`) walks all 256
+`CGACOMP.PAL` entries, for each one writing the index to port `0x3C8`
+then 3 bytes (R,G,B) to port `0x3C9` — the standard VGA DAC
+load sequence. `CGACOMP.PAL` itself (768 bytes = 256 × 3) was read
+directly: a standard VGA palette file, each R/G/B channel in the
+6-bit `0-63` DAC range (not 8-bit). Decoded entries 0-15 (the only ones
+the algorithm below ever actually produces, confirmed by simulating it
+— see below):
 
-Not independently re-derived: the exact RGB values `CGACOMP.PAL`
-assigns to each of the resulting output color indices, or the precise
-bit arithmetic of the lookup-table-building function byte-for-byte —
-the *algorithm class* (sliding-window NTSC artifact-color
-reconstruction via a precomputed table) is solidly confirmed, further
-micro-level precision wasn't chased since the ScummVM port will most
-likely want to reimplement composite emulation from first principles
-(there's existing public reference material for the NTSC CGA
-composite algorithm) rather than port this exact lookup table.
+| idx | R,G,B (0-63) | idx | R,G,B (0-63) |
+|---|---|---|---|
+| 0 | 0,0,0 (black) | 8 | 41,0,23 |
+| 1 | 0,24,0 | 9 | 28,29,30 |
+| 2 | 0,16,56 | 10 | 52,19,63 |
+| 3 | 0,39,63 | 11 | 38,43,63 |
+| 4 | 19,16,0 | 12 | 63,17,0 |
+| 5 | 0,46,0 | 13 | 55,49,0 |
+| 6 | 28,29,30 | 14 | 63,33,60 |
+| 7 | 0,58,36 | 15 | 63,63,63 (white) |
+
+Indices 0, 5, 10, 15 are the "solid run" colors (black, green, magenta,
+white) — exactly the 4 colors a real NTSC composite CGA display shows
+for a flat run of each of the 4 raw 2-bit pixel values, which is a
+well-known, documented real-hardware behavior and a strong sanity
+check that this decode is understood correctly. `CGACOMP.PAL`'s
+remaining 240 entries (16-255) are loaded into the DAC too but never
+referenced by the drawing code — presumably just padding/unused.
+
+**The exact decode algorithm** (pulled from the disassembly and
+verified by simulating all 256 inputs in Python — output is always in
+0-15, confirming only 16 colors are ever actually used): a 256-entry
+*word* table (512 bytes) is built once at init. For each possible
+input byte (4 packed 2-bit CGA pixels, read low-to-high as `p0 p1 p2
+p3`):
+
+```python
+p0 = byte & 0x3
+p1 = (byte >> 2) & 0x3
+p2 = (byte >> 4) & 0x3
+p3 = (byte >> 6) & 0x3
+mid = (byte >> 2) & 0xF          # p1 and p2 combined into one nibble
+
+out_lo = mid
+if p2 == p3 or p2 == p1:
+    out_lo = ((p2 << 2) | p2) & 0xFF   # "solid run" color instead
+
+out_hi = mid
+if p0 == p1 or p2 == p1:
+    out_hi = ((p1 << 2) | p1) & 0xFF   # "solid run" color instead
+
+table[byte] = (out_lo, out_hi)         # the colors for pixels p1 and p2
+```
+
+i.e. for the *middle two* pixels of each 4-pixel byte, the output color
+defaults to a "transition" index (the two pixels combined into one
+4-bit value) unless a neighboring pixel matches, in which case it
+collapses to that pixel's own "solid" color — avoiding the color
+fringing a naive per-byte decode would show at solid-color boundaries.
+The actual per-byte decode loop (confirmed separately) reads one byte
+*behind* the current position (`mov dl, [si-2]`) when it needs the
+previous byte's trailing pixel for continuity across a byte boundary,
+and two more precomputed **200-entry tables** (`0x72B`/`0x8BB` — 200 =
+the mode 13h screen height) are source/destination row-address tables,
+a standard "avoid a multiply per row" optimization unrelated to the
+color math.
+
+This is now fully decoded to the point of being directly portable: the
+Python above plus the palette table is a complete, working
+reimplementation of this driver's composite-color decision — the only
+thing not done is converting the 256 unused `CGACOMP.PAL` DAC entries
+or re-deriving why the original author chose exactly these RGB triples
+(they're very close to, but not verified identical to, the commonly-
+published "16 CGA composite artifact colors" reference values used by
+DOSBox and other emulators — a side-by-side comparison wasn't done).
 
 ### 3.8 What this means for the ScummVM port
 
@@ -536,33 +609,27 @@ driver-loading or `int 65h` at all.
 
 ## 4. Next steps (need Paul / IDA, not done here)
 
-All three drivers are now traced (§3.5-3.7) — nothing left in the
-tileset investigation is blocking. What's left is lower priority:
+All three drivers are now traced to the pixel/algorithm level
+(§3.5-3.7), both previously-open loose ends (`cgacomp.drv`'s exact
+artifact-color algorithm and palette, and `cga.drv`'s addressing
+"curiosity") are resolved (§3.5, §3.7), and `EGACOLOR`'s real purpose
+and the `EGATHEME.*` directories' contents are confirmed (§3.6). The
+tileset investigation has nothing further blocking it. What's left is
+genuinely out of scope for this investigation, not just undone:
 
-1. The exact `CGACOMP.PAL` RGB values and the lookup-table-building
-   function's bit arithmetic in `cgacomp.drv` weren't derived
-   byte-for-byte (§3.7) — the *algorithm* is solidly confirmed, but a
-   ScummVM reimplementation of composite emulation will likely want to
-   build its own table from the standard public NTSC-CGA-composite
-   algorithm rather than extract this one exactly.
-2. Minor unresolved curiosity, not blocking anything: `cga.drv`'s
-   pixel-plot primitive addresses the interlaced scanline banks via one
-   segment + a `0x2000`-byte offset, while its own `clear_screen`/
-   `flash_screen` primitives switch between two real segments
-   (`+0x200` paragraphs = `+0x2000` bytes, i.e. the real `0xB800`→
-   `0xBA00` CGA bank convention) — these may be two different buffers
-   (an intermediate staging/compositing buffer vs. the real hardware
-   framebuffer) rather than an inconsistency; not confirmed either way,
-   and not relevant to the ScummVM port either way.
-3. If useful: a full IDA database for `ULTIMAII.EXE` (patched) would
+1. If useful: a full IDA database for `ULTIMAII.EXE` (patched) would
    let the remaining ~170 diff clusters (mostly small, UI-context or
    address-relocation noise per the sampling done here) be swept
    properly instead of by manual `ndisasm` spot-checks. Not needed for
    the 3 bugfixes or the tileset architecture above, which are already
    fully traced.
-4. `player.full`, `u2-*.pat`, `u2up*.exe/ini` and the `u2cfg*.exe`
+2. `player.full`, `u2-*.pat`, `u2up*.exe/ini` and the `u2cfg*.exe`
    tools in the install directory weren't examined at all — out of
    scope here (installer/config tooling, not runtime game code).
+3. Whether `CGACOMP.PAL`'s chosen RGB values match a known public
+   reference for "the 16 CGA composite artifact colors" wasn't checked
+   side-by-side — cosmetic curiosity, not needed since §3.7 already
+   gives the exact values this patch actually uses.
 
 ## Methodology (for reproducing or extending this)
 
