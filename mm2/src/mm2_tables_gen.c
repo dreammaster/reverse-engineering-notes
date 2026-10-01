@@ -77,3 +77,18 @@ const uint8_t MM2_START_ITEM[64] = {
 	12, 10, 12, 9, 5, 5, 8, 9,
 	15, 15, 15, 11, 10, 10, 13, 15,
 };  /* [tier][class] */
+const uint8_t MM2_TREASURE_THRESHOLD[7] = {
+	25, 40, 50, 55, 70, 75, 100,
+};
+const uint8_t MM2_TREASURE_ROWS[28] = {
+	0, 24, 53, 65,
+	65, 13, 19, 26,
+	91, 6, 13, 19,
+	114, 3, 10, 12,
+	126, 8, 23, 28,
+	154, 2, 4, 5,
+	159, 22, 34, 48,
+};  /* {base item id, range for quality 0..2} */
+const uint8_t MM2_TREASURE_CHARGES[4] = {
+	5, 60, 200, 0,
+};

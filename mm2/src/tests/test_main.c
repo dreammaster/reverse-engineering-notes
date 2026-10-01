@@ -6,6 +6,7 @@
 #include "../mm2_map.h"
 #include "../mm2_monpic.h"
 #include "../mm2_party.h"
+#include "../mm2_reward.h"
 #include "../mm2_text.h"
 #include "../mm2_battle.h"
 #include "../mm2_combat.h"
@@ -418,6 +419,34 @@ static void test_battle(const Mm2Game *g) {
 	CHECK(bt.frontParty == 1 && bt.frontMonsters == 2);
 }
 
+static void test_rewards(const Mm2Game *g) {
+	static Mm2Item items[MM2_ITEMS];
+	static Mm2Monster mons[MM2_MONSTERS];
+	Mm2Rng lo = {rng_lo, 0}, hi = {rng_hi, 0};
+	Mm2Loot loot = {0, 0, 0, 0, 0};
+	Mm2TreasureItem t[3];
+	Mm2Monster m;
+	CHECK(mm2_load_items(g, items) && mm2_load_monsters(g, mons));
+	memset(&m, 0, sizeof(m));
+	m.goldClass = 1; m.dropsGems = 1; m.itemClass = 2; m.exp = 150;
+	mm2_monster_reward(&loot, &m, 0x35, &lo);
+	CHECK(loot.gold == 7 && loot.gems == 1 && loot.exp == 150 && loot.itemClass == 2 && loot.itemTier == 3);
+	m.goldClass = 3;                                  /* id>>1 = 26, + rand(1,26) = 27 -> 27*256 + 7 */
+	mm2_monster_reward(&loot, &m, 0x35, &lo);
+	CHECK(loot.gold == 7 + 7 + 27 * 256 && loot.exp == 300);
+	m.itemClass = 1;                                  /* a lower class never replaces the best one */
+	mm2_monster_reward(&loot, &m, 0x71, &lo);
+	CHECK(loot.itemClass == 2 && loot.itemTier == 3);
+	loot.itemClass = 2;
+	loot.itemTier = 0;
+	CHECK(mm2_treasure_roll(&loot, items, t, &lo) == 3);
+	CHECK(t[0].item == 1 && t[1].item == 1 && t[2].item == 1 && t[0].flags == 0);
+	CHECK(mm2_treasure_roll(&loot, items, t, &hi) == 0);
+	loot.itemTier = 5;                                /* tier >= 2 adds a magical bonus: rand(1,5) */
+	CHECK(mm2_treasure_roll(&loot, items, t, &lo) == 3 && t[0].flags == 1);
+	CHECK(mons[0].exp == 150);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -430,6 +459,7 @@ int main(void) {
 	test_monster_pictures(&g);
 	test_combat();
 	test_battle(&g);
+	test_rewards(&g);
 	test_text(&g);
 	test_banks(&g);
 	test_indoor_render(&g);

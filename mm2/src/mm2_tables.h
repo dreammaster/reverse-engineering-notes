@@ -23,6 +23,10 @@ extern const uint16_t MM2_START_SP[23];
 extern const uint8_t MM2_START_AC[15];
 extern const uint8_t MM2_START_ITEM[64];
 
+extern const uint8_t MM2_TREASURE_THRESHOLD[7];
+extern const uint8_t MM2_TREASURE_ROWS[28];
+extern const uint8_t MM2_TREASURE_CHARGES[4];
+
 enum { MM2_KNIGHT, MM2_PALADIN, MM2_ARCHER, MM2_CLERIC, MM2_SORCERER, MM2_ROBBER, MM2_NINJA, MM2_BARBARIAN };
 
 /* Experience needed to reach `level` (>= 2) for a class. */
