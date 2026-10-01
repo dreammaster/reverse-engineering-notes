@@ -13,8 +13,8 @@ chunk (after LZW):
   messages        FFh-terminated strings (chars & 7Fh; 40h = newline)
 ```
 
-* A trigger fires when the party is on `cell` and `facing_mask & direction_bit` (direction bits:
-  N=1? … `evt_check_cell_triggers` uses `DGROUP:16D2[byte_23217]`).  Script *n* is the n-th `FFh`
+* A trigger fires when the party is on `cell` and `facing_mask & direction_bit` (direction bits: **W = 10h, S = 20h, E = 40h, N = 80h**, `F0h` = any
+  direction; table `DGROUP:16D2[byte_23217]`).  Script *n* is the n-th `FFh`
   terminated block (`evt_run_script` skips `n` blocks).
 * If the cell has none of its triggers armed for this facing, the "no trigger" path runs a random
   encounter (`start_combat`).
@@ -72,3 +72,5 @@ Semantics are from reading the handlers; names in the IDA databases: `evt_opNN_*
 | 50 | 2 | `1A570` | `cond` = number of party skill slots equal to skill *n* (`party_skill_count`; e.g. Cartographer, Mountaineer) |
 
 Opcode usage across the shipped maps: see `tools/mm2_data.py` (`python -c` with `split_scripts`).
+
+`tools/mm2_events.py MAP` prints the trigger table, the scripts with opcode names and the message texts of a map.
