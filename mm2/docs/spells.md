@@ -183,3 +183,5 @@ the monster resists ("resisted and").
   the wall/flag bits of the destination; **Town Portal** (1-5 = town), **Nature's Gate** (outdoor cells by era), **Surface** (last
   surface position `byte_231EC`), **Location** (shows the map position, `2PLAY:BB4E`) ; the four **Transmutations** set the
   terrain-change bytes `1DC2C..1DC2F`.
+
+*(Not checked in detail: Jump distance, the effect values set by Guard Dog / Shelter / Walk on Water, the exact Teleport range and the Nature's Gate destination table; the figures above come from a condensed read of the handlers.)*
