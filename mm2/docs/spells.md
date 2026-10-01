@@ -123,3 +123,43 @@ spells (Energy Blast, Flame Arrow, Fire Ball, Lightning Bolt, ...) are resolved 
 | 93 | Cleric | 9 | Holy Word | 10 SP+10 Gems | Combat | 4A | 0A |
 | 94 | Cleric | 9 | Resurrection | 10 SP+10 Gems | Non-combat | 8A | 0A |
 | 95 | Cleric | 9 | Uncurse Item | 10 SP+50 Gems | Non-combat | B2 | 0A |
+
+## Combat spell parameters (read from `2CAST2` handlers)
+
+Every combat handler prepares `word_27816` (damage) and/or `byte_27812/27813` (status kind) and calls
+`2COMBAT:combat_party_spell_hits(count, first_target, element)` (`18696`).  `count` = number of monsters hit
+(10 = the whole group, clamped to the monsters present; 1 = the chosen one), `element` is the damage/resistance class
+(1 fire, 2 electricity, 3 cold, 4 acid/poison, 6 mental/magic, 0 = none/special) used for the monster's resistance tests.
+Damage helper `sub_1A82C(dice, bonus)` = **sum over the caster's level of `rand(1, dice) + bonus`** (`dice = 0` = just
+`bonus` per level).
+
+| Spell | Targets | Damage |
+|---|--:|---|
+| Energy Blast | 1 | level x (1d5 + 1) |
+| Flame Arrow | 1 | 1d5 + 3 (fixed, not per level), fire |
+| Electric Arrow | 1 | 1d9 + 7, electricity |
+| Lightning Bolt | 4 | level x (1d5 + 1), electricity |
+| Cold Beam | 1 | level x 6, cold |
+| Fire Ball | 6 | level x (1d5 + 1), fire |
+| Acid Stream / Acid Spray | 1 / 3 | acid |
+| Sand Storm | all | level x (1d7 + 1) |
+| Fantastic Freeze | 3 | level x 10, cold |
+| Super Shock | 1 | level x 20, electricity |
+| Dancing Sword | all | level x (1d11 + 1) |
+| Incinerate | 1 | level x (1d21 + 19), fire |
+| Mega Volts | all | level x (1d9 + 7), electricity |
+| Inferno | all | level x (1d16 + 4), fire |
+| Meteor Shower | all outdoors | 1d21 + 24 |
+| Star Burst | all outdoors | 1d161 + 39 |
+| Pain | 1 | 1d12 + 3 |
+| Cold Ray | 5 | 25, cold |
+| Disrupt | 1 | 100 |
+| Implosion | 1 | 1000 |
+
+Status spells (`byte_27812`): 1 silence, 2 weaken, 3 frighten (Apparition), 4 sleep, 5 hold (Web, Immobilize, Paralyze),
+6 mindless (Feeble Mind), 7 encasement (Air/Water/Earth/Fire Encasement), 8 Fingers of Death, 9 Disintegration.  Sleep,
+Web and Silence use `sub_1A7EA` for the number of monsters affected (`level + 4` below level 7, else up to 10 depending on the
+group size).  Party buffs (Shield, Power Shield, Bless, Invisibility, Heroism: +6 levels, ...) set the status bytes
+`1DC33..1DC36` described in save-format.md.  Monster resistance: `byte_27681` (magic resistance %) is rolled first
+(`rand(caster level, 90) < n` resists), then the flag bits of the record.  Damage in `combat_party_spell_hits` is halved when
+the monster resists ("resisted and").
