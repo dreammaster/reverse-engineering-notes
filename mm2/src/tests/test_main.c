@@ -4,6 +4,7 @@
 #include "../mm2_files.h"
 #include "../mm2_gfx.h"
 #include "../mm2_map.h"
+#include "../mm2_party.h"
 #include "../mm2_combat.h"
 #include "../mm2_data.h"
 #include "../mm2_events.h"
@@ -183,6 +184,28 @@ static void test_tables_and_rules(const Mm2Game *g) {
 		CHECK(memcmp(out, orig.data, sizeof(out)) == 0);
 		mm2_blob_free(&orig);
 	}
+	/* character creation reproduces the shipped level-1 characters (Gene Eric exactly; the others differ only in
+	 * equipment-dependent fields: AC, food, backpack, gold, location) */
+	for (i = 0; i < MM2_ROSTER_CHARS; i++) {
+		const Mm2Char *c = &roster.chars[i];
+		if (c->raw[MC_NAME] && c->raw[MC_LEVEL] == 1 && c->raw[MC_AGE] == 18 && i < 6) {
+			Mm2NewChar n;
+			Mm2Char m;
+			int k, diffs = 0;
+			memset(&n, 0, sizeof(n));
+			n.cls = c->raw[MC_CLASS]; n.race = c->raw[MC_RACE]; n.alignment = c->raw[MC_ALIGN]; n.sex = c->raw[MC_SEX];
+			memcpy(n.name, c->raw, 11);
+			n.stats[0] = c->raw[0x10]; n.stats[1] = c->raw[0x11]; n.stats[2] = c->raw[0x12]; n.stats[3] = c->raw[0x27];
+			n.stats[4] = c->raw[0x13]; n.stats[5] = c->raw[0x14]; n.stats[6] = c->raw[0x15];
+			mm2_create_character(&m, &n);
+			for (k = 0; k < MM2_CHAR_SIZE; k++)
+				if (m.raw[k] != c->raw[k] && k != MC_AC && k != MC_FOOD && k != MC_PACK_ID && k != MC_GOLD && k != MC_TOWN) diffs++;
+			CHECK(diffs == 0);
+			if (i == 3) CHECK(memcmp(m.raw, c->raw, MM2_CHAR_SIZE) == 0);
+		}
+	}
+	CHECK(mm2_roster_find_free(&roster) == -1 || roster.chars[mm2_roster_find_free(&roster)].raw[MC_NAME] == 0);
+	CHECK(mm2_race_stat_adjust(1, 0) == -1 && mm2_race_stat_adjust(3, 6) == 2 && mm2_race_stat_adjust(0, 3) == 0);
 	/* rules: values from tools/mm2_rules.py */
 	CHECK(mm2_exp_for_level(0, 2) == 1500 && mm2_exp_for_level(0, 5) == 12000 && mm2_exp_for_level(0, 10) == 384000);
 	CHECK(mm2_exp_for_level(0, 11) == 576000 && mm2_exp_for_level(0, 25) == 13248000 && mm2_exp_for_level(0, 80) == 154048000u);

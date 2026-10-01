@@ -14,6 +14,15 @@ extern const uint8_t MM2_HIT_DIV[8];
 extern const uint8_t MM2_MONSTER_TOHIT[16];
 extern const uint8_t MM2_STAT_BRACKET[23];
 
+extern const uint8_t MM2_RACE_STAT_ADJ[35];
+extern const uint8_t MM2_RACE_RESIST[48];
+extern const uint8_t MM2_START_THIEVERY[8];
+extern const uint16_t MM2_START_HP[8];
+extern const uint16_t MM2_ENDURANCE_HP[22];
+extern const uint16_t MM2_START_SP[23];
+extern const uint8_t MM2_START_AC[15];
+extern const uint8_t MM2_START_ITEM[64];
+
 enum { MM2_KNIGHT, MM2_PALADIN, MM2_ARCHER, MM2_CLERIC, MM2_SORCERER, MM2_ROBBER, MM2_NINJA, MM2_BARBARIAN };
 
 /* Experience needed to reach `level` (>= 2) for a class. */
