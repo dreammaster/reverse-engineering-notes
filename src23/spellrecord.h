@@ -158,9 +158,17 @@ typedef enum {
      */
     SpellFieldTickAmount = 0x34,
 
-    /* 0x36-0x3F: referenced by nothing traced so far (10 bytes -- plausibly
-     * a description-block id for ShowClueBookSpellDetail's own "EFFECT:"/
-     * "WHEN:" text via LookupSpellDescriptionBlockOffset, not confirmed). */
+    /*
+     * 0x36-0x3F: referenced by nothing traced so far (10 bytes). An
+     * earlier guess that this might hold a description-block id for
+     * ShowClueBookSpellDetail's "EFFECT:"/"WHEN:" text doesn't hold up:
+     * LookupSpellDescriptionBlockOffset's own real call
+     * (yendor2.asm:6395/6402) passes a fixed scratch-buffer address and
+     * a fixed category constant (5/6), not any per-record field --
+     * whatever drives the actual per-spell text content isn't this
+     * lookup's own "id" parameter. Left unidentified rather than
+     * re-guessed.
+     */
 
     /*
      * word_332FA: a byte offset into `g_currentPartyRecord` where
