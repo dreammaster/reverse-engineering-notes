@@ -7,6 +7,7 @@
 #include "../mm2_monpic.h"
 #include "../mm2_party.h"
 #include "../mm2_text.h"
+#include "../mm2_battle.h"
 #include "../mm2_combat.h"
 #include "../mm2_data.h"
 #include "../mm2_events.h"
@@ -383,6 +384,40 @@ static void test_session(const Mm2Game *g) {
 	mm2_session_end(&s);
 }
 
+static void test_battle(const Mm2Game *g) {
+	static Mm2Monster table[MM2_MONSTERS];
+	Mm2Char a, b;
+	Mm2Char *party[2] = {&a, &b};
+	Mm2Rng lo = {rng_lo, 0};
+	static const uint8_t ids[3] = {0, 1, 2};   /* speeds 20, 15, 12 */
+	Mm2Battle bt;
+	Mm2ActorKind k;
+	int idx, seq = 0;
+	static const int expect[5][2] = {{MM2_ACTOR_MONSTER, 0}, {MM2_ACTOR_PARTY, 1}, {MM2_ACTOR_MONSTER, 1}, {MM2_ACTOR_PARTY, 0}, {MM2_ACTOR_MONSTER, 2}};
+	CHECK(mm2_load_monsters(g, table));
+	memset(&a, 0, sizeof(a));
+	memset(&b, 0, sizeof(b));
+	a.raw[0x6E] = 14;
+	b.raw[0x6E] = 18;
+	mm2_battle_init(&bt, table, ids, 3, party, 2, 0, MM2_SURPRISE_NONE, &lo);
+	CHECK(bt.frontMonsters == 3 && bt.frontParty == 2 && bt.count == 3);
+	CHECK(bt.hp[0] == 5 && bt.speed[0] == 20 && bt.speed[2] == 12 && bt.usesLeft[0] >= 1);
+	mm2_battle_start_round(&bt);
+	while ((k = mm2_battle_next_actor(&bt, &idx)) != MM2_ACTOR_NONE) {
+		CHECK(seq < 5 && (int)k == expect[seq][0] && idx == expect[seq][1]);
+		mm2_battle_mark_acted(&bt, k, idx);
+		seq++;
+	}
+	CHECK(seq == 5);
+	mm2_battle_remove_monster(&bt, 0);
+	CHECK(bt.count == 2 && bt.id[0] == 1 && bt.speed[0] == 15 && mm2_battle_visible(&bt) == 2);
+	/* surprise: party surprised -> monsters double their front rank */
+	mm2_battle_init(&bt, table, ids, 3, party, 2, 0, MM2_SURPRISE_PARTY, &lo);
+	CHECK(bt.frontParty == 2 && bt.frontMonsters == 3);
+	mm2_battle_init(&bt, table, ids, 3, party, 2, 0, MM2_SURPRISE_MONSTERS, &lo);
+	CHECK(bt.frontParty == 1 && bt.frontMonsters == 2);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -394,6 +429,7 @@ int main(void) {
 	test_session(&g);
 	test_monster_pictures(&g);
 	test_combat();
+	test_battle(&g);
 	test_text(&g);
 	test_banks(&g);
 	test_indoor_render(&g);
