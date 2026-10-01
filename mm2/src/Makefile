@@ -4,7 +4,7 @@
 CC       = gcc
 CFLAGS  ?= -std=c99 -O2 -Wall -Wextra -pedantic
 BUILD   := build
-CORE    := mm2_lzw.c mm2_files.c mm2_gfx.c mm2_map.c mm2_view.c mm2_data.c mm2_rules.c mm2_tables_gen.c
+CORE    := mm2_lzw.c mm2_files.c mm2_gfx.c mm2_map.c mm2_view.c mm2_data.c mm2_state.c mm2_events.c mm2_rules.c mm2_tables_gen.c
 CORE_O  := $(CORE:%.c=$(BUILD)/%.o)
 
 SDL_CFLAGS ?= -IC:/dev/scummvm_libs_2015/include/SDL2 -Dmain=SDL_main

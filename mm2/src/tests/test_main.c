@@ -5,6 +5,7 @@
 #include "../mm2_gfx.h"
 #include "../mm2_map.h"
 #include "../mm2_data.h"
+#include "../mm2_events.h"
 #include "../mm2_tables.h"
 #include "../mm2_view.h"
 
@@ -180,6 +181,61 @@ static void test_tables_and_rules(const Mm2Game *g) {
 	CHECK(mm2_bracket(1) == -3 && mm2_bracket(15) == 1 && mm2_bracket(255) >= 18);
 }
 
+static int g_msgs, g_ops;
+static int count_exec(void *ud, Mm2Vm *vm, int op, const uint8_t *args) {
+	(void)ud; (void)vm; (void)args;
+	g_ops++;
+	if (op == EV_MSG) g_msgs++;
+	return 1;
+}
+static int fixed_rand(void *ud, int lo, int hi) {
+	(void)ud; (void)hi;
+	return lo;
+}
+
+static void test_event_vm(const Mm2Game *g) {
+	static const uint8_t script[] = {
+		EV_SET_VAR, 3, 5, EV_VAR_COND, 3, 0, EV_SKIP_IF_NOT, 1, EV_MSG, 1, EV_END, 0xFF,   /* script 0 */
+		EV_VAR_COND, 4, 0, EV_SKIP_IF_NOT, 1, EV_MSG, 2, EV_COND_RAND, 9, EV_MSG, 3, 0xFF, /* script 1 */
+	};
+	static Mm2State st;
+	Mm2EventHost host = {count_exec, fixed_rand, 0};
+	Mm2Vm vm = {0};
+	Mm2EventChunk c;
+	Mm2Blob ev;
+	int m;
+	vm.state = &st;
+	vm.host = &host;
+	g_msgs = g_ops = 0;
+	CHECK(mm2_vm_run(&vm, script, sizeof(script), 0) == 5);
+	CHECK(*mm2_state_ptr(&st, mm2_event_var_dgroup(3)) == 5 && vm.cond == 5 && g_msgs == 1);
+	g_msgs = 0;
+	CHECK(mm2_vm_run(&vm, script, sizeof(script), 1) == 4);   /* var 4 = 0 -> skip the first message, then random + message */
+	CHECK(vm.cond == 1 && g_msgs == 1);
+	CHECK(mm2_vm_run(&vm, script, sizeof(script), 2) == -1);
+	CHECK(mm2_event_op_len(EV_FIGHT) == 13 && mm2_event_op_len(EV_PLACE_TREASURE) == 15 && mm2_event_op_len(0) == 0);
+	CHECK(mm2_event_var_dgroup(0x84) == 0x3CA && mm2_event_var_dgroup(0x23) == 0x3D8 && mm2_event_var_dgroup(0x50) == 0);
+	/* every shipped script runs to its end with a do-nothing host */
+	for (m = 0; m < MM2_MAPS; m++) {
+		ev = mm2_load_events(g, m);
+		if (ev.data && mm2_parse_events(&ev, &c)) {
+			int s, n = 0;
+			size_t p = 0;
+			while (p < c.scriptsLen) {
+				if (c.scripts[p] == 0xFF) { n++; p++; }
+				else p += (size_t)mm2_event_op_len(c.scripts[p]);
+			}
+			for (s = 0; s < n; s++)
+				CHECK(mm2_vm_run(&vm, c.scripts, c.scriptsLen, s) >= 0);
+			if (m == 0) {
+				CHECK(mm2_event_find_trigger(&c, 8, 0, 'W') == 29 && mm2_event_find_trigger(&c, 8, 0, 'N') == -1);
+				CHECK(mm2_event_find_trigger(&c, 8, 1, 'S') == 41);
+			}
+		}
+		mm2_blob_free(&ev);
+	}
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -187,6 +243,7 @@ int main(void) {
 	test_maps_and_events(&g);
 	test_map_rules(&g);
 	test_tables_and_rules(&g);
+	test_event_vm(&g);
 	test_banks(&g);
 	test_indoor_render(&g);
 	test_outdoor_render(&g);
