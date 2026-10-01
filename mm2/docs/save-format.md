@@ -34,8 +34,13 @@ The table (state offset = position within the 2052-byte payload; the 2053rd byte
 (`g_inn_town`, DGROUP `03D4`, the 5th of the status bytes `03D0..03DB`) holds the id (0-4) of the town whose inn
 last saved: `inn_common_helper` and `inn_menu` (1RETINN) set it from `g_map_id` before `save_roster`, and
 loading (`1MENU2`, "continue") copies it back into `g_map_id` and re-enters that town
-(`2PLAY:B5EA`, with the party x/y left by the town entry *(position source not checked)*).  The same byte is the map the party returns to from event
+(`2PLAY:B5EA`) at the inn's own entrance.  The same byte is the map the party returns to from event
 `FDh` in the blacksmith trap and in `inn_leave`.  So the save only ever records which town you were in.
 
 The original game also keeps a copy of `ROSTER.DAT` on the player disk / in `DEFAULT.DAT` (new-game
 template, 780 bytes).
+
+**Where the party stands after loading / leaving the inn**: `inn_menu` (on leaving) copies the position from per-town tables
+indexed by the town id: x = `DGROUP:21E8` = {7, 9, 7, 7, 3}, y = `21EE` = {3, 13, 11, 0, 10}, facing = `21F4` = "NNENW"
+(towns 0-4 in map order), then calls `set_facing_masks`.  Loading goes through the same exit, so a loaded game always begins at
+the inn entrance of `g_inn_town`.

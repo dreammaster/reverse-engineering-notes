@@ -47,4 +47,3 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 3. Driver code (`drv/*.asm`) is disassembled but its internal helpers are unnamed.
 4. Remaining unnamed functions (about 60 resident, about 50 in overlays) are small helpers.
 5. `import_names.py` to refresh names of *existing* overlay databases without a rebuild.
-6. Where the party position is restored from after loading (only `g_inn_town` is saved).
